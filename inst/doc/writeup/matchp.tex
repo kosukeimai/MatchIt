@@ -120,10 +120,10 @@ assumptions and that different specifications can yield very different
 causal inferences.
 
 The problem for researchers is how to convince readers that we picked
-a representative specification or the right one rather than the one
-that most supported our favorite hypothesis.  What does it even mean
-to choose ``the right'' parametric model estimates when any chosen
-model depends on assumptions we cannot verify?  When we read a
+the right specification or at least a representative one rather than
+the one that most supported our favorite hypothesis.  What does it
+even mean to choose ``the right'' parametric model estimates when any
+chosen model depends on assumptions we cannot verify?  When we read a
 published article in political science, how do we know whether the
 causal effect presented is accurate or whether the article merely
 demonstrates that it was \emph{possible} to find a specification
@@ -280,7 +280,7 @@ district $i$, we will observe either $y_{i}(1)$ or $y_{i}(0)$ but not
 both.
 
 The difference between the two potential outcomes defines the simplest
-realized (or in-sample) definition of a causal effect:
+realized (or fixed) definition of a causal effect:
 \begin{equation}
   \label{rce}
   \text{(Realized causal effect for unit $i$)} = y_i(1) - y_i(0).
@@ -302,11 +302,11 @@ two areas of statistics that are widely, but incorrectly, perceived to
 be more difficult than causal inference.
 
 If district $i$ receives the treatment, we observe $y_i=y_i(1)$ but
-not $y_i(0)$ and otherwise we observe $y_i=y_i(0)$ but not $y_i(1)$.
-In this framework, causal inference can be thought of as a severe
-missing data problem, where each unit has two relevant dependent
-variables, $y_i(0)$ and $y_i(1)$, but one of which, $t_iy_i(0) +
-(1-t_i)y_i(1)$, is always missing.  Moreover, since $y_i(0)$ and
+not $y_i(0)$ and otherwise we observe $y_i=y_i(0)$ but not $y_i(1)$,
+i.e., $t_iy_i(0) + (1-t_i)y_i(1)$.  In this framework, causal
+inference can be thought of as a severe missing data problem, where
+each unit has two relevant dependent variables, $y_i(0)$ and $y_i(1)$,
+but one of which is always missing.  Moreover, since $y_i(0)$ and
 $y_i(1)$ are never both observed for any set of units, we cannot use a
 known relationship between the two to extrapolate to units where only
 one is observed.  Making causal inferences is thus equivalent to an
@@ -402,7 +402,7 @@ of units in our data --- since they are closer to our data than
 effects for averages of specified populations or population subgroups,
 but the difference is not always important from a practical viewpoint
 since a good estimator for one is ``automatically a good estimator for
-the other'' \citep[p.6][]{Imbens04}.
+the other'' \citep[p.6]{Imbens04}.
 
 Among in-sample effects, we consider two choices.  The first is the
 average treatment effect or ATE:
@@ -413,8 +413,8 @@ average treatment effect or ATE:
 \end{align}
 which is the mean causal effect for unit $i$ averaged over all units
 (so that the expected value operator in the first line averages over
-the random potential outcomes for each unit, and the average over $i$
-in both refers to the observed sample).
+the random causal effects for each unit, and the summation over $i$ in
+both refers to the observed sample).
 
 The alternative choice of a target quantity of interest is the average
 treatment effect on the treated, or ATT:
@@ -542,11 +542,11 @@ fields, this same condition is known as ignorability, which means that
 $t_i$ and the potential outcomes are independent after conditioning on
 $X_i$, and so we can literally ignore all unobserved variables
 \citep{RosRub83}.  Ignorability is a strong condition, but it is one
-about which social scientists are deeply knowledgeable and which is
-the central methodological concern of many substantive scholarly
-articles.  We emphasize this assumption to make clear that our
-procedures contain no magic: They are unable to control for variables
-that are not measured.
+about which social scientists are deeply knowledgeable and it is the
+central methodological concern of many substantive scholarly articles.
+We emphasize this assumption to make clear that our procedures contain
+no magic: They are unable to control for variables that are not
+measured.
 
 In the context of the no selection or omitted variable bias
 assumptions, we have implicitly made three others that are worth
@@ -576,7 +576,7 @@ directly estimate this model.  Preprocessing data with matching
 procedures is suboptimal in this situation.  Of course, few
 researchers with real observational data sets have this kind of
 knowledge and as a result some choices need to be made among the range
-of possible parametric models.  The dilemma then is that although
+of possible parametric models.  The dilemma is that although
 researchers using parametric methods do not know the true parametric
 model, they must proceed as if they do.
 
@@ -725,12 +725,13 @@ for estimation in a regression framework without functional form
 assumptions.  So five explanatory variables leads to a regression
 model with 100,000 parameters, and the usual approach works by
 estimating only a constant term and five slope coefficients and
-restricting by assumption the remaining 99,994 parameters.  Nine such
-explanatory variables leaves us with a model with one \emph{billion}
-parameters, to be approximated by only the ten that we would estimate
-under the traditional approach.  Eighty ten-category explanatory
-variables would require a regression model with more parameters than
-the estimated number of elementary particles in the universe.
+restricting by assumption the remaining 99,994 parameters to zero.
+Nine such explanatory variables leaves us with a model with one
+\emph{billion} parameters, to be approximated by only the ten that we
+would estimate under the traditional approach.  Eighty ten-category
+explanatory variables would require a regression model with more
+parameters than the estimated number of elementary particles in the
+universe.
 
 Estimating rather than making assumptions about all these extra
 parameters is obviously not possible under the standard regression
@@ -739,7 +740,7 @@ near enough observations.  We cannot avoid the problem with nonlinear
 or non-normal statistical models, since these pose the same curse of
 dimensionality as linear regression.  The assumption of ignorability,
 which enables us to make the positivist assumption that we have
-measured and observe all necessary variables, is insufficient.
+measured and observed all necessary variables, is insufficient.
 
 Instead, we are led to the inescapable conclusion that, in parametric
 causal inference of observational data, many assumptions about many
@@ -885,15 +886,15 @@ observable ways and assign one from each pair to be treated and the
 other to be a control.  Then no matter what effect $X_i$ has on $y$,
 we can ignore it entirely since $X_i$ is literally held constant
 within each pair of units.\footnote{Formally, ignorability, by which
-  we mean the independence of $T$ and the potential outcomes given $X$, and
-  balance in Equation \ref{balance} guarantee valid inferences, which
-  can be written as $P(Y(0)|T=1)=P(Y(0)|T=0)$ and
+  we mean the independence of $T$ and the potential outcomes given
+  $X$, and balance in equation~(\ref{balance}) guarantee valid
+  inferences, which can be written as $P(Y(0)|T=1)=P(Y(0)|T=0)$ and
   $P(Y(1)|T=1)=P(Y(1)|T=0)$.}
 
 Although one-to-one exact matching can eliminate model dependence and
 any bias from incorrect assumptions made during the parametric stage
 of analysis, it is not necessary to break the link between $t$ and
-$X$, since satisfying equation \ref{balance} only requires the
+$X$, since satisfying equation~(\ref{balance}) only requires the
 distributions to be equivalent.  Moreover, exact matching has the
 disadvantage in many data sets of not generating many matches.  The
 problem is most severe if $X_i$ is high dimensional (another effect of
@@ -969,7 +970,7 @@ parametric modeling of the preprocessed data set.  We describe this
 procedure for the ATT, and so the matching is designed to choose
 control units that look most like the treated units.
 
-\paragraph{1. Select Covariates}  
+\paragraph{Step 1. Select Covariates}  
 Include all variables in $X$ that would have been included in your
 parametric model without preprocessing.  By the usual rules for
 avoiding omitted variable bias these should include all variables that
@@ -979,28 +980,27 @@ usually reduce bias more than they will increase variance when using
 matching and so most should normally be included \citep{RubTho96,
   HecIchSmi98}.  To avoid post-treatment bias, exclude variables
 affected by the treatment variable
-\citep{FraRub02,Greenland03,KinZen04}.
+\citep{FraRub02,Greenland03,KinZen04}.  
 
 If all the variables in $X_i$ are categorical, try exact matching in
 Step 2.  Otherwise, try propensity score matching in Step 3.
-\paragraph{2. Try Exact Matching}  
+
+\paragraph{Step 2. Try Exact Matching}  
 Match each treated unit to all control units with exactly the same
 covariate values.  This procedure is more general than one-to-one
 matching, since we use as many control units as are available for each
-treated unit.  
-
-If a large number of units were matched, then we have exact balance
-with little inefficiency and we may skip the remaining steps and
-proceed to the parametric analysis.  If insufficient matches are
-found, either repeat the exact matching with fewer covariates or
+treated unit.  If a large number of units were matched, then we have
+exact balance with little inefficiency and we may skip the remaining
+steps and proceed to the parametric analysis.  If insufficient matches
+are found, either repeat the exact matching with fewer covariates or
 switch to propensity score matching, described in Step 3.  In the
 former, we balance the included variables but do not balance at all on
 the rest.  The excluded variables may be partially balanced due to
 correlations with the included variables, but some balance will be
-absent.  In contrast, propensity score matching uses all variables
-but only approximately matches.
+absent.  In contrast, propensity score matching uses all variables but
+only approximately matches.
 
-\paragraph{3. Use Propensity Score Matching}  
+\paragraph{Step 3. Use Propensity Score Matching}  
 The first step in this procedure is to summarize all the variables in
 $X$ with a single variable called the \emph{propensity score}
 \citep{RosRub83}.  The propensity score is the true probability of
@@ -1062,7 +1062,7 @@ a diverse array of applications is based on propensity scores.  The
 reason the propensity score approach often works in practice to
 balance the covariates relatively quickly may be related to the
 theoretical properties of the true score discussed above, but this
-conjecture is both unproven and irrelevant to making valid causal
+conjecture is unproven and even irrelevant to making valid causal
 inferences.  At least given the current state of the literature, only
 this practical advice based on the propensity score tautology is
 useful in practice.
@@ -1078,16 +1078,16 @@ nearest neighbor matching on the propensity score).\footnote{When
   simply starts with some treated unit and matches the closest control
   unit that has not yet been matched.  This approach, however, is not
   invariant to the order in which we match units.  A second approach
-  minimizes the total distance within matched units \citep[][pp.
-  311-23]{Rosenbaum02}.  Our software implements both, incorporating
-  optimal matching code provided by \citet{Hansen03}.} If this
-procedure balances $X$ (and thus satisfies the procedures for checking
-balance we describe in Step 4), we use it.  If not, then we respecify
-the logistic regression by adding interactions or squared terms and
-match again.  If that works, then we use it.  If not, we can try even
-more elaborate specifications (when necessary, perhaps even trying
-other functional forms such as CART, neural network analyses, or
-others).
+  minimizes the total distance within matched units
+  \citep[e.g.,][]{Rosenbaum89}.  Our software implements both,
+  incorporating optimal matching code provided by \citet{Hansen04}.}
+If this procedure balances $X$ (and thus satisfies the procedures for
+checking balance we describe in Step 4), we use it.  If not, then we
+respecify the logistic regression by adding interactions or squared
+terms and match again.  If that works, then we use it.  If not, we can
+try even more elaborate specifications (when necessary, perhaps even
+trying other functional forms such as CART, neural network analyses,
+or others).
 
 The collective wisdom of the literature also recommends four more
 specific rules for applying propensity scores.  First, if many more
@@ -1149,7 +1149,7 @@ achieved with a reasonable number of observations within each
 subclass, then the analysis procedure is carried out within each
 subclass and the results are averaged.
 
-\paragraph{4. Evaluate the Matching Procedure}
+\paragraph{Step 4. Evaluate the Matching Procedure}
 A good matching procedure reduces bias by increasing balance, does not
 increase the variance much by keeping the number of observations
 large, and prevents inducing new biases by matching only based on $X$
@@ -1171,9 +1171,9 @@ access to an extraordinary number of observations.  Instead of
 comparing estimates of the full multidimensional densities,
 researchers usually examine various low dimensional summaries.  If a
 low dimensional summary differs between the treated and control groups
-then equation~(\ref{balance}) probably does not hold.  The risk of
-course is that even if many low dimensional summaries are the same for
-the treatment and control groups, we still cannot be certain that
+then equation~(\ref{balance}) does not hold.  The risk of course is
+that even if many low dimensional summaries are the same for the
+treatment and control groups, we still cannot be certain that
 equation~(\ref{balance}) holds.  However, if the parametric analysis
 model itself does not use any higher order interactions not captured
 by the lower dimensional summaries, then the problem of not
@@ -1305,7 +1305,7 @@ present a model where propensity score matching works well.  In the
 second, ordinary propensity score matching did not balance adequately,
 and so we performed subclassification on the propensity score.  For
 pedagogical reasons, and to save space, we use different methods of
-checking balance via Equation~(\ref{balance}) in our two applications.
+checking balance via equation~(\ref{balance}) in our two applications.
 
 \subsection{Democratic Senate Majorities and FDA Drug Approval Time}
 
@@ -1622,9 +1622,11 @@ invisible candidates in the lower subclasses and the reverse in the
 higher subclasses.  This is another indication that in the raw data,
 the covariates are highly unbalanced.  Through this simple technique
 we are able to compare the most similar candidates within each
-subclass.  Indeed, the t-statistics for the difference in covariates
-for all subclasses exceed 2 only once, which is roughly the same as we
-would expect if treatment were assigned randomly within each subclass.
+subclass.  Indeed, the t-statistics for the mean difference in
+covariates for all subclasses exceed 2 only once, which is roughly the
+same as we would expect if treatment were assigned randomly within
+each subclass.
+
 \begin{table}[t]
   \begin{center}
     \begin{tabular}{lrrrrrr}
@@ -1751,9 +1753,9 @@ preprocessing is worse, since including imbalanced observations in a
 parametric analysis merely produces false precision.  So although
 estimated standard errors may increase in some cases with
 preprocessing, they would be more accurate.  Moreover, in many
-situations, eliminating observations far from the data as matching
-does will sometimes reduce heterogeneity and thereby reduce the
-variance.
+situations, eliminating observations far from the rest of the data as
+matching does will sometimes reduce heterogeneity and thereby reduce
+the variance.
 
 Third, the matching literature offers a large number of possible and
 seemingly ad hoc procedures.  From one perspective, we might be
@@ -1828,11 +1830,11 @@ For example, to use propensity score matching of a treatment
 indicator, \texttt{treat}, and three pretreatment covariates, use this
 command:
 \begin{verbatim}
-match.out <- matchit(treat ~ age + educ + black, data = koch)
+match.out <- matchit(treat ~ age + educ + black, data = lalonde)
 \end{verbatim}
 with the output stored as \texttt{match.out}.  For exact matching use:
 \begin{verbatim}
-match.out <- matchit(treat ~ age + educ + black, exact=TRUE, data = carpenter)
+match.out <- matchit(treat ~ age + educ + black, exact=TRUE, data = lalonde)
 \end{verbatim}
 Numerous other options are also available.
 
