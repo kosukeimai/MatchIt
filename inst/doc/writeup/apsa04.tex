@@ -1,6 +1,6 @@
 \documentclass[20pt,landscape,pdftex]{foils}
 
-\usepackage{ppftlk}
+\usepackage{./ppftlk}
 \renewcommand{\P}{\text{P}}
 \newcommand{\MC}{\multicolumn}
 \renewcommand\r{\right}
@@ -45,6 +45,44 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+\foilhead{Motivation\pause}
+
+\hypersetup{pdfpagetransition=Replace}
+
+\begin{itemize}
+\item Most political scientists use a parametric model (e.g., linear
+  regression).\pause
+  \begin{itemize}
+  \item select one model specification from many possible
+    specifications.\pause
+  \item assume the selected model is correct without such
+    knowledge.\pause
+  \item ``correct'' specification is chosen after looking at the
+    estimates.\pause  
+  \item present several {\it selected} specifications to show your
+    results are ``robust.''\pause
+  \end{itemize}
+
+\item To readers of an article\pause 
+  \begin{itemize}
+  \item it's never clear whether it represents a true test of an ex
+    ante hypothesis.\pause
+  \item or whether it merely shows it's possible to find such
+    results.\pause
+  \end{itemize}
+  
+\item Statistics textbooks do not tell us what to do.\pause
+  
+\item Our idea: reduce model dependence without introducing
+  bias.\pause
+  \begin{itemize}
+  \item preprocess the data without looking at the estimates.\pause
+  \end{itemize} 
+\end{itemize}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 \foilhead{Introduction\pause}
 
 \hypersetup{pdfpagetransition=Replace}
@@ -79,7 +117,8 @@
   \item resulting estimates are less model dependent.\pause
   \end{enumerate} 
 
-\item Easy-to-use software: MatchIt available at http://gking.harvard.edu/matchit/
+\item Easy-to-use software: MatchIt available at
+  http://gking.harvard.edu/matchit/\pause
 \end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -115,9 +154,12 @@
 
 \item Quantities of interest:\pause
   \begin{itemize}
-    \item Average Treatment Effect: $ATE = \frac{1}{n}\sum_{i=1}^n E[Y_i(1) - Y_i(0)]$
+    \item Average Treatment Effect: $ATE = \frac{1}{n}\sum_{i=1}^n
+      E[Y_i(1) - Y_i(0)]$\pause 
       \bigskip
-    \item Average Treatment Effect for the Treated:\\ ATT = $\frac{1}{\sum_{i=1}^n t_i}\sum_{i:t_i=1} E[Y_i(1) - Y_i(0)]$
+    \item Average Treatment Effect for the Treated:\\ ATT =
+      $\frac{1}{\sum_{i=1}^n t_i}\sum_{i:t_i=1} E[Y_i(1) -
+      Y_i(0)]$\pause 
   \end{itemize}
 \end{itemize}
 
@@ -163,7 +205,8 @@
   parameters):\\ e.g., $Y_i \sim p(\mu_i, \theta)$ with $\mu_i \equiv
   E(Y_i \mid t_i, X_i)=g(\alpha+t_i \beta + X_i \gamma)$\pause
 \item but, the true model is unknown.\pause
-\item In experimental studies, $T$ and $X$ are independent:\pause 
+\item In experimental studies, $T$ and $X$ are independent and so $X$
+  can be dropped:\pause 
   \begin{itemize}
   \item $ATT = g(\alpha+\beta) - g(\alpha).$\pause
   \item The results do not depend on the functional form,
@@ -177,7 +220,7 @@
 \end{itemize}
 
  \begin{center}
-   \includegraphics{figs/olspanel-thick.pdf}
+   \includegraphics{figs/olspanel-thick.pdf}\pause
  \end{center}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -206,7 +249,7 @@
   \item contains a subset of the raw data.\pause
   \item $p(X\mid t_i=1) = p(X\mid t_i=0)$ for one-to-one exact
     matching.\pause
-  \item $p(X\mid t_i=1) \approx p(X\mid t_i=0)$ for other matching
+  \item $p(X\mid t_i=1) \approx p(X\mid t_i=0)$ for nonexact matching
     methods.\pause 
   \item model-dependence is reduced.\pause
   \end{itemize}
@@ -254,6 +297,82 @@
 \item Parametric Outcome Analysis: same method, same algorithm, same
   software, same model checking procedures, ... \pause
 \end{enumerate}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\foilhead{Empirical Illustration\pause}
+
+\hypersetup{pdfpagetransition=Replace}
+
+\begin{itemize}
+\item Democratic senate majorities and FDA drug approval time
+  (Carpenter 2002).\pause
+  \begin{itemize}
+  \item Hypothesis: ``expected approval times are greater when
+    Democrats control the White House, when the agency's oversight
+    committees are more liberal, and when the House and Senate are
+    more liberal'' (p.495).\pause
+  \item liberal FDA oversight should lead to slower approval of new
+    drugs.\pause 
+  \end{itemize}
+
+\item Original analysis:\pause
+  \begin{itemize}
+  \item 408 new drugs (262 approved, 146 pending).\pause
+  \item lognormal survival model.\pause
+  \item seven oversight variables (median adjusted ADA scores for
+    House and Senate Committees as well as for House and Senate
+    floors, Democratic Majority in House and Senate, and Democratic
+    Presidency).\pause
+  \item 18 control variables (clinical factors, firm characteristics,
+    media variables, etc.)\pause
+  \end{itemize}
+
+\item Our analysis:\pause
+  \begin{itemize}
+  \item focuses on the causal effect of a Democratic majority in the
+    Senate.\pause
+  \item omits variables that are highly likely to be affected by the
+    treatment.\pause
+  \item uses one-to-one nearest neighbor propensity score matching.\pause
+  \item discards 49 units (2 treated and 17 control units).\pause
+  \item runs 262,143 possible specifications and calculate ATE.\pause
+  \end{itemize}
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\foilhead{Improved Balance and Reduced Model Dependence\pause}
+
+\hypersetup{pdfpagetransition=Replace}
+
+\begin{center}
+  \includegraphics[scale=1.2]{figs/fdabal}\pause \\
+  \includegraphics[scale=1.2]{figs/fdadens}\pause
+\end{center}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\foilhead{Concluding Remarks\pause}
+
+\hypersetup{pdfpagetransition=Replace}
+
+\begin{itemize}
+\item What can go wrong\pause
+  \begin{itemize}
+  \item curse of dimensionality in balance diagnostics.\pause
+  \item preprocessing data may increase variance while reducing
+    bias.\pause 
+  \item change in quantities of interest.\pause
+  \end{itemize}
+\item We provide a way to get around the ethical and methodological
+  problem of choosing a model specification.\pause
+\item Preprocessing the raw data with matching procedures make
+  familiar parametric models a much more reliable tool.\pause
+
+\item Preprocessing makes causal inference less sensitive to modeling
+  assumptions.\pause 
+\end{itemize}
 
 
 \end{document}
