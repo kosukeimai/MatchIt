@@ -35,114 +35,184 @@ for Parametric Causal Inference}
 \baselineskip=1.57\baselineskip
 
 \section{Choosing a matching method}
-A wide variety of matching procedures exist, primarily originating in the statistics, economics, and epidemiology literatures.  Here we provide
-a step by step guide to navigating the broad range of possibilities. 
-As discussed in Section \ref{s:nonparpreproc}, exact matching is the simplest and most intuitive way of selecting matched samples: treated and control units
-that are exactly the same on all observed covariates, $X_i$.  However, due to another version of the curse of dimensionality, it is often very difficult to
-obtain enough exact matches, especially when there are continuous covariates.   Thus, methods such as propensity score matching or subclassification are often used
-to obtain well-matched samples; rather than restricting each unit to having an exact match from the other treatment group, groups of units are chosen such
-that the distribution of covariates is the same in the treated and control groups (the covariates are ``balanced'').
+A wide variety of matching procedures exist, primarily originating in
+the statistics, economics, and epidemiology literatures.  Here we
+provide a step by step guide to navigating the broad range of
+possibilities.  As discussed in Section \ref{s:nonparpreproc}, exact
+matching is the simplest and most intuitive way of selecting matched
+samples: treated and control units that are exactly the same on all
+observed covariates, $X_i$.  However, due to another version of the
+curse of dimensionality, it is often very difficult to obtain enough
+exact matches, especially when there are continuous covariates.  Thus,
+methods such as propensity score matching or subclassification are
+often used to obtain well-matched samples; rather than restricting
+each unit to having an exact match from the other treatment group,
+groups of units are chosen such that the distribution of covariates is
+the same in the treated and control groups (the covariates are
+``balanced'').
 
-The key diagnostic for how well the preprocessing step works is how similar are the resulting treated and control groups.  Thus, a variety of matching
-procedures can be tried, and the final matched sets chosen should be the ones with the best covariate balance.  It is very important to do
-this preprocessing step without using or even looking at the outcome variable; Because the outcome variable
-is not used during this process, doing the matching multiple times will not bias the final results.   This is similar to what is done in a randomized experiment; before
-collecting the outcome data, if an undesirable randomization is obtained (e.g., all men in the treated group and all women in the control group), then the randomization
-can be repeated until a better randomization is obtained.  See \cite{Rubin01} for more discussion of this issue.
+The key diagnostic for how well the preprocessing step works is how
+similar are the resulting treated and control groups.  Thus, a variety
+of matching procedures can be tried, and the final matched sets chosen
+should be the ones with the best covariate balance.  It is very
+important to do this preprocessing step without using or even looking
+at the outcome variable; Because the outcome variable is not used
+during this process, doing the matching multiple times will not bias
+the final results.  This is similar to what is done in a randomized
+experiment; before collecting the outcome data, if an undesirable
+randomization is obtained (e.g., all men in the treated group and all
+women in the control group), then the randomization can be repeated
+until a better randomization is obtained.  See \cite{Rubin01} for more
+discussion of this issue.
 
-[I'm not sure the pre-processing tautology is really relevant here.  It's more important if we're talking about the theoretical properties of propensity
-scores, which I don't think we're going to go into...   pre-processing tautology...it works if it balances and it balances if it works.]
+[I'm not sure the pre-processing tautology is really relevant here.
+It's more important if we're talking about the theoretical properties
+of propensity scores, which I don't think we're going to go into...
+pre-processing tautology...it works if it balances and it balances if
+it works.]
 
-There are four key steps to the preprocessing that we advocate, and a fifth step involves the standard parametric modeling of the outcome.
-Because we are primarily interested in the ATT, the matching is designed to choose control units that look the most like the treated units.  We generally will think of
-choosing for each treated unit the control unit that looks the most similar to it, but variations on that are possible.   
-We present only the general ideas and techniques here. For more details 
-or other matching methods, such as kernel weighting or full matching, see \cite{Imbens04}, \cite{Stuart04}, \cite{Rosenbaum02}, or the \MatchIt\ manual [reference???]. 
+There are four key steps to the preprocessing that we advocate, and a
+fifth step involves the standard parametric modeling of the outcome.
+Because we are primarily interested in the ATT, the matching is
+designed to choose control units that look the most like the treated
+units.  We generally will think of choosing for each treated unit the
+control unit that looks the most similar to it, but variations on that
+are possible.  We present only the general ideas and techniques here.
+For more details or other matching methods, such as kernel weighting
+or full matching, see \cite{Imbens04}, \cite{Stuart04},
+\cite{Rosenbaum02}, or the \MatchIt\ manual [reference???].
 
 \begin{enumerate}
-\item Covariate selection.  Select the covariates to include in $X_i$.  Include all variables that may be related to treatment
-assignment and the outcome; it is better to include variables only weakly related to treatment assignment than to exclude them (\cite{RubTho96, Heckman98a}).
-However, do not include variables that may be affected by treatment assignment, as that will bias the results (\cite{FraRub02}, \cite{Greenland03}).  
-\begin{itemize} \item Are all of the variables in $X_i$ categorical?
-	\begin{itemize} \item Yes: Try exact matching.  Go to Step 2.
-                        \item No: Use propensity score matching.  Go to Step 3.
-        \end{itemize}
-\end{itemize}
-                                                                                                                                                      
-\item  Exact matching.  Form groups of treated and control units such that within each group (``subclass''), all of the units have exactly the same covariate values.  
-\begin{itemize} \item Were most units put into one of the subclasses?
-        \begin{itemize} \item Yes: Good.  Go to Step 5.
-                        \item No, the remaining sample sizes are small: There are probably not
-enough units for exact matching with all of those covariates.  Either
-repeat the exact matching with fewer covariates (in which case the excluded
-covariates will not necessarily be balanced in the final analysis) or
-switch to propensity score matching, described in Step 3.
-        \end{itemize}
-\end{itemize}
-                                                                                                                                     
-\item  Propensity score matching.  Estimate propensity scores using all
-covariates from Step 1.  The propensity score, introduced by \cite{RosRub83a}, is defined as the probability of receiving treatment, given
-the covariates $X_i$: $e_i(X_i) = P(t_i=1 | X_i)$.  There are two key features of the propensity score.  The first is that it is a balancing score: if a group of units
-have similar values of the propensity score, then the covariates will be balanced in the treated and control groups.  The second is that if treatment assignment
-is ignorable given the covariates $X_i$, then it is also ignorable given the propensity score, $e_i$.  This means that the matching can be done using the one-dimensional
-propensity score, instead of directly matching on all of the covariates $X_i$, thus solving the curse of dimensionality for matching.  
-There are a few additional choices that can be made regarding the matching procedure.
-\begin{itemize} \item Do you care in particular about obtaining particularly close matches on a few specific variables?
-      	\begin{itemize} \item Yes, and they are all categorical: Use propensity
-                  score matching combined with exact matching on those
-                  variables.
-                	\item Yes, and some are continuous: Use propensity score
-                  caliper matching combined with Mahalanobis matching on those
-                  variables.  The Mahalanobis distance between
-		  units $i$ and $j$ is $(X_i-X_j)'\Sigma^{-1}(X_i-X_j)$, where $\Sigma$ is the variance covariance matrix of $X$ in the control group.  
-		  \cite{RubTho00} describes this method in detail.
-                     	\item No: Do not use Mahalanobis or exact matching.
-      	\end{itemize}
-                                                                                                                              
-        	\item  How many control units are available, relative to the number of treated units?
-        \begin{itemize} \item A lot (more than twice as many): Consider choosing more than one control match for each treated unit, perhaps two or three.
-                        \item Fewer controls or about the same number as the number of treated:  This is a hard situation for matching.  Consider doing just
-		   subclassification, described in Step 4, switching the labels of "treated" and "control", or matching with replacement, where each control unit can be 
-		   matched to more than one treated unit.
-        \end{itemize}
-                                                                                                                                                     
-        	\item Are there some units (either treated or control) that are outside the range of the propensity score values for the other group, i.e., are there some units
-	in one group that don't look like any units in the other group?  This can be seen in diagnostic plots such as those output by \MatchIt.
-        \begin{itemize} \item Yes: Consider discarding units outside the range of common support.
-                        \item No: Good!  That is a good situation for matching, and no explicit discarding needs to be done beyond the general matching process.
-	\end{itemize}
-\end{itemize}
-
-\item Assess the matching procedure.  Use a propensity score specification procedure
-such as that described in \cite{DehWah02} or the \MatchIt\ manual.  Then use diagnostic plots and
-summary statistics to examine how well the matching worked.  
-\begin{itemize} \item Are the covariate means more similar in the matched groups, as compared to the original groups?
-        \begin{itemize} \item Yes:  Good.  You are ready to do the analysis.  Go to Step 5.
-                        \item Yes, but the difference in propensity scores in the overall groups is greater than 0.5 standard deviations.  Use 
-		subclassification to form subclasses in which the covariates (and propensity score) should be well balanced.  Subclassification forms groups of units
-		in which the covariate distributions should be similar.  Generally five or six subclasses are sufficient to adjust for a univariate covariate
-		such as the propensity score (\cite{Cochran68}, \cite{RosRub84}).                                              	
-			\item No:  Some modifications are necessary.  Try matching with replacement or use subclassification.  If it is very difficult to 
-		find well matched samples, the conclusion may be that your data set is insufficient for estimating causal effects.
-        \end{itemize}
-\end{itemize}
-                                                                                                                                                     
-\item  Outcome analysis.  This step should be done only after a final matched sample has been chosen.
+\item Covariate selection.  Select the covariates to include in $X_i$.
+  Include all variables that may be related to treatment assignment
+  and the outcome; it is better to include variables only weakly
+  related to treatment assignment than to exclude them
+  (\cite{RubTho96, Heckman98a}).  However, do not include variables
+  that may be affected by treatment assignment, as that will bias the
+  results (\cite{FraRub02}, \cite{Greenland03}).
 \begin{itemize} 
-		\item Are there covariates you would like to control for in the outcome analysis?
-        \begin{itemize} \item Yes: Use standard software packages, such as Zelig [cite?], to estimate the causal effect.
-                        \item No: The difference in means of the outcome can be used as an estimate of the treatment effect.  This is 
-		implemented in the Neyman function in \MatchIt.
-	\end{itemize}
-		\item Was subclassification done, either using exact matching or in Step 4?
-        \begin{itemize} \item Yes: Do the analysis within these subclasses, and weight across subclasses to estimate the overall effect.
-                        \item No: Do just an overall analysis.
-        \end{itemize}                                                                                                                                                     
-
+\item Are all of the variables in $X_i$ categorical?
+  \begin{itemize} \item Yes: Try exact matching.  Go to Step 2.
+  \item No: Use propensity score matching.  Go to Step 3.
+  \end{itemize}
 \end{itemize}
-\end{enumerate}                                                                                                                                                             
 
+\item Exact matching.  Form groups of treated and control units such
+  that within each group (``subclass''), all of the units have exactly
+  the same covariate values.
+\begin{itemize} 
+\item Were most units put into one of the subclasses?
+  \begin{itemize} \item Yes: Good.  Go to Step 5.
+  \item No, the remaining sample sizes are small: There are probably
+    not enough units for exact matching with all of those covariates.
+    Either repeat the exact matching with fewer covariates (in which
+    case the excluded covariates will not necessarily be balanced in
+    the final analysis) or switch to propensity score matching,
+    described in Step 3.
+  \end{itemize}
+\end{itemize}
 
+\item Propensity score matching.  Estimate propensity scores using all
+  covariates from Step 1.  The propensity score, introduced by
+  \cite{RosRub83a}, is defined as the probability of receiving
+  treatment, given the covariates $X_i$: $e_i(X_i) = P(t_i=1 | X_i)$.
+  There are two key features of the propensity score.  The first is
+  that it is a balancing score: if a group of units have similar
+  values of the propensity score, then the covariates will be balanced
+  in the treated and control groups.  The second is that if treatment
+  assignment is ignorable given the covariates $X_i$, then it is also
+  ignorable given the propensity score, $e_i$.  This means that the
+  matching can be done using the one-dimensional propensity score,
+  instead of directly matching on all of the covariates $X_i$, thus
+  solving the curse of dimensionality for matching.  There are a few
+  additional choices that can be made regarding the matching
+  procedure.
+\begin{itemize} 
+\item Do you care in particular about obtaining particularly close
+  matches on a few specific variables?
+  \begin{itemize} \item Yes, and they are all categorical: Use propensity
+    score matching combined with exact matching on those variables.
+  \item Yes, and some are continuous: Use propensity score caliper
+    matching combined with Mahalanobis matching on those variables.
+    The Mahalanobis distance between units $i$ and $j$ is
+    $(X_i-X_j)'\Sigma^{-1}(X_i-X_j)$, where $\Sigma$ is the variance
+    covariance matrix of $X$ in the control group.  \cite{RubTho00}
+    describes this method in detail.
+  \item No: Do not use Mahalanobis or exact matching.
+  \end{itemize}
+  
+\item How many control units are available, relative to the number of
+  treated units?
+  \begin{itemize} 
+  \item A lot (more than twice as many): Consider choosing more than
+    one control match for each treated unit, perhaps two or three.
+  \item Fewer controls or about the same number as the number of
+    treated: This is a hard situation for matching.  Consider doing
+    just subclassification, described in Step 4, switching the labels
+    of "treated" and "control", or matching with replacement, where
+    each control unit can be matched to more than one treated unit.
+  \end{itemize}
+  
+\item Are there some units (either treated or control) that are
+  outside the range of the propensity score values for the other
+  group, i.e., are there some units     in one group that don't look
+  like any units in the other group?  This can be seen in diagnostic
+  plots such as those output by \MatchIt.
+  \begin{itemize} 
+  \item Yes: Consider discarding units outside the range of common
+    support.
+  \item No: Good!  That is a good situation for matching, and no
+    explicit discarding needs to be done beyond the general matching
+    process.
+  \end{itemize}
+\end{itemize}
+
+\item Assess the matching procedure.  Use a propensity score
+  specification procedure such as that described in \cite{DehWah02} or
+  the \MatchIt\ manual.  Then use diagnostic plots and summary
+  statistics to examine how well the matching worked.
+  \begin{itemize} 
+  \item Are the covariate means more similar in the matched groups, as
+    compared to the original groups?
+    \begin{itemize} 
+    \item Yes: Good.  You are ready to do the analysis.  Go to Step 5.
+    \item Yes, but the difference in propensity scores in the overall
+      groups is greater than 0.5 standard deviations.  Use
+      subclassification to form subclasses in which the covariates
+      (and propensity score) should be well balanced.
+      Subclassification forms groups of units in which the covariate
+      distributions should be similar.  Generally five or six
+      subclasses are sufficient to adjust for a univariate covariate
+      such as the propensity score (\cite{Cochran68},
+      \cite{RosRub84}).
+    \item No: Some modifications are necessary.  Try matching with
+      replacement or use subclassification.  If it is very difficult
+      to find well matched samples, the conclusion may be that your
+      data set is insufficient for estimating causal effects.
+    \end{itemize}
+  \end{itemize}
+  
+\item Outcome analysis.  This step should be done only after a final
+  matched sample has been chosen.
+  \begin{itemize} 
+  \item Are there covariates you would like to control for in the
+    outcome analysis?
+    \begin{itemize} 
+    \item Yes: Use standard software packages, such as Zelig [cite?],
+      to estimate theq causal effect.
+    \item No: The difference in means of the outcome can be used as an
+      estimate of the treatment effect.  This is implemented in the
+      Neyman function in \MatchIt.
+    \end{itemize}
+  \item Was subclassification done, either using exact matching or in
+    Step 4?
+    \begin{itemize} 
+    \item Yes: Do the analysis within these subclasses, and weight
+      across subclasses to estimate the overall effect.
+    \item No: Do just an overall analysis.
+    \end{itemize}    
+  \end{itemize}
+\end{enumerate}  
 
 \bibliographystyle{apsr} \bibliography{gk,gkpubs}
 

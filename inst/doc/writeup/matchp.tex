@@ -113,7 +113,7 @@ simple preprocessing step to their data analysis procedures and then
 use whatever models they were previously accustomed to using to
 analyze the preprocessed data rather than the raw data.  All of the
 intuition, diagnostics, and knowledge about these procedures can be
-used as before.  
+used as before.
 
 Preprocessing data with matching in the way we propose improves
 parametric analyses by making them considerably less dependent on
@@ -231,7 +231,7 @@ relationship between the two to extrapolate to units where only one is
 observed.  Making causal inferences is thus equivalent to imputing
 missing data, using whatever external information is available.  As we
 show below, this analogy will prove useful in making the bridge that
-connects nonparametric matching to parametric models.  
+connects nonparametric matching to parametric models.
 
 Causal inference can also be thought of as an especially severe form
 of ecological inference.  In ecological inference, we observe for each
@@ -290,8 +290,8 @@ inferences, we imagine that the realized potential outcomes in
 which we use capital letters).  We do not require that the data are
 sampled from some specific population, only that there exists some
 data generation process that leads to the one realization we see and
-could have led to some other realization.  This logic then produces the
-random causal effect:
+could have led to some other realization.  This logic then produces
+the random causal effect:
 \begin{equation}
   \label{rance}
   \text{(Random Causal Effect for unit $i$)}  = Y_i(1) - Y_i(0),
@@ -303,9 +303,8 @@ hypothetical draws of the the random causal effect:
 \begin{align}
   \label{meance}
   \text{(Mean Causal Effect for unit $i$)}
-  &= E(\text{Random Causal Effect for unit $i$})\\ 
-  &= E[Y_i(1) - Y_i(0)]\\ \notag
-  &= \mu_i(1) - \mu_i(0),
+  &= E(\text{Random Causal Effect for unit $i$})\\
+  &= E[Y_i(1) - Y_i(0)]\\ \notag &= \mu_i(1) - \mu_i(0),
 \end{align}
 where $E[Y_i(1)]\equiv\mu_i(1)$ and $E[Y_i(0)]\equiv\mu_i(0)$.
 
@@ -319,7 +318,7 @@ population average treatment effect or ATE:
 \begin{align}
   \label{pate}
   \text{ATE} = E[Y_i(1) - Y_i(0)] \\
-             = \frac{1}{n}\sum_{i=1}^n[\mu_i(1) - \mu_i(0)],
+  = \frac{1}{n}\sum_{i=1}^n[\mu_i(1) - \mu_i(0)],
 \end{align}
 which is the mean causal effect for unit $i$ averaged over all units
 (so that the expected value operator in the first line averages over
@@ -330,7 +329,7 @@ treatment effect on the treated, or ATT:
 \begin{align}
   \label{att}
   \text{ATT} = E[Y_i(1) - Y_i(0)|t_i=1] \\
-             = \frac{1}{\sum t_i}\sum_{i:t_i=1}[\mu_i(1) - \mu_i(0)],
+  = \frac{1}{\sum t_i}\sum_{i:t_i=1}[\mu_i(1) - \mu_i(0)],
 \end{align}
 In our running example, this is the average causal effect in districts
 in which the Democratic Party nominated the incumbent member of the
@@ -620,7 +619,7 @@ parameters are frequently necessary, and only rarely do we have
 sufficient external information to make these assumptions based on
 genuine knowledge.  The frequent unavoidable consequence is high
 levels of model dependence, but no good reason to choose one set of
-assumptions over another.  
+assumptions over another.
 
 Some researchers surely respond to this diversity of possible models
 by inadvertently choosing specifications that support their favored
@@ -766,8 +765,8 @@ model to estimate $\mu_i(0)$ and its uncertainty, whereas if $t_i=0$,
 we set $\mu_i(0)=y_i$ and use the parametric model to estimate
 $\mu_i(1)$ and its uncertainty estimate.  In Bayesian models,
 estimating the realized causal effect requires the equivalent of
-conditioning on $y_i$ after the likelihood estimation 
-\citep[as in][]{King97}.
+conditioning on $y_i$ after the likelihood estimation \citep[as
+in][]{King97}.
 
 \section{Empirical Illustrations}
 
@@ -782,7 +781,7 @@ unjustified modeling assumptions playing a decreased role.  We define
 sensitivity as the variability in point estimates across potential
 specifications of pre-treatment covariates.  In these illustrations we
 concern ourselves with bias, not efficiency, although the latter has
-been the focus of much attention in the economic literature (cites). 
+been the focus of much attention in the economic literature (cites).
 
 \subsection{Assessing the Causal Effect of Visibility on Candidate
   Evaluations}
@@ -866,15 +865,15 @@ report results across all such possible specifications.
     \caption{Imbalance of pre-treatment covariates in the Koch data.
       The full sample size was 494, and the matched dataset with
       subclassification was 463.  The first three columns present
-      means for visible female (``treated'') and invisible (``control'')
-      Republican candidates and t-statistics for the full
-      dataset.  The last three columns present means and t-statistics
-      for one representative subclass.  This table shows that
-      candidate ideology is highly imbalanced in the full Koch data,
-      and that balance can be achieved by subclassification.  Visible
-      females, for example, were much more likely to be perceived as
-      liberal than invisible candidates overall, but within subclass 4
-      this difference diminishes.}
+      means for visible female (``treated'') and invisible
+      (``control'') Republican candidates and t-statistics for the
+      full dataset.  The last three columns present means and
+      t-statistics for one representative subclass.  This table shows
+      that candidate ideology is highly imbalanced in the full Koch
+      data, and that balance can be achieved by subclassification.
+      Visible females, for example, were much more likely to be
+      perceived as liberal than invisible candidates overall, but
+      within subclass 4 this difference diminishes.}
     \label{tb:kochmtest}
   \end{center}
 \end{table}
@@ -928,8 +927,8 @@ candidates within subclass 4, which differs only slightly from the
     \caption{Means test statistics for six pre-treatment covariates.
       Each cell presents t-statistic for the covariate within each
       subclass, and No. treated / control indicates the number of
-      treated / control units in each subclass and $N$ indicates the total
-      number of units in each subclass.  This table shows that
+      treated / control units in each subclass and $N$ indicates the
+      total number of units in each subclass.  This table shows that
       relative balance can be achieved within each subclass with only
       six subclasses.}
     \label{tb:kochxsub}
@@ -970,14 +969,14 @@ We now assess the claim of model sensitivity by reporting treatment
 effect estimates of parametric models with the full dataset and our
 matched (subclassified) dataset.  Specifically, we consider all 63
 possible combinations in which the 6 covariates may enter the
-regression with the treatment indicator.  For each specification, we record the point
-estimate of the treatment coefficient representing the average effect
-of being a visible female (Republican) candidate on the voter's
-ideological assessment.  For the matched dataset, we run the exact
-same specification locally within each subclass, aggregating the point
-estimates weighed by the number of treated units in each subclass.
-The result is a distribution of treatment effect estimates across
-possible specifications for raw and pre-processed data.  
+regression with the treatment indicator.  For each specification, we
+record the point estimate of the treatment coefficient representing
+the average effect of being a visible female (Republican) candidate on
+the voter's ideological assessment.  For the matched dataset, we run
+the exact same specification locally within each subclass, aggregating
+the point estimates weighed by the number of treated units in each
+subclass.  The result is a distribution of treatment effect estimates
+across possible specifications for raw and pre-processed data.
 
 Figure~\ref{fg:kochdens} presents the results, plotting densities of
 estimated treatment effects for the raw and pre-processed data.  As
@@ -1056,8 +1055,7 @@ s.out <- sim(z.out, x = x.out)
 \end{verbatim}
 
 
-\baselineskip=0.637\baselineskip
-\bibliographystyle{apsr} 
+\baselineskip=0.637\baselineskip \bibliographystyle{apsr}
 \bibliography{gk,gkpubs}
 
 \end{document}
