@@ -6,7 +6,7 @@
 <BODY BACKGROUND="/pics/temple.jpg">
 
 <center>
-<h1>MatchIt: Matching Software for Causal Inference</h1>
+<h1>MatchIt:  Nonparametric Preprocessing for Parametric Casual Inference</h1>
 
 <p><a href="http://www.people.fas.harvard.edu/~deho/">Daniel Ho</a>,
 <a href="http://www.princeton.edu/~kimai/">Kosuke Imai</a>, 
@@ -33,7 +33,7 @@ work better."
       greatly reduce the dependence of causal inferences on
       hard-to-justify, but commonly made, statistical modeling
       assumptions.  The software also easily fits into existing
-      research practices since, after preprocessing with MatchIt,
+      research practices since, after preprocessing data with MatchIt,
       researchers can use whatever parametric model they would have
       used without MatchIt, but produce inferences with substantially
       more robustness and less sensitivity to modeling assumptions.
