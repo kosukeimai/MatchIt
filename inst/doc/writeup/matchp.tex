@@ -1142,19 +1142,20 @@ that is too fragile for making robust causal inferences by any means.
 
 \paragraph{Parametric Outcome Analysis}  
 After choosing the final matched sample, with maximum balance and a
-large number of observations, carry out the same parametric analysis.
+large number of observations, the parametric analysis can now proceed.
 With one possible exception, we use the same procedures for running
-the parametric analysis as analyzing the raw rather than preprocessed
-data set.  This includes the same maximization algorithms, the same
-software, the same model checking and fit procedures, and the same
-methods of computing and interpreting quantities of interest.  The one
-exception is that for subclassification, the parametric analysis
-should be conducted separately within each subclass, and the results
-combined by taking a weighted average (with weights based on the
-number of units in each subclass).  Using preprocessed data should
-reduce model dependence, and this too is worth checking: as one should
-even without preprocessing, we should check the sensitivity of causal
-effect estimates to changes in the specification.
+the parametric analysis on the preprocessed data as we would have used
+to analyze the original raw data set without preprocessing.  This
+includes the same maximization algorithms, the same software, the same
+model checking and fit procedures, and the same methods of computing
+and interpreting quantities of interest.  The one exception is that
+for subclassification, the parametric analysis should be conducted
+separately within each subclass, and the results combined by taking a
+weighted average (with weights based on the number of units in each
+subclass).  Using preprocessed data should reduce model dependence,
+and this too is worth checking: as one should even without
+preprocessing, we should check the sensitivity of causal effect
+estimates to changes in the specification.
 
 \section{Computing Uncertainty Estimates}
 
@@ -1188,16 +1189,16 @@ estimates associated with parametric methods: They are all conditional
 on the pretreatment variables $X$ (and $t$), which are therefore
 treated as fixed and exogenous.  Since our preprocessing procedures
 modify the raw data only in ways that are solely a function of $X$, a
-reasonable method for defining uncertainty for the purpose of computing
-uncertainty estimates is to continue to treat $X$, and thus our entire
-preprocessing procedures, as fixed.  The advantage of this definition
-is that we can easily compute standard errors and confidence intervals
-using the same methods researchers have been using with their
-parametric methods all along, but applied to the preprocessed instead
-of raw data.  (The one exception to our procedure occurs when matching
-with replacement, where we would then run the parametric procedure
-with each control unit weighted by the number of times it was chosen
-as a match.)
+reasonable method for defining uncertainty for the purpose of
+computing uncertainty estimates is to continue to treat $X$, and thus
+our entire preprocessing procedures, as fixed.  The advantage of this
+definition is that we can easily compute standard errors and
+confidence intervals using the same methods researchers have been
+using with their parametric methods all along, but applied to the
+preprocessed instead of raw data.  (The one exception to our procedure
+occurs when matching with replacement, where we would then run the
+parametric procedure with each unit weighted by the number of times it
+was chosen as a match.)
 
 Thus, when estimating the ATT or ATE, we compute estimates of
 $\mu_i(1)$ and $\mu_i(0)$ and their uncertainty as usual from the
