@@ -1271,22 +1271,19 @@ We now offer two empirical illustrations of how preprocessing raw data
 via nonparametric matching can reduce the dependence of parametric
 models on difficult-to-justify functional form assumptions.  We first
 present a model where propensity score matching works well.  In the
-second, ordinary propensity score matching was inadequate to achieve a
-high level of balance, and so we performed subclassification on the
-propensity score. For pedagogical reasons, and to save space, we use
-different methods of checking equation~(\ref{balance}) in our two
-applications.
+second, ordinary propensity score matching did not balance adequately,
+and so we performed subclassification on the propensity score.  For
+pedagogical reasons, and to save space, we use different methods of
+checking balance via Equation~(\ref{balance}) in our two applications.
 
 \subsection{Democratic Senate Majorities and FDA Drug Approval Time}
 
 An influential article by \citet{Carp02} examines several determinants
 of new drug approval times by the U.S.\ Food and Drug Administration
-(FDA).  Here, we focus on the hypothesis that ``expected approval
-times are greater when Democrats control the White House, when the
-agency's oversight committees are more liberal, and when the House and
-Senate are more liberal'' \citep[p.495]{Carp02} (specifically Model 1
-of Table 2, p.499).  In short, liberal FDA oversight should lead to
-slower approval of new drugs --- a key hypothesis in the literature on
+(FDA).  Here, we focus on the hypothesis that Democratic oversight of
+the FDA should lead to slower approval of new drugs
+\citep[p.495]{Carp02} (specifically Model 1 of Table 2, p.499).
+Carpenter thus tests a key hypothesis in the literature on
 institutional and partisan determinants of regulatory policy.
 
 To test this hypothesis, Carpenter uses a lognormal survival model of
@@ -1303,9 +1300,10 @@ characteristics.\footnote{In the original paper, \citet{Carp02} uses a
 FDA, 262 of which were eventually approved.  The remaining 146 drug
 applications were still pending at the time of data collection and
 hence are treated as right-censored observations.  (Inferences from
-the censored observations are model-dependent by design and so are not
-influenced by the methods we introduce.)  Approval time is measured in
-months passed from the submission of an application.
+the censored observations are model-dependent by design and so this
+aspect of the problem is not influenced by the methods we introduce.)
+Approval time is measured in months passed from the submission of an
+application.
 
 We focus on the causal effect of a Democratic majority in the Senate,
 one of the seven oversight variables.  Carpenter's remaining six
@@ -1318,18 +1316,16 @@ media coverage of a particular disease is affected by Democratic
 control, bias would be induced.  Although post-treatment bias is a
 critical issue in accurately estimating causal effects, it would
 affect parametric models with or without preprocessing and so is less
-relevant for our present goal of studying the consequences of
-preprocessing for reducing parametric model dependence; we do not
-pursue it further.
+relevant for our present goal of reducing model dependence;
+we do not pursue it further.
 
-A second assumption we make is the absence of autocorrelation (or
-interference among units).  In this application, this assumption means
-that the existence of a Democratic Senate majority when one drug is
-considered by the FDA has no affect on the approval time of another
-drug (even after controlling for the existence of a Democratic Senate
-majority and other control variables at the time of approval of the
-second drug).  This assumption seems reasonably applicable to these
-data.
+We also assume the absence of autocorrelation (or interference among
+units).  In this application, this assumption means that the existence
+of a Democratic Senate majority when one drug is considered by the FDA
+has no affect on the approval time of another drug (even after
+controlling for the existence of a Democratic Senate majority and
+other control variables at the time of approval of the second drug).
+This assumption seems reasonably applicable to these data.
 
 In the original analysis, the reported coefficient for the Democratic
 Senate majority variable is statistically significant at the 10\%
@@ -1344,12 +1340,12 @@ the data.
 
 To preprocess, we conduct nearest neighbor propensity score matching
 (without replacement), estimating the propensity score using logistic
-regression with all covariates as linear predictors. We find that
-including the square root of the nightly TV news disease story
-variable into this model significantly improves its balance after
-matching. This preprocessing procedure discards 49 units (2 treated
-units and 47 control units) from the original sample that otherwise
-require substantial, model-dependent extrapolations.
+regression with all covariates as linear predictors. We find that also
+matching on the square root of the nightly TV news disease story
+variable significantly improves its balance and so we include it.
+This preprocessing procedure discards 49 units (2 treated units and 47
+control units) from the original sample that otherwise require
+substantial, model-dependent extrapolations.
 
 Figure~\ref{fg:fdabal} summarizes how preprocessing can improve the
 covariate balance. The left panel plots the absolute value of
@@ -1406,48 +1402,45 @@ will not be affected as much by the model specification.
 We now run the same log-normal survival analysis as Carpenter did, but
 using the preprocessed data set.  Since nothing changed other than the
 removal of data that would have required highly model-dependent
-inferences, no other analysis procedures need change.  We can compute
-point estimates, standard errors, and confidence intervals using the
-same procedures Carpenter did on the raw data.  By applying this
-procedure to the preprocessed data, the estimated average treatment
-effect is $-31.6$ months with an estimated standard error $10.3$,
-indicating that a Democratic Senate majority significantly decreases
-the average approval time of new drugs. This result thus contradicts
+inferences, no other analysis procedures change.  We compute point
+estimates, standard errors, and confidence intervals using the same
+procedures Carpenter did on the raw data.  By applying this procedure
+to the preprocessed data, the estimated average treatment effect is
+$-31.6$ months with an estimated standard error $10.3$, indicating
+that a Democratic Senate majority significantly decreases the average
+approval time of new drugs.  This result thus continues to contradict
 Carpenter's initial hypothesis.
 
 Although data analysis would end here for those interested in the
 substantive research questions, for our methodological purposes we go
 a step further to demonstrate the model-dependence of the average
 causal effect of a Democratic Senate majority using the preprocessed
-data and compare this with the results from the raw data.  To do this,
-we estimate the average treatment effect by calculating
-Equation~(\ref{att}) according to the fitted lognormal model.  For
-simplicity, we portray model dependence by the variability in point
-estimates of causal effects across potential specifications of
-pretreatment covariates, although the same conclusions apply to most
-other quantities of interest computed from parametric models.
+data and compare this with that from the raw data.  For simplicity, we
+portray model dependence by the variability in ATE point estimates
+across potential specifications of pretreatment covariates, although
+the same conclusions apply to most other quantities of interest too.
 
-We then estimate the ATE by considering all possible specifications in
-which the 18 covariates enter the model with the treatment indicator
-(i.e., all possible subsets of covariates from the 18).  Even though
-we ignored interactions and nonlinearities, this amounts to $262,143$
-survival analyses, all of which we ran. Figure~\ref{fg:fdadens}
-presents a histogram for the estimated average treatment effects
-across all the specifications for the raw data as well as for the
-matched (preprocessed) data.  The key result here is that estimates
-are far more model-dependent using the raw data than using the matched
-data.  For example, the variance of the estimated average treatment
-effect from the matched data (the solid curve) is more than three
-times as large as that from the raw data (the dashed curve).  (The
-distribution of estimates for the matched data is also closer to the
-normal density, which will happen when control variables included are
-having effects only due to random errors.)
+We estimate the point estimate of the ATE for every possible
+specifications in which the 18 covariates enter the model with the
+treatment indicator (i.e., all possible subsets of covariates from the
+18).  Even though we ignored interactions and nonlinearities, this
+amounts to $262,143$ survival analyses, all of which we ran.
+Figure~\ref{fg:fdadens} presents a histogram for the estimated average
+treatment effects across all the specifications for the raw data as
+well as for the matched (preprocessed) data.  The key result here is
+that estimates are far more model-dependent using the raw data than
+using the matched data.  For example, the variance of the estimated
+average treatment effect from the matched data (the solid curve) is
+more than three times as large as that from the raw data (the dashed
+curve).  (The distribution of estimates for the matched data is also
+closer to the normal density, which will happen when control variables
+included are having effects only due to random errors.)
 \begin{figure}[t] 
  \begin{center}
    \includegraphics{figs/fdadens.pdf}
   \end{center}
   \vspace{-0.275in}
-  \caption{Kernel density plot (a smoothened histogram)
+  \caption{Kernel density plot (a smoothed histogram)
     of the estimated average treatment effect of the Democratic Senate
     majority on FDA drug approval time across $262,143$
     specifications. The solid line presents a density plot of the
@@ -1477,12 +1470,11 @@ than indicated by the usual parametric approach.
   Evaluations}
 
 For our second application, we reanalyze a study of citizen
-evaluations of the ideological positions for candidates for the House
-of Representatives by \citet{Koch02}.  We begin by replicating the
-analysis, which we did successfully.  The quantity of interest is the
-causal effect of being a highly visible female candidate on citizen
-voter evaluations of the candidate's ideology (scored as a seven point
-ordinal scale, where high scores indicate greater
+evaluations of the ideological positions of candidates for the U.S.\ 
+House of Representatives by \citet{Koch02}.  The quantity of interest
+is the causal effect of being a highly visible female candidate on
+citizen voter evaluations of the candidate's ideology (scored as a
+seven point ordinal scale, where high scores indicate greater
 conservatism).\footnote{Visibility is measured originally by whether a
   candidate had campaign expenditures exceeding more than \$750,000.
   For simplicity and comparison to \citet{Koch02}, we stipulate to,
@@ -1490,7 +1482,8 @@ conservatism).\footnote{Visibility is measured originally by whether a
   methods.}  We confine ourselves to studying this effect on
 Republican female candidates, compared to the control of invisible
 male and female candidates (corresponding to the fourth column of
-Table 2 in \citet[p.  459]{Koch02}).
+Table 2 in \citet[p.  459]{Koch02}).  We begin by replicating the
+analysis, which we did successfully.
 
 Since randomly assigning visibility to candidates in real elections is
 infeasible, \citet{Koch02} collects observational data with
@@ -1569,16 +1562,16 @@ therefore likely to be a significant problem.
 Through experimentation, we find that propensity score matching does
 not improve balance much, no matter how we specify the propensity
 score equation.  However, subclassifying on the propensity score
-improves balance well without reducing the number of observations
-much, and so we use it.  Our propensity score analysis involves a
-logistic regression of visibility on all six pretreatment covariates.
-We also discard treatment units whose propensity score is greater than
-the maximum of control units and control units whose propensity score
-is lower than the minimum of the treated units.  This results in 31
-discarded units, and (just as in Figure \ref{fg:extrap}) greatly
-reduces the risks of extrapolation.  Next, we create six subclasses by
-quantiles of the propensity score of the treated units.  As is
-desired, covariate balance is substantially better within each
+improves balance considerably without reducing the number of
+observations much, and so we use it.  Our propensity score analysis
+involves a logistic regression of visibility on all six pretreatment
+covariates.  We also discard treatment units whose propensity score is
+greater than the maximum of control units and control units whose
+propensity score is lower than the minimum of the treated units.  This
+results in 31 discarded units, and (as in Figure \ref{fg:extrap})
+greatly reduces the risks of extrapolation.  Next, we create six
+subclasses by quantiles of the propensity score of the treated units.
+As is desired, covariate balance is substantially better within each
 subclass than in the raw data; within each subclass, any extrapolation
 would be confined to a region much closer to the data.  For example,
 the last three columns of Table~\ref{tb:kochmtest} present means and
@@ -1638,21 +1631,21 @@ estimated average treatment effect of $-0.23$ with an estimated
 standard error $0.14$, indicating that female visibility might cause
 voters to perceive female candidates as more liberal.
 
-We now evaluate model sensitivity by studying the variance of causal
-effect point estimates for 63 (=$\sum_{i=1}^6 {6 \choose i}$)
-regressions containing all possible subsets of Koch's six covariates,
-again for simplicity restricting ourselves to only permutations of the
-possible main effects.  For the matched dataset, we run the same
-specification locally within each subclass, aggregating the point
-estimates weighted by the number of treated units in each subclass.
-The result in each case is 63 separate point estimates for the raw and
-for the preprocessed data.
+We now turn to our main purpose of evaluating model sensitivity by
+studying the variance of causal effect point estimates for 63
+(=$\sum_{i=1}^6 {6 \choose i}$) regressions containing all possible
+subsets of Koch's six covariates, again for simplicity restricting
+ourselves to only permutations of the possible main effects.  For the
+matched data set, we run the same specification locally within each
+subclass, aggregating the point estimates weighted by the number of
+treated units in each subclass.  The result in each case is 63
+separate point estimates for the raw and for the preprocessed data.
 
 Figure~\ref{fg:kochdens} presents the results, plotting densities of
 estimated average treatment effects for the treated (ATT) from the raw
 and preprocessed data.  As expected, the estimated treatment effect
 estimates are substantially more variable for the raw data.  Estimated
-effects from the raw data (see the solid line), range from $-0.64$ to
+effects from the raw data (see the solid line) range from $-0.64$ to
 $-0.2$, signifying that female visibility causes voters to perceive
 candidates as more liberal.  The point estimate from the raw data that
 controls for all six covariates, signified by the vertical arrow,
@@ -1660,9 +1653,9 @@ appears conservative compared to this range.  Estimates from the
 preprocessed data, however, stand in stark contrast to the estimates
 from the raw data.  The variability of coefficient estimates is
 substantially smaller, ranging from $-0.31$ to $-0.07$, and the
-variance across specifications is more than six times smaller than for
-the raw data, as shown by the highly peaked density.  Rather than
-erring on the conservative side, the reported point estimate now
+variance across specifications is more than \emph{six} times smaller
+than for the raw data, as shown by the highly peaked density.  Rather
+than erring on the conservative side, the reported point estimate now
 appears to be substantially larger in substantive effect than we might
 expect from the more valid and less model-dependent preprocessed data.
 \begin{figure}[t] 
@@ -1684,12 +1677,12 @@ expect from the more valid and less model-dependent preprocessed data.
 
 In short, not only can preprocessing reduce model dependence,
 decreasing the probability that researchers may inadvertently present
-unrepresentative estimates, but preprocessing also may change or
-reinforce the substantive conclusions of the research.  The fact that
-treatment effects may be substantially smaller may even further
-bolster the claim that ``[t]he contradictory nature of . . . [the]
-cues received from Republican female candidates presents citizens with
-a complicated information-processing task'' \citep[p. 460]{Koch02}.
+innacurate estimates, but preprocessing also may change or reinforce
+the substantive conclusions of the research.  The fact that treatment
+effects may be substantially smaller may even further bolster the
+claim that ``[t]he contradictory nature of . . .  [the] cues received
+from Republican female candidates presents citizens with a complicated
+information-processing task'' \citep[p.  460]{Koch02}.
 
 \section{What Can Go Wrong}
 
