@@ -79,7 +79,7 @@ if (TEST) {
                  mandiz01 + peddiz01 + acutediz + orphdum + natreg +
                  I(natregsq/10000) + wpnoavg3 + vandavg3 + condavg3,
                  dist='lognormal', scale=0, data=data) 
-  res <- toy
+  #res <- toy
   #print(summary(res))
 
   #start <- c(res$scale, res$coef)
@@ -87,10 +87,14 @@ if (TEST) {
   #              X=model.matrix(res), C=(data$d==0)*1, method="BFGS")
   #print(res1)
   
+  start <- c(res$scale, 0.5, res$coef)
+  res1 <- optim(start, lognorm.inv.gauss.llik, Y=data$acttime, X=model.matrix(res), C=(data$d==0)*1, method="BFGS")
+  print(res1)
+
   start <- c(-0.21, 0.54, 2.92, -2.50)
   print(lognorm.inv.gauss.llik(start, Y=data$acttime,
-                               X=model.matrix(res), C=(data$d==0)*1)) 
+                               X=model.matrix(toy), C=(data$d==0)*1)) 
   res2 <- optim(start, lognorm.inv.gauss.llik, Y = data$acttime,
-                X=model.matrix(res), C=(data$d==0)*1, method="BFGS")
+                X=model.matrix(toy), C=(data$d==0)*1, method="BFGS")
   print(res2)
 }
