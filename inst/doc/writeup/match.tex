@@ -93,214 +93,100 @@ implements these matching methods.
 \tableofcontents
 
 \clearpage
+
 \section{Introduction}
-\subsection{Literature Review (including Heckman, Rosenbaum, etc.)}
-\section{Causal Inference and Potential Outcomes}
-\subsection{Potential outcomes framework}
-\subsection{Causal Inference in an Experiment}
-\subsection{Causal Inference with Observational Data}
-\subsubsection{Model Adjustments: The Role of Functional Form Assumptions}
-\subsubsection{Matching}
-\subsubsection{Exact Matching}
-\subsubsection{Continuous Covariates and the Curse of Dimensionality}
-\section{Propensity Score Matching}
-\subsection{Estimating Propensity Scores}
-\subsubsection{Logistic Regression}
-\subsubsection{Others: CART?, GAM, probit, ...}
-\subsection{Matching Parameters}
-\subsubsection{Exact Restrictions}
-\subsubsection{Optimal vs. nearest neighbor matching}
-\subsubsection{Ratios and Replacement}
-\subsubsection{Specification Algorithm}
-\subsubsection{Discarding}
-\subsubsection{Subclassification}
-\subsubsection{Caliper and Mahalanobis Matching}
-\subsection{Diagnostics}
-\subsubsection{Checking for balance}
-\subsubsection{Bias statistics}
-\subsubsection{Means tests vs. bias statistics}
-\subsection{Analysis}
-\subsubsection{Effect on treated, overall effect}
-\section{Applications}
-\subsection{Cross-sectional}
-\subsection{Panel Data}
-\section{Remaining Open Issues}
-\subsection{Multi-treatment regimes}
-\subsection{Panel Data}
-\section{Conclusion}
 
-\paragraph{Notation} 
-Let $i$ index $N$ units of interest. $Y_i(1)$ represents the potential
-outcome of unit $i$ under treatment and $Y_i(0)$ the potential outcome
-of unit $i$ under control.  $T_i=1$ indicates that unit $i$ was
-assigned treatment, and $T_i=0$ that unit $i$ was assigned control.  
-$Y_i(1)$ and $Y_i(0)$ are jointly unobservable, such that we only
-observe $Y_i^{obs}=T_i(Y_i(1))+(1-T_i)(Y_i(0))$.  This is often termed
-as the ``fundamental problem of causal inference''
-(\citealt[p. 947]{holland86}, \citealt[p. 79]{KinKeoVer94}).  
+A new and exciting statistics literature has emerged in recent years,
+building on advances in nonparametric, non-model-based inference, and
+focused around diverse generalizations of different types of matching
+estimators.  The potential of this literature is enormous, as it offers
+the wherewithall for researchers to make much more reliable causal
+inferences than has been the case in most of the social sciences.  These
+methods make it possible to vastly reduce the necessary functional form
+and other assumptions, and to verify empirically rather than assume
+unstated but critical modeling assumptions.
+                                                                                                                                                             
+Unfortunately, this literature has grown into a cacaphony of related but
+conflicting techniques, practices, conventions, and rules of thumb.
+Valid methods of computing standard errors and confidence intervals are
+even more complicated, often not used, and sometimes not available.
+Advice and guidelines are lacking or conflicting.
+                                                                                                                                                             
+In this paper, we attempt to unify this diverse literature for
+researchers to make the most productive use of these methods.  Our
+simple unifying idea is to think of these new nonparametric techniques
+as ways of making the parametric techniques more commonly known and
+used in the social sciences (regression, logit, etc.) work better.
+This framework thus enables us to add a simple pre-processing step and
+let social scientists use whatever models they are already accustomed
+to using, rather than requiring them to substitute the methods they
+know for one of a set of entirely new and unfamilar methods.  Our
+approach therefore has obvious pedagogical and expository advantages,
+but the approach also turns out to be useful in bringing intellectual
+order and cohesion to this conflicting literature and to suggest
+relatively straightforward advice for empirical researchers seeking to
+make causal inferences.  When thought of in the way we propose, the
+approach also immediately suggests a simple, standardized, and valid
+approach to computing standard errors and confidence intervals for any
+of the new techniques.
+                                                                                                                                                             
+In this paper, we describe our unifying approach and all that which leads
+from it.  We also describe software we have prepared and are making
+available as a companion to this paper.  The software is easy to use and
+implements all the ideas discussed herein.
+                                                                                                                                                             
+\section{Causal inference and potential outcomes}
+\subsection{Fundamentals}
+Causal effects are inherently a comparison of potential outcomes...generally as the outcome if the treatment of interest
+is applied, and the outcome if the treatment of interest is not applied (the ``control'' situation).  e.g., cholesterol level
+after two months on a cholesterol-reducing drug compared with cholesterol level after two months on placebo.   Since each unit (e.g., each individual
+at a given point in time) either receives or does nto receive the treatment (not both), can think of causal inference as missing data problem where 
+we are interested in predicting the missing potential outcomes.  This idea will be discussed in detail in Section \ref{analysis}, which discusses the 
+estimation of causal effects.
 
-The treatment effect for unit $i$ is defined as $\alpha_i = Y_i(1) - Y_i(0)$.
-Two quantities of interest are the average treatment effect (ATE),
+To estimate causal effects it is important to clearly define what the treatment, units, and potential outcomes are.  What is the treatment of which we are 
+estimating the effect?  To whom is the treatment applied or withheld?  And what are the outcomes in which we are interested?  In some situations these
+questions are fairly straightforward.  For example, in the cholesterol example, the treatment of interest is a new cholesterol-reducing drug and how it compares
+with a placebo.  The units are the individuals who enter the study, at the point in time that they enter the study.  And the potential outcomes of interest
+are cholesterol levels two months after treatment assignment.
 
-\begin{equation}
-\overline{\alpha}  =  E(Y_i(1))-E(Y_i(0)),
-\end{equation}
+This definition of causal efects used regardless of how we will learn about the causal effects...whether through a randomized experiment, or through the use of 
+observational data.  [Do we need to clarify what we mean by a randomized experiment and observational data?]
 
-or the average treatment effect on the treated (ATT),
+\subsection{Assignment mechanism}
+The question then is how do we learn about causal effects?  The first key is multiple units...need to observe some individuals who receive the treatment,
+and some who receive the control so we can know what happens under both settings.  When multiple units are involved, a key assumption
+is that of the Stable Unit Treatment Value Assumption (SUTVA).  There are two components to this: (1) within each treatment group (treatment and control), 
+everyone receives the same treatment--there are no versions of the treatments, and (2) no interference between units--one unit's treatment assignment does
+not affect the potential outcomes of any other units. 
 
-\begin{equation}
-\overline{\alpha}_T =  E(Y_i(1) - Y_i(0) | T_i=1). 
-\end{equation}
+The final key concept is that of the assignment mechanism, which refers to how the treatments are assigned to units (i.e., determines which potential outcomes
+are observed).  This is conveyed by $T$, and we have the identity: ???.  
 
-\paragraph{Variance of the Treatment Effect}
-To calculate the variance of the ATT requires determining first 
-whether the quantity of interest substantively is a sample or
-population parameter (\citealt[pp. 28-29]{ImbensNDb}.)\footnote{This section
-  discusses the estimation of the variance of the ATT (versus ATE) for simplicity
-  of notation.  With the exception of the note on the efficiency gain
-  due to knowledge of the propensity score for ATE variance
-  estimation, the calculations are analogous.}
-
-If we are interested in the sample ATT, estimating the variance
-of the treatment effect is straightforward, involving simply the
-variance of the estimated treatment effect for each treated unit. 
-
-\begin{comment}
-Liz: I don't understand this.  How is it "simple", 
-since we don't observe the estimated treatment effect for each treated unit, nevermind the individual variances.  
-Maybe replace by something like "involving simply the variance of the potential outcomes under treatment and under 
-control."  (which is true for the Neyman estimate).
-
-Dan: Estimated treatment effect here refers to the pair difference,
-each of which estimates $\alpha_i$.  If we adopt the Neyman estimates
-via the discussion below, we should certainly also adopt your language here.
-\end{comment}
-
-To understand the logic of why the matching process does not affect the
-variance estimation, first consider pairwise exact matching
-on all covariates.  Since we're fully conditioning on $X$ in that
-case, the matching process involves no estimation uncertainty 
-and the variance of sample ATE may simply be estimated by:
-
-\begin{equation} \label{VarATT}
-V( \overline{\alpha}_T) = V \bigl\{ ( Y_i^{obs}(1) | T=1) -
-  ( \hat{Y}_i(0) | T=1 )  \bigl\},
-\end{equation} 
-
-\noindent where the missing potential outcome $\hat{Y}_i(0) | T=1$ is estimated by the
-matched control unit to unit $i$.  In other words, the variance of the
-sample ATT is simply the variance of the differences in the matched
-pairs.\footnote{An estimate due to \cite{Neyman23}, which 
-does not use the
-  covariance between matched pairs and was initially applied to randomized
-  experiments is sometimes used instead: $\hat{V}(\overline{\alpha}) =
-  \frac{V(Y_i(1)^{obs} | T=1)}{M} + \frac{V(\hat{Y}_i(0) |
-    T=1)}{N-M}$, where $M$ represents the number of treated
-  units (\citealt[Chapter 6]{ImbRubND}). \label{neyman}
-  \citet{ImbRubND} note that this variance estimate may be
-  understood as (a) an unbiased estimator under the assumption of
-  constant additive treatment effects, (b) an upwardly biased
-  estimator relaxing that assumption, or (c) an unbiased estimator of
-  the superpopulation ATE.}
+\subsection{Unbiasedness of causal estimates in randomized experiments}
+A key benefit of randomized experiments is that the assignment mechanism is unconfounded; it does not involve the potential outcomes.  
+In a completely randomized experiment, the difference in sample means of the potential outcomes is an unbiased estimate of the true treatment effect.  
 
 
-\begin{comment}
-Liz:  I would disagree.  I would put the Neyman estimate up here in the main text, and move this alternate 
-estimator to the footnote.  There are 2 main problems with using
-Equation (1).  (1) If you don't an equal number of 
-treated and control units this won't work, unless you do something like average all of the control's matched to each 
-treated unit to get a "conglomerated" control unit for each treated. 
-(2) Since $Y(0)$ and $Y(1)$ are never 
-observed together, there really is no information in the data  
-about the correlation between $Y(0)$ and $Y(1)$, so using Equation (1) is somewhat misleading.   By using only the X's 
-to impute the missing potential outcomes, it is implicity assuming that they are independent (if we thought they 
-weren't independent we would have to use $Y(1)$ to impute $Y(0)$ and vice versa, which would require saying something 
-about what we think the correlation is (which would not be based on any data, just intuition).  Assuming independence 
-is in some ways safe, especially since there really is no other information to base it on.  So saying that this 
-estimator uses the covariance between $Y(0)$ and $Y(1)$ is misleading since the only information that would be in 
-there would be from whatever we said it was (e.g. 0).]
+\subsection{Replicating a hypothetical randomized experiment with observational data}
+When we are in a setting with observational data, a key concept is that of trying to replicate a randomized experiment as much as possible.  
+Two ways of doing this: find samples that are as similar as possible on all background covariates, and the outcome values are not used in the design.  We thus
+will think of carefully designing an observational study--selecting treated and control groups such that they look like they could have arisen from a randomized
+experiment.  In that way, any differences in the outcome can be attributed to the treatment itself, not to any pre-existing differences between the groups. 
 
-Dan:  I take it as a great sign of progress that we're discussing these
-details!  It's a very good point.  Though regarding (1), it's certainly possible to
-weight (I think this is what is done in the Becker Ichino
-implementation).  This is related to the weighting issue we're
-discussing on the diagnostics -- if we're weighting to
-calculate ATE's in ratio matching, we should be consistent with the
-variance calculation as well.  So in my mind the real issue is (2).  
+A key assumption with observational studies is that of unconfounded treatment assignment: that treatment assignment is independent of the potential outcomes
+given the observed covariates.  In other words, for two individuals with the same values of observed covariates, if one received treatment and the other control,
+then that treatment assignment was random--within groups defined by the covariates, the treated and control groups are only randomly different from one another.
+In that way we assume that within blocks defined by the covariates, we have replicated a mini-randomized experiment.  
 
-Regarding (2), one counterargument would be that that since we're
-using the matched unit to estimate the
-counterfactual, the whole point is that it's imputed and therefore we
-can use it to estimate the covariance as well.  True, we've assumed
-conditional independence between the potential outcomes and treatment,
-but certainly not conditional independence between $Y(0)$ and $Y(1)$.
-The difference seems to boil down to this: suppose you find extremely
-high covariance of your matched pairs.  Do we think that this in fact gives us any
-added information and certainty about the ATE?  The Neyman estimates
-would guard against this possibility, providing a more conservative
-variance estimate; but if covariance!=0 they're also biased (albeit
-conservatively).  Even Imbens himself (depending on coauthor!) sometimes leans toward Neyman
-(\citealt[Chapter 6]{ImbRubND}) and sometimes away
-(\citealt[p. 3]{AbaImbND}).  (Note also that the calculation of the
-V(ATE) in a model-based analysis after pscore matching 
-would also often take into account the covariance.  We use whatever
-method to impute missing potential outcomes, and then we take $\frac{1}{N} \sum_{i=1}^N
-\hat{\alpha}_i$ to estimate the ATE and the variance of these paired
-differences to estimate the V(ATE) -- or would we still advocate the
-Neyman estimates in this scenario?)
+Since the 1970's, work has developed matching methods to select well-matched samples for comparison, again with this idea of replicating a hypothetical
+randomized experiment.  Original work looked at the bias and variance consequences  of choosing matched rather than random samples for follow-up, when
+outcome data has not yet been collected on any units and cost constraints prohibit following up the full samples.  Methods extended to situation 
+where outcome data already available and interest is in selecting well-matched samples for comparison.  Here we summarize these methods and
+present methods for implementing matching with observational data.
 
-An attractive property of the Neyman estimate is that it's
-conservative, and could be justified as a population estimate (see
-Note 2).  
-
-Ultimately I think this is a question of default choice, and I'd be
-happy to make the Neyman estimates the default with an option of using
-the variance of the difference between matched pairs. 
-\end{comment}
-
-Similar to exact matching, propensity score matching is simply a means
-to obtain a balanced dataset, and the
-variance of the sample ATT is the same as in Equation~\ref{VarATT}.
-The only difference is the fact that the missing potential outcome
-$\hat{Y}_i(0) | T=1$ is now estimated by the matched control unit \emph{via the propensity
-score}.  Since the propensity score does not estimate any population
-parameter and serves its role purely as a ``balancing score'', it does
-not introduce any added uncertainty to the variance of the treatment
-effect.\footnote{There is one slight exception to this, namely that
-  ties in the propensity score are resolved by a random draw.  This is
-  a scenario that is likely to happen when the explanatory covariates
-  are largely categorical.  Even in this instance, reporting estimates
-  from one draw of matched pairs is correct (akin to drawing a random
-  sample from a population), but to avoid potentially ``spurious'' findings, the 
-  user might well be advised to impute
-  missing potential outcomes several times and combine estimates
-  across these datasets via standard multiple imputation rules
-  (see \citealt{rubin87}).}  (Note, however, that knowledge of the propensity score might decrease the
-variance bound for the ATT, but not the ATE
-(\citealt{frolich02,hahn98,HirImbRid02}).)  In fact, this variance
-estimate might even be conservative for the sample ATT, providing
-over-coverage compared to the variance conditional on the
-covariates (\citealt{AbaImbND}).
-
-If on the other hand we are interested in the population ATT, the
-variance may be estimated by the bootstrap, or even the Neyman
-estimate in Note~\ref{neyman} (\citealt{ImbensNDb}, \citealt[Chapter
-6]{ImbRubND}).
-
-\begin{comment} 
-Dan:  Should matching with replacement change the variance calculations? 
-This might be the motivation for the Dehejia \& Wahba to bootstrap --
-but there must be an analytical formula to reflect the bias-variance
-tradeoff of matching with replacement...
-\end{comment}
-
-
-
-\paragraph{Quantity of Interest.} Average treatment effect vs. average
-  treatment effect on the treated; limiting inferences to what's
-  scientifically estimable. 
 \paragraph{Defining units, treatment and outcome.}  In assessing a
-  causal effect, the definition of units is crucial.  
+  causal effect, the clear definition of treatments and units is crucial.  
   We divide units [variables???]  into two classes: pre-exposure --
   those whose values are determined prior to exposure to the cause;
   post-exposure -- those whose values are determined after exposure to
@@ -326,6 +212,109 @@ where
 the variables before time $t$ are treated as covariates and the variables after time $t$ are treated as outcomes.  
 This idea is explored by Bertrand et al. (2002), and they find that it has good properties.  We will discuss this
 method more below.
+
+
+\subsection{Inference}
+\subsubsection{Model Adjustments: The Role of Functional Form Assumptions}
+\subsubsection{Matching as way to reduce assumptions/extrapolation}
+\subsubsection{Benefits to combining matching and modeling}
+                                                                                                                                                             
+\section{Overview of Matching}
+\subsection{Main idea: find matches that look as similar as possible}
+\subsection{Exact matching}
+\subsection{Propensity scores as a way to reduce dimensionality}
+[This paragraph is from earlier version.]  Similar to exact matching, propensity score matching is simply a means
+to obtain a balanced dataset, and the
+variance of the sample ATT is the same as in Equation~\ref{VarATT}.
+The only difference is the fact that the missing potential outcome
+$\hat{Y}_i(0) | T=1$ is now estimated by the matched control unit \emph{via the propensity
+score}.  Since the propensity score does not estimate any population
+parameter and serves its role purely as a ``balancing score'', it does
+not introduce any added uncertainty to the variance of the treatment
+effect.\footnote{There is one slight exception to this, namely that
+  ties in the propensity score are resolved by a random draw.  This is
+  a scenario that is likely to happen when the explanatory covariates
+  are largely categorical.  Even in this instance, reporting estimates
+  from one draw of matched pairs is correct (akin to drawing a random
+  sample from a population), but to avoid potentially ``spurious'' findings, the 
+  user might well be advised to impute
+  missing potential outcomes several times and combine estimates
+  across these datasets via standard multiple imputation rules
+  (see \citealt{rubin87}).}  (Note, however, that knowledge of the propensity score might decrease the
+variance bound for the ATT, but not the ATE
+(\citealt{frolich02,hahn98,HirImbRid02}).)  In fact, this variance
+estimate might even be conservative for the sample ATT, providing
+over-coverage compared to the variance conditional on the
+covariates (\citealt{AbaImbND}).
+If on the other hand we are interested in the population ATT, the
+variance may be estimated by the bootstrap, or even the Neyman
+estimate in Note~\ref{neyman} (\citealt{ImbensNDb}, \citealt[Chapter
+6]{ImbRubND}).
+
+
+                                                                                                                                                             
+\section{Details of matching procedures}
+\subsection{Estimating propensity scores}
+\subsubsection{Logistic regression}
+logistic regression usually used.  fit model with treatment assignment on left-hand side and covariates on right-hand side.
+Fitted values from regression are the propensity scores.
+
+\subsubsection{Others: CART, GAM, probit}
+Other methods can also be used.  [Dan comments here as well?]
+
+\subsection{Nearest neighbor matching}
+Generally matching chooses one (or more than one) matches for each unit.  For example, when estimating the average treatment effect
+on the treated, choose one (or more than one) control unit for each treated unit.  This is often done using nearest neighbor matching,
+which goes through the treated units one by one and finds the best matching control unit.  Variations on and details for this are described in the next few sections.
+
+\subsubsection{Common support: discard}
+A key concept is that of matching within regions of common support--estimating causal effects only in area of the covariates where
+there are treated and control units.  In essence this is what matching is always attempting to do, but sometimes done more explicitly.
+A few ways to do this...
+
+\subsubsection{Order of matching: greedy and optimal matching}
+\subsubsection{Matching ratios}
+\subsubsection{With or without replacement}
+\subsubsection{Caliper matching}
+\subsection{Subclassification}
+\subsubsection{Full matching}
+\subsection{``Special'' variables}
+\subsubsection{Exact matching on a few variables}
+\subsubsection{Mahalanobis matching within propensity score calipers}
+\subsection{Diagnostics}
+\subsubsection{Checking for balance}
+\subsubsection{Bias statistics}
+\subsubsection{Means tests}
+\subsubsection{Propensity score model specification}
+
+\section{Analysis}
+\subsection{Average treatment effect, average effect on the treated}
+\paragraph{Quantity of Interest.} Average treatment effect vs. average
+  treatment effect on the treated; limiting inferences to what's
+  scientifically estimable. 
+
+\subsection{"Naive" estimates}
+\subsubsection{Neyman's estimates of causal effect, variance}
+\subsection{Use modeling to repeatedly impute missing potential outcomes}
+\subsubsection{Specify standard models in treated and control groups}
+\subsubsection{Logistic regression, OLS, etc. (zelig)}
+\subsubsection{Contrast with standard OLS (parallel linear regressions)}
+\subsection{More information on benefits of combining matching and modeling}
+                                                                                                                                                             
+\section{Applications}
+\subsection{National Supported Work Demonstration}
+\subsection{FDA?}
+\subsection{Argentinian?}
+\subsection{Cross-sectional?}
+\subsection{Panel Data?}
+                                                                                                                                                             
+ 
+\section{Open research topics}
+\subsection{Multi-treatment regimes}
+\subsection{Panel Data}
+                                                                                                                                                             
+\section{Conclusion}
+
 
 \appendix
 \paragraph{Algorithms}
@@ -484,9 +473,7 @@ and the variance is:
 %\singlespacing
 
 \bibliographystyle{pa}
-\bibliography{gk}
+\bibliography{~/gkbibtex/gk,~/gkbibtex/gkpubs}
 
-%\bibliographystyle{/home/stuart/gkbibtex/pa}
-%\bibliography{/home/stuart/gkbibtex/gk}
 
 \end{document}
