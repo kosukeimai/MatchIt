@@ -29,11 +29,11 @@
 %
 \title{Matching as Nonparametric Preprocessing\\
   for Improving Parametric Causal Inference\thanks{Our thanks to Dan
-    Carpenter and Jeff Koch for data; Alexis Diamond, Olivia Lau, and
-    Jas Sekhon for many helpful comments; and the National Institutes
-    of Aging (P01 AG17625-01) and the National Science Foundation
-    (SES-0318275, IIS-9874747) for research support.  Software to
-    implement the methods in this paper is available at
+    Carpenter and Jeff Koch for data; Alexis Diamond and Olivia Lau
+    for many helpful comments; and the National Institutes of Aging
+    (P01 AG17625-01) and the National Science Foundation (SES-0318275,
+    IIS-9874747) for research support.  Software to implement the
+    methods in this paper is available at
     \texttt{http://GKing.Harvard.Edu/matchit}.}}
 
 \author{Daniel E. Ho,\thanks{J.D.\ candidate, Yale Law School, Ph.D.\
@@ -55,9 +55,9 @@ Gary King,\thanks{David Florence Professor of Government, Harvard
   \texttt{http://GKing.Harvard.Edu}, \texttt{King@Harvard.Edu}, (617)
   495-2027).}
 %\and %
-Elizabeth A. Stuart\thanks{Researcher, Mathematica Policy Research,
-  Inc.\, Ph.D.\, Department of Statistics, Harvard University.
-  (Science Center 702, One Oxford Street, Cambridge, MA 02138, USA;
+Elizabeth A. Stuart\thanks{Researcher, Mathematica Policy Research, Inc.\, Ph.D.\, Department of Statistics,
+  Harvard University. (Science Center 702, One Oxford Street,
+  Cambridge, MA 02138, USA;
   \texttt{http://www.people.fas.harvard.edu/\~\,estuart},
   \texttt{Stuart@Stat.Harvard.Edu}).}}
 
@@ -1386,8 +1386,8 @@ usual parametric approach.
 
 For our second application, we reanalyze a study of citizen
 evaluations of the ideological positions for candidates for the House
-of Representatives by \citet{Koch02} We begin by replicating the
-analysis, which we did successfully.  The quantity of interest is the
+of Representatives by \citet{Koch02}.  We begin by replicating the
+analysis, which we did exactly.  The quantity of interest is the
 causal effect of being a highly visible female candidate on citizen
 voter evaluations of the candidate's ideology (scored as a seven point
 ordinal scale, where high scores indicate greater
@@ -1405,13 +1405,29 @@ infeasible, \citet{Koch02} collects observational data with
 pretreatment covariates including candidate ideology, voter perception
 of party ideology, respondent ideology, candidate feeling thermometer,
 and political awareness.  Koch uses least squares to adjust for these
-explanatory variables, varying only the treatment.  We see that
-even with such a small number of covariates, the curse of
-dimensionality looms large.  Given unique values of these covariates,
-estimation without assumptions would require a model with 44 million
-parameters using a dataset with only 494 observations.  Koch reduces
-these parameters to only six (main effects) by the assumptions of no
-other interactions and nonlinearities.
+explanatory variables, varying only the treatment.  Let us first
+provide a brief assessment of the assumptions common to a traditional
+parametric approach and our preprocessing approach.  First, the study
+assumes that visibility does not itself affect any of the pretreatment
+covariates.  This might be violated, for example, if visibility
+influences the affect felt for a candidate as measured by the feeling
+thermometer.  Controlling for the feeling thermometer would thereby
+induce what is commonly known as post-treatment bias.  Second, the
+study assumes that the visibility of one candidate does not affect the
+potential outcomes of another candidate.  Visibility of a candidates
+might, for example, detract local media attention from a candidate in
+an adjoining district, violating independence.  Third, the study
+assumes that visibility is the same treatment for candidates.
+
+Here, we do not take issue with these three assumptions.  Instead, we
+focus on the sensitivity of inferences to controlling for these
+confounding factors.  Even with a relatively small number of
+covariates, the curse of dimensionality looms large.  Given unique
+values of these covariates, estimation without assumptions would
+require a model with 44 million parameters using a dataset with only
+494 observations.  Koch reduces these parameters to only six (main
+effects) by the assumptions of no other interactions and
+nonlinearities.
 
 The linear adjustments are important since, as the raw data in
 Table~\ref{tb:kochmtest} demonstrate, visible and invisible candidates
