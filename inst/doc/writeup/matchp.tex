@@ -507,45 +507,35 @@ then we still have the best linear approximation to the conditional
 expectation function, but the relationship we estimate can be far off.
 If we are running this regression for the purpose of estimating a
 causal effect, then the treatment variable is also in the regression,
-then its coefficient
+and its coefficient can be biased to any degree if the functional
+relationship with the control variable is misestimated.
 
-The key problem is that when we have two ten-category explanatory
-variables, we need not 20 parameters but rather 100.  More generally,
-with $j$ 10-category variables, we need $10^j$ parameters.  So 5
+A much more serious problem occurs if we have more explanatory
+variables.  For example, estimation without functional form
+assumptions with two ten-category explanatory variables would require
+not 20 parameters but rather 100.  In this case, the usual approach
+would include a constant term and two slope coefficients, reducing 100
+parameters to three by pure assumption.  And with more than one
+variable, any claim about external knowledge constraining the
+functional form this much becomes highly dubious.  By what theory do
+we know that 97 parameters should be set to exactly zero?  Including a
+linear interaction would not help much since it would merely add one
+more parameter to estimate, and we would only need to make assumptions
+about 96 parameters.
+
+The problem esclates very fast as the number of explanatory variables
+increase.  With $j$ 10-category variables, we need $10^j$ parameters
+for estimation in a regression framework without assumtions.  So five
 explanatory variables leads to a regression model with 100,000
-parameters.  Ten such explanatory variables has a model with a billion
-parameters.  Eighty explanatory variables requires a regression model
-with more parameters than current estimates of the number of
-elementary particles in the universe.
+parameters, and the usual approach works by estimating only a constant
+term and five slope coefficients.  Nine such explanatory variables has
+a model with a billion parameters, which would be approximated by only
+the ten that we would estimate under the traditional approach.  Eighty
+explanatory variables requires a regression model with more parameters
+than current estimates of the number of elementary particles in the
+universe.
 
-  Suppose we have ten 10-category
-variables?  In the usual regression approach, 
-
-
-map the funct'l form 
-hard to do
-curse of dimensionality
-
-In this section, we study the assumptions behind the parametric
-methods commonly used for estimating causal inferences in the social
-sciences.  Our purpose is to show how key assumptions prove
-unnecessary if $t_i$ and $X_i$ are unrelated, since this is something
-our preprocessing procedures can affect.
-
-We begin with a simple randomized controlled experiment.  By
-definition, randomized experiments have three features:  random
-selection of units from some relevant population, random assignment of
-the values of $t_i$, and a large $n$.  
-
-model where the values of the causal variable are assigned randomly
-and with equal probability, so that half the observations appear in
-the treatment group and half in the control group.  If we had the
-luxury of designing a controlled, randomized, experiment, we could
-accomplish this by randomly drawing one-half of the units, assigning
-them $t_i=1$, and assigning the other half $t_i=0$.  Then a good
-estimator of the ATE is simply the mean of $y_i$ for the treatment
-group minus the mean of $y_i$ for the control group.  Why?  Because
-random assignment implies
+The unavoidable consequence of 
 
 \section{Matched Preprocessing}
 
