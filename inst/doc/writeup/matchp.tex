@@ -39,8 +39,7 @@
 \author{Daniel E. Ho,\thanks{J.D.\ candidate, Yale Law School, Ph.D.\,
     Department of Government, Harvard University. (Center for Basic
     Research in the Social Sciences, 34 Kirkland, Cambridge MA 02138,
-    USA; \texttt{http://www.people.fas.harvard.edu/\~\,deho},
-    \texttt{daniel.ho@Yale.Edu}).}
+    USA; \texttt{daniel.ho@Yale.Edu}).}
 %\and %
 Kosuke Imai,\thanks{Assistant Professor, Department of Politics, Princeton
     University (Corwin Hall 041, Department of Politics, Princeton
@@ -885,9 +884,9 @@ experiment where we find pairs of units that are identical in all
 observable ways and assign one from each pair to be treated and the
 other to be a control.  Then no matter what effect $X_i$ has on $y$,
 we can ignore it entirely since $X_i$ is literally held constant
-within each pair of units.\footnote{Formally, ignorability, the
-  independence of $T$ and the potential outcomes given $X$, and
-  balance in Equation \ref{balance} guarantees valid inferences, which
+within each pair of units.\footnote{Formally, ignorability, by which
+  we mean the independence of $T$ and the potential outcomes given $X$, and
+  balance in Equation \ref{balance} guarantee valid inferences, which
   can be written as $P(Y(0)|T=1)=P(Y(0)|T=0)$ and
   $P(Y(1)|T=1)=P(Y(1)|T=0)$.}
 
@@ -902,7 +901,7 @@ the curse of dimensionality) or contains continuous variables.  The
 result may then be a preprocessed data set with very few observations
 that results in a parametric analysis with large standard errors.  In
 this situation, we may reduce model dependence and the potential for
-bias, but decrease efficiency and as a result increase mean square
+bias, but decrease efficiency and as a result increase mean squared
 error.  If this occurs in practice, those in the matching literature
 tend to sacrifice some bias reduction for the increased efficiency
 that comes from having more observations in the preprocessed dataset.
@@ -1073,13 +1072,22 @@ score by a logistic regression of $t_i$ on $X_i$ and a constant term.
 Since we are in the situation where exact matching is insufficient, we
 match each treated unit to the control unit with the most similar
 value of the estimated propensity score $\hat{e}_i$ (which is known as
-nearest neighbor matching on the propensity score).  If this procedure
-balances $X$ (and thus satisfies the procedures for checking balance
-we describe in Step 4), we use it.  If not, then we respecify the
-logistic regression by adding interactions or squared terms and match
-again.  If that works, then we use it.  If not, we can try even more
-elaborate specifications (when necessary, perhaps even trying other
-functional forms such as CART, neural network analyses, or others).
+nearest neighbor matching on the propensity score).\footnote{When
+  matching without replacement, two different approaches of matching
+  nearest neighbors exist. The first, known as ``greedy'' matching,
+  simply starts with some treated unit and matches the closest control
+  unit that has not yet been matched.  This approach, however, is not
+  invariant to the order in which we match units.  A second approach
+  minimizes the total distance within matched units \citep[][pp.
+  311-23]{Rosenbaum02}.  Our software implements both, incorporating
+  optimal matching code provided by \citet{Hansen03}.} If this
+procedure balances $X$ (and thus satisfies the procedures for checking
+balance we describe in Step 4), we use it.  If not, then we respecify
+the logistic regression by adding interactions or squared terms and
+match again.  If that works, then we use it.  If not, we can try even
+more elaborate specifications (when necessary, perhaps even trying
+other functional forms such as CART, neural network analyses, or
+others).
 
 The collective wisdom of the literature also recommends four more
 specific rules for applying propensity scores.  First, if many more
@@ -1199,7 +1207,7 @@ If some covariates are omitted from some of the matching procedures,
 the balance on them should still be checked.  Doing so is often a good
 way to discover important covariates, since in fact researchers
 frequently have good qualitative knowledge not coded in $X$
-\citet[][Ch.3]{Rosenbaum02}.  Indeed, preprocessing can help
+\citep[][Ch.3]{Rosenbaum02}.  Indeed, preprocessing can help
 researchers better understand their data when supplemented by good
 qualitative information and research \citep[e.g.,][]{RosSil01}.
 
