@@ -38,8 +38,16 @@ print.matchit <- function(x,  digits = max(3, getOption("digits")-3), ...)
       if(sum(tt==1)<2|(sum(tt==0)<2)){
         xsum[c(1,2),c(3,4,5)] <- NA
       } else {
-        xsum[1,3] <- sd(xx,na.rm=T) 
-        xsum[1,4] <- -1*t.test(xx~tt)$statistic
+        xsum[1,3] <- sd(xx,na.rm=T)
+        if (is.null(x$call$exact))
+          xsum[1,4] <- -1*t.test(xx~tt)$statistic
+        else if (is.logical(x$call$exact))
+          if (x$call$exact)
+            xsum[1,4] <- NA
+          else
+            xsum[1,4] <- -1*t.test(xx~tt)$statistic
+        else
+          xsum[1,4] <- -1*t.test(xx~tt)$statistic
         xsum[1,5] <- (mean(x1,na.rm=T)-mean(x0,na.rm=T))/sd(x1,na.rm=T)
         xsum[2,3] <- sqrt(weighted.var(xx[ww>0],ww[ww>0]))
         xsum[2,4] <- t.test.wtd(xx[ww>0],tt[ww>0],ww[ww>0])
