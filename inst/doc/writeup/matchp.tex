@@ -1158,12 +1158,7 @@ construction, approximately constant, and thus balanced.  Generally
 five or six subclasses are sufficient to adjust for a univariate
 covariate such as the propensity score \citep{Cochran68,RosRub84}.
 Alternatively, ``full matching'' methods such as that in
-\citet{Hansen04} can be utilized.  That is, if balance is achieved
-with a reasonable number of observations within each subclass, then
-the analysis procedure is carried out within each subclass and the
-results are averaged, or else an overall model can be run with fixed
-or random effects for each subclass.
-
+\citep{Hansen04} can be utilized.
 
 \paragraph{Step 4. Evaluate the Matching Procedure}
 A good matching procedure reduces bias by increasing balance, does not
@@ -1199,11 +1194,11 @@ Perhaps the simplest, and also most commonly used, low dimensional
 summary compares the mean of the treatment group for each variable in
 $X$ with the mean of that variable in the control group.  If one or
 more of these differ by more than half a standard deviation of the
-respective $X$ variable, then better balance is needed (\cite{Cochran68}).  We can also
-compare the variances of each variable between the two groups, as well
-as interactions or higher order moments.  Another common approach is to
-compare treatment and control histograms (or density estimates) one
-variable at a time.
+respective $X$ variable, then better balance is needed
+(\cite{Cochran68}).  We can also compare the variances of each
+variable between the two groups, as well as interactions or higher
+order moments.  Another common approach is to compare treatment and
+control histograms (or density estimates) one variable at a time.
 
 A paradoxical but quite useful procedure is to compare the histogram
 of the propensity scores of the control units with that of the treated
