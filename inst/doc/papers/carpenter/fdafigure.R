@@ -28,3 +28,40 @@ text(-20,0.04,"Full Data")
 text(-40,0.08,"Matched\nData")
 text(-28,0.1275,"Point Estimate \n of Full Data")
 dev.off()
+
+data <- read.table("ajps2002-full1b.txt", header=T)
+data$treat <- data$demsnmaj
+
+library(Matchit)
+mout <- matchit(treat ~ orderent + stafcder + prevgenx + lethal +
+                deathrt1 + hosp01 + I(hospdisc/1000000) +
+                hhosleng + femdiz01 + mandiz01 +
+                peddiz01 + acutediz + orphdum + natreg +
+                I(natregsq/1000) + wpnoavg3 + sqrt(wpnoavg3) +
+                vandavg3 + condavg3, data=data, discard=1)
+smout <- summary(mout)
+pscore <- mout$data$pscore[mout$data$treat==0]
+
+trellis.device(device="pdf",file="fdabal.pdf",color=FALSE,width=6,height=4)
+par(mar=c(2, 2, 2, 2) + 0.1, cex.lab=0.6, cex.axis=0.6,
+    mgp=c(1,0.5,0), cex.main=0.5, cex=0.8, mfrow=c(1,2))
+
+plot(abs(smout$sum.all[,"T-stat"]),
+      abs(smout$sum.matched[,"T-stat"]), pch=".", 
+      xlim=c(0, max(abs(smout$sum.all[,"T-stat"]))),
+      ylim=c(0, max(abs(smout$sum.all[,"T-stat"]))), 
+      main="Covariate balance before and after matching",
+      xlab="t-statistics before matching",
+      ylab="t-statistics after matching")
+polygon(c(-0.2,-0.2,1.96,1.96,-0.2), c(-0.2,1.96,1.96,-0.2,-0.2), density=-1,
+        col="darkgray", border=NA)
+points(abs(smout$sum.all[,"T-stat"]),
+       abs(smout$sum.matched[,"T-stat"]), pch=19, cex=0.6)
+abline(0,1)
+plot(density(mout$data$pscore[mout$data$treat==1 & mout$psweights>0]),
+     type="h", col="darkgray", xlim=c(0,1), ylim=c(0,4),
+     main="Propensity score before and after matching",
+     xlab="Estimated propensity score")
+lines(density(pscore[mout$psweights[mout$data$treat==0]>0]), lwd=2)
+lines(density(pscore), lwd=2, lty=2)
+dev.off()
