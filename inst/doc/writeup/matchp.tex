@@ -1416,16 +1416,13 @@ preprocessing.\footnote{Preprocessing increases the values of the
   however, can be adjusted by fitting the parametric models to the
   preprocessed data.} The right panel of Figure~\ref{fg:fdabal}
 illustrates how preprocessing prevents extrapolation. Before matching,
-the support of the distribution of the estimated propensity score for
-the control group does not overlap with that for the treatment group.
-This means that without preprocessing one must rely on parametric
-assumptions to extrapolate for these units outside of the overlapping
-support region.  Preprocessing makes the adjustment by discarding the
-control units that are located outside of the support of the treatment
-group. Therefore, the estimated propensity score for the matched
-control group has the overlapping support, and its distribution is
-much closer to that for the treatment group.
-
+there are a number of control units (drugs) that look very different from the
+units in the treated group--those with low propensity scores.  Those control units,
+who look very different from the treated units on background variables, 
+will be influential in any model fit to the raw data set.
+By choosing the matched set of control units who look more similar to the treated units, 
+the treated-control comparison will be among only similar units and thus not affected 
+as much by the model specification.
 
 \begin{figure}[t] 
  \begin{center}
