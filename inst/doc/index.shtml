@@ -17,7 +17,7 @@
 work better."
 
 <!-- rbuild: replace 'Version:' '</b>' version -->
-<b>Version: 0.8</b>
+<p><b>Version: 0.8</b>
 
   <table width="90%" border="0" cellpadding="10">
     <tr>
