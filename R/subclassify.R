@@ -1,15 +1,30 @@
 subclassify <- function(formula,data,in.sample,pscore,nearest=TRUE,
                         match.matrix,subclass=0,sub.by="treat",
-                        counter=TRUE, full = list(full=FALSE, min.controls = 0, 
-                                        max.controls = Inf,
-                                        omit.fraction = NULL, tol = 0.01)){
+                        counter=TRUE, full = FALSE, full.options=list()){
+
   data <- eval(data,parent.frame())
   treata <- model.frame(formula,data)[,1,drop=FALSE]
   treat <- as.vector(treata[,1])
   names(treat) <- row.names(treata)
 
-  if(full$full) { # full matching with propensity score
-    if(counter){cat("Full Matching...")}  
+  if(full) { # full matching with propensity score
+    if(counter){cat("Full Matching...")}
+    full <- full.options
+    if(is.null(full$min.controls)){
+      full$min.controls <- 0
+    }
+    if(is.null(full$max.controls)){
+      full$max.controls <- Inf
+    }
+    if(is.null(full$omit.fraction)){
+      full$omit.fraction <- NULL
+    }
+    if(is.null(full$tol)){
+      full$tol <- 0.01
+    }
+    if(is.null(full$subclass.indices)){
+      full$subclass.indices <- NULL
+    }
     n1 <- length(treat[treat==1])
     n0 <- length(treat[treat==0])
     p1 <- pscore[treat==1]
@@ -19,7 +34,7 @@ subclassify <- function(formula,data,in.sample,pscore,nearest=TRUE,
     colnames(distance) <- row.names(treata)[treat==0]
     for (i in 1:n1)
       distance[i,] <- abs(p1[i]-p0)
-    full <- as.matrix(fullmatch(distance, subclass.indices = NULL,
+    full <- as.matrix(fullmatch(distance,subclass.indices = full$subclass.indices,
                                 min.controls = full$min.controls,
                                 max.controls = full$max.controls,
                                 omit.fraction = full$omit.fraction,

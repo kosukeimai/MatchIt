@@ -140,7 +140,7 @@ summary.matchit <- function(object, verbose=F, sig=2, ...) {
   sum.matched <- rbind(sum.matched,sum.matched.int)
   
   #now subclassification
-  if(!identical(subclass,0) & !identical(eval(object$call$full$full),TRUE))
+  if(!identical(subclass,0) & !identical(eval(object$call$full),TRUE))
     {
       qbins <- max(psclass,na.rm=TRUE)
       if(verbose){

@@ -2,11 +2,9 @@ matchit <- function(formula, model="logit", data, discard=0,
                     reestimate=FALSE, nearest=TRUE, replace=FALSE,
                     m.order=2, ratio=1, caliper=0, calclosest=FALSE,
                     subclass=0, sub.by="treat", mahvars=NULL, exact=FALSE,
-                    counter=TRUE, full = list(full=FALSE, min.controls = 0, 
-                                    max.controls = Inf,
-                                    omit.fraction = NULL, tol = 0.01), ...){ 
+                    counter=TRUE, full = FALSE, full.options=list(), ...){ 
   cl <- match.call()
-  if (m.order==1 | full$full)
+  if (m.order==1 | full)
     require(optmatch)
   
   #Checking input format
@@ -71,10 +69,10 @@ matchit <- function(formula, model="logit", data, discard=0,
   if(!(identical(counter,TRUE)| identical(counter,FALSE))){
     warning("counter=",cl$counter," is invalid; used counter=TRUE instead",call.=FALSE);counter=TRUE}    
   #full matching
-  if(!(identical(full$full,TRUE) | identical(full$full,FALSE))){
-    warning("full=list(full=",cl$full,") is invalid; used full=list(full=FALSE) instead",call. = FALSE)
-    full$full <- FALSE
-  } else if(full$full & nearest){
+  if(!(identical(full,TRUE) | identical(full,FALSE))){
+    warning("full=",cl$full,") is invalid; used full=FALSE instead",call. = FALSE)
+    full <- FALSE
+  } else if(full & nearest){
     warning("Full matching will ignore nearest neighbor inputs",call. = FALSE)
     nearest <- F
   }
@@ -132,7 +130,7 @@ matchit <- function(formula, model="logit", data, discard=0,
     mf[[1]] <- as.name("distance")
     mf$nearest <- mf$replace <- mf$m.order <- mf$ratio <- mf$caliper <- 
       mf$calclosest <- mf$subclass <- mf$sub.by <- mf$mahvars <-
-        mf$exact <- mf$full <- NULL 
+        mf$exact <- mf$full <- mf$full.options <- NULL 
     a <- eval(as.call(mf), sys.frame(sys.parent()))
     if(!is.null(dotsub)) { 
       data <- data[dotsub,]
@@ -147,7 +145,7 @@ matchit <- function(formula, model="logit", data, discard=0,
     b1 <- subclassify(formula, data, a$in.sample, a$pscore,
                       nearest = nearest, b$match.matrix,
                       subclass = subclass, sub.by = sub.by, counter =
-                      counter, full = full)
+                      counter, full = full, full.options=full.options)
     
     c <- diagnose(formula, b$match.matrix, a$pscore, a$in.sample,
                   data=data, exact=exact, mahvars=mahvars,
