@@ -1110,7 +1110,7 @@ controls may not make a material difference in the end anyway.
 Perhaps the simplest, and also most commonly used, low dimensional
 summary compares the mean of the treatment group for each variable in
 $X$ with the mean of that variable in the control group.  If one or
-more of these differ by more than half a standard deviation from the
+more of these differ by more than half a standard deviation of the
 respective $X$ variable, then better balance is needed.  We can also
 compare the variances of each variable between the two groups, as well
 as interactions or higher order moments.  Another common approach is
@@ -1612,7 +1612,7 @@ where preprocessing could hurt is if some covariate has a huge effect
 on the outcome variable and preprocessing slightly reduces balance on
 this variable but improves it for all the others.  A researcher might
 be fooled into choosing a matching tradeoff like this if he or she
-were not aware of large effect of this covariate.
+were not aware of the large effect of this covariate.
 
 Second, as with all statistical methods, a bias-variance tradeoff
 exists for matching.  If we drop many observations during
@@ -1635,7 +1635,7 @@ concerned about the sensitivity of our results to changes in this
 process, just as we have been concerned with the sensitivity of causal
 effect estimates to parametric modeling assumptions.  In our view,
 this is not a major issue since the right procedure is the one that
-maximizes balance (with a large as possible $n$), no matter how many
+maximizes balance (with an as large as possible $n$), no matter how many
 procedures we try.  By applying this criterion in a disciplined way
 (i.e., without consulting $y$) to a large number of possible matching
 procedures, no choices are open to the analyst.  Instead, researchers
