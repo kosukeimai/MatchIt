@@ -91,10 +91,9 @@ advances in nonparametric, non-model-based inference, and focusing
 around diverse generalizations of matching estimators for causal
 inference.  This work shows considerable promise for increasing the
 reliability and validity of causal inferences from standard parametric
-regressions that social scientists typically run.  The new methods
-make it possible to reduce or eliminate the functional form and other
-assumptions of parametric models and to verify empirically rather than
-assume critical features of the model.
+regressions that social scientists typically run by reducing or
+eliminating functional form and other assumptions of parametric
+models.
 
 The statistical literature on matching has grown quite sophisticated
 but, from the point of view of the practical researcher, it looks like
@@ -212,10 +211,10 @@ estimates of interest at the population level.
 
 \paragraph{Realized Causal Effects}
 Because of pretreatment differences among the districts (both
-measured, $X_i$, and unmeasured), the causal effect may differ across
-the districts.  As such, the definition of the causal effect exists at
-the district level, but the definition does not otherwise require
-reference to the pretreatment variables.
+measured, $X_i$, and unmeasured), the causal effect may also differ
+across the districts.  We therefore define the casual effect at the
+district level.  Except for this point, the definition itself does not
+require reference to the pretreatment variables.
 
 A causal effect is a function of \emph{potential outcomes}: let
 $y_i(1)\equiv y_i(t_i=1)$ be the vote we would observe in district $i$
@@ -230,16 +229,7 @@ potential outcomes remain the same regardless of whether the treatment
 is in fact applied in district $i$ or not.  However, since the
 Democratic Party either will nominate ($t_i=1$) or will not nominate
 ($t_i=0$) an incumbent to run in district $i$, we will observe either
-$y_{i}(1)$ or $y_{i}(0)$ but not both.\footnote{We assume throughout
-  that every unit within each treatment group receives the same
-  treatment.  This assumption would be violated in our running example
-  if the nomination the Democratic party gives to the incumbent in
-  some districts means something different from that in other
-  districts.  We also assume that the treatment in one unit has no
-  effect on the potential outcomes in any unit other than its own.
-  Together these two assumptions are sometimes known under the awkward
-  name of the ``stable unit treatment value assumption'' or SUTVA
-  \citep{Rubin74}.}
+$y_{i}(1)$ or $y_{i}(0)$ but not both.
 
 The difference between the two potential outcomes defines the simplest
 realized (or in-sample) definition of a causal effect:
@@ -260,7 +250,8 @@ programs in the social sciences, the inherent difficulty of this goal
 is not always fully appreciated.  To clarify this issue, and to
 further clarify the definition of causal effects, we now show how
 causal inference is an extreme special case of two areas of statistics
-that are widely, but incorrectly, perceived to be more difficult.
+that are widely, but incorrectly, perceived to be more difficult than
+causal inference.
 
 If district $i$ receives the treatment, we observe $y_i=y_i(1)$ but
 not $y_i(0)$ and otherwise we observe $y_i=y_i(0)$ but not $y_i(1)$.
@@ -365,7 +356,7 @@ difference is not always important from a practical viewpoint since a
 good estimator for one is ``automatically a good estimator for the
 other'' \citep[p.6][]{Imbens04}.
 
-Among in sample effects, we consider two choices.  The first is the
+Among in-sample effects, we consider two choices.  The first is the
 average treatment effect or ATE:
 \begin{align}
   \label{pate}
@@ -396,7 +387,7 @@ training programs, we are not normally interested in assigning
 employed people to have this training.  In the social sciences, the
 ATT is also a reasonable choice, but so is the average treatment
 effect (the ATE).  In our running example, we might be interested not
-only in the effect of incumbency when the incumbent were nominated,
+only in the effect of incumbency when the incumbent is nominated,
 but we can also imagine what might have happened if an incumbent were
 nominated a district in which he or she did not actually receive the
 nomination.  In this paper, we usually focus on ATT as the quantity of
@@ -415,11 +406,11 @@ methods.
 
 \subsection{Experimental}
 
-Although classical randomized experiments are only very rarely
-conducted in political science, they remain a useful ideal type for
-understanding other types of research.  Indeed, some of the
-assumptions necessary for valid inference in experiments are
-approximated by the preprocessing procedures we suggest below.
+Although classical randomized experiments are only rarely conducted in
+political science, they remain a useful ideal type for understanding
+other research designs.  Indeed, some of the assumptions necessary for
+valid inference in experiments are approximated by the preprocessing
+procedures we suggest below.
 
 Valid and relatively straightforward causal inferences can be achieved
 via classical randomized experiments.  Such experiments have three
@@ -447,8 +438,8 @@ $y_i(1)$ and $y_i(0)$.  If instead one or more of the three conditions
 do not hold, then $X_i$ may be omitted without any resulting bias
 (although the variance may increase).  Random assignment guarantees
 that $t_i$ is unrelated to \emph{any} $X_i$, whether measured or not,
-except by random chance.  Moreover, the large $n$ in condition
-guarantees that this chance is vanishingly small.
+except by random chance.  Moreover, the large $n$ condition guarantees
+that this chance is vanishingly small.
 
 Classical randomized experiments are a true ideal type, particularly
 in relation to most social science research which almost always fails
@@ -506,7 +497,16 @@ that are not measured.
 Assuming ignorability and the absence of selection bias still leaves
 many assumptions to be made when choosing a specific statistical
 inference method.  We now focus on this point in the context of
-commonly used parametric methods.
+commonly used parametric methods.\footnote{We assume throughout that
+  every unit within each treatment group receives the same treatment.
+  This assumption would be violated in our running example if the
+  nomination the Democratic party gives to the incumbent in some
+  districts means something different from that in other districts.
+  We also assume that the treatment in one unit has no effect on the
+  potential outcomes in any unit other than its own.  Together these
+  two assumptions are sometimes known under the awkward name of the
+  ``stable unit treatment value assumption'' or SUTVA
+  \citep{Rubin74}.}
 
 \section{Parametric Analysis Methods}
 
@@ -1350,7 +1350,7 @@ we ignored interactions and nonlinearities, this amounts to $262,143$
 survival analyses, all of which we ran. Figure~\ref{fg:fdadens}
 presents the density plot for the estimated average treatment effects
 for the raw data as well as the matched (preprocessed) data.  The key
-result here is that estimates are far more model dependent using the
+result here is that estimates are far more model-dependent using the
 raw data than using the matched data.  For example, the variance of
 the estimated average treatment effect from the matched data is more
 than three times as large as that from the raw data.  Although
@@ -1549,7 +1549,7 @@ variance across specifications is more than six times smaller than for
 the raw data, as shown by the highly peaked density.  Rather than
 erring on the conservative side, the reported point estimate now
 appears to be substantially larger in substantive effect than we might
-expect from the more valid and less model dependent preprocessed data.
+expect from the more valid and less model-dependent preprocessed data.
 
 In short, not only can preprocessing reduce model dependence,
 decreasing the probability that researchers may inadvertently present
@@ -1626,17 +1626,18 @@ no matter what method is chosen.
 \section{Concluding Remarks}
 
 Anyone using a parametric statistical technique for long enough (and
-it doesn't take very long) will recognize the dilemma of which of
-hundreds of possible regressions to present in a written work.  This
-choice is difficult, fraught with ethical and methodological dilemmas,
-and not covered in any serious way in classical statistics texts.
-Parametric methods merely assume that we know the correct
-specification.  In practice, the ``correct'' specification is chosen
-after looking at the estimates and so it is never to a reader whether
-an article is a true test of an ex ante hypothesis, in the sense that
-the author was vulnerable to being proved wrong, or whether the
-article is merely a proof that it is \emph{possible} to find a
-specification consistent with the author's favored hypothesis.
+it doesn't take very long) will recognize the difficulty of choosing
+which of hundreds of possible regressions to present in a written
+work.  This choice is difficult, fraught with ethical and
+methodological dilemmas, and not covered in any serious way in
+classical statistics texts.  Parametric methods merely assume that we
+know the correct specification.  In practice, the ``correct''
+specification is chosen after looking at the estimates and so it is
+never clear to a reader whether an article is a true test of an ex
+ante hypothesis, in the sense that the author was vulnerable to being
+proved wrong, or whether the article is merely a proof that it is
+\emph{possible} to find a specification consistent with the author's
+favored hypothesis.
 
 We provide a way around at least some of this problem.  Preprocessing
 raw data with the matching procedures we recommend makes familiar
