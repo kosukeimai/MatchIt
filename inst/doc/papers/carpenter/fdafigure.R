@@ -18,11 +18,11 @@ doverlay <- function(x1, x0, xlab = "", main = "", lines = FALSE,
   }
 }
 
-trellis.device(device="pdf",file="fda.pdf",color=FALSE,width=6,height=4)
+trellis.device(device="pdf",file="fdadens.pdf",color=FALSE,width=6,height=4)
 par(mar=c(2, 2, 2, 2) + 0.1, cex.lab=0.6, cex.axis=0.6,
     mgp=c(1,0.5,0), cex.main=0.5, cex=0.8)
 doverlay(mate,ate,lwd=2,
-         xlab="Average Treatment Effect", leg=F)
+         xlab="Estimated Average Treatment Effect", leg=F)
 arrows(ate[length(ate)], 0.12, ate[length(ate)],0, length=0.1)
 text(-20,0.04,"Full Data")
 text(-40,0.08,"Matched\nData")
