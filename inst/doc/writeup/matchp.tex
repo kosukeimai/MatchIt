@@ -1388,8 +1388,8 @@ compared to the control of invisible male and female candidates
 Since randomly assigning visibility to candidates in real elections is
 infeasible, \citet{Koch02} collects observational data, with
 pretreatment covariates including candidate ideology, voter perception
-of party ideology, respondent ideology, feeling thermometer, and
-political awareness.  Koch uses least squares to adjust for these
+of party ideology, respondent ideology, candidate feeling thermometer,
+and political awareness.  Koch uses least squares to adjust for these
 explanatory variables, varying only the treatment.  Yet, we can see
 that even with such a small number of covariates, the curse of
 dimensionality looms large.  Given unique values of these covariates,
@@ -1565,9 +1565,13 @@ small changes in procedures, and of course it produces a data set that
 is by design less sensitive to model assumptions.  However, like any
 method, using it badly or to ill effecxt is certainly possible.  Thus,
 in this section, we discuss what can go wrong and how we might avoid
-these problems.  We discuss five issues.
+these problems.  We discuss five issues, some of which have come up
+already.
 
-First, 
+First, the curse of dimensionality affects balancing diagnostics of
+course, and we may well miss a higher dimensional imbalance when
+checking lower dimensional summaries.  Even if we were not interested
+in testing this with our parametric model, and 
 
 \section{Concluding Remarks}
 
