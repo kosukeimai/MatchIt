@@ -6,8 +6,8 @@ library(Zelig)
 library(mvtnorm)
 library(combinat)
 library(lattice)
-#setwd("c:/R/match/docs/papers/koch/")
-setwd("c:/match/docs/papers/koch/")
+setwd("c:/R/match/docs/papers/koch/")
+#setwd("c:/match/docs/papers/koch/")
 source("fn.R")
 dta <- read.dta("genharvard.dta")
 
@@ -52,10 +52,10 @@ for (i in N:(length(xvars)-1)) {
     ftmp <- as.formula(ftmp)
     tmp <- lm(ftmp,  data = dta.full)
     coef[counter] <- tmp$coefficient[tt]
-    tmp <- zelig(ftmp, data = dta.match, model="ls", by="psclass") 
+    tmp <- zelig(ftmp, data = dta.match, model="ls", by="psclass")
     wate <- 0
     for(l in 1:length(tmp)){
-      wate <- wate + tmp[[l]]$coefficient[tt]*sum(dta.match$psclass==l & dta.match[,tt]==1)/sum(dta.match$psclass!=0 & dta.match[,tt]==1)      
+      wate <- wate + tmp[[l]]$coefficient[tt]*sum(dta.match$psclass==l & dta.match[,tt]==1)/sum(dta.match$psclass!=0 & dta.match[,tt]==1)
     }
     mcoef[counter] <- wate
     counter <- counter + 1
@@ -74,37 +74,40 @@ mcoef[length(mcoef)] <- wate
 #tables
 library(xtable)
 sm1 <- summary(m1)
-tab1 <- sm1$sum.all[1:7,]
+tab1 <- cbind(sm1$sum.all[1:7,c(1,2,4)],sm1$q.table[1:7,c(1,2,4) , 4])
 row.names(tab1) <- c("Propensity Score", "Candidate Ideology",
                  "Perception of Party Ideology", "Respondent Ideology",
                  "Respondent Ideology * Feeling Thermometer",
                  "Feeling Thermometer", "Political Awareness")
 xtable(tab1)
 
+
 number.t <- sm1$q.table[nrow(sm1$q.table), , ][1, ]
 number.c <- sm1$q.table[nrow(sm1$q.table), , ][2, ]
 number.all <- sm1$q.table[nrow(sm1$q.table), , ][3, ]
-tab2 <- rbind(sm1$q.table[1, , ], number.t, number.c, 
-                number.all)
-row.names(tab2) <- c("Means for Treated", "Means for Control",
-                 "SE", "T-stat", "Bias stat", "Reduction",
-                 "No. treated", "No. control", "N")
-xtable(tab2)
-
-tab3 <- sm1$q.table[2:7,4,]
-row.names(tab3) <- c("Candidate Ideology",
+tab2 <- rbind(sm1$q.table[2:7,4,],number.t, number.c, 
+              number.all)
+row.names(tab2) <- c("Candidate Ideology",
                      "Perception of Party Ideology", "Respondent Ideology",
                      "Respondent Ideology * Feeling Thermometer",
-                     "Feeling Thermometer", "Political Awareness")
-xtable(tab3)
+                     "Feeling Thermometer", "Political Awareness",
+                     "No. treated", "No. control", "N")
+xtable(tab2)
 
 #plotting figure
-setwd("c:/match/docs/papers/koch/writeup")
+#setwd("c:/match/docs/papers/koch/writeup")
+setwd("c:/R/match/docs/papers/koch/writeup")
 trellis.device(device="pdf",file="dens.pdf",color=FALSE,width=6,height=4)
 par(mar=c(2, 2, 2, 2) + 0.1, cex.lab=0.6, cex.axis=0.6,
     mgp=c(1,0.5,0), cex.main=0.5, cex=0.8)
-doverlay(coef,mcoef,lwd=2, col=c("black","darkgrey"), xlab="Average Treatment Effect")
-abline(v=coefficients(res)[tt])
-arrows(-0.35,4.8,-0.252,3.9,length=0.1)
-text(-0.35,5.4,"Point Estimate \n of Full Data")
+doverlay(coef,mcoef,lwd=2,
+         xlab="Average Treatment Effect", leg=F)
+arrows(coefficients(res)[tt], 4.7, coefficients(res)[tt],0, length=0.1)
+text(-0.532,3,"Full Data")
+text(-0.25,8.85,"Matched\nData")
+text(-0.3,5.4,"Point Estimate \n of Full Data")
 dev.off()
+
+nn <- 0
+for(i in 1:6){
+  nn <- nn + choose(6,i)}

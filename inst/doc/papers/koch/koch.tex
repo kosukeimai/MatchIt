@@ -58,82 +58,66 @@ bookmarksnumbered=true, linkcolor=webred]{hyperref}
 
 \begin{table}[ht]
   \begin{center}
-    \begin{tabular}{lrrrrr}
+    \begin{tabular}{lrrrrrr}
       \hline
-      & Mean for  & Mean for \\
-      & Treated & Control  & SE & t-stat & Bias stat \\
+      & \MC{3}{c}{\bf Raw Data} & \MC{3}{c}{\bf Pre-processed Data
+      (subclass 4)}\\
+      & Mean for  & Mean for  &    & Mean for  & Mean for \\
+      & Treated & Control  & t-stat &    Treated & Control  & t-stat \\
       \hline
-      Propensity Score & 0.48 & 0.10 & 0.23 & 10.71 & 1.65 \\
-      Candidate Ideology & 0.44 & 0.20 & 0.15 & 12.18 & 1.52 \\
-      Perception of Party Ideology & 0.72 & 0.73 & 0.19 & -0.42 & -0.05 \\
-      Respondent Ideology & 0.49 & 0.53 & 0.28 & -0.97 & -0.12 \\
-      Respondent Ideology $\times$ & 0.31 & 0.32 & 0.23 & -0.44 &
-      -0.06 \\
-      Feeling Thermometer \\
-      Feeling Thermometer & 0.60 & 0.55 & 0.22 & 1.70 & 0.22 \\
-      Political Awareness & 0.76 & 0.70 & 0.22 & 2.42 & 0.29 \\
+      Propensity Score & 0.48 & 0.10 & 10.71 & 0.61 & 0.54 & 2.32 \\
+      Candidate Ideology & 0.44 & 0.20 & 12.18 & 0.50 & 0.48 & 1.15 \\
+      Perception of Party Ideology & 0.72 & 0.73 & -0.42 & 0.69 & 0.67 & 0.24 \\
+      Respondent Ideology & 0.49 & 0.53 & -0.97 & 0.45 & 0.50 & -0.38 \\
+      \hspace{0.1in} Respondent Ideology $\times$ & 0.31 & 0.32 & -0.44 & 0.27 &
+      0.25 & 0.18 \\
+      Feeling Thermometer\\
+      Feeling Thermometer & 0.60 & 0.55 & 1.70 & 0.54 & 0.53 & 0.03 \\
+      Political Awareness & 0.76 & 0.70 & 2.42 & 0.76 & 0.74 & 0.28 \\
       \hline
     \end{tabular}
     \caption{Imbalance of pre-treatment covariates in the Koch data.  The
-      first two columns present means for visible (``treated'') and
-      invisible (``control'') female Republican candidates. SE
-      represents pooled standard errors; t-stat represents means test
-      statistic; and Bias stat presents balance bias statistic.  This
-      table shows that candidate ideology is highly imbalanced in the
-      full Koch data.  Visible females, for example, were much more
-      likely to be perceived as liberal than invisible females.}
+      first three columns present means for visible (``treated'') and
+      invisible (``control'') female Republican candidatens and
+      t-statistics for the full dataset.  The last three columns
+      present means and t-statistics for one representative subclass.
+      This table shows that candidate ideology is highly imbalanced in
+      the full Koch data, and that balance can be achieved by
+      subclassification.  Visible females, for example, were much more
+      likely to be perceived as liberal than invisible females
+      overall, but within subclass 4 this difference diminishes.}
     \label{tb:kochmtest}
   \end{center}
 \end{table}
 
-\begin{table}[ht]
-  \begin{center}
-    \begin{tabular}{lrrrrrr}
-      \hline
-      & Subclass 1 & Subclass 2 & Subclass 3 & Subclass 4 & Subclass 5 & Subclass 6 \\
-      \hline
-      Means for Treated & 0.08 & 0.19 & 0.32 & 0.61 & 0.77 & 0.88 \\
-      Means for Control & 0.05 & 0.19 & 0.30 & 0.54 & 0.75 & 0.90 \\
-      SE & 0.03 & 0.03 & 0.07 & 0.08 & 0.03 & 0.03 \\
-      T-stat & 2.32 & 0.29 & 0.90 & 2.32 & 1.08 & -0.56 \\
-      Bias stat & 0.13 & 0.01 & 0.09 & 0.28 & 0.07 & -0.09 \\
-      Reduction & 1.00 & 1.00 & 1.00 & 1.00 & 1.00 & 1.00 \\
-      N treated & 14.00 & 13.00 & 13.00 & 14.00 & 13.00 & 11.00 \\
-      N control & 299.00 & 30.00 & 39.00 & 12.00 & 3.00 & 2.00 \\
-      N & 313.00 & 43.00 & 52.00 & 26.00 & 16.00 & 13.00 \\
-      \hline
-    \end{tabular}
-    \caption{Summary of subclassification and balance of propensity
-      score.  Reduction indicates if there was an increase in balance
-      of the propensity score; No. treated / control indicates the number of
-      treated / control units in each subclass; N indicates the total
-      number of units in each subclass.  This table shows that
-      subclassification reduces imbalance of covariates (as summarized
-      by the propensity score).}
-    \label{tb:kochpsub}
-  \end{center}
-\end{table}
 
 \begin{table}[ht]
   \begin{center}
     \begin{tabular}{lrrrrrr}
       \hline
-      Covariate & Subclass 1 & Subclass 2 & Subclass 3 & Subclass 4 & Subclass 5 & Subclass 6 \\
+      & \MC{6}{c}{\bf Subclass} \\
+      Covariate &  1 &  2 &  3 &  4 &  5 &  6 \\
       \hline
       Candidate Ideology & 2.16 & -0.85 & 0.33 & 1.15 & 1.51 & -0.45 \\
       Perception of Party Ideology & -0.65 & -1.05 & 0.59 & 0.24 & 0.06 & 1.53 \\
       Respondent Ideology & 1.45 & -0.73 & 1.08 & -0.38 & -1.26 & -1.00 \\
       Respondent Ideology $\times$ & 0.50 & -0.81 & 1.64 & 0.18 &
       -1.44 & -0.42 \\
-      Feeling Thermometer \\
+      \hspace{0.1in} Feeling Thermometer \\
       Feeling Thermometer & -0.03 & 0.33 & 1.61 & 0.03 & -1.34 & 1.08 \\
       Political Awareness & 0.53 & 0.14 & -1.50 & 0.28 & -1.08 & 0.66 \\
+      No. treated & 14.00 & 13.00 & 13.00 & 14.00 & 13.00 & 11.00 \\
+      No. control & 299.00 & 30.00 & 39.00 & 12.00 & 3.00 & 2.00 \\
+      $N$ & 313.00 & 43.00 & 52.00 & 26.00 & 16.00 & 13.00 \\
       \hline
     \end{tabular}
     \caption{Means test statistics for six pre-treatment covariates.
       Each cell presents t-statistic for the covariate within each
-      subclass.  This table shows that relative balance can be
-      achieved within each subclass with only six subclasses. }
+      subclass, and No. treated / control indicates the number of
+      treated / control units in each subclass and $N$ indicates the total
+      number of units in each subclass.  This table shows that
+      relative balance can be achieved within each subclass with only
+      six subclasses.}
     \label{tb:kochxsub}
   \end{center}
 \end{table}
@@ -149,7 +133,7 @@ bookmarksnumbered=true, linkcolor=webred]{hyperref}
     specifications with the Koch data.  The solid line presents
     estimates for the full dataset and the dashed line presents
     estimates for the matched dataset (via subclassification).  The
-    solid vertical line presents the point estimate of the regression
+    vertical arrow presents the point estimate of the regression
     presented in the original paper.  This figure shows that treatment
     effect estimates are much more sensitive to model specification
     for the full dataset compared to the matched dataset.}

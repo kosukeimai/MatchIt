@@ -23,17 +23,20 @@ draw.ols <- function(ols1,sims=1000){
   return(sim.beta)
 }
 #overlaying densities
-doverlay <- function(x1, x0, xlab = "", main = "", lines = FALSE, ...)
+doverlay <- function(x1, x0, xlab = "", main = "", lines = FALSE,
+                     leg=T, ...)
 {
   x <- c(x1,x0)
-  minobs <- min(x)
-  maxobs <- max(x)
-  dx1 <- density(x1, from = minobs, to = maxobs)
-  dx0 <- density(x0, from = minobs, to = maxobs)
-    matplot(dx0$x, cbind(dx1$y, dx0$y), type = "l", ylab = "Density", 
-            xlab = xlab, main = main, ...)
-  legend(minobs, max(c(dx1$y, dx0$y)), lty = 1:2, 
-         legend = c("Full Data", "Matched Data"), ...)
+  dx1 <- density(x1)#, from = minobs, to = maxobs)
+  dx0 <- density(x0)#, from = minobs, to = maxobs)
+  plot(dx1, type = "l", ylab = "Density", 
+       xlab = xlab, main = main, xlim=range(c(dx1$x,dx0$x)),
+       ylim = range(c(dx1$y,dx0$y)),...)
+  lines(dx0, lty=2, ...)
+  if(leg){
+    legend(minobs, max(c(dx1$y, dx0$y)), lty = 1:2, 
+           legend = c("Full Data", "Matched Data"), ...)
+  }
 }
 
 #model adjustment
