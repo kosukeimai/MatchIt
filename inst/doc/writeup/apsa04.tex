@@ -1,0 +1,92 @@
+\documentclass[20pt,landscape,pdftex]{foils}
+
+\usepackage{ppftlk}
+\renewcommand{\P}{\text{P}}
+\newcommand{\MC}{\multicolumn}
+\renewcommand\r{\right}
+\renewcommand\l{\left}
+\newcommand\dist{\buildrel\rm d\over\sim}
+\newcommand\ind{\stackrel{\rm indep.}{\sim}}
+\newcommand{\cY}{{\cal Y}}
+\newcommand{\cT}{{\cal T}}
+\setlength{\doublerulesep}{\arrayrulewidth}
+\newtheorem{assumption}{Assumption}
+\newcommand{\indep}{{\bot\negthickspace\negthickspace\bot}} 
+\newcommand\spacingset[1]{\renewcommand{\baselinestretch}%
+{#1}\small\normalsize}
+
+%
+\title{Matching as Nonparametric Preprocessing for Improving
+  Parametric Causal Inference}
+
+\date{August, 2004}
+\author{Daniel E. Ho \\
+  Yale Law School\\
+  \\
+  Kosuke Imai\\
+  Department of Politics\\ Princeton University \\
+  \\ 
+  Gary King\\
+  Department of Government\\ Harvard University\\
+  \\
+  Elizabeth A. Stuart\\
+  Department of Statistics\\ Harvard University
+\mbox{}\pdfbookmark{TitlePage}{stlab0}}
+
+\parindent=0pt
+\begin{document}
+\color{black}
+\LOGOOFF
+%\hypersetup{pdfpagetransition={Split /Dm /H /M /O}}
+%\hypersetup{pdfpagetransition={Blinds /Dm /H}}
+\hypersetup{pdfpagetransition={Box /M /O}}
+%\hypersetup{pdfpagetransition==Dissolve}
+\maketitle
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\foilhead{Introduction\pause}
+
+\hypersetup{pdfpagetransition=Replace}
+
+\begin{itemize}
+\item Matching, a new statistics literature on causal inferences:\pause
+  \begin{enumerate}
+  \item nonparametric, non-model based methods.\pause
+  \item reducing or eliminating functional form and other assumptions.\pause
+  \end{enumerate}
+  
+\item But, from the point of view of practical researchers,\pause
+  \begin{enumerate}    
+  \item conflicting techniques, practices, guidelines, and rules of thumbs. \pause
+  \item calculation of valid standard errors is complicated or
+    unavailable.\pause
+  \item few theoretical results.\pause
+  \end{enumerate}
+
+\item Our unifying idea of this diverse literature:\pause 
+  \begin{enumerate}
+  \item use matching NOT as a substitute for familiar parametric
+    regression analysis.\pause
+  \item use matching to make our parametric models work better.\pause
+  \end{enumerate}
+
+\item Under our proposed framework,\pause
+  \begin{enumerate}
+  \item parametric analyses are applied to preprocessed data rather
+    than to raw data.\pause
+  \item valid standard errors are readily available.\pause
+  \item resulting estimates are less model dependent.\pause
+  \end{enumerate} 
+
+\item Easy-to-use software: MatchIt available at http://gking.harvard.edu/matchit/
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\foilhead{Definition of Causal Effects\pause}
+
+\hypersetup{pdfpagetransition=Replace}
+
+
+\end{document}
