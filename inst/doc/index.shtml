@@ -16,7 +16,8 @@
 <p>"At MatchIt, we don't make parametric models, we make parametric models
 work better."
 
-<p>Version: Pre-release, beta 0.8
+<!-- rbuild: replace 'Version:' '</b>' version -->
+<b>Version: 0.8</b>
 
   <table width="90%" border="0" cellpadding="10">
     <tr>

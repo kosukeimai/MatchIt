@@ -23,7 +23,7 @@
   {http://gking.harvard.edu/}}
 \newcommand{\hlink}{\htmladdnormallink}
 
-\bodytext{ BACKGROUND="http://gking.harvard.edu/pics/temple.setcounter"}
+\bodytext{ BACKGROUND="http://gking.harvard.edu/pics/temple.jpg"}
 \setcounter{tocdepth}{3}
 
 \newcommand{\MatchIt}{\textsc{MatchIt}}
@@ -224,15 +224,13 @@ E(\text{re78}(\text{treat}=1) | \text{treat}=1) - E(\text{re78}(\text{treat}=0) 
 \noindent where \texttt{re78(treat=1)} represents the potential
 outcome under the treatment of the job program, and
 \texttt{re78(treat=0)} under control.  To be clear, note that the
-first expression in Equation~\ref{re78eqn} is \emph{observed}, whereas
-the second expression is the \emph{unobserved} counterfactual of real
-earnings if participants had not participated.  The same expression of
-the ATT, in the notation that has been generally adopted, is:
-
+first term in Equation~\ref{re78eqn} is \emph{observed}, whereas the
+second term is the \emph{unobserved} counterfactual of real earnings
+if participants had not participated.  The same expression of the ATT,
+in mathematical notation is:
 \begin{equation}
-E(Y_i(1) | T_i=1 ) - E(Y_i(0) | T_i=1).
+  E(Y_{1i} | t_i=1 ) - E(Y_{0i} | t_i=1).
 \end{equation}
-
 \begin{table}[h]
 \label{dwvars}
 \centering
@@ -263,8 +261,8 @@ E(Y_i(1) | T_i=1 ) - E(Y_i(0) | T_i=1).
 \subsection{Exact Matching \label{exactm}}
 
 The simplest version of matching is exact.  This technique matches
-every treated unit to all possible control units with the same
-covariate values.  For example, to find exact matches on
+\emph{each} treated unit to \emph{all} possible control units with the
+same covariate values.  For example, to find exact matches on
 race:\footnote{The examples in this document are for illustrative
   purposes only, and are not intended to obtain actual estimates of
   the average treatment effect, which would clearly require taking
@@ -295,7 +293,8 @@ Matched     185     429   614
 \end{verbatim} 
 The printout includes the original call to \MatchIt\ and the fact that
 all 185 treatment units were exactly matched to all 429 control units
-on race covariates.
+on race covariates.  (Obviously finding exact matches becomes more
+difficult as we add covariates.)
 
 We can obtain more information on the matching using the {\tt summary}
 command:
@@ -331,12 +330,13 @@ The results indicate that the means of the race variables ({\tt black}
 and {\tt hispan}) are quite different between the full treated and
 control groups, but within each subclass formed by these two binary
 covariates the values of the race variables of the treated and control
-units are the same.  These two binary covariates form three
-subclasses, and we see, for example, that 243 units (156 treated and
-87 control) are black and non-hispanic.  The balance bias statistic
-presented in the right column of the first table is a measure of how
-close covariates between treated and control groups are.  For a formal
-definition, see Subsection~\ref{cmd:sum}.
+units are (by the construction of this exact matching procedure) the
+same.  These two binary covariates form three subclasses, and we see,
+for example, that 243 units (156 treated and 87 control) are black and
+non-hispanic.  The balance bias statistic presented in the right
+column of the first table is the mean difference between covariate
+values for controls and treated in standard deviation units; for a
+formal definition, see Subsection~\ref{cmd:sum}.
 
 We can use the {\tt psclass} component of {\tt foo1} to identify which
 units are in each subclass and to verify their covariate values.
@@ -1837,7 +1837,8 @@ least squares regression can be fit to the matched data, using the
  1340.0095   801.4961     1.6719     0.0954
 
 
-\end{verbatim} %$
+\end{verbatim} 
+%$
 
 \subsection{Using Zelig for analysis}
 Zelig is an easy-to-use R program estimates a variety of statistical
