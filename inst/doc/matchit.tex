@@ -49,8 +49,7 @@ Gary King,\thanks{David Florence Professor of Government, Harvard
   495-2027).}
 \and %
 Elizabeth A. Stuart\thanks{Researcher, Mathematica Policy Research, Inc.\, Ph.D.\, Department of Statistics,
-  Harvard University. (Science Center 702, One Oxford Street,
-  Cambridge, MA 02138, USA;
+  Harvard University. (600 Maryland Ave., SW, Suite 550, Washington, DC 20024, USA;
   \texttt{http://www.mathematica-mpr.com},
   \texttt{Stuart@Stat.Harvard.Edu}).}}
 
@@ -136,7 +135,7 @@ There are two ways to install \MatchIt\:
 \end{enumerate}
 
 \subsection{Loading \MatchIt}
-As with any R package, you must install \MatchIt\ only once, and you
+As with any R package, you must install \MatchIt\ only once, but you
 must load it prior to each use.  You can do this for each R session by
 typing:
 \begin{verbatim}
@@ -145,7 +144,6 @@ typing:
 at the command prompt.  Alternatively, you can specify R to load
 \MatchIt\ automatically at launch.  (This allows you to skip the step
 of typing {\tt library(Matchit)} at the beginning of every R session.)
- 
 To do this, edit the {\tt Rprofile} file located in the R program
 subdirectory, e.g. \texttt{C:/R/rw1091/etc/}, for Windows systems and
 the {\tt .Rprofile} file located in the home directory for Unix/Linux
@@ -185,7 +183,7 @@ run by:
 \MatchIt\ is designed for studies with a dependent variable that is a
 function of a single dichotomous causal variable, with values known as
 the ``treatment'' and ``control'' groups, and a set of pretreatment
-controls covariates.  \MatchIt\ can be used for other types of causal
+covariates.  \MatchIt\ can be used for other types of causal
 variables by dichotomizing them, perhaps in multiple ways.
 
 Unless otherwise noted, let $i$ index the $n$ units in the dataset,
@@ -595,7 +593,7 @@ We can also check the propensity score and covariate distribution with
 diagnostic plots, which are depicted in Figure~\ref{f2diags}.  These
 plot functions are interactive.  For example, the first menu asks
 whether you would like to see density estimates of the propensity
-scores.  Inputting \texttt{1} will yield the left-hand panel in
+scores.  Inputting \texttt{1} will yield the top panel in
 Figure~\ref{f2diags}.
 
 \begin{verbatim}
@@ -665,10 +663,10 @@ very similar distributions in the matched treated and control groups.
 \subsection{Optimal matching}
 \label{optmatch}
 The default nearest neighbor 
-matching method in \MatchIt\ is what is known as ``greedy" matching, where the closest control match for each treated unit
+matching method in \MatchIt\ is ``greedy" matching, where the closest control match for each treated unit
 is chosen  
 one at a time, without trying to minimize a global distance measure.  
-Another method, known as ``optimal" matching, finds the matched samples with the smallest average absolute
+Another method, ``optimal" matching, finds the matched samples with the smallest average absolute
 propensity score distance 
 between each matched pair.   
 With large control pools, greedy and optimal matching may lead to very similar (or the same) 
@@ -679,7 +677,7 @@ matching can be particularly helpful when there are not many appropriate control
 treated units.    See \cite{GuRos93} or \cite{Rosenbaum02} for more information on optimal matching.
 
 Optimal matching can be performed with \MatchIt\ using an add-on package called ``\texttt{optmatch}" 
-(\cite{Hansen04}).  Because \texttt{optmatch} is not yet available on CRAN, it must be installed separately, from
+(\cite{Hansen04}).  Because \texttt{optmatch} is not yet available on CRAN, it must be installed separately, from \\
 \hlink{http://www.stat.lsa.umich.edu/~bbh/optmatch.html}{http://www.stat.lsa.umich.edu/~bbh/optmatch.html}.  
 Once \texttt{optmatch} is installed, optimal matching can be 
 chosen within \MatchIt\ simply by setting \texttt{m.order=1}.  All
@@ -774,7 +772,7 @@ Number of units discarded:   0
 In this example, even though optimal matching is not guaranteed to maximize the balance in the overall matched samples, 
 the resulting balance in the matched samples is better when optimal matching is used.
 For example, the t-statistic of the propensity score in matched samples is 0.14 with greedy matching and only 
-0.03 with optimal matching.  
+0.02 with optimal matching.  
 
 \subsection{Propensity Score Matching with Exact Restriction}
 
@@ -893,7 +891,7 @@ Note that the only differences between this and the earlier propensity
 score matching example are: (a) the number of covariates used, (b) the
 \texttt{discard} option (which drops control units outside the support
 of the treated group's propensity scores, and (c) matching with
-replacement.
+replacement (so that each control unit can be matched to more than one treated unit).
 
 \subsection{Non-matched and Discarded Units}
 
@@ -1000,8 +998,8 @@ as a match only once.
 \subsection{Subclassification}
 
 After matching, you may subclassify all observations, or the matched
-units, by the propensity score into a given number of groups.  The
-\texttt{subclass} option lets you choose a number of these subclasses.
+units, into a given number of groups by the propensity score.  The
+\texttt{subclass} option lets you choose the number of these subclasses.
 When you choose this command, \MatchIt\ matches in the same way, but
 it also adds a variable to the output object with the subclass number.
 You can then use this variable by applying your parametric analysis
@@ -1116,7 +1114,8 @@ Full matching will ignore nearest neighbor inputs
 > print(summary(foo1))
 
 Assignment model specification:
-matchit(formula = treat ~ age + educ + black + hispan + married + nodegree + re74 + re75, data = lalonde, full = T)
+matchit(formula = treat ~ age + educ + black + hispan + married + nodegree + 
+	re74 + re75, data = lalonde, full = T)
 
 Summary of covariates for all data:
 
@@ -1158,19 +1157,19 @@ Number of units discarded:   0
 We see that the matching has utilized all units (the treated and control group sample sizes are the same for the full
 and matched samples), but that there has been significant reduction in bias from the full matching.  The 
 diagnostics are slightly different with full matching as compared with the previous matching methods we have discussed; 
-since many subclasses will have only one treated or control unit it 
+since many subclasses will have only one treated or one control unit it 
 is not possible to do the weighted comparisons done for standard subclassification.  
 
 To assess balance on each covariate in the matched samples obtained from full matching, a linear model is run with
-the covariate of interest (e.g., the propensity score, age, or education), and the treatment indicator and the subclass
+the covariate of interest (e.g., the propensity score, age, or education) on the left-hand side, and the treatment indicator and the subclass
 fixed effects on the right-hand side (see Section \ref{fullmatchanal} for more discussion of the use of fixed effects
 with full matching).  The mean in the treated group is defined as the average predicted value of the covariate as if all 
 units were treated; the mean in the control group is defined as the average predicted value of the covariate as if all units 
 were control.  This prevents the need to define one of the subclasses as the baseline subclass and allows a comparison
 of units across all subclasses, but still accounts for the fact that the units should be well matched within each subclass.  
 The standard deviation of each covariate is the same in the full and matched samples, since
-all units are utilized.  Finally, the t-statistc is the t-statistic of the coefficient of the treatment indicator in
-the linear model predicting the covarite; this t-statistic reflects the differences between the treated and control groups,
+all units are utilized.  Finally, the t-statistic is the t-statistic of the coefficient of the treatment indicator in
+the linear model predicting the covariate; this t-statistic reflects the differences between the treated and control groups,
 after conditioning on the subclasses.
 
 
@@ -1241,7 +1240,7 @@ foo3 <- matchit(treat~educ+re74+re75,data=lalonde,model="gam")
 foo4 <- matchit(treat~educ+re74+re75,data=lalonde,model="cart")
 \end{verbatim}
 
-Each use different models to estimate the propensity score.  Before
+Each uses a different model to estimate the propensity score.  Before
 using any of these techniques, it is best to understand the
 theoretical groundings of these techniques and to evaluate the
 results.  For political science articles discussing or implementing
@@ -1577,12 +1576,12 @@ matchit <- function(formula, data, model="logit", discard=0,
   \item \texttt{m.order}  specifies the order in which to match
     treatment units with control units:
     \begin{itemize}
-    \item (1) indicates optimal matching.  Requires add-on package \texttt{optmatch}.
-    \item (2) indicates matching from highest propensity scores to
+    \item ``1'' indicates optimal matching.  Requires add-on package \texttt{optmatch}.
+    \item ``2'' indicates matching from highest propensity scores to
       lowest (default).
-    \item (3) indicates matching from lowest propensity scores to
+    \item ``3'' indicates matching from lowest propensity scores to
       highest.
-    \item (4) indicates matching in random order.
+    \item ``4'' indicates matching in random order.
     \end{itemize}
   \item \texttt{caliper} specifies the standard deviations of 
     the propensity score within which to draw control units,
@@ -1799,7 +1798,7 @@ The \texttt{summary} call returns, when applicable:
   and interactions down the row names, and summary statistics on
   \emph{all observations} in each of the columns.  The columns in
   \texttt{sum.all} contain \footnote{The values output for full matching are slightly different
-from that described here; see Section \ref{fullmatch} for details}:
+from that described here; see Section \ref{fullmatching} for details}:
   \begin{itemize}
   \item means of all covariates $X$ for treated and control units,
     where \texttt{Means Treated}$= \mu_{X|T=1} = \frac{1}{n_1}
@@ -1823,7 +1822,8 @@ from that described here; see Section \ref{fullmatch} for details}:
 \item \texttt{sum.matched} is a data frame which contains variable
   names down the row names, and summary statistics on only the
   \emph{matched observations} in each of the columns.  Specifically,
-  the columns in \texttt{sum.matched} contains:
+  the columns in \texttt{sum.matched} contain\footnote{The values output for full matching are slightly different
+from that described here; see Section \ref{fullmatching} for details}:
   \begin{itemize}
   \item weighted means for matched treatment units of all covariates
     $X$ and their interactions, where \texttt{Means Treated}$=
@@ -2106,7 +2106,7 @@ observations where $T_i=0$).  Then, given this model, the missing
 outcomes $Y_{i0}$ are imputed for the matched treated units by using
 the values of the explanatory variables for the treated units and the
 same functional form fit to the control units.  Once those potential
-outcomes are imputed, the estimation of individual $i$'s treatment
+outcomes are imputed, the estimate of individual $i$'s treatment
 effect is $Y_{1i}-\widehat{Y_{0i}}$.  The average treatment effect for
 any subpopulation, e.g., the average treatment effect for the treated
 individuals, is the average over $i$ of this difference. An advantage
@@ -2123,7 +2123,7 @@ units.  We demonstrate this with a linear model ({\tt "lm"}), but
 range of other models.
 
 First run \MatchIt\ and then the chosen analysis model (here, linear
-regression) using zelig.  Note that the {\tt data} input for this
+regression) using Zelig.  Note that the {\tt data} input for this
 example takes only \emph{matched control units} with the {\tt
   match.data} command.
 \begin{verbatim}
@@ -2180,7 +2180,7 @@ obtained from the output objects in {\tt s.out1}.
 Alternatively, users may want to calculate treatment effects on both
 the treated and the control groups.  One option would be to simply
 run a pooled regression, for which first differences can be calculated
-in zelig.  Alternatively, we may use separate models for the treated
+in Zelig.  Alternatively, we may use separate models for the treated
 and control units to impute missing potential outcomes, as here:
 \begin{verbatim}
 > z0 <- zelig(re78 ~ age + educ + black + hispan + nodegree +
@@ -2192,7 +2192,7 @@ and control units to impute missing potential outcomes, as here:
 \end{verbatim}
 Combining simulated treatment effects from these models is
 straightforward.  Similar to the above example, we simply combine
-quantities of interest from the two models.  Note that zelig
+quantities of interest from the two models.  Note that Zelig
 calculates the difference between observed and either predicted or
 expected values.  This means that the treatment effect for the control
 units is actually the effect of control (observed control outcome
@@ -2478,7 +2478,7 @@ variety of statistical models.
 \item \texttt{model}: the name of a statistical model, enclosed in {\tt ""}.
   Currently, the following models are supported:
   \begin{itemize}
-  \item \texttt{logit}, the default method, implements of a logistic
+  \item \texttt{logit}, the default method, implements a logistic
     regression.  See {\tt help(glm)} for more options.
   \item \texttt{probit} implements a probit regression.  See
     {\tt help(glm)} for more options. 
@@ -2535,9 +2535,9 @@ given a propensity score, with various flexible options.
 
 \subsubsection{Syntax}
 \begin{verbatim}
-> foo <- matchdef(formula, in.sample, pscores, covariates, nearest=TRUE,
+> foo <- matchdef(formula, in.sample, pscore, nearest=TRUE,
    replace=FALSE, m.order=2, ratio=1, caliper=0, calclosest=FALSE,
-   mahvars=NULL, exact=FALSE, data=NULL, counter=TRUE)
+   mahvars=NULL, exact=FALSE, data=NULL, counter=TRUE, ...)
 \end{verbatim}
 
 \subsubsection{Arguments}
@@ -2589,8 +2589,6 @@ given a propensity score, with various flexible options.
 \item \texttt{counter}: an indicator for whether a counter showing the
   percent of treated units matched so far is printed out, default={\tt
     TRUE}.
-\item \texttt{full}: an indicator for whether full matching will be done, default={\texttt{FALSE}}.
-\item \texttt{full.options}: a list of additional options when using full matching.
 \end{itemize}
 
 
@@ -2649,8 +2647,9 @@ given a propensity score.
 
 \subsubsection{Syntax}
 \begin{verbatim}
-foo <- subclassify(formula, data,  in.sample, pscore, nearest=TRUE, match.matrix,
-subclass=0, sub.by="treat", counter=TRUE, full=FALSE, full.options)
+foo <- subclassify(formula, data,  in.sample, pscore, nearest=TRUE, 
+			match.matrix, subclass=0, sub.by="treat", 
+			counter=TRUE, full=FALSE, full.options=list())
 \end{verbatim} 
 
 \subsubsection{Arguments}
