@@ -32,7 +32,7 @@ matchdef <-  function(formula, in.sample, pscore, nearest = TRUE,
   names(matchedc) <- clabels
   
   ## optimal ratio matching
-  if (m.order==3) {
+  if (m.order==1) {
     cat("Optimal Matching Treated: ")
     distance <- matrix(0, ncol=n0, nrow=n1)
     rownames(distance) <- row.names(treata)[treat==1]

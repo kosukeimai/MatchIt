@@ -4,7 +4,7 @@ matchit <- function(formula, model="logit", data, discard=0,
                     subclass=0, sub.by="treat", mahvars=NULL, exact=FALSE,
                     counter=TRUE, opt = FALSE, full = FALSE, ...){ 
   cl <- match.call()
-  if (m.order==3)
+  if (m.order==1)
     require(optmatch)
   
   #Checking input format
@@ -46,7 +46,8 @@ matchit <- function(formula, model="logit", data, discard=0,
   if(!(identical(replace,TRUE) | identical(replace,FALSE))){
     warning("replace=",cl$replace," is invalid; used replace=FALSE instead",call.=FALSE);replace=0}
   #m.order
-  if(!(identical(m.order,2) | identical(m.order,3) | identical(m.order,4))){
+  if(!(identical(m.order,2) | identical(m.order,3) |
+       identical(m.order,4) | identical(m.order,1))){
     warning("m.order=",cl$m.order," is invalid; used m.order=2 instead",call.=FALSE);m.order=2}
   #ratio
   ratio <- round(ratio)
