@@ -141,8 +141,8 @@ and cohesion to conflicting methodological literatures, and suggests a
 relatively straightforward approach for empirical researchers seeking
 to make causal inferences.  For example, our approach suggests a
 simple, standardized, and valid approach to computing standard errors
-and confidence intervals for most of the new matching techniques.  Our
-approach has also made it possible for us to write easy-to-use
+and confidence intervals for most of the new matching techniques.
+This strategy also made it possible for us to write easy-to-use
 software that implements all the ideas we discuss in this paper; it is
 free and available at \url{http://gking.harvard.edu/matchit}.
 
@@ -220,8 +220,7 @@ estimates of interest at the population level.
 Because of pretreatment differences among the districts (both
 measured, $X_i$, and unmeasured), the causal effect may also differ
 across the districts.  We therefore define the casual effect at the
-district level.  Except for this point, the definition itself does not
-require reference to the pretreatment variables.
+district level.
 
 A causal effect is a function of \emph{potential outcomes}: let
 $y_i(1)\equiv y_i(t_i=1)$ be the vote we would observe in district $i$
@@ -234,12 +233,12 @@ incumbency status in the same district, $t_i$, and not a function of
 candidates in other districts.)  The use of parentheses in this
 notation denotes that the outcome is potential, and so not necessarily
 observed, and that it depends on the value of the variable in
-parentheses.  A key point is that the values of these potential
-outcomes remain the same regardless of whether the treatment is in
-fact applied in district $i$ or not.  However, since the Democratic
-Party either will nominate ($t_i=1$) or will not nominate ($t_i=0$) an
-incumbent to run in district $i$, we will observe either $y_{i}(1)$ or
-$y_{i}(0)$ but not both.
+parentheses.  Since these are potential outcomes, their values remain
+the same regardless of whether the treatment is in fact applied in
+district $i$ or not.  However, the key point is that since the
+Democratic Party either will nominate ($t_i=1$) or will not nominate
+($t_i=0$) an incumbent to run in district $i$, we will observe either
+$y_{i}(1)$ or $y_{i}(0)$ but not both.
 
 The difference between the two potential outcomes defines the simplest
 realized (or in-sample) definition of a causal effect:
@@ -443,9 +442,11 @@ omitted variable bias even without any control variables included.  To
 see this, recall that under the usual econometric rules for omitted
 variable bias, a variable $X_i$ must be controlled for if it is
 causally prior to $t_i$, empirically related to $t_i$, and affects
-$y_i$ conditional on $t_i$ --- or, in other words, $X_i$ must be
-controlled for if it is correlated with the potential outcomes,
-$y_i(1)$ and $y_i(0)$.  If instead one or more of the three conditions
+$y_i$ conditional on $t_i$.
+% --- or, in other words, $X_i$ must be
+%controlled for if it is correlated with the potential outcomes,
+%$y_i(1)$ and $y_i(0)$.  
+If instead one or more of the three conditions
 do not hold, then $X_i$ may be omitted without any resulting bias
 (although the variance may increase).  Random assignment guarantees
 that $t_i$ is unrelated to \emph{any} $X_i$, whether measured or not,
@@ -597,18 +598,25 @@ which importantly no longer has a summation sign over $i$.
 
 The systematic components in equations~(\ref{smatt}) are now scalar
 constants for all $i$.  This is a key result, since it means that
-changing the definition of the functional form $g(\cdot)$ now amounts
-to nothing more than a simple reparameterization.  Since maximum
+changing the definition of the functional form $g(\cdot)$ no longer
+models a high dimensional space representing how the mean varies over
+$i$ as a function of all the variables in $X$, but insteads now merely
+amounts to nothing more than a simple scalar reparameterization.  The
+fact that $g(\cdot)$ is now a scalar is central: Since maximum
 likelihood is invariant to reparameterization --- meaning, for
 example, that the MLE of $\alpha$ is the same as the square root of
-the MLE of $\alpha^2$ \citep[][p.75--76]{King89} --- no matter how
-$g(\cdot)$ is defined we get the same estimate of the expected
-potential outcomes.\footnote{To rule out degenerate cases such as
-  $g(a)=8$, we require that the image of $g(\cdot)$ and the range of
-  the potential outcomes be the same.} Moreover, given any chosen
-stochastic component, this result holds for a wide range of 
-parametric models, including all the special cases of the general
-model given above.
+the MLE of $\alpha^2$ \citep[][p.75--76]{King89} --- we get the same
+estimate of the expected potential outcomes no matter how $g(\cdot)$
+is defined.\footnote{To rule out degenerate cases such as $g(a)=8$, we
+  require that the image of $g(\cdot)$ and the range of the potential
+  outcomes be the same.}  Thus, when $\mu$ is a function of $X$, the
+choice of $g(\cdot)$ is a difficult substantive decision typically
+requiring more knowledge than is available.  In contrast, in
+experimental data, because we can now drop $X$, the choice of
+$\g(\cdot)$ reduces to an easy computational issue with no substantive
+import.  Moreover, given any chosen stochastic component, this result
+holds for a wide range of parametric models, including all the special
+cases of the general model given above.
 
 Since the specific maximum likelihood estimator of the population mean
 for many of common probability densities is merely the sample mean,
@@ -846,16 +854,17 @@ contains continuous variables.  The result may then be a preprocessed
 data set with very few observations that results in a parametric
 analysis with large standard errors.  In this situation, we may reduce
 model dependence and the potential for bias, but decrease efficiency
-and as a result increased mean square error.  If this occurs in
+and as a result increase mean square error.  If this occurs in
 practice, those in the matching literature tend to sacrifice some bias
 reduction for the increased efficiency that comes from having more
-observations in the preprocessed dataset.  In our approach,
-sacrificing bias reduction only affects the preprocessing stage, and
-our second stage parametric analysis has a chance to eliminate the
-remaining bias.  We therefore now turn in Section \ref{s:choose} to a
-menu of matching procedures that enable researchers to satisfy
-equation~(\ref{balance}) as closely as possible while still generating
-a preprocessed dataset with enough observations.
+observations in the preprocessed dataset.  In our approach, if we lose
+some opportunity for bias reduction we do so only in the preprocessing
+stage; our second stage parametric analysis still has a chance to
+eliminate the remaining bias.  We therefore now turn in Section
+\ref{s:choose} to a menu of matching procedures that enable
+researchers to satisfy equation~(\ref{balance}) as closely as possible
+while still generating a preprocessed dataset with enough
+observations.
 
 Finally, the right graph in Figure \ref{fg:extrap} gives a simple
 example of the consequences for reducing model dependence for matching
@@ -900,12 +909,12 @@ balance.  To ensure that selection during preprocessing is only on $X$
 (to prevent inducing bias), the outcome variable $y$ should not be
 examined during the preprocessing stage.  As long as $y$ is not
 consulted, preprocessing cannot result in stacking the deck one way or
-another.  This is similar to what is typically done in a randomized
-experiment: Before collecting the outcome data, if an undesirable
-randomization is obtained (e.g., all men in the treated group and all
-women in the control group), the randomization is repeated (or
-stratification variables are introduced) at will until better data are
-obtained \citep[see][]{Rubin01}.
+another.  Experimentalists typically follow a similar procedure by
+repeating randomization as often as desired before collecting the
+outcome data.  Thus, if an undesirable randomization is obtained, such
+as with all men in the treated group and all women in the control
+group, they merely discard the first randomization and do it again
+until better data are obtained \citep[see][]{Rubin01}.
 
 We recommend four steps of preprocessing, followed by standard
 parametric modeling of the preprocessed data set.  We describe this
@@ -916,12 +925,12 @@ control units that look most like the treated units.
 Include all variables in $X$ that would have been included in your
 parametric model without preprocessing.  By the usual rules for
 avoiding omitted variable bias these should include all variables that
-may affect the treatment assignment and the dependent variable.  More
-with matching than in parametric techniques, including variables only
-weakly related to treatment assignment will usually reduce bias more
-than they will increase variance and so should normally be included
-\citep{RubTho96, HecIchSmi98}.  To avoid post-treatment bias, exclude
-variables affected by the treatment variable
+may affect the treatment assignment and the dependent variable.
+Including variables only weakly related to treatment assignment will
+usually reduce bias more than they will increase variance when using
+matching and so most should normally be included \citep{RubTho96,
+  HecIchSmi98}.  To avoid post-treatment bias, exclude variables
+affected by the treatment variable
 \citep{FraRub02,Greenland03,KinZen04}.
 
 If all the variables in $X_i$ are categorical, try exact matching in
@@ -949,19 +958,19 @@ $X$ with a single variable called the \emph{propensity score}
 \citep{RosRub83}.  The propensity score is the true probability of
 unit $i$ receiving treatment, given the covariates $X_i$, $e_i(X_i) =
 P(t_i=1 | X_i)$.  It is usually estimated via a logistic regression of
-$t_i$ on a constant term and $X_i$.  The propensity score is central
-to modern matching methods, but the present state of statistical
-theory means that its role as a theoretical idea differs profoundly
-from its role in practice.  Understanding this disconnect, an
-explanation of which to our knowledge has not explicitly appeared
-before in the literature, is fundamental to making good practical use
-of this important concept.
+$t_i$ on a constant term and $X_i$ (still without regard to the
+dependent variable).  The propensity score is central to modern
+matching methods, but the present state of statistical theory means
+that its role as a theoretical idea differs profoundly from its role
+in practice.  Understanding this disconnect, an explanation of which
+to our knowledge has not explicitly appeared before in the literature,
+is fundamental to making good practical use of this important concept.
 
-From a theoretical perspective, the true propensity score is valuable
-because it is a ``balancing score,'' meaning that if a group of units
-have similar propensity score distributions, then the covariates will
-be balanced in the treated and control groups on all variables in $X$.
-In addition, if the treatment assignment is ignorable given the
+Theoretically, the true propensity score is valuable because it is a
+``balancing score,'' meaning that if a group of units have similar
+propensity score distributions, then the covariates will be balanced
+in the treated and control groups on all variables in $X$.  In
+addition, if the treatment assignment is ignorable given the
 covariates $X_i$, then it is also ignorable given only the propensity
 score.  This means that matching can be done using just the
 one-dimensional propensity score, instead of all of the covariates
@@ -1413,8 +1422,8 @@ voter evaluations of the candidate's ideology (scored as a seven point
 ordinal scale, where high scores indicate greater
 conservatism).\footnote{Visibility is measured originally by whether a
   candidate had campaign expenditures exceeding more than \$750,000.
-  For simplicity and comparison to \citet{Koch02}, we stipulate to
-  rather than evaluate the appropriateness of these measurements or
+  For simplicity and comparison to \citet{Koch02}, we stipulate to,
+  rather than evaluate the appropriateness of, these measurements or
   methods.}  We confine ourselves to studying this effect on
 Republican female candidates, compared to the control of invisible
 male and female candidates (corresponding to the fourth column of
