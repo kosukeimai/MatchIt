@@ -53,7 +53,7 @@ number of units.}
 (default=TRUE).} 
 
    \item{full}{Whether to do full matching (default=FALSE).  Requires ``optmatch" package.}
-        \item{full.options}{Additional options for full matching.}
+   \item{full.options}{Additional options for full matching.}
 
 
 }

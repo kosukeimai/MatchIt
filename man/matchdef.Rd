@@ -14,7 +14,7 @@ does not generally need to be called directly by users; these details are includ
 users. }
 
 \usage{
-matchdef <- matchdef(formula, in.sample, pscore, covariates, nearest=TRUE, replace=FALSE, 
+matchdef <- matchdef(formula, in.sample, pscore, nearest=TRUE, replace=FALSE, 
 		m.order=2, ratio=1, caliper=0, calclosest=FALSE, mahvars=NULL, exact=FALSE, 
 		data=NULL, counter=TRUE)
 }
@@ -32,9 +32,6 @@ treatment indicator and \code{X1} and \code{X2} are the pre-treatment covariates
 common support restrictions with \code{discard}. Computed in \code{distance}.}
 
   \item{pscore}{Vector of propensity scores, calculated in \code{distance}.}
-
-  \item{covariates}{Covariates from data frame used in matching process.  Output from
-\code{distance}.}
 
 	\item{nearest}{Whether to perform nearest-neighbor matching (default=TRUE).  }
 	\item{replace}{Whether to match with replacement (default=FALSE). }
