@@ -82,6 +82,18 @@ m1 <- matchit(rviswom ~ rvisman + repcan1 + goppty + rideo + rproj +
               repft + aware, data=dta.full, caliper=0.1)
 dta.match <- match.data(m1)
 
+#testing sensitivity
+# (the following models provide estimates of ttt effects that do not meet conventional alpha levels)
+fml <- as.formula(prcanid ~ rviswom + repcan1 + I(rviswom*repcan1))
+fml <- as.formula(prcanid ~ rviswom + repcan1 + I(rviswom*repcan1) + rvisman)
+fml <- as.formula(prcanid ~ rviswom + rvisman + repcan1 + I(rviswom*repcan1) + I(rvisman*repcan1))
+fml <- as.formula(prcanid ~ rviswom + rvisman + repcan1 + I(rviswom*repcan1) + I(repcan1^2) + goppty)
+fml <- as.formula(prcanid ~ rviswom + rvisman + repcan1 + I(rviswom*repcan1) + I(repcan1^2) + goppty + rideo)
+fml <- as.formula(prcanid ~ rviswom + rvisman + repcan1 + I(rviswom*repcan1) + I(repcan1^2) + goppty + rideo +rproj)
+fml <- as.formula(prcanid ~ rviswom + rvisman + repcan1 + I(rviswom*repcan1) + goppty + rideo +rproj)
+ff <- zsim(fml,dta.full,num=1000,zz=F,treat="rviswom")
+hist(ff,col="grey")
+
 #creating possible RHS specifications
 xvar <- names(dta.full)[2:length(names(dta.full))]
 #xvar <- xvar[xvar!="rvisman"]
