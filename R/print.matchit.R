@@ -66,7 +66,7 @@ print.matchit <- function(x,  digits = max(3, getOption("digits")-3), ...)
         xsum[2,1] <- mean(predict(m1,newdata=tdat)) 
         tdat$tt <- 0
         xsum[2,2] <- mean(predict(m1,newdata=tdat)) 
-        xsum[1,3] <- xsum[2,3] <- sd(foo1$data$pscore) 
+        xsum[1,3] <- xsum[2,3] <- sd(xx) 
         xsum[1,4] <- summary(m0)$coef[2,3]
         xsum[1,5] <- (xsum[1,1]-xsum[1,2])/sd(x1)
         xsum[2,4] <- summary(m1)$coef[2,3]
