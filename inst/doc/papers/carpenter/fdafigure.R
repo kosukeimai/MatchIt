@@ -69,4 +69,7 @@ plot(density(mout$data$pscore[mout$data$treat==1 & mout$psweights>0]),
      xlab="Estimated propensity score")
 lines(density(pscore[mout$psweights[mout$data$treat==0]>0]), lwd=2)
 lines(density(pscore), lwd=2, lty=2)
+text(0.1, 1.7, "Raw control\ngroup", cex=0.6)
+text(0.7, 3.2, "Matched control\ngroup", cex=0.6)
+text(0.8, 0.8, "Treatment\ngroup", cex=0.6)
 dev.off()
