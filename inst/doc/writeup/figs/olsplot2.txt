@@ -15,7 +15,7 @@ library(matchit)
 dta2 <- read.table("dta2.txt")
 
 # Take out a point
-dta2 <- dta2[-c(11),]
+dta2 <- dta2[-c(11,31,32),]
 
 # Add some points
 newdta <- as.data.frame(matrix(0, ncol=3, nrow=9))
@@ -35,8 +35,26 @@ newdta[10,] <- c(7, 3, 0)
 newdta[11,] <- c(7, 2.4, 0)
 newdta[12,] <- c(4.5, 1.5, 1)
 newdta[13,] <- c(5.5, 2, 1)
-newdta[14,] <- c(5.5, 1.8, 0)
-newdta[15,] <- c(7.8, 3.8, 0)
+newdta[14,] <- c(5, 1, 0)
+
+newdta[15,] <- c(6.4, 3.1, 0)
+newdta[16,] <- c(6.8, 2.7, 0)
+newdta[17,] <- c(7, 5, 0)
+
+# To get okay data set: take out 15-19, subtract -0.1
+#newdta[15,] <- c(7.8, 2.8, 0)
+#newdta[16,] <- c(7.8, 2, 0)
+
+# Either take out or leave these three in
+# If in, subtract -0.3
+#newdta[17,] <- c(7, 3.9, 0)
+#newdta[18,] <- c(9.5, 3.75, 0)
+#newdta[19,] <- c(9.6, 3.3, 0)
+#newdta[20,] <- c(8, 5.75, 0)
+
+dta2 <- rbind(dta2, newdta)
+
+dta2$y[dta2$t==0] <- dta2$y[dta2$t==0]  - 0.1
 
 for (i in 1:1) {
 break
@@ -53,7 +71,6 @@ newdta[18,] <- c(9, 3.5, 0)
 #newdta[20,] <- c(5.5, 1, 0)
 }
 
-dta2 <- rbind(dta2, newdta)
 
 lm.all1 <- lm(y ~ t+x, data=dta2)
 lm.all2 <- lm(y ~ t+x+I(x^2), data=dta2)
@@ -77,7 +94,7 @@ lines(plot.pts, lm.all2$coef[1] + lm.all2$coef[2] +
       lty=2)
 lines(plot.pts, lm.all2$coef[1] + lm.all2$coef[3]*plot.pts +
       lm.all2$coef[4]*plot.pts^2, lty=2, col=8)
-legend(4, 9, lty=c(1, 1, 2, 2), col=c(1, 8, 1, 8),
+legend(2, 7, lty=c(1, 1, 2, 2), col=c(1, 8, 1, 8),
                legend=c("Linear Model, Treated Group",
                  "Linear Model, Control Group",
                  "Quadratic Model, Treated Group",
@@ -96,7 +113,7 @@ lines(plot.pts, lm.m2$coef[1] + lm.m2$coef[2] +
       lty=2)
 lines(plot.pts, lm.m2$coef[1] + lm.m2$coef[3]*plot.pts +
       lm.m2$coef[4]*plot.pts^2, lty=2, col=8)
-legend(4, 9, lty=c(1, 1, 2, 2), col=c(1, 8, 1, 8),
+legend(2, 7, lty=c(1, 1, 2, 2), col=c(1, 8, 1, 8),
        legend=c("Linear Model, Treated Group",
          "Linear Model, Control Group",
          "Quadratic Model, Treated Group",
