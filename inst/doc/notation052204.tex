@@ -1,0 +1,148 @@
+\documentclass[oneside,letterpaper,titlepage,12pt]{article}
+%\usepackage[ae,hyper]{/usr/lib/R/share/texmf/Rd}
+\usepackage{makeidx}
+\usepackage{graphicx}
+\usepackage{natbib}
+\usepackage[reqno]{amsmath}
+\usepackage{amssymb}
+\usepackage{verbatim}
+\usepackage{epsf}
+\usepackage{url}
+\usepackage{html}
+\usepackage{dcolumn}
+\usepackage{longtable}
+\usepackage{vmargin}
+\setpapersize{USletter}
+\newcolumntype{.}{D{.}{.}{-1}}
+\newcolumntype{d}[1]{D{.}{.}{#1}}
+%\pagestyle{myheadings}
+\htmladdtonavigation{
+  \htmladdnormallink{%
+    \htmladdimg{http://gking.harvard.edu/pics/home.gif}}
+  {http://gking.harvard.edu/}}
+\newcommand{\hlink}{\htmladdnormallink}
+
+\bodytext{ BACKGROUND="http://gking.harvard.edu/pics/temple.setcounter"}
+\setcounter{tocdepth}{3}
+
+\parindent=0cm
+\newcommand{\MatchIt}{\textsc{MatchIt}}
+
+\begin{document}
+
+\begin{center}
+Notation for \MatchIt \\
+Elizabeth Stuart \\
+\end{center}
+
+This document details the notation to be used in the matching paper to accompany \MatchIt,
+as discussed in conference call on April 27, 2004 and emails on April 27-29, 2004. It was modified on May 22, 2004 following a series of emails. \\
+
+We first provide a general idea of the notation and ideas.  Formal notation follows.
+
+\begin{enumerate}
+\item  There exists in nature fixed values, $Y_{1i}$ and $Y_{0i}$, the
+potential outcomes under treatment and control, respectively.  They, or
+more usually their difference, denoted by $\tau_i=Y_{1i}-Y_{0i}$, are our quantities of interest and hence
+the inferential target in this exercise.  They are not generally known.
+There also exist in nature a vector of fixed values $X_i$ that are known and
+will play the role of covariates to condition on.  Note that the use of $X_i$ in matching assumes that they are not 
+affected by treatment assignment: $X_{1i}=X_{0i}=X_i$.  If a researcher is interested in adjusting for a variable potentially affected by treatment
+assignment, then methods such as principal stratification should be used. [We can write a paragraph on that somewhere.]
+
+\item  Then (i.e., only after step 1) $t_i$ is created, preferably by the
+experimenter, who assigns its values randomly, but in some cases $t_i$ is
+created by the world and we hope that it was created effectively randomly
+(or randomly conditional on the observed $X_i$).  This is what is known as the assumption of 
+unconfounded treatment assignment: That treatment assignment is independent of
+the potential outcomes given the covariates $X_i$.  The observed $t_i$ is a realization of the random variable $T_i$. 
+
+\item  The random variable $Y_i$ is calculated
+deterministically as $Y_i = Y_{1i}T_i + Y_{0i}(1-T_i)$.  This is
+an accounting identity, not a regression equation with an error term;
+i.e., it is just true, not really an assumption.  Given treatment assignment $t_i$, we observe
+$y_i = Y_{1i}t_i + Y_{0i} (1-t_i)$.
+\end{enumerate}
+
+The accounting identity in 3 implies that we observe $Y_{1i}=Y_i$ (but
+not $Y_{0i}$) when $t_i=1$, and we observe $Y_{0i}=Y_i$ (but not
+$Y_{1i}$) when $t_i=0$.  Since the fundamental problem of causal
+inference indicates that either $Y_{0i}$ or $Y_{1i}$ will be
+unobserved for each $i$, we will need to infer their values, for which we
+define $\tilde Y_{1i} \sim p(Y_{1i})$  and $\tilde Y_{0i} \sim
+p(Y_{0i})$ as draws of the potential outcomes under treatment and
+control, respectively, from their respective predictive posterior
+distributions.\\
+
+We now detail the notation utilized.  
+We first define notation for individual $i$:
+\begin{itemize}
+\item $Y_{1i}=$ individual $i$'s potential outcome under treatment 
+\item $Y_{0i}=$ individual $i$'s potential outcome under control
+\item $t_i=$ individual $i$'s observed treatment assignment; a realization of the random variable $T_i$ 
+\begin{itemize} \item $t_i=1$ means individual $i$ receives treatment
+		\item $t_i=0$ means individual $i$ receives control
+\end{itemize}
+\item $Y_{0i}$ and $Y_{1i}$ are considered fixed quantities.  Which one is observed depends on the random variable $T_i$.
+\item $Y_i=T_i Y_{1i} + (1-T_i) Y_{0i}$ is a random variable indicating individual $i$'s observed outcome
+\item Let $\tilde{Y}_{0i}$ be a draw from the posterior distribution of $Y_{0i}$: $\tilde{Y}_{0i} \sim p(Y_{0i})$. 
+Similarly, let  $\tilde{Y}_{1i}$ be a draw from the posterior distribution of $Y_{1i}$: $\tilde{Y}_{1i} \sim p(Y_{1i})$.
+\item Consider variables $X_i$.  If $X_{0i}=X_{1i}=X_i$ then $X$ is a ``proper covariate'' in that it is not affected by treatment assignment.  Only proper
+covariates should be used in the matching procedure.  That $X_i$ is not affected by treatment assignment 
+is always an assumption (sometimes more reasonable than other times)--we never observe $X_{0i}$ and $X_{1i}$ for individual $i$.
+\end{itemize}
+
+For individual $i$, the potentially observed values can be represented by the following 2x2 table:
+
+\begin{center}
+\begin{tabular}{cc|c|c|}
+\multicolumn{4}{c}{\hspace*{4cm} Actual treatment assignment} \\
+\\
+\multicolumn{2}{c}{} & \multicolumn{2}{c}{Control \hfill Treatment} \\
+\cline{3-4}
+& & & \phantom{abcd} \\
+& Control & $Y_{0i}$, $X_i$ & $\tilde{Y}_{0i}$, $X_i$ \\
+Potential & & &  \phantom{abcd} \\
+\cline{3-4}
+outcomes under & & & \phantom{abcd} \\
+& Treatment  & $\tilde{Y}_{1i}$, $X_i$ & $Y_{1i}$, $X_i$ \\
+& & & \phantom{abcd} \\
+\cline{3-4}
+\end{tabular}
+\end{center}
+ 
+For each individual, we are in either Column 1 or Column 2 (depending on treatment assignment).  Within each column, 1 number will be observed and 1 will be a drawn
+value from the posterior distribution (i.e., the true value for that cell is missing). Thus, for each individual we are in the situation of one of the 
+following two vectors of potential outcomes:
+
+\begin{center}
+\begin{tabular}{rl}
+If $t_i=1$: & $(\tilde Y_{0i}, Y_{1i})$ \\
+If $t_i=0$: & $(Y_{0i}, \tilde Y_{1i})$ \\
+\end{tabular}
+\end{center}
+
+Now consider $n$ individuals observed, with $n_1$ in the treated group and $n_0$ in the control group ($n=n_0+n_1$).  Then we have the following notation:
+\begin{itemize}
+\item $n_1=\sum_{i=1}^n t_i$, $n_0=\sum_{i=1}^n (1-t_i)$
+\item ${\bf y_0} = \{y_{i}|t_i=0\}$.  ${\bf y_0}$ is of length $n_0$.
+\item ${\bf y_1} = \{y_{i}|t_i=1\}$.  ${\bf y_1}$ is of length $n_1$.
+\item ${\bf y} = \{ {\bf y_0}, {\bf y_1}\}$.  ${\bf y}$ is of length $n$.
+\item $\overline{y}_1 = \frac{\sum_{i=1}^n t_i Y_{1i}}{\sum_{i=1}^n t_i}=\frac{\sum_{i=1}^{n_1} y_{1i}}{n_1}$
+\item $\overline{y}_0 = \frac{\sum_{i=1}^n (1-t_i) Y_{0i}}{\sum_{i=1}^n (1-t_i)}=\frac{\sum_{i=1}^{n_0} y_{0i}}{n_0}$
+\item Observed sample variances would be calculated in a similar way (using ${\bf y_0}$ and ${\bf y_1}$).
+\end{itemize}
+
+Throughout, we will use $p()$ to represent pdf's and $g()$ for functional forms of models.
+
+One point to make sure we mention in the write-up is to say what OLS assumes.  OLS with a treatment indicator does:
+$$y_i|X_i, t_i \sim N(\alpha + \beta_0 t_i + {\boldsymbol \beta} {\bf X_i}, \sigma^2)$$
+which assumes that the models of the potential outcomes follow parallel lines with equal residual variance:
+$$Y_{1i}|X_i \sim N(\alpha + \beta_0 + {\boldsymbol \beta} {\bf X_i}, \sigma^2)$$
+$$Y_{0i}|X_i \sim N(\alpha + {\boldsymbol \beta} {\bf X_i}, \sigma^2).$$
+We can also have a graphical representation of this, perhaps with some examples of outcomes that clearly don't have that nice parallel linear relationship,
+and show that this would be a very special case of what we're advocating.
+
+
+
+\end{document}
