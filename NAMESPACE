@@ -1,0 +1,18 @@
+export(
+	matchdef,
+	matchit,
+	diagnose,
+	distance,
+	subclassify,
+	exactmatch,
+	neyman,	
+	help.matchit
+	)	
+
+S3method(print, matchit)
+S3method(print, summary.matchit)
+S3method(print, summary.neyman)
+S3method(plot, matchit)
+S3method(summary, matchit)
+S3method(summary, neyman)
+
