@@ -1,8 +1,3 @@
-% to include:
-% - pscore estimated is slightly less good for bias, much better for variance
-% - extrapolation graph
-% - edit dan's section
-% - include para at top of variance section with ways of looking at
 %   this, including anticipatory responce to A&I
 \documentclass[11pt,titlepage]{article}
 %\usepackage[notref]{showkeys}
@@ -992,42 +987,41 @@ score.  The goal of matching is to achieve the best balance for a
 large number of observations, using any method of matching that is a
 function of $X$, so long as we do not consult $y$.  As it turns out,
 and for whatever reason, one such method that researchers have found
-useful in a diverse array of applications is using propensity scores.
-The reason the propensity score approach often works in practice to
-balance the covariates relatively quickly may be related to the
-theoretical properties of the true score discussed above, but this
-conjecture is both unproven and irrelevant to making valid causal
+useful in a diverse array of applications is based on propensity
+scores.  The reason the propensity score approach often works in
+practice to balance the covariates relatively quickly may be related
+to the theoretical properties of the true score discussed above, but
+this conjecture is both unproven and irrelevant to making valid causal
 inferences.  At least given the current state of the literature, only
-this practical advice, and the propensity score tautology, is useful
-in practice.
+this practical advice, based on the propensity score tautology, is
+useful in practice.
 
 In applications, the usual practice is to estimate the propensity
 score by a logistic regression of $t_i$ on $X_i$ and a constant term.
-Since we are in the situation where exact matching was insufficient,
-we match each treated unit to the control unit with the most similar
+Since we are in the situation where exact matching is insufficient, we
+match each treated unit to the control unit with the most similar
 value of the estimated propensity score, $\hat{e}_i$ (which is known
 as nearest neighbor matching on the propensity score).  If this
-procedure balances $X$ (and procedures for checking balance are
-offered in Step 4), then we use it.  If not, then we try respecifying
-the logistic regression by adding interactions or squared terms and
-matching again.  If that works, then we use it.  If not then we can
-try even more elaborate specifications (when necessary perhaps even
-trying other functional forms such as CART, neural network analyses,
-or others).
+procedure balances $X$ (and thus satisfies the procedures for checking
+balance we describe in Step 4), then we use it.  If not, then we try
+respecifying the logistic regression by adding interactions or squared
+terms and matching again.  If that works, then we use it.  If not then
+we can try even more elaborate specifications (when necessary perhaps
+even trying other functional forms such as CART, neural network
+analyses, or others).
 
 The collective wisdom of the literature also recommends four more
 specific details of how to use propensity scores.  First, if many more
 control than treatment units are available, consider choosing more
 than one control match for each treated unit.  This will increase the
 efficiency of the procedure (although each match past the first
-usually reduces the variance somewhat less than the previous one and
-will moderately increase bias).  If, instead, fewer controls are
-available than those treated, then matching with replacement ---
-allowing each control unit to be matched to more than one treated unit
---- is a good option.  Alternatively, consider switching the
-definition of treatment and control groups (although, of course, if
-using ATT, this will change the substantive definition of the causal
-effect).
+usually reduces the variance somewhat less than the previous one).
+If, instead, fewer controls are available than those treated, then
+matching with replacement --- allowing each control unit to be matched
+to more than one treated unit --- is a good option.  Alternatively,
+consider switching the definition of treatment and control groups
+(although, of course, if using ATT, this will change the substantive
+definition of the causal effect).
 
 Second, sometimes we are in the situation of suspecting, from prior
 evidence (but not from the present data set), that a small number of
@@ -1042,11 +1036,11 @@ variables to choose specific matches within these pools.  If exact
 matching does not turn up sufficient observations, then we can choose
 the nearest neighbor on the large-effect variables, defined by the
 Mahalanobis distance, among all units within (say) 0.25 standard
-deviations of the propensity score computed from all other variables.
-The Mahalanobis distance is the weighted average of the squared
-distance between units $i$ and $j$, $(X_i-X_j)'\Sigma^{-1}(X_i-X_j)$,
-where $\Sigma$ is the variance covariance matrix of $X$ in the control
-group.  See \cite{RubTho00}.
+deviations (also known as ``calipers'') of the propensity score
+computed from all other variables.  The Mahalanobis distance is the
+weighted average of the squared distance between units $i$ and $j$,
+$(X_i-X_j)'\Sigma^{-1}(X_i-X_j)$, where $\Sigma$ is the sample
+variance matrix of $X$ in the control group.  See \cite{RubTho00}.
 
 Third, if some control units fall outside the range of the treated
 propensity score values, then these controls cannot be adjusted by
@@ -1055,7 +1049,8 @@ is to discard these control units.  Similarly, if any treated units
 fall outside the range of the propensity score units, these too are
 discarded.  Dropping treated units changes the causal effect being
 estimated, but if it remains a relevant quantity at least it can be
-estimated in a reasonable way.
+estimated in a reasonable way.  Discarding these nonoverlapping
+observations eliminates the need for extrapolation.
 
 Finally, if finding a matching procedure with good balance and a large
 number of observations is otherwise difficult, use subclassification.
@@ -1063,8 +1058,8 @@ In this procedure, we divide the units into roughly equally sized
 subclasses where the propensity score is, by construction,
 approximately constant, and thus balanced.  Generally five or six
 subclasses are sufficient to adjust for a univariate covariate such as
-the propensity score (\cite{Cochran68}, \cite{RosRub84}).  If balance
-is achieved with a reasonable number of observations within each
+the propensity score \citep{Cochran68,RosRub84}.  If balance is
+achieved with a reasonable number of observations within each
 subclass, then the analysis procedure is carried out within each
 subclass too and the results are averaged.
 
@@ -1073,9 +1068,9 @@ A good matching procedure will reduce bias by increasing balance, not
 increase the variance much by keeping the number of observations
 large, and prevent the introduction of new biases by matching only
 based on $X$ and not consulting $y$ until the analysis stage.  We
-assume matching is based only on $X$, and also note that checking the
-number of observations remaining after matching is easy.  The main
-task of this section, then, is to describe how to evaluate balance.
+assume matching is based only on $X$, and checking the number of
+observations remaining after matching is easy.  Thus, the main task of
+this section, then, is to describe how to evaluate balance.
 
 Conceptually, verifying balance involves checking whether Equation
 \ref{balance} holds.  One way to think about this process is to
@@ -1127,7 +1122,7 @@ In the unusual situation where particular parametric assumptions are
 somehow justified and verified, then it may be reasonable to proceed.
 But in most applications, model sensitivity that can't be improved by
 preprocessing because balance is too hard to achieve marks a data set
-that is too fragile for making robust causal inferences.
+that is too fragile for making robust causal inferences by any means.
 
 \paragraph{Parametric Outcome Analysis}  
 After the final matched sample --- with maximum balance and a large
@@ -1141,7 +1136,10 @@ quantities of interest.  The one exception is that if
 subclassification was used to create the preprocessed data set, then
 the parametric analysis should be conducted within each subclass
 separately, and the results combined by taking an average, weighting
-by the number of units in each subclass.
+by the number of units in each subclass.  The result of preprocessing
+should be less model dependence, and this too is worth checking: as
+one should even without preprocessing, we should check the sensitivity of causal
+effect estimates to changes in the specification.
 
 \section{Computing Uncertainty Estimates}
 
@@ -1209,23 +1207,21 @@ a model where propensity score modeling works well.  In the second,
 ordinary propensity score modeling was inadequate to achieve a high
 level of balance, and so we performed subclassification on the
 propensity score. For pedagogical reasons, and to save space, we use
-different methods of presenting (\ref{balance}) in our two
-applications.
+different methods of checking (\ref{balance}) in our two applications.
 
 \subsection{The Effect of Democratic Senate Majorities
   on FDA Drug Approval Time}
 
 An influential article by \citet{Carp02} examines several determinants
-of new drug approval approval times by the U.S.\ Food and Drug
-Administration (FDA)\footnote{We focus specifically on Model 1 of
-  Table 2 \citep[p. 499]{Carp02}.}.  Here, we focus on the hypothesis
-that ``expected approval times are greater when Democrats control the
-White House, when the agency's oversight committees are more liberal,
-and when the House and Senate are more liberal''
-\citep[p.495]{Carp02}.  In short, liberal FDA oversight should lead to
-slower approval of new drugs.  This hypothesis is substantively
-important to the literature on institutional and partisan determinants
-of regulatory policy.
+of new drug approval times by the U.S.\ Food and Drug Administration
+(FDA)\footnote{We focus specifically on Model 1 of Table 2 \citep[p.
+  499]{Carp02}.}.  Here, we focus on the hypothesis that ``expected
+approval times are greater when Democrats control the White House,
+when the agency's oversight committees are more liberal, and when the
+House and Senate are more liberal'' \citep[p.495]{Carp02}.  In short,
+liberal FDA oversight should lead to slower approval of new drugs.
+This hypothesis is substantively important to the literature on
+institutional and partisan determinants of regulatory policy.
 
 To test this hypothesis, Carpenter uses a lognormal survival model of
 approval times regressed on several causal variables of political
@@ -1244,7 +1240,7 @@ pending at the time of data collection and hence are treated as
 right-censored observations. The approval time is measured in months
 passed from the submission of an application.
 
-In our analysis, we focus on the estimation of the marginal effect of
+In our analysis, we focus on the estimation of the causal effect of
 the binary treatment variable of Democratic Senate majority, one of
 the seven oversight variables. In the original analysis, the reported
 coefficient for this variable is statistically significant at the 10\%
@@ -1292,14 +1288,17 @@ t-statistics before and after matching for mean differences of each
 covariate between the treatment and control groups.  Before matching,
 the means of three covariates and the estimated propensity score
 (summarizing all the covariates) are significantly different between
-the treatment and control groups.  For example, drugs introduced under
+the treatment and control groups.  For example, the original
+coefficients (not shown) indicate that the drugs introduced under
 Democratic Senate control appeared on average 25 times less in the
 Washington Post, received substantially less broadcast news coverage,
-and were submitted at times with fewer FDA staff.  However, after
-matching, these differences vanish -- all t-statistics are less than
-1.96 implying that the mean differences are no longer statistically
-significant at the 5\% level.  The mean differences of the other
-covariates are small both before and after
+and were submitted at times with fewer FDA staff, and all of these
+have significant t statistics (i.e., appear to the right of the grey
+box in the figure).  However, after matching, these differences vanish
+as all t-statistics are less than 1.96, implying that the mean
+differences are no longer statistically significant at the 5\% level
+(in the figure none are above the grey box).  The mean differences of
+the other covariates are small both before and after
 preprocessing.\footnote{Preprocessing increases the values of the
   t-statistics for two variables. Uniform improvement of balance for
   all covariates is unlikely unless exact matching is possible and/or
@@ -1311,12 +1310,12 @@ The right panel of Figure~\ref{fg:fdabal} provides another view of how
 our preprocessing improves covariate balance.  Before matching, a
 number of control units (drugs) look very different from the units in
 the treated group --- those with low propensity scores.  The problem
-with parametric models applied to raw data is that it is these control
-units which will be most influential in any model fit to the raw data
-set.  By choosing the matched set of control units which look more
-similar to the treated units, the treated-control comparison will then
-take place only among units on the background variables and thus will
-not be affected as much by the model specification.
+with parametric models applied to raw data is that these control units
+will be most influential in any model fit to the raw data set.  By
+choosing the matched set of control units which look more similar to
+the treated units, the treated-control comparison will then take place
+only among units on the background variables and thus will not be
+affected as much by the model specification.
 \begin{figure}[t] 
  \begin{center}
    \includegraphics{figs/fdadens.pdf}
@@ -1335,7 +1334,7 @@ not be affected as much by the model specification.
   \label{fg:fdadens}
 \end{figure}
 
-We now examine the model dependence of the average marginal effect of
+We now examine the model dependence of the average causal effect of
 a Democratic Senate majority using the preprocessed data and compare
 this with the results from the raw data.  To do this, we estimate the
 average treatment effect by estimating (\ref{att}) according to the
@@ -1347,22 +1346,25 @@ from parametric models.
 
 We then estimate the ATE by considering all possible specifications in
 which the 18 covariates enter the model with the treatment indicator
-(i.e., all possible subsets of covariates from the 18).  Even ignoring
-possible interactions and nonlinearities, this amounts to $262,143$
-survival analyses. Figure~\ref{fg:fdadens} presents the density plot
-for the estimated average treatment effects for the raw data as well
-as the matched (preprocessed) data.  The estimates are far more model
-dependent using the raw data than using the matched data.  For
-example, the variance of the estimated average treatment effect from
-the matched data is more than three times as large as that from the
-raw data.  The point estimate from the raw data with all covariates
-implies that a Democratic Senate majority decreases the expected
-approval time by about 30 months, whereas many specifications indicate
-that the estimate is much less.  Using the raw data, Carpenter notes
-the large model sensitivity, concluding that oversight covariates
-appear not to matter.  However, the result from the matched data
-indicate that the effect size may even be larger and less sensitive
-than suggested by the raw data.
+(i.e., all possible subsets of covariates from the 18).  Even though
+we ignored interactions and nonlinearities, this amounts to $262,143$
+survival analyses, all of which we ran. Figure~\ref{fg:fdadens}
+presents the density plot for the estimated average treatment effects
+for the raw data as well as the matched (preprocessed) data.  The key
+result here is that estimates are far more model dependent using the
+raw data than using the matched data.  For example, the variance of
+the estimated average treatment effect from the matched data is more
+than three times as large as that from the raw data.  Although
+Carpenter was unable to draw conclusions from the raw data due to
+high levels of model dependence, our preprocessing shows that there
+does exist sufficient information in the data to draw conclusions
+without difficult-to-justify functional form assumptions.
+
+Using the raw data, Carpenter notes the large model sensitivity,
+concluding that oversight covariates appear not to matter.  However,
+the result from the matched data seems to indicate that the actual
+effect size may even be larger and more firm than indicated by the
+usual parametric approach.
 
 \subsection{Causal Effect of Visibility on Candidate
   Evaluations}
@@ -1377,7 +1379,7 @@ where high scores indicate greater conservatism).\footnote{Visibility
   is measured originally by whether a candidate had campaign
   expenditures exceeding more than \$750,000.  For simplicity and
   comparison to \citet{Koch02}, we stipulate to rather than evaluate
-  the correctness of these measurements or methods.}  We confine
+  the appropriateness of these measurements or methods.}  We confine
 ourselves to studying this effect on Republican female candidates,
 compared to the control of invisible male and female candidates
 (corresponding to the fourth column of Table 2 in \citet[p.
@@ -1391,10 +1393,10 @@ political awareness.  Koch uses least squares to adjust for these
 explanatory variables, varying only the treatment.  Yet, we can see
 that even with such a small number of covariates, the curse of
 dimensionality looms large.  Given unique values of these covariates,
-nonparametric estimation would require estimation of 44 million
-parameters, and with a dataset with only 494 observations.  Koch
-reduces these parameters to only six (main effects) by the assumptions
-of no other interactions and nonlinearities.
+estimation without assumptions would require a model with 44 million
+parameters using a dataset with only 494 observations.  Koch reduces
+these parameters to only six (main effects) by the assumptions of no
+other interactions and nonlinearities.
 
 The linear adjustments are important since, as the raw data in
 Table~\ref{tb:kochmtest} demonstrate, visible and invisible candidates
@@ -1410,8 +1412,8 @@ therefore likely to be a significant problem.
   \begin{center}
     \begin{tabular}{lrrrrrr}
       \hline
-      & \MC{3}{c}{\bf Raw Data} & \MC{3}{c}{\bf Preprocessed Data
-      (subclass 4) }\\
+      & \MC{3}{c}{} & \MC{3}{c}{\bf Preprocessed Data}\\
+      & \MC{3}{c}{\bf Raw Data} & \MC{3}{c}{\bf (subclass 4)}\\
       & Mean for  & Mean for  &    & Mean for  & Mean for \\
       & Treated & Control  & t-stat &    Treated & Control  & t-stat \\
       \hline
@@ -1449,9 +1451,9 @@ involves a logistic regression of visibilty on all six pretreatment
 covariates.  We also discard treatment units whose propensity score is
 greater than the maximum of control units and control units whose
 propensity score is lower than the minimum of the treated units.  This
-results in 31 discarded units, and ensures that outliers do not
-contaminate our data.  Next, we create six subclasses by quantiles of
-the propensity score of the treated units.  As is desired, within each
+results in 31 discarded units, and greatly reduces the risks of
+extrapolation.  Next, we create six subclasses by quantiles of the
+propensity score of the treated units.  As is desired, within each
 subclass, covariate balance is substantially better than in the full
 sample.  For example, the last three columns of
 Table~\ref{tb:kochmtest} presents means and t-statistics for each
@@ -1498,10 +1500,10 @@ matches a small number of visible candidates with many more invisible
 candidates in the lower subclasses and the reverse in the higher
 subclasses.  This is another indicator that in the raw data, the
 covariates are highly unbalanced.  Through this simple technique we
-are able to compared the most similar candidates within each subclass.
-Indeed, across subclass-covariates the t-statistic exceeds 2 only
-once, which is roughly the same as we would expect if treatment were
-assigned randomly within each subclass.
+are able to compare the most similar candidates within each subclass.
+Indeed, across subclasss, the t-statistics for the difference in
+covariates exceed 2 only once, which is roughly the same as we would
+expect if treatment were assigned randomly within each subclass.
 \begin{figure}[t] 
  \begin{center}
    \includegraphics[height=3.5in,angle=0]{figs/kochdens.pdf}
@@ -1510,11 +1512,11 @@ assigned randomly within each subclass.
  \caption{Density estimates of estimated effects of
    being a highly visible female Republican candidate across 63
    possible specifications with the Koch data.  The dashed line
-   presents estimates for the full dataset and the solid line for the
+   presents estimates for the raw dataset and the solid line for the
    (subclassified) matched dataset.  The vertical arrow presents the
    point estimate of the regression presented in the original paper.
    This figure shows that treatment effect estimates are much more
-   sensitive to model specification for the full dataset compared to
+   sensitive to model specification for the raw dataset compared to
    the matched dataset.}
  \label{fg:kochdens}
 \end{figure}
@@ -1535,11 +1537,11 @@ hypothesized, the estimated treatment effect estimates are
 substantially more variable for the raw data.  Effect estimates from
 the raw data, plotted by the solid line, range from $-0.64$ to $-0.2$,
 signifying female visibility causes voters to perceive candidates as
-more liberal.  The point estimate from the full data that controls for
+more liberal.  The point estimate from the raw data that controls for
 all six covariates, signified by the vertical arrow, appears
 conservative compared to this range.  Yet estimates from the
 preprocessed data stand in stark contrast to the estimates from the
-raw data.  The range of coefficient estimates is substantially
+raw data.  The variability of coefficient estimates is substantially
 smaller, ranging from $-0.31$ to $-0.07$, and the variance across
 specifications is more than six times smaller than for the raw data,
 as shown by the highly peaked density.  Rather than erring on the
@@ -1557,6 +1559,15 @@ from Republican female candidates presents citizens with a complicated
 information-processing task'' \citep[p. 460]{Koch02}.
 
 \section{What Can Go Wrong}
+
+The advantage of matching is that it is normally relatively robust to
+small changes in procedures, and of course it produces a data set that
+is by design less sensitive to model assumptions.  However, like any
+method, using it badly or to ill effecxt is certainly possible.  Thus,
+in this section, we discuss what can go wrong and how we might avoid
+these problems.  We discuss five issues.
+
+First, 
 
 \section{Concluding Remarks}
 
