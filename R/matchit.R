@@ -139,12 +139,12 @@ matchit <- function(formula, model="logit", data, discard=0,
                   replace = replace, m.order = m.order, ratio = ratio,
                   caliper = caliper, calclosest = calclosest, 
                   mahvars = mahvars,data = data, exact = exact,
-                  counter = counter, ...)
+                  counter = counter)
     
     b1 <- subclassify(formula, data, a$in.sample, a$pscore,
                       nearest = nearest, b$match.matrix,
                       subclass = subclass, sub.by = sub.by, counter =
-                      counter, full = full, ...)
+                      counter, full = full)
     
     c <- diagnose(formula, b$match.matrix, a$pscore, a$in.sample,
                   data=data, exact=exact, mahvars=mahvars,
