@@ -83,7 +83,7 @@ lm.m2 <- lm(y ~ t+x+I(x^2), data=matched)
                                                                                                                                                              
 trellis.device(device="pdf",file="olspanel-thick.pdf",color=FALSE,width=8,height=4)
 par(mar=c(2, 2, 2, 2) + 0.1, cex.lab=0.7, cex.axis=0.5,
-    mgp=c(1,0.5,0), cex.main=0.8, cex=1, mfrow=c(1,2))
+    mgp=c(1,0.5,0), cex.main=0.8, cex=1, mfrow=c(1,2), bg="white")
 plot(dta2$x[dta2$t==1],dta2$y[dta2$t==1],pch="T",
      xlim=range(dta2$x), ylim = range(dta2$y),
      xlab="X", ylab = "Y", cex=0.8, main="Before Matching")
@@ -101,7 +101,7 @@ legend(2, 7, lty=c(1, 1, 2, 2), col=c(1, 8, 1, 8), lwd=1.5,
                  "Quadratic Model, Treated Group",
                  "Quadratic Model, Control Group"), cex=0.5)
 plot(matched$x[matched$t==1], matched$y[matched$t==1],
-     pch="T", main="", xlab="X", ylab="Y", xlim=range(dta2$x),
+     pch="T", xlab="X", ylab="Y", xlim=range(dta2$x),
      ylim=range(dta2$y), cex=0.8, main="After Matching")
 points(matched$x[matched$t==0], matched$y[matched$t==0], pch="C", cex=0.8)
 points(dta2$x[temp$matched==FALSE & dta2$t==0],
