@@ -1560,18 +1560,67 @@ information-processing task'' \citep[p. 460]{Koch02}.
 
 \section{What Can Go Wrong}
 
-The advantage of matching is that it is normally relatively robust to
-small changes in procedures, and of course it produces a data set that
-is by design less sensitive to model assumptions.  However, like any
-method, using it badly or to ill effecxt is certainly possible.  Thus,
+The advantage of matching is that it is relatively robust to small
+changes in procedures, and of course it produces a data set that is by
+design less sensitive to modeling assumptions.  However, like any
+method, using it badly or to ill effect is certainly possible.  Thus,
 in this section, we discuss what can go wrong and how we might avoid
-these problems.  We discuss five issues, some of which have come up
-already.
+these problems.  We discuss four issues.
 
-First, the curse of dimensionality affects balancing diagnostics of
-course, and we may well miss a higher dimensional imbalance when
-checking lower dimensional summaries.  Even if we were not interested
-in testing this with our parametric model, and 
+First, since the curse of dimensionality affects balancing
+diagnostics, we may well miss a higher dimensional aspect of imbalance
+when checking lower dimensional summaries.  Even if we are
+uninterested in testing these with our parametric model, they can
+affect our estimates.  Such will be the case with parametric models
+with or without preprocessing, and so in all but the most unusual
+cases at least preprocessing should not hurt.  One pathological case
+where preprocessing could hurt is if some covariate has a huge effect
+on the outcome variable and preprocessing slightly reduces balance on
+this variable but improves it for all the others.  A researcher might
+be fooled into choosing a matching tradeoff like this if he or she
+were not aware of large effect of this covariate.
+
+Second, as with all statistical methods, a bias-variance tradeoff
+exists for matching.  If we drop many observations during
+preprocessing and balance is not substantially improved, the mean
+square error (or other mean-variance summary) might actually increase.
+Users must pay close attention to this tradeoff during the process of
+matching, but no precise rules exist for how to make these choices.
+In particular, the methodological literature offers no formal
+estimates of mean square error and so in marginal cases it can be
+difficult to know whether or how much preprocessing will help.  Of
+course, dropping many observations does not necessarily mean that
+preprocessing is worse, since including imbalanced observations in a
+parametric analysis merely produces false precision.  So although
+estimated standard errors may increase in some cases with
+preprocessing, they would be more accurate.
+
+Third, the matching literature offers a large number of possible and
+seemingly ad hoc procedures.  From one perspective, we might be
+concerned about the sensitivity of our results to changes in this
+process, just as we have been concerned with the sensitivity of causal
+effect estimates to parametric modeling assumptions.  In our view,
+this is not a major issue since the right procedure is the one that
+maximizes balance (with a large as possible $n$), no matter how many
+procedures we try.  By applying this criterion in a disciplined way
+(i.e., without consulting $y$) to a large number of possible matching
+procedures, no choices are open to the analyst.  Instead, researchers
+should merely run as many as possible and choose by this relatively
+automatic procedure.  Unlike parametric modeling exercises, we need
+not choose this matching procedure or another; we merely run them all
+and apply this criterion.
+
+Finally, by dropping observations, we may wind up losing some
+critically important cases or may change either the information base
+of our sample or, in special cases such as when dropping treated
+units, the definition of causal effect.  Examining the dropped cases
+provides an easy diagnostic for this problem.  However, we must be
+alert to the problem that if we learn that some critical units are
+dropped, then it may mean that no appropriate matches can be found for
+them.  In this situation, we may be forced to conclude that the data
+do not contain sufficient information to answer the questions posed,
+no matter what method is chosen.
+
 
 \section{Concluding Remarks}
 
