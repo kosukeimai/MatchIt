@@ -533,12 +533,13 @@ to the \texttt{discard} option (described below).  In this case there
 were no units discarded and no ``problematic covariates.''
 
 For further information on the balance in the full and matched samples
-we can use the {\tt verbose=T} option with {\tt summary}, which
-shows the balance of all squares and interactions of the covariates
-used in the matching procedure.  This is helpful for diagnosing whether balance across matched
-pairs has been attained.  Significant differences in higher order
-interactions usually are a good indication that the assignment model
-needs to be respecified, as discussed in Section \ref{pscorespec}.
+we can use the {\tt verbose=T} option with {\tt summary}, which shows
+the balance of all squares and interactions of the covariates used in
+the matching procedure.  This is helpful for diagnosing whether
+balance across matched pairs has been attained.  Significant
+differences in higher order interactions usually are a good indication
+that the assignment model needs to be respecified, as discussed in
+Section \ref{pscorespec}.
 
 \begin{verbatim}
 > summary(foo2, verbose=T)
@@ -621,7 +622,7 @@ Would you like to see a jitterplot of the propensity scores?
 
 Entering a \texttt{1} also reveals instructions on how to
 interactively identify particular units, which may be useful for
-identifying particular outliers: 
+identifying particular outliers:
 
 \begin{verbatim}
 [1] "To identify the units, use first mouse button; to stop, use
@@ -633,7 +634,7 @@ observation name specified in the data frame.  You may end this by
 clicking the second mouse button.
 
 Lastly, the \texttt{plot} command allows you to plot density estimates
-for any covariates and their interactions:\footnote{Note that when
+for any covariates:\footnote{Note that when
   subclassification is specified, the \texttt{plot} command
   additionally permits plotting density estimates of any covariates
   within a particular subclass.}
@@ -644,9 +645,6 @@ for any covariates and their interactions:\footnote{Note that when
 1 Yes :  pscore   
 2 Yes :  re74     
 3 Yes :  re75     
-4 Yes :  re74xre74
-5 Yes :  re74xre75
-6 Yes :  re75xre75
 Would you like to see density estimates of any other covariates?
 \end{verbatim}
 
