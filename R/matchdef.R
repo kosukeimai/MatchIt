@@ -1,6 +1,8 @@
-matchdef <-  function(formula,in.sample,pscore,nearest=TRUE,replace=FALSE,
-                      m.order=2,ratio=1,caliper=0,calclosest=FALSE,mahvars=NULL,exact=FALSE,
-                      data=NULL, counter=TRUE, opt=FALSE, ...){
+matchdef <-  function(formula, in.sample, pscore, nearest = TRUE,
+                      replace = FALSE, m.order = 2, ratio = 1,
+                      caliper = 0, calclosest = FALSE, mahvars = NULL,
+                      exact = FALSE, data = NULL, counter = TRUE, opt
+                      = FALSE, ...){ 
   treata <- model.frame(formula,data)[,1,drop=FALSE]
   treat <- as.vector(treata[,1])
   names(treat) <- row.names(treata)
@@ -15,29 +17,49 @@ matchdef <-  function(formula,in.sample,pscore,nearest=TRUE,replace=FALSE,
   p1 <- pscore[treat==1]
   p0 <- pscore[treat==0]
 
-  if(nearest) {
-    ## Generating separate indices for treated and control units
-    if(is.null(names(treat))){names(treat) <- seq(1,n)}
-    labels <- names(treat)
-    clabels <- labels[treat==0]
-    tlabels <- labels[treat==1]
-    
-    ## Generating match matrix
-    match.matrix <- matrix(0,n1,ratio)
-    match.matrix <- as.data.frame(match.matrix)
-    row.names(match.matrix) <- tlabels
-    
-    ## Vectors of whether unit has been matched: = 0 if not matched (unit # of match if matched)
-    ## = -1 if can't be matched (if in.sample=0)
-    matchedc <- rep(0,length(p0))
-    names(matchedc) <- clabels
-    
-    ## These are the units that are ineligible because of discard (in.sample==0)
+  ## Generating separate indices for treated and control units
+  if(is.null(names(treat))){names(treat) <- seq(1,n)}
+  labels <- names(treat)
+  clabels <- labels[treat==0]
+  tlabels <- labels[treat==1]
+  
+  ## Generating match matrix
+  match.matrix <- as.data.frame(matrix(0,n1,ratio), row.names = tlabels)
+
+  ## Vectors of whether unit has been matched:
+  ## = 0 if not matched (unit # of match if matched)
+  ## = -1 if can't be matched (if in.sample=0)
+  matchedc <- rep(0,length(p0))
+  names(matchedc) <- clabels
+  
+  ## optimal ratio matching
+  if (opt) {
+    distance <- matrix(0, ncol=n0, nrow=n1)
+    rownames(distance) <- row.names(treata)[treat==1]
+    colnames(distance) <- row.names(treata)[treat==0]
+    for (i in 1:n1)
+      distance[i,] <- abs(p1[i]-p0)
+    full <- as.matrix(fullmatch(distance, min.controls = ratio,
+                                max.controls = ratio + 1, ...))
+    psclass <- full[pmatch(row.names(treata), row.names(full)),]
+    psclass <- as.numeric(as.factor(psclass))
+    names(psclass) <- row.names(treata)
+    for (i in 1:n1) {
+      match.matrix[i,] <-
+        names(psclass)[match(psclass[tlabels[i]],
+                             psclass[-pmatch(tlabels[i],
+                                             names(psclass))])]
+    }
+ 
+  }
+  else if(nearest) {    
+    ## These are the units that are ineligible because of discard
+    ## (in.sample==0) 
     matchedc[in.sample[clabels]==0] <- -1
     match.matrix[in.sample[tlabels]==0,] <- -1
     matchedt <- match.matrix[,1] 
-    
     names(matchedt) <- tlabels
+    
     ## total number of matches (including ratios) = ratio * n1
     tr <- length(match.matrix[match.matrix!=-1])
     r <- 1
@@ -47,7 +69,8 @@ matchdef <-  function(formula,in.sample,pscore,nearest=TRUE,replace=FALSE,
     
     ## Var-covar matrix for Mahalanobis (currently set for full sample)      
     if (!is.null(mahvars)) {
-      if(!sum(mahvars%in%names(data))==length(mahvars)){stop("Mahvars not contained in data",call.=FALSE)}
+      if(!sum(mahvars%in%names(data))==length(mahvars))
+        stop("Mahvars not contained in data",call.=FALSE)
       mahvars <- as.matrix(data[,mahvars])
       row.names(mahvars) <- labels
       Sigma <- var(mahvars)

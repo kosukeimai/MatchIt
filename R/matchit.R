@@ -2,7 +2,7 @@ matchit <- function(formula, model="logit", data, discard=0,
                     reestimate=FALSE, nearest=TRUE, replace=FALSE,
                     m.order=2, ratio=1, caliper=0, calclosest=FALSE,
                     subclass=0, sub.by="treat", mahvars=NULL, exact=FALSE,
-                    counter=TRUE, opt = FALSE, ...){ 
+                    counter=TRUE, opt = FALSE, full = FALSE, ...){ 
   cl <- match.call()
   if (opt)
     require(optmatch)
@@ -126,20 +126,24 @@ matchit <- function(formula, model="logit", data, discard=0,
     if(!is.null(dotsub)) { 
       data <- data[dotsub,]
     }
+
+    b <- matchdef(formula, a$in.sample, a$pscore, nearest = nearest,
+                  replace = replace, m.order = m.order, ratio = ratio,
+                  caliper = caliper, calclosest = calclosest, 
+                  mahvars = mahvars,data = data, exact = exact,
+                  counter = counter, opt = opt)
     
-    b <- matchdef(formula, a$in.sample, a$pscore,
-                  nearest=nearest, replace=replace, m.order=m.order,
-                  ratio=ratio, caliper=caliper, calclosest=calclosest,
-                  mahvars=mahvars,data=data, exact=exact,
-                  counter=counter) 
-    b1 <- subclassify(formula, data, a$in.sample, a$pscore, nearest=nearest,
-                      b$match.matrix, subclass=subclass,
-                      sub.by=sub.by, counter=counter, opt=opt)
+    b1 <- subclassify(formula, data, a$in.sample, a$pscore,
+                      nearest = nearest, b$match.matrix,
+                      subclass = subclass, sub.by = sub.by, counter =
+                      counter, full = full)
+    
     c <- diagnose(formula, b$match.matrix, a$pscore, a$in.sample,
                   data=data, exact=exact, mahvars=mahvars,
                   subclass=subclass, psclass=b1$psclass,nearest=nearest,
                   q.cut=b1$q.cut, counter=counter)
-    #adding pscore and weights to dataframe
+    
+    ##adding pscore and weights to dataframe
     pscore <- a$pscore
     psweights <- c$weights
     

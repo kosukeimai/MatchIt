@@ -1,12 +1,12 @@
 subclassify <- function(formula,data,in.sample,pscore,nearest=TRUE,
                         match.matrix,subclass=0,sub.by="treat",
-                        counter=TRUE, opt=FALSE, ...){
+                        counter=TRUE, full=FALSE, ...){
   data <- eval(data,parent.frame())
   treata <- model.frame(formula,data)[,1,drop=FALSE]
   treat <- as.vector(treata[,1])
   names(treat) <- row.names(treata)
 
-  if(opt) { # full matching with propensity score
+  if(full) { # full matching with propensity score
     n1 <- length(treat[treat==1])
     n0 <- length(treat[treat==0])
     p1 <- pscore[treat==1]
