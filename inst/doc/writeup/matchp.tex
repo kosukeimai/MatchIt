@@ -665,18 +665,38 @@ with enough observations.
 
 \section{Computing Uncertainty Estimates}
 
-Parametric methods come with a list of relatively standard ways of
-computing uncertainty estimates, such as standard errors or confidence
-intervals.  These include methods based on using the asymptotic normal
-approximation to the likelihood function, direct simulation from the
-finite sample posterior density, various frequentist bias correction
-methods, robust Bayesian analysis, bootstrapping, etc.  Any of these
-can be implemented by drawing and summarizing simulations of the
-chosen quantity of interest, given the parametric model and
-accompanying theory of inference.
+No concensus exists in the literature on the right methods to use to
+compute uncertainty estimates, such as standard errors or confidence
+intervals, from matching procedures.  Little disagreement exists over
+the relevant technical statistical techniques; the issue instead
+revolves around normative criteria such as what researchers should
+condition on and what they should attribute to additional uncertainty.
+Since people are no more likely to reach consensus via debate on
+normative statistical issues than on normative political issues, we
+believe the best way forward is to choose a reasonable definition and
+let others pick others if they prefer.  Our choice, which we now
+explicate, is based on what is substantively reasonable and also easy
+to implement.
 
-These methods of inference are all conditional on fixed and exogenous
-pretreatment variables, $X$.  Since our preprocessing procedures
+Parametric methods applied to raw data without preprocessing come with
+a list of relatively standard ways of computing uncertainty estimates.
+These include methods based on using the asymptotic normal
+approximation to the likelihood function, direct simulation from the
+finite sample posterior density, various frequentist bias corrections,
+robust Bayesian analysis involving classes of posteriors, and even
+nonparametric bootstrapping, etc.  Any of these are easy to implement
+by drawing and summarizing simulations of the chosen quantity of
+interest, given a parametric model and accompanying theory of
+inference.
+
+A common feature of the various uncertainty estimates in parametric
+methods is that they are all conditional on the pretreatment variables
+$X$ (and $t$), which are treated as fixed and exogenous.  Since all
+our preprocessing procedures do is to modify the raw data in ways that
+are solely a function of $X$, a reasonable method of computing
+uncertainty estimates is to continue to treat $X$, and the entire
+preprocessing procedures, as fixed.  The advantage of this procedure
+is to
 
 With one relevant exception, preprocessed data
 
