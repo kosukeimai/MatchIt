@@ -194,7 +194,7 @@ is over the randomization distribution.
 \item With observational data, not guaranteed that treated and control groups look similar before treatment assignment
 \item Think about replicating a randomized experiment as much as possible (\cite{Rubin91, Rosenbaum99, Rubin01})
 \begin{enumerate} \item Find treated and control groups as similar as possible on all background covariates
-		  \item Don't use the outcome in the design.  Particularly helpful in high-stakes situations, so that matched samples can't be chosen to
+                  \item Don't use the outcome in the design.  Particularly helpful in high-stakes situations, so that matched samples can't be chosen to
 give desired result (e.g., FDA, tobacco litigation).
 \end{enumerate}
 \item Key assumption: unconfounded treatment assignment: treatment assignment independent of the potential outcomes given the observed covariates,
@@ -315,7 +315,7 @@ of estimating the effect on the treated, since we are matching to the treated gr
 \item Often done using nearest neighbor matching, which goes through the treated units one by one and finds the best matching control unit. 
 \item Variations on and details for this are described in the next few sections
 \begin{enumerate} \item  How many matches to get for each treated unit
-		  \item  Whether each control unit can be matched to more than one treated unit
+                  \item  Whether each control unit can be matched to more than one treated unit
 \end{enumerate}
 \end{itemize}
 
@@ -332,19 +332,19 @@ scores lower than the lowest treated unit propensity score are discarded)
 \begin{itemize}
 \item The nearest neighbor matching algorithm described in Section \ref{nearest} is a ``greedy'' algorithm
 \begin{itemize} \item Chooses the best match for each treated unit one at a time, without trying to reduce a global distance measure
-		\item Earlier matches never reconsidered to see if better balance could be obtained.
-		\item Need to choose in what order to do that matching: hardest to match first (those with high propensity scores), easiest to match first
+                \item Earlier matches never reconsidered to see if better balance could be obtained.
+                \item Need to choose in what order to do that matching: hardest to match first (those with high propensity scores), easiest to match first
 (those with low propensity scores), or random order.  
-		\item Not a lot of guidance on this order...\cite{Rubin73a} found that the three orders performed similarly
+                \item Not a lot of guidance on this order...\cite{Rubin73a} found that the three orders performed similarly
 when there is a large pool of control available.  When pool of controls smaller, may want to think about in what part of the covariate space close matches
 are particularly desired (those matched first most likely to have better matches).  
 \end{itemize}
 \item \cite{Rosenbaum02} describes ``optimal'' matching
 \begin{itemize} \item Minimizes a global distance measure, thus finding an optimal set of matches.  
-		\item Related to network optimization literature.
-		\item \cite{GuRos93} find that overall balance generally similar using optimal or greedy matching, 
+                \item Related to network optimization literature.
+                \item \cite{GuRos93} find that overall balance generally similar using optimal or greedy matching, 
 but that optimal matching does lead to smaller distances between matched pairs
-		\item In essence, the two methods (greedy and optimal) are choosing similar sets of matched units, 
+                \item In essence, the two methods (greedy and optimal) are choosing similar sets of matched units, 
 but optimal matching does a better job of assigning the matched pairs to each other.  
 \end{itemize}
 \end{itemize}
@@ -356,7 +356,7 @@ but optimal matching does a better job of assigning the matched pairs to each ot
 \item \cite{Smith97} discusses these issues in sociology, advocates use of multiple controls.  
 \item \cite{Rosenbaum91a} and \cite{MinRos00} discuss the benefits of using variable ratio matching, where the number of control matches for each treated unit varies
 \begin{itemize} 
-		\item Can lead to very high bias reduction without much loss of precision.
+                \item Can lead to very high bias reduction without much loss of precision.
 \end{itemize}
 \end{itemize}
 
@@ -393,7 +393,7 @@ of the covariates included in the propensity score specification.
 estimated average treatment effect.  
 \begin{itemize} \item Weighting the subclass estimates by the number of treated units in each subclass estimates the average treatment effect
 for the treated group
-		\item Weighting by the overall number of units in each subclass estimates the average treatment effect over the whole population.  
+                \item Weighting by the overall number of units in each subclass estimates the average treatment effect over the whole population.  
 \end{itemize}
 \end{itemize}
 
@@ -491,12 +491,45 @@ to mis-specification of the propensity score model (\cite{Drake93, DehWah99, Deh
 \section{Analysis}
 \label{analysis}
 \subsection{Average treatment effect, average effect on the treated}
+
 \begin{itemize} 
 \item Average treatment effect vs. average
   treatment effect on the treated; 
 \item limiting inferences to what's
   scientifically estimable. 
 \end{itemize}
+
+Our Assumption
+\begin{eqnarray}
+  p\,(Y_0 \mid T,  X) = p\,(Y_0 \mid X)
+\end{eqnarray}
+
+Our Estimand: population average treatment effect for the treated
+\begin{eqnarray}
+  E(Y_1 - Y_0 \mid T=1)
+\end{eqnarray}
+
+Our Estimator:
+\begin{eqnarray}
+    \frac{1}{N_1} \sum_{i=1}^{N} T_i (Y_{1i} - \hat{\mu}_0(X_i))
+\end{eqnarray}
+where $\hat{\mu}_0(X_i)$ is a consistent estimate of the conditional
+mean function, $\mu_{0}(X)= E(Y_0 \mid X)$, evaluated at $X_i$.  We
+estimate it by fitting the parametric model to the control group.
+This is possible because $E(Y_0 \mid X)=E(Y_0 \mid T=0,X)$ by
+independence.
+
+
+However, since we use the parametric model, the mean independence
+assumption may not be plausible. That is, we may not be able to
+extrapolate $\hat{\mu}_{0}(X)$ obtained from the control group to the
+treatment group because the distributions of $X$ differ between the
+two groups.  Hence, we match the treated units with control units that
+are similar in terms of pre-treatment variables. Let $M_i$ represent
+the number of times the unit $i$ in the control group is matched with
+a treated unit.  Matching may be done with replacement.  Now, we
+estimate $\mu_{0}(X)$ using $M_i$ as weights.
+
 
 \subsection{"Naive" estimates}
 \subsubsection{Neyman's estimates of causal effect, variance}
