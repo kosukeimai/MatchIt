@@ -1249,12 +1249,22 @@ characteristics.\footnote{In the original paper, \citet{Carp02} uses a
   lognormal frailty model with a common (ungrouped) random effect.
   Here, for simplicity and speed of computation, we drop the random
   effect.  This has very small effects on the quantities we estimate,
-  and no effect on our conclusions.}  The dataset consists of 408 new
-drugs whose applications were reviewed by the FDA, 262 of which were
-eventually approved.  The remaining 146 applications were still
-pending at the time of data collection and hence are treated as
-right-censored observations. The approval time is measured in months
-passed from the submission of an application.
+  and no effect on our conclusions.} {\bf A key assumption of his
+  parametric approach is that these control variables are causally
+  prior to the political oversight variable. This assumption might be
+  violated if for example media coverage of the disease is affected by
+  liberal Senators. Although such a violation produces post-treatment
+  bias in estimated causal effect, we focus on the issue of model
+  sensitivity.\footnote{ Moreover, the assumption of no interference
+    among units implies that the value of a political oversight
+    variable for one drug does not affect the approval time of another
+    drug (conditioning on the political oversight variables of the
+    latter).}}  The dataset consists of 408 new drugs whose
+applications were reviewed by the FDA, 262 of which were eventually
+approved.  The remaining 146 applications were still pending at the
+time of data collection and hence are treated as right-censored
+observations. The approval time is measured in months passed from the
+submission of an application.
 
 In our analysis, we focus on the estimation of the causal effect of
 the binary treatment variable of Democratic Senate majority, one of
