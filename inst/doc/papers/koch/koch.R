@@ -32,6 +32,13 @@ mfml <- as.formula(paste(tt,"~",paste(xvars,collapse=" + ")))
 m1 <- matchit(mfml, data=dta.full, subclass=6, nearest=F, discard=1)
 dta.match <- match.data(m1)
 
+#total number of cells
+cc <- apply(dta.full[,xvars],2,table)
+tc <- 1
+for(i in 1:length(cc)){
+  tc <- tc*length(cc[[i]])
+}
+
 #sensitivity
 start <- paste(yy,"~",tt)
 coef <- mcoef <- NULL
@@ -97,11 +104,11 @@ xtable(tab2)
 #plotting figure
 #setwd("c:/match/docs/papers/koch/writeup")
 setwd("c:/R/match/docs/papers/koch/writeup")
-trellis.device(device="pdf",file="dens.pdf",color=FALSE,width=6,height=4)
+trellis.device(device="pdf",file="kochdens.pdf",color=FALSE,width=6,height=4)
 par(mar=c(2, 2, 2, 2) + 0.1, cex.lab=0.6, cex.axis=0.6,
     mgp=c(1,0.5,0), cex.main=0.5, cex=0.8)
-doverlay(coef,mcoef,lwd=2,
-         xlab="Average Treatment Effect", leg=F)
+doverlay(mcoef,coef,lwd=2,
+         xlab="Estimated Average Treatment Effect", leg=F)
 arrows(coefficients(res)[tt], 4.7, coefficients(res)[tt],0, length=0.1)
 text(-0.532,3,"Full Data")
 text(-0.25,8.85,"Matched\nData")
