@@ -992,7 +992,7 @@ matched:
      0      0      0      0      0      3      0      7      0      1      0
 PSID12 PSID13 PSID14 PSID15 PSID16 PSID17 PSID18 PSID19 PSID20
      0      0      0      1      0      2      0      0      0
-\end{verbatim}  %$
+\end{verbatim}  
 
 We see that PSID unit 8 was matched 7 times, whereas unit 15 was used
 as a match only once.
@@ -1091,6 +1091,7 @@ Total          377         55         46         53         49         34
 provide summaries across subclasses.
 
 \subsection{Full matching}
+\label{fullmatching}
 When all treated and control units will be used in the analysis, a particular type of subclassification is called
 ``full matching"  (\cite{Rosenbaum02, Hansen04}), in which the matched sample is composed of matched sets, where
 each matched set contains either one treated unit and one or more controls, or one control unit and one or more
@@ -1102,10 +1103,76 @@ options discussed in the documentation with
 ``optmatch" can be used in \MatchIt\ through the ``full.options()" list.  \MatchIt\ nearest neighbor matching options
 will be ignored with full matching.
 
-Diagnostics are slightly different with full matching; since many subclasses will have only one treated or control unit it 
+As an example of full matching,
+
+\begin{verbatim}
+> foo1 <- matchit(treat ~ age + educ + black + hispan + married +
++                nodegree + re74 + re75, data=lalonde, full=T)
+Calculating propensity score...Done
+Full Matching...Done
+Calculating summary statistics...Done
+Warning message: 
+Full matching will ignore nearest neighbor inputs 
+> print(summary(foo1))
+
+Assignment model specification:
+matchit(formula = treat ~ age + educ + black + hispan + married + nodegree + re74 + re75, data = lalonde, full = T)
+
+Summary of covariates for all data:
+
+         Means Treated Means Control        SD  T-stat     Bias
+pscore       5.774e-01        0.1822    0.2903 19.8129  1.79409
+age          2.582e+01       28.0303    9.8812 -2.5590 -0.30945
+educ         1.035e+01       10.2354    2.6283  0.4777  0.05496
+black        8.432e-01        0.2028    0.4894 18.5978  1.75677
+hispan       5.946e-02        0.1422    0.3220 -2.9393 -0.34890
+married      1.892e-01        0.5128    0.4932 -7.8180 -0.82407
+nodegree     7.081e-01        0.5967    0.4831  2.6336  0.24431
+re74         2.096e+03     5619.2365 6477.9645 -6.3815 -0.72108
+re75         1.532e+03     2466.4844 3295.6790 -3.2486 -0.29026
+
+Summary of covariates for matched data:
+
+         Means Treated Means Control        SD   T-stat      Bias Reduction
+pscore          0.3020        0.3010    0.2903  1.54747  0.004246         1
+age            27.4031       27.3460    9.8812  0.05121  0.007989         1
+educ           10.1803       10.3069    2.6283 -0.39747 -0.062969         0
+black           0.4053        0.3917    0.4894  1.37815  0.037432         1
+hispan          0.1155        0.1180    0.3220 -0.08142 -0.010922         1
+married         0.4361        0.4063    0.4932  0.77764  0.075908         1
+nodegree        0.6321        0.6295    0.4831  0.04499  0.005567         1
+re74         4430.1492     4612.4848 6477.9645 -0.31085 -0.037313         1
+re75         2162.6791     2194.5371 3295.6790 -0.08446 -0.009896         1
+
+Sample sizes:
+
+        Treated Control Total
+Full        185     429   614
+Matched     185     429   614
+
+Problematic covariates:  
+Number of units discarded:   0
+
+\end{verbatim}
+
+We see that the matching has utilized all units (the treated and control group sample sizes are the same for the full
+and matched samples), but that there has been significant reduction in bias from the full matching.  The 
+diagnostics are slightly different with full matching as compared with the previous matching methods we have discussed; 
+since many subclasses will have only one treated or control unit it 
 is not possible to do the weighted comparisons done for standard subclassification.  
 
-[NEED TO FILL THIS IN.]
+To assess balance on each covariate in the matched samples obtained from full matching, a linear model is run with
+the covariate of interest (e.g., the propensity score, age, or education), and the treatment indicator and the subclass
+fixed effects on the right-hand side (see Section \ref{fullmatchanal} for more discussion of the use of fixed effects
+with full matching).  The mean in the treated group is defined as the average predicted value of the covariate as if all 
+units were treated; the mean in the control group is defined as the average predicted value of the covariate as if all units 
+were control.  This prevents the need to define one of the subclasses as the baseline subclass and allows a comparison
+of units across all subclasses, but still accounts for the fact that the units should be well matched within each subclass.  
+The standard deviation of each covariate is the same in the full and matched samples, since
+all units are utilized.  Finally, the t-statistc is the t-statistic of the coefficient of the treatment indicator in
+the linear model predicting the covarite; this t-statistic reflects the differences between the treated and control groups,
+after conditioning on the subclasses.
+
 
 \subsection{Caliper Matching}
 
@@ -1731,7 +1798,8 @@ The \texttt{summary} call returns, when applicable:
 \item \texttt{sum.all} is a data frame which contains variable names
   and interactions down the row names, and summary statistics on
   \emph{all observations} in each of the columns.  The columns in
-  \texttt{sum.all} contain:
+  \texttt{sum.all} contain \footnote{The values output for full matching are slightly different
+from that described here; see Section \ref{fullmatch} for details}:
   \begin{itemize}
   \item means of all covariates $X$ for treated and control units,
     where \texttt{Means Treated}$= \mu_{X|T=1} = \frac{1}{n_1}
@@ -2282,6 +2350,7 @@ Pooled Average Treatment Effect: Y - PR
 \end{verbatim}
 
 \subsection{Analysis of data from full matching}
+\label{fullmatchanal}
 It will generally not be possible to run models
 separately within each subclass after full matching, due to very small sample sizes of either the treated or
 control group within each subclass.  In this situation, a common approach is to run a model similar to that 
@@ -2295,7 +2364,6 @@ For example,
 > m1 <- lm(re78~ treat + age + educ + black + hispan + married +
          nodegree + re74 + re75 + as.factor(psclass),
          data=foo1$data)
-> summary(m1)
 > summary(m1)
 
 Call:
