@@ -41,7 +41,7 @@ distance <- function(formula, model="logit", data,
     else if(model=="nnet"){
       require(nnet)
       mf[[1]] <- as.name("nnet.formula")
-      mf$size <- 3  #is this the right default setting?
+      if(is.null(mf$size)){mf$size <- 3}  # default setting?
       res <- eval(as.call(mf),sys.frame(sys.parent()))
       if(a==0){
         pscore <- as.vector(fitted(res))
