@@ -14,5 +14,5 @@ Description:  MatchIt selects matched samples of the
   covariate distributions -- can be used to match exactly
   on covariates, to match on propensity scores, or perform 
   a variety of other matching procedures.
-License: GPL
+License: GPL version 2 or newer
 URL: http://gking.harvard.edu/matchit
