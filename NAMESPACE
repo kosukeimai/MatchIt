@@ -1,5 +1,6 @@
 export(
 	matchdef,
+        match.data,
 	matchit,
 	diagnose,
 	distance,
