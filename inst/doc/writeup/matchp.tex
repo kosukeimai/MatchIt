@@ -567,23 +567,22 @@ experimental vs.\ observational data under this general model.
 \subsection{Experimental Data}\label{s:paraexp}
 
 In experimental data, random assignment guarantees (among other
-things) that $T_i$ and (any observed or unobserved) $X_i$ are
-independent.  Since stochastic independence implies mean independence,
-we can drop $X$ and write $E[Y_i(1)|t_i=1,X]=E[Y_i(1)|t_i=1]$ and
-$E[Y_i(0)|t_i=1,X]=E[Y_i(0)|t_i=1]$.  As such, we can simplify
-equation~(\ref{matt}) as
+things) that $T$ and (any observed or unobserved) $X$ are independent.
+In this situation, $X$ cannot be a confounding factor when estimating
+the effect of $T$ and so we drop $X$ and simplify
+Equation~(\ref{matt}) as
 \begin{align}
   \label{smatt}
   E[Y_i(1)|t_i=1] &\equiv \mu_i(1) = g(\alpha + \beta)\notag \\
   E[Y_i(0)|t_i=0] &\equiv \mu_i(0) = g(\alpha)
 \end{align}
-and so the average treatment effect on the treated from
-equation~(\ref{att}) becomes simply
+and the average treatment effect on the treated in
+Equation~(\ref{att}) as
 \begin{equation}
   \label{satt}
   \text{ATT} = g(\alpha+\beta) - g(\alpha),
 \end{equation}
-which most importantly no longer has a summation sign over $i$.
+which importantly no longer has a summation sign over $i$.
 
 The systematic components in equations~(\ref{smatt}) are now scalar
 constants for all $i$.  This is a key result, since it means that
