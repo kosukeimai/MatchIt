@@ -38,7 +38,7 @@
     comments; and the National Institutes of Aging (P01 AG17625-01)
     and the National Science Foundation (SES-0318275, IIS-9874747) for
     research support.  Software to implement the methods in this paper
-    is available from \texttt{http://GKing.Harvard.Edu/matchit}.}}
+    is available at \texttt{http://GKing.Harvard.Edu/matchit}.}}
 
 \author{Daniel E. Ho,\thanks{J.D.\ candidate, Yale Law School, Ph.D.\
     candidate, Department of Government, Harvard
@@ -92,31 +92,30 @@ Elizabeth A. Stuart\thanks{Ph.D.\ Candidate, Department of Statistics,
 
 A new statistics literature has emerged in recent years, building on
 advances in nonparametric, non-model-based inference, and focused
-around diverse generalizations of different types of matching
-estimators for causal inference.  The promise of this work is
-considerable, as it promises more reliable and valid causal inferences
-than is typical with the standard parametric regressions social
-scientists usually run (regression, logit, etc.).  The new methods
-make it possible to reduce or eliminate the functional form and other
-assumptions of parametric models and to verify empirically rather than
-assume critical modeling assumptions.
+around diverse generalizations of matching estimators for causal
+inference.  The promise of this work is considerable, including more
+reliable and valid causal inferences than is typical with the standard
+parametric regressions social scientists usually run (regression,
+logit, etc.).  The new methods make it possible to reduce or eliminate
+the functional form and other assumptions of parametric models and to
+verify empirically rather than assume critical modeling assumptions.
 
 The statistical literature on matching has grown quite sophisticated
 but, from the point of view of the practical researcher, it looks like
-a cacophony of related but conflicting techniques, practices,
-conventions, and rules of thumb.  Valid methods of computing standard
-errors and confidence intervals are even more complicated, often not
-used, and sometimes not available.  Many theoretical results do not
-apply to real applications unless unknown theoretical quantities or
+a cacophony of conflicting techniques, practices, conventions, and
+rules of thumb.  Valid methods of computing standard errors and
+confidence intervals are even more complicated, often not used, and
+sometimes not available.  Many theoretical results do not apply to
+real applications unless unknown theoretical quantities or
 specifications are somehow divined, and so coherent guidelines for
 practice are conflicting, absent, or based on clinical experience
-rather than scientific proof.  Although matching now comprises a
-substantial fraction of the empirical work in some disciplines, such
-as epidemiology and medicine, the diversity of the substantive
-applications, and the difficulties of the conflicting methodological
-languages used to describe the same underlying concepts, has limited
-the spread of these powerful techniques to much of the social
-sciences.
+rather than scientific evidence or mathematical proof.  Although
+matching now comprises a substantial fraction of the empirical work in
+some disciplines, such as epidemiology and medicine, the diversity of
+the substantive applications and the difficulties of the conflicting
+methodological languages used to describe the same underlying
+concepts, has limited the spread of these powerful techniques to much
+of the social sciences.
 
 In this paper, we attempt to unify this diverse literature so applied
 researchers can make productive use of these new methods.  Our simple
@@ -130,15 +129,23 @@ the preprocessed data rather than the raw data.  All of the intuition,
 diagnostics, and knowledge about our parametric procedures can then be
 used as before.
 
-Preprocessing data with matching in the way we propose improves
-parametric analyses by making them considerably less dependent on
-assumptions about functional forms and distributions.  Our
-preprocessing approach has obvious advantages in terms of exposition,
-pedagogy, and ease-of-use, since what we have already learned is not
-discarded, but it also turns out to help bring some order and cohesion
-to the conflicting methodological literature and to suggest some
-relatively straightforward advice for empirical researchers seeking to
-make causal inferences.  For example, when thought of in the way we
+Preprocessing data with matching in the way we propose makes
+parametric analyses considerably less dependent on assumptions about
+functional forms and distributions.  In particular, the common process
+researchers follow of running many regressions to pick one or a few to
+present that are plausible or representative --- or in the worst case
+to choose those that support their favored theories --- will be
+greatly limited since, with preprocessing, the variation in estimates
+across specifications is be greatly reduced.  Preprocessing is thus
+good insurance for readers that the author did not unintentionally
+cook the books, and productive for investigators trying to find
+systematic patterns in our typically noisy data.  Our preprocessing
+approach has obvious advantages in terms of exposition, pedagogy, and
+ease-of-use, since what we have already learned is not discarded, but
+it also turns out to help bring some order and cohesion to the
+conflicting methodological literature and to suggest some relatively
+straightforward advice for empirical researchers seeking to make
+causal inferences.  For example, when thought of in the way we
 propose, the approach suggests a simple, standardized, and valid
 approach to computing standard errors and confidence intervals for any
 of the new techniques.  Our approach has also made it possible for us
@@ -151,12 +158,12 @@ Our approach is similar in spirit to
 forms of) parametric adjustment following matching, as well as
 \citet{HecIchTod98} who develop forms of matching that are combined
 with semi-parametric (kernel weighting) analyses.  Applied researchers
-have intuitively chosen similar approaches, such as in
-\citet{Rosenbaum86, GlaLevMye03}.  It is also similar in spirit to
-methods in other areas that preprocess data so that subsequent
-analyses can be improved without modifying existing techniques, such
-as multiple imputation \citep{Rubin87,KinHonJos01} and outlier and
-feature detection \citep[][Ch.8]{Bishop95}.
+have intuitively chosen similar approaches for particular projects,
+such as in \citet{Rosenbaum86} and \citet{GlaLevMye03}.  Our idea is
+also similar in spirit to methods in other areas that preprocess data
+so that subsequent analyses can be improved without modifying existing
+techniques, such as multiple imputation \citep{Rubin87,KinHonJos01}
+and outlier and feature detection \citep[][Ch.8]{Bishop95}.
 
 \section{Definition of Causal Effects}
 
@@ -169,10 +176,7 @@ that might be used to estimate it from real data.  To explicate these
 ideas, we use the running example from \citet[][Section
 3.1.1]{KinKeoVer94}, where the goal is to estimate the electoral
 advantage of incumbency for Democrats in the U.S.\ House of
-Representatives.  That is, we only study Democratic incumbents and
-define the treatment as when the Democratic Party nominates one of
-these incumbents willing to run for a new term and the control as when
-the Party nominates someone else to run in an open seat.
+Representatives.
 
 The unit of analysis in our example is therefore the congressional
 district, which we label with the index $i$ ($i=1,\dots,n$).  In most
@@ -181,7 +185,7 @@ simplify the exposition by considering only a single dichotomous
 causal (or ``treatment'') variable.  We do the same and label it
 $t_i$, which takes a value of 1 if unit $i$ receives the treatment and
 0 if $i$ is untreated (the ``control condition'').  In our running
-example, the treatment is whether the incumbent is given the party's
+example, the treatment is whether the incumbent receives the party's
 nomination in district $i$.  Projects with more complicated causal
 variables can dichotomize (perhaps in several alternative ways) or use
 more complicated methods \citep{ImaDyk03}.  Those with more than one
@@ -204,9 +208,9 @@ close connections between this definition and the goals of the
 substantively unrelated but mathematically closely related missing
 data and ecological inference literatures.  We then generalize the
 definition to include features of random causal effects that are
-useful for our use of nonparametric methods of preprocessing for
-parametric models.  Finally, we give specific causal estimates of
-interest at the population level.
+useful for understanding connections between nonparametric
+preprocessing and parametric models.  Finally, we give specific causal
+estimates of interest at the population level.
 
 \paragraph{Realized Causal Effects}
 Because of pretreatment differences among the districts (both
@@ -220,10 +224,10 @@ $y_i(1)\equiv y_i(t_i=1)$ be the vote we would observe in district $i$
 in say the 2008 election if in fact the Democratic incumbent receives
 his or her party's nomination (i.e., $t_i=1$) and $y_i(0)\equiv
 y_i(t_i=0)$ the vote the party would receive if the Democratic Party
-nominates a nonincumbent ($t_i=0$).  The use of parentheses in this
-notation denotes that the outcome is potential, and so not necessarily
-observed, and that it depends on the value of the variable in
-parentheses.  A key point is that the values of these potential
+nominates a nonincumbent (i.e., $t_i=0$).  The use of parentheses in
+this notation denotes that the outcome is potential, and so not
+necessarily observed, and that it depends on the value of the variable
+in parentheses.  A key point is that the values of these potential
 outcomes remain the same regardless of whether the treatment is in
 fact applied in district $i$ or not.  However, since the Democratic
 Party either will nominate ($t_i=1$) or will not nominate ($t_i=0$) an
@@ -266,12 +270,13 @@ In this framework, causal inference can be thought of as a severe
 missing data problem, where each unit has two relevant dependent
 variables, $y_i(0)$ and $y_i(1)$, but one of which, $t_iy_i(0) +
 (1-t_i)y_i(1)$, is always missing.  Moreover, since $y_i(0)$ and
-$y_i(1)$ are never observed for the same units, we cannot use a known
-relationship between the two to extrapolate to units where only one is
-observed.  Making causal inferences is thus equivalent to imputing
-missing data, using whatever external information is available.  As we
-show below, this connection will prove useful in making the bridge
-that connects nonparametric matching to parametric models.
+$y_i(1)$ are never both observed for any set of units, we cannot use a
+known relationship between the two to extrapolate to units where only
+one is observed.  Making causal inferences is thus equivalent to an
+especially difficult case of imputing missing data, using whatever
+external information is available.  As we show below, this connection
+will prove useful in making the bridge that connects nonparametric
+matching to parametric models.
 
 Causal inference can also be thought of as an especially severe form
 of ecological inference.  In ecological inference, we observe for each
@@ -281,14 +286,14 @@ and the proportion of people who are black) and the goal is to
 estimate the unknown cell proportions (the proportion of blacks who
 vote and the proportion of whites who vote).  We make the bridge by
 referring to the known ($y_i$ and $t_i$) and potentially unknown
-($y_i(0)$ and $y_i(1)$) quantities in both problems in the same
-notation and pay attention to the order in which the information is
-generated: In both problems, we imagine that $y_i(0)$ and $y_i(1)$
-exist in nature before our research begins.  Then $t_i$ (the treatment
-in causal inference or the row marginal in ecological inference) is
-applied or otherwise becomes known.  Finally, we can calculate the
-observed outcome $y_i$ deterministically via this simple accounting
-identity:
+[$y_i(0)$ and $y_i(1)$] quantities in both problems in the same
+notation and pay special attention to the order in which the
+information is generated: In both problems, we imagine that $y_i(0)$
+and $y_i(1)$ exist in nature before our research begins.  Then $t_i$
+(the treatment in causal inference or the row marginal in ecological
+inference) is applied or otherwise becomes known.  Finally, we can
+calculate the observed outcome $y_i$ deterministically via this simple
+accounting identity:
 \begin{equation}
   \label{id}
   y_i = t_iy_i(1) + (1-t_i)y_i(0).
@@ -301,8 +306,9 @@ bounds on both quantities of interest with certainty
 always knowing one of the quantities exactly; however, because
 (\ref{id}) cannot be solved for one of the unknowns (since it would
 require dividing by $t_i$ or $1-t_i$, which includes zero) we have the
-severe disadvantage of not knowing anything with certainty about the
-other unknown.
+severe disadvantage in causal inference of not knowing anything with
+certainty about the other unknown; this problem does not arise in
+ecological inference.
 
 Social scientists correctly think of missing data imputation and
 ecological inference as difficult and hazardous areas of statistical
@@ -351,10 +357,18 @@ where $\mu_i(1)\equiv E[Y_i(1)]$ and $\mu_i(0)\equiv E[Y_i(0)]$.
 In most applications, we do not attempt to estimate the treatment
 effect for each observation, and instead estimate the average over all
 observations, for some subset of observations, or for a particular
-population or population subgroup.  This leads to two choices for
-quantities of interest, for either realized and random causal effects
-(we show them here for the latter).  First is the population average
-treatment effect or ATE:
+population or population subgroup.  This leads to several choices for
+quantities of interest, each of which defined for either realized (in
+sample) or population causal effects.  We focus on in sample effects
+--- i.e., based on quantities of interest for all or a subset of units
+in our data --- since they are closer to our data than effects for
+averages of specified populations or population subgroups, but the
+difference is not always important from a practical viewpoint since a
+good estimator for one is ``automatically a good estimator for the
+other'' \citep[p.6][]{Imbens04}.
+
+Among in sample effects, we consider two choices.  The first is the
+average treatment effect or ATE:
 \begin{align}
   \label{pate}
   \text{ATE} = E[Y_i(1) - Y_i(0)] \\
@@ -363,20 +377,14 @@ treatment effect or ATE:
 which is the mean causal effect for unit $i$ averaged over all units
 (so that the expected value operator in the first line averages over
 the random potential outcomes for each unit as well as over units).
-{\bf The second equation is an estimator of the first equation, but
-  not the estimand. alternatively, the second equation can be
-  interpreted as the estimand of the sample aerage treatment effect. }
 
-The alternative choice of a target quantity of interest is the
-population average treatment effect on the treated, or ATT:
+The alternative choice of a target quantity of interest is the average
+treatment effect on the treated, or ATT:
 \begin{align}
   \label{att}
   \text{ATT} = E[Y_i(1) - Y_i(0)|t=1] \\
   = \frac{1}{\sum t_i}\sum_{i:t_i=1}[\mu_i(1) - \mu_i(0)],
 \end{align}
-{\bf The second equation is an estimator of the first equation, but
-  not the estimand. alternatively, the second equation can be
-  interpreted as the estimand of the sample aerage treatment effect. }
 In our running example, this is the average causal effect in districts
 in which the Democratic Party nominated the incumbent member of the
 House.  From one perspective, we might want to know this treatment
@@ -430,47 +438,46 @@ chance.  Combining this with the large $n$ from the third feature
 guarantees that the chance that something will go wrong is vanishingly
 small.
 
-Random assignment in feature (2) guarantees the absence of omitted
-variable bias even without any control variables included.  To see
-this, recall that, under the usual econometric rules for omitted
+Random assignment in the second feature guarantees the absence of
+omitted variable bias even without any control variables included.  To
+see this, recall that, under the usual econometric rules for omitted
 variable bias, a variable $X_i$ must be controlled for if it is
 causally prior to $t_i$, empirically related to $t_i$, and affects
-$y_i$ conditional on $t_i$ (or, in other words, $X_i$ must be
-correlated with the potential outcomes, $y_i(1)$ and $y_i(0)$).  If,
-instead, one or more of the three conditions do not hold, then $X_i$
-may be omitted without any bias resulting (although the variance may
-increase).  Random assignment guarantees that $t_i$ is unrelated to
-\emph{any} $X_i$, whether measured or not, except by random chance.
-Moreover, the large $n$ in condition (3) guarantees that this chance
-is vanishingly small.
+$y_i$ conditional on $t_i$ [or, in other words, $X_i$ must be
+controlled for if it is correlated with the potential outcomes,
+$y_i(1)$ and $y_i(0)$].  If, instead, one or more of the three
+conditions do not hold, then $X_i$ may be omitted without any bias
+resulting (although the variance may increase).  Random assignment
+guarantees that $t_i$ is unrelated to \emph{any} $X_i$, whether
+measured or not, except by random chance.  Moreover, the large $n$ in
+condition guarantees that this chance is vanishingly small.
 
-Classical randomized Experiments are a true ideal type,
-particularly in relation to most social science research where almost
-all research fails to meet at least one of the three features.  Even
-most social science lab experiments have random assignment but no
-random selection and often a small $n$.  Traditional survey research
-has what is intended to be random selection (although with
-dramatically increasing nonresponse rates and cell phone usage, this
-is a less plausible claim) and certainly has a large $n$, but random
-assignment, except when the treatment involves the wording of survey
-questions, is usually impossible.
+Classical randomized experiments are a true ideal type, particularly
+in relation to most social science research which almost always fails
+to meet at least one of the three features.  Even most social science
+lab experiments have random assignment but no random selection and
+often a small $n$.  Traditional survey research has what is intended
+to be random selection (although with dramatically increasing
+nonresponse rates and cell phone usage, this is a less plausible
+claim) and certainly has a large $n$, but random assignment, except
+when the treatment involves the wording of survey questions, is
+usually impossible.
 
 \subsection{Observational}
 
 We define observational data collection mechanisms as any process
 generating data that does not meet all three of the features of a
-classical randomized experiment.  Researchers trying to use the
-experimental paradigm try to design research to meet all three
-features discussed in the previous section.  Researchers analyzing
-observational data are instead forced to make assumptions that, if
-correct, help them avoid various threats to the validity of their
-causal inferences.
+randomized experiment.  Researchers trying to use the experimental
+paradigm try to design research to meet all three features discussed
+in the previous section.  Researchers analyzing observational data are
+instead forced to make assumptions that, if correct, help them avoid
+various threats to the validity of their causal inferences.
 
 In this paper, we shall assume data are selected in a manner that does
 not generate selection bias.  Observations need not be selected at
 random, as in an experiment, but the probability of selection must not
 be correlated with the dependent variable $y$, after taking into
-account the treatment $t$ and pretreatment covariates, $X$.  Whether
+account the treatment, $t$, and pretreatment covariates, $X$.  Whether
 this assumption is satisfied by carefully considering and controlling
 for the sample selection process or by changing the quantity of
 interest to be that reflected by the sample, avoiding selection bias
