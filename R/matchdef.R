@@ -48,9 +48,9 @@ matchdef <-  function(formula, in.sample, pscore, nearest = TRUE,
     names(psclass) <- row.names(treata)
     for (i in 1:n1) {
       match.matrix[i,] <-
-        names(psclass)[match(psclass[tlabels[i]],
+        names(which(psclass[tlabels[i]]==
                              psclass[-pmatch(tlabels[i],
-                                             names(psclass))])]
+                                             names(psclass))]))
     }
  
   }
