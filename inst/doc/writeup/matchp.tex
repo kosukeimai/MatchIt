@@ -96,16 +96,16 @@ in the discipline.  The problem is easy to recognize, but it usually
 only arises in private and so open discussions of it are only
 infrequently found in the literature.
 
-To see the problem, consider how political scientists typically
-conduct quantitative research: Even for a single project, we often
-spend a year or more collecting, correcting, recollecting, merging,
-and recoding data.  When all the data are finally available, in the
-right format, and loaded into our favorite statistical package, we
-obtain a causal estimate by running some parametric statistical
-procedure --- regression, logit, probit, duration models, structural
-equation models, count models, etc.  This run typically takes only a
-few seconds and, according to some textbook ways of proceeding, it
-would be time to write up the results.
+To see the problem, consider how quantitative political science
+research typically proceeds: Even for a single project, we often spend
+a year or more collecting, correcting, recollecting, merging, and
+recoding data.  When all the data are finally available, in the right
+format, and loaded into our favorite statistical package, we obtain a
+causal estimate by running some parametric statistical procedure ---
+regression, logit, probit, duration models, structural equation
+models, count models, etc.  This run typically takes only a few
+seconds and, according to some textbook ways of proceeding, it would
+be time to write up the results.
 
 Of course, this never happens.  Instead, we do a second run with
 different control variables, a third with a different functional form,
@@ -114,43 +114,42 @@ different sample periods or observation subsets, and then each of
 these or others are repeated with slight variations over and over
 again.  Although this usual procedure produces hundreds or even
 thousands of alternative estimates of our causal effect, we typically
-only choose one, and rarely more than say 5--10, to present in a
-paper.  Yet, we know that the dependence of our estimates on these
-modeling assumptions means that different specifications can produce
-very different causal inferences.
+only choose one, and rarely more than 5--10, to present in a paper.
+Yet, we know that the dependence of our estimates on these modeling
+assumptions means that different specifications can produce very
+different causal inferences.
 
-The problem for researchers is how can to convince readers that we
-picked a representative specification or the right one rather than the
-one that most supported our favorite hypothesis?  What does it even
-mean to choose ``the right'' parametric model estimates when any
-chosen model depends on assumptions we cannot verify?  When we read a
+The problem for researchers is how to convince readers that we picked
+a representative specification or the right one rather than the one
+that most supported our favorite hypothesis.  What does it even mean
+to choose ``the right'' parametric model estimates when any chosen
+model depends on assumptions we cannot verify?  When we read a
 published article in political science, how do we know the estimated
 causal effect presented is accurate or whether it merely demonstrates
 that the researcher found it \emph{possible} to find a specification
 consistent with his or her prior expectations?
 
-We attack this problem by drawing from a new statistics literature on
-nonparametric, non-model-based inference, that focuses on a diverse
-collection of matching estimators for causal inference.  This work
-offers considerable promise for increasing the reliability and
-validity of causal inferences by reducing or eliminating the role of
-functional form and other assumptions of parametric models.  The
-statistical literature on matching has grown quite sophisticated, but,
-from the point of view of the practical researcher, it looks like a
-cacophony of conflicting techniques, practices, conventions, and rules
-of thumb.  Valid methods for computing standard errors and confidence
-intervals are even more complicated, often not used, and sometimes not
-available.  Many theoretical results do not apply to practical
-applications unless unknown theoretical quantities or specifications
-are somehow divined.  Coherent guidelines for practice are
-conflicting, absent, or based on clinical experience rather than
-scientific evidence or mathematical proof.\footnote{Matching methods
-  now comprise a substantial fraction of the empirical work in some
-  disciplines, such as epidemiology and medicine.  However, the
-  diversity of substantive applications and the conflicting
-  methodological languages used to describe the same underlying
-  concepts have limited the spread of these powerful techniques to
-  much of the social sciences.}
+We attack this problem by drawing on a new statistics literature
+concerned with nonparametric, non-model-based causal inference based
+on matching.  This work offers considerable promise for increasing the
+reliability and validity of causal inferences by reducing or
+eliminating the role of functional form and other assumptions of
+parametric models.  The statistical literature on matching has grown
+quite sophisticated, but, from the point of view of the practical
+researcher, it looks like a cacophony of conflicting techniques,
+practices, conventions, and rules of thumb.  Valid methods for
+computing standard errors and confidence intervals are even more
+complicated, often not used, and sometimes not available.  Many
+theoretical results do not apply to practical applications unless
+unknown theoretical quantities or specifications are somehow divined.
+Coherent guidelines for practice are conflicting, absent, or based on
+clinical experience rather than scientific evidence or mathematical
+proof.\footnote{Matching methods now comprise a substantial fraction
+  of the empirical work in some disciplines, such as epidemiology and
+  medicine.  However, the diversity of substantive applications and
+  the conflicting methodological languages used to describe the same
+  underlying concepts have limited the spread of these powerful
+  techniques to much of the social sciences.}
 
 We attempt to reduce model dependence by first unifying this diverse
 literature and suggesting a procedure by which applied researchers can
