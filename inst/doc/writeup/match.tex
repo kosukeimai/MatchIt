@@ -94,6 +94,10 @@ implements these matching methods.
 
 \clearpage
 
+\renewcommand{\baselinestretch}{2}
+\small
+\normalsize
+
 \section{Introduction}
 
 A new and exciting statistics literature has emerged in recent years,
@@ -106,7 +110,7 @@ methods make it possible to vastly reduce the necessary functional form
 and other assumptions, and to verify empirically rather than assume
 unstated but critical modeling assumptions.
                                                                                                                                                              
-Unfortunately, this literature has grown into a cacaphony of related but
+Unfortunately, this literature has grown into a cacophony of related but
 conflicting techniques, practices, conventions, and rules of thumb.
 Valid methods of computing standard errors and confidence intervals are
 even more complicated, often not used, and sometimes not available.
@@ -120,7 +124,7 @@ used in the social sciences (regression, logit, etc.) work better.
 This framework thus enables us to add a simple pre-processing step and
 let social scientists use whatever models they are already accustomed
 to using, rather than requiring them to substitute the methods they
-know for one of a set of entirely new and unfamilar methods.  Our
+know for one of a set of entirely new and unfamiliar methods.  Our
 approach therefore has obvious pedagogical and expository advantages,
 but the approach also turns out to be useful in bringing intellectual
 order and cohesion to this conflicting literature and to suggest
@@ -140,7 +144,7 @@ implements all the ideas discussed herein.
 Causal effects are inherently a comparison of potential outcomes...generally as the outcome if the treatment of interest
 is applied, and the outcome if the treatment of interest is not applied (the ``control'' situation).  e.g., cholesterol level
 after two months on a cholesterol-reducing drug compared with cholesterol level after two months on placebo.   Since each unit (e.g., each individual
-at a given point in time) either receives or does nto receive the treatment (not both), can think of causal inference as missing data problem where 
+at a given point in time) either receives or does not receive the treatment (not both), can think of causal inference as missing data problem where 
 we are interested in predicting the missing potential outcomes.  This idea will be discussed in detail in Section \ref{analysis}, which discusses the 
 estimation of causal effects.
 
@@ -150,7 +154,7 @@ questions are fairly straightforward.  For example, in the cholesterol example, 
 with a placebo.  The units are the individuals who enter the study, at the point in time that they enter the study.  And the potential outcomes of interest
 are cholesterol levels two months after treatment assignment.
 
-This definition of causal efects used regardless of how we will learn about the causal effects...whether through a randomized experiment, or through the use of 
+This definition of causal effects used regardless of how we will learn about the causal effects...whether through a randomized experiment, or through the use of 
 observational data.  [Do we need to clarify what we mean by a randomized experiment and observational data?]
 
 \subsection{Assignment mechanism}
@@ -172,46 +176,20 @@ In a completely randomized experiment, the difference in sample means of the pot
 When we are in a setting with observational data, a key concept is that of trying to replicate a randomized experiment as much as possible.  
 Two ways of doing this: find samples that are as similar as possible on all background covariates, and the outcome values are not used in the design.  We thus
 will think of carefully designing an observational study--selecting treated and control groups such that they look like they could have arisen from a randomized
-experiment.  In that way, any differences in the outcome can be attributed to the treatment itself, not to any pre-existing differences between the groups. 
+experiment, as discussed in \cite{Rubin91, Rubin01} and \cite{Rosenbaum99}.  
+In that way, any differences in the outcome can be attributed to the treatment itself, not to any pre-existing differences between the groups. 
 
 A key assumption with observational studies is that of unconfounded treatment assignment: that treatment assignment is independent of the potential outcomes
 given the observed covariates.  In other words, for two individuals with the same values of observed covariates, if one received treatment and the other control,
 then that treatment assignment was random--within groups defined by the covariates, the treated and control groups are only randomly different from one another.
-In that way we assume that within blocks defined by the covariates, we have replicated a mini-randomized experiment.  
+In that way we assume that within blocks defined by the covariates, we have replicated a mini-randomized experiment.   To make this assumption more plausible,
+it is important to include as many covariates as possible in the matching, particularly those thought to be related to the choice of which treatment is received.
 
 Since the 1970's, work has developed matching methods to select well-matched samples for comparison, again with this idea of replicating a hypothetical
 randomized experiment.  Original work looked at the bias and variance consequences  of choosing matched rather than random samples for follow-up, when
-outcome data has not yet been collected on any units and cost constraints prohibit following up the full samples.  Methods extended to situation 
+outcome data has not yet been collected on any units and cost constraints prohibit following up the full samples (\cite{AltRub70, Rubin73a, Rubin73b}).  Methods extended to situation 
 where outcome data already available and interest is in selecting well-matched samples for comparison.  Here we summarize these methods and
 present methods for implementing matching with observational data.
-
-\paragraph{Defining units, treatment and outcome.}  In assessing a
-  causal effect, the clear definition of treatments and units is crucial.  
-  We divide units [variables???]  into two classes: pre-exposure --
-  those whose values are determined prior to exposure to the cause;
-  post-exposure -- those whose values are determined after exposure to
-  the cause.\footnote{Holland, p. 946}  One particularly prevalent issue
-  in comparative politics and international relations consists of
-  cases where treatment occurs at some time $t$ and persists
-  indefinitely.  In Simmons's data, for example, commitment to Article VIII occurs,
-  but there is no possibility of ``un-committing.''  In the
-  comparative electoral systems data, with few exceptions, a country
-  has the same electoral system for long periods of time.  One
-  approach taken by researchers has been to define units as
-  unit-years, such as country-years or dyad-years.  This, however, violates the
-  stability assumptions of matching. 
-  [In more traditional econometric terms, the treatment indicator may
-  thereby suffer of serial
-  correlation\footnote{Duflo, 2003} inducing an artificial causal
-  effect.] We suggest redefining the units to be countries (rather than country/years as done by Simmons and others),
-which properly reflects the hypothesized assignment mechanism.  In these examples where treatment occurs at time $t$
-and persists indefinitely, ``treatment assignment" is not done every year for each state, as implied by the usual
-treatment of each country and year as a different unit.  Rather, treatment is applied to each state only once (at time
-$t$) and the units modeled should reflect that.  Thus, we recommend [?????] the use of modeling at the country level, 
-where
-the variables before time $t$ are treated as covariates and the variables after time $t$ are treated as outcomes.  
-This idea is explored by Bertrand et al. (2002), and they find that it has good properties.  We will discuss this
-method more below.
 
 
 \subsection{Inference}
@@ -223,7 +201,10 @@ method more below.
 \subsection{Main idea: find matches that look as similar as possible}
 \subsection{Exact matching}
 \subsection{Propensity scores as a way to reduce dimensionality}
-[This paragraph is from earlier version.]  Similar to exact matching, propensity score matching is simply a means
+
+\begin{comment}
+[From earlier version.]
+ Similar to exact matching, propensity score matching is simply a means
 to obtain a balanced dataset, and the
 variance of the sample ATT is the same as in Equation~\ref{VarATT}.
 The only difference is the fact that the missing potential outcome
@@ -250,11 +231,23 @@ If on the other hand we are interested in the population ATT, the
 variance may be estimated by the bootstrap, or even the Neyman
 estimate in Note~\ref{neyman} (\citealt{ImbensNDb}, \citealt[Chapter
 6]{ImbRubND}).
-
+\end{comment}
 
                                                                                                                                                              
 \section{Details of matching procedures}
 \subsection{Estimating propensity scores}
+\label{pscorest}
+
+Outside of randomized experiments, we generally do now know the true propensity 
+scores and thus must estimate them.  Since the propensity score does not estimate any population
+parameter and serves its role purely as a ``balancing score'', it does
+not introduce any added uncertainty to the variance of the treatment
+effect.  In fact, theoretical results (\cite{RubTho92b, RubTho96, HilRubTho99}) show that using estimated rather than true propensity scores
+can actually lead to lower variance in the estimated treatment effect.  \cite{Hahn98} shows that using estimated propensity scores in the estimation
+of the average treatment effect has the same asymptotic efficiency as using the true propensity scores, but that knowing the true propensity score
+does lower the asymptotic variance bound of the average effect of the treatment on the treated.  [This isn't great for us, since we are generally in a scenario
+of estimating the effect on the treated, since we are matching to the treated group.] 
+
 \subsubsection{Logistic regression}
 logistic regression usually used.  fit model with treatment assignment on left-hand side and covariates on right-hand side.
 Fitted values from regression are the propensity scores.
@@ -263,31 +256,118 @@ Fitted values from regression are the propensity scores.
 Other methods can also be used.  [Dan comments here as well?]
 
 \subsection{Nearest neighbor matching}
+\label{nearest}
 Generally matching chooses one (or more than one) matches for each unit.  For example, when estimating the average treatment effect
 on the treated, choose one (or more than one) control unit for each treated unit.  This is often done using nearest neighbor matching,
-which goes through the treated units one by one and finds the best matching control unit.  Variations on and details for this are described in the next few sections.
+which goes through the treated units one by one and finds the best matching control unit. 
+Variations on and details for this are described in the next few sections, such as how many matches to get for each treated unit, and whether control units
+can be matched to more than one treated unit.
+
 
 \subsubsection{Common support: discard}
 A key concept is that of matching within regions of common support--estimating causal effects only in area of the covariates where
 there are treated and control units.  In essence this is what matching is always attempting to do, but sometimes done more explicitly.
-A few ways to do this...
+\cite{KinZen02} discuss the importance of this in political science.  \cite{DehWah99} illustrate an example, where control units with propensity 
+scores lower than the lowest treated unit propensity score are discarded.  
 
 \subsubsection{Order of matching: greedy and optimal matching}
+The nearest neighbor matching algorithm described in Section \ref{nearest} is a ``greedy'' algorithm, in that it chooses the best match for each treated unit one 
+at a time, without trying to reduce a global distance measure; earlier matches are never reconsidered to see if better balance could be obtained.
+When doing greedy matching, need to choose in what order to do that matching: hardest to match first (those with high propensity scores), easiest to match first
+(those with low propensity scores), or random order.  Not a lot of guidance on this...\cite{Rubin73a} found that the three orders performed similarly
+when there is a large pool of control available.  When pool of controls smaller, may want to think about in what part of the covariate space close matches
+are particularly desired.  
+
+\cite{Rosenbaum02} describes ``optimal'' matching, which minimizes a global distance measure, thus finding an optimal set of matches.  Related to network optimization 
+literature.
+\cite{GuRos93} find that overall balance generally similar using optimal or greedy matching, but that optimal matching does lead to smaller distances between matched pairs;
+in essence, the two methods are choosing similar sets of matched units, but optimal matching does a better job of assigning the matched pairs to each other.  
+
 \subsubsection{Matching ratios}
+When many controls available, may be possible to get more than one good match for each treated unit, known as ratio matching.  Will likely have slightly less bias
+reduction than 1-1 matching, but variance benefits since more units utilized.  \cite{Smith97} discusses these issues in sociology, advocates use of multiple controls.  
+\cite{Rosenbaum91a} and \cite{MinRos00} discuss the benefits of using variable ratio matching, where the number of control matches for each treated unit varies, and
+show that this can lead to very high bias reduction without much loss of precision.
+
 \subsubsection{With or without replacement}
+A key issue is whether each control unit can be used as a match multiple times (``with replacement''), or only once (``without replacement'').  Matching with replacement
+can decrease bias because good matches can be used multiple times, but variance estimation more complex since matched units no longer independent.  In addition, when
+matching with replacement, the number of times each control is used as a match should be monitored to make sure inference is not based on only a few control units.
+Matching with replacement can be helpful when the control pool is not very large or there are not very many good matches.  When matching with replacement used,
+variance estimated either using bootstrap (e.g., \cite{AgoDyn04}) or by weighting units in the outcome analysis by the number of times they were matched (\cite{DehWah02,
+HilReiZan04}).
+
 \subsubsection{Caliper matching}
+Caliper matching (\cite{AltRub70}) selects matches within a specified range (caliper) of a covariate or set of covariates.  
+
 \subsection{Subclassification}
+Subclassification divides the treated and control groups into subclasses with similar covariate values.  \cite{Cochran68} gives analytic
+results for the effects of subclassification; for a single covariate arising from one of a number of continuous distributions (normal, t), creating just five subclasses
+based on that covariate removes over 90\% of the bias in the estimated treatment effect due to imbalance in that covariate. \cite{RosRub84}
+shows that creating just five propensity score subclasses removes at least 90\% of the bias in the estimated treatment effect due to each of the covariates
+included in the propensity score specification.  
+
+Model-based adjustments can be done within subclasses, and then aggregated across subclasses to obtain an overall
+estimated average treatment effect.  Weighting the subclass estimates by the number of treated units in each subclass estimates the average treatment effect
+for the treated group; weighting by the overall number of units in each subclass estimates the average treatment effect over the whole population.  
+
 \subsubsection{Full matching}
+In what can be thought of as the limit of subclassification, \cite{Rosenbaum91a} and \cite{Hansen03} discuss ``full matching'', in which the matched sample can be
+thought of as being composed of matched sets, where each matched set contains either one treated unit and one or more controls, or one control unit and one or more
+treated units.  This tends to use all of the units in the samples, with no discarding.
+
 \subsection{``Special'' variables}
+Sometimes there are a few covariates which researcher desires to treat in a ``special'' way, by obtaining particularly close matches on those variables.
+Here we describe a few methods for doing so.
+
 \subsubsection{Exact matching on a few variables}
+When the ``special'' covariates are categorical, the propensity score matching can essentially be done within subclasses defined by those categorical variables;
+exact matching on the key covariates and then propensity score matching within that.
+
 \subsubsection{Mahalanobis matching within propensity score calipers}
+One option to ensure close matches on a few key covariates, but without sacrificing close matches on the rest of the covariates is to use Mahalanobis matching on
+a few key covariates, $x^*$, within propensity score calipers.  
+The Mahalanobis distance on covariates $X$ between units $i$ and $j$ is $(x_i-x_j)'\Sigma_{c}^{-1}(x_i-x_j)$, where $\Sigma_c$ is the variance covariance matrix of X in the
+control group.  An algorithm is as follows, from \cite{RubTho00}:
+\begin{enumerate}
+\item Randomly order the treated units.
+\item For the first treated unit, find all available control units with propensity score values that differ from the treated unit's propensity score by less than 
+the caliper c.  If there is no such control unit, match the treated unit to the control unit with the nearest value of the propensity score.
+\item From the subset of units defined in Step 2, select as a match the control unit who is closest to the treated unit in terms of the Mahalanobis distance
+on the covariates $x^*$.  
+\item Remove the treated unit and the matched control unit from the lists of treated and control units.  Go to Step 2 for the next treated unit.
+\end{enumerate}
+
+\cite{RosRub85a} suggest caliper sizes, which depend on the covariate variances in the treated and control groups.  Generally, a caliper of 0.25 standard deviations
+of the propensity score is found to work well, however if the variance of the covariates is larger in the treated group than in the control group, a smaller caliper
+size may be necessary.  \cite{RubTho00} finds that doing this Mahalanobis matching within propensity score calipers is clearly superior to
+matching only on the key covariates or to linear regression adjustment on the full samples, even when the key covariates account for most of the variation in the outcomes.
+
 \subsection{Diagnostics}
+As mentioned in Section \ref{pscorest} and discussed in \cite{Rubin04}, the model diagnostics for propensity score specifications are not the standard model diagnostics.  This is because we are not
+concerned with the parameter estimates themselves, but rather with using the propensity scores as a tool to create well-matched samples.  Thus, the specification is
+assessed by examining covariate balance between the groups and whether the matching is finding groups that are well-matched on all covariates.  
+There are a variety of simple diagnostic procedures that can be used, such as testing the difference in means of the covariates and their squares and two-way interactions
+between the matched treated and control groups.
+
+Because the outcome variable is not used, doing the matching multiple times and choosing the best matched sample will not bias the results, as discussed by \cite{Greevy04}.
+It may be that it is not possible to obtain good balance on some or all covariates...data may be insufficient for question at hand.  Matching will highlight this
+limitation of data, and from there user can either step back and say the data is lacking, or go forward and estimate causal effects, making it clear that answers
+are reliant on the model assumptions.
+
 \subsubsection{Checking for balance}
 \subsubsection{Bias statistics}
 \subsubsection{Means tests}
 \subsubsection{Propensity score model specification}
+  Specific algorithms for diagnosing propensity score models are in \cite{RosRub84}, \cite{Perkins00}, \cite{DehWah02},
+\cite{MicBloHil04}, and \cite{matchitdocs}.  These generally involve examining the covariate balance in subclasses defined by the propensity score.  If
+covariates (or their squares or cross-products) are found to be unbalanced, then those terms are included in the new propensity score specification.  
+Results show that treatment effect estimates are much more sensitive to mis-specification of the model of the outcome than 
+to mis-specification of the propensity score model (\cite{Drake93, DehWah99, DehWah02, Zhao04}).
+
 
 \section{Analysis}
+\label{analysis}
 \subsection{Average treatment effect, average effect on the treated}
 \paragraph{Quantity of Interest.} Average treatment effect vs. average
   treatment effect on the treated; limiting inferences to what's
@@ -297,10 +377,12 @@ A few ways to do this...
 \subsubsection{Neyman's estimates of causal effect, variance}
 \subsection{Use modeling to repeatedly impute missing potential outcomes}
 \subsubsection{Specify standard models in treated and control groups}
-\subsubsection{Logistic regression, OLS, etc. (zelig)}
+\subsubsection{Logistic regression, OLS, etc. (Zelig)}
 \subsubsection{Contrast with standard OLS (parallel linear regressions)}
 \subsection{More information on benefits of combining matching and modeling}
-                                                                                                                                                             
+Many researchers have indicated the benefits of combining matching and modeling adjustments: \cite{Rubin73b, RobRot95, HecHidTod97, AbaImb04}.                                     
+
+                                                                                                                          
 \section{Applications}
 \subsection{National Supported Work Demonstration}
 \subsection{FDA?}
@@ -312,9 +394,56 @@ A few ways to do this...
 \section{Open research topics}
 \subsection{Multi-treatment regimes}
 \subsection{Panel Data}
+ One particularly prevalent issue
+  in comparative politics and international relations consists of
+  cases where treatment occurs at some time $t$ and persists
+  indefinitely.  In Simmons's data, for example, commitment to Article VIII occurs,
+  but there is no possibility of ``un-committing.''  In the
+  comparative electoral systems data, with few exceptions, a country
+  has the same electoral system for long periods of time.  One
+  approach taken by researchers has been to define units as
+  unit-years, such as country-years or dyad-years.  This, however, violates the
+  stability assumptions of matching. 
+  [In more traditional econometric terms, the treatment indicator may
+  thereby suffer of serial
+  correlation\footnote{Duflo, 2003} inducing an artificial causal
+  effect.] We suggest redefining the units to be countries (rather than country/years as done by Simmons and others),
+which properly reflects the hypothesized assignment mechanism.  In these examples where treatment occurs at time $t$
+and persists indefinitely, ``treatment assignment" is not done every year for each state, as implied by the usual
+treatment of each country and year as a different unit.  Rather, treatment is applied to each state only once (at time
+$t$) and the units modeled should reflect that.  Thus, we recommend [?????] the use of modeling at the country level, 
+where
+the variables before time $t$ are treated as covariates and the variables after time $t$ are treated as outcomes.  
+This idea is explored by Bertrand et al. (2002), and they find that it has good properties. 
+
+Need to define treatment assignment date for the control units.  Discussed by \cite{Rubin91} and \cite{Sianesi04}.
+
+\subsection{Controlling for a post-treatment variable}
+We probably want to discuss this a little...mention principal stratification (\cite{FraRub02}) and need to subclassify based on pair of post-treatment
+variables: the value if treatment received and the value if control received.  
                                                                                                                                                              
 \section{Conclusion}
+\subsection{Other issues}
+\subsubsection{Missing data}
+We have assumed all covariate values observed, so propensity scores estimated using logistic regression.  When values missing, can do something like a general
+location model (\cite{DagRub00}) to estimate propensity scores, but much more complex, and diagnostics in particular are difficult.  We advocate creating 
+multiple complete data sets using the ideas behind multiple imputation, doing the estimation of causal effects within each data set (i.e., finding matched samples
+and estimating the treatment effects), and then combining the results using combining rules.  \cite{Song01} provides an example of this approach. 
+[??????.  I'm not sure about this, but feel that we should mention
+missing data--Liz.]  
 
+\subsubsection{Unobserved variables}
+We have assumed unconfounded treatment assignment.  But what if treatment assignment only unconfounded given some unobserved covariate?  This will be a concern with 
+all observational studies.  Assumption of unconfounded treatment assignment can't be directly tested, although sensitivity tests can be done, to asses how sensitive
+results are to a hypothetical unobserved binary covariate.  Details can be found in \cite{RosRub83b} and \cite{Imbens03}.  
+
+\subsubsection{Software available}
+There are a variety of software packages available to implement matching.  Matchit, etc.  
+
+\subsection{Advice}
+Choose control groups well..ideally have large pool of controls.  Propensity scores helpful with many covariates.  If pool large enough, get multiple matches for
+each treated unit.  If groups still unbalanced after matching (e.g., mean propensity scores more than 0.5 standard deviations apart), divide matched samples into
+subclasses and do analyses within subclasses, then aggregate (kind of a local-linear/spline approach).  Combine matching with modeling adjustments.  
 
 \appendix
 \paragraph{Algorithms}
@@ -375,7 +504,7 @@ and the variance is:
 \item Construct 10 blocks defined by the deciles of the propensity
   score for the treated group (where to obtain balance
   in the pre-treatment covariates, (a) split imbalanced blocks further, and/or
-  (b) respecify the asssignment model
+  (b) respecify the assignment model
   to take into account interactions and squares of imbalanced
   covariates).
 \item Discard control units with propensity scores below the minimum
@@ -389,7 +518,7 @@ and the variance is:
       indicator.  (If sample sizes permit, this logistic model may
       also be estimated using all covariates.)} \label{sub1}
   \item{Generate a posterior distribution of the parameters from this
-      model, drawing 1000 simulated values of $\beta$, where $sim$
+      model, drawing 1000 simulated values of $\beta$, where $\sim$
       represents each simulated set of parameters.}
   \item{For each substratum and one draw of the parameters $\beta$ from the
       posterior distribution, impute the missing potential outcomes
@@ -472,8 +601,7 @@ and the variance is:
 \clearpage
 %\singlespacing
 
-\bibliographystyle{pa}
-\bibliography{~/gkbibtex/gk,~/gkbibtex/gkpubs}
-
+\bibliographystyle{/home/stuart/gkbibtex/pa}
+\bibliography{/home/stuart/gkbibtex/gk,/home/stuart/gkbibtex/gkpubs}
 
 \end{document}
