@@ -14,5 +14,5 @@ cp matchit.pdf ~/www/matchit/docs/.
 cp ~/www/matchit/docs/matchit.html ~/www/matchit/docs/index.html
 echo "A new version of MatchIt has been posted"|mail -s "MatchIt" kimai@Princeton.Edu
 echo "A new version of MatchIt has been posted"|mail -s "MatchIt" stuart@stat.harvard.edu
-echo "A new version of MatchIt has been posted"|mail -s "MatchIt" deho@fas.harvard.edu
+echo "A new version of MatchIt has been posted"|mail -s "MatchIt" daniel.ho@yale.edu
 
