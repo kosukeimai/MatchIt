@@ -1129,13 +1129,23 @@ The dataset consists of 408 new drugs whose applications were reviewed
 by the FDA, 262 of which were eventually approved.  The remaining 146
 applications were still pending at the time of data collection and
 hence are treated as right-censored observations. The approval time is
-measured in months passed from the submission of an application.  In
-our analysis, we focus on the estimation of the marginal effect of the
-binary treatment variable of the existence of a Democratic Senate
-majority, which is one of the seven oversight variables. We do not
-control for the remaining six oversight variables because they are
-conceptually and statistically highly related, and in part
-consequences of, the Democratic Senate majority variable.
+measured in months passed from the submission of an application.  
+
+In our analysis, we focus on the estimation of the marginal effect of
+the binary treatment variable of the existence of a Democratic Senate
+majority, which is one of the seven oversight variables. In the
+original analysis, the reported coefficient for this variable is
+statistically significant at 10\% level but in the opposite direction
+of Carpenter's hypothesis.  For our purposes, however, this treatment
+variable is of particular interest because \citet[p.498][]{Carp02}
+finds that ``The coefficient estimate for this variable [Democratic
+Senate majority] is not significant in other regressions, and even
+switches sign when firm variables are added (analyses available upon
+request)''. We are, therefore, interested in how this model
+sensitivity can be reduced by preprocessing the data.  (We omit the
+remaining six oversight variables because they are conceptually and
+statistically highly related, and in part consequences of, the
+Democratic Senate majority variable.)
 
 To preprocess the data, we conduct nearest neighbor propensity score
 matching (without replacement), estimating the propensity score using
