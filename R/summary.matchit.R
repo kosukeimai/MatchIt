@@ -147,9 +147,15 @@ summary.matchit <- function(object, verbose=F, sig=2, ...) {
     if(verbose){
       for(j in i:k){
         x2 <- covariates[,i]*as.matrix(covariates[,j])
-        sum.all.int <- rbind(sum.all.int,qoi(x2,tt=treat,ww=weights)$xsum[1,])
-        Reduction <- (abs(sum.all.int[nrow(sum.all.int),5])-abs(qoi(x2,tt=treat,ww=weights)$xsum[2,5]))>0
-        sum.matched.int <- rbind(sum.matched.int,cbind(qoi(x2,tt=treat,ww=weights)$xsum[2,],Reduction))
+        if(!identical(eval(object$call$full),TRUE)){
+          jqoi <- qoi(x2,tt=treat,ww=weights)
+        } else {
+          jqoi <- qoi(x2,tt=treat,ww=weights,
+                      psc = object$data$psclass, full = T)
+        }
+        sum.all.int <- rbind(sum.all.int,jqoi$xsum[1,])
+        Reduction <- (abs(sum.all.int[nrow(sum.all.int),5])-abs(jqoi$xsum[2,5]))>0
+        sum.matched.int <- rbind(sum.matched.int,cbind(jqoi$xsum[2,],Reduction))
         row.names(sum.all.int)[nrow(sum.all.int)] <-
           row.names(sum.matched.int)[nrow(sum.matched.int)] <-
             paste(names(covariates)[i],names(covariates)[j],sep="x")
