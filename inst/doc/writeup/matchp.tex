@@ -382,7 +382,7 @@ The alternative choice of a target quantity of interest is the average
 treatment effect on the treated, or ATT:
 \begin{align}
   \label{att}
-  \text{ATT} & = \frac{1}{\sum_{i=1}^n t_i}\sum_{i:t_i=1} E[Y_i(1) - Y_i(0)|t=1] \notag\\
+  \text{ATT} & = \frac{1}{\sum_{i=1}^n t_i}\sum_{i:t_i=1} E[Y_i(1) - Y_i(0)]\notag\\
   & = \frac{1}{\sum_{i=1}^n t_i}\sum_{i:t_i=1}[\mu_i(1) - \mu_i(0)],
 \end{align}
 In our running example, this is the average causal effect in districts
