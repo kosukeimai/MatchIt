@@ -5,6 +5,7 @@ library(foreign)
 library(Zelig)
 library(mvtnorm)
 library(combinat)
+library(lattice)
 #setwd("c:/R/match/docs/papers/koch/")
 setwd("c:/match/docs/papers/koch/")
 source("fn.R")
@@ -21,8 +22,6 @@ dta.full <- na.omit(dta.full)
 
 #matching and creating matched dataset
 #now testing sensitivity
-#fml <- as.formula(prcanid ~ I(rviswom==1 | rvisman==1) + repcan1 + goppty + rideo +rproj + repft + aware)
-#fml <- as.formula(prcanid ~ rviswom + rvisman + repcan1 + goppty + rideo +rproj + repft + aware)
 fml <- as.formula(prcanid ~ rviswom + repcan1 + goppty + rideo + rproj + repft + aware)
 res <- zelig(fml, data=dta.full, model="ls")
 xvars <- names(res$coefficients)
@@ -30,24 +29,12 @@ xvars <- xvars[3:length(xvars)]
 tt <- attr(terms(res),"term.labels")[1]
 yy <- attr(terms(res),"variables")[[2]]
 mfml <- as.formula(paste(tt,"~",paste(xvars,collapse=" + ")))
-#m1 <- matchit(mfml, caliper=0.1,data=dta.full)
-m1 <- matchit(mfml,data=dta.full)
+m1 <- matchit(mfml, data=dta.full, subclass=6, nearest=F, discard=1)
 dta.match <- match.data(m1)
-mres <- zelig(fml, data=dta.match, model="ls")
-
-#original models
-summary(ols1 <- lm(fml,data=dta.full))
-summary(ols2 <- lm(fml,data=dta.match))
-#sampling from posterior
-f1 <- zsim(fml,dta.full,num=1000,zz=F,treat="rviswom")
-f2 <- zsim(fml,dta.match,num=1000,zz=F,treat="rviswom")
-#overlaying densities
-doverlay(f1,f2)
 
 #sensitivity
 start <- paste(yy,"~",tt)
 coef <- mcoef <- NULL
-
 N <- 1
 total <- 1
 for (i in N:(length(xvars)-1))
@@ -63,38 +50,61 @@ for (i in N:(length(xvars)-1)) {
     for (k in 1:i)
       ftmp <- paste(ftmp, "+", allsubset[k,j])
     ftmp <- as.formula(ftmp)
-    tmp <- lm(ftmp,  data = dta.full) 
+    tmp <- lm(ftmp,  data = dta.full)
     coef[counter] <- tmp$coefficient[tt]
-    tmp <- lm(ftmp, data = dta.match) 
-    mcoef[counter] <- tmp$coefficient[tt]
+    tmp <- zelig(ftmp, data = dta.match, model="ls", by="psclass") 
+    wate <- 0
+    for(l in 1:length(tmp)){
+      wate <- wate + tmp[[l]]$coefficient[tt]*sum(dta.match$psclass==l & dta.match[,tt]==1)/sum(dta.match$psclass!=0 & dta.match[,tt]==1)      
+    }
+    mcoef[counter] <- wate
     counter <- counter + 1
   }
   cat(i,"covariates:",length(coef),"\n")
   cat(date(), "\n\n")
 }
 coef[length(coef)] <- res$coefficients[tt]
-mcoef[length(mcoef)] <- mres$coefficients[tt] 
-
-#plotting
-doverlay(coef,mcoef)
-abline(v=coefficients(res)[tt])
-
-#visualizing extrapolation
-lm.full <- lm(prcanid~repcan1+rviswom, data=dta.full)
-lm.match <- lm(prcanid~repcan1+rviswom, data=dta.match)
-par(mfrow=c(2,1))
-plot(dta.full$repcan1, jitter(dta.full$prcanid),
-     col=(dta.full$rviswom+2*(1-dta.full$rviswom)), cex=0.5,
-     pch=16, main="Full Data", ylab="Outcome (jittered)", xlab="Candidate Ideology")
-abline(coef=c(sum(coefficients(lm.full)[c(1,3)]),coefficients(lm.full)[2]))
-abline(coef=c(coefficients(lm.full)[1],coefficients(lm.full)[2]))
-plot(dta.match$repcan1,jitter(dta.match$prcanid),
-     col=(dta.match$rviswom+2*(1-dta.match$rviswom)), cex=0.5,
-     pch=16, main="Matched Data", ylab="Outcome (jittered)", xlab="Candidate Ideology")
-abline(coef=c(sum(coefficients(lm.match)[c(1,3)]),coefficients(lm.match)[2]))
-abline(coef=c(coefficients(lm.match)[1],coefficients(lm.match)[2]))
-
-tot <- 0
-for(i in 1:6){
-  tot <- tot+choose(6,i)
+mres <- zelig(fml, data=dta.match, model="ls",by="psclass")
+wate <- 0
+for(l in 1:length(tmp)){
+  wate <- wate + tmp[[l]]$coefficient[tt]*sum(dta.match$psclass==l & dta.match[,tt]==1)/sum(dta.match$psclass!=0 & dta.match[,tt]==1)      
 }
+mcoef[length(mcoef)] <- wate
+
+#tables
+library(xtable)
+sm1 <- summary(m1)
+tab1 <- sm1$sum.all[1:7,]
+row.names(tab1) <- c("Propensity Score", "Candidate Ideology",
+                 "Perception of Party Ideology", "Respondent Ideology",
+                 "Respondent Ideology * Feeling Thermometer",
+                 "Feeling Thermometer", "Political Awareness")
+xtable(tab1)
+
+number.t <- sm1$q.table[nrow(sm1$q.table), , ][1, ]
+number.c <- sm1$q.table[nrow(sm1$q.table), , ][2, ]
+number.all <- sm1$q.table[nrow(sm1$q.table), , ][3, ]
+tab2 <- rbind(sm1$q.table[1, , ], number.t, number.c, 
+                number.all)
+row.names(tab2) <- c("Means for Treated", "Means for Control",
+                 "SE", "T-stat", "Bias stat", "Reduction",
+                 "No. treated", "No. control", "N")
+xtable(tab2)
+
+tab3 <- sm1$q.table[2:7,4,]
+row.names(tab3) <- c("Candidate Ideology",
+                     "Perception of Party Ideology", "Respondent Ideology",
+                     "Respondent Ideology * Feeling Thermometer",
+                     "Feeling Thermometer", "Political Awareness")
+xtable(tab3)
+
+#plotting figure
+setwd("c:/match/docs/papers/koch/writeup")
+trellis.device(device="pdf",file="dens.pdf",color=FALSE,width=6,height=4)
+par(mar=c(2, 2, 2, 2) + 0.1, cex.lab=0.6, cex.axis=0.6,
+    mgp=c(1,0.5,0), cex.main=0.5, cex=0.8)
+doverlay(coef,mcoef,lwd=2, col=c("black","darkgrey"), xlab="Average Treatment Effect")
+abline(v=coefficients(res)[tt])
+arrows(-0.35,4.8,-0.252,3.9,length=0.1)
+text(-0.35,5.4,"Point Estimate \n of Full Data")
+dev.off()

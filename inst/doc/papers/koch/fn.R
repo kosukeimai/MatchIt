@@ -32,8 +32,8 @@ doverlay <- function(x1, x0, xlab = "", main = "", lines = FALSE, ...)
   dx0 <- density(x0, from = minobs, to = maxobs)
     matplot(dx0$x, cbind(dx1$y, dx0$y), type = "l", ylab = "Density", 
             xlab = xlab, main = main, ...)
-  legend(-0.2, max(c(dx1$y, dx0$y)), lty = 1:2, col = 1:2, 
-         legend = c("Full Data", "Matched Data"), cex=0.5)
+  legend(minobs, max(c(dx1$y, dx0$y)), lty = 1:2, 
+         legend = c("Full Data", "Matched Data"), ...)
 }
 
 #model adjustment
