@@ -511,33 +511,37 @@ commonly used parametric methods.
 \section{Parametric Analysis Methods}
 
 Researchers willing to assume that a particular parametric model
-generated their data, up to but not including some unknown parameters,
-should specify and directly estimate this model.  Preprocessing with
-matching procedures is suboptimal in this situation.  Of course, few
-researchers with real observational data sets have this kind of
-knowledge and as a result some choices need to be made among the range
-of possible parametric models.
+generated their data, up to but not including some unknown parameters
+{\bf this sounds a bit awkward to me. should we delete ``but not
+  including''?}, should specify and directly estimate this model.
+Preprocessing data with matching procedures is suboptimal in this
+situation.  Of course, few researchers with real observational data
+sets have this kind of knowledge and as a result some choices need to
+be made among the range of possible parametric models. {\bf the
+  dilemma is that although researchers don't know the true parametric
+  model, they must assume one as if they know it...}
 
-We thus begin by specifying a single but general parametric model that
-characterizes the range of models that researchers might choose from.
-The special cases of this model include almost all parametric models
-that have been used in the social sciences.  First define the model's
-chosen stochastic component as $Y_i \sim p(\mu_i,\theta)$, for
-probability density $p(\cdot)$, mean $\mu_i$, and vector of ancillary
-parameters $\theta$.  Then denote the systematic component as
-$\mu_i\equiv E(Y_i|t_i,X_i)=g(\alpha + t_i\beta + X_i\gamma)$, for
-some specified functional form $g(\cdot)$ and with intercept $\alpha$
-and coefficients $\beta$ and $\gamma$.  The ancillary parameters may
-also be specified to vary over observations as a function of $X_i$ or
-other covariates.  This framework includes all generalized linear
-models \citep{McCNel89} as well as many others.  For example, if
-$p(\cdot)$ is normal and $g(c)=c$, we have linear regression; if
-$p(\cdot)$ is Bernoulli and $g(c)=1/(1+e^{-c})$, the model reduces to
-a logistic regression.
+{\bf the transition here is a bit awkward.} We thus begin by
+specifying a single but general parametric model that characterizes
+the range of models that researchers might choose from.  The special
+cases of this model include almost all parametric models that have
+been used in the social sciences.  First define the model's chosen
+stochastic component as $Y_i \sim p(\mu_i,\theta)$, for probability
+density $p(\cdot)$, mean $\mu_i$, and vector of ancillary parameters
+$\theta$.  Then denote the systematic component as $\mu_i\equiv
+E(Y_i|t_i,X_i)=g(\alpha + t_i\beta + X_i\gamma)$, for some specified
+functional form $g(\cdot)$ and with intercept $\alpha$ and
+coefficients $\beta$ and $\gamma$.  The ancillary parameters may also
+be specified to vary over observations as a function of $X_i$ or other
+covariates.  This framework includes all generalized linear models
+\citep{McCNel89} as well as many others.  For example, if $p(\cdot)$
+is normal and $g(c)=c$, we have linear regression; if $p(\cdot)$ is
+Bernoulli and $g(c)=1/(1+e^{-c})$, the model reduces to a logistic
+regression.
 
-We define the ATT in (\ref{att}) under this model by plugging in the
-definitions of the potential outcomes from the systematic component,
-with $t_i$ taking on values 1 and 0 respectively:
+We define the ATT in equation~(\ref{att}) under this model by plugging
+in the definitions of the potential outcomes from the systematic
+component, with $t_i$ taking on values 1 and 0 respectively:
 \begin{align}
   \label{matt}
 \mu_i(1)&\equiv E(Y_i(1)|t_i=1,X)= g(\alpha + \beta + X_i\gamma)\notag \\
@@ -562,15 +566,15 @@ things) that $T_i$ and (any observed or unobserved) $X_i$ are
 independent.  Since stochastic independence implies mean independence,
 we can drop $X$ and write $E[Y_i(1)|t_i=1,X]=E[Y_i(1)|t_i=1]$ and
 $E[Y_i(0)|t_i=1,X]=E[Y_i(0)|t_i=1]$.  As such, we can simplify
-(\ref{matt}) as
+equation~(\ref{matt}) as
 \begin{align}
   \label{smatt}
   E[Y_i(1)|t_i=1] &\equiv \mu_i(1) = g(\alpha + \beta)\notag \\
   E[Y_i(0)|t_i=0] &\equiv \mu_i(0) = g(\alpha)
 \end{align}
 %{\bf Is $\mu_i(j)$ defined with or without conditioning on $x_i$?}
-and so the average treatment effect on the treated from (\ref{att})
-becomes simply
+and so the average treatment effect on the treated from
+equation~(\ref{att}) becomes simply
 \begin{equation}
   \label{satt}
   \text{ATT} = g(\alpha+\beta) - g(\alpha),
@@ -583,26 +587,27 @@ becomes simply
 % we're doing (tho not perhaps in general).  also, there seems to me
 % to be little gain in making the definition since the estimators are
 % pretty much all the same anyway (other than the ci's)
+% ki: that's fine by me. the sentence you inserted earlier made this clear.
 which most importantly no longer has a summation sign over $i$.
 
-The systematic components in Equations~\ref{smatt} are now scalar
+The systematic components in equations~(\ref{smatt}) are now scalar
 constants for all $i$.  This is a key result, since it means that
 changing the definition of the functional form $g(\cdot)$ now amounts
-to nothing more than a simple reparameterization.  Fortunately,
-maximum likelihood is invariant to reparameterization --- meaning, for
+to nothing more than a simple reparameterization.  Since maximum
+likelihood is invariant to reparameterization --- meaning, for
 example, that the MLE of $\alpha$ is the same as the square root of
-the MLE of $\alpha^2$ \citep[][p.75--76]{King89} --- which implies
-that no matter how $g(\cdot)$ is defined we get the same estimate of
-the expected potential outcomes.\footnote{To rule out degenerate cases
-  such as $g(a)=8$, we require that the image of $g(\cdot)$ and the
-  range of the potential outcomes be the same.} Moreover, given any
-chosen stochastic component, this result holds for a wide range of or
+the MLE of $\alpha^2$ \citep[][p.75--76]{King89} --- no matter how
+$g(\cdot)$ is defined we get the same estimate of the expected
+potential outcomes.\footnote{To rule out degenerate cases such as
+  $g(a)=8$, we require that the image of $g(\cdot)$ and the range of
+  the potential outcomes be the same.} Moreover, given any chosen
+stochastic component, this result holds for a wide range of or
 parametric models, including all the special cases of the general
 model given above.
 
 Since the specific maximum likelihood estimator of the population mean
-for most common probability densities is merely the sample mean, the
-analysis of classical randomized experiments often comes down to
+for many of common probability densities is merely the sample mean,
+the analysis of classical randomized experiments often comes down to
 taking the difference in the sample means of $y$ for the treatment and
 control groups.  But even if one chooses to run a parametric model
 (for reasons of efficiency, conducting conditional inferences, or
@@ -616,8 +621,8 @@ makes for the functional form.
 In experiments, then, random assignment breaks the link between $T$
 and $X$ and, by so doing, eliminates the problem of model dependence.
 When analyzing observational data with parametric methods we are not
-so fortunate.  We cannot reduce Equations~\ref{att} to
-Equations~\ref{matt} and so are left having to model the full
+so fortunate.  We cannot reduce equations~(\ref{att}) to
+equations~(\ref{matt}) and so are left having to model the full
 functional relationship that connects the mean as it varies as a
 function of $t$ and $X$ over observations.  Since $X$ is typically
 multidimensional, this is a surprisingly difficult task with rather
@@ -627,12 +632,13 @@ The problem is the curse of dimensionality and the consequence in
 practice is model dependence.  We begin with the former and suppose
 for simplicity that we have a dependent variable and one ten-category
 explanatory variable, and our goal is use linear regression technology
-to estimate the functional relationship without functional form
-assumptions.  To do this, we would represent the ten categories with
-ten parameters (a constant and nine dummy variables or equivalently 10
-mean indicator variables).  In contrast, the usual approach to
-estimation is to assume linearity.  This enables us to enter not 10
-indicator variables, but rather only a constant term and one slope
+to estimate the functional relationship without actually making
+functional form assumptions.  To do this, we would represent the ten
+categories with ten parameters (a constant and nine dummy variables or
+equivalently 10 mean indicator variables).  In contrast, the usual
+approach to estimation is to assume linearity {\bf by directly
+  including the ten-category variable}.  This enables us to enter not
+10 indicator variables, but rather only a constant term and one slope
 coefficient.  How do we get from ten parameters to only two?  Pure
 assumption.  If we have some sense that the relationship is indeed
 linear or close to linear, this is a good use of external information
@@ -691,10 +697,10 @@ assumptions over another.  Residual and other diagnostics will uncover
 some forms of misspecification, but the curse of dimensionality
 prevents any simple parametric solution to the problem.
 
-To clarify the problem of sensitivity to model specification, we offer
-the left graph of Figure~\ref{fg:extrap}, which plots simulated data
-for outcome $Y$ on the vertical axis and a pretreatment covariate $X$
-on the horizontal axis.  Each data point is plotted as a ``T'' for
+To illustrate the problem of sensitivity to model specification, we
+offer the left graph of Figure~\ref{fg:extrap}, which plots artificial
+data for outcome $Y$ on the vertical axis and a pretreatment covariate
+$X$ on the horizontal axis.  Each data point is plotted as a ``T'' for
 treated units ($t_i=1$) and ``C'' for control units ($t_i=0$).  We
 then fit two regressions to these data.  The first is a linear
 regression of $Y$ on a constant, $X$, and $t$: $E(Y_i|X_i,t_i)=\alpha
@@ -737,21 +743,22 @@ the overall shape completely different, but the causal effect has now
 switched signs and become much larger (this can be seen in the graph
 because the gray solid line is slighly below the dark solid line,
 whereas the gray dashed curve is substantially above the dark dashed
-curve.
+curve).
 
 Ultimately, these two models estimate the causal effect by the average
 vertical distance between the C's and T's.  They differ only in
-precisely how they compute this average.  The key problem generating
-model dependence is the absence of any treated unit values with $X$
-less than 4.  This means that to estimate features of $Y(1)$ on the
-left side of the graph requires extrapolation over a considerable
-distance from where the T's are observed.  Such extrapolations are
-what make causal effect estimates exquisitely sensitive to minor
-modifications in the statistical model.  In other words, the curse of
-dimensionality creates the problem in parametric analyses by requiring
-a large number of assumptions to which estimates may be sensitive, and
-``unbalanced'' data like these which require extrapolation means that
-different assumptions will produce model dependent estimates.
+precisely how they compute this average.  The key problem that
+generates model dependence is the absence of any treated unit values
+with $X$ less than 4.  This means that to estimate features of $Y(1)$
+on the left side of the graph requires extrapolation over a
+considerable distance from where the T's are observed.  Such
+extrapolations are what make causal effect estimates exquisitely
+sensitive to minor modifications in the statistical model.  In other
+words, the curse of dimensionality creates the problem in parametric
+analyses by requiring a large number of assumptions to which estimates
+may be sensitive, and ``unbalanced'' data like these which require
+extrapolation means that different assumptions will produce model
+dependent estimates.
 
 Some researchers surely respond to this diversity of possible models
 by inadvertently choosing specifications that support their favored
@@ -760,7 +767,8 @@ some aspects of specification uncertainty in published work by giving
 results for multiple specifications and evaluating how model dependent
 the substantive results are.  But researchers are rarely able to
 portray the full sensitivity of their causal inferences to model
-specification, and attempts to do so in many situations lead to
+specification {\bf should we emphasize the fact that this is
+  impossible?}, and attempts to do so in many situations lead to
 nihilistic conclusions.\footnote{Two approaches to this problem
   include extreme bounds analysis \citep{Leamer78}, which is a
   somewhat standardized way to portray model dependence, and Bayesian
