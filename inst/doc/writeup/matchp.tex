@@ -1335,33 +1335,34 @@ Our second empirical illustration analyzes the dataset about the
 approval time of new pharmaceutical products by the Food and Drug
 Administration (FDA). The original dataset was studied by
 \citet{Carp02}, and we were able to replicate all of his results which
-use the variables made available to us.
+use the variables made available to us.  See that paper for details of the data
+set utilized (we concentrate on Model 1 of Table 2).  
 
 In this influential paper, \citet{Carp02} examines various
 determinants of the FDA approval time to answer the question of how
 long it takes for the FDA to approve new drugs. Here, we focus on the
 hypothesis about the relationship between the ideology of the agency's
-overseers and expected times of approval. In particular, his first
+overseers and expected approval time. In particular, his first
 hypothesis is that ``expected approval times are greater when
 Democrats control the White House, when the agency's oversight
 committees are more liberal, and when the House and Senate are more
 liberal'' \citep[p.495]{Carp02}. That is, the more liberal the FDA's
 overseers are, the more likely the agency is to approve new drugs
-quickly. 
+slowly. 
 
-To test this hypothesis, he uses a lognormal survival model with the
+To test this hypothesis, Carpenter uses a lognormal survival model with the
 main causal variables (median adjusted ADA scores for House and Senate
 Committees as well as for House and Senate floors, Democratic Majority
 in House and Senate, and Democratic Presidency) along with 18 control
 variables including clinical and epidemiology factors and firm
 characteristics.\footnote{In the original paper, \citet{Carp02} uses
   the lognormal model with frailty. He does not specify any group and
-  assume a common random effect.  Here, for the sake of simplicity, we
+  assumes a common random effect.  Here, for the sake of simplicity, we
   use the standard lognormal model. The substantive results do not
   change when the frailty model is used.}  The dataset consists of 408
 new drugs whose applications were reviewed by the FDA, and 262 of
-which were eventually approved. The remaining 146 applications are
-still pending at the time when the data were collected and hence are
+which were eventually approved. The remaining 146 applications were
+still pending at the time of data collection and hence are
 treated as right-censored observations. The approval time is measured
 in months that passed from the submission of an application.  In our
 analysis, we focus on the estimation of the marginal effect using the
@@ -1371,14 +1372,13 @@ six oversight variables because they are conceptually and
 statistically highly related to the Democratic Senate majority
 variable.
 
-To preprocess the data, we conduct the nearest neighbor propensity
-score matching (without replacement) using the logistic regression
+To preprocess the data, we conduct nearest neighbor propensity
+score matching (without replacement), estimating the propensity score using logistic regression
 with all covariates as linear predictors. We find that including a
 square root of the nightly TV news disease story variable into this
 model significantly improves its balance after matching. This
 preprocessing procedure discards 49 units (2 treated units and 47
-control units) from the sample for which no comparable unit is
-found. 
+control units) from the sample. 
 
 
 \begin{figure}[t] 
@@ -1403,16 +1403,16 @@ Figure~\ref{fg:fdabal} summarizes how preprocessing can improve the
 covariate balance. The left panel plots the absolute value of
 t-statistics before and after matching for mean differences of each
 covariate between the treatment and control groups.  Before matching,
-the means of the three covariates and the estimated propensity score
+the means of three covariates and the estimated propensity score
 are significantly different between the treatment and control groups.
-However, after matching, these t-statistics are less than 1.96,
+However, after matching, these four t-statistics are all less than 1.96,
 implying that the mean differences are no longer statistically
-significant at 5\% level. We find the mean differences of the other
-covariates to be small both before and after
+significant at the 5\% level. The mean differences of the other
+covariates are small both before and after
 preprocessing.\footnote{Preprocessing increases the values of the
-  t-statistics for two variables. The uniform improvement of balance
+  t-statistics for two variables. Uniform improvement of balance
   for all covariates is unlikely unless exact matching is possible
-  and/or the sample size is large. These minor sample differences,
+  and/or the sample size is large. The minor sample differences that remain,
   however, can be adjusted by fitting the parametric models to the
   preprocessed data.} The right panel of Figure~\ref{fg:fdabal}
 illustrates how preprocessing prevents extrapolation. Before matching,
@@ -1432,37 +1432,38 @@ much closer to that for the treatment group.
     \includegraphics{figs/fdadens.pdf}
   \end{center}
   \vspace{-0.275in}
-  \caption{Kernel density plot of estimated average treatment effect of
-    Democratic Senate majority on FDA drug approval time across 262143
+  \caption{Kernel density plot of the estimated average treatment effect of
+    Democratic Senate majority on FDA drug approval time across $262,143$
     possible specifications with the Carpenter data. The solid line
-    presents density plot of estimated average treatment effect for
+    presents a density plot of the estimated average treatment effect for
     the matched dataset, while the dashed line presents that for the
-    full dataset.  The vertical arrow shows the point estimate of the
-    lognormal survival regression from the full dataset.  This figure
+    raw data.  The vertical arrow shows the point estimate of the
+    lognormal survival regression from the raw data.  This figure
     shows that average treatment effect estimates are more sensitive
-    to model specification for the full dataset compared to the
-    matched dataset.}
+    to model specification using the raw data as compared with using
+    the matched data.}
   \label{fg:fdadens}
 \end{figure}
 
-We now examine the model dependence of the average marginal effect of
+We now examine the model dependence of the average marginal effect of a
 Democratic Senate majority using the preprocessed data and compare it
 with the results from the raw data.  To do this, we estimate the
 average treatment effect by calculating $\frac{1}{n} \sum_{i=1}^n
 E(Y_i \mid T_i = 1, X_i)-E(Y_i \mid T_i =0 ,X_i)$ according to the
-fitted lognormal model. We repeat this procedure by using all possible
-specifications, which in total amounts to $262,143$ regressions.
+fitted lognormal model. We repeat this procedure by considering all possible
+specifications in which the 18 covariates enter the model with the treatment indicator (i.e., all possible
+subsets of covariates from the 18).  This amounts to $262,143$ regressions.
 Figure~\ref{fg:fdadens} presents the density plot for the estimated
-average treatment effects for the raw data as well as the preprocessed
-data. The estimates are clearly more model dependent if one uses the
-raw data than if the matched data are used. For example, the variance
-of estimated average treatment effect from the matched data is more
+average treatment effects for the raw data as well as the matched (preprocessed)
+data. The estimates are clearly more model dependent using the
+raw data than using the matched data. For example, the variance
+of the estimated average treatment effect from the matched data is more
 than three times as large as that from the raw data. The point
-estimate from the raw data with all covariates implies that Democratic
+estimate from the raw data with all covariates implies that a Democratic
 Senate majority decreases the expected approval time by about 30
 months, whereas many specifications indicate that the estimate is much
 less.  However, the result from the matched data indicate that the
-effect size may be larger.
+effect size may actually be larger.
 
 
 \section{What Can Go Wrong}
