@@ -104,7 +104,7 @@ print.matchit <- function(x,  digits = max(3, getOption("digits") -
             print.data.frame(xqoi$xn, digits = digits)
           }
         cat("\n\n")
-        if(!is.null(x$psclass) & !identical(eval(x$call$opt),TRUE)) {
+        if(!is.null(x$psclass) & !identical(eval(x$call$full),TRUE)) {
             qqoi <- qoi.by.sub(pscore, treat, x$psweights, x$psclass)
             cat("\nSummary of propensity score by subclasses:\n\n")
             print.data.frame(qqoi$q.table, digits = digits)

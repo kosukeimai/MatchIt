@@ -121,7 +121,7 @@ matchit <- function(formula, model="logit", data, discard=0,
     mf[[1]] <- as.name("distance")
     mf$nearest <- mf$replace <- mf$m.order <- mf$ratio <- mf$caliper <- 
       mf$calclosest <- mf$subclass <- mf$sub.by <- mf$mahvars <-
-        mf$exact <- NULL 
+        mf$exact <- <- mf$full <- NULL 
     a <- eval(as.call(mf), sys.frame(sys.parent()))
     if(!is.null(dotsub)) { 
       data <- data[dotsub,]
