@@ -1026,18 +1026,18 @@ covariates have a disproportionately large effect on our outcome
 variable.  When this is the case, even slightly mismatching on these
 variables may severely bias our causal effect.  To avoid this problem,
 we match using two separate metrics, one for the large-effect
-variables and another for the rest.  Thus, if feasible, we create
-pools of exact matches on the large-effect variables and then use
-nearest neighbor propensity score matching based on the remaining
-variables to choose specific matches within these pools.  If exact
-matching does not turn up sufficient observations, then we can choose
-the nearest neighbor on the large-effect variables, defined by the
-Mahalanobis distance, among all units within (say) 0.25 standard
-deviations (also known as ``calipers'') of the propensity score
-computed from all other variables.  The Mahalanobis distance is the
-weighted average of the squared distance between units $i$ and $j$,
-$(X_i-X_j)'\Sigma^{-1}(X_i-X_j)$, where $\Sigma$ is the sample
-variance matrix of $X$ in the control group.  See \cite{RubTho00}.
+variables and another for the rest.  If feasible, we create pools of
+exact matches on the large-effect variables and then use nearest
+neighbor propensity score matching based on the remaining variables to
+choose specific matches within these pools.  If exact matching does
+not turn up sufficient observations, then we can choose the nearest
+neighbor on the large-effect variables, defined by the Mahalanobis
+distance, among all units within 0.25 standard deviations (also known
+as ``calipers'') of the propensity score computed from all other
+variables.\footnote{The Mahalanobis distance is the weighted average
+  of the squared distance between units $i$ and $j$,
+  $(X_i-X_j)'\Sigma^{-1}(X_i-X_j)$, where $\Sigma$ is the sample
+  variance matrix of $X$ in the control group.  See \cite{RubTho00}.}
 
 Third, if some control units fall outside the range of the treated
 propensity score values, then these controls cannot be adjusted by
@@ -1045,29 +1045,29 @@ replication or deletion to match the treated units.  Common practice
 is to discard these control units.  Similarly, if any treated units
 fall outside the range of the propensity score units, these too are
 discarded.  Dropping treated units changes the causal effect being
-estimated, but if it remains a relevant quantity at least it can be
+estimated, but if it remains a relevant quantity, at least it can be
 estimated in a reasonable way.  Discarding these nonoverlapping
 observations eliminates the need for extrapolation.
 
 Finally, if finding a matching procedure with good balance and a large
 number of observations is otherwise difficult, use subclassification.
-In this procedure, we divide the units into roughly equally sized
+To use this procedure, divide the units into roughly equally sized
 subclasses where the propensity score is, by construction,
 approximately constant, and thus balanced.  Generally five or six
 subclasses are sufficient to adjust for a univariate covariate such as
 the propensity score \citep{Cochran68,RosRub84}.  If balance is
 achieved with a reasonable number of observations within each
 subclass, then the analysis procedure is carried out within each
-subclass too and the results are averaged.
+subclass and the results are averaged.
 
 \paragraph{4. Evaluate the Matching Procedure}
-A good matching procedure will reduce bias by increasing balance, not
+A good matching procedure reduces bias by increasing balance, does not
 increase the variance much by keeping the number of observations
-large, and prevent the introduction of new biases by matching only
-based on $X$ and not consulting $y$ until the analysis stage.  We
-assume matching is based only on $X$, and checking the number of
-observations remaining after matching is easy.  Thus, the main task of
-this section, then, is to describe how to evaluate balance.
+large, and prevents inducing new biases by matching only based on $X$
+without consulting $y$ until the analysis stage.  We assume matching
+is based only on $X$, and checking the number of observations
+remaining after matching is easy.  Thus, the main task of this section
+is to describe how to evaluate balance.
 
 Conceptually, verifying balance involves checking whether
 equation~(\ref{balance}) holds.  One way to think about this process
@@ -1078,13 +1078,13 @@ Because of the curse of dimensionality, multidimensional histograms
 with more than a few covariates tend to be very sparse and so using
 them to estimate the two underlying probability densities in
 equation~(\ref{balance}) will ordinarily be very difficult without
-access to an extraordinary number of observations.  Thus, instead of
+access to an extraordinary number of observations.  Instead of
 comparing estimates of the full multidimensional densities,
-researchers usually examine various low dimensional summaries of them.
-If a low dimensional summary differs between the treated and control
-groups then equation~(\ref{balance}) probably does not hold.  The risk
-of course is that even if many low dimensional summaries are the same
-for the treatment and control groups, we still cannot be certain that
+researchers usually examine various low dimensional summaries.  If a
+low dimensional summary differs between the treated and control groups
+then equation~(\ref{balance}) probably does not hold.  The risk of
+course is that even if many low dimensional summaries are the same for
+the treatment and control groups, we still cannot be certain that
 equation~(\ref{balance}) holds.  However, if the parametric analysis
 model itself does not use any higher order interactions not captured
 by the lower dimensional summaries, then the problem of not
@@ -1094,7 +1094,7 @@ controls may not make a material difference in the end anyway.
 Perhaps the simplest, and also most commonly used, low dimensional
 summary compares the mean of the treatment group for each variable in
 $X$ with the mean of that variable in the control group.  If one or
-more of these differ by more than half a standard deviation of the
+more of these differ by more than half a standard deviation from the
 respective $X$ variable, then better balance is needed.  We can also
 compare the variances of each variable between the two groups, as well
 as interactions or higher order moments.  Another common approach is
@@ -1125,25 +1125,24 @@ preprocessing because balance is too hard to achieve marks a data set
 that is too fragile for making robust causal inferences by any means.
 
 \paragraph{Parametric Outcome Analysis}  
-After the final matched sample --- with maximum balance and a large
-number of observations --- has been chosen, the parametric analysis
-should then proceed.  With one possible exception, we use the same
-procedures for running the parametric analysis as when analyzing the
-raw rather than preprocessed data set.  This includes the same
-maximization algorithms, the same software, the same model checking
-and fit procedures, and the same methods of computing and interpreting
-quantities of interest.  The one exception is that if
-subclassification was used to create the preprocessed data set, then
-the parametric analysis should be conducted within each subclass
-separately, and the results combined by taking an average, weighting
-by the number of units in each subclass.  The result of preprocessing
-should be less model dependence, and this too is worth checking: as
-one should even without preprocessing, we should check the sensitivity of causal
+After choosing the final matched sample, with maximum balance and a
+large number of observations, carry out the same parametric analysis.
+With one possible exception, we use the same procedures for running
+the parametric analysis as analyzing the raw rather than preprocessed
+data set.  This includes the same maximization algorithms, the same
+software, the same model checking and fit procedures, and the same
+methods of computing and interpreting quantities of interest.  The one
+exception is that for subclassification, the parametric analysis
+should be conducted separately within each subclass, and the results
+combined by taking a weighted average (with weights based on the
+number of units in each subclass).  Using preprocessed data should
+reduce model dependence, and this too is worth checking: as one should
+even without preprocessing, we should check the sensitivity of causal
 effect estimates to changes in the specification.
 
 \section{Computing Uncertainty Estimates}
 
-No consensus exists in the literature on methods to use to compute
+No consensus exists in the literature on methods for computing
 uncertainty estimates, such as standard errors or confidence
 intervals, from matching procedures.  The problem is not some
 disagreement over technical statistical issues.  Rather, the issue
@@ -1173,7 +1172,7 @@ estimates associated with parametric methods: They are all conditional
 on the pretreatment variables $X$ (and $t$), which are therefore
 treated as fixed and exogenous.  Since our preprocessing procedures
 modify the raw data only in ways that are solely a function of $X$, a
-reasonable method of defining uncertainty for the purpose of computing
+reasonable method for defining uncertainty for the purpose of computing
 uncertainty estimates is to continue to treat $X$, and thus our entire
 preprocessing procedures, as fixed.  The advantage of this definition
 is that we can easily compute standard errors and confidence intervals
