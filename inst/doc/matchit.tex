@@ -68,47 +68,47 @@ Elizabeth A. Stuart\thanks{Ph.D.\ Candidate, Department of Statistics, Harvard
 \tableofcontents
 
 \section{Introduction}
-MatchIt implements the suggestions of Ho, Imai, King, and Stuart
+\MatchIt\ implements the suggestions of Ho, Imai, King, and Stuart
 (2004) for improving parametric statistical models by preprocessing
-data with nonparametric matching methods.  MatchIt implements a wide
+data with nonparametric matching methods.  \MatchIt\ implements a wide
 range of sophisticated matching methods, making it possible to greatly
-reduce the dependence of causal inferences on hard-to-justify, but
-commonly made, statistical modeling assumptions.  The software also
+reduce the dependence of causal inferences on commonly made, but
+hard-to-justify, statistical modeling assumptions.  The software also
 easily fits into existing research practices since, after
-preprocessing with MatchIt, researchers can use whatever parametric
-model they would have used without MatchIt, but produce inferences
+preprocessing with \MatchIt, researchers can use whatever parametric
+model they would have used without \MatchIt, but produce inferences
 with substantially more robustness and less sensitivity to modeling
-assumptions.  Matched data sets created by MatchIt can be entered
-easily in Zelig for subsequent parametric analyses.
+assumptions.  Matched data sets created by \MatchIt\ can be entered
+easily in \href{http://gking.harvard.edu/zelig/}{Zelig} for subsequent
+parametric analyses.
 
 % (\citealt{rubin74,RosRub83,RosRub84,Holland86}).  
 
 \subsection{Software Requirements} 
 \MatchIt\ works in conjunction with the R language and statistical
-software, and will run on any platform where R is
-installed (Windows, Unix, Macintosh).  R is available free for
-download at the Comprehensive R Archive Network (CRAN) at
-\url{http://www.r-project.org/}.  \MatchIt\ was tested on R Version[s]
-1.6.2, 1.7.1 and 1.8.1.
+software, and will run on any platform where R is installed (Windows,
+Unix, or Mac OS X).  R is available free for download at the
+Comprehensive R Archive Network (CRAN) at
+\href{http://www.r-project.org/}{http://www.r-project.org/}.
+\MatchIt\ has been tested on R Version[s] 1.6.2, 1.7.1, 1.8.1 and
+1.9.0.
 
 \subsection{Installing \MatchIt} 
 
 There are two ways to install \MatchIt\: 
 
 \begin{enumerate} 
-\item For the easiest way to install \MatchIt\ for all platforms, from
-  either the \textbf{Unix shell or the GUI terminal (Windows, Mac)}, type:
-  
-  \begin{small}
+\item For the easiest way to install \MatchIt\ for all platforms,
+  type at the R prompt:
 \begin{verbatim}
-> install.packages("matchit",CRAN="http://www.people.fas.harvard.edu/~deho")
+ > install.packages("matchit", 
+           CRAN="http://www.people.fas.harvard.edu/~deho")
 \end{verbatim}
-  \end{small} 
-  
+
   \noindent \MatchIt\ will proceed to automatically install itself onto
   your system.  During the process you may either decide to keep or
-  discard the installation files, which will not affect the way \MatchIt\
-  runs. 
+  discard the installation files, which will not affect the way
+  \MatchIt\ runs.
 
 \item Alternatively, you can install \MatchIt\ from a \textbf{local file}:
   \begin{enumerate} 
@@ -116,11 +116,11 @@ There are two ways to install \MatchIt\:
     \begin{enumerate}
     \item Download the \texttt{matchit\_0.1-1.tar.gz} file from
       \url{http://www.people.fas.harvard.edu/~deho/src/contrib}
-      \item In the Unix shell, install the package locally by typing:
+    \item In the Unix shell, install the package locally by typing:
 \begin{verbatim}
-$ R INSTALL matchit_0.1-1.tar.gz   
+> R INSTALL matchit_0.1-1.tar.gz   
 \end{verbatim}
-        from the directory where the file is located. 
+      from the directory where the file is located.
     \end{enumerate}
   \item \textbf{Windows or Mac} systems:
     \begin{enumerate}
@@ -134,31 +134,28 @@ $ R INSTALL matchit_0.1-1.tar.gz
 \end{enumerate}
 
 \subsection{Loading \MatchIt}
-As with any R package, you have to load \MatchIt\ in order to be able
-to use it.  You can do this for each R session by typing:
+As with any R package, you have to load \MatchIt\ in order to use it.
+You can do this for each R session by typing:
 \begin{verbatim}
 > library(matchit) 
 \end{verbatim}
-at the command prompt.  Alternatively, you can specify R to load \MatchIt\
-automatically at launch.  (This allows you to skip the step of typing
- {\tt library(matchit)} at the beginning of every R session.)  
-
-To do this, edit the {\tt Rprofile} file
-located in the R program subdirectory (e.g.,
-\texttt{C:/R/rw1071/etc/}).  Using a text editor such as
-  Windows notepad, add the following line to the {\tt Rprofile} file:
-
+at the command prompt.  Alternatively, you can specify R to load
+\MatchIt\ automatically at launch.  (This allows you to skip the step
+of typing {\tt library(matchit)} at the beginning of every R session.)
+ 
+To do this, edit the {\tt Rprofile} file located in the R program
+subdirectory, e.g. \texttt{C:/R/rw1071/etc/}, for Windows systems and
+the {\tt .Rprofile} file located in the home directory for Unix/Linux
+and Mac OS X systems.  Using a text editor such as Windows notepad,
+add the following line to the file:
 \begin{verbatim}
 options(defaultPackages = c(getOption("defaultPackages"), "matchit"))
 \end{verbatim}
-
-For this change to take effect, start R after having added the line to
-{\tt Rprofile}.  On Unix systems this file may be called 
-{\tt .Rprofile}.  
+For this change to take effect, you need to restart R.
 
 \subsection{Updating \MatchIt}
-You may update to the most recent version of \MatchIt\ by typing the following
-commands from your R session. 
+You may update to the most recent version of \MatchIt\ by typing the
+following commands from your R session.
 
 \begin{small}
 \begin{verbatim}
@@ -168,10 +165,10 @@ commands from your R session.
 \end{small} 
 
 \section{A User's Guide by Examples}
-\MatchIt\ attempts to balance the covariates of the treatment and control units by allowing
-the user to specify the precise matching algorithm.  The outcome analysis can
-then be performed on the matched dataset, either via Zelig or any
-other routine in R.  
+\MatchIt\ attempts to balance the covariates of the treatment and
+control units by allowing the user to specify the precise matching
+algorithm.  The outcome analysis can then be performed on the matched
+dataset, either via Zelig or any other routine in R.
 
 We illustrate the basic capacities of \MatchIt\ through a series of
 examples, all of which are contained in a demo script, which may be
@@ -184,8 +181,8 @@ run by:
 \subsection{Notation}
 Unless otherwise noted, let $i$ index the $n$ units in the dataset,
 $n_1$ the number of treated units, $n_0$ the number of control units
-(such that $n=n_0+n_1$), and $x_i$ some observed covariate vector for unit
-$i$.  $T_i=1$ indicates that unit $i$ was assigned treatment, and
+(such that $n=n_0+n_1$), and $x_i$ some observed covariate vector for
+unit $i$.  $T_i=1$ indicates that unit $i$ was assigned treatment, and
 $T_i=0$ that unit $i$ was assigned control.  $Y_i(1)$ represents the
 potential outcome of unit $i$ under treatment and $Y_i(0)$ the
 potential outcome of unit $i$ under control.  $Y_i(1)$ and $Y_i(0)$
@@ -254,10 +251,10 @@ E(Y_i(1) | T_i=1 ) - E(Y_i(0) | T_i=1)
 
 \subsection{Exact Matching \label{exactm}}
 The simplest version of matching is exact.  For example, to find exact
-matches on race:\footnote{The examples in this section are for illustrative
-  purposes only, and are not intended to obtain actual estimates of
-  the average treatment effect, which would clearly require taking
-  into account all pre-treatment variables.}
+matches on race:\footnote{The examples in this section are for
+  illustrative purposes only, and are not intended to obtain actual
+  estimates of the average treatment effect, which would clearly
+  require taking into account all pre-treatment variables.}
 
 \begin{verbatim}
 > data(lalonde)          #loads the example dataset
@@ -315,13 +312,19 @@ Sample sizes by covariates:
 Number of units discarded:   0
 \end{verbatim}
 
-We see that the means of the race variables ({\tt black} and {\tt hispan}) are quite different between the groups, but
-that within each subclass formed by these two binary covariates the values of the race variables of the treated and control units within each subclass are the same. 
-These two binary covariates form three subclasses, and we see, for example, that 243 units (156 treated and 87 control) are black and non-hispanic.
+We see that the means of the race variables ({\tt black} and {\tt
+  hispan}) are quite different between the groups, but that within
+each subclass formed by these two binary covariates the values of the
+race variables of the treated and control units within each subclass
+are the same.  These two binary covariates form three subclasses, and
+we see, for example, that 243 units (156 treated and 87 control) are
+black and non-hispanic.
 
-We can use the {\tt psclass} component of {\tt foo1} to identify which units are in each subclass and to verify their covariate values:
+We can use the {\tt psclass} component of {\tt foo1} to identify which
+units are in each subclass and to verify their covariate values:
 
-To see ID numbers of the first 20 units in subclass 1 (``NSW'' refers to the National Supported Work Demonstration participants):
+To see ID numbers of the first 20 units in subclass 1 (``NSW'' refers
+to the National Supported Work Demonstration participants):
 \begin{verbatim}
 > row.names(foo1$data)[foo1$psclass==1][1:20]
  [1] "NSW1"  "NSW3"  "NSW4"  "NSW5"  "NSW6"  "NSW7"  "NSW8"  "NSW9"  "NSW11"
@@ -329,7 +332,8 @@ To see ID numbers of the first 20 units in subclass 1 (``NSW'' refers to the Nat
 [19] "NSW21" "NSW24"
 \end{verbatim}
 
-To confirm the covariate values of the units in subclass 2 (``PSID'' refers to individuals in the Panel Survey of Income Dynamics):
+To confirm the covariate values of the units in subclass 2 (``PSID''
+refers to individuals in the Panel Survey of Income Dynamics):
 \begin{verbatim}
 > foo1$data[foo1$psclass==2,c("black", "hispan")][1:20,]
        black hispan
@@ -357,7 +361,6 @@ PSID45     0      1
 
 
 \subsection{Propensity Score Matching}
-
 When exact matches do not exist, matching on the propensity score is a
 common and useful alternative.  To propensity score match, with
 pre-treatment covariates composed of real earnings in 1974 and 1975:
@@ -390,9 +393,12 @@ Matched     185     185   370
  
 \end{verbatim} 
 
-We see that 185 control units were matched to the treated units (a ``1-1'' match).  The average propensity scores in the treated and control
-groups are much more similar than in the original groups, with both groups having propensity score means of $0.352$ in the matched samples.  We
-can use the {\tt summary()} command to obtain further information on the original and matched samples:
+We see that 185 control units were matched to the treated units (a
+``1-1'' match).  The average propensity scores in the treated and
+control groups are much more similar than in the original groups, with
+both groups having propensity score means of $0.352$ in the matched
+samples.  We can use the {\tt summary()} command to obtain further
+information on the original and matched samples:
 
 \begin{verbatim}
 > summary(foo2)
@@ -424,16 +430,22 @@ Problematic covariates:
 Number of units discarded:   0
 \end{verbatim}
 
-This reveals simple statistics of the mean of the propensity score and the covariates used in the propensity score specification for
-the full and matched samples, as well as t-statistics and balance bias
-statistics used to assess whether there was a reduction in bias. 
-All three variables (propensity score, 1974 income, and 1975 income) had reductions in bias due to the matching.  For example, the original
-bias in 1974 income was $-0.72$ standard deviations, but is only $0.011$ standard deviations in the matched samples. 
-This one-to-one matching algorithm has thus chosen 185 control individuals who do look very similar to the treated group on the covariates used in the
-matching process (1974 income and 1975 income).  
+This reveals simple statistics of the mean of the propensity score and
+the covariates used in the propensity score specification for the full
+and matched samples, as well as t-statistics and balance bias
+statistics used to assess whether there was a reduction in bias.  All
+three variables (propensity score, 1974 income, and 1975 income) had
+reductions in bias due to the matching.  For example, the original
+bias in 1974 income was $-0.72$ standard deviations, but is only
+$0.011$ standard deviations in the matched samples.  This one-to-one
+matching algorithm has thus chosen 185 control individuals who do look
+very similar to the treated group on the covariates used in the
+matching process (1974 income and 1975 income).
 
-For further information on the balance in the full and matched samples we can use the {\tt verbose=T} option with {\tt summary()}, which shows the balance
-of all squares and interactions of the covariates used in the matching procedure:
+For further information on the balance in the full and matched samples
+we can use the {\tt verbose=T} option with {\tt summary()}, which
+shows the balance of all squares and interactions of the covariates
+used in the matching procedure:
 
 \begin{verbatim}
 > summary(foo2, verbose=T)
@@ -487,29 +499,31 @@ Problematic covariates:
 Number of units discarded:   0
 \end{verbatim}
 
-There are no longer substantially different 1974 or 1975 real earnings in the
-matched sample, and the bias has substantially reduced in the
+There are no longer substantially different 1974 or 1975 real earnings
+in the matched sample, and the bias has substantially reduced in the
 propensity score and real earnings.  More specifically, job training
-participants on average earned roughly \$3,523 less in 1974 and \$934 less in 1975 than
-non-participants, significant differences with t-statistics of
--7.25 and -3.28, respectively.  In the matched sample, the earnings difference
-is only \$56 (t-statistic=0.11) in 1974 and \$96 (t-statistic=0.32)
-in 1975.  Note that \texttt{sum.all} and
+participants on average earned roughly \$3,523 less in 1974 and \$934
+less in 1975 than non-participants, significant differences with
+t-statistics of -7.25 and -3.28, respectively.  In the matched sample,
+the earnings difference is only \$56 (t-statistic=0.11) in 1974 and
+\$96 (t-statistic=0.32) in 1975.  Note that \texttt{sum.all} and
 \texttt{sum.matched} automatically calculate the statistics for all
 squares and interactions of covariates specified in the assignment
-model, which is helpful for diagnosing whether balance across
-matched pairs has been attained.  Significant differences in higher
-order interactions usually are a good indication that the assignment
-model needs to be respecified, as discussed in Section \ref{pscorespec}.  The bias reduction indicators,
-calculated in the 
-\texttt{Reduction} column in \texttt{sum.matched} of the {\tt summary} output, additionally
-indicate that there was an absolute reduction in the balance bias in propensity scores and real earnings.
+model, which is helpful for diagnosing whether balance across matched
+pairs has been attained.  Significant differences in higher order
+interactions usually are a good indication that the assignment model
+needs to be respecified, as discussed in Section \ref{pscorespec}.
+The bias reduction indicators, calculated in the \texttt{Reduction}
+column in \texttt{sum.matched} of the {\tt summary} output,
+additionally indicate that there was an absolute reduction in the
+balance bias in propensity scores and real earnings.
 
 The \texttt{summary} command will additionally report (a) the original
 call of the \MatchIt\ object, (b) whether there are any ``Problematic
 covariates'' that may still be imbalanced in the assignment model, and
 (c) how many units were discarded due to the \texttt{discard} option
-(described below).  In this case there were no units discarded and no ``problematic covariates.''  
+(described below).  In this case there were no units discarded and no
+``problematic covariates.''
 
 We can also check the propensity score and covariate distribution with
 diagnostic plots, which are depicted in Figure~\ref{f2diags}.  These
@@ -549,7 +563,7 @@ second."
 
 Clicking the first mouse button near the units will bring up the
 observation name specified in the data frame.  You may end this by
-clicking the second mouse button. 
+clicking the second mouse button.
 
 Lastly, the \texttt{plot} command allows you to plot density estimates
 for any covariates and their interactions:\footnote{Note that when
@@ -579,16 +593,19 @@ Would you like to see density estimates of any other covariates?
   \end{center}
 \end{figure}
 
-Examining these graphs in Figure~\ref{f2diags}, we see that the matched samples are very well matched on the propensity score, with very similar distributions
-in the matched treated and control groups.
+Examining these graphs in Figure~\ref{f2diags}, we see that the
+matched samples are very well matched on the propensity score, with
+very similar distributions in the matched treated and control groups.
 
-[IN THE EARLIER VERSION WE HAD AN EXAMPLE HERE OF MATCHING WITH REPLACEMENT BECAUSE MATCHING WITHOUT REPLACEMENT DIDN'T WORK VERY WELL.  I CUT IT OUT, BUT
-DO WE WANT AN EXAMPLE WITH REPLACEMENT SOMEWHERE?]
+[IN THE EARLIER VERSION WE HAD AN EXAMPLE HERE OF MATCHING WITH
+REPLACEMENT BECAUSE MATCHING WITHOUT REPLACEMENT DIDN'T WORK VERY
+WELL.  I CUT IT OUT, BUT DO WE WANT AN EXAMPLE WITH REPLACEMENT
+SOMEWHERE?]
 
 \subsection{Propensity Score Matching with Exact Restriction}
 
-Now suppose we wanted to match on a propensity score specification with real earnings in 1974 and 1975, 
-as well as exact match on race:
+Now suppose we wanted to match on a propensity score specification
+with real earnings in 1974 and 1975, as well as exact match on race:
 
 \begin{verbatim}
 > foo3 <- matchit(treat ~ re74 + re75, exact=c("black","hispan"),
@@ -612,9 +629,10 @@ Full        185     429   614
 Matched     116     116   232
 \end{verbatim}
 
-Exact matches on race were found for only 116 of the treated units, and so there are 116 treated and 116 control units in the matched samples.  We can 
-easily verify that the race variables in the matched samples
-are the same:
+Exact matches on race were found for only 116 of the treated units,
+and so there are 116 treated and 116 control units in the matched
+samples.  We can easily verify that the race variables in the matched
+samples are the same:
 
 \begin{verbatim}
 > sum.foo3 <- summary(foo3)
@@ -628,13 +646,17 @@ hispan    0.09482759    0.09482759 0.2936101      0    0         1
 black     0.75000000    0.75000000 0.4339489      0    0         1
 \end{verbatim}
 
-{\tt summary(foo3)\$sum.all} gives a summary of the covariates before matching.  {\tt summary(foo3)\$sum.matched} gives
-the comparable summaries on the matched samples. Before matching, 84\% of participants were black, compared to only
-20\% of the non-participants.  In the matched samples, black participants
-and non-participants comprise 75\% of the observations. 
+{\tt summary(foo3)\$sum.all} gives a summary of the covariates before
+matching.  {\tt summary(foo3)\$sum.matched} gives the comparable
+summaries on the matched samples. Before matching, 84\% of
+participants were black, compared to only 20\% of the
+non-participants.  In the matched samples, black participants and
+non-participants comprise 75\% of the observations.
 
-It is also easy to extract the matched subsetted data using the {\tt match.data()} command.  The following three commands output the full matched data set,
-the matched treated group, and the matched control group, respectively: 
+It is also easy to extract the matched subsetted data using the {\tt
+  match.data()} command.  The following three commands output the full
+matched data set, the matched treated group, and the matched control
+group, respectively:
 
 \begin{verbatim}
 dta.matched <- match.data(foo3)
@@ -642,7 +664,8 @@ dta.treated <- match.data(foo3, group = "treat")
 dta.control <- match.data(foo3, group = "control")
 \end{verbatim}
 
-We can examine which units were matched to which using the {\tt match.matrix} output:
+We can examine which units were matched to which using the {\tt
+  match.matrix} output:
 \begin{verbatim}
 > foo3$match.matrix
             V1
@@ -659,10 +682,11 @@ NSW10  PSID422
 ...  
 \end{verbatim}
 
-The  unit numbers on the left are the treated units; the units in the 2nd column are the controls matched to each treated unit.  For example, PSID Unit 406 was
-matched to NSW Unit 1.  NSW Unit 9 did not have a match.  
-We can verify that the matched pairs are identical
-in \texttt{black} and \texttt{hispan}:
+The unit numbers on the left are the treated units; the units in the
+2nd column are the controls matched to each treated unit.  For
+example, PSID Unit 406 was matched to NSW Unit 1.  NSW Unit 9 did not
+have a match.  We can verify that the matched pairs are identical in
+\texttt{black} and \texttt{hispan}:
 
 \begin{verbatim}
 > lalonde[c("NSW1", "PSID406"), c("black", "hispan")]
@@ -691,20 +715,21 @@ The following line replicates the matching algorithm of Table 2
 \end{verbatim}
 
 Note that the only differences between this and the earlier propensity
-score matching example are: (a) the number of covariates used,  (b)
-the \texttt{discard} option (which drops control units outside
-the support of the treated group's propensity scores, and (c) matching with replacement. 
+score matching example are: (a) the number of covariates used, (b) the
+\texttt{discard} option (which drops control units outside the support
+of the treated group's propensity scores, and (c) matching with
+replacement.
 
 \subsection{Non-matched and Discarded Units}
-The output objects \texttt{in.sample} and \texttt{psweights} give you all the
-information about non-matched and discarded units.  \texttt{in.sample}
-is a logical vector that indicates whether the unit was discarded due
-to the common support conditions (the \texttt{discard} option), while
-\texttt{psweights} gives information on whether the unit was matched.
-If for observation $i$, \texttt{in.sample}[i] is TRUE and
-\texttt{weights}[i] is $0$, then unit $i$ was eligible for matching
-but not used.  If \texttt{in.sample}[i] is FALSE, then
-\texttt{weights}[i] will be $0$.  
+The output objects \texttt{in.sample} and \texttt{psweights} give you
+all the information about non-matched and discarded units.
+\texttt{in.sample} is a logical vector that indicates whether the unit
+was discarded due to the common support conditions (the
+\texttt{discard} option), while \texttt{psweights} gives information
+on whether the unit was matched.  If for observation $i$,
+\texttt{in.sample}[i] is TRUE and \texttt{weights}[i] is $0$, then
+unit $i$ was eligible for matching but not used.  If
+\texttt{in.sample}[i] is FALSE, then \texttt{weights}[i] will be $0$.
 
 For example, suppose we use the assignment model from above:
 
@@ -778,11 +803,14 @@ streat   1.0 25.82 10.35  0.84   0.06    0.19     0.71 2095.57 1532.06 6349.14
 
 So the units that were discarded because of support conditions were on
 average about ten years older than the treated units, were much less
-likely to be black, were more likely to be married, more likely to have
-high school degrees, and had much higher income, particularly in 1974.  
+likely to be black, were more likely to be married, more likely to
+have high school degrees, and had much higher income, particularly in
+1974.
 
-We can also use the {\tt psweights} output to examine how many times the control units were matched (for matching
-with replacement).  Printing out {\tt psweights} shows the weights themselves. Each matched treated unit has a weight of one, whereas each matched control
+We can also use the {\tt psweights} output to examine how many times
+the control units were matched (for matching with replacement).
+Printing out {\tt psweights} shows the weights themselves. Each
+matched treated unit has a weight of one, whereas each matched control
 unit has a weight proportional to the number of times it was matched:
 
 \begin{verbatim}
@@ -799,9 +827,12 @@ unit has a weight proportional to the number of times it was matched:
 0.7514451 0.0000000 0.0000000 0.0000000
 \end{verbatim}
 
-NSW Unit 8 was not matched and thus has a weight of 0.  We need to re-scale the control unit weights to see how many times each control
-was matched.  The sum of the control group weights adds up to the number of uniquely matched control units, so we re-scale by the number of treated units
-matched divided by the number of control units matched:
+NSW Unit 8 was not matched and thus has a weight of 0.  We need to
+re-scale the control unit weights to see how many times each control
+was matched.  The sum of the control group weights adds up to the
+number of uniquely matched control units, so we re-scale by the number
+of treated units matched divided by the number of control units
+matched:
 
 \begin{verbatim}
 > print((foo$psweights[foo$data$treat==0]*sum(foo$psweights[foo$data$treat==1])/sum(foo$psweights[foo$data$treat==0]))[1:20])
@@ -936,8 +967,8 @@ Number of units discarded:   0
 \end{verbatim}
 
 
-Hence out of the 185 observations in the NSW sample, only 25 units have exact
-matches. 
+Hence out of the 185 observations in the NSW sample, only 25 units
+have exact matches.
 
 \subsection{Caliper Matching}
 
@@ -997,18 +1028,17 @@ foo4 <- matchit(treat~educ+re74+re75,data=lalonde,model="cart")
 \end{verbatim}
 
 Each use different models to estimate the propensity score.  Before
-using any of these techniques, the user is strongly advised to
-seek outside resources to understand the theoretical groundings of
-these techniques.  For political science articles discussing or
-implementing (a) neural networks see
-\citet{beck99,Zeng99,Zeng00,LagRus02}, (b) generalized
-additive models see \citet{BecJac98}, and (c) classification trees
-see \citet{RugKimMar03}.  For more general treatments,
-see \citet{Bishop95,White92,BreFriOls84}. 
-See also the \texttt{glm} library for further control of logit and
-probit regressions, the \texttt{nnet} for neural networks, the
-\texttt{mgcv} library for generalized additive models, and the
-\texttt{rpart} library for classification trees.
+using any of these techniques, the user is strongly advised to seek
+outside resources to understand the theoretical groundings of these
+techniques.  For political science articles discussing or implementing
+(a) neural networks see \citet{beck99,Zeng99,Zeng00,LagRus02}, (b)
+generalized additive models see \citet{BecJac98}, and (c)
+classification trees see \citet{RugKimMar03}.  For more general
+treatments, see \citet{Bishop95,White92,BreFriOls84}.  See also the
+\texttt{glm} library for further control of logit and probit
+regressions, the \texttt{nnet} for neural networks, the \texttt{mgcv}
+library for generalized additive models, and the \texttt{rpart}
+library for classification trees.
 
 \subsection{Using Observation Names}
 \label{rnames}
@@ -1018,7 +1048,7 @@ data frame, you may find it helpful to specify observation names the
 data input.  Use the \texttt{row.names} command to achieve this.  For
 example, to assign the names ``Dan'', ``Kosuke'', ``Liz'' and ``Gary''
 to a data frame with the first four observations in the Lalonde data,
-type: 
+type:
 
 \begin{verbatim}
 > test <- lalonde[1:4,]  #taking a lalonde subset
@@ -1048,45 +1078,59 @@ foo <- matchdef(treat,index,re75,replace=TRUE)
 \end{verbatim}
 
 \subsection{Diagnosing a propensity score model}
-The model specification and diagnostics when estimating propensity scores are not the standard model diagnostics
-for logistic regression or CART, as
-discussed by \cite{Rubin04}.  With propensity score estimation, and matching methods more generally, concern is not with the parameter estimates
-of the model, but rather with the quality of the matches.  As discussed by \cite{Greevy04}, because the matching does not make use of
-the outcome values, the matching can 
-be done multiple times and the 
-best matched sample chosen without biasing the results.  Diagnostics for propensity scores thus involve assessing specifications and choosing
-the one that leads to the most balance between the treated and control groups.
+The model specification and diagnostics when estimating propensity
+scores are not the standard model diagnostics for logistic regression
+or CART, as discussed by \cite{Rubin04}.  With propensity score
+estimation, and matching methods more generally, concern is not with
+the parameter estimates of the model, but rather with the quality of
+the matches.  As discussed by \cite{Greevy04}, because the matching
+does not make use of the outcome values, the matching can be done
+multiple times and the best matched sample chosen without biasing the
+results.  Diagnostics for propensity scores thus involve assessing
+specifications and choosing the one that leads to the most balance
+between the treated and control groups.
 
-\cite{RosRub84a}, \cite{Perkins00}, and \cite{DehWah02} describe propensity score model fitting strategies 
-that involve examining the resulting covariate balance in subclasses defined by the propensity score.  If 
-covariates (or their squares or cross-products) are found to be imbalanced, those terms are then included in the propensity
-score specification, which should improve their balance.  A sample strategy is described here:
+\cite{RosRub84a}, \cite{Perkins00}, and \cite{DehWah02} describe
+propensity score model fitting strategies that involve examining the
+resulting covariate balance in subclasses defined by the propensity
+score.  If covariates (or their squares or cross-products) are found
+to be imbalanced, those terms are then included in the propensity
+score specification, which should improve their balance.  A sample
+strategy is described here:
 
 \begin{enumerate}
-\item Start with model (for example, logistic regression with treatment received as the response variable) with main
-effects for each of the observed covariates.  The propensity scores are the predictors of treatment assignment generated
-from this model.  
-\item (Optional) Discard control units outside the range of the treated group propensity scores, and/or treated units
-outside the range of the control group propensity scores.
-\item Form 2 subclass (with propensity scores split at their median), do a t-test of the propensity score in 
-the treated and 
-control groups in each subclass.  If there is a significant difference, split into subclass into 2 subclasses at its median.  
-Continue this process, splitting a subclass if it has
-a t-statistic greater than 2.5 and if there are two or more treated and control units in each new subclass formed.
-\item Within each subclass formed in Step 3, test for equality of means of functions of X (e.g., each covariate, each
-covariate squared,
-2-way interactions of covariates).  If any t-statistic is greater than 2 in any subclass, include that term in the new
-propensity score specification.  (Other, similar rules can be used, such as including terms that are significant in
-more than 1 subclass).
-\item Repeat Steps 1-4 until there are no more (or very few, as few as possible) significant t-statistics.  This will
-imply that within each block the treated and control groups are very well balanced.
+\item Start with model (for example, logistic regression with
+  treatment received as the response variable) with main effects for
+  each of the observed covariates.  The propensity scores are the
+  predictors of treatment assignment generated from this model.
+\item (Optional) Discard control units outside the range of the
+  treated group propensity scores, and/or treated units outside the
+  range of the control group propensity scores.
+\item Form 2 subclass (with propensity scores split at their median),
+  do a t-test of the propensity score in the treated and control
+  groups in each subclass.  If there is a significant difference,
+  split into subclass into 2 subclasses at its median.  Continue this
+  process, splitting a subclass if it has a t-statistic greater than
+  2.5 and if there are two or more treated and control units in each
+  new subclass formed.
+\item Within each subclass formed in Step 3, test for equality of
+  means of functions of X (e.g., each covariate, each covariate
+  squared, 2-way interactions of covariates).  If any t-statistic is
+  greater than 2 in any subclass, include that term in the new
+  propensity score specification.  (Other, similar rules can be used,
+  such as including terms that are significant in more than 1
+  subclass).
+\item Repeat Steps 1-4 until there are no more (or very few, as few as
+  possible) significant t-statistics.  This will imply that within
+  each block the treated and control groups are very well balanced.
 \end{enumerate}
 
 This method can be implemented in \MatchIt\ in the following way.
 
-First, run propensity score model with main effects for each of the covariates
-(a sub-set of the Lalonde variables are utilized here for brevity), first
-with just two subclasses, divided at the median propensity score:
+First, run propensity score model with main effects for each of the
+covariates (a sub-set of the Lalonde variables are utilized here for
+brevity), first with just two subclasses, divided at the median
+propensity score:
 
 \begin{verbatim}
 > match.out1 <- matchit(treat ~ age + married + black + hispan +
@@ -1118,8 +1162,8 @@ Number of units discarded:   0
 
 \end{verbatim}
 
-Because the t-statistics of the propensity scores in both Subclasses are greater than 2.5, we divide each block in 
-half, at its median:
+Because the t-statistics of the propensity scores in both Subclasses
+are greater than 2.5, we divide each block in half, at its median:
 
 \begin{verbatim}
 > match.out1 <- matchit(treat ~ age + married + black + hispan +
@@ -1129,10 +1173,12 @@ half, at its median:
 > summary(match.out1, verbose=T)
 \end{verbatim}
 
-Because Subclass 4 still has a t-statistic greater than 2.5, we again divide that Subclass in half, leading to
-five subclasses.  All five subclasses have t-statistics of the propensity score less than 2.5.  We then run {\tt 
-summary(match.out1, verbose=T)} on that matchit object, to examine the balance of all
-of the squares and interactions of the covariates within each Subclass.
+Because Subclass 4 still has a t-statistic greater than 2.5, we again
+divide that Subclass in half, leading to five subclasses.  All five
+subclasses have t-statistics of the propensity score less than 2.5.
+We then run {\tt summary(match.out1, verbose=T)} on that matchit
+object, to examine the balance of all of the squares and interactions
+of the covariates within each Subclass.
 
 \begin{verbatim}
 > match.out1 <- matchit(treat ~ age + married + black + hispan +
@@ -1157,15 +1203,17 @@ Subclass  4 :  agexnodegree
 Subclass  5 :  
 \end{verbatim}
 
-These ``problematic" covariates are then included in the new propensity score specification, and the process is repeated.
-(Note: since {\tt black} and {\tt married} are binary covariates, their squares are just the variables themselves and thus 
-the squares are not included in the new specification.)
+These ``problematic" covariates are then included in the new
+propensity score specification, and the process is repeated.  (Note:
+since {\tt black} and {\tt married} are binary covariates, their
+squares are just the variables themselves and thus the squares are not
+included in the new specification.)
 
 \begin{verbatim}
 > match.out2 <- matchit(treat ~ age + educ + married + nodegree + hispan +
                       black + re74 + re75 + I(black*educ) +
                       I(black*re74) + I(age*married) + I(married*black) + 
-		      I(married*nodegree) + I(married*educ) +
+                      I(married*nodegree) + I(married*educ) +
                       I(nodegree*educ) + I(age*nodegree),
                       data=lalonde, subclass=c(0,.5,1))
 
@@ -1185,11 +1233,14 @@ This process leads to three blocks being created  ({\tt subclass=c(0, .25, .5, 1
 > summary(match.out2, verbose=F)
 \end{verbatim}
 
-We see that now there are only 2 ``problematic covariates," in just one Subclass.  Note that we use {\tt verbose=F}
-at this stage so that we are checking just the balance of the squares and two-way interactions of the covariates themselves; 
-{\tt verbose=T} here would give details on the squares and interactions of the interaction variables, which are generally 
-not of as much interest as the two-way interactions themselves.  We thus stop here and use this propensity score model,
-with the chosen interactions.
+We see that now there are only 2 ``problematic covariates," in just
+one Subclass.  Note that we use {\tt verbose=F} at this stage so that
+we are checking just the balance of the squares and two-way
+interactions of the covariates themselves; {\tt verbose=T} here would
+give details on the squares and interactions of the interaction
+variables, which are generally not of as much interest as the two-way
+interactions themselves.  We thus stop here and use this propensity
+score model, with the chosen interactions.
 
 \begin{verbatim}
 Problematic covariates:
@@ -1198,10 +1249,12 @@ Subclass  2 :  re74 I(black * re74)
 Subclass  3 :  
 \end{verbatim}
 
-This section has provided one example of a diagnostic procedure for propensity score models.  The details may vary (for 
-example, an option could be to include only squares and interactions that have a significant difference in more than one 
-block.  The user could also identify a different cut-point for the subclasses, or for significance (as opposed to 2.5
-and 2).
+This section has provided one example of a diagnostic procedure for
+propensity score models.  The details may vary (for example, an option
+could be to include only squares and interactions that have a
+significant difference in more than one block.  The user could also
+identify a different cut-point for the subclasses, or for significance
+(as opposed to 2.5 and 2).
 
 \section{Reference}
 
@@ -1221,70 +1274,69 @@ matchit <- function(formula, data, model="logit", discard=0,
 \subsection{Inputs}
 
 \begin{enumerate}
-
-\item \textbf{Formula (required).}  \texttt{formula}  takes the form of {\tt T \~\ X1 + X2}, where
-  {\tt T} is a binary treatment indicator and {\tt X1} and {\tt X2} are
-  the pre-treatment covariates, and {\tt T}, {\tt X1}, and {\tt X2}
-  are contained in the same data frame.  The $+$ symbol means
-  ``inclusion'' not ``addition.'' You may also include
-  interaction terms in the form of {\tt I(X1*X2)} or squared terms in
-  the form of {\tt I(X1 \^\ 2)}.\footnote{The \texttt{I()} command
-  ensures that the expression is interpreted as one term.  If you omit
-  it, the main effects will automatically be included as well.} 
   
-\item \textbf{Dataframe (required).}  \texttt{data} specifies the data frame containing the
-  variables called in the formula.  You may find it helpful for the
-  diagnostics to specify observation names in the data frame.  To do
-  this, see Section~\ref{rnames}.
-
+\item \textbf{Formula (required).}  \texttt{formula} takes the form of
+  {\tt T \~\ X1 + X2}, where {\tt T} is a binary treatment indicator
+  and {\tt X1} and {\tt X2} are the pre-treatment covariates, and {\tt
+    T}, {\tt X1}, and {\tt X2} are contained in the same data frame.
+  The $+$ symbol means ``inclusion'' not ``addition.'' You may also
+  include interaction terms in the form of {\tt I(X1*X2)} or squared
+  terms in the form of {\tt I(X1 \^\ 2)}.\footnote{The \texttt{I()}
+    command ensures that the expression is interpreted as one term.
+    If you omit it, the main effects will automatically be included as
+    well.}
+  
+\item \textbf{Dataframe (required).}  \texttt{data} specifies the data
+  frame containing the variables called in the formula.  You may find
+  it helpful for the diagnostics to specify observation names in the
+  data frame.  To do this, see Section~\ref{rnames}.
+  
 \item \textbf{Assignment Model.}The assignment model estimation may be
-  changed by \texttt{model}, which specifies the method used to estimate the propensity score:
+  changed by \texttt{model}, which specifies the method used to
+  estimate the propensity score:
   \begin{enumerate}
-  \item \texttt{logit}, the default method, implements a logistic regression.  See
-    {\tt help(glm)} for more options. 
-  \item \texttt{probit} implements a probit regression.  See
-    {\tt help(glm)} for more options. 
-  \item \texttt{nnet} implements a neural network in the
-    \texttt{nnet} library, with a default size of 3.  See {\tt
-      help(nnet)} for more options.
-  \item \texttt{GAM} implements a generalized additive model 
-    as in the \texttt{mgcv} library.  See
-    {\tt help(gam)} for more options.
+  \item \texttt{logit}, the default method, implements a logistic
+    regression.  See {\tt help(glm)} for more options.
+  \item \texttt{probit} implements a probit regression.  See {\tt
+      help(glm)} for more options.
+  \item \texttt{nnet} implements a neural network in the \texttt{nnet}
+    library, with a default size of 3.  See {\tt help(nnet)} for more
+    options.
+  \item \texttt{GAM} implements a generalized additive model as in the
+    \texttt{mgcv} library.  See {\tt help(gam)} for more options.
   \item \texttt{cart} implements a classification tree as in the
-    \texttt{rpart} library.  See {\tt help(rpart)} for more
-    options.  
+    \texttt{rpart} library.  See {\tt help(rpart)} for more options.
   \end{enumerate}
-
-\item \textbf{Discarding.} \texttt{discard} specifies whether to discard units that
-  fall outside some measure of support of the distance score
+  
+\item \textbf{Discarding.} \texttt{discard} specifies whether to
+  discard units that fall outside some measure of support of the
+  distance score
   \begin{itemize}
-  \item default=0 keeps all units.  Use this
-    option when the units to be matched are substantially similar,
-    such as in the case of matching treatment and control units from a
-    field experiment that was close to (but not fully) randomized
-    (e.g., \citealt{Imai03}).  (Other reasons for
-    keeping all units may be that subclassification on all units is
-    desired or that caliper matching will naturally restrict the donor
-    pool.)
-  \item  1 keeps all units with common support on the distance
-    measure. Use this option when the units to be
-    matched are substantially different (i.e., when there is a large
-    degree of non-overlapping support on the distance score), such as
-    in the case of measuring the effect of democracy on economic
-    growth (e.g., \citealt{KinZen03}).  
+  \item default=0 keeps all units.  Use this option when the units to
+    be matched are substantially similar, such as in the case of
+    matching treatment and control units from a field experiment that
+    was close to (but not fully) randomized (e.g., \citealt{Imai03}).
+    (Other reasons for keeping all units may be that subclassification
+    on all units is desired or that caliper matching will naturally
+    restrict the donor pool.)
+  \item 1 keeps all units with common support on the distance measure.
+    Use this option when the units to be matched are substantially
+    different (i.e., when there is a large degree of non-overlapping
+    support on the distance score), such as in the case of measuring
+    the effect of democracy on economic growth (e.g.,
+    \citealt{KinZen03}).
   \item 2 discards only control units outside the support of the
-    distance measure of the treated units.
-    Use this option when the average treatment effect on the treated
-    is of most interest and when unwilling to discard non-overlapping
-    treatment units, such as possibly in the case of the effect of job
-    training on those individuals that actually participated in a job
-    evaluation program (e.g., \citealt{HecIchTod98}) or a drug study
-    where one cannot discard patients treated with the drug for
-    whatever reason. 
-  \item 3 discards only treated units outside the support of 
-    the distance measure of the control units.  Use this option when
-    the average treatment effect on the control units is of most
-    interest and when unwilling to discard control units. 
+    distance measure of the treated units.  Use this option when the
+    average treatment effect on the treated is of most interest and
+    when unwilling to discard non-overlapping treatment units, such as
+    possibly in the case of the effect of job training on those
+    individuals that actually participated in a job evaluation program
+    (e.g., \citealt{HecIchTod98}) or a drug study where one cannot
+    discard patients treated with the drug for whatever reason.
+  \item 3 discards only treated units outside the support of the
+    distance measure of the control units.  Use this option when the
+    average treatment effect on the control units is of most interest
+    and when unwilling to discard control units.
   \end{itemize}
 
 \item \textbf{Reestimation.} \texttt{reestimate} specifies whether the
@@ -1331,49 +1383,56 @@ matchit <- function(formula, data, model="logit", discard=0,
   when the ratio of control units that are comparable to the treated units
   is small and when pre-treatment covariates between treatment and
   control units diverge substantially.  
-
+  
 \item \textbf{Ratio Matching.}  \texttt{ratio} specifies the number of
   control units to be matched to each treatment unit, default=1.  Use
-  larger integer values when a large number of comparable control units are available to
-  increase efficiency of the estimand. If matching is done without replacement and there are 
-  fewer control units than ratio times the number of eligible treated units (i.e. not enough control
-  units for the specified method), then the higher
-  ratios will have \texttt{NA} in place of the matching unit number.  
+  larger integer values when a large number of comparable control
+  units are available to increase efficiency of the estimand. If
+  matching is done without replacement and there are fewer control
+  units than ratio times the number of eligible treated units (i.e.
+  not enough control units for the specified method), then the higher
+  ratios will have \texttt{NA} in place of the matching unit number.
 
 \item \textbf{Subclassification}
   Subclassification options allow the user to subclassify units along
   the propensity score:
   \begin{itemize}
-  \item \texttt{subclass} is either (1) a scalar, specifying the number of
-    subclasses, or (2) a vector of probabilities bounded
-    between 0 and 1, to create quantiles based on \texttt{subtype}, where the value of
-    0 (default) indicates no subclassification.  
+  \item \texttt{subclass} is either (1) a scalar, specifying the
+    number of subclasses, or (2) a vector of probabilities bounded
+    between 0 and 1, to create quantiles based on \texttt{subtype},
+    where the value of 0 (default) indicates no subclassification.
   \item If \texttt{subclass!=0}, \texttt{sub.by} may specify by what
-    criteria to subclassify: \texttt{``treat''} indicates by the number of treatment units (default), \texttt{``control''} indicates by the number 
-of control units, and \texttt{``all''} indicates by the total number of units.  
+    criteria to subclassify: \texttt{``treat''} indicates by the
+    number of treatment units (default), \texttt{``control''}
+    indicates by the number of control units, and \texttt{``all''}
+    indicates by the total number of units.
   \end{itemize}
   The subclass options create quantiles corresponding to the given
   probabilities from \texttt{subclass}, using the \texttt{quantile}
   command on the propensity scores of the \texttt{subtype} units. 
-
+  
 \item \textbf{Exact Matching.}  \texttt{exact} specifies whether exact
-  matching should be done.  \texttt{FALSE} (default) indicates no exact 
-  matching.  \texttt{TRUE} indicates exact matching on all variables in the 
-  assignment model of the \texttt{formula} (i.e., the propensity score
-  will never be generated).  A vector of variable names indicates separate variables on
-  which to exact match, in combination with matching on the propensity
-  score.  This option will not be different from \texttt{exact=TRUE},
-  unless the list differs from the variables in the formula.\footnote{For
-    example, \texttt{matchit(T \~\ X1 + X2, data, exact=TRUE)} is
-    equivalent to \texttt{matchit(T \~\ X1, data, exact=cbind(X1,X2))}.
-    But \texttt{matchit(T \~\ X1 + X2, data, exact=X1)} will match
-    units exactly only on \texttt{X1} and perform nearest neighbor
-    matching on the propensity score which uses \texttt{X1} and \texttt{X2}.} 
-  Variables should be entered as a vector of names 
-  \texttt{exact=c("X1","X2")} that refer to variable names in \texttt{data}.
-
-\item \textbf{Counter.} \texttt{counter} specifies whether a counter indicating the progress of the matching should be displayed.  \texttt{TRUE} (default) means
-that this counter will be displayed, \texttt{FALSE} means that it will not be displayed.
+  matching should be done.  \texttt{FALSE} (default) indicates no
+  exact matching.  \texttt{TRUE} indicates exact matching on all
+  variables in the assignment model of the \texttt{formula} (i.e., the
+  propensity score will never be generated).  A vector of variable
+  names indicates separate variables on which to exact match, in
+  combination with matching on the propensity score.  This option will
+  not be different from \texttt{exact=TRUE}, unless the list differs
+  from the variables in the formula.\footnote{For example,
+    \texttt{matchit(T \~\ X1 + X2, data, exact=TRUE)} is equivalent to
+    \texttt{matchit(T \~\ X1, data, exact=cbind(X1,X2))}.  But
+    \texttt{matchit(T \~\ X1 + X2, data, exact=X1)} will match units
+    exactly only on \texttt{X1} and perform nearest neighbor matching
+    on the propensity score which uses \texttt{X1} and \texttt{X2}.}
+  Variables should be entered as a vector of names
+  \texttt{exact=c("X1","X2")} that refer to variable names in
+  \texttt{data}.
+  
+\item \textbf{Counter.} \texttt{counter} specifies whether a counter
+  indicating the progress of the matching should be displayed.
+  \texttt{TRUE} (default) means that this counter will be displayed,
+  \texttt{FALSE} means that it will not be displayed.
 
 \end{enumerate}
   
@@ -1381,7 +1440,7 @@ that this counter will be displayed, \texttt{FALSE} means that it will not be di
 
 The following are the outputs of each \texttt{matchit} object, though
 note that if outputs are not applicable for the original
-\texttt{matchit} call, they will be returned as \texttt{NA}): 
+\texttt{matchit} call, they will be returned as \texttt{NA}):
 
 \begin{enumerate}
 
@@ -1405,30 +1464,32 @@ note that if outputs are not applicable for the original
    \item \texttt{NA} indicates that the treatment unit was not
      matched.  
    \end{itemize}
-
-\item \texttt{in.sample} is a vector of length $n$ that
-  displays whether the units were eligible for matching due to
-  discarding.  If unit $i$ was discarded, \texttt{in.sample[i]=FALSE},
-  and if unit $i$ was not discarded \texttt{in.sample[i]=TRUE}.
-
-\item \texttt{matched} is a vector of length $n$ that displays whether the units were matched.  \texttt{matched==TRUE} means
-that unit was matched, whereas \texttt{matched==FALSE} means it was not.
-
-\item \texttt{psweights} is a vector for all observations that provides
-  the weights assigned to each unit in the 
-  matching process.  Unmatched units have weights equal to $0$. Matched
-  treated units have weight $1$.  Each matched control unit has weight proportional to the number of times it was matched.  The sum of the control
-  weights is equal to the number of uniquely matched control units.
-
-\item \texttt{psclass} contains the subclass index in an ordinal scale
-  from 1 to the total number of subclasses as specified in
-  \texttt{subclass}; a higher subclass refers to a higher propensity
-  score.  Unmatched units have \texttt{psclass=0}.
-
-\item \texttt{q.cut} gives the subclass cut-points.  
-
-\item \texttt{assign.model} stores the output of the assignment
-  model.  For example: 
+   
+ \item \texttt{in.sample} is a vector of length $n$ that displays
+   whether the units were eligible for matching due to discarding.  If
+   unit $i$ was discarded, \texttt{in.sample[i]=FALSE}, and if unit
+   $i$ was not discarded \texttt{in.sample[i]=TRUE}.
+   
+ \item \texttt{matched} is a vector of length $n$ that displays
+   whether the units were matched.  \texttt{matched==TRUE} means that
+   unit was matched, whereas \texttt{matched==FALSE} means it was not.
+   
+ \item \texttt{psweights} is a vector for all observations that
+   provides the weights assigned to each unit in the matching process.
+   Unmatched units have weights equal to $0$. Matched treated units
+   have weight $1$.  Each matched control unit has weight proportional
+   to the number of times it was matched.  The sum of the control
+   weights is equal to the number of uniquely matched control units.
+   
+ \item \texttt{psclass} contains the subclass index in an ordinal
+   scale from 1 to the total number of subclasses as specified in
+   \texttt{subclass}; a higher subclass refers to a higher propensity
+   score.  Unmatched units have \texttt{psclass=0}.
+   
+ \item \texttt{q.cut} gives the subclass cut-points.
+   
+ \item \texttt{assign.model} stores the output of the assignment
+   model.  For example:
   
   \begin{footnotesize}
 \begin{verbatim}
@@ -1451,10 +1512,12 @@ Residual Deviance: 253.1        AIC: 271.1
 \end{verbatim}
 \end{footnotesize}
 
-\item \texttt{data} is a data frame that contains the original data set in the \MatchIt call, as well as three additional variables: \texttt{psclass}, 
-\texttt{psweights}, and \texttt{pscore} (\texttt{pscore} is a vector of $n$ length that contains the estimated propensity scores for
-  all units (i.e., the probability of treatment assignment
-  conditional on the covariates)).
+\item \texttt{data} is a data frame that contains the original data
+  set in the \MatchIt call, as well as three additional variables:
+  \texttt{psclass}, \texttt{psweights}, and \texttt{pscore}
+  (\texttt{pscore} is a vector of $n$ length that contains the
+  estimated propensity scores for all units (i.e., the probability of
+  treatment assignment conditional on the covariates)).
 
 \item \texttt{treat} stores the treatment indicator from \texttt{data}.
 
@@ -1624,22 +1687,36 @@ The estimated variance of the estimated treatment effect in Equation \eqref{ate}
 \label{estvar}
 \widehat{{\rm var}}(\widehat{ate}) = \frac{s_{mt}^2}{\sum_{i=1}^{n_1} w_i} + \frac{s_{mc}^2}{\sum_{i=1}^{n_0} w_i},
 \end{equation}
-where $s_a^2$ is the weighted variance of the outcome in group $a$, and $n_1$ and $n_0$ are the sizes of the matched treated and control groups,
-respectively.  The weighted variance in group $a$ is calculated as:
+where $s_a^2$ is the weighted variance of the outcome in group $a$,
+and $n_1$ and $n_0$ are the sizes of the matched treated and control
+groups, respectively.  The weighted variance in group $a$ is
+calculated as:
 $$ s^2_{a} = \frac{\sum_{i=1}^{n_a} w_i (y-\overline{y}_a^w)^2}{(\sum_{i=1}^{n_a} w_i) - 1}.$$
 
-Neyman ??? showed that the variance estimate in Equation \eqref{estvar} is unbiased for the true variance when the treatment effect is additive and constant
-for all individuals ($Y_i(1)-Y_i(0)=c$ for all $i$) and overestimates the true variance when the effect is non-additive.  
+Neyman ??? showed that the variance estimate in Equation
+\eqref{estvar} is unbiased for the true variance when the treatment
+effect is additive and constant for all individuals ($Y_i(1)-Y_i(0)=c$
+for all $i$) and overestimates the true variance when the effect is
+non-additive.
 
-If subclasses were formed using \MatchIt, then the Neyman function will also compute within-subclass estimates and a weighted average across the subclasses.
-The weighted average will be weighted by the {\tt sub.by} option in the \MatchIt call (the number of treated units, the number of control
-units, or the total number of units in each subclass).  If interest is in estimating the average treatment effect for the treated, the number of treated units
-in each subclass should be used for the subclassification and weighting.  Subclasses with fewer than two treated or control units are not used
-in the estimation of the average treatment effect and its variance; they are given a weight of zero.
+If subclasses were formed using \MatchIt, then the Neyman function
+will also compute within-subclass estimates and a weighted average
+across the subclasses.  The weighted average will be weighted by the
+{\tt sub.by} option in the \MatchIt call (the number of treated units,
+the number of control units, or the total number of units in each
+subclass).  If interest is in estimating the average treatment effect
+for the treated, the number of treated units in each subclass should
+be used for the subclassification and weighting.  Subclasses with
+fewer than two treated or control units are not used in the estimation
+of the average treatment effect and its variance; they are given a
+weight of zero.
 
-Using the Neyman function, it is also possible to estimate the variance of the estimated treatment effect using the bootstrap.  With that option,
-the user specifies a number of bootstrap samples.  An estimated treatment effect is calculated for each bootstrap sample, and the variance of the estimated
-treatment effects is given by the sample variance of the bootstrap estimates.  [NOTATION HERE.]  
+Using the Neyman function, it is also possible to estimate the
+variance of the estimated treatment effect using the bootstrap.  With
+that option, the user specifies a number of bootstrap samples.  An
+estimated treatment effect is calculated for each bootstrap sample,
+and the variance of the estimated treatment effects is given by the
+sample variance of the bootstrap estimates.  [NOTATION HERE.]
 
 The format of {\tt neyman} is:
 
@@ -1647,11 +1724,16 @@ The format of {\tt neyman} is:
 > neyman(Y, object, bootstrap=NULL, counter=TRUE)
 \end{verbatim}
 
-{\tt Y} is the outcome of interest, {\tt object} is the \MatchIt\ object, {\tt bootstrap} (optionally) 
-specifies how many bootstrap replications to use in calculating the variance, and {\tt counter} gives an option of not having a counter indicate
-what proportion of the bootstrap samples have been completed.  The output of {\tt neyman()} is the estimated treatment effect and its
-estimated standard deviation.   If {\tt match.out} is subclassified, the subclass estimates can be obtained by using the {\tt summary()} command on the
-{\tt neyman()} output object.  Examples are provided below, which can be run using {\tt demo(analysis)}.
+{\tt Y} is the outcome of interest, {\tt object} is the \MatchIt\ 
+object, {\tt bootstrap} (optionally) specifies how many bootstrap
+replications to use in calculating the variance, and {\tt counter}
+gives an option of not having a counter indicate what proportion of
+the bootstrap samples have been completed.  The output of {\tt
+  neyman()} is the estimated treatment effect and its estimated
+standard deviation.  If {\tt match.out} is subclassified, the subclass
+estimates can be obtained by using the {\tt summary()} command on the
+{\tt neyman()} output object.  Examples are provided below, which can
+be run using {\tt demo(analysis)}.
 
 \subsubsection{Simple Neyman calculation}
 Here we provide a simple example of the use of the {\tt neyman()} function.
@@ -1726,8 +1808,9 @@ Subclass 4   47    14
 \end{verbatim}
 
 \subsubsection{Neyman with exact matching}
-The {\tt neyman()} function can also be used with exact matching on covariates.  For exact matching, an overall estimated
-treatment effect is calculated, using the {\tt psweights} as weights.
+The {\tt neyman()} function can also be used with exact matching on
+covariates.  For exact matching, an overall estimated treatment effect
+is calculated, using the {\tt psweights} as weights.
 
 \begin{verbatim}
 > match.out1e <- matchit(treat ~ black + hispan, data = lalonde, exact=TRUE)
@@ -1756,10 +1839,12 @@ Overall  185   429
 \end{verbatim}
 
 \subsection{Linear regression on matched samples}
-Linear regression is a common method for estimating causal effects.  \MatchIt\ helps ensure that the regression is
-done using treated and control groups with similar covariate distributions, thus reducing reliance on the linearity 
-assumption and extrapolation.  The ordinary least squares regression can be fit to the matched data, using
-the {\tt match.data()} function:
+Linear regression is a common method for estimating causal effects.
+\MatchIt\ helps ensure that the regression is done using treated and
+control groups with similar covariate distributions, thus reducing
+reliance on the linearity assumption and extrapolation.  The ordinary
+least squares regression can be fit to the matched data, using the
+{\tt match.data()} function:
 
 \begin{verbatim}
 > lm.1 <- lm(re78 ~ treat + pscore, data=match.data(match.out1))                                                                                               
@@ -1776,30 +1861,34 @@ models, gives easily interpretable results by simulating quantities of
 interest, and provides numerical and graphical summaries.  The package
 along with the complete documentation is available at
 \href{http://gking.harvard.edu/zelig/}{http://gking.harvard.edu/zelig/}.
-\MatchIt\ and Zelig can be easily used together to enable estimation of
-causal effects in very general settings.
+\MatchIt\ and Zelig can be easily used together to enable estimation
+of causal effects in very general settings.
                                                                                                                                                              
-Here we provide a few examples of how to use Zelig with \MatchIt\ objects.
-The general framework is that we impute the missing potential outcomes For
-example, the outcomes under no treatment, $Y(0)$, are missing for all the
-units in the treated group, whereas the outcomes under the treatment,
-$Y(1)$, are observed.  We impute these missing outcomes in the following
-manner. First, we estimate a model for $Y(0)$ using the observed outcomes
-of the matched control units. Then, given this model, the missing outcome
-$Y(0)$ are imputed for the matched treated units. Once those potential
-outcomes are imputed, the estimation of individual $i$'s treatment
-effect, $Y_i(1)-Y_i(0)$, is straightforward. The average treatment effect
-for any subpopulation, e.g., the average treatment effect for the treated
-individuals, can be similarly calculated. An advantage of this simulation
-approach is that the uncertainty estimates such as standard errors are
-obtained easily.
+Here we provide a few examples of how to use Zelig with \MatchIt\ 
+objects.  The general framework is that we impute the missing
+potential outcomes For example, the outcomes under no treatment,
+$Y(0)$, are missing for all the units in the treated group, whereas
+the outcomes under the treatment, $Y(1)$, are observed.  We impute
+these missing outcomes in the following manner. First, we estimate a
+model for $Y(0)$ using the observed outcomes of the matched control
+units. Then, given this model, the missing outcome $Y(0)$ are imputed
+for the matched treated units. Once those potential outcomes are
+imputed, the estimation of individual $i$'s treatment effect,
+$Y_i(1)-Y_i(0)$, is straightforward. The average treatment effect for
+any subpopulation, e.g., the average treatment effect for the treated
+individuals, can be similarly calculated. An advantage of this
+simulation approach is that the uncertainty estimates such as standard
+errors are obtained easily.
 
 \subsubsection{Basic analysis with Zelig}
-A few steps are required to obtain estimates of the average treatment effect:
+A few steps are required to obtain estimates of the average treatment
+effect:
 
-First, using Zelig, fit a model of the outcome with the covariates or propensity score as predictors, using
-just the matched control group.  Here we use a linear model ({\tt "lm"}), however Zelig can support a wide range of models.
-For more details, see the Zelig documentation at {\url gking.harvard.edu/zelig}.
+First, using Zelig, fit a model of the outcome with the covariates or
+propensity score as predictors, using just the matched control group.
+Here we use a linear model ({\tt "lm"}), however Zelig can support a
+wide range of models.  For more details, see the Zelig documentation
+at {\url gking.harvard.edu/zelig}.
 \begin{verbatim}
 > library(Zelig)
 > match.out1 <- matchit(treat ~ age + educ + black + hispan + nodegree +
@@ -1814,8 +1903,8 @@ Next, set the $x$ variables to the covariates observed in the matched treated un
                TRUE)
 \end{verbatim}
 
-Finally, predict {\tt re78} for the $x$'s in {\tt x.out1}, using the model fit in the control group (output in {\tt 
-z.out1}).
+Finally, predict {\tt re78} for the $x$'s in {\tt x.out1}, using the
+model fit in the control group (output in {\tt z.out1}).
 
 \begin{verbatim}
 > s.out1 <- sim(z.out1, x = x.out1)
@@ -1845,12 +1934,14 @@ Pooled Average Treatment Effect: Y - PR
 1 1137 716 -943.4 3094 -293.3  2580
 \end{verbatim}
 
-We see that the average treatment effect for the treated group is $\$1127$, with standard deviation $716.$.  Other 
-information can be obtained from the output objects in {\tt s.out1}.  
+We see that the average treatment effect for the treated group is
+$\$1127$, with standard deviation $716.$.  Other information can be
+obtained from the output objects in {\tt s.out1}.
 
 \subsubsection{Zelig with subclassification}
-Zelig can also be used with subclassification.  In this case, treatment effects can be obtained for each subclass
-separately, as well as overall.
+Zelig can also be used with subclassification.  In this case,
+treatment effects can be obtained for each subclass separately, as
+well as overall.
 
 \begin{verbatim}
 > match.out1s <- matchit(treat ~ age + educ + black + hispan + nodegree
@@ -1972,23 +2063,24 @@ Pooled Average Treatment Effect: Y - PR
 \end{verbatim}
 
 \subsection{Matching and Difference-in-Difference Estimates}
-A difference-in-differences (DID) analysis can be easily incorporated into
-\MatchIt.  If we were interested in the DID matching estimate in the
-Lalonde data, we could simply include {\texttt re75} as a covariate in
-our analysis model.  Alternatively, matching on covariates, including {\tt re75} can be done, 
-and then the analysis done on the change in income from 1975 to 1978: {\tt re78}-{\tt re75}.  
+A difference-in-differences (DID) analysis can be easily incorporated
+into \MatchIt.  If we were interested in the DID matching estimate in
+the Lalonde data, we could simply include {\texttt re75} as a
+covariate in our analysis model.  Alternatively, matching on
+covariates, including {\tt re75} can be done, and then the analysis
+done on the change in income from 1975 to 1978: {\tt re78}-{\tt re75}.
 
 \section{Frequently Asked Questions}
 
 \subsection{Why Two Separate Commands?}
 The purpose of \MatchIt\ is to replicate an experimental template,
 where random assignment of treatment balances covariates.  Separation
-of the estimation procedure into two steps simulates the research design of an experiment,
-where no information on outcomes is known at the point of
-randomization.  Much like an experimenter cannot easily rerun an
-experiment if the outcome was not satisfactory, the separation of the
-balancing process from the analysis process helps keep clear the goal
-of balancing control and treatment groups. 
+of the estimation procedure into two steps simulates the research
+design of an experiment, where no information on outcomes is known at
+the point of randomization.  Much like an experimenter cannot easily
+rerun an experiment if the outcome was not satisfactory, the
+separation of the balancing process from the analysis process helps
+keep clear the goal of balancing control and treatment groups.
 
 \subsection{What if there is missing data?}
 \MatchIt\ requires complete data sets, with no missing values.  If
@@ -1999,12 +2091,11 @@ outcomes), or the analysis should be done using only complete cases
   www.multiple-imputation.com} gives information on imputation
 methods, including a list of available software.  This software
 includes \texttt{PROC MI} in SAS ({\em
-  http://support.sas.com/rnd/app/da/new/dami.html}),
-software developed by Joseph Schafer ({\em
-  http://www.stat.psu.edu/\~{}jls/}), and the Amelia software 
-({\em http://gking.harvard.edu/stats.shtml}).  For more information on
-missing data and imputation methods, see 
-\cite{KinHonJos01}, \cite{LitRub02}, or \cite{Schafer97}.  
+  http://support.sas.com/rnd/app/da/new/dami.html}), software
+developed by Joseph Schafer ({\em http://www.stat.psu.edu/\~{}jls/}),
+and the Amelia software ({\em http://gking.harvard.edu/stats.shtml}).
+For more information on missing data and imputation methods, see
+\cite{KinHonJos01}, \cite{LitRub02}, or \cite{Schafer97}.
 
 
 %\appendix
@@ -2013,12 +2104,12 @@ missing data and imputation methods, see
 \label{reference}  
 For those interested in contributing to \MatchIt, we provide this
 Appendix on the internal structure.  For anyone who already has added,
-or is potentially interested in adding, options to \MatchIt, please do not
-hesitate to contact us.  
+or is potentially interested in adding, options to \MatchIt, please do
+not hesitate to contact us.
 
-The \texttt{matchit} command serves as an umbrella for five
-unique commands, which may also be used separately.  For instance,
-some researchers may wish to feed in known propensity scores into the
+The \texttt{matchit} command serves as an umbrella for five unique
+commands, which may also be used separately.  For instance, some
+researchers may wish to feed in known propensity scores into the
 matching portion of \texttt{matchit}.  Although for most users the
 above documentation will suffice, the following subsections provide
 more detail on individual commands tha comprise \MatchIt.
@@ -2037,13 +2128,13 @@ variety of statistical models.
 
 \subsubsection{Arguments}
 \begin{itemize}
-\item{formula}: a symbolic representation of the model to be estimated,
-  in the form {\tt Y $\sim$ X1 + X2 + \dots}.
+\item{formula}: a symbolic representation of the model to be
+  estimated, in the form {\tt Y $\sim$ X1 + X2 + \dots}.
 \item{model}: the name of a statistical model, enclosed in {\tt ""}.
   Currently, the following models are supported:
   \begin{itemize}
-  \item \texttt{logit}, the default method, implements of a logistic regression.  See
-    {\tt help(glm)} for more options. 
+  \item \texttt{logit}, the default method, implements of a logistic
+    regression.  See {\tt help(glm)} for more options.
   \item \texttt{probit} implements a probit regression.  See
     {\tt help(glm)} for more options. 
   \item \texttt{nnet} implements a neural network in the
@@ -2057,20 +2148,20 @@ variety of statistical models.
     options.  
   \end{itemize}
 \item{data}: a data frame containing the variables in the formula.
-\item{discard}: a scalar specifying whether to discard units that
-  fall outside some measure of support of the distance score
+\item{discard}: a scalar specifying whether to discard units that fall
+  outside some measure of support of the distance score
   \begin{itemize}
   \item default=0 keeps all units
   \item  1 keeps all units with common support on the distance
     measure
   \item 2 discards only control units outside the support of the
     distance measure of the treated units,
-  \item 3 discards only treated units outside the support of 
-    the distance measure of the control units
+  \item 3 discards only treated units outside the support of the
+    distance measure of the control units
   \end{itemize}
-\item{reestimate}: a logical scalar specifying whether the
-  propensity score model should be re-estimated after units are
-  discarded (\texttt{TRUE}) or not (\texttt{FALSE}).
+\item{reestimate}: a logical scalar specifying whether the propensity
+  score model should be re-estimated after units are discarded
+  (\texttt{TRUE}) or not (\texttt{FALSE}).
 \item{counter}: an indicator for whether a counter showing the percent of treated units matched so far is printed out, default={\tt TRUE}.
 \item{\dots}: additional arguments passed to \texttt{distance}, depending on
     the model to be estimated.
@@ -2079,7 +2170,9 @@ variety of statistical models.
 \subsubsection{Output Values}
 The \texttt{distance} command will return the following objects:
 \begin{itemize}
-\item{in.sample}: a vector indicating which units were not discarded (1=in sample, 0=not in sample (discarded due to common support restrictions)). 
+\item{in.sample}: a vector indicating which units were not discarded
+  (1=in sample, 0=not in sample (discarded due to common support
+  restrictions)).
 \item{pscore}: a vector of estimated propensity scores. 
 \item{treat}: a vector of the treatment indicator.
 \item{covariates}: a data frame of the covariates used in the
@@ -2104,7 +2197,8 @@ given a propensity score, with various flexible options.
 
 \subsubsection{Arguments}
 \begin{itemize}
-\item{formula}:  a symbolic representation of the propensity score model estimated, in the form {\tt Y $\sim$ X1 + X2 + \dots}.
+\item{formula}: a symbolic representation of the propensity score
+  model estimated, in the form {\tt Y $\sim$ X1 + X2 + \dots}.
 \item{in.sample}: a vector indicating which units were not discarded (1=in sample, 0=not in sample (discarded due to common support restrictions)). 
 \item{pscore}: a vector of estimated propensity scores. 
 \item{nearest}: a logical scalar which specifies whether
@@ -2132,17 +2226,20 @@ given a propensity score, with various flexible options.
   \item\texttt{mahvars}: if \texttt{caliper!=0}, a vector specifying
     the variables on which to perform Mahalanobis-metric matching
     within each caliper, default=NULL.  Variables should be entered as
-    a vector of variable names contained in \texttt{data}, e.g., \texttt{mahvars=c("X1","X2")}.
+    a vector of variable names contained in \texttt{data}, e.g.,
+    \texttt{mahvars=c("X1","X2")}.
   \end{itemize}
-\item{exact}: specifies whether exact matching should be done.  FALSE (default) indicates no exact 
-  matching.  TRUE indicates exact matching on all variables in the 
-  assignment model of the \texttt{formula} (i.e., the propensity score
-  will never be generated).  A list of variables indicates variables on
-  which to exact match, in combination with matching on the propensity
-  score.  Variables should be entered as a  string
-  of variable names contained in \texttt{data}, e.g.,  \texttt{exact=c("X1","X2")}.
+\item{exact}: specifies whether exact matching should be done.  FALSE
+  (default) indicates no exact matching.  TRUE indicates exact
+  matching on all variables in the assignment model of the
+  \texttt{formula} (i.e., the propensity score will never be
+  generated).  A list of variables indicates variables on which to
+  exact match, in combination with matching on the propensity score.
+  Variables should be entered as a string of variable names contained
+  in \texttt{data}, e.g., \texttt{exact=c("X1","X2")}.
 \item{data}: a data frame containing the variables in the formula.
-\item{counter}: an indicator for whether a counter showing the percent of treated units matched so far is printed out, default={\tt TRUE}.
+\item{counter}: an indicator for whether a counter showing the percent
+  of treated units matched so far is printed out, default={\tt TRUE}.
 \end{itemize}
 
 
@@ -2152,16 +2249,19 @@ The \texttt{matchdef} command will return the following objects:
 \begin{itemize}
 \item{match.matrix}: an $n_1$ by \texttt{ratio} matrix,where
   \texttt{row.names(match.matrix)} represent the names of the
-  treatment units and the column represents the matched control units, and $n_1$
-  represents the total number of treatment units.  \texttt{NA}
-  indicates that the unit was not matched. 
-\item{in.sample}:  a vector indicating which units were not discarded (1=in sample, 0=not in sample (discarded due to common support restrictions)).
+  treatment units and the column represents the matched control units,
+  and $n_1$ represents the total number of treatment units.
+  \texttt{NA} indicates that the unit was not matched.
+\item{in.sample}: a vector indicating which units were not discarded
+  (1=in sample, 0=not in sample (discarded due to common support
+  restrictions)).
 \end{itemize}
 
 \subsection{\texttt{exactmatch}}
 
 \subsubsection{Description}
-The \texttt{exactmatch} does exact matching on the variables in {\tt formula}, when {\tt exact=TRUE}.
+The \texttt{exactmatch} does exact matching on the variables in {\tt
+  formula}, when {\tt exact=TRUE}.
 
 \subsubsection{Syntax}
 \begin{verbatim}
@@ -2172,16 +2272,19 @@ foo <- exactmatch(formula, data, counter=TRUE)
 The \texttt{exactmatch} command takes as inputs the following
 objects:
 \begin{itemize}
-\item{formula}:  a symbolic representation of the propensity score model estimated, in the form {\tt Y $\sim$ X1 + X2 + \dots}.
+\item{formula}: a symbolic representation of the propensity score
+  model estimated, in the form {\tt Y $\sim$ X1 + X2 + \dots}.
 \item{data}: a data frame containing the variables in the formula.
-\item{counter}: an indicator for whether a counter showing the percent of treated units matched so far is printed out, default={\tt TRUE}.
+\item{counter}: an indicator for whether a counter showing the percent
+  of treated units matched so far is printed out, default={\tt TRUE}.
 \end{itemize}
 
 \subsubsection{Output Values}
 The \texttt{exactmatch} command will return the following objects: 
 \begin{itemize}
-\item{psclass}: a vector containing the subclass index in an ordinal scale
-  from 1 to the total number of subclasses, defined by the categories of the variables in {\tt formula}.
+\item{psclass}: a vector containing the subclass index in an ordinal
+  scale from 1 to the total number of subclasses, defined by the
+  categories of the variables in {\tt formula}.
 \end{itemize}
 
 \subsection{\texttt{subclassify}}
@@ -2200,26 +2303,29 @@ subclass=0, sub.by=''treat'', counter=TRUE)
 The \texttt{subclassify} command takes as inputs the following
 objects:
 \begin{itemize}
-\item{formula}:  a symbolic representation of the propensity score model estimated, in the form {\tt Y $\sim$ X1 + X2 + \dots}.
+\item{formula}: a symbolic representation of the propensity score
+  model estimated, in the form {\tt Y $\sim$ X1 + X2 + \dots}.
 \item{data}: a data frame containing the variables in the formula.
-\item{in.sample}:  a vector indicating which units were not discarded (1=in sample, 0=not in sample (discarded due to common support restrictions)).
+\item{in.sample}: a vector indicating which units were not discarded
+  (1=in sample, 0=not in sample (discarded due to common support
+  restrictions)).
 \item{pscore}: a vector of estimated propensity scores.  
 \item{nearest}: a logical scalar which specifies whether
   to perform nearest-neighbor matching, default=TRUE 
 \item{match.matrix}: an $n_1$ by \texttt{ratio} matrix,where
   \texttt{row.names(match.matrix)} represent the names of the
-  treatment units and the column represents the matched control units, and $n_1$
-  represents the total number of treatment units.  \texttt{NA}
-  indicates that the unit was not matched. 
-\item{subclass}: specifies either the number of
-  subclasses in a scalar, or a vector of probabilities bounded
-  between 0 and 1, to create quantiles based on \texttt{sub.by}, where the value of
-  0 (default) indicates no subclassification
-\item{sub.by}: if \texttt{subclass!=0}, \texttt{sub.by} may specify
-  by what criteria to subclassify;
-  {\tt ``treat''} indicates by the number of treated units (default), {\tt ``control''} indicates by
-  the number of control units, and {\tt ``all''} indicates by the total
-  number of units.  
+  treatment units and the column represents the matched control units,
+  and $n_1$ represents the total number of treatment units.
+  \texttt{NA} indicates that the unit was not matched.
+\item{subclass}: specifies either the number of subclasses in a
+  scalar, or a vector of probabilities bounded between 0 and 1, to
+  create quantiles based on \texttt{sub.by}, where the value of 0
+  (default) indicates no subclassification
+\item{sub.by}: if \texttt{subclass!=0}, \texttt{sub.by} may specify by
+  what criteria to subclassify; {\tt ``treat''} indicates by the
+  number of treated units (default), {\tt ``control''} indicates by
+  the number of control units, and {\tt ``all''} indicates by the
+  total number of units.
 \end{itemize}
 
 \subsubsection{Output Values}
@@ -2235,7 +2341,8 @@ The \texttt{subclassify} command will return the following objects:
 \subsection{\texttt{diagnose}}
 
 \subsubsection{Description}
-The \texttt{diagnose} command calculates summary statistics, including the weights for each unit. 
+The \texttt{diagnose} command calculates summary statistics, including
+the weights for each unit.
 
 \subsubsection{Syntax}
 \begin{verbatim}
@@ -2246,48 +2353,55 @@ foo <-diagnose(formula, match.matrix, pscore, in.sample, data,
 \end{verbatim} 
 
 \subsubsection{Arguments}
-The \texttt{diagnose} command takes as inputs the following
-objects:
+The \texttt{diagnose} command takes as inputs the following objects:
 \begin{itemize}
-\item{formula}:  a symbolic representation of the propensity score model estimated, in the form {\tt Y $\sim$ X1 + X2 + \dots}.
+\item{formula}: a symbolic representation of the propensity score
+  model estimated, in the form {\tt Y $\sim$ X1 + X2 + \dots}.
 \item{match.matrix}: an $n_1$ by \texttt{ratio} matrix,where
   \texttt{row.names(match.matrix)} represent the names of the
-  treatment units and the column represents the matched control units, and $n_1$
-  represents the total number of treatment units.  \texttt{NA}
-  indicates that the unit was not matched. 
+  treatment units and the column represents the matched control units,
+  and $n_1$ represents the total number of treatment units.
+  \texttt{NA} indicates that the unit was not matched.
 \item{pscore}: a vector of estimated propensity scores.  
-\item{in.sample}:  a vector indicating which units were not discarded (1=in sample, 0=not in sample (discarded due to common support restrictions)).
+\item{in.sample}: a vector indicating which units were not discarded
+  (1=in sample, 0=not in sample (discarded due to common support
+  restrictions)).
 \item{data}: a data frame containing the variables in the formula.
-\item{exact}: specifies whether exact matching should be done.  FALSE (default) indicates no exact 
-  matching.  TRUE indicates exact matching on all variables in the 
-  assignment model of the \texttt{formula} (i.e., the propensity score
-  will never be generated).  A list of variables indicates variables on
-  which to exact match, in combination with matching on the propensity
-  score.  Variables should be entered as a  string
-  of variable names contained in \texttt{data}, e.g.,  \texttt{exact=c("X1","X2")}.
-\item{mahvars}: the variables on which to perform Mahalanobis-metric matching
-    within each caliper, default=NULL.  Variables should be entered as
-    a vector of variable names contained in \texttt{data}, e.g., \texttt{mahvars=c("X1","X2")}.
+\item{exact}: specifies whether exact matching should be done.  FALSE
+  (default) indicates no exact matching.  TRUE indicates exact
+  matching on all variables in the assignment model of the
+  \texttt{formula} (i.e., the propensity score will never be
+  generated).  A list of variables indicates variables on which to
+  exact match, in combination with matching on the propensity score.
+  Variables should be entered as a string of variable names contained
+  in \texttt{data}, e.g., \texttt{exact=c("X1","X2")}.
+\item{mahvars}: the variables on which to perform Mahalanobis-metric
+  matching within each caliper, default=NULL.  Variables should be
+  entered as a vector of variable names contained in \texttt{data},
+  e.g., \texttt{mahvars=c("X1","X2")}.
 \item{subclass}: specifies either the number of
   subclasses in a scalar, or a vector of probabilities bounded
   between 0 and 1, to create quantiles based on \texttt{sub.by}, where the value of
   0 (default) indicates no subclassification
-\item{psclass}: a vector containing the subclass index in an ordinal scale
-  from 1 to the total number of subclasses as specified in
-  \texttt{subclass} 
-\item{nearest}: a logical scalar which specifies whether
-  to perform nearest-neighbor matching, default=TRUE 
+\item{psclass}: a vector containing the subclass index in an ordinal
+  scale from 1 to the total number of subclasses as specified in
+  \texttt{subclass}
+\item{nearest}: a logical scalar which specifies whether to perform
+  nearest-neighbor matching, default=TRUE
 \item{q.cut}: the cutoff values in terms of the propensity score that
   mark the subclasses.
-\item{counter}: an indicator for whether a counter showing the percent of treated units matched so far is printed out, default={\tt TRUE}.
+\item{counter}: an indicator for whether a counter showing the percent
+  of treated units matched so far is printed out, default={\tt TRUE}.
 \end{itemize}
 
 \subsubsection{Output Values}
 The \texttt{diagnose} command will return the following objects: 
 \begin{itemize}
-\item{weights}: a vector containing the weights for each unit.  {\tt weight}=0 if unit not matched.  {\tt weight}=1 for each matched treated unit.
-{\tt weight} for each matched control unit proportional to the number of times it was matched.  Sum of control weights equals the number of unique controls
-matched.  
+\item{weights}: a vector containing the weights for each unit.  {\tt
+    weight}=0 if unit not matched.  {\tt weight}=1 for each matched
+  treated unit.  {\tt weight} for each matched control unit
+  proportional to the number of times it was matched.  Sum of control
+  weights equals the number of unique controls matched.
 \end{itemize}
 
 \end{appendix}
