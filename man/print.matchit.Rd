@@ -29,7 +29,7 @@ subclass).} }
   \url{http://gking.harvard.edu/matchit}.}
 
 \author{
-  Daniel Ho <\email{deho@fas.harvard.edu}>;  Kosuke Imai <\email{kimai@princeton.edu}>; Gary King
+  Daniel Ho <\email{daniel.ho@yale.edu}>;  Kosuke Imai <\email{kimai@princeton.edu}>; Gary King
   <\email{king@harvard.edu}>; Elizabeth Stuart<\email{stuart@stat.harvard.edu}>
 }
 
