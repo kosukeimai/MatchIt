@@ -91,7 +91,7 @@ advances in nonparametric, non-model-based inference, and focusing
 around diverse generalizations of matching estimators for causal
 inference.  This work shows considerable promise for increasing the
 reliability and validity of causal inferences from standard parametric
-regressiosn that social scientists typically run.  The new methods
+regressions that social scientists typically run.  The new methods
 make it possible to reduce or eliminate the functional form and other
 assumptions of parametric models and to verify empirically rather than
 assume critical features of the model.
@@ -109,8 +109,9 @@ scientific evidence or mathematical proof.  Although matching now
 comprises a substantial fraction of the empirical work in some
 disciplines, such as epidemiology and medicine, the diversity of
 substantive applications and the conflicting methodological languages
-used to describe the same underlying concepts, has limited the spread
-of these powerful techniques to much of the social sciences.
+used to describe the same underlying concepts, has {\bf have?} limited
+the spread of these powerful techniques to much of the social sciences
+{\bf This sentence seems a bit too long}.
 
 In this paper, we attempt to unify this diverse literature so applied
 researchers can make productive use of these new methods.  Our simple
@@ -118,34 +119,34 @@ unifying idea is to use these new nonparametric techniques not as
 substitutes for our present parametric regression analyses, but to
 make our familiar parametric techniques work better.  Under our
 inferential framework, analysts merely add a simple preprocessing step
-to their data analysis procedures and then use whichever models they
-were previously accustomed to using to analyze the preprocessed data
-rather than the raw data.  All of the intuition, diagnostics, and
+to their data analysis procedures and then employ whichever models
+they were previously accustomed to using to analyze the preprocessed
+data rather than the raw data.  All of the intuition, diagnostics, and
 knowledge about our parametric procedures can then be used as before.
 
 Preprocessing data with matching in the way we propose makes
 parametric analyses considerably less dependent on assumptions about
-functional forms and distributions.  In particular, the common process
-researchers follow of running many regressions to pick one or a few to
-present that are plausible or representative --- or in the worst case
-to choose those that support their favored theories --- will be
-greatly limited since, with preprocessing, the variation in estimates
-across specifications is be greatly reduced.  Preprocessing is thus
-good insurance for readers that the author did not unintentionally
-cook the books, and productive for investigators trying to find
-systematic patterns in our typically noisy data.  Our preprocessing
-approach has obvious advantages in terms of exposition, pedagogy, and
-ease-of-use, since what we have already learned is not discarded, but
-it also turns out to help bring some order and cohesion to the
-conflicting methodological literature and to suggest some relatively
-straightforward advice for empirical researchers seeking to make
-causal inferences.  For example, when thought of in the way we
-propose, the approach suggests a simple, standardized, and valid
-approach to computing standard errors and confidence intervals for any
-of the new techniques.  Our approach has also made it possible for us
-to write easy-to-use software that implements all the ideas we discuss
-in this paper; it is free and available at
-http://gking.harvard.edu/matchit.
+functional forms and distributions.  In particular, the common
+practice researchers follow of running many regressions to pick one or
+a few to present that are plausible or representative --- or in the
+worst case to choose those that support their favored theories ---
+will be greatly limited since, with preprocessing, the variation in
+estimates across specifications is be greatly reduced.  Preprocessing
+is thus good insurance for readers that the author did not
+unintentionally cook the books, and productive for investigators
+trying to find systematic patterns in typically noisy social science
+data.  Our preprocessing approach has obvious advantages in terms of
+exposition, pedagogy, and ease-of-use, since what we have already
+learned is not discarded, but it also turns out to help bring some
+order and cohesion to the conflicting methodological literature and to
+suggest some relatively straightforward advice for empirical
+researchers seeking to make causal inferences.  For example, when
+thought of in the way we propose, the approach suggests a simple,
+standardized, and valid approach to computing standard errors and
+confidence intervals for any of the new techniques.  Our approach has
+also made it possible for us to write easy-to-use software that
+implements all the ideas we discuss in this paper; it is free and
+available at http://gking.harvard.edu/matchit.
 
 Our approach is similar in spirit to
 \citet{AbaImb04,ImaDyk03,RosRub84a,Rubin79,RubTho00}, who recommend
@@ -190,10 +191,10 @@ The observed outcome (or ``dependent'') variable is $y_i$, which in
 our case is the Democratic proportion of the two-party vote in
 congressional district $i$.  Finally, prior to the treatment decision,
 each district $i$ has a variety of characteristics, some of which we
-measure and collect in a vector denoted $X_i$.  (Whether preprocessing
+measure and collect in a vector denoted $X_i$.  Whether preprocessing
 or not, variables that are at least in part consequences of the
 treatment variable should never be controlled for when estimating a
-causal effect.)
+causal effect.
 
 To clarify our inferential goals, we begin by defining the ``realized
 causal effect,'' which is the simplest definition available.  To
@@ -365,8 +366,8 @@ Among in sample effects, we consider two choices.  The first is the
 average treatment effect or ATE:
 \begin{align}
   \label{pate}
-  \text{ATE} = E[Y_i(1) - Y_i(0)] \notag\\
-  = \frac{1}{n}\sum_{i=1}^n[\mu_i(1) - \mu_i(0)],
+  \text{ATE} & = E[Y_i(1) - Y_i(0)] \notag\\
+  &  = \frac{1}{n}\sum_{i=1}^n[\mu_i(1) - \mu_i(0)],
 \end{align}
 which is the mean causal effect for unit $i$ averaged over all units
 (so that the expected value operator in the first line averages over
@@ -376,8 +377,8 @@ The alternative choice of a target quantity of interest is the average
 treatment effect on the treated, or ATT:
 \begin{align}
   \label{att}
-  \text{ATT} = E[Y_i(1) - Y_i(0)|t=1] \notag\\
-  = \frac{1}{\sum t_i}\sum_{i:t_i=1}[\mu_i(1) - \mu_i(0)],
+  \text{ATT} & = E[Y_i(1) - Y_i(0)|t=1] \notag\\
+  & = \frac{1}{\sum_{i=1}^n t_i}\sum_{i:t_i=1}[\mu_i(1) - \mu_i(0)],
 \end{align}
 In our running example, this is the average causal effect in districts
 in which the Democratic Party nominated the incumbent member of the
@@ -461,11 +462,14 @@ usually impossible.
 
 We define observational data collection mechanisms as any process
 generating data that does not meet all three of the features of a
-randomized experiment.  Researchers trying to use the experimental
-paradigm try to design research to meet all three features discussed
-in the previous section.  Researchers analyzing observational data are
-instead forced to make assumptions that, if correct, help them avoid
-various threats to the validity of their causal inferences.
+randomized experiment {\bf should we just focus on the lack of
+  randomization? randomized experiments can have small $n$ and
+  unrepresentative sample}.  Researchers trying to use the
+experimental paradigm try to design research to meet all three
+features discussed in the previous section.  Researchers analyzing
+observational data are instead forced to make assumptions that, if
+correct, help them avoid various threats to the validity of their
+causal inferences.
 
 In this paper, we shall assume data are selected in a manner that does
 not generate selection bias.  Observations need not be selected at
