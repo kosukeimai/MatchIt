@@ -18,6 +18,14 @@ summary(foo2)
 summary(foo2, verbose=T)
 plot(foo2)
 
+# Greedy vs. optimal matching
+if ("optmatch"%in%.packages(all=T)) {
+foo <- matchit(treat ~ re74+re75+age+educ, data=lalonde)
+print(summary(foo))
+foo <- matchit(treat ~ re74+re75+age+educ, data=lalonde, m.order=1)
+print(summary(foo))
+}
+
 #Propensity score with exact restriction
 foo3 <- matchit(treat ~ re74 + re75, exact=c("black","hispan"), data=lalonde)
 print(foo3)
