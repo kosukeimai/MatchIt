@@ -214,25 +214,25 @@ preprocessing, suitable for improving any parametric method.
 The notation, ideas, and running example in this section parallel that
 in \citet[][Section 3.1.1]{KinKeoVer94}, but key aspects of the ideas
 originate with many others, especially \citet{Rubin74} and
-\citet{Holland86}.  Thus, the goal in our example is to estimate the
-electoral advantage of incumbency for Democrats in the U.S.\ House of
-Representatives.  The most important idea in this section is that a
+\citet{Holland86}.  The most important idea in this section is that a
 causal effect is a theoretical quantity, defined independently of any
 empirical method that might be used to estimate it from real data.
 
-The unit of analysis in our example is therefore the congressional
-district, which we label with the index $i$ ($i=1,\dots,n$).  In most
-of the methodological literature on causal inference, researchers
-simplify the exposition by considering only a single dichotomous
-causal (or ``treatment'') variable.  We do the same and label it
-$t_i$, which takes a value of 1 if unit $i$ receives the treatment and
-0 if $i$ is untreated (the ``control condition'').  In our running
-example, the treatment is whether the incumbent receives the party's
-nomination in district $i$.  Projects with more complicated causal
-variables can dichotomize (perhaps in several alternative ways) or use
-more complicated methods \citep{ImaDyk03}.  Those with more than one
-causal variable of interest can follow all the advice herein for one
-variable at a time.
+Our running example is to estimate the electoral advantage of
+incumbency for Democrats in the U.S.\ House of Representatives.  The
+unit of analysis is therefore the congressional district, which we
+label with the index $i$ ($i=1,\dots,n$).  In most of the
+methodological literature on causal inference, researchers simplify
+the exposition by considering only a single dichotomous causal (or
+``treatment'') variable.  We do the same and label it $t_i$, which
+takes a value of 1 if unit $i$ receives the treatment and 0 if $i$ is
+untreated (the ``control condition'').  In our running example, the
+treatment is whether the incumbent receives the party's nomination in
+district $i$.  Projects with more complicated causal variables can
+dichotomize (perhaps in several alternative ways) or use more
+complicated methods \citep{ImaDyk03}.  Those with more than one causal
+variable of interest can follow all the advice herein for one variable
+at a time.
 
 The observed outcome (or ``dependent'') variable is $y_i$, which in
 our case is the Democratic proportion of the two-party vote in
