@@ -46,7 +46,6 @@ ols.ate <- function(ols.m,sims=1000,treat){
   xx <- model.matrix(eval(ols.m$call$formula),data=dta)
   xx <- xx[,!is.na(coef(ols.m))]
   y.hat <- xx%*%t(b.sim)
-  ate <- matrix(0,sims,1)
   y.obs <- model.frame(ols.m)[,1]
   nn <- length(y.obs)
   if(nn==nrow(y.hat)){
@@ -64,14 +63,15 @@ ols.ate <- function(ols.m,sims=1000,treat){
 #wrapper for zelig
 zsim <- function(fml,dta,num=1000,zz=T,treat="dviswom"){
   if(zz){
-    tt <- dta$dviswom
+#    tt <- dta$dviswom
+    tt <- dta[,treat]
     z.out <- zelig(fml, data = dta, model="ls")
-    dta$dviswom <- 1-dta$dviswom
+    dta[,treat] <- 1-dta[,treat]
     x1 <- setx(z.out, data = dta[tt==1,],cond=T)
     x0 <- setx(z.out, data = dta[tt==0,],cond=T)
     s1 <- sim(z.out, x = x1, fn=NULL, num=1000)
-    s0 <- sim(z.out, x = x0, fn=NULL, num=1000)
-    ate <- c(s1$qi$ate.ev,-s0$qi$ate.ev)   
+    s0 <- sim(z.out, x = x0, fn=NULL, num=1000)    
+    ate <- c(s1$qi$ate.ev,-s0$qi$ate.ev)
   } else {
     ols.m <- lm(fml,data=dta)
     ate <- ols.ate(ols.m,sim=num,treat)
