@@ -55,7 +55,7 @@ Gary King,\thanks{David Florence Professor of Government, Harvard
   \texttt{http://GKing.Harvard.Edu}, \texttt{King@Harvard.Edu}, (617)
   495-2027).}
 %\and %
-Elizabeth A. Stuart\thanks{Ph.D.\ Candidate, Department of Statistics,
+Elizabeth A. Stuart\thanks{Researcher, Mathematica Policy Research, Inc.\, Ph.D.\, Department of Statistics,
   Harvard University. (Science Center 702, One Oxford Street,
   Cambridge, MA 02138, USA;
   \texttt{http://www.people.fas.harvard.edu/\~\,estuart},
@@ -95,7 +95,7 @@ regressions that social scientists typically run by reducing or
 eliminating functional form and other assumptions of parametric
 models.
 
-The statistical literature on matching has grown quite sophisticated
+The statistical literature on matching has grown quite sophisticated,
 but, from the point of view of the practical researcher, it looks like
 a cacophony of conflicting techniques, practices, conventions, and
 rules of thumb.  Valid methods for computing standard errors and
@@ -353,7 +353,7 @@ In most applications, we do not attempt to estimate the treatment
 effect for each observation, and instead estimate the average over all
 observations, for some subset of observations, or for a particular
 population or population subgroup.  This leads to several choices for
-quantities of interest, each of which defined for either realized (in
+quantities of interest, each of which is defined for either realized (in
 sample) or population causal effects.  We focus on in sample effects
 --- i.e., based on quantities of interest for all or a subset of units
 in our data --- since they are closer to our data than effects for
@@ -595,7 +595,7 @@ $g(\cdot)$ is defined we get the same estimate of the expected
 potential outcomes.\footnote{To rule out degenerate cases such as
   $g(a)=8$, we require that the image of $g(\cdot)$ and the range of
   the potential outcomes be the same.} Moreover, given any chosen
-stochastic component, this result holds for a wide range of or
+stochastic component, this result holds for a wide range of 
 parametric models, including all the special cases of the general
 model given above.
 
@@ -625,7 +625,7 @@ severe consequences for research practice.
 The problem is the curse of dimensionality and the consequence in
 practice is model dependence.  We begin with the former and for
 simplicity suppose that we have a dependent variable and one
-ten-category explanatory variable, and our goal is use linear
+ten-category explanatory variable, and our goal is to use linear
 regression technology to estimate the functional relationship without
 actually making functional form assumptions.  To do this, we represent
 the ten categories with ten parameters (a constant and nine dummy
@@ -929,7 +929,7 @@ switch to propensity score matching, described in Step 3.  In the
 former, we balance the included variables but do not balance at all on
 the rest.  The excluded variables may be partially balanced due to
 correlations with the included variables, but some balance will be
-absent.  In contrast, propensity score matching using all variables
+absent.  In contrast, propensity score matching uses all variables
 but only approximately matches.
 
 \paragraph{3. Use Propensity Score Matching}  
@@ -1048,7 +1048,7 @@ Third, if some control units fall outside the range of the treated
 propensity score values, then these controls cannot be adjusted by
 replication or deletion to match the treated units.  Common practice
 is to discard these control units.  Similarly, if any treated units
-fall outside the range of the propensity score units, these too are
+fall outside the propensity score range of the control units, these too are
 discarded.  Dropping treated units changes the causal effect being
 estimated, but if it remains a relevant quantity, at least it can be
 estimated in a reasonable way.  Discarding these nonoverlapping
