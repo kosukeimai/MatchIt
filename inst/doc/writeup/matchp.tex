@@ -793,22 +793,22 @@ So instead, \citet{koch:02} estimates the treatment effect by
 assumption, employing ordinary least squares.
 
 Yet as the first three columns in Table~\ref{tb:kochmtest} show,
-visible and invisible female candidates differ drastically in
-explanatory covariates.  Most strikingly, visible female candidates
-tend to be substantially more liberal than invisible candidates:
-visible candidates are rated 0.44 on a scale from 0 to 1, which is
-almost one standard deviation higher than the 0.2 average rating of
-invisible candidates (t-statistic=12.18).  In addition, visible
-candidates appear to be slightly more politically aware
-(t-statistic=2.42).  As a result of this covariate imbalance, we may
-not be comfortable in reducing $4.4 \times 10^7$ parameters to 6
-merely by assumption.  Indeed, model sensitivity may lead some
-scholars to inadvertently report regressions that confirm some
-hypotheses when other specifications would caution against such a
-conclusion.  Merely six explanatory variables, for example, may enter
-the right-hand side of a linear regression in 63 different ways
-(=$\sum_{i=1}^6 {6 \choose i}$), but scholars rarely report results
-across all such possible specifications.
+visible and invisible candidates differ drastically in explanatory
+covariates.  Most strikingly, visible female candidates tend to be
+substantially more liberal than invisible candidates: visible
+candidates are rated 0.44 on a scale from 0 to 1, which is almost one
+standard deviation higher than the 0.2 average rating of invisible
+candidates (t-statistic=12.18).  In addition, visible candidates
+appear to be slightly more politically aware (t-statistic=2.42).  As a
+result of this covariate imbalance, we may not be comfortable in
+reducing $4.4 \times 10^7$ parameters to 6 merely by assumption.
+Extrapolation is likely to be significant.  Indeed, model sensitivity
+may lead some scholars to inadvertently report regressions that
+confirm some hypotheses when other specifications would caution
+against such a conclusion.  Merely six explanatory variables, for
+example, may enter the right-hand side of a linear regression in 63
+different ways (=$\sum_{i=1}^6 {6 \choose i}$), but scholars rarely
+report results across all such possible specifications.
 
 \begin{table}[t]
   \begin{center}
@@ -833,14 +833,14 @@ across all such possible specifications.
     \caption{Imbalance of pre-treatment covariates in the Koch data.
       The full sample size was 494, and the matched dataset with
       subclassification was 463.  The first three columns present
-      means for visible (``treated'') and invisible (``control'')
-      female Republican candidates and t-statistics for the full
+      means for visible female (``treated'') and invisible (``control'')
+      Republican candidates and t-statistics for the full
       dataset.  The last three columns present means and t-statistics
       for one representative subclass.  This table shows that
       candidate ideology is highly imbalanced in the full Koch data,
       and that balance can be achieved by subclassification.  Visible
       females, for example, were much more likely to be perceived as
-      liberal than invisible females overall, but within subclass 4
+      liberal than invisible candidates overall, but within subclass 4
       this difference diminishes.}
     \label{tb:kochmtest}
   \end{center}
@@ -908,11 +908,13 @@ Table~\ref{tb:kochxsub} presents simple means test statistics for each
 of the main covariates in each of the subclasses.  The last three rows
 present the number of unit in each subclass.  Note that there are few
 visible candidates matched with many more invisible candidates in the
-lower subclasses and the reverse in the higher subclasses.  Through
-this simple technique we are able to compare relatively similar
-candidates within each subclass.  Indeed across subclass-covariates
-the t-statistic exceeds 2 only once, which is roughly the same as we
-would expect if the data were generated randomly.
+lower subclasses and the reverse in the higher subclasses.  This
+indicates that in the raw data, covariates are quite unbalanced.
+Through this simple technique we are able to compare relatively
+similar candidates within each subclass.  Indeed across
+subclass-covariates the t-statistic exceeds 2 only once, which is
+roughly the same as we would expect if the data were generated
+randomly.
 
 \begin{figure}[t]
   \begin{center}
