@@ -28,8 +28,8 @@
 %
 \title{Matching as Nonparametric Preprocessing for Reducing Model
   Dependence in Parametric Causal Inference\thanks{Our thanks to Dan
-    Carpenter and Jeff Koch for data; Neal Beck, Alexis Diamond,
-    Olivia Lau, Gabe Linz, and Paul Rosenbaum for many helpful
+    Carpenter and Jeff Koch for data; Neal Beck, Alexis Diamond, Ben
+    Hansen, Olivia Lau, Gabe Linz, and Paul Rosenbaum for many helpful
     comments; and the National Institutes of Aging (P01 AG17625-01)
     and the National Science Foundation (SES-0318275, IIS-9874747) for
     research support.  Software to implement the methods in this paper
@@ -61,6 +61,7 @@ Elizabeth A. Stuart\thanks{Researcher, Mathematica Policy Research, Inc.\, Ph.D.
   \texttt{Stuart@Stat.Harvard.Edu}).}}
 
 \date{\today\ (\printtime)} 
+
 \begin{document}\maketitle
 
 \begin{abstract}
@@ -481,16 +482,12 @@ omitted variable bias even without any control variables included.  To
 see this, recall that under the usual econometric rules for omitted
 variable bias, a variable $X_i$ must be controlled for if it is
 causally prior to $t_i$, empirically related to $t_i$, and affects
-$y_i$ conditional on $t_i$.
-% --- or, in other words, $X_i$ must be
-%controlled for if it is correlated with the potential outcomes,
-%$y_i(1)$ and $y_i(0)$.  
-If instead one or more of the three conditions
-do not hold, then $X_i$ may be omitted without any resulting bias
-(although the variance may increase).  Random assignment guarantees
-that $t_i$ is unrelated to \emph{any} $X_i$, whether measured or not,
-except by random chance.  Moreover, the large $n$ condition guarantees
-that this chance is vanishingly small.
+$y_i$ conditional on $t_i$.  If instead one or more of the three
+conditions do not hold, then $X_i$ may be omitted without any
+resulting bias (although the variance may increase).  Random
+assignment guarantees that $t_i$ is unrelated to \emph{any} $X_i$,
+whether measured or not, except by random chance.  Moreover, the large
+$n$ condition guarantees that this chance is vanishingly small.
 
 Classical randomized experiments are a true ideal type, particularly
 in relation to most social science research which almost always fails
@@ -841,8 +838,8 @@ the parametric analysis so that (1) the relationship between $t_i$ and
 $X_i$ is eliminated or reduced, and (2) no bias and little
 inefficiency is induced.  If we are able to adjust the data so that
 $t_i$ and $X_i$ are completely unrelated (which makes the control and
-treatment groups are identical with respect to $X$), we will have
-moved a good deal of the way from Section \ref{s:paraobs} to Section
+treatment groups identical with respect to $X$), we will have moved a
+good deal of the way from Section \ref{s:paraobs} to Section
 \ref{s:paraexp}.  An assumption of ignorability is still necessary,
 but we would no longer need to model the full parametric relationship
 between the dependent variable and the multidimensional $X_i$.  This
@@ -851,11 +848,11 @@ resulting parametric analysis stemming from the functional form
 specification and the curse of dimensionality.  For data sets where
 preprocessing reduces the extent of the relationship between $t_i$ and
 $X_i$, but is unable to make them completely independent, model
-dependence is not eliminated but will normally be greatly reduced.
-Indeed, if nonparametric preprocessing results in no reduction of
-model dependence, then it is likely that the data have little
-information to support causal inferences by any method, which of
-course would also be useful information.
+dependence is not eliminated but will normally be greatly reduced.  If
+nonparametric preprocessing results in no reduction of model
+dependence, then it is likely that the data have little information to
+support causal inferences by \emph{any} method, which of course would
+also be useful information.
 
 But how can we adjust the data without inducing bias in our causal
 estimates?  The key to this problem is that the fundamental rule for
@@ -876,7 +873,6 @@ that this relationship holds:
   \label{balance}
   p(X|t=1) = p(X|t=0).
 \end{equation}
-
 The simplest way to satisfy equation~(\ref{balance}) by preprocessing
 is to use \emph{one-to-one exact matching}.  The idea is to match each
 treated unit with one control unit for which the values of $X_i$ are
@@ -889,28 +885,34 @@ experiment where we find pairs of units that are identical in all
 observable ways and assign one from each pair to be treated and the
 other to be a control.  Then no matter what effect $X_i$ has on $y$,
 we can ignore it entirely since $X_i$ is literally held constant
-within each pair of units.
+within each pair of units.\footnote{Formally, ignorability, the
+  independence of $T$ and the potential outcomes given $X$, and
+  balance in Equation \ref{balance} guarantees valid inferences, which
+  can be written as $P(Y(0)|T=1)=P(Y(0)|T=0)$ and
+  $P(Y(1)|T=1)=P(Y(1)|T=0)$.}
 
 Although one-to-one exact matching can eliminate model dependence and
 any bias from incorrect assumptions made during the parametric stage
-of analysis, it has the disadvantage in many applications of not
-generating many matches.  The problem is most severe if $X_i$ is high
-dimensional (another effect of the curse of dimensionality) or
-contains continuous variables.  The result may then be a preprocessed
-data set with very few observations that results in a parametric
-analysis with large standard errors.  In this situation, we may reduce
-model dependence and the potential for bias, but decrease efficiency
-and as a result increase mean square error.  If this occurs in
-practice, those in the matching literature tend to sacrifice some bias
-reduction for the increased efficiency that comes from having more
-observations in the preprocessed dataset.  In our approach, if we lose
-some opportunity for bias reduction we do so only in the preprocessing
-stage; our second stage parametric analysis still has a chance to
-eliminate the remaining bias.  We therefore now turn in Section
-\ref{s:choose} to a menu of matching procedures that enable
-researchers to satisfy equation~(\ref{balance}) as closely as possible
-while still generating a preprocessed dataset with enough
-observations.
+of analysis, it is not necessary to break the link between $t$ and
+$X$, since satisfying equation \ref{balance} only requires the
+distributions to be equivalent.  Moreover, exact matching has the
+disadvantage in many data sets of not generating many matches.  The
+problem is most severe if $X_i$ is high dimensional (another effect of
+the curse of dimensionality) or contains continuous variables.  The
+result may then be a preprocessed data set with very few observations
+that results in a parametric analysis with large standard errors.  In
+this situation, we may reduce model dependence and the potential for
+bias, but decrease efficiency and as a result increase mean square
+error.  If this occurs in practice, those in the matching literature
+tend to sacrifice some bias reduction for the increased efficiency
+that comes from having more observations in the preprocessed dataset.
+In our approach, if we lose some opportunity for bias reduction we do
+so only in the preprocessing stage; our second stage parametric
+analysis still has a chance to eliminate the remaining bias.  We
+therefore now turn in Section \ref{s:choose} to a menu of matching
+procedures that enable researchers to satisfy equation~(\ref{balance})
+as closely as possible while still generating a preprocessed dataset
+with enough observations.
 
 Finally, the right graph in Figure \ref{fg:extrap} gives an example of
 the consequences for reducing model dependence of matching that is not
@@ -924,7 +926,8 @@ identical causal effects.  Preprocessing has therefore made the
 assumption about whether to include $X^2$ in the regression largely
 irrelevant.  Indeed, for a large range of models, this preprocessed
 data will be mostly insensitive to the choice of functional form
-assumptions and so will return highly similar causal effect estimates.
+assumptions and so will return highly similar causal effect
+estimates.
 
 \section{Choosing a Matching Procedure}\label{s:choose}
 
@@ -985,7 +988,7 @@ Step 2.  Otherwise, try propensity score matching in Step 3.
 Match each treated unit to all control units with exactly the same
 covariate values.  This procedure is more general than one-to-one
 matching, since we use as many control units as are available for each
-treated unit.
+treated unit.  
 
 If a large number of units were matched, then we have exact balance
 with little inefficiency and we may skip the remaining steps and
@@ -1047,7 +1050,7 @@ have a consistent estimate of the propensity score when matching on
 the propensity score balances the raw covariates.  Of course, once we
 have balance on the covariates, we're done and don't need to look
 back.  That is, it works when it works, and when it doesn't work, it
-doesn't work.
+doesn't work (and when it doesn't work, keep working at it).
 
 The tautology thus provides a way to make irrelevant the knowledge of
 whether we have satisfied the conditions necessary to use the
@@ -1081,9 +1084,10 @@ functional forms such as CART, neural network analyses, or others).
 The collective wisdom of the literature also recommends four more
 specific rules for applying propensity scores.  First, if many more
 control than treatment units are available, consider choosing more
-than one control match for each treated unit.  This will increase the
-efficiency of the procedure (although each match past the first
-usually reduces the variance somewhat less than the previous one).
+than one control match for each treated unit \citep{Smith97}.  This
+will increase the efficiency of the procedure (although each match
+past the first usually reduces the variance somewhat less than the
+previous one), and can in some instances greatly reduce the bias too.
 If, instead, fewer controls are available than those treated, then
 matching with replacement --- allowing each control unit to be matched
 to more than one treated unit --- is a good option.  Alternatively,
@@ -1111,7 +1115,10 @@ variables.\footnote{The 0.25 standard deviation figure, which is the
   distance is the weighted average of the squared distance between
   units $i$ and $j$, $(X_i-X_j)'\Sigma^{-1}(X_i-X_j)$, where $\Sigma$
   is the sample variance matrix of $X$ in the control group.  See
-  \cite{RubTho00}.}
+  \cite{RubTho00}.}  If some of the variables in $X$ represent binary
+variables with very few in one category, common practice is to include
+them in the propensity score but not in the Mahalonobis distance
+calculation.
 
 Third, if some control units fall outside the range of the treated
 propensity score values, then these controls cannot be adjusted to
@@ -1187,6 +1194,14 @@ it is often a particularly good low dimensional summary. (Some take
 this idea a step further and make the comparisons with formal
 hypothesis tests, although still conditional on the propensity score
 being correct; see \citet{Sekhon04b}).
+
+If some covariates are omitted from some of the matching procedures,
+the balance on them should still be checked.  Doing so is often a good
+way to discover important covariates, since in fact researchers
+frequently have good qualitative knowledge not coded in $X$
+\citet[][Ch.3]{Rosenbaum02}.  Indeed, preprocessing can help
+researchers better understand their data when supplemented by good
+qualitative information and research \citep[e.g.,][]{RosSil01}.
 
 If meeting these criteria for balance proves impossible, we then need
 to recognize that preprocessing by matching may not be helpful.  But
@@ -1429,7 +1444,7 @@ across potential specifications of pretreatment covariates, although
 the same conclusions apply to most other quantities of interest too.
 
 We estimate the point estimate of the ATE for every possible
-specifications in which the 18 covariates enter the model with the
+specification in which the 18 covariates enter the model with the
 treatment indicator (i.e., all possible subsets of covariates from the
 18).  Even though we ignored interactions and nonlinearities, this
 amounts to $262,143$ survival analyses, all of which we ran.
