@@ -10,6 +10,9 @@ subclassify <- function(formula,data,in.sample,pscore,nearest=TRUE,
   if(full) { # full matching with propensity score
     if(counter){cat("Full Matching...")}
     full <- full.options
+    if(!is.list(full.options)){
+      warning("full.options must be a list; assuming defaults for full matching",call.=FALSE)
+    } 
     if(is.null(full$min.controls)){
       full$min.controls <- 0
     }
@@ -24,6 +27,12 @@ subclassify <- function(formula,data,in.sample,pscore,nearest=TRUE,
     }
     if(is.null(full$subclass.indices)){
       full$subclass.indices <- NULL
+    }
+    notin <- names(full.options)[which(!names(full.options)%in%c("min.controls","max.controls",
+                                "omit.fraction","omit.fraction",
+                                "tol", "subclass.indices"))]
+    if(!is.null(notin)){
+      warning(paste(notin,collapse=" "), " in full.options invalid and ignored for full matching",call.=FALSE)
     }
     n1 <- length(treat[treat==1])
     n0 <- length(treat[treat==0])
