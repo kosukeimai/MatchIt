@@ -6,7 +6,13 @@ export(
 	subclassify,
 	exactmatch,
 	neyman,	
-	help.matchit
+	help.matchit,
+	print.matchit,
+	print.summary.matchit,
+	print.summary.neyman,
+	plot.matchit,
+	summary.matchit,
+	summary.neyman
 	)	
 
 S3method(print, matchit)
