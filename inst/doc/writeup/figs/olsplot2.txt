@@ -89,13 +89,13 @@ plot(dta2$x[dta2$t==1],dta2$y[dta2$t==1],pch="T",
      xlab="X", ylab = "Y", cex=0.8)
 points(dta2$x[dta2$t==0],dta2$y[dta2$t==0],pch="C", cex=0.8)
 abline(lm.all1$coef[1] + lm.all1$coef[2], lm.all1$coef[3], lty=1)
-abline(lm.all1$coef[1], lm.all1$coef[3], lty=1, col="darkgrey")
+abline(lm.all1$coef[1], lm.all1$coef[3], lty=1, col="darkgray")
 lines(plot.pts, lm.all2$coef[1] + lm.all2$coef[2] +
      lm.all2$coef[3]*plot.pts + lm.all2$coef[4]*plot.pts^2,
       lty=2)
 lines(plot.pts, lm.all2$coef[1] + lm.all2$coef[3]*plot.pts +
-      lm.all2$coef[4]*plot.pts^2, lty=2, col="darkgrey")
-legend(2, 7, lty=c(1, 1, 2, 2), col=c(1, "darkgrey", 1, "darkgrey"),
+      lm.all2$coef[4]*plot.pts^2, lty=2, col="darkgray")
+legend(2, 7, lty=c(1, 1, 2, 2), col=c(1, "darkgray", 1, "darkgray"),
                legend=c("Linear Model, Treated Group",
                  "Linear Model, Control Group",
                  "Quadratic Model, Treated Group",
@@ -106,15 +106,15 @@ plot(matched$x[matched$t==1], matched$y[matched$t==1],
 points(matched$x[matched$t==0], matched$y[matched$t==0], pch="C", cex=0.8)
 points(dta2$x[temp$matched==FALSE & dta2$t==0],
        dta2$y[temp$matched==FALSE & dta2$t==0],
-       pch="C", col="darkgrey", cex=0.8)
+       pch="C", col="darkgray", cex=0.8)
 abline(lm.m1$coef[1] + lm.m1$coef[2], lm.m1$coef[3], lty=1)
-abline(lm.m1$coef[1], lm.m1$coef[3], lty=1, col="darkgrey")
+abline(lm.m1$coef[1], lm.m1$coef[3], lty=1, col="darkgray")
 lines(plot.pts, lm.m2$coef[1] + lm.m2$coef[2] +
       lm.m2$coef[3]*plot.pts + lm.m2$coef[4]*plot.pts^2,
       lty=2)
 lines(plot.pts, lm.m2$coef[1] + lm.m2$coef[3]*plot.pts +
-      lm.m2$coef[4]*plot.pts^2, lty=2, col="darkgrey")
-legend(2, 7, lty=c(1, 1, 2, 2), col=c(1, "darkgrey", 1, "darkgrey"),
+      lm.m2$coef[4]*plot.pts^2, lty=2, col="darkgray")
+legend(2, 7, lty=c(1, 1, 2, 2), col=c(1, "darkgray", 1, "darkgray"),
        legend=c("Linear Model, Treated Group",
          "Linear Model, Control Group",
          "Quadratic Model, Treated Group",
