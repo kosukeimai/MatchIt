@@ -6,8 +6,8 @@ library(Zelig)
 library(mvtnorm)
 library(combinat)
 library(lattice)
-setwd("c:/R/match/docs/papers/koch/")
-#setwd("c:/match/docs/papers/koch/")
+#setwd("c:/R/match/docs/papers/koch/")
+setwd("c:/match/docs/papers/koch/")
 source("fn.R")
 dta <- read.dta("genharvard.dta")
 
@@ -102,17 +102,17 @@ row.names(tab2) <- c("Candidate Ideology",
 xtable(tab2)
 
 #plotting figure
-#setwd("c:/match/docs/papers/koch/writeup")
-setwd("c:/R/match/docs/papers/koch/writeup")
-trellis.device(device="pdf",file="kochdens.pdf",color=FALSE,width=6,height=4)
+setwd("c:/match/docs/papers/koch/writeup")
+#setwd("c:/R/match/docs/papers/koch/writeup")
+trellis.device(device="pdf",file="kochdens.pdf",color=FALSE,width=6,height=3)
 par(mar=c(2, 2, 2, 2) + 0.1, cex.lab=0.6, cex.axis=0.6,
     mgp=c(1,0.5,0), cex.main=0.5, cex=0.8)
 doverlay(mcoef,coef,lwd=2,
-         xlab="Estimated Average Treatment Effect", leg=F)
+         xlab="Estimated average treatment effect", leg=F)
 arrows(coefficients(res)[tt], 4.7, coefficients(res)[tt],0, length=0.1)
-text(-0.532,3,"Full Data")
-text(-0.25,8.85,"Matched\nData")
-text(-0.3,5.4,"Point Estimate \n of Full Data")
+text(-0.532,3,"Raw data")
+text(-0.25,8.85,"Matched\ndata")
+text(-0.3,5.4,"Point estimate \n of raw data")
 dev.off()
 
 nn <- 0
