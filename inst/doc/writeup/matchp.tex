@@ -1432,23 +1432,16 @@ which the 18 covariates enter the model with the treatment indicator
 (i.e., all possible subsets of covariates from the 18).  Even though
 we ignored interactions and nonlinearities, this amounts to $262,143$
 survival analyses, all of which we ran. Figure~\ref{fg:fdadens}
-presents the density plot for the estimated average treatment effects
-for the raw data as well as the matched (preprocessed) data.  The key
-result here is that estimates are far more model-dependent using the
-raw data than using the matched data.  For example, the variance of
-the estimated average treatment effect from the matched data is more
-than three times as large as that from the raw data.  Although
-Carpenter was unable to draw conclusions from the raw data due to high
-levels of model dependence, our preprocessing shows that there does
-exist sufficient information in the data to draw conclusions without
-difficult-to-justify functional form assumptions. {\bf Can we change
-  this last sentence to: In his original analysis, Carpenter was
-  unable to draw conclusions from the raw data due to high levels of
-  model dependence. This can be seen by the density graph with a hevy
-  lower tail in our figure. However, our preprocessing shows ... And
-  then add the sentence: Contrary to the original hypothesisi, a
-  Democratic Senate majority reduces the average approval time of new
-  drugs.}
+presents a histogram for the estimated average treatment effects
+across all the specifications for the raw data as well as for the
+matched (preprocessed) data.  The key result here is that estimates
+are far more model-dependent using the raw data than using the matched
+data.  For example, the variance of the estimated average treatment
+effect from the matched data (the solid curve) is more than three
+times as large as that from the raw data (the dashed curve).  (The
+distribution of estimates for the matched data is also closer to the
+normal density, which will happen when control variables included are
+having effects only due to random errors.)
 \begin{figure}[t] 
  \begin{center}
    \includegraphics{figs/fdadens.pdf}
@@ -1467,11 +1460,18 @@ difficult-to-justify functional form assumptions. {\bf Can we change
   \label{fg:fdadens}
 \end{figure}
 
-Using the raw data, Carpenter notes the large model sensitivity,
-concluding that oversight covariates appear not to matter.  However,
-the result from the matched data seems to indicate that the actual
-effect size may even be larger and more firm than indicated by the
-usual parametric approach.
+In his original analysis, Carpenter was unable to draw conclusions
+from the raw data due to high levels of model dependence. This can be
+seen by the density graph with a heavy lower tail in our figure.
+However, our preprocessing shows that there does exist sufficient
+information in the data to draw conclusions without
+difficult-to-justify functional form assumptions.  Contrary to the
+original hypothesis, a Democratic Senate majority reduces the average
+approval time of new drugs.  Using the raw data, Carpenter notes the
+large model sensitivity, concluding that oversight covariates appear
+not to matter.  However, the result from the matched data seems to
+indicate that the actual effect size may even be larger and more firm
+than indicated by the usual parametric approach.
 
 \subsection{Causal Effect of Visibility on Candidate
   Evaluations}
