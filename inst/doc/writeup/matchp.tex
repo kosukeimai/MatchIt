@@ -1385,11 +1385,11 @@ male and female candidates (corresponding to the fourth column of
 Table 2 in \citet[p.  459]{Koch02}).
 
 Since randomly assigning visibility to candidates in real elections is
-infeasible, \citet{Koch02} collects observational data, with
+infeasible, \citet{Koch02} collects observational data with
 pretreatment covariates including candidate ideology, voter perception
 of party ideology, respondent ideology, candidate feeling thermometer,
 and political awareness.  Koch uses least squares to adjust for these
-explanatory variables, varying only the treatment.  Yet, we see that
+explanatory variables, varying only the treatment.  We see that
 even with such a small number of covariates, the curse of
 dimensionality looms large.  Given unique values of these covariates,
 estimation without assumptions would require a model with 44 million
@@ -1451,17 +1451,18 @@ regression of visibility on all six pretreatment covariates.  We also
 discard treatment units whose propensity score is greater than the
 maximum of control units and control units whose propensity score is
 lower than the minimum of the treated units.  This results in 31
-discarded units, and greatly reduces the risks of extrapolation.
-Next, we create six subclasses by quantiles of the propensity score of
-the treated units.  As is desired, within each subclass, covariate
-balance is substantially better than in the full sample.  For example,
-the last three columns of Table~\ref{tb:kochmtest} presents means and
-t-statistics for each covariate in one representative subclass showing
-that balance uniformly increases in each of these covariates.
-Candidate ideology, which was highly imbalanced in the raw data, now
-has a t-statistic for the difference of only 0.5 for visible
-candidates within subclass 4, which differs only slightly from the
-0.48 for invisible candidates in that subclass (t-statistic=1.15).
+discarded units, and (just as in Figure \ref{fg:extrap}) greatly
+reduces the risks of extrapolation.  Next, we create six subclasses by
+quantiles of the propensity score of the treated units.  As is
+desired, covariate balance is substantially better within each
+subclass than in the raw data.  For example, the last three columns of
+Table~\ref{tb:kochmtest} presents means and t-statistics for each
+covariate in one representative subclass showing that balance
+uniformly increases in each of these covariates.  Candidate ideology,
+which was highly imbalanced in the raw data, now has a t-statistic for
+the difference of only 0.5 for visible candidates within subclass 4,
+which differs only slightly from the 0.48 for invisible candidates in
+that subclass (t-statistic=1.15).
 
 \begin{table}[t]
   \begin{center}
@@ -1501,10 +1502,9 @@ invisible candidates in the lower subclasses and the reverse in the
 higher subclasses.  This is another indication that in the raw data,
 the covariates are highly unbalanced.  Through this simple technique
 we are able to compare the most similar candidates within each
-subclass.  Indeed, across subclass, the t-statistics for the
-difference in covariates exceed 2 only once, which is roughly the same
-as we would expect if treatment were assigned randomly within each
-subclass.
+subclass.  Indeed, the t-statistics for the difference in covariates
+for all subclasses exceed 2 only once, which is roughly the same as we
+would expect if treatment were assigned randomly within each subclass.
 
 \begin{figure}[t] 
  \begin{center}
@@ -1537,12 +1537,12 @@ Figure~\ref{fg:kochdens} presents the results, plotting densities of
 estimated average treatment effects for the treated (ATT) from the raw
 and preprocessed data.  As expected, the estimated treatment effect
 estimates are substantially more variable for the raw data.  Estimated
-effects from the raw data, plotted by the solid line, range from
-$-0.64$ to $-0.2$, signifying female visibility causes voters to
-perceive candidates as more liberal.  The point estimate from the raw
-data that controls for all six covariates, signified by the vertical
-arrow, appears conservative compared to this range.  Yet estimates
-from the preprocessed data stand in stark contrast to the estimates
+effects from the raw data (see the solid line), range from $-0.64$ to
+$-0.2$, signifying that female visibility causes voters to perceive
+candidates as more liberal.  The point estimate from the raw data that
+controls for all six covariates, signified by the vertical arrow,
+appears conservative compared to this range.  Estimates from the
+preprocessed data, however, stand in stark contrast to the estimates
 from the raw data.  The variability of coefficient estimates is
 substantially smaller, ranging from $-0.31$ to $-0.07$, and the
 variance across specifications is more than six times smaller than for
@@ -1553,21 +1553,21 @@ expect from the more valid and less model dependent preprocessed data.
 
 In short, not only can preprocessing reduce model dependence,
 decreasing the probability that researchers may inadvertently present
-unrepresentative estimates, but preprocessing also may change
-substantive conclusions of the research.  The fact that treatment
-effects may be substantially smaller may even further bolster the
-claim that ``[t]he contradictory nature of . . . [the] cues received
-from Republican female candidates presents citizens with a complicated
-information-processing task'' \citep[p. 460]{Koch02}.
+unrepresentative estimates, but preprocessing also may change or
+reinforce the substantive conclusions of the research.  The fact that
+treatment effects may be substantially smaller may even further
+bolster the claim that ``[t]he contradictory nature of . . . [the]
+cues received from Republican female candidates presents citizens with
+a complicated information-processing task'' \citep[p. 460]{Koch02}.
 
 \section{What Can Go Wrong}
 
 The advantage of matching is that it is relatively robust to small
-changes in procedures, and of course it produces a data set that is by
-design less sensitive to modeling assumptions.  However, like any
-method, using it badly or to ill effect is certainly possible.  Thus,
-in this section, we discuss what can go wrong and how we might avoid
-these problems.  We discuss four issues.
+changes in procedures, and produces a data set that is by design less
+sensitive to modeling assumptions.  However, like any method, using it
+badly or to ill effect is certainly possible.  Thus, in this section,
+we discuss what can go wrong and how we might avoid these problems.
+We discuss four issues.
 
 First, since the curse of dimensionality affects balancing
 diagnostics, we may well miss a higher dimensional aspect of imbalance
@@ -1631,36 +1631,39 @@ hundreds of possible regressions to present in a written work.  This
 choice is difficult, fraught with ethical and methodological dilemmas,
 and not covered in any serious way in classical statistics texts.
 Parametric methods merely assume that we know the correct
-specification.  In practice, of course, the ``correct'' specification
-is chosen after looking at the estimates and so it is never to a
-reader whether an article is a true test of an ex ante hypothesis, in
-the sense that the author was vulnerable to being proved wrong, or
-whether instead the article is merely a proof that it is
-\emph{possible} to find a specification consistent with the author's
-favored hypothesis.
+specification.  In practice, the ``correct'' specification is chosen
+after looking at the estimates and so it is never to a reader whether
+an article is a true test of an ex ante hypothesis, in the sense that
+the author was vulnerable to being proved wrong, or whether the
+article is merely a proof that it is \emph{possible} to find a
+specification consistent with the author's favored hypothesis.
 
 We provide a way around at least some of this problem.  Preprocessing
-raw data with the matching procedures we recommend makes the
-parametric methods we are all familiar with a much more reliable tool
-of empirical analysis, and in particular causal effect estimates
-become far more insensitive to seemingly arbitrary choices in model
-specification.  If we read an article demonstrating that balance has
-been achieved for a data set, readers need not worry that slightly
-different specifications than those discussed in the text will greatly
-alter its empirical conclusions.
+raw data with the matching procedures we recommend makes familiar
+parametric methods a much more reliable tool of empirical analysis,
+and in particular, causal effect estimates become far more insensitive
+to seemingly arbitrary choices in model specification.  If we read an
+article demonstrating that balance has been achieved for a data set,
+readers need not worry that slightly different specifications than
+those discussed in the text will greatly alter its empirical
+conclusions.
 
 \appendix
 \section{Matching Software}\label{s:matchit}
 
-We have created software called MatchIt for the free and open source
-package R (see http://www.r-project.org).  MatchIt, which is available
-at http://gking.harvard.edu/matchit/, implements a large fraction of
+We have created a software package called MatchIt (available at
+http://gking.harvard.edu/matchit/) that implements a large fraction of
 the matching procedures suggested in the diverse scholarly literatures
 on this subject.  Most of our software operates with a single command
 that takes an existing dataset and produces as output a single
 preprocessed matched dataset.  The preprocessed matched dataset can
-then be used by other software just as you would have used the
-original dataset.
+then be used by standard parametric software just as you would have
+used the original dataset.  MatchIt also works seemlessly with the
+general-purpose statistics program, Zelig (\citet{ImaKinLau04},
+available at http://gking.harvard.edu/zelig).  MatchIt and Zelig run
+under most operating systems via the open-source statistical program R
+(see http://r-project.org).  MatchIt, Zelig, and R are available free
+of charge.
 
 For example, to use propensity score matching of a treatment
 indicator, \texttt{treat}, and three pretreatment covariates, use this
@@ -1668,34 +1671,32 @@ command:
 \begin{verbatim}
 match.out <- matchit(treat ~ age + educ + black, data = koch)
 \end{verbatim}
-and to exact match use:
+and for exact matching use:
 \begin{verbatim}
 match.out <- matchit(treat ~ age + educ + black, exact=TRUE, data = carpenter)
 \end{verbatim}
 Numerous other options are also available.
 
-MatchIt also works well with the general purpose statistics package
-Zelig (see http://gking.harvard.edu/zelig).  For example, suppose
-we first used MatchIt to subclassify into 5 classes by the propensity
-score, use
+Suppose we use MatchIt to subclassify into 5 classes by the propensity
+score:
 \begin{verbatim}
 match.out <- matchit(treat ~ age + educ + black, subclass=5, data = koch)
 \end{verbatim}
-Then we could use Zelig to estimate a parametric model (in this case
-least squares regression) within each of the five subclasses defined
-by MatchIt, using data from the control group:
+Then we can easily use Zelig to estimate a parametric model (in this
+case least squares regression) within each of the five subclasses
+defined in MatchIt, using data from the control group:
 \begin{verbatim}
 z.out <- zelig(re78 ~ pscore, model = "ls", by = "psclass", 
                 data = match.data(match.out, "control"))
 \end{verbatim}
-and then set the explanatory variables to predict the missing
-potential outcomes under control for the treatment group and simulate
-quantities of interest:
+With Zelig, we can also set the explanatory variables to predict the
+missing potential outcomes under control for the treatment group and
+simulate quantities of interest within each subclass:
 \begin{verbatim}
-x.out <- setx(z.out, data = match.data(match.out2, "treat"), cond = TRUE)
+x.out <- setx(z.out, data = match.data(match.out, "treat"), cond = TRUE)
 s.out <- sim(z.out, x = x.out)
 \end{verbatim}
-
+The output automatically weights the results by the separate subclasses.
 \baselineskip=0.637\baselineskip \bibliographystyle{apsr}
 \bibliography{gk,gkpubs}
 
