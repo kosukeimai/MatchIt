@@ -22,7 +22,6 @@ subclassify <- function(formula,data,in.sample,pscore,nearest=TRUE,
     psclass <- as.numeric(as.factor(psclass))
     names(psclass) <- row.names(treata)
     q <- NULL
-    if(counter){cat("Done\n")}
   }
   else if(subclass) {
     if(counter){cat("Subclassifying...")}  
