@@ -741,7 +741,7 @@ NSW8   PSID355
 NSW9      <NA>
 NSW10  PSID422
 ...  
-\end{verbatim}
+\end{verbatim}  %$
 
 The unit numbers on the left are the treated units; the units in the
 2nd column are the controls matched to each treated unit.  For
@@ -782,15 +782,17 @@ of the treated group's propensity scores, and (c) matching with
 replacement.
 
 \subsection{Non-matched and Discarded Units}
-The output objects \texttt{in.sample} and \texttt{psweights} give you
-all the information about non-matched and discarded units.
-\texttt{in.sample} is a logical vector of length $n$ that indicates whether each unit
-was discarded due to the common support conditions (the
-\texttt{discard} option), while \texttt{psweights} gives information
-on whether each unit was matched.  If, for observation $i$,
-\texttt{in.sample}[i] is TRUE and \texttt{psweights}[i] is $0$, then
-unit $i$ was eligible for matching but not used.  If
-\texttt{in.sample}[i] is FALSE, then \texttt{psweights}[i] will be $0$.
+
+The output objects \texttt{in.sample} and \texttt{psweights} gives all
+the information about non-matched and discarded units.
+\texttt{in.sample} is a logical vector of length $n$ indicating
+whether each unit was discarded due to the common support conditions
+(the \texttt{discard} option), while \texttt{psweights} gives
+information on whether each unit was matched.  If, for observation
+$i$, \texttt{in.sample}[i] is TRUE and \texttt{psweights}[i] is $0$,
+then unit $i$ was eligible for matching but not used.  If
+\texttt{in.sample}[i] is FALSE, then \texttt{psweights}[i] will be
+$0$.
 
 For example, suppose we use the assignment model from above:
 
@@ -822,10 +824,10 @@ support conditions:
  PSID19  PSID20  PSID21  PSID22  PSID23  PSID24  PSID25  PSID26  PSID28  PSID29
       0       0       0       0       0       0       0       0       0       0
 ...
-\end{verbatim}
+\end{verbatim} %$
 
-One could further wonder how the discarded units differ from the
-treated units in the NSW experiment:
+and how the discarded units differ from the treated units in the NSW
+experiment:
 
 \begin{verbatim}
 > sdisc <- apply(lalonde[!foo$in.sample,],2,mean) #taking column-wise means
@@ -862,7 +864,7 @@ unit has a weight proportional to the number of times it was matched:
 0.7514451 0.0000000 0.0000000 0.0000000
 \end{verbatim}
 
-NSW Unit 8 was not matched and thus has a weight of 0.  We need to
+NSW Unit 7 was not matched and thus has a weight of 0.  We need to
 re-scale the control unit weights to see how many times each control
 was matched.  The sum of the control group weights equals the
 number of uniquely matched control units, so we re-scale by the number
@@ -876,14 +878,27 @@ matched:
      0      0      0      0      0      3      0      7      0      1      0
 PSID12 PSID13 PSID14 PSID15 PSID16 PSID17 PSID18 PSID19 PSID20
      0      0      0      1      0      2      0      0      0
-\end{verbatim}
+\end{verbatim}  %$
 
-We see that PSID unit 8 was matched 7 times, whereas unit 15 was used as a match only once.  
+We see that PSID unit 8 was matched 7 times, whereas unit 15 was used
+as a match only once.
 
 \subsection{Subclassification}
 
-To perform a subclassification routine, use the \texttt{subclass}
-command:
+After matching, you may subclassify all observations, or the matched
+units, by the propensity score into a given number of groups.  The
+\texttt{subclass} option lets you choose a number of these subclasses.
+When you choose this command, \MatchIt\ matches in the same way, but
+it also adds a variable to the output object with the subclass number.
+You can then use this variable by applying your parametric analysis
+within each subclass, rather than to the entire dataset, but to still
+summarize the results for the entire dataset.  This can significantly
+increase the robustness of the ultimate results since each parametric
+analysis within a subclass requires only local rather than global
+parametric smoothing assumptions.
+
+To perform a subclassification routine for matched units, use the
+\texttt{subclass} command as:
 
 \begin{verbatim}
 > data(lalonde) 
@@ -891,9 +906,9 @@ command:
   nodegree + re74 + re75, data=lalonde, replace=TRUE, subclass=6)
 \end{verbatim}
 
-To perform subclassification on \emph{all} units, we can circumvent
-the nearest neighbor matching algorithm entirely by setting
-\texttt{nearest} to \texttt{FALSE}:
+To perform subclassification on \emph{all} units, without unit-by-unit
+matching, we circumvent the nearest neighbor matching algorithm
+entirely by setting \texttt{nearest} to \texttt{FALSE}:
 
 \begin{verbatim}
 > data(lalonde) 
@@ -903,7 +918,7 @@ the nearest neighbor matching algorithm entirely by setting
 \end{verbatim}
 
 Figure \ref{diags} presents diagnostic graphs from \texttt{plot(foo2)}.  
-We can also summarize the results using the {\tt print} command:
+We also summarize the results using the {\tt print} command:
 
 \begin{figure}[tbp]
   \begin{center}
@@ -957,13 +972,16 @@ Control        346         24         17         21         18          3
 Total          377         55         46         53         49         34
 \end{verbatim}
 
-\noindent \texttt{q.table} in the {\tt summary} output is also an easy way to provide summaries across
-subclasses.  
+\noindent 
+\texttt{q.table} in the {\tt summary} output is also an easy way to
+provide summaries across subclasses.
 
 \subsection{Caliper Matching}
 
-To match within a caliper of 0.25 standard deviations of the
-propensity score, use the \texttt{caliper} input:
+A \emph{caliper} is a value of the propensity score demoninated in
+units of standard deviations.  To match within a caliper of 0.25
+standard deviations of the propensity score, use the \texttt{caliper}
+input:
 
 \begin{verbatim}
 > foo <- matchit(treat ~ age + educ + black + hispan + married +
@@ -977,14 +995,16 @@ matching, as described in Section \ref{mahal}.
 If no control units exist within the range of caliper specified, the
 treated unit remains unmatched.  In some instances this might result
 in very few matched units.  As a result, you may want to increase the
-caliper size or match the nearest neighbor when no units within the
-caliper are available by specifying \texttt{calclosest=TRUE}.
+caliper size or match the nearest neighbor only when no units within
+the caliper are available, as done by specifying
+\texttt{calclosest=TRUE}.
 
 \subsection{Mahalanobis Metric Matching within Caliper}
 \label{mahal}
-To match with the Mahalanobis metric within the caliper, specify the
-variables on which to compute the metric with the \texttt{mahvars}
-input, as well as the \texttt{caliper} input:
+To match using the Mahalanobis metric, within a specified caliper of
+the propensity score, specify the variables on which to compute the
+metric with the \texttt{mahvars} input, as well as the
+\texttt{caliper} input:
 
 \begin{verbatim}
 > foo <- matchit(treat ~ age + educ + black + hispan + married +
@@ -994,13 +1014,18 @@ input, as well as the \texttt{caliper} input:
 
 \subsection{Mahalanobis Metric Matching}
 
-To perform only Mahalanobis Metric matching, set the
+To perform only Mahalanobis Metric matching without calipers, set the
 \texttt{caliper=Inf}:
 
 \begin{verbatim}
 > foo <- matchit(treat ~ age + educ, data=lalonde,
   mahvars=c("age","educ"), caliper=Inf, replace=TRUE)
 \end{verbatim}
+Some experience has shown that Mahalanobis metric matching by itself
+does not work as well as propensity score matching, but it is often
+used within calipers (as described in the previous section) to fine
+tune propensity score matching, often by chosing a subset of
+particularly crucial variables.
 
 \subsection{Assignment Model Specification}
 
