@@ -14,7 +14,7 @@ summary.matchit <- function(object, verbose=F, sig=2, ...) {
   }
   weighted.var <- function(x, w) {
     sum(w * (x - weighted.mean(x,w))^2)/(sum(w) - 1)}
-  qoi <- function(xx,tt,ww, psc = NULL, full = T){
+  qoi <- function(xx,tt,ww, psc = NULL, full = F){
     xsum <- matrix(0,2,5)
     xsum <- as.data.frame(xsum)
     row.names(xsum) <- c("Full","Matched")
