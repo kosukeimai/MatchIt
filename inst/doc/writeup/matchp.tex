@@ -371,7 +371,7 @@ Among in sample effects, we consider two choices.  The first is the
 average treatment effect or ATE:
 \begin{align}
   \label{pate}
-  \text{ATE} = E[Y_i(1) - Y_i(0)] \\
+  \text{ATE} = E[Y_i(1) - Y_i(0)] \notag\\
   = \frac{1}{n}\sum_{i=1}^n[\mu_i(1) - \mu_i(0)],
 \end{align}
 which is the mean causal effect for unit $i$ averaged over all units
@@ -382,7 +382,7 @@ The alternative choice of a target quantity of interest is the average
 treatment effect on the treated, or ATT:
 \begin{align}
   \label{att}
-  \text{ATT} = E[Y_i(1) - Y_i(0)|t=1] \\
+  \text{ATT} = E[Y_i(1) - Y_i(0)|t=1] \notag\\
   = \frac{1}{\sum t_i}\sum_{i:t_i=1}[\mu_i(1) - \mu_i(0)],
 \end{align}
 In our running example, this is the average causal effect in districts
@@ -481,7 +481,7 @@ account the treatment, $t$, and pretreatment covariates, $X$.  Whether
 this assumption is satisfied by carefully considering and controlling
 for the sample selection process or by changing the quantity of
 interest to be that reflected by the sample, avoiding selection bias
-is not a trivial matter, and it is the subject of a great deal of
+is not a trivial matter, and indeed is the subject of a great deal of
 concern and study in a large variety of methodological and substantive
 literatures.  We mention it here to emphasize that all the well-known
 concerns about selecting on the dependent variable should remain a
@@ -507,10 +507,8 @@ that are not measured.
 
 Assuming ignorability and the absence of selection bias still leaves
 many assumptions to be made when choosing a specific statistical
-inference method.  Results from these methods can still be biased,
-unbiased, efficient, inefficient, and almost anything else, depending
-on the analyst's choices.  We now focus on this point in the context
-of commonly used parametric methods.
+inference method.  We now focus on this point in the context of
+commonly used parametric methods.
 
 \section{Parametric Analysis Methods}
 
@@ -518,26 +516,26 @@ Researchers willing to assume that a particular parametric model
 generated their data, up to but not including some unknown parameters,
 should specify and directly estimate this model.  Preprocessing with
 matching procedures is suboptimal in this situation.  Of course, few
-researchers with real observational data sets in the social sciences
-have this kind of knowledge and as a result some choices need to be
-made among the range of possible parametric models.
+researchers with real observational data sets have this kind of
+knowledge and as a result some choices need to be made among the range
+of possible parametric models.
 
 We thus begin by specifying a single but general parametric model that
 characterizes the range of models that researchers might choose from.
 The special cases of this model include almost all parametric models
-that have been used in the social sciences.  First define the chosen
-stochastic component as $Y_i \sim p(\mu_i,\theta)$, for probability
-density $p(\cdot)$, mean $\mu_i$, and vector of ancillary parameters
-$\theta$.  Then denote the systematic component as $\mu_i\equiv
-E(Y_i|t_i,X_i)=g(\alpha + t_i\beta + X_i\gamma)$, for some specified
-functional form $g(\cdot)$ and with intercept $\alpha$ and
-coefficients $\beta$ and $\gamma$.  The ancillary parameters may also
-be specified to vary over observations as a function of $X_i$ or other
-covariates.  This framework includes all generalized linear models
-\citep{McCNel89} as well as many others.  For example, if $p(\cdot)$
-is normal and $g(c)=c$, we have linear regression; if $p(\cdot)$ is
-Bernoulli and $g(c)=1/(1+e^{-c})$, the model reduces to a logistic
-regression.
+that have been used in the social sciences.  First define the model's
+chosen stochastic component as $Y_i \sim p(\mu_i,\theta)$, for
+probability density $p(\cdot)$, mean $\mu_i$, and vector of ancillary
+parameters $\theta$.  Then denote the systematic component as
+$\mu_i\equiv E(Y_i|t_i,X_i)=g(\alpha + t_i\beta + X_i\gamma)$, for
+some specified functional form $g(\cdot)$ and with intercept $\alpha$
+and coefficients $\beta$ and $\gamma$.  The ancillary parameters may
+also be specified to vary over observations as a function of $X_i$ or
+other covariates.  This framework includes all generalized linear
+models \citep{McCNel89} as well as many others.  For example, if
+$p(\cdot)$ is normal and $g(c)=c$, we have linear regression; if
+$p(\cdot)$ is Bernoulli and $g(c)=1/(1+e^{-c})$, the model reduces to
+a logistic regression.
 
 We define the ATT in (\ref{att}) under this model by plugging in the
 definitions of the potential outcomes from the systematic component,
@@ -608,11 +606,12 @@ Since the specific maximum likelihood estimator of the population mean
 for most common probability densities is merely the sample mean, the
 analysis of classical randomized experiments often comes down to
 taking the difference in the sample means of $y$ for the treatment and
-control groups.  But even if one chooses to run a parametric model for
-reasons of efficiency, conducting conditional inferences, or because
-of knowledge of the functional form, the absence of model dependence
-means that the choice for a functional form will not matter: The
-results will be the same no matter what the choice for $g(\cdot)$ is.
+control groups.  But even if one chooses to run a parametric model
+(for reasons of efficiency, conducting conditional inferences, or
+because of knowledge of the functional form), the absence of model
+dependence means that the choice for a functional form will not
+matter: The results will be almost the same no matter what choice one
+makes for the functional form.
 
 \subsection{Observational Data} \label{s:paraobs}
 
@@ -623,22 +622,24 @@ so fortunate.  We cannot reduce Equations~\ref{att} to
 Equations~\ref{matt} and so are left having to model the full
 functional relationship that connects the mean as it varies as a
 function of $t$ and $X$ over observations.  Since $X$ is typically
-multidimensional, this is a surprisingly difficult task.
+multidimensional, this is a surprisingly difficult task with rather
+severe consequences for research practice.
 
-To see this point, which is known as the curse of dimensionality,
-suppose for simplicity that we have a dependent variable and one
-ten-category explanatory variable, and our goal is use linear
-regression technology to estimate the functional relationship without
-functional form assumptions.  To do this, we would represent the ten
-categories with ten parameters (a constant and nine dummy variables or
-equivalently 10 mean indicator variables).  In contrast, the usual
-approach to estimation is to assume linearity.  This enables us to
-enter not 10 indicator variables, but rather only a constant term and
-one slope coefficient.  How do we get from ten parameters to only two?
-Pure assumption.  If we have some sense that the relationship is
-indeed linear or close to linear, this is a good use of external
-information to reduce the number of parameters that must be estimated.
-If not, then we still have the best {\it linear} approximation to the
+The problem is the curse of dimensionality and the consequence in
+practice is model dependence.  We begin with the former and suppose
+for simplicity that we have a dependent variable and one ten-category
+explanatory variable, and our goal is use linear regression technology
+to estimate the functional relationship without functional form
+assumptions.  To do this, we would represent the ten categories with
+ten parameters (a constant and nine dummy variables or equivalently 10
+mean indicator variables).  In contrast, the usual approach to
+estimation is to assume linearity.  This enables us to enter not 10
+indicator variables, but rather only a constant term and one slope
+coefficient.  How do we get from ten parameters to only two?  Pure
+assumption.  If we have some sense that the relationship is indeed
+linear or close to linear, this is a good use of external information
+to reduce the number of parameters that must be estimated.  If not,
+then we still have the best {\it linear} approximation to the
 conditional expectation function, but the relationship we estimate can
 be far off.  If we are running this regression for the purpose of
 estimating a causal effect, then the treatment variable is also in the
@@ -660,7 +661,7 @@ parameter to estimate, and so we would still need to make assumptions
 about the remaining 96 parameters.
 
 The problem escalates very fast as the number of explanatory variables
-increase.  With $v$ 10-category variables, we need $10^v$ parameters
+increase.  With $V$ 10-category variables, we need $10^V$ parameters
 for estimation in a regression framework without functional form
 assumptions.  So five explanatory variables leads to a regression
 model with 100,000 parameters, and the usual approach works by
@@ -713,11 +714,13 @@ assumptions over another.
   \label{fg:extrap}
 \end{figure}
 
-To illustrate model sensitivity to specification in a very simple
-setting, Figure~\ref{fg:extrap} plots some artificial data with
-outcome $Y$, confounding covariate $X$, and a treatment of interest.
-The left panel plots the raw data with simple linear and quadratic
-fitted values. The difference between the parallel lines or parabolas
+To clarify the problem of sensitivity to model specification, we offer
+the left panel of Figure~\ref{fg:extrap}, which plots simulated data
+with outcome $Y$ on the vertical axis and a pretreatment covariate $X$
+on the horizontal axis.  Each data point is plotted as a ``T'' for
+treated units ($t_i=1$) and ``C'' for control units ($t_i=0$).  The
+left panel plots the raw data with simple linear and quadratic fitted
+values. The difference between the parallel lines or parabolas
 represents the estimated treatment effect, which here appears to be
 positive for the linear model and negative for the quadratic model.
 No treated units exist, however, with $X$ values below 4, and the
