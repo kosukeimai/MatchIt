@@ -70,5 +70,13 @@ believable, nor do we connect this to our discussion of the curse in section
 problems by controlling for fewer covariates.
 
 
-- Andrew's INTERACTIONS point (perhaps a footnote about how this presents the same specification issues)
+- Andrew's INTERACTIONS point (perhaps a footnote about how this presents the same specification issues 
+and that diagnostics are easier with matching)
+
+
+PREVIOUS LITERATURE
+
+- More cites to earlier matching literature?  Sentence like "Although matching methods have been 
+discussed in the statistics literature since at least the 1970's (Rubin 1970, etc.), only recently have 
+they become popular in applied fields such as economics, political science, and sociology."
 

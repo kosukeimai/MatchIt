@@ -1,3 +1,34 @@
+# August 5, 2004
+# Play with FDA matching to see if can do better.
+
+fdafull <- read.table("~/matchit/docs/papers/carpenter/ajps2002-full1b.txt", header=T)
+fdafull$treat <- fdafull$demsnmaj
+
+library(Matchit)
+mout <- matchit(treat ~ orderent + stafcder + prevgenx + lethal +
+                deathrt1 + hosp01 + I(hospdisc/1000000) +
+                hhosleng + femdiz01 + mandiz01 + peddiz01 + acutediz +
+                orphdum + natreg + I(natregsq/1000) +  wpnoavg3 +
+                sqrt(wpnoavg3) + vandavg3 + condavg3, data=fdafull,
+                discard=1)
+                                                                                                                                                             
+print(summary(mout))
+#mdata <- match.data(mout)
+                                                                                                                                                             
+mout2 <- matchit(treat ~ orderent + stafcder + prevgenx + lethal +
+                deathrt1 + hosp01 + I(hospdisc/1000000) +
+                hhosleng + femdiz01 + mandiz01 + peddiz01 + acutediz +
+                orphdum + natreg + I(natregsq/1000) +  wpnoavg3 +
+                sqrt(wpnoavg3) + vandavg3 + condavg3, data=fdafull,
+                discard=1,  caliper=.25)
+                                                                                                                                                             
+print(summary(mout2))
+
+
+
+#################################################################################
+for (i in 1:1) {
+break
 # Program to try matching with the FDA data
 # full1b does not have the fsubmits variable
 
@@ -70,3 +101,4 @@ sim2 <- sim(a2, x = set2, cond.data=match.data(temp, "treat"))
 print(summary(sim2))
 
 
+}

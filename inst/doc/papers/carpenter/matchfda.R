@@ -1,4 +1,4 @@
-data <- read.table("ajps2002-full1b.txt", header=T)
+data <- read.table("~/matchit/docs/papers/carpenter/ajps2002-full1b.txt", header=T)
 data$treat <- data$demsnmaj
 
 sink("matchfda.out")
