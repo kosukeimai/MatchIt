@@ -27,13 +27,13 @@
   \setcounter{minutes}{\time-\value{hours}*60}%
   \thehours :\theminutes}
 %
-\title{Matching as Nonparametric Preprocessing\\
-  for Improving Parametric Causal Inference\thanks{Our thanks to Dan
+\title{Matching as Nonparametric Preprocessing for Reducing Model
+  Dependence in Parametric Causal Inference\thanks{Our thanks to Dan
     Carpenter and Jeff Koch for data; Alexis Diamond, Olivia Lau, and
-  Gabe Linz for many helpful comments; and the National Institutes of Aging
-    (P01 AG17625-01) and the National Science Foundation (SES-0318275,
-    IIS-9874747) for research support.  Software to implement the
-    methods in this paper is available at
+    Gabe Linz for many helpful comments; and the National Institutes
+    of Aging (P01 AG17625-01) and the National Science Foundation
+    (SES-0318275, IIS-9874747) for research support.  Software to
+    implement the methods in this paper is available at
     \texttt{http://GKing.Harvard.Edu/matchit}.}}
 
 \author{Daniel E. Ho,\thanks{J.D.\ candidate, Yale Law School, Ph.D.\,
@@ -64,86 +64,128 @@ Elizabeth A. Stuart\thanks{Researcher, Mathematica Policy Research, Inc.\, Ph.D.
 \begin{document}\maketitle
 
 \begin{abstract}
-  The fast growing statistical literatures on matching methods in
-  several disciplines offer the promise of causal inference without
-  resort to the difficult-to-justify functional form assumptions
-  inherent in commonly used parametric methods.  However, these
-  literatures also suffer from many diverse and conflicting approaches
-  to estimation, uncertainty, theoretical analysis, and practical
-  advice.  In this paper, we propose a unified perspective on matching
-  as a method of nonparametric preprocessing for improving parametric
-  methods.  This approach makes it possible for researchers to
-  preprocess their data (such as with the easy-to-use matching
-  software we offer with this paper) and then to apply whatever
-  familiar statistical techniques they would have used anyway.  Under
-  our approach, instead of using matching to replace existing methods,
-  we use it to make existing methods work better, such as by giving
-  more accurate and considerably less model-dependent causal
-  inferences.
+  Although political science articles rarely present causal estimates
+  from more than a few model specifications, authors typically choose
+  the ones to include from numerous trial runs readers never see.
+  Given the typically large variation in estimates across choices of
+  control variables, functional forms, and other modeling assumptions,
+  how can researchers convince readers that the few estimates
+  presented are accurate or representative?  How do readers know that
+  political science articles are not merely demonstrations of the
+  \emph{possibility} to find a specification that fits the author's
+  favorite hypothesis?  Matching methods offer the promise of causal
+  inference with fewer assumptions but the literature suffers from
+  conflicting approaches to estimation, uncertainty, theoretical
+  analysis, and practical advice.  In this paper, we propose a unified
+  perspective on this literature by suggesting matching a method of
+  nonparametric preprocessing for reducing model dependence in
+  parametric methods.  This approach makes it possible for researchers
+  to preprocess their data (such as with the easy-to-use matching
+  software we offer) and then to apply whatever familiar techniques
+  they would have used anyway.  Under our approach, instead of using
+  matching to replace existing parametric methods, we use it to make
+  existing methods work better, such as by giving more accurate and
+  considerably less model-dependent causal inferences.
 \end{abstract}
 %\baselineskip=1.57\baselineskip
 
 \section{Introduction}
 
-A new statistics literature has emerged in recent years, building on
-advances in nonparametric, non-model-based inference, and focusing
-around diverse generalizations of matching estimators for causal
-inference.  This work shows considerable promise for increasing the
-reliability and validity of causal inferences from standard parametric
-regressions that social scientists typically run by reducing or
-eliminating the role of functional form and other assumptions of
-parametric models.
+In this paper, we offer procedures to reduce model dependence in
+political science research.  Model dependence is a statistical problem
+that threatens the validity of a wide variety of quantitative research
+in the discipline.  The problem is easy to recognize, but it usually
+only arises in private and so open discussions of it are only
+infrequently found in the literature.
 
-The statistical literature on matching has grown quite sophisticated,
-but, from the point of view of the practical researcher, it looks like
-a cacophony of conflicting techniques, practices, conventions, and
-rules of thumb.  Valid methods for computing standard errors and
-confidence intervals are even more complicated, often not used, and
-sometimes not available.  Many theoretical results do not apply to
-practical applications unless unknown theoretical quantities or
-specifications are somehow divined.  Coherent guidelines for practice
-are conflicting, absent, or based on clinical experience rather than
-scientific evidence or mathematical proof.  Matching methods now
-comprise a substantial fraction of the empirical work in some
-disciplines, such as epidemiology and medicine.  However, the
-diversity of substantive applications and the conflicting
-methodological languages used to describe the same underlying concepts
-have limited the spread of these powerful techniques to much of the
-social sciences.
+To see the problem, consider how political scientists typically
+conduct quantitative research: Even for a single project, we often
+spend a year or more collecting, correcting, recollecting, merging,
+and recoding data.  When all the data are finally available, in the
+right format, and loaded into our favorite statistical package, we
+obtain a causal estimate by running some parametric statistical
+procedure --- regression, logit, probit, duration models, structural
+equation models, count models, etc.  This run typically takes only a
+few seconds and, according to some textbook ways of proceeding, it
+would be time to write up the results.
 
-In this paper, we attempt to unify this diverse literature so applied
-researchers can make productive use of these new methods.  Our simple
-unifying idea is to use these new nonparametric techniques not as
-substitutes for our present parametric regression analyses, but to
-make our familiar parametric techniques work better.  Under our
-inferential framework, analysts merely add a simple preprocessing step
-to their data analysis procedures and then employ whichever models
-they were previously accustomed to using to analyze the preprocessed
-data rather than the raw data.  All of the intuition, diagnostics, and
-knowledge about our parametric procedures can then be used as before.
+Of course, this never happens.  Instead, we do a second run with
+different control variables, a third with a different functional form,
+a forth with a different measure of our key causal variable, one with
+different sample periods or observation subsets, and then each of
+these or others are repeated with slight variations over and over
+again.  Although this usual procedure produces hundreds or even
+thousands of alternative estimates of our causal effect, we typically
+only choose one, and rarely more than say 5--10, to present in a
+paper.  Yet, we know that the dependence of our estimates on these
+modeling assumptions means that different specifications can produce
+very different causal inferences.
 
-Preprocessing data with matching in the way we propose makes
-parametric analyses considerably less dependent on assumptions about
-functional forms and distributions.  In particular, the common process
-that researchers follow of running many regressions and picking one or
-a few to present that are plausible or representative --- or in the
-worst case to choosing those that support their favored theories ---
-will be greatly limited since preprocessing greatly reduces the
-variation in estimates across specifications.  For readers,
-preprocessing is thus good insurance that the author did not
-unintentionally cook the books; for investigators, it is a productive
-method for finding systematic patterns in our typically noisy data.
-Our preprocessing approach has obvious advantages in terms of
-exposition, pedagogy, and ease-of-use, since our methodology builds on
-rather than replaces what we have already learned, brings some order
-and cohesion to conflicting methodological literatures, and suggests a
-relatively straightforward approach for empirical researchers seeking
-to make causal inferences.  For example, our approach suggests a
-simple, standardized, and valid approach to computing standard errors
-and confidence intervals for most of the new matching techniques.
-This strategy also made it possible for us to write easy-to-use
-software that implements all the ideas we discuss in this paper; it is
-free and available at \url{http://gking.harvard.edu/matchit}.
+The problem for researchers is how can to convince readers that we
+picked a representative specification or the right one rather than the
+one that most supported our favorite hypothesis?  What does it even
+mean to choose ``the right'' parametric model estimates when any
+chosen model depends on assumptions we cannot verify?  When we read a
+published article in political science, how do we know the estimated
+causal effect presented is accurate or whether it merely demonstrates
+that the researcher found it \emph{possible} to find a specification
+consistent with his or her prior expectations?
+
+We attack this problem by drawing from a new statistics literature on
+nonparametric, non-model-based inference, that focuses on a diverse
+collection of matching estimators for causal inference.  This work
+offers considerable promise for increasing the reliability and
+validity of causal inferences by reducing or eliminating the role of
+functional form and other assumptions of parametric models.  The
+statistical literature on matching has grown quite sophisticated, but,
+from the point of view of the practical researcher, it looks like a
+cacophony of conflicting techniques, practices, conventions, and rules
+of thumb.  Valid methods for computing standard errors and confidence
+intervals are even more complicated, often not used, and sometimes not
+available.  Many theoretical results do not apply to practical
+applications unless unknown theoretical quantities or specifications
+are somehow divined.  Coherent guidelines for practice are
+conflicting, absent, or based on clinical experience rather than
+scientific evidence or mathematical proof.\footnote{Matching methods
+  now comprise a substantial fraction of the empirical work in some
+  disciplines, such as epidemiology and medicine.  However, the
+  diversity of substantive applications and the conflicting
+  methodological languages used to describe the same underlying
+  concepts have limited the spread of these powerful techniques to
+  much of the social sciences.}
+
+We attempt to reduce model dependence by first unifying this diverse
+literature and suggesting a procedure by which applied researchers can
+make productive use of the ideas developed without giving up most of
+their present analytical strategies.  Our simple unifying idea is to
+use these new nonparametric techniques not as substitutes for our
+present parametric regression techniques, but to make our familiar
+parametric techniques work better.  Under our inferential framework,
+analysts merely add a simple preprocessing step to their data analysis
+procedures and then employ whichever models they were previously
+accustomed to using to analyze the preprocessed data rather than the
+raw data.  All of the intuition, diagnostics, and knowledge about our
+parametric procedures can then be used as before.
+
+Parametric techniques applied to the resulting preprocessed data are
+typically far less sensitive to the choices of modeling assumptions
+researchers make than the raw data and produce more valid causal
+inferences.  For readers, preprocessing is thus good insurance that
+the author did not unintentionally cook the books; for investigators,
+it is a productive method for finding systematic patterns in our
+typically noisy data without having to worry as much about whether
+unverified modeling assumptions are correct.  Our preprocessing
+approach has obvious advantages in terms of exposition, pedagogy, and
+ease-of-use, since our methodology builds on rather than replaces what
+we have already learned, brings some order and cohesion to conflicting
+methodological literatures, and suggests a relatively straightforward
+approach for empirical researchers seeking to make causal inferences.
+For example, our approach suggests a simple, standardized, and valid
+approach to computing standard errors and confidence intervals for
+most of the new matching techniques.  This strategy also made it
+possible for us to write easy-to-use software that implements all the
+ideas we discuss in this paper; it is free and available at
+\url{http://gking.harvard.edu/matchit}.
 
 Our approach is similar in spirit to \citet{ImaDyk03},
 \citet{RosRub84a}, \citet{Rubin79}, and \citet{RubTho00} who each
@@ -156,14 +198,15 @@ weighting) analyses, as well as to the parametric bias adjustment for
 one form of matching by \citet{AbaImb04} (except that, to avoid
 inducing new biases, we recommend below that matching be evaluated
 prior to examining the dependent variable, which is not the case with
-these approaches as generally implemented).  To our knowledge, the
-present paper is the first to propose and work out the conditions for
-matching as a general method of nonparametric preprocessing, suitable
-for improving any parametric method.\footnote{Our idea is also similar
-  in spirit to methods in other areas that preprocess data so that
-  subsequent analyses can be improved without modifying existing
-  techniques, such as multiple imputation \citep{Rubin87,KinHonJos01}
-  and outlier and feature detection \citep[][Ch.8]{Bishop95}.}
+these latter approaches as generally implemented).  To our knowledge,
+the present paper is the first to propose and work out the conditions
+for matching as a general method of nonparametric preprocessing,
+suitable for improving any parametric method.\footnote{Our idea is
+  also similar in spirit to methods in other areas that preprocess
+  data so that subsequent analyses can be improved without modifying
+  existing techniques, such as multiple imputation
+  \citep{Rubin87,KinHonJos01} and outlier and feature detection
+  \citep[][Ch.8]{Bishop95}.}
 
 \section{Definition of Causal Effects}
 
@@ -303,9 +346,9 @@ bounds on both quantities of interest with certainty
 always knowing one of the quantities exactly; however, because
 (\ref{id}) cannot be solved for one of the unknowns (since it would
 require dividing by $t_i$ or $1-t_i$, which includes zero) we have the
-severe disadvantage in causal inference of not knowing anything with
-certainty about the other unknown; this problem does not arise in
-ecological inference.
+severe disadvantage in causal inference of in general not knowing
+anything with certainty about the other unknown; this problem does not
+arise in ecological inference.
 
 Social scientists correctly think of missing data imputation and
 ecological inference as difficult and hazardous areas of statistical
@@ -314,18 +357,18 @@ in unobserved quantities by using patterns in observed data, with
 nothing but optimistic assumptions guaranteeing that the former have
 anything necessarily to do with the latter.  However, scholars should
 be no less concerned when making causal inferences, as every causal
-effect ever estimated involves essentially identical inferential
-hazards.  If anything, the specific problems in making causal
-inferences are even more difficult than most applications in these
-other areas.  Whether using linear regressions, simple
-descriptive differences in means, or complicated multiple equation
-estimators, causal inference requires assumptions that are no easier
-to justify than those in imputation or ecological inference.  In all
-three areas, the inferential target is not normally highly constrained
-by the observed data and so substantive conclusions will usually
-depend on unverifiable assumptions about the data generation process.
-Thus, laying these assumptions bare as clearly as possible throughout
-the process is essential.
+effect ever estimated from observational data involves essentially
+identical inferential hazards.  If anything, the specific problems in
+making causal inferences are even more difficult than most
+applications in these other areas.  Whether using linear regressions,
+simple descriptive differences in means, or complicated multiple
+equation estimators, causal inference requires assumptions that are no
+easier to justify than those in imputation or ecological inference.
+In all three areas, the inferential target is not normally highly
+constrained by the observed data and so substantive conclusions will
+usually depend on unverifiable assumptions about the data generation
+process.  Thus, laying these assumptions bare as clearly as possible
+throughout the process is essential.
 
 \paragraph{Random Causal Effects} In order to make statistical
 inferences, we imagine that the realized potential outcomes in
@@ -403,7 +446,7 @@ actually receive the nomination.  In this paper, we usually focus on
 ATT as the quantity of interest when it is conceptually or
 algebraically simpler, but we also show how to compute the ATE.
 
-\section{Data Collection Mechanisms}
+\section{Assumptions and Data Collection Mechanisms}
 
 We now describe the assumptions necessary for making causal inferences
 in experimental and observational research.  Some version of these
@@ -956,7 +999,7 @@ The first step in this procedure is to summarize all the variables in
 $X$ with a single variable called the \emph{propensity score}
 \citep{RosRub83}.  The propensity score is the true probability of
 unit $i$ receiving treatment, given the covariates $X_i$, $e_i(X_i) =
-P(t_i=1 | X_i)$.  It is usually estimated via a logistic regression of
+P(T_i=1 | X_i)$.  It is usually estimated via a logistic regression of
 $t_i$ on a constant term and $X_i$ (still without regard to the
 dependent variable).  The propensity score is central to modern
 matching methods, but the present state of statistical theory means
@@ -1064,10 +1107,10 @@ variables.\footnote{The Mahalanobis distance is the weighted average
   variance matrix of $X$ in the control group.  See \cite{RubTho00}.}
 
 Third, if some control units fall outside the range of the treated
-propensity score values, then these controls cannot be adjusted by
-replication or deletion to match the treated units.  Common practice
-is to discard these control units.  Similarly, if any treated units
-fall outside the propensity score range of the control units, these too are
+propensity score values, then these controls cannot be adjusted by to
+match the treated units without extrapolation.  Common practice is to
+discard these control units.  Similarly, if any treated units fall
+outside the propensity score range of the control units, these too are
 discarded.  Dropping treated units changes the causal effect being
 estimated, but if it remains a relevant quantity, at least it can be
 estimated in a reasonable way.  Discarding these nonoverlapping
@@ -1664,14 +1707,14 @@ concerned about the sensitivity of our results to changes in this
 process, just as we have been concerned with the sensitivity of causal
 effect estimates to parametric modeling assumptions.  In our view,
 this is not a major issue since the right procedure is the one that
-maximizes balance (with an as large as possible $n$), no matter how many
-procedures we try.  By applying this criterion in a disciplined way
-(i.e., without consulting $y$) to a large number of possible matching
-procedures, no choices are open to the analyst.  Instead, researchers
-should merely run as many as possible and choose by this relatively
-automatic procedure.  Unlike parametric modeling exercises, we need
-not choose this matching procedure or another; we merely run them all
-and apply this criterion.
+maximizes balance (with an as large as possible $n$), no matter how
+many procedures we try.  By applying this criterion in a disciplined
+way (i.e., without consulting $y$) to a large number of possible
+matching procedures, no choices are open to the analyst.  Instead,
+researchers should merely run as many as possible and choose by this
+relatively automatic procedure.  Unlike parametric modeling exercises,
+we need not choose this matching procedure or another; we merely run
+as many as feasible or likely to reduce bias and apply this criterion.
 
 Finally, by dropping observations, we may wind up losing some
 critically important cases or may change either the information base
