@@ -71,20 +71,17 @@ Elizabeth A. Stuart\thanks{Ph.D.\ Candidate, Department of Statistics,
 \section{Introduction}
 \MatchIt\ implements the suggestions of Ho, Imai, King, and Stuart
 (2004) for improving parametric statistical models by preprocessing
-data with semi-parametric matching methods.  \MatchIt\ implements a
-wide range of sophisticated matching methods, making it possible to
-greatly reduce the dependence of causal inferences on commonly made,
-but hard-to-justify, statistical modeling assumptions.  The software
-also easily fits into existing research practices since, after
-preprocessing with \MatchIt, researchers can use whatever parametric
-model they would have used without \MatchIt, but produce inferences
-using the same procedures but with substantially more robustness and
-less sensitivity to modeling assumptions.  Matched data sets created
-by \MatchIt\ can also be entered easily in
-\hlink{Zelig}{http://gking.harvard.edu/zelig/} for subsequent
-parametric analyses.
-
-% (\citealt{rubin74,RosRub83,RosRub84,Holland86}).  
+data with semi-parametric matching methods.  After preprocessing with
+\MatchIt, researchers can use whatever parametric model they would
+have used without \MatchIt, but produce inferences that are
+substantially more robust and less sensitivity to modeling
+assumptions.  Matched data sets created by \MatchIt\ can also be
+entered easily in \hlink{Zelig}{http://gking.harvard.edu/zelig/} for
+subsequent parametric analyses.  \MatchIt\ reduces the dependence of
+causal inferences on commonly made, but hard-to-justify, statistical
+modeling assumptions via a wide range of sophisticated matching
+methods.  Matching methods can even be added to \MatchIt, if you have
+the inclination.
 
 \subsection{Software Requirements} 
 \MatchIt\ works in conjunction with the R language and statistical
@@ -105,15 +102,14 @@ There are two ways to install \MatchIt\:
 \begin{enumerate} 
 \item For the easiest way to install \MatchIt\ for all platforms,
   type at the R prompt:
-% We should change these addresses to Gary's site at some point
 \begin{verbatim}
  > install.packages("matchit", CRAN="http://gking.harvard.edu")
 \end{verbatim}
 
-  \noindent \MatchIt\ will proceed to automatically install itself onto
-  your system.  During the process you may either decide to keep or
-  discard the installation files, which will not affect the way
-  \MatchIt\ runs.
+  \noindent \MatchIt\ will  install itself onto
+  your system automatically.  During the process you may either decide
+  to keep or discard the installation files, which will not affect the
+  way \MatchIt\ runs.
 
 \item Alternatively, you can install \MatchIt\ from a \textbf{local file}:
   \begin{enumerate} 
@@ -139,8 +135,9 @@ There are two ways to install \MatchIt\:
 \end{enumerate}
 
 \subsection{Loading \MatchIt}
-As with any R package, you have to load \MatchIt\ in order to use it.
-You can do this for each R session by typing:
+As with any R package, you must install \MatchIt\ only once, and you
+must load it prior to each use.  You can do this for each R session by
+typing:
 \begin{verbatim}
 > library(matchit) 
 \end{verbatim}
@@ -164,7 +161,7 @@ following commands from your R session.
 
 \begin{small}
 \begin{verbatim}
-> update.packages("matchit",CRAN="http://www.people.fas.harvard.edu/~deho")
+> update.packages("matchit",CRAN="http://gking.harvard.edu")
 > library(matchit) 
 \end{verbatim}
 \end{small} 
@@ -186,14 +183,14 @@ run by:
 \subsection{Notation}
 \MatchIt\ is designed for studies with a dependent variable that is a
 function of a single dichotomous causal variable, with values known as
-the ``treatment'' and ``control'' groups, and a set of covariates used
-as pretreatment controls.  \MatchIt\ can be used for other types of
-causal variables by dichotomizing them, perhaps in different ways.
+the ``treatment'' and ``control'' groups, and a set of pretreatment
+controls covariates.  \MatchIt\ can be used for other types of causal
+variables by dichotomizing them, perhaps in multiple ways.
 
 Unless otherwise noted, let $i$ index the $n$ units in the dataset,
 $n_1$ the number of treated units, $n_0$ the number of control units
-(such that $n=n_0+n_1$), and $x_i$ some observed covariate vector for
-unit $i$.  $T_i=1$ indicates that unit $i$ was assigned treatment, and
+(such that $n=n_0+n_1$), and $x_i$ a vector of control variables for
+unit $i$.  $t_i=1$ indicates that unit $i$ was assigned treatment, and
 $t_i=0$ that unit $i$ was assigned control.  $y_{1i}$ represents the
 potential outcome of unit $i$ under treatment and $y_{0i}$ the
 potential outcome of unit $i$ under control.  $y_{1i}$ and $y_{0i}$
@@ -226,8 +223,10 @@ outcome under the treatment of the job program, and
 \texttt{re78(treat=0)} under control.  To be clear, note that the
 first term in Equation~\ref{re78eqn} is \emph{observed}, whereas the
 second term is the \emph{unobserved} counterfactual of real earnings
-if participants had not participated.  The same expression of the ATT,
-in mathematical notation is:
+if participants had not participated.  The nature of causal inference
+is that one of the two terms in the difference will always be
+unobserved.  The same expression of the ATT, in mathematical notation
+is:
 \begin{equation}
   E(Y_{1i} | t_i=1 ) - E(Y_{0i} | t_i=1).
 \end{equation}
@@ -274,10 +273,11 @@ race:\footnote{The examples in this document are for illustrative
 \end{verbatim}
 
 \noindent \texttt{foo1} now contains all the information on the
-matched units.  The matching forms subclasses based on the covariates
-in the formula portion of the \MatchIt\ call; within each subclass,
-all units have the same covariate values.  To obtain basic information
-about the matching procedure:
+matched units.  The matching forms all possible subclasses based on
+unique values of the covariates in the formula portion of the
+\MatchIt\ call; within each subclass, all units have the same
+covariate values.  To obtain basic information about the matching
+procedure:
 
 \begin{verbatim}
 > print(foo1)
@@ -328,15 +328,16 @@ Number of units discarded:   0
 \end{verbatim}
 The results indicate that the means of the race variables ({\tt black}
 and {\tt hispan}) are quite different between the full treated and
-control groups, but within each subclass formed by these two binary
-covariates the values of the race variables of the treated and control
-units are (by the construction of this exact matching procedure) the
-same.  These two binary covariates form three subclasses, and we see,
-for example, that 243 units (156 treated and 87 control) are black and
-non-hispanic.  The balance bias statistic presented in the right
-column of the first table is the mean difference between covariate
-values for controls and treated in standard deviation units; for a
-formal definition, see Subsection~\ref{cmd:sum}.
+control groups, but we know that within each subclass formed by these
+two binary covariates the values of the race variables of the treated
+and control units are (by the construction of this exact matching
+procedure) the same.  These two binary covariates form three
+subclasses, and we see, for example, that 243 units (156 treated and
+87 control) are black and non-hispanic.  The balance bias statistic
+presented in the right column of the first table is the mean
+difference between covariate values for controls and treated in
+standard deviation units; for a formal definition, see
+Subsection~\ref{cmd:sum}.
 
 We can use the {\tt psclass} component of {\tt foo1} to identify which
 units are in each subclass and to verify their covariate values.
@@ -349,9 +350,10 @@ to the National Supported Work Demonstration participants):
 [19] "NSW21" "NSW24"
 \end{verbatim}
 
-We can also confirm the covariate values of the units in each subclass.  For example, to see the covariate
-values of the first 20 units in subclass 2 (``PSID''
-refers to individuals in the Panel Survey of Income Dynamics):
+We can also confirm the covariate values of the units in each
+subclass.  For example, to see the covariate values of the first 20
+units in subclass 2 (``PSID'' refers to individuals in the Panel
+Survey of Income Dynamics):
 \begin{verbatim}
 > foo1$data[foo1$psclass==2,c("black", "hispan")][1:20,]
        black hispan
