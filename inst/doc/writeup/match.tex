@@ -509,27 +509,27 @@ Our Estimand: population average treatment effect for the treated
   E(Y_1 - Y_0 \mid T=1)
 \end{eqnarray}
 
-Our Estimator:
+Regression without Matching: assume that we can consistently estimate
+the conditional mean function, $\mu_{0}(X)= E(Y_0 \mid X)$, by fitting
+a parametric model to the control group.  Then, our estimator is
 \begin{eqnarray}
     \frac{1}{N_1} \sum_{i=1}^{N} T_i (Y_{1i} - \hat{\mu}_0(X_i))
 \end{eqnarray}
-where $\hat{\mu}_0(X_i)$ is a consistent estimate of the conditional
-mean function, $\mu_{0}(X)= E(Y_0 \mid X)$, evaluated at $X_i$.  We
-estimate it by fitting the parametric model to the control group.
-This is possible because $E(Y_0 \mid X)=E(Y_0 \mid T=0,X)$ by
-independence.
+The variance can be estimated by computing the estimate of $V(Y_1 \mid
+T=1)$ using the sample variance from the control group, and
+$V(\hat{\mu}_0(X_i))$ from the parametric model (via simulation in
+Zelig).
 
-
-However, since we use the parametric model, the mean independence
-assumption may not be plausible. That is, we may not be able to
-extrapolate $\hat{\mu}_{0}(X)$ obtained from the control group to the
-treatment group because the distributions of $X$ differ between the
-two groups.  Hence, we match the treated units with control units that
-are similar in terms of pre-treatment variables. Let $M_i$ represent
-the number of times the unit $i$ in the control group is matched with
-a treated unit.  Matching may be done with replacement.  Now, we
-estimate $\mu_{0}(X)$ using $M_i$ as weights.
-
+Regression with Matching: In the above formulation, we assumed that
+$\mu_{0}$ can be consistently computed using the control group and be
+used to impute the missing potential outcome for the treatment group.
+To make this extrapolation more plausible, we conduct matching to make
+the control group similar to the treatment group in terms of
+pre-treatment variables. Let $M_i$ represent the number of times the
+unit $i$ in the control group is matched with a treated unit.
+Matching may be done with replacement.  Now, we estimate $\mu_{0}(X)$
+using $M_i$ as weights (e.g., via weighted regression). The variance
+can be calculated in the same way as above.
 
 \subsection{"Naive" estimates}
 \subsubsection{Neyman's estimates of causal effect, variance}
