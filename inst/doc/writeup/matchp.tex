@@ -58,8 +58,8 @@ Elizabeth A. Stuart\thanks{Ph.D.\ Candidate, Department of Statistics, Harvard
 \begin{document}\maketitle
 
 \begin{abstract}
-  The fast growing statistical literatures in several disciplines on
-  matching methods offer the promise of causal inference without
+  The fast growing statistical literatures on matching methods in
+  several disciplines offer the promise of causal inference without
   resort to the usual difficult-to-justify functional form assumptions
   of commonly used parametric methods.  However, this literature also
   suffers from many diverse and conflicting approaches to estimation,
@@ -70,7 +70,7 @@ Elizabeth A. Stuart\thanks{Ph.D.\ Candidate, Department of Statistics, Harvard
   (such as with the easy-to-use matching software we have developed)
   and then to apply whatever familiar statistical techniques they
   would have used anyway.  Under our approach, instead of using
-  matching to replace existing methods, we use it to makes existing
+  matching to replace existing methods, we use it to make existing
   methods work better, such as by giving more accurate and
   considerably less model-dependent causal inferences.
 \end{abstract}
@@ -128,7 +128,7 @@ approach to computing standard errors and confidence intervals for any
 of the new techniques.  Our approach has also made it possible for us
 to write easy-to-use software that implements all the ideas we discuss
 in this paper; it is free and available at
-http://GKing.Harvard.edu/zelig.
+http://gking.harvard.edu/matchit.
 
 \section{Definition of Causal Effects}
 
@@ -152,28 +152,27 @@ of the methodological literature on causal inference, researchers
 simplify the exposition by considering only a single dichotomous
 causal (or ``treatment'') variable.  We do the same and label it
 $t_i$, which takes a value of 1 if unit $i$ receives the treatment and
-0 if $i$ is untreated (which is also called the ``control
-unit'').\footnote{We will assume that every unit within the treatment
-  group receives the same treatment.  This assumption would be
-  violated in our running example if the nomination the Democratic
-  party gives to the incumbent in some districts means something
-  different from that in other districts.  We also assume that the
-  treatment in one unit has no effect on the potential outcomes in any
-  unit other than its own.  Together these two assumptions are
-  sometimes known under the awkward name of the ``stable unit
-  treatment value assumption'' or SUTVA.}  In our running example, the
-treatment is whether the incumbent is given the party's nomination in
-district $i$.  Projects with more complicated causal variables can
-dichotomize (perhaps in several alternative ways) or use more
-complicated methods \citep{ImaDyk03}.  Those with more than one causal
-variable of interest can follow all the advice herein for one variable
-at a time.
+0 if $i$ is untreated (the ``control condition'').\footnote{We will
+  assume that every unit within each treatment group receives the same
+  treatment.  This assumption would be violated in our running example
+  if the nomination the Democratic party gives to the incumbent in
+  some districts means something different from that in other
+  districts.  We also assume that the treatment in one unit has no
+  effect on the potential outcomes in any unit other than its own.
+  Together these two assumptions are sometimes known under the awkward
+  name of the ``stable unit treatment value assumption'' or SUTVA
+  \citep{Rubin74}.}  In our running example, the treatment is whether
+the incumbent is given the party's nomination in district $i$.
+Projects with more complicated causal variables can dichotomize
+(perhaps in several alternative ways) or use more complicated methods
+\citep{ImaDyk03}.  Those with more than one causal variable of
+interest can follow all the advice herein for one variable at a time.
 
-The outcome (or ``dependent'') variable is $y_i$, which in our case is
-the Democratic proportion of the two-party vote in congressional
-district $i$.  Finally, prior to the treatment decision, each district
-$i$ differs in a variety of ways, some of which we measure and collect
-in a vector denoted $X_i$.
+The observed outcome (or ``dependent'') variable is $y_i$, which in
+our case is the Democratic proportion of the two-party vote in
+congressional district $i$.  Finally, prior to the treatment decision,
+each district $i$ has a variety of characteristics, some of which we
+measure and collect in a vector denoted $X_i$.
 
 To clarify our inferential goals, we begin with by defining the
 ``realized causal effect,'' which is the simplest definition
@@ -195,17 +194,17 @@ require reference to the pretreatment variables.
 
 A causal effect is a function of \emph{potential outcomes}: let
 $y_i(t_i=1)\equiv y_i(1)$ be the vote we would observe in district $i$
-in say the 2004 election if in fact the Democratic incumbent received
+in say the 2008 election if in fact the Democratic incumbent receives
 his or her party's nomination (i.e., $t_i=1$) and $y_i(t_i=0)\equiv
 y_i(0)$ the vote the party would receive if the Democratic Party
-nominated a nonincumbent ($t_i=0$).  The use of parentheses in this
+nominates a nonincumbent ($t_i=0$).  The use of parentheses in this
 notation denotes that the outcome is potential, and so not necessarily
 observed, and that it depends on the value of the variable in
 parentheses.  A key point is that the values of these potential
 outcomes remain the same regardless of whether the treatment is in
 fact applied in district $i$ or not.  However, since the Democratic
-Party either nominated ($t_i=1$) or did not nominate ($t_i=0$) an
-incumbent to run in district $i$, we observe either $y_{i}(1)$ or
+Party either will nominate ($t_i=1$) or will not nominate ($t_i=0$) an
+incumbent to run in district $i$, we will observe either $y_{i}(1)$ or
 $y_{i}(0)$ but not both.
 
 The difference between the two potential outcomes defines the simplest
@@ -232,7 +231,7 @@ relationship between the two to extrapolate to units where only one is
 observed.  Making causal inferences is thus equivalent to imputing
 missing data, using whatever external information is available.  As we
 show below, this analogy will prove useful in making the bridge that
-connects nonparametric matching to parametric models.
+connects nonparametric matching to parametric models.  
 
 Causal inference can also be thought of as an especially severe form
 of ecological inference.  In ecological inference, we observe for each
@@ -241,14 +240,15 @@ $2\times 2$ contingency table (such as the proportion of people voting
 and the proportion of people who are black) and the goal is to
 estimate the unknown cell proportions (the proportion of blacks who
 vote and the proportion of whites who vote).  We make the bridge by
-referring to the known ($y_i$ and $t_i$) and unknown ($y_i(0)$ and
-$y_i(1)$) quantities in both problems in the same notation and pay
-attention to the order in which the information is generated: In both
-problems, we imagine that $y_i(0)$ and $y_i(1)$ exist in nature before
-our research begins.  Then $t_i$ (the treatment in causal inference or
-the row marginal in ecological inference) is applied or otherwise
-becomes known.  Finally, we can calculate the observed outcome $y_i$
-deterministically via this simple accounting identity:
+referring to the known ($y_i$ and $t_i$) and potentially unknown
+($y_i(0)$ and $y_i(1)$) quantities in both problems in the same
+notation and pay attention to the order in which the information is
+generated: In both problems, we imagine that $y_i(0)$ and $y_i(1)$
+exist in nature before our research begins.  Then $t_i$ (the treatment
+in causal inference or the row marginal in ecological inference) is
+applied or otherwise becomes known.  Finally, we can calculate the
+observed outcome $y_i$ deterministically via this simple accounting
+identity:
 \begin{equation}
   \label{id}
   y_i = t_iy_i(1) + (1-t_i)y_i(0).
@@ -264,13 +264,25 @@ require dividing by $t_i$ or $1-t_i$, which includes zero) we have the
 severe disadvantage of not knowing anything with certainty about the
 other unknown.
 
-The fundamental difficulty is the same with causal inference,
-statistical inference in the presence of missing data, and ecological
-inference: The inferential target is not normally highly constrained
-by the observed data and so substantive conclusions will usually
-depend on some unverifiable assumptions about the data generation
-process.  Laying these assumptions bear as clearly as possible
-throughout the process is therefore essential.
+Social scientists correctly think of missing data imputation and
+ecological inference as difficult and hazardous areas of statistical
+inference.  After all, both involve making inferences about patterns
+in unobserved quantities by using patterns in observed data, with
+nothing but optimistic assumptions guaranteeing that the former have
+anything necessarily to do with the latter.  However, scholars should
+be no less concerned when making causal inferences, as every causal
+effect ever estimated involves essentially identical inferential
+hazards.  If anything, the specific problems in making causal
+inferences are even more difficult than in these other areas.
+Moreover, whether using linear regressions, simple descriptive
+differences in means, or complicated multiple equation estimators,
+causal inference requires assumptions that are no easier to justify
+than those in imputation or ecological inference.  In all three areas
+the inferential target is not normally highly constrained by the
+observed data and so substantive conclusions will usually depend on
+unverifiable assumptions about the data generation process.  And so
+laying these assumptions bear as clearly as possible throughout the
+process is essential.
 
 \paragraph{Random Causal Effects} In order to make statistical
 inferences, we imagine that the realized potential outcomes in
@@ -282,7 +294,7 @@ could have led to some other realization.  This logic then produces the
 random causal effect:
 \begin{equation}
   \label{rance}
-  \text{(Random Causal Effect for unit $i$)}  = Y_i(1) - Y_i(0)
+  \text{(Random Causal Effect for unit $i$)}  = Y_i(1) - Y_i(0),
 \end{equation}
 features of which we are interested in as alternative quantities of
 interest.  For example, our second definition of the causal effect is
@@ -328,7 +340,9 @@ districts where the treatment was applied.  In other words, the ATT is
 the effect of the treatment actually applied.  Medical studies
 typically use the ATT as the designated quantity of interest because
 they often only care about the causal effect of drugs for patients
-that receive or would receive the drugs.  In the social sciences, the
+that receive or would receive the drugs.  For another example, in job
+training programs, we are not normally interested in assinging
+employed people to have this training.  In the social sciences, the
 ATT is also a reasonable choice, but so is the average treatment
 effect (the ATE).  In our running example, it is quite likely that if
 an incumbent were nominated in districts in which he or she did not
@@ -357,17 +371,20 @@ inference in experiments will be approximated by the preprocessing
 procedures we suggest below.
 
 Valid and relatively automatic causal inferences can be achieved via
-classical randomized experiments.  Such experiments have three
+classical randomized experiments (where by ``classical'' we refer to
+the situation where randomness is complete and not merely applied
+within categories of other variables).  Such experiments have three
 critical features: (1) \emph{random selection} of units from a given
 population to be observed, (2) \emph{random assignment} of values of
 the treatment ($t_i$) to each observed unit, and (3) a \emph{large
-  $n$}.  
+  $n$}.
 
 The first feature avoids selection bias by identifying a given
-population and guaranteeing that the data generation process is
-related to the dependent variable only by random chance.  Combining
-this with the large $n$ from the third feature guarantees that the
-chance that something will go wrong is vanishingly small.
+population and guaranteeing that the probability of selection from
+this population is related to the dependent variable only by random
+chance.  Combining this with the large $n$ from the third feature
+guarantees that the chance that something will go wrong is vanishingly
+small.
 
 Random assignment in feature (2) guarantees the absence of omitted
 variable bias even without any control variables included.  To see
@@ -438,20 +455,30 @@ of commonly used parametric methods.
 
 \section{Parametric Analysis Methods}
 
-We begin by specifying a single but general parametric model, special
-cases of which include almost all parametric models used regularly in
-the social sciences.  First define the stochastic component as $Y_i
-\sim p(\mu_i,\theta)$, for a specified probability density $p(\cdot)$,
-mean $\mu_i$, and vector of ancillary parameters $\theta$.  Then
-denote the systematic component as $E(Y_i|t_i,X_i)\equiv\mu_i=g(\alpha
-+ t_i\beta + X_i\gamma)$, for some specified functional form
-$g(\cdot)$ and with intercept $\alpha$ and coefficients $\beta$ and
-$\gamma$.  The ancillary parameters may also be specified to vary over
-observations as a function of $X_i$ or other covariates.  This
-framework includes all ``generalized linear models'' as well as many
-others.  For example, if $p(\cdot)$ is normal and $g(c)=c$, we have
-linear regression; if $p(\cdot)$ is Bernoulli and $g(c)=1/(1+e^{-c})$,
-the model reduces to a logistic regression.
+Researchers in the situation of knowing, up to but not including some
+unknown parameters, the parametric model that generated their data
+should specific and directly estimate this parametric model.
+Preprocessing with matching procedures is suboptimal in this
+situation.  Of course, few researchers with real observational data
+sets in the social sciences have this kind of knowledge and as a
+result some choices need to be made among the range of possible
+parametric models.
+
+We thus begin by specifying a single but general parametric model that
+characterizes the range of models that researchers might choose from.
+Indeed, the special cases of thsi model include almost all parametric
+models that have been used in the social sciences.  First define the
+stochastic component as $Y_i \sim p(\mu_i,\theta)$, for a specified
+probability density $p(\cdot)$, mean $\mu_i$, and vector of ancillary
+parameters $\theta$.  Then denote the systematic component as
+$E(Y_i|t_i,X_i)\equiv\mu_i=g(\alpha + t_i\beta + X_i\gamma)$, for some
+specified functional form $g(\cdot)$ and with intercept $\alpha$ and
+coefficients $\beta$ and $\gamma$.  The ancillary parameters may also
+be specified to vary over observations as a function of $X_i$ or other
+covariates.  This framework includes all ``generalized linear models''
+as well as many others.  For example, if $p(\cdot)$ is normal and
+$g(c)=c$, we have linear regression; if $p(\cdot)$ is Bernoulli and
+$g(c)=1/(1+e^{-c})$, the model reduces to a logistic regression.
 
 We define the ATT in (\ref{att}) under this model by plugging in the
 definitions of the potential outcomes from the systematic component,
@@ -470,15 +497,15 @@ over observations, and forming a likelihood function
 \end{equation}
 the maximum of which gives parameter estimates.
 
-We now turn to the empirical consequences of having experimental vs.\ 
-observational data in making inferences under this model.
+We now turn to the difficulties in making causal inferences from
+experimental vs.\ observational data under this general model.
 
 \subsection{Experimental Data}\label{s:paraexp}
 
-In experimental data, random assignment guarantees that $T_i$ and (any
-observed or unobserved) $X_i$ are independent.  Since stochastic
-independence implies mean independence, we can drop $X$ and write
-$E(Y_i(1)|t_i=1,X)=E(Y_i(1)|t_i=1)$ and
+In experimental data, classical random assignment guarantees that
+$T_i$ and (any observed or unobserved) $X_i$ are independent.  Since
+stochastic independence implies mean independence, we can drop $X$ and
+write $E(Y_i(1)|t_i=1,X)=E(Y_i(1)|t_i=1)$ and
 $E(Y_i(0)|t_i=1,X)=E(Y_i(0)|t_i=1)$.  As such, we can simplify
 (\ref{matt}) as
 \begin{align}
@@ -498,12 +525,16 @@ The systematic components in Equations \ref{smatt} are now scalar
 constants for all $i$.  This is a key result, since it means that
 changing the definition of the functional form $g(\cdot)$ now amounts
 to nothing more than a simple reparameterization.  Fortunately,
-maximum likelihood is invariant to reparameterization
-\citep[][p.75-6]{King89}, which means that no matter how $g(\cdot)$ is
-defined we get the same estimate of the expected potential outcomes.
-Moreover, given any chosen stochastic component, this result holds for
-virtually any parametric model, including all the special cases of the
-general model given above.
+maximum likelihood is invariant to reparameterization --- meaning, for
+example, that the MLE of $\alpha$ is the same as the square root of
+the MLE of $\alpha^2$ \citep[][p.75-6]{King89} --- which implies that
+no matter how $g(\cdot)$ is defined we get the same estimate of the
+expected potential outcomes.\footnote{To rule out degenerate cases
+  such as $g(a)=8$, we require that the image of $g(\cdot)$ and the
+  potential outcomes be the same.} Moreover, given any chosen
+stochastic component, this result holds for virtually any parametric
+model, including all the special cases of the general model given
+above.
 
 Since the specific maximum likelihood estimator of the population mean
 for most common probability densities is merely the sample mean, the
@@ -612,21 +643,23 @@ The goal of matching in general and our specific nonparametric
 preprocessing approach is to adjust the data prior to the parametric
 analysis so that (1) the relationship between $t_i$ and $X_i$ is
 eliminated or reduced and (2) no bias is induced.  If we are able to
-adjust the data so that $t_i$ and $X_i$ are completely unrelated, we
-will have moved a good deal of the way from Section \ref{s:paraobs} to
-Section \ref{s:paraexp}.  An assumption of ignorability will still be
-necessary, but we will no longer need to model the full parametric
-relationship between the dependent variable and the multidimensional
-$X_i$.  We will also have eliminated an important source of model
-dependence in the resulting parametric analysis stemming from the
-functional form specification and the curse of dimensionality.  For
-data sets where preprocessing reduces the extent of the relationship
-between $t_i$ and $X_i$, but is unable to make them completely
-independent, model dependence is not eliminated but will normally be
-greatly reduced.  Indeed, if nonparametric preprocessing results in no
-reduction of model dependence, then it is likely that the data have
-little information to support causal inferences by any method, which
-of course would also be useful information.
+adjust the data so that $t_i$ and $X_i$ are completely unrelated, so
+that the control and treatment groups are identical with respect to
+$X$ before the treatment assignment, we will have moved a good deal of
+the way from Section \ref{s:paraobs} to Section \ref{s:paraexp}.  An
+assumption of ignorability will still be necessary, but we will no
+longer need to model the full parametric relationship between the
+dependent variable and the multidimensional $X_i$.  We will also have
+eliminated an important source of model dependence in the resulting
+parametric analysis stemming from the functional form specification
+and the curse of dimensionality.  For data sets where preprocessing
+reduces the extent of the relationship between $t_i$ and $X_i$, but is
+unable to make them completely independent, model dependence is not
+eliminated but will normally be greatly reduced.  Indeed, if
+nonparametric preprocessing results in no reduction of model
+dependence, then it is likely that the data have little information to
+support causal inferences by any method, which of course would also be
+useful information.
 
 But how can we adjust the data without inducing bias in our causal
 estimates?  The key to this problem is that the fundamental rule for
@@ -667,16 +700,16 @@ $X_i$ is high dimensional or contains continuous variables.  The
 result may then be a preprocessed data set with very few observations
 that results in a parametric analysis with large standard errors.  In
 this situation, we may have reduced model dependence and the potential
-for bias but decreased efficiency and as a result mean square error.
-If this occurs in practice, those in the matching literature tend to
-sacrifice some bias reduction for the increased efficiency that comes
-from having more observations in the preprocessed dataset.  In our
-approach, sacrificing bias reduction only affects the preprocessing
-stage, and our second stage parametric analysis has a chance to
-eliminate the remaining bias.  We therefore now turn to a menu of
-matching procedures that enable researchers to satisfy (\ref{balance})
-as closely as possible while still generating a preprocessed dataset
-with enough observations.
+for bias but decreased efficiency and as a result increased mean
+square error.  If this occurs in practice, those in the matching
+literature tend to sacrifice some bias reduction for the increased
+efficiency that comes from having more observations in the
+preprocessed dataset.  In our approach, sacrificing bias reduction
+only affects the preprocessing stage, and our second stage parametric
+analysis has a chance to eliminate the remaining bias.  We therefore
+now turn to a menu of matching procedures that enable researchers to
+satisfy (\ref{balance}) as closely as possible while still generating
+a preprocessed dataset with enough observations.
 
 \section{Choosing a Matching Procedure}
 
@@ -685,16 +718,16 @@ with enough observations.
 No concensus exists in the literature on methods to use to compute
 uncertainty estimates, such as standard errors or confidence
 intervals, from matching procedures.  The problem is not some
-disagreement exists over technical statistical techniques.  Rather,
-the issue revolves around normative criteria such as what researchers
-should condition on and what they should attribute to additional
-uncertainty.  Since scholars are no more likely to reach consensus via
-debate on normative statistical issues than on normative political
-issues, we believe the best way forward is to choose a reasonable
-definition and show how to compute uncertainty estimates for it, and
-let others pick different definitions if they prefer.  Our choice,
-which we now explicate, appears substantively reasonable and has the
-advantage of being easy to implement.
+disagreement over technical statistical techniques.  Rather, the issue
+revolves around normative criteria such as what researchers should
+condition on and what they should attribute to additional uncertainty.
+Since scholars are no more likely to reach consensus via debate on
+normative statistical issues than on normative political issues, we
+believe the best way forward is to choose a reasonable definition and
+show how to compute uncertainty estimates for it, and let others pick
+different definitions if they prefer.  Our choice, which we now
+explicate, appears substantively reasonable and has the advantage of
+being easy to implement.
 
 Parametric methods applied to raw data without preprocessing come with
 a list of relatively standard ways of computing uncertainty estimates.
@@ -733,8 +766,8 @@ model to estimate $\mu_i(0)$ and its uncertainty, whereas if $t_i=0$,
 we set $\mu_i(0)=y_i$ and use the parametric model to estimate
 $\mu_i(1)$ and its uncertainty estimate.  In Bayesian models,
 estimating the realized causal effect requires the equivalent of
-conditioning on $y_i$ after the likelihood estimation (as in
-\citet{King97}).
+conditioning on $y_i$ after the likelihood estimation 
+\citep[as in][]{King97}.
 
 \section{Empirical Illustrations}
 
