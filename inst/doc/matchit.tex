@@ -434,9 +434,11 @@ PSID45     0      1
 When insufficient exact matches can be found, as is becomes
 increasingly common as the number of covariates increase, we need to
 find a way to identify matches that are ``close.''  In this situation,
-matching on the propensity score is a useful alternative.  To
-propensity score match, with pre-treatment covariates composed of real
-earnings in 1974 and 1975:
+matching on the propensity score is a useful alternative.  The
+propensity score is the probability that a treatment was assigned to a
+unit given information in the control variables.  To propensity score
+match, with pre-treatment covariates composed of real earnings in 1974
+and 1975:
 
 \begin{verbatim}
 > foo2 <- matchit(treat ~ re74 + re75, data=lalonde)
@@ -1029,11 +1031,11 @@ particularly crucial variables.
 
 \subsection{Assignment Model Specification}
 
-\MatchIt\ permits you to use a wide variety of methods to
-estimate the propensity score, including logit (default), probit,
-neural networks, generalized additive models, and classification
-trees.  These can be specified in the \MatchIt\ call using the
-\texttt{model} input.  For example:
+\MatchIt\ permits you to use a wide variety of methods to estimate the
+propensity score, including logit (the default), probit, neural
+networks, generalized additive models, and classification trees.
+These can be specified in the \MatchIt\ call using the \texttt{model}
+input.  For example:
 
 \begin{verbatim}
 foo1 <- matchit(treat~educ+re74+re75,data=lalonde,model="probit")
@@ -1043,17 +1045,18 @@ foo4 <- matchit(treat~educ+re74+re75,data=lalonde,model="cart")
 \end{verbatim}
 
 Each use different models to estimate the propensity score.  Before
-using any of these techniques, the user is strongly advised to seek
-outside resources to understand the theoretical groundings of these
-techniques.  For political science articles discussing or implementing
-(a) neural networks see \citet{BecKinZen00,Zeng99,Zeng00,LagRus02}, (b)
-generalized additive models see \citet{BecJac98}, and (c)
-classification trees see \citet{RugKimMar03}.  For more general
-treatments, see \citet{Bishop95,White92,BreFriOls84}.  See also the
-\texttt{glm} library for further control of logit and probit
-regressions, the \texttt{nnet} for neural networks, the \texttt{mgcv}
-library for generalized additive models, and the \texttt{rpart}
-library for classification trees.
+using any of these techniques, it is best to understand the
+theoretical groundings of these techniques and to evaluate the
+results.  For political science articles discussing or implementing
+(a) neural networks see
+\citet{BecKinZen00,Zeng99,Zeng00,KinZen02,LagRus02}, (b) generalized
+additive models see \citet{BecJac98}, and (c) classification trees see
+\citet{RugKimMar03}.  For more general treatments, see
+\citet{Bishop95,White92,BreFriOls84}.  For additional options you may
+add to each command, see the \texttt{glm} library for further control
+of logit and probit regressions, the \texttt{nnet} for neural
+networks, the \texttt{mgcv} library for generalized additive models,
+and the \texttt{rpart} library for classification trees.
 
 \subsection{Using Observation Names}
 \label{rnames}
@@ -1076,11 +1079,12 @@ Liz        1  30   12     1      0       0        0    0    0 24909.450
 Gary       1  27   11     1      0       0        1    0    0  7506.146
 \end{verbatim} 
 
-\subsection{Matching on One Covariate}
+\subsection{Matching on One Covariate or Alternative Metrics}
 \MatchIt\ does not assume a propensity score bounded between 0 and 1.
 For example, we could use simply the \texttt{matchdef} command,
 documented in Appendix~\ref{reference}, to match nearest neighbors on
-one covariate:
+a single covariate, which could be a specific variable or a metric you
+have created:
 
 \begin{verbatim}
 index <- rep(TRUE,nrow(lalonde))   #keeping all units
@@ -1092,27 +1096,26 @@ names(re75) <- row.names(lalonde)
 foo <- matchdef(treat,index,re75,replace=TRUE)
 \end{verbatim}
 
-\subsection{Diagnosing a propensity score model}
+\subsection{Diagnosing a Propensity Score Model}
 \label{pscorespec}
-The model specification and diagnostics when estimating propensity
-scores are not the standard model diagnostics for logistic regression
-or CART, as discussed by \cite{Rubin04}.  With propensity score
-estimation, and matching methods more generally, concern is not with
-the parameter estimates of the model, but rather with the quality of
-the matches.  As discussed by \cite{Greevy04}, because the matching
-does not make use of the outcome values, matching can be done multiple
-times and the best matched sample chosen without biasing results.
-Diagnostics for propensity scores thus involve assessing
-specifications and choosing the one that leads to the most balance
-between the matched treated and control groups.
+The model specification and diagnostics for propensity scores are not
+the standard model diagnostics for logistic regression or CART.  With
+propensity score estimation, and matching methods more generally,
+concern is not with the parameter estimates of the model (after all,
+the outcome variable is not even used in the matching procedure), but
+rather with the quality of the matches.  Because matching does not
+make use of the outcome values, and the subsequent parametric analysis
+is conditional on all the variables used in the matching procedure,
+matching can be done multiple times and the best matched sample chosen
+without biasing causal estimates from the ultimate parametric
+analysis.  Diagnostics for propensity scores thus involve assessing
+specifications and choosing the single specification with the best
+balance between the matched treated and control groups.  If covariates
+(or their squares or cross-products) are found to be imbalanced, those
+terms are then included in the propensity score specification, which
+should improve their balance.  
 
-\cite{RosRub84a}, \cite{Perkins00}, and \cite{DehWah02} describe
-propensity score model fitting strategies that involve examining the
-resulting covariate balance in subclasses defined by the propensity
-score.  If covariates (or their squares or cross-products) are found
-to be imbalanced, those terms are then included in the propensity
-score specification, which should improve their balance.  A sample
-strategy is described here:
+A sample strategy is described here:
 
 \begin{enumerate}
 \item Start with model (for example, logistic regression with
