@@ -665,17 +665,27 @@ very similar distributions in the matched treated and control groups.
 \subsection{Optimal matching}
 \label{optmatch}
 The default nearest neighbor 
-matching method in \MatchIt\ is what is known as ``greedy" matching, where the treated units 
-are matched
-one at a time, with the closest control match for each chosen, without trying to minimize a global distance measure.  
-Another method, known as ``optimal" matching, finds the matched samples with the smallest average distance between each 
-matched pair.   Optimal matching can be performed with \MatchIt\ using an add-on package called ``\texttt{optmatch}" 
-(\cite{Hansen04}).  Because \texttt{optmatch} is not yet available on CRAN, it must be installed separately, from
-\hlink{FILL IN HERE}{http://gking.harvard.edu/zelig}.  
+matching method in \MatchIt\ is what is known as ``greedy" matching, where the closest control match for each treated unit
+is chosen  
+one at a time, without trying to minimize a global distance measure.  
+Another method, known as ``optimal" matching, finds the matched samples with the smallest average absolute
+propensity score distance 
+between each matched pair.   
+With large control pools, greedy and optimal matching may lead to very similar (or the same) 
+sets of matches; research (\cite{GuRos93}) has shown that greedy and optimal matching generally choose 
+the same sets of controls for the matched samples, but that optimal matching does a better job of minimizing the propensity
+score distance within each pair.  In addition, optimal 
+matching can be particularly helpful when there are not many appropriate control matches for the
+treated units.    See \cite{GuRos93} or \cite{Rosenbaum02} for more information on optimal matching.
 
+Optimal matching can be performed with \MatchIt\ using an add-on package called ``\texttt{optmatch}" 
+(\cite{Hansen04}).  Because \texttt{optmatch} is not yet available on CRAN, it must be installed separately, from
+\hlink{http://www.stat.lsa.umich.edu/~bbh/optmatch.html}{http://www.stat.lsa.umich.edu/~bbh/optmatch.html}.  
 Once \texttt{optmatch} is installed, optimal matching can be 
-chosen within \MatchIt\ by simply setting \texttt{m.order=1}.  All
-other options for nearest neighbor matching remain the same.  Here we provide an example of optimal matching.  First
+chosen within \MatchIt\ simply by setting \texttt{m.order=1}.  All
+other options for nearest neighbor matching remain the same.  
+
+Here we provide an example of optimal matching.  First
 we show the default greedy matching, which matches the treated students in order from the treated unit with the highest 
 propensity score to the treated unit with the smallest propensity score.  
 
@@ -761,15 +771,10 @@ Number of units discarded:   0
 %temp <- foo$data$pscore[foo$data$treat==1]-foo$data$pscore[foo$match.matrix[,1]]
 %mean(abs(temp))
 
-In this example, we see that the resulting balance in the matched samples is better when optimal matching is used.
+In this example, even though optimal matching is not guaranteed to maximize the balance in the overall matched samples, 
+the resulting balance in the matched samples is better when optimal matching is used.
 For example, the t-statistic of the propensity score in matched samples is 0.14 with greedy matching and only 
-0.03 with optimal matching.  With large control pools, greedy and optimal matching may lead to very similar (or the same) 
-sets of matches and research (\cite{GuRos93}) has shown that greedy and optimal matching generally choose 
-the same sets of controls for the matched samples, but that optimal matching does a better job of minimizing the propensity
-score distance within each pair.  In addition, optimal 
-matching can be particularly helpful when there are not many appropriate control matches for the
-treated units.    See \cite{GuRos93} or \cite{Rosenbaum02} for more information on optimal matching.
-
+0.03 with optimal matching.  
 
 \subsection{Propensity Score Matching with Exact Restriction}
 
@@ -1089,10 +1094,13 @@ provide summaries across subclasses.
 When all treated and control units will be used in the analysis, a particular type of subclassification is called
 ``full matching"  (\cite{Rosenbaum02, Hansen04}), in which the matched sample is composed of matched sets, where
 each matched set contains either one treated unit and one or more controls, or one control unit and one or more
-treated units.  Full matching is optimal in terms of minimizing a weighted average of the distances between
+treated units.  Full matching is optimal in terms of minimizing a weighted average of the propensity score distances between
 each treated subject and each control subject within each stratum.  Full matching can be implemented in \MatchIt\ using
-the add-on package ``optmatch", discussed in Section \ref{optmatch}.  All options discussed in the documentation with
-``optmatch" can be used in \MatchIt\ through the ``????" option.
+the add-on package ``optmatch", discussed in Section \ref{optmatch}.  For full matching, the only input required is the
+option ``full=TRUE", a propensity score model, and the data set.  Additionally, all 
+options discussed in the documentation with
+``optmatch" can be used in \MatchIt\ through the ``full.options()" list.  \MatchIt\ nearest neighbor matching options
+will be ignored with full matching.
 
 Diagnostics are slightly different with full matching; since many subclasses will have only one treated or control unit it 
 is not possible to do the weighted comparisons done for standard subclassification.  
@@ -1549,7 +1557,7 @@ matchit <- function(formula, data, model="logit", discard=0,
   step by conducting the parametric analysis within each subclass and
   then aggregating the results.  This increases robustness of the
   parametric step by shortening the length of any parametric
-  extrapolations and smoothing.
+  extrapolations and smoothing.  See also the discussion of the \texttt{full} option.  
   \begin{itemize}
   \item \texttt{subclass} is either (1) a scalar, specifying the
     number of subclasses, or (2) a vector of probabilities bounded
@@ -1589,7 +1597,7 @@ matchit <- function(formula, data, model="logit", discard=0,
 
 \item \textbf{Full.}  \texttt{full} specifies full matching, which forms subclasses using all
 treated and all control units.  When \texttt{full=TRUE}, \texttt{nearest} is automatically set to \texttt{FALSE}.
-The default is not to do full matching (\texttt{full=FALSE}).  
+The default is to not do full matching (\texttt{full=FALSE}).  
 
 \item \textbf{Full.Options().}  \texttt{full.options()} is an optional list of additional options for
 the call to \texttt{optmatch} when doing full matching.  See the \texttt{optmatch} documentation for more information.
@@ -1646,9 +1654,7 @@ they are returned as \texttt{NA}:
    
  \item \texttt{psclass} contains the subclass index in an ordinal
    scale from 1 to the total number of subclasses as specified in
-   \texttt{subclass}; a higher subclass refers to a higher propensity
-   score (higher probability of treatment given observed values of the
-   covariates).  Unmatched units have \texttt{psclass=0}.
+   \texttt{subclass} (or the total number of subclasses from a full matching).  Unmatched units have \texttt{psclass=0}.
    
  \item \texttt{q.cut} gives the subclass cut-points that classify the
  propensity score.
@@ -1994,6 +2000,7 @@ Overall  185   429
 \end{verbatim}
 
 \subsection{Linear regression on matched samples}
+\label{linreg}
 Linear regression is a common method for estimating causal effects.
 \MatchIt\ helps ensure that the regression is done using treated and
 control groups with similar covariate distributions, thus reducing
@@ -2273,6 +2280,60 @@ Pooled Average Treatment Effect: Y - PR
 1 -72.41 1568 -4041 3520 -3053  2737
 
 \end{verbatim}
+
+\subsection{Analysis of data from full matching}
+It will generally not be possible to run models
+separately within each subclass after full matching, due to very small sample sizes of either the treated or
+control group within each subclass.  In this situation, a common approach is to run a model similar to that 
+described in Section \ref{linreg}, with fixed effects included for each of the subclasses. 
+
+For example, 
+
+\begin{verbatim}
+> foo1 <- matchit(treat ~ age + educ + black + hispan + married +
+                nodegree + re74 + re75, data=lalonde, full=T)
+> m1 <- lm(re78~ treat + age + educ + black + hispan + married +
+         nodegree + re74 + re75 + as.factor(psclass),
+         data=foo1$data)
+> summary(m1)
+> summary(m1)
+
+Call:
+lm(formula = re78 ~ treat + age + educ + black + hispan + married + 
+    nodegree + re74 + re75 + as.factor(psclass), data = foo1$data)
+
+Residuals:
+   Min     1Q Median     3Q    Max 
+-14184  -4357   -839   3563  49756 
+
+Coefficients:
+                        Estimate Std. Error t value Pr(>|t|)    
+(Intercept)            3.783e+04  1.352e+04   2.799 0.005327 ** 
+treat                  1.681e+03  8.412e+02   1.998 0.046205 *  
+age                   -7.800e+01  5.185e+01  -1.504 0.133164    
+educ                  -5.582e+02  4.002e+02  -1.395 0.163689    
+black                 -1.823e+04  7.779e+03  -2.344 0.019472 *  
+hispan                -5.685e+03  2.551e+03  -2.229 0.026260 *  
+married                5.515e+03  2.139e+03   2.578 0.010226 *  
+nodegree              -3.837e+03  1.841e+03  -2.084 0.037639 *  
+re74                   5.830e-01  1.535e-01   3.798 0.000164 ***
+re75                   1.193e-01  1.439e-01   0.829 0.407230    
+as.factor(psclass)2   -6.910e+02  4.957e+03  -0.139 0.889181    
+as.factor(psclass)3   -1.718e+04  9.093e+03  -1.890 0.059375 .  
+as.factor(psclass)4   -2.114e+04  8.299e+03  -2.547 0.011149 *  
+as.factor(psclass)5   -1.601e+04  7.214e+03  -2.220 0.026883 *  
+...
+as.factor(psclass)98  -7.008e+03  5.342e+03  -1.312 0.190186    
+as.factor(psclass)99  -1.564e+04  6.449e+03  -2.425 0.015643 *  
+as.factor(psclass)100 -3.926e+03  6.380e+03  -0.615 0.538526    
+as.factor(psclass)101 -1.875e+04  7.637e+03  -2.455 0.014408 *  
+---
+Signif. codes:  0 `***' 0.001 `**' 0.01 `*' 0.05 `.' 0.1 ` ' 1 
+
+Residual standard error: 6921 on 504 degrees of freedom
+Multiple R-Squared: 0.2943,     Adjusted R-squared: 0.1417 
+F-statistic: 1.928 on 109 and 504 DF,  p-value: 1.144e-06 
+\end{verbatim} 
 
 \subsection{Matching and Difference-in-Difference Estimates}
 
