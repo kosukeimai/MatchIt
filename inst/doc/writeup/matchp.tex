@@ -522,14 +522,15 @@ as in an experiment, but the probability of selection must not be
 correlated with the dependent variable $y$ after taking into account
 the treatment $t$ and pretreatment covariates, $X$.  Whether this
 assumption is satisfied by carefully considering and controlling for
-the sample selection process or by changing the quantity of interest
-to be that reflected by the sample, avoiding selection bias is not a
-trivial matter, and indeed is the subject of a great deal of concern
-and study in a large variety of methodological and substantive
-literatures.  We mention it here to emphasize that all the well-known
-concerns about selecting on the dependent variable should remain a
-concern to researchers even when adopting our approach of
-preprocessing data via nonparametric matching procedures.
+the sample selection process (as in case-control designs) or by
+changing the quantity of interest to be that reflected by the sample,
+avoiding selection bias is not a trivial matter, and indeed is the
+subject of a great deal of concern and study in a large variety of
+methodological and substantive literatures.  We mention it here to
+emphasize that all the well-known concerns about selecting on the
+dependent variable should remain a concern to researchers even when
+adopting our approach of preprocessing data via nonparametric matching
+procedures.
 
 We also assume that a researcher analyzing observational data has
 sufficient information in their measured pretreatment control
@@ -887,7 +888,7 @@ other to be a control.  Then no matter what effect $X_i$ has on $y$,
 we can ignore it entirely since $X_i$ is literally held constant
 within each pair of units.\footnote{Formally, ignorability, by which
   we mean the independence of $T$ and the potential outcomes given
-  $X$, and balance in equation~(\ref{balance}) guarantee valid
+  $X$, and balance in Equation \ref{balance} guarantee valid
   inferences, which can be written as $P(Y(0)|T=1)=P(Y(0)|T=0)$ and
   $P(Y(1)|T=1)=P(Y(1)|T=0)$.}
 
