@@ -2,7 +2,7 @@
 # Test sensitivity of FDA data to models, before and after matching
 # Use demsnmaj as the treatment (see matchfda.txt)
 
-fdafull <- read.table("~/match/docs/papers/carpenter/ajps2002-full1b.txt", header=T)
+fdafull <- read.table("~/matchit/docs/papers/carpenter/ajps2002-full1b.txt", header=T)
 
 # Model 1
 fdafull$treat <- fdafull$demsnmaj
