@@ -647,9 +647,13 @@ appropriate control matches for the treated units.  See \cite{GuRos93}
 or \cite{Rosenbaum02} for more information on optimal matching.
 
 Optimal matching can be performed with \MatchIt\ using an add-on
-package called ``\texttt{optmatch}'' (\cite{Hansen04}).  Because
-\texttt{optmatch} is not yet available on CRAN, it must be installed
-separately, from \\
+package called ``\texttt{optmatch}'' (\cite{Hansen04}), which must be
+installed separately by typing at the R command prompt,
+\begin{verbatim}
+> install.packages("optmatch", contriburl = "http://www.stat.lsa.umich.edu/~bbh/optmatch")
+\end{verbatim}
+Currently, \texttt{optmatch} is not available for Windows.  For more
+information about the package, see
 \hlink{http://www.stat.lsa.umich.edu/~bbh/optmatch.html}{http://www.stat.lsa.umich.edu/~bbh/optmatch.html}.
 Once \texttt{optmatch} is installed, optimal matching can be chosen
 within \MatchIt\ simply by setting \texttt{m.order=1}.  All other
