@@ -1,13 +1,13 @@
 #Koch replication
 rm(list=ls())
-library(Matchit)
+library(MatchIt)
 library(foreign)
 library(Zelig)
 library(mvtnorm)
 library(combinat)
 library(lattice)
 #setwd("c:/R/match/docs/papers/koch/")
-setwd("c:/match/docs/papers/koch/")
+#setwd("c:/match/docs/papers/koch/")
 source("fn.R")
 dta <- read.dta("genharvard.dta")
 
@@ -102,11 +102,11 @@ row.names(tab2) <- c("Candidate Ideology",
 xtable(tab2)
 
 #plotting figure
-setwd("c:/match/docs/papers/koch/writeup")
+#setwd("c:/match/docs/papers/koch/writeup")
 #setwd("c:/R/match/docs/papers/koch/writeup")
 trellis.device(device="pdf",file="kochdens.pdf",color=FALSE,width=6,height=3)
 par(mar=c(2, 2, 2, 2) + 0.1, cex.lab=0.6, cex.axis=0.6,
-    mgp=c(1,0.5,0), cex.main=0.5, cex=0.8)
+    mgp=c(1,0.5,0), cex.main=0.5, cex=0.8, bg="white")
 doverlay(mcoef,coef,lwd=2,
          xlab="Estimated average treatment effect", leg=F)
 arrows(coefficients(res)[tt], 4.7, coefficients(res)[tt],0, length=0.1)
