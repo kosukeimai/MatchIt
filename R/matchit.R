@@ -2,9 +2,11 @@ matchit <- function(formula, model="logit", data, discard=0,
                     reestimate=FALSE, nearest=TRUE, replace=FALSE,
                     m.order=2, ratio=1, caliper=0, calclosest=FALSE,
                     subclass=0, sub.by="treat", mahvars=NULL, exact=FALSE,
-                    counter=TRUE, opt = FALSE, full = FALSE, ...){ 
+                    counter=TRUE, full = list(full=FALSE, min.controls = 0, 
+                                    max.controls = Inf,
+                                    omit.fraction = NULL, tol = 0.01), ...){ 
   cl <- match.call()
-  if (m.order==1 | full)
+  if (m.order==1 | full$full)
     require(optmatch)
   
   #Checking input format
@@ -69,8 +71,9 @@ matchit <- function(formula, model="logit", data, discard=0,
   if(!(identical(counter,TRUE)| identical(counter,FALSE))){
     warning("counter=",cl$counter," is invalid; used counter=TRUE instead",call.=FALSE);counter=TRUE}    
   #full matching
-  if(!(identical(full,TRUE) | identical(full,FALSE))){
-    warning("full=",cl$full," is invalid; used full=TRUE instead",call. = FALSE)
+  if(!(identical(full$full,TRUE) | identical(full$full,FALSE))){
+    warning("full=list(full=",cl$full,") is invalid; used full=list(full=FALSE) instead",call. = FALSE)
+    full$full <- FALSE
   } else if(full & nearest){
     warning("Full matching will ignore nearest neighbor inputs",call. = FALSE)
     nearest <- F

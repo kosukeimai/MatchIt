@@ -1,12 +1,14 @@
 subclassify <- function(formula,data,in.sample,pscore,nearest=TRUE,
                         match.matrix,subclass=0,sub.by="treat",
-                        counter=TRUE, full=FALSE, ...){
+                        counter=TRUE, full = list(full=FALSE, min.controls = 0, 
+                                        max.controls = Inf,
+                                        omit.fraction = NULL, tol = 0.01)){
   data <- eval(data,parent.frame())
   treata <- model.frame(formula,data)[,1,drop=FALSE]
   treat <- as.vector(treata[,1])
   names(treat) <- row.names(treata)
 
-  if(full) { # full matching with propensity score
+  if(full$full) { # full matching with propensity score
     if(counter){cat("Full Matching...")}  
     n1 <- length(treat[treat==1])
     n0 <- length(treat[treat==0])
@@ -17,11 +19,16 @@ subclassify <- function(formula,data,in.sample,pscore,nearest=TRUE,
     colnames(distance) <- row.names(treata)[treat==0]
     for (i in 1:n1)
       distance[i,] <- abs(p1[i]-p0)
-    full <- as.matrix(fullmatch(distance, subclass.indices = NULL, ...))
+    full <- as.matrix(fullmatch(distance, subclass.indices = NULL,
+                                min.controls = full$min.controls,
+                                max.controls = full$max.controls,
+                                omit.fraction = full$omit.fraction,
+                                tol = full$tol))
     psclass <- full[pmatch(row.names(treata), row.names(full)),]
     psclass <- as.numeric(as.factor(psclass))
     names(psclass) <- row.names(treata)
     q <- NULL
+    if(counter){cat("Done\n")}
   }
   else if(subclass) {
     if(counter){cat("Subclassifying...")}  
