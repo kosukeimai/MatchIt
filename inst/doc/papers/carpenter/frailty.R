@@ -21,15 +21,21 @@ lognorm.inv.gauss.llik <- function(param, Y, X, C){
   beta <- param[3:length(param)]
   mu <- X%*%beta
 
-  value <- sum((1-C)*(-log(sigma) + dnorm((log(Y)-mu)/sigma, log=TRUE) -
-                      pnorm((log(Y)-mu)/sigma, lower.tail= FALSE,
-                            log.p=TRUE)) -
-               0.5*log(1-2*theta*pnorm((log(Y)-mu)/sigma,
-                                       lower.tail= FALSE, 
-                                       log.p=TRUE)))
-  value <- value + sum((1-sqrt(1-2*theta*pnorm((log(Y)-mu)/sigma,
-                                               lower.tail= FALSE, 
-                                               log.p=TRUE)))/theta) 
+  lnS <- log(1 - pnorm((log(Y)-mu)/sigma))
+  lnS <- pnorm((log(Y)-mu)/sigma, lower.tail = FALSE, log = TRUE)
+  lnh <- dnorm(log(Y), mean=mu, sd=sigma, log = TRUE) - lnS
+  value <- sum(-sqrt(1-2*theta*lnS)/theta + (1-C)*lnh -
+    0.5*(1-C)*log(1-2*theta*lnS)) 
+  
+  #value <- sum((1-C)*(-log(sigma) + dnorm((log(Y)-mu)/sigma, log=TRUE) -
+  #                    pnorm((log(Y)-mu)/sigma, lower.tail= FALSE,
+  #                          log.p=TRUE)) -
+  #             0.5*log(1-2*theta*pnorm((log(Y)-mu)/sigma,
+  #                                     lower.tail= FALSE, 
+  #                                     log.p=TRUE)))
+  #value <- value + sum((1-sqrt(1-2*theta*pnorm((log(Y)-mu)/sigma,
+  #                                             lower.tail= FALSE, 
+  #                                             log.p=TRUE)))/theta) 
   return(-value)
 }
 
@@ -67,15 +73,16 @@ if (TEST) {
                  I(natregsq/10000) + wpnoavg3 + vandavg3 + condavg3,
                  dist='lognormal', scale=0, data=data) 
   res <- toy
-  print(summary(res))
+  #print(summary(res))
 
-  start <- c(res$scale, res$coef)
-  res1 <- optim(start, lognorm.llik, Y = data$acttime,
-                X=model.matrix(res), C=(data$d==0)*1, method="BFGS")
-  print(res1)
+  #start <- c(res$scale, res$coef)
+  #res1 <- optim(start, lognorm.llik, Y = data$acttime,
+  #              X=model.matrix(res), C=(data$d==0)*1, method="BFGS")
+  #print(res1)
   
-  start <- c(res$scale, 0, res$coef)
   start <- c(-0.21, 0.54, 2.92, -2.50)
+  print(lognorm.inv.gauss.llik(start, Y=data$acttime,
+                               X=model.matrix(res), C=(data$d==0)*1)) 
   res2 <- optim(start, lognorm.inv.gauss.llik, Y = data$acttime,
                 X=model.matrix(res), C=(data$d==0)*1, method="BFGS")
   print(res2)
