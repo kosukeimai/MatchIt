@@ -1301,8 +1301,8 @@ Our second empirical illustration analyzes the dataset about the
 approval time of new pharmaceutical products by the Food and Drug
 Administration (FDA). The original dataset was studied by
 \citet{Carp02}, and we were able to replicate all of his results which
-use the variables made available to us.  See that paper for details of the data
-set utilized (we concentrate on Model 1 of Table 2).  
+use the variables made available to us.  See that paper for details of
+the data set utilized (we concentrate on Model 1 of Table 2).
 
 In this influential paper, \citet{Carp02} examines various
 determinants of the FDA approval time to answer the question of how
@@ -1314,37 +1314,46 @@ Democrats control the White House, when the agency's oversight
 committees are more liberal, and when the House and Senate are more
 liberal'' \citep[p.495]{Carp02}. That is, the more liberal the FDA's
 overseers are, the more likely the agency is to approve new drugs
-slowly. 
+slowly.
 
-To test this hypothesis, Carpenter uses a lognormal survival model with the
-main causal variables (median adjusted ADA scores for House and Senate
-Committees as well as for House and Senate floors, Democratic Majority
-in House and Senate, and Democratic Presidency) along with 18 control
-variables including clinical and epidemiology factors and firm
-characteristics.\footnote{In the original paper, \citet{Carp02} uses
-  the lognormal model with frailty. He does not specify any group and
-  assumes a common random effect.  Here, for the sake of simplicity, we
-  use the standard lognormal model. The substantive results do not
-  change when the frailty model is used.}  The dataset consists of 408
-new drugs whose applications were reviewed by the FDA, and 262 of
-which were eventually approved. The remaining 146 applications were
-still pending at the time of data collection and hence are
-treated as right-censored observations. The approval time is measured
-in months that passed from the submission of an application.  In our
-analysis, we focus on the estimation of the marginal effect using the
-binary treatment variable of Democratic Senate majority, which is one
-of the seven oversight variables. We do not control for the remaining
-six oversight variables because they are conceptually and
-statistically highly related to the Democratic Senate majority
-variable.
+To test this hypothesis, Carpenter uses a lognormal survival model
+with the main causal variables (median adjusted ADA scores for House
+and Senate Committees as well as for House and Senate floors,
+Democratic Majority in House and Senate, and Democratic Presidency)
+along with 18 control variables including clinical and epidemiology
+factors and firm characteristics.\footnote{In the original paper,
+  \citet{Carp02} uses the lognormal model with frailty. He does not
+  specify any group and assumes a common random effect.  Here, for the
+  sake of simplicity, we use the standard lognormal model. The
+  substantive results do not change when the frailty model is used.}
+The dataset consists of 408 new drugs whose applications were reviewed
+by the FDA, and 262 of which were eventually approved. The remaining
+146 applications were still pending at the time of data collection and
+hence are treated as right-censored observations. The approval time is
+measured in months that passed from the submission of an application.
 
-To preprocess the data, we conduct nearest neighbor propensity
-score matching (without replacement), estimating the propensity score using logistic regression
-with all covariates as linear predictors. We find that including a
-square root of the nightly TV news disease story variable into this
-model significantly improves its balance after matching. This
-preprocessing procedure discards 49 units (2 treated units and 47
-control units) from the sample. 
+In our analysis, we focus on the estimation of the marginal effect
+using the binary treatment variable of Democratic Senate majority,
+which is one of the seven oversight variables. We do not control for
+the remaining six oversight variables because they are conceptually
+and statistically highly related to the Democratic Senate majority
+variable. In the original analysis, the reported coefficient for this
+variable is statistically significant at 10\% level but in the
+opposite direction of his hypothesis.  For our purposes, however, this
+treatment variable is of particular interest because \citet{Carp02}
+finds that ``The coefficient estimate for this variable [Democratic
+Senate majority] is not significant in other regressions, and even
+switches sign when firm variables are added (analyses available upon
+request)'' (p.498). We are, therefore, interested in how this model
+sensitivity can be reduced by preprocessing the data.
+
+To preprocess the data, we conduct nearest neighbor propensity score
+matching (without replacement), estimating the propensity score using
+logistic regression with all covariates as linear predictors. We find
+that including a square root of the nightly TV news disease story
+variable into this model significantly improves its balance after
+matching. This preprocessing procedure discards 49 units (2 treated
+units and 47 control units) from the sample.
 
 
 \begin{figure}[t] 
