@@ -213,33 +213,31 @@ Because of pretreatment differences among the districts (both
 measured, $X_i$, and unmeasured), the causal effect may differ across
 the districts.  As such, the definition of the causal effect exists at
 the district level, but the definition does not otherwise require
-reference to the pretreatment variables. {\bf A funny thing is that
-  ``realized'' causal effect is never realized (or observed).}
+reference to the pretreatment variables.
 
 A causal effect is a function of \emph{potential outcomes}: let
-$y_i(t_i=1)\equiv y_i(1)$ {\bf this should be $y_i(1)\equiv
-  y_i(t_i=1)$.} be the vote we would observe in district $i$ in say
-the 2008 election if in fact the Democratic incumbent receives his or
-her party's nomination (i.e., $t_i=1$) and $y_i(t_i=0)\equiv y_i(0)$
-{\bf this should be $y_i(0)\equiv y_i(t_i=0)$.} the vote the party
-would receive if the Democratic Party nominates a nonincumbent
-($t_i=0$).  The use of parentheses in this notation denotes that the
-outcome is potential, and so not necessarily observed, and that it
-depends on the value of the variable in parentheses.  A key point is
-that the values of these potential outcomes remain the same regardless
-of whether the treatment is in fact applied in district $i$ or not.
-However, since the Democratic Party either will nominate ($t_i=1$) or
-will not nominate ($t_i=0$) an incumbent to run in district $i$, we
-will observe either $y_{i}(1)$ or $y_{i}(0)$ but not both.\footnote{We
-  assume throughout that every unit within each treatment group
-  receives the same treatment.  This assumption would be violated in
-  our running example if the nomination the Democratic party gives to
-  the incumbent in some districts means something different from that
-  in other districts.  We also assume that the treatment in one unit
-  has no effect on the potential outcomes in any unit other than its
-  own.  Together these two assumptions are sometimes known under the
-  awkward name of the ``stable unit treatment value assumption'' or
-  SUTVA \citep{Rubin74}.}
+$y_i(1)\equiv y_i(t_i=1)$ be the vote we would observe in district $i$
+in say the 2008 election if in fact the Democratic incumbent receives
+his or her party's nomination (i.e., $t_i=1$) and $y_i(0)\equiv
+y_i(t_i=0)$ the vote the party would receive if the Democratic Party
+nominates a nonincumbent ($t_i=0$).  The use of parentheses in this
+notation denotes that the outcome is potential, and so not necessarily
+observed, and that it depends on the value of the variable in
+parentheses.  A key point is that the values of these potential
+outcomes remain the same regardless of whether the treatment is in
+fact applied in district $i$ or not.  However, since the Democratic
+Party either will nominate ($t_i=1$) or will not nominate ($t_i=0$) an
+incumbent to run in district $i$, we will observe either $y_{i}(1)$ or
+$y_{i}(0)$ but not both.\footnote{We assume throughout that every unit
+  within each treatment group receives the same treatment.  This
+  assumption would be violated in our running example if the
+  nomination the Democratic party gives to the incumbent in some
+  districts means something different from that in other districts.
+  We also assume that the treatment in one unit has no effect on the
+  potential outcomes in any unit other than its own.  Together these
+  two assumptions are sometimes known under the awkward name of the
+  ``stable unit treatment value assumption'' or SUTVA
+  \citep{Rubin74}.}
 
 The difference between the two potential outcomes defines the simplest
 realized (or in-sample) definition of a causal effect:
@@ -247,10 +245,11 @@ realized (or in-sample) definition of a causal effect:
   \label{rce}
   \text{(Realized causal effect for unit $i$)} = y_i(1) - y_i(0).
 \end{equation}
-The fact that one of these potential outcomes is always a
-counterfactual --- and thus is never known for certain no matter how
-perfect the research design, experimental control, or number of
-observations collected --- expresses what is known as the
+(This quantity is an unobserved realization of a random variable to be
+defined below.)  The fact that one of these potential outcomes is
+always a counterfactual --- and thus is never known for certain no
+matter how perfect the research design, experimental control, or
+number of observations collected --- expresses what is known as the
 ``fundamental problem of causal inference'' \citep{Holland86}.
 
 \paragraph{Connections to Missing Data and Ecological Inference}
@@ -331,13 +330,8 @@ inferences, we imagine that the realized potential outcomes in
 which we use the corresponding capital letters).  We do not require
 that the data are sampled from some specific population, only that
 there exists some data generation process that leads to the one
-realization we see and could have led to some other realization. {\bf
-  This sentence is a little unclear to me. We might want to make a
-  clear distinction between in-sample (or finite population) and
-  out-of-sample (or population) inferences. For example, the former is
-  used to make inferences about a particular election at hand, whereas
-  the latter attempts to make generalization about some underlying
-  population. }  This logic then produces the random causal effect:
+realization we see and could have led to some other realization.  This
+logic then produces the random causal effect:
 \begin{equation}
   \label{rance}
   \text{(Random Causal Effect for unit $i$)}  = Y_i(1) - Y_i(0),
@@ -351,17 +345,16 @@ hypothetical draws of the the random causal effect:
   &= E(\text{Random Causal Effect for unit $i$})\\
   &= E[Y_i(1) - Y_i(0)]\\ \notag &= \mu_i(1) - \mu_i(0),
 \end{align}
-where $E[Y_i(1)]\equiv\mu_i(1)$ and $E[Y_i(0)]\equiv\mu_i(0)$. {\bf
-  Again, RHS and LHS should be flipped.}
+where $\mu_i(1)\equiv E[Y_i(1)]$ and $\mu_i(0)\equiv E[Y_i(0)]$.
 
 \paragraph{Average Quantities of Interest}
 In most applications, we do not attempt to estimate the treatment
 effect for each observation, and instead estimate the average over all
-observations or some subset of observations. {\bf or for a particular
-  (subset of) population} This leads to two choices for quantities of
-interest, for either realized and random causal effects (we show them
-here for the latter).  First is the population average treatment
-effect or ATE:
+observations, for some subset of observations, or for a particular
+population or population subgroup.  This leads to two choices for
+quantities of interest, for either realized and random causal effects
+(we show them here for the latter).  First is the population average
+treatment effect or ATE:
 \begin{align}
   \label{pate}
   \text{ATE} = E[Y_i(1) - Y_i(0)] \\
@@ -374,8 +367,8 @@ the random potential outcomes for each unit as well as over units).
   not the estimand. alternatively, the second equation can be
   interpreted as the estimand of the sample aerage treatment effect. }
 
-The alternative choice of a target quantity of interest is the {\bf
-  population} average treatment effect on the treated, or ATT:
+The alternative choice of a target quantity of interest is the
+population average treatment effect on the treated, or ATT:
 \begin{align}
   \label{att}
   \text{ATT} = E[Y_i(1) - Y_i(0)|t=1] \\
@@ -396,14 +389,13 @@ that receive or would receive the drugs.  For another example, in job
 training programs, we are not normally interested in assigning
 employed people to have this training.  In the social sciences, the
 ATT is also a reasonable choice, but so is the average treatment
-effect (the ATE).  In our running example, it is quite likely that if
-an incumbent were nominated in districts in which he or she did not
-actually receive the nomination that an incumbency advantage would
-still exist, and whatever this effect is, it might be of substantive
-interest {\bf this sentence seems a bit awkward.}.  In this paper, we
-usually focus on ATT as the quantity of interest when it is
-conceptually or algebraically simpler, but we also show how to compute
-the ATE.
+effect (the ATE).  In our running example, we might be interested not
+only in the effect of incumbency when the incumbent were nominated,
+but we can also imagine what might have happened if an incumbent were
+nominated a district in which he or she did not actually receive the
+nomination.  In this paper, we usually focus on ATT as the quantity of
+interest when it is conceptually or algebraically simpler, but we also
+show how to compute the ATE.
 
 \section{Data Collection Mechanisms}
 
@@ -417,24 +409,19 @@ methods.
 
 \subsection{Experimental}
 
-Although true {\bf classical randomized instead of ``true''}
-experiments are only very rarely conducted in political science, they
-remain a useful ideal type for understanding other types of research.
-In addition, {\bf rather than using ``in addition'' should we use a
-  different word because this is something important and needs to be
-  emphasized?} some of the assumptions necessary for valid inference
-in experiments will be approximated by the preprocessing procedures we
-suggest below.
+Although classical randomized experiments are only very rarely
+conducted in political science, they remain a useful ideal type for
+understanding other types of research.  Indeed, some of the
+assumptions necessary for valid inference in experiments will be
+approximated by the preprocessing procedures we suggest below.
 
-Valid and relatively automatic {\bf ``straightforward'' rather than
-  ``automatic''?} causal inferences can be achieved via classical
-randomized experiments (where by ``classical'' we refer to the
-situation where the random assignment is complete and not applied
-within categories of other variables {\bf ``not applied ...'' is not
-  clear to me}).  Such experiments have three critical features: (1)
-\emph{random selection} of units to be observed from a given
-population, (2) \emph{random assignment} of values of the treatment
-($t_i$) to each observed unit, and (3) a \emph{large $n$}.
+Valid and relatively straightforward causal inferences can be achieved
+via classical randomized experiments.  Such experiments have three
+critical features: (1) \emph{random selection} of units to be observed
+from a given population, (2) \emph{random assignment} of values of the
+treatment ($t_i$) to each observed unit (in ``classical'' experiments
+random assignment is complete and not within fixed clusters or strata
+defined by other variables), and (3) a \emph{large $n$}.
 
 The first feature avoids selection bias by identifying a given
 population and guaranteeing that the probability of selection from
@@ -448,16 +435,16 @@ variable bias even without any control variables included.  To see
 this, recall that, under the usual econometric rules for omitted
 variable bias, a variable $X_i$ must be controlled for if it is
 causally prior to $t_i$, empirically related to $t_i$, and affects
-$y_i$ conditional on $t_i$ {\bf or in other words, $X_i$ must be
-  correlated with the potential outcomes, $y_i(1)$ and $y_i(0)$}.  If,
+$y_i$ conditional on $t_i$ (or, in other words, $X_i$ must be
+correlated with the potential outcomes, $y_i(1)$ and $y_i(0)$).  If,
 instead, one or more of the three conditions do not hold, then $X_i$
-may be omitted without any bias resulting {\bf although variance may
-  be larger}.  Random assignment guarantees that $t_i$ is unrelated to
+may be omitted without any bias resulting (although the variance may
+increase).  Random assignment guarantees that $t_i$ is unrelated to
 \emph{any} $X_i$, whether measured or not, except by random chance.
 Moreover, the large $n$ in condition (3) guarantees that this chance
 is vanishingly small.
 
-{\bf Classical randomized} Experiments are a true ideal type,
+Classical randomized Experiments are a true ideal type,
 particularly in relation to most social science research where almost
 all research fails to meet at least one of the three features.  Even
 most social science lab experiments have random assignment but no
@@ -500,14 +487,13 @@ variables $X$ so that it is possible via \emph{some} method to make
 valid causal inferences.  This is known in some fields as the absence
 of omitted variable bias, so that $X_i$ must include all variables
 that are causally prior to $t_i$, associated with $t_i$, and affect
-$y_i$ conditional on $t_i$ {\bf citation? we also need to be careful
-  about whether to use $y_i$ or $Y_i$ and $T_i$ or $t_i$}.  In other
+$Y_i$ conditional on $t_i$ \citep{Goldberger91,KinKeoVer94}.  In other
 fields, this same condition is known as ignorability, which means that
 $t_i$ and the potential outcomes are independent after conditioning on
-$X_i$, and so we can literally ignore all unobserved variables {\bf
-  \citep{RosRub83}}.  Ignorability is a strong condition, but it is
-one about which social scientists are deeply knowledgeable and which
-is the central methodological concern of many substantive scholarly
+$X_i$, and so we can literally ignore all unobserved variables
+\citep{RosRub83}.  Ignorability is a strong condition, but it is one
+about which social scientists are deeply knowledgeable and which is
+the central methodological concern of many substantive scholarly
 articles.  We emphasize this assumption to make clear that our
 procedures contain no magic: They are unable to control for variables
 that are not measured.
@@ -521,12 +507,10 @@ of commonly used parametric methods.
 
 \section{Parametric Analysis Methods}
 
-Researchers in the situation of knowing the parametric model {\bf
-  nobody knows the true model and so I would say ``researchers who are
-  willing to assume a parametric model''} that generated their data,
-up to but not including some unknown parameters, should specify and
-directly estimate this parametric model.  Preprocessing with matching
-procedures is suboptimal in this situation.  Of course, few
+Researchers willing to assume a parametric model that generated their
+data, up to but not including some unknown parameters, should specify
+and directly estimate this parametric model.  Preprocessing with
+matching procedures is suboptimal in this situation.  Of course, few
 researchers with real observational data sets in the social sciences
 have this kind of knowledge and as a result some choices need to be
 made among the range of possible parametric models. {\bf I guess we
