@@ -558,7 +558,7 @@ assumptions, we have implicitly made three others that are worth
 additional emphasis here.  First, pretreatment covariates $X$ are
 truly pretreatment and are thus not consequences of $t$.  Second, we
 assume the independence of units, which is the equivalent of assuming
-the absence of time series or spatial autocorrelation (or in other
+the absence of time series or spatial autocorrelation across units (or in other
 words that the two potential outcomes for observation $i$ and the
 treatment for observation $j$ are independent, for all $i\not=j$).  We
 have also assumed that all treatments are the same.  This assumption
@@ -1024,7 +1024,7 @@ Theoretically, the true propensity score is valuable because it is a
 propensity score distributions, then the covariates will be balanced
 in the treated and control groups on all variables in $X$.  In
 addition, if the treatment assignment is ignorable given the
-covariates $X_i$, then it is also ignorable given only the propensity
+covariates $X$, then it is also ignorable given only the propensity
 score.  This means that matching can be done using just the
 one-dimensional propensity score, instead of all of the covariates
 $X$.  Using the true propensity score in this way thus would seem to
@@ -1081,7 +1081,8 @@ nearest neighbor matching on the propensity score).\footnote{When
   nearest neighbors exist. The first, known as ``greedy'' matching,
   simply starts with some treated unit and matches the closest control
   unit that has not yet been matched.  This approach, however, is not
-  invariant to the order in which we match units.  A second approach
+  invariant to the order in which units are matched.  A second approach, known
+  as ``optimal'' matching,
   minimizes the total distance within matched units
   \citep[e.g.,][]{Rosenbaum89}.  Our software implements both,
   incorporating optimal matching code provided by \citet{Hansen04}.}
@@ -1120,7 +1121,7 @@ choose specific matches within these pools.  If exact matching does
 not turn up sufficient observations, then we can choose the nearest
 neighbor on the large-effect variables, defined by the Mahalanobis
 distance, among all units within 0.25 standard deviations (also known
-as ``calipers'') of the propensity score computed from all other
+as ``calipers'') of the propensity score computed from all
 variables.\footnote{The 0.25 standard deviation figure, which is the
   most common recommendation in the literature, appears to be
   interpolated from the results in \citet{CocRub73}.  The Mahalanobis
@@ -1189,7 +1190,7 @@ $X$ with the mean of that variable in the control group.  If one or
 more of these differ by more than half a standard deviation of the
 respective $X$ variable, then better balance is needed.  We can also
 compare the variances of each variable between the two groups, as well
-as interactions or higher order moments.  Another common approach is
+as interactions or higher order moments.  Another common approach is to
 compare treatment and control histograms (or density estimates) one
 variable at a time.
 
@@ -1210,7 +1211,7 @@ If some covariates are omitted from some of the matching procedures,
 the balance on them should still be checked.  Doing so is often a good
 way to discover important covariates, since in fact researchers
 frequently have good qualitative knowledge of variables not coded in
-$X$ \citep[][Ch.3]{Rosenbaum02}.  Indeed, preprocessing can help
+$X$ (\citep[][Ch.3]{Rosenbaum02}).  Indeed, preprocessing can help
 researchers better understand their data when supplemented by good
 qualitative information and research \citep[e.g.,][]{RosSil01}.
 
@@ -1356,7 +1357,7 @@ we do not pursue it further.
 We also assume the absence of autocorrelation (or interference among
 units).  In this application, this assumption means that the existence
 of a Democratic Senate majority when one drug is considered by the FDA
-has no affect on the approval time of another drug (even after
+has no affect on the approval time of another drug (after
 controlling for the existence of a Democratic Senate majority and
 other control variables at the time of approval of the second drug).
 This assumption seems reasonably applicable to these data.
@@ -1376,7 +1377,7 @@ To preprocess, we conduct nearest neighbor propensity score matching
 (without replacement), estimating the propensity score using logistic
 regression with all covariates as linear predictors. We find that also
 matching on the square root of the nightly TV news disease story
-variable significantly improves its balance and so we include it.
+variable significantly improves its balance and so we include it in the propensity score model.
 This preprocessing procedure discards 49 units (2 treated units and 47
 control units) from the original sample that otherwise require
 substantial, model-dependent extrapolations.
@@ -1430,7 +1431,7 @@ problem with parametric models applied to raw data is that these
 control units will be most influential in any model fit to the raw
 data set.  By choosing the matched set of control units which look
 most similar to the treated units, the treated-control comparison will
-then take place only among units on the background variables and thus
+then take place only among units similar on the background variables and thus
 will not be affected as much by the model specification.
 
 We now run the same log-normal survival analysis as Carpenter did, but
@@ -1602,8 +1603,8 @@ improves balance considerably without reducing the number of
 observations much, and so we use it.  Our propensity score analysis
 involves a logistic regression of visibility on all six pretreatment
 covariates.  We also discard treatment units whose propensity score is
-greater than the maximum of control units and control units whose
-propensity score is lower than the minimum of the treated units.  This
+greater than the maximum of the control units' propensity scores and control units whose
+propensity score is lower than the minimum of the treated units' propensity scores.  This
 results in 31 discarded units, and (as in Figure \ref{fg:extrap})
 greatly reduces the risks of extrapolation.  Next, we create six
 subclasses by quantiles of the propensity score of the treated units.
@@ -1663,10 +1664,10 @@ each subclass.
 
 With this preprocessed data set we can now run the same least squares
 analysis as in \citet{Koch02}.  The only difference is that we run the
-analysis by subclass, and average the estimates weighting by the
+analysis by subclass, and average the estimates, weighting by the
 number of treated candidates in each subclass.  This yields an
 estimated average treatment effect of $-0.23$ with an estimated
-standard error $0.14$, indicating that female visibility might cause
+standard error of $0.14$, indicating that female visibility might cause
 voters to perceive female candidates as more liberal, the key
 substantive purpose of this analysis.
 
