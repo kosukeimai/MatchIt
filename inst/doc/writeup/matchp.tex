@@ -460,7 +460,7 @@ In this paper, we shall assume data are selected in a manner that does
 not generate selection bias.  Observations need not be selected at
 random, as in an experiment, but the probability of selection must not
 be correlated with the dependent variable $y$, after taking into
-account the treatment $t$ and pre-treatment covariates, $X$.  Whether
+account the treatment $t$ and pretreatment covariates, $X$.  Whether
 this assumption is satisfied by carefully considering and controlling
 for the sample selection process or by changing the quantity of
 interest to be that reflected by the sample, avoiding selection bias
@@ -472,7 +472,7 @@ concern to researchers even when adopting our approach of
 preprocessing data via nonparametric matching procedures.
 
 We also assume that a researcher analyzing observational data has
-sufficient information in their measured pre-treatment control
+sufficient information in their measured pretreatment control
 variables $X$ so that it is possible via \emph{some} method to make
 valid causal inferences.  This is known in some fields as the absence
 of omitted variable bias, so that $X_i$ must include all variables
@@ -662,7 +662,49 @@ genuine knowledge.  The frequent unavoidable consequence is high
 levels of model dependence, but no good reason to choose one set of
 assumptions over another.
 
-% graph on interpolation and extrapolation
+\begin{figure}[t] 
+ \begin{center}
+   \includegraphics[width=6in]{figs/olspanel.pdf}
+  \end{center}
+  \vspace{-0.275in}
+  \caption{Model sensitivity of average treatment effect estimates for
+    imbalanced raw and balanced matched data.  This figure presents a
+    fake dataset of treated units represented by ``T'' and control
+    units represented by ``C,'' where y-axis plots the outcome of
+    interest and the x-axis plots some confounding covariate.  The
+    panels depicts estimates of the average treatment effect for a
+    linear and quadratic specification, represented by the difference
+    between parallel lines and parabolas, respectively.  In the raw
+    data, plotted in the left panel, the models extrapolate for
+    treated units with $X$ values below 4 and are therefore sensitive
+    to specification.  In the matched data, plotted in the right
+    panel, treated units are matched with control units that are close
+    in $X$ (grey units are discarded) and as a result treatment effect
+    estimates are similar irrespective of model specification.}
+  \label{fg:extrap}
+\end{figure}
+
+To illustrate model sensitivity to specification in a very simple
+setting, Figure~\ref{fg:extrap} plots some simulated data with some
+outcome $Y$, confounding covariate $X$, and a treatment of interest.
+The left panel plots the raw data with simple linear and quadratic
+fitted values. The difference between the parallel lines or parabolas
+represents the estimated treatment effect, which here appears to be
+positive for the linear model and negative for the quadratic model.
+No treated units exist, however, with $X$ values below 4, and the
+models thereby extrapolate from the data.  Since we don't observe any
+treated units with $X < 4$, the data provide little information to
+estimate what the counterfactual outcome for control units with $X <
+4$ would be.  Morever, these control units appear to lead to an
+awkward fit of the models in the range of $X$ where our data is
+actually informative.  Confining ourselves to the range of units which
+are actually close in $X$ by matching, the details of which we discuss
+next, linear and quadratic specifications yields virtually identical
+treatment effect estimates in the right panel.  While astute
+researchers may point out that residual diagnostics should uncover
+misspecification in the left panel, the myriad of specification
+choices, and concordantly the difficulty of diagnosing
+misspecification, expands dramatically as the covariates grow.
 
 Some researchers surely respond to this diversity of possible models
 by inadvertently choosing specifications that support their favored
@@ -1231,7 +1273,7 @@ this with the results from the raw data.  To do this, we estimate the
 average treatment effect by estimating (\ref{att}) according to the
 fitted lognormal model.  For simplicity, we portray model dependence
 by the variability in point estimates of causal effects across
-potential specifications of pre-treatment covariates, although the
+potential specifications of pretreatment covariates, although the
 same conclusions apply to most other quantities of interest computed
 from parametric models.
 
@@ -1315,7 +1357,7 @@ therefore likely to be a significant problem.
       Political Awareness & 0.76 & 0.70 & 2.42 & 0.76 & 0.74 & 0.28 \\
       \hline
     \end{tabular}
-    \caption{Imbalance of pre-treatment covariates in Koch data.
+    \caption{Imbalance of pretreatment covariates in Koch data.
       The full sample size is 494, and the preprocessed data size is
       463.  The first three columns present means for visible female
       (``treated'') and invisible (``control'') Republican candidates,
@@ -1335,7 +1377,7 @@ improve balance much, no matter how we were able to specify the
 propensity score equation.  However, subclassifying on the propensity
 score improves balance well without reducing the number of
 observations much, and so we use it.  Our propensity score analysis
-involves a logistic regression of visibilty on all six pre-treatment
+involves a logistic regression of visibilty on all six pretreatment
 covariates.  We also discard treatment units whose propensity score is
 greater than the maximum of control units and control units whose
 propensity score is lower than the minimum of the treated units.  This
@@ -1372,7 +1414,7 @@ that subclass (t-statistic=1.15).
       Total $N$  & 313 & 43 & 52 & 26 & 16 & 13 \\
       \hline
     \end{tabular}
-    \caption{Means test statistics for six pre-treatment covariates.
+    \caption{Means test statistics for six pretreatment covariates.
       Each cell presents the t-statistic for the covariate within each
       subclass.  This table shows that relative balance can be
       achieved within each subclass with only six subclasses.}
