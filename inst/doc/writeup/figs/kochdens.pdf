@@ -2,8 +2,8 @@
 %âãÏÓ
 1 0 obj
 <<
-/CreationDate (D:20040803103922)
-/ModDate (D:20040803103922)
+/CreationDate (D:20040804032622)
+/ModDate (D:20040804032622)
 /Title (R Graphics Output)
 /Producer (R 1.9.0)
 /Creator (R)
@@ -651,7 +651,7 @@ S
 Q q
 BT
 0.000 0.000 0.000 rg
-/F1 1 Tf 6.00 0.00 0.00 6.00 168.29 3.46 Tm (Estimated Average Treatment Effect) Tj
+/F1 1 Tf 6.00 0.00 0.00 6.00 169.48 3.46 Tm (Estimated average treatment effect) Tj
 /F1 1 Tf 0.00 6.00 -6.00 0.00 10.37 134.00 Tm (Density) Tj
 ET
 Q q 24.19 24.19 383.62 239.62 re W n
@@ -1184,17 +1184,17 @@ S
 S
 BT
 0.000 0.000 0.000 rg
-/F1 1 Tf 10.00 0.00 0.00 10.00 135.52 98.95 Tm (Full Data) Tj
+/F1 1 Tf 10.00 0.00 0.00 10.00 134.51 98.95 Tm (Raw data) Tj
 /F1 1 Tf 10.00 0.00 0.00 10.00 268.53 240.06 Tm (Matched) Tj
-/F1 1 Tf 10.00 0.00 0.00 10.00 277.15 228.54 Tm (Data) Tj
-/F1 1 Tf 10.00 0.00 0.00 10.00 230.90 160.19 Tm (Point Estimate ) Tj
-/F1 1 Tf 10.00 0.00 0.00 10.00 237.32 148.67 Tm ( of Full Data) Tj
+/F1 1 Tf 10.00 0.00 0.00 10.00 277.98 228.54 Tm (data) Tj
+/F1 1 Tf 10.00 0.00 0.00 10.00 231.45 160.19 Tm (Point estimate ) Tj
+/F1 1 Tf 10.00 0.00 0.00 10.00 238.25 148.67 Tm ( of raw data) Tj
 ET
 Q
 endstream
 endobj
 14 0 obj
-17365
+17363
 endobj
 3 0 obj
 <<
@@ -1211,7 +1211,7 @@ xref
 0000000000 65535 f 
 0000000020 00000 n 
 0000000162 00000 n 
-0000018517 00000 n 
+0000018515 00000 n 
 0000000211 00000 n 
 0000000328 00000 n 
 0000000422 00000 n 
@@ -1222,7 +1222,7 @@ xref
 0000000909 00000 n 
 0000000993 00000 n 
 0000001075 00000 n 
-0000018495 00000 n 
+0000018493 00000 n 
 trailer
 <<
 /Size 15
@@ -1230,5 +1230,5 @@ trailer
 /Root 2 0 R
 >>
 startxref
-18601
+18599
 %%EOF
