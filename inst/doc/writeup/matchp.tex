@@ -166,10 +166,11 @@ To clarify our inferential goals, we begin with by defining the
 available.  To provide further familiarity with this concept, we
 briefly show the close connections between this definition and the
 goals of the substantively unrelated but mathematically closely
-related missing data and ecological inference literatures.  Finally,
-we generalize the definition to include features of random causal
-effects that is useful for our use of nonparametric methods as
-preprocessing for parametric models.
+related missing data and ecological inference literatures.  We then
+generalize the definition to include features of random causal effects
+that are useful for our use of nonparametric methods of preprocessing
+for parametric models.  Finally, we give specific causal estimates of
+interest at the population level.
 
 \paragraph{Realized Causal Effects}
 Because of pretreatment differences among the districts (both
@@ -282,11 +283,13 @@ hypothetical draws of the the random causal effect:
 \end{align}
 where $E[Y_i(1)]\equiv\mu_i(1)$ and $E[Y_i(0)]\equiv\mu_i(0)$.
 
+\paragraph{Average Quantities of Interest}
 In most applications, we do not attempt to estimate the treatment
 effect for each observation, and instead estimate the average over all
 observations or some subset of observations.  This leads to two
-choices for quantities of interest.  First is the population average
-treatment effect or ATE:
+choices for quantities of interest, for either realized and random
+causal effects (we show them here for the latter).  First is the
+population average treatment effect or ATE:
 \begin{align}
   \label{pate}
   \text{ATE} = E[Y_i(1) - Y_i(0)] \\
@@ -449,7 +452,7 @@ over observations, and forming a likelihood function
 \begin{equation}
   \label{lik}
   L(\alpha,\beta,\gamma,\theta|y) = \prod_{i=1}^n 
-  p\left(y_i \mid g(\alpha + t_i\beta + X_i\gamma), \alpha\right)
+  p\left(y_i \mid g(\alpha + t_i\beta + X_i\gamma), \theta\right)
 \end{equation}
 the maximum of which gives parameter estimates.
 
@@ -665,47 +668,59 @@ with enough observations.
 
 \section{Computing Uncertainty Estimates}
 
-No concensus exists in the literature on the right methods to use to
-compute uncertainty estimates, such as standard errors or confidence
-intervals, from matching procedures.  Little disagreement exists over
-the relevant technical statistical techniques; the issue instead
-revolves around normative criteria such as what researchers should
-condition on and what they should attribute to additional uncertainty.
-Since people are no more likely to reach consensus via debate on
-normative statistical issues than on normative political issues, we
-believe the best way forward is to choose a reasonable definition and
-let others pick others if they prefer.  Our choice, which we now
-explicate, is based on what is substantively reasonable and also easy
-to implement.
+No concensus exists in the literature on methods to use to compute
+uncertainty estimates, such as standard errors or confidence
+intervals, from matching procedures.  The problem is not some
+disagreement exists over technical statistical techniques.  Rather,
+the issue revolves around normative criteria such as what researchers
+should condition on and what they should attribute to additional
+uncertainty.  Since scholars are no more likely to reach consensus via
+debate on normative statistical issues than on normative political
+issues, we believe the best way forward is to choose a reasonable
+definition and show how to compute uncertainty estimates for it, and
+let others pick different definitions if they prefer.  Our choice,
+which we now explicate, appears substantively reasonable and has the
+advantage of being easy to implement.
 
 Parametric methods applied to raw data without preprocessing come with
 a list of relatively standard ways of computing uncertainty estimates.
 These include methods based on using the asymptotic normal
 approximation to the likelihood function, direct simulation from the
-finite sample posterior density, various frequentist bias corrections,
-robust Bayesian analysis involving classes of posteriors, and even
-nonparametric bootstrapping, etc.  Any of these are easy to implement
-by drawing and summarizing simulations of the chosen quantity of
-interest, given a parametric model and accompanying theory of
-inference.
+finite sampling distribution or posterior density, various frequentist
+bias corrections, robust Bayesian analysis involving classes of
+posteriors, and even nonparametric bootstrapping, among others.  Any
+of these are easy to implement by drawing and summarizing simulations
+of the chosen quantity of interest, given a parametric model and
+accompanying theory of inference.
 
-A common feature of the various uncertainty estimates in parametric
-methods is that they are all conditional on the pretreatment variables
-$X$ (and $t$), which are treated as fixed and exogenous.  Since all
-our preprocessing procedures do is to modify the raw data in ways that
-are solely a function of $X$, a reasonable method of computing
-uncertainty estimates is to continue to treat $X$, and the entire
-preprocessing procedures, as fixed.  The advantage of this procedure
-is to
+Our idea is to take advantage of a common feature of the uncertainty
+estimates associated with parametric methods: They are all conditional
+on the pretreatment variables $X$ (and $t$), which are therefore
+treated as fixed and exogenous.  Since our preprocessing procedures
+modify the raw data only in ways that are solely a function of $X$, a
+reasonable method of defining uncertainty for the purpose of computing
+uncertainty estimates is to continue to treat $X$, and thus our entire
+preprocessing procedures, as fixed.  The advantage of this definition
+is that we can easily compute standard errors and confidence intervals
+using the same methods researchers have been using with their
+parametric methods all along, but applied to the preprocessed instead
+of raw data.  (The one exception to our procedure occurs when matching
+with replacement, where we would then run the parametric procedure
+weighted by the number of treated units matched to each control unit.)
 
-With one relevant exception, preprocessed data
-
-% \begin{align}
-%   \label{att}
-%   \text{ATT} = E[Y_i(1) - Y_i(0)|t_i=1] \\
-%              = \frac{1}{\sum t_i}\sum_{i:t_i=1}[\mu_i(1) - \mu_i(0)],
-% \end{align}
-
+Thus, when estimating the ATT or ATE, we compute estimates of
+$\mu_i(1)$ and $\mu_i(0)$ and their uncertainty as usual from the
+parametric model applied to the preprocessed data.  If computing the
+realized causal effect (either on average over all observations or
+just the average for the treated units), we compute parametric
+estimates conditional on the observed $y_i$ for each unit.  In this
+situation, if $t_i=1$, we set $\mu_i(1)=y_i$ and use the parametric
+model to estimate $\mu_i(0)$ and its uncertainty, whereas if $t_i=0$,
+we set $\mu_i(0)=y_i$ and use the parametric model to estimate
+$\mu_i(1)$ and its uncertainty estimate.  In Bayesian models,
+estimating the realized causal effect requires the equivalent of
+conditioning on $y_i$ after the likelihood estimation (as in
+\citet{King97}).
 
 \section{Empirical Illustrations}
 
@@ -716,7 +731,8 @@ With one relevant exception, preprocessed data
 \appendix
 \section{Matching Software}
 
-
-\bibliographystyle{apsr} \bibliography{gk,gkpubs}
+\baselineskip=0.637\baselineskip
+\bibliographystyle{apsr} 
+\bibliography{gk,gkpubs}
 
 \end{document}
