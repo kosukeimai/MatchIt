@@ -1408,18 +1408,19 @@ using the preprocessed data set.  Since nothing changed other than the
 removal of data that would have required highly model-dependent
 inferences, no other analysis procedures need change.  We can compute
 point estimates, standard errors, and confidence intervals using the
-same procedures Carpenter did on the raw data. 
-% *** insert brief statement of results with se's.
-{\bf The estimated average treatment effect (ATE) is $-31.6$ months
-  with estimated standard error $10.3$, indicating that a Democratic
-  Senate majority significantly decreased the average approval time of
-  new drugs and therefore contradicting Carpenter's hypothesis.}
+same procedures Carpenter did on the raw data.  By applying this
+procedure to the preprocessed data, the estimated average treatment
+effect is $-31.6$ months with an estimated standard error $10.3$,
+indicating that a Democratic Senate majority significantly decreases
+the average approval time of new drugs. This result thus contradicts
+Carpenter's initial hypothesis.
 
-Although normally data analysis would end here, for our methodological
-purposes we go a step further to demonstrate the model-dependence of
-the average causal effect of a Democratic Senate majority using the
-preprocessed data and compare this with the results from the raw data.
-To do this, we estimate the average treatment effect by calculating
+Although data analysis would end here for those interested in the
+substantive research questions, for our methodological purposes we go
+a step further to demonstrate the model-dependence of the average
+causal effect of a Democratic Senate majority using the preprocessed
+data and compare this with the results from the raw data.  To do this,
+we estimate the average treatment effect by calculating
 Equation~(\ref{att}) according to the fitted lognormal model.  For
 simplicity, we portray model dependence by the variability in point
 estimates of causal effects across potential specifications of
