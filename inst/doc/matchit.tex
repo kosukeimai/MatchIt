@@ -37,21 +37,21 @@
     \href{http://www.people.fas.harvard.edu/\~deho}{http://www.people.fas.harvard.edu/\~\,deho},
     \href{mailto:Deho@Fas.Harvard.Edu}{Deho@Fas.Harvard.Edu}).}
 \and %
-Kosuke Imai\thanks{Assistant Professor, Department of Politics, Princeton
-    University (Corwin Hall 041, Department of Politics, Princeton
-    University, Princeton NJ 08544, USA;
-    \href{http://www.princeton.edu/\~kimai}{http://www.princeton.edu/\~\,kimai},
-    \href{mailto:KImai@Princeton.Edu}{KImai@Princeton.Edu}).}
+Kosuke Imai\thanks{Assistant Professor, Department of Politics,
+  Princeton University (Corwin Hall 041, Department of Politics,
+  Princeton University, Princeton NJ 08544, USA;
+  \href{http://www.princeton.edu/\~kimai}{http://www.princeton.edu/\~\,kimai},
+  \href{mailto:KImai@Princeton.Edu}{KImai@Princeton.Edu}).}
 \and %
 Gary King\thanks{David Florence Professor of Government, Harvard
   University (Center for Basic Research in the Social Sciences, 34
   Kirkland Street, Harvard University, Cambridge MA 02138;
-  \href{http://GKing.Harvard.Edu}{http://GKing.Harvard.Edu}, \href{mailto:King@Harvard.Edu}{King@Harvard.Edu}, (617)
-  495-2027).}
+  \href{http://GKing.Harvard.Edu}{http://GKing.Harvard.Edu},
+  \href{mailto:King@Harvard.Edu}{King@Harvard.Edu}, (617) 495-2027).}
 \and %
-Elizabeth A. Stuart\thanks{Ph.D.\ Candidate, Department of Statistics, Harvard
-  University. (Science Center 702, One Oxford Street, Cambridge, MA
-  02138, USA;
+Elizabeth A. Stuart\thanks{Ph.D.\ Candidate, Department of Statistics,
+  Harvard University. (Science Center 702, One Oxford Street,
+  Cambridge, MA 02138, USA;
   \href{http://www.people.fas.harvard.edu/\~estuart}{http://www.people.fas.harvard.edu/\~\,estuart},
   \href{mailto:Stuart@Stat.Harvard.Edu}{Stuart@Stat.Harvard.Edu}).}}
 
@@ -61,9 +61,9 @@ Elizabeth A. Stuart\thanks{Ph.D.\ Candidate, Department of Statistics, Harvard
 \maketitle
 
 \begin{rawhtml}
-<p>
-  [Also available is a downloadable <a href="/matchit/docs/matchit.pdf">PDF</a>
-  version of this entire document]
+  <p> [Also available is a downloadable <a
+  href="/matchit/docs/matchit.pdf">PDF</a> version of this entire
+  document]
 \end{rawhtml}
 
 \tableofcontents
@@ -71,16 +71,17 @@ Elizabeth A. Stuart\thanks{Ph.D.\ Candidate, Department of Statistics, Harvard
 \section{Introduction}
 \MatchIt\ implements the suggestions of Ho, Imai, King, and Stuart
 (2004) for improving parametric statistical models by preprocessing
-data with semi-parametric matching methods.  \MatchIt\ implements a wide
-range of sophisticated matching methods, making it possible to greatly
-reduce the dependence of causal inferences on commonly made, but
-hard-to-justify, statistical modeling assumptions.  The software also
-easily fits into existing research practices since, after
+data with semi-parametric matching methods.  \MatchIt\ implements a
+wide range of sophisticated matching methods, making it possible to
+greatly reduce the dependence of causal inferences on commonly made,
+but hard-to-justify, statistical modeling assumptions.  The software
+also easily fits into existing research practices since, after
 preprocessing with \MatchIt, researchers can use whatever parametric
 model they would have used without \MatchIt, but produce inferences
-with substantially more robustness and less sensitivity to modeling
-assumptions.  Matched data sets created by \MatchIt\ can be entered
-easily in \href{http://gking.harvard.edu/zelig/}{Zelig} for subsequent
+using the same procedures but with substantially more robustness and
+less sensitivity to modeling assumptions.  Matched data sets created
+by \MatchIt\ can also be entered easily in
+\hlink{Zelig}{http://gking.harvard.edu/zelig/} for subsequent
 parametric analyses.
 
 % (\citealt{rubin74,RosRub83,RosRub84,Holland86}).  
@@ -91,7 +92,11 @@ software, and will run on any platform where R is installed (Windows,
 Unix, or Mac OS X).  R is available free for download at the
 Comprehensive R Archive Network (CRAN) at
 \href{http://www.r-project.org/}{http://www.r-project.org/}.
-\MatchIt\ has been tested on R Version 1.9.0.
+\MatchIt\ has been tested on R Version 1.9.0.  A good way to learn R,
+if you don't know it already, is to learn Zelig (available at
+\hlink{http:gking.harvard.edu}{http:gking.harvard.edu}) which includes
+a self-contained introduction to R and can then be used to analyze the
+data after \MatchIt.
 
 \subsection{Installing \MatchIt} 
 
@@ -102,8 +107,7 @@ There are two ways to install \MatchIt\:
   type at the R prompt:
 % We should change these addresses to Gary's site at some point
 \begin{verbatim}
- > install.packages("matchit", 
-           CRAN="http://www.people.fas.harvard.edu/~deho")
+ > install.packages("matchit", CRAN="http://gking.harvard.edu")
 \end{verbatim}
 
   \noindent \MatchIt\ will proceed to automatically install itself onto
@@ -180,23 +184,29 @@ run by:
 \end{verbatim}
 
 \subsection{Notation}
+\MatchIt\ is designed for studies with a dependent variable that is a
+function of a single dichotomous causal variable, with values known as
+the ``treatment'' and ``control'' groups, and a set of covariates used
+as pretreatment controls.  \MatchIt\ can be used for other types of
+causal variables by dichotomizing them, perhaps in different ways.
+
 Unless otherwise noted, let $i$ index the $n$ units in the dataset,
 $n_1$ the number of treated units, $n_0$ the number of control units
 (such that $n=n_0+n_1$), and $x_i$ some observed covariate vector for
 unit $i$.  $T_i=1$ indicates that unit $i$ was assigned treatment, and
-$T_i=0$ that unit $i$ was assigned control.  $Y_i(1)$ represents the
-potential outcome of unit $i$ under treatment and $Y_i(0)$ the
-potential outcome of unit $i$ under control.  $Y_i(1)$ and $Y_i(0)$
+$t_i=0$ that unit $i$ was assigned control.  $y_{1i}$ represents the
+potential outcome of unit $i$ under treatment and $y_{0i}$ the
+potential outcome of unit $i$ under control.  $y_{1i}$ and $y_{0i}$
 are jointly unobservable, so we only observe
-$Y_i^{obs}=T_i(Y_i(1))+(1-T_i)(Y_i(0))$.
+$y_i=t_iy_{1i}+(1-t_i)y_{0i}$.
 
 \subsection{The Lalonde Data}
 For all of our examples, we use data from the job training program
 analyzed in \citet{lalonde86} and \citet{DehWah99}.  A subsample of
-the data consisting of the National Supported Work
-Demonstration (NSW) treated group and the comparison sample from the Population
-Survey of Income Dynamics (PSID) is included in \MatchIt, and the full
-dataset is available at
+the data consisting of the National Supported Work Demonstration (NSW)
+treated group and the comparison sample from the Population Survey of
+Income Dynamics (PSID) is included in \MatchIt, and the full dataset
+is available at
 \url{http://www.columbia.edu/~rd247/nswdata.html}.\footnote{\texttt{data(lalonde)}
   was created using \texttt{NSWRE74\_TREATED.TXT} and
   \texttt{CPS3\_CONTROLS.TXT} from this website.}
@@ -283,12 +293,12 @@ Sample sizes for full and exactly matched data:
 Full        185     429   614
 Matched     185     429   614
 \end{verbatim} 
- 
-This returns the original call to \MatchIt.  We also see that all 185
-treatment units were exactly matched to all 429 control units on race
-covariates.  
+The printout includes the original call to \MatchIt\ and the fact that
+all 185 treatment units were exactly matched to all 429 control units
+on race covariates.
 
-We can obtain more information on the matching using the {\tt summary} command:
+We can obtain more information on the matching using the {\tt summary}
+command:
 
 \begin{verbatim}
 > summary(foo1)
@@ -317,16 +327,16 @@ Sample sizes by covariates:
  
 Number of units discarded:   0
 \end{verbatim}
-
-The means of the race variables ({\tt black} and {\tt hispan}) are
-quite different between the full treated and control groups.  Since
-covariates are the same within each matched subclass, means tests are
-not reported for the matched data.\footnote{Overall means are also not
-  reported.  These means are not necessarily the same between control
-  and treated groups as the number of treated and control units in
-  each subclass may differ.}  The two binary covariates here form
-three subclasses, and we see, for example, that 243 units (156 treated
-and 87 control) are black and non-hispanic.
+The results indicate that the means of the race variables ({\tt black}
+and {\tt hispan}) are quite different between the full treated and
+control groups, but within each subclass formed by these two binary
+covariates the values of the race variables of the treated and control
+units are the same.  These two binary covariates form three
+subclasses, and we see, for example, that 243 units (156 treated and
+87 control) are black and non-hispanic.  The balance bias statistic
+presented in the right column of the first table is a measure of how
+close covariates between treated and control groups are.  For a formal
+definition, see Subsection~\ref{cmd:sum}.}
 
 We can use the {\tt psclass} component of {\tt foo1} to identify which
 units are in each subclass and to verify their covariate values.
@@ -367,66 +377,68 @@ PSID40     0      1
 PSID45     0      1
 \end{verbatim}
 
-\subsection{Exact Matching on All Covariates}
+% \subsection{Exact Matching on All Covariates}
 
-To match exactly on all covariates:
+% To match exactly on all covariates:
 
-\begin{verbatim}
-> foo <- matchit(treat ~ age + educ + black + hispan + married +
-+                nodegree + re74 + re75, data=lalonde, exact=TRUE)
+% \begin{verbatim}
+% > foo <- matchit(treat ~ age + educ + black + hispan + married +
+% +                nodegree + re74 + re75, data=lalonde, exact=TRUE)
 
-> summary(foo)
+% > summary(foo)
  
-Assignment model specification:
-matchit(formula = treat ~ age + educ + black + hispan + married +  
-   nodegree + re74 + re75, data = lalonde, exact = TRUE)
+% Assignment model specification:
+% matchit(formula = treat ~ age + educ + black + hispan + married +  
+%    nodegree + re74 + re75, data = lalonde, exact = TRUE)
  
-Summary of covariates for all data:
+% Summary of covariates for all data:
  
-         Means Treated Means Control        SD  T-stat     Bias
-age          2.582e+01       28.0303    9.8812 -2.9911 -0.30945
-educ         1.035e+01       10.2354    2.6283  0.5468  0.05496
-black        8.432e-01        0.2028    0.4894 19.3443  1.75677
-hispan       5.946e-02        0.1422    0.3220 -3.4091 -0.34890
-married      1.892e-01        0.5128    0.4932 -8.5961 -0.82407
-nodegree     7.081e-01        0.5967    0.4831  2.7127  0.24431
-re74         2.096e+03     5619.2365 6477.9645 -7.2456 -0.72108
-re75         1.532e+03     2466.4844 3295.6790 -3.2776 -0.29026
+%          Means Treated Means Control        SD  T-stat     Bias
+% age          2.582e+01       28.0303    9.8812 -2.9911 -0.30945
+% educ         1.035e+01       10.2354    2.6283  0.5468  0.05496
+% black        8.432e-01        0.2028    0.4894 19.3443  1.75677
+% hispan       5.946e-02        0.1422    0.3220 -3.4091 -0.34890
+% married      1.892e-01        0.5128    0.4932 -8.5961 -0.82407
+% nodegree     7.081e-01        0.5967    0.4831  2.7127  0.24431
+% re74         2.096e+03     5619.2365 6477.9645 -7.2456 -0.72108
+% re75         1.532e+03     2466.4844 3295.6790 -3.2776 -0.29026
  
  
-Sample sizes for full and exactly matched data:
+% Sample sizes for full and exactly matched data:
  
-        Treated Control Total
-Full        185     429   614
-Matched      13      12    25
+%         Treated Control Total
+% Full        185     429   614
+% Matched      13      12    25
  
-Sample sizes by covariates:
+% Sample sizes by covariates:
  
-  age educ black hispan married nodegree re74 re75 Treated Control Total
-1  21   13     1      0       0        0    0    0       1       1     2
-2  18   10     1      0       0        1    0    0       1       2     3
-3  17   10     1      0       0        1    0    0       4       2     6
-4  20   12     1      0       0        0    0    0       1       2     3
-5  17    8     1      0       0        1    0    0       3       2     5
-6  18   11     1      0       0        1    0    0       2       2     4
-7  19   11     1      0       0        1    0    0       1       1     2
+%   age educ black hispan married nodegree re74 re75 Treated Control Total
+% 1  21   13     1      0       0        0    0    0       1       1     2
+% 2  18   10     1      0       0        1    0    0       1       2     3
+% 3  17   10     1      0       0        1    0    0       4       2     6
+% 4  20   12     1      0       0        0    0    0       1       2     3
+% 5  17    8     1      0       0        1    0    0       3       2     5
+% 6  18   11     1      0       0        1    0    0       2       2     4
+% 7  19   11     1      0       0        1    0    0       1       1     2
  
-Number of units discarded:   0
-\end{verbatim}
+% Number of units discarded:   0
+% \end{verbatim}
 
 
-Hence out of the 185 observations in the NSW sample, only 25 units
-have exact matches.
+% Hence out of the 185 observations in the NSW sample, only 25 units
+% have exact matches.
 
 \subsection{Propensity Score Matching}
-When exact matches do not exist, matching on the propensity score is a
-common and useful alternative.  To propensity score match, with
-pre-treatment covariates composed of real earnings in 1974 and 1975:
+When insufficient exact matches can be found, as is becomes
+increasingly common as the number of covariates increase, we need to
+find a way to identify matches that are ``close.''  In this situation,
+matching on the propensity score is a useful alternative.  To
+propensity score match, with pre-treatment covariates composed of real
+earnings in 1974 and 1975:
 
 \begin{verbatim}
 > foo2 <- matchit(treat ~ re74 + re75, data=lalonde)
 \end{verbatim} 
-
 
 \noindent You may again check basic statistics of the \MatchIt\ object by the
 \texttt{print} command:
@@ -450,7 +462,6 @@ Full        185     429   614
 Matched     185     185   370
  
 \end{verbatim} 
-
 We see that 185 control units were matched to the 185 treated units (a
 ``1-1'' match).  The average propensity scores in the matched treated
 and control groups are much more similar than in the original groups,
@@ -490,25 +501,20 @@ Number of units discarded:   0
 
 This reveals simple statistics of the propensity score and the
 covariates used in the propensity score specification for the full and
-matched samples, including t-statistics and balance bias
-statistics.\footnote{Balance bias statistics are a measure of how
-  close covariates between treated and control groups are.  For a
-  formal definition, see Subsection~\ref{cmd:sum}.}  The last column
-of the summary statistics for the matched data reports whether there
-there was a reduction of balance bias in the covariates with matching,
-denoted by ``1'' if yes, and 0 otherwise.  All three variables
-(propensity score, 1974 income, and 1975 income) had reductions in
-bias due to the matching.  For example, the original bias in 1974
-income was $-0.72$ standard deviations, but is only $0.011$ standard
-deviations in the matched samples.  More specifically, job training
-participants on average earned roughly \$3,523 less in 1974 and \$934
-less in 1975 than non-participants, significant differences with
-t-statistics of -7.25 and -3.28, respectively.  In the matched sample,
-the earnings difference is only \$56 (t-statistic=0.11) in 1974 and
-\$96 (t-statistic=0.32) in 1975.  This one-to-one matching algorithm
-has thus chosen 185 control individuals who do look very similar to
-the treated group on the covariates used in the matching process (1974
-income and 1975 income).
+matched samples, including t-statistics and balance bias statistics
+used to assess whether there was a reduction in bias in the
+covariates.  All three variables (propensity score, 1974 income, and
+1975 income) had reductions in bias due to the matching.  For example,
+the original bias in 1974 income was $-0.72$ standard deviations, but
+is only $0.011$ standard deviations in the matched samples.  More
+specifically, job training participants on average earned roughly
+\$3,523 less in 1974 and \$934 less in 1975 than non-participants,
+significant differences with t-statistics of -7.25 and -3.28,
+respectively.  In the matched sample, the earnings difference is only
+\$56 (t-statistic=0.11) in 1974 and \$96 (t-statistic=0.32) in 1975.
+This one-to-one matching algorithm has thus chosen 185 control
+individuals who do look very similar to the treated group on the
+covariates used in the matching process (1974 income and 1975 income).
 
 The \texttt{summary} command will additionally report (a) the original
 call of the \MatchIt\ object, (b) whether there are any ``Problematic
