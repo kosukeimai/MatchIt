@@ -2,13 +2,6 @@ ft <- function(t, mu, sigma) {
 	return((1/(t*sigma*sqrt(2*pi)))*exp((-1/(2*sigma^2))*(log(t)-mu)^2))
 }
 
-#t <- 5
-#mu <- 0
-#sigma <- 1
-
-#print(ft(t, mu, sigma))
-#print(dnorm((log(t)-mu)/sigma))
-
 lognorm.llik <- function(param, Y, X, C){
   sigma <- exp(param[1])
   beta <- param[2:length(param)]
@@ -34,7 +27,11 @@ lognorm.inv.gauss.llik <- function(param, Y, X, C){
   lnh <- log(ft(Y, mu, sigma)) - lnS
   lnhold <- dnorm(log(Y), mean=mu, sd=sigma, log = TRUE) - lnS
 
-  value <- sum(-sqrt(1-2*theta*lnS)/theta + (1-C)*lnh -
+  #value <- sum(-sqrt(1-2*theta*lnS)/theta + (1-C)*lnh -
+  #  0.5*(1-C)*log(1-2*theta*lnS)) 
+
+  # New form: Include first term (1/theta)
+  value <- sum((1/theta) - sqrt(1-2*theta*lnS)/theta + (1-C)*lnh -
     0.5*(1-C)*log(1-2*theta*lnS)) 
   
   #value <- sum((1-C)*(-log(sigma) + dnorm((log(Y)-mu)/sigma, log=TRUE) -
