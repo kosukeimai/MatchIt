@@ -1,0 +1,102 @@
+\documentclass[oneside,letterpaper,titlepage,12pt]{article}
+%\usepackage[ae,hyper]{/usr/lib/R/share/texmf/Rd}
+\usepackage{makeidx}
+\usepackage{graphicx}
+\usepackage{natbib}
+\usepackage[reqno]{amsmath}
+\usepackage{amssymb}
+\usepackage{verbatim}
+\usepackage{epsf}
+\usepackage{url}
+\usepackage{html}
+\usepackage{dcolumn}
+\usepackage{longtable}
+\usepackage{vmargin}
+\setpapersize{USletter}
+\newcolumntype{.}{D{.}{.}{-1}}
+\newcolumntype{d}[1]{D{.}{.}{#1}}
+%\pagestyle{myheadings}
+\htmladdtonavigation{
+  \htmladdnormallink{%
+    \htmladdimg{http://gking.harvard.edu/pics/home.gif}}
+  {http://gking.harvard.edu/}}
+\newcommand{\hlink}{\htmladdnormallink}
+
+\bodytext{ BACKGROUND="http://gking.harvard.edu/pics/temple.setcounter"}
+\setcounter{tocdepth}{3}
+
+\parindent=0cm
+\newcommand{\MatchIt}{\textsc{MatchIt}}
+
+\begin{document}
+
+\begin{center}
+Notation for \MatchIt \\
+Elizabeth Stuart \\
+\end{center}
+
+This document details the notation to be used in the matching paper to accompany \MatchIt,
+as discussed in conference call on April 27, 2004. \\
+
+
+First define notation for individual $i$:
+\begin{itemize}
+\item $Y_{1i}=$ individual $i$'s potential outcome under treatment 
+\item $Y_{0i}=$ individual $i$'s potential outcome under control
+\item $T_i=$ individual $i$'s observed treatment assignment 
+\begin{itemize} \item $T_i=1$ means individual $i$ receives treatment
+		\item $T_i=0$ means individual $i$ receives control
+\end{itemize}
+\item $Y_{i0}$ and $Y_{i1}$ are considered fixed quantities.  Which one is observed depends on the random variable $T_i$.
+\item $y_i=T_i Y_{1i} + (1-T_i) Y_{0i}$ is individual $i$'s observed outcome
+\item Let $y_{1i}=(Y_{1i}|T_i=1)$.  Similarly, $y_{0i}=(Y_{0i}|T_i=0)$.  One of these is observed for individual $i$.
+\item Let $\tilde{y}_{0i}$ be a draw from the posterior distribution of $Y_{0i}$, given that $T_i=1$: $\tilde{y}_{0i} \sim P(Y_{0i}|T_i=1)$. 
+Similarly, let  $\tilde{y}_{1i}$ be a draw from the posterior distribution of $Y_{1i}$, 
+given that $T_i=0$: $\tilde{y}_{1i} \sim P(Y_{1i}|T_i=0)$.
+[I'm not crazy about this 
+notation...is the ``$|T_i=1$'' necessary, or could we just use $\tilde{y}_{0i} \sim P(Y_{0i})$?  
+We can still have $\tilde{y}_{0i}$ even if $T_i=0$, we just won't ever actually use it.  But it does still exist in some
+sense.].  
+\item Consider variables $X_i$.  If $X_{0i}=X_{1i}=X_i$ then $X$ is a ``proper covariate'' in that it is not affected by treatment assignment.  Only proper
+covariates should be used in matching procedure.  This is always an assumption--we never observe $X_{0i}$ and $X_{1i}$ for individual $i$.
+\item We think of the capital $Y$'s as corresponding to ``true'' values ($Y_{0i}$, $Y_{1i}$) while the lower-case $y$'s represent realized values:
+lower-case $y$'s without a tilde are observed values; lower-case $y$'s with a tilde are draws from the posterior distribution.
+\end{itemize}
+
+For individual $i$, the potentially observed values can be represented by the following 2x2 table:
+
+\begin{center}
+\begin{tabular}{c|c|c|}
+\multicolumn{3}{c}{\hspace*{.8cm} $T_i=0$ \hfill $T_i=1$} \\
+\cline{2-3}
+$Y_{0i}$ & $y_{0i}$, $X_i$ & $\tilde{y}_{0i}$, $X_i$ \\
+\cline{2-3}
+$Y_{1i}$ & $\tilde{y}_{1i}$, $X_i$ & $y_{1i}$, $X_i$ \\
+\cline{2-3}
+\end{tabular}
+\end{center}
+ 
+For each individual, we are in either Column 1 or Column 2 (depending on treatment assignment).  Within each column, 1 number will be observed and 1 will be a drawn
+value from the posterior distribution (i.e., the true value for that cell is missing). \\
+
+
+Now consider $n$ individuals observed, with $n_1$ in the treated group and $n_0$ in the control group ($n=n_0+n_1$).  Then we have the following notation:
+\begin{itemize}
+\item $n_1=\sum_{i=1}^n T_i$, $n_0=\sum_{i=1}^n (1-T_i)$
+\item ${\bf y_0} = \{y_{0i}\} = \{y_{i}|T_i=0\}$.  ${\bf y_0}$ is of length $n_0$.
+\item ${\bf y_1} = \{y_{1i}\} = \{y_{i}|T_i=1\}$.  ${\bf y_1}$ is of length $n_1$.
+\item ${\bf y} = \{ {\bf y_0}, {\bf y_1}\}$.  ${\bf y}$ is of length $n$.
+\item $\overline{y}_1 = \frac{\sum_{i=1}^n T_i Y_{1i}}{\sum_{i=1}^n T_i}=\frac{\sum_{i=1}^{n_1} y_{1i}}{n_1}$
+\item $\overline{y}_0 = \frac{\sum_{i=1}^n (1-T_i) Y_{0i}}{\sum_{i=1}^n (1-T_i)}=\frac{\sum_{i=1}^{n_0} y_{0i}}{n_0}$
+\item Observed sample variances would be calculated in a similar way (using ${\bf y_0}$ and ${\bf y_1}$).
+\end{itemize}
+
+One point to make sure we mention in the write-up is to say what OLS assumes.  OLS with a treatment indicator does:
+$$E(y_i) = \alpha + \beta_0 T_i + {\boldsymbol \beta} {\bf X_i},$$
+which assumes that the models of the potential outcomes follow parallel lines:
+$$E(y_{1i}) = \alpha + \beta_0 + {\boldsymbol \beta} {\bf X_i},$$
+$$E(y_{0i}) = \alpha + {\boldsymbol \beta} {\bf X_i}.$$
+We can also have a graphical representation of this, perhaps with some examples of outcomes that clearly don't have that nice parallel linear relationship,
+and show that this would be a very special case of what we're advocating.
+
+\end{document}
