@@ -75,6 +75,7 @@ if (TEST) {
   print(res1)
   
   start <- c(res$scale, 0, res$coef)
+  start <- c(-0.21, 0.54, 2.92, -2.50)
   res2 <- optim(start, lognorm.inv.gauss.llik, Y = data$acttime,
                 X=model.matrix(res), C=(data$d==0)*1, method="BFGS")
   print(res2)
