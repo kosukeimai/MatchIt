@@ -21,7 +21,6 @@ lognorm.inv.gauss.llik <- function(param, Y, X, C){
   beta <- param[3:length(param)]
   mu <- X%*%beta
 
-  lnS <- log(1 - pnorm((log(Y)-mu)/sigma))
   lnS <- pnorm((log(Y)-mu)/sigma, lower.tail = FALSE, log = TRUE)
   lnh <- dnorm(log(Y), mean=mu, sd=sigma, log = TRUE) - lnS
   value <- sum(-sqrt(1-2*theta*lnS)/theta + (1-C)*lnh -
