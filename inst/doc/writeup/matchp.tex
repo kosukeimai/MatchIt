@@ -60,6 +60,7 @@ Elizabeth A. Stuart\thanks{Ph.D.\ Candidate, Department of Statistics, Harvard
 \begin{abstract}
 
 \end{abstract}
+\baselineskip=1.57\baselineskip
 
 \section{Introduction}
 
@@ -116,13 +117,13 @@ in this paper; it is free and available at http://GKing.Harvard.edu/zelig.
 
 \section{Definition of Causal Effects}
 
-The notation and ideas in this section parallel that in \citet[][\S
+The notation and ideas in this section parallel that in \citet[][Section
   3.1.1]{KinKeoVer94}, but the key aspects of it can be traced to many
 others, especially \citet{Rubin74} and \citet{Holland86}.  The most
 important idea in this literature is that a causal effect is a
 theoretical quantity, defined independently any empirical method that
 might be used to estimate it from real data.  To explicate these
-ideas, we use the running example from \citet[][\S
+ideas, we use the running example from \citet[][Section
   3.1.1]{KinKeoVer94}, where the goal is to estimate the electoral
 advantage of incumbency for Democrats in the U.S.\ House of
 Representatives.  That is, we only study Democratic incumbents and
@@ -274,7 +275,7 @@ hypothetical draws of the the random causal effect:
   \label{meance}
   \text{(Mean Causal Effect for unit $i$)}
   &= E(\text{Random Causal Effect for unit $i$})\\ 
-  &= E(Y_i(1) - Y_i(0))\\ \notag
+  &= E[Y_i(1) - Y_i(0)]\\ \notag
   &= \mu_i(1) - \mu_i(0),
 \end{align}
 where $E[Y_i(1)]\equiv\mu_i(1)$ and $E[Y_i(0)]\equiv\mu_i(0)$.
@@ -320,12 +321,13 @@ the ATE.
 
 \section{Data Collection Mechanisms}
 
-We now describe the assumptions necessary in experimental and
-observational research designs.  Some version of assumptions, or some
-way to deal with the information in them, are necessary no matter what
-statistical methods are used for estimation.  Any specific statistical
-method chosen will make other assumptions, but the ones discussed in
-this section affect all methods.
+We now describe the assumptions necessary for making causal inferences
+in experimental and observational research designs.  Some version of
+these assumptions, or some way to deal with the information in them,
+are necessary no matter what statistical methods are used for
+estimation.  Any specific statistical method chosen will make other
+assumptions, but the ones discussed in this section affect essentially
+all methods.
 
 \subsection{Experimental}
 
@@ -342,31 +344,31 @@ observed, (2) \emph{random assignment} of values of the treatment
 ($t_i$) to each observed unit, and (3) a \emph{large $n$}.  The first
 feature avoids selection bias by identifying a given population and
 guaranteeing that the data generation process is related to the
-dependent variable only by random chance.  Combining this the large
-$n$ from the third feature of randomized experiments guarantees that
-the chance that something will go wrong is vanishingly small.
+dependent variable only by random chance.  Combining this with the
+large $n$ from the third feature guarantees that the chance that
+something will go wrong is vanishingly small.
 
 Random assignment in feature (2) guarantees the absence of omitted
 variable bias even without any control variables included.  To see
 this, recall that, under the usual econometric rules for omitted
 variable bias, a variable $X_i$ must be controlled for if it is
 causally prior to $t_i$, empirically related to $t_i$, and affects
-$y_i$ conditional on $t_i$.  If, instead, any of the three conditions
-do not hold, then $X_i$ may be omitted without any resulting bias.
-Random assignment guarantees that $t_i$ is unrelated to \emph{any}
-measured $X_i$ except by random chance.  Moreover, the large $n$ in
-condition (3) guarantees that this chance is vanishingly small.
+$y_i$ conditional on $t_i$.  If, instead, one or more of the three
+conditions do not hold, then $X_i$ may be omitted without any bias
+resulting.  Random assignment guarantees that $t_i$ is unrelated to
+\emph{any} $X_i$, whether measured or not, except by random chance.
+Moreover, the large $n$ in condition (3) guarantees that this chance
+is vanishingly small.
 
 Experiments are a true ideal type, particularly in relation to most
 social science research where almost all research fails to meet at
 least one of the three features.  Even most social science lab
-experiments, like the types in psychology and economics, have random
-assignment but no random selection and often a small $n$.  Traditional
-survey research has what is intended to be random selection (although
-with dramatically increasing nonresponse rates and cell phone usage
-this is a less plausible claim) and certainly has a large $n$, but
-random assignment, except of the wording of survey questions, is
-usually impossible.
+experiments have random assignment but no random selection and often a
+small $n$.  Traditional survey research has what is intended to be
+random selection (although with dramatically increasing nonresponse
+rates and cell phone usage, this is a less plausible claim) and
+certainly has a large $n$, but random assignment, except when the
+treatment is the wording of survey questions, is usually impossible.
 
 \subsection{Observational}
 
@@ -383,17 +385,17 @@ not generate selection bias.  Observations need not be selected at
 random, as in an experiment, but the probability of selection must not
 be correlated with the dependent variable $y$, after taking into
 account the treatment $t$ and pre-treatment covariates, $X$.  This is
-not a trivial matter, and it is the subject of a great deal of
-methodological and substantive research.  We mention it here to
-emphasize all the well-known concerns in the literature about
-selecting on the dependent variable should remain a concern to
-researchers even when adopting our to approach to preprocessing data
-via nonparametric matching procedures.
+not a trivial matter, and it is the subject of a great deal of concern
+and study in a large variety of methodological and substantive
+literature.  We mention it here to emphasize that all the well-known
+concerns in the literature about selecting on the dependent variable
+should remain a concern to researchers even when adopting our approach
+to preprocessing data via nonparametric matching procedures.
 
-We will also assume that a researcher has sufficient information in
-their pre-treatment control variables $X$ so that it is possible via
-\emph{some} method to make valid causal inferences.  This is known in
-some fields as the absence of omitted variable bias, so that $X_i$
+We also assume that a researcher has sufficient information in their
+measured pre-treatment control variables $X$ so that it is possible
+via \emph{some} method to make valid causal inferences.  This is known
+in some fields as the absence of omitted variable bias, so that $X_i$
 must include all variables that are causally prior to $t_i$,
 associated with $t_i$, and affect $y_i$ conditional on $t_i$.  In
 other fields, this same condition is known as ignorability, which
@@ -403,31 +405,32 @@ variables.  Ignorability is a strong condition, but it is one about
 which social scientists are deeply knowledgable and which is the
 central methodological concern of many substantive scholarly articles.
 We emphasize this assumption to make clear that our procedures contain
-no magic: they are unable to control for variables that are not
+no magic: They are unable to control for variables that are not
 measured.
 
-Assuming ignorability and no selection bias still leaves many
-assumptions to be made for methods of statistical inference.  Results
-from these methods can still be biased, unbiased, efficient,
-inefficient, and almost anything else.  We now focus on this point in
-the context of commonly used parametric methods.
+Assuming ignorability and the absence of selection bias still leaves
+many assumptions to be made by individual methods of statistical
+inference.  Results from these methods can still be biased, unbiased,
+efficient, inefficient, and almost anything else, depending on the
+analyst's choices.  We now focus on this point in the context of
+commonly used parametric methods.
 
 \section{Parametric Analysis Methods}
 
 We begin by specifying a single but general parametric model, special
 cases of which include almost all parametric models used regularly in
 the social sciences.  First define the stochastic component as $Y_i
-\sim p(\mu_i,\theta)$, for a specified probability density $p(\cdot)$
-and vector of ancillary parameters $\theta$.  Then denote the
-systematic component as $E(Y_i|t_i,X_i)\equiv\mu_i=g(\alpha + t_i\beta
-+ X_i\gamma)$, for some specified functional form $g(\cdot)$ and with
-intercept $\alpha$ and coefficients $\beta$ and $\gamma$.  The
-ancillary parameters may also be specified to vary over observations
-as a function of $X_i$ or other covariates.  This framework includes
-all ``generalized linear models'' as well as many other models.  For
-some examples, if $p(\cdot)$ is normal and $g(c)=c$, we have linear
-regression.  If $p(\cdot)$ is Bernoulli and $g(c)=1/(1+e^{-c})$, we
-have logit.
+\sim p(\mu_i,\theta)$, for a specified probability density $p(\cdot)$,
+mean $\mu_i$, and vector of ancillary parameters $\theta$.  Then
+denote the systematic component as $E(Y_i|t_i,X_i)\equiv\mu_i=g(\alpha
++ t_i\beta + X_i\gamma)$, for some specified functional form
+$g(\cdot)$ and with intercept $\alpha$ and coefficients $\beta$ and
+$\gamma$.  The ancillary parameters may also be specified to vary over
+observations as a function of $X_i$ or other covariates.  This
+framework includes all ``generalized linear models'' as well as many
+other models.  For some examples, if $p(\cdot)$ is normal and
+$g(c)=c$, we have linear regression.  If $p(\cdot)$ is Bernoulli and
+$g(c)=1/(1+e^{-c})$, we have logit.
 
 Assuming independence over observations is sufficient to form a
 likelihood function:
@@ -454,41 +457,53 @@ observational data in making inferences under this model.
 
 In experimental data, random assignment guarantees that $T_i$ and (any
 observed or unobserved) $X_i$ are independent.  Since stochastic
-independence implies mean independence,
+independence implies mean independence, we can write
 $E(Y_i(1)|t_i=1,X)=E(Y_i(1)|t_i=1)$ and
 $E(Y_i(0)|t_i=1,X)=E(Y_i(0)|t_i=1)$.  As such, we can simplify
-(\ref{matt}) as:
+(\ref{matt}) as
 \begin{align}
-  \label{matt}
+  \label{smatt}
   E(Y_i(1)|t_i=1) &\equiv \mu_i(1) = g(\alpha + \beta)\notag \\
   E(Y_i(0)|t_i=0) &\equiv \mu_i(0) = g(\alpha)
 \end{align}
-In both equations, the systematic components are now scalar constants
-for all $i$.  This is a key result, since it means that changing the
-definition of the functional form $g(\cdot)$ is merely a
-reparameterization.  Fortunately, maximum likelihood is invarient to
-reparameterization \citep[][p.75-6]{King89}, which means that no
-matter how $g(\cdot)$ is defined we get the same estimate.  Moreover,
-this result holds for virtually any parametric model that is a special
-case of the general model above.  
+and so the average treatment effect on the treated from (\ref{att})
+becomes simply
+\begin{equation}
+  \label{satt}
+  \text{ATT} = g(\alpha+\beta) - g(\alpha)
+\end{equation}
+which is one number and without a summation sign over $i$.
 
-Since the specific maximum likelihood estimator in all the usual cases
-is merely the sample mean, the analysis of classical randomized
-experiments basically comes down taking the difference in sample mean
-of $y$ for the treatment and control groups.  But even if one chooses
-to run a parametric model, it will not matter: the results will be the
-same no matter what the choice is.
+The systematic components of both equations of (\ref{smatt}) are now
+scalar constants for all $i$.  This is a key result, since it means
+that changing the definition of the functional form $g(\cdot)$ now
+amounts to nothing more than a simple reparameterization.
+Fortunately, maximum likelihood is invariant to reparameterization
+\citep[][p.75-6]{King89}, which means that no matter how $g(\cdot)$ is
+defined we get the same estimate of the expected potential outcomes.
+Moreover, given any chosen stochastic component, this result holds for
+virtually any parametric model, including all the special cases of the
+general model given above.
+
+Since the specific maximum likelihood estimator of the population mean
+for most common probability densities is merely the sample mean, the
+analysis of classical randomized experiments often comes down to
+taking the difference in the sample means of $y$ for the treatment and
+control groups.  But even if one chooses to run a parametric model, it
+will not matter: the results will be the same no matter what the
+choice for $g()$ is.
 
 \subsection{With Observational Data}
 
-In experiments, random assignment thus breaks the link between $T$ and
-$X$ and, by so doing, eliminates the problem of model dependence.
-When analyzing observatonal data with parametric methods we are not so
-lucky.  We cannot reduce Equations \ref{att} to Equations \ref{matt}
-and so are left having to model the full functional relationship that
-connects the mean as it varies as a function of $t$ and $X$.  Since
-$X$ is typically multidimensional, this is a task far more difficult
-than many may realize.
+In experiments, random assignment breaks the link between $T$ and $X$
+and, by so doing, eliminates the problem of model dependence.  When
+analyzing observatonal data with parametric methods we are not so
+fortunate.  We cannot reduce Equations \ref{att} to Equations
+\ref{matt} and so are left having to model the full functional
+relationship that connects the mean as it varies as a function of $t$
+and $X$ over observations.  Since $X$ is typically multidimensional,
+this is a task far more difficult and highly dependent on often
+unstated assumptions than many realize.
 
 To see this point, which is known as the curse of dimensionality,
 suppose for simplicity that we have a dependent variable and one
@@ -496,48 +511,65 @@ ten-category explanatory variable, and our goal is use linear
 regression technology to estimate the functional relationship without
 functional form assumptions.  To do this, we would represent the ten
 categories with ten parameters (a constant and nine dummy variables or
-10 mean indicators variables).  In contrast, the usual approach to
+10 mean indicator variables).  In contrast, the usual approach to
 estimation is to assume linearity.  This enables us to enter not 10
 indicator variables, but rather only a constant term and one slope
 coefficient.  How do we get from ten parameters to only two?  Pure
-assumption.  If we have some sense that the relationship is indeed
-linear or close to linear, this is a good use of external information
-to reduce the number of parameters that must be estimated.  If not,
-then we still have the best linear approximation to the conditional
-expectation function, but the relationship we estimate can be far off.
-If we are running this regression for the purpose of estimating a
-causal effect, then the treatment variable is also in the regression,
-and its coefficient can be biased to any degree if the functional
-relationship with the control variable is misestimated.
+assumption about the remaining eight.  If we have some sense that the
+relationship is indeed linear or close to linear, this is a good use
+of external information to reduce the number of parameters that must
+be estimated.  If not, then we still have the best linear
+approximation to the conditional expectation function, but the
+relationship we estimate can be far off.  If we are running this
+regression for the purpose of estimating a causal effect, then the
+treatment variable is also in the regression, and its coefficient can
+be biased to any degree if the functional relationship with the
+control variable is misspecified.
 
-A much more serious problem occurs if we have more explanatory
-variables.  For example, estimation without functional form
+This problem quickly becomes more serious as the number of explanatory
+variables increase.  For example, estimation without functional form
 assumptions with two ten-category explanatory variables would require
-not 20 parameters but rather 100.  In this case, the usual approach
-would include a constant term and two slope coefficients, reducing 100
-parameters to three by pure assumption.  And with more than one
-variable, any claim about external knowledge constraining the
-functional form this much becomes highly dubious.  By what theory do
-we know that 97 parameters should be set to exactly zero?  Including a
+not 20 parameters but 100.  In this case, the usual approach would
+include a constant term and two slope coefficients, reducing 100
+parameters to three by pure assumption.  And with multiple explanatory
+variables, claims about external knowledge constraining the functional
+form much become dubious.  In this example, by what theory would we
+know that 97 parameters should be set to exactly zero?  Including a
 linear interaction would not help much since it would merely add one
 more parameter to estimate, and we would only need to make assumptions
 about 96 parameters.
 
 The problem esclates very fast as the number of explanatory variables
-increase.  With $j$ 10-category variables, we need $10^j$ parameters
+increase.  With $v$ 10-category variables, we need $10^v$ parameters
 for estimation in a regression framework without assumtions.  So five
 explanatory variables leads to a regression model with 100,000
 parameters, and the usual approach works by estimating only a constant
-term and five slope coefficients.  Nine such explanatory variables has
-a model with a billion parameters, which would be approximated by only
-the ten that we would estimate under the traditional approach.  Eighty
-explanatory variables requires a regression model with more parameters
-than current estimates of the number of elementary particles in the
-universe.
+term and five slope coefficients and restricting by assumption the
+remaining 99,994 others.  Nine such explanatory variables has a model
+with one \emph{billion} parameters, which would be approximated by
+only the ten that we would estimate under the traditional approach.
+Eighty ten-category explanatory variables would require a regression
+model with more parameters than current estimates of the number of
+elementary particles in the universe.
 
-The unavoidable consequence of 
+Estimating rather than making assumptions about all these extra
+parameters is not possible under the standard regression approach,
+since our data sets do not have sufficient observations to support
+estimation of anywhere near the required number of parameters.  We
+cannot avoid the problem wtih nonlinear or non-normal statistical
+models, since these pose the same curse of dimensionality as linear
+regression.  Instead, many assumptions about many parameters are
+necessary under this approach.  The unavoidable consequence is high
+levels of model dependence:  change the assumptions 
 
 \section{Matched Preprocessing}
+
+Also, just a quick point, but I wanted to mention that I think it's also
+important to note that if a bunch of fairly reasonable different models do
+give wildly different answers after matching, then it's probably a sign
+that the data isn't there to support causal inference, and I probably
+wouldn't believe any of them.
+
 
 \subsection{Exact Matching}
 
