@@ -501,19 +501,25 @@ articles.  We emphasize this assumption to make clear that our
 procedures contain no magic: They are unable to control for variables
 that are not measured.
 
-Assuming ignorability and the absence of selection bias still leaves
-many assumptions to be made when choosing a specific statistical
-inference method.  We now focus on this point in the context of
-commonly used parametric methods.\footnote{We assume throughout that
-  every unit within each treatment group receives the same treatment.
-  This assumption would be violated in our running example if the
-  nomination the Democratic party gives to the incumbent in some
-  districts means something different from that in other districts.
-  We also assume that the treatment in one unit has no effect on the
-  potential outcomes in any unit other than its own.  Together these
-  two assumptions are sometimes known under the awkward name of the
+In the context of the no selection or omitted variable bias
+assumptions, we have implicitly made three others that are worth
+additional emphasis here.  First, pretreatment covariates $X$ are
+truly pretreatment and are thus not consequences of $t$.  Second, we
+assume the independence of units, which is the equivalent of assuming
+the absence of time series or spatial autocorrelation (or in other
+words that the two potential outcomes for observation $i$ and the
+treatment for observation $j$ are independent, for all $i\not=j$).  We
+have also assumed that all treatments are the same.  This assumption
+would be violated in our running example if incumbency status meant
+something different across districts.\footnote{These last two
+  assumptions are sometimes known under the awkward name of the
   ``stable unit treatment value assumption'' or SUTVA
   \citep{Rubin74}.}
+
+Satisfying the assumptions discussed in this section still leaves many
+other assumptions to be made when choosing a specific statistical
+inference method.  We now focus on this point in the context of
+commonly used parametric methods.
 
 \section{Parametric Analysis Methods}
 
