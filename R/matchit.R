@@ -68,6 +68,12 @@ matchit <- function(formula, model="logit", data, discard=0,
   #counter
   if(!(identical(counter,TRUE)| identical(counter,FALSE))){
     warning("counter=",cl$counter," is invalid; used counter=TRUE instead",call.=FALSE);counter=TRUE}    
+  #full matching
+  if(!(identical(full,TRUE) | identical(full,FALSE))){
+    warning("full=",cl$full," is invalid; used full=TRUE instead",call.=FALSE)
+  } else if(full & nearest){
+    warning("Full matching will ignore nearest neighbot inputs",call.=FALSE)
+  }
   
   # Set up for output
   tt <- terms(formula(cl))
