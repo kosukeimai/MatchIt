@@ -38,8 +38,8 @@ common support restrictions with \code{discard}. Computed in \code{distance}.}
 
 	\item{nearest}{Whether to perform nearest-neighbor matching (default=TRUE).  }
 	\item{replace}{Whether to match with replacement (default=FALSE). }
-	\item{m.order}{Order in which to match treated units with control units.  2
-(default)=from high to low, 3=from low to high, 4=random order.}
+	\item{m.order}{Order in which to match treated units with control units.  1=optimal (requires ``optmatch" package), 
+2 (default)=from high to low, 3=from low to high, 4=random order.}
 	\item{ratio}{The number of control units to be matched to each treated unit (default=1).}
 
 	\item{caliper}{Standard deviations of the propensity score within which to draw control

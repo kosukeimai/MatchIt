@@ -14,7 +14,7 @@ users. }
 
 \usage{
 subclassify <- subclassify(formula, data, in.sample, pscore, nearest=TRUE, match.matrix, 
-	      	subclass=0, sub.by="treat", counter=TRUE)
+	      	subclass=0, sub.by="treat", counter=TRUE, full=FALSE, full.options=list())
 }
 
 
@@ -50,7 +50,13 @@ vector of probabilities to create quantiles based on \code{sub.by}.}
 number of units.}
 
 	\item{counter}{Whether to display counter indicating the progress of the matching
-(default=TRUE).} }
+(default=TRUE).} 
+
+   \item{full}{Whether to do full matching (default=FALSE).  Requires ``optmatch" package.}
+        \item{full.options}{Additional options for full matching.}
+
+
+}
 
 \value{
   \item{psclass}{Subclass index in an ordinal scale from 1 to the number of subclasses.  

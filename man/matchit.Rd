@@ -27,14 +27,15 @@ available through \code{help.matchit}.}
 in the matching.  There are a number of matching options, detailed below.  The full syntax is
 \code{matchit(formula, data=NULL, discard=0, exact=FALSE, replace=FALSE, ratio=1, model="logit",
 reestimate=FALSE, nearest=TRUE, m.order=2, caliper=0, calclosest=FALSE, mahvars=NULL,
-subclass=0, subtype=1, interact=TRUE, \dots)} A summary of the results can be seen graphically
+subclass=0, sub.by="treat", counter=TRUE, full=FALSE, full.options=list(),  \dots)} A summary of the results can be seen 
+graphically
 using \code{plot(matchitobject)}, or numerically using \code{summary(matchitobject)}.  
 \code{print(matchitobject)} also prints out the output.  }
 
 \usage{
 matchit <- matchit(formula, data, model="logit", discard=0, reestimate=FALSE, nearest=TRUE,
                  replace=FALSE, m.order=2, ratio=1, caliper=0, calclosest=FALSE,
-                 subclass=0, sub.by="treat", mahvars=NULL, exact=FALSE, counter=TRUE, ...)
+                 subclass=0, sub.by="treat", mahvars=NULL, exact=FALSE, counter=TRUE, full=FALSE, full.options=list(),...)
 }
 
 
@@ -61,8 +62,8 @@ only treated units outside the support of the distance measure of the control un
 discarding units (default=FALSE).}
 	\item{nearest}{Whether to perform nearest-neighbor matching (default=TRUE).  }
 	\item{replace}{Whether to match with replacement (default=FALSE). }
-	\item{m.order}{Order in which to match treated units with control units.  2
-(default)=from high to low, 3=from low to high, 4=random order.}
+	\item{m.order}{Order in which to match treated units with control units.  1=optimal (requires ``optmatch" 
+package), 2 (default)=from high to low, 3=from low to high, 4=random order.}
 
 	\item{ratio}{The number of control units to be matched to each treated unit (default=1).}
 	\item{caliper}{Standard deviations of the propensity score within which to draw control
@@ -88,6 +89,9 @@ score.}
 
 	\item{counter}{Whether to display counter indicating the progress of the matching
 (default=TRUE).}
+
+	\item{full}{Whether to do full matching (default=FALSE).  Requires ``optmatch" package.}
+	\item{full.options}{Additional options for full matching.}
 
 	\item{...}{Additional arguments to be passed to \code{matchit}, depending on the model
 to be used.} 
