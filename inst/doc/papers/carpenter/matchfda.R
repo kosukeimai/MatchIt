@@ -4,10 +4,11 @@ data$treat <- data$demsnmaj
 sink("matchfda.out")
 library(Matchit)
 mout <- matchit(treat ~ orderent + stafcder + prevgenx + lethal +
-                deathrt1 + acutediz + hosp01 + I(hospdisc/10000) +
-                hhosleng + femdiz01 + mandiz01 + peddiz01 + orphdum +
-                natreg + I(natregsq/1000) +  wpnoavg3 + sqrt(wpnoavg3)
-                + vandavg3 + condavg3, data=data, discard=1)  
+                deathrt1 + hosp01 + I(hospdisc/10000) +
+                hhosleng + femdiz01 + mandiz01 + peddiz01 + acutediz +
+                orphdum + natreg + I(natregsq/1000) +  wpnoavg3 +
+                sqrt(wpnoavg3) + vandavg3 + condavg3, data=data,
+                discard=1)   
 
 print(summary(mout))
 mdata <- match.data(mout)
