@@ -36,20 +36,26 @@ legend(4.5, .35, lty=c(1, 1, 2, 2), col=c(1, 8, 1, 8), legend=c("Y~T+X, Treated 
 		"Y~T+X+X^2, Control Group"))
 dev.off()
 
-matched <- all
-minx <- min(x.t)
-matched <- all[all$x > minx,]
+#matched <- all
+#minx <- min(x.t)
+#matched <- all[all$x > minx,]
+
+library(matchit)
+temp <- matchit(t ~ x, data=all)
+matched <- match.data(temp)
 
 lm.m1 <- lm(y ~ t+x, data=matched)
 lm.m2 <- lm(y ~ t+x+I(x^2), data=matched)
 
 pdf("olsplot2.pdf")
+#x11()
 plot(matched$x[matched$t==1], matched$y[matched$t==1], pch="T", main="", xlab="", ylab="", xlim=c(1, 7), ylim=c(-.2, .4))
 par(new=T)
 plot(matched$x[matched$t==0], matched$y[matched$t==0], pch="C", main="", xlab="X", ylab="Y", xlim=c(1, 7), ylim=c(-.2, .4))
-abline(v=minx)
+#abline(v=minx)
 par(new=T)
-plot(all$x[all$x < minx & all$t==0], all$y[all$x < minx & all$t==0], pch="C", main="", xlab="", ylab="", xlim=c(1,7), ylim=c(-.2, .4), col=8)
+plot(all$x[temp$matched==FALSE & all$t==0], all$y[temp$matched==FALSE & all$t==0], pch="C", main="", xlab="", ylab="", xlim=c(1,7), ylim=c(-.2, .4), 
+	col=8)
 abline(lm.m1$coef[1] + lm.m1$coef[2], lm.m1$coef[3], lty=1)
 abline(lm.m1$coef[1], lm.m1$coef[3], lty=1, col=8)
 par(new=T)
@@ -61,6 +67,28 @@ plot(plot.pts, lm.m2$coef[1] + lm.m2$coef[3]*plot.pts + lm.m2$coef[4]*plot.pts^2
 legend(4.5, .35, lty=c(1, 1, 2, 2), col=c(1, 8, 1, 8), legend=c("Y~T+X, Treated Group", "Y~T+X, Control Group", "Y~T+X+X^2, Treated Group",
 		"Y~T+X+X^2, Control Group"))
 dev.off()
+
+############ OLD VERSION:
+
+
+#pdf("olsplot2.pdf")
+#plot(matched$x[matched$t==1], matched$y[matched$t==1], pch="T", main="", xlab="", ylab="", xlim=c(1, 7), ylim=c(-.2, .4))
+#par(new=T)
+#plot(matched$x[matched$t==0], matched$y[matched$t==0], pch="C", main="", xlab="X", ylab="Y", xlim=c(1, 7), ylim=c(-.2, .4))
+#abline(v=minx)
+#par(new=T)
+#plot(all$x[all$x < minx & all$t==0], all$y[all$x < minx & all$t==0], pch="C", main="", xlab="", ylab="", xlim=c(1,7), ylim=c(-.2, .4), col=8)
+#abline(lm.m1$coef[1] + lm.m1$coef[2], lm.m1$coef[3], lty=1)
+#abline(lm.m1$coef[1], lm.m1$coef[3], lty=1, col=8)
+#par(new=T)
+#plot(plot.pts, lm.m2$coef[1] + lm.m2$coef[2] + lm.m2$coef[3]*plot.pts + lm.m2$coef[4]*plot.pts^2, type="l", lty=2, 
+#	xlim=c(1,7), ylim=c(-.2, .4), xlab="", ylab="")
+#par(new=T)
+#plot(plot.pts, lm.m2$coef[1] + lm.m2$coef[3]*plot.pts + lm.m2$coef[4]*plot.pts^2, type="l", lty=2, xlim=c(1,7), ylim=c(-.2, .4), 
+#	xlab="", ylab="", main="Models run on matched data", col=8)
+#legend(4.5, .35, lty=c(1, 1, 2, 2), col=c(1, 8, 1, 8), legend=c("Y~T+X, Treated Group", "Y~T+X, Control Group", "Y~T+X+X^2, Treated Group",
+#		"Y~T+X+X^2, Control Group"))
+#dev.off()
 
 
 
