@@ -1,43 +1,5 @@
-# To-do list generated from July 10, 2003 meeting with Gary, Kosuke, Dan, Liz
+# To do list for Matchit
 
-# Allocation of to-do items (also entered in todo.txt)
+(1) Max bias reduction
 
-1.  Global change of "match" -> "matchit"
-	Not allocated; volunteers?
-
-Liz: 
-2.  Fixing exact option 
-	Change so that exact=TRUE (use all variables in model formula, don't do pscore)
-			    =FALSE (no exact matching)
-			    =vector of variables (do exact matching on these, then pscores
-						  within)
-	Check if can use "covariates" from model output (for various types of model spec.)
-	Check what happens with interactions
-
-3.  General troubleshooting/diagnosing/adding error messages
-	Items A(1), C(6,7,8,9) on todo.txt
-	Other general troubleshooting: run program many different ways, see what happens!
-	If n_t or n_c < 2 in a subclass, don't run output for that subclass
-
-Dan:
-4.  (Rough) write up of discussion we had today about variance estimation
-
-5.  Fix up write-up in cupid.tex
-	Change order of examples: exact matching first
-	Make early examples and demo very simple (just a few variables)
-	Make documentation simpler
-
-Kosuke:
-6.  Incorporate Zelig for analysis portion
-
-7.  Add generalized additive model option
-
-8.  Split "diagnose" into "subclassify" and "plot" commands to be run on
-	output of balance()
-	This maybe should wait until after I diagnose diagnose  
-	The other thing that needs to be done here is figure out how to calculate
-		the variances of the X's when matching is done with ratios and
-		there are variable numbers of matches per treated.  (Kosuke,
-		I can help with this...Paul Rosenbaum's work on full matching
-		might have some ideas)
-
+(2) Factor vars
