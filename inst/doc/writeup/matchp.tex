@@ -64,25 +64,24 @@ Elizabeth A. Stuart\thanks{Researcher, Mathematica Policy Research, Inc.\, Ph.D.
 \begin{document}\maketitle
 
 \begin{abstract}
-  Although political science articles rarely present causal estimates
-  from more than a few model specifications, authors typically choose
+  Although political science articles rarely include causal estimates
+  from more than a few model specifications, authors usually choose
   these from numerous trial runs readers never see.  Given the
   typically large variation in estimates across choices of control
   variables, functional forms, and other modeling assumptions, how can
   researchers ensure that the few estimates presented are accurate or
-  representative?  How do readers know that political science articles
-  are not merely demonstrations that the author found it
-  \emph{possible} to find a specification that fits his or her
-  favorite hypothesis?  Matching methods, which offer the promise of
-  causal inference with fewer assumptions, is one possible way
-  forward, but the literature suffers from conflicting approaches to
-  estimation, uncertainty, theoretical results, and practical advice.
-  We propose a unified perspective on this literature.  Our approach
-  makes it possible for researchers to preprocess their data (such as
-  with the easy-to-use matching software we offer) and then to apply
+  representative?  How do readers know that publications are not
+  merely demonstrations that the author found it \emph{possible} to
+  find a specification that fits his or her favorite hypothesis?
+  Matching methods, which offer the promise of causal inference with
+  fewer assumptions, is one possible way forward, but the literature
+  suffers from conflicting approaches to estimation, uncertainty,
+  theoretical results, and practical advice.  We propose a unified
+  approach that makes it possible for researchers to preprocess data
+  (such as with the easy-to-use software we offer) and then to apply
   whatever familiar parametric techniques they would have used anyway.
-  Instead of replacing existing methods with matching, we use matching
-  to make parametric models work better by giving more accurate and
+  Instead of replacing existing methods, we use matching to make
+  parametric models work better by giving more accurate and
   considerably less model-dependent causal inferences.
 \end{abstract}
 \baselineskip=1.57\baselineskip
@@ -93,7 +92,7 @@ In this paper, we offer procedures to reduce model dependence in
 political science research.  Model dependence is a statistical problem
 that threatens the validity of a wide variety of quantitative research
 in the discipline.  The problem is easy to recognize, but it usually
-only arises in private and open discussions of it are rarely found in
+only arises in private.  Open discussions of it are rarely found in
 the literature.
 
 To see the problem, consider how quantitative political science
@@ -126,8 +125,8 @@ even mean to choose ``the right'' parametric model estimates when any
 chosen model depends on assumptions we cannot verify?  When we read a
 published article in political science, how do we know whether the
 causal effect presented is accurate or whether the article merely
-demonstrates that it was \emph{possible} to find a specification
-consistent with the researcher's prior expectations?
+demonstrates that the author found it \emph{possible} to find a
+specification consistent with his or her prior expectations?
 
 We attack this problem by drawing on a new statistics literature on
 causal inference based on matching, a nonparametric and
@@ -177,34 +176,35 @@ advantages in terms of exposition, pedagogy, and ease-of-use, since
 our methodology builds on rather than replaces what we have already
 learned, brings some order and cohesion to conflicting methodological
 literatures, and suggests a relatively straightforward approach for
-empirical researchers seeking to make causal inferences.  For example,
-our approach suggests a simple, standardized, and valid approach to
-computing standard errors and confidence intervals for most of the new
-matching techniques.  This strategy also made it possible for us to
-write easy-to-use software that implements all the ideas we discuss in
-this paper; it is free and available at
-\url{http://gking.harvard.edu/matchit}.
+empirical researchers seeking to make causal inferences. Our approach
+also suggests a simple, standardized, and valid approach to computing
+standard errors and confidence intervals for most of the new matching
+techniques.  This strategy also made it possible for us to write
+easy-to-use software that implements all the ideas discussed in this
+paper; it is available as an open source and free R program.
+% ; it is free and available at
+% \url{http://gking.harvard.edu/matchit}.
 
-Our approach is similar in spirit to \citet{ImaDyk03},
-\citet{RosRub84a}, \citet{Rubin79}, and \citet{RubTho00} who each
-recommend matching followed by a (different) specific form of
-parametric adjustment, as well as intuitively chosen strategies used
-in applied research by \citet{Rosenbaum86} and others, as discussed in
-\citet{GlaLevMye03}.  It is also similar to \citet{HecIchTod98} who
-develop forms of matching combined with semi-parametric (kernel
-weighting) analyses, as well as to the parametric bias adjustment for
-one form of matching by \citet{AbaImb04} (except that, to avoid
-inducing new biases, we recommend below that matching be evaluated
-prior to examining the dependent variable, which is not the case with
-these latter approaches as generally implemented).  To our knowledge,
-the present paper is the first to propose and work out the conditions
-for matching as a general method of nonparametric preprocessing,
-suitable for improving any parametric method.\footnote{Our idea is
-  also similar in spirit to methods in other areas that preprocess
-  data so that subsequent analyses can be improved without modifying
-  existing techniques, such as multiple imputation
-  \citep{Rubin87,KinHonJos01} and outlier and feature detection
-  \citep[][Ch.8]{Bishop95}.}
+Our approach is similar in spirit to, but a generalization of the
+ideas in, \citet{ImaDyk03}, \citet{RosRub84a}, \citet{Rubin79}, and
+\citet{RubTho00} who each recommend matching followed by a (different)
+specific form of parametric adjustment, as well as intuitively chosen
+strategies used in applied research by \citet{Rosenbaum86} and others,
+as discussed in \citet{GlaLevMye03}.\footnote{It is also similar to
+  \citet{HecIchTod98} who develop forms of matching combined with
+  semi-parametric (kernel weighting) analyses, as well as to the
+  parametric bias adjustment for one form of matching by
+  \citet{AbaImb04} (except that, to avoid inducing new biases, we
+  recommend below that matching be evaluated prior to examining the
+  dependent variable, which is not the case with these latter
+  approaches as generally implemented).}  Our idea is also similar in
+spirit to methods in other areas that preprocess data so that
+subsequent analyses can be improved without modifying existing
+techniques, such as multiple imputation \citep{Rubin87,KinHonJos01}
+and outlier and feature detection \citep[][Ch.8]{Bishop95}.  To our
+knowledge, the present paper is the first to propose and work out the
+conditions for matching as a general method of nonparametric
+preprocessing, suitable for improving any parametric method.
 
 \section{Definition of Causal Effects}
 
