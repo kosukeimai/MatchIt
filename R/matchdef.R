@@ -41,7 +41,8 @@ matchdef <-  function(formula, in.sample, pscore, nearest = TRUE,
     for (i in 1:n1)
       distance[i,] <- abs(p1[i]-p0)
     full <- as.matrix(fullmatch(distance, min.controls = ratio,
-                                max.controls = ratio + 1, ...))
+                                max.controls = ratio,
+                                omit.fraction = (n0-ratio*n1)/n0,...))
     psclass <- full[pmatch(row.names(treata), row.names(full)),]
     psclass <- as.numeric(as.factor(psclass))
     names(psclass) <- row.names(treata)
