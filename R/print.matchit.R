@@ -43,7 +43,7 @@ print.matchit <- function(x,  digits = max(3, getOption("digits")-3), ...)
           xsum[1,4] <- -1*t.test(xx~tt)$statistic
         else if (is.logical(x$call$exact))
           if (x$call$exact)
-            xsum[1,4] <- NA
+            xsum[1,4] <- 0
           else
             xsum[1,4] <- -1*t.test(xx~tt)$statistic
         else
