@@ -53,14 +53,14 @@
 \item How most political scientists do empirical analysis:\pause
   \begin{enumerate}
   \item collect the data spending months or years.\pause
-  \item finish records and merging.\pause
+  \item finish recording and merging.\pause
   \item sit in front of your computer with nobody to bother you.\pause
   \item run one regression.\pause
   \item run another regression with different control variables.\pause
   \item run another regression with different functional forms.\pause
   \item run another regression with different measures.\pause
   \item run yet another regression with a subset of the data.\pause
-  \item end up with 100 or 1000 estimates.\pause
+  \item end up with 100 or 1000 {\it different} estimates.\pause
   \item put 5 regression results in the paper.\pause 
   \end{enumerate}
 \item What's the problem?\pause
@@ -119,8 +119,6 @@
   \item resulting estimates are less model dependent.\pause
   \end{enumerate} 
 
-\item Easy-to-use software: MatchIt available at
-  \Ia{http://gking.harvard.edu/matchit/}\pause
 \end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -131,16 +129,13 @@
 
 \begin{itemize}
 
-\item Example: estimating the electoral advantage of incumbency for
-  Democrats\pause
+\item Notations:\pause
   \begin{itemize}
-  \item Units: congressional districts, $i=1,\dots,n$.\pause
-  \item Observed treatment: Democratic incumbent ran $(t_i=1)$, did
-    not run $(t_i=0)$.\pause
-  \item Observed outcome: Democratic vote share for the $i$th
-    district, $y_i$.\pause
-  \item Control variables: use pretreatment variables $X_i$ and avoid
-    posttreatment bias.
+  \item Units:  $i=1,\dots,n$.\pause
+  \item Observed treatment: $(t_i=1)$ if treated, $(t_i=0)$ otherwise.\pause
+  \item Observed outcome: $y_i$.\pause
+  \item Control variables: control for pretreatment variables $X_i$ to
+    avoid posttreatment bias.\pause
   \end{itemize}
 
 \item Potential outcomes: $y_i(1) \equiv y_i(t_i=1)$ and $y_i(0)
@@ -148,8 +143,6 @@
   \begin{itemize}
   \item Realized Causal Effect for unit $i$: $y_i(1) - y_i(0)$.\pause
   \item The fundamental problem of causal inference.\pause
-  \item Connection to missing data and ecological inference:\\ $y_i =
-    t_i y_i(1) + (1-t_i) y_i(0)$\pause
   \item Random causal effect for unit $i$: $Y_i(1) - Y_i(0).$\pause
   \item Mean causal effect for unit $i$: $E[Y_i(1) - Y_i(0)].$\pause
   \end{itemize}
@@ -167,46 +160,15 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\foilhead{Data Collection Mechanisms\pause}
-
-\hypersetup{pdfpagetransition=Replace}
-
-\begin{itemize}
-\item Key features of classical randomized experiments:\pause
-  \begin{enumerate}
-  \item random selection of units from a given population.\pause
-  \item random assignment of values of the treatment.\pause
-  \item large $n$.\pause
-  \end{enumerate}
-\item Observational studies:\pause
-  \begin{itemize}
-  \item do not meet all three features of classical randomized
-    experiments\pause
-  \item comprise almost all political science research
-  \end{itemize}
-
-\item Assumptions for causal inference:\pause
-  \begin{itemize}
-  \item no sample selection bias.\pause
-  \item no omitted variable bias.\pause
-  \item no posttreatment bias.\pause
-  \item independent units.\pause
-  \item same treatment within each treatment group.\pause
-  \end{itemize}
-\end{itemize}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 \foilhead{Parametric Analysis Methods\pause}
 
 \hypersetup{pdfpagetransition=Replace}
 
 \begin{itemize}
-\zerolistvertdimens 
 \item Researchers typically assume a parametric model (up to unknown
   parameters):\\ e.g., $Y_i \sim p(\mu_i, \theta)$ with $\mu_i \equiv
   E(Y_i \mid t_i, X_i)=g(\alpha+t_i \beta + X_i \gamma)$\pause
-\item but, the true model is unknown.\pause
+\item But, the true model is unknown.\pause
 \item In experimental studies, $T$ and $X$ are independent and so $X$
   can be dropped:\pause 
   \begin{itemize}
@@ -216,14 +178,10 @@
   \end{itemize}
 \item In observational studies, the results are model-dependent.\pause
   \begin{itemize}
-  \item curse of dimensionality: $m$ 10-category variables require
-    $10^m$ parameters in regression.\pause
+  \item curse of dimensionality: e.g., one 10-category variables
+    require $10$ parameters (NOT 1 parameter) in regression.\pause
   \end{itemize}
 \end{itemize}
-
- \begin{center}
-   \includegraphics{figs/olspanel-thick.pdf}\pause
- \end{center}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -232,30 +190,29 @@
 \hypersetup{pdfpagetransition=Replace}
 
 \begin{itemize}
-\item Adjust the data prior to the parametric analysis so that:\pause
-  \begin{enumerate}
-  \item the relationship between $t_i$ and $X_i$ is eliminated or reduced.\pause
-  \item no bias and little inefficiency is induced.\pause
-  \end{enumerate}
-
+\zerolistvertdimens 
+\item Adjust the data prior to the parametric analysis so that the
+  relationship between $t_i$ and $X_i$ is eliminated or reduced.\pause
+  
 \item Fundamental rule for avoiding selection bias: do not select on
-  dependent variable.\pause 
+  dependent variable.\pause
   \begin{itemize}
   \item valid selection rule -- a function of $t_i$ and $X_i$.\pause 
   \item randomized blocks in experiments, stratified sampling in
     surveys.\pause
   \end{itemize}
 
-\item Preprocessed data set\pause
+\item Preprocessed data set contains a subset of the raw data.\pause
   \begin{itemize}
-  \item contains a subset of the raw data.\pause
-  \item $p(X\mid t_i=1) = p(X\mid t_i=0)$ for one-to-one exact
-    matching.\pause
-  \item $p(X\mid t_i=1) \approx p(X\mid t_i=0)$ for nonexact matching
-    methods.\pause 
   \item model-dependence is reduced.\pause
+  \item $p(X\mid t_i=1) = p(X\mid t_i=0)$ or $p(X\mid t_i=1) \approx
+    p(X\mid t_i=0)$.\pause
   \end{itemize}
 \end{itemize}
+
+\begin{center}
+  \includegraphics{figs/olspanel-thick.pdf}\pause
+\end{center}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -369,19 +326,54 @@
   \end{itemize}
 \item We provide a way to get around the ethical and methodological
   problem of choosing a model specification.\pause
+
 \item Preprocessing the raw data with matching procedures makes
   familiar parametric models a much more reliable tool.\pause
-
-\item Preprocessing makes causal inference less sensitive to modeling
-  assumptions.\pause 
-
-\item Readers (and authors) need not worry slightly different
+  
+\item Readers (and authors) need not worry that slightly different
   specifications alter the empirical conclusions.\pause
 
 \item Easy-to-use software: MatchIt available at
   \Ia{http://gking.harvard.edu/matchit/}\pause
 
 \end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\foilhead{Extra Slides\pause}
+
+\hypersetup{pdfpagetransition=Replace}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\foilhead{Data Collection Mechanisms\pause}
+
+\hypersetup{pdfpagetransition=Replace}
+
+\begin{itemize}
+\item Key features of classical randomized experiments:\pause
+  \begin{enumerate}
+  \item random selection of units from a given population.\pause
+  \item random assignment of values of the treatment.\pause
+  \item large $n$.\pause
+  \end{enumerate}
+\item Observational studies:\pause
+  \begin{itemize}
+  \item do not meet all three features of classical randomized
+    experiments\pause
+  \item comprise almost all political science research
+  \end{itemize}
+
+\item Assumptions for causal inference:\pause
+  \begin{itemize}
+  \item no sample selection bias.\pause
+  \item no omitted variable bias.\pause
+  \item no posttreatment bias.\pause
+  \item independent units.\pause
+  \item same treatment within each treatment group.\pause
+  \end{itemize}
+\end{itemize}
+
 
 
 \end{document}
