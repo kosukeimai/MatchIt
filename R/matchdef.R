@@ -51,7 +51,8 @@ matchdef <-  function(formula, in.sample, pscore, nearest = TRUE,
                              psclass[-pmatch(tlabels[i],
                                              names(psclass))]))
     }
- 
+    if(counter==TRUE){cat("Done\n")}
+
   }  else if(nearest) {    
     ## These are the units that are ineligible because of discard
     ## (in.sample==0) 
@@ -204,8 +205,8 @@ matchdef <-  function(formula, in.sample, pscore, nearest = TRUE,
       if (replace==TRUE) matchedc[goodmatch==clabels] <- 0
       
     }
+    if(counter==TRUE){cat("Done\n")}
   }
-  if(counter==TRUE){cat("Done\n")}
   if(!nearest){match.matrix <- NULL}   else {
     x <- as.matrix(match.matrix)
     x[x==-1] <- NA
