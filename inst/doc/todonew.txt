@@ -1,5 +1,12 @@
 # To do list for Matchit
 
-(1) Max bias reduction
+- Max bias reduction
 
-(2) Factor vars
+- Factor vars
+
+- full matching
+
+- optimal matching
+
+- A*I without using y?
+
