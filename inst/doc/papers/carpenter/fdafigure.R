@@ -14,19 +14,19 @@ doverlay <- function(x1, x0, xlab = "", main = "", lines = FALSE,
   lines(dx0, lty=2, ...)
   if(leg){
     legend(minobs, max(c(dx1$y, dx0$y)), lty = 1:2, 
-           legend = c("Raw Data", "Matched Data"), ...)
+           legend = c("Raw data", "Matched data"), ...)
   }
 }
 
-trellis.device(device="pdf",file="fdadens.pdf",color=FALSE,width=6,height=4)
+trellis.device(device="pdf",file="fdadens.pdf",color=FALSE,width=6,height=3)
 par(mar=c(2, 2, 2, 2) + 0.1, cex.lab=0.6, cex.axis=0.6,
     mgp=c(1,0.5,0), cex.main=0.5, cex=0.8)
 doverlay(mate,ate,lwd=2,
-         xlab="Estimated Average Treatment Effect", leg=F)
+         xlab="Estimated average treatment effect", leg=F)
 arrows(ate[length(ate)], 0.12, ate[length(ate)],0, length=0.1)
-text(-20,0.04,"Raw Data")
-text(-40,0.08,"Matched\nData")
-text(-28,0.1275,"Point Estimate \n of Raw Data")
+text(-20,0.04,"Raw data")
+text(-40,0.08,"Matched\ndata")
+text(-28,0.1275,"Point estimate \n of raw data")
 dev.off()
 
 data <- read.table("ajps2002-full1b.txt", header=T)
@@ -51,14 +51,14 @@ plot(abs(smout$sum.all[-18,"T-stat"]),
       xlim=c(0, max(abs(smout$sum.all[,"T-stat"]))),
       ylim=c(0, max(abs(smout$sum.all[,"T-stat"]))), 
       main="Covariate balance before and after matching",
-      xlab="absolute t-statistics before matching",
-      ylab="absolute t-statistics after matching")
+      xlab="Absolute t-statistics before matching",
+      ylab="Absolute t-statistics after matching")
 polygon(c(-0.2,-0.2,1.96,1.96,-0.2), c(-0.2,1.96,1.96,-0.2,-0.2), density=-1,
         col="darkgray", border=NA)
 points(abs(smout$sum.all[-18,"T-stat"]),
        abs(smout$sum.matched[-18,"T-stat"]), pch=19, cex=0.6)
 abline(0,1)
-text(5.5, 1.5, "propensity score", cex=0.6)
+text(5.5, 1.5, "Propensity score", cex=0.6)
 text(4.5, 0.1, "FDA review staff", cex=0.6)
 text(4, 2, "Washington Post stories", cex=0.6)
 text(4, 0.7, "Nightly TV News stories", cex=0.6)

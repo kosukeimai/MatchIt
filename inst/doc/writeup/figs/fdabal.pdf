@@ -2,8 +2,8 @@
 %âãÏÓ
 1 0 obj
 <<
-/CreationDate (D:20040804103252)
-/ModDate (D:20040804103252)
+/CreationDate (D:20040804134637)
+/ModDate (D:20040804134637)
 /Title (R Graphics Output)
 /Producer (R 1.9.1)
 /Creator (R)
@@ -170,8 +170,8 @@ Q q 0.00 0.00 216.00 216.00 re W n
 BT
 0.000 0.000 0.000 rg
 /F2 1 Tf 6.00 0.00 -0.00 6.00 44.71 198.73 Tm (Covariate balance before and after matching) Tj
-/F1 1 Tf 7.00 0.00 -0.00 7.00 51.40 4.32 Tm (absolute t-statistics before matching) Tj
-/F1 1 Tf 0.00 7.00 -7.00 0.00 12.96 54.21 Tm (absolute t-statistics after matching) Tj
+/F1 1 Tf 7.00 0.00 -0.00 7.00 51.01 4.32 Tm (Absolute t-statistics before matching) Tj
+/F1 1 Tf 0.00 7.00 -7.00 0.00 12.96 53.82 Tm (Absolute t-statistics after matching) Tj
 ET
 Q q 30.24 30.24 155.52 155.52 re W n
 0.663 0.663 0.663 rg
@@ -208,7 +208,7 @@ BT
 ET
 30.24 30.24 m 185.76 185.76 l S
 BT
-/F1 1 Tf 7.00 0.00 -0.00 7.00 125.40 65.62 Tm (propensity score) Tj
+/F1 1 Tf 7.00 0.00 -0.00 7.00 125.01 65.62 Tm (Propensity score) Tj
 /F1 1 Tf 7.00 0.00 -0.00 7.00 104.66 35.60 Tm (FDA review staff) Tj
 /F1 1 Tf 7.00 0.00 -0.00 7.00 82.22 76.10 Tm (Washington Post stories) Tj
 /F1 1 Tf 7.00 0.00 -0.00 7.00 82.57 48.90 Tm (Nightly TV News stories) Tj

@@ -50,8 +50,8 @@
 Kosuke Imai,\thanks{Assistant Professor, Department of Politics, Princeton
     University (Corwin Hall 041, Department of Politics, Princeton
     University, Princeton NJ 08544, USA;
-    \texttt{http://www.princeton.edu/\~\,kimai},
-    \texttt{KImai@Princeton.Edu}).}
+    \texttt{http://www.princeton.edu/\~{}kimai},
+    \texttt{kimai@Princeton.Edu}).}
 %\and %
 Gary King,\thanks{David Florence Professor of Government, Harvard
   University (Center for Basic Research in the Social Sciences, 34
@@ -149,14 +149,14 @@ http://gking.harvard.edu/matchit.
 Our approach is similar in spirit to \citet{AbaImb04,RubTho00}, who
 recommend (specific forms of) parametric adjustment following
 matching, as well as \citet{HecIchTod98} who develop forms of matching
-that are combined with semi-parametric (kernel weighting) analyses.
-Applied researchers have intuitively chosen similar approaches, such as in
-\citet{Rosenbaum86, GlaLevMye03}.  
-It is also similar in spirit to methods in other areas that preprocess
-data so that subsequent analyses can be improved without modifying
-existing techniques, such as multiple imputation
+that are combined with semi-parametric (kernel weighting) analyses
+\citep[see also][]{RosRub84a,ImaDyk03}.  Applied researchers have
+intuitively chosen similar approaches, such as in \citet{Rosenbaum86,
+  GlaLevMye03}.  It is also similar in spirit to methods in other
+areas that preprocess data so that subsequent analyses can be improved
+without modifying existing techniques, such as multiple imputation
 \citep{Rubin87,KinHonJos01} and outlier and feature detection
-\citep[][Ch.8]{Bishop95}.  
+\citep[][Ch.8]{Bishop95}.
 
 \section{Definition of Causal Effects}
 
@@ -1328,11 +1328,108 @@ claim that ``[t]he contradictory nature of . . . [the] cues received
 from Republican female candidates presents citizens with a complicated
 information-processing task'' \citep[p. 460]{Koch02}.
 
-\subsection{Democratic Senate Majority and FDA Approval Time}
+\subsection{Estimating the Marginal Effect of Democratic Senate
+  Majority on FDA Drug Approval Time} 
+
+Our second empirical illustration analyzes the dataset about the
+approval time of new pharmaceutical products by the Food and Drug
+Administration (FDA). The original dataset was studied by
+\citet{Carp02}, and we were able to replicate all of his results which
+use the variables made available to us.
+
+In this influential paper, \citet{Carp02} examines various
+determinants of the FDA approval time to answer the question of how
+long it takes for the FDA to approve new drugs. Here, we focus on the
+hypothesis about the relationship between the ideology of the agency's
+overseers and expected times of approval. In particular, his first
+hypothesis is that ``expected approval times are greater when
+Democrats control the White House, when the agency's oversight
+committees are more liberal, and when the House and Senate are more
+liberal'' \citep[p.495]{Carp02}. That is, the more liberal the FDA's
+overseers are, the more likely the agency is to approve new drugs
+quickly. 
+
+To test this hypothesis, he uses a lognormal survival model with the
+main causal variables (median adjusted ADA scores for House and Senate
+Committees as well as for House and Senate floors, Democratic Majority
+in House and Senate, and Democratic Presidency) along with 18 control
+variables including clinical and epidemiology factors and firm
+characteristics.\footnote{In the original paper, \citet{Carp02} uses
+  the lognormal model with frailty. He does not specify any group and
+  assume a common random effect.  Here, for the sake of simplicity, we
+  use the standard lognormal model. The substantive results do not
+  change when the frailty model is used.}  The dataset consists of 408
+new drugs whose applications were reviewed by the FDA, and 262 of
+which were eventually approved. The remaining 146 applications are
+still pending at the time when the data were collected and hence are
+treated as right-censored observations. The approval time is measured
+in months that passed from the submission of an application.  In our
+analysis, we focus on the estimation of the marginal effect using the
+binary treatment variable of Democratic Senate majority, which is one
+of the seven oversight variables. We do not control for the remaining
+six oversight variables because they are conceptually and
+statistically highly related to the Democratic Senate majority
+variable.
+
+To preprocess the data, we conduct the nearest neighbor propensity
+score matching (without replacement) using the logistic regression
+with all covariates as linear predictors. We find that including a
+square root of the nightly TV news disease story variable into this
+model significantly improves its balance after matching. This
+preprocessing procedure discards 49 units (2 treated units and 47
+control units) from the sample for which no comparable unit is
+found. 
+
 
 \begin{figure}[t] 
  \begin{center}
-    \includegraphics[height=3.5in,angle=0]{figs/fdadens.pdf}
+    \includegraphics{figs/fdabal.pdf}
+  \end{center}
+  \vspace{-0.275in}
+  \caption{Covariate balance before and after matching for the FDA data.
+    The left panel plots the absolute value of t-statistics before and
+    after matching for mean differences of each covariate between the
+    treatment and control groups. The gray rectangular represents the
+    region where t-statistics are not significant at 5\% level for
+    both before and after matching. After matching, all t-statistics
+    become insignificant. The right panel presents the density plot
+    for estimated propensity score before and after matching. After
+    matching, the distribution for the control group becomes
+    significantly more similar to that for the treatment group.  }
+  \label{fg:fdabal}
+\end{figure}
+
+Figure~\ref{fg:fdabal} summarizes how preprocessing can improve the
+covariate balance. The left panel plots the absolute value of
+t-statistics before and after matching for mean differences of each
+covariate between the treatment and control groups.  Before matching,
+the means of the three covariates and the estimated propensity score
+are significantly different between the treatment and control groups.
+However, after matching, these t-statistics are less than 1.96,
+implying that the mean differences are no longer statistically
+significant at 5\% level. We find the mean differences of the other
+covariates to be small both before and after
+preprocessing.\footnote{Preprocessing increases the values of the
+  t-statistics for two variables. The uniform improvement of balance
+  for all covariates is unlikely unless exact matching is possible
+  and/or the sample size is large. These minor sample differences,
+  however, can be adjusted by fitting the parametric models to the
+  preprocessed data.} The right panel of Figure~\ref{fg:fdabal}
+illustrates how preprocessing prevents extrapolation. Before matching,
+the support of the distribution of the estimated propensity score for
+the control group does not overlap with that for the treatment group.
+This means that without preprocessing one must rely on parametric
+assumptions to extrapolate for these units outside of the overlapping
+support region.  Preprocessing makes the adjustment by discarding the
+control units that are located outside of the support of the treatment
+group. Therefore, the estimated propensity score for the matched
+control group has the overlapping support, and its distribution is
+much closer to that for the treatment group.
+
+
+\begin{figure}[t] 
+ \begin{center}
+    \includegraphics{figs/fdadens.pdf}
   \end{center}
   \vspace{-0.275in}
   \caption{Kernel density plot of estimated average treatment effect of
@@ -1347,6 +1444,26 @@ information-processing task'' \citep[p. 460]{Koch02}.
     matched dataset.}
   \label{fg:fdadens}
 \end{figure}
+
+We now examine the model dependence of the average marginal effect of
+Democratic Senate majority using the preprocessed data and compare it
+with the results from the raw data.  To do this, we estimate the
+average treatment effect by calculating $\frac{1}{n} \sum_{i=1}^n
+E(Y_i \mid T_i = 1, X_i)-E(Y_i \mid T_i =0 ,X_i)$ according to the
+fitted lognormal model. We repeat this procedure by using all possible
+specifications, which in total amounts to $262,143$ regressions.
+Figure~\ref{fg:fdadens} presents the density plot for the estimated
+average treatment effects for the raw data as well as the preprocessed
+data. The estimates are clearly more model dependent if one uses the
+raw data than if the matched data are used. For example, the variance
+of estimated average treatment effect from the matched data is more
+than three times as large as that from the raw data. The point
+estimate from the raw data with all covariates implies that Democratic
+Senate majority decreases the expected approval time by about 30
+months, whereas many specifications indicate that the estimate is much
+less.  However, the result from the matched data indicate that the
+effect size may be larger.
+
 
 \section{What Can Go Wrong}
 
