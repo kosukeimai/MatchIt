@@ -1,3 +1,12 @@
+% to include:
+% - pscore estimated is slightly less good for bias, much better for variance
+% - extrapolation graph
+% - redefine qoi if kill overlap: if ate or att and drop treated, but
+%   not otherwise
+% - no selection bias if qoi is in-sample (which is solution by definition)
+% - edit liz (pscore) and dan's sections
+% - include para at top of variance section with ways of looking at
+%   this, including anticipatory responce to A&I
 \documentclass[11pt,titlepage]{article}
 %\usepackage[notref]{showkeys}
 \usepackage[reqno]{amsmath}
@@ -27,7 +36,7 @@
   \thehours :\theminutes}
 %
 \title{Matching as Nonparametric Preprocessing\\
-for Parametric Causal Inference}
+for Improving Parametric Causal Inference}
 
 \author{Daniel E. Ho,\thanks{J.D.\ candidate, Yale Law School, Ph.D.\
     candidate, Department of Government, Harvard
@@ -60,43 +69,47 @@ Elizabeth A. Stuart\thanks{Ph.D.\ Candidate, Department of Statistics, Harvard
 \begin{abstract}
   The fast growing statistical literatures on matching methods in
   several disciplines offer the promise of causal inference without
-  resort to the usual difficult-to-justify functional form assumptions
-  of commonly used parametric methods.  However, this literature also
-  suffers from many diverse and conflicting approaches to estimation,
-  uncertainty, theoretical analysis, and practical advice.  In this
-  paper, we propose a unified perspective on matching as a method of
-  nonparametric preprocessing for improving parametric methods.  This
-  approach makes it possible for researchers to preprocess their data
-  (such as with the easy-to-use matching software we have developed)
-  and then to apply whatever familiar statistical techniques they
-  would have used anyway.  Under our approach, instead of using
-  matching to replace existing methods, we use it to make existing
-  methods work better, such as by giving more accurate and
-  considerably less model-dependent causal inferences.
+  resort to the difficult-to-justify functional form assumptions
+  inherent in commonly used parametric methods.  However, these
+  literatures also suffer from many diverse and conflicting approaches
+  to estimation, uncertainty, theoretical analysis, and practical
+  advice.  In this paper, we propose a unified perspective on matching
+  as a method of nonparametric preprocessing for improving parametric
+  methods.  This approach makes it possible for researchers to
+  preprocess their data (such as with the easy-to-use matching
+  software we offer with this paper) and then to apply whatever
+  familiar statistical techniques they would have used anyway.  Under
+  our approach, instead of using matching to replace existing methods,
+  we use it to make existing methods work better, such as by giving
+  more accurate and considerably less model-dependent causal
+  inferences.
 \end{abstract}
-\baselineskip=1.57\baselineskip
+%\baselineskip=1.57\baselineskip
 
 \section{Introduction}
 
 A new statistics literature has emerged in recent years, building on
 advances in nonparametric, non-model-based inference, and focused
 around diverse generalizations of different types of matching
-estimators for causal inference.  The promise of this literature is
-considerable, as it seeks to offer much more reliable causal
-inferences than is typical with the standard parametric regressions
-social scientists usually run (regression, logit, etc.).  The new
-methods make it possible to reduce or eliminate the functional form
-and other assumptions of parametric models and to verify empirically
-rather than assume critical modeling assumptions.
+estimators for causal inference.  The promise of this work is
+considerable, as it promises more reliable and valid causal inferences
+than is typical with the standard parametric regressions social
+scientists usually run (regression, logit, etc.).  The new methods
+make it possible to reduce or eliminate the functional form and other
+assumptions of parametric models and to verify empirically rather than
+assume critical modeling assumptions.
 
-The statistical literature on matching has grown quite sophisticated,
-but from the point of view of the practical researcher, it looks like
+The statistical literature on matching has grown quite sophisticated
+but, from the point of view of the practical researcher, it looks like
 a cacophony of related but conflicting techniques, practices,
 conventions, and rules of thumb.  Valid methods of computing standard
 errors and confidence intervals are even more complicated, often not
-used, and sometimes not available.  Coherent guidelines for practice
-are conflicting or absent altogether.  Although matching now comprises
-a substantial fraction of the empirical work in some disciplines, such
+used, and sometimes not available.  Many theoretical results do not
+apply to real applications unless unknown theoretical quantities or
+specifications are somehow divined, and so coherent guidelines for
+practice are conflicting, absent, or based on clinical experience
+rather than scientific proof.  Although matching now comprises a
+substantial fraction of the empirical work in some disciplines, such
 as epidemiology and medicine, the diversity of the substantive
 applications, and the difficulties of the conflicting methodological
 languages used to describe the same underlying concepts, has limited
@@ -108,26 +121,35 @@ researchers can make productive use of these new methods.  Our simple
 unifying idea is to use these new nonparametric techniques not as
 substitutes for our present parametric regression analyses, but
 instead to use them to make our familiar parametric techniques work
-better.  Under our inferential framework, analysts would merely add a
-simple preprocessing step to their data analysis procedures and then
-use whatever models they were previously accustomed to using to
-analyze the preprocessed data rather than the raw data.  All of the
-intuition, diagnostics, and knowledge about these procedures can be
+better.  Under our inferential framework, analysts merely add a simple
+preprocessing step to their data analysis procedures and then use
+whatever models they were previously accustomed to using to analyze
+the preprocessed data rather than the raw data.  All of the intuition,
+diagnostics, and knowledge about our parametric procedures can then be
 used as before.
 
 Preprocessing data with matching in the way we propose improves
 parametric analyses by making them considerably less dependent on
 assumptions about functional forms and distributions.  Our
 preprocessing approach has obvious advantages in terms of exposition,
-pedagogy, and ease-of-use, but it also turns out to help bring some
-order and cohesion to this conflicting literature and to suggest some
+pedagogy, and ease-of-use, since what we have already learned is not
+discarded, but it also turns out to help bring some order and cohesion
+to the conflicting methodological literature and to suggest some
 relatively straightforward advice for empirical researchers seeking to
 make causal inferences.  For example, when thought of in the way we
 propose, the approach suggests a simple, standardized, and valid
 approach to computing standard errors and confidence intervals for any
-of the new techniques.  Our approach has also made it possible for us
-to write easy-to-use software that implements all the ideas we discuss
-in this paper; it is free and available at
+of the new techniques.  Our approach is similar in spirit to
+\citet{AbaImb04,*****}, who recommend (specific forms of) parametric
+adjustment following matching, as well as \citet{HecTo***} who develop
+forms of matching that are combined with semi-parametric (kernal
+weighting) analyses.  It is also similar in spirit to methods in other
+areas that preprocess data so that subsequent analyses can be improved
+without modififying existing techniques, such as multiple imputation
+\citep{Rubin**,KinHonJos00} and outlier and feature detection
+\citep{cite from king/zeng paper}.  Our approach has also made it
+possible for us to write easy-to-use software that implements all the
+ideas we discuss in this paper; it is free and available at
 http://gking.harvard.edu/matchit.
 
 \section{Definition of Causal Effects}
@@ -152,45 +174,40 @@ of the methodological literature on causal inference, researchers
 simplify the exposition by considering only a single dichotomous
 causal (or ``treatment'') variable.  We do the same and label it
 $t_i$, which takes a value of 1 if unit $i$ receives the treatment and
-0 if $i$ is untreated (the ``control condition'').\footnote{We will
-  assume that every unit within each treatment group receives the same
-  treatment.  This assumption would be violated in our running example
-  if the nomination the Democratic party gives to the incumbent in
-  some districts means something different from that in other
-  districts.  We also assume that the treatment in one unit has no
-  effect on the potential outcomes in any unit other than its own.
-  Together these two assumptions are sometimes known under the awkward
-  name of the ``stable unit treatment value assumption'' or SUTVA
-  \citep{Rubin74}.}  In our running example, the treatment is whether
-the incumbent is given the party's nomination in district $i$.
-Projects with more complicated causal variables can dichotomize
-(perhaps in several alternative ways) or use more complicated methods
-\citep{ImaDyk03}.  Those with more than one causal variable of
-interest can follow all the advice herein for one variable at a time.
+0 if $i$ is untreated (the ``control condition'').  In our running
+example, the treatment is whether the incumbent is given the party's
+nomination in district $i$.  Projects with more complicated causal
+variables can dichotomize (perhaps in several alternative ways) or use
+more complicated methods \citep{ImaDyk03}.  Those with more than one
+causal variable of interest can follow all the advice herein for one
+variable at a time.
 
 The observed outcome (or ``dependent'') variable is $y_i$, which in
 our case is the Democratic proportion of the two-party vote in
 congressional district $i$.  Finally, prior to the treatment decision,
 each district $i$ has a variety of characteristics, some of which we
-measure and collect in a vector denoted $X_i$.
+measure and collect in a vector denoted $X_i$.  (Whether preprocessing
+or not, variables that are at least in part consequences of the
+treatment variable should never be controlled for when estimating a
+causal effect.)
 
-To clarify our inferential goals, we begin with by defining the
-``realized causal effect,'' which is the simplest definition
-available.  To provide further familiarity with this concept, we
-briefly show the close connections between this definition and the
-goals of the substantively unrelated but mathematically closely
-related missing data and ecological inference literatures.  We then
-generalize the definition to include features of random causal effects
-that are useful for our use of nonparametric methods of preprocessing
-for parametric models.  Finally, we give specific causal estimates of
+To clarify our inferential goals, we begin by defining the ``realized
+causal effect,'' which is the simplest definition available.  To
+provide further familiarity with this concept, we briefly show the
+close connections between this definition and the goals of the
+substantively unrelated but mathematically closely related missing
+data and ecological inference literatures.  We then generalize the
+definition to include features of random causal effects that are
+useful for our use of nonparametric methods of preprocessing for
+parametric models.  Finally, we give specific causal estimates of
 interest at the population level.
 
 \paragraph{Realized Causal Effects}
 Because of pretreatment differences among the districts (both
-measured, $X_i$, and unmeasured), the causal effect can also differ
-across the districts.  As such, the definition of the causal effect
-exists at the district level, but the definition does not otherwise
-require reference to the pretreatment variables.
+measured, $X_i$, and unmeasured), the causal effect may differ across
+the districts.  As such, the definition of the causal effect exists at
+the district level, but the definition does not otherwise require
+reference to the pretreatment variables.
 
 A causal effect is a function of \emph{potential outcomes}: let
 $y_i(t_i=1)\equiv y_i(1)$ be the vote we would observe in district $i$
@@ -205,7 +222,16 @@ outcomes remain the same regardless of whether the treatment is in
 fact applied in district $i$ or not.  However, since the Democratic
 Party either will nominate ($t_i=1$) or will not nominate ($t_i=0$) an
 incumbent to run in district $i$, we will observe either $y_{i}(1)$ or
-$y_{i}(0)$ but not both.
+$y_{i}(0)$ but not both.\footnote{We assume throughout that every unit
+  within each treatment group receives the same treatment.  This
+  assumption would be violated in our running example if the
+  nomination the Democratic party gives to the incumbent in some
+  districts means something different from that in other districts.
+  We also assume that the treatment in one unit has no effect on the
+  potential outcomes in any unit other than its own.  Together these
+  two assumptions are sometimes known under the awkward name of the
+  ``stable unit treatment value assumption'' or SUTVA
+  \citep{Rubin74}.}
 
 The difference between the two potential outcomes defines the simplest
 realized (or in-sample) definition of a causal effect:
@@ -219,7 +245,14 @@ perfect the research design, experimental control, or number of
 observations collected --- expresses what is known as the
 ``fundamental problem of causal inference'' \citep{Holland86}.
 
-\paragraph{Analogies to Missing Data and Ecological Inference}
+\paragraph{Connections to Missing Data and Ecological Inference}
+Although causal inference is the ultimate goal of most research
+programs in the social sciences, the inherent difficulty of this goal
+is not always fully appreciated.  To clarify this issue, and to
+further clarify the definition of causal effects, we now show how
+causal inference is an extreme special case of two areas of statistics
+that are widely, but incorrectly, perceived to be more difficult.
+
 If district $i$ receives the treatment, we observe $y_i=y_i(1)$ but
 not $y_i(0)$ and otherwise we observe $y_i=y_i(0)$ but not $y_i(1)$.
 In this framework, causal inference can be thought of as a severe
@@ -230,8 +263,8 @@ $y_i(1)$ are never observed for the same units, we cannot use a known
 relationship between the two to extrapolate to units where only one is
 observed.  Making causal inferences is thus equivalent to imputing
 missing data, using whatever external information is available.  As we
-show below, this analogy will prove useful in making the bridge that
-connects nonparametric matching to parametric models.
+show below, this connection will prove useful in making the bridge
+that connects nonparametric matching to parametric models.
 
 Causal inference can also be thought of as an especially severe form
 of ecological inference.  In ecological inference, we observe for each
@@ -273,31 +306,31 @@ anything necessarily to do with the latter.  However, scholars should
 be no less concerned when making causal inferences, as every causal
 effect ever estimated involves essentially identical inferential
 hazards.  If anything, the specific problems in making causal
-inferences are even more difficult than in these other areas.
-Moreover, whether using linear regressions, simple descriptive
-differences in means, or complicated multiple equation estimators,
-causal inference requires assumptions that are no easier to justify
-than those in imputation or ecological inference.  In all three areas
-the inferential target is not normally highly constrained by the
-observed data and so substantive conclusions will usually depend on
-unverifiable assumptions about the data generation process.  And so
-laying these assumptions bear as clearly as possible throughout the
-process is essential.
+inferences are even more difficult than most applications in these
+other areas.  Moreover, whether using linear regressions, simple
+descriptive differences in means, or complicated multiple equation
+estimators, causal inference requires assumptions that are no easier
+to justify than those in imputation or ecological inference.  In all
+three areas the inferential target is not normally highly constrained
+by the observed data and so substantive conclusions will usually
+depend on unverifiable assumptions about the data generation process.
+And so laying these assumptions bear as clearly as possible throughout
+the process is essential.
 
 \paragraph{Random Causal Effects} In order to make statistical
 inferences, we imagine that the realized potential outcomes in
 (\ref{rce}) are realizations of corresponding random variables (for
-which we use capital letters).  We do not require that the data are
-sampled from some specific population, only that there exists some
-data generation process that leads to the one realization we see and
-could have led to some other realization.  This logic then produces
-the random causal effect:
+which we use the corresponding capital letters).  We do not require
+that the data are sampled from some specific population, only that
+there exists some data generation process that leads to the one
+realization we see and could have led to some other realization.  This
+logic then produces the random causal effect:
 \begin{equation}
   \label{rance}
   \text{(Random Causal Effect for unit $i$)}  = Y_i(1) - Y_i(0),
 \end{equation}
 features of which we are interested in as alternative quantities of
-interest.  For example, our second definition of the causal effect is
+interest.  For example, our second definition for the causal effect is
 the mean causal effect, which is the average over repeated
 hypothetical draws of the the random causal effect:
 \begin{align}
@@ -328,7 +361,7 @@ The alternative choice of a target quantity of interest is the average
 treatment effect on the treated, or ATT:
 \begin{align}
   \label{att}
-  \text{ATT} = E[Y_i(1) - Y_i(0)|t_i=1] \\
+  \text{ATT} = E[Y_i(1) - Y_i(0)|t=1] \\
   = \frac{1}{\sum t_i}\sum_{i:t_i=1}[\mu_i(1) - \mu_i(0)],
 \end{align}
 In our running example, this is the average causal effect in districts
@@ -405,29 +438,34 @@ small $n$.  Traditional survey research has what is intended to be
 random selection (although with dramatically increasing nonresponse
 rates and cell phone usage, this is a less plausible claim) and
 certainly has a large $n$, but random assignment, except when the
-treatment is the wording of survey questions, is usually impossible.
+treatment involves the wording of survey questions, is usually
+impossible.
 
 \subsection{Observational}
 
-Observational data was generated in a way that does not meet all three
-of the features of a classical randomized experiment.  Researchers
-trying to use the experimental paradigm try to design research to meet
-all three features discussed in the previous section.  Researchers
-analyzing observational data are instead forced to make assumptions
-that, if correct, help them avoid various threats to the validity of
-their causal inferences.
+We define observational data colelction mechanisms as any process
+generating data that does not meet all three of the features of a
+classical randomized experiment.  Researchers trying to use the
+experimental paradigm try to design research to meet all three
+features discussed in the previous section.  Researchers analyzing
+observational data are instead forced to make assumptions that, if
+correct, help them avoid various threats to the validity of their
+causal inferences.
 
 In this paper, we shall assume data are selected in a manner that does
 not generate selection bias.  Observations need not be selected at
 random, as in an experiment, but the probability of selection must not
 be correlated with the dependent variable $y$, after taking into
-account the treatment $t$ and pre-treatment covariates, $X$.  This is
-not a trivial matter, and it is the subject of a great deal of concern
-and study in a large variety of methodological and substantive
+account the treatment $t$ and pre-treatment covariates, $X$.  Whether
+this assumption is satisified by carefully considering and controlling
+for the sample selection process or by changing the quantity of
+interest to be that reflected by the sample, avoiding selection bias
+is not a trivial matter, and it is the subject of a great deal of
+concern and study in a large variety of methodological and substantive
 literatures.  We mention it here to emphasize that all the well-known
-concerns in the literature about selecting on the dependent variable
-should remain a concern to researchers even when adopting our approach
-to preprocessing data via nonparametric matching procedures.
+concerns about selecting on the dependent variable should remain a
+concern to researchers even when adopting our approach of
+preprocessing data via nonparametric matching procedures.
 
 We also assume that a researcher analyzing observational data has
 sufficient information in their measured pre-treatment control
@@ -454,8 +492,8 @@ of commonly used parametric methods.
 
 \section{Parametric Analysis Methods}
 
-Researchers in the situation of knowing, up to but not including some
-unknown parameters, the parametric model that generated their data
+Researchers in the situation of knowing the parametric model that
+generated their data, up to but not including some unknown parameters,
 should specific and directly estimate this parametric model.
 Preprocessing with matching procedures is suboptimal in this
 situation.  Of course, few researchers with real observational data
@@ -465,7 +503,7 @@ parametric models.
 
 We thus begin by specifying a single but general parametric model that
 characterizes the range of models that researchers might choose from.
-Indeed, the special cases of thsi model include almost all parametric
+Indeed, the special cases of this model include almost all parametric
 models that have been used in the social sciences.  First define the
 stochastic component as $Y_i \sim p(\mu_i,\theta)$, for a specified
 probability density $p(\cdot)$, mean $\mu_i$, and vector of ancillary
@@ -504,13 +542,13 @@ experimental vs.\ observational data under this general model.
 In experimental data, classical random assignment guarantees that
 $T_i$ and (any observed or unobserved) $X_i$ are independent.  Since
 stochastic independence implies mean independence, we can drop $X$ and
-write $E(Y_i(1)|t_i=1,X)=E(Y_i(1)|t_i=1)$ and
-$E(Y_i(0)|t_i=1,X)=E(Y_i(0)|t_i=1)$.  As such, we can simplify
+write $E[Y_i(1)|t_i=1,X]=E[Y_i(1)|t_i=1]$ and
+$E[Y_i(0)|t_i=1,X]=E[Y_i(0)|t_i=1]$.  As such, we can simplify
 (\ref{matt}) as
 \begin{align}
   \label{smatt}
-  E(Y_i(1)|t_i=1) &\equiv \mu_i(1) = g(\alpha + \beta)\notag \\
-  E(Y_i(0)|t_i=0) &\equiv \mu_i(0) = g(\alpha)
+  E[Y_i(1)|t_i=1] &\equiv \mu_i(1) = g(\alpha + \beta)\notag \\
+  E[Y_i(0)|t_i=0] &\equiv \mu_i(0) = g(\alpha)
 \end{align}
 and so the average treatment effect on the treated from (\ref{att})
 becomes simply
@@ -540,8 +578,9 @@ for most common probability densities is merely the sample mean, the
 analysis of classical randomized experiments often comes down to
 taking the difference in the sample means of $y$ for the treatment and
 control groups.  But even if one chooses to run a parametric model,
-the absence of model dependence means that it will not matter: The
-results will be the same no matter what the choice for $g()$ is.
+the absence of model dependence means that the choice for a functional
+form will not matter: The results will be the same no matter what the
+choice for $g(\cdot)$ is.
 
 \subsection{Observational Data} \label{s:paraobs}
 
@@ -552,8 +591,7 @@ so fortunate.  We cannot reduce Equations \ref{att} to Equations
 \ref{matt} and so are left having to model the full functional
 relationship that connects the mean as it varies as a function of $t$
 and $X$ over observations.  Since $X$ is typically multidimensional,
-this is a task far more difficult and highly dependent on often
-unstated assumptions than many realize.
+this is a surprisingly difficult task.
 
 To see this point, which is known as the curse of dimensionality,
 suppose for simplicity that we have a dependent variable and one
@@ -565,16 +603,15 @@ categories with ten parameters (a constant and nine dummy variables or
 estimation is to assume linearity.  This enables us to enter not 10
 indicator variables, but rather only a constant term and one slope
 coefficient.  How do we get from ten parameters to only two?  Pure
-assumption about the remaining eight.  If we have some sense that the
-relationship is indeed linear or close to linear, this is a good use
-of external information to reduce the number of parameters that must
-be estimated.  If not, then we still have the best linear
-approximation to the conditional expectation function, but the
-relationship we estimate can be far off.  If we are running this
-regression for the purpose of estimating a causal effect, then the
-treatment variable is also in the regression, and its coefficient can
-be biased to any degree if the functional relationship with the
-control variables is misspecified.
+assumption.  If we have some sense that the relationship is indeed
+linear or close to linear, this is a good use of external information
+to reduce the number of parameters that must be estimated.  If not,
+then we still have the best linear approximation to the conditional
+expectation function, but the relationship we estimate can be far off.
+If we are running this regression for the purpose of estimating a
+causal effect, then the treatment variable is also in the regression,
+and its coefficient can be biased to any degree if the functional
+relationship with the control variables is misspecified.
 
 This problem quickly becomes more serious as the number of explanatory
 variables increase.  For example, estimation without functional form
@@ -621,31 +658,33 @@ genuine knowledge.  The frequent unavoidable consequence is high
 levels of model dependence, but no good reason to choose one set of
 assumptions over another.
 
+% graph on interpolation and extrapolation
+
 Some researchers surely respond to this diversity of possible models
 by inadvertently choosing specifications that support their favored
-hypotheses.  The best scholars forthrightly portray at least some
-aspects of specification uncertainty in their published work by
-displaying the results from multiple specifications and evaluating and
-emphasizing how model dependent their substantive results are.  But
-researchers rarely portray the full sensitivity of their causal
-inferences to model specification, and attempts to do so in many
-situations lead to nihilistic conclusions.\footnote{Two approaches to
-  this problem include extreme bounds analysis \citep{Leamer78}, which
-  is a relatively standardized way to portray model dependence, and
-  Bayesian model averaging \citep{HoeMadRaf99,ImaKin04}, which is
-  intended to draw inferences by appropriately combining inferences
-  from models with different specifications.}
+hypotheses.  Current best practice is to forthrightly portray at least
+some aspects of specification uncertainty in published work by giving
+results for multiple specifications and evaluating how model dependent
+the substantive results are.  But researchers rarely portray the full
+sensitivity of their causal inferences to model specification, and
+attempts to do so in many situations lead to nihilistic
+conclusions.\footnote{Two approaches to this problem include extreme
+  bounds analysis \citep{Leamer78}, which is a somewhat standardized
+  way to portray model dependence, and Bayesian model averaging
+  \citep{HoeMadRaf99,ImaKin04}, which is intended to draw inferences
+  by appropriately combining inferences from models with different
+  specifications.}
 
 \section{Nonparametric Preprocessing} \label{s:nonparpreproc}
 
 The goal of matching in general and our specific nonparametric
 preprocessing approach is to adjust the data prior to the parametric
 analysis so that (1) the relationship between $t_i$ and $X_i$ is
-eliminated or reduced and (2) no bias is induced.  If we are able to
-adjust the data so that $t_i$ and $X_i$ are completely unrelated, so
-that the control and treatment groups are identical with respect to
-$X$ before the treatment assignment, we will have moved a good deal of
-the way from Section \ref{s:paraobs} to Section \ref{s:paraexp}.  An
+eliminated or reduced and (2) no bias and little inefficiency is
+induced.  If we are able to adjust the data so that $t_i$ and $X_i$
+are completely unrelated, so that the control and treatment groups are
+identical with respect to $X$, we will have moved a good deal of the
+way from Section \ref{s:paraobs} to Section \ref{s:paraexp}.  An
 assumption of ignorability will still be necessary, but we will no
 longer need to model the full parametric relationship between the
 dependent variable and the multidimensional $X_i$.  We will also have
@@ -665,14 +704,14 @@ estimates?  The key to this problem is that the fundamental rule for
 avoiding selection bias --- do not select on the dependent variable
 --- does not prevent us from selecting observations on the explanatory
 variables ($t_i$ or $X_i$).  Random or other physical assignments in
-experiments and stratified sampling in surveys are examples of data
-collection mechanisms that select observations given chosen values of
-the explanatory variables.  But we can also select observations, or
-selectively drop observations from an existing sample without bias, as
-long as we do so using a rule that is a function only of $t_i$ and
-$X_i$.  Our preprocessed dataset will therefore include a selected
-subset of the observed sample for which $t_i$ and $X_i$ are unrelated,
-or in other words for which this relationship holds:
+experiments by the investigator and stratified sampling in surveys are
+examples of data collection mechanisms that select observations given
+chosen values of the explanatory variables.  But we can also select,
+duplicate, or selectively drop observations from an existing sample
+without bias, as long as we do so using a rule that is a function only
+of $t_i$ and $X_i$.  Our preprocessed dataset will therefore include a
+selected subset of the observed sample for which $t_i$ and $X_i$ are
+unrelated, or in other words for which this relationship holds:
 \begin{equation}
   \label{balance}
   p(X|t=1) = p(X|t=0).
@@ -684,7 +723,7 @@ control unit for which the values of $X_i$ are identical.  Our
 preprocessed dataset thus is the same as the original dataset with any
 unmatched units discarded, and $t_i$ and $X_i$ are now independent.
 If enough matches are available, this procedure eliminates all
-dependence in the parametric analysis on the functional form.  It is
+dependence on the functional form in the parametric analysis.  It is
 also highly intuitive, since it directly parallels an experiment where
 we find pairs of units that are identical in all observable ways and
 assign one from each pair to be treated and the other to be a control.
@@ -695,22 +734,265 @@ Although one-to-one exact matching can eliminate model dependence and
 any bias from incorrect assumptions made during the parametric stage
 of analysis, it has the disadvantage in many applications of not
 generating many matches.  The problem is of course most severe if
-$X_i$ is high dimensional or contains continuous variables.  The
-result may then be a preprocessed data set with very few observations
-that results in a parametric analysis with large standard errors.  In
-this situation, we may have reduced model dependence and the potential
-for bias but decreased efficiency and as a result increased mean
-square error.  If this occurs in practice, those in the matching
-literature tend to sacrifice some bias reduction for the increased
-efficiency that comes from having more observations in the
-preprocessed dataset.  In our approach, sacrificing bias reduction
-only affects the preprocessing stage, and our second stage parametric
-analysis has a chance to eliminate the remaining bias.  We therefore
-now turn to a menu of matching procedures that enable researchers to
-satisfy (\ref{balance}) as closely as possible while still generating
-a preprocessed dataset with enough observations.
+$X_i$ is high dimensional (another effect of the curse of
+dimensionality) or contains continuous variables.  The result may then
+be a preprocessed data set with very few observations that results in
+a parametric analysis with large standard errors.  In this situation,
+we may have reduced model dependence and the potential for bias but
+decreased efficiency and as a result increased mean square error.  If
+this occurs in practice, those in the matching literature tend to
+sacrifice some bias reduction for the increased efficiency that comes
+from having more observations in the preprocessed dataset.  In our
+approach, sacrificing bias reduction only affects the preprocessing
+stage, and our second stage parametric analysis has a chance to
+eliminate the remaining bias.  We therefore now turn to a menu of
+matching procedures that enable researchers to satisfy (\ref{balance})
+as closely as possible while still generating a preprocessed dataset
+with enough observations.
 
 \section{Choosing a Matching Procedure}
+
+In this section, we offer a step by step guide to navigating the wide
+variety of matching procedures proposed throughout the statistics,
+economics, epidemiology, medical, and biostatistics literatures.
+These are young and fast-growing areas, and so we try to distill the
+current collective wisdom when one is available or, when not, suggest
+an approach that is at least widely recognized as reasonable.  For
+detailed reviews of the technical literatures, and other matching
+procedures, see \citep{Angrist**,Imbens04,Rosenbaum02,Stuart04} and
+the detailed user's guide to the software that accopmanies this paper
+(see Appendix \ref{s:matchit}).
+
+The goal of matching is to improve \emph{balance}, the degree to which
+the treatment and control $X$ distributions resemble each other, while
+not losing too many observations in the process.  The main diagonstic
+of success is also balance (as well as the number of observations
+remaining).  We judge balance at first by taking the difference in the
+treatment and control group means or full histograms for each variable
+in $X$.  These can be supplemented by comparing the means of the
+squares and cross-products of the variables and higher order moments
+or with more dimensions.
+
+In our quest for better balance, any number of matching procedures can
+be tried, wih the final preprocessed data set the one with the best
+balance.  To ensure that selection during preprocessing is only on
+$X$, so no bias is induced, the outcome variable $y$ should not be
+examined during the preprocessing stage.  As long as $y$ is not
+consulted, preprocessing cannot result in stacking the deck one way or
+another.  This is similar to what is typically done in a randomized
+experiment: Before collecting the outcome data, if an undesirable
+randomization is obtained (e.g., all men in the treated group and all
+women in the control group), the randomization is repeated at will
+until a better one is obtained \citep[see][]{Rubin01}.
+
+We recommend that preprocessing be composed of four key steps,
+followed by standard parametric modeling of the preprocessed data set.
+We describe this procedure for the ATT, and so the matching is
+designed to choose control units that look most like the treated
+units.  We generally think of choosing for each treated unit the
+control unit that looks the most similar to it, but variations are
+possible.
+
+\paragraph{1.  Covariate Selection}  
+Include all variables in $X$ that would have been included in your
+parametric model without preprocessing.  By the usual rules of
+avoiding omitted variable bias these should include all variables that
+may affect the treatment assignment and the dependent variable.  More
+with matching than in parametric techinques, including variables only
+weakly related to treatment assignment will usually reduce bias more
+than they will increase variance and so should normally be included
+\citep{RubTho96, Heckman98a}.  To avoid posttreatment bias, be sure to
+exclude variables affected by the treatment variable (\cite{FraRub02},
+\cite{Greenland03}, \citet{KinZen04}).
+
+If all the variables in $X_i$ are categorical, try exact matching in
+Step 2.  Otherwise, try propensity score matching in Step 3.
+  
+\paragraph{2. Exact matching}  
+Match each treated unit to all control units with exactly the same
+covariate values.  This procedure is thus more general than one-to-one
+matching, since we use as many control units as are available for each
+treated unit.
+
+If a large number of units were matched, then we have have exact
+balance little inefficiency: go to the parametric analysis.  If
+insufficient matches could be found, either repeat the exact matching
+with fewer covariates or switch to propensity score matching,
+described in Step 3.  In the former, we balance the included variables
+but do not balance at all on the rest, which might not be exactly
+balanced in the final analysis.  In the latter, we approximately match
+on all the covariates.
+
+\paragraph{3. Propensity score matching}  
+The first step in this procedure is to summarize all the variables in
+$X$ with a single variable called the \emph{propensity score}
+\cite{RosRub83a}.  The propensity score is the true probability of
+unit $i$ receiving treatment, given the covariates $X_i$, $e_i(X_i) =
+P(t_i=1 | X_i)$.  It is usually estimated via a logistic regression of
+$t_i$ on a constant term and $X_i$.  The propensity score is central
+to modern matching methods, but the present state of statistical
+theory means that its role as a theoretical idea differs markedly from
+its role in practice.  Understanding this disconnect, an explanation
+of which to our knowledge has not explicitly appeared before in the
+literature, is fundamental to making good practical use of this
+important concept.
+
+From a theoretical perspective, the true propensity score is valuable
+because it is a ``balancing score,'' meaning that if a group of units
+have similar propensity score distributions, then the covariates will
+be balanced in the treated and control groups on all variables in $X$.
+In addition, if the treatment assignment is ignorable given the
+covariates $X_i$, then it is also ignorable given only the propensity
+score.  This means that matching can be done using just the
+one-dimensional propensity score, instead of all of the covariates
+$X$.  Using the true propensity score in this way thus would seem to
+solve the curse of dimensionality for matching.
+
+In practice, however, we do not know the true propensity score (except
+perhaps in unusual special cases).  We would still be able to appeal
+to the true propensity score's theoretical properties if we had a
+consistent estimate of it, but such an estimate would require knowing
+the correct functional form for the assignment model, which is highly
+unlikely.  Moreover, no theoretical results exist for the case when
+the true form of the propensity score equation remains unknown.  These
+theoretical results would therefore seem to be entirely
+self-defeating: In order to use nonparametric matching to avoid
+parametric modeling assumptions, we must know the parametric
+functional form of the propensity score equation!
+
+Fortunately, there is a way out.  What we do is to look past the
+theoretical properties of the propensity score, except for the purpose
+of motiviating the goal of better propensity score specification, and
+most importantly recognizing the value of what we call the
+\emph{propensity score tautology}, the main justification for using
+this technology in practice: The estimated propensity score is a
+balancing score when we have a consistent estimate of the true
+propensity score.  We know we have a consistent estimate of the
+propensity score when matching on the propensity score balances the
+raw covariates.  Of course, wnce we have balance on the covariates,
+we're done and don't need to look back.  That is, it works when it
+works, and when it doesn't work, it doesn't work.
+
+The tautology thus provides a way to make to make irrelevant the
+knowledge of whether we have satisfied the conditions necessary to use
+the theoretical results about the true or consistently estimated
+score.  The goal of matching is to acheive the best balance for a
+large number of observations, using any method of matching that is a
+function of $X$, so long as we do not consult $y$.  As it turns out,
+and for whatever reason, one such method that researchers have found
+useful in a diverse array of applications is using propensity scores.
+The reason the propensity score approach often works in practice to
+balance the covariates relatively quickly may be related to the
+theoretical properties of the true score discussed above, but this
+conjecture is both unproven and irrelevant to making valid causal
+inferences.  At least given the current state of the literature, only
+this practical advice, and the propensity score tautology, is useful
+in practice.
+
+In applications, the usual practice is to estimate the propensity
+score by a logistic regression of $t_i$ on $X_i$ and a constant term.
+Since we are in the situation where exact matching was insufficient,
+we match each treated unit to the control unit with the most similar
+value of the propensity score, $e_i$ (which is known as nearest
+neighbor matching on the propensity score).  If this procedure
+balances $X$ (and procedures for which checking balance are offered in
+Step 4), then we use it.  If not, then we try respecifying the
+logistic regression by adding interactions or squared terms and
+matching again.  If that works, then we use it.  If not then we can
+try even more elaborate specifications (when necessary perhaps even
+trying other functional forms such as CART, neural network analyses,
+or others).
+
+The collective wisdom of the literature also recommends three more
+specific details of how to use propensity scores.  First, if many more
+control than treatment units are available, consider choosing more
+than one control match for each treated unit.  This will increase the
+efficiency of the procedure (although each match past the first
+usually reduces the variance somewhat less than the previous one).
+If, instead, fewer controls are available than those treated, then
+matching with replacement --- allowing each control unit to be matched
+to more than one treated unit --- is a good option.  Alternatively,
+consider switching the definition of treatment and control groups
+(although, of course, if using ATT, this will change the substantive
+definition of the causal effect).
+
+Second, sometimes we are in the situation of suspecting, from prior
+evidence (but not from the present data set), that a small number of
+covariates have a disproportionately large effect on our outcome
+variable.  When this is the case, even slightly mismatching on these
+variables severly bias of our causal effect.  To avoid this problem,
+we match using two separate metrics, one of the large-effect variables
+and another for the rest.  Thus, if feasiable, we create pools of
+exact matches on the large-effect variables and then use nearest
+neighbor propensity score matching based on the remaining variables to
+choose specific matches within these pools.  If exact matching does
+not turn up sufficient observations, then we can choose the nearest
+neighbor, defined by the Mahalanobis distance, among all units within
+(say) 0.25 standard deviations of the propensity score computed from
+all other variables.  The Mahalanobis distance is the weighted average
+of the squared distance between units $i$ and $j$,
+$(X_i-X_j)'\Sigma^{-1}(X_i-X_j)$, where $\Sigma$ is the variance
+covariance matrix of $X$ in the control group.  See \cite{RubTho00}.
+
+Finally, if some control units fall outside the range of the treated
+propensity score values, then these controls cannot be adjusted by
+replication or deletion to match the treated units.  Common practice
+is to discard these control units.  Similarly, if any treated units
+fall outside the range of the propensity score units, these too are
+discarded.  Dropping treated units changes the causal effect being
+estimated, but if it remains a relevant quantity at least it can be
+estimated in a reasonable way.
+
+
+  
+\paragraph{4. Assess the matching procedure}
+Use a propensity score specification procedure such as that described
+in \cite{DehWah02} or the MatchIt manual.  Then use diagnostic plots
+and summary statistics to examine how well the matching worked.
+  \begin{enumerate} 
+  \item Are the covariate means more similar in the matched groups, as
+    compared to the original groups?
+    \begin{enumerate} 
+    \item Yes: Good.  You are ready to do the analysis.  Go to Step 5.
+    \item Yes, but the difference in propensity scores in the overall
+      groups is greater than 0.5 standard deviations.  Use
+      subclassification to form subclasses in which the covariates
+      (and propensity score) should be well balanced.
+      Subclassification forms groups of units in which the covariate
+      distributions should be similar.  Generally five or six
+      subclasses are sufficient to adjust for a univariate covariate
+      such as the propensity score (\cite{Cochran68},
+      \cite{RosRub84}).
+    \item No: Some modifications are necessary.  Try matching with
+      replacement or use subclassification.  If it is very difficult
+      to find well matched samples, the conclusion may be that your
+      data set is insufficient for estimating causal effects.
+    \end{enumerate}
+  \end{enumerate}
+  
+
+
+\item Outcome analysis.  This step should be done only after a final
+  matched sample has been chosen.
+  \begin{enumerate} 
+  \item Are there covariates you would like to control for in the
+    outcome analysis?
+    \begin{enumerate} 
+    \item Yes: Use standard software packages, such as Zelig [cite?],
+      to estimate theq causal effect.
+    \item No: The difference in means of the outcome can be used as an
+      estimate of the treatment effect.  This is implemented in the
+      Neyman function in MatchIt.
+    \end{enumerate}
+  \item Was subclassification done, either using exact matching or in
+    Step 4?
+    \begin{enumerate} 
+    \item Yes: Do the analysis within these subclasses, and weight
+      across subclasses to estimate the overall effect.
+    \item No: Do just an overall analysis.
+    \end{enumerate}    
+  \end{enumerate}
+\end{enumerate}  
 
 \section{Computing Uncertainty Estimates}
 
@@ -1009,7 +1291,7 @@ information-processing task'' \citep[p. 460]{Koch02}.
 \section{Concluding Remarks}
 
 \appendix
-\section{Matching Software}
+\section{Matching Software}\label{s:matchit}
 
 We have created software called MatchIt for the free and open source
 package R (see http://www.r-project.org).  MatchIt, which is available
