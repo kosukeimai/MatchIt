@@ -1917,10 +1917,12 @@ First, using Zelig, fit a model of the outcome with the covariates or
 propensity score as predictors, using only the matched control group
 units.  We demonstrate this with a linear model ({\tt "lm"}), but
 \hlink{Zelig}{http://gking.harvard.edu/zelig} also supports a wide
-range of other models as well.
+range of other models.
 
-First run matchit and then the chosen analysis model (linear
-regression) using zelig:
+First run \MatchIt\ and then the chosen analysis model (here, linear
+regression) using zelig.  Note that the {\tt data} input for this
+example takes only \emph{matched control units} with the {\tt
+  match.data} command.
 \begin{verbatim}
 > library(Zelig)
 > match.out1 <- matchit(treat ~ age + educ + black + hispan + nodegree +
@@ -1972,6 +1974,37 @@ We see that the average treatment effect for the treated group is
 $\$1127$, with standard deviation $\$716$.  Other information can be
 obtained from the output objects in {\tt s.out1}.
 
+Alternatively, users may want to calculate treatment effects on both
+the treated and the control groups.  One option would be to simply
+run a pooled regression, for which first differences can be calculated
+in zelig.  Alternatively, we may use separate models for the treated
+and control units to impute missing potential outcomes, as here:
+\begin{verbatim}
+> z0 <- zelig(re78 ~ age + educ + black + hispan + nodegree +
+                      married + re74 + re75, data = match.data(match.out1,
+                                 "control"), model = "ls")
+> z1 <- zelig(re78 ~ age + educ + black + hispan + nodegree +
+                      married + re74 + re75, data = match.data(match.out1,
+                                 "treat"), model = "ls")
+\end{verbatim}
+Combining simulated treatment effects from these models is
+straightforward.  Similar to the above example, we simply combine
+quantities of interest from the two models.  Note that zelig
+calculates the difference between observed and either predicted or
+expected values.  This means that the treatment effect for the control
+units is actually the effect of control (observed control outcome
+minus the imputed outcome under treatment from the model).  Hence, to
+combine treatment effects just reverse the signs of the estimated
+treatmente effect of controls as in the last line below.
+\begin{verbatim}
+x1 <- setx(z0, data = match.data(match.out1,"treat"),cond=T)
+x0 <- setx(z1, data = match.data(match.out1,"control"),cond=T)
+s1 <- sim(z0, x = x1)
+s0 <- sim(z1, x = x0)
+ate.all <- c(s1$qi$ate.ev,-s0$qi$ate.ev)
+\end{verbatim}
+{\tt ate.all} now represents the average treatment effect for all
+matched units.   
 % 1127 doesn't correspond to any of the numbers above
 % we also need to explain each of these, or remove some of them from
 % the output
