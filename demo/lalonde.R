@@ -70,6 +70,13 @@ foo <- matchit(treat ~ age + educ + black + hispan + married +
                nodegree + re74 + re75, data=lalonde, exact=TRUE)
 summary(foo)
 
+# Full matching
+if ("optmatch"%in%.packages(all=T)) {
+foo1 <- matchit(treat ~ age + educ + black + hispan + married +
+               nodegree + re74 + re75, data=lalonde, full=T)
+print(summary(foo1))
+}
+
 # Caliper matching
 foo <- matchit(treat ~ age + educ + black + hispan + married +
                nodegree + re74 + re75, data=lalonde, caliper=0.25,
