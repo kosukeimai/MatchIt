@@ -19,7 +19,7 @@
 \title{Matching as Nonparametric Preprocessing for Improving
   Parametric Causal Inference}
 
-\date{August, 2004}
+\date{September 2, 2004}
 \author{Daniel E. Ho \\
   Yale Law School\\
   \\
@@ -50,7 +50,7 @@
 \hypersetup{pdfpagetransition=Replace}
 
 \begin{itemize}
-\item Matching, a new statistics literature on causal inferences:\pause
+\item Matching, a new statistics literature on causal inference:\pause
   \begin{enumerate}
   \item nonparametric, non-model based methods.\pause
   \item reducing or eliminating functional form and other assumptions.\pause
@@ -68,7 +68,7 @@
   \begin{enumerate}
   \item use matching NOT as a substitute for familiar parametric
     regression analysis.\pause
-  \item use matching to make our parametric models work better.\pause
+  \item use matching to make conventional parametric models work better.\pause
   \end{enumerate}
 
 \item Under our proposed framework,\pause
@@ -93,7 +93,7 @@
 \item Example: estimating the electoral advantage of incumbency for
   Democrats\pause
   \begin{itemize}
-  \item Unit: congressional districts, $i=1,\dots,n$.\pause
+  \item Units: congressional districts, $i=1,\dots,n$.\pause
   \item Observed treatment: Democratic incumbent ran $(t_i=1)$, did
     not run $(t_i=0)$.\pause
   \item Observed outcome: Democratic vote share for the $i$th
@@ -128,16 +128,17 @@
 \hypersetup{pdfpagetransition=Replace}
 
 \begin{itemize}
-\item Classical randomized experiments:\pause
+\item Key features of classical randomized experiments:\pause
   \begin{enumerate}
-  \item random selection of units from a give population.\pause
+  \item random selection of units from a given population.\pause
   \item random assignment of values of the treatment.\pause
-  \item a large $n$.\pause
+  \item large $n$.\pause
   \end{enumerate}
 \item Observational studies:\pause
   \begin{itemize}
-  \item do not meet all three features of randomized experiments\pause
-  \item almost all political science research
+  \item do not meet all three features of classical randomized
+    experiments\pause
+  \item comprise almost all political science research
   \end{itemize}
 
 \item Assumptions for causal inference:\pause
@@ -145,8 +146,8 @@
   \item no sample selection bias.\pause
   \item no omitted variable bias.\pause
   \item no posttreatment bias.\pause
-  \item no interference among units.\pause
-  \item the same treatment.\pause
+  \item independent units.\pause
+  \item same treatment.\pause
   \end{itemize}
 \end{itemize}
 
@@ -203,8 +204,8 @@
 \item Preprocessed data set\pause
   \begin{itemize}
   \item contains a subset of the raw data.\pause
-  \item $p(X\mid t_i=1) = p(X\mid t_i=0)$ for one-to-one
-    matching.\pause 
+  \item $p(X\mid t_i=1) = p(X\mid t_i=0)$ for one-to-one exact
+    matching.\pause
   \item $p(X\mid t_i=1) \approx p(X\mid t_i=0)$ for other matching
     methods.\pause 
   \item model-dependence is reduced.\pause
@@ -231,7 +232,8 @@
   
 \begin{enumerate}
 \item Select Covariates: include all variables that would have been
-  included in the parametric model. avoid posttreatment bias.\pause
+  included in the parametric model, but avoid posttreatment
+  bias.\pause
   
 \item Try Exact Matching: if a large number of units are matched, go
   to the parametric analysis.\pause
