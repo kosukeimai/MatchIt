@@ -4,7 +4,7 @@ matchit <- function(formula, model="logit", data, discard=0,
                     subclass=0, sub.by="treat", mahvars=NULL, exact=FALSE,
                     counter=TRUE, opt = FALSE, full = FALSE, ...){ 
   cl <- match.call()
-  if (opt)
+  if (m.order==3)
     require(optmatch)
   
   #Checking input format
@@ -121,7 +121,7 @@ matchit <- function(formula, model="logit", data, discard=0,
     mf[[1]] <- as.name("distance")
     mf$nearest <- mf$replace <- mf$m.order <- mf$ratio <- mf$caliper <- 
       mf$calclosest <- mf$subclass <- mf$sub.by <- mf$mahvars <-
-        mf$exact <- mf$opt <- NULL 
+        mf$exact <- NULL 
     a <- eval(as.call(mf), sys.frame(sys.parent()))
     if(!is.null(dotsub)) { 
       data <- data[dotsub,]
@@ -131,7 +131,7 @@ matchit <- function(formula, model="logit", data, discard=0,
                   replace = replace, m.order = m.order, ratio = ratio,
                   caliper = caliper, calclosest = calclosest, 
                   mahvars = mahvars,data = data, exact = exact,
-                  counter = counter, opt = opt)
+                  counter = counter)
     
     b1 <- subclassify(formula, data, a$in.sample, a$pscore,
                       nearest = nearest, b$match.matrix,
@@ -142,7 +142,7 @@ matchit <- function(formula, model="logit", data, discard=0,
                   data=data, exact=exact, mahvars=mahvars,
                   subclass=subclass, psclass=b1$psclass,nearest=nearest,
                   q.cut=b1$q.cut, counter=counter)
-    
+ 
     ##adding pscore and weights to dataframe
     pscore <- a$pscore
     psweights <- c$weights

@@ -1,8 +1,7 @@
 matchdef <-  function(formula, in.sample, pscore, nearest = TRUE,
                       replace = FALSE, m.order = 2, ratio = 1,
                       caliper = 0, calclosest = FALSE, mahvars = NULL,
-                      exact = FALSE, data = NULL, counter = TRUE, opt
-                      = FALSE, ...){ 
+                      exact = FALSE, data = NULL, counter = TRUE, ...){ 
   treata <- model.frame(formula,data)[,1,drop=FALSE]
   treat <- as.vector(treata[,1])
   names(treat) <- row.names(treata)
@@ -33,7 +32,7 @@ matchdef <-  function(formula, in.sample, pscore, nearest = TRUE,
   names(matchedc) <- clabels
   
   ## optimal ratio matching
-  if (opt) {
+  if (m.order==3) {
     cat("Optimal Matching Treated: ")
     distance <- matrix(0, ncol=n0, nrow=n1)
     rownames(distance) <- row.names(treata)[treat==1]
