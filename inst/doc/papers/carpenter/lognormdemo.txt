@@ -17,6 +17,16 @@ sim2 <- sim(a2, x = set2, cond.data=match.data(temp, "treat"))
 
 print(summary(sim2))
 
-# Model 2
+# Model 2: Use subclasses
+ 
+a2 <- zelig(Surv(acttime, d) ~ prevgenx + lethal + deathrt1 + acutediz, data=match.data(temp, "control"), model="lognorm",
+	by="psclass")
 
+set2 <- setx(a2, data = match.data(temp, "treat"), cond = TRUE)
+
+sim2 <- sim(a2, x = set2, cond.data=match.data(temp, "treat"))
+
+print(summary(sim2))
+print(summary(sim2, subset=1))
+print(summary(sim2, subset=2))
 

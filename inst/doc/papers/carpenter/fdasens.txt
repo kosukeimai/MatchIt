@@ -16,7 +16,15 @@ condavg3 + orderent + stafcder, data=fdafull, subclass=5, discard=1)
 #print(summary(temp))
 
 # Estimate using matching, almost covariates
-a2 <- zelig(Surv(acttime, d) ~ prevgenx + lethal + deathrt1 + acutediz, data=match.data(temp, "control"), model="lognorm")
+a2 <- zelig(Surv(acttime, d) ~ prevgenx + lethal + deathrt1 + acutediz, data=match.data(temp, 
+"control"), model="lognorm")
+
+fdafull$id <- c(1:length(fdafull$acttime))
+
+chck <- survreg(Surv(acttime, d) ~  hcomm + scomm + hfloor + sfloor+ demsnmaj + demhsmaj + prespart + orderent +
+stafcder + prevgenx + lethal + deathrt1 + hosp01 + hospdisc + hhosleng + femdiz01 + mandiz01 + peddiz01 + 
+acutediz + orphdum + natreg + natregsq + wpnoavg3 + vandavg3 + condavg3 + frailty(id, dist="gaussian"), data=fdafull, dist="lognormal")
+
 
 set2 <- setx(a2, data = match.data(temp, "treat"), cond = TRUE)
 
