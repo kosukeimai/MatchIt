@@ -1,0 +1,37 @@
+# fdasens.txt
+# Test sensitivity of FDA data to models, before and after matching
+# Use demsnmaj as the treatment (see matchfda.txt)
+
+fdafull <- read.table("~/match/docs/papers/carpenter/ajps2002-full1b.txt", header=T)
+
+# Model 1
+fdafull$treat <- fdafull$demsnmaj
+
+temp <- matchit(treat ~ prevgenx + lethal + deathrt1 + acutediz + 
+hosp01 + hospdisc + hhosleng + femdiz01 + mandiz01 + peddiz01 + orphdum + natreg + natregsq + vandavg3 + wpnoavg3 + 
+condavg3 + orderent + stafcder, data=fdafull, subclass=5, discard=1)
+
+#print("1-1 nearest neighbor, demsnmaj=1 as treat, 5 subclasses")
+#print(temp)
+#print(summary(temp))
+
+# Estimate using matching, almost covariates
+a2 <- zelig(Surv(acttime, d) ~ prevgenx + lethal + deathrt1 + acutediz, data=match.data(temp, "control"), model="lognorm")
+
+set2 <- setx(a2, data = match.data(temp, "treat"), cond = TRUE)
+
+sim2 <- sim(a2, x = set2, cond.data=match.data(temp, "treat"))
+
+print(summary(sim2))
+
+# Estimate using full data set, all covariates
+af <- zelig(Surv(acttime, d) ~ prevgenx + lethal + deathrt1 + acutediz, data=fdafull[fdafull$treat==0,], model="lognorm")
+
+af <- zelig(Surv(acttime, d) ~ prevgenx + lethal + deathrt1 + acutediz, data=fdafull, model="lognorm")
+
+setf <- setx(a2, data = fdafull[fdafull$treat==1,], cond = TRUE)
+
+simf <- sim(a2, x = set2, cond.data=fdafull[fdafull$treat==1,])
+
+print(summary(simf))
+
