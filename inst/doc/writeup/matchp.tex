@@ -1,0 +1,276 @@
+\documentclass[11pt,titlepage]{article}
+%\usepackage[notref]{showkeys}
+\usepackage[reqno]{amsmath}
+\usepackage{natbib}
+\usepackage{amssymb}
+\usepackage{epsfig}
+\usepackage{comment}
+\usepackage{url}
+\usepackage[all]{xy}        
+\usepackage[usenames]{color}
+\newcommand{\Cb}[1]{\textcolor{ProcessBlue}{#1}}  % blue
+\newcommand{\Cr}[1]{\textcolor{Red}{#1}}          % red
+\newcommand{\Co}[1]{\textcolor{BurntOrange}{#1}}  % orange
+\newcommand{\Cg}[1]{\textcolor{Green}{#1}}        % green
+\newcommand{\Cp}[1]{\textcolor{Purple}{#1}}       % purple
+\newcommand{\Cbr}[1]{\textcolor{RawSienna}{#1}}    % brown
+\usepackage{dcolumn}
+\newcolumntype{.}{D{.}{.}{-1}}
+\newcolumntype{d}[1]{D{.}{.}{#1}}
+\usepackage{threeparttable,booktabs}
+
+% changes for the apsr
+%\usepackage{apsr}
+
+% Shortcuts
+\renewcommand{\P}{\text{P}}
+\newcommand{\MC}{\multicolumn}
+\usepackage{calc}
+\newcounter{hours}\newcounter{minutes}
+\newcommand{\printtime}{%
+  \setcounter{hours}{\time/60}%
+  \setcounter{minutes}{\time-\value{hours}*60}%
+  \thehours :\theminutes}
+%
+\title{Matching as Nonparametric Preprocessing for Parametric Causal
+  Inference}
+
+\author{Daniel E. Ho,\thanks{J.D.\ candidate, Yale Law School, Ph.D.\
+    candidate, Department of Government, Harvard
+    University. (Center for Basic Research in the Social Sciences, 34
+    Kirkland, Cambridge MA 02138, USA;
+    \texttt{http://www.people.fas.harvard.edu/\~\,deho},
+    \texttt{Deho@Fas.Harvard.Edu}).}
+%\and %
+Kosuke Imai,\thanks{Assistant Professor, Department of Politics, Princeton
+    University (Corwin Hall 041, Department of Politics, Princeton
+    University, Princeton NJ 08544, USA;
+    \texttt{http://www.princeton.edu/\~\,kimai},
+    \texttt{KImai@Princeton.Edu}).}
+%\and %
+Gary King,\thanks{David Florence Professor of Government, Harvard
+  University (Center for Basic Research in the Social Sciences, 34
+  Kirkland Street, Harvard University, Cambridge MA 02138;
+  \texttt{http://GKing.Harvard.Edu}, \texttt{King@Harvard.Edu}, (617)
+  495-2027).}
+%\and %
+Elizabeth A. Stuart\thanks{Ph.D.\ Candidate, Department of Statistics, Harvard
+  University. (Science Center 702, One Oxford Street, Cambridge, MA
+  02138, USA;
+  \texttt{http://www.people.fas.harvard.edu/\~\,estuart},
+  \texttt{Stuart@Stat.Harvard.Edu}).}}
+
+\date{\today\ (\printtime)} 
+\begin{document}\maketitle
+
+\begin{abstract}
+
+\end{abstract}
+
+\section{Introduction}
+
+A new statistics literature has emerged in recent years, building on
+advances in nonparametric, non-model-based inference, and focused
+around diverse generalizations of different types of matching
+estimators for causal inference.  The promise of this literature is
+considerable, as it seeks to offer much more reliable causal
+inferences than is typical with the standard parametric regressions
+social scientists usually run (regression, logit, etc.).  The new
+methods make it possible to reduce or eliminate the functional form
+and other assumptions of regression and to verify empirically rather
+than assume critical modeling assumptions.
+
+The statistical literature on matching has grown quite sophisticated,
+but from the point of view of he practical researcher, it looks like a
+cacophony of related but conflicting techniques, practices,
+conventions, and rules of thumb.  Valid methods of computing standard
+errors and confidence intervals are even more complicated, often not
+used, and sometimes not available.  Coherent practical guidelines for
+practice are conflicting or absent altogether.  Although matching now
+comprises a substantial fraction of the empirical work in some
+disciplines, such as epidemiology and medicine, the diversity of the
+substantive applications, and the difficulties of the conflicting
+methodological languages used to describe the same underlying
+methodological concepts, has limited the spread of these powerful
+techniques to much of the social sciences.
+
+In this paper, we attempt to unify this diverse literature so applied
+researchers can make the most productive use of these new methods.
+Our simple unifying idea is to use these new nonparametric techniques
+not as substitutes for our present parametric regression analyses, but
+instead to use them to make familiar parametric techniques work
+better.  Under our inferential framework, analysts would merely need
+to add a simple pre-processing step to data analyses and then use
+whatever models they were previously accustomed to using afterwards.
+All their intuition, diagnostics, and graphics can be used as before.
+Preprocessing data with matching in the way we propose improves
+parametric analyses by making them considerably less dependent on
+assumptions about functional forms and distributions.
+
+Our preprocessing approach has obvious pedagogical and expository
+advantages, but it also turns out to be useful in bringing
+intellectual order and cohesion to this conflicting literature and to
+suggest some relatively straightforward advice for empirical
+researchers seeking to make causal inferences.  When thought of in the
+way we propose, the approach also suggests a simple, standardized, and
+valid approach to computing standard errors and confidence intervals
+for any of the new techniques.  Our approach has also made it possible
+for us to write easy-to-use software that implements all the ideas we
+discuss in this paper.
+
+\section{Notation for Causal Effects}
+
+\subsection{Alternative Definitions}
+
+The notation and ideas in this section parallels that in \citet[][\s
+3.1.1]{KinKeoVer94}, but aspects of it can be traced to many others,
+especially \citet{Rubin74,Holland86}.  In this work, and in most of
+the methodological literature on causal inference, researchers
+simplify the exposition and the methods by considering only a
+dichotomous causal (or ``treatment'') variable.  We do the same and
+label it $t_i$, which takes a value of 1 for units that receive a
+treatment and 0 for control units which do not.  Projects that have
+more complicated causal variables can dichotomize (perhaps in several
+alternative ways) or use more complicated methods \citep{ImaDyk03}.
+To help fix ideas, we use the running example from
+\citet{KinKeoVer94}, where the goal is to estimate the electoral
+advantage of incumbency for Democrats in the U.S.\ House of
+Representatives.  That is, we only study Democratic incumbents and
+define the treatment as when the Democratic Party nominates an
+incumbent Democratic House member for a new term and the control as
+when the Party nominates someone else to run in an open seat.  The
+dependent variable is $y_i$, the Democratic proportion of the
+two-party vote in congressional district $i$.
+
+To clarify our inferential goals, we offer three closely related
+definitions of the causal effect.  All three are a function of two
+\emph{potential outcomes}: let $y_{1i}$ be the vote we would observe
+in district $i$ in say the 2004 election if in fact the Democratic
+incumbent received his or her party's nomination (i.e., $t_i=1$) and
+$y_{0i}$ if the Democratic Party nominated a nonincumbent ($t_i=1$).
+The values of these potential outcomes remain the same regardless of
+whether the treatment was applied in district $i$ or not.  However,
+since the Democratic Party either nominated or did not nominate an
+incumbent to run in district $i$, we observe either $y_{1i}$ or
+$y_{0i}$ but not both.  Yet, the difference between these two
+quantities is what defines the causal effect.  To be more precise, we
+define the realized (or in-sample) causal effect as:
+\begin{equation}
+  \label{rce}
+  \text{Realized causal effect in $i$} = y_{1i} - y_{0i}
+\end{equation}
+The fact that one of these potential outcomes is always a
+counterfactual --- and thus is never known for certain no matter how
+perfect the research design, experimental control, or number of
+observations collected --- expresses what is known as the fundamental
+problem of causal inference.  If district $i$ received the treatment,
+we observe $y_i=y_{1i}$ and otherwise $y_i=y_{0i}$; that is,
+\begin{equation}
+  \label{y}
+  y_i = t_iy_{1i} + (1-t_i)y_{0i}.
+\end{equation}
+
+In order to make statistical inferences, we imagine that the realized
+potential outcomes in (\ref{rce}) are realizations of corresponding
+random variables (for which we use capital letters).  This leads to
+the random causal effect:
+\begin{equation}
+  \label{rance}
+  \text{(Random Causal Effect for unit $i$)}  = Y_{1i} - Y_{0i}
+\end{equation}
+features of which we are interested in as alternative quantities of
+interest.  For example, our second definition of the causal effect is
+the mean causal effect, which is the average over repeated
+hypothetical draws of the the random causal effect:
+\begin{align}
+  \label{meance}
+  \text{Mean Causal Effect for unit $i$}
+  &= E(\mbox{Random Causal Effect for unit $i$})\\ 
+  &= E(Y_{1i} - Y_{0i})\\ \notag
+  &= \mu_{1i} - \mu_{0i},
+\end{align}
+where $E(Y_{1i})=\mu_{1i}$ and $E(Y_{0i})=\mu_{0i}$.  
+
+In applications, we will not usually attempt to estimate the treatment
+effect for each observations, and will instead estimate the average
+over all observations.  This leads to two choices.  First is the
+population average treatment effect:
+\begin{equation}
+  \label{pate}
+  \text{Population Average Treatment Effect (ATE)} = E(Y_1 - Y_0)
+\end{equation}
+which is the mean causal effect for unit $i$ averaged over all units
+(so that the expected value operator averages over all units and the
+randomness in the random potential outcome for each unit.
+
+The alternative choice of a target quantity of interest is the mean
+causal effect among those who received the treatment:
+\begin{equation}
+  \label{att}
+  \text{Population Average Treatment Effect on the Treated (ATT)} = E(Y_1 - Y_0|T=1)
+\end{equation}
+which is the average causal effect in districts which the Democratic
+Party nominated the incumbent member of the House.  From one
+perspective, we might want to know this treatment effect on the
+treated (the ATT) since obviously this group of districts is where the
+treatment was applied.  Medical studies typically use the ATT as the
+designated quantity of interest on the argument that they only care
+about the causal effect of drugs for patients that receive the drugs.
+In the social sciences, the ATT is a reasonable choice.  In our
+running example, there certainly is a (latent) incumbency effect even
+in districts without incumbents running, if the incumbent did run, and
+so the ATE might also be of interest.
+
+\subsection{Assignment Mechanisms}
+
+The advantages of the preprocessing techniques we introduce below are
+based on reducing the sensitivity of the assumptions of parametric
+techniques.  We will therefore need to be clear about precisely what
+assumptions of the latter are eliminated or relaxed by the former.  In
+this section, we identify assumptions that both approaches make about
+the assignment mechanism and that we assume throughout this paper.
+
+First, we assume that every unit within the treatment group receives
+the same treatment.  This assumption would be violated in our running
+example if the nomination the Democratic party gives to the incumbent
+in some districts meant something different from that in other
+districts.  Second, we assume that the treatment in one unit has no
+effect on the potential outcomes in any unit other than its own.  This
+assumption would be violated in our running example if the nomination
+choice of the party in one district caused the potential votes in
+another district to change.  Together these two assumptions are
+sometimes known under the awkward name of the ``stable unit treatment
+value assumption'' or SUTVA.
+
+Third, we do not require the values of $t_i$ to be randomly assigned.
+Instead, we assume what is known in some fields as no omitted variable
+bias, and in others as ignorability.  Denote $X_i$ as a vector of
+observed control variables, all causally prior to $t_i$.  Then the
+assumption is that, $X_i$ is sufficient for valid estimation of causal
+effects.  Or, more formally, $t_i$ and the potential outcomes are
+independent after conditioning on $X_i$.  By the usual rules for
+omitted variable bias, $X_i$ must therefore include all variables that
+meet three conditions: they are causally prior to $t_i$, they are
+associated with $X_i$, and they affect $y_i$ conditional on $t_i$.
+
+
+\section{Regression and Other Model-Based Inference}
+
+\section{Matched Preprocessing}
+
+\subsection{Exact Matching}
+
+\subsection{Reducing the Curse of Dimensionality with Propensity Scores}
+
+\subsection{Other Matching Techniques...}
+
+\section{Applications}
+
+\section{What Can Go Wrong}
+
+\section{Concluding Remarks}
+
+\appendix
+\section{Matching Software}
+
+\end{document}
