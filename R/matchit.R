@@ -70,9 +70,10 @@ matchit <- function(formula, model="logit", data, discard=0,
     warning("counter=",cl$counter," is invalid; used counter=TRUE instead",call.=FALSE);counter=TRUE}    
   #full matching
   if(!(identical(full,TRUE) | identical(full,FALSE))){
-    warning("full=",cl$full," is invalid; used full=TRUE instead",call.=FALSE)
+    warning("full=",cl$full," is invalid; used full=TRUE instead",call. = FALSE)
   } else if(full & nearest){
-    warning("Full matching will ignore nearest neighbot inputs",call.=FALSE)
+    warning("Full matching will ignore nearest neighbor inputs",call. = FALSE)
+    nearest <- F
   }
   
   # Set up for output
