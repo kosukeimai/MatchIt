@@ -661,9 +661,31 @@ matching procedures that enable researchers to satisfy (\ref{balance})
 as closely as possible while still generating a preprocessed dataset
 with enough observations.
 
-\section{A Menu of Approximate Matching Procedures}
+\section{A Menu of Matching Procedures}
 
 \section{Computing Uncertainty Estimates}
+
+Parametric methods come with a list of relatively standard ways of
+computing uncertainty estimates, such as standard errors or confidence
+intervals.  These include methods based on using the asymptotic normal
+approximation to the likelihood function, direct simulation from the
+finite sample posterior density, various frequentist bias correction
+methods, robust Bayesian analysis, bootstrapping, etc.  Any of these
+can be implemented by drawing and summarizing simulations of the
+chosen quantity of interest, given the parametric model and
+accompanying theory of inference.
+
+These methods of inference are all conditional on fixed and exogenous
+pretreatment variables, $X$.  Since our preprocessing procedures
+
+With one relevant exception, preprocessed data
+
+% \begin{align}
+%   \label{att}
+%   \text{ATT} = E[Y_i(1) - Y_i(0)|t_i=1] \\
+%              = \frac{1}{\sum t_i}\sum_{i:t_i=1}[\mu_i(1) - \mu_i(0)],
+% \end{align}
+
 
 \section{Empirical Illustrations}
 
