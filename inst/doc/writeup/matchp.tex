@@ -1503,11 +1503,13 @@ candidates.
 Here, we do not take issue with these three assumptions.  Instead, we
 focus on the sensitivity of inferences to differents in specification.
 Even with a relatively small number of covariates, the curse of
-dimensionality looms large.  Given unique values of these covariates,
-estimation without assumptions would require a model with 44 million
-parameters using a dataset with only 494 observations.  Koch reduces
-these parameters to only six (main effects) by the assumptions of no
-other interactions and nonlinearities.
+dimensionality looms large.  Given the combinations that can be
+created by the unique values of these covariates and the treatment, it
+is easy to calculate that a parametric model that imposes no
+unverified functional form assumptions would require estimating
+87,530,856 parameters --- a problem of course in a data set with only
+494 observations.  Koch reduces these parameters to only six (main
+effects) by assuming no interactions or nonlinearities.
 
 The linear adjustments are important since, as the raw data in
 Table~\ref{tb:kochmtest} demonstrate, visible and invisible candidates
