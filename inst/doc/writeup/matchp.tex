@@ -29,11 +29,12 @@
 %
 \title{Matching as Nonparametric Preprocessing\\
   for Improving Parametric Causal Inference\thanks{Our thanks to Dan
-    Carpenter and Jeff Koch for data; Olivia Lau for many helpful
-    comments; and the National Institutes of Aging (P01 AG17625-01)
-    and the National Science Foundation (SES-0318275, IIS-9874747) for
-    research support.  Software to implement the methods in this paper
-    is available at \texttt{http://GKing.Harvard.Edu/matchit}.}}
+    Carpenter and Jeff Koch for data; Alexis Diamond and Olivia Lau
+    for many helpful comments; and the National Institutes of Aging
+    (P01 AG17625-01) and the National Science Foundation (SES-0318275,
+    IIS-9874747) for research support.  Software to implement the
+    methods in this paper is available at
+    \texttt{http://GKing.Harvard.Edu/matchit}.}}
 
 \author{Daniel E. Ho,\thanks{J.D.\ candidate, Yale Law School, Ph.D.\
     candidate, Department of Government, Harvard
@@ -86,43 +87,41 @@ Elizabeth A. Stuart\thanks{Ph.D.\ Candidate, Department of Statistics,
 \section{Introduction}
 
 A new statistics literature has emerged in recent years, building on
-advances in nonparametric, non-model-based inference, and focused
+advances in nonparametric, non-model-based inference, and focusing
 around diverse generalizations of matching estimators for causal
-inference.  The promise of this work is considerable, including more
-reliable and valid causal inferences than is typical with the standard
-parametric regressions social scientists usually run (regression,
-logit, etc.).  The new methods make it possible to reduce or eliminate
-the functional form and other assumptions of parametric models and to
-verify empirically rather than assume critical modeling assumptions.
+inference.  This work shows considerable promise for increasing the
+reliability and validity of causal inferences from standard parametric
+regressiosn that social scientists typically run.  The new methods
+make it possible to reduce or eliminate the functional form and other
+assumptions of parametric models and to verify empirically rather than
+assume critical features of the model.
 
 The statistical literature on matching has grown quite sophisticated
 but, from the point of view of the practical researcher, it looks like
 a cacophony of conflicting techniques, practices, conventions, and
-rules of thumb.  Valid methods of computing standard errors and
+rules of thumb.  Valid methods for computing standard errors and
 confidence intervals are even more complicated, often not used, and
 sometimes not available.  Many theoretical results do not apply to
-real applications unless unknown theoretical quantities or
-specifications are somehow divined, and so coherent guidelines for
-practice are conflicting, absent, or based on clinical experience
-rather than scientific evidence or mathematical proof.  Although
-matching now comprises a substantial fraction of the empirical work in
-some disciplines, such as epidemiology and medicine, the diversity of
-the substantive applications and the difficulties of the conflicting
-methodological languages used to describe the same underlying
-concepts, has limited the spread of these powerful techniques to much
-of the social sciences.
+practical applications unless unknown theoretical quantities or
+specifications are somehow divined.  Coherent guidelines for practice
+are conflicting, absent, or based on clinical experience rather than
+scientific evidence or mathematical proof.  Although matching now
+comprises a substantial fraction of the empirical work in some
+disciplines, such as epidemiology and medicine, the diversity of
+substantive applications and the conflicting methodological languages
+used to describe the same underlying concepts, has limited the spread
+of these powerful techniques to much of the social sciences.
 
 In this paper, we attempt to unify this diverse literature so applied
 researchers can make productive use of these new methods.  Our simple
 unifying idea is to use these new nonparametric techniques not as
-substitutes for our present parametric regression analyses, but
-instead to use them to make our familiar parametric techniques work
-better.  Under our inferential framework, analysts merely add a simple
-preprocessing step to their data analysis procedures and then use
-whatever models they were previously accustomed to using to analyze
-the preprocessed data rather than the raw data.  All of the intuition,
-diagnostics, and knowledge about our parametric procedures can then be
-used as before.
+substitutes for our present parametric regression analyses, but to
+make our familiar parametric techniques work better.  Under our
+inferential framework, analysts merely add a simple preprocessing step
+to their data analysis procedures and then use whichever models they
+were previously accustomed to using to analyze the preprocessed data
+rather than the raw data.  All of the intuition, diagnostics, and
+knowledge about our parametric procedures can then be used as before.
 
 Preprocessing data with matching in the way we propose makes
 parametric analyses considerably less dependent on assumptions about
@@ -1112,7 +1111,10 @@ whether propensity score matching is adequate.  It is useful
 nonetheless as one of our procedures for checking balance because it
 offers a low dimensional summary not obviously worse than the others
 we have discussed already.  Indeed, for the reasons discussed above,
-it is often a particularly good low dimensional summary.
+it is often a particularly good low dimensional summary. (Some take
+this idea a step further and make the comparisons with formal
+hypothesis tests, although still conditional on the propensity score
+being correct; see \citep{Sekhon04b}).
 
 If meeting these criteria for balance proves impossible, we then need
 to recognize that preprocessing by matching not be helpful.  But if
