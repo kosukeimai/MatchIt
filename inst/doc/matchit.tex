@@ -31,30 +31,28 @@
 \title{\MatchIt: Nonparametric Preprocessing for Parametric Causal
   Inference}
 
-\author{Daniel E. Ho\thanks{J.D.\ candidate, Yale Law School, Ph.D.\ 
-    candidate, Department of Government, Harvard University. (Center
-    for Basic Research in the Social Sciences, 34 Kirkland, Cambridge
-    MA 02138, USA;
-    \href{http://www.people.fas.harvard.edu/\~deho}{http://www.people.fas.harvard.edu/\~\,deho},
-    \href{mailto:Deho@Fas.Harvard.Edu}{Deho@Fas.Harvard.Edu}).}
+\author{Daniel E. Ho,\thanks{J.D.\ candidate, Yale Law School, Ph.D.\,
+    Department of Government, Harvard University. (Center for Basic
+    Research in the Social Sciences, 34 Kirkland, Cambridge MA 02138,
+    USA; \texttt{daniel.ho@Yale.Edu}).}
 \and %
-Kosuke Imai\thanks{Assistant Professor, Department of Politics,
-  Princeton University (Corwin Hall 041, Department of Politics,
-  Princeton University, Princeton NJ 08544, USA;
-  \href{http://www.princeton.edu/\~kimai}{http://www.princeton.edu/\~\,kimai},
-  \href{mailto:KImai@Princeton.Edu}{KImai@Princeton.Edu}).}
+Kosuke Imai,\thanks{Assistant Professor, Department of Politics, Princeton
+    University (Corwin Hall 041, Department of Politics, Princeton
+    University, Princeton NJ 08544, USA;
+    \texttt{http://www.princeton.edu/\~{}kimai},
+    \texttt{kimai@Princeton.Edu}).}
 \and %
-Gary King\thanks{David Florence Professor of Government, Harvard
+Gary King,\thanks{David Florence Professor of Government, Harvard
   University (Center for Basic Research in the Social Sciences, 34
   Kirkland Street, Harvard University, Cambridge MA 02138;
-  \href{http://GKing.Harvard.Edu}{http://GKing.Harvard.Edu},
-  \href{mailto:King@Harvard.Edu}{King@Harvard.Edu}, (617) 495-2027).}
+  \texttt{http://GKing.Harvard.Edu}, \texttt{King@Harvard.Edu}, (617)
+  495-2027).}
 \and %
-Elizabeth A. Stuart\thanks{Ph.D.\ Candidate, Department of Statistics,
+Elizabeth A. Stuart\thanks{Researcher, Mathematica Policy Research, Inc.\, Ph.D.\, Department of Statistics,
   Harvard University. (Science Center 702, One Oxford Street,
   Cambridge, MA 02138, USA;
-  \href{http://www.people.fas.harvard.edu/\~estuart}{http://www.people.fas.harvard.edu/\~\,estuart},
-  \href{mailto:Stuart@Stat.Harvard.Edu}{Stuart@Stat.Harvard.Edu}).}}
+  \texttt{http://www.mathematica-mpr.com},
+  \texttt{Stuart@Stat.Harvard.Edu}).}}
 
 \makeindex
 
@@ -664,6 +662,115 @@ Examining these graphs in Figure~\ref{f2diags}, we see that the
 matched samples are very well matched on the propensity score, with
 very similar distributions in the matched treated and control groups.
 
+\subsection{Optimal matching}
+\label{optmatch}
+The default nearest neighbor 
+matching method in \MatchIt\ is what is known as ``greedy" matching, where the treated units 
+are matched
+one at a time, with the closest control match for each chosen, without trying to minimize a global distance measure.  
+Another method, known as ``optimal" matching, finds the matched samples with the smallest average distance between each 
+matched pair.   Optimal matching can be performed with \MatchIt\ using an add-on package called ``\texttt{optmatch}" 
+(\cite{Hansen04}).  Because \texttt{optmatch} is not yet available on CRAN, it must be installed separately, from
+\hlink{FILL IN HERE}{http://gking.harvard.edu/zelig}.  
+
+Once \texttt{optmatch} is installed, optimal matching can be 
+chosen within \MatchIt\ by simply setting \texttt{m.order=1}.  All
+other options for nearest neighbor matching remain the same.  Here we provide an example of optimal matching.  First
+we show the default greedy matching, which matches the treated students in order from the treated unit with the highest 
+propensity score to the treated unit with the smallest propensity score.  
+
+\begin{verbatim}
+> foo <- matchit(treat ~ re74+re75+age+educ, data=lalonde)
+Calculating propensity score...Done
+Matching Treated: 10%...20%...30%...40%...50%...60%...70%...80%...90%...100%...Done
+Calculating summary statistics...Done
+> summary(foo)
+
+Assignment model specification:
+matchit(formula = treat ~ re74 + re75 + age + educ, data = lalonde)
+
+Summary of covariates for all data:
+
+       Means Treated Means Control        SD  T-stat     Bias
+pscore        0.3536        0.2788    0.1209  8.3279  0.82986
+re74       2095.5737     5619.2365 6477.9645 -7.2456 -0.72108
+re75       1532.0553     2466.4844 3295.6790 -3.2776 -0.29026
+age          25.8162       28.0303    9.8812 -2.9911 -0.30945
+educ         10.3459       10.2354    2.6283  0.5468  0.05496
+
+Summary of covariates for matched data:
+
+       Means Treated Means Control        SD   T-stat      Bias Reduction
+pscore        0.3536        0.3523 8.966e-02  0.13648  0.014134         1
+re74       2095.5737     2137.7507 4.623e+03 -0.08762 -0.008631         1
+re75       1532.0553     1385.2355 2.850e+03  0.49495  0.045607         1
+age          25.8162       25.2811 8.946e+00  0.57481  0.074792         1
+educ         10.3459       10.4486 2.274e+00 -0.43384 -0.051079         1
+
+Sample sizes:
+
+        Treated Control Total
+Full        185     429   614
+Matched     185     185   370
+
+Problematic covariates:  
+Number of units discarded:   0
+\end{verbatim}
+
+Now, with optimal matching:
+
+\begin{verbatim}
+>  foo <- matchit(treat ~ re74+re75+age+educ, data=lalonde, m.order=1)
+Calculating propensity score...Done
+Optimal Matching Treated: Done
+Calculating summary statistics...Done
+> summary(foo)
+
+Assignment model specification:
+matchit(formula = treat ~ re74 + re75 + age + educ, data = lalonde,     m.order = 1)
+
+Summary of covariates for all data:
+
+       Means Treated Means Control        SD  T-stat     Bias
+pscore        0.3536        0.2788    0.1209  8.3279  0.82986
+re74       2095.5737     5619.2365 6477.9645 -7.2456 -0.72108
+re75       1532.0553     2466.4844 3295.6790 -3.2776 -0.29026
+age          25.8162       28.0303    9.8812 -2.9911 -0.30945
+educ         10.3459       10.2354    2.6283  0.5468  0.05496
+
+Summary of covariates for matched data:
+
+       Means Treated Means Control        SD   T-stat      Bias Reduction
+pscore        0.3536        0.3533 8.996e-02  0.02487  0.002584         1
+re74       2095.5737     2120.2338 4.626e+03 -0.05120 -0.005046         1
+re75       1532.0553     1413.4162 2.854e+03  0.39940  0.036853         1
+age          25.8162       25.2054 8.916e+00  0.65839  0.085368         1
+educ         10.3459       10.4703 2.278e+00 -0.52431 -0.061833         0
+
+Sample sizes:
+
+        Treated Control Total
+Full        185     429   614
+Matched     185     185   370
+
+Problematic covariates:  
+Number of units discarded:   0
+\end{verbatim}
+
+% Difference in matched pairs about the same for both methods, about 0.09
+%temp <- foo$data$pscore[foo$data$treat==1]-foo$data$pscore[foo$match.matrix[,1]]
+%mean(abs(temp))
+
+In this example, we see that the resulting balance in the matched samples is better when optimal matching is used.
+For example, the t-statistic of the propensity score in matched samples is 0.14 with greedy matching and only 
+0.03 with optimal matching.  With large control pools, greedy and optimal matching may lead to very similar (or the same) 
+sets of matches and research (\cite{GuRos93}) has shown that greedy and optimal matching generally choose 
+the same sets of controls for the matched samples, but that optimal matching does a better job of minimizing the propensity
+score distance within each pair.  In addition, optimal 
+matching can be particularly helpful when there are not many appropriate control matches for the
+treated units.    See \cite{GuRos93} or \cite{Rosenbaum02} for more information on optimal matching.
+
+
 \subsection{Propensity Score Matching with Exact Restriction}
 
 Now suppose we wanted to match on a propensity score specification
@@ -977,6 +1084,20 @@ Total          377         55         46         53         49         34
 \noindent 
 \texttt{q.table} in the {\tt summary} output is also an easy way to
 provide summaries across subclasses.
+
+\subsection{Full matching}
+When all treated and control units will be used in the analysis, a particular type of subclassification is called
+``full matching"  (\cite{Rosenbaum02, Hansen04}), in which the matched sample is composed of matched sets, where
+each matched set contains either one treated unit and one or more controls, or one control unit and one or more
+treated units.  Full matching is optimal in terms of minimizing a weighted average of the distances between
+each treated subject and each control subject within each stratum.  Full matching can be implemented in \MatchIt\ using
+the add-on package ``optmatch", discussed in Section \ref{optmatch}.  All options discussed in the documentation with
+``optmatch" can be used in \MatchIt\ through the ``????" option.
+
+Diagnostics are slightly different with full matching; since many subclasses will have only one treated or control unit it 
+is not possible to do the weighted comparisons done for standard subclassification.  
+
+[NEED TO FILL THIS IN.]
 
 \subsection{Caliper Matching}
 
@@ -1293,7 +1414,7 @@ matchit <- function(formula, data, model="logit", discard=0,
                     reestimate=FALSE, nearest=TRUE, replace=FALSE,
                     m.order=2, ratio=1, caliper=0, calclosest=FALSE,
                     subclass=0, sub.by="treat", mahvars=NULL, exact=FALSE,
-                    counter=TRUE,...)
+                    counter=TRUE, full=FALSE, full.options=list(),...)
 \end{verbatim}
 
 \subsection{Inputs}
@@ -1381,13 +1502,12 @@ matchit <- function(formula, data, model="logit", discard=0,
   \item \texttt{m.order}  specifies the order in which to match
     treatment units with control units:
     \begin{itemize}
+    \item (1) indicates optimal matching.  Requires add-on package \texttt{optmatch}.
     \item (2) indicates matching from highest propensity scores to
       lowest (default).
     \item (3) indicates matching from lowest propensity scores to
       highest.
     \item (4) indicates matching in random order.
-    \item (1) is a placeholder for ``optimal matching'' that is yet to be
-      developed.
     \end{itemize}
   \item \texttt{caliper} specifies the standard deviations of 
     the propensity score within which to draw control units,
@@ -1466,6 +1586,13 @@ matchit <- function(formula, data, model="logit", discard=0,
   indicating the progress of the matching is displayed.  \texttt{TRUE}
   (default) means that this counter will be displayed, \texttt{FALSE}
   means that it will not be displayed.
+
+\item \textbf{Full.}  \texttt{full} specifies full matching, which forms subclasses using all
+treated and all control units.  When \texttt{full=TRUE}, \texttt{nearest} is automatically set to \texttt{FALSE}.
+The default is not to do full matching (\texttt{full=FALSE}).  
+
+\item \textbf{Full.Options().}  \texttt{full.options()} is an optional list of additional options for
+the call to \texttt{optmatch} when doing full matching.  See the \texttt{optmatch} documentation for more information.
 
 \end{enumerate}
   
@@ -2299,7 +2426,7 @@ given a propensity score, with various flexible options.
 \item \texttt{m.order} specifies the order within which to match
   treatment units with control units
   \begin{itemize}
-  \item (1) indicates optimal matching (not yet implemented)
+  \item (1) indicates optimal matching.  This requires the add-on package \texttt{optmatch}.
   \item (2) indicates matching from highest propensity score to lowest
     (default)
   \item (3) indicates matching from lowest propensity score to highest
@@ -2333,6 +2460,8 @@ given a propensity score, with various flexible options.
 \item \texttt{counter}: an indicator for whether a counter showing the
   percent of treated units matched so far is printed out, default={\tt
     TRUE}.
+\item \texttt{full}: an indicator for whether full matching will be done, default={\texttt{FALSE}}.
+\item \texttt{full.options}: a list of additional options when using full matching.
 \end{itemize}
 
 
@@ -2392,7 +2521,7 @@ given a propensity score.
 \subsubsection{Syntax}
 \begin{verbatim}
 foo <- subclassify(formula, data,  in.sample, pscore, nearest=TRUE, match.matrix,
-subclass=0, sub.by="treat", counter=TRUE)
+subclass=0, sub.by="treat", counter=TRUE, full=FALSE, full.options)
 \end{verbatim} 
 
 \subsubsection{Arguments}
@@ -2421,6 +2550,8 @@ objects:
   number of treated units (default), {\tt ``control''} indicates by
   the number of control units, and {\tt ``all''} indicates by the
   total number of units.
+\item \texttt{full}: an indicator for whether full matching will be done, default={\texttt{FALSE}}.
+\item \texttt{full.options}: a list of additional options when using full matching.
 \end{itemize}
 
 \subsubsection{Output Values}
