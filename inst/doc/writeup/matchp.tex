@@ -185,8 +185,8 @@ paper; it is available as an open source and free R program.
 % ; it is free and available at
 % \url{http://gking.harvard.edu/matchit}.
 
-Our approach is similar in spirit to, but a generalization of the
-ideas in, \citet{ImaDyk03}, \citet{RosRub84a}, \citet{Rubin79}, and
+Our approach is similar in spirit to, or a generalization of the ideas
+in, \citet{ImaDyk03}, \citet{RosRub84a}, \citet{Rubin79}, and
 \citet{RubTho00} who each recommend matching followed by a (different)
 specific form of parametric adjustment, as well as intuitively chosen
 strategies used in applied research by \citet{Rosenbaum86} and others,
@@ -194,10 +194,10 @@ as discussed in \citet{GlaLevMye03}.\footnote{It is also similar to
   \citet{HecIchTod98} who develop forms of matching combined with
   semi-parametric (kernel weighting) analyses, as well as to the
   parametric bias adjustment for one form of matching by
-  \citet{AbaImb04} (except that, to avoid inducing new biases, we
+  \citet{AbaImb04}, except that, to avoid inducing new biases, we
   recommend below that matching be evaluated prior to examining the
   dependent variable, which is not the case with these latter
-  approaches as generally implemented).}  Our idea is also similar in
+  approaches as generally implemented.}  Our idea is also similar in
 spirit to methods in other areas that preprocess data so that
 subsequent analyses can be improved without modifying existing
 techniques, such as multiple imputation \citep{Rubin87,KinHonJos01}
@@ -240,7 +240,7 @@ measure and collect in a vector denoted $X_i$.  Whether preprocessing
 or not, variables that are even in part a consequence of the treatment
 variable should never be controlled for when estimating a causal
 effect.  This is of course a critical point, since controlling for the
-consequences of a causal variable can massively bias a causal
+consequences of a causal variable can severely bias a causal
 inference; the problem is unfortunately too common in political
 science \citep{KinZen04}.
 
@@ -253,13 +253,13 @@ data and ecological inference literatures.  We then generalize the
 definition to include features of random causal effects that are
 useful for understanding connections between nonparametric
 preprocessing and parametric models.  Finally, we give specific causal
-estimates of interest at the population level.
+effects of interest at the population level.
 
 \paragraph{Realized Causal Effects}
 Because of pretreatment differences among the districts (both
 measured, $X_i$, and unmeasured), the causal effect may also differ
 across the districts.  We therefore define the casual effect at the
-district level.
+district (i.e., observation) level.
 
 A causal effect is a function of \emph{potential outcomes}: let
 $y_i(1)\equiv y_i(t_i=1)$ be the vote we would observe in district $i$
