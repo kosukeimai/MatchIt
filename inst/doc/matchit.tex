@@ -251,20 +251,25 @@ E(Y_i(1) | T_i=1 ) - E(Y_i(0) | T_i=1).
 \end{table}
 
 \subsection{Exact Matching \label{exactm}}
-The simplest version of matching is exact.  For example, to find exact
-matches on race:\footnote{The examples in this document are for
-  illustrative purposes only, and are not intended to obtain actual
-  estimates of the average treatment effect, which would clearly
-  require taking into account all pre-treatment variables.}
+
+The simplest version of matching is exact.  This technique matches
+every treated unit to all possible control units with the same
+covariate values.  For example, to find exact matches on
+race:\footnote{The examples in this document are for illustrative
+  purposes only, and are not intended to obtain actual estimates of
+  the average treatment effect, which would clearly require taking
+  into account all pre-treatment variables.}
 
 \begin{verbatim}
 > data(lalonde)          #loads the example dataset
 > foo1 <- matchit(treat ~ black + hispan, exact=TRUE, data=lalonde)
 \end{verbatim}
 
-\noindent \texttt{foo1} now contains all the information on the matched units.  The matching forms subclasses based on the covariates
-in the formula portion of the \MatchIt\ call; within each subclass, all units have the same covariate values.  
-To obtain basic information about the matching procedure: 
+\noindent \texttt{foo1} now contains all the information on the
+matched units.  The matching forms subclasses based on the covariates
+in the formula portion of the \MatchIt\ call; within each subclass,
+all units have the same covariate values.  To obtain basic information
+about the matching procedure:
 
 \begin{verbatim}
 > print(foo1)
@@ -313,13 +318,15 @@ Sample sizes by covariates:
 Number of units discarded:   0
 \end{verbatim}
 
-The means of the race variables ({\tt black} and {\tt
-  hispan}) are quite different between the full treated and control groups, but within
-each subclass formed by these two binary covariates the values of the
-race variables of the treated and control units
-are the same.  These two binary covariates form three subclasses, and
-we see, for example, that 243 units (156 treated and 87 control) are
-black and non-hispanic.
+The means of the race variables ({\tt black} and {\tt hispan}) are
+quite different between the full treated and control groups.  Since
+covariates are the same within each matched subclass, means tests are
+not reported for the matched data.\footnote{Overall means are also not
+  reported.  These means are not necessarily the same between control
+  and treated groups as the number of treated and control units in
+  each subclass may differ.}  The two binary covariates here form
+three subclasses, and we see, for example, that 243 units (156 treated
+and 87 control) are black and non-hispanic.
 
 We can use the {\tt psclass} component of {\tt foo1} to identify which
 units are in each subclass and to verify their covariate values.
@@ -483,23 +490,25 @@ Number of units discarded:   0
 
 This reveals simple statistics of the propensity score and the
 covariates used in the propensity score specification for the full and
-matched samples, including t-statistics and balance bias statistics
-used to assess whether there was a reduction in bias in the
-covariates.\footnote{Balance bias statistics are a measure of how
+matched samples, including t-statistics and balance bias
+statistics.\footnote{Balance bias statistics are a measure of how
   close covariates between treated and control groups are.  For a
-  formal definition, see Subsection~\ref{cmd:sum}.}  All three
-variables (propensity score, 1974 income, and 1975 income) had
-reductions in bias due to the matching.  For example, the original
-bias in 1974 income was $-0.72$ standard deviations, but is only
-$0.011$ standard deviations in the matched samples.  More
-specifically, job training participants on average earned roughly
-\$3,523 less in 1974 and \$934 less in 1975 than non-participants,
-significant differences with t-statistics of -7.25 and -3.28,
-respectively.  In the matched sample, the earnings difference is only
-\$56 (t-statistic=0.11) in 1974 and \$96 (t-statistic=0.32) in 1975.
-This one-to-one matching algorithm has thus chosen 185 control
-individuals who do look very similar to the treated group on the
-covariates used in the matching process (1974 income and 1975 income).
+  formal definition, see Subsection~\ref{cmd:sum}.}  The last column
+of the summary statistics for the matched data reports whether there
+there was a reduction of balance bias in the covariates with matching,
+denoted by ``1'' if yes, and 0 otherwise.  All three variables
+(propensity score, 1974 income, and 1975 income) had reductions in
+bias due to the matching.  For example, the original bias in 1974
+income was $-0.72$ standard deviations, but is only $0.011$ standard
+deviations in the matched samples.  More specifically, job training
+participants on average earned roughly \$3,523 less in 1974 and \$934
+less in 1975 than non-participants, significant differences with
+t-statistics of -7.25 and -3.28, respectively.  In the matched sample,
+the earnings difference is only \$56 (t-statistic=0.11) in 1974 and
+\$96 (t-statistic=0.32) in 1975.  This one-to-one matching algorithm
+has thus chosen 185 control individuals who do look very similar to
+the treated group on the covariates used in the matching process (1974
+income and 1975 income).
 
 The \texttt{summary} command will additionally report (a) the original
 call of the \MatchIt\ object, (b) whether there are any ``Problematic
