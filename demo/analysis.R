@@ -47,8 +47,8 @@ if(length(foo)==0){
   print("Using Zelig for analysis")
   z.out1 <- zelig(re78 ~ pscore, data = match.data(match.out1,
                                    "control"), model = "ls")
-  x.out1 <- setx(z.out1, data = match.data(match.out1, "treat"), cond =
-                 TRUE)
+  x.out1 <- setx(z.out1, data = match.data(match.out1, "treat"),
+                 fn = NULL, cond = TRUE)
   s.out1 <- sim(z.out1, x = x.out1)
   print(summary(s.out1))
   user.prompt()
@@ -57,8 +57,8 @@ if(length(foo)==0){
   print("Using Zelig for analysis, with propensity score subclassification")
   z.out2 <- zelig(re78 ~ pscore, data = match.data(match.out1s,
                                    "control"), model="ls", by="psclass")
-  x.out2 <- setx(z.out2, data = match.data(match.out1s, "treat"), cond =
-                 TRUE)
+  x.out2 <- setx(z.out2, data = match.data(match.out1s, "treat"),
+                 fn = NULL, cond = TRUE)
   s.out2 <- sim(z.out2, x = x.out2, num = 100)
   print(summary(s.out2)) # overall results
   print(summary(s.out2, subset = 1)) # subclass 1
