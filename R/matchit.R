@@ -74,7 +74,7 @@ matchit <- function(formula, model="logit", data, discard=0,
   if(!(identical(full$full,TRUE) | identical(full$full,FALSE))){
     warning("full=list(full=",cl$full,") is invalid; used full=list(full=FALSE) instead",call. = FALSE)
     full$full <- FALSE
-  } else if(full & nearest){
+  } else if(full$full & nearest){
     warning("Full matching will ignore nearest neighbor inputs",call. = FALSE)
     nearest <- F
   }
