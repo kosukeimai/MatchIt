@@ -74,9 +74,9 @@ Elizabeth A. Stuart\thanks{Ph.D.\ Candidate, Department of Statistics,
 data with semi-parametric matching methods.  After preprocessing with
 \MatchIt, researchers can use whatever parametric model they would
 have used without \MatchIt, but produce inferences that are
-substantially more robust and less sensitivity to modeling
+substantially more robust and less sensitive to modeling
 assumptions.  Matched data sets created by \MatchIt\ can also be
-entered easily in \hlink{Zelig}{http://gking.harvard.edu/zelig/} for
+entered easily into \hlink{Zelig}{http://gking.harvard.edu/zelig/} for
 subsequent parametric analyses.  \MatchIt\ reduces the dependence of
 causal inferences on commonly made, but hard-to-justify, statistical
 modeling assumptions via a wide range of sophisticated matching
@@ -91,7 +91,7 @@ Comprehensive R Archive Network (CRAN) at
 \href{http://www.r-project.org/}{http://www.r-project.org/}.
 \MatchIt\ has been tested on R Version 1.9.0.  A good way to learn R,
 if you don't know it already, is to learn Zelig (available at
-\hlink{http:gking.harvard.edu}{http:gking.harvard.edu}) which includes
+\hlink{http://gking.harvard.edu}{http:gking.harvard.edu}) which includes
 a self-contained introduction to R and can then be used to analyze the
 data after \MatchIt.
 
@@ -231,7 +231,6 @@ is:
   E(Y_{1i} | t_i=1 ) - E(Y_{0i} | t_i=1).
 \end{equation}
 \begin{table}[h]
-\label{dwvars}
 \centering
 \begin{tabular}{lp{3in}}
   \hline 
@@ -254,7 +253,7 @@ is:
   \texttt{re75} & Real earnings (1975) \\ 
   \hline
 \end{tabular}\label{lalonde}
-\caption{Description of Lalonde data}
+\caption{Description of Lalonde data \label{dwvars}}
 \end{table}
 
 \subsection{Exact Matching \label{exactm}}
@@ -431,12 +430,12 @@ PSID45     0      1
 % have exact matches.
 
 \subsection{Propensity Score Matching}
-When insufficient exact matches can be found, as is becomes
+When insufficient exact matches can be found, as becomes
 increasingly common as the number of covariates increase, we need to
 find a way to identify matches that are ``close.''  In this situation,
 matching on the propensity score is a useful alternative.  The
-propensity score is the probability that a treatment was assigned to a
-unit given information in the control variables.  To propensity score
+propensity score is the probability that a unit receives
+treatment, given the covariates.  To propensity score
 match, with pre-treatment covariates composed of real earnings in 1974
 and 1975:
 
@@ -980,7 +979,7 @@ provide summaries across subclasses.
 
 \subsection{Caliper Matching}
 
-A \emph{caliper} is a value of the propensity score demoninated in
+A \emph{caliper} is a value of the propensity score denominated in
 units of standard deviations.  To match within a caliper of 0.25
 standard deviations of the propensity score, use the \texttt{caliper}
 input:
@@ -994,10 +993,11 @@ This restricts the matches to have propensity scores within the
 caliper size.  It is usually used in combination with Mahalanobis
 matching, as described in Section \ref{mahal}.
 
-If no control units exist within the range of caliper specified, the
+If no control units exist within the range of caliper specified for
+a given treated unit, that
 treated unit remains unmatched.  In some instances this might result
 in very few matched units.  As a result, you may want to increase the
-caliper size or match the nearest neighbor only when no units within
+caliper size or match the nearest neighbor when no units within
 the caliper are available, as done by specifying
 \texttt{calclosest=TRUE}.
 
@@ -1026,7 +1026,7 @@ To perform only Mahalanobis Metric matching without calipers, set the
 Some experience has shown that Mahalanobis metric matching by itself
 does not work as well as propensity score matching, but it is often
 used within calipers (as described in the previous section) to fine
-tune propensity score matching, often by chosing a subset of
+tune propensity score matching, often by choosing a subset of
 particularly crucial variables.
 
 \subsection{Assignment Model Specification}
@@ -1062,7 +1062,7 @@ and the \texttt{rpart} library for classification trees.
 \label{rnames}
 
 Since the diagnostics often make use of the observation names of the
-data frame, you may find it helpful to specify observation names the
+data frame, you may find it helpful to specify observation names for the
 data input.  Use the \texttt{row.names} command to achieve this.  For
 example, to assign the names ``Dan'', ``Kosuke'', ``Liz'' and ``Gary''
 to a data frame with the first four observations in the Lalonde data,
@@ -1213,7 +1213,7 @@ Calculating summary statistics...Done
 We are interested in the ``Problematic covariates''.  For subclasses,
 this is a list of all covariates, squares, and two-way interactions
 that have t-statistics greater than $2$ in any subclass (the default
-of $2$ can be changed by specifying the {\texttt sig} option in the
+of $2$ can be changed by specifying the \texttt{sig} option in the
 {\texttt summary} command).
 
 \begin{verbatim}
@@ -1276,7 +1276,7 @@ Subclass  3 :
 This section has provided one example of a diagnostic procedure for
 propensity score models.  The details may vary (for example, an option
 could be to include only squares and interactions that have a
-significant difference in more than one block.  The user could also
+significant difference in more than one block.)  The user could also
 identify a different cut-point for the subclasses, or for significance
 (as opposed to 2.5 and 2).
 
@@ -1691,7 +1691,7 @@ original data sets can be done better on the matched data sets.
 To obtain the matched data sets, use {\tt match.data(match.out)},
 where {\tt match.out} is a \MatchIt\ object.  {\tt
   match.data(match.out, "treat")} gives just the matched treated
-units, and {\tt match.data(match.out, "control")} gives just the
+units, and  \\ {\tt match.data(match.out, "control")} gives just the
 matched control units.
 
 Here we describe two possible analysis methods to use with \MatchIt.
@@ -1884,7 +1884,7 @@ least squares regression can be fit to the matched data, using the
 %$
 
 \subsection{Using Zelig for analysis}
-Zelig is an easy-to-use R program estimates a variety of statistical
+Zelig is an easy-to-use R program that estimates a variety of statistical
 models, gives easily interpretable results by simulating quantities of
 interest, and provides numerical and graphical summaries.  The package
 along with the complete documentation is available at
@@ -1897,7 +1897,7 @@ objects.  The general framework is that of imputing the missing
 potential outcomes.  For example, for the treated group, the potential
 outcomes under control, $Y_{0i}$, are missing, whereas the outcomes
 under treatment, $Y_{1i}$, are observed.  We impute the missing
-outcomes, $Y_{1i}$ as follows.  First, we fit a model using the
+outcomes, $Y_{0i}$ as follows.  First, we fit a model using the
 observed outcomes of the matched control units (i.e., using only
 observations where $T_i=0$).  Then, given this model, the missing
 outcomes $Y_{i0}$ are imputed for the matched treated units by using
@@ -1995,7 +1995,7 @@ expected values.  This means that the treatment effect for the control
 units is actually the effect of control (observed control outcome
 minus the imputed outcome under treatment from the model).  Hence, to
 combine treatment effects just reverse the signs of the estimated
-treatmente effect of controls as in the last line below.
+treatment effect of controls as in the last line below.
 \begin{verbatim}
 x1 <- setx(z0, data = match.data(match.out1,"treat"),cond=T)
 x0 <- setx(z1, data = match.data(match.out1,"control"),cond=T)
@@ -2155,7 +2155,7 @@ simulates the research design of an experiment, where no information
 on outcomes is known at the point of experimental design and
 randomization.  Much like an experimenter cannot easily rerun an
 experiment if the outcome was not satisfactory, the separation of the
-balancing process in \MatchIt\ from the analysis process afterwards
+balancing process in \MatchIt\ from the analysis process afterwords
 helps keep clear the goal of balancing control and treatment groups
 and makes it less likely that the user will inadvertently cook the
 books in his or her favor.
