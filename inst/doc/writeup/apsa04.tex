@@ -88,5 +88,170 @@
 
 \hypersetup{pdfpagetransition=Replace}
 
+\begin{itemize}
+
+\item Example: estimating the electoral advantage of incumbency for
+  Democrats\pause
+  \begin{itemize}
+  \item Unit: congressional districts, $i=1,\dots,n$.\pause
+  \item Observed treatment: Democratic incumbent ran $(t_i=1)$, did
+    not run $(t_i=0)$.\pause
+  \item Observed outcome: Democratic vote share for the $i$th
+    district, $y_i$.\pause
+  \item Control variables: use pretreatment variables $X_i$ and avoid
+    posttreatment bias.
+  \end{itemize}
+
+\item Potential outcomes: $y_i(1) \equiv y_i(t_i=1)$ and $y_i(0)
+  \equiv y_i(t_i=0)$\pause  
+  \begin{itemize}
+  \item Realized Causal Effect for unit $i$: $y_i(1) - y_i(0)$.\pause
+  \item The fundamental problem of causal inference.\pause
+  \item Connection to missing data and ecological inference:\\ $y_i =
+    t_i y_i(1) + (1-t_i) y_i(0)$\pause
+  \item Random causal effect for unit $i$: $Y_i(1) - Y_i(0).$\pause
+  \item Mean causal effect for unit $i$: $E[Y_i(1) - Y_i(0)].$\pause
+  \end{itemize}
+
+\item Quantities of interest:\pause
+  \begin{itemize}
+    \item Average Treatment Effect: $ATE = \frac{1}{n}\sum_{i=1}^n E[Y_i(1) - Y_i(0)]$
+      \bigskip
+    \item Average Treatment Effect for the Treated:\\ ATT = $\frac{1}{\sum_{i=1}^n t_i}\sum_{i:t_i=1} E[Y_i(1) - Y_i(0)]$
+  \end{itemize}
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\foilhead{Data Collection Mechanisms\pause}
+
+\hypersetup{pdfpagetransition=Replace}
+
+\begin{itemize}
+\item Classical randomized experiments:\pause
+  \begin{enumerate}
+  \item random selection of units from a give population.\pause
+  \item random assignment of values of the treatment.\pause
+  \item a large $n$.\pause
+  \end{enumerate}
+\item Observational studies:\pause
+  \begin{itemize}
+  \item do not meet all three features of randomized experiments\pause
+  \item almost all political science research
+  \end{itemize}
+
+\item Assumptions for causal inference:\pause
+  \begin{itemize}
+  \item no sample selection bias.\pause
+  \item no omitted variable bias.\pause
+  \item no posttreatment bias.\pause
+  \item no interference among units.\pause
+  \item the same treatment.\pause
+  \end{itemize}
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\foilhead{Parametric Analysis Methods\pause}
+
+\hypersetup{pdfpagetransition=Replace}
+
+\begin{itemize}
+\zerolistvertdimens 
+\item Researchers typically assume a parametric model (up to unknown
+  parameters):\\ e.g., $Y_i \sim p(\mu_i, \theta)$ with $\mu_i \equiv
+  E(Y_i \mid t_i, X_i)=g(\alpha+t_i \beta + X_i \gamma)$\pause
+\item but, the true model is unkown.\pause
+\item In experimental studies, $T$ and $X$ are independent:\pause 
+  \begin{itemize}
+  \item $ATT = g(\alpha+\beta) - g(\alpha).$\pause
+  \item The results do not depend on the functional form,
+    $g(\cdot)$.\pause 
+  \end{itemize}
+\item In observational studies, the results are model-dependent.\pause
+  \begin{itemize}
+  \item curse of dimensionality: $m$ 10-category variables require
+    $10^m$ parameters in regression.\pause
+  \end{itemize}
+\end{itemize}
+
+ \begin{center}
+   \includegraphics{figs/olspanel-thick.pdf}
+ \end{center}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\foilhead{Nonparametric Preprocessing\pause}
+
+\hypersetup{pdfpagetransition=Replace}
+
+\begin{itemize}
+\item Adjust the data prior to the parametric analysis so that:\pause
+  \begin{enumerate}
+  \item the relationship between $t_i$ and $X_i$ is eliminated or reduced.\pause
+  \item no bias and little inefficiency is induced.\pause
+  \end{enumerate}
+
+\item Fundamental rule for avoiding selection bias: do not select on
+  dependent variable.\pause 
+  \begin{itemize}
+  \item valid selection rule -- a function of $t_i$ and $X_i$.\pause 
+  \item randomized blocks in experiments, stratified sampling in
+    surveys.\pause
+  \end{itemize}
+
+\item Preprocessed data set\pause
+  \begin{itemize}
+  \item contains a subset of the raw data.\pause
+  \item $p(X\mid t_i=1) = p(X\mid t_i=0)$ for one-to-one
+    matching.\pause 
+  \item $p(X\mid t_i=1) \approx p(X\mid t_i=0)$ for other matching
+    methods.\pause 
+  \item model-dependence is reduced.\pause
+  \end{itemize}
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\foilhead{Choosing a Matching Procedure\pause}
+
+\hypersetup{pdfpagetransition=Replace}
+
+\begin{itemize}
+\zerolistvertdimens 
+\item The goal of matching: improve balance without losing too many
+  observations.\pause
+
+\item Try different matching procedures until better balance is
+  achieved.\pause
+
+\item But, do not examine the outcome variable during
+  preprocessing.\pause
+\end{itemize}
+  
+\begin{enumerate}
+\item Select Covariates: include all variables that would have been
+  included in the parametric model. avoid posttreatment bias.\pause
+  
+\item Try Exact Matching: if a large number of units are matched, go
+  to the parametric analysis.\pause
+  
+\item Use Propensity Score Matching: summarize all the variables in
+  $X$ with a single variable, $e_i(X_i)=\Pr(t_i=1\mid X_i)$.\pause
+  
+  \begin{enumerate}
+  \item propensity score tautology: it works when it works, and when
+    it doesn't work, it doesn't work.\pause
+
+  \item logistic regression, GAM, CART, neural network, etc.\pause
+    
+  \end{enumerate}
+
+\item Evaluate the Matching Procedure: look at various low-dimensional
+  summaries of $X$.\pause
+\item Parametric Outcome Analysis: same method, same algorithm, same
+  software, same model checking procedures, ... \pause
+\end{enumerate}
+
 
 \end{document}
