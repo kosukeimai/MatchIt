@@ -27,7 +27,7 @@ work better."
 <!-- width="285" height="425"> -->
 
       <td valign="top"><br>MatchIt implements the suggestions of <a
-      href="/files/abs/matchp-abs.html">Ho, Imai, King, and Stuart
+      href="/files/abs/matchp-abs.shtml">Ho, Imai, King, and Stuart
       (2004)</a> for improving parametric statistical models by
       preprocessing data with nonparametric matching methods.  MatchIt
       implements a wide range of sophisticated matching methods,
