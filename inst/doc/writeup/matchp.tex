@@ -1,4 +1,3 @@
-%   this, including anticipatory responce to A&I
 \documentclass[11pt,titlepage]{article}
 %\usepackage[notref]{showkeys}
 \usepackage[reqno]{amsmath}
@@ -12,7 +11,7 @@
 \newcolumntype{.}{D{.}{.}{-1}}
 \newcolumntype{d}[1]{D{.}{.}{#1}}
 \usepackage{threeparttable,booktabs}
-%\usepackage{times}
+\usepackage{times}
 \usepackage{vmargin}
 \setpapersize{USletter}
 \topmargin=0in
@@ -87,7 +86,7 @@ Elizabeth A. Stuart\thanks{Researcher, Mathematica Policy Research, Inc.\, Ph.D.
   parametric models work better by giving more accurate and
   considerably less model-dependent causal inferences.
 \end{abstract}
-%\baselineskip=1.57\baselineskip
+\baselineskip=1.57\baselineskip
 
 \section{Introduction}
 
@@ -126,10 +125,10 @@ a representative specification or the right one rather than the one
 that most supported our favorite hypothesis.  What does it even mean
 to choose ``the right'' parametric model estimates when any chosen
 model depends on assumptions we cannot verify?  When we read a
-published article in political science, how do we know the estimated
-causal effect presented is accurate or whether it merely demonstrates
-that it was \emph{possible} to find a specification consistent with
-the researcher's prior expectations?
+published article in political science, how do we know whether the
+causal effect presented is accurate or whether the article merely
+demonstrates that it was \emph{possible} to find a specification
+consistent with the researcher's prior expectations?
 
 We attack this problem by drawing on a new statistics literature on
 causal inference based on matching, a nonparametric and
@@ -162,10 +161,10 @@ to use these new nonparametric techniques, not as substitutes for our
 present parametric regression techniques, but to make our familiar
 parametric techniques work better.  Under our inferential framework,
 analysts merely add a simple preprocessing step to their data analysis
-procedures.  They then employ whatever statistical models they
-previously accustomed to using to analyze the preprocessed data rather
-than the raw data.  All of the intuition, diagnostics, and knowledge
-about our parametric procedures can then be used as before.
+procedures.  They then employ whatever statistical models they are
+accustomed to using to analyze the preprocessed data rather than the
+raw data.  All of the intuition, diagnostics, and knowledge about our
+parametric procedures can then be used as before.
 
 Parametric techniques applied to the preprocessed data are typically
 far less sensitive to the choices of modeling assumptions than when
@@ -576,8 +575,8 @@ procedures is suboptimal in this situation.  Of course, few
 researchers with real observational data sets have this kind of
 knowledge and as a result some choices need to be made among the range
 of possible parametric models.  The dilemma then is that although
-researchers using this approach do not know the true parametric model,
-they must proceed as if they do.
+researchers using parametric methods do not know the true parametric
+model, they must proceed as if they do.
 
 We begin to elaborate this problem and some paths forward by
 specifying a single but general parametric model that characterizes
@@ -1100,10 +1099,13 @@ not turn up sufficient observations, then we can choose the nearest
 neighbor on the large-effect variables, defined by the Mahalanobis
 distance, among all units within 0.25 standard deviations (also known
 as ``calipers'') of the propensity score computed from all other
-variables.\footnote{The Mahalanobis distance is the weighted average
-  of the squared distance between units $i$ and $j$,
-  $(X_i-X_j)'\Sigma^{-1}(X_i-X_j)$, where $\Sigma$ is the sample
-  variance matrix of $X$ in the control group.  See \cite{RubTho00}.}
+variables.\footnote{The 0.25 standard deviation figure, which is the
+  most common recommendation in the literature, appears to be
+  interpolated from the results in \citet{CocRub73}.  The Mahalanobis
+  distance is the weighted average of the squared distance between
+  units $i$ and $j$, $(X_i-X_j)'\Sigma^{-1}(X_i-X_j)$, where $\Sigma$
+  is the sample variance matrix of $X$ in the control group.  See
+  \cite{RubTho00}.}
 
 Third, if some control units fall outside the range of the treated
 propensity score values, then these controls cannot be adjusted to
