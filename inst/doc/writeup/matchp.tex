@@ -153,7 +153,7 @@ that are combined with semi-parametric (kernel weighting) analyses.
 Applied researchers have intuitively chosen similar approaches, such as in
 \citet{Rosenbaum86, GlaLevMye03}.  
 It is also similar in spirit to methods in other areas that preprocess
-data so that subsequent analyses can be improved without modififying
+data so that subsequent analyses can be improved without modifying
 existing techniques, such as multiple imputation
 \citep{Rubin87,KinHonJos01} and outlier and feature detection
 \citep[][Ch.8]{Bishop95}.  
@@ -320,7 +320,7 @@ to justify than those in imputation or ecological inference.  In all
 three areas the inferential target is not normally highly constrained
 by the observed data and so substantive conclusions will usually
 depend on unverifiable assumptions about the data generation process.
-And so laying these assumptions bear as clearly as possible throughout
+And so laying these assumptions bare as clearly as possible throughout
 the process is essential.
 
 \paragraph{Random Causal Effects} In order to make statistical
@@ -379,7 +379,7 @@ the effect of the treatment actually applied.  Medical studies
 typically use the ATT as the designated quantity of interest because
 they often only care about the causal effect of drugs for patients
 that receive or would receive the drugs.  For another example, in job
-training programs, we are not normally interested in assinging
+training programs, we are not normally interested in assigning
 employed people to have this training.  In the social sciences, the
 ATT is also a reasonable choice, but so is the average treatment
 effect (the ATE).  In our running example, it is quite likely that if
@@ -410,10 +410,10 @@ procedures we suggest below.
 
 Valid and relatively automatic causal inferences can be achieved via
 classical randomized experiments (where by ``classical'' we refer to
-the situation where randomness is complete and not merely applied
+the situation where the random assignment is complete and not applied
 within categories of other variables).  Such experiments have three
-critical features: (1) \emph{random selection} of units from a given
-population to be observed, (2) \emph{random assignment} of values of
+critical features: (1) \emph{random selection} of units to be observed from a given
+population, (2) \emph{random assignment} of values of
 the treatment ($t_i$) to each observed unit, and (3) a \emph{large
   $n$}.
 
@@ -449,7 +449,7 @@ impossible.
 
 \subsection{Observational}
 
-We define observational data colelction mechanisms as any process
+We define observational data collection mechanisms as any process
 generating data that does not meet all three of the features of a
 classical randomized experiment.  Researchers trying to use the
 experimental paradigm try to design research to meet all three
@@ -463,7 +463,7 @@ not generate selection bias.  Observations need not be selected at
 random, as in an experiment, but the probability of selection must not
 be correlated with the dependent variable $y$, after taking into
 account the treatment $t$ and pre-treatment covariates, $X$.  Whether
-this assumption is satisified by carefully considering and controlling
+this assumption is satisfied by carefully considering and controlling
 for the sample selection process or by changing the quantity of
 interest to be that reflected by the sample, avoiding selection bias
 is not a trivial matter, and it is the subject of a great deal of
@@ -500,7 +500,7 @@ of commonly used parametric methods.
 
 Researchers in the situation of knowing the parametric model that
 generated their data, up to but not including some unknown parameters,
-should specific and directly estimate this parametric model.
+should specify and directly estimate this parametric model.
 Preprocessing with matching procedures is suboptimal in this
 situation.  Of course, few researchers with real observational data
 sets in the social sciences have this kind of knowledge and as a
@@ -820,8 +820,8 @@ covariate values.  This procedure is thus more general than one-to-one
 matching, since we use as many control units as are available for each
 treated unit.
 
-If a large number of units were matched, then we have have exact
-balance little inefficiency: go to the parametric analysis.  If
+If a large number of units were matched, then we have exact
+balance with little inefficiency: go to the parametric analysis.  If
 insufficient matches could be found, either repeat the exact matching
 with fewer covariates or switch to propensity score matching,
 described in Step 3.  In the former, we balance the included variables
@@ -899,9 +899,9 @@ In applications, the usual practice is to estimate the propensity
 score by a logistic regression of $t_i$ on $X_i$ and a constant term.
 Since we are in the situation where exact matching was insufficient,
 we match each treated unit to the control unit with the most similar
-value of the propensity score, $e_i$ (which is known as nearest
+value of the estimated propensity score, $\hat{e}_i$ (which is known as nearest
 neighbor matching on the propensity score).  If this procedure
-balances $X$ (and procedures for which checking balance are offered in
+balances $X$ (and procedures for checking balance are offered in
 Step 4), then we use it.  If not, then we try respecifying the
 logistic regression by adding interactions or squared terms and
 matching again.  If that works, then we use it.  If not then we can
@@ -914,7 +914,8 @@ specific details of how to use propensity scores.  First, if many more
 control than treatment units are available, consider choosing more
 than one control match for each treated unit.  This will increase the
 efficiency of the procedure (although each match past the first
-usually reduces the variance somewhat less than the previous one).
+usually reduces the variance somewhat less than the previous one and will
+moderately increase bias).
 If, instead, fewer controls are available than those treated, then
 matching with replacement --- allowing each control unit to be matched
 to more than one treated unit --- is a good option.  Alternatively,
@@ -926,14 +927,14 @@ Second, sometimes we are in the situation of suspecting, from prior
 evidence (but not from the present data set), that a small number of
 covariates have a disproportionately large effect on our outcome
 variable.  When this is the case, even slightly mismatching on these
-variables severely bias of our causal effect.  To avoid this problem,
-we match using two separate metrics, one of the large-effect variables
+variables may severely bias our causal effect.  To avoid this problem,
+we match using two separate metrics, one for the large-effect variables
 and another for the rest.  Thus, if feasible, we create pools of
 exact matches on the large-effect variables and then use nearest
 neighbor propensity score matching based on the remaining variables to
 choose specific matches within these pools.  If exact matching does
 not turn up sufficient observations, then we can choose the nearest
-neighbor, defined by the Mahalanobis distance, among all units within
+neighbor on the large-effect variables, defined by the Mahalanobis distance, among all units within
 (say) 0.25 standard deviations of the propensity score computed from
 all other variables.  The Mahalanobis distance is the weighted average
 of the squared distance between units $i$ and $j$,
@@ -977,7 +978,7 @@ multidimensional histogram of all the control units.  Because of the
 curse of dimensionality, multidimensional histograms with more than a
 few covariates tend to be very sparse and so using them to estimate
 the two underlying probability densities in (\ref{balance}) will
-ordinarly be very difficult without access to an extraordinary number
+ordinarily be very difficult without access to an extraordinary number
 of observations.  Thus, instead of comparing estimates of the full
 multidimensional densities, researchers usually examine various low
 dimensional summaries of them.  If a low dimensional summary differs
@@ -989,10 +990,10 @@ However, if the parametric analysis model itself does not use any
 higher order interactions not captured by the lower dimensional
 summaries, then the problem of not recognizing a higher order
 incompatibility between treatments and controls may not make a
-material difference in end anyway.
+material difference in the end anyway.
 
 Perhaps the simplest, and also most commonly used, low dimensional
-summary comparing the mean of the treatment group for each variable in
+summary compares the mean of the treatment group for each variable in
 $X$ with the mean of that variable in the control group.  If one or
 more of these differ by more than half a standard deviation of the
 respective $X$ variable, then better balance is needed.  We can also
@@ -1037,7 +1038,7 @@ by the number of units in each subclass.
 
 \section{Computing Uncertainty Estimates}
 
-No concensus exists in the literature on methods to use to compute
+No consensus exists in the literature on methods to use to compute
 uncertainty estimates, such as standard errors or confidence
 intervals, from matching procedures.  The problem is not some
 disagreement over technical statistical techniques.  Rather, the issue
@@ -1169,7 +1170,7 @@ report results across all such possible specifications.
   \begin{center}
     \begin{tabular}{lrrrrrr}
       \hline
-      & \MC{3}{c}{\bf Raw Data} & \MC{3}{c}{\bf Pre-processed Data
+      & \MC{3}{c}{\bf Raw Data} & \MC{3}{c}{\bf Preprocessed Data
       (subclass 4) }\\
       & Mean for  & Mean for  &    & Mean for  & Mean for \\
       & Treated & Control  & t-stat &    Treated & Control  & t-stat \\
@@ -1248,9 +1249,9 @@ candidates within subclass 4, which differs only slightly from the
       \hline
     \end{tabular}
     \caption{Means test statistics for six pre-treatment covariates.
-      Each cell presents t-statistic for the covariate within each
-      subclass, and No. treated / control indicates the number of
-      treated / control units in each subclass and $N$ indicates the
+      Each cell presents the t-statistic for the covariate within each
+      subclass, No. treated / control indicates the number of
+      treated / control units in each subclass, and $N$ indicates the
       total number of units in each subclass.  This table shows that
       relative balance can be achieved within each subclass with only
       six subclasses.}
@@ -1299,29 +1300,28 @@ the voter's ideological assessment.  For the matched dataset, we run
 the exact same specification locally within each subclass, aggregating
 the point estimates weighed by the number of treated units in each
 subclass.  The result is a distribution of treatment effect estimates
-across possible specifications for raw and pre-processed data.
+across possible specifications for raw and preprocessed data.
 
 Figure~\ref{fg:kochdens} presents the results, plotting densities of
-estimated treatment effects for the raw and pre-processed data.  As
+estimated treatment effects for the raw and preprocessed data.  As
 hypothesized, the range of treatment effect estimates is substantially
-more variable for the raw data.  Effect estimates, plotted by the
-dashed line, range from $-0.64$ to $-0.2$, signifying female
-visibility causes voters to perceive candidates as more liberal.  The
-point estimate from the full data that controls for all six
-covariates, signified by the vertical arrow, appears conservative
-compared to this range.  Yet estimates from the pre-processed data,
-plotted by the solid line, stand in stark contrast the to estimates
-from the raw data.  The range of coefficient estimates is
-substantially smaller, ranging from $-0.31$ to $-0.07$, and the
-variance across specifications is more than six times smaller than for
-the raw data, as shown by the highly peaked density.  Rather than
-erring on the conservative side, the reported point estimate now
+more variable for the raw data.  Effect estimates from the raw data, plotted by the
+solid line, range from $-0.64$ to $-0.2$, signifying female visibility
+causes voters to perceive candidates as more liberal.  The point
+estimate from the full data that controls for all six covariates,
+signified by the vertical arrow, appears conservative compared to this
+range.  Yet estimates from the preprocessed data stand in stark
+contrast to the estimates from the raw data.  The range of coefficient
+estimates is substantially smaller, ranging from $-0.31$ to $-0.07$,
+and the variance across specifications is more than six times smaller
+than for the raw data, as shown by the highly peaked density.  Rather
+than erring on the conservative side, the reported point estimate now
 appears to be substantially larger in substantive effect than we might
-expect from the pre-processed data.
+expect from the preprocessed data.
 
-In short, not only can pre-processing reduce model dependence,
+In short, not only can preprocessing reduce model dependence,
 decreasing the probability that researchers may inadvertently present
-unrepresentative estimates, but pre-processing also may change
+unrepresentative estimates, but preprocessing also may change
 substantive conclusions of the research.  The fact that treatment
 effects may be substantially smaller may even further bolster the
 claim that ``[t]he contradictory nature of . . . [the] cues received
@@ -1337,7 +1337,7 @@ information-processing task'' \citep[p. 460]{Koch02}.
   \vspace{-0.275in}
   \caption{Kernel density plot of estimated average treatment effect of
     Democratic Senate majority on FDA drug approval time across 262143
-    possible specificatons with the Carpenter data. The solid line
+    possible specifications with the Carpenter data. The solid line
     presents density plot of estimated average treatment effect for
     the matched dataset, while the dashed line presents that for the
     full dataset.  The vertical arrow shows the point estimate of the
@@ -1378,7 +1378,7 @@ match.out <- matchit(treat ~ age + educ + black, exact=TRUE, data = lalonde)
 Numerous other options are also available.
 
 MatchIt also works well with the general purpose statistics package
-Zelig (see http://gking.harvard.edu/zelig).  For example, suppose we
+Zelig (see \\ http://gking.harvard.edu/zelig).  For example, suppose we
 first used MatchIt to subclassify into 5 classes by the propensity
 score, use
 \begin{verbatim}
@@ -1391,8 +1391,8 @@ by MatchIt, using data from the control group:
 z.out <- zelig(re78 ~ pscore, model = "ls", by = "psclass", 
                 data = match.data(match.out, "control"))
 \end{verbatim}
-and then set the explanatory variables to predict the potential
-outcomes for the treatment group and simulate quantities of interst:
+and then set the explanatory variables to predict the missing potential
+outcomes under control for the treatment group and simulate quantities of interest:
 \begin{verbatim}
 x.out <- setx(z.out, data = match.data(match.out2, "treat"), cond = TRUE)
 s.out <- sim(z.out, x = x.out)
