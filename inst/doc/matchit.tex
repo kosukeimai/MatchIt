@@ -1,6 +1,7 @@
 \documentclass[oneside,letterpaper,titlepage]{article}
 %\usepackage[ae,hyper]{/usr/lib/R/share/texmf/Rd}
-\usepackage{makeidx}
+\usepackage{bibentry}
+\usepackage{upquote}
 \usepackage{graphicx}
 \usepackage{natbib}
 \usepackage[reqno]{amsmath}
@@ -10,10 +11,7 @@
 \usepackage{url}
 \usepackage{html}
 \usepackage{dcolumn}
-\usepackage{longtable}
-\usepackage{vmargin}
-\usepackage{times}
-\setpapersize{USletter}
+\usepackage{fullpage}
 \newcolumntype{.}{D{.}{.}{-1}}
 \newcolumntype{d}[1]{D{.}{.}{#1}}
 %\pagestyle{myheadings}
@@ -653,7 +651,7 @@ or \cite{Rosenbaum02} for more information on optimal matching.
 Optimal matching can be performed with \MatchIt\ using an add-on
 package called ``\texttt{optmatch}'' (\cite{Hansen04}).  Because
 \texttt{optmatch} is not yet available on CRAN, it must be installed
-separately, from
+separately, from \\
 \hlink{http://www.stat.lsa.umich.edu/~bbh/optmatch.html}{http://www.stat.lsa.umich.edu/~bbh/optmatch.html}.
 Once \texttt{optmatch} is installed, optimal matching can be chosen
 within \MatchIt\ simply by setting \texttt{m.order=1}.  All other
@@ -2764,6 +2762,7 @@ The \texttt{diagnose} command will return the following objects:
 
 
 % see gkbibtex/cvstricks.tex
+\clearpage
 \bibliographystyle{polisci}
 \bibliography{gk,gkpubs}
 
