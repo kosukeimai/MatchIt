@@ -73,16 +73,18 @@ Elizabeth A. Stuart\thanks{Researcher, Mathematica Policy Research, Inc.\, Ph.D.
   representative?  How do readers know that political science articles
   are not merely demonstrations that the author found it
   \emph{possible} to find a specification that fits his or her
-  favorite hypothesis?  Matching methods offer the promise of causal
-  inference with fewer assumptions but the literature suffers from
-  conflicting approaches to estimation, uncertainty, theoretical
-  analysis, and practical advice.  In this paper, we propose a unified
-  perspective on this literature that enables researchers to
-  preprocess their data (such as with the easy-to-use software we
-  offer) and then to apply whatever familiar techniques they would
-  have used anyway.  Under our approach, instead of using matching to
-  replace existing parametric methods, we use it to make existing
-  methods work better, such as by giving more accurate and
+  favorite hypothesis?  In this paper, we propose to use matching
+  methods as nonparametric preprocessing for reducing model dependence
+  in parametric causal inference. Although matching methods offer the
+  promise of causal inference with fewer assumptions, the literature
+  suffers from conflicting approaches to estimation, uncertainty,
+  theoretical results, and practical advice. We propose a unified
+  perspective on this literature. Our approach makes it possible for
+  researchers to preprocess their data (such as with the easy-to-use
+  matching software we offer) and then to apply whatever familiar
+  parametric techniques they would have used anyway.  Instead of
+  replacing existing methods with matching, we use matching to make
+  parametric models work better by giving more accurate and
   considerably less model-dependent causal inferences.
 \end{abstract}
 %\baselineskip=1.57\baselineskip
@@ -112,10 +114,10 @@ different control variables, a third with a different functional form,
 a forth with a different measure of our key causal variable, one with
 different sample periods or observation subsets, and then each of
 these or others are repeated with slight variations over and over
-again.  Although this usual procedure produces hundreds or even
-thousands of alternative estimates of our causal effect, we typically
-only choose one, and rarely more than 5--10, to present in a paper.
-Yet, we know that the dependence of our estimates on these modeling
+again.  Although this usual procedure produces hundreds or thousands
+of alternative estimates of our causal effect, we typically only
+choose one, and rarely more than 5--10, to present in a paper.  Yet,
+we know that the dependence of our estimates on these modeling
 assumptions means that different specifications can produce very
 different causal inferences.
 
@@ -135,10 +137,10 @@ on matching.  This work offers considerable promise for increasing the
 reliability and validity of causal inferences by reducing or
 eliminating the role of functional form and other assumptions of
 parametric models.  The statistical literature on matching has grown
-quite sophisticated, but, from the point of view of the practical
-researcher, it looks like a cacophony of conflicting techniques,
-practices, conventions, and rules of thumb.  Valid methods for
-computing standard errors and confidence intervals are even more
+theoretically sophisticated, but, from the point of view of the
+practical researcher, it looks like a cacophony of conflicting
+techniques, practices, conventions, and rules of thumb.  Valid methods
+for computing standard errors and confidence intervals are even more
 complicated, often not used, and sometimes not available.  Many
 theoretical results do not apply to practical applications unless
 unknown theoretical quantities or specifications are somehow divined.
@@ -1675,8 +1677,8 @@ The advantage of matching is that it is relatively robust to small
 changes in procedures, and produces a data set that is by design less
 sensitive to modeling assumptions.  However, like any method, using it
 badly or to ill effect is certainly possible.  Thus, in this section,
-we discuss four ways in which preprocessing can go wrong and how we
-might avoid these problems.
+we discuss four ways in which preprocessing can go wrong and how
+researchers might try to avoid these problems.
 
 First, since the curse of dimensionality affects balancing
 diagnostics, we may well miss a higher dimensional aspect of imbalance
@@ -1704,7 +1706,10 @@ course, dropping many observations does not necessarily mean that
 preprocessing is worse, since including imbalanced observations in a
 parametric analysis merely produces false precision.  So although
 estimated standard errors may increase in some cases with
-preprocessing, they would be more accurate.
+preprocessing, they would be more accurate.  Moreover, in many
+situations, eliminating observations far from the data as matching
+does will sometimes reduce heterogeneity and thereby reduce the
+variance.
 
 Third, the matching literature offers a large number of possible and
 seemingly ad hoc procedures.  From one perspective, we might be
