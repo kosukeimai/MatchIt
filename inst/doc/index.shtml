@@ -1,0 +1,61 @@
+<html>
+<head>
+<title>MatchIt Software Website</title>
+</head>
+
+<BODY BACKGROUND="/pics/temple.jpg">
+
+<center>
+<h1>MatchIt: Matching Software for Causal Inference</h1>
+
+<p><a href="http://www.people.fas.harvard.edu/~deho/">Daniel Ho</a>,
+<a href="http://www.princeton.edu/~kimai/">Kosuke Imai</a>, 
+<a href="http://GKing.Harvard.edu">Gary King</a>, 
+<a href="http://www.people.fas.harvard.edu/~estuart/">Elizabeth Stuart</a>
+
+<p>"At MatchIt, we don't make parametric models, we make parametric models
+work better."
+
+<p>Version: Pre-release, beta 0.8
+
+  <table width="90%" border="0" cellpadding="10">
+    <tr>
+	  <td><img src="eshfish.jpg" width="285" height="425"></a></td>
+
+      <td valign="top"><br>MatchIt implements the suggestions of <a
+      href="paper.html">Ho, Imai, King, and Stuart (2004)</a> for
+      improving parametric statistical models by preprocessing data
+      with nonparametric matching methods.  MatchIt implements a wide
+      range of sophisticated matching methods, making it possible to
+      greatly reduce the dependence of causal inferences on
+      hard-to-justify, but commonly made, statistical modeling
+      assumptions.  The software also easily fits into existing
+      research practices since, after preprocessing with MatchIt,
+      researchers can use whatever parametric model they would have
+      used without MatchIt, but produce inferences with substantially
+      more robustness and less sensitivity to modeling assumptions.
+      MatchIt is an <a href="http://www.r-project.org">R</a> program,
+      and also works seamlessly within <a href="/zelig/">Zelig</a>.
+
+<ul>
+<li><a href="docs/">Complete Documentation</a>
+
+<li><a
+href="http://gking.harvard.edu/matchit/docs/Installing_M_SMALL_ATC.html">Installation
+and Downloads</a>
+
+<li>MatchIt Mailing List: <a
+href="http://lists.hmdc.harvard.edu/index.cgi?info=matchit">[Un]Subscribe</a>,
+or <a href="http://lists.hmdc.harvard.edu/lists/matchit/">Browse/Search
+Archives</a>
+
+</td>
+      
+    </tr>
+  </table>
+  </center>
+
+<!--#include virtual="mend.html"-->
+
+</body>
+</html>
