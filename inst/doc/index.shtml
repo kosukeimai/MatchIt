@@ -17,11 +17,13 @@
 work better."
 
 <!-- rbuild: replace 'Version:' '</b>' version -->
-<p><b>Version: 0.8</b>
+<p><b>Version:0.1-4</b>
 
   <table width="90%" border="0" cellpadding="10">
     <tr>
-	  <td><img src="eshfish.jpg" width="285" height="425"></a></td>
+	  <td><img src="face_off.jpg"></a></td>
+
+<!-- width="285" height="425"> -->
 
       <td valign="top"><br>MatchIt implements the suggestions of <a
       href="paper.html">Ho, Imai, King, and Stuart (2004)</a> for
@@ -36,7 +38,7 @@ work better."
       used without MatchIt, but produce inferences with substantially
       more robustness and less sensitivity to modeling assumptions.
       MatchIt is an <a href="http://www.r-project.org">R</a> program,
-      and also works seamlessly within <a href="/zelig/">Zelig</a>.
+      and also works seamlessly with <a href="/zelig/">Zelig</a>.
 
 <ul>
 <li>Documentation:  <a href="docs/">Read on-line</a> or <a
