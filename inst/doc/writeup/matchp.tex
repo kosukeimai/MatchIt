@@ -29,12 +29,12 @@
 %
 \title{Matching as Nonparametric Preprocessing for Reducing Model
   Dependence in Parametric Causal Inference\thanks{Our thanks to Dan
-    Carpenter and Jeff Koch for data; Alexis Diamond, Olivia Lau, and
-    Gabe Linz for many helpful comments; and the National Institutes
-    of Aging (P01 AG17625-01) and the National Science Foundation
-    (SES-0318275, IIS-9874747) for research support.  Software to
-    implement the methods in this paper is available at
-    \texttt{http://GKing.Harvard.Edu/matchit}.}}
+    Carpenter and Jeff Koch for data; Neal Beck, Alexis Diamond,
+    Olivia Lau, and Gabe Linz for many helpful comments; and the
+    National Institutes of Aging (P01 AG17625-01) and the National
+    Science Foundation (SES-0318275, IIS-9874747) for research
+    support.  Software to implement the methods in this paper is
+    available at \texttt{http://GKing.Harvard.Edu/matchit}.}}
 
 \author{Daniel E. Ho,\thanks{J.D.\ candidate, Yale Law School, Ph.D.\,
     Department of Government, Harvard University. (Center for Basic
@@ -1408,8 +1408,12 @@ using the preprocessed data set.  Since nothing changed other than the
 removal of data that would have required highly model-dependent
 inferences, no other analysis procedures need change.  We can compute
 point estimates, standard errors, and confidence intervals using the
-same procedures Carpenter did on the raw data.  
+same procedures Carpenter did on the raw data. 
 % *** insert brief statement of results with se's.
+{\bf The estimated average treatment effect (ATE) is $-31.6$ months
+  with estimated standard error $10.3$, indicating that a Democratic
+  Senate majority significantly decreased the average approval time of
+  new drugs and therefore contradicting Carpenter's hypothesis.}
 
 Although normally data analysis would end here, for our methodological
 purposes we go a step further to demonstrate the model-dependence of
@@ -1433,10 +1437,17 @@ result here is that estimates are far more model-dependent using the
 raw data than using the matched data.  For example, the variance of
 the estimated average treatment effect from the matched data is more
 than three times as large as that from the raw data.  Although
-Carpenter was unable to draw conclusions from the raw data due to
-high levels of model dependence, our preprocessing shows that there
-does exist sufficient information in the data to draw conclusions
-without difficult-to-justify functional form assumptions.
+Carpenter was unable to draw conclusions from the raw data due to high
+levels of model dependence, our preprocessing shows that there does
+exist sufficient information in the data to draw conclusions without
+difficult-to-justify functional form assumptions. {\bf Can we change
+  this last sentence to: In his original analysis, Carpenter was
+  unable to draw conclusions from the raw data due to high levels of
+  model dependence. This can be seen by the density graph with a hevy
+  lower tail in our figure. However, our preprocessing shows ... And
+  then add the sentence: Contrary to the original hypothesisi, a
+  Democratic Senate majority reduces the average approval time of new
+  drugs.}
 \begin{figure}[t] 
  \begin{center}
    \includegraphics{figs/fdadens.pdf}
