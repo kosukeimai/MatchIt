@@ -194,9 +194,12 @@ our case is the Democratic proportion of the two-party vote in
 congressional district $i$.  Finally, prior to the treatment decision,
 each district $i$ has a variety of characteristics, some of which we
 measure and collect in a vector denoted $X_i$.  Whether preprocessing
-or not, variables that are at least in part consequences of the
-treatment variable should never be controlled for when estimating a
-causal effect.
+or not, variables that are even in part a consequence of the treatment
+variable should never be controlled for when estimating a causal
+effect.  This is of course a critical point, since controlling for the
+consequences of a causal variable can massively bias a causal
+inference; the problem is unfortunately too common in political
+science \citep{KinZen04}.
 
 To clarify our inferential goals, we begin by defining the ``realized
 causal effect,'' which is the simplest definition available.  To
