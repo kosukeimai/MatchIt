@@ -1972,7 +1972,7 @@ Pooled Average Treatment Effect: Y - PR
 \end{verbatim}
 
 We see that the average treatment effect for the treated group is
-$\$1127$, with standard deviation $\$716$.  Other information can be
+$\$1137$, with standard deviation $\$716$.  Other information can be
 obtained from the output objects in {\tt s.out1}.
 
 Alternatively, users may want to calculate treatment effects on both
@@ -2004,8 +2004,20 @@ s1 <- sim(z0, x = x1)
 s0 <- sim(z1, x = x0)
 ate.all <- c(s1$qi$ate.ev,-s0$qi$ate.ev)
 \end{verbatim}
-{\tt ate.all} now represents the average treatment effect for all
-matched units.   
+{\tt ate.all} now contains the posterior draws of the average
+treatment effect for all matched units. We need ``$-$'' before
+\texttt{-s0\$qi\$ate.ev} because Zelig always calculates the observed
+outcome minus the counterfactual outcome. So, for the control group,
+it simulates $y_0-y_1$. To get summary statistics, we can do, for
+example, 
+\begin{verbatim}
+mean(ate.all)
+sd(ate.all)
+quantile(ate.all, c(0.025, 0.975))
+\end{verbatim}
+which gives the estimated mean, standard deviation, and 95\%
+confidence interval of the posterior distribution of the average
+treatment effect for all matched units.
 % 1127 doesn't correspond to any of the numbers above
 % we also need to explain each of these, or remove some of them from
 % the output
