@@ -1,6 +1,8 @@
 \name{matchit}
 
 \alias{matchit}
+\alias{MatchIt}
+\alias{Matchit}
 \alias{i}
 
 \title{Matchit: Matching Software for Causal Inference}
