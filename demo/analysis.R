@@ -37,10 +37,7 @@ print(summary(lm.1)$coef[2,])
 silent <- readline("\nPress <return> to continue: ")
 
 # Zelig part from zelig documentation (match.R in demo directory)
-foo <- .find.package("Zelig",quiet=T)
-if(length(foo)==0){
-  cat("Zelig is not installed.  \nFor further illustrations of analyses,\nyou may install Zelig from \nhttp://gking.harvard.edu/zelig/\n")
-} else {
+if ("Zelig"%in%.packages(all=T)) {
   library(Zelig)
 
   ## an example for propensity score matching
@@ -66,3 +63,20 @@ if(length(foo)==0){
   print(summary(s.out2, subset = 3)) # subclass 3
   user.prompt()
 }
+if(!("Zelig"%in%.packages(all=T))){
+  cat("Zelig is not installed.  \nFor further illustrations of analyses,\nyou may install Zelig from \nhttp://gking.harvard.edu/zelig/\n")
+}
+
+# Full matching: if package installed
+if ("optmatch"%in%.packages(all=T)) {
+print("Analysis after full matching: using fixed effects")
+foo1 <- matchit(treat ~ age + educ + black + hispan + married +
+                nodegree + re74 + re75, data=lalonde, full=T)
+m1 <- lm(re78~ treat + age + educ + black + hispan + married +
+         nodegree + re74 + re75 + as.factor(psclass),
+         data=foo1$data)
+print(summary(m1))
+}
+if(!("optmatch"%in%.packages(all=T)))
+  cat("Optmatch is not installed. \nMore information is available from \nhttp://www.stat.lsa.umich.edu/~bbh/optmatch.html \n")
+
