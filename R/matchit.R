@@ -2,8 +2,11 @@ matchit <- function(formula, model="logit", data, discard=0,
                     reestimate=FALSE, nearest=TRUE, replace=FALSE,
                     m.order=2, ratio=1, caliper=0, calclosest=FALSE,
                     subclass=0, sub.by="treat", mahvars=NULL, exact=FALSE,
-                    counter=TRUE,...){ 
+                    counter=TRUE, opt = FALSE, ...){ 
   cl <- match.call()
+  if (opt)
+    require(optmatch)
+  
   #Checking input format
   #data input
   is.null(data)  #there must be a better way to get a warning for data input
@@ -118,7 +121,7 @@ matchit <- function(formula, model="logit", data, discard=0,
     mf[[1]] <- as.name("distance")
     mf$nearest <- mf$replace <- mf$m.order <- mf$ratio <- mf$caliper <- 
       mf$calclosest <- mf$subclass <- mf$sub.by <- mf$mahvars <-
-        mf$exact <- NULL 
+        mf$exact <- mf$opt <- NULL 
     a <- eval(as.call(mf), sys.frame(sys.parent()))
     if(!is.null(dotsub)) { 
       data <- data[dotsub,]
@@ -127,10 +130,11 @@ matchit <- function(formula, model="logit", data, discard=0,
     b <- matchdef(formula, a$in.sample, a$pscore,
                   nearest=nearest, replace=replace, m.order=m.order,
                   ratio=ratio, caliper=caliper, calclosest=calclosest,
-                  mahvars=mahvars,data=data, exact=exact, counter=counter) 
+                  mahvars=mahvars,data=data, exact=exact,
+                  counter=counter) 
     b1 <- subclassify(formula, data, a$in.sample, a$pscore, nearest=nearest,
                       b$match.matrix, subclass=subclass,
-                      sub.by=sub.by, counter=counter)
+                      sub.by=sub.by, counter=counter, opt=opt)
     c <- diagnose(formula, b$match.matrix, a$pscore, a$in.sample,
                   data=data, exact=exact, mahvars=mahvars,
                   subclass=subclass, psclass=b1$psclass,nearest=nearest,
