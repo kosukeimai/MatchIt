@@ -1,4 +1,13 @@
+ft <- function(t, mu, sigma) {
+	return((1/(t*sigma*sqrt(2*pi)))*exp((-1/(2*sigma^2))*(log(t)-mu)^2))
+}
 
+#t <- 5
+#mu <- 0
+#sigma <- 1
+
+#print(ft(t, mu, sigma))
+#print(dnorm((log(t)-mu)/sigma))
 
 lognorm.llik <- function(param, Y, X, C){
   sigma <- exp(param[1])
@@ -22,7 +31,9 @@ lognorm.inv.gauss.llik <- function(param, Y, X, C){
   mu <- X%*%beta
 
   lnS <- pnorm((log(Y)-mu)/sigma, lower.tail = FALSE, log = TRUE)
-  lnh <- dnorm(log(Y), mean=mu, sd=sigma, log = TRUE) - lnS
+  lnh <- log(ft(Y, mu, sigma)) - lnS
+  lnhold <- dnorm(log(Y), mean=mu, sd=sigma, log = TRUE) - lnS
+
   value <- sum(-sqrt(1-2*theta*lnS)/theta + (1-C)*lnh -
     0.5*(1-C)*log(1-2*theta*lnS)) 
   
@@ -84,6 +95,5 @@ if (TEST) {
                                X=model.matrix(res), C=(data$d==0)*1)) 
   res2 <- optim(start, lognorm.inv.gauss.llik, Y = data$acttime,
                 X=model.matrix(res), C=(data$d==0)*1, method="BFGS")
-  print("res2")
   print(res2)
 }
