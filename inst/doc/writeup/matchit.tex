@@ -1,0 +1,492 @@
+\documentclass[11pt,titlepage]{article}
+%\usepackage[notref]{showkeys}
+\usepackage[reqno]{amsmath}
+\usepackage{natbib}
+\usepackage{amssymb}
+\usepackage{epsfig}
+\usepackage{comment}
+\usepackage{url}
+\usepackage[all]{xy}        
+\usepackage[usenames]{color}
+\newcommand{\Cb}[1]{\textcolor{ProcessBlue}{#1}}  % blue
+\newcommand{\Cr}[1]{\textcolor{Red}{#1}}          % red
+\newcommand{\Co}[1]{\textcolor{BurntOrange}{#1}}  % orange
+\newcommand{\Cg}[1]{\textcolor{Green}{#1}}        % green
+\newcommand{\Cp}[1]{\textcolor{Purple}{#1}}       % purple
+\newcommand{\Cbr}[1]{\textcolor{RawSienna}{#1}}    % brown
+\usepackage{dcolumn}
+\newcolumntype{.}{D{.}{.}{-1}}
+\newcolumntype{d}[1]{D{.}{.}{#1}}
+\usepackage{threeparttable,booktabs}
+
+% changes for the apsr
+%\usepackage{apsr}
+
+% Shortcuts
+\renewcommand{\P}{\text{P}}
+\newcommand{\MC}{\multicolumn}
+\usepackage{calc}
+\newcounter{hours}\newcounter{minutes}
+\newcommand{\printtime}{%
+  \setcounter{hours}{\time/60}%
+  \setcounter{minutes}{\time-\value{hours}*60}%
+  \thehours :\theminutes}
+% \Bpara{x coord}{y coord}{rotation angle in degrees}{height in pt}
+\newcommand{\Bpara}[4]{\begin{picture}(0,0)%
+    \setlength{\unitlength}{1pt}%
+    \put(#1,#2){\rotatebox{#3}{\raisebox{0mm}[0mm][0mm]{%
+          \makebox[0mm]{$\left.\rule{0mm}{#4pt}\right\}$}}}}%
+    \end{picture}}
+%
+  \title{Matching Methods for Causal Inference}
+
+\author{Daniel E. Ho\thanks{J.D.\ candidate, Yale Law School, Ph.D.\
+    candidate, Department of Government, Harvard
+    University. (Center for Basic Research in the Social Sciences, 34
+    Kirkland, Cambridge MA 02138, USA;
+    \texttt{http://www.people.fas.harvard.edu/\~\,deho},
+    \texttt{Deho@Fas.Harvard.Edu}).}
+\and %
+Kosuke Imai\thanks{Assistant Professor, Department of Politics, Princeton
+    University (Corwin Hall 041, Department of Politics, Princeton
+    University, Princeton NJ 08544, USA;
+    \texttt{http://www.princeton.edu/\~\,kimai},
+    \texttt{KImai@Princeton.Edu}).}
+\and %
+Gary King\thanks{David Florence Professor of Government, Harvard
+  University (Center for Basic Research in the Social Sciences, 34
+  Kirkland Street, Harvard University, Cambridge MA 02138;
+  \texttt{http://GKing.Harvard.Edu}, \texttt{King@Harvard.Edu}, (617)
+  495-2027).}
+\and %
+Elizabeth A. Stuart\thanks{Ph.D.\ Candidate, Department of Statistics, Harvard
+  University. (Science Center 702, One Oxford Street, Cambridge, MA
+  02138, USA;
+  \texttt{http://www.people.fas.harvard.edu/\~\,estuart},
+  \texttt{Stuart@Stat.Harvard.Edu}).}}
+
+\date{\today\ (\printtime)} 
+\begin{document}\maketitle
+
+\begin{abstract}
+Randomized experiments have long  been considered the gold standard
+for the estimation of causal effects.  Yet due to 
+ethical and practical reasons, it is often infeasible to do randomized
+experiments in political science.  We 
+discuss the ideas of using matching to replicate randomized
+experiments using observational data to draw causal inferences.  The main goal is to obtain 
+treated and control groups similar to each other on all of the
+observed background covariates.  The framework for 
+these methods is the Rubin-Holland model for causal inference, which
+has penetrated the biomedical sciences
+and to a more limited extent the social sciences.  Yet with a few
+unpublished exceptions the framework has not been applied to causal
+questions in political science, leaving many causal ``answers'' in the
+discipline to rest on unfounded functional form assumptions.  
+We provide a summary and guidelines to apply matching
+to causal questions in political science, with
+applications in international relations, American, and comparative
+politics, as well as user-friendly ``MatchIt'' software for R / Splus that
+implements these matching methods. 
+\end{abstract}
+
+\tableofcontents
+
+\clearpage
+\section{Introduction}
+\subsection{Literature Review (including Heckman, Rosenbaum, etc.)}
+\section{Causal Inference and Potential Outcomes}
+\subsection{Potential outcomes framework}
+\subsection{Causal Inference in an Experiment}
+\subsection{Causal Inference with Observational Data}
+\subsubsection{Model Adjustments: The Role of Functional Form Assumptions}
+\subsubsection{Matching}
+\subsubsection{Exact Matching}
+\subsubsection{Continuous Covariates and the Curse of Dimensionality}
+\section{Propensity Score Matching}
+\subsection{Estimating Propensity Scores}
+\subsubsection{Logistic Regression}
+\subsubsection{Others: CART?, GAM, probit, ...}
+\subsection{Matching Parameters}
+\subsubsection{Exact Restrictions}
+\subsubsection{Optimal vs. nearest neighbor matching}
+\subsubsection{Ratios and Replacement}
+\subsubsection{Specification Algorithm}
+\subsubsection{Discarding}
+\subsubsection{Subclassification}
+\subsubsection{Caliper and Mahalanobis Matching}
+\subsection{Diagnostics}
+\subsubsection{Checking for balance}
+\subsubsection{Bias statistics}
+\subsubsection{Means tests vs. bias statistics}
+\subsection{Analysis}
+\subsubsection{Effect on treated, overall effect}
+\section{Applications}
+\subsection{Cross-sectional}
+\subsection{Panel Data}
+\section{Remaining Open Issues}
+\subsection{Multi-treatment regimes}
+\subsection{Panel Data}
+\section{Conclusion}
+
+\paragraph{Notation} 
+Let $i$ index $N$ units of interest. $Y_i(1)$ represents the potential
+outcome of unit $i$ under treatment and $Y_i(0)$ the potential outcome
+of unit $i$ under control.  $T_i=1$ indicates that unit $i$ was
+assigned treatment, and $T_i=0$ that unit $i$ was assigned control.  
+$Y_i(1)$ and $Y_i(0)$ are jointly unobservable, such that we only
+observe $Y_i^{obs}=T_i(Y_i(1))+(1-T_i)(Y_i(0))$.  This is often termed
+as the ``fundamental problem of causal inference''
+(\citealt[p. 947]{holland86}, \citealt[p. 79]{KinKeoVer94}).  
+
+The treatment effect for unit $i$ is defined as $\alpha_i = Y_i(1) - Y_i(0)$.
+Two quantities of interest are the average treatment effect (ATE),
+
+\begin{equation}
+\overline{\alpha}  =  E(Y_i(1))-E(Y_i(0)),
+\end{equation}
+
+or the average treatment effect on the treated (ATT),
+
+\begin{equation}
+\overline{\alpha}_T =  E(Y_i(1) - Y_i(0) | T_i=1). 
+\end{equation}
+
+\paragraph{Variance of the Treatment Effect}
+To calculate the variance of the ATT requires determining first 
+whether the quantity of interest substantively is a sample or
+population parameter (\citealt[pp. 28-29]{ImbensNDb}.)\footnote{This section
+  discusses the estimation of the variance of the ATT (versus ATE) for simplicity
+  of notation.  With the exception of the note on the efficiency gain
+  due to knowledge of the propensity score for ATE variance
+  estimation, the calculations are analogous.}
+
+If we are interested in the sample ATT, estimating the variance
+of the treatment effect is straightforward, involving simply the
+variance of the estimated treatment effect for each treated unit. 
+
+\begin{comment}
+Liz: I don't understand this.  How is it "simple", 
+since we don't observe the estimated treatment effect for each treated unit, nevermind the individual variances.  
+Maybe replace by something like "involving simply the variance of the potential outcomes under treatment and under 
+control."  (which is true for the Neyman estimate).
+
+Dan: Estimated treatment effect here refers to the pair difference,
+each of which estimates $\alpha_i$.  If we adopt the Neyman estimates
+via the discussion below, we should certainly also adopt your language here.
+\end{comment}
+
+To understand the logic of why the matching process does not affect the
+variance estimation, first consider pairwise exact matching
+on all covariates.  Since we're fully conditioning on $X$ in that
+case, the matching process involves no estimation uncertainty 
+and the variance of sample ATE may simply be estimated by:
+
+\begin{equation} \label{VarATT}
+V( \overline{\alpha}_T) = V \bigl\{ ( Y_i^{obs}(1) | T=1) -
+  ( \hat{Y}_i(0) | T=1 )  \bigl\},
+\end{equation} 
+
+\noindent where the missing potential outcome $\hat{Y}_i(0) | T=1$ is estimated by the
+matched control unit to unit $i$.  In other words, the variance of the
+sample ATT is simply the variance of the differences in the matched
+pairs.\footnote{An estimate due to \cite{Neyman23}, which 
+does not use the
+  covariance between matched pairs and was initially applied to randomized
+  experiments is sometimes used instead: $\hat{V}(\overline{\alpha}) =
+  \frac{V(Y_i(1)^{obs} | T=1)}{M} + \frac{V(\hat{Y}_i(0) |
+    T=1)}{N-M}$, where $M$ represents the number of treated
+  units (\citealt[Chapter 6]{ImbRubND}). \label{neyman}
+  \citet{ImbRubND} note that this variance estimate may be
+  understood as (a) an unbiased estimator under the assumption of
+  constant additive treatment effects, (b) an upwardly biased
+  estimator relaxing that assumption, or (c) an unbiased estimator of
+  the superpopulation ATE.}
+
+
+\begin{comment}
+Liz:  I would disagree.  I would put the Neyman estimate up here in the main text, and move this alternate 
+estimator to the footnote.  There are 2 main problems with using
+Equation (1).  (1) If you don't an equal number of 
+treated and control units this won't work, unless you do something like average all of the control's matched to each 
+treated unit to get a "conglomerated" control unit for each treated. 
+(2) Since $Y(0)$ and $Y(1)$ are never 
+observed together, there really is no information in the data  
+about the correlation between $Y(0)$ and $Y(1)$, so using Equation (1) is somewhat misleading.   By using only the X's 
+to impute the missing potential outcomes, it is implicity assuming that they are independent (if we thought they 
+weren't independent we would have to use $Y(1)$ to impute $Y(0)$ and vice versa, which would require saying something 
+about what we think the correlation is (which would not be based on any data, just intuition).  Assuming independence 
+is in some ways safe, especially since there really is no other information to base it on.  So saying that this 
+estimator uses the covariance between $Y(0)$ and $Y(1)$ is misleading since the only information that would be in 
+there would be from whatever we said it was (e.g. 0).]
+
+Dan:  I take it as a great sign of progress that we're discussing these
+details!  It's a very good point.  Though regarding (1), it's certainly possible to
+weight (I think this is what is done in the Becker Ichino
+implementation).  This is related to the weighting issue we're
+discussing on the diagnostics -- if we're weighting to
+calculate ATE's in ratio matching, we should be consistent with the
+variance calculation as well.  So in my mind the real issue is (2).  
+
+Regarding (2), one counterargument would be that that since we're
+using the matched unit to estimate the
+counterfactual, the whole point is that it's imputed and therefore we
+can use it to estimate the covariance as well.  True, we've assumed
+conditional independence between the potential outcomes and treatment,
+but certainly not conditional independence between $Y(0)$ and $Y(1)$.
+The difference seems to boil down to this: suppose you find extremely
+high covariance of your matched pairs.  Do we think that this in fact gives us any
+added information and certainty about the ATE?  The Neyman estimates
+would guard against this possibility, providing a more conservative
+variance estimate; but if covariance!=0 they're also biased (albeit
+conservatively).  Even Imbens himself (depending on coauthor!) sometimes leans toward Neyman
+(\citealt[Chapter 6]{ImbRubND}) and sometimes away
+(\citealt[p. 3]{AbaImbND}).  (Note also that the calculation of the
+V(ATE) in a model-based analysis after pscore matching 
+would also often take into account the covariance.  We use whatever
+method to impute missing potential outcomes, and then we take $\frac{1}{N} \sum_{i=1}^N
+\hat{\alpha}_i$ to estimate the ATE and the variance of these paired
+differences to estimate the V(ATE) -- or would we still advocate the
+Neyman estimates in this scenario?)
+
+An attractive property of the Neyman estimate is that it's
+conservative, and could be justified as a population estimate (see
+Note 2).  
+
+Ultimately I think this is a question of default choice, and I'd be
+happy to make the Neyman estimates the default with an option of using
+the variance of the difference between matched pairs. 
+\end{comment}
+
+Similar to exact matching, propensity score matching is simply a means
+to obtain a balanced dataset, and the
+variance of the sample ATT is the same as in Equation~\ref{VarATT}.
+The only difference is the fact that the missing potential outcome
+$\hat{Y}_i(0) | T=1$ is now estimated by the matched control unit \emph{via the propensity
+score}.  Since the propensity score does not estimate any population
+parameter and serves its role purely as a ``balancing score'', it does
+not introduce any added uncertainty to the variance of the treatment
+effect.\footnote{There is one slight exception to this, namely that
+  ties in the propensity score are resolved by a random draw.  This is
+  a scenario that is likely to happen when the explanatory covariates
+  are largely categorical.  Even in this instance, reporting estimates
+  from one draw of matched pairs is correct (akin to drawing a random
+  sample from a population), but to avoid potentially ``spurious'' findings, the 
+  user might well be advised to impute
+  missing potential outcomes several times and combine estimates
+  across these datasets via standard multiple imputation rules
+  (see \citealt{rubin87}).}  (Note, however, that knowledge of the propensity score might decrease the
+variance bound for the ATT, but not the ATE
+(\citealt{frolich02,hahn98,HirImbRid02}).)  In fact, this variance
+estimate might even be conservative for the sample ATT, providing
+over-coverage compared to the variance conditional on the
+covariates (\citealt{AbaImbND}).
+
+If on the other hand we are interested in the population ATT, the
+variance may be estimated by the bootstrap, or even the Neyman
+estimate in Note~\ref{neyman} (\citealt{ImbensNDb}, \citealt[Chapter
+6]{ImbRubND}).
+
+\begin{comment} 
+Dan:  Should matching with replacement change the variance calculations? 
+This might be the motivation for the Dehejia \& Wahba to bootstrap --
+but there must be an analytical formula to reflect the bias-variance
+tradeoff of matching with replacement...
+\end{comment}
+
+
+
+\paragraph{Quantity of Interest.} Average treatment effect vs. average
+  treatment effect on the treated; limiting inferences to what's
+  scientifically estimable. 
+\paragraph{Defining units, treatment and outcome.}  In assessing a
+  causal effect, the definition of units is crucial.  
+  We divide units [variables???]  into two classes: pre-exposure --
+  those whose values are determined prior to exposure to the cause;
+  post-exposure -- those whose values are determined after exposure to
+  the cause.\footnote{Holland, p. 946}  One particularly prevalent issue
+  in comparative politics and international relations consists of
+  cases where treatment occurs at some time $t$ and persists
+  indefinitely.  In Simmons's data, for example, commitment to Article VIII occurs,
+  but there is no possibility of ``un-committing.''  In the
+  comparative electoral systems data, with few exceptions, a country
+  has the same electoral system for long periods of time.  One
+  approach taken by researchers has been to define units as
+  unit-years, such as country-years or dyad-years.  This, however, violates the
+  stability assumptions of matching. 
+  [In more traditional econometric terms, the treatment indicator may
+  thereby suffer of serial
+  correlation\footnote{Duflo, 2003} inducing an artificial causal
+  effect.] We suggest redefining the units to be countries (rather than country/years as done by Simmons and others),
+which properly reflects the hypothesized assignment mechanism.  In these examples where treatment occurs at time $t$
+and persists indefinitely, ``treatment assignment" is not done every year for each state, as implied by the usual
+treatment of each country and year as a different unit.  Rather, treatment is applied to each state only once (at time
+$t$) and the units modeled should reflect that.  Thus, we recommend [?????] the use of modeling at the country level, 
+where
+the variables before time $t$ are treated as covariates and the variables after time $t$ are treated as outcomes.  
+This idea is explored by Bertrand et al. (2002), and they find that it has good properties.  We will discuss this
+method more below.
+
+\appendix
+\paragraph{Algorithms}
+\paragraph{A Sample Matching Algorithm: Optimal Nearest Neighbor One-to-one
+Matching with Replacement}
+\begin{enumerate}
+\item Generate propensity score. \label{assignment}
+\item Check balance of pre-treatment covariates.  If an imbalance
+  exists, reestimate the assignment model Step~\ref{assignment} by adding
+  higher order terms and interactions.  Continue until a obtaining a
+  balance in pre-treatment covariates.  
+\item Optional: Discard control units with propensity scores below the minimum
+  score of treated units (note, other forms of discarding may be suitable).
+\item Optional: Re-estimate propensity score.
+\item To match units: \label{match}
+  \begin{enumerate}
+  \item Calculate the absolute difference between propensity
+    score of the \emph{non-matched} treated unit with the highest propensity
+    score (unit $i$) and all control units. \label{match1}
+  \item Match units $i$ and $j$, where:
+    \begin{equation}
+      | (e_i | T=1)-(e_j | T=0) | < | (e_i | T=1)-(e_k | T=0) |,  \forall k \ne j.  
+    \end{equation}
+    In the instance multiple control units are
+    within the minimum distance, draw randomly to match one of those
+    control units. \label{match2}
+  \end{enumerate}
+\item Continue Steps~\ref{match1}-\ref{match2} for all non-matched
+  treated units until all treated units
+  are matched. \label{match3}
+\item Calculate the average treatment effect on the treated for the
+  sample $ATE_s$, where:
+  \begin{equation}
+    ATE_s=\frac{1}{N_T} \sum_{i=1}^{N_T} \big\{ (Y_i|T=1) - (Y_m|T=0)
+    \big \}
+  \end{equation}
+where $N_T$ represents the number of treated units, $Y_i$ refers to
+treated units, and $Y_m$ refers to the control unit matched to $i$. 
+\item To estimate the point estimate and variance of $ATE$ bootstrap the donor pool $B$ times
+  and repeat (Steps~\ref{match}-\ref{match3}) for each bootstrapped sample, storing
+  the estimated average treatment effect $ATE_s$ from each bootstrap. 
+\item Lastly, calculate quantities of interest from the distribution
+  of bootstrapped $ATE_s$, where the point estimate for the average
+  treatment effect on the treated is:
+\begin{equation}
+    ATE = \frac{1}{B} \sum_{s=1}^{B} ATE_s
+\end{equation}
+and the variance is:
+\begin{equation}
+    Var(ATE)= \frac{1}{B-1} \sum_{s=1}^{B} (ATE-ATE_s)^2
+\end{equation}
+\end{enumerate}
+
+\paragraph{The Subclassification/Regression Adjustment Algorithm for a Binary Outcome
+  Variable}
+\begin{enumerate}
+\item Generate propensity score.
+\item Construct 10 blocks defined by the deciles of the propensity
+  score for the treated group (where to obtain balance
+  in the pre-treatment covariates, (a) split imbalanced blocks further, and/or
+  (b) respecify the asssignment model
+  to take into account interactions and squares of imbalanced
+  covariates).
+\item Discard control units with propensity scores below the minimum
+  score of treated units.
+\item Re-estimate propensity score and regenerate blocks without the
+  discarded units (optional)
+\item For units within each substratum: \label{sub}
+  \begin{enumerate}
+  \item{Estimate the logistic model, regressing
+      the binary outcome on the propensity scores and the treatment
+      indicator.  (If sample sizes permit, this logistic model may
+      also be estimated using all covariates.)} \label{sub1}
+  \item{Generate a posterior distribution of the parameters from this
+      model, drawing 1000 simulated values of $\beta$, where $sim$
+      represents each simulated set of parameters.}
+  \item{For each substratum and one draw of the parameters $\beta$ from the
+      posterior distribution, impute the missing potential outcomes
+      $\hat{Y_i}(1)|T_i=0$ and $\hat{Y_i}(0)|T_i=1$ with a logistic regression,
+      where:
+      \begin{equation}
+        (\hat{Y_i}(1)|T_i=0) = \frac{1}{1+exp(-X_i^t \beta)}
+      \end{equation}
+      and 
+      \begin{equation}
+        (\hat{Y_i}(0)|T_i=1) = \frac{1}{1+exp(-X_i^c \beta)}
+      \end{equation}
+      where the superscripts $c$ and $t$ represents the counterfactual
+      treatment indicator of control and treatment, respectively.}
+  \item{Calculate the treatment effect for all units 
+      in the substratum
+      \begin{equation}
+        TE_{d} = \left( \begin{array}{c}
+            (Y(1) | T=1) \\
+            (\hat{Y}(1) | T=0)
+          \end{array} \right)- 
+        \left( \begin{array}{c}
+            (\hat{Y}(0) | T=1)\\
+            (Y(0) | T=0)
+          \end{array} \right)
+      \end{equation}
+      where $d$ represents the subscript for the decile and $TE_{d}$
+      is a vector of treatment effects for all $i$ units in the
+      substratum, $(Y(1) | T=1)$ and $(Y(0) | T=0)$ represent vectors
+      of observed potential outcomes, and $(\hat{Y}(1) | T=0)$ and
+      $(\hat{Y}(0) | T=1)$ represent vectors of imputed missing
+      potential outcomes.}
+  \item {Calculate the average treatment effect for the substratum
+      conditional on the set of simulated parameters $ATE_{d,sim}$:
+      \begin{equation}
+        ATE_{d,sim}=\frac{1}{n_d} \sum_{i=1}^{n_d}TE_{i,d}
+      \end{equation}
+      where $n_d$ represents the number of units in the substratum,
+      and $TE_{i,d}$ refers to the treatment effect for each unit $i$
+      in substratum $d$.} \label{sub2}
+  \item{Repeat Steps~\ref{sub1}-\ref{sub2} for all draws of $\beta$.}
+  \item {Calculate the average treatment effect for the substratum
+      across all simulated parameters $ATE_d$:
+      \begin{equation}
+        ATE_{d}=\frac{1}{1000} \sum_{sim=1}^{1000} ATE_{d,sim}
+      \end{equation}}
+  \item{Calculate the variance of $ATE_d$ for that substratum:
+      \begin{equation}
+        Var(ATE_d)=Var(ATE_{d,sim})
+      \end{equation}} \label{sub3}
+  \item Finally repeat Steps~\ref{sub1}-\ref{sub3} to generate $ATE_d$
+    and $Var(ATE_d)$ for all substrata. 
+  \end{enumerate}
+\item{Having completed each of the above steps for each substratum,
+    calculate the overall average treatment effect ATE:
+    \begin{equation}
+      ATE=\sum_{d=1}^{10} \Big \{ \big (\frac{n_{d,t}}{N_t} \big ) \big (ATE_d
+      \big ) \Big \}
+    \end{equation}
+    where $n_{d,t}$ represents the number of treated units in each
+    substratum $d$ and $N_t$ represents the total number of treated units
+    across all substrata.}
+\item{Finally, calculate the overall variance of the ATE:
+    \begin{equation}
+      Var(ATE)=\sum_{d=1}^{10} \Big \{ \big (\frac{n_{d,t}}{N_t} \big )^2 \big (Var(ATE_d)
+      \big ) \Big \}.
+    \end{equation}}
+\end{enumerate}
+
+
+
+%\begin{figure}[h]
+%  \begin{center}
+%    \includegraphics[width=3in,angle=-90]{figs/term_lib}
+%  \end{center}
+%  \caption{Proportion of civil rights and liberties cases decided
+%    liberally}
+%\end{figure}
+
+\clearpage
+%\singlespacing
+
+\bibliographystyle{pa}
+\bibliography{gk}
+
+%\bibliographystyle{/home/stuart/gkbibtex/pa}
+%\bibliography{/home/stuart/gkbibtex/gk}
+
+\end{document}

@@ -1,0 +1,15 @@
+our(%custom_filenames);
+sub custom_title_hook {
+my($sec_name) = shift;
+   $sec_name=~tr/[a-z][A-Z][0-9] /_/sc;
+   my(@words)= split(/\s+/,$sec_name);
+   my($fn)= join("_",@words[0..2]);
+   $fn=substr($fn,0,22);
+   $fn=~s/(.*?)_*$/$1/;
+   $custom_filenames{"$fn"}++;
+   if ($custom_filenames{"$fn"}>1) {
+        $fn=$fn . $custom_filenames{"$fn"};
+   }
+   return($fn);
+}
+$CUSTOM_TITLES=1;
