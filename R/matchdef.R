@@ -33,6 +33,11 @@ matchdef <-  function(formula, in.sample, pscore, nearest = TRUE,
   
   ## optimal ratio matching
   if (m.order==1) {
+    check <- library()
+    if(any(check$results[,"Package"] == "optmatch"))
+      require(optmatch)
+    else
+      stop("Please install optmatch using \n     install.packages(\"optmatch\", contriburl= \"http://www.stat.lsa.umich.edu/~bbh/optmatch\")")
     cat("Optimal Matching Treated: ")
     distance <- matrix(0, ncol=n0, nrow=n1)
     rownames(distance) <- row.names(treata)[treat==1]
