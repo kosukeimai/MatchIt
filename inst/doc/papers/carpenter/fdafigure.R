@@ -20,7 +20,7 @@ doverlay <- function(x1, x0, xlab = "", main = "", lines = FALSE,
 
 trellis.device(device="pdf",file="fdadens.pdf",color=FALSE,width=6,height=3)
 par(mar=c(2, 2, 2, 2) + 0.1, cex.lab=0.6, cex.axis=0.6,
-    mgp=c(1,0.5,0), cex.main=0.5, cex=0.8)
+    mgp=c(1,0.5,0), cex.main=0.5, cex=0.8, bg="white")
 doverlay(mate,ate,lwd=2,
          xlab="Estimated average treatment effect", leg=F)
 arrows(ate[length(ate)], 0.12, ate[length(ate)],0, length=0.1)
@@ -44,7 +44,7 @@ pscore <- mout$data$pscore[mout$data$treat==0]
 
 trellis.device(device="pdf",file="fdabal.pdf",color=FALSE,width=6,height=3)
 par(mar=c(2, 2, 2, 2) + 0.1, cex.lab=0.6, cex.axis=0.6,
-    mgp=c(1,0.5,0), cex.main=0.5, cex=0.8, mfrow=c(1,2))
+    mgp=c(1,0.5,0), cex.main=0.5, cex=0.8, mfrow=c(1,2), bg="white")
 
 plot(abs(smout$sum.all[-18,"T-stat"]),
       abs(smout$sum.matched[-18,"T-stat"]), pch=".", 
