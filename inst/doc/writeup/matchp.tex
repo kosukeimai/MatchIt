@@ -670,11 +670,11 @@ assumptions over another.
   \caption{Model sensitivity of average treatment effect estimates for
     imbalanced raw and balanced matched data.  This figure presents a
     fake dataset of treated units represented by ``T'' and control
-    units represented by ``C,'' where y-axis plots the outcome of
+    units represented by ``C,'' where the y-axis plots the outcome of
     interest and the x-axis plots some confounding covariate.  The
     panels depicts estimates of the average treatment effect for a
     linear and quadratic specification, represented by the difference
-    between parallel lines and parabolas, respectively.  In the raw
+    between the parallel lines and parabolas, respectively.  In the raw
     data, plotted in the left panel, the models extrapolate for
     treated units with $X$ values below 4 and are therefore sensitive
     to specification.  In the matched data, plotted in the right
@@ -685,7 +685,7 @@ assumptions over another.
 \end{figure}
 
 To illustrate model sensitivity to specification in a very simple
-setting, Figure~\ref{fg:extrap} plots some simulated data with some
+setting, Figure~\ref{fg:extrap} plots some simulated data with an
 outcome $Y$, confounding covariate $X$, and a treatment of interest.
 The left panel plots the raw data with simple linear and quadratic
 fitted values. The difference between the parallel lines or parabolas
@@ -699,12 +699,12 @@ estimate what the counterfactual outcome for control units with $X <
 awkward fit of the models in the range of $X$ where our data is
 actually informative.  Confining ourselves to the range of units which
 are actually close in $X$ by matching, the details of which we discuss
-next, linear and quadratic specifications yields virtually identical
+next, linear and quadratic specifications yield virtually identical
 treatment effect estimates in the right panel.  While astute
 researchers may point out that residual diagnostics should uncover
 misspecification in the left panel, the myriad of specification
 choices, and concordantly the difficulty of diagnosing
-misspecification, expands dramatically as the covariates grow.
+misspecification, expands dramatically as the number of covariates grows.
 
 Some researchers surely respond to this diversity of possible models
 by inadvertently choosing specifications that support their favored
@@ -1149,7 +1149,7 @@ applications.
   on FDA Drug Approval Time}
 
 An influential article by \citet{Carp02} examines several determinants
-of new drug approval approval times by the U.S.\ Food and Drug
+of new drug approval times by the U.S.\ Food and Drug
 Administration (FDA)\footnote{We focus specifically on Model 1 of
   Table 2 \citep[p. 499]{Carp02}.}.  Here, we focus on the hypothesis
 that ``expected approval times are greater when Democrats control the
@@ -1190,7 +1190,7 @@ regressions, and even switches sign when firm variables are added
 model sensitivity of the effects of Senate control may be reduced by
 preprocessing the data.  (We omit the remaining six oversight
 variables because they are conceptually and statistically highly
-related, and in part consequences of, the Democratic Senate majority
+related to, and in part consequences of, the Democratic Senate majority
 variable.)
 
 To preprocess the data, we conduct nearest neighbor propensity score
