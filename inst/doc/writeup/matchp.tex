@@ -942,7 +942,7 @@ economics, epidemiology, medical, and biostatistics literatures.
 These are young and fast-growing areas, and so we try to distill the
 current collective wisdom when one is available or, when not, to
 suggest an approach that is at least widely recognized as reasonable.
-For detailed reviews of the technical literatures, and other matching
+For reviews of the technical literatures, and other matching
 procedures, see \citet{Imbens04}, \citet{Rosenbaum02}, and
 \citet{Stuart04} and the detailed user's guide to the software that
 accompanies this paper (see Appendix \ref{s:matchit}).
@@ -965,7 +965,7 @@ examined during the preprocessing stage.  As long as $y$ is not
 consulted, preprocessing cannot result in stacking the deck one way or
 another.  Experimentalists typically follow a similar procedure by
 repeating randomization as often as desired before collecting the
-outcome data.  Thus, if an undesirable randomization is obtained, such
+outcome data; if an undesirable randomization is obtained, such
 as with all men in the treated group and all women in the control
 group, they merely discard the first randomization and do it again
 until better data are obtained \citep[see][]{Rubin01}.
@@ -979,13 +979,13 @@ control units that look most like the treated units.
 Include all variables in $X$ that would have been included in your
 parametric model without preprocessing.  By the usual rules for
 avoiding omitted variable bias these should include all variables that
-may affect the treatment assignment and the dependent variable.
+affect both the treatment assignment and the dependent variable.
 Including variables only weakly related to treatment assignment will
 usually reduce bias more than they will increase variance when using
 matching and so most should normally be included \citep{RubTho96,
   HecIchSmi98}.  To avoid post-treatment bias, exclude variables
 affected by the treatment variable
-\citep{FraRub02,Greenland03,KinZen04}.  
+\citep{FraRub02,Greenland03,KinZen04}.
 
 If all the variables in $X_i$ are categorical, try exact matching in
 Step 2.  Otherwise, try propensity score matching in Step 3.
@@ -1030,17 +1030,17 @@ one-dimensional propensity score, instead of all of the covariates
 $X$.  Using the true propensity score in this way thus would seem to
 solve the curse of dimensionality for matching.
 
-In practice, however, we do not know the true propensity score (except
-perhaps in unusual situations).  We would still be able to appeal to
-the true propensity score's theoretical properties if we had a
-consistent estimate of it, but such an estimate would require knowing
-the correct functional form for the assignment model, which is highly
-unlikely.  Moreover, few useful theoretical results exist for the case
-when the true form of the propensity score equation remains unknown.
-These theoretical results would therefore seem to be entirely
-self-defeating: In order to use nonparametric matching to avoid
-parametric modeling assumptions, we must know the parametric
-functional form of the propensity score equation!
+In practice, however, we do not know the \emph{true} propensity score
+(except in unusual situations like experiments).  We would still be
+able to appeal to some of the true propensity score's theoretical
+properties if we had a consistent estimate of it, but such an estimate
+would require knowing the correct functional form for the assignment
+model, which is highly unlikely.  Moreover, few useful theoretical
+results exist for the case when the true form of the propensity score
+equation remains unknown.  These theoretical results would therefore
+seem to be entirely self-defeating: In order to use nonparametric
+matching to avoid parametric modeling assumptions, we must know the
+parametric functional form of the propensity score equation!
 
 Fortunately, there is a way out.  We suggest, first, looking past the
 theoretical properties of the propensity score, except for the purpose
@@ -1069,8 +1069,7 @@ balance the covariates relatively quickly may be related to the
 theoretical properties of the true score discussed above, but this
 conjecture is unproven and even irrelevant to making valid causal
 inferences.  At least given the current state of the literature, only
-this practical advice based on the propensity score tautology is
-useful in practice.
+the propensity score tautology is useful in practice.
 
 In applications, the usual practice is to estimate the propensity
 score by a logistic regression of $t_i$ on $X_i$ and a constant term.
@@ -1172,10 +1171,9 @@ Because of the curse of dimensionality, multidimensional histograms
 with more than a few covariates tend to be very sparse and so using
 them to estimate the two underlying probability densities in
 equation~(\ref{balance}) will ordinarily be very difficult without
-access to an extraordinary number of observations.  Instead of
-comparing estimates of the full multidimensional densities,
-researchers usually examine various low dimensional summaries.  If a
-low dimensional summary differs between the treated and control groups
+access to an extraordinary number of observations.  Thus researchers
+usually examine various low dimensional summaries instead.  If a low
+dimensional summary differs between the treated and control groups
 then equation~(\ref{balance}) does not hold.  The risk of course is
 that even if many low dimensional summaries are the same for the
 treatment and control groups, we still cannot be certain that
@@ -1211,8 +1209,8 @@ being correct; see \citet{Sekhon04b}).
 If some covariates are omitted from some of the matching procedures,
 the balance on them should still be checked.  Doing so is often a good
 way to discover important covariates, since in fact researchers
-frequently have good qualitative knowledge not coded in $X$
-\citep[][Ch.3]{Rosenbaum02}.  Indeed, preprocessing can help
+frequently have good qualitative knowledge of variables not coded in
+$X$ \citep[][Ch.3]{Rosenbaum02}.  Indeed, preprocessing can help
 researchers better understand their data when supplemented by good
 qualitative information and research \citep[e.g.,][]{RosSil01}.
 
