@@ -29,11 +29,12 @@
 \title{Matching as Nonparametric Preprocessing for Reducing Model
   Dependence in Parametric Causal Inference\thanks{Our thanks to Dan
     Carpenter and Jeff Koch for data; Neal Beck, Alexis Diamond, Ben
-    Hansen, Olivia Lau, Gabe Linz, and Paul Rosenbaum for many helpful
-    comments; and the National Institutes of Aging (P01 AG17625-01)
-    and the National Science Foundation (SES-0318275, IIS-9874747) for
-    research support.  Software to implement the methods in this paper
-    is available at \texttt{http://GKing.Harvard.Edu/matchit}.}}
+    Hansen, Olivia Lau, Gabe Linz, Paul Rosenbaum, and Jas Sekhon for
+    many helpful comments; and the National Institutes of Aging (P01
+    AG17625-01) and the National Science Foundation (SES-0318275,
+    IIS-9874747) for research support.  Software to implement the
+    methods in this paper is available at
+    \texttt{http://GKing.Harvard.Edu/matchit}.}}
 
 
 \author{Daniel E. Ho,\thanks{J.D.\ candidate, Yale Law School, Ph.D.\,
@@ -1147,15 +1148,22 @@ estimated in a reasonable way.  Discarding these nonoverlapping
 observations eliminates the need for extrapolation.
 
 Finally, if finding a matching procedure with good balance and a large
-number of observations is otherwise difficult, use subclassification.
-To use this procedure, divide the units into roughly equally sized
-subclasses where the propensity score is, by construction,
-approximately constant, and thus balanced.  Generally five or six
-subclasses are sufficient to adjust for a univariate covariate such as
-the propensity score \citep{Cochran68,RosRub84}.  If balance is
-achieved with a reasonable number of observations within each
-subclass, then the analysis procedure is carried out within each
-subclass and the results are averaged.
+number of observations is difficult, subclassification can be a useful
+technique.  In subclassification, we form groups in which the
+distributions of covariates is the same, although across the
+subclasses the distributions of covariates may be quite different.
+Subclassification can be accomplished by dividing the units into
+roughly equally sized subclasses where the propensity score is, by
+construction, approximately constant, and thus balanced.  Generally
+five or six subclasses are sufficient to adjust for a univariate
+covariate such as the propensity score \citep{Cochran68,RosRub84}.
+Alternatively, ``full matching'' methods such as that in
+\citep{Hansen04} can be utilized.  That is, if balance is achieved
+with a reasonable number of observations within each subclass, then
+the analysis procedure is carried out within each subclass and the
+results are averaged, or else an overall model can be run with fixed
+or random effects for each subclass.
+
 
 \paragraph{Step 4. Evaluate the Matching Procedure}
 A good matching procedure reduces bias by increasing balance, does not
@@ -1241,7 +1249,9 @@ and interpreting quantities of interest.  The one exception is that
 for subclassification, the parametric analysis should be conducted
 separately within each subclass, and the results combined by taking a
 weighted average (with weights based on the number of units in each
-subclass).  Using preprocessed data should reduce model dependence,
+subclass), or, if insufficient observations exist within each
+subclass, fit an overall model with fixed or random effects for the
+subclasses.  Using preprocessed data should reduce model dependence,
 and this too is worth checking: as one should even without
 preprocessing, we should check the sensitivity of causal effect
 estimates to changes in the specification.
@@ -1471,7 +1481,7 @@ well as for the matched (preprocessed) data.  The key result here is
 that estimates are far more model-dependent using the raw data than
 using the matched data.  For example, the variance of the estimated
 average treatment effect from the matched data (the solid curve) is
-more than three times as large as that from the raw data (the dashed
+less than one third the size of that from the raw data (the dashed
 curve).  (The distribution of estimates for the matched data is also
 closer to the normal density, which will happen when control variables
 included are having effects only due to random errors.)
