@@ -146,17 +146,17 @@ to write easy-to-use software that implements all the ideas we discuss
 in this paper; it is free and available at
 http://gking.harvard.edu/matchit.
 
-Our approach is similar in spirit to \citet{AbaImb04,RubTho00}, who
-recommend (specific forms of) parametric adjustment following
-matching, as well as \citet{HecIchTod98} who develop forms of matching
-that are combined with semi-parametric (kernel weighting) analyses
-\citep[see also][]{RosRub84a,ImaDyk03}.  Applied researchers have
-intuitively chosen similar approaches, such as in \citet{Rosenbaum86,
-  GlaLevMye03}.  It is also similar in spirit to methods in other
-areas that preprocess data so that subsequent analyses can be improved
-without modifying existing techniques, such as multiple imputation
-\citep{Rubin87,KinHonJos01} and outlier and feature detection
-\citep[][Ch.8]{Bishop95}.
+Our approach is similar in spirit to
+\citet{AbaImb04,ImaDyk03,RosRub84a,RubTho00}, who recommend (specific
+forms of) parametric adjustment following matching, as well as
+\citet{HecIchTod98} who develop forms of matching that are combined
+with semi-parametric (kernel weighting) analyses.  Applied researchers
+have intuitively chosen similar approaches, such as in
+\citet{Rosenbaum86, GlaLevMye03}.  It is also similar in spirit to
+methods in other areas that preprocess data so that subsequent
+analyses can be improved without modifying existing techniques, such
+as multiple imputation \citep{Rubin87,KinHonJos01} and outlier and
+feature detection \citep[][Ch.8]{Bishop95}.
 
 \section{Definition of Causal Effects}
 
@@ -213,31 +213,33 @@ Because of pretreatment differences among the districts (both
 measured, $X_i$, and unmeasured), the causal effect may differ across
 the districts.  As such, the definition of the causal effect exists at
 the district level, but the definition does not otherwise require
-reference to the pretreatment variables.
+reference to the pretreatment variables. {\bf A funny thing is that
+  ``realized'' causal effect is never realized (or observed).}
 
 A causal effect is a function of \emph{potential outcomes}: let
-$y_i(t_i=1)\equiv y_i(1)$ be the vote we would observe in district $i$
-in say the 2008 election if in fact the Democratic incumbent receives
-his or her party's nomination (i.e., $t_i=1$) and $y_i(t_i=0)\equiv
-y_i(0)$ the vote the party would receive if the Democratic Party
-nominates a nonincumbent ($t_i=0$).  The use of parentheses in this
-notation denotes that the outcome is potential, and so not necessarily
-observed, and that it depends on the value of the variable in
-parentheses.  A key point is that the values of these potential
-outcomes remain the same regardless of whether the treatment is in
-fact applied in district $i$ or not.  However, since the Democratic
-Party either will nominate ($t_i=1$) or will not nominate ($t_i=0$) an
-incumbent to run in district $i$, we will observe either $y_{i}(1)$ or
-$y_{i}(0)$ but not both.\footnote{We assume throughout that every unit
-  within each treatment group receives the same treatment.  This
-  assumption would be violated in our running example if the
-  nomination the Democratic party gives to the incumbent in some
-  districts means something different from that in other districts.
-  We also assume that the treatment in one unit has no effect on the
-  potential outcomes in any unit other than its own.  Together these
-  two assumptions are sometimes known under the awkward name of the
-  ``stable unit treatment value assumption'' or SUTVA
-  \citep{Rubin74}.}
+$y_i(t_i=1)\equiv y_i(1)$ {\bf this should be $y_i(1)\equiv
+  y_i(t_i=1)$.} be the vote we would observe in district $i$ in say
+the 2008 election if in fact the Democratic incumbent receives his or
+her party's nomination (i.e., $t_i=1$) and $y_i(t_i=0)\equiv y_i(0)$
+{\bf this should be $y_i(0)\equiv y_i(t_i=0)$.} the vote the party
+would receive if the Democratic Party nominates a nonincumbent
+($t_i=0$).  The use of parentheses in this notation denotes that the
+outcome is potential, and so not necessarily observed, and that it
+depends on the value of the variable in parentheses.  A key point is
+that the values of these potential outcomes remain the same regardless
+of whether the treatment is in fact applied in district $i$ or not.
+However, since the Democratic Party either will nominate ($t_i=1$) or
+will not nominate ($t_i=0$) an incumbent to run in district $i$, we
+will observe either $y_{i}(1)$ or $y_{i}(0)$ but not both.\footnote{We
+  assume throughout that every unit within each treatment group
+  receives the same treatment.  This assumption would be violated in
+  our running example if the nomination the Democratic party gives to
+  the incumbent in some districts means something different from that
+  in other districts.  We also assume that the treatment in one unit
+  has no effect on the potential outcomes in any unit other than its
+  own.  Together these two assumptions are sometimes known under the
+  awkward name of the ``stable unit treatment value assumption'' or
+  SUTVA \citep{Rubin74}.}
 
 The difference between the two potential outcomes defines the simplest
 realized (or in-sample) definition of a causal effect:
@@ -329,8 +331,13 @@ inferences, we imagine that the realized potential outcomes in
 which we use the corresponding capital letters).  We do not require
 that the data are sampled from some specific population, only that
 there exists some data generation process that leads to the one
-realization we see and could have led to some other realization.  This
-logic then produces the random causal effect:
+realization we see and could have led to some other realization. {\bf
+  This sentence is a little unclear to me. We might want to make a
+  clear distinction between in-sample (or finite population) and
+  out-of-sample (or population) inferences. For example, the former is
+  used to make inferences about a particular election at hand, whereas
+  the latter attempts to make generalization about some underlying
+  population. }  This logic then produces the random causal effect:
 \begin{equation}
   \label{rance}
   \text{(Random Causal Effect for unit $i$)}  = Y_i(1) - Y_i(0),
@@ -344,15 +351,17 @@ hypothetical draws of the the random causal effect:
   &= E(\text{Random Causal Effect for unit $i$})\\
   &= E[Y_i(1) - Y_i(0)]\\ \notag &= \mu_i(1) - \mu_i(0),
 \end{align}
-where $E[Y_i(1)]\equiv\mu_i(1)$ and $E[Y_i(0)]\equiv\mu_i(0)$.
+where $E[Y_i(1)]\equiv\mu_i(1)$ and $E[Y_i(0)]\equiv\mu_i(0)$. {\bf
+  Again, RHS and LHS should be flipped.}
 
 \paragraph{Average Quantities of Interest}
 In most applications, we do not attempt to estimate the treatment
 effect for each observation, and instead estimate the average over all
-observations or some subset of observations.  This leads to two
-choices for quantities of interest, for either realized and random
-causal effects (we show them here for the latter).  First is the
-population average treatment effect or ATE:
+observations or some subset of observations. {\bf or for a particular
+  (subset of) population} This leads to two choices for quantities of
+interest, for either realized and random causal effects (we show them
+here for the latter).  First is the population average treatment
+effect or ATE:
 \begin{align}
   \label{pate}
   \text{ATE} = E[Y_i(1) - Y_i(0)] \\
@@ -361,14 +370,20 @@ population average treatment effect or ATE:
 which is the mean causal effect for unit $i$ averaged over all units
 (so that the expected value operator in the first line averages over
 the random potential outcomes for each unit as well as over units).
+{\bf The second equation is an estimator of the first equation, but
+  not the estimand. alternatively, the second equation can be
+  interpreted as the estimand of the sample aerage treatment effect. }
 
-The alternative choice of a target quantity of interest is the average
-treatment effect on the treated, or ATT:
+The alternative choice of a target quantity of interest is the {\bf
+  population} average treatment effect on the treated, or ATT:
 \begin{align}
   \label{att}
   \text{ATT} = E[Y_i(1) - Y_i(0)|t=1] \\
   = \frac{1}{\sum t_i}\sum_{i:t_i=1}[\mu_i(1) - \mu_i(0)],
 \end{align}
+{\bf The second equation is an estimator of the first equation, but
+  not the estimand. alternatively, the second equation can be
+  interpreted as the estimand of the sample aerage treatment effect. }
 In our running example, this is the average causal effect in districts
 in which the Democratic Party nominated the incumbent member of the
 House.  From one perspective, we might want to know this treatment
@@ -385,9 +400,10 @@ effect (the ATE).  In our running example, it is quite likely that if
 an incumbent were nominated in districts in which he or she did not
 actually receive the nomination that an incumbency advantage would
 still exist, and whatever this effect is, it might be of substantive
-interest.  In this paper, we usually focus on ATT as the quantity of
-interest when it is conceptually or algebraically simpler, but we also
-show how to compute the ATE.
+interest {\bf this sentence seems a bit awkward.}.  In this paper, we
+usually focus on ATT as the quantity of interest when it is
+conceptually or algebraically simpler, but we also show how to compute
+the ATE.
 
 \section{Data Collection Mechanisms}
 
