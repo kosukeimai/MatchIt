@@ -1312,13 +1312,13 @@ checking balance via equation~(\ref{balance}) in our two applications.
 
 \subsection{Democratic Senate Majorities and FDA Drug Approval Time}
 
-An influential article by \citet{Carp02} examines several determinants
-of new drug approval times by the U.S.\ Food and Drug Administration
-(FDA).  Here, we focus on the hypothesis that Democratic oversight of
-the FDA should lead to slower approval of new drugs
-\citep[p.495]{Carp02} (specifically Model 1 of Table 2, p.499).
-Carpenter thus tests a key hypothesis in the literature on
-institutional and partisan determinants of regulatory policy.
+An influential article by \citet{Carp02} tests a key hypothesis in the
+literature on institutional and partisan determinants of regulatory
+policy by examining several determinants of new drug approval times by
+the U.S.\ Food and Drug Administration (FDA).  Here, we focus on the
+hypothesis that Democratic oversight of the FDA should lead to slower
+approval of new drugs \citep[p.495]{Carp02} (specifically Model 1 of
+Table 2, p.499).
 
 To test this hypothesis, Carpenter uses a lognormal survival model of
 approval times regressed on several causal variables of political
@@ -1368,9 +1368,9 @@ our purposes this variable is of particular interest because
 \citet[p.498]{Carp02} finds that ``[t]he coefficient estimate for this
 variable [Democratic Senate majority] is not significant in other
 regressions, and even switches sign when firm variables are added.''
-We therefore examine whether the model sensitivity Carpenter noticed
-of the Democratic Senate majority variable is reduced by preprocessing
-the data.
+We therefore examine whether the model sensitivity that prevented
+Carpenter from drawing firm conclusions about the Democratic Senate
+majority variable is reduced by preprocessing the data.
 
 To preprocess, we conduct nearest neighbor propensity score matching
 (without replacement), estimating the propensity score using logistic
@@ -1446,18 +1446,20 @@ approval time of new drugs.  This result thus continues to contradict
 Carpenter's initial hypothesis.
 
 Although data analysis would end here for those interested in the
-substantive research questions, for our methodological purposes we go
-a step further to demonstrate the model-dependence of the average
-causal effect of a Democratic Senate majority using the preprocessed
-data and compare this with that from the raw data.  For simplicity, we
-portray model dependence by the variability in ATE point estimates
-across potential specifications of pretreatment covariates, although
-the same conclusions apply to most other quantities of interest too.
+substantive research question at hand, for our methodological purposes
+we go a step further to demonstrate the model-dependence of the
+average causal effect of a Democratic Senate majority using the
+preprocessed data and compare this with that from the raw data.  For
+simplicity, we portray model dependence by the variability in ATE
+point estimates across potential specifications of pretreatment
+covariates, although the same conclusions apply to most other
+quantities of interest too.
 
 We estimate the point estimate of the ATE for every possible
 specification in which the 18 covariates enter the model with the
 treatment indicator (i.e., all possible subsets of covariates from the
-18).  Even though we ignored interactions and nonlinearities, this
+18).  Even though we ignored interactions and nonlinearities (which
+are of course additional key aspects of model dependence), this
 amounts to $262,143$ survival analyses, all of which we ran.
 Figure~\ref{fg:fdadens} presents a histogram for the estimated average
 treatment effects across all the specifications for the raw data as
@@ -1504,20 +1506,20 @@ than indicated by the usual parametric approach.
   Evaluations}
 
 For our second application, we reanalyze a study of citizen
-evaluations of the ideological positions of candidates for the U.S.\ 
+evaluations of the ideological positions of candidates for the U.S.\
 House of Representatives by \citet{Koch02}.  The quantity of interest
 is the causal effect of being a highly visible female candidate on
 citizen voter evaluations of the candidate's ideology (scored as a
 seven point ordinal scale, where high scores indicate greater
 conservatism).\footnote{Visibility is measured originally by whether a
   candidate had campaign expenditures exceeding more than \$750,000.
-  For simplicity and comparison to \citet{Koch02}, we stipulate to,
-  rather than evaluate the appropriateness of, these measurements or
-  methods.}  We confine ourselves to studying this effect on
-Republican female candidates, compared to the control of invisible
-male and female candidates (corresponding to the fourth column of
-Table 2 in \citet[p.  459]{Koch02}).  We begin by replicating the
-analysis, which we did successfully.
+  For simplicity and to maintain comparison to \citet{Koch02}, we
+  stipulate to, rather than evaluate the appropriateness of, these and
+  other measurements and methods.}  We confine ourselves to studying
+this effect on Republican female candidates, compared to the control
+of invisible male and female candidates (corresponding to the fourth
+column of Table 2 in \citet[p.  459]{Koch02}).  We begin by
+replicating the analysis, which we did successfully.
 
 Since randomly assigning visibility to candidates in real elections is
 infeasible, \citet{Koch02} collects observational data with
@@ -1665,17 +1667,19 @@ analysis by subclass, and average the estimates weighting by the
 number of treated candidates in each subclass.  This yields an
 estimated average treatment effect of $-0.23$ with an estimated
 standard error $0.14$, indicating that female visibility might cause
-voters to perceive female candidates as more liberal.
+voters to perceive female candidates as more liberal, the key
+substantive purpose of this analysis.
 
-We now turn to our main purpose of evaluating model sensitivity by
-studying the variance of causal effect point estimates for 63
-(=$\sum_{i=1}^6 {6 \choose i}$) regressions containing all possible
-subsets of Koch's six covariates, again for simplicity restricting
-ourselves to only permutations of the possible main effects.  For the
-matched data set, we run the same specification locally within each
-subclass, aggregating the point estimates weighted by the number of
-treated units in each subclass.  The result in each case is 63
-separate point estimates for the raw and for the preprocessed data.
+We now turn to our main (methodological) purpose of evaluating model
+sensitivity by studying the variance of causal effect point estimates
+for 63 (=$\sum_{i=1}^6 {6 \choose i}$) regressions containing all
+possible subsets of Koch's six covariates, again for simplicity
+restricting ourselves to only permutations of the possible main
+effects.  For the matched data set, we run the same specification
+locally within each subclass, aggregating the point estimates weighted
+by the number of treated units in each subclass.  The result in each
+case is 63 separate point estimates for the raw and for the
+preprocessed data.
 
 Figure~\ref{fg:kochdens} presents the results, plotting densities of
 estimated average treatment effects for the treated (ATT) from the raw
@@ -1798,36 +1802,37 @@ know the correct specification.  In practice, the ``correct''
 specification is chosen after looking at the estimates and so it is
 never clear to a reader whether an article is a true test of an ex
 ante hypothesis, in the sense that the author was vulnerable to being
-proved wrong, or whether the article is merely a proof that it is
-\emph{possible} to find a specification consistent with the author's
+proved wrong, or whether the article is merely a proof of the
+existence of at least one specification consistent with the author's
 favored hypothesis.
 
 We provide a way around at least part of this problem.  Preprocessing
 raw data with the matching procedures we recommend makes familiar
-parametric methods a much more reliable tool of empirical analysis,
-and in particular, causal effect estimates become far more insensitive
-to seemingly arbitrary choices in model specification.  If we read an
-article demonstrating that balance has been achieved for a data set,
-readers need not worry that slightly different specifications than
-those discussed in the text will greatly alter its empirical
-conclusions.
+parametric methods a much more reliable tool of empirical analysis
+and, in particular, causal effect estimates become far more
+insensitive to seemingly arbitrary choices in model specification.  If
+we read an article demonstrating that balance has been achieved for a
+data set, readers can worry considerably less that slightly different
+specifications than those discussed in the text will greatly alter its
+empirical conclusions.
 
 \appendix
 \section{Matching Software}\label{s:matchit}
 
-We have created a software package called MatchIt (available at
-\url{http://gking.harvard.edu/matchit/}) that implements a large
-fraction of the matching procedures suggested in the diverse scholarly
-literatures on this subject.  Most of our software operates with a
-single command that takes an existing dataset and produces as output a
-single preprocessed matched dataset.  The preprocessed matched dataset
-can then be used by standard parametric software just as you would
-have used the original dataset.  MatchIt also works seamlessly with
-the general-purpose statistics program, Zelig (\citet{ImaKinLau04},
-available at \url{http://gking.harvard.edu/zelig}).  MatchIt and Zelig
-run under most operating systems via the open-source statistical
-program R (see \url{http://r-project.org}).  MatchIt, Zelig, and R are
-available free of charge.
+We have created a software package called MatchIt
+% (available at
+% \url{http://gking.harvard.edu/matchit/}) 
+that implements a large fraction of the matching procedures suggested
+in the diverse scholarly literatures on this subject.  Most of our
+software operates with a single command that takes an existing dataset
+and produces as output a single preprocessed matched dataset.  The
+preprocessed matched dataset can then be used by standard parametric
+software just as you would have used the original dataset.  MatchIt
+also works seamlessly with the general-purpose statistics program,
+Zelig (\citet{ImaKinLau04}, available at
+\url{http://gking.harvard.edu/zelig}).  MatchIt and Zelig run under
+most operating systems via the open-source and free statistical
+program R (see \url{http://r-project.org}).
 
 For example, to use propensity score matching of a treatment
 indicator, \texttt{treat}, and three pretreatment covariates, use this
@@ -1839,10 +1844,8 @@ with the output stored as \texttt{match.out}.  For exact matching use:
 \begin{verbatim}
 match.out <- matchit(treat ~ age + educ + black, exact=TRUE, data = lalonde)
 \end{verbatim}
-Numerous other options are also available.
-
-Suppose we use MatchIt to subclassify into 5 classes by the propensity
-score:
+Numerous other options are also available.  For example, suppose we
+use MatchIt to subclassify into 5 classes by the propensity score:
 \begin{verbatim}
 match.out <- matchit(treat ~ age + educ + black, subclass=5, data = koch)
 \end{verbatim}
