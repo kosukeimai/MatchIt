@@ -516,41 +516,42 @@ directly estimate this model.  Preprocessing data with matching
 procedures is suboptimal in this situation.  Of course, few
 researchers with real observational data sets have this kind of
 knowledge and as a result some choices need to be made among the range
-of possible parametric models. The dilemma then is that although
+of possible parametric models.  The dilemma then is that although
 researchers using this approach do not know the true parametric model,
 they must proceed as if they do.
 
-We begin by specifying a single but general parametric model that
-characterizes the range of models that researchers might choose from.
-The special cases of this model include almost all parametric models
-that have been used in the social sciences.  First define the model's
-chosen stochastic component as $Y_i \sim p(\mu_i,\theta)$, for
-probability density $p(\cdot)$, mean $\mu_i$, and vector of ancillary
-parameters $\theta$.  Then denote the systematic component as
-$\mu_i\equiv E(Y_i|t_i,X_i)=g(\alpha + t_i\beta + X_i\gamma)$, for
-some specified functional form $g(\cdot)$ and with intercept $\alpha$
-and coefficients $\beta$ and $\gamma$.  The ancillary parameters may
-also be specified to vary over observations as a function of $X_i$ or
-other covariates.  This framework includes all generalized linear
-models \citep{McCNel89} as well as many others.  For example, if
-$p(\cdot)$ is normal and $g(c)=c$, we have linear regression; if
-$p(\cdot)$ is Bernoulli and $g(c)=1/(1+e^{-c})$, the model reduces to
-a logistic regression.
+We begin to elaborate this problem and some paths forward by
+specifying a single but general parametric model that characterizes
+the range of models that researchers might choose from.  The special
+cases of this model include almost all parametric models that have
+been used in the social sciences.  First, define the chosen stochastic
+component for the model as $Y_i \sim p(\mu_i,\theta)$ for probability
+density $p(\cdot)$, mean $\mu_i$, and vector of ancillary parameters
+$\theta$.  Then, denote the systematic component as $\mu_i\equiv
+E(Y_i|t_i,X_i)=g(\alpha + t_i\beta + X_i\gamma)$ for some specified
+functional form $g(\cdot)$ and with intercept $\alpha$ and
+coefficients $\beta$ and $\gamma$.  The ancillary parameters may also
+be specified to vary over observations as a function of $X_i$ or other
+covariates.  This framework includes all generalized linear models
+\citep{McCNel89}, as well as many others.  For example, if $p(\cdot)$
+is normal and $g(c)=c$, we have linear regression; if $p(\cdot)$ is
+Bernoulli and $g(c)=1/(1+e^{-c})$, the model reduces to a logistic
+regression.
 
 We define the ATT in equation~(\ref{att}) under this model by plugging
 in the definitions of the potential outcomes from the systematic
 component, with $t_i$ taking on values 1 and 0 respectively:
 \begin{align}
   \label{matt}
-\mu_i(1)&\equiv E(Y_i(1)|t_i=1,X)= g(\alpha + \beta + X_i\gamma)\notag \\
-\mu_i(0)&\equiv E(Y_i(0)|t_i=0,X) = g(\alpha + X_i\gamma)
+\mu_i(1)&\equiv E(Y_i(1)|t_i=1,X)= g(\alpha + \beta + X_i\gamma),\notag \\
+\mu_i(0)&\equiv E(Y_i(0)|t_i=0,X) = g(\alpha + X_i\gamma).
 \end{align}
 We can produce estimates of these quantities by assuming independence
 over observations, and forming a likelihood function
 \begin{equation}
   \label{lik}
   L(\alpha,\beta,\gamma,\theta|y) = \prod_{i=1}^n 
-  p\left(y_i \mid g(\alpha + t_i\beta + X_i\gamma), \theta\right)
+  p\left(y_i \mid g(\alpha + t_i\beta + X_i\gamma), \theta\right),
 \end{equation}
 the maximum of which gives parameter estimates.
 
@@ -570,22 +571,12 @@ equation~(\ref{matt}) as
   E[Y_i(1)|t_i=1] &\equiv \mu_i(1) = g(\alpha + \beta)\notag \\
   E[Y_i(0)|t_i=0] &\equiv \mu_i(0) = g(\alpha)
 \end{align}
-%{\bf Is $\mu_i(j)$ defined with or without conditioning on $x_i$?}
 and so the average treatment effect on the treated from
 equation~(\ref{att}) becomes simply
 \begin{equation}
   \label{satt}
   \text{ATT} = g(\alpha+\beta) - g(\alpha),
 \end{equation}
-% {\bf What about ATE? also should we make the distinction between
-%   population and in-sample inference? If it's the latter, we need to
-%   condition on the observed $y_i$ in the sample.}  
-% gk: i'm willing to try to define these in a way people can
-% understand if you want, but it seems hard in the context of what
-% we're doing (tho not perhaps in general).  also, there seems to me
-% to be little gain in making the definition since the estimators are
-% pretty much all the same anyway (other than the ci's)
-% ki: that's fine by me. the sentence you inserted earlier made this clear.
 which most importantly no longer has a summation sign over $i$.
 
 The systematic components in equations~(\ref{smatt}) are now scalar
@@ -616,10 +607,10 @@ makes for the functional form.
 
 \subsection{Observational Data} \label{s:paraobs}
 
-In experiments, then, random assignment breaks the link between $T$
-and $X$ and, by so doing, eliminates the problem of model dependence.
-When analyzing observational data with parametric methods we are not
-so fortunate.  We cannot reduce equations~(\ref{att}) to
+In experiments, random assignment breaks the link between $T$ and $X$
+and, by so doing, eliminates the problem of model dependence.  When
+analyzing observational data with parametric methods we are not so
+fortunate.  We cannot reduce equations~(\ref{att}) to
 equations~(\ref{matt}) and so are left having to model the full
 functional relationship that connects the mean as it varies as a
 function of $t$ and $X$ over observations.  Since $X$ is typically
@@ -627,16 +618,16 @@ multidimensional, this is a surprisingly difficult task with rather
 severe consequences for research practice.
 
 The problem is the curse of dimensionality and the consequence in
-practice is model dependence.  We begin with the former and suppose
-for simplicity that we have a dependent variable and one ten-category
-explanatory variable, and our goal is use linear regression technology
-to estimate the functional relationship without actually making
-functional form assumptions.  To do this, we would represent the ten
-categories with ten parameters (a constant and nine dummy variables or
-equivalently 10 mean indicator variables).  In contrast, the usual
-approach to estimation is to assume linearity {\bf by directly
-  including the ten-category variable}.  This enables us to enter not
-10 indicator variables, but rather only a constant term and one slope
+practice is model dependence.  We begin with the former and for
+simplicity suppose that we have a dependent variable and one
+ten-category explanatory variable, and our goal is use linear
+regression technology to estimate the functional relationship without
+actually making functional form assumptions.  To do this, we represent
+the ten categories with ten parameters (a constant and nine dummy
+variables or equivalently 10 mean indicator variables).  In contrast,
+the usual approach to estimation is to assume linearity by directly
+including the ten-category variable.  This enables us to enter not 10
+indicator variables, but rather only a constant term and one slope
 coefficient.  How do we get from ten parameters to only two?  Pure
 assumption.  If we have some sense that the relationship is indeed
 linear or close to linear, this is a good use of external information
@@ -673,14 +664,13 @@ explanatory variables leaves us with a model with one \emph{billion}
 parameters, to be approximated by only the ten that we would estimate
 under the traditional approach.  Eighty ten-category explanatory
 variables would require a regression model with more parameters than
-current estimates of the number of elementary particles in the
-universe.
+the estimated number of elementary particles in the universe.
 
 Estimating rather than making assumptions about all these extra
 parameters is obviously not possible under the standard regression
-approach, since social data sets do not come with anywhere near enough
-observations.  We cannot avoid the problem with nonlinear or
-non-normal statistical models, since these pose the same curse of
+approach, since social science data sets do not come with anywhere
+near enough observations.  We cannot avoid the problem with nonlinear
+or non-normal statistical models, since these pose the same curse of
 dimensionality as linear regression.  The assumption of ignorability,
 which enables us to make the positivist assumption that we have
 measured and observe all necessary variables, is insufficient.
@@ -689,7 +679,7 @@ Instead, we are led to the inescapable conclusion that, in parametric
 causal inference of observational data, many assumptions about many
 parameters are frequently necessary, and only rarely do we have
 sufficient external information to make these assumptions based on
-genuine knowledge.  The frequent unavoidable consequence is high
+genuine knowledge.  The frequent, unavoidable consequence is high
 levels of model dependence, but no good reason to choose one set of
 assumptions over another.  Residual and other diagnostics will uncover
 some forms of misspecification, but the curse of dimensionality
@@ -735,7 +725,7 @@ parametric model's causal effect estimate.
 Model dependence is easy to see by also fitting a quadratic model to
 these data, which merely involves adding an $X^2$ term to the original
 linear regression.  Fitted values for the quadratic regression appear
-as dashed lines in the same left graph.  Clearly these fit the same
+as dashed lines in the same left graph.  Clearly, these fit the same
 data markedly differently from the original regression.  Not only is
 the overall shape completely different, but the causal effect has now
 switched signs and become much larger (this can be seen in the graph
@@ -749,26 +739,25 @@ precisely how they compute this average.  The key problem that
 generates model dependence is the absence of any treated unit values
 with $X$ less than 4.  This means that to estimate features of $Y(1)$
 on the left side of the graph requires extrapolation over a
-considerable distance from where the T's are observed.  Such
-extrapolations are what make causal effect estimates exquisitely
-sensitive to minor modifications in the statistical model.  In other
-words, the curse of dimensionality creates the problem in parametric
-analyses by requiring a large number of assumptions to which estimates
-may be sensitive, and ``unbalanced'' data like these which require
-extrapolation means that different assumptions will produce model
-dependent estimates.
+considerable distance from where the T's are observed.  These
+extrapolations make causal effect estimates exquisitely sensitive to
+minor modifications in the statistical model.  In other words, in
+parametric analyses, the curse of dimensionality requires a large
+number of assumptions to which estimates may be sensitive.  And
+``unbalanced'' data like these require extrapolation, which means that
+different assumptions will produce different estimates.
 
 Some researchers surely respond to this diversity of possible models
 by inadvertently choosing specifications that support their favored
 hypotheses.  Current best practice is to portray forthrightly at least
 some aspects of specification uncertainty in published work by giving
 results for multiple specifications and evaluating how model dependent
-the substantive results are.  But researchers are rarely able to
-portray the full sensitivity of their causal inferences to model
-specification {\bf should we emphasize the fact that this is
-  impossible?}, and attempts to do so in many situations lead to
-nihilistic conclusions.\footnote{Two approaches to this problem
-  include extreme bounds analysis \citep{Leamer78}, which is a
+the substantive results are.  But researchers of course do not often
+go very far in portraying the sensitivity of their causal inferences
+to model specification, and conveying all the sensitivity is
+essentially impossible.  Indeed, attempts to do so in many situations
+lead to nihilistic conclusions.\footnote{Two approaches to this
+  problem include extreme bounds analysis \citep{Leamer78}, which is a
   somewhat standardized way to portray model dependence, and Bayesian
   model averaging \citep{HoeMadRaf99,ImaKin04}, which is intended to
   draw inferences by appropriately combining inferences from models
@@ -779,33 +768,33 @@ nihilistic conclusions.\footnote{Two approaches to this problem
 The goal of matching in general and our specific nonparametric
 preprocessing approach in particular is to adjust the data prior to
 the parametric analysis so that (1) the relationship between $t_i$ and
-$X_i$ is eliminated or reduced and (2) no bias and little inefficiency
-is induced.  If we are able to adjust the data so that $t_i$ and $X_i$
-are completely unrelated, so that the control and treatment groups are
-identical with respect to $X$, we will have moved a good deal of the
-way from Section \ref{s:paraobs} to Section \ref{s:paraexp}.  An
-assumption of ignorability will still be necessary, but we will no
-longer need to model the full parametric relationship between the
-dependent variable and the multidimensional $X_i$.  We will also have
-eliminated an important source of model dependence in the resulting
-parametric analysis stemming from the functional form specification
-and the curse of dimensionality.  For data sets where preprocessing
-reduces the extent of the relationship between $t_i$ and $X_i$, but is
-unable to make them completely independent, model dependence is not
-eliminated but will normally be greatly reduced.  Indeed, if
-nonparametric preprocessing results in no reduction of model
-dependence, then it is likely that the data have little information to
-support causal inferences by any method, which of course would also be
-useful information.
+$X_i$ is eliminated or reduced, and (2) no bias and little
+inefficiency is induced.  If we are able to adjust the data so that
+$t_i$ and $X_i$ are completely unrelated (which makes the control and
+treatment groups are identical with respect to $X$), we will have
+moved a good deal of the way from Section \ref{s:paraobs} to Section
+\ref{s:paraexp}.  An assumption of ignorability is still necessary,
+but we would no longer need to model the full parametric relationship
+between the dependent variable and the multidimensional $X_i$.  This
+also eliminates an important source of model dependence in the
+resulting parametric analysis stemming from the functional form
+specification and the curse of dimensionality.  For data sets where
+preprocessing reduces the extent of the relationship between $t_i$ and
+$X_i$, but is unable to make them completely independent, model
+dependence is not eliminated but will normally be greatly reduced.
+Indeed, if nonparametric preprocessing results in no reduction of
+model dependence, then it is likely that the data have little
+information to support causal inferences by any method, which of
+course would also be useful information.
 
 But how can we adjust the data without inducing bias in our causal
 estimates?  The key to this problem is that the fundamental rule for
-avoiding selection bias --- do not select on the dependent variable
+avoiding selection bias --- not selecting on the dependent variable
 --- does not prevent us from selecting observations on the explanatory
 variables ($t_i$ or $X_i$).  (Random or other physical assignments in
 experiments by the investigator and stratified sampling in surveys are
 examples of valid data collection mechanisms that select observations
-given chosen values of the explanatory variables.)  But we can also
+given chosen values of the explanatory variables.)  We can also
 select, duplicate, or selectively drop observations from an existing
 sample without bias, as long as we do so using a rule that is a
 function only of $t_i$ and $X_i$.  Our preprocessed dataset will
@@ -822,8 +811,8 @@ The simplest way to satisfy equation~(\ref{balance}) by preprocessing
 is to use \emph{one-to-one exact matching}.  The idea is to match each
 treated unit with one control unit for which the values of $X_i$ are
 identical.  Our preprocessed dataset thus is the same as the original
-dataset with any unmatched units discarded, and $t_i$ and $X_i$ are
-now independent.  If enough matches are available, this procedure
+dataset with any unmatched units discarded, with $t_i$ and $X_i$ now
+independent.  If enough matches are available, this procedure
 eliminates all dependence on the functional form in the parametric
 analysis.  It is also highly intuitive, since it directly parallels an
 experiment where we find pairs of units that are identical in all
@@ -835,23 +824,22 @@ within each pair of units.
 Although one-to-one exact matching can eliminate model dependence and
 any bias from incorrect assumptions made during the parametric stage
 of analysis, it has the disadvantage in many applications of not
-generating many matches.  The problem is of course most severe if
-$X_i$ is high dimensional (another effect of the curse of
-dimensionality) or contains continuous variables.  The result may then
-be a preprocessed data set with very few observations that results in
-a parametric analysis with large standard errors.  In this situation,
-we may have reduced model dependence and the potential for bias but
-decreased efficiency and as a result increased mean square error.  If
-this occurs in practice, those in the matching literature tend to
-sacrifice some bias reduction for the increased efficiency that comes
-from having more observations in the preprocessed dataset.  In our
-approach, sacrificing bias reduction only affects the preprocessing
-stage, and our second stage parametric analysis has a chance to
-eliminate the remaining bias.  We therefore now turn in Section
-\ref{s:choose} to a menu of matching procedures that enable
-researchers to satisfy equation~(\ref{balance}) as closely as possible
-while still generating a preprocessed dataset with enough
-observations.
+generating many matches.  The problem is most severe if $X_i$ is high
+dimensional (another effect of the curse of dimensionality) or
+contains continuous variables.  The result may then be a preprocessed
+data set with very few observations that results in a parametric
+analysis with large standard errors.  In this situation, we may reduce
+model dependence and the potential for bias, but decrease efficiency
+and as a result increased mean square error.  If this occurs in
+practice, those in the matching literature tend to sacrifice some bias
+reduction for the increased efficiency that comes from having more
+observations in the preprocessed dataset.  In our approach,
+sacrificing bias reduction only affects the preprocessing stage, and
+our second stage parametric analysis has a chance to eliminate the
+remaining bias.  We therefore now turn in Section \ref{s:choose} to a
+menu of matching procedures that enable researchers to satisfy
+equation~(\ref{balance}) as closely as possible while still generating
+a preprocessed dataset with enough observations.
 
 Finally, the right graph in Figure \ref{fg:extrap} gives a simple
 example of the consequences for reducing model dependence for matching
@@ -869,31 +857,31 @@ return highly similar causal effect estimates.
 
 \section{Choosing a Matching Procedure}\label{s:choose}
 
-In this section, we offer a step by step guide to navigating the wide
+In this section, we offer a step by step guide for navigating the wide
 variety of matching procedures proposed throughout the statistics,
 economics, epidemiology, medical, and biostatistics literatures.
 These are young and fast-growing areas, and so we try to distill the
 current collective wisdom when one is available or, when not, suggest
 an approach that is at least widely recognized as reasonable.  For
 detailed reviews of the technical literatures, and other matching
-procedures, see \citet{Imbens04,Rosenbaum02,Stuart04} and the detailed
-user's guide to the software that accompanies this paper (see Appendix
-\ref{s:matchit}).
+procedures, see \citet{Imbens04}, \citet{Rosenbaum02}, and
+\citet{Stuart04} and the detailed user's guide to the software that
+accompanies this paper (see Appendix \ref{s:matchit}).
 
 The goal of matching is to improve \emph{balance}, the degree to which
-the treatment and control $X$ distributions resemble each other, while
-not losing too many observations in the process.  The main diagnostic
-of success is also balance (as well as the number of observations
-remaining).  We judge balance at first by taking the difference in the
-treatment and control group means or full histograms for each variable
-in $X$.  These can be supplemented by comparing the means of the
-squares and cross-products of the variables and higher order moments
-or with more dimensions.
+the treatment and control $X$ distributions resemble each other,
+without losing too many observations in the process.  The main
+diagnostic of success is also balance (as well as the number of
+observations remaining).  We judge balance at first by taking the
+difference in the treatment and control group means or full histograms
+for each variable in $X$.  These can be supplemented by comparing the
+means of the squares and cross-products of the variables and higher
+order moments or with more dimensions.
 
-In our quest for better balance, any number of matching procedures can
-be tried, with the final preprocessed data set the one with the best
-balance.  To ensure that selection during preprocessing is only on
-$X$, so no bias is induced, the outcome variable $y$ should not be
+In our quest for better balance, one can try any number of matching
+procedures, with the final preprocessed data set the one with the best
+balance.  To ensure that selection during preprocessing is only on $X$
+(to prevent inducing bias), the outcome variable $y$ should not be
 examined during the preprocessing stage.  As long as $y$ is not
 consulted, preprocessing cannot result in stacking the deck one way or
 another.  This is similar to what is typically done in a randomized
@@ -903,29 +891,28 @@ women in the control group), the randomization is repeated (or
 stratification variables are introduced) at will until better data are
 obtained \citep[see][]{Rubin01}.
 
-We recommend that preprocessing be composed of four key steps,
-followed by standard parametric modeling of the preprocessed data set.
-We describe this procedure for the ATT, and so the matching is
-designed to choose control units that look most like the treated
-units.
+We recommend four steps of preprocessing, followed by standard
+parametric modeling of the preprocessed data set.  We describe this
+procedure for the ATT, and so the matching is designed to choose
+control units that look most like the treated units.
 
 \paragraph{1. Select Covariates}  
 Include all variables in $X$ that would have been included in your
-parametric model without preprocessing.  By the usual rules of
+parametric model without preprocessing.  By the usual rules for
 avoiding omitted variable bias these should include all variables that
 may affect the treatment assignment and the dependent variable.  More
 with matching than in parametric techniques, including variables only
 weakly related to treatment assignment will usually reduce bias more
 than they will increase variance and so should normally be included
-\citep{RubTho96, HecIchSmi98}.  To avoid post-treatment bias, be sure
-to exclude variables affected by the treatment variable
+\citep{RubTho96, HecIchSmi98}.  To avoid post-treatment bias, exclude
+variables affected by the treatment variable
 \citep{FraRub02,Greenland03,KinZen04}.
 
 If all the variables in $X_i$ are categorical, try exact matching in
 Step 2.  Otherwise, try propensity score matching in Step 3.
 \paragraph{2. Try Exact Matching}  
 Match each treated unit to all control units with exactly the same
-covariate values.  This procedure is thus more general than one-to-one
+covariate values.  This procedure is more general than one-to-one
 matching, since we use as many control units as are available for each
 treated unit.
 
@@ -966,8 +953,8 @@ $X$.  Using the true propensity score in this way thus would seem to
 solve the curse of dimensionality for matching.
 
 In practice, however, we do not know the true propensity score (except
-perhaps in unusual special cases).  We would still be able to appeal
-to the true propensity score's theoretical properties if we had a
+perhaps in unusual situations).  We would still be able to appeal to
+the true propensity score's theoretical properties if we had a
 consistent estimate of it, but such an estimate would require knowing
 the correct functional form for the assignment model, which is highly
 unlikely.  Moreover, no theoretical results exist for the case when
@@ -977,18 +964,19 @@ self-defeating: In order to use nonparametric matching to avoid
 parametric modeling assumptions, we must know the parametric
 functional form of the propensity score equation!
 
-Fortunately, there is a way out.  What we do is to look past the
+Fortunately, there is a way out.  We suggest, first, looking past the
 theoretical properties of the propensity score, except for the purpose
 of motivating the goal of better propensity score specification, and
-most importantly recognizing the value of what we call the
-\emph{propensity score tautology}, the main justification for using
-this technology in practice: The estimated propensity score is a
-balancing score when we have a consistent estimate of the true
-propensity score.  We know we have a consistent estimate of the
-propensity score when matching on the propensity score balances the
-raw covariates.  Of course, once we have balance on the covariates,
-we're done and don't need to look back.  That is, it works when it
-works, and when it doesn't work, it doesn't work.
+second and more importantly, recognizing the value of what we call the
+\emph{propensity score tautology}.  The propensity score tautology in
+our view is the main justification for using this technology in
+practice: The estimated propensity score is a balancing score when we
+have a consistent estimate of the true propensity score.  We know we
+have a consistent estimate of the propensity score when matching on
+the propensity score balances the raw covariates.  Of course, once we
+have balance on the covariates, we're done and don't need to look
+back.  That is, it works when it works, and when it doesn't work, it
+doesn't work.
 
 The tautology thus provides a way to make irrelevant the knowledge of
 whether we have satisfied the conditions necessary to use the
@@ -1003,25 +991,24 @@ balance the covariates relatively quickly may be related to the
 theoretical properties of the true score discussed above, but this
 conjecture is both unproven and irrelevant to making valid causal
 inferences.  At least given the current state of the literature, only
-this practical advice, based on the propensity score tautology, is
+this practical advice based on the propensity score tautology is
 useful in practice.
 
 In applications, the usual practice is to estimate the propensity
 score by a logistic regression of $t_i$ on $X_i$ and a constant term.
 Since we are in the situation where exact matching is insufficient, we
 match each treated unit to the control unit with the most similar
-value of the estimated propensity score, $\hat{e}_i$ (which is known
-as nearest neighbor matching on the propensity score).  If this
-procedure balances $X$ (and thus satisfies the procedures for checking
-balance we describe in Step 4), then we use it.  If not, then we try
-respecifying the logistic regression by adding interactions or squared
-terms and matching again.  If that works, then we use it.  If not then
-we can try even more elaborate specifications (when necessary perhaps
-even trying other functional forms such as CART, neural network
-analyses, or others).
+value of the estimated propensity score $\hat{e}_i$ (which is known as
+nearest neighbor matching on the propensity score).  If this procedure
+balances $X$ (and thus satisfies the procedures for checking balance
+we describe in Step 4), we use it.  If not, then we respecify the
+logistic regression by adding interactions or squared terms and match
+again.  If that works, then we use it.  If not, we can try even more
+elaborate specifications (when necessary, perhaps even trying other
+functional forms such as CART, neural network analyses, or others).
 
 The collective wisdom of the literature also recommends four more
-specific details of how to use propensity scores.  First, if many more
+specific rules for applying propensity scores.  First, if many more
 control than treatment units are available, consider choosing more
 than one control match for each treated unit.  This will increase the
 efficiency of the procedure (although each match past the first
@@ -1033,8 +1020,8 @@ consider switching the definition of treatment and control groups
 (although, of course, if using ATT, this will change the substantive
 definition of the causal effect).
 
-Second, sometimes we are in the situation of suspecting, from prior
-evidence (but not from the present data set), that a small number of
+Second, we are sometimes in the situation of suspecting from prior
+evidence (but not from the present data set) that a small number of
 covariates have a disproportionately large effect on our outcome
 variable.  When this is the case, even slightly mismatching on these
 variables may severely bias our causal effect.  To avoid this problem,
@@ -1382,21 +1369,21 @@ usual parametric approach.
 \subsection{Causal Effect of Visibility on Candidate
   Evaluations}
 
-For our second application, we replicate a study of citizen
+For our second application, we reanalyze a study of citizen
 evaluations of the ideological positions for candidates for the House
-of Representatives by \citet{Koch02}, which we were able to do
-successfully {\bf I would split this sentence into two}.  The quantity
-of interest is the causal effect of being a highly visible female
-candidate on citizen voter evaluations of the candidate's ideology
-(scored as a seven point ordinal scale, where high scores indicate
-greater conservatism).\footnote{Visibility is measured originally by
-  whether a candidate had campaign expenditures exceeding more than
-  \$750,000.  For simplicity and comparison to \citet{Koch02}, we
-  stipulate to rather than evaluate the appropriateness of these
-  measurements or methods.}  We confine ourselves to studying this
-effect on Republican female candidates, compared to the control of
-invisible male and female candidates (corresponding to the fourth
-column of Table 2 in \citet[p.  459]{Koch02}).
+of Representatives by \citet{Koch02} We begin by replicating the
+analysis, which we did exactly.  The quantity of interest is the
+causal effect of being a highly visible female candidate on citizen
+voter evaluations of the candidate's ideology (scored as a seven point
+ordinal scale, where high scores indicate greater
+conservatism).\footnote{Visibility is measured originally by whether a
+  candidate had campaign expenditures exceeding more than \$750,000.
+  For simplicity and comparison to \citet{Koch02}, we stipulate to
+  rather than evaluate the appropriateness of these measurements or
+  methods.}  We confine ourselves to studying this effect on
+Republican female candidates, compared to the control of invisible
+male and female candidates (corresponding to the fourth column of
+Table 2 in \citet[p.  459]{Koch02}).
 
 Since randomly assigning visibility to candidates in real elections is
 infeasible, \citet{Koch02} collects observational data, with
