@@ -269,67 +269,92 @@ matches on race:\footnote{The examples in this section are for illustrative
 To obtain basic information about the matching procedure: 
 
 \begin{verbatim}
-> print(foo1) 
-
+> print(foo1)
+ 
 Assignment model specification:
 matchit(formula = treat ~ black + hispan, data = lalonde, exact = TRUE)
-
-
+ 
 Sample sizes for full and exactly matched data:
-
+ 
         Treated Control Total
-Full        185     128   313
-Matched     185     128   313
-\end{verbatim}
-
+Full        185     429   614
+Matched     185     429   614
+\end{verbatim} 
+ 
 This returns the original call to \MatchIt.  We also see that all 185
-treatment units were exactly matched to 128 control units on race
+treatment units were exactly matched to all 429 control units on race
 covariates.  
 
-
-
-To check the matched pairs:
+We can obtain more information on the matching using the {\tt summary()} command:
 
 \begin{verbatim}
-> print(foo1$match.matrix)  %$
-            V1
-NSW1      <NA>
-NSW2      <NA>
-NSW3    PSID26
-NSW4    PSID46
-NSW5    PSID24
-NSW6    PSID15
-NSW7    PSID58
-NSW8      <NA>
-NSW9   PSID125
-NSW10   PSID48
-....
+> summary(foo1)
+ 
+Assignment model specification:
+matchit(formula = treat ~ black + hispan, data = lalonde, exact = TRUE)
+ 
+Summary of covariates for all data:
+ 
+       Means Treated Means Control     SD T-stat    Bias
+black        0.84324        0.2028 0.4894 19.344  1.7568
+hispan       0.05946        0.1422 0.3220 -3.409 -0.3489
+  
+Sample sizes for full and exactly matched data:
+ 
+        Treated Control Total
+Full        185     429   614
+Matched     185     429   614
+ 
+Sample sizes by covariates:
+ 
+  black hispan Treated Control Total
+1     1      0     156      87   243
+2     0      1      11      61    72
+3     0      0      18     281   299
+ 
+Number of units discarded:   0
 \end{verbatim}
 
-NSW1 through NSW10 are the names of the treated units (representing
-National Support to Work participants), and column
-\texttt{V1} contains the names of the matched control units
-(representing Population Survey of Income Dynamics respondents).
-\texttt{foo1\$match.matrix} indicates, for example, that no units were
-matched with NSW1 or NSW2 (signified by \texttt{<NA>}), and that NSW3
-was matched with PSID26, NSW4 was matched with PSID46, and so on.  
+We see that the means of the race variables ({\tt black} and {\tt hispan}) are quite different between the groups, but
+that within each subclass formed by these two binary covariates the values of the race variables of the treated and control units within each subclass are the same. 
+These two binary covariates form three subclasses, and we see, for example, that 243 units (156 treated and 87 control) are black and non-hispanic.
 
-We can verify, for example, that the education variables for NSW3 and
-PSID26 are the same:
+We can use the {\tt psclass} component of {\tt foo1} to identify which units are in each subclass and to verify their covariate values:
 
+To see ID numbers of the first 20 units in subclass 1 (``NSW'' refers to the National Supported Work Demonstration participants):
 \begin{verbatim}
-> lalonde[c("NSW3","PSID26"),c("treat","educ","nodegree")]
-       treat educ nodegree
-NSW3       1   12        0
-PSID26     0   12        0
+> row.names(foo1$data)[foo1$psclass==1][1:20]
+ [1] "NSW1"  "NSW3"  "NSW4"  "NSW5"  "NSW6"  "NSW7"  "NSW8"  "NSW9"  "NSW11"
+[10] "NSW12" "NSW13" "NSW14" "NSW15" "NSW16" "NSW17" "NSW18" "NSW19" "NSW20"
+[19] "NSW21" "NSW24"
 \end{verbatim}
 
-In other words, the matched control and treatment units both finished
-twelve years of schooling.\footnote{Note that since we're only
-  matching on education, there are a large number of potential control
-  units that may match treated units.  The exact matching algorithm
-  resolves ``tied'' control units by random draw, so running the same
-  line might provide a different set of matches.}
+To confirm the covariate values of the units in subclass 2 (``PSID'' refers to individuals in the Panel Survey of Income Dynamics):
+\begin{verbatim}
+> foo1$data[foo1$psclass==2,c("black", "hispan")][1:20,]
+       black hispan
+NSW2       0      1
+NSW28      0      1
+NSW44      0      1
+NSW87      0      1
+NSW100     0      1
+NSW112     0      1
+NSW129     0      1
+NSW167     0      1
+NSW173     0      1
+NSW177     0      1
+NSW180     0      1
+PSID9      0      1
+PSID16     0      1
+PSID17     0      1
+PSID21     0      1
+PSID22     0      1
+PSID28     0      1
+PSID31     0      1
+PSID40     0      1
+PSID45     0      1
+\end{verbatim}
+
 
 \subsection{Propensity Score Matching}
 
@@ -341,38 +366,150 @@ pre-treatment covariates composed of real earnings in 1974 and 1975:
 > foo2 <- matchit(treat ~ re74 + re75, data=lalonde)
 \end{verbatim} 
 
+
 You may again check basic statistics of the \MatchIt\ object by the
 \texttt{print} command:
 
 \begin{verbatim}
 > print(foo2)
-
+ 
 Assignment model specification:
 matchit(formula = treat ~ re74 + re75, data = lalonde)
-
-
+ 
 Summary of propensity score for full and matched samples:
-
-        Means.r Means.t   SD T-stat Bias
-Full       0.62    0.54 0.14  -4.93 0.59
-Matched    0.67    0.54 0.13  -8.84 0.93
-
+ 
+        Means Treated Means Control      SD     T-stat       Bias
+Full           0.3519        0.2795 0.11817  8.2436469  8.202e-01
+Matched        0.3519        0.3520 0.08806 -0.0003493 -3.624e-05
+ 
 Sample sizes:
-
+ 
         Treated Control Total
-Full        185     128   313
-Matched     128     128   256
+Full        185     429   614
+Matched     185     185   370
+ 
 \end{verbatim} 
 
-This reveals simple statistics of the mean of the propensity score for
-full and matched samples, as well as t-statistics and balance bias
-statistics used to assess whether there was a reduction in bias.  So
-we can see that matched samples have not reduced the difference in
-bias very well: in fact, the t-statistic of the propensity score has
-gotten worse, jumping to $-8.8$!  The sample sizes show that by
-conducting a one-to-one matching algorithm we are using all of the
-control units, which is the reason why we're not able to balance units
-very well. 
+We see that 185 control units were matched to the treated units (a ``1-1'' match).  The average propensity scores in the treated and control
+groups are much more similar than in the original groups, with both groups having propensity score means of $0.352$ in the matched samples.  We
+can use the {\tt summary()} command to obtain further information on the original and matched samples:
+
+\begin{verbatim}
+> summary(foo2)
+ 
+Assignment model specification:
+matchit(formula = treat ~ re74 + re75, data = lalonde)
+ 
+Summary of covariates for all data:
+ 
+       Means Treated Means Control        SD T-stat    Bias
+pscore        0.3519        0.2795    0.1182  8.244  0.8202
+re74       2095.5737     5619.2365 6477.9645 -7.246 -0.7211
+re75       1532.0553     2466.4844 3295.6790 -3.278 -0.2903
+ 
+Summary of covariates for matched data:
+ 
+       Means Treated Means Control        SD     T-stat       Bias Reduction
+pscore        0.3519        0.3520 8.806e-02 -0.0003493 -3.624e-05         1
+re74       2095.5737     2040.3275 4.697e+03  0.1129664  1.131e-02         1
+re75       1532.0553     1436.3806 2.849e+03  0.3225721  2.972e-02         1
+ 
+Sample sizes:
+ 
+        Treated Control Total
+Full        185     429   614
+Matched     185     185   370
+ 
+Problematic covariates:
+Number of units discarded:   0
+\end{verbatim}
+
+This reveals simple statistics of the mean of the propensity score and the covariates used in the propensity score specification for
+the full and matched samples, as well as t-statistics and balance bias
+statistics used to assess whether there was a reduction in bias. 
+All three variables (propensity score, 1974 income, and 1975 income) had reductions in bias due to the matching.  For example, the original
+bias in 1974 income was $-0.72$ standard deviations, but is only $0.011$ standard deviations in the matched samples. 
+This one-to-one matching algorithm has thus chosen 185 control individuals who do look very similar to the treated group on the covariates used in the
+matching process (1974 income and 1975 income).  
+
+For further information on the balance in the full and matched samples we can use the {\tt verbose=T} option with {\tt summary()}, which shows the balance
+of all squares and interactions of the covariates used in the matching procedure:
+
+\begin{verbatim}
+> summary(foo2, verbose=T)
+ 
+Assignment model specification:
+matchit(formula = treat ~ re74 + re75, data = lalonde)
+ 
+Summary of covariates and interactions for all data:
+ 
+              Means Treated Means Control        SD  T-stat     Bias
+pscore            3.519e-01     2.795e-01 1.182e-01  8.2436  0.82019
+re74              2.096e+03     5.619e+03 6.478e+03 -7.2456 -0.72108
+re75              1.532e+03     2.466e+03 3.296e+03 -3.2776 -0.29026
+pscorexpscore     1.316e-01     9.312e-02 5.896e-02  8.5621  0.82170
+pscorexre74       3.284e+02     7.620e+02 6.627e+02 -8.1426 -0.74246
+pscorexre75       3.819e+02     4.960e+02 6.953e+02 -1.8020 -0.15444
+re74xre74         2.814e+07     7.756e+07 1.353e+08 -4.5738 -0.43306
+re74xre75         1.312e+07     2.543e+07 5.354e+07 -2.6991 -0.24252
+re75xre75         1.265e+07     1.690e+07 4.478e+07 -0.9365 -0.07568
+ 
+Summary of covariates and interactions for matched data:
+ 
+              Means Treated Means Control        SD     T-stat       Bias
+pscore            3.519e-01     3.520e-01 8.806e-02 -0.0003493 -3.624e-05
+re74              2.096e+03     2.040e+03 4.697e+03  0.1129664  1.131e-02
+re75              1.532e+03     1.436e+03 2.849e+03  0.3225721  2.972e-02
+pscorexpscore     1.316e-01     1.316e-01 4.675e-02  0.0139071  1.444e-03
+pscorexre74       3.284e+02     3.340e+02 5.772e+02 -0.0927353 -9.542e-03
+pscorexre75       3.819e+02     3.959e+02 6.999e+02 -0.1916425 -1.891e-02
+re74xre74         2.814e+07     2.442e+07 1.001e+08  0.3570086  3.261e-02
+re74xre75         1.312e+07     8.919e+06 4.064e+07  0.9939819  8.270e-02
+re75xre75         1.265e+07     7.942e+06 4.229e+07  1.0720362  8.410e-02
+              Reduction
+pscore                1
+re74                  1
+re75                  1
+pscorexpscore         1
+pscorexre74           1
+pscorexre75           1
+re74xre74             1
+re74xre75             1
+re75xre75             0
+ 
+Sample sizes:
+ 
+        Treated Control Total
+Full        185     429   614
+Matched     185     185   370
+ 
+Problematic covariates:
+Number of units discarded:   0
+\end{verbatim}
+
+There are no longer substantially different 1974 or 1975 real earnings in the
+matched sample, and the bias has substantially reduced in the
+propensity score and real earnings.  More specifically, job training
+participants on average earned roughly \$3,523 less in 1974 and \$934 less in 1975 than
+non-participants, significant differences with t-statistics of
+-7.25 and -3.28, respectively.  In the matched sample, the earnings difference
+is only \$56 (t-statistic=0.11) in 1974 and \$96 (t-statistic=0.32)
+in 1975.  Note that \texttt{sum.all} and
+\texttt{sum.matched} automatically calculate the statistics for all
+squares and interactions of covariates specified in the assignment
+model, which is helpful for diagnosing whether balance across
+matched pairs has been attained.  Significant differences in higher
+order interactions usually are a good indication that the assignment
+model needs to be respecified, as discussed in Section \ref{pscorespec}.  The bias reduction indicators,
+calculated in the 
+\texttt{Reduction} column in \texttt{sum.matched} of the {\tt summary} output, additionally
+indicate that there was an absolute reduction in the balance bias in propensity scores and real earnings.
+
+The \texttt{summary} command will additionally report (a) the original
+call of the \MatchIt\ object, (b) whether there are any ``Problematic
+covariates'' that may still be imbalanced in the assignment model, and
+(c) how many units were discarded due to the \texttt{discard} option
+(described below).  In this case there were no units discarded and no ``problematic covariates.''  
 
 We can also check the propensity score and covariate distribution with
 diagnostic plots, which are depicted in Figure~\ref{f2diags}.  These
@@ -434,194 +571,111 @@ Would you like to see density estimates of any other covariates?
 
 \begin{figure}[h]
   \begin{center}
-    \includegraphics[width=2.35in,angle=0]{figs/f2pscore}
-    \includegraphics[width=2.35in,angle=0]{figs/f2pjitter}
+    \includegraphics[width=2.35in,angle=0]{figs/f2figa}
+    \includegraphics[width=2.35in,angle=0]{figs/f2figb}
     \hfill
     \caption{Sample interactive diagnostic graphs}
     \label{f2diags}
   \end{center}
 \end{figure}
 
-Examining these graphs in Figure~\ref{f2diags}, it does not appear from the left-hand graph (the first graph from the
-\texttt{plot} command) that the matched samples
-are quite similar.  In fact, as we noted before, the number of control units in the PSID sample is actually
-less than the number of treated units.  This means that matching
-without replacement is unlikely to decrease bias, since one is still
-using all control units.  Hence, suppose we wanted to match with replacement:
+Examining these graphs in Figure~\ref{f2diags}, we see that the matched samples are very well matched on the propensity score, with very similar distributions
+in the matched treated and control groups.
 
-\begin{verbatim}
-> foo2a <- matchit(treat ~ re74 + re75, data=lalonde, replace=TRUE)
-\end{verbatim} 
-
-The diagnostic graphs in Figure~\ref{f2diags_replace} look somewhat better. 
-
-\begin{figure}[h]
-  \begin{center}
-    \includegraphics[width=2.35in,angle=0]{figs/f2pscore_r}
-    \includegraphics[width=2.35in,angle=0]{figs/f2pjitter_r}
-    \hfill
-    \caption{Sample interactive diagnostic graphs}
-    \label{f2diags_replace}
-  \end{center}
-\end{figure}
-
-We can also check means tests and balance statistics:
-
-\begin{footnotesize}
-\begin{verbatim}
-> foo2a$sum.all
-          means.t.all means.c.all       sd.all  t.all bias.all
-pscore           0.62        0.54         0.14  -4.93     0.59
-re74          2095.57     5566.87      6199.23   4.72    -0.56
-re75          1532.06     2610.70      4362.80   1.97    -0.25
-re74xre74 28141411.57 83216152.51 135805662.85   3.40    -0.41
-re74xre75 13118578.32 31267090.48  72443160.98   1.98    -0.25
-re75xre75 12654750.32 37625849.46  94943567.75   2.03    -0.26
-Number         185.00      128.00       313.00 313.00   313.00
-> foo2a$sum.matched
-            means.t.m   means.c.m         sd.m t.matched bias.matched reduction
-pscore           0.62        0.62         0.10     -1.85         0.00         1
-re74          2095.57     2041.34      4775.26      1.71         0.01         1
-re75          1532.06     1251.34      3071.87      0.21         0.06         1
-re74xre74 28141411.57 25740726.49 104469102.06      1.28         0.02         1
-re74xre75 13118578.32  8967690.87  45198031.40      0.63         0.06         1
-re75xre75 12654750.32  9975368.67  53256124.72      0.60         0.03         1
-Number         185.00       80.00       265.00    265.00       265.00       265
-\end{verbatim}
-\end{footnotesize}
-
-which may also be obtained by using the \texttt{summary} command:
-
-\begin{footnotesize}
-\begin{verbatim}
-> summary(foo2a)
-
-Assignment model specification:
-matchit(formula = treat ~ re74 + re75, data = lalonde, replace = TRUE)
-
-Summary of covariates and interactions for all data:
-
-          means.t.all means.c.all       sd.all  t.all bias.all
-pscore           0.62        0.54         0.14  -4.93     0.59
-re74          2095.57     5566.87      6199.23   4.72    -0.56
-re75          1532.06     2610.70      4362.80   1.97    -0.25
-re74xre74 28141411.57 83216152.51 135805662.85   3.40    -0.41
-re74xre75 13118578.32 31267090.48  72443160.98   1.98    -0.25
-re75xre75 12654750.32 37625849.46  94943567.75   2.03    -0.26
-Number         185.00      128.00       313.00 313.00   313.00
-
-Summary of covariates and interactions for matched data:
-
-            means.t.m   means.c.m         sd.m t.matched bias.matched reduction
-pscore           0.62        0.62         0.10     -1.97         0.00         1
-re74          2095.57     2041.34      4775.68      1.84         0.01         1
-re75          1532.06     1251.34      3072.15      0.32         0.06         1
-re74xre74 28141411.57 25740726.49 104478317.35      1.36         0.02         1
-re74xre75 13118578.32  8967690.87  45202018.35      0.70         0.06         1
-re75xre75 12654750.32  9975368.67  53260822.48      0.66         0.03         1
-Number         185.00       77.00       262.00    262.00       262.00       262
-
-Problematic covariates:  
-Number of units discarded:   0
-\end{verbatim}
-\end{footnotesize}
-
-There are no longer substantially different 1974 or 1975 real earnings in the
-matched sample, and the bias has substantially reduced in the
-propensity score and real earnings.  More specifically, job training
-participants on average earned roughly \$3,470 less in 1974 and \$1,080 less in 1975 than
-non-participants, significant differences with t-statistics of
-4.72 and 1.97, respectively.  In the matched sample, the earnings difference
-is only \$54 (t-statistic=1.71) in 1974 and \$281 (t-statistic=0.21)
-in 1975.  Note that \texttt{sum.all} and
-\texttt{sum.matched} automatically calculate the statistics for all
-squares and interactions of covariates specified in the assignment
-model, which is helpful for diagnosing whether balance across
-matched pairs has been attained.  Significant differences in higher
-order interactions usually are a good indication that the assignment
-model needs to be respecified.  The balance bias statistics,
-calculated in the 
-\texttt{reduction} column in \texttt{sum.matched}, additionally
-indicate that there was an absolute
-reduction in the balance bias in propensity scores and real earnings.
-
-The \texttt{summary} command will additionally report (a) the original
-call of the \MatchIt\ object, (b) whether there are any ``Problematic
-covariates'' that may still be imbalanced in the assignment model, and
-(c) how many units were discarded due to the \texttt{discard} option
-(described below). 
-
-Note also that only 80 control units were used in the matching
-process, as seen the \texttt{Number} row of \texttt{sum.matched}. 
-By looking at \texttt{foo2a\$weights} we can also examine how many times each of the control units was
-matched to a treated unit.
-
-\begin{footnotesize}
-\begin{verbatim}
-> foo2a$weights[foo2a$treat==0]
-  PSID1   PSID2   PSID3   PSID4   PSID5   PSID6   PSID7   PSID8   PSID9  PSID10 
-      2       1       3       2       0       2       1       2       2       2 
- PSID11  PSID12  PSID13  PSID14  PSID15  PSID16  PSID17  PSID18  PSID19  PSID20 
-      2       0       1       2       4       4       5       3       1       1 
- PSID21  PSID22  PSID23  PSID24  PSID25  PSID26  PSID27  PSID28  PSID29  PSID30 
-      4       1       1       3       2       4       1       4       3       3 
-....
-\end{verbatim}
-\end{footnotesize}
+[IN THE EARLIER VERSION WE HAD AN EXAMPLE HERE OF MATCHING WITH REPLACEMENT BECAUSE MATCHING WITHOUT REPLACEMENT DIDN'T WORK VERY WELL.  I CUT IT OUT, BUT
+DO WE WANT AN EXAMPLE WITH REPLACEMENT SOMEWHERE?]
 
 \subsection{Propensity Score Matching with Exact Restriction}
 
-Now suppose we wanted to match on a propensity score specification with only real earnings in 1974, 
+Now suppose we wanted to match on a propensity score specification with real earnings in 1974 and 1975, 
 as well as exact match on race:
 
 \begin{verbatim}
-> foo3 <- matchit(treat ~ re74, exact=c("black","hispan"),
+> foo3 <- matchit(treat ~ re74 + re75, exact=c("black","hispan"),
   data=lalonde)
+> print(foo3)
+ 
+Assignment model specification:
+matchit(formula = treat ~ re74 + re75, data = lalonde, exact = c("black",     "hispan"))
+ 
+ 
+Summary of propensity score for full and matched samples:
+ 
+        Means Treated Means Control      SD T-stat   Bias
+Full           0.3519        0.2795 0.11817  8.244 0.8202
+Matched        0.3851        0.3349 0.08021  5.018 1.1226
+ 
+Sample sizes:
+ 
+        Treated Control Total
+Full        185     429   614
+Matched     116     116   232
 \end{verbatim}
 
-We can easily verify that the race variables in the matched samples
+Exact matches on race were found for only 116 of the treated units, and so there are 116 treated and 116 control units in the matched samples.  We can 
+easily verify that the race variables in the matched samples
 are the same:
 
 \begin{verbatim}
-> foo3$sum.all[c("hispan","black"),]
-       means.t.all means.c.all sd.all t.all bias.all
-hispan        0.06        0.12   0.28  1.73    -0.21
-black         0.84        0.45   0.47 -7.55     0.84
-> foo3$sum.matched[c("hispan","black"),]
-       means.t.m means.c.m sd.m t.matched bias.matched reduction
-hispan      0.13      0.13 0.33         0            0         1
-black       0.67      0.67 0.47         0            0         1
+> sum.foo3 <- summary(foo3)
+> sum.foo3$sum.all[c("hispan","black"),]
+       Means Treated Means Control        SD    T-stat       Bias
+hispan    0.05945946     0.1421911 0.3219967 -3.409136 -0.3488957
+black     0.84324324     0.2027972 0.4894132 19.344264  1.7567745
+> sum.foo3$sum.matched[c("hispan","black"),]
+       Means Treated Means Control        SD T-stat Bias Reduction
+hispan    0.09482759    0.09482759 0.2936101      0    0         1
+black     0.75000000    0.75000000 0.4339489      0    0         1
 \end{verbatim}
 
-Before matching, 84\% of participants were black, compared to only
-45\% of the non-participants.  In the matched samples, black participants
-and non-participants comprise 67\% of the observations. 
+{\tt summary(foo3)\$sum.all} gives a summary of the covariates before matching.  {\tt summary(foo3)\$sum.matched} gives
+the comparable summaries on the matched samples. Before matching, 84\% of participants were black, compared to only
+20\% of the non-participants.  In the matched samples, black participants
+and non-participants comprise 75\% of the observations. 
 
-It is also easy to extract the matched subsetted data:
-% ** [are we
-% outputting this directly for Zelig portion -- currently even with
-% weights, we can't... Why not? With the weights, can't we just
-% output data[weights!=0,]?? That will output all of the people
-% in data who were matched, and it works because weights should have the same
-% length as the number of observations in data.  (liz) ]:
+It is also easy to extract the matched subsetted data using the {\tt match.data()} command.  The following three commands output the full matched data set,
+the matched treated group, and the matched control group, respectively: 
 
 \begin{verbatim}
-> fm <- na.omit(foo3$match.matrix)            #deleting non-matched units
-> matched.treated <- lalonde[row.names(fm),]  #subsetting treated units
-> matched.controls <- lalonde[as.character(fm[,1]),]        #subsetting control units
+dta.matched <- match.data(foo3)
+dta.treated <- match.data(foo3, group = "treat")
+dta.control <- match.data(foo3, group = "control")
 \end{verbatim}
 
-We can further verify that every matched pair is identical
+We can examine which units were matched to which using the {\tt match.matrix} output:
+\begin{verbatim}
+> foo3$match.matrix
+            V1
+NSW1   PSID406
+NSW2   PSID385
+NSW3   PSID388
+NSW4   PSID326
+NSW5   PSID337
+NSW6   PSID376
+NSW7   PSID134
+NSW8   PSID355
+NSW9      <NA>
+NSW10  PSID422
+...  
+\end{verbatim}
+
+The  unit numbers on the left are the treated units; the units in the 2nd column are the controls matched to each treated unit.  For example, PSID Unit 406 was
+matched to NSW Unit 1.  NSW Unit 9 did not have a match.  
+We can verify that the matched pairs are identical
 in \texttt{black} and \texttt{hispan}:
 
 \begin{verbatim}
-> mt <- matched.treated[,c("black","hispan")]  # subsetting the race indicators
-> mc <- matched.controls[,c("black","hispan")]
-> attributes(mt) <- NULL   # to strip names for identical() test
-> attributes(mc) <- NULL
-> identical(mt,mc)  #testing whether the arrays are identical
-[1] TRUE
+> lalonde[c("NSW1", "PSID406"), c("black", "hispan")]
+        black hispan
+NSW1        1      0
+PSID406     1      0
+
+> lalonde[c("NSW2", "PSID385"), c("black", "hispan")]
+        black hispan
+NSW2        0      1
+PSID385     0      1
 \end{verbatim}
+
 
 \subsection{Replication of Dehejia \& Wahba}
 
@@ -642,67 +696,122 @@ the \texttt{discard} option (which drops control units outside
 the support of the treated group's propensity scores, and (c) matching with replacement. 
 
 \subsection{Non-matched and Discarded Units}
-The objects \texttt{in.sample} and \texttt{weights} give you all the
+The output objects \texttt{in.sample} and \texttt{psweights} give you all the
 information about non-matched and discarded units.  \texttt{in.sample}
 is a logical vector that indicates whether the unit was discarded due
 to the common support conditions (the \texttt{discard} option), while
-\texttt{weights} gives information on whether the unit was matched.
+\texttt{psweights} gives information on whether the unit was matched.
 If for observation $i$, \texttt{in.sample}[i] is TRUE and
 \texttt{weights}[i] is $0$, then unit $i$ was eligible for matching
 but not used.  If \texttt{in.sample}[i] is FALSE, then
 \texttt{weights}[i] will be $0$.  
 
-For example, suppose we run the following assignment model:
+For example, suppose we use the assignment model from above:
 
 \begin{verbatim}
-> foo <- matchit(treat ~ age + educ, data=lalonde, discard=2, replace=TRUE)
+> foo <- matchit(treat ~ age + I(age^2) + educ + I(educ^2) + black +
+  hispan + married + nodegree + re74  + I(re74^2) + re75 + I(re75^2) +
+  I(as.numeric(re74==0)) + I(as.numeric(re75==0)), data=lalonde,
+  replace=1,discard=1)
 \end{verbatim}
 
 We can tell which units were discarded because of support conditions:
 
 \begin{verbatim}
 > foo$in.sample[!foo$in.sample]
-  PSID4  PSID10  PSID12  PSID13  PSID22  PSID24  PSID27  PSID29  PSID30  PSID33 
-  FALSE   FALSE   FALSE   FALSE   FALSE   FALSE   FALSE   FALSE   FALSE   FALSE 
- PSID37  PSID38  PSID48  PSID56  PSID79  PSID87 PSID103 PSID109 PSID110 PSID115 
-  FALSE   FALSE   FALSE   FALSE   FALSE   FALSE   FALSE   FALSE   FALSE   FALSE 
-PSID116 PSID127 
-  FALSE   FALSE 
+   NSW5    NSW8   NSW51   NSW62   NSW63   NSW66   NSW71  NSW109  NSW136  NSW151
+  FALSE   FALSE   FALSE   FALSE   FALSE   FALSE   FALSE   FALSE   FALSE   FALSE
+ NSW164  NSW178   PSID3  PSID11  PSID16  PSID34  PSID39  PSID40  PSID44  PSID47
+  FALSE   FALSE   FALSE   FALSE   FALSE   FALSE   FALSE   FALSE   FALSE   FALSE
+ PSID50  PSID53  PSID57  PSID63  PSID64  PSID65  PSID67  PSID68  PSID71  PSID77
+  FALSE   FALSE   FALSE   FALSE   FALSE   FALSE   FALSE   FALSE   FALSE   FALSE
+ PSID81  PSID83  PSID87 PSID100 PSID101 PSID104 PSID107 PSID108 PSID109 PSID111
+  FALSE   FALSE   FALSE   FALSE   FALSE   FALSE   FALSE   FALSE   FALSE   FALSE
+PSID115 PSID117 PSID119 PSID120 PSID125 PSID129 PSID130 PSID133 PSID135 PSID143
+  FALSE   FALSE   FALSE   FALSE   FALSE   FALSE   FALSE   FALSE   FALSE   FALSE
+PSID146 PSID147 PSID149 PSID152 PSID162 PSID163 PSID175 PSID176 PSID181 PSID186
+  FALSE   FALSE   FALSE   FALSE   FALSE   FALSE   FALSE   FALSE   FALSE   FALSE
+PSID190 PSID198 PSID201 PSID203 PSID204 PSID205 PSID206 PSID209 PSID212 PSID214
+  FALSE   FALSE   FALSE   FALSE   FALSE   FALSE   FALSE   FALSE   FALSE   FALSE
+PSID222 PSID223 PSID233 PSID238 PSID242 PSID243 PSID246 PSID249 PSID252 PSID254
+  FALSE   FALSE   FALSE   FALSE   FALSE   FALSE   FALSE   FALSE   FALSE   FALSE
+PSID257 PSID259 PSID262 PSID270 PSID272 PSID286 PSID287 PSID288 PSID294 PSID296
+  FALSE   FALSE   FALSE   FALSE   FALSE   FALSE   FALSE   FALSE   FALSE   FALSE
+PSID297 PSID298 PSID303 PSID304 PSID307 PSID309 PSID311 PSID319 PSID329 PSID332
+  FALSE   FALSE   FALSE   FALSE   FALSE   FALSE   FALSE   FALSE   FALSE   FALSE
+PSID346 PSID350 PSID354 PSID359 PSID360 PSID363 PSID364 PSID387 PSID390 PSID395
+  FALSE   FALSE   FALSE   FALSE   FALSE   FALSE   FALSE   FALSE   FALSE   FALSE
+PSID396 PSID403 PSID404 PSID421 PSID426 PSID427
+  FALSE   FALSE   FALSE   FALSE   FALSE   FALSE
 \end{verbatim}
 
 And we can also tell which units were not matched despite meeting
 support conditions:
 
 \begin{verbatim}
-> foo$weights[foo$in.sample & foo$weights==0]
-  PSID1   PSID3   PSID5   PSID6   PSID7   PSID8   PSID9  PSID11  PSID15  PSID16 
-      0       0       0       0       0       0       0       0       0       0 
- PSID17  PSID19  PSID20  PSID23  PSID28  PSID32  PSID35  PSID36  PSID39  PSID41 
-      0       0       0       0       0       0       0       0       0       0 
- PSID42  PSID44  PSID45  PSID46  PSID49  PSID51  PSID52  PSID55  PSID57  PSID59 
-      0       0       0       0       0       0       0       0       0       0 
- PSID70  PSID81  PSID84  PSID85  PSID91  PSID94  PSID95  PSID99 PSID100 PSID101 
-      0       0       0       0       0       0       0       0       0       0 
-PSID104 PSID106 PSID108 PSID112 PSID117 PSID118 PSID120 PSID124 
-      0       0       0       0       0       0       0       0 
+
+> foo$psweights[foo$in.sample & foo$psweights==0]
+  PSID1   PSID2   PSID4   PSID5   PSID7   PSID9  PSID12  PSID13  PSID14  PSID18
+      0       0       0       0       0       0       0       0       0       0
+ PSID19  PSID20  PSID21  PSID22  PSID23  PSID24  PSID25  PSID26  PSID28  PSID29
+      0       0       0       0       0       0       0       0       0       0
+ PSID30  PSID31  PSID32  PSID35  PSID36  PSID38  PSID42  PSID43  PSID45  PSID46
+      0       0       0       0       0       0       0       0       0       0
+ PSID49  PSID51  PSID52  PSID54  PSID55  PSID56  PSID58  PSID60  PSID61  PSID62
+      0       0       0       0       0       0       0       0       0       0
+ PSID70  PSID72  PSID73  PSID74  PSID75  PSID76  PSID78  PSID79  PSID80  PSID82
+      0       0       0       0       0       0       0       0       0       0
+...
 \end{verbatim}
 
 One could further wonder how the discarded units differ from the
 treated units in the NSW experiment:
 
 \begin{verbatim}
-> sdisc <- apply(lalonde[!foo$in.sample,],2,mean)   #taking column-wise means
+> sdisc <- apply(lalonde[!foo$in.sample,],2,mean) #taking column-wise means
 > streat <- apply(lalonde[lalonde$treat==1,],2,mean)
-> round(rbind(sdisc,streat),2)                      #rounding 
+> round(rbind(sdisc,streat),2) #rounding
        treat   age  educ black hispan married nodegree    re74    re75    re78
-sdisc      0 53.23 11.00  0.23   0.18    1.00     0.36 5027.30 2752.70 1054.56
-streat     1 25.82 10.35  0.84   0.06    0.19     0.71 2095.57 1532.06 6349.14
+sdisc    0.1 35.59  9.94  0.13   0.05    0.70     0.58 7484.53 2309.50 7760.00
+streat   1.0 25.82 10.35  0.84   0.06    0.19     0.71 2095.57 1532.06 6349.14
 \end{verbatim}
 
 So the units that were discarded because of support conditions were on
-average more than twice as old as the treated units, were much less
-likely to be black, were all married, and much more likely to have
-high school degrees.  
+average about ten years older than the treated units, were much less
+likely to be black, were more likely to be married, more likely to have
+high school degrees, and had much higher income, particularly in 1974.  
+
+We can also use the {\tt psweights} output to examine how many times the control units were matched (for matching
+with replacement).  Printing out {\tt psweights} shows the weights themselves. Each matched treated unit has a weight of one, whereas each matched control
+unit has a weight proportional to the number of times it was matched:
+
+\begin{verbatim}
+> print(foo$psweights[foo$data$treat==1][1:10])
+ NSW1  NSW2  NSW3  NSW4  NSW5  NSW6  NSW7  NSW8  NSW9 NSW10
+    1     1     1     1     0     1     1     0     1     1
+
+> print(foo$psweights[foo$data$treat==0][1:20])
+    PSID1     PSID2     PSID3     PSID4     PSID5     PSID6     PSID7     PSID8
+0.0000000 0.0000000 0.0000000 0.0000000 0.0000000 1.1271676 0.0000000 2.6300578
+    PSID9    PSID10    PSID11    PSID12    PSID13    PSID14    PSID15    PSID16
+0.0000000 0.3757225 0.0000000 0.0000000 0.0000000 0.0000000 0.3757225 0.0000000
+   PSID17    PSID18    PSID19    PSID20
+0.7514451 0.0000000 0.0000000 0.0000000
+\end{verbatim}
+
+NSW Unit 8 was not matched and thus has a weight of 0.  We need to re-scale the control unit weights to see how many times each control
+was matched.  The sum of the control group weights adds up to the number of uniquely matched control units, so we re-scale by the number of treated units
+matched divided by the number of control units matched:
+
+\begin{verbatim}
+> print((foo$psweights[foo$data$treat==0]*sum(foo$psweights[foo$data$treat==1])/sum(foo$psweights[foo$data$treat==0]))[1:20])
+ PSID1  PSID2  PSID3  PSID4  PSID5  PSID6  PSID7  PSID8  PSID9 PSID10 PSID11
+     0      0      0      0      0      3      0      7      0      1      0
+PSID12 PSID13 PSID14 PSID15 PSID16 PSID17 PSID18 PSID19 PSID20
+     0      0      0      1      0      2      0      0      0
+\end{verbatim}
+
+We see that PSID unit 8 was matched 7 times, whereas unit 15 was used as a match only once.  
 
 \subsection{Subclassification}
 
@@ -724,51 +833,61 @@ the nearest neighbor matching algorithm entirely by setting
 > foo2 <- matchit(treat ~ age + educ + black + hispan + married +
   nodegree + re74 + re75, data=lalonde, nearest=FALSE, replace=TRUE,
   subclass=6)
-> print(foo2$match.matrix) %$
-[1] NA
 \end{verbatim}
 
 Figure \ref{diags} presents diagnostic graphs from \texttt{plot(foo2)}.  
 
 \begin{figure}[tbp]
   \begin{center}
-    \includegraphics[width=2.35in,angle=0]{figs/pscore}
-    \includegraphics[width=2.35in,angle=0]{figs/pjitter}
-    \includegraphics[width=2.35in,angle=0]{figs/re75dens}
-    \includegraphics[width=2.35in,angle=0]{figs/sub3educ}
+    \includegraphics[width=2.35in,angle=0]{figs/subclass1}
+    \includegraphics[width=2.35in,angle=0]{figs/subclass2}
+    \includegraphics[width=2.35in,angle=0]{figs/subclass3}
+    \includegraphics[width=2.35in,angle=0]{figs/subclass4}
     \hfill
     \caption{Sample interactive diagnostic graphs from \texttt{demo(lalonde)}}
 \label{diags}
 \end{center}
 \end{figure}
 
-\texttt{q.table} can be an easy way to provide summaries across
-subclasses.  For example, to examine summary statistics for the
-propensity score across all six subclasses:
+We can also summarize the results using the {\tt print()} command:
 
-\begin{footnotesize}
 \begin{verbatim}
-> foo1$q.table[1,,]
-            Subclass 1 Subclass 2 Subclass 3 Subclass 4 Subclass 5 Subclass 6
-means.t.q         0.39       0.71       0.83       0.89       0.94       0.96
-means.c.q         0.40       0.70       0.83       0.90       0.94       0.96
-sd.q              0.16       0.05       0.02       0.02       0.01       0.00
-t.q               0.31      -0.54       0.26       1.65       3.22      -0.10
-bias.q           -0.04       0.02       0.00      -0.02      -0.02       0.00
-reduction.q       1.00       1.00       1.00       1.00       1.00       1.00
+> print(foo2)
+ 
+Assignment model specification:
+matchit(formula = treat ~ age + educ + black + hispan + married +     nodegree + re74 + re75, data = lalonde, nearest = FALSE,     replace = TRUE, subclass = 6)
+ 
+Summary of propensity score for full sample:
+ 
+     Means Treated Means Control     SD T-stat  Bias
+Full        0.5774        0.1822 0.2903  20.14 1.794
+ 
+Sample sizes:
+ 
+     Treated Control Total
+Full     185     429   614
+ 
+ 
+Summary of propensity score by subclasses:
+ 
+              Subclass 1 Subclass 2 Subclass 3 Subclass 4 Subclass 5 Subclass 6
+Means Treated    0.13761    0.50815    0.62615   0.682281    0.72963    0.78055
+Means Control    0.07627    0.46688    0.62923   0.682351    0.73457    0.77741
+SD               0.06753    0.06705    0.01897   0.014952    0.01516    0.02037
+T-stat           4.20947    2.40592   -0.53366  -0.017308   -1.05718    0.38338
+Bias             0.77817    0.60165   -0.15852  -0.004403   -0.34684    0.14896
+ 
+Sample sizes by subclasses:
+ 
+        Subclass 1 Subclass 2 Subclass 3 Subclass 4 Subclass 5 Subclass 6
+Treated         31         31         29         32         31         31
+Control        346         24         17         21         18          3
+Total          377         55         46         53         49         34
 \end{verbatim}
-\end{footnotesize}
 
-Or to examine for how many covariates, squares and interactions there's been a reduction in the
-``balance bias'' for each subclass: 
+\texttt{q.table} in the {\tt summary()} output is also an easy way to provide summaries across
+subclasses.  
 
-\begin{footnotesize}
-\begin{verbatim}
-> apply(foo1$q.table[,6,]==1,2,sum,na.rm=T)
-Subclass 1 Subclass 2 Subclass 3 Subclass 4 Subclass 5 Subclass 6 
-        30         24         23         31         42         38 
-\end{verbatim}
-\end{footnotesize}
 
 \subsection{Exact Matching on All Covariates}
 
@@ -776,30 +895,49 @@ To match exactly on all covariates:
 
 \begin{verbatim}
 > foo <- matchit(treat ~ age + educ + black + hispan + married +
-  nodegree + re74 + re75, data=lalonde, exact=TRUE, replace=TRUE)
++                nodegree + re74 + re75, data=lalonde, exact=TRUE)
+
+> summary(foo)
+ 
+Assignment model specification:
+matchit(formula = treat ~ age + educ + black + hispan + married +     nodegree + re74 + re75, data = lalonde, exact = TRUE)
+ 
+Summary of covariates for all data:
+ 
+         Means Treated Means Control        SD  T-stat     Bias
+age          2.582e+01       28.0303    9.8812 -2.9911 -0.30945
+educ         1.035e+01       10.2354    2.6283  0.5468  0.05496
+black        8.432e-01        0.2028    0.4894 19.3443  1.75677
+hispan       5.946e-02        0.1422    0.3220 -3.4091 -0.34890
+married      1.892e-01        0.5128    0.4932 -8.5961 -0.82407
+nodegree     7.081e-01        0.5967    0.4831  2.7127  0.24431
+re74         2.096e+03     5619.2365 6477.9645 -7.2456 -0.72108
+re75         1.532e+03     2466.4844 3295.6790 -3.2776 -0.29026
+ 
+ 
+Sample sizes for full and exactly matched data:
+ 
+        Treated Control Total
+Full        185     429   614
+Matched      13      12    25
+ 
+Sample sizes by covariates:
+ 
+  age educ black hispan married nodegree re74 re75 Treated Control Total
+1  21   13     1      0       0        0    0    0       1       1     2
+2  18   10     1      0       0        1    0    0       1       2     3
+3  17   10     1      0       0        1    0    0       4       2     6
+4  20   12     1      0       0        0    0    0       1       2     3
+5  17    8     1      0       0        1    0    0       3       2     5
+6  18   11     1      0       0        1    0    0       2       2     4
+7  19   11     1      0       0        1    0    0       1       1     2
+ 
+Number of units discarded:   0
 \end{verbatim}
 
-Or more simply,
 
-\begin{verbatim}
-> foo <- matchit(treat~age,exact=names(lalonde)[2:9],
-  data=lalonde,replace=TRUE)
-> print(na.omit(foo$match.matrix)) %$
-           V1
-NSW7   PSID50
-NSW21  PSID49
-NSW27  PSID14
-NSW35  PSID40
-NSW50  PSID50
-NSW54  PSID40
-NSW74  PSID40
-NSW81  PSID40
-NSW93  PSID14
-NSW103 PSID14
-\end{verbatim}
-
-Hence out of the 185 observations in the NSW sample, only 10 exact
-matches exist when matching with replacement.
+Hence out of the 185 observations in the NSW sample, only 25 units have exact
+matches. 
 
 \subsection{Caliper Matching}
 
@@ -1073,10 +1211,11 @@ The basic syntax to \texttt{matchit} is quite similar to other models in R, such
 \texttt{lm} or \texttt{glm} models: 
 
 \begin{verbatim}
-matchit <- function(formula, data=NULL, discard=0, exact=FALSE,
-           replace=FALSE, ratio=1, model="logit", reestimate=FALSE,
-           nearest=TRUE, m.order=2, caliper=0, calclosest=FALSE,
-           mahvars=NULL, subclass=0, subtype=1, interact=TRUE, ...)
+matchit <- function(formula, data, model="logit", discard=0,
+                    reestimate=FALSE, nearest=TRUE, replace=FALSE,
+                    m.order=2, ratio=1, caliper=0, calclosest=FALSE,
+                    subclass=0, sub.by="treat", mahvars=NULL, exact=FALSE,
+                    counter=TRUE,...)
 \end{verbatim}
 
 \subsection{Inputs}
@@ -1097,6 +1236,24 @@ matchit <- function(formula, data=NULL, discard=0, exact=FALSE,
   variables called in the formula.  You may find it helpful for the
   diagnostics to specify observation names in the data frame.  To do
   this, see Section~\ref{rnames}.
+
+\item \textbf{Assignment Model.}The assignment model estimation may be
+  changed by \texttt{model}, which specifies the method used to estimate the propensity score:
+  \begin{enumerate}
+  \item \texttt{logit}, the default method, implements a logistic regression.  See
+    {\tt help(glm)} for more options. 
+  \item \texttt{probit} implements a probit regression.  See
+    {\tt help(glm)} for more options. 
+  \item \texttt{nnet} implements a neural network in the
+    \texttt{nnet} library, with a default size of 3.  See {\tt
+      help(nnet)} for more options.
+  \item \texttt{GAM} implements a generalized additive model 
+    as in the \texttt{mgcv} library.  See
+    {\tt help(gam)} for more options.
+  \item \texttt{cart} implements a classification tree as in the
+    \texttt{rpart} library.  See {\tt help(rpart)} for more
+    options.  
+  \end{enumerate}
 
 \item \textbf{Discarding.} \texttt{discard} specifies whether to discard units that
   fall outside some measure of support of the distance score
@@ -1130,60 +1287,12 @@ matchit <- function(formula, data=NULL, discard=0, exact=FALSE,
     interest and when unwilling to discard control units. 
   \end{itemize}
 
-\item \textbf{Exact Matching.}  \texttt{exact} specifies whether exact
-  matching should be done.  \texttt{FALSE} (default) indicates no exact 
-  matching.  \texttt{TRUE} indicates exact matching on all variables in the 
-  assignment model of the \texttt{formula} (i.e., the propensity score
-  will never be generated).  A vector of variable names indicates separate variables on
-  which to exact match, in combination with matching on the propensity
-  score.  This option will not be different from \texttt{exact=TRUE},
-  unless the list differs from the variables in the formula.\footnote{For
-    example, \texttt{matchit(T \~\ X1 + X2, data, exact=TRUE)} is
-    equivalent to \texttt{matchit(T \~\ X1, data, exact=cbind(X1,X2))}.
-    But \texttt{matchit(T \~\ X1 + X2, data, exact=X1)} will match
-    units exactly only on \texttt{X1} and perform nearest neighbor
-    matching on the propensity score which uses \texttt{X1} and \texttt{X2}.} 
-  Variables should be entered as a vector of names 
-  \texttt{exact=c("X1","X2")} that refer to variable names in \texttt{data}.
-  
-\item \textbf{Replacement matching.} \texttt{replace} is a logical vector which specifies whether
-  to match with replacement, default=FALSE.  Use this to reduce bias
-  when the ratio of control units that are comparable to the treated units
-  is small and when pre-treatment covariates between treatment and
-  control units diverge substantially.  
-
-\item \textbf{Ratio Matching.}  \texttt{ratio} specifies the number of
-  control units to be matched to each treatment unit, default=1.  Use
-  larger integer values when a large number of comparable control units are available to
-  increase efficiency of the estimand. If matching is done without replacement and there are 
-  fewer control units than ratio times the number of eligible treated units (i.e. not enough control
-  units for the specified method), then the higher
-  ratios will have \texttt{NA} in place of the matching unit number.  
-
-\item \textbf{Assignment Model.}The assignment model estimation may be
-  changed by \texttt{model}, which specifies the method used to estimate the propensity score:
-  \begin{enumerate}
-  \item \texttt{logit}, the default method, implements a logistic regression.  See
-    {\tt help(glm)} for more options. 
-  \item \texttt{probit} implements a probit regression.  See
-    {\tt help(glm)} for more options. 
-  \item \texttt{nnet} implements a neural network in the
-    \texttt{nnet} library, with a default size of 3.  See {\tt
-      help(nnet)} for more options.
-  \item \texttt{GAM} implements a generalized additive model 
-    as in the \texttt{mgcv} library.  See
-    {\tt help(gam)} for more options.
-  \item \texttt{cart} implements a classification tree as in the
-    \texttt{rpart} library.  See {\tt help(rpart)} for more
-    options.  
-  \end{enumerate}
-
 \item \textbf{Reestimation.} \texttt{reestimate} specifies whether the
   propensity score model should be re-estimated after units are
   discarded, default=FALSE.  This may be desirable for efficiency
   reasons. 
 % ** [but we have no formal proof for this, right?].  
-  
+
 \item \textbf{Advanced Matching}
   \begin{itemize}
   \item \texttt{nearest} is a logical scalar which specifies whether
@@ -1217,6 +1326,20 @@ matchit <- function(formula, data=NULL, discard=0, exact=FALSE,
     \end{itemize}
   \end{itemize}
 
+\item \textbf{Replacement matching.} \texttt{replace} is a logical vector which specifies whether
+  to match with replacement, default=FALSE.  Use this to reduce bias
+  when the ratio of control units that are comparable to the treated units
+  is small and when pre-treatment covariates between treatment and
+  control units diverge substantially.  
+
+\item \textbf{Ratio Matching.}  \texttt{ratio} specifies the number of
+  control units to be matched to each treatment unit, default=1.  Use
+  larger integer values when a large number of comparable control units are available to
+  increase efficiency of the estimand. If matching is done without replacement and there are 
+  fewer control units than ratio times the number of eligible treated units (i.e. not enough control
+  units for the specified method), then the higher
+  ratios will have \texttt{NA} in place of the matching unit number.  
+
 \item \textbf{Subclassification}
   Subclassification options allow the user to subclassify units along
   the propensity score:
@@ -1225,14 +1348,33 @@ matchit <- function(formula, data=NULL, discard=0, exact=FALSE,
     subclasses, or (2) a vector of probabilities bounded
     between 0 and 1, to create quantiles based on \texttt{subtype}, where the value of
     0 (default) indicates no subclassification.  
-  \item If \texttt{subclass!=0}, \texttt{subtype} may specify by what
-    criteria to subclassify: (0) indicates by the number of control
-    units, (1) indicates by number of treatment units (default), and
-    (2) indicates by the total number of units.  
+  \item If \texttt{subclass!=0}, \texttt{sub.by} may specify by what
+    criteria to subclassify: \texttt{``treat''} indicates by the number of treatment units (default), \texttt{``control''} indicates by the number 
+of control units, and \texttt{``all''} indicates by the total number of units.  
   \end{itemize}
   The subclass options create quantiles corresponding to the given
   probabilities from \texttt{subclass}, using the \texttt{quantile}
   command on the propensity scores of the \texttt{subtype} units. 
+
+\item \textbf{Exact Matching.}  \texttt{exact} specifies whether exact
+  matching should be done.  \texttt{FALSE} (default) indicates no exact 
+  matching.  \texttt{TRUE} indicates exact matching on all variables in the 
+  assignment model of the \texttt{formula} (i.e., the propensity score
+  will never be generated).  A vector of variable names indicates separate variables on
+  which to exact match, in combination with matching on the propensity
+  score.  This option will not be different from \texttt{exact=TRUE},
+  unless the list differs from the variables in the formula.\footnote{For
+    example, \texttt{matchit(T \~\ X1 + X2, data, exact=TRUE)} is
+    equivalent to \texttt{matchit(T \~\ X1, data, exact=cbind(X1,X2))}.
+    But \texttt{matchit(T \~\ X1 + X2, data, exact=X1)} will match
+    units exactly only on \texttt{X1} and perform nearest neighbor
+    matching on the propensity score which uses \texttt{X1} and \texttt{X2}.} 
+  Variables should be entered as a vector of names 
+  \texttt{exact=c("X1","X2")} that refer to variable names in \texttt{data}.
+
+\item \textbf{Counter.} \texttt{counter} specifies whether a counter indicating the progress of the matching should be displayed.  \texttt{TRUE} (default) means
+that this counter will be displayed, \texttt{FALSE} means that it will not be displayed.
+
 \end{enumerate}
   
 \subsection{Output}
@@ -1242,10 +1384,13 @@ note that if outputs are not applicable for the original
 \texttt{matchit} call, they will be returned as \texttt{NA}): 
 
 \begin{enumerate}
-  
+
+\item \texttt{call} provides the original \MatchIt call.
+ 
+\item \texttt{formula} shows the formula used to specify the propensity score model.
+
 \item \texttt{match.matrix} is an $n_1$ by \texttt{ratio} data frame,
   where:
-%** [Need to change match.matrix to match.frame]
 
   \begin{itemize}
   \item the row names, \texttt{row.names(match.matrix)}, store the
@@ -1261,86 +1406,26 @@ note that if outputs are not applicable for the original
      matched.  
    \end{itemize}
 
-See the simple example is Section~\ref{exactm} for an illustration of the
-\texttt{match.matrix} format. 
-
-\item \texttt{pscore} is a vector of $n$ length that contains the estimated propensity scores for
-  all units (i.e., the probability of treatment assignment
-  conditional on the covariates).
-
-\item \texttt{in.sample} is a vector of $n$ length that
+\item \texttt{in.sample} is a vector of length $n$ that
   displays whether the units were eligible for matching due to
   discarding.  If unit $i$ was discarded, \texttt{in.sample[i]=FALSE},
   and if unit $i$ was not discarded \texttt{in.sample[i]=TRUE}.
 
-\item \texttt{weights} is a vector for all observations that provides
+\item \texttt{matched} is a vector of length $n$ that displays whether the units were matched.  \texttt{matched==TRUE} means
+that unit was matched, whereas \texttt{matched==FALSE} means it was not.
+
+\item \texttt{psweights} is a vector for all observations that provides
   the weights assigned to each unit in the 
   matching process.  Unmatched units have weights equal to $0$. Matched
-  treated units have weight $1$.  Matched control units have weight $
-  \sum_{i=1}^{N_m} \frac{1}{c_i} $, where the sum is over the treated
-  units that control unit was matched
-  to, and $c_i$ is the number of control units treated unit $i$
-  was matched to.  The sum of the weights for the control group will equal 
-  the number of treated units that were matched.  
+  treated units have weight $1$.  Each matched control unit has weight proportional to the number of times it was matched.  The sum of the control
+  weights is equal to the number of uniquely matched control units.
 
-\item \texttt{sum.all} is a data frame which contains variable names
-  and interactions down the row names, and summary statistics on \emph{all
-  observations} in each of the
-  columns.  The columns in \texttt{sum.all} contain:
-  \begin{itemize}
-  \item means for treatment units of all covariates $X$ and their
-    interactions, where \texttt{means.t.all}$= \mu_{X|T=1} =
-    \frac{1}{n_1} \sum_{T=1} X_i$ and
-    \texttt{means.c.all}$= \mu_{X|T=0} = \frac{1}{n_0} \sum_{T=0} X_i$,
-  \item standard deviations for all covariates $X$ and their
-    interactions, where \texttt{sd.all}$= s_X = \frac{1}{n-1}
-    \sum_{i} (X_i - \overline{X})$,
-  \item t-statistics from means tests of all covariates $X$ and their
-    interactions \texttt{t.all},\footnote{Note that the t-tests do
-      not assume constant variance across treatment and control
-      groups, using a pooled estimate of the standard deviation.  For
-      this reason, the t-statistics do not correspond to the overall standard
-      deviations reported in \texttt{sd.all} or \texttt{sd.matched}.
-      For more information, see \texttt{help(t.test)}.} and
-  \item matchit bias statistics \texttt{bias.all}$=\frac{\mu_{X|T=1} -
-      \mu_{X|T=0}}{s_{x|T=1}}$, where $s_{x|T=1} = \frac{1}{n_1-1}
-    \sum_{T=1} ( (X_i|T_i=1) - \mu_{X|T=1})$.
-  \end{itemize}
-  The last row of \texttt{sum.all} contains the number of treated
-  units $n_1$, the number of control units $n_0$, and the total number
-  of units $n$. 
+\item \texttt{psclass} contains the subclass index in an ordinal scale
+  from 1 to the total number of subclasses as specified in
+  \texttt{subclass}; a higher subclass refers to a higher propensity
+  score.  Unmatched units have \texttt{psclass=0}.
 
-\item \texttt{sum.matched} is a data frame  
-  which contains variable names
-  and interactions down the row names, and summary statistics on only
-  the  \emph{matched observations} in each of the
-  columns.  Specifically, the columns in \texttt{sum.matched} contains:
-  \begin{itemize}
-  \item weighted means for matched treatment units of all covariates $X$ and their
-    interactions, where \texttt{means.t.m}$= \mu_{wX|T=1} =
-    \frac{1}{n_1} \sum_{T=1} w_iX_i$ and
-    \texttt{means.c.m}$=\mu_{wX|T=0} = \frac{1}{n_0} \sum_{T=0} w_iX_i$,
-  \item standard deviations for all covariates $X$ and their
-    interactions of matched units, where
-    \texttt{sd.m} $= s_wX = \frac{1}{n} \sum_{i} (w_iX_i - \overline{wX})$,
-  \item t-statistics (weighted by matches) from means tests of all covariates $X$ and their
-    interactions \texttt{t.matched},\footnote{Note that the weighted t-tests do
-      not assume constant variance across treatment and control
-      groups, using a pooled estimate of the standard deviation.  For
-      this reason, the weighted t-statistics do not correspond to the overall standard
-      deviations reported in \texttt{sd.all} or \texttt{sd.matched}.
-      For more information, see \texttt{help(t.test)}.}
-  \item balance bias statistics
-  \texttt{bias.matched}$=\frac{\mu_{wX|T=1} -
-  \mu_{wX|T=0}}{s_{x|T=1}}$
-  \item a column indicating whether there was a reduction in the
-  absolute balance bias compared to all units (1 indicates a
-  reduction, and 0 indicates no reduction),
-  \end{itemize}
-  
-  where $w$ represents the vector of \texttt{weights}.   The last row
-  of \texttt{sum.matched} contains the number of matched treated units, the
-  number of matched control units, and the total number of matched units. 
+\item \texttt{q.cut} gives the subclass cut-points.  
 
 \item \texttt{assign.model} stores the output of the assignment
   model.  For example: 
@@ -1366,46 +1451,41 @@ Residual Deviance: 253.1        AIC: 271.1
 \end{verbatim}
 \end{footnotesize}
 
-\item \texttt{treat} stores the treatment indicator
+\item \texttt{data} is a data frame that contains the original data set in the \MatchIt call, as well as three additional variables: \texttt{psclass}, 
+\texttt{psweights}, and \texttt{pscore} (\texttt{pscore} is a vector of $n$ length that contains the estimated propensity scores for
+  all units (i.e., the probability of treatment assignment
+  conditional on the covariates)).
+
+\item \texttt{treat} stores the treatment indicator from \texttt{data}.
 
 \item \texttt{covariates} stores the covariates used in the RHS of the
   assignment model
-
-\item \texttt{qindex} contains the subclass index in an ordinal scale
-  from 1 to the total number of subclasses as specified in
-  \texttt{subclass}; a higher subclass refers to a higher propensity
-  score
-
-\item \texttt{q.table} is an array that contains the same
-  information as \texttt{sum.all} and \texttt{sum.matched} broken
-  down by each subclass (see examples below) 
-
 \end{enumerate}
 
-\begin{table}[tbp]
-  \begin{center}
-    \small
-    \begin{tabular}{lp{5in}}
-      \hline
-      & Description \\ 
-      \hline
-      1 & Means tests of covariates, interactions and squares (overall and
-      within subclass) -- query to include these in respecification of
-      assignment model\\
-      2& Density estimates of any particular covariates \\
-      3& Number of treated and control units in each subclass \\
-      4& Units not matched / discarded (and why they are excluded) \\
-      5& Assignment model estimates \\
-      6& Density estimates of the propensity scores of treatment and
-      control groups (before matching and after) \\
-      7&Estimated bias reduction\\
-      8&Number of exact matches\\
-      \hline
-    \end{tabular}
-    \caption{Diagnostic tools}
-    \label{diagnostic}
-  \end{center}
-\end{table}
+%\begin{table}[tbp]
+%  \begin{center}
+%    \small
+%    \begin{tabular}{lp{5in}}
+%      \hline
+%      & Description \\ 
+%      \hline
+%      1 & Means tests of covariates, interactions and squares (overall and
+%      within subclass) -- query to include these in respecification of
+%      assignment model\\
+%      2& Density estimates of any particular covariates \\
+%      3& Number of treated and control units in each subclass \\
+%      4& Units not matched / discarded (and why they are excluded) \\
+%      5& Assignment model estimates \\
+%      6& Density estimates of the propensity scores of treatment and
+%      control groups (before matching and after) \\
+%      7&Estimated bias reduction\\
+%      8&Number of exact matches\\
+%      \hline
+%    \end{tabular}
+%    \caption{Diagnostic tools}
+%    \label{diagnostic}
+%  \end{center}
+%\end{table}
 
 \subsection{Print, Plot and Summary Commands}
 \subsubsection{Print}
@@ -1415,21 +1495,88 @@ The \texttt{print} command returns (when applicable):
 \item Summary statistics of the propensity score for full and matched
   samples
 \item Summary statistics of the propensity score for each subclass
-\item Sample sizes for full and matched samples
+\item Sample sizes for full and matched samples (full and by subclass)
 \end{enumerate}
 
 \subsubsection{Summary}
 The \texttt{summary} command returns (when applicable):
 \begin{enumerate}
 \item The original assignment model call 
-\item The \texttt{sum.all} and \texttt{sum.matched} outputs 
-\item Problematic covariates that remain imbalanced in the matched
-    sample or in each subclass\footnote{A
-    variable is listed when the absolute value of the t-statistic in
-    the matched sample exceeds 2.5, or when the absolute balance bias is
-    greater in the matched sample than in the full sample.}
-\item The number of units discarded due to the \texttt{discard} option
-\item The \texttt{q.table} output
+%\item Problematic covariates that remain imbalanced in the matched
+%    sample or in each subclass\footnote{A
+%    variable is listed when the absolute value of the t-statistic in
+%    the matched sample exceeds 2.5, or when the absolute balance bias is
+%    greater in the matched sample than in the full sample.}
+\item \texttt{sum.all} is a data frame which contains variable names
+  and interactions down the row names, and summary statistics on \emph{all
+  observations} in each of the
+  columns.  The columns in \texttt{sum.all} contain:
+  \begin{itemize}
+  \item means for treatment units of all covariates $X$, where \texttt{Means Treated}$= \mu_{X|T=1} =
+    \frac{1}{n_1} \sum_{T=1} X_i$ and
+    \texttt{Means Control}$= \mu_{X|T=0} = \frac{1}{n_0} \sum_{T=0} X_i$,
+  \item standard deviations for all covariates $X$, where \texttt{SD}$= s_X = \frac{1}{n-1}
+    \sum_{i} (X_i - \overline{X})$,
+  \item t-statistics from means tests of all covariates $X$, \texttt{T-stat},\footnote{Note that the t-tests do
+      not assume constant variance across treatment and control
+      groups, using a pooled estimate of the standard deviation.  For
+      this reason, the t-statistics do not correspond to the overall standard
+      deviations reported in \texttt{SD}.
+      For more information, see \texttt{help(t.test)}.} and
+  \item matchit bias statistics \texttt{Bias}$=\frac{\mu_{X|T=1} -
+      \mu_{X|T=0}}{s_{x|T=1}}$, where $s_{x|T=1} = \frac{1}{n_1-1}
+    \sum_{T=1} ( (X_i|T_i=1) - \mu_{X|T=1})$.
+  \end{itemize}
+
+\item \texttt{sum.matched} is a data frame  
+  which contains variable names down the row names, and summary statistics on only
+  the  \emph{matched observations} in each of the
+  columns.  Specifically, the columns in \texttt{sum.matched} contains:
+  \begin{itemize}
+  \item weighted means for matched treatment units of all covariates $X$ and their
+    interactions, where \texttt{Means Treated}$= \mu_{wX|T=1} =
+    \frac{1}{n_1} \sum_{T=1} w_iX_i$ and
+    \texttt{Means Control}$=\mu_{wX|T=0} = \frac{1}{n_0} \sum_{T=0} w_iX_i$,
+  \item standard deviations for all covariates $X$ and their
+    interactions of matched units, where
+    \texttt{SD} $= s_wX = \frac{1}{n} \sum_{i} (w_iX_i - \overline{wX})$,
+  \item t-statistics (weighted by matches) from means tests of all covariates $X$ and their
+    interactions \texttt{T-stat},\footnote{Note that the weighted t-tests do
+      not assume constant variance across treatment and control
+      groups, using a pooled estimate of the standard deviation.  For
+      this reason, the weighted t-statistics do not correspond to the overall standard
+      deviations reported in \texttt{SD}.
+      For more information, see \texttt{help(t.test)}.}
+  \item balance bias statistics
+  \texttt{Bias}$=\frac{\mu_{wX|T=1} -
+  \mu_{wX|T=0}}{s_{x|T=1}}$
+  \item a column indicating whether there was a reduction in the
+  absolute balance bias compared to all units (1 indicates a
+  reduction, and 0 indicates no reduction),
+  \end{itemize}
+  
+  where $w$ represents the vector of \texttt{psweights}.   The last row
+  of \texttt{sum.matched} contains the number of matched treated units, the
+  number of matched control units, and the total number of matched units.  
+
+\item Problematic covariates that remain imbalanced in the matched sample or in each subclass.  A variable is listed
+when the absolute value of the t-statistic in the matched sample exceeds \texttt{sig} (default=2).  
+
+\item \texttt{sig} specifies the size of the t-statistic for a covariate to be declared ``problematic.''
+
+\item \texttt{verbose} is an option to show \texttt{sum.all} and \texttt{sum.matched} for all covariates, their squares, and interactions: 
+\texttt{verbose=TRUE} shows all of the squares and interactions, \texttt{verbose=FALSE} (default) shows only the covariates themselves.
+
+\item \texttt{xn} gives the sample sizes in the full and matched samples.
+
+\item \texttt{q.table} is an array that contains the same
+  information as \texttt{sum.all} and \texttt{sum.matched} broken
+  down by each subclass
+
+\item \texttt{qn} gives the sample sizes in the full and matched samples, broken down by subclass
+\item The \texttt{match.matrix} output
+\item The \texttt{psclass} output
+\item The \texttt{in.sample} output
 \end{enumerate}
 
 \subsubsection{Plot}
@@ -1624,16 +1771,28 @@ the {\tt match.data()} function:
 \end{verbatim}
 
 \subsection{Using Zelig for analysis}
-[This paragraph is really bad, I know.] Zelig is an easy-to-use R program that enables estimation of a large variety of 
-statistical models, easily interpretable quantities of interest, and automated graphics and summaries.  More details,
-and the package itself, are available at {\url gking.harvard.edu/zelig}. \MatchIt\ and Zelig can be easily used
-together to enable estimation of causal effects in very general settings.
-
-Here we provide a few examples of how to use Zelig with \MatchIt\ objects.   The general framework is that of imputing
-the missing potential outcomes under control $Y(0)$ for the units in the treated group.  This is done by estimating a
-model for $Y(0)$ using the matched control units, and then imputing $Y(0)$ for the matched treated units. Once
-those potential outcomes are imputed, calculation of individual $i$'s average treatment effect is straightforward:
-$Y_i(1)-Y_i(0)$.  The average treatment effect across the treated individuals can then also be easily calculated.
+Zelig is an easy-to-use R program estimates a variety of statistical
+models, gives easily interpretable results by simulating quantities of
+interest, and provides numerical and graphical summaries.  The package
+along with the complete documentation is available at
+\href{http://gking.harvard.edu/zelig/}{http://gking.harvard.edu/zelig/}.
+\MatchIt\ and Zelig can be easily used together to enable estimation of
+causal effects in very general settings.
+                                                                                                                                                             
+Here we provide a few examples of how to use Zelig with \MatchIt\ objects.
+The general framework is that we impute the missing potential outcomes For
+example, the outcomes under no treatment, $Y(0)$, are missing for all the
+units in the treated group, whereas the outcomes under the treatment,
+$Y(1)$, are observed.  We impute these missing outcomes in the following
+manner. First, we estimate a model for $Y(0)$ using the observed outcomes
+of the matched control units. Then, given this model, the missing outcome
+$Y(0)$ are imputed for the matched treated units. Once those potential
+outcomes are imputed, the estimation of individual $i$'s treatment
+effect, $Y_i(1)-Y_i(0)$, is straightforward. The average treatment effect
+for any subpopulation, e.g., the average treatment effect for the treated
+individuals, can be similarly calculated. An advantage of this simulation
+approach is that the uncertainty estimates such as standard errors are
+obtained easily.
 
 \subsubsection{Basic analysis with Zelig}
 A few steps are required to obtain estimates of the average treatment effect:
