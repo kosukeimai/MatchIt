@@ -1249,38 +1249,47 @@ characteristics.\footnote{In the original paper, \citet{Carp02} uses a
   lognormal frailty model with a common (ungrouped) random effect.
   Here, for simplicity and speed of computation, we drop the random
   effect.  This has very small effects on the quantities we estimate,
-  and no effect on our conclusions.} {\bf A key assumption of his
-  parametric approach is that these control variables are causally
-  prior to the political oversight variable. This assumption might be
-  violated if for example media coverage of the disease is affected by
-  liberal Senators. Although such a violation produces post-treatment
-  bias in estimated causal effect, we focus on the issue of model
-  sensitivity.\footnote{ Moreover, the assumption of no interference
-    among units implies that the value of a political oversight
-    variable for one drug does not affect the approval time of another
-    drug (conditioning on the political oversight variables of the
-    latter).}}  The dataset consists of 408 new drugs whose
-applications were reviewed by the FDA, 262 of which were eventually
-approved.  The remaining 146 applications were still pending at the
-time of data collection and hence are treated as right-censored
-observations. The approval time is measured in months passed from the
-submission of an application.
+  and no effect on our conclusions.}  The dataset consists of 408 new
+drugs whose applications were reviewed by the FDA, 262 of which were
+eventually approved.  The remaining 146 applications were still
+pending at the time of data collection and hence are treated as
+right-censored observations. The approval time is measured in months
+passed from the submission of an application.
 
-In our analysis, we focus on the estimation of the causal effect of
-the binary treatment variable of Democratic Senate majority, one of
-the seven oversight variables. In the original analysis, the reported
-coefficient for this variable is statistically significant at the 10\%
+In our analysis, we focus on the estimation of the causal effect of a
+Democratic majority in the Senate, one of the seven oversight
+variables.  Carpenter's remaining six oversight variables are
+conceptually and statistically highly related, and are in part
+consequences of a Democratic Senate majority.  As such, we omit them
+to avoid post-treatment bias, and thus do not control for the
+consequences of this causal variable.  Post-treatment bias may still
+exist in this research design if other variables controled for are
+consequences of a Democratic Senate majority.  For example, if media
+coverage of a particular disease is affected by Democratic control,
+bias would be induced.  Although post-treatment bias is a critical
+issue in accurately estimating causal effects, it is less relevant for
+our present goal of studying the consequences of preprocessing for
+reducing parametric model dependence, and so we do not pursue it
+further.  
+
+A second assumption that seems more plausible is the absence of
+interference among units.  In this application, this assumptions means
+that the existence of a Democratic Senate majority when one drug is
+considered by the FDA has no affect on the approval time of another
+drug (even after controlling for the existence of a Democratic Senate
+majority at the time of approval of the second drug).  This assumption
+seems reasonably applicable to these data.
+
+In the original analysis, the reported coefficient for the Democratic
+Senate majority variable is statistically significant at the 10\%
 level but in the opposite direction of Carpenter's hypothesis.  For
-our purposes this treatment variable is of particular interest because
+our purposes this variable is of particular interest because
 \citet[p.498]{Carp02} finds that ``[t]he coefficient estimate for this
 variable [Democratic Senate majority] is not significant in other
 regressions, and even switches sign when firm variables are added
 (analyses available upon request)''.  We therefore examine whether
-model sensitivity of the effects of Senate control may be reduced by
-preprocessing the data.  (We omit the remaining six oversight
-variables because they are conceptually and statistically highly
-related, and in part consequences of, the Democratic Senate majority
-variable.)
+model sensitivity of the effects of a Democratic Senate majority may
+be reduced by preprocessing the data.
 
 To preprocess the data, we conduct nearest neighbor propensity score
 matching (without replacement), estimating the propensity score using
