@@ -507,33 +507,28 @@ of commonly used parametric methods.
 
 \section{Parametric Analysis Methods}
 
-Researchers willing to assume a parametric model that generated their
-data, up to but not including some unknown parameters, should specify
-and directly estimate this parametric model.  Preprocessing with
+Researchers willing to assume that a particular parametric model
+generated their data, up to but not including some unknown parameters,
+should specify and directly estimate this model.  Preprocessing with
 matching procedures is suboptimal in this situation.  Of course, few
 researchers with real observational data sets in the social sciences
 have this kind of knowledge and as a result some choices need to be
-made among the range of possible parametric models. {\bf I guess we
-  say it here. but even with experimental data, we don't know the true
-  parametric model.}
+made among the range of possible parametric models.
 
 We thus begin by specifying a single but general parametric model that
 characterizes the range of models that researchers might choose from.
-Indeed, the special cases of this model include almost all parametric
-models that have been used in the social sciences.  First define the
-stochastic component as $Y_i \sim p(\mu_i,\theta)$, for a specified
-{\bf known rather than specified?}  probability density $p(\cdot)$,
-mean $\mu_i$, and vector of ancillary parameters $\theta$.  Then
-denote the systematic component as $E(Y_i|t_i,X_i)\equiv\mu_i=g(\alpha
-+ t_i\beta + X_i\gamma)$ {\bf it should be $\mu_i \equiv E(Y_i \mid
-  t_i, X_i) =...$}, for some specified functional form {\bf I would
-  use ``known function''} $g(\cdot)$ and with intercept $\alpha$ and
+The special cases of this model include almost all parametric models
+that have been used in the social sciences.  First define the chosen
+stochastic component as $Y_i \sim p(\mu_i,\theta)$, for probability
+density $p(\cdot)$, mean $\mu_i$, and vector of ancillary parameters
+$\theta$.  Then denote the systematic component as $\mu_i\equiv
+E(Y_i|t_i,X_i)=g(\alpha + t_i\beta + X_i\gamma)$, for some specified
+functional form $g(\cdot)$ and with intercept $\alpha$ and
 coefficients $\beta$ and $\gamma$.  The ancillary parameters may also
 be specified to vary over observations as a function of $X_i$ or other
-covariates.  This framework includes all ``generalized linear models''
-{\bf remove the quotation marks and include McCulloch and Nelder
-  citation} as well as many others.  For example, if $p(\cdot)$ is
-normal and $g(c)=c$, we have linear regression; if $p(\cdot)$ is
+covariates.  This framework includes all generalized linear models
+\citep{McCNel89} as well as many others.  For example, if $p(\cdot)$
+is normal and $g(c)=c$, we have linear regression; if $p(\cdot)$ is
 Bernoulli and $g(c)=1/(1+e^{-c})$, the model reduces to a logistic
 regression.
 
@@ -542,13 +537,11 @@ definitions of the potential outcomes from the systematic component,
 with $t_i$ taking on values 1 and 0 respectively:
 \begin{align}
   \label{matt}
-  E(Y_i(1)|t_i=1,X) &\equiv \mu_i(1) = g(\alpha + \beta + X_i\gamma)\notag \\
-  E(Y_i(0)|t_i=0,X) &\equiv \mu_i(0) = g(\alpha + X_i\gamma)
+\mu_i(1)&\equiv E(Y_i(1)|t_i=1,X)= g(\alpha + \beta + X_i\gamma)\notag \\
+\mu_i(0)&\equiv E(Y_i(0)|t_i=0,X) = g(\alpha + X_i\gamma)
 \end{align}
-{\bf again, it seems to me that $\mu_i(j)$ is defined here and so that
-  should come as LHS.}  We can produce estimates of these quantities
-by assuming independence over observations, and forming a likelihood
-function
+We can produce estimates of these quantities by assuming independence
+over observations, and forming a likelihood function
 \begin{equation}
   \label{lik}
   L(\alpha,\beta,\gamma,\theta|y) = \prod_{i=1}^n 
@@ -561,14 +554,10 @@ experimental vs.\ observational data under this general model.
 
 \subsection{Experimental Data}\label{s:paraexp}
 
-In experimental data, classical {\bf remove ``classical''} random
-assignment guarantees that $T_i$ and (any observed or unobserved)
-$X_i$ are independent {\bf the independence is between the potential
-  outcomes and the treatment assignment as well as between the
-  covariate and treatment assignment. the latter gurantees no omitted
-  variable bias}.  Since stochastic independence implies mean
-independence, we can drop $X$ and write
-$E[Y_i(1)|t_i=1,X]=E[Y_i(1)|t_i=1]$ and
+In experimental data, random assignment guarantees (among other
+things) that $T_i$ and (any observed or unobserved) $X_i$ are
+independent.  Since stochastic independence implies mean independence,
+we can drop $X$ and write $E[Y_i(1)|t_i=1,X]=E[Y_i(1)|t_i=1]$ and
 $E[Y_i(0)|t_i=1,X]=E[Y_i(0)|t_i=1]$.  As such, we can simplify
 (\ref{matt}) as
 \begin{align}
@@ -576,17 +565,22 @@ $E[Y_i(0)|t_i=1,X]=E[Y_i(0)|t_i=1]$.  As such, we can simplify
   E[Y_i(1)|t_i=1] &\equiv \mu_i(1) = g(\alpha + \beta)\notag \\
   E[Y_i(0)|t_i=0] &\equiv \mu_i(0) = g(\alpha)
 \end{align}
-{\bf Is $\mu_i(j)$ defined with or without conditioning on $x_i$?}
+%{\bf Is $\mu_i(j)$ defined with or without conditioning on $x_i$?}
 and so the average treatment effect on the treated from (\ref{att})
 becomes simply
 \begin{equation}
   \label{satt}
   \text{ATT} = g(\alpha+\beta) - g(\alpha),
 \end{equation}
-{\bf What about ATE? also should we make the distinction between
-  population and in-sample inference? If it's the latter, we need to
-  condition on the observed $y_i$ in the sample.}  which most
-importantly no longer has a summation sign over $i$.
+% {\bf What about ATE? also should we make the distinction between
+%   population and in-sample inference? If it's the latter, we need to
+%   condition on the observed $y_i$ in the sample.}  
+% gk: i'm willing to try to define these in a way people can
+% understand if you want, but it seems hard in the context of what
+% we're doing (tho not perhaps in general).  also, there seems to me
+% to be little gain in making the definition since the estimators are
+% pretty much all the same anyway (other than the ci's)
+which most importantly no longer has a summation sign over $i$.
 
 The systematic components in Equations~\ref{smatt} are now scalar
 constants for all $i$.  This is a key result, since it means that
@@ -598,22 +592,20 @@ the MLE of $\alpha^2$ \citep[][p.75--76]{King89} --- which implies
 that no matter how $g(\cdot)$ is defined we get the same estimate of
 the expected potential outcomes.\footnote{To rule out degenerate cases
   such as $g(a)=8$, we require that the image of $g(\cdot)$ and the
-  {\bf range of the} potential outcomes be the same.} Moreover, given
-any chosen stochastic component, this result holds for virtually any
-{\bf replace ``virtually any'' with ``a wide range of'' or such}
-parametric model, including all the special cases of the general model
-given above.
+  range of the potential outcomes be the same.} Moreover, given any
+chosen stochastic component, this result holds for a wide range of or
+parametric models, including all the special cases of the general
+model given above.
 
 Since the specific maximum likelihood estimator of the population mean
 for most common probability densities is merely the sample mean, the
 analysis of classical randomized experiments often comes down to
 taking the difference in the sample means of $y$ for the treatment and
-control groups.  But even if one chooses to run a parametric model
-{\bf maybe we should mention why one might want to do this in
-  experimental data; (1) improve the efficiency (2) conducting
-  conditional inferences}, the absence of model dependence means that
-the choice for a fuxnctional form will not matter: The results will be
-the same no matter what the choice for $g(\cdot)$ is.
+control groups.  But even if one chooses to run a parametric model for
+reasons of efficiency, conducting conditional inferences, or because
+of knowledge of the functional form, the absence of model dependence
+means that the choice for a functional form will not matter: The
+results will be the same no matter what the choice for $g(\cdot)$ is.
 
 \subsection{Observational Data} \label{s:paraobs}
 
@@ -632,11 +624,11 @@ ten-category explanatory variable, and our goal is use linear
 regression technology to estimate the functional relationship without
 functional form assumptions.  To do this, we would represent the ten
 categories with ten parameters (a constant and nine dummy variables or
-{\bf equivalently} 10 mean indicator variables).  In contrast, the
-usual approach to estimation is to assume linearity.  This enables us
-to enter not 10 indicator variables, but rather only a constant term
-and one slope coefficient.  How do we get from ten parameters to only
-two?  Pure assumption.  If we have some sense that the relationship is
+equivalently 10 mean indicator variables).  In contrast, the usual
+approach to estimation is to assume linearity.  This enables us to
+enter not 10 indicator variables, but rather only a constant term and
+one slope coefficient.  How do we get from ten parameters to only two?
+Pure assumption.  If we have some sense that the relationship is
 indeed linear or close to linear, this is a good use of external
 information to reduce the number of parameters that must be estimated.
 If not, then we still have the best {\it linear} approximation to the
