@@ -34,6 +34,7 @@ matchdef <-  function(formula, in.sample, pscore, nearest = TRUE,
   
   ## optimal ratio matching
   if (opt) {
+    cat("Optimal Matching Treated: ")
     distance <- matrix(0, ncol=n0, nrow=n1)
     rownames(distance) <- row.names(treata)[treat==1]
     colnames(distance) <- row.names(treata)[treat==0]
