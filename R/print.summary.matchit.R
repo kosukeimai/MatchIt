@@ -31,7 +31,7 @@ print.summary.matchit <- function(x, digits = max(3, getOption("digits") - 3), .
       cat(row.names(xs2)[!is.na(xs2[,4]) & abs(xs2[,4])>sig])
       cat("\n")
     }
-  if(!is.null(x$psclass))
+  if(!is.null(x$psclass) & !identical(eval(x$call$opt),TRUE))
     {
       if(identical(eval(x$call$exact),TRUE)){
         cat("\nSample sizes for full and exactly matched data:\n\n")
