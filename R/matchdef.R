@@ -52,8 +52,7 @@ matchdef <-  function(formula, in.sample, pscore, nearest = TRUE,
                                              names(psclass))]))
     }
  
-  }
-  else if(nearest) {    
+  }  else if(nearest) {    
     ## These are the units that are ineligible because of discard
     ## (in.sample==0) 
     matchedc[in.sample[clabels]==0] <- -1

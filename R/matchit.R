@@ -4,7 +4,7 @@ matchit <- function(formula, model="logit", data, discard=0,
                     subclass=0, sub.by="treat", mahvars=NULL, exact=FALSE,
                     counter=TRUE, opt = FALSE, full = FALSE, ...){ 
   cl <- match.call()
-  if (m.order==1)
+  if (m.order==1 | full)
     require(optmatch)
   
   #Checking input format
@@ -14,7 +14,7 @@ matchit <- function(formula, model="logit", data, discard=0,
     stop("Data ", cl$data, " must be a dataframe",call.=FALSE)}
   #check pscore / psweights names in dataframe
   if("pscore"%in%names(data)){
-    stop("Dataframe contains the variable 'pscore'.  Please change this name.",call.=FALSE)
+    stop("Dataframe contains the variable 'pscore'.  Please change this name.",call. = FALSE)
   } 
   if("psweights"%in%names(data)){
     stop("Dataframe contains the variable 'psweights'.  Please change this name.",call.=FALSE)

@@ -7,6 +7,7 @@ subclassify <- function(formula,data,in.sample,pscore,nearest=TRUE,
   names(treat) <- row.names(treata)
 
   if(full) { # full matching with propensity score
+    if(counter){cat("Full Matching...")}  
     n1 <- length(treat[treat==1])
     n0 <- length(treat[treat==0])
     p1 <- pscore[treat==1]
@@ -21,6 +22,7 @@ subclassify <- function(formula,data,in.sample,pscore,nearest=TRUE,
     psclass <- as.numeric(as.factor(psclass))
     names(psclass) <- row.names(treata)
     q <- NULL
+    if(counter){cat("Done\n")}
   }
   else if(subclass) {
     if(counter){cat("Subclassifying...")}  
