@@ -98,17 +98,19 @@ is always an assumption (sometimes more reasonable than other times)--we never o
 For individual $i$, the potentially observed values can be represented by the following 2x2 table:
 
 \begin{center}
-\begin{tabular}{c|c|c|}
-\multicolumn{3}{c}{\hspace*{.8cm} $T_i=0$ \hfill $T_i=1$} \\
-\cline{2-3}
-& \phantom{abcd} \\
-$\theta_{0i}$ & $\theta_{0i}$, $X_i$ & $\tilde{\theta}_{0i}$, $X_i$ \\
-& \phantom{abcd} \\
-\cline{2-3}
-& \phantom{abcd} \\
-$\theta_{1i}$ & $\tilde{\theta}_{1i}$, $X_i$ & $\theta_{1i}$, $X_i$ \\
-& \phantom{abcd} \\
-\cline{2-3}
+\begin{tabular}{cc|c|c|}
+\multicolumn{4}{c}{\hspace*{4cm} Actual treatment assignment} \\
+\\
+\multicolumn{2}{c}{} & \multicolumn{2}{c}{Control \hfill Treatment} \\
+\cline{3-4}
+& & & \phantom{abcd} \\
+& Control & $\theta_{0i}$, $X_i$ & $\tilde{\theta}_{0i}$, $X_i$ \\
+Potential & & &  \phantom{abcd} \\
+\cline{3-4}
+outcomes under & & & \phantom{abcd} \\
+& Treatment  & $\tilde{\theta}_{1i}$, $X_i$ & $\theta_{1i}$, $X_i$ \\
+& & & \phantom{abcd} \\
+\cline{3-4}
 \end{tabular}
 \end{center}
  
