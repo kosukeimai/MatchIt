@@ -1,0 +1,34 @@
+# oldplot.txt
+# Code to create plot showing dangers of OLS
+
+n.t <- 40
+n.c <- 2*n.t
+
+x.t <- rnorm(n.t, 4.5, 1)
+x.c <- rnorm(n.c, 3, 1)
+ 
+y.c <- exp(-x.c) + rnorm(n.c, 0, .01)
+
+lm.y <- lm(y.c[x.c > 3.5] ~ x.c[x.c > 3.5])
+
+y.t <- lm.y$coef[1] + lm.y$coef[2]*x.t - 0.1 + rnorm(n.t, 0, .01)
+
+all <- as.data.frame(cbind(x=c(x.t, x.c), y=c(y.t, y.c), t=c(rep(1, n.t), rep(0, n.c))))
+lm.all <- lm(y ~ t+x, data=all)
+
+pdf("olsplot.pdf")
+plot(x.t, y.t, pch="T", main="", xlab="", ylab="", xlim=c(1, 7), ylim=c(-.2, .4))
+par(new=T)
+plot(x.c, y.c, pch="C", main="", xlab="X", ylab="Y", xlim=c(1, 7), ylim=c(-.2, .4))
+abline(lm.all$coef[1] + lm.all$coef[2], lm.all$coef[3])
+abline(lm.all$coef[1], lm.all$coef[3])
+dev.off()
+
+#x11()
+#plot(x.t, y.t, pch="T", main="", xlab="", ylab="", xlim=c(min(x.t, x.c),max(x.t, x.c)), ylim=c(min(y.t, y.c),max(y.t,y.c)))
+#par(new=T)
+#plot(x.c, y.c, pch="C", main="", xlab="X", ylab="Y", xlim=c(min(x.t, x.c),max(x.t,x.c)), ylim=c(min(y.t,y.c),max(y.t,y.c)))
+#abline(1, .5)
+#abline(0, .5)
+
+
