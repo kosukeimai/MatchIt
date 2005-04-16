@@ -75,26 +75,25 @@ Elizabeth A. Stuart\thanks{Researcher, Mathematica Policy Research, Inc.\, Ph.D.
   merely demonstrations that the author found it \emph{possible} to
   find a specification that fits his or her favorite hypothesis?
   Matching methods, which offer the promise of causal inference with
-  fewer assumptions, is one possible way forward, but the literature
-  suffers from conflicting approaches to estimation, uncertainty,
-  theoretical results, and practical advice.  We propose a unified
-  approach that makes it possible for researchers to preprocess data
-  (such as with the easy-to-use software we offer) and then to apply
-  whatever familiar parametric techniques they would have used anyway.
-  Instead of replacing existing methods, we use matching to make
-  parametric models work better by giving more accurate and
-  considerably less model-dependent causal inferences.
+  fewer assumptions, constitute one possible way forward, but the
+  literature suffers from conflicting approaches to estimation,
+  uncertainty, theoretical results, and practical advice.  We propose
+  a unified approach that makes it possible for researchers to
+  preprocess data (such as with the easy-to-use software we offer) and
+  then to apply whatever familiar parametric techniques they would
+  have used anyway.  Instead of replacing existing methods, we use
+  matching to make parametric models work better by giving more
+  accurate and considerably less model-dependent causal inferences.
 \end{abstract}
 \baselineskip=1.57\baselineskip
 
 \section{Introduction}
 
-In this paper, we offer procedures to reduce model dependence in
-political science research.  Model dependence is a statistical problem
-that threatens the validity of a wide variety of quantitative research
-in the discipline.  The problem is easy to recognize, but it usually
-only arises in private.  Open discussions of it are rarely found in
-the literature.
+In We offer procedures to reduce model dependence in political science
+research.  Model dependence is a statistical problem that threatens
+the validity of a wide variety of quantitative research in the
+discipline.  The problem is easy to recognize, but open discussions of
+it in the literature are rare.
 
 To see the problem, consider how quantitative political science
 research typically proceeds: Even for a single project, we often spend
@@ -131,26 +130,25 @@ specification consistent with his or her prior expectations?
 
 We attack this problem by drawing on a new statistics literature on
 causal inference based on matching, a nonparametric and
-non-model-based statistical procedure.  This work offers considerable
-promise for increasing the reliability and validity of causal
-inferences by reducing or eliminating the role of functional form and
-other assumptions of parametric models.  The statistical literature on
-matching has grown theoretically sophisticated, but, from the point of
-view of the practical researcher, it looks like a cacophony of
-conflicting techniques, practices, conventions, and rules of thumb.
-Valid methods for computing standard errors and confidence intervals
-are even more complicated, often not used, and sometimes not
-available.  Many theoretical results do not apply to practical
-applications unless unknown theoretical quantities or specifications
-are somehow divined.  Coherent guidelines for practice are
-conflicting, absent, or based on clinical experience rather than
-scientific evidence or mathematical proof.\footnote{Matching methods
-  now comprise a substantial fraction of the empirical work in some
-  disciplines, such as epidemiology and medicine.  However, the
-  diversity of substantive applications and the conflicting
-  methodological languages used to describe the same underlying
-  concepts have limited the spread of these powerful techniques to
-  much of the social sciences.}
+non-model-based statistical procedure.  This literature offers
+considerable promise for increasing the reliability and validity of
+causal inferences by reducing or eliminating the role of functional
+form and other assumptions of parametric models.  This literature has
+grown theoretically sophisticated, but, from the point of view of the
+practical researcher, it looks like a cacophony of conflicting
+techniques, practices, conventions, and rules of thumb.  Valid methods
+for computing standard errors and confidence intervals are even more
+complicated, often not used, and sometimes not available.  Many
+theoretical results do not apply to practical applications unless
+unknown theoretical quantities or specifications are somehow divined.
+Coherent guidelines for practice are conflicting, absent, or based on
+clinical experience rather than scientific evidence or mathematical
+proof.\footnote{Matching methods now comprise a substantial fraction
+  of the empirical work in some disciplines, such as epidemiology and
+  medicine.  However, the diversity of substantive applications and
+  the conflicting methodological languages used to describe the same
+  underlying concepts have limited the spread of these powerful
+  techniques to much of the social sciences.}
 
 We attempt to reduce model dependence by first unifying this diverse
 literature.  In particular, we suggest a procedure by which applied
@@ -182,9 +180,10 @@ also suggests a simple, standardized, and valid approach to computing
 standard errors and confidence intervals for most of the new matching
 techniques.  This strategy also made it possible for us to write
 easy-to-use software that implements all the ideas discussed in this
-paper.  The program, called MatchIt, is available as an open source
-and free R program; MatchIt also works seemlessly with the general
-purpose R statistics package called Zelig \citep{ImaKinLau04}.
+paper and incorporat6e most existing approaches described in the
+literature.  The program, called MatchIt, is available as an open
+source and free R program; MatchIt also works seemlessly with the
+general purpose R statistics package called Zelig \citep{ImaKinLau04}.
 % ; it is free and available at
 % \url{http://gking.harvard.edu/matchit}.
 
@@ -213,38 +212,36 @@ preprocessing, suitable for improving any parametric method.
 
 The notation, ideas, and running example in this section parallel that
 in \citet[][Section 3.1.1]{KinKeoVer94}, but key aspects of the ideas
-originate with many others, especially \citet{Rubin74} and
-\citet{Holland86}.  The most important idea in this section is that a
-causal effect is a theoretical quantity, defined independently of any
-empirical method that might be used to estimate it from real data.
+originate with many others, especially \citet{Neyman**},
+\citet{Fisher**} \citet{Rubin74} and \citet{Holland86} in statistics
+and \citet{Roy51} and \citet{Quandt**} in econometrics.  The most
+important idea in this section is that a causal effect is a
+theoretical quantity, defined independently of any empirical method
+that might be used to estimate it from real data.
 
-Our running example is to estimate the electoral advantage of
-incumbency for Democrats in the U.S.\ House of Representatives.  The
-unit of analysis is therefore the congressional district, which we
-label with the index $i$ ($i=1,\dots,n$).  In most of the
-methodological literature on causal inference, researchers simplify
-the exposition by considering only a single dichotomous causal (or
-``treatment'') variable.  We do the same and label it $t_i$, which
-takes a value of 1 if unit $i$ receives the treatment and 0 if $i$ is
-untreated (the ``control condition'').  In our running example, the
-treatment is whether the incumbent receives the party's nomination in
-district $i$.  Projects with more complicated causal variables can
-dichotomize (perhaps in several alternative ways) or use more
-complicated methods \citep{ImaDyk03}.  Those with more than one causal
-variable of interest can follow all the advice herein for one variable
-at a time.
+Our running example is estimating the electoral advantage of
+incumbency for Democrats in the U.S.\ House of Representatives.  In
+most of the methodological literature on causal inference, researchers
+simplify the exposition by considering only a single dichotomous
+causal (or ``treatment'') variable.  We do the same and label it
+$t_i$, which takes a value of 1 if congressional district $i$
+($i=1,\dots,n$) receives the treatment and 0 if $i$ is untreated (the
+``control condition'').  In our running example, the treatment is
+whether the incumbent receives the party's nomination in district $i$.
 
 The observed outcome (or ``dependent'') variable is $y_i$, which in
 our case is the Democratic proportion of the two-party vote in
-congressional district $i$.  Finally, prior to the treatment decision,
-each district $i$ has a variety of characteristics, some of which we
-measure and collect in a vector denoted $X_i$.  Whether preprocessing
-or not, variables that are even in part a consequence of the treatment
-variable should never be controlled for when estimating a causal
-effect.  This is of course a critical point, since controlling for the
-consequences of a causal variable can severely bias a causal
-inference; the problem is unfortunately too common in political
-science \citep{KinZen04}.
+district $i$.  Finally, each district $i$ has a variety of
+characteristics determined prior to the incumbent's decision to run
+for election and the party's decision to renominate the incumbent,
+some of which we measure and collect in a vector denoted $X_i$.
+Whether preprocessing or not, variables that are even in part a
+consequence of the treatment variable should never be controlled for
+when estimating a causal effect (see \citet[][Section 4.2]{Cox58} and
+\citet[][pp.73--4]{Rosenbaum02}).  This is of course a critical point,
+since controlling for the consequences of a causal variable can
+severely bias a causal inference; the problem is unfortunately too
+common in political science \citep{KinZen04}.
 
 To clarify our inferential goals, we begin by defining the ``realized
 causal effect,'' which is the simplest definition available.  To
@@ -254,8 +251,8 @@ substantively unrelated but mathematically closely-related missing
 data and ecological inference literatures.  We then generalize the
 definition to include features of random causal effects that are
 useful for understanding connections between nonparametric
-preprocessing and parametric models.  Finally, we give specific causal
-effects of interest at the population level.
+preprocessing and parametric models, define causal effects of interest
+at the population level, and discuss nonbinary treatments.
 
 \paragraph{Realized Causal Effects}
 Because of pretreatment differences among the districts (both
@@ -275,11 +272,7 @@ districts.)  The use of parentheses in this notation denotes that the
 outcome is potential, and so not necessarily observed, and that it
 depends on the value of the variable in parentheses.  Since these are
 potential outcomes, their values remain the same regardless of whether
-the treatment is in fact applied in district $i$ or not.  However, the
-key point is that since the Democratic Party either will nominate
-($t_i=1$) or will not nominate ($t_i=0$) an incumbent to run in
-district $i$, we will observe either $y_{i}(1)$ or $y_{i}(0)$ but not
-both.
+the treatment is in fact applied in district $i$ or not.  
 
 The difference between the two potential outcomes defines the simplest
 realized (or fixed) definition of a causal effect:
@@ -288,11 +281,11 @@ realized (or fixed) definition of a causal effect:
   \text{(Realized causal effect for unit $i$)} = y_i(1) - y_i(0).
 \end{equation}
 (This quantity is an unobserved realization of a random variable to be
-defined below.)  The fact that one of these potential outcomes is
-always a counterfactual --- and thus is never known for certain no
-matter how perfect the research design, experimental control, or
-number of observations collected --- expresses what is known as the
-``fundamental problem of causal inference'' \citep{Holland86}.
+defined below.)  Since the Democratic Party will either nominate
+($t_i=1$) or not nominate ($t_i=0$) an incumbent to run in district
+$i$, one of these potential outcomes is always a counterfactual and
+thus never observed. This is known as the ``fundamental problem of
+causal inference'' \citep{Holland86}.
 
 \paragraph{Connections to Missing Data and Ecological Inference}
 Although causal inference is the ultimate goal of most research
@@ -301,38 +294,38 @@ is not always fully appreciated.  To clarify this issue, and to
 further elucidate the definition of causal effects, we now show how
 causal inference with observational data is an extreme special case of
 two areas of statistics that are widely, but incorrectly, perceived to
-be more difficult than causal inference.
+be even more difficult.
 
 If district $i$ receives the treatment, we observe $y_i=y_i(1)$ but
-not $y_i(0)$ and otherwise we observe $y_i=y_i(0)$ but not $y_i(1)$,
-i.e., $t_iy_i(0) + (1-t_i)y_i(1)$.  In this framework, causal
-inference can be thought of as a severe missing data problem, where
-each unit has two relevant dependent variables, $y_i(0)$ and $y_i(1)$,
-but one of which is always missing.  Moreover, since $y_i(0)$ and
-$y_i(1)$ are never both observed for any set of units, we cannot use a
-known relationship between the two to extrapolate to units where only
-one is observed.  Making causal inferences is thus equivalent to an
-especially difficult case of imputing missing data, using whatever
-external information is available.  As we show below, this connection
-will prove useful in making the bridge that connects nonparametric
-matching to parametric models.
+not $y_i(0)$ and otherwise we observe $y_i=y_i(0)$ but not $y_i(1)$.
+In this framework, causal inference can be thought of as a severe
+missing data problem, where each unit has two relevant dependent
+variables, $y_i(0)$ and $y_i(1)$, but one of which is always missing.
+Moreover, since $y_i(0)$ and $y_i(1)$ are never both observed for any
+set of units, we cannot use a known relationship between the two to
+extrapolate to units where only one is observed.  Making causal
+inferences is thus equivalent to an especially difficult case of
+imputing missing data, using whatever external information is
+available.  As we show below, this connection will prove useful in
+making the bridge that connects nonparametric matching to parametric
+models.
 
 Causal inference can also be thought of as an especially severe form
 of ecological inference.  In ecological inference, we observe for each
-observation the proportions representing the two marginals of a
-$2\times 2$ contingency table (such as the proportion of people voting
-and the proportion of people who are black in a precinct) and try to
-estimate the unknown cell proportions (the proportion of blacks who
-vote and the proportion of whites who vote).  To show the connection,
-we refer to the known ($y_i$ and $t_i$) and potentially unknown
-[$y_i(0)$ and $y_i(1)$] quantities in both problems in the same
-notation and pay special attention to the order in which the
-information is generated: In both problems, we imagine that $y_i(0)$
-and $y_i(1)$ exist in nature before our research begins.  Then $t_i$
-(the treatment in causal inference or the row marginal in ecological
-inference) is applied or otherwise becomes known.  Finally, we can
-calculate the observed outcome $y_i$ deterministically via this simple
-accounting identity:
+unit the proportions representing the two marginals of a $2\times 2$
+contingency table (such as the proportion of people voting and the
+proportion of people who are black in a precinct) and try to estimate
+the unknown cell proportions (the proportion of blacks who vote and
+the proportion of whites who vote).  To show the connection, we refer
+to the known ($y_i$ and $t_i$) and potentially unknown [$y_i(0)$ and
+$y_i(1)$] quantities in both problems in the same notation and pay
+special attention to the order in which the information is generated:
+In both problems, we imagine that $y_i(0)$ and $y_i(1)$ exist in
+nature before our research begins.  Then $t_i$ (the treatment in
+causal inference or the row marginal in ecological inference) is
+applied or otherwise becomes known.  Finally, we can calculate the
+observed outcome $y_i$ deterministically via this simple accounting
+identity:
 \begin{equation}
   \label{id}
   y_i = t_iy_i(1) + (1-t_i)y_i(0).
@@ -341,13 +334,15 @@ In ecological inference, by solving (\ref{id}) for one of the unknowns
 as a linear function of the other and recognizing that proportions are
 always constrained to the unit interval, we can put deterministic
 bounds on both quantities of interest with certainty
-\citep[][ch.5]{King97}.  In causal inference, we have the advantage of
-always knowing one of the quantities exactly; however, because
-(\ref{id}) cannot be solved for one of the unknowns (since it would
-require dividing by $t_i$ or $1-t_i$, which includes zero) we have the
-severe disadvantage in causal inference of in general not knowing
-anything with certainty about the other unknown; this problem does not
-arise in ecological inference.
+(\citealp{DunDav53} and \citealp[][ch.5]{King97}).  In causal
+inference, we have the advantage of always knowing one of the
+quantities exactly; however, because (\ref{id}) cannot be solved for
+one of the unknowns (since it would require dividing by $t_i$ or
+$1-t_i$, which includes zero) we have the severe disadvantage in
+causal inference of in general not knowing anything with certainty
+about the other unknown; this problem does not arise in ecological
+inference.\footnote{See \citet{Manski95} for intersting exceptions in
+  special cases.}
 
 Social scientists correctly think of missing data imputation and
 ecological inference as difficult and hazardous areas of statistical
@@ -367,24 +362,24 @@ In all three areas, the inferential target is not normally highly
 constrained by the observed data and so substantive conclusions will
 usually depend on unverifiable assumptions about the data generation
 process.  Thus, highlighting the assumptions as clearly as possible,
-and methods to deal with model dependence, is essential.
+and methods to deal with model dependence, are essential.
 
 \paragraph{Random Causal Effects} In order to make statistical
-inferences, we imagine that the realized potential outcomes in
-(\ref{rce}) are realizations of corresponding random variables (for
-which we use the corresponding capital letters).  We do not require
-that the data are sampled from some specific population, only that
-there exists some data generation process that leads to the one
-realization we see and could have led to some other realization.  This
-logic then produces the random causal effect:
+inferences, we imagine that the potential outcomes in (\ref{rce}) are
+realizations of corresponding random variables (for which we use the
+corresponding capital letters).  We do not require that the data are
+sampled from some specific population, only that there exists some
+data generation process that leads to the one realization we see and
+could have led to some other realization.  This produces the random
+causal effect:
 \begin{equation}
   \label{rance}
   \text{(Random Causal Effect for unit $i$)}  = Y_i(1) - Y_i(0),
 \end{equation}
-features of which we are interested in as alternative quantities of
-interest.  For example, our second definition for the causal effect is
-the mean causal effect, which is the average over repeated
-hypothetical draws of the the random causal effect:
+features of which constitute alternative quantities of interest.  For
+example, our second definition for the causal effect is the \emph{mean
+  causal effect}, which is the average over repeated hypothetical
+draws of the random causal effect:
 \begin{align}
   \label{meance} \text{(Mean Causal Effect for unit $i$)}
   &= E(\text{Random Causal Effect for unit $i$})\\
@@ -393,12 +388,15 @@ hypothetical draws of the the random causal effect:
 where $\mu_i(1)\equiv E[Y_i(1)]$ and $\mu_i(0)\equiv E[Y_i(0)]$.  In
 experiments, the randomness in the potential outcomes is generated by
 the investigator assigning the values of the treatment randomly; for
-simplicity, we distinguish the two only by the context and use $t_i$
-for both.
+simplicity, we distinguish the two only by context and use $t_i$ for
+both.\footnote{An alternative interpretation of the mean causal effect
+  is to assign all randomness to sampling from the population, while
+  assuming fixed potential outcomes.}
 
 \paragraph{Average Quantities of Interest}
 In most applications, we do not attempt to estimate the treatment
-effect for each observation, but instead estimate the average over all
+effect for each observation, or assume they are constant over all
+observations, but instead estimate the average effect over all
 observations, for some subset of observations, or for a particular
 population or population subgroup.  This leads to several choices for
 quantities of interest, each of which is defined for either realized
@@ -422,8 +420,8 @@ which is the mean causal effect for unit $i$ averaged over all units
 the random causal effects for each unit, and the summation over $i$ in
 both refers to the observed sample).
 
-The alternative choice of a target quantity of interest is the average
-treatment effect on the treated, or ATT:
+Often of more interest substantively is the average treatment effect
+on the treated, or ATT:
 \begin{align}
   \label{att}
   \text{ATT} & = \frac{1}{\sum_{i=1}^n t_i}\sum_{i:t_i=1} E[Y_i(1) - Y_i(0)]\notag\\
@@ -440,14 +438,31 @@ they often only care about the causal effect of drugs for patients
 that receive or would receive the drugs.  For another example, in job
 training programs, we are not normally interested in assigning
 employed people to have this training \citep{HecIchTod98}.  In the
-social sciences, the ATT is also a reasonable choice, but so is the
-average treatment effect (the ATE).  In our running example, we might
-be interested not only in the effect of incumbency when the incumbent
-is nominated, but we can also imagine what might have happened if an
-incumbent were nominated in a district in which he or she did not
-actually receive the nomination.  In this paper, we usually focus on
-ATT as the quantity of interest when it is conceptually or
-algebraically simpler, but we also show how to compute the ATE.
+social sciences, the ATT is often a reasonable choice, as is the ATE.
+In our running example, we might be interested not only in the effect
+of incumbency when the incumbent is nominated, but we can also imagine
+what might have happened if an incumbent were nominated in a district
+in which he or she did not actually receive the nomination.  In this
+paper, we usually focus on ATT as the quantity of interest when it is
+conceptually or algebraically simpler, but we also show how to compute
+the ATE.  If causal effects are constant over $i$, then ATT and ATE
+are identical.\footnote{To change these sample causal effects to
+  population causal effects for the ATE we average over the
+  population, and for the ATT we average over the population times the
+  probability of receiving treatment.  Points estimates for the two
+  are normally identical, although the variances for the population
+  estimates would be larger.}
+
+\paragraph{Non-Binary Treatments}
+
+Projects with causal variables that have more than two categories or
+are continuous or mixed can dichotomize (perhaps in several
+alternative ways) or use more complicated methods designed especially
+for these variables \citep{ImaDyk03}.  Those with more than one causal
+variable of interest can follow all the advice herein for one variable
+at a time.  We stick a single binary treatment here, since it greatly
+simplifies the exposition and improves intuition even for those who
+will ultimately use more sophisticated treatments.
 
 \section{Assumptions and Data Collection Mechanisms}
 
@@ -548,25 +563,26 @@ $Y_i$ conditional on $t_i$ \citep{Goldberger91,KinKeoVer94}.  In other
 fields, this same condition is known as ignorability, which means that
 $t_i$ and the potential outcomes are independent after conditioning on
 $X_i$, and so we can literally ignore all unobserved variables
-\citep{RosRub83}.  Ignorability is a strong condition, but it is one
-about which social scientists are deeply knowledgeable and it is the
-central methodological concern of many substantive scholarly articles.
-We emphasize this assumption to make clear that our procedures contain
-no magic: They are unable to control for variables that are not
-measured.
+\citep{RosRub83}.  In still others it is known as the absence of
+confounding or conditional independence.  Whatever the name, it is a
+strong condition, but it is one about which social scientists are
+deeply knowledgeable and it is the central methodological concern of
+many substantive scholarly articles.  We emphasize this assumption to
+make clear that our procedures contain no magic: They are unable to
+control for variables that are not measured.
 
 In the context of the no selection or omitted variable bias
 assumptions, we have implicitly made three others that are worth
 additional emphasis here.  First, pretreatment covariates $X$ are
 truly pretreatment and are thus not consequences of $t$.  Second, we
 assume the independence of units, which is the equivalent of assuming
-the absence of time series or spatial autocorrelation across units (or in other
-words that the two potential outcomes for observation $i$ and the
-treatment for observation $j$ are independent, for all $i\not=j$).  We
-have also assumed that all treatments are the same.  This assumption
-would be violated in our running example if incumbency status meant
-something different across districts.\footnote{These last two
-  assumptions are sometimes known under the awkward name of the
+the absence of time series or spatial autocorrelation across units (or
+in other words that the two potential outcomes for observation $i$ and
+the treatment for observation $j$ are independent, for all $i\not=j$).
+We have also assumed that all treatments are the same.  This
+assumption would be violated in our running example if incumbency
+status meant something different across districts.\footnote{These last
+  two assumptions are sometimes known under the awkward name of the
   ``stable unit treatment value assumption'' or SUTVA
   \citep{Rubin74}.}
 
@@ -1083,18 +1099,17 @@ nearest neighbor matching on the propensity score).\footnote{When
   nearest neighbors exist. The first, known as ``greedy'' matching,
   simply starts with some treated unit and matches the closest control
   unit that has not yet been matched.  This approach, however, is not
-  invariant to the order in which units are matched.  A second approach, known
-  as ``optimal'' matching,
-  minimizes the total distance within matched units
-  \citep[e.g.,][]{Rosenbaum89}.  Our software implements both,
-  incorporating optimal matching code provided by \citet{Hansen04}.}
-If this procedure balances $X$ (and thus satisfies the procedures for
-checking balance we describe in Step 4), we use it.  If not, then we
-respecify the logistic regression by adding interactions or squared
-terms and match again.  If that works, then we use it.  If not, we can
-try even more elaborate specifications (when necessary, perhaps even
-trying other functional forms such as CART, neural network analyses,
-or others).
+  invariant to the order in which units are matched.  A second
+  approach, known as ``optimal'' matching, minimizes the total
+  distance within matched units \citep[e.g.,][]{Rosenbaum89}.  Our
+  software implements both, incorporating optimal matching code
+  provided by \citet{Hansen04}.}  If this procedure balances $X$ (and
+thus satisfies the procedures for checking balance we describe in Step
+4), we use it.  If not, then we respecify the logistic regression by
+adding interactions or squared terms and match again.  If that works,
+then we use it.  If not, we can try even more elaborate specifications
+(when necessary, perhaps even trying other functional forms such as
+CART, neural network analyses, or others).
 
 The collective wisdom of the literature also recommends four more
 specific rules for applying propensity scores.  First, if many more
