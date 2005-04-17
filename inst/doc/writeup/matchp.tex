@@ -573,17 +573,17 @@ control for variables that are not measured.
 
 In the context of the no selection or omitted variable bias
 assumptions, we have implicitly made three others that are worth
-additional emphasis here.  First, pretreatment covariates $X$ are
+additional emphasis here.  First, the pretreatment covariates $X$ are
 truly pretreatment and are thus not consequences of $t$.  Second, we
 assume the independence of units, which is the equivalent of assuming
 the absence of time series or spatial autocorrelation across units (or
 in other words that the two potential outcomes for observation $i$ and
 the treatment for observation $j$ are independent, for all $i\not=j$).
-We have also assumed that all treatments are the same.  This
-assumption would be violated in our running example if incumbency
-status meant something different across districts.\footnote{These last
-  two assumptions are sometimes known under the awkward name of the
-  ``stable unit treatment value assumption'' or SUTVA
+We have also assumed the treatment administered to each unit is the
+same.  This assumption would be violated in our running example if
+incumbency status meant something different across
+districts.\footnote{These last two assumptions are sometimes known as
+  the ``stable unit treatment value assumption'' or SUTVA
   \citep{Rubin74}.}
 
 Satisfying the assumptions discussed in this section still leaves many
@@ -603,16 +603,15 @@ of possible parametric models.  The dilemma is that although
 researchers using parametric methods do not know the true parametric
 model, they must proceed as if they do.
 
-We begin to elaborate this problem and some paths forward by
-specifying a single but general parametric model that characterizes
-the range of models that researchers might choose from.  The special
-cases of this model include almost all parametric models that have
-been used in the social sciences.  First, define the chosen stochastic
-component for the model as $Y_i \sim p(\mu_i,\theta)$ for probability
-density $p(\cdot)$, mean $\mu_i$, and vector of ancillary parameters
-$\theta$.  Then, denote the systematic component as $\mu_i\equiv
-E(Y_i|t_i,X_i)=g(\alpha + t_i\beta + X_i\gamma)$ for some specified
-functional form $g(\cdot)$ and with intercept $\alpha$ and
+We begin by specifying a single but general parametric model that
+characterizes the range of models that researchers might choose from.
+The special cases of this model include almost all parametric models
+that have been used in the social sciences.  First, define the chosen
+stochastic component for the model as $Y_i \sim p(\mu_i,\theta)$ for
+probability density $p(\cdot)$, mean $\mu_i$, and vector of ancillary
+parameters $\theta$.  Then, denote the systematic component as
+$\mu_i\equiv E(Y_i|t_i,X_i)=g(\alpha + t_i\beta + X_i\gamma)$ for some
+specified functional form $g(\cdot)$ and with intercept $\alpha$ and
 coefficients $\beta$ and $\gamma$.  The ancillary parameters may also
 be specified to vary over observations as a function of $X_i$ or other
 covariates.  This framework includes all generalized linear models
@@ -621,7 +620,7 @@ is normal and $g(c)=c$, we have linear regression; if $p(\cdot)$ is
 Bernoulli and $g(c)=1/(1+e^{-c})$, the model reduces to a logistic
 regression.
 
-We define the ATT in equation~(\ref{att}) under this model by plugging
+We define the ATT in Equation \ref{att} under this model by plugging
 in the definitions of the potential outcomes from the systematic
 component, with $t_i$ taking on values 1 and 0 respectively:
 \begin{align}
@@ -661,22 +660,21 @@ Equation~(\ref{att}) as
 \end{equation}
 which importantly no longer has a summation sign over $i$.
 
-The systematic components in equations~(\ref{smatt}) are now scalar
-constants for all $i$.  This is a key result, since it means that
-changing the definition of the functional form $g(\cdot)$ no longer
-models a high dimensional space representing how the mean varies over
-$i$ as a function of all the variables in $X$, but instead now merely
-amounts to a simple scalar reparameterization.  The fact that
-$g(\cdot)$ is now a scalar is central: Since maximum likelihood is
-invariant to reparameterization --- meaning, for example, that the MLE
-of $\alpha$ is the same as the square root of the MLE of $\alpha^2$
-\citep[][p.75--76]{King89} --- we get the same estimate of the
-expected potential outcomes no matter how $g(\cdot)$ is
-defined.\footnote{To rule out degenerate cases such as $g(a)=8$, we
-  require that the image of $g(\cdot)$ and the range of the potential
-  outcomes be the same.}  Thus, when $\mu$ is a function of $X$, the
-choice of $g(\cdot)$ is a difficult substantive decision typically
-requiring more knowledge than is available.  In contrast, in
+The systematic components in Equations \ref{smatt} are now scalar
+constants for all $i$.  This is a key result, since the functional
+form $g(\cdot)$ no longer models a high dimensional space representing
+how the mean varies over $i$ as a function of all the variables in
+$X$, but instead now merely amounts to a simple scalar
+reparameterization.  The fact that $g(\cdot)$ is now a scalar is
+central: Since maximum likelihood is invariant to reparameterization
+--- meaning, for example, that the MLE of $\alpha$ is the same as the
+square root of the MLE of $\alpha^2$ \citep[][p.75--76]{King89} --- we
+get the same estimate of the expected potential outcomes no matter how
+$g(\cdot)$ is defined.\footnote{To rule out degenerate cases such as
+  $g(a)=8$, we require that the image of $g(\cdot)$ and the range of
+  the potential outcomes be the same.}  Thus, when $\mu$ is a function
+of $X$, the choice of $g(\cdot)$ is a difficult substantive decision
+typically requiring more knowledge than is available.  In contrast, in
 experimental data, because we can now drop $X$, the choice of
 $g(\cdot)$ reduces to an easy computational issue with no substantive
 import.  Moreover, given any chosen stochastic component, this result
@@ -684,8 +682,8 @@ holds for a wide range of parametric models, including all the special
 cases of the general model given above.
 
 Since the specific maximum likelihood estimator of the population mean
-for many of common probability densities is merely the sample mean,
-the analysis of classical randomized experiments often comes down to
+for many common probability densities is merely the sample mean, the
+analysis of classical randomized experiments often comes down to
 taking the difference in the sample means of $y$ for the treatment and
 control groups.  But even if one chooses to run a parametric model
 (for reasons of efficiency, conducting conditional inferences, or
@@ -699,12 +697,11 @@ makes for the functional form.
 In experiments, random assignment breaks the link between $t$ and $X$
 and, by so doing, eliminates the problem of model dependence.  When
 analyzing observational data with parametric methods we are not so
-fortunate.  We cannot reduce equations~(\ref{matt}) to
-equations~(\ref{smatt}) and so are left having to model the full
-functional relationship that connects the mean as it varies as a
-function of $t$ and $X$ over observations.  Since $X$ is typically
-multidimensional, this is a surprisingly difficult task with rather
-severe consequences for research practice.
+fortunate.  We cannot reduce (\ref{matt}) to (\ref{smatt}) and so are
+left having to model the full functional relationship that connects
+the mean as it varies as a function of $t$ and $X$ over observations.
+Since $X$ is typically multidimensional, this is a surprisingly
+difficult task with rather severe consequences for research practice.
 
 The problem is the curse of dimensionality and the consequence in
 practice is model dependence.  We begin with the former and for
@@ -896,8 +893,8 @@ that this relationship holds:
   \label{balance}
   p(X|t=1) = p(X|t=0).
 \end{equation}
-The simplest way to satisfy equation~(\ref{balance}) by preprocessing
-is to use \emph{one-to-one exact matching}.  The idea is to match each
+The simplest way to satisfy Equation \ref{balance} by preprocessing is
+to use \emph{one-to-one exact matching}.  The idea is to match each
 treated unit with one control unit for which the values of $X_i$ are
 identical.  Our preprocessed dataset thus is the same as the original
 dataset with any unmatched units discarded, and thus with $t_i$ and
@@ -967,15 +964,20 @@ accompanies this paper.% (see Appendix \ref{s:matchit}).
 
 The goal of matching is to improve \emph{balance}, the degree to which
 the treatment and control $X$ distributions resemble each other,
-without losing too many observations in the process.  The main
-diagnostic of success is also balance (as well as the number of
-observations remaining).  We judge balance at first by taking the
+without losing too many observations in the
+process.\footnote{Selecting observations to make the distributions
+  look similar is traditionally broken into two components: ensuring
+  common support by pruning observations where the empirical densities
+  do not overlap and weighting or parametric adjustment to make the
+  portions of the densities that do overlap have the same heights.}
+The main diagnostic of success is also balance (as well as the number
+of observations remaining).  We judge balance at first by taking the
 difference in the treatment and control group means or full histograms
-for each variable in $X$.  These can be supplemented by comparing the
+for each variable in $X$, and then usually proceed to compare the
 means of the squares and cross-products of the variables and higher
 order moments or with more dimensions.
 
-In our quest for better balance, one can try any number of matching
+In seeking better balance, one can try any number of matching
 procedures, with the final preprocessed data set the one with the best
 balance.  To ensure that selection during preprocessing is only on $X$
 (to prevent inducing bias), the outcome variable $y$ should not be
@@ -983,59 +985,61 @@ examined during the preprocessing stage.  As long as $y$ is not
 consulted, preprocessing cannot result in stacking the deck one way or
 another.  Experimentalists typically follow a similar procedure by
 repeating randomization as often as desired before collecting the
-outcome data; if an undesirable randomization is obtained, such
-as with all men in the treated group and all women in the control
-group, they merely discard the first randomization and do it again
-until better data are obtained \citep[see][]{Rubin01}.
+outcome data; if an undesirable randomization is obtained, such as
+with all men in the treated group and all women in the control group,
+they merely discard the first randomization and do it again until
+better data are obtained \citep[see][]{Rubin01}.
 
-We recommend four steps of preprocessing, followed by standard
+We discuss four aspects of preprocessing, followed by standard
 parametric modeling of the preprocessed data set.  We describe this
 procedure for the ATT, and so the matching is designed to choose
 control units that look most like the treated units.
 
-\paragraph{Step 1. Select Covariates}  
+\paragraph{Select Covariates}
 Include all variables in $X$ that would have been included in your
 parametric model without preprocessing.  By the usual rules for
 avoiding omitted variable bias these should include all variables that
-affect both the treatment assignment and the dependent variable.
-Including variables only weakly related to treatment assignment will
-usually reduce bias more than they will increase variance when using
-matching and so most should normally be included \citep{RubTho96,
-  HecIchSmi98}.  To avoid post-treatment bias, exclude variables
-affected by the treatment variable
-\citep{Cox58,FraRub02,Greenland03,KinZen04}.
+affect both the treatment assignment and the dependent variable.  If a
+large pool of potential control units are available, then including
+variables only weakly related to treatment assignment will usually
+reduce bias more than they will increase variance and so most should
+normally be included \citep{RubTho96, HecIchSmi98}; otherwise, the
+usual econometric rules apply about the bias of excluding relevant
+variables and inefficiency of including irrelevant ones.  To avoid
+post-treatment bias, exclude variables affected by the treatment
+variable.
 
-If all the variables in $X_i$ are categorical, try exact matching in
-Step 2.  Otherwise, try propensity score matching in Step 3.
-
-\paragraph{Step 2. Try Exact Matching}  
-Match each treated unit to all control units with exactly the same
-covariate values.  This procedure is more general than one-to-one
-matching, since we use as many control units as are available for each
-treated unit.  If a large number of units were matched, then we have
-exact balance with little inefficiency and we may skip the remaining
-steps and proceed to the parametric analysis.  If insufficient matches
-are found, either repeat the exact matching with fewer covariates or
-switch to propensity score matching, described in Step 3.  In the
-former, we balance the included variables but do not balance at all on
-the rest.  The excluded variables may be partially balanced due to
+\paragraph{Exact Matching}  
+It is always worth checking to see whether each treated unit can be
+matched to all control units with exactly the same covariate values.
+This procedure is more general than one-to-one exact matching, since
+we use as many control units as are available for each treated unit.
+If a large number of units were matched, then we have exact balance
+with little inefficiency and we may skip the remaining steps.  Indeed,
+exact balance means that a difference in means is sufficient for the
+parametric analysis (but be sure to weight if very different numbers
+of matches are included for each unit).  If insufficient matches are
+found, we either repeat the exact matching with fewer covariates or
+switch to propensity score matching, described below.  In the former,
+we balance the included variables but do not balance at all on the
+rest.  The excluded variables may be partially balanced due to
 correlations with the included variables, but some balance will be
 absent.  In contrast, propensity score matching uses all variables but
 only approximately matches.
 
-\paragraph{Step 3. Use Propensity Score Matching}  
+\paragraph{The Propensity Score Tautology}
 The first step in this procedure is to summarize all the variables in
 $X$ with a single variable called the \emph{propensity score}
 \citep{RosRub83}.  The propensity score is the true probability of
 unit $i$ receiving treatment, given the covariates $X_i$, $e_i(X_i) =
 P(t_i=1 | X_i)$.  It is usually estimated via a logistic regression of
-$t_i$ on a constant term and $X_i$ (still without regard to the
-dependent variable).  The propensity score is central to modern
-matching methods, but the present state of statistical theory means
-that its role as a theoretical idea differs profoundly from its role
-in practice.  Understanding this disconnect, an explanation of which
-to our knowledge has not explicitly appeared before in the literature,
-is fundamental to making good practical use of this important concept.
+$t_i$ on a constant term and $X_i$ (without regard to the dependent
+variable).  The propensity score is central to modern matching
+methods, but the present state of statistical theory means that its
+role as a theoretical idea differs profoundly from its role in
+practice.  Understanding this disconnect, an explanation of which to
+our knowledge has not explicitly appeared before in the literature, is
+fundamental to making good practical use of this important concept.
 
 Theoretically, the true propensity score is valuable because it is a
 ``balancing score,'' meaning that if a group of units have similar
@@ -1096,20 +1100,22 @@ match each treated unit to the control unit with the most similar
 value of the estimated propensity score $\hat{e}_i$ (which is known as
 nearest neighbor matching on the propensity score).\footnote{When
   matching without replacement, two different approaches of matching
-  nearest neighbors exist. The first, known as ``greedy'' matching,
-  simply starts with some treated unit and matches the closest control
-  unit that has not yet been matched.  This approach, however, is not
-  invariant to the order in which units are matched.  A second
-  approach, known as ``optimal'' matching, minimizes the total
+  nearest neighbors are available. The first, known as ``greedy''
+  matching, starts with some treated unit and matches the closest
+  control unit that has not yet been matched.  This approach, although
+  slightly faster and easier to understand, is not invariant to the
+  order in which units are matched.  A second approach, known as
+  ``optimal'' matching, avoids these issues by minimizing the total
   distance within matched units \citep[e.g.,][]{Rosenbaum89}.  Our
   software implements both, incorporating optimal matching code
   provided by \citet{Hansen04}.}  If this procedure balances $X$ (and
 thus satisfies the procedures for checking balance we describe in Step
 4), we use it.  If not, then we respecify the logistic regression by
 adding interactions or squared terms and match again.  If that works,
-then we use it.  If not, we can try even more elaborate specifications
-(when necessary, perhaps even trying other functional forms such as
-CART, neural network analyses, or others).
+then we use it.  If not, we try even more elaborate specifications
+(such as other functional forms such as CART, neural network analyses,
+or others) or more sophisticated matching methods
+\citep{Fr\:{o}lich04,SmiTod04}.
 
 The collective wisdom of the literature also recommends four more
 specific rules for applying propensity scores.  First, if many more
@@ -1120,10 +1126,10 @@ past the first usually reduces the variance somewhat less than the
 previous one), and can in some instances greatly reduce the bias too.
 If, instead, fewer controls are available than those treated, then
 matching with replacement --- allowing each control unit to be matched
-to more than one treated unit --- is a good option.  Alternatively,
-consider switching the definition of treatment and control groups
-(although, of course, if using ATT, this will change the substantive
-definition of the causal effect).
+to more than one treated unit --- is a good option \citep{DehWah99}.
+Alternatively, we can consider switching the definition of treatment
+and control groups (although, of course, if using ATT, this will
+change the substantive definition of the causal effect).
 
 Second, we are sometimes in the situation of suspecting from prior
 evidence (but not from the present data set) that a small number of
@@ -1139,41 +1145,47 @@ not turn up sufficient observations, then we can choose the nearest
 neighbor on the large-effect variables, defined by the Mahalanobis
 distance, among all units within 0.25 standard deviations (also known
 as ``calipers'') of the propensity score computed from all
-variables.\footnote{The 0.25 standard deviation figure, which is the
-  most common recommendation in the literature, appears to be
-  interpolated from the results in \citet{CocRub73}.  The Mahalanobis
-  distance is the weighted average of the squared distance between
-  units $i$ and $j$, $(X_i-X_j)'\Sigma^{-1}(X_i-X_j)$, where $\Sigma$
-  is the sample variance matrix of $X$ in the control group.  See
-  \cite{RubTho00}.}  If some of the variables in $X$ represent binary
-variables with very few in one category, common practice is to include
-them in the propensity score but not in the Mahalanobis distance
-calculation (\cite{GuRos93, RubTho00}).
+variables.\footnote{The 0.25 standard deviation figure, although not a
+  universal constant of nature, is the most common recommendation in
+  the literature; it appears to have been interpolated from the
+  results in \citet{CocRub73}.  The Mahalanobis distance is the
+  weighted average of the squared distance between units $i$ and $j$,
+  $(X_i-X_j)'\Sigma^{-1}(X_i-X_j)$, where $\Sigma$ is the sample
+  variance matrix of $X$ in the control group.  See \cite{RubTho00}.}
+If some of the variables in $X$ represent binary variables with very
+few in one category, common practice is to include them in the
+propensity score but not in the Mahalanobis distance calculation
+(\citealp{GuRos93, RubTho00}).
 
-Third, if some control units fall outside the range of the treated
-propensity score values, then these controls cannot be adjusted to
-match the treated units without extrapolation.  Common practice is to
-discard these control units.  Similarly, if any treated units fall
-outside the propensity score range of the control units, these too are
-discarded.  Dropping treated units changes the causal effect being
-estimated, but if it remains a relevant quantity, at least it can be
-estimated in a reasonable way.  Discarding these nonoverlapping
-observations eliminates the need for extrapolation.
+Third, if some control units fall outside the range (or ``common
+support'') of the treated propensity score values, then these controls
+cannot be adjusted to match the treated units without extrapolation.
+Common practice is to discard these control units.  Similarly, if any
+treated units fall outside the propensity score range of the control
+units, these too are discarded.  Dropping treated units changes the
+causal effect being estimated, but if it remains a relevant quantity,
+at least it can be estimated in a reasonable way.  Discarding these
+nonoverlapping observations eliminates the need for extrapolation.
 
 Finally, if finding a matching procedure with good balance and a large
 number of observations is difficult, subclassification can be a useful
 technique.  In subclassification, we form groups in which the
-distributions of covariates is the same, although across the
+distributions of covariates is the same, even though across the
 subclasses the distributions of covariates may be quite different.
 Subclassification can be accomplished by dividing the units into
 roughly equally sized subclasses where the propensity score is, by
-construction, approximately constant, and thus balanced.  Generally
-five or six subclasses are sufficient to adjust for a univariate
-covariate such as the propensity score \citep{Cochran68,RosRub84}.
-Alternatively, ``full matching'' methods such as that in
-\citep{Hansen04} can be utilized.
+construction, approximately constant, and thus balanced.  Some think
+that five or six subclasses are sufficient to adjust for a univariate
+covariate such as the propensity score \citep{Cochran68,RosRub84}, but
+as $n$ increases more subclasses are generally preferable.  In
+addition, the number and definition of the subclasses should be tuned
+to the nature of the empirical distributions to ensure adequate
+treatment and control units in each subclass.  Alternatively, ``full
+matching'' methods such as that in \citet{Hansen04} can be utilized.
+Another promising new approach involves a predominantly automated
+search for the best possible match \citep{DiaSek05}.
 
-\paragraph{Step 4. Evaluate the Matching Procedure}
+\paragraph{Evaluating the Matching Procedure}
 A good matching procedure reduces bias by increasing balance, does not
 increase the variance much by keeping the number of observations
 large, and prevents inducing new biases by matching only based on $X$
@@ -1183,54 +1195,57 @@ remaining after matching is easy.  Thus, the main task of this section
 is to describe how to evaluate balance.
 
 Conceptually, verifying balance involves checking whether
-equation~(\ref{balance}) holds.  One way to think about this process
-is to imagine, for all the variables in $X$, forming a
+(\ref{balance}), $p(X|t=1)=p(X|t=0)$, holds.  One way to think about
+this process is to imagine, for all the variables in $X$, forming a
 multidimensional histogram of all the treated units and comparing it
 to another multidimensional histogram of all the control units.
 Because of the curse of dimensionality, multidimensional histograms
 with more than a few covariates tend to be very sparse and so using
 them to estimate the two underlying probability densities in
-equation~(\ref{balance}) will ordinarily be very difficult without
-access to an extraordinary number of observations.  Thus researchers
-usually examine various low dimensional summaries instead.  If a low
+(\ref{balance}) will ordinarily be very difficult without access to an
+extraordinary number of observations.  Thus researchers usually
+examine various low dimensional summaries instead.  If a low
 dimensional summary differs between the treated and control groups
-then equation~(\ref{balance}) does not hold.  The risk of course is
-that even if many low dimensional summaries are the same for the
-treatment and control groups, we still cannot be certain that
-equation~(\ref{balance}) holds.  However, if the parametric analysis
-model itself does not use any higher order interactions not captured
-by the lower dimensional summaries, then the problem of not
-recognizing a higher order incompatibility between treatments and
-controls may not make a material difference in the end anyway.
+then (\ref{balance}) does not hold.  The risk of course is that even
+if many low dimensional summaries are the same for the treatment and
+control groups, we still cannot be certain that (\ref{balance}) holds.
 
 Perhaps the simplest, and also most commonly used, low dimensional
-summary compares the mean of the treatment group for each variable in
-$X$ with the mean of that variable in the control group.  If one or
+summary compares the mean of each variable in $X$ within the treated
+group with the mean of each variable in the control group.  If one or
 more of these differ by more than half a standard deviation of the
 respective $X$ variable, then better balance is needed
-(\cite{Cochran68}).  We can also compare the variances of each
+\citep{Cochran68}, although in practice, one should look for much
+smaller deviations.  We can also compare the variances of each
 variable between the two groups, as well as interactions or higher
 order moments.  Another common approach is to compare treatment and
 control histograms (or density estimates) one variable at a time.
+Some use formal hypothesis tests for these mean and variance
+differences, but it is the sample and not population balance that we
+seek.  Moreover, we would not want the power reductions inherent in
+hypothesis testing, due to pruning observations and smaller numbers
+within each subclass, to affect decision making about balance, since
+``insignificant'' differences between treatment and control groups can
+be due to good balance or inefficient estimates.
 
 A paradoxical but quite useful procedure is to compare the histogram
 of the propensity scores of the control units with that of the treated
-units. This is paradoxical (and indeed a new tautology) because it
-relies on the propensity score as a summary of the data to check
-whether propensity score matching is adequate.  It is useful
-nonetheless as one of our procedures for checking balance because it
-offers a low dimensional summary not obviously worse than the others
-we have discussed already.  Indeed, for the reasons discussed above,
-it is often a particularly good low dimensional summary. (Some take
-this idea a step further and make the comparisons with formal
-hypothesis tests, although still conditional on the propensity score
-being correct; see \citet{Sekhon04b}).
+units. This is paradoxical (and part of the propensity score
+tautology) because it relies on the propensity score as a summary of
+the data to check whether propensity score matching is adequate.  It
+is useful nonetheless as one of our procedures for checking balance
+because it offers a low dimensional summary not obviously worse than
+the others we have discussed already.  Indeed, for the reasons
+discussed above, it is often a particularly good low dimensional
+summary. (Some take this idea a step further and make the comparisons
+with formal hypothesis tests, although still conditional on the
+propensity score being correct; see \citealp{Sekhon04b}).
 
 If some covariates are omitted from some of the matching procedures,
 the balance on them should still be checked.  Doing so is often a good
 way to discover important covariates, since in fact researchers
 frequently have good qualitative knowledge of variables not coded in
-$X$ (\citep[][Ch.3]{Rosenbaum02}).  Indeed, preprocessing can help
+$X$ \citep[][Ch.3]{Rosenbaum02}.  Indeed, preprocessing can help
 researchers better understand their data when supplemented by good
 qualitative information and research \citep[e.g.,][]{RosSil01}.
 
@@ -1266,46 +1281,43 @@ estimates to changes in the specification.
 
 \section{Computing Uncertainty Estimates}
 
-No consensus exists in the literature on methods for computing
-uncertainty estimates, such as standard errors or confidence
-intervals, from matching procedures.  The problem is not some
-disagreement over technical statistical issues.  Rather, the issue
-revolves around normative criteria such as what researchers should
-condition on and what they should attribute to additional uncertainty.
-Since scholars are no more likely to reach consensus via debate on
-normative statistical issues than on normative political issues, we
-believe the best way forward is to choose a reasonable definition and
-show how to compute uncertainty estimates for it, and let others pick
-different definitions if they prefer.  Our choice, which we now
-explicate, appears substantively reasonable and has the advantage of
-being easy to implement.
+Computing uncertainty estimates, such as standard errors or confidence
+intervals, from matching procedures is an active area of research
+where no consensus yet exists.  The problem is not some disagreement
+over technical statistical issues.  Rather, the issue revolves around
+normative criteria such as what researchers should condition on and
+what they should attribute to additional uncertainty.  Since scholars
+are no more likely to reach consensus via debate on normative
+statistical issues than on normative political issues, the best way
+forward may be to choose a reasonable definition, show how to
+compute uncertainty estimates for it, and let others pick different
+definitions if they prefer.  Our choice, which we now explicate,
+appears substantively reasonable and has the advantage of being easy
+to implement.
 
-Parametric methods applied to raw data without preprocessing come with
-a list of relatively standard ways of computing uncertainty estimates.
-These include methods based on using the asymptotic normal
-approximation to the likelihood function, direct simulation from the
-finite sampling distribution or posterior density, various frequentist
-bias corrections, robust Bayesian analysis involving classes of
-posteriors, and even nonparametric bootstrapping, among others.  Any
-of these are easy to implement by drawing and summarizing simulations
-of the chosen quantity of interest, given a parametric model and
-accompanying theory of inference.
-
-Our idea is to take advantage of a common feature of the uncertainty
-estimates associated with parametric methods: They are all conditional
-on the pretreatment variables $X$ (and $t$), which are therefore
-treated as fixed and exogenous.  Since our preprocessing procedures
+Our idea is to take advantage of a common feature of all of the
+methods of computing uncertainty estimates associated with parametric
+methods: They are all conditional on the pretreatment variables $X$
+(and $t$), which are therefore treated as fixed and
+exogenous.\footnote{These include methods based on using the
+  asymptotic normal approximation to the likelihood function, direct
+  simulation from the finite sampling distribution or posterior
+  density, various frequentist bias corrections, robust Bayesian
+  analysis involving classes of posteriors, and even nonparametric
+  bootstrapping, among others.}  Since our preprocessing procedures
 modify the raw data only in ways that are solely a function of $X$, a
-reasonable method for defining uncertainty for the purpose of
-computing uncertainty estimates is to continue to treat $X$, and thus
-our entire preprocessing procedures, as fixed.  The advantage of this
-definition is that we can easily compute standard errors and
-confidence intervals using the same methods researchers have been
-using with their parametric methods all along, but applied to the
-preprocessed instead of raw data.  (The one exception to our procedure
-occurs when matching with replacement, where we would then run the
-parametric procedure with each unit weighted by the number of times it
-was chosen as a match.)
+reasonable method for defining uncertainty is to continue to treat
+$X$, and thus our entire preprocessing procedures, as fixed.  The
+advantage of this definition is that we can easily compute standard
+errors and confidence intervals using the same methods researchers
+have been using with their parametric methods all along, but applied
+to the preprocessed instead of raw data.  (The one exception to our
+procedure occurs when matching with replacement, where we would then
+run the parametric procedure with each unit weighted by the number of
+times it was chosen as a match.)  If proper procedures are developed
+to include aspects of matching in the uncertainty estimates, these
+could be used also, but they would estimate a different variance
+quantity.
 
 Thus, when estimating the ATT or ATE, we compute estimates of
 $\mu_i(1)$ and $\mu_i(0)$ and their uncertainty as usual from the
@@ -1316,10 +1328,7 @@ estimates conditional on the observed $y_i$ for each unit.  In this
 situation, if $t_i=1$, we set $\mu_i(1)=y_i$ and use the parametric
 model to estimate $\mu_i(0)$ and its uncertainty, whereas if $t_i=0$,
 we set $\mu_i(0)=y_i$ and use the parametric model to estimate
-$\mu_i(1)$ and its uncertainty estimate.  In Bayesian models,
-estimating the realized causal effect requires the equivalent of
-conditioning on $y_i$ after the likelihood estimation \citep[as
-in][]{King97}.
+$\mu_i(1)$ and its uncertainty estimate.
 
 \section{Empirical Illustrations}
 
@@ -1330,7 +1339,7 @@ present a model where propensity score matching works well.  In the
 second, ordinary propensity score matching did not balance adequately,
 and so we performed subclassification on the propensity score.  For
 pedagogical reasons, and to save space, we use different methods of
-checking balance via equation~(\ref{balance}) in our two applications.
+checking balance via (\ref{balance}) in our two applications.
 
 \subsection{Democratic Senate Majorities and FDA Drug Approval Time}
 
@@ -1339,8 +1348,8 @@ literature on institutional and partisan determinants of regulatory
 policy by examining several determinants of new drug approval times by
 the U.S.\ Food and Drug Administration (FDA).  Here, we focus on the
 hypothesis that Democratic oversight of the FDA should lead to slower
-approval of new drugs \citep[p.495]{Carp02} (specifically Model 1 of
-Table 2, p.499).
+approval of new drugs \citep[p.495 and Model 1 of Table 2,
+p.499]{Carp02}.
 
 To test this hypothesis, Carpenter uses a lognormal survival model of
 approval times regressed on several causal variables of political
@@ -1536,7 +1545,7 @@ seven point ordinal scale, where high scores indicate greater
 conservatism).\footnote{Visibility is measured originally by whether a
   candidate had campaign expenditures exceeding more than \$750,000.
   For simplicity and to maintain comparison to \citet{Koch02}, we
-  stipulate to, rather than evaluate the appropriateness of, these and
+  stipulate, rather than evaluate the appropriateness of, these and
   other measurements and methods.}  We confine ourselves to studying
 this effect on Republican female candidates, compared to the control
 of invisible male and female candidates (corresponding to the fourth
@@ -1557,7 +1566,7 @@ candidate as measured by the feeling thermometer.  Controlling for the
 feeling thermometer would thereby induce post-treatment bias.  Second,
 the study assumes that the visibility of one candidate does not affect
 the potential outcomes of another candidate.  Visibility of a
-candidates might, for example, detract local media attention from a
+candidate might, for example, detract local media attention from a
 candidate in an adjoining district, violating independence.  Third,
 the study assumes that visibility is the same treatment for all
 candidates.
@@ -1781,7 +1790,7 @@ course, dropping many observations does not necessarily mean that
 preprocessing is worse, since including imbalanced observations in a
 parametric analysis merely produces false precision.  So although
 estimated standard errors may increase in some cases with
-preprocessing, they would be more accurate.  Moreover, in many
+preprocessing, they would likely be more accurate.  Moreover, in many
 situations, eliminating observations far from the rest of the data as
 matching does will sometimes reduce heterogeneity and thereby reduce
 the variance.
@@ -1790,16 +1799,17 @@ Third, the matching literature offers a large number of possible and
 seemingly ad hoc procedures.  From one perspective, we might be
 concerned about the sensitivity of our results to changes in this
 process, just as we have been concerned with the sensitivity of causal
-effect estimates to parametric modeling assumptions.  In our view,
-this is not a major issue since the right procedure is the one that
-maximizes balance (with an as large as possible $n$), no matter how
-many procedures we try.  By applying this criterion in a disciplined
-way (i.e., without consulting $y$) to a large number of possible
-matching procedures, no choices are open to the analyst.  Instead,
-researchers should merely run as many as possible and choose by this
-relatively automatic procedure.  Unlike parametric modeling exercises,
-we need not choose this matching procedure or another; we merely run
-as many as feasible or likely to reduce bias and apply this criterion.
+effect estimates to parametric modeling assumptions.  This is not
+normally viewed as a major issue since the right procedure is the one
+that maximizes balance (with an as large as possible $n$), no matter
+how many procedures we try.  By applying this criterion in a
+disciplined way (i.e., without consulting $y$) to a large number of
+possible matching procedures, no choices are open to the analyst.
+Instead, researchers should merely run as many as possible and choose
+by this relatively automatic procedure.  Unlike parametric modeling
+exercises, we need not choose this matching procedure or another; we
+merely run as many as feasible or likely to reduce bias and apply this
+criterion.
 
 Finally, by dropping observations, we may wind up losing some
 critically important cases or may change either the information base
@@ -1838,54 +1848,64 @@ data set, readers can worry considerably less that slightly different
 specifications than those discussed in the text will greatly alter its
 empirical conclusions.
 
-% \appendix
-% \section{Matching Software}\label{s:matchit}
+Alternative approaches, working from different angles, to reducing
+model dependence include cross-validation \citep{BlaSmi**}, weighting
+\citep{Robins**; HirImbRub**}, nonparametric techniques, robust
+estimation, and fitting checks for parametric models.  Although when
+used properly each of these approaches reduce model dependence,
+matching is simpler to use and understand, and would work without
+modification to improve all the parametric models now used in the
+social sciences.  It even works well with these ``alternative''
+approaches.
 
-% We have created a software package called MatchIt
-% % (available at
-% % \url{http://gking.harvard.edu/matchit/}) 
-% that implements a large fraction of the matching procedures suggested
-% in the diverse scholarly literatures on this subject.  Most of our
-% software operates with a single command that takes an existing dataset
-% and produces as output a single preprocessed matched dataset.  The
-% preprocessed matched dataset can then be used by standard parametric
-% software just as you would have used the original dataset.  MatchIt
-% also works seamlessly with the general-purpose statistics program,
-% Zelig (\citet{ImaKinLau04}, available at
-% \url{http://gking.harvard.edu/zelig}).  MatchIt and Zelig run under
-% most operating systems via the open-source and free statistical
-% program R (see \url{http://r-project.org}).
+\appendix
+\section{Matching Software}\label{s:matchit}
 
-% For example, to use propensity score matching of a treatment
-% indicator, \texttt{treat}, and three pretreatment covariates, use this
-% command:
-% \begin{verbatim}
-% match.out <- matchit(treat ~ age + educ + black, data = lalonde)
-% \end{verbatim}
-% with the output stored as \texttt{match.out}.  For exact matching use:
-% \begin{verbatim}
-% match.out <- matchit(treat ~ age + educ + black, exact=TRUE, data = lalonde)
-% \end{verbatim}
-% Numerous other options are also available.  For example, suppose we
-% use MatchIt to subclassify into 5 classes by the propensity score:
-% \begin{verbatim}
-% match.out <- matchit(treat ~ age + educ + black, subclass=5, data = koch)
-% \end{verbatim}
-% Then we can easily use Zelig to estimate a parametric model (in this
-% case least squares regression) within each of the five subclasses
-% defined in MatchIt, using data from the control group:
-% \begin{verbatim}
-% z.out <- zelig(re78 ~ pscore, model = "ls", by = "psclass", 
-%                 data = match.data(match.out, "control"))
-% \end{verbatim}
-% With Zelig, we can also set the explanatory variables to predict the
-% missing potential outcomes under control for the treatment group and
-% simulate quantities of interest within each subclass:
-% \begin{verbatim}
-% x.out <- setx(z.out, data = match.data(match.out, "treat"), cond = TRUE)
-% s.out <- sim(z.out, x = x.out)
-% \end{verbatim}
-% The output automatically weights the results by the separate subclasses.
+A variety of software exists for conducting matching analyses
+\citep{}.
+
+We have created a software package called MatchIt (available at
+\url{http://gking.harvard.edu/matchit/}) that implements a large
+fraction of the matching procedures suggested in the diverse scholarly
+literatures on this subject.  Most of our software operates with a
+single command that takes an existing dataset and produces as output a
+single preprocessed matched dataset.  The preprocessed matched dataset
+can then be used by standard parametric software just as you would
+have used the original dataset.  MatchIt also works seamlessly with
+the general-purpose statistics program, Zelig (\citet{ImaKinLau04}.
+MatchIt and Zelig run under most operating systems via the open-source
+and free statistical program R (see \url{http://r-project.org}).
+
+For example, to use propensity score matching of a treatment
+indicator, \texttt{treat}, and three pretreatment covariates, use this
+command:
+\begin{verbatim}
+match.out <- matchit(treat ~ age + educ + black, data = lalonde)
+\end{verbatim}
+with the output stored as \texttt{match.out}.  For exact matching use:
+\begin{verbatim}
+match.out <- matchit(treat ~ age + educ + black, exact=TRUE, data = lalonde)
+\end{verbatim}
+Numerous other options are also available.  For example, suppose we
+use MatchIt to subclassify into 5 classes by the propensity score:
+\begin{verbatim}
+match.out <- matchit(treat ~ age + educ + black, subclass=5, data = koch)
+\end{verbatim}
+Then we can easily use Zelig to estimate a parametric model (in this
+case least squares regression) within each of the five subclasses
+defined in MatchIt, using data from the control group:
+\begin{verbatim}
+z.out <- zelig(re78 ~ pscore, model = "ls", by = "psclass", 
+                data = match.data(match.out, "control"))
+\end{verbatim}
+With Zelig, we can also set the explanatory variables to predict the
+missing potential outcomes under control for the treatment group and
+simulate quantities of interest within each subclass:
+\begin{verbatim}
+x.out <- setx(z.out, data = match.data(match.out, "treat"), cond = TRUE)
+s.out <- sim(z.out, x = x.out)
+\end{verbatim}
+The output automatically weights the results by the separate subclasses.
 
 \baselineskip=0.637\baselineskip \bibliographystyle{apsr}
 \bibliography{gk,gkpubs}
