@@ -1,9 +1,4 @@
 % todo:
-% - matching isn't an estimator; we just switch a lame para for a good
-% one
-% - doubly robust
-%- see lechner on bounds on QOI even without dropping Ts.  siaw.unisg.ch
-% - drop tstats replace with bias diff
 % - fix examples
 \documentclass[11pt,titlepage]{article}
 %\usepackage[notref]{showkeys}
@@ -627,9 +622,9 @@ is normal and $g(c)=c$, we have linear regression; if $p(\cdot)$ is
 Bernoulli and $g(c)=1/(1+e^{-c})$, the model reduces to a logistic
 regression.
 
-We define the ATT in Equation \ref{att} under this model by plugging
-in the definitions of the potential outcomes from the systematic
-component, with $t_i$ taking on values 1 and 0 respectively:
+We define the ATT in (\ref{att}) under this model by plugging in the
+definitions of the potential outcomes from the systematic component,
+with $t_i$ taking on values 1 and 0 respectively:
 \begin{align}
   \label{matt}
 \mu_i(1)&\equiv E(Y_i(1)|t_i=1,X)= g(\alpha + \beta + X_i\gamma),\notag \\
@@ -652,36 +647,34 @@ experimental vs.\ observational data under this general model.
 In experimental data, random assignment guarantees (among other
 things) that $t$ and (any observed or unobserved) $X$ are independent.
 In this situation, $X$ cannot be a confounding factor when estimating
-the effect of $t$ and so we drop $X$ and simplify
-Equation~(\ref{matt}) as
+the effect of $t$ and so we drop $X$ and simplify (\ref{matt}) as
 \begin{align}
   \label{smatt}
   E[Y_i(1)|t_i=1] &\equiv \mu_i(1) = g(\alpha + \beta)\notag \\
   E[Y_i(0)|t_i=0] &\equiv \mu_i(0) = g(\alpha)
 \end{align}
-and the average treatment effect on the treated in
-Equation~(\ref{att}) as
+and the average treatment effect on the treated in (\ref{att}) as
 \begin{equation}
   \label{satt}
   \text{ATT} = g(\alpha+\beta) - g(\alpha),
 \end{equation}
 which importantly no longer has a summation sign over $i$.
 
-The systematic components in Equations \ref{smatt} are now scalar
-constants for all $i$.  This is a key result, since the functional
-form $g(\cdot)$ no longer models a high dimensional space representing
-how the mean varies over $i$ as a function of all the variables in
-$X$, but instead now merely amounts to a simple scalar
-reparameterization.  The fact that $g(\cdot)$ is now a scalar is
-central: Since maximum likelihood is invariant to reparameterization
---- meaning, for example, that the MLE of $\alpha$ is the same as the
-square root of the MLE of $\alpha^2$ \citep[][p.75--76]{King89} --- we
-get the same estimate of the expected potential outcomes no matter how
-$g(\cdot)$ is defined.\footnote{To rule out degenerate cases such as
-  $g(a)=8$, we require that the image of $g(\cdot)$ and the range of
-  the potential outcomes be the same.}  Thus, when $\mu$ is a function
-of $X$, the choice of $g(\cdot)$ is a difficult substantive decision
-typically requiring more knowledge than is available.  In contrast, in
+The systematic components in (\ref{smatt}) are now scalar constants
+for all $i$.  This is a key result, since the functional form
+$g(\cdot)$ no longer models a high dimensional space representing how
+the mean varies over $i$ as a function of all the variables in $X$,
+but instead now merely amounts to a simple scalar reparameterization.
+The fact that $g(\cdot)$ is now a scalar is central: Since maximum
+likelihood is invariant to reparameterization --- meaning, for
+example, that the MLE of $\alpha$ is the same as the square root of
+the MLE of $\alpha^2$ \citep[][p.75--76]{King89} --- we get the same
+estimate of the expected potential outcomes no matter how $g(\cdot)$
+is defined.\footnote{To rule out degenerate cases such as $g(a)=8$, we
+  require that the image of $g(\cdot)$ and the range of the potential
+  outcomes be the same.}  Thus, when $\mu$ is a function of $X$, the
+choice of $g(\cdot)$ is a difficult substantive decision typically
+requiring more knowledge than is available.  In contrast, in
 experimental data, because we can now drop $X$, the choice of
 $g(\cdot)$ reduces to an easy computational issue with no substantive
 import.  Moreover, given any chosen stochastic component, this result
@@ -900,9 +893,9 @@ that this relationship holds:
   \label{balance}
   p(X|t=1) = p(X|t=0).
 \end{equation}
-The simplest way to satisfy Equation \ref{balance} by preprocessing is
-to use \emph{one-to-one exact matching}.  The idea is to match each
-treated unit with one control unit for which the values of $X_i$ are
+The simplest way to satisfy (\ref{balance}) by preprocessing is to use
+\emph{one-to-one exact matching}.  The idea is to match each treated
+unit with one control unit for which the values of $X_i$ are
 identical.  Our preprocessed dataset thus is the same as the original
 dataset with any unmatched units discarded, and thus with $t_i$ and
 $X_i$ now independent.  If enough matches are available, this
@@ -914,35 +907,34 @@ treated and the other to be a control.  Then no matter what effect
 $X_i$ has on $y$, we can ignore it entirely since $X_i$ is literally
 held constant within each pair of units.\footnote{Formally,
   ignorability, by which we mean the independence of $t$ and the
-  potential outcomes given $X$, and balance in Equation \ref{balance}
+  potential outcomes given $X$, and balance in (\ref{balance})
   guarantee valid inferences, which can be written as
   $P(Y(0)|t=1)=P(Y(0)|t=0)$ and $P(Y(1)|t=1)=P(Y(1)|t=0)$.}
 
 Although one-to-one exact matching can eliminate model dependence and
 any bias from incorrect assumptions made during the parametric stage
 of analysis, it is not the only way to break the link between $t$ and
-$X$, since satisfying equation~(\ref{balance}) only requires the
-distributions to be equivalent.  Moreover, exact matching has the
-disadvantage in many data sets of not generating many matches.  The
-problem is most severe if $X_i$ is high dimensional (another effect of
-the curse of dimensionality) or contains continuous variables.  The
-result may then be a preprocessed data set with very few observations
-that results in a parametric analysis with large standard errors.  In
-this situation, we may reduce model dependence and the potential for
-bias, but decrease efficiency and as a result increase mean squared
-error.  If this occurs in practice, those in the matching literature
-tend to sacrifice some bias reduction for the increased efficiency
-that comes from having more observations in the preprocessed dataset.
-In our approach, if we lose some opportunity for bias reduction we do
-so only in the preprocessing stage; our second stage parametric
-analysis still has a chance to eliminate the remaining bias.  We
-therefore turn in Section \ref{s:choose} to a menu of matching
-procedures that enable researchers to satisfy equation~(\ref{balance})
-as closely as possible while still generating a preprocessed dataset
-with enough observations.
+$X$, since satisfying (\ref{balance}) only requires the distributions
+to be equivalent.  Moreover, exact matching has the disadvantage in
+many data sets of not generating many matches.  The problem is most
+severe if $X_i$ is high dimensional (another effect of the curse of
+dimensionality) or contains continuous variables.  The result may then
+be a preprocessed data set with very few observations that results in
+a parametric analysis with large standard errors.  In this situation,
+we may reduce model dependence and the potential for bias, but
+decrease efficiency and as a result increase mean squared error.  If
+this occurs in practice, common practice is to sacrifice some bias
+reduction for the increased efficiency that comes from having more
+observations in the preprocessed dataset.  In our approach, if we lose
+some opportunity for bias reduction we do so only in the preprocessing
+stage; our second stage parametric analysis still has a chance to
+eliminate the remaining bias.  We therefore turn in Section
+\ref{s:choose} to a menu of matching procedures that enable
+researchers to satisfy (\ref{balance}) as closely as possible while
+still generating a preprocessed dataset with enough observations.
 
-Finally, the right graph in Figure \ref{fg:extrap} gives an example of
-the consequences for reducing model dependence of matching that is not
+We now offer an example in the right graph in Figure \ref{fg:extrap}
+of the reduction in model dependence produced by matching that is not
 exact.  The data in this panel is the same as that for which the
 parametric analyses in the left graph give highly model dependent
 results.  The difference is that the matching procedure deleted the
@@ -955,6 +947,38 @@ regression largely irrelevant.  Indeed, for a large range of models,
 this preprocessed data will be mostly insensitive to the choice of
 functional form assumptions and so will return highly similar causal
 effect estimates.
+
+A key point about matching as nonparametric preprocessing is that
+matching is \emph{not} a method of estimation; to get an estimate of a
+causal effect from matching requires that it be paired with some
+analysis method.  In the past, the analysis method has almost always
+been a simple difference in means between the treatment and control
+groups.  This method certainly makes sense in the case of exact
+one-to-one matching, since most parametric procedures applied to
+exactly matched data would give the same estimates.  Our point is
+that, with matching that is not exact, using a difference in means
+test is equivalent to assuming that any remaining imbalance in the
+matched sample is strictly unrelated to the treatment, which we know
+is false, or has no effect on the outcome, which we have no evidence
+about before consulting the outcome variable.  With data that are
+anything short of exactly matched, not adjusting is suboptimal.  We
+might as well make use of our decades of experience with parametric
+models to adjust (i.e., to interpolate or extrapolate) the matched
+sample.  The adjustment necessary is far less onorous, model
+dependent, and thus much more empirical than what would be necessary
+without matching.  
+
+Finally, we note that an advantage of parametric analysis following
+matching is that the whole two-step procedure is ``doubly robust'' in
+the sense that if \emph{either} the matching \emph{or} the parametric
+model is right, causal estimates will be statistically consistent
+\citep[see][]{RobRot01}.  That is, if the parametric model is
+misspecified, but the matching is exact, or if the matching is
+inadequate or wrong but the parametric model is correctly specified,
+then our estimates will still be consistent.  The double robustness
+property does not apply generally to using matching with a difference
+in means.
+
 
 \section{Choosing a Matching Procedure}\label{s:choose}
 
@@ -1135,8 +1159,9 @@ If, instead, fewer controls are available than those treated, then
 matching with replacement --- allowing each control unit to be matched
 to more than one treated unit --- is a good option \citep{DehWah99}.
 Alternatively, we can consider switching the definition of treatment
-and control groups (although, of course, if using ATT, this will
-change the substantive definition of the causal effect).
+and control groups (although, if using ATT, this will change the
+substantive definition of the causal effect unless one uses more
+sophisticated estimators; \citealt{Lechner00}).
 
 Second, we are sometimes in the situation of suspecting from prior
 evidence (but not from the present data set) that a small number of
@@ -1230,10 +1255,11 @@ control histograms (or density estimates) one variable at a time.
 Some use formal hypothesis tests for these mean and variance
 differences, but it is the sample and not population balance that we
 seek.  Moreover, we would not want the power reductions inherent in
-hypothesis testing, due to pruning observations and smaller numbers
+hypothesis testing, due to pruning observations, or smaller numbers
 within each subclass, to affect decision making about balance, since
 ``insignificant'' differences between treatment and control groups can
-be due to good balance or inefficient estimates.
+be due to good balance or inefficient estimates: we only seek good
+balance.
 
 A paradoxical but quite useful procedure is to compare the histogram
 of the propensity scores of the control units with that of the treated
@@ -1321,10 +1347,10 @@ have been using with their parametric methods all along, but applied
 to the preprocessed instead of raw data.  (The one exception to our
 procedure occurs when matching with replacement, where we would then
 run the parametric procedure with each unit weighted by the number of
-times it was chosen as a match.)  If proper procedures are developed
-to include aspects of matching in the uncertainty estimates, these
-could be used also, but they would estimate a different variance
-quantity.
+times it was chosen as a match.)  As proper procedures are developed
+to include different aspects of matching in the uncertainty estimates,
+these could be used also, but they would each estimate a different
+variance quantity.
 
 Thus, when estimating the ATT or ATE, we compute estimates of
 $\mu_i(1)$ and $\mu_i(0)$ and their uncertainty as usual from the
