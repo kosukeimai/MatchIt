@@ -559,15 +559,17 @@ procedures.
 We also assume that a researcher analyzing observational data has
 sufficient information in their measured pretreatment control
 variables $X$ so that it is possible via \emph{some} method to make
-valid causal inferences.  This is known in some fields as the absence
-of omitted variable bias, so that $X_i$ must include all variables
-that are causally prior to $t_i$, associated with $t_i$, and affect
-$Y_i$ conditional on $t_i$ \citep{Goldberger91,KinKeoVer94}.  In other
-fields, this same condition is known as ignorability, which means that
-$t_i$ and the potential outcomes are independent after conditioning on
-$X_i$, and so we can literally ignore all unobserved variables
-\citep{RosRub83}.  In still others it is known as the absence of
-confounding or conditional independence.  Whatever the name, it is a
+valid causal inferences.  This is known in political methodology and
+econometrics as the absence of ``omitted variable bias,'' so that
+$X_i$ must include all variables that are causally prior to $t_i$,
+associated with $t_i$, and affect $Y_i$ conditional on $t_i$
+\citep{Goldberger91,KinKeoVer94}, or ``selection on observables''
+\citep{HecRob85}.  In statistics, this same condition is known as
+``ignorability,'' which means that $t_i$ and the potential outcomes
+are independent after conditioning on $X_i$, and so we can literally
+ignore all unobserved variables \citep{RosRub83}.  In biostatistics,
+it is known as the absence of ``confounding,'' and in several fields it
+is known as ``conditional independence''.  Whatever the name, it is a
 strong condition, but it is one about which social scientists are
 deeply knowledgeable and it is the central methodological concern of
 many substantive scholarly articles.  We emphasize this assumption to
@@ -1252,15 +1254,25 @@ respective $X$ variable, then better balance is needed
 smaller deviations.  We can also compare the variances of each
 variable between the two groups, as well as interactions or higher
 order moments.  Another common approach is to compare treatment and
-control histograms (or density estimates) one variable at a time.
-Some use formal hypothesis tests for these mean and variance
-differences, but it is the sample and not population balance that we
-seek.  Moreover, we would not want the power reductions inherent in
-hypothesis testing, due to pruning observations, or smaller numbers
-within each subclass, to affect decision making about balance, since
+control histograms one variable at a time, although these histograms
+should be treated as summaries of the data and not estimates of
+population densities.  
+
+Some examine formal hypothesis tests for these mean, variance, and
+distribution differences, but balance is a characteristic of the
+observed sample, not some hypothetical population, and so hypothesis
+tests, although often providing convenient summaries of the data, are
+not relevant as inferences to a population; t-statistics below 2 and
+p-values above 0.05 have no special relevance to assessing balance.
+The closer the two observed treatment and control groups in the
+sample, the better.  Moreover, we would not want power reductions due
+to pruning observations, or dividing units into subclasses, to affect
+decision making about whether balance has been achieved, since
 ``insignificant'' differences between treatment and control groups can
-be due to good balance or inefficient estimates: we only seek good
-balance.
+be due to good balance or inefficient estimates: we only require good
+balance.  Thus, for one example, better than using the t-statistic for
+the difference in means would be to use the raw difference in means
+(perhaps denominated in standard deviation units).
 
 A paradoxical but quite useful procedure is to compare the histogram
 of the propensity scores of the control units with that of the treated
