@@ -899,27 +899,27 @@ that this relationship holds:
 where $\tilde p$ refers to the observed empirical density of the data
 (think histogram), rather than a population density.\footnote{To be
   more specific, the empirical density is defined as $\tilde p(x) = \#
-  \{ i\in \{1, 2, ..., n \}: X_i = x \} / n$, for all $x$.  The
-    denominator in (\ref{balance}) is $\sum_{i=1}^n t_i$ on the left
-    side and $\sum_{i=1}^n (1-t_i)$ on the right.}  The simplest way
-  to satisfy (\ref{balance}) by preprocessing is to use
-  \emph{one-to-one exact matching}.  The idea is to match each treated
-  unit with one control unit for which the values of $X_i$ are
-  identical.  Our preprocessed dataset thus is the same as the
-  original dataset with any unmatched units discarded, and thus with
-  $t_i$ and $X_i$ now independent.  If enough matches are available,
-  this procedure eliminates all dependence on the functional form in
-  the parametric analysis.  It is also highly intuitive, since it
-  directly parallels an experiment where we find pairs of units that
-  are identical in all observable ways and assign one from each pair
-  to be treated and the other to be a control.  Then no matter what
-  effect $X_i$ has on $y$, we can ignore it entirely since $X_i$ is
-  literally held constant within each pair of
-  units.\footnote{Formally, ignorability, by which we mean the
-    independence of $t$ and the potential outcomes given $X$, and
-    balance in (\ref{balance}) guarantee valid inferences, which can
-    be written as $p(Y(0)|t=1)=p(Y(0)|t=0)$ and
-    $p(Y(1)|t=1)=p(Y(1)|t=0)$.}
+  \{ i\in \{1, 2, ..., n \}: X_i = x \} / n$, for all $x$, where
+  $\#\{a\}$ is the number of elements in the set $\{a\}$.  The
+  denominator in (\ref{balance}) is $\sum_{i=1}^n t_i$ on the left
+  side and $\sum_{i=1}^n (1-t_i)$ on the right.}  The simplest way to
+satisfy (\ref{balance}) by preprocessing is to use \emph{one-to-one
+  exact matching}.  The idea is to match each treated unit with one
+control unit for which the values of $X_i$ are identical.  Our
+preprocessed dataset thus is the same as the original dataset with any
+unmatched units discarded, and thus with $t_i$ and $X_i$ now
+independent.  If enough matches are available, this procedure
+eliminates all dependence on the functional form in the parametric
+analysis.  It is also highly intuitive, since it directly parallels an
+experiment where we find pairs of units that are identical in all
+observable ways and assign one from each pair to be treated and the
+other to be a control.  Then no matter what effect $X_i$ has on $y$,
+we can ignore it entirely since $X_i$ is literally held constant
+within each pair of units.\footnote{Formally, ignorability, by which
+  we mean the independence of $t$ and the potential outcomes given
+  $X$, and balance in (\ref{balance}) guarantee valid inferences,
+  which can be written as $p(Y(0)|t=1)=p(Y(0)|t=0)$ and
+  $p(Y(1)|t=1)=p(Y(1)|t=0)$.}
 
 Although one-to-one exact matching can eliminate model dependence and
 any bias from incorrect assumptions made during the parametric stage
