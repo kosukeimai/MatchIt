@@ -1,12 +1,23 @@
-data <- read.table("~/matchit/docs/papers/carpenter/ajps2002-full1b.txt", header=T)
+data <- read.table("ajps2002-full1b.txt", header=T)
 data$treat <- data$demsnmaj
 
-sink("matchfda.out")
-library(Matchit)
+## rescaling
+data$hospdisc <- data$hospdisc/100000
+data$natreg <- data$natreg/100
+data$stafcder <- data$stafcder/100
+data$prevgenx <- data$prevgenx/100
+data$hhosleng <- data$hhosleng/10
+data$condavg3 <- data$condavg3/10
+data$orderent <- data$orderent/10
+data$vandavg3 <- data$vandavg3/10
+data$wpnoavg3 <- data$wpnoavg3/100
+
+#sink("matchfda.out")
+library(MatchIt)
 mout <- matchit(treat ~ orderent + stafcder + prevgenx + lethal +
-                deathrt1 + hosp01 + I(hospdisc/1000000) +
+                deathrt1 + hosp01 + hospdisc +
                 hhosleng + femdiz01 + mandiz01 + peddiz01 + acutediz +
-                orphdum + natreg + I(natregsq/1000) +  wpnoavg3 +
+                orphdum + natreg + I(natreg^2) +  wpnoavg3 +
                 sqrt(wpnoavg3) + vandavg3 + condavg3, data=data,
                 discard=1)   
 
@@ -15,14 +26,19 @@ mdata <- match.data(mout)
 
 library(Zelig)
 fullmodel <- as.formula(Surv(acttime, d) ~ treat + prevgenx + lethal +
-                        deathrt1 + acutediz + hosp01 + I(hospdisc/10000) +
+                        deathrt1 + acutediz + hosp01 + hospdisc +
                         hhosleng + femdiz01 + mandiz01 + peddiz01 +
-                        orphdum + natreg + I(natregsq/1000) + vandavg3 + 
-                        wpnoavg3 + condavg3 +
-                        orderent + stafcder)
+                        orphdum + natreg + I(natreg^2) + vandavg3 + 
+                        wpnoavg3 + condavg3 + orderent + stafcder +
+                        I(prevgenx^2) + I(deathrt1^2) + I(hospdisc^2) + 
+                        I(hhosleng^2) + I(vandavg3^2) + I(wpnoavg3^2) +
+                        I(condavg3^2) + I(orderent^2) + I(stafcder^2)
+                        )
 
 res <- zelig(fullmodel, data=data, model="lognorm")
+print(summary(res))
 mres <- zelig(fullmodel, data=mdata, model="lognorm")
+print(summary(res))
 xvars <- names(res$coefficients)
 xvars <- xvars[3:length(xvars)]
 start <- paste("Surv(acttime, d) ~ treat")
