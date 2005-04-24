@@ -47,10 +47,10 @@ start <- paste("Surv(acttime, d) ~ treat")
 library(combinat)
 N <- 1
 total <- 1
-for (i in N:(length(xvars)-1))
-  total <- total + ncol(combn(xvars, i)) 
+for (i in N:(length(xvars)-1)) 
+  total <- total + nCm(length(xvars), i) 
 cat("\n I'm going to run", total, "regressions!\n")
-    
+
 ate <- mate <- rep(0,total)
 counter <- 1
 cat("start", date(), "\n")
