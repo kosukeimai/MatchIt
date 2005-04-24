@@ -1272,14 +1272,17 @@ tests, although often providing convenient summaries of the data, are
 not relevant as inferences to a population; t-statistics below 2 and
 p-values above 0.05 have no special relevance to assessing balance.
 The closer the two observed treatment and control groups in the
-sample, the better.  Moreover, we would not want power reductions due
-to pruning observations, or dividing units into subclasses, to affect
-decision making about whether balance has been achieved, since
-``insignificant'' differences between treatment and control groups can
-be due to good balance or inefficient estimates: we only require good
-balance.  Thus, for one example, better than using the t-statistic for
-the difference in means would be to use the raw difference in means
-(perhaps denominated in standard deviation units).
+sample, the better.  Moreover, hypothesis tests can be highly
+misleading in the context of assessing balance since we would not want
+power reductions due to pruning observations, or dividing units into
+subclasses, to affect decision making about whether balance has been
+achieved, since ``insignificant'' differences between treatment and
+control groups can be due to good balance or inefficient estimates: we
+only require good balance.  Thus, for one example, better than using
+the t-statistic for the difference in means would be to use the raw
+difference in means; and better than both would be a quantile-quantile
+plot for each variable, since that tests the entire the equality of
+the full empricial distribution of the treatment and control groups.
 
 A paradoxical but quite useful procedure is to compare the histogram
 of the propensity scores of the control units with that of the treated
@@ -1914,19 +1917,19 @@ works well with these ``alternative'' approaches.
 \section{Matching Software}\label{s:matchit}
 
 A variety of excellent software is available to perform matching
-\citep{AbaDruLeb02, BecIch02, BerKos03, CumMcKWei03, Hansen05,
-  LeuSia04, Parsons00, Parsons01, Sekhon04}.  However, each program
-implements only a specialized subset of available statistical
-procedures.  Moreover, they are spread over a range of different
-languages and packages, which would normally makes it impractical to
-use more than one for any applied project.  Thus, as a companion to
-and in the same spirit as this paper, we have created a software
-package (called MatchIt, available at \url{http://.....})  that
-implements the vast majority of the matching procedures suggested in
-the diverse scholarly literatures on this subject.  Where possible,
-MatchIt builds on and incorporates existing packages and, across all
-the specialized techniques, MatchIt offers a single, simple, and
-unified syntax.  Adding procedures to MatchIt is also easy.
+\citep{AbaDruLeb02, BecIch02, BerKos03, Hansen05, LeuSia04, Parsons00,
+  Parsons01, Sekhon04}.  However, each program implements only a
+specialized subset of available statistical procedures.  Moreover,
+they are spread over a range of different languages and packages,
+which would normally makes it impractical to use more than one for any
+applied project.  Thus, as a companion to and in the same spirit as
+this paper, we have created a software package (called MatchIt,
+available at \url{http://.....})  that implements the vast majority of
+the matching procedures suggested in the diverse scholarly literatures
+on this subject.  Where possible, MatchIt builds on and incorporates
+existing packages and, across all the specialized techniques, MatchIt
+offers a single, simple, and unified syntax.  Adding procedures to
+MatchIt is also easy.
 
 MatchIt operates with a single command that takes an existing dataset
 and produces as output a single preprocessed matched dataset.  The
