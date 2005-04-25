@@ -12,7 +12,7 @@ data$orderent <- data$orderent/10
 data$vandavg3 <- data$vandavg3/10
 data$wpnoavg3 <- data$wpnoavg3/100
 
-#sink("matchfda.out")
+sink("matchfda.out")
 library(MatchIt)
 mout <- matchit(treat ~ orderent + stafcder + prevgenx + lethal +
                 deathrt1 + hosp01 + hospdisc +
