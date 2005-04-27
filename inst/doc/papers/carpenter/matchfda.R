@@ -45,37 +45,41 @@ start <- paste("Surv(acttime, d) ~ treat")
 
 
 library(combinat)
+sims <- 1000000
 N <- 1
-total <- 1
+total <- rep(0,length(xvars)-1)
 for (i in N:(length(xvars)-1)) 
-  total <- total + nCm(length(xvars), i) 
-cat("\n I'm going to run", total, "regressions!\n")
+  total[i] <- nCm(length(xvars), i) 
+run <- round(total/sum(total)*sims)
 
-ate <- mate <- rep(0,total)
+ate <- mate <- rep(0,sum(run))
 counter <- 1
 cat("start", date(), "\n")
 for (i in N:(length(xvars)-1)) {
-  allsubset <- combn(xvars, i)
-  for (j in 1:ncol(allsubset)) {
-    ftmp <- start
-    for (k in 1:i) 
-      ftmp <- paste(ftmp, "+", allsubset[k,j])
-    ftmp <- as.formula(ftmp)
-    tmp <- survreg(ftmp,  data = data, dist="lognormal")
-    x0 <- x1 <- model.matrix(tmp)
-    x0[,"treat"] <- 0
-    x1[,"treat"] <- 1
-    ate[counter] <- mean(exp(x1%*%tmp$coefficients+0.5*tmp$scale^2) -
-                         exp(x0%*%tmp$coefficients+0.5*tmp$scale^2))
-    tmp <- survreg(ftmp, data = mdata, dist="lognormal") 
-    x0 <- x1 <- model.matrix(tmp)
-    x0[,"treat"] <- 0
-    x1[,"treat"] <- 1
-    mate[counter] <- mean(exp(x1%*%tmp$coefficients+0.5*tmp$scale^2) -
-                          exp(x0%*%tmp$coefficients+0.5*tmp$scale^2))
-    counter <- counter + 1
+  if (run[i]>0) {
+    sel <- sample(1:nCm(length(xvars), i), run[i], replace=FALSE)
+    allsubset <- combn(xvars, i)[,sel]
+    for (j in 1:ncol(allsubset)) {
+      ftmp <- start
+      for (k in 1:i) 
+        ftmp <- paste(ftmp, "+", allsubset[k,j])
+      ftmp <- as.formula(ftmp)
+      tmp <- survreg(ftmp,  data = data, dist="lognormal")
+      x0 <- x1 <- model.matrix(tmp)
+      x0[,"treat"] <- 0
+      x1[,"treat"] <- 1
+      ate[counter] <- mean(exp(x1%*%tmp$coefficients+0.5*tmp$scale^2) -
+                           exp(x0%*%tmp$coefficients+0.5*tmp$scale^2))
+      tmp <- survreg(ftmp, data = mdata, dist="lognormal") 
+      x0 <- x1 <- model.matrix(tmp)
+      x0[,"treat"] <- 0
+      x1[,"treat"] <- 1
+      mate[counter] <- mean(exp(x1%*%tmp$coefficients+0.5*tmp$scale^2) -
+                            exp(x0%*%tmp$coefficients+0.5*tmp$scale^2))
+      counter <- counter + 1
+    }
+    cat(i,"covariates:",date(),"\n")
   }
-  cat(i,"covariates:",date(),"\n")
 }
 
 ## using the full model
