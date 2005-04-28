@@ -57,13 +57,10 @@ counter <- 1
 cat("start", date(), "\n")
 for (i in N:(length(xvars)-1)) {
   if (run[i]>0) {
-    sel <- sample(1:nCm(length(xvars), i), run[i], replace=FALSE)
-    allsubset <- combn(xvars, i)[,sel]
-    for (j in 1:ncol(allsubset)) {
+    for (j in 1:ncol(run[i])) {
       ftmp <- start
-      for (k in 1:i) 
-        ftmp <- paste(ftmp, "+", allsubset[k,j])
-      ftmp <- as.formula(ftmp)
+      bk <- sample(xvars,i,replace=F)
+      ftmp <- as.formula(paste(ftmp, "+",paste(bk,collapse=" + ")))
       tmp <- survreg(ftmp,  data = data, dist="lognormal")
       x0 <- x1 <- model.matrix(tmp)
       x0[,"treat"] <- 0
