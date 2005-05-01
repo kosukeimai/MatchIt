@@ -22,14 +22,19 @@ dta.full <- na.omit(dta.full)
 
 #matching and creating matched dataset
 #now testing sensitivity
-fml <- as.formula(prcanid ~ rviswom + repcan1 + goppty + rideo + rproj + repft + aware)
+#fml <- as.formula(prcanid ~ rviswom + repcan1 + goppty + rideo + rproj + repft + aware)
+fml <- as.formula(prcanid ~ rviswom + repcan1 + goppty + rideo + rproj
+                  + repft + aware + I(repcan1^2) + I(goppty^2) +
+                  I(rideo^2) + I(rproj^2) + I(repft^2) + I(aware^2))
 res <- zelig(fml, data=dta.full, model="ls")
 xvars <- names(res$coefficients)
 xvars <- xvars[3:length(xvars)]
 tt <- attr(terms(res),"term.labels")[1]
 yy <- attr(terms(res),"variables")[[2]]
 mfml <- as.formula(paste(tt,"~",paste(xvars,collapse=" + ")))
-m1 <- matchit(mfml, data=dta.full, subclass=6, nearest=F, discard=1)
+m1 <- matchit(mfml, data=dta.full, nearest=T, discard=1,
+              caliper=0.3, reestimate=T)
+#m1 <- matchit(mfml, data=dta.full, subclass=6, nearest=F, discard=1)
 dta.match <- match.data(m1)
 
 #new diagnostics
@@ -80,14 +85,6 @@ for(i in 1:length(cc)){
   tc <- tc*length(cc[[i]])
 }
 
-#using squares as well
-fml <- as.formula(prcanid ~ rviswom + repcan1 + goppty + rideo + rproj
-                  + repft + aware + I(repcan1^2) + I(goppty^2) +
-                  I(rideo^2) + I(rproj^2) + I(repft^2) + I(aware^2))
-res <- zelig(fml, data=dta.full, model="ls")
-xvars <- names(res$coefficients)
-xvars <- xvars[3:length(xvars)]
-
 #sensitivity
 start <- paste(yy,"~",tt)
 coef <- mcoef <- NULL
@@ -108,24 +105,28 @@ for (i in N:(length(xvars)-1)) {
     ftmp <- as.formula(ftmp)
     tmp <- lm(ftmp,  data = dta.full)
     coef[counter] <- tmp$coefficient[tt]
-    tmp <- zelig(ftmp, data = dta.match, model="ls", by="psclass")
-    wate <- 0
-    for(l in 1:length(tmp)){
-      wate <- wate + tmp[[l]]$coefficient[tt]*sum(dta.match$psclass==l & dta.match[,tt]==1)/sum(dta.match$psclass!=0 & dta.match[,tt]==1)
-    }
-    mcoef[counter] <- wate
+    #for subclass
+#    tmp <- zelig(ftmp, data = dta.match, model="ls", by="psclass")
+#    wate <- 0
+#    for(l in 1:length(tmp)){
+#      wate <- wate + tmp[[l]]$coefficient[tt]*sum(dta.match$psclass==l & dta.match[,tt]==1)/sum(dta.match$psclass!=0 & dta.match[,tt]==1)
+#    }
+#    mcoef[counter] <- wate
+    #for caliper matching
+    mcoef[counter] <- lm(ftmp, data = dta.match)$coefficient[tt]
     counter <- counter + 1
   }
   cat(i,"covariates:",counter,"\n")
   cat(date(), "\n\n")
 }
-coef[length(coef)] <- res$coefficients[tt]
-mres <- zelig(fml, data=dta.match, model="ls",by="psclass")
-wate <- 0
-for(l in 1:length(tmp)){
-  wate <- wate + tmp[[l]]$coefficient[tt]*sum(dta.match$psclass==l & dta.match[,tt]==1)/sum(dta.match$psclass!=0 & dta.match[,tt]==1)  
+save.image("koch.Rdata")
+#coef[length(coef)] <- res$coefficients[tt]
+#mres <- zelig(fml, data=dta.match, model="ls",by="psclass")
+#wate <- 0
+#for(l in 1:length(tmp)){
+#  wate <- wate + tmp[[l]]$coefficient[tt]*sum(dta.match$psclass==l & dta.match[,tt]==1)/sum(dta.match$psclass!=0 & dta.match[,tt]==1)  
 }
-mcoef[length(mcoef)] <- wate
+#mcoef[length(mcoef)] <- wate
 
 #tables
 library(xtable)
