@@ -1,6 +1,6 @@
 % todo:
 % - fix examples
-% - fix fig 1
+
 \documentclass[11pt,titlepage]{article}
 %\usepackage[notref]{showkeys}
 \usepackage[reqno]{amsmath}
@@ -795,7 +795,7 @@ $Y$ on a constant, $t$, and $X$: $E(Y_i|X_i,t_i)=\alpha + t_i\beta +
 X_i\gamma$.  The fitted values for this graph are portrayed in two
 parallel solid lines, the dark solid line for the treated group,
 $E(Y_i|X_i,t_i=1)=\alpha+\beta+X_i\gamma$, and the gray solid line is
-for the controls, $E(Y_i|X_i,t_i=0)=\alpha+X_i\gamma$. The small but
+for the controls, $E(Y_i|X_i,t_i=0)=\alpha+X_i\gamma$. The 
 positive vertical distance between the two straight lines is this
 parametric model's causal effect estimate.
 \begin{figure}[t] 
@@ -812,9 +812,9 @@ parametric model's causal effect estimate.
     specification, represented by the difference between parallel
     lines and parabolas, respectively.  Dark lines are fitted to the
     treated points and gray to the controls.  In the raw data, plotted
-    in the left panel, the models must extrapolate for treated units
-    with $X$ values below 4 and are therefore highly sensitive to
-    specification.  In the matched data, plotted in the right panel,
+    in the left panel, some of the control units are far outside the range
+    of the treated units, and these outlying control units are influential in the parametric models.
+    In the matched data, plotted in the right panel,
     treated units are matched with control units that are close in $X$
     (gray units are discarded) and as a result treatment effect
     estimates are similar regardless of model specification.}
@@ -828,18 +828,24 @@ regression appear as dashed curves in the same left graph, again gray
 for the controls and solid black for the treated.  Clearly, these fit
 the same data markedly differently from the original regression.  Not
 only is the overall shape completely different, but the causal effect
-has now switched signs and become much larger (this can be seen in the
-graph because the gray solid line is slightly below the dark solid
-line, whereas the gray dashed curve is substantially above the dark
+has now switched signs (this can be seen in the
+graph because the gray solid line is below the dark solid
+line, whereas the gray dashed curve is above the dark
 dashed curve).
 
 Ultimately, these two models estimate the causal effect by the average
 vertical distance between the C's and T's.  They differ only in how
-they compute this average.  The key problem that generates model
-dependence is the absence of any treated unit values with $X$ less
-than 4.  This means that to estimate features of $Y(1)$ on the left
-side of the graph requires extrapolation over a considerable distance
-from where the T's are observed.  These extrapolations make causal
+they compute this average.  In this case, the linear model estimates
+a causal effect of $0.049$, while the quadratic model estimates a causal
+effect of $-0.038$.  In the matched data, both parametric models yield 
+estimates of $0.001$, which is very close to the true effect of $0$. 
+The key problem that generates model dependence in the full data set
+is the presence of control units far outside the range of 
+the treated units. 
+The model estimation thus extrapolates over a range of data that does not include
+treated and control units, and so is particularly sensitive to the set of control 
+units who do not look similar to the treated units.
+These extrapolations make causal
 effect estimates exquisitely sensitive to minor modifications in the
 statistical model.  In other words, in parametric analyses, the curse
 of dimensionality requires a large number of assumptions to which
