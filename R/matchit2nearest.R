@@ -220,7 +220,7 @@ matchit2nearest <-  function(formula, data, model="logit",
     x[x==-1] <- NA
     match.matrix <- as.data.frame(x)
 
-   z <- list(match.matrix = match.matrix, in.sample = in.sample, pscore=pscore, assign.model=assign.model)
+   z <- list(match.matrix = match.matrix, in.sample = in.sample, pscore=pscore, assign.model=assign.model, psclass=NULL)
    class(z) <- "matchit"
    return(z)
 }
