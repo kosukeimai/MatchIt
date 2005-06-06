@@ -4,7 +4,7 @@ matchit <- function(formula, method="nearest", data, ...) {
   if (!exists(fn))
     stop(method, "not supported.")
   mf <- match.call(expand.dots = TRUE)  
-  res <- do.call(fn, list(formula, data, ...))
+  res <- do.call(fn, list(formula, method, data, ...))
   
   return(res)
 }
