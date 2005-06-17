@@ -1,5 +1,5 @@
 matchit <- function(formula, data, method = "nearest",
-                    distance = "logit", distance.option=list(), ...) { 
+                    distance = "logit", distance.options=list(), ...) { 
 
   ## check inputs
   fn1 <- paste("distance2", distance, sep = "")
@@ -15,12 +15,12 @@ matchit <- function(formula, data, method = "nearest",
   X <- model.matrix(tt, data)
   
   ## estimate the distance measure
-  distance.option$formula <- formula
-  distance.option$data <- data
-  dist <- do.call(fn1, distance.option)
+  distance.options$formula <- formula
+  distance.options$data <- data
+  out1 <- do.call(fn1, distance.options)
 
   ## matching!
-  res <- do.call(fn2, list(treat, dist, ...))
+  out2 <- do.call(fn2, list(treat, out1$dis, ...))
   
-  return(res)
+  return(out2)
 }
