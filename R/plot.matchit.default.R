@@ -40,6 +40,8 @@ plot.matchit.default <- function(obj){
       mtext("QQ Plots", 3, 3, TRUE, 0.5, cex=1.2,font=2)
       mtext("Raw", 3, 1, TRUE, 0.5, cex=1.2,font = 1)
       mtext("Matched", 3, 1, TRUE, 0.83, cex=1.2,font = 1)
+      mtext("Control Units", 1, 0, TRUE, 2/3, cex=1,font = 1)
+      mtext("Treated Units", 4, 0, TRUE, 0.5, cex=1,font = 1)
     }
     par(usr = c(0, 1, 0, 1))
     l.wid <- strwidth(nn, "user")
@@ -65,9 +67,9 @@ plot.matchit.default <- function(obj){
       box()
     } else{
       tb1 <- table(xi,treat)
-      tb1 <- tb1/apply(tb1,2,sum)
-      tb2 <- table(xi,treat,obj$matched)[,,2]
-      tb2 <- tb2/apply(tb2,2,sum)
+      tb1 <- t(t(tb1)/apply(tb1,2,sum))
+      tb2 <- table(xi,treat,obj$matched)[,,"TRUE"]
+      tb2 <- t(t(tb2)/apply(tb2,2,sum))
       rr <- range(tb1,tb2)
       qqplot(xi[treat==0],xi[treat==1],
              xlim=rr,ylim=rr,axes=F,
