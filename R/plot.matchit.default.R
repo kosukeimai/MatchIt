@@ -1,4 +1,4 @@
-plot.matchit.default <- function(obj){
+plot.matchit.default <- function(obj,discrete.cutoff=5){
   match.matrix <- obj$match.matrix
   xdata <- obj$data
   treata <- model.frame(obj$formula,xdata)[,1,drop=FALSE]
@@ -47,7 +47,7 @@ plot.matchit.default <- function(obj){
     l.wid <- strwidth(nn, "user")
     cex.labels <- max(0.8, min(2, 0.9/max(l.wid)))
     text(0.5,0.5,ni,cex=cex.labels)
-    if(length(table(xi))>10){
+    if(length(table(xi))>discrete.cutoff){
       rr <- range(xi)
       qqplot(xi[treat==0],xi[treat==1],
              xlim=rr,ylim=rr,axes=F,ylab="",
