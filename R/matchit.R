@@ -20,7 +20,7 @@ matchit <- function(formula, data, method = "nearest",
   out1 <- do.call(fn1, distance.options)
 
   ## matching!
-  out2 <- do.call(fn2, list(treat, out1$dis, ...))
+  out2 <- do.call(fn2, list(treat, X, out1$dis, ...))
   
   return(out2)
 }
