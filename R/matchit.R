@@ -11,8 +11,9 @@ matchit <- function(formula, data, method = "nearest",
   
   ## obtain T and X
   tt <- terms(formula)
-  treat <- model.response(model.frame(tt, data))
-  X <- model.matrix(tt, data)
+  mf <- model.frame(tt, data)
+  treat <- model.response(mf)
+  X <- model.matrix(tt, data=mf)
   
   ## estimate the distance measure
   if (method == "exact") {
@@ -29,6 +30,13 @@ matchit <- function(formula, data, method = "nearest",
 
   ## matching!
   out2 <- do.call(fn2, list(treat, X, dis, ...))
+
+  ## putting all the results together
+  out2$call <- match.call()
+  out2$assign <- out1
+  out2$formula <- formula
+  out2$treat <- treat
+  out2$covariates <- X
   
   return(out2)
 }
