@@ -37,6 +37,7 @@ matchit <- function(formula, data, method = "nearest",
   out2$formula <- formula
   out2$treat <- treat
   out2$covariates <- X
+  out2$pscore <- dis
   
   return(out2)
 }
