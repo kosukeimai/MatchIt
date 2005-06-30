@@ -8,19 +8,27 @@ matchit <- function(formula, data, method = "nearest",
   fn2 <- paste("matchit2", method, sep = "")
   if (!exists(fn2))
     stop(method, "not supported.")
-
+  
   ## obtain T and X
   tt <- terms(formula)
   treat <- model.response(model.frame(tt, data))
   X <- model.matrix(tt, data)
   
   ## estimate the distance measure
-  distance.options$formula <- formula
-  distance.options$data <- data
-  out1 <- do.call(fn1, distance.options)
-
+  if (method == "exact") {
+    dist <-  NULL
+    if (!is.null(distance))
+      warning("distance is set to `NULL' when exact matching is used.")
+  }
+  else {
+    distance.options$formula <- formula
+    distance.options$data <- data
+    out1 <- do.call(fn1, distance.options)
+    dist <- out1$dist
+  }
+  
   ## matching!
-  out2 <- do.call(fn2, list(treat, X, out1$dis, ...))
+  out2 <- do.call(fn2, list(treat, X, dist, ...))
   
   return(out2)
 }
