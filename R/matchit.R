@@ -16,7 +16,7 @@ matchit <- function(formula, data, method = "nearest",
   
   ## estimate the distance measure
   if (method == "exact") {
-    dist <-  NULL
+    dis <-  NULL
     if (!is.null(distance))
       warning("distance is set to `NULL' when exact matching is used.")
   }
@@ -24,11 +24,11 @@ matchit <- function(formula, data, method = "nearest",
     distance.options$formula <- formula
     distance.options$data <- data
     out1 <- do.call(fn1, distance.options)
-    dist <- out1$dist
+    dis <- out1$dis
   }
-  
+
   ## matching!
-  out2 <- do.call(fn2, list(treat, X, dist, ...))
+  out2 <- do.call(fn2, list(treat, X, dis, ...))
   
   return(out2)
 }
