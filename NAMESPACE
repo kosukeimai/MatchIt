@@ -1,26 +1,8 @@
 import(MASS)
-export(
-	matchdef,
-        match.data,
-	matchit,
-	diagnose,
-	distance,
-	subclassify,
-	exactmatch,
-	neyman,	
-	help.matchit,
-	print.matchit,
-	print.summary.matchit,
-	print.summary.neyman,
-	plot.matchit,
-	summary.matchit,
-	summary.neyman
-	)	
+export(matchit)	
 
 S3method(print, matchit)
-S3method(print, summary.matchit)
-S3method(print, summary.neyman)
+S3method(print, matchit.subclass)
 S3method(plot, matchit)
 S3method(summary, matchit)
-S3method(summary, neyman)
 
