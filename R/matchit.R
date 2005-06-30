@@ -1,5 +1,5 @@
-matchit <- function(formula, data, method = "nearest",
-                    distance = "logit", distance.options=list(), ...) { 
+matchit <- function(formula, data, method = "nearest", distance = "logit",
+                    distance.options=list(), verbose = FALSE, ...) { 
 
   ## check inputs
   fn1 <- paste("distance2", distance, sep = "")
@@ -22,6 +22,8 @@ matchit <- function(formula, data, method = "nearest",
       warning("distance is set to `NULL' when exact matching is used.")
   }
   else {
+    if (verbose)
+      cat("Calculating distance measure via", distance, "\n")
     distance.options$formula <- formula
     distance.options$data <- data
     out1 <- do.call(fn1, distance.options)
@@ -29,6 +31,8 @@ matchit <- function(formula, data, method = "nearest",
   }
 
   ## matching!
+  if (verbose)
+    cat("Matching via", method, "\n")
   out2 <- do.call(fn2, list(treat, X, dis, ...))
 
   ## putting all the results together
