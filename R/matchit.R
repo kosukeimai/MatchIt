@@ -17,13 +17,13 @@ matchit <- function(formula, data, method = "nearest", distance = "logit",
 
   ## estimate the distance measure
   if (method == "exact") {
-    dis <-  NULL
+    dis <-  out1 <- NULL
     if (!is.null(distance))
       warning("distance is set to `NULL' when exact matching is used.")
   }
   else {
     if (verbose)
-      cat("Calculating distance measure via", distance, "\n")
+    cat("Calculating distance measure via", distance, "\n")
     distance.options$formula <- formula
     distance.options$data <- data
     out1 <- do.call(fn1, distance.options)
@@ -33,7 +33,8 @@ matchit <- function(formula, data, method = "nearest", distance = "logit",
   ## matching!
   if (verbose)
     cat("Matching via", method, "\n")
-  out2 <- do.call(fn2, list(treat, data, dis, ...))
+  if (method == "exact") out2 <- do.call(fn2, list(treat, X, dis, ...)) 
+  else out2 <- do.call(fn2, list(treat, data, dis, ...))
 
   ## putting all the results together
   out2$call <- match.call()
