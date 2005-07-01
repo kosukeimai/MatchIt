@@ -20,8 +20,10 @@ matchit2optimal <- function(treat, X, dist, ratio = 1, ...) {
   for (i in 1:n1)
     mm[i,] <- names(which(psclass[tlabels[i]] == psclass[-pmatch(tlabels[i],
                                    names(psclass))]))
+
+  psweights <- weights.matrix(match.matrix=as.data.frame(mm), treat=treat)$psweights
   
-  res <- list(match.matrix = mm)
+  res <- list(match.matrix = mm, psclass=psclass, psweights=psweights)
 
   class(res) <- "matchit"
   return(res)

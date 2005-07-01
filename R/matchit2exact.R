@@ -1,4 +1,4 @@
-matchit2exact <- function(formula, data, counter=TRUE, ...){
+matchit2exact <- function(treat, formula, data, counter=TRUE, ...){
 
   if(counter){cat("Exact matching...")}
   data <- eval(data,parent.frame())

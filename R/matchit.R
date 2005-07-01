@@ -14,7 +14,7 @@ matchit <- function(formula, data, method = "nearest", distance = "logit",
   mf <- model.frame(tt, data)
   treat <- model.response(mf)
   X <- model.matrix(tt, data=mf)
-  
+
   ## estimate the distance measure
   if (method == "exact") {
     dis <-  NULL
@@ -33,7 +33,7 @@ matchit <- function(formula, data, method = "nearest", distance = "logit",
   ## matching!
   if (verbose)
     cat("Matching via", method, "\n")
-  out2 <- do.call(fn2, list(treat, X, dis, ...))
+  out2 <- do.call(fn2, list(treat, data, dis, ...))
 
   ## putting all the results together
   out2$call <- match.call()

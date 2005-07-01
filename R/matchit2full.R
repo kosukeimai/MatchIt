@@ -13,7 +13,10 @@ matchit2full <- function(treat, X, dist, ...) {
   psclass <- full[pmatch(names(treat), names(full))]
   psclass <- as.numeric(as.factor(psclass))
   names(psclass) <- names(treat)
-  res <- list(psclass = psclass, q.cut = NULL)
+
+  psweights <- weights.subclass(psclass, treat)$psweights
+
+  res <- list(psclass = psclass, q.cut = NULL, psweights=psweights)
   class(res) <- c("matchit.subclass", "matchit")
   return(res)
 }

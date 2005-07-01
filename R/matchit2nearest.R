@@ -1,88 +1,51 @@
-matchit2nearest <-  function(formula, data, model="logit", 
-                      discard=0, reestimate=FALSE, replace = FALSE, m.order = 2, ratio = 1,
+matchit2nearest <-  function(treat, data,  dist,  ratio=1, replace = FALSE, m.order = 2, 
                       caliper = 0, calclosest = FALSE, mahvars = NULL,
                       exact = FALSE,  counter = TRUE, ...){ 
 
-  # Call distance to estimate propensity score
-  distance.out <- distance(formula, model, data, discard, reestimate, counter)
-
-  in.sample <- distance.out$in.sample
-  pscore <- distance.out$pscore
-  assign.model <- distance.out$assign.model
- 
-  treata <- model.frame(formula,data)[,1,drop=FALSE]
-  treat <- as.vector(treata[,1])
-  names(treat) <- row.names(treata)
-  
-  covariates <- model.frame(delete.response(terms(formula)),data)[,,drop=FALSE]
-  
-  ## Total number of units
+  # Sample sizes, labels
   n <- length(treat)
-  n1 <- length(treat[treat==1])
   n0 <- length(treat[treat==0])
-  
-  p1 <- pscore[treat==1]
-  p0 <- pscore[treat==0]
+  n1 <- length(treat[treat==1])
+  d1 <- dist[treat==1]
+  d0 <- dist[treat==0]
 
-  ## Generating separate indices for treated and control units
+  data <- as.data.frame(data)
+
   if(is.null(names(treat))){names(treat) <- seq(1,n)}
   labels <- names(treat)
-  clabels <- labels[treat==0]
-  tlabels <- labels[treat==1]
-  
+  tlabels <- names(treat[treat==1])
+  clabels <- names(treat[treat==0])
+
+  in.sample <- !is.na(dist)
+  pscore <- dist
+   
+  names(in.sample) <- labels
+
   ## Generating match matrix
-  match.matrix <- as.data.frame(matrix(0,n1,ratio), row.names = tlabels)
+  match.matrix <- as.data.frame(matrix(0, nrow=n1, ncol=ratio,  dimnames= list(tlabels, 1:ratio)))
 
   ## Vectors of whether unit has been matched:
   ## = 0 if not matched (unit # of match if matched)
   ## = -1 if can't be matched (if in.sample=0)
-  matchedc <- rep(0,length(p0))
+  matchedc <- rep(0,length(d0))
   names(matchedc) <- clabels
   
-  ## optimal ratio matching
-  if (m.order==1) {
-    check <- library()
-    if(any(check$results[,"Package"] == "optmatch"))
-      require(optmatch)
-    else
-      stop("Please install optmatch using \n     install.packages(\"optmatch\", contriburl= \"http://www.stat.lsa.umich.edu/~bbh/optmatch\")")
-    cat("Optimal Matching Treated: ")
-    distance <- matrix(0, ncol=n0, nrow=n1)
-    rownames(distance) <- row.names(treata)[treat==1]
-    colnames(distance) <- row.names(treata)[treat==0]
-    for (i in 1:n1)
-      distance[i,] <- abs(p1[i]-p0)
-    full <- as.matrix(fullmatch(distance, min.controls = ratio,
-                                max.controls = ratio,
-                                omit.fraction = (n0-ratio*n1)/n0,...))
-    psclass <- full[pmatch(row.names(treata), row.names(full)),]
-    psclass <- as.numeric(as.factor(psclass))
-    names(psclass) <- row.names(treata)
-    for (i in 1:n1) {
-      match.matrix[i,] <-
-        names(which(psclass[tlabels[i]]==
-                             psclass[-pmatch(tlabels[i],
-                                             names(psclass))]))
-    }
-    if(counter==TRUE){cat("Done\n")}
-
-  }  else {    
-    ## These are the units that are ineligible because of discard
-    ## (in.sample==0) 
-    matchedc[in.sample[clabels]==0] <- -1
-    match.matrix[in.sample[tlabels]==0,] <- -1
-    matchedt <- match.matrix[,1] 
-    names(matchedt) <- tlabels
+  ## These are the units that are ineligible because of discard
+  ## (in.sample==0) 
+  matchedc[in.sample[clabels]==0] <- -1
+  match.matrix[in.sample[tlabels]==0,] <- -1
+  matchedt <- match.matrix[,1] 
+  names(matchedt) <- tlabels
     
-    ## total number of matches (including ratios) = ratio * n1
-    tr <- length(match.matrix[match.matrix!=-1])
-    r <- 1
+  ## total number of matches (including ratios) = ratio * n1
+  tr <- length(match.matrix[match.matrix!=-1])
+  r <- 1
     
-    ## Caliper for matching (=0 if caliper matching not done)
-    sd.cal <- caliper*sqrt(var(pscore[in.sample==1]))
+  ## Caliper for matching (=0 if caliper matching not done)
+  sd.cal <- caliper*sqrt(var(dist[in.sample==1]))
     
-    ## Var-covar matrix for Mahalanobis (currently set for full sample)      
-    if (!is.null(mahvars)) {
+  ## Var-covar matrix for Mahalanobis (currently set for full sample)      
+  if (!is.null(mahvars)) {
       if(!sum(mahvars%in%names(data))==length(mahvars))
         stop("Mahvars not contained in data",call.=FALSE)
       mahvars <- as.matrix(data[,mahvars])
@@ -92,7 +55,10 @@ matchit2nearest <-  function(formula, data, model="logit",
     
     ## Now for exact matching within nearest neighbor
     ## exact should not equal T for this type of matching--that would get sent to matchit2exact
-    if (exact!=FALSE){
+    exactmatch <- exact
+    if (!is.logical(exact)) {exactmatch <- TRUE} 
+
+    if (exactmatch==TRUE){
       if(!sum(exact%in%names(data))==length(exact))
         stop("Exact variables not contained in data",call.=FALSE)
       exact <- as.matrix(data[,exact])
@@ -128,12 +94,12 @@ matchit2nearest <-  function(formula, data, model="logit",
       ## Which ratio we're on
       if(r!=ceiling(i/(tr/ratio))) {r <- r+1; matchedt <- match.matrix[,r]}
       
-      if(m.order==2) {iterp1 <- max(p1[matchedt==0],na.rm=T)}
-      if(m.order==3) {iterp1 <- min(p1[matchedt==0],na.rm=T)}
-      if(m.order==4) {iterp1 <- sample(p1[matchedt==0][!is.na(p1[matchedt==0])],1)}
+      if(m.order==2) {iterd1 <- max(d1[matchedt==0],na.rm=T)}
+      if(m.order==3) {iterd1 <- min(d1[matchedt==0],na.rm=T)}
+      if(m.order==4) {iterd1 <- sample(d1[matchedt==0][!is.na(d1[matchedt==0])],1)}
       
       ## The treatment unit for this iteration, again resolving ties randomly
-      itert <- as.vector(na.omit(tlabels[iterp1==p1 & matchedt==0]))
+      itert <- as.vector(na.omit(tlabels[iterd1==d1 & matchedt==0]))
       if(length(itert)>1){itert <- sample(itert,1)}
       
       ## Calculating all the absolute deviations in propensity scores
@@ -159,13 +125,13 @@ matchit2nearest <-  function(formula, data, model="logit",
           mindev <- NA
         }
         else
-          deviation <- abs(p0[!clabels%in%match.matrix[itert,(1:r-1)] & matchedc2==0]-iterp1)
+          deviation <- abs(d0[!clabels%in%match.matrix[itert,(1:r-1)] & matchedc2==0]-iterd1)
       }	else { 
         if (sum(matchedc2==0)==0) { 
           deviation <- NULL
           mindev <- NA
         }
-        else deviation <- abs(p0[matchedc2==0]-iterp1)
+        else deviation <- abs(d0[matchedc2==0]-iterd1)
       }
       
       if (caliper!=0 & (!is.null(deviation))) {
@@ -214,13 +180,16 @@ matchit2nearest <-  function(formula, data, model="logit",
       
     }
     if(counter==TRUE){cat("Done\n")}
-  }
-
+  
     x <- as.matrix(match.matrix)
     x[x==-1] <- NA
     match.matrix <- as.data.frame(x)
 
-   z <- list(match.matrix = match.matrix, in.sample = in.sample, pscore=pscore, assign.model=assign.model, psclass=NULL)
-   class(z) <- "matchit"
-   return(z)
+   # Calculate weights
+   psweights <- weights.matrix(match.matrix, treat=treat)$psweights
+
+   res <- list(match.matrix = match.matrix, psweights=psweights)
+   class(res) <- "matchit"
+   return(res)
+
 }
