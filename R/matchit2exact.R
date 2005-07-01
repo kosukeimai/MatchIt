@@ -16,7 +16,6 @@ matchit2exact <- function(treat, X, dis,  ...){
     psclass[xx==cc[i]] <- i
   }
 
-  psclass[psclass==0] <- rep(NA, sum(psclass==0))
   names(psclass) <- names(treat)
   
   psweights <- weights.subclass(psclass=psclass, treat=treat)$psweights
