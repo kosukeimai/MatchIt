@@ -17,8 +17,6 @@ matchit2nearest <-  function(treat, data,  dist,  ratio=1, replace = FALSE, m.or
   clabels <- names(treat[treat==0])
 
   in.sample <- !is.na(dist)
-  pscore <- dist
-   
   names(in.sample) <- labels
 
   ## Generating match matrix
