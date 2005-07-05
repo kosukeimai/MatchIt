@@ -1,5 +1,6 @@
 matchit <- function(formula, data, method = "nearest", distance = "logit",
-                    distance.options=list(), verbose = FALSE, ...) { 
+                    distance.options=list(), discard = "none",
+                    verbose = FALSE, ...) { 
 
   ## check inputs
   fn1 <- paste("distance2", distance, sep = "")
@@ -14,35 +15,42 @@ matchit <- function(formula, data, method = "nearest", distance = "logit",
   mf <- model.frame(tt, data)
   treat <- model.response(mf)
   X <- model.matrix(tt, data=mf)
-
+  
   ## estimate the distance measure
   if (method == "exact") {
-    dis <-  out1 <- NULL
+    dis <- out1 <- NULL
     if (!is.null(distance))
       warning("distance is set to `NULL' when exact matching is used.")
   }
   else {
     if (verbose)
-    cat("Calculating distance measure via", distance, "\n")
-    distance.options$formula <- formula
-    distance.options$data <- data
+      cat("Calculating distance measure via", distance, "\n")
+    if (is.null(distance.options$formula))
+      distance.options$formula <- formula
+    if (is.null(distance.options$data))
+      distance.options$data <- data
     out1 <- do.call(fn1, distance.options)
-    dis <- out1$dis
+    out1 <- discard(treat, out1$assign.model, out1$pscore, discard)
+    dis <- out1$pscore
+    discarded <- out1$discarded
   }
 
   ## matching!
   if (verbose)
     cat("Matching via", method, "\n")
-  if (method == "exact") out2 <- do.call(fn2, list(treat, X, dis, ...)) 
-  else out2 <- do.call(fn2, list(treat, data, dis, ...))
+  if (method == "exact")
+    out2 <- do.call(fn2, list(treat, X, dis, ...)) 
+  else
+    out2 <- do.call(fn2, list(treat, data, dis, ...))
 
   ## putting all the results together
   out2$call <- match.call()
-  out2$assign <- out1
+  out2$assign.model <- out1$assign.model
   out2$formula <- formula
   out2$treat <- treat
-  out2$covariates <- X
+  out2$X <- X
   out2$pscore <- dis
+  out2$discarded <- discarded
   
   return(out2)
 }
