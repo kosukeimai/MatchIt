@@ -18,7 +18,7 @@ matchit <- function(formula, data, method = "nearest", distance = "logit",
   
   ## estimate the distance measure
   if (method == "exact") {
-    pscore <- out1 <- NULL
+    pscore <- out1 <- discarded <- NULL
     if (!is.null(distance))
       warning("distance is set to `NULL' when exact matching is used.")
   }
@@ -38,7 +38,7 @@ matchit <- function(formula, data, method = "nearest", distance = "logit",
   ## matching!
   if (verbose)
     cat("Matching via", method, "\n")
-  out2 <- do.call(fn2, list(treat, X, data, pscore, ...)) 
+  out2 <- do.call(fn2, list(treat, X, data, pscore, discarded, ...)) 
 
   ## putting all the results together
   out2$call <- match.call()
