@@ -18,10 +18,12 @@ matchit2full <- function(treat, X, data, pscore, discarded, ...) {
   names(psclass) <- names(ttt)
 
   ## add psclass = NA for discarded units
-  tmp <- rep(NA, sum(discarded))
-  names(tmp) <- names(treat[discarded])
-  psclass <- c(psclass, tmp)[names(treat)]
-
+  if (any(discarded)) {
+    tmp <- rep(NA, sum(discarded))
+    names(tmp) <- names(treat[discarded])
+    psclass <- c(psclass, tmp)[names(treat)]
+  }
+  
   ## calculate weights and return the results
   psweights <- weights.subclass(psclass, treat)$psweights
   res <- list(psclass = psclass, q.cut = NULL, psweights=psweights)
