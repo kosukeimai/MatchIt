@@ -1,6 +1,8 @@
-matchit2nearest <-  function(treat, data,  dist,  ratio=1, replace = FALSE, m.order = 2, 
-                      caliper = 0, calclosest = FALSE, mahvars = NULL,
-                      exact = FALSE,  counter = TRUE, ...){ 
+matchit2nearest <-  function(treat, X, data,  dist,  ratio=1,
+                             replace = FALSE, m.order = 2,  
+                             caliper = 0, calclosest = FALSE,
+                             mahvars = NULL, exact = FALSE,
+                             counter = TRUE, ...){  
 
   # Sample sizes, labels
   n <- length(treat)
@@ -8,8 +10,6 @@ matchit2nearest <-  function(treat, data,  dist,  ratio=1, replace = FALSE, m.or
   n1 <- length(treat[treat==1])
   d1 <- dist[treat==1]
   d0 <- dist[treat==0]
-
-  data <- as.data.frame(data)
 
   if(is.null(names(treat))){names(treat) <- seq(1,n)}
   labels <- names(treat)

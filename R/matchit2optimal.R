@@ -1,4 +1,4 @@
-matchit2optimal <- function(treat, X, dist, ratio = 1, ...) {
+matchit2optimal <- function(treat, X, data, dist, ratio = 1, ...) {
   require(optmatch)
   n0 <- length(treat[treat==0])
   n1 <- length(treat[treat==1])

@@ -1,4 +1,4 @@
-matchit2full <- function(treat, X, dist, ...) {
+matchit2full <- function(treat, X, data, dist, ...) {
   require(optmatch)
   n0 <- length(treat[treat==0])
   n1 <- length(treat[treat==1])
