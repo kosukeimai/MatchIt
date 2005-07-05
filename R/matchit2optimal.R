@@ -1,9 +1,9 @@
-matchit2optimal <- function(treat, X, data, dist, ratio = 1, ...) {
+matchit2optimal <- function(treat, X, data, pscore, ratio = 1, ...) {
   require(optmatch)
   n0 <- length(treat[treat==0])
   n1 <- length(treat[treat==1])
-  d1 <- dist[treat==1]
-  d0 <- dist[treat==0]
+  d1 <- pscore[treat==1]
+  d0 <- pscore[treat==0]
   d <- matrix(0, ncol=n0, nrow=n1)
   tlabels <- rownames(d) <- names(treat[treat==1])
   clabels <- colnames(d) <- names(treat[treat==0])

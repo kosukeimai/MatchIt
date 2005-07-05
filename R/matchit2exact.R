@@ -1,4 +1,4 @@
-matchit2exact <- function(treat, X, data, dis, ...){
+matchit2exact <- function(treat, X, data, pscore, ...){
 
   n <- length(treat)
   xx <- apply(X, 1, function(x) paste(x, collapse = "\r"))

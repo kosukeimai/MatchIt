@@ -1,4 +1,4 @@
-matchit2nearest <-  function(treat, X, data,  dist,  ratio=1,
+matchit2nearest <-  function(treat, X, data,  pscore,  ratio=1,
                              replace = FALSE, m.order = 2,  
                              caliper = 0, calclosest = FALSE,
                              mahvars = NULL, exact = FALSE,
@@ -8,15 +8,15 @@ matchit2nearest <-  function(treat, X, data,  dist,  ratio=1,
   n <- length(treat)
   n0 <- length(treat[treat==0])
   n1 <- length(treat[treat==1])
-  d1 <- dist[treat==1]
-  d0 <- dist[treat==0]
+  d1 <- pscore[treat==1]
+  d0 <- pscore[treat==0]
 
   if(is.null(names(treat))){names(treat) <- seq(1,n)}
   labels <- names(treat)
   tlabels <- names(treat[treat==1])
   clabels <- names(treat[treat==0])
 
-  in.sample <- !is.na(dist)
+  in.sample <- !is.na(pscore)
   names(in.sample) <- labels
 
   ## Generating match matrix
@@ -40,7 +40,7 @@ matchit2nearest <-  function(treat, X, data,  dist,  ratio=1,
   r <- 1
     
   ## Caliper for matching (=0 if caliper matching not done)
-  sd.cal <- caliper*sqrt(var(dist[in.sample==1]))
+  sd.cal <- caliper*sqrt(var(pscore[in.sample==1]))
     
   ## Var-covar matrix for Mahalanobis (currently set for full sample)      
   if (!is.null(mahvars)) {

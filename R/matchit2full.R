@@ -1,9 +1,9 @@
-matchit2full <- function(treat, X, data, dist, ...) {
+matchit2full <- function(treat, X, data, pscore, ...) {
   require(optmatch)
   n0 <- length(treat[treat==0])
   n1 <- length(treat[treat==1])
-  d1 <- dist[treat==1]
-  d0 <- dist[treat==0]
+  d1 <- pscore[treat==1]
+  d0 <- pscore[treat==0]
   d <- matrix(0, ncol=n0, nrow=n1)
   rownames(d) <- names(treat[treat==1])
   colnames(d) <- names(treat[treat==0])
