@@ -1,8 +1,6 @@
 distance2nnet <- function(formula, data, ...) {
   require(nnet)
-  res <- list()
-  res$out <- nnet(formula, data, ...)
-  res$dis <- fitted(res$out)
-  return(res)
+  res <- nnet(formula, data, ...)
+  return(list(assign.model = res, pscore = fitted(res)))
 }
 

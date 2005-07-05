@@ -1,8 +1,6 @@
 distance2rpart <- function(formula, data, ...) {
   require(rpart)
-  res <- list()
-  res$out <- rpart(formula, data, ...)
-  res$dis <- predict(res$out)
-  return(res)
+  res <- rpart(formula, data, ...)
+  return(list(assign.model = res, pscore = predict(res)))
 }
 
