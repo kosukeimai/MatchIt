@@ -15,13 +15,13 @@ matchit <- function(formula, data, method = "nearest", distance = "logit",
   mf <- model.frame(tt, data)
   treat <- model.response(mf)
   X <- model.matrix(tt, data=mf)
-  
+
   ## estimate the distance measure
   if (method == "exact") {
     distance <- out1 <- discarded <- NULL
     if (!is.null(distance))
       warning("distance is set to `NULL' when exact matching is used.")
-  }
+  } 
   else {
     if (verbose)
       cat("Calculating distance measure via", distance, "\n")
@@ -43,6 +43,9 @@ matchit <- function(formula, data, method = "nearest", distance = "logit",
     cat("Matching via", method, "\n")
   out2 <- do.call(fn2, list(treat, X, data, pscore=distance, discarded, ...)) 
 
+  #how to add subclass outputs (shouldn't conflict with exact)
+  # method="subclass"; subclassifying matched classes
+  
   ## putting all the results together
   out2$call <- match.call()
   out2$model <- out1$assign.model
