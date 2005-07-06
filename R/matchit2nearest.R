@@ -186,7 +186,7 @@ matchit2nearest <-  function(treat, X, data, pscore, discarded,
   x[x==-1] <- NA
 
   ## Calculate weights and return the results
-  res <- list(match.matrix = match.matrix, psweights =
+  res <- list(match.matrix = match.matrix, weights =
               weights.matrix(match.matrix, treat, discarded))
   class(res) <- "matchit"
   return(res)

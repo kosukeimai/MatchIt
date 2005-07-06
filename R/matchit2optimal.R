@@ -42,8 +42,8 @@ matchit2optimal <- function(treat, X, data, pscore, discarded,
   }
 
   ## calculate weights and return the results
-  res <- list(match.matrix = mm, psclass=psclass, psweights =
-              weights.matrix(mm, treat, discarded))
+  res <- list(match.matrix = mm, subclass = psclass,
+              weights = weights.matrix(mm, treat, discarded))
 
   class(res) <- "matchit"
   return(res)
