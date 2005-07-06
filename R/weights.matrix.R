@@ -1,19 +1,17 @@
-weights.matrix <- function(match.matrix, treat){
+weights.matrix <- function(match.matrix, treat, discarded){
   
   n <- length(treat)
   labels <- names(treat) 
- 
   tlabels <- labels[treat==1]
   clabels <- labels[treat==0]
 
   ## NEED TO FIX THIS LATER
-  in.sample <- rep(1, n)
+  in.sample <- !discarded
   names(in.sample) <- labels
-
-  match.matrix <- match.matrix[tlabels,,drop=F][in.sample[tlabels]==1,,drop=F]
+  match.matrix <- match.matrix[tlabels,,drop=F][in.sample[tlabels],,drop=F]
   num.matches <- dim(match.matrix)[2]-apply(as.matrix(match.matrix),
                                             1, function(x){sum(is.na(x))})
-  names(num.matches) <- tlabels[in.sample[tlabels]==1]
+  names(num.matches) <- tlabels[in.sample[tlabels]]
   
   t.units <- row.names(match.matrix)[num.matches>0]
   c.units <- na.omit(as.vector(as.matrix(match.matrix)))
@@ -44,6 +42,6 @@ weights.matrix <- function(match.matrix, treat){
   else if (sum(weights[clabels])==0)
     stop("No control units were matched")
 
-  return(list(psweights=weights))
+  return(weights)
 }
 

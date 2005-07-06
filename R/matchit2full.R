@@ -25,8 +25,8 @@ matchit2full <- function(treat, X, data, pscore, discarded, ...) {
   }
   
   ## calculate weights and return the results
-  psweights <- weights.subclass(psclass, treat)$psweights
-  res <- list(psclass = psclass, q.cut = NULL, psweights=psweights)
+  res <- list(psclass = psclass, q.cut = NULL,
+              psweights = weights.subclass(psclass, treat))
   class(res) <- c("matchit.subclass", "matchit")
   return(res)
 }

@@ -13,10 +13,8 @@ matchit2exact <- function(treat, X, data, pscore, ...){
   for(i in 1:ncc)
     psclass[xx==cc[i]] <- i
 
-  names(psclass) <- names(treat)
-  psweights <- weights.subclass(psclass=psclass, treat=treat)$psweights
- 
-  res <- list(psclass=psclass,  q.cut=NULL, psweights=psweights)
+  res <- list(psclass=psclass,  q.cut=NULL, psweights =
+              weights.subclass(psclass, treat))
   class(res) <- c("matchit.subclass", "matchit")
   return(res)
 }

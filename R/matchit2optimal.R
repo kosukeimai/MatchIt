@@ -14,12 +14,12 @@ matchit2optimal <- function(treat, X, data, pscore, discarded,
   for (i in 1:n1) 
     d[i,] <- abs(d1[i]-d0)
   full <- fullmatch(d, min.controls = ratio,
-                    max.controls = ratio, omit.fraction =
-                    (n0-ratio*n1)/n0, ...)
+                    max.controls = ratio,
+                    omit.fraction = (n0-ratio*n1)/n0, ...)
   psclass <- full[pmatch(names(ttt), names(full))]
   psclass <- as.numeric(as.factor(psclass))
   names(psclass) <- names(ttt)
-
+  
   mm <- matrix(0, nrow = n1, ncol = ratio, dimnames = list(tlabels, 1:ratio))
   for (i in 1:n1)
     mm[i,] <- names(which(psclass[tlabels[i]] == psclass[-pmatch(tlabels[i],
@@ -42,8 +42,8 @@ matchit2optimal <- function(treat, X, data, pscore, discarded,
   }
 
   ## calculate weights and return the results
-  psweights <- weights.matrix(match.matrix = mm, treat=treat)$psweights
-  res <- list(match.matrix = mm, psclass=psclass, psweights=psweights)
+  res <- list(match.matrix = mm, psclass=psclass, psweights =
+              weights.matrix(mm, treat, discarded))
 
   class(res) <- "matchit"
   return(res)

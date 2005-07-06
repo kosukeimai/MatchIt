@@ -1,27 +1,34 @@
-weights.subclass <-function(psclass, treat) {
+weights.subclass <- function(psclass, treat) {
 
-  n <- length(treat)
-  labels <- names(treat)
-  tlabels <- labels[treat==1]
-  clabels <- labels[treat==0]
-
-  weights <- rep(0,length(treat))
+  ttt <- treat[!is.na(psclass)]
+  classes <- na.omit(psclass)
+  
+  n <- length(ttt)
+  labels <- names(ttt)
+  tlabels <- labels[ttt==1]
+  clabels <- labels[ttt==0]
+  
+  weights <- rep(0, n)
   names(weights) <- labels
-  weights[tlabels][psclass[tlabels]!=0] <- 1
+  weights[tlabels] <- 1
  
-  classes <- unique(psclass)
-  for(j in classes){
-    qn0 <- sum(treat==0 & psclass==j)
-    qn1 <- sum(treat==1 & psclass==j)
-    weights[treat==0 & psclass==j] <- qn1/qn0
+  for(j in unique(classes)){
+    qn0 <- sum(ttt==0 & classes==j)
+    qn1 <- sum(ttt==1 & classes==j)
+    weights[ttt==0 & classes==j] <- qn1/qn0
   }
-  if (sum(weights[treat==0], na.rm=T)==0)
-    weights[treat==0] <- rep(0, length(weights[clabels]))
+  if (sum(weights[ttt==0])==0)
+    weights[ttt==0] <- rep(0, length(weights[clabels]))
   else {
     ## Number of C units that were matched to at least 1 T
-    num.cs <- sum(weights[clabels][psclass[clabels]!=0]>0)
-    weights[clabels][psclass[clabels]!=0] <- 
-      weights[clabels][psclass[clabels]!=0]*num.cs/sum(weights[clabels][psclass[clabels]!=0])
+    num.cs <- sum(weights[clabels] > 0)
+    weights[clabels] <- weights[clabels]*num.cs/sum(weights[clabels])
+  }
+
+  if (any(is.na(psclass))) {
+    tmp <- rep(0, sum(is.na(psclass)))
+    names(tmp) <- names(treat[is.na(psclass)])
+    weights <- c(weights, tmp)[names(treat)]
   }
   
   if (sum(weights)==0) 
@@ -31,6 +38,6 @@ weights.subclass <-function(psclass, treat) {
   else if (sum(weights[clabels])==0)
     stop("No control units were matched")
   
-  return(list(psweights=weights))
+  return(weights)
 }
 
