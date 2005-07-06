@@ -1,6 +1,6 @@
 matchit <- function(formula, data, method = "nearest", distance = "logit",
                     distance.options=list(), discard = "none",
-                    reestiamte = FALSE, verbose = FALSE, ...) { 
+                    reestimate = FALSE, verbose = FALSE, ...) { 
 
   ## check inputs
   fn1 <- paste("distance2", distance, sep = "")
