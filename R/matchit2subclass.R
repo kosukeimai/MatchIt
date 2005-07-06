@@ -34,8 +34,12 @@ matchit2subclass <- function(treat,X,data,pscore,discarded,
     else if(sub.by=="all") {
       q <- c(0,quantile(pscore,probs=c(subclass)),1)
       }
+    else {
+      stop("Must specify a valid sub.by",call.=FALSE)
+    }
   }
   else {
+    if(subclass<=0){stop("Subclass must be a positive vector",call.=FALSE)}
     sprobs <- seq(0,1,length=(round(subclass)+1))
       sprobs <- sprobs[2:(length(sprobs)-1)]
     if(sub.by=="treat")            {
@@ -46,6 +50,9 @@ matchit2subclass <- function(treat,X,data,pscore,discarded,
     }
     else if(sub.by=="all") {
       q <- c(0,quantile(pscore,probs=sprobs,na.rm=TRUE),1)
+    }
+    else {
+      stop("Must specify a valid sub.by",call.=FALSE)
     }
   }
   ## Calculating Subclasses
@@ -61,5 +68,7 @@ matchit2subclass <- function(treat,X,data,pscore,discarded,
   psclass[in.sample==0] <- 0
   psclass[!matched] <- 0
   if(verbose){cat("Done\n")}
-  return(list(psclass = psclass, q.cut = q))
+  res <- list(psclass = psclass, q.cut = q)
+  class(res) <- "matchit.subclass"
+  return(res)
 }
