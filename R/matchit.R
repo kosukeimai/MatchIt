@@ -41,7 +41,7 @@ matchit <- function(formula, data, method = "nearest", distance = "logit",
   ## matching!
   if (verbose)
     cat("Matching via", method, "\n")
-  out2 <- do.call(fn2, list(treat, X, data, pscore, discarded, ...)) 
+  out2 <- do.call(fn2, list(treat, X, data, pscore=distance, discarded, ...)) 
 
   ## putting all the results together
   out2$call <- match.call()
