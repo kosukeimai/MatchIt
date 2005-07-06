@@ -1,9 +1,12 @@
 print.matchit.exact <- function(obj){
   cat("\nCall: ", deparse(obj$call),"\n",sep = "")
-  cat("\nExact Subclasses: ", max(foo$psclass),"\n",sep="")
+  cat("\nExact Subclasses: ", max(obj$subclass),"\n",sep="")
   cat("\nSample sizes:\n")
+  ntab <- table(factor(obj$subclass!=0,
+                       levels=c("TRUE","FALSE")),
+                obj$treat)
   nn <- rbind(table(obj$treat),
-              table(obj$matched,obj$treat)[2:1,])
+              ntab[c("TRUE","FALSE"),])
   dimnames(nn) <- list(c("Full","Matched","Discarded"),
                        c("Control","Treated"))
   print.table(nn)
