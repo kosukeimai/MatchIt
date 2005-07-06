@@ -2,7 +2,8 @@ matchit2nearest <-  function(treat, X, data, pscore, discarded,
                              ratio=1, replace = FALSE, m.order = 2,  
                              caliper = 0, calclosest = FALSE,
                              mahvars = NULL, exact = FALSE,
-                             counter = TRUE, ...){  
+                             counter = TRUE,
+                             subclass=NULL, ...){  
 
   # Sample sizes, labels
   n <- length(treat)
@@ -16,7 +17,6 @@ matchit2nearest <-  function(treat, X, data, pscore, discarded,
   labels <- names(treat)
   tlabels <- names(treat[treat==1])
   clabels <- names(treat[treat==0])
-  
   in.sample <- !discarded
   names(in.sample) <- labels
   
@@ -185,9 +185,21 @@ matchit2nearest <-  function(treat, X, data, pscore, discarded,
   x <- as.matrix(match.matrix)
   x[x==-1] <- NA
 
+  
   ## Calculate weights and return the results
   res <- list(match.matrix = match.matrix, weights =
               weights.matrix(match.matrix, treat, discarded))
-  class(res) <- "matchit"
+  
+  ## Subclassifying
+  if(!is.null(subclass)){
+    psres <- matchit2subclass(treat,X,data,pscore,discarded,
+                              match.matrix=match.matrix,...)
+    res$psclass <- psres$psclass
+    res$q.cut <- psres$q.cut
+    class(res) <- "matchit.subclass"
+  } else{
+    class(res) <- "matchit"
+  }
+  
   return(res)
 }
