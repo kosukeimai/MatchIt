@@ -2417,6 +2417,27 @@ income from 1975 to 1978: {\tt re78}-{\tt re75}.
 
 \section{Frequently Asked Questions}
 
+\subsection{How Do I Ensure Replicability As \MatchIt\ Versions Develop?}
+
+As the literature on matching techniques is rapidly evolving, \MatchIt\ will strive to incorporate new developments. \MatchIt\ 
+is thereby an evolving program.  Users may be concerned that analysis written in a particular version may not be compatible 
+with newer versions of the program.  The primary way to ensure that replication archives remain valid is to record the version 
+of \MatchIt\ that was used in the analysis.  Our website maintains binaries of all public release versions, so that 
+researchers can replicate results exactly with the appropriate version.
+
+In addition, users may find it helpful to install packages with version control, using the {\tt installWithVers} command with 
+{\tt install.packages}.  So for example, in the windows R console, users may download the appropriate version from our 
+website and install the package with version control by:
+
+\begin{verbatim}
+> install.packages(choose.files('',filters=Filters[c('zip','All'),]),
++                  .libPaths()[1],installWithVers=T,CRAN=NULL)
+\end{verbatim}
+
+R CMD INSTALL similarly permits users to specify this version using the {\tt --with-package-versions} option.  After having 
+specified version control, different versions of the program may be called as necessary.  Similar advice may also be 
+appropriate for version control for R more generally. 
+
 \subsection{Why Two Separate Commands?}
 
 The purpose of matching is to approximate an experimental template,
