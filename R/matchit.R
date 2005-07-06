@@ -1,6 +1,6 @@
 matchit <- function(formula, data, method = "nearest", distance = "logit",
                     distance.options=list(), discard = "none",
-                    verbose = FALSE, ...) { 
+                    reestiamte = FALSE, verbose = FALSE, ...) { 
 
   ## check inputs
   fn1 <- paste("distance2", distance, sep = "")
@@ -30,9 +30,12 @@ matchit <- function(formula, data, method = "nearest", distance = "logit",
     if (is.null(distance.options$data))
       distance.options$data <- data
     out1 <- do.call(fn1, distance.options)
-    out1 <- discard(treat, out1$assign.model, out1$pscore, discard)
+    discarded <- discard(treat, out1$pscore, discard)
+    if (reestimate) {
+      distance.options$data <- data[!discarded,]
+      out1 <- do.call(fn1, distance.options)
+    }
     pscore <- out1$pscore
-    discarded <- out1$discarded
   }
 
   ## matching!

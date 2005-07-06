@@ -1,8 +1,6 @@
-discard <- function(treat, out, pscore, option) {
+discard <- function(treat, pscore, option) {
 
   n.obs <- length(treat)
-  new.model <- out
-  new.pscore <- pscore
   pmax0 <- max(pscore[treat==0])
   pmax1 <- max(pscore[treat==1])
   pmin0 <- min(pscore[treat==0])
@@ -18,6 +16,5 @@ discard <- function(treat, out, pscore, option) {
   else
     stop("invalid input for `discard'")
   
-  return(list(assign.model = new.model, pscore = new.pscore,
-              discarded = discarded)) 
+  return(discarded)
 }
