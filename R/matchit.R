@@ -51,7 +51,8 @@ matchit <- function(formula, data, method = "nearest", distance = "logit",
   out2$model <- out1$assign.model
   out2$formula <- formula
   out2$treat <- treat
-  out2$X <- X
+  if (is.null(out2$X))
+    out2$X <- X
   out2$distance <- distance
   out2$discarded <- discarded
   
