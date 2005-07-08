@@ -1,32 +1,11 @@
-plot.matchit.default <- function(obj,discrete.cutoff=5){
+#need to account for weights -- how do we do qq plots with weights
+plot.matchit <- function(obj,discrete.cutoff=5){
   match.matrix <- obj$match.matrix
-  xdata <- obj$data
-  treata <- model.frame(obj$formula,xdata)[,1,drop=FALSE]
-  pscore <- xdata[,"pscore"]
-  in.sample <- obj$in.sample
-  covariates <- obj$covariates
-  treat <- as.vector(treata[,1])
-  names(treat) <- row.names(treata)
-  covariates <- model.frame(delete.response(terms(obj$formula)),xdata)[,,drop=FALSE]
-  mahvars <- eval(obj$call$mahvars)
-  exact <- eval(obj$call$exact)
-  if (!is.null(mahvars)){
-    w <- mahvars%in%names(covariates)
-    if(sum(w)!=length(mahvars)){
-      md <- as.data.frame(as.matrix(xdata[,mahvars[!w]]))
-      names(md) <- mahvars[!w]
-      covariates <- cbind(covariates,md)
-    }
-  }
-  if (!identical(TRUE, exact) & !identical(FALSE, exact)) {
-    w <- exact%in%names(covariates)
-    if(sum(w)!=length(exact)) {
-      ed <- as.data.frame(as.matrix(xdata[,exact[!w]]))
-      names(ed) <- exact[!w]
-      covariates <- cbind(covariates,ed)
-    }
-  }
-  nn <- names(covariates)
+  covariates  <- obj$X
+  treat <- obj$treat
+  pscore <- obj$distance
+  matched <- obj$weights!=0
+  nn <- dimnames(covariates)[[2]]
   nc <- length(nn)
   covariates <- data.matrix(covariates)
   oma <- c(4, 4, 6, 4)
@@ -57,8 +36,8 @@ plot.matchit.default <- function(obj,discrete.cutoff=5){
       abline(a=-(rr[2]-rr[1])*0.1,b=1,lty=2)
       axis(2)
       box()
-      qqplot(xi[treat==0 & obj$matched],
-             xi[treat==1 & obj$matched],
+      qqplot(xi[treat==0 & matched],
+             xi[treat==1 & matched],
              xlim=rr,ylim=rr,axes=F,ylab="",
              xlab="")
       abline(a=0,b=1)
@@ -68,7 +47,7 @@ plot.matchit.default <- function(obj,discrete.cutoff=5){
     } else{
       tb1 <- table(xi,treat)
       tb1 <- t(t(tb1)/apply(tb1,2,sum))
-      tb2 <- table(xi,treat,obj$matched)[,,"TRUE"]
+      tb2 <- table(xi[matched],treat[matched])
       tb2 <- t(t(tb2)/apply(tb2,2,sum))
       rr <- range(tb1,tb2)
       qqplot(xi[treat==0],xi[treat==1],
@@ -80,8 +59,8 @@ plot.matchit.default <- function(obj,discrete.cutoff=5){
       axis(2)
       text(tb1[,1],tb1[,2],row.names(tb1))
       box()
-      qqplot(xi[treat==0 & obj$matched],
-             xi[treat==1 & obj$matched],
+      qqplot(xi[treat==0 & matched],
+             xi[treat==1 & matched],
              xlim=rr,ylim=rr,axes=F,
              type="n",xlab="",ylab="")
       text(tb2[,1],tb2[,2],row.names(tb2))
