@@ -5,7 +5,7 @@ matchit2nearest <-  function(treat, X, data, pscore, discarded,
                              counter = TRUE,
                              subclass=NULL, ...){  
 
-  #exact F to NULL?? vs. TRUE
+  #counter
   
   # Sample sizes, labels
   n <- length(treat)
@@ -56,6 +56,7 @@ matchit2nearest <-  function(treat, X, data, pscore, discarded,
     if(sum(ww)!=nw){
       X <- cbind(X,mahvars[!ww])
     }
+    mahvars <- as.matrix(mahvars)
   }
   
   ## Now for exact matching within nearest neighbor
