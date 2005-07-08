@@ -120,7 +120,7 @@ matchit2nearest <-  function(treat, X, data, pscore, discarded,
     ## Make matchedc2==-2 if it isn't an exact match
     ## There might be a more efficient way to do this, but I couldn't figure
     ## out another way to compare a vector with the matrix
-    if (is.matrix(exact)) {
+    if (!is.null(exact)) {
       for (k in 1:dim(exact)[2]) matchedc2[exact[itert,k]!=exact[clabels,k]] <- -2
     }
     
