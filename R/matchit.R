@@ -12,6 +12,7 @@ matchit <- function(formula, data, method = "nearest", distance = "logit",
   
   ## obtain T and X
   tt <- terms(formula)
+  attr(tt, "intercept") <- 0
   mf <- model.frame(tt, data)
   treat <- model.response(mf)
   X <- model.matrix(tt, data=mf)
