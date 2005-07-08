@@ -1,10 +1,12 @@
 matchit2nearest <-  function(treat, X, data, pscore, discarded,
                              ratio=1, replace = FALSE, m.order = 2,  
                              caliper = 0, calclosest = FALSE,
-                             mahvars = NULL, exact = FALSE,
+                             mahvars = NULL, exact = NULL,
                              counter = TRUE,
                              subclass=NULL, ...){  
 
+  #exact F to NULL?? vs. TRUE
+  
   # Sample sizes, labels
   n <- length(treat)
   n0 <- length(treat[treat==0])
@@ -43,27 +45,32 @@ matchit2nearest <-  function(treat, X, data, pscore, discarded,
   ## Caliper for matching (=0 if caliper matching not done)
   sd.cal <- caliper*sqrt(var(pscore[in.sample==1]))
   
-  ## Var-covar matrix for Mahalanobis (currently set for full sample)      
+  ## Var-covar matrix for Mahalanobis (currently set for full sample)
   if (!is.null(mahvars)) {
     if(!sum(mahvars%in%names(data))==length(mahvars))
       stop("Mahvars not contained in data")
-    mahvars <- as.matrix(data[,mahvars])
-    row.names(mahvars) <- labels
+    ww <- mahvars%in%dimnames(X)[[2]]
+    nw <- length(mahvars)
+    mahvars <- data[,mahvars,drop=F]
     Sigma <- var(mahvars)
-  }   
+    if(sum(ww)!=nw){
+      X <- cbind(X,mahvars[!ww])
+    }
+  }
   
   ## Now for exact matching within nearest neighbor
   ## exact should not equal T for this type of matching--that would get sent to matchit2exact
-  exactmatch <- exact
-  if (!is.logical(exact)) {exactmatch <- TRUE} 
-  
-  if (exactmatch){
+  if (!is.null(exact)){
     if(!sum(exact%in%names(data))==length(exact))
       stop("Exact variables not contained in data",call.=FALSE)
-    exact <- as.matrix(data[,exact])
-    row.names(exact) <- labels
+    ww <- exact%in%dimnames(X)[[2]]
+    nw <- length(exact)
+    exact <- data[,exact,drop=F]
+    if(sum(ww)!=nw){
+      X <- cbind(X,exact[!ww])
+    }
   }
-  
+ 
   ## Looping through nearest neighbour matching for all treatment units
   ## Only do matching for units with in.sample==1 (matched!=-1)
   if(counter){
@@ -188,8 +195,8 @@ matchit2nearest <-  function(treat, X, data, pscore, discarded,
   
   ## Calculate weights and return the results
   res <- list(match.matrix = match.matrix, weights =
-              weights.matrix(match.matrix, treat, discarded))
-  
+              weights.matrix(match.matrix, treat, discarded), X=X)
+
   ## Subclassifying
   if(!is.null(subclass)){
     psres <- matchit2subclass(treat,X,data,pscore,discarded,
@@ -200,6 +207,6 @@ matchit2nearest <-  function(treat, X, data, pscore, discarded,
   } else{
     class(res) <- "matchit"
   }
-  
+
   return(res)
 }

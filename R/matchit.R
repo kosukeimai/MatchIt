@@ -42,17 +42,15 @@ matchit <- function(formula, data, method = "nearest", distance = "logit",
   if (verbose)
     cat("Matching via", method, "\n")
   out2 <- do.call(fn2, list(treat, X, data, pscore=distance, discarded, ...)) 
-
-  #how to add subclass outputs (shouldn't conflict with exact)
-  # method="subclass"; subclassifying matched classes
   
   ## putting all the results together
   out2$call <- match.call()
   out2$model <- out1$assign.model
   out2$formula <- formula
   out2$treat <- treat
-  if (is.null(out2$X))
+  if (is.null(out2$X)){
     out2$X <- X
+  }
   out2$distance <- distance
   out2$discarded <- discarded
   
