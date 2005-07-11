@@ -6,8 +6,8 @@ summary.matchit <- function(obj, verbose=F, ...) {
     xsum <- matrix(0,2,7)
     xsum <- as.data.frame(xsum)
     row.names(xsum) <- c("Full","Matched")
-    names(xsum) <- c("Means Treated","Means Control","SD","QQ Med",
-                     "QQ Mean", "QQ Max","Bias")
+    names(xsum) <- c("Means Treated","Means Control","Pooled SD","QQ Med",
+                     "QQ Mean", "QQ Max","Std. Bias")
     x1 <- xx[tt==1]
     x0 <- xx[tt==0]
     ww1 <- ww[tt==1]
