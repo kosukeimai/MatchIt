@@ -202,12 +202,11 @@ matchit2nearest <-  function(treat, X, data, pscore, discarded,
   if(!is.null(subclass)){
     psres <- matchit2subclass(treat,X,data,pscore,discarded,
                               match.matrix=match.matrix,...)
-    res$psclass <- psres$psclass
+    res$subclass <- psres$subclass
     res$q.cut <- psres$q.cut
     class(res) <- "matchit.subclass"
   } else{
     class(res) <- "matchit"
   }
-
   return(res)
 }
