@@ -8,12 +8,11 @@ qqsum <- function (x, y){
     sx <- approx(1:lenx, sx, n = leny)$y
   if (leny > lenx) 
     sy <- approx(1:leny, sy, n = lenx)$y
-  dxy <- sqrt(2)*abs(sx-sy)
+  dxy <- abs(sx-sy)
   meandiff <- mean(dxy)
   meddiff <- as.numeric(median(dxy))
   maxdiff <- max(dxy)
-  invisible(list(x = sx, y = sy,
-                 meandiff=meandiff,
+  invisible(list(meandiff=meandiff,
                  meddiff = meddiff,
                  maxdiff = maxdiff))
 }
