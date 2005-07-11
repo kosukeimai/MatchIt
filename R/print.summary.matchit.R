@@ -22,6 +22,8 @@ print.summary.matchit <- function(x, digits = max(3, getOption("digits") - 3), .
         cat("Summary of covariates for matched data:\n\n")
       }
       print.data.frame(xs1, digits=digits)
+      cat("\nPercent Balance Improvement:\n\n")
+      print.data.frame(x$reduction,digits=digits)
       cat("\nSample sizes:\n\n")
       print.table(xn, digits=digits)
       cat("\n")

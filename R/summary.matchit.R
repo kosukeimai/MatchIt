@@ -35,9 +35,10 @@ summary.matchit <- function(obj, verbose=F, ...) {
   XX <- foo$X
   treat <- foo$treat
   weights <- foo$weights
-  aa <- apply(XX,2,qoi,tt=treat,ww=weights)
   nam <- dimnames(obj$X)[[2]]
   kk <- ncol(obj$X)
+  ## Summary Stats
+  aa <- apply(XX,2,qoi,tt=treat,ww=weights)
   sum.all <- as.data.frame(matrix(0,kk,7))
   sum.matched <- as.data.frame(matrix(0,kk,7))
   row.names(sum.all) <- row.names(sum.matched) <- nam
@@ -61,6 +62,14 @@ summary.matchit <- function(obj, verbose=F, ...) {
   xn <- aa[[1]]$xn
   sum.all <- rbind(sum.all,sum.all.int)
   sum.matched <- rbind(sum.matched,sum.matched.int)
+  ## Imbalance Reduction
+  stat0 <- abs(cbind(sum.all[,2]-sum.all[,1],
+                     sum.all[,4:7]))
+  stat1 <- abs(cbind(sum.matched[,2]-sum.matched[,1],
+                     sum.matched[,4:7]))
+  reduction <- as.data.frame(100*(stat0-stat1)/stat0)
+  names(reduction) <- c("Mean","QQ Med","QQ Mean", "QQ Max", "Std. Bias")
+  ## Sample sizes
   nn <- rbind(table(obj$treat),
               table(obj$weights!=0,obj$treat)[2:1,])
   dimnames(nn) <- list(c("Full","Matched","Discarded"),
@@ -69,6 +78,7 @@ summary.matchit <- function(obj, verbose=F, ...) {
   obj$sum.all <- sum.all
   obj$sum.matched <- sum.matched
   obj$verbose <- verbose
+  obj$reduction <- reduction
   class(obj) <- "summary.matchit"
   return(obj)
 }  
