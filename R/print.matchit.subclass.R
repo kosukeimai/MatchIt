@@ -1,7 +1,7 @@
 print.matchit.subclass <- function(obj){
   cat("\nCall: ", deparse(obj$call),"\n",sep = "")
   cat("\nSample sizes by subclasses:\n\n")
-  nsub <- table(obj$psclass,obj$treat)
+  nsub <- table(obj$subclass,obj$treat)
   nn <- rbind(table(obj$treat),nsub)
   dimnames(nn) <-
     list(c("Full",paste("Subclass",dimnames(nsub)[[1]])),

@@ -3,7 +3,7 @@ summary.matchit <- function(obj, verbose=F, ...) {
     sum(w * (x - weighted.mean(x,w))^2)/(sum(w) - 1)}
   ## Function to calculate summary stats
   qoi <- function(xx,tt,ww){
-    xsum <- matrix(0,2,7)
+    xsum <- matrix(NA,2,7)
     xsum <- as.data.frame(xsum)
     row.names(xsum) <- c("Full","Matched")
     names(xsum) <- c("Means Treated","Means Control","Pooled SD","QQ Med",
@@ -18,9 +18,7 @@ summary.matchit <- function(obj, verbose=F, ...) {
     X.c.m <- xx[tt==0][ww0>0]
     xsum[2,1] <- weighted.mean(X.t.m, ww1[ww1>0])
     xsum[2,2] <- weighted.mean(X.c.m, ww0[ww0>0])
-    if(sum(tt==1)<2|(sum(tt==0)<2)){
-      xsum[c(1,2),c(3,4,5)] <- NA
-    } else {
+    if(!(sum(tt==1)<2|(sum(tt==0)<2))){ 
       xsum[1,3] <- sd(xx,na.rm=T)
       qqall <- qqsum(x1,x0)
       xsum[1,4:6] <- c(qqall$meddiff,qqall$meandiff,qqall$maxdiff)
@@ -32,11 +30,11 @@ summary.matchit <- function(obj, verbose=F, ...) {
     } 
     xsum
   }
-  XX <- foo$X
-  treat <- foo$treat
-  weights <- foo$weights
+  XX <- obj$X
+  treat <- obj$treat
+  weights <- obj$weights
   nam <- dimnames(obj$X)[[2]]
-  kk <- ncol(obj$X)
+  kk <- ncol(XX)
   ## Summary Stats
   aa <- apply(XX,2,qoi,tt=treat,ww=weights)
   sum.all <- as.data.frame(matrix(0,kk,7))

@@ -30,18 +30,10 @@ print.summary.matchit <- function(x, digits = max(3, getOption("digits") - 3), .
     }
   if(!is.null(x$psclass) & !identical(eval(x$call$full),TRUE))
     {
-      if(identical(eval(x$call$exact),TRUE)){
-        cat("\nSample sizes for full and exactly matched data:\n\n")
-        print.table(xn,digits = digits)
-        cat("\nSample sizes by covariates:\n\n")
-        print.table(q.table, digits = digits)
-        cat("\n")
-      } else {
-        print.table(q.table, digits = digits)
-        cat("\nSample sizes by subclasses:\n\n")
-        print.data.frame(x$qn, digits = digits)
-        cat("\n")
-      }
+      print.table(q.table, digits = digits)
+      cat("\nSample sizes by subclasses:\n\n")
+      print.data.frame(x$qn, digits = digits)
+      cat("\n")
     }
   invisible(x)
 }
