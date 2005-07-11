@@ -68,7 +68,7 @@ matchit2subclass <- function(treat,X,data,pscore,discarded,
   psclass[in.sample==0] <- 0
   psclass[!matched] <- 0
   if(verbose){cat("Done\n")}
-  res <- list(psclass = psclass, q.cut = q)
+  res <- list(subclass = psclass, q.cut = q)
   class(res) <- "matchit.subclass"
   return(res)
 }
