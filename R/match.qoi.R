@@ -29,3 +29,31 @@ qoi <- function(xx,tt,ww){
   } 
   xsum
 }
+
+## By subclass
+qoi.by.sub <- function(xx,tt,ww,qq){
+  qbins <- max(qq,na.rm=TRUE)
+  q.table <- matrix(0,7,qbins)
+  qn <- matrix(0,3,qbins)
+  matched <- ww!=0
+  for (i in 1:qbins)
+    {
+      qi <- qq[matched]==i
+      qx <- xx[matched][qi]
+      qt <- tt[matched][qi]
+      qw <- ww[matched][qi]
+          if(sum(qt==1)<2|(sum(qt==0)<2)){
+            if(sum(qt==1)<2){warning("Not enough treatment units in subclass ",i,call.=FALSE)}
+            else if(sum(qt==0)<2){warning("Not enough control units in subclass ",i,call.=FALSE)}
+          }
+      qoi.i <- qoi(qx,qt,qw)
+      q.table[,i] <- as.numeric(qoi.i[1,])
+      qn[,i] <- c(sum(qt),sum(qt==0),length(qt))
+    }
+  q.table <- as.data.frame(q.table)
+  qn <- as.data.frame(qn)
+  names(q.table) <- names(qn) <- paste("Subclass",1:qbins)
+  row.names(q.table) <- names(qoi.i)
+  row.names(qn) <- c("Treated","Control","Total")
+  list(q.table=q.table,qn=qn)
+}

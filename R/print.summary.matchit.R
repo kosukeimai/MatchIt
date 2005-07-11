@@ -28,12 +28,5 @@ print.summary.matchit <- function(x, digits = max(3, getOption("digits") - 3), .
       print.table(xn, digits=digits)
       cat("\n")
     }
-  if(!is.null(x$psclass) & !identical(eval(x$call$full),TRUE))
-    {
-      print.table(q.table, digits = digits)
-      cat("\nSample sizes by subclasses:\n\n")
-      print.data.frame(x$qn, digits = digits)
-      cat("\n")
-    }
   invisible(x)
 }

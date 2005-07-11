@@ -53,11 +53,11 @@ summary.matchit.subclass <- function(obj, verbose=F, ...) {
           ii <- ii + 1 
           q.table[ii,,] <- as.matrix(aa[[i]]$q.table)
           nn <- c(nn,names(aa)[i])
-          for(j in i:k){
+          for(j in i:kk){
             ii <- ii + 1 
-            x2 <- covariates[,i]*as.matrix(covariates[,j])
-            q.table[ii,,] <- as.matrix(qoi.by.sub(x2,tt=treat,ww=weights,qq=object$psclass)$q.table)
-            nn <- c(nn,paste(names(covariates)[i],names(covariates)[j],sep="x"))
+            x2 <- XX[,i]*as.matrix(XX[,j])
+            q.table[ii,,] <- as.matrix(qoi.by.sub(x2,tt=treat,ww=weights,qq=obj$subclass)$q.table)
+            nn <- c(nn,paste(nam[i],nam[j],sep="x"))
           }
         }
   }   
