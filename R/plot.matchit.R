@@ -45,25 +45,20 @@ plot.matchit <- function(obj,discrete.cutoff=5){
       abline(a=-(rr[2]-rr[1])*0.1,b=1,lty=2)
       box()
     } else{
-      tb1 <- table(xi,treat)
-      tb1 <- t(t(tb1)/apply(tb1,2,sum))
-      tb2 <- table(xi[matched],treat[matched])
-      tb2 <- t(t(tb2)/apply(tb2,2,sum))
-      rr <- range(tb1,tb2)
-      qqplot(xi[treat==0],xi[treat==1],
+      xij <- jitter(xi)
+      rr <- range(xij)
+      qqplot(xij[treat==0],xij[treat==1],
              xlim=rr,ylim=rr,axes=F,
-             type="n",xlab="",ylab="")
+             xlab="",ylab="")
       abline(a=0,b=1)
       abline(a=(rr[2]-rr[1])*0.1,b=1,lty=2)
       abline(a=-(rr[2]-rr[1])*0.1,b=1,lty=2)
       axis(2)
-      text(tb1[,1],tb1[,2],row.names(tb1))
       box()
-      qqplot(xi[treat==0 & matched],
-             xi[treat==1 & matched],
+      qqplot(xij[treat==0 & matched],
+             xij[treat==1 & matched],
              xlim=rr,ylim=rr,axes=F,
-             type="n",xlab="",ylab="")
-      text(tb2[,1],tb2[,2],row.names(tb2))
+             xlab="",ylab="")
       abline(a=0,b=1)
       abline(a=(rr[2]-rr[1])*0.1,b=1,lty=2)
       abline(a=-(rr[2]-rr[1])*0.1,b=1,lty=2)
