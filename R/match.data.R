@@ -1,6 +1,12 @@
-match.data <- function(object, group = "all") {
-  data <- object$data
-  treat <- eval(object$treat, data)
+match.data <- function(object, group = "all", distance = "distance",
+                       weights = "weights") {
+  data <- eval(object$call$data)
+  treat <- object$treat
+  vars <- names(data)
+  if (distance %in% vars)
+    stop("invalid input for distance. choose a different name.")
+  if (weights %in% vars)
+    stop("invalid input for weights. choose a different name.")
   if (group == "all")
     return(data[object$matched,])
   else if (group == "treat")

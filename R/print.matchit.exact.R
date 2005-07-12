@@ -1,16 +1,16 @@
-print.matchit.exact <- function(obj){
-  cat("\nCall: ", deparse(obj$call),"\n",sep = "")
-  cat("\nExact Subclasses: ", max(obj$subclass),"\n",sep="")
+print.matchit.exact <- function(x, digits = getOption("digits"), ...){
+  cat("\nCall: ", deparse(x$call),"\n",sep = "")
+  cat("\nExact Subclasses: ", max(x$subclass),"\n",sep="")
   cat("\nSample sizes:\n")
-  ntab <- table(factor(obj$subclass!=0,
+  ntab <- table(factor(x$subclass!=0,
                        levels=c("TRUE","FALSE")),
-                obj$treat)
-  nn <- rbind(table(obj$treat),
+                x$treat)
+  nn <- rbind(table(x$treat),
               ntab[c("TRUE","FALSE"),])
   dimnames(nn) <- list(c("Full","Matched","Discarded"),
                        c("Control","Treated"))
-  print.table(nn)
-  invisible(obj)
+  print.table(nn, ...)
+  invisible(x)
   cat("\n")
 }
 

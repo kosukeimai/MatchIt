@@ -1,12 +1,12 @@
-print.matchit.subclass <- function(obj){
-  cat("\nCall: ", deparse(obj$call),"\n",sep = "")
+print.matchit.subclass <- function(x, digits = getOption("digits"), ...){
+  cat("\nCall: ", deparse(x$call),"\n",sep = "")
   cat("\nSample sizes by subclasses:\n\n")
-  nsub <- table(obj$subclass,obj$treat)
-  nn <- rbind(table(obj$treat),nsub)
+  nsub <- table(x$subclass,x$treat)
+  nn <- rbind(table(x$treat),nsub)
   dimnames(nn) <-
     list(c("Full",paste("Subclass",dimnames(nsub)[[1]])),
          c("Control","Treated"))
-  print.table(nn)
-  invisible(obj)
+  print.table(nn, ...)
+  invisible(x)
   cat("\n")
 }
