@@ -2,7 +2,13 @@ import(MASS)
 export(matchit)	
 
 S3method(print, matchit)
+S3method(print, matchit.exact)
 S3method(print, matchit.subclass)
+S3method(print, summary.matchit)
+S3method(print, summary.matchit.exact)
+S3method(print, summary.matchit.subclass)
 S3method(plot, matchit)
 S3method(summary, matchit)
+S3method(summary, matchit.exact)
+S3method(summary, matchit.subclass)
 
