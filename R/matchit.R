@@ -1,6 +1,6 @@
 matchit <- function(formula, data, method = "nearest", distance = "logit",
                     distance.options=list(), discard = "none",
-                    reestimate = FALSE, verbose = FALSE, ...) { 
+                    reestimate = FALSE, ...) { 
 
   ## check inputs
   fn1 <- paste("distance2", distance, sep = "")
@@ -24,8 +24,6 @@ matchit <- function(formula, data, method = "nearest", distance = "logit",
       warning("distance is set to `NULL' when exact matching is used.")
   } 
   else {
-    if (verbose)
-      cat("Calculating distance measure via", distance, "\n")
     if (is.null(distance.options$formula))
       distance.options$formula <- formula
     if (is.null(distance.options$data))
@@ -40,8 +38,6 @@ matchit <- function(formula, data, method = "nearest", distance = "logit",
   }
 
   ## matching!
-  if (verbose)
-    cat("Matching via", method, "\n")
   out2 <- do.call(fn2, list(treat, X, data, pscore=distance, discarded, ...)) 
   
   ## putting all the results together
