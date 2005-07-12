@@ -1,12 +1,7 @@
 summary.matchit.subclass <- function(obj, verbose=F, ...) {
   XX <- obj$X
   treat <- obj$treat
-  if(is.null(obj$weights)){
-    weights <- rep(1,length(treat))
-    names(weights) <- names(treat)
-  } else {
-    weights <- obj$weights
-  }
+  weights <- obj$weights
   nam <- dimnames(obj$X)[[2]]
   kk <- ncol(XX)
   ## Summary Stats
@@ -55,9 +50,9 @@ summary.matchit.subclass <- function(obj, verbose=F, ...) {
           nn <- c(nn,names(aa)[i])
           for(j in i:kk){
             ii <- ii + 1 
-            x2 <- covariates[,i]*as.matrix(covariates[,j])
-            q.table[ii,,] <- as.matrix(qoi.by.sub(x2,tt=treat,ww=weights,qq=object$psclass)$q.table)
-            nn <- c(nn,paste(names(covariates)[i],names(covariates)[j],sep="x"))
+            x2 <- XX[,i]*as.matrix(XX[,j])
+            q.table[ii,,] <- as.matrix(qoi.by.sub(x2,tt=treat,ww=weights,qq=obj$subclass)$q.table)
+            nn <- c(nn,paste(nam[i],nam[j],sep="x"))
           }
         }
   }   
