@@ -7,8 +7,8 @@ matchit2subclass <- function(treat, X, data, pscore, discarded,
   n <- length(treat)
   ## Matching & Subclassification
   if(!is.null(match.matrix)){
-    match.matrix <- match.matrix[in.sample[treat==1],,drop=F]
-    t.units <- row.names(match.matrix)[!is.na(match.matrix)]
+    #match.matrix <- match.matrix[in.sample[treat==1],,drop=F]
+    t.units <- row.names(match.matrix)[in.sample[treat==1]==1]
     c.units <- na.omit(as.vector(as.matrix(match.matrix)))
     matched <-c(t.units,c.units)
     matched <- names(treat)%in%matched

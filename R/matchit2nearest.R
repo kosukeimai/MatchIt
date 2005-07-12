@@ -3,7 +3,7 @@ matchit2nearest <-  function(treat, X, data, pscore, discarded,
                              caliper = 0, calclosest = FALSE,
                              mahvars = NULL, exact = NULL,
                              counter = TRUE,
-                             subclass=NULL, ...){  
+                             subclass=NULL, verbose=FALSE, sub.by=NULL, ...){  
 
   #counter
   
@@ -200,8 +200,9 @@ matchit2nearest <-  function(treat, X, data, pscore, discarded,
 
   ## Subclassifying
   if(!is.null(subclass)){
+    if(is.null(sub.by)) sub.by="treat"
     psres <- matchit2subclass(treat,X,data,pscore,discarded,
-                              match.matrix=match.matrix,...)
+                              match.matrix=match.matrix, subclass=subclass, verbose=verbose, sub.by=sub.by, ...)
     res$subclass <- psres$subclass
     res$q.cut <- psres$q.cut
     class(res) <- c("matchit.subclass", "matchit")
