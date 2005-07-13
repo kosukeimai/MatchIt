@@ -1,4 +1,7 @@
-matchit2exact <- function(treat, X, data, pscore, ...){
+matchit2exact <- function(treat, X, data, pscore, discarded, verbose=FALSE, ...){
+
+   if(verbose)
+    cat("Exact matching...")
 
   n <- length(treat)
   xx <- apply(X, 1, function(x) paste(x, collapse = "\r"))

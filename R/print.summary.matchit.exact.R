@@ -1,6 +1,6 @@
 print.summary.matchit.exact <- function(x, digits = max(3, getOption("digits") - 3), ...){  
   cat("\nSample sizes for full and exactly matched data:\n\n")
-  ntab <- table(factor(x$subclass!=0,
+  ntab <- table(factor(!is.na(x$subclass),
                        levels=c("TRUE","FALSE")),
                 x$treat)
   nn <- rbind(table(x$treat),

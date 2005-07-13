@@ -7,7 +7,7 @@ summary.matchit.exact <- function(object, covariates = FALSE, ...) {
     names(q.table) <- c("Treated","Control","Total")
     for(i in 1:qbins){
       qi <- object$subclass==i
-      q.table[i,] <- c(sum(treat[qi]==1), sum(treat[qi]==0), length(treat[qi]))
+      q.table[i,] <- c(sum(treat[qi]==1, na.rm=T), sum(treat[qi]==0, na.rm=T), length(treat[qi & !is.na(qi)]))
     }
   } else {
     kk <- ncol(XX)
@@ -15,11 +15,12 @@ summary.matchit.exact <- function(object, covariates = FALSE, ...) {
     names(q.table) <- c("Treated","Control","Total",dimnames(XX)[[2]])
     for(i in 1:qbins){
       qi <- object$subclass==i
-      q.table[i,] <- c(sum(treat[qi]==1), sum(treat[qi]==0), length(treat[qi]),as.numeric(XX[qi,,drop=F][1,]))
+      q.table[i,] <- c(sum(treat[qi]==1, na.rm=T), sum(treat[qi]==0, na.rm=T), length(treat[qi & !is.na(qi)]),as.numeric(XX[qi,,drop=F][1,]))
     }
   }
+
   ## output
-  res <- list(call = object$call, q.table = q.table)
+  res <- list(call = object$call, q.table = q.table, subclass=object$subclass, treat=object$treat)
   class(res) <- c("summary.matchit.exact", "summary.matchit")
   return(res)
 }

@@ -1,5 +1,8 @@
-matchit2full <- function(treat, X, data, pscore, discarded, ...) {
+matchit2full <- function(treat, X, data, pscore, discarded, verbose=FALSE,...) {
   require(optmatch)
+
+ if(verbose)
+    cat("Full matching...")
 
   ## full matching for undiscarded units
   ttt <- treat[!discarded]

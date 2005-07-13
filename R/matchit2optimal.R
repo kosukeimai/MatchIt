@@ -1,6 +1,9 @@
 matchit2optimal <- function(treat, X, data, pscore, discarded,
-                            ratio = 1, ...) {
+                            ratio = 1, verbose=FALSE, ...) {
   require(optmatch)
+
+ if(verbose)
+    cat("Optimal matching...")
 
   ## optimal matching for undiscarded units
   ttt <- treat[!discarded]

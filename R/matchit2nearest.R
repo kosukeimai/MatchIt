@@ -2,11 +2,11 @@ matchit2nearest <-  function(treat, X, data, pscore, discarded,
                              ratio=1, replace = FALSE, m.order = 2,  
                              caliper = 0, calclosest = FALSE,
                              mahvars = NULL, exact = NULL,
-                             counter = TRUE,
                              subclass=NULL, verbose=FALSE, sub.by=NULL, ...){  
 
-  #counter
-  
+ if(verbose)
+    cat("Nearest neighbor matching...")
+
   # Sample sizes, labels
   n <- length(treat)
   n0 <- length(treat[treat==0])
@@ -74,7 +74,7 @@ matchit2nearest <-  function(treat, X, data, pscore, discarded,
  
   ## Looping through nearest neighbour matching for all treatment units
   ## Only do matching for units with in.sample==1 (matched!=-1)
-  if(counter){
+  if(verbose){
     trseq <- floor(seq(tr/10,tr,tr/10))
     cat("Matching Treated: ")
   }
@@ -82,7 +82,7 @@ matchit2nearest <-  function(treat, X, data, pscore, discarded,
   for(i in 1:tr){
     ## Make new matchedc column to be used for exact matching
     ## Will only be 0 (eligible for matching) if it's an exact match
-    if(counter) {if(i%in%trseq){cat(10*which(trseq==i),"%...",sep="")}}  # a counter
+    if(verbose) {if(i%in%trseq){cat(10*which(trseq==i),"%...",sep="")}}  # a counter
     matchedc2 <- matchedc
     ##in cases there's no replacement and all controls have been used up
     if(!0%in%matchedc2){  
@@ -188,7 +188,7 @@ matchit2nearest <-  function(treat, X, data, pscore, discarded,
     if (replace) matchedc[goodmatch==clabels] <- 0
     
   }
-  if(counter){cat("Done\n")}
+  if(verbose){cat("Done\n")}
   
   x <- as.matrix(match.matrix)
   x[x==-1] <- NA
