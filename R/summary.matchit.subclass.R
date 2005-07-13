@@ -1,9 +1,11 @@
-summary.matchit.subclass <- function(obj, verbose=F, ...) {
-  XX <- obj$X
-  treat <- obj$treat
-  weights <- obj$weights
-  nam <- dimnames(obj$X)[[2]]
+summary.matchit.subclass <- function(object, interactions = FALSE,
+                                     ...) {
+  XX <- object$X
+  treat <- object$treat
+  weights <- object$weights
+  nam <- dimnames(object$X)[[2]]
   kk <- ncol(XX)
+  
   ## Summary Stats
   aa <- apply(XX,2,qoi,tt=treat,ww=weights)
   sum.all <- as.data.frame(matrix(0,kk,7))
@@ -14,7 +16,7 @@ summary.matchit.subclass <- function(obj, verbose=F, ...) {
   for(i in 1:kk){
     sum.all[i,] <- aa[[i]][1,]
     sum.matched[i,] <- aa[[i]][2,]
-    if(verbose){
+    if(interactions){
       for(j in i:kk){
         x2 <- XX[,i]*as.matrix(XX[,j])
         jqoi <- qoi(x2,tt=treat,ww=weights)
@@ -29,9 +31,10 @@ summary.matchit.subclass <- function(obj, verbose=F, ...) {
   xn <- aa[[1]]$xn
   sum.all <- rbind(sum.all,sum.all.int)
   sum.matched <- rbind(sum.matched,sum.matched.int)
+
   ## By Subclass
-  qbins <- max(obj$subclass,na.rm=TRUE)
-  if(verbose){
+  qbins <- max(object$subclass,na.rm=TRUE)
+  if(interactions){
     q.table <- array(0,dim=c(kk+sum(1:kk),7,qbins))
     ii <- 0
     nn <- NULL
@@ -39,9 +42,9 @@ summary.matchit.subclass <- function(obj, verbose=F, ...) {
     q.table <- array(0,dim=c(kk,7,qbins))
   }
   aa <- apply(XX,2,qoi.by.sub,tt=treat,ww=weights,
-                  qq=obj$subclass)
+                  qq=object$subclass)
   for(i in 1:kk){
-    if(!verbose){
+    if(!interactions){
       q.table[i,,] <- as.matrix(aa[[i]]$q.table)
       nn <- names(aa)
         } else {
@@ -51,18 +54,17 @@ summary.matchit.subclass <- function(obj, verbose=F, ...) {
           for(j in i:kk){
             ii <- ii + 1 
             x2 <- XX[,i]*as.matrix(XX[,j])
-            q.table[ii,,] <- as.matrix(qoi.by.sub(x2,tt=treat,ww=weights,qq=obj$subclass)$q.table)
+            q.table[ii,,] <- as.matrix(qoi.by.sub(x2,tt=treat,ww=weights,qq=object$subclass)$q.table)
             nn <- c(nn,paste(nam[i],nam[j],sep="x"))
           }
         }
   }   
   qn <- aa[[1]]$qn
   dimnames(q.table) <- list(nn,row.names(aa[[i]]$q.table),paste("Subclass",1:qbins))
-  obj$verbose <- verbose
-  obj$sum.all <- sum.all
-  obj$sum.matched <- sum.matched
-  obj$q.table <- q.table
-  obj$qn <- qn
-  class(obj) <- "summary.matchit.subclass"
-  obj
+
+  ## output
+  res <- list(call = object$call, sum.all = sum.all, sum.matched =
+              sum.matched, q.table = q.table, qn = qn)
+  class(res) <- c("summary.matchit.subclass", "summary.matchit")
+  return(res)
 }
