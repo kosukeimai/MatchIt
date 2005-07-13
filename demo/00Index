@@ -1,3 +1,5 @@
-lalonde		General examples of MatchIt methods, using Lalonde dataset
-analysis	Demo of analysis procedures to estimate treatment effects
-diagnose	Demo of how to diagnose a propensity score model
+exact		Demo of exact matching, using Lalonde dataset
+full		Demo of full matching, using Lalonde dataset
+nearest		Demos of nearest neighbor matching, using Lalonde dataset
+subclass	Demo of subclassification, using Lalonde dataset
+optimal		Demo of optimal matching, using Lalonde dataset

@@ -4,7 +4,7 @@
 
 data(lalonde)
 
-m.out <- matchit(treat ~ age + educ + black + hispan + married, data = lalonde,
+m.out <- matchit(treat ~ educ + black + hispan, data = lalonde,
                  method = "exact")
 
 print(m.out)
