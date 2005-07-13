@@ -1,9 +1,29 @@
 matchit2subclass <- function(treat, X, data, pscore, discarded,
                              match.matrix=NULL, subclass=6, sub.by="treat",
                              verbose = FALSE){
-  in.sample <- !discarded
+
   if(verbose)
     cat("Subclassifying... \n")  
+
+  # sub.by
+  if(!is.vector(sub.by)|length(sub.by)!=1){
+    warning(sub.by," is not a valid sub.by option; sub.by=\"treat\" used instead",call.=FALSE); sub.by <- "treat"}
+  if(!sub.by%in%c("treat","control","all")){
+    warning(sub.by, " is not a valid sub.by option; sub.by=\"treat\" used instead",call.=FALSE); sub.by <- "treat"}
+
+  #subclass
+  if(length(subclass)==1){ 
+    if(subclass<0 | subclass==1){
+      warning(subclass, " is not a valid subclass; subclass=6 used instead",call.=FALSE); subclass <- 6}
+  } else {
+    if(!is.vector(subclass)){
+      warning(subclass, " is not a valid subclass; subclass=6 used instead",call.=FALSE); subclass <- 6}
+    if(sum(subclass<=1 & subclass>=0)!=length(subclass)){
+      warning("Subclass ", subclass, " is not bounded by 0 and 1; subclass=6 used instead",
+              call.=FALSE); subclass <- 6}
+  }
+
+  in.sample <- !discarded
   n <- length(treat)
   ## Matching & Subclassification
   if(!is.null(match.matrix)){

@@ -7,6 +7,30 @@ matchit2nearest <-  function(treat, X, data, pscore, discarded,
  if(verbose)
     cat("Nearest neighbor matching... \n")
 
+  #replace
+  if(!(identical(replace,TRUE) | identical(replace,FALSE))){
+    warning("replace=",replace," is invalid; used replace=FALSE instead",call.=FALSE);replace=FALSE}
+  #m.order
+  if(!(identical(m.order,2) | identical(m.order,3) |
+       identical(m.order,4))){
+    warning("m.order=",m.order," is invalid; used m.order=2 instead",call.=FALSE);m.order=2}
+  #ratio
+  ratio <- round(ratio)
+  if(!is.numeric(ratio) | ratio[1]<1 | !identical(round(length(ratio)),1)){
+    warning("ratio=",ratio," is invalid; used ratio=1 instead",call.=FALSE);ratio=1}
+  #caliper
+  if(!is.vector(caliper) | !identical(round(length(caliper)),1)){
+    warning("caliper=",caliper," is invalid; Caliper matching not done",call.=FALSE);caliper=0}
+  if(caliper<0){
+    warning("caliper=",caliper," is less than 0; Caliper matching not done",call.=FALSE);caliper=0}
+  #calclosest
+  if(!(identical(calclosest,TRUE)| identical(calclosest,FALSE))){
+    warning("calclosest=",calclosest," is invalid; used calclosest=FALSE instead",call.=FALSE)
+    calclosest=FALSE}
+  #mahvars & caliper
+  if (!is.null(mahvars) & caliper[1]==0){
+    warning("Must specify caliper > 0 to use Mahalanobis matching. Mahalanobis matching not done",call. = FALSE)}
+
   # Sample sizes, labels
   n <- length(treat)
   n0 <- length(treat[treat==0])
@@ -47,9 +71,11 @@ matchit2nearest <-  function(treat, X, data, pscore, discarded,
   
   ## Var-covar matrix for Mahalanobis (currently set for full sample)
   if (!is.null(mahvars)) {
-    if(!sum(mahvars%in%names(data))==length(mahvars))
-      stop("Mahvars not contained in data")
-    ww <- mahvars%in%dimnames(X)[[2]]
+    if(!sum(mahvars%in%names(data))==length(mahvars)) {
+	    warning("Mahvars not contained in data.  Mahalanobis matching not done.",call.=FALSE)
+	    mahvars=NULL
+	}
+    else {  ww <- mahvars%in%dimnames(X)[[2]]
     nw <- length(mahvars)
     mahvars <- data[,mahvars,drop=F]
     Sigma <- var(mahvars)
@@ -57,19 +83,24 @@ matchit2nearest <-  function(treat, X, data, pscore, discarded,
       X <- cbind(X,mahvars[!ww])
     }
     mahvars <- as.matrix(mahvars)
+    }
   }
   
   ## Now for exact matching within nearest neighbor
   ## exact should not equal T for this type of matching--that would get sent to matchit2exact
   if (!is.null(exact)){
-    if(!sum(exact%in%names(data))==length(exact))
-      stop("Exact variables not contained in data",call.=FALSE)
+    if(!sum(exact%in%names(data))==length(exact)) {
+	    warning("Exact variables not contained in data. Exact matching not done.",call.=FALSE)
+	    exact=NULL
+	}
+    else {
     ww <- exact%in%dimnames(X)[[2]]
     nw <- length(exact)
     exact <- data[,exact,drop=F]
     if(sum(ww)!=nw){
       X <- cbind(X,exact[!ww])
     }
+   }
   }
  
   ## Looping through nearest neighbour matching for all treatment units

@@ -2,6 +2,12 @@ matchit <- function(formula, data, method = "nearest", distance = "logit",
                     distance.options=list(), discard = "none",
                     reestimate = FALSE, ...) { 
 
+  #Checking input format
+  #data input
+  if(is.null(data)) stop("Dataframe must be specified",call.=FALSE)
+  if(!is.data.frame(data)){
+    stop("Data must be a dataframe",call.=FALSE)}
+  
   ## check inputs
   fn1 <- paste("distance2", distance, sep = "")
   if (!exists(fn1))
@@ -9,7 +15,7 @@ matchit <- function(formula, data, method = "nearest", distance = "logit",
   fn2 <- paste("matchit2", method, sep = "")
   if (!exists(fn2))
     stop(method, "not supported.")
-  
+
   ## obtain T and X
   tt <- terms(formula)
   attr(tt, "intercept") <- 0
