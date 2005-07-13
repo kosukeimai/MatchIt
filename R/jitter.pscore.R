@@ -1,7 +1,8 @@
 jitter.pscore <- function(obj){
   treat <- obj$treat
   pscore <- obj$distance
-  matched <- obj$weights!=0
+  weights <- obj$weights
+  matched <- weights!=0
   q.cut <- obj$q.cut
   jitp <- jitter(rep(1,length(treat)),factor=6)-(treat==0)
   cwt <- sqrt(weights)
