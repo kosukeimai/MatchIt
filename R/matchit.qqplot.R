@@ -1,8 +1,14 @@
-matchit.qqplot <- function(obj,discrete.cutoff){
+matchit.qqplot <- function(obj,discrete.cutoff,which.subclass=NULL){
   covariates  <- obj$X
   treat <- obj$treat
-  pscore <- obj$distance
   matched <- obj$weights!=0
+  if(!is.null(which.subclass)){
+    subclass <- obj$subclass
+    sub.index <- subclass==which.subclass & !is.na(subclass)
+    covariates <- covariates[sub.index,]
+    treat <- treat[sub.index]
+    matched <- matched[sub.index]
+  }
   nn <- dimnames(covariates)[[2]]
   nc <- length(nn)
   covariates <- data.matrix(covariates)
@@ -14,7 +20,11 @@ matchit.qqplot <- function(obj,discrete.cutoff){
     ni <- nn[i]
     plot(xi,type="n",axes=F)
     if(((i-1)%%3)==0){
-      mtext("QQ Plots", 3, 3, TRUE, 0.5, cex=1.2,font=2)
+      htext <- "QQ Plots"
+      if(!is.null(which.subclass)){
+        htext <- paste(htext,paste(" (Subclass ",which.subclass,")",sep=""),sep="")
+      } 
+      mtext(htext, 3, 3, TRUE, 0.5, cex=1.2,font=2)
       mtext("Raw", 3, 1, TRUE, 0.5, cex=1.2,font = 1)
       mtext("Matched", 3, 1, TRUE, 0.83, cex=1.2,font = 1)
       mtext("Control Units", 1, 0, TRUE, 2/3, cex=1,font = 1)
