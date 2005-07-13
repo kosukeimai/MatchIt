@@ -29,7 +29,7 @@ matchit2nearest <-  function(treat, X, data, pscore, discarded,
     calclosest=FALSE}
   #mahvars & caliper
   if (!is.null(mahvars) & caliper[1]==0){
-    warning("Must specify caliper > 0 to use Mahalanobis matching. Mahalanobis matching not done",call. = FALSE)}
+    warning("No caliper size specified for Mahalanobis matching.  Caliper=.25 used.",call. = FALSE);caliper=.25}
 
   # Sample sizes, labels
   n <- length(treat)
