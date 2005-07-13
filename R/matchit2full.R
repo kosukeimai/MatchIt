@@ -2,7 +2,7 @@ matchit2full <- function(treat, X, data, pscore, discarded, verbose=FALSE,...) {
   require(optmatch)
 
  if(verbose)
-    cat("Full matching...")
+    cat("Full matching... \n")
 
   ## full matching for undiscarded units
   ttt <- treat[!discarded]

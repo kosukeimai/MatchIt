@@ -3,7 +3,7 @@ matchit2optimal <- function(treat, X, data, pscore, discarded,
   require(optmatch)
 
  if(verbose)
-    cat("Optimal matching...")
+    cat("Optimal matching... \n")
 
   ## optimal matching for undiscarded units
   ttt <- treat[!discarded]

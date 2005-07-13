@@ -3,7 +3,7 @@ matchit2subclass <- function(treat, X, data, pscore, discarded,
                              verbose = FALSE){
   in.sample <- !discarded
   if(verbose)
-    cat("Subclassifying...")  
+    cat("Subclassifying... \n")  
   n <- length(treat)
   ## Matching & Subclassification
   if(!is.null(match.matrix)){

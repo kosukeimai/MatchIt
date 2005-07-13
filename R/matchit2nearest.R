@@ -5,7 +5,7 @@ matchit2nearest <-  function(treat, X, data, pscore, discarded,
                              subclass=NULL, verbose=FALSE, sub.by=NULL, ...){  
 
  if(verbose)
-    cat("Nearest neighbor matching...")
+    cat("Nearest neighbor matching... \n")
 
   # Sample sizes, labels
   n <- length(treat)
