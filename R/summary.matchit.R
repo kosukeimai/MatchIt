@@ -54,7 +54,7 @@ summary.matchit <- function(object, interactions = FALSE, ...) {
 
   ## output
   res <- list(call = object$call, nn = nn, sum.all = sum.all,
-              sum.matched = sum.matched, reduction = reduction)
+              sum.matched = sum.matched, reduction = reduction, match.matrix=object$match.matrix)
   class(res) <- "summary.matchit"
   return(res)
 }
