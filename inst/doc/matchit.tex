@@ -48,7 +48,7 @@ Elizabeth A. Stuart\thanks{Researcher, Mathematica Policy Research,
   Inc.\, Ph.D.\, Department of Statistics, Harvard University. (600
   Maryland Ave., SW, Suite 550, Washington, DC 20024, USA;
   \texttt{http://www.mathematica-mpr.com},
-  \texttt{Stuart@Stat.Harvard.Edu}).}}
+  \texttt{EStuart@Mathematica-MPR.com}).}}
 
 \makeindex
 
@@ -227,7 +227,7 @@ matching procedures. There is also a standard output of
 \item \texttt{discard} specifies whether to discard units that fall
   outside some measure of support of the distance score:
   \begin{itemize}
-  \item \texttt{none} (default) discards no unit.  Use this option
+  \item \texttt{none} (default) discards no units.  Use this option
     when the units to be matched are substantially similar, such as in
     the case of matching treatment and control units from a field
     experiment that was close to (but not fully) randomized (e.g.,
@@ -258,16 +258,18 @@ matching procedures. There is also a standard output of
   
 \item \texttt{reestimate} specifies whether the model for distance
   measure should be re-estimated after units are discarded. The
-  default is \texttt{FALSE}.  This may be desirable for efficiency
-  reasons, especially if many units were not matched so that the
-  matched samples are quite different from the original samples.
+  default is \texttt{FALSE}.  Reestimation may be desirable for efficiency
+  reasons, especially if many units were discarded and so the
+  post-discard samples are quite different from the original samples.
 \end{enumerate}
 
 \subsubsection{Standard Output of \texttt{matchit()}}
 
 The following are the elements of the \texttt{matchit} output object;
 if outputs are not applicable for the original \texttt{matchit} call,
-they are returned as \texttt{NA}:
+they are returned as \texttt{NA} [EAS: This isn't quite true--they just aren't in there for now.
+E.g., for method=nearest, the subclassification outputs aren't included at all in the matchit object. 
+Do we want to change that?]:
 
 \begin{enumerate}
   
@@ -296,19 +298,19 @@ they are returned as \texttt{NA}:
    support restrictions.  It equals \texttt{TRUE} if unit $i$ was
    discarded, and \texttt{=FALSE} otherwise. 
    
- \item \texttt{distance} is a vector of estimated distance measure.
+ \item \texttt{distance} is a vector of length $n$ with the estimated distance measure for each unit.
 
  \item \texttt{weights} is a vector of length $n$ that provides the
    weights assigned to each unit in the matching process.  Unmatched
    units have weights equal to $0$. Matched treated units have weight
    $1$.  Each matched control unit has weight proportional to the
-   number of times it was matched.  The sum of the control weights is
+   number of treatment units to which it was matched, and the sum of the control weights is
    equal to the number of uniquely matched control units.
 
  \item \texttt{subclass} contains the subclass index in an ordinal
    scale from 1 to the total number of subclasses as specified in
-   \texttt{subclass} (or the total number of subclasses from a full
-   and optimal matching).  Unmatched units have \texttt{psclass=NA}.
+   \texttt{subclass} (or the total number of subclasses from full
+   or exact matching).  Unmatched units have \texttt{psclass=NA}.
    
  \item \texttt{q.cut} gives the subclass cut-points that classify the
    distance measure.
@@ -330,10 +332,7 @@ they are returned as \texttt{NA}:
 
 The \texttt{print} command returns (when applicable):
 \begin{enumerate}
-\item The original assignment model call.
-\item Summary statistics of the propensity score for full and matched
-  samples.
-\item Summary statistics of the propensity score for each subclass.
+\item The original MatchIt call.
 \item Sample sizes for full and matched samples (full and by subclass).
 \end{enumerate}
 
@@ -343,14 +342,11 @@ The \texttt{summary} command returns more information about the
 \MatchIt\ model.  Optional inputs are:
 
 \begin{enumerate}
-\item \texttt{sig}, which specifies the size of the t-statistic for a
-  covariate to be declared ``problematic'' (default=2).
-  
-\item \texttt{verbose}, which is an option to show calculate summary
+\item \texttt{interactions}, which is an option to show calculate summary
   statistics in \texttt{sum.all} and \texttt{sum.matched} for all
   covariates, their squares, and interactions when
-  \texttt{verbose=TRUE} and only the covariates themselves when
-  \texttt{verbose=FALSE} (default).
+  \texttt{interactions=TRUE} and only the covariates themselves when
+  \texttt{interactions=FALSE} (default).
 \end{enumerate}
 
 The \texttt{summary} call returns, when applicable:
@@ -368,17 +364,11 @@ The \texttt{summary} call returns, when applicable:
     where \texttt{Means Treated}$= \mu_{X|T=1} = \frac{1}{n_1}
     \sum_{T=1} X_i$ and \texttt{Means Control}$= \mu_{X|T=0} =
     \frac{1}{n_0} \sum_{T=0} X_i$,
-  \item standard deviations for all covariates $X$, where
+  \item pooled standard deviations for all covariates $X$, where
     \texttt{SD}$= s_X = \sqrt{\frac{1}{n-1} \sum_{i} (X_i -
       \overline{X})^2}$,
-  \item $t$-statistics from means tests of all covariates $X$,
-    \texttt{T-stat},\footnote{Note that the t-tests do not assume
-      constant variance across treatment and control groups, using a
-      pooled estimate of the standard deviation.  For this reason, the
-      t-statistics do not correspond to the overall standard
-      deviations reported in \texttt{SD}.  For more information, see
-      \texttt{help(t.test)}.} and
-  \item matchit bias statistics \texttt{Bias}$=\frac{\mu_{X|T=1} -
+  \item summary statistics from a QQ plot [EAS: Dan, can you fill in here?]
+  \item standardized bias statistics, where  \texttt{Std. Bias}$=\frac{\mu_{X|T=1} -
       \mu_{X|T=0}}{s_{x|T=1}}$, where $s_{x|T=1} =
     \sqrt{\frac{1}{n_1-1} \sum_{T=1} ( (X_i|T_i=1) - \mu_{X|T=1})}$.
   \end{itemize}
@@ -397,41 +387,24 @@ The \texttt{summary} call returns, when applicable:
   \item weighted standard deviations for all covariates $X$ and their
     interactions of matched units, where \texttt{SD} $= s_{wX} =
     \sqrt{\frac{1}{n} \sum_{i} (w_iX_i - \overline{wX})^2}$,
-  \item $t$-statistics (weighted by {\texttt psweights}) from means
-    tests of all covariates $X$ and their interactions
-    \texttt{T-stat},\footnote{Note that the weighted t-tests do not
-      assume constant variance across treatment and control groups,
-      using a pooled estimate of the standard deviation.  For this
-      reason, the weighted t-statistics do not correspond to the
-      overall standard deviations reported in \texttt{SD}.  For more
-      information, see \texttt{help(t.test)}.}
-  \item balance bias statistics \texttt{Bias}$=\frac{\mu_{wX|T=1} -
+  \item standardized bias statistics \texttt{Std. Bias}$=\frac{\mu_{wX|T=1} -
       \mu_{wX|T=0}}{s_{x|T=1}}$, and
-  \item a column indicating whether there was a reduction in the
-    absolute balance bias compared to all units (1 indicates a
-    reduction, and 0 indicates no reduction),
   \end{itemize}
-  where $w$ represents the vector of \texttt{psweights}.  The last row
-  of \texttt{sum.matched} contains the number of matched treated
-  units, the number of matched control units, and the total number of
-  matched units.
+  where $w$ represents the vector of \texttt{weights}.  
   
-\item Problematic covariates that remain imbalanced in the matched
-  sample or in each subclass.  A variable is listed when the absolute
-  value of the t-statistic in the matched sample exceeds \texttt{sig}
-  (default=2).
-  
-\item \texttt{xn} gives the sample sizes in the full and matched
-  samples.
+\item \texttt{reduction} shows the percent bias reduction achieved in each of the
+	balance measures in \texttt{sum.all} and \texttt{sum.matched}, defined as $100*\frac{a-b}{a}$, where
+	$a$ was the balance statistic before matching and $b$ is the balance statistic after matching.
+
+\item \texttt{nn} gives the sample sizes in the full and matched
+  samples and the number of discarded units, by treatment and control.
   
 \item \texttt{q.table} is an array that contains the same information
-  as \texttt{sum.all} and \texttt{sum.matched} by subclass.
+  as \texttt{sum.matched} by subclass.
   
 \item \texttt{qn} gives the sample sizes in the full and matched
-  samples, by subclass.
+  samples and the number of discarded units, by subclass and by treatment and control.
 \item \texttt{match.matrix} from the {\texttt matchit} output.
-\item \texttt{psclass} from the {\texttt matchit} output.
-\item \texttt{in.sample} from the {\texttt matchit} output.
 \end{enumerate}
 
 \subsubsection{Plot}
@@ -439,12 +412,9 @@ The \texttt{plot} command allows you to check the distributions of
 covariates in the assignment model, squares, and interactions, and
 within each subclasses if specified.  The graphs present:
 \begin{enumerate}
-\item Density estimate graphs of the propensity score of treated and
-  control units in the full and matched samples.
 \item Jitter plots of the propensity score for treated and control
   units.
-\item Density estimate graphs of any covariates.
-\item Density estimate graphs of any covariates by subclass.
+\item QQ plots of each variable [EAS: Dan, can you fill this in?]
 \end{enumerate}
 
 \section{A User's Guide by Examples}
