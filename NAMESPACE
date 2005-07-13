@@ -1,5 +1,6 @@
 import(MASS)
-export(matchit)	
+export(matchit,	
+       match.data)	
 
 S3method(print, matchit)
 S3method(print, matchit.exact)
