@@ -1682,86 +1682,56 @@ they are returned as \texttt{NA}:
   
 \item \texttt{call} provides the original \MatchIt\ call.
  
-\item \texttt{formula} shows the formula used to specify the
-  propensity score model.
+\item \texttt{formula} shows the formula used to specify the model for
+  estimating the distance measure.
   
-\item \texttt{match.matrix} is an $n_1$ by \texttt{ratio} data frame,
+\item \texttt{match.matrix} is an $n_1$ by \texttt{ratio} matrix
   where:
   \begin{itemize}
-  \item the row names, \texttt{row.names(match.matrix)}, store the
-    names of the treatment units, which come from the data frame
-    specified in \texttt{data} (to learn how to do this, see
-    Section~\ref{rnames}),
+  \item the row names, which can be obtained through
+    \texttt{row.names(match.matrix)}, represent the names of the
+    treatment units, which come from the data frame specified in
+    \texttt{data} (to learn how to do this, see Section~\ref{rnames}).
   \item each column stores the name(s) of the control unit(s) matched
-    to the treatment unit of that row (e.g., when the \texttt{ratio}
-    input is specified as 3, the three columns of
+    to the treatment unit of that row. For example, when the
+    \texttt{ratio} input is specified as 3, the three columns of
     \texttt{match.matrix} represent the three control units matched to
-    one treatment unit),
-   \item \texttt{NA} indicates that the treatment unit was not
-     matched.  
+    one treatment unit).
+   \item \texttt{NA} indicates that the treatment unit was not matched.  
    \end{itemize}
    
- \item \texttt{in.sample} is a vector of length $n$ that displays
-   whether the units were eligible for matching due to discarding due
-   to common support restrictions.  If unit $i$ was discarded,
-   \texttt{in.sample[i]=FALSE}, and if unit $i$ was not discarded
-   \texttt{in.sample[i]=TRUE}.
+ \item \texttt{discarded} is a vector of length $n$ that displays
+   whether the units were ineligible for matching due to common
+   support restrictions.  It equals \texttt{TRUE} if unit $i$ was
+   discarded, and \texttt{=FALSE} otherwise. 
    
- \item \texttt{matched} is a vector of length $n$ that displays
-   whether each unit was matched.  \texttt{matched==TRUE} means that
-   unit was matched, whereas \texttt{matched==FALSE} means it was not.
-   
- \item \texttt{psweights} is a vector of length $n$ that provides the
+ \item \texttt{distance} is a vector of estimated distance measure.
+
+ \item \texttt{weights} is a vector of length $n$ that provides the
    weights assigned to each unit in the matching process.  Unmatched
    units have weights equal to $0$. Matched treated units have weight
    $1$.  Each matched control unit has weight proportional to the
    number of times it was matched.  The sum of the control weights is
    equal to the number of uniquely matched control units.
-   
- \item \texttt{psclass} contains the subclass index in an ordinal
+
+ \item \texttt{subclass} contains the subclass index in an ordinal
    scale from 1 to the total number of subclasses as specified in
    \texttt{subclass} (or the total number of subclasses from a full
-   matching).  Unmatched units have \texttt{psclass=0}.
+   and optimal matching).  Unmatched units have \texttt{psclass=NA}.
    
  \item \texttt{q.cut} gives the subclass cut-points that classify the
- propensity score.
+   distance measure.
    
- \item \texttt{assign.model} stores the output of the assignment
-   model.  For example:
+ \item \texttt{model} stores the output of the model used to estimate
+   the distance measure.  \texttt{summary(m.out)} will give the
+   summary of the model where \texttt{m.out} is the output object from
+   \texttt{matchit()}. 
+   
+ \item \texttt{treat} stores the treatment indicator from
+   \texttt{data} (the left-hand side of \texttt{formula}).
   
-  \begin{footnotesize}
-\begin{verbatim}
-> foo <- matchit(treat~ age + educ + black + hispan + married +
-      nodegree + re74 + re75,data=lalonde)
-> print(foo$assign.model)
-
-Call:  glm(formula = treat ~ age + educ + black + hispan + married +
-      nodegree + re74 + re75, family = binomial, data = lalonde) 
-
-Coefficients:
-(Intercept)          age         educ        black       hispan      married  
-  7.077e-01   -8.696e-02    1.257e-01    1.690e+00    9.011e-01   -1.484e+00  
-   nodegree         re74         re75  
-  1.171e+00   -7.810e-05    1.957e-05  
-
-Degrees of Freedom: 312 Total (i.e. Null);  304 Residual
-Null Deviance:      423.5 
-Residual Deviance: 253.1        AIC: 271.1 
-\end{verbatim} %$
-\end{footnotesize}
-
-\item \texttt{data} is a data frame that contains the original data
-  set in the \MatchIt\ call, as well as three additional variables:
-  \texttt{psclass}, \texttt{psweights}, and \texttt{pscore}
-  (\texttt{pscore} is a vector of $n$ length that contains the
-  estimated propensity scores for all units (i.e., the probability of
-  treatment assignment conditional on the covariates)).
-  
-\item \texttt{treat} stores the treatment indicator from \texttt{data}
-  (the left-hand side of the assignment model).
-  
-\item \texttt{covariates} stores the covariates used in the right-hand
-  side of the assignment model.
+ \item \texttt{X} stores the covariates used for estimating the
+   distance measure (the right-hand side of \texttt{formula}).
 \end{enumerate}
 
 \subsubsection{Print}
