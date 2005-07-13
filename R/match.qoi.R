@@ -38,10 +38,10 @@ qoi.by.sub <- function(xx,tt,ww,qq){
   matched <- ww!=0
   for (i in 1:qbins)
     {
-      qi <- qq[matched]==i
+      qi <- qq[matched]==i & (!is.na(qq[matched]))
       qx <- xx[matched][qi]
       qt <- tt[matched][qi]
-      qw <- ww[matched][qi]
+      qw <- as.numeric(ww[matched][qi]!=0)
           if(sum(qt==1)<2|(sum(qt==0)<2)){
             if(sum(qt==1)<2){warning("Not enough treatment units in subclass ",i,call.=FALSE)}
             else if(sum(qt==0)<2){warning("Not enough control units in subclass ",i,call.=FALSE)}
