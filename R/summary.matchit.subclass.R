@@ -1,9 +1,10 @@
 summary.matchit.subclass <- function(object, interactions = FALSE,
                                      ...) {
-  XX <- object$X
+
+  XX <- cbind(distance=object$distance,object$X)
   treat <- object$treat
   weights <- object$weights
-  nam <- dimnames(object$X)[[2]]
+  nam <- dimnames(XX)[[2]]
   kk <- ncol(XX)
   
   ## Summary Stats
