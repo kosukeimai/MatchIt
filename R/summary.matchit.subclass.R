@@ -77,7 +77,11 @@ summary.matchit.subclass <- function(object, interactions = FALSE,
   sum.subclass <- sum.all
   for(i in 1:kk){
     for(j in 1:7){
-      sum.subclass[i,j] <- sum(wsub*q.table[i,j,])
+      if(j==3) {
+        sum.subclass[i,j] <- sqrt(sum((wsub^2)*(q.table[i,j,]^2)))
+      } else {
+        sum.subclass[i,j] <- sum(wsub*q.table[i,j,])
+      }
     }
   }
 
