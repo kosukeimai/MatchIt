@@ -138,9 +138,7 @@ following commands from your R session.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \clearpage
 
-\section{A Quick Overview}
-
-\subsection{\MatchIt\, Commands}
+\section{Overview}
 
 For any matching procedure, \MatchIt\, does its work with the
 following three commands:
@@ -182,20 +180,20 @@ matching procedures. There is also a standard output of
 
 \begin{enumerate}
   
-\item \texttt{formula} takes the form of {\tt T \~\ X1 + X2}, where
-  {\tt T} is a binary treatment indicator and {\tt X1} and {\tt X2}
-  are the pre-treatment covariates, and {\tt T}, {\tt X1}, and {\tt
-    X2} are contained in the same data frame.  The $+$ symbol means
-  ``inclusion'' not ``addition.'' You may also include interaction
-  terms in the form of {\tt X1:X2} or squared terms in the form of
-  {\tt I(X1 \^\ 2)}.  The \texttt{I()} command ensures that the
-  expression is interpreted as one term.  
-
+\item \texttt{formula} takes the usual sytanx of R formula, {\tt treat
+    \~\ x1 + x2}, where {\tt treat} is a binary treatment indicator
+  and {\tt x1} and {\tt x2} are the pre-treatment covariates. Both the
+  treatment indicator and pre-treatment covariates must be contained
+  in the same data frame, which is specified as {\tt data} (see
+  below).  All the usual R sytanx for formula works. For example, {\tt
+    x1:x2} represents the first order interation term between {\tt x1}
+  and {\tt x2}, and {\tt I(x1 \^\ 2)} represents the square term of
+  {\tt x1}. See {\tt help(formula)} for details.
   
 \item \texttt{data} specifies the data frame containing the variables
-  called in the formula.  You may find it helpful for the diagnostics
-  to specify observation names in the data frame.  To do this, see
-  Section~\ref{rnames}.  
+  called in {\tt formula}.  You may find it helpful for the
+  diagnostics to specify observation names in the data frame (see
+  Section~\ref{rnames}).
   
 \item \texttt{method} specifies a matching method. Currently,
   \texttt{exact} (exact matching), \texttt{full} (full matching),
@@ -203,24 +201,40 @@ matching procedures. There is also a standard output of
   (optimal matching), \texttt{subclass} (subclassification) are
   available. The default is \texttt{nearest}. Note that within each of
   these matching methods, \MatchIt\, offers a variety of options.
-
-\item \texttt{distance}, specifies the method used to estimate the
-  propensity score:
-  \begin{enumerate}
-  \item \texttt{logit}, the default method, implements a logistic
-    regression.  See {\tt help(glm)} for more options.
-  \item \texttt{probit} implements a probit regression.  See {\tt
-      help(glm)} for more options.
-  \item \texttt{nnet} implements a neural network in the \texttt{nnet}
-    library, with a default size of 3.  See {\tt help(nnet)} for more
-    options.
-  \item \texttt{GAM} implements a generalized additive model as in the
-    \texttt{mgcv} library.  See {\tt help(gam)} for more options.
-  \item \texttt{cart} implements a classification tree as in the
-    \texttt{rpart} library.  See {\tt help(rpart)} for more options.
-  \end{enumerate}
   
-\item{distance.options} specifies the optinal arguments that are
+\item \texttt{distance}, specifies the method used to estimate the
+  distance measure. The default is the logistic regression, {\tt
+    logit}. Currently, the following methods are available:
+  \begin{enumerate}
+  \item binomial generalized linear models with various links ({\tt
+      glm()} in the {\tt stats} package); \texttt{logit} (logistic
+    link), {\tt linear.logit} (logistic link with linear propensity
+    score}, \texttt{probit} (probit link), {\tt linear.probit} (probit
+  link with linear propensity score}, {\tt cloglog} (complementary
+log-log link), {\tt linear.cloglog} (complementary log-log link with
+linear propensity score), {\tt log} (log link), {\tt linear.log} (log
+link with linear propensity score), {\tt cauchit} (cauchy CDF link),
+{\tt linear.cauchit} (cauchy CDF link with linear propensity score).
+
+\item binomial generalized additive model with various links ({\tt
+    gam()} in the {\tt mgcv} package); \texttt{GAMlogit} (logistic
+  link), {\tt GAMlinear.logit} (logistic link with linear propensity
+  score}, \texttt{probit} (probit link), {\tt GAMlinear.probit}
+(probit link with linear propensity score}, {\tt GAMcloglog}
+(complementary log-log link), {\tt GAMlinear.cloglog} (complementary
+log-log link with linear propensity score), {\tt GAMlog} (log link),
+{\tt GAMlinear.log} (log link with linear propensity score), {\tt
+  GAMcauchit} (cauchy CDF link), {\tt GAMlinear.cauchit} (cauchy CDF link
+with linear propensity score).
+
+\item \texttt{nnet}, neural network model ({\tt nnet()} in the {\tt
+    nnet} package).
+  
+\item \texttt{rpart}, classification tree ({\tt rpart()} in the
+  \texttt{rpart} package).
+\end{enumerate}
+
+\item \texttt{distance.options} specifies the optinal arguments that are
   passed to the model for estimating the distance measure. The input
   to this argument should be a list.
 
@@ -266,17 +280,18 @@ matching procedures. There is also a standard output of
 \subsubsection{Standard Output of \texttt{matchit()}}
 
 The following are the elements of the \texttt{matchit} output object;
-if outputs are not applicable for the original \texttt{matchit} call,
-they are returned as \texttt{NA} [EAS: This isn't quite true--they just aren't in there for now.
-E.g., for method=nearest, the subclassification outputs aren't included at all in the matchit object. 
-Do we want to change that?]:
 
 \begin{enumerate}
   
-\item \texttt{call} provides the original \MatchIt\ call.
- 
+\item \texttt{call} provides the original {\tt matchit()} call.
+  
 \item \texttt{formula} shows the formula used to specify the model for
   estimating the distance measure.
+  
+\item \texttt{model} stores the output of the model used to estimate
+  the distance measure.  \texttt{summary(m.out\$model)} will give the
+  summary of the model where \texttt{m.out} is the output object from
+  \texttt{matchit()}.
   
 \item \texttt{match.matrix} is an $n_1$ by \texttt{ratio} matrix
   where:
@@ -290,54 +305,53 @@ Do we want to change that?]:
     \texttt{ratio} input is specified as 3, the three columns of
     \texttt{match.matrix} represent the three control units matched to
     one treatment unit).
-   \item \texttt{NA} indicates that the treatment unit was not matched.  
-   \end{itemize}
+  \item \texttt{NA} indicates that the treatment unit was not matched.  
+  \end{itemize}
    
- \item \texttt{discarded} is a vector of length $n$ that displays
-   whether the units were ineligible for matching due to common
-   support restrictions.  It equals \texttt{TRUE} if unit $i$ was
-   discarded, and \texttt{=FALSE} otherwise. 
-   
- \item \texttt{distance} is a vector of length $n$ with the estimated distance measure for each unit.
-
- \item \texttt{weights} is a vector of length $n$ that provides the
-   weights assigned to each unit in the matching process.  Unmatched
-   units have weights equal to $0$. Matched treated units have weight
-   $1$.  Each matched control unit has weight proportional to the
-   number of treatment units to which it was matched, and the sum of the control weights is
-   equal to the number of uniquely matched control units.
-
- \item \texttt{subclass} contains the subclass index in an ordinal
-   scale from 1 to the total number of subclasses as specified in
-   \texttt{subclass} (or the total number of subclasses from full
-   or exact matching).  Unmatched units have \texttt{psclass=NA}.
-   
- \item \texttt{q.cut} gives the subclass cut-points that classify the
-   distance measure.
-   
- \item \texttt{model} stores the output of the model used to estimate
-   the distance measure.  \texttt{summary(m.out)} will give the
-   summary of the model where \texttt{m.out} is the output object from
-   \texttt{matchit()}. 
-   
- \item \texttt{treat} stores the treatment indicator from
-   \texttt{data} (the left-hand side of \texttt{formula}).
+\item \texttt{discarded} is a vector of length $n$ that displays
+  whether the units were ineligible for matching due to common
+  support restrictions.  It equals \texttt{TRUE} if unit $i$ was
+  discarded, and it is set to \texttt{FALSE} otherwise.
   
- \item \texttt{X} stores the covariates used for estimating the
-   distance measure (the right-hand side of \texttt{formula}).
+\item \texttt{distance} is a vector of length $n$ with the estimated
+  distance measure for each unit.
+  
+\item \texttt{weights} is a vector of length $n$ that provides the
+  weights assigned to each unit in the matching process.  Unmatched
+  units have weights equal to $0$. Matched treated units have weight
+  $1$.  Each matched control unit has weight proportional to the
+  number of treatment units to which it was matched, and the sum of
+  the control weights is equal to the number of uniquely matched
+  control units.
+  
+\item \texttt{subclass} contains the subclass index in an ordinal
+  scale from 1 to the total number of subclasses as specified in
+  \texttt{subclass} (or the total number of subclasses from full or
+  exact matching).  Unmatched units have \texttt{NA}.
+  
+\item \texttt{q.cut} gives the subclass cut-points that classify the
+  distance measure.
+  
+\item \texttt{treat} stores the treatment indicator from
+  \texttt{data} (the left-hand side of \texttt{formula}).
+ 
+\item \texttt{X} stores the covariates used for estimating the
+  distance measure (the right-hand side of \texttt{formula}).
 \end{enumerate}
 
 
-\subsubsection{Print}
+%\subsubsection{Print}
+%
+%The \texttt{print} command returns (when applicable):
+%\begin{enumerate}
+%\item The original MatchIt call.
+%\item Sample sizes for full and matched samples (full and by subclass).
+%\end{enumerate}
 
-The \texttt{print} command returns (when applicable):
-\begin{enumerate}
-\item The original MatchIt call.
-\item Sample sizes for full and matched samples (full and by subclass).
-\end{enumerate}
-
-\subsubsection{Summary}
+\subsection{Balance Diagnostics through {\tt summary()} and {\tt plot()}}
 \label{cmd:sum}
+
+\subsubsection{{\tt summary()}}
 The \texttt{summary} command returns more information about the
 \MatchIt\ model.  Optional inputs are:
 
@@ -393,8 +407,8 @@ The \texttt{summary} call returns, when applicable:
   where $w$ represents the vector of \texttt{weights}.  
   
 \item \texttt{reduction} shows the percent bias reduction achieved in each of the
-	balance measures in \texttt{sum.all} and \texttt{sum.matched}, defined as $100*\frac{a-b}{a}$, where
-	$a$ was the balance statistic before matching and $b$ is the balance statistic after matching.
+        balance measures in \texttt{sum.all} and \texttt{sum.matched}, defined as $100*\frac{a-b}{a}$, where
+        $a$ was the balance statistic before matching and $b$ is the balance statistic after matching.
 
 \item \texttt{nn} gives the sample sizes in the full and matched
   samples and the number of discarded units, by treatment and control.
@@ -407,7 +421,8 @@ The \texttt{summary} call returns, when applicable:
 \item \texttt{match.matrix} from the {\texttt matchit} output.
 \end{enumerate}
 
-\subsubsection{Plot}
+\subsubsection{{\tt plot()}}
+
 The \texttt{plot} command allows you to check the distributions of
 covariates in the assignment model, squares, and interactions, and
 within each subclasses if specified.  The graphs present:
