@@ -791,117 +791,57 @@ provide summaries across subclasses.
 \subsection{Full Matching}
 \label{fullmatching}
 
-When all treated and control units will be used in the analysis, a
-particular type of subclassification is called ``full matching''
-(\cite{Rosenbaum02, Hansen04}), in which the matched sample is
-composed of matched sets, where each matched set contains either one
-treated unit and one or more controls, or one control unit and one or
-more treated units.  Full matching is optimal in terms of minimizing a
-weighted average of the propensity score distances between each
-treated subject and each control subject within each stratum.  Full
-matching can be implemented in \MatchIt\ using the add-on package
-``optmatch", discussed in Section \ref{optmatch}.  For full matching,
-the only input required is the option ``full=TRUE", a propensity score
-model, and the data set.  Additionally, all options discussed in the
-documentation with ``optmatch" can be used in \MatchIt\ through the
-``full.options()" list.  \MatchIt\ nearest neighbor matching options
-will be ignored with full matching.
+When one wishes to use all treated and control units in the analysis,
+a particular type of subclassification is called ``full matching''
+\citep{Rosenbaum02, Hansen04}. In this matching procedure, the matched
+sample is composed of matched sets, where each matched set contains
+either one treated unit and one or more controls, or one control unit
+and one or more treated units.  Full matching is optimal in terms of
+minimizing a weighted average of the propensity score distances
+between each treated subject and each control subject within each
+stratum.  
 
 \subsubsection{Options}
-\textbf{Full.}  \texttt{full} specifies full matching, which forms
-subclasses using all treated and all control units.  When
-\texttt{full=TRUE}, \texttt{nearest} is automatically set to
-\texttt{FALSE}.  The default is to not do full matching
-(\texttt{full=FALSE}).
-  
-\textbf{Full.Options().}  \texttt{full.options()} is an optional list
-of additional options for the call to \texttt{optmatch} when doing
-full matching.  See the \texttt{optmatch} documentation for more
-information.
+
+Full matching can be performed with \MatchIt\ by setting
+\texttt{method = "full"}.  We use an add-on package called
+\texttt{optmatch} \citep{Hansen04}, which must be installed separately
+by typing at the R command prompt,
+\begin{verbatim}
+> install.packages("optmatch", contriburl = "http://www.stat.lsa.umich.edu/~bbh/optmatch")
+\end{verbatim}
+Currently, \texttt{optmatch} is only available for Unix and MacOS X
+(but not for Windows).  For more information about the package, see
+\hlink{http://www.stat.lsa.umich.edu/\~{}bbh/optmatch.html}{http://www.stat.lsa.umich.edu/\~bbh/optmatch.html}.
+The available options are listed below.
+
+\begin{enumerate}
+\item {\tt verbose} specifies whether some helpful comments are
+  printed on the screen. The default is {\tt FALSE}
+\item {\tt ...} represents additional inputs that can be passed to the
+  {\tt fullmatch()} function in the {\tt optmatch} package. See {\tt
+    help(fullmatch)} for details.
+\end{enumerate}
 
 \subsubsection{Examples}
 
-As an example of full matching,
+The following example script can be run by typing {\tt demo(full)} at
+the R prompt.
 
 \begin{verbatim}
-> foo1 <- matchit(treat ~ age + educ + black + hispan + married +
-+                nodegree + re74 + re75, data=lalonde, full=T)
-Calculating propensity score...Done
-Full Matching...Done
-Calculating summary statistics...Done
-Warning message: 
-Full matching will ignore nearest neighbor inputs 
-> print(summary(foo1))
-
-Assignment model specification:
-matchit(formula = treat ~ age + educ + black + hispan + married + nodegree + 
-        re74 + re75, data = lalonde, full = T)
-
-Summary of covariates for all data:
-
-         Means Treated Means Control        SD  T-stat     Bias
-pscore       5.774e-01        0.1822    0.2903 19.8129  1.79409
-age          2.582e+01       28.0303    9.8812 -2.5590 -0.30945
-educ         1.035e+01       10.2354    2.6283  0.4777  0.05496
-black        8.432e-01        0.2028    0.4894 18.5978  1.75677
-hispan       5.946e-02        0.1422    0.3220 -2.9393 -0.34890
-married      1.892e-01        0.5128    0.4932 -7.8180 -0.82407
-nodegree     7.081e-01        0.5967    0.4831  2.6336  0.24431
-re74         2.096e+03     5619.2365 6477.9645 -6.3815 -0.72108
-re75         1.532e+03     2466.4844 3295.6790 -3.2486 -0.29026
-
-Summary of covariates for matched data:
-
-         Means Treated Means Control        SD   T-stat      Bias Reduction
-pscore          0.3020        0.3010    0.2903  1.54747  0.004246         1
-age            27.4031       27.3460    9.8812  0.05121  0.007989         1
-educ           10.1803       10.3069    2.6283 -0.39747 -0.062969         0
-black           0.4053        0.3917    0.4894  1.37815  0.037432         1
-hispan          0.1155        0.1180    0.3220 -0.08142 -0.010922         1
-married         0.4361        0.4063    0.4932  0.77764  0.075908         1
-nodegree        0.6321        0.6295    0.4831  0.04499  0.005567         1
-re74         4430.1492     4612.4848 6477.9645 -0.31085 -0.037313         1
-re75         2162.6791     2194.5371 3295.6790 -0.08446 -0.009896         1
-
-Sample sizes:
-
-        Treated Control Total
-Full        185     429   614
-Matched     185     429   614
-
-Problematic covariates:  
-Number of units discarded:   0
-
+## load the Lalonde data
+data(lalonde)
+## conduct full matching using the propensity score based on logistic regression
+m.out <- matchit(treat ~ age + educ + black + hispan + married + nodegree + re74 + re75, 
+                 data = lalonde, method = "full", distance = "logit")
+## print a short summary
+print(m.out)
+## balance diagnostics through statistics
+summary(m.out)
+## balance diagnostics through plots
+plot(m.out)
 \end{verbatim}
 
-We see that the matching has utilized all units (the treated and
-control group sample sizes are the same for the full and matched
-samples), but that there has been significant reduction in bias from
-the full matching.  The diagnostics are slightly different with full
-matching as compared with the previous matching methods we have
-discussed; since many subclasses will have only one treated or one
-control unit it is not possible to do the weighted comparisons done
-for standard subclassification.
-
-To assess balance on each covariate in the matched samples obtained
-from full matching, a linear model is run with the covariate of
-interest (e.g., the propensity score, age, or education) on the
-left-hand side, and the treatment indicator and the subclass fixed
-effects on the right-hand side (see Section \ref{fullmatchanal} for
-more discussion of the use of fixed effects with full matching).  The
-mean in the treated group is defined as the average predicted value of
-the covariate as if all units were treated; the mean in the control
-group is defined as the average predicted value of the covariate as if
-all units were control.  This prevents the need to define one of the
-subclasses as the baseline subclass and allows a comparison of units
-across all subclasses, but still accounts for the fact that the units
-should be well matched within each subclass.  The standard deviation
-of each covariate is the same in the full and matched samples, since
-all units are utilized.  Finally, the t-statistic is the t-statistic
-of the coefficient of the treatment indicator in the linear model
-predicting the covariate; this t-statistic reflects the differences
-between the treated and control groups, after conditioning on the
-subclasses.
 
 \subsection{Nearest Neighbor Matching}
 
@@ -1375,114 +1315,47 @@ appropriate control matches for the treated units.  See \cite{GuRos93}
 or \cite{Rosenbaum02} for more information on optimal matching.
 
 \subsubsection{Options}
-Optimal matching can be performed with \MatchIt\ using an add-on
-package called ``\texttt{optmatch}'' (\cite{Hansen04}), which must be
-installed separately by typing at the R command prompt,
+
+Optimal matching can be performed with \MatchIt\ by setting
+\texttt{method = "optimal"}.  We use an add-on package called
+\texttt{optmatch} \citep{Hansen04}, which must be installed separately
+by typing at the R command prompt,
 \begin{verbatim}
 > install.packages("optmatch", contriburl = "http://www.stat.lsa.umich.edu/~bbh/optmatch")
 \end{verbatim}
-Currently, \texttt{optmatch} is not available for Windows.  For more
-information about the package, see
-\hlink{http://www.stat.lsa.umich.edu/~bbh/optmatch.html}{http://www.stat.lsa.umich.edu/~bbh/optmatch.html}.
-Once \texttt{optmatch} is installed, optimal matching can be chosen
-within \MatchIt\ simply by setting \texttt{m.order=1}.  All other
-options for nearest neighbor matching remain the same.
+Currently, \texttt{optmatch} is only available for Unix and MacOS X
+(but not for Windows).  For more information about the package, see
+\hlink{http://www.stat.lsa.umich.edu/\~{}bbh/optmatch.html}{http://www.stat.lsa.umich.edu/\~bbh/optmatch.html}.
+The available options are listed below.
 
-Here we provide an example of optimal matching.  First we show the
-default greedy matching, which matches the treated students in order
-from the treated unit with the highest propensity score to the treated
-unit with the smallest propensity score.
+\begin{enumerate}
+\item {\tt ratio} specifies the the number of control units to be
+  matched to each treatment unit, the default is {\tt 1}.
+\item {\tt verbose} specifies whether some helpful comments are
+  printed on the screen. The default is {\tt FALSE}
+\item {\tt ...} represents additional inputs that can be passed to the
+  {\tt fullmatch()} function in the {\tt optmatch} package. See {\tt
+    help(fullmatch)} for details.
+\end{enumerate}
 
 \subsubsection{Examples}
 
-\begin{verbatim}
-> foo <- matchit(treat ~ re74+re75+age+educ, data=lalonde)
-Calculating propensity score...Done
-Matching Treated: 10%...20%...30%...40%...50%...60%...70%...80%...90%...100%...Done
-Calculating summary statistics...Done
-> summary(foo)
-
-Assignment model specification:
-matchit(formula = treat ~ re74 + re75 + age + educ, data = lalonde)
-
-Summary of covariates for all data:
-
-       Means Treated Means Control        SD  T-stat     Bias
-pscore        0.3536        0.2788    0.1209  8.3279  0.82986
-re74       2095.5737     5619.2365 6477.9645 -7.2456 -0.72108
-re75       1532.0553     2466.4844 3295.6790 -3.2776 -0.29026
-age          25.8162       28.0303    9.8812 -2.9911 -0.30945
-educ         10.3459       10.2354    2.6283  0.5468  0.05496
-
-Summary of covariates for matched data:
-
-       Means Treated Means Control        SD   T-stat      Bias Reduction
-pscore        0.3536        0.3523 8.966e-02  0.13648  0.014134         1
-re74       2095.5737     2137.7507 4.623e+03 -0.08762 -0.008631         1
-re75       1532.0553     1385.2355 2.850e+03  0.49495  0.045607         1
-age          25.8162       25.2811 8.946e+00  0.57481  0.074792         1
-educ         10.3459       10.4486 2.274e+00 -0.43384 -0.051079         1
-
-Sample sizes:
-
-        Treated Control Total
-Full        185     429   614
-Matched     185     185   370
-
-Problematic covariates:  
-Number of units discarded:   0
-\end{verbatim}
-
-Now, with optimal matching:
+The following example script can be run by typing {\tt demo(optimal)}
+at the R prompt.
 
 \begin{verbatim}
->  foo <- matchit(treat ~ re74+re75+age+educ, data=lalonde, m.order=1)
-Calculating propensity score...Done
-Optimal Matching Treated: Done
-Calculating summary statistics...Done
-> summary(foo)
-
-Assignment model specification:
-matchit(formula = treat ~ re74 + re75 + age + educ, data = lalonde,     m.order = 1)
-
-Summary of covariates for all data:
-
-       Means Treated Means Control        SD  T-stat     Bias
-pscore        0.3536        0.2788    0.1209  8.3279  0.82986
-re74       2095.5737     5619.2365 6477.9645 -7.2456 -0.72108
-re75       1532.0553     2466.4844 3295.6790 -3.2776 -0.29026
-age          25.8162       28.0303    9.8812 -2.9911 -0.30945
-educ         10.3459       10.2354    2.6283  0.5468  0.05496
-
-Summary of covariates for matched data:
-
-       Means Treated Means Control        SD   T-stat      Bias Reduction
-pscore        0.3536        0.3533 8.996e-02  0.02487  0.002584         1
-re74       2095.5737     2120.2338 4.626e+03 -0.05120 -0.005046         1
-re75       1532.0553     1413.4162 2.854e+03  0.39940  0.036853         1
-age          25.8162       25.2054 8.916e+00  0.65839  0.085368         1
-educ         10.3459       10.4703 2.278e+00 -0.52431 -0.061833         0
-
-Sample sizes:
-
-        Treated Control Total
-Full        185     429   614
-Matched     185     185   370
-
-Problematic covariates:  
-Number of units discarded:   0
+## load the Lalonde data
+data(lalonde)
+## optimal ratio matching using the propensity score based on logistic regression
+m.out <- matchit(treat ~ re74 + re75 + age + educ, data = lalonde, method = "optimal", 
+                 distance = "logit", ratio = 2)
+## a short summary
+print(m.out)
+## balance diagnostics through statistics
+summary(m.out)
+## balance diagnostics through graphics
+plot(m.out)
 \end{verbatim}
-
-% Difference in matched pairs about the same for both methods, about 0.09
-%temp <- foo$data$pscore[foo$data$treat==1]-foo$data$pscore[foo$match.matrix[,1]]
-%mean(abs(temp))
-
-In this example, even though optimal matching is not guaranteed to
-maximize the balance in the overall matched samples, the resulting
-balance in the matched samples is better when optimal matching is
-used.  For example, the t-statistic of the propensity score in matched
-samples is 0.14 with greedy matching and only 0.02 with optimal
-matching.
 
 
 \subsection{Balance Diagnostics}
