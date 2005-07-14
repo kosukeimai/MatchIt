@@ -1,10 +1,10 @@
 matchit2optimal <- function(treat, X, data, distance, discarded,
                             ratio = 1, verbose=FALSE, ...) {
   require(optmatch)
-
- if(verbose)
+  
+  if(verbose)
     cat("Optimal matching... \n")
-
+  
   ## optimal matching for undiscarded units
   ttt <- treat[!discarded]
   n0 <- length(ttt[ttt==0])

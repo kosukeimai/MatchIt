@@ -1,4 +1,5 @@
-matchit2full <- function(treat, X, data, distance, discarded, verbose=FALSE,...) {
+matchit2full <- function(treat, X, data, distance, discarded,
+                         verbose=FALSE, ...) { 
   require(optmatch)
 
  if(verbose)
