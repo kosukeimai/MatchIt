@@ -1,4 +1,4 @@
-matchit2subclass <- function(treat, X, data, pscore, discarded,
+matchit2subclass <- function(treat, X, data, distance, discarded,
                              match.matrix=NULL, subclass=6, sub.by="treat",
                              verbose = FALSE){
 
@@ -37,8 +37,8 @@ matchit2subclass <- function(treat, X, data, pscore, discarded,
   names(matched) <- names(treat)
   m1 <- matched[treat==1]
   m0 <- matched[treat==0]
-  p1 <- pscore[treat==1][m1]
-  p0 <- pscore[treat==0][m0]
+  p1 <- distance[treat==1][m1]
+  p0 <- distance[treat==0][m0]
   ## Settting Cut Points
   if(length(subclass)!=1 | (length(subclass)==1 & all(subclass<1))) {
     subclass <- sort(subclass)
@@ -51,7 +51,7 @@ matchit2subclass <- function(treat, X, data, pscore, discarded,
     else if(sub.by=="control") 
       q <- c(0,quantile(p0,probs=c(subclass)),1)
     else if(sub.by=="all") 
-      q <- c(0,quantile(pscore,probs=c(subclass)),1)
+      q <- c(0,quantile(distance,probs=c(subclass)),1)
     else 
       stop("Invalid input for sub.by")
   }
@@ -64,7 +64,7 @@ matchit2subclass <- function(treat, X, data, pscore, discarded,
     else if(sub.by=="control") 
       q <- c(0,quantile(p0,probs=sprobs,na.rm=TRUE),1)
     else if(sub.by=="all") 
-      q <- c(0,quantile(pscore,probs=sprobs,na.rm=TRUE),1)
+      q <- c(0,quantile(distance,probs=sprobs,na.rm=TRUE),1)
     else 
       stop("Must specify a valid sub.by",call.=FALSE)
   }
@@ -75,7 +75,7 @@ matchit2subclass <- function(treat, X, data, pscore, discarded,
   for (i in 1:qbins){
     q1 <- q[i]
     q2 <- q[i+1]
-    psclass <- psclass+i*as.numeric(pscore<q2 & pscore>=q1)
+    psclass <- psclass+i*as.numeric(distance<q2 & distance>=q1)
   }
   
   ## No subclass for discarded or unmatched units

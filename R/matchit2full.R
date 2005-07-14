@@ -1,4 +1,4 @@
-matchit2full <- function(treat, X, data, pscore, discarded, verbose=FALSE,...) {
+matchit2full <- function(treat, X, data, distance, discarded, verbose=FALSE,...) {
   require(optmatch)
 
  if(verbose)
@@ -8,8 +8,8 @@ matchit2full <- function(treat, X, data, pscore, discarded, verbose=FALSE,...) {
   ttt <- treat[!discarded]
   n0 <- length(ttt[ttt==0])
   n1 <- length(ttt[ttt==1])
-  d1 <- pscore[ttt==1]
-  d0 <- pscore[ttt==0]
+  d1 <- distance[ttt==1]
+  d0 <- distance[ttt==0]
   d <- matrix(0, ncol=n0, nrow=n1)
   rownames(d) <- names(ttt[ttt==1])
   colnames(d) <- names(ttt[ttt==0])

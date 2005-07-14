@@ -1,4 +1,4 @@
-matchit2nearest <-  function(treat, X, data, pscore, discarded,
+matchit2nearest <-  function(treat, X, data, distance, discarded,
                              ratio=1, replace = FALSE, m.order = 2,  
                              caliper = 0, calclosest = FALSE,
                              mahvars = NULL, exact = NULL,
@@ -35,8 +35,8 @@ matchit2nearest <-  function(treat, X, data, pscore, discarded,
   n <- length(treat)
   n0 <- length(treat[treat==0])
   n1 <- length(treat[treat==1])
-  d1 <- pscore[treat==1]
-  d0 <- pscore[treat==0]
+  d1 <- distance[treat==1]
+  d0 <- distance[treat==0]
   
   if(is.null(names(treat)))
     names(treat) <- 1:n
@@ -67,7 +67,7 @@ matchit2nearest <-  function(treat, X, data, pscore, discarded,
   r <- 1
   
   ## Caliper for matching (=0 if caliper matching not done)
-  sd.cal <- caliper*sqrt(var(pscore[in.sample==1]))
+  sd.cal <- caliper*sqrt(var(distance[in.sample==1]))
   
   ## Var-covar matrix for Mahalanobis (currently set for full sample)
   if (!is.null(mahvars)) {
@@ -232,8 +232,10 @@ matchit2nearest <-  function(treat, X, data, pscore, discarded,
   ## Subclassifying
   if(!is.null(subclass)){
     if(is.null(sub.by)) sub.by="treat"
-    psres <- matchit2subclass(treat,X,data,pscore,discarded,
-                              match.matrix=match.matrix, subclass=subclass, verbose=verbose, sub.by=sub.by, ...)
+    psres <- matchit2subclass(treat,X,data,distance,discarded,
+                              match.matrix=match.matrix,
+                              subclass=subclass,
+                              verbose=verbose, sub.by=sub.by, ...)
     res$subclass <- psres$subclass
     res$q.cut <- psres$q.cut
     class(res) <- c("matchit.subclass", "matchit")

@@ -1,4 +1,4 @@
-matchit2optimal <- function(treat, X, data, pscore, discarded,
+matchit2optimal <- function(treat, X, data, distance, discarded,
                             ratio = 1, verbose=FALSE, ...) {
   require(optmatch)
 
@@ -9,8 +9,8 @@ matchit2optimal <- function(treat, X, data, pscore, discarded,
   ttt <- treat[!discarded]
   n0 <- length(ttt[ttt==0])
   n1 <- length(ttt[ttt==1])
-  d1 <- pscore[ttt==1]
-  d0 <- pscore[ttt==0]
+  d1 <- distance[ttt==1]
+  d0 <- distance[ttt==0]
   d <- matrix(0, ncol=n0, nrow=n1)
   tlabels <- rownames(d) <- names(ttt[ttt==1])
   clabels <- colnames(d) <- names(ttt[ttt==0])

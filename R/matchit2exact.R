@@ -1,4 +1,4 @@
-matchit2exact <- function(treat, X, data, pscore, discarded, verbose=FALSE, ...){
+matchit2exact <- function(treat, X, data, distance, discarded, verbose=FALSE, ...){
 
    if(verbose)
     cat("Exact matching... \n")
