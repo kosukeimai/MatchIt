@@ -1,9 +1,9 @@
-matchit.qqplot <- function(obj,discrete.cutoff,which.subclass=NULL){
-  covariates  <- obj$X
-  treat <- obj$treat
-  matched <- obj$weights!=0
+matchit.qqplot <- function(x,discrete.cutoff,which.subclass=NULL){
+  covariates  <- x$X
+  treat <- x$treat
+  matched <- x$weights!=0
   if(!is.null(which.subclass)){
-    subclass <- obj$subclass
+    subclass <- x$subclass
     sub.index <- subclass==which.subclass & !is.na(subclass)
     covariates <- covariates[sub.index,]
     treat <- treat[sub.index]

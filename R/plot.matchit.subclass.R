@@ -1,4 +1,4 @@
-plot.matchit.subclass <- function(obj,discrete.cutoff=5,type="QQ"){
+plot.matchit.subclass <- function(x,discrete.cutoff=5,type="QQ"){
   choice.menu <- function(choices,question)
     {
       k <- length(choices)-1
@@ -16,7 +16,7 @@ plot.matchit.subclass <- function(obj,discrete.cutoff=5,type="QQ"){
       return(ans)
     }
   if(type=="QQ"){
-    choices <- c("No",paste("Yes : Subclass ", 1:max(obj$subclass,na.rm=T)))
+    choices <- c("No",paste("Yes : Subclass ", 1:max(x$subclass,na.rm=T)))
     question <- "Would you like to see density estimates of any subclass covariates?"
     ans <- -1
     while(ans!=0)
@@ -24,11 +24,11 @@ plot.matchit.subclass <- function(obj,discrete.cutoff=5,type="QQ"){
         ans <- as.numeric(choice.menu(choices,question))
         if(ans!=0)
           {
-            matchit.qqplot(obj,discrete.cutoff,which.subclass=5)     
+            matchit.qqplot(x,discrete.cutoff,which.subclass=5)     
           }
       }
   } else if(type=="jitter"){
-    jitter.pscore(obj)
+    jitter.pscore(x)
   } else {
     stop("Invalid type")
   }

@@ -1,11 +1,13 @@
 # Need to account for weights -- how do we do qq plots with weights
-plot.matchit <- function(obj,discrete.cutoff=5,type="QQ"){
-  if (class(obj)[1]=="matchit.exact"){
+plot.matchit <- function(x,discrete.cutoff=5,type="QQ"){
+  if (class(x)[1]=="matchit.exact"){
     return(warning("Plot() not appropriate for exact matching.  No plots generated"))
   }
   if(type=="QQ"){
-    matchit.qqplot(obj,discrete.cutoff)
+    matchit.qqplot(x,discrete.cutoff)
   } else if(type=="jitter"){
-    jitter.pscore(obj)
+    jitter.pscore(x)
+  } else {
+    stop("Invalid type")
   }
 }
