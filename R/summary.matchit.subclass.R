@@ -100,12 +100,9 @@ summary.matchit.subclass <- function(object, interactions = FALSE,
   names(reduction) <- c("Mean","QQ Med","QQ Mean", "QQ Max", "Std. Bias")
 
   ## output
-  object$sum.all <- sum.all
-  object$sum.matched <- sum.matched
-  object$sum.subclass <- sum.subclass
-  object$reduction <- reduction
-  object$qn <- qn
-  object$q.table <- q.table
-  class(object) <- c("summary.matchit.subclass", "summary.matchit")
-  return(object)
+  res <- list(sum.all = sum.all, sum.matched = sum.matched,
+              sum.subclass = sum.subclass, reduction = reduction,
+              qn = qn, q.table = q.table)
+  class(res) <- c("summary.matchit.subclass", "summary.matchit")
+  return(res)
 }
