@@ -34,43 +34,25 @@ matchit.qqplot <- function(x,discrete.cutoff,which.subclass=NULL){
     l.wid <- strwidth(nn, "user")
     cex.labels <- max(0.8, min(2, 0.9/max(l.wid)))
     text(0.5,0.5,ni,cex=cex.labels)
-    if(length(table(xi))>discrete.cutoff){
-      rr <- range(xi)
-      qqplot(xi[treat==0],xi[treat==1],
-             xlim=rr,ylim=rr,axes=F,ylab="",
-             xlab="")
-      abline(a=0,b=1)
-      abline(a=(rr[2]-rr[1])*0.1,b=1,lty=2)
-      abline(a=-(rr[2]-rr[1])*0.1,b=1,lty=2)
-      axis(2)
-      box()
-      qqplot(xi[treat==0 & matched],
-             xi[treat==1 & matched],
-             xlim=rr,ylim=rr,axes=F,ylab="",
-             xlab="")
-      abline(a=0,b=1)
-      abline(a=(rr[2]-rr[1])*0.1,b=1,lty=2)
-      abline(a=-(rr[2]-rr[1])*0.1,b=1,lty=2)
-      box()
-    } else{
-      xij <- jitter(xi)
-      rr <- range(xij)
-      qqplot(xij[treat==0],xij[treat==1],
-             xlim=rr,ylim=rr,axes=F,
-             xlab="",ylab="")
-      abline(a=0,b=1)
-      abline(a=(rr[2]-rr[1])*0.1,b=1,lty=2)
-      abline(a=-(rr[2]-rr[1])*0.1,b=1,lty=2)
-      axis(2)
-      box()
-      qqplot(xij[treat==0 & matched],
-             xij[treat==1 & matched],
-             xlim=rr,ylim=rr,axes=F,
-             xlab="",ylab="")
-      abline(a=0,b=1)
-      abline(a=(rr[2]-rr[1])*0.1,b=1,lty=2)
-      abline(a=-(rr[2]-rr[1])*0.1,b=1,lty=2)
-      box()
+    if(length(table(xi))<=discrete.cutoff){
+      xi <- jitter(xi)
     }
+    rr <- range(xi)
+    qqplot(xi[treat==0],xi[treat==1],
+           xlim=rr,ylim=rr,axes=F,ylab="",
+           xlab="")
+    abline(a=0,b=1)
+    abline(a=(rr[2]-rr[1])*0.1,b=1,lty=2)
+    abline(a=-(rr[2]-rr[1])*0.1,b=1,lty=2)
+    axis(2)
+    box()
+    qqplot(xi[treat==0 & matched],
+           xi[treat==1 & matched],
+           xlim=rr,ylim=rr,axes=F,ylab="",
+           xlab="")
+    abline(a=0,b=1)
+    abline(a=(rr[2]-rr[1])*0.1,b=1,lty=2)
+    abline(a=-(rr[2]-rr[1])*0.1,b=1,lty=2)
+    box()
   }  
 }
