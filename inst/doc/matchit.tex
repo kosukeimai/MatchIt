@@ -541,212 +541,90 @@ in mathematical notation is:
 
 The simplest version of matching is exact.  This technique matches
 \emph{each} treated unit to \emph{all} possible control units with the
-same covariate values.  For example, to find exact matches on race
-(The examples in this document are for illustrative purposes only, and
-are not intended to obtain actual estimates of the average treatment
-effect, which would clearly require taking into account all
-pre-treatment variables.):
+same covariate values, forming subclasses such that within each subclass all
+units (treatment and control) have the same covariate values.
 
 \subsubsection{Options}
 
-\textbf{Exact Matching.}  \texttt{exact} specifies whether exact
-matching should be done.  \texttt{FALSE} (default) indicates no exact
-matching.  \texttt{TRUE} indicates exact matching on all variables in
-the assignment model of the \texttt{formula} (i.e., the propensity
-score will never be generated).  A vector of variable names indicates
-separate variables on which to exact match, in combination with
-matching on the propensity score.  This option will not be different
-from \texttt{exact=TRUE}, unless the list differs from the variables
-in the formula.  (For example, \texttt{matchit(T \~\ X1 + X2, data,
-  exact=TRUE)} is equivalent to \texttt{matchit(T \~\ X1, data,
-  exact=cbind(X1,X2))}.  But \texttt{matchit(T \~\ X1 + X2, data,
-  exact=X1)} will match units exactly only on \texttt{X1} and perform
-nearest neighbor matching on the propensity score which uses
-\texttt{X1} and \texttt{X2}.)  Variables should be entered as a vector
-of names \texttt{exact=c("X1","X2")} that refer to variable names in
-\texttt{data}.
-  
+Exact matching is implemented in /MatchIt/ using \texttt{method="exact"}.  
+Exact macthing will be done on all covariates included on the right-hand side
+of the \texttt{formula} specified in the /MatchIt/ call.  No \texttt{distance}
+option is used for exact matching, and there are no additional
+options for exact matching.  
+
 \subsubsection{Examples}
 
+The following example script can be run by typing {\tt demo(exact)} at
+the R prompt.
+
 \begin{verbatim}
-> data(lalonde)          #loads the example dataset
-> foo1 <- matchit(treat ~ black + hispan, exact=TRUE, data=lalonde)
+The following example script can be run by typing {\tt demo(full)} at
+the R prompt.
+
+\begin{verbatim}
+## load the Lalonde data
+data(lalonde)
+## conduct exact matching on educ, black, and hispan
+m.out <- matchit(treat ~ educ + black + hispan, data = lalonde,
+                 method = "exact")
+## print a short summary
+print(m.out)
+## details of each of the subclasses formed
+summary(m.out)
 \end{verbatim}
 
-\noindent \texttt{foo1} now contains all the information on the
-matched units.  The matching forms all possible subclasses based on
-unique values of the covariates in the formula portion of the
-\MatchIt\ call; within each subclass, all units have the same
-covariate values.  To obtain basic information about the matching
-procedure:
-
-\begin{verbatim}
-> print(foo1)
- 
-Assignment model specification:
-matchit(formula = treat ~ black + hispan, data = lalonde, exact = TRUE)
- 
-Sample sizes for full and exactly matched data:
- 
-        Treated Control Total
-Full        185     429   614
-Matched     185     429   614
-\end{verbatim} 
-The printout includes the original call to \MatchIt\ and the fact that
-all 185 treatment units were exactly matched to all 429 control units
-on race covariates.  (Obviously finding exact matches becomes more
-difficult as we add covariates.)
-
-We can obtain more information on the matching using the {\tt summary}
-command:
-
-\begin{verbatim}
-> summary(foo1)
- 
-Assignment model specification:
-matchit(formula = treat ~ black + hispan, data = lalonde, exact = TRUE)
- 
-Summary of covariates for all data:
- 
-       Means Treated Means Control     SD T-stat    Bias
-black        0.84324        0.2028 0.4894 19.344  1.7568
-hispan       0.05946        0.1422 0.3220 -3.409 -0.3489
-  
-Sample sizes for full and exactly matched data:
- 
-        Treated Control Total
-Full        185     429   614
-Matched     185     429   614
- 
-Sample sizes by covariates:
- 
-  black hispan Treated Control Total
-1     1      0     156      87   243
-2     0      1      11      61    72
-3     0      0      18     281   299
- 
-Number of units discarded:   0
-\end{verbatim}
-The results indicate that the means of the race variables ({\tt black}
-and {\tt hispan}) are quite different between the full treated and
-control groups, but we know that within each subclass formed by these
-two binary covariates the values of the race variables of the treated
-and control units are (by the construction of this exact matching
-procedure) the same.  These two binary covariates form three
-subclasses, and we see, for example, that 243 units (156 treated and
-87 control) are black and non-hispanic.  The balance bias statistic
-presented in the right column of the first table is the mean
-difference between covariate values for controls and treated in
-standard deviation units; for a formal definition, see
-Subsection~\ref{cmd:sum}.
-
-We can use the {\tt psclass} component of {\tt foo1} to identify which
-units are in each subclass and to verify their covariate values.  To
-see ID numbers of the first 20 units in subclass 1 (``NSW'' refers to
-the National Supported Work Demonstration participants):
-\begin{verbatim}
-> row.names(foo1$data)[foo1$psclass==1][1:20]
- [1] "NSW1"  "NSW3"  "NSW4"  "NSW5"  "NSW6"  "NSW7"  "NSW8"  "NSW9"  "NSW11"
-[10] "NSW12" "NSW13" "NSW14" "NSW15" "NSW16" "NSW17" "NSW18" "NSW19" "NSW20"
-[19] "NSW21" "NSW24"
-\end{verbatim}
-
-We can also confirm the covariate values of the units in each
-subclass.  For example, to see the covariate values of the first 20
-units in subclass 2 (``PSID'' refers to individuals in the Panel
-Survey of Income Dynamics):
-\begin{verbatim}
-> foo1$data[foo1$psclass==2,c("black", "hispan")][1:20,]
-       black hispan
-NSW2       0      1
-NSW28      0      1
-NSW44      0      1
-NSW87      0      1
-NSW100     0      1
-NSW112     0      1
-NSW129     0      1
-NSW167     0      1
-NSW173     0      1
-NSW177     0      1
-NSW180     0      1
-PSID9      0      1
-PSID16     0      1
-PSID17     0      1
-PSID21     0      1
-PSID22     0      1
-PSID28     0      1
-PSID31     0      1
-PSID40     0      1
-PSID45     0      1
-\end{verbatim}
-
+The /MatchIt/ output object will include \texttt{weights} and \texttt{subclass}, which can be used
+to identify which units were put into the same subclass.  Units that did not have the same 
+covariate values as anyone in the other treatment group have \texttt{subclass=NA}.
 
 \subsection{Subclassification}
 
-After matching, you may subclassify all observations, or the matched
-units, into a given number of groups by the propensity score.  The
-\texttt{subclass} option lets you choose the number of these
-subclasses.  When you choose this command, \MatchIt\ matches in the
-same way, but it also adds a variable to the output object with the
-subclass number.  You can then use this variable by applying your
-parametric analysis within each subclass, rather than to the entire
-dataset, but to still summarize the results for the entire dataset.
-This can significantly increase the robustness of the ultimate results
-since each parametric analysis within a subclass requires only local
-rather than global parametric smoothing assumptions.
+When there are many covariates on which matches are desired, it is often very difficult
+to find a sufficient number of exact matches.  In that case, it is sometimes desirable
+to do subclassification using a scalar distance measure, such as the propensity score or
+other distance measure estimated using one of the \texttt{distance} options.  Subclassification
+will form subclasses based on this distance measure.  Within each subclass, the distribution of 
+covariates in the treatment and control groups should be similar, and this can be checked using
+the \texttt{summary} command after doing subclassifiction.  
+
+Subclassification is implemented in /MatchIt/ using \texttt{method="subclass"}.  See also the 
+Sections on full matching (Section \ref{full}) and nearest-neighbor matching (Section \ref{nearest}),
+which provide additional ways of performing subclassification.  
 
 \subsubsection{Options}
 
-\textbf{Subclassification} Subclassification options allow the
-  user to subclassify units along the propensity score, without
-  changing the matching procedure.  The subclassifying variable is
-  added to the output object so that it can be used in the analysis
-  step by conducting the parametric analysis within each subclass and
-  then aggregating the results.  This increases robustness of the
-  parametric step by shortening the length of any parametric
-  extrapolations and smoothing.  See also the discussion of the
-  \texttt{full} option.
-  \begin{itemize}
+\begin{itemize}
   \item \texttt{subclass} is either (1) a scalar, specifying the
     number of subclasses, or (2) a vector of probabilities bounded
-    between 0 and 1, to create quantiles based on \texttt{subtype},
-    where the value of 0 (default) indicates no subclassification.
-  \item If \texttt{subclass!=0}, \texttt{sub.by} specifies by what
+    between 0 and 1, to create quantiles of the distance measure using
+    the units in the group specified by \texttt{sub.by}.  
+    The default is \texttt{subclass=6}.
+  \item \texttt{sub.by} specifies by what
     criteria to subclassify: \texttt{``treat''} indicates by the
     number of treatment units (default), \texttt{``control''}
     indicates by the number of control units, and \texttt{``all''}
     indicates by the total number of units.
   \end{itemize}
-  The subclass options create quantiles corresponding to the given
-  probabilities from \texttt{subclass}, using the \texttt{quantile}
-  command on the propensity scores of the \texttt{sub.by} units.
-  
 
 \subsubsection{Examples}
 
-To perform a subclassification routine for matched units, use the
-\texttt{subclass} command as:
+The following example script can be run by typing {\tt demo(subclass)} at
+the R prompt.
 
 \begin{verbatim}
-> data(lalonde) 
-> foo1 <- matchit(treat ~ age + educ + black + hispan + married +
-  nodegree + re74 + re75, data=lalonde, replace=TRUE, subclass=6)
+## load the Lalonde data
+data(lalonde)
+## form 6 subclasses (the default) based on distance measure estimated using logistic regression
+## of treat on re74, re75, age, and educ.  By default, each subclass will have
+## approximately the same number of treated units. 
+m.out <- matchit(treat ~ re74+re75+age+educ, data=lalonde, method = "subclass")
+## print a short summary
+print(m.out)
+## summary of balance within each subclass
+summary(m.out)
 \end{verbatim}
 
-To perform subclassification on \emph{all} units, without unit-by-unit
-matching, we circumvent the nearest neighbor matching algorithm
-entirely by setting \texttt{nearest} to \texttt{FALSE}:
-
-\begin{verbatim}
-> data(lalonde) 
-> foo2 <- matchit(treat ~ age + educ + black + hispan + married +
-  nodegree + re74 + re75, data=lalonde, nearest=FALSE, replace=TRUE,
-  subclass=6)
-\end{verbatim}
-
-Figure \ref{diags} presents diagnostic graphs from \texttt{plot(foo2)}.  
-We also summarize the results using the {\tt print} command:
-
+\begin{comment}
 \begin{figure}[tbp]
   \begin{center}
 %    \rotatebox{270}{\includegraphics[height=2.85in,angle=0]{figs/subclass1}}
@@ -762,47 +640,7 @@ We also summarize the results using the {\tt print} command:
 \label{diags}
 \end{center}
 \end{figure}
-
-
-\begin{verbatim}
-> print(foo2)
- 
-Assignment model specification:
-matchit(formula = treat ~ age + educ + black + hispan + married + nodegree + 
-    re74 + re75, data = lalonde, nearest = FALSE, replace = TRUE, subclass = 6)
- 
-Summary of propensity score for full sample:
- 
-     Means Treated Means Control     SD T-stat  Bias
-Full        0.5774        0.1822 0.2903  20.14 1.794
- 
-Sample sizes:
- 
-     Treated Control Total
-Full     185     429   614
- 
- 
-Summary of propensity score by subclasses:
- 
-              Subclass 1 Subclass 2 Subclass 3 Subclass 4 Subclass 5 Subclass 6
-Means Treated    0.13761    0.50815    0.62615   0.682281    0.72963    0.78055
-Means Control    0.07627    0.46688    0.62923   0.682351    0.73457    0.77741
-SD               0.06753    0.06705    0.01897   0.014952    0.01516    0.02037
-T-stat           4.20947    2.40592   -0.53366  -0.017308   -1.05718    0.38338
-Bias             0.77817    0.60165   -0.15852  -0.004403   -0.34684    0.14896
- 
-Sample sizes by subclasses:
- 
-        Subclass 1 Subclass 2 Subclass 3 Subclass 4 Subclass 5 Subclass 6
-Treated         31         31         29         32         31         31
-Control        346         24         17         21         18          3
-Total          377         55         46         53         49         34
-\end{verbatim}
-
-\noindent 
-\texttt{q.table} in the {\tt summary} output is also an easy way to
-provide summaries across subclasses.
-
+\end{comment}
 
 \subsection{Full Matching}
 \label{fullmatching}
@@ -861,150 +699,114 @@ plot(m.out)
 
 \subsection{Nearest Neighbor Matching}
 
+Nearest neighbor matching selects the $r$ best matches for each individual
+in the treatment group (excluding those discarded using the \texttt{discard}) option.
+The matching is done using a distance measure such as the propensity score, and
+matches are chosen for each treated unit one at a time, where at each step the control unit not yet
+matched that is closest to the treated unit on the distance measure is chosen as the match.  There
+are many variations on nearest neighbor matching.  See below
+for the options available in /MatchIt/.
+
+Nearest neighbor matching is implemented in /MatchIt/ using the \texttt{method="nearest"} option.
+
 \subsubsection{Options}
 \begin{enumerate}
-\item \texttt{nearest} is a logical scalar which specifies whether
-  to perform nearest-neighbor matching, default=TRUE.  Using
-  \texttt{nearest=FALSE} can provide a more efficient way to
-  perform only subclassification. 
 \item \texttt{m.order}  specifies the order in which to match
   treatment units with control units:
   \begin{itemize}
-  \item ``1'' indicates optimal matching.  Requires add-on package \texttt{optmatch}.
-  \item ``2'' indicates matching from highest propensity scores to
-    lowest (default).
-  \item ``3'' indicates matching from lowest propensity scores to
-    highest.
+  \item ``2'' indicates matching from the largest value of the distance measure to
+    the smallest (default).
+  \item ``3'' indicates matching from the smallest value of the distance measure
+    to the largest.
   \item ``4'' indicates matching in random order.
   \end{itemize}
-\item \texttt{caliper} specifies the standard deviations of 
-  the propensity score within which to draw control units,
-  default=0.  If \texttt{caliper!=0}: 
+\item \texttt{ratio} specifies the number of control units to match to each treated unit, default=1.
+\item \texttt{replace} specifies whether each control unit can be matched to more than one treated unit.  For
+  matching ``with replacement", \texttt{replace=TRUE}.  If each control is to be used as a match only
+  once (``without replacement"), \texttt{replace=FALSE} (default).  
+\item \texttt{exact} specifies variables on which to perform exact matching within the nearest neighbor matching.
+  If \texttt{exact} is specified, only matches that exactly match on the covariates in \texttt{exact} will be
+  selected.  Within the matches that match on the variables in \texttt{exact}, the match with the closest 
+  distance measure will be chosen.  \texttt{exact} should be entered as a vector of variable names
+  \texttt{exact=c("X1", "X2")} that are names of variables in \texttt{data}.  
+\item \texttt{caliper} specifies the number of standard deviations of 
+  the distance measure within which to draw control units,
+  default=0.  If a caliper is specified, the matches are restricted to being within the caliper and 
+  a control unit within the caliper for a treated unit is randomly
+  selected as the match for that treated unit.  If \texttt{caliper!=0}: 
   \begin{itemize} 
   \item \texttt{calclosest} specifies whether to take the nearest
     available match if no matches are available within
     \texttt{caliper} (default=FALSE).
   \item \texttt{mahvars} specifies variables on which to perform
-    Mahalanobis-metric matching within each caliper, default=NULL.
+    Mahalanobis-metric matching within each caliper (default=NULL).
     Variables should be entered as a vector of variable names
     \texttt{mahvars=c("X1","X2")} that are names of variables in
-    \texttt{data}.
+    \texttt{data}.  If \texttt{mahvars} is specified without \texttt{caliper}, the caliper
+    is set to 0.25.  
   \end{itemize}
+\item \texttt{subclass} and \texttt{sub.by}.  See Section \ref{subclass} for more details on these options.  If
+   a \texttt{subclass} is specified within \texttt{method="nearest"}, subclasses will be formed using the matched
+   units after the nearest neighbor matching is completed.  
 \end{enumerate}
-  
-\textbf{Replacement matching.} \texttt{replace} is a logical vector
-which specifies whether to match with replacement (i.e., whether each
-control unit can be matched to more than one treated unit),
-default=FALSE.  Use this to reduce bias when the ratio of control
-units that are comparable to the treated units is small and when
-pre-treatment covariates between treatment and control units diverge
-substantially.
-  
-\textbf{Ratio Matching.}  \texttt{ratio} specifies the number of
-control units to be matched to each treatment unit, default=1.  To
-increase efficiency of the estimand when there is a large number of
-comparable control units available, use larger integer values. If
-matching is done without replacement and there are fewer control units
-than ratio times the number of eligible treated units (i.e.  there are
-not enough control units for the specified method), then the higher
-ratios will have \texttt{NA} in place of the matching unit number.
 
-\textbf{Counter.} \texttt{counter} specifies whether a counter
-indicating the progress of the matching is displayed.  \texttt{TRUE}
-(default) means that this counter will be displayed, \texttt{FALSE}
-means that it will not be displayed.
-  
+Ratio matching with a ratio greater than 1 is sometimes used to   
+increase efficiency of the estimand when there is a large number of
+comparable control units available. If
+matching is done without replacement and there are fewer control units
+than ratio times the number of eligible treated units (i.e.,  there are
+not enough control units for the specified method), then the higher
+ratios will have \texttt{NA} in place of the matching unit number in \texttt{match.matrix}.
+
 \subsubsection{Examples}
 
-\paragraph{Propensity Score Matching} When insufficient exact matches
-can be found, as this becomes increasingly common as the number of
-covariates increase, we need to find a way to identify matches that
-are ``close.''  In this situation, matching on the estimated
-propensity score is a useful alternative.  The propensity score is the
-probability that a unit receives treatment, given the covariates.  To
-conduct propensity score matching, with pre-treatment covariates
-composed of real earnings in 1974 and 1975:
+The following example script can be run by typing {\tt demo(nearest)} at
+the R prompt.
 
 \begin{verbatim}
-> foo2 <- matchit(treat ~ re74 + re75, data=lalonde)
-\end{verbatim} 
+## load the Lalonde data
+data(lalonde)
+## Nearest neighbor matching on propensity score estimated using logistic regression of
+## treat on re74, re75, age, and educ.  Two matches chosen for each control unit.
+cat("DEMO 2:1 Nearest neighbor matching \n")
+m.out <- matchit(treat ~ re74+re75+age+educ, data=lalonde,
+                 method = "nearest", distance = "logit", ratio=2)
+## print a short summary
+print(m.out)
+## print out summary of balance in matched samples
+summary(m.out)
 
-\noindent You may again check basic statistics of the \MatchIt\ object by the
-\texttt{print} command:
+## Mahalanobis matching on re74 and re75 within nearest neighbor matching on distance measure, with
+## restriction of exact matches on married.
+cat("DEMO 1:1 Nearest neighbor matching with Mahalanobis matching on re74 and re75 and exact matching on married \n")
+m.out2 <- matchit(treat ~ re74+re75+age+educ, data=lalonde,
+                 method = "nearest", distance = "logit", mahvars=c("re74", "re75"), exact=c("married"), caliper=.25)
+print(m.out2)
+summary(m.out2)
 
-\begin{verbatim}
-> print(foo2)
- 
-Assignment model specification:
-matchit(formula = treat ~ re74 + re75, data = lalonde)
- 
-Summary of propensity score for full and matched samples:
- 
-        Means Treated Means Control      SD     T-stat       Bias
-Full           0.3519        0.2795 0.11817  8.2436469  8.202e-01
-Matched        0.3519        0.3520 0.08806 -0.0003493 -3.624e-05
- 
-Sample sizes:
- 
-        Treated Control Total
-Full        185     429   614
-Matched     185     185   370
- 
-\end{verbatim} 
-We see that 185 control units were matched to the 185 treated units (a
-``1-1'' match).  The average propensity scores in the matched treated
-and control groups are much more similar than in the original groups,
-with both groups having propensity score means of roughly $0.35$ in
-the matched samples.  The {\tt summary} command gives further
-information on the original and matched samples:
+## Nearest neighbor matching with discard option
+cat("DEMO 1:1 Nearest neighbor matching with units outside the common support discarded \n")
+m.out3 <- matchit(treat ~ re74+re75+age+educ, data=lalonde,
+                 method = "nearest", distance = "logit", discard="both")
+print(m.out3)
+summary(m.out3)
 
-\begin{verbatim}
-> summary(foo2)
- 
-Assignment model specification:
-matchit(formula = treat ~ re74 + re75, data = lalonde)
- 
-Summary of covariates for all data:
- 
-       Means Treated Means Control        SD T-stat    Bias
-pscore        0.3519        0.2795    0.1182  8.244  0.8202
-re74       2095.5737     5619.2365 6477.9645 -7.246 -0.7211
-re75       1532.0553     2466.4844 3295.6790 -3.278 -0.2903
- 
-Summary of covariates for matched data:
- 
-       Means Treated Means Control        SD     T-stat       Bias Reduction
-pscore        0.3519        0.3520 8.806e-02 -0.0003493 -3.624e-05         1
-re74       2095.5737     2040.3275 4.697e+03  0.1129664  1.131e-02         1
-re75       1532.0553     1436.3806 2.849e+03  0.3225721  2.972e-02         1
- 
-Sample sizes:
- 
-        Treated Control Total
-Full        185     429   614
-Matched     185     185   370
- 
-Problematic covariates:
-Number of units discarded:   0
+## Nearest neighbor matching with replacement
+cat("DEMO 2:1 Nearest neighbor matching with replacement \n")
+m.out4 <- matchit(treat ~ re74+re75+age+educ, data=lalonde,
+                 method = "nearest", distance = "logit", replace=TRUE, ratio=2)
+print(m.out4)
+summary(m.out4)
+
+## Nearest neighbor matching followed by formation of 5 subclasses
+cat("DEMO 1:1 Nearest neighbor matching followed by subclassification \n")
+m.out5 <- matchit(treat ~ re74+re75+age+educ, data=lalonde,
+                 method = "nearest", distance = "logit", subclass=5)
+print(m.out5)
+summary(m.out5)
 \end{verbatim}
 
-This reveals simple statistics of the propensity score and the
-covariates used in the propensity score specification for the full and
-matched samples, including t-statistics and balance bias statistics
-used to assess whether there was a reduction in bias in the
-covariates.  All three variables (propensity score, 1974 income, and
-1975 income) had reductions in bias due to the matching.  For example,
-the original bias in 1974 income was $-0.72$ standard deviations, but
-is only $0.011$ standard deviations in the matched samples.  More
-specifically, job training participants on average earned roughly
-\$3,523 less in 1974 and \$934 less in 1975 than non-participants,
-significant differences with t-statistics of -7.25 and -3.28,
-respectively.  In the matched sample, the earnings difference is only
-\$56 (t-statistic=0.11) in 1974 and \$96 (t-statistic=0.32) in 1975.
-This one-to-one matching algorithm has thus chosen 185 control
-individuals who do look very similar to the treated group on the
-covariates used in the matching process (1974 income and 1975 income).
-
+\begin{comment}
 The \texttt{summary} command will additionally report (a) the original
 call of the \MatchIt\ object, (b) whether there are any ``Problematic
 covariates'' that may still be imbalanced in the assignment
@@ -1024,111 +826,12 @@ differences in higher order interactions usually are a good indication
 that the assignment model needs to be respecified, as discussed in
 Section \ref{pscorespec}.
 
-\begin{verbatim}
-> summary(foo2, verbose=T)
- 
-Assignment model specification:
-matchit(formula = treat ~ re74 + re75, data = lalonde)
- 
-Summary of covariates and interactions for all data:
- 
-              Means Treated Means Control        SD  T-stat     Bias
-pscore            3.519e-01     2.795e-01 1.182e-01  8.2436  0.82019
-re74              2.096e+03     5.619e+03 6.478e+03 -7.2456 -0.72108
-re75              1.532e+03     2.466e+03 3.296e+03 -3.2776 -0.29026
-pscorexpscore     1.316e-01     9.312e-02 5.896e-02  8.5621  0.82170
-pscorexre74       3.284e+02     7.620e+02 6.627e+02 -8.1426 -0.74246
-pscorexre75       3.819e+02     4.960e+02 6.953e+02 -1.8020 -0.15444
-re74xre74         2.814e+07     7.756e+07 1.353e+08 -4.5738 -0.43306
-re74xre75         1.312e+07     2.543e+07 5.354e+07 -2.6991 -0.24252
-re75xre75         1.265e+07     1.690e+07 4.478e+07 -0.9365 -0.07568
- 
-Summary of covariates and interactions for matched data:
- 
-              Means Treated Means Control        SD     T-stat       Bias
-pscore            3.519e-01     3.520e-01 8.806e-02 -0.0003493 -3.624e-05
-re74              2.096e+03     2.040e+03 4.697e+03  0.1129664  1.131e-02
-re75              1.532e+03     1.436e+03 2.849e+03  0.3225721  2.972e-02
-pscorexpscore     1.316e-01     1.316e-01 4.675e-02  0.0139071  1.444e-03
-pscorexre74       3.284e+02     3.340e+02 5.772e+02 -0.0927353 -9.542e-03
-pscorexre75       3.819e+02     3.959e+02 6.999e+02 -0.1916425 -1.891e-02
-re74xre74         2.814e+07     2.442e+07 1.001e+08  0.3570086  3.261e-02
-re74xre75         1.312e+07     8.919e+06 4.064e+07  0.9939819  8.270e-02
-re75xre75         1.265e+07     7.942e+06 4.229e+07  1.0720362  8.410e-02
-              Reduction
-pscore                1
-re74                  1
-re75                  1
-pscorexpscore         1
-pscorexre74           1
-pscorexre75           1
-re74xre74             1
-re74xre75             1
-re75xre75             0
- 
-Sample sizes:
- 
-        Treated Control Total
-Full        185     429   614
-Matched     185     185   370
- 
-Problematic covariates:
-Number of units discarded:   0
-\end{verbatim}
-
 We can also check the propensity score and covariate distribution with
 diagnostic plots, which are depicted in Figure~\ref{f2diags}.  These
 plot functions are interactive.  For example, the first menu asks
 whether you would like to see density estimates of the propensity
 scores.  Inputting \texttt{1} will yield the top panel in
 Figure~\ref{f2diags}.
-
-\begin{verbatim}
-> plot(foo2)
-  Choices
-0 No     
-1 Yes    
-Would you like to see density estimates of the propensity scores?
-\end{verbatim}
-
-The density curves overlay control and treatment units for full and
-matched samples.  Next, the menu will prompt you whether you would
-like to see jitter plots of the propensity scores.
-
-\begin{verbatim}
-Would you like to see density estimates of the propensity scores?1
-  Choices
-0 No     
-1 Yes    
-Would you like to see a jitterplot of the propensity scores?
-\end{verbatim}
-
-Entering a \texttt{1} also reveals instructions on how to
-interactively identify particular units, which may be useful for
-identifying particular outliers:
-
-\begin{verbatim}
-[1] "To identify the units, use first mouse button; to stop, use
-second."
-\end{verbatim}
-
-Clicking the first mouse button near the units will bring up the
-observation name specified in the data frame.  You may end this by
-clicking the second mouse button.
-
-Lastly, the \texttt{plot} command allows you to plot density estimates
-for any covariates:\footnote{Note that when subclassification is
-  specified, the \texttt{plot} command additionally permits plotting
-  density estimates of any covariates within a particular subclass.}
-
-\begin{verbatim}
-  Choices         
-0 No              
-1 Yes :  pscore   
-2 Yes :  re74     
-3 Yes :  re75     
-Would you like to see density estimates of any other covariates?
-\end{verbatim}
 
 \begin{figure}[ph]
   \begin{center}
@@ -1145,33 +848,6 @@ Would you like to see density estimates of any other covariates?
 Examining these graphs in Figure~\ref{f2diags}, we see that the
 matched samples are very well matched on the propensity score, with
 very similar distributions in the matched treated and control groups.
-
-\paragraph{Propensity Score Matching with Exact Restriction}
-Now suppose we wanted to match on a propensity score specification
-with real earnings in 1974 and 1975, as well as exact match on race:
-
-\begin{verbatim}
-> foo3 <- matchit(treat ~ re74 + re75, exact=c("black","hispan"),
-  data=lalonde)
-> print(foo3)
- 
-Assignment model specification:
-matchit(formula = treat ~ re74 + re75, data = lalonde, 
-   exact = c("black","hispan"))
- 
- 
-Summary of propensity score for full and matched samples:
-    
-        Means Treated Means Control      SD T-stat   Bias
-Full           0.3519        0.2795 0.11817  8.244 0.8202
-Matched        0.3851        0.3349 0.08021  5.018 1.1226
- 
-Sample sizes:
- 
-        Treated Control Total
-Full        185     429   614
-Matched     116     116   232
-\end{verbatim}
 
 Exact matches on race were found for only 116 of the treated units,
 and so there are 116 treated and 116 control units in the matched
@@ -1244,53 +920,6 @@ NSW2        0      1
 PSID385     0      1
 \end{verbatim}
 
-\paragraph{Caliper Matching}
-A \emph{caliper} is a value of the propensity score denominated in
-units of standard deviations.  To match within a caliper of 0.25
-standard deviations of the propensity score, use the \texttt{caliper}
-input:
-
-\begin{verbatim}
-> foo <- matchit(treat ~ age + educ + black + hispan + married +
-  nodegree + re74 + re75, data=lalonde, caliper=0.25, replace=TRUE)
-\end{verbatim}
-
-This restricts the matches to have propensity scores within the
-caliper size.  It is usually used in combination with Mahalanobis
-matching, as described in Section \ref{mahal}.
-
-If no control units exist within the range of caliper specified for a
-given treated unit, that treated unit remains unmatched.  In some
-instances this might result in very few matched units.  As a result,
-you may want to increase the caliper size or match the nearest
-neighbor when no units within the caliper are available, as done by
-specifying \texttt{calclosest=TRUE}.
-
-\paragraph{Mahalanobis Metric Matching within Caliper}
-To match using the Mahalanobis metric, within a specified caliper of
-the propensity score, specify the variables on which to compute the
-metric with the \texttt{mahvars} input, as well as the
-\texttt{caliper} input:
-
-\begin{verbatim}
-> foo <- matchit(treat ~ age + educ + black + hispan + married +
-  nodegree + re74 + re75, data=lalonde, mahvars=c("age","educ"),
-  caliper=0.25, replace=TRUE)
-\end{verbatim}
-
-\paragraph{Mahalanobis Metric Matching}
-To perform only Mahalanobis Metric matching without calipers, set the
-\texttt{caliper=Inf}:
-
-\begin{verbatim}
-> foo <- matchit(treat ~ age + educ, data=lalonde,
-  mahvars=c("age","educ"), caliper=Inf, replace=TRUE)
-\end{verbatim}
-Some experience has shown that Mahalanobis metric matching by itself
-does not work as well as propensity score matching, but it is often
-used within calipers (as described in the previous section) to fine
-tune propensity score matching, often by choosing a subset of
-particularly crucial variables.
 
 \paragraph{Replication of Dehejia \& Wahba}
 The following line replicates the matching algorithm of Table 2
@@ -1311,6 +940,7 @@ of the treated group's propensity scores, and (c) matching with
 replacement (so that each control unit can be matched to more than one
 treated unit).
 
+\end{comment}
 
 \subsection{Optimal Matching}
 \label{optmatch}
