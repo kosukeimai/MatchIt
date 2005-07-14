@@ -53,8 +53,10 @@ summary.matchit <- function(object, interactions = FALSE, ...) {
                        c("Control","Treated"))
 
   ## output
-  res <- list(call = object$call, nn = nn, sum.all = sum.all,
-              sum.matched = sum.matched, reduction = reduction, match.matrix=object$match.matrix)
-  class(res) <- "summary.matchit"
-  return(res)
+  object$nn <- nn
+  object$sum.all <- sum.all
+  object$sum.matched <- sum.matched
+  object$reduction <- reduction
+  class(object) <- "summary.matchit"
+  return(object)
 }

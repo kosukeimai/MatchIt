@@ -64,8 +64,10 @@ summary.matchit.subclass <- function(object, interactions = FALSE,
   dimnames(q.table) <- list(nn,row.names(aa[[i]]$q.table),paste("Subclass",1:qbins))
 
   ## output
-  res <- list(call = object$call, sum.all = sum.all, sum.matched =
-              sum.matched, q.table = q.table, qn = qn)
-  class(res) <- c("summary.matchit.subclass", "summary.matchit")
-  return(res)
+  object$sum.all <- sum.all
+  object$sum.matched <- sum.matched
+  object$qn <- qn
+  object$q.table <- q.table
+  class(object) <- c("summary.matchit.subclass", "summary.matchit")
+  return(object)
 }
