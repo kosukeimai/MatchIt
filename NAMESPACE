@@ -1,6 +1,7 @@
 import(MASS)
+import(Zelig)
 export(matchit,	
-       match.data)	
+       match.data) 
 
 S3method(print, matchit)
 S3method(print, matchit.exact)
