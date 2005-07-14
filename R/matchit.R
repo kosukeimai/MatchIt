@@ -35,20 +35,20 @@ matchit <- function(formula, data, method = "nearest", distance = "logit",
     if (is.null(distance.options$data))
       distance.options$data <- data
     out1 <- do.call(fn1, distance.options)
-    discarded <- discard(treat, out1$pscore, discard)
+    discarded <- discard(treat, out1$distance, discard)
     if (reestimate) {
       distance.options$data <- data[!discarded,]
       out1 <- do.call(fn1, distance.options)
     }
-    distance <- out1$pscore
+    distance <- out1$distance
   }
 
   ## matching!
-  out2 <- do.call(fn2, list(treat, X, data, pscore=distance, discarded, ...)) 
+  out2 <- do.call(fn2, list(treat, X, data, distance=distance, discarded, ...)) 
   
   ## putting all the results together
   out2$call <- match.call()
-  out2$model <- out1$assign.model
+  out2$model <- out1$model
   out2$formula <- formula
   out2$treat <- treat
   if (is.null(out2$X)){
