@@ -10,5 +10,9 @@ print.summary.matchit.subclass <- function(x, digits = max(3, getOption("digits"
   print.table(q.table, digits = digits)
   cat("\nSample sizes by subclasses:\n\n")
   print.data.frame(x$qn, digits = digits)
+  cat("\nSummary of balance across subclasses\n\n")
+  print.data.frame(x$sum.subclass, digits = digits)
+  cat("\nPercent Balance Improvement:\n\n")
+  print.data.frame(x$reduction,digits=digits)
   cat("\n")
 }

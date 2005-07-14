@@ -6,7 +6,7 @@ summary.matchit.subclass <- function(object, interactions = FALSE,
   weights <- object$weights
   nam <- dimnames(XX)[[2]]
   kk <- ncol(XX)
-  
+
   ## Summary Stats
   aa <- apply(XX,2,qoi,tt=treat,ww=as.numeric(weights!=0))
   sum.all <- as.data.frame(matrix(0,kk,7))
@@ -62,10 +62,44 @@ summary.matchit.subclass <- function(object, interactions = FALSE,
   }   
   qn <- aa[[1]]$qn
   dimnames(q.table) <- list(nn,row.names(aa[[i]]$q.table),paste("Subclass",1:qbins))
+  
+  ## Aggregate Subclass 
+  if(is.null(object$call$sub.by)){
+    object$call$sub.by <- "treat"
+  }
+  if(object$call$sub.by=="treat") {
+    wsub <- qn[1,]/sum(qn[1,])
+  } else if(sub.by=="control") {
+    wsub <- qn[2,]/sum(qn[2,])
+  } else if(sub.by=="all") {
+    wsub <- qn[3,]/sum(qn[3,])
+  }
+  sum.subclass <- sum.all
+  for(i in 1:kk){
+    for(j in 1:7){
+      sum.subclass[i,j] <- sum(wsub*q.table[i,j,])
+    }
+  }
+
+  ## Imbalance Reduction
+  stat0 <- abs(cbind(sum.all[,2]-sum.all[,1],
+                     sum.all[,4:7]))
+  stat1 <- abs(cbind(sum.subclass[,2]-sum.subclass[,1],
+                     sum.subclass[,4:7]))
+  reduction <- as.data.frame(100*(stat0-stat1)/stat0)
+  if(sum(stat0==0 & stat1==0)>0){
+    reduction[stat0==0 & stat1==0] <- 0
+  }
+  if(sum(stat0==0 & stat1>0)>0){
+    reduction[stat0==0 & stat1>0] <- -Inf
+  }
+  names(reduction) <- c("Mean","QQ Med","QQ Mean", "QQ Max", "Std. Bias")
 
   ## output
   object$sum.all <- sum.all
   object$sum.matched <- sum.matched
+  object$sum.subclass <- sum.subclass
+  object$reduction <- reduction
   object$qn <- qn
   object$q.table <- q.table
   class(object) <- c("summary.matchit.subclass", "summary.matchit")
