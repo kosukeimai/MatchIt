@@ -2,5 +2,6 @@ exact		Demo of exact matching, using Lalonde dataset
 full		Demo of full matching, using Lalonde dataset
 match.data      Demo of obtaining matched data
 nearest		Demos of nearest neighbor matching, using Lalonde dataset
+neyman          Demo of estimating the average treatment effect through the Neyman's method
 subclass	Demo of subclassification, using Lalonde dataset
 optimal		Demo of optimal matching, using Lalonde dataset
