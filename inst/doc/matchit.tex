@@ -168,8 +168,7 @@ The main command, \texttt{matchit()}, implements a variety of matching
 procedures. 
 \begin{verbatim}
 m.out <- matchit(formula, data, method = "nearest", distance = "logit",
-                 distance.options=list(), discard = "none",
-                 reestimate = FALSE, ...)
+                 distance.options=list(), discard = "none", reestimate = FALSE, ...)
 \end{verbatim}
 The command takes several inputs that are common for all matching
 procedures in addition to many inputs that are specific to particular
@@ -333,7 +332,7 @@ The following are the elements of the \texttt{matchit} output object;
   $1$.  Each matched control unit has weight proportional to the
   number of treatment units to which it was matched, and the sum of
   the control weights is equal to the number of uniquely matched
-  control units.
+  control units. See Section~\ref{subsec:weights} for more details.
   
 \item \texttt{subclass} contains the subclass index in an ordinal
   scale from 1 to the total number of subclasses as specified in
@@ -394,17 +393,18 @@ The \texttt{summary} call returns, when applicable:
     where \texttt{Means Treated}$= \mu_{X|T=1} = \frac{1}{n_1}
     \sum_{T=1} X_i$ and \texttt{Means Control}$= \mu_{X|T=0} =
     \frac{1}{n_0} \sum_{T=0} X_i$,
-  \item pooled standard deviations for all covariates $X$, where
-    \texttt{SD}$= s_X = \sqrt{\frac{1}{n-1} \sum_{i} (X_i -
-      \overline{X})^2}$,
+  \item pooled standard deviations for all covariates $X$, where ${\rm
+      SD} = s_X = \sqrt{\frac{1}{n-1} \sum_{i} (X_i -
+      \overline{X})^2}$.
   \item summary statistics from a Q-Q plot, which compares treated and
     control covariate distributions, where \texttt{QQ Med}, \texttt{QQ
       Mean}, and \texttt{QQ Max} indicate the median, mean,
     and maximum orthogonal deviations from the 45 degree line of a Q-Q
     plot.
-  \item standardized bias statistics, where  \texttt{Std. Bias}$=\frac{\mu_{X|T=1} -
-      \mu_{X|T=0}}{s_{x|T=1}}$, where $s_{x|T=1} =
-    \sqrt{\frac{1}{n_1-1} \sum_{T=1} ( (X_i|T_i=1) - \mu_{X|T=1})}$.
+  \item standardized bias statistics, $${\rm Std.
+      Bias}=\frac{\mu_{X|T=1} - \mu_{X|T=0}}{s_{x|T=1}}, \quad {\rm
+      where} \quad s_{x|T=1} = \sqrt{\frac{\sum_{i \in \{i:
+        T_i=1\}} X_i - \mu_{X|T=1}}{n_1-1} }.$$
   \end{itemize}
   
 \item \texttt{sum.matched} is a data frame which contains variable
@@ -464,6 +464,75 @@ within each subclasses if specified.  The graphs present:
   \texttt{discrete.cutoff} (\texttt{type="QQ"} (default)).
 \end{enumerate}
 
+\subsection{Obtaining Matched Data Set}
+
+After matching, one might wish to obtain the matched data set for
+subsequent analyses (see Section~\ref{sec:analysis}) and other
+purposes. We provide {\tt match.data()} function, which allows users
+to obtain the matched data set.
+\begin{verbatim}
+m.data <- match.data(object, group = "all", distance = "distance", weights = "weights",
+                     subclass = "subclass")
+\end{verbatim}
+The output of the function {\tt match.data()} is the original data
+frame where additional information about matching (i.e., distance
+measure as well as resulting weights and subclasses) is added.
+
+\subsubsection{Inputs to {\tt match.data()}}
+
+{\tt match.data()} takes the following inputs:
+\begin{enumerate}
+\item {\tt object} is the output object from {\tt matchit()}. This is
+  an required input.
+\item {\tt group} specifies which subgroup users want to extract the
+  matched data for. Available options are {\tt "all"} (all matched
+  units), {\tt "treat"} (matched units in the treatment group), and
+  {\tt "control"} (matched units in the control group). The default is
+  {\tt "all"}.
+\item {\tt distance} specifies the variable name used to store the
+  distance measure. The default is {\tt "distance"}.
+\item {\tt weights} specifies the variable name used to store the
+  resulting weights from matching. The default is {\tt "weights"}. See
+  Section~\ref{subsec:weights} for more details on the weights.
+\item {\tt subclass} specifies the variable name used to store the
+  subclass indicator. The default is {\tt "subclass"}.
+\end{enumerate}
+
+\subsubsection{Examples}
+
+Here, we present examples for using {\tt match.data()}. Users can run
+these commands by typing {\tt demo(match.data)} at the R prompt.
+\begin{verbatim}
+## load the Lalonde data
+data(lalonde)
+
+## run a nearest neighbor matching
+m.out1 <- matchit(treat ~ re74 + re75 + age + educ, data = lalonde, method = "nearest",  
+                  distance = "logit")
+
+## obtain matched data 
+m.data1 <- match.data(m.out1)
+
+## summarize the resulting matched data
+summary(m.data1)
+
+## obtain matched data for the treatment group
+m.data2 <- match.data(m.out1, group = "treat")
+summary(m.data2)
+
+## obtain matched data for the control group
+m.data3 <- match.data(m.out1, group = "control")
+summary(m.data3)
+
+## run a subclassification method
+m.out2 <- matchit(treat ~ re74 + re75 + age + educ, data=lalonde, method = "subclass")
+
+## specify different names
+m.data4 <- match.data(m.out2, subclass = "block", weights = "w",
+                      distance = "pscore")
+## print the variable names of the matched data
+names(m.data4)
+\end{verbatim}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \clearpage
@@ -1130,8 +1199,11 @@ significant difference in more than one block.)  The user could also
 identify a different cut-point for the subclasses, or for significance
 (as opposed to 2.5 and 2).
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\clearpage
 
 \section{Statistical Analysis after Matching}
+\label{sec:analysis}
 
 Once the matching is complete, the \MatchIt\ object can be used with
 any other analysis procedure; \MatchIt\ is designed to make those
@@ -1656,6 +1728,7 @@ covariates, including {\tt re75} can be done, and then the analysis is
 done on the change in income from 1975 to 1978: {\tt re78}-{\tt re75}.
 
 \subsection{How Exactly are the Weights Created?}
+\label{subsec:weights}
 
 Each type of matching method can be thought of as creating groups of
 units with at least one treated unit and at least one control unit in
