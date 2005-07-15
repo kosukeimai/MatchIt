@@ -372,6 +372,11 @@ The \texttt{summary} command returns more information about the
   covariates, their squares, and interactions when
   \texttt{interactions=TRUE} and only the covariates themselves when
   \texttt{interactions=FALSE} (default).
+\item \texttt{addlvariables}, which may contain additional variables on which
+  to calculate the diagnostic statistics (in addition to the variables included in
+  the matching procedure).  By default, \texttt{addlvariables=NULL}.  \texttt{addlvariables}
+  must be specified as a dataframe, with the same number of units and units in the same order as in the data set sent to
+  /MatchIt/.  
 \end{enumerate}
 
 The \texttt{summary} call returns, when applicable:
@@ -445,7 +450,7 @@ covariates in the assignment model, squares, and interactions, and
 within each subclasses if specified.  The graphs present:
 \begin{enumerate}
 \item Jitter plots of the propensity score for treated and control
-  units.
+  units (\texttt{type="jitter}).
 \item Q-Q plots of each covariate to check balance of marginal
   distributions.  This graph plots covariate values that fall in
   (approximately) the same quantile of treated and control
@@ -456,7 +461,7 @@ within each subclasses if specified.  The graphs present:
   on the 45 degree line indicate that the marginal distributions are
   identical.  Discrete covariates that take 5 or fewer values are
   jittered for visibility.  This may be changed by setting the option
-  \texttt{discrete.cutoff}.
+  \texttt{discrete.cutoff} (\texttt{type="QQ"} (default)).
 \end{enumerate}
 
 
@@ -558,10 +563,6 @@ The following example script can be run by typing {\tt demo(exact)} at
 the R prompt.
 
 \begin{verbatim}
-The following example script can be run by typing {\tt demo(full)} at
-the R prompt.
-
-\begin{verbatim}
 ## load the Lalonde data
 data(lalonde)
 ## conduct exact matching on educ, black, and hispan
@@ -578,6 +579,7 @@ to identify which units were put into the same subclass.  Units that did not hav
 covariate values as anyone in the other treatment group have \texttt{subclass=NA}.
 
 \subsection{Subclassification}
+\label{subclass}
 
 When there are many covariates on which matches are desired, it is often very difficult
 to find a sufficient number of exact matches.  In that case, it is sometimes desirable
@@ -698,6 +700,7 @@ plot(m.out)
 
 
 \subsection{Nearest Neighbor Matching}
+\label{nearest}
 
 Nearest neighbor matching selects the $r$ best matches for each individual
 in the treatment group (excluding those discarded using the \texttt{discard}) option.
@@ -806,77 +809,6 @@ print(m.out5)
 summary(m.out5)
 \end{verbatim}
 
-\begin{comment}
-The \texttt{summary} command will additionally report (a) the original
-call of the \MatchIt\ object, (b) whether there are any ``Problematic
-covariates'' that may still be imbalanced in the assignment
-model,\footnote{A variable is considered ``problematic'' when the
-  absolute value of the t-statistic in the matched sample exceeds 2,
-  or when the absolute balance bias is greater in the matched sample
-  than in the full sample.} and (c) how many units were discarded due
-to the \texttt{discard} option (described below).  In this case there
-were no units discarded and no ``problematic covariates.''
-
-For further information on the balance in the full and matched samples
-we can use the {\tt verbose=T} option with {\tt summary}, which shows
-the balance of all squares and interactions of the covariates used in
-the matching procedure.  This is helpful for diagnosing whether
-balance across matched pairs has been attained.  Significant
-differences in higher order interactions usually are a good indication
-that the assignment model needs to be respecified, as discussed in
-Section \ref{pscorespec}.
-
-We can also check the propensity score and covariate distribution with
-diagnostic plots, which are depicted in Figure~\ref{f2diags}.  These
-plot functions are interactive.  For example, the first menu asks
-whether you would like to see density estimates of the propensity
-scores.  Inputting \texttt{1} will yield the top panel in
-Figure~\ref{f2diags}.
-
-\begin{figure}[ph]
-  \begin{center}
-     {\includegraphics[scale=0.5]{figs/f2figa}}
-     {\includegraphics[scale=0.5]{figs/f2figb}}
-%   \rotatebox{270}{\includegraphics[height=4in,angle=0]{figs/f2figa}}
-%    \rotatebox{270}{\includegraphics[height=4in,angle=0]{figs/f2figb}}
-    \hfill
-    \caption{Sample interactive diagnostic graphs}
-    \label{f2diags}
-  \end{center}
-\end{figure}
-
-Examining these graphs in Figure~\ref{f2diags}, we see that the
-matched samples are very well matched on the propensity score, with
-very similar distributions in the matched treated and control groups.
-
-Exact matches on race were found for only 116 of the treated units,
-and so there are 116 treated and 116 control units in the matched
-samples.  We can quickly verify that the race variables in the matched
-samples are the same:
-
-\begin{verbatim}
-> sum.foo3 <- summary(foo3)
-> sum.foo3$sum.all[c("hispan","black"),]
-       Means Treated Means Control        SD    T-stat       Bias
-hispan    0.05945946     0.1421911 0.3219967 -3.409136 -0.3488957
-black     0.84324324     0.2027972 0.4894132 19.344264  1.7567745
-> sum.foo3$sum.matched[c("hispan","black"),]
-       Means Treated Means Control        SD T-stat Bias Reduction
-hispan    0.09482759    0.09482759 0.2936101      0    0         1
-black     0.75000000    0.75000000 0.4339489      0    0         1
-\end{verbatim}
-
-The command {\tt summary(foo3)\$sum.all} gives a summary of the
-covariates before matching, whereas {\tt summary(foo3)\$sum.matched}
-gives the comparable summaries on the matched samples. Before
-matching, 84\% of participants were black, compared to only 20\% of
-the non-participants.  In the matched samples, black participants and
-non-participants comprise 75\% of the observations.
-
-It is easy to extract the matched subsetted data using the {\tt
-  match.data} command.  The following three commands output the full
-matched data set, the matched treated group, and the matched control
-group, respectively:
 
 \begin{verbatim}
 dta.matched <- match.data(foo3)
@@ -1734,6 +1666,28 @@ covariate in our analysis model.  Alternatively, matching on
 covariates, including {\tt re75} can be done, and then the analysis is
 done on the change in income from 1975 to 1978: {\tt re78}-{\tt re75}.
 
+\subsection{How exactly are the weights created?}
+
+Each type of matching method can be thought of as creating groups of units with at least one
+treated unit and at least one control unit in each group.  In exact matching, subclassification, or full matching, these
+groups are the subclasses formed, and the number 
+of treated and control units will vary quite a bit across subclasses.  In nearest neighbor or optimal matching,
+thee groups are the pairs (or sets) of treated and control units matched: in 1:1 nearest neighbor matching there will
+be one treated unit and one control unit in each group.  In 2:1 nearest neighbor matching there will be one treated unit
+and two control units in each group.  Unmatched units receive a weight of 0.  All matched treated units receive a weight of 1.  
+
+The weights for matched control units are formed as follows:
+\begin{enumerate}
+\item Within each group, each control unit is given a preliminary weight of $n_{ti}/n_{ci}$, where
+   $n_{ti}$ and $n_{ci}$ are the number of treated and control units in group $i$, respectively.  
+\item If matching is done with replacement, each control units weight is added up across the groups in 
+   which it was matched.
+\item The control group weights are scaled to sum to the number of uniquely matched control units.
+\end{enumerate}
+
+With subclassification, when the analysis is done separately within each subclass and then aggregated up across the 
+subclasses, these weights will generally not be used, but they may be used for full matching or nearest neighbor matching
+if the number of control units matched to each treated unit varies.
 
 \subsection{How Do I Create Observation Names?}
 \label{rnames}
