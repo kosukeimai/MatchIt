@@ -1,6 +1,7 @@
 import(MASS)
 export(matchit,	
        match.data,
+       neyman,
        user.prompt) 
 
 S3method(print, matchit)
