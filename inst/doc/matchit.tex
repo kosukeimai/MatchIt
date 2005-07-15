@@ -467,7 +467,7 @@ within each subclasses if specified.  The graphs present:
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \clearpage
-\section{Details of Matching Methods and Examples}
+\section{User's Guide by Examples}
 
 \MatchIt\ is designed for studies with a dependent variable that is a
 function of a single dichotomous causal variable, with values known as
@@ -566,8 +566,7 @@ the R prompt.
 ## load the Lalonde data
 data(lalonde)
 ## conduct exact matching on educ, black, and hispan
-m.out <- matchit(treat ~ educ + black + hispan, data = lalonde,
-                 method = "exact")
+m.out <- matchit(treat ~ educ + black + hispan, data = lalonde, method = "exact")
 ## print a short summary
 print(m.out)
 ## details of each of the subclasses formed
@@ -702,41 +701,50 @@ plot(m.out)
 \subsection{Nearest Neighbor Matching}
 \label{nearest}
 
-Nearest neighbor matching selects the $r$ best matches for each individual
-in the treatment group (excluding those discarded using the \texttt{discard}) option.
-The matching is done using a distance measure such as the propensity score, and
-matches are chosen for each treated unit one at a time, where at each step the control unit not yet
-matched that is closest to the treated unit on the distance measure is chosen as the match.  There
-are many variations on nearest neighbor matching.  See below
-for the options available in /MatchIt/.
+Nearest neighbor matching selects the $r$ best matches for each
+individual in the treatment group (excluding those discarded using the
+\texttt{discard}) option.  The matching is done using a distance
+measure such as the propensity score, and matches are chosen for each
+treated unit one at a time, where at each step the control unit not
+yet matched that is closest to the treated unit on the distance
+measure is chosen as the match.  There are many variations on nearest
+neighbor matching.  See below for the options available in /MatchIt/.
 
-Nearest neighbor matching is implemented in /MatchIt/ using the \texttt{method="nearest"} option.
+Nearest neighbor matching is implemented in /MatchIt/ using the
+\texttt{method="nearest"} option.
 
 \subsubsection{Options}
 \begin{enumerate}
 \item \texttt{m.order}  specifies the order in which to match
   treatment units with control units:
   \begin{itemize}
-  \item ``2'' indicates matching from the largest value of the distance measure to
-    the smallest (default).
-  \item ``3'' indicates matching from the smallest value of the distance measure
-    to the largest.
+  \item ``2'' indicates matching from the largest value of the
+    distance measure to the smallest (default).
+  \item ``3'' indicates matching from the smallest value of the
+    distance measure to the largest.
   \item ``4'' indicates matching in random order.
   \end{itemize}
-\item \texttt{ratio} specifies the number of control units to match to each treated unit, default=1.
-\item \texttt{replace} specifies whether each control unit can be matched to more than one treated unit.  For
-  matching ``with replacement", \texttt{replace=TRUE}.  If each control is to be used as a match only
-  once (``without replacement"), \texttt{replace=FALSE} (default).  
-\item \texttt{exact} specifies variables on which to perform exact matching within the nearest neighbor matching.
-  If \texttt{exact} is specified, only matches that exactly match on the covariates in \texttt{exact} will be
-  selected.  Within the matches that match on the variables in \texttt{exact}, the match with the closest 
-  distance measure will be chosen.  \texttt{exact} should be entered as a vector of variable names
-  \texttt{exact=c("X1", "X2")} that are names of variables in \texttt{data}.  
-\item \texttt{caliper} specifies the number of standard deviations of 
-  the distance measure within which to draw control units,
-  default=0.  If a caliper is specified, the matches are restricted to being within the caliper and 
-  a control unit within the caliper for a treated unit is randomly
-  selected as the match for that treated unit.  If \texttt{caliper!=0}: 
+\item \texttt{ratio} specifies the number of control units to match to
+  each treated unit, default=1.
+\item \texttt{replace} specifies whether each control unit can be
+  matched to more than one treated unit.  For matching ``with
+  replacement", \texttt{replace=TRUE}.  If each control is to be used
+  as a match only once (``without replacement"),
+  \texttt{replace=FALSE} (default).
+\item \texttt{exact} specifies variables on which to perform exact
+  matching within the nearest neighbor matching.  If \texttt{exact} is
+  specified, only matches that exactly match on the covariates in
+  \texttt{exact} will be selected.  Within the matches that match on
+  the variables in \texttt{exact}, the match with the closest distance
+  measure will be chosen.  \texttt{exact} should be entered as a
+  vector of variable names \texttt{exact=c("X1", "X2")} that are names
+  of variables in \texttt{data}.
+\item \texttt{caliper} specifies the number of standard deviations of
+  the distance measure within which to draw control units, default=0.
+  If a caliper is specified, the matches are restricted to being
+  within the caliper and a control unit within the caliper for a
+  treated unit is randomly selected as the match for that treated
+  unit.  If \texttt{caliper!=0}:
   \begin{itemize} 
   \item \texttt{calclosest} specifies whether to take the nearest
     available match if no matches are available within
@@ -745,66 +753,65 @@ Nearest neighbor matching is implemented in /MatchIt/ using the \texttt{method="
     Mahalanobis-metric matching within each caliper (default=NULL).
     Variables should be entered as a vector of variable names
     \texttt{mahvars=c("X1","X2")} that are names of variables in
-    \texttt{data}.  If \texttt{mahvars} is specified without \texttt{caliper}, the caliper
-    is set to 0.25.  
+    \texttt{data}.  If \texttt{mahvars} is specified without
+    \texttt{caliper}, the caliper is set to 0.25.
   \end{itemize}
-\item \texttt{subclass} and \texttt{sub.by}.  See Section \ref{subclass} for more details on these options.  If
-   a \texttt{subclass} is specified within \texttt{method="nearest"}, subclasses will be formed using the matched
-   units after the nearest neighbor matching is completed.  
+\item \texttt{subclass} and \texttt{sub.by}.  See Section
+  \ref{subclass} for more details on these options.  If a
+  \texttt{subclass} is specified within \texttt{method="nearest"},
+  subclasses will be formed using the matched units after the nearest
+  neighbor matching is completed.
 \end{enumerate}
 
-Ratio matching with a ratio greater than 1 is sometimes used to   
+Ratio matching with a ratio greater than 1 is sometimes used to
 increase efficiency of the estimand when there is a large number of
-comparable control units available. If
-matching is done without replacement and there are fewer control units
-than ratio times the number of eligible treated units (i.e.,  there are
-not enough control units for the specified method), then the higher
-ratios will have \texttt{NA} in place of the matching unit number in \texttt{match.matrix}.
+comparable control units available. If matching is done without
+replacement and there are fewer control units than ratio times the
+number of eligible treated units (i.e., there are not enough control
+units for the specified method), then the higher ratios will have
+\texttt{NA} in place of the matching unit number in
+\texttt{match.matrix}.
 
 \subsubsection{Examples}
 
-The following example script can be run by typing {\tt demo(nearest)} at
-the R prompt.
+The following example script can be run by typing {\tt demo(nearest)}
+at the R prompt.
 
 \begin{verbatim}
 ## load the Lalonde data
 data(lalonde)
 ## Nearest neighbor matching on propensity score estimated using logistic regression of
 ## treat on re74, re75, age, and educ.  Two matches chosen for each control unit.
-cat("DEMO 2:1 Nearest neighbor matching \n")
-m.out <- matchit(treat ~ re74+re75+age+educ, data=lalonde,
-                 method = "nearest", distance = "logit", ratio=2)
+m.out <- matchit(treat ~ re74 + re75 + age + educ, data = lalonde, method = "nearest", 
+                 distance = "logit", ratio=2)
 ## print a short summary
 print(m.out)
 ## print out summary of balance in matched samples
 summary(m.out)
 
-## Mahalanobis matching on re74 and re75 within nearest neighbor matching on distance measure, with
-## restriction of exact matches on married.
-cat("DEMO 1:1 Nearest neighbor matching with Mahalanobis matching on re74 and re75 and exact matching on married \n")
-m.out2 <- matchit(treat ~ re74+re75+age+educ, data=lalonde,
-                 method = "nearest", distance = "logit", mahvars=c("re74", "re75"), exact=c("married"), caliper=.25)
+## Mahalanobis matching on re74 and re75 within nearest neighbor matching on 
+## distance measure, with restriction of exact matches on married.
+m.out2 <- matchit(treat ~ re74 + re75 + age + educ, data = lalonde, method = "nearest", 
+                  distance = "logit", mahvars=c("re74", "re75"), exact=c("married"), 
+                  caliper=.25)
 print(m.out2)
 summary(m.out2)
 
 ## Nearest neighbor matching with discard option
-cat("DEMO 1:1 Nearest neighbor matching with units outside the common support discarded \n")
-m.out3 <- matchit(treat ~ re74+re75+age+educ, data=lalonde,
-                 method = "nearest", distance = "logit", discard="both")
+m.out3 <- matchit(treat ~ re74 + re75 + age + educ, data = lalonde, method = "nearest", 
+                  distance = "logit", discard="both")
 print(m.out3)
 summary(m.out3)
 
 ## Nearest neighbor matching with replacement
-cat("DEMO 2:1 Nearest neighbor matching with replacement \n")
-m.out4 <- matchit(treat ~ re74+re75+age+educ, data=lalonde,
-                 method = "nearest", distance = "logit", replace=TRUE, ratio=2)
+m.out4 <- matchit(treat ~ re74 + re75 + age + educ, data = lalonde, method = "nearest", 
+                  distance = "logit", replace=TRUE, ratio=2)
 print(m.out4)
 summary(m.out4)
 
 ## Nearest neighbor matching followed by formation of 5 subclasses
-cat("DEMO 1:1 Nearest neighbor matching followed by subclassification \n")
-m.out5 <- matchit(treat ~ re74+re75+age+educ, data=lalonde,
-                 method = "nearest", distance = "logit", subclass=5)
+m.out5 <- matchit(treat ~ re74 + re75 + age + educ, data = lalonde, method = "nearest", 
+                  distance = "logit", subclass=5)
 print(m.out5)
 summary(m.out5)
 \end{verbatim}
@@ -871,8 +878,6 @@ score matching example are: (a) the number of covariates used, (b) the
 of the treated group's propensity scores, and (c) matching with
 replacement (so that each control unit can be matched to more than one
 treated unit).
-
-\end{comment}
 
 \subsection{Optimal Matching}
 \label{optmatch}
@@ -1126,7 +1131,7 @@ identify a different cut-point for the subclasses, or for significance
 (as opposed to 2.5 and 2).
 
 
-\section{Analysis}
+\section{Statistical Analysis after Matching}
 
 Once the matching is complete, the \MatchIt\ object can be used with
 any other analysis procedure; \MatchIt\ is designed to make those
@@ -1142,7 +1147,7 @@ matched control units.
 
 Here we describe two possible analysis methods to use with \MatchIt.
 
-\subsection{Neyman function}
+\subsection{Using Neyman's Method to Estimate Average Treatment Effect}
 
 {\tt neyman} is a \MatchIt\ function which calculates a simple
 difference in means and corresponding variance estimate.  For any more
@@ -1311,26 +1316,8 @@ Signif. codes:  0 `***' 0.001 `**' 0.01 `*' 0.05 `.' 0.1 ` ' 1
 Overall  185   429
 \end{verbatim}
 
-\subsection{Linear regression on matched samples}
-\label{linreg}
-Linear regression is a common method for estimating causal effects.
-\MatchIt\ helps ensure that the regression is done using treated and
-control groups with similar covariate distributions, thus reducing
-reliance on the linearity assumption and extrapolation.  The ordinary
-least squares regression can be fit to the matched data, using the
-{\tt match.data} function:
+\subsection{Using Zelig for Parametric Causal Inference}
 
-\begin{verbatim}
-> lm.1 <- lm(re78 ~ treat + pscore, data=match.data(match.out1))
-> summary(lm.1)$coef[2,]
-  Estimate Std. Error    t value   Pr(>|t|)
- 1340.0095   801.4961     1.6719     0.0954
-
-
-\end{verbatim} 
-%$
-
-\subsection{Using Zelig for analysis}
 Zelig is an easy-to-use R program that estimates a variety of statistical
 models, gives easily interpretable results by simulating quantities of
 interest, and provides numerical and graphical summaries.  The package
@@ -1593,12 +1580,14 @@ Pooled Average Treatment Effect: Y - PR
 
 \end{verbatim}
 
-\subsection{Analysis of data from full matching}
+\subsubsection{Analysis of data from full matching}
 \label{fullmatchanal}
-It will generally not be possible to run models
-separately within each subclass after full matching, due to very small sample sizes of either the treated or
-control group within each subclass.  In this situation, a common approach is to run a model similar to that 
-described in Section \ref{linreg}, with fixed effects included for each of the subclasses. 
+
+It will generally not be possible to run models separately within each
+subclass after full matching, due to very small sample sizes of either
+the treated or control group within each subclass.  In this situation,
+a common approach is to run a model with fixed effects included for
+each of the subclasses.
 
 For example, 
 
@@ -1666,28 +1655,36 @@ covariate in our analysis model.  Alternatively, matching on
 covariates, including {\tt re75} can be done, and then the analysis is
 done on the change in income from 1975 to 1978: {\tt re78}-{\tt re75}.
 
-\subsection{How exactly are the weights created?}
+\subsection{How Exactly are the Weights Created?}
 
-Each type of matching method can be thought of as creating groups of units with at least one
-treated unit and at least one control unit in each group.  In exact matching, subclassification, or full matching, these
-groups are the subclasses formed, and the number 
-of treated and control units will vary quite a bit across subclasses.  In nearest neighbor or optimal matching,
-thee groups are the pairs (or sets) of treated and control units matched: in 1:1 nearest neighbor matching there will
-be one treated unit and one control unit in each group.  In 2:1 nearest neighbor matching there will be one treated unit
-and two control units in each group.  Unmatched units receive a weight of 0.  All matched treated units receive a weight of 1.  
+Each type of matching method can be thought of as creating groups of
+units with at least one treated unit and at least one control unit in
+each group.  In exact matching, subclassification, or full matching,
+these groups are the subclasses formed, and the number of treated and
+control units will vary quite a bit across subclasses.  In nearest
+neighbor or optimal matching, thee groups are the pairs (or sets) of
+treated and control units matched: in 1:1 nearest neighbor matching
+there will be one treated unit and one control unit in each group.  In
+2:1 nearest neighbor matching there will be one treated unit and two
+control units in each group.  Unmatched units receive a weight of 0.
+All matched treated units receive a weight of 1.
 
 The weights for matched control units are formed as follows:
 \begin{enumerate}
-\item Within each group, each control unit is given a preliminary weight of $n_{ti}/n_{ci}$, where
-   $n_{ti}$ and $n_{ci}$ are the number of treated and control units in group $i$, respectively.  
-\item If matching is done with replacement, each control units weight is added up across the groups in 
-   which it was matched.
-\item The control group weights are scaled to sum to the number of uniquely matched control units.
+\item Within each group, each control unit is given a preliminary
+  weight of $n_{ti}/n_{ci}$, where $n_{ti}$ and $n_{ci}$ are the
+  number of treated and control units in group $i$, respectively.
+\item If matching is done with replacement, each control units weight
+  is added up across the groups in which it was matched.
+\item The control group weights are scaled to sum to the number of
+  uniquely matched control units.
 \end{enumerate}
 
-With subclassification, when the analysis is done separately within each subclass and then aggregated up across the 
-subclasses, these weights will generally not be used, but they may be used for full matching or nearest neighbor matching
-if the number of control units matched to each treated unit varies.
+With subclassification, when the analysis is done separately within
+each subclass and then aggregated up across the subclasses, these
+weights will generally not be used, but they may be used for full
+matching or nearest neighbor matching if the number of control units
+matched to each treated unit varies.
 
 \subsection{How Do I Create Observation Names?}
 \label{rnames}
