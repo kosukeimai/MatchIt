@@ -73,12 +73,12 @@ with \MatchIt, researchers can use whatever parametric model they
 would have used without \MatchIt, but produce inferences that are
 substantially more robust and less sensitive to modeling assumptions.
 Matched data sets created by \MatchIt\ can also be entered easily into
-\hlink{Zelig}{http://gking.harvard.edu/zelig/} for subsequent
-parametric analyses.  \MatchIt\ reduces the dependence of causal
-inferences on commonly made, but hard-to-justify, statistical modeling
-assumptions via a wide range of sophisticated matching methods.  Other
-matching methods can even be added to \MatchIt, if you have the
-inclination.
+\hlink{Zelig}{http://gking.harvard.edu/zelig/} \citep{ImaKinLau04} for
+subsequent parametric analyses.  \MatchIt\ reduces the dependence of
+causal inferences on commonly made, but hard-to-justify, statistical
+modeling assumptions via a wide range of sophisticated matching
+methods.  Other matching methods can even be added to \MatchIt, if you
+have the inclination.
 
 \subsection{Software Requirements} 
 \MatchIt\ works in conjunction with the R programming language and
@@ -465,6 +465,7 @@ within each subclasses if specified.  The graphs present:
 \end{enumerate}
 
 \subsection{Obtaining Matched Data Set}
+\label{subsec:match.data}
 
 After matching, one might wish to obtain the matched data set for
 subsequent analyses (see Section~\ref{sec:analysis}) and other
@@ -848,8 +849,9 @@ units for the specified method), then the higher ratios will have
 
 \subsubsection{Examples}
 
-The following example script can be run by typing {\tt demo(nearest)}
-at the R prompt.
+\begin{enumerate}
+\item The following example script can be run by typing {\tt
+    demo(nearest)} at the R prompt.
 
 \begin{verbatim}
 ## load the Lalonde data
@@ -890,9 +892,8 @@ print(m.out5)
 summary(m.out5)
 \end{verbatim}
 
-
-We can examine which units were matched to which using the {\tt
-  match.matrix} output:
+\item We can examine which units were matched to which using the {\tt
+    match.matrix} output:
 \begin{verbatim}
 > foo3$match.matrix
             V1
@@ -928,24 +929,26 @@ PSID385     0      1
 \end{verbatim}
 
 
-\paragraph{Replication of Dehejia \& Wahba}
-The following line replicates the matching algorithm of Table 2
-(column 10, row 4) of \citet{DehWah99}:
+\item Replication of \citet{DehWah99}. The following line replicates
+  the matching algorithm of Table 2 (column 10, row 4):
 
 \begin{verbatim}
-> data(lalonde)                 #calls the Lalonde data
-> foo <- matchit(treat ~ age + I(age^2) + educ + I(educ^2) + black +
-  hispan + married + nodegree + re74  + I(re74^2) + re75 + I(re75^2) +
-  I(as.numeric(re74==0)) + I(as.numeric(re75==0)), data=lalonde,
-  replace=1,discard=1)
+## load the Lalonde data
+data(lalonde)           
+## matching with replacement     
+foo <- matchit(treat ~ age + I(age^2) + educ + I(educ^2) + black +
+               hispan + married + nodegree + re74 + I(re74^2) + re75 + I(re75^2) +
+               I(as.numeric(re74==0)) + I(as.numeric(re75==0)), data=lalonde,
+               replace = TRUE, discard = "both")
 \end{verbatim}
 
-Note that the only differences between this and the earlier propensity
-score matching example are: (a) the number of covariates used, (b) the
-\texttt{discard} option (which drops control units outside the support
-of the treated group's propensity scores, and (c) matching with
-replacement (so that each control unit can be matched to more than one
-treated unit).
+  Note that the only differences between this and the earlier
+  propensity score matching example are: (a) the number of covariates
+  used, (b) the \texttt{discard} option (which drops control units
+  outside the support of the treated group's propensity scores, and
+  (c) matching with replacement (so that each control unit can be
+  matched to more than one treated unit).
+\end{enumerate}
 
 \subsection{Optimal Matching}
 \label{optmatch}
@@ -1208,23 +1211,30 @@ Once the matching is complete, the \MatchIt\ object can be used with
 any other analysis procedure; \MatchIt\ is designed to make those
 analysis procedures less dependent on the modeling assumptions and
 thus work better.  Thus, any analysis you might have done using the
-original data sets can be done better on the matched data sets.
+original data sets can be done better on the matched data sets.  To
+obtain the matched data sets, use {\tt match.data(m.out)}, where {\tt
+  m.out} is a \MatchIt\ object. See Section~\ref{subsec:match.data}
+for more options and details.
 
-To obtain the matched data sets, use {\tt match.data(match.out)},
-where {\tt match.out} is a \MatchIt\ object.  {\tt
-  match.data(match.out, "treat")} gives just the matched treated
-units, and  \\ {\tt match.data(match.out, "control")} gives just the
-matched control units.
-
-Here we describe two possible analysis methods to use with \MatchIt.
+In this section, we describe two possible analysis methods to use with
+\MatchIt. First, we descibe a simple difference-in-means approach to
+estimate the average treatment effect. Next, we descibe our
+recommended approach, which uses
+\hlink{Zelig}{http://gking.harvard.edu/zelig/} to conduct parametric
+causal inference after preprocessing the data through \MatchIt.
 
 \subsection{Using Neyman's Method to Estimate Average Treatment Effect}
 
-{\tt neyman} is a \MatchIt\ function which calculates a simple
+{\tt neyman()} is a \MatchIt\ function which calculates a simple
 difference in means and corresponding variance estimate.  For any more
 sophisticated analyses (and even this simple case if you desire), we
-recommend using Zelig, which has been programmed to take \MatchIt\ 
-output as input.  The estimated treatment effect is:
+recommend using \hlink{Zelig}{http://gking.harvard.edu/zelig/}, to
+conduct a model-based analysis after matching. See
+Section~\ref{subsec:Zelig} for more details.
+
+\subsubsection{Estimation Details}
+
+The estimated treatment effect is:
 \begin{equation}
 \label{ate} 
 \widehat{ate} = \overline{y}_{mt}^w-\overline{y}_{mc}^w,
@@ -1254,145 +1264,101 @@ true variance when the treatment effect is additive and constant for
 all individuals ($Y_i(1)-Y_i(0)=c$ for all $i$) and overestimates the
 true variance when the effect is non-additive.
 
-If subclasses were formed using \MatchIt, then the Neyman function
-will also compute within-subclass estimates and a weighted average
-across the subclasses.  The weighted average will be weighted by the
-{\tt sub.by} option in the \MatchIt\ call (the number of treated units,
+If subclassification is used, then we compute within-subclass
+estimates as well as their weighted average across the subclasses.
+The weighted average will be weighted by the number of treated units,
 the number of control units, or the total number of units in each
-subclass).  If interest is in estimating the average treatment effect
+subclass.  If interest is in estimating the average treatment effect
 for the treated, the number of treated units in each subclass should
 be used for the subclassification and weighting.  Subclasses with
 fewer than two treated or control units are not used in the estimation
 of the average treatment effect and its variance; they are given a
 weight of zero.
 
-Using the Neyman function, it is also possible to estimate the
-variance of the estimated treatment effect using the bootstrap.  With
-that option, the user specifies a number of bootstrap samples.  An
-estimated treatment effect is calculated for each bootstrap sample,
-and the variance of the estimated treatment effects is given by the
-sample variance of the bootstrap estimates.  
+\subsubsection{Inputs to {\tt neyman()}}
 
-The format of {\tt neyman} is:
-
+The {\tt neyman()} function takes the following format:
 \begin{verbatim}
-> neyman(Y, object, bootstrap=NULL, counter=TRUE)
+n.out <- neyman(Y, object, bootstrap = NULL, verbose = TRUE)
+\end{verbatim}
+The output of {\tt neyman} is the estimated treatment effect and its
+estimated standard error.  {\tt summary()} command can be used on the
+output from {\tt neyman}, which provides a convenient summary of the
+results. {\tt neyman()} takes the following inputs.
+
+\begin{enumerate}
+\item {\tt Y} is the outcome variable of interest, 
+\item {\tt object} is the output from {\tt matchit()}.
+\item {\tt bootstrap} is an optional input, which specifies the number
+  of bootstrap replications used for calculating the variance. Specify
+  this option only if users wish to calculate the variance estimate
+  through bootstrap. If this option is specified, an estimated
+  treatment effect is calculated for each bootstrap sample, and the
+  variance of the estimated treatment effects is given by the sample
+  variance of the bootstrap estimates. The default is {\tt NULL},
+  which implies that the analytical (rather than bootstrap) variance
+  estimate is calculated.
+\item {\tt verbose} is a logical variable representing whether to
+  print on the screen a counter indicate what proportion of the
+  bootstrap samples have been completed. The default is {\tt FALSE}
+\end{enumerate}
+
+\subsubsection{Examples}
+
+Here, we provide some examples of the use of the {\tt neyman()}
+function.
+
+\begin{enumerate}
+\item Propensity score matching:
+\begin{verbatim}
+## load the Lalonde data
+data(lalonde)
+## conduct the default propensity score matching
+m.out1 <- matchit(treat ~ age + educ + black + hispan + nodegree +
+                  married + re74 + re75, data = lalonde)
+## calculate ATE on re78
+n.out1 <- neyman(re78, m.out1)
+## a short summary
+print(n.out1)
+## a more detailed summary
+summary(n.out1) 
 \end{verbatim}
 
-{\tt Y} is the outcome of interest, {\tt object} is the \MatchIt\ 
-object, {\tt bootstrap} (optionally) specifies how many bootstrap
-replications to use in calculating the variance, and {\tt counter}
-gives an option of not having a counter indicate what proportion of
-the bootstrap samples have been completed.  The output of {\tt neyman}
-is the estimated treatment effect and its estimated standard
-deviation.  If {\tt match.out} is subclassified, the subclass
-estimates can be obtained by using the {\tt summary} command on the
-{\tt neyman} output object.  Examples are provided below, which can be
-run using {\tt demo(analysis)}.
-
-\subsubsection{Simple Neyman calculation}
-Here we provide a simple example of the use of the {\tt neyman} function.
+\item Subclassification: By default, {\tt sub.by = "treated"} and thus
+  the subclassification and subclass weights are done using the number
+  of treated individuals.  Thus, the subclasses below have
+  approximately equal numbers of treated units in each subclass.
 
 \begin{verbatim}
-> match.out1 <- matchit(treat ~ age + educ + black + hispan + nodegree +
-+                       married + re74 + re75, data = lalonde)
-> neyman.out <- neyman(re78, match.out1)
-> print(neyman.out)
- 
- Average Treatment Effect:
-  
-ATE  SD
-908 731
- 
-> summary(neyman.out)
- 
- Average Treatment Effect:
-        Estimate Std. Error z value Pr(>|z|)
-Overall      908        731    1.24     0.21
- 
- 
- Sample Sizes:
-        Ntrt Ncont
-Overall  185   185
+## subclassification
+m.out2 <- matchit(treat ~ age + educ + black + hispan + nodegree +
+                  married + re74 + re75, data = lalonde, subclass=4)
+n.out2 <- neyman(re78, m.out2)
+print(n.out2)
+summary(n.out2)
+
 \end{verbatim}
 
-Thus, the treatment appears to increase real earnings in 1978 by an
-average of $\$908$ for individuals in the treated group, with standard
-error $731$.
-
-\subsubsection{Neyman within subclasses}
-The {\tt neyman} function can also be used with subclassification.  By
-default, {\tt sub.by="treated"} and thus the subclassification and
-subclass weights are done using the number of treated individuals.
-Thus, the subclasses below have approximately equal numbers of treated
-units in each subclass.
+\item Exact Matching: For exact matching, an overall estimated
+  treatment effect is calculated using the {\tt weights} as weights.
 
 \begin{verbatim}
-> match.out1s <- matchit(treat ~ age + educ + black + hispan + nodegree
-                 + married + re74 + re75, data = lalonde, subclass=4)
-> neyman.outs <- neyman(re78, match.out1s)
-> print(neyman.outs)
- 
- Average Treatment Effect:
-  
- ATE   SD
-1232  840
- 
-> summary(neyman.outs)
- 
- Average Treatment Effect:
-           Estimate Std. Error z value Pr(>|z|)
-Overall        1232        840    1.47     0.14
-Subclass 1     1312       1212    1.08     0.28
-Subclass 2     2310       1532    1.51     0.13
-Subclass 3     1768       1550    1.14     0.25
-Subclass 4     -413       2228   -0.19     0.85
- 
- 
- Sample Sizes:
-           Ntrt Ncont
-Overall     185   185
-Subclass 1   46   121
-Subclass 2   45    22
-Subclass 3   47    28
-Subclass 4   47    14
+## exact matching
+m.out3 <- matchit(treat ~ black + hispan, data = lalonde, exact=TRUE)
+n.out3 <- neyman(re78, m.out3)
+print(n.out3)
+summary(n.out3)
 \end{verbatim}
-
-\subsubsection{Neyman with exact matching}
-The {\tt neyman} function can also be used with exact matching on
-covariates.  For exact matching, an overall estimated treatment effect
-is calculated, using the {\tt psweights} as weights.
-
-\begin{verbatim}
-> match.out1e <- matchit(treat ~ black + hispan, data = lalonde, exact=TRUE)
-> neyman.oute <- neyman(re78, match.out1e)
-> print(neyman.oute)
- 
- Average Treatment Effect:
-  
- ATE   SD
-1093  657
- 
-> summary(neyman.oute)
- 
- Average Treatment Effect:
-        Estimate Std. Error z value Pr(>|z|)
-Overall     1093        657    1.66    0.096 .
----
-Signif. codes:  0 `***' 0.001 `**' 0.01 `*' 0.05 `.' 0.1 ` ' 1
- 
- 
- Sample Sizes:
-        Ntrt Ncont
-Overall  185   429
-\end{verbatim}
+\end{enumerate}
 
 \subsection{Using Zelig for Parametric Causal Inference}
+\label{subsec:Zelig}
 
-Zelig is an easy-to-use R program that estimates a variety of statistical
-models, gives easily interpretable results by simulating quantities of
-interest, and provides numerical and graphical summaries.  The package
-along with the complete documentation is available at
+Zelig \citep{ImaKinLau04} is an easy-to-use R program that estimates a
+variety of statistical models, gives easily interpretable results by
+simulating quantities of interest, and provides numerical and
+graphical summaries.  The package along with the complete
+documentation is available at
 \href{http://gking.harvard.edu/zelig/}{http://gking.harvard.edu/zelig/}.
 \MatchIt\ and Zelig can be easily used together to enable estimation
 of causal effects in very general settings.
