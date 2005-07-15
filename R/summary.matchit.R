@@ -1,6 +1,8 @@
-summary.matchit <- function(object, interactions = FALSE, ...) {
+summary.matchit <- function(object, interactions = FALSE, addlvariables = NULL, ...) {
 
   XX <- cbind(distance=object$distance,object$X)
+  if (!is.null(addlvariables)) XX <- cbind(XX, addlvariables)
+
   treat <- object$treat
   weights <- object$weights
   nam <- dimnames(XX)[[2]]
@@ -53,7 +55,7 @@ summary.matchit <- function(object, interactions = FALSE, ...) {
                        c("Control","Treated"))
 
   ## output
-  res <- list(nn = nn, sum.all = sum.all, sum.matched = sum.matched,
+  res <- list(call=object$call, nn = nn, sum.all = sum.all, sum.matched = sum.matched,
               reduction = reduction)
   class(res) <- "summary.matchit"
   return(res)

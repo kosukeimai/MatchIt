@@ -1,7 +1,9 @@
-summary.matchit.subclass <- function(object, interactions = FALSE,
+summary.matchit.subclass <- function(object, interactions = FALSE, addlvariables=NULL, 
                                      ...) {
 
   XX <- cbind(distance=object$distance,object$X)
+  if (!is.null(addlvariables)) XX <- cbind(XX, addlvariables)
+
   treat <- object$treat
   weights <- object$weights
   nam <- dimnames(XX)[[2]]
