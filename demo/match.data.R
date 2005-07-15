@@ -15,6 +15,7 @@ user.prompt()
 m.data1 <- match.data(m.out1)
 user.prompt()
 
+## summarize the resulting matched data
 summary(m.data1)
 user.prompt()
 
@@ -36,10 +37,10 @@ user.prompt()
 m.out2 <- matchit(treat ~ re74 + re75 + age + educ, data=lalonde, method = "subclass")
 user.prompt()
 
-
 ## specify different names
 m.data4 <- match.data(m.out2, subclass = "block", weights = "w",
                       distance = "pscore")
 user.prompt()
 
+## print the variable names of the matched data
 names(m.data4)
