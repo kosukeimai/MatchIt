@@ -11,7 +11,7 @@ neyman.matchit<-function(Y, object, bootstrap=NULL, counter=TRUE){
       bseq<-floor(seq(bootstrap/10, bootstrap, bootstrap/10))
     }
     for(i in 1:bootstrap){
-      sidx <- sample(c(1:nrow(data)), size=nrow(data),
+      sidx <- sample(c(1:length(Y)), size=length(Y),
                      replace=T)
       dta <- eval(object$call$data, sys.parent())[sidx,]
       bobject<-eval(cl)
