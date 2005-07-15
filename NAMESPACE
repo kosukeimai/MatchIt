@@ -1,7 +1,8 @@
 import(MASS)
 import(Zelig)
 export(matchit,	
-       match.data) 
+       match.data,
+       user.prompt) 
 
 S3method(print, matchit)
 S3method(print, matchit.exact)
