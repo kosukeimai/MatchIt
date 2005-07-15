@@ -1,4 +1,4 @@
-summary.neyman<-function(object,...){
+summary.neyman <- function(object,...){
   tval<-object$ate/object$se
   res<-cbind(object$ate, object$se, tval, 2*pnorm(abs(tval), lower.tail=FALSE))
   colnames(res)<-c("Estimate", "Std. Error", "z value", "Pr(>|z|)")
