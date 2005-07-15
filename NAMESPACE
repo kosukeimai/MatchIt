@@ -1,5 +1,4 @@
 import(MASS)
-import(Zelig)
 export(matchit,	
        match.data,
        user.prompt) 
