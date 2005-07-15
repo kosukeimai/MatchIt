@@ -1,13 +1,13 @@
-neyman.matchit<-function(Y, object, bootstrap=NULL, counter=TRUE){
+neyman.matchit<-function(Y, object, bootstrap=NULL, verbose=TRUE){
 
   if(is.null(bootstrap)) {
     res<-neyman.est(Y, object)
   } else {
     ate.est<-Ntrt<-Ncont<-NULL
     cl<-object$call
-    cl$counter<-FALSE
+    cl$verbose<-FALSE
     cl$data <- as.name("dta")
-    if(counter) {
+    if(verbose) {
       bseq<-floor(seq(bootstrap/10, bootstrap, bootstrap/10))
     }
     for(i in 1:bootstrap){
@@ -20,7 +20,7 @@ neyman.matchit<-function(Y, object, bootstrap=NULL, counter=TRUE){
       ate.est<-rbind(ate.est, tmp$ate.est)
       Ntrt<-rbind(Ntrt, tmp$Ntrt)
       Ncont<-rbind(Ncont, tmp$Ncont)
-      if(counter & i%in%bseq)
+      if(verbose & i%in%bseq)
         cat(10*which(bseq==i),"%...", sep="")
     }
     cat("Done\n")
