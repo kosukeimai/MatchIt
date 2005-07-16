@@ -41,7 +41,7 @@ user.prompt()
 
 
 ## exact matching
-m.out3 <- matchit(treat ~ black + hispan, data = lalonde, exact=TRUE)
+m.out3 <- matchit(treat ~ black + hispan, data = lalonde, method = "exact")
 user.prompt()
 
 n.out3 <- neyman(re78, m.out3)

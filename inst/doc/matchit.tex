@@ -1344,7 +1344,7 @@ summary(n.out2)
 
 \begin{verbatim}
 ## exact matching
-m.out3 <- matchit(treat ~ black + hispan, data = lalonde, exact=TRUE)
+m.out3 <- matchit(treat ~ black + hispan, data = lalonde, method = "exact")
 n.out3 <- neyman(re78, m.out3)
 print(n.out3)
 summary(n.out3)
