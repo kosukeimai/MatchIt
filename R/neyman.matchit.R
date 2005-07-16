@@ -67,10 +67,12 @@ neyman.matchit<-function(Y, object, bootstrap=NULL, verbose=TRUE){
     } 
     ## Set w to 0 if block has fewer then 2 t or c units
     w[res$Ntrt<=1 | res$Ncont<=1] <- rep(0, sum(res$Ntrt<=1 | res$Ncont<=1))
-    if (nrow(res$ate.est)==1)
-      ate <- res$ate.est
-    else
+    if (nrow(res$ate.est)==1){
+      ate <- as.vector(res$ate.est)
+      names(ate) <- dimnames(res$ate.est)[[2]]
+    } else {
       ate<-apply(res$ate.est, 2, weighted.mean, w=w)
+    }
     if (length(res$Ntrt)> 1) {
       numtrt <- c(sum(res$Ntrt), res$Ntrt)
       numcont <- c(sum(res$Ncont), res$Ncont)
