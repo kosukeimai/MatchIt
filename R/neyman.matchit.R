@@ -28,7 +28,7 @@ neyman.matchit<-function(Y, object, bootstrap=NULL, verbose=TRUE){
     res<-list(ate.est=ate.est, ate.var=NULL, Ntrt=Ntrt, Ncont=Ncont, bootstrap=bootstrap)
   }
     
-  # Subclass estimates calculated above...now aggregate
+  ## Subclass estimates calculated above...now aggregate
   if(is.null(object$call$sub.by)){
     sub.by <- "treat"
   } else {
@@ -47,7 +47,7 @@ neyman.matchit<-function(Y, object, bootstrap=NULL, verbose=TRUE){
       } else if(sub.by=="all"){
         w <- (res$Ncont+res$Ntrt)/apply((res$Ncont+res$Ntrt),1,sum)
       }
-                                        # Set w to 0 if block has fewer then 2 t or c units
+      ## Set w to 0 if block has fewer then 2 t or c units
       w[res$Ntrt<=1 | res$Ncont<=1] <- rep(0, sum(res$Ntrt<=1 | res$Ncont<=1)) 
       ate.boot <- NULL
       for(i in 1:bootstrap){
@@ -65,9 +65,12 @@ neyman.matchit<-function(Y, object, bootstrap=NULL, verbose=TRUE){
     } else if(sub.by=="all"){
       w <- (res$Ncont+res$Ntrt)/sum(res$Ncont+res$Ntrt)
     } 
-                                        # Set w to 0 if block has fewer then 2 t or c units
-    w[res$Ntrt<=1 | res$Ncont<=1] <- rep(0, sum(res$Ntrt<=1 | res$Ncont<=1)) 
-    ate<-apply(res$ate.est, 2, weighted.mean, w)
+    ## Set w to 0 if block has fewer then 2 t or c units
+    w[res$Ntrt<=1 | res$Ncont<=1] <- rep(0, sum(res$Ntrt<=1 | res$Ncont<=1))
+    if (nrow(res$ate.est)==1)
+      ate <- res$ate.est
+    else
+      ate<-apply(res$ate.est, 2, weighted.mean, w=w)
     if (length(res$Ntrt)> 1) {
       numtrt <- c(sum(res$Ntrt), res$Ntrt)
       numcont <- c(sum(res$Ncont), res$Ncont)
