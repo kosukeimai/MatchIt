@@ -66,11 +66,11 @@ Elizabeth A. Stuart\thanks{Researcher, Mathematica Policy Research,
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \clearpage
 \section{Introduction}
-\MatchIt\ implements the suggestions of Ho, Imai, King, and Stuart
-(2004) for improving parametric statistical models by preprocessing
-data with semi/non-parametric matching methods.  After preprocessing
-with \MatchIt, researchers can use whatever parametric model they
-would have used without \MatchIt, but produce inferences that are
+\MatchIt\ implements the suggestions of \citet{HoImaKin05} for
+improving parametric statistical models by preprocessing data with
+semi/non-parametric matching methods.  After preprocessing with
+\MatchIt, researchers can use whatever parametric model they would
+have used without \MatchIt, but produce inferences that are
 substantially more robust and less sensitive to modeling assumptions.
 Matched data sets created by \MatchIt\ can also be entered easily into
 \hlink{Zelig}{http://gking.harvard.edu/zelig/} \citep{ImaKinLau04} for
@@ -1219,7 +1219,7 @@ for more options and details.
 In this section, we describe two possible analysis methods to use with
 \MatchIt. First, we descibe a simple difference-in-means approach to
 estimate the average treatment effect. Next, we descibe our
-recommended approach, which uses
+recommended approach \citep{HoImaKin05}, which uses
 \hlink{Zelig}{http://gking.harvard.edu/zelig/} to conduct parametric
 causal inference after preprocessing the data through \MatchIt.
 
@@ -1354,33 +1354,39 @@ summary(n.out3)
 \subsection{Using Zelig for Parametric Causal Inference}
 \label{subsec:Zelig}
 
-Zelig \citep{ImaKinLau04} is an easy-to-use R program that estimates a
-variety of statistical models, gives easily interpretable results by
-simulating quantities of interest, and provides numerical and
-graphical summaries.  The package along with the complete
-documentation is available at
+Here, we describe an implementation of our recommended approach
+\citep{HoImaKin05} -- parametric causal inference after matching -- by
+using Zelig in combination with \MatchIt\ .  Zelig \citep{ImaKinLau04}
+is an easy-to-use R package that estimates a variety of statistical
+models, gives easily interpretable results by simulating quantities of
+interest, and provides numerical and graphical summaries.  The package
+along with the complete documentation is available at
 \href{http://gking.harvard.edu/zelig/}{http://gking.harvard.edu/zelig/}.
 \MatchIt\ and Zelig can be easily used together to enable estimation
-of causal effects in very general settings.
+of causal effects in very general settings with a variety of
+statistical models.
 
-Here we provide a few examples of how to use Zelig with \MatchIt\ 
-objects.  The general framework is that of imputing the missing
-potential outcomes.  For example, for the treated group, the potential
-outcomes under control, $Y_{0i}$, are missing, whereas the outcomes
-under treatment, $Y_{1i}$, are observed.  We impute the missing
-outcomes, $Y_{0i}$ as follows.  First, we fit a model using the
-observed outcomes of the matched control units (i.e., using only
-observations where $T_i=0$).  Then, given this model, the missing
-outcomes $Y_{i0}$ are imputed for the matched treated units by using
-the values of the explanatory variables for the treated units and the
-same functional form fit to the control units.  Once those potential
-outcomes are imputed, the estimate of individual $i$'s treatment
-effect is $Y_{1i}-\widehat{Y_{0i}}$.  The average treatment effect for
-any subpopulation, e.g., the average treatment effect for the treated
-individuals, is the average over $i$ of this difference. An advantage
-of this simulation approach is that the uncertainty estimates such as
-standard errors are obtained easily from the model uncertainty in the
-first stage fit.
+Here we provide a few examples of how to use Zelig with \MatchIt\ .
+The general framework is that of imputing the missing potential
+outcomes.  For example, for the treated group, the potential outcomes
+under control, $Y_{0i}$, are missing, whereas the outcomes under
+treatment, $Y_{1i}$, are observed.  We impute the missing outcomes,
+$Y_{0i}$, via Monte Carlo simulation using a parametric statistical
+model as follows.  First, we fit a model using the observed outcomes
+of the matched control units (i.e., using only observations where
+$T_i=0$).  Then, given this fitted model, the missing outcomes
+$Y_{i0}$ are imputed for the matched treated units by using the values
+of the explanatory variables for the treated units.  Once those
+potential outcomes are imputed, the estimate of individual $i$'s
+treatment effect is $Y_{1i}-\widehat{Y}_{0i}$ where $\widehat{Y}_{0i}$
+is the Monte Carlo estimate of the average missing potential outcome
+for unit $i$.  The in-sample average treatment effect for the treated
+individuals can be then obtained by averaging over $i$ of this
+difference. A similar procedure can also be used to estimate various
+quantities of interest. Another advantage of this simulation approach
+is that the uncertainty estimates such as standard errors are obtained
+easily from the estimation uncertainty in fitting the parametric
+model. See \citep{HoImaKin05} for more details.
 
 \subsubsection{Basic analysis with Zelig}
 
