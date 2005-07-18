@@ -5,3 +5,4 @@ nearest		Demos of nearest neighbor matching, using Lalonde dataset
 neyman          Demo of estimating the average treatment effect through the Neyman's method
 subclass	Demo of subclassification, using Lalonde dataset
 optimal		Demo of optimal matching, using Lalonde dataset
+Zelig           Demo of using Zelig with MatchIt for parametric causal inference after matching
