@@ -1361,12 +1361,12 @@ is an easy-to-use R package that estimates a variety of statistical
 models, gives easily interpretable results by simulating quantities of
 interest, and provides numerical and graphical summaries.  The package
 along with the complete documentation is available at
-\href{http://gking.harvard.edu/zelig/}{http://gking.harvard.edu/zelig/}.
+\hlink{http://gking.harvard.edu/zelig/}{http://gking.harvard.edu/zelig/}.
 \MatchIt\ and Zelig can be easily used together to enable estimation
 of causal effects in very general settings with a variety of
 statistical models.
 
-Here we provide a few examples of how to use Zelig with \MatchIt\ .
+\subsubsection{The General Framework}
 The general framework is that of imputing the missing potential
 outcomes.  For example, for the treated group, the potential outcomes
 under control, $Y_{0i}$, are missing, whereas the outcomes under
@@ -1388,296 +1388,119 @@ is that the uncertainty estimates such as standard errors are obtained
 easily from the estimation uncertainty in fitting the parametric
 model. See \citep{HoImaKin05} for more details.
 
-\subsubsection{Basic analysis with Zelig}
+\subsubsection{Examples}
+To illustrate this approach, we provide a couple of examples using the
+Lalonde data. We use the linear least squares model, but a wide range
+of other models are available in Zelig (for the list of supported
+models, see
+\hlink{http://gking.harvard.edu/zelig/docs/Models\_Zelig\_Can.html}{http://gking.harvard.edu/zelig/docs/Models_Zelig_Can.html}).
 
-First, using Zelig, fit a model of the outcome with the covariates or
-propensity score as predictors, using only the matched control group
-units.  We demonstrate this with a linear model ({\tt "lm"}), but
-\hlink{Zelig}{http://gking.harvard.edu/zelig} also supports a wide
-range of other models.
-
-First run \MatchIt\ and then the chosen analysis model (here, linear
-regression) using Zelig.  Note that the {\tt data} input for this
-example takes only \emph{matched control units} with the {\tt
-  match.data} command.
+\begin{enumerate}
+\item Propensity Score Matching: 
 \begin{verbatim}
-> library(Zelig)
-> match.out1 <- matchit(treat ~ age + educ + black + hispan + nodegree +
-                      married + re74 + re75, data = lalonde)
-> z.out1 <- zelig(re78 ~ pscore, data = match.data(match.out1,
-                                 "control"), model = "ls")
+## load the Lalonde data
+load(lalonde)
+
+## load Zelig package: if not already installed, try install.package("Zelig")
+library(Zelig)
+
+## propensity score matching
+m.out1 <- matchit(treat ~ age + educ + black + hispan + nodegree + married + re74 + re75, 
+                  method = "nearest", data = lalonde)
+
+## fit the linear model to the control group controlling for propensity score and 
+## other covariates
+z.out1 <- zelig(re78 ~ age + educ + black + hispan + nodegree + married + re74 + re75
+ + distance, data = match.data(m.out1, "control"), model = "ls")
+
+## set the covariates to the covariates of matched treated units
+## use conditional prediction by setting cond = TRUE.
+x.out1 <- setx(z.out1, data = match.data(m.out1, "treat"), fn = NULL, cond = TRUE)
+
+## simulate the average treatment effect for the treated
+s.out1 <- sim(z.out1, x = x.out1)
+
+## obtain a summary
+summary(s.out1)
 \end{verbatim}
-Next, set the $x$ variables to the covariates observed in the matched
-treated units:
+  
+\item Estimating the average treatment effects on both the treated and
+  the control groups. We use the same {\tt matchit()} output as in the
+  first example above.
 \begin{verbatim}
-> x.out1 <- setx(z.out1, data = match.data(match.out1, "treat"), cond =
-               TRUE)
-\end{verbatim}
-where the last option tells Zelig to condition on the observed values
-in making its predictions.
+## fit the linear model to the treatment group controlling for propensity score and 
+## other covariates
+z.out2 <- zelig(re78 ~ age + educ + black + hispan + nodegree + married + re74 + re75
+ + distance, data = match.data(m.out1, "control"), model = "ls")
 
-Finally, predict {\tt re78} for the $x$'s in {\tt x.out1}, using the
-model fit in the control group (output in {\tt z.out1}).
+## conducting the simulation procedure for the control group
+x.out2 <- setx(z.out2, data = match.data(m.out1, "control"), fn = NULL, cond = TRUE)
+s.out2 <- sim(z.out2, x = x.out2)
 
-\begin{verbatim}
-> s.out1 <- sim(z.out1, x = x.out1)
-> summary(s.out1)
+##  Note that Zelig calculates the difference between observed and
+##  either predicted or expected values.  This means that the treatment
+##  effect for the control units is actually the effect of control
+##  (observed control outcome minus the imputed outcome under treatment
+##  from the model).  Hence, to combine treatment effects just reverse
+##  the signs of the estimated treatment effect of controls.
+ate.all <- c(s.out1$qi$ate.ev, -s.out2$qi$ate.ev)
 
-  Model: ls 
-  Number of simulations: 1000 
-
-Mean Values of Observed Data (n = 185) 
-(Intercept)      pscore 
-     1.0000      0.5774 
-
-Pooled Expected Values: E(Y|X)
-  mean    sd  min  max 2.5% 97.5%
-1 5229 728.1 1788 8565 3735  6655
-
-Pooled Predicted Values: Y|X
-  mean   sd    min   max  2.5% 97.5%
-1 5213 6161 -21454 34534 -6916 17212
-
-Pooled Average Treatment Effect: Y - EV
-  mean    sd    min  max  2.5% 97.5%
-1 1120 570.4 -524.6 3230 23.69  2205
-
-Pooled Average Treatment Effect: Y - PR
-  mean  sd    min  max   2.5% 97.5%
-1 1137 716 -943.4 3094 -293.3  2580
-\end{verbatim}
-
-We see that the average treatment effect for the treated group is
-$\$1137$, with standard deviation $\$716$.  Other information can be
-obtained from the output objects in {\tt s.out1}.
-
-Alternatively, users may want to calculate treatment effects on both
-the treated and the control groups.  One option would be to simply
-run a pooled regression, for which first differences can be calculated
-in Zelig.  Alternatively, we may use separate models for the treated
-and control units to impute missing potential outcomes, as here:
-\begin{verbatim}
-> z0 <- zelig(re78 ~ age + educ + black + hispan + nodegree +
-                      married + re74 + re75, data = match.data(match.out1,
-                                 "control"), model = "ls")
-> z1 <- zelig(re78 ~ age + educ + black + hispan + nodegree +
-                      married + re74 + re75, data = match.data(match.out1,
-                                 "treat"), model = "ls")
-\end{verbatim}
-Combining simulated treatment effects from these models is
-straightforward.  Similar to the above example, we simply combine
-quantities of interest from the two models.  Note that Zelig
-calculates the difference between observed and either predicted or
-expected values.  This means that the treatment effect for the control
-units is actually the effect of control (observed control outcome
-minus the imputed outcome under treatment from the model).  Hence, to
-combine treatment effects just reverse the signs of the estimated
-treatment effect of controls as in the last line below.
-\begin{verbatim}
-x1 <- setx(z0, data = match.data(match.out1,"treat"),cond=T)
-x0 <- setx(z1, data = match.data(match.out1,"control"),cond=T)
-s1 <- sim(z0, x = x1)
-s0 <- sim(z1, x = x0)
-ate.all <- c(s1$qi$ate.ev,-s0$qi$ate.ev)
-\end{verbatim}
-{\tt ate.all} now contains the posterior draws of the average
-treatment effect for all matched units. We need ``$-$'' before
-\texttt{-s0\$qi\$ate.ev} because Zelig always calculates the observed
-outcome minus the counterfactual outcome. So, for the control group,
-it simulates $y_0-y_1$. To get summary statistics, we can do, for
-example, 
-\begin{verbatim}
+## some summaries
+## point estimate
 mean(ate.all)
+## standard error
 sd(ate.all)
+## 95% confidence interval
 quantile(ate.all, c(0.025, 0.975))
 \end{verbatim}
-which gives the estimated mean, standard deviation, and 95\%
-confidence interval of the posterior distribution of the average
-treatment effect for all matched units.
-% 1127 doesn't correspond to any of the numbers above
-% we also need to explain each of these, or remove some of them from
-% the output
-
-\subsubsection{Zelig with subclassification}
-
-Zelig can also be used with subclassification.  In this case,
-treatment effect estimates are obtained for each subclass separately
-for diagnostic purposes, as well as overall.
+  
+\item Subclassification: In this case, the average treatment effect
+  estimates are obtained for each subclass separately as well as
+  for the overall sample.
 
 \begin{verbatim}
-> match.out1s <- matchit(treat ~ age + educ + black + hispan + nodegree
-                       + married + re74 + re75, data = lalonde, subclass=4)
+## subclassification with 4 subclasses
+m.out2 <- matchit(treat ~ age + educ + black + hispan + nodegree + married + re74 + re75,  
+                  data = lalonde, method = "subclass", subclass = 4)
 
-> z.out2 <- zelig(re78 ~ pscore, data = match.data(match.out1s,
-                                 "control"), model="ls", by="psclass")
-> z.out2 <- zelig(re78 ~ pscore, data = match.data(match.out1s,
-                                  "control"), model="ls", by="psclass")
-> x.out2 <- setx(z.out2, data = match.data(match.out1s, "treat"), cond =
-                TRUE)
-> s.out2 <- sim(z.out2, x = x.out2, num = 100)
-> summary(s.out2) # overall results
+## controlling only for the estimated prpensity score and lagged Y within each subclass
+## one can potentially control for more
+z.out3 <- zelig(re78 ~ re74 + re75 + distance, data = match.data(m.out2, "control"), 
+                model = "ls", by = "subclass")
 
-  Model: ls 
-  Number of simulations: 100 
+## conducting simulations
+x.out3 <- setx(z.out3, data = match.data(m.out2, "treat"), fn = NULL, cond = TRUE)
 
-Mean Values of Observed Data (n = 121) 
-(Intercept)      pscore 
-     1.0000      0.1967 
+## for the demonstration purpose, we set the number of simulations to be 100
+s.out3 <- sim(z.out3, x = x.out3, num = 100)
 
-Pooled Expected Values: E(Y|X)
-  mean   sd   min   max  2.5% 97.5%
-1 5490 1876 -9819 15626 689.5  8989
+## overall results
+summary(s.out3) 
 
-Pooled Predicted Values: Y|X
-  mean   sd    min   max  2.5% 97.5%
-1 5558 6463 -20955 34843 -7215 18336
-
-Pooled Average Treatment Effect: Y - EV
-    mean   sd   min  max  2.5% 97.5%
-1 -24.06 1175 -3935 4940 -2543  2151
-
-Pooled Average Treatment Effect: Y - PR
-    mean   sd   min  max  2.5% 97.5%
-1 -102.9 1731 -6548 6664 -3621  3523
-
-> summary(s.out2, subset = 1) # subclass 1
-
-Results for 1 
-
-  Model: ls 
-  Number of simulations: 100 
-
-Mean Values of Observed Data (n = 121) 
-(Intercept)      pscore 
-     1.0000      0.1967 
-
-Pooled Expected Values: E(Y|X)
-  mean   sd  min   max 2.5% 97.5%
-1 5959 1029 2714 11874 4274  8497
-
-Pooled Predicted Values: Y|X
-  mean   sd    min   max  2.5% 97.5%
-1 6014 6286 -15846 30285 -6407 18466
-
-Pooled Average Treatment Effect: Y - EV
-    mean    sd   min  max   2.5% 97.5%
-1 -57.84 494.2 -1087 1136 -921.5 931.2
-
-Pooled Average Treatment Effect: Y - PR
-    mean    sd   min  max  2.5% 97.5%
-1 -113.0 712.7 -2618 1385 -1370  1130
-
-> summary(s.out2, subset = 2) # subclass 2
-
-Results for 1 
-
-  Model: ls 
-  Number of simulations: 100 
-
-Mean Values of Observed Data (n = 22) 
-(Intercept)      pscore 
-     1.0000      0.6115 
-
-Pooled Expected Values: E(Y|X)
-  mean   sd   min  max  2.5% 97.5%
-1 4240 1745 -3598 9641 385.6  7635
-
-Pooled Predicted Values: Y|X
-  mean   sd    min   max  2.5% 97.5%
-1 4207 6055 -20264 25088 -7863 15946
-
-Pooled Average Treatment Effect: Y - EV
-   mean   sd   min  max  2.5% 97.5%
-1 -63.4 1115 -2548 3409 -2017  2024
-
-Pooled Average Treatment Effect: Y - PR
-    mean   sd   min  max  2.5% 97.5%
-1 -29.97 1688 -4300 5429 -2659  3677
-
-> summary(s.out2, subset = 3) # subclass 3
-
-Results for 1 
-
-  Model: ls 
-  Number of simulations: 100 
-
-Mean Values of Observed Data (n = 28) 
-(Intercept)      pscore 
-     1.0000      0.6906 
-
-Pooled Expected Values: E(Y|X)
-  mean   sd   min   max   2.5% 97.5%
-1 4022 2393 -3678 12483 -770.7  8948
-
-Pooled Predicted Values: Y|X
-  mean   sd    min   max  2.5% 97.5%
-1 4198 6561 -19411 27558 -8398 17549
-
-Pooled Average Treatment Effect: Y - EV
-   mean    sd   min  max  2.5% 97.5%
-1 103.4 967.1 -2518 1987 -1798  1618
-
-Pooled Average Treatment Effect: Y - PR
-    mean   sd   min  max  2.5% 97.5%
-1 -72.41 1568 -4041 3520 -3053  2737
-
+## summary for each subclass
+summary(s.out3, subset = 1) 
+summary(s.out3, subset = 2) 
+summary(s.out3, subset = 3) 
 \end{verbatim}
+  
+%\item Analysis of data from full matching: It will generally not be
+%  possible to run models separately within each subclass after full
+%  matching, due to very small sample sizes of either the treated or
+%  control group within each subclass.  In this situation, a common
+%  approach is to run a model with fixed effects included for each of
+%  the subclasses.
+%
+%For example, 
+%\begin{verbatim}
+%> foo1 <- matchit(treat ~ age + educ + black + hispan + married +
+%                nodegree + re74 + re75, data=lalonde, full=T)
+%> m1 <- lm(re78~ treat + age + educ + black + hispan + married +
+%         nodegree + re74 + re75 + as.factor(psclass),
+%         data=foo1$data)
+%> summary(m1)
+%\end{verbatim} 
+\end{enumerate}
 
-\subsubsection{Analysis of data from full matching}
-\label{fullmatchanal}
-
-It will generally not be possible to run models separately within each
-subclass after full matching, due to very small sample sizes of either
-the treated or control group within each subclass.  In this situation,
-a common approach is to run a model with fixed effects included for
-each of the subclasses.
-
-For example, 
-
-\begin{verbatim}
-> foo1 <- matchit(treat ~ age + educ + black + hispan + married +
-                nodegree + re74 + re75, data=lalonde, full=T)
-> m1 <- lm(re78~ treat + age + educ + black + hispan + married +
-         nodegree + re74 + re75 + as.factor(psclass),
-         data=foo1$data)
-> summary(m1)
-
-Call:
-lm(formula = re78 ~ treat + age + educ + black + hispan + married + 
-    nodegree + re74 + re75 + as.factor(psclass), data = foo1$data)
-
-Residuals:
-   Min     1Q Median     3Q    Max 
--14184  -4357   -839   3563  49756 
-
-Coefficients:
-                        Estimate Std. Error t value Pr(>|t|)    
-(Intercept)            3.783e+04  1.352e+04   2.799 0.005327 ** 
-treat                  1.681e+03  8.412e+02   1.998 0.046205 *  
-age                   -7.800e+01  5.185e+01  -1.504 0.133164    
-educ                  -5.582e+02  4.002e+02  -1.395 0.163689    
-black                 -1.823e+04  7.779e+03  -2.344 0.019472 *  
-hispan                -5.685e+03  2.551e+03  -2.229 0.026260 *  
-married                5.515e+03  2.139e+03   2.578 0.010226 *  
-nodegree              -3.837e+03  1.841e+03  -2.084 0.037639 *  
-re74                   5.830e-01  1.535e-01   3.798 0.000164 ***
-re75                   1.193e-01  1.439e-01   0.829 0.407230    
-as.factor(psclass)2   -6.910e+02  4.957e+03  -0.139 0.889181    
-as.factor(psclass)3   -1.718e+04  9.093e+03  -1.890 0.059375 .  
-as.factor(psclass)4   -2.114e+04  8.299e+03  -2.547 0.011149 *  
-as.factor(psclass)5   -1.601e+04  7.214e+03  -2.220 0.026883 *  
-...
-as.factor(psclass)98  -7.008e+03  5.342e+03  -1.312 0.190186    
-as.factor(psclass)99  -1.564e+04  6.449e+03  -2.425 0.015643 *  
-as.factor(psclass)100 -3.926e+03  6.380e+03  -0.615 0.538526    
-as.factor(psclass)101 -1.875e+04  7.637e+03  -2.455 0.014408 *  
----
-Signif. codes:  0 `***' 0.001 `**' 0.01 `*' 0.05 `.' 0.1 ` ' 1 
-
-Residual standard error: 6921 on 504 degrees of freedom
-Multiple R-Squared: 0.2943,     Adjusted R-squared: 0.1417 
-F-statistic: 1.928 on 109 and 504 DF,  p-value: 1.144e-06 
-\end{verbatim} 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \clearpage
