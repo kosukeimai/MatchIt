@@ -1,5 +1,5 @@
 matchit2nearest <-  function(treat, X, data, distance, discarded,
-                             ratio=1, replace = FALSE, m.order = 2,  
+                             ratio=1, replace = FALSE, m.order = "largest",  
                              caliper = 0, calclosest = FALSE,
                              mahvars = NULL, exact = NULL,
                              subclass=NULL, verbose=FALSE, sub.by=NULL, ...){  
@@ -11,9 +11,9 @@ matchit2nearest <-  function(treat, X, data, distance, discarded,
   if(!(identical(replace,TRUE) | identical(replace,FALSE))){
     warning("replace=",replace," is invalid; used replace=FALSE instead",call.=FALSE);replace=FALSE}
   #m.order
-  if(!(identical(m.order,2) | identical(m.order,3) |
-       identical(m.order,4))){
-    warning("m.order=",m.order," is invalid; used m.order=2 instead",call.=FALSE);m.order=2}
+  if(!(identical(m.order,"largest") | identical(m.order,"smallest") |
+       identical(m.order,"random"))){
+    warning("m.order=",m.order," is invalid; used m.order='largest' instead",call.=FALSE);m.order="largest"}
   #ratio
   ratio <- round(ratio)
   if(!is.numeric(ratio) | ratio[1]<1 | !identical(round(length(ratio)),1)){
@@ -132,9 +132,9 @@ matchit2nearest <-  function(treat, X, data, distance, discarded,
     ## Which ratio we're on
     if(r!=ceiling(i/(tr/ratio))) {r <- r+1; matchedt <- match.matrix[,r]}
     
-    if(m.order==2) {iterd1 <- max(d1[matchedt==0],na.rm=T)}
-    if(m.order==3) {iterd1 <- min(d1[matchedt==0],na.rm=T)}
-    if(m.order==4) {iterd1 <- sample(d1[matchedt==0][!is.na(d1[matchedt==0])],1)}
+    if(m.order=="largest") {iterd1 <- max(d1[matchedt==0],na.rm=T)}
+    if(m.order=="smallest") {iterd1 <- min(d1[matchedt==0],na.rm=T)}
+    if(m.order=="random") {iterd1 <- sample(d1[matchedt==0][!is.na(d1[matchedt==0])],1)}
     
     ## The treatment unit for this iteration, again resolving ties randomly
     itert <- as.vector(na.omit(tlabels[iterd1==d1 & matchedt==0]))
