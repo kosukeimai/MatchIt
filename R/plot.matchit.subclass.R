@@ -24,7 +24,7 @@ plot.matchit.subclass <- function(x,discrete.cutoff=5,type="QQ"){
         ans <- as.numeric(choice.menu(choices,question))
         if(ans!=0)
           {
-            matchit.qqplot(x,discrete.cutoff,which.subclass=5)     
+            matchit.qqplot(x,discrete.cutoff,which.subclass=ans)     
           }
       }
   } else if(type=="jitter"){

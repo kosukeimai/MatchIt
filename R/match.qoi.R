@@ -1,5 +1,5 @@
 ## Function to calculate summary stats
-qoi <- function(xx,tt,ww){
+qoi <- function(xx,tt,ww, t.plot=NULL, c.plot=NULL){
   weighted.var <- function(x, w) {
     sum(w * (x - weighted.mean(x,w))^2)/(sum(w) - 1)}
   xsum <- matrix(NA,2,7)
@@ -23,7 +23,8 @@ qoi <- function(xx,tt,ww){
     xsum[1,4:6] <- c(qqall$meddiff,qqall$meandiff,qqall$maxdiff)
     xsum[1,7] <- (mean(x1,na.rm=T)-mean(x0,na.rm=T))/sd(x1,na.rm=T)
     xsum[2,3] <- sqrt(weighted.var(xx[ww>0],ww[ww>0]))
-    qqmat <- qqsum(x1[ww1>0],x0[ww0>0])
+    if(!is.null(t.plot)) qqmat <- qqsum(xx[t.plot],xx[c.plot])
+    else qqmat <- qqsum(x1[ww1>0],x0[ww0>0])
     xsum[2,4:6] <- c(qqmat$meddiff,qqmat$meandiff,qqmat$maxdiff)
     xsum[2,7] <- (xsum[2,1]-xsum[2,2])/sqrt(weighted.var(X.t.m,ww1[ww1>0]))
   } 

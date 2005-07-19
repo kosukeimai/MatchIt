@@ -7,7 +7,8 @@ print.summary.matchit.exact <- function(x, digits = max(3, getOption("digits") -
   #dimnames(nn) <- list(c("Full","Matched","Discarded"),
   #                     c("Control","Treated"))
   #print.table(nn,digits=digits)
-  cat("\n")
+
+  cat("\nCall:\n", deparse(x$call),"\n\n",sep = "")
   cat("\nMatched sample sizes by subclass:\n\n")
   print.data.frame(x$q.table, digits = digits)
   cat("\n")

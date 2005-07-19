@@ -30,6 +30,6 @@ matchit2full <- function(treat, X, data, distance, discarded,
   
   ## calculate weights and return the results
   res <- list(subclass = psclass, weights = weights.subclass(psclass, treat))
-  class(res) <- c("matchit.subclass", "matchit")
+  class(res) <- c("matchit.full", "matchit")
   return(res)
 }

@@ -11,7 +11,7 @@ print.summary.matchit <- function(x, digits = max(3, getOption("digits") - 3), .
 
   xs1 <- sum.matched
   cc <- row.names(sum.all)
-  if(!is.null(x$match.matrix) | identical(eval(x$call$full),TRUE))
+  if(!is.null(x$match.matrix) | eval(x$call$method=="full"))
     {
       cat("Summary of balance for matched data:\n\n")
       print.data.frame(xs1, digits=digits)
