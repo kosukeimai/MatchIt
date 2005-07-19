@@ -185,7 +185,7 @@ matching procedures. There is also a standard output of
   treatment indicator and pre-treatment covariates must be contained
   in the same data frame, which is specified as {\tt data} (see
   below).  All of the usual R syntax for formula works. For example, {\tt
-    x1:x2} represents the first order interation term between {\tt x1}
+    x1:x2} represents the first order interaction term between {\tt x1}
   and {\tt x2}, and {\tt I(x1 \^\ 2)} represents the square term of
   {\tt x1}. See {\tt help(formula)} for details.
   
@@ -224,8 +224,8 @@ matching procedures. There is also a standard output of
     score), {\tt cloglog} (complementary log-log link), {\tt
       linear.cloglog} (complementary log-log link with linear
     propensity score), {\tt log} (log link), {\tt linear.log} (log
-    link with linear propensity score), {\tt cauchit} (cauchy CDF
-    link), {\tt linear.cauchit} (cauchy CDF link with linear
+    link with linear propensity score), {\tt cauchit} (Cauchy CDF
+    link), {\tt linear.cauchit} (Cauchy CDF link with linear
     propensity score).
 
   \item binomial generalized additive model with various links ({\tt
@@ -236,8 +236,8 @@ matching procedures. There is also a standard output of
     (complementary log-log link), {\tt GAMlinear.cloglog}
     (complementary log-log link with linear propensity score), {\tt
       GAMlog} (log link), {\tt GAMlinear.log} (log link with linear
-    propensity score), {\tt GAMcauchit} (cauchy CDF link), {\tt
-      GAMlinear.cauchit} (cauchy CDF link with linear propensity
+    propensity score), {\tt GAMcauchit} (Cauchy CDF link), {\tt
+      GAMlinear.cauchit} (Cauchy CDF link with linear propensity
     score). \citet{HasTib90,BecJac98} and many others discuss the
     generalized additive models.
 
@@ -251,7 +251,7 @@ matching procedures. There is also a standard output of
     others discuss classification trees.
 \end{enumerate}
 
-\item \texttt{distance.options} specifies the optinal arguments that are
+\item \texttt{distance.options} specifies the optional arguments that are
   passed to the model for estimating the distance measure. The input
   to this argument should be a list.
 
@@ -295,7 +295,7 @@ matching procedures. There is also a standard output of
   
 \item \texttt{reestimate} specifies whether the model for distance
   measure should be re-estimated after units are discarded. The
-  default is \texttt{FALSE}.  Reestimation may be desirable for efficiency
+  default is \texttt{FALSE}.  Re-estimation may be desirable for efficiency
   reasons, especially if many units were discarded and so the
   post-discard samples are quite different from the original samples.
 
@@ -383,7 +383,7 @@ The \texttt{summary} command returns more information about the
   on which to calculate the diagnostic statistics (in addition to the
   variables included in the matching procedure).  By default,
   \texttt{addlvariables=NULL}.  \texttt{addlvariables} must be
-  specified as a dataframe, with the same number of units and units in
+  specified as a data frame, with the same number of units and units in
   the same order as in the data set sent to \MatchIt .
 \end{enumerate}
 
@@ -634,7 +634,7 @@ values.
 \subsubsection{Options}
 
 Exact matching is implemented in \MatchIt\ using \texttt{method =
-  "exact"}.  Exact macthing will be done on all covariates included on
+  "exact"}.  Exact matching will be done on all covariates included on
 the right-hand side of the \texttt{formula} specified in the \MatchIt\
 call.  No \texttt{distance} option is used for exact matching, and
 there are no additional options for exact matching.
@@ -672,7 +672,7 @@ distance measure estimated using one of the \texttt{distance} options.
 Subclassification will form subclasses based on this distance measure.
 Within each subclass, the distribution of covariates in the treatment
 and control groups should be similar, and this can be checked using
-the \texttt{summary()} command after doing subclassifiction.
+the \texttt{summary()} command after doing subclassification.
 
 Subclassification is implemented in \MatchIt\ using \texttt{method =
   "subclass"}.  See also the Sections on full matching (Section
@@ -974,8 +974,8 @@ obtain the matched data sets, use {\tt match.data(m.out)}, where {\tt
 for more options and details.
 
 In this section, we describe two possible analysis methods to use with
-\MatchIt. First, we descibe a simple difference-in-means approach to
-estimate the average treatment effect. Next, we descibe our
+\MatchIt. First, we describe a simple difference-in-means approach to
+estimate the average treatment effect. Next, we describe our
 recommended approach \citep{HoImaKin05}, which uses
 \hlink{Zelig}{http://gking.harvard.edu/zelig/} to conduct parametric
 causal inference after preprocessing the data through \MatchIt.
@@ -1001,7 +1001,7 @@ $a$ ($mt$ refers to the matched treated group, and $mc$ refers to the
 matched control group).  The weighted mean is calculated as:
 $$\overline{y}_a^w = \frac{\sum_{i=1}^n w_i y_i}{\sum_{i=1}^n w_i},$$
 where $y_i$ is the outcome and $w_i$ is the weight for individual $i$
-({\tt psweights} from the \MatchIt\ object).
+({\tt weights} from the \MatchIt\ object).
 
 The estimated variance of the estimated treatment effect in Equation
 \eqref{ate} is:
@@ -1266,7 +1266,7 @@ summary(s.out3, subset = 3)
 \begin{itemize}
 \item \textbf{2.0-1} (??, 2005): Stable release for R 2.1. Major revisions.
 \item \textbf{1.0-1} (January 3, 2005): Stable release for R 2.0. The
-  first official versioin of \MatchIt
+  first official version of \MatchIt
 \end{itemize}
 
 
@@ -1349,7 +1349,7 @@ versions of the program.  The primary way to ensure that replication
 archives remain valid is to record the version of \MatchIt\ that was
 used in the analysis.  Our website maintains binaries of all public
 release versions, so that researchers can replicate results exactly
-with the appropriate version (for unix-based platforms, see
+with the appropriate version (for Unix-based platforms, see
 \hlink{http://gking.harvard.edu/src/contrib/}{http://gking.harvard.edu/src/contrib/};
 for windows, see
 \hlink{http://gking.harvard.edu/bin/windows/contrib/}{http://gking.harvard.edu/bin/windows/contrib/}).
