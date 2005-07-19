@@ -85,7 +85,7 @@ have the inclination.
 statistical software, and will run on any platform where R is
 installed (Windows, Unix, or Mac OS X).  R is available free for
 download at the Comprehensive R Archive Network (CRAN) at
-\href{http://www.r-project.org/}{http://www.r-project.org/}.
+\hlink{http://www.r-project.org/}{http://www.r-project.org/}.
 \MatchIt\ has been tested on the most recent version of R.  A good way
 to learn R, if you don't know it already, is to learn Zelig (available
 at \hlink{http://gking.harvard.edu}{http://gking.harvard.edu}) which
@@ -203,29 +203,30 @@ matching procedures. There is also a standard output of
   Section \ref{methods} for more details.
   
 \item \texttt{distance}, specifies the method used to estimate the
-  distance measure. The default is logistic regression, {\tt
-    logit}. Before using any of these techniques, it is best to
-  understand the theoretical groundings of these techniques and to
-  evaluate the results.  Most of these methods (such as logistic or probit regression) are estimating
-  the propensity score, defined as the probability of receiving treatment, conditional on
-  the covariates (\cite{RosRub83a}).  The distance measures used are the predicted probabilities from the model
-  (the propensity scores).  
-  Currently, the following 
-  methods are available:
+  distance measure. The default is logistic regression, {\tt logit}.
+  Before using any of these techniques, it is best to understand the
+  theoretical groundings of these techniques and to evaluate the
+  results.  Most of these methods (such as logistic or probit
+  regression) are estimating the propensity score, defined as the
+  probability of receiving treatment, conditional on the covariates
+  (\cite{RosRub83a}).  The distance measures used are the predicted
+  probabilities from the model (the propensity scores).  Currently,
+  the following methods are available:
   \begin{enumerate}
   \item {\tt mahalanobis} computes the Mahalanobis distance measure
     ({\tt mahalanobis()} in the {\tt stats} package).
   \item binomial generalized linear models with various links ({\tt
       glm()} in the {\tt stats} package); \texttt{logit} (logistic
     link), {\tt linear.logit} (logistic link with linear propensity
-    score)\footnote{The linear propensity scores are obtained by transforming back onto a linear scale}, \texttt{probit} 
-    (probit link), {\tt linear.probit} (probit
-    link with linear propensity score), {\tt cloglog} (complementary
-    log-log link), {\tt linear.cloglog} (complementary log-log link
-    with linear propensity score), {\tt log} (log link), {\tt
-      linear.log} (log link with linear propensity score), {\tt
-      cauchit} (cauchy CDF link), {\tt linear.cauchit} (cauchy CDF
-    link with linear propensity score).
+    score)\footnote{The linear propensity scores are obtained by
+      transforming back onto a linear scale}, \texttt{probit} (probit
+    link), {\tt linear.probit} (probit link with linear propensity
+    score), {\tt cloglog} (complementary log-log link), {\tt
+      linear.cloglog} (complementary log-log link with linear
+    propensity score), {\tt log} (log link), {\tt linear.log} (log
+    link with linear propensity score), {\tt cauchit} (cauchy CDF
+    link), {\tt linear.cauchit} (cauchy CDF link with linear
+    propensity score).
 
   \item binomial generalized additive model with various links ({\tt
       gam()} in the {\tt mgcv} package); \texttt{GAMlogit} (logistic
@@ -366,7 +367,6 @@ The following are the elements of the \texttt{matchit} output object;
 
 
 \subsection{Balance Diagnostics through {\tt summary()} and {\tt plot()}}
-
 \label{cmd:sum}
 
 \subsubsection{{\tt summary()}}
@@ -379,11 +379,12 @@ The \texttt{summary} command returns more information about the
   covariates, their squares, and interactions when
   \texttt{interactions=TRUE} and only the covariates themselves when
   \texttt{interactions=FALSE} (default).
-\item \texttt{addlvariables}, which may contain additional variables on which
-  to calculate the diagnostic statistics (in addition to the variables included in
-  the matching procedure).  By default, \texttt{addlvariables=NULL}.  \texttt{addlvariables}
-  must be specified as a dataframe, with the same number of units and units in the same order as in the data set sent to
-  \MatchIt\.  
+\item \texttt{addlvariables}, which may contain additional variables
+  on which to calculate the diagnostic statistics (in addition to the
+  variables included in the matching procedure).  By default,
+  \texttt{addlvariables=NULL}.  \texttt{addlvariables} must be
+  specified as a dataframe, with the same number of units and units in
+  the same order as in the data set sent to \MatchIt .
 \end{enumerate}
 
 The \texttt{summary} call returns, when applicable:
