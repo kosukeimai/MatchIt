@@ -967,163 +967,34 @@ plot(m.out)
 Once the matching is complete, the \MatchIt\ object can be used with
 any other analysis procedure; \MatchIt\ is designed to make those
 analysis procedures less dependent on the modeling assumptions and
-thus work better.  Thus, any analysis you might have done using the
-original data sets can be done better on the matched data sets.  To
-obtain the matched data sets, use {\tt match.data(m.out)}, where {\tt
-  m.out} is a \MatchIt\ object. See Section~\ref{subsec:match.data}
-for more options and details.
+thus work better.  Therefore, any analysis you might have done using
+the original data sets can be done better on the matched data sets.
+To obtain the matched data sets, use {\tt match.data(m.out)}, where
+{\tt m.out} is a \MatchIt\ object. See Section~\ref{subsec:match.data}
+for more options and details. 
 
-In this section, we describe two possible analysis methods to use with
-\MatchIt. First, we describe a simple difference-in-means approach to
-estimate the average treatment effect. Next, we describe our
-recommended approach \citep{HoImaKin05}, which uses
+In this section, we describe our recommended approach
+\citep{HoImaKin05}, which uses
 \hlink{Zelig}{http://gking.harvard.edu/zelig/} to conduct parametric
-causal inference after preprocessing the data through \MatchIt.
+causal inference after preprocessing the data through \MatchIt.  The
+resulting matched data sets can also be exported to other statistical
+program using commands such as {\tt write.table()} and {\tt
+  write.csv()}. Also, the commands in the {\tt foreign} package allow
+users to save matched data sets as binary files for various
+statistical software including STATA and SPSS.
 
-\subsection{Using Neyman's Method to Estimate Average Treatment Effect}
-
-{\tt neyman()} is a \MatchIt\ function which calculates a simple
-difference in means and corresponding variance estimate.  For any more
-sophisticated analyses (and even this simple case if you desire), we
-recommend using \hlink{Zelig}{http://gking.harvard.edu/zelig/}, to
-conduct a model-based analysis after matching. See
-Section~\ref{subsec:Zelig} for more details.
-
-\subsubsection{Estimation Details}
-
-The estimated treatment effect is:
-\begin{equation}
-\label{ate} 
-\widehat{ate} = \overline{y}_{mt}^w-\overline{y}_{mc}^w,
-\end{equation}
-where $\overline{y}_a^w$ is the weighted mean of the outcome in group
-$a$ ($mt$ refers to the matched treated group, and $mc$ refers to the
-matched control group).  The weighted mean is calculated as:
-$$\overline{y}_a^w = \frac{\sum_{i=1}^n w_i y_i}{\sum_{i=1}^n w_i},$$
-where $y_i$ is the outcome and $w_i$ is the weight for individual $i$
-({\tt weights} from the \MatchIt\ object).
-
-The estimated variance of the estimated treatment effect in Equation
-\eqref{ate} is:
-\begin{equation}
-\label{estvar}
-\widehat{{\rm var}}(\widehat{ate}) = \frac{s_{mt}^2}{\sum_{i=1}^{n_1} w_i} + \frac{s_{mc}^2}{\sum_{i=1}^{n_0} w_i},
-\end{equation}
-where $s_a^2$ is the weighted variance of the outcome in group $a$,
-and $n_1$ and $n_0$ are the sizes of the matched treated and control
-groups, respectively.  The weighted variance in group $a$ is
-calculated as:
-$$s^2_{a} = \frac{\sum_{i=1}^{n_a} w_i
-  (y-\overline{y}_a^w)^2}{(\sum_{i=1}^{n_a} w_i) - 1}.$$
-
-The variance estimate in Equation \eqref{estvar} is unbiased for the
-true variance when the treatment effect is additive and constant for
-all individuals ($Y_i(1)-Y_i(0)=c$ for all $i$) and overestimates the
-true variance when the effect is non-additive.
-
-If subclassification is used, then we compute within-subclass
-estimates as well as their weighted average across the subclasses.
-The weighted average will be weighted by the number of treated units,
-the number of control units, or the total number of units in each
-subclass.  If interest is in estimating the average treatment effect
-for the treated, the number of treated units in each subclass should
-be used for the subclassification and weighting.  Subclasses with
-fewer than two treated or control units are not used in the estimation
-of the average treatment effect and its variance; they are given a
-weight of zero.
-
-\subsubsection{Inputs to {\tt neyman()}}
-
-The {\tt neyman()} function takes the following format:
-\begin{verbatim}
-n.out <- neyman(Y, object, bootstrap = NULL, verbose = TRUE)
-\end{verbatim}
-The output of {\tt neyman} is the estimated treatment effect and its
-estimated standard error.  {\tt summary()} command can be used on the
-output from {\tt neyman}, which provides a convenient summary of the
-results. {\tt neyman()} takes the following inputs.
-
-\begin{enumerate}
-\item {\tt Y} is the outcome variable of interest, 
-\item {\tt object} is the output from {\tt matchit()}.
-\item {\tt bootstrap} is an optional input, which specifies the number
-  of bootstrap replications used for calculating the variance. Specify
-  this option only if users wish to calculate the variance estimate
-  through bootstrap. If this option is specified, an estimated
-  treatment effect is calculated for each bootstrap sample, and the
-  variance of the estimated treatment effects is given by the sample
-  variance of the bootstrap estimates. The default is {\tt NULL},
-  which implies that the analytical (rather than bootstrap) variance
-  estimate is calculated.
-\item {\tt verbose} is a logical variable representing whether to
-  print on the screen a counter indicate what proportion of the
-  bootstrap samples have been completed. The default is {\tt FALSE}
-\end{enumerate}
-
-\subsubsection{Examples}
-
-Here, we provide some examples of the use of the {\tt neyman()}
-function.
-
-\begin{enumerate}
-\item Propensity score matching:
-\begin{verbatim}
-## load the Lalonde data
-data(lalonde)
-## conduct the default propensity score matching
-m.out1 <- matchit(treat ~ age + educ + black + hispan + nodegree +
-                  married + re74 + re75, data = lalonde)
-## calculate ATE on re78
-n.out1 <- neyman(re78, m.out1)
-## a short summary
-print(n.out1)
-## a more detailed summary
-summary(n.out1) 
-\end{verbatim}
-
-\item Subclassification: By default, {\tt sub.by = "treated"} and thus
-  the subclassification and subclass weights are done using the number
-  of treated individuals.  Thus, the subclasses below have
-  approximately equal numbers of treated units in each subclass.
-
-\begin{verbatim}
-## subclassification
-m.out2 <- matchit(treat ~ age + educ + black + hispan + nodegree +
-                  married + re74 + re75, data = lalonde, subclass=4)
-n.out2 <- neyman(re78, m.out2)
-print(n.out2)
-summary(n.out2)
-
-\end{verbatim}
-
-\item Exact Matching: For exact matching, an overall estimated
-  treatment effect is calculated using the {\tt weights} as weights.
-
-\begin{verbatim}
-## exact matching
-m.out3 <- matchit(treat ~ black + hispan, data = lalonde, method = "exact")
-n.out3 <- neyman(re78, m.out3)
-print(n.out3)
-summary(n.out3)
-\end{verbatim}
-\end{enumerate}
-
-\subsection{Using Zelig for Parametric Causal Inference}
-\label{subsec:Zelig}
-
-Here, we describe an implementation of our recommended approach
-\citep{HoImaKin05} -- parametric causal inference after matching -- by
-using Zelig in combination with \MatchIt.  Zelig \citep{ImaKinLau04}
-is an easy-to-use R package that estimates a variety of statistical
-models, gives easily interpretable results by simulating quantities of
-interest, and provides numerical and graphical summaries.  The package
-along with the complete documentation is available at
+Zelig \citep{ImaKinLau04} is an easy-to-use R package that estimates a
+variety of statistical models, gives easily interpretable results by
+simulating quantities of interest, and provides numerical and
+graphical summaries.  The package along with the complete
+documentation is available at
 \hlink{http://gking.harvard.edu/zelig/}{http://gking.harvard.edu/zelig/}.
 \MatchIt\ and Zelig can be easily used together to enable estimation
 of causal effects in very general settings with a variety of
 statistical models.
 
-\subsubsection{The General Framework}
+\subsection{The General Framework}
+
 The general framework is that of imputing the missing potential
 outcomes.  For example, for the treated group, the potential outcomes
 under control, $Y_{0i}$, are missing, whereas the outcomes under
@@ -1145,7 +1016,8 @@ is that the uncertainty estimates such as standard errors are obtained
 easily from the estimation uncertainty in fitting the parametric
 model. See \citep{HoImaKin05} for more details.
 
-\subsubsection{Examples}
+\subsection{Examples}
+
 To illustrate this approach, we provide a couple of examples using the
 Lalonde data. We use the linear least squares model, but a wide range
 of other models are available in Zelig (for the list of supported
