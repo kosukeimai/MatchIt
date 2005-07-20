@@ -7,8 +7,8 @@ Author: Daniel Ho <daniel.ho@yale.edu>,
         Gary King <king@harvard.edu>,
         Elizabeth Stuart <stuart@stat.harvard.edu>
 Maintainer: Daniel Ho <daniel.ho@yale.edu>
-Depends: R (>= 2.0), MASS
-Suggests: Zelig, optmatch
+Depends: R (>= 2.0), MASS, Zelig
+Suggests: optmatch
 Description:  MatchIt selects matched samples of the
   the original treated and control groups with similar
   covariate distributions -- can be used to match exactly
