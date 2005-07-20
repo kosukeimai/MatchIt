@@ -294,13 +294,15 @@ matching procedures. There is also a standard output of
   \end{itemize}
   
 \item \texttt{reestimate} specifies whether the model for distance
-  measure should be re-estimated after units are discarded. The
-  default is \texttt{FALSE}.  Re-estimation may be desirable for efficiency
-  reasons, especially if many units were discarded and so the
-  post-discard samples are quite different from the original samples.
+  measure should be re-estimated after units are discarded. The input
+  must be a logical value. The default is \texttt{FALSE}.
+  %Re-estimation may be desirable for efficiency
+  %reasons, especially if many units were discarded and so the
+  %post-discard samples are quite different from the original samples.
 
-\item \texttt{verbose} specifies whether or not to print out comments indicating the
-  status of the matching.  The default is \texttt{verbose=FALSE}.
+\item \texttt{verbose} specifies whether or not to print out comments
+  indicating the status of the matching. The input must be a logical
+  value. The default is \texttt{FALSE}.
 \end{enumerate}
 
 \subsubsection{Standard Output of \texttt{matchit()}}
