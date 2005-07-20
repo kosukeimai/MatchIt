@@ -2,27 +2,53 @@
 
 \alias{match.data}
 
-\title{Output matched data sets}
+\title{Output Matched Data Sets}
 
-\description{The code \code{match.data} creates output data sets from a \code{matchit}
-matching algorithm.}
+\description{\code{match.data} outputs matched data sets from
+\code{matchit()}.}
 
 \usage{
-match.data <- match.data(object, group="all")
+match.data <- match.data(object, group="all", distance = "distance",
+weights = "weights", subclass = "subclass")
 }
 
-\arguments{ 
-\item{object}{(required).  Stored output from \code{matchit}.} 
+\arguments{
 
-\item{group}{Which units to output.  "all" (default) gives all matched units (treated and
-control), "treat" gives just the matched treated units, and "control" gives just the matched
-control units.} }
+  \item{object}{The output object from {\tt matchit()}. This is
+    an required input.
+  } 
+  \item{group}{This argument specifies for which matched group the user
+    wants to extract the data. Available options are \code{"all"} (all
+    matched units), \code{"treat"} (matched units in the treatment
+    group), and \code{"control"} (matched units in the control
+    group). The default is \code{"all"}.
+  }
+  \item{distance}{This argument specifies the variable name used to
+    store the distance measure. The default is \code{"distance"}.
+  }
+  \item{weights}{This argument specifies the variable name used to store
+    the resulting weights from matching. The default is
+    \code{"weights"}.
+  }
+  \item{subclass}{This argument specifies the variable name used to store the
+    subclass indicator. The default is \code{"subclass"}.
+  }
+}
 
-\value{ 
-\item{Returns a subset of the original data set sent to \code{matchit}, with just the matched units.  The data set also contains the additional
-variables \code{psclass}, \code{pscore}, and \code{psweights}.  The variable \code{psclass} gives the subclass index for each unit (if applicable).  
-The variable \code{pscore} gives the propensity scores, and \code{psweights} gives the weights for each unit, generated in the matching procedure.  
-See the \code{matchit} documentation for more details.} 
+\value{
+
+  \item{Returns a subset of the original data set sent to
+    \code{matchit()}, with just the matched units.  The data set also
+    contains the additional variables \code{distance}, \code{weights},
+    and \code{subclass}. The variable \code{distance} gives
+    the estimated distance measure, and \code{weights} gives the
+    weights for each unit, generated in the matching procedure.
+    The variable \code{subclass} gives the subclass
+    index for each unit (if applicable).
+    See the \url{http://gking.harvard.edu/matchit/} for the complete
+    documentation and type \code{demo(match.data)} at the R prompt to
+    see a demonstration of the code.
+  }
 }
 
 \seealso{Please use \code{help.matchit} to access the matchit reference
@@ -30,7 +56,8 @@ See the \code{matchit} documentation for more details.}
   \url{http://gking.harvard.edu/matchit}.}
 
 \author{
-  Daniel Ho <\email{daniel.ho@yale.edu}>;  Kosuke Imai <\email{kimai@princeton.edu}>; Gary King
+  Daniel Ho <\email{daniel.ho@yale.edu}>; Kosuke Imai
+  <\email{kimai@princeton.edu}>; Gary King
   <\email{king@harvard.edu}>; Elizabeth Stuart<\email{stuart@stat.harvard.edu}>
 }
 
