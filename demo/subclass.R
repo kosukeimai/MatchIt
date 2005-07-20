@@ -16,4 +16,7 @@ user.prompt()
 
 ## balance diagnostics
 summary(m.out)
+user.prompt()
 
+## balance diagnostics through plots
+plot(m.out)
