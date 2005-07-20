@@ -15,5 +15,5 @@ user.prompt()
 print(m.out)
 user.prompt()
 
-## a full summary
+## another summary
 summary(m.out)
