@@ -11,9 +11,11 @@ m.out <- matchit(treat ~ educ + black + hispan, data = lalonde,
                  method = "exact")
 user.prompt()
 
-## a short summary
+## print a short summary
 print(m.out)
 user.prompt()
 
-## another summary
+## balance diagnostics through statistics
 summary(m.out)
+user.prompt()
+
