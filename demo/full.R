@@ -12,5 +12,3 @@ m.out <- matchit(treat ~ age + educ + black + hispan + married +
 print(m.out)
 ## balance diagnostics through statistics
 summary(m.out)
-## balance diagnostics through plots
-plot(m.out)
