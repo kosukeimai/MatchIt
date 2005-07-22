@@ -49,14 +49,15 @@ summary.matchit <- function(object, interactions = FALSE, addlvariables = NULL, 
   names(reduction) <- c("Mean","QQ Med","QQ Mean", "QQ Max", "Std. Bias")
 
   ## Sample sizes
-  if(sum(x$discarded)==0 & sum(x$weights==0)!=0) { nn <- rbind(table(x$treat), table(x$weights>0, x$treat)[2,],
-                table(x$weights>0, x$treat)[1,], c(0,0)) }
-  else if(sum(x$discarded!=0) & sum(x$weights==0)!=0) { nn <- rbind(table(x$treat), table(x$weights>0,x$treat)[2,],
-                table(x$weights>0, x$treat)[1,], table(x$discarded, x$treat)[2,]) }
-  else if(sum(x$discarded==0) & sum(x$weights==0)==0) { nn <- rbind(table(x$treat), table(x$weights>0, x$treat),
-                c(0,0), c(0,0)) }
-  else if(sum(x$discarded!=0) & sum(x$weights==0)==0) { nn <- rbind(table(x$treat), table(x$weights>0, x$treat),
-                c(0,0), table(x$discarded, x$treat)[2,]) }
+  if(sum(object$discarded)==0 & sum(object$weights==0)!=0) { nn <- rbind(table(object$treat), 
+		table(object$weights>0, object$treat)[2,], table(object$weights>0, object$treat)[1,], c(0,0)) }
+  else if(sum(object$discarded!=0) & sum(object$weights==0)!=0) { nn <- rbind(table(object$treat), 
+		table(object$weights>0,object$treat)[2,], table(object$weights>0, object$treat)[1,], 
+		table(object$discarded, object$treat)[2,]) }
+  else if(sum(object$discarded==0) & sum(object$weights==0)==0) { nn <- rbind(table(object$treat), 
+		table(object$weights>0, object$treat), c(0,0), c(0,0)) }
+  else if(sum(object$discarded!=0) & sum(object$weights==0)==0) { nn <- rbind(table(object$treat), 
+		table(object$weights>0, object$treat), c(0,0), table(object$discarded, object$treat)[2,]) }
 
   #nn <- rbind(table(object$treat),
   #            table(object$weights!=0,object$treat)[2:1,])
