@@ -53,7 +53,7 @@ summary.matchit.full <- function(object, interactions = FALSE, addlvariables = N
   names(reduction) <- c("Mean","QQ Med","QQ Mean", "QQ Max", "Std. Bias")
 
   ## Sample sizes
-  nn <- matrix(0, ncol=4, nrow=2)
+  nn <- matrix(0, ncol=2, nrow=4)
   nn[1,] <- c(sum(object$treat==0), sum(object$treat==1))
   nn[2,] <- c(sum(object$treat==0 & object$weights>0), sum(object$treat==1 & object$weights>0))
   nn[3,] <- c(sum(object$treat==0 & object$weights==0 & object$discarded==0), sum(object$treat==1 & object$weights==0 & object$discarded==0))

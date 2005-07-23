@@ -11,7 +11,7 @@ print.matchit <- function(x, digits = getOption("digits"), ...){
   #              table(x$weights>0,x$treat)[2:1,])
 
 
-  nn <- matrix(0, ncol=4, nrow=2)
+  nn <- matrix(0, ncol=2, nrow=4)
   nn[1,] <- c(sum(x$treat==0), sum(x$treat==1))
   nn[2,] <- c(sum(x$treat==0 & x$weights>0), sum(x$treat==1 & x$weights>0))
   nn[3,] <- c(sum(x$treat==0 & x$weights==0 & x$discarded==0), sum(x$treat==1 & x$weights==0 & x$discarded==0))
