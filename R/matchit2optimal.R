@@ -40,7 +40,7 @@ matchit2optimal <- function(treat, X, data, distance, discarded,
       tmp <- matrix(NA, nrow = sum(tdisc), ncol= ratio,
                     dimnames = list(names(treat[treat==1 & discarded]),
                       1:ratio))
-      mm <- rbind(mm, tmp)[names(treat[treat==1]),]
+      mm <- as.matrix(rbind(mm, tmp)[names(treat[treat==1]),])
     }
   }
 

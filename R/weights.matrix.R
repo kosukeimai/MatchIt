@@ -5,9 +5,9 @@ weights.matrix <- function(match.matrix, treat, discarded){
   tlabels <- labels[treat==1]
   clabels <- labels[treat==0]
 
-  ## NEED TO FIX THIS LATER
   in.sample <- !discarded
   names(in.sample) <- labels
+ 
   match.matrix <- match.matrix[tlabels,,drop=F][in.sample[tlabels],,drop=F]
   num.matches <- dim(match.matrix)[2]-apply(as.matrix(match.matrix),
                                             1, function(x){sum(is.na(x))})
