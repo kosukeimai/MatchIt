@@ -475,7 +475,7 @@ within each subclasses if specified.  The graphs present:
   \texttt{discrete.cutoff} (\texttt{type="QQ"} (default)).
 \end{enumerate}
 
-\sussubsection{Examples}
+\subsubsection{Examples}
 The following is an example of the output from using \texttt{summary} on a \MatchIt\ object generated using nearest
 neighbor matching, followed by sample plots from \texttt{plot}:
 
@@ -567,8 +567,8 @@ plot(m.out, type="jitter")
 %    \rotatebox{270}{\includegraphics[height=2.85in,angle=0]{figs/subclass1}}
     {\includegraphics{figs/qqplotnn}}
     \hfill
-    \caption{Sample diagnostic QQ plots: Nearest Neighbor matching}}
-\label{diagqq}
+    \caption{Sample diagnostic QQ plots: Nearest Neighbor matching}
+\label{diagqqnn}
 \end{center}
 \end{figure}
 
@@ -577,8 +577,8 @@ plot(m.out, type="jitter")
 %    \rotatebox{270}{\includegraphics[height=2.85in,angle=0]{figs/subclass1}}
     {\includegraphics{figs/qqplotnn}}
     \hfill
-    \caption{Sample diagnostic jitter plot: Nearest Neighbor matching}}
-\label{diagjitter}
+    \caption{Sample diagnostic jitter plot: Nearest Neighbor matching}
+\label{diagjitternn}
 \end{center}
 \end{figure}
 
@@ -611,9 +611,6 @@ educ         0.055
 black        1.757
 hispan      -0.349
 age         -0.309
-
-
-Summary of balance by subclasses:
 
 , , Subclass 1
 
@@ -784,20 +781,20 @@ plot(m.outs, type="jitter")
 \begin{figure}[tbp]
   \begin{center}
 %    \rotatebox{270}{\includegraphics[height=2.85in,angle=0]{figs/subclass1}}
-    {\includegraphics{figs/qqplotsubs}}
+    {\includegraphics{figs/qqplotsub}}
     \hfill
-    \caption{Sample diagnostic QQ plots: Subclassification}}
-\label{diagqq}
+    \caption{Sample diagnostic QQ plots: Subclassification}
+\label{diagqqsub}
 \end{center}
 \end{figure}
 
 \begin{figure}[tbp]
   \begin{center}
 %    \rotatebox{270}{\includegraphics[height=2.85in,angle=0]{figs/subclass1}}
-    {\includegraphics{figs/qqplotsubs}}
+    {\includegraphics{figs/jitterplotsubs}}
     \hfill
-    \caption{Sample diagnostic jitter plot: Subclassification}}
-\label{diagjitter}
+    \caption{Sample diagnostic jitter plot: Subclassification}
+\label{diagjittersub}
 \end{center}
 \end{figure}
 
@@ -825,7 +822,7 @@ to units that were matched.
 {\tt match.data()} takes the following inputs:
 \begin{enumerate}
 \item {\tt object} is the output object from {\tt matchit()}. This is
-  an required input.
+  a required input.
 \item {\tt group} specifies for which matched group the user wants to extract the
   data. Available options are {\tt "all"} (all matched
   units), {\tt "treat"} (matched units in the treatment group), and
@@ -1068,7 +1065,8 @@ a particular type of subclassification is called ``full matching''
 \citep{Rosenbaum02, Hansen04}. In this matching procedure, the matched
 sample is composed of matched sets, where each matched set contains
 either one treated unit and one or more controls, or one control unit
-and one or more treated units.  Full matching is optimal in terms of
+and one or more treated units.  The only units not placed into a subclass 
+will be those discarded (if a \texttt{discard} option was specified).  Full matching is optimal in terms of
 minimizing a weighted average of the propensity score distances
 between each treated subject and each control subject within each
 stratum.  
@@ -1123,9 +1121,9 @@ measure such as the propensity score, and matches are chosen for each
 treated unit one at a time, where at each step the control unit not
 yet matched that is closest to the treated unit on the distance
 measure is chosen as the match.  There are many variations on nearest
-neighbor matching.  See below for the options available in /MatchIt/.
+neighbor matching.  See below for the options available in \MatchIt\.
 
-Nearest neighbor matching is implemented in /MatchIt/ using the
+Nearest neighbor matching is implemented in \MatchIt\ using the
 \texttt{method="nearest"} option.
 
 \subsubsection{Options}
@@ -1139,6 +1137,11 @@ Nearest neighbor matching is implemented in /MatchIt/ using the
     the distance measure to the largest.
   \item {\tt "random"} indicates matching in random order.
   \end{itemize}
+\item \texttt{replace} specifies whether each control unit can be
+  matched to more than one treated unit.  For matching ``with
+  replacement'', \texttt{replace = TRUE}.  If each control is to be
+  used as a match at most once (``without replacement''), \texttt{replace
+    = FALSE}. The default is {\tt FALSE}.
 \item \texttt{ratio} specifies the number of control units to match to
   each treated unit, default=1.  If matching is done without
   replacement and there are fewer control units than ratio times the
@@ -1146,11 +1149,6 @@ Nearest neighbor matching is implemented in /MatchIt/ using the
   units for the specified method), then the higher ratios will have
   \texttt{NA} in place of the matching unit number in
   \texttt{match.matrix}.
-\item \texttt{replace} specifies whether each control unit can be
-  matched to more than one treated unit.  For matching ``with
-  replacement'', \texttt{replace = TRUE}.  If each control is to be
-  used as a match at most once (``without replacement''), \texttt{replace
-    = FALSE}. The default is {\tt FALSE}.
 \item \texttt{exact} specifies variables on which to perform exact
   matching within the nearest neighbor matching.  If \texttt{exact} is
   specified, only matches that exactly match on the covariates in
@@ -1183,8 +1181,6 @@ Nearest neighbor matching is implemented in /MatchIt/ using the
   neighbor matching is completed.
 \end{enumerate}
 
-comparable control units available. 
-
 \subsubsection{Examples}
 
 The following example script can be run by typing {\tt
@@ -1208,25 +1204,37 @@ m.out2 <- matchit(treat ~ re74 + re75 + age + educ, data = lalonde, method = "ne
                   distance = "logit", mahvars=c("re74", "re75"), exact=c("married"), 
                   caliper=.25)
 print(m.out2)
+## balance diagnostics through statistics
 summary(m.out2)
+## balance diagnostics through graphics
+plot(m.out2)
 
 ## Nearest neighbor matching with discard option
 m.out3 <- matchit(treat ~ re74 + re75 + age + educ, data = lalonde, method = "nearest", 
                   distance = "logit", discard="both")
 print(m.out3)
+## balance diagnostics through statistics
 summary(m.out3)
+## balance diagnostics through graphics
+plot(m.out3)
 
 ## Nearest neighbor matching with replacement
 m.out4 <- matchit(treat ~ re74 + re75 + age + educ, data = lalonde, method = "nearest", 
                   distance = "logit", replace=TRUE, ratio=2)
 print(m.out4)
+## balance diagnostics through statistics
 summary(m.out4)
+## balance diagnostics through graphics
+plot(m.out4)
 
 ## Nearest neighbor matching followed by formation of 5 subclasses
 m.out5 <- matchit(treat ~ re74 + re75 + age + educ, data = lalonde, method = "nearest", 
                   distance = "logit", subclass=5)
 print(m.out5)
+## balance diagnostics through statistics
 summary(m.out5)
+## balance diagnostics through graphics
+plot(m.out5)
 \end{verbatim}
 
 \subsection{Optimal Matching}
@@ -1360,7 +1368,7 @@ installed Zelig, follow the installation procedure described at
 \hlink{http://gking.harvard.edu/zelig/docs/Installation.html}{http://gking.harvard.edu/zelig/docs/Installation.html}
 
 \begin{enumerate}
-\item Propensity Score Matching: 
+\item Nearest neighbor matching using propensity scores: 
 \begin{verbatim}
 ## load the Lalonde data
 load(lalonde)
@@ -1368,7 +1376,7 @@ load(lalonde)
 ## load Zelig package: if not already installed, try install.package("Zelig")
 library(Zelig)
 
-## propensity score matching
+## nearest neighbor matching using propensity scores
 m.out1 <- matchit(treat ~ age + educ + black + hispan + nodegree + married + re74 + re75, 
                   method = "nearest", data = lalonde)
 
@@ -1427,7 +1435,7 @@ quantile(ate.all, c(0.025, 0.975))
 m.out2 <- matchit(treat ~ age + educ + black + hispan + nodegree + married + re74 + re75,  
                   data = lalonde, method = "subclass", subclass = 4)
 
-## controlling only for the estimated prpensity score and lagged Y within each subclass
+## controlling only for the estimated propensity score and lagged Y within each subclass
 ## one can potentially control for more
 z.out3 <- zelig(re78 ~ re74 + re75 + distance, data = match.data(m.out2, "control"), 
                 model = "ls", by = "subclass")
@@ -1512,7 +1520,7 @@ The weights for matched control units are formed as follows:
 \item Within each group, each control unit is given a preliminary
   weight of $n_{ti}/n_{ci}$, where $n_{ti}$ and $n_{ci}$ are the
   number of treated and control units in group $i$, respectively.
-\item If matching is done with replacement, each control units weight
+\item If matching is done with replacement, each control unit's weight
   is added up across the groups in which it was matched.
 \item The control group weights are scaled to sum to the number of
   uniquely matched control units.
