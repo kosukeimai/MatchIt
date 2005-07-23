@@ -53,15 +53,14 @@ summary.matchit.full <- function(object, interactions = FALSE, addlvariables = N
   names(reduction) <- c("Mean","QQ Med","QQ Mean", "QQ Max", "Std. Bias")
 
   ## Sample sizes
-  if(sum(object$weights==0)!=0) { 
-	nn <- rbind(table(object$treat), table(object$weights!=0,object$treat)[2:1,]) 
-  }
-  if(sum(object$weights==0)==0) { 
-	nn <- rbind(table(object$treat), table(object$weights!=0, object$treat), c(sum(object$weights[object$treat==0]==0,
-	sum(object$weights[object$treat==1]==0)))) 
-  }
-  
-  dimnames(nn) <- list(c("Full", "Matched", "Discarded"), c("Control", "Treated"))
+  nn <- matrix(0, ncol=4, nrow=2)
+  nn[1,] <- c(sum(object$treat==0), sum(object$treat==1))
+  nn[2,] <- c(sum(object$treat==0 & object$weights>0), sum(object$treat==1 & object$weights>0))
+  nn[3,] <- c(sum(object$treat==0 & object$weights==0 & object$discarded==0), sum(object$treat==1 & object$weights==0 & object$discarded==0))
+  nn[4,] <- c(sum(object$treat==0 & object$weights==0 & object$discarded==1), sum(object$treat==1 & object$weights==0 & object$discarded==1))
+   
+   dimnames(nn) <- list(c("Full","Matched","Unmatched","Discarded"),
+                       c("Control","Treated"))
 
   ## output
   res <- list(call=object$call, nn = nn, sum.all = sum.all, sum.matched = sum.matched,

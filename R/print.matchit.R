@@ -11,15 +11,11 @@ print.matchit <- function(x, digits = getOption("digits"), ...){
   #              table(x$weights>0,x$treat)[2:1,])
 
 
-  if(sum(x$discarded)==0 & sum(x$weights==0)!=0) { nn <- rbind(table(x$treat), table(x$weights>0, x$treat)[2,],
-		table(x$weights>0, x$treat)[1,], c(0,0)) }
-  else if(sum(x$discarded!=0) & sum(x$weights==0)!=0) { nn <- rbind(table(x$treat), table(x$weights>0,x$treat)[2,], 
-		table(x$weights>0, x$treat)[1,], table(x$discarded, x$treat)[2,]) }
-  else if(sum(x$discarded==0) & sum(x$weights==0)==0) { nn <- rbind(table(x$treat), table(x$weights>0, x$treat), 
-		c(0,0), c(0,0)) }
-  else if(sum(x$discarded!=0) & sum(x$weights==0)==0) { nn <- rbind(table(x$treat), table(x$weights>0, x$treat),
-		c(0,0), table(x$discarded, x$treat)[2,]) }
-		
+  nn <- matrix(0, ncol=4, nrow=2)
+  nn[1,] <- c(sum(x$treat==0), sum(x$treat==1))
+  nn[2,] <- c(sum(x$treat==0 & x$weights>0), sum(x$treat==1 & x$weights>0))
+  nn[3,] <- c(sum(x$treat==0 & x$weights==0 & x$discarded==0), sum(x$treat==1 & x$weights==0 & x$discarded==0))
+  nn[4,] <- c(sum(x$treat==0 & x$weights==0 & x$discarded==1), sum(x$treat==1 & x$weights==0 & x$discarded==1))
 
   dimnames(nn) <- list(c("Full","Matched","Unmatched","Discarded"),
                        c("Control","Treated"))
