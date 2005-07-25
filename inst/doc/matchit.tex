@@ -96,7 +96,7 @@ analyze the data after \MatchIt.
 
 To install \MatchIt\ for all platforms, type at the R command prompt:
 \begin{verbatim}
- > install.packages("MatchIt")
+install.packages("MatchIt")
 \end{verbatim}
 
   \noindent \MatchIt\ will install itself onto your system
@@ -109,7 +109,7 @@ As with any R package, you must install \MatchIt\ only once, but you
 must load it prior to each use.  You can do this for each R session by
 typing:
 \begin{verbatim}
-> library(MatchIt) 
+library(MatchIt) 
 \end{verbatim}
 at the R command prompt.  Alternatively, you can specify R to load
 \MatchIt\ automatically at launch so that you can skip the step of
@@ -481,51 +481,37 @@ neighbor matching, followed by sample plots from \texttt{plot}:
 
 \begin{verbatim}
 
-> m.out <- matchit(treat ~ re74+re75+educ+black+hispan+age, data=lalonde, method="nearest")
+> m.out <- matchit(treat ~ re74 + re75 + educ + black + hispan + age, data = lalonde, 
+                   method = "nearest")
  
 > print(summary(m.out))
 
 Call:
-matchit(formula = treat ~ re74 + re75 + educ + black + hispan +     age, data = lalonde, method = "nearest")
+matchit(formula = treat ~ re74 + re75 + educ + black + hispan + age, data = lalonde, 
+method = "nearest")
 
 Summary of balance for all data:
 
-         Means Treated Means Control Pooled SD   QQ Med  QQ Mean   QQ Max
-distance      5.66e-01         0.187     0.284    0.732    0.535     0.84
-re74          2.10e+03      5619.237  6477.964 3430.277 5155.851 13044.16
-re75          1.53e+03      2466.484  3295.679 1373.280 1511.706  9609.60
-educ          1.03e+01        10.235     2.628    1.414    0.962     5.66
-black         8.43e-01         0.203     0.489    1.414    0.903     1.41
-hispan        5.95e-02         0.142     0.322    0.000    0.119     1.41
-age           2.58e+01        28.030     9.881    1.414    4.650    14.14
-         Std. Bias
-distance     1.792
-re74        -0.721
-re75        -0.290
-educ         0.055
-black        1.757
-hispan      -0.349
-age         -0.309
-
+         Means Treated Means Control Pooled SD   QQ Med  QQ Mean   QQ Max Std. Bias
+distance      5.66e-01         0.187     0.284    0.732    0.535     0.84     1.792 
+re74          2.10e+03      5619.237  6477.964 3430.277 5155.851 13044.16    -0.721
+re75          1.53e+03      2466.484  3295.679 1373.280 1511.706  9609.60    -0.290
+educ          1.03e+01        10.235     2.628    1.414    0.962     5.66     0.055
+black         8.43e-01         0.203     0.489    1.414    0.903     1.41     1.757
+hispan        5.95e-02         0.142     0.322    0.000    0.119     1.41    -0.349
+age           2.58e+01        28.030     9.881    1.414    4.650    14.14    -0.309
+        
 Summary of balance for matched data:
 
-         Means Treated Means Control Pooled SD  QQ Med QQ Mean   QQ Max
-distance      5.66e-01         0.365     0.257   0.150   0.284 6.93e-01
-re74          2.10e+03      2466.304  4574.949 410.082 978.726 1.86e+04
-re75          1.53e+03      1960.355  3089.993 638.038 887.982 1.61e+04
-educ          1.03e+01        10.470     2.673   1.414   1.307 5.66e+00
-black         8.43e-01         0.470     0.475   0.000   0.527 1.41e+00
-hispan        5.95e-02         0.276     0.374   0.000   0.306 1.41e+00
-age           2.58e+01        26.054     8.794   2.828   3.868 1.13e+01
-         Std. Bias
-distance    0.9509
-re74       -0.0759
-re75       -0.1330
-educ       -0.0618
-black       1.0231
-hispan     -0.9118
-age        -0.0332
-
+         Means Treated Means Control Pooled SD  QQ Med QQ Mean   QQ Max Std. Bias
+distance      5.66e-01         0.365     0.257   0.150   0.284 6.93e-01    0.9509
+re74          2.10e+03      2466.304  4574.949 410.082 978.726 1.86e+04   -0.0759
+re75          1.53e+03      1960.355  3089.993 638.038 887.982 1.61e+04   -0.1330
+educ          1.03e+01        10.470     2.673   1.414   1.307 5.66e+00   -0.0618
+black         8.43e-01         0.470     0.475   0.000   0.527 1.41e+00    1.0231
+hispan        5.95e-02         0.276     0.374   0.000   0.306 1.41e+00   -0.9118
+age           2.58e+01        26.054     8.794   2.828   3.868 1.13e+01   -0.0332
+        
 Percent Balance Improvement:
 
            Mean QQ Med QQ Mean QQ Max Std. Bias
@@ -547,19 +533,23 @@ Discarded       0       0
 
 \end{verbatim}
 
-For this 1:1 nearest neighbor matching, we see that 185 control units were matched to the 185 treatment units.  The \texttt{summary}
-command first gives measures of the balance between the treated and control groups in the full (original) data set, 
-and then the same measures of balance in the matched data set.  If the matching worked well, the standardized bias
-and QQ plot statistics should be smaller in the matched data set as compared with the full data set.  We could also use the \texttt{addlvars}
-option to examine the balance in variables not included in the distance model; it may be beneficial to include in the 
-distance model any variables that 
-are not well balanced in the matched data sets.
+For this 1:1 nearest neighbor matching, we see that 185 control units
+were matched to the 185 treatment units.  The \texttt{summary} command
+first gives measures of the balance between the treated and control
+groups in the full (original) data set, and then the same measures of
+balance in the matched data set.  If the matching worked well, the
+standardized bias and QQ plot statistics should be smaller in the
+matched data set as compared with the full data set.  We could also
+use the \texttt{addlvars} option to examine the balance in variables
+not included in the distance model; it may be beneficial to include in
+the distance model any variables that are not well balanced in the
+matched data sets.
 
 We can also examine the balance graphically:
 
 \begin{verbatim}
-plot(m.out)
-plot(m.out, type="jitter")
+> plot(m.out)
+> plot(m.out, type="jitter")
 \end{verbatim}
 
 \begin{figure}[tbp]
@@ -582,156 +572,102 @@ plot(m.out, type="jitter")
 \end{center}
 \end{figure}
 
-The diagnostics are similar for subclassification, except that the diagnostic statistics are printed out separately for each subclass,
-and plots are generated separately for each subclass.  
+The diagnostics are similar for subclassification, except that the
+diagnostic statistics are printed out separately for each subclass,
+and plots are generated separately for each subclass.
 
 \begin{verbatim}
 
-> m.outs <- matchit(treat ~ re74+re75+educ+black+hispan+age, data=lalonde, method="subclass")
+> m.outs <- matchit(treat ~ re74 + re75 + educ + black + hispan + age, data = lalonde, 
+                    method = "subclass")
 > print(summary(m.outs))
 
 Call:
-matchit(formula = treat ~ re74 + re75 + educ + black + hispan +     age, data = lalonde, method = "subclass", sub.by = "treat")
+matchit(formula = treat ~ re74 + re75 + educ + black + hispan +     
+        age, data = lalonde, method = "subclass", sub.by = "treat")
 
 Summary of balance for all data:
 
-         Means Treated Means Control Pooled SD   QQ Med  QQ Mean   QQ Max
-distance      5.66e-01         0.187     0.284    0.732    0.535     0.84
-re74          2.10e+03      5619.237  6477.964 3430.277 5155.851 13044.16
-re75          1.53e+03      2466.484  3295.679 1373.280 1511.706  9609.60
-educ          1.03e+01        10.235     2.628    1.414    0.962     5.66
-black         8.43e-01         0.203     0.489    1.414    0.903     1.41
-hispan        5.95e-02         0.142     0.322    0.000    0.119     1.41
-age           2.58e+01        28.030     9.881    1.414    4.650    14.14
-         Std. Bias
-distance     1.792
-re74        -0.721
-re75        -0.290
-educ         0.055
-black        1.757
-hispan      -0.349
-age         -0.309
-
+         Means Treated Means Control Pooled SD   QQ Med  QQ Mean   QQ Max Std. Bias
+distance      5.66e-01         0.187     0.284    0.732    0.535     0.84     1.792
+re74          2.10e+03      5619.237  6477.964 3430.277 5155.851 13044.16    -0.721
+re75          1.53e+03      2466.484  3295.679 1373.280 1511.706  9609.60    -0.290
+educ          1.03e+01        10.235     2.628    1.414    0.962     5.66     0.055
+black         8.43e-01         0.203     0.489    1.414    0.903     1.41     1.757
+hispan        5.95e-02         0.142     0.322    0.000    0.119     1.41    -0.349
+age           2.58e+01        28.030     9.881    1.414    4.650    14.14    -0.309
+        
 , , Subclass 1
 
-         Means Treated Means Control Pooled SD    QQ Med   QQ Mean    QQ Max
-distance      1.22e-01      7.62e-02  5.22e-02  5.48e-02  6.51e-02  1.23e-01
-re74          3.63e+03      6.33e+03  7.15e+03  4.59e+03  5.18e+03  1.30e+04
-re75          2.23e+03      2.62e+03  3.30e+03  6.63e+02  1.15e+03  9.63e+03
-educ          1.06e+01      1.03e+01  2.80e+00  1.41e+00  1.37e+00  9.90e+00
-black         6.45e-02      5.81e-03  1.03e-01  0.00e+00  4.56e-02  1.41e+00
-hispan        3.55e-01      1.77e-01  3.94e-01  0.00e+00  2.28e-01  1.41e+00
-age           2.50e+01      2.86e+01  1.05e+01  2.83e+00  6.56e+00  1.98e+01
-         Std. Bias
-distance  7.79e-01
-re74     -3.38e-01
-re75     -1.17e-01
-educ      1.93e-01
-black     2.35e-01
-hispan    3.65e-01
-age      -5.85e-01
-
+         Means Treated Means Control Pooled SD    QQ Med   QQ Mean    QQ Max Std. Bias
+distance      1.22e-01      7.62e-02  5.22e-02  5.48e-02  6.51e-02  1.23e-01  7.79e-01
+re74          3.63e+03      6.33e+03  7.15e+03  4.59e+03  5.18e+03  1.30e+04 -3.38e-01
+re75          2.23e+03      2.62e+03  3.30e+03  6.63e+02  1.15e+03  9.63e+03 -1.17e-01
+educ          1.06e+01      1.03e+01  2.80e+00  1.41e+00  1.37e+00  9.90e+00  1.93e-01
+black         6.45e-02      5.81e-03  1.03e-01  0.00e+00  4.56e-02  1.41e+00  2.35e-01
+hispan        3.55e-01      1.77e-01  3.94e-01  0.00e+00  2.28e-01  1.41e+00  3.65e-01
+age           2.50e+01      2.86e+01  1.05e+01  2.83e+00  6.56e+00  1.98e+01 -5.85e-01
+        
 , , Subclass 2
 
-         Means Treated Means Control Pooled SD    QQ Med   QQ Mean    QQ Max
-distance      5.39e-01      5.34e-01  6.46e-02  1.62e-02  1.99e-02  6.55e-02
-re74          7.53e+03      7.21e+03  5.92e+03  6.57e+02  1.23e+03  4.51e+03
-re75          4.11e+03      3.48e+03  5.01e+03  1.71e+03  2.12e+03  1.61e+04
-educ          9.00e+00      8.69e+00  3.47e+00  7.07e-01  1.29e+00  5.66e+00
-black         1.00e+00      1.00e+00  0.00e+00  0.00e+00  0.00e+00  0.00e+00
-hispan        0.00e+00      0.00e+00  0.00e+00  0.00e+00  0.00e+00  0.00e+00
-age           2.81e+01      3.33e+01  1.03e+01  9.33e+00  8.05e+00  1.98e+01
-         Std. Bias
-distance  6.29e-02
-re74      5.56e-02
-re75      1.10e-01
-educ      1.03e-01
-black             
-hispan            
-age      -6.36e-01
-
+         Means Treated Means Control Pooled SD    QQ Med   QQ Mean    QQ Max Std. Bias
+distance      5.39e-01      5.34e-01  6.46e-02  1.62e-02  1.99e-02  6.55e-02  6.29e-02
+re74          7.53e+03      7.21e+03  5.92e+03  6.57e+02  1.23e+03  4.51e+03  5.56e-02
+re75          4.11e+03      3.48e+03  5.01e+03  1.71e+03  2.12e+03  1.61e+04  1.10e-01
+educ          9.00e+00      8.69e+00  3.47e+00  7.07e-01  1.29e+00  5.66e+00  1.03e-01
+black         1.00e+00      1.00e+00  0.00e+00  0.00e+00  0.00e+00  0.00e+00          
+hispan        0.00e+00      0.00e+00  0.00e+00  0.00e+00  0.00e+00  0.00e+00          
+age           2.81e+01      3.33e+01  1.03e+01  9.33e+00  8.05e+00  1.98e+01 -6.36e-01
+        
 ...
 \end{verbatim}
 
 \begin{comment}
 , , Subclass 3
 
-         Means Treated Means Control Pooled SD    QQ Med   QQ Mean    QQ Max
-distance      6.46e-01      6.45e-01  1.16e-02  1.32e-03  2.86e-03  1.30e-02
-re74          8.92e+02      1.40e+03  1.82e+03  5.43e+02  8.26e+02  2.12e+03
-re75          7.07e+02      1.46e+03  2.19e+03  2.91e+02  9.44e+02  8.97e+03
-educ          8.93e+00      9.12e+00  1.32e+00  0.00e+00  4.37e-01  2.83e+00
-black         1.00e+00      1.00e+00  0.00e+00  0.00e+00  0.00e+00  0.00e+00
-hispan        0.00e+00      0.00e+00  0.00e+00  0.00e+00  0.00e+00  0.00e+00
-age           2.39e+01      1.96e+01  7.08e+00  3.80e+00  6.26e+00  2.00e+01
-         Std. Bias
-distance  7.54e-02
-re74     -3.15e-01
-re75     -5.02e-01
-educ     -1.57e-01
-black             
-hispan            
-age       5.47e-01
-
+         Means Treated Means Control Pooled SD    QQ Med   QQ Mean    QQ Max Std. Bias
+distance      6.46e-01      6.45e-01  1.16e-02  1.32e-03  2.86e-03  1.30e-02  7.54e-02
+re74          8.92e+02      1.40e+03  1.82e+03  5.43e+02  8.26e+02  2.12e+03 -3.15e-01
+re75          7.07e+02      1.46e+03  2.19e+03  2.91e+02  9.44e+02  8.97e+03 -5.02e-01
+educ          8.93e+00      9.12e+00  1.32e+00  0.00e+00  4.37e-01  2.83e+00 -1.57e-01
+black         1.00e+00      1.00e+00  0.00e+00  0.00e+00  0.00e+00  0.00e+00          
+hispan        0.00e+00      0.00e+00  0.00e+00  0.00e+00  0.00e+00  0.00e+00          
+age           2.39e+01      1.96e+01  7.08e+00  3.80e+00  6.26e+00  2.00e+01  5.47e-01
+        
 , , Subclass 4
 
-         Means Treated Means Control Pooled SD    QQ Med   QQ Mean    QQ Max
-distance      6.77e-01      6.78e-01  8.23e-03  4.31e-03  4.32e-03  1.19e-02
-re74          3.90e+02      7.11e+02  8.22e+02  0.00e+00  4.42e+02  1.68e+03
-re75          1.19e+03      6.84e+02  1.47e+03  1.52e+02  7.70e+02  3.23e+03
-educ          1.00e+01      1.06e+01  9.21e-01  1.41e+00  8.08e-01  2.83e+00
-black         1.00e+00      1.00e+00  0.00e+00  0.00e+00  0.00e+00  0.00e+00
-hispan        0.00e+00      0.00e+00  0.00e+00  0.00e+00  0.00e+00  0.00e+00
-age           2.35e+01      2.22e+01  7.99e+00  2.83e+00  4.48e+00  1.13e+01
-         Std. Bias
-distance -7.99e-02
-re74     -4.35e-01
-re75      3.06e-01
-educ     -7.38e-01
-black             
-hispan            
-age       1.95e-01
-
+         Means Treated Means Control Pooled SD    QQ Med   QQ Mean    QQ Max Std. Bias
+distance      6.77e-01      6.78e-01  8.23e-03  4.31e-03  4.32e-03  1.19e-02 -7.99e-02
+re74          3.90e+02      7.11e+02  8.22e+02  0.00e+00  4.42e+02  1.68e+03 -4.35e-01
+re75          1.19e+03      6.84e+02  1.47e+03  1.52e+02  7.70e+02  3.23e+03  3.06e-01
+educ          1.00e+01      1.06e+01  9.21e-01  1.41e+00  8.08e-01  2.83e+00 -7.38e-01
+black         1.00e+00      1.00e+00  0.00e+00  0.00e+00  0.00e+00  0.00e+00          
+hispan        0.00e+00      0.00e+00  0.00e+00  0.00e+00  0.00e+00  0.00e+00          
+age           2.35e+01      2.22e+01  7.99e+00  2.83e+00  4.48e+00  1.13e+01  1.95e-01
+        
 , , Subclass 5
 
-         Means Treated Means Control Pooled SD    QQ Med   QQ Mean    QQ Max
-distance      6.94e-01      6.97e-01  3.20e-03  1.09e-03  3.37e-03  1.07e-02
-re74          9.41e+01      3.26e+02  4.43e+02  0.00e+00  1.58e+02  8.01e+02
-re75          4.05e+02      3.08e+02  1.23e+03  0.00e+00  1.27e+03  7.78e+03
-educ          1.10e+01      1.14e+01  4.28e-01  0.00e+00  6.06e-01  1.41e+00
-black         1.00e+00      1.00e+00  0.00e+00  0.00e+00  0.00e+00  0.00e+00
-hispan        0.00e+00      0.00e+00  0.00e+00  0.00e+00  0.00e+00  0.00e+00
-age           2.67e+01      2.23e+01  6.11e+00  9.90e+00  6.87e+00  1.27e+01
-         Std. Bias
-distance -9.86e-01
-re74     -6.03e-01
-re75      7.26e-02
-educ     -1.66e+00
-black             
-hispan            
-age       8.19e-01
+         Means Treated Means Control Pooled SD    QQ Med   QQ Mean    QQ Max Std. Bias
+distance      6.94e-01      6.97e-01  3.20e-03  1.09e-03  3.37e-03  1.07e-02 -9.86e-01
+re74          9.41e+01      3.26e+02  4.43e+02  0.00e+00  1.58e+02  8.01e+02 -6.03e-01
+re75          4.05e+02      3.08e+02  1.23e+03  0.00e+00  1.27e+03  7.78e+03  7.26e-02
+educ          1.10e+01      1.14e+01  4.28e-01  0.00e+00  6.06e-01  1.41e+00 -1.66e+00
+black         1.00e+00      1.00e+00  0.00e+00  0.00e+00  0.00e+00  0.00e+00          
+hispan        0.00e+00      0.00e+00  0.00e+00  0.00e+00  0.00e+00  0.00e+00          
+age           2.67e+01      2.23e+01  6.11e+00  9.90e+00  6.87e+00  1.27e+01  8.19e-01        
 \end{comment}
 \begin{verbatim}
 , , Subclass 6
 
-         Means Treated Means Control Pooled SD    QQ Med   QQ Mean    QQ Max
-distance      7.20e-01      7.24e-01  1.81e-02  2.63e-03  5.47e-03  2.88e-02
-re74          0.00e+00      2.70e+02  3.97e+02  0.00e+00  3.82e+02  3.63e+03
-re75          5.19e+02      1.66e+03  2.34e+03  0.00e+00  1.33e+03  6.83e+03
-educ          1.25e+01      1.26e+01  1.20e+00  0.00e+00  2.33e-01  1.41e+00
-black         1.00e+00      1.00e+00  0.00e+00  0.00e+00  0.00e+00  0.00e+00
-hispan        0.00e+00      0.00e+00  0.00e+00  0.00e+00  0.00e+00  0.00e+00
-age           2.76e+01      2.70e+01  7.84e+00  2.45e+00  3.32e+00  1.13e+01
-         Std. Bias
-distance -2.90e-01
-re74          -Inf
-re75     -6.96e-01
-educ     -1.35e-01
-black             
-hispan            
-age       8.69e-02
-
-
+         Means Treated Means Control Pooled SD    QQ Med   QQ Mean    QQ Max Std. Bias
+distance      7.20e-01      7.24e-01  1.81e-02  2.63e-03  5.47e-03  2.88e-02 -2.90e-01
+re74          0.00e+00      2.70e+02  3.97e+02  0.00e+00  3.82e+02  3.63e+03      -Inf
+re75          5.19e+02      1.66e+03  2.34e+03  0.00e+00  1.33e+03  6.83e+03 -6.96e-01
+educ          1.25e+01      1.26e+01  1.20e+00  0.00e+00  2.33e-01  1.41e+00 -1.35e-01
+black         1.00e+00      1.00e+00  0.00e+00  0.00e+00  0.00e+00  0.00e+00          
+hispan        0.00e+00      0.00e+00  0.00e+00  0.00e+00  0.00e+00  0.00e+00          
+age           2.76e+01      2.70e+01  7.84e+00  2.45e+00  3.32e+00  1.13e+01  8.69e-02
+        
 Sample sizes by subclasses:
 
         Subclass 1 Subclass 2 Subclass 3 Subclass 4 Subclass 5 Subclass 6
@@ -741,23 +677,15 @@ Total          375         57         47         52         38         45
 
 Summary of balance across subclasses
 
-         Means Treated Means Control Pooled SD   QQ Med  QQ Mean   QQ Max
-distance      5.66e-01      5.59e-01  1.44e-02   0.0135 1.69e-02 4.23e-02
-re74          2.10e+03      2.72e+03  1.59e+03 967.1902 1.37e+03 4.30e+03
-re75          1.53e+03      1.71e+03  1.18e+03 470.4902 1.26e+03 8.75e+03
-educ          1.03e+01      1.05e+01  8.20e-01   0.5924 7.93e-01 4.01e+00
-black         8.43e-01      8.33e-01  1.72e-02   0.0000 7.64e-03 2.37e-01
-hispan        5.95e-02      2.97e-02  6.61e-02   0.0000 3.82e-02 2.37e-01
-age           2.58e+01      2.55e+01  3.46e+00   5.1973 5.92e+00 1.58e+01
-         Std. Bias
-distance   -0.0741
-re74          -Inf
-re75       -0.1360
-educ       -0.4002
-black          NaN
-hispan         NaN
-age         0.0687
-
+         Means Treated Means Control Pooled SD   QQ Med  QQ Mean   QQ Max Std. Bias
+distance      5.66e-01      5.59e-01  1.44e-02   0.0135 1.69e-02 4.23e-02   -0.0741
+re74          2.10e+03      2.72e+03  1.59e+03 967.1902 1.37e+03 4.30e+03      -Inf
+re75          1.53e+03      1.71e+03  1.18e+03 470.4902 1.26e+03 8.75e+03   -0.1360
+educ          1.03e+01      1.05e+01  8.20e-01   0.5924 7.93e-01 4.01e+00   -0.4002
+black         8.43e-01      8.33e-01  1.72e-02   0.0000 7.64e-03 2.37e-01       NaN
+hispan        5.95e-02      2.97e-02  6.61e-02   0.0000 3.82e-02 2.37e-01       NaN
+age           2.58e+01      2.55e+01  3.46e+00   5.1973 5.92e+00 1.58e+01    0.0687
+        
 Percent Balance Improvement:
 
          Mean QQ Med QQ Mean QQ Max Std. Bias
@@ -770,12 +698,10 @@ hispan   64.0    0.0    67.8  83.24       NaN
 age      86.8 -267.5   -27.3 -11.72      77.8
 
 \end{verbatim}
-
 Similarly, we can examine the balance within each subclass graphically:
-
 \begin{verbatim}
-plot(m.outs)
-plot(m.outs, type="jitter")
+> plot(m.outs)
+> plot(m.outs, type="jitter")
 \end{verbatim}    
 
 \begin{figure}[tbp]
@@ -797,25 +723,25 @@ plot(m.outs, type="jitter")
 \label{diagjittersub}
 \end{center}
 \end{figure}
-
-Further examples of the summary statistics and diagnostic plots can be seen in the demos for each of the specific matching 
-methods (see Section \ref{methods}).
+Further examples of the summary statistics and diagnostic plots can be
+seen in the demos for each of the specific matching methods (see
+Section \ref{methods}).
 
 \subsection{Obtaining the Matched Data Set}
 \label{subsec:match.data}
 
 After matching, one might wish to obtain the matched data set for
 subsequent analyses (see Section~\ref{sec:analysis}) and other
-purposes. We provide the function {\tt match.data()} to allow users
-to obtain the matched data set.
+purposes. We provide the function {\tt match.data()} to allow users to
+obtain the matched data set.
 \begin{verbatim}
 m.data <- match.data(object, group = "all", distance = "distance", weights = "weights",
                      subclass = "subclass")
 \end{verbatim}
 The output of the function {\tt match.data()} is the original data
 frame where additional information about matching (i.e., distance
-measure as well as resulting weights and subclasses) is added, restricted
-to units that were matched.
+measure as well as resulting weights and subclasses) is added,
+restricted to units that were matched.
 
 \subsubsection{Inputs to {\tt match.data()}}
 
@@ -823,8 +749,8 @@ to units that were matched.
 \begin{enumerate}
 \item {\tt object} is the output object from {\tt matchit()}. This is
   a required input.
-\item {\tt group} specifies for which matched group the user wants to extract the
-  data. Available options are {\tt "all"} (all matched
+\item {\tt group} specifies for which matched group the user wants to
+  extract the data. Available options are {\tt "all"} (all matched
   units), {\tt "treat"} (matched units in the treatment group), and
   {\tt "control"} (matched units in the control group). The default is
   {\tt "all"}.
@@ -1078,7 +1004,7 @@ Full matching can be performed with \MatchIt\ by setting
 \texttt{optmatch} \citep{Hansen04}, which must be installed separately
 by typing at the R command prompt,
 \begin{verbatim}
-> install.packages("optmatch", contriburl = "http://www.stat.lsa.umich.edu/~bbh/optmatch")
+install.packages("optmatch", contriburl = "http://www.stat.lsa.umich.edu/~bbh/optmatch")
 \end{verbatim}
 Currently, \texttt{optmatch} is only available for Unix and MacOS X
 (but not for Windows).  For more information about the package, see
@@ -1114,14 +1040,15 @@ plot(m.out)
 \subsection{Nearest Neighbor Matching}
 \label{nearest}
 
-Nearest neighbor matching selects the $r$ best control matches for each
-individual in the treatment group (excluding those discarded using the
-\texttt{discard}) option.  The matching is done using a distance
-measure such as the propensity score, and matches are chosen for each
-treated unit one at a time, where at each step the control unit not
-yet matched that is closest to the treated unit on the distance
-measure is chosen as the match.  There are many variations on nearest
-neighbor matching.  See below for the options available in \MatchIt\.
+Nearest neighbor matching selects the $r$ best control matches for
+each individual in the treatment group (excluding those discarded
+using the \texttt{discard}) option.  The matching is done using a
+distance measure such as the propensity score, and matches are chosen
+for each treated unit one at a time, where at each step the control
+unit not yet matched that is closest to the treated unit on the
+distance measure is chosen as the match.  There are many variations on
+nearest neighbor matching.  See below for the options available in
+\MatchIt.
 
 Nearest neighbor matching is implemented in \MatchIt\ using the
 \texttt{method="nearest"} option.
@@ -1262,7 +1189,7 @@ Optimal matching can be performed with \MatchIt\ by setting
 \texttt{optmatch} \citep{Hansen04}, which must be installed separately
 by typing at the R command prompt,
 \begin{verbatim}
-> install.packages("optmatch", contriburl = "http://www.stat.lsa.umich.edu/~bbh/optmatch")
+install.packages("optmatch", contriburl = "http://www.stat.lsa.umich.edu/~bbh/optmatch")
 \end{verbatim}
 Currently, \texttt{optmatch} is only available for Unix and MacOS X
 (but not for Windows).  For more information about the package, see
@@ -1576,8 +1503,8 @@ may download the appropriate version from our website and install the
 package with version control by:
 
 \begin{verbatim}
-> install.packages(choose.files('',filters=Filters[c('zip','All'),]),
-+                  .libPaths()[1],installWithVers=T,CRAN=NULL)
+install.packages(choose.files('',filters=Filters[c('zip','All'),]),
+                 .libPaths()[1],installWithVers=T,CRAN=NULL)
 \end{verbatim}
 
 R CMD INSTALL similarly permits users to specify this version using
