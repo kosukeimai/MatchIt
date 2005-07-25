@@ -17,8 +17,10 @@ help.matchit(object)
 \arguments{
   \item{object}{a character string representing a Matchit command or model. 
     \code{help.matchit("command")} will take you to an index of Matchit
-    commands and \code{help.matchit("model")} will take you to a list of
-    models. }
+    commands and \code{help.matchit("method")} will take you to a list of
+    matching methods. The following inputs are currently available:
+    \code{exact}, \code{nearest}, \code{subclass}, \code{full},
+    \code{optimal}. }
   }
 
 \seealso{The complete document is available online at
