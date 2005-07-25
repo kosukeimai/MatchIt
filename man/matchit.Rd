@@ -39,7 +39,7 @@ numerically using \code{summary(matchitobject)}.
 
 \usage{matchit(formula, data, method = "nearest", distance = "logit",
                distance.options = list(), discard = "none",
-               reestimate = FALSE, verbose = FALSE, ...)
+               reestimate = FALSE, ...)
 }
 
 
@@ -98,10 +98,6 @@ numerically using \code{summary(matchitobject)}.
     distance measure should be re-estimated after units are
     discarded. The input must be a logical value. The default is
     \code{FALSE}.
-  }
-  \item{verbose}{This argument specifies whether or not to print out
-    comments indicating the status of the matching. The input must be a
-    logical value. The default is \code{FALSE}.
   }
   \item{...}{Additional arguments to be passed to a variety of matching
     methods. See \url{http://gking.harvard.edu/matchit/??} for the
