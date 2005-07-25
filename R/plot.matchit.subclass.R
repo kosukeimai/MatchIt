@@ -1,4 +1,4 @@
-plot.matchit.subclass <- function(x, y = NULL, discrete.cutoff=5,type="QQ"){
+plot.matchit.subclass <- function(x, discrete.cutoff=5,type="QQ", ...){
   choice.menu <- function(choices,question)
     {
       k <- length(choices)-1
