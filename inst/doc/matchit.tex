@@ -378,7 +378,7 @@ The \texttt{summary} command returns more information about the
 \begin{enumerate}
 \item \texttt{interactions}, which is an option to calculate summary
   statistics in \texttt{sum.all} and \texttt{sum.matched} for all
-  covariates, their squares, and interactions when
+  covariates, their squares, and two-way interactions when
   \texttt{interactions=TRUE} and only the covariates themselves when
   \texttt{interactions=FALSE} (default).
 \item \texttt{addlvariables}, which may contain additional variables
@@ -555,7 +555,8 @@ We can also examine the balance graphically:
 \begin{figure}[tbp]
   \begin{center}
 %    \rotatebox{270}{\includegraphics[height=2.85in,angle=0]{figs/subclass1}}
-    {\includegraphics[height=2.85in]{figs/qqplotnn}}
+    {\includegraphics[scale=0.5]{figs/qqplotnn}}
+    {\includegraphics[scale=0.5]{figs/qqplotnn2}}
     \hfill
     \caption{Sample diagnostic QQ plots: Nearest Neighbor matching}
 \label{diagqqnn}
@@ -565,9 +566,10 @@ We can also examine the balance graphically:
 \begin{figure}[tbp]
   \begin{center}
 %    \rotatebox{270}{\includegraphics[height=2.85in,angle=0]{figs/subclass1}}
-    {\includegraphics[height=2.85in]{figs/jitterplotnn}}
+    {\includegraphics[scale=0.5]{figs/jitterplotnn}}
     \hfill
-    \caption{Sample diagnostic jitter plot: Nearest Neighbor matching}
+    \caption{Sample diagnostic jitter plot: Nearest Neighbor matching.  Matched units shown in black,
+unmatched units shown in grey.}
 \label{diagjitternn}
 \end{center}
 \end{figure}
@@ -707,7 +709,8 @@ Similarly, we can examine the balance within each subclass graphically:
 \begin{figure}[tbp]
   \begin{center}
 %    \rotatebox{270}{\includegraphics[height=2.85in,angle=0]{figs/subclass1}}
-    {\includegraphics[height=2.85in]{figs/qqplotsub}}
+    {\includegraphics[scale=0.5]{figs/qqplotsub}}
+    {\includegraphics[scale=0.5]{figs/qqplotsub2}}
     \hfill
     \caption{Sample diagnostic QQ plots: Subclassification}
 \label{diagqqsub}
@@ -716,10 +719,10 @@ Similarly, we can examine the balance within each subclass graphically:
 
 \begin{figure}[tbp]
   \begin{center}
-%    \rotatebox{270}{\includegraphics[height=2.85in,angle=0]{figs/subclass1}}
-    {\includegraphics[height=2.85in]{figs/jitterplotsub}}
+%    \rotatebox{270}{\includegraphics[scale=0.5,angle=0]{figs/subclass1}}
+    {\includegraphics[scale=0.5]{figs/jitterplotsub}}
     \hfill
-    \caption{Sample diagnostic jitter plot: Subclassification}
+    \caption{Sample diagnostic jitter plot: Subclassification.  Vertical lines indicate the subclass cut points.}
 \label{diagjittersub}
 \end{center}
 \end{figure}
