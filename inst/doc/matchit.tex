@@ -93,7 +93,7 @@ at \hlink{http://gking.harvard.edu}{http://gking.harvard.edu}) which
 includes a self-contained introduction to R and can then be used to
 analyze the data after \MatchIt.
 
-\subsection{Installing \MatchIt} 
+\subsection{Installing \MatchIt}
 
 To install \MatchIt\ for all platforms, type at the R command prompt:
 \begin{verbatim}
@@ -124,16 +124,17 @@ options(defaultPackages = c(getOption("defaultPackages"), "MatchIt"))
 \end{verbatim}
 For this change to take effect, you need to restart R.
 
-%\subsection{Updating \MatchIt}
-%You may update to the most recent version of \MatchIt\ by typing the
-%following commands from your R session.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% shall we add this back in?
+% \subsection{Updating \MatchIt}
+% You may update to the most recent version of \MatchIt\ by typing the
+% following commands from your R session.
 %
-%\begin{small}
-%\begin{verbatim}
+% \begin{small}
+% \begin{verbatim}
 %> update.packages("MatchIt")
 %> library(MatchIt) 
 %\end{verbatim}
-%\end{small} 
+% \end{small}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -154,26 +155,25 @@ three commands:
 
 In addition, \texttt{match.data()} creates the data frame from the
 original data frame by excluding unmatched units and including
-important information about the particular matching procedure (i.e.,
-weights, subclasses, and distance measure).  This matched data set can
-then be used for subsequent parametric analyses thorough
-\hlink{Zelig}{http://gking.harvard.edu/zelig/} and other statistical
-programs. Finally, the output object comes with a standard
-\texttt{print()} command, which prints out a very brief summary of the
-output.
+information about the particular matching procedure (i.e., weights,
+subclasses, and distance measure).  This matched data set can then be
+used for subsequent parametric analyses thorough
+\hlink{Zelig}{http://gking.harvard.edu/zelig/} or other statistical
+programs. Finally, a standard \texttt{print()} command can be used to
+print out a very brief summary of the output object.
 
 \subsection{Matching through \texttt{matchit()}}
 
 The main command, \texttt{matchit()}, implements a variety of matching
-procedures. 
+procedures.
 \begin{verbatim}
 m.out <- matchit(formula, data, method = "nearest", distance = "logit",
                  distance.options=list(), discard = "none", reestimate = FALSE, ...)
 \end{verbatim}
 The command takes several inputs that are common for all matching
-procedures in addition to many inputs that are specific to particular
-matching procedures. There is also a standard output of
-\texttt{matchit()}.
+procedures in addition to inputs specific to particular matching
+procedures. There is also a standard output of \texttt{matchit()}
+across all commands.  We describe both here.
 
 \subsubsection{Common Inputs to \texttt{matchit()}}
 
@@ -184,10 +184,10 @@ matching procedures. There is also a standard output of
   and {\tt x1} and {\tt x2} are the pre-treatment covariates. Both the
   treatment indicator and pre-treatment covariates must be contained
   in the same data frame, which is specified as {\tt data} (see
-  below).  All of the usual R syntax for formula works. For example, {\tt
-    x1:x2} represents the first order interaction term between {\tt x1}
-  and {\tt x2}, and {\tt I(x1 \^\ 2)} represents the square term of
-  {\tt x1}. See {\tt help(formula)} for details.
+  below).  All of the usual R syntax for formulas work here. For
+  example, {\tt x1:x2} represents the first order interaction term
+  between {\tt x1} and {\tt x2}, and {\tt I(x1 \^\ 2)} represents the
+  square term of {\tt x1}. See {\tt help(formula)} for details.
   
 \item \texttt{data} specifies the data frame containing the variables
   called in {\tt formula}.  You may find it helpful for the
@@ -202,7 +202,7 @@ matching procedures. There is also a standard output of
   these matching methods, \MatchIt\ offers a variety of options.  See
   Section \ref{methods} for more details.
   
-\item \texttt{distance}, specifies the method used to estimate the
+\item \texttt{distance} specifies the method used to estimate the
   distance measure. The default is logistic regression, {\tt logit}.
   Before using any of these techniques, it is best to understand the
   theoretical groundings of these techniques and to evaluate the
@@ -249,56 +249,62 @@ matching procedures. There is also a standard output of
   \item \texttt{rpart}, classification trees ({\tt rpart()} in the
     \texttt{rpart} package). \citet{BreFriOls84,RugKimMar03} and many
     others discuss classification trees.
-\end{enumerate}
+  \end{enumerate}
 
-\item \texttt{distance.options} specifies the optional arguments that are
-  passed to the model for estimating the distance measure. The input
-  to this argument should be a list.
+\item \texttt{distance.options} specifies the optional arguments that
+  are passed to the model for estimating the distance measure. The
+  input to this argument should be a list.
+  % ** needs more detail so a user can figure out what to do with
+  % this.
 
+  % ** why delete all the advice here?  to save space?  if so, we
+  % could put it somewhere else perhaps
 \item \texttt{discard} specifies whether to discard units that fall
-  outside some measure of support of the distance score before matching, and not
-  allow them to be used at all in the matching procedure.  Note that discarding
-  units may change the quantity of interest being estimated.
+  outside some measure of support of the distance score before
+  matching, and not allow them to be used at all in the matching
+  procedure.  Note that discarding units may change the quantity of
+  interest being estimated.
   \begin{itemize}
-  \item \texttt{none} (default) discards no units before matching. 
-    %Use this option
-    %when the units to be matched are substantially similar, such as in
-    %the case of matching treatment and control units from a field
-    %experiment that was close to (but not fully) randomized (e.g.,
-    %\citealt{Imai05}), when caliper matching will restrict the donor
-    %pool, or when you do not wish to change the quantity of interest
-    %and the parametric methods to be used post-matching can be trusted
-    %to extrapolate.
-  \item \texttt{both} discards all units (treated and control) that are outside the support
-    of the distance measure.  
-    %Use this option when the units to be
-    %matched are substantially different (when there is a large degree
-    %of non-overlapping support on the distance score), such as in the
-    %case of measuring the effect of democracy on economic growth
-    %(e.g., \citealt{KinZen04}).
+  \item \texttt{none} (default) discards no units before matching.
+    % Use this option when the units to be matched are substantially
+    % similar, such as in the case of matching treatment and control
+    % units from a field experiment that was close to (but not fully)
+    % randomized (e.g., \citealt{Imai05}), when caliper matching will
+    % restrict the donor pool, or when you do not wish to change the
+    % quantity of interest and the parametric methods to be used
+    % post-matching can be trusted to extrapolate.
+  \item \texttt{both} discards all units (treated and control) that
+    are outside the support of the distance measure.
+    % Use this option when the units to be matched are substantially
+    % different (when there is a large degree of non-overlapping
+    % support on the distance score), such as in the case of measuring
+    % the effect of democracy on economic growth (e.g.,
+    % \citealt{KinZen04}).
   \item \texttt{control} discards only control units outside the
-    support of the distance measure of the treated units.  
-    %Use this
-    %option when the average treatment effect on the treated is of most
-    %interest and when unwilling to discard non-overlapping treatment
-    %units (which would change the quantity of interest), such as
-    %possibly in the case of the effect of job training on those
-    %individuals that actually participated in a job evaluation program
-    %or a drug study where interest is in all patients treated with the
-    %drug.
+    support of the distance measure of the treated units.
+    % Use this option when the average treatment effect on the treated
+    % is of most interest and when unwilling to discard
+    % non-overlapping treatment units (which would change the quantity
+    % of interest), such as possibly in the case of the effect of job
+    % training on those individuals that actually participated in a
+    % job evaluation program or a drug study where interest is in all
+    % patients treated with the drug.
   \item \texttt{treat} discards only treated units outside the support
-    of the distance measure of the control units.  
-    %Use this option
-    %when the average treatment effect on the control units is of most
-    %interest and when unwilling to discard control units.
+    of the distance measure of the control units.
+    % Use this option when the average treatment effect on the control
+    % units is of most interest and when unwilling to discard control
+    % units.
   \end{itemize}
+  % ** can we add an option to discard any control units not within
+  % the convex hull of the treated units?  see
+  % gking.harvard.edu/whatif for the code
   
 \item \texttt{reestimate} specifies whether the model for distance
   measure should be re-estimated after units are discarded. The input
   must be a logical value. The default is \texttt{FALSE}.
-  %Re-estimation may be desirable for efficiency
-  %reasons, especially if many units were discarded and so the
-  %post-discard samples are quite different from the original samples.
+  % Re-estimation may be desirable for efficiency reasons, especially
+  % if many units were discarded and so the post-discard samples are
+  % quite different from the original samples.
 
 \item \texttt{verbose} specifies whether or not to print out comments
   indicating the status of the matching. The input must be a logical
@@ -310,7 +316,6 @@ matching procedures. There is also a standard output of
 The following are the elements of the \texttt{matchit} output object;
 
 \begin{enumerate}
-  
 \item \texttt{call} provides the original {\tt matchit()} call.
   
 \item \texttt{formula} shows the formula used to specify the model for
@@ -321,6 +326,8 @@ The following are the elements of the \texttt{matchit} output object;
   summary of the model where \texttt{m.out} is the output object from
   \texttt{matchit()}.
   
+  % ** n_1 and ratio aren't defined at this point so its hard to
+  % follow what the next line means, even with the subsequent list.
 \item \texttt{match.matrix} is an $n_1$ by \texttt{ratio} matrix
   where:
   \begin{itemize}
@@ -330,16 +337,16 @@ The following are the elements of the \texttt{matchit} output object;
     \texttt{data} (to learn how to do this, see Section~\ref{rnames}).
   \item each column stores the name(s) of the control unit(s) matched
     to the treatment unit of that row. For example, when the
-    \texttt{ratio} input for nearest neighbor or optimal matching is specified as 3, the three columns of
-    \texttt{match.matrix} represent the three control units matched to
-    one treatment unit).
-  \item \texttt{NA} indicates that the treatment unit was not matched.  
+    \texttt{ratio} input for nearest neighbor or optimal matching is
+    specified as 3, the three columns of \texttt{match.matrix}
+    represent the three control units matched to one treatment unit).
+  \item \texttt{NA} indicates that the treatment unit was not matched.
   \end{itemize}
    
 \item \texttt{discarded} is a vector of length $n$ that displays
-  whether the units were ineligible for matching due to common
-  support restrictions.  It equals \texttt{TRUE} if unit $i$ was
-  discarded, and it is set to \texttt{FALSE} otherwise.
+  whether the units were ineligible for matching due to common support
+  restrictions.  It equals \texttt{TRUE} if unit $i$ was discarded,
+  and it is set to \texttt{FALSE} otherwise.
   
 \item \texttt{distance} is a vector of length $n$ with the estimated
   distance measure for each unit.
@@ -360,15 +367,16 @@ The following are the elements of the \texttt{matchit} output object;
 \item \texttt{q.cut} gives the subclass cut-points that classify the
   distance measure.
   
-\item \texttt{treat} stores the treatment indicator from
-  \texttt{data} (the left-hand side of \texttt{formula}).
+\item \texttt{treat} stores the treatment indicator from \texttt{data}
+  (the left-hand side of \texttt{formula}).
  
 \item \texttt{X} stores the covariates used for estimating the
   distance measure (the right-hand side of \texttt{formula}).
 \end{enumerate}
 
 
-\subsection{Balance Diagnostics through {\tt summary()} and {\tt plot()}}
+\subsection{Balance Diagnostics through {\tt summary()} and {\tt
+    plot()}}
 \label{cmd:sum}
 
 \subsubsection{{\tt summary()}}
@@ -385,8 +393,8 @@ The \texttt{summary} command returns more information about the
   on which to calculate the diagnostic statistics (in addition to the
   variables included in the matching procedure).  By default,
   \texttt{addlvariables=NULL}.  \texttt{addlvariables} must be
-  specified as a data frame, with the same number of units and units in
-  the same order as in the data set sent to \MatchIt .
+  specified as a data frame, with the same number of units and units
+  in the same order as in the data set sent to \MatchIt .
 \end{enumerate}
 
 The \texttt{summary} call returns, when applicable:
@@ -409,13 +417,13 @@ The \texttt{summary} call returns, when applicable:
       \overline{X})^2}$.
   \item summary statistics from a Q-Q plot, which compares treated and
     control covariate distributions, where \texttt{QQ Med}, \texttt{QQ
-      Mean}, and \texttt{QQ Max} indicate the median, mean,
-    and maximum orthogonal deviations from the 45 degree line of a Q-Q
+      Mean}, and \texttt{QQ Max} indicate the median, mean, and
+    maximum orthogonal deviations from the 45 degree line of a Q-Q
     plot.
   \item standardized bias statistics, $${\rm Std.
       Bias}=\frac{\mu_{X|T=1} - \mu_{X|T=0}}{s_{x|T=1}}, \quad {\rm
-      where} \quad s_{x|T=1} = \sqrt{\frac{\sum_{i \in \{i:
-        T_i=1\}} X_i - \mu_{X|T=1}}{n_1-1} }.$$
+      where} \quad s_{x|T=1} = \sqrt{\frac{\sum_{i \in \{i: T_i=1\}}
+        X_i - \mu_{X|T=1}}{n_1-1} }.$$
   \end{itemize}
   
 \item \texttt{sum.matched} is a data frame which contains variable
@@ -434,10 +442,10 @@ The \texttt{summary} call returns, when applicable:
     interactions of matched units, where \texttt{SD} $= s_{wX} =
     \sqrt{\frac{1}{n} \sum_{i} (w_iX_i - \overline{X}^*)^2}$, where
     $\overline{X}^*$ is the weighted mean of $X$.
-  \item standardized bias statistics \texttt{Std. Bias}$=\frac{\mu_{wX|T=1} -
-      \mu_{wX|T=0}}{s_{x|T=1}}$, and
+  \item standardized bias statistics \texttt{Std.
+      Bias}$=\frac{\mu_{wX|T=1} - \mu_{wX|T=0}}{s_{x|T=1}}$, and
   \end{itemize}
-  where $w$ represents the vector of \texttt{weights}.  
+  where $w$ represents the vector of \texttt{weights}.
   
 \item \texttt{reduction} shows the percent bias reduction achieved in
   each of the balance measures in \texttt{sum.all} and
@@ -452,7 +460,8 @@ The \texttt{summary} call returns, when applicable:
   as \texttt{sum.matched} by subclass.
   
 \item \texttt{qn} gives the sample sizes in the full and matched
-  samples and the number of discarded units, by subclass and by treatment and control.
+  samples and the number of discarded units, by subclass and by
+  treatment and control.
 \item \texttt{match.matrix} from the {\texttt matchit} output.
 \end{enumerate}
 
@@ -560,8 +569,7 @@ We can also examine the balance graphically:
   \begin{center}
 %    \rotatebox{270}{\includegraphics[height=2.85in,angle=0]{figs/subclass1}}
     {\includegraphics[scale=0.5]{figs/qqplotnn}}
-    {\includegraphics[scale=0.5]{figs/qqplotnn2}}
-    \hfill
+    {\includegraphics[scale=0.5]{figs/qqplotnn2}} \hfill
     \caption{Sample diagnostic QQ plots: Nearest Neighbor matching}
 \label{diagqqnn}
 \end{center}
@@ -572,8 +580,8 @@ We can also examine the balance graphically:
 %    \rotatebox{270}{\includegraphics[height=2.85in,angle=0]{figs/subclass1}}
     {\includegraphics[scale=0.5]{figs/jitterplotnn}}
     \hfill
-    \caption{Sample diagnostic jitter plot: Nearest Neighbor matching.  Matched units shown in black,
-unmatched units shown in grey.}
+    \caption{Sample diagnostic jitter plot: Nearest Neighbor matching.
+      Matched units shown in black, unmatched units shown in grey.}
 \label{diagjitternn}
 \end{center}
 \end{figure}
@@ -812,8 +820,8 @@ names(m.data4)
 \label{methods}
 
 \MatchIt\ is designed for studies with a dependent variable that is a
-function of a dichotomous causal variable, with values known as
-the ``treatment'' and ``control'' groups, and a set of pretreatment
+function of a dichotomous causal variable, with values known as the
+``treatment'' and ``control'' groups, and a set of pretreatment
 covariates that are measured {\it prior to} the administration of the
 treatment.  \MatchIt\ can be used for other types of causal variables
 by dichotomizing them, perhaps in multiple ways \citep[see
