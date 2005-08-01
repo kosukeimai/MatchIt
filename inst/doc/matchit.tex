@@ -39,7 +39,7 @@ Kosuke Imai,\thanks{Assistant Professor, Department of Politics,
   \texttt{kimai@Princeton.Edu}).}
 \and
 Gary King,\thanks{David Florence Professor of Government, Harvard
-  University (Center for Basic Research in the Social Sciences, 34
+  University (Institute for Quantitative Social Science, 34
   Kirkland Street, Harvard University, Cambridge MA 02138;
   \texttt{http://GKing.Harvard.Edu}, \texttt{King@Harvard.Edu}, (617)
   495-2027).}
@@ -67,18 +67,19 @@ Elizabeth A. Stuart\thanks{Researcher, Mathematica Policy Research,
 \clearpage
 \section{Introduction}
 \MatchIt\ implements the suggestions of \citet{HoImaKin05} for
-improving parametric statistical models by preprocessing data with
-semi/non-parametric matching methods.  After preprocessing with
-\MatchIt, researchers can use whatever parametric model they would
-have used without \MatchIt, but produce inferences that are
-substantially more robust and less sensitive to modeling assumptions.
-Matched data sets created by \MatchIt\ can also be entered easily into
-\hlink{Zelig}{http://gking.harvard.edu/zelig/} \citep{ImaKinLau04} for
-subsequent parametric analyses.  \MatchIt\ reduces the dependence of
-causal inferences on commonly made, but hard-to-justify, statistical
-modeling assumptions via a wide range of sophisticated matching
-methods.  Other matching methods can even be added to \MatchIt, if you
-have the inclination.
+improving parametric statistical models and reducing model dependence
+by preprocessing data with semi- and non-parametric matching methods.
+After preprocessing with \MatchIt, researchers can use whatever
+parametric model they would have used without \MatchIt, but produce
+inferences that are substantially more robust and less sensitive to
+modeling assumptions.  Matched data sets created by \MatchIt\ can also
+be entered easily into \hlink{Zelig}{http://gking.harvard.edu/zelig/}
+\citep{ImaKinLau04}, or other programs, for subsequent parametric
+analyses.  \MatchIt\ reduces the dependence of causal inferences on
+commonly made, but hard-to-justify, statistical modeling assumptions
+via a wide range of sophisticated matching methods.  In addition, we
+have written \MatchIt\ so that adding methods to its structure is
+easy, if you have the inclination.
 
 \subsection{Software Requirements} 
 \MatchIt\ works in conjunction with the R programming language and
@@ -98,11 +99,10 @@ To install \MatchIt\ for all platforms, type at the R command prompt:
 \begin{verbatim}
 install.packages("MatchIt")
 \end{verbatim}
-
-  \noindent \MatchIt\ will install itself onto your system
-  automatically.  During the process you may either decide to keep or
-  discard the installation files, which will not affect the way
-  \MatchIt\ runs.
+and \MatchIt\ will install itself onto your system automatically.
+During the process you may either decide to keep or discard the
+installation files, which will not affect the way \MatchIt\ runs.  You
+only need to do this once.
 
 \subsection{Loading \MatchIt}
 As with any R package, you must install \MatchIt\ only once, but you
@@ -115,7 +115,7 @@ at the R command prompt.  Alternatively, you can specify R to load
 \MatchIt\ automatically at launch so that you can skip the step of
 typing {\tt library(MatchIt)} at the beginning of every R session.  To
 do this, edit the {\tt Rprofile} file located in the R program
-subdirectory, e.g. \texttt{C:/R/rw1091/etc/}, for Windows systems and
+subdirectory, e.g. \texttt{C:/R/rw1091/etc/}, for Windows systems or
 the {\tt .Rprofile} file located in the home directory for Unix/Linux
 and Mac OS X systems.  Using a text editor such as Windows notepad and
 emacs, add the following line to the file:
