@@ -568,8 +568,8 @@ We can also examine the balance graphically:
 \begin{figure}[tbp]
   \begin{center}
 %    \rotatebox{270}{\includegraphics[height=2.85in,angle=0]{figs/subclass1}}
-    {\includegraphics[scale=0.5]{figs/qqplotnn}}
-    {\includegraphics[scale=0.5]{figs/qqplotnn2}} \hfill
+    {\includegraphics[scale=0.8]{figs/qqplotnn}}
+    {\includegraphics[scale=0.8]{figs/qqplotnn2}} \hfill
     \caption{Sample diagnostic QQ plots: Nearest Neighbor matching}
 \label{diagqqnn}
 \end{center}
@@ -578,7 +578,7 @@ We can also examine the balance graphically:
 \begin{figure}[tbp]
   \begin{center}
 %    \rotatebox{270}{\includegraphics[height=2.85in,angle=0]{figs/subclass1}}
-    {\includegraphics[scale=0.5]{figs/jitterplotnn}}
+    {\includegraphics[scale=0.7]{figs/jitterplotnn}}
     \hfill
     \caption{Sample diagnostic jitter plot: Nearest Neighbor matching.
       Matched units shown in black, unmatched units shown in grey.}
@@ -721,8 +721,8 @@ Similarly, we can examine the balance within each subclass graphically:
 \begin{figure}[tbp]
   \begin{center}
 %    \rotatebox{270}{\includegraphics[height=2.85in,angle=0]{figs/subclass1}}
-    {\includegraphics[scale=0.5]{figs/qqplotsub}}
-    {\includegraphics[scale=0.5]{figs/qqplotsub2}}
+    {\includegraphics[scale=.8]{figs/qqplotsub}}
+    {\includegraphics[scale=.8]{figs/qqplotsub2}}
     \hfill
     \caption{Sample diagnostic QQ plots: Subclassification}
 \label{diagqqsub}
@@ -732,7 +732,7 @@ Similarly, we can examine the balance within each subclass graphically:
 \begin{figure}[tbp]
   \begin{center}
 %    \rotatebox{270}{\includegraphics[scale=0.5,angle=0]{figs/subclass1}}
-    {\includegraphics[scale=0.5]{figs/jitterplotsub}}
+    {\includegraphics[scale=0.7]{figs/jitterplotsub}}
     \hfill
     \caption{Sample diagnostic jitter plot: Subclassification.  Vertical lines indicate the subclass cut points.}
 \label{diagjittersub}
@@ -837,6 +837,7 @@ $y_{0i}$ the potential outcome of unit $i$ under control.  $y_{1i}$
 and $y_{0i}$ are jointly unobservable, so we only observe
 $y_i=t_iy_{1i}+(1-t_i)y_{0i}$.
 
+%** these examples were introduced before this discussion
 For all of our examples, we use data from the job training program
 analyzed in \citet{lalonde86} and \citet{DehWah99}.  A subsample of
 the data consisting of the National Supported Work Demonstration (NSW)
@@ -852,16 +853,14 @@ average treatment effect on the treated (ATT):
 \begin{equation}\label{re78eqn}
 E(\text{re78}(\text{treat}=1) | \text{treat}=1)\; - \; E(\text{re78}(\text{treat}=0) | \text{treat}=1),
 \end{equation}
-
-\noindent where \texttt{re78(treat=1)} represents the potential
-outcome under the treatment of the job program, and
-\texttt{re78(treat=0)} under control.  To be clear, note that the
-first term (inside the expectation) in Equation~\ref{re78eqn} is
-\emph{observed}, whereas the second term is the \emph{unobserved}
-counterfactual of real earnings if participants had not participated.
-The nature of causal inference is that one of the two terms in the
-difference will always be unobserved.  The same expression of the ATT,
-in mathematical notation is:
+where \texttt{re78(treat=1)} represents the potential outcome under
+the treatment of the job program, and \texttt{re78(treat=0)} under
+control.  The first term (inside the expectation) in
+Equation~\ref{re78eqn} is \emph{observed}, whereas the second term is
+the \emph{unobserved} counterfactual of real earnings if participants
+had not participated.  The nature of causal inference is that one of
+the two terms in the difference will always be unobserved.  The same
+expression of the ATT, in mathematical notation is:
 \begin{equation}
   E(Y_{1i} | t_i=1 ) \; - \; E(Y_{0i} | t_i=1).
 \end{equation}
@@ -933,20 +932,21 @@ values as anyone in the other treatment group have \texttt{subclass =
 \subsection{Subclassification}
 \label{subclass}
 
-When there are many covariates on which matches are desired, it is
-often very difficult to find a sufficient number of exact matches.  In
-that case, it is sometimes desirable to do subclassification using a
-scalar distance measure, such as the propensity score or other
-distance measure estimated using one of the \texttt{distance} options.
-Subclassification will form subclasses based on this distance measure.
-Within each subclass, the distribution of covariates in the treatment
-and control groups should be similar, and this can be checked using
-the \texttt{summary()} command after doing subclassification.
+When there are many covariates on which matches are desired, finidng
+sufficient exact matches will often be impossible.  In that case,
+subclassification is sometimes desireable, such as by using a scalar
+distance measure like the propensity score estimated using one of the
+\texttt{distance} options.  Subclassification will form subclasses
+based on this distance measure.  Within each subclass, the
+distribution of covariates in the treatment and control groups should
+be similar, and this can be checked using the \texttt{summary()}
+command after doing subclassification.
 
 Subclassification is implemented in \MatchIt\ using \texttt{method =
   "subclass"}.  See also the Sections on full matching (Section
-\ref{fullmatching}) and nearest-neighbor matching (Section \ref{nearest}),
-which provide additional ways of performing subclassification.
+\ref{fullmatching}) and nearest-neighbor matching (Section
+\ref{nearest}), which provide additional ways of performing
+subclassification.
 
 \subsubsection{Options}
 
@@ -1006,11 +1006,11 @@ a particular type of subclassification is called ``full matching''
 \citep{Rosenbaum02, Hansen04}. In this matching procedure, the matched
 sample is composed of matched sets, where each matched set contains
 either one treated unit and one or more controls, or one control unit
-and one or more treated units.  The only units not placed into a subclass 
-will be those discarded (if a \texttt{discard} option was specified).  Full matching is optimal in terms of
-minimizing a weighted average of the propensity score distances
-between each treated subject and each control subject within each
-stratum.  
+and one or more treated units.  The only units not placed into a
+subclass will be those discarded (if a \texttt{discard} option was
+specified).  Full matching is optimal in terms of minimizing a
+weighted average of the propensity score distances between each
+treated subject and each control subject within each stratum.
 
 \subsubsection{Options}
 
@@ -1198,10 +1198,11 @@ or \cite{Rosenbaum02} for more information on optimal matching.
 
 \subsubsection{Options}
 
-Optimal matching can be performed with \MatchIt\ by setting
-\texttt{method = "optimal"}.  We use an add-on package called
-\texttt{optmatch} \citep{Hansen04}, which must be installed separately
-by typing at the R command prompt,
+Optimal matching is performed with \MatchIt\ by setting \texttt{method
+  = "optimal"}.  We use an add-on package called \texttt{optmatch}
+\citep{Hansen04}, which must be installed separately by typing at the
+R command prompt,
+%** can we do this automatically if its needed?
 \begin{verbatim}
 install.packages("optmatch", contriburl = "http://www.stat.lsa.umich.edu/~bbh/optmatch")
 \end{verbatim}
@@ -1211,8 +1212,8 @@ Currently, \texttt{optmatch} is only available for Unix and MacOS X
 The available options are listed below.
 
 \begin{enumerate}
-\item {\tt ratio} specifies the number of control units to be
-  matched to each treatment unit, the default is {\tt 1}.
+\item {\tt ratio} specifies the number of control units to be matched
+  to each treatment unit, the default is {\tt 1}.
 \item {\tt ...} represents additional inputs that can be passed to the
   {\tt fullmatch()} function in the {\tt optmatch} package. See {\tt
     help(fullmatch)} for details.
