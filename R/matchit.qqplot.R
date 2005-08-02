@@ -10,8 +10,7 @@ matchit.qqplot <- function(x,discrete.cutoff,which.subclass=NULL, numdraws=5000)
 
        m.covariates <- x$X[c(t.plot, c.plot),]
        m.treat <- x$treat[c(t.plot, c.plot)]
-  }
-  else {
+  } else {
  	m.covariates <- covariates[matched,]
  	m.treat <- treat[matched]
   }
@@ -57,6 +56,7 @@ matchit.qqplot <- function(x,discrete.cutoff,which.subclass=NULL, numdraws=5000)
     text(0.5,0.5,ni,cex=cex.labels)
     if(length(table(xi))<=discrete.cutoff){
       xi <- jitter(xi)
+      m.xi <- jitter(m.xi)
     }
     rr <- range(xi)
     qqplot(xi[treat==0],xi[treat==1],
