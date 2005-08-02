@@ -22,7 +22,8 @@ summary.matchit.exact <- function(object, covariates = FALSE, ...) {
   }
 
   ## output
-  res <- list(call=object$call, q.table = q.table)
+  res <- list(q.table = q.table, subclass = object$subclass,
+              treat = object$treat, call = object$call)
   class(res) <- c("summary.matchit.exact", "summary.matchit")
   return(res)
 }
