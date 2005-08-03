@@ -139,7 +139,63 @@ For this change to take effect, you need to restart R.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-\section{Overview}
+\section{Statistical Overview}
+\label{sec:overview}
+
+{\bf Here, we describe the idea of using matching as preprocessing.
+  Maybe, the example should be in A User's Guide?}
+
+Once the matching is complete, the \MatchIt\ object can be used with
+any other analysis procedure; \MatchIt\ is designed to make those
+analysis procedures less dependent on the modeling assumptions and
+thus work better.  Therefore, any analysis you might have done using
+the original data sets can be done better on the matched data sets.
+To obtain the matched data sets, use {\tt match.data(m.out)}, where
+{\tt m.out} is a \MatchIt\ object. See Section~\ref{subsec:match.data}
+for more options and details.
+
+In this section, we describe our recommended approach
+\citep{HoImaKin05}, which uses
+\hlink{Zelig}{http://gking.harvard.edu/zelig/} to conduct parametric
+causal inference after preprocessing the data through \MatchIt.  The
+resulting matched data sets can also be exported to other statistical
+program using commands such as {\tt write.table()} and {\tt
+  write.csv()}. Also, the commands in the {\tt foreign} package allow
+users to save matched data sets as binary files for various
+statistical software including STATA and SPSS.
+
+Zelig \citep{ImaKinLau04} is an easy-to-use R package that estimates a
+variety of statistical models, gives easily interpretable results by
+simulating quantities of interest, and provides numerical and
+graphical summaries.  The package along with the complete
+documentation is available at
+\hlink{http://gking.harvard.edu/zelig/}{http://gking.harvard.edu/zelig/}.
+\MatchIt\ and Zelig can be easily used together to enable estimation
+of causal effects in very general settings with a variety of
+statistical models.
+
+The general framework is that of imputing the missing potential
+outcomes.  For example, for the treated group, the potential outcomes
+under control, $Y_{0i}$, are missing, whereas the outcomes under
+treatment, $Y_{1i}$, are observed.  We impute the missing outcomes,
+$Y_{0i}$, via Monte Carlo simulation using a parametric statistical
+model as follows.  First, we fit a model using the observed outcomes
+of the matched control units (i.e., using only observations where
+$T_i=0$).  Then, given this fitted model, the missing outcomes
+$Y_{i0}$ are imputed for the matched treated units by using the values
+of the explanatory variables for the treated units.  Once those
+potential outcomes are imputed, the estimate of individual $i$'s
+treatment effect is $Y_{1i}-\widehat{Y}_{0i}$ where $\widehat{Y}_{0i}$
+is the Monte Carlo estimate of the average missing potential outcome
+for unit $i$.  The in-sample average treatment effect for the treated
+individuals can be then obtained by averaging over $i$ of this
+difference. A similar procedure can also be used to estimate various
+quantities of interest. Another advantage of this simulation approach
+is that the uncertainty estimates such as standard errors are obtained
+easily from the estimation uncertainty in fitting the parametric
+model. See \citep{HoImaKin05} for more details.
+
+
 
 For any matching procedure, \MatchIt\ does its work with the following
 three commands:
@@ -162,7 +218,323 @@ used for subsequent parametric analyses thorough
 programs. Finally, a standard \texttt{print()} command can be used to
 print out a very brief summary of the output object.
 
-\subsection{Matching through \texttt{matchit()}}
+\input{matchit2zelig}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{A User's Guide by Examples}
+\label{methods}
+
+{\bf Here, we need to go back to the same structure as before.
+  Perhaps, we can rerun the same examples and paste current outputs or
+  use replace the old ones with some of the new examples below.}
+
+\MatchIt\ is designed for studies with a dependent variable that is a
+function of a dichotomous causal variable, with values known as the
+``treatment'' and ``control'' groups, and a set of pretreatment
+covariates that are measured {\it prior to} the administration of the
+treatment.  \MatchIt\ can be used for other types of causal variables
+by dichotomizing them, perhaps in multiple ways \citep[see
+also][]{ImaDyk04}.
+
+Unless otherwise noted, let $i$ index the $n$ units in the dataset,
+$n_1$ the number of treated units, $n_0$ the number of control units
+(such that $n=n_0+n_1$), and $x_i$ a vector of pretreatment or control
+variables for unit $i$.  $t_i=1$ indicates that unit $i$ was assigned
+treatment, and $t_i=0$ that unit $i$ was assigned control.  $y_{1i}$
+represents the potential outcome of unit $i$ under treatment and
+$y_{0i}$ the potential outcome of unit $i$ under control.  $y_{1i}$
+and $y_{0i}$ are jointly unobservable, so we only observe
+$y_i=t_iy_{1i}+(1-t_i)y_{0i}$.
+
+%** these examples were introduced before this discussion
+For all of our examples, we use data from the job training program
+analyzed in \citet{lalonde86} and \citet{DehWah99}.  A subsample of
+the data consisting of the National Supported Work Demonstration (NSW)
+treated group and the comparison sample from the Population Survey of
+Income Dynamics (PSID) is included in \MatchIt.%, and the full dataset
+% is available at \url{http://www.columbia.edu/~rd247/nswdata.html}.\footnote{\texttt{data(lalonde)} was created using \texttt{NSWRE74\_TREATED.TXT} and \texttt{CPS3\_CONTROLS.TXT} from this website.}
+The variables in this dataset are in Table~\ref{dwvars} below.  One
+causal effect of interest is the impact that participation in the job
+training program, \texttt{treat==1}, had on real earnings in 1978,
+\texttt{re78}, for those that participated in the program, i.e., the
+average treatment effect on the treated (ATT):
+
+\begin{equation}\label{re78eqn}
+E(\text{re78}(\text{treat}=1) | \text{treat}=1)\; - \; E(\text{re78}(\text{treat}=0) | \text{treat}=1),
+\end{equation}
+where \texttt{re78(treat=1)} represents the potential outcome under
+the treatment of the job program, and \texttt{re78(treat=0)} under
+control.  The first term (inside the expectation) in
+Equation~\ref{re78eqn} is \emph{observed}, whereas the second term is
+the \emph{unobserved} counterfactual of real earnings if participants
+had not participated.  The nature of causal inference is that one of
+the two terms in the difference will always be unobserved.  The same
+expression of the ATT, in mathematical notation is:
+\begin{equation}
+  E(Y_{1i} | t_i=1 ) \; - \; E(Y_{0i} | t_i=1).
+\end{equation}
+\begin{table}[h]
+\centering
+\begin{tabular}{lp{3in}}
+  \hline 
+  \multicolumn{1}{l}{Name} & \multicolumn{1}{c}{Description} \\
+  \hline
+  \multicolumn{2}{l}{\textbf{Outcome ($Y$)}} \\ 
+  \texttt{re78} & Real earnings (1978) \\\\
+  \multicolumn{2}{l}{\textbf{Treatment Indicator ($T$)}} \\
+  \texttt{treat} & Treated in job training program from March 1975-June
+  1977 (1 if treated, 0 if not treated)
+  \\ \\
+  \multicolumn{2}{l}{\textbf{Pre-treatment Covariates ($X$)}} \\
+  \texttt{age} & Age\\
+  \texttt{educ} & Years of education \\
+  \texttt{black} & Race black (1 if black, 0 otherwise) \\
+  \texttt{hispan} & Race hispanic  (1 if Hispanic, 0 otherwise) \\
+  \texttt{married} & Marital status (1 if married, 0 otherwise) \\
+  \texttt{nodegree} & High school degree (1 if no degree, 0 otherwise)\\
+  \texttt{re74} & Real earnings (1974) \\
+  \texttt{re75} & Real earnings (1975) \\ 
+  \hline
+\end{tabular}\label{lalonde}
+\caption{Description of Lalonde data \label{dwvars}}
+\end{table}
+
+\subsection{Exact Matching} 
+\label{exactm}
+
+The simplest version of matching is exact.  This technique matches
+\emph{each} treated unit to \emph{all} possible control units with the
+same covariate values, forming subclasses such that within each
+subclass all units (treatment and control) have the same covariate
+values.
+
+\subsubsection{Examples}
+
+The following example script can be run by typing {\tt demo(exact)} at
+the R prompt.
+
+\begin{verbatim}
+## load the Lalonde data
+data(lalonde)
+## conduct exact matching on educ, black, and hispan
+m.out <- matchit(treat ~ educ + black + hispan, data = lalonde, method = "exact")
+## balance diagnostics through statistics
+summary(m.out)
+## balance diagnostics through graphics
+plot(m.out)
+\end{verbatim}
+
+The \MatchIt\ output object will include \texttt{weights} and
+\texttt{subclass}, which can be used to identify which units were put
+into the same subclass.  Units that did not have the same covariate
+values as anyone in the other treatment group have \texttt{subclass =
+  NA}.
+
+\subsection{Subclassification}
+\label{subclass}
+
+When there are many covariates on which matches are desired, finidng
+sufficient exact matches will often be impossible.  In that case,
+subclassification is sometimes desireable, such as by using a scalar
+distance measure like the propensity score estimated using one of the
+\texttt{distance} options.  Subclassification will form subclasses
+based on this distance measure.  Within each subclass, the
+distribution of covariates in the treatment and control groups should
+be similar, and this can be checked using the \texttt{summary()}
+command after doing subclassification.
+
+Subclassification is implemented in \MatchIt\ using \texttt{method =
+  "subclass"}.  See also the Sections on full matching (Section
+\ref{fullmatching}) and nearest-neighbor matching (Section
+\ref{nearest}), which provide additional ways of performing
+subclassification.
+
+\subsubsection{Examples}
+
+The following example script can be run by typing {\tt demo(subclass)}
+at the R prompt.
+
+\begin{verbatim}
+## load the Lalonde data
+data(lalonde)
+## form 6 subclasses (the default) based on distance measure estimated using logistic regression
+## of treat on re74, re75, age, and educ.  By default, each subclass will have
+## approximately the same number of treated units. 
+m.out <- matchit(treat ~ re74+re75+age+educ, data=lalonde, method = "subclass")
+## balance diagnostics through statistics
+summary(m.out)
+## balance diagnostics through graphics
+plot(m.out)
+\end{verbatim}
+
+\begin{comment}
+\begin{figure}[tbp]
+  \begin{center}
+%    \rotatebox{270}{\includegraphics[height=2.85in,angle=0]{figs/subclass1}}
+%    \rotatebox{270}{\includegraphics[height=2.85in,angle=0]{figs/subclass2}}
+%    \rotatebox{270}{\includegraphics[height=2.85in,angle=0]{figs/subclass3}}
+%    \rotatebox{270}{\includegraphics[height=2.85in,angle=0]{figs/subclass4}}
+    {\includegraphics[scale=0.25]{figs/subclass1}}
+    {\includegraphics[scale=0.25]{figs/subclass2}}
+    {\includegraphics[scale=0.25,angle=90]{figs/subclass3}}
+    {\includegraphics[scale=0.25]{figs/subclass4}}
+    \hfill
+    \caption{Sample interactive diagnostic graphs from \texttt{demo(lalonde)}}
+\label{diags}
+\end{center}
+\end{figure}
+\end{comment}
+
+\subsection{Full Matching}
+\label{fullmatching}
+
+When one wishes to use all treated and control units in the analysis,
+a particular type of subclassification is called ``full matching''
+\citep{Rosenbaum02, Hansen04}. In this matching procedure, the matched
+sample is composed of matched sets, where each matched set contains
+either one treated unit and one or more controls, or one control unit
+and one or more treated units.  The only units not placed into a
+subclass will be those discarded (if a \texttt{discard} option was
+specified).  Full matching is optimal in terms of minimizing a
+weighted average of the propensity score distances between each
+treated subject and each control subject within each stratum.
+
+\subsubsection{Examples}
+
+The following example script can be run by typing {\tt demo(full)} at
+the R prompt.
+
+\begin{verbatim}
+## load the Lalonde data
+data(lalonde)
+## conduct full matching using the propensity score based on logistic regression
+m.out <- matchit(treat ~ age + educ + black + hispan + married + nodegree + re74 + re75, 
+                 data = lalonde, method = "full", distance = "logit")
+## print a short summary
+print(m.out)
+## balance diagnostics through statistics
+summary(m.out)
+## balance diagnostics through graphics
+plot(m.out)
+\end{verbatim}
+
+
+\subsection{Nearest Neighbor Matching}
+\label{nearest}
+
+Nearest neighbor matching selects the $r$ best control matches for
+each individual in the treatment group (excluding those discarded
+using the \texttt{discard}) option.  The matching is done using a
+distance measure such as the propensity score, and matches are chosen
+for each treated unit one at a time, where at each step the control
+unit not yet matched that is closest to the treated unit on the
+distance measure is chosen as the match.  There are many variations on
+nearest neighbor matching.  See below for the options available in
+\MatchIt.
+
+Nearest neighbor matching is implemented in \MatchIt\ using the
+\texttt{method="nearest"} option.
+
+\subsubsection{Examples}
+
+The following example script can be run by typing {\tt
+    demo(nearest)} at the R prompt.
+
+\begin{verbatim}
+## load the Lalonde data
+data(lalonde)
+## Nearest neighbor matching on propensity score estimated using logistic regression of
+## treat on re74, re75, age, and educ.  Two matches chosen for each control unit.
+m.out <- matchit(treat ~ re74 + re75 + age + educ, data = lalonde, method = "nearest", 
+                 distance = "logit", ratio=2)
+## balance diagnostics through statistics
+summary(m.out)
+## balance diagnostics through graphics
+plot(m.out)
+
+## Mahalanobis matching on re74 and re75 within nearest neighbor matching on 
+## distance measure, with restriction of exact matches on married.
+m.out2 <- matchit(treat ~ re74 + re75 + age + educ, data = lalonde, method = "nearest", 
+                  distance = "logit", mahvars=c("re74", "re75"), exact=c("married"), 
+                  caliper=.25)
+print(m.out2)
+## balance diagnostics through statistics
+summary(m.out2)
+## balance diagnostics through graphics
+plot(m.out2)
+
+## Nearest neighbor matching with discard option
+m.out3 <- matchit(treat ~ re74 + re75 + age + educ, data = lalonde, method = "nearest", 
+                  distance = "logit", discard="both")
+print(m.out3)
+## balance diagnostics through statistics
+summary(m.out3)
+## balance diagnostics through graphics
+plot(m.out3)
+
+## Nearest neighbor matching with replacement
+m.out4 <- matchit(treat ~ re74 + re75 + age + educ, data = lalonde, method = "nearest", 
+                  distance = "logit", replace=TRUE, ratio=2)
+print(m.out4)
+## balance diagnostics through statistics
+summary(m.out4)
+## balance diagnostics through graphics
+plot(m.out4)
+
+## Nearest neighbor matching followed by formation of 5 subclasses
+m.out5 <- matchit(treat ~ re74 + re75 + age + educ, data = lalonde, method = "nearest", 
+                  distance = "logit", subclass=5)
+print(m.out5)
+## balance diagnostics through statistics
+summary(m.out5)
+## balance diagnostics through graphics
+plot(m.out5)
+\end{verbatim}
+
+\subsection{Optimal Matching}
+\label{optmatch}
+
+The default nearest neighbor matching method in \MatchIt\ is
+``greedy'' matching, where the closest control match for each treated
+unit is chosen one at a time, without trying to minimize a global
+distance measure.  Another method, ``optimal'' matching, finds the
+matched samples with the smallest average absolute 
+distance between each matched pair.  With large control pools, greedy
+and optimal matching may lead to very similar (or the same) sets of
+matches; research \citep{GuRos93} has shown that greedy and optimal
+matching generally choose the same sets of controls for the matched
+samples, but that optimal matching does a better job of minimizing the
+distance within each pair.  In addition, optimal
+matching can be particularly helpful when there are not many
+appropriate control matches for the treated units.  See \cite{GuRos93}
+or \cite{Rosenbaum02} for more information on optimal matching.
+
+\subsubsection{Examples}
+
+The following example script can be run by typing {\tt demo(optimal)}
+at the R prompt.
+
+\begin{verbatim}
+## load the Lalonde data
+data(lalonde)
+## optimal ratio matching using the propensity score based on logistic regression
+m.out <- matchit(treat ~ re74 + re75 + age + educ, data = lalonde, method = "optimal", 
+                 distance = "logit", ratio = 2)
+## a short summary
+print(m.out)
+## balance diagnostics through statistics
+summary(m.out)
+## balance diagnostics through graphics
+plot(m.out)
+\end{verbatim}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{References}
+
+\subsection{Inputs}
 
 The main command, \texttt{matchit()}, implements a variety of matching
 procedures.
@@ -175,7 +547,7 @@ procedures in addition to inputs specific to particular matching
 procedures. There is also a standard output of \texttt{matchit()}
 across all commands.  We describe both here.
 
-\subsubsection{Common Inputs to \texttt{matchit()}}
+\subsubsection{Inputs Common to All Matching Methods}
 
 \begin{enumerate}
   
@@ -311,7 +683,134 @@ across all commands.  We describe both here.
   value. The default is \texttt{FALSE}.
 \end{enumerate}
 
-\subsubsection{Standard Output of \texttt{matchit()}}
+\subsubsection{Inputs Specific to Exact Matching}
+
+Exact matching is implemented in \MatchIt\ using \texttt{method =
+  "exact"}.  Exact matching will be done on all covariates included on
+the right-hand side of the \texttt{formula} specified in the \MatchIt\
+call.  No \texttt{distance} option is used for exact matching, and
+there are no additional options for exact matching.
+
+\subsubsection{Inputs Specific to Subclassification}
+
+\begin{enumerate}
+\item \texttt{subclass} is either (1) a scalar, specifying the number
+  of subclasses, or (2) a vector of probabilities bounded between 0
+  and 1, to create quantiles of the distance measure using the units
+  in the group specified by \texttt{sub.by}.  The default is
+  \texttt{subclass = 6}.
+\item \texttt{sub.by} specifies by what criteria to subclassify:
+  \texttt{"treat"} indicates by the number of treatment units
+  (default), \texttt{"control"} indicates by the number of control
+  units, and \texttt{"all"} indicates by the total number of units.
+\end{enumerate}
+
+\subsubsection{Inputs Specific to Nearest Neighbor Matching}
+
+\begin{enumerate}
+\item \texttt{m.order}  specifies the order in which to match
+  treatment units with control units:
+  \begin{itemize}
+  \item {\tt "largest"} indicates matching from the largest value of
+    the distance measure to the smallest. This is the default.
+  \item {\tt "smallest"} indicates matching from the smallest value of
+    the distance measure to the largest.
+  \item {\tt "random"} indicates matching in random order.
+  \end{itemize}
+\item \texttt{replace} specifies whether each control unit can be
+  matched to more than one treated unit.  For matching ``with
+  replacement'', \texttt{replace = TRUE}.  If each control is to be
+  used as a match at most once (``without replacement''), \texttt{replace
+    = FALSE}. The default is {\tt FALSE}.
+\item \texttt{ratio} specifies the number of control units to match to
+  each treated unit, default=1.  If matching is done without
+  replacement and there are fewer control units than ratio times the
+  number of eligible treated units (i.e., there are not enough control 
+  units for the specified method), then the higher ratios will have
+  \texttt{NA} in place of the matching unit number in
+  \texttt{match.matrix}.
+\item \texttt{exact} specifies variables on which to perform exact
+  matching within the nearest neighbor matching.  If \texttt{exact} is
+  specified, only matches that exactly match on the covariates in
+  \texttt{exact} will be allowed.  Within the matches that match on
+  the variables in \texttt{exact}, the match with the closest distance
+  measure will be chosen.  \texttt{exact} should be entered as a
+  vector of variable names (\texttt{exact = c("X1", "X2")}) that are
+  names of variables in \texttt{data}.
+\item \texttt{caliper} specifies the number of standard deviations of
+  the distance measure within which to draw control units, default=0.
+  If a caliper is specified, the matches are restricted to being
+  within the caliper and a control unit within the caliper for a
+  treated unit is randomly selected as the match for that treated
+  unit.  If \texttt{caliper != 0}, there are two additional options:
+  \begin{itemize} 
+  \item \texttt{calclosest} specifies whether to take the nearest
+    available match if no matches are available within the
+    \texttt{caliper}. The default is {\tt FALSE}.
+  \item \texttt{mahvars} specifies variables on which to perform
+    Mahalanobis-metric matching within each caliper (default=NULL).
+    Variables should be entered as a vector of variable names
+    (\texttt{mahvars=c("X1","X2")}) that are names of variables in
+    \texttt{data}.  If \texttt{mahvars} is specified without
+    \texttt{caliper}, the caliper is set to 0.25.
+  \end{itemize}
+\item \texttt{subclass} and \texttt{sub.by}.  See Section
+  \ref{subclass} for more details on these options.  If a
+  \texttt{subclass} is specified within \texttt{method = "nearest"},
+  the matched units will be placed into subclasses after the nearest
+  neighbor matching is completed.
+\end{enumerate}
+
+
+\subsubsection{Inputs Specific to Full Matching}
+
+Full matching can be performed with \MatchIt\ by setting
+\texttt{method = "full"}.  We use an add-on package called
+\texttt{optmatch} \citep{Hansen04}, which must be installed separately
+by typing at the R command prompt,
+\begin{verbatim}
+install.packages("optmatch", contriburl = "http://www.stat.lsa.umich.edu/~bbh/optmatch")
+\end{verbatim}
+For more information about the package, see
+\hlink{http://www.stat.lsa.umich.edu/\~{}bbh/optmatch.html}{http://www.stat.lsa.umich.edu/\~bbh/optmatch.html}.
+The available options are listed below.
+
+\begin{enumerate}
+\item {\tt ...} represents additional inputs that can be passed to the
+  {\tt fullmatch()} function in the {\tt optmatch} package. See {\tt
+    help(fullmatch)} for details.
+\end{enumerate}
+
+\subsubsection{Inputs Specific to Optimal Matching}
+
+Optimal matching is performed with \MatchIt\ by setting \texttt{method
+  = "optimal"}.  We use an add-on package called \texttt{optmatch}
+\citep{Hansen04}, which must be installed separately by typing at the
+R command prompt,
+%** can we do this automatically if its needed?
+\begin{verbatim}
+install.packages("optmatch", contriburl = "http://www.stat.lsa.umich.edu/~bbh/optmatch")
+\end{verbatim}
+Currently, \texttt{optmatch} is only available for Unix and MacOS X
+(but not for Windows).  For more information about the package, see
+\hlink{http://www.stat.lsa.umich.edu/\~{}bbh/optmatch.html}{http://www.stat.lsa.umich.edu/\~bbh/optmatch.html}.
+The available options are listed below.
+
+\begin{enumerate}
+\item {\tt ratio} specifies the number of control units to be matched
+  to each treatment unit, the default is {\tt 1}.
+\item {\tt ...} represents additional inputs that can be passed to the
+  {\tt fullmatch()} function in the {\tt optmatch} package. See {\tt
+    help(fullmatch)} for details.
+\end{enumerate}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{Outputs}
+
+\subsubsection{Output Object Contents}
 
 The following are the elements of the \texttt{matchit} output object;
 
@@ -374,10 +873,6 @@ The following are the elements of the \texttt{matchit} output object;
   distance measure (the right-hand side of \texttt{formula}).
 \end{enumerate}
 
-
-\subsection{Balance Diagnostics through {\tt summary()} and {\tt
-    plot()}}
-\label{cmd:sum}
 
 \subsubsection{{\tt summary()}}
 The \texttt{summary} command returns more information about the
@@ -742,7 +1237,7 @@ Further examples of the summary statistics and diagnostic plots can be
 seen in the demos for each of the specific matching methods (see
 Section \ref{methods}).
 
-\subsection{Obtaining the Matched Data Set}
+\subsubsection{{\tt match.data()}}
 \label{subsec:match.data}
 
 After matching, one might wish to obtain the matched data set for
@@ -758,7 +1253,7 @@ frame where additional information about matching (i.e., distance
 measure as well as resulting weights and subclasses) is added,
 restricted to units that were matched.
 
-\subsubsection{Inputs to {\tt match.data()}}
+\paragraph{Inputs}
 
 {\tt match.data()} takes the following inputs:
 \begin{enumerate}
@@ -778,7 +1273,7 @@ restricted to units that were matched.
   subclass indicator. The default is {\tt "subclass"}.
 \end{enumerate}
 
-\subsubsection{Examples}
+\paragraph{Examples}
 
 Here, we present examples for using {\tt match.data()}. Users can run
 these commands by typing {\tt demo(match.data)} at the R prompt.
@@ -814,606 +1309,7 @@ m.data4 <- match.data(m.out2, subclass = "block", weights = "w",
 names(m.data4)
 \end{verbatim}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\section{Matching Methods}
-\label{methods}
-
-\MatchIt\ is designed for studies with a dependent variable that is a
-function of a dichotomous causal variable, with values known as the
-``treatment'' and ``control'' groups, and a set of pretreatment
-covariates that are measured {\it prior to} the administration of the
-treatment.  \MatchIt\ can be used for other types of causal variables
-by dichotomizing them, perhaps in multiple ways \citep[see
-also][]{ImaDyk04}.
-
-Unless otherwise noted, let $i$ index the $n$ units in the dataset,
-$n_1$ the number of treated units, $n_0$ the number of control units
-(such that $n=n_0+n_1$), and $x_i$ a vector of pretreatment or control
-variables for unit $i$.  $t_i=1$ indicates that unit $i$ was assigned
-treatment, and $t_i=0$ that unit $i$ was assigned control.  $y_{1i}$
-represents the potential outcome of unit $i$ under treatment and
-$y_{0i}$ the potential outcome of unit $i$ under control.  $y_{1i}$
-and $y_{0i}$ are jointly unobservable, so we only observe
-$y_i=t_iy_{1i}+(1-t_i)y_{0i}$.
-
-%** these examples were introduced before this discussion
-For all of our examples, we use data from the job training program
-analyzed in \citet{lalonde86} and \citet{DehWah99}.  A subsample of
-the data consisting of the National Supported Work Demonstration (NSW)
-treated group and the comparison sample from the Population Survey of
-Income Dynamics (PSID) is included in \MatchIt.%, and the full dataset
-% is available at \url{http://www.columbia.edu/~rd247/nswdata.html}.\footnote{\texttt{data(lalonde)} was created using \texttt{NSWRE74\_TREATED.TXT} and \texttt{CPS3\_CONTROLS.TXT} from this website.}
-The variables in this dataset are in Table~\ref{dwvars} below.  One
-causal effect of interest is the impact that participation in the job
-training program, \texttt{treat==1}, had on real earnings in 1978,
-\texttt{re78}, for those that participated in the program, i.e., the
-average treatment effect on the treated (ATT):
-
-\begin{equation}\label{re78eqn}
-E(\text{re78}(\text{treat}=1) | \text{treat}=1)\; - \; E(\text{re78}(\text{treat}=0) | \text{treat}=1),
-\end{equation}
-where \texttt{re78(treat=1)} represents the potential outcome under
-the treatment of the job program, and \texttt{re78(treat=0)} under
-control.  The first term (inside the expectation) in
-Equation~\ref{re78eqn} is \emph{observed}, whereas the second term is
-the \emph{unobserved} counterfactual of real earnings if participants
-had not participated.  The nature of causal inference is that one of
-the two terms in the difference will always be unobserved.  The same
-expression of the ATT, in mathematical notation is:
-\begin{equation}
-  E(Y_{1i} | t_i=1 ) \; - \; E(Y_{0i} | t_i=1).
-\end{equation}
-\begin{table}[h]
-\centering
-\begin{tabular}{lp{3in}}
-  \hline 
-  \multicolumn{1}{l}{Name} & \multicolumn{1}{c}{Description} \\
-  \hline
-  \multicolumn{2}{l}{\textbf{Outcome ($Y$)}} \\ 
-  \texttt{re78} & Real earnings (1978) \\\\
-  \multicolumn{2}{l}{\textbf{Treatment Indicator ($T$)}} \\
-  \texttt{treat} & Treated in job training program from March 1975-June
-  1977 (1 if treated, 0 if not treated)
-  \\ \\
-  \multicolumn{2}{l}{\textbf{Pre-treatment Covariates ($X$)}} \\
-  \texttt{age} & Age\\
-  \texttt{educ} & Years of education \\
-  \texttt{black} & Race black (1 if black, 0 otherwise) \\
-  \texttt{hispan} & Race hispanic  (1 if Hispanic, 0 otherwise) \\
-  \texttt{married} & Marital status (1 if married, 0 otherwise) \\
-  \texttt{nodegree} & High school degree (1 if no degree, 0 otherwise)\\
-  \texttt{re74} & Real earnings (1974) \\
-  \texttt{re75} & Real earnings (1975) \\ 
-  \hline
-\end{tabular}\label{lalonde}
-\caption{Description of Lalonde data \label{dwvars}}
-\end{table}
-
-\subsection{Exact Matching} 
-\label{exactm}
-
-The simplest version of matching is exact.  This technique matches
-\emph{each} treated unit to \emph{all} possible control units with the
-same covariate values, forming subclasses such that within each
-subclass all units (treatment and control) have the same covariate
-values.
-
-\subsubsection{Options}
-
-Exact matching is implemented in \MatchIt\ using \texttt{method =
-  "exact"}.  Exact matching will be done on all covariates included on
-the right-hand side of the \texttt{formula} specified in the \MatchIt\
-call.  No \texttt{distance} option is used for exact matching, and
-there are no additional options for exact matching.
-
-\subsubsection{Examples}
-
-The following example script can be run by typing {\tt demo(exact)} at
-the R prompt.
-
-\begin{verbatim}
-## load the Lalonde data
-data(lalonde)
-## conduct exact matching on educ, black, and hispan
-m.out <- matchit(treat ~ educ + black + hispan, data = lalonde, method = "exact")
-## balance diagnostics through statistics
-summary(m.out)
-## balance diagnostics through graphics
-plot(m.out)
-\end{verbatim}
-
-The \MatchIt\ output object will include \texttt{weights} and
-\texttt{subclass}, which can be used to identify which units were put
-into the same subclass.  Units that did not have the same covariate
-values as anyone in the other treatment group have \texttt{subclass =
-  NA}.
-
-\subsection{Subclassification}
-\label{subclass}
-
-When there are many covariates on which matches are desired, finidng
-sufficient exact matches will often be impossible.  In that case,
-subclassification is sometimes desireable, such as by using a scalar
-distance measure like the propensity score estimated using one of the
-\texttt{distance} options.  Subclassification will form subclasses
-based on this distance measure.  Within each subclass, the
-distribution of covariates in the treatment and control groups should
-be similar, and this can be checked using the \texttt{summary()}
-command after doing subclassification.
-
-Subclassification is implemented in \MatchIt\ using \texttt{method =
-  "subclass"}.  See also the Sections on full matching (Section
-\ref{fullmatching}) and nearest-neighbor matching (Section
-\ref{nearest}), which provide additional ways of performing
-subclassification.
-
-\subsubsection{Options}
-
-\begin{itemize}
-\item \texttt{subclass} is either (1) a scalar, specifying the number
-  of subclasses, or (2) a vector of probabilities bounded between 0
-  and 1, to create quantiles of the distance measure using the units
-  in the group specified by \texttt{sub.by}.  The default is
-  \texttt{subclass = 6}.
-\item \texttt{sub.by} specifies by what criteria to subclassify:
-  \texttt{"treat"} indicates by the number of treatment units
-  (default), \texttt{"control"} indicates by the number of control
-  units, and \texttt{"all"} indicates by the total number of units.
-  \end{itemize}
-
-\subsubsection{Examples}
-
-The following example script can be run by typing {\tt demo(subclass)}
-at the R prompt.
-
-\begin{verbatim}
-## load the Lalonde data
-data(lalonde)
-## form 6 subclasses (the default) based on distance measure estimated using logistic regression
-## of treat on re74, re75, age, and educ.  By default, each subclass will have
-## approximately the same number of treated units. 
-m.out <- matchit(treat ~ re74+re75+age+educ, data=lalonde, method = "subclass")
-## balance diagnostics through statistics
-summary(m.out)
-## balance diagnostics through graphics
-plot(m.out)
-\end{verbatim}
-
-\begin{comment}
-\begin{figure}[tbp]
-  \begin{center}
-%    \rotatebox{270}{\includegraphics[height=2.85in,angle=0]{figs/subclass1}}
-%    \rotatebox{270}{\includegraphics[height=2.85in,angle=0]{figs/subclass2}}
-%    \rotatebox{270}{\includegraphics[height=2.85in,angle=0]{figs/subclass3}}
-%    \rotatebox{270}{\includegraphics[height=2.85in,angle=0]{figs/subclass4}}
-    {\includegraphics[scale=0.25]{figs/subclass1}}
-    {\includegraphics[scale=0.25]{figs/subclass2}}
-    {\includegraphics[scale=0.25,angle=90]{figs/subclass3}}
-    {\includegraphics[scale=0.25]{figs/subclass4}}
-    \hfill
-    \caption{Sample interactive diagnostic graphs from \texttt{demo(lalonde)}}
-\label{diags}
-\end{center}
-\end{figure}
-\end{comment}
-
-\subsection{Full Matching}
-\label{fullmatching}
-
-When one wishes to use all treated and control units in the analysis,
-a particular type of subclassification is called ``full matching''
-\citep{Rosenbaum02, Hansen04}. In this matching procedure, the matched
-sample is composed of matched sets, where each matched set contains
-either one treated unit and one or more controls, or one control unit
-and one or more treated units.  The only units not placed into a
-subclass will be those discarded (if a \texttt{discard} option was
-specified).  Full matching is optimal in terms of minimizing a
-weighted average of the propensity score distances between each
-treated subject and each control subject within each stratum.
-
-\subsubsection{Options}
-
-Full matching can be performed with \MatchIt\ by setting
-\texttt{method = "full"}.  We use an add-on package called
-\texttt{optmatch} \citep{Hansen04}, which must be installed separately
-by typing at the R command prompt,
-\begin{verbatim}
-install.packages("optmatch", contriburl = "http://www.stat.lsa.umich.edu/~bbh/optmatch")
-\end{verbatim}
-For more information about the package, see
-\hlink{http://www.stat.lsa.umich.edu/\~{}bbh/optmatch.html}{http://www.stat.lsa.umich.edu/\~bbh/optmatch.html}.
-The available options are listed below.
-
-\begin{enumerate}
-\item {\tt ...} represents additional inputs that can be passed to the
-  {\tt fullmatch()} function in the {\tt optmatch} package. See {\tt
-    help(fullmatch)} for details.
-\end{enumerate}
-
-\subsubsection{Examples}
-
-The following example script can be run by typing {\tt demo(full)} at
-the R prompt.
-
-\begin{verbatim}
-## load the Lalonde data
-data(lalonde)
-## conduct full matching using the propensity score based on logistic regression
-m.out <- matchit(treat ~ age + educ + black + hispan + married + nodegree + re74 + re75, 
-                 data = lalonde, method = "full", distance = "logit")
-## print a short summary
-print(m.out)
-## balance diagnostics through statistics
-summary(m.out)
-## balance diagnostics through graphics
-plot(m.out)
-\end{verbatim}
-
-
-\subsection{Nearest Neighbor Matching}
-\label{nearest}
-
-Nearest neighbor matching selects the $r$ best control matches for
-each individual in the treatment group (excluding those discarded
-using the \texttt{discard}) option.  The matching is done using a
-distance measure such as the propensity score, and matches are chosen
-for each treated unit one at a time, where at each step the control
-unit not yet matched that is closest to the treated unit on the
-distance measure is chosen as the match.  There are many variations on
-nearest neighbor matching.  See below for the options available in
-\MatchIt.
-
-Nearest neighbor matching is implemented in \MatchIt\ using the
-\texttt{method="nearest"} option.
-
-\subsubsection{Options}
-\begin{enumerate}
-\item \texttt{m.order}  specifies the order in which to match
-  treatment units with control units:
-  \begin{itemize}
-  \item {\tt "largest"} indicates matching from the largest value of
-    the distance measure to the smallest. This is the default.
-  \item {\tt "smallest"} indicates matching from the smallest value of
-    the distance measure to the largest.
-  \item {\tt "random"} indicates matching in random order.
-  \end{itemize}
-\item \texttt{replace} specifies whether each control unit can be
-  matched to more than one treated unit.  For matching ``with
-  replacement'', \texttt{replace = TRUE}.  If each control is to be
-  used as a match at most once (``without replacement''), \texttt{replace
-    = FALSE}. The default is {\tt FALSE}.
-\item \texttt{ratio} specifies the number of control units to match to
-  each treated unit, default=1.  If matching is done without
-  replacement and there are fewer control units than ratio times the
-  number of eligible treated units (i.e., there are not enough control 
-  units for the specified method), then the higher ratios will have
-  \texttt{NA} in place of the matching unit number in
-  \texttt{match.matrix}.
-\item \texttt{exact} specifies variables on which to perform exact
-  matching within the nearest neighbor matching.  If \texttt{exact} is
-  specified, only matches that exactly match on the covariates in
-  \texttt{exact} will be allowed.  Within the matches that match on
-  the variables in \texttt{exact}, the match with the closest distance
-  measure will be chosen.  \texttt{exact} should be entered as a
-  vector of variable names (\texttt{exact = c("X1", "X2")}) that are
-  names of variables in \texttt{data}.
-\item \texttt{caliper} specifies the number of standard deviations of
-  the distance measure within which to draw control units, default=0.
-  If a caliper is specified, the matches are restricted to being
-  within the caliper and a control unit within the caliper for a
-  treated unit is randomly selected as the match for that treated
-  unit.  If \texttt{caliper != 0}, there are two additional options:
-  \begin{itemize} 
-  \item \texttt{calclosest} specifies whether to take the nearest
-    available match if no matches are available within the
-    \texttt{caliper}. The default is {\tt FALSE}.
-  \item \texttt{mahvars} specifies variables on which to perform
-    Mahalanobis-metric matching within each caliper (default=NULL).
-    Variables should be entered as a vector of variable names
-    (\texttt{mahvars=c("X1","X2")}) that are names of variables in
-    \texttt{data}.  If \texttt{mahvars} is specified without
-    \texttt{caliper}, the caliper is set to 0.25.
-  \end{itemize}
-\item \texttt{subclass} and \texttt{sub.by}.  See Section
-  \ref{subclass} for more details on these options.  If a
-  \texttt{subclass} is specified within \texttt{method = "nearest"},
-  the matched units will be placed into subclasses after the nearest
-  neighbor matching is completed.
-\end{enumerate}
-
-\subsubsection{Examples}
-
-The following example script can be run by typing {\tt
-    demo(nearest)} at the R prompt.
-
-\begin{verbatim}
-## load the Lalonde data
-data(lalonde)
-## Nearest neighbor matching on propensity score estimated using logistic regression of
-## treat on re74, re75, age, and educ.  Two matches chosen for each control unit.
-m.out <- matchit(treat ~ re74 + re75 + age + educ, data = lalonde, method = "nearest", 
-                 distance = "logit", ratio=2)
-## balance diagnostics through statistics
-summary(m.out)
-## balance diagnostics through graphics
-plot(m.out)
-
-## Mahalanobis matching on re74 and re75 within nearest neighbor matching on 
-## distance measure, with restriction of exact matches on married.
-m.out2 <- matchit(treat ~ re74 + re75 + age + educ, data = lalonde, method = "nearest", 
-                  distance = "logit", mahvars=c("re74", "re75"), exact=c("married"), 
-                  caliper=.25)
-print(m.out2)
-## balance diagnostics through statistics
-summary(m.out2)
-## balance diagnostics through graphics
-plot(m.out2)
-
-## Nearest neighbor matching with discard option
-m.out3 <- matchit(treat ~ re74 + re75 + age + educ, data = lalonde, method = "nearest", 
-                  distance = "logit", discard="both")
-print(m.out3)
-## balance diagnostics through statistics
-summary(m.out3)
-## balance diagnostics through graphics
-plot(m.out3)
-
-## Nearest neighbor matching with replacement
-m.out4 <- matchit(treat ~ re74 + re75 + age + educ, data = lalonde, method = "nearest", 
-                  distance = "logit", replace=TRUE, ratio=2)
-print(m.out4)
-## balance diagnostics through statistics
-summary(m.out4)
-## balance diagnostics through graphics
-plot(m.out4)
-
-## Nearest neighbor matching followed by formation of 5 subclasses
-m.out5 <- matchit(treat ~ re74 + re75 + age + educ, data = lalonde, method = "nearest", 
-                  distance = "logit", subclass=5)
-print(m.out5)
-## balance diagnostics through statistics
-summary(m.out5)
-## balance diagnostics through graphics
-plot(m.out5)
-\end{verbatim}
-
-\subsection{Optimal Matching}
-\label{optmatch}
-
-The default nearest neighbor matching method in \MatchIt\ is
-``greedy'' matching, where the closest control match for each treated
-unit is chosen one at a time, without trying to minimize a global
-distance measure.  Another method, ``optimal'' matching, finds the
-matched samples with the smallest average absolute 
-distance between each matched pair.  With large control pools, greedy
-and optimal matching may lead to very similar (or the same) sets of
-matches; research \citep{GuRos93} has shown that greedy and optimal
-matching generally choose the same sets of controls for the matched
-samples, but that optimal matching does a better job of minimizing the
-distance within each pair.  In addition, optimal
-matching can be particularly helpful when there are not many
-appropriate control matches for the treated units.  See \cite{GuRos93}
-or \cite{Rosenbaum02} for more information on optimal matching.
-
-\subsubsection{Options}
-
-Optimal matching is performed with \MatchIt\ by setting \texttt{method
-  = "optimal"}.  We use an add-on package called \texttt{optmatch}
-\citep{Hansen04}, which must be installed separately by typing at the
-R command prompt,
-%** can we do this automatically if its needed?
-\begin{verbatim}
-install.packages("optmatch", contriburl = "http://www.stat.lsa.umich.edu/~bbh/optmatch")
-\end{verbatim}
-Currently, \texttt{optmatch} is only available for Unix and MacOS X
-(but not for Windows).  For more information about the package, see
-\hlink{http://www.stat.lsa.umich.edu/\~{}bbh/optmatch.html}{http://www.stat.lsa.umich.edu/\~bbh/optmatch.html}.
-The available options are listed below.
-
-\begin{enumerate}
-\item {\tt ratio} specifies the number of control units to be matched
-  to each treatment unit, the default is {\tt 1}.
-\item {\tt ...} represents additional inputs that can be passed to the
-  {\tt fullmatch()} function in the {\tt optmatch} package. See {\tt
-    help(fullmatch)} for details.
-\end{enumerate}
-
-\subsubsection{Examples}
-
-The following example script can be run by typing {\tt demo(optimal)}
-at the R prompt.
-
-\begin{verbatim}
-## load the Lalonde data
-data(lalonde)
-## optimal ratio matching using the propensity score based on logistic regression
-m.out <- matchit(treat ~ re74 + re75 + age + educ, data = lalonde, method = "optimal", 
-                 distance = "logit", ratio = 2)
-## a short summary
-print(m.out)
-## balance diagnostics through statistics
-summary(m.out)
-## balance diagnostics through graphics
-plot(m.out)
-\end{verbatim}
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-
-\section{Statistical Analysis after Matching}
-\label{sec:analysis}
-
-Once the matching is complete, the \MatchIt\ object can be used with
-any other analysis procedure; \MatchIt\ is designed to make those
-analysis procedures less dependent on the modeling assumptions and
-thus work better.  Therefore, any analysis you might have done using
-the original data sets can be done better on the matched data sets.
-To obtain the matched data sets, use {\tt match.data(m.out)}, where
-{\tt m.out} is a \MatchIt\ object. See Section~\ref{subsec:match.data}
-for more options and details. 
-
-In this section, we describe our recommended approach
-\citep{HoImaKin05}, which uses
-\hlink{Zelig}{http://gking.harvard.edu/zelig/} to conduct parametric
-causal inference after preprocessing the data through \MatchIt.  The
-resulting matched data sets can also be exported to other statistical
-program using commands such as {\tt write.table()} and {\tt
-  write.csv()}. Also, the commands in the {\tt foreign} package allow
-users to save matched data sets as binary files for various
-statistical software including STATA and SPSS.
-
-Zelig \citep{ImaKinLau04} is an easy-to-use R package that estimates a
-variety of statistical models, gives easily interpretable results by
-simulating quantities of interest, and provides numerical and
-graphical summaries.  The package along with the complete
-documentation is available at
-\hlink{http://gking.harvard.edu/zelig/}{http://gking.harvard.edu/zelig/}.
-\MatchIt\ and Zelig can be easily used together to enable estimation
-of causal effects in very general settings with a variety of
-statistical models.
-
-\subsection{The General Framework}
-
-The general framework is that of imputing the missing potential
-outcomes.  For example, for the treated group, the potential outcomes
-under control, $Y_{0i}$, are missing, whereas the outcomes under
-treatment, $Y_{1i}$, are observed.  We impute the missing outcomes,
-$Y_{0i}$, via Monte Carlo simulation using a parametric statistical
-model as follows.  First, we fit a model using the observed outcomes
-of the matched control units (i.e., using only observations where
-$T_i=0$).  Then, given this fitted model, the missing outcomes
-$Y_{i0}$ are imputed for the matched treated units by using the values
-of the explanatory variables for the treated units.  Once those
-potential outcomes are imputed, the estimate of individual $i$'s
-treatment effect is $Y_{1i}-\widehat{Y}_{0i}$ where $\widehat{Y}_{0i}$
-is the Monte Carlo estimate of the average missing potential outcome
-for unit $i$.  The in-sample average treatment effect for the treated
-individuals can be then obtained by averaging over $i$ of this
-difference. A similar procedure can also be used to estimate various
-quantities of interest. Another advantage of this simulation approach
-is that the uncertainty estimates such as standard errors are obtained
-easily from the estimation uncertainty in fitting the parametric
-model. See \citep{HoImaKin05} for more details.
-
-\subsection{Examples}
-
-To illustrate this approach, we provide a couple of examples using the
-Lalonde data. Users can run these example commands by typing {\tt
-  demo(Zelig)} at the R prompt. We use the linear least squares model
-in these examples. However, a wide range of other models are available
-in Zelig (for the list of supported models, see
-\hlink{http://gking.harvard.edu/zelig/docs/Models\_Zelig\_Can.html}{http://gking.harvard.edu/zelig/docs/Models_Zelig_Can.html}),
-and they can be used in the exactly same way. If you have not
-installed Zelig, follow the installation procedure described at
-\hlink{http://gking.harvard.edu/zelig/docs/Installation.html}{http://gking.harvard.edu/zelig/docs/Installation.html}
-
-\begin{enumerate}
-\item Nearest neighbor matching using propensity scores: 
-\begin{verbatim}
-## load the Lalonde data
-load(lalonde)
-
-## load Zelig package: if not already installed, try install.package("Zelig")
-library(Zelig)
-
-## nearest neighbor matching using propensity scores
-m.out1 <- matchit(treat ~ age + educ + black + hispan + nodegree + married + re74 + re75, 
-                  method = "nearest", data = lalonde)
-
-## fit the linear model to the control group controlling for propensity score and 
-## other covariates
-z.out1 <- zelig(re78 ~ age + educ + black + hispan + nodegree + married + re74 + re75
- + distance, data = match.data(m.out1, "control"), model = "ls")
-
-## set the covariates to the covariates of matched treated units
-## use conditional prediction by setting cond = TRUE.
-x.out1 <- setx(z.out1, data = match.data(m.out1, "treat"), fn = NULL, cond = TRUE)
-
-## simulate the average treatment effect for the treated
-s.out1 <- sim(z.out1, x = x.out1)
-
-## obtain a summary
-summary(s.out1)
-\end{verbatim}
-  
-\item Estimating the average treatment effects on both the treated and
-  the control groups. We use the same {\tt matchit()} output as in the
-  first example above.
-\begin{verbatim}
-## fit the linear model to the treatment group controlling for propensity score and 
-## other covariates
-z.out2 <- zelig(re78 ~ age + educ + black + hispan + nodegree + married + re74 + re75
- + distance, data = match.data(m.out1, "control"), model = "ls")
-
-## conducting the simulation procedure for the control group
-x.out2 <- setx(z.out2, data = match.data(m.out1, "control"), fn = NULL, cond = TRUE)
-s.out2 <- sim(z.out2, x = x.out2)
-
-##  Note that Zelig calculates the difference between observed and
-##  either predicted or expected values.  This means that the treatment
-##  effect for the control units is actually the effect of control
-##  (observed control outcome minus the imputed outcome under treatment
-##  from the model).  Hence, to combine treatment effects just reverse
-##  the signs of the estimated treatment effect of controls.
-ate.all <- c(s.out1$qi$ate.ev, -s.out2$qi$ate.ev)
-
-## some summaries
-## point estimate
-mean(ate.all)
-## standard error
-sd(ate.all)
-## 95% confidence interval
-quantile(ate.all, c(0.025, 0.975))
-\end{verbatim}
-  
-\item Subclassification: In this case, the average treatment effect
-  estimates are obtained for each subclass separately as well as
-  for the overall sample.
-
-\begin{verbatim}
-## subclassification with 4 subclasses
-m.out2 <- matchit(treat ~ age + educ + black + hispan + nodegree + married + re74 + re75,  
-                  data = lalonde, method = "subclass", subclass = 4)
-
-## controlling only for the estimated propensity score and lagged Y within each subclass
-## one can potentially control for more
-z.out3 <- zelig(re78 ~ re74 + re75 + distance, data = match.data(m.out2, "control"), 
-                model = "ls", by = "subclass")
-
-## conducting simulations
-x.out3 <- setx(z.out3, data = match.data(m.out2, "treat"), fn = NULL, cond = TRUE)
-
-## for the demonstration purpose, we set the number of simulations to be 100
-s.out3 <- sim(z.out3, x = x.out3, num = 100)
-
-## overall results
-summary(s.out3) 
-
-## summary for each subclass
-summary(s.out3, subset = 1) 
-summary(s.out3, subset = 2) 
-summary(s.out3, subset = 3) 
-\end{verbatim}
-  
-%\item Analysis of data from full matching: It will generally not be
-%  possible to run models separately within each subclass after full
-%  matching, due to very small sample sizes of either the treated or
-%  control group within each subclass.  In this situation, a common
-%  approach is to run a model with fixed effects included for each of
-%  the subclasses.
-%
-%For example, 
-%\begin{verbatim}
-%> foo1 <- matchit(treat ~ age + educ + black + hispan + married +
-%                nodegree + re74 + re75, data=lalonde, full=T)
-%> m1 <- lm(re78~ treat + age + educ + black + hispan + married +
-%         nodegree + re74 + re75 + as.factor(psclass),
-%         data=foo1$data)
-%> summary(m1)
-%\end{verbatim} 
-\end{enumerate}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
