@@ -86,11 +86,12 @@ statistical software, and will run on any platform where R is
 installed (Windows, Unix, or Mac OS X).  R is available free for
 download at the Comprehensive R Archive Network (CRAN) at
 \hlink{http://www.r-project.org/}{http://www.r-project.org/}.
-\MatchIt\ has been tested on the most recent version of R.  A good way
-to learn R, if you don't know it already, is to learn Zelig (available
-at \hlink{http://gking.harvard.edu}{http://gking.harvard.edu}) which
+\MatchIt\ has been tested on the most recent version of R (2.1.1).  A
+good way to learn R, if you don't know it already, is to learn Zelig
+(available at
+\hlink{http://gking.harvard.edu}{http://gking.harvard.edu}) which
 includes a self-contained introduction to R and can then be used to
-analyze the data after \MatchIt.
+analyze the data after running \MatchIt.
 
 \subsection{Installing \MatchIt}
 
@@ -136,89 +137,7 @@ For this change to take effect, you need to restart R.
 %> library(MatchIt) 
 %\end{verbatim}
 % \end{small}
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-
-\section{Statistical Overview}
-\label{sec:overview}
-
-{\bf Here, we describe the idea of using matching as preprocessing.
-  Maybe, the example should be in A User's Guide?}
-
-Once matching is complete and balance has been achieved, the \MatchIt\ 
-object can be used with any other analysis procedure; \MatchIt\ is
-designed to make those analysis procedures less dependent on the
-modeling assumptions and thus work better.  Therefore, any analysis
-you might have conducted using the original data set can be conducted
-with less model dependence using the matched data set.  To obtain the
-matched data set, use {\tt match.data(m.out)}, where {\tt m.out} is a
-\MatchIt\ object. See Section~\ref{subsec:match.data} for more options
-and details.
-
-In this section, we describe our recommended approach
-\citep{HoImaKin05}, which uses
-\hlink{Zelig}{http://gking.harvard.edu/zelig/} to conduct parametric
-causal inference after preprocessing the data through \MatchIt.  The
-resulting matched data sets can also be exported to other statistical
-program using commands such as {\tt write.table()} and {\tt
-  write.csv()}. In addition, the commands in the {\tt foreign} package
-allow users to save matched data sets as binary files for various
-statistical software including STATA and SPSS.
-
-Zelig \citep{ImaKinLau04} is an easy-to-use R package that estimates a
-variety of statistical models, gives easily interpretable results by
-simulating quantities of interest, and provides numerical and
-graphical summaries.  The package along with the complete
-documentation is available at
-\hlink{http://gking.harvard.edu/zelig/}{http://gking.harvard.edu/zelig/}.
-\MatchIt\ and Zelig can be easily used together to enable estimation
-of causal effects in very general settings with a variety of
-statistical models.
-
-The general framework is that of imputing the missing potential
-outcomes.  For example, for the treated group, the potential outcomes
-under control, $Y_{0i}$, are missing, whereas the outcomes under
-treatment, $Y_{1i}$, are observed.  We impute the missing outcomes,
-$Y_{0i}$, via Monte Carlo simulation using a parametric statistical
-model as follows.  First, we fit a model using the observed outcomes
-of the matched control units (i.e., using only observations where
-$T_i=0$).  Then, given this fitted model, the missing outcomes
-$Y_{i0}$ are imputed for the matched treated units by using the values
-of the explanatory variables for the treated units.  Once those
-potential outcomes are imputed, the estimate of individual $i$'s
-treatment effect is $Y_{1i}-\widehat{Y}_{0i}$ where $\widehat{Y}_{0i}$
-is the Monte Carlo estimate of the average missing potential outcome
-for unit $i$.  The in-sample average treatment effect for the treated
-individuals can be then obtained by averaging over $i$ of this
-difference. A similar procedure can also be used to estimate various
-quantities of interest. Another advantage of this simulation approach
-is that the uncertainty estimates such as standard errors are obtained
-easily from the estimation uncertainty in fitting the parametric
-model. See \citep{HoImaKin05} for more details.
-
-For any matching procedure, \MatchIt\ does its work with the following
-three commands:
-
-\begin{enumerate}
-\item \texttt{matchit()} implements a variety of matching procedures.
-
-\item \texttt{summary()} summarizes the resulting balance of
-  covariates after matching.
-
-\item \texttt{plot()} creates plots useful for balance diagnostics.
-\end{enumerate}
-
-In addition, \texttt{match.data()} creates the data frame from the
-original data frame by excluding unmatched units and including
-information about the particular matching procedure (i.e., weights,
-subclasses, and distance measure).  This matched data set can then be
-used for subsequent parametric analyses thorough
-\hlink{Zelig}{http://gking.harvard.edu/zelig/} or other statistical
-programs. Finally, a standard \texttt{print()} command can be used to
-print out a very brief summary of the output object.
-
-\input{matchit2zelig}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -310,6 +229,29 @@ subclass all units (treatment and control) have the same covariate
 values.  Exact restrictions on a subset of covariates can also be
 specified in nearest neighbor matching (see
 Subsection~\ref{subsubsec:nninputs}).
+
+\subsubsection{General Syntax}
+
+For any matching procedure, \MatchIt\ does its work with the following
+three commands:
+
+\begin{enumerate}
+\item \texttt{matchit()} implements a variety of matching procedures.
+
+\item \texttt{summary()} summarizes the resulting balance of
+  covariates after matching.
+
+\item \texttt{plot()} creates plots useful for balance diagnostics.
+\end{enumerate}
+
+In addition, \texttt{match.data()} creates the data frame from the
+original data frame by excluding unmatched units and including
+information about the particular matching procedure (i.e., weights,
+subclasses, and distance measure).  This matched data set can then be
+used for subsequent parametric analyses thorough
+\hlink{Zelig}{http://gking.harvard.edu/zelig/} or other statistical
+programs. Finally, a standard \texttt{print()} command can be used to
+print out a very brief summary of the output object.
 
 \subsubsection{Examples}
 
@@ -534,7 +476,7 @@ plot(m.out)
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\section{References}
+\section{Detailed Reference on How to Finetune \MatchIt\ }
 
 \subsection{Inputs}
 
@@ -1327,6 +1269,63 @@ names(m.data4)
 
 
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Conducting Analyses after Matching}
+\label{sec:analysis}
+
+Once matching is complete and balance has been achieved, the \MatchIt\ 
+object can be used with any other analysis procedure; \MatchIt\ is
+designed to make those analysis procedures less dependent on the
+modeling assumptions and thus work better.  Therefore, any analysis
+you might have conducted using the original data set can be conducted
+with less model dependence using the matched data set.  To obtain the
+matched data set, use {\tt match.data(m.out)}, where {\tt m.out} is a
+\MatchIt\ object. See Section~\ref{subsec:match.data} for more options
+and details.
+
+In this section, we describe our recommended approach
+\citep{HoImaKin05}, which uses
+\hlink{Zelig}{http://gking.harvard.edu/zelig/} to conduct parametric
+causal inference after preprocessing the data through \MatchIt.  The
+resulting matched data sets can also be exported to other statistical
+program using commands such as {\tt write.table()} and {\tt
+  write.csv()}. In addition, the commands in the {\tt foreign} package
+allow users to save matched data sets as binary files for various
+statistical software including STATA and SPSS.
+
+Zelig \citep{ImaKinLau04} is an easy-to-use R package that estimates a
+variety of statistical models, gives easily interpretable results by
+simulating quantities of interest, and provides numerical and
+graphical summaries.  The package along with the complete
+documentation is available at
+\hlink{http://gking.harvard.edu/zelig/}{http://gking.harvard.edu/zelig/}.
+\MatchIt\ and Zelig can be easily used together to enable estimation
+of causal effects in very general settings with a variety of
+statistical models.
+
+The general framework is that of imputing the missing potential
+outcomes.  For example, for the treated group, the potential outcomes
+under control, $Y_{0i}$, are missing, whereas the outcomes under
+treatment, $Y_{1i}$, are observed.  We impute the missing outcomes,
+$Y_{0i}$, via Monte Carlo simulation using a parametric statistical
+model as follows.  First, we fit a model using the observed outcomes
+of the matched control units (i.e., using only observations where
+$T_i=0$).  Then, given this fitted model, the missing outcomes
+$Y_{i0}$ are imputed for the matched treated units by using the values
+of the explanatory variables for the treated units.  Once those
+potential outcomes are imputed, the estimate of individual $i$'s
+treatment effect is $Y_{1i}-\widehat{Y}_{0i}$ where $\widehat{Y}_{0i}$
+is the Monte Carlo estimate of the average missing potential outcome
+for unit $i$.  The in-sample average treatment effect for the treated
+individuals can be then obtained by averaging over $i$ of this
+difference. A similar procedure can also be used to estimate various
+quantities of interest. Another advantage of this simulation approach
+is that the uncertainty estimates such as standard errors are obtained
+easily from the estimation uncertainty in fitting the parametric
+model. See \citep{HoImaKin05} for more details.
+
+
+\input{matchit2zelig}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
