@@ -1334,9 +1334,10 @@ names(m.data4)
 A difference-in-differences (DID) analysis can be easily conducted
 with \MatchIt.  If we were interested in the DID matching estimate in
 the Lalonde data, we could simply include {\texttt re75} as a
-covariate in our analysis model.  Alternatively, matching on
-covariates, including {\tt re75} can be done, and then the analysis is
-done on the change in income from 1975 to 1978: {\tt re78}-{\tt re75}.
+covariate in the preprocessing step.  Then the analysis can be
+performed on the change in income from 1975 to 1978: {\tt re78}-{\tt
+  re75}.  Time-varying covariates (of which none exist in the Lalonde
+data) should of course also be differenced for the DID estimator.
 
 \subsection{How Exactly are the Weights Created?}
 \label{subsec:weights}
