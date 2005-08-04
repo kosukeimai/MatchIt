@@ -27,10 +27,9 @@
 \title{\MatchIt: Nonparametric Preprocessing for Parametric Causal
   Inference}
 
-\author{Daniel E. Ho,\thanks{J.D.\ candidate, Yale Law School, Ph.D.\,
-    Department of Government, Harvard University. (Center for Basic
-    Research in the Social Sciences, 34 Kirkland, Cambridge MA 02138,
-    USA; \texttt{daniel.ho@Yale.Edu}).}
+\author{Daniel E. Ho,\thanks{Institute for Quantitative Social
+    Science, 34 Kirkland, Cambridge MA 02138,
+    USA; \texttt{http://people.iq.harvard.edu/~dho/}, \texttt{daniel.e.ho@gmail.com}.}
 \and
 Kosuke Imai,\thanks{Assistant Professor, Department of Politics,
   Princeton University (Corwin Hall 041, Department of Politics,
@@ -102,7 +101,9 @@ install.packages("MatchIt")
 and \MatchIt\ will install itself onto your system automatically.
 During the process you may either decide to keep or discard the
 installation files, which will not affect the way \MatchIt\ runs.  You
-only need to do this once.
+only need to do this once.  Some users may also find it helpful to
+install the package with version control (see
+Subsection~\ref{subsec:vercontrol}).
 
 \subsection{Loading \MatchIt}
 As with any R package, you must install \MatchIt\ only once, but you
@@ -115,7 +116,7 @@ at the R command prompt.  Alternatively, you can specify R to load
 \MatchIt\ automatically at launch so that you can skip the step of
 typing {\tt library(MatchIt)} at the beginning of every R session.  To
 do this, edit the {\tt Rprofile} file located in the R program
-subdirectory, e.g. \texttt{C:/R/rw1091/etc/}, for Windows systems or
+subdirectory, e.g. \texttt{C:/R/rw2011/etc/}, for Windows systems or
 the {\tt .Rprofile} file located in the home directory for Unix/Linux
 and Mac OS X systems.  Using a text editor such as Windows notepad and
 emacs, add the following line to the file:
@@ -145,14 +146,15 @@ For this change to take effect, you need to restart R.
 {\bf Here, we describe the idea of using matching as preprocessing.
   Maybe, the example should be in A User's Guide?}
 
-Once the matching is complete, the \MatchIt\ object can be used with
-any other analysis procedure; \MatchIt\ is designed to make those
-analysis procedures less dependent on the modeling assumptions and
-thus work better.  Therefore, any analysis you might have done using
-the original data sets can be done better on the matched data sets.
-To obtain the matched data sets, use {\tt match.data(m.out)}, where
-{\tt m.out} is a \MatchIt\ object. See Section~\ref{subsec:match.data}
-for more options and details.
+Once matching is complete and balance has been achieved, the \MatchIt\ 
+object can be used with any other analysis procedure; \MatchIt\ is
+designed to make those analysis procedures less dependent on the
+modeling assumptions and thus work better.  Therefore, any analysis
+you might have conducted using the original data set can be conducted
+with less model dependence using the matched data set.  To obtain the
+matched data set, use {\tt match.data(m.out)}, where {\tt m.out} is a
+\MatchIt\ object. See Section~\ref{subsec:match.data} for more options
+and details.
 
 In this section, we describe our recommended approach
 \citep{HoImaKin05}, which uses
@@ -160,8 +162,8 @@ In this section, we describe our recommended approach
 causal inference after preprocessing the data through \MatchIt.  The
 resulting matched data sets can also be exported to other statistical
 program using commands such as {\tt write.table()} and {\tt
-  write.csv()}. Also, the commands in the {\tt foreign} package allow
-users to save matched data sets as binary files for various
+  write.csv()}. In addition, the commands in the {\tt foreign} package
+allow users to save matched data sets as binary files for various
 statistical software including STATA and SPSS.
 
 Zelig \citep{ImaKinLau04} is an easy-to-use R package that estimates a
@@ -194,8 +196,6 @@ quantities of interest. Another advantage of this simulation approach
 is that the uncertainty estimates such as standard errors are obtained
 easily from the estimation uncertainty in fitting the parametric
 model. See \citep{HoImaKin05} for more details.
-
-
 
 For any matching procedure, \MatchIt\ does its work with the following
 three commands:
@@ -307,7 +307,9 @@ The simplest version of matching is exact.  This technique matches
 \emph{each} treated unit to \emph{all} possible control units with the
 same covariate values, forming subclasses such that within each
 subclass all units (treatment and control) have the same covariate
-values.
+values.  Exact restrictions on a subset of covariates can also be
+specified in nearest neighbor matching (see
+Subsection~\ref{subsubsec:nninputs}).
 
 \subsubsection{Examples}
 
@@ -706,7 +708,7 @@ there are no additional options for exact matching.
 \end{enumerate}
 
 \subsubsection{Inputs Specific to Nearest Neighbor Matching}
-
+\label{subsubsec:nninputs}
 \begin{enumerate}
 \item \texttt{m.order}  specifies the order in which to match
   treatment units with control units:
@@ -791,8 +793,7 @@ R command prompt,
 \begin{verbatim}
 install.packages("optmatch", contriburl = "http://www.stat.lsa.umich.edu/~bbh/optmatch")
 \end{verbatim}
-Currently, \texttt{optmatch} is only available for Unix and MacOS X
-(but not for Windows).  For more information about the package, see
+For more information about the package, see
 \hlink{http://www.stat.lsa.umich.edu/\~{}bbh/optmatch.html}{http://www.stat.lsa.umich.edu/\~bbh/optmatch.html}.
 The available options are listed below.
 
@@ -870,7 +871,9 @@ The following are the elements of the \texttt{matchit} output object;
   (the left-hand side of \texttt{formula}).
  
 \item \texttt{X} stores the covariates used for estimating the
-  distance measure (the right-hand side of \texttt{formula}).
+  distance measure (the right-hand side of \texttt{formula}).  When
+  applicable, \texttt{X} is augmented by covariates contained in
+  \texttt{mahvars} and \texttt{exact}. 
 \end{enumerate}
 
 
@@ -899,9 +902,9 @@ The \texttt{summary} call returns, when applicable:
 \item \texttt{sum.all} is a data frame that contains variable names
   and interactions down the row names, and summary statistics on
   \emph{all observations} in each of the columns.  The columns in
-  \texttt{sum.all} contain \footnote{The values output for full
-    matching are slightly different from that described here; see
-    Section \ref{fullmatching} for details}:
+  \texttt{sum.all} contain \footnote{The output for full matching is
+    slightly different from that described here; see Section
+    \ref{fullmatching} for details.}:
   \begin{itemize}
   \item means of all covariates $X$ for treated and control units,
     where \texttt{Means Treated}$= \mu_{X|T=1} = \frac{1}{n_1}
@@ -966,19 +969,19 @@ The \texttt{plot} command allows you to check the distributions of
 covariates in the assignment model, squares, and interactions, and
 within each subclasses if specified.  The graphs present:
 \begin{enumerate}
-\item Jitter plots of the propensity score for treated and control
-  units (\texttt{type="jitter}).
 \item Q-Q plots of each covariate to check balance of marginal
-  distributions.  This graph plots covariate values that fall in
-  (approximately) the same quantile of treated and control
-  distributions.  Control unit quantile values are plotted on the
-  x-axis, and treated unit quantile values are plotted on the y-axis.
-  If values fall below the 45 degree line, control units generally
-  take lower values of the covariate.  Data points that fall exactly
-  on the 45 degree line indicate that the marginal distributions are
-  identical.  Discrete covariates that take 5 or fewer values are
-  jittered for visibility.  This may be changed by setting the option
-  \texttt{discrete.cutoff} (\texttt{type="QQ"} (default)).
+  distributions (\texttt{type="QQ"} (default)).  This graph plots
+  covariate values that fall in (approximately) the same quantile of
+  treated and control distributions.  Control unit quantile values are
+  plotted on the x-axis, and treated unit quantile values are plotted
+  on the y-axis.  If values fall below the 45 degree line, control
+  units generally take lower values of the covariate.  Data points
+  that fall exactly on the 45 degree line indicate that the marginal
+  distributions are identical.  Discrete covariates that take 5 or
+  fewer values are jittered for visibility.  This may be changed by
+  setting the option \texttt{discrete.cutoff}.
+\item Jitter plots of the propensity score for treated and control
+  units (\texttt{type="jitter"}).
 \end{enumerate}
 
 \subsubsection{Examples}
@@ -1059,13 +1062,16 @@ We can also examine the balance graphically:
 > plot(m.out)
 > plot(m.out, type="jitter")
 \end{verbatim}
-
+Figures~\ref{diagqqnn} and~\ref{diagjitternn} display these two sample
+plots.  
 \begin{figure}[tbp]
   \begin{center}
 %    \rotatebox{270}{\includegraphics[height=2.85in,angle=0]{figs/subclass1}}
-    {\includegraphics[scale=0.8]{figs/qqplotnn}}
-    {\includegraphics[scale=0.8]{figs/qqplotnn2}} \hfill
-    \caption{Sample diagnostic QQ plots: Nearest Neighbor matching}
+    {\includegraphics[scale=0.7]{figs/qqplotnn}}
+    {\includegraphics[scale=0.7]{figs/qqplotnn2}} \hfill
+    \caption{Sample diagnostic QQ plots: Nearest Neighbor matching
+      with the \MatchIt\ call \texttt{matchit(treat ~ re74 + re75 + educ
+        + black + hispan + age, data=lalonde, method="nearest")}.}
 \label{diagqqnn}
 \end{center}
 \end{figure}
@@ -1075,7 +1081,9 @@ We can also examine the balance graphically:
 %    \rotatebox{270}{\includegraphics[height=2.85in,angle=0]{figs/subclass1}}
     {\includegraphics[scale=0.7]{figs/jitterplotnn}}
     \hfill
-    \caption{Sample diagnostic jitter plot: Nearest Neighbor matching.
+    \caption{Sample diagnostic jitter plot: Nearest Neighbor matching
+      with the \MatchIt\ call \texttt{matchit(treat ~ re74 + re75 +
+        educ + black + hispan + age, data=lalonde, method="nearest")}.
       Matched units shown in black, unmatched units shown in grey.}
 \label{diagjitternn}
 \end{center}
@@ -1212,14 +1220,17 @@ Similarly, we can examine the balance within each subclass graphically:
 > plot(m.outs)
 > plot(m.outs, type="jitter")
 \end{verbatim}    
+Figures~\ref{} and \ref{} display these two plots. 
 
 \begin{figure}[tbp]
   \begin{center}
 %    \rotatebox{270}{\includegraphics[height=2.85in,angle=0]{figs/subclass1}}
-    {\includegraphics[scale=.8]{figs/qqplotsub}}
-    {\includegraphics[scale=.8]{figs/qqplotsub2}}
+    {\includegraphics[scale=.7]{figs/qqplotsub}}
+    {\includegraphics[scale=.7]{figs/qqplotsub2}}
     \hfill
-    \caption{Sample diagnostic QQ plots: Subclassification}
+    \caption{Sample diagnostic QQ plots: Subclassification with
+      \MatchIt\ call \texttt{matchit(treat ~ re74 + re75 + educ +
+        black + hispan + age, data = lalonde, method = "subclass")}.}
 \label{diagqqsub}
 \end{center}
 \end{figure}
@@ -1229,7 +1240,12 @@ Similarly, we can examine the balance within each subclass graphically:
 %    \rotatebox{270}{\includegraphics[scale=0.5,angle=0]{figs/subclass1}}
     {\includegraphics[scale=0.7]{figs/jitterplotsub}}
     \hfill
-    \caption{Sample diagnostic jitter plot: Subclassification.  Vertical lines indicate the subclass cut points.}
+    \caption{Sample diagnostic jitter plot: Subclassification with
+      \MatchIt\ call \texttt{matchit(treat ~ re74 + re75 + educ +
+        black + hispan + age, data = lalonde, method = "subclass")}.
+      Vertical lines indicate the subclass cut points and the area of
+      each diamond is proportional to the weights of the matched units
+      for each subclass.}
 \label{diagjittersub}
 \end{center}
 \end{figure}
@@ -1281,7 +1297,7 @@ these commands by typing {\tt demo(match.data)} at the R prompt.
 ## load the Lalonde data
 data(lalonde)
 
-## run a nearest neighbor matching
+## perform nearest neighbor matching
 m.out1 <- matchit(treat ~ re74 + re75 + age + educ, data = lalonde, method = "nearest",  
                   distance = "logit")
 
@@ -1347,8 +1363,8 @@ units with at least one treated unit and at least one control unit in
 each group.  In exact matching, subclassification, or full matching,
 these groups are the subclasses formed, and the number of treated and
 control units will vary quite a bit across subclasses.  In nearest
-neighbor or optimal matching, thee groups are the pairs (or sets) of
-treated and control units matched: in 1:1 nearest neighbor matching
+neighbor or optimal matching, the groups are the pairs (or sets) of
+treated and control units matched.  In 1:1 nearest neighbor matching
 there will be one treated unit and one control unit in each group.  In
 2:1 nearest neighbor matching there will be one treated unit and two
 control units in each group.  Unmatched units receive a weight of 0.
@@ -1394,7 +1410,7 @@ Gary       1  27   11     1      0       0        1    0    0  7506.146
 
 
 \subsection{How Do I Ensure Replicability As \MatchIt\ Versions Develop?}
-
+\label{subsec:vercontrol}
 As the literature on matching techniques is rapidly evolving,
 \MatchIt\ will strive to incorporate new developments. \MatchIt\ is
 thereby an evolving program.  Users may be concerned that analysis
@@ -1449,7 +1465,7 @@ simulates the research design of an experiment, where no information
 on outcomes is known at the point of experimental design and
 randomization.  Much like an experimenter cannot easily rerun an
 experiment if the outcome was not satisfactory, the separation of the
-balancing process in \MatchIt\ from the analysis process afterwords
+balancing process in \MatchIt\ from the analysis process afterwards
 helps keep clear the goal of balancing control and treatment groups
 and makes it less likely that the user will inadvertently cook the
 books in his or her favor.
