@@ -6,7 +6,7 @@
 data(lalonde)
 user.prompt()
 
-## run a nearest neighbor matching
+## perform nearest neighbor matching
 m.out1 <- matchit(treat ~ re74 + re75 + age + educ, data = lalonde,
                  method = "nearest", distance = "logit")
 user.prompt()
