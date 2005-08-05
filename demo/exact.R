@@ -16,6 +16,6 @@ print(m.out)
 user.prompt()
 
 ## balance diagnostics through statistics
-summary(m.out)
+summary(m.out, covariates = T)
 user.prompt()
 
