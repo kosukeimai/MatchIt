@@ -35,7 +35,7 @@ matchit <- function(formula, data, method = "nearest", distance = "logit",
     if (is.null(distance.options$data))
       distance.options$data <- data
     out1 <- do.call(fn1, distance.options)
-    discarded <- discard(treat, out1$distance, discard)
+    discarded <- discard(treat, out1$distance, discard, X)
     if (reestimate) {
       distance.options$data <- data[!discarded,]
       out1 <- do.call(fn1, distance.options)

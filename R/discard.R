@@ -1,4 +1,4 @@
-discard <- function(treat, pscore, option) {
+discard <- function(treat, pscore, option, X) {
 
   n.obs <- length(treat)
   pmax0 <- max(pscore[treat==0])
@@ -13,8 +13,14 @@ discard <- function(treat, pscore, option) {
     discarded <- (pscore < pmin1 | pscore > pmax1)
   else if (option == "treat")   # discard treated units only
     discarded <- (pscore < pmin0 | pscore > pmax0)
-  else
+  else if (option == "convex.hull"){ # discard units not in T convex hull
+    require(whatif)
+    require(lpSolve)
+    wif <- whatif(X[treat==0,],X[treat==1,])
+    discarded <- rep(FALSE, n.obs)
+    discarded[treat==0] <- !wif$in.hull
+  }  else 
     stop("invalid input for `discard'")
-  
+  names(discarded) <- names(treat)
   return(discarded)
 }
