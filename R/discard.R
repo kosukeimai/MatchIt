@@ -16,7 +16,7 @@ discard <- function(treat, pscore, option, X) {
   else if (option == "convex.hull"){ # discard units not in T convex hull
     require(whatif)
     require(lpSolve)
-    wif <- whatif(X[treat==0,],X[treat==1,])
+    wif <- whatif(cfact = X[treat==0,], data = X[treat==1,])
     discarded <- rep(FALSE, n.obs)
     discarded[treat==0] <- !wif$in.hull
   }  else 
