@@ -139,14 +139,7 @@ For this change to take effect, you need to restart R.
 % \end{small}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\section{A User's Guide by Examples}
-\label{methods}
-
-{\bf Here, we need to go back to the same structure as before.
-  Perhaps, we can rerun the same examples and paste current outputs or
-  use replace the old ones with some of the new examples below.}
+\section{Statistical Overview}
 
 \MatchIt\ is designed for studies with a dependent variable that is a
 function of a dichotomous causal variable, with values known as the
@@ -156,28 +149,91 @@ treatment.  \MatchIt\ can be used for other types of causal variables
 by dichotomizing them, perhaps in multiple ways \citep[see
 also][]{ImaDyk04}.
 
-Unless otherwise noted, let $i$ index the $n$ units in the dataset,
-$n_1$ the number of treated units, $n_0$ the number of control units
-(such that $n=n_0+n_1$), and $x_i$ a vector of pretreatment or control
-variables for unit $i$.  $t_i=1$ indicates that unit $i$ was assigned
-treatment, and $t_i=0$ that unit $i$ was assigned control.  $y_{1i}$
-represents the potential outcome of unit $i$ under treatment and
-$y_{0i}$ the potential outcome of unit $i$ under control.  $y_{1i}$
-and $y_{0i}$ are jointly unobservable, so we only observe
+\subsection{General Syntax of \MatchIt\ }
+
+For any matching procedure, \MatchIt\ does its work with the following
+three commands:
+
+\begin{enumerate}
+\item \texttt{matchit()} implements a variety of matching procedures,
+  for which examples and details on finetuning the matching procedures
+  are described in Section~\ref{methods} and
+  Section~\ref{sec:reference}.
+  
+\item \texttt{summary()} summarizes the resulting balance of
+  covariates after matching.
+  
+\item \texttt{plot()} creates plots to assess balance of covariates.
+\end{enumerate}
+
+In addition, \texttt{match.data()} creates the data frame from the
+original data frame by excluding unmatched units and including
+information about the particular matching procedure (i.e., weights,
+subclasses, and distance measure).  This matched data set can then be
+used for subsequent parametric analyses thorough
+\hlink{Zelig}{http://gking.harvard.edu/zelig/} or other statistical
+programs. Finally, a standard \texttt{print()} command can be used to
+print out a very brief summary of the output object.
+
+\subsection{A General Example}
+
+Here, we provide a simple example of how \MatchIt\ can be used. 
+
+\begin{enumerate}
+  
+\item The {\bf Preprocessing} Step: First, preprocess the dataset by matching
+  treated and control units as indicated by the dichotomous
+  \texttt{treat} variable on \texttt{X1} and \texttt{X2} in the
+  dataset \texttt{my.dataset}:
+\begin{verbatim}
+  m.out <- matchit(treat ~ X1 + X2, data = my.dataset)
+\end{verbatim}
+  This creates the \MatchIt\ object called \texttt{m.out}.  Second, to
+  assess balance of covariates:
+\begin{verbatim}
+  summary(m.out)
+  plot(m.out)
+\end{verbatim}
+
+\item The {\bf  Analysis} Step: To create the the matched dataset: 
+\begin{verbatim}
+  mdata <- matched.data(m.out)
+\end{verbatim}
+  Users can then run any analysis that would have been conducted
+  conventionally.  For example, to run OLS on the outcome \texttt{Y}:
+\begin{verbatim}
+  ols1 <- lm(Y ~ treat + X1 + X2, data = mdata)
+\end{verbatim}
+For full simulations of direct quantities of interests, the same model
+may be run easily with Zelig as shown in Section~\ref{sec:analysis}.
+\end{enumerate}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{A User's Guide by Examples}
+\label{methods}
+
+We adopt the same notation as in \citet{HoImaKin05}. Unless otherwise
+noted, let $i$ index the $n$ units in the dataset, $n_1$ the number of
+treated units, $n_0$ the number of control units (such that
+$n=n_0+n_1$), and $x_i$ a vector of pretreatment or control variables
+for unit $i$.  $t_i=1$ indicates that unit $i$ was assigned treatment,
+and $t_i=0$ that unit $i$ was assigned control.  $y_{1i}$ represents
+the potential outcome of unit $i$ under treatment and $y_{0i}$ the
+potential outcome of unit $i$ under control.  $y_{1i}$ and $y_{0i}$
+are jointly unobservable, so we only observe
 $y_i=t_iy_{1i}+(1-t_i)y_{0i}$.
 
-%** these examples were introduced before this discussion
 For all of our examples, we use data from the job training program
 analyzed in \citet{lalonde86} and \citet{DehWah99}.  A subsample of
 the data consisting of the National Supported Work Demonstration (NSW)
 treated group and the comparison sample from the Population Survey of
-Income Dynamics (PSID) is included in \MatchIt.%, and the full dataset
-% is available at \url{http://www.columbia.edu/~rd247/nswdata.html}.\footnote{\texttt{data(lalonde)} was created using \texttt{NSWRE74\_TREATED.TXT} and \texttt{CPS3\_CONTROLS.TXT} from this website.}
-The variables in this dataset are in Table~\ref{dwvars} below.  One
-causal effect of interest is the impact that participation in the job
-training program, \texttt{treat==1}, had on real earnings in 1978,
-\texttt{re78}, for those that participated in the program, i.e., the
-average treatment effect on the treated (ATT):
+Income Dynamics (PSID) is included in \MatchIt.  The variables in this
+dataset are in Table~\ref{dwvars} below.  One causal effect of
+interest is the impact that participation in the job training program,
+\texttt{treat==1}, had on real earnings in 1978, \texttt{re78}, for
+those that participated in the program, i.e., the average treatment
+effect on the treated (ATT):
 
 \begin{equation}\label{re78eqn}
 E(\text{re78}(\text{treat}=1) | \text{treat}=1)\; - \; E(\text{re78}(\text{treat}=0) | \text{treat}=1),
@@ -230,63 +286,137 @@ values.  Exact restrictions on a subset of covariates can also be
 specified in nearest neighbor matching (see
 Subsection~\ref{subsubsec:nninputs}).
 
-\subsubsection{General Syntax}
-
-For any matching procedure, \MatchIt\ does its work with the following
-three commands:
-
-\begin{enumerate}
-\item \texttt{matchit()} implements a variety of matching procedures.
-
-\item \texttt{summary()} summarizes the resulting balance of
-  covariates after matching.
-
-\item \texttt{plot()} creates plots useful for balance diagnostics.
-\end{enumerate}
-
-In addition, \texttt{match.data()} creates the data frame from the
-original data frame by excluding unmatched units and including
-information about the particular matching procedure (i.e., weights,
-subclasses, and distance measure).  This matched data set can then be
-used for subsequent parametric analyses thorough
-\hlink{Zelig}{http://gking.harvard.edu/zelig/} or other statistical
-programs. Finally, a standard \texttt{print()} command can be used to
-print out a very brief summary of the output object.
-
-\subsubsection{Examples}
-
 The following example script can be run by typing {\tt demo(exact)} at
 the R prompt.
 
 \begin{verbatim}
-## load the Lalonde data
-data(lalonde)
-## conduct exact matching on educ, black, and hispan
-m.out <- matchit(treat ~ educ + black + hispan, data = lalonde, method = "exact")
-## balance diagnostics through statistics
-summary(m.out)
-## balance diagnostics through graphics
-plot(m.out)
+> ## load the Lalonde data
+> data(lalonde)
+> ## conduct exact matching on educ, black, and hispan
+> m.out <- matchit(treat ~ educ + black + hispan, data = lalonde, method = "exact")
 \end{verbatim}
 
-The \MatchIt\ output object will include \texttt{weights} and
-\texttt{subclass}, which can be used to identify which units were put
-into the same subclass.  Units that did not have the same covariate
-values as anyone in the other treatment group have \texttt{subclass =
-  NA}.
+\noindent \texttt{m.out} now contains all the information on the
+matched units.  The matching forms all possible subclasses based on
+unique values of the covariates in the formula portion of the
+\MatchIt\ call; within each subclass, all units have the same
+covariate values.  To obtain basic information about the matching
+procedure:
+\begin{verbatim}
+> ## print a short summary
+> print(m.out)
+
+Call: matchit(formula = treat ~ educ + black + hispan, data = lalonde,     method = "exact")
+
+Exact Subclasses: 25
+
+Sample sizes:
+          Control Treated
+Full          429     185
+Matched       376     184
+Unmatched      53       1
+\end{verbatim}
+The printout includes the original call to \MatchIt\ and the fact that
+all 184 treatment units were exactly matched to 376 control units on
+race and education.  
+
+We can obtain more information on the matching using the {\tt summary}
+command.  To include the covariates in each subclass, we also use the
+\texttt{covariates = T} option:
+\begin{verbatim}
+> ## balance diagnostics through statistics
+> summary(m.out, covariates = T)
+
+Call:
+matchit(formula = treat ~ educ + black + hispan, data = lalonde,     method = "exact")
+
+
+Sample sizes for full and exactly matched data:
+
+          Control Treated
+Full          429     185
+Matched       376     184
+Discarded      53       1
+
+
+Matched sample sizes by subclass:
+
+   Treated Control Total educ black hispan
+1       39      13    52   11     1      0
+2        4      10    14    9     0      1
+3       30      23    53   12     1      0
+4       15       8    23    8     1      0
+5       22      13    35    9     1      0
+6        1       2     3   16     1      0
+7        7      83    90   12     0      0
+8        7       3    10   13     1      0
+9       28      11    39   10     1      0
+10       1       2     3    7     1      0
+11       1      13    14   14     0      0
+12       2      20    22    9     0      0
+13       2       5     7   10     0      1
+14       4       2     6    4     1      0
+15       4       2     6   14     1      0
+16       3       3     6    5     1      0
+17       2       7     9    8     0      1
+18       4      29    33   11     0      0
+19       1      21    22    7     0      0
+20       1       2     3    6     1      0
+21       1      14    15   13     0      0
+22       2      12    14   12     0      1
+23       1      29    30    8     0      0
+24       1      40    41   10     0      0
+25       1       9    10   11     0      1
+\end{verbatim}
+\MatchIt\ has created 25 subclasses where values of race and education
+covariates are equal.  The \MatchIt\ output object will include
+\texttt{weights} and \texttt{subclass}, which can be used to identify
+which units were put into the same subclass.  Units that did not have
+the same covariate values as anyone in the other treatment group have
+\texttt{subclass = NA}.
+
+For example, we can use the {\tt sublass} component of {\tt m.out} to
+identify which units are in each subclass and to verify their
+covariate values.  To see ID numbers of the first 10 units in subclass
+1, in which all subjects are black and have 11 years of education
+(``NSW'' refers to the National Supported Work Demonstration
+participants):
+\begin{verbatim}
+> row.names(m.out$X)[m.out$subclass==1][1:10]
+ [1] "NSW1"  "NSW4"  "NSW8"  "NSW21" "NSW24" "NSW26" "NSW27" "NSW30" "NSW33"
+[10] "NSW45"
+\end{verbatim}
+We can also confirm the covariate values of the units in each
+subclass.  For example, to see the covariate values of the first 5
+units in subclass 2 (``PSID'' refers to individuals in the Panel
+Survey of Income Dynamics):
+\begin{verbatim}
+> m.out$X[m.out$subclass==2 & !is.na(m.out$subclass),][1:5,]
+       educ black hispan
+NSW2      9     0      1
+NSW100    9     0      1
+NSW112    9     0      1
+NSW173    9     0      1
+PSID9     9     0      1
+\end{verbatim}
 
 \subsection{Subclassification}
 \label{subclass}
 
-When there are many covariates on which matches are desired, finidng
+When there are many covariates on which matches are desired, finding
 sufficient exact matches will often be impossible.  In that case,
-subclassification is sometimes desireable, such as by using a scalar
+subclassification is sometimes desirable, such as by using a scalar
 distance measure like the propensity score estimated using one of the
 \texttt{distance} options.  Subclassification will form subclasses
 based on this distance measure.  Within each subclass, the
 distribution of covariates in the treatment and control groups should
 be similar, and this can be checked using the \texttt{summary()}
-command after doing subclassification.
+command after doing subclassification.  You can then apply parametric
+analysis within each subclass, rather than the entire dataset, while
+still summarizing the results for the entire dataset.  This can
+significantly increase the robustness of the ultimate results since
+each parametric analysis within a subclass requires only local rather
+than global parametric smoothing assumptions.
 
 Subclassification is implemented in \MatchIt\ using \texttt{method =
   "subclass"}.  See also the Sections on full matching (Section
@@ -294,75 +424,178 @@ Subclassification is implemented in \MatchIt\ using \texttt{method =
 \ref{nearest}), which provide additional ways of performing
 subclassification.
 
-\subsubsection{Examples}
-
 The following example script can be run by typing {\tt demo(subclass)}
 at the R prompt.
 
 \begin{verbatim}
-## load the Lalonde data
-data(lalonde)
-## form 6 subclasses (the default) based on distance measure estimated using logistic regression
-## of treat on re74, re75, age, and educ.  By default, each subclass will have
-## approximately the same number of treated units. 
-m.out <- matchit(treat ~ re74+re75+age+educ, data=lalonde, method = "subclass")
-## balance diagnostics through statistics
-summary(m.out)
-## balance diagnostics through graphics
-plot(m.out)
+> ## load the Lalonde data
+> data(lalonde)
+> ## form 6 subclasses (the default) based on distance measure
+> ## estimated using logistic regression of treat on re74, re75, educ,
+> ## black, hispan, and age.  By default, each subclass will have
+> ## approximately the same number of treated units. 
+> m.out <-  matchit(treat ~ re74 + re75 + educ + black + hispan + age,
+>                   data = lalonde, method = "subclass")
+> ## balance diagnostics through statistics
+> summary(m.out)
+
+Call:
+matchit(formula = treat ~ re74 + re75 + educ + black + hispan +     
+        age, data = lalonde, method = "subclass", sub.by = "treat")
+
+Summary of balance for all data:
+
+         Means Treated Means Control Pooled SD   QQ Med  QQ Mean   QQ Max Std. Bias
+distance      5.66e-01         0.187     0.284    0.732    0.535     0.84     1.792
+re74          2.10e+03      5619.237  6477.964 3430.277 5155.851 13044.16    -0.721
+re75          1.53e+03      2466.484  3295.679 1373.280 1511.706  9609.60    -0.290
+educ          1.03e+01        10.235     2.628    1.414    0.962     5.66     0.055
+black         8.43e-01         0.203     0.489    1.414    0.903     1.41     1.757
+hispan        5.95e-02         0.142     0.322    0.000    0.119     1.41    -0.349
+age           2.58e+01        28.030     9.881    1.414    4.650    14.14    -0.309
+        
+, , Subclass 1
+
+         Means Treated Means Control Pooled SD    QQ Med   QQ Mean    QQ Max Std. Bias
+distance      1.22e-01      7.62e-02  5.22e-02  5.48e-02  6.51e-02  1.23e-01  7.79e-01
+re74          3.63e+03      6.33e+03  7.15e+03  4.59e+03  5.18e+03  1.30e+04 -3.38e-01
+re75          2.23e+03      2.62e+03  3.30e+03  6.63e+02  1.15e+03  9.63e+03 -1.17e-01
+educ          1.06e+01      1.03e+01  2.80e+00  1.41e+00  1.37e+00  9.90e+00  1.93e-01
+black         6.45e-02      5.81e-03  1.03e-01  0.00e+00  4.56e-02  1.41e+00  2.35e-01
+hispan        3.55e-01      1.77e-01  3.94e-01  0.00e+00  2.28e-01  1.41e+00  3.65e-01
+age           2.50e+01      2.86e+01  1.05e+01  2.83e+00  6.56e+00  1.98e+01 -5.85e-01
+        
+, , Subclass 2
+
+         Means Treated Means Control Pooled SD    QQ Med   QQ Mean    QQ Max Std. Bias
+distance      5.39e-01      5.34e-01  6.46e-02  1.62e-02  1.99e-02  6.55e-02  6.29e-02
+re74          7.53e+03      7.21e+03  5.92e+03  6.57e+02  1.23e+03  4.51e+03  5.56e-02
+re75          4.11e+03      3.48e+03  5.01e+03  1.71e+03  2.12e+03  1.61e+04  1.10e-01
+educ          9.00e+00      8.69e+00  3.47e+00  7.07e-01  1.29e+00  5.66e+00  1.03e-01
+black         1.00e+00      1.00e+00  0.00e+00  0.00e+00  0.00e+00  0.00e+00          
+hispan        0.00e+00      0.00e+00  0.00e+00  0.00e+00  0.00e+00  0.00e+00          
+age           2.81e+01      3.33e+01  1.03e+01  9.33e+00  8.05e+00  1.98e+01 -6.36e-01
+        
+...
 \end{verbatim}
 
 \begin{comment}
+, , Subclass 3
+
+         Means Treated Means Control Pooled SD    QQ Med   QQ Mean    QQ Max Std. Bias
+distance      6.46e-01      6.45e-01  1.16e-02  1.32e-03  2.86e-03  1.30e-02  7.54e-02
+re74          8.92e+02      1.40e+03  1.82e+03  5.43e+02  8.26e+02  2.12e+03 -3.15e-01
+re75          7.07e+02      1.46e+03  2.19e+03  2.91e+02  9.44e+02  8.97e+03 -5.02e-01
+educ          8.93e+00      9.12e+00  1.32e+00  0.00e+00  4.37e-01  2.83e+00 -1.57e-01
+black         1.00e+00      1.00e+00  0.00e+00  0.00e+00  0.00e+00  0.00e+00          
+hispan        0.00e+00      0.00e+00  0.00e+00  0.00e+00  0.00e+00  0.00e+00          
+age           2.39e+01      1.96e+01  7.08e+00  3.80e+00  6.26e+00  2.00e+01  5.47e-01
+        
+, , Subclass 4
+
+         Means Treated Means Control Pooled SD    QQ Med   QQ Mean    QQ Max Std. Bias
+distance      6.77e-01      6.78e-01  8.23e-03  4.31e-03  4.32e-03  1.19e-02 -7.99e-02
+re74          3.90e+02      7.11e+02  8.22e+02  0.00e+00  4.42e+02  1.68e+03 -4.35e-01
+re75          1.19e+03      6.84e+02  1.47e+03  1.52e+02  7.70e+02  3.23e+03  3.06e-01
+educ          1.00e+01      1.06e+01  9.21e-01  1.41e+00  8.08e-01  2.83e+00 -7.38e-01
+black         1.00e+00      1.00e+00  0.00e+00  0.00e+00  0.00e+00  0.00e+00          
+hispan        0.00e+00      0.00e+00  0.00e+00  0.00e+00  0.00e+00  0.00e+00          
+age           2.35e+01      2.22e+01  7.99e+00  2.83e+00  4.48e+00  1.13e+01  1.95e-01
+        
+, , Subclass 5
+
+         Means Treated Means Control Pooled SD    QQ Med   QQ Mean    QQ Max Std. Bias
+distance      6.94e-01      6.97e-01  3.20e-03  1.09e-03  3.37e-03  1.07e-02 -9.86e-01
+re74          9.41e+01      3.26e+02  4.43e+02  0.00e+00  1.58e+02  8.01e+02 -6.03e-01
+re75          4.05e+02      3.08e+02  1.23e+03  0.00e+00  1.27e+03  7.78e+03  7.26e-02
+educ          1.10e+01      1.14e+01  4.28e-01  0.00e+00  6.06e-01  1.41e+00 -1.66e+00
+black         1.00e+00      1.00e+00  0.00e+00  0.00e+00  0.00e+00  0.00e+00          
+hispan        0.00e+00      0.00e+00  0.00e+00  0.00e+00  0.00e+00  0.00e+00          
+age           2.67e+01      2.23e+01  6.11e+00  9.90e+00  6.87e+00  1.27e+01  8.19e-01        
+\end{comment}
+\begin{verbatim}
+, , Subclass 6
+
+         Means Treated Means Control Pooled SD    QQ Med   QQ Mean    QQ Max Std. Bias
+distance      7.20e-01      7.24e-01  1.81e-02  2.63e-03  5.47e-03  2.88e-02 -2.90e-01
+re74          0.00e+00      2.70e+02  3.97e+02  0.00e+00  3.82e+02  3.63e+03      -Inf
+re75          5.19e+02      1.66e+03  2.34e+03  0.00e+00  1.33e+03  6.83e+03 -6.96e-01
+educ          1.25e+01      1.26e+01  1.20e+00  0.00e+00  2.33e-01  1.41e+00 -1.35e-01
+black         1.00e+00      1.00e+00  0.00e+00  0.00e+00  0.00e+00  0.00e+00          
+hispan        0.00e+00      0.00e+00  0.00e+00  0.00e+00  0.00e+00  0.00e+00          
+age           2.76e+01      2.70e+01  7.84e+00  2.45e+00  3.32e+00  1.13e+01  8.69e-02
+        
+Sample sizes by subclasses:
+
+        Subclass 1 Subclass 2 Subclass 3 Subclass 4 Subclass 5 Subclass 6
+Treated         31         31         30         31         31         31
+Control        344         26         17         21          7         14
+Total          375         57         47         52         38         45
+
+Summary of balance across subclasses
+
+         Means Treated Means Control Pooled SD   QQ Med  QQ Mean   QQ Max Std. Bias
+distance      5.66e-01      5.59e-01  1.44e-02   0.0135 1.69e-02 4.23e-02   -0.0741
+re74          2.10e+03      2.72e+03  1.59e+03 967.1902 1.37e+03 4.30e+03      -Inf
+re75          1.53e+03      1.71e+03  1.18e+03 470.4902 1.26e+03 8.75e+03   -0.1360
+educ          1.03e+01      1.05e+01  8.20e-01   0.5924 7.93e-01 4.01e+00   -0.4002
+black         8.43e-01      8.33e-01  1.72e-02   0.0000 7.64e-03 2.37e-01       NaN
+hispan        5.95e-02      2.97e-02  6.61e-02   0.0000 3.82e-02 2.37e-01       NaN
+age           2.58e+01      2.55e+01  3.46e+00   5.1973 5.92e+00 1.58e+01    0.0687
+        
+Percent Balance Improvement:
+
+         Mean QQ Med QQ Mean QQ Max Std. Bias
+distance 98.1   98.2    96.8  94.97      95.9
+re74     82.4   71.8    73.4  67.05      -Inf
+re75     81.4   65.7    16.3   8.94      53.1
+educ     -3.3   58.1    17.6  29.05    -628.1
+black    98.5  100.0    99.2  83.24       NaN
+hispan   64.0    0.0    67.8  83.24       NaN
+age      86.8 -267.5   -27.3 -11.72      77.8
+\end{verbatim}
+We can also assess balance visually via the \texttt{plot} command: 
+\begin{verbatim}
+> ## balance diagnostics through graphics
+> plot(m.out)
+> plot(m.out, type="jitter")
+\end{verbatim}    
+Figures~\ref{diagqqsub} and \ref{diagjittersub} display these two
+diagnostic plots, respectively.
 \begin{figure}[tbp]
   \begin{center}
 %    \rotatebox{270}{\includegraphics[height=2.85in,angle=0]{figs/subclass1}}
-%    \rotatebox{270}{\includegraphics[height=2.85in,angle=0]{figs/subclass2}}
-%    \rotatebox{270}{\includegraphics[height=2.85in,angle=0]{figs/subclass3}}
-%    \rotatebox{270}{\includegraphics[height=2.85in,angle=0]{figs/subclass4}}
-    {\includegraphics[scale=0.25]{figs/subclass1}}
-    {\includegraphics[scale=0.25]{figs/subclass2}}
-    {\includegraphics[scale=0.25,angle=90]{figs/subclass3}}
-    {\includegraphics[scale=0.25]{figs/subclass4}}
+    {\includegraphics[scale=.7]{figs/qqplotsub}}
+    {\includegraphics[scale=.7]{figs/qqplotsub2}}
     \hfill
-    \caption{Sample interactive diagnostic graphs from \texttt{demo(lalonde)}}
-\label{diags}
+    \caption{Sample diagnostic QQ plots: Subclassification with
+      \MatchIt\ call \texttt{matchit(treat ~ re74 + re75 + educ +
+        black + hispan + age, data = lalonde, method = "subclass")}.}
+\label{diagqqsub}
 \end{center}
 \end{figure}
-\end{comment}
 
-\subsection{Full Matching}
-\label{fullmatching}
+\begin{figure}[tbp]
+  \begin{center}
+%    \rotatebox{270}{\includegraphics[scale=0.5,angle=0]{figs/subclass1}}
+    {\includegraphics[scale=0.7]{figs/jitterplotsub}}
+    \hfill
+    \caption{Sample diagnostic jitter plot: Subclassification with
+      \MatchIt\ call \texttt{matchit(treat ~ re74 + re75 + educ +
+        black + hispan + age, data = lalonde, method = "subclass")}.
+      Vertical lines indicate the subclass cut points and the area of
+      each diamond is proportional to the weights of the matched units
+      for each subclass.}
+\label{diagjittersub}
+\end{center}
+\end{figure}
 
-When one wishes to use all treated and control units in the analysis,
-a particular type of subclassification is called ``full matching''
-\citep{Rosenbaum02, Hansen04}. In this matching procedure, the matched
-sample is composed of matched sets, where each matched set contains
-either one treated unit and one or more controls, or one control unit
-and one or more treated units.  The only units not placed into a
-subclass will be those discarded (if a \texttt{discard} option was
-specified).  Full matching is optimal in terms of minimizing a
-weighted average of the propensity score distances between each
-treated subject and each control subject within each stratum.
-
-\subsubsection{Examples}
-
-The following example script can be run by typing {\tt demo(full)} at
-the R prompt.
-
-\begin{verbatim}
-## load the Lalonde data
-data(lalonde)
-## conduct full matching using the propensity score based on logistic regression
-m.out <- matchit(treat ~ age + educ + black + hispan + married + nodegree + re74 + re75, 
-                 data = lalonde, method = "full", distance = "logit")
-## print a short summary
-print(m.out)
-## balance diagnostics through statistics
-summary(m.out)
-## balance diagnostics through graphics
-plot(m.out)
-\end{verbatim}
-
+Lastly, subclassification may also be used in conjunction with nearest
+neighbor matching described below in Subsection~\ref{nearest}, by
+specifying leaving the default of \texttt{method = "nearest"} but
+adding the option \texttt{subclass}.  When you choose this command,
+\MatchIt\ matches in the same way, but it also adds a variable to the
+output object with the subclass number.
 
 \subsection{Nearest Neighbor Matching}
 \label{nearest}
@@ -374,16 +607,161 @@ distance measure such as the propensity score, and matches are chosen
 for each treated unit one at a time, where at each step the control
 unit not yet matched that is closest to the treated unit on the
 distance measure is chosen as the match.  There are many variations on
-nearest neighbor matching.  See below for the options available in
-\MatchIt.
+nearest neighbor matching, which are described in further detail in
+Section~\ref{sec:reference}. 
 
 Nearest neighbor matching is implemented in \MatchIt\ using the
-\texttt{method="nearest"} option.
+\texttt{method="nearest"} option.  The following example script can be
+run by typing {\tt demo(nearest)} at the R prompt.
 
-\subsubsection{Examples}
+To conduct propensity score matching with pre-treatment covariates
+composed of real earnings in 1974 and 1975, education, race, and age:
+\begin{verbatim}
+> m.out <- matchit(treat ~ re74 + re75 + educ + black + hispan + age,
++                  data = lalonde, method = "nearest")
+\end{verbatim}
 
-The following example script can be run by typing {\tt
-    demo(nearest)} at the R prompt.
+\noindent You may again check basic statistics of the \MatchIt\ object by the
+\texttt{print} command:
+\begin{verbatim}
+> print(m.out)
+
+Call: matchit(formula = treat ~ re74 + re75 + educ + black + hispan +
+                        age, data = lalonde, method = "nearest")
+
+Sample sizes:
+          Control Treated
+Full          429     185
+Matched       185     185
+Unmatched     244       0
+Discarded       0       0
+\end{verbatim}
+
+We see that 185 control units were matched to the 185 treated units (a
+``1-1'' match).  The \texttt{summary()} command first gives measures
+of the balance between the treated and control groups in the full
+(original) data set, and then the same measures of balance in the
+matched data set.  If the matching worked well, the standardized bias
+and QQ plot statistics should be smaller in the matched data set as
+compared with the full data set.  We could also use the
+\texttt{addlvars} option to examine the balance in variables not
+included in the distance model; it may be beneficial to include in the
+distance model any variables that are not well balanced in the matched
+data sets.
+\begin{verbatim}
+> summary(m.out)
+
+Call:
+matchit(formula = treat ~ re74 + re75 + educ + black + hispan + age, data = lalonde, 
+method = "nearest")
+
+Summary of balance for all data:
+
+         Means Treated Means Control Pooled SD   QQ Med  QQ Mean   QQ Max Std. Bias
+distance      5.66e-01         0.187     0.284    0.732    0.535     0.84     1.792 
+re74          2.10e+03      5619.237  6477.964 3430.277 5155.851 13044.16    -0.721
+re75          1.53e+03      2466.484  3295.679 1373.280 1511.706  9609.60    -0.290
+educ          1.03e+01        10.235     2.628    1.414    0.962     5.66     0.055
+black         8.43e-01         0.203     0.489    1.414    0.903     1.41     1.757
+hispan        5.95e-02         0.142     0.322    0.000    0.119     1.41    -0.349
+age           2.58e+01        28.030     9.881    1.414    4.650    14.14    -0.309
+        
+Summary of balance for matched data:
+
+         Means Treated Means Control Pooled SD  QQ Med QQ Mean   QQ Max Std. Bias
+distance      5.66e-01         0.365     0.257   0.150   0.284 6.93e-01    0.9509
+re74          2.10e+03      2466.304  4574.949 410.082 978.726 1.86e+04   -0.0759
+re75          1.53e+03      1960.355  3089.993 638.038 887.982 1.61e+04   -0.1330
+educ          1.03e+01        10.470     2.673   1.414   1.307 5.66e+00   -0.0618
+black         8.43e-01         0.470     0.475   0.000   0.527 1.41e+00    1.0231
+hispan        5.95e-02         0.276     0.374   0.000   0.306 1.41e+00   -0.9118
+age           2.58e+01        26.054     8.794   2.828   3.868 1.13e+01   -0.0332
+        
+Percent Balance Improvement:
+
+           Mean QQ Med QQ Mean QQ Max Std. Bias
+distance   46.9   79.4    46.8   17.6      46.9
+re74       89.5   88.0    81.0  -42.3      89.5
+re75       54.2   53.5    41.3  -67.3      54.2
+educ      -12.5    0.0   -35.9    0.0     -12.5
+black      41.8  100.0    41.6    0.0      41.8
+hispan   -161.3    0.0  -157.7    0.0    -161.3
+age        89.3 -100.0    16.8   20.0      89.3
+
+Sample sizes:
+
+          Control Treated
+Full          429     185
+Matched       185     185
+Unmatched     244       0
+Discarded       0       0
+\end{verbatim}
+This reveals simple statistics of the propensity score and the
+covariates used in the propensity score specification for the full and
+matched samples, including means, QQ, and balance bias statistics used
+to assess whether there was a reduction in bias in the covariates.
+Distance and the variables 1974 income, 1975 income, black, and age
+experienced reductions in bias due to the matching.  For example, the
+original bias in 1974 income was $-0.72$ standard deviations, but is
+only $-0.076$ standard deviations in the matched samples.  More
+specifically, job training participants on average earned roughly
+\$3,523 less in 1974 and \$934 less in 1975 than non-participants,
+respectively, in the full sample.  In the matched sample, the earnings
+difference is reduced to \$370 in 1974 and \$428 in 1975.  This
+one-to-one matching algorithm has thus chosen 185 control individuals
+who are more similar to the treated group in 1974 income and 1975
+income, which is summarized by the $89.5$ and $54.2$ percent
+balance improvement. 
+
+The \texttt{summary} command will additionally report (a) the original
+call of the \MatchIt\ object, (b) how many units were discarded due
+to the \texttt{discard} option (described below), and (c) percent
+balance improvement.  
+
+For further information on the balance in the full and matched samples
+we can use the {\tt interactions=T} option with {\tt summary}, which
+shows the balance of all squares and interactions of the covariates
+used in the matching procedure.  This is helpful for diagnosing
+whether balance across matched pairs has been attained.  Significant
+differences in higher order interactions usually are a good indication
+that the assignment model needs to be respecified, as discussed in
+Section \ref{pscorespec}.
+
+We can also examine the balance graphically:
+\begin{verbatim}
+> plot(m.out)
+> plot(m.out, type="jitter")
+\end{verbatim}
+Figures~\ref{diagqqnn} and~\ref{diagjitternn} display these two sample
+plots.  In the jitter plot, you may identify units by observation name
+by clicking the first mouse button near the units.  
+\begin{figure}[tbp]
+  \begin{center}
+%    \rotatebox{270}{\includegraphics[height=2.85in,angle=0]{figs/subclass1}}
+    {\includegraphics[scale=0.7]{figs/qqplotnn}}
+    {\includegraphics[scale=0.7]{figs/qqplotnn2}} \hfill
+    \caption{Sample diagnostic QQ plots: Nearest Neighbor matching
+      with the \MatchIt\ call \texttt{matchit(treat ~ re74 + re75 + educ
+        + black + hispan + age, data=lalonde, method="nearest")}.}
+\label{diagqqnn}
+\end{center}
+\end{figure}
+
+\begin{figure}[tbp]
+  \begin{center}
+%    \rotatebox{270}{\includegraphics[height=2.85in,angle=0]{figs/subclass1}}
+    {\includegraphics[scale=0.7]{figs/jitterplotnn}}
+    \hfill
+    \caption{Sample diagnostic jitter plot: Nearest Neighbor matching
+      with the \MatchIt\ call \texttt{matchit(treat ~ re74 + re75 +
+        educ + black + hispan + age, data=lalonde, method="nearest")}.
+      Matched units shown in black, unmatched units shown in grey.}
+\label{diagjitternn}
+\end{center}
+\end{figure}
+Examining these graphs, we see that the matched samples are very well
+matched on the propensity score, but that there are some remaining
+imbalances in education, race, and age covariates. 
 
 \begin{verbatim}
 ## load the Lalonde data
@@ -436,6 +814,39 @@ summary(m.out5)
 plot(m.out5)
 \end{verbatim}
 
+\subsection{Full Matching}
+\label{fullmatching}
+
+When one wishes to use all treated and control units in the analysis,
+a particular type of subclassification is called ``full matching''
+\citep{Rosenbaum02, Hansen04}. In this matching procedure, the matched
+sample is composed of matched sets, where each matched set contains
+either one treated unit and one or more controls, or one control unit
+and one or more treated units.  The only units not placed into a
+subclass will be those discarded (if a \texttt{discard} option was
+specified).  Full matching is optimal in terms of minimizing a
+weighted average of the propensity score distances between each
+treated subject and each control subject within each stratum.
+
+The following example script can be run by typing {\tt demo(full)} at
+the R prompt.
+
+\begin{verbatim}
+## load the Lalonde data
+data(lalonde)
+## conduct full matching using the propensity score based on logistic regression
+m.out <- matchit(treat ~ age + educ + black + hispan + married + nodegree + re74 + re75, 
+                 data = lalonde, method = "full", distance = "logit")
+## print a short summary
+print(m.out)
+## balance diagnostics through statistics
+summary(m.out)
+## balance diagnostics through graphics
+plot(m.out)
+\end{verbatim}
+
+
+
 \subsection{Optimal Matching}
 \label{optmatch}
 
@@ -454,8 +865,6 @@ matching can be particularly helpful when there are not many
 appropriate control matches for the treated units.  See \cite{GuRos93}
 or \cite{Rosenbaum02} for more information on optimal matching.
 
-\subsubsection{Examples}
-
 The following example script can be run by typing {\tt demo(optimal)}
 at the R prompt.
 
@@ -473,10 +882,67 @@ summary(m.out)
 plot(m.out)
 \end{verbatim}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Conducting Analyses after Matching}
+\label{sec:analysis}
+
+Once matching is complete and balance has been achieved, the \MatchIt\ 
+object can be used with any other analysis procedure; \MatchIt\ is
+designed to make those analysis procedures less dependent on the
+modeling assumptions and thus work better.  Therefore, any analysis
+you might have conducted using the original data set can be conducted
+with less model dependence using the matched data set.  To obtain the
+matched data set, use {\tt match.data(m.out)}, where {\tt m.out} is a
+\MatchIt\ object. See Section~\ref{subsec:match.data} for more options
+and details.
+
+In this section, we describe our recommended approach
+\citep{HoImaKin05}, which uses
+\hlink{Zelig}{http://gking.harvard.edu/zelig/} to conduct parametric
+causal inference after preprocessing the data through \MatchIt.  The
+resulting matched data sets can also be exported to other statistical
+program using commands such as {\tt write.table()} and {\tt
+  write.csv()}. In addition, the commands in the {\tt foreign} package
+allow users to save matched data sets as binary files for various
+statistical software including STATA and SPSS.
+
+Zelig \citep{ImaKinLau04} is an easy-to-use R package that estimates a
+variety of statistical models, gives easily interpretable results by
+simulating quantities of interest, and provides numerical and
+graphical summaries.  The package along with the complete
+documentation is available at
+\hlink{http://gking.harvard.edu/zelig/}{http://gking.harvard.edu/zelig/}.
+\MatchIt\ and Zelig can be easily used together to enable estimation
+of causal effects in very general settings with a variety of
+statistical models.
+
+The general framework is that of imputing the missing potential
+outcomes.  For example, for the treated group, the potential outcomes
+under control, $Y_{0i}$, are missing, whereas the outcomes under
+treatment, $Y_{1i}$, are observed.  We impute the missing outcomes,
+$Y_{0i}$, via Monte Carlo simulation using a parametric statistical
+model as follows.  First, we fit a model using the observed outcomes
+of the matched control units (i.e., using only observations where
+$T_i=0$).  Then, given this fitted model, the missing outcomes
+$Y_{i0}$ are imputed for the matched treated units by using the values
+of the explanatory variables for the treated units.  Once those
+potential outcomes are imputed, the estimate of individual $i$'s
+treatment effect is $Y_{1i}-\widehat{Y}_{0i}$ where $\widehat{Y}_{0i}$
+is the Monte Carlo estimate of the average missing potential outcome
+for unit $i$.  The in-sample average treatment effect for the treated
+individuals can be then obtained by averaging over $i$ of this
+difference. A similar procedure can also be used to estimate various
+quantities of interest. Another advantage of this simulation approach
+is that the uncertainty estimates such as standard errors are obtained
+easily from the estimation uncertainty in fitting the parametric
+model. See \citep{HoImaKin05} for more details.
+
+\input{matchit2zelig}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \section{Detailed Reference on How to Finetune \MatchIt\ }
+\label{sec:reference}
 
 \subsection{Inputs}
 
@@ -566,15 +1032,14 @@ across all commands.  We describe both here.
     \texttt{rpart} package). \citet{BreFriOls84,RugKimMar03} and many
     others discuss classification trees.
   \end{enumerate}
-
+  
 \item \texttt{distance.options} specifies the optional arguments that
   are passed to the model for estimating the distance measure. The
-  input to this argument should be a list.
-  % ** needs more detail so a user can figure out what to do with
-  % this.
+  input to this argument should be a list.  For example, if the
+  distance measure is estimated with a logistic regression, users can
+  increase the maximum IWLS iterations by \texttt{distance.options =
+    list(maxit = 5000)}.
 
-  % ** why delete all the advice here?  to save space?  if so, we
-  % could put it somewhere else perhaps
 \item \texttt{discard} specifies whether to discard units that fall
   outside some measure of support of the distance score before
   matching, and not allow them to be used at all in the matching
@@ -582,45 +1047,42 @@ across all commands.  We describe both here.
   interest being estimated.
   \begin{itemize}
   \item \texttt{none} (default) discards no units before matching.
-    % Use this option when the units to be matched are substantially
-    % similar, such as in the case of matching treatment and control
-    % units from a field experiment that was close to (but not fully)
-    % randomized (e.g., \citealt{Imai05}), when caliper matching will
-    % restrict the donor pool, or when you do not wish to change the
-    % quantity of interest and the parametric methods to be used
-    % post-matching can be trusted to extrapolate.
-  \item \texttt{both} discards all units (treated and control) that
-    are outside the support of the distance measure.
-    % Use this option when the units to be matched are substantially
-    % different (when there is a large degree of non-overlapping
-    % support on the distance score), such as in the case of measuring
-    % the effect of democracy on economic growth (e.g.,
-    % \citealt{KinZen04}).
-  \item \texttt{control} discards only control units outside the
-    support of the distance measure of the treated units.
-    % Use this option when the average treatment effect on the treated
-    % is of most interest and when unwilling to discard
-    % non-overlapping treatment units (which would change the quantity
-    % of interest), such as possibly in the case of the effect of job
-    % training on those individuals that actually participated in a
-    % job evaluation program or a drug study where interest is in all
-    % patients treated with the drug.
-  \item \texttt{treat} discards only treated units outside the support
-    of the distance measure of the control units.
-    % Use this option when the average treatment effect on the control
-    % units is of most interest and when unwilling to discard control
-    % units.
+    Use this option when the units to be matched are substantially
+    similar, such as in the case of matching treatment and control
+    units from a field experiment that was close to (but not fully)
+    randomized (e.g., \citealt{Imai05}), when caliper matching will
+    restrict the donor pool, or when you do not wish to change the
+    quantity of interest and the parametric methods to be used
+    post-matching can be trusted to extrapolate.
+   \item \texttt{both} discards all units (treated and control) that
+     are outside the support of the distance measure. Use this option
+     when the units to be matched are substantially different (when
+     there is a large degree of non-overlapping support on the
+     distance score), such as in the case of measuring the effect of
+     democracy on economic growth (e.g., \citealt{KinZen04}).
+   \item \texttt{control} discards only control units outside the
+     support of the distance measure of the treated units.  Use this
+     option when the average treatment effect on the treated is of
+     most interest and when unwilling to discard non-overlapping
+     treatment units (which would change the quantity of interest),
+     such as possibly in the case of the effect of job training on
+     those individuals that actually participated in a job evaluation
+     program or a drug study where interest is in all patients treated
+     with the drug.
+   \item \texttt{treat} discards only treated units outside the
+     support of the distance measure of the control units.  Use this
+     option when the average treatment effect on the control units is
+     of most interest and when unwilling to discard control units.
+   \item \texttt{convex.hull} discards control units not within the
+     convex hull of the treated units. 
   \end{itemize}
-  % ** can we add an option to discard any control units not within
-  % the convex hull of the treated units?  see
-  % gking.harvard.edu/whatif for the code
   
 \item \texttt{reestimate} specifies whether the model for distance
   measure should be re-estimated after units are discarded. The input
   must be a logical value. The default is \texttt{FALSE}.
-  % Re-estimation may be desirable for efficiency reasons, especially
-  % if many units were discarded and so the post-discard samples are
-  % quite different from the original samples.
+  Re-estimation may be desirable for efficiency reasons, especially if
+  many units were discarded and so the post-discard samples are quite
+  different from the original samples.
 
 \item \texttt{verbose} specifies whether or not to print out comments
   indicating the status of the matching. The input must be a logical
@@ -768,7 +1230,7 @@ The following are the elements of the \texttt{matchit} output object;
   summary of the model where \texttt{m.out} is the output object from
   \texttt{matchit()}.
   
-  % ** n_1 and ratio aren't defined at this point so its hard to
+   % ** n_1 and ratio aren't defined at this point so its hard to
   % follow what the next line means, even with the subsequent list.
 \item \texttt{match.matrix} is an $n_1$ by \texttt{ratio} matrix
   where:
@@ -926,275 +1388,6 @@ within each subclasses if specified.  The graphs present:
   units (\texttt{type="jitter"}).
 \end{enumerate}
 
-\subsubsection{Examples}
-The following is an example of the output from using
-\texttt{summary()} on an output object from {\tt matchit()} generated
-using nearest neighbor matching, followed by sample plots from
-\texttt{plot()}:
-
-\begin{verbatim}
-
-> m.out <- matchit(treat ~ re74 + re75 + educ + black + hispan + age, data = lalonde, 
-                   method = "nearest")
- 
-> print(summary(m.out))
-
-Call:
-matchit(formula = treat ~ re74 + re75 + educ + black + hispan + age, data = lalonde, 
-method = "nearest")
-
-Summary of balance for all data:
-
-         Means Treated Means Control Pooled SD   QQ Med  QQ Mean   QQ Max Std. Bias
-distance      5.66e-01         0.187     0.284    0.732    0.535     0.84     1.792 
-re74          2.10e+03      5619.237  6477.964 3430.277 5155.851 13044.16    -0.721
-re75          1.53e+03      2466.484  3295.679 1373.280 1511.706  9609.60    -0.290
-educ          1.03e+01        10.235     2.628    1.414    0.962     5.66     0.055
-black         8.43e-01         0.203     0.489    1.414    0.903     1.41     1.757
-hispan        5.95e-02         0.142     0.322    0.000    0.119     1.41    -0.349
-age           2.58e+01        28.030     9.881    1.414    4.650    14.14    -0.309
-        
-Summary of balance for matched data:
-
-         Means Treated Means Control Pooled SD  QQ Med QQ Mean   QQ Max Std. Bias
-distance      5.66e-01         0.365     0.257   0.150   0.284 6.93e-01    0.9509
-re74          2.10e+03      2466.304  4574.949 410.082 978.726 1.86e+04   -0.0759
-re75          1.53e+03      1960.355  3089.993 638.038 887.982 1.61e+04   -0.1330
-educ          1.03e+01        10.470     2.673   1.414   1.307 5.66e+00   -0.0618
-black         8.43e-01         0.470     0.475   0.000   0.527 1.41e+00    1.0231
-hispan        5.95e-02         0.276     0.374   0.000   0.306 1.41e+00   -0.9118
-age           2.58e+01        26.054     8.794   2.828   3.868 1.13e+01   -0.0332
-        
-Percent Balance Improvement:
-
-           Mean QQ Med QQ Mean QQ Max Std. Bias
-distance   46.9   79.4    46.8   17.6      46.9
-re74       89.5   88.0    81.0  -42.3      89.5
-re75       54.2   53.5    41.3  -67.3      54.2
-educ      -12.5    0.0   -35.9    0.0     -12.5
-black      41.8  100.0    41.6    0.0      41.8
-hispan   -161.3    0.0  -157.7    0.0    -161.3
-age        89.3 -100.0    16.8   20.0      89.3
-
-Sample sizes:
-
-          Control Treated
-Full          429     185
-Matched       185     185
-Unmatched     244       0
-Discarded       0       0
-
-\end{verbatim}
-
-For this 1:1 nearest neighbor matching, we see that 185 control units
-were matched to the 185 treatment units.  The \texttt{summary()}
-command first gives measures of the balance between the treated and
-control groups in the full (original) data set, and then the same
-measures of balance in the matched data set.  If the matching worked
-well, the standardized bias and QQ plot statistics should be smaller
-in the matched data set as compared with the full data set.  We could
-also use the \texttt{addlvars} option to examine the balance in
-variables not included in the distance model; it may be beneficial to
-include in the distance model any variables that are not well balanced
-in the matched data sets.
-
-We can also examine the balance graphically:
-
-\begin{verbatim}
-> plot(m.out)
-> plot(m.out, type="jitter")
-\end{verbatim}
-Figures~\ref{diagqqnn} and~\ref{diagjitternn} display these two sample
-plots.  
-\begin{figure}[tbp]
-  \begin{center}
-%    \rotatebox{270}{\includegraphics[height=2.85in,angle=0]{figs/subclass1}}
-    {\includegraphics[scale=0.7]{figs/qqplotnn}}
-    {\includegraphics[scale=0.7]{figs/qqplotnn2}} \hfill
-    \caption{Sample diagnostic QQ plots: Nearest Neighbor matching
-      with the \MatchIt\ call \texttt{matchit(treat ~ re74 + re75 + educ
-        + black + hispan + age, data=lalonde, method="nearest")}.}
-\label{diagqqnn}
-\end{center}
-\end{figure}
-
-\begin{figure}[tbp]
-  \begin{center}
-%    \rotatebox{270}{\includegraphics[height=2.85in,angle=0]{figs/subclass1}}
-    {\includegraphics[scale=0.7]{figs/jitterplotnn}}
-    \hfill
-    \caption{Sample diagnostic jitter plot: Nearest Neighbor matching
-      with the \MatchIt\ call \texttt{matchit(treat ~ re74 + re75 +
-        educ + black + hispan + age, data=lalonde, method="nearest")}.
-      Matched units shown in black, unmatched units shown in grey.}
-\label{diagjitternn}
-\end{center}
-\end{figure}
-
-The diagnostics are similar for subclassification, except that the
-diagnostic statistics are printed out separately for each subclass,
-and plots are generated separately for each subclass.
-
-\begin{verbatim}
-
-> m.outs <- matchit(treat ~ re74 + re75 + educ + black + hispan + age, data = lalonde, 
-                    method = "subclass")
-> print(summary(m.outs))
-
-Call:
-matchit(formula = treat ~ re74 + re75 + educ + black + hispan +     
-        age, data = lalonde, method = "subclass", sub.by = "treat")
-
-Summary of balance for all data:
-
-         Means Treated Means Control Pooled SD   QQ Med  QQ Mean   QQ Max Std. Bias
-distance      5.66e-01         0.187     0.284    0.732    0.535     0.84     1.792
-re74          2.10e+03      5619.237  6477.964 3430.277 5155.851 13044.16    -0.721
-re75          1.53e+03      2466.484  3295.679 1373.280 1511.706  9609.60    -0.290
-educ          1.03e+01        10.235     2.628    1.414    0.962     5.66     0.055
-black         8.43e-01         0.203     0.489    1.414    0.903     1.41     1.757
-hispan        5.95e-02         0.142     0.322    0.000    0.119     1.41    -0.349
-age           2.58e+01        28.030     9.881    1.414    4.650    14.14    -0.309
-        
-, , Subclass 1
-
-         Means Treated Means Control Pooled SD    QQ Med   QQ Mean    QQ Max Std. Bias
-distance      1.22e-01      7.62e-02  5.22e-02  5.48e-02  6.51e-02  1.23e-01  7.79e-01
-re74          3.63e+03      6.33e+03  7.15e+03  4.59e+03  5.18e+03  1.30e+04 -3.38e-01
-re75          2.23e+03      2.62e+03  3.30e+03  6.63e+02  1.15e+03  9.63e+03 -1.17e-01
-educ          1.06e+01      1.03e+01  2.80e+00  1.41e+00  1.37e+00  9.90e+00  1.93e-01
-black         6.45e-02      5.81e-03  1.03e-01  0.00e+00  4.56e-02  1.41e+00  2.35e-01
-hispan        3.55e-01      1.77e-01  3.94e-01  0.00e+00  2.28e-01  1.41e+00  3.65e-01
-age           2.50e+01      2.86e+01  1.05e+01  2.83e+00  6.56e+00  1.98e+01 -5.85e-01
-        
-, , Subclass 2
-
-         Means Treated Means Control Pooled SD    QQ Med   QQ Mean    QQ Max Std. Bias
-distance      5.39e-01      5.34e-01  6.46e-02  1.62e-02  1.99e-02  6.55e-02  6.29e-02
-re74          7.53e+03      7.21e+03  5.92e+03  6.57e+02  1.23e+03  4.51e+03  5.56e-02
-re75          4.11e+03      3.48e+03  5.01e+03  1.71e+03  2.12e+03  1.61e+04  1.10e-01
-educ          9.00e+00      8.69e+00  3.47e+00  7.07e-01  1.29e+00  5.66e+00  1.03e-01
-black         1.00e+00      1.00e+00  0.00e+00  0.00e+00  0.00e+00  0.00e+00          
-hispan        0.00e+00      0.00e+00  0.00e+00  0.00e+00  0.00e+00  0.00e+00          
-age           2.81e+01      3.33e+01  1.03e+01  9.33e+00  8.05e+00  1.98e+01 -6.36e-01
-        
-...
-\end{verbatim}
-
-\begin{comment}
-, , Subclass 3
-
-         Means Treated Means Control Pooled SD    QQ Med   QQ Mean    QQ Max Std. Bias
-distance      6.46e-01      6.45e-01  1.16e-02  1.32e-03  2.86e-03  1.30e-02  7.54e-02
-re74          8.92e+02      1.40e+03  1.82e+03  5.43e+02  8.26e+02  2.12e+03 -3.15e-01
-re75          7.07e+02      1.46e+03  2.19e+03  2.91e+02  9.44e+02  8.97e+03 -5.02e-01
-educ          8.93e+00      9.12e+00  1.32e+00  0.00e+00  4.37e-01  2.83e+00 -1.57e-01
-black         1.00e+00      1.00e+00  0.00e+00  0.00e+00  0.00e+00  0.00e+00          
-hispan        0.00e+00      0.00e+00  0.00e+00  0.00e+00  0.00e+00  0.00e+00          
-age           2.39e+01      1.96e+01  7.08e+00  3.80e+00  6.26e+00  2.00e+01  5.47e-01
-        
-, , Subclass 4
-
-         Means Treated Means Control Pooled SD    QQ Med   QQ Mean    QQ Max Std. Bias
-distance      6.77e-01      6.78e-01  8.23e-03  4.31e-03  4.32e-03  1.19e-02 -7.99e-02
-re74          3.90e+02      7.11e+02  8.22e+02  0.00e+00  4.42e+02  1.68e+03 -4.35e-01
-re75          1.19e+03      6.84e+02  1.47e+03  1.52e+02  7.70e+02  3.23e+03  3.06e-01
-educ          1.00e+01      1.06e+01  9.21e-01  1.41e+00  8.08e-01  2.83e+00 -7.38e-01
-black         1.00e+00      1.00e+00  0.00e+00  0.00e+00  0.00e+00  0.00e+00          
-hispan        0.00e+00      0.00e+00  0.00e+00  0.00e+00  0.00e+00  0.00e+00          
-age           2.35e+01      2.22e+01  7.99e+00  2.83e+00  4.48e+00  1.13e+01  1.95e-01
-        
-, , Subclass 5
-
-         Means Treated Means Control Pooled SD    QQ Med   QQ Mean    QQ Max Std. Bias
-distance      6.94e-01      6.97e-01  3.20e-03  1.09e-03  3.37e-03  1.07e-02 -9.86e-01
-re74          9.41e+01      3.26e+02  4.43e+02  0.00e+00  1.58e+02  8.01e+02 -6.03e-01
-re75          4.05e+02      3.08e+02  1.23e+03  0.00e+00  1.27e+03  7.78e+03  7.26e-02
-educ          1.10e+01      1.14e+01  4.28e-01  0.00e+00  6.06e-01  1.41e+00 -1.66e+00
-black         1.00e+00      1.00e+00  0.00e+00  0.00e+00  0.00e+00  0.00e+00          
-hispan        0.00e+00      0.00e+00  0.00e+00  0.00e+00  0.00e+00  0.00e+00          
-age           2.67e+01      2.23e+01  6.11e+00  9.90e+00  6.87e+00  1.27e+01  8.19e-01        
-\end{comment}
-\begin{verbatim}
-, , Subclass 6
-
-         Means Treated Means Control Pooled SD    QQ Med   QQ Mean    QQ Max Std. Bias
-distance      7.20e-01      7.24e-01  1.81e-02  2.63e-03  5.47e-03  2.88e-02 -2.90e-01
-re74          0.00e+00      2.70e+02  3.97e+02  0.00e+00  3.82e+02  3.63e+03      -Inf
-re75          5.19e+02      1.66e+03  2.34e+03  0.00e+00  1.33e+03  6.83e+03 -6.96e-01
-educ          1.25e+01      1.26e+01  1.20e+00  0.00e+00  2.33e-01  1.41e+00 -1.35e-01
-black         1.00e+00      1.00e+00  0.00e+00  0.00e+00  0.00e+00  0.00e+00          
-hispan        0.00e+00      0.00e+00  0.00e+00  0.00e+00  0.00e+00  0.00e+00          
-age           2.76e+01      2.70e+01  7.84e+00  2.45e+00  3.32e+00  1.13e+01  8.69e-02
-        
-Sample sizes by subclasses:
-
-        Subclass 1 Subclass 2 Subclass 3 Subclass 4 Subclass 5 Subclass 6
-Treated         31         31         30         31         31         31
-Control        344         26         17         21          7         14
-Total          375         57         47         52         38         45
-
-Summary of balance across subclasses
-
-         Means Treated Means Control Pooled SD   QQ Med  QQ Mean   QQ Max Std. Bias
-distance      5.66e-01      5.59e-01  1.44e-02   0.0135 1.69e-02 4.23e-02   -0.0741
-re74          2.10e+03      2.72e+03  1.59e+03 967.1902 1.37e+03 4.30e+03      -Inf
-re75          1.53e+03      1.71e+03  1.18e+03 470.4902 1.26e+03 8.75e+03   -0.1360
-educ          1.03e+01      1.05e+01  8.20e-01   0.5924 7.93e-01 4.01e+00   -0.4002
-black         8.43e-01      8.33e-01  1.72e-02   0.0000 7.64e-03 2.37e-01       NaN
-hispan        5.95e-02      2.97e-02  6.61e-02   0.0000 3.82e-02 2.37e-01       NaN
-age           2.58e+01      2.55e+01  3.46e+00   5.1973 5.92e+00 1.58e+01    0.0687
-        
-Percent Balance Improvement:
-
-         Mean QQ Med QQ Mean QQ Max Std. Bias
-distance 98.1   98.2    96.8  94.97      95.9
-re74     82.4   71.8    73.4  67.05      -Inf
-re75     81.4   65.7    16.3   8.94      53.1
-educ     -3.3   58.1    17.6  29.05    -628.1
-black    98.5  100.0    99.2  83.24       NaN
-hispan   64.0    0.0    67.8  83.24       NaN
-age      86.8 -267.5   -27.3 -11.72      77.8
-
-\end{verbatim}
-Similarly, we can examine the balance within each subclass graphically:
-\begin{verbatim}
-> plot(m.outs)
-> plot(m.outs, type="jitter")
-\end{verbatim}    
-Figures~\ref{} and \ref{} display these two plots. 
-
-\begin{figure}[tbp]
-  \begin{center}
-%    \rotatebox{270}{\includegraphics[height=2.85in,angle=0]{figs/subclass1}}
-    {\includegraphics[scale=.7]{figs/qqplotsub}}
-    {\includegraphics[scale=.7]{figs/qqplotsub2}}
-    \hfill
-    \caption{Sample diagnostic QQ plots: Subclassification with
-      \MatchIt\ call \texttt{matchit(treat ~ re74 + re75 + educ +
-        black + hispan + age, data = lalonde, method = "subclass")}.}
-\label{diagqqsub}
-\end{center}
-\end{figure}
-
-\begin{figure}[tbp]
-  \begin{center}
-%    \rotatebox{270}{\includegraphics[scale=0.5,angle=0]{figs/subclass1}}
-    {\includegraphics[scale=0.7]{figs/jitterplotsub}}
-    \hfill
-    \caption{Sample diagnostic jitter plot: Subclassification with
-      \MatchIt\ call \texttt{matchit(treat ~ re74 + re75 + educ +
-        black + hispan + age, data = lalonde, method = "subclass")}.
-      Vertical lines indicate the subclass cut points and the area of
-      each diamond is proportional to the weights of the matched units
-      for each subclass.}
-\label{diagjittersub}
-\end{center}
-\end{figure}
-Further examples of the summary statistics and diagnostic plots can be
-seen in the demos for each of the specific matching methods (see
-Section \ref{methods}).
-
 \subsubsection{{\tt match.data()}}
 \label{subsec:match.data}
 
@@ -1269,63 +1462,6 @@ names(m.data4)
 
 
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Conducting Analyses after Matching}
-\label{sec:analysis}
-
-Once matching is complete and balance has been achieved, the \MatchIt\ 
-object can be used with any other analysis procedure; \MatchIt\ is
-designed to make those analysis procedures less dependent on the
-modeling assumptions and thus work better.  Therefore, any analysis
-you might have conducted using the original data set can be conducted
-with less model dependence using the matched data set.  To obtain the
-matched data set, use {\tt match.data(m.out)}, where {\tt m.out} is a
-\MatchIt\ object. See Section~\ref{subsec:match.data} for more options
-and details.
-
-In this section, we describe our recommended approach
-\citep{HoImaKin05}, which uses
-\hlink{Zelig}{http://gking.harvard.edu/zelig/} to conduct parametric
-causal inference after preprocessing the data through \MatchIt.  The
-resulting matched data sets can also be exported to other statistical
-program using commands such as {\tt write.table()} and {\tt
-  write.csv()}. In addition, the commands in the {\tt foreign} package
-allow users to save matched data sets as binary files for various
-statistical software including STATA and SPSS.
-
-Zelig \citep{ImaKinLau04} is an easy-to-use R package that estimates a
-variety of statistical models, gives easily interpretable results by
-simulating quantities of interest, and provides numerical and
-graphical summaries.  The package along with the complete
-documentation is available at
-\hlink{http://gking.harvard.edu/zelig/}{http://gking.harvard.edu/zelig/}.
-\MatchIt\ and Zelig can be easily used together to enable estimation
-of causal effects in very general settings with a variety of
-statistical models.
-
-The general framework is that of imputing the missing potential
-outcomes.  For example, for the treated group, the potential outcomes
-under control, $Y_{0i}$, are missing, whereas the outcomes under
-treatment, $Y_{1i}$, are observed.  We impute the missing outcomes,
-$Y_{0i}$, via Monte Carlo simulation using a parametric statistical
-model as follows.  First, we fit a model using the observed outcomes
-of the matched control units (i.e., using only observations where
-$T_i=0$).  Then, given this fitted model, the missing outcomes
-$Y_{i0}$ are imputed for the matched treated units by using the values
-of the explanatory variables for the treated units.  Once those
-potential outcomes are imputed, the estimate of individual $i$'s
-treatment effect is $Y_{1i}-\widehat{Y}_{0i}$ where $\widehat{Y}_{0i}$
-is the Monte Carlo estimate of the average missing potential outcome
-for unit $i$.  The in-sample average treatment effect for the treated
-individuals can be then obtained by averaging over $i$ of this
-difference. A similar procedure can also be used to estimate various
-quantities of interest. Another advantage of this simulation approach
-is that the uncertainty estimates such as standard errors are obtained
-easily from the estimation uncertainty in fitting the parametric
-model. See \citep{HoImaKin05} for more details.
-
-
-\input{matchit2zelig}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
