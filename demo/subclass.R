@@ -6,8 +6,9 @@
 data(lalonde)
 user.prompt()
 
-## sublcalssification
-m.out <- matchit(treat ~ re74+re75+age+educ, data=lalonde, method = "subclass")
+## sublclassification
+m.out <-  matchit(treat ~ re74 + re75 + educ + black + hispan + age,
+                  data = lalonde, method = "subclass")
 user.prompt()
 
 ## a short summary
@@ -20,3 +21,4 @@ user.prompt()
 
 ## balance diagnostics through plots
 plot(m.out)
+plot(m.out, type="jitter")
