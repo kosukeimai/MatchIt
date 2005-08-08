@@ -4,6 +4,22 @@
 data(lalonde)
 user.prompt()
 
+## 1:1 Nearest neighbor matching
+m.out <- matchit(treat ~ re74 + re75 + educ + black + hispan + age,
+                 data = lalonde, method = "nearest")
+user.prompt()
+
+## print a short summary
+print(m.out)
+user.prompt()
+
+## balance diagnostics through statistics
+summary(m.out)
+user.prompt()
+
+## balance diagnostics through graphics
+plot(m.out)
+
 ## 2:1 Nearest neighbor matching
 m.out <- matchit(treat ~ re74+re75+age+educ, data=lalonde,
                  method = "nearest", distance = "logit", ratio=2)
@@ -83,5 +99,3 @@ user.prompt()
 
 ## balance diagnostics through graphics
 plot(m.out5)
-
-
