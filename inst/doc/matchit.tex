@@ -565,8 +565,8 @@ diagnostic plots, respectively.
 \begin{figure}[tbp]
   \begin{center}
 %    \rotatebox{270}{\includegraphics[height=2.85in,angle=0]{figs/subclass1}}
-    {\includegraphics[scale=.7]{figs/qqplotsub}}
-    {\includegraphics[scale=.7]{figs/qqplotsub2}}
+    \includegraphics[scale=.5]{figs/qqplotsub}
+    \includegraphics[scale=.5]{figs/qqplotsub2}
     \hfill
     \caption{Sample diagnostic QQ plots: Subclassification with
       \MatchIt\ call \texttt{matchit(treat ~ re74 + re75 + educ +
@@ -738,8 +738,8 @@ by clicking the first mouse button near the units.
 \begin{figure}[tbp]
   \begin{center}
 %    \rotatebox{270}{\includegraphics[height=2.85in,angle=0]{figs/subclass1}}
-    {\includegraphics[scale=0.7]{figs/qqplotnn}}
-    {\includegraphics[scale=0.7]{figs/qqplotnn2}} \hfill
+    \includegraphics[scale=0.5]{figs/qqplotnn}
+    \includegraphics[scale=0.5]{figs/qqplotnn2} \hfill
     \caption{Sample diagnostic QQ plots: Nearest Neighbor matching
       with the \MatchIt\ call \texttt{matchit(treat ~ re74 + re75 + educ
         + black + hispan + age, data=lalonde, method="nearest")}.}
@@ -826,11 +826,12 @@ and one or more treated units.  The only units not placed into a
 subclass will be those discarded (if a \texttt{discard} option was
 specified).  Full matching is optimal in terms of minimizing a
 weighted average of the propensity score distances between each
-treated subject and each control subject within each stratum.
+treated subject and each control subject within each stratum.  The
+following example script can be run by typing {\tt demo(full)} at the
+R prompt.
 
-The following example script can be run by typing {\tt demo(full)} at
-the R prompt.
-
+We first load the Lalonde data, confuct full matching, and then print
+a short summary.
 \begin{verbatim}
 ## load the Lalonde data
 > data(lalonde)
@@ -838,8 +839,6 @@ the R prompt.
 > m.out <- matchit(treat ~ age + educ + black + hispan + married + nodegree + re74 + re75, 
 +                  data = lalonde, method = "full", distance = "logit")
 ## print a short summary
-> print(m.out)
-
 > m.out
 
 Call: 
@@ -852,8 +851,13 @@ Full          429     185
 Matched       429     185
 Unmatched       0       0
 Discarded       0       0
+\end{verbatim}
+We see that the matching has utilized all units (the treated and
+control group sample sizes are the same for the full and matched
+samples). We can now obtain a summary of resulting balance after full
+matching.
 
-
+\begin{verbatim}
 ## balance diagnostics through statistics
 > summary(m.out)
 
@@ -908,12 +912,26 @@ Full          429     185
 Matched       429     185
 Unmatched       0       0
 Discarded       0       0
+\end{verbatim}
+There has been significant reduction in standardized bias (and mean
+deviation from the 45 degree line in the quantile-quantile plot) from
+the full matching: the percent improvement is nearly 100 percent.  The
+diagnostics are slightly different with full matching as compared with
+the previous matching methods we have discussed; since many subclasses
+will have only one treated or one control unit it is not possible to
+do the weighted comparisons done for standard subclassification. {\bf
+  Dan, what did we decide to do?}
 
-
+Finally, we can obtain a graphical summary of resulting balance via
+the usual {\tt plot()} function.
+\begin{verbatim}
 ## balance diagnostics through graphics
-plot(m.out)
+> plot(m.out)
 \end{verbatim}
 
+%\includegraphics[scale=0.5]{full1}
+%\includegraphics[scale=0.5]{full2}
+%\includegraphics[scale=0.5]{full3}
 
 
 \subsection{Optimal Matching}
