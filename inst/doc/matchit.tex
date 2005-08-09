@@ -833,14 +833,83 @@ the R prompt.
 
 \begin{verbatim}
 ## load the Lalonde data
-data(lalonde)
+> data(lalonde)
 ## conduct full matching using the propensity score based on logistic regression
-m.out <- matchit(treat ~ age + educ + black + hispan + married + nodegree + re74 + re75, 
-                 data = lalonde, method = "full", distance = "logit")
+> m.out <- matchit(treat ~ age + educ + black + hispan + married + nodegree + re74 + re75, 
++                  data = lalonde, method = "full", distance = "logit")
 ## print a short summary
-print(m.out)
+> print(m.out)
+
+> m.out
+
+Call: 
+matchit(formula = treat ~ age + educ + black + hispan + married +     
+        nodegree + re74 + re75, data = lalonde, method = "full", distance = "logit")
+
+Sample sizes:
+          Control Treated
+Full          429     185
+Matched       429     185
+Unmatched       0       0
+Discarded       0       0
+
+
 ## balance diagnostics through statistics
-summary(m.out)
+> summary(m.out)
+
+Call: 
+matchit(formula = treat ~ age + educ + black + hispan + married +   
+        nodegree + re74 + re75, data = lalonde, method = "full", distance = "logit")
+
+Summary of balance for all data:
+
+         Means Treated Means Control Pooled SD   QQ Med  QQ Mean   QQ Max Std. Bias
+distance      5.77e-01         0.182     0.290    0.732    0.558 8.44e-01     1.794
+age           2.58e+01        28.030     9.881    1.414    4.650 1.41e+01    -0.309
+educ          1.03e+01        10.235     2.628    1.414    0.962 5.66e+00     0.055
+black         8.43e-01         0.203     0.489    1.414    0.903 1.41e+00     1.757
+hispan        5.95e-02         0.142     0.322    0.000    0.119 1.41e+00    -0.349
+married       1.89e-01         0.513     0.493    0.000    0.459 1.41e+00    -0.824
+nodegree      7.08e-01         0.597     0.483    0.000    0.160 1.41e+00     0.244
+re74          2.10e+03      5619.237  6477.964 3430.277 5155.851 1.30e+04    -0.721
+re75          1.53e+03      2466.484  3295.679 1373.280 1511.706 9.61e+03    -0.290
+
+Summary of balance for matched data:
+
+         Means Treated Means Control Pooled SD   QQ Med  QQ Mean   QQ Max Std. Bias
+distance      5.77e-01         0.576     0.219 5.73e-03 9.83e-03 1.40e-01  5.78e-03
+age           2.58e+01        24.642     9.197 4.24e+00 4.38e+00 1.27e+01  1.64e-01
+educ          1.03e+01        10.389     2.473 0.00e+00 6.45e-01 5.66e+00 -2.15e-02
+black         8.43e-01         0.835     0.369 0.00e+00 1.24e-02 1.41e+00  2.36e-02
+hispan        5.95e-02         0.061     0.239 0.00e+00 2.83e-03 1.41e+00 -6.60e-03
+married       1.89e-01         0.132     0.356 0.00e+00 6.96e-02 1.41e+00  1.47e-01
+nodegree      7.08e-01         0.708     0.455 0.00e+00 2.60e-02 1.41e+00 -5.66e-05
+re74          2.10e+03      2407.948  4803.181 1.56e+02 7.77e+02 1.86e+04 -6.39e-02
+re75          1.53e+03      1567.982  2596.207 3.85e+02 7.61e+02 1.80e+04 -1.12e-02
+        
+
+Percent Balance Improvement:
+
+          Mean QQ Med QQ Mean QQ Max Std. Bias
+distance  99.7   99.2    98.2   83.5      99.7
+age       47.0 -200.0     5.8   10.0      47.0
+educ      60.9  100.0    33.0    0.0      60.9
+black     98.7  100.0    98.6    0.0      98.7
+hispan    98.1    0.0    97.6    0.0      98.1
+married   82.2    0.0    84.8    0.0      82.2
+nodegree 100.0    0.0    83.7    0.0     100.0
+re74      91.1   95.4    84.9  -42.3      91.1
+re75      96.2   72.0    49.7  -87.6      96.2
+
+Sample sizes:
+
+          Control Treated
+Full          429     185
+Matched       429     185
+Unmatched       0       0
+Discarded       0       0
+
+
 ## balance diagnostics through graphics
 plot(m.out)
 \end{verbatim}
