@@ -66,20 +66,21 @@ Elizabeth A. Stuart\thanks{Researcher, Mathematica Policy Research,
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \clearpage
 \section{Introduction}
-\MatchIt\ implements the suggestions of \citet{HoImaKin05} for
-improving parametric statistical models and reducing model dependence
-by preprocessing data with semi- and non-parametric matching methods.
-After preprocessing with \MatchIt, researchers can use whatever
-parametric model they would have used without \MatchIt, but produce
-inferences that are substantially more robust and less sensitive to
-modeling assumptions.  Matched data sets created by \MatchIt\ can also
-be entered easily into \hlink{Zelig}{http://gking.harvard.edu/zelig/}
-\citep{ImaKinLau04}, or other programs, for subsequent parametric
-analyses.  \MatchIt\ reduces the dependence of causal inferences on
-commonly made, but hard-to-justify, statistical modeling assumptions
-via a wide range of sophisticated matching methods.  In addition, we
-have written \MatchIt\ so that adding methods to its structure is
-easy, if you have the inclination.
+\MatchIt\ implements the suggestions of Ho, Imai, King, and Stuart
+(2005)\nocite{HoImaKin05} for improving parametric statistical models
+and reducing model dependence by preprocessing data with semi- and
+non-parametric matching methods.  After preprocessing with \MatchIt,
+researchers can use whatever parametric model they would have used
+without \MatchIt, but produce inferences that are substantially more
+robust and less sensitive to modeling assumptions.  Matched data sets
+created by \MatchIt\ can also be entered easily into
+\hlink{Zelig}{http://gking.harvard.edu/zelig/} \citep{ImaKinLau04}, or
+other programs, for subsequent parametric analyses.  \MatchIt\ reduces
+the dependence of causal inferences on commonly made, but
+hard-to-justify, statistical modeling assumptions via a wide range of
+sophisticated matching methods.  In addition, we have written
+\MatchIt\ so that adding methods to its structure is easy, if you have
+the inclination.
 
 \subsection{Software Requirements} 
 \MatchIt\ works in conjunction with the R programming language and
@@ -142,15 +143,15 @@ For this change to take effect, you need to restart R.
 
 \section{Statistical Overview}
 
-\MatchIt\ is designed for studies with a dependent variable that is a
-function of a dichotomous causal variable, with values known as the
-``treatment'' and ``control'' groups, and a set of pretreatment
-covariates that are measured {\it prior to} the administration of the
-treatment.  \MatchIt\ can be used for other types of causal variables
-by dichotomizing them, perhaps in multiple ways \citep[see
-also][]{ImaDyk04}.
+\MatchIt\ is designed for studies with a dependent variable (or a set
+of dependent variables) that is a function of a dichotomous causal
+variable, with values known as the ``treatment'' and ``control''
+groups, and a set of ``pretreatment'' covariates, i.e., that are
+causally prior to the administration of the treatment.  \MatchIt\ can
+be used for other types of causal variables by dichotomizing them,
+perhaps in multiple ways \citep[see also][]{ImaDyk04}.
 
-\subsection{General Syntax of \MatchIt\ }
+\subsection{General Syntax of \MatchIt}
 
 For any matching procedure, \MatchIt\ does its work with the following
 three commands:
@@ -215,17 +216,19 @@ may be run easily with Zelig as shown in Section~\ref{sec:analysis}.
 \label{methods}
 
 We adopt the same notation as in \citet{HoImaKin05}. Unless otherwise
-noted, let $i$ index the $n$ units in the dataset, $n_1$ the number of
-treated units, $n_0$ the number of control units (such that
-$n=n_0+n_1$), and $x_i$ a vector of pretreatment or control variables
-for unit $i$.  $t_i=1$ indicates that unit $i$ was assigned treatment,
-and $t_i=0$ that unit $i$ was assigned control.  $y_{1i}$ represents
-the potential outcome of unit $i$ under treatment and $y_{0i}$ the
-potential outcome of unit $i$ under control.  $y_{1i}$ and $y_{0i}$
-are jointly unobservable, so we only observe
-$y_i=t_iy_{1i}+(1-t_i)y_{0i}$.
+noted, let $i$ index the $n$ units in the dataset, $n_1$ denote the
+number of treated units, $n_0$ denote the number of control units
+(such that $n=n_0+n_1$), and $x_i$ indicate a vector of pretreatment
+(or control) variables for unit $i$.  Let $t_i=1$ when unit $i$ is
+assigned treatment, and $t_i=0$ when unit $i$ is assigned control.
+(The labels ``treatment'' and ``control'' are arbitrary and can be
+switched for convenience.)  Denote $y_{1i}$ as the potential outcome
+of unit $i$ under treatment and $y_{0i}$ the potential outcome of unit
+$i$ under control.  The variables $y_{1i}$ and $y_{0i}$ are jointly
+unobservable, and for each $i$, we observe one
+$y_i=t_iy_{1i}+(1-t_i)y_{0i}$, and not the other.
 
-For all of our examples, we use data from the job training program
+For our running example, we use data from the job training program
 analyzed in \citet{lalonde86} and \citet{DehWah99}.  A subsample of
 the data consisting of the National Supported Work Demonstration (NSW)
 treated group and the comparison sample from the Population Survey of
@@ -235,9 +238,12 @@ interest is the impact that participation in the job training program,
 \texttt{treat==1}, had on real earnings in 1978, \texttt{re78}, for
 those that participated in the program, i.e., the average treatment
 effect on the treated (ATT):
-
+%** shouldn't we switch this to the notation in the paper?
+%** i.e., to SATT.  in fact, why don 't we just use the same equations
+%** in the paper entirely.
 \begin{equation}\label{re78eqn}
-E(\text{re78}(\text{treat}=1) | \text{treat}=1)\; - \; E(\text{re78}(\text{treat}=0) | \text{treat}=1),
+  E(\text{re78}(\text{treat}=1) | \text{treat}=1)\; - \; 
+  E(\text{re78}(\text{treat}=0) | \text{treat}=1),
 \end{equation}
 where \texttt{re78(treat=1)} represents the potential outcome under
 the treatment of the job program, and \texttt{re78(treat=0)} under
@@ -247,6 +253,7 @@ the \emph{unobserved} counterfactual of real earnings if participants
 had not participated.  The nature of causal inference is that one of
 the two terms in the difference will always be unobserved.  The same
 expression of the ATT, in mathematical notation is:
+%** same question
 \begin{equation}
   E(Y_{1i} | t_i=1 ) \; - \; E(Y_{0i} | t_i=1).
 \end{equation}
@@ -276,28 +283,25 @@ expression of the ATT, in mathematical notation is:
 \caption{Description of Lalonde data \label{dwvars}}
 \end{table}
 
-\subsection{Exact Matching} 
-\label{exactm}
+\subsection{Exact Matching}\label{exactm}
 
 The simplest version of matching is exact.  This technique matches
-\emph{each} treated unit to \emph{all} possible control units with the
-same covariate values, forming subclasses such that within each
-subclass all units (treatment and control) have the same covariate
-values.  Exact restrictions on a subset of covariates can also be
-specified in nearest neighbor matching (see
+\emph{each} treated unit to \emph{all} possible control units with
+exactly the same value on all the covariates, forming subclasses such
+that within each subclass all units (treatment and control) have the
+same covariate values.  Exact restrictions on a subset of covariates
+can also be specified in nearest neighbor matching (see
 Subsection~\ref{subsubsec:nninputs}).
 
 The following example script can be run by typing {\tt demo(exact)} at
-the R prompt.
-
+the R prompt:
 \begin{verbatim}
 > ## load the Lalonde data
 > data(lalonde)
 > ## conduct exact matching on educ, black, and hispan
 > m.out <- matchit(treat ~ educ + black + hispan, data = lalonde, method = "exact")
 \end{verbatim}
-
-\noindent \texttt{m.out} now contains all the information on the
+The file \texttt{m.out} now contains all the information on the
 matched units.  The matching forms all possible subclasses based on
 unique values of the covariates in the formula portion of the
 \MatchIt\ call; within each subclass, all units have the same
@@ -404,20 +408,21 @@ PSID9     9     0      1
 \subsection{Subclassification}
 \label{subclass}
 
-When there are many covariates on which matches are desired, finding
-sufficient exact matches will often be impossible.  In that case,
-subclassification is sometimes desirable, such as by using a scalar
-distance measure like the propensity score estimated using one of the
-\texttt{distance} options.  Subclassification will form subclasses
-based on this distance measure.  Within each subclass, the
-distribution of covariates in the treatment and control groups should
-be similar, and this can be checked using the \texttt{summary()}
-command after doing subclassification.  You can then apply parametric
-analysis within each subclass, rather than the entire dataset, while
-still summarizing the results for the entire dataset.  This can
-significantly increase the robustness of the ultimate results since
-each parametric analysis within a subclass requires only local rather
-than global parametric smoothing assumptions.
+When there are many covariates (or many values of some covariates) on
+which matches are desired, finding sufficient exact matches will often
+be impossible.  In that case, subclassification is sometimes
+desirable, such as by using a scalar distance measure like the
+propensity score estimated using one of the \texttt{distance} options.
+Subclassification will form subclasses based on this distance measure.
+Within each subclass, the distribution of covariates in the treatment
+and control groups should be similar, and this can be checked using
+the \texttt{summary()} command after doing subclassification.  You can
+then apply parametric analysis within each subclass, rather than the
+entire dataset, while still summarizing the results for the entire
+dataset.  This can significantly increase the robustness of the
+ultimate results since each parametric analysis within a subclass
+requires only local rather than global parametric smoothing
+assumptions.
 
 Subclassification is implemented in \MatchIt\ using \texttt{method =
   "subclass"}.  See also the Sections on full matching (Section
@@ -426,8 +431,7 @@ Subclassification is implemented in \MatchIt\ using \texttt{method =
 subclassification.
 
 The following example script can be run by typing {\tt demo(subclass)}
-at the R prompt.
-
+at the R prompt:
 \begin{verbatim}
 > ## load the Lalonde data
 > data(lalonde)
@@ -555,6 +559,11 @@ black    98.5  100.0    99.2  83.24       NaN
 hispan   64.0    0.0    67.8  83.24       NaN
 age      86.8 -267.5   -27.3 -11.72      77.8
 \end{verbatim}
+%** let's include some details about what each of the column headings
+%   mean.  this is the only place to find it unless you prefer it in
+%   the reference manual, but even then it shouldprobably be explained here.
+%   so, ``Mean QQ is the...''
+
 We can also assess balance visually via the \texttt{plot} command: 
 \begin{verbatim}
 > ## balance diagnostics through graphics
@@ -590,6 +599,8 @@ diagnostic plots, respectively.
 \label{diagjittersub}
 \end{center}
 \end{figure}
+
+%** the way to interpret these figures is...
 
 Lastly, subclassification may also be used in conjunction with nearest
 neighbor matching described below in Subsection~\ref{nearest}, by
@@ -818,18 +829,17 @@ plot(m.out5)
 \subsection{Full Matching}
 \label{fullmatching}
 
-When one wishes to use all treated and control units in the analysis,
-a particular type of subclassification is called ``full matching''
-\citep{Rosenbaum02, Hansen04}. In this matching procedure, the matched
-sample is composed of matched sets, where each matched set contains
-either one treated unit and one or more controls, or one control unit
-and one or more treated units.  The only units not placed into a
-subclass will be those discarded (if a \texttt{discard} option was
-specified).  Full matching is optimal in terms of minimizing a
-weighted average of the propensity score distances between each
-treated subject and each control subject within each stratum.  The
-following example script can be run by typing {\tt demo(full)} at the
-R prompt.
+Full matching is a a particular type of subclassification that always
+uses all treated and control units \citep{Rosenbaum02, Hansen04}.  A
+fully matched sample is composed of matched sets, where each matched
+set contains either one treated unit and one or more controls (or one
+control unit and one or more treated units).  The only units not
+placed into a subclass will be those discarded (if a \texttt{discard}
+option was specified) because they are outside of common support.
+Full matching is optimal in terms of minimizing a weighted average of
+the propensity score distances between each treated subject and each
+control subject within each stratum.  The following example script can
+be run by typing {\tt demo(full)} at the R prompt.
 
 We first load the Lalonde data, confuct full matching, and then print
 a short summary.
@@ -853,6 +863,9 @@ Matched       429     185
 Unmatched       0       0
 Discarded       0       0
 \end{verbatim}
+%** not sure what each of the 4 items listed here are.  ``full'' must
+%   mean the complete data but it sounds like 'full matching'.  let's
+%   just define all 4 here
 We see that the matching has utilized all units (the treated and
 control group sample sizes are the same for the full and matched
 samples). We can now obtain a summary of resulting balance after full
@@ -914,14 +927,16 @@ Matched       429     185
 Unmatched       0       0
 Discarded       0       0
 \end{verbatim}
+%** we need to explain the col titles or refer back to the intro
+%   section (to be added) to the user's guide
 There has been significant reduction in standardized bias (and mean
 deviation from the 45 degree line in the quantile-quantile plot) from
 the full matching: the percent improvement is nearly 100 percent.  The
 diagnostics are slightly different with full matching as compared with
 the previous matching methods we have discussed; since many subclasses
 will have only one treated or one control unit it is not possible to
-do the weighted comparisons done for standard subclassification. {\bf
-  Dan, what did we decide to do?}
+do the weighted comparisons done for standard subclassification.
+%** {\bf  Dan, what did we decide to do?}
 
 Finally, we can obtain a graphical summary of resulting balance via
 the usual {\tt plot()} function.
@@ -942,16 +957,16 @@ The default nearest neighbor matching method in \MatchIt\ is
 ``greedy'' matching, where the closest control match for each treated
 unit is chosen one at a time, without trying to minimize a global
 distance measure.  Another method, ``optimal'' matching, finds the
-matched samples with the smallest average absolute 
-distance between each matched pair.  With large control pools, greedy
-and optimal matching may lead to very similar (or the same) sets of
-matches; research \citep{GuRos93} has shown that greedy and optimal
-matching generally choose the same sets of controls for the matched
-samples, but that optimal matching does a better job of minimizing the
-distance within each pair.  In addition, optimal
-matching can be particularly helpful when there are not many
-appropriate control matches for the treated units.  See \cite{GuRos93}
-or \cite{Rosenbaum02} for more information on optimal matching.
+matched samples with the smallest average absolute distance between
+each matched pair.  With large control pools, greedy and optimal
+matching may lead to very similar (or the same) sets of matches;
+\citet{GuRos93} have shown that greedy and optimal matching generally
+choose the same sets of controls for the matched samples, but that
+optimal matching does a better job of minimizing the distance within
+each pair.  In addition, optimal matching can be particularly helpful
+when there are not many appropriate control matches for the treated
+units.  See \cite{GuRos93} or \cite{Rosenbaum02} for more information
+on optimal matching.
 
 The following example script can be run by typing {\tt demo(optimal)}
 at the R prompt.
@@ -974,56 +989,84 @@ plot(m.out)
 \section{Conducting Analyses after Matching}
 \label{sec:analysis}
 
-Once matching is complete and balance has been achieved, the \MatchIt\ 
-object can be used with any other analysis procedure; \MatchIt\ is
-designed to make those analysis procedures less dependent on the
-modeling assumptions and thus work better.  Therefore, any analysis
-you might have conducted using the original data set can be conducted
-with less model dependence using the matched data set.  To obtain the
-matched data set, use {\tt match.data(m.out)}, where {\tt m.out} is a
-\MatchIt\ object. See Section~\ref{subsec:match.data} for more options
-and details.
+Once matching is complete and balance has been achieved, the \MatchIt\
+object (output from the \texttt{matchit()} function) can be used with
+any other analysis procedure; \MatchIt\ is designed to make those
+analysis procedures less dependent on the modeling assumptions and
+thus work better.  Therefore, any analysis you might have conducted
+using the original data set can be conducted with less model
+dependence using the matched data set.  To obtain the matched data
+set, use {\tt match.data(m.out)}, where {\tt m.out} is a \MatchIt\
+object. See Section~\ref{subsec:match.data} for more options and
+details.
 
 In this section, we describe our recommended approach
 \citep{HoImaKin05}, which uses
 \hlink{Zelig}{http://gking.harvard.edu/zelig/} to conduct parametric
 causal inference after preprocessing the data through \MatchIt.  The
 resulting matched data sets can also be exported to other statistical
-program using commands such as {\tt write.table()} and {\tt
+programs using commands such as {\tt write.table()} and {\tt
   write.csv()}. In addition, the commands in the {\tt foreign} package
 allow users to save matched data sets as binary files for various
 statistical software including STATA and SPSS.
 
 Zelig \citep{ImaKinLau04} is an easy-to-use R package that estimates a
-variety of statistical models, gives easily interpretable results by
-simulating quantities of interest, and provides numerical and
-graphical summaries.  The package along with the complete
-documentation is available at
+large variety of statistical models, gives easily interpretable
+results by simulating quantities of interest, provides numerical and
+graphical summaries, and is easily extensible.  The package along with
+the complete documentation is available at
 \hlink{http://gking.harvard.edu/zelig/}{http://gking.harvard.edu/zelig/}.
 \MatchIt\ and Zelig can be easily used together to enable estimation
 of causal effects in very general settings with a variety of
 statistical models.
 
-The general framework is that of imputing the missing potential
-outcomes.  For example, for the treated group, the potential outcomes
-under control, $Y_{0i}$, are missing, whereas the outcomes under
-treatment, $Y_{1i}$, are observed.  We impute the missing outcomes,
-$Y_{0i}$, via Monte Carlo simulation using a parametric statistical
-model as follows.  First, we fit a model using the observed outcomes
-of the matched control units (i.e., using only observations where
-$T_i=0$).  Then, given this fitted model, the missing outcomes
-$Y_{i0}$ are imputed for the matched treated units by using the values
-of the explanatory variables for the treated units.  Once those
-potential outcomes are imputed, the estimate of individual $i$'s
-treatment effect is $Y_{1i}-\widehat{Y}_{0i}$ where $\widehat{Y}_{0i}$
-is the Monte Carlo estimate of the average missing potential outcome
-for unit $i$.  The in-sample average treatment effect for the treated
-individuals can be then obtained by averaging over $i$ of this
-difference. A similar procedure can also be used to estimate various
-quantities of interest. Another advantage of this simulation approach
-is that the uncertainty estimates such as standard errors are obtained
-easily from the estimation uncertainty in fitting the parametric
-model. See \citep{HoImaKin05} for more details.
+The most common way that parametric analyses are used to compute
+quantities of interest are by holding constant some explanatory
+variables, changing others, and computing predicted or expected values
+and taking the difference or ratio.  In the case of causal inference,
+this would probably mean looking at the effect on the expected value
+of the outcome variable when changing $T$ from 0 to 1, while holding
+constant the pretreatment control variables $X$ at their their means
+or medians.  This, and indeed any other ordinary procedure, would be a
+perfectly reasonable way to proceed with analysis after matching.
+
+Another way proceed with analysis after \MatchIt\ is to compute the
+average treatment effect on the treated.  For example, for the treated
+group, the potential outcomes under control, $Y_{0i}$, are missing,
+whereas the outcomes under treatment, $Y_{1i}$, are observed, and the
+goal of the analysis is to impute the missing outcomes, $Y_{0i}$ in
+observations where $T_i=1$, which we do via simulation using a
+parametric statistical model (as described below).  Once those
+potential outcomes are imputed from the model, the estimate of
+individual $i$'s treatment effect is $Y_{1i}-\widehat{Y}_{0i}$ where
+$\widehat{Y}_{0i}$ is a simulation of the average missing potential
+outcome for unit $i$ (that is it is a simulation of the value of the
+dependent variable for unit $i$ under the counterfactual condition
+where $T_i=0$).  The in-sample average treatment effect for the
+treated individuals can be then obtained by averaging over $i$ of this
+difference for all observations where in fact $T_i=1$.  (A similar
+procedure can also be used to estimate various other quantities of
+interest such as the average treatment effect for all observations.)
+An advantage of this simulation approach is that the uncertainty
+estimates such as standard errors and confidence intervals are
+obtained easily by the usual rules in fitting the parametric model.
+
+The imputations from the model can be done in at least two ways.
+Recall that the model is used to impute \emph{the value that the
+  outcome variable would take among the treated units if those treated
+  units were actually controls}.  Thus, one reasonable approach would
+be to fit a model to the whole set of matched data and create
+simulated predicted values of the dependent variable for the treated
+units with $T_i$ switched counterfactually from 1 to 0.  An
+alternative approach would be to fit a model without $T$ by using only
+the outcomes of the matched control units (i.e., using only
+observations where $T_i=0$).  Then, given this fitted model, the
+missing outcomes $Y_{i0}$ are imputed for the matched treated units by
+using the values of the explanatory variables for the treated units.
+The first approach will usually have lower variance, since all
+observations are used, and the second may have less bias, since no
+assumption of constant parameters is needed.  See \citep{HoImaKin05}
+for more details.
 
 \input{matchit2zelig}
 
@@ -1034,16 +1077,16 @@ model. See \citep{HoImaKin05} for more details.
 
 \subsection{Inputs}
 
-The main command, \texttt{matchit()}, implements a variety of matching
-procedures.
+The main command, \texttt{matchit()}, can be used to implements any of
+the matching procedures:
 \begin{verbatim}
 m.out <- matchit(formula, data, method = "nearest", distance = "logit",
                  distance.options=list(), discard = "none", reestimate = FALSE, ...)
 \end{verbatim}
-The command takes several inputs that are common for all matching
-procedures in addition to inputs specific to particular matching
-procedures. There is also a standard output of \texttt{matchit()}
-across all commands.  We describe both here.
+The command takes some inputs that are common to all matching
+procedures and other inputs specific to particular procedures.  The
+outputs are standard across all procedures.  We organize the reference
+manual in these categories.
 
 \subsubsection{Inputs Common to All Matching Methods}
 
@@ -1281,7 +1324,7 @@ Optimal matching is performed with \MatchIt\ by setting \texttt{method
   = "optimal"}.  We use an add-on package called \texttt{optmatch}
 \citep{Hansen04}, which must be installed separately by typing at the
 R command prompt,
-%** can we do this automatically if its needed?
+%** can we do this automatically if its needed, like we do in zelig?
 \begin{verbatim}
 install.packages("optmatch", contriburl = "http://www.stat.lsa.umich.edu/~bbh/optmatch")
 \end{verbatim}
@@ -1305,7 +1348,8 @@ The available options are listed below.
 
 \subsubsection{Output Object Contents}
 
-The following are the elements of the \texttt{matchit} output object;
+Regardless of the type of matching performed, the \texttt{matchit}
+output object contains the following elements:
 
 \begin{enumerate}
 \item \texttt{call} provides the original {\tt matchit()} call.
@@ -1318,8 +1362,6 @@ The following are the elements of the \texttt{matchit} output object;
   summary of the model where \texttt{m.out} is the output object from
   \texttt{matchit()}.
   
-   % ** n_1 and ratio aren't defined at this point so its hard to
-  % follow what the next line means, even with the subsequent list.
 \item \texttt{match.matrix} is an $n_1$ by \texttt{ratio} matrix
   where:
   \begin{itemize}
@@ -1479,10 +1521,9 @@ within each subclasses if specified.  The graphs present:
 \subsubsection{{\tt match.data()}}
 \label{subsec:match.data}
 
-After matching, one might wish to obtain the matched data set for
-subsequent analyses (see Section~\ref{sec:analysis}) and other
-purposes. We provide the function {\tt match.data()} to allow users to
-obtain the matched data set.
+To extract the matched data set for subsequent analyses from the
+output object (see Section~\ref{sec:analysis}), we provide the
+function {\tt match.data()}.  This is used as follows:
 \begin{verbatim}
 m.data <- match.data(object, group = "all", distance = "distance", weights = "weights",
                      subclass = "subclass")
@@ -1577,14 +1618,15 @@ covariate in the preprocessing step.  Then the analysis can be
 performed on the change in income from 1975 to 1978: {\tt re78}-{\tt
   re75}.  Time-varying covariates (of which none exist in the Lalonde
 data) should of course also be differenced for the DID estimator.
+%** we should show how to do this with zelig
 
 \subsection{How Exactly are the Weights Created?}
 \label{subsec:weights}
 
 Each type of matching method can be thought of as creating groups of
 units with at least one treated unit and at least one control unit in
-each group.  In exact matching, subclassification, or full matching,
-these groups are the subclasses formed, and the number of treated and
+each.  In exact matching, subclassification, or full matching, these
+groups are the subclasses formed, and the number of treated and
 control units will vary quite a bit across subclasses.  In nearest
 neighbor or optimal matching, the groups are the pairs (or sets) of
 treated and control units matched.  In 1:1 nearest neighbor matching
