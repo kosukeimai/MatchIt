@@ -159,18 +159,10 @@ perhaps in multiple ways \citep[see also][]{ImaDyk04}.
 \subsection{Preprocessing via Matching}
 
 %%% (K) talk briefly about what matching is.
-
   
 \subsection{Checking Balance}
 
 %%% (K) talk briefly about why and how we should check balance.
-
-\texttt{summary()} summarizes the resulting balance of covariates
-after matching.
-  
-\texttt{plot()} creates plots to assess balance of covariates.
-
-
 
 \subsection{Conducting Analyses after Matching}
 
@@ -221,26 +213,6 @@ The first approach will usually have lower variance, since all
 observations are used, and the second may have less bias, since no
 assumption of constant parameters is needed.  See \citep{HoImaKin05}
 for more details.
-
-First, we use \texttt{match.data()} to create the matched data by
-excluding unmatched units from the original data, and including
-information about the particular matching procedure (i.e., weights,
-subclasses, and distance measure).  
-\begin{verbatim}
->  mdata <- matched.data(m.out)
-\end{verbatim}
-where {\tt m.out} is the \MatchIt\ object from {\tt matchit()} and
-{\tt mdata} is the resulting matched data.  This matched data set can
-then be used for subsequent parametric analyses thorough
-\hlink{Zelig}{http://gking.harvard.edu/zelig/} or any other
-statistical programs. If one uses Zelig, then a syntax for least
-squares regression is
-\begin{verbatim}
->  z.out <- zelig(Y ~ treat + x1 + x2, model = "ls", data = mdata)
-\end{verbatim}
-where {\tt Y} is the outcome variable, and {\tt z.out} is the output
-object from {\tt zelig}. For more details, see
-Section~\ref{sec:analysis}.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -601,6 +573,18 @@ print(m.out)
 \subsection{Checking Balance}
 \label{subsec:balance}
 
+In \MatchIt, there are two ways to check balance after any matching
+procedure. Given the \MatchIt\ output object {\tt m.out}, one can use
+the following commands
+\begin{enumerate}
+\item \texttt{summary(m.out)} gives numerical summaries of the
+  resulting balance of covariates.
+
+\item \texttt{plot(m.out)} gives graphical summaries to assess balance
+  of covariates.
+\end{enumerate}
+
+
 %%
 %% this is from exact matching
 %%
@@ -949,8 +933,8 @@ shows the balance of all squares and interactions of the covariates
 used in the matching procedure.  This is helpful for diagnosing
 whether balance across matched pairs has been attained.  Significant
 differences in higher order interactions usually are a good indication
-that the assignment model needs to be respecified, as discussed in
-Section \ref{pscorespec}.
+that the assignment model needs to be respecified, %as discussed in
+%Section \ref{pscorespec}.
 
 We can also examine the balance graphically:
 \begin{verbatim}
@@ -1105,6 +1089,27 @@ the complete documentation is available at
 \MatchIt\ and Zelig can be easily used together to enable estimation
 of causal effects in very general settings with a variety of
 statistical models.
+
+First, we use \texttt{match.data()} to create the matched data by
+excluding unmatched units from the original data, and including
+information about the particular matching procedure (i.e., weights,
+subclasses, and distance measure).  
+\begin{verbatim}
+>  mdata <- matched.data(m.out)
+\end{verbatim}
+where {\tt m.out} is the \MatchIt\ object from {\tt matchit()} and
+{\tt mdata} is the resulting matched data.  This matched data set can
+then be used for subsequent parametric analyses thorough
+\hlink{Zelig}{http://gking.harvard.edu/zelig/} or any other
+statistical programs. If one uses Zelig, then a syntax for least
+squares regression is
+\begin{verbatim}
+>  z.out <- zelig(Y ~ treat + x1 + x2, model = "ls", data = mdata)
+\end{verbatim}
+where {\tt Y} is the outcome variable, and {\tt z.out} is the output
+object from {\tt zelig}. For more details, see
+Section~\ref{subsec:analysis}.
+
 
 
 \input{matchit2zelig}
@@ -1562,7 +1567,7 @@ within each subclasses if specified.  The graphs present:
 \label{subsec:match.data}
 
 To extract the matched data set for subsequent analyses from the
-output object (see Section~\ref{sec:analysis}), we provide the
+output object (see Section~\ref{subsec:analysis}), we provide the
 function {\tt match.data()}.  This is used as follows:
 \begin{verbatim}
 m.data <- match.data(object, group = "all", distance = "distance", weights = "weights",
