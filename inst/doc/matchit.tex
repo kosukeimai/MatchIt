@@ -146,7 +146,7 @@ which will update all the libraries including \MatchIt.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\section{Statistical and Command Overview}
+\section{Statistical Overview}
 
 \MatchIt\ is designed for studies with a dependent variable (or a set
 of dependent variables) that is a function of a dichotomous causal
@@ -159,21 +159,6 @@ perhaps in multiple ways \citep[see also][]{ImaDyk04}.
 \subsection{Preprocessing via Matching}
 
 %%% (K) talk briefly about what matching is.
-
-\texttt{matchit()} implements a variety of matching procedures, for
-which examples and details on finetuning the matching procedures are
-described in Section~\ref{methods} and Section~\ref{sec:reference}. A
-general syntax is
-\begin{verbatim}
-> m.out <- matchit(treat ~ x1 + x2, data = mydata)
-\end{verbatim}
-where {\tt treat} is the dichotomous treatment variable, and {\tt x1}
-and {\tt x2} are pre-treatment covariates.  This command creates the
-\MatchIt\ object called \texttt{m.out}.  A quick summary of the
-matching procedure can be printed on the screen by typing
-\begin{verbatim}
-> m.out
-\end{verbatim}
 
   
 \subsection{Checking Balance}
@@ -335,6 +320,26 @@ difference will always be unobserved.
 \subsection{Preprocessing via Matching}
 \label{subsec:matching}
 
+\texttt{matchit()} implements a variety of matching procedures.  A
+general syntax is
+\begin{verbatim}
+> m.out <- matchit(treat ~ x1 + x2, data = mydata)
+\end{verbatim}
+where {\tt treat} is the dichotomous treatment variable, and {\tt x1}
+and {\tt x2} are pre-treatment covariates.  This command creates the
+\MatchIt\ object called \texttt{m.out}.  A quick summary of the
+matching procedure can be printed on the screen by typing
+\begin{verbatim}
+> m.out
+\end{verbatim}
+or
+\begin{verbatim}
+> print(m.out)
+\end{verbatim}
+Examples of various matching procedures are given for the reminder of
+this section, and Section~\ref{subsec:inputs} lists all possible
+specifications of {\tt matchit()}.
+
 \subsubsection{Exact Matching}
 \label{subsubsec:exact}
 
@@ -376,9 +381,8 @@ Unmatched      53       1
 \end{verbatim}
 The printout includes the original call to \MatchIt\ and the fact that
 all 184 treatment units were exactly matched to 376 control units on
-race and education. Now, proceed to
-Section~\ref{subsubsec:exact-balance} for checking the balance of
-covariates after exact matching.
+race and education. Now, proceed to Section~\ref{subsec:balance} for
+checking the balance of covariates after exact matching.
 
 \subsubsection{Subclassification}
 \label{subsubsec:subclass}
@@ -597,8 +601,9 @@ print(m.out)
 \subsection{Checking Balance}
 \label{subsec:balance}
 
-\subsubsection{Exact Matching}
-\label{subsubsec:exact-balance}
+%%
+%% this is from exact matching
+%%
 
 We can obtain more information on the matching using the {\tt summary}
 command.  To include the covariates in each subclass, we also use the
@@ -608,7 +613,7 @@ command.  To include the covariates in each subclass, we also use the
 > summary(m.out, covariates = T)
 
 Call:
-matchit(formula = treat ~ educ + black + hispan, data = lalonde,     method = "exact")
+matchit(formula = treat ~ educ + black + hispan, data = lalonde, method = "exact")
 
 
 Sample sizes for full and exactly matched data:
@@ -680,9 +685,9 @@ NSW173    9     0      1
 PSID9     9     0      1
 \end{verbatim}
 
-\subsubsection{Subclassification}
-\label{subsubsec:subclass-balance}
-
+%%
+%% this is the output of subclassification
+%%
 \begin{verbatim}
 > ## balance diagnostics through statistics
 > summary(m.out)
@@ -853,8 +858,11 @@ of \texttt{method = "nearest"} but adding the option
 the same way, but it also adds a variable to the output object with
 the subclass number.
 
-\subsubsection{Nearest Neighbor Matching}
-\label{subsubsec:nearest-balance}
+
+
+%%%
+%%% this is from nearest neighbor
+%%%
 
 The \texttt{summary()} command first gives measures of the balance
 between the treated and control groups in the full (original) data
@@ -980,8 +988,9 @@ Examining these graphs, we see that the matched samples are very well
 matched on the propensity score, but that there are some remaining
 imbalances in education, race, and age covariates. 
 
-\subsubsection{Full Matching}
-\label{subsubsec:full-balance}
+%%%
+%%% this is from full matching. probably not necessary.
+%%%
 
 \begin{verbatim}
 ## balance diagnostics through statistics
@@ -1061,16 +1070,6 @@ the usual {\tt plot()} function.
 \includegraphics[scale=0.5]{figs/full2}
 \includegraphics[scale=0.5]{figs/full3}
 
-\subsubsection{Optimal Matching}
-\label{subsubsec:optimal-balance}
-
-\begin{verbatim}
-## balance diagnostics through statistics
-summary(m.out)
-## balance diagnostics through graphics
-plot(m.out)
-\end{verbatim}
-
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Conducting Analyses after Matching}
@@ -1116,6 +1115,7 @@ statistical models.
 \label{sec:reference}
 
 \subsection{Inputs}
+\label{subsec:inputs}
 
 The main command, \texttt{matchit()}, can be used to implements any of
 the matching procedures:
