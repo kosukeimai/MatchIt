@@ -257,12 +257,13 @@ where {\tt Y} is the outcome variable, and {\tt z.out} is the output
 object from {\tt zelig}. For more details, see
 Section~\ref{sec:analysis}.
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \section{User's Guide to \MatchIt}
 \label{methods}
 
-We adopt the same notation as in \citet{HoImaKin05}. Unless otherwise
+We adopt the same notation as in \citet*{HoImaKin05}. Unless otherwise
 noted, let $i$ index the $n$ units in the dataset, $n_1$ denote the
 number of treated units, $n_0$ denote the number of control units
 (such that $n=n_0+n_1$), and $x_i$ indicate a vector of pretreatment
@@ -275,6 +276,8 @@ $i$ under control.  The variables $y_{1i}$ and $y_{0i}$ are jointly
 unobservable, and for each $i$, we observe one
 $y_i=t_iy_{1i}+(1-t_i)y_{0i}$, and not the other.
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 \subsection{Example Data: National Supported Work Demonstration}
 \label{subsec:lalonde}
 
@@ -283,43 +286,36 @@ analyzed in \citet{lalonde86} and \citet{DehWah99}.  A subsample of
 the data consisting of the National Supported Work Demonstration (NSW)
 treated group and the comparison sample from the Population Survey of
 Income Dynamics (PSID) is included in \MatchIt.  The variables in this
-dataset are in Table~\ref{dwvars} below.  One causal effect of
+dataset are described in Table~\ref{dwvars}.  One causal effect of
 interest is the impact that participation in the job training program,
-\texttt{treat==1}, had on real earnings in 1978, \texttt{re78}, for
-those that participated in the program, i.e., the average treatment
-effect on the treated (ATT):
-%** shouldn't we switch this to the notation in the paper?
-%** i.e., to SATT.  in fact, why don 't we just use the same equations
-%** in the paper entirely.
-\begin{equation}\label{re78eqn}
-  E(\text{re78}(\text{treat}=1) | \text{treat}=1)\; - \; 
-  E(\text{re78}(\text{treat}=0) | \text{treat}=1),
-\end{equation}
-where \texttt{re78(treat=1)} represents the potential outcome under
-the treatment of the job program, and \texttt{re78(treat=0)} under
-control.  The first term (inside the expectation) in
-Equation~\ref{re78eqn} is \emph{observed}, whereas the second term is
-the \emph{unobserved} counterfactual of real earnings if participants
-had not participated.  The nature of causal inference is that one of
-the two terms in the difference will always be unobserved.  The same
-expression of the ATT, in mathematical notation is:
-%** same question
-\begin{equation}
-  E(Y_{1i} | t_i=1 ) \; - \; E(Y_{0i} | t_i=1).
-\end{equation}
+\texttt{treat == 1}, had on real earnings in 1978, \texttt{re78}, for
+those that participated in the program.  The average treatment effect
+on the treated (ATT) is defined as,
+\begin{align}
+  \label{att}
+  \text{ATT} & = \frac{1}{\sum_{i=1}^n t_i}\sum_{i:t_i=1} E[Y_i(1) - Y_i(0)],
+\end{align}
+where $Y_i(1)$ represents the potential outcome under the treatment of
+the job program, and $Y_i(0)$ under control.  Note that the first term
+inside the expectation (the right hand side of Equation~\ref{att}) is
+\emph{observed}, whereas the second term is the \emph{unobserved}
+counterfactual of real earnings if participants had not participated.
+The nature of causal inference is that one of the two terms in the
+difference will always be unobserved.  
+
 \begin{table}[h]
 \centering
 \begin{tabular}{lp{3in}}
   \hline 
-  \multicolumn{1}{l}{Name} & \multicolumn{1}{c}{Description} \\
+  \multicolumn{1}{l}{Variable name} & \multicolumn{1}{c}{Description} \\
   \hline
-  \multicolumn{2}{l}{\textbf{Outcome ($Y$)}} \\ 
-  \texttt{re78} & Real earnings (1978) \\\\
-  \multicolumn{2}{l}{\textbf{Treatment Indicator ($T$)}} \\
+  \multicolumn{2}{l}{\textbf{Outcome variable ($Y$)}} \\ 
+  \texttt{re78} & Real earnings (1978) \\ \\
+  \multicolumn{2}{l}{\textbf{Treatment variable ($T$)}} \\
   \texttt{treat} & Treated in job training program from March 1975-June
   1977 (1 if treated, 0 if not treated)
   \\ \\
-  \multicolumn{2}{l}{\textbf{Pre-treatment Covariates ($X$)}} \\
+  \multicolumn{2}{l}{\textbf{Pre-treatment covariates ($X$)}} \\
   \texttt{age} & Age\\
   \texttt{educ} & Years of education \\
   \texttt{black} & Race black (1 if black, 0 otherwise) \\
@@ -333,9 +329,11 @@ expression of the ATT, in mathematical notation is:
 \caption{Description of Lalonde data \label{dwvars}}
 \end{table}
 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 \subsection{Preprocessing via Matching}
 \label{subsec:matching}
-
 
 \subsubsection{Exact Matching}
 \label{subsubsec:exact}
@@ -346,7 +344,7 @@ exactly the same value on all the covariates, forming subclasses such
 that within each subclass all units (treatment and control) have the
 same covariate values.  Exact restrictions on a subset of covariates
 can also be specified in nearest neighbor matching (see
-Subsection~\ref{subsubsec:nninputs}).
+Section~\ref{subsubsec:nninputs}).
 
 The following example script can be run by typing {\tt demo(exact)} at
 the R prompt:
@@ -372,13 +370,235 @@ Exact Subclasses: 25
 
 Sample sizes:
           Control Treated
-Full          429     185
+All           429     185
 Matched       376     184
 Unmatched      53       1
 \end{verbatim}
 The printout includes the original call to \MatchIt\ and the fact that
 all 184 treatment units were exactly matched to 376 control units on
-race and education.  
+race and education. Now, proceed to
+Section~\ref{subsubsec:exact-balance} for checking the balance of
+covariates after exact matching.
+
+\subsubsection{Subclassification}
+\label{subsubsec:subclass}
+
+When there are many covariates (or many values of some covariates) on
+which matches are desired, finding sufficient exact matches will often
+be impossible.  In that case, subclassification is sometimes
+desirable, such as by using a scalar distance measure like the
+propensity score estimated using one of the \texttt{distance} options.
+Subclassification will form subclasses based on this distance measure.
+Within each subclass, the distribution of covariates in the treatment
+and control groups should be similar, and this can be checked using
+the \texttt{summary()} command after doing subclassification.  You can
+then apply parametric analysis within each subclass, rather than the
+entire dataset, while still summarizing the results for the entire
+dataset.  This can significantly increase the robustness of the
+ultimate results since each parametric analysis within a subclass
+requires only local rather than global parametric smoothing
+assumptions.
+
+Subclassification is implemented in \MatchIt\ using \texttt{method =
+  "subclass"}.  See also the Sections on full matching (Section
+\ref{subsubsec:full}) and nearest-neighbor matching (Section
+\ref{subsubsec:nearest}), which provide additional ways of performing
+subclassification.
+
+The following example script can be run by typing {\tt demo(subclass)}
+at the R prompt: 
+\begin{verbatim}
+> ## load the Lalonde data
+> data(lalonde)
+> ## form 6 subclasses (the default) based on distance measure
+> ## estimated using logistic regression of treat on re74, re75, educ,
+> ## black, hispan, and age.  By default, each subclass will have
+> ## approximately the same number of treated units. 
+> m.out <-  matchit(treat ~ re74 + re75 + educ + black + hispan + age,
+>                   data = lalonde, method = "subclass")
+\end{verbatim}
+
+\subsubsection{Nearest Neighbor Matching}
+\label{subsubsec:nearest}
+
+Nearest neighbor matching selects the $r$ best control matches for
+each individual in the treatment group (excluding those discarded
+using the \texttt{discard}) option.  The matching is done using a
+distance measure such as the propensity score, and matches are chosen
+for each treated unit one at a time, where at each step the control
+unit not yet matched that is closest to the treated unit on the
+distance measure is chosen as the match.  There are many variations on
+nearest neighbor matching, which are described in further detail in
+Section~\ref{sec:reference}.
+
+Nearest neighbor matching is implemented in \MatchIt\ using the
+\texttt{method="nearest"} option.  The following example script can be
+run by typing {\tt demo(nearest)} at the R prompt.
+
+To conduct propensity score matching with pre-treatment covariates
+composed of real earnings in 1974 and 1975, education, race, and age:
+\begin{verbatim}
+> m.out <- matchit(treat ~ re74 + re75 + educ + black + hispan + age,
++                  data = lalonde, method = "nearest")
+\end{verbatim}
+
+\noindent You may again check basic statistics of the \MatchIt\ object by the
+\texttt{print} command:
+\begin{verbatim}
+> print(m.out)
+
+Call: matchit(formula = treat ~ re74 + re75 + educ + black + hispan +
+                        age, data = lalonde, method = "nearest")
+
+Sample sizes:
+          Control Treated
+All           429     185
+Matched       185     185
+Unmatched     244       0
+Discarded       0       0
+\end{verbatim}
+
+We see that 185 control units were matched to the 185 treated units (a
+``1-1'' match).  
+
+
+\begin{verbatim}
+## load the Lalonde data
+data(lalonde)
+## Nearest neighbor matching on propensity score estimated using logistic regression of
+## treat on re74, re75, age, and educ.  Two matches chosen for each control unit.
+m.out <- matchit(treat ~ re74 + re75 + age + educ, data = lalonde, method = "nearest", 
+                 distance = "logit", ratio=2)
+## balance diagnostics through statistics
+summary(m.out)
+## balance diagnostics through graphics
+plot(m.out)
+
+## Mahalanobis matching on re74 and re75 within nearest neighbor matching on 
+## distance measure, with restriction of exact matches on married.
+m.out2 <- matchit(treat ~ re74 + re75 + age + educ, data = lalonde, method = "nearest", 
+                  distance = "logit", mahvars=c("re74", "re75"), exact=c("married"), 
+                  caliper=.25)
+print(m.out2)
+## balance diagnostics through statistics
+summary(m.out2)
+## balance diagnostics through graphics
+plot(m.out2)
+
+## Nearest neighbor matching with discard option
+m.out3 <- matchit(treat ~ re74 + re75 + age + educ, data = lalonde, method = "nearest", 
+                  distance = "logit", discard="both")
+print(m.out3)
+## balance diagnostics through statistics
+summary(m.out3)
+## balance diagnostics through graphics
+plot(m.out3)
+
+## Nearest neighbor matching with replacement
+m.out4 <- matchit(treat ~ re74 + re75 + age + educ, data = lalonde, method = "nearest", 
+                  distance = "logit", replace=TRUE, ratio=2)
+print(m.out4)
+## balance diagnostics through statistics
+summary(m.out4)
+## balance diagnostics through graphics
+plot(m.out4)
+
+## Nearest neighbor matching followed by formation of 5 subclasses
+m.out5 <- matchit(treat ~ re74 + re75 + age + educ, data = lalonde, method = "nearest", 
+                  distance = "logit", subclass=5)
+print(m.out5)
+## balance diagnostics through statistics
+summary(m.out5)
+## balance diagnostics through graphics
+plot(m.out5)
+\end{verbatim}
+
+\subsubsection{Full Matching}
+\label{subsubsec:full}
+
+Full matching is a a particular type of subclassification that always
+uses all treated and control units \citep{Rosenbaum02, Hansen04}.  A
+fully matched sample is composed of matched sets, where each matched
+set contains either one treated unit and one or more controls (or one
+control unit and one or more treated units).  The only units not
+placed into a subclass will be those discarded (if a \texttt{discard}
+option was specified) because they are outside of common support.
+Full matching is optimal in terms of minimizing a weighted average of
+the propensity score distances between each treated subject and each
+control subject within each stratum.  The following example script can
+be run by typing {\tt demo(full)} at the R prompt.
+
+We first load the Lalonde data, confuct full matching, and then print
+a short summary.
+\begin{verbatim}
+## load the Lalonde data
+> data(lalonde)
+## conduct full matching using the propensity score based on logistic regression
+> m.out <- matchit(treat ~ age + educ + black + hispan + married + nodegree + re74 + re75, 
++                  data = lalonde, method = "full", distance = "logit")
+## print a short summary
+> m.out
+
+Call: 
+matchit(formula = treat ~ age + educ + black + hispan + married +     
+        nodegree + re74 + re75, data = lalonde, method = "full", distance = "logit")
+
+Sample sizes:
+          Control Treated
+All           429     185
+Matched       429     185
+Unmatched       0       0
+Discarded       0       0
+\end{verbatim}
+%** not sure what each of the 4 items listed here are.  ``full'' must
+%   mean the complete data but it sounds like 'full matching'.  let's
+%   just define all 4 here
+We see that the matching has utilized all units (the treated and
+control group sample sizes are the same for the full and matched
+samples). We can now obtain a summary of resulting balance after full
+matching.
+
+
+
+\subsubsection{Optimal Matching}
+\label{subsubsec:optimal}
+
+The default nearest neighbor matching method in \MatchIt\ is
+``greedy'' matching, where the closest control match for each treated
+unit is chosen one at a time, without trying to minimize a global
+distance measure.  Another method, ``optimal'' matching, finds the
+matched samples with the smallest average absolute distance between
+each matched pair.  With large control pools, greedy and optimal
+matching may lead to very similar (or the same) sets of matches;
+\citet{GuRos93} have shown that greedy and optimal matching generally
+choose the same sets of controls for the matched samples, but that
+optimal matching does a better job of minimizing the distance within
+each pair.  In addition, optimal matching can be particularly helpful
+when there are not many appropriate control matches for the treated
+units.  See \cite{GuRos93} or \cite{Rosenbaum02} for more information
+on optimal matching.
+
+The following example script can be run by typing {\tt demo(optimal)}
+at the R prompt.
+
+\begin{verbatim}
+## load the Lalonde data
+data(lalonde)
+## optimal ratio matching using the propensity score based on logistic regression
+m.out <- matchit(treat ~ re74 + re75 + age + educ, data = lalonde, method = "optimal", 
+                 distance = "logit", ratio = 2)
+## a short summary
+print(m.out)
+\end{verbatim}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{Checking Balance}
+\label{subsec:balance}
+
+\subsubsection{Exact Matching}
+\label{subsubsec:exact-balance}
 
 We can obtain more information on the matching using the {\tt summary}
 command.  To include the covariates in each subclass, we also use the
@@ -394,7 +614,7 @@ matchit(formula = treat ~ educ + black + hispan, data = lalonde,     method = "e
 Sample sizes for full and exactly matched data:
 
           Control Treated
-Full          429     185
+All           429     185
 Matched       376     184
 Discarded      53       1
 
@@ -460,43 +680,10 @@ NSW173    9     0      1
 PSID9     9     0      1
 \end{verbatim}
 
-
 \subsubsection{Subclassification}
-\label{subsubsec:subclass}
+\label{subsubsec:subclass-balance}
 
-When there are many covariates (or many values of some covariates) on
-which matches are desired, finding sufficient exact matches will often
-be impossible.  In that case, subclassification is sometimes
-desirable, such as by using a scalar distance measure like the
-propensity score estimated using one of the \texttt{distance} options.
-Subclassification will form subclasses based on this distance measure.
-Within each subclass, the distribution of covariates in the treatment
-and control groups should be similar, and this can be checked using
-the \texttt{summary()} command after doing subclassification.  You can
-then apply parametric analysis within each subclass, rather than the
-entire dataset, while still summarizing the results for the entire
-dataset.  This can significantly increase the robustness of the
-ultimate results since each parametric analysis within a subclass
-requires only local rather than global parametric smoothing
-assumptions.
-
-Subclassification is implemented in \MatchIt\ using \texttt{method =
-  "subclass"}.  See also the Sections on full matching (Section
-\ref{subsubsec:full}) and nearest-neighbor matching (Section
-\ref{subsubsec:nearest}), which provide additional ways of performing
-subclassification.
-
-The following example script can be run by typing {\tt demo(subclass)}
-at the R prompt:
 \begin{verbatim}
-> ## load the Lalonde data
-> data(lalonde)
-> ## form 6 subclasses (the default) based on distance measure
-> ## estimated using logistic regression of treat on re74, re75, educ,
-> ## black, hispan, and age.  By default, each subclass will have
-> ## approximately the same number of treated units. 
-> m.out <-  matchit(treat ~ re74 + re75 + educ + black + hispan + age,
->                   data = lalonde, method = "subclass")
 > ## balance diagnostics through statistics
 > summary(m.out)
 
@@ -659,63 +846,25 @@ diagnostic plots, respectively.
 %** the way to interpret these figures is...
 
 Lastly, subclassification may also be used in conjunction with nearest
-neighbor matching described below in Subsection~\ref{subsubsec:nearest}, by
-specifying leaving the default of \texttt{method = "nearest"} but
-adding the option \texttt{subclass}.  When you choose this command,
-\MatchIt\ matches in the same way, but it also adds a variable to the
-output object with the subclass number.
+neighbor matching described below in
+Subsection~\ref{subsubsec:nearest}, by specifying leaving the default
+of \texttt{method = "nearest"} but adding the option
+\texttt{subclass}.  When you choose this command, \MatchIt\ matches in
+the same way, but it also adds a variable to the output object with
+the subclass number.
 
 \subsubsection{Nearest Neighbor Matching}
-\label{subsubsec:nearest}
+\label{subsubsec:nearest-balance}
 
-Nearest neighbor matching selects the $r$ best control matches for
-each individual in the treatment group (excluding those discarded
-using the \texttt{discard}) option.  The matching is done using a
-distance measure such as the propensity score, and matches are chosen
-for each treated unit one at a time, where at each step the control
-unit not yet matched that is closest to the treated unit on the
-distance measure is chosen as the match.  There are many variations on
-nearest neighbor matching, which are described in further detail in
-Section~\ref{sec:reference}. 
-
-Nearest neighbor matching is implemented in \MatchIt\ using the
-\texttt{method="nearest"} option.  The following example script can be
-run by typing {\tt demo(nearest)} at the R prompt.
-
-To conduct propensity score matching with pre-treatment covariates
-composed of real earnings in 1974 and 1975, education, race, and age:
-\begin{verbatim}
-> m.out <- matchit(treat ~ re74 + re75 + educ + black + hispan + age,
-+                  data = lalonde, method = "nearest")
-\end{verbatim}
-
-\noindent You may again check basic statistics of the \MatchIt\ object by the
-\texttt{print} command:
-\begin{verbatim}
-> print(m.out)
-
-Call: matchit(formula = treat ~ re74 + re75 + educ + black + hispan +
-                        age, data = lalonde, method = "nearest")
-
-Sample sizes:
-          Control Treated
-Full          429     185
-Matched       185     185
-Unmatched     244       0
-Discarded       0       0
-\end{verbatim}
-
-We see that 185 control units were matched to the 185 treated units (a
-``1-1'' match).  The \texttt{summary()} command first gives measures
-of the balance between the treated and control groups in the full
-(original) data set, and then the same measures of balance in the
-matched data set.  If the matching worked well, the standardized bias
-and QQ plot statistics should be smaller in the matched data set as
-compared with the full data set.  We could also use the
-\texttt{addlvars} option to examine the balance in variables not
-included in the distance model; it may be beneficial to include in the
-distance model any variables that are not well balanced in the matched
-data sets.
+The \texttt{summary()} command first gives measures of the balance
+between the treated and control groups in the full (original) data
+set, and then the same measures of balance in the matched data set.
+If the matching worked well, the standardized bias and QQ plot
+statistics should be smaller in the matched data set as compared with
+the full data set.  We could also use the \texttt{addlvars} option to
+examine the balance in variables not included in the distance model;
+it may be beneficial to include in the distance model any variables
+that are not well balanced in the matched data sets.
 \begin{verbatim}
 > summary(m.out)
 
@@ -759,7 +908,7 @@ age        89.3 -100.0    16.8   20.0      89.3
 Sample sizes:
 
           Control Treated
-Full          429     185
+All           429     185
 Matched       185     185
 Unmatched     244       0
 Discarded       0       0
@@ -831,101 +980,8 @@ Examining these graphs, we see that the matched samples are very well
 matched on the propensity score, but that there are some remaining
 imbalances in education, race, and age covariates. 
 
-\begin{verbatim}
-## load the Lalonde data
-data(lalonde)
-## Nearest neighbor matching on propensity score estimated using logistic regression of
-## treat on re74, re75, age, and educ.  Two matches chosen for each control unit.
-m.out <- matchit(treat ~ re74 + re75 + age + educ, data = lalonde, method = "nearest", 
-                 distance = "logit", ratio=2)
-## balance diagnostics through statistics
-summary(m.out)
-## balance diagnostics through graphics
-plot(m.out)
-
-## Mahalanobis matching on re74 and re75 within nearest neighbor matching on 
-## distance measure, with restriction of exact matches on married.
-m.out2 <- matchit(treat ~ re74 + re75 + age + educ, data = lalonde, method = "nearest", 
-                  distance = "logit", mahvars=c("re74", "re75"), exact=c("married"), 
-                  caliper=.25)
-print(m.out2)
-## balance diagnostics through statistics
-summary(m.out2)
-## balance diagnostics through graphics
-plot(m.out2)
-
-## Nearest neighbor matching with discard option
-m.out3 <- matchit(treat ~ re74 + re75 + age + educ, data = lalonde, method = "nearest", 
-                  distance = "logit", discard="both")
-print(m.out3)
-## balance diagnostics through statistics
-summary(m.out3)
-## balance diagnostics through graphics
-plot(m.out3)
-
-## Nearest neighbor matching with replacement
-m.out4 <- matchit(treat ~ re74 + re75 + age + educ, data = lalonde, method = "nearest", 
-                  distance = "logit", replace=TRUE, ratio=2)
-print(m.out4)
-## balance diagnostics through statistics
-summary(m.out4)
-## balance diagnostics through graphics
-plot(m.out4)
-
-## Nearest neighbor matching followed by formation of 5 subclasses
-m.out5 <- matchit(treat ~ re74 + re75 + age + educ, data = lalonde, method = "nearest", 
-                  distance = "logit", subclass=5)
-print(m.out5)
-## balance diagnostics through statistics
-summary(m.out5)
-## balance diagnostics through graphics
-plot(m.out5)
-\end{verbatim}
-
 \subsubsection{Full Matching}
-\label{subsubsec:full}
-
-Full matching is a a particular type of subclassification that always
-uses all treated and control units \citep{Rosenbaum02, Hansen04}.  A
-fully matched sample is composed of matched sets, where each matched
-set contains either one treated unit and one or more controls (or one
-control unit and one or more treated units).  The only units not
-placed into a subclass will be those discarded (if a \texttt{discard}
-option was specified) because they are outside of common support.
-Full matching is optimal in terms of minimizing a weighted average of
-the propensity score distances between each treated subject and each
-control subject within each stratum.  The following example script can
-be run by typing {\tt demo(full)} at the R prompt.
-
-We first load the Lalonde data, confuct full matching, and then print
-a short summary.
-\begin{verbatim}
-## load the Lalonde data
-> data(lalonde)
-## conduct full matching using the propensity score based on logistic regression
-> m.out <- matchit(treat ~ age + educ + black + hispan + married + nodegree + re74 + re75, 
-+                  data = lalonde, method = "full", distance = "logit")
-## print a short summary
-> m.out
-
-Call: 
-matchit(formula = treat ~ age + educ + black + hispan + married +     
-        nodegree + re74 + re75, data = lalonde, method = "full", distance = "logit")
-
-Sample sizes:
-          Control Treated
-Full          429     185
-Matched       429     185
-Unmatched       0       0
-Discarded       0       0
-\end{verbatim}
-%** not sure what each of the 4 items listed here are.  ``full'' must
-%   mean the complete data but it sounds like 'full matching'.  let's
-%   just define all 4 here
-We see that the matching has utilized all units (the treated and
-control group sample sizes are the same for the full and matched
-samples). We can now obtain a summary of resulting balance after full
-matching.
+\label{subsubsec:full-balance}
 
 \begin{verbatim}
 ## balance diagnostics through statistics
@@ -978,7 +1034,7 @@ re75      96.2   72.0    49.7  -87.6      96.2
 Sample sizes:
 
           Control Treated
-Full          429     185
+All           429     185
 Matched       429     185
 Unmatched       0       0
 Discarded       0       0
@@ -1005,46 +1061,16 @@ the usual {\tt plot()} function.
 \includegraphics[scale=0.5]{figs/full2}
 \includegraphics[scale=0.5]{figs/full3}
 
-
 \subsubsection{Optimal Matching}
-\label{subsubsec:optimal}
-
-The default nearest neighbor matching method in \MatchIt\ is
-``greedy'' matching, where the closest control match for each treated
-unit is chosen one at a time, without trying to minimize a global
-distance measure.  Another method, ``optimal'' matching, finds the
-matched samples with the smallest average absolute distance between
-each matched pair.  With large control pools, greedy and optimal
-matching may lead to very similar (or the same) sets of matches;
-\citet{GuRos93} have shown that greedy and optimal matching generally
-choose the same sets of controls for the matched samples, but that
-optimal matching does a better job of minimizing the distance within
-each pair.  In addition, optimal matching can be particularly helpful
-when there are not many appropriate control matches for the treated
-units.  See \cite{GuRos93} or \cite{Rosenbaum02} for more information
-on optimal matching.
-
-The following example script can be run by typing {\tt demo(optimal)}
-at the R prompt.
+\label{subsubsec:optimal-balance}
 
 \begin{verbatim}
-## load the Lalonde data
-data(lalonde)
-## optimal ratio matching using the propensity score based on logistic regression
-m.out <- matchit(treat ~ re74 + re75 + age + educ, data = lalonde, method = "optimal", 
-                 distance = "logit", ratio = 2)
-## a short summary
-print(m.out)
 ## balance diagnostics through statistics
 summary(m.out)
 ## balance diagnostics through graphics
 plot(m.out)
 \end{verbatim}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\subsection{Checking Balance}
-\label{subsec:balance}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Conducting Analyses after Matching}
