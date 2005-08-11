@@ -149,16 +149,40 @@ which will update all the libraries including \MatchIt.
 \section{Statistical Overview}
 
 \MatchIt\ is designed for studies with a dependent variable (or a set
-of dependent variables) that is a function of a dichotomous causal
-variable, with values known as the ``treatment'' and ``control''
-groups, and a set of ``pretreatment'' covariates, i.e., that are
-causally prior to the administration of the treatment.  \MatchIt\ can
-be used for other types of causal variables by dichotomizing them,
-perhaps in multiple ways \citep[see also][]{ImaDyk04}.
+of dependent variables) that is a function of a dichotomous causal (or
+``treatment'') variable, with values known as the ``treated'' and
+``control'' groups, and a set of ``pretreatment'' covariates, i.e.,
+that are causally prior to the administration of the treatment.
+\MatchIt\ works for experimental data, but is also designed for
+observation designs where the treatment variable is observed rather
+than manipulated by the investigator.  \MatchIt\ can be used for other
+types of causal variables by dichotomizing them, perhaps in multiple
+ways \citep[see also][]{ImaDyk04}.
 
 \subsection{Preprocessing via Matching}
 
-%%% (K) talk briefly about what matching is.
+The goal of matching is to adjust the data prior to the parametric
+analysis so that (1) the relationship between $t_i$ and $X_i$ is
+eliminated or reduced, and (2) no bias and little inefficiency is
+induced.  This means that during matching we can select, duplicate, or
+selectively drop observations from an existing sample without inducing
+bias, as long as we do so using a rule that is a function only of
+$t_i$ and $X_i$.  \MatchIt\ provides, implements, and evaluates the
+choice of these rules.  After matching, the preprocessed dataset will
+be such that $t_i$ and $X_i$ are unrelated or less related than in the
+raw data, meaning that the treatment and control groups have the same
+background characteristics, or in other words that this relationship
+holds: $\tilde p(X|t=1) \approx \tilde p(X|t=0)$, where $\tilde p$
+refers to the observed empirical density of the data (think
+histogram), rather than a population density.  
+
+The simplest way to satisfy match is to use one-to-one exact matching,
+which pairs each treated unit with one control unit for which the
+values of $X_i$ are identical.  But good matching only requires that
+the \emph{distribution} of $X$ given $t=0$ match the distribution of
+$X$ given $t=1$, and so individual matched pairs are not required.
+Indeed, many of the other methods implemented in \MatchIt\ only
+attempt to balance the overall distributions.
   
 \subsection{Checking Balance}
 
