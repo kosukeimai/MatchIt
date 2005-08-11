@@ -21,16 +21,16 @@ user.prompt()
 plot(m.out)
 
 ## 2:1 Nearest neighbor matching
-m.out <- matchit(treat ~ re74+re75+age+educ, data=lalonde,
-                 method = "nearest", distance = "logit", ratio=2)
+m.out1 <- matchit(treat ~ re74+re75+age+educ, data=lalonde,
+                  method = "nearest", distance = "logit", ratio=2)
 user.prompt()
 
 ## print a short summary
-print(m.out)
+print(m.out1)
 user.prompt()
 
 ## balance diagnostics through statistics
-summary(m.out)
+summary(m.out1)
 user.prompt()
 
 ## balance diagnostics through graphics
@@ -54,7 +54,7 @@ plot(m.out2)
 
 ## 1:1 Nearest neighbor matching with units outside the common support discarded
 m.out3 <- matchit(treat ~ re74+re75+age+educ, data=lalonde,
-                 method = "nearest", distance = "logit", discard="both")
+                 method = "nearest", distance = "logit", discard= "both")
 user.prompt()
 
 ## print a short summary
