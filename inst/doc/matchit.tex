@@ -583,18 +583,25 @@ the following commands
 \item \texttt{plot(m.out)} gives graphical summaries to assess balance
   of covariates.
 \end{enumerate}
+Below, we give three examples (exact matching, subclassification, and
+nearest neigbor matching) to illustrate the use of these two
+functions. Similar commands can be used for all other matching
+procedures, and they will give similar outputs. See
+Section~\ref{subsec:outputs} for details.
 
-
+\paragraph{Examples}
+\begin{enumerate}
 %%
 %% this is from exact matching
 %%
-
-We can obtain more information on the matching using the {\tt summary}
-command.  To include the covariates in each subclass, we also use the
-\texttt{covariates = T} option:
+\item Using the example of exact matching from
+  Section~\ref{subsubsec:exact}, we obtain more information on the
+  matching using the {\tt summary()} command.  To include the
+  covariates in each subclass, we also use the \texttt{covariates =
+    TRUE} option:
 \begin{verbatim}
 > ## balance diagnostics through statistics
-> summary(m.out, covariates = T)
+> summary(m.out, covariates = TRUE)
 
 Call:
 matchit(formula = treat ~ educ + black + hispan, data = lalonde, method = "exact")
@@ -669,11 +676,14 @@ NSW173    9     0      1
 PSID9     9     0      1
 \end{verbatim}
 
+
+\item Using the example of subclassification from
+  Section~\ref{subsubsec:subclass}, we check the balance of
+  covariates.
 %%
 %% this is the output of subclassification
 %%
 \begin{verbatim}
-> ## balance diagnostics through statistics
 > summary(m.out)
 
 Call:
@@ -848,15 +858,16 @@ the subclass number.
 %%% this is from nearest neighbor
 %%%
 
-The \texttt{summary()} command first gives measures of the balance
-between the treated and control groups in the full (original) data
-set, and then the same measures of balance in the matched data set.
-If the matching worked well, the standardized bias and QQ plot
-statistics should be smaller in the matched data set as compared with
-the full data set.  We could also use the \texttt{addlvars} option to
-examine the balance in variables not included in the distance model;
-it may be beneficial to include in the distance model any variables
-that are not well balanced in the matched data sets.
+\item The \texttt{summary()} command first gives measures of the
+  balance between the treated and control groups in the full
+  (original) data set, and then the same measures of balance in the
+  matched data set.  If the matching worked well, the standardized
+  bias and QQ plot statistics should be smaller in the matched data
+  set as compared with the full data set.  We could also use the
+  \texttt{addlvars} option to examine the balance in variables not
+  included in the distance model; it may be beneficial to include in
+  the distance model any variables that are not well balanced in the
+  matched data sets.
 \begin{verbatim}
 > summary(m.out)
 
@@ -972,87 +983,89 @@ Examining these graphs, we see that the matched samples are very well
 matched on the propensity score, but that there are some remaining
 imbalances in education, race, and age covariates. 
 
+\end{enumerate}
+
 %%%
 %%% this is from full matching. probably not necessary.
 %%%
-
-\begin{verbatim}
-## balance diagnostics through statistics
-> summary(m.out)
-
-Call: 
-matchit(formula = treat ~ age + educ + black + hispan + married +   
-        nodegree + re74 + re75, data = lalonde, method = "full", distance = "logit")
-
-Summary of balance for all data:
-
-         Means Treated Means Control Pooled SD   QQ Med  QQ Mean   QQ Max Std. Bias
-distance      5.77e-01         0.182     0.290    0.732    0.558 8.44e-01     1.794
-age           2.58e+01        28.030     9.881    1.414    4.650 1.41e+01    -0.309
-educ          1.03e+01        10.235     2.628    1.414    0.962 5.66e+00     0.055
-black         8.43e-01         0.203     0.489    1.414    0.903 1.41e+00     1.757
-hispan        5.95e-02         0.142     0.322    0.000    0.119 1.41e+00    -0.349
-married       1.89e-01         0.513     0.493    0.000    0.459 1.41e+00    -0.824
-nodegree      7.08e-01         0.597     0.483    0.000    0.160 1.41e+00     0.244
-re74          2.10e+03      5619.237  6477.964 3430.277 5155.851 1.30e+04    -0.721
-re75          1.53e+03      2466.484  3295.679 1373.280 1511.706 9.61e+03    -0.290
-
-Summary of balance for matched data:
-
-         Means Treated Means Control Pooled SD   QQ Med  QQ Mean   QQ Max Std. Bias
-distance      5.77e-01         0.576     0.219 5.73e-03 9.83e-03 1.40e-01  5.78e-03
-age           2.58e+01        24.642     9.197 4.24e+00 4.38e+00 1.27e+01  1.64e-01
-educ          1.03e+01        10.389     2.473 0.00e+00 6.45e-01 5.66e+00 -2.15e-02
-black         8.43e-01         0.835     0.369 0.00e+00 1.24e-02 1.41e+00  2.36e-02
-hispan        5.95e-02         0.061     0.239 0.00e+00 2.83e-03 1.41e+00 -6.60e-03
-married       1.89e-01         0.132     0.356 0.00e+00 6.96e-02 1.41e+00  1.47e-01
-nodegree      7.08e-01         0.708     0.455 0.00e+00 2.60e-02 1.41e+00 -5.66e-05
-re74          2.10e+03      2407.948  4803.181 1.56e+02 7.77e+02 1.86e+04 -6.39e-02
-re75          1.53e+03      1567.982  2596.207 3.85e+02 7.61e+02 1.80e+04 -1.12e-02
-        
-
-Percent Balance Improvement:
-
-          Mean QQ Med QQ Mean QQ Max Std. Bias
-distance  99.7   99.2    98.2   83.5      99.7
-age       47.0 -200.0     5.8   10.0      47.0
-educ      60.9  100.0    33.0    0.0      60.9
-black     98.7  100.0    98.6    0.0      98.7
-hispan    98.1    0.0    97.6    0.0      98.1
-married   82.2    0.0    84.8    0.0      82.2
-nodegree 100.0    0.0    83.7    0.0     100.0
-re74      91.1   95.4    84.9  -42.3      91.1
-re75      96.2   72.0    49.7  -87.6      96.2
-
-Sample sizes:
-
-          Control Treated
-All           429     185
-Matched       429     185
-Unmatched       0       0
-Discarded       0       0
-\end{verbatim}
+%
+%\begin{verbatim}
+%## balance diagnostics through statistics
+%> summary(m.out)
+%
+%Call: 
+%matchit(formula = treat ~ age + educ + black + hispan + married +   
+%        nodegree + re74 + re75, data = lalonde, method = "full", distance = "logit")
+%
+%Summary of balance for all data:
+%
+%         Means Treated Means Control Pooled SD   QQ Med  QQ Mean   QQ Max Std. Bias
+%distance      5.77e-01         0.182     0.290    0.732    0.558 8.44e-01     1.794
+%age           2.58e+01        28.030     9.881    1.414    4.650 1.41e+01    -0.309
+%educ          1.03e+01        10.235     2.628    1.414    0.962 5.66e+00     0.055
+%black         8.43e-01         0.203     0.489    1.414    0.903 1.41e+00     1.757
+%hispan        5.95e-02         0.142     0.322    0.000    0.119 1.41e+00    -0.349
+%married       1.89e-01         0.513     0.493    0.000    0.459 1.41e+00    -0.824
+%nodegree      7.08e-01         0.597     0.483    0.000    0.160 1.41e+00     0.244
+%re74          2.10e+03      5619.237  6477.964 3430.277 5155.851 1.30e+04    -0.721
+%re75          1.53e+03      2466.484  3295.679 1373.280 1511.706 9.61e+03    -0.290
+%
+%Summary of balance for matched data:
+%
+%         Means Treated Means Control Pooled SD   QQ Med  QQ Mean   QQ Max Std. Bias
+%distance      5.77e-01         0.576     0.219 5.73e-03 9.83e-03 1.40e-01  5.78e-03
+%age           2.58e+01        24.642     9.197 4.24e+00 4.38e+00 1.27e+01  1.64e-01
+%educ          1.03e+01        10.389     2.473 0.00e+00 6.45e-01 5.66e+00 -2.15e-02
+%black         8.43e-01         0.835     0.369 0.00e+00 1.24e-02 1.41e+00  2.36e-02
+%hispan        5.95e-02         0.061     0.239 0.00e+00 2.83e-03 1.41e+00 -6.60e-03
+%married       1.89e-01         0.132     0.356 0.00e+00 6.96e-02 1.41e+00  1.47e-01
+%nodegree      7.08e-01         0.708     0.455 0.00e+00 2.60e-02 1.41e+00 -5.66e-05
+%re74          2.10e+03      2407.948  4803.181 1.56e+02 7.77e+02 1.86e+04 -6.39e-02
+%re75          1.53e+03      1567.982  2596.207 3.85e+02 7.61e+02 1.80e+04 -1.12e-02
+%        
+%
+%Percent Balance Improvement:
+%
+%          Mean QQ Med QQ Mean QQ Max Std. Bias
+%distance  99.7   99.2    98.2   83.5      99.7
+%age       47.0 -200.0     5.8   10.0      47.0
+%educ      60.9  100.0    33.0    0.0      60.9
+%black     98.7  100.0    98.6    0.0      98.7
+%hispan    98.1    0.0    97.6    0.0      98.1
+%married   82.2    0.0    84.8    0.0      82.2
+%nodegree 100.0    0.0    83.7    0.0     100.0
+%re74      91.1   95.4    84.9  -42.3      91.1
+%re75      96.2   72.0    49.7  -87.6      96.2
+%
+%Sample sizes:
+%
+%          Control Treated
+%All           429     185
+%Matched       429     185
+%Unmatched       0       0
+%Discarded       0       0
+%\end{verbatim}
 %** we need to explain the col titles or refer back to the intro
 %   section (to be added) to the user's guide
-There has been significant reduction in standardized bias (and mean
-deviation from the 45 degree line in the quantile-quantile plot) from
-the full matching: the percent improvement is nearly 100 percent.  The
-diagnostics are slightly different with full matching as compared with
-the previous matching methods we have discussed; since many subclasses
-will have only one treated or one control unit it is not possible to
-do the weighted comparisons done for standard subclassification.
+%There has been significant reduction in standardized bias (and mean
+%deviation from the 45 degree line in the quantile-quantile plot) from
+%the full matching: the percent improvement is nearly 100 percent.  The
+%diagnostics are slightly different with full matching as compared with
+%the previous matching methods we have discussed; since many subclasses
+%will have only one treated or one control unit it is not possible to
+%do the weighted comparisons done for standard subclassification.
 %** {\bf  Dan, what did we decide to do?}
+%
+%Finally, we can obtain a graphical summary of resulting balance via
+%the usual {\tt plot()} function.
+%\begin{verbatim}
+%## balance diagnostics through graphics
+%> plot(m.out)
+%\end{verbatim}
 
-Finally, we can obtain a graphical summary of resulting balance via
-the usual {\tt plot()} function.
-\begin{verbatim}
-## balance diagnostics through graphics
-> plot(m.out)
-\end{verbatim}
-
-\includegraphics[scale=0.5]{figs/full1}
-\includegraphics[scale=0.5]{figs/full2}
-\includegraphics[scale=0.5]{figs/full3}
+%\includegraphics[scale=0.5]{figs/full1}
+%\includegraphics[scale=0.5]{figs/full2}
+%\includegraphics[scale=0.5]{figs/full3}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1390,6 +1403,7 @@ The available options are listed below.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \subsection{Outputs}
+\label{subsec:outputs}
 
 \subsubsection{Output Object Contents}
 
