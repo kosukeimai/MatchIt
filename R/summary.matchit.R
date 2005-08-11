@@ -55,7 +55,7 @@ summary.matchit <- function(object, interactions = FALSE, addlvariables = NULL, 
   nn[3,] <- c(sum(object$treat==0 & object$weights==0 & object$discarded==0), sum(object$treat==1 & object$weights==0 & object$discarded==0))
   nn[4,] <- c(sum(object$treat==0 & object$weights==0 & object$discarded==1), sum(object$treat==1 & object$weights==0 & object$discarded==1))
 
-  dimnames(nn) <- list(c("Full","Matched","Unmatched","Discarded"),
+  dimnames(nn) <- list(c("All","Matched","Unmatched","Discarded"),
                        c("Control","Treated"))
 
   #nn <- rbind(table(object$treat),
