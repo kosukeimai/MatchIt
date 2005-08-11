@@ -146,7 +146,7 @@ which will update all the libraries including \MatchIt.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\section{Statistical Overview}
+\section{Statistical and Command Overview}
 
 \MatchIt\ is designed for studies with a dependent variable (or a set
 of dependent variables) that is a function of a dichotomous causal
@@ -158,22 +158,34 @@ perhaps in multiple ways \citep[see also][]{ImaDyk04}.
 
 \subsection{Preprocessing via Matching}
 
-For any matching procedure, \MatchIt\ does its work with the following
-three commands:
+%%% (K) talk briefly about what matching is.
 
-\begin{enumerate}
-\item \texttt{matchit()} implements a variety of matching procedures,
-  for which examples and details on finetuning the matching procedures
-  are described in Section~\ref{methods} and
-  Section~\ref{sec:reference}.
-  
-\item \texttt{summary()} summarizes the resulting balance of
-  covariates after matching.
-  
-\item \texttt{plot()} creates plots to assess balance of covariates.
-\end{enumerate}
+\texttt{matchit()} implements a variety of matching procedures, for
+which examples and details on finetuning the matching procedures are
+described in Section~\ref{methods} and Section~\ref{sec:reference}. A
+general syntax is
+\begin{verbatim}
+> m.out <- matchit(treat ~ x1 + x2, data = mydata)
+\end{verbatim}
+where {\tt treat} is the dichotomous treatment variable, and {\tt x1}
+and {\tt x2} are pre-treatment covariates.  This command creates the
+\MatchIt\ object called \texttt{m.out}.  A quick summary of the
+matching procedure can be printed on the screen by typing
+\begin{verbatim}
+> m.out
+\end{verbatim}
 
+  
 \subsection{Checking Balance}
+
+%%% (K) talk briefly about why and how we should check balance.
+
+\texttt{summary()} summarizes the resulting balance of covariates
+after matching.
+  
+\texttt{plot()} creates plots to assess balance of covariates.
+
+
 
 \subsection{Conducting Analyses after Matching}
 
@@ -225,50 +237,25 @@ observations are used, and the second may have less bias, since no
 assumption of constant parameters is needed.  See \citep{HoImaKin05}
 for more details.
 
-
-
-
-
-In addition, \texttt{match.data()} creates the data frame from the
-original data frame by excluding unmatched units and including
+First, we use \texttt{match.data()} to create the matched data by
+excluding unmatched units from the original data, and including
 information about the particular matching procedure (i.e., weights,
-subclasses, and distance measure).  This matched data set can then be
-used for subsequent parametric analyses thorough
-\hlink{Zelig}{http://gking.harvard.edu/zelig/} or other statistical
-programs. Finally, a standard \texttt{print()} command can be used to
-print out a very brief summary of the output object.
-
-\subsection{A General Example}
-
-Here, we provide a simple example of how \MatchIt\ can be used. 
-
-\begin{enumerate}
-  
-\item The {\bf Preprocessing} Step: First, preprocess the dataset by matching
-  treated and control units as indicated by the dichotomous
-  \texttt{treat} variable on \texttt{X1} and \texttt{X2} in the
-  dataset \texttt{my.dataset}:
+subclasses, and distance measure).  
 \begin{verbatim}
-  m.out <- matchit(treat ~ X1 + X2, data = my.dataset)
+>  mdata <- matched.data(m.out)
 \end{verbatim}
-  This creates the \MatchIt\ object called \texttt{m.out}.  Second, to
-  assess balance of covariates:
+where {\tt m.out} is the \MatchIt\ object from {\tt matchit()} and
+{\tt mdata} is the resulting matched data.  This matched data set can
+then be used for subsequent parametric analyses thorough
+\hlink{Zelig}{http://gking.harvard.edu/zelig/} or any other
+statistical programs. If one uses Zelig, then a syntax for least
+squares regression is
 \begin{verbatim}
-  summary(m.out)
-  plot(m.out)
+>  z.out <- zelig(Y ~ treat + x1 + x2, model = "ls", data = mdata)
 \end{verbatim}
-
-\item The {\bf  Analysis} Step: To create the the matched dataset: 
-\begin{verbatim}
-  mdata <- matched.data(m.out)
-\end{verbatim}
-  Users can then run any analysis that would have been conducted
-  conventionally.  For example, to run OLS on the outcome \texttt{Y}:
-\begin{verbatim}
-  ols1 <- lm(Y ~ treat + X1 + X2, data = mdata)
-\end{verbatim}
-For full simulations of direct quantities of interests, the same model
-may be run easily with Zelig as shown in Section~\ref{sec:analysis}.
+where {\tt Y} is the outcome variable, and {\tt z.out} is the output
+object from {\tt zelig}. For more details, see
+Section~\ref{sec:analysis}.
 \end{enumerate}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -289,7 +276,7 @@ $i$ under control.  The variables $y_{1i}$ and $y_{0i}$ are jointly
 unobservable, and for each $i$, we observe one
 $y_i=t_iy_{1i}+(1-t_i)y_{0i}$, and not the other.
 
-\subsection{Example Data}
+\subsection{Example Data: National Supported Work Demonstration}
 \label{subsec:lalonde}
 
 For our running example, we use data from the job training program
@@ -1116,7 +1103,7 @@ procedures and other inputs specific to particular procedures.  The
 outputs are standard across all procedures.  We organize the reference
 manual in these categories.
 
-\subsubsection{Inputs Common to All Matching Methods}
+\subsubsection{All Matching Methods}
 
 \begin{enumerate}
   
@@ -1248,7 +1235,7 @@ manual in these categories.
   value. The default is \texttt{FALSE}.
 \end{enumerate}
 
-\subsubsection{Inputs Specific to Exact Matching}
+\subsubsection{Exact Matching}
 
 Exact matching is implemented in \MatchIt\ using \texttt{method =
   "exact"}.  Exact matching will be done on all covariates included on
@@ -1256,7 +1243,7 @@ the right-hand side of the \texttt{formula} specified in the \MatchIt\
 call.  No \texttt{distance} option is used for exact matching, and
 there are no additional options for exact matching.
 
-\subsubsection{Inputs Specific to Subclassification}
+\subsubsection{Subclassification}
 
 \begin{enumerate}
 \item \texttt{subclass} is either (1) a scalar, specifying the number
@@ -1270,7 +1257,7 @@ there are no additional options for exact matching.
   units, and \texttt{"all"} indicates by the total number of units.
 \end{enumerate}
 
-\subsubsection{Inputs Specific to Nearest Neighbor Matching}
+\subsubsection{Nearest Neighbor Matching}
 \label{subsubsec:nninputs}
 \begin{enumerate}
 \item \texttt{m.order}  specifies the order in which to match
@@ -1327,7 +1314,7 @@ there are no additional options for exact matching.
 \end{enumerate}
 
 
-\subsubsection{Inputs Specific to Full Matching}
+\subsubsection{Full Matching}
 
 Full matching can be performed with \MatchIt\ by setting
 \texttt{method = "full"}.  We use an add-on package called
@@ -1346,7 +1333,7 @@ The available options are listed below.
     help(fullmatch)} for details.
 \end{enumerate}
 
-\subsubsection{Inputs Specific to Optimal Matching}
+\subsubsection{Optimal Matching}
 
 Optimal matching is performed with \MatchIt\ by setting \texttt{method
   = "optimal"}.  We use an add-on package called \texttt{optmatch}
@@ -1626,6 +1613,8 @@ names(m.data4)
 
 \begin{itemize}
 \item \textbf{2.0-1} (??, 2005): Stable release for R 2.1. Major revisions.
+\item \textbf{1.0-2} (August 10, 2005): Stable release for R
+  2.1. Minor bug fixes (Thanks to Bart Bonikowski).
 \item \textbf{1.0-1} (January 3, 2005): Stable release for R 2.0. The
   first official version of \MatchIt
 \end{itemize}
