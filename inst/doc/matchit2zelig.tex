@@ -15,31 +15,53 @@ installed Zelig, follow the installation procedure described at
 \item Nearest neighbor matching using propensity scores: 
 \begin{verbatim}
 ## load the Lalonde data
-load(lalonde)
+> load(lalonde)
 
 ## load Zelig package: if not already installed, try install.package("Zelig")
-library(Zelig)
+> library(Zelig)
 
 ## nearest neighbor matching using propensity scores
-m.out1 <- matchit(treat ~ age + educ + black + hispan + nodegree + married + re74 + re75, 
+> m.out1 <- matchit(treat ~ age + educ + black + hispan + nodegree + married + re74 + re75, 
                   method = "nearest", data = lalonde)
 
 ## fit the linear model to the control group controlling for propensity score and 
 ## other covariates
-z.out1 <- zelig(re78 ~ age + educ + black + hispan + nodegree + married + re74 + re75
+> z.out1 <- zelig(re78 ~ age + educ + black + hispan + nodegree + married + re74 + re75
  + distance, data = match.data(m.out1, "control"), model = "ls")
 
 ## set the covariates to the covariates of matched treated units
 ## use conditional prediction by setting cond = TRUE.
-x.out1 <- setx(z.out1, data = match.data(m.out1, "treat"), fn = NULL, cond = TRUE)
+> x.out1 <- setx(z.out1, data = match.data(m.out1, "treat"), fn = NULL, cond = TRUE)
 
 ## simulate the average treatment effect for the treated
-s.out1 <- sim(z.out1, x = x.out1)
+> s.out1 <- sim(z.out1, x = x.out1)
 
 ## obtain a summary
-summary(s.out1)
+> summary(s.out1)
+
+> summary(s.out1)
+
+  Model: ls 
+  Number of simulations: 1000 
+
+Mean Values of Observed Data (n = 185) 
+(Intercept)         age        educ       black      hispan    nodegree 
+  1.000e+00   2.582e+01   1.035e+01   8.432e-01   5.946e-02   7.081e-01 
+    married        re74        re75    distance 
+  1.892e-01   2.096e+03   1.532e+03   5.774e-01 
+
+Pooled Expected Values: E(Y|X)
+  mean     sd   2.5%  97.5% 
+4994.6 2274.8  693.2 9940.3 
+
+Pooled Average Treatment Effect: Y - EV
+  mean     sd   2.5%  97.5% 
+1354.6  572.3  243.3 2493.4 
 \end{verbatim}
   
+The estimated average treatment effect on the treated is thus \$1,355, with a 95\% interval
+of (\$243, \$2,493).
+
 \item Estimating the average treatment effects on both the treated and
   the control groups. We use the same {\tt matchit()} output as in the
   first example above.
@@ -72,7 +94,10 @@ quantile(ate.all, c(0.025, 0.975))
   
 \item Subclassification: In this case, the average treatment effect
   estimates are obtained for each subclass separately as well as
-  for the overall sample.
+  for the overall sample.  Estimating the treatment effects separately 
+  for each subclass, and then aggregating across subclasses, can significantly
+  increase the robustness of the ultimate results since the paramatric analysis
+  within each subclass requires only local rather than global assumptions.
 
 \begin{verbatim}
 ## subclassification with 4 subclasses
