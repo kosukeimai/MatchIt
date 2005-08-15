@@ -17,7 +17,7 @@ plot.matchit.subclass <- function(x, discrete.cutoff=5,type="QQ", ...){
     }
   if(type=="QQ"){
     choices <- c("No",paste("Yes : Subclass ", 1:max(x$subclass,na.rm=T)))
-    question <- "Would you like to see density estimates of any subclass covariates?"
+    question <- "Would you like to see quantile-quantile plots of any subclasses?"
     ans <- -1
     while(ans!=0)
       {
