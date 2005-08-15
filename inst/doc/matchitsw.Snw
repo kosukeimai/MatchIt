@@ -696,7 +696,7 @@ m.out <- matchit(treat ~ re74 + re75 + educ + black + hispan + age,
                   data = lalonde, method = "nearest")
 @
 
-<<fig=TRUE, width=12, height=6>>=
+<<fig=TRUE, width=8, height=5>>=
 plot(m.out)
 plot(m.out, type="jitter")
 @
@@ -923,7 +923,7 @@ where {\tt Y} is the outcome variable, and {\tt z.out} is the output
 object from {\tt zelig}. For more details, see
 Section~\ref{subsec:analysis}.
 
-\input{matchit2zelig}
+\input{matchit2zeligsw}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
