@@ -55,6 +55,8 @@ Elizabeth A. Stuart\thanks{Researcher, Mathematica Policy Research,
 \begin{document}
 \maketitle
 
+
+
 \begin{rawhtml}
   <p> [Also available is a downloadable <a
   href="/matchit/docs/matchit.pdf">PDF</a> version of this entire
@@ -118,9 +120,12 @@ Subsection~\ref{subsec:vercontrol}).
 As with any R package, you need install \MatchIt\ only once, but you
 must load it prior to each use.  You can do this for each R session by
 typing
-\begin{verbatim}
-> library(MatchIt) 
-\end{verbatim}
+
+\begin{Schunk}
+\begin{Sinput}
+> library(MatchIt)
+\end{Sinput}
+\end{Schunk}
 at the R command prompt.  
 
 Alternatively, you can specify R to load \MatchIt\ automatically at
@@ -132,7 +137,7 @@ file located in the home directory for Unix/Linux and Mac OS X
 systems.  Using a text editor such as Windows notepad and emacs, add
 the following line to the file:
 \begin{verbatim}
-  options(defaultPackages = c(getOption("defaultPackages"), "MatchIt"))
+> options(defaultPackages = c(getOption("defaultPackages"), "MatchIt"))
 \end{verbatim}
 For this change to take effect, you need to restart R.
 
@@ -278,7 +283,7 @@ analyzed in \citet{lalonde86} and \citet{DehWah99}.  A subsample of
 the data consisting of the National Supported Work Demonstration (NSW)
 treated group and the comparison sample from the Population Survey of
 Income Dynamics (PSID) is included in \MatchIt.\footnote{This data set, \texttt{lalonde},
-was created using NSWRE74_TREATED.txt and CPS3_CONTROLS.txt from
+was created using NSWRE74$\_$TREATED.TXT and CPS3$\_$CONTROLS.TXT from
 http://www.columbia.edu/$\sim$rd247/nswdata.}  The variables in this
 dataset are described in Table~\ref{dwvars}.  One causal effect of
 interest is the impact that participation in the job training program,
@@ -331,20 +336,26 @@ difference will always be unobserved.
 
 \texttt{matchit()} implements a variety of matching procedures.  A
 general syntax is
-\begin{verbatim}
+\begin{Schunk}
+\begin{Sinput}
 > m.out <- matchit(treat ~ x1 + x2, data = mydata)
-\end{verbatim}
+\end{Sinput}
+\end{Schunk}
 where {\tt treat} is the dichotomous treatment variable, and {\tt x1}
 and {\tt x2} are pre-treatment covariates.  This command creates the
 \MatchIt\ object called \texttt{m.out}.  A quick summary of the
 matching procedure can be printed on the screen by typing
-\begin{verbatim}
+\begin{Schunk}
+\begin{Sinput}
 > m.out
-\end{verbatim}
+\end{Sinput}
+\end{Schunk}
 or
-\begin{verbatim}
+\begin{Schunk}
+\begin{Sinput}
 > print(m.out)
-\end{verbatim}
+\end{Sinput}
+\end{Schunk}
 Examples of various matching procedures are given for the reminder of
 this section, and Section~\ref{subsec:inputs} lists all possible
 specifications of {\tt matchit()}.
@@ -378,12 +389,12 @@ values of the covariates in the right hand side of the formula; within
 each subclass, all units have the same covariate values.  To obtain
 basic information about the matching procedure:
 
+\# print a short summary
 \begin{Schunk}
 \begin{Sinput}
 > m.out
 \end{Sinput}
 \begin{Soutput}
-
 Call: matchit(formula = treat ~ educ + black + hispan, data = lalonde,     method = "exact")
 
 Exact Subclasses: 25
@@ -393,8 +404,6 @@ Sample sizes:
 Full          429     185
 Matched       376     184
 Unmatched      53       1
-
-
 \end{Soutput}
 \end{Schunk}
 
@@ -432,9 +441,9 @@ Subclassification is implemented in \MatchIt\ using \texttt{method =
 subclassification.  The following example script can be run by typing
 {\tt demo(subclass)} at the R prompt:
 
+\# Run the default subclassification scheme
 \begin{Schunk}
 \begin{Sinput}
-> data(lalonde)
 > m.out <- matchit(treat ~ re74 + re75 + educ + black + hispan + 
 +     age, data = lalonde, method = "subclass")
 \end{Sinput}
@@ -481,7 +490,6 @@ composed of real earnings in 1974 and 1975, education, race, and age:
 > print(m.out)
 \end{Sinput}
 \begin{Soutput}
-
 Call: matchit(formula = treat ~ re74 + re75 + educ + black + hispan +     age, data = lalonde, method = "nearest")
 
 Sample sizes:
@@ -490,8 +498,6 @@ Full          429     185
 Matched       185     185
 Unmatched     244       0
 Discarded       0       0
-
-
 \end{Soutput}
 \end{Schunk}
 
@@ -579,21 +585,15 @@ The following example script can be run by typing {\tt demo(full)} at
 the R prompt.  We first load the Lalonde data, confuct full matching,
 and then print a short summary.
 
+\# conduct full matching using the propensity score based on logistic regression 
 \begin{Schunk}
 \begin{Sinput}
 > m.out <- matchit(treat ~ age + educ + black + hispan + married + 
 +     nodegree + re74 + re75, data = lalonde, method = "full", 
 +     distance = "logit")
-\end{Sinput}
-\begin{Soutput}
-Loading required package: optmatch
-
-\end{Soutput}
-\begin{Sinput}
 > m.out
 \end{Sinput}
 \begin{Soutput}
-
 Call: matchit(formula = treat ~ age + educ + black + hispan + married +     nodegree + re74 + re75, data = lalonde, method = "full",     distance = "logit")
 
 Sample sizes:
@@ -602,8 +602,6 @@ Full          429     185
 Matched       429     185
 Unmatched       0       0
 Discarded       0       0
-
-
 \end{Soutput}
 \end{Schunk}
 
@@ -644,6 +642,7 @@ For more information about the package, see
 The following example script can be run by typing {\tt demo(optimal)}
 at the R prompt.
 
+\# optimal ratio matching using the propensity score based on logistic regression
 \begin{Schunk}
 \begin{Sinput}
 > m.out <- matchit(treat ~ re74 + re75 + age + educ, data = lalonde, 
@@ -651,7 +650,6 @@ at the R prompt.
 > m.out
 \end{Sinput}
 \begin{Soutput}
-
 Call: matchit(formula = treat ~ re74 + re75 + age + educ, data = lalonde,     method = "optimal", distance = "logit", ratio = 2)
 
 Sample sizes:
@@ -660,8 +658,6 @@ Full          429     185
 Matched       370     185
 Unmatched      59       0
 Discarded       0       0
-
-
 \end{Soutput}
 \end{Schunk}
 
@@ -697,6 +693,7 @@ Section~\ref{subsec:outputs} for details.
   covariates in each subclass, we also use the \texttt{covariates =
     TRUE} option:
 
+\# balance diagnostics through statistics
 \begin{Schunk}
 \begin{Sinput}
 > m.out <- matchit(treat ~ educ + black + hispan, data = lalonde, 
@@ -704,7 +701,6 @@ Section~\ref{subsec:outputs} for details.
 > summary(m.out, covariates = TRUE)
 \end{Sinput}
 \begin{Soutput}
-
 Call:
 matchit(formula = treat ~ educ + black + hispan, data = lalonde,     method = "exact")
 
@@ -744,8 +740,6 @@ Matched sample sizes by subclass:
 23       1      29    30    8     0      0
 24       1      40    41   10     0      0
 25       1       9    10   11     0      1
-
-
 \end{Soutput}
 \end{Schunk}
 
@@ -770,7 +764,6 @@ participants):
 \begin{Soutput}
  [1] "NSW1"  "NSW4"  "NSW8"  "NSW21" "NSW24" "NSW26" "NSW27" "NSW30" "NSW33"
 [10] "NSW45"
-
 \end{Soutput}
 \end{Schunk}
 
@@ -791,7 +784,6 @@ NSW100    9     0      1
 NSW112    9     0      1
 NSW173    9     0      1
 PSID9     9     0      1
-
 \end{Soutput}
 \end{Schunk}
 
@@ -808,7 +800,6 @@ PSID9     9     0      1
 > summary(m.out)
 \end{Sinput}
 \begin{Soutput}
-
 Call:
 matchit(formula = treat ~ re74 + re75 + educ + black + hispan +     age, data = lalonde, method = "subclass", sub.by = "treat")
 
@@ -985,16 +976,23 @@ educ                 -3.301   58.11   17.56  29.054
 black                98.464  100.00   99.15  83.243
 hispan               64.046    0.00   67.79  83.243
 age                  86.817 -267.50  -27.34 -11.716
-
-
 \end{Soutput}
 \end{Schunk}
 
-For each set of units (full data set, matched data set, subclasses), the "Means Treated" and "Means Control" columns show the weighted
-means in the treated and control groups.  The "Pooled SD" is the standard deviation of the covariate in the pooled group of treated and
-control units.  The "Std. Bias" is the difference in means in the treated and control groups, divided by the "Pooled SD" in the full data
-set.  Good matches will generally have standardized biases less than approximately 0.25; values greater than that imply that the
-groups have means that are more than a quarter of a standard deviation apart.  
+For each set of units (full data set, matched data set, subclasses), the ``Means Treated" and ``Means Control" columns show 
+the weighted
+means in the treated and control groups.  The ``Pooled SD" is the standard deviation of the covariate in the set
+of treated units.  The ``Std. Bias" is the difference in means in the treated and control groups, divided by the ``Pooled SD" in 
+the treated group in the full data
+set.  The same standard deviation is used for calculating the standardized bias in the full data and the matched data set
+so that the success of the matching at reducing bias in the covariate means can be easily assessed; standardizing
+by the same quantity puts the two differences in means on the same scale.  With subclassification, the standardized
+bias within each subclass is also calculated using the same standard deviation (that of the full treated group).   Good 
+matches will generally have standardized biases less than approximately 0.25; values greater than that imply that the
+groups have means that are more than a quarter of a standard deviation apart.   In this example, the bias between the groups 
+within each sublcass is generally small, with the exception of Subclass 1, which has a large number of control units and a 
+propensity score mean that is lower than that of the treated units in that subclass.  Using the \texttt{discard} option may be 
+desirable here, to reduce any bias due to these control units with low propensity scores.  
 
 Finally, the final three columns 
 gives summary statistics of a Quantile-Quantile (Q-Q) plot (see below for more information on these plots).
@@ -1003,58 +1001,75 @@ of the two groups (treated and control) were exactly the same, all points would 
 would be 0.  Values greater than 0 indicate deviations between the groups in some part of the empirical distributions.  The plots themselves,
 described below, can provide further insight into which part of the covariate distribution has differences between the groups.
 
+The percent balance improvement also indicates that the subclassification has been successful at forming subclasses within 
+which the distribution of covariates is more similar than in the full data set.  In particular, 80 to 90 percent reduction in 
+the standardized bias was achieved in 4 of the 6 covariates through subclassification; little bias reduction was achieved on 
+the education variable, which had very small bias to start (standardized bias of only 0.055 in the full data set).  
+
 As mentioned, we can also assess balance visually via the \texttt{plot} command, which provides two types of plots: jitter plots of
 the distance measure, and Q-Q plots of each covariate.
+Figures~\ref{diagqqsub} and \ref{diagjittersub} display these two
+diagnostic plots, respectively.
 
-
+\begin{Schunk}
+\begin{Sinput}
+> m.out <- matchit(treat ~ re74 + re75 + educ + black + hispan + 
++     age, data = lalonde, method = "subclass")
+\end{Sinput}
+\end{Schunk}
 \begin{Schunk}
 \begin{Sinput}
 > plot(m.out)
 > plot(m.out, type = "jitter")
 \end{Sinput}
-\begin{Soutput}
-[1] "To identify the units, use first mouse button; to stop, use second."
-numeric(0)
-\end{Soutput}
 \end{Schunk}
-\includegraphics{matchitsw-013}
 
-\begin{verbatim}
-> ## balance diagnostics through graphics
-> plot(m.out)
-> plot(m.out, type="jitter")
-\end{verbatim}    
-Figures~\ref{diagqqsub} and \ref{diagjittersub} display these two
-diagnostic plots, respectively.
+%<<fig=TRUE, width=8, height=5, prefix.string=figs/, echo=FALSE>>=
+%plot(m.out)
+%@
+%<<fig=TRUE, width=8, height=5, prefix.string=figs/>>=
+%plot(m.out, type="jitter")
+%@
+
 \begin{figure}[tbp]
   \begin{center}
-%    \rotatebox{270}{\includegraphics[height=2.85in,angle=0]{figs/subclass1}}
-    \includegraphics[scale=.5]{figs/qqplotsub}
-    \includegraphics[scale=.5]{figs/qqplotsub2}
+    %\rotatebox{270}{\includegraphics[height=2.85in,angle=0]{figs/subclass1}}
+    \includegraphics[scale=.25]{figs/qqplotsub}
+    \includegraphics[scale=.25]{figs/qqplotsub2}
     \hfill
-    \caption{Sample diagnostic QQ plots: Subclassification with
+\caption{Sample diagnostic QQ plots: Subclassification with
       \MatchIt\ call \texttt{matchit(treat ~ re74 + re75 + educ +
-        black + hispan + age, data = lalonde, method = "subclass")}.}
+        black + hispan + age, data = lalonde, method = "subclass")} followed by plot(m.out).}
 \label{diagqqsub}
 \end{center}
 \end{figure}
 
 \begin{figure}[tbp]
   \begin{center}
-%    \rotatebox{270}{\includegraphics[scale=0.5,angle=0]{figs/subclass1}}
-    {\includegraphics[scale=0.7]{figs/jitterplotsub}}
+    %\rotatebox{270}{\includegraphics[scale=0.5,angle=0]{figs/subclass1}}
+    {\includegraphics[scale=0.5]{figs/jitterplotsub}}
     \hfill
-    \caption{Sample diagnostic jitter plot: Subclassification with
+\caption{Sample diagnostic jitter plot: Subclassification with
       \MatchIt\ call \texttt{matchit(treat ~ re74 + re75 + educ +
-        black + hispan + age, data = lalonde, method = "subclass")}.
+        black + hispan + age, data = lalonde, method = "subclass") followed by plot(m.out, type="jitter")}.
       Vertical lines indicate the subclass cut points and the area of
       each diamond is proportional to the weights of the matched units
-      for each subclass.}
+      for each subclass.  Unmatched units would be shown in grey.}
 \label{diagjittersub}
 \end{center}
 \end{figure}
 
-%** the way to interpret these figures is...
+In Figure \ref{diagqqsub} we see that the empirical distributions of the treated and control units are much more similar
+in Subclass 3 (shown in the ``Matched" column of figures) than they are in the full data set (shown in the ``Raw" column of 
+figures).  If the empirical distributions were the same in the treated and control groups, the points should all lie on the 45 
+degree line.  Deviations from the 45 degree line indicate differences in the empirical distribution.  We see that in this case, 
+the distributions of most of the covariates are very similar in Subclass 3, with the exception of \texttt{age}, which
+on which the treated units generally have larger values than the control units (indicated by the points falling above the 45 
+degree line).
+
+The jitter plot in Figure \ref{diagjittersub} can be used to examine the overall distribution of propensity scores in the 
+treated and control groups.  In this example we see that the two groups have reasonable overlap, with control units throughout 
+the range of treated unit propensity scores.  
 
 Lastly, subclassification may also be used in conjunction with nearest
 neighbor matching described below in
@@ -1081,10 +1096,11 @@ the subclass number.
 
 \begin{Schunk}
 \begin{Sinput}
+> m.out <- matchit(treat ~ re74 + re75 + educ + black + hispan + 
++     age, data = lalonde, method = "nearest")
 > summary(m.out)
 \end{Sinput}
 \begin{Soutput}
-
 Call:
 matchit(formula = treat ~ re74 + re75 + educ + black + hispan +     age, data = lalonde, method = "nearest")
 
@@ -1144,8 +1160,6 @@ All           429     185
 Matched       185     185
 Unmatched     244       0
 Discarded       0       0
-
-
 \end{Soutput}
 \end{Schunk}
 
@@ -1177,22 +1191,34 @@ shows the balance of all squares and interactions of the covariates
 used in the matching procedure.  This is helpful for diagnosing
 whether balance across matched pairs has been attained.  Significant
 differences in higher order interactions usually are a good indication
-that the assignment model needs to be respecified, %as discussed in
+that the assignment model needs to be respecified. For example, if a variable
+not included in the original distance measure has large imbalances in the matched groups, including
+that variable in the next model specification may improve the resulting balance on that variable.  \cite{DehWah99} provide
+a detailed example of a propensity score specification algorithm.   Because the outcome variable is not used
+in the matching procedure, a variety of matching methods can be tried, and the one that leads to the best resulting balance
+chosen.
+
+%as discussed in
 %Section \ref{pscorespec}.
 
 We can also examine the balance graphically:
-\begin{verbatim}
+\begin{Schunk}
+\begin{Sinput}
 > plot(m.out)
-> plot(m.out, type="jitter")
-\end{verbatim}
+> plot(m.out, type = "jitter")
+\end{Sinput}
+\end{Schunk}
+
 Figures~\ref{diagqqnn} and~\ref{diagjitternn} display these two sample
 plots.  In the jitter plot, you may identify units by observation name
 by clicking the first mouse button near the units.  
+
 \begin{figure}[tbp]
   \begin{center}
 %    \rotatebox{270}{\includegraphics[height=2.85in,angle=0]{figs/subclass1}}
-    \includegraphics[scale=0.5]{figs/qqplotnn}
-    \includegraphics[scale=0.5]{figs/qqplotnn2} \hfill
+    \includegraphics[scale=0.25]{figs/qqplotnn}
+    \includegraphics[scale=0.25]{figs/qqplotnn2} 
+    \hfill
     \caption{Sample diagnostic QQ plots: Nearest Neighbor matching
       with the \MatchIt\ call \texttt{matchit(treat ~ re74 + re75 + educ
         + black + hispan + age, data=lalonde, method="nearest")}.}
@@ -1203,7 +1229,7 @@ by clicking the first mouse button near the units.
 \begin{figure}[tbp]
   \begin{center}
 %    \rotatebox{270}{\includegraphics[height=2.85in,angle=0]{figs/subclass1}}
-    {\includegraphics[scale=0.7]{figs/jitterplotnn}}
+    {\includegraphics[scale=0.5]{figs/jitterplotnn}}
     \hfill
     \caption{Sample diagnostic jitter plot: Nearest Neighbor matching
       with the \MatchIt\ call \texttt{matchit(treat ~ re74 + re75 +
@@ -1291,18 +1317,22 @@ First, we use \texttt{match.data()} to create the matched data by
 excluding unmatched units from the original data, and including
 information about the particular matching procedure (i.e., weights,
 subclasses, and the distance measure).  
-\begin{verbatim}
->  mdata <- matched.data(m.out)
-\end{verbatim}
+\begin{Schunk}
+\begin{Sinput}
+> mdata <- match.data(m.out)
+\end{Sinput}
+\end{Schunk}
 where {\tt m.out} is the \MatchIt\ object from {\tt matchit()} and
 {\tt mdata} is the resulting matched data.  This matched data set can
 then be used for subsequent parametric analyses thorough
 \hlink{Zelig}{http://gking.harvard.edu/zelig/} or any other
 statistical programs. If one uses Zelig, then a syntax for least
 squares regression is
-\begin{verbatim}
->  z.out <- zelig(Y ~ treat + x1 + x2, model = "ls", data = mdata)
-\end{verbatim}
+\begin{Schunk}
+\begin{Sinput}
+> z.out <- zelig(Y ~ treat + x1 + x2, model = "ls", data = mdata)
+\end{Sinput}
+\end{Schunk}
 where {\tt Y} is the outcome variable, and {\tt z.out} is the output
 object from {\tt zelig}. For more details, see
 Section~\ref{subsec:analysis}.
@@ -1320,8 +1350,8 @@ Section~\ref{subsec:analysis}.
 The main command, \texttt{matchit()}, can be used to implements any of
 the matching procedures:
 \begin{verbatim}
-m.out <- matchit(formula, data, method = "nearest", distance = "logit",
-                 distance.options=list(), discard = "none", reestimate = FALSE, ...)
+> m.out <- matchit(formula, data, method = "nearest", distance = "logit", distance.options=list(), 
+	discard = "none", reestimate = FALSE, ...)
 \end{verbatim}
 The command takes some inputs that are common to all matching
 procedures and other inputs specific to particular procedures.  The
@@ -1709,7 +1739,9 @@ The \texttt{summary} call returns, when applicable:
   each of the balance measures in \texttt{sum.all} and
   \texttt{sum.matched}, defined as $100(|a|-|b|)/|a|$, where $a$ was
   the value of the balance measure before matching and $b$ is the
-  value of the balance measure after matching.
+  value of the balance measure after matching.  Because the difference in means and the standardized bias
+  differ only by a constant (the standard deviation in the full treated group), the percent reduction in bias
+  is the same for these two measures, and thus is only printed out once.
 
 \item \texttt{nn} gives the sample sizes in the full and matched
   samples and the number of discarded units, by treatment and control.
@@ -1890,17 +1922,20 @@ For example, to assign the names ``Dan'', ``Kosuke'', ``Liz'' and
 ``Gary'' to a data frame with the first four observations in the
 Lalonde data, type:
 
-\begin{verbatim}
-> test <- lalonde[1:4,]  #taking a lalonde subset
-> row.names(test) <- c("Dan","Kosuke","Liz","Gary")  #assigning row names
+\begin{Schunk}
+\begin{Sinput}
+> test <- lalonde[1:4, ]
+> row.names(test) <- c("Dan", "Kosuke", "Liz", "Gary")
 > print(test)
-       treat age educ black hispan married nodegree re74 re75      re78
-Dan        1  37   11     1      0       1        1    0    0  9930.046
-Kosuke     1  22    9     0      1       0        1    0    0  3595.894
-Liz        1  30   12     1      0       0        0    0    0 24909.450
-Gary       1  27   11     1      0       0        1    0    0  7506.146
-\end{verbatim} 
-
+\end{Sinput}
+\begin{Soutput}
+       treat age educ black hispan married nodegree re74 re75  re78
+Dan        1  37   11     1      0       1        1    0    0  9930
+Kosuke     1  22    9     0      1       0        1    0    0  3596
+Liz        1  30   12     1      0       0        0    0    0 24909
+Gary       1  27   11     1      0       0        1    0    0  7506
+\end{Soutput}
+\end{Schunk}
 
 \subsection{How Do I Ensure Replicability As \MatchIt\ Versions Develop?}
 \label{subsec:vercontrol}
@@ -1919,7 +1954,7 @@ for windows, see
 
 In addition, users may find it helpful to install packages with
 version control, using the {\tt installWithVers} command with {\tt
-  install.packages}.  So for example, in the windows R console, users
+install.packages}.  So for example, in the windows R console, users
 may download the appropriate version from our website and install the
 package with version control by:
 
