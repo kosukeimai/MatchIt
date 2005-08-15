@@ -90,8 +90,8 @@ summary.matchit.subclass <- function(object, interactions = FALSE, addlvariables
   ## Imbalance Reduction
   stat0 <- abs(cbind(sum.all[,2]-sum.all[,1],
                      sum.all[,4:7]))
-  stat1 <- abs(cbind(sum.matched[,2]-sum.matched[,1],
-                     sum.matched[,4:7]))
+  stat1 <- abs(cbind(sum.subclass[,2]-sum.subclass[,1],
+                     sum.subclass[,4:7]))
   reduction <- as.data.frame(100*(stat0-stat1)/stat0)
   if(sum(stat0==0 & stat1==0, na.rm=T)>0){
     reduction[stat0==0 & stat1==0] <- 0
@@ -99,7 +99,7 @@ summary.matchit.subclass <- function(object, interactions = FALSE, addlvariables
   if(sum(stat0==0 & stat1>0,na.rm=T)>0){
     reduction[stat0==0 & stat1>0] <- -Inf
   }
-  names(reduction) <- c("Mean","QQ Med","QQ Mean", "QQ Max", "Std. Bias")
+  names(reduction) <- c("Mean","Std. Bias", "QQ Med","QQ Mean", "QQ Max")
 
   ## output
   res <- list(call=object$call, sum.all = sum.all, sum.matched = sum.matched,

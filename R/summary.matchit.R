@@ -46,7 +46,7 @@ summary.matchit <- function(object, interactions = FALSE, addlvariables = NULL, 
   if(sum(stat0==0 & stat1>0,na.rm=T)>0){
     reduction[stat0==0 & stat1>0] <- -Inf
   }
-  names(reduction) <- c("Mean","QQ Med","QQ Mean", "QQ Max", "Std. Bias")
+  names(reduction) <- c("Mean","Std. Bias", "QQ Med","QQ Mean", "QQ Max")
 
   ## Sample sizes
   nn <- matrix(0, ncol=2, nrow=4)
