@@ -1,0 +1,130 @@
+%** {\bf Does all the neyman stuff go in here, or just the examples, with
+%   syntax somewhere else?}
+
+To illustrate this approach, we provide several examples using the
+Lalonde data. Users can run these example commands by typing {\tt
+  demo(Zelig)} at the R prompt. We use the linear least squares model
+in these examples. However, a wide range of other models are available
+in Zelig (for the list of supported models, see
+\hlink{http://gking.harvard.edu/zelig/docs/Models\_Zelig\_Can.html}{http://gking.harvard.edu/zelig/docs/Models_Zelig_Can.html}),
+and they can be used in the exactly same way. If you have not
+installed Zelig, follow the installation procedure described at
+\hlink{http://gking.harvard.edu/zelig/docs/Installation.html}{http://gking.harvard.edu/zelig/docs/Installation.html}
+
+\begin{enumerate}
+\item Nearest neighbor matching using propensity scores: 
+
+<<>>=
+## load the Lalonde data
+data(lalonde)
+## load Zelig package: if not already installed, try install.package("Zelig")
+library(Zelig)
+
+## nearest neighbor matching using propensity scores
+m.out1 <- matchit(treat ~ age + educ + black + hispan + nodegree + married + re74 + re75, 
+                  method = "nearest", data = lalonde)
+
+## fit the linear model to the control group controlling for propensity score and 
+## other covariates
+z.out1 <- zelig(re78 ~ age + educ + black + hispan + nodegree + married + re74 + re75 + distance,
+   		   data = match.data(m.out1, "control"), model = "ls")
+
+## set the covariates to the covariates of matched treated units
+## use conditional prediction by setting cond = TRUE.
+x.out1 <- setx(z.out1, data = match.data(m.out1, "treat"), fn = NULL, cond = TRUE)
+
+## simulate the average treatment effect for the treated
+s.out1 <- sim(z.out1, x = x.out1)
+
+## obtain a summary
+summary(s.out1)
+@
+  
+The estimated average treatment effect on the treated is thus \$1,355, with a 95\% interval
+of (\$243, \$2,493).
+
+\item Estimating the average treatment effects on both the treated and
+  the control groups. We use the same {\tt matchit()} output as in the
+  first example above.
+
+<<>>=
+## fit the linear model to the treatment group controlling for propensity score and 
+## other covariates
+z.out2 <- zelig(re78 ~ age + educ + black + hispan + nodegree + married + re74 + re75 + distance,
+  data = match.data(m.out1, "control"), model = "ls")
+
+## conducting the simulation procedure for the control group
+x.out2 <- setx(z.out2, data = match.data(m.out1, "control"), fn = NULL, cond = TRUE)
+s.out2 <- sim(z.out2, x = x.out2)
+
+##  Note that Zelig calculates the difference between observed and
+##  either predicted or expected values.  This means that the treatment
+##  effect for the control units is actually the effect of control
+##  (observed control outcome minus the imputed outcome under treatment
+##  from the model).  Hence, to combine treatment effects just reverse
+##  the signs of the estimated treatment effect of controls.
+ate.all <- c(s.out1$qi$ate.ev, -s.out2$qi$ate.ev)
+
+## some summaries
+## point estimate
+mean(ate.all)
+## standard error
+sd(ate.all)
+## 95% confidence interval
+quantile(ate.all, c(0.025, 0.975))
+@
+  
+\item Subclassification: In this case, the average treatment effect
+  estimates are obtained for each subclass separately as well as
+  for the overall sample.  Estimating the treatment effects separately 
+  for each subclass, and then aggregating across subclasses, can significantly
+  increase the robustness of the ultimate results since the paramatric analysis
+  within each subclass requires only local rather than global assumptions.
+
+<<>>=
+## subclassification with 4 subclasses
+m.out2 <- matchit(treat ~ age + educ + black + hispan + nodegree + married + re74 + re75,  
+                  data = lalonde, method = "subclass", subclass = 4)
+
+## controlling only for the estimated propensity score and lagged Y within each subclass
+## one can potentially control for more
+z.out3 <- zelig(re78 ~ re74 + re75 + distance, data = match.data(m.out2, "control"), 
+                model = "ls", by = "subclass")
+
+## conducting simulations
+x.out3 <- setx(z.out3, data = match.data(m.out2, "treat"), fn = NULL, cond = TRUE)
+
+## for the demonstration purpose, we set the number of simulations to be 100
+s.out3 <- sim(z.out3, x = x.out3, num = 100)
+
+## overall results
+summary(s.out3) 
+
+## summary for each subclass
+summary(s.out3, subset = 1) 
+summary(s.out3, subset = 2) 
+summary(s.out3, subset = 3) 
+@
+  
+%\item Analysis of data from full matching: It will generally not be
+%  possible to run models separately within each subclass after full
+%  matching, due to very small sample sizes of either the treated or
+%  control group within each subclass.  In this situation, a common
+%  approach is to run a model with fixed effects included for each of
+%  the subclasses.
+%
+%For example, 
+%\begin{verbatim}
+%> foo1 <- matchit(treat ~ age + educ + black + hispan + married +
+%                nodegree + re74 + re75, data=lalonde, full=T)
+%> m1 <- lm(re78~ treat + age + educ + black + hispan + married +
+%         nodegree + re74 + re75 + as.factor(psclass),
+%         data=foo1$data)
+%> summary(m1)
+%\end{verbatim} 
+\end{enumerate}
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: "matchit"
+%%% End: 

@@ -1,0 +1,224 @@
+%** {\bf Does all the neyman stuff go in here, or just the examples, with
+%   syntax somewhere else?}
+
+To illustrate this approach, we provide several examples using the
+Lalonde data. Users can run these example commands by typing {\tt
+  demo(Zelig)} at the R prompt. We use the linear least squares model
+in these examples. However, a wide range of other models are available
+in Zelig (for the list of supported models, see
+\hlink{http://gking.harvard.edu/zelig/docs/Models\_Zelig\_Can.html}{http://gking.harvard.edu/zelig/docs/Models_Zelig_Can.html}),
+and they can be used in the exactly same way. If you have not
+installed Zelig, follow the installation procedure described at
+\hlink{http://gking.harvard.edu/zelig/docs/Installation.html}{http://gking.harvard.edu/zelig/docs/Installation.html}
+
+\begin{enumerate}
+\item Nearest neighbor matching using propensity scores: 
+
+\begin{Schunk}
+\begin{Sinput}
+> data(lalonde)
+> library(Zelig)
+> m.out1 <- matchit(treat ~ age + educ + black + hispan + nodegree + 
++     married + re74 + re75, method = "nearest", data = lalonde)
+> z.out1 <- zelig(re78 ~ age + educ + black + hispan + nodegree + 
++     married + re74 + re75 + distance, data = match.data(m.out1, 
++     "control"), model = "ls")
+> x.out1 <- setx(z.out1, data = match.data(m.out1, "treat"), fn = NULL, 
++     cond = TRUE)
+> s.out1 <- sim(z.out1, x = x.out1)
+> summary(s.out1)
+\end{Sinput}
+\begin{Soutput}
+
+  Model: ls 
+  Number of simulations: 1000 
+
+Mean Values of Observed Data (n = 185) 
+(Intercept)         age        educ       black      hispan    nodegree 
+  1.000e+00   2.582e+01   1.035e+01   8.432e-01   5.946e-02   7.081e-01 
+    married        re74        re75    distance 
+  1.892e-01   2.096e+03   1.532e+03   5.774e-01 
+
+Pooled Expected Values: E(Y|X)
+   mean      sd    2.5%   97.5% 
+ 5018.9  2281.7   730.4 10046.4 
+
+Pooled Average Treatment Effect: Y - EV
+  mean     sd   2.5%  97.5% 
+1330.3  568.7  236.7 2439.6 
+
+\end{Soutput}
+\end{Schunk}
+  
+The estimated average treatment effect on the treated is thus \$1,355, with a 95\% interval
+of (\$243, \$2,493).
+
+\item Estimating the average treatment effects on both the treated and
+  the control groups. We use the same {\tt matchit()} output as in the
+  first example above.
+
+\begin{Schunk}
+\begin{Sinput}
+> z.out2 <- zelig(re78 ~ age + educ + black + hispan + nodegree + 
++     married + re74 + re75 + distance, data = match.data(m.out1, 
++     "control"), model = "ls")
+> x.out2 <- setx(z.out2, data = match.data(m.out1, "control"), 
++     fn = NULL, cond = TRUE)
+> s.out2 <- sim(z.out2, x = x.out2)
+> ate.all <- c(s.out1$qi$ate.ev, -s.out2$qi$ate.ev)
+> mean(ate.all)
+\end{Sinput}
+\begin{Soutput}
+[1] 653
+
+\end{Soutput}
+\begin{Sinput}
+> sd(ate.all)
+\end{Sinput}
+\begin{Soutput}
+[1] 845.3
+
+\end{Soutput}
+\begin{Sinput}
+> quantile(ate.all, c(0.025, 0.975))
+\end{Sinput}
+\begin{Soutput}
+  2.5%  97.5% 
+-727.7 2215.3 
+
+\end{Soutput}
+\end{Schunk}
+  
+\item Subclassification: In this case, the average treatment effect
+  estimates are obtained for each subclass separately as well as
+  for the overall sample.  Estimating the treatment effects separately 
+  for each subclass, and then aggregating across subclasses, can significantly
+  increase the robustness of the ultimate results since the paramatric analysis
+  within each subclass requires only local rather than global assumptions.
+
+\begin{Schunk}
+\begin{Sinput}
+> m.out2 <- matchit(treat ~ age + educ + black + hispan + nodegree + 
++     married + re74 + re75, data = lalonde, method = "subclass", 
++     subclass = 4)
+> z.out3 <- zelig(re78 ~ re74 + re75 + distance, data = match.data(m.out2, 
++     "control"), model = "ls", by = "subclass")
+> x.out3 <- setx(z.out3, data = match.data(m.out2, "treat"), fn = NULL, 
++     cond = TRUE)
+> s.out3 <- sim(z.out3, x = x.out3, num = 100)
+> summary(s.out3)
+\end{Sinput}
+\begin{Soutput}
+
+  Model: ls 
+  Number of simulations: 25 
+
+Mean Values of Observed Data (n = 46) 
+(Intercept)        re74        re75    distance 
+     1.0000   5430.5389   2929.0394      0.2392 
+
+Pooled Expected Values: E(Y|X)
+ mean    sd  2.5% 97.5% 
+ 4870  5170 -3657 16523 
+
+Pooled Average Treatment Effect: Y - EV
+  mean     sd   2.5%  97.5% 
+1480.4 1354.3 -737.1 4396.5 
+
+\end{Soutput}
+\begin{Sinput}
+> summary(s.out3, subset = 1)
+\end{Sinput}
+\begin{Soutput}
+
+Results for 1 
+
+  Model: ls 
+  Number of simulations: 25 
+
+Mean Values of Observed Data (n = 46) 
+(Intercept)        re74        re75    distance 
+     1.0000   5430.5389   2929.0394      0.2392 
+
+Pooled Expected Values: E(Y|X)
+ mean    sd  2.5% 97.5% 
+ 6862  3930  2935 17574 
+
+Pooled Average Treatment Effect: Y - EV
+  mean     sd   2.5%  97.5% 
+ 330.2  732.8 -973.6 1491.4 
+
+
+\end{Soutput}
+\begin{Sinput}
+> summary(s.out3, subset = 2)
+\end{Sinput}
+\begin{Soutput}
+
+Results for 1 
+
+  Model: ls 
+  Number of simulations: 25 
+
+Mean Values of Observed Data (n = 45) 
+(Intercept)        re74        re75    distance 
+     1.0000   1777.4221    972.3441      0.6039 
+
+Pooled Expected Values: E(Y|X)
+    mean       sd     2.5%    97.5% 
+ 4318.21  2437.01   -99.49 10061.82 
+
+Pooled Average Treatment Effect: Y - EV
+  mean     sd   2.5%  97.5% 
+2168.1 1083.5  175.6 4099.1 
+
+
+\end{Soutput}
+\begin{Sinput}
+> summary(s.out3, subset = 3)
+\end{Sinput}
+\begin{Soutput}
+
+Results for 1 
+
+  Model: ls 
+  Number of simulations: 25 
+
+Mean Values of Observed Data (n = 47) 
+(Intercept)        re74        re75    distance 
+     1.0000    939.9688   1217.4546      0.6934 
+
+Pooled Expected Values: E(Y|X)
+   mean      sd    2.5%   97.5% 
+ 4095.9  5094.3   308.2 11508.9 
+
+Pooled Average Treatment Effect: Y - EV
+  mean     sd   2.5%  97.5% 
+1797.5  794.2  425.0 3348.9 
+
+
+\end{Soutput}
+\end{Schunk}
+  
+%\item Analysis of data from full matching: It will generally not be
+%  possible to run models separately within each subclass after full
+%  matching, due to very small sample sizes of either the treated or
+%  control group within each subclass.  In this situation, a common
+%  approach is to run a model with fixed effects included for each of
+%  the subclasses.
+%
+%For example, 
+%\begin{verbatim}
+%> foo1 <- matchit(treat ~ age + educ + black + hispan + married +
+%                nodegree + re74 + re75, data=lalonde, full=T)
+%> m1 <- lm(re78~ treat + age + educ + black + hispan + married +
+%         nodegree + re74 + re75 + as.factor(psclass),
+%         data=foo1$data)
+%> summary(m1)
+%\end{verbatim} 
+\end{enumerate}
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: "matchit"
+%%% End: 
