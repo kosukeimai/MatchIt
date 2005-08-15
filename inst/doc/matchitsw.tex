@@ -366,6 +366,23 @@ the R prompt:
 \begin{Schunk}
 \begin{Sinput}
 > library(MatchIt)
+\end{Sinput}
+\begin{Soutput}
+Loading required package: MASS
+Loading required package: Zelig
+Loading required package: boot
+
+Please refer to http://gking.harvard.edu/zelig for full documentation 
+or help.zelig() for help with commands and models supported by Zelig.
+
+## 
+##  MatchIt (Version 1.0-1, built: 2005-1-3)
+##  Please refer to http://gking.harvard.edu/matchit for full documentation 
+##  or help.matchit() for help with commands supported by MatchIt.
+##
+
+\end{Soutput}
+\begin{Sinput}
 > data(lalonde)
 > m.out <- matchit(treat ~ educ + black + hispan, data = lalonde, 
 +     method = "exact")
@@ -584,6 +601,12 @@ and then print a short summary.
 > m.out <- matchit(treat ~ age + educ + black + hispan + married + 
 +     nodegree + re74 + re75, data = lalonde, method = "full", 
 +     distance = "logit")
+\end{Sinput}
+\begin{Soutput}
+Loading required package: optmatch
+
+\end{Soutput}
+\begin{Sinput}
 > m.out
 \end{Sinput}
 \begin{Soutput}
@@ -808,139 +831,139 @@ matchit(formula = treat ~ re74 + re75 + educ + black + hispan +     age, data = 
 
 Summary of balance for all data:
 
-         Means Treated Means Control Pooled SD   QQ Med  QQ Mean   QQ Max
-distance      5.66e-01         0.187     0.284    0.732    0.535     0.84
-re74          2.10e+03      5619.237  6477.964 3430.277 5155.851 13044.16
-re75          1.53e+03      2466.484  3295.679 1373.280 1511.706  9609.60
-educ          1.03e+01        10.235     2.628    1.414    0.962     5.66
-black         8.43e-01         0.203     0.489    1.414    0.903     1.41
-hispan        5.95e-02         0.142     0.322    0.000    0.119     1.41
-age           2.58e+01        28.030     9.881    1.414    4.650    14.14
-         Std. Bias
-distance     1.792
-re74        -0.721
-re75        -0.290
-educ         0.055
-black        1.757
-hispan      -0.349
-age         -0.309
+         Means Treated Means Control Treated SD Std. Bias   QQ Med  QQ Mean
+distance         0.566         0.187      0.211     1.792    0.732    0.535
+re74          2095.574      5619.237   4886.620    -0.721 3430.277 5155.851
+re75          1532.055      2466.484   3219.251    -0.290 1373.280 1511.706
+educ            10.346        10.235      2.011     0.055    1.414    0.962
+black            0.843         0.203      0.365     1.757    1.414    0.903
+hispan           0.059         0.142      0.237    -0.349    0.000    0.119
+age             25.816        28.030      7.155    -0.309    1.414    4.650
+            QQ Max
+distance     0.840
+re74     13044.159
+re75      9609.595
+educ         5.657
+black        1.414
+hispan       1.414
+age         14.142
 
 
 Summary of balance by subclasses:
 
 , , Subclass 1
 
-         Means Treated Means Control Pooled SD    QQ Med   QQ Mean    QQ Max
-distance      1.22e-01      7.62e-02  5.22e-02  5.48e-02  6.51e-02  1.23e-01
-re74          3.63e+03      6.33e+03  7.15e+03  4.59e+03  5.18e+03  1.30e+04
-re75          2.23e+03      2.62e+03  3.30e+03  6.63e+02  1.15e+03  9.63e+03
-educ          1.06e+01      1.03e+01  2.80e+00  1.41e+00  1.37e+00  9.90e+00
-black         6.45e-02      5.81e-03  1.03e-01  0.00e+00  4.56e-02  1.41e+00
-hispan        3.55e-01      1.77e-01  3.94e-01  0.00e+00  2.28e-01  1.41e+00
-age           2.50e+01      2.86e+01  1.05e+01  2.83e+00  6.56e+00  1.98e+01
-         Std. Bias
-distance  7.79e-01
-re74     -3.38e-01
-re75     -1.17e-01
-educ      1.93e-01
-black     2.35e-01
-hispan    3.65e-01
-age      -5.85e-01
+         Means Treated Means Control Treated SD Std. Bias    QQ Med   QQ Mean
+distance         0.122         0.076      0.059     0.779     0.055     0.065
+re74          3628.026      6332.407   8002.323    -0.338  4588.884  5184.224
+re75          2232.359      2624.566   3340.297    -0.117   663.357  1146.136
+educ            10.613        10.265      1.801     0.193     1.414     1.369
+black            0.065         0.006      0.250     0.235     0.000     0.046
+hispan           0.355         0.177      0.486     0.365     0.000     0.228
+age             24.968        28.564      6.151    -0.585     2.828     6.562
+            QQ Max
+distance     0.123
+re74     12979.299
+re75      9631.728
+educ         9.899
+black        1.414
+hispan       1.414
+age         19.799
 
 , , Subclass 2
 
-         Means Treated Means Control Pooled SD    QQ Med   QQ Mean    QQ Max
-distance      5.39e-01      5.34e-01  6.46e-02  1.62e-02  1.99e-02  6.55e-02
-re74          7.53e+03      7.21e+03  5.92e+03  6.57e+02  1.23e+03  4.51e+03
-re75          4.11e+03      3.48e+03  5.01e+03  1.71e+03  2.12e+03  1.61e+04
-educ          9.00e+00      8.69e+00  3.47e+00  7.07e-01  1.29e+00  5.66e+00
-black         1.00e+00      1.00e+00  0.00e+00  0.00e+00  0.00e+00  0.00e+00
-hispan        0.00e+00      0.00e+00  0.00e+00  0.00e+00  0.00e+00  0.00e+00
-age           2.81e+01      3.33e+01  1.03e+01  9.33e+00  8.05e+00  1.98e+01
-         Std. Bias
-distance  6.29e-02
-re74      5.56e-02
-re75      1.10e-01
-educ      1.03e-01
-black             
-hispan            
-age      -6.36e-01
+         Means Treated Means Control Treated SD Std. Bias    QQ Med   QQ Mean
+distance         0.539         0.534      0.070     0.063     0.016     0.020
+re74          7529.849      7209.650   5753.799     0.056   657.495  1234.428
+re75          4108.624      3484.381   5692.184     0.110  1710.911  2118.164
+educ             9.000         8.692      2.989     0.103     0.707     1.295
+black            1.000         1.000      0.000               0.000     0.000
+hispan           0.000         0.000      0.000               0.000     0.000
+age             28.097        33.269      8.138    -0.636     9.334     8.050
+            QQ Max
+distance     0.065
+re74      4508.668
+re75     16073.541
+educ         5.657
+black        0.000
+hispan       0.000
+age         19.799
 
 , , Subclass 3
 
-         Means Treated Means Control Pooled SD    QQ Med   QQ Mean    QQ Max
-distance      6.46e-01      6.45e-01  1.16e-02  1.32e-03  2.86e-03  1.30e-02
-re74          8.92e+02      1.40e+03  1.82e+03  5.43e+02  8.26e+02  2.12e+03
-re75          7.07e+02      1.46e+03  2.19e+03  2.91e+02  9.44e+02  8.97e+03
-educ          8.93e+00      9.12e+00  1.32e+00  0.00e+00  4.37e-01  2.83e+00
-black         1.00e+00      1.00e+00  0.00e+00  0.00e+00  0.00e+00  0.00e+00
-hispan        0.00e+00      0.00e+00  0.00e+00  0.00e+00  0.00e+00  0.00e+00
-age           2.39e+01      1.96e+01  7.08e+00  3.80e+00  6.26e+00  2.00e+01
-         Std. Bias
-distance  7.54e-02
-re74     -3.15e-01
-re75     -5.02e-01
-educ     -1.57e-01
-black             
-hispan            
-age       5.47e-01
+         Means Treated Means Control Treated SD Std. Bias    QQ Med   QQ Mean
+distance         0.646         0.645      0.011     0.075     0.001     0.003
+re74           892.324      1403.987   1624.758    -0.315   543.081   825.572
+re75           707.407      1463.220   1504.611    -0.502   291.168   944.259
+educ             8.933         9.118      1.172    -0.157     0.000     0.437
+black            1.000         1.000      0.000               0.000     0.000
+hispan           0.000         0.000      0.000               0.000     0.000
+age             23.867        19.647      7.718     0.547     3.801     6.260
+            QQ Max
+distance     0.013
+re74      2117.652
+re75      8965.316
+educ         2.828
+black        0.000
+hispan       0.000
+age         19.976
 
 , , Subclass 4
 
-         Means Treated Means Control Pooled SD    QQ Med   QQ Mean    QQ Max
-distance      6.77e-01      6.78e-01  8.23e-03  4.31e-03  4.32e-03  1.19e-02
-re74          3.90e+02      7.11e+02  8.22e+02  0.00e+00  4.42e+02  1.68e+03
-re75          1.19e+03      6.84e+02  1.47e+03  1.52e+02  7.70e+02  3.23e+03
-educ          1.00e+01      1.06e+01  9.21e-01  1.41e+00  8.08e-01  2.83e+00
-black         1.00e+00      1.00e+00  0.00e+00  0.00e+00  0.00e+00  0.00e+00
-hispan        0.00e+00      0.00e+00  0.00e+00  0.00e+00  0.00e+00  0.00e+00
-age           2.35e+01      2.22e+01  7.99e+00  2.83e+00  4.48e+00  1.13e+01
-         Std. Bias
-distance -7.99e-02
-re74     -4.35e-01
-re75      3.06e-01
-educ     -7.38e-01
-black             
-hispan            
-age       1.95e-01
+         Means Treated Means Control Treated SD Std. Bias    QQ Med   QQ Mean
+distance         0.677         0.678      0.007    -0.080     0.004     0.004
+re74           390.290       710.654    737.073    -0.435     0.000   441.668
+re75          1193.816       683.647   1667.376     0.306   151.719   769.614
+educ            10.000        10.571      0.775    -0.738     1.414     0.808
+black            1.000         1.000      0.000               0.000     0.000
+hispan           0.000         0.000      0.000               0.000     0.000
+age             23.548        22.190      6.971     0.195     2.828     4.478
+            QQ Max
+distance     0.012
+re74      1684.659
+re75      3231.361
+educ         2.828
+black        0.000
+hispan       0.000
+age         11.314
 
 , , Subclass 5
 
-         Means Treated Means Control Pooled SD    QQ Med   QQ Mean    QQ Max
-distance      6.94e-01      6.97e-01  3.20e-03  1.09e-03  3.37e-03  1.07e-02
-re74          9.41e+01      3.26e+02  4.43e+02  0.00e+00  1.58e+02  8.01e+02
-re75          4.05e+02      3.08e+02  1.23e+03  0.00e+00  1.27e+03  7.78e+03
-educ          1.10e+01      1.14e+01  4.28e-01  0.00e+00  6.06e-01  1.41e+00
-black         1.00e+00      1.00e+00  0.00e+00  0.00e+00  0.00e+00  0.00e+00
-hispan        0.00e+00      0.00e+00  0.00e+00  0.00e+00  0.00e+00  0.00e+00
-age           2.67e+01      2.23e+01  6.11e+00  9.90e+00  6.87e+00  1.27e+01
-         Std. Bias
-distance -9.86e-01
-re74     -6.03e-01
-re75      7.26e-02
-educ     -1.66e+00
-black             
-hispan            
-age       8.19e-01
+         Means Treated Means Control Treated SD Std. Bias    QQ Med   QQ Mean
+distance         0.694         0.697      0.003    -0.986     0.001     0.003
+re74            94.139       325.798    384.061    -0.603     0.000   157.765
+re75           404.855       307.680   1339.194     0.073     0.000  1270.772
+educ            11.000        11.429      0.258    -1.660     0.000     0.606
+black            1.000         1.000      0.000               0.000     0.000
+hispan           0.000         0.000      0.000               0.000     0.000
+age             26.710        22.286      5.399     0.819     9.899     6.869
+            QQ Max
+distance     0.011
+re74       800.767
+re75      7783.902
+educ         1.414
+black        0.000
+hispan       0.000
+age         12.728
 
 , , Subclass 6
 
-         Means Treated Means Control Pooled SD    QQ Med   QQ Mean    QQ Max
-distance      7.20e-01      7.24e-01  1.81e-02  2.63e-03  5.47e-03  2.88e-02
-re74          0.00e+00      2.70e+02  3.97e+02  0.00e+00  3.82e+02  3.63e+03
-re75          5.19e+02      1.66e+03  2.34e+03  0.00e+00  1.33e+03  6.83e+03
-educ          1.25e+01      1.26e+01  1.20e+00  0.00e+00  2.33e-01  1.41e+00
-black         1.00e+00      1.00e+00  0.00e+00  0.00e+00  0.00e+00  0.00e+00
-hispan        0.00e+00      0.00e+00  0.00e+00  0.00e+00  0.00e+00  0.00e+00
-age           2.76e+01      2.70e+01  7.84e+00  2.45e+00  3.32e+00  1.13e+01
-         Std. Bias
-distance -2.90e-01
-re74          -Inf
-re75     -6.96e-01
-educ     -1.35e-01
-black             
-hispan            
-age       8.69e-02
+         Means Treated Means Control Treated SD Std. Bias    QQ Med   QQ Mean
+distance         0.720         0.724      0.016    -0.290     0.003     0.005
+re74             0.000       270.099      0.000      -Inf     0.000   381.978
+re75           518.669      1663.721   1644.262    -0.696     0.000  1329.640
+educ            12.484        12.643      1.180    -0.135     0.000     0.233
+black            1.000         1.000      0.000               0.000     0.000
+hispan           0.000         0.000      0.000               0.000     0.000
+age             27.645        27.000      7.423     0.087     2.448     3.318
+            QQ Max
+distance     0.029
+re74      3627.005
+re75      6825.954
+educ         1.414
+black        0.000
+hispan       0.000
+age         11.314
 
 
 Sample sizes by subclasses:
@@ -952,33 +975,33 @@ Total          375         57         47         52         38         45
 
 Summary of balance across subclasses
 
-         Means Treated Means Control Pooled SD   QQ Med  QQ Mean   QQ Max
-distance      5.66e-01      5.59e-01  1.44e-02   0.0135 1.69e-02 4.23e-02
-re74          2.10e+03      2.72e+03  1.59e+03 967.1902 1.37e+03 4.30e+03
-re75          1.53e+03      1.71e+03  1.18e+03 470.4902 1.26e+03 8.75e+03
-educ          1.03e+01      1.05e+01  8.20e-01   0.5924 7.93e-01 4.01e+00
-black         8.43e-01      8.33e-01  1.72e-02   0.0000 7.64e-03 2.37e-01
-hispan        5.95e-02      2.97e-02  6.61e-02   0.0000 3.82e-02 2.37e-01
-age           2.58e+01      2.55e+01  3.46e+00   5.1973 5.92e+00 1.58e+01
-         Std. Bias
-distance   -0.0741
-re74          -Inf
-re75       -0.1360
-educ       -0.4002
-black          NaN
-hispan         NaN
-age         0.0687
+         Means Treated Means Control Treated SD Std. Bias  QQ Med  QQ Mean
+distance         0.566         0.559      0.016    -0.074   0.013    0.017
+re74          2095.574      2715.819   1678.241      -Inf 967.190 1373.887
+re75          1532.055      1705.840   1219.402    -0.136 470.490 1264.821
+educ            10.346        10.460      0.660    -0.400   0.592    0.793
+black            0.843         0.833      0.042       NaN   0.000    0.008
+hispan           0.059         0.030      0.082       NaN   0.000    0.038
+age             25.816        25.524      2.867     0.069   5.197    5.921
+           QQ Max
+distance    0.042
+re74     4298.064
+re75     8750.814
+educ        4.013
+black       0.237
+hispan      0.237
+age        15.799
 
 Percent Balance Improvement:
 
-         Mean QQ Med QQ Mean QQ Max Std. Bias
-distance    0      0       0      0         0
-re74        0      0       0      0         0
-re75        0      0       0      0         0
-educ        0      0       0      0         0
-black       0      0       0      0         0
-hispan      0      0       0      0         0
-age         0      0       0      0         0
+           Mean Std. Bias  QQ Med QQ Mean  QQ Max
+distance 98.088     95.87   98.16   96.84  94.967
+re74     82.398      -Inf   71.80   73.35  67.050
+re75     81.402     53.14   65.74   16.33   8.937
+educ     -3.301   -628.06   58.11   17.56  29.054
+black    98.464       NaN  100.00   99.15  83.243
+hispan   64.046       NaN    0.00   67.79  83.243
+age      86.817     77.80 -267.50  -27.34 -11.716
 
 
 \end{Soutput}
@@ -1084,52 +1107,52 @@ matchit(formula = treat ~ re74 + re75 + educ + black + hispan +     age, data = 
 
 Summary of balance for all data:
 
-         Means Treated Means Control Pooled SD   QQ Med  QQ Mean   QQ Max
-distance      5.66e-01         0.187     0.284    0.732    0.535     0.84
-re74          2.10e+03      5619.237  6477.964 3430.277 5155.851 13044.16
-re75          1.53e+03      2466.484  3295.679 1373.280 1511.706  9609.60
-educ          1.03e+01        10.235     2.628    1.414    0.962     5.66
-black         8.43e-01         0.203     0.489    1.414    0.903     1.41
-hispan        5.95e-02         0.142     0.322    0.000    0.119     1.41
-age           2.58e+01        28.030     9.881    1.414    4.650    14.14
-         Std. Bias
-distance     1.792
-re74        -0.721
-re75        -0.290
-educ         0.055
-black        1.757
-hispan      -0.349
-age         -0.309
+         Means Treated Means Control Treated SD Std. Bias   QQ Med  QQ Mean
+distance         0.566         0.187      0.211     1.792    0.732    0.535
+re74          2095.574      5619.237   4886.620    -0.721 3430.277 5155.851
+re75          1532.055      2466.484   3219.251    -0.290 1373.280 1511.706
+educ            10.346        10.235      2.011     0.055    1.414    0.962
+black            0.843         0.203      0.365     1.757    1.414    0.903
+hispan           0.059         0.142      0.237    -0.349    0.000    0.119
+age             25.816        28.030      7.155    -0.309    1.414    4.650
+            QQ Max
+distance     0.840
+re74     13044.159
+re75      9609.595
+educ         5.657
+black        1.414
+hispan       1.414
+age         14.142
 
 Summary of balance for matched data:
 
-         Means Treated Means Control Pooled SD  QQ Med QQ Mean   QQ Max
-distance      5.66e-01         0.365     0.257   0.150   0.284 6.93e-01
-re74          2.10e+03      2466.304  4574.949 410.082 978.726 1.86e+04
-re75          1.53e+03      1960.355  3089.993 638.038 887.982 1.61e+04
-educ          1.03e+01        10.470     2.673   1.414   1.307 5.66e+00
-black         8.43e-01         0.470     0.475   0.000   0.527 1.41e+00
-hispan        5.95e-02         0.276     0.374   0.000   0.306 1.41e+00
-age           2.58e+01        26.054     8.794   2.828   3.868 1.13e+01
-         Std. Bias
-distance    0.9509
-re74       -0.0759
-re75       -0.1330
-educ       -0.0618
-black       1.0231
-hispan     -0.9118
-age        -0.0332
+         Means Treated Means Control Treated SD Std. Bias  QQ Med QQ Mean
+distance         0.566         0.365      0.257     0.951   0.150   0.284
+re74          2095.574      2466.304   4574.949    -0.076 410.082 978.726
+re75          1532.055      1960.355   3089.993    -0.133 638.038 887.982
+educ            10.346        10.470      2.673    -0.062   1.414   1.307
+black            0.843         0.470      0.475     1.023   0.000   0.527
+hispan           0.059         0.276      0.374    -0.912   0.000   0.306
+age             25.816        26.054      8.794    -0.033   2.828   3.868
+            QQ Max
+distance     0.693
+re74     18556.957
+re75     16073.541
+educ         5.657
+black        1.414
+hispan       1.414
+age         11.314
 
 Percent Balance Improvement:
 
-           Mean QQ Med QQ Mean QQ Max Std. Bias
-distance   46.9   79.4    46.8   17.6      46.9
-re74       89.5   88.0    81.0  -42.3      89.5
-re75       54.2   53.5    41.3  -67.3      54.2
-educ      -12.5    0.0   -35.9    0.0     -12.5
-black      41.8  100.0    41.6    0.0      41.8
-hispan   -161.3    0.0  -157.7    0.0    -161.3
-age        89.3 -100.0    16.8   20.0      89.3
+            Mean Std. Bias  QQ Med QQ Mean QQ Max
+distance   46.94     46.94   79.43   46.79  17.59
+re74       89.48     89.48   88.05   81.02 -42.26
+re75       54.16     54.16   53.54   41.26 -67.27
+educ      -12.50    -12.50    0.00  -35.88   0.00
+black      41.76     41.76  100.00   41.56   0.00
+hispan   -161.35   -161.35    0.00 -157.70   0.00
+age        89.26     89.26 -100.00   16.81  20.00
 
 Sample sizes:
 
