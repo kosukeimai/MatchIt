@@ -1,5 +1,5 @@
 ## Function to calculate summary stats
-qoi <- function(xx,tt,ww, t.plot=NULL, c.plot=NULL){
+qoi <- function(xx,tt,ww, t.plot=NULL, c.plot=NULL, sds=NULL){
   weighted.var <- function(x, w) {
     sum(w * (x - weighted.mean(x,w))^2)/(sum(w) - 1)}
   xsum <- matrix(NA,2,7)
@@ -22,12 +22,14 @@ qoi <- function(xx,tt,ww, t.plot=NULL, c.plot=NULL){
     qqall <- qqsum(x1,x0)
     xsum[1,5:7] <- c(qqall$meddiff,qqall$meandiff,qqall$maxdiff)
     #xsum[1,7] <- (mean(x1,na.rm=T)-mean(x0,na.rm=T))/sd(x1,na.rm=T)
-    xsum[1,4] <- (mean(x1,na.rm=T)-mean(x0,na.rm=T))/xsum[1,3]
-    xsum[2,3] <- sqrt(weighted.var(xx[ww>0],ww[ww>0]))
+    if (!is.null(sds)) xsum[1,4] <- (mean(x1,na.rm=T)-mean(x0,na.rm=T))/sds
+    else xsum[1,4] <- (mean(x1,na.rm=T)-mean(x0,na.rm=T))/xsum[1,3]
+    xsum[2,3] <- sqrt(weighted.var(x1[ww1>0],ww1[ww1>0]))
     if(!is.null(t.plot)) qqmat <- qqsum(xx[t.plot],xx[c.plot])
     else qqmat <- qqsum(x1[ww1>0],x0[ww0>0])
     xsum[2,5:7] <- c(qqmat$meddiff,qqmat$meandiff,qqmat$maxdiff)
     #xsum[2,7] <- (xsum[2,1]-xsum[2,2])/sqrt(weighted.var(X.t.m,ww1[ww1>0]))
+    if (!is.null(sds)) xsum[2,4] <- (xsum[2,1]-xsum[2,2])/sds
     xsum[2,4] <- (xsum[2,1]-xsum[2,2])/xsum[1,3]
   } 
   xsum
@@ -49,7 +51,7 @@ qoi.by.sub <- function(xx,tt,ww,qq){
             if(sum(qt==1)<2){warning("Not enough treatment units in subclass ",i,call.=FALSE)}
             else if(sum(qt==0)<2){warning("Not enough control units in subclass ",i,call.=FALSE)}
           }
-      qoi.i <- qoi(qx,qt,qw)
+      qoi.i <- qoi(qx,qt,qw, sds=sd(xx[tt==1],na.rm=T))
       q.table[,i] <- as.numeric(qoi.i[1,])
       qn[,i] <- c(sum(qt),sum(qt==0),length(qt))
     }

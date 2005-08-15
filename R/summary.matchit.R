@@ -36,9 +36,9 @@ summary.matchit <- function(object, interactions = FALSE, addlvariables = NULL, 
 
   ## Imbalance Reduction
   stat0 <- abs(cbind(sum.all[,2]-sum.all[,1],
-                     sum.all[,4:7]))
+                     sum.all[,5:7]))
   stat1 <- abs(cbind(sum.matched[,2]-sum.matched[,1],
-                     sum.matched[,4:7]))
+                     sum.matched[,5:7]))
   reduction <- as.data.frame(100*(stat0-stat1)/stat0)
   if(sum(stat0==0 & stat1==0, na.rm=T)>0){
     reduction[stat0==0 & stat1==0] <- 0
@@ -46,7 +46,7 @@ summary.matchit <- function(object, interactions = FALSE, addlvariables = NULL, 
   if(sum(stat0==0 & stat1>0,na.rm=T)>0){
     reduction[stat0==0 & stat1>0] <- -Inf
   }
-  names(reduction) <- c("Mean","Std. Bias", "QQ Med","QQ Mean", "QQ Max")
+  names(reduction) <- c("Mean and Std. Bias", "QQ Med","QQ Mean", "QQ Max")
 
   ## Sample sizes
   nn <- matrix(0, ncol=2, nrow=4)
