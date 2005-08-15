@@ -5,8 +5,8 @@ qoi <- function(xx,tt,ww, t.plot=NULL, c.plot=NULL){
   xsum <- matrix(NA,2,7)
   xsum <- as.data.frame(xsum)
   row.names(xsum) <- c("Full","Matched")
-  names(xsum) <- c("Means Treated","Means Control","Pooled SD","QQ Med",
-                   "QQ Mean", "QQ Max","Std. Bias")
+  names(xsum) <- c("Means Treated","Means Control","Treated SD","Std. Bias", "QQ Med",
+                   "QQ Mean", "QQ Max")
   x1 <- xx[tt==1]
   x0 <- xx[tt==0]
   ww1 <- ww[tt==1]
@@ -18,15 +18,17 @@ qoi <- function(xx,tt,ww, t.plot=NULL, c.plot=NULL){
   xsum[2,1] <- weighted.mean(X.t.m, ww1[ww1>0])
   xsum[2,2] <- weighted.mean(X.c.m, ww0[ww0>0])
   if(!(sum(tt==1)<2|(sum(tt==0)<2))){ 
-    xsum[1,3] <- sd(xx,na.rm=T)
+    xsum[1,3] <- sd(x1,na.rm=T)
     qqall <- qqsum(x1,x0)
-    xsum[1,4:6] <- c(qqall$meddiff,qqall$meandiff,qqall$maxdiff)
-    xsum[1,7] <- (mean(x1,na.rm=T)-mean(x0,na.rm=T))/sd(x1,na.rm=T)
+    xsum[1,5:7] <- c(qqall$meddiff,qqall$meandiff,qqall$maxdiff)
+    #xsum[1,7] <- (mean(x1,na.rm=T)-mean(x0,na.rm=T))/sd(x1,na.rm=T)
+    xsum[1,4] <- (mean(x1,na.rm=T)-mean(x0,na.rm=T))/xsum[1,3]
     xsum[2,3] <- sqrt(weighted.var(xx[ww>0],ww[ww>0]))
     if(!is.null(t.plot)) qqmat <- qqsum(xx[t.plot],xx[c.plot])
     else qqmat <- qqsum(x1[ww1>0],x0[ww0>0])
-    xsum[2,4:6] <- c(qqmat$meddiff,qqmat$meandiff,qqmat$maxdiff)
-    xsum[2,7] <- (xsum[2,1]-xsum[2,2])/sqrt(weighted.var(X.t.m,ww1[ww1>0]))
+    xsum[2,5:7] <- c(qqmat$meddiff,qqmat$meandiff,qqmat$maxdiff)
+    #xsum[2,7] <- (xsum[2,1]-xsum[2,2])/sqrt(weighted.var(X.t.m,ww1[ww1>0]))
+    xsum[2,4] <- (xsum[2,1]-xsum[2,2])/xsum[1,3]
   } 
   xsum
 }

@@ -45,7 +45,7 @@ matchit.qqplot <- function(x,discrete.cutoff,which.subclass=NULL, numdraws=5000)
         htext <- paste(htext,paste(" (Subclass ",which.subclass,")",sep=""),sep="")
       } 
       mtext(htext, 3, 3, TRUE, 0.5, cex=1.2,font=2)
-      mtext("Raw", 3, 1, TRUE, 0.5, cex=1.2,font = 1)
+      mtext("All", 3, 1, TRUE, 0.5, cex=1.2,font = 1)
       mtext("Matched", 3, 1, TRUE, 0.83, cex=1.2,font = 1)
       mtext("Control Units", 1, 0, TRUE, 2/3, cex=1,font = 1)
       mtext("Treated Units", 4, 0, TRUE, 0.5, cex=1,font = 1)
