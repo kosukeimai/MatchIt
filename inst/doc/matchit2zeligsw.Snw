@@ -40,8 +40,11 @@ s.out1 <- sim(z.out1, x = x.out1)
 summary(s.out1)
 @
   
-The estimated average treatment effect on the treated is thus \$1,355, with a 95\% interval
-of (\$243, \$2,493).
+The estimated average treatment effect on the treated is thus 
+\$\Sexpr{round(as.numeric(summary(s.out1)$qi.stats$ate.ev[1]),2)}, 
+with a 95\% interval
+of (\$\Sexpr{round(as.numeric(summary(s.out1)$qi.stats$ate.ev[3]),2)}, 
+\$\Sexpr{round(as.numeric(summary(s.out1)$qi.stats$ate.ev[4]),2)}).
 
 \item Estimating the average treatment effects on both the treated and
   the control groups. We use the same {\tt matchit()} output as in the
