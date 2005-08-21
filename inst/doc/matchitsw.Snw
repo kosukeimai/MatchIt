@@ -333,20 +333,20 @@ difference will always be unobserved.
 
 \texttt{matchit()} implements a variety of matching procedures.  A
 general syntax is
-<<results=hide,eval=FALSE>>=
-m.out <- matchit(treat ~ x1 + x2, data = mydata)
-@
+\begin{verbatim}
+> m.out <- matchit(treat ~ x1 + x2, data = mydata)
+\end{verbatim}
 where {\tt treat} is the dichotomous treatment variable, and {\tt x1}
 and {\tt x2} are pre-treatment covariates.  This command creates the
 \MatchIt\ object called \texttt{m.out}.  A quick summary of the
 matching procedure can be printed on the screen by typing
-<<results=hide>>=
-m.out
-@
+\begin{verbatim}
+> m.out
+\end{verbatim}
 or
-<<results=hide>>=
-print(m.out)
-@
+\begin{verbatim}
+> print(m.out)
+\end{verbatim}
 Examples of various matching procedures are given for the reminder of
 this section, and Section~\ref{subsec:inputs} lists all possible
 specifications of {\tt matchit()}.
