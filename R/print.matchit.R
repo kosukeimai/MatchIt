@@ -1,5 +1,5 @@
 print.matchit <- function(x, digits = getOption("digits"), ...){
-  cat("\nCall: ", deparse(x$call),"\n",sep = "")
+  cat("\nCall: ", deparse(x$call),"\n", sep="\n")
   cat("\nSample sizes:\n")
   
   #if(any(x$weights>0)) 
@@ -9,7 +9,6 @@ print.matchit <- function(x, digits = getOption("digits"), ...){
   #else 
   #  nn <- rbind(table(x$treat),
   #              table(x$weights>0,x$treat)[2:1,])
-
 
   nn <- matrix(0, ncol=2, nrow=4)
   nn[1,] <- c(sum(x$treat==0), sum(x$treat==1))

@@ -1,5 +1,5 @@
 print.matchit.exact <- function(x, digits = getOption("digits"), ...){
-  cat("\nCall: ", deparse(x$call),"\n",sep = "")
+  cat("\nCall: ", deparse(x$call),"\n",sep = "\n")
   cat("\nExact Subclasses: ", max(x$subclass, na.rm=T),"\n",sep="")
   cat("\nSample sizes:\n")
   ntab <- table(factor(!is.na(x$subclass),

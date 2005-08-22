@@ -18,43 +18,42 @@ installed Zelig, follow the installation procedure described at
 \begin{Sinput}
 > data(lalonde)
 > library(Zelig)
-> m.out1 <- matchit(treat ~ age + educ + black + hispan + nodegree + 
-+     married + re74 + re75, method = "nearest", data = lalonde)
-> z.out1 <- zelig(re78 ~ age + educ + black + hispan + nodegree + 
-+     married + re74 + re75 + distance, data = match.data(m.out1, 
-+     "control"), model = "ls")
-> x.out1 <- setx(z.out1, data = match.data(m.out1, "treat"), fn = NULL, 
-+     cond = TRUE)
+> m.out1 <- matchit(treat ~ age + educ + black + 
++     hispan + nodegree + married + re74 + re75, 
++     method = "nearest", data = lalonde)
+> z.out1 <- zelig(re78 ~ age + educ + black + hispan + 
++     nodegree + married + re74 + re75 + distance, 
++     data = match.data(m.out1, "control"), model = "ls")
+> x.out1 <- setx(z.out1, data = match.data(m.out1, 
++     "treat"), fn = NULL, cond = TRUE)
 > s.out1 <- sim(z.out1, x = x.out1)
 > summary(s.out1)
 \end{Sinput}
 \begin{Soutput}
-
   Model: ls 
   Number of simulations: 1000 
 
 Mean Values of Observed Data (n = 185) 
-(Intercept)         age        educ       black      hispan    nodegree 
-  1.000e+00   2.582e+01   1.035e+01   8.432e-01   5.946e-02   7.081e-01 
-    married        re74        re75    distance 
-  1.892e-01   2.096e+03   1.532e+03   5.774e-01 
+(Intercept)         age        educ       black      hispan 
+  1.000e+00   2.582e+01   1.035e+01   8.432e-01   5.946e-02 
+   nodegree     married        re74        re75    distance 
+  7.081e-01   1.892e-01   2.096e+03   1.532e+03   5.774e-01 
 
 Pooled Expected Values: E(Y|X)
    mean      sd    2.5%   97.5% 
- 5005.4  2292.0   732.9 10074.8 
+ 5004.2  2283.3   718.6 10027.9 
 
 Pooled Average Treatment Effect: Y - EV
   mean     sd   2.5%  97.5% 
-1343.7  584.2  186.7 2504.9 
-
+1345.0  570.4  204.1 2424.4 
 \end{Soutput}
 \end{Schunk}
   
 The estimated average treatment effect on the treated is thus 
-\$1343.73, 
+\$1344.97, 
 with a 95\% interval
-of (\$186.72, 
-\$2504.88).
+of (\$204.12, 
+\$2424.39).
 
 \item Estimating the average treatment effects on both the treated and
   the control groups. We use the same {\tt matchit()} output as in the
@@ -62,24 +61,24 @@ of (\$186.72,
 
 \begin{Schunk}
 \begin{Sinput}
-> z.out2 <- zelig(re78 ~ age + educ + black + hispan + nodegree + 
-+     married + re74 + re75 + distance, data = match.data(m.out1, 
-+     "control"), model = "ls")
-> x.out2 <- setx(z.out2, data = match.data(m.out1, "control"), 
-+     fn = NULL, cond = TRUE)
+> z.out2 <- zelig(re78 ~ age + educ + black + hispan + 
++     nodegree + married + re74 + re75 + distance, 
++     data = match.data(m.out1, "control"), model = "ls")
+> x.out2 <- setx(z.out2, data = match.data(m.out1, 
++     "control"), fn = NULL, cond = TRUE)
 > s.out2 <- sim(z.out2, x = x.out2)
 > ate.all <- c(s.out1$qi$ate.ev, -s.out2$qi$ate.ev)
 > mean(ate.all)
 \end{Sinput}
 \begin{Soutput}
-[1] 666.2
+[1] 685.5
 
 \end{Soutput}
 \begin{Sinput}
 > sd(ate.all)
 \end{Sinput}
 \begin{Soutput}
-[1] 850.6
+[1] 828.9
 
 \end{Soutput}
 \begin{Sinput}
@@ -87,27 +86,29 @@ of (\$186.72,
 \end{Sinput}
 \begin{Soutput}
   2.5%  97.5% 
--705.3 2303.7 
+-640.5 2307.0 
 
 \end{Soutput}
 \end{Schunk}
   
 \item Subclassification: In this case, the average treatment effect
-  estimates are obtained for each subclass separately as well as
-  for the overall sample.  Estimating the treatment effects separately 
-  for each subclass, and then aggregating across subclasses, can significantly
-  increase the robustness of the ultimate results since the paramatric analysis
-  within each subclass requires only local rather than global assumptions.
+  estimates are obtained for each subclass separately as well as for
+  the overall sample.  Estimating the treatment effects separately for
+  each subclass, and then aggregating across subclasses, can
+  significantly increase the robustness of the ultimate results since
+  the paramatric analysis within each subclass requires only local
+  rather than global assumptions.
 
 \begin{Schunk}
 \begin{Sinput}
-> m.out2 <- matchit(treat ~ age + educ + black + hispan + nodegree + 
-+     married + re74 + re75, data = lalonde, method = "subclass", 
-+     subclass = 4)
-> z.out3 <- zelig(re78 ~ re74 + re75 + distance, data = match.data(m.out2, 
-+     "control"), model = "ls", by = "subclass")
-> x.out3 <- setx(z.out3, data = match.data(m.out2, "treat"), fn = NULL, 
-+     cond = TRUE)
+> m.out2 <- matchit(treat ~ age + educ + black + 
++     hispan + nodegree + married + re74 + re75, 
++     data = lalonde, method = "subclass", subclass = 4)
+> z.out3 <- zelig(re78 ~ re74 + re75 + distance, 
++     data = match.data(m.out2, "control"), model = "ls", 
++     by = "subclass")
+> x.out3 <- setx(z.out3, data = match.data(m.out2, 
++     "treat"), fn = NULL, cond = TRUE)
 > s.out3 <- sim(z.out3, x = x.out3, num = 100)
 > summary(s.out3)
 \end{Sinput}
@@ -122,11 +123,11 @@ Mean Values of Observed Data (n = 46)
 
 Pooled Expected Values: E(Y|X)
  mean    sd  2.5% 97.5% 
- 4244  5775 -7629 16451 
+ 4494  5336 -5934 15753 
 
 Pooled Average Treatment Effect: Y - EV
   mean     sd   2.5%  97.5% 
-2100.7 1873.4 -850.5 6640.1 
+1857.1 1625.4 -366.5 5737.8 
 
 \end{Soutput}
 \begin{Sinput}
@@ -145,11 +146,11 @@ Mean Values of Observed Data (n = 46)
 
 Pooled Expected Values: E(Y|X)
  mean    sd  2.5% 97.5% 
- 6865  3843  2975 17015 
+ 6718  3820  2804 16880 
 
 Pooled Average Treatment Effect: Y - EV
   mean     sd   2.5%  97.5% 
- 327.1  463.0 -441.6 1215.3 
+ 474.2  542.2 -416.5 1558.1 
 
 
 \end{Soutput}
@@ -168,12 +169,12 @@ Mean Values of Observed Data (n = 45)
      1.0000   1777.4221    972.3441      0.6039 
 
 Pooled Expected Values: E(Y|X)
-  mean     sd   2.5%  97.5% 
-3876.0 2250.0 -603.5 8807.3 
+ mean    sd  2.5% 97.5% 
+ 3793  2662 -1467  9575 
 
 Pooled Average Treatment Effect: Y - EV
   mean     sd   2.5%  97.5% 
-2610.3 1067.6  652.9 4642.0 
+2693.7 1170.9  853.7 4876.7 
 
 
 \end{Soutput}
@@ -192,12 +193,12 @@ Mean Values of Observed Data (n = 47)
      1.0000    939.9688   1217.4546      0.6934 
 
 Pooled Expected Values: E(Y|X)
- mean    sd  2.5% 97.5% 
- 3708  4410  -569  9341 
+   mean      sd    2.5%   97.5% 
+ 4050.2  4196.3  -352.8 10117.2 
 
 Pooled Average Treatment Effect: Y - EV
- mean    sd  2.5% 97.5% 
- 2186   923   526  3822 
+  mean     sd   2.5%  97.5% 
+1843.1  922.6  180.9 3294.9 
 
 
 \end{Soutput}
@@ -220,8 +221,3 @@ Pooled Average Treatment Effect: Y - EV
 %> summary(m1)
 %\end{verbatim} 
 \end{enumerate}
-
-%%% Local Variables: 
-%%% mode: latex
-%%% TeX-master: "matchit"
-%%% End: 

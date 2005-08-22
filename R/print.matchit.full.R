@@ -1,5 +1,5 @@
 print.matchit.full <- function(x, digits = getOption("digits"), ...){
-  cat("\nCall: ", deparse(x$call),"\n",sep = "")
+  cat("\nCall: ", deparse(x$call),"\n",sep = "\n")
   cat("\nSample sizes:\n")
   
   if (any(x$weights>0)) 

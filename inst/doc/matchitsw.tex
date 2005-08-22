@@ -51,7 +51,7 @@ Elizabeth A. Stuart\thanks{Researcher, Mathematica Policy Research,
 
 \makeindex
 
-\usepackage{/usr/lib64/R/share/texmf/Sweave}
+\usepackage{/Library/Frameworks/R.framework/Resources/share/texmf/Sweave}
 \begin{document}
 \maketitle
 
@@ -104,9 +104,11 @@ analyze the data after running \MatchIt.
 \label{subsec:install}
 
 To install \MatchIt\ for all platforms, type at the R command prompt:
-\begin{verbatim}
+\begin{Schunk}
+\begin{Sinput}
 > install.packages("MatchIt")
-\end{verbatim}
+\end{Sinput}
+\end{Schunk}
 and \MatchIt\ will install itself onto your system automatically.
 During the process you may either decide to keep or discard the
 installation files, which will not affect the way \MatchIt\ runs.  You
@@ -120,32 +122,10 @@ Subsection~\ref{subsec:vercontrol}).
 As with any R package, you need install \MatchIt\ only once, but you
 must load it prior to each use.  You can do this for each R session by
 typing
-
 \begin{Schunk}
 \begin{Sinput}
 > library(MatchIt)
 \end{Sinput}
-\begin{Soutput}
-Loading required package: MASS
-Loading required package: Zelig
-Loading required package: boot
-
-Please refer to http://gking.harvard.edu/zelig for full documentation 
-or help.zelig() for help with commands and models supported by Zelig.
-
-## 
-##  MatchIt (Version 1.0-1, built: 2005-1-3)
-##  Please refer to http://gking.harvard.edu/matchit for full documentation 
-##  or help.matchit() for help with commands supported by MatchIt.
-##
-
-Attaching package: 'MatchIt'
-
-
-	The following object(s) are masked _by_ .GlobalEnv :
-
-	 lalonde 
-\end{Soutput}
 \end{Schunk}
 at the R command prompt.  
 
@@ -157,18 +137,23 @@ at the beginning of every R session.  To do this, edit the {\tt
 file located in the home directory for Unix/Linux and Mac OS X
 systems.  Using a text editor such as Windows notepad and emacs, add
 the following line to the file:
-\begin{verbatim}
-> options(defaultPackages = c(getOption("defaultPackages"), "MatchIt"))
-\end{verbatim}
+\begin{Schunk}
+\begin{Sinput}
+> options(defaultPackages = c(getOption("defaultPackages"), 
++     "MatchIt"))
+\end{Sinput}
+\end{Schunk}
 For this change to take effect, you need to restart R.
 
 \subsection{Updating \MatchIt}
 
 We recommend that you periodically update \MatchIt\ at the R prompt by typing:
-\begin{verbatim}
+\begin{Schunk}
+\begin{Sinput}
 > update.packages()
-> library(MatchIt) 
-\end{verbatim}
+> library(MatchIt)
+\end{Sinput}
+\end{Schunk}
 which will update all the libraries including \MatchIt.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -195,35 +180,44 @@ induced.  This means that during matching we can select, duplicate, or
 selectively drop observations from an existing sample without inducing
 bias, as long as we do so using a rule that is a function only of
 $t_i$ and $X_i$.  \MatchIt\ provides, implements, and evaluates the
-choice of these rules.  After matching, the preprocessed dataset will
-be such that $t_i$ and $X_i$ are unrelated or less related than in the
-raw data, meaning that the treatment and control groups have the same
-background characteristics, or in other words that this relationship
-holds: $\tilde p(X|t=1) \approx \tilde p(X|t=0)$, where $\tilde p$
-refers to the observed empirical density of the data (think
-histogram), rather than a population density.  
+choice of these rules.  After matching, the original dataset will be
+preprocessed so that $t_i$ and $X_i$ are unrelated or less related
+than before. This indicates that the treatment and control groups have
+the same background characteristics, or formally $\tilde p(X|t=1)
+\approx \tilde p(X|t=0)$, where $\tilde p$ refers to the observed
+empirical density of the data (think histogram), rather than a
+population density.
 
-The simplest way to obtain good matches (as defined above) is to use one-to-one exact matching,
-which pairs each treated unit with one control unit for which the
-values of $X_i$ are identical.  However, with many covariates and finite numbers of
-potential matches, it is often very difficult to obtain exact matches.  Luckily, good matching only requires that
-the \emph{distribution} of $X$ given $t=0$ match the distribution of
-$X$ given $t=1$, and so individual matched pairs are not required.
-Indeed, many of the other methods implemented in \MatchIt\ only
-attempt to balance the overall covariate distributions, without necessarily finding one-to-one exact matches.
+The simplest way to obtain good matches (as defined above) is to use
+one-to-one exact matching, which pairs each treated unit with one
+control unit for which the values of $X_i$ are identical.  However,
+with many covariates and finite numbers of potential matches, it is
+often very difficult to obtain exact matches.  Luckily, good matching
+only requires that the \emph{distribution} of $X$ given $t=0$ match
+the distribution of $X$ given $t=1$, and so individual (exactly)
+matched pairs are not required.  Indeed, many of the other methods
+implemented in \MatchIt\ only attempt to balance the overall covariate
+distributions, without necessarily finding one-to-one exact matches.
 
 \subsection{Checking Balance}
 
-The goal of a matching procedure is to replicate a randomized experiment in terms of finding units who look
-as if they could have been randomly assigned to treatment or control status.  That is, we want the distribution
-of covariates to be the same in the matched treated and matched control groups. Thus, a crucial part of any 
-matching procedure is assessing how close the matches are in the two groups (the ``balance").  Because the outcome variable
-is not used in the matching procedure, a variety of matching methods can be assessed, and the matching procedure that leads to the
-best balance chosen.  \MatchIt\ provides a number of ways to assess the balance of covariates after matching, including
-numerical summaries such as the standardized bias between the groups (difference in means divided by the treated group standard
-deviation) and graphical summaries such as quantile-quantile plots that compare the empirical distributions of each covariate.  
-These diagnostics can be done on the covariates included in the matching procedure, as well as on other covariates on which
-close matches are desired.  
+The goal of a matching procedure is to replicate a randomized
+experiment in terms of finding units who look as if they could have
+been randomly assigned to treatment or control status.  That is, we
+would like the distribution of covariates to be the same in the
+matched treated and matched control groups. Thus, a crucial part of
+any matching procedure is assessing how close the matches are in the
+two groups, which we call the ``balance".  Because the outcome
+variable is not used in the matching procedure, a variety of matching
+methods can be assessed, and the matching procedure that leads to the
+best balance chosen.  \MatchIt\ provides a number of ways to assess
+the balance of covariates after matching, including numerical
+summaries such as the standardized bias (difference in means divided
+by the treated group standard deviation) and graphical summaries such
+as quantile-quantile plots that compare the empirical distributions of
+each covariate.  These diagnostics can be done on the covariates
+included in the matching procedure, as well as on other covariates on
+which close matches are desired.
 
 \subsection{Conducting Analyses after Matching}
 
@@ -303,14 +297,15 @@ For a running example, we use data from the job training program
 analyzed in \citet{lalonde86} and \citet{DehWah99}.  A subsample of
 the data consisting of the National Supported Work Demonstration (NSW)
 treated group and the comparison sample from the Population Survey of
-Income Dynamics (PSID) is included in \MatchIt.\footnote{This data set, \texttt{lalonde},
-was created using NSWRE74$\_$TREATED.TXT and CPS3$\_$CONTROLS.TXT from
+Income Dynamics (PSID) is included in \MatchIt.\footnote{This data
+set, \texttt{lalonde}, was created using NSWRE74$\_$TREATED.TXT and
+CPS3$\_$CONTROLS.TXT from
 http://www.columbia.edu/$\sim$rd247/nswdata.}  The variables in this
 dataset are described in Table~\ref{dwvars}.  One causal effect of
 interest is the impact that participation in the job training program,
 \texttt{treat == 1}, had on real earnings in 1978, \texttt{re78}, for
 those that participated in the program.  The average treatment effect
-on the treated (ATT) is defined as,
+on the treated (ATT) is defined as, 
 \begin{align}
   \label{att}
   \text{ATT} & = \frac{1}{\sum_{i=1}^n t_i}\sum_{i:t_i=1} E[Y_i(1) - Y_i(0)],
@@ -394,13 +389,12 @@ Section~\ref{subsubsec:nearest}).
 
 The following example script can be run by typing {\tt demo(exact)} at
 the R prompt:
-
 \begin{Schunk}
 \begin{Sinput}
 > library(MatchIt)
 > data(lalonde)
-> m.out <- matchit(treat ~ educ + black + hispan, data = lalonde, 
-+     method = "exact")
+> m.out <- matchit(treat ~ educ + black + hispan, 
++     data = lalonde, method = "exact")
 \end{Sinput}
 \end{Schunk}
 
@@ -409,14 +403,16 @@ units.  The matching forms all possible subclasses based on unique
 values of the covariates in the right hand side of the formula; within
 each subclass, all units have the same covariate values.  To obtain
 basic information about the matching procedure:
-
-\noindent \# print a short summary
 \begin{Schunk}
 \begin{Sinput}
 > m.out
 \end{Sinput}
 \begin{Soutput}
-Call: matchit(formula = treat ~ educ + black + hispan, data = lalonde,     method = "exact")
+Call: 
+matchit(formula = treat ~ educ + black + hispan, data = lalonde, 
+    method = "exact")
+
+
 
 Exact Subclasses: 25
 
@@ -461,12 +457,10 @@ Subclassification is implemented in \MatchIt\ using \texttt{method =
 \ref{subsubsec:nearest}), which provide additional ways of performing
 subclassification.  The following example script can be run by typing
 {\tt demo(subclass)} at the R prompt:
-
-\noindent \# Run the default subclassification scheme
 \begin{Schunk}
 \begin{Sinput}
-> m.out <- matchit(treat ~ re74 + re75 + educ + black + hispan + 
-+     age, data = lalonde, method = "subclass")
+> m.out <- matchit(treat ~ re74 + re75 + educ + 
++     black + hispan + age, data = lalonde, method = "subclass")
 \end{Sinput}
 \end{Schunk}
 
@@ -508,8 +502,8 @@ composed of real earnings in 1974 and 1975, education, race, and age:
 
 \begin{Schunk}
 \begin{Sinput}
-> m.out <- matchit(treat ~ re74 + re75 + educ + black + hispan + 
-+     age, data = lalonde, method = "nearest")
+> m.out <- matchit(treat ~ re74 + re75 + educ + 
++     black + hispan + age, data = lalonde, method = "nearest")
 \end{Sinput}
 \end{Schunk}
 
@@ -520,7 +514,11 @@ composed of real earnings in 1974 and 1975, education, race, and age:
 > print(m.out)
 \end{Sinput}
 \begin{Soutput}
-Call: matchit(formula = treat ~ re74 + re75 + educ + black + hispan +     age, data = lalonde, method = "nearest")
+Call: 
+matchit(formula = treat ~ re74 + re75 + educ + black + hispan + 
+    age, data = lalonde, method = "nearest")
+
+
 
 Sample sizes:
           Control Treated
@@ -545,45 +543,62 @@ for a complete list of options for nearest neighbor matching.
 
 \item Nearest neighbor matching on propensity score estimated using
   logistic regression where 2 matches are chosen for each treated unit.
-\begin{verbatim}
-> m.out1 <- matchit(treat ~ re74 + re75 + age + educ, data = lalonde, method = "nearest", 
-+                   distance = "logit", ratio=2)
-\end{verbatim}
+\begin{Schunk}
+\begin{Sinput}
+> m.out1 <- matchit(treat ~ re74 + re75 + age + 
++     educ, data = lalonde, method = "nearest", 
++     distance = "logit", ratio = 2)
+\end{Sinput}
+\end{Schunk}
 
 \item Mahalanobis matching on {\tt re74} and {\tt re75}.
-\begin{verbatim}
-> m.out <- matchit(treat ~ re74+re75, data=lalonde, method="nearest", 
-+  		   distance="mahalanobis")
-\end{verbatim}
+\begin{Schunk}
+\begin{Sinput}
+> m.out <- matchit(treat ~ re74 + re75, data = lalonde, 
++     method = "nearest", distance = "mahalanobis")
+\end{Sinput}
+\end{Schunk}
 
 \item Mahalanobis matching on {\tt re74} and {\tt re75} within nearest
   neighbor matching on distance measure (propensity score), with restriction of exact
   matches on {\tt married}.
-\begin{verbatim}
-> m.out2 <- matchit(treat ~ re74 + re75 + age + educ, data = lalonde, method = "nearest", 
-+                   distance = "logit", mahvars=c("re74", "re75"), exact=c("married"), 
-+                   caliper=.25)
-\end{verbatim}
+\begin{Schunk}
+\begin{Sinput}
+> m.out2 <- matchit(treat ~ re74 + re75 + age + 
++     educ, data = lalonde, method = "nearest", 
++     distance = "logit", mahvars = c("re74", "re75"), 
++     exact = c("married"), caliper = 0.25)
+\end{Sinput}
+\end{Schunk}
 
 \item Nearest neighbor matching after discarding all units outside of
   the common support of the estimated distance measure.
-\begin{verbatim}
-> m.out3 <- matchit(treat ~ re74 + re75 + age + educ, data = lalonde, method = "nearest", 
-+                   distance = "logit", discard= "both")
-\end{verbatim}
+\begin{Schunk}
+\begin{Sinput}
+> m.out3 <- matchit(treat ~ re74 + re75 + age + 
++     educ, data = lalonde, method = "nearest", 
++     distance = "logit", discard = "both")
+\end{Sinput}
+\end{Schunk}
 
 \item Nearest neighbor matching with replacement where two control
   units are matched with one treated unit.
-\begin{verbatim}
-> m.out4 <- matchit(treat ~ re74 + re75 + age + educ, data = lalonde, method = "nearest", 
-+                   distance = "logit", replace = TRUE, ratio = 2)
-\end{verbatim}
+\begin{Schunk}
+\begin{Sinput}
+> m.out4 <- matchit(treat ~ re74 + re75 + age + 
++     educ, data = lalonde, method = "nearest", 
++     distance = "logit", replace = TRUE, ratio = 2)
+\end{Sinput}
+\end{Schunk}
 
 \item Nearest neighbor matching followed by formation of 5 subclasses
-\begin{verbatim}
-m.out5 <- matchit(treat ~ re74 + re75 + age + educ, data = lalonde, method = "nearest", 
-                  distance = "logit", subclass=5)
-\end{verbatim}
+\begin{Schunk}
+\begin{Sinput}
+> m.out5 <- matchit(treat ~ re74 + re75 + age + 
++     educ, data = lalonde, method = "nearest", 
++     distance = "logit", subclass = 5)
+\end{Sinput}
+\end{Schunk}
 \end{enumerate}
 
 \subsubsection{Full Matching}
@@ -605,31 +620,31 @@ for a complete list of optional inputs for full matching.
 Full matching can be performed with \MatchIt\ by setting
 \texttt{method = "full"}.  We use an add-on package called
 \texttt{optmatch} \citep{Hansen04}, which must be installed separately
-by typing at the R command prompt,
-\begin{verbatim}
-> install.packages("optmatch", contriburl = "http://www.stat.lsa.umich.edu/~bbh/optmatch")
-\end{verbatim}
-For more information about the package, see
+by typing at the R command prompt, %** can we do this automatically if
+its needed, like we do in zelig?  <<results=hide,eval=FALSE>>=
+install.packages("optmatch", contriburl =
+"http://www.stat.lsa.umich.edu/~bbh/optmatch") @ For more information
+about the package, see
 \hlink{http://www.stat.lsa.umich.edu/\~{}bbh/optmatch.html}{http://www.stat.lsa.umich.edu/\~bbh/optmatch.html}.
 The following example script can be run by typing {\tt demo(full)} at
-the R prompt.  We first load the Lalonde data, confuct full matching,
-and then print a short summary.
+the R prompt.  We first load the Lalonde data, confuct full matching
+(using the propensity score based on logistic regression), and then
+print a short summary.
 
-\noindent \# conduct full matching using the propensity score based on logistic regression 
 \begin{Schunk}
 \begin{Sinput}
-> m.out <- matchit(treat ~ age + educ + black + hispan + married + 
-+     nodegree + re74 + re75, data = lalonde, method = "full", 
-+     distance = "logit")
-\end{Sinput}
-\begin{Soutput}
-Loading required package: optmatch
-\end{Soutput}
-\begin{Sinput}
+> m.out <- matchit(treat ~ age + educ + black + 
++     hispan + married + nodegree + re74 + re75, 
++     data = lalonde, method = "full", distance = "logit")
 > m.out
 \end{Sinput}
 \begin{Soutput}
-Call: matchit(formula = treat ~ age + educ + black + hispan + married +     nodegree + re74 + re75, data = lalonde, method = "full",     distance = "logit")
+Call: 
+matchit(formula = treat ~ age + educ + black + hispan + married + 
+    nodegree + re74 + re75, data = lalonde, method = "full", 
+    distance = "logit")
+
+
 
 Sample sizes:
           Control Treated
@@ -666,26 +681,29 @@ for a complete list of optional inputs for optimal matching.
 
 Optimal matching is performed with \MatchIt\ by setting \texttt{method
   = "optimal"}.  We use an add-on package called \texttt{optmatch}
-\citep{Hansen04}, which must be installed separately by typing at the
-R command prompt,
-%** can we do this automatically if its needed, like we do in zelig?
-\begin{verbatim}
-> install.packages("optmatch", contriburl = "http://www.stat.lsa.umich.edu/~bbh/optmatch")
-\end{verbatim}
-For more information about the package, see
-\hlink{http://www.stat.lsa.umich.edu/\~{}bbh/optmatch.html}{http://www.stat.lsa.umich.edu/\~bbh/optmatch.html}.
-The following example script can be run by typing {\tt demo(optimal)}
-at the R prompt.
-
-\noindent \# optimal ratio matching using the propensity score based on logistic regression
+  \citep{Hansen04}, which must be installed separately by typing at
+  the R command prompt, %** can we do this automatically if its
+  needed, like we do in zelig?  <<results=hide,eval=FALSE>>=
+  install.packages("optmatch", contriburl =
+  "http://www.stat.lsa.umich.edu/~bbh/optmatch") @ For more
+  information about the package, see
+  \hlink{http://www.stat.lsa.umich.edu/\~{}bbh/optmatch.html}{http://www.stat.lsa.umich.edu/\~bbh/optmatch.html}.
+  The following example script (optimal ratio matching based on the
+  propensity score from the logistic regression) can be run by typing
+  {\tt demo(optimal)} at the R prompt.
 \begin{Schunk}
 \begin{Sinput}
-> m.out <- matchit(treat ~ re74 + re75 + age + educ, data = lalonde, 
-+     method = "optimal", distance = "logit", ratio = 2)
+> m.out <- matchit(treat ~ re74 + re75 + age + educ, 
++     data = lalonde, method = "optimal", distance = "logit", 
++     ratio = 2)
 > m.out
 \end{Sinput}
 \begin{Soutput}
-Call: matchit(formula = treat ~ re74 + re75 + age + educ, data = lalonde,     method = "optimal", distance = "logit", ratio = 2)
+Call: 
+matchit(formula = treat ~ re74 + re75 + age + educ, data = lalonde, 
+    method = "optimal", distance = "logit", ratio = 2)
+
+
 
 Sample sizes:
           Control Treated
@@ -711,8 +729,8 @@ the following commands
 \item \texttt{plot(m.out)} gives graphical summaries to assess balance
   of covariates.
 \end{enumerate}
-Below, we give three examples (exact matching, nearest neigbor matching, and sublassification) 
-to illustrate the use of these two
+Below, we give three examples (exact matching, nearest neigbor
+matching, and sublassification) to illustrate the use of these two
 functions. Similar commands can be used for all other matching
 procedures, and they will give similar outputs. See
 Section~\ref{subsec:outputs} for details.
@@ -727,17 +745,19 @@ Section~\ref{subsec:outputs} for details.
   matching using the {\tt summary()} command.  To also show the
   covariates values in each subclass, we use the \texttt{covariates =
     TRUE} option:
-
-\# balance diagnostics through statistics
 \begin{Schunk}
 \begin{Sinput}
-> m.out <- matchit(treat ~ educ + black + hispan, data = lalonde, 
-+     method = "exact")
+> m.out <- matchit(treat ~ educ + black + hispan, 
++     data = lalonde, method = "exact")
 > summary(m.out, covariates = TRUE)
 \end{Sinput}
 \begin{Soutput}
 Call:
-matchit(formula = treat ~ educ + black + hispan, data = lalonde,     method = "exact")
+
+matchit(formula = treat ~ educ + black + hispan, data = lalonde, 
+    method = "exact")
+
+
 
 
 Sample sizes for full and exactly matched data:
@@ -797,8 +817,8 @@ participants):
 > row.names(m.out$X)[m.out$subclass == 1][1:10]
 \end{Sinput}
 \begin{Soutput}
- [1] "NSW1"  "NSW4"  "NSW8"  "NSW21" "NSW24" "NSW26" "NSW27" "NSW30" "NSW33"
-[10] "NSW45"
+ [1] "NSW1"  "NSW4"  "NSW8"  "NSW21" "NSW24" "NSW26" "NSW27"
+ [8] "NSW30" "NSW33" "NSW45"
 \end{Soutput}
 \end{Schunk}
 
@@ -809,8 +829,8 @@ Survey of Income Dynamics):
 
 \begin{Schunk}
 \begin{Sinput}
-> m.out$X[m.out$subclass == 2 & !is.na(m.out$subclass), ][1:5, 
-+     ]
+> m.out$X[m.out$subclass == 2 & !is.na(m.out$subclass), 
++     ][1:5, ]
 \end{Sinput}
 \begin{Soutput}
        educ black hispan
@@ -836,51 +856,55 @@ PSID9     9     0      1
   To illustrate this we use the example of nearext neighbor matching from Section \ref{subsubsec:nearest}:
 \begin{Schunk}
 \begin{Sinput}
-> m.out <- matchit(treat ~ re74 + re75 + educ + black + hispan + 
-+     age, data = lalonde, method = "nearest")
+> m.out <- matchit(treat ~ re74 + re75 + educ + 
++     black + hispan + age, data = lalonde, method = "nearest")
 > summary(m.out)
 \end{Sinput}
 \begin{Soutput}
 Call:
-matchit(formula = treat ~ re74 + re75 + educ + black + hispan +     age, data = lalonde, method = "nearest")
+
+matchit(formula = treat ~ re74 + re75 + educ + black + hispan + 
+    age, data = lalonde, method = "nearest")
+
+
 
 Summary of balance for all data:
 
-         Means Treated Means Control Treated SD Std. Bias   QQ Med  QQ Mean
-distance         0.566         0.187      0.211     1.792    0.732    0.535
-re74          2095.574      5619.237   4886.620    -0.721 3430.277 5155.851
-re75          1532.055      2466.484   3219.251    -0.290 1373.280 1511.706
-educ            10.346        10.235      2.011     0.055    1.414    0.962
-black            0.843         0.203      0.365     1.757    1.414    0.903
-hispan           0.059         0.142      0.237    -0.349    0.000    0.119
-age             25.816        28.030      7.155    -0.309    1.414    4.650
-            QQ Max
-distance     0.840
-re74     13044.159
-re75      9609.595
-educ         5.657
-black        1.414
-hispan       1.414
-age         14.142
+         Means Treated Means Control Treated SD Std. Bias
+distance         0.566         0.187      0.211     1.792
+re74          2095.574      5619.237   4886.620    -0.721
+re75          1532.055      2466.484   3219.251    -0.290
+educ            10.346        10.235      2.011     0.055
+black            0.843         0.203      0.365     1.757
+hispan           0.059         0.142      0.237    -0.349
+age             25.816        28.030      7.155    -0.309
+           QQ Med  QQ Mean    QQ Max
+distance    0.732    0.535     0.840
+re74     3430.277 5155.851 13044.159
+re75     1373.280 1511.706  9609.595
+educ        1.414    0.962     5.657
+black       1.414    0.903     1.414
+hispan      0.000    0.119     1.414
+age         1.414    4.650    14.142
 
 Summary of balance for matched data:
 
-         Means Treated Means Control Treated SD Std. Bias  QQ Med QQ Mean
-distance         0.566         0.365      0.211     0.951   0.150   0.284
-re74          2095.574      2466.304   4886.620    -0.076 410.082 978.726
-re75          1532.055      1960.355   3219.251    -0.133 638.038 887.982
-educ            10.346        10.470      2.011    -0.062   1.414   1.307
-black            0.843         0.470      0.365     1.023   0.000   0.527
-hispan           0.059         0.276      0.237    -0.912   0.000   0.306
-age             25.816        26.054      7.155    -0.033   2.828   3.868
-            QQ Max
-distance     0.693
-re74     18556.957
-re75     16073.541
-educ         5.657
-black        1.414
-hispan       1.414
-age         11.314
+         Means Treated Means Control Treated SD Std. Bias
+distance         0.566         0.365      0.211     0.951
+re74          2095.574      2466.304   4886.620    -0.076
+re75          1532.055      1960.355   3219.251    -0.133
+educ            10.346        10.470      2.011    -0.062
+black            0.843         0.470      0.365     1.023
+hispan           0.059         0.276      0.237    -0.912
+age             25.816        26.054      7.155    -0.033
+          QQ Med QQ Mean    QQ Max
+distance   0.150   0.284     0.693
+re74     410.082 978.726 18556.957
+re75     638.038 887.982 16073.541
+educ       1.414   1.307     5.657
+black      0.000   0.527     1.414
+hispan     0.000   0.306     1.414
+age        2.828   3.868    11.314
 
 Percent Balance Improvement:
 
@@ -903,67 +927,90 @@ Discarded       0       0
 \end{Soutput}
 \end{Schunk}
 
-The \texttt{summary()} command provides simple statistics of the propensity score and the
-covariates used in the matching for the full and
-matched samples, including means, standardized bias, and Quantile-Quantile (Q-Q) plot statistics.  These are used
-to assess whether there was a reduction in bias in the covariates.
-The \texttt{summary} command will additionally report (a) the original
-call of the \MatchIt\ object, (b) how many units were matched, unmatched, or discarded due
-to the \texttt{discard} option (described below), and (c) the percent
-improvement in balance for each of the balance measures, defined as $100((|a|-|b|)/|a|)$, where $a$ is the balance
-before and $b$ is the balance after matching.  
+The \texttt{summary()} command provides simple statistics of the
+propensity score and the covariates used in the matching for the full
+and matched samples, including means, standardized bias, and
+Quantile-Quantile (Q-Q) plot statistics.  These are used to assess
+whether there was a reduction in bias in the covariates.  The
+\texttt{summary} command will additionally report (a) the original
+call of the \MatchIt\ object, (b) how many units were matched,
+unmatched, or discarded due to the \texttt{discard} option (described
+below), and (c) the percent improvement in balance for each of the
+balance measures, defined as $100((|a|-|b|)/|a|)$, where $a$ is the
+balance before and $b$ is the balance after matching.
 
-For each set of units (full sample and matched sample), the following statistics are provided: the ``Means Treated" 
-and ``Means Control" columns show the weighted
-means in the treated and control groups;  the ``Treated SD" is the standard deviation of the covariate in the set
-of treated units; the ``Std. Bias" is the difference in means in the treated and control groups, divided by the 
-``Treated SD" calculated using all treated units.  The same standard deviation is used for calculating the standardized bias 
-in the full data and the matched data set so that the success of the matching at reducing bias in the covariate means can be 
-easily assessed; standardizing
-by the same quantity puts the two differences in means on the same scale.  
-Good matches will generally have standardized biases less than approximately 0.25; values greater than that imply that the
-groups have means that are more than a quarter of a standard deviation apart.   
+For each set of units (full sample and matched sample), the following
+statistics are provided: the ``Means Treated" and ``Means Control"
+columns show the weighted means in the treated and control groups; the
+``Treated SD" is the standard deviation of the covariate in the set of
+treated units; the ``Std. Bias" is the difference in means in the
+treated and control groups, divided by the ``Treated SD" calculated
+using all treated units.  The same standard deviation is used for
+calculating the standardized bias in the full data and the matched
+data set so that the success of the matching at reducing bias in the
+covariate means can be easily assessed; standardizing by the same
+quantity puts the two differences in means on the same scale.  Good
+matches will generally have standardized biases less than
+approximately 0.25; values greater than that imply that the groups
+have means that are more than a quarter of a standard deviation apart.
 
-The final three columns of the summary output give summary statistics of a Q-Q plot (see below for more information on these 
-plots). Those columns give the median, mean, and maximum orthogonal deviations from the 45-degree line of the Q-Q plot.  If 
-the empirical distributions of the two groups (treated and control) were exactly the same, all points would lie on the 
-45-degree line and thus all of these distances would be 0.  Values greater than 0 indicate deviations between the groups in 
-some part of the empirical distributions.  The plots themselves, described below, can provide further insight into which 
-part of the covariate distribution has differences between the groups.
+The final three columns of the summary output give summary statistics
+of a Q-Q plot (see below for more information on these plots). Those
+columns give the median, mean, and maximum orthogonal deviations from
+the 45-degree line of the Q-Q plot.  If the empirical distributions of
+the two groups (treated and control) were exactly the same, all points
+would lie on the 45-degree line and thus all of these distances would
+be 0.  Values greater than 0 indicate deviations between the groups in
+some part of the empirical distributions.  The plots themselves,
+described below, can provide further insight into which part of the
+covariate distribution has differences between the groups.
 
-In this example of nearest neighbor matching, we see that the matching has reduced the bias in the propensity score from 
-1.79 to 0.95 and has reduced the bias in some of the covariates (e.g., 1974 and 1975 income).  Job training participants on 
-average earned roughly \$3,524 less in 1974 and \$934 less in 1975 than non-participants, in the full sample.  
-In the matched sample, the earnings difference is reduced to \$371 in 1974 and \$428 in 1975.  This
-one-to-one matching algorithm has thus chosen 185 control individuals
-who are more similar to the treated group in 1974 income and 1975
-income, which is summarized by the $89.5$ and $54.2$ percent
-balance improvement in these covariates.  However 
-there are still fairly large differences on some of the covariates, such as the race variables.  In this situation, if close
-matches on the race variables are desired, it may make sense to try Mahalanobis or exact matching on the race variables in
-addition to the propensity score matching.  The large remaining bias in the propensity score (0.95 standard deviations) also
-indicates that it may be desirable to do subclassification instead of or in addition to the matching, as described below.  
+In this example of nearest neighbor matching, we see that the matching
+has reduced the bias in the propensity score from 1.79 to 0.95 and has
+reduced the bias in some of the covariates (e.g., 1974 and 1975
+income).  Job training participants on average earned roughly \$3,524
+less in 1974 and \$934 less in 1975 than non-participants, in the full
+sample.  In the matched sample, the earnings difference is reduced to
+\$371 in 1974 and \$428 in 1975.  This one-to-one matching algorithm
+has thus chosen 185 control individuals who are more similar to the
+treated group in 1974 income and 1975 income, which is summarized by
+the $89.5$ and $54.2$ percent balance improvement in these covariates.
+However there are still fairly large differences on some of the
+covariates, such as the race variables.  In this situation, if close
+matches on the race variables are desired, it may make sense to try
+Mahalanobis or exact matching on the race variables in addition to the
+propensity score matching.  The large remaining bias in the propensity
+score (0.95 standard deviations) also indicates that it may be
+desirable to do subclassification instead of or in addition to the
+matching, as described below.
 
-Two options to the \texttt{summary} command can also help with assessing balance and respecifying the propensity score
-model, as necessary.  First, the {\tt interactions=T} option with {\tt summary}
+Two options to the \texttt{summary} command can also help with
+assessing balance and respecifying the propensity score model, as
+necessary.  First, the {\tt interactions=T} option with {\tt summary}
 shows the balance of all squares and interactions of the covariates
-used in the matching procedure.  Large differences in higher order interactions usually are a good indication
-that the assignment model needs to be respecified.   Similarly, the {\tt addlvariables} option with {\tt summary}
-will provide balance measures on additional variables not included in the original matching procedure.  If a variable
-(or interaction of variables) not included in the original distance measure has large imbalances in the matched groups, 
-including that variable in the next model specification may improve the resulting balance on that variable.  \cite{DehWah99} 
-provide a detailed example of a propensity score specification algorithm.   Because the outcome variable is not used
-in the matching procedure, a variety of matching methods can be tried, and the one that leads to the best resulting balance
-chosen.
+used in the matching procedure.  Large differences in higher order
+interactions usually are a good indication that the assignment model
+needs to be respecified.  Similarly, the {\tt addlvariables} option
+with {\tt summary} will provide balance measures on additional
+variables not included in the original matching procedure.  If a
+variable (or interaction of variables) not included in the original
+distance measure has large imbalances in the matched groups, including
+that variable in the next model specification may improve the
+resulting balance on that variable.  \cite{DehWah99} provide a
+detailed example of a propensity score specification algorithm.
+Because the outcome variable is not used in the matching procedure, a
+variety of matching methods can be tried, and the one that leads to
+the best resulting balance chosen.
 
 %as discussed in
 %Section \ref{pscorespec}.
 
-We can also examine the balance graphically using the \texttt{plot()} command, 
-which provides two types of plots: jitter plots of
-the distance measure, and Q-Q plots of each covariate.  Figures~\ref{diagqqnn} and~\ref{diagjitternn} display these two sample
+We can also examine the balance graphically using the \texttt{plot()}
+command, which provides two types of plots: jitter plots of the
+distance measure, and Q-Q plots of each covariate.
+Figures~\ref{diagqqnn} and~\ref{diagjitternn} display these two sample
 plots.  In the jitter plot, you may identify units by observation name
-by clicking the first mouse button near the units.  
+by clicking the first mouse button near the units.
 
 \begin{Schunk}
 \begin{Sinput}
@@ -998,17 +1045,20 @@ by clicking the first mouse button near the units.
 \end{center}
 \end{figure}
 
-The balance of the
-individual covariates is shown in the Q-Q plots.
-If the empirical distributions are the same in the treated and control groups, the points would all lie on the 45 
-degree line.  Deviations from the 45 degree line indicate differences in the empirical distribution.  
-The jitter plot shows the overall distribution of propensity scores in the treated and control groups.  In the jitter plot,
-the size of each diamond is proportional to the weight given to that unit; matched units are in black while unmatched units
-are in grey.
+The balance of the individual covariates is shown in the Q-Q plots.
+If the empirical distributions are the same in the treated and control
+groups, the points would all lie on the 45 degree line.  Deviations
+from the 45 degree line indicate differences in the empirical
+distribution.  The jitter plot shows the overall distribution of
+propensity scores in the treated and control groups.  In the jitter
+plot, the size of each diamond is proportional to the weight given to
+that unit; matched units are in black while unmatched units are in
+grey.
 
-Examining these graphs, we see that the matched samples are fairly well
-matched on the propensity score and the income variables, but that there are some remaining
-imbalances in the race and age variables, as was also seen using the \texttt{summary} command.  
+Examining these graphs, we see that the matched samples are fairly
+well matched on the propensity score and the income variables, but
+that there are some remaining imbalances in the race and age
+variables, as was also seen using the \texttt{summary} command.
 
 \item Now for subclassification, using the example from
   Section~\ref{subsubsec:subclass}, we check the balance of
@@ -1018,176 +1068,184 @@ imbalances in the race and age variables, as was also seen using the \texttt{sum
 %%
 \begin{Schunk}
 \begin{Sinput}
-> m.out <- matchit(treat ~ re74 + re75 + educ + black + hispan + 
-+     age, data = lalonde, method = "subclass")
+> m.out <- matchit(treat ~ re74 + re75 + educ + 
++     black + hispan + age, data = lalonde, method = "subclass")
 > summary(m.out)
 \end{Sinput}
 \begin{Soutput}
 Call:
-matchit(formula = treat ~ re74 + re75 + educ + black + hispan +     age, data = lalonde, method = "subclass", sub.by = "treat")
+
+matchit(formula = treat ~ re74 + re75 + educ + black + hispan + 
+    age, data = lalonde, method = "subclass", sub.by = "treat")
+
+
 
 Summary of balance for all data:
 
-         Means Treated Means Control Treated SD Std. Bias   QQ Med  QQ Mean
-distance         0.566         0.187      0.211     1.792    0.732    0.535
-re74          2095.574      5619.237   4886.620    -0.721 3430.277 5155.851
-re75          1532.055      2466.484   3219.251    -0.290 1373.280 1511.706
-educ            10.346        10.235      2.011     0.055    1.414    0.962
-black            0.843         0.203      0.365     1.757    1.414    0.903
-hispan           0.059         0.142      0.237    -0.349    0.000    0.119
-age             25.816        28.030      7.155    -0.309    1.414    4.650
-            QQ Max
-distance     0.840
-re74     13044.159
-re75      9609.595
-educ         5.657
-black        1.414
-hispan       1.414
-age         14.142
+         Means Treated Means Control Treated SD Std. Bias
+distance         0.566         0.187      0.211     1.792
+re74          2095.574      5619.237   4886.620    -0.721
+re75          1532.055      2466.484   3219.251    -0.290
+educ            10.346        10.235      2.011     0.055
+black            0.843         0.203      0.365     1.757
+hispan           0.059         0.142      0.237    -0.349
+age             25.816        28.030      7.155    -0.309
+           QQ Med  QQ Mean    QQ Max
+distance    0.732    0.535     0.840
+re74     3430.277 5155.851 13044.159
+re75     1373.280 1511.706  9609.595
+educ        1.414    0.962     5.657
+black       1.414    0.903     1.414
+hispan      0.000    0.119     1.414
+age         1.414    4.650    14.142
 
 
 Summary of balance by subclasses:
 
 , , Subclass 1
 
-         Means Treated Means Control Treated SD Std. Bias    QQ Med   QQ Mean
-distance         0.122         0.076      0.059     0.217     0.055     0.065
-re74          3628.026      6332.407   8002.323    -0.553  4588.884  5184.224
-re75          2232.359      2624.566   3340.297    -0.122   663.357  1146.136
-educ            10.613        10.265      1.801     0.173     1.414     1.369
-black            0.065         0.006      0.250     0.161     0.000     0.046
-hispan           0.355         0.177      0.486     0.749     0.000     0.228
-age             24.968        28.564      6.151    -0.503     2.828     6.562
-            QQ Max
-distance     0.123
-re74     12979.299
-re75      9631.728
-educ         9.899
-black        1.414
-hispan       1.414
-age         19.799
+         Means Treated Means Control Treated SD Std. Bias
+distance         0.122         0.076      0.059     0.217
+re74          3628.026      6332.407   8002.323    -0.553
+re75          2232.359      2624.566   3340.297    -0.122
+educ            10.613        10.265      1.801     0.173
+black            0.065         0.006      0.250     0.161
+hispan           0.355         0.177      0.486     0.749
+age             24.968        28.564      6.151    -0.503
+            QQ Med   QQ Mean    QQ Max
+distance     0.055     0.065     0.123
+re74      4588.884  5184.224 12979.299
+re75       663.357  1146.136  9631.728
+educ         1.414     1.369     9.899
+black        0.000     0.046     1.414
+hispan       0.000     0.228     1.414
+age          2.828     6.562    19.799
 
 , , Subclass 2
 
-         Means Treated Means Control Treated SD Std. Bias    QQ Med   QQ Mean
-distance         0.539         0.534      0.070     0.021     0.016     0.020
-re74          7529.849      7209.650   5753.799     0.066   657.495  1234.428
-re75          4108.624      3484.381   5692.184     0.194  1710.911  2118.164
-educ             9.000         8.692      2.989     0.153     0.707     1.295
-black            1.000         1.000      0.000     0.000     0.000     0.000
-hispan           0.000         0.000      0.000     0.000     0.000     0.000
-age             28.097        33.269      8.138    -0.723     9.334     8.050
-            QQ Max
-distance     0.065
-re74      4508.668
-re75     16073.541
-educ         5.657
-black        0.000
-hispan       0.000
-age         19.799
+         Means Treated Means Control Treated SD Std. Bias
+distance         0.539         0.534      0.070     0.021
+re74          7529.849      7209.650   5753.799     0.066
+re75          4108.624      3484.381   5692.184     0.194
+educ             9.000         8.692      2.989     0.153
+black            1.000         1.000      0.000     0.000
+hispan           0.000         0.000      0.000     0.000
+age             28.097        33.269      8.138    -0.723
+            QQ Med   QQ Mean    QQ Max
+distance     0.016     0.020     0.065
+re74       657.495  1234.428  4508.668
+re75      1710.911  2118.164 16073.541
+educ         0.707     1.295     5.657
+black        0.000     0.000     0.000
+hispan       0.000     0.000     0.000
+age          9.334     8.050    19.799
 
 , , Subclass 3
 
-         Means Treated Means Control Treated SD Std. Bias    QQ Med   QQ Mean
-distance         0.646         0.645      0.011     0.004     0.001     0.003
-re74           892.324      1403.987   1624.758    -0.105   543.081   825.572
-re75           707.407      1463.220   1504.611    -0.235   291.168   944.259
-educ             8.933         9.118      1.172    -0.092     0.000     0.437
-black            1.000         1.000      0.000     0.000     0.000     0.000
-hispan           0.000         0.000      0.000     0.000     0.000     0.000
-age             23.867        19.647      7.718     0.590     3.801     6.260
-            QQ Max
-distance     0.013
-re74      2117.652
-re75      8965.316
-educ         2.828
-black        0.000
-hispan       0.000
-age         19.976
+         Means Treated Means Control Treated SD Std. Bias
+distance         0.646         0.645      0.011     0.004
+re74           892.324      1403.987   1624.758    -0.105
+re75           707.407      1463.220   1504.611    -0.235
+educ             8.933         9.118      1.172    -0.092
+black            1.000         1.000      0.000     0.000
+hispan           0.000         0.000      0.000     0.000
+age             23.867        19.647      7.718     0.590
+            QQ Med   QQ Mean    QQ Max
+distance     0.001     0.003     0.013
+re74       543.081   825.572  2117.652
+re75       291.168   944.259  8965.316
+educ         0.000     0.437     2.828
+black        0.000     0.000     0.000
+hispan       0.000     0.000     0.000
+age          3.801     6.260    19.976
 
 , , Subclass 4
 
-         Means Treated Means Control Treated SD Std. Bias    QQ Med   QQ Mean
-distance         0.677         0.678      0.007    -0.003     0.004     0.004
-re74           390.290       710.654    737.073    -0.066     0.000   441.668
-re75          1193.816       683.647   1667.376     0.158   151.719   769.614
-educ            10.000        10.571      0.775    -0.284     1.414     0.808
-black            1.000         1.000      0.000     0.000     0.000     0.000
-hispan           0.000         0.000      0.000     0.000     0.000     0.000
-age             23.548        22.190      6.971     0.190     2.828     4.478
-            QQ Max
-distance     0.012
-re74      1684.659
-re75      3231.361
-educ         2.828
-black        0.000
-hispan       0.000
-age         11.314
+         Means Treated Means Control Treated SD Std. Bias
+distance         0.677         0.678      0.007    -0.003
+re74           390.290       710.654    737.073    -0.066
+re75          1193.816       683.647   1667.376     0.158
+educ            10.000        10.571      0.775    -0.284
+black            1.000         1.000      0.000     0.000
+hispan           0.000         0.000      0.000     0.000
+age             23.548        22.190      6.971     0.190
+            QQ Med   QQ Mean    QQ Max
+distance     0.004     0.004     0.012
+re74         0.000   441.668  1684.659
+re75       151.719   769.614  3231.361
+educ         1.414     0.808     2.828
+black        0.000     0.000     0.000
+hispan       0.000     0.000     0.000
+age          2.828     4.478    11.314
 
 , , Subclass 5
 
-         Means Treated Means Control Treated SD Std. Bias    QQ Med   QQ Mean
-distance         0.694         0.697      0.003    -0.013     0.001     0.003
-re74            94.139       325.798    384.061    -0.047     0.000   157.765
-re75           404.855       307.680   1339.194     0.030     0.000  1270.772
-educ            11.000        11.429      0.258    -0.213     0.000     0.606
-black            1.000         1.000      0.000     0.000     0.000     0.000
-hispan           0.000         0.000      0.000     0.000     0.000     0.000
-age             26.710        22.286      5.399     0.618     9.899     6.869
-            QQ Max
-distance     0.011
-re74       800.767
-re75      7783.902
-educ         1.414
-black        0.000
-hispan       0.000
-age         12.728
+         Means Treated Means Control Treated SD Std. Bias
+distance         0.694         0.697      0.003    -0.013
+re74            94.139       325.798    384.061    -0.047
+re75           404.855       307.680   1339.194     0.030
+educ            11.000        11.429      0.258    -0.213
+black            1.000         1.000      0.000     0.000
+hispan           0.000         0.000      0.000     0.000
+age             26.710        22.286      5.399     0.618
+            QQ Med   QQ Mean    QQ Max
+distance     0.001     0.003     0.011
+re74         0.000   157.765   800.767
+re75         0.000  1270.772  7783.902
+educ         0.000     0.606     1.414
+black        0.000     0.000     0.000
+hispan       0.000     0.000     0.000
+age          9.899     6.869    12.728
 
 , , Subclass 6
 
-         Means Treated Means Control Treated SD Std. Bias    QQ Med   QQ Mean
-distance         0.720         0.724      0.016    -0.022     0.003     0.005
-re74             0.000       270.099      0.000    -0.055     0.000   381.978
-re75           518.669      1663.721   1644.262    -0.356     0.000  1329.640
-educ            12.484        12.643      1.180    -0.079     0.000     0.233
-black            1.000         1.000      0.000     0.000     0.000     0.000
-hispan           0.000         0.000      0.000     0.000     0.000     0.000
-age             27.645        27.000      7.423     0.090     2.448     3.318
-            QQ Max
-distance     0.029
-re74      3627.005
-re75      6825.954
-educ         1.414
-black        0.000
-hispan       0.000
-age         11.314
+         Means Treated Means Control Treated SD Std. Bias
+distance         0.720         0.724      0.016    -0.022
+re74             0.000       270.099      0.000    -0.055
+re75           518.669      1663.721   1644.262    -0.356
+educ            12.484        12.643      1.180    -0.079
+black            1.000         1.000      0.000     0.000
+hispan           0.000         0.000      0.000     0.000
+age             27.645        27.000      7.423     0.090
+            QQ Med   QQ Mean    QQ Max
+distance     0.003     0.005     0.029
+re74         0.000   381.978  3627.005
+re75         0.000  1329.640  6825.954
+educ         0.000     0.233     1.414
+black        0.000     0.000     0.000
+hispan       0.000     0.000     0.000
+age          2.448     3.318    11.314
 
 
 Sample sizes by subclasses:
 
-        Subclass 1 Subclass 2 Subclass 3 Subclass 4 Subclass 5 Subclass 6
-Treated         31         31         30         31         31         31
-Control        344         26         17         21          7         14
-Total          375         57         47         52         38         45
+        Subclass 1 Subclass 2 Subclass 3 Subclass 4
+Treated         31         31         30         31
+Control        344         26         17         21
+Total          375         57         47         52
+        Subclass 5 Subclass 6
+Treated         31         31
+Control          7         14
+Total           38         45
 
 Summary of balance across subclasses
 
-         Means Treated Means Control Treated SD Std. Bias  QQ Med  QQ Mean
-distance         0.566         0.559      0.016     0.034   0.013    0.017
-re74          2095.574      2715.819   1678.241    -0.127 967.190 1373.887
-re75          1532.055      1705.840   1219.402    -0.054 470.490 1264.821
-educ            10.346        10.460      0.660    -0.057   0.592    0.793
-black            0.843         0.833      0.042     0.027   0.000    0.008
-hispan           0.059         0.030      0.082     0.125   0.000    0.038
-age             25.816        25.524      2.867     0.041   5.197    5.921
-           QQ Max
-distance    0.042
-re74     4298.064
-re75     8750.814
-educ        4.013
-black       0.237
-hispan      0.237
-age        15.799
+         Means Treated Means Control Treated SD Std. Bias
+distance         0.566         0.559      0.016     0.034
+re74          2095.574      2715.819   1678.241    -0.127
+re75          1532.055      1705.840   1219.402    -0.054
+educ            10.346        10.460      0.660    -0.057
+black            0.843         0.833      0.042     0.027
+hispan           0.059         0.030      0.082     0.125
+age             25.816        25.524      2.867     0.041
+          QQ Med  QQ Mean   QQ Max
+distance   0.013    0.017    0.042
+re74     967.190 1373.887 4298.064
+re75     470.490 1264.821 8750.814
+educ       0.592    0.793    4.013
+black      0.000    0.008    0.237
+hispan     0.000    0.038    0.237
+age        5.197    5.921   15.799
 
 Percent Balance Improvement:
 
@@ -1202,31 +1260,42 @@ age                  86.817 -267.50  -27.34 -11.716
 \end{Soutput}
 \end{Schunk}
 
-The \texttt{summary} output for subclassification is the same as that for nearest neighbor matching, except
-that the balance statistics are shown separately for each subclass, and the overall balance in the matched samples
-is calculated by aggregating across the subclasses.  Consistent with the calculations for the full and matched samples,
-the standardized bias within each subclass is also calculated using the standard deviation of the full treated group, 
-again so that the differences in means are all scaled by the same amount and not affected by changes in sample sizes.   
+The \texttt{summary} output for subclassification is the same as that
+for nearest neighbor matching, except that the balance statistics are
+shown separately for each subclass, and the overall balance in the
+matched samples is calculated by aggregating across the subclasses.
+Consistent with the calculations for the full and matched samples, the
+standardized bias within each subclass is also calculated using the
+standard deviation of the full treated group, again so that the
+differences in means are all scaled by the same amount and not
+affected by changes in sample sizes.
 
-In this example, the bias between the groups 
-within each sublcass is generally small, with the exception of Subclass 1, which has a large number of control units 
-with small propensity scores.  
-The percent balance improvement also indicates that the subclassification has been successful at forming subclasses within 
-which the distribution of covariates is more similar than in the full data set.  In particular, 80 to 90 percent reduction in 
-the standardized bias was achieved in 4 of the 6 covariates through subclassification; little bias reduction was achieved on 
-the education variable, which had very small bias to start (standardized bias of only 0.055 in the full data set).  For this
-example, it appears as though subclassification has been able to form better matched samples than the simple 1-1 nearest 
-neighbor matching method described above.
+In this example, the bias between the groups within each sublcass is
+generally small, with the exception of Subclass 1, which has a large
+number of control units with small propensity scores.  The percent
+balance improvement also indicates that the subclassification has been
+successful at forming subclasses within which the distribution of
+covariates is more similar than in the full data set.  In particular,
+80 to 90 percent reduction in the standardized bias was achieved in 4
+of the 6 covariates through subclassification; little bias reduction
+was achieved on the education variable, which had very small bias to
+start (standardized bias of only 0.055 in the full data set).  For
+this example, it appears as though subclassification has been able to
+form better matched samples than the simple 1-1 nearest neighbor
+matching method described above.
 
-We can also examine the balance graphically.  Figures~\ref{diagqqsub} and \ref{diagjittersub} display the two
-diagnostic plots.  With subclassification, separate Q-Q plots are printed for each subclass; for each, the graphs
-shown in the left-hand column are those for the full data set.  The jitter plot is the same as that for nearest neighbor 
-matching, with the addition of vertical lines indicating the subclass cut-points.
+We can also examine the balance graphically.  Figures~\ref{diagqqsub}
+and \ref{diagjittersub} display the two diagnostic plots.  With
+subclassification, separate Q-Q plots are printed for each subclass;
+for each, the graphs shown in the left-hand column are those for the
+full data set.  The jitter plot is the same as that for nearest
+neighbor matching, with the addition of vertical lines indicating the
+subclass cut-points.
 
 \begin{Schunk}
 \begin{Sinput}
-> m.out <- matchit(treat ~ re74 + re75 + educ + black + hispan + 
-+     age, data = lalonde, method = "subclass")
+> m.out <- matchit(treat ~ re74 + re75 + educ + 
++     black + hispan + age, data = lalonde, method = "subclass")
 \end{Sinput}
 \end{Schunk}
 \begin{Schunk}
@@ -1271,15 +1340,17 @@ matching, with the addition of vertical lines indicating the subclass cut-points
 \end{center}
 \end{figure}
 
-In Figure \ref{diagqqsub} we see that the empirical distributions of the treated and control units are much more similar
-in Subclass 3 (shown in the ``Matched" column of figures) than they are in the full data set (shown in the ``Raw" column of 
-figures).  
-We see that in this case, 
-the distributions of most of the covariates are very similar in Subclass 3, with the exception of \texttt{age}, which
-on which the treated units generally have larger values than the control units (indicated by the points falling above the 45 
-degree line).
-The jitter plot indicates that using the \texttt{discard} option may be 
-desirable here, to reduce any bias due to the many control units with low propensity scores.  
+In Figure \ref{diagqqsub} we see that the empirical distributions of
+the treated and control units are much more similar in Subclass 3
+(shown in the ``Matched" column of figures) than they are in the full
+data set (shown in the ``Raw" column of figures).  We see that in this
+case, the distributions of most of the covariates are very similar in
+Subclass 3, with the exception of \texttt{age}, which on which the
+treated units generally have larger values than the control units
+(indicated by the points falling above the 45 degree line).  The
+jitter plot indicates that using the \texttt{discard} option may be
+desirable here, to reduce any bias due to the many control units with
+low propensity scores.
 
 \end{enumerate}
 
@@ -1369,7 +1440,8 @@ statistical programs. If one uses Zelig, then a syntax for least
 squares regression is
 \begin{Schunk}
 \begin{Sinput}
-> z.out <- zelig(Y ~ treat + x1 + x2, model = "ls", data = mdata)
+> z.out <- zelig(Y ~ treat + x1 + x2, model = "ls", 
++     data = mdata)
 \end{Sinput}
 \end{Schunk}
 where {\tt Y} is the outcome variable, and {\tt z.out} is the output
@@ -1388,10 +1460,13 @@ Section~\ref{subsec:analysis}.
 
 The main command, \texttt{matchit()}, can be used to implements any of
 the matching procedures:
-\begin{verbatim}
-> m.out <- matchit(formula, data, method = "nearest", distance = "logit", distance.options=list(), 
-	discard = "none", reestimate = FALSE, ...)
-\end{verbatim}
+\begin{Schunk}
+\begin{Sinput}
+> m.out <- matchit(formula, data, method = "nearest", 
++     distance = "logit", distance.options = list(), 
++     discard = "none", reestimate = FALSE, ...)
+\end{Sinput}
+\end{Schunk}
 The command takes some inputs that are common to all matching
 procedures and other inputs specific to particular procedures.  The
 outputs are standard across all procedures.  We organize the reference
@@ -1820,10 +1895,12 @@ within each subclasses if specified.  The graphs present:
 To extract the matched data set for subsequent analyses from the
 output object (see Section~\ref{subsec:analysis}), we provide the
 function {\tt match.data()}.  This is used as follows:
-\begin{verbatim}
-m.data <- match.data(object, group = "all", distance = "distance", weights = "weights",
-                     subclass = "subclass")
-\end{verbatim}
+\begin{Schunk}
+\begin{Sinput}
+> m.data <- match.data(object, group = "all", distance = "distance", 
++     weights = "weights", subclass = "subclass")
+\end{Sinput}
+\end{Schunk}
 The output of the function {\tt match.data()} is the original data
 frame where additional information about matching (i.e., distance
 measure as well as resulting weights and subclasses) is added,
@@ -1852,40 +1929,58 @@ restricted to units that were matched.
 \paragraph{Examples}
 
 Here, we present examples for using {\tt match.data()}. Users can run
-these commands by typing {\tt demo(match.data)} at the R prompt.
-\begin{verbatim}
-## load the Lalonde data
-data(lalonde)
-
-## perform nearest neighbor matching
-m.out1 <- matchit(treat ~ re74 + re75 + age + educ, data = lalonde, method = "nearest",  
-                  distance = "logit")
-
-## obtain matched data 
-m.data1 <- match.data(m.out1)
-
-## summarize the resulting matched data
-summary(m.data1)
-
-## obtain matched data for the treatment group
-m.data2 <- match.data(m.out1, group = "treat")
-summary(m.data2)
-
-## obtain matched data for the control group
-m.data3 <- match.data(m.out1, group = "control")
-summary(m.data3)
-
-## run a subclassification method
-m.out2 <- matchit(treat ~ re74 + re75 + age + educ, data=lalonde, method = "subclass")
-
-## specify different names
-m.data4 <- match.data(m.out2, subclass = "block", weights = "w",
-                      distance = "pscore")
-## print the variable names of the matched data
-names(m.data4)
-\end{verbatim}
-
-
+these commands by typing {\tt demo(match.data)} at the R
+prompt. First, we load the Lalonde data,
+\begin{Schunk}
+\begin{Sinput}
+> data(lalonde)
+\end{Sinput}
+\end{Schunk}
+The next line performs nearest neighbor matching based on the
+estimated propensity score from the logistic regression,
+\begin{Schunk}
+\begin{Sinput}
+> m.out1 <- matchit(treat ~ re74 + re75 + age + 
++     educ, data = lalonde, method = "nearest", 
++     distance = "logit")
+\end{Sinput}
+\end{Schunk}
+To obtain matched data, type the following command, 
+\begin{Schunk}
+\begin{Sinput}
+> m.data1 <- match.data(m.out1)
+\end{Sinput}
+\end{Schunk}
+It is easy to summarize the resulting matched data,
+\begin{Schunk}
+\begin{Sinput}
+> summary(m.data1)
+\end{Sinput}
+\end{Schunk}
+To obtain matched data for the treatment or control group, specify the option
+{\tt group} as follows,
+\begin{Schunk}
+\begin{Sinput}
+> m.data2 <- match.data(m.out1, group = "treat")
+> summary(m.data2)
+> m.data3 <- match.data(m.out1, group = "control")
+> summary(m.data3)
+\end{Sinput}
+\end{Schunk}
+We can also specify different names for the subclass indicator, the
+weight variable, and the estimated distance measure. The following
+example first does a subclassification method, obtains the
+matched data with specified names for those three variables, and then
+print out the names of all variables in the resulting matched data.
+\begin{Schunk}
+\begin{Sinput}
+> m.out2 <- matchit(treat ~ re74 + re75 + age + 
++     educ, data = lalonde, method = "subclass")
+> m.data4 <- match.data(m.out2, subclass = "block", 
++     weights = "w", distance = "pscore")
+> names(m.data4)
+\end{Sinput}
+\end{Schunk}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1967,11 +2062,16 @@ Lalonde data, type:
 > print(test)
 \end{Sinput}
 \begin{Soutput}
-       treat age educ black hispan married nodegree re74 re75  re78
-Dan        1  37   11     1      0       1        1    0    0  9930
-Kosuke     1  22    9     0      1       0        1    0    0  3596
-Liz        1  30   12     1      0       0        0    0    0 24909
-Gary       1  27   11     1      0       0        1    0    0  7506
+       treat age educ black hispan married nodegree re74
+Dan        1  37   11     1      0       1        1    0
+Kosuke     1  22    9     0      1       0        1    0
+Liz        1  30   12     1      0       0        0    0
+Gary       1  27   11     1      0       0        1    0
+       re75  re78
+Dan       0  9930
+Kosuke    0  3596
+Liz       0 24909
+Gary      0  7506
 \end{Soutput}
 \end{Schunk}
 

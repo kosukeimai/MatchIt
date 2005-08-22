@@ -3,28 +3,28 @@ matchit.qqplot <- function(x,discrete.cutoff,which.subclass=NULL, numdraws=5000)
   treat <- x$treat
   matched <- x$weights!=0
   
-  # For full matching, sample numdraws observations using the weights
+  ## For full matching, sample numdraws observations using the weights
   if(x$call$method=="full") {
-       t.plot <- sample(names(treat)[treat==1], numdraws/2, replace=TRUE, prob=x$weights[treat==1])
-       c.plot <- sample(names(treat)[treat==0], numdraws/2, replace=TRUE, prob=x$weights[treat==0])
-
-       m.covariates <- x$X[c(t.plot, c.plot),]
-       m.treat <- x$treat[c(t.plot, c.plot)]
+    t.plot <- sample(names(treat)[treat==1], numdraws/2, replace=TRUE, prob=x$weights[treat==1])
+    c.plot <- sample(names(treat)[treat==0], numdraws/2, replace=TRUE, prob=x$weights[treat==0])
+    
+    m.covariates <- x$X[c(t.plot, c.plot),]
+    m.treat <- x$treat[c(t.plot, c.plot)]
   } else {
- 	m.covariates <- covariates[matched,]
- 	m.treat <- treat[matched]
+    m.covariates <- covariates[matched,]
+    m.treat <- treat[matched]
   }
-
+  
   if(!is.null(which.subclass)){
     subclass <- x$subclass
     sub.index <- subclass==which.subclass & !is.na(subclass)
     covariates <- covariates[sub.index,]
     treat <- treat[sub.index]
     matched <- matched[sub.index]
-    # Matched units in each subclass
+    ## Matched units in each subclass
     m.covariates <- covariates[matched,]
     m.treat <- treat[matched]
-    # Compare to full sample--reset covariates and treat to full data set
+    ## Compare to full sample--reset covariates and treat to full data set
     covariates <- x$X
     treat <- x$treat
   }
@@ -59,18 +59,13 @@ matchit.qqplot <- function(x,discrete.cutoff,which.subclass=NULL, numdraws=5000)
       m.xi <- jitter(m.xi)
     }
     rr <- range(xi)
-    qqplot(xi[treat==0],xi[treat==1],
-           xlim=rr,ylim=rr,axes=F,ylab="",
-           xlab="")
+    qqplot(xi[treat==0],xi[treat==1], xlim=rr,ylim=rr,axes=F,ylab="",xlab="")
     abline(a=0,b=1)
     abline(a=(rr[2]-rr[1])*0.1,b=1,lty=2)
     abline(a=-(rr[2]-rr[1])*0.1,b=1,lty=2)
     axis(2)
     box()
-    qqplot(m.xi[m.treat==0],
-           m.xi[m.treat==1],
-           xlim=rr,ylim=rr,axes=F,ylab="",
-           xlab="")
+    qqplot(m.xi[m.treat==0],m.xi[m.treat==1],xlim=rr,ylim=rr,axes=F,ylab="",xlab="")
     abline(a=0,b=1)
     abline(a=(rr[2]-rr[1])*0.1,b=1,lty=2)
     abline(a=-(rr[2]-rr[1])*0.1,b=1,lty=2)

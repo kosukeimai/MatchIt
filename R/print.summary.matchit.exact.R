@@ -1,5 +1,7 @@
-print.summary.matchit.exact <- function(x, digits = max(3, getOption("digits") - 3), ...){ 
-  cat("\nCall:\n", deparse(x$call),"\n\n",sep = "")
+print.summary.matchit.exact <- function(x, digits = max(3,
+                                             getOption("digits") - 3),
+                                        ...){  
+  cat("\nCall:\n", deparse(x$call),"\n",sep = "\n")
   cat("\nSample sizes for full and exactly matched data:\n\n")
   ntab <- table(factor(!is.na(x$subclass),
                       levels=c("TRUE","FALSE")), x$treat)

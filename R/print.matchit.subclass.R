@@ -1,5 +1,5 @@
 print.matchit.subclass <- function(x, digits = getOption("digits"), ...){
-  cat("\nCall: ", deparse(x$call),"\n",sep = "")
+  cat("\nCall: ", deparse(x$call),"\n",sep = "\n")
   cat("\nSample sizes by subclasses:\n\n")
   nsub <- table(x$subclass,x$treat)
   nn <- rbind(table(x$treat),nsub)
