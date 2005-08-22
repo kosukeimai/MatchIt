@@ -945,56 +945,6 @@ low propensity scores.
 \subsection{Conducting Analyses after Matching}
 \label{subsec:analysis}
 
-Once matching is complete and balance has been achieved, the \MatchIt\
-object (output from the \texttt{matchit()} function) can be used with
-any other analysis procedure; \MatchIt\ is designed to make those
-analysis procedures less dependent on the modeling assumptions and
-thus work better.  Therefore, any analysis you might have conducted
-using the original data set can be conducted with less model
-dependence using the matched data set.  To obtain the matched data
-set, use {\tt match.data(m.out)}, where {\tt m.out} is a \MatchIt\
-object. See Section~\ref{subsec:match.data} for more options and
-details.
-
-In this section, we describe our recommended approach
-\citep{HoImaKin05}, which uses
-\hlink{Zelig}{http://gking.harvard.edu/zelig/} to conduct parametric
-causal inference after preprocessing the data through \MatchIt.  The
-resulting matched data sets can also be exported to other statistical
-programs using commands such as {\tt write.table()} and {\tt
-  write.csv()}. In addition, the commands in the {\tt foreign} package
-allow users to save matched data sets as binary files for various
-statistical software including STATA and SPSS.
-
-Zelig \citep{ImaKinLau04} is an easy-to-use R package that estimates a
-large variety of statistical models, gives easily interpretable
-results by simulating quantities of interest, provides numerical and
-graphical summaries, and is easily extensible.  The package along with
-the complete documentation is available at
-\hlink{http://gking.harvard.edu/zelig/}{http://gking.harvard.edu/zelig/}.
-\MatchIt\ and Zelig can be easily used together to enable estimation
-of causal effects in very general settings with a variety of
-statistical models.
-
-First, we use \texttt{match.data()} to create the matched data by
-excluding unmatched units from the original data, and including
-information about the particular matching procedure (i.e., weights,
-subclasses, and the distance measure).  
-<<results=hide,eval=FALSE>>=
-mdata <- match.data(m.out)
-@
-where {\tt m.out} is the \MatchIt\ object from {\tt matchit()} and
-{\tt mdata} is the resulting matched data.  This matched data set can
-then be used for subsequent parametric analyses thorough
-\hlink{Zelig}{http://gking.harvard.edu/zelig/} or any other
-statistical programs. If one uses Zelig, then a syntax for least
-squares regression is
-<<results=hide,eval=FALSE>>=
-z.out <- zelig(Y ~ treat + x1 + x2, model = "ls", data = mdata)
-@
-where {\tt Y} is the outcome variable, and {\tt z.out} is the output
-object from {\tt zelig}. For more details, see
-Section~\ref{subsec:analysis}.
 
 \input{matchit2zeligsw}
 

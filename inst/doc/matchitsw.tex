@@ -139,8 +139,7 @@ systems.  Using a text editor such as Windows notepad and emacs, add
 the following line to the file:
 \begin{Schunk}
 \begin{Sinput}
-> options(defaultPackages = c(getOption("defaultPackages"), 
-+     "MatchIt"))
+> options(defaultPackages = c(getOption("defaultPackages"), "MatchIt"))
 \end{Sinput}
 \end{Schunk}
 For this change to take effect, you need to restart R.
@@ -393,8 +392,8 @@ the R prompt:
 \begin{Sinput}
 > library(MatchIt)
 > data(lalonde)
-> m.out <- matchit(treat ~ educ + black + hispan, 
-+     data = lalonde, method = "exact")
+> m.out <- matchit(treat ~ educ + black + hispan, data = lalonde, 
++     method = "exact")
 \end{Sinput}
 \end{Schunk}
 
@@ -459,8 +458,8 @@ subclassification.  The following example script can be run by typing
 {\tt demo(subclass)} at the R prompt:
 \begin{Schunk}
 \begin{Sinput}
-> m.out <- matchit(treat ~ re74 + re75 + educ + 
-+     black + hispan + age, data = lalonde, method = "subclass")
+> m.out <- matchit(treat ~ re74 + re75 + educ + black + hispan + 
++     age, data = lalonde, method = "subclass")
 \end{Sinput}
 \end{Schunk}
 
@@ -502,8 +501,8 @@ composed of real earnings in 1974 and 1975, education, race, and age:
 
 \begin{Schunk}
 \begin{Sinput}
-> m.out <- matchit(treat ~ re74 + re75 + educ + 
-+     black + hispan + age, data = lalonde, method = "nearest")
+> m.out <- matchit(treat ~ re74 + re75 + educ + black + hispan + 
++     age, data = lalonde, method = "nearest")
 \end{Sinput}
 \end{Schunk}
 
@@ -545,17 +544,16 @@ for a complete list of options for nearest neighbor matching.
   logistic regression where 2 matches are chosen for each treated unit.
 \begin{Schunk}
 \begin{Sinput}
-> m.out1 <- matchit(treat ~ re74 + re75 + age + 
-+     educ, data = lalonde, method = "nearest", 
-+     distance = "logit", ratio = 2)
+> m.out1 <- matchit(treat ~ re74 + re75 + age + educ, data = lalonde, 
++     method = "nearest", distance = "logit", ratio = 2)
 \end{Sinput}
 \end{Schunk}
 
 \item Mahalanobis matching on {\tt re74} and {\tt re75}.
 \begin{Schunk}
 \begin{Sinput}
-> m.out <- matchit(treat ~ re74 + re75, data = lalonde, 
-+     method = "nearest", distance = "mahalanobis")
+> m.out <- matchit(treat ~ re74 + re75, data = lalonde, method = "nearest", 
++     distance = "mahalanobis")
 \end{Sinput}
 \end{Schunk}
 
@@ -564,10 +562,9 @@ for a complete list of options for nearest neighbor matching.
   matches on {\tt married}.
 \begin{Schunk}
 \begin{Sinput}
-> m.out2 <- matchit(treat ~ re74 + re75 + age + 
-+     educ, data = lalonde, method = "nearest", 
-+     distance = "logit", mahvars = c("re74", "re75"), 
-+     exact = c("married"), caliper = 0.25)
+> m.out2 <- matchit(treat ~ re74 + re75 + age + educ, data = lalonde, 
++     method = "nearest", distance = "logit", mahvars = c("re74", 
++         "re75"), exact = c("married"), caliper = 0.25)
 \end{Sinput}
 \end{Schunk}
 
@@ -575,9 +572,8 @@ for a complete list of options for nearest neighbor matching.
   the common support of the estimated distance measure.
 \begin{Schunk}
 \begin{Sinput}
-> m.out3 <- matchit(treat ~ re74 + re75 + age + 
-+     educ, data = lalonde, method = "nearest", 
-+     distance = "logit", discard = "both")
+> m.out3 <- matchit(treat ~ re74 + re75 + age + educ, data = lalonde, 
++     method = "nearest", distance = "logit", discard = "both")
 \end{Sinput}
 \end{Schunk}
 
@@ -585,18 +581,16 @@ for a complete list of options for nearest neighbor matching.
   units are matched with one treated unit.
 \begin{Schunk}
 \begin{Sinput}
-> m.out4 <- matchit(treat ~ re74 + re75 + age + 
-+     educ, data = lalonde, method = "nearest", 
-+     distance = "logit", replace = TRUE, ratio = 2)
+> m.out4 <- matchit(treat ~ re74 + re75 + age + educ, data = lalonde, 
++     method = "nearest", distance = "logit", replace = TRUE, ratio = 2)
 \end{Sinput}
 \end{Schunk}
 
 \item Nearest neighbor matching followed by formation of 5 subclasses
 \begin{Schunk}
 \begin{Sinput}
-> m.out5 <- matchit(treat ~ re74 + re75 + age + 
-+     educ, data = lalonde, method = "nearest", 
-+     distance = "logit", subclass = 5)
+> m.out5 <- matchit(treat ~ re74 + re75 + age + educ, data = lalonde, 
++     method = "nearest", distance = "logit", subclass = 5)
 \end{Sinput}
 \end{Schunk}
 \end{enumerate}
@@ -633,9 +627,14 @@ print a short summary.
 
 \begin{Schunk}
 \begin{Sinput}
-> m.out <- matchit(treat ~ age + educ + black + 
-+     hispan + married + nodegree + re74 + re75, 
-+     data = lalonde, method = "full", distance = "logit")
+> m.out <- matchit(treat ~ age + educ + black + hispan + married + 
++     nodegree + re74 + re75, data = lalonde, method = "full", 
++     distance = "logit")
+\end{Sinput}
+\begin{Soutput}
+Loading required package: optmatch
+\end{Soutput}
+\begin{Sinput}
 > m.out
 \end{Sinput}
 \begin{Soutput}
@@ -693,9 +692,8 @@ Optimal matching is performed with \MatchIt\ by setting \texttt{method
   {\tt demo(optimal)} at the R prompt.
 \begin{Schunk}
 \begin{Sinput}
-> m.out <- matchit(treat ~ re74 + re75 + age + educ, 
-+     data = lalonde, method = "optimal", distance = "logit", 
-+     ratio = 2)
+> m.out <- matchit(treat ~ re74 + re75 + age + educ, data = lalonde, 
++     method = "optimal", distance = "logit", ratio = 2)
 > m.out
 \end{Sinput}
 \begin{Soutput}
@@ -747,8 +745,8 @@ Section~\ref{subsec:outputs} for details.
     TRUE} option:
 \begin{Schunk}
 \begin{Sinput}
-> m.out <- matchit(treat ~ educ + black + hispan, 
-+     data = lalonde, method = "exact")
+> m.out <- matchit(treat ~ educ + black + hispan, data = lalonde, 
++     method = "exact")
 > summary(m.out, covariates = TRUE)
 \end{Sinput}
 \begin{Soutput}
@@ -817,8 +815,8 @@ participants):
 > row.names(m.out$X)[m.out$subclass == 1][1:10]
 \end{Sinput}
 \begin{Soutput}
- [1] "NSW1"  "NSW4"  "NSW8"  "NSW21" "NSW24" "NSW26" "NSW27"
- [8] "NSW30" "NSW33" "NSW45"
+ [1] "NSW1"  "NSW4"  "NSW8"  "NSW21" "NSW24" "NSW26" "NSW27" "NSW30" "NSW33"
+[10] "NSW45"
 \end{Soutput}
 \end{Schunk}
 
@@ -829,8 +827,8 @@ Survey of Income Dynamics):
 
 \begin{Schunk}
 \begin{Sinput}
-> m.out$X[m.out$subclass == 2 & !is.na(m.out$subclass), 
-+     ][1:5, ]
+> m.out$X[m.out$subclass == 2 & !is.na(m.out$subclass), ][1:5, 
++     ]
 \end{Sinput}
 \begin{Soutput}
        educ black hispan
@@ -856,8 +854,8 @@ PSID9     9     0      1
   To illustrate this we use the example of nearext neighbor matching from Section \ref{subsubsec:nearest}:
 \begin{Schunk}
 \begin{Sinput}
-> m.out <- matchit(treat ~ re74 + re75 + educ + 
-+     black + hispan + age, data = lalonde, method = "nearest")
+> m.out <- matchit(treat ~ re74 + re75 + educ + black + hispan + 
++     age, data = lalonde, method = "nearest")
 > summary(m.out)
 \end{Sinput}
 \begin{Soutput}
@@ -870,41 +868,41 @@ matchit(formula = treat ~ re74 + re75 + educ + black + hispan +
 
 Summary of balance for all data:
 
-         Means Treated Means Control Treated SD Std. Bias
-distance         0.566         0.187      0.211     1.792
-re74          2095.574      5619.237   4886.620    -0.721
-re75          1532.055      2466.484   3219.251    -0.290
-educ            10.346        10.235      2.011     0.055
-black            0.843         0.203      0.365     1.757
-hispan           0.059         0.142      0.237    -0.349
-age             25.816        28.030      7.155    -0.309
-           QQ Med  QQ Mean    QQ Max
-distance    0.732    0.535     0.840
-re74     3430.277 5155.851 13044.159
-re75     1373.280 1511.706  9609.595
-educ        1.414    0.962     5.657
-black       1.414    0.903     1.414
-hispan      0.000    0.119     1.414
-age         1.414    4.650    14.142
+         Means Treated Means Control Treated SD Std. Bias   QQ Med  QQ Mean
+distance         0.566         0.187      0.211     1.792    0.732    0.535
+re74          2095.574      5619.237   4886.620    -0.721 3430.277 5155.851
+re75          1532.055      2466.484   3219.251    -0.290 1373.280 1511.706
+educ            10.346        10.235      2.011     0.055    1.414    0.962
+black            0.843         0.203      0.365     1.757    1.414    0.903
+hispan           0.059         0.142      0.237    -0.349    0.000    0.119
+age             25.816        28.030      7.155    -0.309    1.414    4.650
+            QQ Max
+distance     0.840
+re74     13044.159
+re75      9609.595
+educ         5.657
+black        1.414
+hispan       1.414
+age         14.142
 
 Summary of balance for matched data:
 
-         Means Treated Means Control Treated SD Std. Bias
-distance         0.566         0.365      0.211     0.951
-re74          2095.574      2466.304   4886.620    -0.076
-re75          1532.055      1960.355   3219.251    -0.133
-educ            10.346        10.470      2.011    -0.062
-black            0.843         0.470      0.365     1.023
-hispan           0.059         0.276      0.237    -0.912
-age             25.816        26.054      7.155    -0.033
-          QQ Med QQ Mean    QQ Max
-distance   0.150   0.284     0.693
-re74     410.082 978.726 18556.957
-re75     638.038 887.982 16073.541
-educ       1.414   1.307     5.657
-black      0.000   0.527     1.414
-hispan     0.000   0.306     1.414
-age        2.828   3.868    11.314
+         Means Treated Means Control Treated SD Std. Bias  QQ Med QQ Mean
+distance         0.566         0.365      0.211     0.951   0.150   0.284
+re74          2095.574      2466.304   4886.620    -0.076 410.082 978.726
+re75          1532.055      1960.355   3219.251    -0.133 638.038 887.982
+educ            10.346        10.470      2.011    -0.062   1.414   1.307
+black            0.843         0.470      0.365     1.023   0.000   0.527
+hispan           0.059         0.276      0.237    -0.912   0.000   0.306
+age             25.816        26.054      7.155    -0.033   2.828   3.868
+            QQ Max
+distance     0.693
+re74     18556.957
+re75     16073.541
+educ         5.657
+black        1.414
+hispan       1.414
+age         11.314
 
 Percent Balance Improvement:
 
@@ -1068,8 +1066,8 @@ variables, as was also seen using the \texttt{summary} command.
 %%
 \begin{Schunk}
 \begin{Sinput}
-> m.out <- matchit(treat ~ re74 + re75 + educ + 
-+     black + hispan + age, data = lalonde, method = "subclass")
+> m.out <- matchit(treat ~ re74 + re75 + educ + black + hispan + 
++     age, data = lalonde, method = "subclass")
 > summary(m.out)
 \end{Sinput}
 \begin{Soutput}
@@ -1082,170 +1080,166 @@ matchit(formula = treat ~ re74 + re75 + educ + black + hispan +
 
 Summary of balance for all data:
 
-         Means Treated Means Control Treated SD Std. Bias
-distance         0.566         0.187      0.211     1.792
-re74          2095.574      5619.237   4886.620    -0.721
-re75          1532.055      2466.484   3219.251    -0.290
-educ            10.346        10.235      2.011     0.055
-black            0.843         0.203      0.365     1.757
-hispan           0.059         0.142      0.237    -0.349
-age             25.816        28.030      7.155    -0.309
-           QQ Med  QQ Mean    QQ Max
-distance    0.732    0.535     0.840
-re74     3430.277 5155.851 13044.159
-re75     1373.280 1511.706  9609.595
-educ        1.414    0.962     5.657
-black       1.414    0.903     1.414
-hispan      0.000    0.119     1.414
-age         1.414    4.650    14.142
+         Means Treated Means Control Treated SD Std. Bias   QQ Med  QQ Mean
+distance         0.566         0.187      0.211     1.792    0.732    0.535
+re74          2095.574      5619.237   4886.620    -0.721 3430.277 5155.851
+re75          1532.055      2466.484   3219.251    -0.290 1373.280 1511.706
+educ            10.346        10.235      2.011     0.055    1.414    0.962
+black            0.843         0.203      0.365     1.757    1.414    0.903
+hispan           0.059         0.142      0.237    -0.349    0.000    0.119
+age             25.816        28.030      7.155    -0.309    1.414    4.650
+            QQ Max
+distance     0.840
+re74     13044.159
+re75      9609.595
+educ         5.657
+black        1.414
+hispan       1.414
+age         14.142
 
 
 Summary of balance by subclasses:
 
 , , Subclass 1
 
-         Means Treated Means Control Treated SD Std. Bias
-distance         0.122         0.076      0.059     0.217
-re74          3628.026      6332.407   8002.323    -0.553
-re75          2232.359      2624.566   3340.297    -0.122
-educ            10.613        10.265      1.801     0.173
-black            0.065         0.006      0.250     0.161
-hispan           0.355         0.177      0.486     0.749
-age             24.968        28.564      6.151    -0.503
-            QQ Med   QQ Mean    QQ Max
-distance     0.055     0.065     0.123
-re74      4588.884  5184.224 12979.299
-re75       663.357  1146.136  9631.728
-educ         1.414     1.369     9.899
-black        0.000     0.046     1.414
-hispan       0.000     0.228     1.414
-age          2.828     6.562    19.799
+         Means Treated Means Control Treated SD Std. Bias    QQ Med   QQ Mean
+distance         0.122         0.076      0.059     0.217     0.055     0.065
+re74          3628.026      6332.407   8002.323    -0.553  4588.884  5184.224
+re75          2232.359      2624.566   3340.297    -0.122   663.357  1146.136
+educ            10.613        10.265      1.801     0.173     1.414     1.369
+black            0.065         0.006      0.250     0.161     0.000     0.046
+hispan           0.355         0.177      0.486     0.749     0.000     0.228
+age             24.968        28.564      6.151    -0.503     2.828     6.562
+            QQ Max
+distance     0.123
+re74     12979.299
+re75      9631.728
+educ         9.899
+black        1.414
+hispan       1.414
+age         19.799
 
 , , Subclass 2
 
-         Means Treated Means Control Treated SD Std. Bias
-distance         0.539         0.534      0.070     0.021
-re74          7529.849      7209.650   5753.799     0.066
-re75          4108.624      3484.381   5692.184     0.194
-educ             9.000         8.692      2.989     0.153
-black            1.000         1.000      0.000     0.000
-hispan           0.000         0.000      0.000     0.000
-age             28.097        33.269      8.138    -0.723
-            QQ Med   QQ Mean    QQ Max
-distance     0.016     0.020     0.065
-re74       657.495  1234.428  4508.668
-re75      1710.911  2118.164 16073.541
-educ         0.707     1.295     5.657
-black        0.000     0.000     0.000
-hispan       0.000     0.000     0.000
-age          9.334     8.050    19.799
+         Means Treated Means Control Treated SD Std. Bias    QQ Med   QQ Mean
+distance         0.539         0.534      0.070     0.021     0.016     0.020
+re74          7529.849      7209.650   5753.799     0.066   657.495  1234.428
+re75          4108.624      3484.381   5692.184     0.194  1710.911  2118.164
+educ             9.000         8.692      2.989     0.153     0.707     1.295
+black            1.000         1.000      0.000     0.000     0.000     0.000
+hispan           0.000         0.000      0.000     0.000     0.000     0.000
+age             28.097        33.269      8.138    -0.723     9.334     8.050
+            QQ Max
+distance     0.065
+re74      4508.668
+re75     16073.541
+educ         5.657
+black        0.000
+hispan       0.000
+age         19.799
 
 , , Subclass 3
 
-         Means Treated Means Control Treated SD Std. Bias
-distance         0.646         0.645      0.011     0.004
-re74           892.324      1403.987   1624.758    -0.105
-re75           707.407      1463.220   1504.611    -0.235
-educ             8.933         9.118      1.172    -0.092
-black            1.000         1.000      0.000     0.000
-hispan           0.000         0.000      0.000     0.000
-age             23.867        19.647      7.718     0.590
-            QQ Med   QQ Mean    QQ Max
-distance     0.001     0.003     0.013
-re74       543.081   825.572  2117.652
-re75       291.168   944.259  8965.316
-educ         0.000     0.437     2.828
-black        0.000     0.000     0.000
-hispan       0.000     0.000     0.000
-age          3.801     6.260    19.976
+         Means Treated Means Control Treated SD Std. Bias    QQ Med   QQ Mean
+distance         0.646         0.645      0.011     0.004     0.001     0.003
+re74           892.324      1403.987   1624.758    -0.105   543.081   825.572
+re75           707.407      1463.220   1504.611    -0.235   291.168   944.259
+educ             8.933         9.118      1.172    -0.092     0.000     0.437
+black            1.000         1.000      0.000     0.000     0.000     0.000
+hispan           0.000         0.000      0.000     0.000     0.000     0.000
+age             23.867        19.647      7.718     0.590     3.801     6.260
+            QQ Max
+distance     0.013
+re74      2117.652
+re75      8965.316
+educ         2.828
+black        0.000
+hispan       0.000
+age         19.976
 
 , , Subclass 4
 
-         Means Treated Means Control Treated SD Std. Bias
-distance         0.677         0.678      0.007    -0.003
-re74           390.290       710.654    737.073    -0.066
-re75          1193.816       683.647   1667.376     0.158
-educ            10.000        10.571      0.775    -0.284
-black            1.000         1.000      0.000     0.000
-hispan           0.000         0.000      0.000     0.000
-age             23.548        22.190      6.971     0.190
-            QQ Med   QQ Mean    QQ Max
-distance     0.004     0.004     0.012
-re74         0.000   441.668  1684.659
-re75       151.719   769.614  3231.361
-educ         1.414     0.808     2.828
-black        0.000     0.000     0.000
-hispan       0.000     0.000     0.000
-age          2.828     4.478    11.314
+         Means Treated Means Control Treated SD Std. Bias    QQ Med   QQ Mean
+distance         0.677         0.678      0.007    -0.003     0.004     0.004
+re74           390.290       710.654    737.073    -0.066     0.000   441.668
+re75          1193.816       683.647   1667.376     0.158   151.719   769.614
+educ            10.000        10.571      0.775    -0.284     1.414     0.808
+black            1.000         1.000      0.000     0.000     0.000     0.000
+hispan           0.000         0.000      0.000     0.000     0.000     0.000
+age             23.548        22.190      6.971     0.190     2.828     4.478
+            QQ Max
+distance     0.012
+re74      1684.659
+re75      3231.361
+educ         2.828
+black        0.000
+hispan       0.000
+age         11.314
 
 , , Subclass 5
 
-         Means Treated Means Control Treated SD Std. Bias
-distance         0.694         0.697      0.003    -0.013
-re74            94.139       325.798    384.061    -0.047
-re75           404.855       307.680   1339.194     0.030
-educ            11.000        11.429      0.258    -0.213
-black            1.000         1.000      0.000     0.000
-hispan           0.000         0.000      0.000     0.000
-age             26.710        22.286      5.399     0.618
-            QQ Med   QQ Mean    QQ Max
-distance     0.001     0.003     0.011
-re74         0.000   157.765   800.767
-re75         0.000  1270.772  7783.902
-educ         0.000     0.606     1.414
-black        0.000     0.000     0.000
-hispan       0.000     0.000     0.000
-age          9.899     6.869    12.728
+         Means Treated Means Control Treated SD Std. Bias    QQ Med   QQ Mean
+distance         0.694         0.697      0.003    -0.013     0.001     0.003
+re74            94.139       325.798    384.061    -0.047     0.000   157.765
+re75           404.855       307.680   1339.194     0.030     0.000  1270.772
+educ            11.000        11.429      0.258    -0.213     0.000     0.606
+black            1.000         1.000      0.000     0.000     0.000     0.000
+hispan           0.000         0.000      0.000     0.000     0.000     0.000
+age             26.710        22.286      5.399     0.618     9.899     6.869
+            QQ Max
+distance     0.011
+re74       800.767
+re75      7783.902
+educ         1.414
+black        0.000
+hispan       0.000
+age         12.728
 
 , , Subclass 6
 
-         Means Treated Means Control Treated SD Std. Bias
-distance         0.720         0.724      0.016    -0.022
-re74             0.000       270.099      0.000    -0.055
-re75           518.669      1663.721   1644.262    -0.356
-educ            12.484        12.643      1.180    -0.079
-black            1.000         1.000      0.000     0.000
-hispan           0.000         0.000      0.000     0.000
-age             27.645        27.000      7.423     0.090
-            QQ Med   QQ Mean    QQ Max
-distance     0.003     0.005     0.029
-re74         0.000   381.978  3627.005
-re75         0.000  1329.640  6825.954
-educ         0.000     0.233     1.414
-black        0.000     0.000     0.000
-hispan       0.000     0.000     0.000
-age          2.448     3.318    11.314
+         Means Treated Means Control Treated SD Std. Bias    QQ Med   QQ Mean
+distance         0.720         0.724      0.016    -0.022     0.003     0.005
+re74             0.000       270.099      0.000    -0.055     0.000   381.978
+re75           518.669      1663.721   1644.262    -0.356     0.000  1329.640
+educ            12.484        12.643      1.180    -0.079     0.000     0.233
+black            1.000         1.000      0.000     0.000     0.000     0.000
+hispan           0.000         0.000      0.000     0.000     0.000     0.000
+age             27.645        27.000      7.423     0.090     2.448     3.318
+            QQ Max
+distance     0.029
+re74      3627.005
+re75      6825.954
+educ         1.414
+black        0.000
+hispan       0.000
+age         11.314
 
 
 Sample sizes by subclasses:
 
-        Subclass 1 Subclass 2 Subclass 3 Subclass 4
-Treated         31         31         30         31
-Control        344         26         17         21
-Total          375         57         47         52
-        Subclass 5 Subclass 6
-Treated         31         31
-Control          7         14
-Total           38         45
+        Subclass 1 Subclass 2 Subclass 3 Subclass 4 Subclass 5 Subclass 6
+Treated         31         31         30         31         31         31
+Control        344         26         17         21          7         14
+Total          375         57         47         52         38         45
 
 Summary of balance across subclasses
 
-         Means Treated Means Control Treated SD Std. Bias
-distance         0.566         0.559      0.016     0.034
-re74          2095.574      2715.819   1678.241    -0.127
-re75          1532.055      1705.840   1219.402    -0.054
-educ            10.346        10.460      0.660    -0.057
-black            0.843         0.833      0.042     0.027
-hispan           0.059         0.030      0.082     0.125
-age             25.816        25.524      2.867     0.041
-          QQ Med  QQ Mean   QQ Max
-distance   0.013    0.017    0.042
-re74     967.190 1373.887 4298.064
-re75     470.490 1264.821 8750.814
-educ       0.592    0.793    4.013
-black      0.000    0.008    0.237
-hispan     0.000    0.038    0.237
-age        5.197    5.921   15.799
+         Means Treated Means Control Treated SD Std. Bias  QQ Med  QQ Mean
+distance         0.566         0.559      0.016     0.034   0.013    0.017
+re74          2095.574      2715.819   1678.241    -0.127 967.190 1373.887
+re75          1532.055      1705.840   1219.402    -0.054 470.490 1264.821
+educ            10.346        10.460      0.660    -0.057   0.592    0.793
+black            0.843         0.833      0.042     0.027   0.000    0.008
+hispan           0.059         0.030      0.082     0.125   0.000    0.038
+age             25.816        25.524      2.867     0.041   5.197    5.921
+           QQ Max
+distance    0.042
+re74     4298.064
+re75     8750.814
+educ        4.013
+black       0.237
+hispan      0.237
+age        15.799
 
 Percent Balance Improvement:
 
@@ -1294,8 +1288,8 @@ subclass cut-points.
 
 \begin{Schunk}
 \begin{Sinput}
-> m.out <- matchit(treat ~ re74 + re75 + educ + 
-+     black + hispan + age, data = lalonde, method = "subclass")
+> m.out <- matchit(treat ~ re74 + re75 + educ + black + hispan + 
++     age, data = lalonde, method = "subclass")
 \end{Sinput}
 \end{Schunk}
 \begin{Schunk}
@@ -1392,61 +1386,6 @@ low propensity scores.
 \subsection{Conducting Analyses after Matching}
 \label{subsec:analysis}
 
-Once matching is complete and balance has been achieved, the \MatchIt\
-object (output from the \texttt{matchit()} function) can be used with
-any other analysis procedure; \MatchIt\ is designed to make those
-analysis procedures less dependent on the modeling assumptions and
-thus work better.  Therefore, any analysis you might have conducted
-using the original data set can be conducted with less model
-dependence using the matched data set.  To obtain the matched data
-set, use {\tt match.data(m.out)}, where {\tt m.out} is a \MatchIt\
-object. See Section~\ref{subsec:match.data} for more options and
-details.
-
-In this section, we describe our recommended approach
-\citep{HoImaKin05}, which uses
-\hlink{Zelig}{http://gking.harvard.edu/zelig/} to conduct parametric
-causal inference after preprocessing the data through \MatchIt.  The
-resulting matched data sets can also be exported to other statistical
-programs using commands such as {\tt write.table()} and {\tt
-  write.csv()}. In addition, the commands in the {\tt foreign} package
-allow users to save matched data sets as binary files for various
-statistical software including STATA and SPSS.
-
-Zelig \citep{ImaKinLau04} is an easy-to-use R package that estimates a
-large variety of statistical models, gives easily interpretable
-results by simulating quantities of interest, provides numerical and
-graphical summaries, and is easily extensible.  The package along with
-the complete documentation is available at
-\hlink{http://gking.harvard.edu/zelig/}{http://gking.harvard.edu/zelig/}.
-\MatchIt\ and Zelig can be easily used together to enable estimation
-of causal effects in very general settings with a variety of
-statistical models.
-
-First, we use \texttt{match.data()} to create the matched data by
-excluding unmatched units from the original data, and including
-information about the particular matching procedure (i.e., weights,
-subclasses, and the distance measure).  
-\begin{Schunk}
-\begin{Sinput}
-> mdata <- match.data(m.out)
-\end{Sinput}
-\end{Schunk}
-where {\tt m.out} is the \MatchIt\ object from {\tt matchit()} and
-{\tt mdata} is the resulting matched data.  This matched data set can
-then be used for subsequent parametric analyses thorough
-\hlink{Zelig}{http://gking.harvard.edu/zelig/} or any other
-statistical programs. If one uses Zelig, then a syntax for least
-squares regression is
-\begin{Schunk}
-\begin{Sinput}
-> z.out <- zelig(Y ~ treat + x1 + x2, model = "ls", 
-+     data = mdata)
-\end{Sinput}
-\end{Schunk}
-where {\tt Y} is the outcome variable, and {\tt z.out} is the output
-object from {\tt zelig}. For more details, see
-Section~\ref{subsec:analysis}.
 
 \input{matchit2zeligsw}
 
@@ -1462,9 +1401,9 @@ The main command, \texttt{matchit()}, can be used to implements any of
 the matching procedures:
 \begin{Schunk}
 \begin{Sinput}
-> m.out <- matchit(formula, data, method = "nearest", 
-+     distance = "logit", distance.options = list(), 
-+     discard = "none", reestimate = FALSE, ...)
+> m.out <- matchit(formula, data, method = "nearest", distance = "logit", 
++     distance.options = list(), discard = "none", reestimate = FALSE, 
++     ...)
 \end{Sinput}
 \end{Schunk}
 The command takes some inputs that are common to all matching
@@ -1940,9 +1879,8 @@ The next line performs nearest neighbor matching based on the
 estimated propensity score from the logistic regression,
 \begin{Schunk}
 \begin{Sinput}
-> m.out1 <- matchit(treat ~ re74 + re75 + age + 
-+     educ, data = lalonde, method = "nearest", 
-+     distance = "logit")
+> m.out1 <- matchit(treat ~ re74 + re75 + age + educ, data = lalonde, 
++     method = "nearest", distance = "logit")
 \end{Sinput}
 \end{Schunk}
 To obtain matched data, type the following command, 
@@ -1974,10 +1912,10 @@ matched data with specified names for those three variables, and then
 print out the names of all variables in the resulting matched data.
 \begin{Schunk}
 \begin{Sinput}
-> m.out2 <- matchit(treat ~ re74 + re75 + age + 
-+     educ, data = lalonde, method = "subclass")
-> m.data4 <- match.data(m.out2, subclass = "block", 
-+     weights = "w", distance = "pscore")
+> m.out2 <- matchit(treat ~ re74 + re75 + age + educ, data = lalonde, 
++     method = "subclass")
+> m.data4 <- match.data(m.out2, subclass = "block", weights = "w", 
++     distance = "pscore")
 > names(m.data4)
 \end{Sinput}
 \end{Schunk}
@@ -2062,16 +2000,11 @@ Lalonde data, type:
 > print(test)
 \end{Sinput}
 \begin{Soutput}
-       treat age educ black hispan married nodegree re74
-Dan        1  37   11     1      0       1        1    0
-Kosuke     1  22    9     0      1       0        1    0
-Liz        1  30   12     1      0       0        0    0
-Gary       1  27   11     1      0       0        1    0
-       re75  re78
-Dan       0  9930
-Kosuke    0  3596
-Liz       0 24909
-Gary      0  7506
+       treat age educ black hispan married nodegree re74 re75  re78
+Dan        1  37   11     1      0       1        1    0    0  9930
+Kosuke     1  22    9     0      1       0        1    0    0  3596
+Liz        1  30   12     1      0       0        0    0    0 24909
+Gary       1  27   11     1      0       0        1    0    0  7506
 \end{Soutput}
 \end{Schunk}
 

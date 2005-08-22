@@ -1,14 +1,59 @@
 %** {\bf Does all the neyman stuff go in here, or just the examples, with
 %   syntax somewhere else?}
 
+%Once matching is complete and balance has been achieved, the \MatchIt\
+%object (output from the \texttt{matchit()} function) can be used with
+%any other analysis procedure; \MatchIt\ is designed to make those
+%analysis procedures less dependent on the modeling assumptions and
+%thus work better.  Therefore, any analysis you might have conducted
+%using the original data set can be conducted with less model
+%dependence using the matched data set.  To obtain the matched data
+%set, use {\tt match.data(m.out)}, where {\tt m.out} is a \MatchIt\
+%object. See Section~\ref{subsec:match.data} for more options and
+%details.
+
+In this section, we describe our recommended approach
+\citep{HoImaKin05}, which uses
+\hlink{Zelig}{http://gking.harvard.edu/zelig/} to conduct parametric
+causal inference after preprocessing the data through \MatchIt.  (The
+resulting matched data sets can also be exported to other statistical
+programs using commands such as {\tt write.csv()} and {\tt
+  write.table()} for ASCII files, and {\tt write.dta} in {\tt foreign}
+package for a STATA binary file.)  Zelig \citep{ImaKinLau04} is an
+easy-to-use R package that implements a large variety of statistical
+models, gives easily interpretable results by simulating quantities of
+interest, provides numerical and graphical summaries, and is easily
+extensible.  The package along with the complete documentation is
+available at
+\hlink{http://gking.harvard.edu/zelig/}{http://gking.harvard.edu/zelig/}.
+\MatchIt\ and Zelig can be easily used together to enable estimation
+of causal effects in very general settings with a variety of
+statistical models.
+
+The general syntax is as follows. First, we use \texttt{match.data()}
+to create the matched data by excluding unmatched units from the
+original data, and including information about the particular matching
+procedure (i.e., weights, subclasses, and the distance measure).
+<<results=hide,eval=FALSE>>=
+m.data <- match.data(m.out)
+@
+where {\tt m.out} is the \MatchIt\ object from {\tt matchit()} and
+{\tt m.data} is the resulting matched data.  Next, we analyze the
+matched data set via the following command,
+<<results=hide,eval=FALSE>>=
+z.out <- zelig(Y ~ treat + x1 + x2, model = mymodel, data = m.data)
+@
+where {\tt Y} is the outcome variable, {\tt mymodel} is the selected
+model, and {\tt z.out} is the output object from {\tt zelig}.
+
 To illustrate this approach, we provide several examples using the
 Lalonde data. Users can run these example commands by typing {\tt
-  demo(Zelig)} at the R prompt. We use the linear least squares model
-in these examples. However, a wide range of other models are available
-in Zelig (for the list of supported models, see
-\hlink{http://gking.harvard.edu/zelig/docs/Models\_Zelig\_Can.html}{http://gking.harvard.edu/zelig/docs/Models_Zelig_Can.html}),
-and they can be used in the exactly same way. If you have not
-installed Zelig, follow the installation procedure described at
+  demo(Zelig)} at the R prompt. Although we use the linear least
+squares model in these examples, a wide range of other models are
+available in Zelig (for the list of supported models, see
+\hlink{http://gking.harvard.edu/zelig/docs/Models\_Zelig\_Can.html}{http://gking.harvard.edu/zelig/docs/Models_Zelig_Can.html}).
+If you have not installed Zelig, follow the installation procedure
+described at
 \hlink{http://gking.harvard.edu/zelig/docs/Installation.html}{http://gking.harvard.edu/zelig/docs/Installation.html}
 
 \begin{enumerate}
@@ -21,13 +66,12 @@ data(lalonde)
 library(Zelig)
 
 ## nearest neighbor matching using propensity scores
-m.out1 <- matchit(treat ~ age + educ + black + hispan + nodegree + married + re74 + re75, 
-                  method = "nearest", data = lalonde)
+m.out1 <- matchit(treat ~ age + educ + black + hispan + nodegree + married + re74 + re75, method = "nearest", data = lalonde)
 
 ## fit the linear model to the control group controlling for propensity score and 
 ## other covariates
 z.out1 <- zelig(re78 ~ age + educ + black + hispan + nodegree + married + re74 + re75 + distance,
-   		   data = match.data(m.out1, "control"), model = "ls")
+                   data = match.data(m.out1, "control"), model = "ls")
 
 ## set the covariates to the covariates of matched treated units
 ## use conditional prediction by setting cond = TRUE.
