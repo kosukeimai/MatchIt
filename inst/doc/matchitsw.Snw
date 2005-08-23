@@ -71,18 +71,19 @@ Elizabeth A. Stuart\thanks{Researcher, Mathematica Policy Research,
 
 \MatchIt\ implements the suggestions of \citet*{HoImaKin05} for
 improving parametric statistical models and reducing model dependence
-by preprocessing data with semi- and non-parametric matching methods.
-After preprocessing with \MatchIt, researchers can use whatever
-parametric model they would have used without \MatchIt, but produce
-inferences that are substantially more robust and less sensitive to
-modeling assumptions.  Matched data sets created by \MatchIt\ can also
-be entered easily into \hlink{Zelig}{http://gking.harvard.edu/zelig/}
-\citep{ImaKinLau04}, or other programs, for subsequent parametric
-analyses.  \MatchIt\ reduces the dependence of causal inferences on
-commonly made, but hard-to-justify, statistical modeling assumptions
-via a wide range of sophisticated matching methods.  In addition, we
-have written \MatchIt\ so that adding methods to its structure is
-easy, if you have the inclination.
+by preprocessing data with semi-parametric and non-parametric matching
+methods.  After preprocessing with \MatchIt, researchers can use
+whatever parametric model they would have used without \MatchIt, but
+produce inferences that are substantially more robust and less
+sensitive to modeling assumptions.  Matched data sets created by
+\MatchIt\ can also be entered easily into
+\hlink{Zelig}{http://gking.harvard.edu/zelig/} \citep{ImaKinLau04}, or
+other programs, for subsequent parametric analyses.  \MatchIt\ reduces
+the dependence of causal inferences on commonly made, but
+hard-to-justify, statistical modeling assumptions via a wide range of
+sophisticated matching methods.  In addition, we have written
+\MatchIt\ so that adding new matching methods to the software is easy,
+if you have the inclination.
 
 \subsection{Software Requirements} 
 \label{subsec:require}
@@ -91,13 +92,12 @@ easy, if you have the inclination.
 statistical software, and will run on any platform where R is
 installed (Windows, Unix, or Mac OS X).  R is available free for
 download at the Comprehensive R Archive Network (CRAN) at
-\hlink{http://www.r-project.org/}{http://www.r-project.org/}.
-\MatchIt\ has been tested on the most recent version of R (2.1.1).  A
-good way to learn R, if you don't know it already, is to learn Zelig
-(available at
-\hlink{http://gking.harvard.edu}{http://gking.harvard.edu}) which
-includes a self-contained introduction to R and can then be used to
-analyze the data after running \MatchIt.
+\hlink{http://cran.r-project.org/}{http://cran.r-project.org/}.
+\MatchIt\ has been tested on the most recent version of R.  A good way
+to learn R, if you don't know it already, is to learn Zelig (available
+at \hlink{http://gking.harvard.edu}{http://gking.harvard.edu}) which
+includes a self-contained introduction to R and can be used to analyze
+the matched data after running \MatchIt.
 
 \subsection{Installing \MatchIt}
 \label{subsec:install}
@@ -107,14 +107,13 @@ To install \MatchIt\ for all platforms, type at the R command prompt:
 install.packages("MatchIt")
 @
 and \MatchIt\ will install itself onto your system automatically.
-During the process you may either decide to keep or discard the
-installation files, which will not affect the way \MatchIt\ runs.  You
-only need to do this once.  Some users may also find it helpful to
-install the package with version control (see
-Subsection~\ref{subsec:vercontrol}).
+During the installation process you may either decide to keep or
+discard the installation files, which will not affect the way
+\MatchIt\ runs.  Note that you only need to do this once.  Some users
+may also find it helpful to install the package with version control
+(see Subsection~\ref{subsec:vercontrol}).
 
-\subsection{Loading \MatchIt}
-\label{subsec:load}
+\subsection{Loading \MatchIt} \label{subsec:load}
 
 As with any R package, you need install \MatchIt\ only once, but you
 must load it prior to each use.  You can do this for each R session by
@@ -144,7 +143,8 @@ We recommend that you periodically update \MatchIt\ at the R prompt by typing:
 update.packages()
 library(MatchIt) 
 @
-which will update all the libraries including \MatchIt.
+which will update all the libraries including \MatchIt and load the
+new version of \MatchIt.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -156,35 +156,35 @@ of dependent variables) that is a function of a dichotomous causal (or
 ``control'' groups, and a set of ``pretreatment'' covariates, i.e.,
 that are causally prior to the administration of the treatment.
 \MatchIt\ works for experimental data, but is also designed for
-observational designs where the treatment variable is observed rather
-than manipulated by the investigator.  \MatchIt\ can be used for other
-types of causal variables by dichotomizing them, perhaps in multiple
-ways \citep[see also][]{ImaDyk04}.
+observational studies where the treatment variable is simply observed
+rather than manipulated by the investigator.  \MatchIt\ can be used
+for other types of causal variables by dichotomizing them, perhaps in
+multiple ways \citep[see also][]{ImaDyk04}.
 
 \subsection{Preprocessing via Matching}
 
-The goal of matching is to adjust the data prior to the parametric
-analysis so that (1) the relationship between $t_i$ and $X_i$ is
-eliminated or reduced, and (2) no bias and little inefficiency is
-induced.  This means that during matching we can select, duplicate, or
-selectively drop observations from an existing sample without inducing
-bias, as long as we do so using a rule that is a function only of
-$t_i$ and $X_i$.  \MatchIt\ provides, implements, and evaluates the
-choice of these rules.  After matching, the original dataset will be
-preprocessed so that $t_i$ and $X_i$ are unrelated or less related
-than before. This indicates that the treatment and control groups have
-the same background characteristics, or, formally $\tilde p(X|t=1)
-\approx \tilde p(X|t=0)$, where $\tilde p$ refers to the observed
-empirical density of the data (think histogram), rather than a
-population density.
+The goal of matching is to preprocess the data prior to the parametric
+analysis so that the relationship between $t_i$ and $X_i$ is
+eliminated or reduced without introducing bias and inefficiency.  This
+means that when matching we can select, duplicate, or selectively drop
+observations from an existing sample without inducing bias, as long as
+we do so using a rule that is a function only of $t_i$ and $X_i$ and
+does not depend on the outcome variable $Y_i$.  \MatchIt\ provides,
+implements, and evaluates the choice of these rules.  After matching,
+the original dataset will be preprocessed so that $t_i$ and $X_i$ are
+unrelated or less related than before. This implies that the treatment
+and control groups have the same background characteristics, or,
+formally $\tilde p(X\mid t=1) \approx \tilde p(X\mid t=0)$, where
+$\tilde p$ refers to the observed empirical density of the data (think
+histogram), rather than a population density.
 
 The simplest way to obtain good matches (as defined above) is to use
 one-to-one exact matching, which pairs each treated unit with one
 control unit for which the values of $X_i$ are identical.  However,
 with many covariates and finite numbers of potential matches, it is
-often very difficult to obtain exact matches.  Luckily, good matching
-only requires that the \emph{distribution} of $X$ given $t=0$ match
-the distribution of $X$ given $t=1$, and so individual (exactly)
+often very difficult to obtain exact matches.  Fortunately, good
+matching only requires that the empirical \emph{distribution} of $X$
+given $t=0$ match that of $X$ given $t=1$, and so individual (exactly)
 matched pairs are not required.  Indeed, many of the other methods
 implemented in \MatchIt\ only attempt to balance the overall covariate
 distributions, without necessarily finding one-to-one exact matches.
