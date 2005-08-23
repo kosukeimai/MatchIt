@@ -173,7 +173,7 @@ $t_i$ and $X_i$.  \MatchIt\ provides, implements, and evaluates the
 choice of these rules.  After matching, the original dataset will be
 preprocessed so that $t_i$ and $X_i$ are unrelated or less related
 than before. This indicates that the treatment and control groups have
-the same background characteristics, or formally $\tilde p(X|t=1)
+the same background characteristics, or, formally $\tilde p(X|t=1)
 \approx \tilde p(X|t=0)$, where $\tilde p$ refers to the observed
 empirical density of the data (think histogram), rather than a
 population density.
@@ -217,7 +217,7 @@ variables, changing others, and computing predicted or expected values
 and taking the difference or ratio.  In the case of causal inference,
 this would probably mean looking at the effect on the expected value
 of the outcome variable when changing $T$ from 0 to 1, while holding
-constant the pretreatment control variables $X$ at their their means
+constant the pretreatment control variables $X$ at their means
 or medians.  This, and indeed any other ordinary procedure, would be a
 perfectly reasonable way to proceed with analysis after matching.
 
@@ -226,7 +226,7 @@ average treatment effect on the treated.  For example, for the treated
 group, the potential outcomes under control, $Y_{0i}$, are missing,
 whereas the outcomes under treatment, $Y_{1i}$, are observed, and the
 goal of the analysis is to impute the missing outcomes, $Y_{0i}$ in
-observations where $T_i=1$, which we do via simulation using a
+observations where $T_i=1$.  We do this via simulation using a
 parametric statistical model (as described below).  Once those
 potential outcomes are imputed from the model, the estimate of
 individual $i$'s treatment effect is $Y_{1i}-\widehat{Y}_{0i}$ where
@@ -256,7 +256,7 @@ missing outcomes $Y_{i0}$ are imputed for the matched treated units by
 using the values of the explanatory variables for the treated units.
 The first approach will usually have lower variance, since all
 observations are used, and the second may have less bias, since no
-assumption of constant parameters is needed.  See \citep{HoImaKin05}
+assumption of constant parameters is needed.  See \citet*{HoImaKin05}
 for more details.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -408,8 +408,8 @@ When there are many covariates (or many values of some covariates) on
 which matches are desired, finding sufficient exact matches will often
 be impossible.  In that case, subclassification is sometimes
 desirable. Various subclassification schemes exist, including the one
-based on a scalar distance measure such as the estimated propensity
-score using the \texttt{distance} option (see
+based on a scalar distance measure such as the propensity
+score estimated using the \texttt{distance} option (see
 Section~\ref{subsubsec:inputs-all}).  Subclassification will form
 subclasses based on this distance measure.  Within each subclass, the
 distribution of covariates in the treatment and control groups should
@@ -447,7 +447,7 @@ object with the subclass numbers.
 
 Nearest neighbor matching selects the $r$ best control matches for
 each individual in the treatment group (excluding those discarded
-using the \texttt{discard}) option.  The matching is done using a
+using the \texttt{discard}) option (by default, $r=1$).  The matching is done using a
 distance measure specified by the {\tt distance} option. Matches are
 chosen for each treated unit one at a time, and at each matching step
 we choose the control unit that is not yet matched but is closest to
@@ -539,10 +539,15 @@ for a complete list of optional inputs for full matching.
 Full matching can be performed with \MatchIt\ by setting
 \texttt{method = "full"}.  We use an add-on package called
 \texttt{optmatch} \citep{Hansen04}, which must be installed separately
-by typing at the R command prompt, %** can we do this automatically if
-its needed, like we do in zelig?  <<results=hide,eval=FALSE>>=
+by typing at the R command prompt, 
+
+%can we do this automatically if its needed, like we do in zelig?  
+<<results=hide,eval=FALSE>>=
 install.packages("optmatch", contriburl =
-"http://www.stat.lsa.umich.edu/~bbh/optmatch") @ For more information
+"http://www.stat.lsa.umich.edu/~bbh/optmatch") 
+@ 
+
+For more information
 about the package, see
 \hlink{http://www.stat.lsa.umich.edu/\~{}bbh/optmatch.html}{http://www.stat.lsa.umich.edu/\~bbh/optmatch.html}.
 The following example script can be run by typing {\tt demo(full)} at
@@ -582,10 +587,15 @@ for a complete list of optional inputs for optimal matching.
 Optimal matching is performed with \MatchIt\ by setting \texttt{method
   = "optimal"}.  We use an add-on package called \texttt{optmatch}
   \citep{Hansen04}, which must be installed separately by typing at
-  the R command prompt, %** can we do this automatically if its
-  needed, like we do in zelig?  <<results=hide,eval=FALSE>>=
+  the R command prompt, 
+
+%** can we do this automatically if its needed, like we do in zelig?  
+<<results=hide,eval=FALSE>>=
   install.packages("optmatch", contriburl =
-  "http://www.stat.lsa.umich.edu/~bbh/optmatch") @ For more
+  "http://www.stat.lsa.umich.edu/~bbh/optmatch") 
+@ 
+
+For more
   information about the package, see
   \hlink{http://www.stat.lsa.umich.edu/\~{}bbh/optmatch.html}{http://www.stat.lsa.umich.edu/\~bbh/optmatch.html}.
   The following example script (optimal ratio matching based on the
@@ -641,7 +651,7 @@ the same covariate values as anyone in the other treatment group have
 
 For example, we can use the {\tt sublass} component of {\tt m.out} to
 identify which units are in each subclass and to verify their
-covariate values.  To see ID numbers of the first 10 units in subclass
+covariate values.  To see the ID numbers of the first 10 units in subclass
 1, in which all subjects are black and have 11 years of education
 (``NSW'' refers to the National Supported Work Demonstration
 participants):
@@ -821,7 +831,8 @@ summary(m.out)
 The \texttt{summary} output for subclassification is the same as that
 for nearest neighbor matching, except that the balance statistics are
 shown separately for each subclass, and the overall balance in the
-matched samples is calculated by aggregating across the subclasses.
+matched samples is calculated by aggregating across the subclasses, where each subclass is weighted
+by the number of units in the subclass.
 Consistent with the calculations for the full and matched samples, the
 standardized bias within each subclass is also calculated using the
 standard deviation of the full treated group, again so that the
