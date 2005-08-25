@@ -193,21 +193,22 @@ distributions, without necessarily finding one-to-one exact matches.
 
 The goal of a matching procedure is to replicate a randomized
 experiment in terms of finding units who look as if they could have
-been randomly assigned to treatment or control status.  That is, we
-would like the distribution of covariates to be the same in the
-matched treated and matched control groups. Thus, a crucial part of
-any matching procedure is assessing how close the matches are in the
-two groups, which we call the ``balance".  Because the outcome
-variable is not used in the matching procedure, a variety of matching
-methods can be assessed, and the matching procedure that leads to the
-best balance chosen.  \MatchIt\ provides a number of ways to assess
-the balance of covariates after matching, including numerical
-summaries such as the standardized bias (difference in means divided
-by the treated group standard deviation) and graphical summaries such
-as quantile-quantile plots that compare the empirical distributions of
-each covariate.  These diagnostics can be done on the covariates
-included in the matching procedure, as well as on other covariates on
-which close matches are desired.
+been randomly assigned to treatment or control status.  That is, as
+described above, we would like the distribution of covariates to be
+the same in the matched treated and matched control groups. A crucial
+part of any matching procedure is, therefore, to assess how close the
+(empirical) covariate distributions are in the two groups, which we
+call the ``balance".  Because the outcome variable is not used in the
+matching procedure, a variety of matching methods can be assessed, and
+the matching procedure that leads to the best balance is chosen.
+\MatchIt\ provides a number of ways to assess the balance of
+covariates after matching, including numerical summaries such as the
+standardized bias (difference in means divided by the treated group
+standard deviation) and graphical summaries such as quantile-quantile
+plots that compare the empirical distributions of each covariate.
+These diagnostics can be done on all the covariates that are included
+in the matching procedure, as well as on other covariates on which
+close matches are desired.
 
 \subsection{Conducting Analyses after Matching}
 
@@ -230,17 +231,18 @@ observations where $T_i=1$.  We do this via simulation using a
 parametric statistical model (as described below).  Once those
 potential outcomes are imputed from the model, the estimate of
 individual $i$'s treatment effect is $Y_{1i}-\widehat{Y}_{0i}$ where
-$\widehat{Y}_{0i}$ is a simulation of the average missing potential
-outcome for unit $i$ (that is it is a simulation of the value of the
-dependent variable for unit $i$ under the counterfactual condition
-where $T_i=0$).  The in-sample average treatment effect for the
-treated individuals can then be obtained by averaging this
-difference over all observations $i$ where in fact $T_i=1$.  (A similar
-procedure can also be used to estimate various other quantities of
-interest such as the average treatment effect for all observations.)
-An advantage of this simulation approach is that the uncertainty
-estimates such as standard errors and confidence intervals are
-obtained easily by the usual rules in fitting the parametric model.
+$\widehat{Y}_{0i}$ is a Monte Carlo estimate of the average missing
+potential outcome for unit $i$ (i.e., the average of simulated values
+of the dependent variable for unit $i$ under the counterfactual
+condition where $T_i=0$).  The in-sample average treatment effect for
+the treated individuals can then be obtained by averaging this
+difference over all observations $i$ where in fact $T_i=1$.  (A
+similar procedure can also be used to estimate various other
+quantities of interest such as the average treatment effect for all
+observations.)  An advantage of this simulation approach is that the
+uncertainty estimates such as standard errors and confidence intervals
+are obtained easily by the usual rules in fitting the parametric
+model.
 
 The imputation from the model can be done in at least two ways.
 Recall that the model is used to impute \emph{the value that the
@@ -292,10 +294,10 @@ set, \texttt{lalonde}, was created using NSWRE74$\_$TREATED.TXT and
 CPS3$\_$CONTROLS.TXT from
 http://www.columbia.edu/$\sim$rd247/nswdata.}  The variables in this
 dataset are described in Table~\ref{dwvars}.  One causal effect of
-interest is the impact that participation in the job training program,
-\texttt{treat == 1}, had on real earnings in 1978, \texttt{re78}, for
-those that participated in the program.  The average treatment effect
-on the treated (ATT) is defined as, 
+interest is the impact of participation in the job training program,
+\texttt{treat == 1}, on real earnings in 1978, \texttt{re78}, for
+those individuals that participated in the program.  The average
+treatment effect on the treated (ATT) is defined as,
 \begin{align}
   \label{att}
   \text{ATT} & = \frac{1}{\sum_{i=1}^n t_i}\sum_{i:t_i=1} E[Y_i(1) - Y_i(0)],
