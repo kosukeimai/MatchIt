@@ -286,10 +286,10 @@ $y_i=t_iy_{1i}+(1-t_i)y_{0i}$, and not the other.
 \label{subsec:lalonde}
 
 For a running example, we use data from the job training program
-analyzed in \citet{lalonde86} and \citet{DehWah99}.  A subsample of
-the data consisting of the National Supported Work Demonstration (NSW)
-treated group and the comparison sample from the Population Survey of
-Income Dynamics (PSID) is included in \MatchIt.\footnote{This data
+analyzed in \citet{lalonde86} and \citet{DehWah99}. \MatchIt\ includes
+a subsample of the original data consisting of the National Supported
+Work Demonstration (NSW) treated group and the comparison sample from
+the Population Survey of Income Dynamics (PSID).\footnote{This data
 set, \texttt{lalonde}, was created using NSWRE74$\_$TREATED.TXT and
 CPS3$\_$CONTROLS.TXT from
 http://www.columbia.edu/$\sim$rd247/nswdata.}  The variables in this
@@ -303,12 +303,12 @@ treatment effect on the treated (ATT) is defined as,
   \text{ATT} & = \frac{1}{\sum_{i=1}^n t_i}\sum_{i:t_i=1} E[Y_i(1) - Y_i(0)],
 \end{align}
 where $Y_i(1)$ represents the potential outcome under the treatment of
-the job program, and $Y_i(0)$ under control.  Note that the first term
-inside the expectation (the right hand side of Equation~\ref{att}) is
-\emph{observed}, whereas the second term is the \emph{unobserved}
-counterfactual of real earnings if participants had not participated.
-The nature of causal inference is that one of the two terms in the
-difference will always be unobserved.  
+the job program, and $Y_i(0)$ is the potential outcome under control.
+Note that the first term inside the expectation (the right hand side
+of Equation~\ref{att}) is \emph{observed}, whereas the second term is
+the \emph{unobserved} counterfactual of real earnings if participants
+had not participated.  The nature of causal inference is that one of
+the two terms in the difference will always be unobserved.
 
 \begin{table}[h]
 \centering
@@ -342,14 +342,14 @@ difference will always be unobserved.
 \subsection{Preprocessing via Matching}
 \label{subsec:matching}
 
-\texttt{matchit()} implements a variety of matching procedures.  A
-general syntax is
+The main command \texttt{matchit()} implements a variety of matching
+procedures.  A general syntax is given by,
 <<results=hide, eval=FALSE>>=
 m.out <- matchit(treat ~ x1 + x2, data = mydata)
 @
 where {\tt treat} is the dichotomous treatment variable, and {\tt x1}
 and {\tt x2} are pre-treatment covariates.  This command creates the
-\MatchIt\ object called \texttt{m.out}.  A quick summary of the
+\MatchIt\, object called \texttt{m.out}.  A quick summary of the
 matching procedure can be printed on the screen by typing
 <<results=hide, eval=FALSE>>=
 m.out
