@@ -51,7 +51,7 @@ Elizabeth A. Stuart\thanks{Researcher, Mathematica Policy Research,
 
 \makeindex
 
-\usepackage{/Library/Frameworks/R.framework/Resources/share/texmf/Sweave}
+\usepackage{/usr/lib64/R/share/texmf/Sweave}
 \begin{document}
 \maketitle
 
@@ -409,15 +409,13 @@ a short summary about the matching procedure, type
 > m.out
 \end{Sinput}
 \begin{Soutput}
-Call: 
-matchit(formula = treat ~ educ + black + hispan, data = lalonde, 
-    method = "exact")
+Call: matchit(formula = treat ~ educ + black + hispan, data = lalonde,     method = "exact")
 
 Exact Subclasses: 25
 
 Sample sizes:
           Control Treated
-All           429     185
+Full          429     185
 Matched       376     184
 Unmatched      53       1
 \end{Soutput}
@@ -462,14 +460,12 @@ subclassification.  The following example script can be run by typing
 > m.out
 \end{Sinput}
 \begin{Soutput}
-Call: 
-matchit(formula = treat ~ re74 + re75 + educ + black + hispan + 
-    age, data = lalonde, method = "subclass")
+Call: matchit(formula = treat ~ re74 + re75 + educ + black + hispan +     age, data = lalonde, method = "subclass")
 
 Sample sizes by subclasses:
 
            Control Treated
-All            429     185
+Full           429     185
 Subclass 1     344      31
 Subclass 2      26      31
 Subclass 3      17      30
@@ -527,13 +523,11 @@ You may again check basic statistics of the \MatchIt\ object by the
 > m.out
 \end{Sinput}
 \begin{Soutput}
-Call: 
-matchit(formula = treat ~ re74 + re75 + educ + black + hispan + 
-    age, data = lalonde, method = "nearest")
+Call: matchit(formula = treat ~ re74 + re75 + educ + black + hispan +     age, data = lalonde, method = "nearest")
 
 Sample sizes:
           Control Treated
-All           429     185
+Full          429     185
 Matched       185     185
 Unmatched     244       0
 Discarded       0       0
@@ -655,14 +649,11 @@ Loading required package: optmatch
 > m.out
 \end{Sinput}
 \begin{Soutput}
-Call: 
-matchit(formula = treat ~ age + educ + black + hispan + married + 
-    nodegree + re74 + re75, data = lalonde, method = "full", 
-    distance = "logit")
+Call: matchit(formula = treat ~ age + educ + black + hispan + married +     nodegree + re74 + re75, data = lalonde, method = "full",     distance = "logit")
 
 Sample sizes:
           Control Treated
-All           429     185
+Full          429     185
 Matched       429     185
 Unmatched       0       0
 Discarded       0       0
@@ -715,13 +706,11 @@ propensity score from the logistic regression) can be run by typing
 > m.out
 \end{Sinput}
 \begin{Soutput}
-Call: 
-matchit(formula = treat ~ re74 + re75 + age + educ, data = lalonde, 
-    method = "optimal", distance = "logit", ratio = 2)
+Call: matchit(formula = treat ~ re74 + re75 + age + educ, data = lalonde,     method = "optimal", distance = "logit", ratio = 2)
 
 Sample sizes:
           Control Treated
-All           429     185
+Full          429     185
 Matched       370     185
 Unmatched      59       0
 Discarded       0       0
@@ -768,16 +757,18 @@ Section~\ref{subsec:outputs} for more details.
 \end{Sinput}
 \begin{Soutput}
 Call:
-matchit(formula = treat ~ educ + black + hispan, data = lalonde, 
-    method = "exact")
+matchit(formula = treat ~ educ + black + hispan, data = lalonde,     method = "exact")
 
-Sample sizes:
+
+Sample sizes for full and exactly matched data:
+
           Control Treated
-All           429     185
+Full          429     185
 Matched       376     184
 Discarded      53       1
 
 Matched sample sizes by subclass:
+
    Treated Control Total educ black hispan
 1       39      13    52   11     1      0
 2        4      10    14    9     0      1
@@ -863,10 +854,10 @@ NSW24   11     1      0
 \end{Sinput}
 \begin{Soutput}
 Call:
-matchit(formula = treat ~ re74 + re75 + educ + black + hispan + 
-    age, data = lalonde, method = "nearest")
+matchit(formula = treat ~ re74 + re75 + educ + black + hispan +     age, data = lalonde, method = "nearest")
 
 Summary of balance for all data:
+
          Means Treated Means Control Treated SD Std. Bias   QQ Med  QQ Mean
 distance         0.566         0.187      0.211     1.792    0.732    0.535
 re74          2095.574      5619.237   4886.620    -0.721 3430.277 5155.851
@@ -884,8 +875,8 @@ black        1.414
 hispan       1.414
 age         14.142
 
-
 Summary of balance for matched data:
+
          Means Treated Means Control Treated SD Std. Bias  QQ Med QQ Mean
 distance         0.566         0.365      0.211     0.951   0.150   0.284
 re74          2095.574      2466.304   4886.620    -0.076 410.082 978.726
@@ -904,6 +895,7 @@ hispan       1.414
 age         11.314
 
 Percent Balance Improvement:
+
          Mean and Std. Bias  QQ Med QQ Mean QQ Max
 distance              46.94   79.43   46.79  17.59
 re74                  89.48   88.05   81.02 -42.26
@@ -914,6 +906,7 @@ hispan              -161.35    0.00 -157.70   0.00
 age                   89.26 -100.00   16.81  20.00
 
 Sample sizes:
+
           Control Treated
 All           429     185
 Matched       185     185
@@ -1059,9 +1052,10 @@ variables, as was also seen using the \texttt{summary()} command.
 \end{Sinput}
 \begin{Soutput}
 Call:
-matchit(formula = treat ~ re74 + re75 + educ + black + hispan + 
-    age, data = lalonde, method = "subclass", sub.by = "treat")
+matchit(formula = treat ~ re74 + re75 + educ + black + hispan +     age, data = lalonde, method = "subclass", sub.by = "treat")
+
 Summary of balance for all data:
+
          Means Treated Means Control Treated SD Std. Bias   QQ Med  QQ Mean
 distance         0.566         0.187      0.211     1.792    0.732    0.535
 re74          2095.574      5619.237   4886.620    -0.721 3430.277 5155.851
@@ -1081,6 +1075,7 @@ age         14.142
 
 
 Summary of balance by subclasses:
+
 , , Subclass 1
 
          Means Treated Means Control Treated SD Std. Bias    QQ Med   QQ Mean
@@ -1197,12 +1192,14 @@ age         11.314
 
 
 Sample sizes by subclasses:
+
         Subclass 1 Subclass 2 Subclass 3 Subclass 4 Subclass 5 Subclass 6
 Treated         31         31         30         31         31         31
 Control        344         26         17         21          7         14
 Total          375         57         47         52         38         45
 
 Summary of balance across subclasses
+
          Means Treated Means Control Treated SD Std. Bias  QQ Med  QQ Mean
 distance         0.566         0.559      0.016     0.034   0.013    0.017
 re74          2095.574      2715.819   1678.241    -0.127 967.190 1373.887
@@ -1221,6 +1218,7 @@ hispan      0.237
 age        15.799
 
 Percent Balance Improvement:
+
          Mean and Std. Bias  QQ Med QQ Mean  QQ Max
 distance             98.088   98.16   96.84  94.967
 re74                 82.398   71.80   73.35  67.050

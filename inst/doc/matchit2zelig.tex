@@ -107,21 +107,21 @@ Mean Values of Observed Data (n = 185)
   1.892e-01   2.096e+03   1.532e+03   5.774e-01 
 
 Pooled Expected Values: E(Y|X)
-  mean     sd   2.5%  97.5% 
-4988.4 2264.7  785.4 9974.8 
+   mean      sd    2.5%   97.5% 
+ 5019.8  2279.5   724.3 10013.1 
 
 Pooled Average Treatment Effect: Y - EV
   mean     sd   2.5%  97.5% 
-1360.7  598.9  244.7 2538.7 
+1329.3  585.8  181.0 2472.9 
 
 \end{Soutput}
 \end{Schunk}
 The results indicate that the estimated average treatment effect on
 the treated is 
-\$1360.7,
+\$1329.3,
 with a 95\% interval of
-(\$245,
-\$2538.7).
+(\$181,
+\$2472.9).
 
 It is also possible to estimate the average treatment effects on both
 the treated and the control groups. To do this, we fit the linear
@@ -160,14 +160,14 @@ The point estimate and its standard error is given by
 > mean(ate.all)
 \end{Sinput}
 \begin{Soutput}
-[1] 1607
+[1] 1626
 
 \end{Soutput}
 \begin{Sinput}
 > sd(ate.all)
 \end{Sinput}
 \begin{Soutput}
-[1] 787
+[1] 797.2
 
 \end{Soutput}
 \end{Schunk}
@@ -177,8 +177,8 @@ The 95\% confidence interval is given by
 > quantile(ate.all, c(0.025, 0.975))
 \end{Sinput}
 \begin{Soutput}
- 2.5% 97.5% 
-  132  3262 
+  2.5%  97.5% 
+ 181.4 3348.8 
 
 \end{Soutput}
 \end{Schunk}
@@ -236,20 +236,20 @@ Mean Values of Observed Data (n = 46)
 
 Pooled Expected Values: E(Y|X)
  mean    sd  2.5% 97.5% 
- 4401  5396 -6000 15831 
+ 4464  5366 -5489 16055 
 
 Pooled Average Treatment Effect: Y - EV
- mean    sd  2.5% 97.5% 
- 1948  1746 -1043  5866 
+  mean     sd   2.5%  97.5% 
+1887.2 1681.9 -868.5 5698.7 
 
 \end{Soutput}
 \end{Schunk}
 The results indicate that the estimated average treatment effect on
 the treated is
-\$1948.1,
+\$1887.2,
 with a 95\% interval of
-(\$-1042.8,
-\$5865.6).
+(\$-868.5,
+\$5698.7).
 It is also possible to get the summary result for each subclass. For
 example, the following command summarizes the result for the second
 subclass.
@@ -269,12 +269,12 @@ Mean Values of Observed Data (n = 45)
      1.0000   1777.4221    972.3441      0.6039 
 
 Pooled Expected Values: E(Y|X)
-  mean     sd   2.5%  97.5% 
-3781.1 2571.1 -989.8 9578.7 
+ mean    sd  2.5% 97.5% 
+ 3723  2583 -1065  9493 
 
 Pooled Average Treatment Effect: Y - EV
-  mean     sd   2.5%  97.5% 
-2705.2 1180.7  682.3 4859.4 
+ mean    sd  2.5% 97.5% 
+ 2763  1346   236  5185 
 
 
 \end{Soutput}

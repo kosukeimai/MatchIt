@@ -344,7 +344,7 @@ the two terms in the difference will always be unobserved.
 \label{subsec:matching}
 
 The main command \texttt{matchit()} implements a variety of matching
-procedures.  A general syntax is given by,
+procedures.  A general syntax is given by
 <<results=hide, eval=FALSE>>=
 m.out <- matchit(treat ~ x1 + x2, data = mydata)
 @
@@ -405,8 +405,9 @@ command can be used with exact matching.
 \subsubsection{Subclassification}
 \label{subsubsec:subclass}
 
-When there are many covariates (or some covariates can take a large
-number of values) on which matches are desired, finding sufficient
+When there are many covariates 
+on which matches are desired (or some covariates can take a large
+number of values), finding sufficient
 exact matches will often be impossible.  In that case,
 subclassification is sometimes desirable. Various subclassification
 schemes exist, including the one based on a scalar distance measure
