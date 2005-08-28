@@ -897,7 +897,7 @@ low propensity scores.
 \subsection{Conducting Analyses after Matching}
 \label{subsec:analysis}
 
-\input{matchit2zeligsw}
+\input{matchit2zelig}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
