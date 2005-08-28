@@ -1,5 +1,5 @@
 print.matchit <- function(x, digits = getOption("digits"), ...){
-  cat("\nCall: ", deparse(x$call),"\n", sep="\n")
+  cat("\nCall: ", deparse(x$call), sep="\n")
   cat("\nSample sizes:\n")
   
   #if(any(x$weights>0)) 
@@ -16,7 +16,7 @@ print.matchit <- function(x, digits = getOption("digits"), ...){
   nn[3,] <- c(sum(x$treat==0 & x$weights==0 & x$discarded==0), sum(x$treat==1 & x$weights==0 & x$discarded==0))
   nn[4,] <- c(sum(x$treat==0 & x$weights==0 & x$discarded==1), sum(x$treat==1 & x$weights==0 & x$discarded==1))
 
-  dimnames(nn) <- list(c("Full","Matched","Unmatched","Discarded"),
+  dimnames(nn) <- list(c("All","Matched","Unmatched","Discarded"),
                        c("Control","Treated"))
   print.table(nn, ...)
   invisible(x)

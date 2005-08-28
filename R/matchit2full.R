@@ -1,10 +1,10 @@
 matchit2full <- function(treat, X, data, distance, discarded,
                          verbose=FALSE, ...) { 
   require(optmatch)
-
- if(verbose)
+  
+  if(verbose)
     cat("Full matching... \n")
-
+  
   ## full matching for undiscarded units
   ttt <- treat[!discarded]
   n0 <- length(ttt[ttt==0])
