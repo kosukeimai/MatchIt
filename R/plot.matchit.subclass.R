@@ -1,4 +1,6 @@
-plot.matchit.subclass <- function(x, discrete.cutoff=5,type="QQ", ...){
+plot.matchit.subclass <- function(x, discrete.cutoff=5,
+                                  type="QQ", interactive = T,
+                                  subclass = NULL, ...){
   choice.menu <- function(choices,question)
     {
       k <- length(choices)-1
@@ -16,17 +18,24 @@ plot.matchit.subclass <- function(x, discrete.cutoff=5,type="QQ", ...){
       return(ans)
     }
   if(type=="QQ"){
-    choices <- c("No",paste("Yes : Subclass ", 1:max(x$subclass,na.rm=T)))
-    question <- "Would you like to see quantile-quantile plots of any subclasses?"
-    ans <- -1
-    while(ans!=0)
-      {
-        ans <- as.numeric(choice.menu(choices,question))
-        if(ans!=0)
-          {
-            matchit.qqplot(x,discrete.cutoff,which.subclass=ans)     
-          }
-      }
+    if(interactive){
+      choices <- c("No",paste("Yes : Subclass ", 1:max(x$subclass,na.rm=T)))
+      question <- "Would you like to see quantile-quantile plots of any subclasses?"
+      ans <- -1
+      while(ans!=0)
+        {
+          ans <- as.numeric(choice.menu(choices,question))
+          if(ans!=0)
+            {
+              matchit.qqplot(x,discrete.cutoff,which.subclass=ans,
+                             interactive = interactive)     
+            }
+        }
+    } else {
+      print(subclass)
+      matchit.qqplot(x,discrete.cutoff,which.subclass=subclass,
+                     interactive=interactive)
+    }
   } else if(type=="jitter"){
     jitter.pscore(x)
   } else {

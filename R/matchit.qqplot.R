@@ -1,4 +1,6 @@
-matchit.qqplot <- function(x,discrete.cutoff,which.subclass=NULL, numdraws=5000){
+matchit.qqplot <- function(x,discrete.cutoff,
+                           which.subclass=NULL, numdraws=5000,
+                           interactive = T){
   covariates  <- x$X
   treat <- x$treat
   matched <- x$weights!=0
@@ -32,7 +34,11 @@ matchit.qqplot <- function(x,discrete.cutoff,which.subclass=NULL, numdraws=5000)
   nc <- length(nn)
   covariates <- data.matrix(covariates)
   oma <- c(4, 4, 6, 4)
-  opar <- par(mfrow = c(3, 3), mar = rep.int(1/2, 4), oma = oma, ask=T)
+  if(interactive){
+    opar <- par(mfrow = c(3, 3), mar = rep.int(1/2, 4), oma = oma, ask=T)
+  } else {
+    opar <- par(mfrow = c(3, 3), mar = rep.int(1/2, 4), oma = oma, ask=F)
+  }
   on.exit(par(opar))
   for (i in 1:nc){
     xi <- covariates[,i]
