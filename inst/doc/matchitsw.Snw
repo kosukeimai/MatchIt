@@ -190,6 +190,7 @@ implemented in \MatchIt\ only attempt to balance the overall covariate
 distributions, without necessarily finding one-to-one exact matches.
 
 \subsection{Checking Balance}
+\label{subsec:balance-sum}
 
 The goal of a matching procedure is to replicate a randomized
 experiment in terms of finding units who look as if they could have
@@ -426,7 +427,7 @@ m.out <-  matchit(treat ~ re74 + re75 + educ + black + hispan + age, data = lalo
 m.out
 @
 The above syntax forms forms 6 subclasses, which is the default number
-of subclases, based on a distance measure estimated using logistic
+of subclasses, based on a distance measure estimated using logistic
 regression.  By default, each subclass will have approximately the
 same number of treated units.  See
 Sections~\ref{subsubsec:inputs-all}~and~\ref{subsubsec:inputs-subclass}
@@ -469,7 +470,8 @@ You may again check basic statistics of the \MatchIt\ object by the
 <<>>=
 m.out
 @ 
-We see that 185 control units were matched to the 185 treated units (a ``1-1'' match).  
+We see that 185 control units were matched to the 185 treated units
+(an one-to-one match).  
 
 \paragraph{Additional Examples}
 Here, we illustrate various options of nearest neighbor matching by
@@ -547,7 +549,7 @@ about the package, see
 \hlink{http://www.stat.lsa.umich.edu/\~{}bbh/optmatch.html}{http://www.stat.lsa.umich.edu/\~bbh/optmatch.html}.
 
 The following example script can be run by typing {\tt demo(full)} at
-the R prompt.  We first load the Lalonde data, confuct full matching
+the R prompt.  We first load the Lalonde data, conduct full matching
 (using the propensity score based on logistic regression), and then
 print a short summary.
 <<>>=
@@ -605,26 +607,25 @@ are matched through the optimal matching procedure.
 \label{subsec:balance}
 
 In \MatchIt, there are two ways to check balance after any matching
-procedure. Given the \MatchIt\ output object {\tt m.out}, one can use
-the following commands
+procedure: numerical and graphical summaries. Both methods are based
+on the same idea summarized in Section~\ref{subsec:balance-sum} and
+fully described in \citet*{HoImaKin05}. Given the \MatchIt\ output
+object {\tt m.out}, one can use the following commands,
 \begin{enumerate}
 \item \texttt{summary(m.out)} gives numerical summaries of the
   resulting balance of covariates.
-
+  
 \item \texttt{plot(m.out)} gives graphical summaries to assess balance
   of covariates.
 \end{enumerate}
-Below, we give three examples (exact matching, nearest neigbor
-matching, and sublassification) to illustrate the use of these two
-functions. Similar commands can be used for all other matching
+Below, we give three examples (exact matching, nearest neighbor
+matching, and subclassification) to illustrate the use of these two
+functions. The same two commands can be used for all other matching
 procedures, and they will give similar outputs. See
-Section~\ref{subsec:outputs} for details.
+Section~\ref{subsec:outputs} for more details.
 
 \paragraph{Examples}
 \begin{enumerate}
-%%
-%% this is from exact matching
-%%
 \item Using the example of exact matching from
   Section~\ref{subsubsec:exact}, we obtain more information on the
   matching using the {\tt summary()} command.  To also show the
@@ -634,72 +635,65 @@ Section~\ref{subsec:outputs} for details.
 m.out <- matchit(treat ~ educ + black + hispan, data = lalonde, method = "exact")
 summary(m.out, covariates = TRUE)
 @
-
-\MatchIt\ has created 25 subclasses where the values of the race and education
-covariates are equal.  The \MatchIt\ output object will include
-\texttt{weights} and \texttt{subclass}, which can be used to identify
-which units were put into the same subclass.  Units that did not have
-the same covariate values as anyone in the other treatment group have
-\texttt{subclass = NA}.
-
-For example, we can use the {\tt sublass} component of {\tt m.out} to
-identify which units are in each subclass and to verify their
-covariate values.  To see the ID numbers of the first 10 units in subclass
-1, in which all subjects are black and have 11 years of education
-(``NSW'' refers to the National Supported Work Demonstration
-participants):
-
+\MatchIt\ has created 25 subclasses where the values of the race and
+education covariates are equal.  The resulting \MatchIt\ object
+includes \texttt{weights} and \texttt{subclass}, which can be used to
+identify which units were put into the same subclass (See
+Sections~\ref{subsec:analysis}~and~\ref{subsec:match.data} for the
+{\tt match.data()} command which creates the matched data set with
+these identifying variables).  Units that did not have the same
+covariate values as anyone in the other treatment group have
+\texttt{subclass = NA}.  For example, we can use the {\tt subclass}
+component of {\tt m.out} to identify which units are in each subclass
+and to verify their covariate values.  To see the ID numbers of the
+first 5 units in subclass 1, in which all subjects are black and have
+11 years of education (``NSW'' refers to the National Supported Work
+Demonstration participants):
 <<>>=
-row.names(m.out$X)[m.out$subclass==1][1:10]
+row.names(m.out$X)[m.out$subclass==1][1:5]
 @
-
 We can also confirm the covariate values of the units in each
 subclass.  For example, to see the covariate values of the first 5
-units in subclass 2 (``PSID'' refers to individuals in the Panel
+units in subclass 1 (``PSID'' refers to individuals in the Panel
 Survey of Income Dynamics):
-
 <<>>=
-m.out$X[m.out$subclass==2 & !is.na(m.out$subclass),][1:5,]
+m.out$X[m.out$subclass==1,][1:5,]
 @
 
-%%%
-%%% this is from nearest neighbor
-%%%
-
-\item For all other types of matching, the \texttt{summary()} command first gives measures of the
-  balance between the treated and control groups in the full
-  (original) data set, and then the same measures of balance in the
-  matched data set.  If the matching worked well, the measures of balance
-  should be smaller in the matched data
-  set as compared with the full data set.  
-
-  To illustrate this we use the example of nearext neighbor matching from Section \ref{subsubsec:nearest}:
+\item For all other types of matching, the \texttt{summary()} command
+  first gives measures of the balance between the treated and control
+  groups in the full (original) data set, and then the same measures
+  of balance in the matched data set.  If the matching worked well,
+  the measures of balance should be smaller in the matched data set as
+  compared with the full data set.
+  
+  To illustrate this we use the example of nearest neighbor matching
+  from Section \ref{subsubsec:nearest}:
 <<>>=
 m.out <- matchit(treat ~ re74 + re75 + educ + black + hispan + age, data = lalonde, method = "nearest")
 summary(m.out)
 @
-
 The \texttt{summary()} command provides simple statistics of the
 propensity score and the covariates used in the matching for the full
 and matched samples, including means, standardized bias, and
 Quantile-Quantile (Q-Q) plot statistics.  These are used to assess
-whether there was a reduction in bias in the covariates.  The
-\texttt{summary} command will additionally report (a) the original
-call of the \MatchIt\ object, (b) how many units were matched,
-unmatched, or discarded due to the \texttt{discard} option (described
-below), and (c) the percent improvement in balance for each of the
-balance measures, defined as $100((|a|-|b|)/|a|)$, where $a$ is the
-balance before and $b$ is the balance after matching.
+whether there was a reduction in bias in the covariates. In addition,
+the \texttt{summary()} command will report (a) the matched call, (b)
+how many units were matched, unmatched, or discarded due to the
+\texttt{discard} option (described below), and (c) the percent
+improvement in balance for each of the balance measures, defined as
+$100((|a|-|b|)/|a|)$, where $a$ is the balance before and $b$ is the
+balance after matching.
 
-For each set of units (full sample and matched sample), the following
-statistics are provided: the ``Means Treated" and ``Means Control"
+For each set of units (original and matched data sets), the following
+statistics are provided: the ``Means Treated'' and ``Means Control''
 columns show the weighted means in the treated and control groups; the
-``Treated SD" is the standard deviation of the covariate in the set of
-treated units; the ``Std. Bias" is the difference in means in the
-treated and control groups, divided by the ``Treated SD" calculated
+``Treated SD'' is the standard deviation of the covariate in the set
+of treated units; the ``Std. Bias'' is the difference in means in the
+treated and control groups, divided by the ``Treated SD'' calculated
 using all treated units.  The same standard deviation is used for
-calculating the standardized bias in the full data and the matched
-data set so that the success of the matching at reducing bias in the
+calculating the standardized bias in the original and the matched data
+sets so that the success of the matching at reducing bias in the
 covariate means can be easily assessed; standardizing by the same
 quantity puts the two differences in means on the same scale.  Good
 matches will generally have standardized biases less than
@@ -715,7 +709,7 @@ would lie on the 45-degree line and thus all of these distances would
 be 0.  Values greater than 0 indicate deviations between the groups in
 some part of the empirical distributions.  The plots themselves,
 described below, can provide further insight into which part of the
-covariate distribution has differences between the groups.
+covariate distribution has differences between the two groups.
 
 In this example of nearest neighbor matching, we see that the matching
 has reduced the bias in the propensity score from 1.79 to 0.95 and has
@@ -724,9 +718,9 @@ income).  Job training participants on average earned roughly \$3,524
 less in 1974 and \$934 less in 1975 than non-participants, in the full
 sample.  In the matched sample, the earnings difference is reduced to
 \$371 in 1974 and \$428 in 1975.  This one-to-one matching algorithm
-has thus chosen 185 control individuals who are more similar to the
-treated group in 1974 income and 1975 income, which is summarized by
-the $89.5$ and $54.2$ percent balance improvement in these covariates.
+has thus chosen 185 control individuals who are similar to the treated
+group in 1974 income and 1975 income, which is summarized by the
+$89.5$ and $54.2$ percent balance improvement in these covariates.
 However there are still fairly large differences on some of the
 covariates, such as the race variables.  In this situation, if close
 matches on the race variables are desired, it may make sense to try
@@ -736,26 +730,23 @@ score (0.95 standard deviations) also indicates that it may be
 desirable to do subclassification instead of or in addition to the
 matching, as described below.
 
-Two options to the \texttt{summary} command can also help with
+Two options to the \texttt{summary()} command can also help with
 assessing balance and respecifying the propensity score model, as
-necessary.  First, the {\tt interactions=T} option with {\tt summary}
-shows the balance of all squares and interactions of the covariates
-used in the matching procedure.  Large differences in higher order
-interactions usually are a good indication that the assignment model
-needs to be respecified.  Similarly, the {\tt addlvariables} option
-with {\tt summary} will provide balance measures on additional
-variables not included in the original matching procedure.  If a
-variable (or interaction of variables) not included in the original
-distance measure has large imbalances in the matched groups, including
-that variable in the next model specification may improve the
-resulting balance on that variable.  \cite{DehWah99} provide a
-detailed example of a propensity score specification algorithm.
-Because the outcome variable is not used in the matching procedure, a
-variety of matching methods can be tried, and the one that leads to
-the best resulting balance chosen.
-
-%as discussed in
-%Section \ref{pscorespec}.
+necessary.  First, the {\tt interactions = TRUE} option with {\tt
+  summary()} shows the balance of all squares and interactions of the
+covariates used in the matching procedure.  Large differences in
+higher order interactions usually are a good indication that the
+assignment model needs to be respecified.  Similarly, the {\tt
+  addlvariables} option with {\tt summary()} will provide balance
+measures on additional variables not included in the original matching
+procedure.  If a variable (or interaction of variables) not included
+in the original distance measure has large imbalances in the matched
+groups, including that variable in the next model specification may
+improve the resulting balance on that variable.  \cite{DehWah99}
+provides a detailed example of a propensity score specification
+algorithm.  Because the outcome variable is not used in the matching
+procedure, a variety of matching methods can be tried, and the one
+that leads to the best resulting balance chosen.
 
 We can also examine the balance graphically using the \texttt{plot()}
 command, which provides two types of plots: jitter plots of the
@@ -763,7 +754,6 @@ distance measure, and Q-Q plots of each covariate.
 Figures~\ref{diagqqnn} and~\ref{diagjitternn} display these two sample
 plots.  In the jitter plot, you may identify units by observation name
 by clicking the first mouse button near the units.
-
 <<results=hide,eval=FALSE>>=
 plot(m.out)
 plot(m.out, type="jitter")
@@ -771,28 +761,26 @@ plot(m.out, type="jitter")
 
 \begin{figure}[tbp]
   \begin{center}
-%    \rotatebox{270}{\includegraphics[height=2.85in,angle=0]{figs/subclass1}}
     \includegraphics[scale=0.25]{figs/qqplotnn}
     \includegraphics[scale=0.25]{figs/qqplotnn2} 
     \hfill
     \caption{Sample diagnostic QQ plots: Nearest Neighbor matching
       with the \MatchIt\ call \texttt{matchit(treat ~ re74 + re75 + educ
         + black + hispan + age, data=lalonde, method="nearest")}.}
-\label{diagqqnn}
-\end{center}
+    \label{diagqqnn}
+  \end{center}
 \end{figure}
 
 \begin{figure}[tbp]
   \begin{center}
-%    \rotatebox{270}{\includegraphics[height=2.85in,angle=0]{figs/subclass1}}
-    {\includegraphics[scale=0.5]{figs/jitterplotnn}}
+    \includegraphics[scale=0.5]{figs/jitterplotnn}
     \hfill
     \caption{Sample diagnostic jitter plot: Nearest Neighbor matching
       with the \MatchIt\ call \texttt{matchit(treat ~ re74 + re75 +
         educ + black + hispan + age, data=lalonde, method="nearest")}.
       Matched units shown in black, unmatched units shown in grey.}
-\label{diagjitternn}
-\end{center}
+    \label{diagjitternn}
+  \end{center}
 \end{figure}
 
 The balance of the individual covariates is shown in the Q-Q plots.
@@ -808,31 +796,27 @@ grey.
 Examining these graphs, we see that the matched samples are fairly
 well matched on the propensity score and the income variables, but
 that there are some remaining imbalances in the race and age
-variables, as was also seen using the \texttt{summary} command.
+variables, as was also seen using the \texttt{summary()} command.
 
 \item Now for subclassification, using the example from
-  Section~\ref{subsubsec:subclass}, we check the balance of
-  covariates using the \texttt{summary()} and \texttt{plot()} commands.
-%%
-%% this is the output of subclassification
-%%
+  Section~\ref{subsubsec:subclass}, we check the balance of covariates
+  using the \texttt{summary()} and \texttt{plot()} commands.
 <<>>=
 m.out <-  matchit(treat ~ re74 + re75 + educ + black + hispan + age, data = lalonde, method = "subclass")
 summary(m.out)
 @
-
-The \texttt{summary} output for subclassification is the same as that
+The \texttt{summary()} output for subclassification is the same as that
 for nearest neighbor matching, except that the balance statistics are
 shown separately for each subclass, and the overall balance in the
-matched samples is calculated by aggregating across the subclasses, where each subclass is weighted
-by the number of units in the subclass.
-Consistent with the calculations for the full and matched samples, the
-standardized bias within each subclass is also calculated using the
-standard deviation of the full treated group, again so that the
-differences in means are all scaled by the same amount and not
+matched samples is calculated by aggregating across the subclasses,
+where each subclass is weighted by the number of units in the
+subclass.  Consistent with the calculations for the full and matched
+samples, the standardized bias within each subclass is also calculated
+using the standard deviation of the full treated group, again so that
+the differences in means are all scaled by the same amount and not
 affected by changes in sample sizes.
 
-In this example, the bias between the groups within each sublcass is
+In this example, the bias between the groups within each subclass is
 generally small, with the exception of Subclass 1, which has a large
 number of control units with small propensity scores.  The percent
 balance improvement also indicates that the subclassification has been
@@ -853,7 +837,6 @@ for each, the graphs shown in the left-hand column are those for the
 full data set.  The jitter plot is the same as that for nearest
 neighbor matching, with the addition of vertical lines indicating the
 subclass cut-points.
-
 <<results=hide>>=
 m.out <- matchit(treat ~ re74 + re75 + educ + black + hispan + age, data = lalonde, method = "subclass")
 @
@@ -868,87 +851,51 @@ plot(m.out, type="jitter")
 %<<fig=TRUE, width=8, height=5, prefix.string=figs/>>=
 %plot(m.out, type="jitter")
 %@
-
 \begin{figure}[tbp]
   \begin{center}
-    %\rotatebox{270}{\includegraphics[height=2.85in,angle=0]{figs/subclass1}}
     \includegraphics[scale=.25]{figs/qqplotsub}
     \includegraphics[scale=.25]{figs/qqplotsub2}
     \hfill
-\caption{Sample diagnostic QQ plots: Subclassification with
+    \caption{Sample diagnostic QQ plots: Subclassification with
       \MatchIt\ call \texttt{matchit(treat ~ re74 + re75 + educ +
-        black + hispan + age, data = lalonde, method = "subclass")} followed by plot(m.out).}
-\label{diagqqsub}
-\end{center}
+        black + hispan + age, data = lalonde, method = "subclass")}
+      followed by plot(m.out).}
+    \label{diagqqsub}
+  \end{center}
 \end{figure}
 
 \begin{figure}[tbp]
   \begin{center}
-    %\rotatebox{270}{\includegraphics[scale=0.5,angle=0]{figs/subclass1}}
-    {\includegraphics[scale=0.5]{figs/jitterplotsub}}
+    \includegraphics[scale=0.5]{figs/jitterplotsub}
     \hfill
-\caption{Sample diagnostic jitter plot: Subclassification with
+    \caption{Sample diagnostic jitter plot: Subclassification with
       \MatchIt\ call \texttt{matchit(treat ~ re74 + re75 + educ +
-        black + hispan + age, data = lalonde, method = "subclass") followed by plot(m.out, type="jitter")}.
-      Vertical lines indicate the subclass cut points and the area of
-      each diamond is proportional to the weights of the matched units
-      for each subclass.  Unmatched units would be shown in grey.}
-\label{diagjittersub}
-\end{center}
+        black + hispan + age, data = lalonde, method = "subclass")
+        followed by plot(m.out, type="jitter")}.  Vertical lines
+      indicate the subclass cut points and the area of each diamond is
+      proportional to the weights of the matched units for each
+      subclass.  Unmatched units would be shown in grey.}
+    \label{diagjittersub}
+  \end{center}
 \end{figure}
 
 In Figure \ref{diagqqsub} we see that the empirical distributions of
 the treated and control units are much more similar in Subclass 3
-(shown in the ``Matched" column of figures) than they are in the full
-data set (shown in the ``Raw" column of figures).  We see that in this
-case, the distributions of most of the covariates are very similar in
-Subclass 3, with the exception of \texttt{age}, which on which the
-treated units generally have larger values than the control units
-(indicated by the points falling above the 45 degree line).  The
+(shown in the ``Matched'' column of figures) than they are in the full
+data set (shown in the ``Raw'' column of figures).  We see that in
+this case, the distributions of most of the covariates are very
+similar in Subclass 3, with the exception of \texttt{age}, which on
+which the treated units generally have larger values than the control
+units (indicated by the points falling above the 45 degree line).  The
 jitter plot indicates that using the \texttt{discard} option may be
 desirable here, to reduce any bias due to the many control units with
 low propensity scores.
 
 \end{enumerate}
 
-%%%
-%%% this is from full matching. probably not necessary.
-%%%
-%
-%\begin{verbatim}
-%## balance diagnostics through statistics
-%<<>>=
-%m.out <- matchit(formula = treat ~ age + educ + black + hispan + married +   
-%        nodegree + re74 + re75, data = lalonde, method = "full", distance = "logit")
-%summary(m.out)
-%@
-%** we need to explain the col titles or refer back to the intro
-%   section (to be added) to the user's guide
-%There has been significant reduction in standardized bias (and mean
-%deviation from the 45 degree line in the quantile-quantile plot) from
-%the full matching: the percent improvement is nearly 100 percent.  The
-%diagnostics are slightly different with full matching as compared with
-%the previous matching methods we have discussed; since many subclasses
-%will have only one treated or one control unit it is not possible to
-%do the weighted comparisons done for standard subclassification.
-%** {\bf  Dan, what did we decide to do?}
-%
-%Finally, we can obtain a graphical summary of resulting balance via
-%the usual {\tt plot()} function.
-%\begin{verbatim}
-%## balance diagnostics through graphics
-%> plot(m.out)
-%\end{verbatim}
-
-%\includegraphics[scale=0.5]{figs/full1}
-%\includegraphics[scale=0.5]{figs/full2}
-%\includegraphics[scale=0.5]{figs/full3}
-
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Conducting Analyses after Matching}
 \label{subsec:analysis}
-
 
 \input{matchit2zeligsw}
 
@@ -1596,7 +1543,7 @@ simulates the research design of an experiment, where no information
 on outcomes is known at the point of experimental design and
 randomization.  Much like an experimenter cannot easily rerun an
 experiment if the outcome was not satisfactory, the separation of the
-balancing process in \MatchIt\ from the analysis process afterwards
+balancing process in \MatchIt\ from the analysis process afterward
 helps keep clear the goal of balancing control and treatment groups
 and makes it less likely that the user will inadvertently cook the
 books in his or her favor.
