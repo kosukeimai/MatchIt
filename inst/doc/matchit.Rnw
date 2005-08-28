@@ -472,9 +472,10 @@ You may again check basic statistics of the \MatchIt\ object by the
 m.out
 @ 
 We see that 185 control units were matched to the 185 treated units
-(an one-to-one match).  
+(a one-to-one match).  
 
 \paragraph{Additional Examples}
+
 Here, we illustrate various options of nearest neighbor matching by
 providing additional examples based on the Lalonde data. Users should
 refer to
@@ -528,7 +529,7 @@ matched sample is composed of matched sets, where each matched set
 contains either one treated unit and one or more controls (or one
 control unit and one or more treated units).  The only units not
 placed into a subclass will be those discarded (if a \texttt{discard}
-option was specified) because they are outside of common support.
+option was specified) because they are outside the range of common support.
 Full matching is optimal in terms of minimizing a weighted average of
 the estimated distance measure between each treated subject and each
 control subject within each subclass.  See
@@ -614,10 +615,10 @@ fully described in \citet*{HoImaKin05}. Given the \MatchIt\ output
 object {\tt m.out}, one can use the following commands,
 \begin{enumerate}
 \item \texttt{summary(m.out)} gives numerical summaries of the
-  resulting balance of covariates.
+  resulting balance of the covariates.
   
-\item \texttt{plot(m.out)} gives graphical summaries to assess balance
-  of covariates.
+\item \texttt{plot(m.out)} gives graphical summaries to assess the balance
+  of the covariates.
 \end{enumerate}
 Below, we give three examples (exact matching, nearest neighbor
 matching, and subclassification) to illustrate the use of these two
@@ -625,9 +626,10 @@ functions. The same two commands can be used for all other matching
 procedures, and they will give similar outputs. See
 Section~\ref{subsec:outputs} for more details.
 
-\paragraph{Examples}
-\begin{enumerate}
-\item Using the example of exact matching from
+\subsubsection{Example 1: Exact matching}
+\label{subsubsec:balanceexact}
+
+Using the example of exact matching from
   Section~\ref{subsubsec:exact}, we obtain more information on the
   matching using the {\tt summary()} command.  To also show the
   covariates values in each subclass, we use the \texttt{covariates =
@@ -661,7 +663,9 @@ Survey of Income Dynamics):
 m.out$X[m.out$subclass==1,][1:5,]
 @
 
-\item For all other types of matching, the \texttt{summary()} command
+\subsubsection{Example 2: Nearest neighbor matching}
+\label{subsubsec:balancenearest}
+For all other types of matching, the \texttt{summary()} command
   first gives measures of the balance between the treated and control
   groups in the full (original) data set, and then the same measures
   of balance in the matched data set.  If the matching worked well,
@@ -687,10 +691,12 @@ $100((|a|-|b|)/|a|)$, where $a$ is the balance before and $b$ is the
 balance after matching.
 
 For each set of units (original and matched data sets), the following
-statistics are provided: the ``Means Treated'' and ``Means Control''
-columns show the weighted means in the treated and control groups; the
-``Treated SD'' is the standard deviation of the covariate in the set
-of treated units; the ``Std. Bias'' is the difference in means in the
+statistics are provided: 
+\begin{itemize}
+\item ``Means Treated'' and ``Means Control'' show the weighted means in the treated and control groups
+\item ``Treated SD'' is the standard deviation of the covariate in the set
+of treated units
+\item ``Std. Bias'' is the difference in means in the
 treated and control groups, divided by the ``Treated SD'' calculated
 using all treated units.  The same standard deviation is used for
 calculating the standardized bias in the original and the matched data
@@ -700,8 +706,7 @@ quantity puts the two differences in means on the same scale.  Good
 matches will generally have standardized biases less than
 approximately 0.25; values greater than that imply that the groups
 have means that are more than a quarter of a standard deviation apart.
-
-The final three columns of the summary output give summary statistics
+\item The final three columns of the summary output give summary statistics
 of a Q-Q plot (see below for more information on these plots). Those
 columns give the median, mean, and maximum orthogonal deviations from
 the 45-degree line of the Q-Q plot.  If the empirical distributions of
@@ -711,6 +716,9 @@ be 0.  Values greater than 0 indicate deviations between the groups in
 some part of the empirical distributions.  The plots themselves,
 described below, can provide further insight into which part of the
 covariate distribution has differences between the two groups.
+\end{itemize}
+
+\paragraph{Balance in this example}
 
 In this example of nearest neighbor matching, we see that the matching
 has reduced the bias in the propensity score from 1.79 to 0.95 and has
@@ -731,6 +739,8 @@ score (0.95 standard deviations) also indicates that it may be
 desirable to do subclassification instead of or in addition to the
 matching, as described below.
 
+\paragraph{Additional options}
+
 Two options to the \texttt{summary()} command can also help with
 assessing balance and respecifying the propensity score model, as
 necessary.  First, the {\tt interactions = TRUE} option with {\tt
@@ -748,6 +758,8 @@ provides a detailed example of a propensity score specification
 algorithm.  Because the outcome variable is not used in the matching
 procedure, a variety of matching methods can be tried, and the one
 that leads to the best resulting balance chosen.
+
+\paragraph{Examining balance graphically}
 
 We can also examine the balance graphically using the \texttt{plot()}
 command, which provides two types of plots: jitter plots of the
@@ -799,7 +811,9 @@ well matched on the propensity score and the income variables, but
 that there are some remaining imbalances in the race and age
 variables, as was also seen using the \texttt{summary()} command.
 
-\item Now for subclassification, using the example from
+\subsubsection{Example 3: Subclassification}
+\label{subsubsec:balancesubclass}
+Now for subclassification, using the example from
   Section~\ref{subsubsec:subclass}, we check the balance of covariates
   using the \texttt{summary()} and \texttt{plot()} commands.
 <<>>=
@@ -817,6 +831,8 @@ using the standard deviation of the full treated group, again so that
 the differences in means are all scaled by the same amount and not
 affected by changes in sample sizes.
 
+\paragraph{Balance in this example}
+
 In this example, the bias between the groups within each subclass is
 generally small, with the exception of Subclass 1, which has a large
 number of control units with small propensity scores.  The percent
@@ -830,6 +846,8 @@ start (standardized bias of only 0.055 in the full data set).  For
 this example, it appears as though subclassification has been able to
 form better matched samples than the simple 1-1 nearest neighbor
 matching method described above.
+
+\paragraph{Examining the balance graphically}
 
 We can also examine the balance graphically.  Figures~\ref{diagqqsub}
 and \ref{diagjittersub} display the two diagnostic plots.  With
@@ -885,14 +903,13 @@ the treated and control units are much more similar in Subclass 3
 (shown in the ``Matched'' column of figures) than they are in the full
 data set (shown in the ``Raw'' column of figures).  We see that in
 this case, the distributions of most of the covariates are very
-similar in Subclass 3, with the exception of \texttt{age}, which on
+similar in Subclass 3, with the exception of \texttt{age}, on
 which the treated units generally have larger values than the control
 units (indicated by the points falling above the 45 degree line).  The
 jitter plot indicates that using the \texttt{discard} option may be
 desirable here, to reduce any bias due to the many control units with
 low propensity scores.
 
-\end{enumerate}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Conducting Analyses after Matching}
@@ -908,7 +925,7 @@ low propensity scores.
 \subsection{Inputs}
 \label{subsec:inputs}
 
-The main command, \texttt{matchit()}, can be used to implements any of
+The main command, \texttt{matchit()}, can be used to implement any of
 the matching procedures:
 <<results=hide, eval=FALSE>>=
 m.out <- matchit(formula, data, method = "nearest", distance = "logit", distance.options=list(), discard = "none", reestimate = FALSE, ...)

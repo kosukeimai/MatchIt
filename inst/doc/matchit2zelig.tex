@@ -75,13 +75,13 @@ controlling for the estimated propensity score and other covariates,
 +     "control"), model = "ls")
 \end{Sinput}
 \end{Schunk}
-where {\tt "control"} option in {\tt match.data()} extracts the
+where the {\tt "control"} option in {\tt match.data()} extracts the
 matched control units and {\tt ls} specifies linear regression. Note
 that we need not include the treatment indicator in this regression.
-Next, we set the covariates to the covariates of matched treated units
-and use conditional prediction by setting {\tt cond = TRUE} and {\tt
-  fn = NULL} option in {\tt setx()} command in order to impute the
-counterfactual outcome for the treated units. {\tt sim()} command in
+Next, we set the covariates to the covariate values of the matched treated units
+and use conditional prediction by setting the {\tt setx()} command optionsn to {\tt cond = TRUE} and {\tt
+  fn = NULL} in order to impute the
+counterfactual outcomes for the treated units. The {\tt sim()} command in
 Zelig does the imputation.
 \begin{Schunk}
 \begin{Sinput}
@@ -107,25 +107,25 @@ Mean Values of Observed Data (n = 185)
   1.892e-01   2.096e+03   1.532e+03   5.774e-01 
 
 Pooled Expected Values: E(Y|X)
-   mean      sd    2.5%   97.5% 
- 5019.8  2279.5   724.3 10013.1 
+  mean     sd   2.5%  97.5% 
+4986.1 2274.0  735.9 9993.7 
 
 Pooled Average Treatment Effect: Y - EV
   mean     sd   2.5%  97.5% 
-1329.3  585.8  181.0 2472.9 
+1363.0  570.2  255.4 2514.2 
 
 \end{Soutput}
 \end{Schunk}
 The results indicate that the estimated average treatment effect on
 the treated is 
-\$1329.3,
+\$1363,
 with a 95\% interval of
-(\$181,
-\$2472.9).
+(\$255.4,
+\$2514.2).
 
 It is also possible to estimate the average treatment effects on both
 the treated and the control groups. To do this, we fit the linear
-model to the {\it treatment group} controlling for propensity score
+model to the {\it treatment group} controlling for the propensity score (\tt{distance})
 and other covariates,
 \begin{Schunk}
 \begin{Sinput}
@@ -160,14 +160,14 @@ The point estimate and its standard error is given by
 > mean(ate.all)
 \end{Sinput}
 \begin{Soutput}
-[1] 1626
+[1] 1652
 
 \end{Soutput}
 \begin{Sinput}
 > sd(ate.all)
 \end{Sinput}
 \begin{Soutput}
-[1] 797.2
+[1] 806
 
 \end{Soutput}
 \end{Schunk}
@@ -177,15 +177,15 @@ The 95\% confidence interval is given by
 > quantile(ate.all, c(0.025, 0.975))
 \end{Sinput}
 \begin{Soutput}
-  2.5%  97.5% 
- 181.4 3348.8 
+ 2.5% 97.5% 
+  208  3397 
 
 \end{Soutput}
 \end{Schunk}
   
 \item Our second example is subclassification. In this case, the
-  average treatment effect estimates are obtained for each subclass
-  separately as well as for the overall sample.  Estimating the
+  average treatment effect estimates are obtained separately for each subclass
+  as well as for the overall sample.  Estimating the
   treatment effects separately for each subclass, and then aggregating
   across subclasses, can significantly increase the robustness of the
   ultimate results since the parametric analysis within each subclass
@@ -203,14 +203,14 @@ Here, we skip the important step of checking balance in order to focus
 on the illustration of analyzing subclassified data sets.  Next, we
 fit the linear regression within each subclass by controlling for the
 estimated propensity score and past income variables within each
-subclass using {\tt by} option in the {\tt zelig()} command. 
+subclass by using the {\tt by} option in the {\tt zelig()} command. 
 \begin{Schunk}
 \begin{Sinput}
 > z.out3 <- zelig(re78 ~ re74 + re75 + distance, data = match.data(m.out2, 
 +     "control"), model = "ls", by = "subclass")
 \end{Sinput}
 \end{Schunk}
-The same set of commands as the one in the first example are used to
+The same set of commands as in the first example are used to
 do the imputation of the counterfactual outcomes for the treated
 units.
 \begin{Schunk}
@@ -220,7 +220,7 @@ units.
 > s.out3 <- sim(z.out3, x = x.out3)
 \end{Sinput}
 \end{Schunk}
-Finally, to obtain the overall result, type
+Finally, to obtain the overall results, type
 \begin{Schunk}
 \begin{Sinput}
 > summary(s.out3)
@@ -236,20 +236,20 @@ Mean Values of Observed Data (n = 46)
 
 Pooled Expected Values: E(Y|X)
  mean    sd  2.5% 97.5% 
- 4464  5366 -5489 16055 
+ 4511  5153 -4769 15805 
 
 Pooled Average Treatment Effect: Y - EV
   mean     sd   2.5%  97.5% 
-1887.2 1681.9 -868.5 5698.7 
+1840.8 1681.6 -921.3 5555.0 
 
 \end{Soutput}
 \end{Schunk}
 The results indicate that the estimated average treatment effect on
 the treated is
-\$1887.2,
+\$1840.8,
 with a 95\% interval of
-(\$-868.5,
-\$5698.7).
+(\$-921.3,
+\$5555).
 It is also possible to get the summary result for each subclass. For
 example, the following command summarizes the result for the second
 subclass.
@@ -269,12 +269,12 @@ Mean Values of Observed Data (n = 45)
      1.0000   1777.4221    972.3441      0.6039 
 
 Pooled Expected Values: E(Y|X)
- mean    sd  2.5% 97.5% 
- 3723  2583 -1065  9493 
+  mean     sd   2.5%  97.5% 
+3706.9 2562.5 -968.1 9412.5 
 
 Pooled Average Treatment Effect: Y - EV
- mean    sd  2.5% 97.5% 
- 2763  1346   236  5185 
+  mean     sd   2.5%  97.5% 
+2779.4 1301.5  132.2 5276.0 
 
 
 \end{Soutput}

@@ -63,13 +63,13 @@ controlling for the estimated propensity score and other covariates,
 z.out1 <- zelig(re78 ~ age + educ + black + hispan + nodegree + married + re74 + re75 + distance,
                    data = match.data(m.out1, "control"), model = "ls")
 @ 
-where {\tt "control"} option in {\tt match.data()} extracts the
+where the {\tt "control"} option in {\tt match.data()} extracts the
 matched control units and {\tt ls} specifies linear regression. Note
 that we need not include the treatment indicator in this regression.
-Next, we set the covariates to the covariates of matched treated units
-and use conditional prediction by setting {\tt cond = TRUE} and {\tt
-  fn = NULL} option in {\tt setx()} command in order to impute the
-counterfactual outcome for the treated units. {\tt sim()} command in
+Next, we set the covariates to the covariate values of the matched treated units
+and use conditional prediction by setting the {\tt setx()} command optionsn to {\tt cond = TRUE} and {\tt
+  fn = NULL} in order to impute the
+counterfactual outcomes for the treated units. The {\tt sim()} command in
 Zelig does the imputation.
 <<>>=
 x.out1 <- setx(z.out1, data = match.data(m.out1, "treat"), fn = NULL, cond = TRUE)
@@ -83,12 +83,12 @@ The results indicate that the estimated average treatment effect on
 the treated is 
 \$\Sexpr{round(as.numeric(summary(s.out1)$qi.stats$ate.ev[1]),1)},
 with a 95\% interval of
-(\$\Sexpr{round(as.numeric(summary(s.out1)$qi.stats$ate.ev[3],1))},
+(\$\Sexpr{round(as.numeric(summary(s.out1)$qi.stats$ate.ev[3]),1)},
 \$\Sexpr{round(as.numeric(summary(s.out1)$qi.stats$ate.ev[4]),1)}).
 
 It is also possible to estimate the average treatment effects on both
 the treated and the control groups. To do this, we fit the linear
-model to the {\it treatment group} controlling for propensity score
+model to the {\it treatment group} controlling for the propensity score (\tt{distance})
 and other covariates,
 <<>>=
 z.out2 <- zelig(re78 ~ age + educ + black + hispan + nodegree + married + re74 + re75 + distance,
@@ -120,8 +120,8 @@ quantile(ate.all, c(0.025, 0.975))
 @
   
 \item Our second example is subclassification. In this case, the
-  average treatment effect estimates are obtained for each subclass
-  separately as well as for the overall sample.  Estimating the
+  average treatment effect estimates are obtained separately for each subclass
+  as well as for the overall sample.  Estimating the
   treatment effects separately for each subclass, and then aggregating
   across subclasses, can significantly increase the robustness of the
   ultimate results since the parametric analysis within each subclass
@@ -135,18 +135,18 @@ Here, we skip the important step of checking balance in order to focus
 on the illustration of analyzing subclassified data sets.  Next, we
 fit the linear regression within each subclass by controlling for the
 estimated propensity score and past income variables within each
-subclass using {\tt by} option in the {\tt zelig()} command. 
+subclass by using the {\tt by} option in the {\tt zelig()} command. 
 <<>>=
 z.out3 <- zelig(re78 ~ re74 + re75 + distance, data = match.data(m.out2, "control"), model = "ls", by = "subclass")
 @ 
-The same set of commands as the one in the first example are used to
+The same set of commands as in the first example are used to
 do the imputation of the counterfactual outcomes for the treated
 units.
 <<>>=
 x.out3 <- setx(z.out3, data = match.data(m.out2, "treat"), fn = NULL, cond = TRUE)
 s.out3 <- sim(z.out3, x = x.out3)
 @ 
-Finally, to obtain the overall result, type
+Finally, to obtain the overall results, type
 <<>>=
 summary(s.out3) 
 @ 
