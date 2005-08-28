@@ -198,7 +198,7 @@ described above, we would like the distribution of covariates to be
 the same in the matched treated and matched control groups. A crucial
 part of any matching procedure is, therefore, to assess how close the
 (empirical) covariate distributions are in the two groups, which we
-call the ``balance".  Because the outcome variable is not used in the
+call the ``balance.''  Because the outcome variable is not used in the
 matching procedure, a variety of matching methods can be assessed, and
 the matching procedure that leads to the best balance is chosen.
 \MatchIt\ provides a number of ways to assess the balance of
@@ -380,42 +380,40 @@ library(MatchIt)
 data(lalonde)
 m.out <- matchit(treat ~ educ + black + hispan, data = lalonde, method = "exact")
 @
-
 The object \texttt{m.out} contains all the information on the matched
 units.  The matching forms all possible subclasses based on unique
 values of the covariates in the right hand side of the formula; within
 each subclass, all units have the same covariate values.  To obtain
-basic information about the matching procedure:
+a short summary about the matching procedure, type
 <<>>=
 m.out
 @
-
-The printout includes the original call to \MatchIt\ and the fact that
-\Sexpr{sum(m.out$weights[m.out$treat==1]!=0)}
-treatment units were exactly matched to \Sexpr{sum(m.out$weights[m.out$treat==0]!=0)} 
-control units on race
-and education. There was \Sexpr{sum(m.out$weights[m.out$treat==1]==0)}
-treated unit and \Sexpr{sum(m.out$weights[m.out$treat==0]==0)}
-control units that weren't matched,
-and therefore are excluded from the matched data set. See
+The printout includes the matched call and the fact that
+\Sexpr{sum(m.out$weights[m.out$treat==1]!=0)} treatment units were
+exactly matched to \Sexpr{sum(m.out$weights[m.out$treat==0]!=0)}
+control units on race and education. There was
+\Sexpr{sum(m.out$weights[m.out$treat==1]==0)} treated unit and
+\Sexpr{sum(m.out$weights[m.out$treat==0]==0)} control units that were
+not matched, and therefore were excluded from the matched data set.
+See
 Sections~\ref{subsubsec:inputs-all}~and~\ref{subsubsec:inputs-exact}
-for a list of complete input options for exact matching.  Now, proceed
+for a complete list of input options for exact matching.  Now, proceed
 to Section~\ref{subsec:balance} to learn about how the {\tt summary()}
 command can be used with exact matching.
 
 \subsubsection{Subclassification}
 \label{subsubsec:subclass}
 
-When there are many covariates (or many values of some covariates) on
-which matches are desired, finding sufficient exact matches will often
-be impossible.  In that case, subclassification is sometimes
-desirable. Various subclassification schemes exist, including the one
-based on a scalar distance measure such as the propensity
-score estimated using the \texttt{distance} option (see
-Section~\ref{subsubsec:inputs-all}).  Subclassification will form
-subclasses based on this distance measure.  Within each subclass, the
-distribution of covariates in the treatment and control groups should
-be similar.
+When there are many covariates (or some covariates can take a large
+number of values) on which matches are desired, finding sufficient
+exact matches will often be impossible.  In that case,
+subclassification is sometimes desirable. Various subclassification
+schemes exist, including the one based on a scalar distance measure
+such as the propensity score estimated using the \texttt{distance}
+option (see Section~\ref{subsubsec:inputs-all}).  Subclassification
+will form subclasses based on this distance measure.  Within each
+subclass, the distribution of covariates in the treatment and control
+groups should be similar.
 
 Subclassification is implemented in \MatchIt\ using \texttt{method =
   "subclass"}.  See also the sections on full matching (Section
@@ -424,10 +422,9 @@ Subclassification is implemented in \MatchIt\ using \texttt{method =
 subclassification.  The following example script can be run by typing
 {\tt demo(subclass)} at the R prompt:
 <<>>=
-m.out <-  matchit(treat ~ re74 + re75 + educ + black + hispan + age, data = lalonde, 
-                   method = "subclass")
+m.out <-  matchit(treat ~ re74 + re75 + educ + black + hispan + age, data = lalonde, method = "subclass")
+m.out
 @
-
 The above syntax forms forms 6 subclasses, which is the default number
 of subclases, based on a distance measure estimated using logistic
 regression.  By default, each subclass will have approximately the
@@ -437,24 +434,25 @@ for a complete list of input options for subclassification.
 
 Subclassification may also be used in conjunction with nearest
 neighbor matching described below in
-Subsection~\ref{subsubsec:nearest}, by leaving the default
-of \texttt{method = "nearest"} but adding the option
-\texttt{subclass}.  When you choose this command, \MatchIt\ matches in
-the same way, but after the nearest neighbor matches are chosen it places them into
-subclasses, and adds a variable to the output 
-object with the subclass numbers.
+Subsection~\ref{subsubsec:nearest}, by leaving the default of
+\texttt{method = "nearest"} but adding the option \texttt{subclass}.
+When you choose this command, \MatchIt\ matches in the same way, but
+after the nearest neighbor matches are chosen it places them into
+subclasses, and adds a variable to the output object with the subclass
+numbers.
 
 \subsubsection{Nearest Neighbor Matching}
 \label{subsubsec:nearest}
 
 Nearest neighbor matching selects the $r$ best control matches for
 each individual in the treatment group (excluding those discarded
-using the \texttt{discard}) option (by default, $r=1$).  The matching is done using a
-distance measure specified by the {\tt distance} option. Matches are
-chosen for each treated unit one at a time, and at each matching step
-we choose the control unit that is not yet matched but is closest to
-the treated unit on the distance measure.  There are many variations
-on nearest neighbor matching, which are described in further detail in
+using the \texttt{discard}) option (by default, $r=1$).  The matching
+is done using a distance measure specified by the {\tt distance}
+option. Matches are chosen for each treated unit one at a time, and at
+each matching step we choose the control unit that is not yet matched
+but is closest to the treated unit on the distance measure.  There are
+many variations on nearest neighbor matching, which are described in
+further detail in
 Sections~\ref{subsubsec:inputs-all}~and~\ref{subsubsec:inputs-nearest}.
 
 Nearest neighbor matching is implemented in \MatchIt\ using the
@@ -463,19 +461,15 @@ run by typing {\tt demo(nearest)} at the R prompt.
 
 To conduct propensity score matching with pre-treatment covariates
 composed of real earnings in 1974 and 1975, education, race, and age:
-
 <<>>=
 m.out <- matchit(treat ~ re74 + re75 + educ + black + hispan + age, data = lalonde, method = "nearest")
 @
-
-\noindent You may again check basic statistics of the \MatchIt\ object by the
+You may again check basic statistics of the \MatchIt\ object by the
 \texttt{print} command:
 <<>>=
-print(m.out)
-@
-
-We see that 185 control units were matched to the 185 treated units (a
-``1-1'' match).  
+m.out
+@ 
+We see that 185 control units were matched to the 185 treated units (a ``1-1'' match).  
 
 \paragraph{Additional Examples}
 Here, we illustrate various options of nearest neighbor matching by
@@ -541,27 +535,25 @@ for a complete list of optional inputs for full matching.
 Full matching can be performed with \MatchIt\ by setting
 \texttt{method = "full"}.  We use an add-on package called
 \texttt{optmatch} \citep{Hansen04}, which must be installed separately
-by typing at the R command prompt, 
-
+by typing at the R command prompt,
 %can we do this automatically if its needed, like we do in zelig?  
+%K: actually, Zelig requires users to install these packages when
+%they install Zelig.
 <<results=hide,eval=FALSE>>=
-install.packages("optmatch", contriburl =
-"http://www.stat.lsa.umich.edu/~bbh/optmatch") 
+install.packages("optmatch", contriburl = "http://www.stat.lsa.umich.edu/~bbh/optmatch") 
 @ 
-
 For more information
 about the package, see
 \hlink{http://www.stat.lsa.umich.edu/\~{}bbh/optmatch.html}{http://www.stat.lsa.umich.edu/\~bbh/optmatch.html}.
+
 The following example script can be run by typing {\tt demo(full)} at
 the R prompt.  We first load the Lalonde data, confuct full matching
 (using the propensity score based on logistic regression), and then
 print a short summary.
-
 <<>>=
 m.out <- matchit(treat ~ age + educ + black + hispan + married + nodegree + re74 + re75, data = lalonde, method = "full", distance = "logit")
 m.out
 @
-
 We see that the matching has utilized all units (the treated and
 control group sample sizes are the same for the full and matched
 samples). 
@@ -576,37 +568,36 @@ distance measure.  Another method, ``optimal'' matching, finds the
 matched samples with the smallest average absolute distance between
 each matched pair.  With large control pools, greedy and optimal
 matching may lead to very similar (or the same) sets of matches;
-\citet{GuRos93} have shown that greedy and optimal matching generally
-choose the same sets of controls for the matched samples, but that
+\citet{GuRos93} find that greedy and optimal matching generally choose
+the same sets of controls for the overall matched samples, but that
 optimal matching does a better job of minimizing the distance within
-each pair.  In addition, optimal matching can be particularly helpful
-when there are not many appropriate control matches for the treated
-units.  See \cite{GuRos93} or \cite{Rosenbaum02} for more information
-on optimal matching. See
+each pair.  In addition, optimal matching can be helpful when there
+are not many appropriate control matches for the treated units.  See
+\cite{GuRos93} or \cite{Rosenbaum02} for more information on optimal
+matching.
 Sections~\ref{subsubsec:inputs-all}~and~\ref{subsubsec:inputs-optimal}
-for a complete list of optional inputs for optimal matching.
+give a complete list of optional inputs for optimal matching.
 
 Optimal matching is performed with \MatchIt\ by setting \texttt{method
   = "optimal"}.  We use an add-on package called \texttt{optmatch}
-  \citep{Hansen04}, which must be installed separately by typing at
-  the R command prompt, 
-
-%** can we do this automatically if its needed, like we do in zelig?  
+\citep{Hansen04}, which must be installed separately by typing at the
+R command prompt,
 <<results=hide,eval=FALSE>>=
-  install.packages("optmatch", contriburl =
-  "http://www.stat.lsa.umich.edu/~bbh/optmatch") 
+  install.packages("optmatch", contriburl = "http://www.stat.lsa.umich.edu/~bbh/optmatch") 
 @ 
 
-For more
-  information about the package, see
-  \hlink{http://www.stat.lsa.umich.edu/\~{}bbh/optmatch.html}{http://www.stat.lsa.umich.edu/\~bbh/optmatch.html}.
-  The following example script (optimal ratio matching based on the
-  propensity score from the logistic regression) can be run by typing
-  {\tt demo(optimal)} at the R prompt.
+For more information about the package, see
+\hlink{http://www.stat.lsa.umich.edu/\~{}bbh/optmatch.html}{http://www.stat.lsa.umich.edu/\~bbh/optmatch.html}.
+
+The following example script (optimal ratio matching based on the
+propensity score from the logistic regression) can be run by typing
+{\tt demo(optimal)} at the R prompt.
 <<>>=
 m.out <- matchit(treat ~ re74 + re75 + age + educ, data = lalonde, method = "optimal", distance = "logit", ratio = 2)
 m.out
 @
+The short summary shows that for each treated unit, two control units
+are matched through the optimal matching procedure.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -1322,7 +1313,7 @@ The \texttt{summary} call returns, when applicable:
     \sum_{T=1} X_i$ and \texttt{Means Control}$= \mu_{X|T=0} =
     \frac{1}{n_0} \sum_{T=0} X_i$,
   \item standard deviation in the treated group for all covariates $X$,  
-	$\quad s_{x|T=1} = \sqrt{\frac{\sum_{i \in \{i: T_i=1\}}
+        $\quad s_{x|T=1} = \sqrt{\frac{\sum_{i \in \{i: T_i=1\}}
         X_i - \mu_{X|T=1}}{n_1-1} }.$
   \item summary statistics from a Q-Q plot, which compares treated and
     control covariate distributions, where \texttt{QQ Med}, \texttt{QQ
