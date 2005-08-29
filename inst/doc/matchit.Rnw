@@ -156,11 +156,15 @@ new version of \MatchIt.
 of dependent variables) that is a function of a dichotomous causal (or
 ``treatment'') variable, with values known as the ``treated'' and
 ``control'' groups, and a set of ``pretreatment'' covariates, i.e.,
-that are causally prior to the administration of the treatment.
-\MatchIt\ works for experimental data, but is also designed for
-observational studies where the treatment variable is simply observed
-rather than manipulated by the investigator.  \MatchIt\ can be used
-for other types of causal variables by dichotomizing them, perhaps in
+that are causally prior to the administration of the treatment.  (If
+you are interested in the causal effect of more than one variable in
+your data set, run \MatchIt\ separately for each one; it is unlikely
+in any event that any one parametric model will produce valid causal
+inferences for more than one treatment variable at a time.)  \MatchIt\
+works for experimental data, but is designed mainly for observational
+studies where the treatment variable is simply observed rather than
+manipulated at will by the investigator.  \MatchIt\ can be used for
+other types of causal variables by dichotomizing them, perhaps in
 multiple ways \citep[see also][]{ImaDyk04}.
 
 We adopt the same notation as in \citet*{HoImaKin05}. Unless otherwise
@@ -171,9 +175,12 @@ number of treated units, $n_0$ denote the number of control units
 assigned treatment, and $t_i=0$ when unit $i$ is assigned control.
 (The labels ``treatment'' and ``control'' are arbitrary and can be
 switched for convenience.)  Denote $y_i(1)$ as the potential outcome
-of unit $i$ under treatment and $y_i(0)$ the potential outcome of unit
-$i$ under control.  The variables $y_i(1)$ and $y_i(0)$ are jointly
-unobservable, and for each $i$, we observe one
+of unit $i$ under treatment --- the value the outcome variable would
+take if $t_i$ were equal to 1, whether or not $t_i$ in fact is 0 or 1
+-- and $y_i(0)$ the potential outcome of unit $i$ under control ---
+the value the outcome variable would take if $t_i$ were equal to 0,
+regardless of its value in fact.  The variables $y_i(1)$ and $y_i(0)$
+are jointly unobservable, and for each $i$, we observe one
 $y_i=t_iy_i(1)+(1-t_i)y_i(0)$, and not the other.
 
 \subsection{Preprocessing via Matching}
@@ -185,12 +192,13 @@ means that when matching we can select, duplicate, or selectively drop
 observations from an existing sample without inducing bias, as long as
 we do so using a rule that is a function only of $t_i$ and $X_i$ and
 does not depend on the outcome variable $Y_i$.  \MatchIt\ provides,
-implements, and evaluates the choice of these rules.  After matching,
-the original dataset will be preprocessed so that $t_i$ and $X_i$ are
-unrelated or less related than before. This implies that the treatment
-and control groups have the same background characteristics, or,
-formally $\tilde p(X\mid t=1) \approx \tilde p(X\mid t=0)$, where
-$\tilde p$ refers to the observed empirical density of the data (think
+implements, and evaluates the choice of these rules.  The output of
+\MatchIt\ is a new dataset, to substitute for your original, that has
+been preprocessed so that $t_i$ and $X_i$ are unrelated or less
+related than before.  This implies that the treatment and control
+groups have more similar background characteristics, or, formally
+$\tilde p(X\mid t=1) \approx \tilde p(X\mid t=0)$, where $\tilde p$
+refers to the observed empirical density of the data (think
 histogram), rather than a population density.
 
 The simplest way to obtain good matches (as defined above) is to use
@@ -204,20 +212,37 @@ matched pairs are not required.  Indeed, many of the other methods
 implemented in \MatchIt\ only attempt to balance the overall covariate
 distributions, without necessarily finding one-to-one exact matches.
 
+A key point in \citet*{HoImaKin05} is that matching by itself is not a
+method of estimation: Every use of matching in the literature involves
+an analysis step following the matching procedure, but almost all
+analyses use a simple difference in means.  This procedure is
+appropriate only if exact matching was conducted.  In almost all other
+cases, some adjustment is required, and there is no reason to degrade
+your inferences by using an inferior method of analysis even when
+improving your inferences via preprocessing.  With \MatchIt, you can
+improve your analyses in two ways.  In fact, \MatchIt\ analyses are
+doubly robust in that if \emph{either} the matching analysis or the
+analysis model is correct (but not necessarily both) your inferences
+will be statistically consistent.
+
 \subsection{Checking Balance}
 \label{subsec:balance-sum}
 
-The goal of a matching procedure is to replicate a randomized
-experiment in terms of finding units who look as if they could have
-been randomly assigned to treatment or control status.  That is, as
-described above, we would like the distribution of covariates to be
-the same in the matched treated and matched control groups. A crucial
-part of any matching procedure is, therefore, to assess how close the
-(empirical) covariate distributions are in the two groups, which we
-call the ``balance.''  Because the outcome variable is not used in the
-matching procedure, a variety of matching methods can be assessed, and
-the matching procedure that leads to the best balance is chosen.
-\MatchIt\ provides a number of ways to assess the balance of
+The goal of matching is to simulate an aspect of a randomized
+experiment in terms of finding units that look as if they could have
+been randomly assigned to treatment or control status.  When this is
+the case, we break the link between treatment variable and the
+pretreatment controls, which makes the parametric form of the analysis
+model less relevant or irrelevant entirely.  To break this link, we
+need the distribution of covariates to be the same within the matched
+treated and matched control groups. 
+
+A crucial part of any matching procedure is, therefore, to assess how
+close the (empirical) covariate distributions are in the two groups,
+which is known as ``balance.''  Because the outcome variable is not
+used in the matching procedure, a variety of matching methods can be
+assessed, and the matching procedure that leads to the best balance is
+chosen.  \MatchIt\ provides a number of ways to assess the balance of
 covariates after matching, including numerical summaries such as the
 standardized bias (difference in means divided by the treated group
 standard deviation) and graphical summaries such as quantile-quantile
@@ -232,33 +257,33 @@ The most common way that parametric analyses are used to compute
 quantities of interest is by holding constant some explanatory
 variables, changing others, and computing predicted or expected values
 and taking the difference or ratio.  In the case of causal inference,
-this would probably mean looking at the effect on the expected value
-of the outcome variable when changing $T$ from 0 to 1, while holding
-constant the pretreatment control variables $X$ at their means
-or medians.  This, and indeed any other ordinary procedure, would be a
-perfectly reasonable way to proceed with analysis after matching.
+this would mean looking at the effect on the expected value of the
+outcome variable when changing $T$ from 0 to 1, while holding constant
+the pretreatment control variables $X$ at their means or medians.
+This, and indeed any other standard procedure, would be a perfectly
+reasonable way to proceed with analysis after matching.
 
-Another way to proceed with analysis after \MatchIt\ is to compute the
-average treatment effect on the treated.  For example, for the treated
-group, the potential outcomes under control, $Y_i(0)$, are missing,
-whereas the outcomes under treatment, $Y_i(1)$, are observed, and the
-goal of the analysis is to impute the missing outcomes, $Y_i(0)$ in
-observations where $T_i=1$.  We do this via simulation using a
-parametric statistical model (as described below).  Once those
-potential outcomes are imputed from the model, the estimate of
-individual $i$'s treatment effect is $Y_i(1)-\widehat{Y}_i(0)$ where
-$\widehat{Y}_i(0)$ is a Monte Carlo estimate of the average missing
-potential outcome for unit $i$ (i.e., the average of simulated values
-of the dependent variable for unit $i$ under the counterfactual
-condition where $T_i=0$).  The in-sample average treatment effect for
-the treated individuals can then be obtained by averaging this
-difference over all observations $i$ where in fact $T_i=1$.  (A
-similar procedure can also be used to estimate various other
-quantities of interest such as the average treatment effect for all
-observations.)  An advantage of this simulation approach is that the
-uncertainty estimates such as standard errors and confidence intervals
-are obtained easily by the usual rules in fitting the parametric
-model.
+Another increasingly popular way to proceed with analysis after
+\MatchIt\ is to compute the \emph{average treatment effect on the
+  treated}.  For example, for the treated group, the potential
+outcomes under control, $Y_i(0)$, are missing, whereas the outcomes
+under treatment, $Y_i(1)$, are observed, and the goal of the analysis
+is to impute the missing outcomes, $Y_i(0)$ in observations where
+$T_i=1$.  We do this via simulation using a parametric statistical
+model (as described below).  Once those potential outcomes are imputed
+from the model, the estimate of individual $i$'s treatment effect is
+$Y_i(1)-\widehat{Y}_i(0)$ where $\widehat{Y}_i(0)$ is a Monte Carlo
+estimate of the average missing potential outcome for unit $i$ (i.e.,
+the average of simulated values of the dependent variable for unit $i$
+under the counterfactual condition where $T_i=0$).  The in-sample
+average treatment effect for the treated individuals can then be
+obtained by averaging this difference over all observations $i$ where
+in fact $T_i=1$.  (A similar procedure can also be used to estimate
+various other quantities of interest such as the average treatment
+effect for all observations.)  An advantage of this simulation
+approach is that the uncertainty estimates such as standard errors and
+confidence intervals are obtained easily by the usual rules in fitting
+the parametric model.
 
 The imputation from the model can be done in at least two ways.
 Recall that the model is used to impute \emph{the value that the
@@ -312,7 +337,6 @@ of Equation~\ref{att}) is \emph{observed}, whereas the second term is
 the \emph{unobserved} counterfactual of real earnings if participants
 had not participated.  The nature of causal inference is that one of
 the two terms in the difference will always be unobserved.
-
 \begin{table}[h]
 \centering
 \begin{tabular}{lp{3in}}

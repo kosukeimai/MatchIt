@@ -108,20 +108,20 @@ Mean Values of Observed Data (n = 185)
 
 Pooled Expected Values: E(Y|X)
   mean   sd    min   max  2.5% 97.5%
-1 5010 2285 -10722 27619 707.9 10017
+1 4976 2268 -11312 27332 790.5  9979
 
 Average Treatment Effect: Y - EV
   mean    sd    min  max  2.5% 97.5%
-1 1339 581.8 -547.6 3317 265.1  2587
+1 1373 582.2 -658.2 3164 243.3  2534
 
 \end{Soutput}
 \end{Schunk}
 The results indicate that the estimated average treatment effect on
 the treated is 
-\$1339.2,
+\$1373.3,
 with a 95\% interval of
-(\$-547.6,
-\$3316.6).
+(\$-658.2,
+\$3163.6).
 
 It is also possible to estimate the average treatment effects on both
 the treated and the control groups. To do this, we fit the linear
@@ -160,14 +160,14 @@ The point estimate and its standard error is given by
 > mean(ate.all)
 \end{Sinput}
 \begin{Soutput}
-[1] 1622
+[1] 1603
 
 \end{Soutput}
 \begin{Sinput}
 > sd(ate.all)
 \end{Sinput}
 \begin{Soutput}
-[1] 805
+[1] 776.7
 
 \end{Soutput}
 \end{Schunk}
@@ -178,7 +178,7 @@ The 95\% confidence interval is given by
 \end{Sinput}
 \begin{Soutput}
   2.5%  97.5% 
- 224.6 3338.6 
+ 226.5 3222.2 
 
 \end{Soutput}
 \end{Schunk}
@@ -236,20 +236,20 @@ Mean Values of Observed Data (n = 46)
 
 Pooled Expected Values: E(Y|X)
   mean   sd    min   max  2.5% 97.5%
-1 4473 5415 -41169 66576 -5853 16065
+1 4410 5528 -42049 62210 -6301 16271
 
 Pooled Average Treatment Effect: Y - EV
   mean   sd   min  max   2.5% 97.5%
-1 1877 1667 -3466 8160 -797.8  5554
+1 1940 1757 -6175 9104 -757.2  5620
 
 \end{Soutput}
 \end{Schunk}
 The results indicate that the estimated average treatment effect on
 the treated is
-\$1876.5,
+\$1940.4,
 with a 95\% interval of
-(\$-3466,
-\$8160.1).
+(\$-6174.8,
+\$9103.9).
 It is also possible to get the summary result for each subclass. For
 example, the following command summarizes the result for the second
 subclass.
@@ -269,12 +269,12 @@ Mean Values of Observed Data (n = 45)
      1.0000   1777.4221    972.3441      0.6039 
 
 Pooled Expected Values: E(Y|X)
-  mean   sd   min   max   2.5% 97.5%
-1 3859 2530 -7601 16643 -799.9  9503
+  mean   sd   min   max  2.5% 97.5%
+1 3665 2529 -6221 18227 -1203  9266
 
 Average Treatment Effect: Y - EV
-  mean   sd    min  max  2.5% 97.5%
-1 2627 1281 -367.1 6689 416.8  5119
+  mean   sd    min  max 2.5% 97.5%
+1 2822 1244 -236.6 6168  453  5273
 
 
 \end{Soutput}
