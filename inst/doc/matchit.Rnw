@@ -351,7 +351,8 @@ procedures.  A general syntax is given by
 m.out <- matchit(treat ~ x1 + x2, data = mydata)
 @
 where {\tt treat} is the dichotomous treatment variable, and {\tt x1}
-and {\tt x2} are pre-treatment covariates.  This command creates the
+and {\tt x2} are pre-treatment covariates, all of which are contained
+in the data frame {\tt mydata}.  This command creates the
 \MatchIt\, object called \texttt{m.out}.  A quick summary of the
 matching procedure can be printed on the screen by typing
 <<results=hide, eval=FALSE>>=
@@ -384,14 +385,14 @@ data(lalonde)
 m.out <- matchit(treat ~ educ + black + hispan, data = lalonde, method = "exact")
 @
 The object \texttt{m.out} contains all the information on the matched
-units.  The matching forms all possible subclasses based on unique
+units.  \MatchIt\ creates all possible subclasses based on unique
 values of the covariates in the right hand side of the formula; within
 each subclass, all units have the same covariate values.  To obtain
 a short summary about the matching procedure, type
 <<>>=
 m.out
 @
-The printout includes the matched call and the fact that
+The printout includes the matched call and shows that
 \Sexpr{sum(m.out$weights[m.out$treat==1]!=0)} treatment units were
 exactly matched to \Sexpr{sum(m.out$weights[m.out$treat==0]!=0)}
 control units on race and education. There was
@@ -400,9 +401,9 @@ control units on race and education. There was
 not matched, and therefore were excluded from the matched data set.
 See
 Sections~\ref{subsubsec:inputs-all}~and~\ref{subsubsec:inputs-exact}
-for a complete list of input options for exact matching.  Now, proceed
-to Section~\ref{subsec:balance} to learn about how the {\tt summary()}
-command can be used with exact matching.
+for a complete list of input options for exact matching.  Now, you may
+also want to proceed to Section~\ref{subsec:balance} to learn about
+how the {\tt summary()} command can be used with exact matching.
 
 \subsubsection{Subclassification}
 \label{subsubsec:subclass}
@@ -852,7 +853,7 @@ matching method described above.
 \paragraph{Examining the balance graphically}
 
 We can also examine the balance graphically.  Figures~\ref{diagqqsub}
-and \ref{diagjittersub} display the two diagnostic plots.  With
+and \ref{diagjittersub} display two sample diagnostic plots.  With
 subclassification, separate Q-Q plots are printed for each subclass;
 for each, the graphs shown in the left-hand column are those for the
 full data set.  The jitter plot is the same as that for nearest
@@ -1186,7 +1187,9 @@ The available options are listed below.
 \subsubsection{Output Object Contents}
 
 Regardless of the type of matching performed, the \texttt{matchit}
-output object contains the following elements:
+output object contains the following elements:\footnote{When
+inapplicable or unnecessary, these elements may equal {\tt NULL}.  For
+example, when exact matching, {\tt match.matrix = NULL}.}
 
 \begin{enumerate}
 \item \texttt{call} provides the original {\tt matchit()} call.
@@ -1213,7 +1216,7 @@ output object contains the following elements:
     represent the three control units matched to one treatment unit).
   \item \texttt{NA} indicates that the treatment unit was not matched.
   \end{itemize}
-   
+
 \item \texttt{discarded} is a vector of length $n$ that displays
   whether the units were ineligible for matching due to common support
   restrictions.  It equals \texttt{TRUE} if unit $i$ was discarded,
