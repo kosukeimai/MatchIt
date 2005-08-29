@@ -52,7 +52,7 @@ Elizabeth A. Stuart\thanks{Researcher, Mathematica Policy Research,
 
 \makeindex
 
-\usepackage{/usr/local/lib/R/share/texmf/Sweave}
+\usepackage{/usr/lib64/R/share/texmf/Sweave}
 \begin{document}
 \maketitle
 
@@ -116,7 +116,16 @@ During the installation process you may either decide to keep or
 discard the installation files, which will not affect the way
 \MatchIt\ runs.  Note that you only need to do this once.  Some users
 may also find it helpful to install the package with version control
-(see Subsection~\ref{subsec:vercontrol}).
+(see Subsection~\ref{subsec:vercontrol}). 
+
+We recommend that users also install Zelig and optmatch by typing the
+following commands,
+\begin{Schunk}
+\begin{Sinput}
+> install.packages("Zelig")
+> install.packages("optmatch", contriburl = "http://www.stat.lsa.umich.edu/~bbh/optmatch")
+\end{Sinput}
+\end{Schunk}
 
 \subsection{Loading \MatchIt} \label{subsec:load}
 
@@ -1069,7 +1078,7 @@ by clicking the first mouse button near the units.
 
 \begin{figure}[tbp]
   \begin{center}
-\includegraphics{figs/-028}
+\includegraphics{figs/-029}
 %    \includegraphics[scale=0.5]{figs/jitterplotnn}
     \hfill
     \caption{Sample diagnostic jitter plot: Nearest Neighbor matching
@@ -1351,7 +1360,7 @@ subclass cut-points.
 
 \begin{figure}[tbp]
   \begin{center}
-\includegraphics{figs/-032}
+\includegraphics{figs/-033}
     %\includegraphics[scale=0.5]{figs/jitterplotsub}
     \hfill
     \caption{Sample diagnostic jitter plot: Subclassification with

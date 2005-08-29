@@ -108,21 +108,21 @@ Mean Values of Observed Data (n = 185)
   1.892e-01   2.096e+03   1.532e+03   5.774e-01 
 
 Pooled Expected Values: E(Y|X)
- mean    sd  2.5% 97.5% 
- 5004  2291   700  9979 
+  mean     sd   2.5%  97.5% 
+5006.8 2264.3  761.8 9978.0 
 
 Pooled Average Treatment Effect: Y - EV
   mean     sd   2.5%  97.5% 
-1345.2  609.3  166.3 2647.0 
+1342.3  564.5  245.6 2445.9 
 
 \end{Soutput}
 \end{Schunk}
 The results indicate that the estimated average treatment effect on
 the treated is 
-\$1345.2,
+\$1342.3,
 with a 95\% interval of
-(\$166.3,
-\$2647).
+(\$245.6,
+\$2445.9).
 
 It is also possible to estimate the average treatment effects on both
 the treated and the control groups. To do this, we fit the linear
@@ -161,14 +161,14 @@ The point estimate and its standard error is given by
 > mean(ate.all)
 \end{Sinput}
 \begin{Soutput}
-[1] 1614
+[1] 1613
 
 \end{Soutput}
 \begin{Sinput}
 > sd(ate.all)
 \end{Sinput}
 \begin{Soutput}
-[1] 809
+[1] 784.3
 
 \end{Soutput}
 \end{Schunk}
@@ -179,7 +179,7 @@ The 95\% confidence interval is given by
 \end{Sinput}
 \begin{Soutput}
   2.5%  97.5% 
- 175.0 3378.8 
+ 215.4 3319.0 
 
 \end{Soutput}
 \end{Schunk}
@@ -237,20 +237,20 @@ Mean Values of Observed Data (n = 46)
 
 Pooled Expected Values: E(Y|X)
  mean    sd  2.5% 97.5% 
- 4395  5330 -5469 15784 
+ 4458  5438 -6047 16030 
 
 Pooled Average Treatment Effect: Y - EV
   mean     sd   2.5%  97.5% 
-1955.5 1683.6 -750.6 5390.1 
+1890.3 1732.7 -864.5 5733.0 
 
 \end{Soutput}
 \end{Schunk}
 The results indicate that the estimated average treatment effect on
 the treated is
-\$1955.5,
+\$1890.3,
 with a 95\% interval of
-(\$-750.6,
-\$5390.1).
+(\$-864.5,
+\$5733).
 It is also possible to get the summary result for each subclass. For
 example, the following command summarizes the result for the second
 subclass.
@@ -271,11 +271,11 @@ Mean Values of Observed Data (n = 45)
 
 Pooled Expected Values: E(Y|X)
  mean    sd  2.5% 97.5% 
- 3659  2558 -1037  9322 
+ 3876  2495  -699  9388 
 
 Pooled Average Treatment Effect: Y - EV
   mean     sd   2.5%  97.5% 
-2827.8 1285.9  198.0 5035.0 
+2609.9 1259.0  189.4 4862.3 
 
 
 \end{Soutput}
