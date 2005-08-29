@@ -38,7 +38,7 @@ Kosuke Imai,\thanks{Assistant Professor, Department of Politics,
   \texttt{kimai@Princeton.Edu}).}
 \and
 Gary King,\thanks{David Florence Professor of Government, Harvard
-  University (Institute for Quantitative Social Science, 34
+ University (Institute for Quantitative Social Science, 34
   Kirkland Street, Harvard University, Cambridge MA 02138;
   \texttt{http://GKing.Harvard.Edu}, \texttt{King@Harvard.Edu}, (617)
   495-2027).}
@@ -168,11 +168,11 @@ number of treated units, $n_0$ denote the number of control units
 (or control) variables for unit $i$.  Let $t_i=1$ when unit $i$ is
 assigned treatment, and $t_i=0$ when unit $i$ is assigned control.
 (The labels ``treatment'' and ``control'' are arbitrary and can be
-switched for convenience.)  Denote $y_{1i}$ as the potential outcome
-of unit $i$ under treatment and $y_{0i}$ the potential outcome of unit
-$i$ under control.  The variables $y_{1i}$ and $y_{0i}$ are jointly
+switched for convenience.)  Denote $y_i(1)$ as the potential outcome
+of unit $i$ under treatment and $y_i(0)$ the potential outcome of unit
+$i$ under control.  The variables $y_i(1)$ and $y_i(0)$ are jointly
 unobservable, and for each $i$, we observe one
-$y_i=t_iy_{1i}+(1-t_i)y_{0i}$, and not the other.
+$y_i=t_iy_i(1)+(1-t_i)y_i(0)$, and not the other.
 
 \subsection{Preprocessing via Matching}
 
@@ -238,14 +238,14 @@ perfectly reasonable way to proceed with analysis after matching.
 
 Another way to proceed with analysis after \MatchIt\ is to compute the
 average treatment effect on the treated.  For example, for the treated
-group, the potential outcomes under control, $Y_{0i}$, are missing,
-whereas the outcomes under treatment, $Y_{1i}$, are observed, and the
-goal of the analysis is to impute the missing outcomes, $Y_{0i}$ in
+group, the potential outcomes under control, $Y_i(0)$, are missing,
+whereas the outcomes under treatment, $Y_i(1)$, are observed, and the
+goal of the analysis is to impute the missing outcomes, $Y_i(0)$ in
 observations where $T_i=1$.  We do this via simulation using a
 parametric statistical model (as described below).  Once those
 potential outcomes are imputed from the model, the estimate of
-individual $i$'s treatment effect is $Y_{1i}-\widehat{Y}_{0i}$ where
-$\widehat{Y}_{0i}$ is a Monte Carlo estimate of the average missing
+individual $i$'s treatment effect is $Y_i(1)-\widehat{Y}_i(0)$ where
+$\widehat{Y}_i(0)$ is a Monte Carlo estimate of the average missing
 potential outcome for unit $i$ (i.e., the average of simulated values
 of the dependent variable for unit $i$ under the counterfactual
 condition where $T_i=0$).  The in-sample average treatment effect for
@@ -268,7 +268,7 @@ units with $T_i$ switched counterfactually from 1 to 0.  An
 alternative approach would be to fit a model without $T$ by using only
 the outcomes of the matched control units (i.e., using only
 observations where $T_i=0$).  Then, given this fitted model, the
-missing outcomes $Y_{i0}$ are imputed for the matched treated units by
+missing outcomes $Y_i(0)$ are imputed for the matched treated units by
 using the values of the explanatory variables for the treated units.
 The first approach will usually have lower variance, since all
 observations are used, and the second may have less bias, since no
