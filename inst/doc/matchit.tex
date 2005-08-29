@@ -1047,11 +1047,13 @@ by clicking the first mouse button near the units.
 
 \begin{figure}[tbp]
   \begin{center}
-\includegraphics{figs/-028}
-%    \includegraphics[scale=0.25]{figs/qqplotnn}
-%    \includegraphics[scale=0.25]{figs/qqplotnn2} 
+%<<fig=TRUE, width=8, height=5, prefix.string=figs/, echo=FALSE>>=
+%plot(m.out, interactive=FALSE)
+%@
+    \includegraphics[width=3in, height=3in]{figs/qqplotnn}
+    \includegraphics[width=3in, height=3in]{figs/qqplotnn2} 
     \hfill
-    \caption{SWEAVE Sample diagnostic QQ plots: Nearest Neighbor matching
+    \caption{Sample diagnostic QQ plots: Nearest Neighbor matching
       with the \MatchIt\ call \texttt{matchit(treat ~ re74 + re75 + educ
         + black + hispan + age, data=lalonde, method="nearest")}.}
     \label{diagqqnn}
@@ -1060,7 +1062,7 @@ by clicking the first mouse button near the units.
 
 \begin{figure}[tbp]
   \begin{center}
-\includegraphics{figs/-029}
+\includegraphics{figs/-028}
 %    \includegraphics[scale=0.5]{figs/jitterplotnn}
     \hfill
     \caption{Sample diagnostic jitter plot: Nearest Neighbor matching
@@ -1322,11 +1324,13 @@ subclass cut-points.
 
 \begin{figure}[tbp]
   \begin{center}
-\includegraphics{figs/-033}
-%    \includegraphics[scale=.25]{figs/qqplotsub}
-%    \includegraphics[scale=.25]{figs/qqplotsub2}
+%<<fig=TRUE, width=8, height=5, prefix.string=figs/, echo=FALSE>>=
+%plot(m.out, interactive=FALSE)
+%@
+    \includegraphics[width=3in, height=3in]{figs/qqplotsub}
+    \includegraphics[width=3in, height=3in]{figs/qqplotsub2}
     \hfill
-    \caption{SWEAVE Sample diagnostic QQ plots: Subclassification with
+    \caption{Sample diagnostic QQ plots: Subclassification with
       \MatchIt\ call \texttt{matchit(treat ~ re74 + re75 + educ +
         black + hispan + age, data = lalonde, method = "subclass")}
       followed by plot(m.out).}
@@ -1336,10 +1340,10 @@ subclass cut-points.
 
 \begin{figure}[tbp]
   \begin{center}
-\includegraphics{figs/-034}
+\includegraphics{figs/-032}
     %\includegraphics[scale=0.5]{figs/jitterplotsub}
     \hfill
-    \caption{SWEAVE Sample diagnostic jitter plot: Subclassification with
+    \caption{Sample diagnostic jitter plot: Subclassification with
       \MatchIt\ call \texttt{matchit(treat ~ re74 + re75 + educ +
         black + hispan + age, data = lalonde, method = "subclass")
         followed by plot(m.out, type="jitter")}.  Vertical lines
@@ -1818,7 +1822,8 @@ within each subclasses if specified.  The graphs present:
   \texttt{interactive = F}. When subclassifying, users can then
   specify the subclass by the \texttt{subclass} input.
 \item Jitter plots of the propensity score for treated and control
-  units (\texttt{type = "jitter"}).
+  units (\texttt{type = "jitter"}).  If \texttt{interactive=TRUE} (the default), the 
+  user can identify individual units by clicking on the graph with the left mouse button.  
 \end{enumerate}
 
 \subsubsection{{\tt match.data()}}

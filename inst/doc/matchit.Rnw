@@ -802,11 +802,11 @@ plot(m.out, type="jitter")
 
 \begin{figure}[tbp]
   \begin{center}
-<<fig=TRUE, width=8, height=5, prefix.string=figs/, echo=FALSE>>=
-plot(m.out, interactive=FALSE)
-@
-%    \includegraphics[scale=0.25]{figs/qqplotnn}
-%    \includegraphics[scale=0.25]{figs/qqplotnn2} 
+%<<fig=TRUE, width=8, height=5, prefix.string=figs/, echo=FALSE>>=
+%plot(m.out, interactive=FALSE)
+%@
+    \includegraphics[width=3in, height=3in]{figs/qqplotnn}
+    \includegraphics[width=3in, height=3in]{figs/qqplotnn2} 
     \hfill
     \caption{Sample diagnostic QQ plots: Nearest Neighbor matching
       with the \MatchIt\ call \texttt{matchit(treat ~ re74 + re75 + educ
@@ -900,11 +900,11 @@ plot(m.out, type="jitter")
 
 \begin{figure}[tbp]
   \begin{center}
-<<fig=TRUE, width=8, height=5, prefix.string=figs/, echo=FALSE>>=
-plot(m.out, interactive=FALSE)
-@
-%    \includegraphics[scale=.25]{figs/qqplotsub}
-%    \includegraphics[scale=.25]{figs/qqplotsub2}
+%<<fig=TRUE, width=8, height=5, prefix.string=figs/, echo=FALSE>>=
+%plot(m.out, interactive=FALSE)
+%@
+    \includegraphics[width=3in, height=3in]{figs/qqplotsub}
+    \includegraphics[width=3in, height=3in]{figs/qqplotsub2}
     \hfill
     \caption{Sample diagnostic QQ plots: Subclassification with
       \MatchIt\ call \texttt{matchit(treat ~ re74 + re75 + educ +
