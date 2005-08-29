@@ -113,7 +113,14 @@ During the installation process you may either decide to keep or
 discard the installation files, which will not affect the way
 \MatchIt\ runs.  Note that you only need to do this once.  Some users
 may also find it helpful to install the package with version control
-(see Subsection~\ref{subsec:vercontrol}).
+(see Subsection~\ref{subsec:vercontrol}). 
+
+We recommend that users also install Zelig and optmatch by typing the
+following commands,
+<<results=hide, eval=FALSE>>=
+install.packages("Zelig")
+install.packages("optmatch", contriburl = "http://www.stat.lsa.umich.edu/~bbh/optmatch")
+@
 
 \subsection{Loading \MatchIt} \label{subsec:load}
 
