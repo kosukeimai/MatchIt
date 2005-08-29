@@ -165,11 +165,15 @@ new version of \MatchIt.
 of dependent variables) that is a function of a dichotomous causal (or
 ``treatment'') variable, with values known as the ``treated'' and
 ``control'' groups, and a set of ``pretreatment'' covariates, i.e.,
-that are causally prior to the administration of the treatment.
-\MatchIt\ works for experimental data, but is also designed for
-observational studies where the treatment variable is simply observed
-rather than manipulated by the investigator.  \MatchIt\ can be used
-for other types of causal variables by dichotomizing them, perhaps in
+that are causally prior to the administration of the treatment.  (If
+you are interested in the causal effect of more than one variable in
+your data set, run \MatchIt\ separately for each one; it is unlikely
+in any event that any one parametric model will produce valid causal
+inferences for more than one treatment variable at a time.)  \MatchIt\
+works for experimental data, but is designed mainly for observational
+studies where the treatment variable is simply observed rather than
+manipulated at will by the investigator.  \MatchIt\ can be used for
+other types of causal variables by dichotomizing them, perhaps in
 multiple ways \citep[see also][]{ImaDyk04}.
 
 We adopt the same notation as in \citet*{HoImaKin05}. Unless otherwise
@@ -180,9 +184,12 @@ number of treated units, $n_0$ denote the number of control units
 assigned treatment, and $t_i=0$ when unit $i$ is assigned control.
 (The labels ``treatment'' and ``control'' are arbitrary and can be
 switched for convenience.)  Denote $y_i(1)$ as the potential outcome
-of unit $i$ under treatment and $y_i(0)$ the potential outcome of unit
-$i$ under control.  The variables $y_i(1)$ and $y_i(0)$ are jointly
-unobservable, and for each $i$, we observe one
+of unit $i$ under treatment --- the value the outcome variable would
+take if $t_i$ were equal to 1, whether or not $t_i$ in fact is 0 or 1
+-- and $y_i(0)$ the potential outcome of unit $i$ under control ---
+the value the outcome variable would take if $t_i$ were equal to 0,
+regardless of its value in fact.  The variables $y_i(1)$ and $y_i(0)$
+are jointly unobservable, and for each $i$, we observe one
 $y_i=t_iy_i(1)+(1-t_i)y_i(0)$, and not the other.
 
 \subsection{Preprocessing via Matching}
@@ -194,12 +201,13 @@ means that when matching we can select, duplicate, or selectively drop
 observations from an existing sample without inducing bias, as long as
 we do so using a rule that is a function only of $t_i$ and $X_i$ and
 does not depend on the outcome variable $Y_i$.  \MatchIt\ provides,
-implements, and evaluates the choice of these rules.  After matching,
-the original dataset will be preprocessed so that $t_i$ and $X_i$ are
-unrelated or less related than before. This implies that the treatment
-and control groups have the same background characteristics, or,
-formally $\tilde p(X\mid t=1) \approx \tilde p(X\mid t=0)$, where
-$\tilde p$ refers to the observed empirical density of the data (think
+implements, and evaluates the choice of these rules.  The output of
+\MatchIt\ is a new dataset, to substitute for your original, that has
+been preprocessed so that $t_i$ and $X_i$ are unrelated or less
+related than before.  This implies that the treatment and control
+groups have more similar background characteristics, or, formally
+$\tilde p(X\mid t=1) \approx \tilde p(X\mid t=0)$, where $\tilde p$
+refers to the observed empirical density of the data (think
 histogram), rather than a population density.
 
 The simplest way to obtain good matches (as defined above) is to use
@@ -213,20 +221,37 @@ matched pairs are not required.  Indeed, many of the other methods
 implemented in \MatchIt\ only attempt to balance the overall covariate
 distributions, without necessarily finding one-to-one exact matches.
 
+A key point in \citet*{HoImaKin05} is that matching by itself is not a
+method of estimation: Every use of matching in the literature involves
+an analysis step following the matching procedure, but almost all
+analyses use a simple difference in means.  This procedure is
+appropriate only if exact matching was conducted.  In almost all other
+cases, some adjustment is required, and there is no reason to degrade
+your inferences by using an inferior method of analysis even when
+improving your inferences via preprocessing.  With \MatchIt, you can
+improve your analyses in two ways.  In fact, \MatchIt\ analyses are
+doubly robust in that if \emph{either} the matching analysis or the
+analysis model is correct (but not necessarily both) your inferences
+will be statistically consistent.
+
 \subsection{Checking Balance}
 \label{subsec:balance-sum}
 
-The goal of a matching procedure is to replicate a randomized
-experiment in terms of finding units who look as if they could have
-been randomly assigned to treatment or control status.  That is, as
-described above, we would like the distribution of covariates to be
-the same in the matched treated and matched control groups. A crucial
-part of any matching procedure is, therefore, to assess how close the
-(empirical) covariate distributions are in the two groups, which we
-call the ``balance.''  Because the outcome variable is not used in the
-matching procedure, a variety of matching methods can be assessed, and
-the matching procedure that leads to the best balance is chosen.
-\MatchIt\ provides a number of ways to assess the balance of
+The goal of matching is to simulate an aspect of a randomized
+experiment in terms of finding units that look as if they could have
+been randomly assigned to treatment or control status.  When this is
+the case, we break the link between treatment variable and the
+pretreatment controls, which makes the parametric form of the analysis
+model less relevant or irrelevant entirely.  To break this link, we
+need the distribution of covariates to be the same within the matched
+treated and matched control groups. 
+
+A crucial part of any matching procedure is, therefore, to assess how
+close the (empirical) covariate distributions are in the two groups,
+which is known as ``balance.''  Because the outcome variable is not
+used in the matching procedure, a variety of matching methods can be
+assessed, and the matching procedure that leads to the best balance is
+chosen.  \MatchIt\ provides a number of ways to assess the balance of
 covariates after matching, including numerical summaries such as the
 standardized bias (difference in means divided by the treated group
 standard deviation) and graphical summaries such as quantile-quantile
@@ -241,33 +266,33 @@ The most common way that parametric analyses are used to compute
 quantities of interest is by holding constant some explanatory
 variables, changing others, and computing predicted or expected values
 and taking the difference or ratio.  In the case of causal inference,
-this would probably mean looking at the effect on the expected value
-of the outcome variable when changing $T$ from 0 to 1, while holding
-constant the pretreatment control variables $X$ at their means
-or medians.  This, and indeed any other ordinary procedure, would be a
-perfectly reasonable way to proceed with analysis after matching.
+this would mean looking at the effect on the expected value of the
+outcome variable when changing $T$ from 0 to 1, while holding constant
+the pretreatment control variables $X$ at their means or medians.
+This, and indeed any other standard procedure, would be a perfectly
+reasonable way to proceed with analysis after matching.
 
-Another way to proceed with analysis after \MatchIt\ is to compute the
-average treatment effect on the treated.  For example, for the treated
-group, the potential outcomes under control, $Y_i(0)$, are missing,
-whereas the outcomes under treatment, $Y_i(1)$, are observed, and the
-goal of the analysis is to impute the missing outcomes, $Y_i(0)$ in
-observations where $T_i=1$.  We do this via simulation using a
-parametric statistical model (as described below).  Once those
-potential outcomes are imputed from the model, the estimate of
-individual $i$'s treatment effect is $Y_i(1)-\widehat{Y}_i(0)$ where
-$\widehat{Y}_i(0)$ is a Monte Carlo estimate of the average missing
-potential outcome for unit $i$ (i.e., the average of simulated values
-of the dependent variable for unit $i$ under the counterfactual
-condition where $T_i=0$).  The in-sample average treatment effect for
-the treated individuals can then be obtained by averaging this
-difference over all observations $i$ where in fact $T_i=1$.  (A
-similar procedure can also be used to estimate various other
-quantities of interest such as the average treatment effect for all
-observations.)  An advantage of this simulation approach is that the
-uncertainty estimates such as standard errors and confidence intervals
-are obtained easily by the usual rules in fitting the parametric
-model.
+Another increasingly popular way to proceed with analysis after
+\MatchIt\ is to compute the \emph{average treatment effect on the
+  treated}.  For example, for the treated group, the potential
+outcomes under control, $Y_i(0)$, are missing, whereas the outcomes
+under treatment, $Y_i(1)$, are observed, and the goal of the analysis
+is to impute the missing outcomes, $Y_i(0)$ in observations where
+$T_i=1$.  We do this via simulation using a parametric statistical
+model (as described below).  Once those potential outcomes are imputed
+from the model, the estimate of individual $i$'s treatment effect is
+$Y_i(1)-\widehat{Y}_i(0)$ where $\widehat{Y}_i(0)$ is a Monte Carlo
+estimate of the average missing potential outcome for unit $i$ (i.e.,
+the average of simulated values of the dependent variable for unit $i$
+under the counterfactual condition where $T_i=0$).  The in-sample
+average treatment effect for the treated individuals can then be
+obtained by averaging this difference over all observations $i$ where
+in fact $T_i=1$.  (A similar procedure can also be used to estimate
+various other quantities of interest such as the average treatment
+effect for all observations.)  An advantage of this simulation
+approach is that the uncertainty estimates such as standard errors and
+confidence intervals are obtained easily by the usual rules in fitting
+the parametric model.
 
 The imputation from the model can be done in at least two ways.
 Recall that the model is used to impute \emph{the value that the
@@ -321,7 +346,6 @@ of Equation~\ref{att}) is \emph{observed}, whereas the second term is
 the \emph{unobserved} counterfactual of real earnings if participants
 had not participated.  The nature of causal inference is that one of
 the two terms in the difference will always be unobserved.
-
 \begin{table}[h]
 \centering
 \begin{tabular}{lp{3in}}
@@ -362,7 +386,8 @@ procedures.  A general syntax is given by
 \end{Sinput}
 \end{Schunk}
 where {\tt treat} is the dichotomous treatment variable, and {\tt x1}
-and {\tt x2} are pre-treatment covariates.  This command creates the
+and {\tt x2} are pre-treatment covariates, all of which are contained
+in the data frame {\tt mydata}.  This command creates the
 \MatchIt\, object called \texttt{m.out}.  A quick summary of the
 matching procedure can be printed on the screen by typing
 \begin{Schunk}
@@ -402,7 +427,7 @@ the R prompt:
 \end{Sinput}
 \end{Schunk}
 The object \texttt{m.out} contains all the information on the matched
-units.  The matching forms all possible subclasses based on unique
+units.  \MatchIt\ creates all possible subclasses based on unique
 values of the covariates in the right hand side of the formula; within
 each subclass, all units have the same covariate values.  To obtain
 a short summary about the matching procedure, type
@@ -424,7 +449,7 @@ Matched       376     184
 Unmatched      53       1
 \end{Soutput}
 \end{Schunk}
-The printout includes the matched call and the fact that
+The printout includes the matched call and shows that
 184 treatment units were
 exactly matched to 376
 control units on race and education. There was
@@ -433,9 +458,9 @@ control units on race and education. There was
 not matched, and therefore were excluded from the matched data set.
 See
 Sections~\ref{subsubsec:inputs-all}~and~\ref{subsubsec:inputs-exact}
-for a complete list of input options for exact matching.  Now, proceed
-to Section~\ref{subsec:balance} to learn about how the {\tt summary()}
-command can be used with exact matching.
+for a complete list of input options for exact matching.  Now, you may
+also want to proceed to Section~\ref{subsec:balance} to learn about
+how the {\tt summary()} command can be used with exact matching.
 
 \subsubsection{Subclassification}
 \label{subsubsec:subclass}
@@ -610,71 +635,6 @@ for a complete list of options for nearest neighbor matching.
 \end{Schunk}
 \end{enumerate}
 
-\subsubsection{Full Matching}
-\label{subsubsec:full}
-
-Full matching is a a particular type of subclassification that uses
-all treated and control units \citep{Rosenbaum02, Hansen04}.  A fully
-matched sample is composed of matched sets, where each matched set
-contains either one treated unit and one or more controls (or one
-control unit and one or more treated units).  The only units not
-placed into a subclass will be those discarded (if a \texttt{discard}
-option was specified) because they are outside the range of common support.
-Full matching is optimal in terms of minimizing a weighted average of
-the estimated distance measure between each treated subject and each
-control subject within each subclass.  See
-Sections~\ref{subsubsec:inputs-all}~and~\ref{subsubsec:inputs-full}
-for a complete list of optional inputs for full matching.
-
-Full matching can be performed with \MatchIt\ by setting
-\texttt{method = "full"}.  We use an add-on package called
-\texttt{optmatch} \citep{Hansen04}, which must be installed separately
-by typing at the R command prompt,
-%can we do this automatically if its needed, like we do in zelig?  
-%K: actually, Zelig requires users to install these packages when
-%they install Zelig.
-\begin{Schunk}
-\begin{Sinput}
-> install.packages("optmatch", contriburl = "http://www.stat.lsa.umich.edu/~bbh/optmatch")
-\end{Sinput}
-\end{Schunk}
-For more information
-about the package, see
-\hlink{http://www.stat.lsa.umich.edu/\~{}bbh/optmatch.html}{http://www.stat.lsa.umich.edu/\~bbh/optmatch.html}.
-
-The following example script can be run by typing {\tt demo(full)} at
-the R prompt.  We first load the Lalonde data, conduct full matching
-(using the propensity score based on logistic regression), and then
-print a short summary.
-\begin{Schunk}
-\begin{Sinput}
-> m.out <- matchit(treat ~ age + educ + black + hispan + married + 
-+     nodegree + re74 + re75, data = lalonde, method = "full", 
-+     distance = "logit")
-\end{Sinput}
-\begin{Soutput}
-Loading required package: optmatch
-\end{Soutput}
-\begin{Sinput}
-> m.out
-\end{Sinput}
-\begin{Soutput}
-Call: 
-matchit(formula = treat ~ age + educ + black + hispan + married + 
-    nodegree + re74 + re75, data = lalonde, method = "full", 
-    distance = "logit")
-
-Sample sizes:
-          Control Treated
-All           429     185
-Matched       429     185
-Unmatched       0       0
-Discarded       0       0
-\end{Soutput}
-\end{Schunk}
-We see that the matching has utilized all units (the treated and
-control group sample sizes are the same for the full and matched
-samples). 
 
 \subsubsection{Optimal Matching}
 \label{subsubsec:optimal}
@@ -733,6 +693,67 @@ Discarded       0       0
 \end{Schunk}
 The short summary shows that for each treated unit, two control units
 are matched through the optimal matching procedure.
+
+\subsubsection{Full Matching}
+\label{subsubsec:full}
+
+Full matching is a a particular type of subclassification that uses
+all treated and control units \citep{Rosenbaum02, Hansen04}.  A fully
+matched sample is composed of matched sets, where each matched set
+contains one treated unit and one or more controls (or one control
+unit and one or more treated units).  The only units not placed into a
+subclass will be those discarded (if a \texttt{discard} option was
+specified) because they are outside the range of common support.  Full
+matching is optimal in terms of minimizing a weighted average of the
+estimated distance measure between each treated subject and each
+control subject within each subclass.  See
+Sections~\ref{subsubsec:inputs-all}~and~\ref{subsubsec:inputs-full}
+for a complete list of optional inputs for full matching.
+
+Full matching can be performed with \MatchIt\ by setting
+\texttt{method = "full"}.  We use an add-on package called
+\texttt{optmatch} \citep{Hansen04}, which must be installed separately
+by typing at the R command prompt,
+%can we do this automatically if its needed, like we do in zelig?  
+%K: actually, Zelig requires users to install these packages when
+%they install Zelig.
+\begin{Schunk}
+\begin{Sinput}
+> install.packages("optmatch", contriburl = "http://www.stat.lsa.umich.edu/~bbh/optmatch")
+\end{Sinput}
+\end{Schunk}
+For more information
+about the package, see
+\hlink{http://www.stat.lsa.umich.edu/\~{}bbh/optmatch.html}{http://www.stat.lsa.umich.edu/\~bbh/optmatch.html}.
+
+The following example script can be run by typing {\tt demo(full)} at
+the R prompt.  We first load the Lalonde data, conduct full matching
+(using the propensity score based on logistic regression), and then
+print a short summary.
+\begin{Schunk}
+\begin{Sinput}
+> m.out <- matchit(treat ~ age + educ + black + hispan + married + 
++     nodegree + re74 + re75, data = lalonde, method = "full", 
++     distance = "logit")
+> m.out
+\end{Sinput}
+\begin{Soutput}
+Call: 
+matchit(formula = treat ~ age + educ + black + hispan + married + 
+    nodegree + re74 + re75, data = lalonde, method = "full", 
+    distance = "logit")
+
+Sample sizes:
+          Control Treated
+All           429     185
+Matched       429     185
+Unmatched       0       0
+Discarded       0       0
+\end{Soutput}
+\end{Schunk}
+We see that the matching has utilized all units (the treated and
+control group sample sizes are the same for the full and matched
+samples). 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -1026,10 +1047,11 @@ by clicking the first mouse button near the units.
 
 \begin{figure}[tbp]
   \begin{center}
-    \includegraphics[scale=0.25]{figs/qqplotnn}
-    \includegraphics[scale=0.25]{figs/qqplotnn2} 
+\includegraphics{figs/-028}
+%    \includegraphics[scale=0.25]{figs/qqplotnn}
+%    \includegraphics[scale=0.25]{figs/qqplotnn2} 
     \hfill
-    \caption{Sample diagnostic QQ plots: Nearest Neighbor matching
+    \caption{SWEAVE Sample diagnostic QQ plots: Nearest Neighbor matching
       with the \MatchIt\ call \texttt{matchit(treat ~ re74 + re75 + educ
         + black + hispan + age, data=lalonde, method="nearest")}.}
     \label{diagqqnn}
@@ -1038,7 +1060,8 @@ by clicking the first mouse button near the units.
 
 \begin{figure}[tbp]
   \begin{center}
-    \includegraphics[scale=0.5]{figs/jitterplotnn}
+\includegraphics{figs/-029}
+%    \includegraphics[scale=0.5]{figs/jitterplotnn}
     \hfill
     \caption{Sample diagnostic jitter plot: Nearest Neighbor matching
       with the \MatchIt\ call \texttt{matchit(treat ~ re74 + re75 +
@@ -1278,7 +1301,7 @@ matching method described above.
 \paragraph{Examining the balance graphically}
 
 We can also examine the balance graphically.  Figures~\ref{diagqqsub}
-and \ref{diagjittersub} display the two diagnostic plots.  With
+and \ref{diagjittersub} display two sample diagnostic plots.  With
 subclassification, separate Q-Q plots are printed for each subclass;
 for each, the graphs shown in the left-hand column are those for the
 full data set.  The jitter plot is the same as that for nearest
@@ -1297,18 +1320,13 @@ subclass cut-points.
 \end{Sinput}
 \end{Schunk}
 
-%<<fig=TRUE, width=8, height=5, prefix.string=figs/, echo=FALSE>>=
-%plot(m.out)
-%@
-%<<fig=TRUE, width=8, height=5, prefix.string=figs/>>=
-%plot(m.out, type="jitter")
-%@
 \begin{figure}[tbp]
   \begin{center}
-    \includegraphics[scale=.25]{figs/qqplotsub}
-    \includegraphics[scale=.25]{figs/qqplotsub2}
+\includegraphics{figs/-033}
+%    \includegraphics[scale=.25]{figs/qqplotsub}
+%    \includegraphics[scale=.25]{figs/qqplotsub2}
     \hfill
-    \caption{Sample diagnostic QQ plots: Subclassification with
+    \caption{SWEAVE Sample diagnostic QQ plots: Subclassification with
       \MatchIt\ call \texttt{matchit(treat ~ re74 + re75 + educ +
         black + hispan + age, data = lalonde, method = "subclass")}
       followed by plot(m.out).}
@@ -1318,9 +1336,10 @@ subclass cut-points.
 
 \begin{figure}[tbp]
   \begin{center}
-    \includegraphics[scale=0.5]{figs/jitterplotsub}
+\includegraphics{figs/-034}
+    %\includegraphics[scale=0.5]{figs/jitterplotsub}
     \hfill
-    \caption{Sample diagnostic jitter plot: Subclassification with
+    \caption{SWEAVE Sample diagnostic jitter plot: Subclassification with
       \MatchIt\ call \texttt{matchit(treat ~ re74 + re75 + educ +
         black + hispan + age, data = lalonde, method = "subclass")
         followed by plot(m.out, type="jitter")}.  Vertical lines
@@ -1587,18 +1606,6 @@ there are no additional options for exact matching.
   neighbor matching is completed.
 \end{enumerate}
 
-
-\subsubsection{Full Matching}
-\label{subsubsec:inputs-full}
-
-\begin{enumerate}
-\item {\tt ...} represents additional inputs that can be passed to the
-  {\tt fullmatch()} function in the {\tt optmatch} package. See {\tt
-    help(fullmatch)} or
-  \hlink{http://www.stat.lsa.umich.edu/\~{}bbh/optmatch.html}{http://www.stat.lsa.umich.edu/\~bbh/optmatch.html}
-  for details.
-\end{enumerate}
-
 \subsubsection{Optimal Matching}
 \label{subsubsec:inputs-optimal}
 
@@ -1606,6 +1613,17 @@ The available options are listed below.
 \begin{enumerate}
 \item {\tt ratio} specifies the number of control units to be matched
   to each treatment unit, the default is {\tt ratio = 1}.
+\item {\tt ...} represents additional inputs that can be passed to the
+  {\tt fullmatch()} function in the {\tt optmatch} package. See {\tt
+    help(fullmatch)} or
+  \hlink{http://www.stat.lsa.umich.edu/\~{}bbh/optmatch.html}{http://www.stat.lsa.umich.edu/\~bbh/optmatch.html}
+  for details.
+\end{enumerate}
+
+\subsubsection{Full Matching}
+\label{subsubsec:inputs-full}
+
+\begin{enumerate}
 \item {\tt ...} represents additional inputs that can be passed to the
   {\tt fullmatch()} function in the {\tt optmatch} package. See {\tt
     help(fullmatch)} or
@@ -1621,7 +1639,9 @@ The available options are listed below.
 \subsubsection{Output Object Contents}
 
 Regardless of the type of matching performed, the \texttt{matchit}
-output object contains the following elements:
+output object contains the following elements:\footnote{When
+inapplicable or unnecessary, these elements may equal {\tt NULL}.  For
+example, when exact matching, {\tt match.matrix = NULL}.}
 
 \begin{enumerate}
 \item \texttt{call} provides the original {\tt matchit()} call.
@@ -1648,7 +1668,7 @@ output object contains the following elements:
     represent the three control units matched to one treatment unit).
   \item \texttt{NA} indicates that the treatment unit was not matched.
   \end{itemize}
-   
+
 \item \texttt{discarded} is a vector of length $n$ that displays
   whether the units were ineligible for matching due to common support
   restrictions.  It equals \texttt{TRUE} if unit $i$ was discarded,
@@ -1788,7 +1808,7 @@ within each subclasses if specified.  The graphs present:
   that fall exactly on the 45 degree line indicate that the marginal
   distributions are identical.  Discrete covariates that take 5 or
   fewer values are jittered for visibility.  This may be changed by
-  setting the option \texttt{discrete.cutoff}. 	Since there can be
+  setting the option \texttt{discrete.cutoff}.  Since there can be
   many covariates (and many subclasses in subclassification), the
   default Q-Q plot is interactive.  That is, after plotting a $3
   \times 2$ panel of raw and matched Q-Q plots for three covariates,
@@ -1899,7 +1919,10 @@ print out the names of all variables in the resulting matched data.
 \section{What's New?}
 
 \begin{itemize}
-\item \textbf{2.0-1} (??, 2005): Stable release for R 2.1. Major revisions.
+\item \textbf{2.0-1} (August 29, 2005): Stable release for R 2.1.
+  Major revisions including some syntax changes. Statistical tests are
+  no longer used for balance checking, which are now based on the
+  empirical covariate distributions (e.g., quantile-quantile plot).
 \item \textbf{1.0-2} (August 10, 2005): Stable release for R
   2.1. Minor bug fixes (Thanks to Bart Bonikowski).
 \item \textbf{1.0-1} (January 3, 2005): Stable release for R 2.0. The

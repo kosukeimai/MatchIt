@@ -802,8 +802,11 @@ plot(m.out, type="jitter")
 
 \begin{figure}[tbp]
   \begin{center}
-    \includegraphics[scale=0.25]{figs/qqplotnn}
-    \includegraphics[scale=0.25]{figs/qqplotnn2} 
+<<fig=TRUE, width=8, height=5, prefix.string=figs/, echo=FALSE>>=
+plot(m.out, interactive=FALSE)
+@
+%    \includegraphics[scale=0.25]{figs/qqplotnn}
+%    \includegraphics[scale=0.25]{figs/qqplotnn2} 
     \hfill
     \caption{Sample diagnostic QQ plots: Nearest Neighbor matching
       with the \MatchIt\ call \texttt{matchit(treat ~ re74 + re75 + educ
@@ -814,7 +817,10 @@ plot(m.out, type="jitter")
 
 \begin{figure}[tbp]
   \begin{center}
-    \includegraphics[scale=0.5]{figs/jitterplotnn}
+<<fig=TRUE, width=8, height=5, prefix.string=figs/, echo=FALSE>>=
+plot(m.out, type="jitter", interactive=FALSE)
+@
+%    \includegraphics[scale=0.5]{figs/jitterplotnn}
     \hfill
     \caption{Sample diagnostic jitter plot: Nearest Neighbor matching
       with the \MatchIt\ call \texttt{matchit(treat ~ re74 + re75 +
@@ -892,16 +898,13 @@ plot(m.out)
 plot(m.out, type="jitter")
 @
 
-%<<fig=TRUE, width=8, height=5, prefix.string=figs/, echo=FALSE>>=
-%plot(m.out)
-%@
-%<<fig=TRUE, width=8, height=5, prefix.string=figs/>>=
-%plot(m.out, type="jitter")
-%@
 \begin{figure}[tbp]
   \begin{center}
-    \includegraphics[scale=.25]{figs/qqplotsub}
-    \includegraphics[scale=.25]{figs/qqplotsub2}
+<<fig=TRUE, width=8, height=5, prefix.string=figs/, echo=FALSE>>=
+plot(m.out, interactive=FALSE)
+@
+%    \includegraphics[scale=.25]{figs/qqplotsub}
+%    \includegraphics[scale=.25]{figs/qqplotsub2}
     \hfill
     \caption{Sample diagnostic QQ plots: Subclassification with
       \MatchIt\ call \texttt{matchit(treat ~ re74 + re75 + educ +
@@ -913,7 +916,10 @@ plot(m.out, type="jitter")
 
 \begin{figure}[tbp]
   \begin{center}
-    \includegraphics[scale=0.5]{figs/jitterplotsub}
+<<fig=TRUE, width=8, height=5, prefix.string=figs/, echo=FALSE>>=
+plot(m.out, type="jitter", interactive=FALSE)
+@
+    %\includegraphics[scale=0.5]{figs/jitterplotsub}
     \hfill
     \caption{Sample diagnostic jitter plot: Subclassification with
       \MatchIt\ call \texttt{matchit(treat ~ re74 + re75 + educ +
@@ -1390,7 +1396,8 @@ within each subclasses if specified.  The graphs present:
   \texttt{interactive = F}. When subclassifying, users can then
   specify the subclass by the \texttt{subclass} input.
 \item Jitter plots of the propensity score for treated and control
-  units (\texttt{type = "jitter"}).
+  units (\texttt{type = "jitter"}).  If \texttt{interactive=TRUE} (the default), the 
+  user can identify individual units by clicking on the graph with the left mouse button.  
 \end{enumerate}
 
 \subsubsection{{\tt match.data()}}
