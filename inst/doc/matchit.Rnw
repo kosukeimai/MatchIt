@@ -1473,7 +1473,10 @@ names(m.data4)
 \section{What's New?}
 
 \begin{itemize}
-\item \textbf{2.0-1} (??, 2005): Stable release for R 2.1. Major revisions.
+\item \textbf{2.0-1} (August 29, 2005): Stable release for R 2.1.
+  Major revisions including some syntax changes. Statistical tests are
+  no longer used for balance checking, which are now based on the
+  empirical covariate distributions (e.g., quantile-quantile plot).
 \item \textbf{1.0-2} (August 10, 2005): Stable release for R
   2.1. Minor bug fixes (Thanks to Bart Bonikowski).
 \item \textbf{1.0-1} (January 3, 2005): Stable release for R 2.0. The
