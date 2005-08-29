@@ -553,12 +553,12 @@ m.out5 <- matchit(treat ~ re74 + re75 + age + educ, data = lalonde, method = "ne
 Full matching is a a particular type of subclassification that uses
 all treated and control units \citep{Rosenbaum02, Hansen04}.  A fully
 matched sample is composed of matched sets, where each matched set
-contains either one treated unit and one or more controls (or one
-control unit and one or more treated units).  The only units not
-placed into a subclass will be those discarded (if a \texttt{discard}
-option was specified) because they are outside the range of common support.
-Full matching is optimal in terms of minimizing a weighted average of
-the estimated distance measure between each treated subject and each
+contains one treated unit and one or more controls (or one control
+unit and one or more treated units).  The only units not placed into a
+subclass will be those discarded (if a \texttt{discard} option was
+specified) because they are outside the range of common support.  Full
+matching is optimal in terms of minimizing a weighted average of the
+estimated distance measure between each treated subject and each
 control subject within each subclass.  See
 Sections~\ref{subsubsec:inputs-all}~and~\ref{subsubsec:inputs-full}
 for a complete list of optional inputs for full matching.
