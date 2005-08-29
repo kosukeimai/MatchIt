@@ -88,8 +88,8 @@ with a 95\% interval of
 
 It is also possible to estimate the average treatment effects on both
 the treated and the control groups. To do this, we fit the linear
-model to the {\it treatment group} controlling for the propensity score (\tt{distance})
-and other covariates,
+model to the {\it treatment group} controlling for the propensity
+score ({\tt distance}) and other covariates,
 <<>>=
 z.out2 <- zelig(re78 ~ age + educ + black + hispan + nodegree + married + re74 + re75 + distance,
   data = match.data(m.out1, "treat"), model = "ls")
