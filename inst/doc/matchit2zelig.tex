@@ -60,8 +60,9 @@ To load the Zelig package after installing it, type
   regression
 \begin{Schunk}
 \begin{Sinput}
-> m.out1 <- matchit(treat ~ age + educ + black + hispan + nodegree + 
-+     married + re74 + re75, method = "nearest", data = lalonde)
+> m.out1 <- matchit(treat ~ age + educ + black + hispan + 
++     nodegree + married + re74 + re75, method = "nearest", 
++     data = lalonde)
 \end{Sinput}
 \end{Schunk}
 Note that we skip an important step of checking balance in this
@@ -85,8 +86,8 @@ counterfactual outcomes for the treated units. The {\tt sim()} command in
 Zelig does the imputation.
 \begin{Schunk}
 \begin{Sinput}
-> x.out1 <- setx(z.out1, data = match.data(m.out1, "treat"), fn = NULL, 
-+     cond = TRUE)
+> x.out1 <- setx(z.out1, data = match.data(m.out1, "treat"), 
++     fn = NULL, cond = TRUE)
 > s.out1 <- sim(z.out1, x = x.out1)
 \end{Sinput}
 \end{Schunk}
@@ -107,26 +108,26 @@ Mean Values of Observed Data (n = 185)
   1.892e-01   2.096e+03   1.532e+03   5.774e-01 
 
 Pooled Expected Values: E(Y|X)
-  mean   sd    min   max  2.5% 97.5%
-1 4976 2268 -11312 27332 790.5  9979
+ mean    sd  2.5% 97.5% 
+ 5004  2291   700  9979 
 
-Average Treatment Effect: Y - EV
-  mean    sd    min  max  2.5% 97.5%
-1 1373 582.2 -658.2 3164 243.3  2534
+Pooled Average Treatment Effect: Y - EV
+  mean     sd   2.5%  97.5% 
+1345.2  609.3  166.3 2647.0 
 
 \end{Soutput}
 \end{Schunk}
 The results indicate that the estimated average treatment effect on
 the treated is 
-\$1373.3,
+\$1345.2,
 with a 95\% interval of
-(\$-658.2,
-\$3163.6).
+(\$166.3,
+\$2647).
 
 It is also possible to estimate the average treatment effects on both
 the treated and the control groups. To do this, we fit the linear
-model to the {\it treatment group} controlling for the propensity score (\tt{distance})
-and other covariates,
+model to the {\it treatment group} controlling for the propensity
+score ({\tt distance}) and other covariates,
 \begin{Schunk}
 \begin{Sinput}
 > z.out2 <- zelig(re78 ~ age + educ + black + hispan + nodegree + 
@@ -160,14 +161,14 @@ The point estimate and its standard error is given by
 > mean(ate.all)
 \end{Sinput}
 \begin{Soutput}
-[1] 1603
+[1] 1614
 
 \end{Soutput}
 \begin{Sinput}
 > sd(ate.all)
 \end{Sinput}
 \begin{Soutput}
-[1] 776.7
+[1] 809
 
 \end{Soutput}
 \end{Schunk}
@@ -178,7 +179,7 @@ The 95\% confidence interval is given by
 \end{Sinput}
 \begin{Soutput}
   2.5%  97.5% 
- 226.5 3222.2 
+ 175.0 3378.8 
 
 \end{Soutput}
 \end{Schunk}
@@ -194,8 +195,8 @@ The 95\% confidence interval is given by
   We begin this example by conducting subclassification with four subclasses,
 \begin{Schunk}
 \begin{Sinput}
-> m.out2 <- matchit(treat ~ age + educ + black + hispan + nodegree + 
-+     married + re74 + re75, data = lalonde, method = "subclass", 
+> m.out2 <- matchit(treat ~ age + educ + black + hispan + 
++     nodegree + married + re74 + re75, data = lalonde, method = "subclass", 
 +     subclass = 4)
 \end{Sinput}
 \end{Schunk}
@@ -215,8 +216,8 @@ do the imputation of the counterfactual outcomes for the treated
 units.
 \begin{Schunk}
 \begin{Sinput}
-> x.out3 <- setx(z.out3, data = match.data(m.out2, "treat"), fn = NULL, 
-+     cond = TRUE)
+> x.out3 <- setx(z.out3, data = match.data(m.out2, "treat"), 
++     fn = NULL, cond = TRUE)
 > s.out3 <- sim(z.out3, x = x.out3)
 \end{Sinput}
 \end{Schunk}
@@ -235,21 +236,21 @@ Mean Values of Observed Data (n = 46)
      1.0000   5430.5389   2929.0394      0.2392 
 
 Pooled Expected Values: E(Y|X)
-  mean   sd    min   max  2.5% 97.5%
-1 4410 5528 -42049 62210 -6301 16271
+ mean    sd  2.5% 97.5% 
+ 4395  5330 -5469 15784 
 
 Pooled Average Treatment Effect: Y - EV
-  mean   sd   min  max   2.5% 97.5%
-1 1940 1757 -6175 9104 -757.2  5620
+  mean     sd   2.5%  97.5% 
+1955.5 1683.6 -750.6 5390.1 
 
 \end{Soutput}
 \end{Schunk}
 The results indicate that the estimated average treatment effect on
 the treated is
-\$1940.4,
+\$1955.5,
 with a 95\% interval of
-(\$-6174.8,
-\$9103.9).
+(\$-750.6,
+\$5390.1).
 It is also possible to get the summary result for each subclass. For
 example, the following command summarizes the result for the second
 subclass.
@@ -269,12 +270,12 @@ Mean Values of Observed Data (n = 45)
      1.0000   1777.4221    972.3441      0.6039 
 
 Pooled Expected Values: E(Y|X)
-  mean   sd   min   max  2.5% 97.5%
-1 3665 2529 -6221 18227 -1203  9266
+ mean    sd  2.5% 97.5% 
+ 3659  2558 -1037  9322 
 
-Average Treatment Effect: Y - EV
-  mean   sd    min  max 2.5% 97.5%
-1 2822 1244 -236.6 6168  453  5273
+Pooled Average Treatment Effect: Y - EV
+  mean     sd   2.5%  97.5% 
+2827.8 1285.9  198.0 5035.0 
 
 
 \end{Soutput}

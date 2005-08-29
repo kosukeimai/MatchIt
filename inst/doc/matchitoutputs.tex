@@ -1,0 +1,63 @@
+Regardless of the type of matching performed, the \texttt{matchit}
+output object contains the following elements:\footnote{When
+inapplicable or unnecessary, these elements may equal {\tt NULL}.  For
+example, when exact matching, {\tt match.matrix = NULL}.}
+
+\begin{enumerate}
+\item \texttt{call} provides the original {\tt matchit()} call.
+  
+\item \texttt{formula} shows the formula used to specify the model for
+  estimating the distance measure.
+  
+\item \texttt{model} stores the output of the model used to estimate
+  the distance measure.  \texttt{summary(m.out\$model)} will give the
+  summary of the model where \texttt{m.out} is the output object from
+  \texttt{matchit()}.
+  
+\item \texttt{match.matrix} is an $n_1$ by \texttt{ratio} matrix
+  where:
+  \begin{itemize}
+  \item the row names, which can be obtained through
+    \texttt{row.names(match.matrix)}, represent the names of the
+    treatment units, which come from the data frame specified in
+    \texttt{data} (to learn how to do this, see Section~\ref{rnames}).
+  \item each column stores the name(s) of the control unit(s) matched
+    to the treatment unit of that row. For example, when the
+    \texttt{ratio} input for nearest neighbor or optimal matching is
+    specified as 3, the three columns of \texttt{match.matrix}
+    represent the three control units matched to one treatment unit).
+  \item \texttt{NA} indicates that the treatment unit was not matched.
+  \end{itemize}
+
+\item \texttt{discarded} is a vector of length $n$ that displays
+  whether the units were ineligible for matching due to common support
+  restrictions.  It equals \texttt{TRUE} if unit $i$ was discarded,
+  and it is set to \texttt{FALSE} otherwise.
+  
+\item \texttt{distance} is a vector of length $n$ with the estimated
+  distance measure for each unit.
+  
+\item \texttt{weights} is a vector of length $n$ that provides the
+  weights assigned to each unit in the matching process.  Unmatched
+  units have weights equal to $0$. Matched treated units have weight
+  $1$.  Each matched control unit has weight proportional to the
+  number of treatment units to which it was matched, and the sum of
+  the control weights is equal to the number of uniquely matched
+  control units. See Section~\ref{subsec:weights} for more details.
+  
+\item \texttt{subclass} contains the subclass index in an ordinal
+  scale from 1 to the total number of subclasses as specified in
+  \texttt{subclass} (or the total number of subclasses from full or
+  exact matching).  Unmatched units have \texttt{NA}.
+  
+\item \texttt{q.cut} gives the subclass cut-points that classify the
+  distance measure.
+  
+\item \texttt{treat} stores the treatment indicator from \texttt{data}
+  (the left-hand side of \texttt{formula}).
+ 
+\item \texttt{X} stores the covariates used for estimating the
+  distance measure (the right-hand side of \texttt{formula}).  When
+  applicable, \texttt{X} is augmented by covariates contained in
+  \texttt{mahvars} and \texttt{exact}. 
+\end{enumerate}
