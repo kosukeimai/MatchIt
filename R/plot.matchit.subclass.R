@@ -32,7 +32,6 @@ plot.matchit.subclass <- function(x, discrete.cutoff=5,
             }
         }
     } else {
-      print(subclass)
       matchit.qqplot(x,discrete.cutoff,which.subclass=subclass,
                      interactive=interactive)
     }
