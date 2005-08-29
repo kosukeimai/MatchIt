@@ -1,4 +1,4 @@
-jitter.pscore <- function(x){
+jitter.pscore <- function(x, interactive){
   treat <- x$treat
   pscore <- x$distance
   weights <- x$weights
@@ -22,6 +22,8 @@ jitter.pscore <- function(x){
   text(sum(range(na.omit(pscore)))/2,1.5,"Treatment Units")
   text(sum(range(na.omit(pscore)))/2,-0.5,"Control Units")
   box()
-  print("To identify the units, use first mouse button; to stop, use second.")
-  identify(pscore,jitp,names(treat))
+  if(interactive==TRUE) {
+	print("To identify the units, use first mouse button; to stop, use second.")
+  	identify(pscore,jitp,names(treat))
+  }
 }

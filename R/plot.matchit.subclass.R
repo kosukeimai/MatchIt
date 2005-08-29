@@ -36,7 +36,7 @@ plot.matchit.subclass <- function(x, discrete.cutoff=5,
                      interactive=interactive)
     }
   } else if(type=="jitter"){
-    jitter.pscore(x)
+    jitter.pscore(x, interactive=interactive)
   } else {
     stop("Invalid type")
   }
