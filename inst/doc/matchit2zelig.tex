@@ -107,21 +107,21 @@ Mean Values of Observed Data (n = 185)
   1.892e-01   2.096e+03   1.532e+03   5.774e-01 
 
 Pooled Expected Values: E(Y|X)
-  mean     sd   2.5%  97.5% 
-4986.1 2274.0  735.9 9993.7 
+  mean   sd    min   max  2.5% 97.5%
+1 5010 2285 -10722 27619 707.9 10017
 
-Pooled Average Treatment Effect: Y - EV
-  mean     sd   2.5%  97.5% 
-1363.0  570.2  255.4 2514.2 
+Average Treatment Effect: Y - EV
+  mean    sd    min  max  2.5% 97.5%
+1 1339 581.8 -547.6 3317 265.1  2587
 
 \end{Soutput}
 \end{Schunk}
 The results indicate that the estimated average treatment effect on
 the treated is 
-\$1363,
+\$1339.2,
 with a 95\% interval of
-(\$255.4,
-\$2514.2).
+(\$-547.6,
+\$3316.6).
 
 It is also possible to estimate the average treatment effects on both
 the treated and the control groups. To do this, we fit the linear
@@ -160,14 +160,14 @@ The point estimate and its standard error is given by
 > mean(ate.all)
 \end{Sinput}
 \begin{Soutput}
-[1] 1652
+[1] 1622
 
 \end{Soutput}
 \begin{Sinput}
 > sd(ate.all)
 \end{Sinput}
 \begin{Soutput}
-[1] 806
+[1] 805
 
 \end{Soutput}
 \end{Schunk}
@@ -177,8 +177,8 @@ The 95\% confidence interval is given by
 > quantile(ate.all, c(0.025, 0.975))
 \end{Sinput}
 \begin{Soutput}
- 2.5% 97.5% 
-  208  3397 
+  2.5%  97.5% 
+ 224.6 3338.6 
 
 \end{Soutput}
 \end{Schunk}
@@ -235,21 +235,21 @@ Mean Values of Observed Data (n = 46)
      1.0000   5430.5389   2929.0394      0.2392 
 
 Pooled Expected Values: E(Y|X)
- mean    sd  2.5% 97.5% 
- 4511  5153 -4769 15805 
+  mean   sd    min   max  2.5% 97.5%
+1 4473 5415 -41169 66576 -5853 16065
 
 Pooled Average Treatment Effect: Y - EV
-  mean     sd   2.5%  97.5% 
-1840.8 1681.6 -921.3 5555.0 
+  mean   sd   min  max   2.5% 97.5%
+1 1877 1667 -3466 8160 -797.8  5554
 
 \end{Soutput}
 \end{Schunk}
 The results indicate that the estimated average treatment effect on
 the treated is
-\$1840.8,
+\$1876.5,
 with a 95\% interval of
-(\$-921.3,
-\$5555).
+(\$-3466,
+\$8160.1).
 It is also possible to get the summary result for each subclass. For
 example, the following command summarizes the result for the second
 subclass.
@@ -269,12 +269,12 @@ Mean Values of Observed Data (n = 45)
      1.0000   1777.4221    972.3441      0.6039 
 
 Pooled Expected Values: E(Y|X)
-  mean     sd   2.5%  97.5% 
-3706.9 2562.5 -968.1 9412.5 
+  mean   sd   min   max   2.5% 97.5%
+1 3859 2530 -7601 16643 -799.9  9503
 
-Pooled Average Treatment Effect: Y - EV
-  mean     sd   2.5%  97.5% 
-2779.4 1301.5  132.2 5276.0 
+Average Treatment Effect: Y - EV
+  mean   sd    min  max  2.5% 97.5%
+1 2627 1281 -367.1 6689 416.8  5119
 
 
 \end{Soutput}

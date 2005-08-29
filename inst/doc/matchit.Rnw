@@ -27,22 +27,23 @@
 \title{\MatchIt: Nonparametric Preprocessing for Parametric Causal
   Inference}
 
-\author{Daniel E. Ho,\thanks{Institute for Quantitative Social
-    Science (34 Kirkland, Cambridge MA 02138,
-    USA; \texttt{http://people.iq.harvard.edu/~dho/}, \texttt{daniel.e.ho@gmail.com}).}
-\and
-Kosuke Imai,\thanks{Assistant Professor, Department of Politics,
-  Princeton University (Corwin Hall 041, Department of Politics,
-  Princeton University, Princeton NJ 08544, USA;
-  \texttt{http://imai.princeton.edu},
-  \texttt{kimai@Princeton.Edu}).}
-\and
-Gary King,\thanks{David Florence Professor of Government, Harvard
- University (Institute for Quantitative Social Science, 34
-  Kirkland Street, Harvard University, Cambridge MA 02138;
-  \texttt{http://GKing.Harvard.Edu}, \texttt{King@Harvard.Edu}, (617)
-  495-2027).}
-\and
+\author{Daniel E. Ho,\thanks{Institute for Quantitative Social Science
+    (1727 Cambridge Street, Cambridge MA 02138, USA;
+    \texttt{http://people.iq.harvard.edu/~dho/},
+    \texttt{daniel.e.ho@gmail.com}).}  \and 
+%
+  Kosuke Imai,\thanks{Assistant Professor, Department of Politics,
+    Princeton University (Corwin Hall 041, Department of Politics,
+    Princeton University, Princeton NJ 08544, USA;
+    \texttt{http://imai.princeton.edu},
+    \texttt{kimai@Princeton.Edu}).}  \and
+%
+  Gary King,\thanks{David Florence Professor of Government, Harvard
+    University (Institute for Quantitative Social Science, 1737
+    Cambridge Street, Harvard University, Cambridge MA 02138;
+    \texttt{http://GKing.Harvard.Edu}, \texttt{King@Harvard.Edu},
+    (617) 495-2027).}  \and
+%
 Elizabeth A. Stuart\thanks{Researcher, Mathematica Policy Research,
   Inc.\, Ph.D.\, Department of Statistics, Harvard University. (600
   Maryland Ave., SW, Suite 550, Washington, DC 20024, USA;
@@ -73,17 +74,18 @@ Elizabeth A. Stuart\thanks{Researcher, Mathematica Policy Research,
 improving parametric statistical models and reducing model dependence
 by preprocessing data with semi-parametric and non-parametric matching
 methods.  After preprocessing with \MatchIt, researchers can use
-whatever parametric model they would have used without \MatchIt, but
-produce inferences that are substantially more robust and less
-sensitive to modeling assumptions.  Matched data sets created by
-\MatchIt\ can also be entered easily into
-\hlink{Zelig}{http://gking.harvard.edu/zelig/} \citep{ImaKinLau04}, or
-other programs, for subsequent parametric analyses.  \MatchIt\ reduces
-the dependence of causal inferences on commonly made, but
-hard-to-justify, statistical modeling assumptions via a wide range of
-sophisticated matching methods.  In addition, we have written
-\MatchIt\ so that adding new matching methods to the software is easy,
-if you have the inclination.
+whatever parametric model and software they would have used without
+\MatchIt, without other modification, and produce inferences that are
+substantially more robust and less sensitive to modeling assumptions.
+(In addition, you may wish to use
+\hlink{Zelig}{http://gking.harvard.edu/zelig/} \citep{ImaKinLau04} for
+subsequent parametric analyses, as it is designed for maximum
+convenience in analyzing \MatchIt\ datasets.)  \MatchIt\ reduces the
+dependence of causal inferences on commonly made, but hard-to-justify,
+statistical modeling assumptions via a wide range of sophisticated
+matching methods.  In addition, we have written \MatchIt\ so that
+adding new matching methods to the software is as easy for anyone with
+the inclination as it is for us.
 
 \subsection{Software Requirements} 
 \label{subsec:require}
