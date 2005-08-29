@@ -547,47 +547,6 @@ m.out5 <- matchit(treat ~ re74 + re75 + age + educ, data = lalonde, method = "ne
 @
 \end{enumerate}
 
-\subsubsection{Full Matching}
-\label{subsubsec:full}
-
-Full matching is a a particular type of subclassification that uses
-all treated and control units \citep{Rosenbaum02, Hansen04}.  A fully
-matched sample is composed of matched sets, where each matched set
-contains one treated unit and one or more controls (or one control
-unit and one or more treated units).  The only units not placed into a
-subclass will be those discarded (if a \texttt{discard} option was
-specified) because they are outside the range of common support.  Full
-matching is optimal in terms of minimizing a weighted average of the
-estimated distance measure between each treated subject and each
-control subject within each subclass.  See
-Sections~\ref{subsubsec:inputs-all}~and~\ref{subsubsec:inputs-full}
-for a complete list of optional inputs for full matching.
-
-Full matching can be performed with \MatchIt\ by setting
-\texttt{method = "full"}.  We use an add-on package called
-\texttt{optmatch} \citep{Hansen04}, which must be installed separately
-by typing at the R command prompt,
-%can we do this automatically if its needed, like we do in zelig?  
-%K: actually, Zelig requires users to install these packages when
-%they install Zelig.
-<<results=hide,eval=FALSE>>=
-install.packages("optmatch", contriburl = "http://www.stat.lsa.umich.edu/~bbh/optmatch") 
-@ 
-For more information
-about the package, see
-\hlink{http://www.stat.lsa.umich.edu/\~{}bbh/optmatch.html}{http://www.stat.lsa.umich.edu/\~bbh/optmatch.html}.
-
-The following example script can be run by typing {\tt demo(full)} at
-the R prompt.  We first load the Lalonde data, conduct full matching
-(using the propensity score based on logistic regression), and then
-print a short summary.
-<<>>=
-m.out <- matchit(treat ~ age + educ + black + hispan + married + nodegree + re74 + re75, data = lalonde, method = "full", distance = "logit")
-m.out
-@
-We see that the matching has utilized all units (the treated and
-control group sample sizes are the same for the full and matched
-samples). 
 
 \subsubsection{Optimal Matching}
 \label{subsubsec:optimal}
@@ -629,6 +588,48 @@ m.out
 @
 The short summary shows that for each treated unit, two control units
 are matched through the optimal matching procedure.
+
+\subsubsection{Full Matching}
+\label{subsubsec:full}
+
+Full matching is a a particular type of subclassification that uses
+all treated and control units \citep{Rosenbaum02, Hansen04}.  A fully
+matched sample is composed of matched sets, where each matched set
+contains one treated unit and one or more controls (or one control
+unit and one or more treated units).  The only units not placed into a
+subclass will be those discarded (if a \texttt{discard} option was
+specified) because they are outside the range of common support.  Full
+matching is optimal in terms of minimizing a weighted average of the
+estimated distance measure between each treated subject and each
+control subject within each subclass.  See
+Sections~\ref{subsubsec:inputs-all}~and~\ref{subsubsec:inputs-full}
+for a complete list of optional inputs for full matching.
+
+Full matching can be performed with \MatchIt\ by setting
+\texttt{method = "full"}.  We use an add-on package called
+\texttt{optmatch} \citep{Hansen04}, which must be installed separately
+by typing at the R command prompt,
+%can we do this automatically if its needed, like we do in zelig?  
+%K: actually, Zelig requires users to install these packages when
+%they install Zelig.
+<<results=hide,eval=FALSE>>=
+install.packages("optmatch", contriburl = "http://www.stat.lsa.umich.edu/~bbh/optmatch") 
+@ 
+For more information
+about the package, see
+\hlink{http://www.stat.lsa.umich.edu/\~{}bbh/optmatch.html}{http://www.stat.lsa.umich.edu/\~bbh/optmatch.html}.
+
+The following example script can be run by typing {\tt demo(full)} at
+the R prompt.  We first load the Lalonde data, conduct full matching
+(using the propensity score based on logistic regression), and then
+print a short summary.
+<<>>=
+m.out <- matchit(treat ~ age + educ + black + hispan + married + nodegree + re74 + re75, data = lalonde, method = "full", distance = "logit")
+m.out
+@
+We see that the matching has utilized all units (the treated and
+control group sample sizes are the same for the full and matched
+samples). 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -1177,18 +1178,6 @@ there are no additional options for exact matching.
   neighbor matching is completed.
 \end{enumerate}
 
-
-\subsubsection{Full Matching}
-\label{subsubsec:inputs-full}
-
-\begin{enumerate}
-\item {\tt ...} represents additional inputs that can be passed to the
-  {\tt fullmatch()} function in the {\tt optmatch} package. See {\tt
-    help(fullmatch)} or
-  \hlink{http://www.stat.lsa.umich.edu/\~{}bbh/optmatch.html}{http://www.stat.lsa.umich.edu/\~bbh/optmatch.html}
-  for details.
-\end{enumerate}
-
 \subsubsection{Optimal Matching}
 \label{subsubsec:inputs-optimal}
 
@@ -1196,6 +1185,17 @@ The available options are listed below.
 \begin{enumerate}
 \item {\tt ratio} specifies the number of control units to be matched
   to each treatment unit, the default is {\tt ratio = 1}.
+\item {\tt ...} represents additional inputs that can be passed to the
+  {\tt fullmatch()} function in the {\tt optmatch} package. See {\tt
+    help(fullmatch)} or
+  \hlink{http://www.stat.lsa.umich.edu/\~{}bbh/optmatch.html}{http://www.stat.lsa.umich.edu/\~bbh/optmatch.html}
+  for details.
+\end{enumerate}
+
+\subsubsection{Full Matching}
+\label{subsubsec:inputs-full}
+
+\begin{enumerate}
 \item {\tt ...} represents additional inputs that can be passed to the
   {\tt fullmatch()} function in the {\tt optmatch} package. See {\tt
     help(fullmatch)} or
@@ -1380,7 +1380,7 @@ within each subclasses if specified.  The graphs present:
   that fall exactly on the 45 degree line indicate that the marginal
   distributions are identical.  Discrete covariates that take 5 or
   fewer values are jittered for visibility.  This may be changed by
-  setting the option \texttt{discrete.cutoff}. 	Since there can be
+  setting the option \texttt{discrete.cutoff}.  Since there can be
   many covariates (and many subclasses in subclassification), the
   default Q-Q plot is interactive.  That is, after plotting a $3
   \times 2$ panel of raw and matched Q-Q plots for three covariates,
