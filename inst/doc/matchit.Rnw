@@ -28,8 +28,8 @@
   Inference}
 
 \author{Daniel E. Ho,\thanks{Institute for Quantitative Social
-    Science, 34 Kirkland, Cambridge MA 02138,
-    USA; \texttt{http://people.iq.harvard.edu/~dho/}, \texttt{daniel.e.ho@gmail.com}.}
+    Science (34 Kirkland, Cambridge MA 02138,
+    USA; \texttt{http://people.iq.harvard.edu/~dho/}, \texttt{daniel.e.ho@gmail.com}).}
 \and
 Kosuke Imai,\thanks{Assistant Professor, Department of Politics,
   Princeton University (Corwin Hall 041, Department of Politics,
@@ -143,7 +143,7 @@ We recommend that you periodically update \MatchIt\ at the R prompt by typing:
 update.packages()
 library(MatchIt) 
 @
-which will update all the libraries including \MatchIt and load the
+which will update all the libraries including \MatchIt\ and load the
 new version of \MatchIt.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -160,6 +160,19 @@ observational studies where the treatment variable is simply observed
 rather than manipulated by the investigator.  \MatchIt\ can be used
 for other types of causal variables by dichotomizing them, perhaps in
 multiple ways \citep[see also][]{ImaDyk04}.
+
+We adopt the same notation as in \citet*{HoImaKin05}. Unless otherwise
+noted, let $i$ index the $n$ units in the dataset, $n_1$ denote the
+number of treated units, $n_0$ denote the number of control units
+(such that $n=n_0+n_1$), and $x_i$ indicate a vector of pretreatment
+(or control) variables for unit $i$.  Let $t_i=1$ when unit $i$ is
+assigned treatment, and $t_i=0$ when unit $i$ is assigned control.
+(The labels ``treatment'' and ``control'' are arbitrary and can be
+switched for convenience.)  Denote $y_{1i}$ as the potential outcome
+of unit $i$ under treatment and $y_{0i}$ the potential outcome of unit
+$i$ under control.  The variables $y_{1i}$ and $y_{0i}$ are jointly
+unobservable, and for each $i$, we observe one
+$y_i=t_iy_{1i}+(1-t_i)y_{0i}$, and not the other.
 
 \subsection{Preprocessing via Matching}
 
@@ -267,19 +280,6 @@ for more details.
 
 \section{User's Guide to \MatchIt}
 \label{methods}
-
-We adopt the same notation as in \citet*{HoImaKin05}. Unless otherwise
-noted, let $i$ index the $n$ units in the dataset, $n_1$ denote the
-number of treated units, $n_0$ denote the number of control units
-(such that $n=n_0+n_1$), and $x_i$ indicate a vector of pretreatment
-(or control) variables for unit $i$.  Let $t_i=1$ when unit $i$ is
-assigned treatment, and $t_i=0$ when unit $i$ is assigned control.
-(The labels ``treatment'' and ``control'' are arbitrary and can be
-switched for convenience.)  Denote $y_{1i}$ as the potential outcome
-of unit $i$ under treatment and $y_{0i}$ the potential outcome of unit
-$i$ under control.  The variables $y_{1i}$ and $y_{0i}$ are jointly
-unobservable, and for each $i$, we observe one
-$y_i=t_iy_{1i}+(1-t_i)y_{0i}$, and not the other.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -1351,7 +1351,15 @@ within each subclasses if specified.  The graphs present:
   that fall exactly on the 45 degree line indicate that the marginal
   distributions are identical.  Discrete covariates that take 5 or
   fewer values are jittered for visibility.  This may be changed by
-  setting the option \texttt{discrete.cutoff}.
+  setting the option \texttt{discrete.cutoff}. 	Since there can be
+  many covariates (and many subclasses in subclassification), the
+  default Q-Q plot is interactive.  That is, after plotting a $3
+  \times 2$ panel of raw and matched Q-Q plots for three covariates,
+  user input is required to plot the next panel, if necessary.
+  Similarly, user input is required when plotting by subclass.  This
+  interactivity can be turned off by setting the input
+  \texttt{interactive = F}. When subclassifying, users can then
+  specify the subclass by the \texttt{subclass} input.
 \item Jitter plots of the propensity score for treated and control
   units (\texttt{type = "jitter"}).
 \end{enumerate}
