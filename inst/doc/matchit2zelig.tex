@@ -109,20 +109,20 @@ Mean Values of Observed Data (n = 185)
 
 Pooled Expected Values: E(Y|X)
   mean     sd   2.5%  97.5% 
-5006.8 2264.3  761.8 9978.0 
+4998.4 2279.7  752.4 9978.2 
 
 Pooled Average Treatment Effect: Y - EV
   mean     sd   2.5%  97.5% 
-1342.3  564.5  245.6 2445.9 
+1350.7  600.6  230.5 2445.0 
 
 \end{Soutput}
 \end{Schunk}
 The results indicate that the estimated average treatment effect on
 the treated is 
-\$1342.3,
+\$1350.7,
 with a 95\% interval of
-(\$245.6,
-\$2445.9).
+(\$230.5,
+\$2445).
 
 It is also possible to estimate the average treatment effects on both
 the treated and the control groups. To do this, we fit the linear
@@ -161,14 +161,14 @@ The point estimate and its standard error is given by
 > mean(ate.all)
 \end{Sinput}
 \begin{Soutput}
-[1] 1613
+[1] 1626
 
 \end{Soutput}
 \begin{Sinput}
 > sd(ate.all)
 \end{Sinput}
 \begin{Soutput}
-[1] 784.3
+[1] 818.5
 
 \end{Soutput}
 \end{Schunk}
@@ -179,7 +179,7 @@ The 95\% confidence interval is given by
 \end{Sinput}
 \begin{Soutput}
   2.5%  97.5% 
- 215.4 3319.0 
+ 210.9 3321.1 
 
 \end{Soutput}
 \end{Schunk}
@@ -237,20 +237,20 @@ Mean Values of Observed Data (n = 46)
 
 Pooled Expected Values: E(Y|X)
  mean    sd  2.5% 97.5% 
- 4458  5438 -6047 16030 
+ 4406  5339 -5511 15913 
 
 Pooled Average Treatment Effect: Y - EV
   mean     sd   2.5%  97.5% 
-1890.3 1732.7 -864.5 5733.0 
+1944.5 1753.0 -832.7 5588.3 
 
 \end{Soutput}
 \end{Schunk}
 The results indicate that the estimated average treatment effect on
 the treated is
-\$1890.3,
+\$1944.5,
 with a 95\% interval of
-(\$-864.5,
-\$5733).
+(\$-832.7,
+\$5588.3).
 It is also possible to get the summary result for each subclass. For
 example, the following command summarizes the result for the second
 subclass.
@@ -271,11 +271,11 @@ Mean Values of Observed Data (n = 45)
 
 Pooled Expected Values: E(Y|X)
  mean    sd  2.5% 97.5% 
- 3876  2495  -699  9388 
+ 3608  2500 -1073  9153 
 
 Pooled Average Treatment Effect: Y - EV
   mean     sd   2.5%  97.5% 
-2609.9 1259.0  189.4 4862.3 
+2878.0 1214.6  536.6 5049.8 
 
 
 \end{Soutput}

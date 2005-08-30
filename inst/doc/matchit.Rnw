@@ -809,7 +809,7 @@ plot(m.out, type="jitter")
 
 \begin{figure}[tbp]
   \begin{center}
-%<<fig=TRUE, width=8, height=5, prefix.string=figs/, echo=FALSE>>=
+%<<fig=TRUE, width=8, height=5, prefix.string=figs/docs, echo=FALSE>>=
 %plot(m.out, interactive=FALSE)
 %@
     \includegraphics[width=3in, height=3in]{figs/qqplotnn}
@@ -824,7 +824,7 @@ plot(m.out, type="jitter")
 
 \begin{figure}[tbp]
   \begin{center}
-<<fig=TRUE, width=8, height=5, prefix.string=figs/, echo=FALSE>>=
+<<fig=TRUE, width=8, height=5, prefix.string=figs/docs, echo=FALSE>>=
 plot(m.out, type="jitter", interactive=FALSE)
 @
 %    \includegraphics[scale=0.5]{figs/jitterplotnn}
@@ -907,7 +907,7 @@ plot(m.out, type="jitter")
 
 \begin{figure}[tbp]
   \begin{center}
-%<<fig=TRUE, width=8, height=5, prefix.string=figs/, echo=FALSE>>=
+%<<fig=TRUE, width=8, height=5, prefix.string=figs/docs, echo=FALSE>>=
 %plot(m.out, interactive=FALSE)
 %@
     \includegraphics[width=3in, height=3in]{figs/qqplotsub}
@@ -923,7 +923,7 @@ plot(m.out, type="jitter")
 
 \begin{figure}[tbp]
   \begin{center}
-<<fig=TRUE, width=8, height=5, prefix.string=figs/, echo=FALSE>>=
+<<fig=TRUE, width=8, height=5, prefix.string=figs/docs, echo=FALSE>>=
 plot(m.out, type="jitter", interactive=FALSE)
 @
     %\includegraphics[scale=0.5]{figs/jitterplotsub}
