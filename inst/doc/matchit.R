@@ -1,3 +1,5 @@
 Sweave("matchit.Rnw")
+rm(list=ls())
+library(MatchIt)
 Sweave("matchit2zelig.Rnw")
 Sweave("matchitinputs.Rnw")

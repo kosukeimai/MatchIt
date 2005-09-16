@@ -52,7 +52,7 @@ Elizabeth A. Stuart\thanks{Researcher, Mathematica Policy Research,
 
 \makeindex
 
-\usepackage{/usr/lib64/R/share/texmf/Sweave}
+\usepackage{/usr/local/lib/R/share/texmf/Sweave}
 \begin{document}
 \maketitle
 
@@ -118,11 +118,12 @@ discard the installation files, which will not affect the way
 may also find it helpful to install the package with version control
 (see Subsection~\ref{subsec:vercontrol}). 
 
-We recommend that users also install Zelig and optmatch by typing the
-following commands,
+We recommend that users also install Zelig, Matching, and optmatch by
+typing the following commands,
 \begin{Schunk}
 \begin{Sinput}
 > install.packages("Zelig")
+> install.packages("Matching")
 > install.packages("optmatch", contriburl = "http://www.stat.lsa.umich.edu/~bbh/optmatch")
 \end{Sinput}
 \end{Schunk}
@@ -771,6 +772,1443 @@ We see that the matching has utilized all units (the treated and
 control group sample sizes are the same for the full and matched
 samples). 
 
+\subsubsection{Genetic Matching}
+\label{subsub:genetic}
+
+Genetic matching is a method that automates the process of finding an
+optimal balance \citep{DiaSek05}. The idea is to use a genetic search
+algorithm and find a set of weights for each covariate such that the
+optimal balance is achieved after matching. The procedure is
+implemented in {\tt Matching} package \citep{Sekhon04}. As is
+currently implemented, matching is done with replacement and balance
+is determined by the two univariate tests; paired t-tests for
+dichotomous variables and an Kolmogorov-Smirnov test for multinomial
+and continuous variables.  See
+Sections~\ref{subsubsec:inputs-all}~and~\ref{subsubsec:inputs-genetic}
+for a complete list of optional inputs for genetic matching.
+
+Genetic matching can be performed with \MatchIt\ by setting
+\texttt{method = "genetic"}.  We use an add-on package called
+\texttt{Matching} \citep{Sekhon04}, which must be installed separately
+by typing at the R command prompt,
+\begin{Schunk}
+\begin{Sinput}
+> install.packages("Matching")
+\end{Sinput}
+\end{Schunk}
+For more information about the package, see
+\hlink{http://sekhon.polisci.berkeley.edu/matching/}{http://sekhon.polisci.berkeley.edu/matching/}
+
+The following example script can be run by typing {\tt demo(genetic)}
+at the R prompt.  We first load the Lalonde data, conduct genetic
+matching (using the propensity score based on logistic regression as
+one of the covariate), and then print a short summary.
+\begin{Schunk}
+\begin{Sinput}
+> m.out <- matchit(treat ~ age + educ + black + hispan + 
++     married + nodegree + re74 + re75, data = lalonde, method = "genetic", 
++     distance = "logit")
+\end{Sinput}
+\begin{Soutput}
+Loading required package: Matching
+Loading required package: rgenoud
+
+
+Fri Sep 16 16:42:11 2005
+Domains:
+ 0   <=  X1   <=    1000 
+ 0   <=  X2   <=    1000 
+ 0   <=  X3   <=    1000 
+ 0   <=  X4   <=    1000 
+ 0   <=  X5   <=    1000 
+ 0   <=  X6   <=    1000 
+ 0   <=  X7   <=    1000 
+ 0   <=  X8   <=    1000 
+ 0   <=  X9   <=    1000 
+
+Data Type: Integer
+Operators (code number, name, population) 
+	(1) Cloning........................... 	7
+	(2) Uniform Mutation.................. 	6
+	(3) Boundary Mutation................. 	6
+	(4) Non-Uniform Mutation.............. 	6
+	(5) Polytope Crossover................ 	6
+	(6) Multiple Point Simple Crossover... 	6
+	(7) Whole Non-Uniform Mutation........ 	6
+	(8) Heuristic Crossover............... 	6
+	(9) Local-Minimum Crossover........... 	0
+
+SOFT Maximum Number of Generations: 100
+Maximum Nonchanging Generations: 4
+Population size       : 50
+Convergence Tolerance: 1.000000e-03
+
+Not Using the BFGS Derivative Based Optimizer on the Best Individual Each Generation.
+Not Checking Gradients before Stopping
+Not Using Out of Bounds Individuals and Not Allowing Trespassing.
+
+
+
+Maximization Problem.
+
+
+
+The 2 best initial individuals are
+251.00	583.00	897.00	141.00	376.00	130.00	286.00	593.00	431.00	
+fitness = 7.310063e-03
+
+264.00	375.00	130.00	625.00	939.00	141.00	463.00	968.00	559.00	
+fitness = 5.755633e-03
+
+
+The worst fit of the population is: 2.449340e-08
+
+
+GENERATION: 0 (initializing the population)
+Fitness Value... 7.310063e-03
+mean............ 7.502210e-04
+var............. 2.014035e-06
+skewness........ 3.179094e+00
+kurtosis........ 1.308240e+01
+#null........... 0
+#unique......... 50, #Total UniqueCount: 50
+var 1:
+best............ 2.510000e+02
+mean............ 5.159800e+02
+var............. 1.109459e+05
+skewness........ 1.529483e-01
+kurtosis........ 1.490646e+00
+#null........... 0
+var 2:
+best............ 5.830000e+02
+mean............ 5.142600e+02
+var............. 9.343595e+04
+skewness........ -4.982239e-02
+kurtosis........ 1.727139e+00
+#null........... 0
+var 3:
+best............ 8.970000e+02
+mean............ 4.832400e+02
+var............. 9.302322e+04
+skewness........ 7.378341e-02
+kurtosis........ 1.879375e+00
+#null........... 0
+var 4:
+best............ 1.410000e+02
+mean............ 5.365200e+02
+var............. 9.611249e+04
+skewness........ -2.145605e-01
+kurtosis........ 1.707209e+00
+#null........... 0
+var 5:
+best............ 3.760000e+02
+mean............ 5.238600e+02
+var............. 8.201312e+04
+skewness........ -1.775447e-01
+kurtosis........ 1.992792e+00
+#null........... 0
+var 6:
+best............ 1.300000e+02
+mean............ 5.852200e+02
+var............. 8.407273e+04
+skewness........ -3.070950e-01
+kurtosis........ 1.847864e+00
+#null........... 0
+var 7:
+best............ 2.860000e+02
+mean............ 5.619000e+02
+var............. 6.625301e+04
+skewness........ -5.317481e-01
+kurtosis........ 2.593993e+00
+#null........... 0
+var 8:
+best............ 5.930000e+02
+mean............ 4.328400e+02
+var............. 7.006237e+04
+skewness........ 2.001082e-01
+kurtosis........ 2.221885e+00
+#null........... 0
+var 9:
+best............ 4.310000e+02
+mean............ 4.891800e+02
+var............. 8.091779e+04
+skewness........ 1.294397e-01
+kurtosis........ 1.853858e+00
+#null........... 0
+
+GENERATION: 1
+Fitness Value... 7.310063e-03
+mean............ 3.013137e-03
+var............. 4.562337e-06
+skewness........ 6.110081e-01
+kurtosis........ 2.161373e+00
+#null........... 0
+#unique......... 31, #Total UniqueCount: 81
+var 1:
+best............ 2.510000e+02
+mean............ 4.576800e+02
+var............. 7.610526e+04
+skewness........ 8.890353e-01
+kurtosis........ 2.474513e+00
+#null........... 0
+var 2:
+best............ 5.830000e+02
+mean............ 4.893200e+02
+var............. 2.971382e+04
+skewness........ 5.931150e-01
+kurtosis........ 2.609035e+00
+#null........... 0
+var 3:
+best............ 8.970000e+02
+mean............ 4.441200e+02
+var............. 8.442111e+04
+skewness........ 2.284220e-01
+kurtosis........ 1.802475e+00
+#null........... 0
+var 4:
+best............ 1.410000e+02
+mean............ 4.909200e+02
+var............. 6.441119e+04
+skewness........ -1.191029e-01
+kurtosis........ 1.913107e+00
+#null........... 0
+var 5:
+best............ 3.760000e+02
+mean............ 4.569200e+02
+var............. 9.487939e+04
+skewness........ 6.761950e-02
+kurtosis........ 1.762316e+00
+#null........... 0
+var 6:
+best............ 1.300000e+02
+mean............ 4.133200e+02
+var............. 9.192570e+04
+skewness........ 5.546099e-01
+kurtosis........ 1.876483e+00
+#null........... 0
+var 7:
+best............ 2.860000e+02
+mean............ 4.835600e+02
+var............. 6.739761e+04
+skewness........ -5.330799e-02
+kurtosis........ 1.791689e+00
+#null........... 0
+var 8:
+best............ 5.930000e+02
+mean............ 6.892800e+02
+var............. 4.246968e+04
+skewness........ 5.425280e-02
+kurtosis........ 1.820497e+00
+#null........... 0
+var 9:
+best............ 4.310000e+02
+mean............ 5.704000e+02
+var............. 5.775892e+04
+skewness........ -2.223784e-01
+kurtosis........ 2.683533e+00
+#null........... 0
+
+GENERATION: 2
+Fitness Value... 1.119187e-02
+mean............ 4.946338e-03
+var............. 6.182931e-06
+skewness........ -7.969026e-02
+kurtosis........ 2.443857e+00
+#null........... 0
+#unique......... 31, #Total UniqueCount: 112
+var 1:
+best............ 7.130000e+02
+mean............ 3.820800e+02
+var............. 6.175439e+04
+skewness........ 1.694061e+00
+kurtosis........ 4.258083e+00
+#null........... 0
+var 2:
+best............ 3.910000e+02
+mean............ 5.047800e+02
+var............. 1.563745e+04
+skewness........ -2.137900e-01
+kurtosis........ 2.926690e+00
+#null........... 0
+var 3:
+best............ 3.850000e+02
+mean............ 6.169200e+02
+var............. 1.277359e+05
+skewness........ -5.797265e-01
+kurtosis........ 1.526001e+00
+#null........... 0
+var 4:
+best............ 4.740000e+02
+mean............ 3.238200e+02
+var............. 5.835887e+04
+skewness........ 6.198353e-01
+kurtosis........ 1.742420e+00
+#null........... 0
+var 5:
+best............ 6.890000e+02
+mean............ 5.637200e+02
+var............. 6.115864e+04
+skewness........ 6.282609e-01
+kurtosis........ 1.648789e+00
+#null........... 0
+var 6:
+best............ 1.610000e+02
+mean............ 1.556600e+02
+var............. 1.108390e+04
+skewness........ 2.486265e+00
+kurtosis........ 1.054699e+01
+#null........... 0
+var 7:
+best............ 1.590000e+02
+mean............ 3.110600e+02
+var............. 2.551822e+04
+skewness........ 9.999170e-01
+kurtosis........ 4.535970e+00
+#null........... 0
+var 8:
+best............ 8.320000e+02
+mean............ 7.293200e+02
+var............. 2.770518e+04
+skewness........ 5.902965e-01
+kurtosis........ 1.552489e+00
+#null........... 0
+var 9:
+best............ 6.530000e+02
+mean............ 5.170400e+02
+var............. 1.830012e+04
+skewness........ 1.434684e+00
+kurtosis........ 4.406393e+00
+#null........... 0
+
+GENERATION: 3
+Fitness Value... 1.119187e-02
+mean............ 6.510232e-03
+var............. 7.271570e-06
+skewness........ -4.134324e-01
+kurtosis........ 2.922891e+00
+#null........... 0
+#unique......... 32, #Total UniqueCount: 144
+var 1:
+best............ 7.130000e+02
+mean............ 3.261800e+02
+var............. 2.638059e+04
+skewness........ 2.028292e+00
+kurtosis........ 5.504377e+00
+#null........... 0
+var 2:
+best............ 3.900000e+02
+mean............ 5.478000e+02
+var............. 5.140280e+03
+skewness........ -1.391178e+00
+kurtosis........ 3.846164e+00
+#null........... 0
+var 3:
+best............ 3.840000e+02
+mean............ 7.011400e+02
+var............. 5.644336e+04
+skewness........ -8.182074e-01
+kurtosis........ 2.460353e+00
+#null........... 0
+var 4:
+best............ 4.740000e+02
+mean............ 1.993000e+02
+var............. 1.472277e+04
+skewness........ 1.608513e+00
+kurtosis........ 4.072127e+00
+#null........... 0
+var 5:
+best............ 6.890000e+02
+mean............ 4.286600e+02
+var............. 1.571918e+04
+skewness........ 9.072096e-01
+kurtosis........ 3.880037e+00
+#null........... 0
+var 6:
+best............ 1.610000e+02
+mean............ 1.505200e+02
+var............. 1.088369e+04
+skewness........ 4.393368e+00
+kurtosis........ 2.125856e+01
+#null........... 0
+var 7:
+best............ 1.580000e+02
+mean............ 2.783000e+02
+var............. 6.870850e+03
+skewness........ 2.616419e+00
+kurtosis........ 1.508120e+01
+#null........... 0
+var 8:
+best............ 8.320000e+02
+mean............ 6.343000e+02
+var............. 1.102253e+04
+skewness........ 4.642311e-01
+kurtosis........ 4.208056e+00
+#null........... 0
+var 9:
+best............ 6.530000e+02
+mean............ 4.646600e+02
+var............. 6.593664e+03
+skewness........ 1.508774e+00
+kurtosis........ 4.578840e+00
+#null........... 0
+
+GENERATION: 4
+Fitness Value... 1.119187e-02
+mean............ 7.628344e-03
+var............. 1.061261e-05
+skewness........ -4.883738e-01
+kurtosis........ 1.907540e+00
+#null........... 0
+#unique......... 29, #Total UniqueCount: 173
+var 1:
+best............ 6.930000e+02
+mean............ 5.640000e+02
+var............. 5.220308e+04
+skewness........ -2.545493e-01
+kurtosis........ 1.705465e+00
+#null........... 0
+var 2:
+best............ 3.980000e+02
+mean............ 4.515800e+02
+var............. 8.155444e+03
+skewness........ 4.456886e-01
+kurtosis........ 1.698351e+00
+#null........... 0
+var 3:
+best............ 4.050000e+02
+mean............ 4.877000e+02
+var............. 3.698661e+04
+skewness........ 1.421857e+00
+kurtosis........ 3.533338e+00
+#null........... 0
+var 4:
+best............ 4.600000e+02
+mean............ 3.596800e+02
+var............. 2.914770e+04
+skewness........ -2.719171e-01
+kurtosis........ 1.572603e+00
+#null........... 0
+var 5:
+best............ 6.760000e+02
+mean............ 5.701800e+02
+var............. 2.613727e+04
+skewness........ -3.922604e-01
+kurtosis........ 1.858984e+00
+#null........... 0
+var 6:
+best............ 1.590000e+02
+mean............ 1.707800e+02
+var............. 9.681252e+03
+skewness........ 3.316660e+00
+kurtosis........ 1.350985e+01
+#null........... 0
+var 7:
+best............ 1.630000e+02
+mean............ 2.093600e+02
+var............. 4.154110e+03
+skewness........ 4.962986e-01
+kurtosis........ 2.237852e+00
+#null........... 0
+var 8:
+best............ 8.210000e+02
+mean............ 7.131600e+02
+var............. 2.663169e+04
+skewness........ -1.188472e+00
+kurtosis........ 4.484818e+00
+#null........... 0
+var 9:
+best............ 6.430000e+02
+mean............ 5.708800e+02
+var............. 1.763283e+04
+skewness........ -3.633286e-02
+kurtosis........ 3.525169e+00
+#null........... 0
+
+GENERATION: 5
+Fitness Value... 1.119187e-02
+mean............ 9.490116e-03
+var............. 9.593604e-06
+skewness........ -1.544872e+00
+kurtosis........ 3.765901e+00
+#null........... 0
+#unique......... 34, #Total UniqueCount: 207
+var 1:
+best............ 6.670000e+02
+mean............ 7.091800e+02
+var............. 8.819876e+02
+skewness........ 1.804439e+00
+kurtosis........ 2.247839e+01
+#null........... 0
+var 2:
+best............ 4.090000e+02
+mean............ 3.946600e+02
+var............. 2.138644e+02
+skewness........ 3.061388e+00
+kurtosis........ 1.318727e+01
+#null........... 0
+var 3:
+best............ 3.910000e+02
+mean............ 3.953200e+02
+var............. 2.235938e+03
+skewness........ 2.381089e+00
+kurtosis........ 1.316305e+01
+#null........... 0
+var 4:
+best............ 4.400000e+02
+mean............ 4.761200e+02
+var............. 2.263466e+03
+skewness........ 2.675157e+00
+kurtosis........ 1.758248e+01
+#null........... 0
+var 5:
+best............ 6.590000e+02
+mean............ 6.416600e+02
+var............. 1.588442e+04
+skewness........ -2.870578e+00
+kurtosis........ 9.977884e+00
+#null........... 0
+var 6:
+best............ 1.550000e+02
+mean............ 1.581200e+02
+var............. 1.994656e+02
+skewness........ 1.190527e+00
+kurtosis........ 1.479588e+01
+#null........... 0
+var 7:
+best............ 1.680000e+02
+mean............ 1.694800e+02
+var............. 4.528770e+03
+skewness........ 6.145992e+00
+kurtosis........ 4.207354e+01
+#null........... 0
+var 8:
+best............ 8.090000e+02
+mean............ 8.145800e+02
+var............. 3.055564e+03
+skewness........ -3.402136e+00
+kurtosis........ 1.402097e+01
+#null........... 0
+var 9:
+best............ 6.310000e+02
+mean............ 6.631000e+02
+var............. 3.340890e+03
+skewness........ 4.603730e+00
+kurtosis........ 2.524141e+01
+#null........... 0
+
+GENERATION: 6
+Fitness Value... 1.190823e-02
+mean............ 9.583905e-03
+var............. 7.225733e-06
+skewness........ -1.369982e+00
+kurtosis........ 3.195633e+00
+#null........... 0
+#unique......... 31, #Total UniqueCount: 238
+var 1:
+best............ 6.670000e+02
+mean............ 6.883200e+02
+var............. 3.416658e+03
+skewness........ -5.961054e-01
+kurtosis........ 1.243985e+01
+#null........... 0
+var 2:
+best............ 7.840000e+02
+mean............ 4.108000e+02
+var............. 5.102320e+03
+skewness........ 3.742644e+00
+kurtosis........ 1.876820e+01
+#null........... 0
+var 3:
+best............ 3.910000e+02
+mean............ 3.892000e+02
+var............. 3.515200e+02
+skewness........ -2.543531e+00
+kurtosis........ 1.123863e+01
+#null........... 0
+var 4:
+best............ 4.400000e+02
+mean............ 4.637800e+02
+var............. 2.374412e+03
+skewness........ 5.015174e+00
+kurtosis........ 3.417350e+01
+#null........... 0
+var 5:
+best............ 6.590000e+02
+mean............ 6.479000e+02
+var............. 8.852730e+03
+skewness........ -4.535139e+00
+kurtosis........ 2.651003e+01
+#null........... 0
+var 6:
+best............ 1.550000e+02
+mean............ 1.770000e+02
+var............. 1.312332e+04
+skewness........ 6.076508e+00
+kurtosis........ 4.089116e+01
+#null........... 0
+var 7:
+best............ 1.680000e+02
+mean............ 1.815600e+02
+var............. 1.304257e+04
+skewness........ 6.682494e+00
+kurtosis........ 4.636759e+01
+#null........... 0
+var 8:
+best............ 8.090000e+02
+mean............ 8.052000e+02
+var............. 6.971680e+03
+skewness........ -3.419013e+00
+kurtosis........ 1.695641e+01
+#null........... 0
+var 9:
+best............ 6.310000e+02
+mean............ 6.458400e+02
+var............. 2.156694e+03
+skewness........ -1.415188e+00
+kurtosis........ 1.111439e+01
+#null........... 0
+
+GENERATION: 7
+Fitness Value... 1.883757e-02
+mean............ 9.437161e-03
+var............. 1.236673e-05
+skewness........ -6.826808e-01
+kurtosis........ 3.800789e+00
+#null........... 0
+#unique......... 34, #Total UniqueCount: 272
+var 1:
+best............ 6.310000e+02
+mean............ 6.622400e+02
+var............. 4.236742e+03
+skewness........ -3.778972e+00
+kurtosis........ 1.811678e+01
+#null........... 0
+var 2:
+best............ 4.090000e+02
+mean............ 5.035600e+02
+var............. 2.867137e+04
+skewness........ 1.595410e+00
+kurtosis........ 4.286174e+00
+#null........... 0
+var 3:
+best............ 2.700000e+02
+mean............ 3.795400e+02
+var............. 3.161688e+03
+skewness........ -3.698030e+00
+kurtosis........ 1.700653e+01
+#null........... 0
+var 4:
+best............ 4.360000e+02
+mean............ 4.774400e+02
+var............. 1.075725e+04
+skewness........ 3.751864e+00
+kurtosis........ 1.641561e+01
+#null........... 0
+var 5:
+best............ 8.520000e+02
+mean............ 6.508800e+02
+var............. 9.521706e+03
+skewness........ -2.037951e+00
+kurtosis........ 1.062270e+01
+#null........... 0
+var 6:
+best............ 1.550000e+02
+mean............ 1.566000e+02
+var............. 4.469200e+02
+skewness........ -8.376233e-01
+kurtosis........ 1.840929e+01
+#null........... 0
+var 7:
+best............ 1.680000e+02
+mean............ 1.659600e+02
+var............. 8.363184e+02
+skewness........ 3.966817e-01
+kurtosis........ 6.653494e+00
+#null........... 0
+var 8:
+best............ 8.790000e+02
+mean............ 7.825200e+02
+var............. 1.471121e+04
+skewness........ -3.156144e+00
+kurtosis........ 1.246485e+01
+#null........... 0
+var 9:
+best............ 3.340000e+02
+mean............ 6.290800e+02
+var............. 4.431634e+03
+skewness........ -2.098190e+00
+kurtosis........ 1.057127e+01
+#null........... 0
+
+GENERATION: 8
+Fitness Value... 1.883757e-02
+mean............ 9.481889e-03
+var............. 2.370955e-05
+skewness........ -4.271771e-01
+kurtosis........ 2.327267e+00
+#null........... 0
+#unique......... 31, #Total UniqueCount: 303
+var 1:
+best............ 6.310000e+02
+mean............ 6.752800e+02
+var............. 3.041362e+03
+skewness........ 1.590729e+00
+kurtosis........ 8.561028e+00
+#null........... 0
+var 2:
+best............ 4.090000e+02
+mean............ 5.040000e+02
+var............. 3.166588e+04
+skewness........ 6.549468e-01
+kurtosis........ 2.455637e+00
+#null........... 0
+var 3:
+best............ 2.700000e+02
+mean............ 3.995000e+02
+var............. 1.064501e+04
+skewness........ 2.667238e+00
+kurtosis........ 1.186514e+01
+#null........... 0
+var 4:
+best............ 4.360000e+02
+mean............ 4.586000e+02
+var............. 3.443960e+03
+skewness........ 1.837502e+00
+kurtosis........ 6.648223e+00
+#null........... 0
+var 5:
+best............ 8.520000e+02
+mean............ 6.897800e+02
+var............. 5.760492e+03
+skewness........ 2.903625e-02
+kurtosis........ 5.432504e+00
+#null........... 0
+var 6:
+best............ 1.550000e+02
+mean............ 1.644400e+02
+var............. 3.111486e+03
+skewness........ 3.962518e+00
+kurtosis........ 2.045232e+01
+#null........... 0
+var 7:
+best............ 1.680000e+02
+mean............ 1.509800e+02
+var............. 9.822660e+03
+skewness........ 4.405709e+00
+kurtosis........ 2.690046e+01
+#null........... 0
+var 8:
+best............ 8.790000e+02
+mean............ 8.004000e+02
+var............. 1.387456e+04
+skewness........ -5.920999e+00
+kurtosis........ 3.959272e+01
+#null........... 0
+var 9:
+best............ 3.340000e+02
+mean............ 6.048200e+02
+var............. 1.209475e+04
+skewness........ -8.774415e-01
+kurtosis........ 5.535115e+00
+#null........... 0
+
+GENERATION: 9
+Fitness Value... 1.883757e-02
+mean............ 1.130229e-02
+var............. 3.316702e-05
+skewness........ -5.568527e-01
+kurtosis........ 2.174976e+00
+#null........... 0
+#unique......... 34, #Total UniqueCount: 337
+var 1:
+best............ 6.310000e+02
+mean............ 6.482400e+02
+var............. 7.780782e+03
+skewness........ -1.820285e+00
+kurtosis........ 9.034398e+00
+#null........... 0
+var 2:
+best............ 4.090000e+02
+mean............ 4.729800e+02
+var............. 1.995282e+04
+skewness........ 1.394892e+00
+kurtosis........ 3.515881e+00
+#null........... 0
+var 3:
+best............ 2.160000e+02
+mean............ 3.429400e+02
+var............. 8.836416e+03
+skewness........ -1.213218e+00
+kurtosis........ 4.403787e+00
+#null........... 0
+var 4:
+best............ 4.360000e+02
+mean............ 4.686200e+02
+var............. 6.892556e+03
+skewness........ -9.195508e-01
+kurtosis........ 1.165520e+01
+#null........... 0
+var 5:
+best............ 8.520000e+02
+mean............ 7.095200e+02
+var............. 1.658805e+04
+skewness........ -8.182524e-01
+kurtosis........ 5.339994e+00
+#null........... 0
+var 6:
+best............ 1.550000e+02
+mean............ 1.859600e+02
+var............. 1.708236e+04
+skewness........ 4.275217e+00
+kurtosis........ 2.160201e+01
+#null........... 0
+var 7:
+best............ 1.680000e+02
+mean............ 1.420200e+02
+var............. 4.169580e+03
+skewness........ 2.371149e+00
+kurtosis........ 1.146892e+01
+#null........... 0
+var 8:
+best............ 8.790000e+02
+mean............ 8.281400e+02
+var............. 4.875040e+03
+skewness........ -3.013212e+00
+kurtosis........ 1.445138e+01
+#null........... 0
+var 9:
+best............ 3.340000e+02
+mean............ 5.536400e+02
+var............. 3.065095e+04
+skewness........ -6.014460e-01
+kurtosis........ 2.568708e+00
+#null........... 0
+
+GENERATION: 10
+Fitness Value... 1.926692e-02
+mean............ 1.415080e-02
+var............. 3.969147e-05
+skewness........ -1.105008e+00
+kurtosis........ 2.678222e+00
+#null........... 0
+#unique......... 31, #Total UniqueCount: 368
+var 1:
+best............ 6.490000e+02
+mean............ 6.199000e+02
+var............. 1.074077e+04
+skewness........ -2.183939e+00
+kurtosis........ 8.500464e+00
+#null........... 0
+var 2:
+best............ 4.050000e+02
+mean............ 4.218400e+02
+var............. 3.749694e+03
+skewness........ 4.863232e+00
+kurtosis........ 2.690981e+01
+#null........... 0
+var 3:
+best............ 2.810000e+02
+mean............ 2.938000e+02
+var............. 5.069440e+03
+skewness........ 1.636740e+00
+kurtosis........ 5.129772e+00
+#null........... 0
+var 4:
+best............ 4.430000e+02
+mean............ 4.378000e+02
+var............. 5.084480e+03
+skewness........ -2.012177e+00
+kurtosis........ 1.236099e+01
+#null........... 0
+var 5:
+best............ 7.710000e+02
+mean............ 7.344000e+02
+var............. 3.373276e+04
+skewness........ -1.624237e+00
+kurtosis........ 5.635457e+00
+#null........... 0
+var 6:
+best............ 1.560000e+02
+mean............ 1.645200e+02
+var............. 3.506690e+03
+skewness........ 5.786461e+00
+kurtosis........ 3.805554e+01
+#null........... 0
+var 7:
+best............ 1.440000e+02
+mean............ 1.738800e+02
+var............. 5.585746e+03
+skewness........ 2.979257e+00
+kurtosis........ 1.351377e+01
+#null........... 0
+var 8:
+best............ 8.610000e+02
+mean............ 8.643800e+02
+var............. 1.808116e+03
+skewness........ -1.395468e+00
+kurtosis........ 7.412717e+00
+#null........... 0
+var 9:
+best............ 4.260000e+02
+mean............ 3.978800e+02
+var............. 1.532303e+04
+skewness........ 1.404726e+00
+kurtosis........ 3.275512e+00
+#null........... 0
+
+GENERATION: 11
+Fitness Value... 1.926692e-02
+mean............ 1.493197e-02
+var............. 4.056210e-05
+skewness........ -1.206016e+00
+kurtosis........ 2.735391e+00
+#null........... 0
+#unique......... 32, #Total UniqueCount: 400
+var 1:
+best............ 6.490000e+02
+mean............ 6.319000e+02
+var............. 2.425570e+03
+skewness........ -3.782675e+00
+kurtosis........ 2.850915e+01
+#null........... 0
+var 2:
+best............ 4.050000e+02
+mean............ 4.207800e+02
+var............. 9.746292e+03
+skewness........ 3.620688e+00
+kurtosis........ 2.151899e+01
+#null........... 0
+var 3:
+best............ 2.810000e+02
+mean............ 2.615400e+02
+var............. 4.907768e+03
+skewness........ 3.119163e+00
+kurtosis........ 1.660101e+01
+#null........... 0
+var 4:
+best............ 4.430000e+02
+mean............ 4.528400e+02
+var............. 5.465614e+03
+skewness........ 2.858622e+00
+kurtosis........ 1.096363e+01
+#null........... 0
+var 5:
+best............ 7.340000e+02
+mean............ 7.238200e+02
+var............. 4.457803e+04
+skewness........ -1.784977e+00
+kurtosis........ 5.177733e+00
+#null........... 0
+var 6:
+best............ 1.560000e+02
+mean............ 1.681400e+02
+var............. 3.757400e+03
+skewness........ 4.682908e+00
+kurtosis........ 2.322102e+01
+#null........... 0
+var 7:
+best............ 1.440000e+02
+mean............ 1.671800e+02
+var............. 8.155476e+02
+skewness........ 3.131939e+00
+kurtosis........ 1.622578e+01
+#null........... 0
+var 8:
+best............ 8.610000e+02
+mean............ 8.501200e+02
+var............. 1.267171e+04
+skewness........ -4.679570e+00
+kurtosis........ 2.428719e+01
+#null........... 0
+var 9:
+best............ 4.260000e+02
+mean............ 3.512800e+02
+var............. 1.275842e+03
+skewness........ 1.691777e+00
+kurtosis........ 4.411044e+00
+#null........... 0
+
+GENERATION: 12
+Fitness Value... 2.025909e-02
+mean............ 1.556449e-02
+var............. 2.446896e-05
+skewness........ -1.114585e+00
+kurtosis........ 2.977368e+00
+#null........... 0
+#unique......... 33, #Total UniqueCount: 433
+var 1:
+best............ 6.490000e+02
+mean............ 6.294800e+02
+var............. 2.789050e+03
+skewness........ -3.467527e+00
+kurtosis........ 1.451834e+01
+#null........... 0
+var 2:
+best............ 4.450000e+02
+mean............ 4.085000e+02
+var............. 2.454500e+02
+skewness........ 3.946860e+00
+kurtosis........ 2.067674e+01
+#null........... 0
+var 3:
+best............ 2.810000e+02
+mean............ 2.706800e+02
+var............. 4.887218e+03
+skewness........ 3.468142e+00
+kurtosis........ 2.202280e+01
+#null........... 0
+var 4:
+best............ 4.430000e+02
+mean............ 4.583400e+02
+var............. 3.829824e+03
+skewness........ 4.135111e+00
+kurtosis........ 1.993974e+01
+#null........... 0
+var 5:
+best............ 7.710000e+02
+mean............ 7.627800e+02
+var............. 9.701292e+03
+skewness........ -2.225247e+00
+kurtosis........ 9.765567e+00
+#null........... 0
+var 6:
+best............ 1.560000e+02
+mean............ 1.889800e+02
+var............. 1.324102e+04
+skewness........ 2.939660e+00
+kurtosis........ 1.099974e+01
+#null........... 0
+var 7:
+best............ 1.440000e+02
+mean............ 1.613200e+02
+var............. 3.254938e+03
+skewness........ 4.090064e+00
+kurtosis........ 2.008377e+01
+#null........... 0
+var 8:
+best............ 8.610000e+02
+mean............ 8.562200e+02
+var............. 1.645012e+03
+skewness........ -4.367544e+00
+kurtosis........ 2.398192e+01
+#null........... 0
+var 9:
+best............ 4.260000e+02
+mean............ 4.155200e+02
+var............. 5.598410e+03
+skewness........ 1.886739e+00
+kurtosis........ 1.071634e+01
+#null........... 0
+
+GENERATION: 13
+Fitness Value... 2.025909e-02
+mean............ 1.661736e-02
+var............. 3.206782e-05
+skewness........ -1.867848e+00
+kurtosis........ 5.138597e+00
+#null........... 0
+#unique......... 34, #Total UniqueCount: 467
+var 1:
+best............ 6.480000e+02
+mean............ 6.503800e+02
+var............. 2.393556e+02
+skewness........ 4.501089e+00
+kurtosis........ 3.006376e+01
+#null........... 0
+var 2:
+best............ 4.110000e+02
+mean............ 4.068200e+02
+var............. 9.157476e+02
+skewness........ -4.873235e+00
+kurtosis........ 3.255784e+01
+#null........... 0
+var 3:
+best............ 2.800000e+02
+mean............ 2.847000e+02
+var............. 7.234900e+02
+skewness........ 3.783925e+00
+kurtosis........ 1.922962e+01
+#null........... 0
+var 4:
+best............ 4.420000e+02
+mean............ 4.643200e+02
+var............. 8.309578e+03
+skewness........ 4.239263e+00
+kurtosis........ 2.313442e+01
+#null........... 0
+var 5:
+best............ 7.410000e+02
+mean............ 7.541800e+02
+var............. 2.527828e+03
+skewness........ -1.664774e+00
+kurtosis........ 1.087365e+01
+#null........... 0
+var 6:
+best............ 1.550000e+02
+mean............ 1.650400e+02
+var............. 5.224358e+03
+skewness........ 5.830810e+00
+kurtosis........ 3.977944e+01
+#null........... 0
+var 7:
+best............ 1.430000e+02
+mean............ 1.484600e+02
+var............. 9.558484e+02
+skewness........ 3.589457e+00
+kurtosis........ 1.737530e+01
+#null........... 0
+var 8:
+best............ 8.600000e+02
+mean............ 8.376200e+02
+var............. 1.389024e+04
+skewness........ -5.902748e+00
+kurtosis........ 3.865257e+01
+#null........... 0
+var 9:
+best............ 4.250000e+02
+mean............ 4.293800e+02
+var............. 2.838716e+03
+skewness........ 9.504219e-01
+kurtosis........ 1.418005e+01
+#null........... 0
+
+GENERATION: 14
+Fitness Value... 2.025909e-02
+mean............ 1.652984e-02
+var............. 3.104687e-05
+skewness........ -1.331273e+00
+kurtosis........ 3.418801e+00
+#null........... 0
+#unique......... 31, #Total UniqueCount: 498
+var 1:
+best............ 6.480000e+02
+mean............ 6.384800e+02
+var............. 1.825170e+03
+skewness........ -3.743423e+00
+kurtosis........ 1.558583e+01
+#null........... 0
+var 2:
+best............ 4.100000e+02
+mean............ 4.204000e+02
+var............. 3.403800e+03
+skewness........ 7.678229e-01
+kurtosis........ 1.482482e+01
+#null........... 0
+var 3:
+best............ 2.800000e+02
+mean............ 2.816400e+02
+var............. 2.170630e+03
+skewness........ 4.572615e-01
+kurtosis........ 1.366190e+01
+#null........... 0
+var 4:
+best............ 4.420000e+02
+mean............ 4.404200e+02
+var............. 2.519204e+03
+skewness........ -4.241350e+00
+kurtosis........ 2.684642e+01
+#null........... 0
+var 5:
+best............ 7.260000e+02
+mean............ 7.525600e+02
+var............. 1.269166e+03
+skewness........ -2.370328e+00
+kurtosis........ 1.459681e+01
+#null........... 0
+var 6:
+best............ 1.550000e+02
+mean............ 1.609200e+02
+var............. 6.589536e+02
+skewness........ 4.325327e+00
+kurtosis........ 2.061021e+01
+#null........... 0
+var 7:
+best............ 1.430000e+02
+mean............ 1.727000e+02
+var............. 1.230925e+04
+skewness........ 4.751572e+00
+kurtosis........ 2.668530e+01
+#null........... 0
+var 8:
+best............ 8.600000e+02
+mean............ 8.415000e+02
+var............. 5.479850e+03
+skewness........ -4.369063e+00
+kurtosis........ 2.263816e+01
+#null........... 0
+var 9:
+best............ 4.250000e+02
+mean............ 4.289400e+02
+var............. 1.177216e+03
+skewness........ 2.619348e+00
+kurtosis........ 2.078741e+01
+#null........... 0
+
+GENERATION: 15
+Fitness Value... 2.025909e-02
+mean............ 1.766606e-02
+var............. 2.342642e-05
+skewness........ -1.961563e+00
+kurtosis........ 5.794684e+00
+#null........... 0
+#unique......... 28, #Total UniqueCount: 526
+var 1:
+best............ 6.470000e+02
+mean............ 6.326400e+02
+var............. 3.518470e+03
+skewness........ -4.070174e+00
+kurtosis........ 2.037550e+01
+#null........... 0
+var 2:
+best............ 4.100000e+02
+mean............ 4.182800e+02
+var............. 2.056802e+03
+skewness........ 4.073035e+00
+kurtosis........ 2.026805e+01
+#null........... 0
+var 3:
+best............ 2.790000e+02
+mean............ 2.764800e+02
+var............. 2.971696e+02
+skewness........ -4.865082e+00
+kurtosis........ 2.521321e+01
+#null........... 0
+var 4:
+best............ 4.410000e+02
+mean............ 4.398400e+02
+var............. 5.116094e+03
+skewness........ 7.001034e-01
+kurtosis........ 1.503775e+01
+#null........... 0
+var 5:
+best............ 7.320000e+02
+mean............ 7.201800e+02
+var............. 9.799468e+03
+skewness........ -4.711286e+00
+kurtosis........ 2.637269e+01
+#null........... 0
+var 6:
+best............ 1.540000e+02
+mean............ 1.683600e+02
+var............. 5.375230e+03
+skewness........ 6.095062e+00
+kurtosis........ 4.006726e+01
+#null........... 0
+var 7:
+best............ 1.420000e+02
+mean............ 1.436000e+02
+var............. 1.449600e+02
+skewness........ 3.843982e+00
+kurtosis........ 2.779600e+01
+#null........... 0
+var 8:
+best............ 8.590000e+02
+mean............ 8.549000e+02
+var............. 1.193410e+03
+skewness........ -6.145585e+00
+kurtosis........ 4.144201e+01
+#null........... 0
+var 9:
+best............ 4.250000e+02
+mean............ 4.281800e+02
+var............. 8.046276e+02
+skewness........ 2.672965e+00
+kurtosis........ 1.759898e+01
+#null........... 0
+
+GENERATION: 16
+Fitness Value... 2.025909e-02
+mean............ 1.671117e-02
+var............. 3.889256e-05
+skewness........ -1.483396e+00
+kurtosis........ 3.483775e+00
+#null........... 0
+#unique......... 29, #Total UniqueCount: 555
+var 1:
+best............ 6.460000e+02
+mean............ 6.524000e+02
+var............. 1.602400e+03
+skewness........ 3.847017e+00
+kurtosis........ 2.813316e+01
+#null........... 0
+var 2:
+best............ 4.100000e+02
+mean............ 4.182200e+02
+var............. 4.583092e+03
+skewness........ 6.710869e+00
+kurtosis........ 4.678196e+01
+#null........... 0
+var 3:
+best............ 2.780000e+02
+mean............ 2.977200e+02
+var............. 6.733882e+03
+skewness........ 5.641173e+00
+kurtosis........ 3.592744e+01
+#null........... 0
+var 4:
+best............ 4.400000e+02
+mean............ 4.414600e+02
+var............. 1.029168e+03
+skewness........ -6.861333e-01
+kurtosis........ 1.621418e+01
+#null........... 0
+var 5:
+best............ 7.410000e+02
+mean............ 6.348000e+02
+var............. 3.765248e+04
+skewness........ -1.927701e+00
+kurtosis........ 5.116859e+00
+#null........... 0
+var 6:
+best............ 1.530000e+02
+mean............ 1.592800e+02
+var............. 8.156016e+02
+skewness........ 3.292971e+00
+kurtosis........ 1.569173e+01
+#null........... 0
+var 7:
+best............ 1.410000e+02
+mean............ 1.489200e+02
+var............. 1.130354e+03
+skewness........ 4.799929e+00
+kurtosis........ 2.742616e+01
+#null........... 0
+var 8:
+best............ 8.580000e+02
+mean............ 8.589400e+02
+var............. 2.054164e+02
+skewness........ -5.126620e+00
+kurtosis........ 3.611322e+01
+#null........... 0
+var 9:
+best............ 4.250000e+02
+mean............ 4.211400e+02
+var............. 1.004080e+03
+skewness........ -5.371862e+00
+kurtosis........ 3.711461e+01
+#null........... 0
+
+GENERATION: 17
+Fitness Value... 2.058805e-02
+mean............ 1.747576e-02
+var............. 2.587363e-05
+skewness........ -2.017165e+00
+kurtosis........ 6.098820e+00
+#null........... 0
+#unique......... 35, #Total UniqueCount: 590
+var 1:
+best............ 3.580000e+02
+mean............ 6.433000e+02
+var............. 3.563850e+03
+skewness........ -1.284345e+00
+kurtosis........ 1.601886e+01
+#null........... 0
+var 2:
+best............ 4.100000e+02
+mean............ 4.144400e+02
+var............. 1.761246e+03
+skewness........ -2.296226e+00
+kurtosis........ 1.995300e+01
+#null........... 0
+var 3:
+best............ 2.780000e+02
+mean............ 2.805800e+02
+var............. 1.467636e+02
+skewness........ 3.418963e+00
+kurtosis........ 1.628036e+01
+#null........... 0
+var 4:
+best............ 4.400000e+02
+mean............ 4.531000e+02
+var............. 8.630500e+02
+skewness........ 3.075643e+00
+kurtosis........ 1.175810e+01
+#null........... 0
+var 5:
+best............ 7.410000e+02
+mean............ 6.687600e+02
+var............. 1.810374e+04
+skewness........ -2.866071e+00
+kurtosis........ 1.109456e+01
+#null........... 0
+var 6:
+best............ 1.530000e+02
+mean............ 1.614000e+02
+var............. 2.239400e+03
+skewness........ 5.485755e+00
+kurtosis........ 3.596883e+01
+#null........... 0
+var 7:
+best............ 1.410000e+02
+mean............ 1.560800e+02
+var............. 1.018491e+04
+skewness........ 6.811090e+00
+kurtosis........ 4.760857e+01
+#null........... 0
+var 8:
+best............ 8.580000e+02
+mean............ 8.534400e+02
+var............. 5.566864e+02
+skewness........ -3.967005e+00
+kurtosis........ 1.991899e+01
+#null........... 0
+var 9:
+best............ 8.190000e+02
+mean............ 4.346400e+02
+var............. 3.987270e+03
+skewness........ 4.997998e+00
+kurtosis........ 2.923392e+01
+#null........... 0
+
+Soft Generation Wait Limit Hit.
+No Improvement in 4 Generations
+
+Best Fit Found at Generation 17
+Fit Value = 2.058805e-02
+
+
+Parameters at the Solution (value, gradient):
+
+
+Not Obtaining Gradient Information
+ X[ 1] :	3.580000e+02	G[ 1] :	-1.000000e+00
+ X[ 2] :	4.100000e+02	G[ 2] :	-1.000000e+00
+ X[ 3] :	2.780000e+02	G[ 3] :	-1.000000e+00
+ X[ 4] :	4.400000e+02	G[ 4] :	-1.000000e+00
+ X[ 5] :	7.410000e+02	G[ 5] :	-1.000000e+00
+ X[ 6] :	1.530000e+02	G[ 6] :	-1.000000e+00
+ X[ 7] :	1.410000e+02	G[ 7] :	-1.000000e+00
+ X[ 8] :	8.580000e+02	G[ 8] :	-1.000000e+00
+ X[ 9] :	8.190000e+02	G[ 9] :	-1.000000e+00
+
+Solution Found Generation 17
+Number of Generations Run 17
+
+
+Fri Sep 16 16:45:30 2005
+Total run time : 0 hours 3 minutes and 19 seconds
+\end{Soutput}
+\begin{Sinput}
+> m.out
+\end{Sinput}
+\begin{Soutput}
+Call: 
+matchit(formula = treat ~ age + educ + black + hispan + married + 
+    nodegree + re74 + re75, data = lalonde, method = "genetic", 
+    distance = "logit")
+
+Sample sizes:
+          Control Treated
+All           429     185
+Matched        90     185
+Unmatched     339       0
+Discarded       0       0
+\end{Soutput}
+\end{Schunk}
+We see that the matching is done with replacement and only 90 control
+units are included for a matched sample.
+
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \subsection{Checking Balance}
@@ -1078,7 +2516,7 @@ by clicking the first mouse button near the units.
 
 \begin{figure}[tbp]
   \begin{center}
-\includegraphics{figs/docs-029}
+\includegraphics{figs/docs-031}
 %    \includegraphics[scale=0.5]{figs/jitterplotnn}
     \hfill
     \caption{Sample diagnostic jitter plot: Nearest Neighbor matching
@@ -1360,7 +2798,7 @@ subclass cut-points.
 
 \begin{figure}[tbp]
   \begin{center}
-\includegraphics{figs/docs-033}
+\includegraphics{figs/docs-035}
     %\includegraphics[scale=0.5]{figs/jitterplotsub}
     \hfill
     \caption{Sample diagnostic jitter plot: Subclassification with
@@ -1706,11 +3144,11 @@ Lalonde data, type:
 > print(test)
 \end{Sinput}
 \begin{Soutput}
-       treat age educ black hispan married nodegree re74 re75  re78
-Dan        1  37   11     1      0       1        1    0    0  9930
-Kosuke     1  22    9     0      1       0        1    0    0  3596
-Liz        1  30   12     1      0       0        0    0    0 24909
-Gary       1  27   11     1      0       0        1    0    0  7506
+       age educ black hisp married nodegr re74 re75  re78 u74 u75 treat
+Dan     37   11     1    0       1      1    0    0  9930   1   1     1
+Kosuke  22    9     0    1       0      1    0    0  3596   1   1     1
+Liz     30   12     1    0       0      0    0    0 24910   1   1     1
+Gary    27   11     1    0       0      1    0    0  7506   1   1     1
 \end{Soutput}
 \end{Schunk}
 

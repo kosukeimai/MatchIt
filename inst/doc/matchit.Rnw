@@ -115,10 +115,11 @@ discard the installation files, which will not affect the way
 may also find it helpful to install the package with version control
 (see Subsection~\ref{subsec:vercontrol}). 
 
-We recommend that users also install Zelig and optmatch by typing the
-following commands,
+We recommend that users also install Zelig, Matching, and optmatch by
+typing the following commands,
 <<results=hide, eval=FALSE>>=
 install.packages("Zelig")
+install.packages("Matching")
 install.packages("optmatch", contriburl = "http://www.stat.lsa.umich.edu/~bbh/optmatch")
 @
 
@@ -637,6 +638,43 @@ m.out
 We see that the matching has utilized all units (the treated and
 control group sample sizes are the same for the full and matched
 samples). 
+
+\subsubsection{Genetic Matching}
+\label{subsub:genetic}
+
+Genetic matching is a method that automates the process of finding an
+optimal balance \citep{DiaSek05}. The idea is to use a genetic search
+algorithm and find a set of weights for each covariate such that the
+optimal balance is achieved after matching. The procedure is
+implemented in {\tt Matching} package \citep{Sekhon04}. As is
+currently implemented, matching is done with replacement and balance
+is determined by the two univariate tests; paired t-tests for
+dichotomous variables and an Kolmogorov-Smirnov test for multinomial
+and continuous variables.  See
+Sections~\ref{subsubsec:inputs-all}~and~\ref{subsubsec:inputs-genetic}
+for a complete list of optional inputs for genetic matching.
+
+Genetic matching can be performed with \MatchIt\ by setting
+\texttt{method = "genetic"}.  We use an add-on package called
+\texttt{Matching} \citep{Sekhon04}, which must be installed separately
+by typing at the R command prompt,
+<<results=hide,eval=FALSE>>=
+install.packages("Matching") 
+@ 
+For more information about the package, see
+\hlink{http://sekhon.polisci.berkeley.edu/matching/}{http://sekhon.polisci.berkeley.edu/matching/}
+
+The following example script can be run by typing {\tt demo(genetic)}
+at the R prompt.  We first load the Lalonde data, conduct genetic
+matching (using the propensity score based on logistic regression as
+one of the covariate), and then print a short summary.
+<<>>=
+m.out <- matchit(treat ~ age + educ + black + hispan + married + nodegree + re74 + re75, data = lalonde, method = "genetic", distance = "logit")
+m.out
+@
+We see that the matching is done with replacement and only 90 control
+units are included for a matched sample.
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

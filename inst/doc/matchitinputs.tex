@@ -252,3 +252,19 @@ The available options are listed below.
   \hlink{http://www.stat.lsa.umich.edu/\~{}bbh/optmatch.html}{http://www.stat.lsa.umich.edu/\~bbh/optmatch.html}
   for details.
 \end{enumerate}
+
+\subsubsection{Genetic Matching}
+\label{subsubsec:inputs-genetic}
+
+The available options are listed below.
+\begin{enumerate}
+\item {\tt ratio} specifies the number of control units to be matched
+  to each treatment unit, the default is {\tt ratio = 1}. This option
+  does not seem work well as it is implemented in {\tt Matching}
+  package.
+\item {\tt ...} represents additional inputs that can be passed to the
+  {\tt GenMatch()} function in the {\tt Matching} package. See {\tt
+    help(GenMatch)} or
+  \hlink{http://sekhon.polisci.berkeley.edu/library/Matching/html/GenMatch.html}{http://sekhon.polisci.berkeley.edu/library/Matching/html/GenMatch.html}
+  for details.
+\end{enumerate}
