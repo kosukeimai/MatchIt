@@ -1,5 +1,9 @@
 matchit2genetic <- function(treat, X, data, distance, discarded,
-                            ratio = 1, verbose = FALSE, ...) {
+                            ratio = 1, replace = TRUE, verbose =
+                            FALSE, ...) {
+  if (!replace)
+    stop("`replace' must be set to TRUE for Genetic Matching.")
+  
   require(Matching)
   if (verbose)
     cat("Genetic matching... \n")
