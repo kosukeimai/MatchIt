@@ -1,12 +1,19 @@
 matchit2genetic <- function(treat, X, data, distance, discarded,
                             ratio = 1, verbose = FALSE, ...) {
+  if ("rgenoud" %in% .packages(all = TRUE))
+    require(rgenoud)
+  else {
+    install.packages("rgenoud")
+    require(rgenoud)
+  }
+
   if ("Matching" %in% .packages(all = TRUE))
     require(Matching)
   else {
     install.packages("Matching")
     require(Matching)
   }
-  
+
   if (verbose)
     cat("Genetic matching... \n")
   
