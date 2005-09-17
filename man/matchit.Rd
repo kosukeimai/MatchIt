@@ -60,17 +60,20 @@ numerically using \code{summary(matchitobject)}.
   }
   \item{method}{This argument specifies a matching method. Currently,
     \code{"exact"} (exact matching), \code{"full"} (full matching),
-    \code{"nearest"} (nearest neighbor matching), \code{"optimal"}
-    (optimal matching), and \code{"subclass"} (subclassification) are
-    available. The default is \code{"nearest"}. Note that within each of
-    these matching methods, \emph{MatchIt} offers a variety of options.
-    See \url{http://gking.harvard.edu/matchit/??} for the complete list
+    \code{"genetic"} (genetic matching), \code{"nearest"} (nearest
+    neighbor matching), \code{"optimal"} (optimal matching), and
+    \code{"subclass"} (subclassification) are available. The default is
+    \code{"nearest"}. Note that within each of these matching methods,
+    \emph{MatchIt} offers a variety of options. See
+    \url{http://gking.harvard.edu/matchit/docs/Inputs.html} for the
+complete list
     of supported options.
   }
   \item{distance}{This argument specifies the method used to estimate the
     distance measure. The default is logistic regression,
     \code{"logit"}. A variety of other methods are available. See
-    \url{http://gking.harvard.edu/matchit/??} for the complete list of
+    \url{http://gking.harvard.edu/matchit/docs/All_Matching_Methods.html}
+for the complete list of
     supported methods.
   }
   \item{distance.options}{ This optional argument specifies the optional
@@ -146,7 +149,9 @@ numerically using \code{summary(matchitobject)}.
     weight \code{1}.  Each matched control unit has weight proportional
     to the number of treatment units to which it was matched, and the sum of
     the control weights is equal to the number of uniquely matched
-    control units. See \url{http://gking.harvard.edu/matchit/??} for more
+    control units. See
+\url{http://gking.harvard.edu/matchit/docs/How_Exactly_are.html} for
+more
     details.
   }
   \item{subclass}{The subclass index in an ordinal
