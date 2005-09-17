@@ -1,7 +1,13 @@
 matchit2optimal <- function(treat, X, data, distance, discarded,
                             ratio = 1, verbose=FALSE, ...) {
-  require(optmatch)
-  
+
+  if ("optmatch" %in% .packages(all = TRUE))
+    require(optmatch)
+  else {
+    install.packages("optmatch", contriburl="http://www.stat.lsa.umich.edu/~bbh/optmatch")
+    require(optmatch)
+  }
+    
   if(verbose)
     cat("Optimal matching... \n")
   
