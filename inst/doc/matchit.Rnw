@@ -1,5 +1,4 @@
 \documentclass[oneside,letterpaper,titlepage]{article}
-%\usepackage[ae,hyper]{/usr/lib/R/share/texmf/Rd}
 \usepackage{graphicx}
 \usepackage{natbib}
 \usepackage[reqno]{amsmath}
@@ -578,8 +577,9 @@ give a complete list of optional inputs for optimal matching.
 
 Optimal matching is performed with \MatchIt\ by setting \texttt{method
   = "optimal"}.  We use an add-on package called \texttt{optmatch}
-\citep{Hansen04}, which must be installed separately by typing at the
-R command prompt,
+\citep{Hansen04}, which will be automatically installed when optimal
+matching is performed (if it is not installed already). The package can
+also be installed separately by typing at the R command prompt,
 <<results=hide,eval=FALSE>>=
   install.packages("optmatch", contriburl = "http://www.stat.lsa.umich.edu/~bbh/optmatch") 
 @ 
@@ -615,11 +615,10 @@ for a complete list of optional inputs for full matching.
 
 Full matching can be performed with \MatchIt\ by setting
 \texttt{method = "full"}.  We use an add-on package called
-\texttt{optmatch} \citep{Hansen04}, which must be installed separately
-by typing at the R command prompt,
-%can we do this automatically if its needed, like we do in zelig?  
-%K: actually, Zelig requires users to install these packages when
-%they install Zelig.
+\texttt{optmatch} \citep{Hansen04}, which will be automatically
+installed when optimal matching is performed (if it is not installed
+already). The package can also be installed separately by typing at
+the R command prompt,
 <<results=hide,eval=FALSE>>=
 install.packages("optmatch", contriburl = "http://www.stat.lsa.umich.edu/~bbh/optmatch") 
 @ 
@@ -647,17 +646,18 @@ optimal balance \citep{DiaSek05}. The idea is to use a genetic search
 algorithm and find a set of weights for each covariate such that the
 optimal balance is achieved after matching. The procedure is
 implemented in {\tt Matching} package \citep{Sekhon04}. As is
-currently implemented, matching is done with replacement and balance
-is determined by the two univariate tests; paired t-tests for
-dichotomous variables and an Kolmogorov-Smirnov test for multinomial
-and continuous variables.  See
+currently implemented, matching is done with replacement using the
+matching method of \citet{AbaImb04} and balance is determined by the
+two univariate tests; paired t-tests for dichotomous variables and an
+Kolmogorov-Smirnov test for multinomial and continuous variables.  See
 Sections~\ref{subsubsec:inputs-all}~and~\ref{subsubsec:inputs-genetic}
 for a complete list of optional inputs for genetic matching.
 
 Genetic matching can be performed with \MatchIt\ by setting
 \texttt{method = "genetic"}.  We use an add-on package called
-\texttt{Matching} \citep{Sekhon04}, which must be installed separately
-by typing at the R command prompt,
+\texttt{Matching} \citep{Sekhon04}, which will be automatically
+installed (if it is not installed already). The package can
+also be installed separately by typing at the R command prompt,
 <<results=hide,eval=FALSE>>=
 install.packages("Matching") 
 @ 
@@ -666,10 +666,12 @@ For more information about the package, see
 
 The following example script can be run by typing {\tt demo(genetic)}
 at the R prompt.  We first load the Lalonde data, conduct genetic
-matching (using the propensity score based on logistic regression as
-one of the covariate), and then print a short summary.
-<<>>=
+matching (using the estimated propensity score based on logistic
+regression as one of the covariate), and then print a short summary.
+<<results=hide>>=
 m.out <- matchit(treat ~ age + educ + black + hispan + married + nodegree + re74 + re75, data = lalonde, method = "genetic", distance = "logit")
+@
+<<>>=
 m.out
 @
 We see that the matching is done with replacement and only 90 control
