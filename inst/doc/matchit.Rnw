@@ -1130,7 +1130,8 @@ within each subclasses if specified.  The graphs present:
   Similarly, user input is required when plotting by subclass.  This
   interactivity can be turned off by setting the input
   \texttt{interactive = F}. When subclassifying, users can then
-  specify the subclass by the \texttt{subclass} input.
+  specify the subclass by the \texttt{subclass} input.  Users can also specify specific covariates to plot by entering names 
+of covariates in \texttt{which.xs}. 
 \item Jitter plots of the propensity score for treated and control
   units (\texttt{type = "jitter"}).  If \texttt{interactive=TRUE} (the default), the 
   user can identify individual units by clicking on the graph with the left mouse button.  
