@@ -849,11 +849,26 @@ plot(m.out, type="jitter")
 
 \begin{figure}[tbp]
   \begin{center}
-%<<fig=TRUE, width=8, height=5, prefix.string=figs/docs, echo=FALSE>>=
-%plot(m.out, interactive=FALSE)
-%@
-    \includegraphics[width=3in, height=3in]{figs/qqplotnn}
-    \includegraphics[width=3in, height=3in]{figs/qqplotnn2} 
+<<results=tex, echo=FALSE>>=
+file="figs/qqplotnn1.pdf"
+pdf(file)
+plot(m.out, interactive=FALSE, which.xs=c("re74", "re75", "educ"))
+cat("\\includegraphics[width=2.75in, height=2.75in]{", file, "}\n\n", sep="")
+@
+<<echo=FALSE, results=hide>>=
+dev.off()
+@
+<<results=tex, echo=FALSE>>=
+file="figs/qqplotnn2.pdf"
+pdf(file)
+plot(m.out, interactive=FALSE, which.xs=c("black", "hispan", "age"))
+cat("\\includegraphics[width=2.75in, height=2.75in]{", file, "}\n\n", sep="")
+@
+<<echo=FALSE, results=hide>>=
+dev.off()
+@
+    %\includegraphics[width=3in, height=3in]{figs/qqplotnn}
+    %\includegraphics[width=3in, height=3in]{figs/qqplotnn2} 
     \hfill
     \caption{Sample diagnostic QQ plots: Nearest Neighbor matching
       with the \MatchIt\ call \texttt{matchit(treat ~ re74 + re75 + educ
@@ -947,11 +962,26 @@ plot(m.out, type="jitter")
 
 \begin{figure}[tbp]
   \begin{center}
-%<<fig=TRUE, width=8, height=5, prefix.string=figs/docs, echo=FALSE>>=
-%plot(m.out, interactive=FALSE)
-%@
-    \includegraphics[width=3in, height=3in]{figs/qqplotsub}
-    \includegraphics[width=3in, height=3in]{figs/qqplotsub2}
+<<results=tex, echo=FALSE>>=
+file="figs/qqplotsub1.pdf"
+pdf(file)
+plot(m.out, interactive=FALSE, which.xs=c("re74", "re75", "educ"))
+cat("\\includegraphics[width=2.75in, height=2.75in]{", file, "}\n\n", sep="")
+@
+<<echo=FALSE, results=hide>>=
+dev.off()
+@
+<<results=tex, echo=FALSE>>=
+file="figs/qqplotsub2.pdf"
+pdf(file)
+plot(m.out, interactive=FALSE, which.xs=c("black", "hispan", "age"))
+cat("\\includegraphics[width=2.75in, height=2.75in]{", file, "}\n\n", sep="")
+@
+<<echo=FALSE, results=hide>>=
+dev.off()
+@
+    %\includegraphics[width=3in, height=3in]{figs/qqplotsub}
+    %\includegraphics[width=3in, height=3in]{figs/qqplotsub2}
     \hfill
     \caption{Sample diagnostic QQ plots: Subclassification with
       \MatchIt\ call \texttt{matchit(treat ~ re74 + re75 + educ +
