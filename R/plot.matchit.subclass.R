@@ -1,6 +1,6 @@
 plot.matchit.subclass <- function(x, discrete.cutoff=5,
                                   type="QQ", interactive = T,
-                                  subclass = NULL, ...){
+                                  subclass = NULL, which.xs=NULL,...){
   choice.menu <- function(choices,question)
     {
       k <- length(choices)-1
@@ -28,12 +28,12 @@ plot.matchit.subclass <- function(x, discrete.cutoff=5,
           if(ans!=0)
             {
               matchit.qqplot(x,discrete.cutoff,which.subclass=ans,
-                             interactive = interactive)     
+                             interactive = interactive, which.xs=which.xs)     
             }
         }
     } else {
       matchit.qqplot(x,discrete.cutoff,which.subclass=subclass,
-                     interactive=interactive)
+                     interactive=interactive, which.xs=which.xs)
     }
   } else if(type=="jitter"){
     jitter.pscore(x, interactive=interactive)

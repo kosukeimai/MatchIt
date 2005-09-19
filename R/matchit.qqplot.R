@@ -1,7 +1,13 @@
 matchit.qqplot <- function(x,discrete.cutoff,
                            which.subclass=NULL, numdraws=5000,
-                           interactive = T){
+                           interactive = T, which.xs = NULL){
   covariates  <- x$X
+  if(!is.null(which.xs)){
+    if(sum(which.xs%in%dimnames(covariates)[[2]])!=length(which.xs)){
+      stop("which.xs is incorrectly specified")
+    }
+    covariates <- covariates[,which.xs,drop=F]  
+  }
   treat <- x$treat
   matched <- x$weights!=0
   
@@ -13,22 +19,22 @@ matchit.qqplot <- function(x,discrete.cutoff,
     m.covariates <- x$X[c(t.plot, c.plot),]
     m.treat <- x$treat[c(t.plot, c.plot)]
   } else {
-    m.covariates <- covariates[matched,]
+    m.covariates <- covariates[matched,,drop=F]
     m.treat <- treat[matched]
   }
   
   if(!is.null(which.subclass)){
     subclass <- x$subclass
     sub.index <- subclass==which.subclass & !is.na(subclass)
-    covariates <- covariates[sub.index,]
-    treat <- treat[sub.index]
-    matched <- matched[sub.index]
+    sub.covariates <- covariates[sub.index,,drop=F]
+    sub.treat <- treat[sub.index]
+    sub.matched <- matched[sub.index]
     ## Matched units in each subclass
-    m.covariates <- covariates[matched,]
-    m.treat <- treat[matched]
+    m.covariates <- sub.covariates[sub.matched,,drop=F]
+    m.treat <- sub.treat[sub.matched]
     ## Compare to full sample--reset covariates and treat to full data set
-    covariates <- x$X
-    treat <- x$treat
+#    covariates <- x$X
+#    treat <- x$treat
   }
   nn <- dimnames(covariates)[[2]]
   nc <- length(nn)
