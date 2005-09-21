@@ -1,4 +1,4 @@
-\documentclass[oneside,letterpaper,titlepage]{article}
+\documentclass[oneside,letterpaper,titlepage]{book}
 \usepackage{graphicx}
 \usepackage{natbib}
 \usepackage[reqno]{amsmath}
@@ -66,8 +66,8 @@ Elizabeth A. Stuart\thanks{Researcher, Mathematica Policy Research,
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \clearpage
-\section{Introduction}
-\label{sec:intro}
+\chapter{Introduction}
+\label{chap:intro}
 
 \MatchIt\ implements the suggestions of \citet*{HoImaKin05} for
 improving parametric statistical models and reducing model dependence
@@ -86,8 +86,8 @@ matching methods.  In addition, we have written \MatchIt\ so that
 adding new matching methods to the software is as easy for anyone with
 the inclination as it is for us.
 
-\subsection{Software Requirements} 
-\label{subsec:require}
+\section{Software Requirements} 
+\label{sec:require}
 
 \MatchIt\ works in conjunction with the R programming language and
 statistical software, and will run on any platform where R is
@@ -100,8 +100,8 @@ at \hlink{http://gking.harvard.edu}{http://gking.harvard.edu}) which
 includes a self-contained introduction to R and can be used to analyze
 the matched data after running \MatchIt.
 
-\subsection{Installing \MatchIt}
-\label{subsec:install}
+\section{Installing \MatchIt}
+\label{sec:install}
 
 To install \MatchIt\ for all platforms, type at the R command prompt:
 <<results=hide, eval=FALSE>>=
@@ -122,7 +122,7 @@ install.packages("Matching")
 install.packages("optmatch", contriburl = "http://www.stat.lsa.umich.edu/~bbh/optmatch")
 @
 
-\subsection{Loading \MatchIt} \label{subsec:load}
+\section{Loading \MatchIt} \label{sec:load}
 
 As with any R package, you need install \MatchIt\ only once, but you
 must load it prior to each use.  You can do this for each R session by
@@ -145,7 +145,7 @@ options(defaultPackages = c(getOption("defaultPackages"), "MatchIt"))
 @
 For this change to take effect, you need to restart R.
 
-\subsection{Updating \MatchIt}
+\section{Updating \MatchIt}
 
 We recommend that you periodically update \MatchIt\ at the R prompt by typing:
 <<results=hide, eval=FALSE>>=
@@ -157,7 +157,7 @@ new version of \MatchIt.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\section{Statistical Overview}
+\chapter{Statistical Overview}
 
 \MatchIt\ is designed for studies with a dependent variable (or a set
 of dependent variables) that is a function of a dichotomous causal (or
@@ -190,7 +190,7 @@ regardless of its value in fact.  The variables $y_i(1)$ and $y_i(0)$
 are jointly unobservable, and for each $i$, we observe one
 $y_i=t_iy_i(1)+(1-t_i)y_i(0)$, and not the other.
 
-\subsection{Preprocessing via Matching}
+\section{Preprocessing via Matching}
 
 The goal of matching is to preprocess the data prior to the parametric
 analysis so that the relationship between $t_i$ and $X_i$ is
@@ -232,8 +232,8 @@ doubly robust in that if \emph{either} the matching analysis or the
 analysis model is correct (but not necessarily both) your inferences
 will be statistically consistent.
 
-\subsection{Checking Balance}
-\label{subsec:balance-sum}
+\section{Checking Balance}
+\label{sec:balance-sum}
 
 The goal of matching is to simulate an aspect of a randomized
 experiment in terms of finding units that look as if they could have
@@ -258,7 +258,7 @@ These diagnostics can be done on all the covariates that are included
 in the matching procedure, as well as on other covariates on which
 close matches are desired.
 
-\subsection{Conducting Analyses after Matching}
+\section{Conducting Analyses after Matching}
 
 The most common way that parametric analyses are used to compute
 quantities of interest is by holding constant some explanatory
@@ -312,13 +312,13 @@ for more details.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\section{User's Guide to \MatchIt}
+\chapter{User's Guide to \MatchIt}
 \label{methods}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\subsection{Example Data: National Supported Work Demonstration}
-\label{subsec:lalonde}
+\section{Example Data: National Supported Work Demonstration}
+\label{sec:lalonde}
 
 For a running example, we use data from the job training program
 analyzed in \citet{lalonde86} and \citet{DehWah99}. \MatchIt\ includes
@@ -373,8 +373,8 @@ the two terms in the difference will always be unobserved.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\subsection{Preprocessing via Matching}
-\label{subsec:matching}
+\section{Preprocessing via Matching}
+\label{sec:matching}
 
 The main command \texttt{matchit()} implements a variety of matching
 procedures.  A general syntax is given by
@@ -394,10 +394,10 @@ or
 print(m.out)
 @
 Examples of various matching procedures are given for the reminder of
-this section, and Section~\ref{subsec:inputs} lists all possible
+this section, and Section~\ref{sec:matchit} lists all possible
 specifications of {\tt matchit()}.
 
-\subsubsection{Exact Matching}
+\subsection{Exact Matching}
 \label{subsubsec:exact}
 
 The simplest version of matching is exact.  This technique matches
@@ -433,10 +433,10 @@ not matched, and therefore were excluded from the matched data set.
 See
 Sections~\ref{subsubsec:inputs-all}~and~\ref{subsubsec:inputs-exact}
 for a complete list of input options for exact matching.  Now, you may
-also want to proceed to Section~\ref{subsec:balance} to learn about
+also want to proceed to Section~\ref{sec:balance} to learn about
 how the {\tt summary()} command can be used with exact matching.
 
-\subsubsection{Subclassification}
+\subsection{Subclassification}
 \label{subsubsec:subclass}
 
 When there are many covariates 
@@ -477,7 +477,7 @@ after the nearest neighbor matches are chosen it places them into
 subclasses, and adds a variable to the output object with the subclass
 numbers.
 
-\subsubsection{Nearest Neighbor Matching}
+\subsection{Nearest Neighbor Matching}
 \label{subsubsec:nearest}
 
 Nearest neighbor matching selects the $r$ best control matches for
@@ -555,7 +555,7 @@ m.out5 <- matchit(treat ~ re74 + re75 + age + educ, data = lalonde, method = "ne
 \end{enumerate}
 
 
-\subsubsection{Optimal Matching}
+\subsection{Optimal Matching}
 \label{subsubsec:optimal}
 
 The default nearest neighbor matching method in \MatchIt\ is
@@ -597,7 +597,7 @@ m.out
 The short summary shows that for each treated unit, two control units
 are matched through the optimal matching procedure.
 
-\subsubsection{Full Matching}
+\subsection{Full Matching}
 \label{subsubsec:full}
 
 Full matching is a a particular type of subclassification that uses
@@ -638,7 +638,7 @@ We see that the matching has utilized all units (the treated and
 control group sample sizes are the same for the full and matched
 samples). 
 
-\subsubsection{Genetic Matching}
+\subsection{Genetic Matching}
 \label{subsub:genetic}
 
 Genetic matching is a method that automates the process of finding an
@@ -680,12 +680,12 @@ units are included for a matched sample.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\subsection{Checking Balance}
-\label{subsec:balance}
+\section{Checking Balance}
+\label{sec:balance}
 
 In \MatchIt, there are two ways to check balance after any matching
 procedure: numerical and graphical summaries. Both methods are based
-on the same idea summarized in Section~\ref{subsec:balance-sum} and
+on the same idea summarized in Section~\ref{sec:balance-sum} and
 fully described in \citet*{HoImaKin05}. Given the \MatchIt\ output
 object {\tt m.out}, one can use the following commands,
 \begin{enumerate}
@@ -699,9 +699,9 @@ Below, we give three examples (exact matching, nearest neighbor
 matching, and subclassification) to illustrate the use of these two
 functions. The same two commands can be used for all other matching
 procedures, and they will give similar outputs. See
-Section~\ref{subsec:outputs} for more details.
+Section~\ref{sec:outputs} for more details.
 
-\subsubsection{Example 1: Exact matching}
+\subsection{Example 1: Exact matching}
 \label{subsubsec:balanceexact}
 
 Using the example of exact matching from
@@ -717,7 +717,7 @@ summary(m.out, covariates = TRUE)
 education covariates are equal.  The resulting \MatchIt\ object
 includes \texttt{weights} and \texttt{subclass}, which can be used to
 identify which units were put into the same subclass (See
-Sections~\ref{subsec:analysis}~and~\ref{subsec:match.data} for the
+Sections~\ref{sec:analysis}~and~\ref{sec:match.data} for the
 {\tt match.data()} command which creates the matched data set with
 these identifying variables).  Units that did not have the same
 covariate values as anyone in the other treatment group have
@@ -738,7 +738,7 @@ Survey of Income Dynamics):
 m.out$X[m.out$subclass==1,][1:5,]
 @
 
-\subsubsection{Example 2: Nearest neighbor matching}
+\subsection{Example 2: Nearest neighbor matching}
 \label{subsubsec:balancenearest}
 For all other types of matching, the \texttt{summary()} command
   first gives measures of the balance between the treated and control
@@ -907,7 +907,7 @@ well matched on the propensity score and the income variables, but
 that there are some remaining imbalances in the race and age
 variables, as was also seen using the \texttt{summary()} command.
 
-\subsubsection{Example 3: Subclassification}
+\subsection{Example 3: Subclassification}
 \label{subsubsec:balancesubclass}
 Now for subclassification, using the example from
   Section~\ref{subsubsec:subclass}, we check the balance of covariates
@@ -1023,31 +1023,23 @@ low propensity scores.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Conducting Analyses after Matching}
-\label{subsec:analysis}
+
+\section{Conducting Analyses after Matching}
+\label{sec:analysis}
 
 \input{matchit2zelig}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\section{Reference Manual}
-\label{sec:reference}
+\chapter{Reference Manual}
+\label{chap:reference}
 
-\subsection{Inputs}
-\label{subsec:inputs}
+\input{matchitref}
 
-\input{matchitinputs}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{\texttt{summary()}: Numerical Summaries of Balance Diagnostics}
 
-\subsection{Outputs}
-\label{subsec:outputs}
-
-\subsubsection{Output Object Contents}
-
-\input{matchitoutputs}
-
-\subsubsection{{\tt summary()}}
 The \texttt{summary()} command returns more information about the
 \MatchIt\ model.  Optional inputs are:
 
@@ -1136,7 +1128,9 @@ elements, when applicable:
 \item \texttt{match.matrix} from the {\texttt matchit} output.
 \end{enumerate}
 
-\subsubsection{{\tt plot()}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{\texttt{plot()}: Graphical Summaries of Balance Diagnostics}
 
 The \texttt{plot()} command allows you to check the distributions of
 covariates in the assignment model, squares, and interactions, and
@@ -1160,18 +1154,22 @@ within each subclasses if specified.  The graphs present:
   Similarly, user input is required when plotting by subclass.  This
   interactivity can be turned off by setting the input
   \texttt{interactive = F}. When subclassifying, users can then
-  specify the subclass by the \texttt{subclass} input.  Users can also specify specific covariates to plot by entering names 
-of covariates in \texttt{which.xs}. 
-\item Jitter plots of the propensity score for treated and control
+  specify the subclass by the \texttt{subclass} input.  Users can also
+specify specific covariates to plot by entering names of covariates in
+\texttt{which.xs}.  \item Jitter plots of the propensity score for
+treated and control
   units (\texttt{type = "jitter"}).  If \texttt{interactive=TRUE} (the default), the 
   user can identify individual units by clicking on the graph with the left mouse button.  
 \end{enumerate}
 
-\subsubsection{{\tt match.data()}}
-\label{subsec:match.data}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{\texttt{match.data()}}
+\label{sec:match.data}
 
 To extract the matched data set for subsequent analyses from the
-output object (see Section~\ref{subsec:analysis}), we provide the
+output object (see Section~\ref{sec:analysis}), we provide the
 function {\tt match.data()}.  This is used as follows:
 <<results=hide, eval=FALSE>>=
 m.data <- match.data(object, group = "all", distance = "distance", weights = "weights", subclass = "subclass")
@@ -1241,8 +1239,9 @@ m.data4 <- match.data(m.out2, subclass = "block", weights = "w", distance = "psc
 names(m.data4)
 @
 
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\chapter{Appendices}
 
 \section{What's New?}
 
@@ -1261,7 +1260,6 @@ names(m.data4)
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 
 \section{Frequently Asked Questions}
 
