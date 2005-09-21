@@ -1,0 +1,35 @@
+\section{\texttt{plot()}: Graphical Summaries of Balance Diagnostics}
+
+The \texttt{plot()} command allows you to check the distributions of
+covariates in the assignment model, squares, and interactions, and
+within each subclasses if specified.  The graphs present:
+\begin{enumerate}
+\item Q-Q plots of each covariate to check balance of marginal
+  distributions (\texttt{type = "QQ"} (default)).  This graph plots
+  covariate values that fall in (approximately) the same quantile of
+  treated and control distributions.  Control unit quantile values are
+  plotted on the x-axis, and treated unit quantile values are plotted
+  on the y-axis.  If values fall below the 45 degree line, control
+  units generally take lower values of the covariate.  Data points
+  that fall exactly on the 45 degree line indicate that the marginal
+  distributions are identical.  Discrete covariates that take 5 or
+  fewer values are jittered for visibility.  This may be changed by
+  setting the option \texttt{discrete.cutoff}.  
+
+\item Since there can be many covariates (and many subclasses in
+  subclassification), the default Q-Q plot is interactive.  That is,
+  after plotting a $3 \times 2$ panel of raw and matched Q-Q plots for
+  three covariates, user input is required to plot the next panel, if
+  necessary.  Similarly, user input is required when plotting by
+  subclass.  This interactivity can be turned off by setting the input
+  \texttt{interactive = F}.  When subclassifying, users can then
+  specify the subclass by the \texttt{subclass} input.  Users can also
+  specify specific covariates to plot by entering names of covariates
+  in \texttt{which.xs}.
+
+\item Jitter plots of the propensity score for treated and control
+  units (\texttt{type = "jitter"}).  If \texttt{interactive=TRUE} (the
+  default), the user can identify individual units by clicking on the
+  graph with the left mouse button.
+\end{enumerate}
+

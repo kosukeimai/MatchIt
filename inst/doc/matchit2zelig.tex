@@ -1,3 +1,6 @@
+\section{Conducting Analyses after Matching}
+\label{sec:analysis}
+
 In this section, we describe our recommended approach
 \citep{HoImaKin05}, which uses
 \hlink{Zelig}{http://gking.harvard.edu/zelig/} to conduct parametric
@@ -16,25 +19,27 @@ available at
 of causal effects in very general settings with a variety of
 statistical models.
 
+\subsection{Quick Overview}
+
 The general syntax is as follows. First, we use \texttt{match.data()}
 to create the matched data by excluding unmatched units from the
 original data, and including information about the particular matching
 procedure (i.e., weights, subclasses, and the distance measure).
-\begin{Schunk}
-\begin{Sinput}
+\begin{verbatim}
 > m.data <- match.data(m.out)
-\end{Sinput}
-\end{Schunk}
+\end{verbatim}
+
 where {\tt m.out} is the \MatchIt\ object from {\tt matchit()} and
 {\tt m.data} is the resulting matched data.  Next, we analyze the
 matched data set via the following command,
-\begin{Schunk}
-\begin{Sinput}
+\begin{verbatim}
 > z.out <- zelig(Y ~ treat + x1 + x2, model = mymodel, data = m.data)
-\end{Sinput}
-\end{Schunk}
+\end{verbatim}
+
 where {\tt Y} is the outcome variable, {\tt mymodel} is the selected
 model, and {\tt z.out} is the output object from {\tt zelig}.
+
+\subsection{Examples}
 
 To illustrate this approach, we provide two detailed examples using
 the Lalonde data. Users can run these example commands by typing {\tt
@@ -45,241 +50,133 @@ available in Zelig (for the list of supported models, see
 If you have not installed Zelig, follow the installation procedure
 described at
 \hlink{http://gking.harvard.edu/zelig/docs/Installation.html}{http://gking.harvard.edu/zelig/docs/Installation.html}
+
+%One causal effect of interest is the impact of participation in the
+%job training program on real earnings in 1978, for those individuals
+%that participated in the program.  The average treatment effect on the
+%treated (ATT) is defined as,
+%\begin{align}
+%  \label{att}
+%  \text{ATT} & = \frac{1}{\sum_{i=1}^n t_i}\sum_{i:t_i=1} E[Y_i(1) - Y_i(0)],
+%\end{align}
+%where $Y_i(1)$ represents the potential outcome under the treatment of
+%the job program, and $Y_i(0)$ is the potential outcome under control.
+%Note that the first term inside the expectation (the right hand side
+%of Equation~\ref{att}) is \emph{observed}, whereas the second term is
+%the \emph{unobserved} counterfactual of real earnings if participants
+%had not participated.  The nature of causal inference is that one of
+%the two terms in the difference will always be unobserved.
+
 To load the Zelig package after installing it, type
-
-\begin{Schunk}
-\begin{Sinput}
+\begin{verbatim}
 > library(Zelig)
-\end{Sinput}
-\end{Schunk}
+\end{verbatim}
 
-\paragraph{Examples}
 \begin{enumerate}
 \item We begin our first example by conducting the nearest neighbor
   matching using the estimated propensity score from the logistic
   regression
-\begin{Schunk}
-\begin{Sinput}
-> m.out1 <- matchit(treat ~ age + educ + black + hispan + 
-+     nodegree + married + re74 + re75, method = "nearest", 
-+     data = lalonde)
-\end{Sinput}
-\end{Schunk}
-Note that we skip an important step of checking balance in this
-example in order to focus on the illustration of analyzing matched
-data sets. We then fit the linear model to the control group
-controlling for the estimated propensity score and other covariates,
-\begin{Schunk}
-\begin{Sinput}
-> z.out1 <- zelig(re78 ~ age + educ + black + hispan + nodegree + 
-+     married + re74 + re75 + distance, data = match.data(m.out1, 
-+     "control"), model = "ls")
-\end{Sinput}
-\end{Schunk}
-where the {\tt "control"} option in {\tt match.data()} extracts the
-matched control units and {\tt ls} specifies linear regression. Note
-that we need not include the treatment indicator in this regression.
-Next, we set the covariates to the covariate values of the matched treated units
-and use conditional prediction by setting the {\tt setx()} command optionsn to {\tt cond = TRUE} and {\tt
-  fn = NULL} in order to impute the
-counterfactual outcomes for the treated units. The {\tt sim()} command in
-Zelig does the imputation.
-\begin{Schunk}
-\begin{Sinput}
-> x.out1 <- setx(z.out1, data = match.data(m.out1, "treat"), 
-+     fn = NULL, cond = TRUE)
+\begin{verbatim}
+> m.out1 <- matchit(treat ~ age + educ + black + hispan + nodegree + married + re74 + re75, 
+                    method = "nearest", data = lalonde)
+\end{verbatim}
+  Note that we skip an important step of checking balance in this
+  example in order to focus on the illustration of analyzing matched
+  data sets. We then fit the linear model to the control group
+  controlling for the estimated propensity score and other covariates,
+\begin{verbatim}
+> z.out1 <- zelig(re78 ~ age + educ + black + hispan + nodegree + married + re74 + re75, 
+                  data = match.data(m.out1, "control"), model = "ls")
+\end{verbatim}
+  where the {\tt "control"} option in {\tt match.data()} extracts the
+  matched control units and {\tt ls} specifies linear regression. Note
+  that we need not include the treatment indicator in this regression.
+  Next, we set the covariates to the covariate values of the matched
+  treated units and use conditional prediction by setting the {\tt
+    setx()} command optionsn to {\tt cond = TRUE} and {\tt fn = NULL}
+  in order to impute the counterfactual outcomes for the treated
+  units. The {\tt sim()} command in Zelig does the imputation.
+\begin{verbatim}
+> x.out1 <- setx(z.out1, data = match.data(m.out1, "treat"), fn = NULL, cond = TRUE)
 > s.out1 <- sim(z.out1, x = x.out1)
-\end{Sinput}
-\end{Schunk}
+\end{verbatim}
 Finally, we obtain a summary of the results by 
-\begin{Schunk}
-\begin{Sinput}
+\begin{verbatim}
 > summary(s.out1)
-\end{Sinput}
-\begin{Soutput}
+\end{verbatim}
 
-  Model: ls 
-  Number of simulations: 1000 
+\item It is also possible to estimate the average treatment effects on
+  both the treated and the control groups. To do this, we fit the
+  linear model to the {\it treatment group} controlling for the
+  propensity score ({\tt distance}) and other covariates,
 
-Mean Values of Observed Data (n = 185) 
-(Intercept)         age        educ       black      hispan    nodegree 
-  1.000e+00   2.582e+01   1.035e+01   8.432e-01   5.946e-02   7.081e-01 
-    married        re74        re75    distance 
-  1.892e-01   2.096e+03   1.532e+03   5.774e-01 
-
-Pooled Expected Values: E(Y|X)
-   mean      sd    2.5%   97.5% 
- 5012.9  2296.5   729.2 10066.2 
-
-Pooled Average Treatment Effect: Y - EV
-  mean     sd   2.5%  97.5% 
-1336.3  575.1  254.5 2426.9 
-
-\end{Soutput}
-\end{Schunk}
-The results indicate that the estimated average treatment effect on
-the treated is 
-\$1336.3,
-with a 95\% interval of
-(\$254.5,
-\$2426.9).
-
-It is also possible to estimate the average treatment effects on both
-the treated and the control groups. To do this, we fit the linear
-model to the {\it treatment group} controlling for the propensity
-score ({\tt distance}) and other covariates,
-\begin{Schunk}
-\begin{Sinput}
-> z.out2 <- zelig(re78 ~ age + educ + black + hispan + nodegree + 
-+     married + re74 + re75 + distance, data = match.data(m.out1, 
-+     "treat"), model = "ls")
-\end{Sinput}
-\end{Schunk}
+\begin{verbatim}
+> z.out2 <- zelig(re78 ~ age + educ + black + hispan + nodegree + married + re74 + re75, 
+                  data = match.data(m.out1, "treat"), model = "ls")
+\end{verbatim}
 We then conduct the same simulation procedure in order to impute the
 counterfactual outcome for the {\it control group},
-\begin{Schunk}
-\begin{Sinput}
-> x.out2 <- setx(z.out2, data = match.data(m.out1, "control"), 
-+     fn = NULL, cond = TRUE)
+\begin{verbatim}
+> x.out2 <- setx(z.out2, data = match.data(m.out1, "control"), fn = NULL, cond = TRUE)
 > s.out2 <- sim(z.out2, x = x.out2)
-\end{Sinput}
-\end{Schunk}
+\end{verbatim}
 Finally, note that Zelig calculates the difference between observed
 and either predicted or expected values.  This means that the
 treatment effect for the control units is actually the effect of
 control (observed control outcome minus the imputed outcome under
 treatment from the model).  Hence, to combine treatment effects just
 reverse the signs of the estimated treatment effect of controls.
-\begin{Schunk}
-\begin{Sinput}
+\begin{verbatim}
 > ate.all <- c(s.out1$qi$ate.ev, -s.out2$qi$ate.ev)
-\end{Sinput}
-\end{Schunk}
-The point estimate and its standard error is given by
-\begin{Schunk}
-\begin{Sinput}
+\end{verbatim}
+The point estimate, its standard error, and the $95\%$ confidence
+interval is given by
+\begin{verbatim}
 > mean(ate.all)
-\end{Sinput}
-\begin{Soutput}
-[1] 1626
-
-\end{Soutput}
-\begin{Sinput}
 > sd(ate.all)
-\end{Sinput}
-\begin{Soutput}
-[1] 807.2
-
-\end{Soutput}
-\end{Schunk}
-The 95\% confidence interval is given by
-\begin{Schunk}
-\begin{Sinput}
 > quantile(ate.all, c(0.025, 0.975))
-\end{Sinput}
-\begin{Soutput}
-  2.5%  97.5% 
- 205.4 3386.6 
-
-\end{Soutput}
-\end{Schunk}
+\end{verbatim}
   
-\item Our second example is subclassification. In this case, the
-  average treatment effect estimates are obtained separately for each subclass
-  as well as for the overall sample.  Estimating the
+\item Our third example is subclassification. In this case, the
+  average treatment effect estimates are obtained separately for each
+  subclass as well as for the overall sample.  Estimating the
   treatment effects separately for each subclass, and then aggregating
   across subclasses, can significantly increase the robustness of the
   ultimate results since the parametric analysis within each subclass
-  requires only local rather than global assumptions.
+  requires only local rather than global assumptions.  
 
-  We begin this example by conducting subclassification with four subclasses,
-\begin{Schunk}
-\begin{Sinput}
-> m.out2 <- matchit(treat ~ age + educ + black + hispan + 
-+     nodegree + married + re74 + re75, data = lalonde, method = "subclass", 
-+     subclass = 4)
-\end{Sinput}
-\end{Schunk}
-Here, we skip the important step of checking balance in order to focus
-on the illustration of analyzing subclassified data sets.  Next, we
-fit the linear regression within each subclass by controlling for the
-estimated propensity score and past income variables within each
-subclass by using the {\tt by} option in the {\tt zelig()} command. 
-\begin{Schunk}
-\begin{Sinput}
-> z.out3 <- zelig(re78 ~ re74 + re75 + distance, data = match.data(m.out2, 
-+     "control"), model = "ls", by = "subclass")
-\end{Sinput}
-\end{Schunk}
-The same set of commands as in the first example are used to
-do the imputation of the counterfactual outcomes for the treated
-units.
-\begin{Schunk}
-\begin{Sinput}
-> x.out3 <- setx(z.out3, data = match.data(m.out2, "treat"), 
-+     fn = NULL, cond = TRUE)
+  We begin this example by conducting subclassification with four
+  subclasses,
+\begin{verbatim}
+> m.out2 <- matchit(treat ~ age + educ + black + hispan + nodegree + married + re74 + re75, 
+                    data = lalonde, method = "subclass", subclass = 4)
+\end{verbatim}
+  Here, we skip the important step of checking balance in order to
+  focus on the illustration of analyzing subclassified data sets.
+  Next, we fit the linear regression within each subclass by
+  controlling for the estimated propensity score and past income
+  variables within each subclass by using the {\tt by} option in the
+  {\tt zelig()} command.
+\begin{verbatim}
+> z.out3 <- zelig(re78 ~ re74 + re75 + distance, data = match.data(m.out2, "control"), 
+                  model = "ls", by = "subclass")
+\end{verbatim}
+  The same set of commands as in the first example are used to do the
+  imputation of the counterfactual outcomes for the treated units.
+\begin{verbatim}
+> x.out3 <- setx(z.out3, data = match.data(m.out2, "treat"), fn = NULL, cond = TRUE)
 > s.out3 <- sim(z.out3, x = x.out3)
-\end{Sinput}
-\end{Schunk}
+\end{verbatim}
 Finally, to obtain the overall results, type
-\begin{Schunk}
-\begin{Sinput}
+\begin{verbatim}
 > summary(s.out3)
-\end{Sinput}
-\begin{Soutput}
-
-  Model: ls 
-  Number of simulations: 250 
-
-Mean Values of Observed Data (n = 46) 
-(Intercept)        re74        re75    distance 
-     1.0000   5430.5389   2929.0394      0.2392 
-
-Pooled Expected Values: E(Y|X)
- mean    sd  2.5% 97.5% 
- 4456  5409 -5871 16034 
-
-Pooled Average Treatment Effect: Y - EV
-  mean     sd   2.5%  97.5% 
-1894.1 1717.2 -934.2 5627.2 
-
-\end{Soutput}
-\end{Schunk}
-The results indicate that the estimated average treatment effect on
-the treated is
-\$1894.1,
-with a 95\% interval of
-(\$-934.2,
-\$5627.2).
+\end{verbatim}
 It is also possible to get the summary result for each subclass. For
 example, the following command summarizes the result for the second
 subclass.
-\begin{Schunk}
-\begin{Sinput}
+\begin{verbatim}
 > summary(s.out3, subset = 2)
-\end{Sinput}
-\begin{Soutput}
-
-Results for 1 
-
-  Model: ls 
-  Number of simulations: 250 
-
-Mean Values of Observed Data (n = 45) 
-(Intercept)        re74        re75    distance 
-     1.0000   1777.4221    972.3441      0.6039 
-
-Pooled Expected Values: E(Y|X)
-  mean     sd   2.5%  97.5% 
-3768.7 2575.9 -970.6 9563.2 
-
-Pooled Average Treatment Effect: Y - EV
-  mean     sd   2.5%  97.5% 
-2717.6 1244.1  129.8 5052.0 
-
-
-\end{Soutput}
-\end{Schunk}
+\end{verbatim}
   
 \end{enumerate}
 

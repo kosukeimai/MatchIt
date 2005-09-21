@@ -1,0 +1,95 @@
+
+\section{What \MatchIt\ Does}
+
+\MatchIt\ implements the suggestions of \citet*{HoImaKin05} for
+improving parametric statistical models and reducing model dependence
+by preprocessing data with semi-parametric and non-parametric matching
+methods.  After preprocessing with \MatchIt, researchers can use
+whatever parametric model and software they would have used without
+\MatchIt, without other modification, and produce inferences that are
+substantially more robust and less sensitive to modeling assumptions.
+(In addition, you may wish to use
+\hlink{Zelig}{http://gking.harvard.edu/zelig/} \citep{ImaKinLau04} for
+subsequent parametric analyses, as it is designed for maximum
+convenience in analyzing \MatchIt\ datasets.)  \MatchIt\ reduces the
+dependence of causal inferences on commonly made, but hard-to-justify,
+statistical modeling assumptions via a wide range of sophisticated
+matching methods.  In addition, we have written \MatchIt\ so that
+adding new matching methods to the software is as easy for anyone with
+the inclination as it is for us.
+
+\section{Software Requirements} 
+\label{sec:require}
+
+\MatchIt\ works in conjunction with the R programming language and
+statistical software, and will run on any platform where R is
+installed (Windows, Unix, or Mac OS X).  R is available free for
+download at the Comprehensive R Archive Network (CRAN) at
+\hlink{http://cran.r-project.org/}{http://cran.r-project.org/}.
+\MatchIt\ has been tested on the most recent version of R.  A good way
+to learn R, if you don't know it already, is to learn Zelig (available
+at \hlink{http://gking.harvard.edu}{http://gking.harvard.edu}) which
+includes a self-contained introduction to R and can be used to analyze
+the matched data after running \MatchIt.
+
+\section{Installing \MatchIt}
+\label{sec:install}
+
+To install \MatchIt\ for all platforms, type at the R command prompt,
+\begin{verbatim}
+> install.packages("MatchIt")
+\end{verbatim}
+and \MatchIt\ will install itself onto your system automatically.
+During the installation process you may either decide to keep or
+discard the installation files, which will not affect the way
+\MatchIt\ runs.  Note that you only need to do this once.  
+%Some users
+%may also find it helpful to install the package with version control
+%(see Subsection~\ref{subsec:vercontrol}). 
+We recommend that users also install Zelig, Matching, and optmatch by
+typing the following commands,
+\begin{verbatim}
+> install.packages("Zelig")
+> install.packages("Matching")
+> install.packages("optmatch", contriburl = "http://www.stat.lsa.umich.edu/~bbh/optmatch")
+\end{verbatim}
+
+
+\section{Loading \MatchIt} \label{sec:load}
+
+As with any R package, you need install \MatchIt\ only once, but you
+must load it prior to each use.  You can do this for each R session by
+typing,
+\begin{verbatim}
+> library(MatchIt)
+\end{verbatim}
+at the R command prompt.  
+
+Alternatively, you can specify R to load \MatchIt\ automatically at
+launch so that you can skip the step of typing {\tt library(MatchIt)}
+at the beginning of every R session.  To do this, edit the {\tt
+  Rprofile} file located in the R program subdirectory, e.g.
+\texttt{C:/R/rw2011/etc/}, for Windows systems or the {\tt .Rprofile}
+file located in the home directory for Unix/Linux and Mac OS X
+systems.  Using a text editor such as Windows notepad and emacs, add
+the following line to the file,
+\begin{verbatim}
+options(defaultPackages = c(getOption("defaultPackages"), "MatchIt"))
+\end{verbatim}
+For this change to take effect, you need to restart R.
+
+\section{Updating \MatchIt}
+
+We recommend that you periodically update \MatchIt\ at the R prompt by typing:
+\begin{verbatim}
+> update.packages()
+> library(MatchIt)
+\end{verbatim}
+which will update all the libraries including \MatchIt\ and load the
+new version of \MatchIt.
+
+
+%%% Local Variables: 
+%%% mode: pdflatex
+%%% TeX-master: "matchit"
+%%% End: 
