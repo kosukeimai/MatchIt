@@ -343,6 +343,31 @@ example, when exact matching, {\tt match.matrix = NULL}.}
 
 \subsection{Examples}
 
+\begin{enumerate}
+\item Nearest neighbor matching using the estimated propensity score
+from the logistic regression
+\begin{Schunk}
+\begin{Sinput}
+> library(MatchIt)
+> data(lalonde)
+> m.out1 <- matchit(treat ~ age + educ + black + hispan + 
++     nodegree + married + re74 + re75, method = "nearest", 
++     data = lalonde)
+\end{Sinput}
+\end{Schunk}
+\item Subclassification with four subclasses
+\begin{Schunk}
+\begin{Sinput}
+> m.out2 <- matchit(treat ~ age + educ + black + hispan + 
++     nodegree + married + re74 + re75, data = lalonde, method = "subclass", 
++     subclass = 4)
+\end{Sinput}
+\end{Schunk}
+
+\end{enumerate}	
+
 \subsection{See Also}
 
+The complete manual of {\tt MatchIt} is available at
+\href{http://gking.harvard.edu/matchit}{http://gking.harvard.edu/matchit}
 
