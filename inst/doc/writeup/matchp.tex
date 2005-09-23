@@ -1316,6 +1316,24 @@ difference in means; and better than both would be a quantile-quantile
 plot for each variable, since that tests the entire the equality of
 the full empricial distribution of the treatment and control groups.
 
+\begin{figure}[t] 
+ \begin{center}
+   \includegraphics[width=6in,height=4in]{figs/TStatPlot.pdf}
+  \end{center}
+  \vspace{-0.275in}
+  \caption{Dangers in relying on t-statistics as measure of balance.
+    This figure illustrates the dangers in using t-statistics, which involve the
+    sample size, as a measure of balance.  Each panel shows the effect of changing
+    sample size on a measure of balance.  The lines indicate the average value of
+    the statistic when a given number of control units are randomly dropped from the data
+    set (out of a total of 245 control units).  With increasing numbers of control units dropped, the t-statistic gets 
+    closer to 0, falsely indicating reductions in balance with the smaller resulting sample sizes.  In fact, because 
+    controls are
+    dropped randomly, the difference in means stays the same, as indicated in the second panel.}
+  \label{fg:tstat}
+\end{figure}
+
+
 A paradoxical but quite useful procedure is to compare the histogram
 of the propensity scores of the control units with that of the treated
 units. This is paradoxical (and part of the propensity score
