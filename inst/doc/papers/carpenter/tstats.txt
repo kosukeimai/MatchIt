@@ -39,10 +39,9 @@ for (i in 1:length(percdropped)) {
 		controls.kept <- sample(controls, (1-percdropped[i])*nc)
 		newdata <- fdafull[fdafull$treat==1 | row.names(fdafull)%in%controls.kept,]
 
-		stdbias[j,i] <- (mean(newdata[newdata$treat==1,covariate])-mean(newdata[newdata$treat==0,covariate]))/
-			sd(fdafull[fdafull$treat==1,covariate])
+		stdbias[j,i] <- abs(mean(newdata[newdata$treat==1,covariate])-mean(newdata[newdata$treat==0,covariate]))
 		temp <- t.test(newdata[newdata$treat==1,covariate], newdata[newdata$treat==0,covariate])
-		tstats[j,i] <- temp$statistic
+		tstats[j,i] <- abs(temp$statistic)
 
 		# "Fake" matching to get qq plot statistics on "full" data set
 		temp <- matchit(treat ~ stafcder, data=newdata)
@@ -87,8 +86,7 @@ numdropped.mn <- nc - numcontrols.mn
 save(tstats, stdbias, qqplots.md, qqplots.mn, qqplots.mx, percdropped, numcontrols, file="tstats.Rdata")
 
 print("Full dataset standardized bias, t-statistic, and qqplot statistics")
-stdbias.full <- (mean(fdafull[fdafull$treat==1,covariate])-mean(fdafull[fdafull$treat==0,covariate]))/
-			sd(fdafull[fdafull$treat==1,covariate])
+stdbias.full <- (mean(fdafull[fdafull$treat==1,covariate])-mean(fdafull[fdafull$treat==0,covariate]))
 temp <- t.test(fdafull[fdafull$treat==1,covariate], fdafull[fdafull$treat==0,covariate])
 tstat.full <- temp$statistic
 temp <- matchit(treat ~ stafcder, data=fdafull)

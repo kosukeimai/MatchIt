@@ -2,8 +2,8 @@
 
 library(MatchIt)
 
-niter <- 1000
-percdropped <- c(.1, .2, .3, .4, .5, .6, .7, .8, .9)
+niter <- 5000
+percdropped <- c(.1, .15, .2, .25, .3, .35, .4, .45, .5, .55, .6, .65, .7, .75, .8, .85, .9)
 covariate <- "wpnoavg3"
 
 fdafull <- read.table("~/matchit/docs/papers/carpenter/ajps2002-full1b.txt", header=T)
@@ -39,10 +39,9 @@ for (i in 1:length(percdropped)) {
 		controls.kept <- sample(controls, (1-percdropped[i])*nc)
 		newdata <- fdafull[fdafull$treat==1 | row.names(fdafull)%in%controls.kept,]
 
-		stdbias[j,i] <- (mean(newdata[newdata$treat==1,covariate])-mean(newdata[newdata$treat==0,covariate]))/
-			sd(fdafull[fdafull$treat==1,covariate])
+		stdbias[j,i] <- abs(mean(newdata[newdata$treat==1,covariate])-mean(newdata[newdata$treat==0,covariate]))
 		temp <- t.test(newdata[newdata$treat==1,covariate], newdata[newdata$treat==0,covariate])
-		tstats[j,i] <- temp$statistic
+		tstats[j,i] <- abs(temp$statistic)
 
 		# "Fake" matching to get qq plot statistics on "full" data set
 		temp <- matchit(treat ~ wpnoavg3, data=newdata)
@@ -87,8 +86,7 @@ numdropped.mn <- nc - numcontrols.mn
 save(tstats, stdbias, qqplots.md, qqplots.mn, qqplots.mx, percdropped, numcontrols, file="tstats3.Rdata")
 
 print("Full dataset standardized bias, t-statistic, and qqplot statistics")
-stdbias.full <- (mean(fdafull[fdafull$treat==1,covariate])-mean(fdafull[fdafull$treat==0,covariate]))/
-			sd(fdafull[fdafull$treat==1,covariate])
+stdbias.full <- (mean(fdafull[fdafull$treat==1,covariate])-mean(fdafull[fdafull$treat==0,covariate]))
 temp <- t.test(fdafull[fdafull$treat==1,covariate], fdafull[fdafull$treat==0,covariate])
 tstat.full <- temp$statistic
 temp <- matchit(treat ~ wpnoavg3, data=fdafull)
@@ -98,7 +96,43 @@ qqplots.mn.full <- temp$sum.all[2,6]
 qqplots.mx.full <- temp$sum.all[2,7]
 
 print(round(c(stdbias.full, tstat.full, qqplots.md.full, qqplots.mn.full, qqplots.mx.full),2))
- 
+
+pdf("TStatPlot.pdf")
+par(mfrow=c(3,1))
+plot(numdropped.mn, tstats.sum[,1], type="l", xlim=c(min(numdropped.mn), max(numdropped.mn)), 
+	ylim=c(min(tstats.sum), max(tstats.sum)), xlab="", ylab="", main="")
+par(new=T)
+plot(numdropped.mn, tstats.sum[,2], type="l", lty=2, xlim=c(min(numdropped.mn), max(numdropped.mn)),  
+        ylim=c(min(tstats.sum), max(tstats.sum)), xlab="", ylab="", main="") 
+par(new=T)
+plot(numdropped.mn, tstats.sum[,3], type="l", lty=2, xlim=c(min(numdropped.mn), max(numdropped.mn)),  
+        ylim=c(min(tstats.sum), max(tstats.sum)), xlab="Number of Controls Randomly Dropped", ylab="t-statistic", main="") 
+abline(h=2)
+
+plot(numdropped.mn, stdbias.sum[,1], type="l", xlim=c(min(numdropped.mn), max(numdropped.mn)), 
+	ylim=c(min(stdbias.sum), max(stdbias.sum)), xlab="", ylab="", main="")
+par(new=T)
+plot(numdropped.mn, stdbias.sum[,2], type="l", lty=2, xlim=c(min(numdropped.mn), max(numdropped.mn)),  
+        ylim=c(min(stdbias.sum), max(stdbias.sum)), xlab="", ylab="", main="") 
+par(new=T)
+plot(numdropped.mn, stdbias.sum[,3], type="l", lty=2, xlim=c(min(numdropped.mn), max(numdropped.mn)),  
+        ylim=c(min(stdbias.sum), max(stdbias.sum)), xlab="Number of Controls Randomly Dropped", ylab="Difference in Means", 
+	main="") 
+
+plot(numdropped.mn, qqplots.mn.sum[,1], type="l", xlim=c(min(numdropped.mn), max(numdropped.mn)), 
+	ylim=c(min(qqplots.mn.sum), max(qqplots.mn.sum)), xlab="", ylab="", main="")
+par(new=T)
+plot(numdropped.mn, qqplots.mn.sum[,2], type="l", lty=2, xlim=c(min(numdropped.mn), max(numdropped.mn)),  
+        ylim=c(min(qqplots.mn.sum), max(qqplots.mn.sum)), xlab="", ylab="", main="") 
+par(new=T)
+plot(numdropped.mn, qqplots.mn.sum[,3], type="l", lty=2, xlim=c(min(numdropped.mn), max(numdropped.mn)),  
+        ylim=c(min(qqplots.mn.sum), max(qqplots.mn.sum)), xlab="Number of Controls Randomly Dropped", 
+	ylab="QQ Plot Mean Deviation", main="") 
+dev.off()
+
+
+for (i in 1:1) {
+break 
 pdf("TstatPlots1wpnoavg3.pdf")
 par(mfrow=c(2,1))
 plot(numdropped.mn, tstats.sum[,1], type="l", xlim=c(min(numdropped.mn), max(numdropped.mn)), 
@@ -151,7 +185,7 @@ plot(numdropped.mn, qqplots.mx.sum[,3], type="l", lty=2, xlim=c(min(numdropped.m
         ylim=c(min(qqplots.mx.sum), max(qqplots.mx.sum)), xlab="Number of controls dropped", ylab="QQ Plot Maximum", 
 	main="") 
 dev.off()
-
+}
 
 
 
