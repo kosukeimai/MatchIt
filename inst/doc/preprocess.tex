@@ -58,8 +58,7 @@ The simplest version of matching is exact.  This technique matches
 exactly the same value on all the covariates, forming subclasses such
 that within each subclass all units (treatment and control) have the
 same covariate values.  Exact restrictions on a subset of covariates
-can also be specified in nearest neighbor matching (see
-Section~\ref{subsubsec:nearest}).  The following example script can be
+can also be specified in nearest neighbor matching (see below).  The following example script can be
 run by typing {\tt demo(exact)} at the R prompt,
 \begin{verbatim}
 > m.out <- matchit(treat ~ educ + black + hispan, data = lalonde, method = "exact")
@@ -89,16 +88,15 @@ at the R prompt,
 > m.out <- matchit(treat ~ re74 + re75 + educ + black + hispan + age, data = lalonde, 
                    method = "subclass")
 \end{verbatim}
-The above syntax forms forms 6 subclasses, which is the default number
+The above syntax forms 6 subclasses, which is the default number
 of subclasses, based on a distance measure estimated using logistic
 regression.  By default, each subclass will have approximately the
 same number of treated units.  See
-Sections~\ref{subsubsec:inputs-all}~and~\ref{subsubsec:inputs-subclass}
+Section~\ref{subsubsec:inputs-all}
 for a complete list of input options for subclassification.
 
 Subclassification may also be used in conjunction with nearest
-neighbor matching described below in
-Subsection~\ref{subsubsec:nearest}, by leaving the default of
+neighbor matching described below, by leaving the default of
 \texttt{method = "nearest"} but adding the option \texttt{subclass}.
 When you choose this command, \MatchIt\ matches in the same way, but
 after the nearest neighbor matches are chosen it places them into
@@ -117,7 +115,7 @@ each matching step we choose the control unit that is not yet matched
 but is closest to the treated unit on the distance measure.  There are
 many variations on nearest neighbor matching, which are described in
 further detail in
-Sections~\ref{subsubsec:inputs-all}~and~\ref{subsubsec:inputs-nearest}.
+Section~\ref{subsubsec:inputs-all}.
 Nearest neighbor matching is implemented in \MatchIt\ using the
 \texttt{method = "nearest"} option.  The following example script can
 be run by typing {\tt demo(nearest)} at the R prompt,
@@ -189,8 +187,7 @@ each pair.  In addition, optimal matching can be helpful when there
 are not many appropriate control matches for the treated units.  See
 \cite{GuRos93} or \cite{Rosenbaum02} for more information on optimal
 matching.
-Sections~\ref{subsubsec:inputs-all}~and~\ref{subsubsec:inputs-optimal}
-give a complete list of optional inputs for optimal matching.  Optimal
+Section~\ref{subsubsec:inputs-all}~gives a complete list of optional inputs for optimal matching.  Optimal
 matching is performed with \MatchIt\ by setting \texttt{method =
   "optimal"}.  We use an add-on package called \texttt{optmatch}
 \citep{Hansen04}, which will be automatically installed when optimal
@@ -216,7 +213,7 @@ specified) because they are outside the range of common support.  Full
 matching is optimal in terms of minimizing a weighted average of the
 estimated distance measure between each treated subject and each
 control subject within each subclass.  See
-Sections~\ref{subsubsec:inputs-all}~and~\ref{subsubsec:inputs-full}
+Section~\ref{subsubsec:inputs-all}~
 for a complete list of optional inputs for full matching.  Full
 matching can be performed with \MatchIt\ by setting \texttt{method =
   "full"}.  We use an add-on package called \texttt{optmatch}
@@ -237,23 +234,22 @@ Genetic matching is a method that automates the process of finding an
 optimal balance \citep{DiaSek05}. The idea is to use a genetic search
 algorithm and find a set of weights for each covariate such that the
 optimal balance is achieved after matching. The procedure is
-implemented in {\tt Matching} package \citep{Sekhon04}. As is
+implemented using the {\tt Matching} package \citep{Sekhon04}. As it is
 currently implemented, matching is done with replacement using the
-matching method of \citet{AbaImb04} and balance is determined by the
-two univariate tests; paired t-tests for dichotomous variables and an
+matching method of \citet{AbaImb04} and balance is determined by 
+two univariate tests: paired t-tests for dichotomous variables and a
 Kolmogorov-Smirnov test for multinomial and continuous variables.  See
-Sections~\ref{subsubsec:inputs-all}~and~\ref{subsubsec:inputs-genetic}
-for a complete list of optional inputs for genetic matching.  Genetic
+Section~\ref{subsubsec:inputs-all}~for a complete list of optional inputs for genetic matching.  Genetic
 matching can be performed with \MatchIt\ by setting \texttt{method =
   "genetic"}.  We use an add-on package called \texttt{Matching}
 \citep{Sekhon04}, which will be automatically installed (if it is not
 installed already). The following example can also be run by typing
 {\tt demo(genetic)} at the R prompt.  We conduct genetic matching
 (using the estimated propensity score based on logistic regression as
-one of the covariate).
+one of the covariates).
 \begin{verbatim}
-> m.out <- matchit(treat ~ age + educ + black + hispan + married + nodegree + re74 + re75, data = lalonde, 
-                   method = "genetic", distance = "logit")
+> m.out <- matchit(treat ~ age + educ + black + hispan + married + nodegree + re74 + re75, 
+		   data = lalonde, method = "genetic", distance = "logit")
 \end{verbatim}
 
 

@@ -3,7 +3,8 @@
 library(MatchIt)
 
 niter <- 5000
-percdropped <- c(.1, .15, .2, .25, .3, .35, .4, .45, .5, .55, .6, .65, .7, .75, .8, .85, .9)
+#percdropped <- c(.1, .15, .2, .25, .3, .35, .4, .45, .5, .55, .6, .65, .7, .75, .8, .85, .9)
+percdropped <- ppoints(100)
 covariate <- "wpnoavg3"
 
 fdafull <- read.table("~/matchit/docs/papers/carpenter/ajps2002-full1b.txt", header=T)
