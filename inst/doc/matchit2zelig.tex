@@ -7,13 +7,13 @@ In this section, we describe our recommended approach
 causal inference after preprocessing the data using \MatchIt.  (The
 resulting matched data sets can also be exported to other statistical
 programs using commands such as {\tt write.csv()} and {\tt
-  write.table()} for ASCII files, and {\tt write.dta} in {\tt foreign}
-package for a STATA binary file.)  Zelig \citep{ImaKinLau04} is an
-easy-to-use R package that implements a large variety of statistical
-models, gives easily interpretable results by simulating quantities of
-interest, provides numerical and graphical summaries, and is easily
-extensible.  The package along with the complete documentation is
-available at
+  write.table()} for ASCII files, and {\tt write.dta()} in {\tt
+  foreign} package for a STATA binary file.)  Zelig
+\citep{ImaKinLau04} is an easy-to-use R package that implements a
+large variety of statistical models, gives easily interpretable
+results by simulating quantities of interest, provides numerical and
+graphical summaries, and is easily extensible.  The package along with
+the complete documentation is available at
 \hlink{http://gking.harvard.edu/zelig/}{http://gking.harvard.edu/zelig/}.
 \MatchIt\ and Zelig can be easily used together to enable estimation
 of causal effects in very general settings with a variety of
@@ -42,7 +42,7 @@ model, and {\tt z.out} is the output object from {\tt zelig}.
 
 To illustrate this approach, we provide two detailed examples using
 the Lalonde data. Users can run these example commands by typing {\tt
-  demo(Zelig)} at the R prompt. Although we use the linear least
+  demo(analysis)} at the R prompt. Although we use the linear least
 squares model in these examples, a wide range of other models are
 available in Zelig (for the list of supported models, see
 \hlink{http://gking.harvard.edu/zelig/docs/Models\_Zelig\_Can.html}{http://gking.harvard.edu/zelig/docs/Models_Zelig_Can.html}).
@@ -76,16 +76,17 @@ To load the Zelig package after installing it, type
   matching using the estimated propensity score from the logistic
   regression
 \begin{verbatim}
-> m.out1 <- matchit(treat ~ age + educ + black + hispan + nodegree + married + re74 + re75, 
-                    method = "nearest", data = lalonde)
+> m.out1 <- matchit(treat ~ age + educ + black + hispan + nodegree + 
+                    married + re74 + re75, method = "nearest", data = lalonde)
 \end{verbatim}
   Note that we skip an important step of checking balance in this
   example in order to focus on the illustration of analyzing matched
   data sets. We then fit the linear model to the control group
   controlling for the estimated propensity score and other covariates,
 \begin{verbatim}
-> z.out1 <- zelig(re78 ~ age + educ + black + hispan + nodegree + married + re74 + re75, 
-                  data = match.data(m.out1, "control"), model = "ls")
+> z.out1 <- zelig(re78 ~ age + educ + black + hispan + nodegree + 
+                  married + re74 + re75, data = match.data(m.out1, "control"), 
+                  model = "ls")
 \end{verbatim}
   where the {\tt "control"} option in {\tt match.data()} extracts the
   matched control units and {\tt ls} specifies linear regression. Note
@@ -96,7 +97,8 @@ To load the Zelig package after installing it, type
   in order to impute the counterfactual outcomes for the treated
   units. The {\tt sim()} command in Zelig does the imputation.
 \begin{verbatim}
-> x.out1 <- setx(z.out1, data = match.data(m.out1, "treat"), fn = NULL, cond = TRUE)
+> x.out1 <- setx(z.out1, data = match.data(m.out1, "treat"), fn = NULL, 
+                 cond = TRUE)
 > s.out1 <- sim(z.out1, x = x.out1)
 \end{verbatim}
 Finally, we obtain a summary of the results by 
@@ -110,13 +112,15 @@ Finally, we obtain a summary of the results by
   propensity score ({\tt distance}) and other covariates,
 
 \begin{verbatim}
-> z.out2 <- zelig(re78 ~ age + educ + black + hispan + nodegree + married + re74 + re75, 
-                  data = match.data(m.out1, "treat"), model = "ls")
+> z.out2 <- zelig(re78 ~ age + educ + black + hispan + nodegree + 
+                  married + re74 + re75, data = match.data(m.out1, "treat"), 
+                  model = "ls")
 \end{verbatim}
 We then conduct the same simulation procedure in order to impute the
 counterfactual outcome for the {\it control group},
 \begin{verbatim}
-> x.out2 <- setx(z.out2, data = match.data(m.out1, "control"), fn = NULL, cond = TRUE)
+> x.out2 <- setx(z.out2, data = match.data(m.out1, "control"), fn = NULL, 
+                 cond = TRUE)
 > s.out2 <- sim(z.out2, x = x.out2)
 \end{verbatim}
 Finally, note that Zelig calculates the difference between observed
@@ -147,8 +151,9 @@ interval is given by
   We begin this example by conducting subclassification with four
   subclasses,
 \begin{verbatim}
-> m.out2 <- matchit(treat ~ age + educ + black + hispan + nodegree + married + re74 + re75, 
-                    data = lalonde, method = "subclass", subclass = 4)
+> m.out2 <- matchit(treat ~ age + educ + black + hispan + nodegree + 
+                    married + re74 + re75, data = lalonde, 
+                    method = "subclass", subclass = 4)
 \end{verbatim}
   Here, we skip the important step of checking balance in order to
   focus on the illustration of analyzing subclassified data sets.
@@ -157,13 +162,15 @@ interval is given by
   variables within each subclass by using the {\tt by} option in the
   {\tt zelig()} command.
 \begin{verbatim}
-> z.out3 <- zelig(re78 ~ re74 + re75 + distance, data = match.data(m.out2, "control"), 
+> z.out3 <- zelig(re78 ~ re74 + re75 + distance, 
+                  data = match.data(m.out2, "control"), 
                   model = "ls", by = "subclass")
 \end{verbatim}
   The same set of commands as in the first example are used to do the
   imputation of the counterfactual outcomes for the treated units.
 \begin{verbatim}
-> x.out3 <- setx(z.out3, data = match.data(m.out2, "treat"), fn = NULL, cond = TRUE)
+> x.out3 <- setx(z.out3, data = match.data(m.out2, "treat"), fn = NULL, 
+                 cond = TRUE)
 > s.out3 <- sim(z.out3, x = x.out3)
 \end{verbatim}
 Finally, to obtain the overall results, type
@@ -179,3 +186,8 @@ subclass.
   
 \end{enumerate}
 
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: "matchit"
+%%% End: 
