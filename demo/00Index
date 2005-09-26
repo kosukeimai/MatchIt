@@ -5,4 +5,4 @@ match.data      Demo of obtaining matched data
 nearest		Demos of nearest neighbor matching, using Lalonde dataset
 subclass	Demo of subclassification, using Lalonde dataset
 optimal		Demo of optimal matching, using Lalonde dataset
-Zelig           Demo of using Zelig with MatchIt for parametric causal inference after matching
+analysis        Demo of using Zelig with MatchIt for parametric causal inference after matching
