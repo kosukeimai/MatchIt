@@ -4,7 +4,7 @@
 In this section, we describe our recommended approach
 \citep{HoImaKin05}, which uses
 \hlink{Zelig}{http://gking.harvard.edu/zelig/} to conduct parametric
-causal inference after preprocessing the data through \MatchIt.  (The
+causal inference after preprocessing the data using \MatchIt.  (The
 resulting matched data sets can also be exported to other statistical
 programs using commands such as {\tt write.csv()} and {\tt
   write.table()} for ASCII files, and {\tt write.dta} in {\tt foreign}
@@ -28,7 +28,6 @@ procedure (i.e., weights, subclasses, and the distance measure).
 \begin{verbatim}
 > m.data <- match.data(m.out)
 \end{verbatim}
-
 where {\tt m.out} is the \MatchIt\ object from {\tt matchit()} and
 {\tt m.data} is the resulting matched data.  Next, we analyze the
 matched data set via the following command,
@@ -73,7 +72,7 @@ To load the Zelig package after installing it, type
 \end{verbatim}
 
 \begin{enumerate}
-\item We begin our first example by conducting the nearest neighbor
+\item We begin our first example by conducting nearest neighbor
   matching using the estimated propensity score from the logistic
   regression
 \begin{verbatim}

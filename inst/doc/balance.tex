@@ -27,37 +27,24 @@ Section~\ref{sec:outputs} for more details.
 
 \subsubsection{The {\tt summary()} Command}
 
-For exact matching, the resulting \MatchIt\ object includes
-\texttt{weights} and \texttt{subclass}, which can be used to identify
-which units were put into the same subclass (See
-Sections~\ref{sec:analysis}~and~\ref{sec:match.data} for the {\tt
-  match.data()} command which creates the matched data set with these
-identifying variables).  Units that did not have the same covariate
-values as anyone in the other treatment group have \texttt{subclass =
-  NA}.  For example, we can use the {\tt subclass} component of {\tt
-  m.out} to identify which units are in each subclass and to verify
-their covariate values.  For other types of matching, the
-\texttt{summary()} command first gives measures of the balance between
+The \texttt{summary()} command first gives measures of the balance between
 the treated and control groups in the full (original) data set, and
 then the same measures of balance in the matched data set.  If the
 matching worked well, the measures of balance should be smaller in the
-matched data set as compared with the full data set.
+matched data set as compared with the full data set.  The specific balance measures given are described below.
 
-Finally, the \texttt{summary()} output for subclassification is the
+The \texttt{summary()} output for subclassification is the
 same as that for other types of matching, except that the balance
 statistics are shown separately for each subclass, and the overall
 balance in the matched samples is calculated by aggregating across the
 subclasses, where each subclass is weighted by the number of units in
-the subclass.  Consistent with the calculations for the full and
-matched samples, the standardized bias within each subclass is also
-calculated using the standard deviation of the full treated group,
-again so that the differences in means are all scaled by the same
-amount and not affected by changes in sample sizes.
-
+the subclass.  For exact matching, the covariate values within each subclass are guaranteed to 
+be the same, and so the measures of balance are not output for exact matching; only the sample sizes in each
+subclass are shown.
 
 \begin{itemize}
 \item {\bf Balance statistics:} The statistics the \texttt{summary()}
-  command provides include means, standardized bias, and
+  command provides include means, standardized biases, and
   Quantile-Quantile (Q-Q) plot statistics.  These are used to assess
   whether there was a reduction in bias in the covariates. In
   addition, the \texttt{summary()} command will report (a) the matched
@@ -126,7 +113,7 @@ plots.  In the jitter plot, which can be created by setting
 \texttt{type = "jitter"}, you may identify units by observation name
 by clicking the first mouse button near the units. For
 subclassification, separate Q-Q plots are printed for each subclass.
-The jitter plot is the same as that for other types of matching, with
+The jitter plot for subclassification is the same as that for other types of matching, with
 the addition of vertical lines indicating the subclass cut-points.
 
 \begin{figure}[tbp]
@@ -154,7 +141,7 @@ the addition of vertical lines indicating the subclass cut-points.
   \end{center}
 \end{figure}
 
-Two examples output from {\tt plot()} command are shown in
+Two examples of the output from the {\tt plot()} command are shown in
 Figures~\ref{diagqqnn}~and~\ref{diagjitternn}. The balance of the
 individual covariates is shown in the Q-Q plots.  If the empirical
 distributions are the same in the treated and control groups, the
@@ -163,11 +150,7 @@ degree line indicate differences in the empirical distribution.  The
 jitter plot shows the overall distribution of propensity scores in the
 treated and control groups.  In the jitter plot, the size of each
 diamond is proportional to the weight given to that unit; matched
-units are in black while unmatched units are in grey.  Examining these
-graphs, we see that the matched samples are fairly well matched on the
-propensity score and the income variables, but that there are some
-remaining imbalances in the race and age variables, as was also seen
-using the \texttt{summary()} command.
+units are in black while unmatched units are in grey.  
 
 %%% Local Variables: 
 %%% mode: latex
