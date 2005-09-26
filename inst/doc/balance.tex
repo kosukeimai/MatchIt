@@ -27,19 +27,21 @@ Section~\ref{sec:outputs} for more details.
 
 \subsubsection{The {\tt summary()} Command}
 
-The \texttt{summary()} command first gives measures of the balance between
-the treated and control groups in the full (original) data set, and
-then the same measures of balance in the matched data set.  If the
-matching worked well, the measures of balance should be smaller in the
-matched data set as compared with the full data set.  The specific balance measures given are described below.
+The \texttt{summary()} command first gives measures of the balance
+between the treated and control groups in the full (original) data
+set, and then the same measures of balance in the matched data set.
+If the matching worked well, the measures of balance should be smaller
+in the matched data set as compared with the full data set.  The
+specific balance measures given are described below.
 
-The \texttt{summary()} output for subclassification is the
-same as that for other types of matching, except that the balance
-statistics are shown separately for each subclass, and the overall
-balance in the matched samples is calculated by aggregating across the
-subclasses, where each subclass is weighted by the number of units in
-the subclass.  For exact matching, the covariate values within each subclass are guaranteed to 
-be the same, and so the measures of balance are not output for exact matching; only the sample sizes in each
+The \texttt{summary()} output for subclassification is the same as
+that for other types of matching, except that the balance statistics
+are shown separately for each subclass, and the overall balance in the
+matched samples is calculated by aggregating across the subclasses,
+where each subclass is weighted by the number of units in the
+subclass.  For exact matching, the covariate values within each
+subclass are guaranteed to be the same, and so the measures of balance
+are not output for exact matching; only the sample sizes in each
 subclass are shown.
 
 \begin{itemize}
@@ -113,26 +115,22 @@ plots.  In the jitter plot, which can be created by setting
 \texttt{type = "jitter"}, you may identify units by observation name
 by clicking the first mouse button near the units. For
 subclassification, separate Q-Q plots are printed for each subclass.
-The jitter plot for subclassification is the same as that for other types of matching, with
-the addition of vertical lines indicating the subclass cut-points.
+The jitter plot for subclassification is the same as that for other
+types of matching, with the addition of vertical lines indicating the
+subclass cut-points.
 
 \begin{figure}[tbp]
   \begin{center}
-    \includegraphics[width=2.75in, height=2.75in]{figs/qqplotnn1.pdf}
-    \includegraphics[width=2.75in, height=2.75in]{figs/qqplotnn2.pdf}
-    % \includegraphics[width=3in, height=3in]{figs/qqplotnn}
-    %\includegraphics[width=3in, height=3in]{figs/qqplotnn2} 
+    \includegraphics[width=2.75in, height=2.75in]{figs/qqplotnn1}
+    \includegraphics[width=2.75in, height=2.75in]{figs/qqplotnn2}
     \hfill
-    \caption{Sample diagnostic QQ plots: Nearest Neighbor matching
-      with the \MatchIt\ call \texttt{matchit(treat ~ re74 + re75 + educ
-        + black + hispan + age, data=lalonde, method="nearest")}.}
+    \caption{Sample diagnostic QQ plots with nearest neighbor matching}
     \label{diagqqnn}
   \end{center}
 \end{figure}
 
 \begin{figure}[tbp]
   \begin{center}
-    %\includegraphics{figs/docs-036}
     \includegraphics[scale=0.5]{figs/jitterplotnn}
     \hfill
     \caption{Sample diagnostic jitter plot: Matched units shown in

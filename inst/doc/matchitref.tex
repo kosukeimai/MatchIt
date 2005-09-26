@@ -1,28 +1,27 @@
 \section{\texttt{matchit()}: Implementation of Matching Methods}
 \label{sec:matchit}
 
-\subsection{Usage}
+\subsection{Description}
 
-The main command, \texttt{matchit()}, can be used to implement any of
-the matching procedures:
+\texttt{matchit()} can be used to implement a variety of matching
+procedures including exact matching, nearest neighbor matching,
+subclassification, optimal matching, genetic matching, and full
+matching. The output of {\tt matchit()} can be analyzed via
+\href{http://gking.harvard.edu/zelig}{Zelig}.
+
+\subsection{Syntax}
 \begin{verbatim}
-> m.out <- matchit(formula, data, method = "nearest", distance = "logit", 
-                   distance.options = list(), discard = "none", reestimate = FALSE, ...)
+> m.out <- matchit(formula, data, method = "nearest", ...)
 \end{verbatim}
-The command takes some inputs that are common to all matching
-procedures and other inputs specific to particular procedures.  The
-outputs are standard across all procedures.  We organize the reference
-manual in these categories.
 
 \subsection{Arguments}
 
-\subsubsection{All Matching Methods}
-\label{subsubsec:inputs-all}
+\subsubsection{Required Arguments for All Matching Methods}
 
-\begin{enumerate}
-  
-\item \texttt{formula}: formula used to calculate the distance measure for matching.
-  It takes the usual syntax of R formulas, {\tt treat
+\begin{itemize}
+
+\item \texttt{formula}: formula used to calculate the distance measure
+  for matching.  It takes the usual syntax of R formulas, {\tt treat
     \~\ x1 + x2}, where {\tt treat} is a binary treatment indicator
   and {\tt x1} and {\tt x2} are the pre-treatment covariates. Both the
   treatment indicator and pre-treatment covariates must be contained
@@ -32,30 +31,43 @@ manual in these categories.
   between {\tt x1} and {\tt x2}, and {\tt I(x1 \^\ 2)} represents the
   square term of {\tt x1}. See {\tt help(formula)} for details.
   
-\item \texttt{data}: the data frame containing the variables
-  called in {\tt formula}.  You may find it helpful for the
-  diagnostics to specify observation names in the data frame (see
+\item \texttt{data}: the data frame containing the variables called in
+  {\tt formula}.  You may find it helpful for the diagnostics to
+  specify observation names in the data frame (see
   Section~\ref{rnames}).
   
-\item \texttt{method}: the matching method (default=\texttt{nearest}). Currently,
-  \texttt{exact} (exact matching), \texttt{full} (full matching),
-  \texttt{nearest} (nearest neighbor matching), \texttt{optimal}
-  (optimal matching), \texttt{subclass} (subclassification), and \texttt{genetic}
-  (genetic matching) are
-  available. Note that within each of
-  these matching methods, \MatchIt\ offers a variety of options.  See
-  Section \ref{methods} for more details.
+\item \texttt{method}: the matching method (default=\texttt{nearest}).
+  Currently, \texttt{exact} (exact matching), \texttt{full} (full
+  matching), \texttt{nearest} (nearest neighbor matching),
+  \texttt{optimal} (optimal matching), \texttt{subclass}
+  (subclassification), and \texttt{genetic} (genetic matching) are
+  available. Note that within each of these matching methods,
+  \MatchIt\ offers a variety of options.  See Section \ref{methods}
+  for more details.
   
-\item \texttt{distance}: the method used to estimate the
-  distance measure (default=logistic regression, {\tt logit}).
-  Before using any of these techniques, it is best to understand the
-  theoretical groundings of these techniques and to evaluate the
-  results.  Most of these methods (such as logistic or probit
-  regression) are estimating the propensity score, defined as the
-  probability of receiving treatment, conditional on the covariates
-  (\cite{RosRub83}).  The distance measures used are the predicted
-  probabilities from the model (the propensity scores).  Currently,
-  the following methods are available:
+\end{itemize}
+
+
+\subsubsection{Additional Arguments for Specification of
+  Distance Measures}
+\label{subsubsec:inputs-all}
+
+The following arguments specify distance measures that are used for
+matching methods. These arguments apply to all matching methods {\it
+  except exact matching}.
+
+\begin{itemize}
+  
+\item \texttt{distance}: the method used to estimate the distance
+  measure (default=logistic regression, {\tt logit}).  Before using
+  any of these techniques, it is best to understand the theoretical
+  groundings of these techniques and to evaluate the results.  Most of
+  these methods (such as logistic or probit regression) are estimating
+  the propensity score, defined as the probability of receiving
+  treatment, conditional on the covariates (\cite{RosRub83}).  The
+  distance measures used are the predicted probabilities from the
+  model (the propensity scores).  Currently, the following methods are
+  available:
   \begin{itemize}
   \item {\tt mahalanobis} computes the Mahalanobis distance measure
     ({\tt mahalanobis()} in the {\tt stats} package).
@@ -101,12 +113,12 @@ manual in these categories.
   distance measure is estimated with a logistic regression, users can
   increase the maximum IWLS iterations by \texttt{distance.options =
     list(maxit = 5000)}.
-
-\item \texttt{discard}: whether to discard units that fall
-  outside some measure of support of the distance score before
-  matching, and not allow them to be used at all in the matching
-  procedure (default=\texttt{none}).  Note that discarding units may change the quantity of
-  interest being estimated.
+  
+\item \texttt{discard}: whether to discard units that fall outside
+  some measure of support of the distance score before matching, and
+  not allow them to be used at all in the matching procedure
+  (default=\texttt{none}).  Note that discarding units may change the
+  quantity of interest being estimated.
   \begin{itemize}
   \item \texttt{none} (default) discards no units before matching.
     Use this option when the units to be matched are substantially
@@ -140,45 +152,39 @@ manual in these categories.
     \citep{KinZen05b}.
   \end{itemize}
   
-\item \texttt{reestimate}: whether the model for distance
-  measure should be re-estimated after units are discarded (default=\texttt{FALSE}). The input
-  must be a logical value. 
+\item \texttt{reestimate}: whether the model for distance measure
+  should be re-estimated after units are discarded
+  (default=\texttt{FALSE}). The input must be a logical value.
   Re-estimation may be desirable for efficiency reasons, especially if
   many units were discarded and so the post-discard samples are quite
   different from the original samples.
-
+  
 \item \texttt{verbose}: whether or not to print out comments
-  indicating the status of the matching (default=\texttt{FALSE}). The input must be a logical
-  value. 
-\end{enumerate}
+  indicating the status of the matching (default=\texttt{FALSE}). The
+  input must be a logical value.
+\end{itemize}
 
-\subsubsection{Exact Matching}
-\label{subsubsec:inputs-exact}
 
-Exact matching is implemented in \MatchIt\ using \texttt{method =
-  "exact"}.  Exact matching will be done on all covariates included on
-the right-hand side of the \texttt{formula} specified in the \MatchIt\
-call.  No \texttt{distance} option is used for exact matching, and
-there are no additional options for exact matching.
-
-\subsubsection{Subclassification}
+\subsubsection{Additional Arguments for Subclassification}
 \label{subsubsec:inputs-subclass}
 
-\begin{enumerate}
-\item \texttt{sub.by}: by what criteria to subclassify (default=\texttt{``treat"}).
-  \texttt{"treat"} indicates by the number of treatment units, \texttt{"control"} indicates by the number of control
-  units, and \texttt{"all"} indicates by the total number of units.
+\begin{itemize}
+\item \texttt{sub.by}: by what criteria to subclassify
+  (default=\texttt{"treat"}).  \texttt{"treat"} indicates by the
+  number of treatment units, \texttt{"control"} indicates by the
+  number of control units, and \texttt{"all"} indicates by the total
+  number of units.
 \item \texttt{subclass}: either (1) a scalar, specifying the number
   of subclasses, or (2) a vector of probabilities bounded between 0
   and 1, to create quantiles of the distance measure using the units
   in the group specified by \texttt{sub.by}.  The default is
   \texttt{subclass = 6}.
-\end{enumerate}
+\end{itemize}
 
-\subsubsection{Nearest Neighbor Matching}
+\subsubsection{Additional Arguments for Nearest Neighbor Matching}
 \label{subsubsec:inputs-nearest}
 
-\begin{enumerate}
+\begin{itemize}
 \item \texttt{m.order}: the order in which to match
   treatment units with control units.
   \begin{itemize}
@@ -201,20 +207,20 @@ there are no additional options for exact matching.
   enough control units for the specified method), then the higher
   ratios will have \texttt{NA} in place of the matching unit number in
   \texttt{match.matrix}.
-\item \texttt{exact}: variables on which to perform exact
-  matching within the nearest neighbor matching (default=NULL).  If \texttt{exact} is
-  specified, only matches that exactly match on the covariates in
-  \texttt{exact} will be allowed.  Within the matches that match on
-  the variables in \texttt{exact}, the match with the closest distance
-  measure will be chosen.  \texttt{exact} should be entered as a
-  vector of variable names (\texttt{exact = c("X1", "X2")}) that are
-  names of variables in \texttt{data}.
-\item \texttt{caliper}: the number of standard deviations of
-  the distance measure within which to draw control units (default=0).
-  If a caliper is specified, the matches are restricted to being
-  within the caliper and a control unit within the caliper for a
-  treated unit is randomly selected as the match for that treated
-  unit.  If \texttt{caliper != 0}, there are two additional options:
+\item \texttt{exact}: variables on which to perform exact matching
+  within the nearest neighbor matching (default=NULL).  If
+  \texttt{exact} is specified, only matches that exactly match on the
+  covariates in \texttt{exact} will be allowed.  Within the matches
+  that match on the variables in \texttt{exact}, the match with the
+  closest distance measure will be chosen.  \texttt{exact} should be
+  entered as a vector of variable names (\texttt{exact = c("X1",
+    "X2")}) that are names of variables in \texttt{data}.
+\item \texttt{caliper}: the number of standard deviations of the
+  distance measure within which to draw control units (default=0).  If
+  a caliper is specified, the matches are restricted to being within
+  the caliper and a control unit within the caliper for a treated unit
+  is randomly selected as the match for that treated unit.  If
+  \texttt{caliper != 0}, there are two additional options:
   \begin{itemize} 
   \item \texttt{calclosest}: whether to take the nearest
     available match if no matches are available within the
@@ -226,43 +232,43 @@ there are no additional options for exact matching.
     \texttt{data}.  If \texttt{mahvars} is specified without
     \texttt{caliper}, the caliper is set to 0.25.
   \end{itemize}
-\item \texttt{subclass} and \texttt{sub.by}.  See the options for subclassification
-   for more details on these options.  If a
+\item \texttt{subclass} and \texttt{sub.by}.  See the options for
+  subclassification for more details on these options.  If a
   \texttt{subclass} is specified within \texttt{method = "nearest"},
   the matched units will be placed into subclasses after the nearest
   neighbor matching is completed.
-\end{enumerate}
+\end{itemize}
 
-\subsubsection{Optimal Matching}
+\subsubsection{Additional Arguments for Optimal Matching}
 \label{subsubsec:inputs-optimal}
 
 The available options are listed below.
-\begin{enumerate}
+\begin{itemize}
 \item {\tt ratio}: the number of control units to be matched
   to each treatment unit (default = 1).
-\item {\tt ...}: additional inputs that can be passed to the
-  {\tt fullmatch()} function in the {\tt optmatch} package. See {\tt
+\item {\tt ...}: additional inputs that can be passed to the {\tt
+    fullmatch()} function in the {\tt optmatch} package. See {\tt
     help(fullmatch)} or
   \hlink{http://www.stat.lsa.umich.edu/\~{}bbh/optmatch.html}{http://www.stat.lsa.umich.edu/\~bbh/optmatch.html}
   for details.
-\end{enumerate}
+\end{itemize}
 
-\subsubsection{Full Matching}
+\subsubsection{Additional Arguments for Full Matching}
 \label{subsubsec:inputs-full}
 
-\begin{enumerate}
-\item {\tt ...}: additional inputs that can be passed to the
-  {\tt fullmatch()} function in the {\tt optmatch} package. See {\tt
+\begin{itemize}
+\item {\tt ...}: additional inputs that can be passed to the {\tt
+    fullmatch()} function in the {\tt optmatch} package. See {\tt
     help(fullmatch)} or
   \hlink{http://www.stat.lsa.umich.edu/\~{}bbh/optmatch.html}{http://www.stat.lsa.umich.edu/\~bbh/optmatch.html}
   for details.
-\end{enumerate}
+\end{itemize}
 
-\subsubsection{Genetic Matching}
+\subsubsection{Additional Arguments for Genetic Matching}
 \label{subsubsec:inputs-genetic}
 
 The available options are listed below.
-\begin{enumerate}
+\begin{itemize}
 \item {\tt ratio}: the number of control units to be matched
   to each treatment unit (default=1). 
 \item {\tt ...}: additional minor inputs that can be passed to the
@@ -270,10 +276,10 @@ The available options are listed below.
     help(GenMatch)} or
   \hlink{http://sekhon.polisci.berkeley.edu/library/Matching/html/GenMatch.html}{http://sekhon.polisci.berkeley.edu/library/Matching/html/GenMatch.html}
   for details.
-\end{enumerate}
+\end{itemize}
 
 
-\subsection{Outputs}
+\subsection{Output Values}
 \label{sec:outputs}
 
 Regardless of the type of matching performed, the \texttt{matchit}
@@ -281,7 +287,7 @@ output object contains the following elements:\footnote{When
 inapplicable or unnecessary, these elements may equal {\tt NULL}.  For
 example, when exact matching, {\tt match.matrix = NULL}.}
 
-\begin{enumerate}
+\begin{itemize}
 \item \texttt{call}: the original {\tt matchit()} call.
   
 \item \texttt{formula}: the formula used to specify the model for
@@ -338,9 +344,14 @@ example, when exact matching, {\tt match.matrix = NULL}.}
   distance measure (the right-hand side of \texttt{formula}).  When
   applicable, \texttt{X} is augmented by covariates contained in
   \texttt{mahvars} and \texttt{exact}. 
-\end{enumerate}
+\end{itemize}
 
 %\subsection{See Also}
 %The complete manual of {\tt MatchIt} is available at
 %\href{http://gking.harvard.edu/matchit}{http://gking.harvard.edu/matchit}
 
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: "matchit"
+%%% End: 
