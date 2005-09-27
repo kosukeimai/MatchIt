@@ -1,6 +1,6 @@
 Package: MatchIt
-Version: 2.1-1
-Date: 2005-9-16
+Version: 2.1-2
+Date: 2005-9-27
 Title: MatchIt: Nonparametric Preprocessing for Parametric Casual Inference
 Author: Daniel Ho <daniel.ho@yale.edu>,
         Kosuke Imai <kimai@Princeton.Edu>, 
