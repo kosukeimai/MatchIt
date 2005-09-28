@@ -1,18 +1,17 @@
 \section{\texttt{plot()}: Graphical Summaries of Balance}
 
-\subsection{Description}
 The \texttt{plot()} command allows you to check the distributions of
 covariates in the assignment model, squares, and interactions, and
 within each subclasses if specified.  
 
-\subsection{Syntax}
+\subsubsection{Syntax}
 
 \begin{verbatim}
 > plot(m.out, discrete.cutoff = 5, type = "QQ", 
        numdraws = 5000, interactive = TRUE, which.xs = NULL, ...)
 \end{verbatim}
 
-\subsection{Arguments}
+\subsubsection{Arguments}
 
 \begin{itemize}
 \item {\tt type}: type of output graph. \texttt{type = "QQ"}
@@ -38,7 +37,7 @@ within each subclasses if specified.
 
 \end{itemize}
 
-\subsection{Output Values}
+\subsubsection{Output Values}
 
 \begin{itemize}
 \item Empirical quantile-quantile plot: This graph plots covariate

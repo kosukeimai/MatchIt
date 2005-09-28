@@ -1,4 +1,5 @@
 \documentclass[oneside,letterpaper,12pt]{book}
+\usepackage{bibentry}
 \usepackage{graphicx}
 \usepackage{natbib}
 \usepackage[reqno]{amsmath}
@@ -9,6 +10,7 @@
 \usepackage{html}
 \usepackage{dcolumn}
 \usepackage{fullpage}
+\bibpunct{(}{)}{;}{a}{}{,}
 \newcolumntype{.}{D{.}{.}{-1}}
 \newcolumntype{d}[1]{D{.}{.}{#1}}
 %\pagestyle{myheadings}
@@ -29,32 +31,27 @@
 \author{Daniel E. Ho,\thanks{Institute for Quantitative Social Science
     (1727 Cambridge Street, Cambridge MA 02138, USA;
     \texttt{http://people.iq.harvard.edu/~dho/},
-    \texttt{daniel.e.ho@gmail.com}).}  \and 
-%
+    \texttt{daniel.e.ho@gmail.com}).}  \and %
   Kosuke Imai,\thanks{Assistant Professor, Department of Politics,
     Princeton University (Corwin Hall 041, Department of Politics,
     Princeton University, Princeton NJ 08544, USA;
     \texttt{http://imai.princeton.edu},
-    \texttt{kimai@Princeton.Edu}).}  \and
-%
+    \texttt{kimai@Princeton.Edu}).}  \and %
   Gary King,\thanks{David Florence Professor of Government, Harvard
     University (Institute for Quantitative Social Science, 1737
     Cambridge Street, Harvard University, Cambridge MA 02138;
     \texttt{http://GKing.Harvard.Edu}, \texttt{King@Harvard.Edu},
-    (617) 495-2027).}  \and
-%
+    (617) 495-2027).}  \and %
 Elizabeth A. Stuart\thanks{Researcher, Mathematica Policy Research,
   Inc.\, Ph.D.\, Department of Statistics, Harvard University. (600
   Maryland Ave., SW, Suite 550, Washington, DC 20024, USA;
   \texttt{http://www.mathematica-mpr.com},
   \texttt{EStuart@Mathematica-MPR.com}).}}
 
-\makeindex
+%\makeindex
 
 \begin{document}
 \maketitle
-
-
 
 \begin{rawhtml}
   <p> [Also available is a downloadable <a
@@ -63,6 +60,8 @@ Elizabeth A. Stuart\thanks{Researcher, Mathematica Policy Research,
 \end{rawhtml}
 
 \tableofcontents
+
+\nobibliography*
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \clearpage
@@ -90,6 +89,13 @@ Elizabeth A. Stuart\thanks{Researcher, Mathematica Policy Research,
 \chapter{Reference Manual}
 \label{chap:reference}
 
+\section{\texttt{matchit()}: Implementation of Matching Methods}
+\label{sec:matchit}
+Use \texttt{matchit()} to implement a variety of matching
+procedures including exact matching, nearest neighbor matching,
+subclassification, optimal matching, genetic matching, and full
+matching. The output of {\tt matchit()} can be analyzed via
+\hlink{Zelig}{http://gking.harvard.edu/zelig}.
 \input{matchitref}
 \input{summaryref}
 \input{plotref}
@@ -252,7 +258,8 @@ and makes it less likely that the user will inadvertently cook the
 books in his or her favor.
 
 \clearpage
-\bibliographystyle{polisci}
+
+\bibliographystyle{asa}
 \bibliography{gk,gkpubs}
 
 \end{document}
