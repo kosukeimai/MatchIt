@@ -2,10 +2,10 @@
 
 library(MatchIt)
 
-niter <- 5000
+niter <- 10000
 #percdropped <- c(.1, .15, .2, .25, .3, .35, .4, .45, .5, .55, .6, .65, .7, .75, .8, .85, .9)
-percdropped <- ppoints(100)
-percdropped <- percdropped[-100]
+percdropped <- ppoints(50)
+percdropped <- percdropped[1:45]
 covariate <- "wpnoavg3"
 
 fdafull <- read.table("~/matchit/docs/papers/carpenter/ajps2002-full1b.txt", header=T)
@@ -85,7 +85,8 @@ qqplots.mx.sum[,3] <- apply(qqplots.mx, 2, quantile, probs=.975)
 numcontrols.mn <- apply(numcontrols, 2, mean)
 numdropped.mn <- nc - numcontrols.mn
 
-save(tstats, stdbias, qqplots.md, qqplots.mn, qqplots.mx, percdropped, numcontrols, file="tstats3.Rdata")
+save(tstats.sum, stdbias.sum, qqplots.md.sum, qqplots.mn.sum, qqplots.mx.sum, percdropped, numcontrols.mn, 
+	file="tstats3.Rdata")
 
 print("Full dataset standardized bias, t-statistic, and qqplot statistics")
 stdbias.full <- (mean(fdafull[fdafull$treat==1,covariate])-mean(fdafull[fdafull$treat==0,covariate]))
@@ -205,73 +206,46 @@ par(mfrow=c(2,1), mar=c(4,4,1,2))
 plot(numdropped.mn, tstats.sum[,1], type="l", xlim=c(min(numdropped.mn), max(numdropped.mn)), 
 	ylim=c(0, max(tstats.sum)), xlab="", ylab="", main="")
 #axis(4, col="red", col.axis="red")
-polygon(c(min(numdropped.mn), min(numdropped.mn), max(numdropped.mn), max(numdropped.mn)),
-	c(1.88, 2.18, 2.18, 1.88), col=gray(.8), border=NA)
-text(120, 2, label="Statistical significance threshold", cex=0.8)
+text(30, 10, labels="t-statistic", cex=0.8)
+polygon(c(min(numdropped.mn)-30, min(numdropped.mn)-30, max(numdropped.mn)+30, 
+	max(numdropped.mn)+30),
+	c(-1, 2, 2, -1), col="darkgrey", border=NA)
+text(55, 1.7, label='\"Statistical insignificance\" region', cex=0.8)
+par(new=T)
+plot(numdropped.mn, tstats.sum[,1], type="l", xlim=c(min(numdropped.mn), max(numdropped.mn)), 
+	ylim=c(0, max(tstats.sum)), xlab="", ylab="t-statistic", main="", cex.lab=0.8)
+
 plot(numdropped.mn, stdbias.sum[,1], type="l", xlim=c(min(numdropped.mn), max(numdropped.mn)), 
 	ylim=c(20,40), xlab="", ylab="", main="", lty=1)
+text(47, 26.5, labels="Difference in Means", cex=0.8)
 par(new=T)
 plot(numdropped.mn, qqplots.mn.sum[,1], type="l", xlim=c(min(numdropped.mn), max(numdropped.mn)), 
-	ylim=c(20,40), xlab="Number of Controls Randomly Dropped", ylab="", main="", lty=2)
+	ylim=c(20,40), xlab="Number of Controls Randomly Dropped from a Total of 245", 
+	ylab="Number of Washington Post stories", main="", lty=2, cex.lab=0.8)
+text(52, 36.5, labels="QQ Plot Mean Deviation", cex=0.8)
 dev.off()
 
-for (i in 1:1) {
-break 
-pdf("TstatPlots1wpnoavg3.pdf")
-par(mfrow=c(2,1))
+pdf("TStatPlotd.pdf")
+par(mfrow=c(1,2), mar=c(4,4,1,2))
 plot(numdropped.mn, tstats.sum[,1], type="l", xlim=c(min(numdropped.mn), max(numdropped.mn)), 
-	ylim=c(0, 1.5*max(tstats.sum)), xlab="", ylab="", main="")
+	ylim=c(0, max(tstats.sum)), xlab="", ylab="", main="")
+text(30, 10, labels="t-statistic", cex=0.8)
+polygon(c(min(numdropped.mn)-30, min(numdropped.mn)-30, max(numdropped.mn)+30, 
+	max(numdropped.mn)+30),
+	c(-1, 2, 2, -1), col="darkgrey", border=NA)
+text(83, 1.7, label='\"Statistical           ', cex=0.8)
+text(83, 1.3, label=' insignificance\" region', cex=0.8)
 par(new=T)
-plot(numdropped.mn, tstats.sum[,2], type="l", lty=2, xlim=c(min(numdropped.mn), max(numdropped.mn)),  
-        ylim=c(0, 1.5*max(tstats.sum)), xlab="", ylab="", main="") 
-par(new=T)
-plot(numdropped.mn, tstats.sum[,3], type="l", lty=2, xlim=c(min(numdropped.mn), max(numdropped.mn)),  
-        ylim=c(0, 1.5*max(tstats.sum)), xlab="Number of controls dropped", ylab="T-statistic", main="") 
-abline(h=-2)
+plot(numdropped.mn, tstats.sum[,1], type="l", xlim=c(min(numdropped.mn), max(numdropped.mn)), 
+	ylim=c(0, max(tstats.sum)), xlab="Number of Controls Randomly", ylab="t-statistic", main="", cex.lab=0.8)
 
 plot(numdropped.mn, stdbias.sum[,1], type="l", xlim=c(min(numdropped.mn), max(numdropped.mn)), 
-	ylim=c(0, 1.5*max(stdbias.sum)), xlab="", ylab="", main="")
+	ylim=c(20,40), xlab="", ylab="", main="", lty=1)
+text(80, 26.5, labels="Difference in Means", cex=0.8)
 par(new=T)
-plot(numdropped.mn, stdbias.sum[,2], type="l", lty=2, xlim=c(min(numdropped.mn), max(numdropped.mn)),  
-        ylim=c(0, 1.5*max(stdbias.sum)), xlab="", ylab="", main="") 
-par(new=T)
-plot(numdropped.mn, stdbias.sum[,3], type="l", lty=2, xlim=c(min(numdropped.mn), max(numdropped.mn)),  
-        ylim=c(0, 1.5*max(stdbias.sum)), xlab="Number of controls dropped", ylab="Standardized bias", main="") 
-dev.off()
-
-pdf("TstatPlots2wpnoavg3.pdf")
-par(mfrow=c(3,1))
-plot(numdropped.mn, qqplots.md.sum[,1], type="l", xlim=c(min(numdropped.mn), max(numdropped.mn)), 
-	ylim=c(0, 1.5*max(qqplots.md.sum)), xlab="", ylab="", main="")
-par(new=T)
-plot(numdropped.mn, qqplots.md.sum[,2], type="l", lty=2, xlim=c(min(numdropped.mn), max(numdropped.mn)),  
-        ylim=c(0, 1.5*max(qqplots.md.sum)), xlab="", ylab="", main="") 
-par(new=T)
-plot(numdropped.mn, qqplots.md.sum[,3], type="l", lty=2, xlim=c(min(numdropped.mn), max(numdropped.mn)),  
-        ylim=c(0, 1.5*max(qqplots.md.sum)), xlab="Number of controls dropped", ylab="QQ Plot Median", main="") 
-
 plot(numdropped.mn, qqplots.mn.sum[,1], type="l", xlim=c(min(numdropped.mn), max(numdropped.mn)), 
-	ylim=c(min(qplots.mn.sum), max(qqplots.mn.sum)), xlab="", ylab="", main="")
-par(new=T)
-plot(numdropped.mn, qqplots.mn.sum[,2], type="l", lty=2, xlim=c(min(numdropped.mn), max(numdropped.mn)),  
-        ylim=c(min(qqplots.mn.sum), max(qqplots.mn.sum)), xlab="", ylab="", main="") 
-par(new=T)
-plot(numdropped.mn, qqplots.mn.sum[,3], type="l", lty=2, xlim=c(min(numdropped.mn), max(numdropped.mn)),  
-        ylim=c(min(qqplots.mn.sum), max(qqplots.mn.sum)), xlab="Number of controls dropped", ylab="QQ Plot Mean", main="") 
-
-plot(numdropped.mn, qqplots.mx.sum[,1], type="l", xlim=c(min(numdropped.mn), max(numdropped.mn)), 
-	ylim=c(min(qqplots.mx.sum), max(qqplots.mx.sum)), xlab="", ylab="", main="")
-par(new=T)
-plot(numdropped.mn, qqplots.mx.sum[,2], type="l", lty=2, xlim=c(min(numdropped.mn), max(numdropped.mn)),  
-        ylim=c(min(qqplots.mx.sum), max(qqplots.mx.sum)), xlab="", ylab="", main="") 
-par(new=T)
-plot(numdropped.mn, qqplots.mx.sum[,3], type="l", lty=2, xlim=c(min(numdropped.mn), max(numdropped.mn)),  
-        ylim=c(min(qqplots.mx.sum), max(qqplots.mx.sum)), xlab="Number of controls dropped", ylab="QQ Plot Maximum", 
-	main="") 
+	ylim=c(20,40), xlab="Dropped from a Total of 245", 
+	ylab="Number of Washington Post stories", main="", lty=2, cex.lab=0.8)
+text(92, 36.5, labels="QQ Plot Mean Deviation", cex=0.8)
 dev.off()
-}
-
-
-
-
 
