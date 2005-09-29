@@ -1,8 +1,8 @@
 %!PS-Adobe-3.0
-%%DocumentNeededResources: font Helvetica
-%%+ font Helvetica-Bold
-%%+ font Helvetica-Oblique
-%%+ font Helvetica-BoldOblique
+%%DocumentNeededResources: font Times-Roman
+%%+ font Times-Bold
+%%+ font Times-Italic
+%%+ font Times-BoldItalic
 %%+ font Symbol
 %%DocumentMedia: special 396 252 0 () ()
 %%Title: R Graphics Output
@@ -37,32 +37,32 @@
 /rgb { setrgbcolor } def
 /s   { scalefont setfont } def
 % end   .ps.prolog
-%%IncludeResource: font Helvetica
-/Helvetica findfont
+%%IncludeResource: font Times-Roman
+/Times-Roman findfont
 dup length dict begin
   {1 index /FID ne {def} {pop pop} ifelse} forall
   /Encoding ISOLatin1Encoding def
   currentdict
   end
 /Font1 exch definefont pop
-%%IncludeResource: font Helvetica-Bold
-/Helvetica-Bold findfont
+%%IncludeResource: font Times-Bold
+/Times-Bold findfont
 dup length dict begin
   {1 index /FID ne {def} {pop pop} ifelse} forall
   /Encoding ISOLatin1Encoding def
   currentdict
   end
 /Font2 exch definefont pop
-%%IncludeResource: font Helvetica-Oblique
-/Helvetica-Oblique findfont
+%%IncludeResource: font Times-Italic
+/Times-Italic findfont
 dup length dict begin
   {1 index /FID ne {def} {pop pop} ifelse} forall
   /Encoding ISOLatin1Encoding def
   currentdict
   end
 /Font3 exch definefont pop
-%%IncludeResource: font Helvetica-BoldOblique
-/Helvetica-BoldOblique findfont
+%%IncludeResource: font Times-BoldItalic
+/Times-BoldItalic findfont
 dup length dict begin
   {1 index /FID ne {def} {pop pop} ifelse} forall
   /Encoding ISOLatin1Encoding def
@@ -84,7 +84,7 @@ bp
 0.00 0.00 396.00 252.00 cl
 /ps 10 def /Font2 findfont 10 s
 0 0 0 rgb
-198.00 233.29 (Distribution of Propensity Scores) .5 0 0 t
+198.00 233.50 (Distribution of Propensity Scores) .5 0 0 t
 /ps 8 def /Font1 findfont 8 s
 198.00 4.32 (Propensity Score) .5 0 0 t
 30.24 30.24 365.76 221.76 cl
@@ -4063,8 +4063,8 @@ o
 30.24 30.24 365.76 221.76 cl
 /ps 12 def /Font1 findfont 12 s
 0 0 0 rgb
-198.00 180.92 (Treatment Units) .5 0 0 t
-198.00 62.58 (Control Units) .5 0 0 t
+198.00 181.10 (Treatment Units) .5 0 0 t
+198.00 62.87 (Control Units) .5 0 0 t
 0.00 0.00 396.00 252.00 cl
 0 0 0 rgb
 0.75 setlinewidth

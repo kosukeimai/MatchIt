@@ -1,8 +1,8 @@
 %!PS-Adobe-3.0
-%%DocumentNeededResources: font Helvetica
-%%+ font Helvetica-Bold
-%%+ font Helvetica-Oblique
-%%+ font Helvetica-BoldOblique
+%%DocumentNeededResources: font Times-Roman
+%%+ font Times-Bold
+%%+ font Times-Italic
+%%+ font Times-BoldItalic
 %%+ font Symbol
 %%DocumentMedia: special 198 198 0 () ()
 %%Title: R Graphics Output
@@ -37,32 +37,32 @@
 /rgb { setrgbcolor } def
 /s   { scalefont setfont } def
 % end   .ps.prolog
-%%IncludeResource: font Helvetica
-/Helvetica findfont
+%%IncludeResource: font Times-Roman
+/Times-Roman findfont
 dup length dict begin
   {1 index /FID ne {def} {pop pop} ifelse} forall
   /Encoding ISOLatin1Encoding def
   currentdict
   end
 /Font1 exch definefont pop
-%%IncludeResource: font Helvetica-Bold
-/Helvetica-Bold findfont
+%%IncludeResource: font Times-Bold
+/Times-Bold findfont
 dup length dict begin
   {1 index /FID ne {def} {pop pop} ifelse} forall
   /Encoding ISOLatin1Encoding def
   currentdict
   end
 /Font2 exch definefont pop
-%%IncludeResource: font Helvetica-Oblique
-/Helvetica-Oblique findfont
+%%IncludeResource: font Times-Italic
+/Times-Italic findfont
 dup length dict begin
   {1 index /FID ne {def} {pop pop} ifelse} forall
   /Encoding ISOLatin1Encoding def
   currentdict
   end
 /Font3 exch definefont pop
-%%IncludeResource: font Helvetica-BoldOblique
-/Helvetica-BoldOblique findfont
+%%IncludeResource: font Times-BoldItalic
+/Times-BoldItalic findfont
 dup length dict begin
   {1 index /FID ne {def} {pop pop} ifelse} forall
   /Encoding ISOLatin1Encoding def
@@ -97,9 +97,9 @@ bp
 119.33 30.41 (Control Units) .5 0 0 t
 167.59 89.50 (Treated Units) .5 0 90 t
 42.77 111.41 73.92 136.22 cl
-/ps 13 def /Font1 findfont 13 s
+/ps 15 def /Font1 findfont 15 s
 0 0 0 rgb
-58.34 119.34 (re74) .5 0 0 t
+58.34 118.82 (re74) .5 0 0 t
 83.42 111.41 114.58 136.22 cl
 83.42 111.41 114.58 136.22 cl
 0 0 0 rgb
@@ -360,7 +360,8 @@ np
 o
 /ps 4 def /Font1 findfont 4 s
 76.77 112.33 (0) .5 0 90 t
-76.77 125.44 (20000) .5 0 90 t
+76.77 122.16 (15000) .5 0 90 t
+76.77 135.28 (35000) .5 0 90 t
 np
 83.42 111.41 m
 31.16 0 l
@@ -604,9 +605,9 @@ o
 58.34 59.98 (Index) .5 0 0 t
 31.36 89.50 (xi) .5 0 90 t
 42.77 77.09 73.92 101.90 cl
-/ps 13 def /Font1 findfont 13 s
+/ps 15 def /Font1 findfont 15 s
 0 0 0 rgb
-58.34 85.15 (re75) .5 0 0 t
+58.34 84.44 (re75) .5 0 0 t
 83.42 77.09 114.58 101.90 cl
 83.42 77.09 114.58 101.90 cl
 0 0 0 rgb
@@ -859,7 +860,8 @@ np
 o
 /ps 4 def /Font1 findfont 4 s
 76.77 78.01 (0) .5 0 90 t
-76.77 91.72 (15000) .5 0 90 t
+76.77 87.15 (10000) .5 0 90 t
+76.77 100.85 (25000) .5 0 90 t
 np
 83.42 77.09 m
 31.16 0 l
@@ -1103,9 +1105,9 @@ o
 58.34 25.66 (Index) .5 0 0 t
 31.36 55.18 (xi) .5 0 90 t
 42.77 42.77 73.92 67.58 cl
-/ps 13 def /Font1 findfont 13 s
+/ps 15 def /Font1 findfont 15 s
 0 0 0 rgb
-58.34 50.61 (educ) .5 0 0 t
+58.34 50.13 (educ) .5 0 0 t
 83.42 42.77 114.58 67.58 cl
 83.42 42.77 114.58 67.58 cl
 0 0 0 rgb
@@ -1351,7 +1353,7 @@ o
 /ps 4 def /Font1 findfont 4 s
 76.77 43.69 (0) .5 0 90 t
 76.77 50.07 (5) .5 0 90 t
-76.77 62.84 (15) .5 0 90 t
+76.77 56.45 (10) .5 0 90 t
 np
 83.42 42.77 m
 31.16 0 l

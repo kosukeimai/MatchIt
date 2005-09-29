@@ -2,8 +2,8 @@
 %Å‚Å„ÅœÅ”
 1 0 obj
 <<
-/CreationDate (D:20050929102401)
-/ModDate (D:20050929102401)
+/CreationDate (D:20050929105308)
+/ModDate (D:20050929105308)
 /Title (R Graphics Output)
 /Producer (R 2.1.1)
 /Creator (R)
@@ -42,8 +42,8 @@ q
 Q q
 BT
 0.000 0.000 0.000 rg
-/F3 1 Tf 10.00 0.00 -0.00 10.00 118.74 233.29 Tm (Distribution of Propensity Scores) Tj
-/F2 1 Tf 8.00 0.00 -0.00 8.00 167.54 4.32 Tm (Propensity Score) Tj
+/F3 1 Tf 10.00 0.00 -0.00 10.00 127.31 233.50 Tm (Distribution of Propensity Scores) Tj
+/F2 1 Tf 8.00 0.00 -0.00 8.00 170.78 4.32 Tm (Propensity Score) Tj
 ET
 Q q 30.24 30.24 335.52 191.52 re W n
 0.000 0.000 0.000 rg
@@ -3382,17 +3382,17 @@ Q q
 357.54 30.24 m 357.54 23.04 l S
 BT
 0.000 0.000 0.000 rg
-/F2 1 Tf 6.00 0.00 -0.00 6.00 34.92 11.52 Tm (0.0) Tj
-/F2 1 Tf 6.00 0.00 -0.00 6.00 114.54 11.52 Tm (0.2) Tj
-/F2 1 Tf 6.00 0.00 -0.00 6.00 194.15 11.52 Tm (0.4) Tj
-/F2 1 Tf 6.00 0.00 -0.00 6.00 273.76 11.52 Tm (0.6) Tj
-/F2 1 Tf 6.00 0.00 -0.00 6.00 353.37 11.52 Tm (0.8) Tj
+/F2 1 Tf 6.00 0.00 -0.00 6.00 35.34 11.52 Tm (0.0) Tj
+/F2 1 Tf 6.00 0.00 -0.00 6.00 114.96 11.52 Tm (0.2) Tj
+/F2 1 Tf 6.00 0.00 -0.00 6.00 194.57 11.52 Tm (0.4) Tj
+/F2 1 Tf 6.00 0.00 -0.00 6.00 274.18 11.52 Tm (0.6) Tj
+/F2 1 Tf 6.00 0.00 -0.00 6.00 353.79 11.52 Tm (0.8) Tj
 ET
 Q q 30.24 30.24 335.52 191.52 re W n
 BT
 0.000 0.000 0.000 rg
-/F2 1 Tf 12.00 0.00 -0.00 12.00 156.04 180.92 Tm (Treatment Units) Tj
-/F2 1 Tf 12.00 0.00 -0.00 12.00 163.33 62.58 Tm (Control Units) Tj
+/F2 1 Tf 12.00 0.00 -0.00 12.00 159.05 181.10 Tm (Treatment Units) Tj
+/F2 1 Tf 12.00 0.00 -0.00 12.00 165.16 62.87 Tm (Control Units) Tj
 ET
 Q q
 0.000 0.000 0.000 RG
@@ -3444,7 +3444,7 @@ endobj
 /Type /Font
 /Subtype /Type1
 /Name /F2
-/BaseFont /Helvetica
+/BaseFont /Times-Roman
 /Encoding 9 0 R
 >>
 endobj
@@ -3453,7 +3453,7 @@ endobj
 /Type /Font
 /Subtype /Type1
 /Name /F3
-/BaseFont /Helvetica-Bold
+/BaseFont /Times-Bold
 /Encoding 9 0 R
 >>
 endobj
@@ -3462,7 +3462,7 @@ endobj
 /Type /Font
 /Subtype /Type1
 /Name /F4
-/BaseFont /Helvetica-Oblique
+/BaseFont /Times-Italic
 /Encoding 9 0 R
 >>
 endobj
@@ -3471,7 +3471,7 @@ endobj
 /Type /Font
 /Subtype /Type1
 /Name /F5
-/BaseFont /Helvetica-BoldOblique
+/BaseFont /Times-BoldItalic
 /Encoding 9 0 R
 >>
 endobj
@@ -3496,10 +3496,10 @@ xref
 0000046789 00000 n 
 0000047030 00000 n 
 0000047287 00000 n 
-0000047384 00000 n 
-0000047486 00000 n 
-0000047591 00000 n 
-0000047700 00000 n 
+0000047386 00000 n 
+0000047484 00000 n 
+0000047584 00000 n 
+0000047688 00000 n 
 trailer
 <<
 /Size 15
@@ -3507,5 +3507,5 @@ trailer
 /Root 2 0 R
 >>
 startxref
-47778
+47766
 %%EOF
