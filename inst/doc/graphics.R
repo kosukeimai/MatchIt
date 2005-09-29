@@ -7,7 +7,7 @@ m.out <- matchit(treat ~ re74+re75+educ+black+hispan+age, data=lalonde, method="
 
 print(summary(m.out))
 
-postscript(file="figs/qqplotnn1.eps", width=2.75, height=2.75)
+postscript(file="figs/qqplotnn1.eps", width=2.75, height=2.75, horizontal=FALSE)
 par(mar=c(2, 2, 2, 2) + 0.1, cex.lab=0.7, cex.axis=0.5,
     mgp=c(1,0.5,0), cex.main=0.8, cex=1, bg="white", mfrow=c(1,2))
 plot(m.out, which.xs=c("re74", "re75", "educ"), interactive=FALSE)
@@ -19,7 +19,7 @@ par(mar=c(2, 2, 2, 2) + 0.1, cex.lab=0.7, cex.axis=0.5,
 plot(m.out, which.xs=c("re74", "re75", "educ"), interactive=FALSE)
 dev.off()
 
-postscript(file="figs/qqplotnn2.eps", width=2.75, height=2.75)
+postscript(file="figs/qqplotnn2.eps", width=2.75, height=2.75, horizontal=FALSE)
 par(mar=c(2, 2, 2, 2) + 0.1, cex.lab=0.7, cex.axis=0.5,
     mgp=c(1,0.5,0), cex.main=0.8, cex=1, bg="white", mfrow=c(1,2))
 plot(m.out, which.xs=c("black", "hispan", "educ"), interactive=FALSE)
@@ -31,7 +31,7 @@ par(mar=c(2, 2, 2, 2) + 0.1, cex.lab=0.7, cex.axis=0.5,
 plot(m.out, which.xs=c("black", "hispan", "educ"), interactive=FALSE)
 dev.off()
 
-postscript(file="figs/jitterplotnn.eps", width=5.5, height=3.5)
+postscript(file="figs/jitterplotnn.eps", width=5.5, height=3.5, horizontal=FALSE)
 par(mar=c(2, 2, 2, 2) + 0.1, cex.lab=0.7, cex.axis=0.5,
     mgp=c(1,0.5,0), cex.main=0.8, cex=1, bg="white")
 plot(m.out, type="jitter", interactive=FALSE)
