@@ -109,46 +109,51 @@ subclass are shown.
 
 We can also examine the balance graphically using the \texttt{plot()}
 command, which provides two types of plots: jitter plots of the
-distance measure, and Q-Q plots of each covariate.
-Figures~\ref{diagqqnn} and~\ref{diagjitternn} display these two sample
-plots.  In the jitter plot, which can be created by setting
-\texttt{type = "jitter"}, you may identify units by observation name
-by clicking the first mouse button near the units. For
-subclassification, separate Q-Q plots are printed for each subclass.
-The jitter plot for subclassification is the same as that for other
-types of matching, with the addition of vertical lines indicating the
-subclass cut-points.
+distance measure, and Q-Q plots of each covariate.  In the jitter
+plot, which can be created by setting \texttt{type = "jitter"}, you
+may identify units by observation name by clicking the first mouse
+button near the units. For subclassification, separate Q-Q plots are
+printed for each subclass.  The jitter plot for subclassification is
+the same as that for other types of matching, with the addition of
+vertical lines indicating the subclass cut-points.
 
-\begin{figure}[tbp]
-  \begin{center}
-    \includegraphics{figs/qqplotnn1}
-    \includegraphics{figs/qqplotnn2}
-    \hfill
-    \caption{Sample diagnostic QQ plots with nearest neighbor matching}
-    \label{diagqqnn}
-  \end{center}
-\end{figure}
+%\begin{figure}[tbp]
+%  \begin{center}
+%    \includegraphics{figs/qqplotnn1}
+%    \includegraphics{figs/qqplotnn2}
+%    \hfill
+%    \caption{Sample diagnostic QQ plots with nearest neighbor matching}
+%    \label{diagqqnn}
+%  \end{center}
+%\end{figure}
 
-\begin{figure}[tbp]
-  \begin{center}
-    \includegraphics{figs/jitterplotnn}
-    \hfill
-    \caption{Sample diagnostic jitter plot: Matched units shown in
-      black, unmatched units shown in grey.}
-    \label{diagjitternn}
-  \end{center}
-\end{figure}
+%\begin{figure}[tbp]
+%  \begin{center}
+%    \includegraphics{figs/jitterplotnn}
+%    \hfill
+%    \caption{Sample diagnostic jitter plot: Matched units shown in
+%      black, unmatched units shown in grey.}
+%    \label{diagjitternn}
+%  \end{center}
+%\end{figure}
 
-Two examples of the output from the {\tt plot()} command are shown in
-Figures~\ref{diagqqnn}~and~\ref{diagjitternn}. The balance of the
-individual covariates is shown in the Q-Q plots.  If the empirical
-distributions are the same in the treated and control groups, the
-points would all lie on the 45 degree line.  Deviations from the 45
-degree line indicate differences in the empirical distribution.  The
-jitter plot shows the overall distribution of propensity scores in the
-treated and control groups.  In the jitter plot, the size of each
-diamond is proportional to the weight given to that unit; matched
-units are in black while unmatched units are in grey.  
+Two examples of the output from the {\tt plot()} command are shown
+below.
+%in
+%Figures~\ref{diagqqnn}~and~\ref{diagjitternn}. 
+The balance of the individual covariates is shown in the Q-Q plots.
+If the empirical distributions are the same in the treated and control
+groups, the points would all lie on the 45 degree line.  Deviations
+from the 45 degree line indicate differences in the empirical
+distribution.  The jitter plot shows the overall distribution of
+propensity scores in the treated and control groups.  In the jitter
+plot, the size of each diamond is proportional to the weight given to
+that unit; matched units are in black while unmatched units are in
+grey.
+
+\includegraphics{figs/qqplotnn1}
+\includegraphics{figs/jitterplotnn}
+
 
 %%% Local Variables: 
 %%% mode: latex
