@@ -49,10 +49,12 @@ To load the Zelig package after installing it, type
 \item[Model-Based Estimates] In our first example, we conduct a
   standard parametric analysis and compute quantities of interest in
   the most common way.  We begin with nearest neighbor matching with a
-  logistic regression-based propensity score:
+  logistic regression-based propensity score, discarding with the
+  convex.hull option:
 \begin{verbatim}
 > m.out0 <- matchit(treat ~ age + educ + black + hispan + nodegree + 
-                    married + re74 + re75, method = "nearest", data = lalonde)
+                    married + re74 + re75, method = "nearest", discard
+                    = "convex.hull", data = lalonde)
 \end{verbatim}
   Then we check balance using the summary and plot procedures (which
   we don't show here).  When we get balance as good as possible, we

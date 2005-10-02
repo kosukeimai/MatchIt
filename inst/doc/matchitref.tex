@@ -327,13 +327,22 @@ output object contains the following elements:\footnote{When
 
 \subsubsection{Contributors}
 
-The original code to implement exact matching, subclassification, and
-nearest neighbor matching were written by Daniel E. Ho, Gary King,
-Kosuke Imai, and Elizabeth A. Stuart.  Please cite the \MatchIt
-package as
+If you use \MatchIt, please cite
 \begin{verse}
 \bibentry{HoImaKin05}
+and 
+\bibentry{HoImaKin05b}
 \end{verse}
+
+The {\tt convex.hull} discard option is implemented via the {\tt
+  WhatIf} package.  If you use this option, please cite
+\begin{verse}
+\bibentry{StoKinZen05} 
+and either
+\bibentry{KinZen06a}
+or
+\bibentry{KingZen06b}
+\end{verse} 
 
 Generalized linear distance measures are implemented via the {\tt
 stats} package.  If you use this distance measure, please cite 
@@ -344,7 +353,7 @@ stats} package.  If you use this distance measure, please cite
 Generalized additive distance meaures are implemented via the {\tt
   mcgv} package.  If you use this distance measure, please cite
 \begin{verse}
-\bibentry{HasTib90}.
+\bibentry{HasTib90}
 \end{verse}  
 
 The neural network distance measure is implemented via the {\tt nnet}
@@ -358,12 +367,6 @@ The classification trees distance measure is implemented via the {\tt
 \begin{verse}
 \bibentry{BreFriOls84}
 \end{verse}  
-
-The {\tt "convex.hull"} discard option is implemented via the {\tt
-  WhatIf} package.  If you use this option, please cite
-\begin{verse}
-\bibentry{StoKinZen05} 
-\end{verse} 
 
 Full and optimal matching are implemented via the {\tt optmatch}
 package by Ben Hansen. If you use either of these methods, please cite
