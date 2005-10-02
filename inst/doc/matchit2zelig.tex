@@ -33,10 +33,10 @@ model, and {\tt z.out} is the output object from {\tt zelig}.
 
 \subsection{Examples}
 
-To illustrate this approach, we provide two detailed examples using
-the Lalonde data. Users can run these example commands by typing {\tt
-  demo(analysis)}. Although we use the linear least squares model in
-these examples, a wide range of other models are available in Zelig
+We now give four examples using the Lalonde data.  They are meant to
+be read sequentially.  You can run these example commands by typing
+{\tt demo(analysis)}.  Although we use the linear least squares model
+in these examples, a wide range of other models are available in Zelig
 (for the list of supported models, see
 \hlink{http://gking.harvard.edu/zelig/docs/Models\_Zelig\_Can.html}{http://gking.harvard.edu/zelig/docs/Models_Zelig_Can.html}.
 
@@ -45,11 +45,39 @@ To load the Zelig package after installing it, type
 > library(Zelig)
 \end{verbatim}
 
-\begin{enumerate}
-\item Our first example estimates the average treatment effect on the
-  treated, and is useful for datasets with a sufficiently large
-  control group so that we can estimate a parametric model in it
-  alone.
+\begin{description}
+\item[Model-Based Estimates] In our first example, we conduct a
+  standard parametric analysis and compute quantities of interest in
+  the most common way.  We begin with nearest neighbor matching with a
+  logistic regression-based propensity score:
+\begin{verbatim}
+> m.out0 <- matchit(treat ~ age + educ + black + hispan + nodegree + 
+                    married + re74 + re75, method = "nearest", data = lalonde)
+\end{verbatim}
+  Then we check balance using the summary and plot procedures (which
+  we don't show here).  When we get balance as good as possible, we
+  run the parametric analysis:
+\begin{verbatim}
+> z.out0 <- zelig(re78 ~ age + educ + black + hispan + nodegree + 
+                  married + re74 + re75, data = match.data(m.out1), 
+                  model = "ls")
+\end{verbatim}
+  and then set the explanatory variables at their means (the default)
+  and change the treatment variable from a 0 to a 1:
+\begin{verbatim}
+> x.out0 <- setx(z.out0, treat=0)
+> x1.out0 <- setx(z.out0, treat=1)
+\end{verbatim}
+and finally compute the result and examine a summary:
+\begin{verbatim}
+> s.out0 <- sim(z.out1, x = x.out1)
+> summary(s.out0)
+\end{verbatim}
+
+\item[Average Treatment Effect on the Treated] Our first example
+  estimates the average treatment effect on the treated, and is useful
+  for datasets with a sufficiently large control group so that we can
+  estimate a parametric model in it alone.
 
   We begin by conducting nearest neighbor matching with a logistic
   regression-based propensity score:
@@ -85,9 +113,10 @@ Finally, we obtain a summary of the results by
 > summary(s.out1)
 \end{verbatim}
 
-\item Our second example estimates the average treatment effect
-  overall (on both the treated and the control groups).  To do this,
-  we fit the linear model to the {\it treatment group}:
+\item[Average Treatment Effect (Overall)] Our second example estimates
+  the average treatment effect overall (on both the treated and the
+  control groups).  To do this, we fit the linear model to the {\it
+    treatment group}:
 \begin{verbatim}
 > z.out2 <- zelig(re78 ~ age + educ + black + hispan + nodegree + 
                   married + re74 + re75, data = match.data(m.out1, "treat"), 
@@ -116,15 +145,16 @@ interval is given by
 > quantile(ate.all, c(0.025, 0.975))
 \end{verbatim}
   
-\item Our third example uses subclassification. In this case, the
-  average treatment effect estimates are obtained separately for each
-  subclass as well as for the overall sample.  Estimating the
-  treatment effects separately for each subclass, and then aggregating
-  across subclasses, can increase the robustness of the ultimate
-  results since the parametric analysis within each subclass requires
-  only local rather than global assumptions.  However, fewer
-  observations are obviously available within each subclass, and so
-  this option is normally chosen for larger data sets.
+\item[Subclassification] Our third example uses subclassification. In
+  this case, the average treatment effect estimates are obtained
+  separately for each subclass as well as for the overall sample.
+  Estimating the treatment effects separately for each subclass, and
+  then aggregating across subclasses, can increase the robustness of
+  the ultimate results since the parametric analysis within each
+  subclass requires only local rather than global assumptions.
+  However, fewer observations are obviously available within each
+  subclass, and so this option is normally chosen for larger data
+  sets.
 
   We begin this example by conducting subclassification with four
   subclasses,
@@ -159,7 +189,7 @@ subclass.
 > summary(s.out3, subset = 2)
 \end{verbatim}
   
-\end{enumerate}
+\end{description}
 
 
 %%% Local Variables: 
