@@ -3,34 +3,30 @@
 
 \subsection{Quick Overview}
 
-The main command \texttt{matchit()} implements a variety of matching
-procedures.  A general syntax is given by,
+The main command \texttt{matchit()} implements the matching
+procedures.  A general syntax is:
 \begin{verbatim}
 > m.out <- matchit(treat ~ x1 + x2, data = mydata)
 \end{verbatim}
 where {\tt treat} is the dichotomous treatment variable, and {\tt x1}
 and {\tt x2} are pre-treatment covariates, all of which are contained
-in the data frame {\tt mydata}.  This command creates the
-\MatchIt\, object called \texttt{m.out}.  A quick summary of the
-matching procedure can be printed on the screen by typing,
+in the data frame {\tt mydata}.  The dependent variable will normally
+be part of \texttt{mydata} but is never used by \MatchIt\ or included
+the formula.  This command creates the \MatchIt\ object called
+\texttt{m.out}.  Name the output object to see a quick summary of the
+results:
 \begin{verbatim}
 > m.out
-\end{verbatim}
-or,
-\begin{verbatim}
-> print(m.out)
 \end{verbatim}
 
 \subsection{Examples}
 
 To run any of the examples below, you first must load the library and
-the example data set by typing the following commands at R,
+and data:
 \begin{verbatim}
 > library(MatchIt)
 > data(lalonde)
 \end{verbatim}
-Section~\ref{sec:matchit} lists all possible specifications of {\tt
-  matchit()}.
 
 Our example data set is from the job training program analyzed in
 \citet{lalonde86} and \citet{DehWah99}. \MatchIt\ includes a subsample
@@ -39,7 +35,7 @@ Demonstration (NSW) treated group and the comparison sample from the
 Population Survey of Income Dynamics (PSID).\footnote{This data set,
   \texttt{lalonde}, was created using NSWRE74$\_$TREATED.TXT and
   CPS3$\_$CONTROLS.TXT from
-  http://www.columbia.edu/$\sim$rd247/nswdata.}  the variables in this
+  http://www.columbia.edu/$\sim$rd247/nswdata.}  The variables in this
 data set include participation in the job training program
 (\texttt{treat}, which is equal to 1 if participated in the program,
 and 0 otherwise), age ({\tt age}), years of education ({\tt educ}),
@@ -60,7 +56,7 @@ that within each subclass all units (treatment and control) have the
 same covariate values.  Exact matching is implemented in \MatchIt\ 
 using \texttt{method = "exact"}.  Exact matching will be done on all
 covariates included on the right-hand side of the \texttt{formula}
-specified in the \MatchIt\ call.  There are NO additional options for
+specified in the \MatchIt\ call.  There are no additional options for
 exact matching.  Exact restrictions on a subset of covariates can also
 be specified in nearest neighbor matching (see
 Section~\ref{subsubsec:nearest}).  The following example script can be
@@ -75,19 +71,15 @@ run by typing {\tt demo(exact)} at the R prompt,
 
 When there are many covariates on which matches are desired (or some
 covariates can take a large number of values), finding sufficient
-exact matches will often be impossible.  In that case,
-subclassification is sometimes desirable. Various subclassification
-schemes exist, including the one based on a scalar distance measure
-such as the propensity score estimated using the \texttt{distance}
-option (see Section~\ref{subsubsec:inputs-all}).  Subclassification
-will form subclasses based on this distance measure.  Within each
-subclass, the distribution of covariates in the treatment and control
-groups should be similar.  Subclassification is implemented in
-\MatchIt\ using \texttt{method = "subclass"}.
-%See also the sections on full matching (Section
-%\ref{subsubsec:full}) and nearest-neighbor matching (Section
-%\ref{subsubsec:nearest}), which provide additional ways of performing
-%subclassification.  
+exact matches will often be impossible.  The goal of subclassification
+is to form subclasses, such that in each the distribution (rather than
+the exact values) of covariates for the treated and control groups are
+are as similar as possible.  Various subclassification schemes exist,
+including the one based on a scalar distance measure such as the
+propensity score estimated using the \texttt{distance} option (see
+Section~\ref{subsubsec:inputs-all}).  Subclassification is implemented
+in \MatchIt\ using \texttt{method = "subclass"}.
+
 The following example script can be run by typing {\tt demo(subclass)}
 at the R prompt,
 \begin{verbatim}
@@ -97,9 +89,7 @@ at the R prompt,
 The above syntax forms 6 subclasses, which is the default number
 of subclasses, based on a distance measure estimated using logistic
 regression.  By default, each subclass will have approximately the
-same number of treated units.  See
-Section~\ref{subsubsec:inputs-all}
-for a complete list of input options for subclassification.
+same number of treated units.
 
 Subclassification may also be used in conjunction with nearest
 neighbor matching described below, by leaving the default of
@@ -116,65 +106,17 @@ Nearest neighbor matching selects the $r$ best control matches for
 each individual in the treatment group (excluding those discarded
 using the \texttt{discard}) option (by default, $r=1$).  The matching
 is done using a distance measure specified by the {\tt distance}
-option. Matches are chosen for each treated unit one at a time, and at
-each matching step we choose the control unit that is not yet matched
-but is closest to the treated unit on the distance measure.  There are
-many variations on nearest neighbor matching, which are described in
-further detail in
-Section~\ref{subsubsec:inputs-all}.
+option.  Matches are chosen for each treated unit one at a time, and
+at each matching step we choose the control unit that is not yet
+matched but is closest to the treated unit on the distance measure.
+
 Nearest neighbor matching is implemented in \MatchIt\ using the
 \texttt{method = "nearest"} option.  The following example script can
-be run by typing {\tt demo(nearest)} at the R prompt,
+be run by typing {\tt demo(nearest)}:
 \begin{verbatim}
 > m.out <- matchit(treat ~ re74 + re75 + educ + black + hispan + age, 
                    data = lalonde, method = "nearest")
 \end{verbatim}
-
-%\begin{enumerate}
-%\item Nearest neighbor matching on estimated propensity score using
-%  probit regression where 2 matches are chosen for each treated unit.
-%\begin{verbatim}
-%> m.out1 <- matchit(treat ~ re74 + re75 + age + educ, data = lalonde, method = "nearest", 
-%                    distance = "probit", ratio = 2)
-%\end{verbatim}
-
-%\item Mahalanobis matching on {\tt re74} and {\tt re75}.
-%\begin{verbatim}
-%> m.out <- matchit(treat ~ re74 + re75, data = lalonde, method = "nearest", 
-%                   distance = "mahalanobis")
-%\end{verbatim}
-
-%\item Mahalanobis matching on {\tt re74} and {\tt re75} within nearest
-%  neighbor matching on distance measure (propensity score), with
-%  restriction of exact matches on {\tt married}.
-%\begin{verbatim}
-%> m.out2 <- matchit(treat ~ re74 + re75 + age + educ, data = lalonde, method = "nearest", 
-%                    distance = "probit", mahvars = c("re74", "re75"), exact = c("married"), 
-%                    caliper = 0.25)
-%\end{verbatim}
-
-%\item Nearest neighbor matching after discarding all units outside of
-%  the common support of the estimated distance measure.
-%\begin{verbatim}
-%> m.out3 <- matchit(treat ~ re74 + re75 + age + educ, data = lalonde, method = "nearest", 
-%distance = "logit", discard = "both")
-%\end{verbatim}
-
-%\item Nearest neighbor matching with replacement where two control
-%  units are matched with one treated unit.
-%\begin{verbatim}
-%> m.out4 <- matchit(treat ~ re74 + re75 + age + educ, data = lalonde, 
-%     method = "nearest", distance = "logit", replace = TRUE, 
-%     ratio = 2)
-%\end{verbatim}
-
-%\item Nearest neighbor matching followed by formation of 5 subclasses
-%\begin{verbatim}
-%> m.out5 <- matchit(treat ~ re74 + re75 + age + educ, data = lalonde, 
-%     method = "nearest", distance = "logit", subclass = 5)
-%\end{verbatim}
-%
-%\end{enumerate}
 
 \subsubsection{Optimal Matching}
 \label{subsubsec:optimal}
@@ -182,25 +124,21 @@ be run by typing {\tt demo(nearest)} at the R prompt,
 The default nearest neighbor matching method in \MatchIt\ is
 ``greedy'' matching, where the closest control match for each treated
 unit is chosen one at a time, without trying to minimize a global
-distance measure.  Another method, ``optimal'' matching, finds the
-matched samples with the smallest average absolute distance between
-each matched pair.  With large control pools, greedy and optimal
-matching may lead to very similar (or the same) sets of matches;
-\citet{GuRos93} find that greedy and optimal matching generally choose
-the same sets of controls for the overall matched samples, but that
-optimal matching does a better job of minimizing the distance within
-each pair.  In addition, optimal matching can be helpful when there
-are not many appropriate control matches for the treated units.  See
-\cite{GuRos93} or \cite{Rosenbaum02} for more information on optimal
-matching.
-Section~\ref{subsubsec:inputs-all}~gives a complete list of optional inputs for optimal matching.  Optimal
-matching is performed with \MatchIt\ by setting \texttt{method =
-  "optimal"}.  We use an add-on package called \texttt{optmatch}
-\citep{Hansen04}, which will be automatically installed when optimal
-matching is performed (if it is not installed already).  The following
-example can also be run by typing {\tt demo(optimal)} at the R prompt.
-We conduct optimal ratio matching based on the propensity score from
-the logistic regression.
+distance measure.  In contrast, ``optimal'' matching, finds the
+matched samples with the smallest average absolute distance across all
+the matched pairs.  \citet{GuRos93} find that greedy and optimal
+matching generally choose the same sets of controls for the overall
+matched samples, but that optimal matching does a better job of
+minimizing the distance within each pair.  In addition, optimal
+matching can be helpful when there are not many appropriate control
+matches for the treated units.
+
+Optimal matching is performed with \MatchIt\ by setting \texttt{method
+  = "optimal"}.  We use an add-on package called \texttt{optmatch}
+\citep{Hansen04}, which will be automatically installed when needed.
+The following example can also be run by typing {\tt demo(optimal)} at
+the R prompt.  We conduct optimal ratio matching based on the
+propensity score from the logistic regression.
 \begin{verbatim}
 > m.out <- matchit(treat ~ re74 + re75 + age + educ, data = lalonde, 
                    method = "optimal", ratio = 2)
@@ -218,16 +156,14 @@ subclass will be those discarded (if a \texttt{discard} option was
 specified) because they are outside the range of common support.  Full
 matching is optimal in terms of minimizing a weighted average of the
 estimated distance measure between each treated subject and each
-control subject within each subclass.  See
-Section~\ref{subsubsec:inputs-all}~
-for a complete list of optional inputs for full matching.  Full
-matching can be performed with \MatchIt\ by setting \texttt{method =
-  "full"}.  We use an add-on package called \texttt{optmatch}
-\citep{Hansen04}, which will be automatically installed when optimal
-matching is performed (if it is not installed already).  The following
-example can also be run by typing {\tt demo(full)} at the R prompt.
-We conduct full matching (using the propensity score based on logistic
-regression).
+control subject within each subclass.
+
+Full matching can be performed with \MatchIt\ by setting
+\texttt{method = "full"}.  We use an add-on package called
+\texttt{optmatch} \citep{Hansen04}, which will be automatically
+installed when needed.  The following example with full matching (using
+the propensity score based on logistic regression) can also be run by
+typing {\tt demo(full)} at the R prompt:
 \begin{verbatim}
 > m.out <- matchit(treat ~ age + educ + black + hispan + married +
                    nodegree + re74 + re75, data = lalonde, method = "full")
@@ -238,21 +174,19 @@ regression).
 
 Genetic matching is a method that automates the process of finding an
 optimal balance \citep{DiaSek05}. The idea is to use a genetic search
-algorithm and find a set of weights for each covariate such that the
-optimal balance is achieved after matching. The procedure is
-implemented using the {\tt Matching} package \citep{Sekhon04}. As it
-is currently implemented, matching is done with replacement using the
-matching method of \citet{AbaImb04} and balance is determined by two
-univariate tests: paired t-tests for dichotomous variables and a
-Kolmogorov-Smirnov test for multinomial and continuous variables.  See
-Section~\ref{subsubsec:inputs-all}~for a complete list of optional
-inputs for genetic matching.  Genetic matching can be performed with
-\MatchIt\ by setting \texttt{method = "genetic"}.  We use an add-on
-package called \texttt{Matching} \citep{Sekhon04}, which will be
-automatically installed (if it is not installed already). The
-following example can also be run by typing {\tt demo(genetic)} at the
-R prompt.  We conduct genetic matching (using the estimated propensity
-score based on logistic regression as one of the covariates).
+algorithm and to find a set of weights for each covariate such that
+the optimal balance is achieved after matching.  As it is currently
+implemented, matching is done with replacement using the matching
+method of \citet{AbaImb04} and balance is determined by two univariate
+tests: paired t-tests for dichotomous variables and a
+Kolmogorov-Smirnov test for multinomial and continuous variables.
+
+Genetic matching can be performed with \MatchIt\ by setting
+\texttt{method = "genetic"}.  We use an add-on package called
+\texttt{Matching} \citep{Sekhon04}, which will be automatically
+installed when needed.  The following example of genetic matching
+(using the estimated propensity score based on logistic regression as
+one of the covariates) can also be run by typing {\tt demo(genetic)}:
 \begin{verbatim}
 > m.out <- matchit(treat ~ age + educ + black + hispan + married + nodegree + 
                    re74 + re75, data = lalonde, method = "genetic")

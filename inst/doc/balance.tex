@@ -3,36 +3,18 @@
 
 \subsection{Quick Overview}
 
-In \MatchIt, there are two ways to check balance after any matching
-procedure: numerical and graphical summaries. Both methods are based
-on the idea summarized in Section~\ref{sec:balance-sum} and fully
-described in \citet*{HoImaKin05}. Given the \MatchIt\ output object
-{\tt m.out}, one can use the following commands,
-\begin{enumerate}
-\item \texttt{summary(m.out)} gives numerical summaries of the
-  resulting balance of the covariates.
-  
-\item \texttt{plot(m.out)} gives graphical summaries to assess the
-  balance of the covariates.
-\end{enumerate}
-Below, we give three examples (exact matching, nearest neighbor
-matching, and subclassification) to illustrate the use of these two
-functions. The same two commands can be used for all other matching
-procedures, and they will give similar outputs.  See
-Section~\ref{sec:outputs} for more details.
-
+To check balance, use \texttt{summary(m.out)} for numerical summaries
+and \texttt{plot(m.out)} for graphical summaries We illustrate here
+with three examples.
 
 \subsection{Details}
 
-
 \subsubsection{The {\tt summary()} Command}
 
-The \texttt{summary()} command first gives measures of the balance
-between the treated and control groups in the full (original) data
-set, and then the same measures of balance in the matched data set.
-If the matching worked well, the measures of balance should be smaller
-in the matched data set as compared with the full data set.  The
-specific balance measures given are described below.
+The \texttt{summary()} command gives measures of the balance between
+the treated and control groups in the full (original) data set, and
+then in the matched data set.  If the matching worked well, the
+measures of balance should be smaller in the matched data set.
 
 The \texttt{summary()} output for subclassification is the same as
 that for other types of matching, except that the balance statistics
@@ -47,8 +29,7 @@ subclass are shown.
 \begin{itemize}
 \item {\bf Balance statistics:} The statistics the \texttt{summary()}
   command provides include means, standardized biases, and
-  Quantile-Quantile (Q-Q) plot statistics.  These are used to assess
-  whether there was a reduction in bias in the covariates. In
+  Quantile-Quantile (Q-Q) plot summary statistics.  In
   addition, the \texttt{summary()} command will report (a) the matched
   call, (b) how many units were matched, unmatched, or discarded due
   to the \texttt{discard} option (described below), and (c) the
@@ -68,10 +49,9 @@ subclass are shown.
     data sets so that the success of the matching at reducing bias in
     the covariate means can be easily assessed; standardizing by the
     same quantity puts the two differences in means on the same scale.
-    Good matches will generally have standardized biases less than
-    approximately 0.25; values greater than that imply that the groups
-    have means that are more than a quarter of a standard deviation
-    apart.
+    Good matches will generally have means less than a quarter of a
+    standard deviation apart (a standardized biases of less than
+    0.25), although smaller is better and only zero is perfect.
   \item The final three columns of the summary output give summary
     statistics of a Q-Q plot (see below for more information on these
     plots). Those columns give the median, mean, and maximum
@@ -98,11 +78,9 @@ subclass are shown.
   interaction of variables) not included in the original distance
   measure has large imbalances in the matched groups, including that
   variable in the next model specification may improve the resulting
-  balance on that variable.  \cite{DehWah99} provides a detailed
-  example of a propensity score specification algorithm.  Because the
-  outcome variable is not used in the matching procedure, a variety of
-  matching methods can be tried, and the one that leads to the best
-  resulting balance chosen.
+  balance on that variable.  Because the outcome variable is not used
+  in the matching procedure, a variety of matching methods can be
+  tried, and the one that leads to the best resulting balance chosen.
 \end{itemize}
 
 \subsubsection{The \texttt{plot()} Command}
@@ -138,18 +116,14 @@ vertical lines indicating the subclass cut-points.
 %\end{figure}
 
 Two examples of the output from the {\tt plot()} command are shown
-below.
-%in
-%Figures~\ref{diagqqnn}~and~\ref{diagjitternn}. 
-The balance of the individual covariates is shown in the Q-Q plots.
-If the empirical distributions are the same in the treated and control
-groups, the points would all lie on the 45 degree line.  Deviations
-from the 45 degree line indicate differences in the empirical
-distribution.  The jitter plot shows the overall distribution of
-propensity scores in the treated and control groups.  In the jitter
-plot, the size of each diamond is proportional to the weight given to
-that unit; matched units are in black while unmatched units are in
-grey.
+below.  If the empirical distributions are the same in the treated and
+control groups, the points would all lie on the 45 degree line.
+Deviations from the 45 degree line indicate differences in the
+empirical distribution.  The jitter plot shows the overall
+distribution of propensity scores in the treated and control groups.
+In the jitter plot, the size of each diamond is proportional to the
+weight given to that unit; matched units are in black while unmatched
+units are in grey.
 
 \includegraphics{figs/qqplotnn1}
 \includegraphics{figs/jitterplotnn}
