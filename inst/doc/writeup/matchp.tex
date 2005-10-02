@@ -254,7 +254,7 @@ when estimating a causal effect (see \citealt[][Section 4.2]{Cox58}
 and \citealt[][pp.73--4]{Rosenbaum02}).  This is of course a critical
 point, since controlling for the consequences of a causal variable can
 severely bias a causal inference; the problem is unfortunately too
-common \citep{KinZen04}.
+common \citep{KinZen06a}.
 
 To clarify our inferential goals, we begin by defining the ``realized
 causal effect,'' which is the simplest definition available.  To
@@ -471,7 +471,7 @@ are identical.\footnote{To change these sample causal effects to
 Projects with causal variables that have more than two categories or
 are continuous or mixed can dichotomize (perhaps in several
 alternative ways) or use more complicated methods designed especially
-for these variables \citep{ImaDyk03}.  Those with more than one causal
+for these variables \citep{ImaDyk04}.  Those with more than one causal
 variable of interest can follow all the advice herein for one variable
 at a time.  We stick a single binary treatment here, since it greatly
 simplifies the exposition and improves intuition even for those who
@@ -899,11 +899,11 @@ avoiding selection bias --- not selecting on the dependent variable
 --- does not prevent us from selecting observations on the explanatory
 variables ($t_i$ or $X_i$).  (Random or other physical assignments in
 experiments by the investigator and stratified sampling in surveys are
-examples of valid data collection mechanisms that select observations
-given chosen values of the explanatory variables.)  We can also
-select, duplicate, or selectively drop observations from an existing
-sample without bias, as long as we do so using a rule that is a
-function only of $t_i$ and $X_i$.  Our preprocessed dataset will
+other examples of valid data collection mechanisms that select
+observations given chosen values of the explanatory variables.)  We
+can also select, duplicate, or selectively drop observations from an
+existing sample without bias, as long as we do so using a rule that is
+a function only of $t_i$ and $X_i$.  Our preprocessed dataset will
 therefore include a selected subset of the observed sample for which
 $t_i$ and $X_i$ are unrelated, meaning that the treatment and control
 groups have the same background characteristics, or in other words
@@ -1322,14 +1322,17 @@ the full empricial distribution of the treatment and control groups.
   \end{center}
   \vspace{-0.275in}
   \caption{Dangers in relying on t-statistics as measure of balance.
-    This figure illustrates the dangers in using t-statistics as a measure of balance.  Each panel shows the effect of 
-    changing sample size on a measure of balance.  The solid lines indicate the average value of
-    the statistic when a given number of control units are randomly dropped from the data
-    set (out of a total of 245 control units).  The dashed lines indicate the corresponding 95\% confidence
-    intervals.  With larger numbers of control units dropped (i.e., smaller numbers of control units in the
-    resulting sample), the t-statistic gets 
-    closer to 0, falsely indicating reductions in balance with the smaller resulting sample sizes.  In fact, because 
-    controls are dropped randomly, the balance is the same across all data sets, regardless of sample size.}
+    Each panel shows the effect of changing sample size on a measure
+    of balance.  The solid lines indicate the average value of the
+    statistic when a given number of control units are randomly
+    dropped from the data set (out of a total of 245 control units).
+    The dashed lines indicate the corresponding 95\% confidence
+    intervals.  With larger numbers of control units dropped (i.e.,
+    smaller numbers of control units in the resulting sample), the
+    t-statistic gets closer to 0, falsely indicating reductions in
+    balance with the smaller resulting sample sizes.  In fact, because
+    controls are dropped randomly, the balance is the same across all
+    data sets, regardless of sample size.}
   \label{fg:tstat}
 \end{figure}
 
@@ -1459,13 +1462,13 @@ checking balance via (\ref{balance}) in our two applications.
 
 \subsection{Democratic Senate Majorities and FDA Drug Approval Time}
 
-An influential article by \citet{Carp02} tests a key hypothesis in the
+An influential article by \citet{Carpenter02} tests a key hypothesis in the
 literature on institutional and partisan determinants of regulatory
 policy by examining several determinants of new drug approval times by
 the U.S.\ Food and Drug Administration (FDA).  Here, we focus on the
 hypothesis that Democratic oversight of the FDA should lead to slower
 approval of new drugs \citep[p.495 and Model 1 of Table 2,
-p.499]{Carp02}.
+p.499]{Carpenter02}.
 
 To test this hypothesis, Carpenter uses a lognormal survival model of
 approval times regressed on several causal variables of political
@@ -1473,7 +1476,7 @@ oversight (median adjusted ADA scores for House and Senate Committees
 as well as for House and Senate floors, Democratic Majority in House
 and Senate, and Democratic Presidency) and 18 control variables
 including clinical and epidemiology factors and firm
-characteristics.\footnote{In the original paper, \citet{Carp02} uses a
+characteristics.\footnote{In the original paper, \citet{Carpenter02} uses a
   lognormal frailty model with a common (ungrouped) random effect.
   For simplicity and speed, we drop the random effect.  This has very
   small effects on the quantities we estimate, and no effect on our
@@ -1512,7 +1515,7 @@ In the original analysis, the reported coefficient for the Democratic
 Senate majority variable is statistically significant at the 10\%
 level but in the opposite direction of Carpenter's hypothesis.  For
 our purposes this variable is of particular interest because
-\citet[p.498]{Carp02} finds that ``[t]he coefficient estimate for this
+\citet[p.498]{Carpenter02} finds that ``[t]he coefficient estimate for this
 variable [Democratic Senate majority] is not significant in other
 regressions, and even switches sign when firm variables are added.''
 We therefore examine whether the model sensitivity that prevented
