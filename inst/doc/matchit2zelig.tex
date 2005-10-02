@@ -74,10 +74,10 @@ and finally compute the result and examine a summary:
 > summary(s.out0)
 \end{verbatim}
 
-\item[Average Treatment Effect on the Treated] Our first example
-  estimates the average treatment effect on the treated, and is useful
-  for datasets with a sufficiently large control group so that we can
-  estimate a parametric model in it alone.
+\item[Average Treatment Effect on the Treated] We illustrate now how
+  to estimate the average treatment effect on the treated in a way
+  that is quite robust.  We do this by estimating the coefficients in
+  the control group alone.
 
   We begin by conducting nearest neighbor matching with a logistic
   regression-based propensity score:
@@ -97,8 +97,11 @@ and finally compute the result and examine a summary:
 \end{verbatim}
   where the {\tt "control"} option in {\tt match.data()} extracts only
   the matched control units and {\tt ls} specifies least squares
-  regression.  (The treatment indicator is excluded since its a
-  constant in the control group.)  Next, we use the coefficients
+  regression.  In a smaller data set, this example should probably be
+  changed to include all the data in this estimation (using
+  \texttt{data = match.data(m.out1)} for the data) and by including
+  the treatment indicator (which is excluded in the example since its
+  a constant in the control group.)  Next, we use the coefficients
   estimated in this way from the control group, and combine them with
   the values of the covariates set to the values of the treated units.
   We do this by choosing conditional prediction (which means use the
@@ -113,10 +116,9 @@ Finally, we obtain a summary of the results by
 > summary(s.out1)
 \end{verbatim}
 
-\item[Average Treatment Effect (Overall)] Our second example estimates
-  the average treatment effect overall (on both the treated and the
-  control groups).  To do this, we fit the linear model to the {\it
-    treatment group}:
+\item[Average Treatment Effect (Overall)] To estimate the average
+  treatment effect, we continue with the previous example and fit the
+  linear model to the {\it treatment group}:
 \begin{verbatim}
 > z.out2 <- zelig(re78 ~ age + educ + black + hispan + nodegree + 
                   married + re74 + re75, data = match.data(m.out1, "treat"), 
@@ -145,16 +147,15 @@ interval is given by
 > quantile(ate.all, c(0.025, 0.975))
 \end{verbatim}
   
-\item[Subclassification] Our third example uses subclassification. In
-  this case, the average treatment effect estimates are obtained
-  separately for each subclass as well as for the overall sample.
-  Estimating the treatment effects separately for each subclass, and
-  then aggregating across subclasses, can increase the robustness of
-  the ultimate results since the parametric analysis within each
-  subclass requires only local rather than global assumptions.
-  However, fewer observations are obviously available within each
-  subclass, and so this option is normally chosen for larger data
-  sets.
+\item[Subclassification] In subclassification, the average treatment
+  effect estimates are obtained separately for each subclass, and then
+  aggregated for an overall estimate.  Estimating the treatment
+  effects separately for each subclass, and then aggregating across
+  subclasses, can increase the robustness of the ultimate results
+  since the parametric analysis within each subclass requires only
+  local rather than global assumptions.  However, fewer observations
+  are obviously available within each subclass, and so this option is
+  normally chosen for larger data sets.
 
   We begin this example by conducting subclassification with four
   subclasses,
