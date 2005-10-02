@@ -123,11 +123,11 @@ matching methods. These arguments apply to all matching methods {\it
     matching will restrict the donor pool, or when you do not wish to
     change the quantity of interest and the parametric methods to be
     used post-matching can be trusted to extrapolate.
+  \item \texttt{"convex.hull"}: discards control units not within the
+    convex hull of the treated units.  We recommend that this option
+    be used with observational data sets.
   \item \texttt{"both"}: all units (treated and control) that are
-    outside the support of the distance measure will be discarded. Use
-    this option when the units to be matched are substantially
-    different (when there is a large degree of non-overlapping support
-    on the distance score).
+    outside the support of the distance measure will be discarded.
   \item \texttt{"control"}: only control units outside the support of
     the distance measure of the treated units will be discarded.  Use
     this option when the average treatment effect on the treated is of
@@ -138,8 +138,6 @@ matching methods. These arguments apply to all matching methods {\it
     the distance measure of the control units will be discarded.  Use
     this option when the average treatment effect on the control units
     is of most interest and when unwilling to discard control units.
-  \item \texttt{"convex.hull"}: discards control units not within the
-    convex hull of the treated units. 
   \end{itemize}
   
 \item \texttt{reestimate}: If {\tt FALSE} (default), the model for the
