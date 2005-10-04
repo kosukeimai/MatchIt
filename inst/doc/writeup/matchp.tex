@@ -1370,25 +1370,28 @@ end.
 
 \paragraph{Better Balance Evaluations}
 
-Thus, instead of hypothesis tests for assessing balance, we need to
+Instead of using hypothesis tests for assessing balance, we need to
 assess the difference in the multivariate empirical densities of $X$
 for the treatment and control groups.  Since working with multivariate
 densities is difficult, we follow the common procedure of working with
 lower dimensional summaries, but we do so by directly assessing
-differences in the densities.  
+differences.  We also strongly recommend that the measures applied be
+presented in the units of the original variables, so that the
+substance of the problem is emphasized and 
 
-Perhaps the simplest low dimensional summary compares the mean of each
-variable in $X$ for the treated group with the mean of each variable
-in the control group.  The smaller these are the better.  One rule of
-thumb that has been offered is if one or more of these differ by more
-than half a standard deviation of the respective $X$ variable, then
-better balance is needed \citep{Cochran68}, although in practice one
-should look for much smaller deviations.  We can also compare the
-variances of each variable between the two groups, as well as
-interactions or higher order moments.  Another useful procedure is to
-compare treatment and control histograms one variable at a time,
-although these histograms should be treated as summaries of the data
-and not estimates of population densities.
+  For example, a particularly simple low dimensional
+summary compares the mean of each variable in $X$ for the treated
+group with the mean of each variable in the control group.  The
+smaller these are the better.  One rule of thumb that has been offered
+is if one or more of these differ by more than half a standard
+deviation of the respective $X$ variable, then better balance is
+needed \citep{Cochran68}, although in practice one should look for
+much smaller deviations.  We can also compare the variances of each
+variable between the two groups, as well as interactions or higher
+order moments.  Another useful procedure is to compare treatment and
+control histograms one variable at a time, although these histograms
+should be treated as summaries of the data and not estimates of
+population densities.
 
 A paradoxical but useful procedure is to compare the histogram of the
 propensity scores of the control units with that of the treated units.
