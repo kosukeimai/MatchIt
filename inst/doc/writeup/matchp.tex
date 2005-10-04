@@ -1214,7 +1214,7 @@ then we use it.  If not, we try even more elaborate specifications
 or others) or more sophisticated matching methods
 \citep{Frolich04,SmiTod05}.
 
-\paragraph{Which Observations to Matching}
+\paragraph{Deciding Which Observations to Match}
 The collective wisdom of the literature recommends the following three
 procedures for the actual process of choosing matched data sets.
 First, if many more control than treatment units are available,
@@ -1270,11 +1270,9 @@ adjust for a univariate covariate such as the propensity score
 appreciated that as $n$ increases more subclasses are generally
 preferable.  In addition, the number and definition of the subclasses
 should be tuned to the nature of the empirical distributions to ensure
-adequate treatment and control units in each subclass.  Two useful
-alternatives include ``full matching'' methods, which offer variable
-numbers of matches in each subclass \citep{Hansen04}, or the promising
-new approach which implements a predominantly automated search for the
-best match \citep{DiaSek05}.
+adequate treatment and control units in each subclass.  A useful
+alternative is ``full matching'' methods, which offer variable numbers
+of matches in each subclass \citep{Hansen04}.
 
 \paragraph{The Balance Test Fallacy}
 
@@ -1368,59 +1366,83 @@ end.
   \label{f:tstat}
 \end{figure}
 
-\paragraph{Better Balance Evaluations}
+\paragraph{Better Matching Evaluations}
 
 Instead of using hypothesis tests for assessing balance, we need to
 assess the difference in the multivariate empirical densities of $X$
 for the treatment and control groups.  Since working with multivariate
 densities is difficult, we follow the common procedure of working with
 lower dimensional summaries, but we do so by directly assessing
-differences.  We also strongly recommend that the measures applied be
-presented in the units of the original variables, so that the
-substance of the problem is emphasized and 
+differences.  We also recommend that the measures applied be presented
+in the units of the original variables, so that the substance of the
+problem is emphasized and the relationship between the size of the
+remaining imbalance can be compared to one's views about the potential
+importance of this variable in question.
 
-  For example, a particularly simple low dimensional
-summary compares the mean of each variable in $X$ for the treated
-group with the mean of each variable in the control group.  The
-smaller these are the better.  One rule of thumb that has been offered
-is if one or more of these differ by more than half a standard
-deviation of the respective $X$ variable, then better balance is
-needed \citep{Cochran68}, although in practice one should look for
-much smaller deviations.  We can also compare the variances of each
-variable between the two groups, as well as interactions or higher
-order moments.  Another useful procedure is to compare treatment and
-control histograms one variable at a time, although these histograms
-should be treated as summaries of the data and not estimates of
-population densities.
-
-A paradoxical but useful procedure is to compare the histogram of the
-propensity scores of the control units with that of the treated units.
-This is paradoxical (and part of the propensity score tautology)
-because it relies on the propensity score as a summary of the data to
-check whether propensity score matching is adequate.  It is useful
-nonetheless as one of our procedures for checking balance because it
-offers a low dimensional summary not obviously worse than the others
-we have discussed already.  Indeed, for the reasons discussed above,
-it is often a particularly good low dimensional summary.
+One particularly simple low dimensional summary compares the mean of
+each variable in $X$ for the treated group with the mean of each
+variable in the control group.  The smaller these are the better.  One
+rule of thumb that has been offered is if one or more of these differ
+by more than half a standard deviation of the respective $X$ variable,
+then better balance is needed \citep{Cochran68}, but finding ``small''
+imbalance in the original units is the real goal.  It is also useful
+to compare the standard deviations of each variable between the two
+groups, as well as interactions or higher order moments.  Another
+useful procedure is to compare treatment and control histograms one
+variable at a time or in pairs if enough data are
+available.
 
 Our preferred approach is to use a quantile-quantile plot, or QQ-plot,
 for each variable (and often their interactions) to compare the
-distributions of the densities for the treated and control groups.
-QQ-plots are usually the best way to compare two distributions: they
-plot the quantiles of the cumulative distribution of each group
-against each other in a square plot (we give examples in Section
-\ref{s:emp}).  When space is a concern, we summarize these plots with
-mean and maximum deviation between the two distributions on the scale
-of the variables being measured.
+distributions of the full densities for the treated and control groups
+for each variable.  QQ-plots are usually the best way to compare two
+distributions: they plot the quantiles of the cumulative distribution
+of the treatment group against the control gruop in a square plot (we
+give examples in Section \ref{s:emp}).  When space is a concern, we
+summarize these plots with mean and maximum deviation between the two
+distributions on the scale of the variables being measured (on the
+plot this is the average or maximum deviation from the 45 degree
+line).\footnote{A paradoxical but useful procedure is to examine the
+  QQ plot of the propensity scores of the control and treated units.
+  This is paradoxical (and part of the propensity score tautology)
+  because it relies on the propensity score as a summary of the data
+  to check whether propensity score matching is adequate.  It is
+  useful nonetheless as one of our procedures for checking balance
+  because it offers a low dimensional summary not obviously worse than
+  the examining variables one at a time.  Indeed, for the reasons
+  discussed above, it is often a good low dimensional summary.}
+
+The immediate goal of matching is balance, which involves creating a
+data set with less dependence between $t$ and $X$.  Since comparing
+multidimensional histograms is usually infeasible, evaluating balance
+should always be done with multiple one (or higher) dimensional
+summaries.  Relying on any one measure will never be adequate unless
+matching is exact.  In addition, the ultimate goal of matching is not
+merely balance, but reducing bias in estimating the causal effect of
+$t$ on $Y$.  We exclude any information from $Y$ in the matching
+procedure so as not to include selection bias, but we must remember
+that causal estimation bias is a function of both imbalance for our
+covariates \emph{and} our best prior information about the importance
+of each covariate (the effect of $X$ on $Y$ controlling for $t$).
+Obtaining good balance on covariates that are likely to be important
+is more crucial than those that have less of an effect since important
+covariates will inflate any remaining imbalance to produce more bias.
+Thus obtaining a good matched data set requires careful assessment and
+evaluation through multiple objective functions, as well as the
+combination of the quantitative information above and available prior
+information about the likely relative importance each of one's
+covariates.  Automated searches, such as the promising approach of
+\citet{DiaSek05}, can be useful in finding good matches to evaluate so
+long as balance is assessed by the same rules.
 
 If some covariates are omitted from some of the matching procedures,
 the balance on them should still be checked.  Doing so is often a good
 way to discover important covariates, since in fact researchers
 frequently have good qualitative knowledge of variables not coded in
-$X$, especially in nonsurvey data \citep[][Ch.3]{Rosenbaum02}.
-Indeed, preprocessing can help researchers better understand their
-data when supplemented by good qualitative information and research
-\citep[e.g.,][]{RosSil01}.
+$X$, especially in nonsurvey data on countries or regions
+\citep[][Ch.3]{Rosenbaum02}.  Indeed, preprocessing can help
+researchers better understand their data when supplemented by good
+qualitative information and research \citep[e.g.,][]{RosSil01}.
 
 If meeting these criteria for balance proves impossible, we then need
 to recognize that preprocessing by matching may not be helpful.  But
