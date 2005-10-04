@@ -783,8 +783,8 @@ approximately 0.25; values greater than that imply that the groups
 have means that are more than a quarter of a standard deviation apart.
 \item The final three columns of the summary output give summary statistics
 of a Q-Q plot (see below for more information on these plots). Those
-columns give the median, mean, and maximum orthogonal deviations from
-the 45-degree line of the Q-Q plot.  If the empirical distributions of
+columns give the median, mean, and maximum differences between quantiles of treated and control covariates.  If the empirical 
+distributions of
 the two groups (treated and control) were exactly the same, all points
 would lie on the 45-degree line and thus all of these distances would
 be 0.  Values greater than 0 indicate deviations between the groups in
@@ -1078,8 +1078,7 @@ elements, when applicable:
   \item summary statistics from a Q-Q plot, which compares treated and
     control covariate distributions, where \texttt{QQ Med}, \texttt{QQ
       Mean}, and \texttt{QQ Max} indicate the median, mean, and
-    maximum orthogonal deviations from the 45 degree line of a Q-Q
-    plot.
+    maximum quantile differences.
   \item standardized bias statistics, $${\rm Std.
       Bias}=\frac{\mu_{X|T=1} - \mu_{X|T=0}}{s_{x|T=1}}.$$
   \end{itemize}
