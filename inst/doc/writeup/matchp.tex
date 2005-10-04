@@ -1412,28 +1412,32 @@ line).\footnote{A paradoxical but useful procedure is to examine the
   the examining variables one at a time.  Indeed, for the reasons
   discussed above, it is often a good low dimensional summary.}
 
-The immediate goal of matching is balance, which involves creating a
-data set with less dependence between $t$ and $X$.  Since comparing
-multidimensional histograms is usually infeasible, evaluating balance
-should always be done with multiple one (or higher) dimensional
-summaries.  Relying on any one measure will never be adequate unless
-matching is exact.  In addition, the ultimate goal of matching is not
-merely balance, but reducing bias in estimating the causal effect of
+The immediate goal of matching is balance, which involves adjusting
+the data set to reduce dependence between $t$ and $X$.  Since for
+feasibility scholars will use one dimensional summaries to substitute
+for the comparison of multidimensional histograms, evaluating balance
+should always be done in multiple ways.  Relying on any one measure to
+assess balance will never be adequate (unless matching is exact).  
+
+In addition, the ultimate goal of matching is not merely balance, but
+reducing bias and model dependence in estimating the causal effect of
 $t$ on $Y$.  We exclude any information from $Y$ in the matching
-procedure so as not to include selection bias, but we must remember
-that causal estimation bias is a function of both imbalance for our
-covariates \emph{and} our best prior information about the importance
-of each covariate (the effect of $X$ on $Y$ controlling for $t$).
-Obtaining good balance on covariates that are likely to be important
-is more crucial than those that have less of an effect since important
-covariates will inflate any remaining imbalance to produce more bias.
-Thus obtaining a good matched data set requires careful assessment and
-evaluation through multiple objective functions, as well as the
-combination of the quantitative information above and available prior
-information about the likely relative importance each of one's
-covariates.  Automated searches, such as the promising approach of
-\citet{DiaSek05}, can be useful in finding good matches to evaluate so
-long as balance is assessed by the same rules.
+procedure so as to avoid selection bias, but the key is that causal
+estimation bias and model dependence is a function of both imbalance
+in our covariates \emph{and} our best prior information about the
+importance of each covariate (the effect of $X$ on $Y$ controlling for
+$t$).  Obtaining good balance on covariates that are likely to be
+important is more crucial than those that have less of an effect since
+important covariates will inflate any remaining imbalance to produce
+more model dependence.  Thus obtaining a good matched data set
+requires careful assessment and evaluation through multiple objective
+functions (none of which involve balance hypothesis tests), as well as
+the combination of the quantitative measures discussed above and
+available prior information about the likely relative importance of
+each of one's covariates.  So long as balance is assessed by the same
+standards, automated searches, such as the promising approach of
+\citet{DiaSek05} and which our software incorporates, can also be
+useful in finding good matches to evaluate.
 
 If some covariates are omitted from some of the matching procedures,
 the balance on them should still be checked.  Doing so is often a good
@@ -2005,12 +2009,15 @@ when checking lower dimensional summaries.  Even if we are
 uninterested in testing these with our parametric model, they can
 affect our estimates.  Such will be the case with parametric models
 with or without preprocessing, and so in all but the most unusual
-cases at least preprocessing should not hurt.  One pathological case
-where preprocessing could hurt is if some covariate has a huge effect
-on the outcome variable and preprocessing slightly reduces balance on
-this variable but improves it for all the others.  A researcher might
-be fooled into choosing a matching tradeoff like this if he or she
-were not aware of the large effect of this covariate.
+cases preprocessing should at least not make things worse.  One
+pathological case where preprocessing could hurt is if some covariate
+has a huge effect on the outcome variable and preprocessing slightly
+reduces balance on this variable but improves it for all the others.
+A researcher might be fooled into choosing a matching tradeoff like
+this if he or she were not aware of the large effect of this
+covariate.  Carefully evaluating what covariates are likely to have
+the largest effects, and using multiple measures of balance, are
+essential in avoiding this pitfall.
 
 Second, as with all statistical methods, a bias-variance tradeoff
 exists for matching.  If we drop many observations during
@@ -2027,8 +2034,8 @@ parametric analysis merely produces false precision.  So although
 estimated standard errors may increase in some cases with
 preprocessing, they would likely be more accurate.  Moreover, in many
 situations, eliminating observations far from the rest of the data as
-matching does will sometimes reduce heterogeneity and thereby reduce
-the variance.
+matching does will reduce heterogeneity and thereby reduce the
+variance.
 
 Third, the matching literature offers a large number of possible and
 seemingly ad hoc procedures.  From one perspective, we might be
@@ -2036,14 +2043,14 @@ concerned about the sensitivity of our results to changes in this
 process, just as we have been concerned with the sensitivity of causal
 effect estimates to parametric modeling assumptions.  This is not
 normally viewed as a major issue since the right procedure is the one
-that maximizes balance (with an as large as possible $n$), no matter
-how many procedures we try.  By applying this criterion in a
-disciplined way (i.e., without consulting $y$) to a large number of
-possible matching procedures, no choices are open to the analyst.
-Instead, researchers should merely run as many as possible and choose
-by this relatively automatic procedure.  Unlike parametric modeling
-exercises, we need not choose this matching procedure or another; we
-merely run as many as feasible or likely to reduce bias and apply this
+that maximizes balance (with $n$ as large as possible), no matter how
+many procedures we try.  By applying this criterion in a disciplined
+way (i.e., without consulting $y$) to a large number of possible
+matching procedures, no choices are open to the analyst.  Instead,
+researchers should merely run as many as possible and choose by this
+procedure.  Unlike parametric modeling exercises, we need not choose
+this matching procedure or another; we merely run as many as feasible,
+or likely to reduce bias and model dependence, and apply this
 criterion.
 
 Finally, by dropping observations, we may wind up losing some
@@ -2071,7 +2078,9 @@ never clear to a reader whether an article is a true test of an ex
 ante hypothesis, in the sense that the author was vulnerable to being
 proved wrong, or whether the article is merely a proof of the
 existence of at least one specification consistent with the author's
-favored hypothesis.
+favored hypothesis.  Researchers are often frustrated in how their key
+causal estimates depend sensitively on specification decisions they
+have not thought about and on which they have few real opinions.
 
 We provide a way around at least part of this problem.  Preprocessing
 raw data with the matching procedures we recommend makes familiar
@@ -2081,7 +2090,11 @@ insensitive to seemingly arbitrary choices in model specification.  If
 we read an article demonstrating that balance has been achieved for a
 data set, readers can worry considerably less that slightly different
 specifications than those discussed in the text will greatly alter its
-empirical conclusions.
+empirical conclusions.  Analysts using preprocessing have two chances
+to get their analysis right, in that if either the matching procedure
+or the subsequent parametric analysis is specified correctly (and even
+if one of the two is incorrectly specified), causal estimates will
+still be consistent.
 
 Alternative approaches to reducing model dependence include
 cross-validation \citep{BlaSmi04}, weighting \citep{RobRot03,
@@ -2089,8 +2102,8 @@ cross-validation \citep{BlaSmi04}, weighting \citep{RobRot03,
 fitting checks for parametric models.  Although when used properly
 each of these approaches reduce model dependence, matching is simpler
 to use and understand, and would work without modification to improve
-all the parametric models now used in the social sciences.  It even
-works well with these ``alternative'' approaches.
+all the parametric models now used in the social sciences.  Matching
+even works well with these ``alternative'' approaches.
 
 \appendix
 \section{Matching Software}\label{s:matchit}
