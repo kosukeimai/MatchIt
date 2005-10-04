@@ -1009,36 +1009,26 @@ property does not apply to using matching with a difference in means.
 In this section, we organize the practical information available in
 the largely theoretical statistics, economics, epidemiology, medical,
 and biostatistics literatures on matching.  We give special attention
-to the variety of important instances where the theoretical literature
-has been grossly misunderstood by applied researchers and others
-across fields.  For reviews of the technical literatures, see
-\citet{Imbens04}, \citet{Rosenbaum02}, and \citet{Stuart04} and the
-detailed user's guide to the software that accompanies this
-paper.% (see Appendix \ref{s:matchit}).
+to important instances where the theoretical literature has been
+grossly misunderstood by applied researchers and others across fields.
+(For technical literature reviews, see \citet{Imbens04},
+\citet{Rosenbaum02}, and \citet{Stuart04} and the detailed user's
+guide to the software that accompanies this paper; see Appendix
+\ref{s:matchit}).
 
 The goal of matching is to improve \emph{balance}, the degree to which
 the treatment and control $X$ distributions resemble each other,
-without losing too many observations in the
-process.\footnote{Selecting observations to make the distributions
-  look similar is traditionally broken into two components: ensuring
-  common support by pruning observations where the empirical densities
-  do not overlap and weighting or parametric adjustment to make the
-  portions of the densities that do overlap have the same heights.}
-The main diagnostic of success is also balance (as well as the number
-of observations remaining).  We judge balance at first by taking the
-difference in the treatment and control group histograms for each
-variable in $X$, and then usually proceed to compare the means of the
-squares and cross-products of the variables and higher order moments
-or with more dimensions.
-
-In seeking better balance, one can try any number of matching
-procedures, with the final preprocessed data set the one with the best
-balance.  To ensure that selection during preprocessing is only on $X$
-(to prevent inducing bias), the outcome variable $y$ should not be
-examined during the preprocessing stage.  As long as $y$ is not
-consulted, preprocessing cannot result in stacking the deck one way or
-another.  Experimentalists typically follow a similar procedure by
-repeating randomization as often as desired before collecting the
+without losing too many observations in the process.  The main
+diagnostic of success is also balance, the specific details of which
+we describe below, as well as the number of observations remaining
+after matching.  In seeking better balance, one can try any number of
+matching procedures, with the final preprocessed data set the one with
+the best balance.  To ensure that selection during preprocessing is
+only on $X$ (to prevent inducing bias), the outcome variable $y$
+should not be examined during the preprocessing stage.  As long as $y$
+is not consulted, preprocessing cannot result in stacking the deck one
+way or another.  Experimentalists typically follow a similar procedure
+by repeating randomization as often as desired before collecting the
 outcome data; if an undesirable randomization is obtained, such as
 with all men in the treated group and all women in the control group,
 they merely discard the first randomization and do it again until
@@ -1046,46 +1036,94 @@ better data are obtained \citep[see][]{Rubin01}.
 
 We discuss four aspects of preprocessing, followed by standard
 parametric modeling of the preprocessed data set.  We describe this
-procedure for the ATT, and so the matching is designed to choose
-control units that look most like the treated units.
+procedure for the ATT, so the matching is designed to choose control
+units that look most like the treated units.
 
 \paragraph{Selecting Covariates}
 All variables in $X$ that would have been included in a parametric
 model without preprocessing should be included in the matching
 procedure.  By the usual rules for avoiding omitted variable bias
 these should include all variables that affect both the treatment
-assignment and the dependent variable, controlling for the treatment
-(and exclude variables affected by the treatment).  The theoretical
-literature emphasizes that including variables only weakly related to
-treatment assignment usually reduces bias more than it will increase
-variance \citep{RubTho96, HecIchSmi98}, and so most believe that all
-available control variables should always be included.  However, the
-theoretical literature has focused primarily on the case where an
-exceptionally large pool of potentical control units are available.
-Applied researchers seem to have incorrectly generalized this advice
-to all data sets.  If, as is often the case, the pool of potential
-controls is not much larger than the pool of treated units, then the
-usual econometric rules apply about the tradeoff between bias of
-excluding relevant variables and inefficiency of including irrelevant
-ones.
+assignment and, controlling for the treatment, the dependent variable.
+To avoid post-treatment bias, we should exclude variables affected by
+the treatment.  
+
+The theoretical literature emphasizes that including variables only
+weakly related to treatment assignment usually reduces bias more than
+it will increase variance \citep{RubTho96, HecIchSmi98}, and so most
+believe that all available control variables should always be
+included.  However, the theoretical literature has focused primarily
+on the case where an exceptionally large pool of potential control
+units are available.  Applied researchers seem to have incorrectly
+generalized this advice to all data sets.  If, as is often the case,
+the pool of potential controls is not much larger than the pool of
+treated units, then the usual econometric rules apply about the
+tradeoff between bias of excluding relevant variables and inefficiency
+of including irrelevant ones: researchers should not include every
+pre-treatment explantory variable available.
+
+\paragraph{Common Support Problems}
+
+Finding balance is traditionally broken into two components: ensuring
+\emph{common support} by pruning observations where the empirical
+density of the control units and that for the treated units do not
+overlap and additional selection (or later adjustment) to make the
+portions of the densities that do overlap have the same heights.
+Areas outside of common support are particularly problematic since
+they require extrapolation, which can generate considerable model
+dependence.  And indeed the farther the extrapolation is from the data
+the larger can be the model dependence.  For example, asking in 2001,
+what Iraq would be like if the U.S.\ attempted to impose democracy
+there, was pure extrapolation since the U.S.\ had not previously
+attempted the same thing in another country like Iraq in all relevant
+respects.  Making such an inference could only be made on the basis of
+theoretical modeling assumptions because relevant empirical
+observations from the control group do not exist.
+
+In the applied literature, researchers often skip this step, which can
+be a major mistake.\footnote{Some try to find common support by using
+  the ``propensity score,'' which we describe below.  This approach is
+  flawed, however, since the propensity score can only be used to to
+  find common support when it is validated, but validation cannot
+  occur when the data include observations outside common support
+  \citep[see][]{KinZen06a} and the discussion below.}  After all,
+balance always be improved and potential model dependence reduced by
+removing units that require extrapolation.  Part of the reason this
+step is skipped so often is that it has not until recently been clear
+how to identify units that require extrapolation.  Fortunately,
+\citet{KinZen06a} have developed an easy approach by pruning
+observations from the control group that are outside of the ``convex
+hull'' of the treatment group.  With one pre-treatment covariate, the
+convex hull of the treatment group is merely the range of the subset
+of observations of $X$ that are in the treatment group (because
+$t_i=1$), so control units greater than max($X$) or less than min($X$)
+are discarded.  The general definition of the convex hull (which is
+more sophisticated than the range in multiple dimensions) also works
+to define regions of extrapolation with any number of
+covariates.\footnote{Similarly, if any treated units fall outside the
+  convex hull of the control units, these too are often discarded.
+  Dropping treated units changes the causal effect being estimated,
+  and so should be done with more caution, but if it remains a
+  relevant quantity of interest, at least it can be estimated in a
+  reasonable way.}
 
 \paragraph{Exact Matching}  
 It is always worth checking to see whether each treated unit can be
 matched to all control units with exactly the same covariate values.
-This procedure is more general than one-to-one exact matching, since
-we use as many control units as are available for each treated unit.
-If a large number of units were matched, then we have exact balance
-with little inefficiency and we may skip the remaining steps.  Indeed,
-exact balance means that a difference in means is sufficient for the
-parametric analysis (but be sure to weight if very different numbers
-of matches are included for each unit).  If insufficient matches are
-found, we either repeat the exact matching with fewer covariates or
-switch to propensity score matching, described below.  In the former,
-we balance the included variables but do not balance at all on the
-rest.  The excluded variables may be partially balanced due to
-correlations with the included variables, but some balance will be
-absent.  In contrast, propensity score matching uses all variables but
-only approximately matches.
+This procedure is more general than the more commonly tried one-to-one
+exact matching, since we use as many control units as are available
+for each treated unit.  If a large number of units were matched, then
+we have exact balance with little inefficiency and we may skip the
+remaining steps.  Indeed, exact balance means that a difference in
+means is sufficient for the parametric analysis (but be sure to weight
+if very different numbers of matches are included for each unit).  If
+insufficient matches are found, we either repeat the exact matching
+with fewer covariates or switch to other methods, described below.  In
+the former, we balance the included variables but do not balance at
+all on the rest.  The excluded variables may be partially balanced due
+to correlations with the included variables, but some balance will be
+absent.  In contrast, other methods, such as propensity score
+matching, uses all variables but only approximately matches.
 
 \paragraph{The Propensity Score Tautology}
 A commonly used matching procedure is to summarize all the variables
@@ -1093,25 +1131,23 @@ in $X$ with a single variable called the \emph{propensity score}
 \citep{RosRub83}.  The propensity score is the true probability of
 unit $i$ receiving treatment, given the covariates $X_i$, $e_i(X_i) =
 p(t_i=1 | X_i)$.  It is usually estimated via a logistic regression of
-$t_i$ on a constant term and $X_i$ (without regard to the dependent
-variable).  Unfortunately, the role fo the propensity score in the
-theoretical literature differs profoundly from the way it has been
-widely used in practice.  Understanding this disconnect, an
-explanation of which to our knowledge has not explicitly appeared
-before in the literature, is fundamental to making good practical use
-of this important concept.
+$t_i$ on a constant term and $X_i$ (without regard to $y$).
+Unfortunately, the role of the propensity score in the theoretical
+literature differs profoundly from the way it has been widely used in
+practice.  Understanding this disconnect, an explanation of which to
+our knowledge has not explicitly appeared before in the literature, is
+fundamental to making good practical use of this important concept.
 
 Theoretically, the true propensity score is valuable because it is a
 ``balancing score,'' meaning that if a group of units have similar
-propensity score distributions, then the covariates will be balanced
-in the treated and control groups on all variables in $X$.  In
-addition, if the treatment assignment is ignorable given the
-covariates $X$, then it is also ignorable given only the propensity
-score.  This means that matching can be done using just the
-one-dimensional propensity score, instead of all of the covariates
-$X$.  Using the true propensity score in this way, as does much of the
-applied literature, would thus apparently solve the curse of
-dimensionality for matching.
+propensity score distributions, then all the covariates will be
+balanced in the treated and control groups.  In addition, if treatment
+assignment is ignorable given the covariates $X$, then it is also
+ignorable given only the propensity score.  This means that matching
+can be done using just the one-dimensional propensity score, instead
+of all of the variables in $X$.  Using the true propensity score in
+this way, as does much of the applied literature, would thus
+apparently solve the curse of dimensionality for matching.
 
 In practice, however, we do not know the \emph{true} propensity score
 (except in unusual situations like experiments).  We would still be
@@ -1145,9 +1181,9 @@ theoretical results about the true or consistently estimated score.
 The goal of matching is to achieve the best balance for a large number
 of observations, using any method of matching that is a function of
 $X$, so long as we do not consult $y$.  As it turns out, and for
-whatever reason, one such method that researchers have found useful in
-some applications is based on propensity scores.  The reason the
-propensity score approach often works in practice to balance the
+whatever reason, one such method that researchers sometimes find
+useful in some applications is based on propensity scores.  The reason
+the propensity score approach often works in practice to balance the
 covariates relatively quickly may be related to its as yet unproven
 theoretical properties, but this conjecture is irrelevant to making
 valid causal inferences.  At least given the current state of the
@@ -1155,8 +1191,8 @@ literature, only the propensity score tautology is useful in practice.
 Other theoretical results have no direct bearing on practice.
 
 In applications, the usual practice is to estimate the propensity
-score by a logistic regression of $t_i$ on $X_i$ and a constant term.
-Since we are in the situation where exact matching is insufficient, we
+score by a logistic regression of $t_i$ on $X_i$.  Since we are in the
+situation where exact matching is insufficient, the procedure is to
 match each treated unit to the control unit with the most similar
 value of the estimated propensity score $\hat{e}_i$ (which is known as
 nearest neighbor matching on the propensity score).\footnote{When
@@ -1170,24 +1206,25 @@ nearest neighbor matching on the propensity score).\footnote{When
   distance within matched units \citep[e.g.,][]{Rosenbaum89}.  Our
   software implements both, incorporating optimal matching code
   provided by \citet{Hansen04}.}  If this procedure balances $X$ (and
-thus satisfies the procedures for checking balance we describe in Step
-4), we use it.  If not, then we respecify the logistic regression by
+thus satisfies the procedures for checking balance we describe below),
+we use it.  If not, then we respecify the logistic regression by
 adding interactions or squared terms and match again.  If that works,
 then we use it.  If not, we try even more elaborate specifications
 (such as other functional forms such as CART, neural network analyses,
 or others) or more sophisticated matching methods
 \citep{Frolich04,SmiTod05}.
 
-The collective wisdom of the literature also recommends four more
-specific rules for applying propensity scores.  First, if many more
-control than treatment units are available, choosing more than one
-control match for each treated unit will increase the efficiency of
-the procedure (although each match past the first usually reduces the
-variance somewhat less than the previous one), and can in some
-instances greatly reduce the bias too \citep{Smith97}.  If, instead,
-fewer controls are available than those treated, then matching with
-replacement --- allowing each control unit to be matched to more than
-one treated unit --- is a good option \citep{DehWah99}.
+\paragraph{Which Observations to Matching}
+The collective wisdom of the literature recommends the following three
+procedures for the actual process of choosing matched data sets.
+First, if many more control than treatment units are available,
+choosing more than one control match for each treated unit will
+increase the efficiency of the procedure (although each match past the
+first usually reduces the variance less than the previous one), and
+can in some instances greatly reduce the bias too \citep{Smith97}.
+If, instead, fewer controls are available than those treated, then
+matching with replacement --- allowing each control unit to be matched
+to more than one treated unit --- is a good option \citep{DehWah99}.
 Alternatively, we can consider switching the definition of treatment
 and control groups (although, if using ATT, this will change the
 substantive definition of the causal effect unless one uses more
@@ -1198,15 +1235,15 @@ evidence (but not from the present data set) that a small number of
 covariates have a disproportionately large effect on our outcome
 variable.  When this is the case, even slightly mismatching on these
 variables may severely bias our causal effect.  To avoid this problem,
-we match using two separate metrics, one for the large-effect
-variables and another for the rest.  If feasible, we create pools of
-exact matches on the large-effect variables and then use nearest
-neighbor propensity score matching based on the remaining variables to
+we suggest matching using two separate metrics, one for the
+large-effect variables and another for the rest.  If feasible, we
+create pools of exact matches on the large-effect variables and then
+use nearest neighbor matching based on the remaining variables to
 choose specific matches within these pools.  If exact matching does
 not turn up sufficient observations, then we can choose the nearest
 neighbor on the large-effect variables, defined by the Mahalanobis
-distance, among all units within 0.25 standard deviations (also known
-as ``calipers'') of the propensity score computed from all
+distance, among all units within say 0.25 standard deviations (also
+known as ``calipers'') of the propensity score computed from all
 variables.\footnote{The 0.25 standard deviation figure, although not a
   universal constant of nature, is the most common recommendation in
   the literature; it appears to have been interpolated from the
@@ -1218,16 +1255,6 @@ If some of the variables in $X$ represent binary variables with very
 few in one category, common practice is to include them in the
 propensity score but not in the Mahalanobis distance calculation
 (\citealp{GuRos93, RubTho00}).
-
-Third, if some control units fall outside the range (or ``common
-support'') of the treated propensity score values, then these controls
-cannot be adjusted to match the treated units without extrapolation.
-Common practice is to discard these control units.  Similarly, if any
-treated units fall outside the propensity score range of the control
-units, these too are discarded.  Dropping treated units changes the
-causal effect being estimated, but if it remains a relevant quantity,
-at least it can be estimated in a reasonable way.  Discarding these
-nonoverlapping observations eliminates the need for extrapolation.
 
 Finally, if finding a matching procedure with good balance and a large
 number of observations is difficult, subclassification can be a useful
@@ -1249,112 +1276,148 @@ numbers of matches in each subclass \citep{Hansen04}, or the promising
 new approach which implements a predominantly automated search for the
 best match \citep{DiaSek05}.
 
-\paragraph{Evaluating the Matching Procedure}
-%
-% after we settle on a numerical measure of good matching, revise this
-% section by greatly shortening it, discussing (a) multivariate
-% histograms, (b) qq plot var by var as a good, (c) then numerical
-% summaries such as max(qq diff), and intuitive summaries such as diff
-% in means, squares, interactions, etc.  Then add new section on the
-% The Hypothesis Testing for Balance Fallacy
+\paragraph{The Balance Test Fallacy}
 
 A good matching procedure reduces bias by increasing balance, does not
-increase the variance much by keeping the number of observations
-large, and prevents inducing new biases by matching only based on $X$
-without consulting $y$ until the analysis stage.  We assume matching
-is based only on $X$, and checking the number of observations
-remaining after matching is easy.  Thus, the main task of this section
-is to describe how to evaluate balance.
-
-Conceptually, verifying balance involves checking whether
+increase the variance much, and prevents inducing new biases by
+matching only based on $X$ without consulting $y$ until the analysis
+stage.  We assume matching is based only on $X$, and checking the
+number of observations remaining after matching is easy.  Thus, the
+main issue we address in this section and the next is how to evaluate
+balance.  Conceptually, verifying balance involves checking whether
 (\ref{balance}), $\tilde p(X|t=1)=\tilde p(X|t=0)$, holds.  One way to
 think about this process is to imagine, for all the variables in $X$,
-forming a multidimensional histogram of all the treated units and
+forming a multidimensional histogram for all the treated units and
 comparing it to another multidimensional histogram of all the control
 units.  Because of the curse of dimensionality, multidimensional
-histograms with more than a few covariates tend to be very sparse and
-so using them to estimate the two underlying probability densities in
-(\ref{balance}) will ordinarily be very difficult without access to an
-extraordinary number of observations.  Thus researchers usually
-examine various low dimensional summaries instead.  If a low
-dimensional summary differs between the treated and control groups
-then (\ref{balance}) does not hold.  The risk of course is that even
-if many low dimensional summaries are the same for the treatment and
-control groups, we still cannot be certain that (\ref{balance}) holds.
+histograms with more than a few covariates tend to be very coarse or
+have many empty bins, and so using them to estimate the two underlying
+probability densities in (\ref{balance}) will ordinarily be very
+difficult without access to an extraordinary number of observations.
+Thus researchers usually examine various low dimensional summaries
+instead.  If a low dimensional summary differs between the treated and
+control groups then (\ref{balance}) does not hold.  The risk of course
+is that even if the treatment and control groups match according to
+some low dimensional summaries, we still cannot be certain that
+(\ref{balance}) holds since it is a multivariate concept, and so using
+several different checks is always a good idea.
 
-Perhaps the simplest, and also most commonly used, low dimensional
-summary compares the mean of each variable in $X$ within the treated
-group with the mean of each variable in the control group.  If one or
-more of these differ by more than half a standard deviation of the
-respective $X$ variable, then theoretical results indicate better
-balance is needed \citep{Cochran68}, although in practice, one should
-look for much smaller deviations.  We can also compare the variances
-of each variable between the two groups, as well as interactions or
-higher order moments.  Another common approach is to compare treatment
-and control histograms one variable at a time, although these
-histograms should be treated as summaries of the data and not
-estimates of population densities.
+Here we describe what we call \emph{The Balance Test Fallacy}, which
+unfortunately characterizes most applications of matching in most
+fields.  The critical misunderstood point is that balance is a
+characteristic of the observed sample, not some hypothetical
+population.  The idea that hypothesis tests are useful for checking
+balance is therefore incorrect, and t-statistics below 2 and
+p-values above 0.05 have no special relevance for assessing balance.
 
-Some examine formal hypothesis tests for these mean, variance, and
-distribution differences, but balance is a characteristic of the
-observed sample, not some hypothetical population, and so hypothesis
-tests, although often providing convenient summaries of the data, are
-not relevant as inferences to a population; t-statistics below 2 and
-p-values above 0.05 have no special relevance to assessing balance.
-The closer the two observed treatment and control groups in the
-sample, the better.  Moreover, hypothesis tests can be highly
-misleading in the context of assessing balance since we would not want
-power reductions due to pruning observations, or dividing units into
-subclasses, to affect decision making about whether balance has been
-achieved, since ``insignificant'' differences between treatment and
-control groups can be due to good balance or inefficient estimates: we
-only require good balance.  Thus, for one example, better than using
-the t-statistic for the difference in means would be to use the raw
-difference in means; and better than both would be a quantile-quantile
-plot for each variable, since that tests the entire the equality of
-the full empricial distribution of the treatment and control groups.
+The fallacy has several serious implications.  First, balance tests do
+not provide levels below which imbalance can be ignored: The closer
+the two observed treatment and control groups in the sample, the
+better.  Even though we might use a hypothetical population that
+generates the observed $X$ to think about concepts like common
+support, it is the observed sample that is relevant for generating
+balance.  To see this, consider in assessing the effect of some
+treatment whether we want the treatment and control groups to be
+identical, or whether we should be willing to risk them being slightly
+different.  The problem that has been ignored is that if the
+difference, no matter how small, occurs for a variable that happens to
+have a large enough effect on $Y$, then this tiny or ``insignificant''
+imbalance can translate into a large bias in our causal estimates.
 
+The balance fallacy has led hypothesis tests to be used extensively in
+applications of matching.  Most commonly, tables of t-tests for
+differences in means are offered as evidence that balance has been
+``achieved''.  This is unfortunate since a better balanced sample,
+that would reduce bias even further, can often be found.  But even
+more importantly, hypothesis tests not only can cause one to stop too
+soon, but they can be highly misleading even when using them as
+objective functions to optimize.  In particular, hypothesis tests are
+functions of imbalance \emph{and} statistical power, the latter being
+irrelevant for this purpose.  Pruning too many observations reduces
+statistical power and thus affects the test, even if this pruning does
+not improve balance.
+
+To illustrate the dangers of using hypothesis tests to assess balance,
+we created a sequence of matched data sets by \emph{randomly} prunning
+increasing numbers of control group observations (from the real data
+set we analyze in Section \ref{s:carp}).  Random matching procedures
+have no systematic effect on balance.  Yet, consider the left graph in
+Figure \ref{f:tstat}, which plots the number of observations dropped
+(plotted horizontally) by the t-statistic (plotted vertically).  The
+area where the t-statistic falls below 2 is normally (but incorrectly)
+identified as ``insignificant imbalance,'' and clearly the t-statistic
+drops into this area (colored grey in the figure) only because of the
+sample size and regardless of the fact that the balance does not
+differ systematically as more observations are dropped.  Clearly,
+using t-statistics to assess balance in matching applications should
+end.
 \begin{figure}[t] 
  \begin{center}
-   \includegraphics[width=6in,height=4in]{figs/TStatPlote.pdf}
+   \includegraphics[height=4in]{figs/TStatPlote.pdf}
   \end{center}
   \vspace{-0.275in}
   \caption{Dangers in relying on t-statistics as measure of balance.
-    Each panel shows the effect of changing sample size on a measure
-    of balance.  The solid lines indicate the average value of the
-    statistic when a given number of control units are randomly
-    dropped from the data set (out of a total of 245 control units).
-    The dashed lines indicate the corresponding 95\% confidence
-    intervals.  With larger numbers of control units dropped (i.e.,
-    smaller numbers of control units in the resulting sample), the
-    t-statistic gets closer to 0, falsely indicating reductions in
-    balance with the smaller resulting sample sizes.  In fact, because
-    controls are dropped randomly, the balance is the same across all
-    data sets, regardless of sample size.}
-  \label{fg:tstat}
+    The solid lines in both graphs indicate the average value of a
+    measure of balance when a given number of control units are
+    randomly dropped from the data set (out of a total of 245).  With
+    larger numbers of control units dropped (i.e., smaller numbers of
+    control units in the resulting sample), the t-statistic gets
+    closer to 0, falsely indicating reductions in balance with the
+    smaller resulting sample sizes, even though true balance does not
+    vary systematically across the data sets.}
+  \label{f:tstat}
 \end{figure}
 
+\paragraph{Better Balance Evaluations}
 
-A paradoxical but quite useful procedure is to compare the histogram
-of the propensity scores of the control units with that of the treated
-units. This is paradoxical (and part of the propensity score
-tautology) because it relies on the propensity score as a summary of
-the data to check whether propensity score matching is adequate.  It
-is useful nonetheless as one of our procedures for checking balance
-because it offers a low dimensional summary not obviously worse than
-the others we have discussed already.  Indeed, for the reasons
-discussed above, it is often a particularly good low dimensional
-summary. (Some take this idea a step further and make the comparisons
-with formal hypothesis tests, although still conditional on the
-propensity score being correct; see \citealp{Sekhon04b}).
+Thus, instead of hypothesis tests for assessing balance, we need to
+assess the difference in the multivariate empirical densities of $X$
+for the treatment and control groups.  Since working with multivariate
+densities is difficult, we follow the common procedure of working with
+lower dimensional summaries, but we do so by directly assessing
+differences in the densities.  
+
+Perhaps the simplest low dimensional summary compares the mean of each
+variable in $X$ for the treated group with the mean of each variable
+in the control group.  The smaller these are the better.  One rule of
+thumb that has been offered is if one or more of these differ by more
+than half a standard deviation of the respective $X$ variable, then
+better balance is needed \citep{Cochran68}, although in practice one
+should look for much smaller deviations.  We can also compare the
+variances of each variable between the two groups, as well as
+interactions or higher order moments.  Another useful procedure is to
+compare treatment and control histograms one variable at a time,
+although these histograms should be treated as summaries of the data
+and not estimates of population densities.
+
+A paradoxical but useful procedure is to compare the histogram of the
+propensity scores of the control units with that of the treated units.
+This is paradoxical (and part of the propensity score tautology)
+because it relies on the propensity score as a summary of the data to
+check whether propensity score matching is adequate.  It is useful
+nonetheless as one of our procedures for checking balance because it
+offers a low dimensional summary not obviously worse than the others
+we have discussed already.  Indeed, for the reasons discussed above,
+it is often a particularly good low dimensional summary.
+
+Our preferred approach is to use a quantile-quantile plot, or QQ-plot,
+for each variable (and often their interactions) to compare the
+distributions of the densities for the treated and control groups.
+QQ-plots are usually the best way to compare two distributions: they
+plot the quantiles of the cumulative distribution of each group
+against each other in a square plot (we give examples in Section
+\ref{s:emp}).  When space is a concern, we summarize these plots with
+mean and maximum deviation between the two distributions on the scale
+of the variables being measured.
 
 If some covariates are omitted from some of the matching procedures,
 the balance on them should still be checked.  Doing so is often a good
 way to discover important covariates, since in fact researchers
 frequently have good qualitative knowledge of variables not coded in
-$X$ \citep[][Ch.3]{Rosenbaum02}.  Indeed, preprocessing can help
-researchers better understand their data when supplemented by good
-qualitative information and research \citep[e.g.,][]{RosSil01}.
+$X$, especially in nonsurvey data \citep[][Ch.3]{Rosenbaum02}.
+Indeed, preprocessing can help researchers better understand their
+data when supplemented by good qualitative information and research
+\citep[e.g.,][]{RosSil01}.
 
 If meeting these criteria for balance proves impossible, we then need
 to recognize that preprocessing by matching may not be helpful.  But
@@ -1447,7 +1510,7 @@ model to estimate $\mu_i(0)$ and its uncertainty, whereas if $t_i=0$,
 we set $\mu_i(0)=y_i$ and use the parametric model to estimate
 $\mu_i(1)$ and its uncertainty estimate.
 
-\section{Empirical Illustrations}
+\section{Empirical Illustrations}\label{s:emp}
 
 We now offer two empirical illustrations of how preprocessing raw data
 via nonparametric matching can reduce the dependence of parametric
@@ -1458,7 +1521,8 @@ and so we performed subclassification on the propensity score.  For
 pedagogical reasons, and to save space, we use different methods of
 checking balance via (\ref{balance}) in our two applications.
 
-\subsection{Democratic Senate Majorities and FDA Drug Approval Time}
+\subsection{Democratic Senate Majorities and FDA Drug Approval
+  Time}\label{s:carp}
 
 An influential article by \citet{Carpenter02} tests a key hypothesis in the
 literature on institutional and partisan determinants of regulatory
@@ -2001,37 +2065,6 @@ seamlessly with the general-purpose statistics program, Zelig
 Zelig without any extra steps.  MatchIt and Zelig are freely available
 and run under many operating systems via the open-source and free
 statistical program R.
-
-% For example, to use propensity score matching of a treatment
-% indicator, \texttt{treat}, and three pretreatment covariates, use this
-% command:
-% \begin{verbatim}
-% match.out <- matchit(treat ~ age + educ + black, data = lalonde)
-% \end{verbatim}
-% with the output stored as \texttt{match.out}.  For exact matching use:
-% \begin{verbatim}
-% match.out <- matchit(treat ~ age + educ + black, exact=TRUE, data = lalonde)
-% \end{verbatim}
-% Numerous other options are also available.  For example, suppose we
-% use MatchIt to subclassify into 5 classes by the propensity score:
-% \begin{verbatim}
-% match.out <- matchit(treat ~ age + educ + black, subclass=5, data = koch)
-% \end{verbatim}
-% Then we can easily use Zelig to estimate a parametric model (in this
-% case least squares regression) within each of the five subclasses
-% defined in MatchIt, using data from the control group:
-% \begin{verbatim}
-% z.out <- zelig(re78 ~ pscore, model = "ls", by = "psclass", 
-%                 data = match.data(match.out, "control"))
-% \end{verbatim}
-% With Zelig, we can also set the explanatory variables to predict the
-% missing potential outcomes under control for the treatment group and
-% simulate quantities of interest within each subclass:
-% \begin{verbatim}
-% x.out <- setx(z.out, data = match.data(match.out, "treat"), cond = TRUE)
-% s.out <- sim(z.out, x = x.out)
-% \end{verbatim}
-% The output automatically weights the results by the separate subclasses.
 
 \baselineskip=0.637\baselineskip 
 \bibliographystyle{apsr}
