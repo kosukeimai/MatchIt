@@ -1300,13 +1300,13 @@ some low dimensional summaries, we still cannot be certain that
 (\ref{balance}) holds since it is a multivariate concept, and so using
 several different checks is always a good idea.
 
-Here we describe what we call \emph{The Balance Test Fallacy}, which
+Here we describe what we call the balance test fallacy, which
 unfortunately characterizes most applications of matching in most
 fields.  The critical misunderstood point is that balance is a
 characteristic of the observed sample, not some hypothetical
 population.  The idea that hypothesis tests are useful for checking
-balance is therefore incorrect, and t-statistics below 2 and
-p-values above 0.05 have no special relevance for assessing balance.
+balance is therefore incorrect, and t-statistics below 2 and p-values
+above 0.05 have no special relevance for assessing balance.
 
 The fallacy has several serious implications.  First, balance tests do
 not provide levels below which imbalance can be ignored: The closer
@@ -1322,13 +1322,13 @@ difference, no matter how small, occurs for a variable that happens to
 have a large enough effect on $Y$, then this tiny or ``insignificant''
 imbalance can translate into a large bias in our causal estimates.
 
-The balance fallacy has led hypothesis tests to be used extensively in
-applications of matching.  Most commonly, tables of t-tests for
-differences in means are offered as evidence that balance has been
-``achieved''.  This is unfortunate since a better balanced sample,
-that would reduce bias even further, can often be found.  But even
-more importantly, hypothesis tests not only can cause one to stop too
-soon, but they can be highly misleading even when using them as
+The balance test fallacy has led hypothesis tests to be used
+extensively in applications of matching.  Most commonly, tables of
+t-tests for differences in means are offered as evidence that balance
+has been ``achieved''.  This is unfortunate since a better balanced
+sample, that would reduce bias even further, can often be found.  But
+even more importantly, hypothesis tests not only can cause one to stop
+too soon, but they can be highly misleading even when using them as
 objective functions to optimize.  In particular, hypothesis tests are
 functions of imbalance \emph{and} statistical power, the latter being
 irrelevant for this purpose.  Pruning too many observations reduces
@@ -1346,9 +1346,12 @@ area where the t-statistic falls below 2 is normally (but incorrectly)
 identified as ``insignificant imbalance,'' and clearly the t-statistic
 drops into this area (colored grey in the figure) only because of the
 sample size and regardless of the fact that the balance does not
-differ systematically as more observations are dropped.  Clearly,
-using t-statistics to assess balance in matching applications should
-end.
+differ systematically as more observations are dropped.  In fact,
+since hypothesis test are driven in part by factors other than
+balance, we should not even expect them in to be monotonic in balance:
+the t-test can get apparently better while balance gets worse, or vice
+versa.  Using hypothesis statistics to assess balance in matching
+applications should end.
 \begin{figure}[t] 
  \begin{center}
    \includegraphics[height=4in]{figs/TStatPlote.pdf}
@@ -1402,24 +1405,36 @@ give examples in Section \ref{s:emp}).  When space is a concern, we
 summarize these plots with mean and maximum deviation between the two
 distributions on the scale of the variables being measured (on the
 plot this is the average or maximum deviation from the 45 degree
-line).\footnote{A paradoxical but useful procedure is to examine the
-  QQ plot of the propensity scores of the control and treated units.
-  This is paradoxical (and part of the propensity score tautology)
-  because it relies on the propensity score as a summary of the data
-  to check whether propensity score matching is adequate.  It is
-  useful nonetheless as one of our procedures for checking balance
-  because it offers a low dimensional summary not obviously worse than
-  the examining variables one at a time.  Indeed, for the reasons
-  discussed above, it is often a good low dimensional summary.}
+line).\footnote{For example, the maximum distance of quantile functions, is
+  given by $\max_{0 \le \alpha \le 1}
+  |F_{Xt}^{-1}(\alpha)-F^{-1}_{Xc}(\alpha)|$ where $F_{Xt}$ and
+  $F_{Xc}$ are the empirical cumulative probability distribution
+  functions of a single variable $X$ for the matched treatment and
+  matched control groups, respectively. That is,
+  $F_{Xt}(x)=\frac{1}{n'_t} \sum_{i=1}^{n'} {\rm I}_{\{X_i \le x\}}
+  t_i$ and $F_{Xc}(x)=\frac{1}{n'_c} \sum_{i=1}^{n'} {\rm I}_{\{X_i
+    \le x\}} (1-t_i)$ where $n'_t=\sum_{i=1}^{n'} t_i$ and
+  $n'_c=\sum_{i=1}^{n'} (1-t_i)$ are the size of matched treatment and
+  matched control groups, $n'=n'_t + n'_c$ is the size of matched
+  data, and ${\rm I}$ denotes the indicator function.}
+
+A paradoxical but sometimes useful procedure is to examine the QQ plot
+of the propensity scores of the control and treated units.  This is
+paradoxical (and part of the propensity score tautology) because it
+relies on the propensity score as a summary of the data to check
+whether propensity score matching is adequate.  It is useful
+nonetheless as one of our procedures for checking balance because it
+offers a low dimensional summary not obviously worse than the
+examining variables one at a time.  Indeed, for the reasons discussed
+above, it is often a good low dimensional summary.
 
 The immediate goal of matching is balance, which involves adjusting
 the data set to reduce dependence between $t$ and $X$.  Since for
 feasibility scholars will use one dimensional summaries to substitute
 for the comparison of multidimensional histograms, evaluating balance
 should always be done in multiple ways.  Relying on any one measure to
-assess balance will never be adequate (unless matching is exact).  
-
-In addition, the ultimate goal of matching is not merely balance, but
+assess balance will never be adequate (unless matching is exact).  In
+addition, the ultimate goal of matching is not merely balance, but
 reducing bias and model dependence in estimating the causal effect of
 $t$ on $Y$.  We exclude any information from $Y$ in the matching
 procedure so as to avoid selection bias, but the key is that causal
@@ -1436,8 +1451,8 @@ the combination of the quantitative measures discussed above and
 available prior information about the likely relative importance of
 each of one's covariates.  So long as balance is assessed by the same
 standards, automated searches, such as the promising approach of
-\citet{DiaSek05} and which our software incorporates, can also be
-useful in finding good matches to evaluate.
+\citet{DiaSek05} incorporated in our software, can also be useful in
+finding good matches to evaluate.
 
 If some covariates are omitted from some of the matching procedures,
 the balance on them should still be checked.  Doing so is often a good
@@ -1459,34 +1474,20 @@ that cannot be improved by preprocessing because balance is too hard
 to achieve marks a data set that is too fragile for making robust
 causal inferences by any means.
 
-{\bf formal definition of our balance statistic.} One of our balance
-statistics for a particular variable $X$, the Maximum distance of
-quantile functions, is given by
-$$\max_{0 \le \alpha \le 1} |F_{Xt}^{-1}(\alpha)-F^{-1}_{Xc}(\alpha)|$$
-where $F_{Xt}$ and $F_{Xc}$ are the empirical cumulative probability
-distribution functions of the variable $X$ for the matched treatment
-and matched control groups, respectively. That is,
-$F_{Xt}(x)=\frac{1}{n'_t} \sum_{i=1}^{n'} {\rm I}_{\{X_i \le x\}} t_i$
-and $F_{Xc}(x)=\frac{1}{n'_c} \sum_{i=1}^{n'} {\rm I}_{\{X_i \le x\}}
-(1-t_i)$ where $n'_t=\sum_{i=1}^{n'} t_i$ and $n'_c=\sum_{i=1}^{n'}
-(1-t_i)$ are the size of matched treatment and matched control groups,
-$n'=n'_t + n'_c$ is the size of matched data, and ${\rm I}$ denotes
-the indicator function.
-
-{\bf power function of two-sample $t$-test with equal variance.} the
-statistic for two sample $t$-test is given by
-$$ \frac{\sqrt{n'_t+n'_c-2} 
-  (\overline{X}_t-\overline{X}_c)}{\sqrt{\left(\frac{1}{n'_t}
-      +\frac{1}{n'_c}\right)S^2_X}}$$ where $S^2=\sum_{i=1}^n t_i(X_i
-- \overline{X}_t)^2+ (1-t_i)(X_i - \overline{X}_c)^2$, which is
-distributed as the $t$ distribution with $n'_t+n'_c-2$ degrees of
-freedom. The power function is given by
-$$ T_{n'_t+n'_c-1}(-c_{\alpha/2} \mid \phi) +
-1-T_{n'_t+n'_c-1}(c_{\alpha/2} \mid \phi) = 2
-T_{n'_t+n'_c-1}(-c_{\alpha/2} \mid \phi)$$ where $T_\nu$ is the
-distribution function of $t$ distribution with $\nu$ degrees of
-freedom, $c_{\alpha/2}=T_{n'_t+n'_c-1}(1-\alpha/2)$ and
-$$\phi = \frac{\mu_1-\mu_2}{\sigma\sqrt{\frac{1}{n'_t}+\frac{1}{n'_c}}}$$
+% {\bf power function of two-sample $t$-test with equal variance.} the
+% statistic for two sample $t$-test is given by
+% $$ \frac{\sqrt{n'_t+n'_c-2} 
+%   (\overline{X}_t-\overline{X}_c)}{\sqrt{\left(\frac{1}{n'_t}
+%       +\frac{1}{n'_c}\right)S^2_X}}$$ where $S^2=\sum_{i=1}^n t_i(X_i
+% - \overline{X}_t)^2+ (1-t_i)(X_i - \overline{X}_c)^2$, which is
+% distributed as the $t$ distribution with $n'_t+n'_c-2$ degrees of
+% freedom. The power function is given by
+% $$ T_{n'_t+n'_c-1}(-c_{\alpha/2} \mid \phi) +
+% 1-T_{n'_t+n'_c-1}(c_{\alpha/2} \mid \phi) = 2
+% T_{n'_t+n'_c-1}(-c_{\alpha/2} \mid \phi)$$ where $T_\nu$ is the
+% distribution function of $t$ distribution with $\nu$ degrees of
+% freedom, $c_{\alpha/2}=T_{n'_t+n'_c-1}(1-\alpha/2)$ and
+% $$\phi = \frac{\mu_1-\mu_2}{\sigma\sqrt{\frac{1}{n'_t}+\frac{1}{n'_c}}}$$
 
 \paragraph{Parametric Outcome Analysis}  
 After choosing the final matched sample, preferably with maximum
