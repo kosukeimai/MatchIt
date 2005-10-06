@@ -21,7 +21,6 @@ discard <- function(treat, pscore, option, X) {
     require(whatif)
     require(lpSolve)
     wif <- whatif(cfact = X[treat==0,], data = X[treat==1,])
-    print(wif$in.hull)
     discarded <- rep(FALSE, n.obs)
     discarded[treat==0] <- !wif$in.hull
   }  else 
