@@ -54,15 +54,13 @@ subclass are shown.
     0.25), although smaller is better and only zero is perfect.
   \item The final three columns of the summary output give summary
     statistics of a Q-Q plot (see below for more information on these
-    plots). Those columns give the median, mean, and maximum
-    orthogonal deviations from the 45-degree line of the Q-Q plot.  If
-    the empirical distributions of the two groups (treated and
-    control) were exactly the same, all points would lie on the
-    45-degree line and thus all of these distances would be 0.  Values
-    greater than 0 indicate deviations between the groups in some part
-    of the empirical distributions.  The plots themselves, described
-    below, can provide further insight into which part of the
-    covariate distribution has differences between the two groups.
+    plots). Those columns give the median, mean, and maximum distance
+    between the two empirical quantile functions (treated and control
+    groups).  Values greater than 0 indicate deviations between the
+    groups in some part of the empirical distributions.  The plots of
+    the two empirical quantile functions themselves, described below,
+    can provide further insight into which part of the covariate
+    distribution has differences between the two groups.
 \end{enumerate}
 
 \item {\bf Additional options:} Two options to the \texttt{summary()}
