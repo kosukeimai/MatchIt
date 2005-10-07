@@ -13,18 +13,29 @@ discard <- function(treat, pscore, option, X) {
     discarded <- (pscore < pmin1 | pscore > pmax1)
   else if (option == "treat")   # discard treated units only
     discarded <- (pscore < pmin0 | pscore > pmax0)
-  else if (option == "convex.hull"){ # discard units not in T convex hull
+  else if (any(grep(option, c("ch.control", "ch.treat", "ch.both")))) {
+    ## convext hull stuff
     if (!("whatif" %in% .packages(all = TRUE)))
       install.packages("whatif", CRAN="http://gking.harvard.edu")
     if (!("lpSolve" %in% .packages(all = TRUE)))
       install.packages("lpSolve")
     require(whatif)
     require(lpSolve)
-    wif <- whatif(cfact = X[treat==0,], data = X[treat==1,])
     discarded <- rep(FALSE, n.obs)
-    discarded[treat==0] <- !wif$in.hull
-  }  else 
-    stop("invalid input for `discard'")
+    if (option == "ch.control"){ # discard units not in T convex hull
+      wif <- whatif(cfact = X[treat==0,], data = X[treat==1,])
+      discarded[treat==0] <- !wif$in.hull
+    } else if (option == "ch.treat") {
+      wif <- whatif(cfact = X[treat==1,], data = X[treat==0,])
+      discarded[treat==1] <- !wif$in.hull
+    } else if (option == "ch.both"){ # discard units not in T&C convex hull
+      wif <- whatif(cfact = cbind(1-treat, X), data = cbind(treat, X))
+      discarded <- !wif$in.hull
+    }
+    else
+      stop("invalid input for `discard'")
+  } else 
+             stop("invalid input for `discard'")
   names(discarded) <- names(treat)
   return(discarded)
 }
