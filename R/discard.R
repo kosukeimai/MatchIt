@@ -15,11 +15,11 @@ discard <- function(treat, pscore, option, X) {
     discarded <- (pscore < pmin0 | pscore > pmax0)
   else if (any(grep(option, c("hull.control", "hull.treat", "hull.both")))) {
     ## convext hull stuff
-    if (!("whatif" %in% .packages(all = TRUE)))
-      install.packages("whatif", CRAN="http://gking.harvard.edu")
+    if (!("WhatIf" %in% .packages(all = TRUE)))
+      install.packages("WhatIf", CRAN="http://gking.harvard.edu")
     if (!("lpSolve" %in% .packages(all = TRUE)))
       install.packages("lpSolve")
-    require(whatif)
+    require(WhatIf)
     require(lpSolve)
     discarded <- rep(FALSE, n.obs)
     if (option == "hull.control"){ # discard units not in T convex hull
@@ -35,7 +35,7 @@ discard <- function(treat, pscore, option, X) {
     else
       stop("invalid input for `discard'")
   } else 
-             stop("invalid input for `discard'")
+  stop("invalid input for `discard'")
   names(discarded) <- names(treat)
   return(discarded)
 }
