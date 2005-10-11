@@ -145,7 +145,7 @@ results are routinely misinterpreted in applied research, and even in
 some theoretical statistical work.  Coherent guidelines for practice
 are often conflicting, absent, or misunderstood.\footnote{Matching
   methods now comprise a substantial fraction of the empirical work in
-  some disciplines, such as epidemiology and medicine.  However, the
+  observational studies in some disciplines, such as epidemiology and medicine.  However, the
   diversity of substantive applications and the conflicting
   methodological languages used to describe the same underlying
   concepts have limited the spread of these powerful techniques to
@@ -891,8 +891,9 @@ But how can we adjust the data without inducing bias in our causal
 estimates?  The key to this problem is that the fundamental rule for
 avoiding selection bias --- not selecting on the dependent variable
 --- does not prevent us from selecting observations on the explanatory
-variables ($t_i$ or $X_i$).  (Random or other physical assignments in
-experiments by the investigator and stratified sampling in surveys are
+variables ($t_i$ or $X_i$).  (Random or other physical assignments 
+that depend on observed covariates, such as matched pairs or randomized blocks, in experiments
+and stratified sampling in surveys are
 other examples of valid data collection mechanisms that select
 observations given chosen values of the explanatory variables.)  We
 can also select, duplicate, or selectively drop observations from an
@@ -929,7 +930,7 @@ within each pair of units.\footnote{Formally, ignorability (by which
   we mean the independence of $t$ and the potential outcomes given
   $X$) and balance (i.e., Equation \ref{balance}) guarantee valid
   inferences. Together they are written as
-  $p(Y(0)|t=1)=p(Y(0)|t=0)$ and $p(Y(1)|t=1)=p(Y(1)|t=0)$.}
+  $p(Y(0)|t=1,X)=p(Y(0)|t=0,X)$ and $p(Y(1)|t=1,X)=p(Y(1)|t=0,X)$.}
 
 Although one-to-one exact matching can eliminate model dependence and
 any bias from incorrect assumptions made during the parametric stage
@@ -974,7 +975,7 @@ so will return highly similar causal effect estimates.
 A key point about matching as nonparametric preprocessing is that
 matching is \emph{not} a method of estimation: obtaining causal effect
 estimates from matching requires that it be paired with some analysis
-method.  In most applications, the analysis method has almost always
+method.  In many applications, the analysis method has almost always
 been a simple difference in means between the treatment and control
 groups.  This method certainly makes sense in the case of exact
 one-to-one matching, since most parametric procedures applied to
@@ -986,7 +987,7 @@ or has no effect on the outcome, which we have no evidence about
 before consulting the outcome variable, and we will often have good
 evidence to the contrary in real analyses.  For the same reason
 scholars rarely use an unadjusted difference in means to analyze
-observational data, they should not use it in inexact matched data.
+randomized data, they should not use it in inexact matched data.
 Thus, we recommend that scholars make use of our decades of experience
 with parametric models to adjust (i.e., to interpolate or extrapolate)
 the matched sample.  The adjustment necessary is far less onorous,
@@ -1192,7 +1193,7 @@ Other theoretical results have no direct bearing on practice.
 
 In applications, the usual practice is to estimate the propensity
 score by a logistic regression of $t_i$ on $X_i$.  Since we are in the
-situation where exact matching is insufficient, the procedure is to
+situation where exact matching is insufficient, a common procedure is to
 match each treated unit to the control unit with the most similar
 value of the estimated propensity score $\hat{e}_i$ (which is known as
 nearest neighbor matching on the propensity score).\footnote{When
