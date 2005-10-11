@@ -67,7 +67,7 @@ Elizabeth A. Stuart\thanks{Researcher, Mathematica Policy Research,
 
 \begin{abstract}
   Although articles rarely include causal estimates from more than a
-  few model specifications, authors usually choose these from numerous
+  few model specifications, authors usually choose the presented estimates from numerous
   trial runs readers never see.  Given the often large variation in
   estimates across choices of control variables, functional forms, and
   other modeling assumptions, how can researchers ensure that the few
@@ -459,11 +459,11 @@ what might have happened if an incumbent were nominated in a district
 in which he or she did not actually receive the nomination.  In this
 paper, we usually focus on ATT as the quantity of interest when it is
 conceptually or algebraically simpler, but we also show how to compute
-the ATE.  If causal effects are constant over $i$, then ATT and ATE
+the ATE.  If causal effects are constant over $i$, then the ATT and the ATE
 are identical.\footnote{To change these sample causal effects to
   population causal effects for the ATE we average over the
   population, and for the ATT we average over the population times the
-  probability of receiving treatment.  Points estimates for the two
+  probability of receiving treatment.  Point estimates for the two
   are normally identical, although the variances for the population
   estimates would be larger.}
 
@@ -752,7 +752,7 @@ interaction would not help much since it would merely add one more
 parameter to estimate, and so we would still need to make assumptions
 about the remaining 96 parameters.
 
-The problem escalates fast as the number of explanatory variables
+The problem escalates quickly as the number of explanatory variables
 increases.  With $V$ 10-category variables, we need $10^V$ parameters
 for estimation in a regression framework without functional form
 assumptions.  So five explanatory variables leads to a regression
@@ -1123,7 +1123,7 @@ the former, we balance the included variables but do not balance at
 all on the rest.  The excluded variables may be partially balanced due
 to correlations with the included variables, but some balance will be
 absent.  In contrast, other methods, such as propensity score
-matching, uses all variables but only approximately matches.
+matching, use all variables but only approximately matches.
 
 \paragraph{The Propensity Score Tautology}
 A commonly used matching procedure is to summarize all the variables
@@ -1348,9 +1348,9 @@ drops into this area (colored grey in the figure) only because of the
 sample size and regardless of the fact that the balance does not
 differ systematically as more observations are dropped.  In fact,
 since hypothesis test are driven in part by factors other than
-balance, we should not even expect them in to be monotonic in balance:
+balance, we should not even expect them to be monotonic in balance:
 the t-test can get apparently better while balance gets worse, or vice
-versa.\footnote{The two sample $t$-test statistics is given by $
+versa.\footnote{The two sample $t$-test statistic is given by $
   \sqrt{n_t+n_c-2}(\overline{X}_t-\overline{X}_c)/\sqrt{\left(\frac{1}{n_t}
       +\frac{1}{n_c}\right)S^2_X}$ where $S^2=\sum_{i=1}^n t_i(X_i -
   \overline{X}_t)^2+ (1-t_i)(X_i - \overline{X}_c)^2$.  The difference
@@ -1408,7 +1408,7 @@ for each variable (and often their interactions) to compare the
 distributions of the full densities for the treated and control groups
 for each variable.  QQ-plots are usually the best way to compare two
 distributions: they plot the quantiles of the cumulative distribution
-of the treatment group against the control gruop in a square plot (we
+of the treatment group against that of the control group in a square plot (we
 give examples in Section \ref{s:emp}).  When space is a concern, we
 summarize these plots with mean and maximum deviation between the two
 distributions on the scale of the variables being measured (on the
@@ -1553,7 +1553,7 @@ errors and confidence intervals using the same methods researchers
 have been using with their parametric methods all along, but applied
 to the preprocessed instead of raw data.  (The one exception to our
 procedure occurs when matching with replacement, where we would then
-run the parametric procedure with each unit weighted by the number of
+run the parametric procedure with each unit weighted proportional to the number of
 times it was chosen as a match.)  As proper procedures are developed
 to include different aspects of matching in the uncertainty estimates,
 these could be used also, but they would each estimate a different
