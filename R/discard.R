@@ -5,7 +5,9 @@ discard <- function(treat, pscore, option, X) {
   pmax1 <- max(pscore[treat==1])
   pmin0 <- min(pscore[treat==0])
   pmin1 <- min(pscore[treat==1])
-  if (option == "none")         # keep all units
+  if (is.logical(option))       # user input
+    return(option)
+  else if (option == "none")    # keep all units
     discarded <- rep(FALSE, n.obs)
   else if (option == "both")    # discard units outside of common support
     discarded <- (pscore < max(pmin0, pmin1) | pscore > min(pmax0, pmax1))
