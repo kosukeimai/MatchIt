@@ -1,0 +1,239 @@
+
+Call:
+matchit(formula = spec, data = data, method = "nearest", discard = "both", 
+    exact = c("acutediz", "peddiz01", "hosp01", "lethal", "femdiz01", 
+        "mandiz01"))
+
+Summary of balance for all data:
+               Means Treated Means Control Treated SD Std. Bias QQ Med
+distance               0.451         0.365      0.129     0.666  0.082
+orderent               1.133         1.061      1.205     0.060  0.100
+prevgenx               1.098         1.190      1.453    -0.063  0.000
+lethal                 0.626         0.653      0.485    -0.056  0.000
+deathrt1               0.087         0.076      0.311     0.034  0.000
+hosp01                 0.822         0.780      0.384     0.111  0.000
+hospdisc               1.404         1.267      1.911     0.072  0.000
+hhosleng               0.558         0.537      0.594     0.036  0.000
+femdiz01               0.055         0.045      0.229     0.045  0.000
+mandiz01               0.037         0.024      0.189     0.065  0.000
+peddiz01               0.043         0.037      0.203     0.031  0.000
+acutediz               0.368         0.388      0.484    -0.041  0.000
+orphdum                0.129         0.102      0.336     0.080  0.000
+natreg                 0.141         0.181      0.236    -0.171  0.000
+wpnoavg3               0.436         0.683      0.703    -0.352  0.045
+vandavg3               0.168         0.289      0.429    -0.281  0.025
+condavg3               0.277         0.252      0.612     0.041  0.000
+stafcder              12.685        13.447      1.592    -0.478  1.820
+sqrt(hospdisc)         0.949         0.873      0.711     0.108  0.000
+               QQ Mean QQ Max
+distance         0.087  0.188
+orderent         0.194  1.200
+prevgenx         0.084  2.530
+lethal           0.025  1.000
+deathrt1         0.019  2.184
+hosp01           0.043  1.000
+hospdisc         0.164  2.973
+hhosleng         0.069  2.060
+femdiz01         0.012  1.000
+mandiz01         0.012  1.000
+peddiz01         0.006  1.000
+acutediz         0.018  1.000
+orphdum          0.031  1.000
+natreg           0.042  1.090
+wpnoavg3         0.244  1.837
+vandavg3         0.109  2.900
+condavg3         0.107  2.767
+stafcder         1.666  3.730
+sqrt(hospdisc)   0.084  0.613
+
+
+Summary of balance for matched data:
+               Means Treated Means Control Treated SD Std. Bias QQ Med
+distance               0.445         0.408      0.123     0.288  0.034
+orderent               1.183         1.135      1.227     0.040  0.100
+prevgenx               1.166         1.092      1.474     0.051  0.004
+lethal                 0.641         0.641      0.481     0.000  0.000
+deathrt1               0.089         0.089      0.320     0.000  0.000
+hosp01                 0.810         0.810      0.393     0.000  0.000
+hospdisc               1.413         1.279      1.967     0.070  0.000
+hhosleng               0.559         0.556      0.609     0.006  0.000
+femdiz01               0.052         0.052      0.223     0.000  0.000
+mandiz01               0.033         0.033      0.178     0.000  0.000
+peddiz01               0.046         0.046      0.210     0.000  0.000
+acutediz               0.379         0.379      0.487     0.000  0.000
+orphdum                0.131         0.144      0.338    -0.039  0.000
+natreg                 0.139         0.143      0.241    -0.018  0.000
+wpnoavg3               0.408         0.534      0.645    -0.179  0.023
+vandavg3               0.147         0.287      0.321    -0.325  0.025
+condavg3               0.231         0.251      0.422    -0.033  0.033
+stafcder              12.612        13.292      1.585    -0.427  1.750
+sqrt(hospdisc)         0.941         0.910      0.728     0.043  0.000
+               QQ Mean QQ Max
+distance         0.038  0.089
+orderent         0.228  1.000
+prevgenx         0.074  0.503
+lethal           0.000  0.000
+deathrt1         0.006  0.294
+hosp01           0.000  0.000
+hospdisc         0.154  3.014
+hhosleng         0.050  1.560
+femdiz01         0.000  0.000
+mandiz01         0.000  0.000
+peddiz01         0.000  0.000
+acutediz         0.000  0.000
+orphdum          0.013  1.000
+natreg           0.020  0.800
+wpnoavg3         0.141  1.675
+vandavg3         0.140  3.225
+condavg3         0.075  1.700
+stafcder         1.570  3.060
+sqrt(hospdisc)   0.043  0.613
+
+Percent Balance Improvement:
+               Mean and Std. Bias QQ Med QQ Mean  QQ Max
+distance                   56.760 58.792  56.203  52.847
+orderent                   34.019  0.000 -17.662  16.667
+prevgenx                   19.914   -Inf  12.534  80.111
+lethal                    100.000  0.000 100.000 100.000
+deathrt1                   99.902  0.000  71.260  86.564
+hosp01                    100.000  0.000 100.000 100.000
+hospdisc                    2.556  0.000   5.912  -1.375
+hhosleng                   84.643  0.000  27.396  24.272
+femdiz01                  100.000  0.000 100.000 100.000
+mandiz01                  100.000  0.000 100.000 100.000
+peddiz01                  100.000  0.000 100.000 100.000
+acutediz                  100.000  0.000 100.000 100.000
+orphdum                    51.213  0.000  57.386   0.000
+natreg                     89.600  0.000  53.068  26.606
+wpnoavg3                   49.056 50.000  42.334   8.844
+vandavg3                  -15.633  0.000 -27.604 -11.207
+condavg3                   20.219   -Inf  29.658  38.554
+stafcder                   10.765  3.846   5.777  17.962
+sqrt(hospdisc)             59.851  0.000  49.165   0.000
+
+Sample sizes:
+          Control Treated
+All           245     163
+Matched       153     153
+Unmatched      77       8
+Discarded      15       2
+
+
+Call:
+matchit(formula = spec, data = data, method = "genetic", discard = "both", 
+    wait.generations = 1000)
+
+Summary of balance for all data:
+               Means Treated Means Control Treated SD Std. Bias QQ Med
+distance               0.451         0.365      0.129     0.666  0.082
+orderent               1.133         1.061      1.205     0.060  0.100
+prevgenx               1.098         1.190      1.453    -0.063  0.000
+lethal                 0.626         0.653      0.485    -0.056  0.000
+deathrt1               0.087         0.076      0.311     0.034  0.000
+hosp01                 0.822         0.780      0.384     0.111  0.000
+hospdisc               1.404         1.267      1.911     0.072  0.000
+hhosleng               0.558         0.537      0.594     0.036  0.000
+femdiz01               0.055         0.045      0.229     0.045  0.000
+mandiz01               0.037         0.024      0.189     0.065  0.000
+peddiz01               0.043         0.037      0.203     0.031  0.000
+acutediz               0.368         0.388      0.484    -0.041  0.000
+orphdum                0.129         0.102      0.336     0.080  0.000
+natreg                 0.141         0.181      0.236    -0.171  0.000
+wpnoavg3               0.436         0.683      0.703    -0.352  0.045
+vandavg3               0.168         0.289      0.429    -0.281  0.025
+condavg3               0.277         0.252      0.612     0.041  0.000
+stafcder              12.685        13.447      1.592    -0.478  1.820
+sqrt(hospdisc)         0.949         0.873      0.711     0.108  0.000
+               QQ Mean QQ Max
+distance         0.087  0.188
+orderent         0.194  1.200
+prevgenx         0.084  2.530
+lethal           0.025  1.000
+deathrt1         0.019  2.184
+hosp01           0.043  1.000
+hospdisc         0.164  2.973
+hhosleng         0.069  2.060
+femdiz01         0.012  1.000
+mandiz01         0.012  1.000
+peddiz01         0.006  1.000
+acutediz         0.018  1.000
+orphdum          0.031  1.000
+natreg           0.042  1.090
+wpnoavg3         0.244  1.837
+vandavg3         0.109  2.900
+condavg3         0.107  2.767
+stafcder         1.666  3.730
+sqrt(hospdisc)   0.084  0.613
+
+
+Summary of balance for matched data:
+               Means Treated Means Control Treated SD Std. Bias QQ Med
+distance               0.446         0.438      0.120     0.058  0.012
+orderent               1.140         1.120      1.211     0.017  0.100
+prevgenx               1.111         1.121      1.457    -0.007  0.005
+lethal                 0.621         0.621      0.487     0.000  0.000
+deathrt1               0.087         0.087      0.313     0.001  0.000
+hosp01                 0.820         0.814      0.385     0.016  0.000
+hospdisc               1.406         1.374      1.923     0.016  0.000
+hhosleng               0.554         0.555      0.597    -0.001  0.014
+femdiz01               0.056         0.056      0.230     0.000  0.000
+mandiz01               0.037         0.037      0.190     0.000  0.000
+peddiz01               0.043         0.043      0.205     0.000  0.000
+acutediz               0.360         0.335      0.482     0.051  0.000
+orphdum                0.124         0.106      0.331     0.055  0.000
+natreg                 0.140         0.133      0.237     0.027  0.000
+wpnoavg3               0.403         0.351      0.640     0.075  0.037
+vandavg3               0.170         0.198      0.432    -0.066  0.000
+condavg3               0.228         0.187      0.422     0.066  0.033
+stafcder              12.673        12.783      1.598    -0.069  1.580
+sqrt(hospdisc)         0.947         0.948      0.715    -0.001  0.000
+               QQ Mean QQ Max
+distance         0.016  0.064
+orderent         0.198  1.300
+prevgenx         0.352  3.293
+lethal           0.061  1.000
+deathrt1         0.008  0.294
+hosp01           0.010  1.000
+hospdisc         0.214  2.973
+hhosleng         0.104  1.560
+femdiz01         0.020  1.000
+mandiz01         0.000  0.000
+peddiz01         0.010  1.000
+acutediz         0.031  1.000
+orphdum          0.020  1.000
+natreg           0.019  0.180
+wpnoavg3         0.092  1.558
+vandavg3         0.030  0.275
+condavg3         0.056  1.700
+stafcder         1.547  3.130
+sqrt(hospdisc)   0.079  0.793
+
+Percent Balance Improvement:
+               Mean and Std. Bias QQ Med  QQ Mean  QQ Max
+distance                    91.31  85.04   81.602  65.904
+orderent                    71.66   0.00   -2.112  -8.333
+prevgenx                    89.34   -Inf -316.987 -30.166
+lethal                     100.00   0.00 -149.490   0.000
+deathrt1                    97.02   0.00   60.004  86.564
+hosp01                      85.38   0.00   76.239   0.000
+hospdisc                    77.05   0.00  -30.963   0.000
+hhosleng                    96.77   -Inf  -50.083  24.272
+femdiz01                   100.00   0.00  -66.327   0.000
+mandiz01                   100.00   0.00  100.000 100.000
+peddiz01                   100.00   0.00  -66.327   0.000
+acutediz                   -26.39   0.00  -66.327   0.000
+orphdum                     30.45   0.00   33.469   0.000
+natreg                      83.94   0.00   55.304  83.486
+wpnoavg3                    78.77  16.67   62.425  15.238
+vandavg3                    76.58 100.00   72.707  90.517
+condavg3                   -59.87   -Inf   47.005  38.554
+stafcder                    85.52  13.19    7.152  16.086
+sqrt(hospdisc)              98.83   0.00    6.678 -29.399
+
+Sample sizes:
+          Control Treated
+All           245     163
+Matched        98     161
+Unmatched     132       0
+Discarded      15       2
+
