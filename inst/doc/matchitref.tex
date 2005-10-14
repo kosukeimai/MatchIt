@@ -112,8 +112,9 @@ matching methods. These arguments apply to all matching methods {\it
   
 \item \texttt{discard}: specifies whether to discard units that fall
   outside some measure of support of the distance measure.  Discarding
-  units may change the quantity of interest being estimated.  Choose
-  from:
+  units may change the quantity of interest being estimated. Enter a
+  logical vector indicating which unit should be discarded or choose
+  from the following options:
   \begin{itemize}
   \item \texttt{"none"} (default): no units will be discarded before
     matching.  Use this option when the units to be matched are
@@ -203,7 +204,7 @@ matching methods. These arguments apply to all matching methods {\it
     "X2")}).
 \item \texttt{caliper}: the number of standard deviations of the
   distance measure within which to draw control units (defaults to 0).
-  If a caliper is specfied, a control unit within the caliper for a
+  If a caliper is specified, a control unit within the caliper for a
   treated unit is randomly selected as the match for that treated
   unit.  If \texttt{caliper != 0}, there are two additional options:
   \begin{itemize} 
@@ -352,7 +353,7 @@ stats} package.  If you use this distance measure, please cite
 \bibentry{VenRip02}
 \end{verse}
 
-Generalized additive distance meaures are implemented via the {\tt
+Generalized additive distance measures are implemented via the {\tt
   mcgv} package.  If you use this distance measure, please cite
 \begin{verse}
 \bibentry{HasTib90}

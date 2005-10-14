@@ -1,6 +1,6 @@
 Package: MatchIt
-Version: 2.1-3
-Date: 2005-10-05
+Version: 2.1-4
+Date: 2005-10-14
 Title: MatchIt: Nonparametric Preprocessing for Parametric Casual Inference
 Author: Daniel Ho <daniel.e.ho@gmail.com>,
         Kosuke Imai <kimai@Princeton.Edu>, 
@@ -8,7 +8,7 @@ Author: Daniel Ho <daniel.e.ho@gmail.com>,
         Elizabeth Stuart <stuart@stat.harvard.edu>
 Maintainer: Kosuke Imai <kimai@Princeton.Edu>
 Depends: R (>= 2.1), MASS, Zelig
-Suggests: optmatch, Matching
+Suggests: optmatch, Matching, WhatIf
 Description:  MatchIt selects matched samples of the
   the original treated and control groups with similar
   covariate distributions -- can be used to match exactly
