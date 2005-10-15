@@ -1,6 +1,6 @@
 setwd("~/research/matchit/docs/papers/carpenter")
 library(lattice)
-load("matchfda.RData")
+load("matchfdaBase.RData")
 
 doverlay <- function(x1, x0, xlab = "", main = "", lines = FALSE,
                      leg=T, ...)
@@ -32,13 +32,13 @@ dev.off()
 data <- read.table("ajps2002-full1b.txt", header=T)
 data$treat <- data$demsnmaj
 
-library(Matchit)
-mout <- matchit(treat ~ orderent + stafcder + prevgenx + lethal +
-                deathrt1 + hosp01 + I(hospdisc/1000000) +
-                hhosleng + femdiz01 + mandiz01 +
-                peddiz01 + acutediz + orphdum + natreg +
-                I(natregsq/1000) + wpnoavg3 + sqrt(wpnoavg3) +
-                vandavg3 + condavg3, data=data, discard=1)
+#library(Matchit)
+#mout <- matchit(treat ~ orderent + stafcder + prevgenx + lethal +
+#                deathrt1 + hosp01 + I(hospdisc/1000000) +
+#                hhosleng + femdiz01 + mandiz01 +
+#                peddiz01 + acutediz + orphdum + natreg +
+#                I(natregsq/1000) + wpnoavg3 + sqrt(wpnoavg3) +
+#                vandavg3 + condavg3, data=data, discard=1)
 smout <- summary(mout)
 pscore <- mout$data$pscore[mout$data$treat==0]
 

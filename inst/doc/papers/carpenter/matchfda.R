@@ -1,3 +1,7 @@
+##
+## including square terms
+##
+
 rm(list=ls())
 data <- read.table("ajps2002-full1b.txt", header=T)
 data$treat <- data$demsnmaj
@@ -135,8 +139,8 @@ if(analysis) {
   x0 <- x1 <- model.matrix(res)
   x0[,"treat"] <- 0
   x1[,"treat"] <- 1
-  ate[length(ate)] <- mean(exp(x1%*%res$coefficients+0.5*tmp$scale^2) -
-                           exp(x0%*%res$coefficients+0.5*tmp$scale^2))
+  ate[length(ate)] <- mean(exp(x1%*%res$coefficients+0.5*res$scale^2) -
+                           exp(x0%*%res$coefficients+0.5*res$scale^2))
   sims <- 5000
   library(MASS)
   param <- mvrnorm(sims, mu=c(res$coefficients, log(res$scale)),
@@ -151,8 +155,8 @@ if(analysis) {
   x0 <- x1 <- model.matrix(mres)
   x0[,"treat"] <- 0
   x1[,"treat"] <- 1
-  mate[length(mate)] <- mean(exp(x1%*%mres$coefficients+0.5*tmp$scale^2) -
-                             exp(x0%*%mres$coefficients+0.5*tmp$scale^2))
+  mate[length(mate)] <- mean(exp(x1%*%mres$coefficients+0.5*mres$scale^2) -
+                             exp(x0%*%mres$coefficients+0.5*mres$scale^2))
   
   mparam <- mvrnorm(sims, mu=c(mres$coefficients, log(mres$scale)),
                   Sigma=mres$var) 
