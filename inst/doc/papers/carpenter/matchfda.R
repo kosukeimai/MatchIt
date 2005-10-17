@@ -95,7 +95,7 @@ if(analysis) {
         ftmp <- start
         bk <- sample(xvars,i,replace=F)
         ftmp <- as.formula(paste(ftmp, "+",paste(bk,collapse=" + ")))
-        tmp <- survreg(ftmp,  data = data, dist="lognormal")
+        tmp <- survreg(ftmp,  data = data, dist="lognorm")
         x0 <- x1 <- model.matrix(tmp)
         x0[,"treat"] <- 0
         x1[,"treat"] <- 1
@@ -123,7 +123,7 @@ if(analysis) {
         ftmp <- start
         bk <- sample(mxvars,i,replace=F)
         ftmp <- as.formula(paste(ftmp, "+",paste(bk,collapse=" + ")))
-        tmp <- survreg(ftmp,  data = mdata, dist="lognormal")
+        tmp <- survreg(ftmp,  data = mdata, dist="lognorm")
         x0 <- x1 <- model.matrix(tmp)
         x0[,"treat"] <- 0
         x1[,"treat"] <- 1
@@ -144,7 +144,7 @@ if(analysis) {
   sims <- 5000
   library(MASS)
   param <- mvrnorm(sims, mu=c(res$coefficients, log(res$scale)),
-                   Sigma=res$var) 
+                   Sigma=vcov(res)) 
   sate <- exp(param[,-ncol(param)]%*%t(x1) +
               0.5*exp(param[,ncol(param)])^2) -
                 exp(param[,-ncol(param)]%*%t(x0) +
@@ -159,7 +159,7 @@ if(analysis) {
                              exp(x0%*%mres$coefficients+0.5*mres$scale^2))
   
   mparam <- mvrnorm(sims, mu=c(mres$coefficients, log(mres$scale)),
-                  Sigma=mres$var) 
+                    Sigma=vcov(mres)) 
   msate <- exp(mparam[,-ncol(mparam)]%*%t(x1) +
                0.5*exp(mparam[,ncol(mparam)])^2) -
                  exp(mparam[,-ncol(mparam)]%*%t(x0) +
@@ -168,5 +168,4 @@ if(analysis) {
   mest <- c(mean(apply(msate, 1, mean)), sd(apply(msate, 1, mean)))
 
   save.image("matchfda.RData")
-  sink()
 }

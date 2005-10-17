@@ -165,6 +165,8 @@ if(analysis) {
   else if (model == "weibull") {
     ate[length(ate)] <- mean(exp(x1%*%res$coefficients)*gamma(1+res$scale) -
                              exp(x0%*%res$coefficients)*gamma(1+res$scale))
+    param <- mvrnorm(sims, mu=c(res$coefficients, log(res$scale)),
+                     Sigma=vcov(res)) 
     sate <- exp(param[,-ncol(param)]%*%t(x1))*gamma(1+exp(param[,ncol(param)]))-
       exp(param[,-ncol(param)]%*%t(x0))*gamma(1+exp(param[,ncol(param)])) 
   }
@@ -195,6 +197,8 @@ if(analysis) {
   else if (model == "weibull") {
     mate[length(mate)] <- mean(exp(x1%*%mres$coefficients)*gamma(1+mres$scale) -
                              exp(x0%*%mres$coefficients)*gamma(1+mres$scale))
+    param <- mvrnorm(sims, mu=c(mres$coefficients, log(mres$scale)),
+                     Sigma=vcov(mres)) 
     msate <- exp(param[,-ncol(param)]%*%t(x1))*gamma(1+exp(param[,ncol(param)]))-
       exp(param[,-ncol(param)]%*%t(x0))*gamma(1+exp(param[,ncol(param)])) 
   }
