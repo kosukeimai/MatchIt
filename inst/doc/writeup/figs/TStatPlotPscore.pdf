@@ -2,8 +2,8 @@
 %âãÏÓ
 1 0 obj
 <<
-/CreationDate (D:20051024182316)
-/ModDate (D:20051024182316)
+/CreationDate (D:20051025181654)
+/ModDate (D:20051025181654)
 /Title (R Graphics Output)
 /Producer (R 2.2.0)
 /Creator (R)
@@ -356,7 +356,7 @@ Q q 216.00 0.00 216.00 432.00 re W n
 Q q 273.60 57.60 129.60 360.00 re W n
 BT
 0.000 0.000 0.000 rg
-/F2 1 Tf 10.00 0.00 -0.00 10.00 277.49 89.03 Tm (Difference in Means) Tj
+/F2 1 Tf 10.00 0.00 -0.00 10.00 277.49 87.37 Tm (Difference in Means) Tj
 ET
 Q q 273.60 57.60 129.60 360.00 re W n
 0.000 0.000 0.000 RG
@@ -464,7 +464,7 @@ ET
 Q q 273.60 57.60 129.60 360.00 re W n
 BT
 0.000 0.000 0.000 rg
-/F2 1 Tf 10.00 0.00 -0.00 10.00 275.19 104.19 Tm (QQ Plot Mean Deviation) Tj
+/F2 1 Tf 10.00 0.00 -0.00 10.00 276.21 104.19 Tm (QQ Plot Mean Deviation) Tj
 ET
 Q
 endstream
