@@ -14,7 +14,7 @@ model <- "lognorm"
 qoi <- "ATT"
 insample <- TRUE
 file <- "matchfdaLin.RData"
-sims <- 100000
+sims <- 0
 
 ## data
 data <- read.table("ajps2002-full1b.txt", header=T)
@@ -73,7 +73,7 @@ qoical <- function(object, model, what = "ATT", insample = FALSE) {
   if (insample) {  ## insample qoi
     if (what == "ATT") {
       if (model == "lognorm")
-        res <- mean(ifelse(exp(y[,2]), y[,1],
+        res <- mean(ifelse(y[,2], exp(y[,1]),
                            exp(x1%*%object$coefficients+0.5*object$scale^2)) -
                     exp(x0%*%object$coefficients+0.5*object$scale^2))
       else if (model == "exp")
@@ -88,7 +88,7 @@ qoical <- function(object, model, what = "ATT", insample = FALSE) {
     }
     if (what == "ATE") {
       if (model == "lognorm")
-        res <- mean(ifelse(exp(y1[,2]), y1[,1],
+        res <- mean(ifelse(y1[,2], exp(y1[,1]),
                            exp(x1%*%object$coefficients+0.5*object$scale^2)) -
                     ifelse(exp(y0[,2]), y0[,1],
                            exp(x0%*%object$coefficients+0.5*object$scale^2)))
