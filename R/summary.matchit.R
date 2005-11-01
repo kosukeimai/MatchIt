@@ -1,4 +1,6 @@
-summary.matchit <- function(object, interactions = FALSE, addlvariables = NULL, ...) {
+summary.matchit <- function(object, interactions = FALSE,
+                            addlvariables = NULL, standardize = FALSE,
+                            ...) {
 
   XX <- cbind(distance=object$distance,object$X)
   if (!is.null(addlvariables)) XX <- cbind(XX, addlvariables)
@@ -9,9 +11,9 @@ summary.matchit <- function(object, interactions = FALSE, addlvariables = NULL, 
   kk <- ncol(XX)
 
   ## Summary Stats
-  aa <- apply(XX,2,qoi,tt=treat,ww=weights)
-  sum.all <- as.data.frame(matrix(0,kk,7))
-  sum.matched <- as.data.frame(matrix(0,kk,7))
+  aa <- apply(XX,2,qoi,tt=treat,ww=weights,standardize=standardize)
+  sum.all <- as.data.frame(matrix(0,kk,6))
+  sum.matched <- as.data.frame(matrix(0,kk,6))
   row.names(sum.all) <- row.names(sum.matched) <- nam
   names(sum.all) <- names(sum.matched) <- names(aa[[1]])
   sum.all.int <- sum.matched.int <- NULL
@@ -21,7 +23,7 @@ summary.matchit <- function(object, interactions = FALSE, addlvariables = NULL, 
     if(interactions){
       for(j in i:kk){
         x2 <- XX[,i]*as.matrix(XX[,j])
-        jqoi <- qoi(x2,tt=treat,ww=weights)
+        jqoi <- qoi(x2,tt=treat,ww=weights,standardize=standardize)
         sum.all.int <- rbind(sum.all.int,jqoi[1,])
         sum.matched.int <- rbind(sum.matched.int,jqoi[2,])
         row.names(sum.all.int)[nrow(sum.all.int)] <-
@@ -36,9 +38,9 @@ summary.matchit <- function(object, interactions = FALSE, addlvariables = NULL, 
 
   ## Imbalance Reduction
   stat0 <- abs(cbind(sum.all[,2]-sum.all[,1],
-                     sum.all[,5:7]))
+                     sum.all[,4:6]))
   stat1 <- abs(cbind(sum.matched[,2]-sum.matched[,1],
-                     sum.matched[,5:7]))
+                     sum.matched[,4:6]))
   reduction <- as.data.frame(100*(stat0-stat1)/stat0)
   if(sum(stat0==0 & stat1==0, na.rm=T)>0){
     reduction[stat0==0 & stat1==0] <- 0
@@ -46,14 +48,21 @@ summary.matchit <- function(object, interactions = FALSE, addlvariables = NULL, 
   if(sum(stat0==0 & stat1>0,na.rm=T)>0){
     reduction[stat0==0 & stat1>0] <- -Inf
   }
-  names(reduction) <- c("Mean and Std. Bias", "QQ Med","QQ Mean", "QQ Max")
-
+  if (standardize)
+    names(reduction) <- c("Std. Mean Diff.", "eCDF Med","eCDF Mean",
+                          "eCDF Max")
+  else
+    names(reduction) <- c("Mean Diff.", "eQQ Med","eQQ Mean", "eQQ Max")
+    
   ## Sample sizes
   nn <- matrix(0, ncol=2, nrow=4)
   nn[1,] <- c(sum(object$treat==0), sum(object$treat==1))
-  nn[2,] <- c(sum(object$treat==0 & object$weights>0), sum(object$treat==1 & object$weights>0))
-  nn[3,] <- c(sum(object$treat==0 & object$weights==0 & object$discarded==0), sum(object$treat==1 & object$weights==0 & object$discarded==0))
-  nn[4,] <- c(sum(object$treat==0 & object$weights==0 & object$discarded==1), sum(object$treat==1 & object$weights==0 & object$discarded==1))
+  nn[2,] <- c(sum(object$treat==0 & object$weights>0),
+              sum(object$treat==1 & object$weights>0))
+  nn[3,] <- c(sum(object$treat==0 & object$weights==0 & object$discarded==0),
+              sum(object$treat==1 & object$weights==0 & object$discarded==0))
+  nn[4,] <- c(sum(object$treat==0 & object$weights==0 & object$discarded==1),
+              sum(object$treat==1 & object$weights==0 & object$discarded==1))
 
   dimnames(nn) <- list(c("All","Matched","Unmatched","Discarded"),
                        c("Control","Treated"))
@@ -62,8 +71,8 @@ summary.matchit <- function(object, interactions = FALSE, addlvariables = NULL, 
   #            table(object$weights!=0,object$treat)[2:1,])
 
   ## output
-  res <- list(call=object$call, nn = nn, sum.all = sum.all, sum.matched = sum.matched,
-              reduction = reduction)
+  res <- list(call=object$call, nn = nn, sum.all = sum.all,
+              sum.matched = sum.matched, reduction = reduction)
   class(res) <- "summary.matchit"
   return(res)
 }

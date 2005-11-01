@@ -1,4 +1,5 @@
-summary.matchit.subclass <- function(object, interactions = FALSE, addlvariables=NULL, 
+summary.matchit.subclass <- function(object, interactions = FALSE,
+                                     addlvariables=NULL, standardize = FALSE,
                                      ...) {
 
   XX <- cbind(distance=object$distance,object$X)
@@ -10,7 +11,7 @@ summary.matchit.subclass <- function(object, interactions = FALSE, addlvariables
   kk <- ncol(XX)
 
   ## Summary Stats
-  aa <- apply(XX,2,qoi,tt=treat,ww=as.numeric(weights!=0))
+  aa <- apply(XX,2,qoi,tt=treat,ww=as.numeric(weights!=0),standardize=standardize)
   sum.all <- as.data.frame(matrix(0,kk,7))
   sum.matched <- as.data.frame(matrix(0,kk,7))
   row.names(sum.all) <- row.names(sum.matched) <- nam
@@ -22,7 +23,7 @@ summary.matchit.subclass <- function(object, interactions = FALSE, addlvariables
     if(interactions){
       for(j in i:kk){
         x2 <- XX[,i]*as.matrix(XX[,j])
-        jqoi <- qoi(x2,tt=treat,ww=as.numeric(weights!=0))
+        jqoi <- qoi(x2,tt=treat,ww=as.numeric(weights!=0),standardize=standardize)
         sum.all.int <- rbind(sum.all.int,jqoi[1,])
         sum.matched.int <- rbind(sum.matched.int,jqoi[2,])
         row.names(sum.all.int)[nrow(sum.all.int)] <-
@@ -45,7 +46,7 @@ summary.matchit.subclass <- function(object, interactions = FALSE, addlvariables
     q.table <- array(0,dim=c(kk,7,qbins))
   }
   aa <- apply(XX,2,qoi.by.sub,tt=treat,ww=weights,
-                  qq=object$subclass)
+                  qq=object$subclass,standardize=standardize)
   for(i in 1:kk){
     if(!interactions){
       q.table[i,,] <- as.matrix(aa[[i]]$q.table)
@@ -57,7 +58,7 @@ summary.matchit.subclass <- function(object, interactions = FALSE, addlvariables
           for(j in i:kk){
             ii <- ii + 1 
             x2 <- XX[,i]*as.matrix(XX[,j])
-            q.table[ii,,] <- as.matrix(qoi.by.sub(x2,tt=treat,ww=weights,qq=object$subclass)$q.table)
+            q.table[ii,,] <- as.matrix(qoi.by.sub(x2,tt=treat,ww=weights,qq=object$subclass,standardize=standardize)$q.table)
             nn <- c(nn,paste(nam[i],nam[j],sep="x"))
           }
         }
