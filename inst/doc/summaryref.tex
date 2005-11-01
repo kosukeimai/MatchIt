@@ -5,25 +5,27 @@ diagnostics.
 
 \subsubsection{Syntax}
 \begin{verbatim}
-summary(object, interactions = FALSE, addlvariables = NULL, ...)
+summary(object, interactions = FALSE, addlvariables = NULL, standardize = FALSE, ...)
 \end{verbatim}
 
 \subsubsection{Arguments}
 
 \begin{itemize}
 \item \texttt{object}: the output from {\tt matchit()}.
-\item \texttt{interactions}: an option to calculate summary
-  statistics in \texttt{sum.all} and \texttt{sum.matched} for all
-  covariates, their squares, and two-way interactions when
-  \texttt{interactions = TRUE} and only the covariates themselves when
-  \texttt{interactions = FALSE} (default).
+\item \texttt{interactions}: an option to calculate summary statistics
+  in \texttt{sum.all} and \texttt{sum.matched} for all covariates,
+  their squares, and two-way interactions when \texttt{interactions =
+    TRUE} and only the covariates themselves when \texttt{interactions
+    = FALSE}, (DEFAULT = {\tt FALSE}).
 \item \texttt{addlvariables}: additional variables on which to
   calculate the diagnostic statistics (in addition to the variables
-  included in the matching procedure) (default = NULL).
+  included in the matching procedure) (DEFAULT = {\tt NULL}).
   \texttt{addlvariables}: a data frame containing additional variables
   whose balance is examined. The data should come with the same number
   of units and units in the same order as in the data set used for
   {\tt matchit()}.
+\item \texttt{standardize}: a logical variable indicating whether to
+  standardize balance measures. (DEFAULT = {\tt FALSE})
 \end{itemize}
 
 \subsubsection{Output Values}
@@ -43,16 +45,24 @@ elements, when applicable:
     where \texttt{Means Treated}$= \mu_{X|T=1} = \frac{1}{n_1}
     \sum_{T=1} X_i$ and \texttt{Means Control}$= \mu_{X|T=0} =
     \frac{1}{n_0} \sum_{T=0} X_i$,
-  \item standard deviation in the treated group for all covariates $X$,  
-        $$\quad s_{x|T=1} = \sqrt{\frac{\sum_{i \in \{i: T_i=1\}}
-        (X_i - \mu_{X|T=1}}{n_1-1})^2 }.$$
-  \item summary statistics from a Q-Q plot, which compares treated and
-    control covariate distributions, where \texttt{QQ Med}, \texttt{QQ
-      Mean}, and \texttt{QQ Max} indicate the median, mean, and
-    maximum orthogonal deviations from the 45 degree line of a Q-Q
-    plot.
-  \item standardized bias statistics, $${\rm Std.
-      Bias}=\frac{\mu_{X|T=1} - \mu_{X|T=0}}{s_{x|T=1}}.$$
+%  \item standard deviation in the treated group for all covariates $X$,  
+%        $$\quad s_{x|T=1} = \sqrt{\frac{\sum_{i \in \{i: T_i=1\}}
+%        (X_i - \mu_{X|T=1}}{n_1-1})^2 }.$$
+  \item balance statistics of the original data (before matching),
+    which compare treated and control covariate distributions. If {\tt
+      standardize = FALSE}, balance measures will be presented on the
+    original scale. Specifically, mean differences (\texttt{Mean
+      Diff.}) as well as the median, mean, and maximum value of
+    differences in empirical quantile functions for each covariate
+    will be given (\texttt{eQQ Med}, \texttt{eQQ Mean}, and
+    \texttt{eQQ Max}, respectively). If {\tt standardize = TRUE}, the
+    balance measures will be standardized.  Standardized mean
+    differences (\texttt{Std. Mean Diff.}), defined as
+    $\frac{\mu_{X|T=1} - \mu_{X|T=0}}{s_{x|T=1}}$, as well as the
+    median, mean, and maximum value of differences in empirical
+    cumulative distribution functions for each covariate will be given
+    (\texttt{eCDF Med}, \texttt{eCDF Mean}, and \texttt{eCDF Max},
+    respectively).
   \end{itemize}
   
 \item \texttt{sum.matched}: a data frame which contains variable names
@@ -66,13 +76,26 @@ elements, when applicable:
     $X$ and their interactions, where \texttt{Means Treated}$=
     \mu_{wX|T=1} = \frac{1}{n_1} \sum_{T=1} w_iX_i$ and \texttt{Means
       Control}$=\mu_{wX|T=0} = \frac{1}{n_0} \sum_{T=0} w_iX_i$,
-  \item weighted standard deviations in the matched treated group for
-    all covariates $X$, where \texttt{SD} $= s_{wX} =
-    \sqrt{\frac{1}{n} \sum_{i} (w_iX_i - \overline{X}^*)^2}$, where
-    $\overline{X}^*$ is the weighted mean of $X$ in the matched
-    treated group, and
-  \item standardized bias statistics \texttt{Std.
-      Bias}$=\frac{\mu_{wX|T=1} - \mu_{wX|T=0}}{s_{x|T=1}}$.
+%  \item weighted standard deviations in the matched treated group for
+%    all covariates $X$, where \texttt{SD} $= s_{wX} =
+%    \sqrt{\frac{1}{n} \sum_{i} (w_iX_i - \overline{X}^*)^2}$, where
+%    $\overline{X}^*$ is the weighted mean of $X$ in the matched
+%    treated group, and
+  \item balance statistics of the matched data (after matching), which
+    compare treated and control covariate distributions. If {\tt
+      standardize = FALSE}, balance measures will be presented on the
+    original scale. Specifically, mean differences (\texttt{Mean
+      Diff.}) as well as the median, mean, and maximum value of
+    differences in empirical quantile functions for each covariate
+    will be given (\texttt{eQQ Med}, \texttt{eQQ Mean}, and
+    \texttt{eQQ Max}, respectively). If {\tt standardize = TRUE}, the
+    balance measures will be standardized.  Standardized mean
+    differences (\texttt{Std. Mean Diff.}), defined as
+    $\frac{\mu_{X|T=1} - \mu_{X|T=0}}{s_{x|T=1}}$, as well as the
+    median, mean, and maximum value of differences in empirical
+    cumulative distribution functions for each covariate will be given
+    (\texttt{eCDF Med}, \texttt{eCDF Mean}, and \texttt{eCDF Max},
+    respectively).
   \end{itemize}
   where $w$ represents the vector of \texttt{weights}.
   
