@@ -73,14 +73,15 @@ qoical <- function(object, model, what = "ATT", insample = FALSE) {
   if (insample) {  ## insample qoi
     if (what == "ATT") {
       if (model == "lognorm")
-        res <- mean(ifelse(y[,2], exp(y[,1]),
+        res <- mean(ifelse(y[,2]>0.5, exp(y[,1]),
                            exp(x1%*%object$coefficients+0.5*object$scale^2)) -
                     exp(x0%*%object$coefficients+0.5*object$scale^2))
       else if (model == "exp")
-        res <- mean(ifelse(y[,2], y[,1], exp(x1%*%object$coefficients))-
+        res <- mean(ifelse(y[,2]>0.5, exp(y[,1]),
+                           exp(x1%*%object$coefficients))-
                     exp(x0%*%object$coefficients))
       else if (model == "weibull")
-        res <- mean(ifelse(y[,2], y[,1],
+        res <- mean(ifelse(y[,2]>0.5, exp(y[,1]),
                            exp(x1%*%object$coefficients)*gamma(1+object$scale))- 
                     exp(x0%*%object$coefficients)*gamma(1+object$scale))
       else
@@ -88,17 +89,19 @@ qoical <- function(object, model, what = "ATT", insample = FALSE) {
     }
     if (what == "ATE") {
       if (model == "lognorm")
-        res <- mean(ifelse(y1[,2], exp(y1[,1]),
+        res <- mean(ifelse(y1[,2]>0.5, exp(y1[,1]),
                            exp(x1%*%object$coefficients+0.5*object$scale^2)) -
-                    ifelse(exp(y0[,2]), y0[,1],
+                    ifelse(y0[,2]>0.5, exp(y0[,1]),
                            exp(x0%*%object$coefficients+0.5*object$scale^2)))
       else if (model == "exp")
-        res <- mean(ifelse(y1[,2], y1[,1], exp(x1%*%object$coefficients)) -
-                    ifelse(y0[,2], y0[,1], exp(x0%*%object$coefficients)))
+        res <- mean(ifelse(y1[,2]>0.5, exp(y1[,1]),
+                           exp(x1%*%object$coefficients)) -
+                    ifelse(y0[,2]>0.5, exp(y0[,1]),
+                           exp(x0%*%object$coefficients)))
       else if (model == "weibull")
-        res <- mean(ifelse(y1[,2], y1[,1],
+        res <- mean(ifelse(y1[,2]>0.5, exp(y1[,1]),
                     exp(x1%*%object$coefficients)*gamma(1+object$scale)) -
-                    ifelse(y0[,2], y0[,1],
+                    ifelse(y0[,2]>0.5, y0[,1],
                            exp(x0%*%object$coefficients)*gamma(1+object$scale)))
       else
         stop("invalid model.")
