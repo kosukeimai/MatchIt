@@ -25,7 +25,7 @@ doverlay(mate,ate,lwd=2,
          xlab="Estimated in-sample average treatment effect", leg=F)
 arrows(ate[length(ate)], 0.11, ate[length(ate)],0, length=0.1)
 text(-75,0.05,"Raw data")
-text(-43,0.05,"Matched\ndata")
+text(-42,0.05,"Matched\ndata")
 text(-52.5,0.14,"Point estimate of \n Carpenter's specification \n using raw data")
 dev.off()
 

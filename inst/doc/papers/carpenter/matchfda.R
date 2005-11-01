@@ -37,16 +37,17 @@ data$wpnoavg3 <- data$wpnoavg3/100
 spec <- treat ~ orderent  + prevgenx  + lethal +
   deathrt1 + hosp01 + hospdisc + hhosleng + femdiz01 + mandiz01 +
   peddiz01 + acutediz + orphdum + natreg  +  wpnoavg3 +
-  vandavg3 + condavg3 + stafcder + sqrt(hospdisc) 
+  vandavg3 + condavg3 + stafcder + sqrt(hospdisc)
 
 m.out <- matchit(spec, method = "nearest", data = data,
                  discard="both", exact=c("acutediz", "peddiz01", "hosp01",
                                    "lethal", "femdiz01", "mandiz01"))
 print(summary(m.out))
+print(summary(m.out, standardize=TRUE))
 mdata <- match.data(m.out)
 
-##m.out1 <- matchit(spec, method = "genetic", wait.generations = 1000,
-#                  data = data, discard="both") 
+m.out1 <- matchit(spec, method = "genetic", wait.generations = 1000,
+                  data = data, discard="both") 
 
 #sink("matchfda.out")
 #print(summary(m.out))
