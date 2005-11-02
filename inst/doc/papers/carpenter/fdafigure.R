@@ -20,7 +20,7 @@ doverlay <- function(x1, x0, xlab = "", main = "", lines = FALSE,
 
 pdf("fdadens.pdf", paper="special", height=3, width=6)
 par(mar=c(2, 2, 2, 2) + 0.1, cex.lab=0.8, cex.axis=0.8,
-    mgp=c(1,0.5,0), cex.main=0.5, cex=0.8, bg="white")
+    mgp=c(1.5,0.5,0), cex.main=0.5, cex=0.8, bg="white")
 doverlay(mate,ate,lwd=2,
          xlab="Estimated in-sample average treatment effect", leg=F)
 arrows(ate[length(ate)], 0.11, ate[length(ate)],0, length=0.1)
