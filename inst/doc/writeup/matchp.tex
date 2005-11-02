@@ -67,24 +67,24 @@ Elizabeth A. Stuart\thanks{Researcher, Mathematica Policy Research,
 
 \begin{abstract}
   Although articles rarely include causal estimates from more than a
-  few model specifications, authors usually choose the presented estimates from numerous
-  trial runs readers never see.  Given the often large variation in
-  estimates across choices of control variables, functional forms, and
-  other modeling assumptions, how can researchers ensure that the few
-  estimates presented are accurate or representative?  How do readers
-  know that publications are not merely demonstrations that the author
-  found it \emph{possible} to find a specification that fits his or
-  her favorite hypothesis?  Matching methods, which offer the promise
-  of causal inference with fewer assumptions, constitute one possible
-  way forward, but crucial results in this young and fast-growing
-  methodological literature are widely and often grossly
-  misinterpreted in applications.  We explain how to avoid these
-  misinterpretations and propose a unified approach that makes it
-  possible for researchers to preprocess data with matching (such as
-  with the easy-to-use software we offer) and then to apply whatever
-  familiar parametric techniques they would have used anyway.  This
-  procedure makes parametric models produce more accurate and
-  considerably less model-dependent causal inferences.
+  few model specifications, authors usually choose the presented
+  estimates from numerous trial runs readers never see.  Given the
+  often large variation in estimates across choices of control
+  variables, functional forms, and other modeling assumptions, how can
+  researchers ensure that the few estimates presented are accurate or
+  representative?  How do readers know that publications are not
+  merely demonstrations that the author found it \emph{possible} to
+  find a specification that fits his or her favorite hypothesis?
+  Matching methods, which offer the promise of causal inference with
+  fewer assumptions, constitute one possible way forward, but crucial
+  results in this young and fast-growing methodological literature are
+  widely and often grossly misinterpreted in applications.  We explain
+  how to avoid these misinterpretations and propose a unified approach
+  that makes it possible for researchers to preprocess data with
+  matching (such as with the easy-to-use software we offer) and then
+  to apply whatever familiar parametric techniques they would have
+  used anyway.  This procedure makes parametric models produce more
+  accurate and considerably less model-dependent causal inferences.
 \end{abstract}
 %\baselineskip=1.57\baselineskip
 
@@ -195,7 +195,7 @@ possible for us to write easy-to-use software that implements all the
 ideas discussed in this paper and incorporate most existing
 approaches described in the literature.  The program, called MatchIt,
 is available as an open source and free R program; MatchIt also works
-seemlessly with the general purpose R statistics package called Zelig
+seamlessly with the general purpose R statistics package called Zelig
 \citep{ImaKinLau04}.
 % ; it is free and available at
 % \url{http://gking.harvard.edu/matchit}.
@@ -355,7 +355,7 @@ one of the unknowns (since it would require dividing by $t_i$ or
 $1-t_i$, which includes zero) we have the severe disadvantage in
 causal inference of in general not knowing anything with certainty
 about the other unknown; this problem does not arise in ecological
-inference.\footnote{See \citet{Manski95} for intersting exceptions in
+inference.\footnote{See \citet{Manski95} for interesting exceptions in
   special cases.}
 
 Social scientists correctly think of missing data imputation and
@@ -891,10 +891,10 @@ But how can we adjust the data without inducing bias in our causal
 estimates?  The key to this problem is that the fundamental rule for
 avoiding selection bias --- not selecting on the dependent variable
 --- does not prevent us from selecting observations on the explanatory
-variables ($t_i$ or $X_i$).  (Random or other physical assignments 
-that depend on observed covariates, such as matched pairs or randomized blocks, in experiments
-and stratified sampling in surveys are
-other examples of valid data collection mechanisms that select
+variables ($t_i$ or $X_i$).  (Random or other physical assignments
+that depend on observed covariates, such as matched pairs or
+randomized blocks, in experiments and stratified sampling in surveys
+are other examples of valid data collection mechanisms that select
 observations given chosen values of the explanatory variables.)  We
 can also select, duplicate, or selectively drop observations from an
 existing sample without bias, as long as we do so using a rule that is
@@ -990,7 +990,7 @@ scholars rarely use an unadjusted difference in means to analyze
 randomized data, they should not use it in inexact matched data.
 Thus, we recommend that scholars make use of our decades of experience
 with parametric models to adjust (i.e., to interpolate or extrapolate)
-the matched sample.  The adjustment necessary is far less onorous,
+the matched sample.  The adjustment necessary is far less onerous,
 model dependent, and thus much more empirical than what would be
 necessary without matching.
 
@@ -1005,7 +1005,9 @@ then our estimates will still be consistent.  The double robustness
 property does not apply to using matching with a difference in means.
 
 
-\section{Practical Implications of the Theoretical Matching Literature}\label{s:choose}
+\section{Practical Implications of the Theoretical Matching
+  Literature}
+\label{s:choose}
 
 In this section, we organize the practical information available in
 the largely theoretical statistics, economics, epidemiology, medical,
@@ -1061,7 +1063,7 @@ the pool of potential controls is not much larger than the pool of
 treated units, then the usual econometric rules apply about the
 tradeoff between bias of excluding relevant variables and inefficiency
 of including irrelevant ones: researchers should not include every
-pre-treatment explantory variable available.
+pre-treatment explanatory variable available.
 
 \paragraph{Common Support Problems}
 
@@ -1337,7 +1339,7 @@ statistical power and thus affects the test, even if this pruning does
 not improve balance.
 
 To illustrate the dangers of using hypothesis tests to assess balance,
-we created a sequence of matched data sets by \emph{randomly} prunning
+we created a sequence of matched data sets by \emph{randomly} pruning
 increasing numbers of control group observations (from the real data
 set we analyze in Section \ref{s:carp}).  Random matching procedures
 have no systematic effect on balance.  Yet, consider the left graph in
@@ -1585,13 +1587,13 @@ checking balance via (\ref{balance}) in our two applications.
 \subsection{Democratic Senate Majorities and FDA Drug Approval
   Time}\label{s:carp}
 
-An influential article by \citet{Carpenter02} tests a key hypothesis in the
-literature on institutional and partisan determinants of regulatory
-policy by examining several determinants of new drug approval times by
-the U.S.\ Food and Drug Administration (FDA).  Here, we focus on the
-hypothesis that Democratic oversight of the FDA should lead to slower
-approval of new drugs \citep[p.495 and Model 1 of Table 2,
-p.499]{Carpenter02}.
+An influential article by \citet{Carpenter02} tests a key hypothesis
+in the literature on institutional and partisan determinants of
+regulatory policy by examining several determinants of new drug
+approval times by the U.S.\ Food and Drug Administration (FDA).  Here,
+we focus on the hypothesis that Democratic oversight of the FDA should
+lead to slower approval of new drugs (p.495) and the specification of
+Model 1 of Table 2 (p.499).
 
 To test this hypothesis, Carpenter uses a lognormal survival model of
 approval times regressed on several causal variables of political
@@ -1599,32 +1601,34 @@ oversight (median adjusted ADA scores for House and Senate Committees
 as well as for House and Senate floors, Democratic Majority in House
 and Senate, and Democratic Presidency) and 18 control variables
 including clinical and epidemiology factors and firm
-characteristics.\footnote{In the original paper, \citet{Carpenter02} uses a
-  lognormal frailty model with a common (ungrouped) random effect.
-  For simplicity and speed, we drop the random effect.  This has very
-  small effects on the quantities we estimate, and no effect on our
-  conclusions.}  The dataset consists of 408 new drugs reviewed by the
-FDA, 262 of which were eventually approved.  The remaining 146 drug
-applications were still pending at the time of data collection and
-hence are treated as right-censored observations.  (Inferences from
-the censored observations are model-dependent by design and so this
-aspect of the problem is not influenced by the methods we introduce.)
-Approval time is measured in months passed from the submission of an
-application.
+characteristics.\footnote{In the original paper, \citet{Carpenter02}
+  uses a lognormal frailty model with a common (ungrouped) random
+  effect.  For computational simplicity, we drop the random effect.
+  This has very small effects on the quantities we estimate, and no
+  effect on our conclusions.}  The dataset consists of 408 new drugs
+reviewed by the FDA, 262 of which were eventually approved.  The
+remaining 146 drug applications were still pending at the time of data
+collection and hence are treated as right-censored observations.
+(Inferences from the censored observations are necessarily
+model-dependent by design and so this aspect of the problem is not
+influenced by the methods we introduce.)  Approval time is measured in
+months passed from the submission of an application.
 
 We focus on the causal effect of a Democratic majority in the Senate,
-one of the seven oversight variables.  Carpenter's remaining six
-oversight variables are conceptually and statistically highly related,
-and are in part consequences of a Democratic Senate majority.  As
-such, we omit them to avoid post-treatment bias.  Post-treatment bias
-may still exist in this research design if other variables controlled
-for are consequences of a Democratic Senate majority.  For example, if
-media coverage of a particular disease is affected by Democratic
-control, bias would be induced.  Although post-treatment bias is a
-critical issue in accurately estimating causal effects, it would
-affect parametric models with or without preprocessing and so is less
-relevant for our present goal of reducing model dependence;
-we do not pursue it further.
+one of the seven oversight variables. In particular, we estimate the
+in-sample average treatment effect for the treated (ATT) as defined in
+equation~\ref{att}.  Carpenter's remaining six oversight variables are
+conceptually and statistically highly related, and are in part
+consequences of a Democratic Senate majority.  As such, we omit them
+to avoid post-treatment bias.  Post-treatment bias may still exist in
+this research design if other variables controlled for are
+consequences of a Democratic Senate majority.  For example, if media
+coverage of a particular disease is affected by Democratic control,
+bias would be induced.  Although post-treatment bias is a critical
+issue in accurately estimating causal effects, it would affect
+parametric models with or without preprocessing and so is less
+relevant for our present goal of reducing model dependence; we do not
+pursue it further.
 
 We also assume the absence of autocorrelation (or interference among
 units).  In this application, this assumption means that the existence
@@ -1638,73 +1642,113 @@ In the original analysis, the reported coefficient for the Democratic
 Senate majority variable is statistically significant at the 10\%
 level but in the opposite direction of Carpenter's hypothesis.  For
 our purposes this variable is of particular interest because
-\citet[p.498]{Carpenter02} finds that ``[t]he coefficient estimate for this
-variable [Democratic Senate majority] is not significant in other
+\citet[p.498]{Carpenter02} finds that ``[t]he coefficient estimate for
+this variable [Democratic Senate majority] is not significant in other
 regressions, and even switches sign when firm variables are added.''
 We therefore examine whether the model sensitivity that prevented
 Carpenter from drawing firm conclusions about the Democratic Senate
-majority variable is reduced by preprocessing the data.
+majority variable is reduced by preprocessing the data. 
 
-To preprocess, we conduct nearest neighbor propensity score matching
-(without replacement), estimating the propensity score using logistic
-regression with all covariates as linear predictors. We find that also
-matching on the square root of the nightly TV news disease story
-variable significantly improves its balance and so we include it in the propensity score model.
-This preprocessing procedure discards 49 units (2 treated units and 47
-control units) from the original sample that otherwise require
-substantial, model-dependent extrapolations.
+To preprocess, we follow the recommendations described in
+Section~\ref{s:choose}. We first check whether the control units are
+within the convex hull of the treated units using the method developed
+by \citet{KinZen06a}. The result indicates that none of the treated
+and control units is in the convex hull. This lack of common support
+explains in part why \citet{Carpenter02} finds the results are highly
+model-dependent. To proceed, we estimate the propensity score using
+logistic regression with all covariates as linear predictors.  We also
+find that matching on the square root of hospitalization associated
+with indication improves the resulting balance significantly, and so
+we include it.  We then discard 15 control units and 2 treated units
+that are outside of the common support of the estimated propensity
+score. Finally, we conduct one-to-one nearest neighbor propensity
+score matching (without replacement) while placing exact restrictions
+on six binary variables (whether primary indication is lethal
+condition, acute condition, and/or results in hospitalization; whether
+disease mainly affects men, women, and/or children). We choose
+one-to-one matching rather than one-to-many matching or full matching,
+which keep more observations after matching, because our convex hull
+analysis indicates that most of the observations are likely to be
+outside of the common support.  This preprocessing procedure discards
+the total of 102 units (10 treated units and 92 control units) from
+the original sample that otherwise require substantial,
+model-dependent extrapolations. The matched data sets then consists of
+306 observations.
 
-Figure~\ref{fg:fdabal} summarizes how preprocessing can improve the
-covariate balance. The left panel plots the absolute value of
-t-statistics before and after matching for mean differences of each
-covariate between the treatment and control groups.  Before matching,
-the means of three covariates and the estimated propensity score
-(summarizing all the covariates) are significantly different between
-the treatment and control groups.  For example, the original
-coefficients (not shown) indicate that the drugs introduced under
-Democratic Senate control appeared on average 25 times less frequently
-in the Washington Post, received substantially less broadcast news
-coverage, and were submitted at times with fewer FDA staff; all of
-these have significant t-statistics (i.e., appear to the right of the
-gray box in the figure).  However, after matching, these differences
-vanish as all t-statistics are less than 1.96, implying that the mean
-differences are no longer statistically significant at the 5\% level
-(in the figure none are above the gray box).  The mean differences of
-the other covariates are small both before and after
-preprocessing.\footnote{Preprocessing slightly increases the values of
-  the t-statistics for two variables, albeit not significantly so.
-  Uniform improvement of balance for all covariates is unlikely unless
-  exact matching is possible and/or the sample size is large. The
-  minor sample differences that remain, however, will be adjusted by
-  fitting the parametric models to the preprocessed data.}
-\begin{figure}[t] 
- \begin{center}
-   \includegraphics{figs/fdabal.pdf}
-  \end{center}
-  \vspace{-0.275in}
-  \caption{Covariate balance before and after matching for the FDA data.
-    The left panel plots the absolute value of t-statistics before and
-    after matching for mean differences of each covariate between the
-    treatment and control groups. The gray rectangular represents the
-    region where t-statistics are not significant at 5\% level for
-    both before and after matching. After matching, all t-statistics
-    become insignificant. The right panel presents the density plot
-    for estimated propensity score before and after matching. After
-    matching, the distribution for the control group becomes
-    substantially more similar to that for the treatment group.}
-  \label{fg:fdabal}
-\end{figure}
+\begin{table}[t]
+\begin{center}
+\setlength{\tabcolsep}{2pt}
+\begin{tabular}{lrrrrrr}
+\hline
+\hline
+ & \multicolumn{2}{c}{} 
+ & \multicolumn{4}{c}{Empirical quantile measures} \\
+ & \multicolumn{2}{c}{Mean Difference} 
+ & \multicolumn{2}{c}{Mean Difference} 
+ & \multicolumn{2}{c}{Max Difference} \\
+Variable Names 
+& balance & \%imprv.
+& balance & \%imprv.  
+& balance & \%imprv. \\
+\hline
+Estimated propensity score & 0.04 & 56.76 & 0.04 & 56.20 & 0.09 & 52.85 \\
+{\bf Clinical/Epidemiological Factors} & \\
+Incidence of primary indication & 0.07 & 19.91 & 0.07 & 12.53 & 0.50 & 80.11 \\
+Primary indication is lethal condition & 0.00 & 100.00 & 0.00 & 100.00 & 0.00 & 100.00 \\
+Death rate, primary indication & $-$0.00 & 99.90 & 0.01 & 71.26 & 0.29 & 86.56 \\
+Primary indication is acute condition & 0.00 & 100.00 & 0.00 & 100.00 & 0.00 & 100.00 \\
+Primary ind. results in hospitalization & 0.00 & 100.00 & 0.00 & 100.00 & 0.00 & 100.00 \\
+Hospitalizations associated with indication & 0.13 & 2.56 & 0.15 & 5.91 & 3.01 & $-$1.37 \\
+Disease mainly affects women & 0.00 & 100.00 & 0.00 & 100.00 & 0.00 & 100.00 \\
+Disease mainly affects men & 0.00 & 100.00 & 0.00 & 100.00 & 0.00 & 100.00 \\
+Disease mainly affects children & 0.00 & 100.00 & 0.00 & 100.00 & 0.00 & 100.00 \\
+Orphan Drug & $-$0.01 & 51.21 & 0.01 & 57.39 & 1.00 & 0.00 \\
+{\bf Disease Politics (Groups and Media)} & \\
+National and regional groups & $-$0.00 & 89.60 & 0.02 & 53.07 & 0.80 & 26.61 \\
+Nightly TV news disease stories & $-$0.14 & $-$15.63 & 0.14 & $-$27.60 & 3.23 & $-$11.21 \\
+Washington post disease stories & $-$0.13 & 49.06 & 0.14 & 42.33 & 1.68 & 8.84 \\
+Days of Congressional hearings & $-$0.02 & 20.22 & 0.07 & 29.66 & 1.70 & 38.55 \\
+Order of disease market entry & 0.05 & 34.02 & 0.23 & $-$17.66 & 1.00 & 16.67 \\
+{\bf FDA Variable} & \\
+CDER staff & $-$0.68 & 10.77 & 1.57 & 5.78 & 3.06 & 17.96 \\
+\hline
+\hline
+\end{tabular}
+\end{center}
+\caption{Covariate balance after matching for the FDA data. 
+    The table presents three different measures of resulting balance
+    after matching -- sample mean
+    differences, and mean and maximum values of differences in
+    empirical quantile functions -- as well as their percent balance
+    improvement for each covariate of Model 1 of
+    \citet{Carpenter02}. In almost all dimensions and across three
+    different measures, matching significantly improves balance.  
+}
 
-The right panel of Figure~\ref{fg:fdabal} provides another view of how
-our preprocessing improves covariate balance.  Before matching, a
-number of control units (drugs) with low values of the propensity
-score look very different from the units in the treated group.  The
-problem with parametric models applied to raw data is that these
-control units will be most influential in any model fit to the raw
-data set.  By choosing the matched set of control units which look
-most similar to the treated units, the treated-control comparison will
-then take place only among units similar on the background variables and thus
-will not be affected as much by the model specification.
+  \label{tb:fdabal}
+\end{table}
+
+Table~\ref{tb:fdabal} summarizes how preprocessing can improve the
+covariate balance. The table presents three balance measures after
+matching for each covariate and their percept improvement when
+compared to the original balance before matching.  Matching
+significantly improves balance of each covariate. Exact restrictions
+with six binary variables make their balance perfect, which is
+indicated by the fact that the values of all the balance measures are
+zero and their percent improvements are 100. For other variables, the
+balance is significantly better where mean differences become smaller
+for all covariates and empirical quantile measures also indicate a
+significant improvement in balance for most variables.  Preprocessing
+slightly increases the values of empirical quantile measures in two
+cases, albeit not significantly so.  Uniform improvement of balance
+for all covariates and all measures is unlikely unless exact matching
+is possible for all covariates. The minor sample differences that
+remain, however, will be adjusted by fitting the parametric models to
+the preprocessed data. By choosing the matched set of control units
+which look most similar to the treated units, the treated-control
+comparison will then take place only among units similar on the
+background variables and thus will not be affected as much by the
+model specification.
 
 We now run the same log-normal survival analysis as Carpenter did, but
 using the preprocessed data set.  Since nothing changed other than the
@@ -1728,22 +1772,6 @@ point estimates across potential specifications of pretreatment
 covariates, although the same conclusions apply to most other
 quantities of interest too.
 
-We estimate the point estimate of the ATE for every possible
-specification in which the 18 covariates enter the model with the
-treatment indicator (i.e., all possible subsets of covariates from the
-18).  Even though we ignored interactions and nonlinearities (which
-are of course additional key aspects of model dependence), this
-amounts to $262,143$ survival analyses, all of which we ran.
-Figure~\ref{fg:fdadens} presents a histogram for the estimated average
-treatment effects across all the specifications for the raw data as
-well as for the matched (preprocessed) data.  The key result here is
-that estimates are far more model-dependent using the raw data than
-using the matched data.  For example, the variance of the estimated
-average treatment effect from the matched data (the solid curve) is
-less than one third the size of that from the raw data (the dashed
-curve).  (The distribution of estimates for the matched data is also
-closer to the normal density, which will happen when control variables
-included are having effects only due to random errors.)
 \begin{figure}[t] 
  \begin{center}
    \includegraphics{figs/fdadens.pdf}
@@ -1761,6 +1789,23 @@ included are having effects only due to random errors.)
     raw data as compared with the preprocessed matched data.}
   \label{fg:fdadens}
 \end{figure}
+
+We estimate the point estimate of the ATE for every possible
+specification in which the 18 covariates enter the model with the
+treatment indicator (i.e., all possible subsets of covariates from the
+18).  Even though we ignored interactions and nonlinearities (which
+are of course additional key aspects of model dependence), this
+amounts to $262,143$ survival analyses, all of which we ran.
+Figure~\ref{fg:fdadens} presents a histogram for the estimated average
+treatment effects across all the specifications for the raw data as
+well as for the matched (preprocessed) data.  The key result here is
+that estimates are far more model-dependent using the raw data than
+using the matched data.  For example, the variance of the estimated
+average treatment effect from the matched data (the solid curve) is
+less than one third the size of that from the raw data (the dashed
+curve).  (The distribution of estimates for the matched data is also
+closer to the normal density, which will happen when control variables
+included are having effects only due to random errors.)
 
 In his original analysis, Carpenter was unable to draw conclusions
 from the raw data due to high levels of model dependence. This can be
