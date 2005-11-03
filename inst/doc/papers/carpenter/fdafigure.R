@@ -7,20 +7,15 @@ load("matchfdaLin.RData")
 ##
 library(MASS)
 library(survival)
+library(Zelig)
 
 ## matched data
 mcall <- res$call
 mcall$data <- mdata
 mres <- eval(mcall)
 ## original data
-mres <- res
+#mres <- res
 
-coef <- coef(mres)
-var <- vcov(mres)
-nsims <- 100000
-par <- mvrnorm(nsims, mu=c(coef(mres), log(mres$scale)), Sigma=vcov(mres))
-scale2 <- exp(par[,ncol(par)])^2
-par <- par[,-ncol(par)]
 
 x <- model.matrix(mres)
 y <- mres$y
@@ -28,10 +23,24 @@ x0 <- x1 <- x[x[,"treat"] == 1,] # treated only
 x0[,"treat"] <- 0  # counterfactual for the treated
 y <- y[x[,"treat"] == 1,] # observed Y(1) for the treated
 
-att <- apply(ifelse(y[,2]>0.5, matrix(rep(exp(y[,1]), nsims), nrow=nsims, byrow=TRUE),
-                    exp(par%*%t(x1)+0.5*scale2)) -
-                    exp(par%*%t(x0)+0.5*scale2), 1, mean)
-cat("ATT: ", mean(att), " (", sd(att), ")", sep="")
+beta <- coef(mres)
+sigma2 <- mres$scale^2
+
+## delta method
+est <- mean(ifelse(y[,2]>0.5, exp(y[,1]), exp(x1%*%beta+0.5*sigma2)) -
+                    exp(x0%*%beta+0.5*sigma2))
+
+grad <- matrix(0, nrow=length(beta)+1, ncol=1)
+for (i in 1:nrow(x1)) {
+  grad <- grad + ifelse(y[i,2]>0.5, matrix(0, nrow=length(beta)+1, ncol=1),
+                        matrix(c(exp(x1[i,]%*%beta+0.5*sigma2)*x1[i,],
+                                 exp(x1[i,]%*%beta+0.5*sigma2)*sigma2), ncol=1)
+                        -matrix(c(exp(x0[i,]%*%beta+0.5*sigma2)*x0[i,],
+                                  exp(x0[i,]%*%beta+0.5*sigma2)*sigma2), ncol=1))
+}
+grad <- grad/nrow(x1)
+
+cat("ATT: ", est, " (", sqrt(t(grad)%*%vcov(mres)%*%grad), ")", sep="")
 
 ##
 ## density figure
@@ -53,7 +62,7 @@ doverlay <- function(x1, x0, xlab = "", main = "", lines = FALSE,
 }
 
 pdf("fdadens.pdf", paper="special", height=3.5, width=6)
-par(mar=c(2.5, 2, 2, 2) + 0.1, cex.lab=0.8, cex.axis=0.8,
+par(mar=c(2.5, 2.5, 2, 2) + 0.1, cex.lab=0.8, cex.axis=0.8,
     mgp=c(1.5,0.5,0), cex.main=0.5, cex=0.8, bg="white")
 doverlay(mate,ate,lwd=2,
          xlab="Estimated in-sample average treatment effect", leg=F)
