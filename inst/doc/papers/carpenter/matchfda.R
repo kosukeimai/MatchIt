@@ -13,7 +13,8 @@ analysis <- TRUE
 model <- "lognorm"
 qoi <- "ATT"
 insample <- TRUE
-file <- "matchfda.RData"
+se <- TRUE
+file <- "matchfdaCI.RData"
 sims <- 0
 
 ## data
@@ -56,9 +57,19 @@ mdata <- match.data(m.out)
 #sink()
 
 ## functions to calculate QOI
-qoical <- function(object, model, what = "ATT", insample = FALSE) {
+## only lognormal with insample ATT has variance
+qoical <- function(object, model, what = "ATT", insample = FALSE, se=FALSE) {
+  if (se) {
+    if (model != "lognorm")
+      stop("se is not available for this model.")
+    if (what != "ATT")
+    if (!insample)
+      stop("se is not available for this qoi.")
+  }
   x <- model.matrix(object)
   y <- object$y
+  beta <- coef(object)
+  scale <- object$scale
   if (what == "ATE") {
     x0 <- x1 <- x
     y0 <- y1 <- y
@@ -74,51 +85,61 @@ qoical <- function(object, model, what = "ATT", insample = FALSE) {
   }
   if (insample) {  ## insample qoi
     if (what == "ATT") {
-      if (model == "lognorm")
+      if (model == "lognorm") {
         res <- mean(ifelse(y[,2]>0.5, exp(y[,1]),
-                           exp(x1%*%object$coefficients+0.5*object$scale^2)) -
-                    exp(x0%*%object$coefficients+0.5*object$scale^2))
+                           exp(x1%*%beta+0.5*scale^2)) -
+                    exp(x0%*%beta+0.5*scale^2))
+        if (se) {
+          delta1 <- (y[,2]<0.5)*cbind(c(exp(x1%*%beta+0.5*scale^2))*x1,
+                                      c(exp(x1%*%beta+0.5*scale^2)*scale^2))
+          delta0 <- cbind(c(exp(x0%*%beta+0.5*scale^2))*x0,
+                          c(exp(x0%*%beta+0.5*scale^2)*scale^2))
+          grad <- apply(delta1-delta0, 2, mean)
+          var <- t(grad)%*%vcov(object)%*%grad
+          res <- c(res, var, 2*1.96*sqrt(var))
+        }
+      }
       else if (model == "exp")
         res <- mean(ifelse(y[,2]>0.5, exp(y[,1]),
-                           exp(x1%*%object$coefficients))-
-                    exp(x0%*%object$coefficients))
+                           exp(x1%*%beta))-
+                    exp(x0%*%beta))
       else if (model == "weibull")
         res <- mean(ifelse(y[,2]>0.5, exp(y[,1]),
-                           exp(x1%*%object$coefficients)*gamma(1+object$scale))- 
-                    exp(x0%*%object$coefficients)*gamma(1+object$scale))
+                           exp(x1%*%beta)*gamma(1+scale))- 
+                    exp(x0%*%beta)*gamma(1+scale))
       else
         stop("invalid model.")
     }
     if (what == "ATE") {
       if (model == "lognorm")
         res <- mean(ifelse(y1[,2]>0.5, exp(y1[,1]),
-                           exp(x1%*%object$coefficients+0.5*object$scale^2)) -
+                           exp(x1%*%beta+0.5*scale^2)) -
                     ifelse(y0[,2]>0.5, exp(y0[,1]),
-                           exp(x0%*%object$coefficients+0.5*object$scale^2)))
+                           exp(x0%*%beta+0.5*scale^2)))
       else if (model == "exp")
         res <- mean(ifelse(y1[,2]>0.5, exp(y1[,1]),
-                           exp(x1%*%object$coefficients)) -
+                           exp(x1%*%beta)) -
                     ifelse(y0[,2]>0.5, exp(y0[,1]),
-                           exp(x0%*%object$coefficients)))
+                           exp(x0%*%beta)))
       else if (model == "weibull")
         res <- mean(ifelse(y1[,2]>0.5, exp(y1[,1]),
-                    exp(x1%*%object$coefficients)*gamma(1+object$scale)) -
+                    exp(x1%*%beta)*gamma(1+scale)) -
                     ifelse(y0[,2]>0.5, y0[,1],
-                           exp(x0%*%object$coefficients)*gamma(1+object$scale)))
+                           exp(x0%*%beta)*gamma(1+scale)))
       else
         stop("invalid model.")
     }
   }
   else { ## population qoi
     if (model == "lognorm")
-      res <- mean(exp(x1%*%object$coefficients+0.5*object$scale^2) -
-                  exp(x0%*%object$coefficients+0.5*object$scale^2))
+      res <- mean(exp(x1%*%beta+0.5*scale^2) -
+                  exp(x0%*%beta+0.5*scale^2))
     else if (model == "exp")
-      res <- mean(exp(x1%*%object$coefficients) -
-                  exp(x0%*%object$coefficients))
+      res <- mean(exp(x1%*%beta) -
+                  exp(x0%*%beta))
     else if (model == "weibull")
-      res <- mean(exp(x1%*%object$coefficients)*gamma(1+object$scale) -
-                  exp(x0%*%object$coefficients)*gamma(1+object$scale))
+      res <- mean(exp(x1%*%beta)*gamma(1+scale) -
+                  exp(x0%*%beta)*gamma(1+scale))
     else
       stop("invalid model.")
   }  
@@ -149,17 +170,25 @@ if(analysis) {
     run <- round(total/sum(total)*sims)
   else
     run <- total
-  ate <- mate <- rep(NA,sum(run)+1)
+  if (se)
+    ate <- mate <- matrix(NA, nrow=sum(run)+1, ncol=3)
+  else
+    ate <- mate <- rep(NA, sum(run)+1)
   counter <- 1
   
   ## original data
   tmp <- zelig(as.formula(start), data = data, model=model)
-  ate[counter] <- qoical(tmp, model, qoi, insample)
-
+  if (se)
+    ate[counter,] <- qoical(tmp, model, qoi, insample, se)
+  else
+    ate[counter] <- qoical(tmp, model, qoi, insample, se)    
   ## matched data
   tmp <- zelig(as.formula(start), data = mdata, model=model)
-  mate[counter] <- qoical(tmp, model, qoi, insample)
-
+  if (se)
+    mate[counter,] <- qoical(tmp, model, qoi, insample, se)
+  else
+    mate[counter] <- qoical(tmp, model, qoi, insample, se)
+    
   ## looping
   counter <- 2
   cat("start", date(), "\n")
@@ -171,15 +200,24 @@ if(analysis) {
         ftmp <- as.formula(paste(ftmp, "+",paste(bk,collapse=" + ")))
         ## original data
         tmp <- zelig(ftmp,  data = data, model=model)
-        ate[counter] <- qoical(tmp, model, qoi, insample)
+        if (se)
+          ate[counter,] <- qoical(tmp, model, qoi, insample, se)
+        else
+          ate[counter] <- qoical(tmp, model, qoi, insample, se)          
         ## matched data
         xtmp <- model.matrix(ftmp, model.frame(terms(ftmp), mdata))
         if (qr(xtmp)$rank >= ncol(xtmp)) {
           tmp <- zelig(ftmp,  data = mdata, model=model)
-          mate[counter] <- qoical(tmp, model, qoi, insample)
+          if (se)
+            mate[counter,] <- qoical(tmp, model, qoi, insample, se)
+          else
+            mate[counter] <- qoical(tmp, model, qoi, insample, se)
         }
         else
-          mate[counter] <- mate[counter-1]
+          if (se)
+            mate[counter,] <- mate[counter-1,]
+          else
+            mate[counter] <- mate[counter-1]
         counter <- counter + 1
       }
       cat(i,"covariates:",date(),"\n")
