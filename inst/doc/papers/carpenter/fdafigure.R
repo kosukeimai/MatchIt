@@ -13,34 +13,33 @@ library(Zelig)
 mcall <- res$call
 mcall$data <- mdata
 mres <- eval(mcall)
-## original data
-#mres <- res
 
-
-x <- model.matrix(mres)
-y <- mres$y
-x0 <- x1 <- x[x[,"treat"] == 1,] # treated only
-x0[,"treat"] <- 0  # counterfactual for the treated
-y <- y[x[,"treat"] == 1,] # observed Y(1) for the treated
-
-beta <- coef(mres)
-sigma2 <- mres$scale^2
-
-## delta method
-est <- mean(ifelse(y[,2]>0.5, exp(y[,1]), exp(x1%*%beta+0.5*sigma2)) -
-                    exp(x0%*%beta+0.5*sigma2))
-
-grad <- matrix(0, nrow=length(beta)+1, ncol=1)
-for (i in 1:nrow(x1)) {
-  grad <- grad + ifelse(y[i,2]>0.5, matrix(0, nrow=length(beta)+1, ncol=1),
-                        matrix(c(exp(x1[i,]%*%beta+0.5*sigma2)*x1[i,],
-                                 exp(x1[i,]%*%beta+0.5*sigma2)*sigma2), ncol=1)
-                        -matrix(c(exp(x0[i,]%*%beta+0.5*sigma2)*x0[i,],
-                                  exp(x0[i,]%*%beta+0.5*sigma2)*sigma2), ncol=1))
+attcal <- function(object) {
+  x <- model.matrix(object)
+  y <- object$y
+  x0 <- x1 <- x[x[,"treat"] == 1,] # treated only
+  x0[,"treat"] <- 0  # counterfactual for the treated
+  y <- y[x[,"treat"] == 1,] # observed Y(1) for the treated
+  
+  beta <- matrix(coef(object), ncol=1)
+  sigma2 <- object$scale^2
+  
+  ## delta method
+  est <- mean(ifelse(y[,2]>0.5, exp(y[,1]), exp(x1%*%beta+0.5*sigma2)) -
+              exp(x0%*%beta+0.5*sigma2))
+  delta1 <- (y[,2]<0.5)*cbind(c(exp(x1%*%beta+0.5*sigma2))*x1,
+                              c(exp(x1%*%beta+0.5*sigma2)*sigma2))
+  delta0 <- cbind(c(exp(x0%*%beta+0.5*sigma2))*x0,
+                  c(exp(x0%*%beta+0.5*sigma2)*sigma2))
+  grad <- apply(delta1-delta0, 2, mean)
+  se <- sqrt(t(grad)%*%vcov(object)%*%grad)
+  
+  cat("ATT: ", est, " (", se, ")", "\n", sep="")
+  return(c(est, se))
 }
-grad <- grad/nrow(x1)
 
-cat("ATT: ", est, " (", sqrt(t(grad)%*%vcov(mres)%*%grad), ")", sep="")
+att <- attcal(res)
+matt <- attcal(mres)
 
 ##
 ## density figure
