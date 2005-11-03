@@ -1753,13 +1753,13 @@ model specification.
 We now run the same log-normal survival analysis as Carpenter did, but
 using the preprocessed data set.  Since nothing changed other than the
 removal of data that would have required highly model-dependent
-inferences, no other analysis procedures change.  We compute point
-estimates, standard errors, and confidence intervals using the same
-procedures Carpenter did on the raw data.  By applying this procedure
-to the preprocessed data, the estimated average treatment effect for
-the treated based on Carpenter's Model 1 is approximately $-33.1$
-months with an estimated standard error $8.8$, indicating that a
-Democratic Senate majority significantly decreases the average
+inferences, no other analysis procedures change.  We compute maximum
+likelihood estimates, standard errors, and confidence intervals using
+the same procedures Carpenter did on the raw data.  By applying this
+procedure to the preprocessed data, the estimated average treatment
+effect for the treated based on Carpenter's Model 1 is approximately
+$-33.1$ months with an estimated standard error $4.1$, indicating that
+a Democratic Senate majority significantly decreases the average
 approval time of new drugs.  This result thus continues to contradict
 Carpenter's initial hypothesis.
 
@@ -1768,10 +1768,10 @@ substantive research question at hand, for our methodological purposes
 we go a step further to demonstrate the model-dependence of the
 average causal effect of a Democratic Senate majority using the
 preprocessed data and compare this with that from the raw data.  For
-simplicity, we portray model dependence by the variability in ATE
-point estimates across potential specifications of pretreatment
-covariates, although the same conclusions apply to most other
-quantities of interest too.
+simplicity, we portray model dependence by the variability in maximum
+likelihood estimates of insample ATT across potential specifications
+of pretreatment covariates, although the same conclusions apply to
+most other quantities of interest too.
 
 \begin{figure}[t] 
  \begin{center}
@@ -1779,28 +1779,27 @@ quantities of interest too.
   \end{center}
   \vspace{-0.15in}
   \caption{Kernel density plot (a smoothed histogram)
-    of the estimated insample average treatment effect of the
-    Democratic Senate majority for the treated on FDA drug approval
-    time across $262,143$ specifications. The solid line presents a
-    density plot of the estimated insample average treatment effect
-    for the treated (ATT) using the matched dataset, while the dashed
-    line is based on the raw data.  The vertical arrow shows the point
-    estimate from Carpenter's Model 1 based on the raw data.  The
-    figure shows that ATT estimates are considerably more sensitive to
-    model specification using the raw data as compared with the
-    preprocessed matched data.} 
+    of the estimated insample average treatment effect for the treated
+    (ATT) of the Democratic Senate majority on FDA drug approval time
+    across $262,143$ specifications. The solid line presents a density
+    plot of the maximum likelihood estimates of ATT using the matched
+    dataset, while the dashed line is based on the raw data.  The
+    vertical arrow shows the point estimate from Carpenter's Model 1
+    based on the raw data.  The figure shows that ATT estimates are
+    considerably more sensitive to model specification using the raw
+    data as compared with the preprocessed matched data.}
   \label{fg:fdadens}
 \end{figure}
 
-We estimate the point estimate of the ATE for every possible
-specification in which the 18 covariates enter the model with the
-treatment indicator (i.e., all possible subsets of covariates from the
-18).  Even though we ignored interactions and nonlinearities (which
-are of course additional key aspects of model dependence), this
+We obtain the maximum likelihood estimate of the ATE for every
+possible specification in which the 18 covariates enter the model with
+the treatment indicator (i.e., all possible subsets of covariates from
+the 18).  Even though we ignored interactions and nonlinearities
+(which are of course additional key aspects of model dependence), this
 amounts to $262,143$ survival analyses, all of which we ran.
-Figure~\ref{fg:fdadens} presents a histogram for the estimated
-(in-sample) average treatment effects for the treated across all the
-specifications for the raw data as well as for the matched
+Figure~\ref{fg:fdadens} presents a kernel density plot for the
+estimated (in-sample) average treatment effects for the treated across
+all the specifications for the raw data as well as for the matched
 (preprocessed) data.  The key result here is that estimates are far
 more model-dependent using the raw data than using the matched data.
 For example, the variance of the estimated average treatment effect
