@@ -14,7 +14,7 @@ model <- "lognorm"
 qoi <- "ATT"
 insample <- TRUE
 se <- TRUE
-file <- "matchfdaCI.RData"
+file <- "matchfda.RData"
 sims <- 0
 
 ## data
@@ -63,6 +63,7 @@ qoical <- function(object, model, what = "ATT", insample = FALSE, se=FALSE) {
     if (model != "lognorm")
       stop("se is not available for this model.")
     if (what != "ATT")
+      stop("se is not available for this qoi.")
     if (!insample)
       stop("se is not available for this qoi.")
   }
@@ -70,6 +71,7 @@ qoical <- function(object, model, what = "ATT", insample = FALSE, se=FALSE) {
   y <- object$y
   beta <- coef(object)
   scale <- object$scale
+  scale2 <- scale^2
   if (what == "ATE") {
     x0 <- x1 <- x
     y0 <- y1 <- y
@@ -87,13 +89,13 @@ qoical <- function(object, model, what = "ATT", insample = FALSE, se=FALSE) {
     if (what == "ATT") {
       if (model == "lognorm") {
         res <- mean(ifelse(y[,2]>0.5, exp(y[,1]),
-                           exp(x1%*%beta+0.5*scale^2)) -
+                           exp(x1%*%beta+0.5*scale2)) -
                     exp(x0%*%beta+0.5*scale^2))
         if (se) {
-          delta1 <- (y[,2]<0.5)*cbind(c(exp(x1%*%beta+0.5*scale^2))*x1,
-                                      c(exp(x1%*%beta+0.5*scale^2)*scale^2))
-          delta0 <- cbind(c(exp(x0%*%beta+0.5*scale^2))*x0,
-                          c(exp(x0%*%beta+0.5*scale^2)*scale^2))
+          delta1 <- (y[,2]<0.5)*cbind(c(exp(x1%*%beta+0.5*scale2))*x1,
+                                      c(exp(x1%*%beta+0.5*scale2)*scale2))
+          delta0 <- cbind(c(exp(x0%*%beta+0.5*scale2))*x0,
+                          c(exp(x0%*%beta+0.5*scale2)*scale2))
           grad <- apply(delta1-delta0, 2, mean)
           var <- t(grad)%*%vcov(object)%*%grad
           res <- c(res, var, 2*1.96*sqrt(var))
@@ -113,9 +115,9 @@ qoical <- function(object, model, what = "ATT", insample = FALSE, se=FALSE) {
     if (what == "ATE") {
       if (model == "lognorm")
         res <- mean(ifelse(y1[,2]>0.5, exp(y1[,1]),
-                           exp(x1%*%beta+0.5*scale^2)) -
+                           exp(x1%*%beta+0.5*scale2)) -
                     ifelse(y0[,2]>0.5, exp(y0[,1]),
-                           exp(x0%*%beta+0.5*scale^2)))
+                           exp(x0%*%beta+0.5*scale2)))
       else if (model == "exp")
         res <- mean(ifelse(y1[,2]>0.5, exp(y1[,1]),
                            exp(x1%*%beta)) -
@@ -132,8 +134,8 @@ qoical <- function(object, model, what = "ATT", insample = FALSE, se=FALSE) {
   }
   else { ## population qoi
     if (model == "lognorm")
-      res <- mean(exp(x1%*%beta+0.5*scale^2) -
-                  exp(x0%*%beta+0.5*scale^2))
+      res <- mean(exp(x1%*%beta+0.5*scale2) -
+                  exp(x0%*%beta+0.5*scale2))
     else if (model == "exp")
       res <- mean(exp(x1%*%beta) -
                   exp(x0%*%beta))

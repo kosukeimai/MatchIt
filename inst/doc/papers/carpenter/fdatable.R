@@ -1,5 +1,5 @@
 #rm(list=ls())
-load("matchfdaLin.RData")
+load("matchfda.RData")
 sm <- summary(m.out)
 tb <- cbind(sm$sum.matched[,3], sm$reduction[,1],
 #            sm$sum.matched[,4], sm$reduction[,2],

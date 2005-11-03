@@ -63,12 +63,22 @@ doverlay <- function(x1, x0, xlab = "", main = "", lines = FALSE,
 pdf("fdadens.pdf", paper="special", height=3.5, width=6)
 par(mar=c(2.5, 2.5, 2, 2) + 0.1, cex.lab=0.8, cex.axis=0.8,
     mgp=c(1.5,0.5,0), cex.main=0.5, cex=0.8, bg="white")
-doverlay(mate,ate,lwd=2,
-         xlab="Estimated in-sample average treatment effect", leg=F)
+doverlay(mate[,1],ate[,1],lwd=2,
+         xlab="Estimated in-sample average treatment effect for the treated", leg=F)
 arrows(att[1], 0.11, att[1],0, length=0.1)
 text(-75,0.05,"Raw data")
-text(-43,0.05,"Matched\ndata")
-text(ate[length(ate)],0.14,"Point estimate of \n Carpenter's specification \n using raw data")
+text(-36.5,0.05,"Matched\ndata")
+text(ate[nrow(ate),1],0.14,
+     "Point estimate of \n Carpenter's specification \n using raw data")
+dev.off()
+
+pdf("fdaci.pdf", paper="special", height=3.5, width=6)
+par(mar=c(2.5, 2.5, 2, 2) + 0.1, cex.lab=0.8, cex.axis=0.8,
+    mgp=c(1.5,0.5,0), cex.main=0.5, cex=0.8, bg="white")
+doverlay(mate[,3],ate[,3],lwd=2,
+         xlab="Length of estimated 95 percent confidence intervals", leg=F)
+#text(-75,0.05,"Raw data")
+#text(-36.5,0.05,"Matched\ndata")
 dev.off()
 
 ##
