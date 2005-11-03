@@ -68,17 +68,17 @@ doverlay(mate,ate,lwd=2,
 arrows(ate[length(ate)], 0.11, ate[length(ate)],0, length=0.1)
 text(-75,0.05,"Raw data")
 text(-42,0.05,"Matched\ndata")
-text(-52.5,0.14,"Point estimate of \n Carpenter's specification \n using raw data")
+text(ate[length(ate)],0.14,"Point estimate of \n Carpenter's specification \n using raw data")
 dev.off()
 
 ##
 ## eCDF figure
 ##
-sm <- summary(m.out, standardize=TRUE)
-pdf("eCDF.pdf")
-plot(x=sm$sum.all[1:19,"eCDF Max"], y=sm$sum.matched[1:19,"eCDF Max"],
-     xlab="before matching", ylab="after matching", pch=19)
-points(x=sm$sum.all[1:19,"eCDF Mean"], y=sm$sum.matched[1:19,"eCDF Mean"], pch=22)
-points(x=sm$sum.all[1:19,"eCDF Med"], y=sm$sum.matched[1:19,"eCDF Med"], pch=24)
-abline(0,1)
-dev.off()
+#sm <- summary(m.out, standardize=TRUE)
+#pdf("eCDF.pdf")
+#plot(x=sm$sum.all[1:19,"eCDF Max"], y=sm$sum.matched[1:19,"eCDF Max"],
+#     xlab="before matching", ylab="after matching", pch=19)
+#points(x=sm$sum.all[1:19,"eCDF Mean"], y=sm$sum.matched[1:19,"eCDF Mean"], pch=22)
+#points(x=sm$sum.all[1:19,"eCDF Med"], y=sm$sum.matched[1:19,"eCDF Med"], pch=24)
+#abline(0,1)
+#dev.off()
