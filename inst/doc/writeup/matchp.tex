@@ -46,8 +46,8 @@
   Kosuke Imai,\thanks{Assistant Professor, Department of Politics,
     Princeton University (Corwin Hall 041, Department of Politics,
     Princeton University, Princeton NJ 08544, USA;
-    \texttt{http://www.princeton.edu/\~{}kimai},
-    \texttt{kimai@Princeton.Edu}).}
+    \texttt{http://Imai.Princeton.Edu}, \texttt{kimai@Princeton.Edu},
+    (609) 258-6601).}
 %\and %
   Gary King,\thanks{David Florence Professor of Government, Harvard
     University (Center for Basic Research in the Social Sciences, 34
@@ -145,12 +145,13 @@ results are routinely misinterpreted in applied research, and even in
 some theoretical statistical work.  Coherent guidelines for practice
 are often conflicting, absent, or misunderstood.\footnote{Matching
   methods now comprise a substantial fraction of the empirical work in
-  observational studies in some disciplines, such as epidemiology and medicine.  However, the
-  diversity of substantive applications and the conflicting
-  methodological languages used to describe the same underlying
-  concepts have limited the spread of these powerful techniques to
-  much of the social sciences.  However, the misunderstandings we
-  discuss here are no less prevalent in these other areas.}
+  observational studies in some disciplines, such as epidemiology and
+  medicine.  However, the diversity of substantive applications and
+  the conflicting methodological languages used to describe the same
+  underlying concepts have limited the spread of these powerful
+  techniques to much of the social sciences.  However, the
+  misunderstandings we discuss here are no less prevalent in these
+  other areas.}
 
 We attempt to reduce model dependence by first unifying this diverse
 literature.  In particular, we suggest a procedure by which applied
@@ -286,7 +287,7 @@ districts.)  The use of parentheses in this notation denotes that the
 outcome is potential, and so not necessarily observed, and that it
 depends on the value of the variable in parentheses.  Since these are
 potential outcomes, their values remain the same regardless of whether
-the treatment is in fact applied in district $i$ or not.  
+the treatment is in fact applied in district $i$ or not.
 
 The difference between the two potential outcomes defines the simplest
 realized (or fixed) definition of a causal effect:
@@ -414,7 +415,7 @@ observations, but instead estimate the average effect over all
 observations, for some subset of observations, or for a particular
 population or population subgroup.  This leads to several choices for
 quantities of interest, each of which is defined for either realized
-(in sample) or population causal effects.  We focus on in sample
+(in-sample) or population causal effects.  We focus on in sample
 effects --- i.e., based on quantities of interest for all or a subset
 of units in our data --- since they are closer to our data than
 effects for averages of specified populations or population subgroups,
@@ -438,7 +439,8 @@ Often of more interest substantively is the average treatment effect
 on the treated, or ATT:
 \begin{align}
   \label{att}
-  \text{ATT} & = \frac{1}{\sum_{i=1}^n t_i}\sum_{i:t_i=1} E[Y_i(1) - Y_i(0)]\notag\\
+  \text{ATT} & = \frac{1}{\sum_{i=1}^n t_i}\sum_{i:t_i=1} E[Y_i(1) -
+  Y_i(0)]\notag\\ 
   & = \frac{1}{\sum_{i=1}^n t_i}\sum_{i:t_i=1}[\mu_i(1) - \mu_i(0)],
 \end{align}
 In our running example, this is the average causal effect in districts
@@ -459,12 +461,12 @@ what might have happened if an incumbent were nominated in a district
 in which he or she did not actually receive the nomination.  In this
 paper, we usually focus on ATT as the quantity of interest when it is
 conceptually or algebraically simpler, but we also show how to compute
-the ATE.  If causal effects are constant over $i$, then the ATT and the ATE
-are identical.\footnote{To change these sample causal effects to
-  population causal effects for the ATE we average over the
+the ATE.  If causal effects are constant over $i$, then the ATT and
+the ATE are identical.\footnote{To change these sample causal effects
+  to population causal effects for the ATE we average over the
   population, and for the ATT we average over the population times the
-  probability of receiving treatment.  Point estimates for the two
-  are normally identical, although the variances for the population
+  probability of receiving treatment.  Point estimates for the two are
+  normally identical, although the variances for the population
   estimates would be larger.}
 
 \paragraph{Non-Binary Treatments}
@@ -577,9 +579,9 @@ associated with $t_i$, and affect $Y_i$ conditional on $t_i$
 ``ignorability,'' which means that $t_i$ and the potential outcomes
 are independent after conditioning on $X_i$, and so we can literally
 ignore all unobserved variables \citep{RosRub83}.  In biostatistics,
-it is known as the absence of ``confounding,'' and in several fields it
-is known as ``conditional independence''.  Whatever the name, it is a
-strong condition, but it is one about which social scientists are
+it is known as the absence of ``confounding,'' and in several fields
+it is known as ``conditional independence''.  Whatever the name, it is
+a strong condition, but it is one about which social scientists are
 deeply knowledgeable and it is the central methodological concern of
 many substantive scholarly articles.  We emphasize this assumption to
 make clear that our procedures contain no magic: They are unable to
@@ -798,6 +800,7 @@ $E(Y_i|X_i,t_i=1)=\alpha+\beta+X_i\gamma$, and the gray solid line is
 for the controls, $E(Y_i|X_i,t_i=0)=\alpha+X_i\gamma$. The positive
 vertical distance between the two straight lines is this parametric
 model's causal effect estimate.
+
 \begin{figure}[t] 
  \begin{center}
    \includegraphics[width=6in]{figs/olspanel-thick.pdf}
@@ -872,12 +875,12 @@ $X_i$ is eliminated or reduced, and (2) no bias and little
 inefficiency is induced.  If we are able to adjust the data so that
 $t_i$ and $X_i$ are completely unrelated (which makes the control and
 treatment groups identical with respect to $X$), we will have moved a
-good deal of the way from Section \ref{s:paraobs} to Section
-\ref{s:paraexp}.  An assumption of ignorability is still necessary,
-but we would no longer need to model the full parametric relationship
-between the dependent variable and the multidimensional $X_i$.  This
-also eliminates an important source of model dependence in the
-resulting parametric analysis stemming from the functional form
+good deal of the way from Section~\ref{s:paraobs} to
+Section~\ref{s:paraexp}.  An assumption of ignorability is still
+necessary, but we would no longer need to model the full parametric
+relationship between the dependent variable and the multidimensional
+$X_i$.  This also eliminates an important source of model dependence
+in the resulting parametric analysis stemming from the functional form
 specification and the curse of dimensionality.  For data sets where
 preprocessing reduces the extent of the relationship between $t_i$ and
 $X_i$, but is unable to make them completely independent, model
@@ -905,7 +908,7 @@ groups have the same background characteristics, or in other words
 that this relationship holds:
 \begin{equation}
   \label{balance}
-  \tilde p(X|t=1) = \tilde p(X|t=0),
+  \tilde p(X\mid t=1) = \tilde p(X\mid t=0),
 \end{equation}
 where $\tilde p$ refers to the observed empirical density of the data
 (think histogram), rather than a population density.\footnote{To be
@@ -929,8 +932,9 @@ we can ignore it entirely since $X_i$ is literally held constant
 within each pair of units.\footnote{Formally, ignorability (by which
   we mean the independence of $t$ and the potential outcomes given
   $X$) and balance (i.e., Equation \ref{balance}) guarantee valid
-  inferences. Together they are written as
-  $p(Y(0)|t=1,X)=p(Y(0)|t=0,X)$ and $p(Y(1)|t=1,X)=p(Y(1)|t=0,X)$.}
+  inferences. Together they are written as $p(Y(0)\mid
+  t=1,X)=p(Y(0)\mid t=0,X)$ and $p(Y(1)\mid t=1,X)=p(Y(1)\mid
+  t=0,X)$.}
 
 Although one-to-one exact matching can eliminate model dependence and
 any bias from incorrect assumptions made during the parametric stage
@@ -944,18 +948,38 @@ be a preprocessed data set with very few observations that results in
 a parametric analysis with large standard errors.  In this situation,
 we may reduce model dependence and the potential for bias, but
 decrease efficiency and as a result increase mean squared error.  If
-this occurs in practice, common practice is to sacrifice some bias
-reduction for the increased efficiency that comes from having more
-observations in the preprocessed dataset.  In our approach, if we lose
-some opportunity for bias reduction we do so only in the preprocessing
+this occurs, common practice is to sacrifice some bias reduction for
+the increased efficiency that comes from having more observations in
+the preprocessed dataset.  In our approach, if we lose some
+opportunity for bias reduction we do so only in the preprocessing
 stage; our second stage parametric analysis still has a chance to
 eliminate the remaining bias.  This second chance does not apply if
-only the difference in means is used.  We therefore turn in Section
-\ref{s:choose} to a menu of matching procedures that enable
+only the difference in means is used.  We therefore turn in
+Section~\ref{s:choose} to a menu of matching procedures that enable
 researchers to satisfy (\ref{balance}) as closely as possible while
 still generating a preprocessed dataset with enough observations.
 
-We now offer an example, in the right graph in Figure \ref{fg:extrap},
+In many cases, however, matching may increase efficiency of subsequent
+parametric analyses while reducing the bias. Efficiency gain is
+possible when matching reduces heterogeneity in the data by keeping
+only those observations that are similar to each and as a result helps
+parametric models fit better. Matching also increases efficiency by
+removing the dependency between the treatment variable and covariates.
+To see this, consider a simple linear regression with one treatment
+variable, $T$, and one covariate, $X$. The variance of the coefficient
+for the treatment variable is equal to $\sigma^2/[n (1-\gamma) s^2_T]$
+where $\sigma^2$ is the variance of the dependent variable, $n$ is the
+number of observations, $s^2_T$ is the variance of the treatment
+variable, and $\gamma$ is the regression coefficient of $X$ on $T$. If
+matching reduces heterogeneity, then $\sigma^2$ will become smaller.
+If matching reduces the dependence between $T$ and $X$, then $\gamma$
+will be zero. Then, the resulting variance for the treatment effect
+may become smaller even if some observations are dropped. This
+suggests that so long as one keeps as many observations as possible,
+matching might be able to reduce bias without sacrificing efficiency
+of subsequent parametric analyses.
+
+We now offer an example, in the right graph in Figure~\ref{fg:extrap},
 of the reduction in model dependence produced by matching that is not
 exact.  The data in this panel is the same as that for which the
 parametric analyses in the left graph gives highly model-dependent
@@ -1338,31 +1362,6 @@ irrelevant for this purpose.  Pruning too many observations reduces
 statistical power and thus affects the test, even if this pruning does
 not improve balance.
 
-To illustrate the dangers of using hypothesis tests to assess balance,
-we created a sequence of matched data sets by \emph{randomly} pruning
-increasing numbers of control group observations (from the real data
-set we analyze in Section \ref{s:carp}).  Random matching procedures
-have no systematic effect on balance.  Yet, consider the left graph in
-Figure \ref{f:tstat}, which plots the number of observations dropped
-(plotted horizontally) by the t-statistic (plotted vertically).  The
-area where the t-statistic falls below 2 is normally (but incorrectly)
-identified as ``insignificant imbalance,'' and clearly the t-statistic
-drops into this area (colored grey in the figure) only because of the
-sample size and regardless of the fact that the balance does not
-differ systematically as more observations are dropped.  In fact,
-since hypothesis test are driven in part by factors other than
-balance, we should not even expect them to be monotonic in balance:
-the t-test can get apparently better while balance gets worse, or vice
-versa.\footnote{The two sample $t$-test statistic is given by $
-  \sqrt{n_t+n_c-2}(\overline{X}_t-\overline{X}_c)/\sqrt{\left(\frac{1}{n_t}
-      +\frac{1}{n_c}\right)S^2_X}$ where $S^2=\sum_{i=1}^n t_i(X_i -
-  \overline{X}_t)^2+ (1-t_i)(X_i - \overline{X}_c)^2$.  The difference
-  in means as a measure of balance is thus distorted in the t-test due
-  to the number of remaining observations (the first factor in the
-  numerator), the variance of $X$ in those observations (in the
-  denominator), and the ratio of treatment to control observations.}
-Using hypothesis statistics to assess balance in matching applications
-should end.
 \begin{figure}[t] 
  \begin{center}
    \includegraphics[height=4in]{figs/TStatPlotPscore.pdf}
@@ -1379,6 +1378,36 @@ should end.
     vary systematically across the data sets.}
   \label{f:tstat}
 \end{figure}
+
+To illustrate the dangers of using hypothesis tests to assess balance,
+we created a sequence of matched data sets by \emph{randomly} pruning
+increasing numbers of control group observations (from the real data
+set we analyze in Section~\ref{s:carp}).  Random matching procedures
+have no systematic effect on balance.  Yet, consider the left graph in
+Figure~\ref{f:tstat}, which plots the number of observations dropped
+(plotted horizontally) by the t-statistic (plotted vertically).  The
+area where the t-statistic falls below 2 is normally (but incorrectly)
+identified as ``insignificant imbalance,'' and clearly the t-statistic
+drops into this area (colored grey in the figure) only because of the
+sample size and regardless of the fact that the balance does not
+differ systematically as more observations are dropped.  In fact,
+since hypothesis test are driven in part by factors other than
+balance, we should not even expect them to be monotonic in balance:
+the t-test can get apparently better while balance gets worse, or vice
+versa. To see this, consider the two sample $t$-test statistic defined
+as,
+\begin{equation}
+\frac{\sqrt{n_t+n_c-2}(\overline{X}_t-\overline{X}_c)}{\sqrt{\left(\frac{1}{n_t}
+    +\frac{1}{n_c}\right)S^2_X}}
+\end{equation} 
+where $S^2=\sum_{i=1}^n t_i(X_i - \overline{X}_t)^2+ (1-t_i)(X_i -
+\overline{X}_c)^2$, and $n_t$ and $n_c$ represent the sample size for
+the treatment and control groups.  The difference in means as a
+measure of balance is thus distorted in the t-test due to the number
+of remaining observations (the first factor in the numerator), the
+variance of $X$ in those observations (in the denominator), and the
+ratio of treatment to control observations.  Using hypothesis
+statistics to assess balance in matching applications should end.
 
 \paragraph{Better Matching Evaluations}
 
@@ -1411,23 +1440,27 @@ for each variable (and often their interactions) to compare the
 distributions of the full densities for the treated and control groups
 for each variable.  QQ-plots are usually the best way to compare two
 distributions: they plot the quantiles of the cumulative distribution
-of the treatment group against that of the control group in a square plot (we
-give examples in Section \ref{s:emp}).  When space is a concern, we
-summarize these plots with mean and maximum deviation between the two
-distributions on the scale of the variables being measured (on the
-plot this is the average or maximum deviation from the 45 degree
-line).\footnote{For example, the maximum distance of quantile functions, is
-  given by $\max_{0 < \alpha < 1}
-  |F_{Xt}^{-1}(\alpha)-F^{-1}_{Xc}(\alpha)|$ where $F_{Xt}$ and
-  $F_{Xc}$ are the empirical cumulative probability distribution
-  functions of a single variable $X$ for the matched treatment and
-  matched control groups, respectively. That is,
-  $F_{Xt}(x)=\frac{1}{n'_t} \sum_{i=1}^{n'} {\rm I}_{\{X_i \le x\}}
-  t_i$ and $F_{Xc}(x)=\frac{1}{n'_c} \sum_{i=1}^{n'} {\rm I}_{\{X_i
-    \le x\}} (1-t_i)$ where $n'_t=\sum_{i=1}^{n'} t_i$ and
-  $n'_c=\sum_{i=1}^{n'} (1-t_i)$ are the size of matched treatment and
-  matched control groups, $n'=n'_t + n'_c$ is the size of matched
-  data, and ${\rm I}$ denotes the indicator function.}
+of the treatment group against that of the control group in a square
+plot (we give examples in Section \ref{s:emp}).  When space is a
+concern, we summarize these plots with mean and maximum deviation
+between the two distributions on the scale of the variables being
+measured (on the plot this is the average or maximum deviation from
+the 45 degree line).\footnote{For example, the maximum distance of
+  quantile functions, is given by $\max_{0 < \alpha < 1}
+  |\widetilde{F}_{Xt}^{-1}(\alpha)-\widetilde{F}^{-1}_{Xc}(\alpha)|$
+  where $\widetilde{F}_{Xt}$ and $\widetilde{F}_{Xc}$ are the
+  empirical cumulative probability distribution functions of a single
+  variable $X$ for the matched treatment and matched control groups,
+  respectively. That is, $\widetilde{F}_{Xt}(x)=\frac{1}{n^*_t}
+  \sum_{i=1}^{n^*} {\rm I}_{\{X_i \le x\}} t_i$ and
+  $\widetilde{F}_{Xc}(x)=\frac{1}{n^*_c} \sum_{i=1}^{n^*} {\rm
+    I}_{\{X_i \le x\}} (1-t_i)$ where $n^*_t=\sum_{i=1}^{n^*} t_i$ and
+  $n^*_c=\sum_{i=1}^{n^*} (1-t_i)$ are the size of matched treatment
+  and matched control groups, $n^*=n^*_t + n^*_c$ is the size of
+  matched data, and ${\rm I}$ denotes the indicator function.} If one
+wishes to compare the balance across different covariate dimensions,
+then differences in empirical cumulative distribution functions can be
+used, instead.
 
 A paradoxical but sometimes useful procedure is to examine the QQ plot
 of the propensity scores of the control and treated units.  This is
@@ -1556,11 +1589,11 @@ errors and confidence intervals using the same methods researchers
 have been using with their parametric methods all along, but applied
 to the preprocessed instead of raw data.  (The one exception to our
 procedure occurs when matching with replacement, where we would then
-run the parametric procedure with each unit weighted proportional to the number of
-times it was chosen as a match.)  As proper procedures are developed
-to include different aspects of matching in the uncertainty estimates,
-these could be used also, but they would each estimate a different
-variance quantity.
+run the parametric procedure with each unit weighted proportional to
+the number of times it was chosen as a match.)  As proper procedures
+are developed to include different aspects of matching in the
+uncertainty estimates, these could be used also, but they would each
+estimate a different variance quantity.
 
 Thus, when estimating the ATT or ATE, we compute estimates of
 $\mu_i(1)$ and $\mu_i(0)$ and their uncertainty as usual from the
@@ -1617,7 +1650,7 @@ months passed from the submission of an application.
 We focus on the causal effect of a Democratic majority in the Senate,
 one of the seven oversight variables. In particular, we estimate the
 in-sample average treatment effect for the treated (ATT) as defined in
-equation~\ref{att}.  Carpenter's remaining six oversight variables are
+(\ref{att}).  Carpenter's remaining six oversight variables are
 conceptually and statistically highly related, and are in part
 consequences of a Democratic Senate majority.  As such, we omit them
 to avoid post-treatment bias.  Post-treatment bias may still exist in
@@ -1652,28 +1685,28 @@ majority variable is reduced by preprocessing the data.
 To preprocess, we follow the recommendations described in
 Section~\ref{s:choose}. We first check whether the control units are
 within the convex hull of the treated units using the method developed
-by \citet{KinZen06a}. The result indicates that none of the treated
-and control units is in the convex hull. This lack of common support
-explains in part why \citet{Carpenter02} finds the results are highly
-model-dependent. To proceed, we estimate the propensity score using
-logistic regression with all covariates as linear predictors.  We also
-find that matching on the square root of hospitalization associated
-with indication improves the resulting balance significantly, and so
-we include it.  We then discard 15 control units and 2 treated units
-that are outside of the common support of the estimated propensity
-score. Finally, we conduct one-to-one nearest neighbor propensity
-score matching (without replacement) while placing exact restrictions
-on six binary variables (whether primary indication is lethal
-condition, acute condition, and/or results in hospitalization; whether
-disease mainly affects men, women, and/or children). We choose
-one-to-one matching rather than one-to-many matching or full matching,
-which keep more observations after matching, because our convex hull
-analysis indicates that most of the observations are likely to be
-outside of the common support.  This preprocessing procedure discards
-the total of 102 units (10 treated units and 92 control units) from
-the original sample that otherwise require substantial,
-model-dependent extrapolations. The matched data sets then consists of
-306 observations.
+by \citet{KinZen06a}. The result of this analysis indicates that none
+of the treated and control units is in the convex hull. This lack of
+common support explains in part why \citet{Carpenter02} finds the
+results are highly model-dependent. To proceed, we estimate the
+propensity score using logistic regression with all covariates as
+linear predictors.  We also find that matching on the square root of
+hospitalization associated with indication improves the resulting
+balance significantly, and so we include it.  We then discard 15
+control units and 2 treated units that are outside of the common
+support of the estimated propensity score. Finally, we conduct
+one-to-one nearest neighbor propensity score matching (without
+replacement) while placing exact restrictions on six binary variables
+(whether primary indication is lethal condition, acute condition,
+and/or results in hospitalization; whether disease mainly affects men,
+women, and/or children). We choose one-to-one matching rather than
+one-to-many matching or full matching because our convex hull analysis
+indicates that most of the observations are likely to be outside of
+the common support.  This preprocessing procedure discards the total
+of 102 units (10 treated units and 92 control units) from the original
+sample that otherwise require substantial, model-dependent
+extrapolations. The matched data sets then consists of 306
+observations.
 
 \begin{table}[t]
 \begin{center}
@@ -1682,7 +1715,7 @@ model-dependent extrapolations. The matched data sets then consists of
 \hline
 \hline
  & \multicolumn{2}{c}{} 
- & \multicolumn{4}{c}{Empirical quantile measures} \\
+ & \multicolumn{4}{c}{Empirical Quantile Measures} \\
  & \multicolumn{2}{c}{Mean Difference} 
  & \multicolumn{2}{c}{Mean Difference} 
  & \multicolumn{2}{c}{Max Difference} \\
@@ -1692,7 +1725,7 @@ Variable Names
 & imbal. & \%imprv. \\
 \hline
 Estimated propensity score & 0.04 & 56.76 & 0.04 & 56.20 & 0.09 & 52.85 \\
-{\bf Clinical/Epidemiological Factors} & \\
+{\bf Clinical/Epidemiological Variables} & \\
 Incidence of primary indication & 0.07 & 19.91 & 0.07 & 12.53 & 0.50 & 80.11 \\
 Primary indication is lethal condition & 0.00 & 100.00 & 0.00 & 100.00 & 0.00 & 100.00 \\
 Death rate, primary indication & $-$0.00 & 99.90 & 0.01 & 71.26 & 0.29 & 86.56 \\
@@ -1703,7 +1736,7 @@ Disease mainly affects women & 0.00 & 100.00 & 0.00 & 100.00 & 0.00 & 100.00 \\
 Disease mainly affects men & 0.00 & 100.00 & 0.00 & 100.00 & 0.00 & 100.00 \\
 Disease mainly affects children & 0.00 & 100.00 & 0.00 & 100.00 & 0.00 & 100.00 \\
 Orphan Drug & $-$0.01 & 51.21 & 0.01 & 57.39 & 1.00 & 0.00 \\
-{\bf Disease Politics (Groups and Media)} & \\
+\multicolumn{3}{l}{\bf Disease Politics (Groups and Media) Variables} & \\
 National and regional groups & $-$0.00 & 89.60 & 0.02 & 53.07 & 0.80 & 26.61 \\
 Nightly TV news disease stories & $-$0.14 & $-$15.63 & 0.14 & $-$27.60 & 3.23 & $-$11.21 \\
 Washington post disease stories & $-$0.13 & 49.06 & 0.14 & 42.33 & 1.68 & 8.84 \\
@@ -1716,15 +1749,13 @@ CDER staff & $-$0.68 & 10.77 & 1.57 & 5.78 & 3.06 & 17.96 \\
 \end{tabular}
 \end{center}
 \caption{Remaining covariate imbalance after matching for the FDA data. 
-  The table presents three different measures of resulting balance
+  The table presents three different measures of resulting imbalance
   after matching -- sample mean differences, and mean and maximum
   values of differences in empirical quantile functions -- as well as
-  their percent balance improvement for each covariate of Model 1 of
-  \citet{Carpenter02}. In almost all dimensions and across three
-  different measures, matching significantly improves balance.  
-}
-
-  \label{tb:fdabal}
+  their percent balance improvement. In almost all dimensions and
+  across three different measures, matching significantly improves
+  balance.   
+} \label{tb:fdabal}
 \end{table}
 
 Table~\ref{tb:fdabal} summarizes how preprocessing can improve the
@@ -1768,7 +1799,7 @@ we go a step further to demonstrate the model-dependence of the
 average causal effect of a Democratic Senate majority using the
 preprocessed data and compare this with that from the raw data.  For
 simplicity, we portray model dependence by the variability in maximum
-likelihood estimates of insample ATT across potential specifications
+likelihood estimates of in-sample ATT across potential specifications
 of pretreatment covariates, although the same conclusions apply to
 most other quantities of interest too.
 
@@ -1778,15 +1809,16 @@ most other quantities of interest too.
   \end{center}
   \vspace{-0.15in}
   \caption{Kernel density plot (a smoothed histogram)
-    of the estimated insample average treatment effect for the treated
-    (ATT) of the Democratic Senate majority on FDA drug approval time
-    across $262,143$ specifications. The solid line presents a density
-    plot of the maximum likelihood estimates of ATT using the matched
-    dataset, while the dashed line is based on the raw data.  The
-    vertical arrow shows the point estimate from Carpenter's Model 1
-    based on the raw data.  The figure shows that ATT estimates are
-    considerably more sensitive to model specification using the raw
-    data as compared with the preprocessed matched data.}
+    of the estimated in-sample average treatment effect for the
+    treated (ATT) of the Democratic Senate majority on FDA drug
+    approval time across $262,143$ specifications. The solid line
+    presents a density plot of the maximum likelihood estimates of ATT
+    using the matched dataset, while the dashed line is based on the
+    raw data.  The vertical arrow shows the point estimate from
+    Carpenter's Model 1 based on the raw data.  The figure shows that
+    ATT estimates are considerably more sensitive to model
+    specification using the raw data as compared with the preprocessed
+    matched data.}
   \label{fg:fdadens}
 \end{figure}
 
@@ -1810,13 +1842,13 @@ errors.
 
 Furthermore, despite the fact that matching drops more than 100
 observations, we achieve the significant reduction in model dependence
-without sacrificying the effeciency of estimates. For example, the
+without sacrificing the efficiency of estimates. For example, the
 mean length of resulting 95\% confidence interval for the estimated
-insample ATT (averaged over all of the $262,143$ specifications) is
+in-sample ATT (averaged over all of the $262,143$ specifications) is
 only $43.65$ for preprocessed data, which is approximately 20 percent
 shorter than the average length for the original data. Similarly, the
 maximum length is 44.68 for the matched data, which is also
-significantly shorter than that for the orignal data (63.3). As
+significantly shorter than that for the original data (63.3). As
 described in Section~\ref{s:choose}, matching can increase efficiency
 by reducing the heterogeneity in the data and the correlation between
 the treatment variable and covariates.
