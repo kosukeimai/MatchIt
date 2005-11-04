@@ -1687,9 +1687,9 @@ model-dependent extrapolations. The matched data sets then consists of
  & \multicolumn{2}{c}{Mean Difference} 
  & \multicolumn{2}{c}{Max Difference} \\
 Variable Names 
-& balance & \%imprv.
-& balance & \%imprv.  
-& balance & \%imprv. \\
+& imbal. & \%imprv.
+& imbal. & \%imprv.  
+& imbal. & \%imprv. \\
 \hline
 Estimated propensity score & 0.04 & 56.76 & 0.04 & 56.20 & 0.09 & 52.85 \\
 {\bf Clinical/Epidemiological Factors} & \\
@@ -1715,14 +1715,13 @@ CDER staff & $-$0.68 & 10.77 & 1.57 & 5.78 & 3.06 & 17.96 \\
 \hline
 \end{tabular}
 \end{center}
-\caption{Covariate balance after matching for the FDA data. 
-    The table presents three different measures of resulting balance
-    after matching -- sample mean
-    differences, and mean and maximum values of differences in
-    empirical quantile functions -- as well as their percent balance
-    improvement for each covariate of Model 1 of
-    \citet{Carpenter02}. In almost all dimensions and across three
-    different measures, matching significantly improves balance.  
+\caption{Remaining covariate imbalance after matching for the FDA data. 
+  The table presents three different measures of resulting balance
+  after matching -- sample mean differences, and mean and maximum
+  values of differences in empirical quantile functions -- as well as
+  their percent balance improvement for each covariate of Model 1 of
+  \citet{Carpenter02}. In almost all dimensions and across three
+  different measures, matching significantly improves balance.  
 }
 
   \label{tb:fdabal}
@@ -1808,6 +1807,19 @@ data (the dashed curve).  The distribution of estimates for the
 matched data is also closer to the normal density, which will happen
 when control variables included are having effects only due to random
 errors.
+
+Furthermore, despite the fact that matching drops more than 100
+observations, we achieve the significant reduction in model dependence
+without sacrificying the effeciency of estimates. For example, the
+mean length of resulting 95\% confidence interval for the estimated
+insample ATT (averaged over all of the $262,143$ specifications) is
+only $43.65$ for preprocessed data, which is approximately 20 percent
+shorter than the average length for the original data. Similarly, the
+maximum length is 44.68 for the matched data, which is also
+significantly shorter than that for the orignal data (63.3). As
+described in Section~\ref{s:choose}, matching can increase efficiency
+by reducing the heterogeneity in the data and the correlation between
+the treatment variable and covariates.
 
 In his original analysis, Carpenter was unable to draw conclusions
 from the raw data due to high levels of model dependence.  However,
