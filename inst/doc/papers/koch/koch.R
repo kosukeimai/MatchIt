@@ -16,67 +16,37 @@ dta <- read.dta("genharvard.dta")
 #==================================
 
 #creating full dataset 
+#dta.full <- subset(dta,select=c(prcanid, rviswom, rvisman, repcan1 , goppty ,
+#              rideo , rproj , repft , aware), subset=c(rvisman==0 & voter==1))
 dta.full <- subset(dta,select=c(prcanid, rviswom, rvisman, repcan1 , goppty ,
-              rideo , rproj , repft , aware), subset=c(rvisman==0 & voter==1))
+              rideo , rproj , repft , aware, repwom), subset=c(repman==1 & voter==1))
 dta.full <- na.omit(dta.full)
 
 #matching and creating matched dataset
-#now testing sensitivity
-#fml <- as.formula(prcanid ~ rviswom + repcan1 + goppty + rideo + rproj + repft + aware)
-fml <- as.formula(prcanid ~ rviswom + repcan1 + goppty + rideo + rproj
-                  + repft + aware + I(repcan1^2) + I(goppty^2) +
-                  I(rideo^2) + I(rproj^2) + I(repft^2) + I(aware^2))
+#fml <- as.formula(prcanid ~ rviswom + repcan1 + goppty + rideo + rproj
+#                  + repft + aware)
+fml <- as.formula(prcanid ~ I(rvisman==0) + repcan1 + goppty + rideo +
+                  rproj + repft + aware)
 res <- zelig(fml, data=dta.full, model="ls")
 xvars <- names(res$coefficients)
 xvars <- xvars[3:length(xvars)]
 tt <- attr(terms(res),"term.labels")[1]
 yy <- attr(terms(res),"variables")[[2]]
 mfml <- as.formula(paste(tt,"~",paste(xvars,collapse=" + ")))
-m1 <- matchit(mfml, data=dta.full, nearest=T, discard=1,
-              caliper=0.3, reestimate=T)
-#m1 <- matchit(mfml, data=dta.full, subclass=6, nearest=F, discard=1)
+#m1 <- matchit(mfml, method="nearest", data=dta.full)
+m1 <- matchit(mfml, method="optimal", data=dta.full)
+#m1 <- matchit(mfml, method="nearest", data=dta.full,
+#              discard="hull.both",caliper=0.1)
 dta.match <- match.data(m1)
+summary(m1)
 
-#new diagnostics
-X1 <- dta.full$rideo[dta.full$rviswom==1]
-X0 <- dta.full$rideo[dta.full$rviswom==0]
-sdta <- dta.match[dta.match$psclass==1,]
-x1 <- sdta$rideo[sdta$rviswom==1]
-x0 <- sdta$rideo[sdta$rviswom==0]
-
-X1 <- dta.full$repcan1[dta.full$rviswom==1]
-X0 <- dta.full$repcan1[dta.full$rviswom==0]
-sdta <- dta.match[dta.match$psclass==1,]
-x1 <- sdta$repcan1[sdta$rviswom==1]
-x0 <- sdta$repcan1[sdta$rviswom==0]
-
-pdf("kochsub1.pdf",width=8,height=4)
-par(mfrow=c(1,2))
-plot(ecdf(X1),verticals=T, 
-     main="ECDF in Raw Data")
-lines(ecdf(X0),verticals=T,lty=2,lwd=2.5)
-plot(ecdf(x1),verticals=T, 
-     main="ECDF in Subclass 1")
-lines(ecdf(x0),verticals=T,lty=2,lwd=2.5)
+pdf("KochQQa.pdf")
+plot(m1, interactive=FALSE, which.xs=xvars[1:3],discrete.cutoff=30)
 dev.off()
 
-pdf("kochqq.pdf",width=8,height=4)
-par(mfrow=c(1,2))
-foo0 <- qqplot(X1,X0,type="l",
-       ylab="Treated Respondent Ideology",
-       xlab="Control Respondent Ideology",
-       main="Raw Data QQ-Plot")
-abline(a=0,b=1,col="darkgrey")
-foo1 <- qqplot(x1,x0,type="l",
-       ylab="Treated Respondent Ideology",
-       xlab="Control Respondent Ideology",
-       main="Matched Subclass 1 QQ-Plot")
-abline(a=0,b=1,col="darkgrey")
+pdf("KochQQb.pdf")
+plot(m1, interactive=FALSE, which.xs=xvars[4:6],discrete.cutoff=30)
 dev.off()
-
-mean(abs(foo0$x-foo0$y))
-mean(abs(foo1$x-foo1$y))
-
 
 #total number of cells
 cc <- apply(dta.full[,xvars],2,table)
@@ -104,7 +74,7 @@ for (i in N:(length(xvars)-1)) {
       ftmp <- paste(ftmp, "+", allsubset[k,j])
     ftmp <- as.formula(ftmp)
     tmp <- lm(ftmp,  data = dta.full)
-    coef[counter] <- tmp$coefficient[tt]
+    coef[counter] <- tmp$coefficient[2]
     #for subclass
 #    tmp <- zelig(ftmp, data = dta.match, model="ls", by="psclass")
 #    wate <- 0
@@ -113,19 +83,19 @@ for (i in N:(length(xvars)-1)) {
 #    }
 #    mcoef[counter] <- wate
     #for caliper matching
-    mcoef[counter] <- lm(ftmp, data = dta.match)$coefficient[tt]
+    mcoef[counter] <- lm(ftmp, data = dta.match)$coefficient[2]
     counter <- counter + 1
   }
   cat(i,"covariates:",counter,"\n")
   cat(date(), "\n\n")
 }
-save.image("koch.Rdata")
+save.image("koch-11-7-05.Rdata")
 #coef[length(coef)] <- res$coefficients[tt]
 #mres <- zelig(fml, data=dta.match, model="ls",by="psclass")
 #wate <- 0
 #for(l in 1:length(tmp)){
 #  wate <- wate + tmp[[l]]$coefficient[tt]*sum(dta.match$psclass==l & dta.match[,tt]==1)/sum(dta.match$psclass!=0 & dta.match[,tt]==1)  
-}
+#}
 #mcoef[length(mcoef)] <- wate
 
 #tables
@@ -158,11 +128,11 @@ par(mar=c(2, 2, 2, 2) + 0.1, cex.lab=0.6, cex.axis=0.6,
     mgp=c(1,0.5,0), cex.main=0.5, cex=0.8, bg="white")
 doverlay(mcoef,coef,lwd=2,
          xlab="Estimated average treatment effect", leg=F)
-arrows(coefficients(res)[tt], 4.7, coefficients(res)[tt],0, length=0.1)
-text(-0.532,3,"Raw data")
-text(-0.25,8.85,"Matched\ndata")
-text(0.5,0.5,"Matched Data")
-text(-0.3,5.4,"Point estimate \n of raw data")
+arrows(coefficients(res)[2], 25, coefficients(res)[2],0, length=0.1)
+text(0.07,9,"Raw data")
+text(-0.07,75,"Matched\ndata")
+#text(0.5,0.5,"Matched Data")
+text(0.005,25,"Point estimate \n of raw data")
 dev.off()
 
 #traceplots
