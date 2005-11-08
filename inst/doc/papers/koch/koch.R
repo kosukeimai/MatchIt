@@ -12,7 +12,7 @@ source("fn.R")
 dta <- read.dta("genharvard.dta")
 
 #======================================
-# Model 3 (Republicans Male Candidates)
+# Model 3 (Republican Male Candidates)
 #======================================
 
 #creating full dataset 
@@ -79,9 +79,9 @@ for (i in N:(length(xvars)-1)) {
       ftmp <- paste(ftmp, "+", allsubset[k,j])
     ftmp <- as.formula(ftmp)
     tmp0 <- lm(ftmp,  data = dta.full)
-    coef[counter] <- tmp$coefficient[2]
+    coef[counter] <- tmp0$coefficient[2]
     tmp1 <- lm(ftmp, data = dta.match)
-    mcoef[counter] <- tmp$coefficient[2]
+    mcoef[counter] <- tmp1$coefficient[2]
     counter <- counter + 1
   }
   cat(i,"covariates:",counter,"\n")
