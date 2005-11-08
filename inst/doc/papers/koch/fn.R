@@ -24,14 +24,21 @@ draw.ols <- function(ols1,sims=1000){
 }
 #overlaying densities
 doverlay <- function(x1, x0, xlab = "", main = "", lines = FALSE,
-                     leg=T, ...)
+                     leg=T, bw = "nrd0", ...)
 {
   x <- c(x1,x0)
-  dx1 <- density(x1)#, from = minobs, to = maxobs)
-  dx0 <- density(x0)#, from = minobs, to = maxobs)
-  plot(dx1, type = "l", ylab = "Density", 
-       xlab = xlab, main = main, xlim=range(c(dx1$x,dx0$x)),
-       ylim = range(c(dx1$y,dx0$y)),...)
+  dx1 <- density(x1,bw=bw)#, from = minobs, to = maxobs)
+  dx0 <- density(x0,bw=bw)#, from = minobs, to = maxobs)
+  dots <- match.call()
+  if(is.null(dots$xlim)){
+    plot(dx1, type = "l", ylab = "Density", 
+         xlab = xlab, main = main, xlim = range(c(dx1$x,dx0$x)), 
+         ylim = range(c(dx1$y,dx0$y)),...)
+  } else{
+    plot(dx1, type = "l", ylab = "Density", 
+         xlab = xlab, main = main,
+         ylim = range(c(dx1$y,dx0$y)),...)
+  }
   lines(dx0, lty=2, ...)
   if(leg){
     legend(minobs, max(c(dx1$y, dx0$y)), lty = 1:2, 
@@ -80,4 +87,24 @@ zsim <- function(fml,dta,num=1000,zz=T,treat="dviswom"){
     ate <- ols.ate(ols.m,sim=num,treat)
   }
   return(ate)
+}
+
+eqqplot <- function(x, y, plot.it = TRUE, xlab = deparse(substitute(x)),
+                    ylab = deparse(substitute(y)), addit = F,...)
+{ ## empirical quantile-quantile plot; hacked from qqplot() in stats.
+  sx <- sort(x)
+  sy <- sort(y)
+  lenx <- length(sx)
+  leny <- length(sy)
+  if (leny < lenx)
+    sx <- approx(1:lenx, sx, n = leny, method = "constant")$y
+  if (leny > lenx)
+    sy <- approx(1:leny, sy, n = lenx, method = "constant")$y
+  if (plot.it)
+    if(!addit){
+      plot(sx, sy, xlab = xlab, ylab = ylab, ...)
+    } else {
+      points(sx, sy, col="darkgrey", pch=16, cex=0.5)
+    }
+  invisible(list(x = sx, y = sy))
 }
