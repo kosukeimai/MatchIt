@@ -11,20 +11,16 @@ setwd("c:/R/match/docs/papers/koch/")
 source("fn.R")
 dta <- read.dta("genharvard.dta")
 
-#==================================
-# Model 3 (Republicans)
-#==================================
+#======================================
+# Model 3 (Republicans Male Candidates)
+#======================================
 
 #creating full dataset 
-#dta.full <- subset(dta,select=c(prcanid, rviswom, rvisman, repcan1 , goppty ,
-#              rideo , rproj , repft , aware), subset=c(rvisman==0 & voter==1))
 dta.full <- subset(dta,select=c(prcanid, rviswom, rvisman, repcan1 , goppty ,
               rideo , rproj , repft , aware, repwom), subset=c(repman==1 & voter==1))
 dta.full <- na.omit(dta.full)
 
-#matching and creating matched dataset
-#fml <- as.formula(prcanid ~ rviswom + repcan1 + goppty + rideo + rproj
-#                  + repft + aware)
+# Matching and creating matched dataset
 fml <- as.formula(prcanid ~ I(rvisman==0) + repcan1 + goppty + rideo +
                   rproj + repft + aware)
 res <- zelig(fml, data=dta.full, model="ls")
@@ -33,29 +29,38 @@ xvars <- xvars[3:length(xvars)]
 tt <- attr(terms(res),"term.labels")[1]
 yy <- attr(terms(res),"variables")[[2]]
 mfml <- as.formula(paste(tt,"~",paste(xvars,collapse=" + ")))
-#m1 <- matchit(mfml, method="nearest", data=dta.full)
 m1 <- matchit(mfml, method="optimal", data=dta.full)
-#m1 <- matchit(mfml, method="nearest", data=dta.full,
-#              discard="hull.both",caliper=0.1)
 dta.match <- match.data(m1)
 summary(m1)
 
-pdf("KochQQa.pdf")
-plot(m1, interactive=FALSE, which.xs=xvars[1:3],discrete.cutoff=30)
+# QQ Plot
+trellis.device(device="pdf",file="kochQQ.pdf",color=FALSE,width=4,height=4)
+par(mar=c(2, 2, 2, 2) + 0.1, cex.lab=0.6, cex.axis=0.6,
+    mgp=c(1,0.5,0), cex.main=0.8, cex=0.8, bg="white")
+eqqplot(m1$distance[m1$treat==1],m1$distance[m1$treat==0],
+        xlim=range(m1$distance),ylim=range(m1$distance),
+        main="QQ Plot of Propensity Score",
+        xlab="Treated Units", ylab="Control Units",
+        pch=16, cex=0.5)
+abline(a=0,b=1)
+eqqplot(m1$distance[m1$treat==1 & m1$weights==1],
+        m1$distance[m1$treat==0 & m1$weights==1], addit=T)
+text(0.27,0.42,"Matched Data",cex=0.8)
+text(0.45,0.24,"Raw Data",cex=0.8)
 dev.off()
 
-pdf("KochQQb.pdf")
-plot(m1, interactive=FALSE, which.xs=xvars[4:6],discrete.cutoff=30)
-dev.off()
+# Outcome Regression
+summary(lm(fml, data=dta.full))
+summary(lm(fml, data=dta.match))
 
-#total number of cells
+# Total number of cells
 cc <- apply(dta.full[,xvars],2,table)
-tc <- 1
+tc <- 2 #2 treatment values
 for(i in 1:length(cc)){
   tc <- tc*length(cc[[i]])
 }
 
-#sensitivity
+# Sensitivity
 start <- paste(yy,"~",tt)
 coef <- mcoef <- NULL
 N <- 1
@@ -73,129 +78,28 @@ for (i in N:(length(xvars)-1)) {
     for (k in 1:i)
       ftmp <- paste(ftmp, "+", allsubset[k,j])
     ftmp <- as.formula(ftmp)
-    tmp <- lm(ftmp,  data = dta.full)
+    tmp0 <- lm(ftmp,  data = dta.full)
     coef[counter] <- tmp$coefficient[2]
-    #for subclass
-#    tmp <- zelig(ftmp, data = dta.match, model="ls", by="psclass")
-#    wate <- 0
-#    for(l in 1:length(tmp)){
-#      wate <- wate + tmp[[l]]$coefficient[tt]*sum(dta.match$psclass==l & dta.match[,tt]==1)/sum(dta.match$psclass!=0 & dta.match[,tt]==1)
-#    }
-#    mcoef[counter] <- wate
-    #for caliper matching
-    mcoef[counter] <- lm(ftmp, data = dta.match)$coefficient[2]
+    tmp1 <- lm(ftmp, data = dta.match)
+    mcoef[counter] <- tmp$coefficient[2]
     counter <- counter + 1
   }
   cat(i,"covariates:",counter,"\n")
   cat(date(), "\n\n")
 }
 save.image("koch-11-7-05.Rdata")
-#coef[length(coef)] <- res$coefficients[tt]
-#mres <- zelig(fml, data=dta.match, model="ls",by="psclass")
-#wate <- 0
-#for(l in 1:length(tmp)){
-#  wate <- wate + tmp[[l]]$coefficient[tt]*sum(dta.match$psclass==l & dta.match[,tt]==1)/sum(dta.match$psclass!=0 & dta.match[,tt]==1)  
-#}
-#mcoef[length(mcoef)] <- wate
 
-#tables
-library(xtable)
-sm1 <- summary(m1)
-tab1 <- cbind(sm1$sum.all[1:7,c(1,2,4)],sm1$q.table[1:7,c(1,2,4) , 4])
-row.names(tab1) <- c("Propensity Score", "Candidate Ideology",
-                 "Perception of Party Ideology", "Respondent Ideology",
-                 "Respondent Ideology * Feeling Thermometer",
-                 "Feeling Thermometer", "Political Awareness")
-xtable(tab1)
-
-number.t <- sm1$q.table[nrow(sm1$q.table), , ][1, ]
-number.c <- sm1$q.table[nrow(sm1$q.table), , ][2, ]
-number.all <- sm1$q.table[nrow(sm1$q.table), , ][3, ]
-tab2 <- rbind(sm1$q.table[2:7,4,],number.t, number.c, 
-              number.all)
-row.names(tab2) <- c("Candidate Ideology",
-                     "Perception of Party Ideology", "Respondent Ideology",
-                     "Respondent Ideology * Feeling Thermometer",
-                     "Feeling Thermometer", "Political Awareness",
-                     "No. treated", "No. control", "N")
-xtable(tab2)
-
-#plotting figure
+# Plotting Densities
 #setwd("c:/match/docs/papers/koch/writeup")
 #setwd("c:/R/match/docs/papers/koch/writeup")
 trellis.device(device="pdf",file="kochdens.pdf",color=FALSE,width=6,height=3)
 par(mar=c(2, 2, 2, 2) + 0.1, cex.lab=0.6, cex.axis=0.6,
     mgp=c(1,0.5,0), cex.main=0.5, cex=0.8, bg="white")
-doverlay(mcoef,coef,lwd=2,
+doverlay(mcoef,coef,lwd=2, bw=0.004,
          xlab="Estimated average treatment effect", leg=F)
-arrows(coefficients(res)[2], 25, coefficients(res)[2],0, length=0.1)
+arrows(0.007,22, coefficients(res)[2],0, length=0.1)
 text(0.07,9,"Raw data")
-text(-0.07,75,"Matched\ndata")
-#text(0.5,0.5,"Matched Data")
-text(0.005,25,"Point estimate \n of raw data")
+text(-0.055,50,"Matched\ndata")
+text(0.007,27,"Point estimate \n of raw data")
 dev.off()
 
-#traceplots
-trellis.device(device="pdf",file="kochtrace.pdf",color=FALSE,width=6,height=3)
-par(mar=c(2, 2, 2, 2) + 0.1, cex.lab=0.6, cex.axis=0.6,
-    mgp=c(1,0.5,0), cex.main=0.5, cex=0.8, bg="white",par(mfrow=c(2,1)))
-ts.plot(coef,ylim=range(c(coef,mcoef)),
-        ylab="Treatment Effect",main="Raw Data")
-ts.plot(mcoef,ylim=range(c(coef,mcoef)),
-        ylab="Treatment Effect",main="Matched Data")
-dev.off()
-
-nn <- 0
-for(i in 1:6){
-  nn <- nn + choose(6,i)}
-
-#other functions
-#x is in solid steps
-#y is in grey
-#y is in dashed steps
-histbackback2 <- function (x, y, z, brks = NULL, xlab = NULL, axes = TRUE, probability = FALSE, 
-                          xlim = NULL, ylab = "", main="", isf = FALSE, ...) 
-{
-  if(!isf){
-    if (!length(brks)) 
-      brks <- hist(c(x, y), plot = FALSE)$breaks
-    ll <- hist(x, breaks = brks, plot = FALSE, probability =
-               probability)
-    rr <- hist(y, breaks = brks, plot = FALSE, probability =
-               probability)
-    rr2 <- hist(z, breaks = brks, plot = FALSE, probability =
-                probability)
-    if (probability) {
-      ll$counts <- ll$density
-      rr$counts <- rr$density
-      rr2$counts <- rr2$density
-    }
-    xl <- pretty(range(c(ll$counts,rr$counts,rr2$counts)))
-    xl <- c(xl[1], xl[length(xl)])
-    barplot(rr$counts, ylim = xl,  horiz = F, space=0,
-              axes = FALSE, col = "darkgrey",border="darkgrey")      
-    lines(0:length(brks), c(ll$counts,0,0),type="s",lwd=1)
-    lines(0:length(brks), c(rr2$counts,0,0),type="s",lwd=1,lty=2)
-  } else {
-    xl <- pretty(range(c(table(x)/sum(table(x)),table(y)/sum(table(y)),table(z)/sum(table(z)))))
-    xl <- c(xl[1], xl[length(xl)])
-    barplot((t(table(y)/sum(table(y)))), ylim = xl, space = 0, horiz = F, 
-            axes = FALSE, col = "darkgrey",border="darkgrey", cex.names=0.6)  
-    lines(c(0,0:length(table(x))), c(0,as.numeric(t(table(x)/sum(table(x)))),0), type="s",lwd=1)
-    lines(c(0,0:length(table(z))), c(0,as.numeric(t(table(z)/sum(table(z)))),0),type="s",lwd=1,lty=2)
-  }
-  if (axes) {
-    axis(2, at = pretty(xl), labels = format(abs(pretty(xl))))
-    if(!isf){
-      del <- (brks[2] - brks[1] - (brks[3] - brks[2]))/2
-      brks[1] <- brks[1] + del
-      brks[-1] <- brks[-1] - del
-      axis(1, at = 0:(length(brks) - 1), labels = formatC(brks, 
-                                               format = "f", digits =
-                                               1))
-    } 
-    if (ylab != "" | main!="") 
-      title(ylab = ylab, main=main)
-  }
-  box()
-}
