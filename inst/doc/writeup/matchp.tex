@@ -38,7 +38,7 @@
     Software to implement the methods in this paper is available at
     \texttt{http://GKing.Harvard.edu/matchit}.}}
 
-\author{Daniel E. Ho,\thanks{J.D.\ candidate, Yale Law School, Ph.D.\,
+\author{Daniel E. Ho,\thanks{J.D., Yale Law School, Ph.D.\,
     Department of Government, Harvard University. (Center for Basic
     Research in the Social Sciences, 34 Kirkland, Cambridge MA 02138,
     USA; \texttt{daniel.ho@Yale.Edu}).}
@@ -1611,10 +1611,7 @@ $\mu_i(1)$ and its uncertainty estimate.
 
 We now offer two empirical illustrations of how preprocessing raw data
 via nonparametric matching can reduce the dependence of parametric
-models on difficult-to-justify functional form assumptions.  We first
-present a model where propensity score matching works well.  In the
-second, ordinary propensity score matching did not balance adequately,
-and so we performed subclassification on the propensity score.  For
+models on difficult-to-justify functional form assumptions.  For
 pedagogical reasons, and to save space, we use different methods of
 checking balance via (\ref{balance}) in our two applications.
 
@@ -1870,19 +1867,17 @@ indicated by the usual parametric approach.
   Evaluations}
 
 For our second application, we reanalyze a study of citizen
-evaluations of the ideological positions of candidates for the U.S.\
+evaluations of the ideological positions of candidates for the U.S.\ 
 House of Representatives by \citet{Koch02}.  The quantity of interest
-is the causal effect of being a highly visible female candidate on
-citizen voter evaluations of the candidate's ideology (scored as a
-seven point ordinal scale, where high scores indicate greater
+is the causal effect of candidate visibility on citizen voter
+evaluations of the candidate's ideology (scored as a seven point
+ordinal scale, where high scores indicate greater
 conservatism).\footnote{Visibility is measured originally by whether a
   candidate had campaign expenditures exceeding more than \$750,000.
   For simplicity and to maintain comparison to \citet{Koch02}, we
   stipulate, rather than evaluate the appropriateness of, these and
   other measurements and methods.}  We confine ourselves to studying
-this effect on Republican female candidates, compared to the control
-of invisible male and female candidates (corresponding to the fourth
-column of Table 2 in \citet[p.  459]{Koch02}).  We begin by
+the effect of visibility on Republican male candidates.  We begin by
 replicating the analysis, which we did successfully.
 
 Since randomly assigning visibility to candidates in real elections is
@@ -1905,145 +1900,72 @@ the study assumes that visibility is the same treatment for all
 candidates.
 
 Here, we do not take issue with these three assumptions.  Instead, we
-focus on the sensitivity of inferences to differences in specification.
-Even with a relatively small number of covariates, the curse of
-dimensionality looms large.  Given the combinations that can be
-created by the unique values of these covariates and the treatment, it
-is easy to calculate that a parametric model that imposes no
+focus on the sensitivity of inferences to differences in
+specification.  Even with a relatively small number of covariates, the
+curse of dimensionality looms large.  Given the combinations that can
+be created by the unique values of these covariates and the treatment,
+it is easy to calculate that a parametric model that imposes no
 unverified functional form assumptions would require estimating
-87,530,856 parameters --- a problem of course in a data set with only
-494 observations.  Koch reduces these parameters to only six (main
+263,938,500 parameters --- a problem of course in a data set with only
+1,203 observations.  Koch reduces these parameters to only six (main
 effects) by assuming no interactions or nonlinearities.
 
-The linear adjustments are important since, as the raw data in
-Table~\ref{tb:kochmtest} demonstrate, visible and invisible candidates
-differ drastically in terms of background explanatory covariates.
-Most strikingly, visible female candidates tend to be substantially
-more liberal than invisible candidates: visible candidates are rated
-0.44 on a scale from 0 to 1, which is almost an entire standard
-deviation higher than the 0.2 average rating of invisible candidates
-(t-statistic=12.18).  In addition, visible candidates appear to be
-slightly more politically aware (t-statistic=2.42).  Extrapolation is
-therefore likely to be a significant problem.
-\begin{table}[t]
-  \begin{center}
-    \begin{tabular}{lrrrrrr}
-      \hline
-      & \MC{3}{c}{} & \MC{3}{c}{\bf Preprocessed Data}\\
-      & \MC{3}{c}{\bf Raw Data} & \MC{3}{c}{\bf (subclass 4)}\\
-      & Mean for  & Mean for  &    & Mean for  & Mean for \\
-      & Treated & Control  & t-stat &    Treated & Control  & t-stat \\
-      \hline
-      Propensity Score & 0.48 & 0.10 & 10.71 & 0.61 & 0.54 & 2.32 \\
-      Candidate Ideology & 0.44 & 0.20 & 12.18 & 0.50 & 0.48 & 1.15 \\
-      Perception of Party Ideology & 0.72 & 0.73 & -0.42 & 0.69 & 0.67 & 0.24 \\
-      Respondent Ideology & 0.49 & 0.53 & -0.97 & 0.45 & 0.50 & -0.38 \\
-      Respondent Ideology $\times$ \\
-\hspace{0.1in} Feeling Thermometer  & 0.31 & 0.32 & -0.44 & 0.27 & 0.25 & 0.18\\
-      Feeling Thermometer & 0.60 & 0.55 & 1.70 & 0.54 & 0.53 & 0.03 \\
-      Political Awareness & 0.76 & 0.70 & 2.42 & 0.76 & 0.74 & 0.28 \\
-      \hline
-    \end{tabular}
-    \caption{Imbalance of pretreatment covariates in Koch data.
-      The full sample size is 494, and the preprocessed data size is
-      463.  The first three columns present means for visible female
-      (``treated'') and invisible (``control'') Republican candidates,
-      and t-statistics for the full dataset.  The last three columns
-      present means and t-statistics for one representative subclass.
-      This table shows that candidate ideology is highly imbalanced in
-      the full Koch data, and that balance can be achieved by
-      subclassification.  Visible females, for example, were much more
-      likely to be perceived as liberal than invisible candidates
-      overall, but within subclass 4 this difference diminishes.}
-    \label{tb:kochmtest}
-  \end{center}
-\end{table}
+The linear adjustments are important since visible and invisible
+Republican male candidates differ appreciably in terms of background
+explanatory covariates.  Visible candidates on average are less
+liberal than invisible candidates: visible candidates are rated 0.19
+on a scale from 0 to 1, which is roughly one third of a standard
+deviation lower than the average rating of 0.23 of invisible
+candidates.  In addition, visible candidates on average receive a
+feeling thermometer score almost two fifths of a standard deviation
+lower than invisible candidates.  Figure~\ref{fg:kochQQ} summarizes
+these differences in the QQ-plot of the propensity score.  The QQ-plot
+of the raw data in black is consistently below the 45-degree line,
+indicating that treated units are substantially different than control
+units.  Extrapolation is therefore likely to be a significant problem.
+\begin{figure}[t] 
+ \begin{center}
+   \includegraphics[height=3in,angle=0]{figs/kochQQ.pdf}
+ \end{center} 
+ \vspace{-0.275in}
+ \caption{QQ plot of propensity score for candidate visibility. The
+   black dots represent empirical QQ estimates for the raw data.  The
+   grey dots represent QQ estimates for the matched data.  The
+   45-degree line indicates identical distributions.}
+ \label{fg:kochQQ}
+\end{figure}
 
-Through experimentation, we find that propensity score matching does
-not improve balance much, no matter how we specify the propensity
-score equation.  However, subclassifying on the propensity score
-improves balance considerably without reducing the number of
-observations much, and so we use it.  Our propensity score analysis
-involves a logistic regression of visibility on all six pretreatment
-covariates.  We also discard treatment units whose propensity score is
-greater than the maximum of the control units' propensity scores and control units whose
-propensity score is lower than the minimum of the treated units' propensity scores.  This
-results in 31 discarded units, and (as in Figure \ref{fg:extrap})
-greatly reduces the risks of extrapolation.  Next, we create six
-subclasses by quantiles of the propensity score of the treated units.
-As is desired, covariate balance is substantially better within each
-subclass than in the raw data; within each subclass, any extrapolation
-would be confined to a region much closer to the data.  For example,
-the last three columns of Table~\ref{tb:kochmtest} present means and
-t-statistics for each covariate in one representative subclass showing
-that balance uniformly increases in each of these covariates.
-Candidate ideology, which was highly imbalanced in the raw data, now
-has a t-statistic for the difference of only 0.5 for visible
-candidates within subclass 4, which differs only slightly from the
-0.48 for invisible candidates in that subclass (t-statistic=1.15).
+Examining the data we see that there are 853 visible Republican male
+candidates, compared to only 350 invisible ones.  We therefore
+redefine the treatment to examine the impact of being invisible on
+those 350 candidates.  Through experimentation, we find that
+propensity score matching improves balance substantially.  Our
+propensity score analysis involves a logistic regression of visibility
+on all six pretreatment covariates.  We match using an optimal
+one-to-one matching algorithm, resulting in 350 visible candidates
+matched with 350 invisible candidates.  As Figure~\ref{fg:kochQQ}
+demonstrates, matching leads to treatment and control group values of
+the propensity score being identical at almost every quantile, with
+grey dots lining up along the 45-degree line.  The percent balance
+improvement in mean differences is substantial, ranging at worst from
+50.1 percent in the perception of party ideology to 82.0 percent in
+respondent ideology, and at best to 94.5-99.9 for the remaining
+covariates.
 
-To check balance for all the subclasses, Table~\ref{tb:kochxsub}
-presents test statistics for the difference in means for each of the
-main covariates, in each of the subclasses.  The last three rows
-present the number of units in each subclass.  The preprocessing
-procedure matches a small number of visible candidates with many more
-invisible candidates in the lower subclasses and the reverse in the
-higher subclasses.  This is another indication that in the raw data,
-the covariates are highly unbalanced.  Through this simple technique
-we are able to compare the most similar candidates within each
-subclass.  Indeed, the t-statistics for the mean difference in
-covariates for all subclasses exceed 2 only once, which is roughly the
-same as we would expect if treatment were assigned randomly within
-each subclass.
-
-\begin{table}[t]
-  \begin{center}
-    \begin{tabular}{lrrrrrr}
-      \hline
-      & \MC{6}{c}{\bf Subclass} \\
-      Covariate &  1 &  2 &  3 &  4 &  5 &  6 \\
-      \hline
-      Candidate Ideology & 2.16 & -0.85 & 0.33 & 1.15 & 1.51 & -0.45 \\
-      Party Ideology & -0.65 & -1.05 & 0.59 & 0.24 & 0.06 & 1.53 \\
-      Respondent Ideology & 1.45 & -0.73 & 1.08 & -0.38 & -1.26 & -1.00 \\
-      Respondent Ideology $\times$ & 0.50 & -0.81 & 1.64 & 0.18 &
-      -1.44 & -0.42 \\
-      \hspace{0.1in} Feeling Thermometer \\
-      Feeling Thermometer & -0.03 & 0.33 & 1.61 & 0.03 & -1.34 & 1.08 \\
-      Political Awareness & 0.53 & 0.14 & -1.50 & 0.28 & -1.08 & 0.66
-      \\ \hline
-      Treated $n$& 14 & 13 & 13 & 14 & 13 & 11 \\
-      Control $n$& 299 & 30 & 39 & 12 & 3 & 2 \\
-      Total $n$  & 313 & 43 & 52 & 26 & 16 & 13 \\
-      \hline
-    \end{tabular}
-    \caption{Means test statistics for six pretreatment covariates.
-      Each cell presents the t-statistic for the covariate within each
-      subclass.  This table shows that relative balance can be
-      achieved within each subclass with only six subclasses.}
-    \label{tb:kochxsub}
-  \end{center}
-\end{table}
-
-With this preprocessed data set we can now run the same least squares
-analysis as in \citet{Koch02}.  The only difference is that we run the
-analysis by subclass, and average the estimates, weighting by the
-number of treated candidates in each subclass.  This yields an
-estimated average treatment effect of $-0.23$ with an estimated
-standard error of $0.14$, indicating that female visibility might cause
-voters to perceive female candidates as more liberal, the key
-substantive purpose of this analysis.
+With this preprocessed data set we can now run the comparable least
+squares analysis as in \citet{Koch02}.  The only difference is that we
+run the analysis for the matched dataset.  This analysis yields an
+estimated average treatment effect of $-0.03$ with an estimated
+standard error of $0.07$, suggesting that there is not much of an
+effect of invisibility on Republican male candidates.
 
 We now turn to our main (methodological) purpose of evaluating model
 sensitivity by studying the variance of causal effect point estimates
 for 63 (=$\sum_{i=1}^6 {6 \choose i}$) regressions containing all
 possible subsets of Koch's six covariates, again for simplicity
 restricting ourselves to only permutations of the possible main
-effects.  For the matched data set, we run the same specification
-locally within each subclass, aggregating the point estimates weighted
-by the number of treated units in each subclass.  The result in each
-case is 63 separate point estimates for the raw and for the
-preprocessed data.
+effects.  We thereby estimate 63 separate point estimates for the raw
+and for the preprocessed data.
 
 Figure~\ref{fg:kochdens} presents the results, plotting densities of
 estimated average treatment effects for the treated (ATT) from the raw
@@ -2056,12 +1978,12 @@ controls for all six covariates, signified by the vertical arrow,
 appears conservative compared to this range.  Estimates from the
 preprocessed data, however, stand in stark contrast to the estimates
 from the raw data.  The variability of coefficient estimates is
-substantially smaller, ranging from $-0.31$ to $-0.07$, and the
-variance across specifications is more than \emph{six} times smaller
-than for the raw data, as shown by the highly peaked density.  Rather
-than erring on the conservative side, the reported point estimate now
-appears to be substantially larger in substantive effect than we might
-expect from the more valid and less model-dependent preprocessed data.
+substantially smaller, ranging from $-0.38$ to $0.00$, and the
+standard deviation across specifications is more than \emph{seven}
+times smaller than for the raw data, as shown by the highly peaked
+density.  The reported point estimate now appears to be smaller in
+substantive effect than we might expect from the more valid and less
+model-dependent preprocessed data.
 \begin{figure}[t] 
  \begin{center}
    \includegraphics[height=3in,angle=0]{figs/kochdens.pdf}
@@ -2071,22 +1993,17 @@ expect from the more valid and less model-dependent preprocessed data.
    being a highly visible female Republican candidate across 63
    possible specifications with the Koch data.  The dashed line
    presents estimates for the raw dataset and the solid line for the
-   (subclassified) matched dataset.  The vertical arrow presents the
-   point estimate of the regression presented in the original paper.
-   This figure shows that treatment effect estimates are much more
-   sensitive to model specification for the raw dataset compared to
-   the matched dataset.}
+   matched dataset.  The vertical arrow presents the point estimate of
+   the regression comparable to the one presented in the original
+   paper.  This figure shows that treatment effect estimates are much
+   more sensitive to model specification for the raw dataset compared
+   to the matched dataset.}
  \label{fg:kochdens}
 \end{figure}
-
 In short, not only can preprocessing reduce model dependence,
 decreasing the probability that researchers may inadvertently present
 inaccurate estimates, but preprocessing also may change or reinforce
-the substantive conclusions of the research.  The fact that treatment
-effects may be substantially smaller may even further bolster the
-claim that ``[t]he contradictory nature of\ldots [the] cues received
-from Republican female candidates presents citizens with a complicated
-information-processing task'' \citep[p.  460]{Koch02}.
+the substantive conclusions of the research.
 
 \section{What Can Go Wrong}
 
