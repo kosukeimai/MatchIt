@@ -69,7 +69,7 @@ for (i in N:(length(xvars)-1))
   total <- total + ncol(combn(xvars, i)) 
 cat("\n I'm going to run", total, "regressions!\n")
 
-coef <- mcoef <- rep(0,total)
+cil <- mcil <- coef <- mcoef <- rep(0,total)
 counter <- 1
 for (i in N:(length(xvars)-1)) {
   allsubset <- combn(xvars, i)
@@ -80,14 +80,19 @@ for (i in N:(length(xvars)-1)) {
     ftmp <- as.formula(ftmp)
     tmp0 <- lm(ftmp,  data = dta.full)
     coef[counter] <- tmp0$coefficient[2]
+    cil[counter] <- 2*1.96*sqrt(vcov(tmp0)[2,2])
     tmp1 <- lm(ftmp, data = dta.match)
     mcoef[counter] <- tmp1$coefficient[2]
+    mcil[counter] <- 2*1.96*sqrt(vcov(tmp1)[2,2])
     counter <- counter + 1
   }
   cat(i,"covariates:",counter,"\n")
   cat(date(), "\n\n")
+  coef[length(coef)] <- res$coefficients[2]
+  cil[counter] <- 2*1.96*sqrt(vcov(res)[2,2])
+  res1 <- lm(fml, data=dta.match)
+  mcoef[length(mcoef)] <- res1$coefficients[2]
 }
-save.image("koch-11-7-05.Rdata")
 
 # Plotting Densities
 #setwd("c:/match/docs/papers/koch/writeup")
@@ -103,3 +108,5 @@ text(-0.055,50,"Matched\ndata")
 text(0.007,27,"Point estimate \n of raw data")
 dev.off()
 
+#saving image
+save.image("koch-11-7-05.Rdata")
