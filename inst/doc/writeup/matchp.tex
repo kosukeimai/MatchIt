@@ -55,8 +55,8 @@
 %\and %
 Elizabeth A. Stuart\thanks{Researcher, Mathematica Policy Research,
   Inc.\, Ph.D.\, Department of Statistics, Harvard University.
-  (Science Center 702, One Oxford Street, Cambridge, MA 02138, USA;
-  \texttt{http://www.mathematica-mpr.com},
+  (600 Maryland Ave., SW, Suite 550,  Washington, DC, 20024, USA;
+  \texttt{http://people.iq.harvard.edu/$\sim$estuart/},
   \texttt{Stuart@Stat.Harvard.Edu}).}}
 
 \date{\today\ (\printtime)} 
@@ -407,7 +407,7 @@ observation is unnecessary; instead, the goal is to estimate the
 average effect over all observations, for some subset of observations,
 or for a particular population.  This leads to several choices for
 quantities of interest, each of which is defined for either realized
-(in-sample) or population causal effects.  We focus on in sample
+(in-sample) or population causal effects.  We focus on in-sample
 effects --- i.e., based on quantities of interest for all or a subset
 of units in our data --- since they are closer to our data than
 effects for averages of specified populations or population subgroups,
@@ -552,7 +552,7 @@ observational data are instead forced to make assumptions that, if
 correct, help them avoid various threats to the validity of their
 causal inferences.\footnote{Our definition of ``observational data''
   is more expansive than some.  In some fields, only deviations from
-  random assignment would be called observational.  Our definition to
+  random assignment would be called observational.  Our definition
   emphasizes the necessity of assumptions in general rather than any
   ones in particular.}
 
@@ -581,8 +581,8 @@ $X_i$ must include all variables that are causally prior to $t_i$,
 associated with $t_i$, and affect $Y_i$ conditional on $t_i$
 \citep{Goldberger91,KinKeoVer94}, or ``selection on observables''
 \citep{HecRob85}.  In statistics, this same condition is known as
-``ignorability,'' which means that $t_i$ and the potential outcomes
-are independent after conditioning on $X_i$, and so we can literally
+``ignorability,'' which means that $t_i$ and the unobserved potential outcomes
+are independent after conditioning on $X_i$ and the observed potential outcomes, and so we can literally
 ignore all unobserved variables \citep{RosRub83}.  In biostatistics,
 it is known as the absence of ``confounding,'' and in several fields
 it is known as ``conditional independence.''  Whatever the name, it is
@@ -1030,7 +1030,7 @@ is the goal in reducing bias, then $\gamma$ will be close to zero.
 Then, the resulting variance for the treatment effect may become
 smaller even if some observations are dropped and $n$ becomes smaller.
 This suggests that so long as one keeps as many observations as
-possible, matching might will often able to reduce bias and improve
+possible, matching might well often be able to reduce bias and improve
 the efficiency of subsequent parametric analyses.
 
 \section{Practical Implications of the Theoretical Matching
@@ -1153,7 +1153,7 @@ we have exact balance with little inefficiency and we may skip the
 remaining steps.  Indeed, exact balance means that a difference in
 means is sufficient for the parametric analysis (but be sure to
 compute a difference in weighted means if very different numbers of
-matches are included for each unit).  If the insufficient number of
+matches are included for each unit).  If an insufficient number of
 matches is found, we either repeat the exact matching with fewer
 covariates or switch to other methods, described below.  In the
 former, we balance the included variables but do not balance at all on
@@ -1368,7 +1368,7 @@ sample, that would reduce bias even further, can often be found.  But
 even more importantly, hypothesis tests not only can cause one to stop
 too soon, but they can be highly misleading even when using them as
 objective functions to optimize.  In particular, pruning too many
-observations reduces statistical power of hypothesis test (i.e., the
+observations reduces the statistical power of a hypothesis test (i.e., the
 probability of rejecting the null hypothesis) and thus affects the
 test, even if this pruning does not improve balance at all.
 
@@ -1430,7 +1430,7 @@ differences.  We also recommend that the measures applied be presented
 in the units of the original variables, so that the substance of the
 problem is emphasized and the relationship between the size of the
 remaining imbalance can be compared to one's views about the potential
-importance of this variable in question.
+importance of the variable in question.
 
 One particularly simple low dimensional summary compares the mean of
 each variable in $X$ for the treated group with the mean of each
@@ -1477,8 +1477,8 @@ paradoxical (and part of the propensity score tautology) because it
 relies on the propensity score as a summary of the data to check
 whether propensity score matching is adequate.  It is useful
 nonetheless as one of our procedures for checking balance because it
-offers a low dimensional summary not obviously worse than the
-examining variables one at a time.  Indeed, for the reasons discussed
+offers a low dimensional summary not obviously worse than 
+examining the variables one at a time.  Indeed, for the reasons discussed
 above, it is often a good low dimensional summary.
 
 The immediate goal of matching is balance, which involves adjusting
@@ -1607,7 +1607,7 @@ estimate a different variance quantity.
 Thus, when estimating the ATT or ATE, we compute estimates of
 $\mu_i(1)$ and $\mu_i(0)$ and their uncertainty as usual from the
 parametric model applied to the preprocessed data.  If computing
-conditional causals effect (either on average over all observations or
+conditional causal effects (either on average over all observations or
 just the average for the treated units), we set $\mu_i(1)=y_i$ if
 $t_i=1$, and use the parametric model to estimate $\mu_i(0)$ and its
 uncertainty, whereas if $t_i=0$, we set $\mu_i(0)=y_i$ and use the
@@ -1689,7 +1689,7 @@ To preprocess, we follow the recommendations described in
 Section~\ref{s:choose}. We first check whether the control units are
 within the convex hull of the treated units using the method developed
 by \citet{KinZen06a}. The result of this analysis indicates that none
-of the treated and control units is in the convex hull. This lack of
+of the control units is in the convex hull. This lack of
 common support explains in part why \citet{Carpenter02} finds the
 results are highly model-dependent. To proceed, we estimate the
 propensity score using logistic regression with all covariates as
@@ -1758,7 +1758,7 @@ CDER staff & $-$0.68 & 10.77 & 1.57 & 5.78 & 3.06 & 17.96 \\
 
 Table~\ref{tb:fdabal} summarizes how preprocessing can improve the
 covariate balance. The table presents three balance measures after
-matching for each covariate and their percept improvement when
+matching for each covariate and their percent improvement as
 compared to the original balance before matching.  Matching
 substantially improves the balance of each covariate. Exact
 restrictions with six binary variables make their balance perfect,
@@ -1788,7 +1788,7 @@ intervals using the same procedures Carpenter did on the raw data.  By
 applying this procedure to the preprocessed data, the estimated
 average treatment effect for the treated based on Carpenter's Model 1
 is approximately $-33.5$ months with an estimated standard error
-$7.5$, indicating that a Democratic Senate majority significantly
+of $7.5$, indicating that a Democratic Senate majority significantly
 decreases the average approval time of new drugs.  This result thus
 continues to contradict Carpenter's initial hypothesis.
 
@@ -1830,14 +1830,14 @@ model-dependent using the raw data than using the matched data.  For
 example, the variance of the estimated ATT from the matched data (the
 solid curve) is less than \emph{one tenth} the size of that from the
 raw data (the dashed curve).  The distribution of estimates for the
-matched data is also closer to the normal density, which will happen
+matched data is also closer to the density of the normal distribution, which will happen
 when control variables included are having effects only due to random
 error.
 
 Furthermore, despite the fact that matching drops more than 100
 observations, we achieve this considerable reduction in model
 dependence while improving statistical efficiency. For example, the
-mean length of resulting 95\% confidence interval for the estimated
+mean length of the resulting 95\% confidence interval for the estimated
 in-sample ATT (averaged over all of the $262,143$ specifications) is
 only $43.7$ for preprocessed data, which is approximately 20 percent
 shorter than the average length for the original data. Similarly, the
@@ -1968,11 +1968,11 @@ dashed line) range from $-0.72$ to $0.11$, signifying that the
 invisibility for male candidates has no predictable effect on whether
 voters perceive candidates as more liberal.  The point estimate from
 the raw data (or any one point estimate) cannot represent the enormous
-variability in these results.  Estimates from the preprocessed data,
+variability in these results.  Estimates from the preprocessed data
 stand in stark contrast to the estimates from the raw data.  The
 variability of coefficient estimates is substantially smaller, ranging
 from $-0.38$ to $-0.28$, every one of which indicates that not having
-visbility reduces voters perceptions of the candidates as liberal.
+visibility reduces voters perceptions of the candidates as liberal.
 More importantly from our perspective, the standard deviation across
 specifications of the raw data is 10.7 times as large as for the
 preprocessed data.
@@ -2116,7 +2116,7 @@ they are spread over a range of different languages and packages,
 which would normally make it impractical to use more than one for any
 applied project.  Thus, as a companion to and in the same spirit as
 this paper, we have written software (called MatchIt, available at
-\url{http://.....})  that implements the vast majority of the matching
+\url{http://gking.harvard.edu/matchit})  that implements the vast majority of the matching
 procedures suggested in the diverse scholarly literatures on this
 subject.  Where possible, MatchIt builds on and incorporates existing
 packages and, across all the specialized techniques, MatchIt offers a
