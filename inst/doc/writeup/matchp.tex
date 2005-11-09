@@ -1903,7 +1903,7 @@ unverified functional form assumptions would require estimating
 1,203 observations.  Koch reduces these parameters to only six (main
 effects) by assuming no interactions or nonlinearities.
 
-The linear adjustments are important since visible and invisible
+The parametric adjustments are important since visible and invisible
 Republican male candidates differ appreciably in terms of background
 explanatory covariates.  Visible candidates on average are less
 liberal than invisible candidates: visible candidates are rated 0.19
@@ -1929,21 +1929,22 @@ be a serious problem.
  \label{fg:kochQQ}
 \end{figure}
 
-The data include 853 visible Republican male candidates, compared to
-only 350 invisible ones.  We therefore redefine the treatment to
-examine the impact of being invisible on those 350 candidates.
-Through experimentation, we find that propensity score matching
-improves balance substantially.  Our propensity score analysis
-involves a logistic regression of visibility on all six pretreatment
-covariates.  We match using an optimal one-to-one matching algorithm,
-resulting in 350 visible candidates matched with 350 invisible
-candidates.  As Figure~\ref{fg:kochQQ} demonstrates, matching leads to
-treatment and control group values of the propensity score being
-identical at almost every quantile, with grey dots lining up along the
-45-degree line.  The percent balance improvement in mean differences
-is substantial, ranging at worst from 50.1 percent in the perception
-of party ideology to 82.0 percent in respondent ideology, and at best
-to 94.5-99.9 for the remaining covariates.
+The original data include 853 visible Republican male candidates,
+compared to only 350 invisible ones.  We therefore redefine the
+treatment to examine the impact of being invisible on those 350
+candidates.  Through experimentation, we find that propensity score
+matching improves balance substantially.  We estimate propensity score
+via a logistic regression of visibility on all six pretreatment
+covariates.  We conduct an optimal one-to-one nearest neighbor
+matching based on the estimated propensity score, resulting in 350
+visible candidates matched with 350 invisible candidates.  As
+Figure~\ref{fg:kochQQ} demonstrates, matching leads to treatment and
+control group values of the estimated propensity score being identical
+at almost every quantile, with grey dots lining up along the 45-degree
+line.  The percent balance improvement in mean differences is
+substantial, ranging at worst from 50.1 percent in the perception of
+party ideology to 82.0 percent in respondent ideology, and at best to
+94.5--99.9 for the remaining covariates.
 
 With this preprocessed data set we can now run the comparable least
 squares analysis as in \citet{Koch02}.  The only difference is that we
