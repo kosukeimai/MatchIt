@@ -425,7 +425,8 @@ average treatment effect or ATE:
 which is the mean causal effect for unit $i$ averaged over all units
 (so that the expected value operator in the first line averages over
 the random causal effects for each unit, and the summation over $i$ in
-both refers to the observed sample).
+both refers to the observed sample), or equivalently the average of
+the random causal effect.
 
 Often of more interest substantively is the average treatment effect
 on the treated, or ATT:
@@ -462,16 +463,16 @@ the two potential outcomes, $Y_i(1)$ and $Y_i(0)$, corresponding to
 the actual treatment, is replaced by $y_i$ for each $i$.  Then only
 the mean of the counterfactual outcome, $\mu_i(1)$ or $\mu_i(0)$, is
 estimated and the other is set to the observed $y_i$.  These
-conditional ATE and ATT quantities are reasonable alternatives that we
-often use.  In addition, to change sample to population causal effects
-for the ATE we can average over the population, and for the ATT we
-average over individuals in the population times their probabilities
-of receiving treatment.  Point estimates for population and sample are
-normally identical, although the variances for the population
-estimates would be larger.  Different types of causal effects are then
-distinguished by three choices: ATE or ATT, conditional or
-unconditional, and sample or population.  We normally choose
-conditional-sample estimates of the ATE or ATT.
+\emph{conditional} ATE and ATT quantities are reasonable alternatives
+that we often use.  In addition, to change sample to population causal
+effects for the ATE we can average over the population, and for the
+ATT we average over individuals in the population times their
+probabilities of receiving treatment.  Point estimates for population
+and sample are normally identical, although the variances for the
+population estimates would be larger.  Different types of causal
+effects are then distinguished by three choices: ATE or ATT,
+conditional or unconditional, and sample or population.  We normally
+choose conditional-sample estimates of the ATE or ATT.
 
 \paragraph{Non-Binary Treatments}
 
