@@ -1408,17 +1408,16 @@ balance: the t-test can get apparently better while balance gets
 worse, or vice versa.\footnote{To see this, consider the commonly-used
   two sample $t$-test statistic with unknown and unequal variances,
   which can be written as, $\sqrt{n}(\overline{X}_t-\overline{X}_c)/
-  \sqrt{\frac{\sigma^2_t}{r} + \frac{\sigma^2_c}{1-r}}$ where
-  $\sigma^2_t=\sum_{i=1}^n t_i(X_i - \overline{X}_t)^2/(n_t-1)$ and
-  $\sigma^2_c=\sum_{i=1}^n (1-t_i)(X_i - \overline{X}_t)^2/(n_c-1)$
-  represent the variance of $X$ for the treated and control groups,
-  $n_t$ and $n_c$ are the sample size for the treatment and control
-  groups, and $r=n_t/n$.  The difference in sample means as a measure
-  of balance in the numerator is thus distorted in the t-test due to
-  the three factors in the denomenator: the total number of remaining
-  observations $n$, the ratio of remaining treated units to the total
-  number of observations $r=n_t/n$, and the variance of $X$ for
-  treated and control units.}
+  \sqrt{\frac{s^2_t}{r} + \frac{s^2_c}{1-r}}$ where
+  $s^2_t=\sum_{i=1}^n t_i(X_i - \overline{X}_t)^2/(n_t-1)$,
+  $s^2_c=\sum_{i=1}^n (1-t_i)(X_i - \overline{X}_t)^2/(n_c-1)$, $n_t$
+  and $n_c$ are the sample size for the treatment and control groups,
+  and $r=n_t/n$.  Hence, the difference in sample means as a measure
+  of balance is thus distorted in the t-test due to the three factors:
+  the total number of remaining observations $n$, the ratio of
+  remaining treated units to the total number of remaining
+  observations $r$, and the variance of $X$ for the remaining treated
+  and control units, $s_t^2$ and $s_c^2$ respectively.}
 
 \paragraph{Better Matching Evaluations}
 
@@ -1653,19 +1652,19 @@ from the submission of an application.
 
 We focus on the causal effect of a Democratic majority in the Senate,
 one of the seven oversight variables. In particular, we estimate the
-in-sample average treatment effect for the treated (ATT) as defined in
-(\ref{att}).  Carpenter's remaining six oversight variables are
-conceptually and statistically highly related, and are in part
-consequences of a Democratic Senate majority.  As such, we omit them
-to avoid post-treatment bias.  Post-treatment bias may still exist in
-this research design if other variables controlled for are
-consequences of a Democratic Senate majority.  For example, if media
-coverage of a particular disease is affected by Democratic control,
-bias would be induced.  Although post-treatment bias is a critical
-issue in accurately estimating causal effects, it would affect
-parametric models with or without preprocessing and so is less
-relevant for our present goal of reducing model dependence; we do not
-pursue it further.
+in-sample (conditional) average treatment effect for the treated.
+Carpenter's remaining six oversight variables are conceptually and
+statistically highly related, and are in part consequences of a
+Democratic Senate majority.  As such, we omit them to avoid
+post-treatment bias.  Post-treatment bias may still exist in this
+research design if other variables controlled for are consequences of
+a Democratic Senate majority.  For example, if media coverage of a
+particular disease is affected by Democratic control, bias would be
+induced.  Although post-treatment bias is a critical issue in
+accurately estimating causal effects, it would affect parametric
+models with or without preprocessing and so is less relevant for our
+present goal of reducing model dependence; we do not pursue it
+further.
 
 % We also assume the absence of autocorrelation (or interference among
 % units).  In this application, this assumption means that the existence
@@ -1694,23 +1693,20 @@ of the treated and control units is in the convex hull. This lack of
 common support explains in part why \citet{Carpenter02} finds the
 results are highly model-dependent. To proceed, we estimate the
 propensity score using logistic regression with all covariates as
-linear predictors.  We also find that matching on the square root of
-hospitalization associated with indication improves the resulting
-balance significantly, and so we include it.  We then discard 15
-control units and 2 treated units that are outside of the common
-support of the estimated propensity score. Finally, we conduct
-one-to-one nearest neighbor propensity score matching (without
-replacement) while placing exact restrictions on the six binary
-variables (whether primary indication is lethal condition, acute
-condition, and/or results in hospitalization; whether disease mainly
-affects men, women, and/or children). We choose one-to-one matching
-rather than one-to-many matching or full matching because our convex
-hull analysis indicates that most of the observations are likely to be
-outside of the common support.  This preprocessing procedure discards
-102 units (10 treated units and 92 control units) from the original
-sample that would have required substantial, model-dependent
-extrapolations. The matched data sets then consists of 306
-observations.
+linear predictors.  We then discard 15 control units and 2 treated
+units that are outside of the common support of the estimated
+propensity score. Finally, we conduct one-to-one nearest neighbor
+propensity score matching (without replacement) while placing exact
+restrictions on the six binary variables (whether primary indication
+is lethal condition, acute condition, and/or results in
+hospitalization; whether disease mainly affects men, women, and/or
+children). We choose one-to-one matching rather than one-to-many
+matching or full matching because our convex hull analysis indicates
+that most of the observations are likely to be outside of the common
+support.  This preprocessing procedure discards 102 units (10 treated
+units and 92 control units) from the original sample that would have
+required substantial, model-dependent extrapolations. The matched data
+sets then consists of 306 observations.
 \begin{table}[t]
 \begin{center}
 \setlength{\tabcolsep}{2pt}
@@ -1755,9 +1751,9 @@ CDER staff & $-$0.68 & 10.77 & 1.57 & 5.78 & 3.06 & 17.96 \\
   The table presents three different measures of resulting imbalance
   after matching --- sample mean differences, and mean and maximum
   values of differences in empirical quantile functions --- as well as
-  their percent balance improvement over the raw data.  In almost all dimensions and
-  across three different measures, matching substantially improves
-  balance.} \label{tb:fdabal}
+  their percent balance improvement over the raw data.  In almost all
+  dimensions and across three different measures, matching
+  substantially improves balance.} \label{tb:fdabal}
 \end{table}
 
 Table~\ref{tb:fdabal} summarizes how preprocessing can improve the
@@ -1768,18 +1764,20 @@ substantially improves the balance of each covariate. Exact
 restrictions with six binary variables make their balance perfect,
 which is indicated by the fact that the values of all the balance
 measures are zero and their percent improvements are 100.  Mean
-differences are considerably smaller for these and all other
-covariates; empirical quantile measures also indicate a large
-improvement in balance for most variables.  Preprocessing slightly
-increases the values of empirical quantile measures in two cases.
-Uniform improvement of balance for all covariates and all measures is
-unlikely unless exact matching is possible for all covariates. The
-minor sample differences that remain, will be adjusted by fitting the
-parametric models to the preprocessed data. By choosing the matched
-set of control units which look most similar to the treated units, the
-treated-control comparison will then take place only among units
-similar on the background variables and thus will not be affected as
-much by the model specification.
+differences are considerably smaller for all but one covariate;
+empirical quantile measures also indicate a large improvement in
+balance for most variables.  Preprocessing slightly increases the
+values of empirical quantile measures in two cases.  Uniform
+improvement of balance for all covariates and all measures is unlikely
+unless exact matching is possible for all covariates. In this
+particular example, the lack of common support in the original data
+makes matching more difficult.  Therefore, we adjust the minor sample
+differences that remain by fitting the parametric models to the
+preprocessed data. By choosing the matched set of control units which
+look most similar to the treated units, the treated-control comparison
+will then take place only among units similar on the background
+variables and thus will not be affected as much by the model
+specification.
 
 We now run the same log-normal survival analysis as Carpenter but
 using the preprocessed data set.  Since nothing changed other than the
@@ -1806,17 +1804,16 @@ conclusions apply to most other quantities of interest too.
    \includegraphics{figs/fdadens.pdf}
   \end{center}
   \vspace{-0.15in}
-  \caption{Kernel density plot (a smoothed histogram)
-    of the estimated in-sample average treatment effect for the
-    treated (ATT) of the Democratic Senate majority on FDA drug
-    approval time across $262,143$ specifications. The solid line
-    presents a density plot of the maximum likelihood estimates of ATT
-    using the matched dataset, while the dashed line is based on the
-    raw data.  The vertical arrow shows the point estimate from
-    Carpenter's Model 1 based on the raw data.  The figure shows that
-    ATT estimates are considerably more sensitive to model
-    specification using the raw data as compared with the preprocessed
-    matched data.}
+  \caption{Kernel density plot (a smoothed histogram) of the estimated
+    in-sample average treatment effect for the treated (ATT) of the
+    Democratic Senate majority on FDA drug approval time across
+    $262,143$ specifications. The solid line presents a density plot
+    of the maximum likelihood estimates of ATT using the matched
+    dataset, while the dashed line is based on the raw data.  The
+    vertical arrow shows the point estimate from Carpenter's Model 1
+    based on the raw data.  The figure shows that ATT estimates are
+    considerably more sensitive to model specification using the raw
+    data as compared with the preprocessed matched data.}
   \label{fg:fdadens}
 \end{figure}
 
@@ -1856,8 +1853,8 @@ Democratic Senate majority reduces the average approval time of new
 drugs.  Using the raw data, Carpenter notes the large model
 sensitivity, concluding that oversight covariates appear not to
 matter.  However, the result from the matched data seems to indicate
-that the actual effect size may even be larger and more firm than
-indicated by the usual parametric approach.
+that the actual result may even be more firm than indicated by the
+usual parametric approach.
 
 \subsection{Causal Effect of Visibility on Candidate
   Evaluations}
