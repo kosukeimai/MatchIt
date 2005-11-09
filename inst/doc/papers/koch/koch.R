@@ -30,6 +30,8 @@ tt <- attr(terms(res),"term.labels")[1]
 yy <- attr(terms(res),"variables")[[2]]
 mfml <- as.formula(paste(tt,"~",paste(xvars,collapse=" + ")))
 m1 <- matchit(mfml, method="optimal", data=dta.full)
+#m2 <- matchit(mfml, method="optimal", data=dta.full, ratio=2)
+#m3 <- matchit(mfml, method="full", data=dta.full)
 dta.match <- match.data(m1)
 summary(m1)
 
@@ -92,6 +94,7 @@ for (i in N:(length(xvars)-1)) {
   cil[counter] <- 2*1.96*sqrt(vcov(res)[2,2])
   res1 <- lm(fml, data=dta.match)
   mcoef[length(mcoef)] <- res1$coefficients[2]
+  mcil[counter] <- 2*1.96*sqrt(vcov(res1)[2,2])
 }
 
 # Plotting Densities
