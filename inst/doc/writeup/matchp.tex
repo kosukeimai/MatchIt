@@ -1406,20 +1406,19 @@ are dropped.  In fact, since hypothesis test are driven in part by
 factors other than balance, they are not even monotonic functions of
 balance: the t-test can get apparently better while balance gets
 worse, or vice versa.\footnote{To see this, consider the commonly-used
-  two sample $t$-test statistic, which can be written as,
-  $(\overline{X}_t-\overline{X}_c)/
-  \sqrt{\frac{n}{n_tn_c}\left(\frac{n_t-1}{n-2}S^2_t +
-      \frac{n_c-1}{n-2} S^2_c\right)}$ where $S^2_t=\sum_{i=1}^n
-  t_i(X_i - \overline{X}_t)^2/(n_t-1)$ and $S^2_c=\sum_{i=1}^n
-  (1-t_i)(X_i - \overline{X}_t)^2/(n_c-1)$ represent the variance of
-  $X$ for the treated and control groups, and $n_t$ and $n_c$ are the
-  sample size for the treatment and control groups.  The difference in
-  sample means as a measure of balance in the numerator is thus
-  distorted in the t-test due to the three factors in the denomenator:
-  the total number of remaining observations, the ratio of remaining
-  treated to control observations, and the variance of $X$ as the
-  weighted average of the sample variances of $X$ for treated and
-  control units.}
+  two sample $t$-test statistic with unknown and unequal variances,
+  which can be written as, $\sqrt{n}(\overline{X}_t-\overline{X}_c)/
+  \sqrt{\frac{\sigma^2_t}{r} + \frac{\sigma^2_c}{1-r}}$ where
+  $\sigma^2_t=\sum_{i=1}^n t_i(X_i - \overline{X}_t)^2/(n_t-1)$ and
+  $\sigma^2_c=\sum_{i=1}^n (1-t_i)(X_i - \overline{X}_t)^2/(n_c-1)$
+  represent the variance of $X$ for the treated and control groups,
+  $n_t$ and $n_c$ are the sample size for the treatment and control
+  groups, and $r=n_t/n$.  The difference in sample means as a measure
+  of balance in the numerator is thus distorted in the t-test due to
+  the three factors in the denomenator: the total number of remaining
+  observations $n$, the ratio of remaining treated units to the total
+  number of observations $r=n_t/n$, and the variance of $X$ for
+  treated and control units.}
 
 \paragraph{Better Matching Evaluations}
 
