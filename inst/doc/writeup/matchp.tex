@@ -507,9 +507,12 @@ Valid and relatively straightforward causal inferences can be achieved
 via classical randomized experiments.  Such experiments have three
 critical features: (1) \emph{random selection} of units to be observed
 from a given population, (2) \emph{random assignment} of values of the
-treatment to each observed unit (in ``classical'' experiments random
-assignment is complete and not within fixed clusters or strata defined
-by other variables), and (3) a \emph{large $n$}.
+treatment to each observed unit (In later discussion, we assume a
+classical randomized experiment where random assignment is complete
+and not within fixed clusters or strata defined by other variables.
+If treatment assignments depend on observed values of the covariates,
+those covariates need to be conditioned on in subsequent analyses.),
+and (3) a \emph{large $n$}.
 
 The first feature avoids selection bias by identifying a given
 population and guaranteeing that the probability of selection from
@@ -581,16 +584,17 @@ $X_i$ must include all variables that are causally prior to $t_i$,
 associated with $t_i$, and affect $Y_i$ conditional on $t_i$
 \citep{Goldberger91,KinKeoVer94}, or ``selection on observables''
 \citep{HecRob85}.  In statistics, this same condition is known as
-``ignorability,'' which means that $t_i$ and the unobserved potential outcomes
-are independent after conditioning on $X_i$ and the observed potential outcomes, and so we can literally
-ignore all unobserved variables \citep{Rubin78}.  In biostatistics,
-it is known as the absence of ``confounding,'' and in several fields
-it is known as ``conditional independence.''  Whatever the name, it is
-a strong condition, but it is one about which social scientists are
-deeply knowledgeable and it is the central methodological concern of
-many substantive scholarly articles.  We emphasize this assumption to
-make clear that our procedures contain no magic: They are unable to
-control for variables that are not measured.
+``ignorability,'' which means that $t_i$ and the unobserved potential
+outcomes are independent after conditioning on $X_i$ and the observed
+potential outcomes, and so we can literally ignore all unobserved
+variables \citep{Rubin78}.  In biostatistics, it is known as the
+absence of ``confounding,'' and in several fields it is known as
+``conditional independence.''  Whatever the name, it is a strong
+condition, but it is one about which social scientists are deeply
+knowledgeable and it is the central methodological concern of many
+substantive scholarly articles.  We emphasize this assumption to make
+clear that our procedures contain no magic: They are unable to control
+for variables that are not measured.
 
 In the context of the no selection or omitted variable bias
 assumptions, we have implicitly made three others that are worth
