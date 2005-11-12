@@ -507,12 +507,12 @@ Valid and relatively straightforward causal inferences can be achieved
 via classical randomized experiments.  Such experiments have three
 critical features: (1) \emph{random selection} of units to be observed
 from a given population, (2) \emph{random assignment} of values of the
-treatment to each observed unit (In later discussion, we assume a
-classical randomized experiment where random assignment is complete
-and not within fixed clusters or strata defined by other variables.
-If treatment assignments depend on observed values of the covariates,
-those covariates need to be conditioned on in subsequent analyses.),
-and (3) a \emph{large $n$}.
+treatment to each observed unit,\footnote{We assume below a classical
+  randomized experiment where random assignment is complete rather
+  than within fixed strata defined by other variables.  If treatment
+  assignment depend on observed values of the covariates, those
+  covariates need to be conditioned on in subsequent analyses.} and
+(3) a \emph{large $n$}.
 
 The first feature avoids selection bias by identifying a given
 population and guaranteeing that the probability of selection from
@@ -1330,98 +1330,48 @@ forming a multidimensional histogram for all the treated units and
 comparing it to another multidimensional histogram of all the control
 units.  Because of the curse of dimensionality, multidimensional
 histograms with more than a few covariates tend to be very coarse or
-have many empty bins, and so using them to estimate the two underlying
-probability densities in (\ref{balance}) will ordinarily be very
-difficult without access to an extraordinary number of observations.
+have many empty bins, and so are difficult to evaluate and compare.
 Thus researchers usually examine various low dimensional summaries
 instead.  If a low dimensional summary differs between the treated and
-control groups then (\ref{balance}) does not hold.  The risk of course
-is that even if the treatment and control groups match according to
-some low dimensional summaries, we still cannot be certain that
-(\ref{balance}) holds since it is a multivariate concept, and so using
-several different checks is always a good idea.
+control groups then we know (\ref{balance}) does not hold.  The risk
+of course is that even if the treatment and control groups match
+according to some low dimensional summaries, we still cannot be
+certain that (\ref{balance}) holds since it is a multivariate concept,
+and so using several different checks is always a good idea.
 
-Here we describe what we call the balance test fallacy, which
-unfortunately characterizes most applications of matching in most
-fields.  The critical misunderstood point is that balance is a
+Here we describe what \citet{ImaKinStu05} call the balance test
+fallacy, which unfortunately afflicts most applications of matching in
+most fields.  The critical misunderstood point is that balance is a
 characteristic of the observed sample, not some hypothetical
 population.  The idea that hypothesis tests are useful for checking
 balance is therefore incorrect, and t-statistics below 2 and p-values
-above 0.05 have no special relevance for assessing balance.
-
-The fallacy has several serious implications.  First, balance tests do
-not provide levels below which imbalance can be ignored: The closer
-the two observed treatment and control groups in the sample, the
-better.  Even though we might use a hypothetical population that
-generates the observed $X$ to think about concepts like common
-support, it is the observed sample that is relevant for generating
-balance.  To see this, consider in assessing the effect of some
-treatment whether we want the treatment and control groups to be
-identical, or whether we should be willing to risk them being slightly
-different.  The problem that has been ignored is that if the
-difference, no matter how small, occurs for a variable that happens to
+above 0.05 have no special relevance for assessing balance.  But in
+addition, the fallacy has several serious implications.  First,
+balance tests do not provide levels below which imbalance can be
+ignored: The closer the two observed treatment and control groups in
+the sample, the better.  The problem that has been ignored is that if
+imbalance, no matter how small, occurs for a variable that happens to
 have a large enough effect on $Y$, then this tiny or ``insignificant''
 imbalance can translate into a large bias and/or inefficiency in our
-causal estimates.
+causal estimates, so there is no reason to stop if you can find better
+balance.  
 
-The balance test fallacy has led hypothesis tests to be used
-extensively in applications of matching.  Most commonly, tables of
-t-tests for differences in means are offered as evidence that balance
-has been ``achieved''.  This is unfortunate since a better balanced
-sample, that would reduce bias even further, can often be found.  But
-even more importantly, hypothesis tests not only can cause one to stop
-too soon, but they can be highly misleading even when using them as
-objective functions to optimize.  In particular, pruning too many
-observations reduces the statistical power of a hypothesis test (i.e., the
-probability of rejecting the null hypothesis) and thus affects the
-test, even if this pruning does not improve balance at all.
-
-\begin{figure}[t] 
- \begin{center}
-   \includegraphics[height=4in]{figs/TStatPlotPscore.pdf}
-  \end{center}
-  \vspace{-0.275in}
-  \caption{Dangers in relying on t-statistics as measure of balance.
-    The solid lines in both graphs indicate the average value of a
-    measure of balance when a given number of control units are
-    randomly dropped from the data set (out of a total of 245).  With
-    larger numbers of control units dropped (i.e., smaller numbers of
-    control units in the resulting sample), the t-statistic gets
-    closer to 0, falsely indicating reductions in balance with the
-    smaller resulting sample sizes, even though true balance does not
-    vary systematically across the data sets.}
-  \label{f:tstat}
-\end{figure}
-
-To illustrate the dangers of using hypothesis tests to assess balance,
-we created a sequence of matched data sets by \emph{randomly} pruning
-increasing numbers of control group observations (from the real data
-set we analyze in Section~\ref{s:carp}).  Random matching procedures
-have no systematic effect on balance.  Yet, the left graph in
-Figure~\ref{f:tstat}, which plots the number of observations dropped
-(plotted horizontally) by the t-statistic (plotted vertically), shows
-that the t-statistic falsely indicates a dramatic improvement in
-balance.  The area where the t-statistic falls below 2 is normally
-(but incorrectly) identified as ``insignificant imbalance,'' and
-clearly the t-statistic drops into this area (colored grey in the
-figure) only because of the sample size and regardless of the fact
-that the balance does not differ systematically as more observations
-are dropped.  In fact, since hypothesis test are driven in part by
-factors other than balance, they are not even monotonic functions of
-balance: the t-test can get apparently better while balance gets
-worse, or vice versa.\footnote{To see this, consider the commonly-used
-  two sample $t$-test statistic with unknown and unequal variances,
-  which can be written as, $\sqrt{n}(\overline{X}_t-\overline{X}_c)/
-  \sqrt{\frac{s^2_t}{r} + \frac{s^2_c}{1-r}}$ where
-  $s^2_t=\sum_{i=1}^n t_i(X_i - \overline{X}_t)^2/(n_t-1)$,
-  $s^2_c=\sum_{i=1}^n (1-t_i)(X_i - \overline{X}_t)^2/(n_c-1)$, $n_t$
-  and $n_c$ are the sample size for the treatment and control groups,
-  and $r=n_t/n$.  Hence, the difference in sample means as a measure
-  of balance is thus distorted in the t-test due to the three factors:
-  the total number of remaining observations $n$, the ratio of
-  remaining treated units to the total number of remaining
-  observations $r$, and the variance of $X$ for the remaining treated
-  and control units, $s_t^2$ and $s_c^2$ respectively.}
+More serious is that balance tests can also be highly misleading, even
+when using them as objective functions to optimize.  In particular,
+pruning too many observations reduces the statistical power of a
+hypothesis test (i.e., the probability of rejecting the null
+hypothesis) and thus affects the test, even if this pruning does not
+improve balance at all.  \citet{ImaKinStu05} illustrate this danger by
+creating a sequence of matched data sets by \emph{randomly} pruning
+increasing numbers of control group observations.  Random matching
+procedures have no systematic effect on balance, but the test
+statistic indicates that the more data you randomly discard, the
+better balance gets, which is a fatal flaw.  In fact, since hypothesis
+tests are driven in part by factors other than balance (including the
+number of remaining observations, the ratio of remaining treated to
+control units, and the variance of the treated and control groups),
+they are not even monotonic functions of balance: the t-test can get
+apparently better while balance gets worse, or vice versa.
 
 \paragraph{Better Matching Evaluations}
 
