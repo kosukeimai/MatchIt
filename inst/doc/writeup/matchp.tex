@@ -971,7 +971,8 @@ eliminate the remaining bias.  This second chance does not apply if
 only the difference in means is used.  We therefore turn in
 Section~\ref{s:choose} to a menu of matching procedures that enable
 researchers to satisfy (\ref{balance}) as closely as possible while
-still generating a preprocessed dataset with enough observations.
+still generating a preprocessed dataset with enough observations and
+then run a parametric analysis.
 
 We now offer an example, in the right graph in Figure~\ref{fg:extrap},
 of the reduction in model dependence produced by matching that is not
@@ -1013,33 +1014,37 @@ model dependent, and thus much more empirical than what would be
 necessary without matching.
 
 Finally, we note two advantages of our general framework. First, our
-two-step procedure is ``doubly robust'' in the sense that if
-\emph{either} the matching \emph{or} the parametric model is right,
-causal estimates will be statistically consistent
-\citep[see][]{RobRot01}.  That is, if the parametric model is
-misspecified, but the matching is correct, or if the matching is
-inadequate or wrong but the parametric model is correctly specified,
-then our estimates will still be consistent.  The double robustness
-property does not apply generally to using matching with a difference
-in means.  Second, matching can improve efficiency of subsequent
-parametric analyses while reducing the bias. Efficiency gain occurs
-when matching reduces heterogeneity in the data by keeping only those
+two-step procedure is \emph{doubly robust} in the sense that if either
+the matching or the parametric model is right, causal estimates will
+be statistically consistent \citep[see][]{RobRot01}.  That is, if the
+parametric model is misspecified, but the matching is correct, or if
+the matching is inadequate or wrong but the parametric model is
+correctly specified, then our estimates will still be consistent.  The
+double robustness property does not apply generally to using matching
+with a difference in means.  
+
+Second, matching can improve efficiency of subsequent parametric
+analyses even while reducing the bias. Efficiency gain occurs when
+matching reduces heterogeneity in the data by keeping only those
 observations that are similar to each other and as a result helps
 parametric models fit better, or more directly by removing the
-dependency between the treatment variable and covariates.  To see
-this, consider a simple linear regression with one treatment variable,
-$T$, and one covariate, $X$.  The variance of the coefficient for the
-treatment variable is equal to $\sigma^2/[n (1-\gamma) s^2_T]$ where
-$\sigma^2$ is the conditional variance of the dependent variable, $n$
-is the number of observations, $s^2_T$ is the sample variance of the
-treatment variable, and $\gamma$ is the regression coefficient of $X$
-on $T$. If matching reduces heterogeneity, then $\sigma^2$ will become
-smaller.  If matching reduces the dependence between $T$ and $X$, as
-is the goal in reducing bias, then $\gamma$ will be close to zero.
-Then, the resulting variance for the treatment effect may become
-smaller even if some observations are dropped and $n$ becomes smaller.
-This suggests that so long as one keeps as many observations as
-possible, matching might well often be able to reduce bias and improve
+dependency between the treatment variable and covariates.  To see the
+latter, consider a simple linear regression with one treatment
+variable, $T$, and one covariate, $X$.  The variance of the
+coefficient for the treatment variable is equal to $\sigma^2/[n
+(1-\gamma) s^2_T]$ where $\sigma^2$ is the conditional variance of the
+dependent variable, $n$ is the number of observations, $s^2_T$ is the
+sample variance of the treatment variable, and $\gamma$ is the
+coefficient from regressing $X$ on $T$. If matching reduces
+heterogeneity, then $\sigma^2$ will become smaller.  If matching
+reduces the dependence between $T$ and $X$, as is the goal in reducing
+bias, then $\gamma$ will be close to zero.  Thus, the resulting
+variance for the treatment effect may become smaller even if some
+observations are dropped.\footnote{In this situation without a
+  maintained or correct model, no estimator is ``self-efficient'' and
+  so the usual ``more data are better'' rule does not apply.  See
+  \citet{MenRom03}.} This suggests that so long as one keeps as many
+observations as possible, matching will often reduce bias and improve
 the efficiency of subsequent parametric analyses.
 
 \section{Practical Implications of the Theoretical Matching
