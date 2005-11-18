@@ -1,0 +1,38 @@
+Searching 1996-2005.
+AER, Econometrica, JofEconometrics, and Review of Econometrics and 
+Statistics.
+
+How robust is the evidence on the effects of college quality? Evidence
+from matching. Journal of Econometrics, Volume 121, Issues 1-2,
+July-August 2004, Pages 99-124 Dan A. Black and J.A.Jeffrey A. Smith says 
+uses "standard balancing tests" (p.110).
+
+EFFECTS OF ENVIRONMENTAL REGULATIONS ON MANUFACTURING PLANT BIRTHS:  
+EVIDENCE FROM A PROPENSITY SCORE MATCHING ESTIMATOR Authors: List J.A.;
+Millimet D.L.; Fredriksson P.G.; McHone W.W. Source: The Review of
+Economics and Statistics, Volume 85, Number 4, 1 November 2003, pp.
+944-952(9). This uses t-test.
+
+Are Experiments the Only Option? A Look at Dropout Prevention Programs
+Authors: Agodini R.; Dynarski M. Source: The Review of Economics and
+Statistics, Volume 86, Number 1, 1 February 2004, pp. 180-194(15). This 
+uses t-test and F-test.
+
+Dehejia/Wahba Debate articles:
+
+"Causal Effects in Non-Experimental Studies: Re-Evaluating the Evaluation
+of Training Programs" (with Sadek Wahba). * Journal of the American
+Statistical Association, Volume 94, Number 448 (December 1999), pp.
+1053-1062. uses the t-test (see page 1058).
+
+Propensity Score Matching Methods for Non-Experimental Causal Studies"  
+(with Sadek Wahba). * Review of Economics and Statistics, Volume 84
+(February 2002), pp.  151-161. recommends the use of t-test (see page
+161).
+
+Practical propensity score matching: a reply to Smith and Todd Journal of
+Econometrics, Volume 125, Issues 1-2, March-April 2005, Pages 355-364
+Rajeev Dehejia
+
+Rejoinder Journal of Econometrics, Volume 125, Issues 1-2, March-April
+2005, Pages 365-375 Jeffrey Smith and Petra Todd
