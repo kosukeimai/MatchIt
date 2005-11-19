@@ -39,11 +39,11 @@ summary.matchit.subclass <- function(object, interactions = FALSE,
   ## By Subclass
   qbins <- max(object$subclass,na.rm=TRUE)
   if(interactions){
-    q.table <- array(0,dim=c(kk+sum(1:kk),7,qbins))
+    q.table <- array(0,dim=c(kk+sum(1:kk),6,qbins))
     ii <- 0
     nn <- NULL
   } else {
-    q.table <- array(0,dim=c(kk,7,qbins))
+    q.table <- array(0,dim=c(kk,6,qbins))
   }
   aa <- apply(XX,2,qoi.by.sub,tt=treat,ww=weights,
                   qq=object$subclass,standardize=standardize)
@@ -79,7 +79,7 @@ summary.matchit.subclass <- function(object, interactions = FALSE,
   }
   sum.subclass <- sum.all
   for(i in 1:kk){
-    for(j in 1:7){
+    for(j in 1:6){
       if(j==3) {
         sum.subclass[i,j] <- sqrt(sum((wsub^2)*(q.table[i,j,]^2)))
       } else {
