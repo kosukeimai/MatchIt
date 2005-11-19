@@ -1,4 +1,7 @@
-summary.matchit.full <- function(object, interactions = FALSE, addlvariables = NULL, numdraws = 5000, ...) {
+summary.matchit.full <- function(object, interactions = FALSE,
+                                 addlvariables = NULL, numdraws =
+                                 5000, standardize = FALSE,
+                                 ...) {
 
   XX <- cbind(distance=object$distance,object$X)
   if (!is.null(addlvariables)) XX <- cbind(XX, addlvariables)
