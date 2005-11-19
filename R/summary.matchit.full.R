@@ -18,8 +18,8 @@ summary.matchit.full <- function(object, interactions = FALSE,
   ## Summary Stats
   aa <- apply(XX,2,qoi,tt=treat,ww=weights, t.plot=t.plot,
               c.plot=c.plot, standardize=standardize)
-  sum.all <- as.data.frame(matrix(0,kk,7))
-  sum.matched <- as.data.frame(matrix(0,kk,7))
+  sum.all <- as.data.frame(matrix(0,kk,6))
+  sum.matched <- as.data.frame(matrix(0,kk,6))
   row.names(sum.all) <- row.names(sum.matched) <- nam
   names(sum.all) <- names(sum.matched) <- names(aa[[1]])
   sum.all.int <- sum.matched.int <- NULL
@@ -45,9 +45,9 @@ summary.matchit.full <- function(object, interactions = FALSE,
 
   ## Imbalance Reduction
   stat0 <- abs(cbind(sum.all[,2]-sum.all[,1],
-                     sum.all[,5:7]))
+                     sum.all[,4:6]))
   stat1 <- abs(cbind(sum.matched[,2]-sum.matched[,1],
-                     sum.matched[,5:7]))
+                     sum.matched[,4:6]))
   reduction <- as.data.frame(100*(stat0-stat1)/stat0)
   if(sum(stat0==0 & stat1==0, na.rm=T)>0){
     reduction[stat0==0 & stat1==0] <- 0
@@ -55,7 +55,10 @@ summary.matchit.full <- function(object, interactions = FALSE,
   if(sum(stat0==0 & stat1>0,na.rm=T)>0){
     reduction[stat0==0 & stat1>0] <- -Inf
   }
-  names(reduction) <- c("Mean and Std. Bias", "QQ Med","QQ Mean", "QQ Max")
+  if (standardize)
+    names(reduction) <- c("Std. Mean Diff.", "eCDF Med","eCDF Mean", "eCDF Max")
+  else
+    names(reduction) <- c("Mean Diff.", "eQQ Med","eQQ Mean", "eQQ Max")
 
   ## Sample sizes
   nn <- matrix(0, ncol=2, nrow=4)
@@ -65,7 +68,7 @@ summary.matchit.full <- function(object, interactions = FALSE,
   nn[4,] <- c(sum(object$treat==0 & object$weights==0 & object$discarded==1), sum(object$treat==1 & object$weights==0 & object$discarded==1))
    
    dimnames(nn) <- list(c("All","Matched","Unmatched","Discarded"),
-                       c("Control","Treated"))
+                        c("Control","Treated"))
 
   ## output
   res <- list(call=object$call, nn = nn, sum.all = sum.all, sum.matched = sum.matched,
