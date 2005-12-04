@@ -48,13 +48,13 @@ matching methods. These arguments apply to all matching methods {\it
 \begin{itemize}
   
 \item \texttt{distance}: the method used to estimate the distance
-  measure (DEFAULT = {\tt "logit"}, logistic regression).  Before
-  using any of these techniques, it is best to understand the
-  theoretical groundings of these techniques and to evaluate the
-  results.  Most of these methods (such as logistic or probit
-  regression) estimate the propensity score, defined as the
-  probability of receiving treatment, conditional on the covariates.
-  Available methods include:
+  measure (DEFAULT = {\tt "logit"}, logistic regression) or a
+  numerical vector of user's own distance measure.  Before using any
+  of these techniques, it is best to understand the theoretical
+  groundings of these techniques and to evaluate the results.  Most of
+  these methods (such as logistic or probit regression) estimate the
+  propensity score, defined as the probability of receiving treatment,
+  conditional on the covariates.  Available methods include:
   \begin{itemize}
   \item {\tt "mahalanobis"}: the Mahalanobis distance measure.
   \item binomial generalized linear models with one of the following
