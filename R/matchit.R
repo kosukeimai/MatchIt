@@ -9,9 +9,11 @@ matchit <- function(formula, data, method = "nearest", distance = "logit",
     stop("Data must be a dataframe",call.=FALSE)}
   
   ## check inputs
-  fn1 <- paste("distance2", distance, sep = "")
-  if (!exists(fn1))
-    stop(distance, "not supported.")
+  if (!is.numeric(distance)) {
+    fn1 <- paste("distance2", distance, sep = "")
+    if (!exists(fn1))
+      stop(distance, "not supported.")
+  }
   fn2 <- paste("matchit2", method, sep = "")
   if (!exists(fn2))
     stop(method, "not supported.")
@@ -29,6 +31,10 @@ matchit <- function(formula, data, method = "nearest", distance = "logit",
     if (!is.null(distance))
       warning("distance is set to `NULL' when exact matching is used.")
   } 
+  else if (is.numeric(distance)){
+    out1 <- NULL
+    discarded <- discard(treat, distance, discard, X)
+  }
   else {
     if (is.null(distance.options$formula))
       distance.options$formula <- formula
