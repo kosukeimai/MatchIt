@@ -109,6 +109,9 @@ matching. The output of {\tt matchit()} can be analyzed via
 \section{What's New?}
 
 \begin{itemize}
+\item \textbf{2.2-4} (December 3, 2005): Stable release for R 2.2.
+  User's own distance measure can be used with \MatchIt\, (thanks to
+  Nelson Lim).
 \item \textbf{2.2-3} (November 18, 2005): Stable release for R 2.2.
   standardize option added to full matching and subclass (thanks to
   Jeronimo Cortina).
@@ -242,6 +245,11 @@ the {\tt --with-package-versions} option.  After having specified
 version control, different versions of the program may be called as
 necessary.  Similar advice may also be appropriate for version control
 for R more generally.
+
+\subsection{How Do I Use My Own Distance Measure with \MatchIt\,?}
+
+A vector of your own distance measure can be used by specifying it as
+the input for {\tt distance} option in {\tt matchit()}.
 
 \subsection{What Do I Do about Missing Data?}
 
