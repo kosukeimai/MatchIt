@@ -23,7 +23,7 @@
 \item \texttt{data}: the data frame containing the variables called in
   {\tt formula}.  
   
-\item \texttt{method}: the matching method (DEFAULT =
+\item \texttt{method}: the matching method (default =
   \texttt{"nearest"}, nearest neighbor matching).  Currently,
   \texttt{"exact"} (exact matching), \texttt{"full"} (full matching),
   \texttt{"nearest"} (nearest neighbor matching), \texttt{"optimal"}
@@ -33,7 +33,7 @@
   options. See below for more details.
   
 \item \texttt{verbose}: a logical value indicating whether to print
-  the status of the matching algorithm (DEFAULT = \texttt{FALSE}).
+  the status of the matching algorithm (default = \texttt{FALSE}).
 \end{itemize}
 
 
@@ -48,7 +48,7 @@ matching methods. These arguments apply to all matching methods {\it
 \begin{itemize}
   
 \item \texttt{distance}: the method used to estimate the distance
-  measure (DEFAULT = {\tt "logit"}, logistic regression) or a
+  measure (default = {\tt "logit"}, logistic regression) or a
   numerical vector of user's own distance measure.  Before using any
   of these techniques, it is best to understand the theoretical
   groundings of these techniques and to evaluate the results.  Most of
@@ -111,7 +111,7 @@ matching methods. These arguments apply to all matching methods {\it
   trees {\tt help(rpart)}.
   
 \item \texttt{discard}: specifies whether to discard units that fall
-  outside some measure of support of the distance measure (DEFAULT =
+  outside some measure of support of the distance measure (default =
   \texttt{"none"}, discard no units).  Discarding units may change the
   quantity of interest being estimated. Enter a logical vector
   indicating which unit should be discarded or choose from the
@@ -146,7 +146,7 @@ matching methods. These arguments apply to all matching methods {\it
     is of most interest and when unwilling to discard control units.
   \end{itemize}
   
-\item \texttt{reestimate}: If {\tt FALSE} (DEFAULT), the model for the
+\item \texttt{reestimate}: If {\tt FALSE} (default), the model for the
   distance measure will not be re-estimated after units are discarded.
   The input must be a logical value.  Re-estimation may be desirable
   for efficiency reasons, especially if many units were discarded and
@@ -160,13 +160,13 @@ matching methods. These arguments apply to all matching methods {\it
 
 \begin{itemize}
 \item \texttt{sub.by}: criteria for subclassification.  Choose from:
-  \texttt{"treat"} (DEFAULT), the number of treatment units;
+  \texttt{"treat"} (default), the number of treatment units;
   \texttt{"control"}, the number of control units; or \texttt{"all"},
   the total number of units.
 \item \texttt{subclass}: either a scalar specifying the number of
   subclasses, or a vector of probabilities bounded between 0 and 1,
   which create quantiles of the distance measure using the units in
-  the group specified by \texttt{sub.by} (DEFAULT = \texttt{subclass =
+  the group specified by \texttt{sub.by} (default = \texttt{subclass =
     6}).
 \end{itemize}
 
@@ -177,26 +177,26 @@ matching methods. These arguments apply to all matching methods {\it
 \item \texttt{m.order}: the order in which to match treatment units
   with control units.
   \begin{itemize}
-  \item {\tt "largest"} (DEFAULT): matches from the largest value of
+  \item {\tt "largest"} (default): matches from the largest value of
     the distance measure to the smallest.
   \item {\tt "smallest"}: matches from the smallest value of the
     distance measure to the largest.
   \item {\tt "random"}: matches in random order.
   \end{itemize}
 \item \texttt{replace}: logical value indicating whether each control
-  unit can be matched to more than one treated unit (DEFAULT = {\tt
+  unit can be matched to more than one treated unit (default = {\tt
     replace = FALSE}, each control unit is used at most once -- i.e.,
   sampling without replacement). For matching with replacement, use
   \texttt{replace = TRUE}.
 \item \texttt{ratio}: the number of control units to match to each
-  treated unit (DEFAULT = {\tt 1}).  If matching is done without
+  treated unit (default = {\tt 1}).  If matching is done without
   replacement and there are fewer control units than {\tt ratio} times
   the number of eligible treated units (i.e., there are not enough
   control units for the specified method), then the higher ratios will
   have \texttt{NA} in place of the matching unit number in
   \texttt{match.matrix}.
 \item \texttt{exact}: variables on which to perform exact matching
-  within the nearest neighbor matching (DEFAULT = {\tt NULL}, no exact
+  within the nearest neighbor matching (default = {\tt NULL}, no exact
   matching).  If \texttt{exact} is specified, only matches that
   exactly match on the covariates in \texttt{exact} will be allowed.
   Within the matches that match on the variables in \texttt{exact},
@@ -204,7 +204,7 @@ matching methods. These arguments apply to all matching methods {\it
   \texttt{exact} should be entered as a vector of variable names
   (e.g., \texttt{exact = c("X1", "X2")}).
 \item \texttt{caliper}: the number of standard deviations of the
-  distance measure within which to draw control units (DEFAULT = {\tt
+  distance measure within which to draw control units (default = {\tt
     0}, no caliper matching).  If a caliper is specified, a control
   unit within the caliper for a treated unit is randomly selected as
   the match for that treated unit.  If \texttt{caliper != 0}, there
@@ -212,9 +212,9 @@ matching methods. These arguments apply to all matching methods {\it
   \begin{itemize} 
   \item \texttt{calclosest}: whether to take the nearest available
     match if no matches are available within the \texttt{caliper}
-    (DEFAULT = {\tt FALSE}).
+    (default = {\tt FALSE}).
   \item \texttt{mahvars}: variables on which to perform
-    Mahalanobis-metric matching within each caliper (DEFAULT = {\tt
+    Mahalanobis-metric matching within each caliper (default = {\tt
       NULL}).  Variables should be entered as a vector of variable
     names (e.g., \texttt{mahvars = c("X1", "X2")}).  If
     \texttt{mahvars} is specified without \texttt{caliper}, the
@@ -232,7 +232,7 @@ matching methods. These arguments apply to all matching methods {\it
 
 \begin{itemize}
 \item {\tt ratio}: the number of control units to be matched to each
-  treatment unit (DEFAULT = {\tt 1}).
+  treatment unit (default = {\tt 1}).
 \item {\tt ...}: additional inputs that can be passed to the {\tt
     fullmatch()} function in the {\tt optmatch} package. See {\tt
     help(fullmatch)} or
@@ -256,7 +256,7 @@ matching methods. These arguments apply to all matching methods {\it
 The available options are listed below.
 \begin{itemize}
 \item {\tt ratio}: the number of control units to be matched to each
-  treatment unit (DEFAULT = {\tt 1}).
+  treatment unit (default = {\tt 1}).
 \item {\tt ...}: additional minor inputs that can be passed to the
   {\tt GenMatch()} function in the {\tt Matching} package. See {\tt
     help(GenMatch)} or
