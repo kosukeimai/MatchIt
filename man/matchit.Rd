@@ -51,8 +51,8 @@ numerically using \code{summary(matchitobject)}.
     must be contained in the same data frame, which is specified as
     \code{data} (see below).  All of the usual R syntax for formula
     works. For example, \code{x1:x2} represents the first order
-    interaction term between \code{x1} and \code{x2}, and \code{I(x1 \^\
-      2)} represents the square term of \code{x1}. See \code{help(formula)}
+    interaction term between \code{x1} and \code{x2}, and \code{I(x1^2)}
+represents the square term of \code{x1}. See \code{help(formula)}
     for details.
   }
   \item{data}{This argument specifies the data frame containing the
