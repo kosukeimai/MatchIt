@@ -8,7 +8,7 @@ Work Demonstration (NSW) and the comparison sample from the Current Population S
 This data was previously analyzed extensively by Lalonde (1986) and Dehejia and Wahba (1999).  
 The full dataset is available at \url{http://www.columbia.edu/~rd247/nswdata.html}. }
 
-\usage{data(incomedata)}
+\usage{data(lalonde)}
 
 \format{ A data frame with 313 observations (185 treated, 429 control).  There are 10 variables
 measured for each individual.  "treat" is the treatment assignment (1=treated, 0=control).  
