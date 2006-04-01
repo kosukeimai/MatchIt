@@ -1,0 +1,197 @@
+reviewer 1:
+
+p.1, bottom: we don't do Bayesian model averaging or Leamer's extreme
+bounds analysis because once you preprocess (well), all the models you
+estimate will give roughly the same answers.  So the model dependence
+that is the uncertainty intended to be captured by BMA is no longer an
+issue.  We have no objection to BMA or EBA but for those you need to
+specific a particular class of models which you will average over or
+calculate the bounds for.  In our approach, preprocessing should
+reduce model dependence for any model in a broad range. 
+
+p.2, top.  I think there is only one confusion in the literature
+(which i realize after our conversation with Alberto). it comes from
+the econometricians assuming as little as possible and statisticians
+or applied soc scientists assuming full parametric models.  we can
+just clarify this (instead of saying that there is controversy over
+how to compute se's) and explain that we are trying to help people who
+are ALREADY assuming parameteric models by adding preprocessing.
+
+p.2, 2nd para: yes there's a bias-variance tradeoff.  with matching
+you discard data that, if you were willing to assume the model was
+right, would often produce smaller se's.  that's the intuition the
+reviewer wanted. but there are 2 qualifications:  1 is that we aren't
+willing to assume the parametric model applies to some areas, and 2 is
+that in some cases discarding data can reduce variance.  and most
+importantly the 'more data is better' rule only applies when the model
+is ``self-efficient'' (Meng) and we rule that out when you don't know
+what the model is.
+
+3rd para: are there theorems we don't now reference BUT are relevant
+to practical application?  I think we decided this was 'no', but we
+should check.  the point we make is that most of the thms are really
+ireelvant to practice since they assume things we don't know.  the
+``good old MSE'' criteria only make sense if you assume there is no
+misspecification. 
+
+bottom, p.2 we have leave fig 1 in, but explain more clearly that it
+is a hypotehtical example.  i think we can also explain also point in
+the blog entry I recently wrote (see at the end of this message; it
+hasn't been posted yet) about advantages of other approaches and how
+they all often give similar answers when done properly.
+
+last para p.2.  section 6 is already a checklist.
+
+top, p.3. we could define model dependence formally.  in King and
+Zeng, we define it as:
+
+``For simplicity in this section, we define \emph{model dependence} at
+point $x$ as the difference, or distance, between the predicted
+outcome values from any two \emph{plausible} alternative models.  (One
+model might be logit and the other probit, or one linear the other
+quadratic, etc.)  By ``plausible'' alternative models, we mean models
+that fit the data reasonably well and, in particular, they fit about
+equally well around either the ``center'' of the data (such as a
+multivariate mean or median) or the center of a sufficiently large
+cluster of data nearest the counterfactual $x$ of interest. It is easy
+to generate model dependence when the model does not even fit the
+data, but this is easy to avoid, as many current data analysis
+techniques are designed to detect and correct bad fitting models.''
+
+sure, we can change 'the' to 'a'
+
+reviewer 2 ==========================================
+
+1. i think we should be willing to this if the editor would really
+like us to, but i think our position should be that it is wrong.
+i.e., our whole point is that virtually all regression-type models are
+condtional on X, and the se's are computed from that perspective.  the
+uncertainty is not different whether X is determined by the world, by
+some classical experimental design (randomized blocks), by strata in a
+survey, or by matching.  the only difference is that only in the
+latter case can we optimize: we choose the _best_ (the optimium) among
+all matching solutions.  the only reason for us to consider a
+different one is if someone can find a better match.  in that case,
+our answers may well change.  but this isn't model uncertainty in the
+same way as due to models which CANNOT really be ranked in terms of
+which is better (BMA not withstanding).
+
+2. 1-to-n matching is ok with us too.  why did we do 1-to-1 in this
+example?  and of course we'll make the data available.
+
+3.  the difference is that in the stat 101 example, the selection is
+on Y, whereas in matching if you follow the rules you only select on
+X, which can cause no bias.
+
+you can look at Rubin's work as adding observations rather than
+deleting some, but you'd still have to ask why he doesn't add them
+all.  its the same issue.  why do we delete observations?  because
+more observations are only better if the model is self-efficient.
+otherwise you just get model dependence and have no real advantage.
+
+4.  same comment as for 3.  cite Imai and Van Dyk.  do any of these
+alternative methods move you?
+
+5. so we have to better state the formal but irreelvant thm about
+pscores.  anyone have a better way to say this?
+
+6.  we're right about balance tests.  no reason to move here.
+
+reviewer 3 ========================================================
+
+a cranky review.  so we just clarify things a bit more.
+
+authors can keep using their parametric model as they had and they'd
+be better off.  of course, we recommend that they also use their
+parametric model better, and there's a lot of room for improvement
+here.  fair enough, but it doesn't affect us much except for some
+wording.
+
+``first to work out the conditions...''  we're right here; the
+reviewer found no other citation and neither did we.
+
+I like the Ec Inf section, but we can make it short and make it a FN
+perhaps; not sure i think it adds a lot, but maybe we give on things
+that aren't central.
+
+'doubly robust'.  i think we need to find a more careful way of making
+and appropriately qualifying this claim, but i think we should keep
+the phrase.
+ 
+'balance test fallacy':  ok, so we also mention (again!) that we
+shoudl verify balance on more than just the first moment.
+
+se's:  right some rare methods don't condtion on X.  big deal.  the
+clarification i mention above about se's should help here too.
+
+why is this different from 2sls.  ugh.  no reaosn to change the paper
+for this but perhaps we can write soemthing for the reviewer.
+
+exactly what semi-parametric alternatives do social scientists know
+well?
+
+
+====================================== blog entry ==========================
+
+A Unified Theory of Statistical Inference?
+
+If inference is the process of using data we have in order to learn
+about data we do not have, it seems obvious that there can never be a
+proof that anyone has arrived at the "correct" theory of inference.
+After all, the data we have might have nothing to do with the data we
+don't have. So all the (fairly religious) attempts at unification --
+likelihood, Bayes, Bayes with frequentist checks, bootstrapping, etc.,
+etc. -- each contribute a great deal but they are unlikely to
+constitute The Answer. The best we can hope for is an agreement, or a
+convention, or a set of practices that are consistent across fields.
+But getting people to agree on normative principles in this area is
+not obviously different from getting them to agree on the normative
+principles of political philosophy (or any other normative
+principles).
+
+It just doesn't happen, and even if it does it would have merely the
+status of a compromise rather than the correct answer, the latter
+being impossible.
+
+Yet, there is a unifying principal that would represent progress in
+the sense that would advance the field: we will know that something
+like unification has occurred when we distribute the same data, and
+the same inferential question, to a range of scholars with different
+theories of inference, that go by different names, use different
+conventions, and are implemented with different software, and yet they
+all produce approximately the same emprical answer.
+
+We are not there yet, and there are some killer examples where the
+different approaches yield very different conclusions, but there does
+appear to be some movement in this direction. The basic unifying idea
+I think is that all theories of inference require some assumptions,
+but we should never take any theory of inference so seriously that we
+don't stop to check the veracity of the assumptions. The key is that
+conditioning on a model does not work, since of course all models are
+wrong, and some are really bad. What I notice is that most of the
+time, you can get roughly the same answers using (1) likelihood or
+Bayesian models with careful goodness of fit checks and adjustments to
+the model if necessary, (2) various types of robust, semi-parametric,
+etc. statistical methods, (3) matching for use as preprocessing data
+that is later analyzed or further adjusted by parametric likelihood or
+Bayesian methods, (4) Bayesian model averaging, with a large enough
+class of models to average over, (5) the related "committee methods'',
+(6) mixture of experts models, and (7) some highly flexible functional
+forms, like neural network models. Done properly, these will all
+usually give similar answers.
+
+This is related to Xiao-Li Meng's self-efficiency result: the rule
+that ``more data are better'' only holds under the right model.
+Inference can't be completely automated for most quantities, and we
+typically can't make inferences without some modeling assumptions, but
+the answer won't be right unless the assumptions are correct, and we
+can't ever know that the assumptions are right. That means that any
+approach has to come to terms with the concept that some of the data
+might not be right for the given model, or the model might be wrong
+for the observed data. Each of the approaches above has an extra
+component to try to get around the problem of incorrect models. This
+isn't a unification of statistical procedure, or a single unified
+theory of inference, but it may be leading to a unificiation of
+results of many diverse procedures, as we take the intuition from each
+area and apply it across them all.
+
