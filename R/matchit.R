@@ -7,6 +7,8 @@ matchit <- function(formula, data, method = "nearest", distance = "logit",
   if(is.null(data)) stop("Dataframe must be specified",call.=FALSE)
   if(!is.data.frame(data)){
     stop("Data must be a dataframe",call.=FALSE)}
+  if(sum(is.na(data))>0)
+    stop("Missing values exist in the data")
   
   ## check inputs
   if (!is.numeric(distance)) {
