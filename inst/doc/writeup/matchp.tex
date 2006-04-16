@@ -1593,7 +1593,7 @@ run the parametric procedure with each unit weighted proportional to
 the number of times it was chosen as a match.)
 
 Thus, when estimating the ATT or ATE, we compute estimates of
-$\mu_i(1)$ and $\mu_i(0)$ and their uncertainty as usual from the
+$\mu_i(1)$ and $\mu_i(0)$ and their uncertainty as usual from a
 parametric model applied to the preprocessed data.  If computing
 conditional causal effects (either on average over all observations or
 just the average for the treated units), we set $\mu_i(1)=y_i$ if
@@ -2129,7 +2129,7 @@ and the proportion of people who are black in a precinct $t_i$) and
 try to estimate the unknown cell proportions (the proportion of blacks
 who vote $y_i(0)$ and the proportion of whites who vote
 $y_i(1)$), as in Figure \ref{t:note}.
-\begin{table}[ht] 
+\begin{table}[t] 
 \begin{center}
   \leavevmode \setlength{\extrarowheight}{4pt}
 \begin{tabular}{r<{  }@{}r@{}c@{}l@{}c@{}c@{}>{  }l} 
@@ -2142,7 +2142,7 @@ $y_i(1)$), as in Figure \ref{t:note}.
   &\vline&$1-t_i$\\ \cline{2-5}
   && $y_i$       &&       $1-y_i$  && \\
 \end{tabular}
-\caption{\em Notation for Precinct $i$.  The goal is to estimate the
+\caption{Notation for Precinct $i$.  The goal is to estimate the
   quantities of interest, $y_i(0)$ (the fraction of blacks who vote)
   and $y_i(1)$ (the fraction of whites who vote), from the aggregate
   variables $t_i$ (the fraction of voting age people who are black)
