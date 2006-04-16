@@ -910,22 +910,24 @@ any bias from incorrect assumptions made during the parametric stage
 of analysis, it is not the only way to break the link between $t$ and
 $X$, since satisfying (\ref{balance}) only requires the distributions
 to be equivalent.  Thus, to be clear, \emph{matching does not require
-  pairing observations}; only the \emph{distributions} need be matched
-as closely as possible.  Moreover, exact matching has the disadvantage
-in many data sets of not generating many matches.  The problem is most
-severe if $X_i$ is high dimensional (another effect of the curse of
-dimensionality) or contains continuous variables.  The result may then
-be a preprocessed data set with very few observations that results in
-a parametric analysis with large standard errors.  In this situation,
-we may reduce model dependence and the potential for bias, but
-decrease efficiency and as a result increase mean squared error.  If
-this occurs, common practice is to sacrifice some bias reduction for
-the increased efficiency that comes from having more observations in
-the preprocessed dataset.  In our approach, if we lose some
-opportunity for bias reduction we do so only in the preprocessing
-stage; our second stage parametric analysis still has a chance to
-eliminate the remaining bias.  This second chance does not apply if
-only the difference in means is used.  We therefore turn in
+  pairing observations} (indeed, there might have been less confusion
+if the technique had been called ``pruning''); only the
+\emph{distributions} need be matched as closely as possible.
+Moreover, exact matching has the disadvantage in many data sets of not
+generating many matches.  The problem is most severe if $X_i$ is high
+dimensional (another effect of the curse of dimensionality) or
+contains continuous variables.  The result may then be a preprocessed
+data set with very few observations that results in a parametric
+analysis with large standard errors.  In this situation, we may reduce
+model dependence and the potential for bias, but decrease efficiency
+and as a result increase mean squared error.  If this occurs, common
+practice is to sacrifice some bias reduction for the increased
+efficiency that comes from having more observations in the
+preprocessed dataset.  In our approach, if we lose some opportunity
+for bias reduction we do so only in the preprocessing stage; our
+second stage parametric analysis still has a chance to eliminate the
+remaining bias.  This second chance does not apply if only the
+difference in means is used.  We therefore turn in
 Section~\ref{s:choose} to a menu of matching procedures that enable
 researchers to satisfy (\ref{balance}) as closely as possible while
 still generating a preprocessed dataset with enough observations and
