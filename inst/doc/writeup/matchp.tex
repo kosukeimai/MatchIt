@@ -32,11 +32,11 @@
 %
 \title{Matching as Nonparametric Preprocessing for Reducing Model
   Dependence in Parametric Causal Inference\thanks{Our thanks to Dan
-    Carpenter and Jeff Koch for data; Neal Beck, Sam Cook, Alexis
-    Diamond, Ben Hansen, Guido Imbens, Olivia Lau, Gabe Linz, Paul
-    Rosenbaum, Don Rubin, and Jas Sekhon for many helpful comments;
-    and the National Institutes of Aging (P01 AG17625-01), the
-    National Science Foundation (SES-0318275, IIS-9874747,
+    Carpenter and Jeff Koch for data; Alberto Abadie, Neal Beck, Sam
+    Cook, Alexis Diamond, Ben Hansen, Guido Imbens, Olivia Lau, Gabe
+    Linz, Paul Rosenbaum, Don Rubin, and Jas Sekhon for many helpful
+    comments; and the National Institutes of Aging (P01 AG17625-01),
+    the National Science Foundation (SES-0318275, IIS-9874747,
     SES-0550873), and the Princeton University Committee on Research
     in the Humanities and Social Sciences for research support.
     Software to implement the methods in this paper is available at
@@ -168,20 +168,20 @@ not as substitutes for our present parametric regression analyses, but
 to make our familiar parametric methods work better.  Under our
 inferential framework, analysts merely add a simple preprocessing step
 to their usual data analysis procedures.  They then employ whatever
-statistical models they are accustomed to using to analyze the
-preprocessed data rather than the raw data.  All of the intuition,
+statistical models that would have been appropriate to use to analyze
+the preprocessed data rather than the raw data.  All of the intuition,
 diagnostics, and knowledge about our parametric procedures can then be
 used as before.
 
-In a sense, our recommendations already constitute current practice,
-since matching alone is not a method of estimation and always requires
-some technique after matching to compute estimates.  The problem is
-that the parametric model almost universally chosen after matching has
-been a simple difference in means without any controls for potential
-confounding variables.  We simply point out that, except in the
-extraordinary case where matching is exact, better parametric
-procedures have the potential to greatly improve causal inferences
-even after matching.
+In a sense, our recommendations already constitute current best
+practice, since matching alone is not a method of estimation and
+always requires some technique after matching to compute estimates.
+The problem is that the parametric model almost universally chosen
+after matching has been a simple difference in means without any
+controls for potential confounding variables.  We simply point out
+that, except in the extraordinary case where matching is exact, better
+parametric procedures have the potential to greatly improve causal
+inferences even after matching.
 
 From an applied perspective, parametric techniques applied to the
 preprocessed data are typically far less sensitive to the choices of
@@ -210,9 +210,9 @@ seamlessly with the general purpose R statistics package called Zelig
 
 Our approach is similar in spirit to, or a generalization of the ideas
 in \citet{RosRub84a}, \citet{Rubin79}, and \citet{RubTho00} who each
-recommend matching followed by a (different) specific form of
-parametric adjustment, as well as intuitively chosen strategies used
-in applied research by \citet{Rosenbaum86} and others, as discussed in
+recommend matching followed by a different specific form of parametric
+adjustment, as well as intuitively chosen strategies used in applied
+research by \citet{Rosenbaum86} and others, as discussed in
 \citet{GlaLevMye03}.\footnote{It is also similar to
   \citet{HecIchTod98} who develop forms of matching combined with
   semi-parametric (kernel weighting) analyses, as well as to the
@@ -266,19 +266,18 @@ of course a critical point, since controlling for the consequences of
 a causal variable can severely bias a causal inference.  For example,
 controlling for aggregatge voting intentions the day before the
 election would obviously control away, and thus bias, the estimated
-incumbency effect.  The problem is far too common in many areas of
-political science \citep{KinZen06b}.
+incumbency effect.  This ``post-treatment bias'' problem is far too
+common in many areas of political science \citep{KinZen06b}.
 
 To clarify our inferential goals, we begin by defining the ``realized
-causal effect,'' which is the simplest definition available.  To
-provide further familiarity with this concept, we briefly show the
-close connection between this definition and the goals of the
-substantively unrelated but mathematically closely-related missing
-data and ecological inference literatures.  We then generalize the
-definition to include features of random causal effects that are
-useful for understanding connections between nonparametric
-preprocessing and parametric models, define causal effects of interest
-at the population level, and discuss nonbinary treatments.
+causal effect,'' which is the simplest definition available, in that
+it is the closest to the data.  We then generalize the definition to
+include features of random causal effects that are useful for
+understanding connections between nonparametric preprocessing and
+parametric models, define causal effects of interest at the population
+level, and discuss multiple and nonbinary treatments.   Appendix
+\ref{s:connect} discusses connections between causal inference and the
+literatures on missing data and ecological inference.
 
 \paragraph{Realized Causal Effects}
 Because of pretreatment differences among the districts (both
@@ -312,83 +311,6 @@ defined below.)  Since the Democratic Party will either nominate
 $i$, one of these potential outcomes is always a counterfactual and
 thus never observed. This is known as the ``fundamental problem of
 causal inference'' \citep{Holland86}.
-
-\paragraph{Connections to Missing Data and Ecological Inference}
-Although causal inference is the ultimate goal of most research
-programs in the social sciences, the inherent difficulty of this goal
-is not always fully appreciated.  To clarify this issue, and to
-further elucidate the definition of causal effects, we now show how
-causal inference with observational data is an extreme special case of
-two areas of statistics that are widely, but incorrectly, perceived to
-be even more difficult.
-
-If district $i$ receives the treatment, we observe $y_i=y_i(1)$ but
-not $y_i(0)$ and otherwise we observe $y_i=y_i(0)$ but not $y_i(1)$.
-In this framework, causal inference can be thought of as a severe
-missing data problem, where each unit has two relevant dependent
-variables, $y_i(0)$ and $y_i(1)$, but one of which is always missing.
-Since $y_i(0)$ and $y_i(1)$ are never both observed for any set of
-units, we cannot use a known relationship between the two to
-extrapolate to units where only one is observed.  Making causal
-inferences is thus equivalent to an especially difficult case of
-imputing missing data, using whatever external information is
-available.  As we show below, this connection will prove useful in
-making the bridge that connects nonparametric matching to parametric
-models.
-
-Causal inference can also be thought of as an especially severe form
-of ecological inference.  In ecological inference, we observe for each
-unit the proportions representing the two marginals of a $2\times 2$
-contingency table (such as the proportion of people voting and the
-proportion of people who are black in a precinct) and try to estimate
-the unknown cell proportions (the proportion of blacks who vote and
-the proportion of whites who vote).  To show the connection, we refer
-to the known ($y_i$ and $t_i$) and potentially unknown [$y_i(0)$ and
-$y_i(1)$] quantities in both problems in the same notation and pay
-special attention to the order in which the information is generated:
-In both problems, we imagine that $y_i(0)$ and $y_i(1)$ exist
-before our research begins.  Then $t_i$ (the treatment in
-causal inference or the row marginal in ecological inference) is
-applied or otherwise becomes known.  Finally, we can calculate the
-observed outcome $y_i$ deterministically via this simple accounting
-identity:
-\begin{equation}
-  \label{id}
-  y_i = t_iy_i(1) + (1-t_i)y_i(0).
-\end{equation}
-In ecological inference, by solving (\ref{id}) for one of the unknowns
-as a linear function of the other and recognizing that proportions are
-always constrained to the unit interval, we can put deterministic
-bounds on both quantities of interest with certainty
-(\citealp{DunDav53} and \citealp[][ch.5]{King97}).  In causal
-inference, we have the advantage of always knowing one of the
-quantities exactly; however, because (\ref{id}) cannot be solved for
-one of the unknowns (since it would require dividing by $t_i$ or
-$1-t_i$, which includes zero) we have the severe disadvantage in
-causal inference of in general not knowing anything with certainty
-about the other unknown; this problem does not arise in ecological
-inference.\footnote{See \citet{Manski95} for interesting exceptions in
-  special cases.}
-
-Social scientists correctly think of missing data imputation and
-ecological inference as difficult and hazardous areas of statistical
-inference.  After all, both involve making inferences about patterns
-in unobserved quantities by using patterns in observed data, with
-nothing but optimistic assumptions to ensure that the former have
-anything necessarily to do with the latter.  However, scholars should
-be no less concerned when making causal inferences, as every causal
-effect ever estimated from observational data involves these severe
-inferential hazards.  If anything, the specific problems in making
-causal inferences are even more difficult than most applications in
-these other areas.  Whether using linear regressions, simple
-descriptive differences in means, or complicated multiple equation
-estimators, causal inference requires assumptions that are no easier
-to justify than those in imputation or ecological inference.  In all
-three areas, the inferential target is not normally constrained by the
-observed data and so substantive conclusions will usually depend on
-unverifiable assumptions about the data generation process.  Thus,
-highlighting the assumptions as clearly as possible, and methods to
-deal with model dependence, are essential.
 
 \paragraph{Random Causal Effects} 
 Now, imagine that the potential outcomes in (\ref{rce}) are
@@ -486,16 +408,18 @@ effects are then distinguished by three choices: ATE or ATT,
 conditional or unconditional, and sample or population.  We normally
 choose conditional-sample estimates of the ATE or ATT.
 
-\paragraph{Non-Binary Treatments}
+\paragraph{Non-Binary and Multiple Treatments}
 
-Projects with causal variables that have more than two categories or
+Projects with a causal variable that has more than two categories or
 are continuous or mixed can dichotomize (perhaps in several
 alternative ways) or use more complicated methods designed especially
 for these variables \citep{ImaDyk04}.  Those with more than one causal
 variable of interest can follow all the advice herein for one variable
-at a time.  We stick a single binary treatment here, since it greatly
-simplifies the exposition and improves intuition even for those who
-will ultimately use more sophisticated treatments.
+at a time, which would involve matching separately for each and
+working hard to avoid post-treatment bias in the process.  We stick a
+single binary treatment here, since it greatly simplifies the
+exposition and improves intuition even for those who will ultimately
+use more sophisticated treatments.
 
 \section{Assumptions and Data Collection Mechanisms}
 
@@ -522,20 +446,19 @@ from a given population, (2) \emph{random assignment} of values of the
 treatment to each observed unit,\footnote{We assume below a classical
   randomized experiment where random assignment is complete rather
   than within fixed strata defined by other variables.  If treatment
-  assignment depend on observed values of the covariates, those
+  assignment depends on observed values of the covariates, those
   covariates need to be conditioned on in subsequent analyses.} and
-(3) a \emph{large $n$}.
+(3) a \emph{large $n$}.  
 
-The first feature avoids selection bias by identifying a given
-population and guaranteeing that the probability of selection from
-this population is related to the dependent variable only by random
-chance.  Combining this with the large $n$ from the third feature
-guarantees that the chance that something will go wrong is vanishingly
-small.
+Feature (1) avoids selection bias by identifying a given population
+and guaranteeing that the probability of selection from this
+population is related to the dependent variable only by random chance.
+Combining Feature (1) with the large $n$ from Feature (3) guarantees
+that the chance that something will go wrong is vanishingly small.
 
-Random assignment in the second feature guarantees the absence of
-omitted variable bias even without any control variables included.  To
-see this, recall that under the usual econometric rules for omitted
+Random assignment in Feature (2) guarantees the absence of omitted
+variable bias even without any control variables included.  To see
+this, recall that under the usual econometric rules for omitted
 variable bias, a variable $X_i$ must be controlled for if it is
 causally prior to $t_i$, empirically related to $t_i$, and affects
 $y_i$ conditional on $t_i$.  If instead one or more of the three
@@ -543,7 +466,7 @@ conditions do not hold, then $X_i$ may be omitted without any
 resulting bias (although the variance may increase).  Random
 assignment guarantees that $t_i$ is unrelated to \emph{any} $X_i$,
 whether measured or not, except by random chance.  Moreover, the large
-$n$ condition guarantees that this chance is vanishingly small.
+$n$ in Feature (3) guarantees that this chance is vanishingly small.
 
 Classical randomized experiments are a true ideal type, particularly
 in relation to most social science research which almost always fails
@@ -574,8 +497,8 @@ causal inferences.\footnote{Our definition of ``observational data''
 In this paper, we assume data are selected in a manner that does not
 generate selection bias.  Observations need not be selected at random,
 as in an experiment, but the probability of selection must not be
-correlated with the dependent variable $y$ after taking into account
-the treatment $t$ and pretreatment covariates, $X$.  Whether this
+related to the dependent variable $y$ after taking into account the
+treatment $t$ and pretreatment covariates, $X$.  Whether this
 assumption is satisfied by carefully considering and controlling for
 the sample selection process (as in case-control designs) or by
 changing the quantity of interest to be that reflected by the sample,
@@ -605,8 +528,8 @@ absence of ``confounding,'' and in several fields it is known as
 condition, but it is one about which social scientists are deeply
 knowledgeable and it is the central methodological concern of many
 substantive scholarly articles.  We emphasize this assumption to make
-clear that our procedures contain no magic: They are unable to control
-for variables that are not measured.
+clear that our procedures contain no magic: They do not help us
+control for variables that are not measured.
 
 In the context of the no selection or omitted variable bias
 assumptions, we have implicitly made three others that are worth
@@ -676,7 +599,9 @@ the maximum of which gives parameter estimates, or via Bayesian or
 other inferential methods.
 
 We now turn to the difficulties in making causal inferences from
-experimental vs.\ observational data under this general model.
+experimental vs.\ observational data under this general model, and
+conclude this section with an illustration and formal definition of
+model dependence.
 
 \subsection{Experimental Data}\label{s:paraexp}
 
@@ -809,17 +734,24 @@ assumptions over another.  Residual and other diagnostics will uncover
 some forms of misspecification, but the curse of dimensionality
 prevents any simple parametric solution to the problem.
 
-To illustrate the problem of sensitivity to model specification, the
-left graph of Figure~\ref{fg:extrap} plots artificial data for outcome
-$Y$ on the vertical axis and a pretreatment covariate $X$ on the
-horizontal axis.  Each data point is plotted as a ``T'' for treated
-units ($t_i=1$) and ``C'' for control units ($t_i=0$).  We then fit
-two regressions to these data.  The first is a linear regression of
-$Y$ on a constant, $t$, and $X$: $E(Y_i|X_i,t_i)=\alpha + t_i\beta +
+\subsection{Model Dependence in Observational Data}\label{s:modeldep}
+
+We first illustrate the problem of sensitivity to model specification,
+and then give a more formal definition of model dependence.  The left
+graph of Figure~\ref{fg:extrap} plots artificial data for outcome $Y$
+on the vertical axis and a pretreatment covariate $X$ on the
+horizontal axis.  This data set was designed to best illustrate the
+problem, not to be realistic; in real examples, aspects of the problem
+we portray here often appear, but they may be more difficult to see
+given the simultaneous presence of other methodological problems.  In
+this figure, each data point is plotted as a ``T'' for treated units
+($t_i=1$) and ``C'' for control units ($t_i=0$).  We then fit two
+regressions to these data.  The first is a linear regression of $Y$ on
+a constant, $t$, and $X$: $E(Y_i|X_i,t_i)=\alpha + t_i\beta +
 X_i\gamma$.  The fitted values for this regression are portrayed in
 two parallel solid lines, the dark solid line for the treated group,
 $E(Y_i|X_i,t_i=1)=\alpha+\beta+X_i\gamma$, and the gray solid line is
-for the controls, $E(Y_i|X_i,t_i=0)=\alpha+X_i\gamma$. The positive
+for the controls, $E(Y_i|X_i,t_i=0)=\alpha+X_i\gamma$.  The positive
 vertical distance between the two straight lines is this parametric
 model's causal effect estimate.
 
@@ -867,7 +799,7 @@ estimates.  A key problem that generates this model dependence is the
 presence of control units far outside the range of the treated units.
 The model estimation thus extrapolates over a range of data that does
 not include treated and control units, and so is particularly
-sensitive to the set of control units who do not look similar to the
+sensitive to the set of control units which do not look similar to the
 treated units.  These extrapolations make causal effect estimates
 exquisitely sensitive to minor modifications in the statistical model
 \citep{KinZen06b}.
@@ -887,6 +819,20 @@ lead to nihilistic conclusions.\footnote{Two approaches to this
   model averaging \citep{HoeMadRaf99,ImaKin04}, which is intended to
   draw inferences by appropriately combining inferences from models
   with different specifications.}
+
+In attempting to develop methods that indicate the degree of model
+dependence that could possibly occur given only a set of explanatory
+variables, \citet{KinZen06a} ``define model dependence at point $x$ as
+the difference, or distance, between the predicted outcome values from
+any two \emph{plausible} alternative models\dots.  By ``plausible''
+alternative models, we mean models that fit the data reasonably well
+and, in particular, they fit about equally well around either the
+``center'' of the data (such as a multivariate mean or median) or the
+center of a sufficiently large cluster of data nearest the
+counterfactual $x$ of interest.''  In practice, of course, additional
+model dependence will occur when models are chosen that do not fit the
+data.  The left graph in Figure \ref{fg:extrap} obviously combines
+both sources of model dependence.
 
 \section{Nonparametric Preprocessing} \label{s:nonparpreproc}
 
@@ -911,7 +857,8 @@ results in no reduction of model dependence, then it is likely that
 the data have little information to support causal inferences by
 \emph{any} method, which of course would also be useful information.
 
-But how can we adjust the data without inducing bias in our causal
+\paragraph{The Goal of Preprocessing}
+How can we adjust the data without inducing bias in our causal
 estimates?  The key to this problem is that the fundamental rule for
 avoiding selection bias --- not selecting on the dependent variable
 --- does not prevent us from selecting observations on the explanatory
@@ -937,8 +884,9 @@ rather than a population density.\footnote{To be more specific, the
   \dots, n \}: X_i = x \} / n$, for all $x$, where $\#\{a\}$ is the
   number of elements in the set $\{a\}$.  The denominator in
   (\ref{balance}) is $\sum_{i=1}^n t_i$ on the left side and
-  $\sum_{i=1}^n (1-t_i)$ on the right.}  The simplest way to satisfy
-(\ref{balance}) by preprocessing is to use \emph{one-to-one exact
+  $\sum_{i=1}^n (1-t_i)$ on the right.}  The simplest (although not
+necessarily the best) way to understand how we can satisfy
+(\ref{balance}) by preprocessing is via \emph{one-to-one exact
   matching}.  The idea is to match each treated unit with one control
 unit for which all the values of $X_i$ are identical.  Our
 preprocessed dataset thus is the same as the original dataset with any
@@ -961,8 +909,10 @@ Although one-to-one exact matching can eliminate model dependence and
 any bias from incorrect assumptions made during the parametric stage
 of analysis, it is not the only way to break the link between $t$ and
 $X$, since satisfying (\ref{balance}) only requires the distributions
-to be equivalent.  Moreover, exact matching has the disadvantage in
-many data sets of not generating many matches.  The problem is most
+to be equivalent.  Thus, to be clear, \emph{matching does not require
+  pairing observations}; only the \emph{distributions} need be matched
+as closely as possible.  Moreover, exact matching has the disadvantage
+in many data sets of not generating many matches.  The problem is most
 severe if $X_i$ is high dimensional (another effect of the curse of
 dimensionality) or contains continuous variables.  The result may then
 be a preprocessed data set with very few observations that results in
@@ -980,23 +930,6 @@ Section~\ref{s:choose} to a menu of matching procedures that enable
 researchers to satisfy (\ref{balance}) as closely as possible while
 still generating a preprocessed dataset with enough observations and
 then run a parametric analysis.
-
-We now offer an example, in the right graph in Figure~\ref{fg:extrap},
-of the reduction in model dependence produced by matching that is not
-exact.  The data in this panel is the same as that for which the
-parametric analyses in the left graph gives highly model-dependent
-results.  The difference is that the matching procedure deleted the
-observations that would require substantial extrapolation (marked as
-gray C's) and produces imbalance.  With these deletions, the data set
-is now highly balanced, and as such the linear model and the quadratic
-model give essentially identical causal effects.  In the matched data,
-both parametric models yield estimates of approximately $0.001$ (which
-is close to the true effect of $0$ we used to generate the data).
-Preprocessing has therefore made the functional form assumption about
-whether to include $X^2$ in the regression largely irrelevant.
-Indeed, for a large range of models, this preprocessed data set will
-be mostly insensitive to the choice of functional form assumptions and
-so will return highly similar causal effect estimates.
 
 A key point about matching as nonparametric preprocessing is that
 matching is \emph{not} a method of estimation: obtaining causal effect
@@ -1020,23 +953,77 @@ the matched sample.  The adjustment necessary is far less onerous,
 model dependent, and thus much more empirical than what would be
 necessary without matching.
 
-Finally, we note two advantages of our general framework. First, our
-two-step procedure is \emph{doubly robust} in the sense that if either
-the matching or the parametric model is right, causal estimates will
-be statistically consistent \citep[see][]{RobRot01}.  That is, if the
-parametric model is misspecified, but the matching is correct, or if
-the matching is inadequate or wrong but the parametric model is
-correctly specified, then our estimates will still be consistent.  The
-double robustness property does not apply generally to using matching
-with a difference in means.  
+\paragraph{Illustration}
+We now offer an example, in the right graph in Figure~\ref{fg:extrap},
+of the reduction in model dependence produced by matching that is not
+exact.  The data in this panel is the same as that for which the
+parametric analyses in the left graph gives highly model-dependent
+results.  The difference is that the matching procedure deleted the
+observations that would require substantial extrapolation (marked as
+gray C's) and produces imbalance.  With these deletions, the data set
+is now highly balanced, and as such the linear model and the quadratic
+model give essentially identical causal effects.  In the matched data,
+both parametric models yield estimates of approximately $0.001$ (which
+is close to the true effect of $0$ we used to generate the data).
+Preprocessing has therefore made the functional form assumption about
+whether to include $X^2$ in the regression largely irrelevant.
+Indeed, for a large range of models, this preprocessed data set will
+be mostly insensitive to the choice of functional form assumptions and
+so will return highly similar causal effect estimates.
 
-Second, matching can improve efficiency of subsequent parametric
-analyses even while reducing the bias. Efficiency gain occurs when
-matching reduces heterogeneity in the data by keeping only those
-observations that are similar to each other and as a result helps
-parametric models fit better, or more directly by removing the
-dependency between the treatment variable and covariates.  To see the
-latter, consider a simple linear regression with one treatment
+\paragraph{The Paradoxical Advantages of Discarding Data}
+We conclude this section with a discussion of two unusual advantages
+of our inferential framework.  First, our two-step procedure is
+\emph{doubly robust} in the sense that under weak conditions (such as
+ruling out extreme cases where all data are dropped during matching
+stage even though a correct parametric model is specified), if either
+the matching or the parametric model is right causal estimates will
+still be statistically consistent \citep[see][]{RobRot01}.  That is,
+if the parametric model is misspecified, but the matching is correct,
+or if the matching is inadequate but the parametric model is correctly
+specified, then our estimates will still be consistent.  The double
+robustness property does not apply generally to using matching with a
+difference in means.
+
+Second, although matching discards data, it can actually increase the
+efficiency of estimates even while reducing bias.  This may seem like
+a strange situation, and would seem to violate a first principle of
+statistics, informally described as ``more data are better''.
+However, more data are in fact better only when using an estimator
+that is ``self-efficient'' \citet{MenRom03}, which roughly speaking is
+an estimator which is based on a model that is correct (or
+sufficiently correct to make use of more data to improve inferences).
+Estimators that are not self-efficient can have variance reductions
+when discarding data.  
+
+For a simple example, consider data generated from a univariate
+heteroskedastic linear-normal regression model, $Y_i\sim
+N(\beta_0+\beta_1x_i,\sigma_i^2)$, for $i=1,\dots,1000$, and variance
+\begin{equation*}
+  \sigma_i^2 =
+  \begin{cases}
+    \theta & \text{for $x\leq 5$}\\
+    500\theta & \text{for $x>5$}
+  \end{cases}
+\end{equation*}
+where $\theta>0$ and say 50 observations reside at $x>5$.  With data
+generated from this model, weighted least squares is a self-efficient
+estimator, and thus dropping data would increase standard errors.  In
+contrast, the least-squares estimator would not be self-efficient,
+which can be seen because dropping the 50 observations with 500 times
+the variance would greatly reduce heterogeneity and thus reduce
+estimated standard errors.  If we know the correct model, this is not
+an issue, but if as is usually the case we do not know the correct
+model, self-efficiency cannot be assumed, and so dropping data ---
+when done appropriately, such as by following the rules for matching
+--- can reduce heterogeneity and thus be beneficial.
+
+In matching, efficiency gains occur when dropping data if
+heterogeneity is reduced.  This occurs when keeping a set of
+observations for which (\ref{balance}) holds, and as a result helps
+parametric models fit better, as well as by removing the dependency
+between the treatment variable and covariates.  We formalize this
+point by considering a simple linear regression with one treatment
 variable, $T$, and one covariate, $X$.  The variance of the
 coefficient for the treatment variable is equal to $\sigma^2/[n
 (1-\gamma) s^2_T]$ where $\sigma^2$ is the conditional variance of the
@@ -1047,12 +1034,9 @@ heterogeneity, then $\sigma^2$ will become smaller.  If matching
 reduces the dependence between $T$ and $X$, as is the goal in reducing
 bias, then $\gamma$ will be close to zero.  Thus, the resulting
 variance for the treatment effect may become smaller even if some
-observations are dropped.\footnote{In this situation without a model
-  known to be correct, no estimator is ``self-efficient'' and so the
-  usual ``more data are better'' rule does not apply.  See
-  \citet{MenRom03}.} This suggests that so long as one keeps as many
-observations as possible, matching will often reduce bias and improve
-the efficiency of subsequent parametric analyses.
+observations are dropped.  This suggests that so long as one keeps as
+many observations as possible, matching will often reduce bias and
+improve the efficiency of subsequent parametric analyses.
 
 \section{Practical Implications of the Theoretical Matching
   Literature}
@@ -1069,28 +1053,40 @@ guide to the software that accompanies this paper; see Appendix
 \ref{s:matchit}).
 
 The goal of matching is to improve \emph{balance}, the degree to which
-the treatment and control $X$ distributions resemble each other,
-without losing too many observations in the process.  The main
-diagnostic of success is also balance, the specific details of which
-we describe below, as well as the number of observations remaining
-after matching.  In seeking better balance, one can try any number of
-matching procedures, and choose the one with the best balance as the
-final preprocessed data set.  To ensure that selection during
-preprocessing depends only on $X$ (to prevent inducing bias), the
-outcome variable $y$ should not be examined during the preprocessing
-stage.  As long as $y$ is not consulted, preprocessing cannot result
-in stacking the deck one way or another.  Experimenters typically
-follow a similar procedure by repeating randomization as often as
-desired before collecting the outcome data; if an undesirable
-randomization is obtained, such as with all men in the treated group
-and all women in the control group, they merely discard the first
-randomization and do it again until better balance is obtained
-\citep[see][]{Rubin01}.
+the treatment and control $X$ distributions resemble each other as in
+(\ref{balance}), without losing too many observations in the process.
+The main diagnostic of success is also balance, the specific details
+of which we describe below, as well as the number of observations
+remaining after matching.  Trying different matching methods is not
+like trying different models, some of which are right and some wrong,
+since balance provides a straightforward objective function to
+maximize and choose matching solutions.  Just as we iterate a
+numerical likelihood function to its optimum parameter values (and
+ignore any intermediate parameter values on the way to the MLEs), one
+should try as many matching solutions as possible and choose the
+\emph{one} with the best balance as the final preprocessed data set.
+Although this point is often misunderstood (such as by occasional
+mistaken claims in the literature that differences across matching
+solutions should contribute to uncertainty estimates), matching
+solutions with suboptimal balance are in fact irrelevant and should
+play no part in our ultimate inferences.
 
-We discuss four aspects of preprocessing, followed by standard
-parametric modeling of the preprocessed data set.  We describe this
-procedure for the ATT, so the matching is designed to choose control
-units that look most like the treated units.
+To ensure that selection during preprocessing depends only on $X$ (to
+prevent inducing bias), the outcome variable $y$ should not be
+examined during the preprocessing stage.  As long as $y$ is not
+consulted and is not part of the rule by which one drops observations,
+preprocessing cannot result in stacking the deck one way or another.
+Experimenters typically follow a similar procedure by repeating
+randomization as often as desired before collecting the outcome data;
+if an undesirable randomization is obtained, such as with all men in
+the treated group and all women in the control group, they merely
+discard the first randomization and do it again until better balance
+is obtained \citep[see][]{Rubin01}.
+
+We now discuss several aspects of preprocessing, followed by modeling
+of the preprocessed data set and computing uncertainty estimates.  We
+describe this procedure for the ATT, so the matching is designed to
+choose control units that look most like the treated units.
 
 \paragraph{Selecting Covariates}
 All variables in $X$ that would have been included in a parametric
@@ -1107,7 +1103,7 @@ it will increase variance \citep{RubTho96, HecIchSmi98}, and so most
 believe that all available control variables should always be
 included.  However, the theoretical literature has focused primarily
 on the case where the pool of potential control units is considerably
-larger than the set of treated units.  Applied researchers seem to
+larger than the set of treated units.  Some researchers seem to
 have incorrectly generalized this advice to all data sets.  If, as is
 often the case, the pool of potential control units is not much larger
 than the pool of treated units, then always including all available
@@ -1127,13 +1123,13 @@ portions of the densities that do overlap have the same heights.
 Areas outside of common support are particularly problematic since
 they require extrapolation, which can generate considerable model
 dependence.  And indeed the farther the extrapolation is from the data
-the larger can be the model dependence.  For example, asking in 2001,
+the larger can be the model dependence.  For example, asking in 2001
 what Iraq would be like if the U.S.\ attempted to impose democracy
-there, was pure extrapolation since the U.S.\ had not previously
+there was pure extrapolation since the U.S.\ had not previously
 attempted the same thing in another country like Iraq in all relevant
 respects.  Making such an inference could only be made on the basis of
 theoretical modeling assumptions because relevant empirical
-observations from the control group do not exist.
+observations from the control group did not exist.
 
 In the applied literature, researchers often skip this step, which can
 be a major mistake.\footnote{Some try to find common support by using
@@ -1146,15 +1142,15 @@ After all, balance can always be improved and potential model
 dependence reduced by removing units that require extrapolation.  Part
 of the reason this step is skipped so often is that it has not until
 recently been clear how to identify units that require extrapolation.
-One easy approach, developed by \citet{KinZen06b} is to prune
-observations from the control group that are outside of the ``convex
-hull'' of the treatment group.  With one pre-treatment covariate, the
-convex hull of the treatment group is merely the range of the subset
-of observations of $X$ that are in the treatment group (because
-$t_i=1$), so control units with $X$ greater than max($X$) or less than
-min($X$) are discarded.  The general definition of the convex hull
-(which is more sophisticated than the range in multiple dimensions)
-also works to define regions of extrapolation with any number of
+One approach, developed by \citet{KinZen06b} is to prune observations
+from the control group that are outside of the ``convex hull'' of the
+treatment group.  With one pre-treatment covariate, the convex hull of
+the treatment group is merely the range of the subset of observations
+of $X$ that are in the treatment group (because $t_i=1$), so control
+units with $X$ greater than max($X$) or less than min($X$) are
+discarded.  The general definition of the convex hull (which is more
+sophisticated than the range in multiple dimensions) also works to
+define regions of extrapolation with any number of
 covariates.\footnote{Similarly, if any treated units fall outside the
   convex hull of the control units, these too are often discarded.
   Dropping treated units changes the causal effect being estimated,
@@ -1163,7 +1159,8 @@ covariates.\footnote{Similarly, if any treated units fall outside the
   reasonable way.}  Across this and the other methods of checking
 common support, the more conservative the approach that defines common
 support more restrictively, the less model dependence.  Of course,
-more conservative approaches also leave fewer observations.
+more conservative approaches also leave fewer observations.  For other
+recent ideas on identifying common support, see \citet{IacPor06}.
 
 \paragraph{Exact Matching}  
 It is always worth checking to see whether each treated unit can be
@@ -1335,27 +1332,28 @@ of matches in each subclass \citep{Hansen04}.
 
 \paragraph{The Balance Test Fallacy}
 
-A good matching procedure reduces bias by increasing balance, does not
-increase the variance much, and prevents inducing new biases by
-matching only based on $X$ without consulting $y$ until the analysis
-stage.  We assume matching is based only on $X$, and checking the
-number of observations remaining after matching is easy.  Thus, the
-main issue we address in this section and the next is how to evaluate
-balance.  Conceptually, verifying balance involves checking whether
-(\ref{balance}), $\tilde p(X|t=1)=\tilde p(X|t=0)$, holds.  One way to
-think about this process is to imagine, for all the variables in $X$,
-forming a multidimensional histogram for all the treated units and
-comparing it to another multidimensional histogram of all the control
-units.  Because of the curse of dimensionality, multidimensional
-histograms with more than a few covariates tend to be very coarse or
-have many empty bins, and so are difficult to evaluate and compare.
-Thus researchers usually examine various low dimensional summaries
-instead.  If a low dimensional summary differs between the treated and
-control groups then we know (\ref{balance}) does not hold.  The risk
-of course is that even if the treatment and control groups match
-according to some low dimensional summaries, we still cannot be
-certain that (\ref{balance}) holds since it is a multivariate concept,
-and so using several different checks is always a good idea.
+A good matching procedure reduces bias by increasing balance,
+decreases the variance or at least does not increase it much, and
+prevents inducing new biases by matching only based on $X$ without
+consulting $y$ until the analysis stage.  We assume matching is based
+only on $X$, and checking the number of observations remaining after
+matching is easy.  Thus, the main issue we address in this section and
+the next is how to evaluate balance.  Conceptually, verifying balance
+involves checking whether (\ref{balance}), $\tilde p(X|t=1)=\tilde
+p(X|t=0)$, holds.  One way to think about this process is to imagine,
+for all the variables in $X$, forming a multidimensional histogram for
+all the treated units and comparing it to another multidimensional
+histogram of all the control units.  Because of the curse of
+dimensionality, multidimensional histograms with more than a few
+covariates tend to be very coarse or have many empty bins, and so are
+difficult to evaluate and compare.  Thus researchers usually examine
+various low dimensional summaries instead.  If a low dimensional
+summary differs between the treated and control groups then we know
+(\ref{balance}) does not hold.  The risk of course is that even if the
+treatment and control groups match according to some low dimensional
+summaries, we still cannot be certain that (\ref{balance}) holds since
+it is a multivariate concept, and so using several different checks is
+always a good idea.
 
 Here we describe what \citet{ImaKinStu05} call the balance test
 fallacy, which unfortunately afflicts most applications of matching in
@@ -1512,53 +1510,71 @@ robust causal inferences by any means.
 
 \paragraph{Parametric Outcome Analysis}  
 After choosing the final matched sample, preferably with maximum
-balance and a large number of observations, the parametric analysis
-can then proceed.  Unfortunately, with few exceptions the parametric
-analysis chosen in practice by applied researchers after matching has
-been a simple difference in means (or the equivalent of a regression
-of $Y$ on $T$ without any control variables).  This is unfortunate,
-since the procedure assumes that $T$ and $X$ are unrelated.  If the
-assumption is false, and it is false except in the rare case when
-exact matching is possible for all observations, then the result is
-the same for omitted variable bias that occurs whenever a potential
-confounding variable is ignored.
+balance, reduced heterogeneity, and a large number of observations
+remaining, the parametric analysis can then proceed.  Unfortunately,
+with few exceptions the parametric analysis chosen in practice by
+applied researchers after matching has been a simple difference in
+means (or the equivalent of a regression of $Y$ on $T$ without any
+control variables).  This is unfortunate, since the procedure assumes
+that $T$ and $X$ are unrelated.  If the assumption is false, and it is
+false except in the rare case when exact matching is possible for all
+observations, then the result is the same for omitted variable bias
+that occurs whenever a potential confounding variable is ignored.
 
-Thus, with one possible exception, a better procedure is to use the
-same parametric analysis on the preprocessed data as would have been
-used to analyze the original raw data set without preprocessing.  This
-can include the same maximization algorithms, the same software, the
-same model checking and fit procedures, and the same methods of
-computing and interpreting quantities of interest.  The one exception
-is that for subclassification, the parametric analysis should be
-conducted separately within each subclass, and the results combined by
-taking a weighted average (with weights based on the number of units
-in each subclass), or, if insufficient observations exist within each
-subclass, fit an overall model with fixed or random effects for the
-subclasses.  Using preprocessed data should reduce model dependence,
-and this too is worth checking: as one should even without
-preprocessing, we should check the sensitivity of causal effect
-estimates to changes in the specification.
+Thus, a better procedure is to use the same parametric analysis on the
+preprocessed data as would have been used to analyze the original raw
+data set without preprocessing.  This can include the same
+maximization algorithms, the same software, the same model checking
+and fit procedures, and the same methods of computing and interpreting
+quantities of interest.  The only reason to change these procedures is
+best practice at statistical modeling were not followed, such as
+forgetting to focus on a single causal variable at a time, not
+avoiding post-treatment bias, etc.\footnote{The one exception that
+  would suggest a change from standard parametric data analysis
+  procedures is that, for subclassification, the parametric analysis
+  should be conducted separately within each subclass, and the results
+  combined by taking a weighted average (with weights based on the
+  number of units in each subclass), or, if insufficient observations
+  exist within each subclass, fit an overall model with fixed or
+  random effects for the subclasses.}  Using preprocessed data should
+reduce model dependence, and this too is worth checking: as one should
+even without preprocessing, we should check the sensitivity of causal
+effect estimates to changes in the specification.
 
 \paragraph{Computing Uncertainty Estimates}
 
-Computing uncertainty estimates, such as standard errors or confidence
-intervals, from matching procedures is an active area of research
-where no consensus yet exists.  The problem is not some disagreement
-over technical statistical issues.  Rather, the issue revolves around
-normative criteria such as what researchers should condition on and
-what they should attribute to additional uncertainty.  Since scholars
-are no more likely to reach consensus via debate on normative
-statistical issues than on normative political issues, the best way
-forward may be to choose a reasonable definition, show how to compute
-uncertainty estimates for it, and let others pick different
-definitions if they prefer.  Our choice, which we now explicate,
-appears substantively reasonable and has the advantage of being easy
-to implement.
+Parsing what the theoretical literature on matching-based estimators
+says about proper methods of computing uncertainty estimates, such as
+standard errors or confidence intervals, is difficult without
+understanding a fundamental difference in perspectives that is rarely
+discussed.  Neither perspective is right or wrong, and each is useful
+in some circumstances.  
 
-Our idea is to take advantage of a common feature of all of the
-methods of computing uncertainty estimates associated with parametric
-methods: They are all conditional on the pretreatment variables $X$
-(and $t$), which are therefore treated as fixed and
+Many in the literature, modern econometricians most commonly, match
+and then set as their goal producing variance estimators by making as
+few assumptions as possible.  The variance estimates are from point
+estimators based on a simple difference in means, or difference in
+means with bias adjustment, following matching.  This nonparametric
+strategy that tends to produce accurate, but often complicated and
+application-specific, variance estimators \citep[e.g.,][]{AbaImb05}.
+
+In contrast, our perspective (which is similar to the special cases
+analyzed by some statisticians) is to begin with what social
+scientists are now doing, which is estimating some form of parametric
+(usually regression-type) model.  We then ask how matching as
+preprocessing can improve this current practice.  Thus, since social
+scientists are already making parameteric assumptions, we do not ask
+anyone to change their assumptions and we do not reduce them either;
+we merely ask how to compute variance estimate in social scientists'
+current parameteric models if the data are also preprocessed.  The
+answer turns out to be simple and the estimator highly convenient: use
+the same variance estimator as one would normally do in using a
+parametric analysis.
+
+We thus take advantage of a common feature of all of the methods of
+computing uncertainty estimates associated with regression-type
+parametric methods: They are all conditional on the pretreatment
+variables $X$ (and $t$), which are therefore treated as fixed and
 exogenous.\footnote{These include methods based on using the
   asymptotic normal approximation to the likelihood function, direct
   simulation from the finite sampling distribution or posterior
@@ -1574,10 +1590,7 @@ have been using with their parametric methods all along, but applied
 to the preprocessed instead of raw data.  (The one exception to our
 procedure occurs when matching with replacement, where we would then
 run the parametric procedure with each unit weighted proportional to
-the number of times it was chosen as a match.)  As proper procedures
-are developed to include different aspects of matching in the
-uncertainty estimates, these could be used also, but they would each
-estimate a different variance quantity.
+the number of times it was chosen as a match.)
 
 Thus, when estimating the ATT or ATE, we compute estimates of
 $\mu_i(1)$ and $\mu_i(0)$ and their uncertainty as usual from the
@@ -1664,16 +1677,16 @@ To preprocess, we follow the recommendations described in
 Section~\ref{s:choose}. We first check whether the control units are
 within the convex hull of the treated units using the method developed
 by \citet{KinZen06b}. The result of this analysis indicates that none
-of the control units is in the convex hull. This lack of
-common support explains in part why \citet{Carpenter02} finds the
-results are highly model-dependent. To proceed, we estimate the
-propensity score using logistic regression with all covariates as
-linear predictors.  We then discard 15 control units and 2 treated
-units that are outside of the common support of the estimated
-propensity score. Finally, we conduct one-to-one nearest neighbor
-propensity score matching (without replacement) while placing exact
-restrictions on the six binary variables (whether primary indication
-is lethal condition, acute condition, and/or results in
+of the control units is in the convex hull.  This is a conservative
+test for common support, but it explains in part why
+\citet{Carpenter02} finds the results are highly model-dependent. To
+proceed, we estimate the propensity score using logistic regression
+with all covariates as linear predictors.  We then discard 15 control
+units and 2 treated units that are outside of the common support of
+the estimated propensity score. Finally, we conduct one-to-one nearest
+neighbor propensity score matching (without replacement) while placing
+exact restrictions on the six binary variables (whether primary
+indication is lethal condition, acute condition, and/or results in
 hospitalization; whether disease mainly affects men, women, and/or
 children). We choose one-to-one matching rather than one-to-many
 matching or full matching because our convex hull analysis indicates
@@ -1805,9 +1818,9 @@ model-dependent using the raw data than using the matched data.  For
 example, the variance of the estimated ATT from the matched data (the
 solid curve) is less than \emph{one tenth} the size of that from the
 raw data (the dashed curve).  The distribution of estimates for the
-matched data is also closer to the density of the normal distribution, which will happen
-when control variables included are having effects only due to random
-error.
+matched data is also closer to the density of the normal distribution,
+which will happen when control variables included are having effects
+only due to random error.
 
 Furthermore, despite the fact that matching drops more than 100
 observations, we achieve this considerable reduction in model
@@ -1995,10 +2008,11 @@ essential in avoiding this pitfall.
 
 Second, as with all statistical methods, a bias-variance tradeoff
 exists for matching.  If we drop many observations during
-preprocessing and balance is not substantially improved, the mean
-square error (or other mean-variance summary) might actually increase.
-Users must pay close attention to this tradeoff during the process of
-matching, but no precise rules exist for how to make these choices.
+preprocessing, do not in the process reduce heterogeneity, and balance
+is not substantially improved, the mean square error (or other
+mean-variance summary) might actually increase.  Users must pay close
+attention to this tradeoff during the process of matching, but
+unfortunately no precise rules exist for how to make these choices.
 In particular, the methodological literature offers no formal
 estimates of mean square error and so in marginal cases it can be
 difficult to know whether or how much preprocessing will help.  Of
@@ -2022,11 +2036,11 @@ that maximizes balance (with $n$ as large as possible), no matter how
 many procedures we try.  By applying this criterion in a disciplined
 way (i.e., without consulting $y$) to a large number of possible
 matching procedures, no choices are open to the analyst.  Instead,
-researchers should merely run as many as possible and choose by this
-procedure.  Unlike parametric modeling exercises, we need not choose
-this matching procedure or another; we merely run as many as feasible,
-or likely to reduce bias and model dependence, and apply this
-criterion.
+researchers should merely run as many as possible and choose by
+maximizing balance.  Unlike parametric modeling exercises, we need not
+choose this matching procedure or another; we merely run as many as
+feasible, or likely to reduce bias and model dependence, and apply
+this criterion.
 
 Finally, by dropping observations, we may wind up losing some
 critically important cases or may change either the information base
@@ -2081,6 +2095,110 @@ all the parametric models now used in the social sciences.  Matching
 even works well with these ``alternative'' approaches.
 
 \appendix
+
+\section{Connections to Missing Data and Ecological
+  Inference}\label{s:connect}
+
+Although causal inference is the ultimate goal of most research
+programs in the social sciences, the inherent difficulty of this goal
+is not always fully appreciated.  To clarify this issue, and to
+further elucidate the definition of causal effects, we now show how
+causal inference with observational data is an extreme special case of
+two areas of statistics that are widely, but incorrectly, perceived to
+be even more difficult.
+
+If district $i$ receives the treatment, we observe $y_i=y_i(1)$ but
+not $y_i(0)$ and otherwise we observe $y_i=y_i(0)$ but not $y_i(1)$.
+In this framework, causal inference can be thought of as a severe
+missing data problem, where each unit has two relevant dependent
+variables, $y_i(0)$ and $y_i(1)$, but one of which is always missing.
+Since $y_i(0)$ and $y_i(1)$ are never both observed for any set of
+units, we cannot use a known relationship between the two to
+extrapolate to units where only one is observed.  Making causal
+inferences is thus equivalent to an especially difficult case of
+imputing missing data, using whatever external information is
+available.  As we show below, this connection will prove useful in
+making the bridge that connects nonparametric matching to parametric
+models.
+
+Causal inference can also be thought of as an especially severe form
+of ecological inference.  In ecological inference, we observe for each
+unit $i$ the proportions representing the two marginals of a $2\times
+2$ contingency table (such as the proportion of people voting $y_i$
+and the proportion of people who are black in a precinct $t_i$) and
+try to estimate the unknown cell proportions (the proportion of blacks
+who vote $y_i(0)$ and the proportion of whites who vote
+$y_i(1)$), as in Figure \ref{t:note}.
+\begin{table}[ht] 
+\begin{center}
+  \leavevmode \setlength{\extrarowheight}{4pt}
+\begin{tabular}{r<{  }@{}r@{}c@{}l@{}c@{}c@{}>{  }l} 
+  \textbf{Race of}&&\multicolumn{3}{c}{\textbf{Voting Decision}}\\
+  \textbf{Voting Age} && &                   &&\\
+  \textbf{Person} && \multicolumn{1}{c}{Vote} && No vote &
+  \\\cline{2-5}
+  black &\vline& $y_i(0)$ &\vline& $1-y_i(0)$ &\vline& $t_i$ \\
+  \cline{2-5} white &\vline& $y_i(1)$ &\vline& $1-y_i(1)$
+  &\vline&$1-t_i$\\ \cline{2-5}
+  && $y_i$       &&       $1-y_i$  && \\
+\end{tabular}
+\caption{\em Notation for Precinct $i$.  The goal is to estimate the
+  quantities of interest, $y_i(0)$ (the fraction of blacks who vote)
+  and $y_i(1)$ (the fraction of whites who vote), from the aggregate
+  variables $t_i$ (the fraction of voting age people who are black)
+  and $y_i$ (the fraction of people who vote).}
+\label{t:note}
+\end{center}
+\end{table}
+
+To show the connection, we refer to the known ($y_i$ and $t_i$) and
+potentially unknown [$y_i(0)$ and $y_i(1)$] quantities in both
+problems in the same notation and pay special attention to the order
+in which the information is generated: In both problems, we imagine
+that $y_i(0)$ and $y_i(1)$ exist before our research begins.  Then
+$t_i$ (the treatment in causal inference or the row marginal in
+ecological inference) is applied or otherwise becomes known.  Finally,
+we can calculate the observed outcome $y_i$ deterministically via this
+simple accounting identity:
+\begin{equation}
+  \label{id}
+  y_i = t_iy_i(1) + (1-t_i)y_i(0).
+\end{equation}
+In ecological inference, by solving (\ref{id}) for one of the unknowns
+as a linear function of the other and recognizing that proportions are
+always constrained to the unit interval, we can put deterministic
+bounds on both quantities of interest with certainty
+(\citealp{DunDav53} and \citealp[][ch.5]{King97}).  In causal
+inference, we have the advantage of always knowing one of the
+quantities exactly; however, because (\ref{id}) cannot be solved for
+one of the unknowns (since it would require dividing by $t_i$ or
+$1-t_i$, which includes zero) we have the severe disadvantage in
+causal inference of in general not knowing anything with certainty
+about the other unknown; this problem does not arise in ecological
+inference.\footnote{See \citet{Manski95} for interesting exceptions in
+  special cases.}
+
+Social scientists correctly think of missing data imputation and
+ecological inference (without tight bounds) as difficult and hazardous
+areas of statistical inference.  After all, both involve making
+inferences about patterns in unobserved quantities by using patterns
+in observed data, with nothing but assumptions to ensure that the
+former have anything necessarily to do with the latter.  However,
+scholars should be no less concerned when making causal inferences, as
+every causal effect ever estimated from observational data involves
+these severe inferential hazards.  If anything, the specific problems
+in making causal inferences are even more difficult than most
+applications in these other areas.  Whether using linear regressions,
+simple descriptive differences in means, or complicated multiple
+equation estimators, causal inference requires assumptions that are no
+easier to justify than those in imputation or ecological inference.
+In all three areas, the inferential target is not normally
+sufficiently constrained by the observed data and so substantive
+conclusions will usually depend on unverifiable assumptions about the
+data generation process.  Thus, highlighting the assumptions as
+clearly as possible, and including methods to deal with model
+dependence, are essential.
+
 \section{Matching Software}\label{s:matchit}
 
 A variety of excellent software is available to perform matching
@@ -2088,15 +2206,15 @@ A variety of excellent software is available to perform matching
   Parsons01, Sekhon04}.  However, each program implements only a
 specialized subset of available statistical procedures.  Moreover,
 they are spread over a range of different languages and packages,
-which would normally make it impractical to use more than one for any
+which normally makes it impractical to use more than one for any
 applied project.  Thus, as a companion to and in the same spirit as
 this paper, we have written software (called MatchIt, available at
-\url{http://gking.harvard.edu/matchit})  that implements the vast majority of the matching
-procedures suggested in the diverse scholarly literatures on this
-subject.  Where possible, MatchIt builds on and incorporates existing
-packages and, across all the specialized techniques, MatchIt offers a
-single, simple, and unified syntax.  Adding procedures to MatchIt is
-also easy.
+\url{http://gking.harvard.edu/matchit}) that implements the vast
+majority of the matching procedures suggested in the diverse scholarly
+literatures on this subject.  Where possible, MatchIt builds on and
+incorporates existing packages and, across all the specialized
+techniques, MatchIt offers a single, simple, and unified syntax.
+Adding procedures to MatchIt is also easy.
 
 MatchIt operates with a single command that takes an existing dataset
 and produces as output a single preprocessed matched dataset.  The
