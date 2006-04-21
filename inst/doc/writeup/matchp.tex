@@ -1087,7 +1087,7 @@ is obtained \citep[see][]{Rubin01}.
 
 We now discuss several aspects of preprocessing, followed by modeling
 of the preprocessed data set and computing uncertainty estimates.  We
-describe this procedure for the ATT, so the matching is designed to
+describe this procedure for the ATT, so that matching is designed to
 choose control units that look most like the treated units.
 
 \paragraph{Selecting Covariates}
@@ -1316,9 +1316,9 @@ calculation (\citealp{GuRos93, RubTho00}).
 
 Finally, if finding a matching procedure with good balance and a large
 number of observations is difficult, subclassification can be a useful
-technique.  In subclassification, we form groups in which the
-distributions of covariates is the same, even though across the
-subclasses the distributions of covariates may be quite different.
+technique \citep{ImaDyk04}.  In subclassification, we form groups in
+which the distributions of covariates is the same, even though across
+the subclasses the distributions of covariates may be quite different.
 Subclassification can be accomplished by dividing the units into
 roughly equally sized subclasses where the estimated propensity score
 is, by construction, approximately constant, and thus balanced.  Many
@@ -1538,10 +1538,11 @@ avoiding post-treatment bias, etc.\footnote{The one exception that
   combined by taking a weighted average (with weights based on the
   number of units in each subclass), or, if insufficient observations
   exist within each subclass, fit an overall model with fixed or
-  random effects for the subclasses.}  Using preprocessed data should
-reduce model dependence, and this too is worth checking: as one should
-even without preprocessing, we should check the sensitivity of causal
-effect estimates to changes in the specification.
+  random effects for the subclasses \citep{ImaDyk04}.}  Using
+preprocessed data should reduce model dependence, and this too is
+worth checking: as one should even without preprocessing, we should
+check the sensitivity of causal effect estimates to changes in the
+specification.
 
 \paragraph{Computing Uncertainty Estimates}
 
