@@ -210,9 +210,9 @@ seamlessly with the general purpose R statistics package called Zelig
 
 Our approach is similar in spirit to, or a generalization of the ideas
 in \citet{RosRub84a}, \citet{Rubin79}, and \citet{RubTho00} who each
-recommend matching followed by a different specific form of parametric
-adjustment, as well as intuitively chosen strategies used in applied
-research by \citet{Rosenbaum86} and others, as discussed in
+recommend matching followed by a form of parametric adjustment, as
+well as strategies used in applied research problems by
+\citet{Rosenbaum86} and others, as discussed in
 \citet{GlaLevMye03}.\footnote{It is also similar to
   \citet{HecIchTod98} who develop forms of matching combined with
   semi-parametric (kernel weighting) analyses, as well as to the
@@ -264,7 +264,7 @@ when estimating a causal effect (see \citealt[][Section 4.2]{Cox58},
 \citet{Rosenbaum84}, and \citealt[][pp.73--4]{Rosenbaum02}).  This is
 of course a critical point, since controlling for the consequences of
 a causal variable can severely bias a causal inference.  For example,
-controlling for aggregatge voting intentions the day before the
+controlling for aggregate voting intentions the day before the
 election would obviously control away, and thus bias, the estimated
 incumbency effect.  This ``post-treatment bias'' problem is far too
 common in many areas of political science \citep{KinZen06b}.
@@ -315,11 +315,8 @@ causal inference'' \citep{Holland86}.
 \paragraph{Random Causal Effects} 
 Now, imagine that the potential outcomes in (\ref{rce}) are
 realizations of corresponding random variables (for which we use the
-corresponding capital letters).  We do not require that the data are
-sampled from some specific population, only that there exists some
-data generation process that leads to the one realization we see and
-could have led to some other realization.  This produces the random
-causal effect:
+corresponding capital letters).  This produces the random causal
+effect:
 \begin{equation}
   \label{rance}
   \text{(Random Causal Effect for unit $i$)}  = Y_i(1) - Y_i(0),
@@ -329,11 +326,11 @@ example, our second causal effect is the \emph{mean causal effect},
 which is the average over repeated hypothetical draws of the random
 causal effect:
 \begin{align}
-  \label{meance} \text{(Mean Causal Effect for unit $i$)}
-  &= E(\text{Random Causal Effect for unit $i$})\\
-  &= E[Y_i(1) - Y_i(0)]\\ \notag &= \mu_i(1) - \mu_i(0),
+  \label{meance} \text{(Mean Causal Effect)}
+  &= E(\text{Random Causal Effect})\\
+  &= E[Y(1) - Y(0)]\\ \notag &= \mu(1) - \mu(0),
 \end{align}
-where $\mu_i(1)\equiv E[Y_i(1)]$ and $\mu_i(0)\equiv E[Y_i(0)]$.
+where $\mu(1)\equiv E[Y(1)]$ and $\mu(0)\equiv E[Y(0)]$.
 
 \paragraph{Average Quantities of Interest}
 In most applications, estimating the treatment effect for each
@@ -353,8 +350,8 @@ Among in-sample effects, we consider two choices.  The first is the
 average treatment effect or ATE:
 \begin{align}
   \label{pate}
-  \text{ATE} & = \frac{1}{n}\sum_{i=1}^n E[Y_i(1) - Y_i(0)] \notag\\
-  &  = \frac{1}{n}\sum_{i=1}^n[\mu_i(1) - \mu_i(0)],
+  \text{ATE} & = \frac{1}{n}\sum_{i=1}^n E[Y_i(1) - Y_i(0)|X_i] \notag\\
+  &  = \frac{1}{n}\sum_{i=1}^n[\mu_i(1) - \mu_i(0)|X_i],
 \end{align}
 which is the mean causal effect for unit $i$ averaged over all units
 (so that the expected value operator in the first line averages over
@@ -367,8 +364,8 @@ on the treated, or ATT:
 \begin{align}
   \label{att}
   \text{ATT} & = \frac{1}{\sum_{i=1}^n t_i}\sum_{i:t_i=1} E[Y_i(1) -
-  Y_i(0)]\notag\\ 
-  & = \frac{1}{\sum_{i=1}^n t_i}\sum_{i:t_i=1}[\mu_i(1) - \mu_i(0)],
+  Y_i(0)|X_i]\notag\\ 
+  & = \frac{1}{\sum_{i=1}^n t_i}\sum_{i:t_i=1}[\mu_i(1) - \mu_i(0)|X_i],
 \end{align}
 In our running example, this is the average causal effect in districts
 in which the Democratic Party nominated the incumbent member of the
@@ -416,8 +413,8 @@ alternative ways) or use more complicated methods designed especially
 for these variables \citep{ImaDyk04}.  Those with more than one causal
 variable of interest can follow all the advice herein for one variable
 at a time, which would involve matching separately for each and
-working hard to avoid post-treatment bias in the process.  We stick a
-single binary treatment here, since it greatly simplifies the
+working hard to avoid post-treatment bias in the process.  We stick to
+a single binary treatment here, since it greatly simplifies the
 exposition and improves intuition even for those who will ultimately
 use more sophisticated treatments.
 
@@ -452,7 +449,7 @@ treatment to each observed unit,\footnote{We assume below a classical
 
 Feature (1) avoids selection bias by identifying a given population
 and guaranteeing that the probability of selection from this
-population is related to the dependent variable only by random chance.
+population is related to the potential outcomes only by random chance.
 Combining Feature (1) with the large $n$ from Feature (3) guarantees
 that the chance that something will go wrong is vanishingly small.
 
@@ -585,8 +582,8 @@ definitions of the potential outcomes from the systematic component,
 with $t_i$ taking on values 1 and 0 respectively:
 \begin{align}
   \label{matt}
-\mu_i(1)&\equiv E(Y_i(1)|t_i=1,X)= g(\alpha + \beta + X_i\gamma),\notag \\
-\mu_i(0)&\equiv E(Y_i(0)|t_i=0,X) = g(\alpha + X_i\gamma).
+\mu_i(1)&\equiv E(Y_i(1)|t_i=1,X_i)= g(\alpha + \beta + X_i\gamma),\notag \\
+\mu_i(0)&\equiv E(Y_i(0)|t_i=0,X_i) = g(\alpha + X_i\gamma).
 \end{align}
 We can produce estimates of these quantities by assuming independence
 over observations, and forming a likelihood function
@@ -741,15 +738,18 @@ and then give a more formal definition of model dependence.  The left
 graph of Figure~\ref{fg:extrap} plots artificial data for outcome $Y$
 on the vertical axis and a pretreatment covariate $X$ on the
 horizontal axis.  This data set was designed to best illustrate the
-problem, not to be realistic; in real examples, aspects of the problem
-we portray here often appear, but they may be more difficult to see
-given the simultaneous presence of other methodological problems.  In
-this figure, each data point is plotted as a ``T'' for treated units
-($t_i=1$) and ``C'' for control units ($t_i=0$).  We then fit two
-regressions to these data.  The first is a linear regression of $Y$ on
-a constant, $t$, and $X$: $E(Y_i|X_i,t_i)=\alpha + t_i\beta +
-X_i\gamma$.  The fitted values for this regression are portrayed in
-two parallel solid lines, the dark solid line for the treated group,
+problem; in real examples, aspects of the problem we portray here
+often appear, but they may be more difficult to see given the
+simultaneous presence of other methodological problems.  In addition,
+although a good data analyst could easily identify outliers in this
+one-dimensional case, doing so is harder in the usual situation with
+many covariates.  In this figure, each data point is plotted as a
+``T'' for treated units ($t_i=1$) and ``C'' for control units
+($t_i=0$).  We then fit two regressions to these data.  The first is a
+linear regression of $Y$ on a constant, $t$, and $X$:
+$E(Y_i|X_i,t_i)=\alpha + t_i\beta + X_i\gamma$.  The fitted values for
+this regression are portrayed in two parallel solid lines, the dark
+solid line for the treated group,
 $E(Y_i|X_i,t_i=1)=\alpha+\beta+X_i\gamma$, and the gray solid line is
 for the controls, $E(Y_i|X_i,t_i=0)=\alpha+X_i\gamma$.  The positive
 vertical distance between the two straight lines is this parametric
@@ -829,10 +829,13 @@ alternative models, we mean models that fit the data reasonably well
 and, in particular, they fit about equally well around either the
 ``center'' of the data (such as a multivariate mean or median) or the
 center of a sufficiently large cluster of data nearest the
-counterfactual $x$ of interest.''  In practice, of course, additional
-model dependence will occur when models are chosen that do not fit the
-data.  The left graph in Figure \ref{fg:extrap} obviously combines
-both sources of model dependence.
+counterfactual $x$ of interest.''  In our case, the predicted outcome
+values are predicted potential outcomes, $Y(0)$ and $Y(1)$, which in
+our framework can be modeled separately at the parametric stage, and
+each of which may have issues with model dependence.  In practice, of
+course, additional model dependence will occur when models are chosen
+that do not fit the data.  The left graph in Figure \ref{fg:extrap}
+obviously combines both sources of model dependence.
 
 \section{Nonparametric Preprocessing} \label{s:nonparpreproc}
 
@@ -950,17 +953,22 @@ evidence to the contrary in real analyses.  For the same reason
 scholars rarely use an unadjusted difference in means to analyze
 randomized data, they should not use it in inexact matched data.
 Thus, we recommend that scholars make use of our decades of experience
-with parametric models to adjust (i.e., to interpolate or extrapolate)
-the matched sample.  The adjustment necessary is far less onerous,
-model dependent, and thus much more empirical than what would be
-necessary without matching.
+with parametric models to adjust (i.e., to interpolate or slightly
+extrapolate) the matched sample.  The adjustment necessary is far less
+onerous, model dependent, and thus much more empirical than what would
+be necessary without matching.
 
 \paragraph{Illustration}
 We now offer an example, in the right graph in Figure~\ref{fg:extrap},
 of the reduction in model dependence produced by matching that is not
 exact.  The data in this panel is the same as that for which the
 parametric analyses in the left graph gives highly model-dependent
-results.  The difference is that the matching procedure deleted the
+results.  This is merely an illustration, easy to see in this
+one-dimensional case, of patterns that would be difficult to detect
+without matching in the data sets with many variables and other
+methodological issues.
+
+The difference is that the matching procedure deleted the
 observations that would require substantial extrapolation (marked as
 gray C's) and produces imbalance.  With these deletions, the data set
 is now highly balanced, and as such the linear model and the quadratic
@@ -992,7 +1000,7 @@ efficiency of estimates even while reducing bias.  This may seem like
 a strange situation, and would seem to violate a first principle of
 statistics, informally described as ``more data are better''.
 However, more data are in fact better only when using an estimator
-that is ``self-efficient'' \citet{MenRom03}, which roughly speaking is
+that is ``self-efficient'' \citep{MenRom03}, which roughly speaking is
 an estimator which is based on a model that is correct (or
 sufficiently correct to make use of more data to improve inferences).
 Estimators that are not self-efficient can have variance reductions
@@ -1071,7 +1079,12 @@ Although this point is often misunderstood (such as by occasional
 mistaken claims in the literature that differences across matching
 solutions should contribute to uncertainty estimates), matching
 solutions with suboptimal balance are in fact irrelevant and should
-play no part in our ultimate inferences.
+play no part in our ultimate inferences.\footnote{If uncertainty
+  remains about how to measure balance, and several solutions have
+  almost the same balance, then one might wish to include this in our
+  uncertainty estimates, but the decision to do so is a normative one
+  and should be left to the investigator, since all uncertainty
+  estimation techniques excludes some sources of uncertainty.}
 
 To ensure that selection during preprocessing depends only on $X$ (to
 prevent inducing bias), the outcome variable $y$ should not be
@@ -1199,7 +1212,7 @@ fundamental to making good practical use of this important concept.
 Theoretically, the true propensity score is valuable because it is a
 ``balancing score,'' meaning that if the treatment and control groups
 have identical propensity score distributions, then all the covariates
-will be balanced between the two.  In addition, if treatment
+will be balanced between the two groups.  In addition, if treatment
 assignment is strongly ignorable given the covariates $X$, then it is
 also ignorable given only the propensity score.  This means that
 matching can be done using just the one-dimensional propensity score,
@@ -1529,20 +1542,22 @@ data set without preprocessing.  This can include the same
 maximization algorithms, the same software, the same model checking
 and fit procedures, and the same methods of computing and interpreting
 quantities of interest.  The only reason to change these procedures is
-best practice at statistical modeling were not followed, such as
+if best practices in statistical modeling were not followed, such as
 forgetting to focus on a single causal variable at a time, not
-avoiding post-treatment bias, etc.\footnote{The one exception that
-  would suggest a change from standard parametric data analysis
-  procedures is that, for subclassification, the parametric analysis
-  should be conducted separately within each subclass, and the results
-  combined by taking a weighted average (with weights based on the
-  number of units in each subclass), or, if insufficient observations
-  exist within each subclass, fit an overall model with fixed or
-  random effects for the subclasses \citep{ImaDyk04}.}  Using
-preprocessed data should reduce model dependence, and this too is
-worth checking: as one should even without preprocessing, we should
-check the sensitivity of causal effect estimates to changes in the
-specification.
+avoiding post-treatment bias, etc.\footnote{Standard parametric data
+  analysis procedures only need to be changed when using
+  subclassification, full matching, or matching with replacement.  In
+  the latter two we must use weights to ensure that the parametric
+  analysis reflects the actual observations.  For subclassification,
+  parametric analyses should be conducted separately within each
+  subclass, and the results combined by taking a weighted average
+  (with weights based on the number of units in each subclass), or, if
+  insufficient observations exist within each subclass, fit an overall
+  model with fixed or random effects for the subclasses
+  \citep{ImaDyk04}.}  Using preprocessed data should reduce model
+dependence, and this too is worth checking: as one should even without
+preprocessing, we should check the sensitivity of causal effect
+estimates to changes in the specification.
 
 \paragraph{Computing Uncertainty Estimates}
 
@@ -1553,13 +1568,13 @@ understanding a fundamental difference in perspectives that is rarely
 discussed.  Neither perspective is right or wrong, and each is useful
 in some circumstances.  
 
-Some in the literature match and then set as their goal producing
-variance estimators by making as few assumptions as possible.  The
-variance estimates are from point estimators based on a simple
-difference in means, or difference in means with bias adjustment,
-following matching.  This nonparametric strategy that tends to produce
-accurate, but often complicated and application-specific, variance
-estimators \citep[e.g.,][]{AbaImb05}.
+In the matching literature, some proposed nonparametric estimators ---
+such as a difference in means with bias adjustment --- are used to
+estimate the average treatment effect after matching.  Since the goal
+of nonparametric estimation is to make as few assumptions as possible,
+the variance estimation as well as point estimation tend to be based
+on complicated and sometimes application-specific procedures
+\citep[e.g.,][]{AbaImb05}.
 
 In contrast, our perspective (which is similar to the special cases
 analyzed by some statisticians; e.g., \citealt{RubTho00}) is to begin
@@ -1568,11 +1583,11 @@ form of parametric (usually regression-type) model.  We then ask how
 matching as preprocessing can improve this current practice.  Thus,
 since social scientists are already making parameteric assumptions, we
 do not ask anyone to change their assumptions and we do not reduce
-them either; we merely ask how to compute variance estimate in social
+them either; we merely ask how to compute variance estimates in social
 scientists' current parameteric models if the data are also
-preprocessed.  The answer turns out to be simple and the estimator
-highly convenient: use the same variance estimator as one would
-normally do in using a parametric analysis.
+preprocessed.  The answer turns out to be simple: use the same
+variance estimator as one would normally do in using a parametric
+analysis.
 
 We thus take advantage of a common feature of all of the methods of
 computing uncertainty estimates associated with regression-type
@@ -1924,8 +1939,8 @@ The original data include 853 visible Republican male candidates,
 compared to only 350 invisible ones.  We therefore redefine the
 treatment to examine the impact of being invisible on those 350
 candidates.  Through experimentation, we find that propensity score
-matching improves balance substantially.  We estimate propensity score
-via a logistic regression of visibility on all six pretreatment
+matching improves balance substantially.  We estimate the propensity
+score via a logistic regression of visibility on all six pretreatment
 covariates.  We conduct an optimal one-to-one nearest neighbor
 matching based on the estimated propensity score, resulting in 350
 visible candidates matched with 350 invisible candidates.  As
@@ -2042,8 +2057,8 @@ matching procedures, no choices are open to the analyst.  Instead,
 researchers should merely run as many as possible and choose by
 maximizing balance.  Unlike parametric modeling exercises, we need not
 choose this matching procedure or another; we merely run as many as
-feasible, or likely to reduce bias and model dependence, and apply
-this criterion.
+feasible, particularly those most likely to reduce bias and model
+dependence, and apply this criterion.
 
 Finally, by dropping observations, we may wind up losing some
 critically important cases or may change either the information base
