@@ -269,17 +269,18 @@ election would obviously control away, and thus bias, the estimated
 incumbency effect.  This ``post-treatment bias'' problem is far too
 common in many areas of political science \citep{KinZen06b}.
 
-To clarify our inferential goals, we begin by defining the ``realized
-causal effect,'' which is the simplest definition available, in that
-it is the closest to the data.  We then generalize the definition to
-include features of random causal effects that are useful for
-understanding connections between nonparametric preprocessing and
-parametric models, define causal effects of interest at the population
-level, and discuss multiple and nonbinary treatments.   Appendix
-\ref{s:connect} discusses connections between causal inference and the
-literatures on missing data and ecological inference.
+To clarify our inferential goals, we begin by defining the ``fixed
+causal effect,'' which is the simplest insample definition available,
+in that it is the closest to the data.  We then generalize the
+definition to include features of random causal effects that are
+useful for understanding connections between nonparametric
+preprocessing and parametric models, define causal effects of interest
+at the population level, and discuss multiple and nonbinary
+treatments.  Appendix \ref{s:connect} discusses connections between
+causal inference and the literatures on missing data and ecological
+inference.
 
-\paragraph{Realized Causal Effects}
+\paragraph{Fixed Causal Effects}
 Because of pretreatment differences among the districts (both
 measured, $X_i$, and unmeasured), the causal effect may also differ
 across the districts.  We therefore define the casual effect at the
@@ -300,10 +301,10 @@ potential outcomes, their values remain the same regardless of whether
 the treatment is in fact applied in district $i$ or not.
 
 The difference between the two potential outcomes defines the simplest
-realized (or fixed) definition of a causal effect:
+fixed (or unit specific) definition of a causal effect:
 \begin{equation}
   \label{rce}
-  \text{(Realized causal effect for unit $i$)} = y_i(1) - y_i(0).
+  \text{(Fixed causal effect for unit $i$)} = y_i(1) - y_i(0).
 \end{equation}
 (This quantity is an unobserved realization of a random variable to be
 defined below.)  Since the Democratic Party will either nominate
@@ -328,16 +329,16 @@ causal effect:
 \begin{align}
   \label{meance} \text{(Mean Causal Effect)}
   &= E(\text{Random Causal Effect})\\
-  &= E[Y(1) - Y(0)]\\ \notag &= \mu(1) - \mu(0),
+  &= E[Y_i(1) - Y_i(0)]\\ \notag &= \mu_1 - \mu_0,
 \end{align}
-where $\mu(1)\equiv E[Y(1)]$ and $\mu(0)\equiv E[Y(0)]$.
+where $\mu_1\equiv E[Y_i(1)]$ and $\mu_0\equiv E[Y_i(0)]$.
 
 \paragraph{Average Quantities of Interest}
 In most applications, estimating the treatment effect for each
 observation is unnecessary; instead, the goal is to estimate the
 average effect over all observations, for some subset of observations,
 or for a particular population.  This leads to several choices for
-quantities of interest, each of which is defined for either realized
+quantities of interest, each of which is defined for either fixed
 (in-sample) or population causal effects.  We focus on in-sample
 effects --- i.e., based on quantities of interest for all or a subset
 of units in our data --- since they are closer to our data than
@@ -350,22 +351,24 @@ Among in-sample effects, we consider two choices.  The first is the
 average treatment effect or ATE:
 \begin{align}
   \label{pate}
-  \text{ATE} & = \frac{1}{n}\sum_{i=1}^n E[Y_i(1) - Y_i(0)|X_i] \notag\\
-  &  = \frac{1}{n}\sum_{i=1}^n[\mu_i(1) - \mu_i(0)|X_i],
+  \text{ATE} & = \frac{1}{n}\sum_{i=1}^n E[Y_i(1) - Y_i(0)\mid X_i] \notag\\
+  &  = \frac{1}{n}\sum_{i=1}^n \mu_1(X_i) - \mu_0(X_i),
 \end{align}
-which is the mean causal effect for unit $i$ averaged over all units
-(so that the expected value operator in the first line averages over
-the random causal effects for each unit, and the summation over $i$ in
-both refers to the observed sample), or equivalently the average of
-the random causal effect.
+where $\mu_0(X_i)\equiv E(Y_i(0)\mid X_i)$ and $\mu_1(X_i)\equiv
+E(Y_i(1)\mid X_i)$. This quantity is the mean causal effect for a unit
+whose characteristics are represented by $X_i$, averaged over all
+units (so that the expectation operator in the first line averages
+over the random causal effects for each unit with the values of the
+pretreatment variable equal to $X_i$, and the summation over $i$ in
+both lines refers to the observed sample).
 
 Often of more interest substantively is the average treatment effect
 on the treated, or ATT:
 \begin{align}
   \label{att}
   \text{ATT} & = \frac{1}{\sum_{i=1}^n t_i}\sum_{i:t_i=1} E[Y_i(1) -
-  Y_i(0)|X_i]\notag\\ 
-  & = \frac{1}{\sum_{i=1}^n t_i}\sum_{i:t_i=1}[\mu_i(1) - \mu_i(0)|X_i],
+  Y_i(0)\mid X_i]\notag\\ 
+  & = \frac{1}{\sum_{i=1}^n t_i}\sum_{i:t_i=1} \mu_1(X_i) - \mu_0(X_i).
 \end{align}
 In our running example, this is the average causal effect in districts
 in which the Democratic Party nominated the incumbent member of the
@@ -389,21 +392,19 @@ the ATE.  If causal effects are constant over $i$, then the ATT and
 the ATE are identical.
 
 We can derive quantities of interest even closer to the data than the
-ATE and ATT by conditioning each on $y_i$.  The result is that one of
-the two potential outcomes, $Y_i(1)$ and $Y_i(0)$, corresponding to
-the actual treatment, is replaced by $y_i$ for each $i$.  Then only
-the mean of the counterfactual outcome, $\mu_i(1)$ or $\mu_i(0)$, is
-estimated and the other is set to the observed $y_i$.  These
-\emph{conditional} ATE and ATT quantities are reasonable alternatives
-that we often use.  In addition, to change sample to population causal
-effects for the ATE we can average over the population, and for the
-ATT we average over individuals in the population times their
-probabilities of receiving treatment.  Point estimates for population
-and sample are normally identical, although the variances for the
-population estimates would be larger.  Different types of causal
-effects are then distinguished by three choices: ATE or ATT,
-conditional or unconditional, and sample or population.  We normally
-choose conditional-sample estimates of the ATE or ATT.
+ATE and ATT by conditioning each on $y_i$.  The result is that
+$Y_i(1)$ and $Y_i(0)$ are replaced by $y_i(1)$ and $y_i(0)$, for each
+$i$.  Then only one of the counterfactual outcome, $y_i(1)$ or
+$y_i(0)$, is estimated and the other is set to the observed $y_i$.
+These \emph{conditional} ATE and ATT quantities are reasonable
+alternatives that we often use.  In addition, to change sample to
+population causal effects for the ATE, we can average it over the
+population distribution of $X_i$, and for the ATT we average it over
+the conditional distribution of $X_i$ given $T_i=1$. Point estimates
+for population and sample are normally identical, although the
+variances for the population estimates would be larger.  Different
+types of causal effects are then distinguished by three choices: ATE
+or ATT, conditional or unconditional, and sample or population.
 
 \paragraph{Non-Binary and Multiple Treatments}
 
