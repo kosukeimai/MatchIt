@@ -441,12 +441,12 @@ Valid and relatively straightforward causal inferences can be achieved
 via classical randomized experiments.  Such experiments have three
 critical features: (1) \emph{random selection} of units to be observed
 from a given population, (2) \emph{random assignment} of values of the
-treatment to each observed unit,\footnote{We assume below a classical
-  randomized experiment where random assignment is complete rather
-  than within fixed strata defined by other variables.  If treatment
-  assignment depends on observed values of the covariates, those
-  covariates need to be conditioned on in subsequent analyses.} and
-(3) a \emph{large $n$}.  
+treatment to each observed unit,\footnote{Below, we assume a classical
+  randomized experiment with a simple random assignment rather than a
+  random assignment based on some pretreatment covariates.  If
+  treatment assignment depends on observed values of the covariates,
+  those covariates need to be conditioned on in subsequent analyses.}
+and (3) a \emph{large $n$ (sample size)}.
 
 Feature (1) avoids selection bias by identifying a given population
 and guaranteeing that the probability of selection from this
@@ -462,7 +462,7 @@ causally prior to $t_i$, empirically related to $t_i$, and affects
 $y_i$ conditional on $t_i$.  If instead one or more of the three
 conditions do not hold, then $X_i$ may be omitted without any
 resulting bias (although the variance may increase).  Random
-assignment guarantees that $t_i$ is unrelated to \emph{any} $X_i$,
+assignment guarantees that $t_i$ is independent of \emph{any} $X_i$,
 whether measured or not, except by random chance.  Moreover, the large
 $n$ in Feature (3) guarantees that this chance is vanishingly small.
 
@@ -494,19 +494,17 @@ causal inferences.\footnote{Our definition of ``observational data''
 
 In this paper, we assume data are selected in a manner that does not
 generate selection bias.  Observations need not be selected at random,
-as in an experiment, but the probability of selection must not be
-related to the dependent variable $y$ after taking into account the
-treatment $t$ and pretreatment covariates, $X$.  Whether this
-assumption is satisfied by carefully considering and controlling for
-the sample selection process (as in case-control designs) or by
-changing the quantity of interest to be that reflected by the sample,
-avoiding selection bias is not a trivial matter, and indeed is the
-subject of a great deal of concern and study in a large variety of
-methodological and substantive literatures.  We mention it here to
-emphasize that all the well-known concerns about selecting on the
-dependent variable should remain a concern to researchers even when
-adopting our approach of preprocessing data via nonparametric matching
-procedures.
+as in an experiment, but the probability of selection must not depend
+on potential outcomes.  Whether this assumption is satisfied by
+carefully considering and controlling for the sample selection process
+(as in case-control designs) or by changing the quantity of interest
+to be that reflected by the sample, avoiding selection bias is not a
+trivial matter, and indeed is the subject of a great deal of concern
+and study in a large variety of methodological and substantive
+literatures.  We mention it here to emphasize that all the well-known
+concerns about selecting on the dependent variable should remain a
+concern to researchers even when adopting our approach of
+preprocessing data via nonparametric matching procedures.
 
 We also assume that a researcher analyzing observational data has
 sufficient information in their measured pretreatment control
@@ -514,7 +512,7 @@ variables $X$ so that it is possible via \emph{some} method to make
 valid causal inferences.  This is known in political methodology and
 econometrics as the absence of ``omitted variable bias,'' so that
 $X_i$ must include all variables that are causally prior to $t_i$,
-associated with $t_i$, and affect $Y_i$ conditional on $t_i$
+associated with $t_i$, and affect $y_i$ conditional on $t_i$
 \citep{Goldberger91,KinKeoVer94}, or ``selection on observables''
 \citep{HecRob85}.  In statistics, this same condition is known as
 ``ignorability,'' which means that $t_i$ and the unobserved potential
@@ -531,15 +529,15 @@ control for variables that are not measured.
 
 In the context of the no selection or omitted variable bias
 assumptions, we have implicitly made three others that are worth
-additional emphasis here.  First, the pretreatment covariates $X$ are
-truly pretreatment and are thus not consequences of $t$.  Second, we
-assume the independence of units, which is the equivalent of assuming
-the absence of time series or spatial autocorrelation across units (or
-in other words that the two potential outcomes for observation $i$ and
-the treatment for observation $j$ are independent, for all $i\not=j$).
-We have also assumed the treatment administered to each unit is the
-same.  This assumption would be violated in our running example if
-incumbency status meant something different across
+additional emphasis here.  First, the pretreatment covariates $X_i$
+are truly pretreatment and are thus not consequences of $t_i$.
+Second, we assume the independence of units, which is the equivalent
+of assuming the absence of time series or spatial autocorrelation
+across units (or in other words that the two potential outcomes for
+observation $i$ and the treatment for observation $j$ are independent,
+for all $i\not=j$).  We have also assumed the treatment administered
+to each unit is the same.  This assumption would be violated in our
+running example if incumbency status meant something different across
 districts.\footnote{These last two assumptions are sometimes known as
   the ``stable unit treatment value assumption'' or SUTVA
   \citep{Rubin74}.}
