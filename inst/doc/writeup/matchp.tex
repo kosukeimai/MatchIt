@@ -553,21 +553,22 @@ Researchers willing to assume that a particular parametric model (up
 to some unknown parameters) generated their data should specify and
 directly estimate this model.  Preprocessing data with matching
 procedures will not help in this situation.  Of course, few
-researchers with real observational data sets have this kind of
-knowledge and as a result some choices need to be made among the range
-of possible parametric models.  The dilemma is that although
-researchers using parametric methods do not know the true parametric
-model, they must proceed as if they do.
+researchers with observational data sets have this kind of knowledge
+and as a result some choices need to be made among the range of
+possible parametric models.  The dilemma is that although researchers
+using parametric methods do not know the true parametric model, they
+must proceed as if they do.
 
 We begin by specifying a single but general parametric model that
 characterizes the range of models that researchers might choose from.
 The special cases of this model include almost all parametric models
 that have been used in the social sciences.  First, define the chosen
-stochastic component for the model as $Y_i \sim p(\mu_i,\theta)$ for
-probability density $p(\cdot)$, mean $\mu_i$, and vector of ancillary
-parameters $\theta$.  Then, denote the systematic component as
-$\mu_i\equiv E(Y_i|t_i,X_i)=g(\alpha + t_i\beta + X_i\gamma)$ for some
-specified functional form $g(\cdot)$ and with intercept $\alpha$ and
+stochastic component for the model as $Y_i\mid t_i, X_i \sim
+p(\mu(t_i,X_i),\theta)$ for probability density $p(\cdot)$, mean
+$\mu(t_i,X_i)$, and vector of ancillary parameters $\theta$.  Then,
+denote the systematic component as $\mu(t_i,X_i)\equiv E(Y_i\mid
+t_i,X_i)=g(\alpha + t_i\beta + X_i\gamma)$ for some specified
+functional form $g(\cdot)$ and with intercept $\alpha$ and
 coefficients $\beta$ and $\gamma$.  The ancillary parameters may also
 be specified to vary over observations as a function of $X_i$ or other
 covariates.  This framework includes all generalized linear models
@@ -581,8 +582,8 @@ definitions of the potential outcomes from the systematic component,
 with $t_i$ taking on values 1 and 0 respectively:
 \begin{align}
   \label{matt}
-\mu_i(1)&\equiv E(Y_i(1)|t_i=1,X_i)= g(\alpha + \beta + X_i\gamma),\notag \\
-\mu_i(0)&\equiv E(Y_i(0)|t_i=0,X_i) = g(\alpha + X_i\gamma).
+\mu_1(X_i) &\equiv E(Y_i(1)\mid t_i=1,X_i)= g(\alpha + \beta + X_i\gamma),\notag \\
+\mu_0(X_i) &\equiv E(Y_i(0)\mid t_i=0,X_i) = g(\alpha + X_i\gamma).
 \end{align}
 We can produce estimates of these quantities by assuming independence
 over observations, and forming a likelihood function
@@ -602,13 +603,14 @@ model dependence.
 \subsection{Experimental Data}\label{s:paraexp}
 
 In experimental data, random assignment guarantees (among other
-things) that $t$ and (any observed or unobserved) $X$ are independent.
-In this situation, $X$ cannot be a confounding factor when estimating
-the effect of $t$ and so we drop $X$ and replace  (\ref{matt}) with
+things) that $t_i$ and (any observed or unobserved) $X_i$ are
+independent.  In this situation, $X_i$ cannot be a confounding factor
+when estimating the effect of $t_i$ and so we drop $X$ and replace
+(\ref{matt}) with
 \begin{align}
   \label{smatt}
-  E[Y_i(1)|t_i=1] &\equiv \mu_i(1) = g(\alpha + \beta)\notag \\
-  E[Y_i(0)|t_i=0] &\equiv \mu_i(0) = g(\alpha)
+  E[Y_i(1)\mid t_i=1] &\equiv \mu_1 = g(\alpha + \beta)\notag \\
+  E[Y_i(0)\mid t_i=0] &\equiv \mu_0 = g(\alpha)
 \end{align}
 and the average treatment effect on the treated in (\ref{att}) as
 \begin{equation}
@@ -620,7 +622,7 @@ which importantly no longer has a summation sign over $i$.
 The systematic components in (\ref{smatt}) are now scalar constants
 for all $i$.  This is a key result, since the functional form
 $g(\cdot)$ no longer models a high dimensional space representing how
-the mean varies over $i$ as a function of all the variables in $X$,
+the mean varies over $i$ as a function of all the variables in $X_i$,
 but instead now merely amounts to a simple scalar reparameterization.
 The fact that $g(\cdot)$ is now a scalar is central: Since maximum
 likelihood is invariant to reparameterization --- meaning, for
@@ -630,10 +632,10 @@ same as the square root of the MLE of $\alpha^2$
 expected potential outcomes no matter how $g(\cdot)$ is
 defined.\footnote{To rule out degenerate cases such as $g(a)=8$, we
   require that the image of $g(\cdot)$ and the range of the potential
-  outcomes be the same.}  When $\mu$ is a function of $X$, the
-choice of $g(\cdot)$ is a difficult substantive decision typically
-requiring more knowledge than is available.  In contrast, in
-experimental data, because we can now drop $X$, the choice of
+  outcomes be the same.}  When $\mu_0$ and $\mu_1$ are a function of
+$X_i$, the choice of $g(\cdot)$ is a difficult substantive decision
+typically requiring more knowledge than is available.  In contrast, in
+experimental data, because we can now drop $X_i$, the choice of
 $g(\cdot)$ reduces to an easy computational issue with no substantive
 import.  Moreover, given any chosen stochastic component, this result
 holds for a wide range of parametric models, including all the special
@@ -642,8 +644,8 @@ cases of the general model given above.
 Since the specific maximum likelihood estimator of the population mean
 for many common probability densities is merely the sample mean, the
 analysis of classical randomized experiments typically comes down to
-taking the difference in the sample means of $y$ for the treatment and
-control groups.  But even if one chooses to run a parametric model
+taking the difference in the sample means of $y_i$ for the treatment
+and control groups.  But even if one chooses to run a parametric model
 (for reasons of efficiency, conducting conditional inferences, or
 because of knowledge of the functional form), the absence of model
 dependence means that the choice for a functional form will not
@@ -652,14 +654,15 @@ makes for the functional form.
 
 \subsection{Observational Data} \label{s:paraobs}
 
-In experiments, random assignment breaks the link between $t$ and $X$
-and, by so doing, eliminates the problem of model dependence.  When
-analyzing observational data with parametric methods we are not so
-fortunate.  We cannot reduce (\ref{matt}) to (\ref{smatt}) and so are
-left having to model the full functional relationship that connects
-the mean as it varies as a function of $t$ and $X$ over observations.
-Since $X$ is typically multidimensional, this is a surprisingly
-difficult task with rather severe consequences for research practice.
+In experiments, random assignment breaks the link between $t_i$ and
+$X_i$ and, by so doing, eliminates the problem of model dependence.
+When analyzing observational data with parametric methods we are not
+so fortunate.  We cannot reduce (\ref{matt}) to (\ref{smatt}) and so
+are left having to model the full functional relationship that
+connects the mean as it varies as a function of $t_i$ and $X_i$ over
+observations.  Since $X_i$ is typically multidimensional, this is a
+surprisingly difficult task with rather severe consequences for
+research practice.
 
 The problem is the curse of dimensionality and the consequence in
 practice is model dependence.  We begin with the former and for
@@ -734,8 +737,8 @@ prevents any simple parametric solution to the problem.
 
 We first illustrate the problem of sensitivity to model specification,
 and then give a more formal definition of model dependence.  The left
-graph of Figure~\ref{fg:extrap} plots artificial data for outcome $Y$
-on the vertical axis and a pretreatment covariate $X$ on the
+graph of Figure~\ref{fg:extrap} plots artificial data for outcome
+$Y_i$ on the vertical axis and a pretreatment covariate $X_i$ on the
 horizontal axis.  This data set was designed to best illustrate the
 problem; in real examples, aspects of the problem we portray here
 often appear, but they may be more difficult to see given the
@@ -745,12 +748,12 @@ one-dimensional case, doing so is harder in the usual situation with
 many covariates.  In this figure, each data point is plotted as a
 ``T'' for treated units ($t_i=1$) and ``C'' for control units
 ($t_i=0$).  We then fit two regressions to these data.  The first is a
-linear regression of $Y$ on a constant, $t$, and $X$:
-$E(Y_i|X_i,t_i)=\alpha + t_i\beta + X_i\gamma$.  The fitted values for
-this regression are portrayed in two parallel solid lines, the dark
-solid line for the treated group,
-$E(Y_i|X_i,t_i=1)=\alpha+\beta+X_i\gamma$, and the gray solid line is
-for the controls, $E(Y_i|X_i,t_i=0)=\alpha+X_i\gamma$.  The positive
+linear regression of $Y_i$ on a constant, $t_i$, and $X_i$: $E(Y_i\mid
+X_i,t_i)=\alpha + t_i\beta + X_i\gamma$.  The fitted values for this
+regression are portrayed in two parallel solid lines, the dark solid
+line for the treated group, $E(Y_i\mid
+X_i,t_i=1)=\alpha+\beta+X_i\gamma$, and the gray solid line is for the
+controls, $E(Y_i\mid X_i,t_i=0)=\alpha+X_i\gamma$.  The positive
 vertical distance between the two straight lines is this parametric
 model's causal effect estimate.
 
@@ -762,9 +765,9 @@ model's causal effect estimate.
   \caption{Model sensitivity of average treatment effect estimates for
     imbalanced raw and balanced matched data.  This figure presents an
     artificial data set of treated units represented by ``T'' and
-    control units represented by ``C.'' The vertical axis plots $Y$
-    and the horizontal axis plots $X$.  The panels depict estimates of
-    the average treatment effect for a linear and quadratic
+    control units represented by ``C.'' The vertical axis plots $Y_i$
+    and the horizontal axis plots $X_i$.  The panels depict estimates
+    of the average treatment effect for a linear and quadratic
     specification, represented by the difference between parallel
     lines and parabolas, respectively.  Dark lines are fitted to the
     treated points and gray to the controls.  In the raw data, plotted
@@ -772,14 +775,14 @@ model's causal effect estimate.
     range of the treated units, and these outlying control units are
     influential in the parametric models.  In the matched data,
     plotted in the right panel, treated units are matched with control
-    units that are close in $X$ (gray units are discarded) and as a
+    units that are close in $X_i$ (gray units are discarded) and as a
     result treatment effect estimates are similar regardless of model
     specification.}
   \label{fg:extrap}
 \end{figure}
 
 Model dependence is easy to see by also fitting a quadratic model to
-the same data, which merely involves adding an $X^2$ term to the
+the same data, which merely involves adding an $X_i^2$ term to the
 original linear regression.  Fitted values for the quadratic
 regression appear as dashed curves in the same left graph, again gray
 for the controls and solid black for the treated.  Clearly, these fit
@@ -829,12 +832,12 @@ and, in particular, they fit about equally well around either the
 ``center'' of the data (such as a multivariate mean or median) or the
 center of a sufficiently large cluster of data nearest the
 counterfactual $x$ of interest.''  In our case, the predicted outcome
-values are predicted potential outcomes, $Y(0)$ and $Y(1)$, which in
-our framework can be modeled separately at the parametric stage, and
-each of which may have issues with model dependence.  In practice, of
-course, additional model dependence will occur when models are chosen
-that do not fit the data.  The left graph in Figure \ref{fg:extrap}
-obviously combines both sources of model dependence.
+values are predicted potential outcomes, $Y_i(0)$ and $Y_i(1)$, which
+in our framework can be modeled separately at the parametric stage,
+and each of which may have issues with model dependence.  In practice,
+of course, additional model dependence will occur when models are
+chosen that do not fit the data.  The left graph in Figure
+\ref{fg:extrap} obviously combines both sources of model dependence.
 
 \section{Nonparametric Preprocessing} \label{s:nonparpreproc}
 
