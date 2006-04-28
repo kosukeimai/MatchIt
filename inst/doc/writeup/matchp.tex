@@ -246,7 +246,7 @@ incumbency for Democrats in the U.S.\ House of Representatives.  In
 most of the methodological literature on causal inference, researchers
 simplify the exposition by considering only a single dichotomous
 causal (or ``treatment'') variable.  We do the same and label it
-$t_i$, which takes a value of 1 if congressional district $i$
+$T_i$, which takes a value of 1 if congressional district $i$
 ($i=1,\dots,n$) receives the treatment and 0 if $i$ is untreated (the
 ``control condition'').  In our running example, the treatment is
 whether the Democratic incumbent receives the party's nomination in
@@ -287,13 +287,13 @@ across the districts.  We therefore define the casual effect at the
 district (i.e., observation) level.
 
 A causal effect is a function of \emph{potential outcomes}: let
-$y_i(1)\equiv y_i(t_i=1)$ be the vote we would observe in district $i$
+$y_i(1)\equiv y_i(T_i=1)$ be the vote we would observe in district $i$
 in say the 2008 election if in fact the Democratic incumbent receives
-his or her party's nomination (i.e., $t_i=1$), and let $y_i(0)\equiv
-y_i(t_i=0)$ be the vote we would observe if the Democratic Party
-nominates a nonincumbent (i.e., $t_i=0$).  (Each of the potential vote
+his or her party's nomination (i.e., $T_i=1$), and let $y_i(0)\equiv
+y_i(T_i=0)$ be the vote we would observe if the Democratic Party
+nominates a nonincumbent (i.e., $T_i=0$).  (Each of the potential vote
 outcomes in district $i$ is thus a function of the incumbency status
-in the same district, $t_i$, and not a function of candidates in other
+in the same district, $T_i$, and not a function of candidates in other
 districts.)  The use of parentheses in this notation denotes that the
 outcome is potential, and so not necessarily observed, and that it
 depends on the value of the variable in parentheses.  Since these are
@@ -308,7 +308,7 @@ fixed (or unit specific) definition of a causal effect:
 \end{equation}
 (This quantity is an unobserved realization of a random variable to be
 defined below.)  Since the Democratic Party will either nominate
-($t_i=1$) or not nominate ($t_i=0$) an incumbent to run in district
+($T_i=1$) or not nominate ($T_i=0$) an incumbent to run in district
 $i$, one of these potential outcomes is always a counterfactual and
 thus never observed. This is known as the ``fundamental problem of
 causal inference'' \citep{Holland86}.
@@ -366,9 +366,9 @@ Often of more interest substantively is the average treatment effect
 on the treated, or ATT:
 \begin{align}
   \label{att}
-  \text{ATT} & = \frac{1}{\sum_{i=1}^n t_i}\sum_{i:t_i=1} E[Y_i(1) -
+  \text{ATT} & = \frac{1}{\sum_{i=1}^n T_i}\sum_{i=1}^n T_i E[Y_i(1) -
   Y_i(0)\mid X_i]\notag\\ 
-  & = \frac{1}{\sum_{i=1}^n t_i}\sum_{i:t_i=1} \mu_1(X_i) - \mu_0(X_i).
+  & = \frac{1}{\sum_{i=1}^n T_i}\sum_{i=1}^n T_i[\mu_1(X_i) - \mu_0(X_i)].
 \end{align}
 In our running example, this is the average causal effect in districts
 in which the Democratic Party nominated the incumbent member of the
@@ -458,11 +458,11 @@ Random assignment in Feature (2) guarantees the absence of omitted
 variable bias even without any control variables included.  To see
 this, recall that under the usual econometric rules for omitted
 variable bias, a variable $X_i$ must be controlled for if it is
-causally prior to $t_i$, empirically related to $t_i$, and affects
-$y_i$ conditional on $t_i$.  If instead one or more of the three
+causally prior to $T_i$, empirically related to $T_i$, and affects
+$Y_i$ conditional on $T_i$.  If instead one or more of the three
 conditions do not hold, then $X_i$ may be omitted without any
 resulting bias (although the variance may increase).  Random
-assignment guarantees that $t_i$ is independent of \emph{any} $X_i$,
+assignment guarantees that $T_i$ is independent of \emph{any} $X_i$,
 whether measured or not, except by random chance.  Moreover, the large
 $n$ in Feature (3) guarantees that this chance is vanishingly small.
 
@@ -511,11 +511,11 @@ sufficient information in their measured pretreatment control
 variables $X_i$ so that it is possible via \emph{some} method to make
 valid causal inferences.  This is known in political methodology and
 econometrics as the absence of ``omitted variable bias,'' so that
-$X_i$ must include all variables that are causally prior to $t_i$,
-associated with $t_i$, and affect $y_i$ conditional on $t_i$
+$X_i$ must include all variables that are causally prior to $T_i$,
+associated with $T_i$, and affect $Y_i$ conditional on $T_i$
 \citep{Goldberger91,KinKeoVer94}, or ``selection on observables''
 \citep{HecRob85}.  In statistics, this same condition is known as
-``ignorability,'' which means that $t_i$ and the unobserved potential
+``ignorability,'' which means that $T_i$ and the unobserved potential
 outcomes are independent after conditioning on $X_i$ and the observed
 potential outcomes, and so we can literally ignore all unobserved
 variables \citep{Rubin78}.  In biostatistics, it is known as the
@@ -530,7 +530,7 @@ control for variables that are not measured.
 In the context of the no selection or omitted variable bias
 assumptions, we have implicitly made three others that are worth
 additional emphasis here.  First, the pretreatment covariates $X_i$
-are truly pretreatment and are thus not consequences of $t_i$.
+are truly pretreatment and are thus not consequences of $T_i$.
 Second, we assume the independence of units, which is the equivalent
 of assuming the absence of time series or spatial autocorrelation
 across units (or in other words that the two potential outcomes for
@@ -563,11 +563,11 @@ We begin by specifying a single but general parametric model that
 characterizes the range of models that researchers might choose from.
 The special cases of this model include almost all parametric models
 that have been used in the social sciences.  First, define the chosen
-stochastic component for the model as $Y_i\mid t_i, X_i \sim
-p(\mu(t_i,X_i),\theta)$ for probability density $p(\cdot)$, mean
-$\mu(t_i,X_i)$, and vector of ancillary parameters $\theta$.  Then,
-denote the systematic component as $\mu(t_i,X_i)\equiv E(Y_i\mid
-t_i,X_i)=g(\alpha + t_i\beta + X_i\gamma)$ for some specified
+stochastic component for the model as $Y_i\mid T_i, X_i \sim
+p(\mu(T_i,X_i),\theta)$ for probability density $p(\cdot)$, mean
+$\mu(T_i,X_i)$, and vector of ancillary parameters $\theta$.  Then,
+denote the systematic component as $\mu(T_i,X_i)\equiv E(Y_i\mid
+T_i,X_i)=g(\alpha + T_i\beta + X_i\gamma)$ for some specified
 functional form $g(\cdot)$ and with intercept $\alpha$ and
 coefficients $\beta$ and $\gamma$.  The ancillary parameters may also
 be specified to vary over observations as a function of $X_i$ or other
@@ -582,15 +582,15 @@ definitions of the potential outcomes from the systematic component,
 with $t_i$ taking on values 1 and 0 respectively:
 \begin{align}
   \label{matt}
-\mu_1(X_i) &\equiv E(Y_i(1)\mid t_i=1,X_i)= g(\alpha + \beta + X_i\gamma),\notag \\
-\mu_0(X_i) &\equiv E(Y_i(0)\mid t_i=0,X_i) = g(\alpha + X_i\gamma).
+\mu_1(X_i) &\equiv E(Y_i(1)\mid T_i=1,X_i)= g(\alpha + \beta + X_i\gamma),\notag \\
+\mu_0(X_i) &\equiv E(Y_i(0)\mid T_i=0,X_i) = g(\alpha + X_i\gamma).
 \end{align}
 We can produce estimates of these quantities by assuming independence
 over observations, and forming a likelihood function
 \begin{equation}
   \label{lik}
-  L(\alpha,\beta,\gamma,\theta|y, t, X) = \prod_{i=1}^n 
-  p\left(y_i \mid g(\alpha + t_i\beta + X_i\gamma), \theta\right),
+  L(\alpha,\beta,\gamma,\theta\mid Y, T, X) = \prod_{i=1}^n 
+  p\left(Y_i \mid g(\alpha + T_i\beta + X_i\gamma), \theta\right),
 \end{equation}
 the maximum of which gives parameter estimates, or via Bayesian or
 other inferential methods.
@@ -603,14 +603,14 @@ model dependence.
 \subsection{Experimental Data}\label{s:paraexp}
 
 In experimental data, random assignment guarantees (among other
-things) that $t_i$ and (any observed or unobserved) $X_i$ are
+things) that $T_i$ and (any observed or unobserved) $X_i$ are
 independent.  In this situation, $X_i$ cannot be a confounding factor
-when estimating the effect of $t_i$ and so we drop $X$ and replace
+when estimating the effect of $T_i$ and so we drop $X_i$ and replace
 (\ref{matt}) with
 \begin{align}
   \label{smatt}
-  E[Y_i(1)\mid t_i=1] &\equiv \mu_1 = g(\alpha + \beta)\notag \\
-  E[Y_i(0)\mid t_i=0] &\equiv \mu_0 = g(\alpha)
+  E[Y_i(1)\mid T_i=1] &\equiv \mu_1 = g(\alpha + \beta)\notag \\
+  E[Y_i(0)\mid T_i=0] &\equiv \mu_0 = g(\alpha)
 \end{align}
 and the average treatment effect on the treated in (\ref{att}) as
 \begin{equation}
@@ -644,7 +644,7 @@ cases of the general model given above.
 Since the specific maximum likelihood estimator of the population mean
 for many common probability densities is merely the sample mean, the
 analysis of classical randomized experiments typically comes down to
-taking the difference in the sample means of $y_i$ for the treatment
+taking the difference in the sample means of $Y_i$ for the treatment
 and control groups.  But even if one chooses to run a parametric model
 (for reasons of efficiency, conducting conditional inferences, or
 because of knowledge of the functional form), the absence of model
@@ -654,12 +654,12 @@ makes for the functional form.
 
 \subsection{Observational Data} \label{s:paraobs}
 
-In experiments, random assignment breaks the link between $t_i$ and
+In experiments, random assignment breaks the link between $T_i$ and
 $X_i$ and, by so doing, eliminates the problem of model dependence.
 When analyzing observational data with parametric methods we are not
 so fortunate.  We cannot reduce (\ref{matt}) to (\ref{smatt}) and so
 are left having to model the full functional relationship that
-connects the mean as it varies as a function of $t_i$ and $X_i$ over
+connects the mean as it varies as a function of $T_i$ and $X_i$ over
 observations.  Since $X_i$ is typically multidimensional, this is a
 surprisingly difficult task with rather severe consequences for
 research practice.
@@ -746,14 +746,14 @@ simultaneous presence of other methodological problems.  In addition,
 although a good data analyst could easily identify outliers in this
 one-dimensional case, doing so is harder in the usual situation with
 many covariates.  In this figure, each data point is plotted as a
-``T'' for treated units ($t_i=1$) and ``C'' for control units
-($t_i=0$).  We then fit two regressions to these data.  The first is a
-linear regression of $Y_i$ on a constant, $t_i$, and $X_i$: $E(Y_i\mid
-X_i,t_i)=\alpha + t_i\beta + X_i\gamma$.  The fitted values for this
+``T'' for treated units ($T_i=1$) and ``C'' for control units
+($T_i=0$).  We then fit two regressions to these data.  The first is a
+linear regression of $Y_i$ on a constant, $T_i$, and $X_i$: $E(Y_i\mid
+X_i,T_i)=\alpha + T_i\beta + X_i\gamma$.  The fitted values for this
 regression are portrayed in two parallel solid lines, the dark solid
-line for the treated group, $E(Y_i\mid
-X_i,t_i=1)=\alpha+\beta+X_i\gamma$, and the gray solid line is for the
-controls, $E(Y_i\mid X_i,t_i=0)=\alpha+X_i\gamma$.  The positive
+line for the treated group, $E(Y_i\mid X_i,
+T_i=1)=\alpha+\beta+X_i\gamma$, and the gray solid line is for the
+controls, $E(Y_i\mid X_i,T_i=0)=\alpha+X_i\gamma$.  The positive
 vertical distance between the two straight lines is this parametric
 model's causal effect estimate.
 
@@ -843,9 +843,9 @@ chosen that do not fit the data.  The left graph in Figure
 
 The goal of matching in general and our specific nonparametric
 preprocessing approach in particular is to adjust the data prior to
-the parametric analysis so that (1) the relationship between $t_i$ and
+the parametric analysis so that (1) the relationship between $T_i$ and
 $X_i$ is eliminated or reduced, and (2) little bias and inefficiency
-is induced.  If we are able to adjust the data so that $t_i$ and $X_i$
+is induced.  If we are able to adjust the data so that $T_i$ and $X_i$
 are completely unrelated (which makes the control and treatment groups
 identical with respect to $X_i$), we will have moved a good deal of
 the way from Section~\ref{s:paraobs} to Section~\ref{s:paraexp}.  An
@@ -855,7 +855,7 @@ variable and the multidimensional $X_i$.  This also eliminates an
 important source of model dependence in the resulting parametric
 analysis stemming from the functional form specification and the curse
 of dimensionality.  For data sets where preprocessing reduces the
-extent of the relationship between $t_i$ and $X_i$, but is unable to
+extent of the relationship between $T_i$ and $X_i$, but is unable to
 make them completely unrelated, model dependence is not eliminated but
 will normally be greatly reduced.  If nonparametric preprocessing
 results in no reduction of model dependence, then it is likely that
@@ -867,56 +867,56 @@ How can we adjust the data without inducing bias in our causal
 estimates?  The key to this problem is that the fundamental rule for
 avoiding selection bias --- not selecting on the dependent variable
 --- does not prevent us from selecting observations on the explanatory
-variables ($t_i$ or $X_i$).  (Random or other physical assignments
+variables ($T_i$ or $X_i$).  (Random or other physical assignments
 that depend on observed covariates, such as matched pair or randomized
 block designs, in experiments and stratified sampling in surveys are
 other examples of valid data collection mechanisms that select
 observations given chosen values of the explanatory variables.)  We
 can also select, duplicate, or selectively drop observations from an
 existing sample without bias, as long as we do so using a rule that is
-a function only of $t_i$ and $X_i$.  Our preprocessed dataset will
+a function only of $T_i$ and $X_i$.  Our preprocessed dataset will
 therefore include a selected subset of the observed sample for which
-$t_i$ and $X_i$ are unrelated, meaning that the treatment and control
+$T_i$ and $X_i$ are unrelated, meaning that the treatment and control
 groups have the same background characteristics, or in other words
 that this relationship holds:
 \begin{equation}
   \label{balance}
-  \tilde p(X_i\mid t_i=1) = \tilde p(X_i\mid t_i=0),
+  \tilde p(X_i\mid T_i=1) = \tilde p(X_i\mid T_i=0),
 \end{equation}
 where $\tilde p$ refers to the observed empirical density of the data,
 rather than a population density.\footnote{To be more specific, the
   empirical density is defined as $\tilde p(x) = \# \{ i\in \{1, 2,
   \dots, n \}: X_i = x \} / n$, for all $x$, where $\#A$ is the number
   of elements in the set $A$.  The denominator in (\ref{balance}) is
-  $\sum_{i=1}^n t_i$ on the left side and $\sum_{i=1}^n (1-t_i)$ on
+  $\sum_{i=1}^n T_i$ on the left side and $\sum_{i=1}^n (1-T_i)$ on
   the right.}  The simplest (although not necessarily the best) way to
 understand how we can satisfy (\ref{balance}) by preprocessing is via
 \emph{one-to-one exact matching}.  The idea is to match each treated
 unit with one control unit for which all the values of $X_i$ are
 identical.  Our preprocessed dataset thus is the same as the original
 dataset with any unmatched control units discarded, and thus with
-$t_i$ and $X_i$ now independent.  If enough matches are available,
+$T_i$ and $X_i$ now independent.  If enough matches are available,
 this procedure eliminates all dependence on the functional form in the
 parametric analysis.  It is also highly intuitive, since it directly
 parallels an experiment where we find pairs of units that are
 identical in all observable ways and assign one from each pair to be
 treated and the other to be a control.  Then no matter what effect
-$X_i$ has on $y_i$, we can ignore it entirely since $X_i$ is literally
+$X_i$ has on $Y_i$, we can ignore it entirely since $X_i$ is literally
 held constant within each pair of units.\footnote{Formally,
-  ignorability (by which we mean the independence of $t_i$ and the
+  ignorability (by which we mean the independence of $T_i$ and the
   potential outcomes given $X_i$) and balance (i.e., Equation
   \ref{balance}) guarantee valid inferences.  Together they are
-  written as $p(Y_i(0)\mid t_i=1,X_i)=p(Y_i(0)\mid t_i=0,X_i)$ and
-  $p(Y_i(1)\mid t_i=1,X_i)=p(Y_i(1)\mid t_i=0,X_i)$.}
+  written as $p(Y_i(0)\mid T_i=1,X_i)=p(Y_i(0)\mid T_i=0,X_i)$ and
+  $p(Y_i(1)\mid T_i=1,X_i)=p(Y_i(1)\mid T_i=0,X_i)$.}
 
 Although one-to-one exact matching can eliminate model dependence and
 any bias from incorrect assumptions made during the parametric stage
-of analysis, it is not the only way to break the link between $t$ and
-$X$, since satisfying (\ref{balance}) only requires the distributions
-to be equivalent.  Thus, to be clear, \emph{matching does not require
-  pairing observations} (indeed, there might have been less confusion
-if the technique had been called ``pruning''); only the
-\emph{distributions} need be matched as closely as possible.
+of analysis, it is not the only way to break the link between $T_i$
+and $X_i$, since satisfying (\ref{balance}) only requires the
+distributions to be equivalent.  Thus, to be clear, \emph{matching
+  does not require pairing observations} (indeed, there might have
+been less confusion if the technique had been called ``pruning'');
+only the \emph{distributions} need be matched as closely as possible.
 Moreover, exact matching has the disadvantage in many data sets of not
 generating many matches.  The problem is most severe if $X_i$ is high
 dimensional (another effect of the curse of dimensionality) or
@@ -1034,14 +1034,14 @@ observations for which (\ref{balance}) holds, and as a result helps
 parametric models fit better, as well as by removing the dependency
 between the treatment variable and covariates.  We formalize this
 point by considering a simple linear regression with one treatment
-variable, $t_i$, and one covariate, $X_i$.  The variance of the
+variable, $T_i$, and one covariate, $X_i$.  The variance of the
 coefficient for the treatment variable is equal to $\sigma^2/[n
-(1-\gamma) s^2_t]$ where $\sigma^2$ is the conditional variance of the
-dependent variable, $n$ is the number of observations, $s^2_t$ is the
+(1-\gamma) s^2_T]$ where $\sigma^2$ is the conditional variance of the
+dependent variable, $n$ is the number of observations, $s^2_T$ is the
 sample variance of the treatment variable, and $\gamma$ is the
-coefficient from regressing $X_i$ on $t_i$. If matching reduces
+coefficient from regressing $X_i$ on $T_i$. If matching reduces
 heterogeneity, then $\sigma^2$ will become smaller.  If matching
-reduces the dependence between $t_i$ and $X_i$, as is the goal in
+reduces the dependence between $T_i$ and $X_i$, as is the goal in
 reducing bias, then $\gamma$ will be close to zero.  Thus, the
 resulting variance for the treatment effect may become smaller even if
 some observations are dropped.  This suggests that so long as one
@@ -1063,32 +1063,33 @@ guide to the software that accompanies this paper; see Appendix
 \ref{s:matchit}).
 
 The goal of matching is to improve \emph{balance}, the degree to which
-the treatment and control $X$ distributions resemble each other as in
-(\ref{balance}), without losing too many observations in the process.
-The main diagnostic of success is also balance, the specific details
-of which we describe below, as well as the number of observations
-remaining after matching.  Trying different matching methods is not
-like trying different models, some of which are right and some wrong,
-since balance provides a straightforward objective function to
-maximize and choose matching solutions.  Just as we iterate a
-numerical likelihood function to its optimum parameter values (and
-ignore any intermediate parameter values on the way to the MLEs), one
-should try as many matching solutions as possible and choose the
-\emph{one} with the best balance as the final preprocessed data set.
-Although this point is often misunderstood (such as by occasional
-mistaken claims in the literature that differences across matching
-solutions should contribute to uncertainty estimates), matching
-solutions with suboptimal balance are in fact irrelevant and should
-play no part in our ultimate inferences.\footnote{If uncertainty
-  remains about how to measure balance, and several solutions have
-  almost the same balance, then one might wish to include this in our
-  uncertainty estimates, but the decision to do so is a normative one
-  and should be left to the investigator, since all uncertainty
-  estimation techniques excludes some sources of uncertainty.}
+the treatment and control covariate distributions resemble each other
+as in (\ref{balance}), without losing too many observations in the
+process.  The main diagnostic of success is also balance, the specific
+details of which we describe below, as well as the number of
+observations remaining after matching.  Trying different matching
+methods is not like trying different models, some of which are right
+and some wrong, since balance provides a straightforward objective
+function to maximize and choose matching solutions.  Just as we
+iteratively evaluate a likelihood function to its optimal parameter
+values (and ignore any intermediate parameter values on the way to the
+MLEs), one should try as many matching solutions as possible and
+choose the \emph{one} with the best balance as the final preprocessed
+data set.  Although this point is often misunderstood (such as by
+occasional mistaken claims in the literature that differences across
+matching solutions should contribute to uncertainty estimates),
+matching solutions with suboptimal balance are in fact irrelevant and
+should play no part in our ultimate inferences.\footnote{If
+  uncertainty remains about how to measure balance, and several
+  solutions have almost the same balance, then one might wish to
+  include this in our uncertainty estimates, but the decision to do so
+  is a normative one and should be left to the investigator, since all
+  uncertainty estimation techniques excludes some sources of
+  uncertainty.}
 
-To ensure that selection during preprocessing depends only on $X$ (to
-prevent inducing bias), the outcome variable $y$ should not be
-examined during the preprocessing stage.  As long as $y$ is not
+To ensure that selection during preprocessing depends only on $X_i$
+(to prevent inducing bias), the outcome variable $Y_i$ should not be
+examined during the preprocessing stage.  As long as $Y_i$ is not
 consulted and is not part of the rule by which one drops observations,
 preprocessing cannot result in stacking the deck one way or another.
 Experimenters typically follow a similar procedure by repeating
@@ -1104,13 +1105,13 @@ describe this procedure for the ATT, so that matching is designed to
 choose control units that look most like the treated units.
 
 \paragraph{Selecting Covariates}
-All variables in $X$ that would have been included in a parametric
+All variables in $X_i$ that would have been included in a parametric
 model without preprocessing should be included in the matching
 procedure.  By the usual rules for avoiding omitted variable bias
 these should include all variables that affect both the treatment
 assignment and, controlling for the treatment, the dependent variable.
 To avoid post-treatment bias, we should exclude variables affected by
-the treatment.  
+the treatment.
 
 The theoretical literature emphasizes that including variables only
 weakly related to treatment assignment usually reduces bias more than
@@ -1161,8 +1162,8 @@ One approach, developed by \citet{KinZen06b} is to prune observations
 from the control group that are outside of the ``convex hull'' of the
 treatment group.  With one pre-treatment covariate, the convex hull of
 the treatment group is merely the range of the subset of observations
-of $X$ that are in the treatment group (because $t_i=1$), so control
-units with $X$ greater than max($X$) or less than min($X$) are
+of $X$ that are in the treatment group (because $T_i=1$), so control
+units with $X_i$ greater than max($X$) or less than min($X$) are
 discarded.  The general definition of the convex hull (which is more
 sophisticated than the range in multiple dimensions) also works to
 define regions of extrapolation with any number of
@@ -1200,9 +1201,9 @@ matching, use all variables but only approximately matches.
 A commonly used matching procedure is to summarize all the variables
 in $X$ with a single variable called the \emph{propensity score}
 \citep{RosRub83}.  The propensity score is the true probability of
-unit $i$ receiving treatment, given the covariates $X_i$, $e_i(X_i) =
-p(t_i=1 | X_i)$.  It is usually estimated via a logistic regression of
-$t_i$ on a constant term and $X_i$ (without regard to $y$).
+unit $i$ receiving treatment, given the covariates $X_i$, $e(X_i) =
+p(T_i=1 \mid X_i)$.  It is usually estimated via a logistic regression
+of $T_i$ on a constant term and $X_i$ (without regard to $Y_i$).
 Unfortunately, the role of the propensity score in the theoretical
 literature differs profoundly from the way it has been widely used in
 practice.  Understanding this disconnect, an explanation of which to
@@ -1213,8 +1214,8 @@ Theoretically, the true propensity score is valuable because it is a
 ``balancing score,'' meaning that if the treatment and control groups
 have identical propensity score distributions, then all the covariates
 will be balanced between the two groups.  In addition, if treatment
-assignment is strongly ignorable given the covariates $X$, then it is
-also ignorable given only the propensity score.  This means that
+assignment is strongly ignorable given the covariates $X_i$, then it
+is also ignorable given only the propensity score.  This means that
 matching can be done using just the one-dimensional propensity score,
 instead of all of the variables in $X$.  Using the true propensity
 score in this way, as does much of the applied literature, would thus
@@ -1251,7 +1252,7 @@ whether we have satisfied the conditions necessary to use the
 theoretical results about the true or consistently estimated score.
 The goal of matching is to achieve the best balance for a large number
 of observations, using any method of matching that is a function of
-$X$, so long as we do not consult $y$.  As it turns out, and for
+$X_i$, so long as we do not consult $y_i$.  As it turns out, and for
 whatever reason, one such method that researchers sometimes find
 useful in some applications is based on propensity scores.  The reason
 the propensity score approach often works in practice to balance the
@@ -1262,11 +1263,11 @@ literature, only the propensity score tautology is useful in practice.
 Other theoretical results have no direct bearing on practice.
 
 In applications, the usual practice is to estimate the propensity
-score by a logistic regression of $t_i$ on $X_i$.  Since we are in the
-situation where exact matching is insufficient, a common procedure is to
-match each treated unit to the control unit with the most similar
-value of the estimated propensity score $\hat{e}_i$ (which is known as
-nearest neighbor matching on the propensity score).\footnote{When
+score by a logistic regression of $T_i$ on $X_i$.  Since we are in the
+situation where exact matching is insufficient, a common procedure is
+to match each treated unit to the control unit with the most similar
+value of the estimated propensity score $\hat{e}(X_i)$ (which is known
+as nearest neighbor matching on the propensity score).\footnote{When
   matching without replacement, two different approaches of matching
   nearest neighbors are available. The first, known as ``greedy''
   matching, starts with some treated unit and matches the closest
@@ -1354,21 +1355,21 @@ consulting $y$ until the analysis stage.  We assume matching is based
 only on $X$, and checking the number of observations remaining after
 matching is easy.  Thus, the main issue we address in this section and
 the next is how to evaluate balance.  Conceptually, verifying balance
-involves checking whether (\ref{balance}), $\tilde p(X|t=1)=\tilde
-p(X|t=0)$, holds.  One way to think about this process is to imagine,
-for all the variables in $X$, forming a multidimensional histogram for
-all the treated units and comparing it to another multidimensional
-histogram of all the control units.  Because of the curse of
-dimensionality, multidimensional histograms with more than a few
-covariates tend to be very coarse or have many empty bins, and so are
-difficult to evaluate and compare.  Thus researchers usually examine
-various low dimensional summaries instead.  If a low dimensional
-summary differs between the treated and control groups then we know
-(\ref{balance}) does not hold.  The risk of course is that even if the
-treatment and control groups match according to some low dimensional
-summaries, we still cannot be certain that (\ref{balance}) holds since
-it is a multivariate concept, and so using several different checks is
-always a good idea.
+involves checking whether (\ref{balance}), $\tilde p(X_i \mid
+T_i=1)=\tilde p(X_i\mid T_i=0)$, holds.  One way to think about this
+process is to imagine, for all the variables in $X_i$, forming a
+multidimensional histogram for all the treated units and comparing it
+to another multidimensional histogram of all the control units.
+Because of the curse of dimensionality, multidimensional histograms
+with more than a few covariates tend to be very coarse or have many
+empty bins, and so are difficult to evaluate and compare.  Thus
+researchers usually examine various low dimensional summaries instead.
+If a low dimensional summary differs between the treated and control
+groups then we know (\ref{balance}) does not hold.  The risk of course
+is that even if the treatment and control groups match according to
+some low dimensional summaries, we still cannot be certain that
+(\ref{balance}) holds since it is a multivariate concept, and so using
+several different checks is always a good idea.
 
 Here we describe what \citet{ImaKinStu05} call the balance test
 fallacy, which unfortunately afflicts most applications of matching in
@@ -1449,13 +1450,13 @@ line).\footnote{For example, the maximum distance of quantile
   respectively. That is, $\widetilde{F}_{Xt}(x)=\frac{1}{n^*_t}
   \sum_{i=1}^{n^*} {\rm I}_{\{X_i \le x\}} t_i$ and
   $\widetilde{F}_{Xc}(x)=\frac{1}{n^*_c} \sum_{i=1}^{n^*} {\rm
-    I}_{\{X_i \le x\}} (1-t_i)$ where $n^*_t=\sum_{i=1}^{n^*} t_i$ and
-  $n^*_c=\sum_{i=1}^{n^*} (1-t_i)$ are the size of matched treatment
+    I}_{\{X_i \le x\}} (1-T_i)$ where $n^*_t=\sum_{i=1}^{n^*} T_i$ and
+  $n^*_c=\sum_{i=1}^{n^*} (1-T_i)$ are the size of matched treatment
   and matched control groups, $n^*=n^*_t + n^*_c$ is the size of
-  matched data, and ${\rm I}$ denotes the indicator function.} (If one
-wishes to compare the balance across different covariate dimensions,
-then differences in empirical cumulative distribution functions can be
-used, instead.)
+  matched data, and ${\rm I}_{\{\cdot\}}$ denotes the indicator
+  function.} (If one wishes to compare the balance across different
+covariate dimensions, then differences in empirical cumulative
+distribution functions can be used, instead.)
 
 A paradoxical but sometimes useful procedure is to examine the QQ plot
 of the propensity scores of the control and treated units.  This is
@@ -1468,22 +1469,22 @@ examining the variables one at a time.  Indeed, for the reasons discussed
 above, it is often a good low dimensional summary.
 
 The immediate goal of matching is balance, which involves adjusting
-the data set to reduce dependence between $t$ and $X$.  Since for
+the data set to reduce dependence between $T_i$ and $X_i$.  Since for
 feasibility scholars will use one dimensional summaries to substitute
 for the comparison of multidimensional histograms, evaluating balance
 should always be done in multiple ways.  Relying on any one measure to
 assess balance will never be adequate (unless matching is exact).  In
 addition, the ultimate goal of matching is not merely balance, but
 reducing bias and model dependence in estimating the causal effect of
-$t$ on $Y$.  We exclude any information from $Y$ in the matching
+$T_i$ on $Y_i$.  We exclude any information from $Y_i$ in the matching
 procedure so as to avoid selection bias, but the key is that causal
 estimation bias and model dependence is a function of both imbalance
 in our covariates \emph{and} our best prior information about the
-importance of each covariate (the effect of $X$ on $Y$ controlling for
-$t$).  Obtaining good balance on covariates that are likely to be
-important is more crucial than those that have less of an effect since
-important covariates will inflate any remaining imbalance to produce
-more model dependence.  Thus obtaining a good matched data set
+importance of each covariate (the effect of $X_i$ on $Y_i$ controlling
+for $T_i$).  Obtaining good balance on covariates that are likely to
+be important is more crucial than those that have less of an effect
+since important covariates will inflate any remaining imbalance to
+produce more model dependence.  Thus obtaining a good matched data set
 requires careful assessment and evaluation through multiple objective
 functions (none of which involve balance hypothesis tests), as well as
 the combination of the quantitative measures discussed above and
@@ -1497,11 +1498,11 @@ If some covariates are omitted from some of the matching procedures,
 the balance on them should still be checked.  Doing so is often a good
 way to discover that some covariates are indeed important, since
 researchers frequently have good qualitative knowledge of variables
-not coded in $X$, especially in nonsurvey data on countries or regions
-and can check balance qualitatively even when quantitative measures
-are not available to match on \citep[][Ch.3]{Rosenbaum02}.  Indeed,
-preprocessing can help researchers better understand their data when
-supplemented by good qualitative information and research
+not coded in $X_i$, especially in nonsurvey data on countries or
+regions and can check balance qualitatively even when quantitative
+measures are not available to match on \citep[][Ch.3]{Rosenbaum02}.
+Indeed, preprocessing can help researchers better understand their
+data when supplemented by good qualitative information and research
 \citep[e.g.,][]{RosSil01}.
 
 If meeting these criteria for balance proves impossible, we then need
@@ -1529,12 +1530,12 @@ balance, reduced heterogeneity, and a large number of observations
 remaining, the parametric analysis can then proceed.  Unfortunately,
 with few exceptions the parametric analysis chosen in practice by
 applied researchers after matching has been a simple difference in
-means (or the equivalent of a regression of $Y$ on $T$ without any
+means (or the equivalent of a regression of $Y_i$ on $T_i$ without any
 control variables).  This is unfortunate, since the procedure assumes
-that $T$ and $X$ are unrelated.  If the assumption is false, and it is
-false except in the rare case when exact matching is possible for all
-observations, then the result is the same for omitted variable bias
-that occurs whenever a potential confounding variable is ignored.
+that $T_i$ and $X_i$ are unrelated.  If the assumption is false, and
+it is false except in the rare case when exact matching is possible
+for all observations, then the result is the same for omitted variable
+bias that occurs whenever a potential confounding variable is ignored.
 
 Thus, a better procedure is to use the same parametric analysis on the
 preprocessed data as would have been used to analyze the original raw
@@ -1580,19 +1581,19 @@ In contrast, our perspective (which is similar to the special cases
 analyzed by some statisticians; e.g., \citealt{RubTho00}) is to begin
 with what social scientists are now doing, which is estimating some
 form of parametric (usually regression-type) model.  We then ask how
-matching as preprocessing can improve this current practice.  Thus,
-since social scientists are already making parameteric assumptions, we
-do not ask anyone to change their assumptions and we do not reduce
-them either; we merely ask how to compute variance estimates in social
-scientists' current parameteric models if the data are also
-preprocessed.  The answer turns out to be simple: use the same
-variance estimator as one would normally do in using a parametric
-analysis.
+matching as nonparametric preprocessing can improve this current
+practice.  Thus, since social scientists are already making
+parametric assumptions, we do not ask anyone to change their
+assumptions and we do not reduce them either; we merely ask how to
+compute variance estimates in social scientists' current parametric
+models if the data are also preprocessed.  The answer turns out to be
+simple: use the same variance estimator as one would normally do in
+using a parametric analysis.
 
 We thus take advantage of a common feature of all of the methods of
 computing uncertainty estimates associated with regression-type
 parametric methods: They are all conditional on the pretreatment
-variables $X$ (and $t$), which are therefore treated as fixed and
+variables $X_i$ (and $T_i$), which are therefore treated as fixed and
 exogenous.\footnote{These include methods based on using the
   asymptotic normal approximation to the likelihood function, direct
   simulation from the finite sampling distribution or posterior
@@ -1611,13 +1612,14 @@ run the parametric procedure with each unit weighted proportional to
 the number of times it was chosen as a match.)
 
 Thus, when estimating the ATT or ATE, we compute estimates of
-$\mu_i(1)$ and $\mu_i(0)$ and their uncertainty as usual from a
+$\mu_1(X_i)$ and $\mu_0(X_i)$ and their uncertainty as usual from a
 parametric model applied to the preprocessed data.  If computing
 conditional causal effects (either on average over all observations or
-just the average for the treated units), we set $\mu_i(1)=y_i$ if
-$t_i=1$, and use the parametric model to estimate $\mu_i(0)$ and its
-uncertainty, whereas if $t_i=0$, we set $\mu_i(0)=y_i$ and use the
-parametric model to estimate $\mu_i(1)$ and its uncertainty estimate.
+just the average for the treated units), we set $\mu_1(X_i)=y_i$ if
+$t_i=1$, and use the parametric model to estimate $\mu_0(X_i)$ and its
+uncertainty, whereas if $t_i=0$, we set $\mu_0(X_i)=y_i$ and use the
+parametric model to estimate $\mu_1(X_i)$ and its uncertainty
+estimate.
 
 \section{Empirical Illustrations}\label{s:emp}
 
@@ -2052,7 +2054,7 @@ effect estimates to parametric modeling assumptions.  This is not
 normally viewed as a major issue since the right procedure is the one
 that maximizes balance (with $n$ as large as possible), no matter how
 many procedures we try.  By applying this criterion in a disciplined
-way (i.e., without consulting $y$) to a large number of possible
+way (i.e., without consulting $Y$) to a large number of possible
 matching procedures, no choices are open to the analyst.  Instead,
 researchers should merely run as many as possible and choose by
 maximizing balance.  Unlike parametric modeling exercises, we need not
