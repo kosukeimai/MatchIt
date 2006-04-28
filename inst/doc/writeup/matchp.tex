@@ -508,7 +508,7 @@ preprocessing data via nonparametric matching procedures.
 
 We also assume that a researcher analyzing observational data has
 sufficient information in their measured pretreatment control
-variables $X$ so that it is possible via \emph{some} method to make
+variables $X_i$ so that it is possible via \emph{some} method to make
 valid causal inferences.  This is known in political methodology and
 econometrics as the absence of ``omitted variable bias,'' so that
 $X_i$ must include all variables that are causally prior to $t_i$,
@@ -847,8 +847,8 @@ the parametric analysis so that (1) the relationship between $t_i$ and
 $X_i$ is eliminated or reduced, and (2) little bias and inefficiency
 is induced.  If we are able to adjust the data so that $t_i$ and $X_i$
 are completely unrelated (which makes the control and treatment groups
-identical with respect to $X$), we will have moved a good deal of the
-way from Section~\ref{s:paraobs} to Section~\ref{s:paraexp}.  An
+identical with respect to $X_i$), we will have moved a good deal of
+the way from Section~\ref{s:paraobs} to Section~\ref{s:paraexp}.  An
 assumption of ignorability is still necessary, but we would no longer
 need to model the full parametric relationship between the dependent
 variable and the multidimensional $X_i$.  This also eliminates an
@@ -856,8 +856,8 @@ important source of model dependence in the resulting parametric
 analysis stemming from the functional form specification and the curse
 of dimensionality.  For data sets where preprocessing reduces the
 extent of the relationship between $t_i$ and $X_i$, but is unable to
-make them completely independent, model dependence is not eliminated
-but will normally be greatly reduced.  If nonparametric preprocessing
+make them completely unrelated, model dependence is not eliminated but
+will normally be greatly reduced.  If nonparametric preprocessing
 results in no reduction of model dependence, then it is likely that
 the data have little information to support causal inferences by
 \emph{any} method, which of course would also be useful information.
@@ -881,34 +881,33 @@ groups have the same background characteristics, or in other words
 that this relationship holds:
 \begin{equation}
   \label{balance}
-  \tilde p(X\mid t=1) = \tilde p(X\mid t=0),
+  \tilde p(X_i\mid t_i=1) = \tilde p(X_i\mid t_i=0),
 \end{equation}
 where $\tilde p$ refers to the observed empirical density of the data,
 rather than a population density.\footnote{To be more specific, the
   empirical density is defined as $\tilde p(x) = \# \{ i\in \{1, 2,
-  \dots, n \}: X_i = x \} / n$, for all $x$, where $\#\{a\}$ is the
-  number of elements in the set $\{a\}$.  The denominator in
-  (\ref{balance}) is $\sum_{i=1}^n t_i$ on the left side and
-  $\sum_{i=1}^n (1-t_i)$ on the right.}  The simplest (although not
-necessarily the best) way to understand how we can satisfy
-(\ref{balance}) by preprocessing is via \emph{one-to-one exact
-  matching}.  The idea is to match each treated unit with one control
-unit for which all the values of $X_i$ are identical.  Our
-preprocessed dataset thus is the same as the original dataset with any
-unmatched control units discarded, and thus with $t_i$ and $X_i$ now
-independent.  If enough matches are available, this procedure
-eliminates all dependence on the functional form in the parametric
-analysis.  It is also highly intuitive, since it directly parallels an
-experiment where we find pairs of units that are identical in all
-observable ways and assign one from each pair to be treated and the
-other to be a control.  Then no matter what effect $X_i$ has on $y$,
-we can ignore it entirely since $X_i$ is literally held constant
-within each pair of units.\footnote{Formally, ignorability (by which
-  we mean the independence of $t$ and the potential outcomes given
-  $X$) and balance (i.e., Equation \ref{balance}) guarantee valid
-  inferences.  Together they are written as $p(Y(0)\mid
-  t=1,X)=p(Y(0)\mid t=0,X)$ and $p(Y(1)\mid t=1,X)=p(Y(1)\mid
-  t=0,X)$.}
+  \dots, n \}: X_i = x \} / n$, for all $x$, where $\#A$ is the number
+  of elements in the set $A$.  The denominator in (\ref{balance}) is
+  $\sum_{i=1}^n t_i$ on the left side and $\sum_{i=1}^n (1-t_i)$ on
+  the right.}  The simplest (although not necessarily the best) way to
+understand how we can satisfy (\ref{balance}) by preprocessing is via
+\emph{one-to-one exact matching}.  The idea is to match each treated
+unit with one control unit for which all the values of $X_i$ are
+identical.  Our preprocessed dataset thus is the same as the original
+dataset with any unmatched control units discarded, and thus with
+$t_i$ and $X_i$ now independent.  If enough matches are available,
+this procedure eliminates all dependence on the functional form in the
+parametric analysis.  It is also highly intuitive, since it directly
+parallels an experiment where we find pairs of units that are
+identical in all observable ways and assign one from each pair to be
+treated and the other to be a control.  Then no matter what effect
+$X_i$ has on $y_i$, we can ignore it entirely since $X_i$ is literally
+held constant within each pair of units.\footnote{Formally,
+  ignorability (by which we mean the independence of $t_i$ and the
+  potential outcomes given $X_i$) and balance (i.e., Equation
+  \ref{balance}) guarantee valid inferences.  Together they are
+  written as $p(Y_i(0)\mid t_i=1,X_i)=p(Y_i(0)\mid t_i=0,X_i)$ and
+  $p(Y_i(1)\mid t_i=1,X_i)=p(Y_i(1)\mid t_i=0,X_i)$.}
 
 Although one-to-one exact matching can eliminate model dependence and
 any bias from incorrect assumptions made during the parametric stage
@@ -922,21 +921,20 @@ Moreover, exact matching has the disadvantage in many data sets of not
 generating many matches.  The problem is most severe if $X_i$ is high
 dimensional (another effect of the curse of dimensionality) or
 contains continuous variables.  The result may then be a preprocessed
-data set with very few observations that results in a parametric
-analysis with large standard errors.  In this situation, we may reduce
-model dependence and the potential for bias, but decrease efficiency
-and as a result increase mean squared error.  If this occurs, common
-practice is to sacrifice some bias reduction for the increased
-efficiency that comes from having more observations in the
-preprocessed dataset.  In our approach, if we lose some opportunity
-for bias reduction we do so only in the preprocessing stage; our
-second stage parametric analysis still has a chance to eliminate the
-remaining bias.  This second chance does not apply if only the
-difference in means is used.  We therefore turn in
-Section~\ref{s:choose} to a menu of matching procedures that enable
-researchers to satisfy (\ref{balance}) as closely as possible while
-still generating a preprocessed dataset with enough observations and
-then run a parametric analysis.
+data set with very few observations that lead to a parametric analysis
+with large standard errors.  In this situation, we may reduce model
+dependence and the potential for bias, but decrease efficiency and as
+a result increase mean squared error.  If this occurs, common practice
+is to sacrifice some bias reduction for the increased efficiency that
+comes from having more observations in the preprocessed dataset.  In
+our approach, if we lose some opportunity for bias reduction we do so
+only in the preprocessing stage; our second stage parametric analysis
+still has a chance to eliminate the remaining bias.  This second
+chance does not apply if only the difference in means is used.  We
+therefore turn in Section~\ref{s:choose} to a menu of matching
+procedures that enable researchers to satisfy (\ref{balance}) as
+closely as possible while still generating a preprocessed dataset with
+enough observations and then run a parametric analysis.
 
 A key point about matching as nonparametric preprocessing is that
 matching is \emph{not} a method of estimation: obtaining causal effect
@@ -970,15 +968,15 @@ one-dimensional case, of patterns that would be difficult to detect
 without matching in the data sets with many variables and other
 methodological issues.
 
-The difference is that the matching procedure deleted the
-observations that would require substantial extrapolation (marked as
-gray C's) and produces imbalance.  With these deletions, the data set
-is now highly balanced, and as such the linear model and the quadratic
-model give essentially identical causal effects.  In the matched data,
-both parametric models yield estimates of approximately $0.001$ (which
-is close to the true effect of $0$ we used to generate the data).
+The difference is that the matching procedure deleted the observations
+that would require substantial extrapolation (marked as gray C's) and
+produces imbalance.  With these deletions, the data set is now highly
+balanced, and as such the linear model and the quadratic model give
+essentially identical causal effects.  In the matched data, both
+parametric models yield estimates of approximately $0.001$ (which is
+close to the true effect of $0$ we used to generate the data).
 Preprocessing has therefore made the functional form assumption about
-whether to include $X^2$ in the regression largely irrelevant.
+whether to include $X_i^2$ in the regression largely irrelevant.
 Indeed, for a large range of models, this preprocessed data set will
 be mostly insensitive to the choice of functional form assumptions and
 so will return highly similar causal effect estimates.
@@ -1010,15 +1008,15 @@ when discarding data.
 
 For a simple example, consider data generated from a univariate
 heteroskedastic linear-normal regression model, $Y_i\sim
-N(\beta_0+\beta_1x_i,\sigma_i^2)$, for $i=1,\dots,1000$, and variance
+N(\beta_0+\beta_1 X_i,\sigma_i^2)$, for $i=1,\dots,1000$, and variance
 \begin{equation*}
   \sigma_i^2 =
   \begin{cases}
-    \theta & \text{for $x\leq 5$}\\
-    500\theta & \text{for $x>5$}
+    \theta & \text{for $X_i\leq 5$}\\
+    500\theta & \text{for $X_i>5$}
   \end{cases}
 \end{equation*}
-where $\theta>0$ and say 50 observations reside at $x>5$.  With data
+where $\theta>0$ and say 50 observations reside at $X_i>5$.  With data
 generated from this model, weighted least squares is a self-efficient
 estimator, and thus dropping data would increase standard errors.  In
 contrast, the least-squares estimator would not be self-efficient,
@@ -1036,19 +1034,19 @@ observations for which (\ref{balance}) holds, and as a result helps
 parametric models fit better, as well as by removing the dependency
 between the treatment variable and covariates.  We formalize this
 point by considering a simple linear regression with one treatment
-variable, $T$, and one covariate, $X$.  The variance of the
+variable, $t_i$, and one covariate, $X_i$.  The variance of the
 coefficient for the treatment variable is equal to $\sigma^2/[n
-(1-\gamma) s^2_T]$ where $\sigma^2$ is the conditional variance of the
-dependent variable, $n$ is the number of observations, $s^2_T$ is the
+(1-\gamma) s^2_t]$ where $\sigma^2$ is the conditional variance of the
+dependent variable, $n$ is the number of observations, $s^2_t$ is the
 sample variance of the treatment variable, and $\gamma$ is the
-coefficient from regressing $X$ on $T$. If matching reduces
+coefficient from regressing $X_i$ on $t_i$. If matching reduces
 heterogeneity, then $\sigma^2$ will become smaller.  If matching
-reduces the dependence between $T$ and $X$, as is the goal in reducing
-bias, then $\gamma$ will be close to zero.  Thus, the resulting
-variance for the treatment effect may become smaller even if some
-observations are dropped.  This suggests that so long as one keeps as
-many observations as possible, matching will often reduce bias and
-improve the efficiency of subsequent parametric analyses.
+reduces the dependence between $t_i$ and $X_i$, as is the goal in
+reducing bias, then $\gamma$ will be close to zero.  Thus, the
+resulting variance for the treatment effect may become smaller even if
+some observations are dropped.  This suggests that so long as one
+keeps as many observations as possible, matching will often reduce
+bias and improve the efficiency of subsequent parametric analyses.
 
 \section{Practical Implications of the Theoretical Matching
   Literature}
