@@ -42,10 +42,8 @@
     Software to implement the methods in this paper is available at
     \texttt{http://GKing.Harvard.edu/matchit}.}}
 
-\author{Daniel E. Ho,\thanks{J.D., Yale Law School, Ph.D.\, Department
-    of Government, Harvard University. (Institute for Quantitative
-    Social Science, 1737 Cambridge St., Cambridge MA 02138, USA;
-    \texttt{daniel.ho@Yale.Edu}).}
+\author{Daniel E. Ho,\thanks{Assistant Professor-Designate, Stanford
+    Law School, Stanford CA 94305. \texttt{daniel.e.ho@gmail.com}}
 %\and %
   Kosuke Imai,\thanks{Assistant Professor, Department of Politics,
     Princeton University (Corwin Hall 041, Department of Politics,
@@ -163,9 +161,9 @@ We attempt to reduce model dependence by first offering a unifying
 approach to this diverse literature.  In particular, we suggest a
 procedure by which applied researchers can make productive use of
 matching methods without giving up most of their existing analytical
-strategies.  Our idea is to use these new nonparametric techniques,
-not as substitutes for our present parametric regression analyses, but
-to make our familiar parametric methods work better.  Under our
+strategies.  Our idea is to use these new nonparametric techniques
+not as substitutes for  present parametric regression analyses, but
+to make familiar parametric methods work better.  Under our
 inferential framework, analysts merely add a simple preprocessing step
 to their usual data analysis procedures.  They then employ whatever
 statistical models that would have been appropriate to use to analyze
@@ -261,7 +259,7 @@ some of which we measure and collect in a vector denoted $X_i$.
 Whether preprocessing or not, variables that are even in part a
 consequence of the treatment variable should never be controlled for
 when estimating a causal effect (see \citealt[][Section 4.2]{Cox58},
-\citet{Rosenbaum84}, and \citealt[][pp.73--4]{Rosenbaum02}).  This is
+\citet{Rosenbaum84}, and \citealt[][pp. 73--4]{Rosenbaum02}).  This is
 of course a critical point, since controlling for the consequences of
 a causal variable can severely bias a causal inference.  For example,
 controlling for aggregate voting intentions the day before the
@@ -270,7 +268,7 @@ incumbency effect.  This ``post-treatment bias'' problem is far too
 common in many areas of political science \citep{KinZen06b}.
 
 To clarify our inferential goals, we begin by defining the ``fixed
-causal effect,'' which is the simplest insample definition available,
+causal effect,'' which is the simplest in-sample definition available,
 in that it is the closest to the data.  We then generalize the
 definition to include features of random causal effects that are
 useful for understanding connections between nonparametric
@@ -301,10 +299,10 @@ potential outcomes, their values remain the same regardless of whether
 the treatment is in fact applied in district $i$ or not.
 
 The difference between the two potential outcomes defines the simplest
-fixed (or unit specific) definition of a causal effect:
+fixed (or unit-specific) causal effect:
 \begin{equation}
   \label{rce}
-  \text{(Fixed causal effect for unit $i$)} = y_i(1) - y_i(0).
+  \text{(Fixed Causal Effect for unit $i$)} = y_i(1) - y_i(0).
 \end{equation}
 (This quantity is an unobserved realization of a random variable to be
 defined below.)  Since the Democratic Party will either nominate
@@ -345,7 +343,7 @@ of units in our data --- since they are closer to our data than
 effects for averages of specified populations or population subgroups,
 but the difference is not always important from a practical viewpoint
 since a good estimator for one is ``automatically a good estimator for
-the other'' \citep[p.6]{Imbens04}.
+the other'' \citep[p. 6]{Imbens04}.
 
 Among in-sample effects, we consider two choices.  The first is the
 average treatment effect or ATE:
@@ -401,7 +399,7 @@ alternatives that we often use.  In addition, to change sample to
 population causal effects for the ATE, we can average it over the
 population distribution of $X_i$, and for the ATT we average it over
 the conditional distribution of $X_i$ given $T_i=1$. Point estimates
-for population and sample are normally identical, although the
+for the population and sample are normally identical, although the
 variances for the population estimates would be larger.  Different
 types of causal effects are then distinguished by three choices: ATE
 or ATT, conditional or unconditional, and sample or population.
@@ -409,7 +407,7 @@ or ATT, conditional or unconditional, and sample or population.
 \paragraph{Non-Binary and Multiple Treatments}
 
 Projects with a causal variable that has more than two categories or
-are continuous or mixed can dichotomize (perhaps in several
+is continuous or mixed can dichotomize (perhaps in several
 alternative ways) or use more complicated methods designed especially
 for these variables \citep{ImaDyk04}.  Those with more than one causal
 variable of interest can follow all the advice herein for one variable
@@ -442,10 +440,10 @@ via classical randomized experiments.  Such experiments have three
 critical features: (1) \emph{random selection} of units to be observed
 from a given population, (2) \emph{random assignment} of values of the
 treatment to each observed unit,\footnote{Below, we assume a classical
-  randomized experiment with a simple random assignment rather than a
+  randomized experiment with simple random assignment rather than
   random assignment based on some pretreatment covariates.  If
   treatment assignment depends on observed values of the covariates,
-  those covariates need to be conditioned on in subsequent analyses.}
+  those covariates should be taken into account in subsequent analyses.}
 and (3) a \emph{large $n$ (sample size)}.
 
 Feature (1) avoids selection bias by identifying a given population
@@ -577,7 +575,7 @@ is normal and $g(c)=c$, we have linear regression; if $p(\cdot)$ is
 Bernoulli and $g(c)=1/(1+e^{-c})$, the model reduces to a logistic
 regression.
 
-We define the ATT in (\ref{att}) under this model by plugging in the
+We define the ATT in (\ref{att}) under this model by substituting in the
 definitions of the potential outcomes from the systematic component,
 with $t_i$ taking on values 1 and 0 respectively:
 \begin{align}
@@ -628,7 +626,7 @@ The fact that $g(\cdot)$ is now a scalar is central: Since maximum
 likelihood is invariant to reparameterization --- meaning, for
 example, that the maximum likelihood estimate (MLE) of $\alpha$ is the
 same as the square root of the MLE of $\alpha^2$
-\citep[][p.75--76]{King89} --- we get the same estimate of the
+\citep[][p. 75--76]{King89} --- we get the same estimate of the
 expected potential outcomes no matter how $g(\cdot)$ is
 defined.\footnote{To rule out degenerate cases such as $g(a)=8$, we
   require that the image of $g(\cdot)$ and the range of the potential
@@ -655,7 +653,7 @@ makes for the functional form.
 \subsection{Observational Data} \label{s:paraobs}
 
 In experiments, random assignment breaks the link between $T_i$ and
-$X_i$ and, by so doing, eliminates the problem of model dependence.
+$X_i$, eliminating the problem of model dependence.
 When analyzing observational data with parametric methods we are not
 so fortunate.  We cannot reduce (\ref{matt}) to (\ref{smatt}) and so
 are left having to model the full functional relationship that
@@ -826,10 +824,10 @@ In attempting to develop methods that indicate the degree of model
 dependence that could possibly occur given only a set of explanatory
 variables, \citet{KinZen06a} ``define model dependence at point $x$ as
 the difference, or distance, between the predicted outcome values from
-any two \emph{plausible} alternative models\dots.  By ``plausible''
+any two \emph{plausible} alternative models\dots.  By `plausible'
 alternative models, we mean models that fit the data reasonably well
 and, in particular, they fit about equally well around either the
-``center'' of the data (such as a multivariate mean or median) or the
+`center' of the data (such as a multivariate mean or median) or the
 center of a sufficiently large cluster of data nearest the
 counterfactual $x$ of interest.''  In our case, the predicted outcome
 values are predicted potential outcomes, $Y_i(0)$ and $Y_i(1)$, which
@@ -887,9 +885,9 @@ where $\tilde p$ refers to the observed empirical density of the data,
 rather than a population density.\footnote{To be more specific, the
   empirical density is defined as $\tilde p(x) = \# \{ i\in \{1, 2,
   \dots, n \}: X_i = x \} / n$, for all $x$, where $\#A$ is the number
-  of elements in the set $A$.  The denominator in (\ref{balance}) is
+  of elements in the set $A$.  The corresponding denominator $n$ is
   $\sum_{i=1}^n T_i$ on the left side and $\sum_{i=1}^n (1-T_i)$ on
-  the right.}  The simplest (although not necessarily the best) way to
+  the right of (\ref{balance}).}  The simplest (although not necessarily the best) way to
 understand how we can satisfy (\ref{balance}) by preprocessing is via
 \emph{one-to-one exact matching}.  The idea is to match each treated
 unit with one control unit for which all the values of $X_i$ are
@@ -917,8 +915,8 @@ distributions to be equivalent.  Thus, to be clear, \emph{matching
   does not require pairing observations} (indeed, there might have
 been less confusion if the technique had been called ``pruning'');
 only the \emph{distributions} need be matched as closely as possible.
-Moreover, exact matching has the disadvantage in many data sets of not
-generating many matches.  The problem is most severe if $X_i$ is high
+Moreover, exact matching has the disadvantage in many data sets of 
+generating few matches.  The problem is most severe if $X_i$ is high
 dimensional (another effect of the curse of dimensionality) or
 contains continuous variables.  The result may then be a preprocessed
 data set with very few observations that lead to a parametric analysis
@@ -985,7 +983,7 @@ so will return highly similar causal effect estimates.
 We conclude this section with a discussion of two unusual advantages
 of our inferential framework.  First, our two-step procedure is
 \emph{doubly robust} in the sense that under weak conditions (such as
-ruling out extreme cases where all data are dropped during matching
+ruling out extreme cases where all data points are dropped during matching
 stage even though a correct parametric model is specified), if either
 the matching or the parametric model is right causal estimates will
 still be statistically consistent \citep[see][]{RobRot01}.  That is,
@@ -996,9 +994,9 @@ robustness property does not apply generally to using matching with a
 difference in means.
 
 Second, although matching discards data, it can actually increase the
-efficiency of estimates even while reducing bias.  This may seem like
-a strange situation, and would seem to violate a first principle of
-statistics, informally described as ``more data are better''.
+efficiency of estimates even while reducing bias.  This may seem 
+counterintuitive, as it would seem to violate a first principle of
+statistics, informally described as ``more data are better.''
 However, more data are in fact better only when using an estimator
 that is ``self-efficient'' \citep{MenRom03}, which roughly speaking is
 an estimator which is based on a model that is correct (or
@@ -1084,7 +1082,7 @@ should play no part in our ultimate inferences.\footnote{If
   solutions have almost the same balance, then one might wish to
   include this in our uncertainty estimates, but the decision to do so
   is a normative one and should be left to the investigator, since all
-  uncertainty estimation techniques excludes some sources of
+  uncertainty estimation techniques exclude some sources of
   uncertainty.}
 
 To ensure that selection during preprocessing depends only on $X_i$
@@ -1126,7 +1124,7 @@ than the pool of treated units, then always including all available
 control variables is bad advice.  Instead, the familiar econometric
 rules apply about the tradeoff between the bias of excluding relevant
 variables and the inefficiency of including irrelevant ones:
-researchers should not include every pre-treatment explanatory
+researchers should not include every pretreatment explanatory
 variable available.
 
 \paragraph{Common Support Problems}
@@ -1160,7 +1158,7 @@ of the reason this step is skipped so often is that it has not until
 recently been clear how to identify units that require extrapolation.
 One approach, developed by \citet{KinZen06b} is to prune observations
 from the control group that are outside of the ``convex hull'' of the
-treatment group.  With one pre-treatment covariate, the convex hull of
+treatment group.  With one pretreatment covariate, the convex hull of
 the treatment group is merely the range of the subset of observations
 of $X$ that are in the treatment group (because $T_i=1$), so control
 units with $X_i$ greater than max($X$) or less than min($X$) are
@@ -1183,7 +1181,7 @@ It is always worth checking to see whether each treated unit can be
 matched to all control units with exactly the same covariate values.
 This procedure is more general than the more commonly tried one-to-one
 exact matching, since we use as many control units as are available
-for each treated unit.  If a large number of units were matched, then
+for each treated unit.  If a large number of units is matched, then
 we have exact balance with little inefficiency and we may skip the
 remaining steps.  Indeed, exact balance means that a difference in
 means is sufficient for the parametric analysis (but be sure to
@@ -1636,8 +1634,8 @@ in the literature on institutional and partisan determinants of
 regulatory policy by examining several determinants of new drug
 approval times by the U.S.\ Food and Drug Administration (FDA).  Here,
 we focus on the hypothesis that Democratic oversight of the FDA should
-lead to slower approval of new drugs (p.495) and the specification of
-Model 1 of Table 2 (p.499).
+lead to slower approval of new drugs (p. 495) and the specification of
+Model 1 of Table 2 (p. 499).
 
 To test this hypothesis, Carpenter uses a lognormal survival model of
 approval times regressed on several causal variables of political
@@ -1686,7 +1684,7 @@ In the original analysis, the reported coefficient for the Democratic
 Senate majority variable is statistically significant at the 10\%
 level but in the opposite direction of Carpenter's hypothesis.  For
 our purposes this variable is of particular interest because
-\citet[p.498]{Carpenter02} finds that ``[t]he coefficient estimate for
+\citet[p. 498]{Carpenter02} finds that ``[t]he coefficient estimate for
 this variable [Democratic Senate majority] is not significant in other
 regressions, and even switches sign when firm variables are added.''
 We therefore examine whether the model sensitivity that prevented
@@ -1703,7 +1701,7 @@ test for common support, but it explains in part why
 proceed, we estimate the propensity score using logistic regression
 with all covariates as linear predictors.  We then discard 15 control
 units and 2 treated units that are outside of the common support of
-the estimated propensity score. Finally, we conduct one-to-one nearest
+the estimated propensity score.  Finally, we conduct one-to-one nearest
 neighbor propensity score matching (without replacement) while placing
 exact restrictions on the six binary variables (whether primary
 indication is lethal condition, acute condition, and/or results in
@@ -1990,7 +1988,7 @@ preprocessed data.
  \end{center} 
  \vspace{-0.275in}
  \caption{Density estimates of estimated effects of
-   being a highly visible female Republican candidate across 63
+   being an invisible male Republican candidate across 63
    possible specifications with the Koch data.  The dashed line
    presents estimates for the raw dataset and the solid line for the
    matched dataset.  The vertical arrow presents the point estimate of
@@ -2024,7 +2022,7 @@ A researcher might be fooled into choosing a matching tradeoff like
 this if he or she were not aware of the large effect of this
 covariate.  Carefully evaluating what covariates are likely to have
 the largest effects, and using multiple measures of balance, are
-essential in avoiding this pitfall.
+essential to avoid this pitfall.
 
 Second, as with all statistical methods, a bias-variance tradeoff
 exists for matching.  If we drop many observations during
@@ -2100,7 +2098,7 @@ we read an article demonstrating that balance has been achieved for a
 data set, readers can worry considerably less that slightly different
 specifications than those discussed in the text will greatly alter its
 empirical conclusions.  Analysts using preprocessing have two chances
-to get their analysis right, in that if either the matching procedure
+to get their analyses right, in that if either the matching procedure
 or the subsequent parametric analysis is specified correctly (and even
 if one of the two is incorrectly specified), causal estimates will
 still be consistent.
