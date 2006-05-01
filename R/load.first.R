@@ -6,9 +6,5 @@
   cat("##  Please refer to http://gking.harvard.edu/matchit for full documentation \n",
       "##  or help.matchit() for help with commands supported by MatchIt.\n##\n",
       sep="")
-  if(!any(search()=="package:MASS"))
-    require(MASS) 
-  if(!any(search()=="package:Zelig"))
-    require(Zelig) 
   options(digits = 4)
 }
