@@ -58,12 +58,11 @@
     (617) 495-2027).}
 %\and %
 Elizabeth A. Stuart\thanks{Researcher, Mathematica Policy Research,
-  Inc.\, Ph.D.\, Department of Statistics, Harvard University.
-  (600 Maryland Ave., SW, Suite 550,  Washington, DC, 20024, USA;
+  Inc.\, (600 Maryland Ave., SW, Suite 550,  Washington, DC, 20024, USA;
   \texttt{http://people.iq.harvard.edu/$\sim$estuart/},
-  \texttt{Stuart@Stat.Harvard.Edu}).}}
+  \texttt{elizabeth.stuart@gmail.com}).}}
 
-\date{\today\ (\printtime)} 
+\date{\today} 
 
 \begin{document}\maketitle
 %\baselineskip=1.57\baselineskip
@@ -259,7 +258,7 @@ some of which we measure and collect in a vector denoted $X_i$.
 Whether preprocessing or not, variables that are even in part a
 consequence of the treatment variable should never be controlled for
 when estimating a causal effect (see \citealt[][Section 4.2]{Cox58},
-\citet{Rosenbaum84}, and \citealt[][pp. 73--4]{Rosenbaum02}).  This is
+\citealt[][]{Rosenbaum84}, and \citealt[][pp. 73--4]{Rosenbaum02}).  This is
 of course a critical point, since controlling for the consequences of
 a causal variable can severely bias a causal inference.  For example,
 controlling for aggregate voting intentions the day before the
@@ -919,7 +918,7 @@ Moreover, exact matching has the disadvantage in many data sets of
 generating few matches.  The problem is most severe if $X_i$ is high
 dimensional (another effect of the curse of dimensionality) or
 contains continuous variables.  The result may then be a preprocessed
-data set with very few observations that lead to a parametric analysis
+data set with very few observations that leads to a parametric analysis
 with large standard errors.  In this situation, we may reduce model
 dependence and the potential for bias, but decrease efficiency and as
 a result increase mean squared error.  If this occurs, common practice
@@ -968,7 +967,7 @@ methodological issues.
 
 The difference is that the matching procedure deleted the observations
 that would require substantial extrapolation (marked as gray C's) and
-produces imbalance.  With these deletions, the data set is now highly
+produce the imbalance.  With these deletions, the data set is now highly
 balanced, and as such the linear model and the quadratic model give
 essentially identical causal effects.  In the matched data, both
 parametric models yield estimates of approximately $0.001$ (which is
@@ -2063,7 +2062,7 @@ dependence, and apply this criterion.
 Finally, by dropping observations, we may wind up losing some
 critically important cases or may change either the information base
 of our sample or, in special cases such as when dropping treated
-units, the definition of causal effect.  Examining the dropped cases
+units, the definition of the causal effect.  Examining the dropped cases
 provides an easy diagnostic for this problem.  However, we must be
 alert to the problem that if we learn that some critical units are
 dropped, then it may mean that no appropriate matches can be found for

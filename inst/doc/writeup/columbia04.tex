@@ -1,6 +1,12 @@
 \documentclass[20pt,landscape,pdftex]{foils}
 
 \usepackage{ppftlk}
+\usepackage{pause}
+\usepackage{background}
+\usepackage{mpmulti}
+\usepackage{hyperref}
+\usepackage{pp4link}
+
 \renewcommand{\P}{\text{P}}
 \newcommand{\MC}{\multicolumn}
 \renewcommand\r{\right}
@@ -494,13 +500,22 @@ algorithm, same software, same model checking procedures, ...\pause
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\foilhead{Improved Balance and Reduced Model Dependence\pause}
+\foilhead{Improved Balance... \pause}
 
 \hypersetup{pdfpagetransition=Replace}
 
+\vspace*{1in}
 \begin{center}
-  \includegraphics[scale=1.2]{fdabal}\pause \\
-  \includegraphics[scale=1.2]{fdadens}\pause
+  \includegraphics[scale=1.5]{fdabal}\pause 
+\end{center}
+
+\foilhead{and Reduced Model Dependence\pause}
+
+\hypersetup{pdfpagetransition=Replace}
+
+\vspace*{1in}
+\begin{center}
+  \includegraphics[scale=1.5]{fdadens}\pause 
 \end{center}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -603,7 +618,7 @@ algorithm, same software, same model checking procedures, ...\pause
       Control $n$& & 299 & 30 & 39 & 12 & 3 & 2 \\
       \hline
     \end{tabular} \\
-  \includegraphics[scale=1.2]{kochdens}\pause
+  \includegraphics[scale=1]{kochdens}\pause
 \end{center}
 
 \end{document}
