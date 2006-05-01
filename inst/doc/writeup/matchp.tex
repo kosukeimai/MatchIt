@@ -1693,25 +1693,25 @@ majority variable is reduced by preprocessing the data.
 To preprocess, we follow the recommendations described in
 Section~\ref{s:choose}. We first check whether the control units are
 within the convex hull of the treated units using the method developed
-by \citet{KinZen06b}. The result of this analysis indicates that none
+by \citet{KinZen06b}.  The result of this analysis indicates that none
 of the control units is in the convex hull.  This is a conservative
 test for common support, but it explains in part why
 \citet{Carpenter02} finds the results are highly model-dependent. To
 proceed, we estimate the propensity score using logistic regression
 with all covariates as linear predictors.  We then discard 15 control
 units and 2 treated units that are outside of the common support of
-the estimated propensity score.  Finally, we conduct one-to-one nearest
-neighbor propensity score matching (without replacement) while placing
-exact restrictions on the six binary variables (whether primary
-indication is lethal condition, acute condition, and/or results in
-hospitalization; whether disease mainly affects men, women, and/or
-children). We choose one-to-one matching rather than one-to-many
-matching or full matching because our convex hull analysis indicates
-that most of the observations are likely to be outside of the common
-support.  This preprocessing procedure discards 102 units (10 treated
-units and 92 control units) from the original sample that would have
-required substantial, model-dependent extrapolations. The matched data
-sets then consists of 306 observations.
+the estimated propensity score.  Finally, we conduct one-to-one
+nearest neighbor propensity score matching (without replacement) while
+placing exact restrictions on the six binary variables (whether
+primary indication is lethal condition, acute condition, and/or
+results in hospitalization; whether disease mainly affects men, women,
+and/or children). We choose one-to-one matching rather than
+one-to-many matching or full matching because our convex hull analysis
+indicates that most of the observations are likely to be outside of
+the common support.  This preprocessing procedure discards 102 units
+(10 treated units and 92 control units) from the original sample that
+would have required substantial, model-dependent extrapolations. The
+matched data sets then consists of 306 observations.
 \begin{table}[t]
 \begin{center}
 \setlength{\tabcolsep}{2pt}
@@ -1858,8 +1858,8 @@ Democratic Senate majority reduces the average approval time of new
 drugs.  Using the raw data, Carpenter notes the large model
 sensitivity, concluding that oversight covariates appear not to
 matter.  However, the result from the matched data seems to indicate
-that the actual result may even be more firm than indicated by the
-usual parametric approach.
+that the actual result may even be relatively more firm than indicated
+by the usual parametric approach.
 
 \subsection{Causal Effect of Visibility on Candidate
   Evaluations}
@@ -2080,8 +2080,8 @@ methodological dilemmas, and not covered in any serious way in
 classical statistics texts.  Parametric methods merely assume that we
 know the correct specification.  In practice, the ``correct''
 specification is chosen after looking at the estimates and so it is
-never clear to a reader whether an article is a true test of an ex
-ante hypothesis, in the sense that the author was vulnerable to being
+never clear to a reader whether an article is a true test of a
+hypothesis, in the sense that the author was vulnerable to being
 proved wrong, or whether the article is merely a proof of the
 existence of at least one specification consistent with the author's
 favored hypothesis.  Researchers are often frustrated with how their
