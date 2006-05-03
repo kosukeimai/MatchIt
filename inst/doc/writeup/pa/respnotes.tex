@@ -1,4 +1,28 @@
-reviewer 1:
+\documentclass[11pt]{article}
+\usepackage{graphicx,latexsym,amssymb,amsmath}
+%% === margins ===
+\addtolength{\hoffset}{-0.75in} \addtolength{\voffset}{-0.75in}
+\addtolength{\textwidth}{1.5in} \addtolength{\textheight}{1.6in}
+
+\begin{document}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{center}
+  {\bf \Large Point-By-Point Reply to the Reviewers}\\
+  ``Matching as Nonparametric Preprocessing for Reducing Model
+  Dependence in Parametric Causal Inference,'' {\it Political
+  Analysis} Manuscript
+\end{center}
+
+We begin by thanking the Reviewers for the careful reading of our
+manuscript and many helpful comments.  We believe that we have
+addressed all of these suggestions and produced our revised
+manuscript. In so doing, we have improved our presentation
+significantly. In what follows, we detail the changes we made to our
+manuscript in response to the editor's and reviewers' comments.
+
+\paragraph{Reply to Reviewer~1}
 
 p.1, bottom: we don't do Bayesian model averaging or Leamer's extreme
 bounds analysis because once you preprocess (well), all the models you
@@ -7,7 +31,7 @@ that is the uncertainty intended to be captured by BMA is no longer an
 issue.  We have no objection to BMA or EBA but for those you need to
 specific a particular class of models which you will average over or
 calculate the bounds for.  In our approach, preprocessing should
-reduce model dependence for any model in a broad range. 
+reduce model dependence for any model in a broad range.
 
 p.2, top.  I think there is only one confusion in the literature
 (which i realize after our conversation with Alberto). it comes from
@@ -60,17 +84,17 @@ techniques are designed to detect and correct bad fitting models.''
 
 sure, we can change 'the' to 'a'
 
-reviewer 2 ==========================================
+\paragraph{Reply to Reviewer~2}
 
 1. i think we should be willing to this if the editor would really
 like us to, but i think our position should be that it is wrong.
 i.e., our whole point is that virtually all regression-type models are
-conditional on X, and the se's are computed from that perspective.  the
-uncertainty is not different whether X is determined by the world, by
-some classical experimental design (randomized blocks), by strata in a
-survey, or by matching.  the only difference is that only in the
-latter case can we optimize: we choose the _best_ (the optimum) among
-all matching solutions.  the only reason for us to consider a
+conditional on X, and the se's are computed from that perspective.
+the uncertainty is not different whether X is determined by the world,
+by some classical experimental design (randomized blocks), by strata
+in a survey, or by matching.  the only difference is that only in the
+latter case can we optimize: we choose the ``best'' (the optimum)
+among all matching solutions.  the only reason for us to consider a
 different one is if someone can find a better match.  in that case,
 our answers may well change.  but this isn't model uncertainty in the
 same way as due to models which CANNOT really be ranked in terms of
@@ -97,7 +121,7 @@ pscores.  anyone have a better way to say this?
 
 6.  we're right about balance tests.  no reason to move here.
 
-reviewer 3 ========================================================
+\paragraph{Reply to Reviwer~3}
 
 a cranky review.  so we just clarify things a bit more.
 
@@ -128,70 +152,6 @@ why is this different from 2sls.  ugh.  no reason to change the paper
 for this but perhaps we can write something for the reviewer.
 
 exactly what semi-parametric alternatives do social scientists know
-well?
+well?  
 
-
-====================================== blog entry ==========================
-
-A Unified Theory of Statistical Inference?
-
-If inference is the process of using data we have in order to learn
-about data we do not have, it seems obvious that there can never be a
-proof that anyone has arrived at the "correct" theory of inference.
-After all, the data we have might have nothing to do with the data we
-don't have. So all the (fairly religious) attempts at unification --
-likelihood, Bayes, Bayes with frequentist checks, bootstrapping, etc.,
-etc. -- each contribute a great deal but they are unlikely to
-constitute The Answer. The best we can hope for is an agreement, or a
-convention, or a set of practices that are consistent across fields.
-But getting people to agree on normative principles in this area is
-not obviously different from getting them to agree on the normative
-principles of political philosophy (or any other normative
-principles).
-
-It just doesn't happen, and even if it does it would have merely the
-status of a compromise rather than the correct answer, the latter
-being impossible.
-
-Yet, there is a unifying principal that would represent progress in
-the sense that would advance the field: we will know that something
-like unification has occurred when we distribute the same data, and
-the same inferential question, to a range of scholars with different
-theories of inference, that go by different names, use different
-conventions, and are implemented with different software, and yet they
-all produce approximately the same empirical answer.
-
-We are not there yet, and there are some killer examples where the
-different approaches yield very different conclusions, but there does
-appear to be some movement in this direction. The basic unifying idea
-I think is that all theories of inference require some assumptions,
-but we should never take any theory of inference so seriously that we
-don't stop to check the veracity of the assumptions. The key is that
-conditioning on a model does not work, since of course all models are
-wrong, and some are really bad. What I notice is that most of the
-time, you can get roughly the same answers using (1) likelihood or
-Bayesian models with careful goodness of fit checks and adjustments to
-the model if necessary, (2) various types of robust, semi-parametric,
-etc. statistical methods, (3) matching for use as preprocessing data
-that is later analyzed or further adjusted by parametric likelihood or
-Bayesian methods, (4) Bayesian model averaging, with a large enough
-class of models to average over, (5) the related "committee methods'',
-(6) mixture of experts models, and (7) some highly flexible functional
-forms, like neural network models. Done properly, these will all
-usually give similar answers.
-
-This is related to Xiao-Li Meng's self-efficiency result: the rule
-that ``more data are better'' only holds under the right model.
-Inference can't be completely automated for most quantities, and we
-typically can't make inferences without some modeling assumptions, but
-the answer won't be right unless the assumptions are correct, and we
-can't ever know that the assumptions are right. That means that any
-approach has to come to terms with the concept that some of the data
-might not be right for the given model, or the model might be wrong
-for the observed data. Each of the approaches above has an extra
-component to try to get around the problem of incorrect models. This
-isn't a unification of statistical procedure, or a single unified
-theory of inference, but it may be leading to a unification of
-results of many diverse procedures, as we take the intuition from each
-area and apply it across them all.
-
+\end{document}
