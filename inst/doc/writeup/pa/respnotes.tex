@@ -84,40 +84,95 @@ manuscript in response to the editor's and reviewers' comments.
 
 \paragraph{Reply to Reviewer~2}
 
-1. i think we should be willing to this if the editor would really
-like us to, but i think our position should be that it is wrong.
-i.e., our whole point is that virtually all regression-type models are
-conditional on X, and the se's are computed from that perspective.
-the uncertainty is not different whether X is determined by the world,
-by some classical experimental design (randomized blocks), by strata
-in a survey, or by matching.  the only difference is that only in the
-latter case can we optimize: we choose the ``best'' (the optimum)
-among all matching solutions.  the only reason for us to consider a
-different one is if someone can find a better match.  in that case,
-our answers may well change.  but this isn't model uncertainty in the
-same way as due to models which CANNOT really be ranked in terms of
-which is better (BMA not withstanding).
+\begin{enumerate}
+\item {\bf Uncertainty about matching procedures.} We disagree with
+  the reviewer about the need to account for the uncertainty about
+  matching procedures. The uncertainty we are trying to address
+  throughout this paper is the uncertainty about model choice rather
+  than uncertainty about matching procedures. Matching procedures is
+  chosen based on the balance of covariates. Our claim is that after
+  matching is done successfully, then model dependence is
+  substantially reduced. One may wish to incorporate the uncertainty
+  about matching procedure into the final uncertainty estimates
+  (though we are not aware of any such method in the literature, and
+  if such a method exists, we are happy to reference it), but we
+  argue that the uncertainty estimated computed conditional on matched
+  observations are also valid for the following reason.
 
-2. 1-to-n matching is ok with us too.  why did we do 1-to-1 in this
-example?  and of course we'll make the data available.
+  In virtually all models used in social sciences (i.e.,
+  regression-type, and whether parametric or nonparametric, methods),
+  the covariates, $X_i$, are considered as fixed and the distribution
+  of $X_i$ is not being modeled. The variance is then computed
+  conditional on $X_i$.  Therefore, the uncertainty estimates can be
+  computed in the same way under the assumed model regardless of
+  whether matching or some other procedures (stratification in a
+  survey, randomized block designs in experiments) are applied to
+  $X_i$. The procedure is valid so long as it does not involve the use
+  of the outcome variable.  We made this point clearer in the revised
+  manuscript.
 
-3.  the difference is that in the stat 101 example, the selection is
-on Y, whereas in matching if you follow the rules you only select on
-X, which can cause no bias.
+\item {\bf One-to-one matching vs other matching procedures.} We do
+  not advocate in general one-to-one matching over some other forms of
+  matching. In this particular example, however, we find that the
+  matching procedures we report in the manuscript (one-to-one matching
+  with some exact restrictions) achieves a more satisfactory degree of
+  balance than some other matching procedures we tried. Of course,
+  this does not mean that some other researchers can come up with a
+  matching procedure that achieves even better balance. And if someone
+  does, we should use that procedure. One reason why we used
+  one-to-one matching in this example rather than some other matching
+  methods that retain more observations is that none of the control
+  observations in this data set lies in the convex hull of the treated
+  observations. Another reason is that there are not many control
+  units available relative to the number of the treated units.
+  Therefore, we want to be conservative in terms of how many
+  observations we retain. We made this point clear in the revised
+  manuscript.
 
-you can look at Rubin's work as adding observations rather than
-deleting some, but you'd still have to ask why he doesn't add them
-all.  its the same issue.  why do we delete observations?  because
-more observations are only better if the model is self-efficient.
-otherwise you just get model dependence and have no real advantage.
 
-4.  same comment as for 3.  cite Imai and Van Dyk.  do any of these
-alternative methods move you?
+\item {\bf Throwing away observations.} We revised the manuscript so
+  that it is clearer to readers why throwing away observations can
+  result in more efficient estimates. This is formally known as the
+  ``sufficiency principle'' in the statistics literature (more data
+  are better only when the model is self-sufficient), and the
+  reference is provided.
 
-5. so we have to better state the formal but irrelevant thm about
-pscores.  anyone have a better way to say this?
+  In the ``Stat 101'' example provided by the reviewer, the selection
+  is based on the outcome variable and hence is susceptible to
+  possible bias. In contrast, matching is valid because it is only
+  conditional on the pre-treatment covariates. We emphasize this key
+  point throughout the revised manuscript.
 
-6.  we're right about balance tests.  no reason to move here.
+\item {\bf Other matching/subclassification methods.} We agree with
+  the reviewer that other matching/subclassification methods are also
+  useful if they can improve the balance. We have added references to
+  these various methods in the revised manuscript.
+
+\item {\bf Propensity score tautology.} We believe that our
+  interpretation of the formal results in Rosenbaum and Rubin (1983)
+  as well as the use of the word ``consistency'' are correct. Both
+  Theorems~1~and~2 are large sample results rather than finite sample
+  ones, and the word ``consistency'' refers to a large sample
+  property; the estimator of propensity score converges to the true
+  propensity score in probability. The extensions of these theorems to
+  general treatment regimes are also based on large sample theory (see
+  the Appendix of Imai and van Dyk (2004)).
+
+  The reviewer is correct in that there are balancing scores other than
+  the propensity score, which is the coarsest balance score. In fact,
+  the covariate matrix $X_i$ is also a balancing score, and this is
+  why exact matching works fine. {\bf Gary, we should probably add a
+    sentence or two to the manuscript to make the reviewer happy.}
+
+\item {\bf Balance test fallacy.} The logic is most easily understood
+  by thinking of an example where one randomly removes the
+  observations. In this case, even though the balance has not
+  improved, the resulting $p$-values will generally increase due to a
+  smaller sample size. We hope that this example, which is explained
+  in the manuscript, gives an intuition of why the use of $p$-value
+  can be misleading.
+
+\end{enumerate}
 
 \paragraph{Reply to Reviwer~3}
 
