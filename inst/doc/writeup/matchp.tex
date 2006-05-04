@@ -817,7 +817,14 @@ lead to nihilistic conclusions.\footnote{Two approaches to this
   somewhat standardized way to portray model dependence, and Bayesian
   model averaging \citep{HoeMadRaf99,ImaKin04}, which is intended to
   draw inferences by appropriately combining inferences from models
-  with different specifications.}
+  with different specifications.  These approaches differ in an
+  important way from matching as preprocessing.  Matching, as we use
+  it, reduces model dependence in causal inference, which involves
+  learning about unobserved potential outcomes.  On the other hand
+  Bayesian model averaging and extreme bounds analysis are designed to
+  deal with model dependence with repect to the observed data or
+  predictive inference.  The two are not necessarily related in real
+  applications.}
 
 In attempting to develop methods that indicate the degree of model
 dependence that could possibly occur given only a set of explanatory
@@ -1210,13 +1217,16 @@ fundamental to making good practical use of this important concept.
 Theoretically, the true propensity score is valuable because it is a
 ``balancing score,'' meaning that if the treatment and control groups
 have identical propensity score distributions, then all the covariates
-will be balanced between the two groups.  In addition, if treatment
-assignment is strongly ignorable given the covariates $X_i$, then it
-is also ignorable given only the propensity score.  This means that
-matching can be done using just the one-dimensional propensity score,
-instead of all of the variables in $X$.  Using the true propensity
-score in this way, as does much of the applied literature, would thus
-apparently solve the curse of dimensionality for matching.
+will be balanced between the two groups.\footnote{The propensity score
+  is one of many balancing scores.  For example, $X$ itself is a
+  balancing score, which explains why exact matching works.} In
+addition, if treatment assignment is strongly ignorable given the
+covariates $X_i$, then it is also ignorable given only the propensity
+score.  This means that matching can be done using just the
+one-dimensional propensity score, instead of all of the variables in
+$X$.  Using the true propensity score in this way, as does much of the
+applied literature, would thus apparently solve the curse of
+dimensionality for matching.
 
 In practice, however, we do not know the \emph{true} propensity score
 (except in unusual situations like experiments).  We would still be
