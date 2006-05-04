@@ -24,65 +24,63 @@ manuscript in response to the editor's and reviewers' comments.
 
 \paragraph{Reply to Reviewer~1}
 
-p.1, bottom: we don't do Bayesian model averaging or Leamer's extreme
-bounds analysis because once you preprocess (well), all the models you
-estimate will give roughly the same answers.  So the model dependence
-that is the uncertainty intended to be captured by BMA is no longer an
-issue.  We have no objection to BMA or EBA but for those you need to
-specific a particular class of models which you will average over or
-calculate the bounds for.  In our approach, preprocessing should
-reduce model dependence for any model in a broad range.
+\begin{enumerate}
+\item {\bf Bayesian model averaging and EBA.} In the matching-based
+  approach we propose, we are trying to reduce the model uncertainty
+  by preprocessing the data. If the matching is done successfully,
+  then model uncertainty should be considerably reduced and therefore
+  the need for the methods like BMA and EBA will be less. Also, it
+  should be noted that matching deals with model uncertainty in the
+  specific context of causal inference, whereas BMA and EBA are mainly
+  concerned about predictive inference or how well a given model fits
+  to the {\it observed} data, as opposed to {\it unobserved potential
+    outcomes}.  {\bf Gary, shouldn't we clarify this in the footnote
+    we mention BMA and EBA so that we can say it we addressed this
+    point in the revision.}
 
-p.2, top.  I think there is only one confusion in the literature
-(which i realize after our conversation with Alberto). it comes from
-the econometricians assuming as little as possible and statisticians
-or applied soc scientists assuming full parametric models.  we can
-just clarify this (instead of saying that there is controversy over
-how to compute se's) and explain that we are trying to help people who
-are ALREADY assuming parametric models by adding preprocessing.
+\item {\bf Computing standard errors.} We clarify the issue of how to
+  compute the standard errors in the revised manuscript. See the last
+  subsection of Section 5. It The standard variance calculation can be
+  difficult under the nonparametric settings, but in the context of
+  our parametric adjustments, this is straightforward.
 
-p.2, 2nd para: yes there's a bias-variance tradeoff.  with matching
-you discard data that, if you were willing to assume the model was
-right, would often produce smaller se's.  that's the intuition the
-reviewer wanted. but there are 2 qualifications:  1 is that we aren't
-willing to assume the parametric model applies to some areas, and 2 is
-that in some cases discarding data can reduce variance.  and most
-importantly the 'more data is better' rule only applies when the model
-is ``self-efficient'' (Meng) and we rule that out when you don't know
-what the model is.
+\item {\bf Bias-variance trade off.} In the revised manuscript, we
+  explicitly discuss the paradoxical advantages of discarding data
+  (see Section 5). The basic message is this: discarding the data can
+  reduce the variance of the estimator if the model fits the better;
+  and hence can reduce the MSE (we already know that the bias goes
+  down).  Formally, this is known as the ``self-efficiency'' principle
+  in the statistical literature, and the reference is provided in the
+  revised manuscript.
 
-3rd para: are there theorems we don't now reference BUT are relevant
-to practical application?  I think we decided this was 'no', but we
-should check.  the point we make is that most of the thms are really
-irrelevant to practice since they assume things we don't know.  the
-``good old MSE'' criteria only make sense if you assume there is no
-misspecification. 
+\item {\bf Figure 1.} This is meant to be an illustrative rather than
+  realistic example. In practice, the detection of model
+  misspecification is even more difficult in part due to the
+  high-dimensionality of the covariate space.  We noted this point in
+  the revised manuscript.
 
-bottom, p.2 we have leave fig 1 in, but explain more clearly that it
-is a hypothetical example.  i think we can also explain also point in
-the blog entry I recently wrote (see at the end of this message; it
-hasn't been posted yet) about advantages of other approaches and how
-they all often give similar answers when done properly.
+\item {\bf Step-by-step statement.} We did not follow the suggestion
+  of providing a ``pseudo-code'' algorithm because we think that
+  substantive knowledge researchers have {\it should} be used in the
+  process of matching (rather than automating the entire process as
+  recommended by some methodologists). But, we tried to state our
+  recommendations more clearly in the revised manuscript.
 
-last para p.2.  section 6 is already a checklist.
+\item {\bf Model dependence.} We formally define model dependence in
+  the revised manuscript. See Section 4.3.
 
-top, p.3. we could define model dependence formally.  in King and
-Zeng, we define it as:
+\item {\bf Comparison with other approaches.} Our point is that if
+  matching is done correctly, then model dependence is reduced and so
+  what model you use (whether parametric, semi-parametric, or
+  nonparametric) after matching matters little. We clarified this
+  point in the revised manuscript.
 
-``For simplicity in this section, we define \emph{model dependence} at
-point $x$ as the difference, or distance, between the predicted
-outcome values from any two \emph{plausible} alternative models.  (One
-model might be logit and the other probit, or one linear the other
-quadratic, etc.)  By ``plausible'' alternative models, we mean models
-that fit the data reasonably well and, in particular, they fit about
-equally well around either the ``center'' of the data (such as a
-multivariate mean or median) or the center of a sufficiently large
-cluster of data nearest the counterfactual $x$ of interest. It is easy
-to generate model dependence when the model does not even fit the
-data, but this is easy to avoid, as many current data analysis
-techniques are designed to detect and correct bad fitting models.''
 
-sure, we can change 'the' to 'a'
+\item {\bf ``the parametric model.''} We changed ``the'' to `a'
+  following the suggestion.
+\end{enumerate}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \paragraph{Reply to Reviewer~2}
 
