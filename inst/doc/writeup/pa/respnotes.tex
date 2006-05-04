@@ -174,37 +174,84 @@ manuscript in response to the editor's and reviewers' comments.
 
 \end{enumerate}
 
-\paragraph{Reply to Reviwer~3}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-a cranky review.  so we just clarify things a bit more.
+\paragraph{Reply to Reviewer~3}
 
-authors can keep using their parametric model as they had and they'd
-be better off.  of course, we recommend that they also use their
-parametric model better, and there's a lot of room for improvement
-here.  fair enough, but it doesn't affect us much except for some
-wording.
+\begin{enumerate}
 
-``first to work out the conditions...''  we're right here; the
-reviewer found no other citation and neither did we.
+\item {\bf Post-treatment bias.} In this manuscript, we focus on the
+  commonly accepted model of causal inference in the statistical
+  literature (i.e., the one based on the potential outcomes). Our
+  recommendation only applies to causal models that are valid in this
+  sense. It is well known that in this framework, controlling for
+  post-treatment variables can include bias (see Rosenbaum, 1984).  Of
+  course, our recommendations will not apply if the purpose of
+  statistical inference is simply predictive (e.g., forecasting, etc.)
+  or a different definition of causality is employed.
 
-I like the Ec Inf section, but we can make it short and make it a FN
-perhaps; not sure i think it adds a lot, but maybe we give on things
-that aren't central.
+\item {\bf The contributions of the paper.} Many methodologists and
+  applied researchers used matching methods (followed by
+  difference-in-means) instead of common parametric methods. A
+  contribution of this paper is to argue that matching can be used in
+  conjunction with parametric analysis as a preprocessing procedure.
+  We also address a number of important issues including the use of
+  hypothesis tests in accessing balance and the use of propensity
+  score in matching.
 
-'doubly robust'.  i think we need to find a more careful way of making
-and appropriately qualifying this claim, but i think we should keep
-the phrase.
+\item {\bf Connections to missing data and ecological inference.} In
+  order to prevent readers from getting distracted, we moved this
+  discussion to Appendix. We want to emphasize that causal inference
+  is a very difficult missing data problem because we do not observe a
+  half of the potential outcomes. Nonresponse in survey and ecological
+  inference are known as difficult missing data problems in social
+  sciences, but causal inference can be as challenging as these
+  problems.
+
+\item {\bf Random vs. fixed causal effects.} The difference between
+  the two is whether to treat potential outcomes as fixed quantities
+  or random quantities. The former applies to in-sample inferences where
+  the probability measure is induced only by random assignment of the
+  treatment (as Neyman and Fisher did in their original papers), and
+  the latter applies to population inferences where the probability
+  measure is induced by both random sampling and random assignment. We
+  clarified this point in the revised manuscript.
+
+\item {\bf Doubly robust.} This property is a large sample property
+  {\bf Gary, is this correct?} and hence discarding all the
+  observations (or if matching made the model unidentifiable) will not
+  achieve the double-robustness. We clarify this issue and refer
+  interested readers to the original work of Jamie Robins.
  
-'balance test fallacy':  ok, so we also mention (again!) that we
-should verify balance on more than just the first moment.
+\item {\bf Bias-variance trade-off.} In the revised manuscript, we
+  explicitly address this issue.
 
-se's:  right some rare methods don't condition on X.  big deal.  the
-clarification i mention above about se's should help here too.
+\item {\bf Balance test fallacy.} We agree with the reviewer that we
+  need to check the balance beyond the first moment. We added this
+  point in the revised manuscript. 
 
-why is this different from 2sls.  ugh.  no reason to change the paper
-for this but perhaps we can write something for the reviewer.
+\item {\bf Fixed covariates.} We agree with the reviewer that while
+  most social scientists consider the covariates as fixed, some
+  methods (whether parametric or nonparametric) model the distribution
+  of $X$. We clarified this point by stating more explicitly our
+  recommendation about how to compute uncertainty.
 
-exactly what semi-parametric alternatives do social scientists know
-well?  
+\item {\bf Differences between matching and TSLS.} While both are
+  two-step estimation procedures, matching and TSLS rely on different
+  assumptions. Matching controls for potential confounding variables
+  by matching on them, while TSLS controls for them by finding an
+  instrument that is independent of them.
+
+\item {\bf Sensitivity analysis.} {\bf Gary, should we mention this in
+    the paper? We can just say that if one is still worried about
+    model dependence after matching, you can do a sensitivity analysis
+    a la Rosenbaum and Rubin. }
+
+\item {\bf Semiparametric methods.} We are unsure as to what
+  semiparametric methods social scientists know well. We find that a
+  majority of applied empirical research in the social science uses
+  parametric regressions. 
+
+\end{enumerate}
 
 \end{document}
