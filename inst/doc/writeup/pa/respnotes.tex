@@ -67,11 +67,15 @@ detail the changes we made to our manuscript since the last version.
 \item {\bf Step-by-step statement.} We did not follow the suggestion
   of providing a ``pseudo-code'' algorithm because we think that
   substantive knowledge researchers have should be used in the process
-  of matching.  There is ongoing unpublished research by us and others
+  of matching.  Trying to provide step-by-step guidance for the variety of
+  situations researchers encounter would require more space and detail than is appropriate
+  in this paper.   There is ongoing unpublished 
+  research by us and others
   that seeks to automate the entire process, but at least at present we
   have found that using substantive knowledge to match helps improve
   estimates.  We have tried to explicate more clearly exactly how this
-  works in the current version of the paper.
+  works in the current version of the paper.  For more details on particular matching methods
+  researchers can see the references cited in the paper as well as the MatchIt manual.
   
 \item {\bf Model dependence.} As suggested, we now formally define
   model dependence in the revised manuscript. See Section 4.3.
@@ -129,14 +133,15 @@ detail the changes we made to our manuscript since the last version.
   that procedure. One reason why we used one-to-one matching in this
   example rather than some other matching methods is that none of the
   control observations in this data set lies in the convex hull of the
-  treated observations. Another reason is that there are not many
-  control units available relative to the number of the treated units.
-  Therefore, we want to be conservative in terms of how many
-  observations we retain.  (These by the way are examples of some of
+  treated observations.
+  Because of that, there are not many well-matched control units available,  
+  and in this example, 1:1 matching selects the controls that are
+  appropriate for comparison with the treated units and discards the units that
+  are not appropriate for that comparison. 
+  (These by the way are examples of some of
   the context-specific substantive knowledge useful in matching that
   makes it difficult to automate.) We made this point clear in the
   revised manuscript.
-
   
 \item {\bf Throwing away observations.} We revised the manuscript so
   that it is clearer to readers why throwing away observations can
@@ -235,7 +240,10 @@ detail the changes we made to our manuscript since the last version.
   and hence discarding all the observations (or if matching made the
   model unidentifiable) will not achieve the double-robustness.  We
   clarify this issue, and others, and refer interested readers to the
-  original work of Jamie Robins.
+  original work of Jamie Robins.  In addition, the reviewer gives an example,
+  stating ``Imagine that the parametric model is correct."  We are coming
+  from the opposite perspective, where we are not willing to assume the model
+  is correct.  
  
 \item {\bf Bias-variance trade-off.} In the revised manuscript, we
   explicitly address this issue.
@@ -261,6 +269,18 @@ detail the changes we made to our manuscript since the last version.
   matching is well worthwhile, we agree.  The examples we include in
   the paper provide some ways of doing sensitivity analyses to verify
   how much model dependence is left.
+
+  The reviewer may also be referring to Rosenbaum and Rubin
+   (1983), ``Assessing sensitivity to an unobserved binary covariate in an observational study with
+  binary outcome", {\it Journal of the Royal Statistical Society Series B}, 
+  in which case that is a different type of sensitivity analysis than what we address here.  That method 
+  assesses sensitivity to an unobserved confounding variable, and while we agree that those 
+  sensitivity analyses are very important in observational studies, that is not the type of sensitivity 
+  we address in this paper.  We rely on the assumption of unconfounded treatment assignment, as is 
+  done in 
+  the vast majority of the literature.  Tests of sensitivity to an unobserved variable such as that in 
+  Rosenbaum and 
+  Rubin (1983) could be done after the adjustments for observed covariates that we advocate here.
 
 \item {\bf Semiparametric methods.} Semiparametric methods do not seem
   to be well known by many social scientists.  The vast majority of
