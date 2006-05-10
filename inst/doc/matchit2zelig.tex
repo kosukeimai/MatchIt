@@ -60,7 +60,7 @@ To load the Zelig package after installing it, type
   we don't show here).  When we get balance as good as possible, we
   run the parametric analysis:
 \begin{verbatim}
-> z.out0 <- zelig(re78 ~ age + educ + black + hispan + nodegree + 
+> z.out0 <- zelig(re78 ~ treat + age + educ + black + hispan + nodegree + 
                   married + re74 + re75, data = match.data(m.out1), 
                   model = "ls")
 \end{verbatim}
@@ -139,7 +139,7 @@ control outcome minus the imputed outcome under treatment from the
 model).  Hence, to combine treatment effects just reverse the signs of
 the estimated treatment effect of controls.
 \begin{verbatim}
-> ate.all <- c(s.out1$qi$ate.ev, -s.out2$qi$ate.ev)
+> ate.all <- c(s.out1$qi$att.ev, -s.out2$qi$att.ev)
 \end{verbatim}
 The point estimate, its standard error, and the $95\%$ confidence
 interval is given by

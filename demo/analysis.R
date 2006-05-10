@@ -58,7 +58,7 @@ user.prompt()
 ##  (observed control outcome minus the imputed outcome under treatment
 ##  from the model).  Hence, to combine treatment effects just reverse
 ##  the signs of the estimated treatment effect of controls.
-ate.all <- c(s.out1$qi$ate.ev, -s.out2$qi$ate.ev)
+ate.all <- c(s.out1$qi$att.ev, -s.out2$qi$att.ev)
 user.prompt()
 
 ## some summaries
