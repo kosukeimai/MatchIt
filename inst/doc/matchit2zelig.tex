@@ -61,7 +61,7 @@ To load the Zelig package after installing it, type
   run the parametric analysis:
 \begin{verbatim}
 > z.out0 <- zelig(re78 ~ treat + age + educ + black + hispan + nodegree + 
-                  married + re74 + re75, data = match.data(m.out1), 
+                  married + re74 + re75, data = match.data(m.out0), 
                   model = "ls")
 \end{verbatim}
   and then set the explanatory variables at their means (the default)
