@@ -1,3 +1,7 @@
+##################
+  Economics
+##################
+
 Searching 1996-2005.
 AER, Econometrica, JofEconometrics, and Review of Econometrics and 
 Statistics.
@@ -36,3 +40,58 @@ Rajeev Dehejia
 
 Rejoinder Journal of Econometrics, Volume 125, Issues 1-2, March-April
 2005, Pages 365-375 Jeffrey Smith and Petra Todd
+
+
+######################
+POLITICAL SCIENCE 
+######################
+APSR 2001 - 2006
+
+Do Get-Out-the-Vote Calls Reduce Turnout? The Importance of
+Statistical Methods for Field Experiments
+KOSUKE IMAI
+American Political Science Review, Volume 99, Issue 02, May 2005, pp
+283-300 
+
+ The Constraining Power of International Treaties: Theory and Methods
+BETH A. SIMMONS DANIEL J. HOPKINS
+American Political Science Review, Volume 99, Issue 04, Nov 2005, pp
+623-631 
+
+There was one other (Barabas, 2005), but it doesn't talk about how the
+balance is assessed.
+
+
+AJPS 2003-2006
+
+This uses pscore matching, but doesn't talk about the balance.
+
+The Effect of Information on Voter Turnout: Evidence from a Natural
+Experiment
+
+David Dreyer Lassen
+
+American Journal of Political Science
+Volume 49, Issue 1, Page 103-118, Jan 2005 
+
+JOP 2000 - 2006
+
+No hit by "propensity score"
+
+
+################
+   SOCIOLOGY
+################
+
+Counterfactual Models of Neighborhood Effects: The Effect of Neighborhood Poverty on Dropping Out and Teenage Pregnancy
+Author(s) 	David J. Harding
+Identifiers 	American Journal of Sociology, volume 109 (2003), pages 676-719
+ 
+Assessing Bias in the Estimation of Causal Effects: Rosenbaum Bounds on Matching Estimators and Instrumental Variables Estimation with Imperfect Instruments
+Thomas A. DiPrete and Markus Gangl
+Sociological Methodology
+Volume 34 Page 271  - December 2004
+
+
+uses propensity score matching but uses standardized bias.
+
