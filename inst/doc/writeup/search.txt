@@ -165,3 +165,36 @@ Volume 48, Issue 1 , July 2004, Pages 705-722
  Title: Does diversification cause the "diversification discount"?
 Author(s): Villalonga B
 Source: FINANCIAL MANAGEMENT 33 (2): 5-27 SUM 2004 
+
+###################
+Medicine
+###################
+
+New England Journal of Medicine:
+Wang, PS, Schneeweiss, S., Avorn, J., Fischer, MA, Mogun, H, Solomon DH, Brookhart, MA. "Risk of Death in 
+Elderly Users of Conventional vs. Atypical Antipsychotic Medications."  NEJM 2005; 353; 
+2335-2341, Dec. 1, 2005.
+
+Show p-values (presumably of t-tests) of full samples; no comparison after subclassification
+
+MacKenzie, EJ, Rivara, FP, Jurkovich, GJ, Nathens, AB, Frey, KP, Egleston, BL, Salkever, DS, Scharfstein, 
+DO. "A National Evaluation of the Effect of Trauma-Center Care on Mortality."  NEJM 354; 366-378, Jan 26, 
+2006.  
+
+Pscore weighting; show difference in means
+
+Lindenauer, PK, Pekow, P, Wang, K, Mamidi, DK, Gutierrez, B, Benjamin, EM.  "Perioperative beta-blocker 
+therapy and mortality after major noncardiac surgery."  NEJM 353: 349-361, Jul 28, 2005.
+
+T-tests, chi-square tests shown on matched samples.  Many still have significant p-values (.0001)!
+
+Mangano, DT, Tudor, IC, Dietzel, C, the Multicenter Study of Perioperative Ischemia Research Group and 
+the Ischemia Research and Education Foundation.  "The Risk Associated with Aprotinin in cardiac surgery."  
+NEJM 354; 353-365, Jan 26, 2006.
+
+show p-values in original samples (t-tests).  Also show c-statistic and use stepwise model selection.
+
+
+
+
+
