@@ -1,0 +1,87 @@
+\documentclass[11pt,titlepage]{article}
+%\usepackage[notref]{showkeys}
+\usepackage[reqno]{amsmath}
+\usepackage{natbib}
+\usepackage{amssymb}
+\usepackage{epsfig}
+\usepackage{comment}
+\usepackage{url}
+\usepackage[all]{xy}        
+\usepackage{dcolumn}
+\newcolumntype{.}{D{.}{.}{-1}}
+\newcolumntype{d}[1]{D{.}{.}{#1}}
+\usepackage{threeparttable,booktabs}
+\usepackage{times}
+\usepackage{vmargin}
+\setpapersize{USletter}
+\topmargin=0in
+\usepackage[compact]{titlesec}  % small
+%\usepackage{ajps}
+\usepackage{times}
+
+
+% Shortcuts
+\renewcommand{\P}{\text{P}}
+\newcommand{\MC}{\multicolumn}
+\usepackage{calc}
+\newcounter{hours}\newcounter{minutes}
+\newcommand{\printtime}{%
+  \setcounter{hours}{\time/60}%
+  \setcounter{minutes}{\time-\value{hours}*60}%
+  \thehours :\theminutes}
+%
+\title{The Balance Test Fallacy in Matching Studies\thanks{Our thanks
+    to Alberto Abadie, Neal Beck, Alexis Diamond, Guido Imbens, Paul
+    Rosenbaum, Don Rubin, and Jas Sekhon for many helpful comments;
+    and the National Institutes of Aging (P01 AG17625-01), the
+    National Science Foundation (SES-0318275, IIS-9874747,
+    SES-0550873), and the Princeton University Committee on Research
+    in the Humanities and Social Sciences for research support.}}
+
+\author{Kosuke Imai,\thanks{Assistant Professor, Department of
+    Politics, Princeton University (Corwin Hall 041, Department of
+    Politics, Princeton University, Princeton NJ 08544, USA;
+    \texttt{http://Imai.Princeton.Edu}, \texttt{KImai@Princeton.Edu},
+    (609) 258-6601).}
+%\and %
+  Gary King,\thanks{David Florence Professor of Government, Harvard
+    University (Institute for Quantitative Social Science, Harvard
+    University, 1737 Cambridge St., Cambridge MA 02138;
+    \texttt{http://GKing.Harvard.Edu}, \texttt{King@Harvard.Edu},
+    (617) 495-2027).}
+%\and %
+  Elizabeth A.\ Stuart\thanks{Researcher, Mathematica Policy Research,
+    Inc.\, (600 Maryland Ave., SW, Suite 550, Washington, DC, 20024,
+    USA; \texttt{http://people.iq.harvard.edu/$\sim$estuart/},
+    \texttt{elizabeth.stuart@gmail.com}).}}
+
+\date{\today} 
+
+\begin{document}\maketitle
+%\baselineskip=1.57\baselineskip
+
+\begin{abstract}
+  In numerous articles across many academic fields, researchers
+  evaluate the quality of matching solutions by examining $t-tests$
+  for the difference in means between the treatment and control
+  groups, or via other hypothesis tests.  We demonstrate that this
+  practice is fallacious and misleading.  We also discuss better
+  alternatives.
+\end{abstract}
+
+A key step in all matching analyses is evaluating the quality of the
+matching solution.
+
+  In fact, since hypothesis
+tests are driven in part by factors other than balance (including the
+number of remaining observations, the ratio of remaining treated to
+control units, and the variance of the treated and control groups),
+they are not even monotonic functions of balance: the t-test can get
+apparently better while balance gets worse, or vice versa.
+\section{Introduction}
+
+%\baselineskip=0.637\baselineskip 
+\bibliographystyle{apsr}
+\bibliography{gk,gkpubs}
+
+\end{document}
