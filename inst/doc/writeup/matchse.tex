@@ -88,7 +88,7 @@ relationship between $X$ and $T$ --- and thus the need for subsequent
 parametric adjustments for $X$ --- are eliminated or reduced.
 Adjusting the sample introduces no bias so long as the matching rule
 for doing this is a function of $X$ and $T$ and not $Y$.  Matching is
-not a method of estimation, and so any appliation of it must be
+not a method of estimation, and so any application of it must be
 followed by the application of a method of estimation.  In the best
 case, the data after matching satisfy
 \begin{equation}
@@ -120,7 +120,7 @@ the chosen algorithm by $t$-tests for the difference in means for each
 variable in $X$ between the treatment and control groups, thus
 seemingly addressing at least one important aspect of a high
 dimensional relationship.  (Other hypothesis tests are also sometimes
-used to evaluate higher dimensional diferences in (\ref{balance}), but
+used to evaluate higher dimensional differences in (\ref{balance}), but
 the same problems we describe below still applies, and so for
 expository purposes we focus on the simpler $t$-test.)  
 
@@ -138,13 +138,13 @@ health \citep{NovReaRau06,ElBGilWu05,LauSmiSta00,BinBreEar05}, and
 statistics \citep{LuZanHor01}.  Tables of $t$-tests and other
 hypothesis tests for balance are used as a justification in these and
 other published articles for the adequacy of the chosen matching
-solution, and insigificant $t$-tests are used a stopping rule during
+solution, and insignificant $t$-tests are used a stopping rule during
 research while maximizing balance in the search for the right analysis
-from which to draw inferences.  This approach is problemmatic for at
+from which to draw inferences.  This approach is problematic for at
 least four reasons.
 
 First, consider a data set on the School Dropout Demonstration
-Assitance Program which sought to reduce dropout rates by a series of
+Assistance Program which sought to reduce dropout rates by a series of
 school ``restructuring'' initiatives, including curriculum reform,
 expanding teacher training, and others \citep{AgoDyn04,Stuart04}.  We
 use a subset of these data that includes 428 students from a treated
@@ -199,7 +199,7 @@ is, the bias that defines the blocks can be set to zero in sample,
 without having to hope that the $n$ is large enough for the advantages
 of randomization to kick in --- matching as well as feasible on all
 observables is preferable.  Indeed, in the best case, we would be able
-to match exactly on all observables, and afterwards randomize the
+to match exactly on all observables, and afterwords randomize the
 assignment of values to the treatment variable $T$.  Treated and
 control groups that differ in any observable way should be avoided
 wherever feasible, and so one should not use a stopping rule in
@@ -220,7 +220,7 @@ Using matching to eliminate bias under this simplified data generation
 process involves dropping or repeating observations so that $F$ is as
 close to a matrix of zeros as possible.  But what happens to bias if
 $F$ is smaller than it was before matching but still not zero?  The
-answer ist hat the bias is reduced, but without knowledge of $\gamma$
+answer is that the bias is reduced, but without knowledge of $\gamma$
 --- which matching researchers eschew estimating to ensure that they
 do not inadvertently introduce selection bias by choosing matching
 solutions that stack the deck for their favored hypotheses --- it
@@ -261,8 +261,8 @@ treated and control groups and should be minimized without limit.  A
 difference in means is a fine way to start.  Statisticians tend to to
 standardize the mean differences so the measure is invariant to the
 scale of the variables.  This is a reasonable approach used to
-simplify the analysis, but in our view the standarization also makes
-the variables invarient to the substantive research question (and to
+simplify the analysis, but in our view the standardization also makes
+the variables invariant to the substantive research question (and to
 priors about likely values of $\gamma$ or the equivalent).  A more
 general approach are quantile-quantile (or ``QQ'') plots that compare
 the full distribution of two variables.  In each case, the statistics
