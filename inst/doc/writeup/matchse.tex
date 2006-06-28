@@ -78,40 +78,41 @@ dependence.  We show that a common approach used for evaluating the
 success of this method, based on hypothesis tests comparing the
 treated and control groups, is invalid.
 
-The ultimate goal of matching and the associated analyses
-we consider is estimating the causal effect of a binary treatment
-variable $T$ on an outcome variable $Y$.  In observational data, this
-typically requires controlling for a vector of observed covariates
-$X$.\footnote{Causal effects can be defined in a variety of ways,
-  including average treatment effect, average treatment effect on the
-  treated, etc.  Our argument applies to any of these or other
-  definitions.}  Matching is used to adjust the data
-nonparametrically, by dropping or repeating observations, so that the
-relationship between $X$ and $T$ --- and thus the need for subsequent
-parametric adjustments for $X$ --- are eliminated or reduced.
-Adjusting the sample introduces no bias so long as the matching rule
-for doing this is a function of $X$ and $T$ and not $Y$.  Matching is
-not a method of estimation, and so any application of it must be
-followed by the application of a method of estimation.  In the best
-case, the data after matching satisfy
+The ultimate goal of matching and the associated analyses we consider
+is estimating the average causal effect of a binary treatment
+variable, $T$, on an outcome variable, $Y$.\footnote{Causal quantities
+  of interest can be defined in a variety of other ways, including
+  average treatment effect on the treated.  Our argument applies to
+  any of these quantities.}  In observational studies, researchers
+typically invoke the strong ignorability assumption \citep{RosRub83},
+which then requires controlling for a vector of observed covariates
+$X$.  Matching is used to nonparametrically adjust for nonrandom
+treatment assignment, by dropping or repeating observations, so that
+the relationship between $X$ and $T$ --- and thus the need for
+subsequent parametric adjustments for $X$ --- are eliminated or
+reduced.  Adjusting the sample introduces no bias so long as the
+matching rule for doing this is a function of $X$ and $T$ and not $Y$.
+Matching is not a method of estimation, and so any application of it
+must be followed by the application of a method of estimation.  In the
+best case, the data after matching satisfy
 \begin{equation}
   \label{balance}
   \tilde p(X\mid T=1) = \tilde p(X\mid T=0),
 \end{equation}
-where $\tilde p$ is the observed empirical density of the data, rather
+where $\tilde p$ is the empirical density of the observed data, rather
 than a population density.\footnote{To be more specific, the empirical
   density is defined as $\tilde p(x) = \# \{ i\in \{1, 2, \dots, n \}:
   X_i = x \} / n$, for all $x$, where $\#A$ is the number of elements
-  in the set $A$.  The corresponding denominator $n$ is $\sum_{i=1}^n
-  T_i$ on the left side and $\sum_{i=1}^n (1-T_i)$ on the right of
-  (\ref{balance}).} In this best case, $T$ and $X$ are empirically
-unrelated in the matched sample, no further adjustments for $X$ are
-necessary, and the causal effect can be estimated by a simple
-difference in means of $Y$ between the treated $T=1$ and control $T=0$
-groups.  When the sample relationship between $T$ and $X$ is reduced
-but not eliminated, further adjustment for $X$ may be necessary, such
-as via the same parametric methods as would have been used if no
-matching had taken place but with considerably less model dependence
+  in the set $A$ and $n$ is the number of observations. } In this best
+case, $T$ and $X$ are unrelated in the matched sample, and no further
+adjustments for $X$ are necessary. Indeed, the average treatment
+effect can be estimated by a simple difference in means of $Y$ between
+the treated ($T=1$) and control ($T=0$) groups.  When the sample
+relationship between $T$ and $X$ is reduced but not eliminated,
+further adjustment for $X$ may be necessary, such as via the same
+parametric methods as would have been used if matching had not been
+used. Moreover, it has been shown that matching can effectively reduce
+the model dependence of subsequent parametric analyses
 \citep{HoImaKin06}.  The immediate goal of matching, then, is to
 choose an algorithm that satisfies (\ref{balance}) as best as
 possible.  Since methodological work on matching is growing fast, the
@@ -119,19 +120,20 @@ list of available matching algorithms from which to choose is also
 growing.
 
 Standard practice is for researchers to evaluate (\ref{balance}) for
-the chosen algorithm by $t$-tests for the difference in means for each
-variable in $X$ between the treatment and control groups, thus
-seemingly addressing at least one important aspect of a high
-dimensional relationship.  (Other hypothesis tests are also sometimes
-used to evaluate higher dimensional differences in (\ref{balance}), but
-the same problems we describe below still applies, and so for
-expository purposes we focus on the simpler $t$-test.)  
+the chosen algorithm by conducting $t$-tests for the difference in
+means for each variable in $X$ between the treatment and control
+groups, thus seemingly addressing at least one important aspect of a
+high dimensional relationship.  (Other hypothesis tests are also
+sometimes used to evaluate higher dimensional differences in
+(\ref{balance}), but the same problems we describe below still
+applies, and so for expository purposes we focus on the simpler
+$t$-test.)
 
 The practice of using hypothesis tests to evaluate balance is
 widespread, and includes a large volume of otherwise high quality work
 in economics \citep{MilFreMcH03,BlaSmi04,AgoDyn04,DehWah99,
-  DehWah02,SmiTod05}, political science \citep{Imai05,SimHop05,
-  Lassen05}, sociology \citep{Harding03,DiPGan04,LunSmi05}, psychology
+  DehWah02,SmiTod05}, political science \citep{Imai05,SimHop05},
+sociology \citep{LunSmi05}, psychology
 \citep{HavNag05,HilWalBro05,YosMagBos03,JonDAgGon04,McCRidMor04},
 education \citep{Crosnoe05,SchBuc03}, management science
 \citep{FreMil04, Villalonga04,WanSchAvo05}, medicine
@@ -141,10 +143,10 @@ health \citep{NovReaRau06,ElBGilWu05,LauSmiSta00,BinBreEar05}, and
 statistics \citep{LuZanHor01}.  Tables of $t$-tests and other
 hypothesis tests for balance are used as a justification in these and
 other published articles for the adequacy of the chosen matching
-solution, and insignificant $t$-tests are used a stopping rule during
-research while maximizing balance in the search for the right analysis
-from which to draw inferences.  This approach is problematic for at
-least four reasons.
+solution, and insignificant $t$-tests are used as a stopping rule
+during research while maximizing balance in the search for the right
+analysis from which to draw inferences.  This approach is problematic
+for at least four reasons.
 
 First, consider a data set on the School Dropout Demonstration
 Assistance Program which sought to reduce dropout rates by a series of
@@ -199,11 +201,11 @@ satisfied in sample, not in some population from which the data are
 hypothetically drawn.  For the same reason that randomized blocks are
 preferable to classical randomization in experimental design --- that
 is, the bias that defines the blocks can be set to zero in sample,
-without having to hope that the $n$ is large enough for the advantages
-of randomization to kick in --- matching as well as feasible on all
-observables is preferable.  Indeed, in the best case, we would be able
-to match exactly on all observables, and afterwords randomize the
-assignment of values to the treatment variable $T$.  Treated and
+without having to hope that the sample size is large enough for the
+advantages of randomization to kick in --- matching on all observables
+is preferable whenever feasible.  Indeed, in the best case, we would
+be able to match exactly on all observables, and afterwords randomize
+the assignment of values to the treatment variable $T$.  Treated and
 control groups that differ in any observable way should be avoided
 wherever feasible, and so one should not use a stopping rule in
 minimizing imbalance other than exact balance.
@@ -214,35 +216,36 @@ That is, imbalance --- the difference between $\tilde p(X\mid T=1)$
 and $\tilde p(X\mid T=0)$ --- should be minimized without limit where
 possible, so long as we are not compromising other goals in the
 process (such as efficiency).  To see this, consider data generated by
-the classical regression model, $E(Y)= \theta + T\beta + X\gamma$
-\citep{Goldberger91}.  Then the regression of $Y$ on a constant and
-$T$ (without $X$) gives a difference in means, the bias of which is
-$E(\hat\beta) = F\gamma$, where $F$ contains vectors of coefficients
-of regressions of each of the variables in $X$ on a constant and $T$.
-Using matching to eliminate bias under this simplified data generation
-process involves dropping or repeating observations so that $F$ is as
-close to a matrix of zeros as possible.  But what happens to bias if
-$F$ is smaller than it was before matching but still not zero?  The
-answer is that the bias is reduced, but without knowledge of $\gamma$
---- which matching researchers eschew estimating to ensure that they
-do not inadvertently introduce selection bias by choosing matching
-solutions that stack the deck for their favored hypotheses --- it
-could be that a nonzero portion of $F$, when multiplied by $\gamma$,
-will generate arbitrarily large bias.  Whether or not some hypothesis
-test indicates that $F$ is not significantly different from zero is
-not material: The smaller $F$ is the better, either above or below the
-$t$-test threshold of significance, since $F$ (i.e., balance) is a
-characteristic of the observed data.
+the classical regression model, $E(Y\mid X)= \theta + T\beta +
+X\gamma$ \citep{Goldberger91}.  Then the regression of $Y$ on a
+constant and $T$ (without $X$) gives a difference in means, the bias
+of which is $E(\hat\beta) = F\gamma$, where $F$ contains vectors of
+coefficients of regressions of each of the variables in $X$ on a
+constant and $T$.  Using matching to eliminate bias under this
+simplified data generation process involves dropping or repeating
+observations so that $F$ is as close to a matrix of zeros as possible.
+But what happens to bias if $F$ is smaller than it was before matching
+but still not zero?  The answer is that the bias is reduced, but
+without knowledge of $\gamma$ --- which matching researchers eschew
+estimating to ensure that they do not inadvertently introduce
+selection bias by choosing matching solutions that stack the deck for
+their favored hypotheses --- it could be that a nonzero portion of
+$F$, when multiplied by $\gamma$, will generate arbitrarily large
+bias.  Whether or not some hypothesis test indicates that $F$ is not
+significantly different from zero is not material: The smaller $F$ is
+the better, either above or below the $t$-test threshold of
+significance, since $F$ (i.e., balance) is a characteristic of the
+observed data.
 
 Finally, the problem in Figure \ref{f:randrop} can be seen by
 recognizing that dropping observations can influence not only balance
 but also statistical power, and the $t$-test is unfortunately a
 function of both.  The more observations dropped, the less power the
-tests have to detect problems.  More formally, we can write the two
-sample $t$ test statistic (TS) with unknown and unequal variances as
+tests have to detect imbalance in observed covariates.  Formally, we
+can write the two sample $t$-test statistic with unknown and
+unequal variances as
 \begin{equation}
-  \label{ttest}
-\text{(TS)} = \frac{\sqrt{n}(\overline{X}_t-\overline{X}_c)}
+  \label{ttest} \frac{\sqrt{n}(\overline{X}_t-\overline{X}_c)}
                {\sqrt{\frac{s^2_t}{r} + \frac{s^2_c}{1-r}}}
 \end{equation}
 where $s^2_t=\sum_{i=1}^n t_i(X_i - \overline{X}_t)^2/(n_t-1)$,
@@ -259,27 +262,28 @@ cannot even be counted on to be monotonic functions of balance: The
 $t$-test can indicate balance is getting better while the actual
 balance is getting worse, staying the same, or improving.
 
-Balance should thus be checked by comparing the observed data in the
-treated and control groups and should be minimized without limit.  A
-difference in means is a fine way to start.  Statisticians tend to to
-standardize the mean differences so the measure is invariant to the
-scale of the variables.  This is a reasonable approach used to
-simplify the analysis, but in our view the standardization also makes
-the variables invariant to the substantive research question (and to
-priors about likely values of $\gamma$ or the equivalent).  A more
-general approach are quantile-quantile (or ``QQ'') plots that compare
-the full distribution of two variables.  In each case, the statistics
-chosen to assess balance should be characteristics of the sample and
-not some hypothetical population.  The graph on the right side of
-Figure \ref{f:randrop} plots for comparison the difference in means
-and a QQ plot summary statistic, the average distance between the
-empirical quantile distributions of the treated and control groups,
-calculated over the same samples with different numbers of control
-units randomly dropped.  Unlike the $t$-test, the level of balance
-does not change for either statistic as more units are randomly
-dropped.  As is widely recognized, we ultimately need better ways of
-comparing two multidimensional histograms, but in all cases these
-should be sample quantities, not hypothesis tests.
+Balance should thus be checked by comparing the observed covariate
+differences between the treated and control groups and should be
+minimized without limit.  A difference in means is a fine way to
+start.  Statisticians tend to to standardize the mean differences so
+the measure can be compared across different variables.  This is a
+reasonable approach used to simplify the analysis, but in our view the
+standardization also makes the variables invariant to the substantive
+research question (and to priors about likely values of $\gamma$ or
+the equivalent).  A more general approach are quantile-quantile (or
+``QQ'') plots that compare the empirical distribution of two
+variables.  In each case, the statistics chosen to assess balance
+should be characteristics of the sample and not some hypothetical
+population.  The graph on the right side of Figure \ref{f:randrop}
+plots for comparison the difference in means and a QQ plot summary
+statistic, the average distance between the empirical quantile
+distributions of the treated and control groups, calculated over the
+same samples with different numbers of control units randomly dropped.
+Unlike the $t$-test, the level of balance does not change for either
+statistic as more units are randomly dropped.  As is widely
+recognized, we ultimately need better ways of comparing two
+multidimensional histograms, but in all cases these should be sample
+quantities, not hypothesis tests.
 
 
 %\baselineskip=0.637\baselineskip 
