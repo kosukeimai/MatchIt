@@ -73,7 +73,7 @@
 
 Across academic fields, matching is a popular method of improving
 causal inference by nonparametrically adjusting for control variables
-\citep{Imbens04,Rosenbaum02}.  In this paper, we show that a common
+\citep{Imbens04,Rosenbaum02,Rubin06}.  In this paper, we show that a common
 approach used in evaluating the success of this method, based on
 hypothesis tests for the difference between the treated and control
 groups, is invalid.
@@ -127,9 +127,11 @@ Standard practice is for researchers to evaluate (\ref{balance}) for
 the chosen algorithm by conducting $t$-tests for the difference in
 means for each variable in $X$ between the treatment and control
 groups, thus seemingly addressing at least one important aspect of a
-high dimensional relationship.  (Other hypothesis tests are also
+high dimensional relationship.  (Other hypothesis tests, such as chi-square, F-, or 
+Kolmogorov-Smirnov tests, are also
 sometimes used to evaluate higher dimensional differences in
-(\ref{balance}), but the same problems we describe below still
+(\ref{balance}), or differences in non-continuous covariates,
+but the same problems we describe below still
 applies, and so for expository purposes we focus on the simpler
 $t$-test.)
 
