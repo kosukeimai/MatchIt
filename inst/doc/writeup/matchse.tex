@@ -51,10 +51,9 @@
     \texttt{http://GKing.Harvard.Edu}, \texttt{King@Harvard.Edu},
     (617) 495-2027).}
 \and 
-  Elizabeth A.\ Stuart\thanks{Researcher, Mathematica Policy Research,
-    Inc.\, (600 Maryland Ave., SW, Suite 550, Washington, DC, 20024,
-    USA; \texttt{http://people.iq.harvard.edu/$\sim$estuart/},
-    \texttt{elizabeth.stuart@gmail.com}).}}
+  Elizabeth A.\ Stuart\thanks{Assistant Professor Designate, Johns Hopkins Bloomberg School
+    of Public Health  (624 N. Broadway, 8th Floor, Baltimore, MD, 21205; 
+    \texttt{EStuart@jhsph.edu}).}}
 
 \date{\today} 
 
@@ -120,6 +119,10 @@ possible.  Since methodological work on matching is growing fast, the
 list of available matching algorithms from which to choose is also
 growing.
 
+Choosing the most appropriate algorithm for a given problem involves assessing how well
+(\ref{balance}) holds.  Ideally that would involve comparing the full multi-dimensional histograms of all
+covariates $X$ in the treated and control groups.  However, in high dimensions that is generally
+infeasible and thus lower-dimensional measures of balance are generally compared instead.
 Standard practice is for researchers to evaluate (\ref{balance}) for
 the chosen algorithm by conducting $t$-tests for the difference in
 means for each variable in $X$ between the treatment and control
@@ -130,7 +133,8 @@ sometimes used to evaluate higher dimensional differences in
 applies, and so for expository purposes we focus on the simpler
 $t$-test.)
 
-The practice of using hypothesis tests to evaluate balance is
+The practice of 
+using hypothesis tests to evaluate balance is
 widespread, and includes a large volume of otherwise high quality work
 in economics \citep{LisMilFre03,BlaSmi04,AgoDyn04,DehWah99,
   DehWah02,SmiTod05}, political science \citep{Imai05,SimHop05},
@@ -145,8 +149,8 @@ statistics \citep{LuZanHor01}.  Tables of $t$-tests and other
 hypothesis tests for balance are used as a justification in these and
 other published articles for the adequacy of the chosen matching
 solution, and insignificant $t$-tests are used as a stopping rule
-during research while maximizing balance in the search for the right
-analysis from which to draw inferences.  This approach is problematic
+for maximizing balance in the search for the right
+matched sample from which to draw inferences.  This approach is problematic
 for at least four reasons.
 
 First, consider a data set on the School Dropout Demonstration
@@ -155,13 +159,13 @@ school ``restructuring'' initiatives, including curriculum reform,
 expanding teacher training, and others \citep{AgoDyn04,Stuart04}.  We
 use a subset of these data that includes 428 students from a treated
 school ($T=1$) and 434 from a control school ($T=0$).  The outcome
-variable $Y$ is a test score (coded as a percentage), and $X$ includes
+variable $Y$ is a test score (on a scale from 0 to 100), and $X$ includes
 a variety of variables but we focus here only on the baseline math
 test score.  Matching begins with the full data set and then
 selectively deletes students until (\ref{balance}) is best satisfied
 without losing too many observations.  Suppose instead that we choose
 a matching algorithm that \emph{randomly} selects observations to
-discard.  Clearly, this algorithm would not effect balance, or the
+discard.  Clearly, this algorithm would not affect balance, or the
 bias in the ultimate analysis that satisfying (\ref{balance}) is meant
 to improve.  Yet, we can show that randomly deleting observations does
 wonders according to the $t$-test.  To do this, we create a sequence
@@ -172,7 +176,7 @@ horizontal axis in this figure reports the number of control units
 randomly dropped, while the vertical axis gives the size of the
 $t$-test.  We have shaded in the area below a $t$-test of 2, which is
 the region in which results are conventionally referred to as
-``statistical insignificant''.  The line on the plot clearly shows
+``statistically insignificant''.  The line on the plot clearly shows
 that, according to the $t$-test, randomly dropping more control units
 does an ``excellent'' job at achieving balance, reducing the statistic
 from 3.7 to 1.6 in the figure.  This of course makes no sense at all.
@@ -194,7 +198,7 @@ from 3.7 to 1.6 in the figure.  This of course makes no sense at all.
 \end{figure}
 
 Second, from a theoretical perspective, balance is a characteristic of
-the sample, not some hypothetical population, and so strictly speaking
+the sample, not some hypothetical population, and so, strictly speaking,
 hypothesis tests are irrelevant in this context.  Virtually all
 methods of adjustment condition on the observed values of $X$, and so
 $X$ can be dropped in these analyses only when (\ref{balance}) is
@@ -204,8 +208,8 @@ blocks are preferable to classical randomization in experimental
 design --- that is, the bias that defines the blocks can be set to
 zero in sample, without having to hope that the sample size is large
 enough for the advantages of randomization to kick in --- matching on
-all observables is preferable whenever feasible.  Indeed, in the best
-case, we would be able to match exactly on all observables, and
+all observed covariates $X$ is preferable whenever feasible.  Indeed, in the best
+case, we would be able to match exactly on all observed covariates, and
 afterwords randomize the assignment of values to the treatment
 variable $T$.  That is, imbalance --- the difference between $\tilde
 p(X\mid T=1)$ and $\tilde p(X\mid T=0)$ --- should be minimized
@@ -219,7 +223,7 @@ model, $E(Y\mid X)= \theta + T\beta + X\gamma$ \citep{Goldberger91}.
 Then the regression of $Y$ on a constant and $T$ (without $X$) gives a
 difference in means, the bias of which as an estimate of $\beta$ is
 $E(\hat\beta-\beta) = F\gamma$, where $F$ contains vectors of
-coefficients of regressions of each of the variables in $X$ on a
+coefficients from regressions of each of the variables in $X$ on a
 constant and $T$.  Using matching to eliminate bias under this
 simplified data generation process involves dropping or repeating
 observations so that $F$ is as close to a matrix of zeros as possible.
@@ -269,7 +273,7 @@ measure can be compared across different variables.  This is a
 reasonable approach used to simplify the analysis, but in our view the
 standardization also makes the variables invariant to the substantive
 research question (and to priors about likely values of $\gamma$ or
-the equivalent).  A more general approach are quantile-quantile (or
+the equivalent).  A more general approach is quantile-quantile (or
 ``QQ'') plots that compare the empirical distribution of two
 variables.  In each case, the statistics chosen to assess balance
 should be characteristics of the sample and not some hypothetical
@@ -277,8 +281,7 @@ population.  The graph on the right side of Figure \ref{f:randrop}
 plots for comparison the difference in means and a QQ plot summary
 statistic, the average distance between the empirical quantile
 distributions of the treated and control groups, calculated over the
-same samples as the left graph with different numbers of control units
-randomly dropped.  Unlike the $t$-test, the level of balance does not
+same samples as the left graph.  Unlike the $t$-test, the level of balance does not
 change for either statistic as more units are randomly dropped.  As is
 widely recognized, we ultimately need better ways of comparing two
 multidimensional histograms, but in all cases these should be sample
