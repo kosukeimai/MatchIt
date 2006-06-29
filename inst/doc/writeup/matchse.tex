@@ -110,7 +110,7 @@ treatment effect can be estimated by a simple difference in means of
 $Y$ between the treated ($T=1$) and control ($T=0$) groups.  When the
 sample relationship between $T$ and $X$ is reduced but not eliminated,
 further adjustment for $X$ may be necessary, such as via the same
-parametric methods as would have been used if matching had not been
+parametric methods as would have been applied if matching had not been
 used. Moreover, it has been shown that matching can effectively reduce
 the model dependence of subsequent parametric analyses
 \citep{HoImaKin06}.  The immediate goal of matching, then, is to
@@ -201,8 +201,8 @@ from 3.7 to 1.6 in the figure.  This of course makes no sense at all.
 
 Second, the problem in Figure~\ref{f:randrop} can be seen by
 recognizing that dropping observations can influence not only balance
-but also statistical power, and the $t$-test like most of statistical
-tests is unfortunately a function of both.  The more observations
+but also statistical power, and unfortunately the $t$-test like most
+statistical tests is a function of both.  The more observations
 dropped, the less power the tests have to detect imbalance in observed
 covariates.  Formally, let $n_t$ and $n_c$ be the sample sizes for the
 matched treatment and control groups, and define $r=n_t/n$ where
@@ -236,7 +236,7 @@ so $X$ can be dropped in these analyses only when
 equation~(\ref{balance}) is satisfied in sample, not in some
 population from which the data are hypothetically or actually drawn.
 For the same reason that randomized blocks are preferable to classical
-randomization in experimental design --- that is, the bias that
+randomization in experimental design --- that is, the imbalance that
 defines the blocks can be set to zero in sample, without having to
 hope that the sample size is large enough for the advantages of
 randomization to kick in --- matching on all observed covariates $X$
