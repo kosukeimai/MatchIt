@@ -212,17 +212,18 @@ unknown and unequal variances as
   \label{ttest} \frac{\sqrt{n_m}(\overline{X}_{mt}-\overline{X}_{mc})}
                {\sqrt{\frac{s^2_{mt}}{r_m} + \frac{s^2_{mc}}{1-r_m}}}
 \end{equation}
-where $\overline{X}_{mt}=\sum_{i=1}^n_m T_i X_i/n_{mt}$ and
-$\overline{X}_{mc}=\sum_{i=1}^n_m (1-T_i)X_i/n_{mc}$ are the sample means, and
-$s^2_{mt}=\sum_{i=1}^n_m T_i(X_i - \overline{X}_{mt})^2/(n_{mt}-1)$ and
-$s^2_{mc}=\sum_{i=1}^n_m (1-T_i)(X_i - \overline{X}_{mt})^2/(n_{mc}-1)$ represent
-the sample variances of the matched treated and control groups,
-respectively.  Hence, the difference in sample means as a measure of
-balance is distorted in the $t$-test by three factors: (1) the total
-number of remaining observations $n_m$, (2) the ratio of remaining
-treated units to the total number of remaining observations $r_m$, and
-(3) the sample variance of $X$ for the remaining treated and control
-units, $s_{mt}^2$ and $s_{mc}^2$.  Since the value of (this and other)
+where $\overline{X}_{mt}=\sum_{i=1}^{n_m} T_i X_i/n_{mt}$ and
+$\overline{X}_{mc}=\sum_{i=1}^{n_m} (1-T_i)X_i/n_{mc}$ are the sample
+means, and $s^2_{mt}=\sum_{i=1}^{n_m} T_i(X_i -
+\overline{X}_{mt})^2/(n_{mt}-1)$ and $s^2_{mc}=\sum_{i=1}^{n_m}
+(1-T_i)(X_i - \overline{X}_{mt})^2/(n_{mc}-1)$ represent the sample
+variances of the matched treated and control groups, respectively.
+Hence, the difference in sample means as a measure of balance is
+distorted in the $t$-test by three factors: (1) the total number of
+remaining observations $n_m$, (2) the ratio of remaining treated units
+to the total number of remaining observations $r_m$, and (3) the
+sample variance of $X$ for the remaining treated and control units,
+$s_{mt}^2$ and $s_{mc}^2$.  Since the value of (this and other)
 hypothesis tests are affected by factors other than balance, they
 cannot even be counted on to be monotonic functions of balance: The
 $t$-test can indicate balance is getting better while the actual
@@ -294,12 +295,12 @@ the left graph.\footnote{Formally, this measure can be defined as
   $\frac{1}{n}\sum_{i=1}^n|\widetilde{F}_{Xmt}^{-1}(X_i)-\widetilde{F}^{-1}_{Xmc}(X_i)|$
   where $\widetilde{F}_{Xmt}$ and $\widetilde{F}_{Xmc}$ are the
   empirical distribution functions of a covariate $X$ for the matched
-  treatment and matched control groups, respectively, and $n=min{n_{mt},n_{mc}}$.}  Unlike the
-$t$-test, the level of balance does not change for either statistic as
-more units are randomly dropped.  As is widely recognized, we
-ultimately need better ways of comparing two multidimensional
-histograms, but in all cases these should be sample quantities, not
-hypothesis tests.
+  treatment and matched control groups, respectively, and
+  $n=\min(n_{mt},n_{mc})$.}  Unlike the $t$-test, the level of balance
+does not change for either statistic as more units are randomly
+dropped.  As is widely recognized, we ultimately need better ways of
+comparing two multidimensional histograms, but in all cases these
+should be sample quantities, not hypothesis tests.
 
 
 %\baselineskip=0.637\baselineskip 
