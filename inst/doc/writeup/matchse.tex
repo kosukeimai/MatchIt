@@ -236,17 +236,17 @@ so $X$ can be dropped in these analyses only when
 equation~(\ref{balance}) is satisfied in sample, not in some
 population from which the data are hypothetically or actually drawn.
 For the same reason that randomized blocks are preferable to classical
-randomization in experimental design --- that is, the imbalance that
-defines the blocks can be set to zero in sample, without having to
-hope that the sample size is large enough for the advantages of
-randomization to kick in --- matching on all observed covariates $X$
-is preferable whenever feasible.  Indeed, in the best case, we would
-be able to match exactly on all observed covariates, and afterwords
-randomize the assignment of values to the treatment variable $T$.
-That is, imbalance --- the difference between $\tilde p(X\mid T=1)$
-and $\tilde p(X\mid T=0)$ --- should be minimized without limit where
-possible, so long as we are not compromising other goals in the
-process (such as efficiency).
+randomization in experimental design --- that is, the imbalance in the
+variables that defines the blocks can be set to zero in sample,
+without having to hope that the sample size is large enough for the
+advantages of randomization to kick in --- matching on all observed
+covariates $X$ is preferable whenever feasible.  Indeed, in the best
+case, we would be able to match exactly on all observed covariates,
+and afterwords randomize the assignment of values to the treatment
+variable $T$.  That is, imbalance --- the difference between $\tilde
+p(X\mid T=1)$ and $\tilde p(X\mid T=0)$ --- should be minimized
+without limit where possible, so long as we are not compromising other
+goals in the process (such as efficiency).
 
 Finally, we offer a simple model that conveys why matching contains no
 de minimus level, below which the level of imbalance is acceptable.
