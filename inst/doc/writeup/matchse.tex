@@ -31,13 +31,13 @@
   \thehours :\theminutes}
 %
 \title{The Balance Test Fallacy in Matching\\ Methods for Causal
-  Inference\thanks{Our thanks to Alberto Abadie, Neal Beck, Alexis
-    Diamond, Guido Imbens, Paul Rosenbaum, Don Rubin, and Jas Sekhon
-    for many helpful comments; and the National Institutes of Aging
-    (P01 AG17625-01), the National Science Foundation (SES-0318275,
-    IIS-9874747, SES-0550873), and the Princeton University Committee
-    on Research in the Humanities and Social Sciences for research
-    support.}}
+  Inference\thanks{Our thanks to Alberto Abadie, Neal Beck, Jack
+    Buckley, Alexis Diamond, Felix Elwert, Guido Imbens, Paul
+    Rosenbaum, Don Rubin, and Jas Sekhon for many helpful comments;
+    and the National Institutes of Aging (P01 AG17625-01), the
+    National Science Foundation (SES-0318275, IIS-9874747,
+    SES-0550873), and the Princeton University Committee on Research
+    in the Humanities and Social Sciences for research support.}}
 
 \author{Kosuke Imai\thanks{Assistant Professor, Department of
     Politics, Princeton University (Corwin Hall 041, Department of
@@ -120,19 +120,20 @@ list of available matching algorithms from which to choose is also
 growing.
 
 Choosing the most appropriate algorithm for a given problem involves
-assessing how well equation~(\ref{balance}) holds in the matched samples.  Ideally that would
-involve comparing the joint distributions of all covariates $X$
-between the matched treatment and control groups.  However, when $X$ is high
-dimensional, this is generally infeasible and thus lower-dimensional
-measures of balance are used instead.  Standard practice is for
-researchers to evaluate equation~(\ref{balance}) for the chosen
-matching algorithm by conducting $t$-tests for the difference in means
-for each variable in $X$ between the matched treatment and control groups,
-thus seemingly addressing at least one important aspect of a high
-dimensional relationship.  Other hypothesis tests, such as $\chi^2$,
-$F$, and Kolmogorov-Smirnov tests, are also sometimes used for each
-covariate, but the same problems we describe below still apply, and so
-for expository purposes we focus on the most commonly used $t$-test.
+assessing how well equation~(\ref{balance}) holds in the matched
+samples.  Ideally that would involve comparing the joint distributions
+of all covariates $X$ between the matched treatment and control
+groups.  However, when $X$ is high dimensional, this is generally
+infeasible and thus lower-dimensional measures of balance are used
+instead.  Standard practice is for researchers to evaluate
+equation~(\ref{balance}) for the chosen matching algorithm by
+conducting $t$-tests for the difference in means for each variable in
+$X$ between the matched treatment and control groups, thus seemingly
+addressing at least one important aspect of a high dimensional
+relationship.  Other hypothesis tests, such as $\chi^2$, $F$, and
+Kolmogorov-Smirnov tests, are also sometimes used for each covariate,
+but the same problems we describe below still apply, and so for
+expository purposes we focus on the most commonly used $t$-test.
 
 The practice of using hypothesis tests to evaluate balance is
 widespread, and includes a large volume of otherwise high quality work
@@ -184,13 +185,13 @@ from 3.7 to 1.6 in the figure.  This of course makes no sense at all.
 \begin{figure}[t]
   \centering
   \includegraphics[height=4.5in]{figs/TStatPlotR0MATH}
-  \caption{Dangers in relying on $t$-statistics as measure of balance.
-    The solid lines in both graphs indicate the average value of a
-    measure of balance when a given number of control units are
-    randomly dropped from the data set (out of a total of 434).  With
-    larger numbers of control units dropped (i.e., smaller numbers of
-    control units in the resulting sample), the value of $t$-statistic
-    gets closer to 0, falsely indicating improvements in balance, even
+  \caption{\em Dangers in relying on $t$-statistics as measure of balance.
+    The lines in both graphs indicate the average value of a measure
+    of balance when a given number of control units are randomly
+    dropped from the data set (out of a total of 434).  With larger
+    numbers of control units dropped (i.e., smaller numbers of control
+    units in the resulting sample), the value of $t$-statistic gets
+    closer to 0, falsely indicating improvements in balance, even
     though true balance does not vary systematically across the data
     sets (and efficiency declines).  The difference in means and
     quantile-quantile plot mean deviation, given in the right graph,
