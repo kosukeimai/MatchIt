@@ -9,6 +9,11 @@ matchit <- function(formula, data, method = "nearest", distance = "logit",
     stop("Data must be a dataframe",call.=FALSE)}
   if(sum(is.na(data))>0)
     stop("Missing values exist in the data")
+
+  ## 7/13/06: Convert character variables to factors as necessary
+  ischar <- rep(0, dim(data)[2])
+  for (i in 1:dim(data)[2]) 
+	if(is.character(data[,i])) data[,i] <- as.factor(data[,i])
   
   ## check inputs
   if (!is.numeric(distance)) {

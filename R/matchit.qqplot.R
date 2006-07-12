@@ -1,7 +1,19 @@
 matchit.qqplot <- function(x,discrete.cutoff,
                            which.subclass=NULL, numdraws=5000,
                            interactive = T, which.xs = NULL){
-  covariates  <- x$X
+  X <- x$X
+  ## Fix X matrix so that it doesn't have any factors
+  varnames <- colnames(X)
+  for(var in varnames) {
+        if(is.factor(X[,var])) {
+                tempX <- X[,!colnames(X)%in%c(var)]
+                form<-formula(substitute(~dummy-1,list(dummy=as.name(var))))
+                X <- cbind(tempX, model.matrix(form, X))
+        }
+  }
+
+  covariates  <- X
+
   if(!is.null(which.xs)){
     if(sum(which.xs%in%dimnames(covariates)[[2]])!=length(which.xs)){
       stop("which.xs is incorrectly specified")

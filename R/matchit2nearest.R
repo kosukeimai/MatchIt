@@ -224,7 +224,6 @@ matchit2nearest <-  function(treat, X, data, distance, discarded,
   x <- as.matrix(match.matrix)
   x[x==-1] <- NA
 
-  
   ## Calculate weights and return the results
   res <- list(match.matrix = match.matrix, weights =
               weights.matrix(match.matrix, treat, discarded), X=X)

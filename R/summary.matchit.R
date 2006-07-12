@@ -2,7 +2,18 @@ summary.matchit <- function(object, interactions = FALSE,
                             addlvariables = NULL, standardize = FALSE,
                             ...) {
 
-  XX <- cbind(distance=object$distance,object$X)
+  X <- object$X
+  ## Fix X matrix so that it doesn't have any factors  
+  varnames <- colnames(X)
+  for(var in varnames) {
+        if(is.factor(X[,var])) {
+                tempX <- X[,!colnames(X)%in%c(var)]   
+                form<-formula(substitute(~dummy-1,list(dummy=as.name(var))))
+                X <- cbind(tempX, model.matrix(form, X))
+        }
+  }
+
+  XX <- cbind(distance=object$distance,X)
   if (!is.null(addlvariables)) XX <- cbind(XX, addlvariables)
 
   treat <- object$treat
