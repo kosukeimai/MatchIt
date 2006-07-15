@@ -32,12 +32,13 @@
 %
 \title{The Balance Test Fallacy in Matching\\ Methods for Causal
   Inference\thanks{Our thanks to Alberto Abadie, Neal Beck, Jack
-    Buckley, Alexis Diamond, Felix Elwert, Guido Imbens, Paul
-    Rosenbaum, Don Rubin, and Jas Sekhon for many helpful comments;
-    and the National Institutes of Aging (P01 AG17625-01), the
-    National Science Foundation (SES-0318275, IIS-9874747,
-    SES-0550873), and the Princeton University Committee on Research
-    in the Humanities and Social Sciences for research support.}}
+    Buckley, Alexis Diamond, Felix Elwert, Andrew Gelman, Ben Hansen,
+    Guido Imbens, Paul Rosenbaum, Don Rubin, and Jas Sekhon for many
+    helpful comments; and the National Institutes of Aging (P01
+    AG17625-01), the National Science Foundation (SES-0318275,
+    IIS-9874747, SES-0550873), and the Princeton University Committee
+    on Research in the Humanities and Social Sciences for research
+    support.}}
 
 \author{Kosuke Imai\thanks{Assistant Professor, Department of
     Politics, Princeton University (Corwin Hall 041, Department of
@@ -85,7 +86,7 @@ variable, $T$, on an outcome variable, $Y$.\footnote{Causal quantities
   any of these quantities.}  In observational studies, researchers
 typically invoke the strong ignorability assumption \citep{RosRub83},
 which then requires controlling for a vector of observed covariates
-$X$.  Matching is used to nonparametrically adjust for nonrandom
+$X$.  Matching is used to adjust nonparametrically for flawed
 treatment assignment, by dropping or repeating observations, so that
 the relationship between $X$ and $T$ --- and thus the need for
 subsequent adjustments for $X$ --- are eliminated or reduced.
@@ -113,19 +114,19 @@ parametric methods as would have been applied if matching had not been
 used. Moreover, it has been shown that matching can effectively reduce
 the model dependence of subsequent parametric analyses
 \citep{HoImaKin06}.  The immediate goal of matching, then, is to
-choose an algorithm that satisfies equation~(\ref{balance}) as best as
+choose an algorithm that satisfies Equation~\ref{balance} as best as
 possible.  Since methodological work on matching is growing fast, the
 list of available matching algorithms from which to choose is also
 growing.
 
 Choosing the most appropriate algorithm for a given problem involves
-assessing how well equation~(\ref{balance}) holds in the matched
+assessing how well Equation~\ref{balance} holds in the matched
 samples.  Ideally that would involve comparing the joint distributions
 of all covariates $X$ between the matched treatment and control
 groups.  However, when $X$ is high dimensional, this is generally
 infeasible and thus lower-dimensional measures of balance are used
 instead.  Standard practice is for researchers to evaluate
-equation~(\ref{balance}) for the chosen matching algorithm by
+Equation~\ref{balance} for the chosen matching algorithm by
 conducting $t$-tests for the difference in means for each variable in
 $X$ between the matched treatment and control groups, thus seemingly
 addressing at least one important aspect of a high dimensional
@@ -163,12 +164,12 @@ control school ($T=0$).  The outcome variable $Y$ is a test score (on
 a scale from 0 to 100), and $X$ includes a variety of variables but we
 focus here only on the baseline math test score.  Matching analysis
 begins with the full data set and then selectively deletes students
-until equation~(\ref{balance}) is best satisfied without losing too
-many observations.  Suppose instead that we choose a matching
-algorithm that \emph{randomly} selects observations to discard.
-Clearly, this algorithm would not affect balance, or the bias in the
-ultimate analysis that satisfying equation~(\ref{balance}) is meant to
-improve.  Yet, we can show that randomly deleting observations does
+until Equation~\ref{balance} is best satisfied without losing too many
+observations.  Suppose instead that we choose a matching algorithm
+that \emph{randomly} selects observations to discard.  Clearly, this
+algorithm would not affect balance, or the bias in the ultimate
+analysis that satisfying Equation~\ref{balance} is meant to improve.
+Yet, we can show that randomly deleting observations seems to do
 wonders according to the $t$-test.  To do this, we create a sequence
 of matching solutions that randomly drop different numbers of control
 observations (with results averaged over $5,000$ draws), and plot the
@@ -206,8 +207,8 @@ statistical tests, is a function of both.  The more observations
 dropped, the less power the tests have to detect imbalance in observed
 covariates.  Formally, let $n_{mt}$ and $n_{mc}$ be the sample sizes
 for the matched treatment and matched control groups, and define
-$r_m=n_{mt}/n_m$ where $n_m=n_{mt}+n_{mc}$. Then, we can write the two
-sample $t$-test statistic with unknown and unequal variances as
+$r_m=n_{mt}/n_m$ where $n_m=n_{mt}+n_{mc}$. Then, write the two sample
+$t$-test statistic with unknown and unequal variances as
 \begin{equation}
   \label{ttest} \frac{\sqrt{n_m}(\overline{X}_{mt}-\overline{X}_{mc})}
                {\sqrt{\frac{s^2_{mt}}{r_m} + \frac{s^2_{mc}}{1-r_m}}}
@@ -234,20 +235,20 @@ the sample, not some hypothetical population, and so, strictly
 speaking, hypothesis tests are irrelevant in this context.  Virtually
 all methods of adjustment condition on the observed values of $X$, and
 so $X$ can be dropped in these analyses only when
-equation~(\ref{balance}) is satisfied in sample, not in some
-population from which the data are hypothetically or actually drawn.
-For the same reason that randomized blocks are preferable to classical
+Equation~\ref{balance} is satisfied in sample, not in some population
+from which the data are hypothetically or actually drawn.  For the
+same reason that randomized blocks are preferable to classical
 randomization in experimental design --- that is, the imbalance in the
 variables that defines the blocks can be set to zero in sample,
 without having to hope that the sample size is large enough for the
 advantages of randomization to kick in --- matching on all observed
-covariates $X$ is preferable whenever feasible.  Indeed, in the best
-case, we would be able to match exactly on all observed covariates,
-and afterwords randomize the assignment of values to the treatment
-variable $T$.  That is, imbalance --- the difference between $\tilde
-p(X\mid T=1)$ and $\tilde p(X\mid T=0)$ --- should be minimized
-without limit where possible, so long as we are not compromising other
-goals in the process (such as efficiency).
+differences in $X$ is preferable whenever feasible.  Indeed, in the
+best case, we would be able to match exactly on all observed
+covariates, and afterwords randomize the assignment of values to the
+treatment variable $T$.  That is, imbalance --- the difference between
+$\tilde p(X\mid T=1)$ and $\tilde p(X\mid T=0)$ --- should be
+minimized without limit where possible, so long as we are not unduly
+compromising other goals in the process (such as efficiency).
 
 Finally, we offer a simple model that conveys why matching contains no
 de minimus level, below which the level of imbalance is acceptable.
@@ -276,31 +277,32 @@ observed data.
 Balance should thus be checked by comparing the observed covariate
 differences between the treated and control groups and the difference
 should be minimized without limit.  A difference in means is a fine
-way to start.  Statisticians tend to standardize the mean differences
+way to start.  (Statisticians tend to standardize the mean differences
 so the measure can be compared across different variables.  This is a
 reasonable approach used to simplify the analysis, but in our view the
 standardization also makes the variables invariant to the substantive
 research question (and to priors about likely values of $\gamma$ or
-the equivalent).  Other options include higher order moments than the
+the equivalent.) Other options include higher order moments than the
 mean, nonparametric density plots, and propensity score summary
 statistics. A more general approach is quantile-quantile (or ``QQ'')
-plots that compare the empirical distribution of two variables.  In
-each case, the statistics chosen to assess balance should be
-characteristics of the sample and not some hypothetical population.
-The graph on the right side of Figure~\ref{f:randrop} plots for
-comparison the difference in means and a QQ plot summary statistic,
-the average distance between the empirical quantile distributions of
-the treated and control groups, calculated over the same samples as
-the left graph.\footnote{Formally, this measure can be defined as
-  $\frac{1}{n} \sum_{i=1}^n |\widetilde{F}_{Xmt}^{-1}(i/n) -
-  \widetilde{F}^{-1}_{Xmc}(i/n)|$ where $\widetilde{F}_{Xmt}$ and
-  $\widetilde{F}_{Xmc}$ are the empirical distribution functions of a
-  covariate $X$ for the matched treatment and matched control groups,
-  respectively, and $n=\min(n_{mt},n_{mc})$.}  Unlike the $t$-test,
-the level of balance does not change for either statistic as more
-units are randomly dropped.  As is widely recognized, we ultimately
-need better ways of comparing two multidimensional histograms, but in
-all cases these should be sample quantities, not hypothesis tests.
+plots that compare the empirical distribution of two variables,
+although they can have higher variance.  In each case, the statistics
+chosen to assess balance should be characteristics of the sample and
+not some hypothetical population.  The graph on the right side of
+Figure~\ref{f:randrop} plots for comparison the difference in means
+and a QQ plot summary statistic, the average distance between the
+empirical quantile distributions of the treated and control groups,
+calculated over the same samples as the left graph.\footnote{Formally,
+  this measure can be defined as $\frac{1}{n} \sum_{i=1}^n
+  |\widetilde{F}_{Xmt}^{-1}(i/n) - \widetilde{F}^{-1}_{Xmc}(i/n)|$
+  where $\widetilde{F}_{Xmt}$ and $\widetilde{F}_{Xmc}$ are the
+  empirical distribution functions of a covariate $X$ for the matched
+  treatment and matched control groups, respectively, and
+  $n=\min(n_{mt},n_{mc})$.}  Unlike the $t$-test, the level of balance
+does not change for either statistic as more units are randomly
+dropped.  As is widely recognized, we ultimately need better ways of
+comparing two multidimensional histograms, but these should be sample
+quantities, not hypothesis tests.
 
 
 %\baselineskip=0.637\baselineskip 
