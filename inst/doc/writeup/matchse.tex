@@ -268,20 +268,24 @@ estimating to ensure that they do not inadvertently introduce
 selection bias by choosing matching solutions that stack the deck for
 their favored hypotheses --- it could be that a nonzero portion of
 $F$, when multiplied by $\gamma$, will generate arbitrarily large
-bias.  Whether or not some hypothesis test indicates that $F$ is not
-significantly different from zero is immaterial: The smaller $F$ is
-the better, either above or below the $t$-test threshold of
-significance, since $F$ (i.e., balance) is a characteristic of the
-observed data.
+bias.  This also shows that no measure of balance which is a function
+of $X$ alone can be guaranteed to be a monotonic function of bias
+without special assumptions \citep{Stuart??}, and so proper measures
+should always be maximized without limit, subject to efficiency
+constraints.  Thus, whether or not some hypothesis test indicates that
+$F$ is not significantly different from zero is immaterial: The
+smaller $F$ is the better, either above or below the $t$-test
+threshold of significance, since $F$ (i.e., balance) is a
+characteristic of the observed data.
 
 Balance should thus be checked by comparing the observed covariate
 differences between the treated and control groups and the difference
 should be minimized without limit.  A difference in means is a fine
 way to start.  (Statisticians tend to standardize the mean differences
 so the measure can be compared across different variables.  This is a
-reasonable approach used to simplify the analysis, but in our view the
+reasonable approach when simplification is necessary, but the
 standardization also makes the variables invariant to the substantive
-research question (and to priors about likely values of $\gamma$ or
+research question, and to priors about likely values of $\gamma$ or
 the equivalent.) Other options include higher order moments than the
 mean, nonparametric density plots, and propensity score summary
 statistics. A more general approach is quantile-quantile (or ``QQ'')
@@ -300,10 +304,24 @@ calculated over the same samples as the left graph.\footnote{Formally,
   treatment and matched control groups, respectively, and
   $n=\min(n_{mt},n_{mc})$.}  Unlike the $t$-test, the level of balance
 does not change for either statistic as more units are randomly
-dropped.  As is widely recognized, we ultimately need better ways of
-comparing two multidimensional histograms, but these should be sample
-quantities, not hypothesis tests.
+dropped.  These statistics are by no means perfect, but they and many
+others do not have the flaw we show hypothesis tests possess when used
+as a stopping rule for assessing balance.  As is widely recognized, we
+also ultimately need better ways of comparing two multidimensional
+histograms, but these should be sample quantities, not hypothesis
+tests.
 
+Although these results indicate that future researchers should not use
+hypothesis tests as a balance stopping rule, a reasonable question is
+how to interpret the considerable volume of published literature that
+did so without reporting better balance statistics.  One
+interpretation would be that published tables which report small
+p-values or large $t$-tests should cause readers to worry about
+balance, whereas the reverse does not suggest any level of comfort.
+Another way to think about these hypothesis tests is as an analogy to
+the tests frequently conducted in randomized experiments, although
+only as a comparison for a hypothetical population of no direct
+relevant to the observed data \citep{Cochran65}.
 
 %\baselineskip=0.637\baselineskip 
 \clearpage
