@@ -63,7 +63,7 @@
   assignment when making causal inferences.  The success of the
   matching adjustment depends on generating as much equivalence as
   possible between the distribution of pre-treatment covariates in the
-  treated and control groups.  In numerous articles across a diverse
+  treatment and control groups.  In numerous articles across a diverse
   variety of academic fields that use matching, researchers evaluate
   the degree of equivalence by conducting hypothesis tests, most
   commonly the $t$-test for the mean difference of each of the
@@ -75,7 +75,7 @@ Across academic fields, matching is a popular method of improving
 causal inference by nonparametrically adjusting for control variables
 \citep{Imbens04,Rosenbaum02,Rubin06}.  In this paper, we show that a
 common approach used in evaluating the success of this method, based
-on hypothesis tests for the covariate differences between the treated
+on hypothesis tests for the covariate differences between the treatment
 and control groups, is invalid.  We also discuss better alternatives.
 
 The ultimate goal of matching and the associated analyses we consider
@@ -107,7 +107,7 @@ than the population density.\footnote{To be more specific, the
 In this best case, $T$ and $X$ are unrelated in the matched sample,
 and no further adjustments for $X$ are necessary. Indeed, the average
 treatment effect can be estimated by a simple difference in means of
-$Y$ between the treated ($T=1$) and control ($T=0$) groups.  When the
+$Y$ between the treatment ($T=1$) and control ($T=0$) groups.  When the
 sample relationship between $T$ and $X$ is reduced but not eliminated,
 further adjustment for $X$ may be necessary, such as via the same
 parametric methods as would have been applied if matching had not been
@@ -159,7 +159,7 @@ Demonstration Assistance Program which sought to reduce dropout rates
 by a series of school ``restructuring'' initiatives, including
 curriculum reform, expanding teacher training, and others
 \citep{AgoDyn04,Stuart04}.  We use a subset of these data that
-includes 428 students from a treated school ($T=1$) and 434 from a
+includes 428 students from a treatment school ($T=1$) and 434 from a
 control school ($T=0$).  The outcome variable $Y$ is a test score (on
 a scale from 0 to 100), and $X$ includes a variety of variables but we
 focus here only on the baseline math test score.  Matching analysis
@@ -190,7 +190,7 @@ from 3.7 to 1.6 in the figure.  This of course makes no sense at all.
     of balance when a given number of control units are randomly
     dropped from the data set (out of a total of 434).  With larger
     numbers of control units dropped (i.e., smaller numbers of control
-    units in the resulting sample), the value of $t$-statistic gets
+    units in the resulting sample), the value of the $t$-statistic gets
     closer to 0, falsely indicating improvements in balance, even
     though true balance does not vary systematically across the data
     sets (and efficiency declines).  The difference in means and
@@ -218,7 +218,7 @@ $\overline{X}_{mc}=\sum_{i=1}^{n_m} (1-T_i)X_i/n_{mc}$ are the sample
 means, and $s^2_{mt}=\sum_{i=1}^{n_m} T_i(X_i -
 \overline{X}_{mt})^2/(n_{mt}-1)$ and $s^2_{mc}=\sum_{i=1}^{n_m}
 (1-T_i)(X_i - \overline{X}_{mt})^2/(n_{mc}-1)$ represent the sample
-variances of the matched treated and control groups, respectively.
+variances of the matched treatment and control groups, respectively.
 Hence, the difference in sample means as a measure of balance is
 distorted in the $t$-test by three factors: (1) the total number of
 remaining observations $n_m$, (2) the ratio of remaining treated units
@@ -270,7 +270,7 @@ their favored hypotheses --- it could be that a nonzero portion of
 $F$, when multiplied by $\gamma$, will generate arbitrarily large
 bias.  This also shows that no measure of balance which is a function
 of $X$ alone can be guaranteed to be a monotone function of bias
-without special assumptions \citep{Stuart??}, and so proper measures
+without special assumptions \citep{RubStu06}, and so proper measures
 should always be maximized without limit, subject to efficiency
 constraints.  Thus, whether or not some hypothesis test indicates that
 $F$ is not significantly different from zero is immaterial: The
@@ -279,7 +279,7 @@ threshold of significance, since $F$ (i.e., balance) is a
 characteristic of the observed data.
 
 Balance should thus be checked by comparing the observed covariate
-differences between the treated and control groups and the difference
+differences between the treatment and control groups and the difference
 should be minimized without limit.  A difference in means is a fine
 way to start.  (Statisticians tend to standardize the mean differences
 so the measure can be compared across different variables.  This is a
@@ -290,12 +290,12 @@ the equivalent.) Other options include higher order moments than the
 mean, nonparametric density plots, and propensity score summary
 statistics. A more general approach is quantile-quantile (or ``QQ'')
 plots that compare the empirical distribution of two variables,
-although they can have higher variance.  In each case, the statistics
+although statistics based on QQ plots can have higher variance.  In each case, the statistics
 chosen to assess balance should be characteristics of the sample and
 not some hypothetical population.  The graph on the right side of
 Figure~\ref{f:randrop} plots for comparison the difference in means
 and a QQ plot summary statistic, the average distance between the
-empirical quantile distributions of the treated and control groups,
+empirical quantile distributions of the treatment and control groups,
 calculated over the same samples as the left graph.\footnote{Formally,
   this measure can be defined as $\frac{1}{n} \sum_{i=1}^n
   |\widetilde{F}_{Xmt}^{-1}(i/n) - \widetilde{F}^{-1}_{Xmc}(i/n)|$
