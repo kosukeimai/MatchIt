@@ -79,21 +79,21 @@ method, based on hypothesis tests for the covariate differences
 between the treated and control groups, is invalid.  We also discuss
 better alternatives.
 
-The ultimate goal of matching and the associated analyses we consider
-is estimating the average causal effect of a binary treatment
-variable, $T$, on an outcome variable, $Y$.\footnote{Causal quantities
-  of interest can be defined in a variety of other ways, including
+A primary goal of matching and the associated analyses we consider is
+estimating the average causal effect of a binary treatment variable,
+$T$, on an outcome variable, $Y$.\footnote{Causal quantities of
+  interest can be defined in a variety of other ways, including
   average treatment effect on the treated.  Our argument applies to
   any of these quantities.}  In observational studies, researchers
 typically invoke the strong ignorability assumption \citep{RosRub83},
 which then requires controlling for a vector of observed covariates
 $X$.  Matching is used to adjust nonparametrically for flawed
-treatment assignment, by dropping or repeating observations, so that
-the relationship between $X$ and $T$ --- and thus the need for
-subsequent adjustments for $X$ --- are eliminated or reduced.
-Adjusting the sample introduces no selection bias so long as the
-matching method for doing this is based on a function of $X$ and $T$
-and not $Y$.  Matching is not a method of estimation, and so any
+treatment assignment, by dropping, repeating, and/or grouping
+observations, so that the relationship between $X$ and $T$ --- and
+thus the need for subsequent adjustments for $X$ --- are eliminated or
+reduced.  Adjusting the sample introduces no selection bias so long as
+the matching method for doing this is based on a function of $X$ and
+$T$ and not $Y$.  Matching is not a method of estimation, and so any
 application of it must be followed by such a method.  In the best
 case, the data after matching satisfy
 \begin{equation}
@@ -227,29 +227,30 @@ to the total number of remaining observations $r_m$, and (3) the
 sample variance of $X$ for the remaining treated and control units,
 $s_{mt}^2$ and $s_{mc}^2$.  Since the value of (this and other)
 hypothesis tests are affected by factors other than balance, they
-cannot even be counted on to be monotonic functions of balance: The
+cannot even be counted on to be monotone functions of balance: The
 $t$-test can indicate balance is getting better while the actual
 balance is getting worse, staying the same, or improving.
 
 Third, from a theoretical perspective, balance is a characteristic of
 the sample, not some hypothetical population, and so, strictly
-speaking, hypothesis tests are irrelevant in this context \citep{Hansen06}.  Virtually
-all methods of adjustment condition on the observed values of $X$, and
-so $X$ can be dropped in these analyses only when
-Equation~\ref{balance} is satisfied in sample, not in some population
-from which the data are hypothetically or actually drawn.  For the
-same reason that randomized blocks are preferable to classical
-randomization in experimental design --- that is, the imbalance in the
-variables that defines the blocks can be set to zero in sample,
-without having to hope that the sample size is large enough for the
-advantages of randomization to kick in --- matching on all observed
-differences in $X$ is preferable whenever feasible.  Indeed, in the
-best case, we would be able to match exactly on all observed
-covariates, and afterwords randomize the assignment of values to the
-treatment variable $T$.  That is, imbalance --- the difference between
-$\tilde p(X\mid T=1)$ and $\tilde p(X\mid T=0)$ --- should be
-minimized without limit where possible, so long as we are not unduly
-compromising other goals in the process (such as efficiency).
+speaking, hypothesis tests are irrelevant in this context
+\citep{HoImaKin06,Hansen06}.  Virtually all methods of adjustment
+condition on the observed values of $X$, and so $X$ can be dropped in
+these analyses only when Equation~\ref{balance} is satisfied in
+sample, not in some population from which the data are hypothetically
+or actually drawn.  For the same reason that randomized blocks are
+preferable to classical randomization in experimental design --- that
+is, the imbalance in the variables that defines the blocks can be set
+to zero in sample, without having to hope that the sample size is
+large enough for the advantages of randomization to kick in ---
+matching on all observed differences in $X$ is preferable whenever
+feasible.  Indeed, in the best case, we would be able to match exactly
+on all observed covariates, and afterwords randomize the assignment of
+values to the treatment variable $T$.  That is, imbalance --- the
+difference between $\tilde p(X\mid T=1)$ and $\tilde p(X\mid T=0)$ ---
+should be minimized without limit where possible, so long as we are
+not unduly compromising other goals in the process (such as
+efficiency).
 
 Finally, we offer a simple model that conveys why matching contains no
 de minimus level, below which the level of imbalance is acceptable.
@@ -268,15 +269,16 @@ without knowledge of $\gamma$ --- which matching researchers eschew
 estimating to ensure that they do not inadvertently introduce
 selection bias by choosing matching solutions that stack the deck for
 their favored hypotheses --- it could be that a nonzero portion of
-$G$, when multiplied by $\gamma$, will generate arbitrarily large
-bias.  This also shows that no measure of balance which is a function
-of $X$ alone can be guaranteed to be a monotone function of bias
-without special assumptions \citep{RubStu06}, and so proper measures of imbalance
-should always be minimized without limit, subject to efficiency
-constraints.  Thus, whether or not some hypothesis test indicates that
-$G$ is not significantly different from zero is immaterial: The
-smaller $G$ is the better, either above or below the $t$-test
-threshold of significance, since $G$ (i.e., balance) is a
+$G$, when multiplied by its corresponding elements of $\gamma$, will
+generate arbitrarily large bias.  This also shows that no measure of
+balance which is a function of $X$ alone can be guaranteed to be a
+monotone function of bias without special assumptions
+\citep{RubStu06}, and so proper measures of imbalance should always be
+minimized without limit, subject to efficiency constraints.  Thus,
+whether or not some hypothesis tests indicate that $G$ is not
+significantly different from zero is immaterial: The smaller $G$ is
+the better, either above or below the $t$-test threshold of
+statistical significance, since $G$ (i.e., balance) is a
 characteristic of the observed data.
 
 Balance should thus be checked by comparing the observed covariate
@@ -289,9 +291,10 @@ standardization also makes the variables invariant to the substantive
 research question, and to priors about likely values of $\gamma$ or
 the equivalent.) Other options include higher order moments than the
 mean, nonparametric density plots, and propensity score summary
-statistics \citep{AusMam06, Hansen04, Rubin01}. A more general approach is quantile-quantile (or ``QQ'')
-plots that compare the empirical distribution of two variables,
-although statistics based on QQ plots can have higher variance.  In each case, the statistics
+statistics \citep{AusMam06, Hansen04, Rubin01}. A more general
+approach is quantile-quantile (or ``QQ'') plots that compare the
+empirical distribution of two variables, although statistics based on
+QQ plots can have higher variance.  In each case, the statistics
 chosen to assess balance should be characteristics of the sample and
 not some hypothetical population.  The graph on the right side of
 Figure~\ref{f:randrop} plots for comparison the difference in means
