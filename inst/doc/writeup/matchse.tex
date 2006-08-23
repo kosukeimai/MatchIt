@@ -60,29 +60,34 @@
 
 \begin{abstract}
   Matching methods are widely used to adjust for possibly confounded
-  treatment assignment when making causal inferences.  The success of
-  the matching adjustment depends on generating as much equivalence as
-  possible between the distribution of pre-treatment covariates in the
-  treated and control groups.  In numerous articles across a diverse
-  variety of academic fields that use matching, researchers evaluate
-  the degree of equivalence by conducting hypothesis tests, most
-  commonly the $t$-test for the mean difference of each of the
-  covariates in the two matched groups.  We demonstrate that these
-  hypothesis tests are fallacious and discuss better alternatives.
+  treatment assignment when making causal inferences in
+  nonexperimental data.  The success of the matching adjustment
+  depends on generating as much equivalence as possible between the
+  distribution of pre-treatment covariates in the treated and control
+  groups.  In numerous articles across a diverse variety of academic
+  fields that use matching, researchers evaluate the degree of
+  equivalence by conducting hypothesis tests, most commonly the
+  $t$-test for the mean difference of each of the covariates in the
+  two matched groups.  We demonstrate that for observational studies,
+  where the tests are used as stopping rules in evaluating matching
+  adjustments, they are highly misleading.  We also consider better
+  alternatives.
 \end{abstract}
 
 Across academic fields, matching is a popular method of improving
-causal inference by nonparametrically adjusting for pre-treatment
-covariates \citep{Imbens04,Rosenbaum02,Rubin06}.  In this paper, we
-show that a common approach used in evaluating the success of this
-method, based on hypothesis tests for the covariate differences
-between the treated and control groups, is invalid.  We also discuss
-better alternatives.
+causal inference by preprocessing data by nonparametrically adjusting
+for pre-treatment covariates \citep{Imbens04,Rosenbaum02,Rubin06}.  In
+this paper, we show that a common approach used in evaluating the
+success of this method, based on hypothesis tests for the covariate
+differences between the treated and control groups, is invalid.  We
+also discuss better alternatives.
+
+\section{The Goal of Matching}
 
 A primary goal of matching and the associated analyses we consider is
 estimating the average causal effect of a binary treatment variable,
 $T$, on an outcome variable, $Y$.\footnote{Causal quantities of
-  interest can be defined in a variety of other ways, including
+  interest can be defined in a variety of other ways, including the
   average treatment effect on the treated.  Our argument applies to
   any of these quantities.}  In observational studies, researchers
 typically invoke the strong ignorability assumption \citep{RosRub83},
@@ -106,28 +111,27 @@ than the population density.\footnote{To be more specific, the
   \dots, n \}: X_i = x \} / n$, for all $x$, where $\#A$ is the number
   of elements in the set $A$ and $n$ is the number of observations. }
 In this best case, $T$ and $X$ are unrelated in the matched sample,
-and no further adjustments for $X$ are necessary. Indeed, the average
+and no further adjustments for $X$ are necessary, and so the average
 treatment effect can be estimated by a simple difference in means of
 $Y$ between the treated ($T=1$) and control ($T=0$) groups.  When the
 sample relationship between $T$ and $X$ is reduced but not eliminated,
 further adjustment for $X$ may be necessary, such as via the same
 parametric methods as would have been applied if matching had not been
-used. Moreover, it has been shown that matching can effectively reduce
-the model dependence of subsequent parametric analyses
-\citep{HoImaKin06}.  The immediate goal of matching, then, is to
-choose an algorithm that satisfies Equation~\ref{balance} as best as
-possible.  Since methodological work on matching is growing fast, the
-list of available matching algorithms from which to choose is also
-growing.
+used. Moreover, matching can effectively reduce the model dependence
+of subsequent parametric analyses \citep{HoImaKin06}.  The immediate
+goal of matching, then, is to choose an algorithm that satisfies
+Equation~\ref{balance} as best as possible.  Since methodological work
+on matching is growing fast, the list of available matching algorithms
+from which to choose is also growing.
 
 Choosing the most appropriate algorithm for a given problem involves
 assessing how well Equation~\ref{balance} holds in the matched
 samples.  Ideally that would involve comparing the joint distributions
-of all covariates $X$ between the matched treated and control
-groups.  However, when $X$ is high dimensional, this is generally
-infeasible and thus lower-dimensional measures of balance are used
-instead.  Standard practice is for researchers to evaluate
-Equation~\ref{balance} for the chosen matching algorithm by
+of all covariates $X$ between the matched treated and control groups.
+However, when $X$ is high dimensional, this is generally infeasible
+and thus lower-dimensional measures of balance are used instead.
+Standard practice in observational studies is for researchers to
+evaluate Equation~\ref{balance} for the chosen matching algorithm by
 conducting $t$-tests for the difference in means for each variable in
 $X$ between the matched treated and control groups, thus seemingly
 addressing at least one important aspect of a high dimensional
@@ -135,6 +139,8 @@ relationship.  Other hypothesis tests, such as $\chi^2$, $F$, and
 Kolmogorov-Smirnov tests, are also sometimes used for each covariate,
 but the same problems we describe below still apply, and so for
 expository purposes we focus on the most commonly used $t$-test.
+
+\section{Problems with Hypothesis Tests as Stopping Rules}
 
 The practice of using hypothesis tests to evaluate balance is
 widespread, and includes a large volume of otherwise high quality work
@@ -238,11 +244,12 @@ speaking, hypothesis tests are irrelevant in this context
 condition on the observed values of $X$, and so $X$ can be dropped in
 these analyses only when Equation~\ref{balance} is satisfied in
 sample, not in some population from which the data are hypothetically
-or actually drawn.  For the same reason that randomized blocks are
-preferable to classical randomization in experimental design --- that
-is, the imbalance in the variables that defines the blocks can be set
-to zero in sample, without having to hope that the sample size is
-large enough for the advantages of randomization to kick in ---
+or actually drawn.  For the same reason that randomized blocks or
+paired matching are preferable to classical randomization in
+experimental design --- that is, the imbalance in the variables that
+defines the blocks can be set to zero in-sample, without having to
+hope that the sample size is large enough for the advantages of
+randomization to kick in \citep[see also][p.264]{GreLuSil04} ---
 matching on all observed differences in $X$ is preferable whenever
 feasible.  Indeed, in the best case, we would be able to match exactly
 on all observed covariates, and afterwords randomize the assignment of
@@ -265,21 +272,22 @@ this simplified data generation process involves dropping or repeating
 observations so that $G$ is as close to a matrix of zeros as possible.
 But what happens to bias if $G$ is smaller than it was before matching
 but still not zero?  The answer is that the bias is reduced, but
-without knowledge of $\gamma$ --- which matching researchers eschew
-estimating to ensure that they do not inadvertently introduce
-selection bias by choosing matching solutions that stack the deck for
-their favored hypotheses --- it could be that a nonzero portion of
-$G$, when multiplied by its corresponding elements of $\gamma$, will
-generate arbitrarily large bias.  This also shows that no measure of
-balance which is a function of $X$ alone can be guaranteed to be a
-monotone function of bias without special assumptions
-\citep{RubStu06}, and so proper measures of imbalance should always be
-minimized without limit, subject to efficiency constraints.  Thus,
-whether or not some hypothesis tests indicate that $G$ is not
-significantly different from zero is immaterial: The smaller $G$ is
-the better, either above or below the $t$-test threshold of
-statistical significance, since $G$ (i.e., balance) is a
-characteristic of the observed data.
+without knowledge of $\gamma$ --- which researchers eschew estimating
+to avoid inadvertently introducing selection bias by choosing matching
+solutions that stack the deck for their favored hypotheses --- it
+could be that a nonzero portion of $G$, when multiplied by its
+corresponding elements of $\gamma$, will generate arbitrarily large
+bias.  This also shows that no measure of balance which is a function
+of $X$ alone can be guaranteed to be a monotone function of bias
+without special assumptions \citep{RubStu06}, and so proper measures
+of imbalance should always be minimized without limit, subject to
+efficiency constraints.  Thus, whether or not some hypothesis tests
+indicate that $G$ is not significantly different from zero is
+immaterial: The smaller $G$ is the better, either above or below the
+$t$-test threshold of statistical significance, since $G$ (i.e.,
+balance) is a characteristic of the observed data.
+
+\section{Appropriate Evaluation of Matching Solutions}
 
 Balance should thus be checked by comparing the observed covariate
 differences between the treated and control groups and the difference
@@ -299,7 +307,7 @@ chosen to assess balance should be characteristics of the sample and
 not some hypothetical population.  The graph on the right side of
 Figure~\ref{f:randrop} plots for comparison the difference in means
 and a QQ plot summary statistic, the average distance between the
-empirical quantile distributions of the treated and control groups,
+empirical quantile distributions of the treated and control groups
 calculated over the same samples as the left graph.\footnote{Formally,
   this measure can be defined as $\frac{1}{n} \sum_{i=1}^n
   |\widetilde{F}_{Xmt}^{-1}(i/n) - \widetilde{F}^{-1}_{Xmc}(i/n)|$
@@ -321,12 +329,14 @@ how to interpret the considerable volume of published literature that
 did so without reporting better balance statistics.  One
 interpretation would be that published tables which report small
 p-values or large $t$-tests should cause readers to worry about
-balance, whereas the reverse does not suggest any level of comfort.
-Another way to think about these hypothesis tests is as an analogy to the
-tests frequently conducted in randomized experiments to assess the adequacy of 
-the randomization. However, even this
-interpretation requires an implicit reference to a hypothetical population,
-which is of questionable direct relevance to the matched sample \citep{Cochran65}.
+balance, whereas the reverse would not suggest any level of comfort
+(analogous to the similarly narrow role for which they may be useful
+in randomized experiments \citealt{Senn94}).  Another way to think
+about these hypothesis tests is as an analogy to the tests frequently
+conducted in randomized experiments to assess the adequacy of the
+randomization.  However, even this interpretation requires an implicit
+reference to a hypothetical population, which is of questionable
+direct relevance to the matched sample \citep{Cochran65}.
 
 %\baselineskip=0.637\baselineskip 
 \clearpage
