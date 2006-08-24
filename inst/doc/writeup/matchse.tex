@@ -285,7 +285,12 @@ efficiency constraints.  Thus, whether or not some hypothesis tests
 indicate that $G$ is not significantly different from zero is
 immaterial: The smaller $G$ is the better, either above or below the
 $t$-test threshold of statistical significance, since $G$ (i.e.,
-balance) is a characteristic of the observed data.
+balance) is a characteristic of the observed data.  A related argument
+has been made in the context of randomized experiments, where
+researchers have shown that even small (and statistically
+insignificant) differences in prognostic covariates can result in
+large differences in the results of the experiment
+\citep{Altman85,Senn94,PocAssEno02}.
 
 \section{Appropriate Evaluation of Matching Solutions}
 
@@ -330,13 +335,22 @@ did so without reporting better balance statistics.  One
 interpretation would be that published tables which report small
 p-values or large $t$-tests should cause readers to worry about
 balance, whereas the reverse would not suggest any level of comfort
-(analogous to the similarly narrow role for which they may be useful
-in randomized experiments \citealt{Senn94}).  Another way to think
-about these hypothesis tests is as an analogy to the tests frequently
-conducted in randomized experiments to assess the adequacy of the
-randomization.  However, even this interpretation requires an implicit
-reference to a hypothetical population, which is of questionable
-direct relevance to the matched sample \citep{Cochran65}.
+(which is analogous to the similarly narrow role for which they may be
+useful in randomized experiments; \citealt{Senn94}).  Another way to
+think about these hypothesis tests is as an analogy to the tests often
+conducted in randomized experiments to check that the randomization
+was done validly.  However, this analogy is imperfect because in a
+randomized experiment researchers can be sure that any imbalance of
+any size resulted by chance, while in an observational study,
+imbalance could be due either to chance or to systematic differences
+between the groups.  In addition, even this interpretation requires an
+implicit reference to a hypothetical population, which is of
+questionable direct relevance to the matched sample \citep{Cochran65}.
+Best practice should be to minimize imbalance for all covariates,
+using measures like those described above, and then to adjust
+parametrically for any remaining differences
+\citep{Rubin79,RosRub84a,HoImaKin06}.
+
 
 %\baselineskip=0.637\baselineskip 
 \clearpage
