@@ -357,6 +357,28 @@ parametrically for any remaining differences
 \citep{Rubin79,RosRub84a,HoImaKin06}.
 
 
+\newline {\bf formalization.} Suppose there are a total of $2n$ units
+with $n$ treated units and $n$ control units. Then, the {\it
+  conditional} bias for estimating the average potential outcome under
+control for the treated (the first term of the first line) using the
+observed average outcome among the control units (the second term) is
+given by,
+\begin{eqnarray*}
+  {\rm Bias}  & =  & \frac{1}{n} \sum_{i=1}^{2n} T_i E[Y_i(0) \mid
+  T_i = 1, X_i] - (1-T_i) E[Y_i(0) \mid T_i = 0, X_i], \\
+  & = & \int E[Y_i(0) \mid T_i = 1, X_i] d\widetilde{F}(X_i \mid T_i =
+  1) - \int E[Y_i(0) \mid T_i = 0, X_i] d\widetilde{F}(X_i \mid T =
+  0), \\
+  & = & \int E[Y_i(0) \mid T_i = 0, X_i] \,[d\widetilde{F}(X_i \mid T_i
+  = 1) - d\widetilde{F}(X_i \mid T_i = 0)] \\
+   &  & + \int\left\{ E[Y_i(0) \mid T_i = 1, X_i] - E[Y_i(0) \mid T_i = 0,
+  X_i]\right\}\, d\widetilde{F}(X_i \mid T = 1)
+\end{eqnarray*}
+The randomization removes the second term, which is the bias due to
+the violation of the ignorability assumption, but it does not remove
+the first term, which is the bias due to the difference between two
+empirical distributions. 
+
 %\baselineskip=0.637\baselineskip 
 \clearpage
 \bibliographystyle{apsr}
