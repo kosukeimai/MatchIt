@@ -356,28 +356,34 @@ using measures like those described above, and then to adjust
 parametrically for any remaining differences
 \citep{Rubin79,RosRub84a,HoImaKin06}.
 
-
-{\bf formalization.} Suppose there are a total of $2n$ units
-with $n$ treated units and $n$ control units. Then, the {\it
+\bigskip
+\noindent {\bf formalization.} Suppose 
+there are $n_1$ treated units and $n_0$ control units. Then, the {\it
   conditional} bias for estimating the average potential outcome under
 control for the treated (the first term of the first line) using the
 observed average outcome among the control units (the second term) is
 given by,
 \begin{eqnarray*}
-  {\rm Bias}  & =  & \frac{1}{n} \sum_{i=1}^{2n} T_i E[Y_i(0) \mid
-  T_i = 1, X_i] - (1-T_i) E[Y_i(0) \mid T_i = 0, X_i], \\
-  & = & \int E[Y_i(0) \mid T_i = 1, X_i] d\widetilde{F}(X_i \mid T_i =
-  1) - \int E[Y_i(0) \mid T_i = 0, X_i] d\widetilde{F}(X_i \mid T =
+  {\rm Bias}  & =  & \frac{1}{n_1} \sum_{i\,\in \{T = 1\}} E[Y_i(0) \mid
+  T_i = 1, X_i] - \frac{1}{n_0} \sum_{i\,\in \{T = 0\}} E[Y_i(0) \mid T_i = 0, X_i], \\
+  & = & \int E[Y(0) \mid T = 1, X] d\widetilde{F}(X \mid T =
+  1) - \int E[Y(0) \mid T = 0, X] d\widetilde{F}(X \mid T =
   0), \\
-  & = & \int E[Y_i(0) \mid T_i = 0, X_i] \,[d\widetilde{F}(X_i \mid T_i
-  = 1) - d\widetilde{F}(X_i \mid T_i = 0)] \\
-   &  & + \int\left\{ E[Y_i(0) \mid T_i = 1, X_i] - E[Y_i(0) \mid T_i = 0,
-  X_i]\right\}\, d\widetilde{F}(X_i \mid T = 1)
+  & = & \int E[Y(0) \mid T = 0, X] \,[d\widetilde{F}(X \mid T
+  = 1) - d\widetilde{F}(X \mid T = 0)] \\
+   &  & + \int\left\{ E[Y(0) \mid T = 1, X] - E[Y(0) \mid T = 0,
+  X]\right\}\, d\widetilde{F}(X \mid T = 1)
 \end{eqnarray*}
 The randomization removes the second term, which is the bias due to
 the violation of the ignorability assumption, but it does not remove
 the first term, which is the bias due to the difference between two
-empirical distributions. 
+empirical distributions. If you take the expectation of this bias over
+the distribution of $X$, then clearly both terms are zero. This shows
+that randomization leads to zero bias if there is no sampling bias.
+Moreover, if $n$ goes to infinity, then $\widetilde{F}(X \mid T = t)$
+converges almost surely to $F(X \mid T=t)$ for $t=0,1$
+(Glivenko-Cantelli Theorem). And hence asymptotically, the bias of the
+first term also goes away under randomization.
 
 %\baselineskip=0.637\baselineskip 
 \clearpage
