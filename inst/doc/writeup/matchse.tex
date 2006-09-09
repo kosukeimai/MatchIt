@@ -385,6 +385,38 @@ converges almost surely to $F(X \mid T=t)$ for $t=0,1$
 (Glivenko-Cantelli Theorem). And hence asymptotically, the bias of the
 first term also goes away under randomization.
 
+Now, let's assume the following structural model
+\begin{eqnarray*}
+  Y_i(1) & = & g_1(X_i) + U_{1i}, \\
+  Y_i(0) & = & g_0(X_i) + U_{0i}
+\end{eqnarray*}
+where $X_i$ is observed while $(U_{i1}, U_{i0})$ is not.  In
+econometrics, we say that {\it separability} between $X$ and $(U_0,
+U_1)$ is assumed. Now, we write the discrepancy as follows,
+\begin{eqnarray*}
+  {\rm Discrepancy}  
+  & =  & \frac{1}{n_1} \sum_{i\,\in \{T = 1\}}
+  Y_i(0) - \frac{1}{n_0} \sum_{i\,\in \{T = 0\}}  Y_i(0), \\
+  & =  & \frac{1}{n_1} \sum_{i\,\in \{T = 1\}}
+  (g_0(X_i) + U_{0i}) - \frac{1}{n_0} \sum_{i\,\in \{T = 0\}}  (g_0(X_i)
+  + U_{0i}), \\
+  & = & \int g_0(X) \,[d\widetilde{F}(X \mid T
+  = 1) - d\widetilde{F}(X \mid T = 0)] +  
+  \int U_0 \,[d\widetilde{F}(U_0 \mid T = 1) - d\widetilde{F}(U_0 \mid
+  T = 0)]   
+\end{eqnarray*}
+We can partially relax the separability assumption by postulating the
+model, $Y_i(t) = g_t(X_i, U_{ti})$ for $t=0,1$. In that case, we get
+\begin{eqnarray*}
+  {\rm Discrepancy} & = & \int g_0(X, U_0) [d\widetilde{F}(X, U_0 \mid
+  T = 1) - d\widetilde{F}(X, U_0 \mid
+  T = 0)] 
+\end{eqnarray*}
+Finally, note that
+\begin{eqnarray*}
+  E({\rm Discrepancy} \mid X_i) = {\rm Bias}.
+\end{eqnarray*}
+
 %\baselineskip=0.637\baselineskip 
 \clearpage
 \bibliographystyle{apsr}
