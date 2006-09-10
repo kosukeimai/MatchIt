@@ -400,17 +400,16 @@ U_1)$ is assumed. Now, we write the discrepancy as follows,
   & =  & \frac{1}{n_1} \sum_{i\,\in \{T = 1\}}
   (g_0(X_i) + U_{0i}) - \frac{1}{n_0} \sum_{i\,\in \{T = 0\}}  (g_0(X_i)
   + U_{0i}), \\
-  & = & \int g_0(X) \,[d\widetilde{F}(X \mid T
-  = 1) - d\widetilde{F}(X \mid T = 0)] +  
-  \int U_0 \,[d\widetilde{F}(U_0 \mid T = 1) - d\widetilde{F}(U_0 \mid
+  & = & \int g_0(X) \,d[\widetilde{F}(X \mid T
+  = 1) - \widetilde{F}(X \mid T = 0)] +  
+  \int U_0 \,d[\widetilde{F}(U_0 \mid T = 1) - \widetilde{F}(U_0 \mid
   T = 0)]   
 \end{eqnarray*}
 We can partially relax the separability assumption by postulating the
 model, $Y_i(t) = g_t(X_i, U_{ti})$ for $t=0,1$. In that case, we get
 \begin{eqnarray*}
-  {\rm Discrepancy} & = & \int g_0(X, U_0) [d\widetilde{F}(X, U_0 \mid
-  T = 1) - d\widetilde{F}(X, U_0 \mid
-  T = 0)] 
+  {\rm Discrepancy} & = & \int g_0(X, U_0)\, d[\widetilde{F}(X, U_0 \mid
+  T = 1) - \widetilde{F}(X, U_0 \mid T = 0)] 
 \end{eqnarray*}
 Finally, note that
 \begin{eqnarray*}
