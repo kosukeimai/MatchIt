@@ -358,21 +358,38 @@ parametrically for any remaining differences
 
 \bigskip
 \noindent {\bf formalization.} Suppose 
-there are $n_1$ treated units and $n_0$ control units. Then, the {\it
-  conditional} bias for estimating the average potential outcome under
-control for the treated (the first term of the first line) using the
-observed average outcome among the control units (the second term) is
-given by,
+there are $n$ treated units and $n$ control units with a total of $2n$
+units. Then, the {\it conditional} bias for estimating the average
+treatment effect is given by,
 \begin{eqnarray*}
-  {\rm Bias}  & =  & \frac{1}{n_1} \sum_{i\,\in \{T = 1\}} E[Y_i(0) \mid
-  T_i = 1, X_i] - \frac{1}{n_0} \sum_{i\,\in \{T = 0\}} E[Y_i(0) \mid T_i = 0, X_i], \\
-  & = & \int E[Y(0) \mid T = 1, X] d\widetilde{F}(X \mid T =
-  1) - \int E[Y(0) \mid T = 0, X] d\widetilde{F}(X \mid T =
-  0), \\
-  & = & \int E[Y(0) \mid T = 0, X] \,d[\widetilde{F}(X \mid T
-  = 1) - \widetilde{F}(X \mid T = 0)] \\
-   &  & + \int\left\{ E[Y(0) \mid T = 1, X] - E[Y(0) \mid T = 0,
-  X]\right\}\, d\widetilde{F}(X \mid T = 1)
+  &    & {\rm Bias} \\
+  & =  & \frac{1}{2n} \sum_{i=1}^{2n} E[Y_i(1) -
+  Y_i(0) \mid X_i] - \left\{\frac{1}{n} \sum_{i \, \in \{T_i =1 \}}
+  E[Y_i(1) \mid X_i] - \frac{1}{n} \sum_{i \, \in \{T_i =0 \}}
+  E[Y_i(0) \mid X_i] \right\}, \\
+  & = & \frac{1}{2n} \left\{ \sum_{i\,\in \{T = 0\}} E[Y_i(1) \mid
+  X_i] - \sum_{i\,\in \{T = 1\}} E[Y_i(1)
+  \mid X_i] + \sum_{i\,\in \{T = 0\}}
+  E[Y_i(0) \mid X_i] - \sum_{i\,\in \{T = 1\}} E[Y_i(0) \mid X_i]\right\}, \\
+  & = & \frac{1}{2} \left\{\int E[Y(1) \mid T = 0, X] d\widetilde{F}(X \mid T =
+  0) - \int E[Y(1) \mid T = 1, X] d\widetilde{F}(X \mid T =
+  1)\right\} \\
+  &  &  + \frac{1}{2} \left\{ \int E[Y(0) \mid T = 0, X] d\widetilde{F}(X \mid T =
+  0) - \int E[Y(0) \mid T = 1, X] d\widetilde{F}(X \mid T =
+  1)\right\}, \\
+  & = &  \frac{1}{2} \int E[Y(1) \mid T = 0, X] \,d[\widetilde{F}(X \mid T
+  = 0) - \widetilde{F}(X \mid T = 1)] \\
+   &  & + \frac{1}{2} \int\left\{ E[Y(1) \mid T = 0, X] - E[Y(1) \mid T = 1,
+  X]\right\}\, d\widetilde{F}(X \mid T = 1)\\
+  &  & + \frac{1}{2} \int E[Y(0) \mid T = 0, X] \,d[\widetilde{F}(X \mid T
+  = 0) - \widetilde{F}(X \mid T = 1)] \\
+   &  & + \frac{1}{2} \int\left\{ E[Y(0) \mid T = 0, X] - E[Y(0) \mid T = 1,
+  X]\right\}\, d\widetilde{F}(X \mid T = 1),\\
+  & = &  \frac{1}{2} \int E[Y(1) + Y(0) \mid T = 0, X]\,d[\widetilde{F}(X \mid T
+  = 0) - \widetilde{F}(X \mid T = 1)] \\
+   &  & + \frac{1}{2} \int\left\{ E[Y(1) + Y(0) \mid T = 0, X] -
+  E[Y(1) + Y(0)\mid T = 1,
+  X]\right\}\, d\widetilde{F}(X \mid T = 1).
 \end{eqnarray*}
 The randomization removes the second term, which is the bias due to
 the violation of the ignorability assumption, but it does not remove
