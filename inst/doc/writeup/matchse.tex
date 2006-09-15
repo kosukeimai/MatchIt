@@ -424,8 +424,10 @@ large sample properties),
   Y_i(0) - \sum_{i\,\in \{T = 1\}} Y_i(0) \right\}, \\
   & = & \frac{1}{2} \int [g_1(X) + g_0(X)] \,d[\widetilde{F}(X \mid T
   = 0) - \widetilde{F}(X \mid T = 1)]  \\
-  & & + \frac{1}{2} \int [U_1 + U_0] \,d[\widetilde{F}(U_0 \mid T = 0) - \widetilde{F}(U_0 \mid
-  T = 1)]   
+  & & + \frac{1}{2} \left\{\int U_1 \,d[\widetilde{F}(U_1 \mid T = 0) -
+  \widetilde{F}(U_1 \mid  T = 1)] + \int U_0
+  \,d[\widetilde{F}(U_0 \mid T = 0) -  \widetilde{F}(U_0 \mid  T = 1)]
+  \right\}    
 \end{eqnarray*}
 We can partially relax the separability assumption by postulating the
 model, $Y_i(t) = g_t(X_i, U_{ti})$ for $t=0,1$. In that case, we get
