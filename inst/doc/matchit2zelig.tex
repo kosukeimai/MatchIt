@@ -8,7 +8,7 @@ resulting matched data sets can also be exported to other statistical
 programs using commands such as {\tt write.csv()} and {\tt
   write.table()} for ASCII files, and {\tt write.dta()} in {\tt
   foreign} package for a STATA binary file.)  Zelig
-\citep{ImaKinLau04} is an R package that implements a large variety of
+\citep{ImaKinLau06} is an R package that implements a large variety of
 statistical models with a single easy-to-use interface, gives easily
 interpretable results by simulating quantities of interest, provides
 numerical and graphical summaries, and is easily extensible.
@@ -192,7 +192,26 @@ subclass.
 > summary(s.out3, subset = 2)
 \end{verbatim}
   
-\end{description}
+\item[How Adjustment After Exact Matching Has No Effect] Regression 
+adjustment after exact one-to-one exact matching gives the identical 
+answer as a simple, unadjusted difference in means.  General exact 
+matching, as implemented in MatchIt, allows one-to-many matches, so to see 
+the same result we must weight when adjusting.  In other words: weighted 
+regression adjustment after general exact matching gives the identical 
+answer as a simple, unadjusted weighted difference in means.  Here is an 
+example:
+
+\begin{verbatim}
+> m.out <- matchit(treat ~ educ+black+hispan, data=lalonde, 
+                   method="exact")
+> z.out <- zelig(re78 ~ treat, data=lalonde, model="ls", 
+                   weights=m.out$weights)
+> z.out <- zelig(re78 ~ treat+educ+black+hispan, data=lalonde,model="ls", 
+                   weights=m.out$weights)
+\end{verbatim}
+
+
+ \end{description}
 
 
 %%% Local Variables: 
