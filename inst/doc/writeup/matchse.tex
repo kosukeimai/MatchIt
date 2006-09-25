@@ -358,7 +358,7 @@ parametrically for any remaining differences
 
 \clearpage
 
-\noindent {\bf formalization.} Suppose 
+\paragraph{formalization 1.} Suppose 
 there are $n$ treated units and $n$ control units with a total of $2n$
 units. Then, the {\it conditional} bias for estimating the average
 treatment effect is given by,
@@ -403,6 +403,7 @@ converges almost surely to $F(X \mid T=t)$ for $t=0,1$
 (Glivenko-Cantelli Theorem). And hence asymptotically, the bias of the
 first term also goes away under randomization.
 
+\paragraph{formalization 2.}
 Now, let's assume the following structural model
 \begin{eqnarray*}
   Y_i(1) & = & g_1(X_i) + U_{1i}, \\
@@ -439,6 +440,53 @@ Finally, note that
 \begin{eqnarray*}
   E({\rm Discrepancy} \mid X_i) = {\rm Bias}.
 \end{eqnarray*}
+
+\paragraph{formalization 3.} Let $I_i$ be a sampling indicator where $I_i=1$
+implies unit $i$ is in the sample. Suppose that our estimand is the
+average treatment effect and our estimator is the difference in sample
+means. Then,
+\begin{eqnarray*}
+ & & {\rm Discrepancy} \\
+ & = &  E[Y_i(1) - Y_i(0)] - \left\{\frac{1}{n} \sum_{i \, \in \{I_i
+ = 1, T_i =1 \}}
+  Y_i(1) - \frac{1}{n} \sum_{i \, \in \{I_i = 1, T_i =0 \}}
+  Y_i(0) \right\}, \\
+& = & E[Y_i(1) - Y_i(0) \mid I_i = 1] \Pr(I_i = 1) + E[Y_i(1) - Y_i(0)
+ \mid I_i = 0] [1-\Pr(I_i = 1)]  \\
+& & 
+- \left\{\frac{1}{n} \sum_{i \, \in \{I_i
+ = 1, T_i =1 \}}
+  Y_i(1) - \frac{1}{n} \sum_{i \, \in \{I_i = 1, T_i =0 \}}
+  Y_i(0) \right\}, \\
+& = & [1-\Pr(I_i = 1)] \left\{E[Y_i(1) - Y_i(0) \mid I_i = 0] -E[Y_i(1) -
+ Y_i(0) \mid I_i = 1] \right\} \\
+& & + E[Y_i(1) - Y_i(0) \mid I_i = 1] - \left\{\frac{1}{n} \sum_{i \, \in \{I_i
+ = 1, T_i =1 \}}
+  Y_i(1) - \frac{1}{n} \sum_{i \, \in \{I_i = 1, T_i =0 \}}
+  Y_i(0) \right\},
+\end{eqnarray*}
+Notice that the first term is the {\it discrepancy due to sample
+  selection}, which is no zero unless either $\Pr(I_i =1)$, i.e.,
+everyone is in the sample, or $E[Y_i(1) - Y_i(0) \mid I_i =
+0]=E[Y_i(1) - Y_i(0) \mid I_i = 1]$, i.e., random sample. Now, the
+second term can be written as,
+\begin{eqnarray*}
+ & &  \left\{E[Y_i(1) - Y_i(0) \mid I_i = 1] - \frac{1}{2n}
+  \sum_{i\,\in \{I_i = 1\}} [Y_i(1) -  Y_i(0)] \right\} + 
+\\
+&  &\left\{\frac{1}{2n} \sum_{i=1}^{2n} [Y_i(1) -
+  Y_i(0)] - \left[\frac{1}{n} \sum_{i \, \in \{T_i =1 \}}
+  Y_i(1) - \frac{1}{n} \sum_{i \, \in \{T_i =0 \}}
+  Y_i(0) \right]\right\}, 
+\end{eqnarray*}
+where the first term can be called as ``finite sample discrepancy''
+and is equal to
+\begin{equation*}
+  \int I_i(Y_i(1) - Y_i(0))\; [ dF(Y_i(1), Y_i(0) \mid I_i = 1)
+  - d\widetilde{F}(Y_i(1), Y_i(0) \mid I_i = 1)],
+\end{equation*}
+the second term equal the discrepancy expression in the
+``formalization 2.'' 
 
 %\baselineskip=0.637\baselineskip 
 \clearpage
