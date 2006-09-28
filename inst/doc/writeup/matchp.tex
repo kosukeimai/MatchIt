@@ -18,8 +18,6 @@
 \usepackage[compact]{titlesec}  % small
 %\usepackage{ajps}
 \usepackage{times}
-
-
 % Shortcuts
 \renewcommand{\P}{\text{P}}
 \newcommand{\MC}{\multicolumn}
@@ -76,17 +74,19 @@ Elizabeth A. Stuart\thanks{Researcher, Mathematica Policy Research,
   how can researchers ensure that the few estimates presented are
   accurate or representative?  How do readers know that publications
   are not merely demonstrations that it is \emph{possible} to find a
-  specification that fits the author's favorite hypothesis?  Matching
-  methods, which offer the promise of causal inference with fewer
-  assumptions, constitute one possible way forward, but crucial
-  results in this fast-growing methodological literature are often
-  grossly misinterpreted.  We explain how to avoid these
-  misinterpretations and propose a unified approach that makes it
-  possible for researchers to preprocess data with matching (such as
-  with the easy-to-use software we offer) and then to apply the best
-  parametric techniques they would have used anyway.  This procedure
-  makes parametric models produce more accurate and considerably less
-  model-dependent causal inferences.
+  specification that fits the author's favorite hypothesis?  And how
+  do we evaluate or even define statistical properties like
+  unbiasedness or mean square error when no unique model or estimator
+  even exists.  Matching methods, which offer the promise of causal
+  inference with fewer assumptions, constitute one possible way
+  forward, but crucial results in this fast-growing methodological
+  literature are often grossly misinterpreted.  We explain how to
+  avoid these misinterpretations and propose a unified approach that
+  makes it possible for researchers to preprocess data with matching
+  (such as with the easy-to-use software we offer) and then to apply
+  the best parametric techniques they would have used anyway.  This
+  procedure makes parametric models produce more accurate and
+  considerably less model-dependent causal inferences.
 \end{abstract}
 
 \section{Introduction}
@@ -775,10 +775,9 @@ $E(Y_i\mid X_i, T_i=1)=\alpha+\beta+X_i\gamma$, and the gray solid
 line is for the controls, $E(Y_i\mid X_i,T_i=0)=\alpha+X_i\gamma$.
 The positive vertical distance between the two straight lines is this
 parametric model's causal effect estimate.
-
 \begin{figure}[t] 
  \begin{center}
-   \includegraphics[width=6in]{figs/olspanel-thick.pdf}
+   \includegraphics[width=6in]{figs/olspanel-sept06.pdf}
   \end{center}
   \vspace{-0.275in}
   \caption{Model sensitivity of average treatment effect estimates for
