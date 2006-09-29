@@ -55,10 +55,10 @@
     \texttt{http://GKing.Harvard.Edu}, \texttt{King@Harvard.Edu},
     (617) 495-2027).}
 %\and %
-Elizabeth A. Stuart\thanks{Researcher, Mathematica Policy Research,
-  Inc.\, (600 Maryland Ave., SW, Suite 550,  Washington, DC, 20024, USA;
+Elizabeth A. Stuart\thanks{Assistant Professor, Departments of Mental Health and Biostatistics,
+Johns Hopkins Bloomberg School of Public Health (624 N Broadway, Room 804, Baltimore, MD 21205; 
   \texttt{http://people.iq.harvard.edu/$\sim$estuart/},
-  \texttt{elizabeth.stuart@gmail.com}).}}
+  \texttt{estuart@jhsph.edu}).}}
 
 \date{\today} 
 
@@ -145,7 +145,7 @@ independent of the backround covariates, which renders any subsequent
 parametric adjustment either irrelevant or less important.
 
 This inferential strategy has three key advantages.  First, the
-approach is easy to use since after researchers need not give up their
+approach is easy to use since researchers need not give up their
 familiar parametric analysis methods.  Instead, they merely add a
 simple preprocessing step before the parametric analysis procedures
 they would have used anyway (or should have used anyway if they are
@@ -1959,7 +1959,7 @@ rated 0.19 on a scale from 0 to 1, which is roughly one third of a
 standard deviation lower than the average rating of 0.23 of less
 visible candidates.  In addition, more visible candidates on average
 receive a feeling thermometer score almost two fifths of a standard
-deviation lower than invisible candidates.  Figure~\ref{fg:kochQQ}
+deviation lower than less visible candidates.  Figure~\ref{fg:kochQQ}
 gives one summary of these differences in the QQ-plot of the
 propensity score.  The QQ-plot of the raw data (in black) is
 consistently below the 45-degree line, indicating that treated units
@@ -1977,7 +1977,7 @@ therefore likely to be a serious problem.
  \label{fg:kochQQ}
 \end{figure}
 
-The original data include 853 visible Republican male candidates,
+The original data include 853 more visible Republican male candidates,
 compared to only 350 less visible ones.  We therefore redefine the
 treatment to examine the impact of being less visible on those 350
 candidates.  Through experimentation, we find that propensity score
@@ -1985,7 +1985,7 @@ matching improves balance substantially.  We estimate the propensity
 score via a logistic regression of visibility on all six pretreatment
 covariates.  We conduct an optimal one-to-one nearest neighbor
 matching based on the estimated propensity score, resulting in 350
-visible candidates matched with 350 less visible candidates.  As
+more visible candidates matched with 350 less visible candidates.  As
 Figure~\ref{fg:kochQQ} demonstrates, matching leads to treatment and
 control group values of the estimated propensity score being identical
 at almost every quantile, with grey dots lining up along the 45-degree
