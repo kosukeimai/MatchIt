@@ -909,7 +909,10 @@ identical.  Our preprocessed dataset thus is the same as the original
 dataset with any unmatched control units discarded, and thus with
 $T_i$ and $X_i$ now independent.  If all treated units are matched,
 this procedure eliminates all dependence on the functional form in the
-parametric analysis.  It is also highly intuitive, since it directly
+parametric analysis.  (If some treated units cannot be matched, then
+they either need to be adjusted during parametric modeling, which of
+course risks extrapolation bias, or dropped, which can change the
+quantity of interest.) It is also highly intuitive, since it directly
 parallels an experiment where we find pairs of units that are
 identical in all observable ways and assign one from each pair to be
 treated and the other to be a control.  Then no matter what effect
@@ -991,7 +994,8 @@ Indeed, for a large range of models, this preprocessed data set will
 be mostly insensitive to the choice of functional form assumptions and
 so will return highly similar causal effect estimates.  (We truncated
 the lines in the right graph to emphasize that we avoid extrapolation
-to draw causal inferences here.)
+to draw causal inferences here and also limit our inferences to data
+in this region.)
 
 \paragraph{The Paradoxical Advantages of Discarding Data 
   for both Bias and Variance} We conclude this section with a
@@ -1171,7 +1175,7 @@ control matches for each treated unit reduces variance further without
 any increase in bias and so dominates one-to-one matching.  Second,
 some researchers only use exact matches, even if the number is very
 small.  This procedure is flawed because it minimizes bias without
-regard to variance.
+regard to variance.  See \citet{RosRub85b}.
 
 If, after exact matching, a large number of units are exactly matched,
 then we have exact balance with little inefficiency and further
@@ -1648,10 +1652,7 @@ $X$, and thus our entire preprocessing procedures, as fixed.  The
 advantage of this definition is that we can easily compute standard
 errors and confidence intervals using the same methods researchers
 have been using with their parametric methods all along, but applied
-to the preprocessed instead of raw data.  (The one exception to our
-procedure occurs when matching with replacement, where we would then
-run the parametric procedure with each unit weighted proportional to
-the number of times it was chosen as a match.)
+to the preprocessed instead of raw data.
 
 Thus, when estimating the ATT or ATE, we compute estimates of
 $\mu_1(X_i)$ and $\mu_0(X_i)$ and their uncertainty as usual from a
@@ -2066,6 +2067,7 @@ covariate.  Carefully evaluating what covariates are likely to have
 the largest effects, and using multiple measures of balance, are
 essential to avoid this pitfall.
 
+% perhaps delete later
 Second, as with all statistical methods, a bias-variance tradeoff
 exists for matching.  If we drop many observations during
 preprocessing, and balance is not substantially improved, the mean
