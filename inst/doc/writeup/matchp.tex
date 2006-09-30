@@ -1008,33 +1008,32 @@ correct, but not necessarily both, causal estimates will still be
 statistically consistent \citep[see][]{RobRot01}.  That is, if the
 parametric model is misspecified, but the matching is correct, or if
 the matching is inadequate but the parametric model is correctly
-specified, then estimates will still be consistent.  Matching followed
-by an unadjusted difference in means does not possess this double
-robustness property.
+specified, then estimates will still be consistent.  The common
+procedure of matching followed by an unadjusted difference in means
+does not possess this double robustness property.
 
-Second, we demonstrate that matching, which is designed to break the
-link between $T$ and $X$ and thus reduce the potential for \emph{bias}
-when adjusting for $X$ via parametric modeling, will also usually
-reduce \emph{variance}.  This can occur even while dropping
-observations.  We formalize this point by considering a simple linear
-regression with one treatment variable, $T_i$, and one covariate,
-$X_i$.  The variance of the coefficient for the treatment variable
-(i.e., of the causal effect) is equal to $\sigma^2/[n (1-\gamma)
-s^2_T]$ where $\sigma^2$ is the conditional variance of the dependent
-variable, $n$ is the number of observations, $s^2_T$ is the sample
-variance of the treatment variable, and $\gamma$ is the coefficient
-from regressing $X_i$ on $T_i$.  If matching improves balance, then
-the dependence between $T_i$ and $X_i$ will drop, $\gamma$ will be
-smaller than in the original sample, and hence the variance will be
-smaller.  
+Second, matching, which is designed to break the link between $T$ and
+$X$ and thus reduce the potential for \emph{bias} when adjusting for
+$X$ via parametric modeling, will also usually reduce \emph{variance}.
+This can occur even while dropping observations.  For intuition, we
+formalize this point by considering a simple linear regression with
+one treatment variable, $T_i$, and one covariate, $X_i$.  The variance
+of the coefficient for the treatment variable (i.e., of the causal
+effect) is equal to $\sigma^2/[n (1-\gamma) s^2_T]$ where $\sigma^2$
+is the conditional variance of the dependent variable, $n$ is the
+number of observations, $s^2_T$ is the sample variance of the
+treatment variable, and $\gamma$ is the coefficient from regressing
+$X_i$ on $T_i$.  If matching improves balance, then the dependence
+between $T_i$ and $X_i$ will drop, $\gamma$ will be smaller than in
+the original sample, and hence the variance will be smaller.
 
 The only issue is that this advantage in reducing variance by reducing
 $\gamma$ can be overcome by dropping $n$ too much in the process.
-Unfortunately, only approximate theoretical results exist on exactly
-how many lost observations it takes to counterbalance the advantages
-in reduced bias and variance from matching, and so we are left in the
-situation of having to rely more than we might like on judgment and
-expertise.  However, the judgment in most applications is not that
+Some theoretical results exist on how many lost observations it takes
+to counterbalance the advantages in reduced bias and variance from
+matching, and so we are left in the situation of having to rely
+somewhat more than we might like on judgment and expertise.  However,
+the results indicate that the judgment in most applications is not
 difficult.  For example, reductions in $\gamma$ by much more than 50\%
 due to matching are not uncommon, whereas proper matching would not
 normally lose anywhere near as large a fraction of observations, and
@@ -1044,7 +1043,7 @@ reduce something like mean square error, which is squared bias plus
 variance.  Thus, even if $n$ is reduced so much that the variance
 increases (even as $\gamma$ decreases), matching will still be
 advantagous in mean square error unless we drop $n$ to an even lower
-level so that it overcomes not only the reduction in variance that
+level so that it outweighs not only the reduction in variance that
 would otherwise occur but also the squared bias reduction.  In
 simulations, the reduction in $n$ required to overcome the advantages
 in mean square error is usually quite substantial \citep{RubTho96}.
@@ -1052,6 +1051,23 @@ The result is that when applied carefully so that $n$ is not much
 smaller in the matched sample than the original sample, matching will
 generally reduce both bias and variance of estimates from subsequent
 parametric analyses.
+
+To be more specific, the theoretical results apply for affinely
+invariant matching methods (such as via the propensity score) with
+ellipsoidally symmetric covariate distributions (such as the normal
+and $t$), as well as for conditionally ellipsoidally symmetric
+distributions (such as general location models for continuous
+covariates, with distributions like the normal or $t$, within classes
+defined by categorical covariates).  Simulation results demonstrate
+that the same results hold under much more general settings as well
+\citep{RubStu06}.  In this setting, matching is ``equal percent bias
+reducing,'' which means that bias is reduced in every dimension of $X$
+by the same amount and bias in any function of the $X$'s, including
+the quantity of interest, will be reduced.  The conclusion of
+\citet{RubTho92} is that matching can reduce bias and also ``lead to
+relatively large variance reduction, as much as a factor of two in
+settings where close matches are possible'' \citep[see
+also][]{RubTho96}.
 
 Thus, although matching discards data, it can actually increase the
 efficiency of estimates even while reducing bias.  This may seem
