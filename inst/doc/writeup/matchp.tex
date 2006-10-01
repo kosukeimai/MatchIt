@@ -76,7 +76,7 @@ Johns Hopkins Bloomberg School of Public Health (624 N Broadway, Room 804, Balti
   are not merely demonstrations that it is \emph{possible} to find a
   specification that fits the author's favorite hypothesis?  And how
   do we evaluate or even define statistical properties like
-  unbiasedness or mean square error when no unique model or estimator
+  unbiasedness or mean squared error when no unique model or estimator
   even exists.  Matching methods, which offer the promise of causal
   inference with fewer assumptions, constitute one possible way
   forward, but crucial results in this fast-growing methodological
@@ -120,7 +120,7 @@ model.  Model dependence combined with likelihood, Bayesian, or other
 methods that condition on a single model, framework, or specification,
 mean that we cannot logically even ask whether an estimator has
 desirable properties, such as unbiasedness, consistency, efficiency,
-mean square error, etc., since a unique estimator must exist before it
+mean squared error, etc., since a unique estimator must exist before it
 can be evaluated.  The related practical problem for researchers is
 how to convince readers that we picked the right specification rather
 than the one that most supported our favorite hypothesis.  What does
@@ -132,7 +132,7 @@ demonstration that it is \emph{possible} to find a specification
 consistent with the author's prior expectations?
 
 We begin where virtually all causal effect methods based on
-observational data begin, by making an ignorability (or no omitted
+observational data begin, by making the ignorability (or no omitted
 variable bias) assumption and conditioning on the definition of a key
 causal (or ``treatment'') variable, and a set of variables we choose
 to control for.  From this common starting point, we offer an easy
@@ -163,7 +163,7 @@ potentially confounding control variables is done nonparametrically,
 the potential for bias is greatly reduced compared to parametric
 analyses based on raw data.  Furthermore, in most situations, the same
 preprocessing also leads to a reduction in the variance of the
-estimated causal effects, and so the mean square error will normally
+estimated causal effects, and so the mean squared error will normally
 be lower too.
 
 In a sense, our recommendations already constitute current best
@@ -238,11 +238,11 @@ suggest here to improve all the parametric models now used in the
 social sciences.  More importantly, since these alternative approaches
 also involve specification or modeling decisions, preproprocessing via
 matching works well in combination with these approaches too, and so
-they should not be considered competitors.  Other seeming possible
+they should not be considered competitors.  Other seemingly possible
 alternatives, such as Bayesian model averaging
 \citep{HoeMadRaf99,ImaKin04} and cross-validation \citep{BlaSmi04},
-are useful for predictive inference but not viable in the context of
-causal inference.
+are useful for predictive inference but not directly applicable in the
+context of causal inference.
 
 \section{Definition of Causal Effects}
 
@@ -517,13 +517,14 @@ as in an experiment, but the probability of selection must not depend
 on potential outcomes.  Whether this assumption is satisfied by
 carefully considering and controlling for the sample selection process
 (as in case-control designs) or by changing the quantity of interest
-to be that reflected by the sample, avoiding selection bias is not a
-trivial matter, and indeed is the subject of a great deal of concern
-and study in a large variety of methodological and substantive
-literatures.  We mention it here to emphasize that all the well-known
-concerns about selecting on the dependent variable should remain a
-concern to researchers even when adopting our approach of
-preprocessing data via nonparametric matching procedures.
+to be that reflected by the sample {\bf KI: this sentence looks a bit
+  awkward to me.}, avoiding selection bias is not a trivial matter,
+and indeed is the subject of a great deal of concern and study in a
+large variety of methodological and substantive literatures.  We
+mention it here to emphasize that all the well-known concerns about
+selecting on the dependent variable should remain a concern to
+researchers even when adopting our approach of preprocessing data via
+nonparametric matching procedures.
 
 We also assume that a researcher analyzing observational data has
 sufficient information in their measured pretreatment control
@@ -917,12 +918,13 @@ parallels an experiment where we find pairs of units that are
 identical in all observable ways and assign one from each pair to be
 treated and the other to be a control.  Then no matter what effect
 $X_i$ has on $Y_i$, we can ignore it entirely since $X_i$ is literally
-held constant within each pair of units.\footnote{Formally,
+held constant within each pair of units.\footnote{{\bf KI: This
+    footnote seems a bit odd. I would delete it.} Formally,
   ignorability (by which we mean the independence of $T_i$ and the
   potential outcomes given $X_i$) and balance (i.e., Equation
   \ref{balance}) guarantee valid inferences.  Together they are
-  written as $p(Y_i(0)\mid T_i=1,X_i)=p(Y_i(0)\mid T_i=0,X_i)$ and
-  $p(Y_i(1)\mid T_i=1,X_i)=p(Y_i(1)\mid T_i=0,X_i)$.}
+  written as $p(Y_i(1), Y_i(0)\mid T_i=1,X_i)=p(Y_i(1), Y_i(0)\mid
+  T_i=0,X_i)$.}
 
 Although one-to-one exact matching can eliminate model dependence and
 any bias from incorrect assumptions made during the parametric stage
@@ -959,7 +961,7 @@ been a simple difference in means between the treatment and control
 groups.  This method certainly makes sense in the case of exact
 one-to-one matching, since most parametric procedures applied to
 exactly matched data would give the same estimates.  However, with
-matching that is not exact, using a difference in means test is
+matching that is not exact, using the difference in means estimator is
 equivalent to assuming that any remaining imbalance in the matched
 sample is strictly unrelated to the treatment, which we know is false,
 or has no effect on the outcome, which we have no evidence about
@@ -1005,12 +1007,12 @@ that under weak conditions (such as ruling out extreme cases where
 matching leads to nonidentification even though the correct parametric
 model is specified), if either the matching or the parametric model is
 correct, but not necessarily both, causal estimates will still be
-statistically consistent \citep[see][]{RobRot01}.  That is, if the
-parametric model is misspecified, but the matching is correct, or if
-the matching is inadequate but the parametric model is correctly
-specified, then estimates will still be consistent.  The common
-procedure of matching followed by an unadjusted difference in means
-does not possess this double robustness property.
+consistent \citep[see][]{RobRot01}.  That is, if the parametric model
+is misspecified, but the matching is correct, or if the matching is
+inadequate but the parametric model is correctly specified, then
+estimates will still be consistent.  The common procedure of matching
+followed by an unadjusted difference in means does not possess this
+double robustness property.
 
 Second, matching, which is designed to break the link between $T$ and
 $X$ and thus reduce the potential for \emph{bias} when adjusting for
@@ -1039,14 +1041,14 @@ due to matching are not uncommon, whereas proper matching would not
 normally lose anywhere near as large a fraction of observations, and
 so variance usually does drop following properly applied matching.
 Moreover, the ultimate goal of any causal estimation procedure is to
-reduce something like mean square error, which is squared bias plus
+reduce something like mean squared error, which is squared bias plus
 variance.  Thus, even if $n$ is reduced so much that the variance
 increases (even as $\gamma$ decreases), matching will still be
-advantagous in mean square error unless we drop $n$ to an even lower
+advantagous in mean squared error unless we drop $n$ to an even lower
 level so that it outweighs not only the reduction in variance that
 would otherwise occur but also the squared bias reduction.  In
 simulations, the reduction in $n$ required to overcome the advantages
-in mean square error is usually quite substantial \citep{RubTho96}.
+in mean squared error is usually quite substantial \citep{RubTho96}.
 The result is that when applied carefully so that $n$ is not much
 smaller in the matched sample than the original sample, matching will
 generally reduce both bias and variance of estimates from subsequent
@@ -1062,8 +1064,9 @@ defined by categorical covariates).  Simulation results demonstrate
 that the same results hold under much more general settings as well
 \citep{RubStu06}.  In this setting, matching is ``equal percent bias
 reducing,'' which means that bias is reduced in every dimension of $X$
-by the same amount and bias in any function of the $X$'s, including
-the quantity of interest, will be reduced.  The conclusion of
+by the same amount and bias in any function of the $X$'s {\bf KI: Is
+  this true? Any function or just a linear function?}, including the
+quantity of interest, will be reduced.  The conclusion of
 \citet{RubTho92} is that matching can reduce bias and also ``lead to
 relatively large variance reduction, as much as a factor of two in
 settings where close matches are possible'' \citep[see
@@ -1107,7 +1110,7 @@ degree to which the treatment and control covariate distributions
 resemble each other as in (\ref{balance}), without losing too many
 observations in the process.  The result of this process, when done
 appropriately, is considerably less model dependence, reduced
-potential for bias, less variance, and as a result lower mean square
+potential for bias, less variance, and as a result lower mean squared
 error.
 
 The main diagnostic of success in matching is also balance, as well as
@@ -1196,16 +1199,16 @@ regard to variance.  See \citet{RosRub85b}.
 If, after exact matching, a large number of units are exactly matched,
 then we have exact balance with little inefficiency and further
 matching procedures are unnececessary.  Indeed, exact balance means
-that a difference in means is sufficient for the parametric analysis
-(but be sure to compute a difference in weighted means if very
-different numbers of matches are included for each unit).  If an
-insufficient number of matches is found, we either repeat exact
-matching with fewer covariates or switch to other methods.  In the
-former, we balance the included variables but do not balance at all on
-the rest.  The excluded variables may be partially balanced due to
-correlations with the included variables, but some balance will be
-absent.  In contrast, other methods, such as propensity score
-matching, use all variables but only approximately matches.
+that a difference in means is sufficient for the analysis (but be sure
+to compute a difference in weighted means if very different numbers of
+matches are included for each unit).  If an insufficient number of
+matches is found, we either repeat exact matching with fewer
+covariates or switch to other methods.  In the former, we balance the
+included variables but do not balance at all on the rest.  The
+excluded variables may be partially balanced due to correlations with
+the included variables, but some balance will be absent.  In contrast,
+other methods, such as propensity score matching, use all variables
+but only approximately matches.
 
 \paragraph{Common Support Problems}
 Finding balance is traditionally broken into two components: ensuring
@@ -1495,7 +1498,7 @@ available.
 
 Our preferred approach is to use an empirical quantile-quantile plot,
 or QQ-plot, for each variable (and often their interactions) to
-compare the full empirical densities for the treated and control
+compare the full empirical distributions for the treated and control
 groups for each variable.  QQ-plots are usually the best way to
 compare two univariate distributions: They plot the quantiles of a
 variable of the treatment group against that of the control group in a
@@ -2091,7 +2094,7 @@ square error (or other mean-variance summary) of the estimated causal
 effect might actually increase.  Users must pay close attention to
 this tradeoff during the process of matching, but unfortunately no
 precise rules exist for how to make these choices.  In particular, the
-methodological literature offers no formal estimates of mean square
+methodological literature offers no formal estimates of mean squared
 error and so in marginal cases it can be difficult to know whether or
 how much preprocessing will help.  Of course, dropping observations
 does not necessarily mean that preprocessing is worse, since improving
