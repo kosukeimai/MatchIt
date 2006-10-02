@@ -720,6 +720,8 @@ interaction would not help much since it would merely add one more
 parameter to estimate, and so we would still need to make assumptions
 about the remaining 96 parameters.
 
+{\bf EAS:  This seems to repeat the previous paragraph somewhat (in fact the 1st lines
+are almost exactly the same.  Maybe we should just delete these few lines?}.
 The problem escalates quickly as the number of explanatory variables
 increases.  With $V$ 10-category variables, we need $10^V$ parameters
 for estimation in a regression framework without functional form
@@ -1031,7 +1033,9 @@ the original sample, and hence the variance will be smaller.
 
 The only issue is that this advantage in reducing variance by reducing
 $\gamma$ can be overcome by dropping $n$ too much in the process.
-Some theoretical results exist on how many lost observations it takes
+{\bf EAS:  I think maybe this is meant to be "Few theoretical results"??}
+Some theoretical results exist on how many 
+lost observations it takes
 to counterbalance the advantages in reduced bias and variance from
 matching, and so we are left in the situation of having to rely
 somewhat more than we might like on judgment and expertise.  However,
@@ -1060,12 +1064,16 @@ ellipsoidally symmetric covariate distributions (such as the normal
 and $t$), as well as for conditionally ellipsoidally symmetric
 distributions (such as general location models for continuous
 covariates, with distributions like the normal or $t$, within classes
-defined by categorical covariates).  Simulation results demonstrate
+defined by categorical covariates).\footnote{Further theoretical and simulation results demonstrate
 that the same results hold under much more general settings as well
-\citep{RubStu06}.  In this setting, matching is ``equal percent bias
+\citep{RubTho96, RubStu06}.}  In this setting, matching is ``equal percent bias
 reducing,'' which means that bias is reduced in every dimension of $X$
 by the same amount and bias in any function of the $X$'s {\bf KI: Is
-  this true? Any function or just a linear function?}, including the
+  this true? Any function or just a linear function?  EAS:  The approximations are only
+for linear functions, but it should work for any function...since bias in all X directions is reduced,
+then it should reduce the bias in any function of those X'.  I think there aren't approximations, though, because 
+it's hard to know by how much it will be reduced, without knowing more about the functional form.  Does that make 
+sense?}, including the
 quantity of interest, will be reduced.  The conclusion of
 \citet{RubTho92} is that matching can reduce bias and also ``lead to
 relatively large variance reduction, as much as a factor of two in
@@ -1195,7 +1203,12 @@ control matches for each treated unit reduces variance further without
 any increase in bias and so dominates one-to-one matching.  Second,
 some researchers only use exact matches, even if the number is very
 small.  This procedure is flawed because it minimizes bias without
-regard to variance.  See \citet{RosRub85b}.
+regard to variance.  {\bf EAS:  R+R 1985 doesn't actually talk about variance--see
+a theme here?--but instead about the bias induced by discarding T's (when you're estimating
+the ATT.  So I would change the sentence to "This procedure is flawed because it minimizes
+bias without regard to variance, and can also lead to biased estimates of the average 
+treatment effect on the treated if many treated units have to be discarded because
+no matches are availabe."}.  See \citet{RosRub85b}.
 
 If, after exact matching, a large number of units are exactly matched,
 then we have exact balance with little inefficiency and further
