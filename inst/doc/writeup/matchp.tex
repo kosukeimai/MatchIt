@@ -40,8 +40,8 @@
     Software to implement the methods in this paper is available at
     \texttt{http://GKing.Harvard.edu/matchit}.}}
 
-\author{Daniel E. Ho,\thanks{Assistant Professor-Designate, Stanford
-    Law School, Stanford CA 94305. \texttt{daniel.e.ho@gmail.com}}
+\author{Daniel E. Ho,\thanks{Assistant Professor of Law, Stanford
+    Law School (559 Nathan Abbott Way, Stanford CA 94305; \texttt{dho@law.stanford.edu}, (650) 723-9560).}
 %\and %
   Kosuke Imai,\thanks{Assistant Professor, Department of Politics,
     Princeton University (Corwin Hall 041, Department of Politics,
@@ -77,7 +77,7 @@ Johns Hopkins Bloomberg School of Public Health (624 N Broadway, Room 804, Balti
   specification that fits the author's favorite hypothesis?  And how
   do we evaluate or even define statistical properties like
   unbiasedness or mean squared error when no unique model or estimator
-  even exists.  Matching methods, which offer the promise of causal
+  even exists?  Matching methods, which offer the promise of causal
   inference with fewer assumptions, constitute one possible way
   forward, but crucial results in this fast-growing methodological
   literature are often grossly misinterpreted.  We explain how to
@@ -465,7 +465,7 @@ treatment to each observed unit,\footnote{Below, we assume a classical
   random assignment based on some pretreatment covariates.  If
   treatment assignment depends on observed values of the covariates,
   those covariates should be taken into account in subsequent analyses.}
-and (3) a \emph{large $n$ (sample size)}.
+and (3) \emph{large $n$ (sample size)}.
 
 Feature (1) avoids selection bias by identifying a given population
 and guaranteeing that the probability of selection from this
@@ -526,7 +526,7 @@ selecting on the dependent variable should remain a concern to
 researchers even when adopting our approach of preprocessing data via
 nonparametric matching procedures.
 
-We also assume that a researcher analyzing observational data has
+We also assume that researchers analyzing observational data have
 sufficient information in their measured pretreatment control
 variables $X_i$ so that it is possible via \emph{some} method to make
 valid causal inferences.  This is known in political methodology and
@@ -1232,8 +1232,8 @@ additional selection (or later adjustment) to make the portions of the
 densities that do overlap have the same heights.  Areas outside of
 common support are particularly problematic since they require
 extrapolation, which can generate considerable model dependence.  And
-indeed the farther the extrapolation is from the data the larger can
-be the model dependence.  For example, asking in 2001 what Iraq would
+indeed the farther the extrapolation is from the data the larger model dependence can become.  For example, asking in 2001 
+what Iraq would
 be like if the U.S.\ attempted to impose democracy there was pure
 extrapolation since the U.S.\ had not previously attempted the same
 thing in another country like Iraq in all relevant respects.  Making
@@ -1422,7 +1422,7 @@ fully appreciated that as $n$ increases more subclasses are generally
 preferable.  In addition, the number and definition of the subclasses
 should be tuned to the nature of the empirical distributions to ensure
 adequate treatment and control units in each subclass.  A useful
-alternative is ``full matching'' methods, which offer variable numbers
+alternative is ``full matching,'' which offers variable numbers
 of matches in each subclass \citep{Hansen04}.
 
 \paragraph{The Balance Test Fallacy}
@@ -1569,9 +1569,9 @@ functions (none of which involve balance hypothesis tests), as well as
 the combination of the quantitative measures discussed above and
 available prior information about the likely relative importance of
 each of one's covariates.  Automated searches can also be useful in
-this regard, such as the promising approach of \citet{DiaSek05}, the
-software for which makes it possible to choose appropriate balance
-measures (this method is also incorporated in MatchIt).
+this regard, such as the promising approach of \citet{DiaSek05}, whose 
+software makes it possible to choose appropriate balance
+measures (and is also incorporated in MatchIt).
 
 If some covariates are omitted from some of the matching procedures,
 the balance on them should still be checked.  Doing so is often a good
@@ -1908,7 +1908,7 @@ the 18).  Even though we ignored interactions and nonlinearities
 (which are of course additional key aspects of model dependence), this
 amounts to $262,143$ survival analyses, all of which we ran on the raw
 data and then again on the preprocessed data.  Figure~\ref{fg:fdadens}
-presents a kernel density plot (a smooth histogram) for the two sets
+presents a kernel density plot (a smoothed histogram) for the two sets
 of results.  The key result here is that estimates are far more
 model-dependent using the raw data than using the matched data.  For
 example, the variance of the estimated ATT from the matched data (the
@@ -1962,7 +1962,7 @@ infeasible, \citet{Koch02} collects observational data with
 pretreatment covariates including candidate ideology, voter perception
 of party ideology, respondent ideology, candidate feeling thermometer,
 and political awareness.  Koch uses least squares to adjust for these
-explanatory variables, making three assumptions.\footnote{First, the
+explanatory variables, making three typical assumptions,\footnote{First, the
   study assumes that visibility does not itself affect any of the
   pretreatment covariates.  This might be violated, for example, if
   visibility influences the affect felt for a candidate as measured by
@@ -1973,8 +1973,7 @@ explanatory variables, making three assumptions.\footnote{First, the
   example, detract local media attention from a candidate in an
   adjoining district, violating independence.  Third, the study
   assumes that ``visibility'' is the same treatment for all
-  candidates.}  For our purposes, we do not consider the veracity of
-these assumptions.  Instead, we focus on the sensitivity of inferences
+  candidates.}  which, for our purposes, we do not challenge.  Instead, we focus on the sensitivity of inferences
 to differences in specification.  Even with a relatively small number
 of covariates, the curse of dimensionality looms large.  Given the
 combinations that can be created by the unique values of these
@@ -1991,9 +1990,9 @@ explanatory covariates.  More visible candidates on average are less
 liberal than less visible candidates: more visible candidates are
 rated 0.19 on a scale from 0 to 1, which is roughly one third of a
 standard deviation lower than the average rating of 0.23 of less
-visible candidates.  In addition, more visible candidates on average
-receive a feeling thermometer score almost two fifths of a standard
-deviation lower than less visible candidates.  Figure~\ref{fg:kochQQ}
+visible candidates.  In addition, more visible candidates score on average
+almost two fifths of a standard
+deviation lower on a feeling thermometer than less visible candidates.  Figure~\ref{fg:kochQQ}
 gives one summary of these differences in the QQ-plot of the
 propensity score.  The QQ-plot of the raw data (in black) is
 consistently below the 45-degree line, indicating that treated units
@@ -2033,7 +2032,7 @@ squares analysis as in \citet{Koch02}.  The only difference is that we
 run the analysis for the matched dataset.  This analysis yields an
 estimated average treatment effect of $-0.03$ with an estimated
 standard error of $0.07$, suggesting that there is not much of an
-effect of being less visibility on Republican male candidates.
+effect of less visibility on Republican male candidates.
 
 We now turn to our main (methodological) purpose of evaluating model
 sensitivity by studying the variance of causal effect point estimates
@@ -2053,7 +2052,7 @@ the raw data (or any one point estimate) cannot represent the enormous
 variability in these results.  Estimates from the preprocessed data
 stand in stark contrast to the estimates from the raw data.  The
 variability of coefficient estimates is substantially smaller, ranging
-from $-0.38$ to $-0.28$, every one of which indicates that not having
+from $-0.38$ to $-0.28$, every one of which indicates that less
 visibility reduces voters perceptions of the candidates as liberal.
 More importantly from our perspective, the standard deviation across
 specifications of the raw data is 10.7 times as large as for the
@@ -2118,7 +2117,7 @@ analysis merely produces false precision.  So although estimated
 standard errors may increase in some cases with preprocessing, they
 would likely be more accurate.  Moreover, in many situations,
 eliminating observations far from the rest of the data as matching
-does will reduce heterogeneity and thereby further reduces the
+does will reduce heterogeneity and thereby further reduces 
 variance.
 
 Third, the matching literature offers a large number of possible and
