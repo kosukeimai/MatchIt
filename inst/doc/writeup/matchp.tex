@@ -1010,12 +1010,14 @@ effect estimates, such as with small bias and variance.  The standard
 approach to estimation in the social sciences presently involves
 parametric modeling of raw data, where a single correct model must be
 chosen but multiple candidate models are usually available, and so a
-unique estimator is not even well defined.  Compounding the problem of
-defining formal properties for estimators like these in practice is
-that the specific choice of a model, and thus estimator, is picked by
-the analyst as a function of almost anything the analyst wishes,
-including the dependent variable or the causal effect estimates
-themselves.  Moreover, this function is not stated.
+unique estimator is not even well defined. {\bf KI: shall we say ``a
+  unique estimator is not often specified by researchers a priori''
+  instead?} Compounding the problem of defining formal properties for
+estimators like these in practice is that the specific choice of a
+model, and thus estimator, is picked by the analyst as a function of
+almost anything the analyst wishes, including the dependent variable
+or the causal effect estimates themselves.  Moreover, this function is
+not stated.
 
 Thus, except in unusual situations where the correct model is known,
 the standard parametric-only approach to causal effect estimation
@@ -1024,7 +1026,10 @@ than some degree of model dependence (although in some situations, it
 may be possible to characterize quantities such as the maximum degree
 of bias).  To get to the point where we can consider the standard
 properties of estimators, and ultimately produce estimates with low
-bias and variance, we first need to reduce model dependence.
+bias and variance, we first need to reduce model dependence. {\bf KI:
+  Should we simply say ``To get to the point where we can ultimately
+  produce estimates with low bias and variance, therefore, we first
+  need to ...''}
 
 We know from the results in Section \ref{s:immed} that matching that
 achieves good balance will reduce or eliminate model dependence.  We
@@ -1032,100 +1037,101 @@ also know from other results that parametric analyses based on these
 preprocessed data will be less biased and have lower variance than
 estimators based on many choices of models applied to the raw data.
 In particular, theoretical results available for a wide range of data
-generating processes\footnote{The theoretical results apply for
-  affinely invariant matching methods (such as via the propensity
-  score) with ellipsoidally symmetric covariate distributions (such as
-  the normal and $t$), as well as for conditionally ellipsoidally
-  symmetric distributions (such as general location models for
-  continuous covariates, with distributions like the normal or $t$,
-  within classes defined by categorical covariates).} and simulations
-for much more general settings \citep{RubTho96, RubStu06} indicate
-that matching is ``equal percent bias reducing,'' which means that
-balance is improved in every dimension of $X$ by the same amount and
-that matching reduces bias in any function of the $X$'s, including the
-quantity of interest \citep{RubTho92,RubTho96}.
+generating processes and simulations for much more general
+settings.\footnote{The theoretical results apply for affinely
+  invariant matching methods (such as via the propensity score) with
+  ellipsoidally symmetric covariate distributions (such as the normal
+  and $t$), as well as for conditionally ellipsoidally symmetric
+  distributions (such as general location models for continuous
+  covariates, with distributions like the normal or $t$, within
+  classes defined by categorical covariates).}  \citep{RubTho96,
+  RubStu06} show that matching is ``equal percent bias reducing,''
+which means that balance is improved in every dimension of $X$ by the
+same amount and that matching reduces bias in any function of the
+$X$'s, including the causal quantities of interest \citep[see
+also][]{RubTho92}.
 
 Theoretical and simulation results also indicate that matching in most
 situations reduce variance, but extreme situations where matching is
 used badly, and too many observations are dropped, can make results
 about variance more complicated and require more judgment
-\citep{RubTho96}.  We now offer an intuitive explanation of the
+\citep{RubTho96}.  Here, we offer an intuitive explanation of the
 paradoxical advantages of discarding data for reducing variance, in
-addition to bias.
-
-Consider first a simple linear regression with one treatment variable,
-$T_i$, and one covariate, $X_i$.  The variance of the coefficient on
-the treatment variable (i.e., of the causal effect) is equal to
-$\sigma^2/[n (1-\gamma) s^2_T]$ where $\sigma^2$ is the conditional
-variance of the dependent variable, $n$ is the number of observations,
-$s^2_T$ is the sample variance of the treatment variable, and $\gamma$
-is the coefficient from regressing $X_i$ on $T_i$.  If matching
-improves balance, then the dependence between $T_i$ and $X_i$ will
-drop, $\gamma$ will be smaller than in the original sample, and hence
-the variance will be smaller.  An analogous situation applies to
-nonlinear data generation processes.
+addition to bias.  Consider first a simple linear regression with one
+treatment variable, $T_i$, and one covariate, $X_i$.  The variance of
+the coefficient on the treatment variable (i.e., of the causal effect)
+is equal to $\sigma^2/[n (1-\gamma) s^2_T]$ where $\sigma^2$ is the
+conditional variance of the dependent variable, $n$ is the number of
+observations, $s^2_T$ is the sample variance of the treatment
+variable, and $\gamma$ is the coefficient from regressing $X_i$ on
+$T_i$.  If matching improves balance, then the dependence between
+$T_i$ and $X_i$ will drop, $\gamma$ will be smaller than in the
+original sample, and hence the variance will be smaller.  An analogous
+situation applies to nonlinear data generation processes.
 
 The only issue is that this advantage in reducing variance by reducing
 $\gamma$ can be overcome by dropping $n$ too much in the process.  In
 most situations, a little judgment and careful analysis can easily
-avoid the problem.  We explain in three ways.  First, in applications
-with many more control than treated units, the variance of the causal
-effect is mostly a function of the number of treated units, and so
-losing control units until their number approximates the number of
-treated units will not reduce the variance much, while still reducing
-bias.  Second, for applications with roughly the same number of
-treatment and control units, reductions in $\gamma$ by much more than
-50\% due to matching are not uncommon, whereas proper matching in this
-situation would not normally lose anywhere near as large a fraction of
-observations, and so variance usually does drop following properly
-applied matching.
+avoid the problem.  We explain in three ways. {\bf KI: should this be
+  ``four'' including the last point about self-efficiency?} First, in
+applications with many more control than treated units, the variance
+of the causal effect is mostly a function of the number of treated
+units, and so losing control units until their number approximates the
+number of treated units will not reduce the variance much, while still
+reducing bias.  Second, for applications with roughly the same number
+of treatment and control units, reductions in $\gamma$ by much more
+than 50\% due to matching are not uncommon, whereas proper matching in
+this situation would not normally lose anywhere near as large a
+fraction of observations, and so variance usually does drop following
+properly applied matching.
 
 Third, the ultimate goal of any causal estimation procedure is to
 reduce something like mean squared error, which is squared bias plus
 variance (although in observational studies bias is normally more of a
-concern than variance).  Thus, even if $n$ is reduced so much that the
-variance increases (even as $\gamma$ decreases), matching will still
-be advantageous in mean squared error unless we drop $n$ to an even
-lower level so that it outweighs not only the reduction in variance
-that would otherwise occur but also the squared bias reduction.  In
-simulations, the reduction in $n$ required to overcome the advantages
-in mean squared error is usually quite substantial \citep{RubTho96}.
-The result is that when applied carefully so that $n$ is not much
-smaller in the matched sample than the original sample, matching will
-generally reduce both bias and variance of estimates from subsequent
-parametric analyses.
+concern than variance because, unlike in an experimental setting,
+unbiasedness is not guranteed).  Thus, even if $n$ is reduced so much
+that the variance increases (even as $\gamma$ decreases), matching
+will still be advantageous in mean squared error unless we drop $n$ to
+an even lower level so that it outweighs not only the reduction in
+variance that would otherwise occur but also the squared bias
+reduction.  In simulations, the reduction in $n$ required to overcome
+the advantages in mean squared error is usually quite substantial
+\citep{RubTho96,ImaDyk04}.  The result is that when applied carefully
+so that $n$ is not much smaller in the matched sample than the
+original sample, matching will generally reduce both bias and variance
+of estimates from subsequent parametric analyses.
 
 Finally we note that, although matching discards data, it can actually
-increase the efficiency of estimates even while reducing bias.  This
-may seem counterintuitive, as it would seem to violate a first
-principle of statistics, informally described as ``more data are
-better.''  However, more data are in fact better only when using an
-estimator that is ``self-efficient'' \citep{MenRom03}, which roughly
-speaking is an estimator which is based on a model that is correct (or
-sufficiently correct to make use of more data to improve inferences).
-Estimators that are not self-efficient can have variance reductions
-when discarding data.  For a simple example, consider data generated
-from a univariate heteroskedastic linear-normal regression model,
-$Y_i\sim N(\beta_0+\eta T_i+\beta_1 X_i,\sigma_i^2)$, for
-$i=1,\dots,1000$, and variance $\sigma^2_i$ equaling $\theta$ for
-$X_i\leq 5$ and $500\theta$ for $X_i>5$, where $\theta>0$ and say 50
-observations reside at $X_i>5$.  With data generated from this model,
-weighted least squares is a self-efficient estimator, and thus
-dropping data would increase standard errors.  In contrast, the
-least-squares estimator would not be self-efficient, which can be seen
-because dropping the 50 observations with 500 times the variance would
-greatly reduce heterogeneity and thus reduce estimated standard
-errors.  If we know the correct model, this is not an issue, but if as
-is usually the case we do not know the correct model and have a range
-of potential parametric models we might consider, self-efficiency
-cannot be assumed, and so dropping data can be
-beneficial.\footnote{Although we introduce this simple example to
-  illustrate circumstances where discarding data can be beneficial, we
-  can also use this example to illustrate another benefit of matching.
-  In general, good balance makes $X$ irrelevant and in this example
-  least squares and weighted least squares would both give very
-  similar estimates of the coefficient on $T$, which in this model is
-  the estimated causal effect.}
+increase the efficiency of estimates.  This may seem counterintuitive,
+as it would seem to violate a first principle of statistics,
+informally described as ``more data are better.''  However, more data
+are in fact better only when using an estimator that is
+``self-efficient'' \citep{MenRom03}, which roughly speaking is an
+estimator which is based on a model that is correct (or sufficiently
+correct to make use of more data to improve inferences).  Estimators
+that are not self-efficient can have variance reductions when
+discarding data.  For a simple example, consider data generated from a
+univariate heteroskedastic linear-normal regression model, $Y_i\sim
+N(\beta_0+\eta T_i+\beta_1 X_i,\sigma_i^2)$, for $i=1,\dots,1000$, and
+variance $\sigma^2_i$ equaling $\theta$ for $X_i\leq 5$ and
+$500\theta$ for $X_i>5$, where $\theta>0$ and say 50 observations
+reside at $X_i>5$.  With data generated from this model, weighted
+least squares is a self-efficient estimator, and thus dropping data
+would increase standard errors.  In contrast, the least-squares
+estimator would not be self-efficient, which can be seen because
+dropping the 50 observations with 500 times the variance would greatly
+reduce heterogeneity and thus reduce estimated standard errors.  If we
+know the correct model, this is not an issue, but if as is usually the
+case we do not know the correct model and have a range of potential
+parametric models we might consider, self-efficiency cannot be
+assumed, and so dropping data can be beneficial.\footnote{Although we
+  introduce this simple example to illustrate circumstances where
+  discarding data can be beneficial, we can also use this example to
+  illustrate another benefit of matching.  In general, good balance
+  makes $X$ irrelevant and in this example least squares and weighted
+  least squares would both give very similar estimates of the
+  coefficient on $T$, which in this model is the estimated causal
+  effect.}
 
 \subsection{Double Robustness}
 Our two-step procedure is \emph{doubly robust} in the sense that under
