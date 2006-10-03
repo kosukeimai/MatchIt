@@ -1010,9 +1010,8 @@ effect estimates, such as with small bias and variance.  The standard
 approach to estimation in the social sciences presently involves
 parametric modeling of raw data, where a single correct model must be
 chosen but multiple candidate models are usually available, and so a
-unique estimator is not even well defined. {\bf KI: shall we say ``a
-  unique estimator is not often specified by researchers a priori''
-  instead?} Compounding the problem of defining formal properties for
+unique estimator is not even specified ex ante and thus not well
+defined.  Compounding the problem of defining formal properties for
 estimators like these in practice is that the specific choice of a
 model, and thus estimator, is picked by the analyst as a function of
 almost anything the analyst wishes, including the dependent variable
@@ -1024,12 +1023,9 @@ the standard parametric-only approach to causal effect estimation
 cannot be described as having any formal statistical properties other
 than some degree of model dependence (although in some situations, it
 may be possible to characterize quantities such as the maximum degree
-of bias).  To get to the point where we can consider the standard
+of bias).  To get to the point where we can consider known
 properties of estimators, and ultimately produce estimates with low
-bias and variance, we first need to reduce model dependence. {\bf KI:
-  Should we simply say ``To get to the point where we can ultimately
-  produce estimates with low bias and variance, therefore, we first
-  need to ...''}
+bias and variance, we first need to reduce model dependence.
 
 We know from the results in Section \ref{s:immed} that matching that
 achieves good balance will reduce or eliminate model dependence.  We
@@ -1072,18 +1068,17 @@ situation applies to nonlinear data generation processes.
 The only issue is that this advantage in reducing variance by reducing
 $\gamma$ can be overcome by dropping $n$ too much in the process.  In
 most situations, a little judgment and careful analysis can easily
-avoid the problem.  We explain in three ways. {\bf KI: should this be
-  ``four'' including the last point about self-efficiency?} First, in
-applications with many more control than treated units, the variance
-of the causal effect is mostly a function of the number of treated
-units, and so losing control units until their number approximates the
-number of treated units will not reduce the variance much, while still
-reducing bias.  Second, for applications with roughly the same number
-of treatment and control units, reductions in $\gamma$ by much more
-than 50\% due to matching are not uncommon, whereas proper matching in
-this situation would not normally lose anywhere near as large a
-fraction of observations, and so variance usually does drop following
-properly applied matching.
+avoid the problem.  We explain in four ways.  First, in applications
+with many more control than treated units, the variance of the causal
+effect is mostly a function of the number of treated units, and so
+losing control units until their number approximates the number of
+treated units will not reduce the variance much, while still reducing
+bias.  Second, for applications with roughly the same number of
+treatment and control units, reductions in $\gamma$ by much more than
+50\% due to matching are not uncommon, whereas proper matching in this
+situation would not normally lose anywhere near as large a fraction of
+observations, and so variance usually does drop following properly
+applied matching.
 
 Third, the ultimate goal of any causal estimation procedure is to
 reduce something like mean squared error, which is squared bias plus
