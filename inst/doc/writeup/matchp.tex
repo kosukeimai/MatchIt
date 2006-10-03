@@ -141,7 +141,7 @@ variables as possible without parametric assumptions.  We do this by
 preprocessing a data set with matching methods so that the treated
 group is as similar as possible to the control group.  In the
 preprocessed data set, the treatment variable is closer to being
-independent of the backround covariates, which renders any subsequent
+independent of the background covariates, which renders any subsequent
 parametric adjustment either irrelevant or less important.
 
 This inferential strategy has three key advantages.  First, the
@@ -200,14 +200,14 @@ unified perspective for applied research.\footnote{Although matching
   other areas.}
 
 Our approach is similar in spirit to, or a generalization of the ideas
-in, \citet{CocRub73}, \citet{RosRub84a}, \citet{Rubin73b,Rubin79}, and
-\citet{RubTho00} who each recommend matching followed by a different
-form of parametric adjustment, as well as strategies used in applied
-research problems by \citet{Rosenbaum86} and others, as discussed in
-\citet{GlaLevMye03}.\footnote{It is also similar to
-  \citet{HecIchTod98} who develop forms of matching combined with
-  semi-parametric (kernel weighting) analyses, as well as to the
-  parametric bias adjustment for one form of matching by
+in, \citet{CocRub73}, \citet{RosRub84a}, \citet{Rubin73b,Rubin79},
+\citet{RubTho00}, and \citet{ImaDyk04} who each recommend matching
+followed by a different form of parametric adjustment, as well as
+strategies used in applied research problems by \citet{Rosenbaum86}
+and others, as discussed in \citet{GlaLevMye03}.\footnote{It is also
+  similar to \citet{HecIchTod98} who develop forms of matching
+  combined with semi-parametric (kernel weighting) analyses, as well
+  as to the parametric bias adjustment for one form of matching by
   \citet{AbaImb06}, except that, to avoid inducing new biases, we
   recommend below that matching be evaluated prior to examining the
   dependent variable, which is not the case with these latter
@@ -218,7 +218,7 @@ research problems by \citet{Rosenbaum86} and others, as discussed in
   and outlier and feature detection \citep[][Ch.8]{Bishop95}.}  To our
 knowledge, the present paper is the first to propose and work out the
 conditions for matching as a general method of nonparametric
-preprocessing, suitable for improving any parametric method.  
+preprocessing, suitable for improving any parametric method.
 
 Our general preprocessing strategy also made it possible for us to
 write easy-to-use software that implements all the ideas discussed in
@@ -236,7 +236,7 @@ used properly each of these approaches can reduce model dependence,
 matching may be simpler to use and understand, and would work as we
 suggest here to improve all the parametric models now used in the
 social sciences.  More importantly, since these alternative approaches
-also involve specification or modeling decisions, preproprocessing via
+also involve specification or modeling decisions, preprocessing via
 matching works well in combination with these approaches too, and so
 they should not be considered competitors.  Other seemingly possible
 alternatives, such as Bayesian model averaging
@@ -955,7 +955,7 @@ we lose some opportunity for bias reduction we do so only in the
 preprocessing stage; the researcher's second stage parametric analysis
 still has a chance to eliminate the remaining bias.  Details about how
 to match when exact one-to-one matching is infeasible appear in our
-software documention; common misunderstandings of the theoretical
+software documentation; common misunderstandings of the theoretical
 literature on approximate matching appear in Section \ref{s:choose}.
 
 A key point about matching as nonparametric preprocessing is that
@@ -1085,7 +1085,7 @@ reduce something like mean squared error, which is squared bias plus
 variance (although in observational studies bias is normally more of a
 concern than variance).  Thus, even if $n$ is reduced so much that the
 variance increases (even as $\gamma$ decreases), matching will still
-be advantagous in mean squared error unless we drop $n$ to an even
+be advantageous in mean squared error unless we drop $n$ to an even
 lower level so that it outweighs not only the reduction in variance
 that would otherwise occur but also the squared bias reduction.  In
 simulations, the reduction in $n$ required to overcome the advantages
@@ -1127,10 +1127,10 @@ beneficial.\footnote{Although we introduce this simple example to
   similar estimates of the coefficient on $T$, which in this model is
   the estimated causal effect.}
 
-\subsection{Double Roubstness}
+\subsection{Double Robustness}
 Our two-step procedure is \emph{doubly robust} in the sense that under
 weak conditions (such as ruling out extreme cases where matching leads
-to nonidentification even though the correct parametric model is
+to non-identification even though the correct parametric model is
 specified), if either the matching or the parametric model is correct,
 but not necessarily both, causal estimates will still be consistent
 \citep[see][]{RobRot01}.  That is, if the parametric model is
@@ -1236,7 +1236,7 @@ be discarded because no matches are available \citep{RosRub85b}.
 
 If, after exact matching, a large number of units are exactly matched,
 then we have exact balance with little inefficiency and further
-matching procedures are unnececessary.  Indeed, exact balance means
+matching procedures are unnecessary.  Indeed, exact balance means
 that a difference in means is sufficient for the analysis (but to
 account for the difference in the number of units, a weighted
 difference in means across exactly-matched subclasses should be used).
@@ -1601,7 +1601,7 @@ If some covariates are omitted from some of the matching procedures,
 the balance on them should still be checked.  Doing so is often a good
 way to discover that some covariates are indeed important, since
 researchers frequently have good qualitative knowledge of variables
-not coded in $X_i$, especially in nonsurvey data on countries or
+not coded in $X_i$, especially in non-survey data on countries or
 regions and can check balance qualitatively even when quantitative
 measures are not available to match on \citep[][Ch.3]{Rosenbaum02}.
 Indeed, preprocessing can help researchers better understand their
