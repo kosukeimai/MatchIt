@@ -1,0 +1,115 @@
+From rse14@columbia.edu Fri Sep 22 16:13:04 2006
+Date: Fri, 22 Sep 2006 16:11:25 -0400
+From: Robert Erikson <rse14@columbia.edu>
+To: Gary King <king@harvard.edu>
+Cc: Elizabeth Stuart <estuart@jhsph.edu>, Kosuke Imai <kimai@Princeton.EDU>, Dan Ho <daniel.e.ho@gmail.com>
+Subject: Your Paper with Political Analysis
+
+Dear Gary et al.,
+
+We have three reviews on your manuscript and I have had a chance to give the
+paper a close reading myself.  R1 and R3 are from the first round.  R4 is
+new.  The delay in the processing is much more due to variables at work in
+the Political Analysis office and not tardiness on the part of reviewers.
+
+It is important to get this paper right with the correct pitch because it
+will be widely read. The reviewers are impressed with the work but also
+express varying degrees of unhappiness or frustration.    In attitude I am
+in agreement with R1, although I am not necessarily committed to all of
+R1~Rs interpretations.  R1~Rs review I see as the most useful, although the
+others definitely have important things to say that should be helpful in
+making further revisions.    The decision itself, as I already signaled is
+another R&R round.   I probably would not send the paper back to R3 or R4
+(or back to R2), but I could envision calling upon R1 once again if further
+help is needed.
+
+.  My major suggestion is to consider R1 as your primary audience for the
+next revision.  That does not mean that you do everything R1~Rs way.
+Rather, where R1 needs convincing, supply the argument that closes the deal.
+
+As I see it there is a lot to like about the paper.  Occasionally one comes
+across a paragraph with dazzling insights.   The caveats about confounding,
+etc., on page 6 are well worded.     While I have no ax to grind regarding
+matching, I want this paper to succeed.  Some comments:
+
+Although the remedy is clear (pre-processing is good), the nature of the
+model-dependence problem seems unfocused.  Is it the subjectivity derived
+from too many available independent variables?  (e.g., the abstract)
+Nonlinearity?  (e.g., Figure 1)  Ignoring the many possible interaction
+effects? (e.g., the Koch discussion).  Also, if model selection is the
+problem, one might be left with the view that matching is no less
+subjective.
+
+The paper could also provide a clearer perspective as to what is new and
+what is not (at least to those familiar to the central literature on
+matching and proximity scores).    My image of the literature is that it is
+a bit unsettled (e.g., Imbens 2004), with both conventional wisdom plus
+debate about the details.  Where in all this does your paper fit in?  E.g.,
+would Rubin et al. see your central argument about preprocessing as standard
+recommendation, something novel, or somewhere in between?
+
+I seem to have missed the argument why post-matching parametric analysis
+makes things better.  With good matching, couldn~Rt a further round of
+parametric analysis make things worse by simply burning precious degrees of
+freedom?   With pre-processing, model selection may be no problem  (a
+virtue), but then (the paradox) why is it needed?  Discuss.
+
+Would not the requirement for plausible matches (particularly within the
+convex hull) strike a death blow to regression-discontinuity analysis, which
+is a current rage?
+
+I agree with R2 that the appendix on ecological inference can be abandoned.
+
+The one section that really needs work is the set of two examples­Carpenter
+and Koch.  If I understand what is going on, the graphs in Figures 2 and 3
+are strikingly misleading.  They show that the parametric analysis performed
+with a pre-processed set of all possible models yields strikingly less
+variance than the same set of all possible models without pre-processing.
+Should there be any surprise in this?   Am I correct that the ~Sraw~T data
+consists of all possible estimates of beta averaged over all possible models
+with no weighting (e.g., model averaging based on a flat prior rather than
+posterior model averaging)?  Of course the coefficient of interest will vary
+all over the place if essential control variables (necessary for reducing
+bias) are all present in only half the models.  Do I misunderstand?  Can the
+point about low variance with pre-processing be made without seemingly being
+misleading?
+
+In other ways, the Carpenter and Koch discussions are confusing.  How is
+this Carpenter-data matching done, given the convex-hull problems?  Is there
+some intuition about where the new result comes from?  On Koch, what exactly
+is the hypothesis­that knowing a candidate makes one think of them as more
+conservative, controlling for objective knowledge?  Where, if anywhere, is
+the surprise in this analysis?
+
+I hope this is clear and sufficient direction.  I am sure you will succeed
+in figuring out the best course.  If you have questions, please feel free to
+call on me.  I look forward to the next iteration.
+
+Best,
+
+Bob
+
+
+Prof. Robert S. Erikson
+Editor, Political Analysis
+Department of Political Science
+Columbia University
+726 IAB
+420 W. 118th St.
+New York, NY 10027
+
+Phone: (212) 854-0036
+Fax:   (212) 222-0598
+
+
+    [ Part 2, Application/PDF  53KB. ]
+    [ Unable to print this part. ]
+
+
+    [ Part 3, Application/PDF  74KB. ]
+    [ Unable to print this part. ]
+
+
+    [ Part 4, Application/PDF  67KB. ]
+    [ Unable to print this part. ]
+
