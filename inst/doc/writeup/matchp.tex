@@ -1027,43 +1027,81 @@ of bias).  To get to the point where we can consider known
 properties of estimators, and ultimately produce estimates with low
 bias and variance, we first need to reduce model dependence.
 
-We know from the results in Section \ref{s:immed} that matching that
-achieves good balance will reduce or eliminate model dependence.  We
-also know from other results that parametric analyses based on these
-preprocessed data will be less biased and have lower variance than
-estimators based on many choices of models applied to the raw data.
-In particular, theoretical results available for a wide range of data
-generating processes and simulations for much more general
-settings.\footnote{The theoretical results apply for affinely
-  invariant matching methods (such as via the propensity score) with
-  ellipsoidally symmetric covariate distributions (such as the normal
-  and $t$), as well as for conditionally ellipsoidally symmetric
-  distributions (such as general location models for continuous
-  covariates, with distributions like the normal or $t$, within
-  classes defined by categorical covariates).}  \citep{RubTho96,
-  RubStu06} show that matching is ``equal percent bias reducing,''
-which means that balance is improved in every dimension of $X$ by the
-same amount and that matching reduces bias in any function of the
-$X$'s, including the causal quantities of interest \citep[see
-also][]{RubTho92}.
+%We know from the results in Section \ref{s:immed} that matching that
+%achieves good balance will reduce or eliminate model dependence.  We
+%also know from other results that parametric analyses based on these
+%preprocessed data will be less biased and have lower variance than
+%estimators based on many choices of models applied to the raw data.
+%In particular, theoretical results available for a wide range of data
+%generating processes and simulations for much more general
+%settings.\footnote{The theoretical results apply for affinely
+%  invariant matching methods (such as via the propensity score) with
+%  ellipsoidally symmetric covariate distributions (such as the normal
+%  and $t$), as well as for conditionally ellipsoidally symmetric
+%  distributions (such as general location models for continuous
+%  covariates, with distributions like the normal or $t$, within
+%  classes defined by categorical covariates).}  \citep{RubTho96,
+%  RubStu06} show that matching is ``equal percent bias reducing,''
+%which means that balance is improved in every dimension of $X$ by the
+%same amount and that matching reduces bias in any function of the
+%$X$'s, including the causal quantities of interest \citep[see
+%also][]{RubTho92}.
 
-Theoretical and simulation results also indicate that matching in most
-situations reduce variance, but extreme situations where matching is
-used badly, and too many observations are dropped, can make results
-about variance more complicated and require more judgment
-\citep{RubTho96}.  Here, we offer an intuitive explanation of the
-paradoxical advantages of discarding data for reducing variance, in
-addition to bias.  Consider first a simple linear regression with one
-treatment variable, $T_i$, and one covariate, $X_i$.  The variance of
-the coefficient on the treatment variable (i.e., of the causal effect)
-is equal to $\sigma^2/[n (1-\gamma) s^2_T]$ where $\sigma^2$ is the
-conditional variance of the dependent variable, $n$ is the number of
-observations, $s^2_T$ is the sample variance of the treatment
-variable, and $\gamma$ is the coefficient from regressing $X_i$ on
-$T_i$.  If matching improves balance, then the dependence between
-$T_i$ and $X_i$ will drop, $\gamma$ will be smaller than in the
-original sample, and hence the variance will be smaller.  An analogous
-situation applies to nonlinear data generation processes.
+We know from the results in Section \ref{s:immed} that matching which
+achieves good balance will reduce or eliminate model dependence.  We
+also know from theoretical and simulation results that, in a wide
+range of scenarios, using matched samples can result in substantial
+bias and variance reduction, compared with using random samples of the
+same size \citep{RubTho92, RubTho96}.  Similarly, \cite{ImaVan04}
+found reductions in both bias and variance when using
+subclassification on estimated propensity scores, compared with
+analyses based on the full data.
+
+To be more specific, the basic setting for which the theoretical
+results hold is that of affinely invariant matching methods (such as
+matching using the propensity score) with ellipsoidally symmetric
+covariate distributions (such as the normal or t).\footnote{Simulation
+  results indicate that the results hold much more generally
+  \cite{RubTho96}, and the theoretical results also hold in more
+  general settings, including conditionally ellipsoidally symmetric
+  distributions (such as general location models for continuous
+  covariates with distributions like the normal or t within classes
+  defined by categorical covariates; \cite{RubTho96}), as well as
+  ``discriminant mixtures of proportional ellipsoidally symmetric
+  distributions" \citep{RubStu06}.}  The key result is that matching
+in this setting is ``equal percent bias reducing,'' meaning that it
+will reduce bias in all dimensions of $X$ by the same amount.
+Matching in this setting thus reduces bias in any function of the
+$X$'s, including the outcome of interest \citep{RubTho92}.  The
+findings also lead to approximations for the reduction in the bias and
+variance that is possible when using matching with normally
+distributed covariates and a linear relationship between the
+covariates and the outcome, including results showing that matching on
+estimated propensity scores can result in additional variance
+reductions, relative to using the true propensity score
+\citep{RubTho96}.  The amount of bias and variance reduction possible
+depends on the covariate distributions in the treatment and control
+groups, including the size of the initial bias in $X$, the original
+sample sizes and the number of matches selected, and on the
+correlation between $X$ and the outcome.  The bias and variance
+reduction approximations all relate to selecting matched rather than
+random samples, of the same size.  In situations where matching is
+used badly, and too many observations are dropped, the variance
+results are more complicated and require more judgment.
+
+We now offer an intuitive explanation of the paradoxical advantages of
+discarding data for reducing variance, in addition to bias.  Consider
+first a simple linear regression with one treatment variable, $T_i$,
+and one covariate, $X_i$.  The variance of the coefficient on the
+treatment variable (i.e., of the causal effect) is equal to
+$\sigma^2/[n (1-\gamma) s^2_T]$ where $\sigma^2$ is the conditional
+variance of the dependent variable, $n$ is the number of observations,
+$s^2_T$ is the sample variance of the treatment variable, and $\gamma$
+is the coefficient from regressing $X_i$ on $T_i$.  If matching
+improves balance, then the dependence between $T_i$ and $X_i$ will
+drop, $\gamma$ will be smaller than in the original sample, and hence
+the variance will be smaller.  An analogous situation applies to
+nonlinear data generation processes.
 
 The only issue is that this advantage in reducing variance by reducing
 $\gamma$ can be overcome by dropping $n$ too much in the process.  In
