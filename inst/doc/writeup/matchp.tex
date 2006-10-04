@@ -725,7 +725,7 @@ about the remaining 96 parameters.
 %number of explanatory variables increases.  With $V$ 10-category
 %variables, we need $10^V$ parameters for estimation in a regression
 %framework without functional form
-assumptions. % So five explanatory variables leads to a regression
+%assumptions. % So five explanatory variables leads to a regression
 %model with 100,000 parameters, and the usual approach works by
 %estimating only a constant term and five slope coefficients and
 %restricting by assumption the remaining 99,994 parameters to zero.
@@ -944,9 +944,7 @@ using relatively little of the data.  Finding matches is often most
 severe if $X_i$ is high dimensional (another effect of the curse of
 dimensionality) or contains continuous variables.  The result may then
 be a preprocessed data set with very few observations that leads to a
-parametric analysis with large standard errors.  In this situation, we
-may reduce model dependence and the potential for bias, but decrease
-efficiency and as a result increase mean squared error.  If this
+parametric analysis with large standard errors.  If this
 occurs, common practice is to use some form of inexact matching that
 balances as well as possible, which thus effectively sacrifices some
 bias reduction for the increased efficiency that comes from having
@@ -1052,7 +1050,7 @@ achieves good balance will reduce or eliminate model dependence.  We
 also know from theoretical and simulation results that, in a wide
 range of scenarios, using matched samples can result in substantial
 bias and variance reduction, compared with using random samples of the
-same size \citep{RubTho92, RubTho96}.  Similarly, \cite{ImaVan04}
+same size \citep{RubTho92, RubTho96}.  Similarly, \cite{ImaDyk04}
 found reductions in both bias and variance when using
 subclassification on estimated propensity scores, compared with
 analyses based on the full data.
@@ -1083,11 +1081,7 @@ reductions, relative to using the true propensity score
 depends on the covariate distributions in the treatment and control
 groups, including the size of the initial bias in $X$, the original
 sample sizes and the number of matches selected, and on the
-correlation between $X$ and the outcome.  The bias and variance
-reduction approximations all relate to selecting matched rather than
-random samples, of the same size.  In situations where matching is
-used badly, and so too many observations are dropped, the variance
-results are more complicated and require more judgment.
+correlation between $X$ and the outcome.
 
 We now offer an intuitive explanation of the paradoxical advantages of
 discarding data for reducing variance, in addition to bias.  Consider
@@ -1135,49 +1129,48 @@ original sample, matching will generally reduce both bias and variance
 of estimates from subsequent parametric analyses.
 
 Finally we note that, although matching discards data, it can actually
-increase the efficiency of estimates.  This may seem counterintuitive,
-as it would seem to violate a first principle of statistics,
-informally described as ``more data are better.''  However, more data
-are in fact better only when using an estimator that is
-``self-efficient'' \citep{MenRom03}, which roughly speaking is an
-estimator which is based on a model that is correct (or sufficiently
-correct to make use of more data to improve inferences).  Estimators
-that are not self-efficient can have variance reductions when
-discarding data.  For a simple example, consider data generated from a
-univariate heteroskedastic linear-normal regression model, $Y_i\sim
-N(\beta_0+\eta T_i+\beta_1 X_i,\sigma_i^2)$, for $i=1,\dots,1000$, and
-variance $\sigma^2_i$ equaling $\theta$ for $X_i\leq 5$ and
-$500\theta$ for $X_i>5$, where $\theta>0$ and say 50 observations
-reside at $X_i>5$.  With data generated from this model, weighted
-least squares is a self-efficient estimator, and thus dropping data
-would increase standard errors.  In contrast, the least-squares
-estimator would not be self-efficient, which can be seen because
-dropping the 50 observations with 500 times the variance would greatly
-reduce heterogeneity and thus reduce estimated standard errors.  If we
-know the correct model, this is not an issue, but if as is usually the
-case we do not know the correct model and have a range of potential
-parametric models we might consider, self-efficiency cannot be
-assumed, and so dropping data can be beneficial.\footnote{Although we
-  introduce this simple example to illustrate circumstances where
-  discarding data can be beneficial, we can also use this example to
-  illustrate another benefit of matching.  In general, good balance
-  makes $X$ irrelevant and in this example least squares and weighted
-  least squares would both give very similar estimates of the
-  coefficient on $T$, which in this model is the estimated causal
-  effect.}
+increase the efficiency of estimates \citep{Smith97}.  This may seem
+counterintuitive, as it would seem to violate a first principle of
+statistics, informally described as ``more data are better.''
+However, more data are in fact better only when using an estimator
+that is ``self-efficient'' \citep{MenRom03}, which roughly speaking is
+an estimator which is based on a model that is correct (or
+sufficiently correct to make use of more data to improve inferences).
+Estimators that are not self-efficient can have variance reductions
+when discarding data.  For a simple example, consider data generated
+from a univariate heteroskedastic linear-normal regression model,
+$Y_i\sim N(\beta_0+\eta T_i+\beta_1 X_i,\sigma_i^2)$, for
+$i=1,\dots,1000$, and variance $\sigma^2_i$ equaling $\theta$ for
+$X_i\leq 5$ and $500\theta$ for $X_i>5$, where $\theta>0$ and say 50
+observations reside at $X_i>5$.  With data generated from this model,
+weighted least squares is a self-efficient estimator, and thus
+dropping data would increase standard errors.  In contrast, the
+least-squares estimator would not be self-efficient, which can be seen
+because dropping the 50 observations with 500 times the variance would
+greatly reduce heterogeneity and thus reduce estimated standard
+errors.  If we know the correct model, this is not an issue, but if as
+is usually the case we do not know the correct model and have a range
+of potential parametric models we might consider, self-efficiency
+cannot be assumed, and so dropping data can be
+beneficial.\footnote{Although we introduce this simple example to
+  illustrate circumstances where discarding data can be beneficial, we
+  can also use this example to illustrate another benefit of matching.
+  In general, good balance makes $X$ irrelevant and in this example
+  least squares and weighted least squares would both give very
+  similar estimates of the coefficient on $T$, which in this model is
+  the estimated causal effect.}
 
-\subsection{Double Robustness}
-Our two-step procedure is \emph{doubly robust} in the sense that under
-weak conditions (such as ruling out extreme cases where matching leads
-to non-identification even though the correct parametric model is
-specified), if either the matching or the parametric model is correct,
-but not necessarily both, causal estimates will still be consistent
-\citep[see][]{RobRot01}.  That is, if the parametric model is
-misspecified, but the matching is correct, or if the matching is
-inadequate but the parametric model is correctly specified, then
-estimates will still be consistent.  The common procedure of matching
-followed by an unadjusted difference in means does not possess this
-double robustness property.
+An advantage of our two-step procedure is that it is \emph{doubly
+  robust} in the sense that under weak conditions (such as ruling out
+extreme cases where matching leads to non-identification even though
+the correct parametric model is specified), if either the matching or
+the parametric model is correct, but not necessarily both, causal
+estimates will still be consistent \citep[see][]{RobRot01}.  That is,
+if the parametric model is misspecified, but the matching is correct,
+or if the matching is inadequate but the parametric model is correctly
+specified, then estimates will still be consistent.  The common
+procedure of matching followed by an unadjusted difference in means
+does not possess this double robustness property.
 
 
 \subsection{Summary}
