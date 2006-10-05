@@ -1058,30 +1058,30 @@ analyses based on the full data.
 To be more specific, the basic setting for which the theoretical
 results hold is that of affinely invariant matching methods (such as
 matching using the propensity score) with ellipsoidally symmetric
-covariate distributions (such as the normal or t).\footnote{Simulation
-  results indicate that the results hold much more generally
-  \cite{RubTho96}, and the theoretical results also hold in more
-  general settings, including conditionally ellipsoidally symmetric
-  distributions (such as general location models for continuous
-  covariates with distributions like the normal or t within classes
-  defined by categorical covariates; \cite{RubTho96}), as well as
-  ``discriminant mixtures of proportional ellipsoidally symmetric
-  distributions" \citep{RubStu06}.}  The key result is that matching
-in this setting is ``equal percent bias reducing,'' meaning that it
-will reduce bias in all dimensions of $X$ by the same amount.
-Matching in this setting thus reduces bias in any function of the
-$X$'s, including the outcome of interest \citep{RubTho92}.  The
-findings also lead to approximations for the reduction in the bias and
-variance that is possible when using matching with normally
-distributed covariates and a linear relationship between the
-covariates and the outcome, including results showing that matching on
-estimated propensity scores can result in additional variance
-reductions, relative to using the true propensity score
-\citep{RubTho96}.  The amount of bias and variance reduction possible
-depends on the covariate distributions in the treatment and control
-groups, including the size of the initial bias in $X$, the original
-sample sizes and the number of matches selected, and on the
-correlation between $X$ and the outcome.
+covariate distributions (such as the normal or $t$
+distribution).\footnote{Simulation results indicate that the results
+  hold much more generally \cite{RubTho96}, and the theoretical
+  results also hold in more general settings, including conditionally
+  ellipsoidally symmetric distributions (such as general location
+  models for continuous covariates with distributions like the normal
+  or t within classes defined by categorical covariates;
+  \cite{RubTho96}), as well as ``discriminant mixtures of proportional
+  ellipsoidally symmetric distributions" \citep{RubStu06}.}  The key
+result is that matching in this setting is ``equal percent bias
+reducing,'' meaning that it will reduce bias in all dimensions of $X$
+by the same amount.  Matching in this setting thus reduces bias in any
+function of the $X$'s, including the outcome of interest
+\citep{RubTho92}.  The findings also lead to approximations for the
+reduction in the bias and variance that is possible when using
+matching with normally distributed covariates and a linear
+relationship between the covariates and the outcome, including results
+showing that matching on estimated propensity scores can result in
+additional variance reductions, relative to using the true propensity
+score \citep{RubTho96}.  The amount of bias and variance reduction
+possible depends on the covariate distributions in the treatment and
+control groups, the size of the initial bias in $X$, the original
+sample sizes, the number of matches selected, and the correlation
+between $X$ and the outcome.
 
 We now offer an intuitive explanation of the paradoxical advantages of
 discarding data for reducing variance, in addition to bias.  Consider
