@@ -1,7 +1,0 @@
-To do list as of Aug 04
-
-1. revise the docs; A User's Guide by Examples, Appendix (?)
-
-2. add GenMatch
-
-3. add neyman and AI to Zelig
