@@ -19,6 +19,10 @@ summary.matchit <- function(object, interactions = FALSE,
   treat <- object$treat
   weights <- object$weights
   nam <- dimnames(XX)[[2]]
+  dupnam <- duplicated(nam)
+  if(sum(dupnam)>0){
+    nam[dupnam] <- paste(nam[dupnam],".1",sep="")
+  }
   kk <- ncol(XX)
 
   ## Summary Stats
