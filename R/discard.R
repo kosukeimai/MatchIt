@@ -19,10 +19,10 @@ discard <- function(treat, pscore, option, X) {
     ## convext hull stuff
     if (!("WhatIf" %in% .packages(all = TRUE)))
       install.packages("WhatIf")
-%    if (!("lpSolve" %in% .packages(all = TRUE)))
-%      install.packages("lpSolve")
+#    if (!("lpSolve" %in% .packages(all = TRUE)))
+#      install.packages("lpSolve")
     require(WhatIf)
-%    require(lpSolve)
+#    require(lpSolve)
     discarded <- rep(FALSE, n.obs)
     if (option == "hull.control"){ # discard units not in T convex hull
       wif <- whatif(cfact = X[treat==0,], data = X[treat==1,])
