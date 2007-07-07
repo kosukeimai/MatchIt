@@ -77,6 +77,12 @@ To obtain matched data for the treatment or control group, specify the option
 > summary(m.data3)
 \end{verbatim}
 
+We can also use the function to return unmatched data:
+
+\begin{verbatim}
+> unmatched.data <- lalonde[!row.names(lalonde)%in%row.names(match.data(m.out1)),]
+\end{verbatim}
+
 We can also specify different names for the subclass indicator, the
 weight variable, and the estimated distance measure. The following
 example first does a subclassification method, obtains the
