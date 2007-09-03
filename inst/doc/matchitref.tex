@@ -243,11 +243,39 @@ matching methods. These arguments apply to all matching methods {\it
 \paragraph{Additional Arguments for Full Matching}
 \label{subsubsec:inputs-full}
 
+See {\tt help(fullmatch)} (part of this information is copied below)
+or
+\hlink{http://www.stat.lsa.umich.edu/\~{}bbh/optmatch.html}{http://www.stat.lsa.umich.edu/~bbh/optmatch.html}
+for details.
+
 \begin{itemize}
-\item {\tt ...}: additional inputs that can be passed to the {\tt
-    fullmatch()} function in the {\tt optmatch} package. See {\tt
-    help(fullmatch)} or
-  \hlink{http://www.stat.lsa.umich.edu/\~{}bbh/optmatch.html}{http://www.stat.lsa.umich.edu/~bbh/optmatch.html} for details.
+\item {\tt min.controls}: The minimum ratio of controls to treatments
+  that is to be permitted within a matched set: should be nonnegative
+  and finite.  If {\tt min.controls} is not a whole number, the
+  reciprocal of a whole number, or zero, then it is rounded down to
+  the nearest whole number or reciprocal of a whole number.
+  
+\item {\tt max.controls}: The maximum ratio of controls to treatments
+  that is to be permitted within a matched set: should be positive and
+  numeric. If {\tt max.controls} is not a whole number, the reciprocal
+  of a whole number, or {\tt Inf}, then it is rounded up to the
+  nearest whole number or reciprocal of a whole number.
+  
+\item {\tt omit.fraction}: Optionally, specify what fraction of
+  controls or treated subjects are to be rejected.  If {\tt
+    omit.fraction} is a positive fraction less than one, then {\tt
+    fullmatch()} leaves up to that fraction of the control reservoir
+  unmatched.  If {\tt omit.fraction} is a negative number greater than
+  $-1$, then {\tt fullmatch()} leaves up to $|{\rm omit.fraction}|$ of
+  the treated group unmatched.  Positive values are only accepted if
+  ${\rm max.controls} >= 1$; negative values, only if ${\rm
+    min.controls} <= 1$.  If {\tt omit.fraction} is not specified,
+  then only those treated and control subjects without permissible
+  matches among the control and treated subjects, respectively, are
+  omitted.
+
+\item {\tt ...}: Additional inputs that can be passed to the {\tt
+    fullmatch()} function in the {\tt optmatch} package.
 \end{itemize}
 
 \paragraph{Additional Arguments for Genetic Matching}
