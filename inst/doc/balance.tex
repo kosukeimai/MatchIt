@@ -28,30 +28,20 @@ subclass are shown.
 
 \begin{itemize}
 \item {\bf Balance statistics:} The statistics the \texttt{summary()}
-  command provides include means, standardized biases, and
-  Quantile-Quantile (Q-Q) plot summary statistics.  In
-  addition, the \texttt{summary()} command will report (a) the matched
-  call, (b) how many units were matched, unmatched, or discarded due
-  to the \texttt{discard} option (described below), and (c) the
-  percent improvement in balance for each of the balance measures,
-  defined as $100((|a|-|b|)/|a|)$, where $a$ is the balance before and
-  $b$ is the balance after matching.  For each set of units (original
-  and matched data sets), the following statistics are provided:
+  command provides include mean differences, standardized mean
+  differences, and (median, mean and maximum) Quantile-Quantile (Q-Q)
+  plot differences.  In addition, the \texttt{summary()} command will
+  report (a) the matched call, (b) how many units were matched,
+  unmatched, or discarded due to the \texttt{discard} option
+  (described below), and (c) the percent improvement in balance for
+  each of the balance measures, defined as $100((|a|-|b|)/|a|)$, where
+  $a$ is the balance before and $b$ is the balance after matching.
+  For each set of units (original and matched data sets), the
+  following statistics are provided:
 \begin{enumerate}
   \item ``Means Treated'' and ``Means Control'' show the weighted
     means in the treated and control groups
-  \item ``Treated SD'' is the standard deviation of the covariate in
-    the set of treated units
-  \item ``Std. Bias'' is the difference in means in the treated and
-    control groups, divided by the ``Treated SD'' calculated using all
-    treated units.  The same standard deviation is used for
-    calculating the standardized bias in the original and the matched
-    data sets so that the success of the matching at reducing bias in
-    the covariate means can be easily assessed; standardizing by the
-    same quantity puts the two differences in means on the same scale.
-    Good matches will generally have means less than a quarter of a
-    standard deviation apart (a standardized biases of less than
-    0.25), although smaller is better and only zero is perfect.
+  \item ``Mean Diff'' is the difference in means between the groups
   \item The final three columns of the summary output give summary
     statistics of a Q-Q plot (see below for more information on these
     plots). Those columns give the median, mean, and maximum distance

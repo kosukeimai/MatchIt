@@ -1,35 +1,61 @@
 \section{Conducting Analyses after Matching}
 \label{sec:analysis}
 
-Although any program may be used for parametric analysis following
-\MatchIt, this section shows how to use
-\hlink{Zelig}{http://gking.harvard.edu/zelig/} with \MatchIt.  (The
-resulting matched data sets can also be exported to other statistical
-programs using commands such as {\tt write.csv()} and {\tt
-  write.table()} for ASCII files, and {\tt write.dta()} in {\tt
-  foreign} package for a STATA binary file.)  Zelig
+Any software package may be used for parametric analysis following
+\MatchIt.  This includes any of the relevant R packages, or other
+statistical software by exporting the resulting matched data sets
+using R commands such as {\tt write.csv()} and {\tt write.table()} for
+ASCII files or {\tt write.dta()} in the {\tt foreign} package for a
+STATA binary file.
+
+In this section, we show how to use
+\hlink{Zelig}{http://gking.harvard.edu/zelig/} with \MatchIt.  Zelig
 \citep{ImaKinLau06} is an R package that implements a large variety of
-statistical models with a single easy-to-use interface, gives easily
-interpretable results by simulating quantities of interest, provides
-numerical and graphical summaries, and is easily extensible.
+statistical models (using numerous existing R packages) with a single
+easy-to-use interface, gives easily interpretable results by
+simulating quantities of interest, provides numerical and graphical
+summaries, and is easily extensible to include new methods.
 
 \subsection{Quick Overview}
 
 The general syntax is as follows. First, we use \texttt{match.data()}
 to create the matched data from the \MatchIt\ output object
 (\texttt{m.out}) by excluding unmatched units from the original data,
-and including information about the particular matching procedure
-(i.e., weights, subclasses, and the distance measure).
+and including information produced by the particular matching
+procedure (i.e., primarily a new data set, but also information that
+may result such as weights, subclasses, or the distance measure).
 \begin{verbatim}
 > m.data <- match.data(m.out)
 \end{verbatim}
-where {\tt m.data} is the resulting matched data.  Next, we analyze
-the matched data set
+where {\tt m.data} is the resulting matched data.  Zelig analyses all
+use three commands --- \texttt{zelig}, \texttt{setx}, and
+\texttt{sim}.  For example, the basic statistical analysis is
+performed first:
 \begin{verbatim}
 > z.out <- zelig(Y ~ treat + x1 + x2, model = mymodel, data = m.data)
 \end{verbatim}
 where {\tt Y} is the outcome variable, {\tt mymodel} is the selected
-model, and {\tt z.out} is the output object from {\tt zelig}.
+model, and {\tt z.out} is the output object from {\tt zelig}.  This
+output object includes estimated coefficients, standard errors, and
+other typical outputs from your chosen statistical model.  Its
+contents can be examined via \texttt{summary(z.out)} or
+\texttt{plot(z.out)}, but the idea of Zelig is that these statistical
+results are typically only intermediate quantities needed to compute
+your ultimate quantities of interest, which in the case of matching
+are usually causal inferences.  To get these causal quantities, we use
+Zelig's other two commands.  Thus, we can set the explanatory
+variables at their means (the default) and change the treatment
+variable from a 0 to a 1:
+\begin{verbatim}
+> x.out0 <- setx(z.out0, treat=0)
+> x1.out0 <- setx(z.out0, treat=1)
+\end{verbatim}
+and finally compute the resulting estimates of the causal effects and
+examine a summary:
+\begin{verbatim}
+> s.out0 <- sim(z.out1, x = x.out1)
+> summary(s.out0)
+\end{verbatim}
 
 \subsection{Examples}
 
@@ -38,7 +64,8 @@ be read sequentially.  You can run these example commands by typing
 {\tt demo(analysis)}.  Although we use the linear least squares model
 in these examples, a wide range of other models are available in Zelig
 (for the list of supported models, see
-\hlink{http://gking.harvard.edu/zelig/docs/Models\_Zelig\_Can.html}{http://gking.harvard.edu/zelig/docs/Models_Zelig_Can.html}.
+\hlink{\url{http://gking.harvard.edu/zelig/docs/Models_Zelig_Can.html}}
+{http://gking.harvard.edu/zelig/docs/Models_Zelig_Can.html}.
 
 To load the Zelig package after installing it, type
 \begin{verbatim}
@@ -50,15 +77,15 @@ To load the Zelig package after installing it, type
   standard parametric analysis and compute quantities of interest in
   the most common way.  We begin with nearest neighbor matching with a
   logistic regression-based propensity score, discarding with the
-  convex.hull option:
+  convex.hull \citep{KinZen06,KinZen07} option:
 \begin{verbatim}
 > m.out0 <- matchit(treat ~ age + educ + black + hispan + nodegree + 
                     married + re74 + re75, method = "nearest", discard
                     = "convex.hull", data = lalonde)
 \end{verbatim}
   Then we check balance using the summary and plot procedures (which
-  we don't show here).  When we get balance as good as possible, we
-  run the parametric analysis:
+  we don't show here).  When we get balance as good as you are able to
+  get it, we run the parametric analysis:
 \begin{verbatim}
 > z.out0 <- zelig(re78 ~ treat + age + educ + black + hispan + nodegree + 
                   married + re74 + re75, data = match.data(m.out0), 

@@ -22,6 +22,7 @@
 
 \bodytext{ BACKGROUND="http://gking.harvard.edu/pics/temple.jpg"}
 \setcounter{tocdepth}{3}
+\setcounter{secnumdepth}{4}
 
 \newcommand{\MatchIt}{\textsc{MatchIt}}
 
@@ -91,11 +92,13 @@ Health and Biostatistics, Johns Hopkins Bloomberg School of Public Health
 
 \section{\texttt{matchit()}: Implementation of Matching Methods}
 \label{sec:matchit}
-Use \texttt{matchit()} to implement a variety of matching
-procedures including exact matching, nearest neighbor matching,
+Use \texttt{matchit()} to implement a variety of matching procedures
+including exact matching, nearest neighbor matching,
 subclassification, optimal matching, genetic matching, and full
-matching. The output of {\tt matchit()} can be analyzed via
-\hlink{Zelig}{http://gking.harvard.edu/zelig}.
+matching.  The output of {\tt matchit()} can be analyzed via any
+standard R package, by exporting the data for use in another program,
+or most simply via \hlink{Zelig}{http://gking.harvard.edu/zelig} in R.
+
 \input{matchitref}
 \input{summaryref}
 \input{plotref}

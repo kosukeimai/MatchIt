@@ -99,15 +99,11 @@ elements, when applicable:
   \end{itemize}
   where $w$ represents the vector of \texttt{weights}.
   
-\item \texttt{reduction}: the percent bias reduction achieved in each
-  of the balance measures in \texttt{sum.all} and
-  \texttt{sum.matched}, defined as $100(|a|-|b|)/|a|$, where $a$ was
-  the value of the balance measure before matching and $b$ is the
-  value of the balance measure after matching.  Because the difference
-  in means and the standardized bias differ only by a constant (the
-  standard deviation in the full treated group), the percent reduction
-  in bias is the same for these two measures, and thus is only printed
-  out once.
+\item \texttt{reduction}: the percent reduction in the difference in
+  means achieved in each of the balance measures in \texttt{sum.all}
+  and \texttt{sum.matched}, defined as $100(|a|-|b|)/|a|$, where $a$
+  was the value of the balance measure before matching and $b$ is the
+  value of the balance measure after matching.
   
 \item \texttt{nn}: the sample sizes in the full and matched samples
   and the number of discarded units, by treatment and control.
