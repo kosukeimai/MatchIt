@@ -8,10 +8,10 @@ hist.pscore <- function(x){
   par(mfrow=c(2,2))
   hist(pscore[treat==1],xlim=range(na.omit(pscore)),
        xlab="Propensity Score", freq=F,
-       main="Pre-Matched Treated")
+       main="Raw Treated")
   hist(pscore[treat==0],xlim=range(na.omit(pscore)),
        xlab="Propensity Score", freq=F,
-       main="Pre-Matched Control")
+       main="Raw Control")
   hist(pscore[treat==1 & weights!=0],xlim=range(na.omit(pscore)),
        xlab="Propensity Score", freq=F,
        main="Matched Treated")
