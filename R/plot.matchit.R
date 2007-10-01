@@ -11,6 +11,8 @@ plot.matchit <- function(x, discrete.cutoff=5, type="QQ",
                    which.xs = which.xs)
   } else if(type=="jitter"){
     jitter.pscore(x, interactive=interactive)
+  } else if(type=="hist"){
+    hist.pscore(x)
   } else {
     stop("Invalid type")
   }
