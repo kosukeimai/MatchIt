@@ -3,48 +3,52 @@ qoi <- function(xx,tt,ww, t.plot=NULL, c.plot=NULL, sds=NULL,
                 standardize = FALSE){
   weighted.var <- function(x, w) {
     sum(w * (x - weighted.mean(x,w))^2)/(sum(w) - 1)}
-  xsum <- matrix(NA,2,6)
+  xsum <- matrix(NA,2,7)
   xsum <- as.data.frame(xsum)
   row.names(xsum) <- c("Full","Matched")
   if (standardize)
-    names(xsum) <- c("Means Treated","Means Control", "Std. Mean Diff.",
+    names(xsum) <- c("Means Treated","Means Control",
+                     "SD Control", "Std. Mean Diff.",
                      "eCDF Med", "eCDF Mean", "eCDF Max")
   else
-    names(xsum) <- c("Means Treated","Means Control","Mean Diff", "eQQ Med",
-                     "eQQ Mean", "eQQ Max")
+    names(xsum) <- c("Means Treated","Means Control",
+                     "SD Control", "Mean Diff",
+                     "eQQ Med", "eQQ Mean", "eQQ Max")
   x1 <- xx[tt==1]
   x0 <- xx[tt==0]
   ww1 <- ww[tt==1]
   ww0 <- ww[tt==0]
   xsum[1,1] <- mean(x1,na.rm=T)
   xsum[1,2] <- mean(x0,na.rm=T)
+  xsum[1,3] <- sd(x0,na.rm=T)
   X.t.m <- xx[tt==1][ww1>0]
   X.c.m <- xx[tt==0][ww0>0]
   xsum[2,1] <- weighted.mean(X.t.m, ww1[ww1>0])
   xsum[2,2] <- weighted.mean(X.c.m, ww0[ww0>0])
+  xsum[2,3] <- sqrt(weighted.var(X.c.m, ww0[ww0>0]))
   if(!(sum(tt==1)<2|(sum(tt==0)<2))){ 
     xsd <- sd(x1,na.rm=T)
     qqall <- qqsum(x1,x0,standardize=standardize)
-    xsum[1,4:6] <- c(qqall$meddiff,qqall$meandiff,qqall$maxdiff)
+    xsum[1,5:7] <- c(qqall$meddiff,qqall$meandiff,qqall$maxdiff)
     if (standardize)
       if (!is.null(sds))
-        xsum[1,3] <- (mean(x1,na.rm=T)-mean(x0,na.rm=T))/sds
+        xsum[1,4] <- (mean(x1,na.rm=T)-mean(x0,na.rm=T))/sds
       else
-        xsum[1,3] <- (mean(x1,na.rm=T)-mean(x0,na.rm=T))/xsd
+        xsum[1,4] <- (mean(x1,na.rm=T)-mean(x0,na.rm=T))/xsd
     else
-      xsum[1,3] <- mean(x1,na.rm=T)-mean(x0,na.rm=T)
+      xsum[1,4] <- mean(x1,na.rm=T)-mean(x0,na.rm=T)
     if(!is.null(t.plot))
       qqmat <- qqsum(xx[t.plot],xx[c.plot],standardize=standardize)
     else
       qqmat <- qqsum(x1[ww1>0],x0[ww0>0],standardize=standardize)
-    xsum[2,4:6] <- c(qqmat$meddiff,qqmat$meandiff,qqmat$maxdiff)
+    xsum[2,5:7] <- c(qqmat$meddiff,qqmat$meandiff,qqmat$maxdiff)
     if (standardize)
       if (!is.null(sds))
-        xsum[2,3] <- (xsum[2,1]-xsum[2,2])/sds
+        xsum[2,4] <- (xsum[2,1]-xsum[2,2])/sds
       else
-        xsum[2,3] <- (xsum[2,1]-xsum[2,2])/xsd
+        xsum[2,4] <- (xsum[2,1]-xsum[2,2])/xsd
     else
-      xsum[2,3] <- xsum[2,1]-xsum[2,2]
+      xsum[2,4] <- xsum[2,1]-xsum[2,2]
   } 
   xsum
 }
