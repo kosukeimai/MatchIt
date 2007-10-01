@@ -95,5 +95,6 @@ matchit.qqplot <- function(x,discrete.cutoff,
     } else {
       par(ask=F)
     }
-  }  
+  }
+  par(ask=F)
 }

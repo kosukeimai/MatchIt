@@ -4,9 +4,11 @@ jitter.pscore <- function(x, interactive){
   weights <- x$weights
   matched <- weights!=0
   q.cut <- x$q.cut
-  jitp <- jitter(rep(1,length(treat)),factor=6)-(treat==0)
+  jitp <- jitter(rep(1,length(treat)),factor=6)+(treat==1)*(weights==0)-(treat==0)-(weights==0)*(treat==0)
   cwt <- sqrt(weights)
-  plot(pscore,xlim=range(na.omit(pscore)),ylim=c(-1,2),
+  minp <- min(pscore,na.rm=T)
+  maxp <- max(pscore,na.rm=T)
+  plot(pscore,xlim=c(minp,maxp+0.1*(maxp-minp)),ylim=c(-1.5,2.5),
        type="n",ylab="",xlab="Propensity Score",
        axes=F,main="Distribution of Propensity Scores")
   if(!is.null(q.cut)){abline(v=q.cut,col="grey",lty=1)}
@@ -19,11 +21,13 @@ jitter.pscore <- function(x, interactive){
   points(pscore[treat==0&weights==0],jitp[treat==0&weights==0],
          pch=5,col="grey",cex=0.5)
   axis(1)
-  text(sum(range(na.omit(pscore)))/2,1.5,"Treatment Units")
-  text(sum(range(na.omit(pscore)))/2,-0.5,"Control Units")
+  text(sum(range(na.omit(pscore)))/2,2.5,"Unmatched Treatment Units")
+  text(sum(range(na.omit(pscore)))/2,1.5,"Matched Treatment Units")
+  text(sum(range(na.omit(pscore)))/2,0.5,"Matched Control Units")
+  text(sum(range(na.omit(pscore)))/2,-0.5,"Unmatched Control Units")
   box()
   if(interactive==TRUE) {
 	print("To identify the units, use first mouse button; to stop, use second.")
-  	identify(pscore,jitp,names(treat))
+  	identify(pscore,jitp,names(treat),atpen=T)
   }
 }
