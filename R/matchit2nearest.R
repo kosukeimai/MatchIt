@@ -45,7 +45,13 @@ matchit2nearest <-  function(treat, X, data, distance, discarded,
   clabels <- names(treat[treat==0])
   in.sample <- !discarded
   names(in.sample) <- labels
-  
+
+  ## 10/1/07: Warning for if fewer control than ratio*treated and matching without replacement
+  if (n0 < ratio*n1 & replace==FALSE) {
+	if (ratio > 1)  warning(paste("Not enough control units for ", ratio, " matches for each treated unit when matching without replacement.  Not all treated units will receive", ratio, "matches"))
+	else warning(paste("Fewer control than treated units and matching without replacement.  Not all treated units will receive a match.  Treated units will be matched in the order specified by m.order:", m.order))
+  }
+
   ## Generating match matrix
   match.matrix <- matrix(0, nrow=n1, ncol=ratio, dimnames=list(tlabels, 1:ratio))
   
