@@ -7,8 +7,8 @@ plot.summary.matchit <- function(x, interactive = TRUE, ...) {
 	stop("Not appropriate for unstandardized summary.  Run summary() with the standardize=TRUE option, and then plot.")
 	}
 	
-	sd.pre <- x$sum.all$"Std. Mean Diff."
-	sd.post <- x$sum.matched$"Std. Mean Diff."
+	sd.pre <- abs(x$sum.all$"Std. Mean Diff.")
+	sd.post <- abs(x$sum.matched$"Std. Mean Diff.")
 
 	ases.dat <- data.frame(es.unw = sd.pre, es.w = sd.post)
 	par(mfrow=c(1,1))
