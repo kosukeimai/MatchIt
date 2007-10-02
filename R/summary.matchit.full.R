@@ -29,6 +29,7 @@ summary.matchit.full <- function(object, interactions = FALSE,
     if(interactions){
       for(j in i:kk){
         x2 <- XX[,i]*as.matrix(XX[,j])
+	names(x2) <- names(XX[,1])
         jqoi <- qoi(x2,tt=treat,ww=weights, t.plot=t.plot,
                     c.plot=c.plot, standardize=standardize)
         sum.all.int <- rbind(sum.all.int,jqoi[1,])
