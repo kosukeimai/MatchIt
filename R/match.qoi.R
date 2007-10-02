@@ -56,7 +56,7 @@ qoi <- function(xx,tt,ww, t.plot=NULL, c.plot=NULL, sds=NULL,
 ## By subclass
 qoi.by.sub <- function(xx,tt,ww,qq,standardize=FALSE){
   qbins <- max(qq,na.rm=TRUE)
-  q.table <- matrix(0,6,qbins)
+  q.table <- matrix(0,7,qbins)
   qn <- matrix(0,3,qbins)
   matched <- ww!=0
   for (i in 1:qbins) {
