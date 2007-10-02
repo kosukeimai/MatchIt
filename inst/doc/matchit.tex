@@ -170,6 +170,15 @@ or most simply via \hlink{Zelig}{http://gking.harvard.edu/zelig} in R.
 
 \section{Frequently Asked Questions}
 
+\subsection{What if My datasets Are Big and Are Taking Up
+  Too Much Memory?}
+
+{\tt matchit()} does not save the data set in its output object.
+However, {\tt match.data()} will create a matched data set. One can
+eliminate the original data set by {\tt rm(name)} where {\tt name} is
+the name of the data set after creating the matched data by {\tt
+  match.data()}.
+
 %\subsection{Can I use a Difference-in-Difference Estimator for Matched
 %  Data?}
 %
