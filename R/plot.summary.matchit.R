@@ -11,6 +11,7 @@ plot.summary.matchit <- function(x, interactive = TRUE, ...) {
 	sd.post <- x$sum.matched$"Std. Mean Diff."
 
 	ases.dat <- data.frame(es.unw = sd.pre, es.w = sd.post)
+	par(mfrow=c(1,1))
         plot(c(0.85, 2.15), c(0, min(3, max(unlist(ases.dat[, 
             1:2]), na.rm = TRUE))), type = "n", xaxt = "n", ylab = "Absolute Standardized Bias", 
             xlab = "", main = "")
