@@ -42,7 +42,7 @@ user.prompt()
 ## fit the linear model to the treatment group controlling for propensity score and 
 ## other covariates
 z.out2 <- zelig(re78 ~ age + educ + black + hispan + nodegree + married + re74 + re75 +
-                       distance, data = match.data(m.out1, "control"), model = "ls")
+                       distance, data = match.data(m.out1, "treat"), model = "ls")
 user.prompt()
 
 ## conducting the simulation procedure for the control group
