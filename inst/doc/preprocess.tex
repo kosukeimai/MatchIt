@@ -52,7 +52,7 @@ real earnings (\texttt{re78}).
 
 The simplest version of matching is exact.  This technique matches
 \emph{each} treated unit to \emph{all} possible control units with
-exactly the same value on all the covariates, forming subclasses such
+exactly the same values on all the covariates, forming subclasses such
 that within each subclass all units (treatment and control) have the
 same covariate values.  Exact matching is implemented in \MatchIt\ 
 using \texttt{method = "exact"}.  Exact matching will be done on all
@@ -74,7 +74,7 @@ When there are many covariates (or some covariates can take a large
 number of values), finding sufficient exact matches will often be
 impossible.  The goal of subclassification is to form subclasses, such
 that in each the distribution (rather than the exact values) of
-covariates for the treated and control groups are are as similar as
+covariates for the treated and control groups are as similar as
 possible.  Various subclassification schemes exist, including the one
 based on a scalar distance measure such as the propensity score
 estimated using the \texttt{distance} option (see
@@ -95,10 +95,11 @@ same number of treated units.
 Subclassification may also be used in conjunction with nearest
 neighbor matching described below, by leaving the default of
 \texttt{method = "nearest"} but adding the option \texttt{subclass}.
-When you choose this command, \MatchIt\ matches in the same way, but
+When you choose this command, \MatchIt\ selects matches using nearest neighbor
+matching, but
 after the nearest neighbor matches are chosen it places them into
-subclasses, and adds a variable to the output object with the subclass
-numbers.
+subclasses, and adds a variable to the output object indicating subclass membership.
+
 
 \subsubsection{Nearest Neighbor Matching}
 \label{subsubsec:nearest}
@@ -149,8 +150,8 @@ regression.
 \subsubsection{Full Matching}
 \label{subsubsec:full}
 
-Full matching is a a particular type of subclassification that uses
-all treated and control units \citep{Rosenbaum02, Hansen04}.  A fully
+Full matching is a particular type of subclassification that forms
+the subclasses in an optimal way \citep{Rosenbaum02, Hansen04}.  A fully
 matched sample is composed of matched sets, where each matched set
 contains one treated unit and one or more controls (or one control
 unit and one or more treated units).  The only units not placed into a

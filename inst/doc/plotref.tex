@@ -1,7 +1,9 @@
 \section{\texttt{plot()}: Graphical Summaries of Balance}
 
+
+\subsection{Plot options for the matchit object}
 The \texttt{plot()} command allows you to check the distributions of
-covariates in the assignment model, squares, and interactions, and
+propensity scores and covariates in the assignment model, squares, and interactions, and
 within each subclasses if specified.  
 
 \subsubsection{Syntax}
@@ -18,7 +20,9 @@ within each subclasses if specified.
   (default) outputs empirical quantile-quantile plots of each
   covariate to check balance of marginal distributions. Alternatively,
   \texttt{type = "jitter"} outputs jitter plots of the propensity
-  score for treated and control units.
+  score for treated and control units.  Finally, \texttt{type="hist"} outputs  
+  histograms of the propensity score in the original treated and control groups
+  and weighted histograms of the propensity score in the matched treated and control groups.
   
 \item {\tt discrete.cutoff}: For quantile-quantile plots, discrete
   covariates that take 5 or fewer values are jittered for visibility.
@@ -55,7 +59,42 @@ within each subclasses if specified.
   area of the diamond is proportional to the weights. Vertical lines
   are plotted if subclassification is used.
 
+\item Histograms: This graph plots histograms of the estimated propensity 
+scores in the original treated and control groups and weighted histograms of the estimated
+propensity scores in the matched treated and control groups.  Plots can be compared vertically to
+quickly check the balance before and after matching.  
+
 \end{itemize}
+
+\subsection{Plot options for the matchit summary object}
+You can also send a matchit summary object to the \texttt{plot()} command, to obtain
+a summary of the balance on each covariate before and after matching.  The summary() object
+must have been created using the option {\texttt standardize=TRUE}.  
+
+\subsubsection{Syntax}
+
+\begin{verbatim}
+> s.out <- summary(object, standardize=TRUE, ...)
+
+> plot(s.out, ...)
+\end{verbatim}
+
+\subsubsection{Arguments}
+
+\begin{itemize}
+\item {\tt interactive}: If \texttt{TRUE} (default), users can
+  identify individual variables by clicking on the graph with the left
+  mouse button.
+\end{itemize}
+
+\subsubsection{Output Values}
+
+\begin{itemize}
+\item Line plot of standardized differences in means before and after matching.  
+Numbers plotted are those output by the summary() command in the sum.all and sum.matched
+objects.  
+\end{itemize}
+
 
 
 %%% Local Variables: 

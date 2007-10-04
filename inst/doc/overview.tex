@@ -1,5 +1,5 @@
 
-\MatchIt\ is designed for causal inference with a dichtomous treatment
+\MatchIt\ is designed for causal inference with a dichotomous treatment
 variable and a set of pretreatment control variables.  Any number or
 type of dependent variables can be used.  (If you are interested in
 the causal effect of more than one variable in your data set, run
@@ -58,10 +58,10 @@ than the reduction in bias that is achieved.
 The simplest way to obtain good matches (as defined above) is to use
 one-to-one exact matching, which pairs each treated unit with one
 control unit for which the values of $X_i$ are identical.  However,
-with many covariates and finite numbers of potential matches, it is
+with many covariates and finite numbers of potential matches, 
 sufficient exact matches often cannot be found.  Indeed, many of the
 other methods implemented in \MatchIt\ attempt to balance the overall
-covariate distributions as close as possible, when sufficient
+covariate distributions as much as possible, when sufficient
 one-to-one exact matches are not available.
 
 A key point in \citet*{HoImaKin07} is that matching methods by
@@ -85,7 +85,7 @@ match first.
 
 The goal of matching is to create a data set that looks closer to one
 that would result from a perfectly blocked (and possibly randomized)
-experiment.  When we get close, we break the link between treatment
+experiment.  When we get close, we break the link between the treatment
 variable and the pretreatment controls, which makes the parametric
 form of the analysis model less relevant or irrelevant entirely.  To
 break this link, we need the distribution of covariates to be the same
@@ -111,7 +111,7 @@ even if some are excluded from one of the matching procedures.
 \section{Conducting Analyses after Matching}
 
 The most common way that parametric analyses are used to compute
-quantities of interest (without matching) is by (statitically) holding
+quantities of interest (without matching) is by (statistically) holding
 constant some explanatory variables, changing others, and computing
 predicted or expected values and taking the difference or ratio, all
 by using the parametric functional form.  In the case of causal

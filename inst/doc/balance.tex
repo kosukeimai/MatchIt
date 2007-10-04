@@ -4,8 +4,7 @@
 \subsection{Quick Overview}
 
 To check balance, use \texttt{summary(m.out)} for numerical summaries
-and \texttt{plot(m.out)} for graphical summaries We illustrate here
-with three examples.
+and \texttt{plot(m.out)} for graphical summaries.
 
 \subsection{Details}
 
@@ -28,7 +27,8 @@ subclass are shown.
 
 \begin{itemize}
 \item {\bf Balance statistics:} The statistics the \texttt{summary()}
-  command provides include mean differences, standardized mean
+  command provides include means, the original control group standard deviation, 
+  mean differences, standardized mean
   differences, and (median, mean and maximum) Quantile-Quantile (Q-Q)
   plot differences.  In addition, the \texttt{summary()} command will
   report (a) the matched call, (b) how many units were matched,
@@ -41,6 +41,7 @@ subclass are shown.
 \begin{enumerate}
   \item ``Means Treated'' and ``Means Control'' show the weighted
     means in the treated and control groups
+  \item ``SD Control" is the standard deviation calculated in the control group
   \item ``Mean Diff'' is the difference in means between the groups
   \item The final three columns of the summary output give summary
     statistics of a Q-Q plot (see below for more information on these
@@ -53,7 +54,7 @@ subclass are shown.
     distribution has differences between the two groups.
 \end{enumerate}
 
-\item {\bf Additional options:} Two options to the \texttt{summary()}
+\item {\bf Additional options:} Three options to the \texttt{summary()}
   command can also help with assessing balance and respecifying the
   propensity score model, as necessary.  First, the {\tt interactions
     = TRUE} option with {\tt summary()} shows the balance of all
@@ -68,20 +69,24 @@ subclass are shown.
   variable in the next model specification may improve the resulting
   balance on that variable.  Because the outcome variable is not used
   in the matching procedure, a variety of matching methods can be
-  tried, and the one that leads to the best resulting balance chosen.
+  tried, and the one that leads to the best resulting balance chosen.  Finally,
+  the {\tt standardize = TRUE} option will print out standardized versions of the
+  balance measures, where the mean difference is standardized (divided) by the standard deviation
+  in the original control group.
 \end{itemize}
 
 \subsubsection{The \texttt{plot()} Command}
 
 We can also examine the balance graphically using the \texttt{plot()}
-command, which provides two types of plots: jitter plots of the
-distance measure, and Q-Q plots of each covariate.  In the jitter
-plot, which can be created by setting \texttt{type = "jitter"}, you
-may identify units by observation name by clicking the first mouse
-button near the units. For subclassification, separate Q-Q plots are
+command, which provides three types of plots: jitter plots of the
+distance measure, Q-Q plots of each covariate, and histograms of the 
+distance measure.  For subclassification, separate Q-Q plots are
 printed for each subclass.  The jitter plot for subclassification is
 the same as that for other types of matching, with the addition of
-vertical lines indicating the subclass cut-points.
+vertical lines indicating the subclass cut-points.  With the histogram option,
+4 histograms are provided: the original treated and control groups and the matched
+treated and control groups.  For the Q-Q plots and the histograms, the weights that result
+after matching are used to create the plots.
 
 %\begin{figure}[tbp]
 %  \begin{center}
@@ -105,13 +110,17 @@ vertical lines indicating the subclass cut-points.
 
 Two examples of the output from the {\tt plot()} command are shown
 below.  If the empirical distributions are the same in the treated and
-control groups, the points would all lie on the 45 degree line.
+control groups, the points in the Q-Q plots would all lie on the 45 degree line.
 Deviations from the 45 degree line indicate differences in the
 empirical distribution.  The jitter plot shows the overall
 distribution of propensity scores in the treated and control groups.
 In the jitter plot, the size of each diamond is proportional to the
 weight given to that unit; matched units are in black while unmatched
-units are in grey.
+units are in grey. In the jitter
+plot, which can be created by setting \texttt{type = "jitter"}, you
+may identify units by observation name by clicking the first mouse
+button near the units. 
+
 
 \hspace{-0.75in}\includegraphics{figs/qqplotnn1}
 \includegraphics[scale=0.75]{figs/jitterplotnn}
