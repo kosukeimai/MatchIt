@@ -13,8 +13,6 @@ print(m.out)
 user.prompt()
 
 ## balance diagnostics through statistics
-summary(m.out)
-
 s.out <- summary(m.out, standardize=TRUE)
 print(s.out)
 user.prompt()
@@ -38,7 +36,7 @@ print(m.out1)
 user.prompt()
 
 ## balance diagnostics through statistics
-summary(m.out1)
+print(summary(m.out1))
 user.prompt()
 
 ## balance diagnostics through graphics
@@ -56,8 +54,8 @@ print(m.out2)
 user.prompt()
 
 ## balance diagnostics through statistics
-summary(m.out2)
 s.out2 <- summary(m.out2, standardize=TRUE)
+print(s.out2)
 user.prompt()
 
 ## balance diagnostics through graphics
@@ -77,7 +75,7 @@ print(m.out3)
 user.prompt()
 
 ## balance diagnostics through statistics
-summary(m.out3)
+print(summary(m.out3))
 user.prompt()
 
 ## balance diagnostics through graphics
@@ -94,7 +92,7 @@ print(m.out4)
 user.prompt()
 
 ## balance diagnostics through statistics
-summary(m.out4)
+print(summary(m.out4))
 user.prompt()
 
 ## balance diagnostics through graphics
@@ -112,7 +110,7 @@ print(m.out5)
 user.prompt()
 
 ## balance diagnostics through statistics
-summary(m.out5)
+print(summary(m.out5))
 user.prompt()
 
 ## balance diagnostics through graphics

@@ -4,7 +4,6 @@
 
 ## load the Lalonde data
 data(lalonde)
-user.prompt()
 
 ## optimal ratio matching using the propensity score based on logistic regression
 m.out <- matchit(treat ~ re74 + re75 + age + educ, data = lalonde,
@@ -16,7 +15,7 @@ print(m.out)
 user.prompt()
 
 ## balance diagnostics through statistics
-summary(m.out)
+print(summary(m.out))
 user.prompt()
 
 ## balance diagnostics through graphics

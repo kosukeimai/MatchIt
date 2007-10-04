@@ -4,11 +4,9 @@
 
 ## load the Lalonde data
 data(lalonde)
-user.prompt()
 
 ## load Zelig package: if not already installed, try install.package("Zelig")
 library(Zelig)
-user.prompt()
 
 ## propensity score matching
 m.out1 <- matchit(treat ~ age + educ + black + hispan + nodegree + married + re74 + re75, 
@@ -31,7 +29,7 @@ s.out1 <- sim(z.out1, x = x.out1)
 user.prompt()
 
 ## obtain a summary
-summary(s.out1)
+print(summary(s.out1))
 user.prompt()
 
 
@@ -63,13 +61,13 @@ user.prompt()
 
 ## some summaries
 ## point estimate
-mean(ate.all)
+print(mean(ate.all))
 user.prompt()
 ## standard error
-sd(ate.all)
+print(sd(ate.all))
 user.prompt()
 ## 95% confidence interval
-quantile(ate.all, c(0.025, 0.975))
+print(quantile(ate.all, c(0.025, 0.975)))
 user.prompt()
 
 
@@ -97,17 +95,16 @@ s.out3 <- sim(z.out3, x = x.out3, num = 100)
 user.prompt()
 
 ## overall results
-summary(s.out3) 
+print(summary(s.out3)) 
 user.prompt()
 
 ## summary for each subclass
-summary(s.out3, subset = 1) 
+print(summary(s.out3, subset = 1))
 user.prompt()
 
-summary(s.out3, subset = 2) 
+print(summary(s.out3, subset = 2))
 user.prompt()
 
-summary(s.out3, subset = 3) 
-user.prompt()
+print(summary(s.out3, subset = 3))
 
 

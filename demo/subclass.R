@@ -4,7 +4,6 @@
 
 ## load the Lalonde data
 data(lalonde)
-user.prompt()
 
 ## sublclassification
 m.out <-  matchit(treat ~ re74 + re75 + educ + black + hispan + age,
@@ -16,7 +15,7 @@ print(m.out)
 user.prompt()
 
 ## balance diagnostics
-summary(m.out)
+print(summary(m.out))
 user.prompt()
 
 ## balance diagnostics through plots

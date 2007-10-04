@@ -4,7 +4,6 @@
 
 ## laod the Lalonde data
 data(lalonde)
-user.prompt()
 
 ## exact matching
 m.out <- matchit(treat ~ educ + black + hispan, data = lalonde,
@@ -16,6 +15,5 @@ print(m.out)
 user.prompt()
 
 ## balance diagnostics through statistics
-summary(m.out, covariates = T)
-user.prompt()
+print(summary(m.out, covariates = T))
 
