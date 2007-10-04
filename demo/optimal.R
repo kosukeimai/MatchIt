@@ -21,3 +21,9 @@ user.prompt()
 
 ## balance diagnostics through graphics
 plot(m.out)
+user.prompt()
+plot(m.out, type="jitter")
+
+s.out <- summary(m.out, standardize=TRUE)
+plot(s.out)
+

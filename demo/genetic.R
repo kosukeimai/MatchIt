@@ -12,7 +12,10 @@ m.out <- matchit(treat ~ age + educ + black + hispan + married + nodegree + re74
 print(m.out)
 
 ## numerical balance diagonstics
-summary(m.out)
+print(summary(m.out))
+
+s.out <- summary(m.out, standardize=TRUE)
 
 ## graphical balance diagnostics
 plot(m.out)
+plot(s.out)
