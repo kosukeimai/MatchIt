@@ -13,7 +13,7 @@ plot.summary.matchit <- function(x, interactive = TRUE, ...) {
 	ases.dat <- data.frame(es.unw = sd.pre, es.w = sd.post)
 	par(mfrow=c(1,1))
         plot(c(0.85, 2.15), c(0, min(3, max(unlist(ases.dat[, 
-            1:2]), na.rm = TRUE))), type = "n", xaxt = "n", ylab = "Absolute Standardized Bias", 
+            1:2]), na.rm = TRUE))), type = "n", xaxt = "n", ylab = "Absolute Standardized Diff in Means", 
             xlab = "", main = "")
         abline(h = c(0.2, 0.4, 0.6, 0.8, 1.0))
         axis(side = 1, at = 1:2, labels = c("All Data", "Matched Data"))
@@ -27,7 +27,7 @@ plot.summary.matchit <- function(x, interactive = TRUE, ...) {
                 col = "black", lwd = 2, pch=19)
         }
         if (max(ases.dat$es.w, na.rm = TRUE) > 3) 
-            mtext(text = "Some standardized biases > 3 after matching!", side = 3, 
+            mtext(text = "Some standardized diffs in means > 3 after matching!", side = 3, 
                 col = "red")
 
   if(interactive==TRUE) {
@@ -36,3 +36,5 @@ plot.summary.matchit <- function(x, interactive = TRUE, ...) {
 	identify(rep(2, length(sd.post)),sd.post,rownames(x$sum.all),atpen=T)
   }
 }
+
+
