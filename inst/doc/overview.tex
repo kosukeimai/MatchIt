@@ -9,7 +9,8 @@ than one treatment variable at a time.)  \MatchIt\ can be used for
 other types of causal variables by dichotomizing them, perhaps in
 multiple ways \citep[see also][]{ImaDyk04}.  \MatchIt\ works for
 experimental data, but is usually used for observational studies where
-the treatment variable is not randomly assigned by the investigator.
+the treatment variable is not randomly assigned by the investigator,
+or the random assignment goes awry.
 
 We adopt the same notation as in \citet*{HoImaKin07}.  Unless
 otherwise noted, let $i$ index the $n$ units in the data set, $n_1$
@@ -44,16 +45,26 @@ difference in means of $Y$ for the treated and control groups.  The
 goal of matching is to preprocess the data prior to the parametric
 analysis so that the actual relationship between $t_i$ and $X_i$ is
 eliminated or reduced without introducing bias and or increasing
-inefficiency too much.  When matching we select, duplicate, or
-selectively drop observations from our data, and we do so without
-inducing bias as long as we use a rule that is a function only of
-$t_i$ and $X_i$ and does not depend on the outcome variable $Y_i$.
-\MatchIt\ implements and evaluates the choice of these rules.
-Matching sometimes increases efficiency by eliminating heterogeneity
-or deleting observations outside of an area where a model can
-reasonably be used to extrapolate, but one needs to be careful not to
-lose too many observations in matching or efficiency will drop more
-than the reduction in bias that is achieved.
+inefficiency too much.  
+
+When matching we select, duplicate, or selectively drop observations
+from our data, and we do so without inducing bias as long as we use a
+rule that is a function only of $t_i$ and $X_i$ and does not depend on
+the outcome variable $Y_i$.  Many methods that offer this
+preprocessing are included here, including exact, subclassification,
+nearest neighbor (including propensity score), optimal, and genetic
+matching.  In order to avoid changing the quantity of interest, most
+\MatchIt\ routines work by retaining all treated units and only
+choosing control units to include in the final data set; this enables
+one to estimate the average treated effect on the treated (the purpose
+of which is described in Section \ref{s:qoi}).
+
+\MatchIt\ implements and evaluates the choice of the rules for
+matching.  Matching sometimes increases efficiency by eliminating
+heterogeneity or deleting observations outside of an area where a
+model can reasonably be used to extrapolate, but one needs to be
+careful not to lose too many observations in matching or efficiency
+will drop more than the reduction in bias that is achieved.
 
 The simplest way to obtain good matches (as defined above) is to use
 one-to-one exact matching, which pairs each treated unit with one
@@ -108,36 +119,51 @@ should never be used to assess balance; see \citet{ImaKinStu07}.
 These balance diagnostics should be performed on all variables in $X$,
 even if some are excluded from one of the matching procedures.
 
-\section{Conducting Analyses after Matching}
+\section{Conducting Analyses after Matching}\label{s:qoi}
 
 The most common way that parametric analyses are used to compute
-quantities of interest (without matching) is by (statistically) holding
-constant some explanatory variables, changing others, and computing
-predicted or expected values and taking the difference or ratio, all
-by using the parametric functional form.  In the case of causal
-inference, this would mean looking at the effect on the expected value
-of the outcome variable when changing $T$ from 0 to 1, while holding
-constant the pretreatment control variables $X$ at their means or
-medians.  This, and indeed any other standard procedure, would be a
-perfectly reasonable way to proceed with analysis after matching.
+quantities of interest (without matching) is by (statistically)
+holding constant some explanatory variables, changing others, and
+computing predicted or expected values and taking the difference or
+ratio, all by using the parametric functional form.  In the case of
+causal inference, this would mean looking at the effect on the
+expected value of the outcome variable when changing $T$ from 0 to 1,
+while holding constant the pretreatment control variables $X$ at their
+means or medians.  This, and indeed any other appropriate analysis
+procedure, would be a perfectly reasonable way to proceed with
+analysis after matching.  If it is the chosen way to proceed, then
+either treated or control units may be deleted during the matching
+stage, since the same parametric structure is assumed to apply to all
+observations.
 
-Another popular quantity of interest is the \emph{average treatment
-  effect on the treated}.  For example, for the treated group, the
-potential outcomes under control, $Y_i(0)$, are missing, whereas the
-outcomes under treatment, $Y_i(1)$, are observed, and the goal of the
-analysis is to impute the missing outcomes, $Y_i(0)$ in observations
-where $T_i=1$.  We do this via simulation using a parametric
-statistical model such as regression, logit, or others (as described
-below).  Once those potential outcomes are imputed from the model, the
-estimate of individual $i$'s treatment effect is
-$Y_i(1)-\widehat{Y}_i(0)$ where $\widehat{Y}_i(0)$ is a predicted
-value of the dependent variable for unit $i$ under the counterfactual
-condition where $T_i=0$.  The in-sample average treatment effect for
-the treated individuals can then be obtained by averaging this
-difference over all observations $i$ where in fact $T_i=1$.  (A
-similar procedure can also be used to estimate various other
+In other instances, researchers wish to reduce the assumptions
+inherent in their statistical model and so want to allow for the
+possibility that their treatment effect to vary over observations.  In
+this situation, one popular quantity of interest used is the
+\emph{average treatment effect on the treated} (ATT).  For example,
+for the treated group, the potential outcomes under control, $Y_i(0)$,
+are missing, whereas the outcomes under treatment, $Y_i(1)$, are
+observed, and the goal of the analysis is to impute the missing
+outcomes, $Y_i(0)$ in observations where $T_i=1$.  We do this via
+simulation using a parametric statistical model such as regression,
+logit, or others (as described below).  Once those potential outcomes
+are imputed from the model, the estimate of individual $i$'s treatment
+effect is $Y_i(1)-\widehat{Y}_i(0)$ where $\widehat{Y}_i(0)$ is a
+predicted value of the dependent variable for unit $i$ under the
+counterfactual condition where $T_i=0$.  The in-sample average
+treatment effect for the treated individuals can then be obtained by
+averaging this difference over all observations $i$ where in fact
+$T_i=1$.  Most \MatchIt\ algorithms retain all treated units, and
+choose some subset of or repeated units from the control group, so
+that estimating the ATT is straightforward.  If one chooses options
+that allow matching with replacement, or any solution that has
+different numbers of controls (or treateds) within each strata, then
+then the parametric analysis following matching must accomodate these
+procedures, such as using fixed effects or weights, as appropriate.
+(Similar procedures can also be used to estimate various other
 quantities of interest such as the average treatment effect by
-computing it for all observations.)
+computing it for all observations, but then one must be aware that the
+quantity of interest may change during the matching procedure.)
 
 The imputation from the model can be done in at least two ways.
 Recall that the model is used to impute \emph{the value that the
@@ -161,12 +187,8 @@ of matching.  The advantage is that if matching is done well your
 answers will be more robust to many small changes in parametric
 specification.
 
-% Local Variables: 
+
+%%% Local Variables: 
 %%% mode: latex
 %%% TeX-master: "matchit"
-% TeX-master: "matchit"
-% TeX-master: t
-% TeX-master: "
-"
-% TeX-master: t
 %%% End: 

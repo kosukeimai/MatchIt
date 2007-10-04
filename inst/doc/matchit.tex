@@ -30,10 +30,10 @@
   Inference\thanks{We thank Olivia Lau for helpful suggestions about
     incorporating \MatchIt\, into Zelig.}}
 
-\author{Daniel E. Ho,\thanks{Institute for Quantitative Social Science
-    (1727 Cambridge Street, Cambridge MA 02138, USA;
-    \texttt{http://people.iq.harvard.edu/$\sim$dho/},
-    \texttt{daniel.e.ho@gmail.com}).}  \and %
+\author{Daniel E. Ho,\thanks{Assistant Professor of Law, Stanford Law
+    School (559 Nathan Abbott Way, Stanford CA 94305;
+    \texttt{http://dho.stanford.edu}, \texttt{dho@law.stanford.edu},
+    (650) 723-9560).}  \and %
   Kosuke Imai,\thanks{Assistant Professor, Department of Politics,
     Princeton University (Corwin Hall 041, Department of Politics,
     Princeton University, Princeton NJ 08544, USA;
@@ -171,14 +171,44 @@ or most simply via \hlink{Zelig}{http://gking.harvard.edu/zelig} in R.
 
 \section{Frequently Asked Questions}
 
+
+\subsection{How to Cite This Work}
+
+If you use \MatchIt, please cite\nocite{HoImaKin07,HoImaKin04}
+\begin{verse}
+  Daniel Ho; Kosuke Imai; Gary King; and Elizabeth Stuart (2007),
+  ``Matching as Nonparametric Preprocessing for Reducing Model
+  Dependence in Parametric Causal Inference,'' \emph{Political
+    Analysis} 15(3): 199-236,
+  \url{http://gking.harvard.edu/files/abs/matchp-abs.shtml}.
+
+and 
+
+Daniel Ho; Kosuke Imai; Gary King; and Elizabeth Stuart (2004)
+``Matchit: Matching as Nonparametric Preprocessing for Parametric
+Causal Inference,'' \url{http://gking.harvard.edu/matchit/}.
+\end{verse}
+
+In addition, the {\tt convex.hull} discard option is implemented via
+the {\tt WhatIf} package \citep{KinZen06,KinZen07,StoKinZen05}.
+Generalized linear distance measures are implemented via the {\tt
+  stats} package \citep{VenRip02}.  Generalized additive distance
+measures are implemented via the {\tt mcgv} package \citep{HasTib90}.
+The neural network distance measure is implemented via the {\tt nnet}
+package \citep{Ripley96}.  The classification trees distance measure
+is implemented via the {\tt rpart} package \citep{BreFriOls84}.  Full
+and optimal matching are implemented via the {\tt optmatch} package
+\citep{Hansen04}.  Genetic matching is implemented via the {\tt
+  Matching} package \citep{DiaSek05}.
+
 \subsection{What if My datasets Are Big and Are Taking Up
   Too Much Memory?}
 
-{\tt matchit()} does not save the data set in its output object.
-However, {\tt match.data()} will create a matched data set. One can
-eliminate the original data set by {\tt rm(name)} where {\tt name} is
-the name of the data set after creating the matched data by {\tt
-  match.data()}.
+{\tt matchit()} does not save the data set in its output object, but
+it does save a matrix of the covariates.  {\tt match.data()} will
+create a matched data set. One can eliminate the original data set to
+save memory in R by {\tt rm(name)}, where {\tt name} is the name of
+the data set, after calling {\tt match.data()}.
 
 %\subsection{Can I use a Difference-in-Difference Estimator for Matched
 %  Data?}

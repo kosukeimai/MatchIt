@@ -52,9 +52,10 @@ matching methods. These arguments apply to all matching methods {\it
   numerical vector of user's own distance measure.  Before using any
   of these techniques, it is best to understand the theoretical
   groundings of these techniques and to evaluate the results.  Most of
-  these methods (such as logistic or probit regression) estimate the
-  propensity score, defined as the probability of receiving treatment,
-  conditional on the covariates.  Available methods include:
+  these methods (such as logistic or probit regression) define the
+  distance by first estimating the propensity score, defined as the
+  probability of receiving treatment, conditional on the covariates.
+  Available methods include:
   \begin{itemize}
   \item {\tt "mahalanobis"}: the Mahalanobis distance measure.
   \item binomial generalized linear models with one of the following
@@ -163,12 +164,14 @@ matching methods. These arguments apply to all matching methods {\it
 \item \texttt{sub.by}: criteria for subclassification.  Choose from:
   \texttt{"treat"} (default), the number of treatment units;
   \texttt{"control"}, the number of control units; or \texttt{"all"},
-  the total number of units.
+  the total number of units.  Changing the default will likely also
+  signal a change in your quantity of interest from the average
+  treatment effect on the treated to other quantities.
 \item \texttt{subclass}: either a scalar specifying the number of
   subclasses, or a vector of probabilities bounded between 0 and 1,
   which create quantiles of the distance measure using the units in
   the group specified by \texttt{sub.by} (default = \texttt{subclass =
-    6}).
+    6}).  
 \end{itemize}
 
 \paragraph{Additional Arguments for Nearest Neighbor Matching}
@@ -358,73 +361,6 @@ output object contains the following elements:\footnote{When
   and \texttt{exact}.
 \end{itemize}
 
-\subsubsection{How to Cite This Work}
-
-If you use \MatchIt, please cite\nocite{HoImaKin07,HoImaKin04}
-\begin{verse}
-  Daniel Ho; Kosuke Imai; Gary King; and Elizabeth Stuart (2007),
-  ``Matching as Nonparametric Preprocessing for Reducing Model
-  Dependence in Parametric Causal Inference,'' \emph{Political
-    Analysis} 15(3): 199-236,
-  \url{http://gking.harvard.edu/files/abs/matchp-abs.shtml}.
-
-
-and 
-
-Daniel Ho; Kosuke Imai; Gary King; and Elizabeth Stuart (2004)
-``Matchit: Matching as Nonparametric Preprocessing for Parametric
-Causal Inference,'' \url{http://gking.harvard.edu/matchit/}.
-\end{verse}
-
-The {\tt convex.hull} discard option is implemented via the {\tt
-  WhatIf} package.  If you use this option, please cite
-\begin{verse}
-\bibentry{StoKinZen05} 
-
-and either
-
-\bibentry{KinZen06}
-
-or
-
-\bibentry{KinZen07}
-\end{verse} 
-
-Generalized linear distance measures are implemented via the {\tt
-stats} package.  If you use this distance measure, please cite 
-\begin{verse}
-\bibentry{VenRip02}
-\end{verse}
-
-Generalized additive distance measures are implemented via the {\tt
-  mcgv} package.  If you use this distance measure, please cite
-\begin{verse}
-\bibentry{HasTib90}
-\end{verse}  
-
-The neural network distance measure is implemented via the {\tt nnet}
-package.  If you use this distance measure, please cite
-\begin{verse}
-\bibentry{Ripley96}
-\end{verse}
-
-The classification trees distance measure is implemented via the {\tt
-  rpart} package.  If you use this distance measure, please cite
-\begin{verse}
-\bibentry{BreFriOls84}
-\end{verse}  
-
-Full and optimal matching are implemented via the {\tt optmatch}
-package by Ben Hansen. If you use either of these methods, please cite
-\begin{verse}
-\bibentry{Hansen04}
-\end{verse} 
-
-Genetic matching is implemented via the {\tt Matching} package by
-Jasjeet Sekhon.  If you use this method, please cite
-\begin{verse}
-\bibentry{DiaSek05}
-\end{verse}
 
 %%% Local Variables: 
 %%% mode: latex
