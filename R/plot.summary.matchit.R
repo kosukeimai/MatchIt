@@ -10,6 +10,8 @@ plot.summary.matchit <- function(x, interactive = TRUE, ...) {
 	sd.pre <- abs(x$sum.all$"Std. Mean Diff.")
 	sd.post <- abs(x$sum.matched$"Std. Mean Diff.")
 
+	if (!is.null(x$q.table)) sd.post <- abs(x$sum.subclass$"Std. Mean Diff") 
+
 	ases.dat <- data.frame(es.unw = sd.pre, es.w = sd.post)
 	par(mfrow=c(1,1))
         plot(c(0.85, 2.15), c(0, min(3, max(unlist(ases.dat[, 
@@ -31,7 +33,7 @@ plot.summary.matchit <- function(x, interactive = TRUE, ...) {
                 col = "red")
 
   if(interactive==TRUE) {
-        print("To identify the units, use first mouse button; to stop, use second.")
+        print("To identify the variables, use first mouse button; to stop, use second.")
         identify(rep(1, length(sd.pre)),sd.pre,rownames(x$sum.all),atpen=T)
 	identify(rep(2, length(sd.post)),sd.post,rownames(x$sum.all),atpen=T)
   }
