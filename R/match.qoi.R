@@ -1,6 +1,6 @@
 ## Function to calculate summary stats
 qoi <- function(xx,tt,ww, t.plot=NULL, c.plot=NULL, sds=NULL,
-                standardize = FALSE){
+                standardize = FALSE, std=F){
   weighted.var <- function(x, w) {
     sum(w * (x - weighted.mean(x,w))^2)/(sum(w) - 1)}
   xsum <- matrix(NA,2,7)
@@ -50,13 +50,16 @@ qoi <- function(xx,tt,ww, t.plot=NULL, c.plot=NULL, sds=NULL,
     else
       xsum[2,4] <- xsum[2,1]-xsum[2,2]
   } 
+  if(!std){
+    xsum <- xsum[,c(1:2,4:7)]
+  }
   xsum
 }
 
 ## By subclass
 qoi.by.sub <- function(xx,tt,ww,qq,standardize=FALSE){
   qbins <- max(qq,na.rm=TRUE)
-  q.table <- matrix(0,7,qbins)
+  q.table <- matrix(0,6,qbins)
   qn <- matrix(0,3,qbins)
   matched <- ww!=0
   for (i in 1:qbins) {

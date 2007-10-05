@@ -26,7 +26,7 @@ summary.matchit <- function(object, interactions = FALSE,
   kk <- ncol(XX)
 
   ## Summary Stats
-  aa <- apply(XX,2,qoi,tt=treat,ww=weights,standardize=standardize)
+  aa <- apply(XX,2,qoi,tt=treat,ww=weights,standardize=standardize,std=T)
   sum.all <- as.data.frame(matrix(0,kk,7))
   sum.matched <- as.data.frame(matrix(0,kk,7))
   row.names(sum.all) <- row.names(sum.matched) <- nam
@@ -38,7 +38,7 @@ summary.matchit <- function(object, interactions = FALSE,
     if(interactions){
       for(j in i:kk){
         x2 <- XX[,i]*as.matrix(XX[,j])
-        jqoi <- qoi(x2,tt=treat,ww=weights,standardize=standardize)
+        jqoi <- qoi(x2,tt=treat,ww=weights,standardize=standardize,std=T)
         sum.all.int <- rbind(sum.all.int,jqoi[1,])
         sum.matched.int <- rbind(sum.matched.int,jqoi[2,])
         row.names(sum.all.int)[nrow(sum.all.int)] <-
