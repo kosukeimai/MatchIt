@@ -85,6 +85,13 @@ matchit2subclass <- function(treat, X, data, distance, discarded,
   res <- list(subclass = psclass, q.cut = q,
               weights = weights.subclass(psclass, treat))
 
+  #warning for discrete data
+  unique.classes <- unique(psclass)
+  unique.classes <- unique.classes[!is.na (unique.classes)]
+  if(length(unique.classes)!=subclass){
+    warning("Due to discreteness in data, fewer subclasses generated",call.=F)
+  }
+ 
   class(res) <- c("matchit.subclass", "matchit")
   return(res)
 }

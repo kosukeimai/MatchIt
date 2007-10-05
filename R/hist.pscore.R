@@ -12,10 +12,12 @@ hist.pscore <- function(x){
   hist(pscore[treat==1 & weights!=0],xlim=range(na.omit(pscore)),
        xlab="Propensity Score", freq=F,
        main="Matched Treated")
+  if(!is.null(q.cut)){abline(v=q.cut,col="grey",lty=1)}
   hist(pscore[treat==0],xlim=range(na.omit(pscore)),
        xlab="Propensity Score", freq=F,
        main="Raw Control")
   hist(pscore[treat==0 & weights!=0],xlim=range(na.omit(pscore)),
        xlab="Propensity Score", freq=F,
        main="Matched Control")  
+  if(!is.null(q.cut)){abline(v=q.cut,col="grey",lty=1)}
 }
