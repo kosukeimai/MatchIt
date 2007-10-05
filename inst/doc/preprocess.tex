@@ -88,14 +88,14 @@ at the R prompt,
                    data = lalonde, method = "subclass")
 \end{verbatim}
 The above syntax forms 6 subclasses, which is the default number
-of subclasses, based on a distance measure estimated using logistic
+of subclasses, based on a distance measure (the propensity score) estimated using logistic
 regression.  By default, each subclass will have approximately the
 same number of treated units.
 
 Subclassification may also be used in conjunction with nearest
 neighbor matching described below, by leaving the default of
 \texttt{method = "nearest"} but adding the option \texttt{subclass}.
-When you choose this command, \MatchIt\ selects matches using nearest neighbor
+When you choose this option, \MatchIt\ selects matches using nearest neighbor
 matching, but
 after the nearest neighbor matches are chosen it places them into
 subclasses, and adds a variable to the output object indicating subclass membership.
@@ -106,10 +106,11 @@ subclasses, and adds a variable to the output object indicating subclass members
 
 Nearest neighbor matching selects the $r$ (default=1) best control
 matches for each individual in the treatment group (excluding those
-discarded using the \texttt{discard}) option.  The matching is done
+discarded using the \texttt{discard} option).  The matching is done
 using a distance measure specified by the {\tt distance} option
 (default=logit).  Matches are chosen for each treated unit one at a
-time, and at each matching step we choose the control unit that is not
+time, with the order specified by the \texttt{m.order} command (default=largest to smallest).  
+At each matching step we choose the control unit that is not
 yet matched but is closest to the treated unit on the distance
 measure.
 
@@ -139,7 +140,7 @@ treated units.
 Optimal matching is performed with \MatchIt\ by setting \texttt{method
   = "optimal"}, which automaticaly loads an add-on package called
 \texttt{optmatch} \citep{Hansen04}.  The following example can also be
-run by typing {\tt demo(optimal)} at the R prompt.  We conduct optimal
+run by typing {\tt demo(optimal)} at the R prompt.  We conduct 2:1 optimal
 ratio matching based on the propensity score from the logistic
 regression.
 \begin{verbatim}
@@ -154,7 +155,7 @@ Full matching is a particular type of subclassification that forms
 the subclasses in an optimal way \citep{Rosenbaum02, Hansen04}.  A fully
 matched sample is composed of matched sets, where each matched set
 contains one treated unit and one or more controls (or one control
-unit and one or more treated units).  The only units not placed into a
+unit and one or more treated units).  As with subclassification, the only units not placed into a
 subclass will be those discarded (if a \texttt{discard} option is
 specified) because they are outside the range of common support.  Full
 matching is optimal in terms of minimizing a weighted average of the

@@ -52,11 +52,13 @@ from our data, and we do so without inducing bias as long as we use a
 rule that is a function only of $t_i$ and $X_i$ and does not depend on
 the outcome variable $Y_i$.  Many methods that offer this
 preprocessing are included here, including exact, subclassification,
-nearest neighbor (including propensity score), optimal, and genetic
-matching.  In order to avoid changing the quantity of interest, most
-\MatchIt\ routines work by retaining all treated units and only
-choosing control units to include in the final data set; this enables
-one to estimate the average treated effect on the treated (the purpose
+nearest neighbor, optimal, and genetic
+matching.  For many of these methods the propensity score--defined as the
+probability of receiving the treatment given the covariates--is a key tool.
+In order to avoid changing the quantity of interest, most
+\MatchIt\ routines work by retaining all treated units and selecting (or weighting)
+control units to include in the final data set; this enables
+one to estimate the average treatment effect on the treated (the purpose
 of which is described in Section \ref{s:qoi}).
 
 \MatchIt\ implements and evaluates the choice of the rules for
@@ -144,7 +146,7 @@ this situation, one popular quantity of interest used is the
 for the treated group, the potential outcomes under control, $Y_i(0)$,
 are missing, whereas the outcomes under treatment, $Y_i(1)$, are
 observed, and the goal of the analysis is to impute the missing
-outcomes, $Y_i(0)$ in observations where $T_i=1$.  We do this via
+outcomes, $Y_i(0)$ for observations with $T_i=1$.  We do this via
 simulation using a parametric statistical model such as regression,
 logit, or others (as described below).  Once those potential outcomes
 are imputed from the model, the estimate of individual $i$'s treatment
@@ -157,13 +159,15 @@ $T_i=1$.  Most \MatchIt\ algorithms retain all treated units, and
 choose some subset of or repeated units from the control group, so
 that estimating the ATT is straightforward.  If one chooses options
 that allow matching with replacement, or any solution that has
-different numbers of controls (or treateds) within each strata, then
+different numbers of controls (or treateds) within each subclass or strata (such
+as full matching), 
 then the parametric analysis following matching must accomodate these
-procedures, such as using fixed effects or weights, as appropriate.
+procedures, such as by using fixed effects or weights, as appropriate.
 (Similar procedures can also be used to estimate various other
 quantities of interest such as the average treatment effect by
 computing it for all observations, but then one must be aware that the
-quantity of interest may change during the matching procedure.)
+quantity of interest may change during the matching procedure 
+as some control units may be dropped.)
 
 The imputation from the model can be done in at least two ways.
 Recall that the model is used to impute \emph{the value that the
@@ -179,7 +183,8 @@ imputed for the matched treated units by using the values of the
 explanatory variables for the treated units.  The first approach will
 usually have lower variance, since all observations are used, and the
 second may have less bias, since no assumption of constant parameters
-is needed.  See \citet*{HoImaKin07} for more details.
+across the models of the potential outcomes under treatment and control is needed.  
+See \citet*{HoImaKin07} for more details.
 
 Other quantities of interest can also be computed at the parametric
 stage, following any procedures you would have followed in the absence

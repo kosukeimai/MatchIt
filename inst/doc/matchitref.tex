@@ -10,7 +10,7 @@
 \begin{itemize}
 
 \item \texttt{formula}: formula used to calculate the distance measure
-  for matching.  It takes the usual syntax of R formulas, {\tt treat
+  for matching (e.g., the propensity score model).  It takes the usual syntax of R formulas, {\tt treat
     \~\ x1 + x2}, where {\tt treat} is a binary treatment indicator,
   and {\tt x1} and {\tt x2} are the pre-treatment covariates. Both the
   treatment indicator and pre-treatment covariates must be contained
@@ -114,7 +114,8 @@ matching methods. These arguments apply to all matching methods {\it
 \item \texttt{discard}: specifies whether to discard units that fall
   outside some measure of support of the distance measure (default =
   \texttt{"none"}, discard no units).  Discarding units may change the
-  quantity of interest being estimated. Enter a logical vector
+  quantity of interest being estimated by changing the observations left in the analysis. 
+  Enter a logical vector
   indicating which unit should be discarded or choose from the
   following options:
   \begin{itemize}
@@ -191,7 +192,8 @@ matching methods. These arguments apply to all matching methods {\it
   unit can be matched to more than one treated unit (default = {\tt
     replace = FALSE}, each control unit is used at most once -- i.e.,
   sampling without replacement). For matching with replacement, use
-  \texttt{replace = TRUE}.
+  \texttt{replace = TRUE}.  After matching with replacement, the weights
+  can be used to reflect the frequency with which each control unit was matched.
 \item \texttt{ratio}: the number of control units to match to each
   treated unit (default = {\tt 1}).  If matching is done without
   replacement and there are fewer control units than {\tt ratio} times

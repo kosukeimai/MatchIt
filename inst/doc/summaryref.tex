@@ -26,7 +26,7 @@ summary(object, interactions = FALSE, addlvariables = NULL, standardize = FALSE,
   {\tt matchit()}.
 \item \texttt{standardize}: a logical variable indicating whether to
   standardize balance measures, i.e., whether the difference in means should be divided
-  by the standard deviation in the original control group. (DEFAULT = {\tt FALSE})
+  by the standard deviation in the original treated group. (DEFAULT = {\tt FALSE})
 \end{itemize}
 
 \subsubsection{Output Values}
@@ -48,7 +48,7 @@ elements, when applicable:
     \frac{1}{n_0} \sum_{T=0} X_i$,
  \item standard deviation in the control group for all covariates $X$,  
         $$\quad s_{x|T=0} = \sqrt{\frac{\sum_{i \in \{i: T_i=0\}}
-        (X_i - \mu_{X|T=0}}{n_0-1})^2 }.$$
+        (X_i - \mu_{X|T=0})^2}{n_0-1} }.$$
   \item balance statistics of the original data (before matching),
     which compare treated and control covariate distributions. If {\tt
       standardize = FALSE}, balance measures will be presented on the

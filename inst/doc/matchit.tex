@@ -47,7 +47,7 @@
 Elizabeth A. Stuart\thanks{Assistant Professor, Departments of Mental 
 Health and Biostatistics, Johns Hopkins Bloomberg School of Public Health 
 (624 N Broadway, Room 804, Baltimore, MD 21205; 
-  \texttt{http://wwww.biostat.jhsph.edu/$\sim$estuart},
+  \texttt{http://www.biostat.jhsph.edu/$\sim$estuart},
   \texttt{estuart@jhsph.edu}).}}
 
 %\makeindex
@@ -235,7 +235,9 @@ treated and control units matched.  In 1:1 nearest neighbor matching
 there will be one treated unit and one control unit in each group.  In
 2:1 nearest neighbor matching there will be one treated unit and two
 control units in each group.  Unmatched units receive a weight of 0.
-All matched treated units receive a weight of 1.
+All matched treated units receive a weight of 1.  These weights are constructed
+to estimate the average treatment effect on the treated, with the control group
+essentially weighted to look like the treated group.
 
 The weights for matched control units are formed as follows:
 \begin{enumerate}

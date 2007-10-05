@@ -13,7 +13,8 @@ and \texttt{plot(m.out)} for graphical summaries.
 The \texttt{summary()} command gives measures of the balance between
 the treated and control groups in the full (original) data set, and
 then in the matched data set.  If the matching worked well, the
-measures of balance should be smaller in the matched data set.
+measures of balance should be smaller in the matched data set (smaller
+values of the measures indicate better balance).
 
 The \texttt{summary()} output for subclassification is the same as
 that for other types of matching, except that the balance statistics
@@ -36,7 +37,8 @@ subclass are shown.
   (described below), and (c) the percent improvement in balance for
   each of the balance measures, defined as $100((|a|-|b|)/|a|)$, where
   $a$ is the balance before and $b$ is the balance after matching.
-  For each set of units (original and matched data sets), the
+  For each set of units (original and matched data sets, with weights
+  used as appropriate in the matched data sets), the
   following statistics are provided:
 \begin{enumerate}
   \item ``Means Treated'' and ``Means Control'' show the weighted
@@ -60,12 +62,12 @@ subclass are shown.
     = TRUE} option with {\tt summary()} shows the balance of all
   squares and interactions of the covariates used in the matching
   procedure.  Large differences in higher order interactions usually
-  are a good indication that the assignment model needs to be
+  are a good indication that the propensity score model (the distance measure) needs to be
   respecified.  Similarly, the {\tt addlvariables} option with {\tt
     summary()} will provide balance measures on additional variables
   not included in the original matching procedure.  If a variable (or
-  interaction of variables) not included in the original distance
-  measure has large imbalances in the matched groups, including that
+  interaction of variables) not included in the original propensity score model
+  has large imbalances in the matched groups, including that
   variable in the next model specification may improve the resulting
   balance on that variable.  Because the outcome variable is not used
   in the matching procedure, a variety of matching methods can be
