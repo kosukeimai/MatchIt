@@ -22,9 +22,12 @@ matchit.qqplot <- function(x,discrete.cutoff,
   }
   treat <- x$treat
   matched <- x$weights!=0
+
+  ratio <- x$call$ratio
+  if(is.null(ratio)){ratio <- 1}
   
-  ## For full matching, sample numdraws observations using the weights
-  if(identical(x$call$method,"full")) {
+  ## For full or ratio matching, sample numdraws observations using the weights
+  if(identical(x$call$method,"full") | (ratio!=1)) {
     t.plot <- sample(names(treat)[treat==1], numdraws/2, replace=TRUE, prob=x$weights[treat==1])
     c.plot <- sample(names(treat)[treat==0], numdraws/2, replace=TRUE, prob=x$weights[treat==0])
     
