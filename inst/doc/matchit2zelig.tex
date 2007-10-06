@@ -229,12 +229,37 @@ answer as a simple, unadjusted weighted difference in means.  Here is an
 example:
 
 \begin{verbatim}
-> m.out <- matchit(treat ~ educ+black+hispan, data=lalonde, 
-                   method="exact")
-> z.out <- zelig(re78 ~ treat, data=lalonde, model="ls", 
-                   weights=m.out$weights)
-> z.out <- zelig(re78 ~ treat+educ+black+hispan, data=lalonde,model="ls", 
-                   weights=m.out$weights)
+> ## exact matching
+> m.out <- matchit(treat ~ educ + black + hispan, data = lalonde, 
+                   method = "exact")
+> ## matched data
+> m.data <- match.data(m.out)
+> ## weighted diff in means
+> weighted.mean(mdata$re78[mdata$treat == 1], mdata$weights[mdata$treat==1]) 
+        - weighted.mean(mdata$re78[mdata$treat==0], mdata$weights[mdata$treat==0])
+[1] 807
+> ## weighted least squares without covariates
+> zelig(re78 ~ treat, data = m.data, model = "ls", weights = "weights")
+
+Call:
+zelig(formula = re78 ~ treat, model = "ls", data = m.data, weights =
+"weights")
+
+Coefficients:
+(Intercept)        treat  
+       5524          807 
+
+> ## weighted least squares with covariates
+> zelig(re78 ~ treat + black + hispan + educ, data = m.data, model = "ls", 
+        weights = "weights")
+
+Call:
+zelig(formula = re78 ~ treat + black + hispan + educ, model = "ls",
+data = m.data, weights = "weights")
+
+Coefficients:
+(Intercept)        treat        black       hispan         educ  
+        314          807        -1882          258          657  
 \end{verbatim}
 
 
