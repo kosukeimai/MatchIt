@@ -38,9 +38,10 @@ elements, when applicable:
 \item \texttt{sum.all}: a data frame that contains variable names and
   interactions down the row names, and summary statistics on \emph{all
     observations} in each of the columns.  The columns in
-  \texttt{sum.all} contain \footnote{The output for full matching is
-    slightly different from that described here; see Section
-    \ref{subsubsec:full} for details.}:
+  \texttt{sum.all} contain: 
+%\footnote{The output for full matching is
+%    slightly different from that described here; see Section
+%    \ref{subsubsec:full} for details.}
   \begin{itemize}
   \item means of all covariates $X$ for treated and control units,
     where \texttt{Means Treated}$= \mu_{X|T=1} = \frac{1}{n_1}
@@ -69,9 +70,10 @@ elements, when applicable:
 \item \texttt{sum.matched}: a data frame which contains variable names
   down the row names, and summary statistics on only the \emph{matched
     observations} in each of the columns.  Specifically, the columns
-  in \texttt{sum.matched} contain the following elements\footnote{The
-    values output for full matching are slightly different from that
-    described here; see Section \ref{subsubsec:full} for details}:
+  in \texttt{sum.matched} contain the following elements:
+%\footnote{The
+%    values output for full matching are slightly different from that
+%    described here; see Section \ref{subsubsec:full} for details}:
   \begin{itemize}
   \item weighted means for matched treatment units and matched control units of all covariates
     $X$ and their interactions, where \texttt{Means Treated}$=
