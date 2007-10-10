@@ -30,7 +30,7 @@ of its value in fact.  The variables $y_i(1)$ and $y_i(0)$ are jointly
 unobservable, and for each $i$, we observe one
 $y_i=t_iy_i(1)+(1-t_i)y_i(0)$, and not the other.  
 
-Also denote a fixed vector of exogneous, pretreatment measured
+Also denote a fixed vector of exogenous, pretreatment measured
 confounders as $X_i$.  These variables are defined in the hope or
 under the assumption that conditioning on them appropriately will make
 inferences ignorable.  Measures of balance should be computed with
@@ -86,7 +86,7 @@ almost all other cases, some adjustment is required, and there is no
 reason to degrade your inferences by using an inferior method of
 analysis such as a difference in means even when improving your
 inferences via preprocessing.  Thus, with \MatchIt, you can improve
-your analyses in two ways.  In fact, \MatchIt\ analyses are ``doubly
+your analyses in two ways. \MatchIt\ analyses are ``doubly
 robust'' in that if \emph{either} the matching analysis \emph{or} the
 analysis model is correct (but not necessarily both) your inferences
 will be statistically consistent.  In practice, the modeling choices
