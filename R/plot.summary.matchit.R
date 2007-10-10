@@ -3,7 +3,7 @@ plot.summary.matchit <- function(x, interactive = TRUE, ...) {
     stop("Not appropriate for exact matching.  No plots generated.")
   }
 
-  if (names(x$sum.all)[4] != "Std. Mean Diff."){ 
+  if (!"Std. Mean Diff."%in%names(x$sum.all)){ 
 	stop("Not appropriate for unstandardized summary.  Run summary() with the standardize=TRUE option, and then plot.")
 	}
 	
