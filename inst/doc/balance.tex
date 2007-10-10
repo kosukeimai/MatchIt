@@ -110,7 +110,7 @@ after matching are used to create the plots.
 %  \end{center}
 %\end{figure}
 
-Two examples of the output from the {\tt plot()} command are shown
+Three examples of the output from the {\tt plot()} command are shown
 below.  If the empirical distributions are the same in the treated and
 control groups, the points in the Q-Q plots would all lie on the 45 degree line.
 Deviations from the 45 degree line indicate differences in the
@@ -121,12 +121,15 @@ weight given to that unit; matched units are in black while unmatched
 units are in grey. In the jitter
 plot, which can be created by setting \texttt{type = "jitter"}, you
 may identify units by observation name by clicking the first mouse
-button near the units. 
+button near the units.  The histograms can be plotted by setting \texttt{type = "hist"}. 
 
 
-\hspace{-0.75in}\includegraphics{figs/qqplotnn1}
-\includegraphics[scale=0.75]{figs/jitterplotnn}
-
+\hspace{-0.75in}
+\begin{center}
+\includegraphics[height=3in]{figs/jitterplotnn}\\
+\includegraphics[height=3in]{figs/qqplotnn1}
+\includegraphics[height=3in]{figs/hist}
+\end{center}
 
 %%% Local Variables: 
 %%% mode: latex
