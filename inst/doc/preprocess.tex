@@ -106,7 +106,7 @@ subclasses, and adds a variable to the output object indicating subclass members
 
 Nearest neighbor matching selects the $r$ (default=1) best control
 matches for each individual in the treatment group (excluding those
-discarded using the \texttt{discard} option).  The matching is done
+discarded using the \texttt{discard} option).  Matching is done
 using a distance measure specified by the {\tt distance} option
 (default=logit).  Matches are chosen for each treated unit one at a
 time, with the order specified by the \texttt{m.order} command (default=largest to smallest).  
@@ -138,7 +138,7 @@ helpful when there are not many appropriate control matches for the
 treated units.
 
 Optimal matching is performed with \MatchIt\ by setting \texttt{method
-  = "optimal"}, which automaticaly loads an add-on package called
+  = "optimal"}, which automatically loads an add-on package called
 \texttt{optmatch} \citep{Hansen04}.  The following example can also be
 run by typing {\tt demo(optimal)} at the R prompt.  We conduct 2:1 optimal
 ratio matching based on the propensity score from the logistic
@@ -163,9 +163,8 @@ estimated distance measure between each treated subject and each
 control subject within each subclass.
 
 Full matching can be performed with \MatchIt\ by setting
-\texttt{method = "full"}.  We use an add-on package called
-\texttt{optmatch} \citep{Hansen04}, which will be automatically
-installed when needed.  The following example with full matching
+\texttt{method = "full"}.  Just as with optimal matching, we use the \texttt{optmatch} package \citep{Hansen04}, which automatically loads when 
+needed.  The following example with full matching
 (using the default propensity score based on logistic regression) can
 also be run by typing {\tt demo(full)} at the R prompt:
 \begin{verbatim}
