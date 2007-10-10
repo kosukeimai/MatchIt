@@ -281,6 +281,15 @@ Liz     30   12     1    0       0      0    0    0 24910   1   1     1
 Gary    27   11     1    0       0      1    0    0  7506   1   1     1
 \end{verbatim}
 
+\subsection{How Can I See Outcomes of Matched Pairs?}
+
+To obtain outcomes of matched pairs, recall that the original dataset has unique row names corresponding to each of
+the observations.  The row names of \texttt{match.matrix} correspond to the names of the treated, and each
+of the cells corresponds to a name of matched controls.  So to obtain matched outcomes, you can use:
+
+\begin{verbatim}
+cbind(lalonde[row.names(foo$match.matrix),"re78"], lalonde[foo$match.matrix,"re78"])
+\end{verbatim}
 
 \subsection{How Do I Ensure Replicability As \MatchIt\ Versions Develop?}
 \label{subsec:vercontrol}
