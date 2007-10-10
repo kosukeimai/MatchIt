@@ -94,8 +94,8 @@ To load the Zelig package after installing it, type
                     = "convex.hull", data = lalonde)
 \end{verbatim}
   Then we check balance using the summary and plot procedures (which
-  we don't show here).  When we get balance as good as you are able to
-  get it, we run the parametric analysis:
+  we don't show here).  When the best balance is achieved, 
+  we run the parametric analysis:
 \begin{verbatim}
 > z.out0 <- zelig(re78 ~ treat + age + educ + black + hispan + nodegree + 
                   married + re74 + re75, data = match.data(m.out0), 
@@ -126,7 +126,9 @@ and finally compute the result and examine a summary:
 \end{verbatim}
   Then we check balance using the summary and plot procedures (which
   we don't show here).  We reestimate the matching procedure until we
-  get balance as good as possible.  Then we go to Zelig, and in this
+  achieve the best balance possible.  (The running examples here are meant merely to illustrate, not to suggest that we've achieved the best 
+balance.)  Then we 
+go to Zelig, and in this
   case choose to fit a linear least squares model to the control group
   only:
 \begin{verbatim}
@@ -235,16 +237,14 @@ answer as a simple, unadjusted difference in means.  General exact
 matching, as implemented in MatchIt, allows one-to-many matches, so to see 
 the same result we must weight when adjusting.  In other words: weighted 
 regression adjustment after general exact matching gives the identical 
-answer as a simple, unadjusted weighted difference in means.  Here is an 
+answer as a simple, unadjusted weighted difference in means.  For 
 example:
 
 \begin{verbatim}
-> ## exact matching
 > m.out <- matchit(treat ~ educ + black + hispan, data = lalonde, 
                    method = "exact")
-> ## matched data
 > m.data <- match.data(m.out)
-> ## weighted diff in means
+> ## weighted diff in means 
 > weighted.mean(mdata$re78[mdata$treat == 1], mdata$weights[mdata$treat==1]) 
         - weighted.mean(mdata$re78[mdata$treat==0], mdata$weights[mdata$treat==0])
 [1] 807
