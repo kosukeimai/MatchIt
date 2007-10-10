@@ -47,7 +47,7 @@ elements, when applicable:
     where \texttt{Means Treated}$= \mu_{X|T=1} = \frac{1}{n_1}
     \sum_{T=1} X_i$ and \texttt{Means Control}$= \mu_{X|T=0} =
     \frac{1}{n_0} \sum_{T=0} X_i$,
- \item standard deviation in the control group for all covariates $X$,  
+ \item standard deviation in the control group for all covariates $X$, where applicable, 
         $$\quad s_{x|T=0} = \sqrt{\frac{\sum_{i \in \{i: T_i=0\}}
         (X_i - \mu_{X|T=0})^2}{n_0-1} }.$$
   \item balance statistics of the original data (before matching),
@@ -59,7 +59,7 @@ elements, when applicable:
     will be given (\texttt{eQQ Med}, \texttt{eQQ Mean}, and
     \texttt{eQQ Max}, respectively). If {\tt standardize = TRUE}, the
     balance measures will be standardized.  Standardized mean
-    differences (\texttt{Std. Mean Diff.}), defined as
+    differences (\texttt{Std.\ Mean Diff.}), defined as
     $\frac{\mu_{X|T=1} - \mu_{X|T=0}}{s_{x|T=1}}$, as well as the
     median, mean, and maximum value of differences in empirical
     cumulative distribution functions for each covariate will be given
@@ -80,7 +80,7 @@ elements, when applicable:
     \mu_{wX|T=1} = \frac{1}{n_1} \sum_{T=1} w_iX_i$ and \texttt{Means
       Control}$=\mu_{wX|T=0} = \frac{1}{n_0} \sum_{T=0} w_iX_i$,
   \item weighted standard deviations in the matched control group for
-    all covariates $X$, where \texttt{SD} $= s_{wX} =
+    all covariates $X$, where applicable, where \texttt{SD} $= s_{wX} =
     \sqrt{\frac{1}{n} \sum_{i} (w_iX_i - \overline{X}^*)^2}$, where
     $\overline{X}^*$ is the weighted mean of $X$ in the matched
     control group, and
@@ -93,7 +93,7 @@ elements, when applicable:
     will be given (\texttt{eQQ Med}, \texttt{eQQ Mean}, and
     \texttt{eQQ Max}, respectively). If {\tt standardize = TRUE}, the
     balance measures will be standardized.  Standardized mean
-    differences (\texttt{Std. Mean Diff.}), defined as
+    differences (\texttt{Std.\ Mean Diff.}), defined as
     $\frac{\mu_{wX|T=1} - \mu_{wX|T=0}}{s_{x|T=1}}$, as well as the
     median, mean, and maximum value of differences in empirical
     cumulative distribution functions for each covariate will be given
