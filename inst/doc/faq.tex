@@ -173,17 +173,16 @@ For more information on missing data and imputation methods, see
 \section{Why Preprocessing?}
 
 The purpose of matching is to approximate an experimental template,
-where the matching procedure approximates random assignment of
-treatment in order to balance covariates between treatment and control
-groups.  Separation of the estimation procedure into two steps
-simulates the research design of an experiment, where no information
-on outcomes is known at the point of experimental design and
-randomization.  Much like an experimenter cannot easily rerun an
-experiment if the outcome was not satisfactory, the separation of the
-balancing process in \MatchIt\ from the analysis process afterward
-helps keep clear the goal of balancing control and treatment groups
-and makes it less likely that the user will inadvertently cook the
-books in his or her favor.
+where the matching procedure approximates blocking prior to random
+treatment assignment in order to balance covariates between treatment
+and control groups.  Separation of the estimation procedure into two
+steps simulates the research design of an experiment, where no
+information on outcomes is known at the point of experimental design
+and randomization.  The separation of the balancing process in
+\MatchIt\ from the analysis process afterward helps keep clear the
+goal of balancing control and treatment groups and makes it less
+likely that the user will inadvertently cook the books in his or her
+favor.
 
 
 %%% Local Variables: 
