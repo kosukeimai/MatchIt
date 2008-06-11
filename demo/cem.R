@@ -14,8 +14,8 @@ user.prompt()
 print(m.out)
 user.prompt()
 
-## balance diagnostics through statistics
-s.out <- summary(m.out, covariates = T)
+## balance diagnostics through statistics; standardize = T for plotting
+s.out <- summary(m.out, covariates = T, standardize = T)
 print(s.out)
 user.prompt()
 
