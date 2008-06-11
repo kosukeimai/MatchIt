@@ -86,31 +86,32 @@ To load the Zelig package after installing it, type
 \item[Model-Based Estimates] In our first example, we conduct a
   standard parametric analysis and compute quantities of interest in
   the most common way.  We begin with nearest neighbor matching with a
-  logistic regression-based propensity score, discarding with the
-  convex.hull \citep{KinZen06,KinZen07} option:
+  logistic regression-based propensity score, discarding control units
+  outside the convex hull of the treated units
+  \citep{KinZen06,KinZen07}:
 \begin{verbatim}
-> m.out0 <- matchit(treat ~ age + educ + black + hispan + nodegree + 
+> m.out <- matchit(treat ~ age + educ + black + hispan + nodegree + 
                     married + re74 + re75, method = "nearest", discard
-                    = "convex.hull", data = lalonde)
+                    = "hull.control", data = lalonde)
 \end{verbatim}
   Then we check balance using the summary and plot procedures (which
   we don't show here).  When the best balance is achieved, 
   we run the parametric analysis:
 \begin{verbatim}
-> z.out0 <- zelig(re78 ~ treat + age + educ + black + hispan + nodegree + 
-                  married + re74 + re75, data = match.data(m.out0), 
+> z.out <- zelig(re78 ~ treat + age + educ + black + hispan + nodegree + 
+                  married + re74 + re75, data = match.data(m.out), 
                   model = "ls")
 \end{verbatim}
   and then set the explanatory variables at their means (the default)
   and change the treatment variable from a 0 to a 1:
 \begin{verbatim}
-> x.out0 <- setx(z.out0, treat=0)
-> x1.out0 <- setx(z.out0, treat=1)
+> x.out <- setx(z.out, treat=0)
+> x1.out <- setx(z.out, treat=1)
 \end{verbatim}
 and finally compute the result and examine a summary:
 \begin{verbatim}
-> s.out0 <- sim(z.out1, x = x.out1)
-> summary(s.out0)
+> s.out <- sim(z.out, x = x.out, x1 = x1.out)
+> summary(s.out)
 \end{verbatim}
 
 \item[Average Treatment Effect on the Treated] We illustrate now how
