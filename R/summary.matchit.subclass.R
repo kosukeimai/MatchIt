@@ -83,9 +83,9 @@ summary.matchit.subclass <- function(object, interactions = FALSE,
   }
   if(object$call$sub.by=="treat") {
     wsub <- qn[1,]/sum(qn[1,])
-  } else if(sub.by=="control") {
+  } else if(object$call$sub.by=="control") {
     wsub <- qn[2,]/sum(qn[2,])
-  } else if(sub.by=="all") {
+  } else if(object$call$sub.by=="all") {
     wsub <- qn[3,]/sum(qn[3,])
   }
   sum.subclass <- sum.all
