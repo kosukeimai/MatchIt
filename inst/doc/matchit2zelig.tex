@@ -8,15 +8,18 @@ using R commands such as {\tt write.csv()} and {\tt write.table()} for
 ASCII files or {\tt write.dta()} in the {\tt foreign} package for a
 STATA binary file.
 
-When variable numbers of treated and control units have been matched to each other
-(e.g., through exact matching, full matching, or k:1 matching with replacement), the weights
-created by MatchIt should be used (e.g., in a weighted regression) to ensure that the matched treated and control groups
-are weighted up to be similar.  Users should also remember that the weights
-created by MatchIt estimate the average treatment effect on the treated, with
-the control units weighted to resemble the treated units.  See below for more detail on the weights.  
-With subclassification, estimates should be obtained within each subclass
-and then aggregated across subclasses.  When it is not possible to calculate an effect within each subclass,
-again the weights can be used to weight the matched units.
+When variable numbers of treated and control units have been matched
+to each other (e.g., through exact matching, full matching, or k:1
+matching with replacement), the weights created by MatchIt should be
+used (e.g., in a weighted regression) to ensure that the matched
+treated and control groups are weighted up to be similar.  Users
+should also remember that the weights created by MatchIt estimate the
+average treatment effect on the treated, with the control units
+weighted to resemble the treated units.  See below for more detail on
+the weights.  With subclassification, estimates should be obtained
+within each subclass and then aggregated across subclasses.  When it
+is not possible to calculate an effect within each subclass, again the
+weights can be used to weight the matched units.
 
 In this section, we show how to use
 \hlink{Zelig}{http://gking.harvard.edu/zelig/} with \MatchIt.  Zelig
@@ -127,11 +130,10 @@ and finally compute the result and examine a summary:
 \end{verbatim}
   Then we check balance using the summary and plot procedures (which
   we don't show here).  We reestimate the matching procedure until we
-  achieve the best balance possible.  (The running examples here are meant merely to illustrate, not to suggest that we've achieved the best 
-balance.)  Then we 
-go to Zelig, and in this
-  case choose to fit a linear least squares model to the control group
-  only:
+  achieve the best balance possible.  (The running examples here are
+  meant merely to illustrate, not to suggest that we've achieved the
+  best balance.)  Then we go to Zelig, and in this case choose to fit
+  a linear least squares model to the control group only:
 \begin{verbatim}
 > z.out1 <- zelig(re78 ~ age + educ + black + hispan + nodegree + 
                   married + re74 + re75, data = match.data(m.out1, "control"), 

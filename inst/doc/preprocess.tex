@@ -151,22 +151,24 @@ regression.
 \subsubsection{Full Matching}
 \label{subsubsec:full}
 
-Full matching is a particular type of subclassification that forms
-the subclasses in an optimal way \citep{Rosenbaum02, Hansen04}.  A fully
+Full matching is a particular type of subclassification that forms the
+subclasses in an optimal way \citep{Rosenbaum02, Hansen04}.  A fully
 matched sample is composed of matched sets, where each matched set
 contains one treated unit and one or more controls (or one control
-unit and one or more treated units).  As with subclassification, the only units not placed into a
-subclass will be those discarded (if a \texttt{discard} option is
-specified) because they are outside the range of common support.  Full
-matching is optimal in terms of minimizing a weighted average of the
-estimated distance measure between each treated subject and each
-control subject within each subclass.
+unit and one or more treated units).  As with subclassification, the
+only units not placed into a subclass will be those discarded (if a
+\texttt{discard} option is specified) because they are outside the
+range of common support.  Full matching is optimal in terms of
+minimizing a weighted average of the estimated distance measure
+between each treated subject and each control subject within each
+subclass.
 
 Full matching can be performed with \MatchIt\ by setting
-\texttt{method = "full"}.  Just as with optimal matching, we use the \texttt{optmatch} package \citep{Hansen04}, which automatically loads when 
-needed.  The following example with full matching
-(using the default propensity score based on logistic regression) can
-also be run by typing {\tt demo(full)} at the R prompt:
+\texttt{method = "full"}.  Just as with optimal matching, we use the
+\texttt{optmatch} package \citep{Hansen04}, which automatically loads
+when needed.  The following example with full matching (using the
+default propensity score based on logistic regression) can also be run
+by typing {\tt demo(full)} at the R prompt:
 \begin{verbatim}
 > m.out <- matchit(treat ~ age + educ + black + hispan + married +
                    nodegree + re74 + re75, data = lalonde, method = "full")
@@ -180,7 +182,7 @@ solution \citep{DiaSek05}.  The idea is to use a genetic search
 algorithm to find a set of weights for each covariate such that the a
 version of optimal balance is achieved after matching.  As currently
 implemented, matching is done with replacement using the matching
-method of \citet{AbaImb04} and balance is determined by two univariate
+method of \citet{AbaImb07} and balance is determined by two univariate
 tests, paired t-tests for dichotomous variables and a
 Kolmogorov-Smirnov test for multinomial and continuous variables, but
 these options can be changed.
@@ -196,6 +198,34 @@ typing {\tt demo(genetic)}:
                    re74 + re75, data = lalonde, method = "genetic")
 \end{verbatim}
 
+
+\subsubsection{Coarsened Exact Matching}
+\label{subsub:cem}
+
+Coarsened Exact Matching (CEM) is a Monotonoic Imbalance Bounding
+(MIB) matching method --- which means that the balance between the
+treated and control groups is chosen by the user ex ante rather than
+discovered through the usual laborious process of checking after the
+fact and repeatedly reestimating, and so that adjusting the imbalance
+on one variable has no effect on the maximum imbalance of any other.
+CEM also strictly bounds through ex ante user choice both the degree
+of model dependence and the average treatment effect estimation error,
+eliminates the need for a separate procedure to restrict data to
+common empirical support, meets the congruence principle, is robust to
+measurement error, works well with multiple imputation methods for
+missing data, and is extremely fast computationally even with very
+large data sets.  CEM also works well for multicategory treatments,
+determining blocks in experimental designs, and evaluating extreme
+counterfactuals \citep{IacKinPor08}.
+
+CEM can be performed with \MatchIt\ by setting \texttt{method =
+  "cem"}, which automatically loads the \texttt{cem} package.  The
+following examples of CEM (with automatic coarsening) can also be run
+by typing \texttt{demo(cem)}:
+\begin{verbatim}
+m.out <- matchit(treat ~ age + educ + black + hispan + married + nodegree 
+                 + re74 + re75, data = lalonde, method = "cem")
+\end{verbatim}
 
 %%% Local Variables: 
 %%% mode: latex

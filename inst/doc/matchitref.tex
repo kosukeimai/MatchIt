@@ -27,10 +27,11 @@
   \texttt{"nearest"}, nearest neighbor matching).  Currently,
   \texttt{"exact"} (exact matching), \texttt{"full"} (full matching),
   \texttt{"nearest"} (nearest neighbor matching), \texttt{"optimal"}
-  (optimal matching), \texttt{"subclass"} (subclassification), and
-  \texttt{"genetic"} (genetic matching) are available. Note that
-  within each of these matching methods, \MatchIt\ offers a variety of
-  options. See below for more details.
+  (optimal matching), \texttt{"subclass"} (subclassification),
+  \texttt{"genetic"} (genetic matching), and \texttt{"cem"} (coarsened
+  exact matching) are available. Note that within each of these
+  matching methods, \MatchIt\ offers a variety of options. See below
+  for more details.
   
 \item \texttt{verbose}: a logical value indicating whether to print
   the status of the matching algorithm (default = \texttt{FALSE}).
@@ -295,6 +296,24 @@ The available options are listed below.
   {\tt GenMatch()} function in the {\tt Matching} package. See {\tt
     help(GenMatch)} or\\
   \hlink{http://sekhon.polisci.berkeley.edu/library/Matching/html/GenMatch.html}{http://sekhon.polisci.berkeley.edu/library/Matching/html/GenMatch.html}
+  for details.
+\end{itemize}
+
+\paragraph{Additional Arguments for Coarsened Exact Matching}
+\label{subsubsec:inputs-cem}
+
+The available options are listed here:
+\begin{itemize}
+\item{cutpoints} named list each describing the cutpoints for the
+    variables.  Each list element is either a vector of cutpoints, a
+    number of cutpoints, a method for automatic bin contruction.
+\item{k2k} return k-to-k matching?
+\item{verbose} controls level of verbosity
+\item{dist} user defined distance function 
+\item {\tt ...}: additional minor inputs that can be passed to the
+  {\tt cem()} function in the {\tt cem} package. See {\tt
+    help(cem)} or
+  \hlink{http://gking.harvard.edu/cem}{http://gking.harvard.edu/cem}
   for details.
 \end{itemize}
 
