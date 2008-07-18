@@ -41,8 +41,7 @@ matchit <- function(formula, data, method = "nearest", distance = "logit",
   else if (is.numeric(distance)){
     out1 <- NULL
     discarded <- discard(treat, distance, discard, X)
-  }
-  else {
+  } else {
     if (is.null(distance.options$formula))
       distance.options$formula <- formula
     if (is.null(distance.options$data))
@@ -51,6 +50,7 @@ matchit <- function(formula, data, method = "nearest", distance = "logit",
     discarded <- discard(treat, out1$distance, discard, X)
     if (reestimate) {
       distance.options$data <- data[!discarded,]
+      distance.options$weights <- distance.options$weights[!discard]
       tmp <- out1
       out1 <- do.call(fn1, distance.options)
       tmp$distance[!discarded] <- out1$distance
