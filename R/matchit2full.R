@@ -9,10 +9,11 @@ matchit2full <- function(treat, X, data, distance, discarded,
   
   ## full matching for undiscarded units
   ttt <- treat[!discarded]
+  ddd <- distance[!discarded]
   n0 <- length(ttt[ttt==0])
   n1 <- length(ttt[ttt==1])
-  d1 <- distance[ttt==1]
-  d0 <- distance[ttt==0]
+  d1 <- ddd[ttt==1]
+  d0 <- ddd[ttt==0]
   d <- matrix(0, ncol=n0, nrow=n1)
   rownames(d) <- names(ttt[ttt==1])
   colnames(d) <- names(ttt[ttt==0])
