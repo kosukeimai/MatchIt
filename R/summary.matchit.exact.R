@@ -20,9 +20,14 @@ summary.matchit.exact <- function(object, covariates = FALSE, ...) {
                        length(treat[qi & !is.na(qi)]),as.numeric(XX[qi,,drop=F][1,])) 
     }
   }
-
+  ntab <- table(factor(!is.na(object$subclass),
+                       levels=c("TRUE","FALSE")), treat)
+  nn <- rbind(table(treat),
+             ntab[c("TRUE","FALSE"),])
+  dimnames(nn) <- list(c("All","Matched","Discarded"),
+                       c("Control","Treated"))
   ## output
-  res <- list(q.table = q.table, subclass = object$subclass,
+  res <- list(q.table = q.table, nn = nn, subclass = object$subclass,
               treat = object$treat, call = object$call)
   class(res) <- c("summary.matchit.exact", "summary.matchit")
   return(res)
