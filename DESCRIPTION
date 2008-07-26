@@ -7,7 +7,8 @@ Author: Daniel Ho <daniel.e.ho@gmail.com>,
         Gary King <king@harvard.edu>,
         Elizabeth Stuart <stuart@stat.harvard.edu>
 Maintainer: Kosuke Imai <kimai@Princeton.Edu>
-Depends: R (>= 2.6), MASS, optmatch, Matching, WhatIf, nnet, rpart, mgcv, cem
+Depends: R (>= 2.6), MASS, optmatch, Matching, WhatIf, nnet, rpart, mgcv
+Suggests: cem
 Description:  MatchIt selects matched samples of the
   the original treated and control groups with similar
   covariate distributions -- can be used to match exactly
