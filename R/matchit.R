@@ -4,12 +4,17 @@ matchit <- function(formula, data, method = "nearest", distance = "logit",
 
   #Checking input format
   #data input
+  mcall <- match.call()
   if(is.null(data)) stop("Dataframe must be specified",call.=FALSE)
   if(!is.data.frame(data)){
     stop("Data must be a dataframe",call.=FALSE)}
-  if(sum(is.na(data))>0)
-    stop("Missing values exist in the data")
-
+  #if(sum(is.na(data))>0)
+  #  stop("Missing values exist in the data")
+  # list-wise deletion
+  allvars <- all.vars(mcall)
+  varsindata <- colnames(data)[colnames(data) %in% all.vars(mcall)]
+  data <- na.omit(subset(data, select = varsindata))
+  
   ## 7/13/06: Convert character variables to factors as necessary
   ischar <- rep(0, dim(data)[2])
   for (i in 1:dim(data)[2]) 
@@ -37,8 +42,7 @@ matchit <- function(formula, data, method = "nearest", distance = "logit",
     distance <- out1 <- discarded <- NULL
     if (!is.null(distance))
       warning("distance is set to `NULL' when exact matching is used.")
-  } 
-  else if (is.numeric(distance)){
+  } else if (is.numeric(distance)){
     out1 <- NULL
     discarded <- discard(treat, distance, discard, X)
   } else {
@@ -63,7 +67,7 @@ matchit <- function(formula, data, method = "nearest", distance = "logit",
   out2 <- do.call(fn2, list(treat, X, data, distance=distance, discarded, ...)) 
   
   ## putting all the results together
-  out2$call <- match.call()
+  out2$call <- mcall
   out2$model <- out1$model
   out2$formula <- formula
   out2$treat <- treat
