@@ -8,12 +8,12 @@ matchit <- function(formula, data, method = "nearest", distance = "logit",
   if(is.null(data)) stop("Dataframe must be specified",call.=FALSE)
   if(!is.data.frame(data)){
     stop("Data must be a dataframe",call.=FALSE)}
-  #if(sum(is.na(data))>0)
-  #  stop("Missing values exist in the data")
+  if(sum(is.na(data))>0)
+    stop("Missing values exist in the data")
   # list-wise deletion
-  allvars <- all.vars(mcall)
-  varsindata <- colnames(data)[colnames(data) %in% all.vars(mcall)]
-  data <- na.omit(subset(data, select = varsindata))
+  # allvars <- all.vars(mcall)
+  # varsindata <- colnames(data)[colnames(data) %in% all.vars(mcall)]
+  # data <- na.omit(subset(data, select = varsindata))
   
   ## 7/13/06: Convert character variables to factors as necessary
   ischar <- rep(0, dim(data)[2])
