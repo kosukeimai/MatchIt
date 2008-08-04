@@ -59,12 +59,18 @@ matchit2subclass <- function(treat, X, data, distance, discarded,
     if(subclass<=0){stop("Subclass must be a positive vector",call.=FALSE)}
     sprobs <- seq(0,1,length=(round(subclass)+1))
     sprobs <- sprobs[2:(length(sprobs)-1)]
-    if(sub.by=="treat")   
-      q <- c(0,quantile(p1,probs=sprobs,na.rm=TRUE),1)
+    min.dist <- min(distance,na.rm=TRUE)-0.01 
+    max.dist <- max(distance,na.rm=TRUE)+0.01
+    if(sub.by=="treat")
+      q <- c(min.dist,quantile(p1,probs=sprobs,na.rm=TRUE),
+             max.dist)
     else if(sub.by=="control") 
-      q <- c(0,quantile(p0,probs=sprobs,na.rm=TRUE),1)
+      q <- c(min.dist,quantile(p0,probs=sprobs,na.rm=TRUE),
+             max.dist)
     else if(sub.by=="all") 
-      q <- c(0,quantile(distance,probs=sprobs,na.rm=TRUE),1)
+      q <- c(min.dist,
+             quantile(distance,probs=sprobs,na.rm=TRUE),
+             max.dist)
     else 
       stop("Must specify a valid sub.by",call.=FALSE)
   }
@@ -77,7 +83,7 @@ matchit2subclass <- function(treat, X, data, distance, discarded,
     q2 <- q[i+1]
     psclass <- psclass+i*as.numeric(distance<q2 & distance>=q1)
   }
-  
+
   ## No subclass for discarded or unmatched units
   psclass[in.sample==0] <- NA
   psclass[!matched] <- NA
