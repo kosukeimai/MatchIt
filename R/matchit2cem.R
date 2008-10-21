@@ -9,7 +9,7 @@
 # strata. 
 #
 matchit2cem <- function(treat, X, data, distance, discarded,
-                            ratio = 1, verbose = FALSE, ...) {
+                            ratio = 1, verbose = FALSE, k2k.method=NULL, ...) {
 
   
   if (!("cem" %in% .packages(all = TRUE)))
@@ -27,7 +27,9 @@ matchit2cem <- function(treat, X, data, distance, discarded,
   # treat does not have the original column name. 
   cem.data <- as.data.frame(cbind(treat,X))
   
-  mat <- cem(treatment="treat",data=cem.data,verbose=as.integer(verbose)+1,...)
+  mat <-
+    cem(treatment="treat",data=cem.data,verbose=as.integer(verbose)+1,
+        method=k2k.method,...)
 
   # here we create a column vector where the matched entry get its stratum
   # and the unmatched entry gets an NA.
