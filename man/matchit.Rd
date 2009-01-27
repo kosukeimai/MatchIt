@@ -85,18 +85,13 @@ for the complete list of
     matching, and not allow them to be used at all in the matching
     procedure.  Note that discarding units may change the quantity of
     interest being estimated.
-
     \item{none}{(default) discards no units before matching.} 
     \item{both}{discards all units (treated and control) that are
-      outside the support of the distance measure.  
-    }
+      outside the support of the distance measure.}
     \item{control}{discards only control units outside the
-      support of the distance measure of the treated units.
-    }
+      support of the distance measure of the treated units.}
     \item{treat}{discards only treated units outside the support
-      of the distance measure of the control units.  
-    }
-  }
+      of the distance measure of the control units.}}
   \item{reestimate}{This argument specifies whether the model for
     distance measure should be re-estimated after units are
     discarded. The input must be a logical value. The default is

@@ -15,7 +15,7 @@ weights = "weights", subclass = "subclass")
 \arguments{
 
   \item{object}{The output object from {\tt matchit()}. This is
-    an required input.
+    a required input.
   } 
   \item{group}{This argument specifies for which matched group the user
     wants to extract the data. Available options are \code{"all"} (all
@@ -47,8 +47,7 @@ weights = "weights", subclass = "subclass")
     index for each unit (if applicable).
     See the \url{http://gking.harvard.edu/matchit/} for the complete
     documentation and type \code{demo(match.data)} at the R prompt to
-    see a demonstration of the code.
-  }
+    see a demonstration of the code.}
 }
 
 \seealso{Please use \code{help.matchit} to access the matchit reference

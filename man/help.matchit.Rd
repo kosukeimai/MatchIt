@@ -6,7 +6,7 @@
 
 \description{
   The \code{help.matchit} command launches html help for Matchit commands
-  and supported models.  The full manual is available online at
+  and supported methods.  The full manual is available online at
   \url{http://gking.harvard.edu/matchit}.
   }
 
