@@ -91,7 +91,8 @@ for the complete list of
     \item{control}{discards only control units outside the
       support of the distance measure of the treated units.}
     \item{treat}{discards only treated units outside the support
-      of the distance measure of the control units.}}
+      of the distance measure of the control units.}
+  }
   \item{reestimate}{This argument specifies whether the model for
     distance measure should be re-estimated after units are
     discarded. The input must be a logical value. The default is

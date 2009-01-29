@@ -14,7 +14,7 @@ weights = "weights", subclass = "subclass")
 
 \arguments{
 
-  \item{object}{The output object from {\tt matchit()}. This is
+  \item{object}{The output object from \code{matchit}. This is
     a required input.
   } 
   \item{group}{This argument specifies for which matched group the user
