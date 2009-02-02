@@ -53,11 +53,9 @@ numerically using \code{summary(matchitobject)}.
     works. For example, \code{x1:x2} represents the first order
     interaction term between \code{x1} and \code{x2}, and \code{I(x1^2)}
 represents the square term of \code{x1}. See \code{help(formula)}
-    for details.
-  }
+    for details.}
   \item{data}{This argument specifies the data frame containing the
-    variables called in \code{formula}.
-  }
+    variables called in \code{formula}.}
   \item{method}{This argument specifies a matching method. Currently,
     \code{"exact"} (exact matching), \code{"full"} (full matching),
     \code{"genetic"} (genetic matching), \code{"nearest"} (nearest
@@ -66,79 +64,60 @@ represents the square term of \code{x1}. See \code{help(formula)}
     \code{"nearest"}. Note that within each of these matching methods,
     \emph{MatchIt} offers a variety of options. See
     \url{http://gking.harvard.edu/matchit/docs/Inputs.html} for the
-complete list
-    of supported options.
-  }
+    complete list of supported options.}
   \item{distance}{This argument specifies the method used to estimate the
     distance measure. The default is logistic regression,
     \code{"logit"}. A variety of other methods are available. See
     \url{http://gking.harvard.edu/matchit/docs/All_Matching_Methods.html}
-for the complete list of
-    supported methods.
-  }
+    for the complete list of supported methods.}
   \item{distance.options}{ This optional argument specifies the optional
     arguments that are passed to the model for estimating the distance
-    measure. The input to this argument should be a list.
-  }
+    measure. The input to this argument should be a list.}
   \item{discard}{This argument specifies whether to discard units that
     fall outside some measure of support of the distance score before
     matching, and not allow them to be used at all in the matching
     procedure.  Note that discarding units may change the quantity of
-    interest being estimated.
-    \item{none}{(default) discards no units before matching.} 
-    \item{both}{discards all units (treated and control) that are
-      outside the support of the distance measure.}
-    \item{control}{discards only control units outside the
-      support of the distance measure of the treated units.}
-    \item{treat}{discards only treated units outside the support
+    interest being estimated.  The options are: \code{"none"} (default), which discards no units before matching,
+    \code{"both"}, which discards all units (treated and control) that are
+      outside the support of the distance measure,
+    \code{"control"}, which discards only control units outside the
+      support of the distance measure of the treated units, and
+    \code{"treat"}, which discards only treated units outside the support
       of the distance measure of the control units.}
-  }
   \item{reestimate}{This argument specifies whether the model for
     distance measure should be re-estimated after units are
     discarded. The input must be a logical value. The default is
-    \code{FALSE}.
-  }
+    \code{FALSE}.}
   \item{...}{Additional arguments to be passed to a variety of matching
     methods. See \url{http://gking.harvard.edu/matchit/??} for the
-    complete list of options.
-  }
+    complete list of options.}
 }
 
 \value{
-  \item{call}{The original \code{matchit} call.
-  }
+  \item{call}{The original \code{matchit} call.}
   \item{formula}{The formula used to specify the model for
-    estimating the distance measure.
-  }
+    estimating the distance measure.}
   \item{model}{The output of the model used to estimate
     the distance measure.  \code{summary(m.out$model)} will give the
     summary of the model where \code{m.out} is the output object from
-    \code{matchit}.
-  }
+    \code{matchit}.}
   \item{match.matrix}{An \eqn{n_1} by \code{ratio} matrix
-    where\cr\cr
-    the row names, which can be obtained through
+    where the row names, which can be obtained through
     \code{row.names(match.matrix)}, represent the names of the
     treatment units, which come from the data frame specified in
-    \code{data}.\cr\cr
-    
-    each column stores the name(s) of the control unit(s) matched
+    \code{data}.  Each column stores the name(s) of the control unit(s) matched
     to the treatment unit of that row. For example, when the
     \code{ratio} input for nearest neighbor or optimal matching is
     specified as 3, the three columns of 
     \code{match.matrix} represent the three control units matched to
-    one treatment unit).\cr\cr
-    
-    \code{NA} indicates that the treatment unit was not matched.
-  }   
+    one treatment unit).    
+    \code{NA} indicates that the treatment unit was not matched.}   
   \item{discarded}{A vector of length $n$ that displays
     whether the units were ineligible for matching due to common
     support restrictions.  It equals \code{TRUE} if unit \eqn{i} was
-    discarded, and it is set to \code{FALSE} otherwise.
-  }
+    discarded, and it is set to \code{FALSE} otherwise.}
   \item{distance}{A vector of length \eqn{n} with the estimated
-    distance measure for each unit.
-  }
+    distance measure for each unit.}
   \item{weights}{A vector of length \eqn{n} that provides the
     weights assigned to each unit in the matching process.  Unmatched
     units have weights equal to \code{0}. Matched treated units have
@@ -146,24 +125,18 @@ for the complete list of
     to the number of treatment units to which it was matched, and the sum of
     the control weights is equal to the number of uniquely matched
     control units. See
-\url{http://gking.harvard.edu/matchit/docs/How_Exactly_are.html} for
-more
-    details.
-  }
+    \url{http://gking.harvard.edu/matchit/docs/How_Exactly_are.html} for  
+    more details.}
   \item{subclass}{The subclass index in an ordinal
     scale from 1 to the total number of subclasses as specified in
     \code{subclass} (or the total number of subclasses from full or
-    exact matching).  Unmatched units have \code{NA}.
-  }
+    exact matching).  Unmatched units have \code{NA}.}
   \item{q.cut}{The subclass cut-points that classify the
-    distance measure.
-  }
+    distance measure.}
   \item{treat}{The treatment indicator from
-    \code{data} (the left-hand side of \code{formula}).
-  }
+    \code{data} (the left-hand side of \code{formula}).}
   \item{X}{The covariates used for estimating the
-    distance measure (the right-hand side of \code{formula}).
-  }
+    distance measure (the right-hand side of \code{formula}).}
 }
 
 \seealso{Please use \code{help.matchit} to access the matchit reference
@@ -172,14 +145,15 @@ more
 }
 
 \references{Daniel Ho, Kosuke Imai, Gary King, and Elizabeth Stuart
-  (2004) `Matching as Nonparametric Preprocessing for Improving Parametric
-  Causal Inference,'' preprint available at
-  \url{http://gking.harvard.edu/files/abs/matchp-abs.shtml} }
+  (2007).  Matching as Nonparametric Preprocessing for Reducing Model Dependence in Parametric
+  Causal Inference.  Political Analysis 15(3): 199-236.
+  \url{http://gking.harvard.edu/files/abs/matchp-abs.shtml} 
+}
 
 \author{
-  Daniel Ho <\email{daniel.ho@yale.edu}>;  Kosuke Imai <\email{kimai@princeton.edu}>; Gary King
-  <\email{king@harvard.edu}>; Elizabeth
-  Stuart<\email{stuart@stat.harvard.edu}> }
+  Daniel Ho \email{daniel.ho@yale.edu};  Kosuke Imai \email{kimai@princeton.edu}; Gary King
+  \email{king@harvard.edu}; Elizabeth
+  Stuart\email{estuart@jhsph.edu} }
 
 \keyword{environment}
 

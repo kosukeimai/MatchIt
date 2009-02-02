@@ -21,7 +21,7 @@ dollars.  "re78" is income in 1978, in U.S. dollars. }
 
 \references{
 	Lalonde, R. (1986). Evaluating the econometric evaluations of training programs 
-	with experimental data. American Economic Review 76: 604-620. \\
+	with experimental data. American Economic Review 76: 604-620.
 
 	Dehejia, R.H. and Wahba, S. (1999).  Causal Effects in Nonexperimental Studies: 
 	Re-Evaluating the Evaluation  of Training Programs.  Journal of the American 

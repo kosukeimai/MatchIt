@@ -15,7 +15,7 @@ user.prompt()
 
 \seealso{\code{readline}}
 
-\author{Olivia Lau <\email{olau@fas.harvard.edu}>
+\author{Olivia Lau \email{olau@fas.harvard.edu}
 }
 
 \examples{

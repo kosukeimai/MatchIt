@@ -30,7 +30,7 @@ help.matchit(object)
                                                                                                                                                              
 \author{
   Daniel Ho <\email{daniel.ho@yale.edu}>;  Kosuke Imai <\email{kimai@princeton.edu}>; Gary King
-  <\email{king@harvard.edu}>; Elizabeth Stuart<\email{stuart@stat.harvard.edu}>
+  <\email{king@harvard.edu}>; Elizabeth Stuart<\email{estuart@jhsph.edu}>
 }
 
 \keyword{documentation}
