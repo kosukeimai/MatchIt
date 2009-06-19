@@ -1,0 +1,20 @@
+citHeader("To cite MatchIt in publications use:")
+
+citEntry(entry = "Article",
+  title        = "{MatchIt}: Nonparametric Preprocessing for Parametric Causal Inference",
+  author       = personList(as.person("Daniel E. Ho"),
+                   as.person("Kosuke Imai"),
+                   as.person("Gary King"),
+                   as.person("Elizabeth A. Stuart")),
+  journal      = "Journal of Statistical Software",
+  year         = "2009",
+  note         = "Forthcoming",
+  url          = "http://www.jstatsoft.org/",
+
+  textVersion  =
+  paste("Daniel E. Ho, Kosuke Imai, Gary King, Elizabeth A. Stuart (2009).",
+        "MatchIt: Nonparametric Preprocessing for Parametric Causal Inference.",
+        "Journal of Statistical Software, Forthcoming.",
+        "URL http://www.jstatsoft.org/.")
+)
+
