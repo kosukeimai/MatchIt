@@ -81,55 +81,53 @@ subclass are shown.
 
 We can also examine the balance graphically using the \texttt{plot()}
 command, which provides three types of plots: jitter plots of the
-distance measure, Q-Q plots of each covariate, and histograms of the 
-distance measure.  For subclassification, separate Q-Q plots are
+distance measure, Q-Q plots of each covariate, and histograms of the
+distance measure.  For subclassification, separate Q-Q plots can be
 printed for each subclass.  The jitter plot for subclassification is
 the same as that for other types of matching, with the addition of
-vertical lines indicating the subclass cut-points.  With the histogram option,
-4 histograms are provided: the original treated and control groups and the matched
-treated and control groups.  For the Q-Q plots and the histograms, the weights that result
-after matching are used to create the plots.
-
-%\begin{figure}[tbp]
-%  \begin{center}
-%    \includegraphics{figs/qqplotnn1}
-%    \includegraphics{figs/qqplotnn2}
-%    \hfill
-%    \caption{Sample diagnostic QQ plots with nearest neighbor matching}
-%    \label{diagqqnn}
-%  \end{center}
-%\end{figure}
-
-%\begin{figure}[tbp]
-%  \begin{center}
-%    \includegraphics{figs/jitterplotnn}
-%    \hfill
-%    \caption{Sample diagnostic jitter plot: Matched units shown in
-%      black, unmatched units shown in grey.}
-%    \label{diagjitternn}
-%  \end{center}
-%\end{figure}
+vertical lines indicating the subclass cut-points.  With the histogram
+option, 4 histograms are provided: the original treated and control
+groups and the matched treated and control groups.  For the Q-Q plots
+and the histograms, the weights that result after matching are used to
+create the plots.
 
 Three examples of the output from the {\tt plot()} command are shown
-below.  If the empirical distributions are the same in the treated and
-control groups, the points in the Q-Q plots would all lie on the 45 degree line.
-Deviations from the 45 degree line indicate differences in the
-empirical distribution.  The jitter plot shows the overall
-distribution of propensity scores in the treated and control groups.
-In the jitter plot, the size of each diamond is proportional to the
-weight given to that unit; matched units are in black while unmatched
-units are in grey. In the jitter
-plot, which can be created by setting \texttt{type = "jitter"}, you
-may identify units by observation name by clicking the first mouse
-button near the units.  The histograms can be plotted by setting \texttt{type = "hist"}. 
+in Figure~\ref{fig:plotcommandoutput}.  If the empirical distributions
+are the same in the treated and control groups, the points in the Q-Q
+plots would all lie on the 45 degree line (lower left panel of
+Figure~\ref{fig:plotcommandoutput}).  Deviations from the 45 degree
+line indicate differences in the empirical distribution.  The jitter
+plot (top panel) shows the overall distribution of propensity scores
+in the treated and control groups.  In the jitter plot, which can be
+created by setting \texttt{type = "jitter"}, the size of each point is
+proportional to the weight given to that unit.  Observation names can
+be interactively identified by clicking the first mouse button near
+the units.  The histograms (lower right panel) can be plotted by
+setting \texttt{type = "hist"}.
 
-
-\hspace{-0.75in}
-\begin{center}
-\includegraphics[height=3in]{figs/jitterplotnn}\\
-\includegraphics[height=3in]{figs/qqplotnn1}
-\includegraphics[height=3in]{figs/hist}
+\begin{figure}
+  \begin{center}
+  \includegraphics[height=2.7in, keepaspectratio=true]{figs/jitterplotnn.pdf}
+  \includegraphics[height=3in,keepaspectratio=true]{figs/qqplotnn1.pdf}
+  \includegraphics[height=3in,keepaspectratio=true]{figs/hist.pdf}
+  \caption{Examples of the three types of output from the
+    \texttt{plot} command resulting from matching on the
+    /texttt{lalonde} data set based on real earnings in 1974
+    (\texttt{re74}) divided by 1000, real earnings in 1975
+    (\texttt{re75}) divided by 1000, years of education
+    (\texttt{educ}), Hispanic (\texttt{hispan}) and marital status
+    (\texttt{married}).  Observations in both the treated and the
+    control groups outside the support of the distance measure were
+    discarded.  The upper plot shows the jitter plot of the distance
+    measure.  The lower left plot shows the QQ plots for the first
+    three covariates (\texttt{I(re74/1000)}, \texttt{I(re75/1000)},
+    \texttt{educ}).  The lower right plot shows the histograms of the
+    density of propensity scores for observations before and after
+    matching.}
+  \label{fig:plotcommandoutput}
 \end{center}
+\end{figure}
+
 
 %%% Local Variables: 
 %%% mode: latex
