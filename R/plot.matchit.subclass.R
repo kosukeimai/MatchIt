@@ -28,17 +28,17 @@ plot.matchit.subclass <- function(x, discrete.cutoff=5,
           if(ans!=0)
             {
               matchit.qqplot(x,discrete.cutoff,which.subclass=ans,
-                             interactive = interactive, which.xs=which.xs)     
+                             interactive = interactive, which.xs=which.xs,...)     
             }
         }
     } else {
       matchit.qqplot(x,discrete.cutoff,which.subclass=subclass,
-                     interactive=interactive, which.xs=which.xs)
+                     interactive=interactive, which.xs=which.xs,...)
     }
   } else if(type=="jitter"){
-    jitter.pscore(x, interactive=interactive)
+    jitter.pscore(x, interactive=interactive,...)
   } else if(type=="hist"){
-    hist.pscore(x)
+    hist.pscore(x,...)
   } else {
     stop("Invalid type")
   }

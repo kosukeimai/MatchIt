@@ -8,11 +8,11 @@ plot.matchit <- function(x, discrete.cutoff=5, type="QQ",
   if(type=="QQ"){
     matchit.qqplot(x=x,discrete.cutoff=discrete.cutoff,
                    numdraws=numdraws, interactive=interactive,
-                   which.xs = which.xs)
+                   which.xs = which.xs, ...)
   } else if(type=="jitter"){
-    jitter.pscore(x, interactive=interactive)
+    jitter.pscore(x, interactive=interactive,...)
   } else if(type=="hist"){
-    hist.pscore(x)
+    hist.pscore(x,...)
   } else {
     stop("Invalid type")
   }

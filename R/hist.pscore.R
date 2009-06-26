@@ -1,4 +1,4 @@
-hist.pscore <- function(x, numdraws=5000){
+hist.pscore <- function(x, numdraws=5000, xlab="Propensity Score", main=NULL, freq=F, xlim = NULL,...){
   treat <- x$treat
   pscore <- x$distance
   weights <- x$weights
@@ -24,18 +24,37 @@ hist.pscore <- function(x, numdraws=5000){
     pscore.control.matched <- pscore[treat==0 & weights!=0]
   }
   par(mfrow=c(2,2))
-  hist(pscore[treat==1],xlim=range(na.omit(pscore)),
-       xlab="Propensity Score", freq=F,
-       main="Raw Treated")
-  hist(pscore.treated.matched,xlim=range(na.omit(pscore)),
-       xlab="Propensity Score", freq=F,
-       main="Matched Treated")
-  if(!is.null(q.cut)){abline(v=q.cut,col="grey",lty=1)}
-  hist(pscore[treat==0],xlim=range(na.omit(pscore)),
-       xlab="Propensity Score", freq=F,
-       main="Raw Control")
-  hist(pscore.control.matched,xlim=range(na.omit(pscore)),
-       xlab="Propensity Score", freq=F,
-       main="Matched Control")
-  if(!is.null(q.cut)){abline(v=q.cut,col="grey",lty=1)}
+  if(!is.null(xlim)){warning("xlim may not be user specified. xlim returned to default.")}
+  xlim <- range(na.omit(pscore))
+  if(is.null(main)){
+    hist(pscore[treat==1],xlim=xlim,
+       xlab=xlab, freq=freq,
+       main="Raw Treated", ...)
+    hist(pscore.treated.matched,xlim=xlim,
+       xlab=xlab, freq=freq,
+       main="Matched Treated",...)
+    if(!is.null(q.cut)){abline(v=q.cut,col="grey",lty=1)}
+    hist(pscore[treat==0],xlim=xlim,
+       xlab=xlab, freq=freq,
+       main="Raw Control",...)
+    hist(pscore.control.matched,xlim=xlim,
+       xlab=xlab, freq=freq,
+       main="Matched Control",...)
+    if(!is.null(q.cut)){abline(v=q.cut,col="grey",lty=1)}
+  }else{
+    hist(pscore[treat==1],xlim=xlim,
+       xlab=xlab, freq=freq,
+       main=main, ...)
+    hist(pscore.treated.matched,xlim=xlim,
+       xlab=xlab, freq=freq,
+       main=main,...)
+    if(!is.null(q.cut)){abline(v=q.cut,col="grey",lty=1)}
+    hist(pscore[treat==0],xlim=xlim,
+       xlab=xlab, freq=freq,
+       main=main,...)
+    hist(pscore.control.matched,xlim=xlim,
+       xlab=xlab, freq=freq,
+       main=main,...)
+    if(!is.null(q.cut)){abline(v=q.cut,col="grey",lty=1)}
+  }
 }

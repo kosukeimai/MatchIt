@@ -1,4 +1,4 @@
-jitter.pscore <- function(x, interactive){
+jitter.pscore <- function(x, interactive,pch=1,cex=NULL,...){
   treat <- x$treat
   pscore <- x$distance
   weights <- x$weights
@@ -10,16 +10,27 @@ jitter.pscore <- function(x, interactive){
   maxp <- max(pscore,na.rm=T)
   plot(pscore,xlim=c(minp,maxp+0.1*(maxp-minp)),ylim=c(-1.5,2.5),
        type="n",ylab="",xlab="Propensity Score",
-       axes=F,main="Distribution of Propensity Scores")
+       axes=F,main="Distribution of Propensity Scores",...)
   if(!is.null(q.cut)){abline(v=q.cut,col="grey",lty=1)}
-  points(pscore[treat==1&weights!=0],jitp[treat==1&weights!=0],
-         pch=18,cex=cwt[treat==1&weights!=0])
-  points(pscore[treat==1&weights==0],jitp[treat==1&weights==0],
-         pch=5,col="grey",cex=0.5)
-  points(pscore[treat==0&weights!=0],jitp[treat==0&weights!=0],
-         pch=18,cex=cwt[treat==0&weights!=0])
-  points(pscore[treat==0&weights==0],jitp[treat==0&weights==0],
-         pch=5,col="grey",cex=0.5)
+  if(is.null(cex)){
+   points(pscore[treat==1&weights!=0],jitp[treat==1&weights!=0],
+        pch=pch,cex=cwt[treat==1&weights!=0],...)
+   points(pscore[treat==0&weights!=0],jitp[treat==0&weights!=0],
+        pch=pch,cex=cwt[treat==0&weights!=0],...)
+   points(pscore[treat==1&weights==0],jitp[treat==1&weights==0],
+        pch=pch,cex=1,...)
+   points(pscore[treat==0&weights==0],jitp[treat==0&weights==0],
+        pch=pch,cex=1,...)
+  }else{
+    points(pscore[treat==1&weights!=0],jitp[treat==1&weights!=0],
+        pch=pch,cex=cex,...)
+    points(pscore[treat==0&weights!=0],jitp[treat==0&weights!=0],
+         pch=pch,cex=cex,...)
+    points(pscore[treat==1&weights==0],jitp[treat==1&weights==0],
+         pch=pch,cex=cex,...)
+    points(pscore[treat==0&weights==0],jitp[treat==0&weights==0],
+         pch=pch,cex=cex,...)
+  }
   axis(1)
   text(sum(range(na.omit(pscore)))/2,2.5,"Unmatched Treatment Units")
   text(sum(range(na.omit(pscore)))/2,1.5,"Matched Treatment Units")
