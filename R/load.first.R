@@ -6,5 +6,4 @@
   cat("##  Please refer to http://gking.harvard.edu/matchit for full documentation \n",
       "##  or help.matchit() for help with commands supported by MatchIt.\n##\n",
       sep="")
-  options(digits = 4)
 }
