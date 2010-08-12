@@ -137,6 +137,7 @@ represents the square term of \code{x1}. See \code{help(formula)}
     \code{data} (the left-hand side of \code{formula}).}
   \item{X}{The covariates used for estimating the
     distance measure (the right-hand side of \code{formula}).}
+  \item{nn}{A basic summary table of matched data (e.g., the number of matched units)}
 }
 
 \seealso{Please use \code{help.matchit} to access the matchit reference
