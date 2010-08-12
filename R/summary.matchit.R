@@ -69,24 +69,8 @@ summary.matchit <- function(object, interactions = FALSE,
   else
     names(reduction) <- c("Mean Diff.", "eQQ Med","eQQ Mean", "eQQ Max")
     
-  ## Sample sizes
-  nn <- matrix(0, ncol=2, nrow=4)
-  nn[1,] <- c(sum(object$treat==0), sum(object$treat==1))
-  nn[2,] <- c(sum(object$treat==0 & object$weights>0),
-              sum(object$treat==1 & object$weights>0))
-  nn[3,] <- c(sum(object$treat==0 & object$weights==0 & object$discarded==0),
-              sum(object$treat==1 & object$weights==0 & object$discarded==0))
-  nn[4,] <- c(sum(object$treat==0 & object$weights==0 & object$discarded==1),
-              sum(object$treat==1 & object$weights==0 & object$discarded==1))
-
-  dimnames(nn) <- list(c("All","Matched","Unmatched","Discarded"),
-                       c("Control","Treated"))
-
-  #nn <- rbind(table(object$treat),
-  #            table(object$weights!=0,object$treat)[2:1,])
-
   ## output
-  res <- list(call=object$call, nn = nn, sum.all = sum.all,
+  res <- list(call=object$call, nn = object$nn, sum.all = sum.all,
               sum.matched = sum.matched, reduction = reduction)
   class(res) <- "summary.matchit"
   return(res)
