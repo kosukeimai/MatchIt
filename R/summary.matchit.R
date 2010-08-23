@@ -13,7 +13,12 @@ summary.matchit <- function(object, interactions = FALSE,
         }
   }
 
-  XX <- cbind(distance=object$distance,X)
+  ## No distance output for pure Mahalanobis
+  if("matchit.mahalanobis"%in%class(object)){
+    XX <- X 
+  } else{
+    XX <- cbind(distance=object$distance,X)
+  }
   if (!is.null(addlvariables)) XX <- cbind(XX, addlvariables)
 
   treat <- object$treat

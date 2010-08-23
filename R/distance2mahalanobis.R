@@ -1,9 +1,8 @@
 distance2mahalanobis <- function(formula, data, ...) {
   X <- model.matrix(formula, data)
-  # Take intercept column out
-  X <- X[,-1]
-  Sigma <- var(X)
+  ## Placeholder where real work is done on a unit by unit basis
+  distance <- rep(1, nrow(X))
   return(list(model = NULL,
-              distance = mahalanobis(X, colMeans(X), cov(X))))
+              distance = distance))
 }
 

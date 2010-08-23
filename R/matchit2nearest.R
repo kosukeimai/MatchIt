@@ -2,7 +2,8 @@ matchit2nearest <-  function(treat, X, data, distance, discarded,
                              ratio=1, replace = FALSE, m.order = "largest",  
                              caliper = 0, calclosest = FALSE,
                              mahvars = NULL, exact = NULL,
-                             subclass=NULL, verbose=FALSE, sub.by=NULL, ...){  
+                             subclass=NULL, verbose=FALSE, sub.by=NULL,
+                             is.full.mahalanobis,...){  
 
  if(verbose)
     cat("Nearest neighbor matching... \n")
@@ -30,7 +31,19 @@ matchit2nearest <-  function(treat, X, data, distance, discarded,
   #mahvars & caliper
   if (!is.null(mahvars) & caliper[1]==0){
     warning("No caliper size specified for Mahalanobis matching.  Caliper=.25 used.",call. = FALSE);caliper=.25}
-
+ #when mahalanobis distance is used for all covars
+ if(is.full.mahalanobis){
+   mahvars <- X[,-1]
+   Sigma <- var(X[,-1])
+   ## Note: caliper irrelevant, but triggers mahalanobis matching
+   caliper <- .25
+   ## no subclass with full mahalanobis
+   if(!is.null(subclass)){
+     warning("No subclassification with pure Mahalanobis distance.",call. = FALSE)
+     subclass <- NULL
+   }
+ }
+ 
   # Sample sizes, labels
   n <- length(treat)
   n0 <- length(treat[treat==0])
@@ -76,7 +89,7 @@ matchit2nearest <-  function(treat, X, data, distance, discarded,
   sd.cal <- caliper*sqrt(var(distance[in.sample==1]))
   
   ## Var-covar matrix for Mahalanobis (currently set for full sample)
-  if (!is.null(mahvars)) {
+  if (!is.null(mahvars) & !is.full.mahalanobis) {
     if(!sum(mahvars%in%names(data))==length(mahvars)) {
 	    warning("Mahvars not contained in data.  Mahalanobis matching not done.",call.=FALSE)
 	    mahvars=NULL

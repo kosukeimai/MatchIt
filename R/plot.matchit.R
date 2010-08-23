@@ -10,8 +10,14 @@ plot.matchit <- function(x, discrete.cutoff=5, type="QQ",
                    numdraws=numdraws, interactive=interactive,
                    which.xs = which.xs, ...)
   } else if(type=="jitter"){
+    if("matchit.mahalanobis" %in% class(x)){
+      stop("Not appropriate for pure Mahalanobis matching.  No plots generated.")
+    }
     jitter.pscore(x, interactive=interactive,...)
   } else if(type=="hist"){
+    if("matchit.mahalanobis" %in% class(x)){
+      stop("Not appropriate for pure Mahalanobis matching.  No plots generated.")
+    }
     hist.pscore(x,...)
   } else {
     stop("Invalid type")

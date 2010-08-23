@@ -63,9 +63,20 @@ matchit <- function(formula, data, method = "nearest", distance = "logit",
     distance <- out1$distance
   }
 
+  ## full mahalanobis matching
+  if(fn1=="distance2mahalanobis"){
+    is.full.mahalanobis <- TRUE
+  } else {is.full.mahalanobis <- FALSE}
+
   ## matching!
   out2 <- do.call(fn2, list(treat, X, data, distance=distance, discarded, ...)) 
-  
+
+  ## no distance for full mahalanobis matching
+  if(fn1=="distance2mahalanobis"){
+    distance[1:length(distance)] <- NA
+    class(out2) <- c("matchit.mahalanobis","matchit")
+  } 
+
   ## putting all the results together
   out2$call <- mcall
   out2$model <- out1$model
