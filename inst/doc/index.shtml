@@ -3,9 +3,7 @@
 <title>MatchIt Software Website</title>
 <script language='Javascript' src='/gking.js'></script></HEAD>
 
-<BODY><script language="Javascript">displayHeader()</script>
-
-<h1>MatchIt: Nonparametric Preprocessing for Parametric Causal Inference</h1>
+<BODY><script language="Javascript">displayHeader('MatchIt: Nonparametric Preprocessing for Parametric Causal Inference')</script>
 
 <p><a href="http://people.iq.harvard.edu/~dho/" target="gkingext">Daniel Ho</a>,
 <a href="http://www.princeton.edu/~kimai/" target="gkingext">Kosuke Imai</a>, 
@@ -20,12 +18,10 @@ work better."
 
   <table width="90%" border="0" cellpadding="10">
     <tr>
-	  <td><img src="face_off.jpg"></a></td>
-
-<!-- width="285" height="425"> -->
+	  <td><img src="face_off.jpg" width="200"></td>
 
       <td valign="top"><br>MatchIt implements the suggestions of <a
-      href="/files/abs/matchp-abs.shtml">Ho, Imai, King, and Stuart
+      href="http://gking.harvard.edu/files/abs/matchp-abs.shtml">Ho, Imai, King, and Stuart
       (2007)</a> for improving parametric statistical
       models by
       preprocessing data with nonparametric matching methods. MatchIt
@@ -39,11 +35,11 @@ work better."
       substantially more robustness and less sensitivity to modeling
       assumptions. MatchIt is an <a
       href="http://www.r-project.org" target="gkingext">R</a> program, and also works
-      seamlessly with <a href="/zelig/">Zelig</a>.
+      seamlessly with <a href="http://gking.harvard.edu/zelig/">Zelig</a>.
 
 <ul>
         <li>Documentation: <a href="docs/">HTML</a> or <a
-href="/matchit/docs/matchit.pdf">PDF</a> 
+href="http://gking.harvard.edu/matchit/docs/matchit.pdf">PDF</a> 
         <li><a
 href="http://gking.harvard.edu/matchit/docs/Installing_M_SMALL_ATC.html">Installation
 and Downloads</a>
@@ -57,7 +53,7 @@ target="gkingext">Browse/Search Archives</a>
 </ul>
 
 We're pleased to report that the <a
-href="/files/abs/matchp-abs.shtml">article</a> on which MatchIt is
+href="http://gking.harvard.edu/files/abs/matchp-abs.shtml">article</a> on which MatchIt is
 based won the <em>Warren Miller Prize</em> for the best paper in
 <em>Political Analysis</em> that year and, separately, has been named a
     <em>Fast Breaking Paper</em> by Thomson Reuters' ScienceWatch, for
@@ -66,7 +62,7 @@ based won the <em>Warren Miller Prize</em> for the best paper in
     total citations across the social sciences in the last two years.
     (You may be interested in this interview: <a
   href="http://sciencewatch.com/dr/fbp/2008/08octfbp/08octfbpHoET/">HTML</a> |
-    <a href="/files/fbp08.pdf">PDF</a>)
+    <a href="http://gking.harvard.edu/files/fbp08.pdf">PDF</a>)
 
 </td>      
     </tr>
