@@ -18,7 +18,7 @@ work better."
 
   <table width="90%" border="0" cellpadding="10">
     <tr>
-	  <td><img src="face_off.jpg" width="200"></td>
+	  <td valign='top'><img src="face_off.jpg" width="200"></td>
 
       <td valign="top"><br>MatchIt implements the suggestions of <a
       href="http://gking.harvard.edu/files/abs/matchp-abs.shtml">Ho, Imai, King, and Stuart
