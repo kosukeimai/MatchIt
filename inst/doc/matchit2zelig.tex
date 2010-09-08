@@ -60,14 +60,14 @@ Zelig's other two commands.  Thus, we can set the explanatory
 variables at their means (the default) and change the treatment
 variable from a 0 to a 1:
 \begin{verbatim}
-> x.out0 <- setx(z.out0, treat=0)
-> x1.out0 <- setx(z.out0, treat=1)
+> x.out <- setx(z.out, treat=0)
+> x1.out <- setx(z.out, treat=1)
 \end{verbatim}
 and finally compute the resulting estimates of the causal effects and
 examine a summary:
 \begin{verbatim}
-> s.out0 <- sim(z.out1, x = x.out1)
-> summary(s.out0)
+> s.out <- sim(z.out, x = x.out, x1 = x1.out)
+> summary(s.out)
 \end{verbatim}
 
 \subsection{Examples}
