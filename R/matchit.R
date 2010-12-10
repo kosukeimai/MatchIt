@@ -69,7 +69,8 @@ matchit <- function(formula, data, method = "nearest", distance = "logit",
   } else {is.full.mahalanobis <- FALSE}
 
   ## matching!
-  out2 <- do.call(fn2, list(treat, X, data, distance=distance, discarded, ...)) 
+  out2 <- do.call(fn2, list(treat, X, data, distance=distance, discarded,
+                            is.full.mahalanobis=is.full.mahalanobis, ...)) 
 
   ## no distance for full mahalanobis matching
   if(fn1=="distance2mahalanobis"){

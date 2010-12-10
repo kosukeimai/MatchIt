@@ -33,8 +33,8 @@ matchit2nearest <-  function(treat, X, data, distance, discarded,
     warning("No caliper size specified for Mahalanobis matching.  Caliper=.25 used.",call. = FALSE);caliper=.25}
  #when mahalanobis distance is used for all covars
  if(is.full.mahalanobis){
-   mahvars <- X[,-1]
-   Sigma <- var(X[,-1])
+   mahvars <- X
+   Sigma <- var(X)
    ## Note: caliper irrelevant, but triggers mahalanobis matching
    caliper <- .25
    ## no subclass with full mahalanobis

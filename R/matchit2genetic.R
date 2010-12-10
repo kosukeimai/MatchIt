@@ -1,4 +1,4 @@
-matchit2genetic <- function(treat, X, data, distance, discarded,
+matchit2genetic <- function(treat, X, data, distance, discarded, is.full.mahalanobis,
                             ratio = 1, verbose = FALSE, ...) {
   #if (!("rgenoud" %in% .packages(all = TRUE)))
   #  install.packages("rgenoud")

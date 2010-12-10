@@ -8,7 +8,7 @@
 # matrix is returned since matches are not unique within
 # strata. 
 #
-matchit2cem <- function(treat, X, data, distance, discarded,
+matchit2cem <- function(treat, X, data, distance, discarded, is.full.mahalanobis,
                             ratio = 1, verbose = FALSE, k2k.method=NULL, ...) {
 
   

@@ -1,4 +1,4 @@
-matchit2subclass <- function(treat, X, data, distance, discarded,
+matchit2subclass <- function(treat, X, data, distance, discarded, is.full.mahalanobis,
                              match.matrix=NULL, subclass=6, sub.by="treat",
                              verbose = FALSE){
 
