@@ -26,6 +26,9 @@ matchit <- function(formula, data, method = "nearest", distance = "logit",
     if (!exists(fn1))
       stop(distance, "not supported.")
   }
+  if (is.numeric(distance)) {
+    	fn1 <- "distance2user"
+  }
   fn2 <- paste("matchit2", method, sep = "")
   if (!exists(fn2))
     stop(method, "not supported.")
