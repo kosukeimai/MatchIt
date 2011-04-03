@@ -9,7 +9,7 @@
 }
 
 \usage{
-match.data <- match.data(object, group="all", distance = "distance",
+  match.data(object, group="all", distance = "distance",
 weights = "weights", subclass = "subclass")
 }
 
