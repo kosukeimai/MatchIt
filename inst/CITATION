@@ -7,12 +7,12 @@ citEntry(entry = "Article",
                    as.person("Gary King"),
                    as.person("Elizabeth A. Stuart")),
   journal      = "Journal of Statistical Software",
-  year         = "2009",
+  year         = "2011",
   note         = "Forthcoming",
   url          = "http://www.jstatsoft.org/",
 
   textVersion  =
-  paste("Daniel E. Ho, Kosuke Imai, Gary King, Elizabeth A. Stuart (2009).",
+  paste("Daniel E. Ho, Kosuke Imai, Gary King, Elizabeth A. Stuart (2011).",
         "MatchIt: Nonparametric Preprocessing for Parametric Causal Inference.",
         "Journal of Statistical Software, Forthcoming.",
         "URL http://www.jstatsoft.org/.")
