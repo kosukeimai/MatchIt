@@ -8,8 +8,10 @@ citEntry(entry = "Article",
                    as.person("Elizabeth A. Stuart")),
   journal      = "Journal of Statistical Software",
   year         = "2011",
-  note         = "Forthcoming",
-  url          = "http://www.jstatsoft.org/",
+  volume       = "42",
+  number       = "8",
+  pages        = "1--28",
+  url          = "http://www.jstatsoft.org/v42/i08/",
 
   textVersion  =
   paste("Daniel E. Ho, Kosuke Imai, Gary King, Elizabeth A. Stuart (2011).",
