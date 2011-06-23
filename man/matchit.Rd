@@ -62,14 +62,10 @@ represents the square term of \code{x1}. See \code{help(formula)}
     neighbor matching), \code{"optimal"} (optimal matching), and
     \code{"subclass"} (subclassification) are available. The default is
     \code{"nearest"}. Note that within each of these matching methods,
-    \emph{MatchIt} offers a variety of options. See
-    \url{http://gking.harvard.edu/matchit/docs/Inputs.html} for the
-    complete list of supported options.}
+    \emph{MatchIt} offers a variety of options.}
   \item{distance}{This argument specifies the method used to estimate the
     distance measure. The default is logistic regression,
-    \code{"logit"}. A variety of other methods are available. See
-    \url{http://gking.harvard.edu/matchit/docs/All_Matching_Methods.html}
-    for the complete list of supported methods.}
+    \code{"logit"}. A variety of other methods are available.}
   \item{distance.options}{ This optional argument specifies the optional
     arguments that are passed to the model for estimating the distance
     measure. The input to this argument should be a list.}
@@ -89,8 +85,7 @@ represents the square term of \code{x1}. See \code{help(formula)}
     discarded. The input must be a logical value. The default is
     \code{FALSE}.}
   \item{...}{Additional arguments to be passed to a variety of matching
-    methods. See \url{http://gking.harvard.edu/matchit/??} for the
-    complete list of options.}
+    methods.}
 }
 
 \value{
@@ -124,9 +119,7 @@ represents the square term of \code{x1}. See \code{help(formula)}
     weight \code{1}.  Each matched control unit has weight proportional
     to the number of treatment units to which it was matched, and the sum of
     the control weights is equal to the number of uniquely matched
-    control units. See
-    \url{http://gking.harvard.edu/matchit/docs/How_Exactly_are.html} for  
-    more details.}
+    control units.}
   \item{subclass}{The subclass index in an ordinal
     scale from 1 to the total number of subclasses as specified in
     \code{subclass} (or the total number of subclasses from full or
