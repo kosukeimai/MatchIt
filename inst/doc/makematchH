@@ -1,18 +1,5 @@
 #!/bin/tcsh
-source ~/.aliases
 latex matchit
 bibtex matchit
 latex matchit
 latex matchit
-latex matchit
-#latex2html -noauto_link -info "" -contents "http://gking.harvard.edu/matchit/docs/matchit.html" -t "matchit" -local_icons -toc_depth 3 -link 3 -dir ~/www/matchit/docs/ matchit.tex
-
-#dp matchit
-#cp matchit.pdf ~/www/matchit/docs/.
-
-#rm -rf matchit.Rcheck
-#cp ~/www/matchit/docs/matchit.html ~/www/matchit/docs/index.html
-#echo "A new version of MatchIt has been posted"|mail -s "MatchIt" kimai@Princeton.Edu
-#echo "A new version of MatchIt has been posted"|mail -s "MatchIt" stuart@stat.harvard.edu
-#echo "A new version of MatchIt has been posted"|mail -s "MatchIt" daniel.ho@yale.edu
-
