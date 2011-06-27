@@ -38,11 +38,11 @@ work better."
       seamlessly with <a href="http://gking.harvard.edu/zelig/">Zelig</a>.
 
 <ul>
-        <li>Documentation: <a href="http://gking.harvard.edu/matchit/docs/">HTML</a> or <a
+        <li>Documentation: <!-- <a href="http://gking.harvard.edu/matchit/docs/">HTML</a> or -->  <a
 href="http://gking.harvard.edu/matchit/docs/matchit.pdf">PDF</a> 
-        <li><a
+        <!-- <li><a
 href="http://gking.harvard.edu/matchit/docs/Installing_M_SMALL_ATC.html">Installation
-and Downloads</a>
+and Downloads</a> -->
 
 <li>All questions, bugs and requests: MatchIt Mailing List: <a
 href="http://lists.hmdc.harvard.edu/index.cgi?info=matchit"
