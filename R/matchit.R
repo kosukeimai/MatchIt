@@ -18,7 +18,7 @@ matchit <- function(formula, data, method = "nearest", distance = "logit",
   ## 7/13/06: Convert character variables to factors as necessary
   ischar <- rep(0, dim(data)[2])
   for (i in 1:dim(data)[2]) 
-	if(is.character(data[,i])) data[,i] <- as.factor(data[,i])
+    if(is.character(data[,i])) data[,i] <- as.factor(data[,i])
   
   ## check inputs
   if (!is.numeric(distance)) {
@@ -27,14 +27,20 @@ matchit <- function(formula, data, method = "nearest", distance = "logit",
       stop(distance, "not supported.")
   }
   if (is.numeric(distance)) {
-    	fn1 <- "distance2user"
+    fn1 <- "distance2user"
   }
   fn2 <- paste("matchit2", method, sep = "")
   if (!exists(fn2))
     stop(method, "not supported.")
 
   ## obtain T and X
-  tt <- terms(formula)
+  tryerror <- try(model.frame(formula), TRUE)
+  if (distance %in% c("GAMlogit", "GAMprobit", "GAMcloglog", "GAMlog", "GAMcauchit")) {
+    library(mgcv)
+    tt <- terms(mgcv::interpret.gam(formula)$fake.formula)
+  } else {
+    tt <- terms(formula)
+  }
   attr(tt, "intercept") <- 0
   mf <- model.frame(tt, data)
   treat <- model.response(mf)
