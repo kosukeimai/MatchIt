@@ -1,0 +1,103 @@
+\section{\texttt{match.data()}: Extracting the Matched Data Set}
+\label{sec:match.data}
+
+\subsection{Usage}
+
+To extract the matched data set for subsequent analyses from the
+output object (see Section~\ref{sec:analysis}), we provide the
+function {\tt match.data()}.  This is used as follows:
+
+\begin{verbatim}
+> m.data <- match.data(object, group = "all", distance = "distance", 
+                       weights = "weights", subclass = "subclass")
+\end{verbatim}
+
+The output of the function {\tt match.data()} is the original data
+frame where additional information about matching (i.e., distance
+measure as well as resulting weights and subclasses) is added,
+restricted to units that were matched.
+
+\subsection{Arguments}
+
+{\tt match.data()} takes the following inputs:
+\begin{enumerate}
+\item {\tt object} is the output object from {\tt matchit()}. This is
+  a required input.
+\item {\tt group} specifies for which matched group the user wants to
+  extract the data. Available options are {\tt "all"} (all matched
+  units), {\tt "treat"} (matched units in the treatment group), and
+  {\tt "control"} (matched units in the control group). The default is
+  {\tt "all"}.
+\item {\tt distance} specifies the variable name used to store the
+  distance measure. The default is {\tt "distance"}.
+\item {\tt weights} specifies the variable name used to store the
+  resulting weights from matching. The default is {\tt "weights"}. See
+  Section~\ref{subsec:weights} for more details on the weights.
+\item {\tt subclass} specifies the variable name used to store the
+  subclass indicator. The default is {\tt "subclass"}.
+\end{enumerate}
+
+\subsection{Examples}
+
+Here, we present examples for using {\tt match.data()}. Users can run
+these commands by typing {\tt demo(match.data)} at the R
+prompt. First, we load the Lalonde data,
+
+\begin{verbatim}
+> data(lalonde)
+\end{verbatim}
+
+The next line performs nearest neighbor matching based on the
+estimated propensity score from the logistic regression,
+
+\begin{verbatim}
+> m.out1 <- matchit(treat ~ re74 + re75 + age + educ, data = lalonde, 
++     method = "nearest", distance = "logit")
+\end{verbatim}
+
+To obtain matched data, type the following command, 
+
+\begin{verbatim}
+> m.data1 <- match.data(m.out1)
+\end{verbatim}
+
+It is easy to summarize the resulting matched data,
+
+\begin{verbatim}
+> summary(m.data1)
+\end{verbatim}
+
+To obtain matched data for the treatment or control group, specify the option
+{\tt group} as follows,
+
+\begin{verbatim}
+> m.data2 <- match.data(m.out1, group = "treat")
+> summary(m.data2)
+> m.data3 <- match.data(m.out1, group = "control")
+> summary(m.data3)
+\end{verbatim}
+
+We can also use the function to return unmatched data:
+
+\begin{verbatim}
+> unmatched.data <- lalonde[!row.names(lalonde)%in%row.names(match.data(m.out1)),]
+\end{verbatim}
+
+We can also specify different names for the subclass indicator, the
+weight variable, and the estimated distance measure. The following
+example first does a subclassification method, obtains the
+matched data with specified names for those three variables, and then
+print out the names of all variables in the resulting matched data.
+
+\begin{verbatim}
+> m.out2 <- matchit(treat ~ re74 + re75 + age + educ, data = lalonde, 
++     method = "subclass")
+> m.data4 <- match.data(m.out2, subclass = "block", weights = "w", 
++     distance = "pscore")
+> names(m.data4)
+\end{verbatim}
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: "matchit"
+%%% End: 

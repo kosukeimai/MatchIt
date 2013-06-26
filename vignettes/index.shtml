@@ -1,0 +1,72 @@
+<html>
+<head>
+<title>MatchIt Software Website</title>
+<script language='Javascript' src='/gking.js'></script></HEAD>
+
+<BODY><script language="Javascript">displayHeader('MatchIt: Nonparametric Preprocessing for Parametric Causal Inference')</script>
+
+<p><a href="http://people.iq.harvard.edu/~dho/" target="gkingext">Daniel Ho</a>,
+<a href="http://www.princeton.edu/~kimai/" target="gkingext">Kosuke Imai</a>, 
+<a href="http://GKing.Harvard.edu">Gary King</a>, 
+<a href="http://people.iq.harvard.edu/~estuart/" target="gkingext">Elizabeth Stuart</a>
+
+<p>"At MatchIt, we don't make parametric models, we make parametric models
+work better."
+
+<!-- rbuild: replace 'Version:' '</b>' version -->
+<p><b>Version:2.2-3</b>
+
+  <table width="90%" border="0" cellpadding="10">
+    <tr>
+	  <td valign='top'><img src="face_off.jpg" width="200"></td>
+
+      <td valign="top"><br>MatchIt implements the suggestions of <a
+      href="http://gking.harvard.edu/files/abs/matchp-abs.shtml">Ho, Imai, King, and Stuart
+      (2007)</a> for improving parametric statistical
+      models by
+      preprocessing data with nonparametric matching methods. MatchIt
+      implements a wide range of sophisticated matching methods,
+      making it possible to greatly reduce the dependence of causal
+      inferences on hard-to-justify, but commonly made, statistical
+      modeling assumptions. The software also easily fits into
+      existing research practices since, after preprocessing data with
+      MatchIt, researchers can use whatever parametric model they
+      would have used without MatchIt, but produce inferences with
+      substantially more robustness and less sensitivity to modeling
+      assumptions. MatchIt is an <a
+      href="http://www.r-project.org" target="gkingext">R</a> program, and also works
+      seamlessly with <a href="http://gking.harvard.edu/zelig/">Zelig</a>.
+
+<ul>
+        <li>Documentation: <!-- <a href="http://gking.harvard.edu/matchit/docs/">HTML</a> or -->  <a
+href="http://gking.harvard.edu/matchit/docs/matchit.pdf">PDF</a> 
+        <!-- <li><a
+href="http://gking.harvard.edu/matchit/docs/Installing_M_SMALL_ATC.html">Installation
+and Downloads</a> -->
+
+<li>All questions, bugs and requests: MatchIt Mailing List: <a
+href="http://lists.hmdc.harvard.edu/index.cgi?info=matchit"
+target="gkingext">[Un]Subscribe</a>, or <a
+href="http://lists.hmdc.harvard.edu/lists/matchit/"
+target="gkingext">Browse/Search Archives</a>
+
+</ul>
+
+We're pleased to report that the <a
+href="http://gking.harvard.edu/files/abs/matchp-abs.shtml">article</a> on which MatchIt is
+based won the <em>Warren Miller Prize</em> for the best paper in
+<em>Political Analysis</em> that year and, separately, has been named a
+    <em>Fast Breaking Paper</em> by Thomson Reuters' ScienceWatch, for
+    being the article with the largest
+    percentage increase in citations among those in the top 1% of
+    total citations across the social sciences in the last two years.
+    (You may be interested in this interview: <a
+  href="http://sciencewatch.com/dr/fbp/2008/08octfbp/08octfbpHoET/">HTML</a> |
+    <a href="http://gking.harvard.edu/files/fbp08.pdf">PDF</a>)
+
+</td>      
+    </tr>
+  </table>
+
+<script language="Javascript">displayFooter()</script></BODY>
+</html>

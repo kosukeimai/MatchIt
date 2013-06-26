@@ -1,0 +1,91 @@
+%% 
+%% This is file `dcolumn.sty', generated 
+%% on <1992/10/29> with the docstrip utility (2.0r).
+%% 
+%% The original source files were:
+%% 
+%% dcolumn.doc  (with options: `style')
+%% 
+%% This file is part of the array package. 
+%% --------------------------------------- 
+%% 
+%% It is a contributed file. 
+%% In case of errors please inform the original author. 
+%% 
+%% The checksum in the header refers to the documented version of 
+%% the file. 
+%% 
+
+
+%%% ====================================================================
+%%%  @LaTeX-style-file{
+%%%     author          = "David Carlisle",
+%%%     version         = "1.01",
+%%%     date            = "12 June 1992",
+%%%     time            = "16:24:45 BST",
+%%%     filename        = "dcolumn.sty",
+%%%     address         = "Computer Science Department
+%%%                        Manchester University
+%%%                        Oxford Road
+%%%                        Manchester
+%%%                        England
+%%%                        M13 9PL",
+%%%     telephone       = "+44 61 275 6139",
+%%%     FAX             = "+44 61 275 6236",
+%%%     checksum        = "48012 272 1205 9538",
+%%%     email           = "carlisle@cs.man.ac.uk (Internet)",
+%%%     codetable       = "ISO/ASCII",
+%%%     keywords        = "LaTeX, tabular, array, decimal",
+%%%     supported       = "yes",
+%%%     docstring       = "
+%%%
+%%%     dcolumn.sty
+%%%
+%%%     A LaTeX style option for producing tabular entries aligned on a
+%%%     decimal point.
+%%%     The `decimal point' may be any math-mode material, or just `.'.
+%%%
+%%%     Requires array.sty.
+%%%     Documentation requires Mittelbach's doc.sty.
+%%%
+%%%     The checksum field above was produced by
+%%%     Robert Solovay's checksum utility.",
+%%%  }
+%%% ====================================================================
+\def\fileversion{v1.01}
+\def\filedate{92/06/12}
+\def\docdate {92/06/17}
+\@ifundefined{DC@centre}{}{\endinput}
+\wlog{Style-Option: `dcolumn' \fileversion
+         \space\space <\filedate> (D.P.C.)}
+\wlog{English documentation dated \space <\docdate> (D.P.C.)}
+\@ifundefined{newcolumntype}{\input array.sty}{}
+\def\DC@#1#2#3{%
+  \uccode`\~=`#1\relax
+  \m@th
+  \ifnum #3 < \z@ \expandafter\DC@centre
+  \else \expandafter\DC@right \fi
+  {#1}{#2}{#3}}
+\def\DC@centre#1#2#3{%
+  \let\DC@end\DC@endcentre
+  \uppercase{\def~}{$\egroup\setbox\tw@=\hbox\bgroup${#2}}%
+  \setbox\tw@=\hbox{${\phantom{{#2}}}$}%
+  \setbox\z@=\hbox\bgroup$\mathcode`#1="8000 }
+\def\DC@endcentre{$\egroup
+    \ifdim \wd\z@>\wd\tw@
+      \setbox\tw@=\hbox to\wd\z@{\unhbox\tw@\hfill}%
+    \else
+      \setbox\z@=\hbox to\wd\tw@{\hfill\unhbox\z@}\fi
+    \box\z@\box\tw@}
+\def\DC@right#1#2#3{%
+  \let\DC@end\DC@endright
+  \uppercase{\def~}{$\egroup\setbox\tw@=\hbox to \dimen@\bgroup${#2}}%
+   \setbox\z@=\hbox{$1$}\dimen@=#3\wd\z@
+   \setbox\z@=\hbox{${#2}$}\advance\dimen@\wd\z@
+   \setbox\tw@=\hbox to \dimen@{}%
+   \setbox\z@=\hbox\bgroup$\mathcode`#1="8000 }
+\def\DC@endright{$\hfil\egroup\hfill\box\z@\box\tw@}
+\newcolumntype{D}[3]{>{\DC@{#1}{#2}{#3}}c<{\DC@end}}
+\endinput
+%% 
+%% End of file `dcolumn.sty'.

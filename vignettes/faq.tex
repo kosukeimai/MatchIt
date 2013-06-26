@@ -1,0 +1,194 @@
+\chapter{Frequently Asked Questions}
+
+\section{How do I Cite this Work?}
+
+If you use \MatchIt, please cite\nocite{HoImaKin07,HoImaKin07a}
+\begin{verse}
+  Daniel Ho; Kosuke Imai; Gary King; and Elizabeth Stuart (2007),
+  ``Matching as Nonparametric Preprocessing for Reducing Model
+  Dependence in Parametric Causal Inference,'' \emph{Political
+    Analysis} 15(3): 199-236,
+  \url{http://gking.harvard.edu/files/abs/matchp-abs.shtml}.
+
+and 
+
+Daniel Ho; Kosuke Imai; Gary King; and Elizabeth Stuart (2007b)
+``Matchit: Nonparametric Preprocessing for Parametric Causal
+Inference,'' \emph{Journal of Statistical Software},
+\url{http://gking.harvard.edu/matchit/}.
+\end{verse}
+
+In addition, the {\tt convex.hull} discard option is implemented via
+the {\tt WhatIf} package \citep{KinZen06,KinZen07,StoKinZen05}.
+Generalized linear distance measures are implemented via the {\tt
+  stats} package \citep{VenRip02}.  Generalized additive distance
+measures are implemented via the {\tt mcgv} package \citep{HasTib90}.
+The neural network distance measure is implemented via the {\tt nnet}
+package \citep{Ripley96}.  The classification trees distance measure
+is implemented via the {\tt rpart} package \citep{BreFriOls84}.  Full
+and optimal matching are implemented via the {\tt optmatch} package
+\citep{Hansen04}.  Genetic matching is implemented via the {\tt
+  Matching} package \citep{DiaSek05}.  Coarsened exact matching is
+implemented via the \texttt{cem} package
+\citep{IacKinPor08,IacKinPor08b}.
+
+\section{What if My datasets Are Big and Are Taking Up
+  Too Much Memory?}
+
+{\tt matchit()} does not save the data set in its output object, but
+it does save a matrix of the covariates.  {\tt match.data()} will
+create a matched data set. One can eliminate the original data set to
+save memory in R by {\tt rm(name)}, where {\tt name} is the name of
+the data set, after calling {\tt match.data()}.
+
+%\section{Can I use a Difference-in-Difference Estimator for Matched
+%  Data?}
+%
+%A difference-in-differences (DID) analysis can be easily conducted
+%with \MatchIt.  If we were interested in the DID matching estimate in
+%the Lalonde data, we could simply include {\texttt re75} as a
+%covariate in the preprocessing step.  Then the analysis can be
+%performed on the change in income from 1975 to 1978: {\tt re78}-{\tt
+%  re75}.  Time-varying covariates (of which none exist in the Lalonde
+%data) should of course also be differenced for the DID estimator.
+%** we should show how to do this with zelig
+
+\section{How Exactly are the Weights Created?}
+\label{subsec:weights}
+
+Each type of matching method can be thought of as creating groups of
+units with at least one treated unit and at least one control unit in
+each.  In exact matching, subclassification, or full matching, these
+groups are the subclasses formed, and the number of treated and
+control units will vary quite a bit across subclasses.  In nearest
+neighbor or optimal matching, the groups are the pairs (or sets) of
+treated and control units matched.  In 1:1 nearest neighbor matching
+there will be one treated unit and one control unit in each group.  In
+2:1 nearest neighbor matching there will be one treated unit and two
+control units in each group.  Unmatched units receive a weight of 0.
+All matched treated units receive a weight of 1.  These weights are constructed
+to estimate the average treatment effect on the treated, with the control group
+essentially weighted to look like the treated group.
+
+The weights for matched control units are formed as follows:
+\begin{enumerate}
+\item Within each group, each control unit is given a preliminary
+  weight of $n_{ti}/n_{ci}$, where $n_{ti}$ and $n_{ci}$ are the
+  number of treated and control units in group $i$, respectively.
+\item If matching is done with replacement, each control unit's weight
+  is added up across the groups in which it was matched.
+\item The control group weights are scaled to sum to the number of
+  uniquely matched control units.
+\end{enumerate}
+
+With subclassification, when the analysis is done separately within
+each subclass and then aggregated up across the subclasses, these
+weights will generally not be used, but they may be used for full
+matching or nearest neighbor matching if the number of control units
+matched to each treated unit varies.
+
+
+
+\section{How Do I Create Observation Names?}
+\label{rnames}
+
+Since the diagnostics often make use of the observation names of the
+data frame, you may find it helpful to specify observation names for
+the data input.  Use the \texttt{row.names} command to achieve this.
+For example, to assign the names ``Dan'', ``Kosuke'', ``Liz'' and
+``Gary'' to a data frame with the first four observations in the
+Lalonde data, type:
+
+
+\begin{verbatim}
+> test <- lalonde[1:4, ]
+> row.names(test) <- c("Dan", "Kosuke", "Liz", "Gary")
+> print(test)
+       age educ black hisp married nodegr re74 re75  re78 u74 u75 treat
+Dan     37   11     1    0       1      1    0    0  9930   1   1     1
+Kosuke  22    9     0    1       0      1    0    0  3596   1   1     1
+Liz     30   12     1    0       0      0    0    0 24910   1   1     1
+Gary    27   11     1    0       0      1    0    0  7506   1   1     1
+\end{verbatim}
+
+\section{How Can I See Outcomes of Matched Pairs?}
+
+To obtain outcomes of matched pairs, recall that the original dataset has unique row names corresponding to each of
+the observations.  The row names of \texttt{match.matrix} correspond to the names of the treated, and each
+of the cells corresponds to a name of matched controls.  So to obtain matched outcomes, you can use:
+
+\begin{verbatim}
+cbind(lalonde[row.names(foo$match.matrix),"re78"], lalonde[foo$match.matrix,"re78"])
+\end{verbatim}
+
+\section{How Do I Ensure Replicability As \MatchIt\ Versions Develop?}
+\label{subsec:vercontrol}
+
+As the literature on matching techniques is rapidly evolving,
+\MatchIt\ will strive to incorporate new developments. \MatchIt\ is
+thereby an evolving program.  Users may be concerned that analysis
+written in a particular version may not be compatible with newer
+versions of the program.  The primary way to ensure that replication
+archives remain valid is to record the version of \MatchIt\ that was
+used in the analysis.  Our website maintains binaries of all public
+release versions, so that researchers can replicate results exactly
+with the appropriate version (for Unix-based platforms, see
+\hlink{http://gking.harvard.edu/src/contrib/}{http://gking.harvard.edu/src/contrib/};
+for windows, see
+\hlink{http://gking.harvard.edu/bin/windows/contrib/}{http://gking.harvard.edu/bin/windows/contrib/}).
+
+In addition, users may find it helpful to install packages with
+version control, using the {\tt installWithVers} command with {\tt
+install.packages}.  So for example, in the windows R console, users
+may download the appropriate version from our website and install the
+package with version control by:
+
+\begin{verbatim}
+install.packages(choose.files('',filters=Filters[c('zip','All'),]),
+                 .libPaths()[1],installWithVers=T,CRAN=NULL)
+\end{verbatim}
+
+{\tt R CMD INSTALL} similarly permits users to specify this version
+using the \\ {\tt --with-package-versions} option.  After having
+specified version control, different versions of the program may be
+called as necessary.  Similar advice may also be appropriate for
+version control for R more generally.
+
+\section{How Do I Use My Own Distance Measure with \MatchIt\,?}
+
+A vector of your own distance measure can be used by specifying it as
+the input for {\tt distance} option in {\tt matchit()}.
+
+\section{What Do I Do about Missing Data?}
+
+\MatchIt\ requires complete data sets, with no missing values (other
+than potential outcomes of course).  If there are missing values in
+the data set, imputation techniques should be used first to fill in
+(``impute'') the missing values (both covariates and outcomes), or the
+analysis should be done using only complete cases (which we do not in
+general recommend).  For imputation software, see Amelia at
+(\hlink{http://gking.harvard.edu/stats.shtml}{http://gking.harvard.edu/stats.shtml})
+or other programs at
+\hlink{http://www.multiple-imputation.com}{http://www.multiple-imputation.com}.
+For more information on missing data and imputation methods, see
+\cite{KinHonJos01}.
+
+\section{Why Preprocessing?}
+
+The purpose of matching is to approximate an experimental template,
+where the matching procedure approximates blocking prior to random
+treatment assignment in order to balance covariates between treatment
+and control groups.  Separation of the estimation procedure into two
+steps simulates the research design of an experiment, where no
+information on outcomes is known at the point of experimental design
+and randomization.  The separation of the balancing process in
+\MatchIt\ from the analysis process afterward helps keep clear the
+goal of balancing control and treatment groups and makes it less
+likely that the user will inadvertently cook the books in his or her
+favor.
+
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: t
+%%% End: 

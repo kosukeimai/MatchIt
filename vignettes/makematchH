@@ -1,0 +1,5 @@
+#!/bin/tcsh
+latex matchit
+bibtex matchit
+latex matchit
+latex matchit

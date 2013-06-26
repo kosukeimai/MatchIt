@@ -1,0 +1,209 @@
+\documentclass[oneside,letterpaper,12pt]{book}
+\usepackage{bibentry}
+\usepackage{graphicx}
+\usepackage{natbib}
+\usepackage[reqno]{amsmath}
+\usepackage{amssymb}
+\usepackage{verbatim}
+\usepackage{epsf}
+\usepackage{url}
+\usepackage{html}
+\usepackage{dcolumn}
+\usepackage{fullpage}
+\bibpunct{(}{)}{;}{a}{}{,}
+\newcolumntype{.}{D{.}{.}{-1}}
+\newcolumntype{d}[1]{D{.}{.}{#1}}
+%\pagestyle{myheadings}
+\htmladdtonavigation{
+  \htmladdnormallink{%
+    \htmladdimg{http://gking.harvard.edu/pics/home.gif}}
+  {http://gking.harvard.edu/}}
+\newcommand{\hlink}{\htmladdnormallink}
+
+%\bodytext{ BACKGROUND="http://gking.harvard.edu/pics/temple.jpg"}
+\setcounter{tocdepth}{3}
+\setcounter{secnumdepth}{4}
+
+\newcommand{\MatchIt}{\textsc{MatchIt}}
+
+\title{\MatchIt: Nonparametric Preprocessing for Parametric Causal
+  Inference\thanks{We thank Olivia Lau for helpful suggestions about
+    incorporating \MatchIt\, into Zelig.}}
+
+\author{Daniel E. Ho,\thanks{Assistant Professor of Law 
+\& Robert E.\ Paradise Faculty Scholar, Stanford Law
+    School (559 Nathan Abbott Way, Stanford CA 94305;
+    \texttt{http://dho.stanford.edu}, \texttt{dho@law.stanford.edu},
+    (650) 723-9560).}  \and %
+  Kosuke Imai,\thanks{Assistant Professor, Department of Politics,
+    Princeton University (Corwin Hall 041, Department of Politics,
+    Princeton University, Princeton NJ 08544, USA;
+    \texttt{http://imai.princeton.edu},
+    \texttt{kimai@Princeton.Edu}).}  \and %
+  Gary King,\thanks{David Florence Professor of Government, Harvard
+    University (Institute for Quantitative Social Science, 1737
+    Cambridge Street, Harvard University, Cambridge MA 02138;
+    \texttt{http://GKing.Harvard.Edu}, \texttt{King@Harvard.Edu},
+    (617) 495-2027).}  \and %
+Elizabeth A. Stuart\thanks{Assistant Professor, Departments of Mental 
+Health and Biostatistics, Johns Hopkins Bloomberg School of Public Health 
+(624 N Broadway, Room 804, Baltimore, MD 21205; 
+  \texttt{http://www.biostat.jhsph.edu/$\sim$estuart},
+  \texttt{estuart@jhsph.edu}).}}
+
+%\makeindex
+
+\begin{document}
+\maketitle
+
+\begin{rawhtml}
+  <p> [Also available is a downloadable <a
+  href="matchit.pdf">PDF</a> version of this entire
+  document]
+\end{rawhtml}
+
+\tableofcontents
+
+\nobibliography*
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\clearpage
+
+\chapter{Introduction}
+\input{intro}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\chapter{Statistical Overview}
+\input{overview}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\chapter{User's Guide to \MatchIt}
+\label{methods}
+
+\input{preprocess}
+\input{balance}
+\input{matchit2zelig}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\chapter{Reference Manual}
+\label{chap:reference}
+
+\section{\texttt{matchit()}: Implementation of Matching Methods}
+\label{sec:matchit}
+Use \texttt{matchit()} to implement a variety of matching procedures
+including exact matching, nearest neighbor matching,
+subclassification, optimal matching, genetic matching, and full
+matching.  The output of {\tt matchit()} can be analyzed via any
+standard R package, by exporting the data for use in another program,
+or most simply via \hlink{Zelig}{http://gking.harvard.edu/zelig} in R.
+
+\input{matchitref}
+\input{summaryref}
+\input{plotref}
+\input{mdataref}
+\input{faq}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\chapter{What's New?}
+
+\begin{itemize}
+\item \textbf{2.4-20} (October 24, 2011): bug fix for GAM models (thanks to Felix Thoemmes)
+\item \textbf{2.4-18} (April 26, 2011): JSS version, no change in code.
+\item \textbf{2.4-17} (April 2, 2011): a minor documentation fix.
+\item \textbf{2.4-16} (January 8, 2011): a bug fix for user defined distance.
+\item \textbf{2.4-15} (December 11, 2010): a bug fix in the
+  mahalanobis matching.
+\item \textbf{2.4-14} (August 12, 2010): a bug fix in {\tt
+    match.data()} so that it can be called within a function (thanks
+  to Ajay Shah, George Baah, and Ben Dominique); \MatchIt now does not
+  specify digits for printing (thanks to Chris Hane); A summary table
+  of matched data is now stored in the output (thanks to George Baah)
+\item \textbf{2.4-11} (June 25, 2009): More flexible inputs in
+  plotting.
+\item \textbf{2.4-10} (February 2, 2009): Minor documentation fixes
+\item \textbf{2.4-8,2.4-9} (January 29, 2009): Minor documentation fixes
+\item \textbf{2.4-7} (August 4, 2008): Fixed minor bug in subclassification 
+(thanks to Ben Domingue)
+\item \textbf{2.4-6} (July 21, 2008): Improved summary object for
+  exact matching (thanks to Andrew Stokes)
+\item \textbf{2.4-5} (July 20, 2008): Fixed a minor bug.
+\item \textbf{2.4-4} (July 18, 2008): Fixed another bug with regard to the discard option (thanks to Ben Dominique).
+\item \textbf{2.4-3} (July 18, 2008): Fixed a bug in full matching
+  regarding the discard option (thanks to Ben Dominique). Some updates
+  of documentation regarding coarsened exact matching (2.4-1 and
+  2.4-2).
+\item \textbf{2.4} (June 12, 2008): Included coarsened exact matching;
+  documentation bug fixes (thanks to Will Lowe)
+\item \textbf{2.3-1} (October 11, 2007): Stable release for R
+  2.6. Documentation improved. Some minor bug fixes and improvements.
+\item \textbf{2.2-14} (September 2, 2007): Stable release for R 2.5.
+  Documentation improved for full matching. (Thanks to Langche Zeng)
+\item \textbf{2.2-13} (April 10, 2007): Stable release for R
+  2.4. Additional fix to package dependencies. Bug fix for summary().
+\item \textbf{2.2-12} (April 6, 2007): Stable release for R 2.4. Fix
+  to package dependencies.
+\item \textbf{2.2-11} (July 13, 2006): Stable release for R 2.3.
+  Fix to ensure summary() command works with character variables in dataframe (thanks to Daniel Gerlanc).
+\item \textbf{2.2-10} (May 9, 2006): Stable release for R 2.3.
+  A bug fix in {\tt demo(analysis)} (thanks to Julia Gray).
+\item \textbf{2.2-9} (May 3, 2006): Stable release for R 2.3.
+  A minor change to DESCRIPTION file.
+\item \textbf{2.2-8} (May 1, 2006): Stable release for R 2.3.
+  Removed dependency on Zelig (thanks to Dave Kane).
+\item \textbf{2.2-7} (April 11, 2006): Stable release for R 2.2.
+  Error message for missing values in the data frame added
+  (thanks to Olivia Lau).
+\item \textbf{2.2-6} (April 4, 2006): Stable release for R 2.2.
+  Bug fixes related to {\tt reestimate} in {\tt matchit()} and {\tt
+  match.data()} (thanks to Ani Ruhil and Claire Aussems). 
+\item \textbf{2.2-5} (December 7, 2005): Stable release for R 2.2.
+  Changed URL of {\tt WhatIf} to CRAN.
+\item \textbf{2.2-4} (December 3, 2005): Stable release for R 2.2.
+  User's own distance measure can be used with \MatchIt\, (thanks to
+  Nelson Lim).
+\item \textbf{2.2-3} (November 18, 2005): Stable release for R 2.2.
+  standardize option added to full matching and subclass (thanks to
+  Jeronimo Cortina).
+\item \textbf{2.2-2} (November 9, 2005): Stable release for R 2.2.
+  {\tt optmatch} package now on CRAN. Changed URL for that package. 
+\item \textbf{2.2-1} (November 1, 2005): Stable release for R 2.2.
+  balance measures based on empirical CDF are added as a new option
+  {\tt standardize} in {\tt summary()}.
+\item \textbf{2.1-4} (October 14, 2005): Stable release for R 2.2.
+  strictly empirical (no interpolation) quantile-quantile functions
+  and plots are used.
+\item \textbf{2.1-3} (September 27, 2005): Stable release for R 2.1.
+  automated the installation of optional packages. fixed a coding
+  error in {\tt summary()}, the documentation edited.
+\item \textbf{2.1-2} (September 27, 2005): Stable release for R 2.1.
+  minor changes to file names, the option {\tt "whichxs"} added to the
+  {\tt plot()}, major editing of the documentation.
+\item \textbf{2.1-1} (September 16, 2005): Stable release for R
+        2.1. Genetic matching added.    
+\item \textbf{2.0-1} (August 29, 2005): Stable release for R 2.1.
+  Major revisions including some syntax changes. Statistical tests are
+  no longer used for balance checking, which are now based on the
+  empirical covariate distributions (e.g., quantile-quantile plot).
+\item \textbf{1.0-2} (August 10, 2005): Stable release for R
+  2.1. Minor bug fixes (Thanks to Bart Bonikowski).
+\item \textbf{1.0-1} (January 3, 2005): Stable release for R 2.0. The
+  first official version of \MatchIt
+\end{itemize}
+
+
+
+\clearpage
+
+\bibliographystyle{asa}
+\bibliography{gk,gkpubs}
+
+\end{document}
+

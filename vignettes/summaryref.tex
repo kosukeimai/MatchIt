@@ -1,0 +1,127 @@
+\section{\texttt{summary()}: Numerical Summaries of Balance}
+
+The \texttt{summary()} command returns numerical summaries of balance
+diagnostics.
+
+\subsubsection{Syntax}
+\begin{verbatim}
+summary(object, interactions = FALSE, addlvariables = NULL, standardize = FALSE, ...)
+\end{verbatim}
+
+\subsubsection{Arguments}
+
+\begin{itemize}
+\item \texttt{object}: the output from {\tt matchit()}.
+\item \texttt{interactions}: an option to calculate summary statistics
+  in \texttt{sum.all} and \texttt{sum.matched} for all covariates,
+  their squares, and two-way interactions when \texttt{interactions =
+    TRUE} and only the covariates themselves when \texttt{interactions
+    = FALSE}, (DEFAULT = {\tt FALSE}).
+\item \texttt{addlvariables}: additional variables on which to
+  calculate the diagnostic statistics (in addition to the variables
+  included in the matching procedure) (DEFAULT = {\tt NULL}).
+  \texttt{addlvariables}: a data frame containing additional variables
+  whose balance is examined. The data should come with the same number
+  of units and units in the same order as in the data set used for
+  {\tt matchit()}.
+\item \texttt{standardize}: a logical variable indicating whether to
+  standardize balance measures, i.e., whether the difference in means should be divided
+  by the standard deviation in the original treated group. (DEFAULT = {\tt FALSE})
+\end{itemize}
+
+\subsubsection{Output Values}
+
+The output from the \texttt{summary()} command includes the following
+elements, when applicable:
+\begin{itemize}
+\item The original assignment model call.
+\item \texttt{sum.all}: a data frame that contains variable names and
+  interactions down the row names, and summary statistics on \emph{all
+    observations} in each of the columns.  The columns in
+  \texttt{sum.all} contain: 
+%\footnote{The output for full matching is
+%    slightly different from that described here; see Section
+%    \ref{subsubsec:full} for details.}
+  \begin{itemize}
+  \item means of all covariates $X$ for treated and control units,
+    where \texttt{Means Treated}$= \mu_{X|T=1} = \frac{1}{n_1}
+    \sum_{T=1} X_i$ and \texttt{Means Control}$= \mu_{X|T=0} =
+    \frac{1}{n_0} \sum_{T=0} X_i$,
+ \item standard deviation in the control group for all covariates $X$, where applicable, 
+        $$\quad s_{x|T=0} = \sqrt{\frac{\sum_{i \in \{i: T_i=0\}}
+        (X_i - \mu_{X|T=0})^2}{n_0-1} }.$$
+  \item balance statistics of the original data (before matching),
+    which compare treated and control covariate distributions. If {\tt
+      standardize = FALSE}, balance measures will be presented on the
+    original scale. Specifically, mean differences (\texttt{Mean
+      Diff.}) as well as the median, mean, and maximum value of
+    differences in empirical quantile functions for each covariate
+    will be given (\texttt{eQQ Med}, \texttt{eQQ Mean}, and
+    \texttt{eQQ Max}, respectively). If {\tt standardize = TRUE}, the
+    balance measures will be standardized.  Standardized mean
+    differences (\texttt{Std.\ Mean Diff.}), defined as
+    $\frac{\mu_{X|T=1} - \mu_{X|T=0}}{s_{x|T=1}}$, as well as the
+    median, mean, and maximum value of differences in empirical
+    cumulative distribution functions for each covariate will be given
+    (\texttt{eCDF Med}, \texttt{eCDF Mean}, and \texttt{eCDF Max},
+    respectively).
+  \end{itemize}
+  
+\item \texttt{sum.matched}: a data frame which contains variable names
+  down the row names, and summary statistics on only the \emph{matched
+    observations} in each of the columns.  Specifically, the columns
+  in \texttt{sum.matched} contain the following elements:
+%\footnote{The
+%    values output for full matching are slightly different from that
+%    described here; see Section \ref{subsubsec:full} for details}:
+  \begin{itemize}
+  \item weighted means for matched treatment units and matched control units of all covariates
+    $X$ and their interactions, where \texttt{Means Treated}$=
+    \mu_{wX|T=1} = \frac{1}{n_1} \sum_{T=1} w_iX_i$ and \texttt{Means
+      Control}$=\mu_{wX|T=0} = \frac{1}{n_0} \sum_{T=0} w_iX_i$,
+  \item weighted standard deviations in the matched control group for
+    all covariates $X$, where applicable, where \texttt{SD} $= s_{wX} =
+    \sqrt{\frac{1}{n} \sum_{i} (w_iX_i - \overline{X}^*)^2}$, where
+    $\overline{X}^*$ is the weighted mean of $X$ in the matched
+    control group, and
+  \item balance statistics of the matched data (after matching), which
+    compare treated and control covariate distributions. If {\tt
+      standardize = FALSE}, balance measures will be presented on the
+    original scale. Specifically, mean differences (\texttt{Mean
+      Diff.}) as well as the median, mean, and maximum value of
+    differences in empirical quantile functions for each covariate
+    will be given (\texttt{eQQ Med}, \texttt{eQQ Mean}, and
+    \texttt{eQQ Max}, respectively). If {\tt standardize = TRUE}, the
+    balance measures will be standardized.  Standardized mean
+    differences (\texttt{Std.\ Mean Diff.}), defined as
+    $\frac{\mu_{wX|T=1} - \mu_{wX|T=0}}{s_{x|T=1}}$, as well as the
+    median, mean, and maximum value of differences in empirical
+    cumulative distribution functions for each covariate will be given
+    (\texttt{eCDF Med}, \texttt{eCDF Mean}, and \texttt{eCDF Max},
+    respectively).
+  \end{itemize}
+  where $w$ represents the vector of \texttt{weights}.
+  
+\item \texttt{reduction}: the percent reduction in the difference in
+  means achieved in each of the balance measures in \texttt{sum.all}
+  and \texttt{sum.matched}, defined as $100(|a|-|b|)/|a|$, where $a$
+  was the value of the balance measure before matching and $b$ is the
+  value of the balance measure after matching.
+  
+\item \texttt{nn}: the sample sizes in the full and matched samples
+  and the number of discarded units, by treatment and control.
+  
+\item \texttt{q.table}: an array that contains the same information
+  as \texttt{sum.matched} by subclass.
+  
+\item \texttt{qn}: the sample sizes in the full and matched
+  samples and the number of discarded units, by subclass and by
+  treatment and control.
+\item \texttt{match.matrix}: the same object is contained in the
+  output of {\tt matchit()}.
+\end{itemize}
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: "matchit"
+%%% End: 

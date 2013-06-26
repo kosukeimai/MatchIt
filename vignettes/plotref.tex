@@ -1,0 +1,105 @@
+\section{\texttt{plot()}: Graphical Summaries of Balance}
+
+
+\subsection{Plot options for the matchit object}
+The \texttt{plot()} command allows you to check the distributions of
+propensity scores and covariates in the assignment model, squares, and
+interactions, and within each subclasses if specified.
+
+\subsubsection{Syntax}
+
+\begin{verbatim}
+> plot(m.out, discrete.cutoff = 5, type = "QQ", 
+       numdraws = 5000, interactive = TRUE, which.xs = NULL, ...)
+\end{verbatim}
+
+\subsubsection{Arguments}
+
+\begin{itemize}
+\item {\tt type}: type of output graph. \texttt{type = "QQ"}
+  (default) outputs empirical quantile-quantile plots of each
+  covariate to check balance of marginal distributions. Alternatively,
+  \texttt{type = "jitter"} outputs jitter plots of the propensity
+  score for treated and control units.  Finally, \texttt{type="hist"} outputs  
+  histograms of the propensity score in the original treated and control groups
+  and weighted histograms of the propensity score in the matched treated and control groups.
+  
+\item {\tt discrete.cutoff}: For quantile-quantile plots, discrete
+  covariates that take 5 or fewer values are jittered for visibility.
+  This may be changed by setting this argument to any other positive
+  integer.
+  
+\item {\tt interactive}: If \texttt{TRUE} (default), users can
+  identify individual units by clicking on the graph with the left
+  mouse button, and (when applicable) choose subclasses to plot.
+  
+\item {\tt which.xs}: For quantitle-quantile plots, specifies particular covariate names in a
+  character vector to plot only a subset of the covariates.
+
+\item {\tt subclass}: If \texttt{interactive = FALSE}, users can
+  specify which subclass to plot. 
+
+\end{itemize}
+
+\subsubsection{Output Values}
+
+\begin{itemize}
+\item Empirical quantile-quantile plot: This graph plots covariate
+  values that fall in (approximately) the same quantile of treated and
+  control distributions.  Control unit quantile values are plotted on
+  the x-axis, and treated unit quantile values are plotted on the
+  y-axis.  If values fall below the 45 degree line, control units
+  generally take lower values of the covariate.  Data points that fall
+  exactly on the 45 degree line indicate that the marginal
+  distributions are identical.
+  
+\item Jitter plots: This graph plots jittered estimated propensity
+  scores of treated and control units.  Dark diamonds indicate matched
+  units and grey diamonds indicate unmatched or discarded units.  The
+  area of the diamond is proportional to the weights. Vertical lines
+  are plotted if subclassification is used.
+
+\item Histograms: This graph plots histograms of the estimated propensity 
+scores in the original treated and control groups and weighted histograms of the estimated
+propensity scores in the matched treated and control groups.  Plots can be compared vertically to
+quickly check the balance before and after matching.  
+
+\end{itemize}
+
+\subsection{Plot options for the matchit summary object}
+You can also send a matchit summary object to the \texttt{plot()} command, to obtain
+a summary of the balance on each covariate before and after matching.  The summary() object
+must have been created using the option \texttt{standardize=TRUE}.  The idea for this plot
+came from the ``twang" package by McCaffrey, Ridgeway, and Morral.  
+
+\subsubsection{Syntax}
+
+\begin{verbatim}
+> s.out <- summary(object, standardize=TRUE, ...)
+
+> plot(s.out, ...)
+\end{verbatim}
+
+\subsubsection{Arguments}
+
+\begin{itemize}
+\item {\tt interactive}: If \texttt{TRUE} (default), users can
+  identify individual variables by clicking on the graph with the left
+  mouse button.
+\end{itemize}
+
+\subsubsection{Output Values}
+
+\begin{itemize}
+\item Line plot of standardized differences in means before and after matching.  
+Numbers plotted are those output by the summary() command in the sum.all and sum.matched
+objects.  
+\end{itemize}
+
+
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: "matchit"
+%%% End: 
+

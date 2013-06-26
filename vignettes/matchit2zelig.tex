@@ -1,0 +1,285 @@
+\section{Conducting Analyses after Matching}
+\label{sec:analysis}
+
+Any software package may be used for parametric analysis following
+\MatchIt.  This includes any of the relevant R packages, or other
+statistical software by exporting the resulting matched data sets
+using R commands such as {\tt write.csv()} and {\tt write.table()} for
+ASCII files or {\tt write.dta()} in the {\tt foreign} package for a
+STATA binary file.
+
+When variable numbers of treated and control units have been matched
+to each other (e.g., through exact matching, full matching, or k:1
+matching with replacement), the weights created by MatchIt should be
+used (e.g., in a weighted regression) to ensure that the matched
+treated and control groups are weighted up to be similar.  Users
+should also remember that the weights created by MatchIt estimate the
+average treatment effect on the treated, with the control units
+weighted to resemble the treated units.  See below for more detail on
+the weights.  With subclassification, estimates should be obtained
+within each subclass and then aggregated across subclasses.  When it
+is not possible to calculate an effect within each subclass, again the
+weights can be used to weight the matched units.
+
+In this section, we show how to use
+\hlink{Zelig}{http://gking.harvard.edu/zelig/} with \MatchIt.  Zelig
+\citep{ImaKinLau06} is an R package that implements a large variety of
+statistical models (using numerous existing R packages) with a single
+easy-to-use interface, gives easily interpretable results by
+simulating quantities of interest, provides numerical and graphical
+summaries, and is easily extensible to include new methods.
+
+\subsection{Quick Overview}
+
+The general syntax is as follows. First, we use \texttt{match.data()}
+to create the matched data from the \MatchIt\ output object
+(\texttt{m.out}) by excluding unmatched units from the original data,
+and including information produced by the particular matching
+procedure (i.e., primarily a new data set, but also information that
+may result such as weights, subclasses, or the distance measure).
+\begin{verbatim}
+> m.data <- match.data(m.out)
+\end{verbatim}
+where {\tt m.data} is the resulting matched data.  Zelig analyses all
+use three commands --- \texttt{zelig}, \texttt{setx}, and
+\texttt{sim}.  For example, the basic statistical analysis is
+performed first:
+\begin{verbatim}
+> z.out <- zelig(Y ~ treat + x1 + x2, model = mymodel, data = m.data)
+\end{verbatim}
+where {\tt Y} is the outcome variable, {\tt mymodel} is the selected
+model, and {\tt z.out} is the output object from {\tt zelig}.  This
+output object includes estimated coefficients, standard errors, and
+other typical outputs from your chosen statistical model.  Its
+contents can be examined via \texttt{summary(z.out)} or
+\texttt{plot(z.out)}, but the idea of Zelig is that these statistical
+results are typically only intermediate quantities needed to compute
+your ultimate quantities of interest, which in the case of matching
+are usually causal inferences.  To get these causal quantities, we use
+Zelig's other two commands.  Thus, we can set the explanatory
+variables at their means (the default) and change the treatment
+variable from a 0 to a 1:
+\begin{verbatim}
+> x.out <- setx(z.out, treat=0)
+> x1.out <- setx(z.out, treat=1)
+\end{verbatim}
+and finally compute the resulting estimates of the causal effects and
+examine a summary:
+\begin{verbatim}
+> s.out <- sim(z.out, x = x.out, x1 = x1.out)
+> summary(s.out)
+\end{verbatim}
+
+\subsection{Examples}
+
+We now give four examples using the Lalonde data.  They are meant to
+be read sequentially.  You can run these example commands by typing
+{\tt demo(analysis)}.  Although we use the linear least squares model
+in these examples, a wide range of other models are available in Zelig
+(for the list of supported models, see
+\hlink{\url{http://gking.harvard.edu/zelig/docs/Models_Zelig_Can.html}}
+{http://gking.harvard.edu/zelig/docs/Models_Zelig_Can.html}.
+
+To load the Zelig package after installing it, type
+\begin{verbatim}
+> library(Zelig)
+\end{verbatim}
+
+\begin{description}
+\item[Model-Based Estimates] In our first example, we conduct a
+  standard parametric analysis and compute quantities of interest in
+  the most common way.  We begin with nearest neighbor matching with a
+  logistic regression-based propensity score, discarding control units
+  outside the convex hull of the treated units
+  \citep{KinZen06,KinZen07}:
+\begin{verbatim}
+> m.out <- matchit(treat ~ age + educ + black + hispan + nodegree + 
+                    married + re74 + re75, method = "nearest", discard
+                    = "hull.control", data = lalonde)
+\end{verbatim}
+  Then we check balance using the summary and plot procedures (which
+  we don't show here).  When the best balance is achieved, 
+  we run the parametric analysis:
+\begin{verbatim}
+> z.out <- zelig(re78 ~ treat + age + educ + black + hispan + nodegree + 
+                  married + re74 + re75, data = match.data(m.out), 
+                  model = "ls")
+\end{verbatim}
+  and then set the explanatory variables at their means (the default)
+  and change the treatment variable from a 0 to a 1:
+\begin{verbatim}
+> x.out <- setx(z.out, treat=0)
+> x1.out <- setx(z.out, treat=1)
+\end{verbatim}
+and finally compute the result and examine a summary:
+\begin{verbatim}
+> s.out <- sim(z.out, x = x.out, x1 = x1.out)
+> summary(s.out)
+\end{verbatim}
+
+\item[Average Treatment Effect on the Treated] We illustrate now how
+  to estimate the average treatment effect on the treated in a way
+  that is quite robust.  We do this by estimating the coefficients in
+  the control group alone.
+
+  We begin by conducting nearest neighbor matching with a logistic
+  regression-based propensity score:
+\begin{verbatim}
+> m.out1 <- matchit(treat ~ age + educ + black + hispan + nodegree + 
+                    married + re74 + re75, method = "nearest", data = lalonde)
+\end{verbatim}
+  Then we check balance using the summary and plot procedures (which
+  we don't show here).  We reestimate the matching procedure until we
+  achieve the best balance possible.  (The running examples here are
+  meant merely to illustrate, not to suggest that we've achieved the
+  best balance.)  Then we go to Zelig, and in this case choose to fit
+  a linear least squares model to the control group only:
+\begin{verbatim}
+> z.out1 <- zelig(re78 ~ age + educ + black + hispan + nodegree + 
+                  married + re74 + re75, data = match.data(m.out1, "control"), 
+                  model = "ls")
+\end{verbatim}
+  where the {\tt "control"} option in {\tt match.data()} extracts only
+  the matched control units and {\tt ls} specifies least squares
+  regression.  In a smaller data set, this example should probably be
+  changed to include all the data in this estimation (using
+  \texttt{data = match.data(m.out1)} for the data) and by including
+  the treatment indicator (which is excluded in the example since its
+  a constant in the control group.)  Next, we use the coefficients
+  estimated in this way from the control group, and combine them with
+  the values of the covariates set to the values of the treated units.
+  We do this by choosing conditional prediction (which means use the
+  observed values) in \texttt{setx()}.  The {\tt sim()} command does
+  the imputation.
+\begin{verbatim}
+> x.out1 <- setx(z.out1, data = match.data(m.out1, "treat"), cond = TRUE)
+> s.out1 <- sim(z.out1, x = x.out1)
+\end{verbatim}
+Finally, we obtain a summary of the results by 
+\begin{verbatim}
+> summary(s.out1)
+\end{verbatim}
+
+\item[Average Treatment Effect (Overall)] To estimate the average
+  treatment effect, we continue with the previous example and fit the
+  linear model to the {\it treatment group}:
+\begin{verbatim}
+> z.out2 <- zelig(re78 ~ age + educ + black + hispan + nodegree + 
+                  married + re74 + re75, data = match.data(m.out1, "treat"), 
+                  model = "ls")
+\end{verbatim}
+We then conduct the same simulation procedure in order to impute the
+counterfactual outcome for the {\it control group},
+\begin{verbatim}
+> x.out2 <- setx(z.out2, data = match.data(m.out1, "control"), cond = TRUE)
+> s.out2 <- sim(z.out2, x = x.out2)
+\end{verbatim}
+In this calculation, Zelig is computing the difference between
+observed and the expected values.  This means that the treatment
+effect for the control units is the effect of control (observed
+control outcome minus the imputed outcome under treatment from the
+model).  Hence, to combine treatment effects just reverse the signs of
+the estimated treatment effect of controls.
+\begin{verbatim}
+> ate.all <- c(s.out1$qi$att.ev, -s.out2$qi$att.ev)
+\end{verbatim}
+The point estimate, its standard error, and the $95\%$ confidence
+interval is given by
+\begin{verbatim}
+> mean(ate.all)
+> sd(ate.all)
+> quantile(ate.all, c(0.025, 0.975))
+\end{verbatim}
+  
+\item[Subclassification] In subclassification, the average treatment
+  effect estimates are obtained separately for each subclass, and then
+  aggregated for an overall estimate.  Estimating the treatment
+  effects separately for each subclass, and then aggregating across
+  subclasses, can increase the robustness of the ultimate results
+  since the parametric analysis within each subclass requires only
+  local rather than global assumptions.  However, fewer observations
+  are obviously available within each subclass, and so this option is
+  normally chosen for larger data sets.
+
+  We begin this example by conducting subclassification with four
+  subclasses,
+\begin{verbatim}
+> m.out2 <- matchit(treat ~ age + educ + black + hispan + nodegree + 
+                    married + re74 + re75, data = lalonde, 
+                    method = "subclass", subclass = 4)
+\end{verbatim}
+  When balance is as good as we can get it, we then fit a linear
+  regression within each subclass by controlling for the estimated
+  propensity score (called \texttt{distance}) and other covariates.
+  In most software, this would involve running four separate
+  regressions and then combining the results.  In Zelig, however, all
+  we need to do is to use the {\tt by} option:
+\begin{verbatim}
+> z.out3 <- zelig(re78 ~ re74 + re75 + distance, 
+                  data = match.data(m.out2, "control"), 
+                  model = "ls", by = "subclass")
+\end{verbatim}
+  The same set of commands as in the first example are used to do the
+  imputation of the counterfactual outcomes for the treated units:
+\begin{verbatim}
+> x.out3 <- setx(z.out3, data = match.data(m.out2, "treat"), fn = NULL, 
+                 cond = TRUE)
+> s.out3 <- sim(z.out3, x = x.out3)
+> summary(s.out3)
+\end{verbatim}
+It is also possible to get the summary result for each subclass. For
+example, the following command summarizes the result for the second
+subclass.
+\begin{verbatim}
+> summary(s.out3, subset = 2)
+\end{verbatim}
+  
+\item[How Adjustment After Exact Matching Has No Effect] Regression 
+adjustment after exact one-to-one exact matching gives the identical 
+answer as a simple, unadjusted difference in means.  General exact 
+matching, as implemented in MatchIt, allows one-to-many matches, so to see 
+the same result we must weight when adjusting.  In other words: weighted 
+regression adjustment after general exact matching gives the identical 
+answer as a simple, unadjusted weighted difference in means.  For 
+example:
+
+\begin{verbatim}
+> m.out <- matchit(treat ~ educ + black + hispan, data = lalonde, 
+                   method = "exact")
+> m.data <- match.data(m.out)
+> ## weighted diff in means 
+> weighted.mean(mdata$re78[mdata$treat == 1], mdata$weights[mdata$treat==1]) 
+        - weighted.mean(mdata$re78[mdata$treat==0], mdata$weights[mdata$treat==0])
+[1] 807
+> ## weighted least squares without covariates
+> zelig(re78 ~ treat, data = m.data, model = "ls", weights = "weights")
+
+Call:
+zelig(formula = re78 ~ treat, model = "ls", data = m.data, weights =
+"weights")
+
+Coefficients:
+(Intercept)        treat  
+       5524          807 
+
+> ## weighted least squares with covariates
+> zelig(re78 ~ treat + black + hispan + educ, data = m.data, model = "ls", 
+        weights = "weights")
+
+Call:
+zelig(formula = re78 ~ treat + black + hispan + educ, model = "ls",
+data = m.data, weights = "weights")
+
+Coefficients:
+(Intercept)        treat        black       hispan         educ  
+        314          807        -1882          258          657  
+\end{verbatim}
+
+
+ \end{description}
+
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: "matchit"
+%%% End: 
