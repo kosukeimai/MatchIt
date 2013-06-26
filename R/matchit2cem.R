@@ -12,8 +12,8 @@ matchit2cem <- function(treat, X, data, distance, discarded, is.full.mahalanobis
                             ratio = 1, verbose = FALSE, k2k.method=NULL, ...) {
 
   
-  if (!("cem" %in% .packages(all = TRUE)))
-    install.packages("cem",repos="http://gking.harvard.edu/")
+  #if (!("cem" %in% .packages(all = TRUE)))
+  #  install.packages("cem",repos="http://gking.harvard.edu/")
   require(cem)
 
   if (verbose)

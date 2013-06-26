@@ -1,8 +1,8 @@
 matchit2optimal <- function(treat, X, data, distance, discarded, is.full.mahalanobis, 
                             ratio = 1, verbose=FALSE, ...) {
 
-  if (!("optmatch" %in% .packages(all = TRUE)))
-    install.packages("optmatch")
+  #if (!("optmatch" %in% .packages(all = TRUE)))
+  #  install.packages("optmatch")
   require(optmatch)
     
   if(verbose)

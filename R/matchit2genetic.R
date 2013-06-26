@@ -4,8 +4,8 @@ matchit2genetic <- function(treat, X, data, distance, discarded, is.full.mahalan
   #  install.packages("rgenoud")
   #require(rgenoud)
 
-  if (!("Matching" %in% .packages(all = TRUE)))
-    install.packages("Matching")
+  #if (!("Matching" %in% .packages(all = TRUE)))
+  #  install.packages("Matching")
   require(Matching)
 
   if (verbose)

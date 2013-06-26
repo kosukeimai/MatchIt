@@ -17,8 +17,8 @@ discard <- function(treat, pscore, option, X) {
     discarded <- (pscore < pmin0 | pscore > pmax0)
   else if (any(grep(option, c("hull.control", "hull.treat", "hull.both")))) {
     ## convext hull stuff
-    if (!("WhatIf" %in% .packages(all = TRUE)))
-      install.packages("WhatIf")
+#    if (!("WhatIf" %in% .packages(all = TRUE)))
+#      install.packages("WhatIf")
 #    if (!("lpSolve" %in% .packages(all = TRUE)))
 #      install.packages("lpSolve")
     require(WhatIf)
