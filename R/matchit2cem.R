@@ -14,7 +14,7 @@ matchit2cem <- function(treat, X, data, distance, discarded, is.full.mahalanobis
   
   #if (!("cem" %in% .packages(all = TRUE)))
   #  install.packages("cem",repos="http://gking.harvard.edu/")
-  require(cem)
+  requireNamespace(cem)
 
   if (verbose)
     cat("Coarsened exact matching...\n")

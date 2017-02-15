@@ -2,7 +2,7 @@ matchit2full <- function(treat, X, data, distance, discarded, is.full.mahalanobi
                          verbose=FALSE, ...) { 
   #if (!("optmatch" %in% .packages(all = TRUE)))
   #  install.packages("optmatch")
-  require(optmatch)
+  requireNamespace(optmatch)
   
   if(verbose)
     cat("Full matching... \n")

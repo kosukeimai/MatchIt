@@ -2,11 +2,11 @@ matchit2genetic <- function(treat, X, data, distance, discarded, is.full.mahalan
                             ratio = 1, verbose = FALSE, ...) {
   #if (!("rgenoud" %in% .packages(all = TRUE)))
   #  install.packages("rgenoud")
-  #require(rgenoud)
+  #requireNamespace(rgenoud)
 
   #if (!("Matching" %in% .packages(all = TRUE)))
   #  install.packages("Matching")
-  require(Matching)
+  requireNamespace(Matching)
 
   if (verbose)
     cat("Genetic matching... \n")

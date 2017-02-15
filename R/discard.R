@@ -21,8 +21,8 @@ discard <- function(treat, pscore, option, X) {
 #      install.packages("WhatIf")
 #    if (!("lpSolve" %in% .packages(all = TRUE)))
 #      install.packages("lpSolve")
-    require(WhatIf)
-#    require(lpSolve)
+    requireNamespace(WhatIf)
+#    requireNamespace(lpSolve)
     discarded <- rep(FALSE, n.obs)
     if (option == "hull.control"){ # discard units not in T convex hull
       wif <- whatif(cfact = X[treat==0,], data = X[treat==1,])

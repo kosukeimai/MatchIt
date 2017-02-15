@@ -3,7 +3,7 @@ matchit2optimal <- function(treat, X, data, distance, discarded, is.full.mahalan
 
   #if (!("optmatch" %in% .packages(all = TRUE)))
   #  install.packages("optmatch")
-  require(optmatch)
+  requireNamespace(optmatch)
     
   if(verbose)
     cat("Optimal matching... \n")
