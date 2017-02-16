@@ -36,7 +36,7 @@ matchit <- function(formula, data, method = "nearest", distance = "logit",
   ## obtain T and X
   tryerror <- try(model.frame(formula), TRUE)
   if (distance %in% c("GAMlogit", "GAMprobit", "GAMcloglog", "GAMlog", "GAMcauchit")) {
-    library(mgcv)
+    requireNamespace(mgcv)
     tt <- terms(mgcv::interpret.gam(formula)$fake.formula)
   } else {
     tt <- terms(formula)

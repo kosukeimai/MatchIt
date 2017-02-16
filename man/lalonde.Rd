@@ -5,8 +5,7 @@
 
 \description{ This is a subsample of the data from the treated group in the National Supported
 Work Demonstration (NSW) and the comparison sample from the Current Population Survey (CPS).  
-This data was previously analyzed extensively by Lalonde (1986) and Dehejia and Wahba (1999).  
-The full dataset is available at \url{http://www.columbia.edu/~rd247/nswdata.html}. }
+This data was previously analyzed extensively by Lalonde (1986) and Dehejia and Wahba (1999). }
 
 \usage{data(lalonde)}
 
@@ -27,5 +26,5 @@ dollars.  "re78" is income in 1978, in U.S. dollars. }
 	Re-Evaluating the Evaluation  of Training Programs.  Journal of the American 
 	Statistical Association 94: 1053-1062.
 }
-\source{\url{http://www.columbia.edu/~rd247/nswdata.html}}
+
 \keyword{datasets}  

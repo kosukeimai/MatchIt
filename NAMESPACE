@@ -1,4 +1,5 @@
-import(MASS)
+import(MASS, graphics, stats, utils)
+
 export(matchit,	
        help.matchit,
        match.data, 
