@@ -1,12 +1,8 @@
 matchit2genetic <- function(treat, X, data, distance, discarded, is.full.mahalanobis,
                             ratio = 1, verbose = FALSE, ...) {
-  #if (!("rgenoud" %in% .packages(all = TRUE)))
-  #  install.packages("rgenoud")
-  #requireNamespace(rgenoud)
 
-  #if (!("Matching" %in% .packages(all = TRUE)))
-  #  install.packages("Matching")
-  requireNamespace(Matching)
+  if (!requireNamespace("Matching", quietly = TRUE)) 
+      stop("Matching package is required.  Please install it.")
 
   if (verbose)
     cat("Genetic matching... \n")
@@ -21,7 +17,7 @@ matchit2genetic <- function(treat, X, data, distance, discarded, is.full.mahalan
   labels <- names(tt)
   tlabels <- names(tt[tt==1])
   clabels <- names(tt[tt==0])
-  out <- GenMatch(tt, cbind(dd, xx), M = ratio, ...)$matches
+  out <- Matching::GenMatch(tt, cbind(dd, xx), M = ratio, ...)$matches
   ## ratio matching does not seem to work with GenMatch
   mm <- matrix(0, nrow = n1, ncol = max(table(out[,1])), dimnames =
                list(tlabels, 1:max(table(out[,1]))))

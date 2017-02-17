@@ -12,9 +12,8 @@ matchit2cem <- function(treat, X, data, distance, discarded, is.full.mahalanobis
                             ratio = 1, verbose = FALSE, k2k.method=NULL, ...) {
 
   
-  #if (!("cem" %in% .packages(all = TRUE)))
-  #  install.packages("cem",repos="http://gking.harvard.edu/")
-  requireNamespace(cem)
+  if (!requireNamespace("cem", quietly = TRUE)) 
+      stop("cem package is required.  Please install it.")
 
   if (verbose)
     cat("Coarsened exact matching...\n")
@@ -28,7 +27,7 @@ matchit2cem <- function(treat, X, data, distance, discarded, is.full.mahalanobis
   cem.data <- as.data.frame(cbind(treat,X))
   
   mat <-
-    cem(treatment="treat",data=cem.data,verbose=as.integer(verbose)+1,
+    cem::cem(treatment="treat",data=cem.data,verbose=as.integer(verbose)+1,
         method=k2k.method,...)
 
   # here we create a column vector where the matched entry get its stratum

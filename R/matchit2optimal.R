@@ -1,9 +1,8 @@
 matchit2optimal <- function(treat, X, data, distance, discarded, is.full.mahalanobis, 
                             ratio = 1, verbose=FALSE, ...) {
 
-  #if (!("optmatch" %in% .packages(all = TRUE)))
-  #  install.packages("optmatch")
-  requireNamespace(optmatch)
+  if (!requireNamespace("optmatch", quietly = TRUE)) 
+      stop("optmatch package is required.  Please install it.")
     
   if(verbose)
     cat("Optimal matching... \n")
@@ -19,9 +18,9 @@ matchit2optimal <- function(treat, X, data, distance, discarded, is.full.mahalan
   clabels <- colnames(d) <- names(ttt[ttt==0])
   for (i in 1:n1) 
     d[i,] <- abs(d1[i]-d0)
-  full <- fullmatch(d, min.controls = ratio,
-                    max.controls = ratio,
-                    omit.fraction = (n0-ratio*n1)/n0, ...)
+  full <- optmatch::fullmatch(d, min.controls = ratio,
+                              max.controls = ratio,
+                              omit.fraction = (n0-ratio*n1)/n0, ...)
   psclass <- full[pmatch(names(ttt), names(full))]
   psclass <- as.numeric(as.factor(psclass))
   names(psclass) <- names(ttt)

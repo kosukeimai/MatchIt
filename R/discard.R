@@ -17,21 +17,16 @@ discard <- function(treat, pscore, option, X) {
     discarded <- (pscore < pmin0 | pscore > pmax0)
   else if (any(grep(option, c("hull.control", "hull.treat", "hull.both")))) {
     ## convext hull stuff
-#    if (!("WhatIf" %in% .packages(all = TRUE)))
-#      install.packages("WhatIf")
-#    if (!("lpSolve" %in% .packages(all = TRUE)))
-#      install.packages("lpSolve")
-    requireNamespace(WhatIf)
-#    requireNamespace(lpSolve)
+    requireNamespace("WhatIf")
     discarded <- rep(FALSE, n.obs)
     if (option == "hull.control"){ # discard units not in T convex hull
-      wif <- whatif(cfact = X[treat==0,], data = X[treat==1,])
+      wif <- WhatIf::whatif(cfact = X[treat==0,], data = X[treat==1,])
       discarded[treat==0] <- !wif$in.hull
     } else if (option == "hull.treat") {
-      wif <- whatif(cfact = X[treat==1,], data = X[treat==0,])
+      wif <- WhatIf::whatif(cfact = X[treat==1,], data = X[treat==0,])
       discarded[treat==1] <- !wif$in.hull
     } else if (option == "hull.both"){ # discard units not in T&C convex hull
-      wif <- whatif(cfact = cbind(1-treat, X), data = cbind(treat, X))
+      wif <- WhatIf::whatif(cfact = cbind(1-treat, X), data = cbind(treat, X))
       discarded <- !wif$in.hull
     }
     else
