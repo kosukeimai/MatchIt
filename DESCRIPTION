@@ -1,6 +1,6 @@
 Package: MatchIt
 Version: 2.4-22
-Date: 2017-02-16
+Date: 2017-02-21
 Title: Nonparametric Preprocessing for Parametric Casual Inference
 Author: Daniel Ho <daniel.e.ho@gmail.com>,
         Kosuke Imai <kimai@Princeton.Edu>, 
@@ -8,7 +8,8 @@ Author: Daniel Ho <daniel.e.ho@gmail.com>,
         Elizabeth Stuart <stuart@stat.harvard.edu>
 Maintainer: Kosuke Imai <kimai@Princeton.Edu>
 Depends: R (>= 2.6), MASS
-Suggests: cem, optmatch, Matching, nnet, rpart, mgcv, WhatIf
+Suggests: cem, optmatch, Matching, nnet, rpart, mgcv, WhatIf, R.rsp
+VignetteBuilder: R.rsp
 Description: Selects matched samples of the original treated and 
   control groups with similar covariate distributions -- can be 
   used to match exactly on covariates, to match on propensity 
