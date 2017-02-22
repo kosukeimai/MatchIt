@@ -9,11 +9,10 @@ Author: Daniel Ho <daniel.e.ho@gmail.com>,
 Maintainer: Kosuke Imai <kimai@Princeton.Edu>
 Depends: R (>= 2.6), MASS
 Suggests: cem, optmatch, Matching, nnet, rpart, mgcv, WhatIf
-Description: This package selects matched samples of the
-  the original treated and control groups with similar
-  covariate distributions -- can be used to match exactly
-  on covariates, to match on propensity scores, or perform 
-  a variety of other matching procedures.
+Description: Selects matched samples of the original treated and 
+  control groups with similar covariate distributions -- can be 
+  used to match exactly on covariates, to match on propensity 
+  scores, or perform a variety of other matching procedures.
 LazyLoad: yes
 LazyData: yes
 License: GPL (>=2)
