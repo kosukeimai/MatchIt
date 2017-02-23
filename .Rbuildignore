@@ -1,0 +1,2 @@
+^\.git$ 		# Ignore git files
+^\.travis\.yml$ # Used for continuous integration testing with travis
