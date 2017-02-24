@@ -1,4 +1,8 @@
 
+#' @import MASS
+#' @import stats
+#' @import utils
+#' @import graphics
 
 in_frame <- function(df, col) {
   exists(col, envir= as.environment(df))
@@ -23,11 +27,6 @@ is.matchit <- function(object) {
 ### GET MATCHES 
 #----------------------------------------------------------
 
-#' @export
-get_matches <- function(object, model_frame, id_cols= NULL, newdata= NULL) {
-  UseMethod("get_pairs", object)
-}
-
 #' @title Get matches from matchit object
 #' @description Get the resulting matches from a \code{matchit} model object. This function allows the 
 #' user to extract the matches from the original dataset used in model building or from a new dataset
@@ -41,7 +40,13 @@ get_matches <- function(object, model_frame, id_cols= NULL, newdata= NULL) {
 #' conjunction with \code{id_cols}. Defaults to \code{NULL}.
 #' @return If \code{newdata} is \code{NULL}, a subset of \code{model_frame} containing the rows 
 #' corresponding to the matched treatement and control observations with weights appended. If 
-#' \code{newdata} is not \code{NULL}, an equivalent subset of \code{newdata} is returned.
+#' \code{newdata} is not \code{NULL}, an equivalent subset of \code{newdata} is returned.2
+#' @export
+get_matches <- function(object, model_frame, id_cols= NULL, newdata= NULL) {
+  UseMethod("get_pairs", object)
+}
+
+
 get_matches.matchit <- function(object, model_frame, id_cols= NULL, newdata= NULL) {
   # 00. error checking
   if (!is.matchit(object)) stop("object must be a class 'matchit' object.")
@@ -96,6 +101,7 @@ get_matches.matchit <- function(object, model_frame, id_cols= NULL, newdata= NUL
 #----------------------------------------------------------
 
 # Need to account for weights -- how do we do qq plots with weights
+#' @export
 plot.matchit <- function(x, discrete.cutoff=5, type="QQ",
                          numdraws=5000, interactive = T, which.xs =
                            NULL, ...){
@@ -121,6 +127,7 @@ plot.matchit <- function(x, discrete.cutoff=5, type="QQ",
   }
 }
 
+#' @export
 plot.matchit.subclass <- function(x, discrete.cutoff=5,
                                   type="QQ", interactive = T,
                                   subclass = NULL, which.xs=NULL,...){
@@ -168,6 +175,7 @@ plot.matchit.subclass <- function(x, discrete.cutoff=5,
 }
 
 
+#' @export
 plot.summary.matchit <- function(x, interactive = TRUE, ...) {
   if ("matchit.exact" %in% class(x)){
     stop("Not appropriate for exact matching.  No plots generated.")
@@ -215,6 +223,7 @@ plot.summary.matchit <- function(x, interactive = TRUE, ...) {
 ### PRINT METHODS
 #----------------------------------------------------------
 
+#' @export
 print.matchit <- function(x, digits = getOption("digits"), ...){
   cat("\nCall: ", deparse(x$call), sep="\n")
   cat("\nSample sizes:\n")
@@ -232,6 +241,7 @@ print.matchit <- function(x, digits = getOption("digits"), ...){
   cat("\n")
 }
 
+#' @export
 print.matchit.exact <- function(x, digits = getOption("digits"), ...){
   cat("\nCall: ", deparse(x$call), sep = "\n")
   cat("\nExact Subclasses: ", max(x$subclass, na.rm=T),"\n",sep="")
@@ -248,7 +258,7 @@ print.matchit.exact <- function(x, digits = getOption("digits"), ...){
   cat("\n")
 }
 
-
+#' @export
 print.matchit.full <- function(x, digits = getOption("digits"), ...){
   cat("\nCall: ", deparse(x$call), sep = "\n")
   cat("\nSample sizes:\n")
@@ -267,7 +277,7 @@ print.matchit.full <- function(x, digits = getOption("digits"), ...){
   cat("\n")
 }
 
-
+#' @export
 print.matchit.subclass <- function(x, digits = getOption("digits"), ...){
   cat("\nCall: ", deparse(x$call), sep = "\n")
   cat("\nSample sizes by subclasses:\n\n")
@@ -281,7 +291,7 @@ print.matchit.subclass <- function(x, digits = getOption("digits"), ...){
   cat("\n")
 }
 
-
+#' @export
 print.summary.matchit.exact <- function(x, digits = max(3,
                                                         getOption("digits") - 3),
                                         ...){  
@@ -294,7 +304,7 @@ print.summary.matchit.exact <- function(x, digits = max(3,
   invisible(x)
 }
 
-
+#' @export
 print.summary.matchit <- function(x, digits = max(3,
                                                   getOption("digits") - 3), ...){
   
@@ -322,7 +332,7 @@ print.summary.matchit <- function(x, digits = max(3,
   invisible(x)
 }
 
-
+#' @export
 print.summary.matchit.subclass <- function(x, digits = max(3,
                                                            getOption("digits") -
                                                              3), ...){   
@@ -349,6 +359,7 @@ print.summary.matchit.subclass <- function(x, digits = max(3,
 ### SUMMARY METHODS
 #----------------------------------------------------------
 
+#' @export
 summary.matchit <- function(object, interactions = FALSE,
                             addlvariables = NULL, standardize = FALSE,
                             ...) {
@@ -432,6 +443,8 @@ summary.matchit <- function(object, interactions = FALSE,
   return(res)
 }
 
+
+#' @export
 summary.matchit.exact <- function(object, covariates = FALSE, ...) {
   XX <- object$X
   treat <- object$treat
@@ -467,6 +480,8 @@ summary.matchit.exact <- function(object, covariates = FALSE, ...) {
   return(res)
 }
 
+
+#' @export
 summary.matchit.full <- function(object, interactions = FALSE,
                                  addlvariables = NULL, numdraws =
                                    5000, standardize = FALSE,
@@ -550,6 +565,7 @@ summary.matchit.full <- function(object, interactions = FALSE,
 }
 
 
+#' @export
 summary.matchit.subclass <- function(object, interactions = FALSE,
                                      addlvariables=NULL, standardize = FALSE,
                                      ...) {
