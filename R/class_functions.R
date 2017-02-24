@@ -28,12 +28,12 @@ get_matches <- function(object, model_frame, id_cols= NULL, newdata= NULL) {
   UseMethod("get_pairs", object)
 }
 
-#' @title Get matches from 'matchit' object
-#' @description Get the resulting matches from a 'matchit' model object. This function allows the 
+#' @title Get matches from matchit object
+#' @description Get the resulting matches from a \code{matchit} model object. This function allows the 
 #' user to extract the matches from the original dataset used in model building or from a new dataset
 #' that has a matching set of key column(s) (\code{id_cols}).
-#' @param object The \code{"matchit} class model object
-#' @param model_frame The \code{"data.frame"} class object used in creation of \code{object}.
+#' @param object The \code{'matchit'} class model object
+#' @param model_frame The \code{'data.frame'} class object used in creation of \code{object}.
 #' @param id_cols A string indicating the ID for the datset used in the call to \code{\link{matchit}}. 
 #' This can be used in combination with \code{newdata} to return the base dataset. Defaults to 
 #' \code{NULL}.
@@ -174,7 +174,8 @@ plot.summary.matchit <- function(x, interactive = TRUE, ...) {
   }
   
   if (!"Std. Mean Diff."%in%names(x$sum.all)){ 
-    stop("Not appropriate for unstandardized summary.  Run summary() with the standardize=TRUE option, and then plot.")
+    stop(paste("Not appropriate for unstandardized summary.  Run summary() with the ", 
+               "standardize=TRUE option, and then plot."))
   }
   
   sd.pre <- abs(x$sum.all$"Std. Mean Diff.")
@@ -185,7 +186,8 @@ plot.summary.matchit <- function(x, interactive = TRUE, ...) {
   ases.dat <- data.frame(es.unw = sd.pre, es.w = sd.post)
   par(mfrow=c(1,1))
   plot(c(0.85, 2.15), c(0, min(3, max(unlist(ases.dat[, 
-                                                      1:2]), na.rm = TRUE))), type = "n", xaxt = "n", ylab = "Absolute Standardized Diff in Means", 
+                                                      1:2]), na.rm = TRUE))), type = "n", xaxt = "n", 
+       ylab = "Absolute Standardized Diff in Means", 
        xlab = "", main = "")
   abline(h = c(0.2, 0.4, 0.6, 0.8, 1.0))
   axis(side = 1, at = 1:2, labels = c("All Data", "Matched Data"))

@@ -2,25 +2,36 @@ Package: MatchIt
 Version: 2.5
 Date: 2017-03-01
 Title: Nonparametric Preprocessing for Parametric Casual Inference
-Description: Selects matched samples of the original treated and 
-  control groups with similar covariate distributions -- can be 
-  used to match exactly on covariates, to match on propensity 
-  scores, or perform a variety of other matching procedures.  The
-  package also implements a series of recommendations offered in 
-  Ho, Imai, King, and Stuart (2007) <DOI:10.1093/pan/mpl013>.
+Description: Selects matched samples of the original treated and
+    control groups with similar covariate distributions -- can be
+    used to match exactly on covariates, to match on propensity
+    scores, or perform a variety of other matching procedures.  The
+    package also implements a series of recommendations offered in
+    Ho, Imai, King, and Stuart (2007) <DOI:10.1093/pan/mpl013>.
 Authors@R: c(
-  person("Daniel", "Ho", , "daniel.e.ho@gmail.com", c("aut", "che")),
-  person("Kosuke", "Imai", , "kimai@Princeton.Edu", c("aut", "che")), 
-  person("Gary", "King", , "king@harvard.edu", c("aut", "che")),
-  person("Elizabeth", "Stuart", , "stuart@stat.harvard.edu", c("aut", "che")),
-  person("Alex", "Whitworth", , "whitworth.alex@gmail.com", c("cab"))
+  person("Daniel", "Ho", , "daniel.e.ho@gmail.com", c("aut")),
+  person("Kosuke", "Imai", , "kimai@Princeton.Edu", c("aut", "cre")),
+  person("Gary", "King", , "king@harvard.edu", c("aut")),
+  person("Elizabeth", "Stuart", , "stuart@stat.harvard.edu", c("aut")),
+  person("Alex", "Whitworth", , "whitworth.alex@gmail.com", c("ctb"))
   )
 Maintainer: Kosuke Imai <kimai@Princeton.Edu>
-Depends: R (>= 2.6), MASS
-Suggests: cem, optmatch, Matching, nnet, rpart, mgcv, WhatIf, R.rsp,
+Depends:
+    R (>= 2.6),
+    MASS
+Suggests:
+    cem,
+    optmatch,
+    Matching,
+    nnet,
+    rpart,
+    mgcv,
+    WhatIf,
+    R.rsp,
     testthat
 VignetteBuilder: R.rsp
 LazyLoad: yes
 LazyData: yes
 License: GPL (>=2)
 URL: http://gking.harvard.edu/matchit
+RoxygenNote: 5.0.1
