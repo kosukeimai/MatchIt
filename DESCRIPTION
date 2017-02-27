@@ -18,11 +18,12 @@ Authors@R: c(
 Maintainer: Kosuke Imai <kimai@Princeton.Edu>
 Depends:
     R (>= 2.6),
-    MASS
-Suggests:
-    cem,
+    MASS, 
     optmatch,
     Matching,
+    rgenoud
+Suggests:
+    cem,
     nnet,
     rpart,
     mgcv,

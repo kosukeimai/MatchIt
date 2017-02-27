@@ -8,6 +8,14 @@ in_frame <- function(df, col) {
   exists(col, envir= as.environment(df))
 }
 
+int_rownames <- function(mat) {
+  options(warn= -1)
+  rn <- as.integer(rownames(mat))
+  options(warn= 0)
+  if (any(is.na(rn))) return(FALSE)
+  else return(TRUE)
+}
+
 #----------------------------------------------------------
 ### Inheritance
 #----------------------------------------------------------
@@ -40,13 +48,13 @@ is.matchit <- function(object) {
 #' conjunction with \code{id_cols}. Defaults to \code{NULL}.
 #' @return If \code{newdata} is \code{NULL}, a subset of \code{model_frame} containing the rows 
 #' corresponding to the matched treatement and control observations with weights appended. If 
-#' \code{newdata} is not \code{NULL}, an equivalent subset of \code{newdata} is returned.2
+#' \code{newdata} is not \code{NULL}, an equivalent subset of \code{newdata} is returned.
 #' @export
 get_matches <- function(object, model_frame, id_cols= NULL, newdata= NULL) {
-  UseMethod("get_pairs", object)
+  UseMethod("get_matches", object)
 }
 
-
+#' @export
 get_matches.matchit <- function(object, model_frame, id_cols= NULL, newdata= NULL) {
   # 00. error checking
   if (!is.matchit(object)) stop("object must be a class 'matchit' object.")
@@ -65,23 +73,45 @@ get_matches.matchit <- function(object, model_frame, id_cols= NULL, newdata= NUL
   }
   
   # 01. preliminaries
-  is_exact_matching <- base::grepl(x = object$call[4], pattern= "exact", ignore.case= TRUE)
+  use_subclass_matching <- base::grepl(x = object$call[4], 
+                                       pattern= paste(c("exact", "full", "subclass"), collapse= "|"),
+                                   ignore.case= TRUE)
   use_newdata <- ifelse(is.null(newdata), FALSE, TRUE)
+  has_int_rownames <- int_rownames(model_frame)
   
   # 02. extract pairs, either exact matching or otherwise
-  if (is_exact_matching) {
-    row_idx <- as.integer(names(object$subclass)[which(!is.na(object$subclass))])
-    match_wts <- object$weights[which(!is.na(object$subclass))]
-    model_subset <- data.frame(model_frame[row_idx, ], weight= match_wts)
+  if (use_subclass_matching) {
+    if (has_int_rownames) {
+      row_idx <- as.integer(names(object$subclass)[which(!is.na(object$subclass))])
+      match_wts <- object$weights[which(!is.na(object$subclass))]
+      model_subset <- data.frame(model_frame[row_idx, ], weight= match_wts)
+    } else {
+      row_idx <- names(object$subclass)[which(!is.na(object$subclass))]
+      match_wts <- object$weights[which(!is.na(object$subclass))]
+      model_subset <- data.frame(model_frame[which(rownames(model_frame) %in% row_idx), ], 
+                                 weight= match_wts)
+    }
   } else {
     n_matches <- ncol(object$match.matrix)
     match_wts <- 1 / n_matches # not done via norm of distance
-    
-    treated_obs <- data.frame(model_frame[as.integer(rownames(object$match.matrix)), ], weight= 1)
     control_obs <- list()
-    for (n in 1:n_matches) {
-      control_obs[[n]] <- data.frame(model_frame[as.integer(object$match.matrix[, n]), ], weight= match_wts)
+    if (has_int_rownames) {
+      treated_obs <- data.frame(model_frame[as.integer(rownames(object$match.matrix)), ], weight= 1)
+      for (n in 1:n_matches) {
+        control_obs[[n]] <- data.frame(model_frame[as.integer(object$match.matrix[, n]), ], 
+                                       weight= match_wts)
+      }
+    } else {
+      treated_obs <- data.frame(
+        model_frame[which(rownames(model_frame) %in% rownames(object$match.matrix)), ],
+                    weight= 1)
+      for (n in 1:n_matches) {
+        control_obs[[n]] <- data.frame(
+          model_frame[which(rownames(model_frame) %in% object$match.matrix[, n]), ],
+          weight= match_wts)
+      }
     }
+    
     control_obs[[n + 1]] <- treated_obs 
     model_subset <- do.call("rbind", control_obs)  
   }
@@ -92,7 +122,10 @@ get_matches.matchit <- function(object, model_frame, id_cols= NULL, newdata= NUL
   } else { # using newdata via id_cols
     newdata <- base::as.data.frame(newdata) # in case of data.table
     unique_ids <- base::unique(x= model_subset[, c(id_cols, "weight")])
-    return(merge(newdata, unique_ids, by= id_cols, all.x=FALSE, all.y=TRUE))
+    # use of all == FALSE for two cases: 
+    # a) newdata contains additional IDs not in the matching data -- most common
+    # b) if model_subset contains IDs that newdata does not have -- less common
+    return(merge(newdata, unique_ids, by= id_cols, all.x=FALSE, all.y=FALSE))
   }
 }
 
