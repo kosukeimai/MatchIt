@@ -1,3 +1,4 @@
+#' @export
 matchit <- function(formula, data, method = "nearest", distance = "logit",
                     distance.options=list(), discard = "none",
                     reestimate = FALSE, ...) { 

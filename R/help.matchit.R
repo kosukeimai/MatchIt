@@ -1,3 +1,4 @@
+#' @export
 help.matchit <- function (object=NULL) 
 {
     under.unix <- !(version$os == "Microsoft Windows" || version$os == 
