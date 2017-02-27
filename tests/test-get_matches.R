@@ -43,7 +43,7 @@ test_that("can get correct matches, nearest", {
   m.out <- matchit(treat ~ re74 + re75 + educ + black + hispan + age,
                    data = lalonde, method = "nearest")
   n_matched <- sum(m.out$nn[2,])
-  nms_matches <- c(rownames(m.out$match.matrix), c(m.out$match.matrix))
+  nms_matched <- c(rownames(m.out$match.matrix), c(m.out$match.matrix))
   
   lalonde$id <- 1:nrow(lalonde)
   lalonde2 <- lalonde[sample.int(500, 3000, replace=TRUE),]
