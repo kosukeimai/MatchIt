@@ -74,7 +74,7 @@ get_matches.matchit <- function(object, model_frame, id_cols= NULL, newdata= NUL
   
   # 01. preliminaries
   use_subclass_matching <- base::grepl(x = object$call[4], 
-                                       pattern= paste(c("exact", "full", "subclass"), collapse= "|"),
+                                       pattern= paste(c("exact", "full", "subclass", "cem"), collapse= "|"),
                                    ignore.case= TRUE)
   use_newdata <- ifelse(is.null(newdata), FALSE, TRUE)
   has_int_rownames <- int_rownames(model_frame)

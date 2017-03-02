@@ -206,10 +206,11 @@ test_that("can get correct matches, genetic", {  ## this one is problematic -- p
 })
 
 test_that("can get correct matches, cem", {
+  library(cem)
   m.out <- matchit(treat ~ age + educ + black + hispan + married + nodegree
                    + re74 + re75, data = lalonde, method = "cem")
   n_matched <- sum(m.out$nn[2,])
-  nms_matched <- c(rownames(m.out$match.matrix), m.out$match.matrix[,1])
+  nms_matched <- names(m.out$subclass[!is.na(m.out$subclass)])
   
   lalonde$id <- 1:nrow(lalonde)
   lalonde2 <- lalonde[sample.int(500, 3000, replace=TRUE),]
