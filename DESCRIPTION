@@ -17,7 +17,8 @@ Authors@R: c(
   )
 Maintainer: Kosuke Imai <kimai@Princeton.Edu>
 Depends:
-    R (>= 2.6),
+    R (>= 2.6)
+Imports:
     MASS, 
     optmatch,
     Matching,
