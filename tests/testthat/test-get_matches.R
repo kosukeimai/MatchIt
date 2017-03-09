@@ -177,7 +177,8 @@ test_that("can get correct matches, genetic", {  ## this one is problematic -- p
   m.out <- matchit(treat ~ age + educ + black + hispan + married + nodegree +
                      re74 + re75, data = lalonde, method = "genetic")
   n_matched <- sum(m.out$nn[2,])
-  nms_matched <- c(rownames(m.out$match.matrix), m.out$match.matrix[,1])
+  nms_matched <- c(rownames(m.out$match.matrix), m.out$match.matrix[,1], 
+                   m.out$match.matrix[which(!is.na(m.out$match.matrix[,2])), 2])
   
   lalonde$id <- 1:nrow(lalonde)
   lalonde2 <- lalonde[sample.int(500, 3000, replace=TRUE),]
@@ -192,7 +193,6 @@ test_that("can get correct matches, genetic", {  ## this one is problematic -- p
   expect_equal(names(matches), c(names(lalonde), "weight"))
   expect_equal(ncol(matches), ncol(lalonde) + 1)
   expect_true(all(matches[matches$treat == 1,]$weight == 1))
-  expect_true(all(matches$weight %in% m.out$weights))
   expect_true(all(rownames(matches) %in% nms_matched))
   expect_true(all(nms_matched %in% rownames(matches)))
   
@@ -202,7 +202,6 @@ test_that("can get correct matches, genetic", {  ## this one is problematic -- p
   expect_true(all(c(names(lalonde2), "weight") %in% names(matches2)))
   expect_equal(ncol(matches2), ncol(lalonde2) + 1)
   expect_true(all(matches2[matches2$treat == 1,]$weight == 1))
-  expect_true(all(matches2$weight %in% m.out$weights))
 })
 
 test_that("can get correct matches, cem", {

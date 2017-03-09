@@ -76,6 +76,7 @@ get_matches.matchit <- function(object, model_frame, id_cols= NULL, newdata= NUL
   use_subclass_matching <- base::grepl(x = object$call[4], 
                                        pattern= paste(c("exact", "full", "subclass", "cem"), collapse= "|"),
                                    ignore.case= TRUE)
+  use_genetic_matching <- base::grepl(x = object$call[4], pattern= "genetic", ignore.case= TRUE)
   use_newdata <- ifelse(is.null(newdata), FALSE, TRUE)
   has_int_rownames <- int_rownames(model_frame)
   
@@ -97,18 +98,35 @@ get_matches.matchit <- function(object, model_frame, id_cols= NULL, newdata= NUL
     control_obs <- list()
     if (has_int_rownames) {
       treated_obs <- data.frame(model_frame[as.integer(rownames(object$match.matrix)), ], weight= 1)
-      for (n in 1:n_matches) {
-        control_obs[[n]] <- data.frame(model_frame[as.integer(object$match.matrix[, n]), ], 
-                                       weight= match_wts)
+      if (!use_genetic_matching) {
+        for (n in 1:n_matches) {
+          control_obs[[n]] <- data.frame(model_frame[as.integer(object$match.matrix[, n]), ], 
+                                         weight= match_wts)
+        } 
+      } else {
+        for (n in 1:n_matches) {
+          row_idx <- which(!is.na(object$match.matrix[, n]))
+          control_obs[[n]] <- data.frame(model_frame[as.integer(object$match.matrix[row_idx, n]), ], 
+                                         weight= match_wts)
+        }
       }
     } else {
       treated_obs <- data.frame(
         model_frame[which(rownames(model_frame) %in% rownames(object$match.matrix)), ],
                     weight= 1)
-      for (n in 1:n_matches) {
-        control_obs[[n]] <- data.frame(
-          model_frame[which(rownames(model_frame) %in% object$match.matrix[, n]), ],
-          weight= match_wts)
+      if (!use_genetic_matching) {
+        for (n in 1:n_matches) {
+          control_obs[[n]] <- data.frame(
+            model_frame[which(rownames(model_frame) %in% object$match.matrix[, n]), ],
+            weight= match_wts)
+        }
+      } else {
+        for (n in 1:n_matches) {
+          row_idx <- which(!is.na(object$match.matrix[, n]))
+          control_obs[[n]] <- data.frame(
+            model_frame[which(rownames(model_frame) %in% object$match.matrix[row_idx, n]), ],
+            weight= match_wts)
+        }
       }
     }
     
