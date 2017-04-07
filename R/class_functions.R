@@ -54,6 +54,7 @@ get_matches <- function(object, model_frame, id_cols= NULL, newdata= NULL) {
   UseMethod("get_matches", object)
 }
 
+
 #' @export
 get_matches.matchit <- function(object, model_frame, id_cols= NULL, newdata= NULL) {
   # 00. error checking
@@ -73,10 +74,15 @@ get_matches.matchit <- function(object, model_frame, id_cols= NULL, newdata= NUL
   }
   
   # 01. preliminaries
+  if ( any(grepl(pattern= "replace", x= names(object$call))) ) {
+    idx_call_replace <- which(names(object$call) == "replace")
+  } else {
+    idx_call_replace <- -1L
+  }
   use_subclass_matching <- base::grepl(x = object$call[4], 
-                                       pattern= paste(c("exact", "full", "subclass", "cem"), collapse= "|"),
-                                   ignore.case= TRUE)
-  use_genetic_matching <- base::grepl(x = object$call[4], pattern= "genetic", ignore.case= TRUE)
+                             pattern= paste(c("exact", "full", "subclass", "cem"), collapse= "|"),
+                             ignore.case= TRUE)
+  # [deprecated] use_genetic_matching <- base::grepl(x = object$call[4], pattern= "genetic", ignore.case= TRUE)
   use_newdata <- ifelse(is.null(newdata), FALSE, TRUE)
   has_int_rownames <- int_rownames(model_frame)
   
@@ -93,45 +99,9 @@ get_matches.matchit <- function(object, model_frame, id_cols= NULL, newdata= NUL
                                  weight= match_wts)
     }
   } else {
-    n_matches <- ncol(object$match.matrix)
-    match_wts <- 1 / n_matches # not done via norm of distance
-    control_obs <- list()
-    if (has_int_rownames) {
-      treated_obs <- data.frame(model_frame[as.integer(rownames(object$match.matrix)), ], weight= 1)
-      if (!use_genetic_matching) {
-        for (n in 1:n_matches) {
-          control_obs[[n]] <- data.frame(model_frame[as.integer(object$match.matrix[, n]), ], 
-                                         weight= match_wts)
-        } 
-      } else {
-        for (n in 1:n_matches) {
-          row_idx <- which(!is.na(object$match.matrix[, n]))
-          control_obs[[n]] <- data.frame(model_frame[as.integer(object$match.matrix[row_idx, n]), ], 
-                                         weight= match_wts)
-        }
-      }
-    } else {
-      treated_obs <- data.frame(
-        model_frame[which(rownames(model_frame) %in% rownames(object$match.matrix)), ],
-                    weight= 1)
-      if (!use_genetic_matching) {
-        for (n in 1:n_matches) {
-          control_obs[[n]] <- data.frame(
-            model_frame[which(rownames(model_frame) %in% object$match.matrix[, n]), ],
-            weight= match_wts)
-        }
-      } else {
-        for (n in 1:n_matches) {
-          row_idx <- which(!is.na(object$match.matrix[, n]))
-          control_obs[[n]] <- data.frame(
-            model_frame[which(rownames(model_frame) %in% object$match.matrix[row_idx, n]), ],
-            weight= match_wts)
-        }
-      }
-    }
-    
-    control_obs[[n + 1]] <- treated_obs 
-    model_subset <- do.call("rbind", control_obs)  
+   model_subset <- get_matches_non_subclass(object= object, model_frame= model_frame,
+                     has_int_rownames= has_int_rownames,
+                     idx_call_replace= idx_call_replace)   
   }
   
   # 03. return  
@@ -145,6 +115,39 @@ get_matches.matchit <- function(object, model_frame, id_cols= NULL, newdata= NUL
     # b) if model_subset contains IDs that newdata does not have -- less common
     return(merge(newdata, unique_ids, by= id_cols, all.x=FALSE, all.y=FALSE))
   }
+}
+
+get_matches_non_subclass <- function(object, model_frame, has_int_rownames, use_genetic_matching,
+                                     idx_call_replace) {
+  ## get match weights
+  n_matches <- ncol(object$match.matrix)
+  # get control observations that have matches and their frequency (ie weight)
+  control_units <- object$match.matrix
+  attr(control_units, "dim") <- NULL
+  control_units <- control_units[!is.na(control_units)]
+  
+  control_wts <- table(control_units); class(control_wts) <- "vector"
+  control_wts <- data.frame(ob= names(control_wts), weight= control_wts / n_matches,
+                            stringsAsFactors= FALSE)
+  
+  if (has_int_rownames) {
+    treated_obs <- data.frame(model_frame[as.integer(rownames(object$match.matrix)), ], weight= 1)
+    control_obs <- data.frame(model_frame[as.integer(control_wts$ob), ], 
+                              weight= control_wts$weight)
+  } else {
+    treated_obs <- data.frame(
+      model_frame[which(rownames(model_frame) %in% rownames(object$match.matrix)), ],
+      weight= 1)
+    
+    model_frame$rownames <- rownames(model_frame)
+    control_obs <- merge(model_frame, control_wts, by.x= "rownames", by.y= "ob", all= FALSE)
+    rownames(control_obs) <- control_obs$rownames
+    control_obs$rownames <- NULL
+    control_obs$ob <- NULL
+  }
+  
+  model_subset <- do.call("rbind", list(control_obs, treated_obs))
+  return(model_subset)
 }
 
 #----------------------------------------------------------

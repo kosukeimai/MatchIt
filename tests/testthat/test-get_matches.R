@@ -237,3 +237,53 @@ test_that("can get correct matches, cem", {
   expect_true(all(matches2$weight %in% m.out$weights))
   
 })
+
+l_treat <- do.call("rbind",replicate(10, lalonde[lalonde$treat == 1, ], simplify = FALSE))
+l_contr <- do.call("rbind",replicate(3, lalonde[lalonde$treat == 0, ], simplify = FALSE))
+l2 <- do.call("rbind", list(l_treat, l_contr)); rm(l_treat, l_contr)
+rownames(l2) <- 1:nrow(l2)
+
+test_that("correct weights for replace= TRUE", {
+  m.out <- matchit(treat ~ re74 + re75 + educ + black + hispan + age,
+                   data = l2, method = "nearest", replace= TRUE)
+  n_matched <- sum(m.out$nn[2,])
+  nms_matched <- c(rownames(m.out$match.matrix), c(m.out$match.matrix))
+  
+  matches <- get_matches(m.out, l2)
+  exp_wts <- c(1, unique(as.vector(table(m.out$match.matrix))))
+  
+  # tests -- no newdata
+  expect_equal(n_matched, nrow(matches))
+  expect_equal(sum(matches$treat), m.out$nn[2,2])
+  expect_equal(nrow(matches) - sum(matches$treat), m.out$nn[2,1])
+  expect_equal(sum(is.na(matches)), 0L)
+  expect_equal(names(matches), c(names(lalonde), "weight"))
+  expect_equal(ncol(matches), ncol(lalonde) + 1)
+  expect_true(all(matches[matches$treat == 1,]$weight == 1))
+  expect_true(all(matches$weight %in% exp_wts))
+  expect_true(all(rownames(matches) %in% nms_matched))
+  expect_true(all(nms_matched %in% rownames(matches)))
+})
+
+
+test_that("correct weights for replace= TRUE; test2", {
+  m.out <- matchit(treat ~ re74 + re75 + educ + black + hispan + age,
+                   data = l2, method = "cem", replace= TRUE)
+  n_matched <- sum(m.out$nn[2,])
+  nms_matched <- c(rownames(m.out$match.matrix), c(m.out$match.matrix))
+  
+  matches <- get_matches(m.out, l2)
+  exp_wts <- c(1, unique(as.vector(table(m.out$match.matrix))))
+  
+  # tests -- no newdata
+  expect_equal(n_matched, nrow(matches))
+  expect_equal(sum(matches$treat), m.out$nn[2,2])
+  expect_equal(nrow(matches) - sum(matches$treat), m.out$nn[2,1])
+  expect_equal(sum(is.na(matches)), 0L)
+  expect_equal(names(matches), c(names(lalonde), "weight"))
+  expect_equal(ncol(matches), ncol(lalonde) + 1)
+  expect_true(all(matches[matches$treat == 1,]$weight == 1))
+  expect_true(all(matches$weight %in% exp_wts))
+  expect_true(all(rownames(matches) %in% nms_matched))
+  expect_true(all(nms_matched %in% rownames(matches)))
+})
