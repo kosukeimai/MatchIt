@@ -1,9 +1,6 @@
 matchit2genetic <- function(treat, X, data, distance, discarded, is.full.mahalanobis,
                             ratio = 1, verbose = FALSE, ...) {
 
-  if (!requireNamespace("Matching", quietly = TRUE)) 
-      stop("Matching package is required.  Please install it.")
-
   if (verbose)
     cat("Genetic matching... \n")
   

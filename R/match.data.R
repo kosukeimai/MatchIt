@@ -1,3 +1,4 @@
+#' @export
 match.data <- function(object, group = "all", distance = "distance",
                        weights = "weights", subclass = "subclass") {
 

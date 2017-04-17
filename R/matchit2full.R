@@ -1,8 +1,5 @@
 matchit2full <- function(treat, X, data, distance, discarded, is.full.mahalanobis,
                          verbose=FALSE, ...) { 
-
-  if (!requireNamespace("optmatch", quietly = TRUE)) 
-      stop("optmatch package is required.  Please install it.")
   
   if(verbose)
     cat("Full matching... \n")
