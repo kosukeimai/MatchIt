@@ -268,9 +268,9 @@ test_that("correct weights for replace= TRUE", {
 
 test_that("correct weights for replace= TRUE; test2", {
   m.out <- matchit(treat ~ re74 + re75 + educ + black + hispan + age,
-                   data = l2, method = "cem", replace= TRUE)
+                   data = l2, method = "cem")
   n_matched <- sum(m.out$nn[2,])
-  nms_matched <- c(rownames(m.out$match.matrix), c(m.out$match.matrix))
+  nms_matched <- names(m.out$subclass[!is.na(m.out$subclass)])
   
   matches <- get_matches(m.out, l2)
   exp_wts <- c(1, unique(as.vector(table(m.out$match.matrix))))
@@ -283,7 +283,7 @@ test_that("correct weights for replace= TRUE; test2", {
   expect_equal(names(matches), c(names(lalonde), "weight"))
   expect_equal(ncol(matches), ncol(lalonde) + 1)
   expect_true(all(matches[matches$treat == 1,]$weight == 1))
-  expect_true(all(matches$weight %in% exp_wts))
+  expect_true(all(matches$weight %in% m.out$weights))
   expect_true(all(rownames(matches) %in% nms_matched))
   expect_true(all(nms_matched %in% rownames(matches)))
 })
