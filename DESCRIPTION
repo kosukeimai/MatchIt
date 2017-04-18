@@ -1,5 +1,5 @@
 Package: MatchIt
-Version: 3.0.1
+Version: 3.0.2
 Date: 2017-04-17
 Title: Nonparametric Preprocessing for Parametric Casual Inference
 Description: Selects matched samples of the original treated and
@@ -20,12 +20,12 @@ Depends:
     R (>= 2.6)
 Imports:
     MASS, 
-    optmatch,
     Matching,
     rgenoud
 Suggests:
     cem,
     nnet,
+    optmatch,
     rpart,
     mgcv,
     WhatIf,
