@@ -10,7 +10,10 @@ matchit2full <- function(treat, X, data, distance, discarded, is.full.mahalanobi
   n0 <- length(ttt[ttt==0])
   n1 <- length(ttt[ttt==1])
 
-  if(!is.matrix(distance)){
+  if(is.matrix(distance)){
+    d <- distance
+    d <- d[treat == 1 & !discarded, treat == 0 & !discarded] 
+  } else {
     d1 <- ddd[ttt==1]
     d0 <- ddd[ttt==0]
     d <- matrix(0, ncol=n0, nrow=n1)
@@ -18,10 +21,7 @@ matchit2full <- function(treat, X, data, distance, discarded, is.full.mahalanobi
     colnames(d) <- names(ttt[ttt==0])
     for (i in 1:n1)  
       d[i,] <- abs(d1[i]-d0)
-  } else {
-    d <- distance
-    d <- d[treat == 1 & !discarded, treat == 0 & !discarded] 
-  }
+  } 
   full <- optmatch::fullmatch(d, ...)
   psclass <- full[pmatch(names(ttt), names(full))]
   psclass <- as.numeric(as.factor(psclass))
