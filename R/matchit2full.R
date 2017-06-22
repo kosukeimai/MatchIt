@@ -20,7 +20,7 @@ matchit2full <- function(treat, X, data, distance, discarded, is.full.mahalanobi
       d[i,] <- abs(d1[i]-d0)
   } else {
     d <- distance
-    d <- d[treat == 0 & !discarded, treat == 1 & !discarded] 
+    d <- d[treat == 1 & !discarded, treat == 0 & !discarded] 
   }
   full <- optmatch::fullmatch(d, ...)
   psclass <- full[pmatch(names(ttt), names(full))]
