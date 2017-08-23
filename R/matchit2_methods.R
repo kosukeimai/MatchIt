@@ -353,7 +353,6 @@ matchit2nearest <-  function(treat, X, data, distance, discarded,
     ## There might be a more efficient way to do this, but I couldn't figure
     ## out another way to compare a vector with the matrix
     if (!is.null(exact)) {
-      for (k in 1:dim(exact)[2]) matchedc2[exact[itert,k]!=exact[clabels,k]] <- -2
       for (k in 1:dim(exact)[2]) matchedc2[exact[[k]][itert]!=exact[[k]][clabels]] <- -2
     }
     
