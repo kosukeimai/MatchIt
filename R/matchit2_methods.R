@@ -99,7 +99,7 @@ matchit2full <- function(treat, X, data, distance, discarded, is.full.mahalanobi
   
   # Determine which number code corresponds to the treated group
   if(is.factor(ttt)){
-      treated <- ttt == 2
+      treated <- as.numeric(ttt) == 2
   } else {
       treated <- ttt == 1
   }
