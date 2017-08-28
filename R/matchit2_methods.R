@@ -96,20 +96,29 @@ matchit2full <- function(treat, X, data, distance, discarded, is.full.mahalanobi
   ## full matching for undiscarded units
   ttt <- treat[!discarded]
   ddd <- distance[!discarded]
-  n0 <- length(ttt[ttt==0])
-  n1 <- length(ttt[ttt==1])
+  
+  # Determine which number code corresponds to the treated group
+  if(is.factor(ttt)){
+      treated <- ttt == 2
+  } else {
+      treated <- ttt == 1
+  }
+  
+  n0 <- length(ttt[!treated])
+  n1 <- length(ttt[treated])
   
   if (is.matrix(distance)){
     if (ncol(distance) != length(treat) | nrow(distance) != length(treat))
-      error("dimension of distance matrix is incorrect")
+      stop("dimension of distance matrix is incorrect")
     d <- distance
-    d <- d[treat == 1 & !discarded, treat == 0 & !discarded]
+    d <- d[treated & !discarded, !treated & !discarded]
   } else {
-    d1 <- ddd[ttt==1]
-    d0 <- ddd[ttt==0]
+    ## Assume that the model has only two group
+    d1 <- ddd[treated]
+    d0 <- ddd[!treated]
     d <- matrix(0, ncol=n0, nrow=n1)
-    rownames(d) <- names(ttt[ttt==1])
-    colnames(d) <- names(ttt[ttt==0])
+    rownames(d) <- names(ttt[treated])
+    colnames(d) <- names(ttt[!treated])
     for (i in 1:n1) 
         d[i,] <- abs(d1[i]-d0)
   }     
