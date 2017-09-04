@@ -9,7 +9,7 @@ This data was previously analyzed extensively by Lalonde (1986) and Dehejia and 
 
 \usage{data(lalonde)}
 
-\format{ A data frame with 313 observations (185 treated, 429 control).  There are 10 variables
+\format{ A data frame with 614 observations (185 treated, 429 control).  There are 10 variables
 measured for each individual.  "treat" is the treatment assignment (1=treated, 0=control).  
 "age" is age in years.  "educ" is education in number of years of schooling.  "black" is an
 indicator for African-American (1=African-American, 0=not).  "hispan" is an indicator for being
