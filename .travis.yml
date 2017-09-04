@@ -1,6 +1,8 @@
 language: r
 cache: packages
 
+dist: trusty
+
 addons:
   apt:
     packages:
