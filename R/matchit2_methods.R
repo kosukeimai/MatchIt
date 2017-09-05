@@ -101,7 +101,7 @@ matchit2full <- function(treat, X, data, distance, discarded, is.full.mahalanobi
   
   if (is.matrix(distance)){
     if (ncol(distance) != length(treat) | nrow(distance) != length(treat))
-      error("dimension of distance matrix is incorrect")
+      stop("dimension of distance matrix is incorrect")
     d <- distance
     d <- d[treat == 1 & !discarded, treat == 0 & !discarded]
   } else {
