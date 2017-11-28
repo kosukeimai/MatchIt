@@ -16,4 +16,3 @@ Returns \code{TRUE} if its argument has class "matchit" among its classes and
 \description{
 Function that checks if the target object is a \code{matchit} object.
 }
-

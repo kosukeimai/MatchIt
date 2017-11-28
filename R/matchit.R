@@ -1,16 +1,18 @@
 
-# utility function for matchit
+# utility function for MatchIt::matchit() to check data inputs
 check_data_missingness <- function(formula, data) {
-  if (!is.formula(formula)) { formula <- formula(formula) }
+  if (!inherits(formula, "formula")) { formula <- formula(formula) }
   if(is.null(data)) stop("Dataframe must be specified",call.=FALSE)
   if(!is.data.frame(data)){
     stop("Data must be a dataframe",call.=FALSE)}
   
   varnames <- all.vars(formula)
   var_idx <- which(names(data) %in% varnames)
-  if (any(apply(data[, var_idx], 2, function(j) sum(is.na(j) || is.nan(j)))) > 0)
+  if (length(varnames) == 0) stop("formula does not contain variables")
+  if ( any(!(varnames %in% names(data))) ) stop("formula variables do not exist in data.")
+  if (any(apply(data[, var_idx], 2, function(j) sum(is.na(j) || is.nan(j))) > 0))
     stop("missing values exist in data")
-  if (any(apply(data[, var_idx], 2, function(j) sum(is.infinite(j)))) > 0))
+  if (any(apply(data[, var_idx], 2, function(j) sum(is.infinite(j))) > 0))
     stop("infinite values exist in data")
 }
 
