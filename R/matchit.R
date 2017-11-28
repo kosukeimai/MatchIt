@@ -1,20 +1,27 @@
+
+# utility function for matchit
+check_data_missingness <- function(formula, data) {
+  if (!is.formula(formula)) { formula <- formula(formula) }
+  if(is.null(data)) stop("Dataframe must be specified",call.=FALSE)
+  if(!is.data.frame(data)){
+    stop("Data must be a dataframe",call.=FALSE)}
+  
+  varnames <- all.vars(formula)
+  var_idx <- which(names(data) %in% varnames)
+  if (any(apply(data[, var_idx], 2, function(j) sum(is.na(j) || is.nan(j)))) > 0)
+    stop("missing values exist in data")
+  if (any(apply(data[, var_idx], 2, function(j) sum(is.infinite(j)))) > 0))
+    stop("infinite values exist in data")
+}
+
 #' @export
 matchit <- function(formula, data, method = "nearest", distance = "logit",
                     distance.options=list(), discard = "none",
                     reestimate = FALSE, ...) { 
 
-  #Checking input format
-  #data input
+  # Check data inputs
   mcall <- match.call()
-  if(is.null(data)) stop("Dataframe must be specified",call.=FALSE)
-  if(!is.data.frame(data)){
-    stop("Data must be a dataframe",call.=FALSE)}
-  if(sum(is.na(data))>0)
-    stop("Missing values exist in the data")
-  # list-wise deletion
-  # allvars <- all.vars(mcall)
-  # varsindata <- colnames(data)[colnames(data) %in% all.vars(mcall)]
-  # data <- na.omit(subset(data, select = varsindata))
+  check_data_missingness(formula, data)
   
   ## 7/13/06: Convert character variables to factors as necessary
   ischar <- rep(0, dim(data)[2])
