@@ -20,8 +20,7 @@ Depends:
     R (>= 2.6)
 Imports:
     MASS, 
-    Matching,
-    rgenoud
+    Matching
 Suggests:
     cem,
     nnet,
@@ -30,10 +29,11 @@ Suggests:
     mgcv,
     WhatIf,
     R.rsp,
-    testthat
+    testthat,
+    rgenoud
 VignetteBuilder: R.rsp
 LazyLoad: yes
 LazyData: yes
 License: GPL (>=2)
 URL: http://gking.harvard.edu/matchit
-RoxygenNote: 5.0.1
+RoxygenNote: 6.0.1
