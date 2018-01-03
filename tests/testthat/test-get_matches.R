@@ -173,6 +173,7 @@ test_that("can get correct matches, subclass", {
   expect_true(all(matches2$weight %in% m.out$weights))
 })
 
+set.seed(12345)
 test_that("can get correct matches, genetic", {  ## this one is problematic -- problematic returns
   m.out <- matchit(treat ~ age + educ + black + hispan + married + nodegree +
                      re74 + re75, data = lalonde, method = "genetic")
