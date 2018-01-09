@@ -28,4 +28,3 @@ Get the resulting matches from a \code{matchit} model object. This function allo
 user to extract the matches from the original dataset used in model building or from a new dataset
 that has a matching set of key column(s) (\code{id_cols}).
 }
-
