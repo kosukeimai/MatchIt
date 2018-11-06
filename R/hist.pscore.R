@@ -57,4 +57,5 @@ hist.pscore <- function(x, numdraws=5000, xlab="Propensity Score", main=NULL, fr
        main=main,...)
     if(!is.null(q.cut)){abline(v=q.cut,col="grey",lty=1)}
   }
+  par(mfrow=c(1,1))
 }
