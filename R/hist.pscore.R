@@ -23,6 +23,7 @@ hist.pscore <- function(x, numdraws=5000, xlab="Propensity Score", main=NULL, fr
     pscore.treated.matched <- pscore[treat==1 & weights!=0]
     pscore.control.matched <- pscore[treat==0 & weights!=0]
   }
+  par_prior <- par(no.readonly = TRUE) ## Store prior par config before changing
   par(mfrow=c(2,2))
   if(!is.null(xlim)){warning("xlim may not be user specified. xlim returned to default.")}
   xlim <- range(na.omit(pscore))
@@ -57,5 +58,5 @@ hist.pscore <- function(x, numdraws=5000, xlab="Propensity Score", main=NULL, fr
        main=main,...)
     if(!is.null(q.cut)){abline(v=q.cut,col="grey",lty=1)}
   }
-  par(mfrow=c(1,1))
+  par(mfrow = par_prior$mfrow) # Reset to prior par config
 }
