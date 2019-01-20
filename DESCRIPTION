@@ -36,4 +36,5 @@ LazyLoad: yes
 LazyData: yes
 License: GPL (>=2)
 URL: http://gking.harvard.edu/matchit
+BugReports: https://github.com/kosukeimai/MatchIt/issues
 RoxygenNote: 6.0.1
