@@ -1,43 +1,73 @@
 #' @export
 match.data <- function(object, group = "all", distance = "distance",
-                       weights = "weights", subclass = "subclass") {
+                       weights = "weights", subclass = "subclass",
+                       data = NULL, drop.unmatched = TRUE) {
 
-  if (!is.null(object$model)) {
-    env <- attributes(terms(object$model))$.Environment
-  } else {
-    env <- parent.frame()
+  if (is.null(data)) {
+    if (!is.null(object$model)) {
+      env <- attributes(terms(object$model))$.Environment
+    } else {
+      env <- parent.frame()
+    }
+    data <- eval(object$call$data, envir = env)
   }
-  data <- eval(object$call$data, envir = env)
-  treat <- object$treat
-  wt <- object$weights
+  else {
+    if (!is.data.frame(data)) {
+      if (is.matrix(data)) data <- as.data.frame.matrix(data)
+      else stop("data must be a data frame.", call. = FALSE)
+    }
+    if (nrow(data) != length(object$treat)) {
+      stop("data must have as many rows as there were units in the original call to matchit().", call. = FALSE)
+    }
+  }
+
   vars <- names(data)
-  if (distance %in% vars)
-    stop("invalid input for distance. choose a different name.")
-  else if (!is.null(object$distance)) {
-    dta <- data.frame(cbind(data, object$distance))
-    names(dta) <- c(names(data), distance)
-    data <- dta
+
+  if (!is.null(object$distance)) {
+    if (distance %in% vars) {
+      if (distance == "distance") {
+        stop(paste0("\"", distance, "\" is already the name of a variable in the data. Please choose another name for distance using the 'distance' argument."), call. = FALSE)
+      }
+      else {
+        stop(paste0("\"", distance, "\" is already the name of a variable in the data. Please choose another name for distance."), call. = FALSE)
+      }
+    }
+
+    data[[distance]] <- object$distance
   }
-  if (weights %in% vars)
-    stop("invalid input for weights. choose a different name.")
-  else if (!is.null(object$weights)){
-    dta <- data.frame(cbind(data, object$weights))
-    names(dta) <- c(names(data), weights)
-    data <- dta
+
+  if (!is.null(object$weights)){
+    if (weights %in% vars) {
+      if (weights == "weights") {
+        stop(paste0("\"", weights, "\" is already the name of a variable in the data. Please choose another name for weights using the 'weights' argument."), call. = FALSE)
+      }
+      else {
+        stop(paste0("\"", weights, "\" is already the name of a variable in the data. Please choose another name for weights."), call. = FALSE)
+      }
+    }
+    data[[weights]] <- object$weights
   }
-  if (subclass %in% vars)
-    stop("invalid input for subclass. choose a different name.")
-  else if (!is.null(object$subclass)){
-    dta <- data.frame(cbind(data, object$subclass))
-    names(dta) <- c(names(data), subclass)
-    data <- dta
+
+  if (!is.null(object$subclass)){
+    if (subclass %in% vars) {
+      if (subclass == "subclass") {
+        stop(paste0("\"", subclass, "\" is already the name of a variable in the data. Please choose another name for subclass using the 'subclass' argument."), call. = FALSE)
+      }
+      else {
+        stop(paste0("\"", subclass, "\" is already the name of a variable in the data. Please choose another name for subclass."), call. = FALSE)
+      }
+    }
+    data[[subclass]] <- object$subclass
   }
-  if (group == "all")
-    return(data[wt > 0,])
-  else if (group == "treat")
-    return(data[wt > 0 & treat == 1,])
-  else if (group == "control")
-    return(data[wt > 0 & treat == 0,])
-  else
-    stop("error: invalid input for group.")
+
+  treat <- object$treat
+  if (drop.unmatched && !is.null(object$weights)) {
+    data <- data[object$weights > 0,]
+    treat <- treat[object$weights > 0]
+  }
+
+  group <- match_arg(group, c("all", "treated", "control"))
+  if (group == "all") return(data)
+  else if (group == "treated") return(data[treat == 1,])
+  else if (group == "control") return(data[treat == 0,])
 }
