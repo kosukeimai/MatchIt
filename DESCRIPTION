@@ -1,6 +1,5 @@
 Package: MatchIt
-Version: 3.0.4
-Date: 2019-01-20
+Version: 3.0.4.9000
 Title: Nonparametric Preprocessing for Parametric Causal Inference
 Description: Selects matched samples of the original treated and
     control groups with similar covariate distributions -- can be
@@ -17,20 +16,22 @@ Authors@R: c(
   )
 Maintainer: Kosuke Imai <Imai@Harvard.Edu>
 Depends:
-    R (>= 2.6)
+    R (>= 3.0.0)
 Imports:
-    MASS, 
-    Matching
+    MASS,
+    backports (>= 1.1.8)
 Suggests:
     cem,
     nnet,
     optmatch,
+    Matching,
     rpart,
     mgcv,
     WhatIf,
     R.rsp,
     testthat,
-    rgenoud
+    rgenoud,
+    CBPS
 VignetteBuilder: R.rsp
 LazyLoad: yes
 LazyData: yes
