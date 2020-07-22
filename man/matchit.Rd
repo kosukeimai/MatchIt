@@ -7,10 +7,10 @@
 \title{MatchIt: Matching Software for Causal Inference}
 
 \description{ \code{matchit} is the main command of the package
-\emph{MatchIt}, which enables parametric models for causal inference to
+\pkg{MatchIt}, which enables parametric models for causal inference to
 work better by selecting well-matched subsets of the original treated
 and control groups.  MatchIt implements the suggestions of Ho, Imai,
-King, and Stuart (2004) for improving parametric statistical models by
+King, and Stuart (2007) for improving parametric statistical models by
 preprocessing data with nonparametric matching methods.  MatchIt
 implements a wide range of sophisticated matching methods, making it
 possible to greatly reduce the dependence of causal inferences on
@@ -25,7 +25,7 @@ subsequent parametric analyses. Full documentation is available online
 at \url{http://gking.harvard.edu/matchit}, and help for specific
 commands is available through \code{help.matchit}.}
 
-\details{The matching is done using the \code{matchit(treat ~ X, ...)} 
+\details{The matching is done using the \code{matchit(treat ~ X, ...)}
 command, where \code{treat} is the vector of treatment assignments and
 \code{X} are the covariates to be used in the matching.  There are a
 number of matching options, detailed below.  The full syntax is
@@ -103,10 +103,10 @@ represents the square term of \code{x1}. See \code{help(formula)}
     \code{data}.  Each column stores the name(s) of the control unit(s) matched
     to the treatment unit of that row. For example, when the
     \code{ratio} input for nearest neighbor or optimal matching is
-    specified as 3, the three columns of 
+    specified as 3, the three columns of
     \code{match.matrix} represent the three control units matched to
-    one treatment unit).    
-    \code{NA} indicates that the treatment unit was not matched.}   
+    one treatment unit).
+    \code{NA} indicates that the treatment unit was not matched.}
   \item{discarded}{A vector of length $n$ that displays
     whether the units were ineligible for matching due to common
     support restrictions.  It equals \code{TRUE} if unit \eqn{i} was
@@ -135,13 +135,13 @@ represents the square term of \code{x1}. See \code{help(formula)}
 
 \seealso{Please use \code{help.matchit} to access the matchit reference
   manual.  The complete document is available online at
-  \url{http://gking.harvard.edu/matchit}.  
+  \url{http://gking.harvard.edu/matchit}.
 }
 
 \references{Daniel Ho, Kosuke Imai, Gary King, and Elizabeth Stuart
   (2007).  Matching as Nonparametric Preprocessing for Reducing Model Dependence in Parametric
   Causal Inference.  Political Analysis 15(3): 199-236.
-  \url{http://gking.harvard.edu/files/abs/matchp-abs.shtml} 
+  \url{http://gking.harvard.edu/files/abs/matchp-abs.shtml}
 }
 
 \author{
