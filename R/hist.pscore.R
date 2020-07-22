@@ -1,62 +1,54 @@
-hist.pscore <- function(x, numdraws=5000, xlab="Propensity Score", main=NULL, freq=F, xlim = NULL,...){
+hist.pscore <- function(x, xlab="Propensity Score", freq = FALSE, ...){
+  .pardefault <- par(no.readonly = TRUE)
+  on.exit(par(.pardefault))
+
   treat <- x$treat
-  pscore <- x$distance
+  pscore <- x$distance[!is.na(x$distance)]
   weights <- x$weights
   matched <- weights!=0
   q.cut <- x$q.cut
   cwt <- sqrt(weights)
+  minp <- min(pscore)
+  maxp <- max(pscore)
   ratio <- x$call$ratio
-  if(is.null(ratio)){ratio <- 1}
-  
-  ## For full or ratio matching, sample numdraws observations using the weights
-  if(identical(x$call$method,"full") | (ratio!=1)) {
-    pscore.treated.matched <- sample(names(treat)[treat==1],
-                                     numdraws/2, replace=TRUE,
-                                     prob=x$weights[treat==1])
-    pscore.treated.matched <- pscore[pscore.treated.matched]
-    pscore.control.matched <- sample(names(treat)[treat==0],
-                                     numdraws/2, replace=TRUE,
-                                     prob=x$weights[treat==0])
-    pscore.control.matched <- pscore[pscore.control.matched]
-    
-  } else {
-    pscore.treated.matched <- pscore[treat==1 & weights!=0]
-    pscore.control.matched <- pscore[treat==0 & weights!=0]
+
+  if (is.null(ratio)) {ratio <- 1}
+
+  for (i in unique(treat, nmax = 2)) {
+    if (freq) weights[treat == i] <- weights[treat == i]/mean(weights[treat == i])
+    else weights[treat == i] <- weights[treat == i]/sum(weights[treat == i])
   }
-  par_prior <- par(no.readonly = TRUE) ## Store prior par config before changing
-  par(mfrow=c(2,2))
-  if(!is.null(xlim)){warning("xlim may not be user specified. xlim returned to default.")}
-  xlim <- range(na.omit(pscore))
-  if(is.null(main)){
-    hist(pscore[treat==1],xlim=xlim,
-       xlab=xlab, freq=freq,
-       main="Raw Treated", ...)
-    hist(pscore.treated.matched,xlim=xlim,
-       xlab=xlab, freq=freq,
-       main="Matched Treated",...)
-    if(!is.null(q.cut)){abline(v=q.cut,col="grey",lty=1)}
-    hist(pscore[treat==0],xlim=xlim,
-       xlab=xlab, freq=freq,
-       main="Raw Control",...)
-    hist(pscore.control.matched,xlim=xlim,
-       xlab=xlab, freq=freq,
-       main="Matched Control",...)
-    if(!is.null(q.cut)){abline(v=q.cut,col="grey",lty=1)}
-  }else{
-    hist(pscore[treat==1],xlim=xlim,
-       xlab=xlab, freq=freq,
-       main=main, ...)
-    hist(pscore.treated.matched,xlim=xlim,
-       xlab=xlab, freq=freq,
-       main=main,...)
-    if(!is.null(q.cut)){abline(v=q.cut,col="grey",lty=1)}
-    hist(pscore[treat==0],xlim=xlim,
-       xlab=xlab, freq=freq,
-       main=main,...)
-    hist(pscore.control.matched,xlim=xlim,
-       xlab=xlab, freq=freq,
-       main=main,...)
-    if(!is.null(q.cut)){abline(v=q.cut,col="grey",lty=1)}
+
+  ylab <- if (freq) "Count" else "Proportion"
+
+  par(mfrow = c(2,2))
+  # breaks <- pretty(na.omit(pscore), 10)
+  breaks <- seq(minp, maxp, length = 11)
+  xlim <- range(breaks)
+
+  for (n in c("Raw Treated", "Matched Treated", "Raw Control", "Matched Control")) {
+    if (startsWith(n, "Raw")) weights <- rep(1, length(treat))
+    else weights <- x$weights
+
+    if (endsWith(n, "Treated")) t <- 1
+    else t <- 0
+
+    if (freq) weights[treat == t] <- weights[treat == t]/mean(weights[treat == t])
+    else weights[treat == t] <- weights[treat == t]/sum(weights[treat == t])
+
+    #Create histogram using weights
+    #Manually assign density, which is used as height of the bars. The scaling
+    #of the weights above determine whether they are "counts" or "proportions".
+    #Regardless, set freq = FALSE in plot() to ensure density is used for bar
+    #height rather than count.
+    pm <- hist(pscore[treat==t], plot = FALSE, breaks = breaks)
+    pm[["density"]] <- vapply(seq_len(length(pm$breaks) - 1), function(i) {
+      sum(weights[treat == t & pscore >= pm$breaks[i] & pscore < pm$breaks[i+1]])
+    }, numeric(1L))
+    plot(pm, xlim = xlim, xlab = xlab, main = n, ylab = ylab,
+         freq = FALSE, col = "lightgray", ...)
+
+    if (!startsWith(n, "Raw") && !is.null(q.cut)) abline(v = q.cut, lty=2)
   }
-  par(mfrow = par_prior$mfrow) # Reset to prior par config
+
 }
