@@ -1,23 +1,21 @@
-#' @export
-help.matchit <- function (object=NULL) 
-{
-    under.unix <- !(version$os == "Microsoft Windows" || version$os == 
+help.matchit <- function(object=NULL) {
+    under.unix <- !(version$os == "Microsoft Windows" || version$os ==
         "Win32" || version$os == "mingw32")
     sys <- function(command, text = NULL) {
-        cmd <- if (length(text)) 
+        cmd <- if (length(text))
             paste(command, text)
         else command
-        if (under.unix) 
+        if (under.unix)
             system(cmd)
         else shell(cmd, wait = TRUE)
     }
     browser <- .Options$help.browser
-    if (!length(browser)) 
+    if (!length(browser))
         browser <- .Options$browser
-    if (!length(browser)) 
+    if (!length(browser))
         browser <- getOption("browser")
     url <- NULL
- 
+
     if (is.null(object))
       url <- c("http://gking.harvard.edu/matchit")
     if (!is.null(object)) {
@@ -42,7 +40,7 @@ help.matchit <- function (object=NULL)
     }
 
     if (is.null(url)) {
-        cat("Error:", object, "currently not documented in help.matchit. \n Please check http://gking.harvard.edu/matchit. \n", 
+        cat("Error:", object, "currently not documented in help.matchit. \n Please check http://gking.harvard.edu/matchit. \n",
             sep = " ")
 	url <- c("http://gking.harvard.edu/matchit")
     }
