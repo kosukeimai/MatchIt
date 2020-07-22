@@ -1,107 +1,175 @@
-matchit.qqplot <- function(x,discrete.cutoff,
-                           which.subclass=NULL, numdraws=5000,
-                           interactive = T, which.xs = NULL,...){
-  X <- x$X
-  ## Fix X matrix so that it doesn't have any factors
-  varnames <- colnames(X)
-  for(var in varnames) {
-        if(is.factor(X[,var])) {
-                tempX <- X[,!colnames(X)%in%c(var)]
-                form<-formula(substitute(~dummy-1,list(dummy=as.name(var))))
-                X <- cbind(tempX, model.matrix(form, X))
-        }
-  }
+matchit.qqplot <- function(object, discrete.cutoff, which.subclass = NULL,
+                           interactive = TRUE, which.xs = NULL,...) {
 
-  covariates  <- X
-
-  if(!is.null(which.xs)){
-    if(sum(which.xs%in%dimnames(covariates)[[2]])!=length(which.xs)){
-      stop("which.xs is incorrectly specified")
+  #Create covariate matrix; include exact and mahvars
+  if (!is.null(which.xs)) {
+    if (!is.vector(which.xs, "character")) {
+      stop("which.xs should be a vector of variables for which balance is to be displayed.", call. = FALSE)
     }
-    covariates <- covariates[,which.xs,drop=F]  
+    which.xs.f <- terms(reformulate(which.xs))
+    X <- model.matrix(update(which.xs.f, NULL ~ . + 1), data = object$X,
+                      contrasts.arg = lapply(Filter(is.factor, object$X),
+                                             function(v) contrasts(v, contrasts = FALSE)))[,-1,drop = FALSE]
   }
-  treat <- x$treat
-  matched <- x$weights!=0
+  else {
+    #Create covariate matrix; include exact and mahvars
+    X <- model.matrix(update(object$formula, NULL ~ . + 1), data = object$X,
+                      contrasts.arg = lapply(Filter(is.factor, object$X),
+                                             function(v) contrasts(v, contrasts = FALSE)))[,-1,drop = FALSE]
+    if (!is.null(object$exact)) {
+      Xexact <- model.matrix(update(object$exact, NULL ~ . + 1), data = object$X,
+                             contrasts.arg = lapply(Filter(is.factor, object$X[, all.vars(object$exact), drop = FALSE]),
+                                                    function(v) contrasts(v, contrasts = FALSE)))[,-1,drop = FALSE]
+      X <- cbind(X, Xexact[,setdiff(colnames(Xexact), colnames(X)), drop = FALSE])
+    }
 
-  ratio <- x$call$ratio
-  if(is.null(ratio)){ratio <- 1}
-  
-  ## For full or ratio matching, sample numdraws observations using the weights
-  if(identical(x$call$method,"full") | (ratio!=1)) {
-    t.plot <- sample(names(treat)[treat==1], numdraws/2, replace=TRUE, prob=x$weights[treat==1])
-    c.plot <- sample(names(treat)[treat==0], numdraws/2, replace=TRUE, prob=x$weights[treat==0])
-    
-    m.covariates <- x$X[c(t.plot, c.plot),]
-    m.treat <- x$treat[c(t.plot, c.plot)]
-  } else {
-    m.covariates <- covariates[matched,,drop=F]
-    m.treat <- treat[matched]
+    if (!is.null(object$mahvars)) {
+      Xmahvars <- model.matrix(update(object$mahvars, NULL ~ . + 1), data = object$X,
+                               contrasts.arg = lapply(Filter(is.factor, object$X[, all.vars(object$mahvars), drop = FALSE]),
+                                                      function(v) contrasts(v, contrasts = FALSE)))[,-1,drop = FALSE]
+      X <- cbind(X, Xmahvars[,setdiff(colnames(Xmahvars), colnames(X)), drop = FALSE])
+    }
   }
-  
-  if(!is.null(which.subclass)){
-    subclass <- x$subclass
-    sub.index <- subclass==which.subclass & !is.na(subclass)
-    sub.covariates <- covariates[sub.index,,drop=F]
-    sub.treat <- treat[sub.index]
-    sub.matched <- matched[sub.index]
-    ## Matched units in each subclass
-    m.covariates <- sub.covariates[sub.matched,,drop=F]
-    m.treat <- sub.treat[sub.matched]
-    ## Compare to full sample--reset covariates and treat to full data set
-#    covariates <- x$X
-#    treat <- x$treat
+
+  t <- object$treat
+
+  if (!is.null(object$subclass) && !is.null(which.subclass)) {
+    w <- as.numeric(object$subclass == which.subclass & !is.na(object$subclass))
   }
-  nn <- dimnames(covariates)[[2]]
-  nc <- length(nn)
-  covariates <- data.matrix(covariates)
- # oma <- c(4, 4, 6, 4)
-  oma <- c(2.25,0,3.75,1.5)
+  else {
+    w <- object$weights
+    if (is.null(w)) w <- rep(1, length(t))
+  }
+
+  for (i in 0:1) w[t == i] <- w[t==i]/sum(w[t==i])
+
+  n1 <- sum(t == 1)
+  n0 <- length(t) - n1
+
+  wn1 <- sum(w[t==1] > 0)
+  wn0 <- sum(w[t==0] > 0)
+
+  varnames <- colnames(X)
+
+  .pardefault <- par(no.readonly = TRUE)
+  on.exit(par(.pardefault))
+
+  oma <- c(2.25, 0, 3.75, 1.5)
   opar <- par(mfrow = c(3, 3), mar = rep.int(1/2, 4), oma = oma)
-  on.exit(par(opar))
 
- # par(oma=c(2.25,0,3.75,1.5))
-  
-  for (i in 1:nc){
-    xi <- covariates[,i]
-    m.xi <- m.covariates[,i]
-    ni <- nn[i]
-    plot(xi,type="n",axes=F)
+  for (i in seq_along(varnames)){
+    x <- X[,i]
+
+    plot(x, type= "n" , axes=FALSE)
     if(((i-1)%%3)==0){
       htext <- "QQ Plots"
-      if(!is.null(which.subclass)){
-        htext <- paste(htext,paste(" (Subclass ",which.subclass,")",sep=""),sep="")
-      } 
-      mtext(htext, 3, 2, TRUE, 0.5, cex=1.1,font=2)
-      mtext("All", 3, .25, TRUE, 0.5, cex=1,font = 1)
-      mtext("Matched", 3, .25, TRUE, 0.83, cex=1,font = 1)
-      mtext("Control Units", 1, 0, TRUE, 2/3, cex=1,font = 1)
-      mtext("Treated Units", 4, 0, TRUE, 0.5, cex=1,font = 1)
+      if (!is.null(which.subclass)){
+        htext <- paste0(htext, paste0(" (Subclass ", which.subclass,")"))
+      }
+      mtext(htext, 3, 2, TRUE, 0.5, cex=1.1, font = 2)
+      mtext("All", 3, .25, TRUE, 0.5, cex=1, font = 1)
+      mtext("Matched", 3, .25, TRUE, 0.83, cex=1, font = 1)
+      mtext("Control Units", 1, 0, TRUE, 2/3, cex=1, font = 1)
+      mtext("Treated Units", 4, 0, TRUE, 0.5, cex=1, font = 1)
     }
     par(usr = c(0, 1, 0, 1))
-    l.wid <- strwidth(nn, "user")
+    l.wid <- strwidth(varnames, "user")
     cex.labels <- max(0.75, min(1.45, 0.85/max(l.wid)))
-    text(0.5,0.5,ni,cex=cex.labels)
-    if(length(table(xi))<=discrete.cutoff){
-      xi <- jitter(xi)
-      m.xi <- jitter(m.xi)
+    text(0.5, 0.5, varnames[i], cex = cex.labels)
+
+    ord <- order(x)
+    x_ord <- x[ord]
+    t_ord <- t[ord]
+
+    u <- unique(x_ord)
+
+    #Need to interpolate larger group to be same size as smaller group
+
+    #Unmatched sample
+    x1 <- x_ord[t_ord == 1]
+    x0 <- x_ord[t_ord != 1]
+
+    if (n1 < n0) {
+      if (length(u) <= discrete.cutoff) {
+        x0probs <- vapply(u, function(u_) mean(x0 == u_), numeric(1L))
+        x0cumprobs <- c(0, cumsum(x0probs)[-length(u)], 1)
+        x0 <- u[findInterval(seq_len(n1)/n1, x0cumprobs, rightmost.closed = TRUE)]
+      }
+      else {
+        x0 <- approx(seq_len(n0)/n0, y = x0, xout = seq_len(n1)/n1, rule = 2,
+                     method = "constant", ties = "ordered")$y
+      }
     }
-    rr <- range(xi)
-    eqqplot(xi[treat==0],xi[treat==1], xlim=rr,ylim=rr,axes=F,ylab="",xlab="",...)
-    abline(a=0,b=1)
-    abline(a=(rr[2]-rr[1])*0.1,b=1,lty=2)
-    abline(a=-(rr[2]-rr[1])*0.1,b=1,lty=2)
+    else if (n1 > n0) {
+      if (length(u) <= discrete.cutoff) {
+        x1probs <- vapply(u, function(u_) mean(x1 == u_), numeric(1L))
+        x1cumprobs <- c(0, cumsum(x1probs)[-length(u)], 1)
+        x1 <- u[findInterval(seq_len(n0)/n0, x1cumprobs, rightmost.closed = TRUE)]
+      }
+      else {
+        x1 <- approx(seq_len(n1)/n1, y = x1, xout = seq_len(n0)/n0, rule = 2,
+                     method = "constant", ties = "ordered")$y
+      }
+    }
+
+    if (length(u) <= discrete.cutoff) {
+      md <- min(diff(u))
+      x0 <- jitter(x0, amount = .07*md)
+      x1 <- jitter(x1, amount = .07*md)
+    }
+
+    rr <- range(c(x0, x1))
+    plot(x0, x1, xlab = "", ylab = "", xlim = rr, ylim = rr, axes = FALSE, ...)
+    abline(a = 0, b = 1)
+    abline(a = (rr[2]-rr[1])*0.1, b = 1, lty = 2)
+    abline(a = -(rr[2]-rr[1])*0.1, b = 1, lty = 2)
     axis(2)
     box()
-    eqqplot(m.xi[m.treat==0],m.xi[m.treat==1],xlim=rr,ylim=rr,axes=F,ylab="",xlab="",...)
-    abline(a=0,b=1)
-    abline(a=(rr[2]-rr[1])*0.1,b=1,lty=2)
-    abline(a=-(rr[2]-rr[1])*0.1,b=1,lty=2)
-    box()
-    if(interactive){
-      par(ask=T)
-    } else {
-      par(ask=F)
+
+    #Matched sample
+    w_ord <- w[ord]
+    w1 <- w_ord[t_ord == 1]
+    w0 <- w_ord[t_ord != 1]
+
+    x1 <- x_ord[t_ord == 1][w1 > 0]
+    x0 <- x_ord[t_ord != 1][w0 > 0]
+
+    if (wn1 < wn0) {
+      if (length(u) <= discrete.cutoff) {
+        x0probs <- vapply(u, function(u_) weighted.mean(x0 == u_, w0[w0 > 0]), numeric(1L))
+        x0cumprobs <- c(0, cumsum(x0probs)[-length(u)], 1)
+        x0 <- u[findInterval(cumsum(w1[w1 > 0]), x0cumprobs, rightmost.closed = TRUE)]
+      }
+      else {
+        x0 <- approx(cumsum(w0[w0 > 0]), y = x0, xout = cumsum(w1[w1 > 0]), rule = 2,
+                     method = "constant", ties = "ordered")$y
+      }
     }
+    else if (wn1 > wn0) {
+      if (length(u) <= discrete.cutoff) {
+        x1probs <- vapply(u, function(u_) weighted.mean(x1 == u_, w1[w1 > 0]), numeric(1L))
+        x1cumprobs <- c(0, cumsum(x1probs)[-length(u)], 1)
+        x1 <- u[findInterval(cumsum(w0[w0 > 0]), x1cumprobs, rightmost.closed = TRUE)]
+      }
+      else {
+        x1 <- approx(cumsum(w1[w1 > 0]), y = x1, xout = cumsum(w0[w0 > 0]), rule = 2,
+                     method = "constant", ties = "ordered")$y
+      }
+    }
+
+    if (length(u) <= discrete.cutoff) {
+      md <- min(diff(u))
+      x0 <- jitter(x0, amount = .1*md)
+      x1 <- jitter(x1, amount = .1*md)
+    }
+
+    plot(x0, x1, xlab = "", ylab = "", xlim = rr, ylim = rr, axes = FALSE, ...)
+    abline(a = 0, b = 1)
+    abline(a = (rr[2]-rr[1])*0.1, b = 1, lty = 2)
+    abline(a = -(rr[2]-rr[1])*0.1, b = 1, lty = 2)
+    box()
+
+    devAskNewPage(ask = interactive)
   }
-  par(ask=F)
+  devAskNewPage(ask = FALSE)
 }
