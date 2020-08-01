@@ -1,8 +1,9 @@
 #' @export
 matchit <- function(formula, data = NULL, method = "nearest", distance = "glm",
-                    link = "logit", distance.options=list(), exact = NULL, mahvars = NULL,
-                    discard = "none", replace = FALSE, m.order = NULL, caliper = NULL,
-                    ratio = 1, reestimate = FALSE, verbose = FALSE, ...) {
+                    link = "logit", distance.options=list(), estimand = "ATT",
+                    exact = NULL, mahvars = NULL, discard = "none",
+                    reestimate = FALSE, replace = FALSE, m.order = NULL,
+                    caliper = NULL, ratio = 1, verbose = FALSE, ...) {
 
   #Checking input format
   #data input
@@ -20,6 +21,7 @@ matchit <- function(formula, data = NULL, method = "nearest", distance = "glm",
   treat <- model.response(treat.mf)
   if (anyNA(treat)) stop("Missing values are not allowed in the treatment.", call. = FALSE)
   names(treat) <- rownames(data0)
+  treat <- binarize(treat) #make 0/1
 
   covs.formula <- delete.response(terms(formula))
   covs <- get_all_vars(covs.formula, data = data0)
@@ -38,7 +40,10 @@ matchit <- function(formula, data = NULL, method = "nearest", distance = "glm",
   }
 
   #Process distance and discard
-  check.inputs(method, distance, mcall, exact, mahvars, caliper, discard, replace, ratio, m.order)
+  check.inputs(method, distance = distance, mcall = mcall, exact = exact,
+               mahvars = mahvars, caliper = caliper, discard = discard,
+               reestimate = reestimate, replace = replace, ratio = ratio,
+               m.order = m.order, estimand = estimand)
 
   exactcovs <- mahcovs <- NULL
 
@@ -166,7 +171,7 @@ matchit <- function(formula, data = NULL, method = "nearest", distance = "glm",
                                  discarded = discarded, exact = exact, mahvars = mahvars,
                                  replace = replace, m.order = m.order, caliper = caliper,
                                  ratio = ratio, is.full.mahalanobis = is.full.mahalanobis,
-                                 formula = formula, ...), quote = TRUE)
+                                 formula = formula, estimand = estimand, verbose = verbose, ...), quote = TRUE)
 
   ## basic summary
   nn <- matrix(0, ncol=2, nrow=4)
