@@ -1,4 +1,4 @@
-matchit.qqplot <- function(object, discrete.cutoff, which.subclass = NULL,
+matchit.qqplot <- function(object, which.subclass = NULL,
                            interactive = TRUE, which.xs = NULL,...) {
 
   #Create covariate matrix; include exact and mahvars
@@ -7,14 +7,15 @@ matchit.qqplot <- function(object, discrete.cutoff, which.subclass = NULL,
       stop("which.xs should be a vector of variables for which balance is to be displayed.", call. = FALSE)
     }
     which.xs.f <- terms(reformulate(which.xs))
+
     X <- model.matrix(update(which.xs.f, NULL ~ . + 1), data = object$X,
-                      contrasts.arg = lapply(Filter(is.factor, object$X),
+                      contrasts.arg = lapply(Filter(is.factor, object$X[, all.vars(which.xs.f), drop = FALSE]),
                                              function(v) contrasts(v, contrasts = FALSE)))[,-1,drop = FALSE]
   }
   else {
     #Create covariate matrix; include exact and mahvars
     X <- model.matrix(update(object$formula, NULL ~ . + 1), data = object$X,
-                      contrasts.arg = lapply(Filter(is.factor, object$X),
+                      contrasts.arg = lapply(Filter(is.factor, object$X[, all.vars(object$formula), drop = FALSE]),
                                              function(v) contrasts(v, contrasts = FALSE)))[,-1,drop = FALSE]
     if (!is.null(object$exact)) {
       Xexact <- model.matrix(update(object$exact, NULL ~ . + 1), data = object$X,
@@ -31,9 +32,17 @@ matchit.qqplot <- function(object, discrete.cutoff, which.subclass = NULL,
     }
   }
 
+  discrete.cutoff <- 5
+
   t <- object$treat
 
   if (!is.null(object$subclass) && !is.null(which.subclass)) {
+    if (!is.atomic(which.subclass) || !is.numeric(which.subclass) || length(which.subclass) > 1) {
+      stop("The argument to subclass must be NULL or the index of the single subclass for which to display covariate distributions.", call. = FALSE)
+    }
+    if (!which.subclass %in% object$subclass[!is.na(object$subclass)]) {
+      stop("The argument supplied to subclass is not the index of any subclass in the matchit object.", call. = FALSE)
+    }
     w <- as.numeric(object$subclass == which.subclass & !is.na(object$subclass))
   }
   else {
@@ -100,7 +109,7 @@ matchit.qqplot <- function(object, discrete.cutoff, which.subclass = NULL,
                      method = "constant", ties = "ordered")$y
       }
     }
-    else if (n1 > n0) {
+    else {
       if (length(u) <= discrete.cutoff) {
         x1probs <- vapply(u, function(u_) mean(x1 == u_), numeric(1L))
         x1cumprobs <- c(0, cumsum(x1probs)[-length(u)], 1)
@@ -145,7 +154,7 @@ matchit.qqplot <- function(object, discrete.cutoff, which.subclass = NULL,
                      method = "constant", ties = "ordered")$y
       }
     }
-    else if (wn1 > wn0) {
+    else {
       if (length(u) <= discrete.cutoff) {
         x1probs <- vapply(u, function(u_) weighted.mean(x1 == u_, w1[w1 > 0]), numeric(1L))
         x1cumprobs <- c(0, cumsum(x1probs)[-length(u)], 1)
