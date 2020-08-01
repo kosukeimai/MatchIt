@@ -51,7 +51,7 @@ qqsum <- function(x, t, w = NULL, standardize = FALSE) {
                        method = "constant", ties = "ordered")$y
         }
       }
-      else if (wn1 > wn0) {
+      else {
         if (length(u) <= 5) {
           x1probs <- vapply(u, function(u_) weighted.mean(x1 == u_, w1[w1 > 0]), numeric(1L))
           x1cumprobs <- c(0, cumsum(x1probs)[-length(u)], 1)
