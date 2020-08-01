@@ -23,11 +23,16 @@ qoi <- function(xx, tt, ww = NULL, s.d.denom = "treated", standardize = FALSE) {
 
   if (standardize && abs(mdiff) > 1e-8) {
     if (!too.small) {
-      std <- switch(s.d.denom,
-                    "treated" = sd(x0, na.rm = TRUE),
-                    "control" = sd(x0, na.rm = TRUE),
-                    "pooled" = sqrt(.5*(var(x1, na.rm = TRUE) + var(x0, na.rm = TRUE))),
-                    stop("s.d.denom must be one of \"treated\", \"control\", or \"pooled\".", call. = FALSE))
+      if (is.numeric(s.d.denom)) {
+        std <- s.d.denom
+      }
+      else {
+        std <- switch(s.d.denom,
+                      "treated" = sd(x0, na.rm = TRUE),
+                      "control" = sd(x0, na.rm = TRUE),
+                      "pooled" = sqrt(.5*(var(x1, na.rm = TRUE) + var(x0, na.rm = TRUE))),
+                      stop("s.d.denom must be one of \"treated\", \"control\", or \"pooled\".", call. = FALSE))
+      }
 
       xsum["Full", 3] <- mdiff/std
     }
@@ -57,11 +62,16 @@ qoi <- function(xx, tt, ww = NULL, s.d.denom = "treated", standardize = FALSE) {
 
       if (standardize && abs(mdiff) > 1e-8) {
         if (!too.small) {
-          std <- switch(s.d.denom,
-                        "treated" = sd(x0, na.rm = TRUE),
-                        "control" = sd(x0, na.rm = TRUE),
-                        "pooled" = sqrt(.5*(var(x1, na.rm = TRUE) + var(x0, na.rm = TRUE))),
-                        stop("s.d.denom must be one of \"treated\", \"control\", or \"pooled\".", call. = FALSE))
+          if (is.numeric(s.d.denom)) {
+            std <- s.d.denom
+          }
+          else {
+            std <- switch(s.d.denom,
+                          "treated" = sd(x0, na.rm = TRUE),
+                          "control" = sd(x0, na.rm = TRUE),
+                          "pooled" = sqrt(.5*(var(x1, na.rm = TRUE) + var(x0, na.rm = TRUE))),
+                          stop("s.d.denom must be one of \"treated\", \"control\", or \"pooled\".", call. = FALSE))
+          }
 
           xsum.matched["Matched",3] <- mdiff/std
         }
