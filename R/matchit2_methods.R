@@ -5,8 +5,7 @@
 # strata.
 #
 # MATCHIT method= cem--------------------------------------
-matchit2cem <- function(treat, covs, data, distance, discarded, is.full.mahalanobis,
-                            ratio = 1, verbose = FALSE, ...) {
+matchit2cem <- function(treat, covs, estimand = "ATT", verbose = FALSE, ...) {
 
   check.package("cem")
 
@@ -18,16 +17,23 @@ matchit2cem <- function(treat, covs, data, distance, discarded, is.full.mahalano
 
   n.obs <- length(treat)
 
+  estimand <- toupper(estimand)
+  estimand <- match_arg(estimand, c("ATT", "ATC", "ATE"))
+
   # cem takes the data all together and wants the treatment specified
   # with the column name of the data frame. Here we massage the matchit
   # inputs to this format. Note that X has its proper columnames, but
   # treat does not have the original column name.
   cem.data <- data.frame(covs, treat)
 
-  args.excluded <- c("treatment", "baseline.group", "data", "verbose")
+  args.excluded <- c("treatment", "baseline.group", "data", "verbose", "eval.imbalance",
+                     "keep.all", "drop", "L1.breaks", "L1.grouping")
   mat <- do.call(cem::cem, c(list(treatment = names(cem.data)[ncol(cem.data)],
                                   data = cem.data,
-                                  verbose = as.integer(verbose)),
+                                  verbose = as.integer(verbose),
+                                  eval.imbalance = FALSE,
+                                  keep.all = FALSE,
+                                  drop = NULL),
                              A[names(A) %in% setdiff(names(formals(cem::cem)), args.excluded)]))
 
   # here we create a column vector where the matched entry get its stratum
@@ -35,44 +41,36 @@ matchit2cem <- function(treat, covs, data, distance, discarded, is.full.mahalano
   strat <- setNames(rep(NA_character_, n.obs), names(treat))
   strat[mat$matched] <- mat$strata[mat$matched]
 
-  # here we just add the names onto the wieght from the cem output
-  wh <- setNames(mat$w, names(treat))
-
-  # weighting functions in matchit error-out on these conditions,
-  # so we should too.
-
-  if (sum(wh)==0)
-    stop("No units were matched")
-  else if (sum(wh[treat==1])==0)
-    stop("No treated units were matched")
-  else if (sum(wh[treat==0])==0)
-    stop("No control units were matched")
-
-  res <- list(subclass = strat, weights = mat$w)
+  res <- list(subclass = strat,
+              weights = weights.subclass(strat, treat, estimand))
   class(res) <- "matchit"
   return(res)
 }
 
 # MATCHIT method= exact------------------------------------
-matchit2exact <- function(treat, covs, data, distance, discarded, is.full.mahalanobis, verbose=FALSE, ...){
+matchit2exact <- function(treat, covs, data, estimand = "ATT", verbose = FALSE, ...){
 
   if(verbose)
     cat("Exact matching... \n")
 
-  xx <- setNames(do.call("paste", c(covs, sep = "|")), names(treat))
+  estimand <- toupper(estimand)
+  estimand <- match_arg(estimand, c("ATT", "ATC", "ATE"))
+
+  xx <- exactify(covs, names(treat))
   cc <- intersect(xx[treat==1], xx[treat==0])
 
   psclass <- setNames(match(xx, cc), names(treat))
 
-  res <- list(subclass = psclass, weights = weights.subclass(psclass, treat))
-  class(res) <- c("matchit.exact", "matchit")
+  res <- list(subclass = psclass,
+              weights = weights.subclass(psclass, treat, estimand))
+  class(res) <- "matchit"
   return(res)
 }
 
 # MATCHIT method= full-------------------------------------
 matchit2full <- function(treat, covs, data, distance, discarded,
-                         ratio = 1, caliper = NULL, mahvars = NULL, exact = NULL,
-                         formula = NULL, verbose = FALSE,
+                         caliper = NULL, mahvars = NULL, exact = NULL,
+                         estimand = "ATT", verbose = FALSE,
                          is.full.mahalanobis, ...) {
 
   check.package("optmatch")
@@ -80,58 +78,87 @@ matchit2full <- function(treat, covs, data, distance, discarded,
   if(verbose)
     cat("Full matching... \n")
 
-  treat0 <- treat
-  treat0[discarded] <- NA
-
-  if (sum(!discarded & treat == 0) < sum(!discarded & treat == 1)) {
-    warning("Fewer control units than treated units; some control units will be matched to multiple treated units.", immediate. = TRUE, call. = FALSE)
-  }
-
-  if (!is.null(exact)) {
-    ex <- do.call("paste", c(model.frame(exact, data = data), sep = "|"))
-    exact.match <- optmatch::exactMatch(ex, treat0)
-  }
-  else exact.match <- NULL
-
-  if (is.full.mahalanobis) {
-    data <- data.frame(treat0, covs)
-    full <- optmatch::fullmatch(formula(data),
-                                data = data,
-                                method = "mahalanobis",
-                                within = exact.match,
-                                ...)
-  }
-  else if (!is.null(mahvars)) {
-    full <- optmatch::fullmatch(update(mahvars, treat0 ~ .),
-                                data = data,
-                                method = "mahalanobis",
-                                within = exact.match,
-                                ...)
+  estimand <- toupper(estimand)
+  estimand <- match_arg(estimand, c("ATT", "ATC", "ATE"))
+  if (estimand == "ATC") {
+    tc <- c("control", "treated")
+    focal <- 0
   }
   else {
-    full <- optmatch::fullmatch(treat0 ~ distance,
-                                method = "euclidean", #slightly faster than Mahalanobis
-                                within = exact.match,
-                                ...)
+    tc <- c("treated", "control")
+    focal <- 1
   }
+
+  if (sum(!discarded & treat != focal) < sum(!discarded & treat == focal)) {
+    warning("Fewer ", tc[2], " units than ", tc[1], " units; some ", tc[2], " units will be matched to multiple ", tc[1], " units.", immediate. = TRUE, call. = FALSE)
+  }
+
+  treat_ <- as.integer(treat == focal)
+  treat_[discarded] <- NA
+
+  within.match <- NULL
+  if (!is.null(exact)) {
+    environment(exact) <- sys.frame(sys.nframe())
+    within.match <- optmatch::exactMatch(update(exact, treat_ ~ .), data = data)
+  }
+
+  if (!is.null(caliper)) {
+    if (is.full.mahalanobis) {
+      stop("Calipers cannot be supplied when distance = \"mahalanobis\".", call. = FALSE)
+    }
+    else if (!is.null(mahvars)) {
+      environment(mahvars) <- sys.frame(sys.nframe())
+      mo <- optmatch::match_on(update(mahvars, treat_ ~ .),
+                               data = data,
+                               method = "mahalanobis")
+    }
+    else {
+      mo <- optmatch::match_on(treat_ ~ distance,
+                               method = "euclidean")
+    }
+
+    if (is.null(within.match)) within.match <- caliper(mo, caliper*sd(distance))
+    else within.match <- within.match + caliper(mo, caliper*sd(distance))
+  }
+
+  withCallingHandlers({
+    if (is.full.mahalanobis) {
+      data <- data.frame(treat_, covs)
+      full <- optmatch::fullmatch(formula(data),
+                                  data = data,
+                                  method = "mahalanobis",
+                                  within = within.match,
+                                  ...)
+    }
+    else if (!is.null(mahvars)) {
+      full <- optmatch::fullmatch(update(mahvars, treat_ ~ .),
+                                  data = data,
+                                  method = "mahalanobis",
+                                  within = within.match,
+                                  ...)
+    }
+    else {
+      full <- optmatch::fullmatch(treat_ ~ distance,
+                                  method = "euclidean", #slightly faster than Mahalanobis
+                                  within = within.match,
+                                  ...)
+    }
+  },
+  warning = function(w) {
+    warning(paste0("(from optmatch) ", conditionMessage(w)), call. = FALSE, immediate. = TRUE)
+    invokeRestart("muffleWarning")
+  })
+
+  if (all(is.na(full))) stop("No matches were found.", call. = FALSE)
 
   psclass <- as.integer(as.factor(full))
   names(psclass) <- names(treat)
-  na.class <- is.na(psclass)
-  max.matches <- max(vapply(levels(full), function(x) sum(!na.class & full == x) - 1, numeric(1L)))
 
-  mm <- matrix(NA_character_, ncol = max.matches, nrow = sum(treat == 1),
-               dimnames = list(names(treat)[treat == 1], 1:max.matches))
+  #No match.matrix because treated units don't index matched strata (i.e., more than one
+  #treated unit can be in the same stratum). Stratum information is contained in subclass.
 
-  for (i in rownames(mm)[!is.na(psclass[treat == 1])]) {
-    matched.controls <- names(treat)[treat == 0 & !na.class & psclass == psclass[i]]
-    if (length(matched.controls) > 0) mm[i, 1:length(matched.controls)] <- matched.controls
-  }
-
-  res <- list(match.matrix = mm, subclass = psclass,
-              weights = weights.subclass(psclass, treat)
-              # weights = weights.matrix(mm, treat, discarded) #slower
-              )
+  res <- list(subclass = psclass,
+              weights = weights.subclass(psclass, treat, estimand))
 
   if (is.full.mahalanobis) class(res) <- c("matchit.mahalanobis", "matchit")
   else class(res) <- c("matchit")
@@ -141,28 +168,38 @@ matchit2full <- function(treat, covs, data, distance, discarded,
 # MATCHIT method= optimal----------------------------------
 matchit2optimal <- function(treat, covs, data, distance, discarded,
                             ratio = 1, caliper = NULL, mahvars = NULL, exact = NULL,
-                            formula = NULL, verbose = FALSE,
+                            estimand = "ATT", verbose = FALSE,
                             is.full.mahalanobis,...) {
 
   check.package("optmatch")
 
-  if(verbose)
-    cat("Optimal matching... \n")
+  if (verbose) cat("Optimal matching... \n")
 
-  treat0 <- treat
-  treat0[discarded] <- NA
+  estimand <- toupper(estimand)
+  estimand <- match_arg(estimand, c("ATT", "ATC"))
+  if (estimand == "ATC") {
+    tc <- c("control", "treated")
+    focal <- 0
+  }
+  else {
+    tc <- c("treated", "control")
+    focal <- 1
+  }
+
+  if (sum(!discarded & treat != focal) < sum(!discarded & treat == focal)) {
+    warning("Fewer ", tc[2], " units than ", tc[1], " units; not all ", tc[1], " units will get a match.", immediate. = TRUE, call. = FALSE)    }
+  else if (sum(!discarded & treat != focal) < sum(!discarded & treat == focal)*ratio) {
+    stop(paste0("Not enough ", tc[2], " units for ", ratio, " matches for each ", tc[1], " unit."), call. = FALSE)
+  }
+
+  treat_ <- as.integer(treat == focal)
+  treat_[discarded] <- NA
 
   ratio <- process.ratio(ratio)
 
-  if (sum(!discarded & treat == 0) < sum(!discarded & treat == 1)) {
-    warning("Fewer control units than treated units; not all treated units will get a match.", immediate. = TRUE, call. = FALSE)
-  }
-  else if (sum(!discarded & treat == 0) < sum(!discarded & treat == 1)*ratio) {
-    stop(paste0("Not enough control units for ", ratio, " matches for each treated unit."), call. = FALSE)
-  }
-
   if (!is.null(exact)) {
-    exact.match <- optmatch::exactMatch(update(exact, treat0 ~ .), data = data)
+    environment(exact) <- sys.frame(sys.nframe())
+    exact.match <- optmatch::exactMatch(update(exact, treat_ ~ .), data = data)
   }
   else exact.match <- NULL
 
@@ -171,45 +208,53 @@ matchit2optimal <- function(treat, covs, data, distance, discarded,
     caliper <- NULL
   }
 
-  if (is.full.mahalanobis) {
-    data <- data.frame(treat0, covs)
-    pair <- optmatch::pairmatch(formula(data),
-                                data = data,
-                                method = "mahalanobis",
-                                controls = ratio,
-                                within = exact.match,
-                                ...)
-  }
-  else if (!is.null(mahvars)) {
-    pair <- optmatch::pairmatch(update(mahvars, treat0 ~ .),
-                                data = data,
-                                method = "mahalanobis",
-                                controls = ratio,
-                                within = exact.match,
-                                ...)
-  }
-  else {
-    pair <- optmatch::pairmatch(treat0 ~ distance,
-                                method = "euclidean", #slightly faster than Mahalanobis
-                                controls = ratio,
-                                within = exact.match, ...)
-  }
+  withCallingHandlers({
+    if (is.full.mahalanobis) {
+      data <- data.frame(treat_, covs)
+      pair <- optmatch::pairmatch(formula(data),
+                                  data = data,
+                                  method = "mahalanobis",
+                                  controls = ratio,
+                                  within = exact.match,
+                                  ...)
+    }
+    else if (!is.null(mahvars)) {
+      pair <- optmatch::pairmatch(update(mahvars, treat_ ~ .),
+                                  data = data,
+                                  method = "mahalanobis",
+                                  controls = ratio,
+                                  within = exact.match,
+                                  ...)
+    }
+    else {
+      pair <- optmatch::pairmatch(treat_ ~ distance,
+                                  method = "euclidean", #slightly faster than Mahalanobis
+                                  controls = ratio,
+                                  within = exact.match, ...)
+    }
+  },
+  warning = function(w) {
+    warning(paste0("(from optmatch) ", conditionMessage(w)), call. = FALSE, immediate. = TRUE)
+    invokeRestart("muffleWarning")
+  })
+
+  if (all(is.na(pair))) stop("No matches were found.", call. = FALSE)
 
   psclass <- as.integer(as.factor(pair))
   names(psclass) <- names(treat)
   na.class <- is.na(psclass)
 
-  mm <- matrix(NA_character_, ncol = ratio, nrow = sum(treat == 1),
-               dimnames = list(names(treat)[treat == 1], seq_len(ratio)))
+  mm <- matrix(NA_character_, ncol = ratio, nrow = sum(treat == focal),
+               dimnames = list(names(treat)[treat == focal], seq_len(ratio)))
 
-  for (i in rownames(mm)[!na.class[treat == 1]]) {
-    matched.controls <- names(treat)[treat == 0 & !na.class & psclass == psclass[i]]
-    if (length(matched.controls) > 0) mm[i, seq_along(matched.controls)] <- matched.controls
+  for (i in rownames(mm)[!na.class[treat == focal]]) {
+    matched.units <- names(treat)[treat != focal & !na.class & psclass == psclass[i]]
+    if (length(matched.units) > 0) mm[i, seq_along(matched.units)] <- matched.units
   }
 
   ## calculate weights and return the results
   res <- list(match.matrix = mm, subclass = psclass,
-              weights = weights.matrix(mm, treat, discarded))
+              weights = weights.subclass(psclass, treat, estimand))
 
   if (is.full.mahalanobis) class(res) <- c("matchit.mahalanobis", "matchit")
   else class(res) <- "matchit"
@@ -220,7 +265,7 @@ matchit2optimal <- function(treat, covs, data, distance, discarded,
 matchit2genetic <- function(treat, covs, data, distance, discarded,
                             ratio = 1, replace = FALSE, m.order = NULL,
                             caliper = NULL, mahvars = NULL, exact = NULL,
-                            formula = NULL, verbose = FALSE,
+                            formula = NULL, estimand = "ATT", verbose = FALSE,
                             is.full.mahalanobis, use.genetic = TRUE, ...) {
 
   check.package(c("Matching", "rgenoud"))
@@ -230,25 +275,38 @@ matchit2genetic <- function(treat, covs, data, distance, discarded,
 
   A <- list(...)
 
+  estimand <- toupper(estimand)
+  estimand <- match_arg(estimand, c("ATT", "ATC"))
+  if (estimand == "ATC") {
+    tc <- c("control", "treated")
+    focal <- 0
+  }
+  else {
+    tc <- c("treated", "control")
+    focal <- 1
+  }
+
+  if (!replace) {
+    if (sum(!discarded & treat != focal) < sum(!discarded & treat == focal)) {
+      warning("Fewer ", tc[2], " units than ", tc[1], " units; not all ", tc[1], " units will get a match.", immediate. = TRUE, call. = FALSE)    }
+    else if (sum(!discarded & treat != focal) < sum(!discarded & treat == focal)*ratio) {
+      stop(paste0("Not enough ", tc[2], " units for ", ratio, " matches for each ", tc[1], " unit."), call. = FALSE)
+    }
+  }
+
+  treat <- as.integer(treat == focal)
+
   ratio <- process.ratio(ratio)
 
   n.obs <- length(treat)
   n1 <- sum(treat == 1)
   n0 <- sum(treat == 0)
 
-  if (!replace) {
-    if (sum(!discarded & treat == 0) < sum(!discarded & treat == 1)) {
-      warning("Fewer control units than treated units; not all treated units will get a match.", immediate. = TRUE, call. = FALSE)
-    }
-    else if (sum(!discarded & treat == 0) < sum(!discarded & treat == 1)*ratio) {
-      warning(paste0("Not enough control units for ", ratio, " matches for each treated unit. Some treated units will not be matched."), immediate. = TRUE, call. = FALSE)
-    }
-  }
-
   if (is.null(names(treat))) names(treat) <- 1:n.obs
 
   if (!is.null(distance)) {
-    m.order <- match_arg(m.order, c("largest", "smallest", "random", "data"))
+    if (is.null(m.order)) m.order <- if (estimand == "ATC") "smallest" else "largest"
+    else m.order <- match_arg(m.order, c("largest", "smallest", "random", "data"))
     ord <- switch(m.order,
                   "largest" = order(distance, decreasing = TRUE),
                   "smallest" = order(distance),
@@ -264,7 +322,7 @@ matchit2genetic <- function(treat, covs, data, distance, discarded,
 
   if (!is.null(mahvars)) {
     covs_to_balance <- model.matrix(update(formula, NULL ~ . + 1), data = covs)[,-1, drop = FALSE]
-    X <- cbind(distance, model.matrix(update(mahvars, .~.+1), data = data))[,-1, drop = FALSE]
+    X <- model.matrix(update(mahvars, .~.+1), data = data)[,-1, drop = FALSE]
   }
   else if (is.full.mahalanobis) {
     covs_to_balance <- model.matrix(update(formula, NULL ~ . + 1), data = covs)[,-1, drop = FALSE]
@@ -276,7 +334,7 @@ matchit2genetic <- function(treat, covs, data, distance, discarded,
   }
 
   if (!is.null(exact)) {
-    ex <- setNames(as.numeric(factor(do.call("paste", c(model.frame(exact, data = data), sep = "|")))), names(treat))
+    ex <- exactify(model.frame(exact, data = data), names(treat))
     X <- cbind(X, ex)
     exact.log <- c(rep(FALSE, ncol(X) - 1), TRUE)
   }
@@ -290,9 +348,9 @@ matchit2genetic <- function(treat, covs, data, distance, discarded,
   }
   else caliper <- NULL
 
+
   lab <- names(treat)
   lab1 <- names(treat[treat == 1])
-  treat <- treat
 
   #Reorder data according to m.order since Match matches in order of data
   olab <- names(treat[ord])
@@ -300,15 +358,15 @@ matchit2genetic <- function(treat, covs, data, distance, discarded,
 
   otreat <- treat[ord][!discarded[ord]]
   ocovs_to_balance <- covs_to_balance[ord,,drop = FALSE][!discarded[ord],, drop = FALSE]
-  oX <- X[ord,,drop = FALSE][!discarded[ord],, drop = FALSE]
+  oX <- (X[ord,,drop = FALSE][!discarded[ord],, drop = FALSE])
 
   if (use.genetic) {
     withCallingHandlers({
       g.out <- Matching::GenMatch(otreat, X = oX, BalanceMatrix = ocovs_to_balance,
                                   M = ratio, exact = exact.log, caliper = caliper,
-                                  replace = replace, estimand = "ATT",
-                                  CommonSupport = FALSE,
-                                  verbose = verbose, print.level = 2*verbose, ...)
+                                  replace = replace, estimand = "ATT", ties = FALSE,
+                                  CommonSupport = FALSE, verbose = verbose,
+                                  print.level = 2*verbose, ...)
     },
     warning = function(w) {
       if (!startsWith(conditionMessage(w), "replace==FALSE, but there are more (weighted) treated obs than control obs.")) warning(w)
@@ -323,9 +381,9 @@ matchit2genetic <- function(treat, covs, data, distance, discarded,
   withCallingHandlers({
     m.out <- Matching::Match(Tr = otreat, X = oX,
                              M = ratio, exact = exact.log, caliper = caliper,
-                             replace = replace, estimand = "ATT",
+                             replace = replace, estimand = "ATT", ties = FALSE,
                              CommonSupport = FALSE, Weight = if (use.genetic) 3 else 2,
-                             Weight.matrix = g.out, version = "fast", ...)
+                             Weight.matrix = g.out, version = "fast")
   },
   warning = function(w) {
     if (!startsWith(conditionMessage(w), "replace==FALSE, but there are more (weighted) treated obs than control obs.")) warning(w)
@@ -335,12 +393,11 @@ matchit2genetic <- function(treat, covs, data, distance, discarded,
   mm <- matrix(NA_character_, nrow = n1, ncol = max(table(m.out$index.treated)),
                dimnames = list(lab1, NULL))
 
-  unique.matched.treated <- unique(m.out$index.treated, nmax = n1)
-  unique.matched.control <- unique(m.out$index.control, nmax = n0)
+  unique.matched.focal <- unique(m.out$index.treated, nmax = n1)
 
-  for (i in unique.matched.treated) {
-    matched.controls <- olab[m.out$index.control[m.out$index.treated == i]]
-    mm[olab[i], 1:length(matched.controls)] <- matched.controls
+  for (i in unique.matched.focal) {
+    matched.units <- olab[m.out$index.control[m.out$index.treated == i]]
+    mm[olab[i], 1:length(matched.units)] <- matched.units
   }
 
   if (!replace) {
@@ -354,7 +411,8 @@ matchit2genetic <- function(treat, covs, data, distance, discarded,
 
   res <- list(match.matrix = mm,
               subclass = psclass,
-              weights = weights.matrix(mm, treat, discarded))
+              weights = weights.matrix(mm, treat),
+              obj = g.out)
 
   class(res) <- "matchit"
   return(res)
@@ -364,7 +422,7 @@ matchit2genetic <- function(treat, covs, data, distance, discarded,
 matchit2nearest <-  function(treat, data, distance, discarded,
                              ratio = 1, replace = FALSE, m.order = NULL,
                              caliper = NULL, mahvars = NULL, exact = NULL,
-                             formula = NULL, verbose = FALSE,
+                             formula = NULL, estimand = "ATT", verbose = FALSE,
                              is.full.mahalanobis, ...){
 
   if(verbose)
@@ -372,36 +430,53 @@ matchit2nearest <-  function(treat, data, distance, discarded,
 
   ratio <- process.ratio(ratio)
 
+  estimand <- toupper(estimand)
+  estimand <- match_arg(estimand, c("ATT", "ATC"))
+  if (estimand == "ATC") {
+    tc <- c("control", "treated")
+    focal <- 0
+  }
+  else {
+    tc <- c("treated", "control")
+    focal <- 1
+  }
+
+  if (!replace) {
+    if (sum(!discarded & treat != focal) < sum(!discarded & treat == focal)) {
+      warning("Fewer ", tc[2], " units than ", tc[1], " units; not all ", tc[1],
+              " units will get a match.", immediate. = TRUE, call. = FALSE)    }
+    else if (sum(!discarded & treat != focal) < sum(!discarded & treat == focal)*ratio) {
+      warning(paste0("Not enough ", tc[2], " units for ", ratio, " matches for each ", tc[1],
+                     " unit. Some ", tc[1], " units will not be matched to ", ratio, " ", tc[2], " units."), immediate. = TRUE, call. = FALSE)
+    }
+  }
+
+  treat <- as.integer(treat == focal)
+
   n.obs <- length(treat)
   n1 <- sum(treat == 1)
   n0 <- sum(treat == 0)
 
-  if (!replace) {
-    if (n0 < n1) {
-      warning("Fewer control units than treated units; not all treated units will get a match.", immediate. = TRUE, call. = FALSE)
-    }
-    else if (n0 < n1*ratio) {
-      warning(paste0("Not enough control units for ", ratio, " matches for each treated unit. Some treated units will receive fewer than ", ratio, " matches."), immediate. = TRUE, call. = FALSE)
-    }
-  }
+  dis1 <- discarded[treat == 1]
+  dis0 <- discarded[treat == 0]
 
-  if (is.null(names(treat))) names(treat) <- 1:n.obs
+  n1_ <- sum(!dis1)
+  n0_ <- sum(!dis0)
+
+  if (is.null(names(treat))) names(treat) <- seq_len(n.obs)
 
   lab1 <- names(treat[treat == 1])
   lab0 <- names(treat[treat == 0])
 
   if (!is.null(caliper) || !is.full.mahalanobis) {
-    if (is.null(names(distance))) names(distance) <- names(treat)
+    names(distance) <- names(treat)
     cal <- caliper*sd(distance[!discarded])
     d1 <- distance[treat == 1]
     d0 <- distance[treat == 0]
   }
 
-  dis1 <- discarded[treat == 1]
-  dis0 <- discarded[treat == 0]
-
   if (!is.null(exact)) {
-    ex <- setNames(do.call("paste", c(model.frame(exact, data = data), sep = "|")), names(treat))
+    ex <- exactify(model.frame(exact, data = data), names(treat))
     ex1 <- ex[treat == 1]
     ex0 <- ex[treat == 0]
   }
@@ -417,26 +492,32 @@ matchit2nearest <-  function(treat, data, distance, discarded,
   else mahcovs <- NULL
 
   mm <- matrix(NA_character_, nrow = n1,
-                         ncol = ratio, dimnames = list(lab1, 1:ratio))
+               ncol = ratio, dimnames = list(lab1, seq_len(ratio)))
 
-  unmatched <- setNames(rep(TRUE, sum(!dis0)), lab0[!dis0])
+  unmatched <- setNames(rep(TRUE, n0_), lab0[!dis0])
 
-  if (!is.null(distance)) {
-    m.order <- match_arg(m.order, c("largest", "smallest", "random", "data"))
-    ord <- switch(m.order,
-                  "largest" = order(d1, decreasing = TRUE),
-                  "smallest" = order(d1),
-                  "random" = sample(1:n1, n1, replace = FALSE),
-                  "data" = 1:n1)
+  if (replace) {
+    ord <- seq_len(n1)
   }
   else {
-    m.order <- match_arg(m.order, c("data", "random"))
-    ord <- switch(m.order,
-                  "random" = sample(1:n1, n1, replace = FALSE),
-                  "data" = 1:n1)
+    if (!is.null(distance)) {
+      if (is.null(m.order)) m.order <- if (estimand == "ATC") "smallest" else "largest"
+      else m.order <- match_arg(m.order, c("largest", "smallest", "random", "data"))
+      ord <- switch(m.order,
+                    "largest" = order(d1, decreasing = TRUE),
+                    "smallest" = order(d1),
+                    "random" = sample(seq_len(n1), n1, replace = FALSE),
+                    "data" = seq_len(n1))
+    }
+    else {
+      m.order <- match_arg(m.order, c("data", "random"))
+      ord <- switch(m.order,
+                    "random" = sample(seq_len(n1), n1, replace = FALSE),
+                    "data" = seq_len(n1))
+    }
   }
 
-  for (r in 1:ratio) {
+  for (r in seq_len(ratio)) {
     for (i in seq_len(n1)[!dis1]) {
 
       ord_i <- ord[i]
@@ -460,6 +541,11 @@ matchit2nearest <-  function(treat, data, distance, discarded,
         #Compute PS differences if PS is distance or caliper
         if (!is.null(caliper) || !is.full.mahalanobis) {
           ps.diff <- abs(unname(d1[ord_i]) - d0[c.eligible])
+
+          if (!is.null(caliper)) {
+            #PS caliper
+            c.eligible <- c.eligible[ps.diff < cal]
+          }
         }
 
         if (is.null(mahcovs)) {
@@ -473,11 +559,6 @@ matchit2nearest <-  function(treat, data, distance, discarded,
                                         cov = mahSigma_inv, inverted = TRUE))
         }
         # names(distances) <- c.eligible
-      }
-
-      if (!is.null(caliper) && length(c.eligible) > 0) {
-        #PS caliper
-        c.eligible <- c.eligible[ps.diff < cal]
       }
 
       #Assign match
@@ -505,7 +586,7 @@ matchit2nearest <-  function(treat, data, distance, discarded,
 
   res <- list(match.matrix = mm,
               subclass = psclass,
-              weights = weights.matrix(mm, treat, discarded))
+              weights = weights.matrix(mm, treat))
 
   if (is.full.mahalanobis) class(res) <- c("matchit.mahalanobis", "matchit")
   else class(res) <- "matchit"
@@ -515,11 +596,9 @@ matchit2nearest <-  function(treat, data, distance, discarded,
 
 # MATCHIT method= subclass---------------------------------
 #Needs updates
-matchit2subclass <- function(treat, covs, data, distance, discarded,
-                             ratio = 1, replace = FALSE, m.order = "largest",
-                             caliper = NULL, mahvars = NULL, exact = NULL,
-                             formula = NULL, verbose = FALSE,
-                             is.full.mahalanobis,
+matchit2subclass <- function(treat, covs, distance, discarded,
+                             replace = FALSE, exact = NULL,
+                             estimand = "ATT", verbose = FALSE,
                              ...) {
 
   if(verbose)
@@ -528,6 +607,7 @@ matchit2subclass <- function(treat, covs, data, distance, discarded,
   A <- list(...)
   subclass <- A[["subclass"]]
   sub.by <- A[["sub.by"]]
+  min.n <- A[["min.n"]]
 
   #Checks
   if (is.null(subclass)) subclass <- 6
@@ -544,11 +624,26 @@ matchit2subclass <- function(treat, covs, data, distance, discarded,
          call. = FALSE)
   }
 
-  if (is.null(sub.by)) sub.by <- "treat"
-  else if (!is.vector(sub.by, "character") || length(sub.by) != 1){
-    stop("sub.by must be one of \"treat\", \"control\", or \"all\".", call. = FALSE)
+  if (!is.null(sub.by)) {
+    sub.by.choices <- c("treat", "control", "all")
+    if (!is.vector(sub.by, "character") || length(sub.by) != 1 || anyNA(pmatch(sub.by, sub.by.choices))) {
+      stop("'sub.by' is deprecated and can't be converted into a proper input. Please supply an argument to 'estimand' instead.", call. = FALSE)
+    }
+    else {
+      sub.by <- sub.by.choices[pmatch(sub.by, sub.by.choices)]
+      estimand <- switch(sub.by, "treat" = "ATT", "control" = "ATC", "ATE")
+      warning(paste0("'sub.by' is deprecated and has been replaced with 'estimand'. Setting 'estimand' to \"", estimand, "\"."), call. = FALSE, immediate. = TRUE)
+    }
   }
-  sub.by <- match_arg(sub.by, c("treat", "control", "all"))
+  else {
+    estimand <- toupper(estimand)
+    estimand <- match_arg(estimand, c("ATT", "ATC", "ATE"))
+  }
+
+  if (is.null(min.n)) min.n <- 1
+  else if (!is.numeric(min.n) || length(min.n) != 1) {
+    stop("'min.n' must be a single number.", call. = FALSE)
+  }
 
   n.obs <- length(treat)
 
@@ -566,10 +661,10 @@ matchit2subclass <- function(treat, covs, data, distance, discarded,
     subclass <- length(sprobs) - 1
   }
 
-  q <- switch(sub.by,
-              "treat" = quantile(p1, probs = sprobs, na.rm=TRUE),
-              "control" = quantile(p0, probs = sprobs, na.rm=TRUE),
-              "all" = quantile(distance, probs = sprobs, na.rm=TRUE))
+  q <- switch(estimand,
+              "ATT" = quantile(p1, probs = sprobs, na.rm = TRUE),
+              "ATC" = quantile(p0, probs = sprobs, na.rm = TRUE),
+              "ATE" = quantile(distance, probs = sprobs, na.rm = TRUE))
 
   ## Calculating Subclasses
   psclass <- setNames(rep(NA_integer_, n.obs), names(treat))
@@ -578,8 +673,8 @@ matchit2subclass <- function(treat, covs, data, distance, discarded,
   ## If any subclasses don't have members of a treatment group, fill them
   ## by "scooting" units from nearby subclasses until each subclass has a unit
   ## from each treatment group
-  if (any(table(treat, psclass) == 0)) {
-    psclass[!discarded] <- subclass_scoot(psclass[!discarded], treat[!discarded], distance[!discarded])
+  if (any(table(treat, psclass) < min.n)) {
+    psclass[!discarded] <- subclass_scoot(psclass[!discarded], treat[!discarded], distance[!discarded], min.n)
   }
 
   if (verbose) cat("Done\n")
@@ -588,11 +683,11 @@ matchit2subclass <- function(treat, covs, data, distance, discarded,
   unique.classes <- unique(psclass[!is.na(psclass)], nmax = subclass)
 
   if (length(unique.classes) != subclass){
-    warning("Due to discreteness in data, fewer subclasses generated than were requested.", call.=FALSE)
+    warning("Due to discreteness in data, fewer subclasses were generated than were requested.", call.=FALSE)
   }
 
   res <- list(subclass = psclass, q.cut = q,
-              weights = weights.subclass(psclass, treat, estimand = "ATT"))
+              weights = weights.subclass(psclass, treat, estimand))
 
   class(res) <- c("matchit.subclass", "matchit")
   return(res)
