@@ -16,9 +16,7 @@ int_rownames <- function(mat) {
   else return(TRUE)
 }
 
-#----------------------------------------------------------
-### Inheritance
-#----------------------------------------------------------
+### Inheritance--------------------------------------------
 
 #' @title Checks matchit Class
 #' @description Function that checks if the target object is a \code{matchit} object.
@@ -31,9 +29,7 @@ is.matchit <- function(object) {
 }
 
 
-#----------------------------------------------------------
-### GET MATCHES
-#----------------------------------------------------------
+### GET MATCHES--------------------------------------------
 
 #' @title Get matches from matchit object
 #' @description Get the resulting matches from a \code{matchit} model object. This function allows the
@@ -150,21 +146,19 @@ get_matches_non_subclass <- function(object, model_frame, has_int_rownames, use_
   return(model_subset)
 }
 
-#----------------------------------------------------------
-### PLOT METHODS
-#----------------------------------------------------------
+
+
+### PLOT METHODS-------------------------------------------
 
 # Need to account for weights -- how do we do qq plots with weights
 #' @export
-plot.matchit <- function(x, discrete.cutoff = 5, type = "qq",
-                         interactive = TRUE, which.xs = NULL, ...) {
+plot.matchit <- function(x, type = "qq", interactive = TRUE, which.xs = NULL, ...) {
 
   type <- tolower(type)
   type <- match_arg(type, c("qq", "jitter", "histogram"))
 
   if (type == "qq") {
-    matchit.qqplot(x, discrete.cutoff=discrete.cutoff,
-                   interactive=interactive,
+    matchit.qqplot(x, interactive=interactive,
                    which.xs = which.xs, ...)
   }
   else if (type == "jitter") {
@@ -173,8 +167,8 @@ plot.matchit <- function(x, discrete.cutoff = 5, type = "qq",
     }
     jitter.pscore(x, interactive = interactive,...)
   }
-  else if (type=="histogram"){
-    if (is.null(x$distance)){
+  else if (type=="histogram") {
+    if (is.null(x$distance)) {
       stop("type = \"hist\" cannot be used if a distance measure is not estimated or supplied. No plots generated.", call. = FALSE)
     }
     hist.pscore(x,...)
@@ -182,16 +176,13 @@ plot.matchit <- function(x, discrete.cutoff = 5, type = "qq",
 }
 
 #' @export
-plot.matchit.subclass <- function(x, discrete.cutoff=5,
-                                  type="qq", interactive = T,
-                                  subclass = NULL, which.xs=NULL,...){
-  choice.menu <- function(choices,question)
-  {
+plot.matchit.subclass <- function(x, type = "qq", interactive = TRUE, which.xs = NULL, subclass = NULL, ...) {
+  choice.menu <- function(choices, question) {
     k <- length(choices)-1
     Choices <- data.frame(choices)
     row.names(Choices) <- 0:k
     names(Choices) <- "Choices"
-    print.data.frame(Choices,right=FALSE)
+    print.data.frame(Choices, right=FALSE)
     ans <- readline(question)
     while(!ans %in% 0:k) {
       print("Not valid -- please pick one of the choices")
@@ -204,31 +195,41 @@ plot.matchit.subclass <- function(x, discrete.cutoff=5,
   type <- tolower(type)
   type <- match_arg(type, c("qq", "jitter", "histogram"))
 
-  if (type=="qq"){
+  if (type == "qq"){
     if (interactive) {
       subclasses <- sort(unique(x$subclass[!is.na(x$subclass)]))
-      choices <- c("No", paste0("Yes : Subclass ", subclasses))
-      question <- "Would you like to see quantile-quantile plots of any subclasses?"
+      choices <- c("No (Exit)", paste0("Yes: Subclass ", subclasses), "Yes: In aggregate")
+      question <- "Would you like to see quantile-quantile plots of any subclasses? "
       ans <- -1
       while(ans != 0) {
         ans <- as.numeric(choice.menu(choices, question))
-        if (ans != 0) {
-          matchit.qqplot(x,discrete.cutoff,which.subclass=subclasses[ans],
-                         interactive = interactive, which.xs=which.xs,...)
+        if (ans %in% seq_along(subclasses)) {
+          matchit.qqplot(x, which.subclass = subclasses[ans],
+                         interactive = interactive, which.xs = which.xs,...)
+        }
+        else if (ans != 0) {
+          matchit.qqplot(x, interactive = interactive, which.xs = which.xs,...)
         }
       }
     }
     else {
-      matchit.qqplot(x, discrete.cutoff, which.subclass = subclass,
+      matchit.qqplot(x,  which.subclass = subclass,
                      interactive = interactive, which.xs = which.xs,...)
     }
   }
-  else if(type=="jitter"){
-    jitter.pscore(x, interactive = interactive,...)
+  else if (type=="jitter") {
+    if (is.null(x$distance)) {
+      stop("type = \"jitter\" cannot be used when no distance variable was estimated or supplied.", call. = FALSE)
+    }
+    jitter.pscore(x, interactive = interactive, ...)
   }
-  else if(type=="histogram"){
+  else if (type == "histogram") {
+    if (is.null(x$distance)) {
+      stop("type = \"histogram\" cannot be used when no distance variable was estimated or supplied.", call. = FALSE)
+    }
     hist.pscore(x,...)
   }
+  invisible(x)
 }
 
 
@@ -301,12 +302,12 @@ plot.summary.matchit <- function(x, abs = TRUE, var.order = "data", threshold = 
   invisible(x)
 }
 
-#----------------------------------------------------------
-### PRINT METHODS
-#----------------------------------------------------------
+
+### PRINT METHODS------------------------------------------
+
 
 #' @export
-print.matchit <- function(x, digits = getOption("digits"), ...){
+print.matchit <- function(x, digits = max(3, getOption("digits") - 3), ...){
   cat("\nCall: ", deparse(x$call), sep="\n")
   cat("\nSample sizes:\n")
 
@@ -324,25 +325,7 @@ print.matchit <- function(x, digits = getOption("digits"), ...){
 }
 
 #' @export
-print.matchit.exact <- function(x, digits = getOption("digits"), ...){
-  cat("\nCall: ", deparse(x$call), sep = "\n")
-  cat("\nExact Subclasses: ", length(unique(x$subclass[!is.na(x$subclass)])),"\n", sep="")
-  cat("\nSample sizes:\n")
-  # ntab <- table(factor(!is.na(x$subclass),
-  #                      levels=c("TRUE","FALSE")),
-  #               x$treat)
-  # nn <- rbind(table(x$treat),
-  #             ntab[c("TRUE","FALSE"),])
-  # dimnames(nn) <- list(c("All","Matched","Unmatched"),
-  #                      c("Control","Treated"))
-
-  print.table(x$nn, ...)
-  invisible(x)
-  cat("\n")
-}
-
-#' @export
-print.matchit.subclass <- function(x, digits = getOption("digits"), ...){
+print.matchit.subclass <- function(x, digits = max(3, getOption("digits") - 3), ...){
   cat("\nCall: ", paste(deparse(x$call), collapse = "\n"), sep = "\n")
   cat("\nSample sizes by subclasses:\n\n")
 
@@ -374,9 +357,9 @@ print.summary.matchit <- function(x, digits = max(3, getOption("digits") - 3), .
 
   if(!is.null(x$sum.matched)) {
     cat("\nSummary of balance for matched data:\n")
-    print.data.frame(as.data.frame(round(x$sum.matched,digits)))
+    print.data.frame(round_df_char(x$sum.matched, digits, pad = "0", na_vals = "."))
     cat("\nPercent Balance Improvement:\n")
-    print.data.frame(as.data.frame(round(x$reduction,digits)))
+    print.data.frame(round_df_char(x$reduction, 1, pad = "0", na_vals = "."))
     cat("\nSample sizes:\n")
     print.table(x$nn, digits=digits)
     cat("\n")
@@ -388,31 +371,31 @@ print.summary.matchit <- function(x, digits = max(3, getOption("digits") - 3), .
 print.summary.matchit.subclass <- function(x, digits = max(3, getOption("digits") -  3), ...){
   cat("\nCall:", deparse(x$call), sep = "\n")
   cat("\nSummary of balance for all data:\n")
-  print.data.frame(as.data.frame(round(x$sum.all,digits)))
+  print.data.frame(round_df_char(x$sum.all, digits, pad = "0", na_vals = "."))
   if (length(x$sum.subclass) > 0) {
     cat("\nSummary of balance by subclasses:\n")
     for (s in seq_along(x$sum.subclass)) {
       cat(paste0("\n- ", names(x$sum.subclass)[s], "\n"))
-      print.data.frame(as.data.frame(round(x$sum.subclass[[s]], digits)))
+      print.data.frame(round_df_char(x$sum.subclass[[s]], digits, pad = "0", na_vals = "."))
     }
   }
   cat("\nSummary of balance across subclasses\n")
-  print.data.frame(as.data.frame(round(x$sum.across, digits)))
+  print.data.frame(round_df_char(x$sum.across, digits, pad = "0", na_vals = "."))
   cat("\nPercent Balance Improvement:\n")
-  print.data.frame(as.data.frame(round(x$reduction, digits)))
+  print.data.frame(round_df_char(x$reduction, 1, pad = "0", na_vals = "."))
   cat("\nSample sizes by subclasses:\n")
   print.table(x$qn)
   cat("\n")
 }
 
 
-#----------------------------------------------------------
-### SUMMARY METHODS
-#----------------------------------------------------------
+
+### SUMMARY METHODS----------------------------------------
+
 
 #' @export
 summary.matchit <- function(object, interactions = FALSE,
-                            addlvariables = NULL, standardize = FALSE,
+                            addlvariables = NULL, standardize = TRUE,
                             data = NULL, ...) {
 
   #Create covariate matrix; include exact and mahvars
@@ -549,7 +532,7 @@ summary.matchit <- function(object, interactions = FALSE,
 
 #' @export
 summary.matchit.subclass <- function(object, interactions = FALSE,
-                                     addlvariables = NULL, standardize = FALSE,
+                                     addlvariables = NULL, standardize = TRUE,
                                      data = NULL, subclass = FALSE, ...) {
 
   #Create covariate matrix; include exact and mahvars
@@ -607,7 +590,7 @@ summary.matchit.subclass <- function(object, interactions = FALSE,
   nam <- colnames(X)
 
   kk <- ncol(X)
-  subclasses <- sort(unique(subclass, nmax = length(object$q.cut) - 1))
+  subclasses <- sort(unique(subclass, nmax = if (!is.null(object$q.cut)) length(object$q.cut) - 1 else length(subclass)))
 
   if (isTRUE(which.subclass)) which.subclass <- subclasses
   else if (isFALSE(which.subclass)) which.subclass <- NULL
@@ -622,7 +605,7 @@ summary.matchit.subclass <- function(object, interactions = FALSE,
 
     #qoi without weights only returns unmatched stats, which is all we need within
     #subclasses. Otherwise, identical to matched stats.
-    aa <- setNames(lapply(seq_len(kk), function(i) qoi(X[in.sub,i], tt = treat[in.sub], standardize = standardize)),
+    aa <- setNames(lapply(seq_len(kk), function(i) qoi(X[in.sub,i], tt = treat[in.sub], standardize = standardize, s.d.denom = sd(X[treat == 1, i]))),
              colnames(X))
 
     sum.sub <- matrix(NA_real_, nrow = kk, ncol = ncol(aa[[1]]), dimnames = list(nam, colnames(aa[[1]])))
@@ -644,7 +627,7 @@ summary.matchit.subclass <- function(object, interactions = FALSE,
             to.remove[k] <- TRUE
           }
           else {
-            jqoi <- qoi(x2[in.sub], tt = treat[in.sub], standardize = standardize)
+            jqoi <- qoi(x2[in.sub], tt = treat[in.sub], standardize = standardize, s.d.denom = sd(x2[treat == 1, i]))
             sum.sub.int[k,] <- jqoi[1,]
             if (i == j) {
               int.names[k] <- paste0(nam[i], "\u00B2")
@@ -735,16 +718,18 @@ summary.matchit.subclass <- function(object, interactions = FALSE,
   qn <- table(treat[!object$discarded], subclass[!object$discarded])
   dimnames(qn) <- list(c("Control", "Treated"), subclasses)
 
-  small.subclass.control <- subclasses[qn["Control", as.character(subclasses)] <= 1]
-  if (length(small.subclass.control) > 0) {
-    if (length(small.subclass.control) == 1) warning(paste0("Not enough control units in subclass ", small.subclass.control, "."), call.= FALSE)
-    else warning(paste0("Not enough control units in subclasses ", word_list(small.subclass.control), "."), call.= FALSE)
-  }
+  if (!is.null(which.subclass)) {
+    small.subclass.control <- which.subclass[qn["Control", as.character(which.subclass)] <= 1]
+    if (length(small.subclass.control) > 0) {
+      if (length(small.subclass.control) == 1) warning(paste0("Not enough control units in subclass ", small.subclass.control, "."), call.= FALSE)
+      else warning(paste0("Not enough control units in subclasses ", word_list(small.subclass.control), "."), call.= FALSE)
+    }
 
-  small.subclass.treated <- subclasses[qn["Treated", as.character(subclasses)] <= 1]
-  if (length(small.subclass.treated) > 0) {
-    if (length(small.subclass.treated) == 1) warning(paste0("Not enough treated units in subclass ", small.subclass.treated, "."), call.= FALSE)
-    else warning(paste0("Not enough treated units in subclasses ", word_list(small.subclass.treated), "."), call.= FALSE)
+    small.subclass.treated <- which.subclass[qn["Treated", as.character(which.subclass)] <= 1]
+    if (length(small.subclass.treated) > 0) {
+      if (length(small.subclass.treated) == 1) warning(paste0("Not enough treated units in subclass ", small.subclass.treated, "."), call.= FALSE)
+      else warning(paste0("Not enough treated units in subclasses ", word_list(small.subclass.treated), "."), call.= FALSE)
+    }
   }
 
   if (any(object$discarded)) {
