@@ -1,43 +1,49 @@
 weights.subclass <- function(psclass, treat, estimand = "ATT") {
 
-  ttt <- treat[!is.na(psclass)]
-  classes <- psclass[!is.na(psclass)]
+  NAsub <- is.na(psclass)
 
-  n <- length(ttt)
-  labels <- names(ttt)
-  tlabels <- labels[ttt==1]
-  clabels <- labels[ttt==0]
+  i1 <- treat == 1 & !NAsub
+  i0 <- treat == 0 & !NAsub
 
-  weights <- rep(0, n)
-  names(weights) <- labels
-  weights[tlabels] <- 1
+  weights <- setNames(rep(0, length(treat)), names(treat))
 
-  for (j in unique(classes)){
-    qn0 <- sum(ttt==0 & classes==j)
-    qn1 <- sum(ttt==1 & classes==j)
-    weights[ttt==0 & classes==j] <- qn1/qn0
+  unique.sub <- unique(psclass[!NAsub], nmax = length(treat)/2)
+
+  treated_by_sub <- vapply(unique.sub, function(s) sum(psclass[i1] == s), numeric(1L))
+  control_by_sub <- vapply(unique.sub, function(s) sum(psclass[i0] == s), numeric(1L))
+  total_by_sub <- treated_by_sub + control_by_sub
+
+  psclass <- as.character(psclass)
+
+  if (estimand == "ATT") {
+    weights[i1] <- 1
+    weights[i0] <- (treated_by_sub/control_by_sub)[psclass[i0]]
+
+    #Weights average 1
+    weights[i0] <- weights[i0]*sum(i0)/sum(weights[i0])
   }
-  if (sum(weights[ttt==0])==0)
-    weights[ttt==0] <- rep(0, length(weights[clabels]))
-  else {
-    ## Number of C units that were matched to at least 1 T
-    num.cs <- sum(weights[clabels] > 0)
-    weights[clabels] <- weights[clabels]*num.cs/sum(weights[clabels])
-  }
+  else if (estimand == "ATC") {
+    weights[i1] <- (control_by_sub/treated_by_sub)[psclass[i1]]
+    weights[i0] <- 1
 
-  if (any(is.na(psclass))) {
-    tmp <- rep(0, sum(is.na(psclass)))
-    names(tmp) <- names(treat[is.na(psclass)])
-    weights <- c(weights, tmp)[names(treat)]
+    #Weights average 1
+    weights[i1] <- weights[i1]*sum(i1)/sum(weights[i1])
+  }
+  else if (estimand == "ATE") {
+    weights[i1] <- (total_by_sub/treated_by_sub)[psclass[i1]]
+    weights[i0] <- (total_by_sub/control_by_sub)[psclass[i0]]
+
+    #Weights average 1
+    weights[i1] <- weights[i1]*sum(i1)/sum(weights[i1])
+    weights[i0] <- weights[i0]*sum(i0)/sum(weights[i0])
   }
 
   if (sum(weights)==0)
     stop("No units were matched")
-  else if (sum(weights[tlabels])==0)
+  else if (sum(weights[treat == 1])==0)
     stop("No treated units were matched")
-  else if (sum(weights[clabels])==0)
+  else if (sum(weights[treat == 0])==0)
     stop("No control units were matched")
 
   return(weights)
 }
-
