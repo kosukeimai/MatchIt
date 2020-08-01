@@ -1,51 +1,55 @@
-check.inputs <- function(method, distance, mcall, exact, mahvars, caliper, discard, replace, ratio, m.order) {
+#Auxiliary functions; some from WeightIt
+
+#Function to process inputs and throw warnings or errors if inputs are incompatible with methods
+check.inputs <- function(method, distance, mcall, exact, mahvars, caliper, discard, reestimate, replace, ratio, m.order, estimand) {
+
   method <- match_arg(method, c("exact", "cem", "nearest", "optimal", "full", "genetic", "subclass"))
 
   ignored.inputs <- character(0)
   error.inputs <- character(0)
   if (method == "exact") {
-    for (i in c("distance", "exact", "mahvars", "caliper", "discard", "replace", "ratio", "m.order")) {
+    for (i in c("distance", "exact", "mahvars", "caliper", "discard", "reestimate", "replace", "ratio", "m.order")) {
       if (i %in% names(mcall) && !is.null(get0(i))) {
         ignored.inputs <- c(ignored.inputs, i)
       }
     }
   }
   else if (method == "cem") {
-    for (i in c("distance", "exact", "mahvars", "caliper", "discard", "replace", "ratio", "m.order")) {
+    for (i in c("distance", "exact", "mahvars", "caliper", "discard", "reestimate", "replace", "ratio", "m.order")) {
       if (i %in% names(mcall) && !is.null(get0(i))) {
         ignored.inputs <- c(ignored.inputs, i)
       }
     }
   }
   else if (method == "nearest") {
-    if (distance == "mahalanobis") {
-      for (e in c("mahvars", "caliper", "discard")) {
+    if (is.character(distance) && distance == "mahalanobis") {
+      for (e in c("mahvars", "caliper", "discard", "reestimate")) {
         if (e %in% names(mcall) && !is.null(get0(e))) {
           error.inputs <- c(error.inputs, e)
         }
       }
     }
     else {
-      if (!is.null(mahvars) && is.null(caliper)) {
-        warning("When mahvars are specified, an argument should be supplied to caliper.", call. = FALSE)
-      }
+      # if (!is.null(mahvars) && is.null(caliper)) {
+      #   warning("When mahvars are specified, an argument should be supplied to caliper.", call. = FALSE)
+      # }
     }
   }
   else if (method == "optimal") {
-    if (distance == "mahalanobis") {
-      for (e in c("mahvars", "caliper", "discard")) {
+    if (is.character(distance) && distance == "mahalanobis") {
+      for (e in c("mahvars", "caliper", "discard", "reestimate")) {
         if (e %in% names(mcall) && !is.null(get0(e))) {
           error.inputs <- c(error.inputs, e)
         }
       }
     }
     else {
-      if (!is.null(mahvars) && is.null(caliper)) {
-        warning("When mahvars are specified, an argument should be supplied to caliper.", call. = FALSE)
-      }
+      # if (!is.null(mahvars) && is.null(caliper)) {
+      #   warning("When mahvars are specified, an argument should be supplied to caliper.", call. = FALSE)
+      # }
     }
 
-    for (i in c("replace", "m.order")) {
+    for (i in c("replace", "caliper", "m.order")) {
       if (i %in% names(mcall) && !is.null(get0(i))) {
         ignored.inputs <- c(ignored.inputs, i)
       }
@@ -53,17 +57,17 @@ check.inputs <- function(method, distance, mcall, exact, mahvars, caliper, disca
 
   }
   else if (method == "full") {
-    if (distance == "mahalanobis") {
-      for (e in c("mahvars", "caliper", "discard")) {
+    if (is.character(distance) && distance == "mahalanobis") {
+      for (e in c("mahvars", "caliper", "discard", "reestimate")) {
         if (e %in% names(mcall) && !is.null(get0(e))) {
           error.inputs <- c(error.inputs, e)
         }
       }
     }
     else {
-      if (!is.null(mahvars) && is.null(caliper)) {
-        warning("When mahvars are specified, an argument should be supplied to caliper.", call. = FALSE)
-      }
+      # if (!is.null(mahvars) && is.null(caliper)) {
+      #   warning("When mahvars are specified, an argument should be supplied to caliper.", call. = FALSE)
+      # }
     }
 
     for (i in c("replace", "ratio", "m.order")) {
@@ -73,21 +77,21 @@ check.inputs <- function(method, distance, mcall, exact, mahvars, caliper, disca
     }
   }
   else if (method == "genetic") {
-    if (distance == "mahalanobis") {
-      for (e in c("mahvars", "caliper", "discard")) {
+    if (is.character(distance) && distance == "mahalanobis") {
+      for (e in c("mahvars", "caliper", "discard", "reestimate")) {
         if (e %in% names(mcall) && !is.null(get0(e))) {
           error.inputs <- c(error.inputs, e)
         }
       }
     }
     else {
-      if (!is.null(mahvars) && is.null(caliper)) {
-        warning("When mahvars are specified, an argument should be supplied to caliper.", call. = FALSE)
-      }
+      # if (!is.null(mahvars) && is.null(caliper)) {
+      #   warning("When mahvars are specified, an argument should be supplied to caliper.", call. = FALSE)
+      # }
     }
   }
   else if (method == "subclass") {
-    if (distance == "mahalanobis") {
+    if (is.character(distance) && distance == "mahalanobis") {
       stop("distance = \"mahalanobis\" is not compatible with subclassification.", call. = FALSE)
     }
 
@@ -109,6 +113,7 @@ check.inputs <- function(method, distance, mcall, exact, mahvars, caliper, disca
                                      call. = FALSE, immediate. = TRUE)
 }
 
+#Function to process distance and give warnings about new syntax
 process.distance <- function(distance, method) {
   if (is.null(distance)) stop(paste0("distance cannot be NULL with method = \"", method, "\"."), call. = FALSE)
   else if (is.vector(distance, "character") && length(distance) == 1) {
@@ -145,6 +150,7 @@ process.distance <- function(distance, method) {
   return(distance)
 }
 
+#Function to check ratio is acceptable
 process.ratio <- function(ratio) {
   if (length(ratio) == 0) ratio <- 1
   if (!is.atomic(ratio) || !is.numeric(ratio) || length(ratio) > 1 || ratio < 1) {
@@ -153,7 +159,9 @@ process.ratio <- function(ratio) {
   round(ratio)
 }
 
-subclass_scoot <- function(sub, treat, x) {
+#Function to ensure no subclass is devoid of both treated and control units by "scooting" units
+#from other subclasses. From WeightIt.
+subclass_scoot <- function(sub, treat, x, min.n = 1) {
   #Reassigns subclasses so there are no empty subclasses
   #for each treatment group. Copied from WeightIt with
   #slight modifications.
@@ -171,8 +179,10 @@ subclass_scoot <- function(sub, treat, x) {
   sub <- setNames(setNames(seq_len(nsub), sort(unique(sub)))[as.character(sub)],
                   original.order)
 
-  if (any(table(treat) < nsub)) {
-    stop("Too many subclasses were requested.", call. = FALSE)
+  if (any(table(treat) < nsub * min.n)) {
+    stop(paste0("Not enough units to fit ", min.n, ngettext(min.n, " treated and control unit",
+                                                            " treated and control units"),
+                " in each subclass."), call. = FALSE)
   }
 
   for (t in unique.treat) {
@@ -183,7 +193,7 @@ subclass_scoot <- function(sub, treat, x) {
 
   sub_tab <- table(treat, sub)
 
-  if (any(sub_tab == 0)) {
+  if (any(sub_tab < min.n)) {
 
     soft_thresh <- function(x, minus = 1) {
       x <- x - minus
@@ -192,33 +202,37 @@ subclass_scoot <- function(sub, treat, x) {
     }
 
     for (t in unique.treat) {
-      while (any(sub_tab[t,] == 0)) {
-        first_0 <- which(sub_tab[t,] == 0)[1]
+      for (n in seq_len(min.n)) {
+        while (any(sub_tab[t,] == 0)) {
+          first_0 <- which(sub_tab[t,] == 0)[1]
 
-        if (first_0 == nsub ||
-            (first_0 != 1 &&
-             sum(soft_thresh(sub_tab[t, seq(1, first_0 - 1)]) / abs(first_0 - seq(1, first_0 - 1))) >=
-             sum(soft_thresh(sub_tab[t, seq(first_0 + 1, nsub)]) / abs(first_0 - seq(first_0 + 1, nsub))))) {
-          #If there are more and closer nonzero subs to the left...
-          first_non0_to_left <- max(seq(1, first_0 - 1)[sub_tab[t, seq(1, first_0 - 1)] > 0])
+          if (first_0 == nsub ||
+              (first_0 != 1 &&
+               sum(soft_thresh(sub_tab[t, seq(1, first_0 - 1)]) / abs(first_0 - seq(1, first_0 - 1))) >=
+               sum(soft_thresh(sub_tab[t, seq(first_0 + 1, nsub)]) / abs(first_0 - seq(first_0 + 1, nsub))))) {
+            #If there are more and closer nonzero subs to the left...
+            first_non0_to_left <- max(seq(1, first_0 - 1)[sub_tab[t, seq(1, first_0 - 1)] > 0])
 
-          name_to_move <- names(sub)[which(x == max(x[treat == t & sub == first_non0_to_left]) & treat == t & sub == first_non0_to_left)[1]]
+            name_to_move <- names(sub)[which(x == max(x[treat == t & sub == first_non0_to_left]) & treat == t & sub == first_non0_to_left)[1]]
 
-          sub[name_to_move] <- first_0
-          sub_tab[t, first_0] <- 1L
-          sub_tab[t, first_non0_to_left] <- sub_tab[t, first_non0_to_left] - 1L
+            sub[name_to_move] <- first_0
+            sub_tab[t, first_0] <- 1L
+            sub_tab[t, first_non0_to_left] <- sub_tab[t, first_non0_to_left] - 1L
 
+          }
+          else {
+            #If there are more and closer nonzero subs to the right...
+            first_non0_to_right <- min(seq(first_0 + 1, nsub)[sub_tab[t, seq(first_0 + 1, nsub)] > 0])
+
+            name_to_move <- names(sub)[which(x == min(x[treat == t & sub == first_non0_to_right]) & treat == t & sub == first_non0_to_right)[1]]
+
+            sub[name_to_move] <- first_0
+            sub_tab[t, first_0] <- 1L
+            sub_tab[t, first_non0_to_right] <- sub_tab[t, first_non0_to_right] - 1L
+          }
         }
-        else {
-          #If there are more and closer nonzero subs to the right...
-          first_non0_to_right <- min(seq(first_0 + 1, nsub)[sub_tab[t, seq(first_0 + 1, nsub)] > 0])
 
-          name_to_move <- names(sub)[which(x == min(x[treat == t & sub == first_non0_to_right]) & treat == t & sub == first_non0_to_right)[1]]
-
-          sub[name_to_move] <- first_0
-          sub_tab[t, first_0] <- 1L
-          sub_tab[t, first_non0_to_right] <- sub_tab[t, first_non0_to_right] - 1L
-        }
+        sub_tab[t,] <- sub_tab[t,] - 1
       }
     }
 
@@ -229,6 +243,7 @@ subclass_scoot <- function(sub, treat, x) {
   return(sub)
 }
 
+#Function to check if package is installed. From WeightIt.
 check.package <- function(package.name, alternative = FALSE) {
   packages.not.installed <- package.name[!vapply(package.name, requireNamespace, logical(1L),
                                                  quietly = TRUE)]
@@ -246,6 +261,10 @@ check.package <- function(package.name, alternative = FALSE) {
   else return(invisible(TRUE))
 }
 
+#Function to turn a vector into a string with "," and "and" or "or" for clean messages. 'and.or'
+#controls whether words are separated by "and" or "or"; 'is.are' controls whether the list is
+#followed by "is" or "are" (to avoid manually figuring out if plural); quotes controls whether
+#quotes should be placed around words in string. From WeightIt.
 word_list <- function(word.list = NULL, and.or = c("and", "or"), is.are = FALSE, quotes = FALSE) {
   #When given a vector of strings, creates a string of the form "a and b"
   #or "a, b, and c"
@@ -290,6 +309,7 @@ word_list <- function(word.list = NULL, and.or = c("and", "or"), is.are = FALSE,
   return(out)
 }
 
+#More informative and cleaner version of base::match.arg. From WeightIt.
 match_arg <- function(arg, choices, several.ok = FALSE) {
   #Replaces match.arg() but gives cleaner error message and processing
   #of arg.
@@ -327,6 +347,124 @@ match_arg <- function(arg, choices, several.ok = FALSE) {
   choices[i]
 }
 
+#Turn a vector into a 0/1 vector. 'zero' and 'one' can be supplied to make it clear which is
+#which; otherwise, a guess is used. From WeightIt.
+binarize <- function(variable, zero = NULL, one = NULL) {
+  if (length(unique(variable)) > 2) stop(paste0("Cannot binarize ", deparse1(substitute(variable)), ": more than two levels."))
+  if (is.character(variable)) {
+    variable <- factor(variable, nmax = 2)
+    unique.vals <- levels(variable)
+  }
+  else unique.vals <- sort(unique(variable, nmax = 2), partial = 1)
+
+  variable.numeric <- as.numeric(variable)
+
+  if (is.null(zero)) {
+    if (is.null(one)) {
+      if (0 %in% variable.numeric) return(setNames(as.integer(variable.numeric != 0), names(variable)))
+      else return(setNames(as.integer(variable != unique.vals[1]), names(variable)))
+    }
+    else {
+      if (one %in% unique.vals) return(setNames(as.integer(variable == one), names(variable)))
+      else stop("The argument to 'one' is not the name of a level of variable.")
+    }
+  }
+  else {
+    if (zero %nin% unique.vals) stop("The argument to 'zero' is not the name of a level of variable.")
+    return(setNames(as.integer(variable != zero), names(variable)))
+  }
+}
+
+#Make interaction vector out of matrix of covs
+exactify <- function(X, nam = NULL, sep = "|") {
+  if (is.null(nam)) nam <- rownames(X)
+  if (is.matrix(X)) X <- lapply(seq_len(ncol(X)), function(i) X[,i])
+  if (!is.list(X)) stop("X must be a matrix, data frame, or list.")
+
+  #Ensure no ambiguity is created by sep
+  sep0 <- sep
+  unique.x <- unlist(lapply(X, function(x) as.character(unique(x))))
+  while (any(grepl(sep, unique.x, fixed = TRUE))) {
+    sep0 <- paste0(sep0, sep)
+  }
+
+  out <- do.call("paste", c(X, sep = sep0))
+  if (!is.null(nam)) names(out) <- nam
+  out
+}
+
+#Determine whether a character vector can be coerced to numeric
+can_str2num <- function(x) {
+  nas <- is.na(x)
+  suppressWarnings(x_num <- as.numeric(as.character(x[!nas])))
+  return(!anyNA(x_num))
+}
+
+#Cleanly coerces a character vector to numeric; best to use after can_str2num()
+str2num <- function(x) {
+  nas <- is.na(x)
+  suppressWarnings(x_num <- as.numeric(as.character(x)))
+  x_num[nas] <- NA
+  return(x_num)
+}
+
+#Clean printing of data frames with numeric and NA elements.
+round_df_char <- function(df, digits, pad = "0", na_vals = "") {
+  #Digits is passed to round(). pad is used to replace trailing zeros so decimal
+  #lines up. Should be "0" or " "; "" (the empty string) un-aligns decimals.
+  #na_vals is what NA should print as.
+
+  if (NROW(df) == 0 || NCOL(df) == 0) return(df)
+  if (!is.data.frame(df)) df <- as.data.frame.matrix(df, stringsAsFactors = FALSE)
+  rn <- rownames(df)
+  cn <- colnames(df)
+
+  infs <- o.negs <- array(FALSE, dim = dim(df))
+  nas <- is.na(df)
+  nums <- vapply(df, is.numeric, logical(1))
+  infs[,nums] <- vapply(which(nums), function(i) !nas[,i] & !is.finite(df[[i]]), logical(NROW(df)))
+
+  for (i in which(!nums)) {
+    if (can_str2num(df[[i]])) {
+      df[[i]] <- str2num(df[[i]])
+      nums[i] <- TRUE
+    }
+  }
+
+  o.negs[,nums] <- !nas[,nums] & df[nums] < 0 & round(df[nums], digits) == 0
+  df[nums] <- round(df[nums], digits = digits)
+
+  for (i in which(nums)) {
+    df[[i]] <- format(df[[i]], scientific = FALSE, justify = "none", trim = TRUE,
+                      drop0trailing = !identical(as.character(pad), "0"))
+
+    if (!identical(as.character(pad), "0") && any(grepl(".", df[[i]], fixed = TRUE))) {
+      s <- strsplit(df[[i]], ".", fixed = TRUE)
+      lengths <- lengths(s)
+      digits.r.of.. <- rep(0, NROW(df))
+      digits.r.of..[lengths > 1] <- nchar(vapply(s[lengths > 1], `[[`, character(1L), 2))
+      max.dig <- max(digits.r.of..)
+
+      dots <- ifelse(lengths > 1, "", if (as.character(pad) != "") "." else pad)
+      pads <- vapply(max.dig - digits.r.of.., function(n) paste(rep(pad, n), collapse = ""), character(1L))
+
+      df[[i]] <- paste0(df[[i]], dots, pads)
+    }
+  }
+
+  df[o.negs] <- paste0("-", df[o.negs])
+
+  # Insert NA placeholders
+  df[nas] <- na_vals
+  df[infs] <- "N/A"
+
+  if (length(rn) > 0) rownames(df) <- rn
+  if (length(cn) > 0) names(df) <- cn
+
+  return(df)
+}
+
+#Used to load backports functions. No need to touch, but must always be included somewhere.
 .onLoad <- function(libname, pkgname) {
   backports::import(pkgname)
 }
