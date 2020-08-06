@@ -102,13 +102,17 @@ matchit2full <- function(treat, covs, data, distance, discarded,
     within.match <- optmatch::exactMatch(update(exact, treat_ ~ .), data = data)
   }
 
+  if (!is.null(mahvars)) {
+    mahvars <- update(mahvars, treat_ ~ .)
+    environment(mahvars) <- sys.frame(sys.nframe())
+  }
+
   if (!is.null(caliper)) {
     if (is.full.mahalanobis) {
       stop("Calipers cannot be supplied when distance = \"mahalanobis\".", call. = FALSE)
     }
     else if (!is.null(mahvars)) {
-      environment(mahvars) <- sys.frame(sys.nframe())
-      mo <- optmatch::match_on(update(mahvars, treat_ ~ .),
+      mo <- optmatch::match_on(mahvars,
                                data = data,
                                method = "mahalanobis")
     }
@@ -117,8 +121,8 @@ matchit2full <- function(treat, covs, data, distance, discarded,
                                method = "euclidean")
     }
 
-    if (is.null(within.match)) within.match <- caliper(mo, caliper*sd(distance))
-    else within.match <- within.match + caliper(mo, caliper*sd(distance))
+    if (is.null(within.match)) within.match <- optmatch::caliper(mo, caliper*sd(distance))
+    else within.match <- within.match + optmatch::caliper(mo, caliper*sd(distance))
   }
 
   withCallingHandlers({
@@ -131,7 +135,7 @@ matchit2full <- function(treat, covs, data, distance, discarded,
                                   ...)
     }
     else if (!is.null(mahvars)) {
-      full <- optmatch::fullmatch(update(mahvars, treat_ ~ .),
+      full <- optmatch::fullmatch(mahvars,
                                   data = data,
                                   method = "mahalanobis",
                                   within = within.match,
@@ -203,6 +207,11 @@ matchit2optimal <- function(treat, covs, data, distance, discarded,
   }
   else exact.match <- NULL
 
+  if (!is.null(mahvars)) {
+    mahvars <- update(mahvars, treat_ ~ .)
+    environment(mahvars) <- sys.frame(sys.nframe())
+  }
+
   if (!is.null(caliper)) {
     warning("Calipers are currently not compatible with method = \"optimal\" and will be ignored.", call. = FALSE)
     caliper <- NULL
@@ -219,7 +228,7 @@ matchit2optimal <- function(treat, covs, data, distance, discarded,
                                   ...)
     }
     else if (!is.null(mahvars)) {
-      pair <- optmatch::pairmatch(update(mahvars, treat_ ~ .),
+      pair <- optmatch::pairmatch(mahvars,
                                   data = data,
                                   method = "mahalanobis",
                                   controls = ratio,
@@ -451,7 +460,7 @@ matchit2nearest <-  function(treat, data, distance, discarded,
     }
   }
 
-  treat <- as.integer(treat == focal)
+  treat <- setNames(as.integer(treat == focal), names(treat))
 
   n.obs <- length(treat)
   n1 <- sum(treat == 1)
@@ -462,8 +471,6 @@ matchit2nearest <-  function(treat, data, distance, discarded,
 
   n1_ <- sum(!dis1)
   n0_ <- sum(!dis0)
-
-  if (is.null(names(treat))) names(treat) <- seq_len(n.obs)
 
   lab1 <- names(treat[treat == 1])
   lab0 <- names(treat[treat == 0])
@@ -484,10 +491,12 @@ matchit2nearest <-  function(treat, data, distance, discarded,
   if (is.full.mahalanobis) {
     mahcovs <- model.matrix(update(formula, NULL ~ . + 1), data)[,-1,drop = FALSE]
     mahSigma_inv <- MASS::ginv(cov(mahcovs))
+    rownames(mahcovs) <- names(treat)
   }
   else if (!is.null(mahvars)) {
     mahcovs <- model.matrix(update(mahvars, NULL ~ . + 1), data)[,-1,drop = FALSE]
     mahSigma_inv <- MASS::ginv(cov(mahcovs))
+    rownames(mahcovs) <- names(treat)
   }
   else mahcovs <- NULL
 
@@ -683,7 +692,7 @@ matchit2subclass <- function(treat, covs, distance, discarded,
   unique.classes <- unique(psclass[!is.na(psclass)], nmax = subclass)
 
   if (length(unique.classes) != subclass){
-    warning("Due to discreteness in data, fewer subclasses were generated than were requested.", call.=FALSE)
+    warning("Due to discreteness in the distance measure, fewer subclasses were generated than were requested.", call.=FALSE)
   }
 
   res <- list(subclass = psclass, q.cut = q,

@@ -7,13 +7,13 @@ weights.subclass <- function(psclass, treat, estimand = "ATT") {
 
   weights <- setNames(rep(0, length(treat)), names(treat))
 
+  psclass <- as.character(psclass)
+
   unique.sub <- unique(psclass[!NAsub], nmax = length(treat)/2)
 
   treated_by_sub <- vapply(unique.sub, function(s) sum(psclass[i1] == s), numeric(1L))
   control_by_sub <- vapply(unique.sub, function(s) sum(psclass[i0] == s), numeric(1L))
   total_by_sub <- treated_by_sub + control_by_sub
-
-  psclass <- as.character(psclass)
 
   if (estimand == "ATT") {
     weights[i1] <- 1
