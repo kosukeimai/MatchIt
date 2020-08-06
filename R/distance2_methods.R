@@ -67,7 +67,7 @@ distance2glm <- function(formula, data, link = "logit", ...) {
 #   return(list(model = res, distance = predict(res)))
 # }
 
-#distance2GAM-----------------
+#distance2gam-----------------
 distance2gam <- function(formula, data, link = "logit", ...) {
   check.package("mgcv")
 
@@ -120,7 +120,13 @@ distance2gam <- function(formula, data, link = "logit", ...) {
 #distance2rpart-----------------
 distance2rpart <- function(formula, data, link = NULL, ...) {
   check.package("rpart")
-  res <- rpart::rpart(formula, data, method = "class", ...)
+  A <- list(...)
+  A[!names(A) %in% c(names(formals(rpart::rpart)), names(formals(rpart::rpart.control)))] <- NULL
+  A$formula <- formula
+  A$data <- data
+  A$method <- "class"
+
+  res <- do.call(rpart::rpart, A)
   return(list(model = res, distance = predict(res, type = "prob")[,"1"]))
 }
 
@@ -140,9 +146,23 @@ distance2cbps <- function(formula, data, link = NULL, ...) {
   else linear <- FALSE
 
   A <- list(...)
-  A$method <- if (isFALSE(A[["over"]])) "exact" else "over"
-  A$standardized <- FALSE
-  A$ATT <- 1
+
+  A[["standardized"]] <- FALSE
+  if (is.null(A[["ATT"]])) {
+    if (is.null(A[["estimand"]])) A[["ATT"]] <- 1
+    else {
+      estimand <- toupper(A[["estimand"]])
+      estimand <- match_arg(estimand, c("ATT", "ATC", "ATE"))
+      A[["ATT"]] <- switch(estimand, "ATT" = 1, "ATC" = 2, 0)
+    }
+  }
+  if (is.null(A[["method"]])) {
+    if (is.null(A[["over"]])) A[["method"]] <- "over"
+    else {
+      A[["method"]] <- if (isFALSE(A[["over"]])) "exact" else "over"
+    }
+  }
+  A[c("estimand", "over")] <- NULL
   res <- do.call(CBPS::CBPS, c(list(formula, data), A), quote = TRUE)
 
   pred <- fitted(res)
@@ -160,10 +180,25 @@ distance2bart <- function(formula, data, link = NULL, ...) {
   }
   else linear <- FALSE
 
-  res <- dbarts::bart2(formula, data, ...)
+  A <- list(...)
+  A[!names(A) %in% c(names(formals(dbarts::bart2)), names(formals(dbarts::dbartsControl)))] <- NULL
+  A$formula <- formula
+  A$data <- data
+
+  res <- do.call(dbarts::bart2, A)
+
   if (linear) pred <- fitted(res, type = "link")
   else pred <- fitted(res, type = "response")
 
   return(list(model = res, distance = pred))
+}
 
+#distance2randomforest-----------------
+distance2randomforest <- function(formula, data, link = NULL, ...) {
+  check.package("randomForest")
+  newdata <- get_all_vars(formula, data)
+  treatvar <- as.character(formula[[2]])
+  newdata[[treatvar]] <- factor(newdata[[treatvar]], levels = c("0", "1"))
+  res <- randomForest::randomForest(formula, data = newdata, ...)
+  return(list(model = res, distance = predict(res, type = "prob")[,"1"]))
 }
