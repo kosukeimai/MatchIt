@@ -117,7 +117,7 @@ check.inputs <- function(method, distance, mcall, exact, mahvars, caliper, disca
 process.distance <- function(distance, method) {
   if (is.null(distance)) stop(paste0("distance cannot be NULL with method = \"", method, "\"."), call. = FALSE)
   else if (is.vector(distance, "character") && length(distance) == 1) {
-    allowable.distances <- c("glm", "cbps", "gam", "mahalanobis", "nnet", "rpart", "bart")
+    allowable.distances <- c("glm", "cbps", "gam", "mahalanobis", "nnet", "rpart", "bart", "randomforest")
 
     if (tolower(distance) %in% c("cauchit", "cloglog", "linear.cloglog", "linear.log", "linear.logit", "linear.probit",
                         "linear.cauchit", "log", "probit")) {
@@ -261,6 +261,65 @@ check.package <- function(package.name, alternative = FALSE) {
   else return(invisible(TRUE))
 }
 
+#Function to turn a method name into a phrase describing the method
+info.to.method <- function(info) {
+
+  out.list <- setNames(vector("list", 3), c("kto1", "type", "replace"))
+  out.list[["kto1"]] <- if (!is.null(info$ratio)) paste0(info$ratio, ":1") else NULL
+  out.list[["type"]] <- switch(info$method,
+                 "exact" = "exact matching",
+                 "cem" = "coarsened exact matching",
+                 "nearest" = "nearest neighbor matching",
+                 "optimal" = "optimal pair matching",
+                 "full" = "optimal full matching",
+                 "genetic" = "genetic matching",
+                 "subclass" = paste0("subclassification (", info$subclass, " subclasses)"))
+  out.list[["replace"]] <- if (!is.null(info$replace) && info$method %in% c("nearest", "optimal", "genetic")) {
+    if (info$replace) "with replacement"
+    else "without replacement"
+  } else NULL
+
+  firstup(do.call("paste", c(unname(out.list), list(sep = " "))))
+}
+
+info.to.distance <- function(info) {
+  distance <- info$distance
+  link <- info$link
+  if (!is.null(link) && startsWith(as.character(link), "linear")) {
+    linear <- TRUE
+    link <- sub("linear.", "", as.character(link))
+  }
+  else linear <- FALSE
+
+  if (distance == "glm") {
+    if (link == "logit") dist <- "logistic regression"
+    else if (link == "probit") dist <- "probit regression"
+    else dist <- paste("GLM with a", link, "link")
+  }
+  else if (distance == "gam") {
+    dist <- paste("GAM with a", link, "link")
+  }
+  else if (distance == "rpart") {
+    dist <- "CART"
+  }
+  else if (distance == "nnet") {
+    dist <- "a neural network"
+  }
+  else if (distance == "cbps") {
+    dist <- "CBPS"
+  }
+  else if (distance == "bart") {
+    dist <- "BART"
+  }
+  else if (distance == "randomforest") {
+    dist <- "a random forest"
+  }
+
+  if (linear) dist <- paste(dist, "and linearized")
+
+  return(dist)
+}
+
 #Function to turn a vector into a string with "," and "and" or "or" for clean messages. 'and.or'
 #controls whether words are separated by "and" or "or"; 'is.are' controls whether the list is
 #followed by "is" or "are" (to avoid manually figuring out if plural); quotes controls whether
@@ -370,7 +429,7 @@ binarize <- function(variable, zero = NULL, one = NULL) {
     }
   }
   else {
-    if (zero %nin% unique.vals) stop("The argument to 'zero' is not the name of a level of variable.")
+    if (!zero %in% unique.vals) stop("The argument to 'zero' is not the name of a level of variable.")
     return(setNames(as.integer(variable != zero), names(variable)))
   }
 }
@@ -406,6 +465,12 @@ str2num <- function(x) {
   suppressWarnings(x_num <- as.numeric(as.character(x)))
   x_num[nas] <- NA
   return(x_num)
+}
+
+#Capitalize first letter
+firstup <- function(x) {
+  substr(x, 1, 1) <- toupper(substr(x, 1, 1))
+  x
 }
 
 #Clean printing of data frames with numeric and NA elements.
