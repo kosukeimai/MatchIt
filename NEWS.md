@@ -14,6 +14,8 @@ output:
 
 * An argument to `data` is no longer required if the variables in `formula` are present in the environment.
 
+* Added extensive documentation for every function, matching method, and distance specification. Documentation no longer links to `gking.harvard.edu/matchit` as it now stands alone.
+
 * The `exact` argument can be supplied either as a character vector of names of variables in `data` or as a one-sided formula. A full cross of all included variables will be used to create bins within which matching will take place.
 
 * The `mahvars` argument can also be supplied either as a character vector of names of variables in `data` or as a one-sided formula. Mahalanobis distance matching will occur on the variables in the formula, processed by `model.matrix()`. Use this when performing Mahalanobis distance matching on some variables within a caliper defined by the propensity scores estimated from the variables in the main `formula` using the argument to `distance`. For regular Mahalanobis distance matching (without a caliper), supply the variables in the main `formula` and set `distance = "mahalanobis"`.
@@ -28,15 +30,21 @@ output:
 
 * Added `"bart"` as an option for `distance`. This estimates propensity scores using Bayesian Additive Regression Trees (BART) as implemented in the `dbarts` package.
 
+* Added `"randomforest"` as an option for `distance`. This estimates propensity scores using random forests as implemented in the `randomForest` package.
+
 * In methods that accept it, `m.order` can be set to "`data`", which matches in the order the data appear. With `distance = "mahalanobis"`, `m.order` can be "`random`" or "`data`", with "`data`" as the default. Otherwise, `m.order` can be `"largest"`, `"smallest"`, `"random"`, or `"data"`, with `"largest"` as the default (consistent with prior behavior).
 
 * `match.data()`, which is used to create matched datasets, has a few new arguments. The `data` argument can be supplied with a dataset that will have the matching weights and subclasses added. If not supplied, `match.data()` will try to figure out the appropriate dataset like it did in the past. The `drop.unmatched` argument controls whether unmatched units are dropped from the output. The default is `TRUE`, consistent with past behavior. Warnings are now more informative.
+
+* `get_matches()`, which seems to have been rarely used since it performed a similar function to `match.data()`, has been revamped. It creates a dataset with one row per unit per matched pair. If a unit is part of two separate pairs (e.g., as a result of matching with replacement), it will get two rows in the output dataset. The goal here was to be able to implement standard error estimators that rely both on repeated use of the same unit and subclass/pair membership, e.g., Austin & Cafri (2020). Otherwise, it functions similarly to `match.data()`. *NOTE: the changes to `get_matches()` are breaking changes! Legacy code will not work with the new syntax!*
+
+* `print.matchit()` has completely changed and now prints information about the matching type and specifications. `summary.matchit()` contains all the information that was in the old `print` method.
 
 * The included dataset, `lalonde`, now uses a `race` variable instead of separate `black` and `hispan` variables. This makes it easier to see how character variables are treated by `MatchIt` functions.
 
 * Bugs in `distance = "rpart"` have been fixed.
 
-* When arguments are supplied to methods that don't accept them, a warning will be thrown.
+* When key arguments are supplied to methods that don't accept them, a warning will be thrown.
 
 ## `method = "nearest"`
 
@@ -90,7 +98,7 @@ output:
 
 * A new argument, `min.n`, can be supplied, which controls the minimim size a treatment group can be in each subclass. When any estimated subclass doesn't have enough members from a treatment group, units from other subclasses are pulled to fill it so that every subclass will have at least `min.n` units from each treatment group. This uses the same mechanism as is used in `WeightIt`. The default `min.n` is 1 to ensure there is at least one treated and control unit in each subclass.
 
-* Rather than producing warnings and using the default number of subclasses (6), when an inappropriate argument is supplied to `subclass`, an error will occur.
+* Rather than producing warnings and just using the default number of subclasses (6), when an inappropriate argument is supplied to `subclass`, an error will occur.
 
 * The new `subclass` argument to `summary()` can be used to control whether subclass balance statistics are computed; it can be `TRUE` (display balance for all subclasses), `FALSE` (display balance for no subclasses), or a vector of subclass indices on which to assess balance. The default is `FALSE`.
 
