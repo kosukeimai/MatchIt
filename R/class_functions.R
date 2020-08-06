@@ -1,157 +1,5 @@
-
-#' @import MASS
-#' @import stats
-#' @import utils
-#' @import graphics
-
-in_frame <- function(df, col) {
-  exists(col, envir= as.environment(df))
-}
-
-int_rownames <- function(mat) {
-  options(warn= -1)
-  rn <- as.integer(rownames(mat))
-  options(warn= 0)
-  if (any(is.na(rn))) return(FALSE)
-  else return(TRUE)
-}
-
-### Inheritance--------------------------------------------
-
-#' @title Checks matchit Class
-#' @description Function that checks if the target object is a \code{matchit} object.
-#' @param object any R object
-#' @return Returns \code{TRUE} if its argument has class "matchit" among its classes and
-#' \code{FALSE} otherwise.
-#' @export
-is.matchit <- function(object) {
-  inherits(object, "matchit")
-}
-
-
-### GET MATCHES--------------------------------------------
-
-#' @title Get matches from matchit object
-#' @description Get the resulting matches from a \code{matchit} model object. This function allows the
-#' user to extract the matches from the original dataset used in model building or from a new dataset
-#' that has a matching set of key column(s) (\code{id_cols}).
-#' @param object The \code{'matchit'} class model object
-#' @param model_frame The \code{'data.frame'} class object used in creation of \code{object}.
-#' @param id_cols A string indicating the ID for the datset used in the call to \code{\link{matchit}}.
-#' This can be used in combination with \code{newdata} to return the base dataset. Defaults to
-#' \code{NULL}.
-#' @param newdata A new \code{data.frame} object to extract matched observations from. Used in
-#' conjunction with \code{id_cols}. Defaults to \code{NULL}.
-#' @return If \code{newdata} is \code{NULL}, a subset of \code{model_frame} containing the rows
-#' corresponding to the matched treatment and control observations with weights appended. If
-#' \code{newdata} is not \code{NULL}, an equivalent subset of \code{newdata} is returned.
-#' @export
-get_matches <- function(object, model_frame, id_cols= NULL, newdata= NULL) {
-  UseMethod("get_matches", object)
-}
-
-
-#' @export
-get_matches.matchit <- function(object, model_frame, id_cols= NULL, newdata= NULL) {
-  # 00. error checking
-  if (!is.matchit(object)) stop("object must be a class 'matchit' object.")
-  if (!is.data.frame(model_frame)) stop("model_frame must be a data.frame")
-  if (nrow(model_frame) != nrow(object$X))
-    stop("model_frame must have the same number of rows as the data used in the call to 'matchit'.")
-  if ( (!is.null(id_cols) & is.null(newdata)) | (is.null(id_cols) & !is.null(newdata)) ) {
-    stop("For identity returns, both id_cols and newdata must be supplied.")
-  }
-  if (!is.null(id_cols) & !is.null(newdata)) {
-    if (!is.character(id_cols)) stop("id_cols must be a character vector.")
-    if (!all(sapply(id_cols, in_frame, df= model_frame)))
-      stop("all values in id_cols must exist in model_frame")
-    if (!all(sapply(id_cols, in_frame, df= newdata)))
-      stop("all values in id_cols must exist in newdata")
-  }
-
-  # 01. preliminaries
-  if ( any(grepl(pattern= "replace", x= names(object$call))) ) {
-    idx_call_replace <- which(names(object$call) == "replace")
-  } else {
-    idx_call_replace <- -1L
-  }
-  use_subclass_matching <- base::grepl(x = object$call[4],
-                             pattern= paste(c("exact", "full", "subclass", "cem"), collapse= "|"),
-                             ignore.case= TRUE)
-  # [deprecated] use_genetic_matching <- base::grepl(x = object$call[4], pattern= "genetic", ignore.case= TRUE)
-  use_newdata <- ifelse(is.null(newdata), FALSE, TRUE)
-  has_int_rownames <- int_rownames(model_frame)
-
-  # 02. extract pairs, either exact matching or otherwise
-  if (use_subclass_matching) {
-    if (has_int_rownames) {
-      row_idx <- as.integer(names(object$subclass)[which(!is.na(object$subclass))])
-      match_wts <- object$weights[which(!is.na(object$subclass))]
-      model_subset <- data.frame(model_frame[row_idx, ], weight= match_wts)
-    } else {
-      row_idx <- names(object$subclass)[which(!is.na(object$subclass))]
-      match_wts <- object$weights[which(!is.na(object$subclass))]
-      model_subset <- data.frame(model_frame[which(rownames(model_frame) %in% row_idx), ],
-                                 weight= match_wts)
-    }
-  } else {
-   model_subset <- get_matches_non_subclass(object= object, model_frame= model_frame,
-                     has_int_rownames= has_int_rownames,
-                     idx_call_replace= idx_call_replace)
-  }
-
-  # 03. return
-  if (!use_newdata) {
-    return(model_subset)
-  } else { # using newdata via id_cols
-    newdata <- base::as.data.frame(newdata) # in case of data.table
-    unique_ids <- base::unique(x= model_subset[, c(id_cols, "weight")])
-    # use of all == FALSE for two cases:
-    # a) newdata contains additional IDs not in the matching data -- most common
-    # b) if model_subset contains IDs that newdata does not have -- less common
-    return(merge(newdata, unique_ids, by= id_cols, all.x=FALSE, all.y=FALSE))
-  }
-}
-
-get_matches_non_subclass <- function(object, model_frame, has_int_rownames, use_genetic_matching,
-                                     idx_call_replace) {
-  ## get match weights
-  n_matches <- ncol(object$match.matrix)
-  # get control observations that have matches and their frequency (ie weight)
-  control_units <- object$match.matrix
-  attr(control_units, "dim") <- NULL
-  control_units <- control_units[!is.na(control_units)]
-
-  control_wts <- table(control_units); class(control_wts) <- "vector"
-  control_wts <- data.frame(ob= names(control_wts), weight= control_wts / n_matches,
-                            stringsAsFactors= FALSE)
-
-  if (has_int_rownames) {
-    treated_obs <- data.frame(model_frame[as.integer(rownames(object$match.matrix)), ], weight= 1)
-    control_obs <- data.frame(model_frame[as.integer(control_wts$ob), ],
-                              weight= control_wts$weight)
-  } else {
-    treated_obs <- data.frame(
-      model_frame[which(rownames(model_frame) %in% rownames(object$match.matrix)), ],
-      weight= 1)
-
-    model_frame$rownames <- rownames(model_frame)
-    control_obs <- merge(model_frame, control_wts, by.x= "rownames", by.y= "ob", all= FALSE)
-    rownames(control_obs) <- control_obs$rownames
-    control_obs$rownames <- NULL
-    control_obs$ob <- NULL
-  }
-
-  model_subset <- do.call("rbind", list(control_obs, treated_obs))
-  return(model_subset)
-}
-
-
-
 ### PLOT METHODS-------------------------------------------
 
-# Need to account for weights -- how do we do qq plots with weights
-#' @export
 plot.matchit <- function(x, type = "qq", interactive = TRUE, which.xs = NULL, ...) {
 
   type <- tolower(type)
@@ -167,7 +15,7 @@ plot.matchit <- function(x, type = "qq", interactive = TRUE, which.xs = NULL, ..
     }
     jitter.pscore(x, interactive = interactive,...)
   }
-  else if (type=="histogram") {
+  else if (type =="histogram") {
     if (is.null(x$distance)) {
       stop("type = \"hist\" cannot be used if a distance measure is not estimated or supplied. No plots generated.", call. = FALSE)
     }
@@ -175,7 +23,6 @@ plot.matchit <- function(x, type = "qq", interactive = TRUE, which.xs = NULL, ..
   }
 }
 
-#' @export
 plot.matchit.subclass <- function(x, type = "qq", interactive = TRUE, which.xs = NULL, subclass = NULL, ...) {
   choice.menu <- function(choices, question) {
     k <- length(choices)-1
@@ -232,8 +79,6 @@ plot.matchit.subclass <- function(x, type = "qq", interactive = TRUE, which.xs =
   invisible(x)
 }
 
-
-#' @export
 plot.summary.matchit <- function(x, abs = TRUE, var.order = "data", threshold = c(.1, .05), position = "bottomright", ...) {
   if (!"Std. Mean Diff." %in% colnames(x$sum.all)) {
     stop("Not appropriate for unstandardized summary.  Run summary() with the standardize = TRUE option, and then plot.", call. = FALSE)
@@ -265,7 +110,7 @@ plot.summary.matchit <- function(x, abs = TRUE, var.order = "data", threshold = 
                 "alphabetical" = order(rownames(x$sum.all), decreasing = TRUE))
 
   dotchart(sd.all[ord], labels = rownames(x$sum.all)[ord], xlab = xlab,
-           bg = NA, col = NA)
+           bg = NA, color = NA)
   abline(v = 0)
 
   if (sub && length(x$sum.subclass) > 0) {
@@ -302,88 +147,85 @@ plot.summary.matchit <- function(x, abs = TRUE, var.order = "data", threshold = 
   invisible(x)
 }
 
-
 ### PRINT METHODS------------------------------------------
 
+print.matchit <- function(x, ...) {
+  info <- x[["info"]]
+  cal <- !is.null(info$caliper)
+  dis <- c("both", "control", "treat")[pmatch(info$discard, c("both", "control", "treat"), 0L)]
+  disl <- length(dis) > 0
+  cat("A matchit object\n")
+  cat(paste0(" - method: ", info.to.method(info), "\n"))
+  if (!is.null(x[["distance"]])) {
+    cat(" - distance: ")
+    if (info$mahalanobis) cat("Mahalanobis")
+    if (info$distance != "mahalanobis") {
+      if (info$mahalanobis) cat(" [matching]\n             ")
+      if (info$distance == "user") cat("User-defined") else cat("Propensity score")
 
-#' @export
-print.matchit <- function(x, digits = max(3, getOption("digits") - 3), ...){
-  cat("\nCall: ", deparse(x$call), sep="\n")
-  cat("\nSample sizes:\n")
-
-  #if(any(x$weights>0))
-  #  nn <- rbind(table(x$treat),
-  #              table(x$weights>0, x$treat),
-  #              c(0,0))
-  #else
-  #  nn <- rbind(table(x$treat),
-  #              table(x$weights>0,x$treat)[2:1,])
-
-  print.table(x$nn, ...)
-  invisible(x)
-  cat("\n")
-}
-
-#' @export
-print.matchit.subclass <- function(x, digits = max(3, getOption("digits") - 3), ...){
-  cat("\nCall: ", paste(deparse(x$call), collapse = "\n"), sep = "\n")
-  cat("\nSample sizes by subclasses:\n\n")
-
-  qn <- table(x$treat[!x$discarded], x$subclass[!x$discarded])
-  rownames(qn) <- c("Control", "Treated")
-
-  if (any(x$discarded)) {
-    qn <- cbind(qn, table(x$treat[x$discarded]))
-    colnames(qn)[ncol(qn)] <- "Discarded"
+      if (cal || disl) {
+        cat(" [")
+        cat(paste(c("matching", "subclassification", "caliper", "common support")[c(!info$mahalanobis && info$method != "subclass", info$method == "subclass", cal, disl)], collapse = ", "))
+        cat("]")
+      }
+      if (info$distance != "user") {
+        cat("\n              - estimated with ")
+        cat(info.to.distance(info))
+      }
+    }
+    cat("\n")
   }
-  qn <- rbind(qn, colSums(qn))
-  rownames(qn)[nrow(qn)] <- "Total"
-
-  qn <- cbind(qn, rowSums(qn))
-  colnames(qn)[ncol(qn)] <- "All"
-
-  print.table(qn, ...)
+  if (cal) {
+    cat(paste0(" - caliper: ", format(info$caliper, digits = 3), " SD\n"))
+  }
+  if (disl) {
+    cat(" - common support: ")
+    if (dis == "both") cat("units from both groups")
+    else if (dis == "treat") cat("treated units")
+    else if (dis == "control") cat("control units")
+    cat(" dropped\n")
+  }
+  cat(paste0(" - number of obs.: ", length(x[["treat"]]), " (original), ", sum(x[["weights"]] != 0), " (matched)\n"))
+  cat(paste0(" - target estimand: ", x[["estimand"]], "\n"))
+  if (!is.null(x[["X"]])) cat(paste0(" - covariates: ", ifelse(length(names(x[["X"]])) > 40, "too many to name", paste(names(x[["X"]]), collapse = ", ")), "\n"))
   invisible(x)
-  cat("\n")
 }
 
-#' @export
 print.summary.matchit <- function(x, digits = max(3, getOption("digits") - 3), ...){
 
   cat("\nCall:", deparse(x$call), sep = "\n")
-  cat("\nSummary of balance for all data:\n")
+  cat("\nSummary of Balance for All Data:\n")
   print.data.frame(as.data.frame(round(x$sum.all,digits)))
   cat("\n")
 
   if(!is.null(x$sum.matched)) {
-    cat("\nSummary of balance for matched data:\n")
+    cat("\nSummary of Balance for Matched Data:\n")
     print.data.frame(round_df_char(x$sum.matched, digits, pad = "0", na_vals = "."))
     cat("\nPercent Balance Improvement:\n")
     print.data.frame(round_df_char(x$reduction, 1, pad = "0", na_vals = "."))
-    cat("\nSample sizes:\n")
+    cat("\nSample Sizes:\n")
     print.table(x$nn, digits=digits)
     cat("\n")
   }
   invisible(x)
 }
 
-#' @export
 print.summary.matchit.subclass <- function(x, digits = max(3, getOption("digits") -  3), ...){
   cat("\nCall:", deparse(x$call), sep = "\n")
-  cat("\nSummary of balance for all data:\n")
+  cat("\nSummary of Balance for All Data:\n")
   print.data.frame(round_df_char(x$sum.all, digits, pad = "0", na_vals = "."))
   if (length(x$sum.subclass) > 0) {
-    cat("\nSummary of balance by subclasses:\n")
+    cat("\nSummary of Balance by Subclass:\n")
     for (s in seq_along(x$sum.subclass)) {
       cat(paste0("\n- ", names(x$sum.subclass)[s], "\n"))
       print.data.frame(round_df_char(x$sum.subclass[[s]], digits, pad = "0", na_vals = "."))
     }
   }
-  cat("\nSummary of balance across subclasses\n")
+  cat("\nSummary of Balance Across Subclasses\n")
   print.data.frame(round_df_char(x$sum.across, digits, pad = "0", na_vals = "."))
   cat("\nPercent Balance Improvement:\n")
   print.data.frame(round_df_char(x$reduction, 1, pad = "0", na_vals = "."))
-  cat("\nSample sizes by subclasses:\n")
+  cat("\nSample Sizes by Subclass:\n")
   print.table(x$qn)
   cat("\n")
 }
@@ -392,8 +234,6 @@ print.summary.matchit.subclass <- function(x, digits = max(3, getOption("digits"
 
 ### SUMMARY METHODS----------------------------------------
 
-
-#' @export
 summary.matchit <- function(object, interactions = FALSE,
                             addlvariables = NULL, standardize = TRUE,
                             data = NULL, ...) {
@@ -530,7 +370,6 @@ summary.matchit <- function(object, interactions = FALSE,
   return(res)
 }
 
-#' @export
 summary.matchit.subclass <- function(object, interactions = FALSE,
                                      addlvariables = NULL, standardize = TRUE,
                                      data = NULL, subclass = FALSE, ...) {
