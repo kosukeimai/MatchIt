@@ -1,6 +1,6 @@
 #' @export
 matchit <- function(formula, data = NULL, method = "nearest", distance = "glm",
-                    link = "logit", distance.options=list(), estimand = "ATT",
+                    link = "logit", distance.options = list(), estimand = "ATT",
                     exact = NULL, mahvars = NULL, discard = "none",
                     reestimate = FALSE, replace = FALSE, m.order = NULL,
                     caliper = NULL, ratio = 1, verbose = FALSE, ...) {
@@ -48,13 +48,13 @@ matchit <- function(formula, data = NULL, method = "nearest", distance = "glm",
   exactcovs <- mahcovs <- NULL
 
   if (method %in% c("exact", "cem")) {
-    distance <- fn1 <- NULL
+    fn1 <- NULL
   }
   else {
     distance <- process.distance(distance, method)
 
     if (is.numeric(distance)) {
-      if (length(distance) != length(treat)) stop("distance must be the same length as the dataset.", call. = FALSE)
+      if (length(distance) != length(treat)) stop("distance must be the same length as the dataset if specified as a numeric vector.", call. = FALSE)
       if (anyNA(distance)) stop("Missing values are not allowed in distance.", call. = FALSE)
       fn1 <- "distance2user"
     }
@@ -107,80 +107,82 @@ matchit <- function(formula, data = NULL, method = "nearest", distance = "glm",
 
   if (is.null(fn1)) {
     #Only for cem and exact
-    dist.model <- NULL
+    dist.model <- distance <- link <- NULL
     discarded <- rep(FALSE, length(treat))
   }
-  else if (fn1 == "distance2user") {
-    dist.model <- NULL
-    discarded <- discard(treat, distance, discard, covs)
-  }
-  else if (fn1 == "distance2mahalanobis") {
-    distance <- NULL
-    dist.model <- NULL
-    discarded <- discard(treat, distance, discard, covs)
-  }
   else {
-    #Estimate distance
-    if (is.null(distance.options$formula)) distance.options$formula <- formula
-    if (is.null(distance.options$data)) distance.options$data <- data
-    if (is.null(distance.options$verbose)) distance.options$verbose <- verbose
-    if (!is.null(attr(distance, "link"))) distance.options$link <- attr(distance, "link")
-    else distance.options$link <- link
+    if (fn1 == "distance2user") {
+      dist.model <- link <- NULL
+      discarded <- discard(treat, distance, discard, covs)
+    }
+    else if (fn1 == "distance2mahalanobis") {
+      distance <- link <- dist.model <- NULL
+      discarded <- discard(treat, distance, discard, covs)
+    }
+    else {
+      #Estimate distance
+      if (is.null(distance.options$formula)) distance.options$formula <- formula
+      if (is.null(distance.options$data)) distance.options$data <- data
+      if (is.null(distance.options$verbose)) distance.options$verbose <- verbose
+      if (is.null(distance.options$estimand)) distance.options$estimand <- estimand
+      if (!is.null(attr(distance, "link"))) distance.options$link <- attr(distance, "link")
+      else distance.options$link <- link
 
-    dist.out <- do.call(fn1, distance.options, quote = TRUE)
-
-    dist.model <- dist.out$model
-    distance <- dist.out$distance
-
-    #Discard
-    discarded <- discard(treat, dist.out$distance, discard, covs)
-
-    #Optionally reestimate
-    if (reestimate && any(discarded)) {
-      for (i in seq_along(distance.options)) {
-        if (length(distance.options[[i]]) == n.obs) {
-          distance.options[[i]] <- distance.options[[i]][!discarded]
-        }
-        else if (length(dim(distance.options[[i]])) == 2 && nrow(distance.options[[i]]) == n.obs) {
-          distance.options[[i]] <- distance.options[[i]][!discarded,,drop = FALSE]
-        }
-      }
       dist.out <- do.call(fn1, distance.options, quote = TRUE)
+
       dist.model <- dist.out$model
-      distance[!discarded] <- dist.out$distance
+      distance <- dist.out$distance
+
+      #Discard
+      discarded <- discard(treat, dist.out$distance, discard, covs)
+
+      #Optionally reestimate
+      if (reestimate && any(discarded)) {
+        for (i in seq_along(distance.options)) {
+          if (length(distance.options[[i]]) == n.obs) {
+            distance.options[[i]] <- distance.options[[i]][!discarded]
+          }
+          else if (length(dim(distance.options[[i]])) == 2 && nrow(distance.options[[i]]) == n.obs) {
+            distance.options[[i]] <- distance.options[[i]][!discarded,,drop = FALSE]
+          }
+        }
+        dist.out <- do.call(fn1, distance.options, quote = TRUE)
+        dist.model <- dist.out$model
+        distance[!discarded] <- dist.out$distance
+      }
+
+      #Remove smoothing terms from gam formula
+      if (inherits(dist.model, "gam")) {
+        formula <- mgcv::interpret.gam(formula)$fake.formula
+      }
     }
   }
-
-
-  # ## obtain T and X
-  # tryerror <- try(model.frame(formula), TRUE)
-  # if (is.character(distance) &&
-  #       distance %in% c("GAMlogit", "GAMprobit", "GAMcloglog", "GAMlog", "GAMcauchit")) {
-  #   requireNamespace("mgcv")
-  #   tt <- terms(mgcv::interpret.gam(formula)$fake.formula)
-  # } else {
-  #   tt <- terms(formula)
-  # }
-  # attr(tt, "intercept") <- 0
-  # mf <- model.frame(tt, data)
-  # treat <- model.response(mf)
-  # X <- model.matrix(tt, data=mf)
 
   ## matching!
   match.out <- do.call(fn2, list(treat = treat, covs = covs, data = data, distance = distance,
                                  discarded = discarded, exact = exact, mahvars = mahvars,
                                  replace = replace, m.order = m.order, caliper = caliper,
                                  ratio = ratio, is.full.mahalanobis = is.full.mahalanobis,
-                                 formula = formula, estimand = estimand, verbose = verbose, ...), quote = TRUE)
+                                 formula = formula, estimand = estimand, verbose = verbose, ...),
+                       quote = TRUE)
 
-  ## basic summary
-  nn <- matrix(0, ncol=2, nrow=4)
-  nn[1,] <- c(sum(treat==0), sum(treat==1))
-  nn[2,] <- c(sum(treat==0 & match.out$weights > 0), sum(treat==1 & match.out$weights > 0))
-  nn[3,] <- c(sum(treat==0 & match.out$weights==0 & !discarded), sum(treat==1 & match.out$weights==0 & !discarded))
-  nn[4,] <- c(sum(treat==0 & discarded), sum(treat==1 & discarded))
-  dimnames(nn) <- list(c("All","Matched","Unmatched","Discarded"),
-                       c("Control", "Treated"))
+  ## Sample size
+  nn <- matrix(0, ncol=2, nrow=4, dimnames = list(c("All","Matched","Unmatched","Discarded"),
+                                                  c("Control", "Treated")))
+  nn["All",] <- c(sum(treat==0), sum(treat==1))
+  nn["Matched",] <- c(sum(treat==0 & match.out$weights > 0), sum(treat==1 & match.out$weights > 0))
+  nn["Unmatched",] <- c(sum(treat==0 & match.out$weights==0 & !discarded), sum(treat==1 & match.out$weights==0 & !discarded))
+  nn["Discarded",] <- c(sum(treat==0 & discarded), sum(treat==1 & discarded))
+
+  info <- list(method = method,
+               distance = if (!is.null(fn1)) sub("distance2", "", fn1, fixed = TRUE) else NULL,
+               link = if (!is.null(link)) link else NULL,
+               discard = discard,
+               replace = if (method %in% c("nearest", "genetic")) replace else NULL,
+               ratio = if (method %in% c("nearest", "optimal", "genetic")) ratio else NULL,
+               caliper = if (!is.null(distance) && method %in% c("nearest", "full", "genetic")) caliper else NULL,
+               mahalanobis = is.full.mahalanobis || !is.null(mahvars),
+               subclass = if (method == "subclass") length(unique(match.out$subclass[!is.na(match.out$subclass)])) else NULL)
 
   #Create X.list for X output, removing duplicate variables
   X.list <- list(covs, exactcovs, mahcovs)
@@ -192,6 +194,8 @@ matchit <- function(formula, data = NULL, method = "nearest", distance = "glm",
   match.out$model <- dist.model
   match.out$X <- do.call("data.frame", X.list)
   match.out$call <- mcall
+  match.out$info <- info
+  match.out$estimand <- estimand
   match.out$formula <- formula
   match.out$treat <- treat
   match.out$distance <- distance
