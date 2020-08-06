@@ -6,7 +6,7 @@ discard <- function(treat, pscore = NULL, option = NULL, covs = NULL) {
     # keep all units
     discarded <- rep(FALSE, n.obs)
   }
-  else if (is.logical(option) && length(option) == n.obs) {
+  else if (is.logical(option) && length(option) == n.obs && !anyNA(option)) {
     # user input
     return(setNames(option, names(treat)))
   }
