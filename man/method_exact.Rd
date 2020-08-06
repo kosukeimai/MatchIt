@@ -6,11 +6,13 @@
 In \code{\link{matchit}}, setting \code{method = "exact"} performs exact matching. With exact matching, a complete cross of the covariates is used to form subclasses defined by each combination of the covariate levels. Any subclass that doesn't contain both treated and control units is discarded, leaving only subclasses containing treatment and control units that are exactly equal on the included covariates. The benefits of exact matching are that confounding due to the covariates included is completely eliminated, regardless of the functional form of the treatment or outcome models. The problem is that typically many units will be discarded, sometimes dramatically reducing precision and changing the target population of inference. To use exact matching in combination with another matching method (i.e., to exact match on some covariates and some other form of matching on others), use the \code{exact} argument with that method.
 
 This page details the allowable arguments with \code{method = "exact"}. See \code{\link{matchit}} for an explanation of what each argument means in a general context and how it can be specified.
+
+Below is how \code{matchit} is used for exact matching:
+\preformatted{
+matchit(formula, data = NULL, method = "exact",
+        estimand = "ATT", verbose = FALSE, ...)
 }
-\usage{
-matchit(formula, data = NULL, method = "exact", verbose = FALSE, ...)
 }
-%- maybe also 'usage' for other objects documented here.
 \arguments{
    \item{formula}{
 a two-sided \code{\link{formula}} object containing the treatment and covariates to be used in creating the subclasses defined by a full cross of the covariate levels.
@@ -20,6 +22,9 @@ a data frame containing the variables named in \code{formula}. If not found in \
 }
   \item{method}{
 set here to \code{"exact"}.
+}
+  \item{estimand}{
+a string containing the desired estimand. Allowable options include \code{"ATT"}, \code{"ATC"}, and \code{"ATE"}. The estimand controls how the weights are computed; see the Computing Weights section at \code{\link{matchit}} for details.
 }
   \item{verbose}{
 \code{logical}; whether information about the matching process should be printed to the console.
@@ -48,5 +53,6 @@ data("lalonde")
 # Exact matching on age, race, married, and educ
 m.out1 <- matchit(treat ~ age + race + married + educ, data = lalonde,
                   method = "exact")
+m.out1
 summary(m.out1)
 }

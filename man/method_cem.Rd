@@ -7,9 +7,12 @@
 In \code{\link{matchit}}, setting \code{method = "cem"} performs coarsened exact matching. With coarsened exact matching, covariates are coaursened into bins, and a complete cross of the coarsened covariates is used to form subclasses defined by each combination of the coarsened covariate levels. Any subclass that doesn't contain both treated and control units is discarded, leaving only subclasses containing treatment and control units that are exactly equal on the coarsened covariates. The coarseneing process can be controlled by an algorithm or by manually specifying cutpoints and groupings. The benefits of coarsened exact matching are that the tradeoff between exact matching and approximate balancing can be managed to prevent discarding too many units, which can otherwise occur with exact matching.
 
 This page details the allowable arguments with \code{method = "cem"}. See \code{\link{matchit}} for an explanation of what each argument means in a general context and how it can be specified.
+
+Below is how \code{matchit} is used for coarsened exact matching:
+\preformatted{
+matchit(formula, data = NULL, method = "cem",
+        estimand = "ATT", verbose = FALSE, ...)
 }
-\usage{
-matchit(formula, data = NULL, method = "cem", estimand = "ATT", verbose = FALSE, ...)
 }
 \arguments{
    \item{formula}{
@@ -22,7 +25,7 @@ a data frame containing the variables named in \code{formula}. If not found in \
 set here to \code{"cem"}.
 }
   \item{estimand}{
-a string containing the desired estimand. Allowable options include \code{"ATT"}, \code{"ATC"}, and \code{"ATE"}. See Details.
+a string containing the desired estimand. Allowable options include \code{"ATT"}, \code{"ATC"}, and \code{"ATE"}. The estimand controls how the weights are computed; see the Computing Weights section at \code{\link{matchit}} for details.
 }
   \item{verbose}{
 \code{logical}; whether information about the matching process should be printed to the console.
@@ -34,15 +37,10 @@ additional arguments passed to \code{\link[cem]{cem}} in \pkg{cem}. Potentially 
 \section{Outputs}{
 All outputs described in \code{\link{matchit}} are returned with \code{method = "cem"} except for \code{match.matrix}. This is because matching strata are not indexed by treated units as they are in some other forms of matching.
 }
-\details{
-\subsection{Estimand}{
-The \code{estimand} argument controls how subclassification weights are computed after matching. When \code{estimand = "ATT"}, matched treated units are given a weight of 1, and each matched control unit is given a weight proportional to the ratio of the number of treated units in its stratum to the number of control units in its stratum. When \code{estimand = "ATC"}, matched control units are given a weight of 1, and each matched treated unit is given a weight proportional to the ratio of the number of control units in its stratum to the number of treated units in its stratum. Note that the argument supplied to \code{estimand} doesn't necessarily correspond to the estimand actually targeted; it is merely a switch to trigger which treatment group is considered "focal".
-}
-}
 \references{
 In a manuscript, be sure to cite the following paper if using \code{matchit} with \code{method = "cem"}:
 
-Iacus, S., King, G., & Porro, G. (2009). cem: Software for Coarsened Exact Matching. Journal of Statistical Software, 30(1), 1–27. \doi{doi.org/10.18637/jss.v030.i09}
+Iacus, S., King, G., & Porro, G. (2009). cem: Software for Coarsened Exact Matching. Journal of Statistical Software, 30(1), 1–27. \doi{10.18637/jss.v030.i09}
 
 For example, a sentence might read:
 
@@ -50,7 +48,7 @@ For example, a sentence might read:
 
 Theory is also developed in the following article:
 
-Iacus, S. M., King, G., & Porro, G. (2012). Causal Inference without Balance Checking: Coarsened Exact Matching. Political Analysis, 20(1), 1–24. \doi{doi.org/10.1093/pan/mpr013}
+Iacus, S. M., King, G., & Porro, G. (2012). Causal Inference without Balance Checking: Coarsened Exact Matching. Political Analysis, 20(1), 1–24. \doi{10.1093/pan/mpr013}
 
 }
 
@@ -66,5 +64,6 @@ data("lalonde")
 # coarsened into 10 bins
 m.out1 <- matchit(treat ~ age + race + married + educ, data = lalonde,
                   method = "cem", cutpoints = list(educ = 9))
+m.out1
 summary(m.out1)
 }

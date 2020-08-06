@@ -7,15 +7,18 @@ Genetic Matching
 In \code{\link{matchit}}, setting \code{method = "genetic"} performs genetic matching. Genetic matching is a form of nearest neighbor matching where distances are computed as the Euclidean distance between units based on scaled versions of the covariates, where each scaling factor represents the importance of the corresponding covariate. A genetic algorithm is used to select the scaling factors. The scaling factors are chosen as those which maximize a criterion related to covariate balance, which can be chosen, but which by default is the smallest p-value in covariate balance tests among the covariates. This method relies on and is a wrapper for the \code{\link[Matching]{GenMatch}} and \code{\link[Matching]{Match}} functions in the \pkg{Matching} package, which uses \code{\link[rgenoud]{genoud}} from the \pkg{rgenoud} package to perform the optimization using the genetic algorithm.
 
 This page details the allowable arguments with \code{method = "genmatch"}. See \code{\link{matchit}} for an explanation of what each argument means in a general context and how it can be specified.
+
+Below is how \code{matchit} is used for genetic matching:
+\preformatted{
+matchit(formula, data = NULL, method = "genetic",
+        distance = "glm", link = "logit",
+        distance.options = list(), estimand = "ATT",
+        exact = NULL, mahvars = NULL, discard = "none",
+        reestimate = FALSE, replace = FALSE,
+        m.order = NULL, caliper = NULL, ratio = 1,
+        verbose = FALSE, ...)
 }
-\usage{
-matchit(formula, data = NULL, method = "genetic", distance = "glm",
-        link = "logit", distance.options=list(), replace = FALSE,
-        ratio = 1, caliper = NULL, m.order = NULL, exact = NULL,
-        mahvars = NULL, discard = "none", reestimate = FALSE,
-        estimand = "ATT", verbose = FALSE, ...)
 }
-%- maybe also 'usage' for other objects documented here.
 \arguments{
    \item{formula}{
 a two-sided \code{\link{formula}} object containing the treatment and covariates to be used in creating the distance measure used in the matching. This formula will be supplied to the functions that estimate the distance measure and is used to determine the covariates whose balance is to be optimized.
@@ -35,17 +38,8 @@ when \code{distance} is specified as a string and not \code{"mahalanobis"}, an a
   \item{distance.options}{
 a named list containing additional arguments supplied to the function that estimates the distance measure as determined by the argument to \code{distance}.
 }
-  \item{replace}{
-whether matching should be done with replacement.
-}
-  \item{ratio}{
-how many control units should be matched to each treated unit for k:1 matching. Should be a single integer value.
-}
-  \item{caliper}{
-the width of the caliper used for caliper matching in units of the standard deviation of the distance measure. The caliper only applies to the distance measure, not to the other covariates included in \code{formula} or \code{mahvars}. Not allowed when \code{distance = "mahalanobis"}.
-}
-  \item{m.order}{
-the order that the matching takes place. The default for \code{distance = "mahalanobis"} is \code{"data"}. Otherwise, the default is \code{"largest"}. See \code{\link{matchit}} for allowable options.
+  \item{estimand}{
+a string containing the desired estimand. Allowable options include \code{"ATT"} and \code{"ATC"}. See Details.
 }
   \item{exact}{
 for which variables exact matching should take place.
@@ -59,8 +53,17 @@ a string containing a method for discarding units outside a region of common sup
   \item{reestimate}{
 if \code{discard} is not \code{"none"}, whether to re-estimate the propensity score in the remaining sample prior to matching.
 }
-  \item{estimand}{
-a string containing the desired estimand. Allowable options include \code{"ATT"} and \code{"ATC"}. See Details.
+  \item{replace}{
+whether matching should be done with replacement.
+}
+  \item{m.order}{
+the order that the matching takes place. The default for \code{distance = "mahalanobis"} is \code{"data"}. Otherwise, the default is \code{"largest"}. See \code{\link{matchit}} for allowable options.
+}
+  \item{caliper}{
+the width of the caliper used for caliper matching in units of the standard deviation of the distance measure. The caliper only applies to the distance measure, not to the other covariates included in \code{formula} or \code{mahvars}. Not allowed when \code{distance = "mahalanobis"}.
+}
+  \item{ratio}{
+how many control units should be matched to each treated unit for k:1 matching. Should be a single integer value.
 }
   \item{verbose}{
 \code{logical}; whether information about the matching process should be printed to the console. When \code{TRUE}, output from \code{GenMatch} with \code{print.level = 2} will be displayed. Default is \code{FALSE} for no printing other than warnings.
@@ -68,8 +71,9 @@ a string containing the desired estimand. Allowable options include \code{"ATT"}
   \item{\dots}{
 additional arguments passed to \code{\link[Matching]{GenMatch}} in \pkg{Matching}. Potentially useful options include \code{pop.size}, \code{max.generations}, and \code{fit.func}. If \code{pop.size} is not specified, a warning from \pkg{Matching} will be thrown reminding you to change it. Note that the \code{ties} and \code{CommonSupport} arguments are set to \code{FALSE} and cannot be changed.
 }
+}
 \section{Outputs}{
-All outputs described in \code{\link{matchit}} are returned with \code{method = "optimal"}. When \code{repalce = FALSE}, the \code{subclass} component is omitted.
+All outputs described in \code{\link{matchit}} are returned with \code{method = "genetic"}. When \code{repalce = TRUE}, the \code{subclass} component is omitted.
 }
 \details{
 In genetic matching, covariates play three roles: 1) as the variables on which balance is optimized, 2) as the variables in the scaled Euclidean distance between units, and 3) in estimating the propensity score. Variables supplied to \code{formula} are always used for role (1), as the variables on which balance is optimized. When \code{distance} is not \code{"mahalnobis"}, the covariates are also used to estimate the propensity score (unless it is supplied). The propensity score, if estimated or uspplied, is always used along the covariates in the scaled Euclidean distance matrix. When \code{mahvars} is specified, the named variables will form the covariates that go into the scaled Euclidean distance matrix. This leads to three ways to use \code{distance} and \code{mahvars} to perform the matching:
@@ -110,6 +114,7 @@ data("lalonde")
 m.out1 <- matchit(treat ~ age + educ + race + nodegree +
                     married + re74 + re75, data = lalonde,
                   method = "genetic")
+m.out1
 summary(m.out1)
 
 # 2:1 genetic matching with replacement without PS
@@ -117,5 +122,6 @@ m.out2 <- matchit(treat ~ age + educ + race + nodegree +
                     married + re74 + re75, data = lalonde,
                   method = "genetic", replace = TRUE,
                   ratio = 2, distance = "mahalanobis")
+m.out2
 summary(m.out2)
 }

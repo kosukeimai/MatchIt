@@ -44,6 +44,9 @@ after subclassification, whether to display balance for individual subclasses, a
   \item{digits}{
 the number of digits to round balance statistics to.
 }
+  \item{x}{
+a \code{summay.matchit} or \code{summary.matchit.subclass} object; the output of a call to \code{summary}.
+}
   \item{\dots}{
 ignored.
 }
@@ -79,16 +82,9 @@ For \code{match.subclass} objects, a \code{summary.matchit.subclass} object, whi
 }
 
 }
-}
-\references{
-
-}
-\author{
-
-}
 
 \seealso{
-\code{\link{summary}} for the generic method; \code{\code{plot.summary.matchit}} for making a Love plot from \code{summary} output.
+\code{\link{summary}} for the generic method; \code{\link{plot.summary.matchit}} for making a Love plot from \code{summary} output.
 
 \code{\link[cobalt]{bal.tab.matchit}} in the \pkg{cobalt} package, which also displays balance for \code{matchit} objects.
 }

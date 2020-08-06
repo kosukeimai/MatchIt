@@ -7,16 +7,18 @@
 In \code{\link{matchit}}, setting \code{method = "full"} performs optimal full matching, which is a form of subclassification wherein all units, both treatment and control (i.e., the "full" sample), are assigned to a subclass and receive at least one match. The matching is optimal in the sense that that sum of the absolute distances between the treated and control units in each subclass are as small as possible. The method relies on and is a wrapper for the \code{\link[optmatch]{fullmatch}} function in the \pkg{optmatch} package. Advantages of optimal full matching include that the matching order is not required to be specified, units do not need to be discarded, and it is less likely that extreme within-subclass distances will be large, unlike with standard subclassification. The primary output of full matching is a set of matching weights that can be applied to the matched sample; in the way, full matching can be seen as a robust alternative to propensity score weighting, robust in the sense that the propensity score model does not need to be correct for good matches to be found.
 
 This page details the allowable arguments with \code{method = "fullmatch"}. See \code{\link{matchit}} for an explanation of what each argument means in a general context and how it can be specified.
-}
-\usage{
-matchit(formula, data = NULL, method = "full", distance = "glm",
-        link = "logit", distance.options=list(), ratio = 1,
-        caliper = NULL, exact = NULL, mahvars = NULL,
-        discard = "none", reestimate = FALSE, verbose = FALSE,
-        ...)
+
+Below is how \code{matchit} is used for optimal full matching:
+\preformatted{
+matchit(formula, data = NULL, method = "full",
+        distance = "glm", link = "logit",
+        distance.options = list(), estimand = "ATT",
+        exact = NULL, mahvars = NULL, discard = "none",
+        reestimate = FALSE, caliper = NULL,
+        verbose = FALSE, ...)
 
 }
-
+}
 \arguments{
   \item{formula}{
 a two-sided \code{\link{formula}} object containing the treatment and covariates to be used in creating the distance measure used in the matching. This formula will be supplied to the functions that estimate the distance measure.
@@ -36,8 +38,8 @@ when \code{distance} is specified as a string and not \code{"mahalanobis"}, an a
   \item{distance.options}{
 a named list containing additional arguments supplied to the function that estimates the distance measure as determined by the argument to \code{distance}.
 }
-  \item{caliper}{
-the width of the caliper used for caliper matching in units of the standard deviation of the distance measure. Calipers are processed using \code{\link[optmatch]{caliper}} in \pkg{optmatch}. Not allowed when \code{distance = "mahalanobis"}. See Notes.
+  \item{estimand}{
+a string containing the desired estimand. Allowable options include \code{"ATT"}, \code{"ATC"}, and \code{"ATE"}. The estimand controls how the weights are computed; see the Computing Weights section at \code{\link{matchit}} for details.
 }
   \item{exact}{
 for which variables exact matching should take place. Exact matching is processed using \code{\link[optmatch]{exactMatch}} in \pkg{optmatch}.
@@ -51,6 +53,9 @@ a string containing a method for discarding units outside a region of common sup
   \item{reestimate}{
 if \code{discard} is not \code{"none"}, whether to re-estimate the propensity score in the remaining sample prior to matching.
 }
+  \item{caliper}{
+the width of the caliper used for caliper matching in units of the standard deviation of the distance measure. Calipers are processed using \code{\link[optmatch]{caliper}} in \pkg{optmatch}. Not allowed when \code{distance = "mahalanobis"}. See Notes.
+}
   \item{verbose}{
 \code{logical}; whether information about the matching process should be printed to the console.
 }
@@ -60,7 +65,7 @@ additional arguments passed to \code{\link[optmatch]{fullmatch}} in \pkg{optmatc
 
 The arguments \code{replace}, \code{ratio}, and \code{m.order} are ignored with a warning.
 }
-\notes{
+\note{
 Due to a bug in \pkg{optmatch} (version 0.9-13), a caliper can only be used when \code{min.controls}, \code{max.controls}, \code{omit.fraction}, and \code{mean.controls} are left at their defaults.
 }
 \section{Outputs}{
@@ -111,12 +116,14 @@ data("lalonde")
 m.out1 <- matchit(treat ~ age + educ + race + nodegree +
                     married + re74 + re75, data = lalonde,
                   method = "full")
+m.out1
 summary(m.out1)
 
 # Optimal full Mahalanobis distance matching within a PS caliper
 m.out2 <- matchit(treat ~ age + educ + race + nodegree +
                     married + re74 + re75, data = lalonde,
                   method = "full", caliper = .01,
-                  mayvars = ~ age + educ + re74 + re75)
+                  mahvars = ~ age + educ + re74 + re75)
+m.out2
 summary(m.out2)
 }

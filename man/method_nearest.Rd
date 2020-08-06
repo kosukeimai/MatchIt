@@ -7,13 +7,17 @@ Nearest Neighbor Matching
 In \code{\link{matchit}}, setting \code{method = "nearest"} performs greedy nearest neighbor matching. A distance is computed between each treated unit and each control unit, and, one by one, each treated unit is assigned a control unit as a match. The matching is "greedy" in the snese that there is no action taken to optimize an overall criterion; each match is selected without considering the other matches that may occur subsequently. Nearest neighbor matching implemented here does not rely on any other package.
 
 This page details the allowable arguments with \code{method = "nearest"}. See \code{\link{matchit}} for an explanation of what each argument means in a general context and how it can be specified.
-}
-\usage{
-matchit(formula, data = NULL, method = "genetic", distance = "glm",
-        link = "logit", distance.options=list(), replace = FALSE,
-        ratio = 1, caliper = NULL, m.order = NULL, exact = NULL,
-        mahvars = NULL, discard = "none", reestimate = FALSE,
+
+Below is how \code{matchit} is used for nearest neighbor matching:
+\preformatted{
+matchit(formula, data = NULL, method = "nearest",
+        distance = "glm", link = "logit",
+        distance.options = list(), estimand = "ATT",
+        exact = NULL, mahvars = NULL, discard = "none",
+        reestimate = FALSE, replace = TRUE,
+        m.order = NULL, caliper = NULL, ratio = 1,
         verbose = FALSE, ...)
+}
 }
 \arguments{
    \item{formula}{
@@ -34,17 +38,8 @@ when \code{distance} is specified as a string and not \code{"mahalanobis"}, an a
   \item{distance.options}{
 a named list containing additional arguments supplied to the function that estimates the distance measure as determined by the argument to \code{distance}.
 }
-  \item{replace}{
-whether matching should be done with replacement.
-}
-  \item{ratio}{
-how many control units should be matched to each treated unit for k:1 matching. Should be a single integer value.
-}
-  \item{caliper}{
-the width of the caliper used for caliper matching in units of the standard deviation of the distance measure. Not allowed when \code{distance = "mahalanobis"}.
-}
-  \item{m.order}{
-the order that the matching takes place. The default for \code{distance = "mahalanobis"} is \code{"data"}. Otherwise, the default is \code{"largest"}. See \code{\link{matchit}} for allowable options.
+  \item{estimand}{
+a string containing the desired estimand. Allowable options include \code{"ATT"} and \code{"ATC"}. See Details.
 }
   \item{exact}{
 for which variables exact matching should take place.
@@ -58,8 +53,17 @@ a string containing a method for discarding units outside a region of common sup
   \item{reestimate}{
 if \code{discard} is not \code{"none"}, whether to re-estimate the propensity score in the remaining sample prior to matching.
 }
-  \item{estimand}{
-a string containing the desired estimand. Allowable options include \code{"ATT"} and \code{"ATC"}. See Details.
+  \item{replace}{
+whether matching should be done with replacement.
+}
+  \item{m.order}{
+the order that the matching takes place. The default for \code{distance = "mahalanobis"} is \code{"data"}. Otherwise, the default is \code{"largest"}. See \code{\link{matchit}} for allowable options.
+}
+  \item{caliper}{
+the width of the caliper used for caliper matching in units of the standard deviation of the distance measure. Not allowed when \code{distance = "mahalanobis"}.
+}
+  \item{ratio}{
+how many control units should be matched to each treated unit for k:1 matching. Should be a single integer value.
 }
   \item{verbose}{
 \code{logical}; whether information about the matching process should be printed to the console.
@@ -76,14 +80,20 @@ Mahalanobis distance matching can be done one of two ways:
 
 1) If a propensity score needs to be estimated for any reason, e.g., for common support with \code{discard} or for creating a caliper, \code{distance} should be whatever method is used to estimate the propensity score or a vector of distance measures, i.e., it should not be \code{"mahalanobis"}. Use \code{mahvars} to specify the variables used to create the Mahalanobis distance. For example, to perform Mahalanobis within a propensity score caliper, the following could be run:
 
-\code{matchit(treat ~ X1 + X2 + X3, method = "nearest", distance = "glm",
-              caliper = .25, mahvars = ~ X1 + X2)}
+\preformatted{
+matchit(treat ~ X1 + X2 + X3, method = "nearest",
+        distance = "glm", caliper = .25,
+        mahvars = ~ X1 + X2)
+}
 
-With this code, \code{X1}, \code{X2}, and \code{X3} are used to estimate the propensity score (using the \code{"glm"} method, which by default is logistic regression), which is used to create a matching caliper. The actual matching occurs on the Mahalanobis distance computed only using \code{X1} and \code{X2}, which are supplied to \code{mahvars}. Units whose propensity score difference is larger than the caliper will not be paired, and some treated units may therefore not receive a match. The estimated propensity scores will be included in the \code{distance} component of the \code{matchit} output.
+With this code, \code{X1}, \code{X2}, and \code{X3} are used to estimate the propensity score (using the \code{"glm"} method, which by default is logistic regression), which is used to create a matching caliper. The actual matching occurs on the Mahalanobis distance computed only using \code{X1} and \code{X2}, which are supplied to \code{mahvars}. Units whose propensity score difference is larger than the caliper will not be paired, and some treated units may therefore not receive a match. The estimated propensity scores will be included in the \code{distance} component of the \code{matchit} output. See Examples.
 
 2) If no propensity score needs to be estimated, \code{distance} should be set to \code{"mahalanobis"}, and Mahalanobis distance matching will occur on all the variables in \code{formula}. Arguments to \code{caliper}, \code{discard}, and \code{mahvars} will be ignored. For example, to perform simple Mahalanobis distance matching, the following could be run:
 
-\code{matchit(treat ~ X1 + X2, method = "nearest", distance = "mahalanobis")}
+\preformatted{
+matchit(treat ~ X1 + X2, method = "nearest",
+        distance = "mahalanobis")
+}
 
 With this code, the Mahalanobis distance is computed using \code{X1} and \code{X2}, and matching occurs on this distance. The \code{distance} component of the \code{matchit} output will be empty.
 
@@ -101,7 +111,7 @@ In a manuscript, you don't need to cite another package when using \code{method 
 \seealso{
 \code{\link{matchit}} for a detailed explanation of the inputs and outputs of a call to \code{matchit}.
 
-\code{\link{method_optimal}} for optimal pair matching, which is similar to greedy nearest neighbor matching except that an overall distance criterion is minimized.
+\code{\link{method_optimal}} for optimal pair matching, which is similar to nearest neighbor matching except that an overall distance criterion is minimized.
 }
 \examples{
 data("lalonde")
@@ -110,12 +120,16 @@ data("lalonde")
 m.out1 <- matchit(treat ~ age + educ + race + nodegree +
                     married + re74 + re75, data = lalonde,
                   method = "nearest")
+m.out1
 summary(m.out1)
 
-# 2:1 genetic matching with replacement without PS
+# 3:1 NN Mahalanobis distance matching with
+# replacement within a PS caliper
 m.out2 <- matchit(treat ~ age + educ + race + nodegree +
                     married + re74 + re75, data = lalonde,
-                  method = "genetic", replace = TRUE,
-                  ratio = 2, distance = "mahalanobis")
+                  method = "nearest", replace = TRUE,
+                  mahvars = ~ age + educ + re74 + re75,
+                  ratio = 3, caliper = .02)
+m.out2
 summary(m.out2)
 }
