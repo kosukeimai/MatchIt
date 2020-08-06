@@ -36,17 +36,13 @@ performed.
 print(m.out)
 ```
 
-    #> 
-    #> Call: 
-    #> matchit(formula = treat ~ age + educ + race + married + nodegree + 
-    #>     re74 + re75, data = lalonde, replace = TRUE)
-    #> 
-    #> Sample sizes:
-    #>           Control Treated
-    #> All           429     185
-    #> Matched        80     185
-    #> Unmatched     349       0
-    #> Discarded       0       0
+    #> A matchit object
+    #>  - method: 1:1 nearest neighbor matching with replacement
+    #>  - distance: Propensity score
+    #>               - estimated with logistic regression
+    #>  - number of obs.: 614 (original), 265 (matched)
+    #>  - target estimand: ATT
+    #>  - covariates: age, educ, race, married, nodegree, re74, re75
 
 We can view propensity score overlap and see which observations were
 matched and unmatched using a jitter plot:
@@ -77,7 +73,7 @@ summary(m.out)
     #> matchit(formula = treat ~ age + educ + race + married + nodegree + 
     #>     re74 + re75, data = lalonde, replace = TRUE)
     #> 
-    #> Summary of balance for all data:
+    #> Summary of Balance for All Data:
     #>            Means Treated Means Control Std. Mean Diff. eCDF Med eCDF Mean eCDF Max
     #> distance          0.5774        0.1822          1.7219   0.3964    0.3774   0.6444
     #> age              25.8162       28.0303         -0.2053   0.0827    0.0813   0.1577
@@ -91,7 +87,7 @@ summary(m.out)
     #> re75           1532.0553     2466.4844         -0.2838   0.1355    0.1342   0.2876
     #> 
     #> 
-    #> Summary of balance for matched data:
+    #> Summary of Balance for Matched Data:
     #>            Means Treated Means Control Std. Mean Diff. eCDF Med eCDF Mean eCDF Max
     #> distance          0.5774        0.5765          0.0042   0.0000    0.0030   0.0486
     #> age              25.8162       24.1027          0.1589   0.0351    0.0766   0.3405
@@ -117,7 +113,7 @@ summary(m.out)
     #> re74                  93.2     95.4      81.9     51.6
     #> re75                  97.0     76.1      49.3     17.3
     #> 
-    #> Sample sizes:
+    #> Sample Sizes:
     #>           Control Treated
     #> All           429     185
     #> Matched        80     185
