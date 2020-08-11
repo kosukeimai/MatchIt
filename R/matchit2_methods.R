@@ -196,7 +196,7 @@ matchit2optimal <- function(treat, covs, data, distance, discarded,
     stop(paste0("Not enough ", tc[2], " units for ", ratio, " matches for each ", tc[1], " unit."), call. = FALSE)
   }
 
-  treat_ <- as.integer(treat == focal)
+  treat_ <- setNames(as.integer(treat == focal), names(treat))
   treat_[discarded] <- NA
 
   ratio <- process.ratio(ratio)
@@ -303,7 +303,7 @@ matchit2genetic <- function(treat, covs, data, distance, discarded,
     }
   }
 
-  treat <- as.integer(treat == focal)
+  treat <- setNames(as.integer(treat == focal), names(treat))
 
   ratio <- process.ratio(ratio)
 
@@ -490,12 +490,12 @@ matchit2nearest <-  function(treat, data, distance, discarded,
 
   if (is.full.mahalanobis) {
     mahcovs <- model.matrix(update(formula, NULL ~ . + 1), data)[,-1,drop = FALSE]
-    mahSigma_inv <- MASS::ginv(cov(mahcovs))
+    mahSigma_inv <- generalized_inverse(cov(mahcovs))
     rownames(mahcovs) <- names(treat)
   }
   else if (!is.null(mahvars)) {
     mahcovs <- model.matrix(update(mahvars, NULL ~ . + 1), data)[,-1,drop = FALSE]
-    mahSigma_inv <- MASS::ginv(cov(mahcovs))
+    mahSigma_inv <- generalized_inverse(cov(mahcovs))
     rownames(mahcovs) <- names(treat)
   }
   else mahcovs <- NULL
