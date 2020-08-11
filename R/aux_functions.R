@@ -529,6 +529,14 @@ round_df_char <- function(df, digits, pad = "0", na_vals = "") {
   return(df)
 }
 
+#Generalized inverse; port of MASS::ginv()
+generalized_inverse <-function(sigma) {
+  sigmasvd <- svd(sigma)
+  pos <- sigmasvd$d > max(1e-8 * sigmasvd$d[1L], 0)
+  sigma_inv <- sigmasvd$v[, pos, drop = FALSE] %*% (sigmasvd$d[pos]^-1 * t(sigmasvd$u[, pos, drop = FALSE]))
+  return(sigma_inv)
+}
+
 #Used to load backports functions. No need to touch, but must always be included somewhere.
 .onLoad <- function(libname, pkgname) {
   backports::import(pkgname)
