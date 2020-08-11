@@ -6,18 +6,18 @@ data("lalonde")
 
 context("get_matches")
 
-test_that("can get correct matches, exact", {  
+test_that("can get correct matches, exact", {
   # preliminaries
-  m.out <- matchit(treat ~ educ + black + hispan, data = lalonde,
+  m.out <- matchit(treat ~ educ + race, data = lalonde,
                    method = "exact")
   n_matched <- sum(m.out$nn[2,])
   nms_matched <- names(m.out$subclass[!is.na(m.out$subclass)])
-  
+
   lalonde$id <- 1:nrow(lalonde)
   lalonde2 <- lalonde[sample.int(500, 3000, replace=TRUE),]
   matches <- get_matches(m.out, lalonde)
   matches2 <- get_matches(m.out, model_frame= lalonde, id_cols= "id", newdata= lalonde2)
-  
+
   # tests -- no newdata
   expect_equal(n_matched, nrow(matches))
   expect_equal(sum(matches$treat), m.out$nn[2,2])
@@ -29,7 +29,7 @@ test_that("can get correct matches, exact", {
   expect_true(all(matches$weight %in% m.out$weights))
   expect_true(all(rownames(matches) %in% nms_matched))
   expect_true(all(nms_matched %in% rownames(matches)))
-  
+
   # tests -- newdata
   expect_equal(sum(is.na(matches2)), 0L)
   expect_true(all(names(matches2) %in% c(names(lalonde2), "weight")))
@@ -40,16 +40,16 @@ test_that("can get correct matches, exact", {
 })
 
 test_that("can get correct matches, nearest", {
-  m.out <- matchit(treat ~ re74 + re75 + educ + black + hispan + age,
+  m.out <- matchit(treat ~ re74 + re75 + educ + race + age,
                    data = lalonde, method = "nearest")
   n_matched <- sum(m.out$nn[2,])
   nms_matched <- c(rownames(m.out$match.matrix), c(m.out$match.matrix))
-  
+
   lalonde$id <- 1:nrow(lalonde)
   lalonde2 <- lalonde[sample.int(500, 3000, replace=TRUE),]
   matches <- get_matches(m.out, lalonde)
   matches2 <- get_matches(m.out, model_frame= lalonde, id_cols= "id", newdata= lalonde2)
-  
+
   # tests -- no newdata
   expect_equal(n_matched, nrow(matches))
   expect_equal(sum(matches$treat), m.out$nn[2,2])
@@ -61,7 +61,7 @@ test_that("can get correct matches, nearest", {
   expect_true(all(matches$weight %in% m.out$weights))
   expect_true(all(rownames(matches) %in% nms_matched))
   expect_true(all(nms_matched %in% rownames(matches)))
-  
+
   # tests -- newdata
   expect_equal(sum(is.na(matches2)), 0L)
   expect_true(all(names(matches2) %in% c(names(lalonde2), "weight")))
@@ -69,22 +69,22 @@ test_that("can get correct matches, nearest", {
   expect_equal(ncol(matches2), ncol(lalonde2) + 1)
   expect_true(all(matches2[matches2$treat == 1,]$weight == 1))
   expect_true(all(matches2$weight %in% m.out$weights))
-  
+
 })
 
 
 test_that("can get correct matches, full", {
   # preliminaries
-  m.out <- matchit(treat ~ age + educ + black + hispan + married +
+  m.out <- matchit(treat ~ age + educ + race + married +
                      nodegree + re74 + re75, data = lalonde, method = "full")
   n_matched <- sum(m.out$nn[2,])
   nms_matched <- names(m.out$subclass[!is.na(m.out$subclass)])
-  
+
   lalonde$id <- 1:nrow(lalonde)
   lalonde2 <- lalonde[sample.int(500, 3000, replace=TRUE),]
   matches <- get_matches(m.out, lalonde)
   matches2 <- get_matches(m.out, model_frame= lalonde, id_cols= "id", newdata= lalonde2)
-  
+
   # tests -- no newdata
   expect_equal(n_matched, nrow(matches))
   expect_equal(sum(matches$treat), m.out$nn[2,2])
@@ -96,7 +96,7 @@ test_that("can get correct matches, full", {
   expect_true(all(matches$weight %in% m.out$weights))
   expect_true(all(rownames(matches) %in% nms_matched))
   expect_true(all(nms_matched %in% rownames(matches)))
-  
+
   # tests -- newdata
   expect_equal(sum(is.na(matches2)), 0L)
   expect_true(all(names(matches2) %in% c(names(lalonde2), "weight")))
@@ -113,12 +113,12 @@ test_that("can get correct matches, optimal", {
                    method = "optimal", ratio = ratio)
   n_matched <- sum(m.out$nn[2,])
   nms_matched <- c(rownames(m.out$match.matrix), c(m.out$match.matrix))
-  
+
   lalonde$id <- 1:nrow(lalonde)
   lalonde2 <- lalonde[sample.int(500, 3000, replace=TRUE),]
   matches <- get_matches(m.out, lalonde)
   matches2 <- get_matches(m.out, model_frame= lalonde, id_cols= "id", newdata= lalonde2)
-  
+
   # tests -- no newdata
   expect_equal(n_matched, nrow(matches))
   expect_equal(sum(matches$treat), m.out$nn[2,2])
@@ -130,7 +130,7 @@ test_that("can get correct matches, optimal", {
   expect_true(all(matches$weight %in% c(1, 1 / ratio)))
   expect_true(all(rownames(matches) %in% nms_matched))
   expect_true(all(nms_matched %in% rownames(matches)))
-  
+
   # tests -- newdata
   expect_equal(sum(is.na(matches2)), 0L)
   expect_true(all(names(matches2) %in% c(names(lalonde2), "weight")))
@@ -142,16 +142,16 @@ test_that("can get correct matches, optimal", {
 
 
 test_that("can get correct matches, subclass", {
-  m.out <- matchit(treat ~ re74 + re75 + educ + black + hispan + age,
+  m.out <- matchit(treat ~ re74 + re75 + educ + race + age,
                    data = lalonde, method = "subclass")
   n_matched <- sum(m.out$nn[2,])
   nms_matched <- names(m.out$subclass[!is.na(m.out$subclass)])
-  
+
   lalonde$id <- 1:nrow(lalonde)
   lalonde2 <- lalonde[sample.int(500, 3000, replace=TRUE),]
   matches <- get_matches(m.out, lalonde)
   matches2 <- get_matches(m.out, model_frame= lalonde, id_cols= "id", newdata= lalonde2)
-  
+
   # tests -- no newdata
   expect_equal(n_matched, nrow(matches))
   expect_equal(sum(matches$treat), m.out$nn[2,2])
@@ -163,7 +163,7 @@ test_that("can get correct matches, subclass", {
   expect_true(all(matches$weight %in% m.out$weights))
   expect_true(all(rownames(matches) %in% nms_matched))
   expect_true(all(nms_matched %in% rownames(matches)))
-  
+
   # tests -- newdata
   expect_equal(sum(is.na(matches2)), 0L)
   expect_true(all(names(matches2) %in% c(names(lalonde2), "weight")))
@@ -175,17 +175,17 @@ test_that("can get correct matches, subclass", {
 
 set.seed(12345)
 test_that("can get correct matches, genetic", {  ## this one is problematic -- problematic returns
-  m.out <- matchit(treat ~ age + educ + black + hispan + married + nodegree +
+  m.out <- matchit(treat ~ age + educ + race + married + nodegree +
                      re74 + re75, data = lalonde, method = "genetic")
   n_matched <- sum(m.out$nn[2,])
-  nms_matched <- c(rownames(m.out$match.matrix), m.out$match.matrix[,1], 
+  nms_matched <- c(rownames(m.out$match.matrix), m.out$match.matrix[,1],
                    m.out$match.matrix[which(!is.na(m.out$match.matrix[,2])), 2])
-  
+
   lalonde$id <- 1:nrow(lalonde)
   lalonde2 <- lalonde[sample.int(500, 3000, replace=TRUE),]
   matches <- get_matches(m.out, lalonde)
   matches2 <- get_matches(m.out, model_frame= lalonde, id_cols= "id", newdata= lalonde2)
-  
+
   # tests -- no newdata
   expect_equal(n_matched, nrow(matches))
   expect_equal(sum(matches$treat), m.out$nn[2,2])
@@ -196,7 +196,7 @@ test_that("can get correct matches, genetic", {  ## this one is problematic -- p
   expect_true(all(matches[matches$treat == 1,]$weight == 1))
   expect_true(all(rownames(matches) %in% nms_matched))
   expect_true(all(nms_matched %in% rownames(matches)))
-  
+
   # tests -- newdata
   expect_equal(sum(is.na(matches2)), 0L)
   expect_true(all(names(matches2) %in% c(names(lalonde2), "weight")))
@@ -207,16 +207,16 @@ test_that("can get correct matches, genetic", {  ## this one is problematic -- p
 
 test_that("can get correct matches, cem", {
   library(cem)
-  m.out <- matchit(treat ~ age + educ + black + hispan + married + nodegree
+  m.out <- matchit(treat ~ age + educ + race + married + nodegree
                    + re74 + re75, data = lalonde, method = "cem")
   n_matched <- sum(m.out$nn[2,])
   nms_matched <- names(m.out$subclass[!is.na(m.out$subclass)])
-  
+
   lalonde$id <- 1:nrow(lalonde)
   lalonde2 <- lalonde[sample.int(500, 3000, replace=TRUE),]
   matches <- get_matches(m.out, lalonde)
-  matches2 <- get_matches(m.out, model_frame= lalonde, id_cols= "id", newdata= lalonde2)
-  
+  matches2 <- get_matches(m.out, data= lalonde, id= "id")
+
   # tests -- no newdata
   expect_equal(n_matched, nrow(matches))
   expect_equal(sum(matches$treat), m.out$nn[2,2])
@@ -228,7 +228,7 @@ test_that("can get correct matches, cem", {
   expect_true(all(matches$weight %in% m.out$weights))
   expect_true(all(rownames(matches) %in% nms_matched))
   expect_true(all(nms_matched %in% rownames(matches)))
-  
+
   # tests -- newdata
   expect_equal(sum(is.na(matches2)), 0L)
   expect_true(all(names(matches2) %in% c(names(lalonde2), "weight")))
@@ -236,7 +236,7 @@ test_that("can get correct matches, cem", {
   expect_equal(ncol(matches2), ncol(lalonde2) + 1)
   expect_true(all(matches2[matches2$treat == 1,]$weight == 1))
   expect_true(all(matches2$weight %in% m.out$weights))
-  
+
 })
 
 l_treat <- do.call("rbind",replicate(10, lalonde[lalonde$treat == 1, ], simplify = FALSE))
@@ -245,14 +245,14 @@ l2 <- do.call("rbind", list(l_treat, l_contr)); rm(l_treat, l_contr)
 rownames(l2) <- 1:nrow(l2)
 
 test_that("correct weights for replace= TRUE", {
-  m.out <- matchit(treat ~ re74 + re75 + educ + black + hispan + age,
+  m.out <- matchit(treat ~ re74 + re75 + educ + race + age,
                    data = l2, method = "nearest", replace= TRUE)
   n_matched <- sum(m.out$nn[2,])
   nms_matched <- c(rownames(m.out$match.matrix), c(m.out$match.matrix))
-  
+
   matches <- get_matches(m.out, l2)
   exp_wts <- c(1, unique(as.vector(table(m.out$match.matrix))))
-  
+
   # tests -- no newdata
   expect_equal(n_matched, nrow(matches))
   expect_equal(sum(matches$treat), m.out$nn[2,2])
@@ -268,14 +268,14 @@ test_that("correct weights for replace= TRUE", {
 
 
 test_that("correct weights for replace= TRUE; test2", {
-  m.out <- matchit(treat ~ re74 + re75 + educ + black + hispan + age,
+  m.out <- matchit(treat ~ re74 + re75 + educ + race + age,
                    data = l2, method = "cem")
   n_matched <- sum(m.out$nn[2,])
   nms_matched <- names(m.out$subclass[!is.na(m.out$subclass)])
-  
+
   matches <- get_matches(m.out, l2)
   exp_wts <- c(1, unique(as.vector(table(m.out$match.matrix))))
-  
+
   # tests -- no newdata
   expect_equal(n_matched, nrow(matches))
   expect_equal(sum(matches$treat), m.out$nn[2,2])
