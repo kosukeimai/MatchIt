@@ -97,7 +97,7 @@ data("lalonde")
 s.out1 <- matchit(treat ~ age + educ + race + nodegree +
                     married + re74 + re75, data = lalonde,
                   method = "subclass", subclass = 7)
-s.out
+s.out1
 summary(s.out1, subclass = TRUE)
 
 # PS subclassification for the ATE with 10 subclasses
