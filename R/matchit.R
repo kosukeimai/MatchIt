@@ -25,14 +25,14 @@ matchit <- function(formula, data, method = "nearest", distance = "logit",
   if (!is.numeric(distance)) {
     fn1 <- paste("distance2", distance, sep = "")
     if (!exists(fn1))
-      stop(distance, "not supported.")
+      stop(distance, " not supported.")
   }
   if (is.numeric(distance)) {
     fn1 <- "distance2user"
   }
   fn2 <- paste("matchit2", method, sep = "")
   if (!exists(fn2))
-    stop(method, "not supported.")
+    stop(method, " not supported.")
 
   ## obtain T and X
   tryerror <- try(model.frame(formula), TRUE)
