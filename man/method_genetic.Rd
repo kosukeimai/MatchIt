@@ -60,7 +60,10 @@ whether matching should be done with replacement.
 the order that the matching takes place. The default for \code{distance = "mahalanobis"} is \code{"data"}. Otherwise, the default is \code{"largest"}. See \code{\link{matchit}} for allowable options.
 }
   \item{caliper}{
-the width of the caliper used for caliper matching in units of the standard deviation of the distance measure. The caliper only applies to the distance measure, not to the other covariates included in \code{formula} or \code{mahvars}. Not allowed when \code{distance = "mahalanobis"}.
+the width(s) of the caliper(s) used for caliper matching. See Details and Examples.
+}
+  \item{std.caliper}{
+\code{logical}; when calipers are specified, whether they are in standard deviation units (\code{TRUE}) or raw units (\code{FALSE}).
 }
   \item{ratio}{
 how many control units should be matched to each treated unit for k:1 matching. Should be a single integer value.
@@ -80,11 +83,13 @@ In genetic matching, covariates play three roles: 1) as the variables on which b
 
 1) When \code{distance = "mahalanobis"}, no propensity score is estimated, and the covariates in \code{formula} are used to form the scaled Euclidean distance matrix. (In the sense, \code{"mahalanobis"} only signals that no propensity score is to be estimated and that the matching variables are those in \code{formula}, consistent with setting \code{distance = "mahalanobis"} with other methods.)
 
-2) When \code{distance} is \code{"mahalanobis"} and \code{mahvars} \emph{is not} specified, the covariates in \code{formula} along with the propensity score are used to form the scaled Euclidean distance matrix. This is the default and most typical use of \code{method = "genetci"} in \pkg{MatchIt}.
+2) When \code{distance} is not \code{"mahalanobis"} and \code{mahvars} \emph{is not} specified, the covariates in \code{formula} along with the propensity score are used to form the scaled Euclidean distance matrix. This is the default and most typical use of \code{method = "genetic"} in \pkg{MatchIt}.
 
-3) When \code{distance} is \code{"mahalanobis"} and \code{mahvars} \emph{is} specified, the covariates in \code{mahvars} along with the propensity score are used to form the scaled Euclidean distance matrix. The covariates in \code{formula} are used to estimate the propensity score and have their balance optimized by the genetic algorithm. Separating the matching covariates from the balance covariates may make it easier to find good matches in some cases.
+3) When \code{distance} is not \code{"mahalanobis"} and \code{mahvars} \emph{is} specified, the covariates in \code{mahvars} are used to form the scaled Euclidean distance matrix. The covariates in \code{formula} are used to estimate the propensity score and have their balance optimized by the genetic algorithm.
 
 Note that as they are used here, \code{distance = "mahalanobis"} and \code{mahvars} don't actually correspond to Mahalanobis distance matching; rather, they are simply signals to use covariates in ways analogus to how they are used in Mahalanobis distance matching with other methods.
+
+When a caliper is specified, any variables mentioned in \code{caliper}, possibily including the distance measure, will be added to the matching variables used to form the scaled Euclidean distance matrix. This is because \pkg{Matching} doesn't allow for the separation of caliper variables and matching variables in genetic matching.
 
 \subsection{Estimand}{
 The \code{estimand} argument controls whether control units are selected to be matched with treated units (\code{estimand = "ATT"}) or treated units are selected to be matched with control units (\code{estimand = "ATC"}). The "focal" group (e.g., the treated units for the ATT) is typically made to be the smaller treatmentgroup, and a warning will be thrown if it is not set that way unless \code{replace = TRUE}. Setting \code{estimand = "ATC"} is equivalent to swapping all treated and control labels for the treatment variable. When \code{estimand = "ATC"}, the default \code{m.order} is \code{"smallest"}, and the \code{match.matrix} component of the output will have the names of the control units as the rownames and be filled with the names of the matched treated units (opposite to when \code{estimand = "ATT"}). Note that the argument supplied to \code{estimand} doesn't necessarily correspond to the estimand actually targeted; it is merely a switch to trigger which treatment group is considered "focal". Note that while \code{GenMatch()} and \code{Matching()} support the ATE as an estimand, \code{matchit()} only supports the ATT and ATC for genetic matching.
@@ -124,4 +129,16 @@ m.out2 <- matchit(treat ~ age + educ + race + nodegree +
                   ratio = 2, distance = "mahalanobis")
 m.out2
 summary(m.out2)
+
+# 1:1 genetic matching on just age, educ, re74, and re75
+# within calipers on PS and educ (PS is also added to
+# matching variables)
+m.out3 <- matchit(treat ~ age + educ + race + nodegree +
+                    married + re74 + re75, data = lalonde,
+                  method = "genetic",
+                  mahvars = ~ age + educ + re74 + re75,
+                  caliper = c(.05, educ = 2),
+                  std.caliper = c(TRUE, FALSE))
+m.out3
+summary(m.out3)
 }

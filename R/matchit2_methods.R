@@ -93,8 +93,10 @@ matchit2full <- function(treat, covs, data, distance, discarded,
     warning("Fewer ", tc[2], " units than ", tc[1], " units; some ", tc[2], " units will be matched to multiple ", tc[1], " units.", immediate. = TRUE, call. = FALSE)
   }
 
-  treat_ <- as.integer(treat == focal)
+  treat_ <- setNames(as.integer(treat == focal), names(treat))
   treat_[discarded] <- NA
+
+
 
   within.match <- NULL
   if (!is.null(exact)) {
@@ -102,27 +104,24 @@ matchit2full <- function(treat, covs, data, distance, discarded,
     within.match <- optmatch::exactMatch(update(exact, treat_ ~ .), data = data)
   }
 
-  if (!is.null(mahvars)) {
-    mahvars <- update(mahvars, treat_ ~ .)
-    environment(mahvars) <- sys.frame(sys.nframe())
-  }
-
   if (!is.null(caliper)) {
-    if (is.full.mahalanobis) {
-      stop("Calipers cannot be supplied when distance = \"mahalanobis\".", call. = FALSE)
+    if (any(names(caliper) != "")) {
+      cov.cals <- setdiff(names(caliper), "")
+      calcovs <- get.covs.matrix(reformulate(cov.cals, intercept = FALSE), data = data)
     }
-    else if (!is.null(mahvars)) {
-      mo <- optmatch::match_on(mahvars,
-                               data = data,
-                               method = "mahalanobis")
-    }
-    else {
-      mo <- optmatch::match_on(treat_ ~ distance,
-                               method = "euclidean")
-    }
+    for (i in seq_along(caliper)) {
+      if (names(caliper)[i] == "") {
+        mo <- optmatch::match_on(distance, z = treat_)
+      }
+      else {
+        mo <- optmatch::match_on(setNames(calcovs[,names(caliper)[i]], names(treat)), z = treat_)
+      }
 
-    if (is.null(within.match)) within.match <- optmatch::caliper(mo, caliper*sd(distance))
-    else within.match <- within.match + optmatch::caliper(mo, caliper*sd(distance))
+      if (is.null(within.match)) within.match <- optmatch::caliper(mo, caliper[i])
+      else within.match <- within.match + optmatch::caliper(mo, caliper[i])
+
+      rm(mo)
+    }
   }
 
   withCallingHandlers({
@@ -135,6 +134,9 @@ matchit2full <- function(treat, covs, data, distance, discarded,
                                   ...)
     }
     else if (!is.null(mahvars)) {
+      mahvars <- update(mahvars, treat_ ~ .)
+      environment(mahvars) <- sys.frame(sys.nframe())
+
       full <- optmatch::fullmatch(mahvars,
                                   data = data,
                                   method = "mahalanobis",
@@ -330,33 +332,58 @@ matchit2genetic <- function(treat, covs, data, distance, discarded,
   }
 
   if (!is.null(mahvars)) {
-    covs_to_balance <- model.matrix(update(formula, NULL ~ . + 1), data = covs)[,-1, drop = FALSE]
-    X <- model.matrix(update(mahvars, .~.+1), data = data)[,-1, drop = FALSE]
+    covs_to_balance <- get.covs.matrix(formula, data = covs)
+    X <- get.covs.matrix(mahvars, data = data)
   }
   else if (is.full.mahalanobis) {
-    covs_to_balance <- model.matrix(update(formula, NULL ~ . + 1), data = covs)[,-1, drop = FALSE]
+    covs_to_balance <- get.covs.matrix(formula, data = covs)
     X <- covs_to_balance
   }
   else {
-    covs_to_balance <- model.matrix(update(formula, NULL ~ . + 1), data = covs)[,-1, drop = FALSE]
-    X <- cbind(distance, covs_to_balance)
+    covs_to_balance <- get.covs.matrix(formula, data = covs)
+    X <- cbind(covs_to_balance, distance)
   }
 
   if (!is.null(exact)) {
-    ex <- exactify(model.frame(exact, data = data), names(treat))
+    ex <- as.numeric(factor(exactify(model.frame(exact, data = data), names(treat))))
     X <- cbind(X, ex)
     exact.log <- c(rep(FALSE, ncol(X) - 1), TRUE)
   }
   else exact.log <- NULL
 
   if (!is.null(caliper)) {
-    if (is.full.mahalanobis) {
-      stop("A caliper cannot be set for genetic matching with distance = \"mahalanobis\".", call. = FALSE)
+    cov.cals <- setdiff(names(caliper), "")
+    if (length(cov.cals) > 0 && any(!cov.cals %in% colnames(X))) {
+      calcovs <- get.covs.matrix(reformulate(cov.cals[!cov.cals %in% colnames(X)]), data = data)
+      X <- cbind(X, calcovs)
+      if (!is.null(exact.log)) exact.log <- c(exact.log, rep(FALSE, ncol(calcovs)))
     }
-    caliper <- c(caliper, rep(Inf, ncol(X) - 1))
-  }
-  else caliper <- NULL
 
+    #Matching::Match multiplies calipers by pop SD, so we need to divide by pop SD to unstandardize
+    pop.sd <- function(x) sqrt(sum((x-mean(x))^2)/length(x))
+    caliper <- caliper / vapply(names(caliper), function(x) {
+      if (x == "") pop.sd(distance[!discarded])
+      else pop.sd(X[!discarded, x])
+    }, numeric(1L))
+
+    cal <- setNames(rep(Inf, ncol(X)), colnames(X))
+    if (length(cov.cals) > 0) {
+      cal[intersect(cov.cals, names(cal))] <- caliper[intersect(cov.cals, names(cal))]
+    }
+
+    if ("" %in% names(caliper)) {
+      if (!is.null(mahvars)) {
+        X <- cbind(X, distance)
+        cal <- c(cal, caliper[names(caliper) == ""])
+        if (!is.null(exact.log)) exact.log <- c(exact.log, FALSE)
+      }
+      else {
+        cal[ncol(covs_to_balance) + 1] <- caliper[names(caliper) == ""]
+      }
+    }
+
+  }
+  else cal<- NULL
 
   lab <- names(treat)
   lab1 <- names(treat[treat == 1])
@@ -372,7 +399,7 @@ matchit2genetic <- function(treat, covs, data, distance, discarded,
   if (use.genetic) {
     withCallingHandlers({
       g.out <- Matching::GenMatch(otreat, X = oX, BalanceMatrix = ocovs_to_balance,
-                                  M = ratio, exact = exact.log, caliper = caliper,
+                                  M = ratio, exact = exact.log, caliper = cal,
                                   replace = replace, estimand = "ATT", ties = FALSE,
                                   CommonSupport = FALSE, verbose = verbose,
                                   print.level = 2*verbose, ...)
@@ -389,7 +416,7 @@ matchit2genetic <- function(treat, covs, data, distance, discarded,
 
   withCallingHandlers({
     m.out <- Matching::Match(Tr = otreat, X = oX,
-                             M = ratio, exact = exact.log, caliper = caliper,
+                             M = ratio, exact = exact.log, caliper = cal,
                              replace = replace, estimand = "ATT", ties = FALSE,
                              CommonSupport = FALSE, Weight = if (use.genetic) 3 else 2,
                              Weight.matrix = g.out, version = "fast")
@@ -475,11 +502,18 @@ matchit2nearest <-  function(treat, data, distance, discarded,
   lab1 <- names(treat[treat == 1])
   lab0 <- names(treat[treat == 0])
 
-  if (!is.null(caliper) || !is.full.mahalanobis) {
+  if (!is.null(distance)) {
     names(distance) <- names(treat)
-    cal <- caliper*sd(distance[!discarded])
     d1 <- distance[treat == 1]
     d0 <- distance[treat == 0]
+  }
+
+  if (!is.null(caliper)) {
+    calcovs <- get.covs.matrix(reformulate(setdiff(names(caliper), "")), data = data)
+    rownames(calcovs) <- names(treat)
+
+    caliper.dist <- caliper[names(caliper) == ""]
+    caliper <- caliper[names(caliper) != ""]
   }
 
   if (!is.null(exact)) {
@@ -489,12 +523,12 @@ matchit2nearest <-  function(treat, data, distance, discarded,
   }
 
   if (is.full.mahalanobis) {
-    mahcovs <- model.matrix(update(formula, NULL ~ . + 1), data)[,-1,drop = FALSE]
+    mahcovs <- get.covs.matrix(formula, data)
     mahSigma_inv <- generalized_inverse(cov(mahcovs))
     rownames(mahcovs) <- names(treat)
   }
   else if (!is.null(mahvars)) {
-    mahcovs <- model.matrix(update(mahvars, NULL ~ . + 1), data)[,-1,drop = FALSE]
+    mahcovs <- get.covs.matrix(mahvars, data)
     mahSigma_inv <- generalized_inverse(cov(mahcovs))
     rownames(mahcovs) <- names(treat)
   }
@@ -545,21 +579,31 @@ matchit2nearest <-  function(treat, data, distance, discarded,
         c.eligible <- c.eligible[ex0[c.eligible] == ex1[ord_i]]
       }
 
-      #Get distances among eligible
+      #Get distances among eligible and apply caliper
       if (length(c.eligible) > 0) {
-        #Compute PS differences if PS is distance or caliper
-        if (!is.null(caliper) || !is.full.mahalanobis) {
-          ps.diff <- abs(unname(d1[ord_i]) - d0[c.eligible])
 
-          if (!is.null(caliper)) {
-            #PS caliper
-            c.eligible <- c.eligible[ps.diff < cal]
+        ps.diff <- NULL
+
+        if (!is.null(caliper)) {
+          #PS caliper
+          if (length(caliper.dist) > 0) {
+            ps.diff <- abs(unname(d1[ord_i]) - d0[c.eligible])
+            c.eligible <- c.eligible[ps.diff <= caliper.dist]
+          }
+
+          #Covariate caliper
+          if (length(caliper) > 0 && length(c.eligible) > 0) {
+            for (x in names(caliper)) {
+              calcov.diff <- abs(unname(calcovs[lab1[ord_i], x]) - calcovs[c.eligible, x])
+              c.eligible <- c.eligible[calcov.diff <= caliper[x]]
+              if (length(c.eligible) == 0) break
+            }
           }
         }
 
         if (is.null(mahcovs)) {
           #PS matching
-          distances <- ps.diff
+          distances <- if(is.null(ps.diff)) abs(unname(d1[ord_i]) - d0[c.eligible]) else ps.diff
         }
         else {
           #MD matching

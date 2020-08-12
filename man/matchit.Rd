@@ -16,8 +16,8 @@ matchit(formula, data = NULL, method = "nearest",
         distance.options = list(), estimand = "ATT",
         exact = NULL, mahvars = NULL, discard = "none",
         reestimate = FALSE, replace = FALSE,
-        m.order = NULL, caliper = NULL, ratio = 1,
-        verbose = FALSE, ...)
+        m.order = NULL, caliper = NULL, std.caliper = TRUE,
+        ratio = 1, verbose = FALSE, ...)
 
 \method{print}{matchit}(x, ...)
 
@@ -64,7 +64,10 @@ for methods that allow it, whether matching should be done with replacement (\co
 for methods that allow it, the order that the matching takes place. Allowable otpions depend on the matching method but include \code{"largest"}, where matching takes place in descending order of distance measures; \code{"smallest"}, where matching takes place in ascending order of distance measures; \code{"random"}, where matching takes place in a random order; and \code{"data"} where matching takes place based on the order of units in the data. When \code{m.order = "random"}, results may differ across different runs of the same code unless a seed is set and specified with \code{\link{set.seed}}. See the individual methods pages for information on whether and how this argument is used. The default of \code{NULL} corresponds to \code{"largest"} when a propensity score is estimated or supplied and \code{"data"} otherwise.
 }
   \item{caliper}{
-for methods that allow it, the width of a caliper to use in matching. The caliper is measured in standard deviations of the distance measure. Units whose pariwse distance is larger than the caliper will not be matched. This can causes some treated units not to be matched, changing the target population of the estimated effect in the matched sample. See the individual methods pages for information on whether and how this argument is used. The default is \code{NULL} for no caliper.
+for methods that allow it, the width(s) of the caliper(s) to use in matching. Should be a numeric vector with each value named according to the variable to which the caliper applies. To apply to the distance measure, the value should be unnamed. See the individual methods pages for information on whether and how this argument is used. The default is \code{NULL} for no caliper.
+}
+  \item{std.caliper}{
+\code{logical}; when a caliper is specified, whether the the caliper is in standard deviation units (\code{TRUE}) or raw units (\code{FALSE}). Can either be of length 1, applying to all calipers, or of length equal to the length of \code{caliper}. Default is \code{TRUE}.
 }
   \item{ratio}{
 for methods that allow it, how many control units should be matched to each treated unit in k:1 matching. Should be a single integer value. See the individual methods pages for information on whether and how this argument is used. The default is 1 for 1:1 matching.
@@ -175,6 +178,16 @@ m.out3 <- matchit(treat ~ age + educ + race + nodegree +
                    caliper = .1, ratio = 2)
 m.out3
 summary(m.out3)
+
+# Optimal full PS matching within calipers on PS, age, and educ
+
+m.out4 <- matchit(treat ~ age + educ + race + nodegree +
+                   married + re74 + re75, data = lalonde,
+                   method = "full",
+                   caliper = c(.1, age = 2, educ = 1),
+                   std.caliper = c(TRUE, FALSE, FALSE)
+m.out4
+summary(m.out4)
 
 # Subclassification on a CBPS PS with 10 subclasses after
 # discarding controls outside common support of PS

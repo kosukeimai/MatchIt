@@ -8,14 +8,14 @@ check.inputs <- function(method, distance, mcall, exact, mahvars, caliper, disca
   ignored.inputs <- character(0)
   error.inputs <- character(0)
   if (method == "exact") {
-    for (i in c("distance", "exact", "mahvars", "caliper", "discard", "reestimate", "replace", "ratio", "m.order")) {
+    for (i in c("distance", "exact", "mahvars", "caliper", "std.caliper", "discard", "reestimate", "replace", "ratio", "m.order")) {
       if (i %in% names(mcall) && !is.null(get0(i))) {
         ignored.inputs <- c(ignored.inputs, i)
       }
     }
   }
   else if (method == "cem") {
-    for (i in c("distance", "exact", "mahvars", "caliper", "discard", "reestimate", "replace", "ratio", "m.order")) {
+    for (i in c("distance", "exact", "mahvars", "caliper", "std.caliper", "discard", "reestimate", "replace", "ratio", "m.order")) {
       if (i %in% names(mcall) && !is.null(get0(i))) {
         ignored.inputs <- c(ignored.inputs, i)
       }
@@ -23,33 +23,23 @@ check.inputs <- function(method, distance, mcall, exact, mahvars, caliper, disca
   }
   else if (method == "nearest") {
     if (is.character(distance) && distance == "mahalanobis") {
-      for (e in c("mahvars", "caliper", "discard", "reestimate")) {
+      for (e in c("mahvars", "discard", "reestimate")) {
         if (e %in% names(mcall) && !is.null(get0(e))) {
           error.inputs <- c(error.inputs, e)
         }
       }
-    }
-    else {
-      # if (!is.null(mahvars) && is.null(caliper)) {
-      #   warning("When mahvars are specified, an argument should be supplied to caliper.", call. = FALSE)
-      # }
     }
   }
   else if (method == "optimal") {
     if (is.character(distance) && distance == "mahalanobis") {
-      for (e in c("mahvars", "caliper", "discard", "reestimate")) {
+      for (e in c("mahvars", "discard", "reestimate")) {
         if (e %in% names(mcall) && !is.null(get0(e))) {
           error.inputs <- c(error.inputs, e)
         }
       }
     }
-    else {
-      # if (!is.null(mahvars) && is.null(caliper)) {
-      #   warning("When mahvars are specified, an argument should be supplied to caliper.", call. = FALSE)
-      # }
-    }
 
-    for (i in c("replace", "caliper", "m.order")) {
+    for (i in c("replace", "caliper", "std.caliper", "m.order")) {
       if (i %in% names(mcall) && !is.null(get0(i))) {
         ignored.inputs <- c(ignored.inputs, i)
       }
@@ -58,16 +48,11 @@ check.inputs <- function(method, distance, mcall, exact, mahvars, caliper, disca
   }
   else if (method == "full") {
     if (is.character(distance) && distance == "mahalanobis") {
-      for (e in c("mahvars", "caliper", "discard", "reestimate")) {
+      for (e in c("mahvars", "discard", "reestimate")) {
         if (e %in% names(mcall) && !is.null(get0(e))) {
           error.inputs <- c(error.inputs, e)
         }
       }
-    }
-    else {
-      # if (!is.null(mahvars) && is.null(caliper)) {
-      #   warning("When mahvars are specified, an argument should be supplied to caliper.", call. = FALSE)
-      # }
     }
 
     for (i in c("replace", "ratio", "m.order")) {
@@ -78,16 +63,11 @@ check.inputs <- function(method, distance, mcall, exact, mahvars, caliper, disca
   }
   else if (method == "genetic") {
     if (is.character(distance) && distance == "mahalanobis") {
-      for (e in c("mahvars", "caliper", "discard", "reestimate")) {
+      for (e in c("mahvars", "discard", "reestimate")) {
         if (e %in% names(mcall) && !is.null(get0(e))) {
           error.inputs <- c(error.inputs, e)
         }
       }
-    }
-    else {
-      # if (!is.null(mahvars) && is.null(caliper)) {
-      #   warning("When mahvars are specified, an argument should be supplied to caliper.", call. = FALSE)
-      # }
     }
   }
   else if (method == "subclass") {
@@ -95,7 +75,7 @@ check.inputs <- function(method, distance, mcall, exact, mahvars, caliper, disca
       stop("distance = \"mahalanobis\" is not compatible with subclassification.", call. = FALSE)
     }
 
-    for (i in c("exact", "mahvars", "caliper", "replace", "ratio", "m.order")) {
+    for (i in c("exact", "mahvars", "caliper", "std.caliper", "replace", "ratio", "m.order")) {
       if (i %in% names(mcall) && !is.null(get0(i))) {
         ignored.inputs <- c(ignored.inputs, i)
       }
@@ -110,7 +90,7 @@ check.inputs <- function(method, distance, mcall, exact, mahvars, caliper, disca
                                             word_list(error.inputs, quotes = 1, is.are = TRUE),
                                             " not allowed with method = \"", method,
                                             "\" and distance = \"", distance, "\"."),
-                                     call. = FALSE, immediate. = TRUE)
+                                     call. = FALSE)
 }
 
 #Function to process distance and give warnings about new syntax
@@ -157,6 +137,100 @@ process.ratio <- function(ratio) {
     stop("Ratio must be a single positive number.", call. = FALSE)
   }
   round(ratio)
+}
+
+#Function to check if caliper is okay and process it
+process.caliper <- function(caliper = NULL, method, data = NULL, covs = NULL, mahcovs = NULL, distance = NULL, discarded = NULL, std.caliper = TRUE) {
+
+  #Check method; must be able to use a caliper
+  #Check caliper names; if "" is one of them but distance = "mahal", throw error;
+  #otherwise make sure variables exist in data or covs
+  #Make sure no calipers are used on binary or factor variables (throw error if so)
+  #Ignore calipers used on single-value variables or with caliper = NA or Inf
+  #Export caliper.formula to add to covs
+  #If std, export standardizedstandardized versions
+
+  #Check need for caliper
+  if (length(caliper) == 0 || !method %in% c("nearest", "genetic", "full")) return(NULL)
+
+  #Check if form of caliper is okay
+  if (!is.atomic(caliper) || !is.numeric(caliper)) stop("'caliper' must be a numeric vector.", call. = FALSE)
+
+  #Check caliper names
+  if (length(caliper) == 1 && (is.null(names(caliper)) || identical(names(caliper), ""))) names(caliper) <- ""
+  else if (is.null(names(caliper))) stop("'caliper' must be a named vector with names corresponding to the variables for which a caliper is to be applied.", call. = FALSE)
+  else if (anyNA(names(caliper))) stop("'caliper' names cannot include NA.", call. = FALSE)
+  else if (sum(names(caliper) == "") > 1) stop("No more than one entry in 'caliper' can have no name.", call. = FALSE)
+
+  if (any(names(caliper) == "") && is.null(distance)) stop("All entries in 'caliper' must be named when distance = \"mahalanobis\".", call. = FALSE)
+
+  #Check if caliper name is in available data
+  cal.in.data <- setNames(names(caliper) %in% names(data), names(caliper))
+  cal.in.covs <- setNames(names(caliper) %in% names(covs), names(caliper))
+  cal.in.mahcovs <- setNames(names(caliper) %in% names(mahcovs), names(caliper))
+  if (any(names(caliper) != "" & !cal.in.covs & !cal.in.data)) stop(paste0("All variables named in 'caliper' must be in 'data'. Variables not in 'data':\n\t",
+                                         paste0(names(caliper)[names(caliper) != "" & !cal.in.data & !cal.in.covs & !cal.in.mahcovs], collapse = ", ")), call. = FALSE)
+
+  #Check std.caliper
+  if (length(std.caliper) == 0 || !is.atomic(std.caliper) || !is.logical(std.caliper)) stop("'std.caliper' must be a logical (TRUE/FALSE) vector.", call. = FALSE)
+  if (length(std.caliper) == 1) std.caliper <- setNames(rep.int(std.caliper, length(caliper)), names(caliper))
+  else if (length(std.caliper) != length(caliper)) stop("'std.caliper' must be the same length as 'caliper'", call. = FALSE)
+  else names(std.caliper) <- names(caliper)
+
+  #Remove trivial calipers
+  caliper <- caliper[is.finite(caliper)]
+
+  num.unique <- vapply(names(caliper), function(x) {
+    if (x == "") var <- distance
+    else if (cal.in.data[x]) var <- data[[x]]
+    else if (cal.in.covs[x]) var <- covs[[x]]
+    else var <- mahcovs[[x]]
+
+    length(unique(var))
+  }, integer(1L))
+
+  caliper <- caliper[num.unique > 1]
+
+  if (length(caliper) == 0) return(NULL)
+
+  #Ensure no calipers on categorical variables
+  cat.vars <- vapply(names(caliper), function(x) {
+    if (num.unique[names(num.unique) == x] == 2) return(TRUE)
+    else {
+      if (x == "") var <- distance
+      else if (cal.in.data[x]) var <- data[[x]]
+      else if (cal.in.covs[x]) var <- covs[[x]]
+      else var <- mahcovs[[x]]
+
+      return(is.factor(var) || is.character(var))
+    }
+  }, logical(1L))
+
+  if (any(cat.vars)) {
+    stop(paste0("Calipers cannot be used with binary, factor, or character variables. Offending variables:\n\t",
+                paste0(ifelse(names(caliper) == "", "<distance>", names(caliper))[cat.vars], collapse = ", ")), call. = FALSE)
+  }
+
+  #Process calipers according to std.caliper
+  std.caliper <- std.caliper[names(std.caliper) %in% names(caliper)]
+  if (anyNA(std.caliper)) stop("'std.caliper' cannot be NA.", call. = FALSE)
+
+  if (any(std.caliper)) {
+    caliper[std.caliper] <- caliper[std.caliper] * vapply(names(caliper)[std.caliper], function(x) {
+      if (x == "") sd(distance[!discarded])
+      else if (cal.in.data[x]) sd(data[[x]][!discarded])
+      else if (cal.in.covs[x]) sd(covs[[x]][!discarded])
+      else sd(mahcovs[[x]][!discarded])
+    }, numeric(1L))
+  }
+
+  #Add cal.formula
+  if (any(names(caliper) != "" & !cal.in.covs[names(caliper)] & !cal.in.mahcovs[names(caliper)])) {
+      attr(caliper, "cal.formula") <- reformulate(names(caliper)[names(caliper) != "" & !cal.in.covs[names(caliper)] & !cal.in.mahcovs[names(caliper)]])
+  }
+
+  return(abs(caliper))
+
 }
 
 #Function to ensure no subclass is devoid of both treated and control units by "scooting" units
@@ -535,6 +609,21 @@ generalized_inverse <-function(sigma) {
   pos <- sigmasvd$d > max(1e-8 * sigmasvd$d[1L], 0)
   sigma_inv <- sigmasvd$v[, pos, drop = FALSE] %*% (sigmasvd$d[pos]^-1 * t(sigmasvd$u[, pos, drop = FALSE]))
   return(sigma_inv)
+}
+
+#Get covariates (RHS) vars from formula
+get.covs.matrix <- function(formula, data) {
+  formula <- update(formula, NULL ~ . + 1)
+
+  mf <- model.frame(formula, data)
+
+  chars.in.mf <- vapply(mf, is.character, logical(1L))
+  mf[chars.in.mf] <- lapply(mf[chars.in.mf], factor)
+
+  X <- model.matrix(formula, data = mf,
+                    contrasts.arg = lapply(Filter(is.factor, mf),
+                                           contrasts, contrasts = FALSE))[,-1,drop = FALSE]
+  return(X)
 }
 
 #Used to load backports functions. No need to touch, but must always be included somewhere.

@@ -176,7 +176,9 @@ print.matchit <- function(x, ...) {
     cat("\n")
   }
   if (cal) {
-    cat(paste0(" - caliper: ", format(info$caliper, digits = 3), " SD\n"))
+    cat(paste0(" - caliper: ", paste(vapply(seq_along(x[["caliper"]]), function(z) paste0(if (names(x[["caliper"]])[z] == "") "<distance>" else names(x[["caliper"]])[z],
+                                                                                   " (", format(round(x[["caliper"]][z], 3)), ")"), character(1L)),
+                                     collapse = ", "), "\n"))
   }
   if (disl) {
     cat(" - common support: ")
@@ -238,22 +240,26 @@ summary.matchit <- function(object, interactions = FALSE,
                             addlvariables = NULL, standardize = TRUE,
                             data = NULL, ...) {
 
-  #Create covariate matrix; include exact and mahvars
-  X <- model.matrix(update(object$formula, NULL ~ . + 1), data = object$X,
-                    contrasts.arg = lapply(Filter(is.factor, object$X),
-                                           function(x) contrasts(x, contrasts = FALSE)))[,-1,drop = FALSE]
+  #Create covariate matrix; include caliper, exact, and mahvars
+
+  X <- get.covs.matrix(object$formula, object$X)
+
   if (!is.null(object$exact)) {
-    Xexact <- model.matrix(update(object$exact, NULL ~ . + 1), data = object$X,
-                           contrasts.arg = lapply(Filter(is.factor, object$X[, all.vars(object$exact), drop = FALSE]),
-                                                  function(x) contrasts(x, contrasts = FALSE)))[,-1,drop = FALSE]
+    Xexact <- get.covs.matrix(object$exact, data = object$X)
     X <- cbind(X, Xexact[,setdiff(colnames(Xexact), colnames(X)), drop = FALSE])
   }
 
   if (!is.null(object$mahvars)) {
-    Xmahvars <- model.matrix(update(object$mahvars, NULL ~ . + 1), data = object$X,
-                           contrasts.arg = lapply(Filter(is.factor, object$X[, all.vars(object$mahvars), drop = FALSE]),
-                                                  function(x) contrasts(x, contrasts = FALSE)))[,-1,drop = FALSE]
+    Xmahvars <- get.covs.matrix(object$mahvars, data = object$X)
     X <- cbind(X, Xmahvars[,setdiff(colnames(Xmahvars), colnames(X)), drop = FALSE])
+  }
+
+  if (!is.null(object$caliper)) {
+    if (any(names(object$caliper) != "")) {
+      #Don't need get.covs.matrix because all variables are numeric
+      Xcalvars <- as.matrix(object$X[, setdiff(names(object$caliper), ""), drop = FALSE])
+      X <- cbind(X, Xcalvars[,setdiff(colnames(Xcalvars), colnames(X)), drop = FALSE])
+    }
   }
 
   if (!is.null(addlvariables)) {
@@ -263,11 +269,11 @@ summary.matchit <- function(object, interactions = FALSE,
           addlvariables <- data[addlvariables]
         }
         else {
-          stop("All variables in addlvariables must be in data.", call. = FALSE)
+          stop("All variables in 'addlvariables' must be in 'data'.", call. = FALSE)
         }
       }
       else {
-        stop("If addlvariables is specified as a string, a data frame argument must be supplied to data.", call. = FALSE)
+        stop("If 'addlvariables' is specified as a string, a data frame argument must be supplied to 'data'.", call. = FALSE)
       }
     }
     else if (inherits(addlvariables, "formula")) {
@@ -275,20 +281,15 @@ summary.matchit <- function(object, interactions = FALSE,
       if (!is.null(data) && is.data.frame(data)) data <- data.frame(data[names(data) %in% vars.in.formula], object$X[names(data) %in% setdiff(vars.in.formula, names(data))])
       else data <- object$X
 
-      addlvariables <- model.matrix(update(addlvariables, NULL ~ . + 1), data = data,
-                                    contrasts.arg = lapply(Filter(is.factor, data[, all.vars(addlvariables), drop = FALSE]),
-                                                           function(x) contrasts(x, contrasts = FALSE)))[,-1,drop = FALSE]
+      addlvariables <- get.covs.matrix(addlvariables, data = data)
     }
     else if (!is.matrix(addlvariables) && !is.data.frame(addlvariables)) {
-      stop("The argument to addlvariables must be in one of the accepted forms. See ?summary.matchit for details.", call. = FALSE)
+      stop("The argument to 'addlvariables' must be in one of the accepted forms. See ?summary.matchit for details.", call. = FALSE)
     }
 
     if (is.data.frame(addlvariables)) {
       if (!all(vapply(addlvariables, is.numeric, logical(1L)))) {
-        addlvariables <- model.matrix(reformulate(names(addlvariables)), data = addlvariables,
-                                      contrasts.arg = lapply(Filter(is.factor, addlvariables),
-                                                             function(x) contrasts(x, contrasts = FALSE)))[,-1,drop = FALSE]
-
+        addlvariables <- get.covs.matrix(reformulate(names(addlvariables)), data = addlvariables)
       }
       else {
         addlvariables <- as.matrix(addlvariables)
@@ -374,10 +375,8 @@ summary.matchit.subclass <- function(object, interactions = FALSE,
                                      addlvariables = NULL, standardize = TRUE,
                                      data = NULL, subclass = FALSE, ...) {
 
-  #Create covariate matrix; include exact and mahvars
-  X <- model.matrix(update(object$formula, NULL ~ . + 1), data = object$X,
-                    contrasts.arg = lapply(Filter(is.factor, object$X),
-                                           function(x) contrasts(x, contrasts = FALSE)))[,-1,drop = FALSE]
+  #Create covariate matrix
+  X <- get.covs.matrix(object$formula, data = object$X)
 
   if (!is.null(addlvariables)) {
     if (is.character(addlvariables)) {
@@ -386,11 +385,11 @@ summary.matchit.subclass <- function(object, interactions = FALSE,
           addlvariables <- data[addlvariables]
         }
         else {
-          stop("All variables in addlvariables must be in data.", call. = FALSE)
+          stop("All variables in 'addlvariables' must be in 'data'.", call. = FALSE)
         }
       }
       else {
-        stop("If addlvariables is specified as a string, a data frame argument must be supplied to data.", call. = FALSE)
+        stop("If 'addlvariables' is specified as a string, a data frame argument must be supplied to 'data'.", call. = FALSE)
       }
     }
     else if (inherits(addlvariables, "formula")) {
@@ -399,20 +398,15 @@ summary.matchit.subclass <- function(object, interactions = FALSE,
                                                                     object$X[names(data) %in% setdiff(vars.in.formula, names(data))])
       else data <- object$X
 
-      addlvariables <- model.matrix(update(addlvariables, NULL ~ . + 1), data = data,
-                                    contrasts.arg = lapply(Filter(is.factor, data[, all.vars(addlvariables), drop = FALSE]),
-                                                           function(x) contrasts(x, contrasts = FALSE)))[,-1,drop = FALSE]
+      addlvariables <- get.covs.matrix(addlvariables, data = data)
     }
     else if (!is.matrix(addlvariables) && !is.data.frame(addlvariables)) {
-      stop("The argument to addlvariables must be in one of the accepted forms. See ?summary.matchit for details.", call. = FALSE)
+      stop("The argument to 'addlvariables' must be in one of the accepted forms. See ?summary.matchit for details.", call. = FALSE)
     }
 
     if (is.data.frame(addlvariables)) {
       if (!all(vapply(addlvariables, is.numeric, logical(1L)))) {
-        addlvariables <- model.matrix(reformulate(names(addlvariables)), data = addlvariables,
-                                      contrasts.arg = lapply(Filter(is.factor, addlvariables),
-                                                             function(x) contrasts(x, contrasts = FALSE)))[,-1,drop = FALSE]
-
+        addlvariables <- get.covs.matrix(reformulate(names(addlvariables)), data = addlvariables)
       }
       else {
         addlvariables <- as.matrix(addlvariables)
@@ -434,7 +428,7 @@ summary.matchit.subclass <- function(object, interactions = FALSE,
   if (isTRUE(which.subclass)) which.subclass <- subclasses
   else if (isFALSE(which.subclass)) which.subclass <- NULL
   else if (!is.atomic(which.subclass) || !all(which.subclass %in% subclasses)) {
-    stop("subclass should be TRUE, FALSE, or a vector of subclass indices for which subclass balance is to be displayed.")
+    stop("'subclass' should be TRUE, FALSE, or a vector of subclass indices for which subclass balance is to be displayed.")
   }
   else which.subclass <- subclasses[which.subclass]
 

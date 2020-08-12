@@ -60,7 +60,10 @@ whether matching should be done with replacement.
 the order that the matching takes place. The default for \code{distance = "mahalanobis"} is \code{"data"}. Otherwise, the default is \code{"largest"}. See \code{\link{matchit}} for allowable options.
 }
   \item{caliper}{
-the width of the caliper used for caliper matching in units of the standard deviation of the distance measure. Not allowed when \code{distance = "mahalanobis"}.
+the width(s) of the caliper(s) used for caliper matching. See Details and Examples.
+}
+  \item{std.caliper}{
+\code{logical}; when calipers are specified, whether they are in standard deviation units (\code{TRUE}) or raw units (\code{FALSE}).
 }
   \item{ratio}{
 how many control units should be matched to each treated unit for k:1 matching. Should be a single integer value.
@@ -88,7 +91,7 @@ matchit(treat ~ X1 + X2 + X3, method = "nearest",
 
 With this code, \code{X1}, \code{X2}, and \code{X3} are used to estimate the propensity score (using the \code{"glm"} method, which by default is logistic regression), which is used to create a matching caliper. The actual matching occurs on the Mahalanobis distance computed only using \code{X1} and \code{X2}, which are supplied to \code{mahvars}. Units whose propensity score difference is larger than the caliper will not be paired, and some treated units may therefore not receive a match. The estimated propensity scores will be included in the \code{distance} component of the \code{matchit} output. See Examples.
 
-2) If no propensity score needs to be estimated, \code{distance} should be set to \code{"mahalanobis"}, and Mahalanobis distance matching will occur on all the variables in \code{formula}. Arguments to \code{caliper}, \code{discard}, and \code{mahvars} will be ignored. For example, to perform simple Mahalanobis distance matching, the following could be run:
+2) If no propensity score needs to be estimated, \code{distance} should be set to \code{"mahalanobis"}, and Mahalanobis distance matching will occur on all the variables in \code{formula}. Arguments to \code{discard} and \code{mahvars} will be ignored, and a caliper can only be placed on named variables. For example, to perform simple Mahalanobis distance matching, the following could be run:
 
 \preformatted{
 matchit(treat ~ X1 + X2, method = "nearest",
@@ -132,4 +135,13 @@ m.out2 <- matchit(treat ~ age + educ + race + nodegree +
                   ratio = 3, caliper = .02)
 m.out2
 summary(m.out2)
+
+# 1:1 NN Mahalanobis distance matching within calipers
+# on re74 and re75 and exact matching on married and race
+m.out3 <- matchit(treat ~ age + educ + re74 + re75, data = lalonde,
+                  method = "nearest", distance = "mahalanobis",
+                  exact = ~ married + race,
+                  caliper = c(re74 = .2, re75 = .15))
+m.out3
+summary(m.out3)
 }

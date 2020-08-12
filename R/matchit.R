@@ -3,7 +3,7 @@ matchit <- function(formula, data = NULL, method = "nearest", distance = "glm",
                     link = "logit", distance.options = list(), estimand = "ATT",
                     exact = NULL, mahvars = NULL, discard = "none",
                     reestimate = FALSE, replace = FALSE, m.order = NULL,
-                    caliper = NULL, ratio = 1, verbose = FALSE, ...) {
+                    caliper = NULL, std.caliper = TRUE, ratio = 1, verbose = FALSE, ...) {
 
   #Checking input format
   #data input
@@ -45,7 +45,7 @@ matchit <- function(formula, data = NULL, method = "nearest", distance = "glm",
                reestimate = reestimate, replace = replace, ratio = ratio,
                m.order = m.order, estimand = estimand)
 
-  exactcovs <- mahcovs <- NULL
+  exactcovs <- mahcovs <- calcovs <- NULL
 
   if (method %in% c("exact", "cem")) {
     fn1 <- NULL
@@ -158,6 +158,13 @@ matchit <- function(formula, data = NULL, method = "nearest", distance = "glm",
     }
   }
 
+  caliper <- process.caliper(caliper, method, data, covs, mahcovs, distance, discarded, std.caliper)
+
+  if (!is.null(attr(caliper, "cal.formula"))) {
+    calcovs <- get_all_vars(attr(caliper, "cal.formula"), data)
+    attr(caliper, "cal.formula") <- NULL
+  }
+
   ## matching!
   match.out <- do.call(fn2, list(treat = treat, covs = covs, data = data, distance = distance,
                                  discarded = discarded, exact = exact, mahvars = mahvars,
@@ -185,7 +192,7 @@ matchit <- function(formula, data = NULL, method = "nearest", distance = "glm",
                subclass = if (method == "subclass") length(unique(match.out$subclass[!is.na(match.out$subclass)])) else NULL)
 
   #Create X.list for X output, removing duplicate variables
-  X.list <- list(covs, exactcovs, mahcovs)
+  X.list <- list(covs, exactcovs, mahcovs, calcovs)
   all.covs <- lapply(X.list, names)
   for (i in seq_along(X.list)[-1]) if (!is.null(X.list[[i]])) X.list[[i]][names(X.list[[i]]) %in% unlist(all.covs[1:(i-1)])] <- NULL
   X.list[lengths(X.list) == 0] <- NULL
@@ -202,6 +209,7 @@ matchit <- function(formula, data = NULL, method = "nearest", distance = "glm",
   match.out$discarded <- discarded
   match.out$exact <- exact
   match.out$mahvars <- mahvars
+  match.out$caliper <- caliper
   match.out$nn <- nn
 
   return(match.out)

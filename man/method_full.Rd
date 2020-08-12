@@ -15,7 +15,7 @@ matchit(formula, data = NULL, method = "full",
         distance.options = list(), estimand = "ATT",
         exact = NULL, mahvars = NULL, discard = "none",
         reestimate = FALSE, caliper = NULL,
-        verbose = FALSE, ...)
+        std.caliper = TRUE, verbose = FALSE, ...)
 
 }
 }
@@ -54,7 +54,10 @@ a string containing a method for discarding units outside a region of common sup
 if \code{discard} is not \code{"none"}, whether to re-estimate the propensity score in the remaining sample prior to matching.
 }
   \item{caliper}{
-the width of the caliper used for caliper matching in units of the standard deviation of the distance measure. Calipers are processed using \code{\link[optmatch]{caliper}} in \pkg{optmatch}. Not allowed when \code{distance = "mahalanobis"}. See Notes.
+the width(s) of the caliper(s) used for caliper matching. See Notes and Examples.
+}
+  \item{std.caliper}{
+\code{logical}; when calipers are specified, whether they are in standard deviation units (\code{TRUE}) or raw units (\code{FALSE}).
 }
   \item{verbose}{
 \code{logical}; whether information about the matching process should be printed to the console.
@@ -66,7 +69,7 @@ additional arguments passed to \code{\link[optmatch]{fullmatch}} in \pkg{optmatc
 The arguments \code{replace}, \code{ratio}, and \code{m.order} are ignored with a warning.
 }
 \note{
-Due to a bug in \pkg{optmatch} (version 0.9-13), a caliper can only be used when \code{min.controls}, \code{max.controls}, \code{omit.fraction}, and \code{mean.controls} are left at their defaults.
+Due to a bug in \pkg{optmatch} (version 0.9-13), calipers can only be used when \code{min.controls} is left at its defaults.
 }
 \section{Outputs}{
 All outputs described in \code{\link{matchit}} are returned with \code{method = "full"} except for \code{match.matrix}. This is because matching strata are not indexed by treated units as they are in some other forms of matching.
@@ -88,7 +91,7 @@ Mahalanobis distance matching can be done one of two ways:
 
 With this code, \code{X1}, \code{X2}, and \code{X3} are used to estimate the propensity score (using the \code{"glm"} method, which by default is logistic regression), which is used to create a matching caliper. The actual matching occurs on the Mahalanobis distance computed only using \code{X1} and \code{X2}, which are supplied to \code{mahvars}. Units whose propensity score difference is larger than the caliper will not be paired, and some treated units may therefore not receive a match. The estimated propensity scores will be included in the \code{distance} component of the \code{matchit} output.
 
-2) If no propensity score needs to be estimated, \code{distance} should be set to \code{"mahalanobis"}, and Mahalanobis distance matching will occur on all the variables in \code{formula}. Arguments to \code{caliper}, \code{discard}, and \code{mahvars} will be ignored. For example, to perform simple Mahalanobis distance matching, the following could be run:
+2) If no propensity score needs to be estimated, \code{distance} should be set to \code{"mahalanobis"}, and Mahalanobis distance matching will occur on all the variables in \code{formula}. Arguments to \code{discard} and \code{mahvars} will be ignored, and a caliper can only be placed on named variables. For example, to perform simple Mahalanobis distance matching, the following could be run:
 
 \code{matchit(treat ~ X1 + X2, method = "full", distance = "mahalanobis")}
 
@@ -126,4 +129,15 @@ m.out2 <- matchit(treat ~ age + educ + race + nodegree +
                   mahvars = ~ age + educ + re74 + re75)
 m.out2
 summary(m.out2)
+
+# Optimal full Mahalanobis distance matching within calipers
+# of 500 on re74 and re75
+m.out3 <- matchit(treat ~ age + educ + re74 + re75,
+                  data = lalonde, distance = "mahalanobis",
+                  method = "full",
+                  caliper = c(re74 = 500, re75 = 500),
+                  std.caliper = FALSE)
+m.out3
+summary(m.out3, addlvariables = ~race + nodegree + married,
+        data = lalonde)
 }
