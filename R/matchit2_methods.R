@@ -509,8 +509,10 @@ matchit2nearest <-  function(treat, data, distance, discarded,
   }
 
   if (!is.null(caliper)) {
-    calcovs <- get.covs.matrix(reformulate(setdiff(names(caliper), "")), data = data)
-    rownames(calcovs) <- names(treat)
+    if (any(names(caliper) != "")) {
+      calcovs <- get.covs.matrix(reformulate(setdiff(names(caliper), "")), data = data)
+      rownames(calcovs) <- names(treat)
+    }
 
     caliper.dist <- caliper[names(caliper) == ""]
     caliper <- caliper[names(caliper) != ""]
