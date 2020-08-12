@@ -185,7 +185,7 @@ m.out4 <- matchit(treat ~ age + educ + race + nodegree +
                    married + re74 + re75, data = lalonde,
                    method = "full",
                    caliper = c(.1, age = 2, educ = 1),
-                   std.caliper = c(TRUE, FALSE, FALSE)
+                   std.caliper = c(TRUE, FALSE, FALSE))
 m.out4
 summary(m.out4)
 

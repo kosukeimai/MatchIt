@@ -17,16 +17,17 @@ matching, genetic matching, exact matching, coarsened exact matching,
 and subclassification, some of which rely on functions from other R
 packages. A variety of methods to estimate propensity scores for
 propensity score matching are included. Below is an example of the use
-of `MatchIt` to perform nearest neighbor propensity score matching with
-replacement and assessing overlap and balance:
+of `MatchIt` to perform 2:1 nearest neighbor propensity score matching
+with a propensity score caliper and assessing overlap and balance:
 
 ``` r
 library("MatchIt")
 data("lalonde", package = "MatchIt")
 
-#Nearest neighbor PS matching with replacement
+#Nearest neighbor PS matching with replacement and a caliper
 m.out <- matchit(treat ~ age + educ + race + married + nodegree +
-                     re74 + re75, data = lalonde, replace = TRUE)
+                     re74 + re75, data = lalonde, 
+                 ratio = 2, caliper = .025)
 ```
 
 Printing the `MatchIt` object provides details of the kind of matching
@@ -37,10 +38,11 @@ print(m.out)
 ```
 
     #> A matchit object
-    #>  - method: 1:1 nearest neighbor matching with replacement
-    #>  - distance: Propensity score
+    #>  - method: 2:1 nearest neighbor matching without replacement
+    #>  - distance: Propensity score [matching, caliper]
     #>               - estimated with logistic regression
-    #>  - number of obs.: 614 (original), 265 (matched)
+    #>  - caliper: 0.025 SD
+    #>  - number of obs.: 614 (original), 234 (matched)
     #>  - target estimand: ATT
     #>  - covariates: age, educ, race, married, nodegree, re74, re75
 
@@ -55,10 +57,8 @@ plot(m.out, type = "jitter", interactive = FALSE)
 <img src="inst/figures/README-unnamed-chunk-4-1.png" style="display: block; margin: auto;" />
 
 With this we can see that most of the unmatched control units had small
-propensity scores, making them unlike the treated group. Control units
-with higher propensity scores were matched to multiple treated units as
-indicated by their larger circles in the plot. Other plots are available
-to view the distributions of propensity scores and covariates.
+propensity scores, making them unlike the treated group. Other plots are
+available to view the distributions of propensity scores and covariates.
 
 We can check covariate balance for the original and matched samples
 using `summary()`:
@@ -71,7 +71,7 @@ summary(m.out)
     #> 
     #> Call:
     #> matchit(formula = treat ~ age + educ + race + married + nodegree + 
-    #>     re74 + re75, data = lalonde, replace = TRUE)
+    #>     re74 + re75, data = lalonde, caliper = 0.025, ratio = 2)
     #> 
     #> Summary of Balance for All Data:
     #>            Means Treated Means Control Std. Mean Diff. eCDF Med eCDF Mean eCDF Max
@@ -89,35 +89,35 @@ summary(m.out)
     #> 
     #> Summary of Balance for Matched Data:
     #>            Means Treated Means Control Std. Mean Diff. eCDF Med eCDF Mean eCDF Max
-    #> distance          0.5774        0.5765          0.0042   0.0000    0.0030   0.0486
-    #> age              25.8162       24.1027          0.1589   0.0351    0.0766   0.3405
-    #> educ             10.3459       10.3784         -0.0114   0.0108    0.0216   0.0595
-    #> raceblack         0.8432        0.8378          0.0134   0.0054    0.0054   0.0054
-    #> racehispan        0.0595        0.0649         -0.0155   0.0054    0.0054   0.0054
-    #> racewhite         0.0973        0.0973          0.0000   0.0000    0.0000   0.0000
-    #> married           0.1892        0.1297          0.1188   0.0595    0.0595   0.0595
-    #> nodegree          0.7081        0.7027          0.0110   0.0054    0.0054   0.0054
-    #> re74           2095.5737     2336.4629         -0.0355   0.0108    0.0406   0.2162
-    #> re75           1532.0553     1503.9290          0.0085   0.0324    0.0680   0.2378
+    #> distance          0.4962        0.4937          0.0110   0.0000    0.0043   0.0392
+    #> age              25.3627       25.5637         -0.0186   0.0711    0.0800   0.2157
+    #> educ             10.2549       10.4216         -0.0584   0.0196    0.0237   0.0784
+    #> raceblack         0.7157        0.7157          0.0000   0.0000    0.0000   0.0000
+    #> racehispan        0.1078        0.1078          0.0000   0.0000    0.0000   0.0000
+    #> racewhite         0.1765        0.1765          0.0000   0.0000    0.0000   0.0000
+    #> married           0.2059        0.2157         -0.0196   0.0098    0.0098   0.0098
+    #> nodegree          0.6765        0.6422          0.0699   0.0343    0.0343   0.0343
+    #> re74           2409.1384     2573.6987         -0.0242   0.0147    0.0528   0.2598
+    #> re75           1704.2015     1721.3424         -0.0052   0.0294    0.0391   0.1275
     #> 
     #> Percent Balance Improvement:
     #>            Std. Mean Diff. eCDF Med eCDF Mean eCDF Max
-    #> distance              99.8    100.0      99.2     92.5
-    #> age                   22.6     57.5       5.8   -115.9
-    #> educ                  70.7     52.5      37.7     46.6
-    #> raceblack             99.2     99.2      99.2     99.2
-    #> racehispan            93.5     93.5      93.5     93.5
+    #> distance              99.4    100.0      98.9     93.9
+    #> age                   90.9     14.1       1.6    -36.7
+    #> educ                 -50.8     13.9      31.6     29.6
+    #> raceblack            100.0    100.0     100.0    100.0
+    #> racehispan           100.0    100.0     100.0    100.0
     #> racewhite            100.0    100.0     100.0    100.0
-    #> married               81.6     81.6      81.6     81.6
-    #> nodegree              95.1     95.1      95.1     95.1
-    #> re74                  93.2     95.4      81.9     51.6
-    #> re75                  97.0     76.1      49.3     17.3
+    #> married               97.0     97.0      97.0     97.0
+    #> nodegree              69.2     69.2      69.2     69.2
+    #> re74                  95.3     93.7      76.5     41.9
+    #> re75                  98.2     78.3      70.8     55.7
     #> 
     #> Sample Sizes:
     #>           Control Treated
     #> All           429     185
-    #> Matched        80     185
-    #> Unmatched     349       0
+    #> Matched       132     102
+    #> Unmatched     297      83
     #> Discarded       0       0
 
 At the top is balance for the original sample. Below that is balance in
