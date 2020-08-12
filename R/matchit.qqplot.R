@@ -8,26 +8,19 @@ matchit.qqplot <- function(object, which.subclass = NULL,
     }
     which.xs.f <- terms(reformulate(which.xs))
 
-    X <- model.matrix(update(which.xs.f, NULL ~ . + 1), data = object$X,
-                      contrasts.arg = lapply(Filter(is.factor, object$X[, all.vars(which.xs.f), drop = FALSE]),
-                                             function(v) contrasts(v, contrasts = FALSE)))[,-1,drop = FALSE]
+    X <- get.covs.matrix(which.xs.f, data = object$X)
   }
   else {
     #Create covariate matrix; include exact and mahvars
-    X <- model.matrix(update(object$formula, NULL ~ . + 1), data = object$X,
-                      contrasts.arg = lapply(Filter(is.factor, object$X[, all.vars(object$formula), drop = FALSE]),
-                                             function(v) contrasts(v, contrasts = FALSE)))[,-1,drop = FALSE]
+    X <- get.covs.matrix(object$formula, data = object$X)
+
     if (!is.null(object$exact)) {
-      Xexact <- model.matrix(update(object$exact, NULL ~ . + 1), data = object$X,
-                             contrasts.arg = lapply(Filter(is.factor, object$X[, all.vars(object$exact), drop = FALSE]),
-                                                    function(v) contrasts(v, contrasts = FALSE)))[,-1,drop = FALSE]
+      Xexact <- get.covs.matrix(object$exact, data = object$X)
       X <- cbind(X, Xexact[,setdiff(colnames(Xexact), colnames(X)), drop = FALSE])
     }
 
     if (!is.null(object$mahvars)) {
-      Xmahvars <- model.matrix(update(object$mahvars, NULL ~ . + 1), data = object$X,
-                               contrasts.arg = lapply(Filter(is.factor, object$X[, all.vars(object$mahvars), drop = FALSE]),
-                                                      function(v) contrasts(v, contrasts = FALSE)))[,-1,drop = FALSE]
+      Xmahvars <- get.covs.matrix(object$mahvars, data = object$X)
       X <- cbind(X, Xmahvars[,setdiff(colnames(Xmahvars), colnames(X)), drop = FALSE])
     }
   }
