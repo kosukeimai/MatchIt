@@ -68,7 +68,7 @@ matchit2exact <- function(treat, covs, data, estimand = "ATT", verbose = FALSE, 
 }
 
 # MATCHIT method= full-------------------------------------
-matchit2full <- function(treat, covs, data, distance, discarded,
+matchit2full <- function(treat, formula, data, distance, discarded,
                          caliper = NULL, mahvars = NULL, exact = NULL,
                          estimand = "ATT", verbose = FALSE,
                          is.full.mahalanobis, ...) {
@@ -95,8 +95,6 @@ matchit2full <- function(treat, covs, data, distance, discarded,
 
   treat_ <- setNames(as.integer(treat == focal), names(treat))
   treat_[discarded] <- NA
-
-
 
   within.match <- NULL
   if (!is.null(exact)) {
@@ -126,8 +124,10 @@ matchit2full <- function(treat, covs, data, distance, discarded,
 
   withCallingHandlers({
     if (is.full.mahalanobis) {
-      data <- data.frame(treat_, covs)
-      full <- optmatch::fullmatch(formula(data),
+      formula <- update(formula, treat_ ~ .)
+      environment(mahvars) <- sys.frame(sys.nframe())
+
+      full <- optmatch::fullmatch(formula,
                                   data = data,
                                   method = "mahalanobis",
                                   within = within.match,
@@ -172,7 +172,7 @@ matchit2full <- function(treat, covs, data, distance, discarded,
 }
 
 # MATCHIT method= optimal----------------------------------
-matchit2optimal <- function(treat, covs, data, distance, discarded,
+matchit2optimal <- function(treat, formula, data, distance, discarded,
                             ratio = 1, caliper = NULL, mahvars = NULL, exact = NULL,
                             estimand = "ATT", verbose = FALSE,
                             is.full.mahalanobis,...) {
@@ -209,11 +209,6 @@ matchit2optimal <- function(treat, covs, data, distance, discarded,
   }
   else exact.match <- NULL
 
-  if (!is.null(mahvars)) {
-    mahvars <- update(mahvars, treat_ ~ .)
-    environment(mahvars) <- sys.frame(sys.nframe())
-  }
-
   if (!is.null(caliper)) {
     warning("Calipers are currently not compatible with method = \"optimal\" and will be ignored.", call. = FALSE)
     caliper <- NULL
@@ -221,8 +216,10 @@ matchit2optimal <- function(treat, covs, data, distance, discarded,
 
   withCallingHandlers({
     if (is.full.mahalanobis) {
-      data <- data.frame(treat_, covs)
-      pair <- optmatch::pairmatch(formula(data),
+      formula <- update(formula, treat_ ~ .)
+      environment(mahvars) <- sys.frame(sys.nframe())
+
+      pair <- optmatch::pairmatch(formula,
                                   data = data,
                                   method = "mahalanobis",
                                   controls = ratio,
@@ -230,6 +227,9 @@ matchit2optimal <- function(treat, covs, data, distance, discarded,
                                   ...)
     }
     else if (!is.null(mahvars)) {
+      mahvars <- update(mahvars, treat_ ~ .)
+      environment(mahvars) <- sys.frame(sys.nframe())
+
       pair <- optmatch::pairmatch(mahvars,
                                   data = data,
                                   method = "mahalanobis",
@@ -273,7 +273,7 @@ matchit2optimal <- function(treat, covs, data, distance, discarded,
 }
 # MATCHIT method= genetic----------------------------------
 #Needs updates
-matchit2genetic <- function(treat, covs, data, distance, discarded,
+matchit2genetic <- function(treat, data, distance, discarded,
                             ratio = 1, replace = FALSE, m.order = NULL,
                             caliper = NULL, mahvars = NULL, exact = NULL,
                             formula = NULL, estimand = "ATT", verbose = FALSE,
@@ -332,15 +332,15 @@ matchit2genetic <- function(treat, covs, data, distance, discarded,
   }
 
   if (!is.null(mahvars)) {
-    covs_to_balance <- get.covs.matrix(formula, data = covs)
+    covs_to_balance <- get.covs.matrix(formula, data = data)
     X <- get.covs.matrix(mahvars, data = data)
   }
   else if (is.full.mahalanobis) {
-    covs_to_balance <- get.covs.matrix(formula, data = covs)
+    covs_to_balance <- get.covs.matrix(formula, data = data)
     X <- covs_to_balance
   }
   else {
-    covs_to_balance <- get.covs.matrix(formula, data = covs)
+    covs_to_balance <- get.covs.matrix(formula, data = data)
     X <- cbind(covs_to_balance, distance)
   }
 
@@ -651,7 +651,7 @@ matchit2nearest <-  function(treat, data, distance, discarded,
 
 # MATCHIT method= subclass---------------------------------
 #Needs updates
-matchit2subclass <- function(treat, covs, distance, discarded,
+matchit2subclass <- function(treat, distance, discarded,
                              replace = FALSE, exact = NULL,
                              estimand = "ATT", verbose = FALSE,
                              ...) {
