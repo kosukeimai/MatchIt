@@ -197,16 +197,16 @@ print.summary.matchit <- function(x, digits = max(3, getOption("digits") - 3), .
 
   cat("\nCall:", deparse(x$call), sep = "\n")
   cat("\nSummary of Balance for All Data:\n")
-  print.data.frame(as.data.frame(round(x$sum.all,digits)))
+  print.data.frame(round_df_char(x$sum.all[,-7, drop = FALSE], digits, pad = "0", na_vals = "."))
   cat("\n")
 
   if(!is.null(x$sum.matched)) {
     cat("\nSummary of Balance for Matched Data:\n")
     print.data.frame(round_df_char(x$sum.matched, digits, pad = "0", na_vals = "."))
     cat("\nPercent Balance Improvement:\n")
-    print.data.frame(round_df_char(x$reduction, 1, pad = "0", na_vals = "."))
+    print.data.frame(round_df_char(x$reduction[,-5, drop = FALSE], 1, pad = "0", na_vals = "."))
     cat("\nSample Sizes:\n")
-    print.table(x$nn, digits=digits)
+    print.data.frame(round_df_char(x$nn, 1, pad = "0", na_vals = "."))
     cat("\n")
   }
   invisible(x)
@@ -215,20 +215,21 @@ print.summary.matchit <- function(x, digits = max(3, getOption("digits") - 3), .
 print.summary.matchit.subclass <- function(x, digits = max(3, getOption("digits") -  3), ...){
   cat("\nCall:", deparse(x$call), sep = "\n")
   cat("\nSummary of Balance for All Data:\n")
-  print.data.frame(round_df_char(x$sum.all, digits, pad = "0", na_vals = "."))
+  print.data.frame(round_df_char(x$sum.all[,-7, drop = FALSE], digits, pad = "0", na_vals = "."))
+
   if (length(x$sum.subclass) > 0) {
     cat("\nSummary of Balance by Subclass:\n")
     for (s in seq_along(x$sum.subclass)) {
       cat(paste0("\n- ", names(x$sum.subclass)[s], "\n"))
-      print.data.frame(round_df_char(x$sum.subclass[[s]], digits, pad = "0", na_vals = "."))
+      print.data.frame(round_df_char(x$sum.subclass[[s]][,-7, drop = FALSE], digits, pad = "0", na_vals = "."))
     }
   }
   cat("\nSummary of Balance Across Subclasses\n")
   print.data.frame(round_df_char(x$sum.across, digits, pad = "0", na_vals = "."))
   cat("\nPercent Balance Improvement:\n")
-  print.data.frame(round_df_char(x$reduction, 1, pad = "0", na_vals = "."))
+  print.data.frame(round_df_char(x$reduction[,-5, drop = FALSE], 1, pad = "0", na_vals = "."))
   cat("\nSample Sizes by Subclass:\n")
-  print.table(x$qn)
+  print.data.frame(round_df_char(x$qn, 1, pad = "0", na_vals = "."))
   cat("\n")
 }
 
@@ -242,25 +243,7 @@ summary.matchit <- function(object, interactions = FALSE,
 
   #Create covariate matrix; include caliper, exact, and mahvars
 
-  X <- get.covs.matrix(object$formula, object$X)
-
-  if (!is.null(object$exact)) {
-    Xexact <- get.covs.matrix(object$exact, data = object$X)
-    X <- cbind(X, Xexact[,setdiff(colnames(Xexact), colnames(X)), drop = FALSE])
-  }
-
-  if (!is.null(object$mahvars)) {
-    Xmahvars <- get.covs.matrix(object$mahvars, data = object$X)
-    X <- cbind(X, Xmahvars[,setdiff(colnames(Xmahvars), colnames(X)), drop = FALSE])
-  }
-
-  if (!is.null(object$caliper)) {
-    if (any(names(object$caliper) != "")) {
-      #Don't need get.covs.matrix because all variables are numeric
-      Xcalvars <- as.matrix(object$X[, setdiff(names(object$caliper), ""), drop = FALSE])
-      X <- cbind(X, Xcalvars[,setdiff(colnames(Xcalvars), colnames(X)), drop = FALSE])
-    }
-  }
+  X <- get.covs.matrix(data = object$X)
 
   if (!is.null(addlvariables)) {
     if (is.character(addlvariables)) {
@@ -289,7 +272,7 @@ summary.matchit <- function(object, interactions = FALSE,
 
     if (is.data.frame(addlvariables)) {
       if (!all(vapply(addlvariables, is.numeric, logical(1L)))) {
-        addlvariables <- get.covs.matrix(reformulate(names(addlvariables)), data = addlvariables)
+        addlvariables <- get.covs.matrix(data = addlvariables)
       }
       else {
         addlvariables <- as.matrix(addlvariables)
@@ -302,11 +285,22 @@ summary.matchit <- function(object, interactions = FALSE,
   treat <- object$treat
   weights <- object$weights
   nam <- colnames(X)
+  nam[startsWith(nam, "`") & endsWith(nam, "`")] <- substr(nam[startsWith(nam, "`") & endsWith(nam, "`")],
+                                                           2, nchar(nam[startsWith(nam, "`") & endsWith(nam, "`")]) - 1)
 
   kk <- ncol(X)
 
+  if (standardize) {
+    s.d.denom <- switch(object$estimand,
+                        "ATT" = "treated",
+                        "ATC" = "control",
+                        "ATE" = "pooled")
+  }
+  else s.d.denom <- NULL
+
   ## Summary Stats
-  aa <- setNames(lapply(seq_len(kk), function(i) qoi(X[,i], tt = treat, ww = weights, standardize = standardize)),
+  aa <- setNames(lapply(seq_len(kk), function(i) qoi(X[,i], tt = treat, ww = weights, subclass = object$subclass,
+                                                     mm = object$mm, standardize = standardize, s.d.denom = s.d.denom)),
                  colnames(X))
 
   sum.all <- sum.matched <- matrix(NA_real_, nrow = kk, ncol = ncol(aa[[1]]), dimnames = list(nam, colnames(aa[[1]])))
@@ -330,7 +324,8 @@ summary.matchit <- function(object, interactions = FALSE,
           to.remove[k] <- TRUE
         }
         else {
-          jqoi <- qoi(x2, tt = treat, ww = weights, standardize = standardize)
+          jqoi <- qoi(x2, tt = treat, ww = weights, subclass = object$subclass,
+                      mm = object$mm, standardize = standardize, s.d.denom = s.d.denom)
           sum.all.int[k,] <- jqoi[1,]
           sum.matched.int[k,] <- jqoi[2,]
           if (i == j) {
@@ -350,7 +345,8 @@ summary.matchit <- function(object, interactions = FALSE,
   }
 
   if (!is.null(object$distance)) {
-    ad <- qoi(object$distance, tt = treat, ww = weights, standardize = standardize)
+    ad <- qoi(object$distance, tt = treat, ww = weights, subclass = object$subclass,
+              mm = object$mm, standardize = standardize, s.d.denom = s.d.denom)
     sum.all <- rbind(ad[1,], sum.all)
     sum.matched <- rbind(ad[2,], sum.matched)
     rownames(sum.all)[1] <- rownames(sum.matched)[1] <- "distance"
@@ -376,7 +372,7 @@ summary.matchit.subclass <- function(object, interactions = FALSE,
                                      data = NULL, subclass = FALSE, ...) {
 
   #Create covariate matrix
-  X <- get.covs.matrix(object$formula, data = object$X)
+  X <- get.covs.matrix(data = object$X)
 
   if (!is.null(addlvariables)) {
     if (is.character(addlvariables)) {
@@ -406,7 +402,7 @@ summary.matchit.subclass <- function(object, interactions = FALSE,
 
     if (is.data.frame(addlvariables)) {
       if (!all(vapply(addlvariables, is.numeric, logical(1L)))) {
-        addlvariables <- get.covs.matrix(reformulate(names(addlvariables)), data = addlvariables)
+        addlvariables <- get.covs.matrix(data = addlvariables)
       }
       else {
         addlvariables <- as.matrix(addlvariables)
@@ -423,7 +419,15 @@ summary.matchit.subclass <- function(object, interactions = FALSE,
   nam <- colnames(X)
 
   kk <- ncol(X)
-  subclasses <- sort(unique(subclass, nmax = if (!is.null(object$q.cut)) length(object$q.cut) - 1 else length(subclass)))
+  subclasses <- sort(unique(subclass[!is.na(subclass)], nmax = if (!is.null(object$q.cut)) length(object$q.cut) - 1 else length(subclass)))
+
+  if (standardize) {
+    s.d.denom <- switch(object$estimand,
+                        "ATT" = "treated",
+                        "ATC" = "control",
+                        "ATE" = "pooled")
+  }
+  else s.d.denom <- NULL
 
   if (isTRUE(which.subclass)) which.subclass <- subclasses
   else if (isFALSE(which.subclass)) which.subclass <- NULL
@@ -432,65 +436,10 @@ summary.matchit.subclass <- function(object, interactions = FALSE,
   }
   else which.subclass <- subclasses[which.subclass]
 
-  ## By Subclass
-  sum.subclass <- lapply(which.subclass, function(s) {
-    in.sub <- subclass == s & !object$discarded
-
-    #qoi without weights only returns unmatched stats, which is all we need within
-    #subclasses. Otherwise, identical to matched stats.
-    aa <- setNames(lapply(seq_len(kk), function(i) qoi(X[in.sub,i], tt = treat[in.sub], standardize = standardize, s.d.denom = sd(X[treat == 1, i]))),
-             colnames(X))
-
-    sum.sub <- matrix(NA_real_, nrow = kk, ncol = ncol(aa[[1]]), dimnames = list(nam, colnames(aa[[1]])))
-
-    sum.sub.int <- NULL
-    for (i in 1:kk) {
-      sum.sub[i,] <- aa[[i]][1,]
-    }
-    if (interactions) {
-      sum.sub.int <- matrix(NA_real_, nrow = kk*(kk+1)/2, ncol = ncol(aa[[1]]), dimnames = list(NULL, colnames(aa[[1]])))
-      to.remove <- rep(FALSE, nrow(sum.sub.int))
-      int.names <- character(nrow(sum.sub.int))
-      k <- 1
-      for (i in 1:kk) {
-        for (j in i:kk) {
-          x2 <- X[,i] * X[,j]
-          if (all(abs(x2) < sqrt(.Machine$double.eps)) ||
-              all(abs(x2 - X[,i]) < sqrt(.Machine$double.eps))) { #prevent interactions within same factors
-            to.remove[k] <- TRUE
-          }
-          else {
-            jqoi <- qoi(x2[in.sub], tt = treat[in.sub], standardize = standardize, s.d.denom = sd(x2[treat == 1, i]))
-            sum.sub.int[k,] <- jqoi[1,]
-            if (i == j) {
-              int.names[k] <- paste0(nam[i], "\u00B2")
-            }
-            else {
-              int.names[k] <- paste(nam[i], nam[j], sep=" * ")
-            }
-          }
-          k <- k + 1
-        }
-      }
-      rownames(sum.sub.int) <- int.names
-
-      sum.sub <- rbind(sum.sub, sum.sub.int[!to.remove,,drop = FALSE])
-    }
-
-    if (!is.null(object$distance)) {
-      ad <- qoi(object$distance[in.sub], tt = treat[in.sub], standardize = standardize)
-      sum.sub <- rbind(ad[1,], sum.sub)
-      rownames(sum.sub)[1] <- "distance"
-    }
-
-    return(sum.sub)
-  })
-  if (!is.null(which.subclass)) names(sum.subclass) <- paste("Subclass", which.subclass)
-
   ## Aggregate Subclass
   #Use the estimated weights to compute aggregate balance.
   ## Summary Stats
-  aa <- setNames(lapply(seq_len(kk), function(i) qoi(X[,i], tt = treat, ww = weights, standardize = standardize)),
+  aa <- setNames(lapply(seq_len(kk), function(i) qoi(X[,i], tt = treat, ww = weights, subclass = subclass, standardize = standardize)),
                  colnames(X))
 
   sum.all <- sum.matched <- matrix(NA_real_, nrow = kk, ncol = ncol(aa[[1]]), dimnames = list(nam, colnames(aa[[1]])))
@@ -513,7 +462,7 @@ summary.matchit.subclass <- function(object, interactions = FALSE,
           to.remove[k] <- TRUE
         }
         else {
-          jqoi <- qoi(x2, tt = treat, ww = weights, standardize = standardize)
+          jqoi <- qoi(x2, tt = treat, ww = weights, subclass = subclass, standardize = standardize)
           sum.all.int[k,] <- jqoi[1,]
           sum.matched.int[k,] <- jqoi[2,]
           if (i == j) {
@@ -533,11 +482,62 @@ summary.matchit.subclass <- function(object, interactions = FALSE,
   }
 
   if (!is.null(object$distance)) {
-    ad <- qoi(object$distance, tt = treat, ww = weights, standardize = standardize)
+    ad <- qoi(object$distance, tt = treat, ww = weights, subclass = subclass, standardize = standardize)
     sum.all <- rbind(ad[1,], sum.all)
     sum.matched <- rbind(ad[2,], sum.matched)
     rownames(sum.all)[1] <- rownames(sum.matched)[1] <- "distance"
   }
+
+  ## By Subclass
+  sum.subclass <- lapply(which.subclass, function(s) {
+
+    #qoi without weights only returns unmatched stats, which is all we need within
+    #subclasses. Otherwise, identical to matched stats.
+    aa <- setNames(lapply(seq_len(kk), function(i) {
+      qoi.subclass(X[,i], tt = treat, subclass = subclass, s.d.denom = s.d.denom, standardize = standardize, which.subclass = s)
+    }), colnames(X))
+
+    sum.sub <- matrix(NA_real_, nrow = kk, ncol = ncol(aa[[1]]), dimnames = list(nam, colnames(aa[[1]])))
+
+    sum.sub.int <- NULL
+    for (i in 1:kk) {
+      sum.sub[i,] <- aa[[i]]
+    }
+    if (interactions) {
+      sum.sub.int <- matrix(NA_real_, nrow = kk*(kk+1)/2, ncol = ncol(aa[[1]]), dimnames = list(NULL, colnames(aa[[1]])))
+      to.remove <- rep(FALSE, nrow(sum.sub.int))
+      int.names <- character(nrow(sum.sub.int))
+      k <- 1
+      for (i in 1:kk) {
+        for (j in i:kk) {
+          if (!to.remove[k]) { #to.remove defined above
+            x2 <- X[,i] * X[,j]
+            jqoi <- qoi.subclass(x2, tt = treat, subclass = subclass, s.d.denom = s.d.denom, standardize = standardize, which.subclass = s)
+            sum.sub.int[k,] <- jqoi
+            if (i == j) {
+              int.names[k] <- paste0(nam[i], "\u00B2")
+            }
+            else {
+              int.names[k] <- paste(nam[i], nam[j], sep = " * ")
+            }
+          }
+          k <- k + 1
+        }
+      }
+      rownames(sum.sub.int) <- int.names
+
+      sum.sub <- rbind(sum.sub, sum.sub.int[!to.remove,,drop = FALSE])
+    }
+
+    if (!is.null(object$distance)) {
+      ad <- qoi.subclass(object$distance, tt = treat, subclass = subclass, s.d.denom = s.d.denom, standardize = standardize, which.subclass = s)
+      sum.sub <- rbind(ad, sum.sub)
+      rownames(sum.sub)[1] <- "distance"
+    }
+
+    return(sum.sub)
+  })
+  if (!is.null(which.subclass)) names(sum.subclass) <- paste("Subclass", which.subclass)
 
   ## Imbalance Reduction
   stat.all <- abs(sum.all[,-(1:2)])

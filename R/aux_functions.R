@@ -612,8 +612,14 @@ generalized_inverse <-function(sigma) {
 }
 
 #Get covariates (RHS) vars from formula
-get.covs.matrix <- function(formula, data) {
-  formula <- update(formula, NULL ~ . + 1)
+get.covs.matrix <- function(formula = NULL, data = NULL) {
+
+  if (is.null(formula)) {
+    fnames <- colnames(data)
+    fnames[!startsWith(fnames, "`")] <- paste0("`", fnames[!startsWith(fnames, "`")], "`")
+    formula <- reformulate(fnames)
+  }
+  else formula <- update(formula, NULL ~ . + 1)
 
   mf <- model.frame(formula, data)
 
@@ -624,6 +630,16 @@ get.covs.matrix <- function(formula, data) {
                     contrasts.arg = lapply(Filter(is.factor, mf),
                                            contrasts, contrasts = FALSE))[,-1,drop = FALSE]
   return(X)
+}
+
+#Standard deviation that uses special formula for binary variables
+sd_ <- function(x, na.rm = TRUE) {
+  if (all(x == 0 | x == 1)) {
+    sqrt(mean(x)*(1-mean(x)))
+  }
+  else {
+    sd(x, na.rm = na.rm)
+  }
 }
 
 #Used to load backports functions. No need to touch, but must always be included somewhere.
