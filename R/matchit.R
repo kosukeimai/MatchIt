@@ -10,22 +10,20 @@ matchit <- function(formula, data = NULL, method = "nearest", distance = "glm",
   mcall <- match.call()
 
   #Process formula and data inputs
-  if (!inherits(formula, "formula")) stop("formula must be a formula object.", call. = FALSE)
+  if (!inherits(formula, "formula")) stop("'formula' must be a formula object.", call. = FALSE)
   f.env <- environment(formula)
 
-  data0 <- get_all_vars(formula, data = data)
-  for (i in names(data0)[vapply(data0, is.character, logical(1L))]) data0[[i]] <- factor(data0[[i]])
-
   treat.formula <- update(formula, . ~ 0)
-  treat.mf <- model.frame(treat.formula, data = data0, na.action = "na.pass")
+  treat.mf <- model.frame(treat.formula, data = data, na.action = "na.pass")
   treat <- model.response(treat.mf)
   if (anyNA(treat)) stop("Missing values are not allowed in the treatment.", call. = FALSE)
-  names(treat) <- rownames(data0)
+  names(treat) <- rownames(treat.mf)
   treat <- binarize(treat) #make 0/1
 
   covs.formula <- delete.response(terms(formula))
-  covs <- get_all_vars(covs.formula, data = data0)
+  covs <- model.frame(covs.formula, data = data, na.action = "na.pass")
   if (anyNA(covs)) stop("Missing values are not allowed in the covariates.", call. = FALSE)
+  for (i in names(covs)[vapply(covs, is.character, logical(1L))]) covs[[i]] <- factor(covs[[i]])
 
   n.obs <- length(treat)
 
@@ -54,8 +52,8 @@ matchit <- function(formula, data = NULL, method = "nearest", distance = "glm",
     distance <- process.distance(distance, method)
 
     if (is.numeric(distance)) {
-      if (length(distance) != length(treat)) stop("distance must be the same length as the dataset if specified as a numeric vector.", call. = FALSE)
-      if (anyNA(distance)) stop("Missing values are not allowed in distance.", call. = FALSE)
+      if (length(distance) != length(treat)) stop("'distance' must be the same length as the dataset if specified as a numeric vector.", call. = FALSE)
+      if (anyNA(distance)) stop("Missing values are not allowed in 'distance'.", call. = FALSE)
       fn1 <- "distance2user"
     }
     else {
@@ -65,10 +63,10 @@ matchit <- function(formula, data = NULL, method = "nearest", distance = "glm",
     if (!is.null(exact)) {
       if (is.character(exact)) {
         if (is.null(data) || !is.data.frame(data)) {
-          stop("If exact is specified as strings, a data frame containing the named variables must be supplied to data.", call. = FALSE)
+          stop("If 'exact' is specified as strings, a data frame containing the named variables must be supplied to 'data'.", call. = FALSE)
         }
         if (!all(exact %in% names(data))) {
-          stop("All names supplied to exact must be variables in data.", call. = FALSE)
+          stop("All names supplied to 'exact' must be variables in 'data'.", call. = FALSE)
         }
         exact <- reformulate(exact)
       }
@@ -76,18 +74,18 @@ matchit <- function(formula, data = NULL, method = "nearest", distance = "glm",
         exact <- update(exact, NULL ~ .)
       }
       else {
-        stop("exact must be supplied as a character vector of names or a one-sided formula.", call. = FALSE)
+        stop("'exact' must be supplied as a character vector of names or a one-sided formula.", call. = FALSE)
       }
-      exactcovs <- get_all_vars(exact, data)
+      exactcovs <- model.frame(exact, data, na.action = "na.pass")
     }
 
     if (!is.null(mahvars)) {
       if (is.character(mahvars)) {
         if (is.null(data) || !is.data.frame(data)) {
-          stop("If mahvars is specified as strings, a data frame containing the named variables must be supplied to data.", call. = FALSE)
+          stop("If 'mahvars' is specified as strings, a data frame containing the named variables must be supplied to 'data'.", call. = FALSE)
         }
         if (!all(mahvars %in% names(data))) {
-          stop("All names supplied to mahvars must be variables in data.", call. = FALSE)
+          stop("All names supplied to 'mahvars' must be variables in 'data'.", call. = FALSE)
         }
         mahvars <- reformulate(mahvars)
       }
@@ -95,9 +93,9 @@ matchit <- function(formula, data = NULL, method = "nearest", distance = "glm",
         mahvars <- update(mahvars, NULL ~ .)
       }
       else {
-        stop("exact must be supplied as a character vector of names or a one-sided formula.", call. = FALSE)
+        stop("'exact' must be supplied as a character vector of names or a one-sided formula.", call. = FALSE)
       }
-      mahcovs <- get_all_vars(mahvars, data)
+      mahcovs <- model.frame(mahvars, data, na.action = "na.pass")
     }
   }
 
@@ -161,7 +159,7 @@ matchit <- function(formula, data = NULL, method = "nearest", distance = "glm",
   caliper <- process.caliper(caliper, method, data, covs, mahcovs, distance, discarded, std.caliper)
 
   if (!is.null(attr(caliper, "cal.formula"))) {
-    calcovs <- get_all_vars(attr(caliper, "cal.formula"), data)
+    calcovs <- model.frame(attr(caliper, "cal.formula"), data, na.action = "na.pass")
     attr(caliper, "cal.formula") <- NULL
   }
 
@@ -199,7 +197,7 @@ matchit <- function(formula, data = NULL, method = "nearest", distance = "glm",
 
   ## putting all the results together
   match.out$model <- dist.model
-  match.out$X <- do.call("data.frame", X.list)
+  match.out$X <- do.call("cbind", X.list)
   match.out$call <- mcall
   match.out$info <- info
   match.out$estimand <- estimand
