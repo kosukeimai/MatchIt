@@ -1,4 +1,4 @@
-discard <- function(treat, pscore = NULL, option = NULL, covs = NULL) {
+discard <- function(treat, pscore = NULL, option = NULL) {
 
   n.obs <- length(treat)
 
