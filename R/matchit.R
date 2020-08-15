@@ -20,11 +20,6 @@ matchit <- function(formula, data = NULL, method = "nearest", distance = "glm",
   names(treat) <- rownames(treat.mf)
   treat <- binarize(treat) #make 0/1
 
-  covs.formula <- delete.response(terms(formula))
-  covs <- model.frame(covs.formula, data = data, na.action = "na.pass")
-  if (anyNA(covs)) stop("Missing values are not allowed in the covariates.", call. = FALSE)
-  for (i in names(covs)[vapply(covs, is.character, logical(1L))]) covs[[i]] <- factor(covs[[i]])
-
   n.obs <- length(treat)
 
   ## Process method
@@ -111,11 +106,11 @@ matchit <- function(formula, data = NULL, method = "nearest", distance = "glm",
   else {
     if (fn1 == "distance2user") {
       dist.model <- link <- NULL
-      discarded <- discard(treat, distance, discard, covs)
+      discarded <- discard(treat, distance, discard)
     }
     else if (fn1 == "distance2mahalanobis") {
       distance <- link <- dist.model <- NULL
-      discarded <- discard(treat, distance, discard, covs)
+      discarded <- discard(treat, distance, discard)
     }
     else {
       #Estimate distance
@@ -132,7 +127,7 @@ matchit <- function(formula, data = NULL, method = "nearest", distance = "glm",
       distance <- dist.out$distance
 
       #Discard
-      discarded <- discard(treat, dist.out$distance, discard, covs)
+      discarded <- discard(treat, dist.out$distance, discard)
 
       #Optionally reestimate
       if (reestimate && any(discarded)) {
@@ -155,6 +150,11 @@ matchit <- function(formula, data = NULL, method = "nearest", distance = "glm",
       }
     }
   }
+
+  covs.formula <- delete.response(terms(formula))
+  covs <- model.frame(covs.formula, data = data, na.action = "na.pass")
+  if (anyNA(covs)) stop("Missing values are not allowed in the covariates.", call. = FALSE)
+  for (i in names(covs)[vapply(covs, is.character, logical(1L))]) covs[[i]] <- factor(covs[[i]])
 
   caliper <- process.caliper(caliper, method, data, covs, mahcovs, distance, discarded, std.caliper)
 
@@ -185,7 +185,6 @@ matchit <- function(formula, data = NULL, method = "nearest", distance = "glm",
                discard = discard,
                replace = if (method %in% c("nearest", "genetic")) replace else NULL,
                ratio = if (method %in% c("nearest", "optimal", "genetic")) ratio else NULL,
-               caliper = if (!is.null(distance) && method %in% c("nearest", "full", "genetic")) caliper else NULL,
                mahalanobis = is.full.mahalanobis || !is.null(mahvars),
                subclass = if (method == "subclass") length(unique(match.out$subclass[!is.na(match.out$subclass)])) else NULL)
 
