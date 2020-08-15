@@ -78,6 +78,11 @@ matchit2full <- function(treat, formula, data, distance, discarded,
   if(verbose)
     cat("Full matching... \n")
 
+  A <- list(...)
+
+  fm.args <- c("min.controls", "max.controls", "omit.fraction", "mean.controls", "tol")
+  A[!names(A) %in% fm.args] <- NULL
+
   estimand <- toupper(estimand)
   estimand <- match_arg(estimand, c("ATT", "ATC", "ATE"))
   if (estimand == "ATC") {
@@ -125,29 +130,32 @@ matchit2full <- function(treat, formula, data, distance, discarded,
   withCallingHandlers({
     if (is.full.mahalanobis) {
       formula <- update(formula, treat_ ~ .)
-      environment(mahvars) <- sys.frame(sys.nframe())
+      environment(formula) <- sys.frame(sys.nframe())
 
-      full <- optmatch::fullmatch(formula,
-                                  data = data,
-                                  method = "mahalanobis",
-                                  within = within.match,
-                                  ...)
+      full <- do.call(optmatch::fullmatch,
+                      c(list(formula,
+                             data = data,
+                             method = "mahalanobis",
+                             within = within.match),
+                        A))
     }
     else if (!is.null(mahvars)) {
       mahvars <- update(mahvars, treat_ ~ .)
       environment(mahvars) <- sys.frame(sys.nframe())
 
-      full <- optmatch::fullmatch(mahvars,
-                                  data = data,
-                                  method = "mahalanobis",
-                                  within = within.match,
-                                  ...)
+      full <- do.call(optmatch::fullmatch,
+                      c(list(mahvars,
+                             data = data,
+                             method = "mahalanobis",
+                             within = within.match),
+                        A))
     }
     else {
-      full <- optmatch::fullmatch(treat_ ~ distance,
-                                  method = "euclidean", #slightly faster than Mahalanobis
-                                  within = within.match,
-                                  ...)
+      full <- do.call(optmatch::fullmatch,
+                      c(list(treat_ ~ distance,
+                             method = "euclidean", #slightly faster than Mahalanobis
+                             within = within.match),
+                        A))
     }
   },
   warning = function(w) {
@@ -166,8 +174,7 @@ matchit2full <- function(treat, formula, data, distance, discarded,
   res <- list(subclass = psclass,
               weights = weights.subclass(psclass, treat, estimand))
 
-  if (is.full.mahalanobis) class(res) <- c("matchit.mahalanobis", "matchit")
-  else class(res) <- c("matchit")
+  class(res) <- c("matchit")
   return(res)
 }
 
@@ -180,6 +187,10 @@ matchit2optimal <- function(treat, formula, data, distance, discarded,
   check.package("optmatch")
 
   if (verbose) cat("Optimal matching... \n")
+
+  A <- list(...)
+  pm.args <- c("tol")
+  A[!names(A) %in% pm.args] <- NULL
 
   estimand <- toupper(estimand)
   estimand <- match_arg(estimand, c("ATT", "ATC"))
@@ -217,31 +228,35 @@ matchit2optimal <- function(treat, formula, data, distance, discarded,
   withCallingHandlers({
     if (is.full.mahalanobis) {
       formula <- update(formula, treat_ ~ .)
-      environment(mahvars) <- sys.frame(sys.nframe())
+      environment(formula) <- sys.frame(sys.nframe())
 
-      pair <- optmatch::pairmatch(formula,
-                                  data = data,
-                                  method = "mahalanobis",
-                                  controls = ratio,
-                                  within = exact.match,
-                                  ...)
+      pair <- do.call(optmatch::pairmatch,
+                      c(list(formula,
+                             data = data,
+                             method = "mahalanobis",
+                             controls = ratio,
+                             within = exact.match),
+                        A))
     }
     else if (!is.null(mahvars)) {
       mahvars <- update(mahvars, treat_ ~ .)
       environment(mahvars) <- sys.frame(sys.nframe())
 
-      pair <- optmatch::pairmatch(mahvars,
-                                  data = data,
-                                  method = "mahalanobis",
-                                  controls = ratio,
-                                  within = exact.match,
-                                  ...)
+      pair <- do.call(optmatch::pairmatch,
+                      c(list(mahvars,
+                             data = data,
+                             method = "mahalanobis",
+                             controls = ratio,
+                             within = exact.match),
+                        A))
     }
     else {
-      pair <- optmatch::pairmatch(treat_ ~ distance,
-                                  method = "euclidean", #slightly faster than Mahalanobis
-                                  controls = ratio,
-                                  within = exact.match, ...)
+      pair <- do.call(optmatch::pairmatch,
+                      c(list(treat_ ~ distance,
+                             method = "euclidean", #slightly faster than Mahalanobis
+                             controls = ratio,
+                             within = exact.match),
+                        A))
     }
   },
   warning = function(w) {
@@ -267,8 +282,7 @@ matchit2optimal <- function(treat, formula, data, distance, discarded,
   res <- list(match.matrix = mm, subclass = psclass,
               weights = weights.subclass(psclass, treat, estimand))
 
-  if (is.full.mahalanobis) class(res) <- c("matchit.mahalanobis", "matchit")
-  else class(res) <- "matchit"
+  class(res) <- "matchit"
   return(res)
 }
 # MATCHIT method= genetic----------------------------------
@@ -398,11 +412,13 @@ matchit2genetic <- function(treat, data, distance, discarded,
 
   if (use.genetic) {
     withCallingHandlers({
-      g.out <- Matching::GenMatch(otreat, X = oX, BalanceMatrix = ocovs_to_balance,
-                                  M = ratio, exact = exact.log, caliper = cal,
-                                  replace = replace, estimand = "ATT", ties = FALSE,
-                                  CommonSupport = FALSE, verbose = verbose,
-                                  print.level = 2*verbose, ...)
+      g.out <- do.call(Matching::GenMatch,
+                       c(list(Tr = otreat, X = oX, BalanceMatrix = ocovs_to_balance,
+                              M = ratio, exact = exact.log, caliper = cal,
+                              replace = replace, estimand = "ATT", ties = FALSE,
+                              CommonSupport = FALSE, verbose = verbose,
+                              print.level = 2*verbose),
+                         A[names(A) %in% names(formals(Matching::GenMatch))]))
     },
     warning = function(w) {
       if (!startsWith(conditionMessage(w), "replace==FALSE, but there are more (weighted) treated obs than control obs.")) warning(w)
@@ -643,8 +659,7 @@ matchit2nearest <-  function(treat, data, distance, discarded,
               subclass = psclass,
               weights = weights.matrix(mm, treat))
 
-  if (is.full.mahalanobis) class(res) <- c("matchit.mahalanobis", "matchit")
-  else class(res) <- "matchit"
+  class(res) <- "matchit"
 
   return(res)
 }
