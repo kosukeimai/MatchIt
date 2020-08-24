@@ -63,7 +63,7 @@ the width(s) of the caliper(s) used for caliper matching. See Notes and Examples
 \code{logical}; whether information about the matching process should be printed to the console.
 }
   \item{\dots}{
-additional arguments passed to \code{\link[optmatch]{fullmatch}} in \pkg{optmatch}. Potentially useful arguments include \code{min.controls}, \code{max.controls}, \code{omit.fraction}, \code{mean.controls}, and \code{tol}. See the \code{\link[optmatch]{fullmatch}} documentation for details.
+additional arguments passed to \code{\link[optmatch]{fullmatch}} in \pkg{optmatch}. Allowed arguments include \code{min.controls}, \code{max.controls}, \code{omit.fraction}, \code{mean.controls}, and \code{tol}. See the \code{\link[optmatch]{fullmatch}} documentation for details.
 }
 
 The arguments \code{replace}, \code{ratio}, and \code{m.order} are ignored with a warning.

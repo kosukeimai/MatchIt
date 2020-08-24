@@ -59,7 +59,7 @@ how many control units should be matched to each treated unit for k:1 matching. 
 \code{logical}; whether information about the matching process should be printed to the console. What is printed depends on the matching method. Default is \code{FALSE} for no printing other than warnings.
 }
   \item{\dots}{
-additional arguments passed to \code{\link[optmatch]{pairmatch}} in \pkg{optmatch}. Only the \code{tols} argument, which is eventually passed to \code{\link[optmatch]{fullmatch}}, make sense to specify.
+additional arguments passed to \code{\link[optmatch]{pairmatch}} in \pkg{optmatch}. Only the \code{tols} argument, which is eventually passed to \code{\link[optmatch]{fullmatch}}, is allowed.
 }
 
 The arguments \code{replace}, \code{caliper}, and \code{m.order} are ignored with a warning.
