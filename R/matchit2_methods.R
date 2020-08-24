@@ -1,8 +1,7 @@
 # this function takes inputs from matchit() and returns the
-# strata for each observation in the subclass entry and the
-# weight for each observation in the weight entry. No match
-# matrix is returned since matches are not unique within
-# strata.
+# strata for each observation in the subclass entry, the
+# weight for each observation in the weight entry, and the
+# match.matrix object
 #
 # MATCHIT method= cem--------------------------------------
 matchit2cem <- function(treat, covs, estimand = "ATT", verbose = FALSE, ...) {
@@ -327,7 +326,7 @@ matchit2genetic <- function(treat, data, distance, discarded,
   n1 <- sum(treat == 1)
   n0 <- sum(treat == 0)
 
-  if (is.null(names(treat))) names(treat) <- 1:n.obs
+  if (is.null(names(treat))) names(treat) <- seq_len(n.obs)
 
   if (!is.null(distance)) {
     if (is.null(m.order)) m.order <- if (estimand == "ATC") "smallest" else "largest"
@@ -335,16 +334,18 @@ matchit2genetic <- function(treat, data, distance, discarded,
     ord <- switch(m.order,
                   "largest" = order(distance, decreasing = TRUE),
                   "smallest" = order(distance),
-                  "random" = sample(1:n.obs, n.obs, replace = FALSE),
-                  "data" = 1:n.obs)
+                  "random" = sample(seq_len(n.obs), n.obs, replace = FALSE),
+                  "data" = seq_len(n.obs))
   }
   else {
     m.order <- match_arg(m.order, c("data", "random"))
     ord <- switch(m.order,
-                  "random" = sample(1:n.obs, n.obs, replace = FALSE),
-                  "data" = 1:n.obs)
+                  "random" = sample(seq_len(n.obs), n.obs, replace = FALSE),
+                  "data" = seq_len(n.obs))
   }
+  ord <- ord[!ord %in% which(discarded)]
 
+  #Create X (matching variables) and covs_to_balance
   if (!is.null(mahvars)) {
     covs_to_balance <- get.covs.matrix(formula, data = data)
     X <- get.covs.matrix(mahvars, data = data)
@@ -358,18 +359,25 @@ matchit2genetic <- function(treat, data, distance, discarded,
     X <- cbind(covs_to_balance, distance)
   }
 
+  #Process exact; exact.log will be supplied to GenMatch() and Match()
   if (!is.null(exact)) {
+    #Add covariates in exact not in X to X
     ex <- as.numeric(factor(exactify(model.frame(exact, data = data), names(treat))))
     X <- cbind(X, ex)
+
     exact.log <- c(rep(FALSE, ncol(X) - 1), TRUE)
   }
   else exact.log <- NULL
 
+  #Process caliper; cal will be supplied to GenMatch() and Match()
   if (!is.null(caliper)) {
+    #Add covariates in caliper other than distance (cov.cals) not in X to X
     cov.cals <- setdiff(names(caliper), "")
     if (length(cov.cals) > 0 && any(!cov.cals %in% colnames(X))) {
       calcovs <- get.covs.matrix(reformulate(cov.cals[!cov.cals %in% colnames(X)]), data = data)
       X <- cbind(X, calcovs)
+
+      #Expand exact.log for newly added covariates
       if (!is.null(exact.log)) exact.log <- c(exact.log, rep(FALSE, ncol(calcovs)))
     }
 
@@ -380,18 +388,26 @@ matchit2genetic <- function(treat, data, distance, discarded,
       else pop.sd(X[!discarded, x])
     }, numeric(1L))
 
+    #cal needs one value per variable in X
     cal <- setNames(rep(Inf, ncol(X)), colnames(X))
+
+    #First put covariate calipers into cal
     if (length(cov.cals) > 0) {
       cal[intersect(cov.cals, names(cal))] <- caliper[intersect(cov.cals, names(cal))]
     }
 
+    #Then put distance caliper into cal
     if ("" %in% names(caliper)) {
       if (!is.null(mahvars)) {
+        #If mahvars specified, distance is not yet in X, so add it to X
         X <- cbind(X, distance)
         cal <- c(cal, caliper[names(caliper) == ""])
+
+        #Expand exact.log for newly added distance
         if (!is.null(exact.log)) exact.log <- c(exact.log, FALSE)
       }
       else {
+        #Otherwise, distance is in X at the specified index
         cal[ncol(covs_to_balance) + 1] <- caliper[names(caliper) == ""]
       }
     }
@@ -399,21 +415,17 @@ matchit2genetic <- function(treat, data, distance, discarded,
   }
   else cal<- NULL
 
-  lab <- names(treat)
-  lab1 <- names(treat[treat == 1])
+  #Reorder data according to m.order since Match matches in order of data;
+  #ord already excludes discarded units
 
-  #Reorder data according to m.order since Match matches in order of data
-  olab <- names(treat[ord])
-  olab1 <- names(treat[ord][treat[ord] == 1])
-
-  otreat <- treat[ord][!discarded[ord]]
-  ocovs_to_balance <- covs_to_balance[ord,,drop = FALSE][!discarded[ord],, drop = FALSE]
-  oX <- (X[ord,,drop = FALSE][!discarded[ord],, drop = FALSE])
+  treat_ <- treat[ord]
+  covs_to_balance <- covs_to_balance[ord,,drop = FALSE]
+  X <- X[ord,,drop = FALSE]
 
   if (use.genetic) {
     withCallingHandlers({
       g.out <- do.call(Matching::GenMatch,
-                       c(list(Tr = otreat, X = oX, BalanceMatrix = ocovs_to_balance,
+                       c(list(Tr = treat_, X = X, BalanceMatrix = covs_to_balance,
                               M = ratio, exact = exact.log, caliper = cal,
                               replace = replace, estimand = "ATT", ties = FALSE,
                               CommonSupport = FALSE, verbose = verbose,
@@ -431,7 +443,7 @@ matchit2genetic <- function(treat, data, distance, discarded,
   }
 
   withCallingHandlers({
-    m.out <- Matching::Match(Tr = otreat, X = oX,
+    m.out <- Matching::Match(Tr = treat_, X = X,
                              M = ratio, exact = exact.log, caliper = cal,
                              replace = replace, estimand = "ATT", ties = FALSE,
                              CommonSupport = FALSE, Weight = if (use.genetic) 3 else 2,
@@ -442,22 +454,27 @@ matchit2genetic <- function(treat, data, distance, discarded,
     invokeRestart("muffleWarning")
   })
 
+  lab <- names(treat)
+  lab1 <- names(treat[treat == 1])
+
+  lab_ <- names(treat_)
+
   mm <- matrix(NA_character_, nrow = n1, ncol = max(table(m.out$index.treated)),
                dimnames = list(lab1, NULL))
 
   unique.matched.focal <- unique(m.out$index.treated, nmax = n1)
 
   for (i in unique.matched.focal) {
-    matched.units <- olab[m.out$index.control[m.out$index.treated == i]]
-    mm[olab[i], 1:length(matched.units)] <- matched.units
+    matched.units <- lab_[m.out$index.control[m.out$index.treated == i]]
+    mm[lab_[i], seq_along(matched.units)] <- matched.units
   }
 
   if (!replace) {
-    psclass <- setNames(rep(NA_character_, n.obs), names(treat))
+    psclass <- setNames(rep(NA_character_, n.obs), lab)
     no.match <- is.na(mm)
     psclass[lab1[!no.match[,1]]] <- lab1[!no.match[,1]]
     psclass[mm[!no.match]] <- lab1[row(mm)[!no.match]]
-    psclass <- setNames(as.integer(factor(psclass, nmax = n1)), names(treat))
+    psclass <- setNames(as.integer(factor(psclass, nmax = n1)), lab)
   }
   else psclass <- NULL
 
