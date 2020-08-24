@@ -484,27 +484,36 @@ match_arg <- function(arg, choices, several.ok = FALSE) {
 #which; otherwise, a guess is used. From WeightIt.
 binarize <- function(variable, zero = NULL, one = NULL) {
   if (length(unique(variable)) > 2) stop(paste0("Cannot binarize ", deparse1(substitute(variable)), ": more than two levels."))
-  if (is.character(variable)) {
+  if (is.character(variable) || is.factor(variable)) {
     variable <- factor(variable, nmax = 2)
     unique.vals <- levels(variable)
   }
-  else unique.vals <- sort(unique(variable, nmax = 2), partial = 1)
-
-  variable.numeric <- as.numeric(variable)
+  else {
+    unique.vals <- unique(variable, nmax = 2)
+  }
 
   if (is.null(zero)) {
     if (is.null(one)) {
-      if (0 %in% variable.numeric) return(setNames(as.integer(variable.numeric != 0), names(variable)))
-      else return(setNames(as.integer(variable != unique.vals[1]), names(variable)))
+      if (can_str2num(unique.vals)) {
+        variable.numeric <- str2num(variable)
+      }
+      else {
+        variable.numeric <- as.numeric(variable)
+      }
+
+      if (0 %in% variable.numeric) zero <- 0
+      else zero <- min(variable.numeric, na.rm = TRUE)
+
+      return(setNames(as.integer(variable.numeric != zero), names(variable)))
     }
     else {
       if (one %in% unique.vals) return(setNames(as.integer(variable == one), names(variable)))
-      else stop("The argument to 'one' is not the name of a level of variable.")
+      else stop("The argument to 'one' is not the name of a level of variable.", call. = FALSE)
     }
   }
   else {
-    if (!zero %in% unique.vals) stop("The argument to 'zero' is not the name of a level of variable.")
-    return(setNames(as.integer(variable != zero), names(variable)))
+    if (zero %in% unique.vals) return(setNames(as.integer(variable != zero), names(variable)))
+    else stop("The argument to 'zero' is not the name of a level of variable.", call. = FALSE)
   }
 }
 
