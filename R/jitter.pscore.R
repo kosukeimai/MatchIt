@@ -39,8 +39,8 @@ jitter.pscore <- function(x, interactive, pch = 1, cex = NULL,...){
   axis(1)
 
   center <- mean(par("usr")[1:2])
-  text(center, 2.5, "Unmatched Treatment Units", adj = .5)
-  text(center, 1.5, "Matched Treatment Units", adj = .5)
+  text(center, 2.5, "Unmatched Treated Units", adj = .5)
+  text(center, 1.5, "Matched Treated Units", adj = .5)
   text(center, 0.5, "Matched Control Units", adj = .5)
   text(center, -0.5, "Unmatched Control Units", adj = .5)
   box()
