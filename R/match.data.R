@@ -99,7 +99,7 @@ get_matches <- function(object, distance = "distance", weights = "weights",
 
   mm <- object$match.matrix
 
-  mm <- mm[!is.na(mm[,1]),,drop = TRUE]
+  mm <- mm[!is.na(mm[,1]),,drop = FALSE]
 
   tmm <- t(mm)
 
