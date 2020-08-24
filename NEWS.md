@@ -20,13 +20,13 @@ output:
 
 * The `mahvars` argument can also be supplied either as a character vector of names of variables in `data` or as a one-sided formula. Mahalanobis distance matching will occur on the variables in the formula, processed by `model.matrix()`. Use this when performing Mahalanobis distance matching on some variables within a caliper defined by the propensity scores estimated from the variables in the main `formula` using the argument to `distance`. For regular Mahalanobis distance matching (without a propensity score caliper), supply the variables in the main `formula` and set `distance = "mahalanobis"`.
 
-* The `caliper` argument can now be specified as a numeric vector with a caliper for each variable named in it. This means you can separately impose calipers on individual variables as well as or instead of the propensity score. For example, to require that units within pairs must be no more than .2 standard deviations of `X1` away from each other, one could specify `caliper = c(X1 = .2)`. A new option `std.caliper` allows the choice of whether the caliper is in standard deviation units or not, and one value per entry in `caliper` can be supplied. An unnamed entry to `caliper` applies the caliper to the distance measure and teh default of `std.caliper` is `FALSE`, so this doesn't change the behavior of old code. This options only applies to the methods that accept calipers, namely `"nearest"`, `"genetic"`, and `"full"`.
+* The `caliper` argument can now be specified as a numeric vector with a caliper for each variable named in it. This means you can separately impose calipers on individual variables as well as or instead of the propensity score. For example, to require that units within pairs must be no more than .2 standard deviations of `X1` away from each other, one could specify `caliper = c(X1 = .2)`. A new option `std.caliper` allows the choice of whether the caliper is in standard deviation units or not, and one value per entry in `caliper` can be supplied. An unnamed entry to `caliper` applies the caliper to the distance measure and the default of `std.caliper` is `FALSE`, so this doesn't change the behavior of old code. This options only applies to the methods that accept calipers, namely `"nearest"`, `"genetic"`, and `"full"`.
 
 * A new `estimand` argument can be supplied to specify the target estimand of the analysis. For all methods, the ATT and ATC are available with the ATT as the default, consistent with prior behavior. For some methods, the ATE is additionally available. Note that setting the estimand doesn't actually mean that estimand is being targeted; if calipers, common support, or other restrictions are applied, the target population will shift from that requested. `estimand` just triggers the choice of which level of the treatment is focal and what formula should be used to compute weights from subclasses.
 
-* The allowable options to `distance` have changed slightly. The input should be either `"mahalanobis"` for Mahalanobis distance matching (without a propensity score caliper), a numeric vector of distance values (i.e., values whose absolute pairwise differences form the distances), or one of the allowable options. The new allowable values include `"glm"` for propensity scores estimated with `glm()`, `"gam"` for propensity scores estimated with `mgcv::gam()`, `"rpart"` for propensity scores estimated with `rpart::rpart()`, `"nnet"` for propensity scores estimated with `nnet::nnet()`, `"cbps"` for propensity scores estimated with `CBPS::CBPS()`, or `bart` for propensity scores estimated with `dbarts::bart2()`. To specify a link (e.g., for probit regression), specify an argument to the new `link` parameter. For linear versions of the propensity score, specify `link` as `"linear.{link}"`. For example, for linear probit regression propensity scores, one should specify `distance = "glm", link = "linear.probit"`. The default `distance` is `"glm"` and the default link is `"logit"`, so these can be omitted if either is desired. Not all methods accept a `link`, and for these, it will be ignored. If an old-style `distance` is supplied, it will be converted to an appropriate specification with a warning (except for `distance = "logit"`, which will be converted without a warning).
+* The allowable options to `distance` have changed slightly. The input should be either `"mahalanobis"` for Mahalanobis distance matching (without a propensity score caliper), a numeric vector of distance values (i.e., values whose absolute pairwise differences form the distances), or one of the allowable options. The new allowable values include `"glm"` for propensity scores estimated with `glm()`, `"gam"` for propensity scores estimated with `mgcv::gam()`, `"rpart"` for propensity scores estimated with `rpart::rpart()`, `"nnet"` for propensity scores estimated with `nnet::nnet()`, `"cbps"` for propensity scores estimated with `CBPS::CBPS()`, or `bart` for propensity scores estimated with `dbarts::bart2()`. To specify a link (e.g., for probit regression), specify an argument to the new `link` parameter. For linear versions of the propensity score, specify `link` as `"linear.{link}"`. For example, for linear probit regression propensity scores, one should specify `distance = "glm", link = "linear.probit"`. The default `distance` is `"glm"` and the default link is `"logit"`, so these can be omitted if either is desired. Not all methods accept a `link`, and for those that don't, it will be ignored. If an old-style `distance` is supplied, it will be converted to an appropriate specification with a warning (except for `distance = "logit"`, which will be converted without a warning).
 
-* The output to `matchit()` has changed slightly; the component `X` is now a data frame, the result of a call to `get_all_vars()` with the formula provided. If `exact` or `mahvars` are specified, their variables are included as well, if not already present. It is included for all methods and is the same for all methods. In the past, it was the result of a call to `model.matrix()` and was only included for some methods.
+* The output to `matchit()` has changed slightly; the component `X` is now a data frame, the result of a call to `model.frame()` with the formula provided. If `exact` or `mahvars` are specified, their variables are included as well, if not already present. It is included for all methods and is the same for all methods. In the past, it was the result of a call to `model.matrix()` and was only included for some methods.
 
 * Added `"cbps"` as option for `distance`. This estimates propensity scores using the covariate balancing propensity score (CBPS) algorithm as implemented in the `CBPS` package. Set `link = "linear"` to use a linear version of the CBPS.
 
@@ -52,11 +52,11 @@ output:
 
 * With `method = "nearest"`, a `subclass` component containing pair membership is now included in the output when `replace = FALSE` (the default), as it has been with optimal and full matching.
 
-* Performance improvements for nearest neighbor matching.
+* Performance improvements.
 
 * When using `method = "nearest"` with `distance = "mahalanobis"`, factor variables can now be included in the main `formula`. The design matrix no longer has to be full rank because a generalized inverse is used to compute the Mahalanobis distance.
 
-* When using Mahalanobis distance matching, unless `m.order = "random"`, results will be identical across runs. Previously, several random choices would occur to break ties. Ties are broken based on the order of the data; shuffling the order of the data may therefore yield different matches.
+* Unless `m.order = "random"`, results will be identical across runs. Previously, several random choices would occur to break ties. Ties are broken based on the order of the data; shuffling the order of the data may therefore yield different matches.
 
 * When using `method = "nearest"` with a caliper specified, the nearest control unit will be matched to the treated unit if one is available. Previously, a random control unit within the caliper would be selected. This eliminates the need for the `calclosest` argument, which has been removed.
 
@@ -68,9 +68,9 @@ output:
 
 * Added support for exact matching with `method = "optimal"` and `method = "full"`. As with `method = "nearest"`, the names of the variables for which exact matches are required should be supplied to the `exact` argument. This relies on `optmatch::exactMatch()`.
 
-* The warning that used to occur when using `method = "optimal"` and `method = "full"` about the order of the match not guaranteed to be the same as the original data no longer occurs.
+* The warning that used to occur about the order of the match not guaranteed to be the same as the original data no longer occurs.
 
-* For `method = "full"`, the `estimand` argument can be set to `"ATT"`, `"ATC"`, or `"ATE"` to compute matching weights that correspond to the given estimand.
+* For `method = "full"`, the `estimand` argument can be set to `"ATT"`, `"ATC"`, or `"ATE"` to compute matching weights that correspond to the given estimand. See `?matchit` for details on how weights are computed for each `estimand`.
 
 ## `method = "genetic"`
 
@@ -82,7 +82,7 @@ output:
 
 * The `exact` argument now correctly functions with `method = "genetic"`. Previously, it would have to be specified in accordance with its use in `Matching::GenMatch()`.
 
-* Different ways to match on variables are now allowed with `method = "genetic"`, similar to how they are with `method = "nearest"`. If `distance = "mahalanobis"`, no distance measure will be computed, and genetic matching will be performed just on the variables supplied to `formula`. Otherwise, if `mahvars` are not specified, genetic matching will be performed on the variables supplied to `formula` and the distance measure. If `mahvars` are specified, genetic matching will be performed on the variables supplied to `mahvars`, but balance will be optimized on all covariates supplied to `formula`. Previously, `mahvars` was ignored. Balance is now always optimized on the variables included in `formula` and never on the distance measure, whereas in the past the distance measure was always included in the balance optimization.
+* Different ways to match on variables are now allowed with `method = "genetic"`, similar to how they are with `method = "nearest"`. If `distance = "mahalanobis"`, no distance measure will be computed, and genetic matching will be performed just on the variables supplied to `formula`. If `mahvars` is specified, genetic matching will be performed on the variables supplied to `mahvars`, but balance will be optimized on all covariates supplied to `formula`. Otherwise, genetic matching will be performed on the variables supplied to `formula` and the distance measure. Previously, `mahvars` was ignored. Balance is now always optimized on the variables included in `formula` and never on the distance measure, whereas in the past the distance measure was always included in the balance optimization.
 
 * The `caliper` argument now works as it does with `method = "nearest"` rather than needing to be supplied in a way that `Matching::Match()` would accept.
 
@@ -92,7 +92,7 @@ output:
 
 * With `method = "cem"`, the `k2k` argument is now recognized. Previously it was ignored unless an argument to `k2k.method` was supplied.
 
-* The `estimand` argument can be set to `"ATT"`, `"ATC"`, or `"ATE"` to compute matching weights that correspond to the given estimand. Previously only ATT weights were computed.
+* The `estimand` argument can be set to `"ATT"`, `"ATC"`, or `"ATE"` to compute matching weights that correspond to the given estimand. Previously only ATT weights were computed. See `?matchit` for details on how weights are computed for each `estimand`.
 
 ## `method = "subclass"`
 
@@ -114,11 +114,13 @@ output:
 
 * In `summary.matchit()`, the argument to `addlvariables` can be specified as a data frame or matrix of covariates, a formula with the additional covariates (and transformations) on the right side, or a character vector containing the names of the additional covariates. For the latter two, if the variables named do not exist in the `X` component of the `matchit` output object or in the environment, an argument to `data` can be supplied to `summary()` that contains these variables.
 
-* The output for `summary()` is now the same for all methods. Previously there were different methods for a few different types of matching. 
+* The output for `summary()` is now the same for all methods (except subclassification). Previously there were different methods for a few different types of matching. 
 
 * The QQ and ECDF statistics have been adjusted. Both now use the weights that were computed as part of the matching. The QQ and ECDF statistics for binary variables are set to the difference in group proportions. The standard deviation of the control group has been removed from the output.
 
 * The default for `standardize` is now `TRUE`, so that standardized mean differnces and ECDF statistics will be displayed by default.
+
+* A new column for the average absolute pair difference for each covariate is included in the output. The values indicate how far treated and contorl units within pairs are from each other.
 
 ## `plot.matchit()`
 
