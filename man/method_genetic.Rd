@@ -4,7 +4,7 @@
 Genetic Matching
 }
 \description{
-In \code{\link{matchit}}, setting \code{method = "genetic"} performs genetic matching. Genetic matching is a form of nearest neighbor matching where distances are computed as the Euclidean distance between units based on scaled versions of the covariates, where each scaling factor represents the importance of the corresponding covariate. A genetic algorithm is used to select the scaling factors. The scaling factors are chosen as those which maximize a criterion related to covariate balance, which can be chosen, but which by default is the smallest p-value in covariate balance tests among the covariates. This method relies on and is a wrapper for the \code{\link[Matching]{GenMatch}} and \code{\link[Matching]{Match}} functions in the \pkg{Matching} package, which uses \code{\link[rgenoud]{genoud}} from the \pkg{rgenoud} package to perform the optimization using the genetic algorithm.
+In \code{\link{matchit}}, setting \code{method = "genetic"} performs genetic matching. Genetic matching is a form of nearest neighbor matching where distances are computed as the generalized Mahalanobis distance, which is a generalization of the Mahalanobis distance with a scaling factor for each covariate that represents the importance of that covariate. A genetic algorithm is used to select the scaling factors. The scaling factors are chosen as those which maximize a criterion related to covariate balance, which can be chosen, but which by default is the smallest p-value in covariate balance tests among the covariates. This method relies on and is a wrapper for the \code{\link[Matching]{GenMatch}} and \code{\link[Matching]{Match}} functions in the \pkg{Matching} package, which uses \code{\link[rgenoud]{genoud}} from the \pkg{rgenoud} package to perform the optimization using the genetic algorithm.
 
 This page details the allowable arguments with \code{method = "genmatch"}. See \code{\link{matchit}} for an explanation of what each argument means in a general context and how it can be specified.
 
@@ -30,7 +30,7 @@ a data frame containing the variables named in \code{formula}. If not found in \
 set here to \code{"genetic"}.
 }
   \item{distance}{
-the distance measure to be used. See \code{\link{distance}} for allowable options. When set to \code{"mahalanobis"}, the covariates in \code{formula} are supplied to the Euclidean distance matrix to have their scaling factors chosen. Otherwise, the distance measure is included with the covariates in \code{formula} to be supplied to the Euclidean distance matrix.
+the distance measure to be used. See \code{\link{distance}} for allowable options. When set to \code{"mahalanobis"}, only the covariates in \code{formula} are supplied to the generalized Mahalanobis distance matrix to have their scaling factors chosen. Otherwise, the distance measure is included with the covariates in \code{formula} to be supplied to the generalized Mahalanobis distance matrix.
 }
   \item{link}{
 when \code{distance} is specified as a string and not \code{"mahalanobis"}, an additional argument controlling the link function used in estimating the distance measure. See \code{\link{distance}} for allowable options with each option.
@@ -45,7 +45,7 @@ a string containing the desired estimand. Allowable options include \code{"ATT"}
 for which variables exact matching should take place.
 }
   \item{mahvars}{
-when a distance measure other than \code{"mahalanobis"} is used (e.g., for caliper matching or to discard units for common support), which covariates should be supplied to the Euclidean distance matrix. If unspecified, all variables in \code{formula} will be supplied to the distance matrix. Use \code{mahvars} to only supply a subset. Even if \code{mahvars} is specified, balance iwll be optimized on all covariates in \code{formula}.
+when a distance measure other than \code{"mahalanobis"} is used (e.g., for caliper matching or to discard units for common support), which covariates should be supplied to the generalized Mahalanobis distance matrix. If unspecified, all variables in \code{formula} will be supplied to the distance matrix. Use \code{mahvars} to only supply a subset. Even if \code{mahvars} is specified, balance will be optimized on all covariates in \code{formula}.
 }
   \item{discard}{
 a string containing a method for discarding units outside a region of common support. Only allowed when \code{distance} is not \code{"mahalanobis"}.
@@ -79,17 +79,15 @@ additional arguments passed to \code{\link[Matching]{GenMatch}} in \pkg{Matching
 All outputs described in \code{\link{matchit}} are returned with \code{method = "genetic"}. When \code{repalce = TRUE}, the \code{subclass} component is omitted.
 }
 \details{
-In genetic matching, covariates play three roles: 1) as the variables on which balance is optimized, 2) as the variables in the scaled Euclidean distance between units, and 3) in estimating the propensity score. Variables supplied to \code{formula} are always used for role (1), as the variables on which balance is optimized. When \code{distance} is not \code{"mahalnobis"}, the covariates are also used to estimate the propensity score (unless it is supplied). The propensity score, if estimated or uspplied, is always used along the covariates in the scaled Euclidean distance matrix. When \code{mahvars} is specified, the named variables will form the covariates that go into the scaled Euclidean distance matrix. This leads to three ways to use \code{distance} and \code{mahvars} to perform the matching:
+In genetic matching, covariates play three roles: 1) as the variables on which balance is optimized, 2) as the variables in the generalized Mahalanobis distance between units, and 3) in estimating the propensity score. Variables supplied to \code{formula} are always used for role (1), as the variables on which balance is optimized. When \code{distance} is not \code{"mahalanobis"}, the covariates are also used to estimate the propensity score (unless it is supplied). When \code{mahvars} is specified, the named variables will form the covariates that go into the distance matrix. Otherwise, the variables in \code{formula} along with the propensity score will go into the distance matrix. This leads to three ways to use \code{distance} and \code{mahvars} to perform the matching:
 
-1) When \code{distance = "mahalanobis"}, no propensity score is estimated, and the covariates in \code{formula} are used to form the scaled Euclidean distance matrix. (In the sense, \code{"mahalanobis"} only signals that no propensity score is to be estimated and that the matching variables are those in \code{formula}, consistent with setting \code{distance = "mahalanobis"} with other methods.)
+1) When \code{distance = "mahalanobis"}, no propensity score is estimated, and the covariates in \code{formula} are used to form the generalized Mahalanobis distance matrix. In this sense, \code{"mahalanobis"} signals that no propensity score is to be estimated and that the matching variables are those in \code{formula}, consistent with setting \code{distance = "mahalanobis"} with other methods.
 
-2) When \code{distance} is not \code{"mahalanobis"} and \code{mahvars} \emph{is not} specified, the covariates in \code{formula} along with the propensity score are used to form the scaled Euclidean distance matrix. This is the default and most typical use of \code{method = "genetic"} in \pkg{MatchIt}.
+2) When \code{distance} is not \code{"mahalanobis"} and \code{mahvars} \emph{is not} specified, the covariates in \code{formula} along with the propensity score are used to form the generalized Mahalanobis distance matrix. This is the default and most typical use of \code{method = "genetic"} in \pkg{MatchIt}.
 
-3) When \code{distance} is not \code{"mahalanobis"} and \code{mahvars} \emph{is} specified, the covariates in \code{mahvars} are used to form the scaled Euclidean distance matrix. The covariates in \code{formula} are used to estimate the propensity score and have their balance optimized by the genetic algorithm.
+3) When \code{distance} is not \code{"mahalanobis"} and \code{mahvars} \emph{is} specified, the covariates in \code{mahvars} are used to form the generalized Mahalanobis distance matrix. The covariates in \code{formula} are used to estimate the propensity score and have their balance optimized by the genetic algorithm. The propensity score is not included in the generalized Mahalanobis distance matrix.
 
-Note that as they are used here, \code{distance = "mahalanobis"} and \code{mahvars} don't actually correspond to Mahalanobis distance matching; rather, they are simply signals to use covariates in ways analogus to how they are used in Mahalanobis distance matching with other methods.
-
-When a caliper is specified, any variables mentioned in \code{caliper}, possibily including the distance measure, will be added to the matching variables used to form the scaled Euclidean distance matrix. This is because \pkg{Matching} doesn't allow for the separation of caliper variables and matching variables in genetic matching.
+When a caliper is specified, any variables mentioned in \code{caliper}, possibly including the distance measure, will be added to the matching variables used to form the generalized Mahalanobis distance matrix. This is because \pkg{Matching} doesn't allow for the separation of caliper variables and matching variables in genetic matching.
 
 \subsection{Estimand}{
 The \code{estimand} argument controls whether control units are selected to be matched with treated units (\code{estimand = "ATT"}) or treated units are selected to be matched with control units (\code{estimand = "ATC"}). The "focal" group (e.g., the treated units for the ATT) is typically made to be the smaller treatmentgroup, and a warning will be thrown if it is not set that way unless \code{replace = TRUE}. Setting \code{estimand = "ATC"} is equivalent to swapping all treated and control labels for the treatment variable. When \code{estimand = "ATC"}, the default \code{m.order} is \code{"smallest"}, and the \code{match.matrix} component of the output will have the names of the control units as the rownames and be filled with the names of the matched treated units (opposite to when \code{estimand = "ATT"}). Note that the argument supplied to \code{estimand} doesn't necessarily correspond to the estimand actually targeted; it is merely a switch to trigger which treatment group is considered "focal". Note that while \code{GenMatch()} and \code{Matching()} support the ATE as an estimand, \code{matchit()} only supports the ATT and ATC for genetic matching.
@@ -131,8 +129,8 @@ m.out2
 summary(m.out2)
 
 # 1:1 genetic matching on just age, educ, re74, and re75
-# within calipers on PS and educ (PS is also added to
-# matching variables)
+# within calipers on PS and educ (PS is not included in
+# the matching variables)
 m.out3 <- matchit(treat ~ age + educ + race + nodegree +
                     married + re74 + re75, data = lalonde,
                   method = "genetic",
