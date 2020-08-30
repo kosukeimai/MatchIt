@@ -27,18 +27,34 @@ matchit2cem <- function(treat, covs, estimand = "ATT", verbose = FALSE, ...) {
 
   args.excluded <- c("treatment", "baseline.group", "data", "verbose", "eval.imbalance",
                      "keep.all", "drop", "L1.breaks", "L1.grouping")
-  mat <- do.call(cem::cem, c(list(treatment = names(cem.data)[ncol(cem.data)],
-                                  data = cem.data,
-                                  verbose = as.integer(verbose),
-                                  eval.imbalance = FALSE,
-                                  keep.all = FALSE,
-                                  drop = NULL),
-                             A[names(A) %in% setdiff(names(formals(cem::cem)), args.excluded)]))
+  mat <- tryCatch({
+    withCallingHandlers({
+      do.call(cem::cem, c(list(treatment = names(cem.data)[ncol(cem.data)],
+                                      data = cem.data,
+                                      verbose = as.integer(verbose),
+                                      eval.imbalance = FALSE,
+                                      keep.all = FALSE,
+                                      drop = NULL),
+                                 A[names(A) %in% setdiff(names(formals(cem::cem)), args.excluded)]))
+    },
+    warning = function(w) {
+      warning(paste0("(from cem) ", conditionMessage(w)), call. = FALSE, immediate. = TRUE)
+      invokeRestart("muffleWarning")
+    })
+  },
+  error = function(e) {
+    if (startsWith(conditionMessage(e), "subscript out of bounds")) {
+      stop("No units were matched. Try changing the coarsening options using the 'cutpoints' and 'grouping' arguments in cem(). See ?method_cem or ?cem::cem for details.", call. = FALSE)
+    }
+    else {
+      stop(paste0("(from cem) ", conditionMessage(e)), call. = FALSE, immediate. = TRUE)
+    }
+  })
 
   # here we create a column vector where the matched entry get its stratum
   # and the unmatched entry gets an NA.
   strat <- setNames(rep(NA_character_, n.obs), names(treat))
-  strat[mat$matched] <- mat$strata[mat$matched]
+  if (!is.null(mat)) strat[mat$matched] <- mat$strata[mat$matched]
 
   res <- list(subclass = strat,
               weights = weights.subclass(strat, treat, estimand))
@@ -160,6 +176,9 @@ matchit2full <- function(treat, formula, data, distance, discarded,
   warning = function(w) {
     warning(paste0("(from optmatch) ", conditionMessage(w)), call. = FALSE, immediate. = TRUE)
     invokeRestart("muffleWarning")
+  },
+  error = function(e) {
+    stop(paste0("(from optmatch) ", conditionMessage(e)), call. = FALSE, immediate. = TRUE)
   })
 
   if (all(is.na(full))) stop("No matches were found.", call. = FALSE)
@@ -261,6 +280,9 @@ matchit2optimal <- function(treat, formula, data, distance, discarded,
   warning = function(w) {
     warning(paste0("(from optmatch) ", conditionMessage(w)), call. = FALSE, immediate. = TRUE)
     invokeRestart("muffleWarning")
+  },
+  error = function(e) {
+    stop(paste0("(from optmatch) ", conditionMessage(e)), call. = FALSE, immediate. = TRUE)
   })
 
   if (all(is.na(pair))) stop("No matches were found.", call. = FALSE)
@@ -433,8 +455,13 @@ matchit2genetic <- function(treat, data, distance, discarded,
                          A[names(A) %in% names(formals(Matching::GenMatch))]))
     },
     warning = function(w) {
-      if (!startsWith(conditionMessage(w), "replace==FALSE, but there are more (weighted) treated obs than control obs.")) warning(w)
+      if (!startsWith(conditionMessage(w), "replace==FALSE, but there are more (weighted) treated obs than control obs.")) {
+        warning(paste0("(from Matching) ", conditionMessage(w)), call. = FALSE, immediate. = TRUE)
+      }
       invokeRestart("muffleWarning")
+    },
+    error = function(e) {
+      stop(paste0("(from Matching) ", conditionMessage(e)), call. = FALSE, immediate. = TRUE)
     })
   }
   else {
@@ -450,8 +477,13 @@ matchit2genetic <- function(treat, data, distance, discarded,
                              Weight.matrix = g.out, version = "fast")
   },
   warning = function(w) {
-    if (!startsWith(conditionMessage(w), "replace==FALSE, but there are more (weighted) treated obs than control obs.")) warning(w)
+    if (!startsWith(conditionMessage(w), "replace==FALSE, but there are more (weighted) treated obs than control obs.")) {
+      warning(paste0("(from Matching) ", conditionMessage(w)), call. = FALSE, immediate. = TRUE)
+    }
     invokeRestart("muffleWarning")
+  },
+  error = function(e) {
+    stop(paste0("(from Matching) ", conditionMessage(e)), call. = FALSE, immediate. = TRUE)
   })
 
   lab <- names(treat)
@@ -550,6 +582,9 @@ matchit2nearest <-  function(treat, data, distance, discarded,
     caliper.dist <- caliper[names(caliper) == ""]
     caliper <- caliper[names(caliper) != ""]
   }
+  else {
+    caliper.dist <- NULL
+  }
 
   if (!is.null(exact)) {
     ex <- exactify(model.frame(exact, data = data), names(treat))
@@ -567,7 +602,9 @@ matchit2nearest <-  function(treat, data, distance, discarded,
     mahSigma_inv <- generalized_inverse(cov(mahcovs))
     rownames(mahcovs) <- names(treat)
   }
-  else mahcovs <- NULL
+  else {
+    mahcovs <- mahSigma_inv <- NULL
+  }
 
   mm <- matrix(NA_character_, nrow = n1,
                ncol = ratio, dimnames = list(lab1, seq_len(ratio)))
@@ -619,20 +656,18 @@ matchit2nearest <-  function(treat, data, distance, discarded,
 
         ps.diff <- NULL
 
-        if (!is.null(caliper)) {
-          #PS caliper
-          if (length(caliper.dist) > 0) {
-            ps.diff <- abs(unname(d1[ord_i]) - d0[c.eligible])
-            c.eligible <- c.eligible[ps.diff <= caliper.dist]
-          }
+        #PS caliper
+        if (length(caliper.dist) > 0) {
+          ps.diff <- abs(unname(d1[ord_i]) - d0[c.eligible])
+          c.eligible <- c.eligible[ps.diff <= caliper.dist]
+        }
 
-          #Covariate caliper
-          if (length(caliper) > 0 && length(c.eligible) > 0) {
-            for (x in names(caliper)) {
-              calcov.diff <- abs(unname(calcovs[lab1[ord_i], x]) - calcovs[c.eligible, x])
-              c.eligible <- c.eligible[calcov.diff <= caliper[x]]
-              if (length(c.eligible) == 0) break
-            }
+        #Covariate caliper
+        if (length(caliper) > 0 && length(c.eligible) > 0) {
+          for (x in names(caliper)) {
+            calcov.diff <- abs(unname(calcovs[lab1[ord_i], x]) - calcovs[c.eligible, x])
+            c.eligible <- c.eligible[calcov.diff <= caliper[x]]
+            if (length(c.eligible) == 0) break
           }
         }
 
