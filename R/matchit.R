@@ -154,7 +154,7 @@ matchit <- function(formula, data = NULL, method = "nearest", distance = "glm",
   covs.formula <- delete.response(terms(formula))
   covs <- model.frame(covs.formula, data = data, na.action = "na.pass")
   if (anyNA(covs)) stop("Missing values are not allowed in the covariates.", call. = FALSE)
-  for (i in names(covs)[vapply(covs, is.character, logical(1L))]) covs[[i]] <- factor(covs[[i]])
+  for (i in which(vapply(covs, is.character, logical(1L)))) covs[[i]] <- factor(covs[[i]])
 
   caliper <- process.caliper(caliper, method, data, covs, mahcovs, distance, discarded, std.caliper)
 
