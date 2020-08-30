@@ -300,7 +300,7 @@ summary.matchit <- function(object, interactions = FALSE,
 
   ## Summary Stats
   aa <- setNames(lapply(seq_len(kk), function(i) qoi(X[,i], tt = treat, ww = weights, subclass = object$subclass,
-                                                     mm = object$mm, standardize = standardize, s.d.denom = s.d.denom)),
+                                                     mm = object$match.matrix, standardize = standardize, s.d.denom = s.d.denom)),
                  colnames(X))
 
   sum.all <- sum.matched <- matrix(NA_real_, nrow = kk, ncol = ncol(aa[[1]]), dimnames = list(nam, colnames(aa[[1]])))
@@ -325,7 +325,7 @@ summary.matchit <- function(object, interactions = FALSE,
         }
         else {
           jqoi <- qoi(x2, tt = treat, ww = weights, subclass = object$subclass,
-                      mm = object$mm, standardize = standardize, s.d.denom = s.d.denom)
+                      mm = object$match.matrix, standardize = standardize, s.d.denom = s.d.denom)
           sum.all.int[k,] <- jqoi[1,]
           sum.matched.int[k,] <- jqoi[2,]
           if (i == j) {
@@ -346,7 +346,7 @@ summary.matchit <- function(object, interactions = FALSE,
 
   if (!is.null(object$distance)) {
     ad <- qoi(object$distance, tt = treat, ww = weights, subclass = object$subclass,
-              mm = object$mm, standardize = standardize, s.d.denom = s.d.denom)
+              mm = object$match.matrix, standardize = standardize, s.d.denom = s.d.denom)
     sum.all <- rbind(ad[1,], sum.all)
     sum.matched <- rbind(ad[2,], sum.matched)
     rownames(sum.all)[1] <- rownames(sum.matched)[1] <- "distance"
