@@ -35,10 +35,11 @@ Suggests:
     R.rsp,
     CBPS,
     dbarts,
-    randomForest
+    randomForest,
+    knitr,
+    rmarkdown
 Encoding: UTF-8
 LazyData: true
 License: GPL (>=2)
-URL: http://gking.harvard.edu/matchit
 BugReports: https://github.com/kosukeimai/MatchIt/issues
-VignetteBuilder: R.rsp
+VignetteBuilder: knitr

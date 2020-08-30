@@ -1,0 +1,21 @@
+---
+title: "Assessing Balance"
+author: "Noah Greifer"
+date: "`r Sys.Date()`"
+output: 
+    html_vignette:
+        toc: true
+
+vignette: >
+  %\VignetteIndexEntry{Assessing Balance}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE,
+                      fig.width=7, fig.height=5)
+options(width = 200)
+```
+
+Brief description of balance, drawing on Ho et al (2007). Methods of assessing balance

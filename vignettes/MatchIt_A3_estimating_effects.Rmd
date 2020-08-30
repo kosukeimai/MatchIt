@@ -1,0 +1,26 @@
+---
+title: "Estimating Effects"
+author: "Noah Greifer"
+date: "`r Sys.Date()`"
+output: 
+    html_vignette:
+        toc: true
+
+vignette: >
+  %\VignetteIndexEntry{Estimating Effects}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+After assessing balance and deciding on a matching specification, it comes time to estimate the effect of the treatment in the matched sample. How the effect is estimated and interpreted depends on the type of model used (if any) and whether a marginal or conditional estimate is desired. In addition to estimating effects, estimating the uncertainty of the effects is critical in communicating them and assessing whether the observed effect is compatible with there being no effect in the population. This guide explains how to estimate effects after various forms of matching and with various outcome types. There may be situations that are not covered here for which additional methodological research may be required, but some of the recommended methods here can be used to guide such applications.
+
+The outcome types we consider here are continuous, with the mean difference the effect of interest; binary, with the risk difference, risk ratio, or odds ratio the effect of interest, and time-to-event (i.e., survival), with the hazard ratio the effect of interest. We also consider both marginal and conditional estimates. Marginal effects are interpreted as the average effect of the treatment in the sampled population, or, equivalently, the expected treatment effect from an individual drawn from the population about which no other information is known. Conditional effects are interpreted as the effect of the treatment in a subset of units with known covariate values, or equivalently, the expected treatment effect from an individual drawn from the population about which we know some of their covariate values. Marginal and conditional estimates are, in general, not the same, except when the treatment effect is null. Conditional effects can vary across covariate values, though often they are modeled as if they do not (i.e., by excluding an interaction between treatment and covariates in the outcome model). For collapsible contrasts (i.e., mean differences, risk differences, and risk ratios), a weighted average of the conditional effects is equal to the marginal effect; for noncollapsible estimates (i.e., odds ratios and hazard ratios), this is not the case.
+
+Uncertainty estimation (i.e., of standard errors, confidence intervals, and p-values) may consider the variety of sources of uncertainty present in the analysis, including (but not limited to!) estimation of the propensity score (if used), matching (i.e., because treated units might be matched to different control units if others had been sampled), and estimation of the treatment effect (i.e., because of sampling error). In general, there are no analytic solutions to all these issues, so much of the research done on uncertainty estimation after matching has relied on simulation studies. A few basic principles emerge:
+
+* The standard error estimated as if no matching had been performed tend to be conservative in most cases (unless weights are included as part of the matching, in which case robust standard errors must be used instead)
+
+* Bootstrapping the entire process of matching and effect estimation tends to work well
+
+* Including either pair membership in the standard error estimate or including covariates used to match in the outcome model and using the regular standard error estimate tends to increase precision without increasing the type I error rate
+
