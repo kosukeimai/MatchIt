@@ -37,6 +37,9 @@ additional arguments passed to \code{\link[cem]{cem}} in \pkg{cem}. Potentially 
 \section{Outputs}{
 All outputs described in \code{\link{matchit}} are returned with \code{method = "cem"} except for \code{match.matrix}. This is because matching strata are not indexed by treated units as they are in some other forms of matching.
 }
+\note{
+If the coarsening is such that there are no exact matches with the coarsened variables, the \code{cutpoints} and \code{grouping} arguments in \code{\link{cem}} can be used to modify the matching specification. Reducing the number of cutpoints or grouping some variable values together can make it easier to find matches. See Examples below. Removing variables can also help (but they will likely not be balanced unless highly correlated with the included variables). To take advantage of coarsened exact matching without failing to find any matches, the covariates can be manually coarsened outside of \code{matchit()} and then supplied to the \code{exact} argument in a call to \code{matchit()} with another matching method.
+}
 \references{
 In a manuscript, be sure to cite the following paper if using \code{matchit} with \code{method = "cem"}:
 
@@ -61,9 +64,12 @@ Iacus, S. M., King, G., & Porro, G. (2012). Causal Inference without Balance Che
 data("lalonde")
 
 # Coarsened exact matching on age, race, married, and educ with educ
-# coarsened into 10 bins
+# coarsened into 10 bins and race coarsened into 2 categories,
+# grouping "white" and "hispan" together
 m.out1 <- matchit(treat ~ age + race + married + educ, data = lalonde,
-                  method = "cem", cutpoints = list(educ = 9))
+                  method = "cem", cutpoints = list(educ = 9),
+                  grouping = list(race = list(c("white", "hispan"),
+                                              "black")))
 m.out1
 summary(m.out1)
 }
