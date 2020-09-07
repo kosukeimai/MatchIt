@@ -44,13 +44,13 @@ plot.matchit.subclass <- function(x, type = "qq", interactive = TRUE, which.xs =
 
   if (type == "qq"){
     if (interactive) {
-      subclasses <- sort(unique(x$subclass[!is.na(x$subclass)]))
+      subclasses <- levels(x$subclass)
       choices <- c("No (Exit)", paste0("Yes: Subclass ", subclasses), "Yes: In aggregate")
       question <- "Would you like to see quantile-quantile plots of any subclasses? "
       ans <- -1
       while(ans != 0) {
         ans <- as.numeric(choice.menu(choices, question))
-        if (ans %in% seq_along(subclasses)) {
+        if (ans %in% seq_along(subclasses) && sum(x$subclass == subclasses[ans]) > 0) {
           matchit.qqplot(x, which.subclass = subclasses[ans],
                          interactive = interactive, which.xs = which.xs,...)
         }
@@ -151,7 +151,7 @@ plot.summary.matchit <- function(x, abs = TRUE, var.order = "data", threshold = 
 
 print.matchit <- function(x, ...) {
   info <- x[["info"]]
-  cal <- !is.null(info$caliper)
+  cal <- !is.null(x[["caliper"]])
   dis <- c("both", "control", "treat")[pmatch(info$discard, c("both", "control", "treat"), 0L)]
   disl <- length(dis) > 0
   cat("A matchit object\n")
@@ -353,9 +353,18 @@ summary.matchit <- function(object, interactions = FALSE,
   }
 
   ## Imbalance Reduction
+  reduction <- matrix(NA_real_, nrow = nrow(sum.all), ncol = ncol(sum.all) - 2,
+                      dimnames = list(rownames(sum.all), colnames(sum.all)[-(1:2)]))
   stat.all <- abs(sum.all[,-(1:2)])
   stat.matched <- abs(sum.matched[,-(1:2)])
-  reduction <- 100*(stat.all-stat.matched)/stat.all
+
+  #Everything but variance ratios
+  reduction[,-2] <- 100*(stat.all[,-2]-stat.matched[,-2])/stat.all[,-2]
+
+  #Just variance ratios; turn to log first
+  vr.all <- abs(log(stat.all[,2]))
+  vr.matched <- abs(log(stat.matched[,2]))
+  reduction[,2] <- 100*(vr.all-vr.matched)/vr.all
 
   reduction[stat.all == 0 & stat.matched == 0] <- 0
   reduction[stat.all == 0 & stat.matched > 0] <- -Inf
@@ -419,7 +428,7 @@ summary.matchit.subclass <- function(object, interactions = FALSE,
   nam <- colnames(X)
 
   kk <- ncol(X)
-  subclasses <- sort(unique(subclass[!is.na(subclass)], nmax = if (!is.null(object$q.cut)) length(object$q.cut) - 1 else length(subclass)))
+  subclasses <- levels(subclass)
 
   if (standardize) {
     s.d.denom <- switch(object$estimand,

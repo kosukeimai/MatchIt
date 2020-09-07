@@ -12,10 +12,10 @@ Computes and prints balance statistics for \code{matchit} and \code{matchit.subc
 \usage{
 \method{summary}{matchit}(object, interactions = FALSE,
         addlvariables = NULL, standardize = TRUE,
-        data = NULL, ...)
+        data = NULL, pair.dist = TRUE, ...)
 \method{summary}{matchit.subclass}(object, interactions = FALSE,
         addlvariables = NULL, standardize = TRUE,
-        data = NULL, subclass = FALSE, ...)
+        data = NULL, pair.dist = TRUE, subclass = FALSE, ...)
 
 \method{print}{summary.matchit}(x, digits = max(3, getOption("digits") - 3),
       ...)
@@ -38,6 +38,9 @@ additional variable for which balance staistics are to be computed along with th
   \item{data}{
 a optional data frame containing variables named in \code{addlvariables} if specified as a string or formula.
 }
+  \item{pair.dist}{
+\code{logical}; whether to compute average absolute pair distances. For matching methods that don't include a \code{match.matrix} component in the output (i.e., exact matching, coarsened exact matching, full matching, and subclassification), computing pair differences can take a long time, especially for large datasets and with many covariates. For other methods (i.e., nearest neighbor, optimal, and genetic matching), computation is fairly quick. Default is \code{TRUE}.
+}
   \item{subclass}{
 after subclassification, whether to display balance for individual subclasses, and, if so, for which ones. Can be \code{TRUE} (display balance for all subclasses), \code{FALSE} (display balance only in aggregate), or the indices (e.g., \code{1:6}) of the specific subclasses for which to display balance. Default is \code{FALSE}.
 }
@@ -56,13 +59,17 @@ ignored.
 
 The standardized mean differences are computed both before and after matching or subclassification as the difference in treatment group means divided by a standardization factor computed in the unmatched (original) sample. The standardization factor depends on the argument supplied to \code{estimand} in \code{matchit}: for \code{"ATT"}, it is the standard deviation in the treated group; for \code{"ATC"}, it is the standard deviation in the control group; for \code{"ATE"}, it is the square root of the average of the variances within each treatment group. The post-matching mean difference is computed with weighted means in the treatment groups using the matching or subclassification weights.
 
-The ECDF difference statitics are computed by creating a (weighted) ECDF for each group and taking the difference between them for each covariate value. The ECDF is a function that outputs the (weighted)  proportion of units with covariate values at or lower than the input value. The maximum ECDF difference is the same thing as the Kolmogorov-Smirnov statistic. The values are bounded at zero and one, with values closer to zero indicating good overlap between the covariate distributions in the treated and control groups. For binary variables, all ECDF differences are equal to the (weighted) difference in proportion and are computed that way.
+The variance ratio is computed as the ratio of the treatment group variances. Variance ratios are not computed for binary variables because their variance is a function solely of their mean. After matching, weighted variances are computed using the formula used in \code{\link{cov.wt}}. The percent recuction in bias is computed using the log of the variance ratios.
+
+The eCDF difference statitics are computed by creating a (weighted) eCDF for each group and taking the difference between them for each covariate value. The eCDF is a function that outputs the (weighted)  proportion of units with covariate values at or lower than the input value. The maximum eCDF difference is the same thing as the Kolmogorov-Smirnov statistic. The values are bounded at zero and one, with values closer to zero indicating good overlap between the covariate distributions in the treated and control groups. For binary variables, all eCDF differences are equal to the (weighted) difference in proportion and are computed that way.
 
 The QQ difference statistics are computed by creating two samples of the same size by interpolating the values of the larger one. The values are arranged in order for each sample. The QQ difference for each quantile is the difference between the observed covariate values at that quantile between the two groups. The difference is on the scale of the original covariate. Values close to zero indicate good overlap between the covariate distributions in the treated and control groups. A weighted interpolation is used for post-matching QQ differences. For binary variables, all QQ differences are equal to the (weighted) difference in proportion and are computed that way.
 
-The pair distance is the average of the absolute differences of a variable between pairs. For example, if a treated unit was paired with four control units, that set of units would contribute four absolute differences to the average. Within a subclass, each combination of treated and control unit forms a pair that contributes once to the average. The pair distance is described in Stuart and Green (2008) and is the value that is minimized when using optimal (full) matching. When \code{standardize = TRUE}, the standardized versions of the variables are used, where the standardization factor is as described above for the standardized mean differences. Pair distances are not computed in the unmatched sample (because there are no pairs).
+The pair distance is the average of the absolute differences of a variable between pairs. For example, if a treated unit was paired with four control units, that set of units would contribute four absolute differences to the average. Within a subclass, each combination of treated and control unit forms a pair that contributes once to the average. The pair distance is described in Stuart and Green (2008) and is the value that is minimized when using optimal (full) matching. When \code{standardize = TRUE}, the standardized versions of the variables are used, where the standardization factor is as described above for the standardized mean differences. Pair distances are not computed in the unmatched sample (because there are no pairs). Because pair distance can take a while to compute, especially with large datasets or for many covariates, setting \code{pair.dist = FALSE} is one way to speed up \code{summary}.
 
 After subclassification, the aggregate balance statistics are computed using the subclassification weights rather than averaging across subclasses.
+
+When printing, \code{NA} values are replaced with periods (\code{.}), and the pair distance column in the unmatched and percent balance improvement components of the output are omitted.
 }
 \value{
 For \code{matchit} objects, a \code{summary.matchit} object, which is a list with the following components:

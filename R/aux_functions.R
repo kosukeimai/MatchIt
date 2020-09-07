@@ -641,13 +641,20 @@ get.covs.matrix <- function(formula = NULL, data = NULL) {
   return(X)
 }
 
-#Standard deviation that uses special formula for binary variables
-sd_ <- function(x, na.rm = TRUE) {
-  if (all(x == 0 | x == 1)) {
-    sqrt(mean(x)*(1-mean(x)))
+#(Weighted) variance that uses special formula for binary variables
+wvar <- function(x, bin.var = NULL, w = NULL, na.rm = TRUE) {
+  if (is.null(w)) w <- rep(1, length(x))
+  if (is.null(bin.var)) bin.var <- all(x == 0 | x == 1)
+
+  w <- w / sum(w)
+  mx <- sum(w * x) #weighted mean
+
+  if (bin.var) {
+    mx*(1-mx)
   }
   else {
-    sd(x, na.rm = na.rm)
+    #Reliability weights variance; same as cov.wt()
+    sum(w * (x - mx)^2)/(1 - sum(w^2))
   }
 }
 
