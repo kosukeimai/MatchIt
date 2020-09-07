@@ -118,7 +118,7 @@ In each treatment group, weights are divided by the sum of the weights in that t
 When \code{method} is something other than \code{"subclass"}, a \code{matchit} object with the following components:
 \itemize{
   \item{\code{match.matrix} - a matrix containing the matches. The rownames correspond to the treated units and the values in each row are the names (or indices) of the control units matched to each treated unit. When treated units are matched to different numbers of control units (e.g., with exact matching or matching with a caliper), empty spaces will be filled with \code{NA}.}
-  \item{\code{subclass} - an integer vector of matching pair/stratum membership for each unit. Unmatched units will have a value of \code{NA}. Not included when \code{replace = TRUE}.}
+  \item{\code{subclass} - an factor containing matching pair/stratum membership for each unit. Unmatched units will have a value of \code{NA}. Not included when \code{replace = TRUE}.}
   \item{\code{weights} - a numeric vector of estimated matching weights. Unmatched units will have a weight of zero.}
   \item{\code{model} - the fit object of the model used to estimate propensity scores when \code{distance} is specified and not \code{"mahalanobis"} or a numeric vector. When \code{reestimate = TRUE}, this is the model estimated after discarding units.}
   \item{\code{X} - a data frame of covariates mentioned in \code{formula}, \code{exact}, and \code{mahvars}.}
