@@ -24,7 +24,8 @@ Authors@R: c(
 Depends:
     R (>= 3.0.0)
 Imports:
-    backports (>= 1.1.8)
+    backports (>= 1.1.8),
+    Rcpp
 Suggests:
     cem,
     nnet,
@@ -38,6 +39,7 @@ Suggests:
     randomForest,
     knitr,
     rmarkdown
+LinkingTo: Rcpp
 Encoding: UTF-8
 LazyData: true
 License: GPL (>=2)

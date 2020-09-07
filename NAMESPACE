@@ -1,6 +1,9 @@
+useDynLib("MatchIt", .registration = TRUE)
+
 import(stats)
 import(graphics)
 importFrom("grDevices", "devAskNewPage")
+importFrom("Rcpp", "evalCpp")
 
 export(get_matches)
 export(match.data)

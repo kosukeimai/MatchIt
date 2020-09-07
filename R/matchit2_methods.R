@@ -55,6 +55,7 @@ matchit2cem <- function(treat, covs, estimand = "ATT", verbose = FALSE, ...) {
   # and the unmatched entry gets an NA.
   strat <- setNames(rep(NA_character_, n.obs), names(treat))
   if (!is.null(mat)) strat[mat$matched] <- mat$strata[mat$matched]
+  strat <- factor(strat, labels = seq_along(unique(strat)))
 
   res <- list(subclass = strat,
               weights = weights.subclass(strat, treat, estimand))
@@ -74,7 +75,7 @@ matchit2exact <- function(treat, covs, data, estimand = "ATT", verbose = FALSE, 
   xx <- exactify(covs, names(treat))
   cc <- intersect(xx[treat==1], xx[treat==0])
 
-  psclass <- setNames(match(xx, cc), names(treat))
+  psclass <- setNames(factor(match(xx, cc)), names(treat))
 
   res <- list(subclass = psclass,
               weights = weights.subclass(psclass, treat, estimand))
@@ -183,7 +184,7 @@ matchit2full <- function(treat, formula, data, distance, discarded,
 
   if (all(is.na(full))) stop("No matches were found.", call. = FALSE)
 
-  psclass <- as.integer(as.factor(full))
+  psclass <- factor(full, labels = seq_len(nlevels(full)))
   names(psclass) <- names(treat)
 
   #No match.matrix because treated units don't index matched strata (i.e., more than one
@@ -287,7 +288,7 @@ matchit2optimal <- function(treat, formula, data, distance, discarded,
 
   if (all(is.na(pair))) stop("No matches were found.", call. = FALSE)
 
-  psclass <- as.integer(as.factor(pair))
+  psclass <- factor(pair, labels = seq_len(nlevels(pair)))
   names(psclass) <- names(treat)
   na.class <- is.na(psclass)
 
@@ -346,7 +347,6 @@ matchit2genetic <- function(treat, data, distance, discarded,
 
   n.obs <- length(treat)
   n1 <- sum(treat == 1)
-  n0 <- sum(treat == 0)
 
   if (is.null(names(treat))) names(treat) <- seq_len(n.obs)
 
@@ -506,7 +506,8 @@ matchit2genetic <- function(treat, data, distance, discarded,
     no.match <- is.na(mm)
     psclass[lab1[!no.match[,1]]] <- lab1[!no.match[,1]]
     psclass[mm[!no.match]] <- lab1[row(mm)[!no.match]]
-    psclass <- setNames(as.integer(factor(psclass, nmax = n1)), lab)
+    psclass <- setNames(factor(psclass, nmax = n1), lab)
+    levels(psclass) <- seq_len(nlevels(psclass))
   }
   else psclass <- NULL
 
@@ -525,6 +526,9 @@ matchit2nearest <-  function(treat, data, distance, discarded,
                              caliper = NULL, mahvars = NULL, exact = NULL,
                              formula = NULL, estimand = "ATT", verbose = FALSE,
                              is.full.mahalanobis, ...){
+
+  A <- list(...)
+  fast <- isTRUE(A$fast)
 
   if(verbose)
     cat("Nearest neighbor matching... \n")
@@ -556,154 +560,95 @@ matchit2nearest <-  function(treat, data, distance, discarded,
 
   n.obs <- length(treat)
   n1 <- sum(treat == 1)
-  n0 <- sum(treat == 0)
 
-  dis1 <- discarded[treat == 1]
-  dis0 <- discarded[treat == 0]
-
-  n1_ <- sum(!dis1)
-  n0_ <- sum(!dis0)
-
-  lab1 <- names(treat[treat == 1])
-  lab0 <- names(treat[treat == 0])
+  lab <- names(treat)
+  lab1 <- lab[treat == 1]
 
   if (!is.null(distance)) {
     names(distance) <- names(treat)
-    d1 <- distance[treat == 1]
-    d0 <- distance[treat == 0]
   }
 
   if (!is.null(caliper)) {
     if (any(names(caliper) != "")) {
-      calcovs <- get.covs.matrix(reformulate(setdiff(names(caliper), "")), data = data)
-      rownames(calcovs) <- names(treat)
+      caliper.covs <- caliper[names(caliper) != ""]
+      caliper.covs.mat <- get.covs.matrix(reformulate(names(caliper.covs)), data = data)
+    }
+    else {
+      caliper.covs.mat <- caliper.covs <- NULL
     }
 
-    caliper.dist <- caliper[names(caliper) == ""]
-    caliper <- caliper[names(caliper) != ""]
+    if (any(names(caliper) == "")) {
+      caliper.dist <- caliper[names(caliper) == ""]
+    }
+    else {
+      caliper.dist <- NULL
+    }
   }
   else {
-    caliper.dist <- NULL
+    caliper.dist <- caliper.covs <- NULL
+    caliper.covs.mat <- NULL
   }
 
   if (!is.null(exact)) {
-    ex <- exactify(model.frame(exact, data = data), names(treat))
-    ex1 <- ex[treat == 1]
-    ex0 <- ex[treat == 0]
+    ex <- exactify(model.frame(exact, data = data))
+    ex <- setNames(as.integer(factor(ex)), lab)
   }
+  else ex <- NULL
 
   if (is.full.mahalanobis) {
     mahcovs <- get.covs.matrix(formula, data)
     mahSigma_inv <- generalized_inverse(cov(mahcovs))
-    rownames(mahcovs) <- names(treat)
   }
   else if (!is.null(mahvars)) {
     mahcovs <- get.covs.matrix(mahvars, data)
     mahSigma_inv <- generalized_inverse(cov(mahcovs))
-    rownames(mahcovs) <- names(treat)
   }
   else {
     mahcovs <- mahSigma_inv <- NULL
   }
 
-  mm <- matrix(NA_character_, nrow = n1,
-               ncol = ratio, dimnames = list(lab1, seq_len(ratio)))
-
-  unmatched <- setNames(rep(TRUE, n0_), lab0[!dis0])
-
   if (replace) {
     ord <- seq_len(n1)
   }
+  else if (!is.null(distance)) {
+    if (is.null(m.order)) m.order <- if (estimand == "ATC") "smallest" else "largest"
+    else m.order <- match_arg(m.order, c("largest", "smallest", "random", "data"))
+
+    ord <- switch(m.order,
+                  "largest" = order(distance[treat == 1], decreasing = TRUE),
+                  "smallest" = order(distance[treat == 1]),
+                  "random" = sample(seq_len(n1), n1, replace = FALSE),
+                  "data" = seq_len(n1))
+  }
   else {
-    if (!is.null(distance)) {
-      if (is.null(m.order)) m.order <- if (estimand == "ATC") "smallest" else "largest"
-      else m.order <- match_arg(m.order, c("largest", "smallest", "random", "data"))
-      ord <- switch(m.order,
-                    "largest" = order(d1, decreasing = TRUE),
-                    "smallest" = order(d1),
-                    "random" = sample(seq_len(n1), n1, replace = FALSE),
-                    "data" = seq_len(n1))
-    }
-    else {
-      m.order <- match_arg(m.order, c("data", "random"))
-      ord <- switch(m.order,
-                    "random" = sample(seq_len(n1), n1, replace = FALSE),
-                    "data" = seq_len(n1))
-    }
+    m.order <- match_arg(m.order, c("data", "random"))
+
+    ord <- switch(m.order,
+                  "random" = sample(seq_len(n1), n1, replace = FALSE),
+                  "data" = seq_len(n1))
   }
 
-  for (r in seq_len(ratio)) {
-    for (i in seq_len(n1)[!dis1]) {
-
-      ord_i <- ord[i]
-      c.eligible <- names(unmatched)
-
-      if (!replace) {
-        if (!any(unmatched)) break
-        c.eligible <- c.eligible[unmatched]
-      }
-      else if (r > 1) {
-        #If replace = T and r > 1, don't rematch to same control unit
-        c.eligible <- c.eligible[!c.eligible %in% mm[ord_i, seq_len(r - 1)]]
-      }
-
-      if (!is.null(exact) && length(c.eligible) > 0) {
-        c.eligible <- c.eligible[ex0[c.eligible] == ex1[ord_i]]
-      }
-
-      #Get distances among eligible and apply caliper
-      if (length(c.eligible) > 0) {
-
-        ps.diff <- NULL
-
-        #PS caliper
-        if (length(caliper.dist) > 0) {
-          ps.diff <- abs(unname(d1[ord_i]) - d0[c.eligible])
-          c.eligible <- c.eligible[ps.diff <= caliper.dist]
-        }
-
-        #Covariate caliper
-        if (length(caliper) > 0 && length(c.eligible) > 0) {
-          for (x in names(caliper)) {
-            calcov.diff <- abs(unname(calcovs[lab1[ord_i], x]) - calcovs[c.eligible, x])
-            c.eligible <- c.eligible[calcov.diff <= caliper[x]]
-            if (length(c.eligible) == 0) break
-          }
-        }
-
-        if (is.null(mahcovs)) {
-          #PS matching
-          distances <- if(is.null(ps.diff)) abs(unname(d1[ord_i]) - d0[c.eligible]) else ps.diff
-        }
-        else {
-          #MD matching
-          distances <- sqrt(mahalanobis(mahcovs[c.eligible, ,drop = FALSE],
-                                        mahcovs[lab1[ord_i],],
-                                        cov = mahSigma_inv, inverted = TRUE))
-        }
-        # names(distances) <- c.eligible
-      }
-
-      #Assign match
-      if (length(c.eligible) > 0) {
-
-        min.dist <- min(distances[c.eligible])
-
-        #For now, resolve ties by selecting the first unit
-        mm[ord_i, r] <- c.eligible[distances[c.eligible] == min.dist][1]
-
-        if (!replace) unmatched[mm[ord_i, r]] <- FALSE
-
-      }
-    }
+  #Both produce matrix of indices of matched ctrl units
+  if (!fast) {
+    mm <- nn_match(treat, ord, ratio, replace, discarded, distance, ex, caliper.dist,
+                    caliper.covs, caliper.covs.mat, mahcovs, mahSigma_inv)
   }
+  else {
+    mm <- nn_matchC(treat, ord, ratio, replace, discarded, distance, ex, caliper.dist,
+                    caliper.covs, caliper.covs.mat, mahcovs, mahSigma_inv)
+  }
+
+  mm[] <- names(treat)[mm]
+  dimnames(mm) <- list(lab1, seq_len(ratio))
 
   if (!replace) {
-    psclass <- setNames(rep(NA_character_, n.obs), names(treat))
+    psclass <- setNames(rep(NA_character_, n.obs), lab)
     no.match <- is.na(mm)
     psclass[lab1[!no.match[,1]]] <- lab1[!no.match[,1]]
     psclass[mm[!no.match]] <- lab1[row(mm)[!no.match]]
-    psclass <- setNames(as.integer(factor(psclass, nmax = n1)), names(treat))
+
+    psclass <- setNames(factor(psclass, nmax = n1), lab)
+    levels(psclass) <- seq_len(nlevels(psclass))
   }
   else psclass <- NULL
 
@@ -799,12 +744,13 @@ matchit2subclass <- function(treat, distance, discarded,
     psclass[!discarded] <- subclass_scoot(psclass[!discarded], treat[!discarded], distance[!discarded], min.n)
   }
 
+  psclass <- factor(psclass, nmax = length(q))
+
   if (verbose) cat("Done\n")
 
   #warning for discrete data
-  unique.classes <- unique(psclass[!is.na(psclass)], nmax = subclass)
 
-  if (length(unique.classes) != subclass){
+  if (nlevels(psclass) != subclass){
     warning("Due to discreteness in the distance measure, fewer subclasses were generated than were requested.", call.=FALSE)
   }
 
