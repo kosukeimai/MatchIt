@@ -17,14 +17,14 @@ matchit <- function(formula, data = NULL, method = "nearest", distance = "glm",
   treat.mf <- model.frame(treat.formula, data = data, na.action = "na.pass")
   treat <- model.response(treat.mf)
   if (anyNA(treat)) stop("Missing values are not allowed in the treatment.", call. = FALSE)
-  names(treat) <- rownames(treat.mf)
   treat <- binarize(treat) #make 0/1
+  names(treat) <- rownames(treat.mf)
 
   n.obs <- length(treat)
 
   ## Process method
   if (length(method) == 1 && is.atomic(method)) {
-    method <- as.character(method)
+    method <- tolower(as.character(method))
     fn2 <- paste0("matchit2", method)
     if (!exists(fn2)) stop(paste0("\"", method, "\" is not a supported method."), call. = FALSE)
   }
