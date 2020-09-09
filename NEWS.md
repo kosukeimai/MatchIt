@@ -20,7 +20,7 @@ output:
 
 * The `mahvars` argument can also be supplied either as a character vector of names of variables in `data` or as a one-sided formula. Mahalanobis distance matching will occur on the variables in the formula, processed by `model.matrix()`. Use this when performing Mahalanobis distance matching on some variables within a caliper defined by the propensity scores estimated from the variables in the main `formula` using the argument to `distance`. For regular Mahalanobis distance matching (without a propensity score caliper), supply the variables in the main `formula` and set `distance = "mahalanobis"`.
 
-* The `caliper` argument can now be specified as a numeric vector with a caliper for each variable named in it. This means you can separately impose calipers on individual variables as well as or instead of the propensity score. For example, to require that units within pairs must be no more than .2 standard deviations of `X1` away from each other, one could specify `caliper = c(X1 = .2)`. A new option `std.caliper` allows the choice of whether the caliper is in standard deviation units or not, and one value per entry in `caliper` can be supplied. An unnamed entry to `caliper` applies the caliper to the distance measure and the default of `std.caliper` is `FALSE`, so this doesn't change the behavior of old code. This options only applies to the methods that accept calipers, namely `"nearest"`, `"genetic"`, and `"full"`.
+* The `caliper` argument can now be specified as a numeric vector with a caliper for each variable named in it. This means you can separately impose calipers on individual variables as well as or instead of the propensity score. For example, to require that units within pairs must be no more than .2 standard deviations of `X1` away from each other, one could specify `caliper = c(X1 = .2)`. A new option `std.caliper` allows the choice of whether the caliper is in standard deviation units or not, and one value per entry in `caliper` can be supplied. An unnamed entry to `caliper` applies the caliper to the distance measure and the default of `std.caliper` is `FALSE`, so this doesn't change the behavior of old code. These options only apply to the methods that accept calipers, namely `"nearest"`, `"genetic"`, and `"full"`.
 
 * A new `estimand` argument can be supplied to specify the target estimand of the analysis. For all methods, the ATT and ATC are available with the ATT as the default, consistent with prior behavior. For some methods, the ATE is additionally available. Note that setting the estimand doesn't actually mean that estimand is being targeted; if calipers, common support, or other restrictions are applied, the target population will shift from that requested. `estimand` just triggers the choice of which level of the treatment is focal and what formula should be used to compute weights from subclasses.
 
@@ -50,9 +50,9 @@ output:
 
 ## `method = "nearest"`
 
-* With `method = "nearest"`, a `subclass` component containing pair membership is now included in the output when `replace = FALSE` (the default), as it has been with optimal and full matching.
+* Matching is much faster due to re-programming with `Rcpp`.
 
-* Performance improvements.
+* With `method = "nearest"`, a `subclass` component containing pair membership is now included in the output when `replace = FALSE` (the default), as it has been with optimal and full matching.
 
 * When using `method = "nearest"` with `distance = "mahalanobis"`, factor variables can now be included in the main `formula`. The design matrix no longer has to be full rank because a generalized inverse is used to compute the Mahalanobis distance.
 
@@ -116,11 +116,13 @@ output:
 
 * The output for `summary()` is now the same for all methods (except subclassification). Previously there were different methods for a few different types of matching. 
 
-* The QQ and ECDF statistics have been adjusted. Both now use the weights that were computed as part of the matching. The QQ and ECDF statistics for binary variables are set to the difference in group proportions. The standard deviation of the control group has been removed from the output.
+* The eCDF median (and QQ median) statistics have been replaced with the variance ratio, which is better studied and part of several sets of published recommendations. The eCDF and QQ median statistics provide little information above and beyond the corresponding mean statistics. The variance ratio uses the variances weighted by the matching weights.
 
-* The default for `standardize` is now `TRUE`, so that standardized mean differnces and ECDF statistics will be displayed by default.
+* The QQ and ECDF statistics have been adjusted. Both now use the weights that were computed as part of the matching. The QQ and eCDF statistics for binary variables are set to the difference in group proportions. The standard deviation of the control group has been removed from the output.
 
-* A new column for the average absolute pair difference for each covariate is included in the output. The values indicate how far treated and contorl units within pairs are from each other.
+* The default for `standardize` is now `TRUE`, so that standardized mean differnces and eCDF statistics will be displayed by default.
+
+* A new column for the average absolute pair difference for each covariate is included in the output. The values indicate how far treated and control units within pairs are from each other. An additional argument to `summary.matchit()`, `pair.dist`, controls whether this value is computed. It can take a long time for some matching methods and could be omitted to speed up computation.
 
 ## `plot.matchit()`
 
@@ -136,6 +138,6 @@ output:
 
 * QQ plots can now be used with all matching methods. Previously, attempting `plot()` after `method = "exact"` would fail.
 
-## `plot.matchit.summary()`
+## `plot.summary.matchit()`
 
 * The summary plot has been completley redesigned. It is now a Love plot made using `graphics::dotchart()`. A few options are available for ordering the variables, presenting absolute or raw standardized mean differences, and placing threshold lines on the plots. For a more sophisticated interface, see `cobalt::love.plot()`, which natively supports `matchit` objects and uses `ggplot2` as its engine.
