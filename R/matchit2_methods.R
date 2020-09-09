@@ -21,7 +21,7 @@ matchit2cem <- function(treat, covs, estimand = "ATT", verbose = FALSE, ...) {
 
   # cem takes the data all together and wants the treatment specified
   # with the column name of the data frame. Here we massage the matchit
-  # inputs to this format. Note that X has its proper columnames, but
+  # inputs to this format. Note that X has its proper column names, but
   # treat does not have the original column name.
   cem.data <- data.frame(covs, treat)
 
@@ -51,11 +51,9 @@ matchit2cem <- function(treat, covs, estimand = "ATT", verbose = FALSE, ...) {
     }
   })
 
-  # here we create a column vector where the matched entry get its stratum
-  # and the unmatched entry gets an NA.
   strat <- setNames(rep(NA_character_, n.obs), names(treat))
   if (!is.null(mat)) strat[mat$matched] <- mat$strata[mat$matched]
-  strat <- factor(strat, labels = seq_along(unique(strat)))
+  strat <- setNames(factor(strat, labels = seq_along(unique(strat))), names(treat))
 
   res <- list(subclass = strat,
               weights = weights.subclass(strat, treat, estimand))
@@ -229,7 +227,7 @@ matchit2optimal <- function(treat, formula, data, distance, discarded,
   }
 
   treat_ <- setNames(as.integer(treat == focal), names(treat))
-  treat_[discarded] <- NA
+  treat_[discarded] <- NA_integer_
 
   ratio <- process.ratio(ratio)
 
@@ -384,12 +382,12 @@ matchit2genetic <- function(treat, data, distance, discarded,
   #Process exact; exact.log will be supplied to GenMatch() and Match()
   if (!is.null(exact)) {
     #Add covariates in exact not in X to X
-    ex <- as.numeric(factor(exactify(model.frame(exact, data = data), names(treat))))
+    ex <- as.integer(factor(exactify(model.frame(exact, data = data), names(treat))))
     X <- cbind(X, ex)
 
     exact.log <- c(rep(FALSE, ncol(X) - 1), TRUE)
   }
-  else exact.log <- NULL
+  else exact.log <- ex <- NULL
 
   #Process caliper; cal will be supplied to GenMatch() and Match()
   if (!is.null(caliper)) {
@@ -402,6 +400,7 @@ matchit2genetic <- function(treat, data, distance, discarded,
       #Expand exact.log for newly added covariates
       if (!is.null(exact.log)) exact.log <- c(exact.log, rep(FALSE, ncol(calcovs)))
     }
+    else cov.cals <- NULL
 
     #Matching::Match multiplies calipers by pop SD, so we need to divide by pop SD to unstandardize
     pop.sd <- function(x) sqrt(sum((x-mean(x))^2)/length(x))
@@ -420,34 +419,38 @@ matchit2genetic <- function(treat, data, distance, discarded,
 
     #Then put distance caliper into cal
     if ("" %in% names(caliper)) {
+      dist.cal <- caliper[names(caliper) == ""]
       if (!is.null(mahvars)) {
         #If mahvars specified, distance is not yet in X, so add it to X
         X <- cbind(X, distance)
-        cal <- c(cal, caliper[names(caliper) == ""])
+        cal <- c(cal, dist.cal)
 
         #Expand exact.log for newly added distance
         if (!is.null(exact.log)) exact.log <- c(exact.log, FALSE)
       }
       else {
         #Otherwise, distance is in X at the specified index
-        cal[ncol(covs_to_balance) + 1] <- caliper[names(caliper) == ""]
+        cal[ncol(covs_to_balance) + 1] <- dist.cal
       }
     }
+    else dist.cal <- NULL
 
   }
-  else cal<- NULL
+  else {
+    cal <- dist.cal <- cov.cals <- NULL
+  }
 
   #Reorder data according to m.order since Match matches in order of data;
   #ord already excludes discarded units
 
   treat_ <- treat[ord]
   covs_to_balance <- covs_to_balance[ord,,drop = FALSE]
-  X <- X[ord,,drop = FALSE]
+  X_ <- X[ord,,drop = FALSE]
 
   if (use.genetic) {
     withCallingHandlers({
       g.out <- do.call(Matching::GenMatch,
-                       c(list(Tr = treat_, X = X, BalanceMatrix = covs_to_balance,
+                       c(list(Tr = treat_, X = X_, BalanceMatrix = covs_to_balance,
                               M = ratio, exact = exact.log, caliper = cal,
                               replace = replace, estimand = "ATT", ties = FALSE,
                               CommonSupport = FALSE, verbose = verbose,
@@ -469,36 +472,59 @@ matchit2genetic <- function(treat, data, distance, discarded,
     g.out <- NULL
   }
 
-  withCallingHandlers({
-    m.out <- Matching::Match(Tr = treat_, X = X,
-                             M = ratio, exact = exact.log, caliper = cal,
-                             replace = replace, estimand = "ATT", ties = FALSE,
-                             CommonSupport = FALSE, Weight = if (use.genetic) 3 else 2,
-                             Weight.matrix = g.out, version = "fast")
-  },
-  warning = function(w) {
-    if (!startsWith(conditionMessage(w), "replace==FALSE, but there are more (weighted) treated obs than control obs.")) {
-      warning(paste0("(from Matching) ", conditionMessage(w)), call. = FALSE, immediate. = TRUE)
-    }
-    invokeRestart("muffleWarning")
-  },
-  error = function(e) {
-    stop(paste0("(from Matching) ", conditionMessage(e)), call. = FALSE, immediate. = TRUE)
-  })
-
   lab <- names(treat)
   lab1 <- names(treat[treat == 1])
 
   lab_ <- names(treat_)
 
-  mm <- matrix(NA_character_, nrow = n1, ncol = max(table(m.out$index.treated)),
-               dimnames = list(lab1, NULL))
+  if (!isFALSE(A$use.Match)) {
+    withCallingHandlers({
+      m.out <- Matching::Match(Tr = treat_, X = X_,
+                               M = ratio, exact = exact.log, caliper = cal,
+                               replace = replace, estimand = "ATT", ties = FALSE,
+                               CommonSupport = FALSE, Weight = 3,
+                               Weight.matrix = if (use.genetic) g.out else generalized_inverse(cor(X)),
+                               version = "fast")
+    },
+    warning = function(w) {
+      if (!startsWith(conditionMessage(w), "replace==FALSE, but there are more (weighted) treated obs than control obs.")) {
+        warning(paste0("(from Matching) ", conditionMessage(w)), call. = FALSE, immediate. = TRUE)
+      }
+      invokeRestart("muffleWarning")
+    },
+    error = function(e) {
+      stop(paste0("(from Matching) ", conditionMessage(e)), call. = FALSE, immediate. = TRUE)
+    })
 
-  unique.matched.focal <- unique(m.out$index.treated, nmax = n1)
+    mm <- matrix(NA_character_, nrow = n1, ncol = max(table(m.out$index.treated)),
+                 dimnames = list(lab1, NULL))
 
-  for (i in unique.matched.focal) {
-    matched.units <- lab_[m.out$index.control[m.out$index.treated == i]]
-    mm[lab_[i], seq_along(matched.units)] <- matched.units
+    unique.matched.focal <- unique(m.out$index.treated, nmax = n1)
+
+    for (i in unique.matched.focal) {
+      matched.units <- lab_[m.out$index.control[m.out$index.treated == i]]
+      mm[lab_[i], seq_along(matched.units)] <- matched.units
+    }
+  }
+  else {
+    ord1 <- ord[ord %in% which(treat == 1)]
+    if (!is.null(cov.cals)) calcovs <- get.covs.matrix(reformulate(cov.cals), data = data)
+    else calcovs <- NULL
+
+    if (is.null(g.out)) MWM <- generalized_inverse(cov(X))
+    else MWM <- g.out$Weight.matrix %*% diag(1/apply(X, 2, var))
+
+    if (isFALSE(A$fast)) {
+      mm <- nn_match(treat, ord1, ratio, replace, discarded, distance, ex, dist.cal,
+                     cov.cals, calcovs, X, MWM)
+    }
+    else {
+      mm <- nn_matchC(treat, ord1, ratio, replace, discarded, distance, ex, dist.cal,
+                      cov.cals, calcovs, X, MWM)
+    }
+
+    mm[] <- names(treat)[mm]
+    dimnames(mm) <- list(lab1, seq_len(ratio))
   }
 
   if (!replace) {
@@ -525,10 +551,7 @@ matchit2nearest <-  function(treat, data, distance, discarded,
                              ratio = 1, replace = FALSE, m.order = NULL,
                              caliper = NULL, mahvars = NULL, exact = NULL,
                              formula = NULL, estimand = "ATT", verbose = FALSE,
-                             is.full.mahalanobis, ...){
-
-  A <- list(...)
-  fast <- isTRUE(A$fast)
+                             is.full.mahalanobis, fast = TRUE, ...){
 
   if(verbose)
     cat("Nearest neighbor matching... \n")
@@ -744,7 +767,7 @@ matchit2subclass <- function(treat, distance, discarded,
     psclass[!discarded] <- subclass_scoot(psclass[!discarded], treat[!discarded], distance[!discarded], min.n)
   }
 
-  psclass <- factor(psclass, nmax = length(q))
+  psclass <- setNames(factor(psclass, nmax = length(q)), names(treat))
 
   if (verbose) cat("Done\n")
 
