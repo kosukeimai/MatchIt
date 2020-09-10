@@ -53,7 +53,7 @@ matchit2cem <- function(treat, covs, estimand = "ATT", verbose = FALSE, ...) {
 
   strat <- setNames(rep(NA_character_, n.obs), names(treat))
   if (!is.null(mat)) strat[mat$matched] <- mat$strata[mat$matched]
-  strat <- setNames(factor(strat, labels = seq_along(unique(strat))), names(treat))
+  strat <- setNames(factor(strat, labels = seq_along(unique(strat[!is.na(strat)]))), names(treat))
 
   res <- list(subclass = strat,
               weights = weights.subclass(strat, treat, estimand))
@@ -306,7 +306,6 @@ matchit2optimal <- function(treat, formula, data, distance, discarded,
   return(res)
 }
 # MATCHIT method= genetic----------------------------------
-#Needs updates
 matchit2genetic <- function(treat, data, distance, discarded,
                             ratio = 1, replace = FALSE, m.order = NULL,
                             caliper = NULL, mahvars = NULL, exact = NULL,
@@ -477,7 +476,7 @@ matchit2genetic <- function(treat, data, distance, discarded,
 
   lab_ <- names(treat_)
 
-  if (!isFALSE(A$use.Match)) {
+  # if (!isFALSE(A$use.Match)) {
     withCallingHandlers({
       m.out <- Matching::Match(Tr = treat_, X = X_,
                                M = ratio, exact = exact.log, caliper = cal,
@@ -505,27 +504,27 @@ matchit2genetic <- function(treat, data, distance, discarded,
       matched.units <- lab_[m.out$index.control[m.out$index.treated == i]]
       mm[lab_[i], seq_along(matched.units)] <- matched.units
     }
-  }
-  else {
-    ord1 <- ord[ord %in% which(treat == 1)]
-    if (!is.null(cov.cals)) calcovs <- get.covs.matrix(reformulate(cov.cals), data = data)
-    else calcovs <- NULL
-
-    if (is.null(g.out)) MWM <- generalized_inverse(cov(X))
-    else MWM <- g.out$Weight.matrix %*% diag(1/apply(X, 2, var))
-
-    if (isFALSE(A$fast)) {
-      mm <- nn_match(treat, ord1, ratio, replace, discarded, distance, ex, dist.cal,
-                     cov.cals, calcovs, X, MWM)
-    }
-    else {
-      mm <- nn_matchC(treat, ord1, ratio, replace, discarded, distance, ex, dist.cal,
-                      cov.cals, calcovs, X, MWM)
-    }
-
-    mm[] <- names(treat)[mm]
-    dimnames(mm) <- list(lab1, seq_len(ratio))
-  }
+  # }
+  # else {
+  #   ord1 <- ord[ord %in% which(treat == 1)]
+  #   if (!is.null(cov.cals)) calcovs <- get.covs.matrix(reformulate(cov.cals), data = data)
+  #   else calcovs <- NULL
+  #
+  #   if (is.null(g.out)) MWM <- generalized_inverse(cov(X))
+  #   else MWM <- g.out$Weight.matrix %*% diag(1/apply(X, 2, var))
+  #
+  #   if (isFALSE(A$fast)) {
+  #     mm <- nn_match(treat, ord1, ratio, replace, discarded, distance, ex, dist.cal,
+  #                    cov.cals, calcovs, X, MWM)
+  #   }
+  #   else {
+  #     mm <- nn_matchC(treat, ord1, ratio, replace, discarded, distance, ex, dist.cal,
+  #                     cov.cals, calcovs, X, MWM)
+  #   }
+  #
+  #   mm[] <- names(treat)[mm]
+  #   dimnames(mm) <- list(lab1, seq_len(ratio))
+  # }
 
   if (!replace) {
     psclass <- setNames(rep(NA_character_, n.obs), lab)
