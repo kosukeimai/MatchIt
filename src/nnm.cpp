@@ -1,7 +1,6 @@
 #include <Rcpp.h>
 using namespace Rcpp;
 
-// [[Rcpp::plugins("cpp11")]]
 // [[Rcpp::export]]
 IntegerMatrix nn_matchC(const IntegerVector& treat,
                         const IntegerVector& ord,
