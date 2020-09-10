@@ -33,7 +33,6 @@ Suggests:
     Matching,
     rpart,
     mgcv,
-    R.rsp,
     CBPS,
     dbarts,
     randomForest,
