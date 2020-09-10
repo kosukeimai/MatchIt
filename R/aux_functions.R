@@ -448,7 +448,7 @@ match_arg <- function(arg, choices, several.ok = FALSE) {
   #of arg.
   if (missing(arg))
     stop("No argument was supplied to match_arg.", call. = FALSE)
-  arg.name <- deparse1(substitute(arg))
+  arg.name <- paste(deparse(substitute(arg), width.cutoff = 500L), collapse = " ")
 
   if (missing(choices)) {
     formal.args <- formals(sys.function(sysP <- sys.parent()))
@@ -483,7 +483,7 @@ match_arg <- function(arg, choices, several.ok = FALSE) {
 #Turn a vector into a 0/1 vector. 'zero' and 'one' can be supplied to make it clear which is
 #which; otherwise, a guess is used. From WeightIt.
 binarize <- function(variable, zero = NULL, one = NULL) {
-  if (length(unique(variable)) > 2) stop(paste0("Cannot binarize ", deparse1(substitute(variable)), ": more than two levels."))
+  if (length(unique(variable)) > 2) stop(paste0("Cannot binarize ", paste(deparse(substitute(variable)), collapse = " "), ": more than two levels."))
   if (is.character(variable) || is.factor(variable)) {
     variable <- factor(variable, nmax = 2)
     unique.vals <- levels(variable)
@@ -646,7 +646,7 @@ wvar <- function(x, bin.var = NULL, w = NULL, na.rm = TRUE) {
   if (is.null(w)) w <- rep(1, length(x))
   if (is.null(bin.var)) bin.var <- all(x == 0 | x == 1)
 
-  w <- w / sum(w)
+  w <- w / sum(w) #weights normalized to sum to 1
   mx <- sum(w * x) #weighted mean
 
   if (bin.var) {
