@@ -1,4 +1,3 @@
-#' @export
 match.data <- function(object, group = "all", distance = "distance",
                        weights = "weights", subclass = "subclass",
                        data = NULL, drop.unmatched = TRUE) {
@@ -123,12 +122,14 @@ get_matches <- function(object, distance = "distance", weights = "weights",
 
   matched[[id]] <- c(as.vector(tmm[!is.na(tmm)]), rownames(mm))
   matched[[subclass]] <- c(as.vector(col(tmm)[!is.na(tmm)]), seq_len(nrow(mm)))
-  matched[[weights]] <- c(1/num.matches[matched$subclass[seq_len(sum(!is.na(mm)))]], rep(1, nrow(mm)))
+  matched[[weights]] <- c(1/num.matches[matched[[subclass]][seq_len(sum(!is.na(mm)))]], rep(1, nrow(mm)))
 
   out <- merge(matched, m.data, by = id, all.x = TRUE, sort = FALSE)
 
   out <- out[order(out[[subclass]], object$treat[out[[id]]], method = "radix", decreasing = c(FALSE, TRUE)),]
   rownames(out) <- NULL
+
+  out[[subclass]] <- factor(out[[subclass]], labels = seq_len(nrow(mm)))
 
   return(out)
 }
