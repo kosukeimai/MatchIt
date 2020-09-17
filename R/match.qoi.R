@@ -135,7 +135,7 @@ qoi.subclass <- function(xx, tt, subclass, s.d.denom = "treated", standardize = 
     xsum["Subclass", 5:6] <- abs(mdiff)
   }
   else if (!too.small) {
-    xsum["Subclass", "Var.Ratio"] <- wvar(xx[in.sub & tt==1], bin.var) / wvar(xx[in.sub & tt==0], bin.var)
+    xsum["Subclass", "Var. Ratio"] <- wvar(xx[in.sub & tt==1], bin.var) / wvar(xx[in.sub & tt==0], bin.var)
 
     qqall <- qqsum(xx[in.sub], tt[in.sub], standardize = standardize)
     xsum["Subclass", 5:6] <- qqall[c("meandiff", "maxdiff")]
