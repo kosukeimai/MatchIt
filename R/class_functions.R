@@ -3,11 +3,15 @@
 plot.matchit <- function(x, type = "qq", interactive = TRUE, which.xs = NULL, ...) {
 
   type <- tolower(type)
-  type <- match_arg(type, c("qq", "jitter", "histogram"))
+  type <- match_arg(type, c("qq", "jitter", "histogram", "ecdf"))
 
   if (type == "qq") {
     matchit.qqplot(x, interactive=interactive,
                    which.xs = which.xs, ...)
+  }
+  else if (type == "ecdf") {
+    matchit.ecdfplot(x, interactive=interactive,
+                     which.xs = which.xs, ...)
   }
   else if (type == "jitter") {
     if (is.null(x$distance)) {
@@ -40,7 +44,7 @@ plot.matchit.subclass <- function(x, type = "qq", interactive = TRUE, which.xs =
   }
 
   type <- tolower(type)
-  type <- match_arg(type, c("qq", "jitter", "histogram"))
+  type <- match_arg(type, c("qq", "ecdf", "jitter", "histogram"))
 
   if (type == "qq"){
     if (interactive) {
@@ -62,6 +66,28 @@ plot.matchit.subclass <- function(x, type = "qq", interactive = TRUE, which.xs =
     else {
       matchit.qqplot(x,  which.subclass = subclass,
                      interactive = interactive, which.xs = which.xs,...)
+    }
+  }
+  else if (type == "ecdf"){
+    if (interactive) {
+      subclasses <- levels(x$subclass)
+      choices <- c("No (Exit)", paste0("Yes: Subclass ", subclasses), "Yes: In aggregate")
+      question <- "Would you like to see emprical CDF plots of any subclasses? "
+      ans <- -1
+      while(ans != 0) {
+        ans <- as.numeric(choice.menu(choices, question))
+        if (ans %in% seq_along(subclasses) && sum(x$subclass == subclasses[ans]) > 0) {
+          matchit.ecdfplot(x, which.subclass = subclasses[ans],
+                         interactive = interactive, which.xs = which.xs,...)
+        }
+        else if (ans != 0) {
+          matchit.ecdfplot(x, interactive = interactive, which.xs = which.xs,...)
+        }
+      }
+    }
+    else {
+      matchit.ecdfplot(x,  which.subclass = subclass,
+                       interactive = interactive, which.xs = which.xs,...)
     }
   }
   else if (type=="jitter") {
@@ -97,7 +123,7 @@ plot.summary.matchit <- function(x, abs = TRUE, var.order = "data", threshold = 
   if (abs) {
     sd.all <- abs(sd.all)
     sd.matched <- abs(sd.matched)
-    xlab <- "Absolute Standardized Mean Difference"
+    xlab <- "Absolute Standardized\nMean Difference"
   }
   else {
     xlab <- "Standardized Mean Difference"
@@ -110,7 +136,7 @@ plot.summary.matchit <- function(x, abs = TRUE, var.order = "data", threshold = 
                 "alphabetical" = order(rownames(x$sum.all), decreasing = TRUE))
 
   dotchart(sd.all[ord], labels = rownames(x$sum.all)[ord], xlab = xlab,
-           bg = NA, color = NA)
+           bg = NA, color = NA, ...)
   abline(v = 0)
 
   if (sub && length(x$sum.subclass) > 0) {
@@ -129,7 +155,7 @@ plot.summary.matchit <- function(x, abs = TRUE, var.order = "data", threshold = 
 
   if (!is.null(threshold)) {
     if (abs) {
-        abline(v = threshold, lty = seq_along(threshold))
+      abline(v = threshold, lty = seq_along(threshold))
     }
     else {
       abline(v = threshold, lty = seq_along(threshold))
@@ -177,7 +203,7 @@ print.matchit <- function(x, ...) {
   }
   if (cal) {
     cat(paste0(" - caliper: ", paste(vapply(seq_along(x[["caliper"]]), function(z) paste0(if (names(x[["caliper"]])[z] == "") "<distance>" else names(x[["caliper"]])[z],
-                                                                                   " (", format(round(x[["caliper"]][z], 3)), ")"), character(1L)),
+                                                                                          " (", format(round(x[["caliper"]][z], 3)), ")"), character(1L)),
                                      collapse = ", "), "\n"))
   }
   if (disl) {

@@ -30,7 +30,7 @@ matchit.qqplot <- function(object, which.subclass = NULL,
   t <- object$treat
 
   if (!is.null(object$subclass) && !is.null(which.subclass)) {
-    if (!is.atomic(which.subclass) || !is.numeric(which.subclass) || length(which.subclass) > 1) {
+    if (!is.atomic(which.subclass) || length(which.subclass) > 1) {
       stop("The argument to subclass must be NULL or the index of the single subclass for which to display covariate distributions.", call. = FALSE)
     }
     if (!which.subclass %in% object$subclass[!is.na(object$subclass)]) {
@@ -169,6 +169,120 @@ matchit.qqplot <- function(object, which.subclass = NULL,
     abline(a = 0, b = 1)
     abline(a = (rr[2]-rr[1])*0.1, b = 1, lty = 2)
     abline(a = -(rr[2]-rr[1])*0.1, b = 1, lty = 2)
+    box()
+
+    devAskNewPage(ask = interactive)
+  }
+  devAskNewPage(ask = FALSE)
+}
+
+matchit.ecdfplot <- function(object, which.subclass = NULL,
+                           interactive = TRUE, which.xs = NULL,...) {
+
+  #Create covariate matrix; include exact and mahvars
+  if (!is.null(which.xs)) {
+    if (!is.vector(which.xs, "character")) {
+      stop("which.xs should be a vector of variables for which balance is to be displayed.", call. = FALSE)
+    }
+    which.xs.f <- terms(reformulate(which.xs))
+
+    X <- get.covs.matrix(which.xs.f, data = object$X)
+  }
+  else {
+    #Create covariate matrix; include exact and mahvars
+    X <- get.covs.matrix(object$formula, data = object$X)
+
+    if (!is.null(object$exact)) {
+      Xexact <- get.covs.matrix(object$exact, data = object$X)
+      X <- cbind(X, Xexact[,setdiff(colnames(Xexact), colnames(X)), drop = FALSE])
+    }
+
+    if (!is.null(object$mahvars)) {
+      Xmahvars <- get.covs.matrix(object$mahvars, data = object$X)
+      X <- cbind(X, Xmahvars[,setdiff(colnames(Xmahvars), colnames(X)), drop = FALSE])
+    }
+  }
+
+  t <- object$treat
+
+  if (!is.null(object$subclass) && !is.null(which.subclass)) {
+    if (!is.atomic(which.subclass) || length(which.subclass) > 1) {
+      stop("The argument to subclass must be NULL or the index of the single subclass for which to display covariate distributions.", call. = FALSE)
+    }
+    if (!which.subclass %in% object$subclass[!is.na(object$subclass)]) {
+      stop("The argument supplied to subclass is not the index of any subclass in the matchit object.", call. = FALSE)
+    }
+    w <- as.numeric(object$subclass == which.subclass & !is.na(object$subclass))
+  }
+  else {
+    w <- object$weights
+    if (is.null(w)) w <- rep(1, length(t))
+  }
+
+  for (i in 0:1) w[t == i] <- w[t==i]/sum(w[t==i])
+
+  varnames <- colnames(X)
+
+  .pardefault <- par(no.readonly = TRUE)
+  on.exit(par(.pardefault))
+
+  oma <- c(2.25, 0, 3.75, 1.5)
+  opar <- par(mfrow = c(3, 3), mar = c(1.5,.5,1.5,.5), oma = oma)
+
+  for (i in seq_along(varnames)){
+    x <- X[,i]
+
+    plot(x, type= "n" , axes=FALSE)
+
+    if(((i-1)%%3)==0){
+      htext <- "eCDF Plots"
+      if (!is.null(which.subclass)){
+        htext <- paste0(htext, paste0(" (Subclass ", which.subclass,")"))
+      }
+      mtext(htext, 3, 2, TRUE, 0.5, cex=1.1, font = 2)
+      mtext("All", 3, .25, TRUE, 0.5, cex=1, font = 1)
+      mtext("Matched", 3, .25, TRUE, 0.83, cex=1, font = 1)
+    }
+    par(usr = c(0, 1, 0, 1))
+    l.wid <- strwidth(varnames, "user")
+    cex.labels <- max(0.75, min(1.45, 0.85/max(l.wid)))
+    text(0.5, 0.5, varnames[i], cex = cex.labels)
+
+    ord <- order(x)
+    x.min <- x[ord][1]
+    x.max <- x[ord][length(x)]
+    x.range <- x.max - x.min
+
+    plot(x = x, y = w, type= "n" , xlim = c(x.min - .02 * x.range, x.max + .02 * x.range),
+         ylim = c(0, 1), axes = TRUE, ...)
+
+    for (tr in 0:1) {
+      in.tr <- t[ord] == tr
+      ordt <- ord[in.tr]
+      cwt <- seq(0, 1, length.out = sum(in.tr) + 2)
+      xt <- c(x.min - .02 * x.range, x[ordt], x.max + .02 * x.range)
+
+      lines(x = xt, y = cwt, type = "s", col = if (tr == 0) "grey60" else "black")
+
+    }
+
+    abline(h = 0:1)
+    box()
+
+    plot(x = x, y = w, type= "n" , xlim = c(x.min - .02 * x.range, x.max + .02 * x.range),
+         ylim = c(0, 1), axes = FALSE, ...)
+    for (tr in 0:1) {
+      in.tr <- t[ord] == tr
+      ordt <- ord[in.tr]
+      cwt <- c(0, cumsum(w[ordt]), 1)
+      xt <- c(x.min - .02 * x.range, x[ordt], x.max + .02 * x.range)
+
+      lines(x = xt, y = cwt, type = "s", col = if (tr == 0) "grey60" else "black")
+
+    }
+
+    abline(h = 0:1)
+    axis(1)
     box()
 
     devAskNewPage(ask = interactive)
