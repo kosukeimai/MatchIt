@@ -13,6 +13,8 @@ vignette: >
 ---
 
 ```{r, include = FALSE}
+knitr::opts_chunk$set(echo = TRUE, eval=T)
+
 #Generatng data similar to Austin (2009) for demonstrating treatment effect estimation
 gen_X <- function(n) {
   X <- matrix(rnorm(9 * n), nrow = n, ncol = 9)
@@ -195,7 +197,7 @@ summary(fit2)
 
 We demonstrate bootstrapping here. The process is generalizable to other matching methods and outcome types. We first need to write a function, `est_fun`, which takes in a dataset and an ordering and outputs an effect estimate. This function should include the matching and effect estimation, though no standard error is required. Any matching method and effect estimation method can be substituted in to get bootstrap standard errors for that combination. Note that the `data` argument supplied to `matchit()` uses the resampled dataset.
 
-```{r, cache = TRUE}
+```{r, eval = FALSE}
 #Bootstrap confidence interval
 # library(boot)
 
@@ -252,7 +254,7 @@ As with continuous outcomes, the regular robust standard errors can also be esti
 
 If we want to include covariates in the model, we have to do some additional work to estimate the effect and its standard error. This is because the coefficient on treatment in a nonlinear model with covariates corresponds to the conditional rather than marginal effect. To estimate a marginal effect, we have to perform a marginal effects procedure, which is equivalent to g-computation in the matched set. Bootstrapping is the most straightforward method to estimate standard errors. We demonstrate this below.
 
-```{r, cache = TRUE}
+```{r, eval = FALSE}
 #Bootstrap confidence intervals
 # library(boot)
 
@@ -307,7 +309,7 @@ coxph(Surv(Y_S) ~ A, data = md, robust = TRUE,
 
 Austin and Small (2014) found bootstrap confidence intervals to work well for marginal hazard ratios. Below we demonstrate this using similar code as before:
 
-```{r, cache = TRUE}
+```{r, eval = FALSE}
 #Bootstrap confidence interval
 # library(boot)
 
@@ -410,7 +412,7 @@ Note that the effect estimates are identical; only the standard errors and p-val
 
 We can also use bootstrapping to estimate standard errors and confidence intervals. Although Abadie and Imbens (2008) demonstrated analytically that bootstrap standard errors may be invalid for matching with replacement, simulation work by Hill and Reiter (2006) and Bodory et al. (2020) has found that bootstrap standard errors are adequate and generally slightly conservative. We demonstrate estimating the bootstrap standard errors and confidence intervals below. Note that the procedure is nearly identical to that used with matching without replacement except that weights are incorporated into the outcome regression.
 
-```{r, cache = TRUE}
+```{r, eval = FALSE}
 #Bootstrap confidence interval
 # library(boot)
 
@@ -465,7 +467,7 @@ Note that we included the weights in the call to `glm()` and we included both `s
 
 To include covariates, we can use the bootstrap as before with matching without replacement. The primary difference now is that the weights must be included both in the treatment effect model and in the computation of the average predicted potential outcomes used in forming the marginal OR. This is demonstrated below.
 
-```{r, cache = TRUE}
+```{r, eval = FALSE}
 #Bootstrap confidence intervals
 # library(boot)
 
@@ -727,7 +729,7 @@ As with other matching methods, we include weights in the call to `glm()` and se
 
 To estimate effects using the strata rather than the MMWS weights, we can use the code described previously for stratification with continuous outcomes if the quantity of interest is the marginal RD, which is collapsible. In general, however, we can use bootstrapping to estimate the standard error of the marginal OR using the procedure described previously (i.e., estimating the average of the stratum-specific risks under each treatment level and computing marginal effects from them). This also makes it fairly straightforward to include covariates in the model. Below we illustrate bootstrapping for the marginal OR with covariates included in the outcome model.
 
-```{r, cache = TRUE}
+```{r, eval = FALSE}
 #Bootstrap confidence intervals
 library(boot)
 
