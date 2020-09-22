@@ -15,7 +15,7 @@ Computes and prints balance statistics for \code{matchit} and \code{matchit.subc
         data = NULL, pair.dist = TRUE, ...)
 \method{summary}{matchit.subclass}(object, interactions = FALSE,
         addlvariables = NULL, standardize = TRUE,
-        data = NULL, pair.dist = TRUE, subclass = FALSE, ...)
+        data = NULL, pair.dist = FALSE, subclass = FALSE, ...)
 
 \method{print}{summary.matchit}(x, digits = max(3, getOption("digits") - 3),
       ...)
@@ -39,7 +39,7 @@ additional variable for which balance staistics are to be computed along with th
 a optional data frame containing variables named in \code{addlvariables} if specified as a string or formula.
 }
   \item{pair.dist}{
-\code{logical}; whether to compute average absolute pair distances. For matching methods that don't include a \code{match.matrix} component in the output (i.e., exact matching, coarsened exact matching, full matching, and subclassification), computing pair differences can take a long time, especially for large datasets and with many covariates. For other methods (i.e., nearest neighbor, optimal, and genetic matching), computation is fairly quick. Default is \code{TRUE}.
+\code{logical}; whether to compute average absolute pair distances. For matching methods that don't include a \code{match.matrix} component in the output (i.e., exact matching, coarsened exact matching, full matching, and subclassification), computing pair differences can take a long time, especially for large datasets and with many covariates. For other methods (i.e., nearest neighbor, optimal, and genetic matching), computation is fairly quick. Default is \code{FALSE} for subclassification and \code{TRUE} otherwise.
 }
   \item{subclass}{
 after subclassification, whether to display balance for individual subclasses, and, if so, for which ones. Can be \code{TRUE} (display balance for all subclasses), \code{FALSE} (display balance only in aggregate), or the indices (e.g., \code{1:6}) of the specific subclasses for which to display balance. Default is \code{FALSE}.

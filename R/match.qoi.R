@@ -1,5 +1,6 @@
 ## Functions to calculate summary stats
-qoi <- function(xx, tt, ww = NULL, subclass = NULL, mm = NULL, s.d.denom = "treated", standardize = FALSE) {
+qoi <- function(xx, tt, ww = NULL, subclass = NULL, mm = NULL, s.d.denom = "treated", standardize = FALSE,
+                compute.pair.dist = TRUE) {
 
   full.only <- is.null(ww) && is.null(mm) && is.null(subclass)
   bin.var <- all(xx == 0 | xx == 1)
@@ -65,14 +66,13 @@ qoi <- function(xx, tt, ww = NULL, subclass = NULL, mm = NULL, s.d.denom = "trea
 
     if (standardize && abs(mdiff) > 1e-8) {
       if (!too.small) {
-        xsum.matched["Matched",3] <- mdiff/std
-        xsum.matched["Matched", 7] <- pair.dist(xx, tt, subclass, mm, std)
+        xsum.matched["Matched", 3] <- mdiff/std
+        if (compute.pair.dist) xsum.matched["Matched", 7] <- pair.dist(xx, tt, subclass, mm, std)
       }
     }
     else {
       xsum.matched["Matched", 3] <- mdiff
-      xsum.matched["Matched", 7] <- pair.dist(xx, tt, subclass, mm)
-
+      if (compute.pair.dist) xsum.matched["Matched", 7] <- pair.dist(xx, tt, subclass, mm)
     }
 
     if (bin.var) {
@@ -145,7 +145,7 @@ qoi.subclass <- function(xx, tt, subclass, s.d.denom = "treated", standardize = 
 }
 
 #Compute within-pair/subclass distances
-pair.dist <- function(xx, tt, subclass = NULL, mm = NULL, std = NULL, fast = T) {
+pair.dist <- function(xx, tt, subclass = NULL, mm = NULL, std = NULL, fast = TRUE) {
 
   if (!is.null(mm)) {
     names(xx) <- names(tt)
