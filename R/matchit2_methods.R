@@ -3,7 +3,7 @@
 # weight for each observation in the weight entry, and the
 # match.matrix object
 #
-# MATCHIT method= cem--------------------------------------
+# MATCHIT method = cem--------------------------------------
 matchit2cem <- function(treat, covs, estimand = "ATT", verbose = FALSE, ...) {
 
   check.package("cem")
@@ -61,7 +61,7 @@ matchit2cem <- function(treat, covs, estimand = "ATT", verbose = FALSE, ...) {
   return(res)
 }
 
-# MATCHIT method= exact------------------------------------
+# MATCHIT method = exact------------------------------------
 matchit2exact <- function(treat, covs, data, estimand = "ATT", verbose = FALSE, ...){
 
   if(verbose)
@@ -81,7 +81,7 @@ matchit2exact <- function(treat, covs, data, estimand = "ATT", verbose = FALSE, 
   return(res)
 }
 
-# MATCHIT method= full-------------------------------------
+# MATCHIT method = full-------------------------------------
 matchit2full <- function(treat, formula, data, distance, discarded,
                          caliper = NULL, mahvars = NULL, exact = NULL,
                          estimand = "ATT", verbose = FALSE,
@@ -195,7 +195,7 @@ matchit2full <- function(treat, formula, data, distance, discarded,
   return(res)
 }
 
-# MATCHIT method= optimal----------------------------------
+# MATCHIT method = optimal----------------------------------
 matchit2optimal <- function(treat, formula, data, distance, discarded,
                             ratio = 1, caliper = NULL, mahvars = NULL, exact = NULL,
                             estimand = "ATT", verbose = FALSE,
@@ -299,13 +299,14 @@ matchit2optimal <- function(treat, formula, data, distance, discarded,
   }
 
   ## calculate weights and return the results
-  res <- list(match.matrix = mm, subclass = psclass,
+  res <- list(match.matrix = mm,
+              subclass = psclass,
               weights = weights.subclass(psclass, treat, estimand))
 
   class(res) <- "matchit"
   return(res)
 }
-# MATCHIT method= genetic----------------------------------
+# MATCHIT method = genetic----------------------------------
 matchit2genetic <- function(treat, data, distance, discarded,
                             ratio = 1, replace = FALSE, m.order = NULL,
                             caliper = NULL, mahvars = NULL, exact = NULL,
@@ -527,35 +528,35 @@ matchit2genetic <- function(treat, data, distance, discarded,
   # }
 
   if (!replace) {
-    psclass <- setNames(rep(NA_character_, n.obs), lab)
-    no.match <- is.na(mm)
-    psclass[lab1[!no.match[,1]]] <- lab1[!no.match[,1]]
-    psclass[mm[!no.match]] <- lab1[row(mm)[!no.match]]
-    psclass <- setNames(factor(psclass, nmax = n1), lab)
-    levels(psclass) <- seq_len(nlevels(psclass))
+    psclass <- mm2subclass(mm, treat)
+    weights <- weights.subclass(psclass, treat)
   }
-  else psclass <- NULL
+  else {
+    psclass <- NULL
+    weights <- weights.matrix(mm, treat)
+  }
 
   res <- list(match.matrix = mm,
               subclass = psclass,
-              weights = weights.matrix(mm, treat),
+              weights = weights,
               obj = g.out)
 
   class(res) <- "matchit"
   return(res)
 }
 
-# MATCHIT method= nearest----------------------------------
+# MATCHIT method = nearest----------------------------------
 matchit2nearest <-  function(treat, data, distance, discarded,
                              ratio = 1, replace = FALSE, m.order = NULL,
                              caliper = NULL, mahvars = NULL, exact = NULL,
                              formula = NULL, estimand = "ATT", verbose = FALSE,
-                             is.full.mahalanobis, fast = TRUE, ...){
+                             is.full.mahalanobis, fast = TRUE,
+                             min.controls = NULL, max.controls = NULL, ...){
 
   if(verbose)
     cat("Nearest neighbor matching... \n")
 
-  ratio <- process.ratio(ratio)
+  ratio <- process.ratio(ratio, max.controls)
 
   estimand <- toupper(estimand)
   estimand <- match_arg(estimand, c("ATT", "ATC"))
@@ -573,8 +574,8 @@ matchit2nearest <-  function(treat, data, distance, discarded,
       warning("Fewer ", tc[2], " units than ", tc[1], " units; not all ", tc[1],
               " units will get a match.", immediate. = TRUE, call. = FALSE)    }
     else if (sum(!discarded & treat != focal) < sum(!discarded & treat == focal)*ratio) {
-      warning(paste0("Not enough ", tc[2], " units for ", ratio, " matches for each ", tc[1],
-                     " unit. Some ", tc[1], " units will not be matched to ", ratio, " ", tc[2], " units."), immediate. = TRUE, call. = FALSE)
+      warning(paste0("Not enough ", tc[2], " units for ", round(ratio, 2), " matches for each ", tc[1],
+                     " unit. Some ", tc[1], " units will not be matched to ", round(ratio, 2), " ", tc[2], " units."), immediate. = TRUE, call. = FALSE)
     }
   }
 
@@ -650,40 +651,74 @@ matchit2nearest <-  function(treat, data, distance, discarded,
                   "data" = seq_len(n1))
   }
 
+  #Variable ratio (extremal matching), Ming & Rosenbaum (2000)
+  #Each treated unit get its own value of ratio
+  if (!is.null(max.controls)) {
+    if (is.null(distance)) stop("'distance' cannot be \"mahalanobis\" for variable ratio matching.", call. = FALSE)
+    if (ratio <= 1) stop("'ratio' must be greater than 1 for variable ratio matching.", call. = FALSE)
+    if (max.controls <= ratio) stop("'max.controls' must be greater than 'ratio' for variable ratio matching.", call. = FALSE)
+    if (is.null(min.controls)) min.controls <- 1
+    else if (min.controls >= ratio) stop("'min.controls' must be less than 'ratio' for variable ratio matching.", call. = FALSE)
+
+    n1 <- sum(treat == 1)
+    m <- round(ratio * n1)
+    if (m > sum(treat == 0)) stop("'ratio' must be less than or equal to n0/n1.", call. = FALSE)
+
+    kmax <- floor((m - min.controls*(n1-1)) / (max.controls - min.controls))
+    kmin <- n1 - kmax - 1
+    kmed <- m - (min.controls*kmin + max.controls*kmax)
+
+    ratio0 <- c(rep(min.controls, kmin), kmed, rep(max.controls, kmax))
+
+    #Make sure no units are assigned 0 matches
+    if (any(ratio0 == 0)) {
+      ind <- which(ratio0 == 0)
+      ratio0[ind] <- 1
+      ratio0[ind + 1] <- ratio0[ind + 1] - 1
+    }
+
+    ratio <- rep(NA_integer_, n1)
+
+    #Order by distance; treated are supposed to have higher values
+    ratio[order(distance[treat == 1],
+                decreasing = mean(distance[treat == 1]) > mean(distance[treat != 1]))] <- ratio0
+  }
+  else {
+    ratio <- rep(ratio, n1)
+  }
+
   #Both produce matrix of indices of matched ctrl units
-  if (!fast) {
-    mm <- nn_match(treat, ord, ratio, replace, discarded, distance, ex, caliper.dist,
+  if (fast) {
+    mm <- nn_matchC(treat, ord, ratio, replace, discarded, distance, ex, caliper.dist,
                     caliper.covs, caliper.covs.mat, mahcovs, mahSigma_inv)
   }
   else {
-    mm <- nn_matchC(treat, ord, ratio, replace, discarded, distance, ex, caliper.dist,
+    mm <- nn_match(treat, ord, ratio, replace, discarded, distance, ex, caliper.dist,
                     caliper.covs, caliper.covs.mat, mahcovs, mahSigma_inv)
   }
 
   mm[] <- names(treat)[mm]
-  dimnames(mm) <- list(lab1, seq_len(ratio))
+  dimnames(mm) <- list(lab1, seq_len(ncol(mm)))
 
   if (!replace) {
-    psclass <- setNames(rep(NA_character_, n.obs), lab)
-    no.match <- is.na(mm)
-    psclass[lab1[!no.match[,1]]] <- lab1[!no.match[,1]]
-    psclass[mm[!no.match]] <- lab1[row(mm)[!no.match]]
-
-    psclass <- setNames(factor(psclass, nmax = n1), lab)
-    levels(psclass) <- seq_len(nlevels(psclass))
+    psclass <- mm2subclass(mm, treat)
+    weights <- weights.subclass(psclass, treat)
   }
-  else psclass <- NULL
+  else {
+    psclass <- NULL
+    weights <- weights.matrix(mm, treat)
+  }
 
   res <- list(match.matrix = mm,
               subclass = psclass,
-              weights = weights.matrix(mm, treat))
+              weights = weights)
 
   class(res) <- "matchit"
 
   return(res)
 }
 
-# MATCHIT method= subclass---------------------------------
+# MATCHIT method = subclass---------------------------------
 #Needs updates
 matchit2subclass <- function(treat, distance, discarded,
                              replace = FALSE, exact = NULL,
@@ -736,12 +771,9 @@ matchit2subclass <- function(treat, distance, discarded,
 
   n.obs <- length(treat)
 
-  p1 <- distance[treat==1]
-  p0 <- distance[treat==0]
-
   ## Setting Cut Points
   if (length(subclass) == 1) {
-    sprobs <- seq(0, 1, length = round(subclass) + 1)
+    sprobs <- seq(0, 1, length.out = round(subclass) + 1)
   }
   else {
     sprobs <- sort(subclass)
@@ -751,8 +783,8 @@ matchit2subclass <- function(treat, distance, discarded,
   }
 
   q <- switch(estimand,
-              "ATT" = quantile(p1, probs = sprobs, na.rm = TRUE),
-              "ATC" = quantile(p0, probs = sprobs, na.rm = TRUE),
+              "ATT" = quantile(distance[treat==1], probs = sprobs, na.rm = TRUE),
+              "ATC" = quantile(distance[treat==0], probs = sprobs, na.rm = TRUE),
               "ATE" = quantile(distance, probs = sprobs, na.rm = TRUE))
 
   ## Calculating Subclasses

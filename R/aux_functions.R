@@ -131,12 +131,13 @@ process.distance <- function(distance, method) {
 }
 
 #Function to check ratio is acceptable
-process.ratio <- function(ratio) {
+process.ratio <- function(ratio, max.controls = NULL) {
   if (length(ratio) == 0) ratio <- 1
   if (!is.atomic(ratio) || !is.numeric(ratio) || length(ratio) > 1 || ratio < 1) {
     stop("Ratio must be a single positive number.", call. = FALSE)
   }
-  round(ratio)
+  if (is.null(max.controls)) ratio <- round(ratio)
+  ratio
 }
 
 #Function to check if caliper is okay and process it
@@ -639,6 +640,22 @@ get.covs.matrix <- function(formula = NULL, data = NULL) {
                     contrasts.arg = lapply(Filter(is.factor, mf),
                                            contrasts, contrasts = FALSE))[,-1,drop = FALSE]
   return(X)
+}
+
+#Get subclass from match.matrix. Only to be used if replace = FALSE.
+mm2subclass <- function(mm, treat) {
+  lab <- names(treat)
+  lab1 <- lab[treat == 1]
+
+  subclass <- setNames(rep(NA_character_, length(treat)), lab)
+  no.match <- is.na(mm)
+  subclass[lab1[!no.match[,1]]] <- lab1[!no.match[,1]]
+  subclass[mm[!no.match]] <- lab1[row(mm)[!no.match]]
+
+  subclass <- setNames(factor(subclass, nmax = length(lab1)), lab)
+  levels(subclass) <- seq_len(nlevels(subclass))
+
+  return(subclass)
 }
 
 #(Weighted) variance that uses special formula for binary variables

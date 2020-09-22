@@ -17,14 +17,16 @@ nn_match <- function(treat, ord, ratio = 1, replace = FALSE, discarded, distance
     d0 <- distance[treat == 0]
   }
 
-  mm <- matrix(NA_integer_, nrow = n1, ncol = ratio)
+  max.ratio <- max(ratio)
+
+  mm <- matrix(NA_integer_, nrow = n1, ncol = max.ratio)
 
   matched <- discarded
 
   ord_ <- ord[!discarded[ord]] #Only non-discarded
 
-  for (r in seq_len(ratio)) {
-    for (ord_i in ord_) {
+  for (r in seq_len(max.ratio)) {
+    for (ord_i in ord_[ratio[ord_] >= r]) {
 
       c.eligible <- !matched & treat == 0
 

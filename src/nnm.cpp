@@ -4,7 +4,7 @@ using namespace Rcpp;
 // [[Rcpp::export]]
 IntegerMatrix nn_matchC(const IntegerVector& treat,
                         const IntegerVector& ord,
-                        const int& ratio,
+                        const IntegerVector& ratio,
                         const bool& replace,
                         const LogicalVector& discarded,
                         const Nullable<NumericVector>& distance_ = R_NilValue,
@@ -36,8 +36,10 @@ IntegerMatrix nn_matchC(const IntegerVector& treat,
   IntegerVector ind = Range(0, n - 1);
   IntegerVector ind1 = ind[treat == 1];
 
+  int max_rat = max(ratio);
+
   // Output matrix with sample indices of C units
-  IntegerMatrix mm(n1, ratio);
+  IntegerMatrix mm(n1, max_rat);
   mm.fill(NA_INTEGER);
 
   // Store who has been matched; exclude discarded
@@ -46,7 +48,7 @@ IntegerMatrix nn_matchC(const IntegerVector& treat,
   // Indices of units to form control pool
   IntegerVector c_pool = ind;
 
-  int t, t_ind, min_ind, c_chosen, num_eligible, cal_len;
+  int t, t_ind, min_ind, c_chosen, num_eligible, cal_len, t_rat;
   double dt, cal_var_t;
 
   NumericVector cal_var, cal_diff, ps_diff, diff, mah_covs_t, mah_covs_col,
@@ -89,12 +91,18 @@ IntegerMatrix nn_matchC(const IntegerVector& treat,
 
   bool ps_diff_assigned = false;
 
-  for (int rat = 0; rat < ratio; ++rat) {
-    for (int i = 0; i < n1; ++i) {
+  //Counters
+  int rat, i, x, j;
+  for (rat = 0; rat < max_rat; ++rat) {
+    for (i = 0; i < n1; ++i) {
 
       if (all(matched).is_true()) break;
 
       t = ord[i] - 1;     // index among treated
+      t_rat = ratio[t];
+
+      if (t_rat < rat + 1) continue;
+
       t_ind = ind1[t]; // index among sample
 
       if (discarded[t_ind]) continue;
@@ -122,7 +130,7 @@ IntegerMatrix nn_matchC(const IntegerVector& treat,
       }
 
       if (use_caliper_covs) {
-        for (int x = 0; (x < cal_len) && any(c_eligible).is_true(); ++x) {
+        for (x = 0; (x < cal_len) && any(c_eligible).is_true(); ++x) {
           cal_var = calcovs_covs_mat( _ , x );
 
           cal_var_t = cal_var[t_ind];
@@ -143,7 +151,7 @@ IntegerMatrix nn_matchC(const IntegerVector& treat,
 
       if (use_mah_covs) {
         mah_covs_c = NumericMatrix(num_eligible, mah_covs.ncol());
-        for (int j = 0; j < mah_covs.ncol(); ++j) {
+        for (j = 0; j < mah_covs.ncol(); ++j) {
           mah_covs_col = mah_covs.column(j);
           mah_covs_c(_,j) = as<NumericVector>(mah_covs_col[c_available]);
         }
@@ -170,18 +178,18 @@ IntegerMatrix nn_matchC(const IntegerVector& treat,
         matched[c_chosen] = true;
       }
       else {
-        if (num_eligible <= ratio) {
-          for (int j = 0; j < num_eligible; ++j) {
+        if (num_eligible <= t_rat) {
+          for (j = 0; j < num_eligible; ++j) {
             mm( t , j ) = c_available[j] + 1;
           }
         }
         else {
           indices = Range(0, num_eligible - 1);
 
-          std::partial_sort(indices.begin(), indices.begin()+ratio, indices.end(),
+          std::partial_sort(indices.begin(), indices.begin() + t_rat, indices.end(),
                             [&match_distance](int k, int j) {return match_distance[k] < match_distance[j];});
 
-          for (int j = 0; j < ratio; ++j) {
+          for (j = 0; j < t_rat; ++j) {
             min_ind = indices[j];
             mm( t , j ) = c_available[min_ind] + 1;
           }

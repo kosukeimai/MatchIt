@@ -16,6 +16,7 @@ matchit(formula, data = NULL, method = "nearest",
         exact = NULL, mahvars = NULL, discard = "none",
         reestimate = FALSE, replace = TRUE,
         m.order = NULL, caliper = NULL, ratio = 1,
+        min.controls = NULL, max.controls = NULL,
         verbose = FALSE, ...)
 }
 }
@@ -66,7 +67,13 @@ the width(s) of the caliper(s) used for caliper matching. See Details and Exampl
 \code{logical}; when calipers are specified, whether they are in standard deviation units (\code{TRUE}) or raw units (\code{FALSE}).
 }
   \item{ratio}{
-how many control units should be matched to each treated unit for k:1 matching. Should be a single integer value.
+how many control units should be matched to each treated unit for k:1 matching. For variable ratio matching, see section "Variable Ratio Matching" in Details below.
+}
+  \item{min.controls}{
+for variable ratio matching, the minimum number of controls units to be matched to each treated unit. See section "Variable Ratio Matching" in Details below.
+}
+  \item{max.controls}{
+for variable ratio matching, the maximum number of controls units to be matched to each treated unit. See section "Variable Ratio Matching" in Details below.
 }
   \item{verbose}{
 \code{logical}; whether information about the matching process should be printed to the console.
@@ -102,6 +109,12 @@ With this code, the Mahalanobis distance is computed using \code{X1} and \code{X
 
 \subsection{Estimand}{
 The \code{estimand} argument controls whether control units are selected to be matched with treated units (\code{estimand = "ATT"}) or treated units are selected to be matched with control units (\code{estimand = "ATC"}). The "focal" group (e.g., the treated units for the ATT) is typically made to be the smaller treatmentgroup, and a warning will be thrown if it is not set that way unless \code{replace = TRUE}. Setting \code{estimand = "ATC"} is equivalent to swapping all treated and control labels for the treatment variable. When \code{estimand = "ATC"}, the default \code{m.order} is \code{"smallest"}, and the \code{match.matrix} component of the output will have the names of the control units as the rownames and be filled with the names of the matched treated units (opposite to when \code{estimand = "ATT"}). Note that the argument supplied to \code{estimand} doesn't necessarily correspond to the estimand actually targeted; it is merely a switch to trigger which treatment group is considered "focal".
+}
+
+\subsection{Variable Ratio Matching}{
+\code{matchit} can perform variable ratio "extremal" matching as described by Ming and Rosenbaum (2000). This method tends to result in better balance than fixed ratio matching at the expense of some precision. When \code{ratio > 1}, rather than requiring all treated units to receive \code{ratio} matches, each treated unit is assigned a value that corresponds to the number of control units they will be matched to. These values are controlled by the arguments \code{min.controls} and \code{max.controls}, which correspond to α and β, respectively, in Ming and Rosenbaum (2000), and trigger variable ratio matching to occur. Some treated units will receive \code{min.controls} matches and others will receive \code{max.controls} matches (and one unit may have an intermediate number of matches); how many units are assigned each number of matches is determined by the algorithm described in Ming and Rosenbaum (2000, p119). \code{ratio} controls how many total control units will be matched: \code{n1 * ratio} control units will be matched, where \code{n1} is the number of treated units, yielding the same total number of matched controls as fixed ratio matching does.
+
+Variable ratio matching cannot be used with Mahalanobis distance matching. The calculations of the numbers of control units each treated unit will be matched to occurs without consideration of \code{caliper} or \code{discard}. \code{ratio} does not have to be an integer but must be greater than 1 and less than \code{n0/n1}, where \code{n0} and \code{n1} are the number of control and treated units, respectively. Setting \code{ratio = n0/n1} performs a crude form of full matching where all control units are matched. If \code{min.controls} is not specified, it is set to 1 by default. \code{min.controls} must be less than \code{ratio} and \code{max.controls} must be greater than \code{ratio}. See Examples below for an example their use.
 }
 
 }
@@ -144,4 +157,15 @@ m.out3 <- matchit(treat ~ age + educ + re74 + re75, data = lalonde,
                   caliper = c(re74 = .2, re75 = .15))
 m.out3
 summary(m.out3)
+
+# 2:1 variable ratio NN matching on the PS
+m.out4 <- matchit(treat ~ age + educ + race + nodegree +
+                    married + re74 + re75, data = lalonde,
+                  method = "nearest", ratio = 2,
+                  min.controls = 1, max.controls = 12)
+m.out4
+summary(m.out4)
+
+# Some units received 1 match and some received 12
+table(table(m.out4$subclass[m.out4$treat == 0]))
 }
