@@ -6,14 +6,14 @@
 using namespace Rcpp;
 
 // nn_matchC
-IntegerMatrix nn_matchC(const IntegerVector& treat, const IntegerVector& ord, const int& ratio, const bool& replace, const LogicalVector& discarded, const Nullable<NumericVector>& distance_, const Nullable<IntegerVector>& exact_, const Nullable<double>& caliper_dist_, const Nullable<NumericVector>& caliper_covs_, const Nullable<NumericMatrix>& calcovs_covs_mat_, const Nullable<NumericMatrix>& mah_covs_, const Nullable<NumericMatrix>& mahSigma_inv_);
+IntegerMatrix nn_matchC(const IntegerVector& treat, const IntegerVector& ord, const IntegerVector& ratio, const bool& replace, const LogicalVector& discarded, const Nullable<NumericVector>& distance_, const Nullable<IntegerVector>& exact_, const Nullable<double>& caliper_dist_, const Nullable<NumericVector>& caliper_covs_, const Nullable<NumericMatrix>& calcovs_covs_mat_, const Nullable<NumericMatrix>& mah_covs_, const Nullable<NumericMatrix>& mahSigma_inv_);
 RcppExport SEXP _MatchIt_nn_matchC(SEXP treatSEXP, SEXP ordSEXP, SEXP ratioSEXP, SEXP replaceSEXP, SEXP discardedSEXP, SEXP distance_SEXP, SEXP exact_SEXP, SEXP caliper_dist_SEXP, SEXP caliper_covs_SEXP, SEXP calcovs_covs_mat_SEXP, SEXP mah_covs_SEXP, SEXP mahSigma_inv_SEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const IntegerVector& >::type treat(treatSEXP);
     Rcpp::traits::input_parameter< const IntegerVector& >::type ord(ordSEXP);
-    Rcpp::traits::input_parameter< const int& >::type ratio(ratioSEXP);
+    Rcpp::traits::input_parameter< const IntegerVector& >::type ratio(ratioSEXP);
     Rcpp::traits::input_parameter< const bool& >::type replace(replaceSEXP);
     Rcpp::traits::input_parameter< const LogicalVector& >::type discarded(discardedSEXP);
     Rcpp::traits::input_parameter< const Nullable<NumericVector>& >::type distance_(distance_SEXP);
