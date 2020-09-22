@@ -8,10 +8,10 @@ qoi <- function(xx, tt, ww = NULL, subclass = NULL, mm = NULL, s.d.denom = "trea
   rownames(xsum) <- "Full"
   if (standardize)
     colnames(xsum) <- c("Means Treated","Means Control", "Std. Mean Diff.",
-                        "Var. Ratio", "eCDF Mean", "eCDF Max", "Std. Pair Diff.")
+                        "Var. Ratio", "eCDF Mean", "eCDF Max", "Std. Pair Dist.")
   else
-    colnames(xsum) <- c("Means Treated","Means Control", "Mean Diff",
-                        "Var. Ratio", "eQQ Mean", "eQQ Max", "Pair Diff")
+    colnames(xsum) <- c("Means Treated","Means Control", "Mean Diff.",
+                        "Var. Ratio", "eQQ Mean", "eQQ Max", "Pair Dist.")
 
   too.small <- sum(tt==1) < 2 || sum(tt==0) < 2
 
