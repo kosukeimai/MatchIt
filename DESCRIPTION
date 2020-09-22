@@ -28,14 +28,19 @@ Imports:
     Rcpp
 Suggests:
     cem,
-    nnet,
     optmatch,
     Matching,
+    nnet,
     rpart,
     mgcv,
     CBPS,
     dbarts,
     randomForest,
+    cobalt,
+    boot,
+    lmtest,
+    sandwich,
+    survival,
     knitr,
     rmarkdown
 LinkingTo: Rcpp
