@@ -60,6 +60,8 @@ output:
 
 * When using `method = "nearest"` with a caliper specified, the nearest control unit will be matched to the treated unit if one is available. Previously, a random control unit within the caliper would be selected. This eliminates the need for the `calclosest` argument, which has been removed.
 
+* Variable ratio extremal matching as described by Ming & Rosenbaum (2000) can be implemented using the new `min.controls` and `max.controls` arguments.
+
 ## `method = "optimal"` and `method = "full"`
 
 * Fixed bug in `method = "optimal"`, which produced results that did not match `optmatch`. Now they do.
@@ -118,7 +120,7 @@ output:
 
 * The eCDF median (and QQ median) statistics have been replaced with the variance ratio, which is better studied and part of several sets of published recommendations. The eCDF and QQ median statistics provide little information above and beyond the corresponding mean statistics. The variance ratio uses the variances weighted by the matching weights.
 
-* The QQ and ECDF statistics have been adjusted. Both now use the weights that were computed as part of the matching. The QQ and eCDF statistics for binary variables are set to the difference in group proportions. The standard deviation of the control group has been removed from the output.
+* The eCDF and QQ statistics have been adjusted. Both now use the weights that were computed as part of the matching. The eCDF and QQ statistics for binary variables are set to the difference in group proportions. The standard deviation of the control group has been removed from the output.
 
 * The default for `standardize` is now `TRUE`, so that standardized mean differnces and eCDF statistics will be displayed by default.
 
@@ -128,7 +130,9 @@ output:
 
 * Plots now use weighted summaries when weights are present, removing the need for the `num.draws` argument.
 
-* The appearance of some plots has improved (e.g., text is appropriately centered, axes are more clearly labelled). For QQ plots with binary variables or variables that take on only a few values, the plots look more like clusters than snakes.
+* Added a new plot type, `"ecdf"`, which creates emprical CDF plots before and after matching.
+
+* The appearance of some plots has improved (e.g., text is appropriately centered, axes are more clearly labelled). For eQQ plots with binary variables or variables that take on only a few values, the plots look more like clusters than snakes.
 
 * The argument to `type` can be abbreviated (e.g., `"j"` for jitter).
 
@@ -136,8 +140,8 @@ output:
 
 * When specifying an argument to `which.xs` to control for which variables balance is displayed graphically, the input should be the name of the original variable rather than the version that appears in the `summary()` output. In particular, if a factor variable was supplied to `matchit()`, it should be referred to by its name rather than the names of its split dummies. This makes it easier to view balance on factor variables without having to know or type the names of all their levels.
 
-* QQ plots can now be used with all matching methods. Previously, attempting `plot()` after `method = "exact"` would fail.
+* eQQ plots can now be used with all matching methods. Previously, attempting `plot()` after `method = "exact"` would fail.
 
 ## `plot.summary.matchit()`
 
-* The summary plot has been completley redesigned. It is now a Love plot made using `graphics::dotchart()`. A few options are available for ordering the variables, presenting absolute or raw standardized mean differences, and placing threshold lines on the plots. For a more sophisticated interface, see `cobalt::love.plot()`, which natively supports `matchit` objects and uses `ggplot2` as its engine.
+* The summary plot has been completely redesigned. It is now a Love plot made using `graphics::dotchart()`. A few options are available for ordering the variables, presenting absolute or raw standardized mean differences, and placing threshold lines on the plots. For a more sophisticated interface, see `cobalt::love.plot()`, which natively supports `matchit` objects and uses `ggplot2` as its engine.
