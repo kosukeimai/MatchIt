@@ -31,14 +31,14 @@ a string containing the desired estimand. Allowable options include \code{"ATT"}
 \code{logical}; whether information about the matching process should be printed to the console.
 }
   \item{\dots}{
-additional arguments passed to \code{\link[=cem:cem]{cem}} in \pkg{cem}. Potentially useful options include \code{cutpoints}, \code{grouping}, \code{k2k}, and \code{method}. To supply and argument to \code{method} in \code{cem}, supply an argument to \code{k2k.method} in \code{matchit} in order to avoid a name conflict with \code{method} in \code{matchit}.
+additional arguments passed to \code{\link[cem:cem]{cem}} in \pkg{cem}. Potentially useful options include \code{cutpoints}, \code{grouping}, \code{k2k}, and \code{method}. To supply and argument to \code{method} in \code{cem}, supply an argument to \code{k2k.method} in \code{matchit} in order to avoid a name conflict with \code{method} in \code{matchit}.
 }
 }
 \section{Outputs}{
 All outputs described in \code{\link{matchit}} are returned with \code{method = "cem"} except for \code{match.matrix}. This is because matching strata are not indexed by treated units as they are in some other forms of matching.
 }
 \note{
-If the coarsening is such that there are no exact matches with the coarsened variables, the \code{cutpoints} and \code{grouping} arguments in \code{\link[=cem:cem]{cem}} can be used to modify the matching specification. Reducing the number of cutpoints or grouping some variable values together can make it easier to find matches. See Examples below. Removing variables can also help (but they will likely not be balanced unless highly correlated with the included variables). To take advantage of coarsened exact matching without failing to find any matches, the covariates can be manually coarsened outside of \code{matchit()} and then supplied to the \code{exact} argument in a call to \code{matchit()} with another matching method.
+If the coarsening is such that there are no exact matches with the coarsened variables, the \code{cutpoints} and \code{grouping} arguments in \code{\link[cem:cem]{cem}} can be used to modify the matching specification. Reducing the number of cutpoints or grouping some variable values together can make it easier to find matches. See Examples below. Removing variables can also help (but they will likely not be balanced unless highly correlated with the included variables). To take advantage of coarsened exact matching without failing to find any matches, the covariates can be manually coarsened outside of \code{matchit()} and then supplied to the \code{exact} argument in a call to \code{matchit()} with another matching method.
 }
 \references{
 In a manuscript, be sure to cite the following paper if using \code{matchit} with \code{method = "cem"}:
