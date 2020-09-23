@@ -228,6 +228,7 @@ print.summary.matchit <- function(x, digits = max(3, getOption("digits") - 3), .
 
   if(!is.null(x$sum.matched)) {
     cat("\nSummary of Balance for Matched Data:\n")
+    if (all(is.na(x$sum.matched[,7]))) x$sum.matched <- x$sum.matched[,-7] #Remove pair dist if empty
     print.data.frame(round_df_char(x$sum.matched, digits, pad = "0", na_vals = "."))
     cat("\nPercent Balance Improvement:\n")
     print.data.frame(round_df_char(x$reduction[,-5, drop = FALSE], 1, pad = "0", na_vals = "."))
@@ -251,6 +252,7 @@ print.summary.matchit.subclass <- function(x, digits = max(3, getOption("digits"
     }
   }
   cat("\nSummary of Balance Across Subclasses\n")
+  if (all(is.na(x$sum.across[,7]))) x$sum.across <- x$sum.across[,-7]
   print.data.frame(round_df_char(x$sum.across, digits, pad = "0", na_vals = "."))
   cat("\nPercent Balance Improvement:\n")
   print.data.frame(round_df_char(x$reduction[,-5, drop = FALSE], 1, pad = "0", na_vals = "."))
