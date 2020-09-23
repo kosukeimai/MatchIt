@@ -131,7 +131,7 @@ qoi.subclass <- function(xx, tt, subclass, s.d.denom = "treated", standardize = 
     xsum["Subclass", 3] <- mdiff
   }
 
-  if (!bin.var) {
+  if (bin.var) {
     xsum["Subclass", 5:6] <- abs(mdiff)
   }
   else if (!too.small) {
