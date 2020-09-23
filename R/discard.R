@@ -11,16 +11,19 @@ discard <- function(treat, pscore = NULL, option = NULL) {
     return(setNames(option, names(treat)))
   }
   else if (length(option) > 1 || !is.character(option)) {
-    stop("Invalid input for discard.", call. = FALSE)
+    stop("'discard' must be \"none\", \"both\", \"control\", \"treated\" or a logical vector of observations to discard.", call. = FALSE)
   }
   else {
-    option <- match_arg(option, c("none", "both", "control", "treat"))
+    option <- match_arg(option, c("none", "both", "control", "treated"))
 
     if (option == "none"){
       # keep all units
       discarded <- rep(FALSE, n.obs)
     }
     else {
+      if (is.null(pscore)) {
+        stop("'discard' must be a logical vector in the absence of a propensity score.", call. = FALSE)
+      }
       pmax0 <- max(pscore[treat==0])
       pmax1 <- max(pscore[treat==1])
       pmin0 <- min(pscore[treat==0])
@@ -30,7 +33,7 @@ discard <- function(treat, pscore = NULL, option = NULL) {
         discarded <- (pscore < max(pmin0, pmin1) | pscore > min(pmax0, pmax1))
       else if (option == "control") # discard control units only
         discarded <- (pscore < pmin1 | pscore > pmax1)
-      else if (option == "treat")   # discard treated units only
+      else if (option == "treated")   # discard treated units only
         discarded <- (pscore < pmin0 | pscore > pmax0)
     }
     # NOTE: WhatIf package has been removed from CRAN, so hull options won't work

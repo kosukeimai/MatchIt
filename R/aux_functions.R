@@ -23,7 +23,7 @@ check.inputs <- function(method, distance, mcall, exact, mahvars, caliper, disca
   }
   else if (method == "nearest") {
     if (is.character(distance) && distance == "mahalanobis") {
-      for (e in c("mahvars", "discard", "reestimate")) {
+      for (e in c("mahvars", "reestimate")) {
         if (e %in% names(mcall) && !is.null(get0(e))) {
           error.inputs <- c(error.inputs, e)
         }
@@ -32,7 +32,7 @@ check.inputs <- function(method, distance, mcall, exact, mahvars, caliper, disca
   }
   else if (method == "optimal") {
     if (is.character(distance) && distance == "mahalanobis") {
-      for (e in c("mahvars", "discard", "reestimate")) {
+      for (e in c("mahvars", "reestimate")) {
         if (e %in% names(mcall) && !is.null(get0(e))) {
           error.inputs <- c(error.inputs, e)
         }
@@ -48,7 +48,7 @@ check.inputs <- function(method, distance, mcall, exact, mahvars, caliper, disca
   }
   else if (method == "full") {
     if (is.character(distance) && distance == "mahalanobis") {
-      for (e in c("mahvars", "discard", "reestimate")) {
+      for (e in c("mahvars", "reestimate")) {
         if (e %in% names(mcall) && !is.null(get0(e))) {
           error.inputs <- c(error.inputs, e)
         }
@@ -63,7 +63,7 @@ check.inputs <- function(method, distance, mcall, exact, mahvars, caliper, disca
   }
   else if (method == "genetic") {
     if (is.character(distance) && distance == "mahalanobis") {
-      for (e in c("mahvars", "discard", "reestimate")) {
+      for (e in c("mahvars", "reestimate")) {
         if (e %in% names(mcall) && !is.null(get0(e))) {
           error.inputs <- c(error.inputs, e)
         }
