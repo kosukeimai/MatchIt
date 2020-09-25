@@ -3,11 +3,24 @@
 #Function to process inputs and throw warnings or errors if inputs are incompatible with methods
 check.inputs <- function(method, distance, mcall, exact, mahvars, caliper, discard, reestimate, replace, ratio, m.order, estimand) {
 
-  method <- match_arg(method, c("exact", "cem", "nearest", "optimal", "full", "genetic", "subclass"))
+  null.method <- is.null(method)
+  if (null.method) {
+    method <- "NULL"
+  }
+  else {
+    method <- match_arg(method, c("exact", "cem", "nearest", "optimal", "full", "genetic", "subclass"))
+  }
 
   ignored.inputs <- character(0)
   error.inputs <- character(0)
-  if (method == "exact") {
+  if (null.method) {
+    for (i in c("exact", "mahvars", "caliper", "std.caliper", "replace", "ratio", "m.order")) {
+      if (i %in% names(mcall) && !is.null(get0(i))) {
+        ignored.inputs <- c(ignored.inputs, i)
+      }
+    }
+  }
+  else if (method == "exact") {
     for (i in c("distance", "exact", "mahvars", "caliper", "std.caliper", "discard", "reestimate", "replace", "ratio", "m.order")) {
       if (i %in% names(mcall) && !is.null(get0(i))) {
         ignored.inputs <- c(ignored.inputs, i)
@@ -84,18 +97,19 @@ check.inputs <- function(method, distance, mcall, exact, mahvars, caliper, disca
 
   if (length(ignored.inputs) > 0) warning(paste0(ngettext(length(ignored.inputs), "The argument ", "The arguments "),
                                                  word_list(ignored.inputs, quotes = 1, is.are = TRUE),
-                                                 " not used with method = \"", method, "\" and will be ignored."),
+                                                 " not used with method = ", add_quotes(method, quotes = !null.method),
+                                                 " and will be ignored."),
                                           call. = FALSE, immediate. = TRUE)
   if (length(error.inputs) > 0) stop(paste0(ngettext(length(error.inputs), "The argument ", "The arguments "),
                                             word_list(error.inputs, quotes = 1, is.are = TRUE),
-                                            " not allowed with method = \"", method,
-                                            "\" and distance = \"", distance, "\"."),
+                                            " not allowed with method = ", add_quotes(method, quotes = !null.method),
+                                            " and distance = \"", distance, "\"."),
                                      call. = FALSE)
 }
 
 #Function to process distance and give warnings about new syntax
 process.distance <- function(distance, method) {
-  if (is.null(distance)) stop(paste0("distance cannot be NULL with method = \"", method, "\"."), call. = FALSE)
+  if (is.null(distance) && !is.null(method)) stop(paste0("distance cannot be NULL with method = \"", method, "\"."), call. = FALSE)
   else if (is.vector(distance, "character") && length(distance) == 1) {
     allowable.distances <- c("glm", "cbps", "gam", "mahalanobis", "nnet", "rpart", "bart", "randomforest")
 
@@ -149,10 +163,10 @@ process.caliper <- function(caliper = NULL, method, data = NULL, covs = NULL, ma
   #Make sure no calipers are used on binary or factor variables (throw error if so)
   #Ignore calipers used on single-value variables or with caliper = NA or Inf
   #Export caliper.formula to add to covs
-  #If std, export standardizedstandardized versions
+  #If std, export standardized versions
 
   #Check need for caliper
-  if (length(caliper) == 0 || !method %in% c("nearest", "genetic", "full")) return(NULL)
+  if (length(caliper) == 0 || is.null(method) || !method %in% c("nearest", "genetic", "full")) return(NULL)
 
   #Check if form of caliper is okay
   if (!is.atomic(caliper) || !is.numeric(caliper)) stop("'caliper' must be a numeric vector.", call. = FALSE)
@@ -340,15 +354,16 @@ check.package <- function(package.name, alternative = FALSE) {
 info.to.method <- function(info) {
 
   out.list <- setNames(vector("list", 3), c("kto1", "type", "replace"))
-  out.list[["kto1"]] <- if (!is.null(info$ratio)) paste0(info$ratio, ":1") else NULL
-  out.list[["type"]] <- switch(info$method,
-                 "exact" = "exact matching",
-                 "cem" = "coarsened exact matching",
-                 "nearest" = "nearest neighbor matching",
-                 "optimal" = "optimal pair matching",
-                 "full" = "optimal full matching",
-                 "genetic" = "genetic matching",
-                 "subclass" = paste0("subclassification (", info$subclass, " subclasses)"))
+  out.list[["kto1"]] <- if (!is.null(info$ratio)) paste0(if (!is.null(info$max.controls)) "variable ratio ", round(info$ratio, 2), ":1") else NULL
+  out.list[["type"]] <- if (is.null(info$method)) "none (no matching)" else
+    switch(info$method,
+           "exact" = "exact matching",
+           "cem" = "coarsened exact matching",
+           "nearest" = "nearest neighbor matching",
+           "optimal" = "optimal pair matching",
+           "full" = "optimal full matching",
+           "genetic" = "genetic matching",
+           "subclass" = paste0("subclassification (", info$subclass, " subclasses)"))
   out.list[["replace"]] <- if (!is.null(info$replace) && info$method %in% c("nearest", "optimal", "genetic")) {
     if (info$replace) "with replacement"
     else "without replacement"
@@ -404,11 +419,8 @@ word_list <- function(word.list = NULL, and.or = c("and", "or"), is.are = FALSE,
   #or "a, b, and c"
   #If is.are, adds "is" or "are" appropriately
   L <- length(word.list)
-  if (quotes) {
-    if (as.integer(quotes) == 2) word.list <- vapply(word.list, function(x) paste0("\"", x, "\""), character(1L))
-    else if (as.integer(quotes) == 1) word.list <- vapply(word.list, function(x) paste0("\'", x, "\'"), character(1L))
-    else stop("'quotes' must be boolean, 1, or 2.")
-  }
+  word.list <- add_quotes(word.list, quotes)
+
   if (L == 0) {
     out <- ""
     attr(out, "plural") = FALSE
@@ -441,6 +453,16 @@ word_list <- function(word.list = NULL, and.or = c("and", "or"), is.are = FALSE,
 
   }
   return(out)
+}
+
+#Add quotation marks around a string.
+add_quotes <- function(x, quotes = 2) {
+  if (!isFALSE(quotes)) {
+    if (isTRUE(quotes) || as.integer(quotes) == 2) x <- paste0("\"", x, "\"")
+    else if (as.integer(quotes) == 1) x <- paste0("\'", x, "\'")
+    else stop("'quotes' must be boolean, 1, or 2.")
+  }
+  x
 }
 
 #More informative and cleaner version of base::match.arg. From WeightIt.

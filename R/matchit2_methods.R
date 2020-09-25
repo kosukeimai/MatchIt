@@ -3,6 +3,14 @@
 # weight for each observation in the weight entry, and the
 # match.matrix object
 #
+# MATCHIT method = NULL--------------------------------------
+matchit2null <- function(discarded, ...) {
+
+  res <- list(weights = as.numeric(!discarded))
+  class(res) <- "matchit"
+
+  return(res)
+}
 # MATCHIT method = cem--------------------------------------
 matchit2cem <- function(treat, covs, estimand = "ATT", verbose = FALSE, ...) {
 

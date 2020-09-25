@@ -12,7 +12,7 @@ Generates plots displaying distributional balance and overlap on covariates and 
      which.xs = NULL, ...)
 
 \method{plot}{matchit.subclass}(x, type = "qq", interactive = TRUE,
-     which.xs = NULL, subclass = NULL, ...)
+     which.xs = NULL, subclass, ...)
 }
 \arguments{
   \item{x}{
@@ -22,13 +22,13 @@ a \code{matchit} object; the output of a call to \code{\link{matchit}}.
 the type of plot to display. Options include \code{"qq"}, \code{"ecdf"}, \code{"jitter"}, and \code{"histogram"}. See Details. Default is \code{"qq"}. Abbreviatiosn allowed.
 }
   \item{interactive}{
-\code{logical}; whether the graphs should be displayed ina an interactive way. Only applies for \code{type = "qq"} and \code{type = "jitter"}. See Details.
+\code{logical}; whether the graphs should be displayed in an interactive way. Only applies for \code{type = "qq"}, \code{"ecdf"}, and \code{"jitter"}. See Details.
 }
   \item{which.xs}{
 with \code{type = "qq"} or \code{"ecdf"}, for which covariate(s) plots should be displayed. Factor variables should be named by the original variable name rather than the names of individual dummy variables created after expansion with \code{model.matrix}.
 }
   \item{subclass}{
-with subclassification and \code{type = "qq"} or \code{"ecdf"}, for which subclass plots should be displayed. If \code{NULL}, plots are displayed for the full sample weighted by the subclassification weights. Ignored when \code{interactive = TRUE}.
+with subclassification and \code{type = "qq"} or \code{"ecdf"}, whether to display balance for individual subclasses, and, if so, for which ones. Can be \code{TRUE} (display plots for all subclasses), \code{FALSE} (display plots only in aggregate), or the indices (e.g., \code{1:6}) of the specific subclasses for which to display balance. When unspecified, if \code{interactive = TRUE}, you will be asked for which subclasses plots are desired, and otherwise, plots will be displayed only in aggregate.
 }
   \item{\dots}{
 arguments passed to \code{\link{plot}} to control the appearance of the plot. Not all options are accepted.

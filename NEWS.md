@@ -8,7 +8,7 @@ output:
 
 # MatchIt (development version)
 
-## General Fixes
+## General Fixes and New Features
 
 * When missing values are present in the dataset but not in the treatment or matching variables, the error that used to appear no longer does.
 
@@ -47,6 +47,8 @@ output:
 * Bugs in `distance = "rpart"` have been fixed.
 
 * When key arguments are supplied to methods that don't accept them, a warning will be thrown.
+
+* In `matchit()`, `method` can be set to `NULL` to not perform matching but create a `matchit` object, possibly with a propensity score estimated using `distance` or with a common support restriction using `discard`, for the purpose of supplying to `summary.matchit()` to assess balance prior to matching.
 
 ## `method = "nearest"`
 

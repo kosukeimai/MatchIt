@@ -1,4 +1,3 @@
-#' @export
 matchit <- function(formula, data = NULL, method = "nearest", distance = "glm",
                     link = "logit", distance.options = list(), estimand = "ATT",
                     exact = NULL, mahvars = NULL, discard = "none",
@@ -28,19 +27,22 @@ matchit <- function(formula, data = NULL, method = "nearest", distance = "glm",
     fn2 <- paste0("matchit2", method)
     if (!exists(fn2)) stop(paste0("\"", method, "\" is not a supported method."), call. = FALSE)
   }
+  else if (is.null(method)) {
+    fn2 <- "matchit2null"
+  }
   else {
     stop("method must be the name of a supported matching method. See ?matchit for allowable options.", call. = FALSE)
   }
 
   #Process distance and discard
-  check.inputs(method, distance = distance, mcall = mcall, exact = exact,
+  check.inputs(method = method, distance = distance, mcall = mcall, exact = exact,
                mahvars = mahvars, caliper = caliper, discard = discard,
                reestimate = reestimate, replace = replace, ratio = ratio,
                m.order = m.order, estimand = estimand)
 
   exactcovs <- mahcovs <- calcovs <- NULL
 
-  if (method %in% c("exact", "cem")) {
+  if (!is.null(method) && method %in% c("exact", "cem")) {
     fn1 <- NULL
   }
   else {
@@ -55,6 +57,7 @@ matchit <- function(formula, data = NULL, method = "nearest", distance = "glm",
       fn1 <- paste0("distance2", distance)
     }
 
+    if (!is.null(method)) {
     if (!is.null(exact)) {
       if (is.character(exact)) {
         if (is.null(data) || !is.data.frame(data)) {
@@ -91,6 +94,7 @@ matchit <- function(formula, data = NULL, method = "nearest", distance = "glm",
         stop("'exact' must be supplied as a character vector of names or a one-sided formula.", call. = FALSE)
       }
       mahcovs <- model.frame(mahvars, data, na.action = "na.pass")
+    }
     }
   }
 
@@ -175,18 +179,24 @@ matchit <- function(formula, data = NULL, method = "nearest", distance = "glm",
   nn <- matrix(0, ncol=2, nrow=4, dimnames = list(c("All","Matched","Unmatched","Discarded"),
                                                   c("Control", "Treated")))
   nn["All",] <- c(sum(treat==0), sum(treat==1))
-  nn["Matched",] <- c(sum(treat==0 & match.out$weights > 0), sum(treat==1 & match.out$weights > 0))
-  nn["Unmatched",] <- c(sum(treat==0 & match.out$weights==0 & !discarded), sum(treat==1 & match.out$weights==0 & !discarded))
+  # if (!is.null(method)) {
+    nn["Matched",] <- c(sum(treat==0 & match.out$weights > 0), sum(treat==1 & match.out$weights > 0))
+    nn["Unmatched",] <- c(sum(treat==0 & match.out$weights==0 & !discarded), sum(treat==1 & match.out$weights==0 & !discarded))
+  # }
+  # else {
+    # nn <- nn[!rownames(nn) %in% c("Matched", "Unmatched"),]
+  # }
   nn["Discarded",] <- c(sum(treat==0 & discarded), sum(treat==1 & discarded))
 
   info <- list(method = method,
                distance = if (!is.null(fn1)) sub("distance2", "", fn1, fixed = TRUE) else NULL,
                link = if (!is.null(link)) link else NULL,
                discard = discard,
-               replace = if (method %in% c("nearest", "genetic")) replace else NULL,
-               ratio = if (method %in% c("nearest", "optimal", "genetic")) ratio else NULL,
+               replace = if (!is.null(method) && method %in% c("nearest", "genetic")) replace else NULL,
+               ratio = if (!is.null(method) && method %in% c("nearest", "optimal", "genetic")) ratio else NULL,
+               max.controls = if (!is.null(method) && method %in% c("nearest")) mcall[["max.controls"]] else NULL,
                mahalanobis = is.full.mahalanobis || !is.null(mahvars),
-               subclass = if (method == "subclass") length(unique(match.out$subclass[!is.na(match.out$subclass)])) else NULL)
+               subclass = if (!is.null(method) && method == "subclass") length(unique(match.out$subclass[!is.na(match.out$subclass)])) else NULL)
 
   #Create X.list for X output, removing duplicate variables
   X.list <- list(covs, exactcovs, mahcovs, calcovs)
