@@ -697,6 +697,11 @@ wvar <- function(x, bin.var = NULL, w = NULL, na.rm = TRUE) {
   }
 }
 
+#Effective sample size
+ESS <- function(w) {
+  sum(w)^2/sum(w^2)
+}
+
 #Used to load backports functions. No need to touch, but must always be included somewhere.
 .onLoad <- function(libname, pkgname) {
   backports::import(pkgname)

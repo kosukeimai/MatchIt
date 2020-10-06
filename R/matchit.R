@@ -176,16 +176,12 @@ matchit <- function(formula, data = NULL, method = "nearest", distance = "glm",
                        quote = TRUE)
 
   ## Sample size
-  nn <- matrix(0, ncol=2, nrow=4, dimnames = list(c("All","Matched","Unmatched","Discarded"),
+  nn <- matrix(0, ncol=2, nrow=5, dimnames = list(c("All","Matched (ESS)","Matched", "Unmatched","Discarded"),
                                                   c("Control", "Treated")))
   nn["All",] <- c(sum(treat==0), sum(treat==1))
-  # if (!is.null(method)) {
-    nn["Matched",] <- c(sum(treat==0 & match.out$weights > 0), sum(treat==1 & match.out$weights > 0))
-    nn["Unmatched",] <- c(sum(treat==0 & match.out$weights==0 & !discarded), sum(treat==1 & match.out$weights==0 & !discarded))
-  # }
-  # else {
-    # nn <- nn[!rownames(nn) %in% c("Matched", "Unmatched"),]
-  # }
+  nn["Matched (ESS)",] <- c(ESS(match.out$weights[treat==0]), ESS(match.out$weights[treat==1]))
+  nn["Matched",] <- c(sum(treat==0 & match.out$weights > 0), sum(treat==1 & match.out$weights > 0))
+  nn["Unmatched",] <- c(sum(treat==0 & match.out$weights==0 & !discarded), sum(treat==1 & match.out$weights==0 & !discarded))
   nn["Discarded",] <- c(sum(treat==0 & discarded), sum(treat==1 & discarded))
 
   info <- list(method = method,

@@ -230,7 +230,12 @@ print.summary.matchit <- function(x, digits = max(3, getOption("digits") - 3), .
     print.data.frame(round_df_char(x$reduction[,-5, drop = FALSE], 1, pad = "0", na_vals = "."))
   }
   cat("\nSample Sizes:\n")
-  print.data.frame(round_df_char(x$nn, 1, pad = "0", na_vals = "."))
+  nn <- x$nn
+  if (isTRUE(all.equal(nn["Matched (ESS)",], nn["Matched",]))) {
+    #Don't print ESS if same as matched SS
+    nn <- nn[rownames(nn) != "Matched (ESS)",]
+  }
+  print.data.frame(round_df_char(nn, 2, pad = " ", na_vals = "."))
   cat("\n")
   invisible(x)
 }
@@ -246,14 +251,19 @@ print.summary.matchit.subclass <- function(x, digits = max(3, getOption("digits"
       cat(paste0("\n- ", names(x$sum.subclass)[s], "\n"))
       print.data.frame(round_df_char(x$sum.subclass[[s]][,-7, drop = FALSE], digits, pad = "0", na_vals = "."))
     }
+    cat("\nSample Sizes by Subclass:\n")
+    print.data.frame(round_df_char(x$qn, 2, pad = " ", na_vals = "."))
   }
-  cat("\nSummary of Balance Across Subclasses\n")
-  if (all(is.na(x$sum.across[,7]))) x$sum.across <- x$sum.across[,-7]
-  print.data.frame(round_df_char(x$sum.across, digits, pad = "0", na_vals = "."))
-  cat("\nPercent Balance Improvement:\n")
-  print.data.frame(round_df_char(x$reduction[,-5, drop = FALSE], 1, pad = "0", na_vals = "."))
-  cat("\nSample Sizes by Subclass:\n")
-  print.data.frame(round_df_char(x$qn, 1, pad = "0", na_vals = "."))
+  else {
+    cat("\nSummary of Balance Across Subclasses\n")
+    if (all(is.na(x$sum.across[,7]))) x$sum.across <- x$sum.across[,-7]
+    print.data.frame(round_df_char(x$sum.across, digits, pad = "0", na_vals = "."))
+    cat("\nPercent Balance Improvement:\n")
+    print.data.frame(round_df_char(x$reduction[,-5, drop = FALSE], 1, pad = "0", na_vals = "."))
+
+    cat("\nSample Sizes:\n")
+    print.data.frame(round_df_char(x$nn, 2, pad = " ", na_vals = "."))
+  }
   cat("\n")
 }
 
@@ -633,7 +643,7 @@ summary.matchit.subclass <- function(object, interactions = FALSE,
   ## output
   res <- list(call=object$call, sum.all = sum.all, sum.across = sum.matched,
               sum.subclass = sum.subclass, reduction = reduction,
-              qn = qn)
+              qn = qn, nn = object$nn)
   class(res) <- c("summary.matchit.subclass", "summary.matchit")
   return(res)
 }

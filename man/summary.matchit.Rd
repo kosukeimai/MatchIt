@@ -42,7 +42,7 @@ a optional data frame containing variables named in \code{addlvariables} if spec
 \code{logical}; whether to compute average absolute pair distances. For matching methods that don't include a \code{match.matrix} component in the output (i.e., exact matching, coarsened exact matching, full matching, and subclassification), computing pair differences can take a long time, especially for large datasets and with many covariates. For other methods (i.e., nearest neighbor, optimal, and genetic matching), computation is fairly quick. Default is \code{FALSE} for subclassification and \code{TRUE} otherwise.
 }
   \item{subclass}{
-after subclassification, whether to display balance for individual subclasses, and, if so, for which ones. Can be \code{TRUE} (display balance for all subclasses), \code{FALSE} (display balance only in aggregate), or the indices (e.g., \code{1:6}) of the specific subclasses for which to display balance. Default is \code{FALSE}.
+after subclassification, whether to display balance for individual subclasses, and, if so, for which ones. Can be \code{TRUE} (display balance for all subclasses), \code{FALSE} (display balance only in aggregate), or the indices (e.g., \code{1:6}) of the specific subclasses for which to display balance. When anything other than \code{FALSE}, aggregate balance statistics will not be displayed. Default is \code{FALSE}.
 }
   \item{digits}{
 the number of digits to round balance statistics to.
@@ -67,6 +67,8 @@ The QQ difference statistics are computed by creating two samples of the same si
 
 The pair distance is the average of the absolute differences of a variable between pairs. For example, if a treated unit was paired with four control units, that set of units would contribute four absolute differences to the average. Within a subclass, each combination of treated and control unit forms a pair that contributes once to the average. The pair distance is described in Stuart and Green (2008) and is the value that is minimized when using optimal (full) matching. When \code{standardize = TRUE}, the standardized versions of the variables are used, where the standardization factor is as described above for the standardized mean differences. Pair distances are not computed in the unmatched sample (because there are no pairs). Because pair distance can take a while to compute, especially with large datasets or for many covariates, setting \code{pair.dist = FALSE} is one way to speed up \code{summary}.
 
+The effective sample size (ESS) is a measure of the size of a hypothetical unweighted sample with roughly the same precision as a weighted sample. When non-uniform matching weights are computed (e.g., as a result of full matching, matching with replacement, or subclassification), the ESS can be used to quantify the potential precison remaining in the matched sample. The ESS will always be less than or equal to the matched sample size, reflecting the loss in precision due to using the weights. With non-uniform weights, it is printed in the sample size table; otherwise, it is removed because it does not contain additional information above the matched sample size.
+
 After subclassification, the aggregate balance statistics are computed using the subclassification weights rather than averaging across subclasses.
 
 When printing, \code{NA} values are replaced with periods (\code{.}), and the pair distance column in the unmatched and percent balance improvement components of the output are omitted.
@@ -88,6 +90,7 @@ For \code{match.subclass} objects, a \code{summary.matchit.subclass} object, whi
   \item{\code{sum.across} - a matrix of balance statistics for each covariate computed using the subclassification weights}
   \item{\code{reduction} - a matrix of the percent reduction in imbalance for each covariate in the matched sample}
   \item{\code{qn} - a matrix of sample sizes within each subclass}
+  \item{\code{nn} - a matrix of the sample sizes in the original (unmatched) and matched samples}
 }
 
 }
@@ -108,6 +111,6 @@ summary(m.out, interactions = TRUE)
 s.out <- matchit(treat ~ age + educ + married +
                    race + nodegree + re74 + re75,
                  data = lalonde, method = "subclass")
-summary(s.out, addlvariables = ~log(age) + I(re74==0),
-        subclass = TRUE)
+summary(s.out, addlvariables = ~log(age) + I(re74==0))
+summary(s.out, subclass = TRUE)
 }

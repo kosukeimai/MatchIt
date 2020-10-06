@@ -133,7 +133,7 @@ When \code{method} is something other than \code{"subclass"}, a \code{matchit} o
   \item{\code{discarded} - a logical vector denoting whther each observation was discarded (\code{TRUE}) or not (\code{FALSE}) by the argument to \code{discard}.}
   \item{\code{exact} - a one-sided formula containing the variables, if any, supplied to \code{exact}.}
   \item{\code{mahvars} - a one-sided formula containing the variables, if any, supplied to \code{mahvars}.}
-  \item{\code{nn} - a matrix of the sample sizes of the treated and control groups before and after matching.}
+  \item{\code{nn} - a matrix of the sample sizes of the treated and control groups before and after matching. See \code{\link{summary.matchit}} for details.}
 }
 
 When \code{method = "subclass"}, a \code{matchit.subclass} object with the same components as above except that \code{match.matrix} is excluded and an additional component, \code{q.cut}, is included, containing a vector of the distance measure cutpoints used to define the subclasses. See \code{\link{method_subclass}} for details.
