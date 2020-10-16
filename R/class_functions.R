@@ -199,7 +199,7 @@ print.matchit <- function(x, ...) {
   if (cal) {
     cat(paste0("\n - caliper: ", paste(vapply(seq_along(x[["caliper"]]), function(z) paste0(if (names(x[["caliper"]])[z] == "") "<distance>" else names(x[["caliper"]])[z],
                                                                                           " (", format(round(x[["caliper"]][z], 3)), ")"), character(1L)),
-                                     collapse = ", "), "\n"))
+                                     collapse = ", ")))
   }
   if (disl) {
     cat("\n - common support: ")
