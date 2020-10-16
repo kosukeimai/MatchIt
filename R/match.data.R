@@ -58,18 +58,23 @@ match.data <- function(object, group = "all", distance = "distance",
   }
 
   treat <- object$treat
+  rownames(data) <- names(treat)
   if (drop.unmatched && !is.null(object$weights)) {
     data <- data[object$weights > 0,]
     treat <- treat[object$weights > 0]
   }
 
   group <- match_arg(group, c("all", "treated", "control"))
-  if (group == "all") return(data)
-  else if (group == "treated") return(data[treat == 1,])
-  else if (group == "control") return(data[treat == 0,])
+  if (group == "treated") data <- data[treat == 1,]
+  else if (group == "control") data <- data[treat == 0,]
+
+  if (!is.null(object$distance)) attr(data, "distance") <- distance
+  if (!is.null(object$weights)) attr(data, "weights") <- weights
+  if (!is.null(object$subclass)) attr(data, "subclass") <- subclass
+
+  return(data)
 }
 
-#' @export
 get_matches <- function(object, distance = "distance", weights = "weights",
                         subclass = "subclass", id = "id", data = NULL) {
 
@@ -130,6 +135,11 @@ get_matches <- function(object, distance = "distance", weights = "weights",
   rownames(out) <- NULL
 
   out[[subclass]] <- factor(out[[subclass]], labels = seq_len(nrow(mm)))
+
+  if (!is.null(object$distance)) attr(out, "distance") <- distance
+  attr(out, "weights") <- weights
+  attr(out, "subclass") <- subclass
+  attr(out, "id") <- id
 
   return(out)
 }
