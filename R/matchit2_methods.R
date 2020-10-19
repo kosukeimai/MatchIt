@@ -708,7 +708,7 @@ matchit2nearest <-  function(treat, data, distance, discarded,
   }
   else {
     mm <- nn_match(treat, ord, ratio, replace, discarded, distance, ex, caliper.dist,
-                   caliper.covs, caliper.covs.mat, mahcovs, mahSigma_inv)
+                   caliper.covs, caliper.covs.mat, mahcovs, mahSigma_inv, verbose)
   }
 
   mm[] <- names(treat)[mm]

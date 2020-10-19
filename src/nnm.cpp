@@ -95,8 +95,8 @@ IntegerMatrix nn_matchC(const IntegerVector& treat,
   bool ps_diff_assigned = false;
 
   int prog_length;
-  if (replace) prog_length = n1;
-  else prog_length = max_rat*n1;
+  if (replace) prog_length = n1 + 1;
+  else prog_length = max_rat*n1 + 1;
   Progress p(prog_length, disl_prog);
 
   //Counters
@@ -104,8 +104,9 @@ IntegerMatrix nn_matchC(const IntegerVector& treat,
   for (rat = 0; rat < max_rat; ++rat) {
     for (i = 0; i < n1; ++i) {
 
+      p.increment();
+
       if (all(matched).is_true()) {
-        p.update(prog_length);
         break;
       }
 
@@ -113,14 +114,12 @@ IntegerMatrix nn_matchC(const IntegerVector& treat,
       t_rat = ratio[t];
 
       if (t_rat < rat + 1) {
-        p.increment();
         continue;
       }
 
       t_ind = ind1[t]; // index among sample
 
       if (discarded[t_ind]) {
-        p.increment();
         continue;
       }
 
@@ -133,7 +132,6 @@ IntegerMatrix nn_matchC(const IntegerVector& treat,
       }
 
       if (any(c_eligible).is_false()) {
-        p.increment();
         continue;
       }
 
@@ -147,7 +145,6 @@ IntegerMatrix nn_matchC(const IntegerVector& treat,
         c_eligible[ps_diff > caliper_dist] = false;
 
         if (any(c_eligible).is_false()) {
-          p.increment();
           continue;
         }
       }
@@ -166,7 +163,6 @@ IntegerMatrix nn_matchC(const IntegerVector& treat,
         }
 
         if (any(c_eligible).is_false()) {
-          p.increment();
           continue;
         }
       }
@@ -221,12 +217,12 @@ IntegerMatrix nn_matchC(const IntegerVector& treat,
           }
         }
       }
-
-      p.increment();
     }
 
     if (replace) break;
   }
+
+  p.update(prog_length);
 
   return mm;
 }

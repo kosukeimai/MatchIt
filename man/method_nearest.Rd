@@ -76,7 +76,7 @@ for variable ratio matching, the minimum number of controls units to be matched 
 for variable ratio matching, the maximum number of controls units to be matched to each treated unit. See section "Variable Ratio Matching" in Details below.
 }
   \item{verbose}{
-\code{logical}; whether information about the matching process should be printed to the console.
+\code{logical}; whether information about the matching process should be printed to the console. When \code{TRUE}, a progress bar implemented using \pkg{RcppProgress} will be displayed.
 }
   \item{\dots}{
 ignored.

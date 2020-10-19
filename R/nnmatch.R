@@ -1,5 +1,5 @@
 nn_match <- function(treat, ord, ratio = 1, replace = FALSE, discarded, distance = NULL, ex = NULL, caliper.dist = NULL,
-                    caliper.covs = NULL, caliper.covs.mat = NULL, mahcovs = NULL, mahSigma_inv = NULL) {
+                    caliper.covs = NULL, caliper.covs.mat = NULL, mahcovs = NULL, mahSigma_inv = NULL, disp_prog = FALSE) {
 
   n1 <- sum(treat == 1)
 
@@ -25,8 +25,19 @@ nn_match <- function(treat, ord, ratio = 1, replace = FALSE, discarded, distance
 
   ord_ <- ord[!discarded[ord]] #Only non-discarded
 
+  if (disp_prog) {
+    pb <- txtProgressBar(min = 0, max = sum(ratio), style = 3)
+    on.exit(close(pb))
+    k <- -1
+  }
+
   for (r in seq_len(max.ratio)) {
     for (ord_i in ord_[ratio[ord_] >= r]) {
+
+      if (disp_prog) {
+        k <- k + 1
+        setTxtProgressBar(pb, k)
+      }
 
       c.eligible <- !matched & treat == 0
 
@@ -85,8 +96,11 @@ nn_match <- function(treat, ord, ratio = 1, replace = FALSE, discarded, distance
       mm[ord_i, r] <- which(c.eligible)[which.min(distances)]
 
       if (!replace) matched[mm[ord_i, r]] <- TRUE
-
     }
+  }
+
+  if (disp_prog) {
+    setTxtProgressBar(pb, sum(ratio))
   }
 
   return(mm)
