@@ -3,7 +3,7 @@ distance2glm <- function(formula, data, link = "logit", ...) {
 
   if (!is.null(link) && startsWith(as.character(link), "linear")) {
     linear <- TRUE
-    link <- sub("linear.", "", as.character(link))
+    link <- sub("linear.", "", as.character(link), fixed = TRUE)
   }
   else linear <- FALSE
 
@@ -17,55 +17,6 @@ distance2glm <- function(formula, data, link = "logit", ...) {
 
   return(list(model = res, distance = pred))
 }
-# distance2logit <- function(formula, data, ...) {
-#   res <- glm(formula, data, family=binomial(logit), ...)
-#   return(list(model = res, distance = fitted(res)))
-# }
-#
-# distance2linear.logit <- function(formula, data, ...) {
-#   res <- glm(formula, data, family=binomial(logit), ...)
-#   return(list(model = res, distance = predict(res)))
-# }
-#
-# distance2probit <- function(formula, data, ...) {
-#   res <- glm(formula, data, family=binomial(probit), ...)
-#   return(list(model = res, distance = fitted(res)))
-# }
-#
-# distance2linear.probit <- function(formula, data, ...) {
-#   res <- glm(formula, data, family=binomial(probit), ...)
-#   return(list(model = res, distance = predict(res)))
-# }
-#
-# distance2cloglog <- function(formula, data, ...) {
-#   res <- glm(formula, data, family=binomial(cloglog), ...)
-#   return(list(model = res, distance = fitted(res)))
-# }
-#
-# distance2linear.cloglog <- function(formula, data, ...) {
-#   res <- glm(formula, data, family=binomial(cloglog), ...)
-#   return(list(model = res, distance = predict(res)))
-# }
-#
-# distance2log <- function(formula, data, ...) {
-#   res <- glm(formula, data, family=binomial(log), ...)
-#   return(list(model = res, distance = fitted(res)))
-# }
-#
-# distance2linear.log <- function(formula, data, ...) {
-#   res <- glm(formula, data, family=binomial(log), ...)
-#   return(list(model = res, distance = predict(res)))
-# }
-#
-# distance2cauchit <- function(formula, data, ...) {
-#   res <- glm(formula, data, family=binomial(cauchit), ...)
-#   return(list(model = res, distance = fitted(res)))
-# }
-#
-# distance2linearcauchit <- function(formula, data, ...) {
-#   res <- glm(formula, data, family=binomial(cauchit), ...)
-#   return(list(model = res, distance = predict(res)))
-# }
 
 #distance2gam-----------------
 distance2gam <- function(formula, data, link = "logit", ...) {
@@ -73,7 +24,7 @@ distance2gam <- function(formula, data, link = "logit", ...) {
 
   if (!is.null(link) && startsWith(as.character(link), "linear")) {
     linear <- TRUE
-    link <- sub("linear.", "", as.character(link))
+    link <- sub("linear.", "", as.character(link), fixed = TRUE)
   }
   else linear <- FALSE
 
@@ -84,38 +35,6 @@ distance2gam <- function(formula, data, link = "logit", ...) {
 
   return(list(model = res, distance = pred))
 }
-
-# distance2GAMlogit <- function(formula, data, ...) {
-#   check.package("mgcv")
-#   res <- mgcv::gam(formula, data, family=binomial(logit), ...)
-#   return(list(model = res, distance = fitted(res)))
-# }
-#
-# distance2GAMprobit <- function(formula, data, ...) {
-#   check.package("mgcv")
-#   res <- mgcv::gam(formula, data, family=binomial(probit), ...)
-#   return(list(model = res, distance = fitted(res)))
-# }
-#
-# distance2GAMcloglog <- function(formula, data, ...) {
-#   check.package("mgcv")
-#   res <- mgcv::gam(formula, data, family=binomial(cloglog), ...)
-#   return(list(model = res, distance = fitted(res)))
-# }
-#
-#
-# distance2GAMlog <- function(formula, data, ...) {
-#   check.package("mgcv")
-#   res <- mgcv::gam(formula, data, family=binomial(log), ...)
-#   return(list(model = res, distance = fitted(res)))
-#
-# }
-#
-# distance2GAMcauchit <- function(formula, data, ...) {
-#   check.package("mgcv")
-#   res <- mgcv::gam(formula, data, family=binomial(cauchit), ...)
-#   return(list(model = res, distance = fitted(res)))
-# }
 
 #distance2rpart-----------------
 distance2rpart <- function(formula, data, link = NULL, ...) {
@@ -136,6 +55,7 @@ distance2nnet <- function(formula, data, link = NULL, ...) {
   res <- nnet::nnet(formula, data, entropy = TRUE, ...)
   return(list(model = res, distance = drop(fitted(res))))
 }
+
 #distance2cbps-----------------
 distance2cbps <- function(formula, data, link = NULL, ...) {
   check.package("CBPS")
@@ -192,6 +112,48 @@ distance2bart <- function(formula, data, link = NULL, ...) {
 
   return(list(model = res, distance = pred))
 }
+
+# distance2bart <- function(formula, data, link = NULL, ...) {
+#   check.package("BART")
+#
+#   if (!is.null(link) && startsWith(as.character(link), "linear")) {
+#     linear <- TRUE
+#     link <- sub("linear.", "", as.character(link), fixed = TRUE)
+#   }
+#   else linear <- FALSE
+#
+#   #Keep link probit because default in matchit is logit but probit is much faster with BART
+#   link <- "probit"
+#
+#   # if (is.null(link)) link <- "probit"
+#   # else if (!link %in% c("probit", "logit")) {
+#   #   stop("'link' must be \"probit\" or \"logit\" with distance = \"bart\".", call. = FALSE)
+#   # }
+#
+#   data <- model.frame(formula, data)
+#
+#   treat <- binarize(data[[1]])
+#   X <- data[-1]
+#
+#   chars <- vapply(X, is.character, logical(1L))
+#   X[chars] <- lapply(X[chars], factor)
+#
+#   A <- list(...)
+#
+#   if (!is.null(A[["mc.cores"]]) && A[["mc.cores"]][1] > 1) fun <- BART::mc.gbart
+#   else fun <- BART::gbart
+#
+#   res <- do.call(fun, c(list(X,
+#                              y.train = treat,
+#                              type = switch(link, "logit" = "lbart", "pbart")),
+#                         A[intersect(names(A), setdiff(names(formals(fun)),
+#                                                       c("x.train", "y.train", "x.test", "type", "ntype")))]))
+#
+#   pred <- res$prob.train.mean
+#   if (linear) pred <- switch(link, logit = qlogis, probit = qnorm)(pred)
+#
+#   return(list(model = res, distance = pred))
+# }
 
 #distance2randomforest-----------------
 distance2randomforest <- function(formula, data, link = NULL, ...) {

@@ -58,43 +58,43 @@ matchit <- function(formula, data = NULL, method = "nearest", distance = "glm",
     }
 
     if (!is.null(method)) {
-    if (!is.null(exact)) {
-      if (is.character(exact)) {
-        if (is.null(data) || !is.data.frame(data)) {
-          stop("If 'exact' is specified as strings, a data frame containing the named variables must be supplied to 'data'.", call. = FALSE)
+      if (!is.null(exact)) {
+        if (is.character(exact)) {
+          if (is.null(data) || !is.data.frame(data)) {
+            stop("If 'exact' is specified as strings, a data frame containing the named variables must be supplied to 'data'.", call. = FALSE)
+          }
+          if (!all(exact %in% names(data))) {
+            stop("All names supplied to 'exact' must be variables in 'data'.", call. = FALSE)
+          }
+          exact <- reformulate(exact)
         }
-        if (!all(exact %in% names(data))) {
-          stop("All names supplied to 'exact' must be variables in 'data'.", call. = FALSE)
+        else if (inherits(exact, "formula")) {
+          exact <- update(exact, NULL ~ .)
         }
-        exact <- reformulate(exact)
+        else {
+          stop("'exact' must be supplied as a character vector of names or a one-sided formula.", call. = FALSE)
+        }
+        exactcovs <- model.frame(exact, data, na.action = "na.pass")
       }
-      else if (inherits(exact, "formula")) {
-        exact <- update(exact, NULL ~ .)
-      }
-      else {
-        stop("'exact' must be supplied as a character vector of names or a one-sided formula.", call. = FALSE)
-      }
-      exactcovs <- model.frame(exact, data, na.action = "na.pass")
-    }
 
-    if (!is.null(mahvars)) {
-      if (is.character(mahvars)) {
-        if (is.null(data) || !is.data.frame(data)) {
-          stop("If 'mahvars' is specified as strings, a data frame containing the named variables must be supplied to 'data'.", call. = FALSE)
+      if (!is.null(mahvars)) {
+        if (is.character(mahvars)) {
+          if (is.null(data) || !is.data.frame(data)) {
+            stop("If 'mahvars' is specified as strings, a data frame containing the named variables must be supplied to 'data'.", call. = FALSE)
+          }
+          if (!all(mahvars %in% names(data))) {
+            stop("All names supplied to 'mahvars' must be variables in 'data'.", call. = FALSE)
+          }
+          mahvars <- reformulate(mahvars)
         }
-        if (!all(mahvars %in% names(data))) {
-          stop("All names supplied to 'mahvars' must be variables in 'data'.", call. = FALSE)
+        else if (inherits(mahvars, "formula")) {
+          mahvars <- update(mahvars, NULL ~ .)
         }
-        mahvars <- reformulate(mahvars)
+        else {
+          stop("'exact' must be supplied as a character vector of names or a one-sided formula.", call. = FALSE)
+        }
+        mahcovs <- model.frame(mahvars, data, na.action = "na.pass")
       }
-      else if (inherits(mahvars, "formula")) {
-        mahvars <- update(mahvars, NULL ~ .)
-      }
-      else {
-        stop("'exact' must be supplied as a character vector of names or a one-sided formula.", call. = FALSE)
-      }
-      mahcovs <- model.frame(mahvars, data, na.action = "na.pass")
-    }
     }
   }
 
@@ -122,6 +122,7 @@ matchit <- function(formula, data = NULL, method = "nearest", distance = "glm",
       if (is.null(distance.options$data)) distance.options$data <- data
       if (is.null(distance.options$verbose)) distance.options$verbose <- verbose
       if (is.null(distance.options$estimand)) distance.options$estimand <- estimand
+
       if (!is.null(attr(distance, "link"))) distance.options$link <- attr(distance, "link")
       else distance.options$link <- link
 
