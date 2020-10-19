@@ -1,3 +1,5 @@
+// [[Rcpp::depends(RcppProgress)]]
+#include <progress.hpp>
 #include <Rcpp.h>
 using namespace Rcpp;
 
@@ -13,7 +15,8 @@ IntegerMatrix nn_matchC(const IntegerVector& treat,
                         const Nullable<NumericVector>& caliper_covs_ = R_NilValue,
                         const Nullable<NumericMatrix>& calcovs_covs_mat_ = R_NilValue,
                         const Nullable<NumericMatrix>& mah_covs_ = R_NilValue,
-                        const Nullable<NumericMatrix>& mahSigma_inv_ = R_NilValue)
+                        const Nullable<NumericMatrix>& mahSigma_inv_ = R_NilValue,
+                        const bool& disl_prog = false)
   {
 
   // Initialize
@@ -91,21 +94,35 @@ IntegerMatrix nn_matchC(const IntegerVector& treat,
 
   bool ps_diff_assigned = false;
 
+  int prog_length;
+  if (replace) prog_length = n1;
+  else prog_length = max_rat*n1;
+  Progress p(prog_length, disl_prog);
+
   //Counters
   int rat, i, x, j;
   for (rat = 0; rat < max_rat; ++rat) {
     for (i = 0; i < n1; ++i) {
 
-      if (all(matched).is_true()) break;
+      if (all(matched).is_true()) {
+        p.update(prog_length);
+        break;
+      }
 
       t = ord[i] - 1;     // index among treated
       t_rat = ratio[t];
 
-      if (t_rat < rat + 1) continue;
+      if (t_rat < rat + 1) {
+        p.increment();
+        continue;
+      }
 
       t_ind = ind1[t]; // index among sample
 
-      if (discarded[t_ind]) continue;
+      if (discarded[t_ind]) {
+        p.increment();
+        continue;
+      }
 
       c_eligible = treat == 0; // index among sample
 
@@ -115,7 +132,10 @@ IntegerMatrix nn_matchC(const IntegerVector& treat,
         c_eligible[exact != exact[t_ind]] = false;
       }
 
-      if (any(c_eligible).is_false()) continue;
+      if (any(c_eligible).is_false()) {
+        p.increment();
+        continue;
+      }
 
       if (use_caliper_dist) {
         dt = distance[t_ind];
@@ -126,7 +146,10 @@ IntegerMatrix nn_matchC(const IntegerVector& treat,
 
         c_eligible[ps_diff > caliper_dist] = false;
 
-        if (any(c_eligible).is_false()) continue;
+        if (any(c_eligible).is_false()) {
+          p.increment();
+          continue;
+        }
       }
 
       if (use_caliper_covs) {
@@ -142,7 +165,10 @@ IntegerMatrix nn_matchC(const IntegerVector& treat,
           c_eligible[cal_diff > caliper_covs[x]] = false;
         }
 
-        if (any(c_eligible).is_false()) continue;
+        if (any(c_eligible).is_false()) {
+          p.increment();
+          continue;
+        }
       }
 
       //Compute distances among eligible
@@ -195,6 +221,8 @@ IntegerMatrix nn_matchC(const IntegerVector& treat,
           }
         }
       }
+
+      p.increment();
     }
 
     if (replace) break;
