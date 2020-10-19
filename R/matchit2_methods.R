@@ -16,8 +16,7 @@ matchit2cem <- function(treat, covs, estimand = "ATT", verbose = FALSE, ...) {
 
   check.package("cem")
 
-  if (verbose)
-    cat("Coarsened exact matching...\n")
+  if (verbose) cat("Coarsened exact matching...\n")
 
   A <- list(...)
   A[["method"]] <- A[["k2k.method"]]
@@ -38,12 +37,12 @@ matchit2cem <- function(treat, covs, estimand = "ATT", verbose = FALSE, ...) {
   mat <- tryCatch({
     withCallingHandlers({
       do.call(cem::cem, c(list(treatment = names(cem.data)[ncol(cem.data)],
-                                      data = cem.data,
-                                      verbose = as.integer(verbose),
-                                      eval.imbalance = FALSE,
-                                      keep.all = FALSE,
-                                      drop = NULL),
-                                 A[names(A) %in% setdiff(names(formals(cem::cem)), args.excluded)]))
+                               data = cem.data,
+                               verbose = as.integer(verbose),
+                               eval.imbalance = FALSE,
+                               keep.all = FALSE,
+                               drop = NULL),
+                          A[names(A) %in% setdiff(names(formals(cem::cem)), args.excluded)]))
     },
     warning = function(w) {
       warning(paste0("(from cem) ", conditionMessage(w)), call. = FALSE, immediate. = TRUE)
@@ -63,6 +62,8 @@ matchit2cem <- function(treat, covs, estimand = "ATT", verbose = FALSE, ...) {
   if (!is.null(mat)) strat[mat$matched] <- mat$strata[mat$matched]
   strat <- setNames(factor(strat, labels = seq_along(unique(strat[!is.na(strat)]))), names(treat))
 
+  if (verbose) cat("Calculating matching weights... \n")
+
   res <- list(subclass = strat,
               weights = weights.subclass(strat, treat, estimand))
   class(res) <- "matchit"
@@ -81,7 +82,9 @@ matchit2exact <- function(treat, covs, data, estimand = "ATT", verbose = FALSE, 
   xx <- exactify(covs, names(treat))
   cc <- intersect(xx[treat==1], xx[treat==0])
 
-  psclass <- setNames(factor(match(xx, cc)), names(treat))
+  psclass <- setNames(factor(match(xx, cc), nmax = length(cc)), names(treat))
+
+  if (verbose) cat("Calculating matching weights... \n")
 
   res <- list(subclass = psclass,
               weights = weights.subclass(psclass, treat, estimand))
@@ -97,8 +100,7 @@ matchit2full <- function(treat, formula, data, distance, discarded,
 
   check.package("optmatch")
 
-  if(verbose)
-    cat("Full matching... \n")
+  if (verbose) cat("Full matching... \n")
 
   A <- list(...)
 
@@ -190,11 +192,13 @@ matchit2full <- function(treat, formula, data, distance, discarded,
 
   if (all(is.na(full))) stop("No matches were found.", call. = FALSE)
 
-  psclass <- factor(full, labels = seq_len(nlevels(full)))
+  psclass <- factor(full, labels = seq_len(nlevels(full)), nmax = nlevels(full))
   names(psclass) <- names(treat)
 
   #No match.matrix because treated units don't index matched strata (i.e., more than one
   #treated unit can be in the same stratum). Stratum information is contained in subclass.
+
+  if (verbose) cat("Calculating matching weights... \n")
 
   res <- list(subclass = psclass,
               weights = weights.subclass(psclass, treat, estimand))
@@ -246,7 +250,7 @@ matchit2optimal <- function(treat, formula, data, distance, discarded,
   else exact.match <- NULL
 
   if (!is.null(caliper)) {
-    warning("Calipers are currently not compatible with method = \"optimal\" and will be ignored.", call. = FALSE)
+    warning("Calipers are currently not compatible with method = \"optimal\" and will be ignored.", call. = FALSE, immediate. = TRUE)
     caliper <- NULL
   }
 
@@ -306,6 +310,8 @@ matchit2optimal <- function(treat, formula, data, distance, discarded,
     if (length(matched.units) > 0) mm[i, seq_along(matched.units)] <- matched.units
   }
 
+  if (verbose) cat("Calculating matching weights... \n")
+
   ## calculate weights and return the results
   res <- list(match.matrix = mm,
               subclass = psclass,
@@ -323,8 +329,7 @@ matchit2genetic <- function(treat, data, distance, discarded,
 
   check.package(c("Matching", "rgenoud"))
 
-  if (verbose)
-    cat("Genetic matching... \n")
+  if (verbose) cat("Genetic matching... \n")
 
   A <- list(...)
 
@@ -486,33 +491,33 @@ matchit2genetic <- function(treat, data, distance, discarded,
   lab_ <- names(treat_)
 
   # if (!isFALSE(A$use.Match)) {
-    withCallingHandlers({
-      m.out <- Matching::Match(Tr = treat_, X = X_,
-                               M = ratio, exact = exact.log, caliper = cal,
-                               replace = replace, estimand = "ATT", ties = FALSE,
-                               CommonSupport = FALSE, Weight = 3,
-                               Weight.matrix = if (use.genetic) g.out else generalized_inverse(cor(X)),
-                               version = "fast")
-    },
-    warning = function(w) {
-      if (!startsWith(conditionMessage(w), "replace==FALSE, but there are more (weighted) treated obs than control obs.")) {
-        warning(paste0("(from Matching) ", conditionMessage(w)), call. = FALSE, immediate. = TRUE)
-      }
-      invokeRestart("muffleWarning")
-    },
-    error = function(e) {
-      stop(paste0("(from Matching) ", conditionMessage(e)), call. = FALSE, immediate. = TRUE)
-    })
-
-    mm <- matrix(NA_character_, nrow = n1, ncol = max(table(m.out$index.treated)),
-                 dimnames = list(lab1, NULL))
-
-    unique.matched.focal <- unique(m.out$index.treated, nmax = n1)
-
-    for (i in unique.matched.focal) {
-      matched.units <- lab_[m.out$index.control[m.out$index.treated == i]]
-      mm[lab_[i], seq_along(matched.units)] <- matched.units
+  withCallingHandlers({
+    m.out <- Matching::Match(Tr = treat_, X = X_,
+                             M = ratio, exact = exact.log, caliper = cal,
+                             replace = replace, estimand = "ATT", ties = FALSE,
+                             CommonSupport = FALSE, Weight = 3,
+                             Weight.matrix = if (use.genetic) g.out else generalized_inverse(cor(X)),
+                             version = "fast")
+  },
+  warning = function(w) {
+    if (!startsWith(conditionMessage(w), "replace==FALSE, but there are more (weighted) treated obs than control obs.")) {
+      warning(paste0("(from Matching) ", conditionMessage(w)), call. = FALSE, immediate. = TRUE)
     }
+    invokeRestart("muffleWarning")
+  },
+  error = function(e) {
+    stop(paste0("(from Matching) ", conditionMessage(e)), call. = FALSE, immediate. = TRUE)
+  })
+
+  mm <- matrix(NA_character_, nrow = n1, ncol = max(table(m.out$index.treated)),
+               dimnames = list(lab1, NULL))
+
+  unique.matched.focal <- unique(m.out$index.treated, nmax = n1)
+
+  for (i in unique.matched.focal) {
+    matched.units <- lab_[m.out$index.control[m.out$index.treated == i]]
+    mm[lab_[i], seq_along(matched.units)] <- matched.units
+  }
   # }
   # else {
   #   ord1 <- ord[ord %in% which(treat == 1)]
@@ -535,13 +540,15 @@ matchit2genetic <- function(treat, data, distance, discarded,
   #   dimnames(mm) <- list(lab1, seq_len(ratio))
   # }
 
-  if (!replace) {
-    psclass <- mm2subclass(mm, treat)
-    weights <- weights.subclass(psclass, treat)
-  }
-  else {
+  if (verbose) cat("Calculating matching weights... \n")
+
+  if (replace) {
     psclass <- NULL
     weights <- weights.matrix(mm, treat)
+  }
+  else {
+    psclass <- mm2subclass(mm, treat)
+    weights <- weights.subclass(psclass, treat)
   }
 
   res <- list(match.matrix = mm,
@@ -561,8 +568,7 @@ matchit2nearest <-  function(treat, data, distance, discarded,
                              is.full.mahalanobis, fast = TRUE,
                              min.controls = NULL, max.controls = NULL, ...){
 
-  if(verbose)
-    cat("Nearest neighbor matching... \n")
+  if (verbose) cat("Nearest neighbor matching... \n")
 
   ratio <- process.ratio(ratio, max.controls)
 
@@ -698,23 +704,25 @@ matchit2nearest <-  function(treat, data, distance, discarded,
   #Both produce matrix of indices of matched ctrl units
   if (fast) {
     mm <- nn_matchC(treat, ord, ratio, replace, discarded, distance, ex, caliper.dist,
-                    caliper.covs, caliper.covs.mat, mahcovs, mahSigma_inv)
+                    caliper.covs, caliper.covs.mat, mahcovs, mahSigma_inv, verbose)
   }
   else {
     mm <- nn_match(treat, ord, ratio, replace, discarded, distance, ex, caliper.dist,
-                    caliper.covs, caliper.covs.mat, mahcovs, mahSigma_inv)
+                   caliper.covs, caliper.covs.mat, mahcovs, mahSigma_inv)
   }
 
   mm[] <- names(treat)[mm]
   dimnames(mm) <- list(lab1, seq_len(ncol(mm)))
 
-  if (!replace) {
-    psclass <- mm2subclass(mm, treat)
-    weights <- weights.subclass(psclass, treat)
-  }
-  else {
+  if (verbose) cat("Calculating matching weights... \n")
+
+  if (replace) {
     psclass <- NULL
     weights <- weights.matrix(mm, treat)
+  }
+  else {
+    psclass <- mm2subclass(mm, treat)
+    weights <- weights.subclass(psclass, treat)
   }
 
   res <- list(match.matrix = mm,
@@ -727,7 +735,6 @@ matchit2nearest <-  function(treat, data, distance, discarded,
 }
 
 # MATCHIT method = subclass---------------------------------
-#Needs updates
 matchit2subclass <- function(treat, distance, discarded,
                              replace = FALSE, exact = NULL,
                              estimand = "ATT", verbose = FALSE,
@@ -815,6 +822,8 @@ matchit2subclass <- function(treat, distance, discarded,
   if (nlevels(psclass) != subclass){
     warning("Due to discreteness in the distance measure, fewer subclasses were generated than were requested.", call.=FALSE)
   }
+
+  if (verbose) cat("Calculating matching weights... \n")
 
   res <- list(subclass = psclass, q.cut = q,
               weights = weights.subclass(psclass, treat, estimand))
