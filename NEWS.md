@@ -64,6 +64,8 @@ output:
 
 * Variable ratio extremal matching as described by Ming & Rosenbaum (2000) can be implemented using the new `min.controls` and `max.controls` arguments.
 
+* Added ability to display a progress bar during matching, which can be activated by setting `verbose = TRUE`.
+
 ## `method = "optimal"` and `method = "full"`
 
 * Fixed bug in `method = "optimal"`, which produced results that did not match `optmatch`. Now they do.
