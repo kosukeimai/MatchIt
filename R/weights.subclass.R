@@ -43,11 +43,11 @@ weights.subclass <- function(psclass, treat, estimand = "ATT") {
   }
 
   if (sum(weights)==0)
-    stop("No units were matched")
+    stop("No units were matched.", call. = FALSE)
   else if (sum(weights[treat == 1])==0)
-    stop("No treated units were matched")
+    stop("No treated units were matched.", call. = FALSE)
   else if (sum(weights[treat == 0])==0)
-    stop("No control units were matched")
+    stop("No control units were matched.", call. = FALSE)
 
   return(weights)
 }

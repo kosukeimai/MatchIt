@@ -22,11 +22,11 @@ weights.matrix <- function(match.matrix, treat) {
   }
 
   if (sum(weights)==0)
-    stop("No units were matched")
+    stop("No units were matched.", call. = FALSE)
   else if (sum(weights[in_t1])==0)
-    stop("No treated units were matched")
+    stop("No treated units were matched.", call. = FALSE)
   else if (sum(weights[in_t0])==0)
-    stop("No control units were matched")
+    stop("No control units were matched.", call. = FALSE)
 
   return(setNames(weights, names(treat)))
 }

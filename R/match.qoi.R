@@ -173,7 +173,7 @@ pair.dist <- function(xx, tt, subclass = NULL, mm = NULL, std = NULL, fast = TRU
       mpdiff <- pairdistsubC(xx, tt, subclass, nlevels(subclass))
     }
   }
-  else  return(NA_real_)
+  else return(NA_real_)
 
   if (!is.null(std) && abs(mpdiff) > 1e-8) {
       mpdiff <- mpdiff/std
