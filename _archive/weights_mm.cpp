@@ -31,7 +31,7 @@ NumericVector weights_mm(CharacterMatrix mm,
     for (j = 0; j < nmatches_i[1]; j++) {
       matched_controls_j = matched_controls_i[j];
       k = weights.findName(matched_controls_j);
-      weights[k] = weights[k] + 1/nmatches_i[1];
+      weights[k] += 1/nmatches_i[1];
     }
   }
 
