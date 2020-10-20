@@ -303,7 +303,7 @@ matchit2optimal <- function(treat, formula, data, distance, discarded,
   na.class <- is.na(psclass)
 
   mm <- matrix(NA_character_, ncol = ratio, nrow = sum(treat == focal),
-               dimnames = list(names(treat)[treat == focal], seq_len(ratio)))
+               dimnames = list(names(treat)[treat == focal], NULL))
 
   for (i in rownames(mm)[!na.class[treat == focal]]) {
     matched.units <- names(treat)[treat != focal & !na.class & psclass == psclass[i]]
@@ -509,6 +509,7 @@ matchit2genetic <- function(treat, data, distance, discarded,
     stop(paste0("(from Matching) ", conditionMessage(e)), call. = FALSE, immediate. = TRUE)
   })
 
+  #Note: must use character match.matrix because of re-ordering treat into treat_
   mm <- matrix(NA_character_, nrow = n1, ncol = max(table(m.out$index.treated)),
                dimnames = list(lab1, NULL))
 
@@ -544,7 +545,7 @@ matchit2genetic <- function(treat, data, distance, discarded,
 
   if (replace) {
     psclass <- NULL
-    weights <- weights.matrix(mm, treat)
+    weights <- weights.matrix(charmm2nummm(mm, treat), treat)
   }
   else {
     psclass <- mm2subclass(mm, treat)
@@ -711,16 +712,15 @@ matchit2nearest <-  function(treat, data, distance, discarded,
                    caliper.covs, caliper.covs.mat, mahcovs, mahSigma_inv, verbose)
   }
 
-  mm[] <- names(treat)[mm]
-  dimnames(mm) <- list(lab1, seq_len(ncol(mm)))
-
   if (verbose) cat("Calculating matching weights... \n")
 
   if (replace) {
     psclass <- NULL
     weights <- weights.matrix(mm, treat)
+    mm <- nummm2charmm(mm, treat)
   }
   else {
+    mm <- nummm2charmm(mm, treat)
     psclass <- mm2subclass(mm, treat)
     weights <- weights.subclass(psclass, treat)
   }

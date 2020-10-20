@@ -664,6 +664,21 @@ get.covs.matrix <- function(formula = NULL, data = NULL) {
   return(X)
 }
 
+#Convert match.matrix (mm) using numerical indices to using char rownames
+nummm2charmm <- function(nummm, treat) {
+  charmm <- matrix(NA_character_, nrow = nrow(nummm), ncol = ncol(nummm),
+                   dimnames = list(names(treat)[treat == 1], NULL))
+  charmm[] <- names(treat)[nummm]
+  charmm
+}
+
+charmm2nummm <- function(charmm, treat) {
+  nummm <- matrix(NA_integer_, nrow = nrow(charmm), ncol = ncol(charmm))
+  n_index <- setNames(seq_along(treat), names(treat))
+  nummm[] <- n_index[charmm]
+  nummm
+}
+
 #Get subclass from match.matrix. Only to be used if replace = FALSE.
 mm2subclass <- function(mm, treat) {
   lab <- names(treat)
