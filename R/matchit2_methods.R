@@ -62,10 +62,13 @@ matchit2cem <- function(treat, covs, estimand = "ATT", verbose = FALSE, ...) {
   if (!is.null(mat)) strat[mat$matched] <- mat$strata[mat$matched]
   strat <- setNames(factor(strat, labels = seq_along(unique(strat[!is.na(strat)]))), names(treat))
 
-  if (verbose) cat("Calculating matching weights... \n")
+  if (verbose) cat("Calculating matching weights... ")
 
   res <- list(subclass = strat,
               weights = weights.subclass(strat, treat, estimand))
+
+  if (verbose) cat("Done.\n")
+
   class(res) <- "matchit"
   return(res)
 }
@@ -84,10 +87,13 @@ matchit2exact <- function(treat, covs, data, estimand = "ATT", verbose = FALSE, 
 
   psclass <- setNames(factor(match(xx, cc), nmax = length(cc)), names(treat))
 
-  if (verbose) cat("Calculating matching weights... \n")
+  if (verbose) cat("Calculating matching weights... ")
 
   res <- list(subclass = psclass,
               weights = weights.subclass(psclass, treat, estimand))
+
+  if (verbose) cat("Done.\n")
+
   class(res) <- "matchit"
   return(res)
 }
@@ -198,10 +204,12 @@ matchit2full <- function(treat, formula, data, distance, discarded,
   #No match.matrix because treated units don't index matched strata (i.e., more than one
   #treated unit can be in the same stratum). Stratum information is contained in subclass.
 
-  if (verbose) cat("Calculating matching weights... \n")
+  if (verbose) cat("Calculating matching weights... ")
 
   res <- list(subclass = psclass,
               weights = weights.subclass(psclass, treat, estimand))
+
+  if (verbose) cat("Done.\n")
 
   class(res) <- c("matchit")
   return(res)
@@ -310,12 +318,14 @@ matchit2optimal <- function(treat, formula, data, distance, discarded,
     if (length(matched.units) > 0) mm[i, seq_along(matched.units)] <- matched.units
   }
 
-  if (verbose) cat("Calculating matching weights... \n")
+  if (verbose) cat("Calculating matching weights... ")
 
   ## calculate weights and return the results
   res <- list(match.matrix = mm,
               subclass = psclass,
               weights = weights.subclass(psclass, treat, estimand))
+
+  if (verbose) cat("Done.\n")
 
   class(res) <- "matchit"
   return(res)
@@ -541,7 +551,7 @@ matchit2genetic <- function(treat, data, distance, discarded,
   #   dimnames(mm) <- list(lab1, seq_len(ratio))
   # }
 
-  if (verbose) cat("Calculating matching weights... \n")
+  if (verbose) cat("Calculating matching weights... ")
 
   if (replace) {
     psclass <- NULL
@@ -551,6 +561,8 @@ matchit2genetic <- function(treat, data, distance, discarded,
     psclass <- mm2subclass(mm, treat)
     weights <- weights.subclass(psclass, treat)
   }
+
+  if (verbose) cat("Done.\n")
 
   res <- list(match.matrix = mm,
               subclass = psclass,
@@ -712,7 +724,7 @@ matchit2nearest <-  function(treat, data, distance, discarded,
                    caliper.covs, caliper.covs.mat, mahcovs, mahSigma_inv, verbose)
   }
 
-  if (verbose) cat("Calculating matching weights... \n")
+  if (verbose) cat("Calculating matching weights... ")
 
   if (replace) {
     psclass <- NULL
@@ -724,6 +736,8 @@ matchit2nearest <-  function(treat, data, distance, discarded,
     psclass <- mm2subclass(mm, treat)
     weights <- weights.subclass(psclass, treat)
   }
+
+  if (verbose) cat("Done.\n")
 
   res <- list(match.matrix = mm,
               subclass = psclass,
@@ -823,10 +837,12 @@ matchit2subclass <- function(treat, distance, discarded,
     warning("Due to discreteness in the distance measure, fewer subclasses were generated than were requested.", call.=FALSE)
   }
 
-  if (verbose) cat("Calculating matching weights... \n")
+  if (verbose) cat("Calculating matching weights... ")
 
   res <- list(subclass = psclass, q.cut = q,
               weights = weights.subclass(psclass, treat, estimand))
+
+  if (verbose) cat("Done.\n")
 
   class(res) <- c("matchit.subclass", "matchit")
   return(res)
