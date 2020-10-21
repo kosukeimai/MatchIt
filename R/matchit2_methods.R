@@ -581,7 +581,10 @@ matchit2nearest <-  function(treat, data, distance, discarded,
                              is.full.mahalanobis, fast = TRUE,
                              min.controls = NULL, max.controls = NULL, ...){
 
-  if (verbose) cat("Nearest neighbor matching... \n")
+  if (verbose) {
+    if (fast) check.package("RcppProgress")
+    cat("Nearest neighbor matching... \n")
+  }
 
   ratio <- process.ratio(ratio, max.controls)
 
