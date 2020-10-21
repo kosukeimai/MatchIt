@@ -20,17 +20,17 @@ output:
 
 * The `mahvars` argument can also be supplied either as a character vector of names of variables in `data` or as a one-sided formula. Mahalanobis distance matching will occur on the variables in the formula, processed by `model.matrix()`. Use this when performing Mahalanobis distance matching on some variables within a caliper defined by the propensity scores estimated from the variables in the main `formula` using the argument to `distance`. For regular Mahalanobis distance matching (without a propensity score caliper), supply the variables in the main `formula` and set `distance = "mahalanobis"`.
 
-* The `caliper` argument can now be specified as a numeric vector with a caliper for each variable named in it. This means you can separately impose calipers on individual variables as well as or instead of the propensity score. For example, to require that units within pairs must be no more than .2 standard deviations of `X1` away from each other, one could specify `caliper = c(X1 = .2)`. A new option `std.caliper` allows the choice of whether the caliper is in standard deviation units or not, and one value per entry in `caliper` can be supplied. An unnamed entry to `caliper` applies the caliper to the distance measure and the default of `std.caliper` is `FALSE`, so this doesn't change the behavior of old code. These options only apply to the methods that accept calipers, namely `"nearest"`, `"genetic"`, and `"full"`.
+* The `caliper` argument can now be specified as a numeric vector with a caliper for each variable named in it. This means you can separately impose calipers on individual variables as well as or instead of the propensity score. For example, to require that units within pairs must be no more than .2 standard deviations of `X1` away from each other, one could specify `caliper = c(X1 = .2)`. A new option `std.caliper` allows the choice of whether the caliper is in standard deviation units or not, and one value per entry in `caliper` can be supplied. An unnamed entry to `caliper` applies the caliper to the propensity score and the default of `std.caliper` is `FALSE`, so this doesn't change the behavior of old code. These options only apply to the methods that accept calipers, namely `"nearest"`, `"genetic"`, and `"full"`.
 
 * A new `estimand` argument can be supplied to specify the target estimand of the analysis. For all methods, the ATT and ATC are available with the ATT as the default, consistent with prior behavior. For some methods, the ATE is additionally available. Note that setting the estimand doesn't actually mean that estimand is being targeted; if calipers, common support, or other restrictions are applied, the target population will shift from that requested. `estimand` just triggers the choice of which level of the treatment is focal and what formula should be used to compute weights from subclasses.
-
-* The allowable options to `distance` have changed slightly. The input should be either `"mahalanobis"` for Mahalanobis distance matching (without a propensity score caliper), a numeric vector of distance values (i.e., values whose absolute pairwise differences form the distances), or one of the allowable options. The new allowable values include `"glm"` for propensity scores estimated with `glm()`, `"gam"` for propensity scores estimated with `mgcv::gam()`, `"rpart"` for propensity scores estimated with `rpart::rpart()`, `"nnet"` for propensity scores estimated with `nnet::nnet()`, `"cbps"` for propensity scores estimated with `CBPS::CBPS()`, or `bart` for propensity scores estimated with `dbarts::bart2()`. To specify a link (e.g., for probit regression), specify an argument to the new `link` parameter. For linear versions of the propensity score, specify `link` as `"linear.{link}"`. For example, for linear probit regression propensity scores, one should specify `distance = "glm", link = "linear.probit"`. The default `distance` is `"glm"` and the default link is `"logit"`, so these can be omitted if either is desired. Not all methods accept a `link`, and for those that don't, it will be ignored. If an old-style `distance` is supplied, it will be converted to an appropriate specification with a warning (except for `distance = "logit"`, which will be converted without a warning).
-
-* The output to `matchit()` has changed slightly; the component `X` is now a data frame, the result of a call to `model.frame()` with the formula provided. If `exact` or `mahvars` are specified, their variables are included as well, if not already present. It is included for all methods and is the same for all methods. In the past, it was the result of a call to `model.matrix()` and was only included for some methods.
 
 * Added `"cbps"` as option for `distance`. This estimates propensity scores using the covariate balancing propensity score (CBPS) algorithm as implemented in the `CBPS` package. Set `link = "linear"` to use a linear version of the CBPS.
 
 * Added `"bart"` as an option for `distance`. This estimates propensity scores using Bayesian Additive Regression Trees (BART) as implemented in the `dbarts` package.
+
+* The allowable options to `distance` have changed slightly. The input should be either `"mahalanobis"` for Mahalanobis distance matching (without a propensity score caliper), a numeric vector of distance values (i.e., values whose absolute pairwise differences form the distances), or one of the allowable options. The new allowable values include `"glm"` for propensity scores estimated with `glm()`, `"gam"` for propensity scores estimated with `mgcv::gam()`, `"rpart"` for propensity scores estimated with `rpart::rpart()`, `"nnet"` for propensity scores estimated with `nnet::nnet()`, `"cbps"` for propensity scores estimated with `CBPS::CBPS()`, or `bart` for propensity scores estimated with `dbarts::bart2()`. To specify a link (e.g., for probit regression), specify an argument to the new `link` parameter. For linear versions of the propensity score, specify `link` as `"linear.{link}"`. For example, for linear probit regression propensity scores, one should specify `distance = "glm", link = "linear.probit"`. The default `distance` is `"glm"` and the default link is `"logit"`, so these can be omitted if either is desired. Not all methods accept a `link`, and for those that don't, it will be ignored. If an old-style `distance` is supplied, it will be converted to an appropriate specification with a warning (except for `distance = "logit"`, which will be converted without a warning).
+
+* The output to `matchit()` has changed slightly; the component `X` is now a data frame, the result of a call to `model.frame()` with the formula provided. If `exact` or `mahvars` are specified, their variables are included as well, if not already present. It is included for all methods and is the same for all methods. In the past, it was the result of a call to `model.matrix()` and was only included for some methods.
 
 * Added `"randomforest"` as an option for `distance`. This estimates propensity scores using random forests as implemented in the `randomForest` package.
 
@@ -88,9 +88,9 @@ output:
 
 * The `exact` argument now correctly functions with `method = "genetic"`. Previously, it would have to be specified in accordance with its use in `Matching::GenMatch()`.
 
-* Different ways to match on variables are now allowed with `method = "genetic"`, similar to how they are with `method = "nearest"`. If `distance = "mahalanobis"`, no distance measure will be computed, and genetic matching will be performed just on the variables supplied to `formula`. If `mahvars` is specified, genetic matching will be performed on the variables supplied to `mahvars`, but balance will be optimized on all covariates supplied to `formula`. Otherwise, genetic matching will be performed on the variables supplied to `formula` and the distance measure. Previously, `mahvars` was ignored. Balance is now always optimized on the variables included in `formula` and never on the distance measure, whereas in the past the distance measure was always included in the balance optimization.
+* Different ways to match on variables are now allowed with `method = "genetic"`, similar to how they are with `method = "nearest"`. If `distance = "mahalanobis"`, no propensity score will be computed, and genetic matching will be performed just on the variables supplied to `formula`. If `mahvars` is specified, genetic matching will be performed on the variables supplied to `mahvars`, but balance will be optimized on all covariates supplied to `formula`. Otherwise, genetic matching will be performed on the variables supplied to `formula` and the propensity score. Previously, `mahvars` was ignored. Balance is now always optimized on the variables included in `formula` and never on the propensity score, whereas in the past the propensity score was always included in the balance optimization.
 
-* The `caliper` argument now works as it does with `method = "nearest"` rather than needing to be supplied in a way that `Matching::Match()` would accept.
+* The `caliper` argument now works as it does with `method = "nearest"` and other methods rather than needing to be supplied in a way that `Matching::Match()` would accept.
 
 * A `subclass` component is now included in the output when `replace = FALSE` (the default), as it has been with optimal and full matching.
 
@@ -104,7 +104,7 @@ output:
 
 * Performance improvements.
 
-* A new argument, `min.n`, can be supplied, which controls the minimim size a treatment group can be in each subclass. When any estimated subclass doesn't have enough members from a treatment group, units from other subclasses are pulled to fill it so that every subclass will have at least `min.n` units from each treatment group. This uses the same mechanism as is used in `WeightIt`. The default `min.n` is 1 to ensure there is at least one treated and control unit in each subclass.
+* A new argument, `min.n`, can be supplied, which controls the minimum size a treatment group can be in each subclass. When any estimated subclass doesn't have enough members from a treatment group, units from other subclasses are pulled to fill it so that every subclass will have at least `min.n` units from each treatment group. This uses the same mechanism as is used in `WeightIt`. The default `min.n` is 1 to ensure there are at least one treated and control unit in each subclass.
 
 * Rather than producing warnings and just using the default number of subclasses (6), when an inappropriate argument is supplied to `subclass`, an error will occur.
 
@@ -126,7 +126,7 @@ output:
 
 * The eCDF and QQ statistics have been adjusted. Both now use the weights that were computed as part of the matching. The eCDF and QQ statistics for binary variables are set to the difference in group proportions. The standard deviation of the control group has been removed from the output.
 
-* The default for `standardize` is now `TRUE`, so that standardized mean differnces and eCDF statistics will be displayed by default.
+* The default for `standardize` is now `TRUE`, so that standardized mean differences and eCDF statistics will be displayed by default.
 
 * A new column for the average absolute pair difference for each covariate is included in the output. The values indicate how far treated and control units within pairs are from each other. An additional argument to `summary.matchit()`, `pair.dist`, controls whether this value is computed. It can take a long time for some matching methods and could be omitted to speed up computation.
 
@@ -134,9 +134,9 @@ output:
 
 * Plots now use weighted summaries when weights are present, removing the need for the `num.draws` argument.
 
-* Added a new plot type, `"ecdf"`, which creates emprical CDF plots before and after matching.
+* Added a new plot type, `"ecdf"`, which creates empirical CDF plots before and after matching.
 
-* The appearance of some plots has improved (e.g., text is appropriately centered, axes are more clearly labelled). For eQQ plots with binary variables or variables that take on only a few values, the plots look more like clusters than snakes.
+* The appearance of some plots has improved (e.g., text is appropriately centered, axes are more clearly labeled). For eQQ plots with binary variables or variables that take on only a few values, the plots look more like clusters than snakes.
 
 * The argument to `type` can be abbreviated (e.g., `"j"` for jitter).
 
