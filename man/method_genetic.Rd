@@ -24,7 +24,7 @@ matchit(formula, data = NULL, method = "genetic",
 a two-sided \code{\link{formula}} object containing the treatment and covariates to be used in creating the distance measure used in the matching. This formula will be supplied to the functions that estimate the distance measure and is used to determine the covariates whose balance is to be optimized.
 }
   \item{data}{
-a data frame containing the variables named in \code{formula}. If not found in \code{data}, the variables will be saught in the environment.
+a data frame containing the variables named in \code{formula}. If not found in \code{data}, the variables will be sought in the environment.
 }
   \item{method}{
 set here to \code{"genetic"}.
@@ -90,7 +90,7 @@ In genetic matching, covariates play three roles: 1) as the variables on which b
 When a caliper is specified, any variables mentioned in \code{caliper}, possibly including the distance measure, will be added to the matching variables used to form the generalized Mahalanobis distance matrix. This is because \pkg{Matching} doesn't allow for the separation of caliper variables and matching variables in genetic matching.
 
 \subsection{Estimand}{
-The \code{estimand} argument controls whether control units are selected to be matched with treated units (\code{estimand = "ATT"}) or treated units are selected to be matched with control units (\code{estimand = "ATC"}). The "focal" group (e.g., the treated units for the ATT) is typically made to be the smaller treatmentgroup, and a warning will be thrown if it is not set that way unless \code{replace = TRUE}. Setting \code{estimand = "ATC"} is equivalent to swapping all treated and control labels for the treatment variable. When \code{estimand = "ATC"}, the default \code{m.order} is \code{"smallest"}, and the \code{match.matrix} component of the output will have the names of the control units as the rownames and be filled with the names of the matched treated units (opposite to when \code{estimand = "ATT"}). Note that the argument supplied to \code{estimand} doesn't necessarily correspond to the estimand actually targeted; it is merely a switch to trigger which treatment group is considered "focal". Note that while \code{GenMatch()} and \code{Matching()} support the ATE as an estimand, \code{matchit()} only supports the ATT and ATC for genetic matching.
+The \code{estimand} argument controls whether control units are selected to be matched with treated units (\code{estimand = "ATT"}) or treated units are selected to be matched with control units (\code{estimand = "ATC"}). The "focal" group (e.g., the treated units for the ATT) is typically made to be the smaller treatment group, and a warning will be thrown if it is not set that way unless \code{replace = TRUE}. Setting \code{estimand = "ATC"} is equivalent to swapping all treated and control labels for the treatment variable. When \code{estimand = "ATC"}, the default \code{m.order} is \code{"smallest"}, and the \code{match.matrix} component of the output will have the names of the control units as the rownames and be filled with the names of the matched treated units (opposite to when \code{estimand = "ATT"}). Note that the argument supplied to \code{estimand} doesn't necessarily correspond to the estimand actually targeted; it is merely a switch to trigger which treatment group is considered "focal". Note that while \code{GenMatch()} and \code{Matching()} support the ATE as an estimand, \code{matchit()} only supports the ATT and ATC for genetic matching.
 }
 }
 \references{

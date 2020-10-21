@@ -18,7 +18,7 @@ matchit(formula, data = NULL, method = "exact",
 a two-sided \code{\link{formula}} object containing the treatment and covariates to be used in creating the subclasses defined by a full cross of the covariate levels.
 }
   \item{data}{
-a data frame containing the variables named in \code{formula}. If not found in \code{data}, the variables will be saught in the environment.
+a data frame containing the variables named in \code{formula}. If not found in \code{data}, the variables will be sought in the environment.
 }
   \item{method}{
 set here to \code{"exact"}.
@@ -43,7 +43,7 @@ In a manuscript, you don't need to cite another package when using \code{method 
 }
 
 \seealso{
-\code{\link{matchit}} for a detailed explanation of the inputs and outputs of a call to \code{matchit}. The \code{exact} argument can be used with other methods to perform exact matching in combination with other mathcing methods.
+\code{\link{matchit}} for a detailed explanation of the inputs and outputs of a call to \code{matchit}. The \code{exact} argument can be used with other methods to perform exact matching in combination with other matching methods.
 
 \code{\link{method_cem}} for coarsened exact matching, which performs exact matching on coarsened versions of the covariates.
 }

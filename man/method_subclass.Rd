@@ -5,7 +5,7 @@
 Subclassification
 }
 \description{
-In \code{\link{matchit}}, setting \code{method = "subclass"} performs subclassification on the distance measure (i.e., propensity score). Treatment and control units are placed into subclasses based on quantiles of the propensity score in the treated group, in the control gorup, or overall, depending on the desired estimand. Weights are computed based on the proportion of treated units in each subclass. Subclassification implemented here does not rely on any other package.
+In \code{\link{matchit}}, setting \code{method = "subclass"} performs subclassification on the distance measure (i.e., propensity score). Treatment and control units are placed into subclasses based on quantiles of the propensity score in the treated group, in the control group, or overall, depending on the desired estimand. Weights are computed based on the proportion of treated units in each subclass. Subclassification implemented here does not rely on any other package.
 
 This page details the allowable arguments with \code{method = "subclass"}. See \code{\link{matchit}} for an explanation of what each argument means in a general context and how it can be specified.
 
@@ -23,7 +23,7 @@ matchit(formula, data = NULL, method = "subclass",
 a two-sided \code{\link{formula}} object containing the treatment and covariates to be used in creating the distance measure used in the subclassification.
 }
   \item{data}{
-a data frame containing the variables named in \code{formula}. If not found in \code{data}, the variables will be saught in the environment.
+a data frame containing the variables named in \code{formula}. If not found in \code{data}, the variables will be sought in the environment.
 }
   \item{method}{
 set here to \code{"subclass"}.
@@ -56,7 +56,7 @@ additional arguments that control the subclassification:
         either the number of subclasses desired or a vector of quantiles used to divide the distance measures into subclasses. Default is 6.
      }
      \item{\code{min.n}}{
-     the minimum number of units of each treatment group that are to be assigned each subclass. If the distance measure is divided in such as way that fewer than \code{min.n} units of a treatment group are assigned a given subclass, units from other subclasses will be reassigned to fill the defficient subclass. Default is 1.
+     the minimum number of units of each treatment group that are to be assigned each subclass. If the distance measure is divided in such as way that fewer than \code{min.n} units of a treatment group are assigned a given subclass, units from other subclasses will be reassigned to fill the deficient subclass. Default is 1.
      }
   }
 }

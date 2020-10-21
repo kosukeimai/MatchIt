@@ -4,7 +4,7 @@
 Nearest Neighbor Matching
 }
 \description{
-In \code{\link{matchit}}, setting \code{method = "nearest"} performs greedy nearest neighbor matching. A distance is computed between each treated unit and each control unit, and, one by one, each treated unit is assigned a control unit as a match. The matching is "greedy" in the snese that there is no action taken to optimize an overall criterion; each match is selected without considering the other matches that may occur subsequently. Nearest neighbor matching implemented here does not rely on any other package.
+In \code{\link{matchit}}, setting \code{method = "nearest"} performs greedy nearest neighbor matching. A distance is computed between each treated unit and each control unit, and, one by one, each treated unit is assigned a control unit as a match. The matching is "greedy" in the sense that there is no action taken to optimize an overall criterion; each match is selected without considering the other matches that may occur subsequently. Nearest neighbor matching implemented here does not rely on any other package.
 
 This page details the allowable arguments with \code{method = "nearest"}. See \code{\link{matchit}} for an explanation of what each argument means in a general context and how it can be specified.
 
@@ -25,7 +25,7 @@ matchit(formula, data = NULL, method = "nearest",
 a two-sided \code{\link{formula}} object containing the treatment and covariates to be used in creating the distance measure used in the matching.
 }
   \item{data}{
-a data frame containing the variables named in \code{formula}. If not found in \code{data}, the variables will be saught in the environment.
+a data frame containing the variables named in \code{formula}. If not found in \code{data}, the variables will be sought in the environment.
 }
   \item{method}{
 set here to \code{"nearest"}.
@@ -108,7 +108,7 @@ matchit(treat ~ X1 + X2, method = "nearest",
 With this code, the Mahalanobis distance is computed using \code{X1} and \code{X2}, and matching occurs on this distance. The \code{distance} component of the \code{matchit} output will be empty.
 
 \subsection{Estimand}{
-The \code{estimand} argument controls whether control units are selected to be matched with treated units (\code{estimand = "ATT"}) or treated units are selected to be matched with control units (\code{estimand = "ATC"}). The "focal" group (e.g., the treated units for the ATT) is typically made to be the smaller treatmentgroup, and a warning will be thrown if it is not set that way unless \code{replace = TRUE}. Setting \code{estimand = "ATC"} is equivalent to swapping all treated and control labels for the treatment variable. When \code{estimand = "ATC"}, the default \code{m.order} is \code{"smallest"}, and the \code{match.matrix} component of the output will have the names of the control units as the rownames and be filled with the names of the matched treated units (opposite to when \code{estimand = "ATT"}). Note that the argument supplied to \code{estimand} doesn't necessarily correspond to the estimand actually targeted; it is merely a switch to trigger which treatment group is considered "focal".
+The \code{estimand} argument controls whether control units are selected to be matched with treated units (\code{estimand = "ATT"}) or treated units are selected to be matched with control units (\code{estimand = "ATC"}). The "focal" group (e.g., the treated units for the ATT) is typically made to be the smaller treatment group, and a warning will be thrown if it is not set that way unless \code{replace = TRUE}. Setting \code{estimand = "ATC"} is equivalent to swapping all treated and control labels for the treatment variable. When \code{estimand = "ATC"}, the default \code{m.order} is \code{"smallest"}, and the \code{match.matrix} component of the output will have the names of the control units as the rownames and be filled with the names of the matched treated units (opposite to when \code{estimand = "ATT"}). Note that the argument supplied to \code{estimand} doesn't necessarily correspond to the estimand actually targeted; it is merely a switch to trigger which treatment group is considered "focal".
 }
 
 \subsection{Variable Ratio Matching}{

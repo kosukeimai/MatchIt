@@ -5,13 +5,13 @@
 Generate a Love Plot of Standardized Mean Differences
 }
 \description{
-Generates a Love plot, which is a dot plot with variable names on the y-axis and standardized mean differences on the x-axis. Each point represents the standardized mean difference of the corresponding covairate in the matched or unmatched sample. Love plots are a simple way to display covariate balance before and after matching. The plots are generated using \code{\link{dotchart}} and \code{\link{points}}.
+Generates a Love plot, which is a dot plot with variable names on the y-axis and standardized mean differences on the x-axis. Each point represents the standardized mean difference of the corresponding covariate in the matched or unmatched sample. Love plots are a simple way to display covariate balance before and after matching. The plots are generated using \code{\link{dotchart}} and \code{\link{points}}.
 }
 \usage{
 \method{plot}{summary.matchit}(x, abs = TRUE, var.order = "data",
        threshold = c(.1, .05), position = "bottomright", ...)
 }
-%- maybe also 'usage' for other objects documented here.
+
 \arguments{
   \item{x}{
 a \code{summary.matchit} object; the output of a call to \code{\link{summary.matchit}}. The \code{standardize} argument must be set to \code{TRUE} (which is the default) in the call to \code{summary}.
@@ -33,7 +33,7 @@ ignored.
 }
 }
 \details{
-For matching methods other than subclassification, \code{plot.summary.matchit} uses \code{x$sum.all[,"Std. Mean Diff."]} and \code{x$sum.matched[,"Std. Mean Diff."]} as the x-axis values. For subclassifcation, in addition to points for the unadjusted and aggregate subclass balance, numerals representing balance in individual subclasses are plotted if \code{subclass = TRUE} in the call to \code{summary}. Aggregate subclass standardized mean differences are taken from \code{x$sum.across[,"Std. Mean Diff."]} and the subclass-specific mean differences are taken from \code{x$sum.subclass}.
+For matching methods other than subclassification, \code{plot.summary.matchit} uses \code{x$sum.all[,"Std. Mean Diff."]} and \code{x$sum.matched[,"Std. Mean Diff."]} as the x-axis values. For subclassification, in addition to points for the unadjusted and aggregate subclass balance, numerals representing balance in individual subclasses are plotted if \code{subclass = TRUE} in the call to \code{summary}. Aggregate subclass standardized mean differences are taken from \code{x$sum.across[,"Std. Mean Diff."]} and the subclass-specific mean differences are taken from \code{x$sum.subclass}.
 }
 \value{
 A plot is displayed, and \code{x} is invisibly returned.
