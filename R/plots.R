@@ -26,10 +26,14 @@ matchit.covplot <- function(object, type = "qq", interactive = TRUE, which.xs = 
 
   t <- object$treat
 
-  w <- object$weights
+  sw <- if (is.null(object$s.weights)) rep(1, length(t)) else object$s.weights
+  w <- object$weights * sw
   if (is.null(w)) w <- rep(1, length(t))
 
-  for (i in 0:1) w[t == i] <- w[t==i]/sum(w[t==i])
+  for (i in 0:1) {
+    w[t == i] <- w[t==i]/sum(w[t==i])
+    sw[t == i] <- sw[t==i]/sum(sw[t==i])
+  }
 
   varnames <- colnames(X)
 
@@ -73,10 +77,10 @@ matchit.covplot <- function(object, type = "qq", interactive = TRUE, which.xs = 
     text(0.5, 0.5, varnames[i], cex = cex.labels)
 
     if (type == "qq") {
-      qqplot_match(x = x, t = t, w = w, ...)
+      qqplot_match(x = x, t = t, w = w, sw = sw, ...)
     }
     else if (type == "ecdf") {
-      ecdfplot_match(x = x, t = t, w = w, ...)
+      ecdfplot_match(x = x, t = t, w = w, sw = sw, ...)
     }
 
     devAskNewPage(ask = interactive)
@@ -137,8 +141,12 @@ matchit.covplot.subclass <- function(object, type = "qq", which.subclass = NULL,
       opar <- par(mfrow = c(3, 3), mar = c(1.5,.5,1.5,.5), oma = oma)
     }
 
-    w <- as.numeric(!is.na(object$subclass) & object$subclass == s)
-    for (i in 0:1) w[t == i] <- w[t==i]/sum(w[t==i])
+    sw <- if (is.null(object$s.weights)) rep(1, length(t)) else object$s.weights
+    w <- sw*(!is.na(object$subclass) & object$subclass == s)
+    for (i in 0:1) {
+      w[t == i] <- w[t==i]/sum(w[t==i])
+      sw[t == i] <- sw[t==i]/sum(sw[t==i])
+    }
 
     for (i in seq_along(varnames)){
 
@@ -172,10 +180,10 @@ matchit.covplot.subclass <- function(object, type = "qq", which.subclass = NULL,
       text(0.5, 0.5, varnames[i], cex = cex.labels)
 
       if (type == "qq") {
-        qqplot_match(x = x, t = t, w = w, ...)
+        qqplot_match(x = x, t = t, w = w, sw = sw, ...)
       }
       else if (type == "ecdf") {
-        ecdfplot_match(x = x, t = t, w = w, ...)
+        ecdfplot_match(x = x, t = t, w = w, sw = sw, ...)
       }
 
       devAskNewPage(ask = interactive)
@@ -184,7 +192,7 @@ matchit.covplot.subclass <- function(object, type = "qq", which.subclass = NULL,
   devAskNewPage(ask = FALSE)
 }
 
-qqplot_match <- function(x, t, w, discrete.cutoff = 5, ...) {
+qqplot_match <- function(x, t, w, sw, discrete.cutoff = 5, ...) {
 
   ord <- order(x)
   x_ord <- x[ord]
@@ -195,39 +203,43 @@ qqplot_match <- function(x, t, w, discrete.cutoff = 5, ...) {
   #Need to interpolate larger group to be same size as smaller group
 
   #Unmatched sample
-  x1 <- x_ord[t_ord == 1]
-  x0 <- x_ord[t_ord != 1]
+  sw_ord <- sw[ord]
+  sw1 <- sw_ord[t_ord == 1]
+  sw0 <- sw_ord[t_ord != 1]
 
-  n1 <- length(x1)
-  n0 <- length(x0)
+  x1 <- x_ord[t_ord == 1][sw1 > 0]
+  x0 <- x_ord[t_ord != 1][sw0 > 0]
 
-  if (n1 < n0) {
+  swn1 <- sum(sw[t==1] > 0)
+  swn0 <- sum(sw[t==0] > 0)
+
+  if (swn1 < swn0) {
     if (length(u) <= discrete.cutoff) {
-      x0probs <- vapply(u, function(u_) mean(x0 == u_), numeric(1L))
+      x0probs <- vapply(u, function(u_) weighted.mean(x0 == u_, sw0[sw0 > 0]), numeric(1L))
       x0cumprobs <- c(0, cumsum(x0probs)[-length(u)], 1)
-      x0 <- u[findInterval(seq_len(n1)/n1, x0cumprobs, rightmost.closed = TRUE)]
+      x0 <- u[findInterval(cumsum(sw1[sw1 > 0]), x0cumprobs, rightmost.closed = TRUE)]
     }
     else {
-      x0 <- approx(seq_len(n0)/n0, y = x0, xout = seq_len(n1)/n1, rule = 2,
+      x0 <- approx(cumsum(sw0[sw0 > 0]), y = x0, xout = cumsum(sw1[sw1 > 0]), rule = 2,
                    method = "constant", ties = "ordered")$y
     }
   }
   else {
     if (length(u) <= discrete.cutoff) {
-      x1probs <- vapply(u, function(u_) mean(x1 == u_), numeric(1L))
+      x1probs <- vapply(u, function(u_) weighted.mean(x1 == u_, sw1[sw1 > 0]), numeric(1L))
       x1cumprobs <- c(0, cumsum(x1probs)[-length(u)], 1)
-      x1 <- u[findInterval(seq_len(n0)/n0, x1cumprobs, rightmost.closed = TRUE)]
+      x1 <- u[findInterval(cumsum(sw0[sw0 > 0]), x1cumprobs, rightmost.closed = TRUE)]
     }
     else {
-      x1 <- approx(seq_len(n1)/n1, y = x1, xout = seq_len(n0)/n0, rule = 2,
+      x1 <- approx(cumsum(sw1[sw1 > 0]), y = x1, xout = cumsum(sw0[sw0 > 0]), rule = 2,
                    method = "constant", ties = "ordered")$y
     }
   }
 
   if (length(u) <= discrete.cutoff) {
     md <- min(diff(u))
-    x0 <- jitter(x0, amount = .07*md)
-    x1 <- jitter(x1, amount = .07*md)
+    x0 <- jitter(x0, amount = .1*md)
+    x1 <- jitter(x1, amount = .1*md)
   }
 
   rr <- range(c(x0, x1))
@@ -285,28 +297,30 @@ qqplot_match <- function(x, t, w, discrete.cutoff = 5, ...) {
   box()
 }
 
-ecdfplot_match <- function(x, t, w, ...) {
+ecdfplot_match <- function(x, t, w, sw, ...) {
   ord <- order(x)
   x.min <- x[ord][1]
   x.max <- x[ord][length(x)]
   x.range <- x.max - x.min
 
+  #Unmatched samples
   plot(x = x, y = w, type= "n" , xlim = c(x.min - .02 * x.range, x.max + .02 * x.range),
        ylim = c(0, 1), axes = TRUE, ...)
 
   for (tr in 0:1) {
     in.tr <- t[ord] == tr
     ordt <- ord[in.tr]
-    cwt <- seq(0, 1, length.out = sum(in.tr) + 2)
+    cswt <- c(0, cumsum(sw[ordt]), 1)
     xt <- c(x.min - .02 * x.range, x[ordt], x.max + .02 * x.range)
 
-    lines(x = xt, y = cwt, type = "s", col = if (tr == 0) "grey60" else "black")
+    lines(x = xt, y = cswt, type = "s", col = if (tr == 0) "grey60" else "black")
 
   }
 
   abline(h = 0:1)
   box()
 
+  #Matched sample
   plot(x = x, y = w, type= "n" , xlim = c(x.min - .02 * x.range, x.max + .02 * x.range),
        ylim = c(0, 1), axes = FALSE, ...)
   for (tr in 0:1) {

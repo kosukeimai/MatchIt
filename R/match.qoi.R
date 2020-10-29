@@ -1,5 +1,5 @@
 ## Functions to calculate summary stats
-qoi <- function(xx, tt, ww = NULL, subclass = NULL, mm = NULL, s.d.denom = "treated", standardize = FALSE,
+qoi <- function(xx, tt, ww = NULL, s.weights, subclass = NULL, mm = NULL, s.d.denom = "treated", standardize = FALSE,
                 compute.pair.dist = TRUE) {
 
   full.only <- is.null(ww) && is.null(mm) && is.null(subclass)
@@ -16,8 +16,8 @@ qoi <- function(xx, tt, ww = NULL, subclass = NULL, mm = NULL, s.d.denom = "trea
 
   too.small <- sum(tt==1) < 2 || sum(tt==0) < 2
 
-  xsum["Full","Means Treated"] <- mean(xx[tt==1], na.rm=TRUE)
-  xsum["Full","Means Control"] <- mean(xx[tt==0], na.rm=TRUE)
+  xsum["Full","Means Treated"] <- weighted.mean(xx[tt==1], s.weights[tt==1], na.rm=TRUE)
+  xsum["Full","Means Control"] <- weighted.mean(xx[tt==0], s.weights[tt==0], na.rm=TRUE)
 
   mdiff <- xsum["Full","Means Treated"] - xsum["Full","Means Control"]
 
@@ -29,11 +29,11 @@ qoi <- function(xx, tt, ww = NULL, subclass = NULL, mm = NULL, s.d.denom = "trea
       else {
         s.d.denom <- match_arg(s.d.denom, c("treated", "control", "pooled"))
         std <- switch(s.d.denom,
-                      "treated" = sqrt(wvar(xx[tt==1], bin.var)),
-                      "control" = sqrt(wvar(xx[tt==0], bin.var)),
-                      "pooled" = sqrt(.5*(wvar(xx[tt==1], bin.var) + wvar(xx[tt==0], bin.var))))
+                      "treated" = sqrt(wvar(xx[tt==1], bin.var, s.weights[tt==1])),
+                      "control" = sqrt(wvar(xx[tt==0], bin.var, s.weights[tt==0])),
+                      "pooled" = sqrt(.5*(wvar(xx[tt==1], bin.var, s.weights[tt==1]) + wvar(xx[tt==0], bin.var, s.weights[tt==0]))))
 
-        if (std < sqrt(.Machine$double.eps)) std <- sqrt(wvar(xx, bin.var)) #Avoid divide by zero
+        if (std < sqrt(.Machine$double.eps)) std <- sqrt(wvar(xx, bin.var, s.weights)) #Avoid divide by zero
       }
       xsum["Full", 3] <- mdiff/std
     }
@@ -46,13 +46,14 @@ qoi <- function(xx, tt, ww = NULL, subclass = NULL, mm = NULL, s.d.denom = "trea
     xsum["Full", 5:6] <- abs(mdiff)
   }
   else if (!too.small) {
-    xsum["Full", "Var. Ratio"] <- wvar(xx[tt==1], bin.var) / wvar(xx[tt==0], bin.var)
+    xsum["Full", "Var. Ratio"] <- wvar(xx[tt==1], bin.var, s.weights[tt==1]) / wvar(xx[tt==0], bin.var, s.weights[tt==0])
 
-    qqall <- qqsum(xx, tt, standardize = standardize)
+    qqall <- qqsum(xx, tt, s.weights, standardize = standardize)
     xsum["Full", 5:6] <- qqall[c("meandiff", "maxdiff")]
   }
 
   if (!full.only) {
+    ww <- ww * s.weights
     xsum.matched <- matrix(NA_real_, nrow = 1, ncol = 7)
     rownames(xsum.matched) <- "Matched"
     colnames(xsum.matched) <- colnames(xsum)
@@ -89,7 +90,7 @@ qoi <- function(xx, tt, ww = NULL, subclass = NULL, mm = NULL, s.d.denom = "trea
   xsum
 }
 
-qoi.subclass <- function(xx, tt, subclass, s.d.denom = "treated", standardize = FALSE, which.subclass = NULL) {
+qoi.subclass <- function(xx, tt, s.weights, subclass, s.d.denom = "treated", standardize = FALSE, which.subclass = NULL) {
   #Within-subclass balance statistics
   bin.var <- all(xx == 0 | xx == 1)
   in.sub <- !is.na(subclass) & subclass == which.subclass
@@ -105,8 +106,8 @@ qoi.subclass <- function(xx, tt, subclass, s.d.denom = "treated", standardize = 
 
   too.small <- sum(in.sub & tt==1) < 2 || sum(in.sub & tt==0) < 2
 
-  xsum["Subclass","Means Treated"] <- mean(xx[in.sub & tt==1], na.rm=TRUE)
-  xsum["Subclass","Means Control"] <- mean(xx[in.sub & tt==0], na.rm=TRUE)
+  xsum["Subclass","Means Treated"] <- weighted.mean(xx[in.sub & tt==1], s.weights[in.sub & tt==1], na.rm=TRUE)
+  xsum["Subclass","Means Control"] <- weighted.mean(xx[in.sub & tt==0], s.weights[in.sub & tt==0], na.rm=TRUE)
 
   mdiff <- xsum["Subclass","Means Treated"] - xsum["Subclass","Means Control"]
 
@@ -119,9 +120,9 @@ qoi.subclass <- function(xx, tt, subclass, s.d.denom = "treated", standardize = 
         #SD from full sample, not within subclass
         s.d.denom <- match_arg(s.d.denom, c("treated", "control", "pooled"))
         std <- switch(s.d.denom,
-                      "treated" = sqrt(wvar(xx[tt==1], bin.var)),
-                      "control" = sqrt(wvar(xx[tt==0], bin.var)),
-                      "pooled" = sqrt(.5*(wvar(xx[tt==1], bin.var) + wvar(xx[tt==0], bin.var))))
+                      "treated" = sqrt(wvar(xx[tt==1], bin.var, s.weights[tt==1])),
+                      "control" = sqrt(wvar(xx[tt==0], bin.var, s.weights[tt==0])),
+                      "pooled" = sqrt(.5*(wvar(xx[tt==1], bin.var, s.weights[tt==1]) + wvar(xx[tt==0], bin.var, s.weights[tt==0]))))
       }
 
       xsum["Subclass", 3] <- mdiff/std
@@ -135,7 +136,7 @@ qoi.subclass <- function(xx, tt, subclass, s.d.denom = "treated", standardize = 
     xsum["Subclass", 5:6] <- abs(mdiff)
   }
   else if (!too.small) {
-    xsum["Subclass", "Var. Ratio"] <- wvar(xx[in.sub & tt==1], bin.var) / wvar(xx[in.sub & tt==0], bin.var)
+    xsum["Subclass", "Var. Ratio"] <- wvar(xx[in.sub & tt==1], bin.var, s.weights[in.sub & tt==1]) / wvar(xx[in.sub & tt==0], bin.var, s.weights[in.sub & tt==0])
 
     qqall <- qqsum(xx[in.sub], tt[in.sub], standardize = standardize)
     xsum["Subclass", 5:6] <- qqall[c("meandiff", "maxdiff")]

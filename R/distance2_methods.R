@@ -83,6 +83,12 @@ distance2cbps <- function(formula, data, link = NULL, ...) {
     }
   }
   A[c("estimand", "over")] <- NULL
+
+  if (!is.null(A[["weights"]])) {
+    A[["sample.weights"]] <- A[["weights"]]
+    A[["weights"]] <- NULL
+  }
+
   res <- do.call(CBPS::CBPS, c(list(formula, data), A), quote = TRUE)
 
   pred <- fitted(res)

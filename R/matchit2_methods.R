@@ -332,7 +332,7 @@ matchit2optimal <- function(treat, formula, data, distance, discarded,
 }
 # MATCHIT method = genetic----------------------------------
 matchit2genetic <- function(treat, data, distance, discarded,
-                            ratio = 1, replace = FALSE, m.order = NULL,
+                            ratio = 1, s.weights = NULL, replace = FALSE, m.order = NULL,
                             caliper = NULL, mahvars = NULL, exact = NULL,
                             formula = NULL, estimand = "ATT", verbose = FALSE,
                             is.full.mahalanobis, use.genetic = TRUE, ...) {
@@ -469,6 +469,7 @@ matchit2genetic <- function(treat, data, distance, discarded,
   treat_ <- treat[ord]
   covs_to_balance <- covs_to_balance[ord,,drop = FALSE]
   X_ <- X[ord,,drop = FALSE]
+  if (!is.null(s.weights)) s.weights <- s.weights[ord]
 
   if (use.genetic) {
     withCallingHandlers({
@@ -477,7 +478,7 @@ matchit2genetic <- function(treat, data, distance, discarded,
                               M = ratio, exact = exact.log, caliper = cal,
                               replace = replace, estimand = "ATT", ties = FALSE,
                               CommonSupport = FALSE, verbose = verbose,
-                              print.level = 2*verbose),
+                              weights = s.weights, print.level = 2*verbose),
                          A[names(A) %in% names(formals(Matching::GenMatch))]))
     },
     warning = function(w) {
@@ -505,7 +506,7 @@ matchit2genetic <- function(treat, data, distance, discarded,
     m.out <- Matching::Match(Tr = treat_, X = X_,
                              M = ratio, exact = exact.log, caliper = cal,
                              replace = replace, estimand = "ATT", ties = FALSE,
-                             CommonSupport = FALSE, Weight = 3,
+                             weights = s.weights, CommonSupport = FALSE, Weight = 3,
                              Weight.matrix = if (use.genetic) g.out else generalized_inverse(cor(X)),
                              version = "fast")
   },
@@ -719,6 +720,7 @@ matchit2nearest <-  function(treat, data, distance, discarded,
 
   #Both produce matrix of indices of matched ctrl units
   if (fast) {
+    print(str(mget(ls())))
     mm <- nn_matchC(treat, ord, ratio, replace, discarded, distance, ex, caliper.dist,
                     caliper.covs, caliper.covs.mat, mahcovs, mahSigma_inv, verbose)
   }

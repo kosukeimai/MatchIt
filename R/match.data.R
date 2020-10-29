@@ -1,6 +1,5 @@
-match.data <- function(object, group = "all", distance = "distance",
-                       weights = "weights", subclass = "subclass",
-                       data = NULL, drop.unmatched = TRUE) {
+match.data <- function(object, group = "all", distance = "distance", weights = "weights", subclass = "subclass",
+                       data = NULL, include.s.weights = TRUE, drop.unmatched = TRUE) {
 
   if (!inherits(object, "matchit")) {
     stop("'object' must be a matchit object, the output of a call to matchit().", call. = FALSE)
@@ -35,7 +34,7 @@ match.data <- function(object, group = "all", distance = "distance",
     data[[distance]] <- object$distance
   }
 
-  if (!is.null(object$weights)){
+  if (!is.null(object$weights)) {
     if (is.null(weights)) stop("The argument to 'weights' cannot be NULL.", call. = FALSE)
     if (!is.atomic(weights) || !is.character(weights) || length(weights) != 1 || is.na(weights)) {
       stop("The argument to 'weights' must be a string of length 1.", call. = FALSE)
@@ -44,9 +43,13 @@ match.data <- function(object, group = "all", distance = "distance",
       stop(paste0("\"", weights, "\" is already the name of a variable in the data. Please choose another name for weights using the 'weights' argument."), call. = FALSE)
     }
     data[[weights]] <- object$weights
+
+    if (!is.null(object$s.weights) && include.s.weights) {
+      data[[weights]] <- data[[weights]] * object$s.weights
+    }
   }
 
-  if (!is.null(object$subclass)){
+  if (!is.null(object$subclass)) {
     if (is.null(subclass)) stop("The argument to 'subclass' cannot be NULL.", call. = FALSE)
     if (!is.atomic(subclass) || !is.character(subclass) || length(subclass) != 1 || is.na(subclass)) {
       stop("The argument to 'subclass' must be a string of length 1.", call. = FALSE)
@@ -56,6 +59,8 @@ match.data <- function(object, group = "all", distance = "distance",
     }
     data[[subclass]] <- object$subclass
   }
+
+
 
   treat <- object$treat
   rownames(data) <- names(treat)
@@ -75,8 +80,8 @@ match.data <- function(object, group = "all", distance = "distance",
   return(data)
 }
 
-get_matches <- function(object, distance = "distance", weights = "weights",
-                        subclass = "subclass", id = "id", data = NULL) {
+get_matches <- function(object, distance = "distance", weights = "weights", subclass = "subclass",
+                        id = "id", data = NULL, include.s.weights = TRUE) {
 
   if (!inherits(object, "matchit")) {
     stop("'object' must be a matchit object, the output of a call to matchit().", call. = FALSE)
@@ -85,9 +90,11 @@ get_matches <- function(object, distance = "distance", weights = "weights",
     stop("A match.matrix component must be present in the matchit object, which does not occur with all types of matching. Use match.data() instead.", call. = FALSE)
   }
 
+  #Get initial data using match.data; note weights and subclass will be removed,
+  #including them here just checks their names don't clash
   m.data <- match.data(object, group = "all", distance = distance,
                        weights = weights, subclass = subclass, data = data,
-                       drop.unmatched = TRUE)
+                       include.s.weights = FALSE, drop.unmatched = TRUE)
 
   if (is.null(id)) stop("The argument to 'id' cannot be NULL.", call. = FALSE)
   if (!is.atomic(id) || !is.character(id) || length(id) != 1 || is.na(id)) {
@@ -102,25 +109,10 @@ get_matches <- function(object, distance = "distance", weights = "weights",
   m.data[c(weights, subclass)] <- NULL
 
   mm <- object$match.matrix
-
   mm <- mm[!is.na(mm[,1]),,drop = FALSE]
-
   tmm <- t(mm)
 
   num.matches <- rowSums(!is.na(mm))
-
-  # #Create match matrix containing just the treated units (in the rownames)
-  # mm1 <- matrix(rownames(mm), nrow = nrow(mm), ncol = ncol(mm))
-  # mm1[is.na(mm)] <- NA_character_
-  # tmm1 <- t(mm1)
-  #
-  #
-  # matched <- as.data.frame(matrix(NA_character_, nrow = 2*sum(!is.na(mm)), ncol = 3))
-  # names(matched) <- c(id, subclass, weights)
-  #
-  # matched[[id]] <- c(as.vector(tmm[!is.na(tmm)]), as.vector(tmm1[!is.na(tmm1)]))
-  # matched[[subclass]] <- c(as.vector(col(tmm)[!is.na(tmm)]), as.vector(col(tmm1)[!is.na(tmm1)]))
-  # matched[[weights]] <- c(1/num.matches[matched$subclass])
 
   matched <- as.data.frame(matrix(NA_character_, nrow = nrow(mm) + sum(!is.na(mm)), ncol = 3))
   names(matched) <- c(id, subclass, weights)
@@ -128,6 +120,10 @@ get_matches <- function(object, distance = "distance", weights = "weights",
   matched[[id]] <- c(as.vector(tmm[!is.na(tmm)]), rownames(mm))
   matched[[subclass]] <- c(as.vector(col(tmm)[!is.na(tmm)]), seq_len(nrow(mm)))
   matched[[weights]] <- c(1/num.matches[matched[[subclass]][seq_len(sum(!is.na(mm)))]], rep(1, nrow(mm)))
+
+  if (!is.null(object$s.weights && include.s.weights)) {
+    matched[[weights]] <- matched[[weights]] * object$s.weights[matched[[id]]]
+  }
 
   out <- merge(matched, m.data, by = id, all.x = TRUE, sort = FALSE)
 

@@ -1,7 +1,7 @@
 matchit <- function(formula, data = NULL, method = "nearest", distance = "glm",
                     link = "logit", distance.options = list(), estimand = "ATT",
                     exact = NULL, mahvars = NULL, discard = "none",
-                    reestimate = FALSE, replace = FALSE, m.order = NULL,
+                    reestimate = FALSE, s.weights = NULL, replace = FALSE, m.order = NULL,
                     caliper = NULL, std.caliper = TRUE, ratio = 1, verbose = FALSE, ...) {
 
   #Checking input format
@@ -12,14 +12,44 @@ matchit <- function(formula, data = NULL, method = "nearest", distance = "glm",
   if (!inherits(formula, "formula")) stop("'formula' must be a formula object.", call. = FALSE)
   f.env <- environment(formula)
 
-  treat.formula <- update(formula, . ~ 0)
-  treat.mf <- model.frame(treat.formula, data = data, na.action = "na.pass")
+  treat.form <- update(terms(formula, data = data), . ~ 0)
+  treat.mf <- model.frame(treat.form, data = data, na.action = "na.pass")
   treat <- model.response(treat.mf)
   if (anyNA(treat)) stop("Missing values are not allowed in the treatment.", call. = FALSE)
   treat <- binarize(treat) #make 0/1
   names(treat) <- rownames(treat.mf)
 
   n.obs <- length(treat)
+
+  #Process s.weights
+  if (!is.null(s.weights)) {
+    if (is.character(s.weights)) {
+      if (is.null(data) || !is.data.frame(data)) {
+        stop("If 's.weights' is specified a string, a data frame containing the named variable must be supplied to 'data'.", call. = FALSE)
+      }
+      if (!all(s.weights %in% names(data))) {
+        stop("The name supplied to 's.weights' must be a variable in 'data'.", call. = FALSE)
+      }
+      s.weights.form <- reformulate(s.weights)
+      s.weights <- model.frame(s.weights.form, data, na.action = "na.pass")
+      if (ncol(s.weights) != 1) stop("'s.weights' can only contain one named variable.", call. = FALSE)
+      s.weights <- s.weights[[1]]
+    }
+    else if (inherits(s.weights, "formula")) {
+      s.weights.form <- update(s.weights.form, NULL ~ .)
+      s.weights <- model.frame(s.weights.form, data, na.action = "na.pass")
+      if (ncol(s.weights) != 1) stop("'s.weights' can only contain one named variable.", call. = FALSE)
+      s.weights <- s.weights[[1]]
+    }
+    else if (!is.numeric(s.weights)) {
+      stop("'s.weights' must be supplied as a numeric vector, string, or one-sided formula.", call. = FALSE)
+    }
+
+    if (anyNA(s.weights)) stop("Missing values are not allowed in 's.weights'.", call. = FALSE)
+    if (length(s.weights) != n.obs) stop("'s.weights' must be the same length as the treatment vector.", call. = FALSE)
+
+    names(s.weights) <- names(treat)
+  }
 
   ## Process method
   if (length(method) == 1 && is.atomic(method)) {
@@ -37,8 +67,8 @@ matchit <- function(formula, data = NULL, method = "nearest", distance = "glm",
   #Process distance and discard
   check.inputs(method = method, distance = distance, mcall = mcall, exact = exact,
                mahvars = mahvars, caliper = caliper, discard = discard,
-               reestimate = reestimate, replace = replace, ratio = ratio,
-               m.order = m.order, estimand = estimand)
+               reestimate = reestimate, s.weights = s.weights, replace = replace,
+               ratio = ratio, m.order = m.order, estimand = estimand)
 
   exactcovs <- mahcovs <- calcovs <- NULL
 
@@ -75,6 +105,7 @@ matchit <- function(formula, data = NULL, method = "nearest", distance = "glm",
           stop("'exact' must be supplied as a character vector of names or a one-sided formula.", call. = FALSE)
         }
         exactcovs <- model.frame(exact, data, na.action = "na.pass")
+        if (anyNA(exactcovs)) stop("Missing values are not allowed in the covariates named in 'exact'.", call. = FALSE)
       }
 
       if (!is.null(mahvars)) {
@@ -91,9 +122,10 @@ matchit <- function(formula, data = NULL, method = "nearest", distance = "glm",
           mahvars <- update(mahvars, NULL ~ .)
         }
         else {
-          stop("'exact' must be supplied as a character vector of names or a one-sided formula.", call. = FALSE)
+          stop("'mahvars' must be supplied as a character vector of names or a one-sided formula.", call. = FALSE)
         }
         mahcovs <- model.frame(mahvars, data, na.action = "na.pass")
+        if (anyNA(mahcovs)) stop("Missing values are not allowed in the covariates named in 'mahvars'.", call. = FALSE)
       }
     }
   }
@@ -122,6 +154,9 @@ matchit <- function(formula, data = NULL, method = "nearest", distance = "glm",
       if (is.null(distance.options$data)) distance.options$data <- data
       if (is.null(distance.options$verbose)) distance.options$verbose <- verbose
       if (is.null(distance.options$estimand)) distance.options$estimand <- estimand
+      if (is.null(distance.options$weights) && !fn1 %in% c("distance2bart", "distance2randomforest")) {
+        distance.options$weights <- s.weights
+      }
 
       if (!is.null(attr(distance, "link"))) distance.options$link <- attr(distance, "link")
       else distance.options$link <- link
@@ -156,7 +191,7 @@ matchit <- function(formula, data = NULL, method = "nearest", distance = "glm",
     }
   }
 
-  covs.formula <- delete.response(terms(formula))
+  covs.formula <- delete.response(terms(formula, data = data))
   covs <- model.frame(covs.formula, data = data, na.action = "na.pass")
   if (anyNA(covs)) stop("Missing values are not allowed in the covariates.", call. = FALSE)
   for (i in which(vapply(covs, is.character, logical(1L)))) covs[[i]] <- factor(covs[[i]])
@@ -165,6 +200,7 @@ matchit <- function(formula, data = NULL, method = "nearest", distance = "glm",
 
   if (!is.null(attr(caliper, "cal.formula"))) {
     calcovs <- model.frame(attr(caliper, "cal.formula"), data, na.action = "na.pass")
+    if (anyNA(calcovs)) stop("Missing values are not allowed in the covariates named in 'caliper'.", call. = FALSE)
     attr(caliper, "cal.formula") <- NULL
   }
 
@@ -172,18 +208,9 @@ matchit <- function(formula, data = NULL, method = "nearest", distance = "glm",
   match.out <- do.call(fn2, list(treat = treat, covs = covs, data = data, distance = distance,
                                  discarded = discarded, exact = exact, mahvars = mahvars,
                                  replace = replace, m.order = m.order, caliper = caliper,
-                                 ratio = ratio, is.full.mahalanobis = is.full.mahalanobis,
+                                 s.weights = s.weights, ratio = ratio, is.full.mahalanobis = is.full.mahalanobis,
                                  formula = formula, estimand = estimand, verbose = verbose, ...),
                        quote = TRUE)
-
-  ## Sample size
-  nn <- matrix(0, ncol=2, nrow=5, dimnames = list(c("All","Matched (ESS)","Matched", "Unmatched","Discarded"),
-                                                  c("Control", "Treated")))
-  nn["All",] <- c(sum(treat==0), sum(treat==1))
-  nn["Matched (ESS)",] <- c(ESS(match.out$weights[treat==0]), ESS(match.out$weights[treat==1]))
-  nn["Matched",] <- c(sum(treat==0 & match.out$weights > 0), sum(treat==1 & match.out$weights > 0))
-  nn["Unmatched",] <- c(sum(treat==0 & match.out$weights==0 & !discarded), sum(treat==1 & match.out$weights==0 & !discarded))
-  nn["Discarded",] <- c(sum(treat==0 & discarded), sum(treat==1 & discarded))
 
   info <- list(method = method,
                distance = if (!is.null(fn1)) sub("distance2", "", fn1, fixed = TRUE) else NULL,
@@ -211,10 +238,11 @@ matchit <- function(formula, data = NULL, method = "nearest", distance = "glm",
   match.out$treat <- treat
   match.out$distance <- distance
   match.out$discarded <- discarded
+  match.out$s.weights <- s.weights
   match.out$exact <- exact
   match.out$mahvars <- mahvars
   match.out$caliper <- caliper
-  match.out$nn <- nn
+  match.out$nn <- nn(treat, match.out$weights, discarded)
 
   return(match.out)
 }
