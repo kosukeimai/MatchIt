@@ -1,7 +1,7 @@
 #Auxiliary functions; some from WeightIt
 
 #Function to process inputs and throw warnings or errors if inputs are incompatible with methods
-check.inputs <- function(method, distance, mcall, exact, mahvars, caliper, discard, reestimate, replace, ratio, m.order, estimand) {
+check.inputs <- function(method, distance, mcall, exact, mahvars, caliper, discard, reestimate, s.weights, replace, ratio, m.order, estimand) {
 
   null.method <- is.null(method)
   if (null.method) {
@@ -651,9 +651,10 @@ get.covs.matrix <- function(formula = NULL, data = NULL) {
     fnames[!startsWith(fnames, "`")] <- paste0("`", fnames[!startsWith(fnames, "`")], "`")
     formula <- reformulate(fnames)
   }
-  else formula <- update(formula, NULL ~ . + 1)
+  else formula <- update(terms(formula, data = data), NULL ~ . + 1)
 
-  mf <- model.frame(formula, data)
+  mf <- model.frame(terms(formula, data = data), data,
+                    na.action = na.pass)
 
   chars.in.mf <- vapply(mf, is.character, logical(1L))
   mf[chars.in.mf] <- lapply(mf[chars.in.mf], factor)
@@ -715,6 +716,21 @@ wvar <- function(x, bin.var = NULL, w = NULL, na.rm = TRUE) {
 #Effective sample size
 ESS <- function(w) {
   sum(w)^2/sum(w^2)
+}
+
+#Compute sample sizes
+nn <- function(treat, weights, discarded) {
+  n <- matrix(0, ncol=2, nrow=5, dimnames = list(c("All","Matched (ESS)","Matched", "Unmatched","Discarded"),
+                                                  c("Control", "Treated")))
+
+  #                       Control                                    Treated
+  n["All",] <-           c(sum(treat==0),                           sum(treat==1))
+  n["Matched (ESS)",] <- c(ESS(weights[treat==0 & weights > 0]),    ESS(weights[treat==1 & weights > 0]))
+  n["Matched",] <-       c(sum(treat==0 & weights > 0),             sum(treat==1 & weights > 0))
+  n["Unmatched",] <-     c(sum(treat==0 & weights==0 & !discarded), sum(treat==1 & weights==0 & !discarded))
+  n["Discarded",] <-     c(sum(treat==0 & discarded),               sum(treat==1 & discarded))
+
+  return(n)
 }
 
 #Used to load backports functions. No need to touch, but must always be included somewhere.
