@@ -15,7 +15,7 @@ matchit(formula, data = NULL, method = "subclass",
         distance = "glm", link = "logit",
         distance.options = list(), estimand = "ATT",
         discard = "none", reestimate = FALSE,
-        verbose = FALSE, ...)
+        s.weights = NULL, verbose = FALSE, ...)
 }
 }
 \arguments{
@@ -46,6 +46,9 @@ a string containing a method for discarding units outside a region of common sup
   \item{reestimate}{
 if \code{discard} is not \code{"none"}, whether to re-estimate the propensity score in the remaining sample prior to subclassification.
 }
+  \item{s.weights}{
+the variable containing sampling weights to be incorporated into propensity score models and balance statistics.
+}
   \item{verbose}{
 \code{logical}; whether information about the matching process should be printed to the console.
 }
@@ -53,13 +56,14 @@ if \code{discard} is not \code{"none"}, whether to re-estimate the propensity sc
 additional arguments that control the subclassification:
   \describe{
      \item{\code{subclass}}{
-        either the number of subclasses desired or a vector of quantiles used to divide the distance measures into subclasses. Default is 6.
+        either the number of subclasses desired or a vector of quantiles used to divide the distance measure into subclasses. Default is 6.
      }
      \item{\code{min.n}}{
-     the minimum number of units of each treatment group that are to be assigned each subclass. If the distance measure is divided in such as way that fewer than \code{min.n} units of a treatment group are assigned a given subclass, units from other subclasses will be reassigned to fill the deficient subclass. Default is 1.
+     the minimum number of units of each treatment group that are to be assigned each subclass. If the distance measure is divided in such a way that fewer than \code{min.n} units of a treatment group are assigned a given subclass, units from other subclasses will be reassigned to fill the deficient subclass. Default is 1.
      }
   }
 }
+The arguments \code{exact}, \code{mahvars}, \code{replace}, \code{m.order}, \code{caliper} (and related arguments), and \code{ratio} are ignored with a warning.
 }
 \section{Outputs}{
 All outputs described in \code{\link{matchit}} are returned with \code{method = "subclass"} except that \code{match.matrix} is excluded and an additional component, \code{q.cut}, is included, containing a vector of the distance measure cutpoints used to define the subclasses. Note that when \code{min.n > 0}, the subclass assignments may not strictly obey the quantiles listed in \code{q.cut}.

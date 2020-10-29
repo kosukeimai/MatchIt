@@ -71,6 +71,8 @@ The effective sample size (ESS) is a measure of the size of a hypothetical unwei
 
 After subclassification, the aggregate balance statistics are computed using the subclassification weights rather than averaging across subclasses.
 
+All balance statistics (except pair differences) are computed incorporating the sampling weights upplied to \code{matchit}, if any. The unadjusted balance statistics include the sampling weights and the adjusted balance statistics use the matching weights multiplied by the sampling weights.
+
 When printing, \code{NA} values are replaced with periods (\code{.}), and the pair distance column in the unmatched and percent balance improvement components of the output are omitted.
 }
 \value{
@@ -92,13 +94,11 @@ For \code{match.subclass} objects, a \code{summary.matchit.subclass} object, whi
   \item{\code{qn} - a matrix of sample sizes within each subclass}
   \item{\code{nn} - a matrix of the sample sizes in the original (unmatched) and matched samples}
 }
-
 }
-
 \seealso{
 \code{\link{summary}} for the generic method; \code{\link{plot.summary.matchit}} for making a Love plot from \code{summary} output.
 
-\code{\link[cobalt]{bal.tab.matchit}} in the \pkg{cobalt} package, which also displays balance for \code{matchit} objects.
+\pkgfun2{cobalt}{bal.tab.matchit}{bal.tab} in the \pkg{cobalt} package, which also displays balance for \code{matchit} objects.
 }
 \examples{
 data("lalonde")

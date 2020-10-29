@@ -44,6 +44,8 @@ With \code{type = "ecdf"}, empirical cumulative density function (eCDF) plots ar
 With \code{type = "jitter"}, a jitter plot is displayed for distance values before and after matching. This method requires a distance variable (e.g., a propensity score) to have been estimated or supplied in the call to \code{matchit}. The plot displays individuals values for matched and unmatched treatment and control units arranged horizontally by their propensity scores. Points are jitter so counts are easier to see. The size of the points increases when they receive higher weights. When \code{interactive = TRUE}, you can click on points in the graph to identify their rownames and indices to further probe extreme values, for example. With subclassification, vertical lines representing the subclass boundaries are overlay on the plots.
 
 With \code{type = "histogram"}, a histogram of distance values is displayed for the treatment and control groups before and after matching. This method requires a distance variable (e.g., a propensity score) to have been estimated or supplied in the call to \code{matchit}. With subclassification, vertical lines representing the subclass boundaries are overlay on the plots.
+
+With all methods, sampling weights are incorprated into the weights if present.
 }
 \value{
 A plot is displayed, and \code{x} is invisibly returned.
@@ -57,7 +59,7 @@ Sometimes, bugs in the plotting functions can cause strange layout or size issue
 
 \code{\link{plot.summary.matchit}} for plotting standardized mean differences in a Love plot.
 
-\code{\link[cobalt]{bal.plot}} in the \pkg{cobalt} package for displaying distributional balance in several other ways that are more easily customizable and produce \pkg{ggplot2} objects. \pkg{cobalt} functions natively support \code{matchit} objects.
+\pkgfun{cobalt}{bal.plot} in the \pkg{cobalt} package for displaying distributional balance in several other ways that are more easily customizable and produce \pkg{ggplot2} objects. \pkg{cobalt} functions natively support \code{matchit} objects.
 }
 \examples{
 data("lalonde")

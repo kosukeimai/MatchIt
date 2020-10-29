@@ -10,7 +10,8 @@ This page details the allowable arguments with \code{method = "exact"}. See \cod
 Below is how \code{matchit} is used for exact matching:
 \preformatted{
 matchit(formula, data = NULL, method = "exact",
-        estimand = "ATT", verbose = FALSE, ...)
+        estimand = "ATT", s.weights = NULL,
+        verbose = FALSE, ...)
 }
 }
 \arguments{
@@ -26,12 +27,16 @@ set here to \code{"exact"}.
   \item{estimand}{
 a string containing the desired estimand. Allowable options include \code{"ATT"}, \code{"ATC"}, and \code{"ATE"}. The estimand controls how the weights are computed; see the Computing Weights section at \code{\link{matchit}} for details.
 }
+  \item{s.weights}{
+the variable containing sampling weights to be incorporated into balance statistics. These weights do not affect the matching process.
+}
   \item{verbose}{
 \code{logical}; whether information about the matching process should be printed to the console.
 }
   \item{\dots}{
 ignored.
 }
+The arguments \code{distance} (and related arguments), \code{exact}, \code{mahvars}, \code{discard} (and related arguments), \code{replace}, \code{m.order}, \code{caliper} (and related arguments), and \code{ratio} are ignored with a warning.
 }
 \section{Outputs}{
 All outputs described in \code{\link{matchit}} are returned with \code{method = "exact"} except for \code{match.matrix}. This is because matching strata are not indexed by treated units as they are in some other forms of matching.

@@ -4,7 +4,7 @@
 \title{Optimal Full Matching}
 
 \description{
-In \code{\link{matchit}}, setting \code{method = "full"} performs optimal full matching, which is a form of subclassification wherein all units, both treatment and control (i.e., the "full" sample), are assigned to a subclass and receive at least one match. The matching is optimal in the sense that that sum of the absolute distances between the treated and control units in each subclass are as small as possible. The method relies on and is a wrapper for the \code{\link[optmatch]{fullmatch}} function in the \pkg{optmatch} package. Advantages of optimal full matching include that the matching order is not required to be specified, units do not need to be discarded, and it is less likely that extreme within-subclass distances will be large, unlike with standard subclassification. The primary output of full matching is a set of matching weights that can be applied to the matched sample; in the way, full matching can be seen as a robust alternative to propensity score weighting, robust in the sense that the propensity score model does not need to be correct for good matches to be found.
+In \code{\link{matchit}}, setting \code{method = "full"} performs optimal full matching, which is a form of subclassification wherein all units, both treatment and control (i.e., the "full" sample), are assigned to a subclass and receive at least one match. The matching is optimal in the sense that that sum of the absolute distances between the treated and control units in each subclass are as small as possible. The method relies on and is a wrapper for the \pkgfun{optmatch}{fullmatch} function in the \pkg{optmatch} package. Advantages of optimal full matching include that the matching order is not required to be specified, units do not need to be discarded, and it is less likely that extreme within-subclass distances will be large, unlike with standard subclassification. The primary output of full matching is a set of matching weights that can be applied to the matched sample; in this way, full matching can be seen as a robust alternative to propensity score weighting, robust in the sense that the propensity score model does not need to be correct to estimate the tretament effect without bias.
 
 This page details the allowable arguments with \code{method = "fullmatch"}. See \code{\link{matchit}} for an explanation of what each argument means in a general context and how it can be specified.
 
@@ -14,8 +14,9 @@ matchit(formula, data = NULL, method = "full",
         distance = "glm", link = "logit",
         distance.options = list(), estimand = "ATT",
         exact = NULL, mahvars = NULL, discard = "none",
-        reestimate = FALSE, caliper = NULL,
-        std.caliper = TRUE, verbose = FALSE, ...)
+        reestimate = FALSE, s.weights = NULL,
+        caliper = NULL, std.caliper = TRUE,
+        verbose = FALSE, ...)
 
 }
 }
@@ -42,16 +43,19 @@ a named list containing additional arguments supplied to the function that estim
 a string containing the desired estimand. Allowable options include \code{"ATT"}, \code{"ATC"}, and \code{"ATE"}. The estimand controls how the weights are computed; see the Computing Weights section at \code{\link{matchit}} for details.
 }
   \item{exact}{
-for which variables exact matching should take place. Exact matching is processed using \code{\link[optmatch]{exactMatch}} in \pkg{optmatch}.
+for which variables exact matching should take place. Exact matching is processed using \pkgfun{optmatch}{exactMatch} in \pkg{optmatch}.
 }
   \item{mahvars}{
-for which variables Mahalanobis matching should take place when a distance measure other than \code{"mahalanobis"} is used (e.g., for caliper matching or to discard units for common support). If specified, the distance measure will not be used in matching.
+for which variables Mahalanobis distance matching should take place when a distance measure other than \code{"mahalanobis"} is used (e.g., for caliper matching or to discard units for common support). If specified, the distance measure will not be used in matching.
 }
   \item{discard}{
 a string containing a method for discarding units outside a region of common support. Only allowed when \code{distance} is not \code{"mahalanobis"}.
 }
   \item{reestimate}{
 if \code{discard} is not \code{"none"}, whether to re-estimate the propensity score in the remaining sample prior to matching.
+}
+  \item{s.weights}{
+the variable containing sampling weights to be incorporated into propensity score models and balance statistics.
 }
   \item{caliper}{
 the width(s) of the caliper(s) used for caliper matching. See Notes and Examples.
@@ -63,13 +67,13 @@ the width(s) of the caliper(s) used for caliper matching. See Notes and Examples
 \code{logical}; whether information about the matching process should be printed to the console.
 }
   \item{\dots}{
-additional arguments passed to \code{\link[optmatch]{fullmatch}} in \pkg{optmatch}. Allowed arguments include \code{min.controls}, \code{max.controls}, \code{omit.fraction}, \code{mean.controls}, and \code{tol}. See the \code{\link[optmatch]{fullmatch}} documentation for details.
+additional arguments passed to \pkgfun{optmatch}{fullmatch} in \pkg{optmatch}. Allowed arguments include \code{min.controls}, \code{max.controls}, \code{omit.fraction}, \code{mean.controls}, and \code{tol}. See the \pkgfun{optmatch}{fullmatch} documentation for details.
 }
 
-The arguments \code{replace}, \code{ratio}, and \code{m.order} are ignored with a warning.
+The arguments \code{replace}, \code{m.order}, and \code{ratio} are ignored with a warning.
 }
 \note{
-Due to a bug in \pkg{optmatch} (version 0.9-13), calipers can only be used when \code{min.controls} is left at its defaults.
+Due to what appears to be a bug in \pkg{optmatch} (version 0.9-13), calipers can only be used when \code{min.controls} is left at its default.
 }
 \section{Outputs}{
 All outputs described in \code{\link{matchit}} are returned with \code{method = "full"} except for \code{match.matrix}. This is because matching strata are not indexed by treated units as they are in some other forms of matching.
@@ -77,25 +81,33 @@ All outputs described in \code{\link{matchit}} are returned with \code{method = 
 \seealso{
 \code{\link{matchit}} for a detailed explanation of the inputs and outputs of a call to \code{matchit}.
 
-\code{\link[optmatch]{fullmatch}} in \pkg{optmatch}, which is the workhorse.
+\pkgfun{optmatch}{fullmatch} in \pkg{optmatch}, which is the workhorse.
 
-\code{\link{method_optimal}} for optimal pair matching, which is a special case of optimal full matching, and which relies on similar machinery. Results from \code{method = "optimal"} can be replicated with \code{method = "full"} by setting \code{min.controls}, \code{max.controls}, and \code{mean.controls} to \code{ratio}.
+\code{\link{method_optimal}} for optimal pair matching, which is a special case of optimal full matching, and which relies on similar machinery. Results from \code{method = "optimal"} can be replicated with \code{method = "full"} by setting \code{min.controls}, \code{max.controls}, and \code{mean.controls} to the desired \code{ratio}.
 }
 \details{
+\subsection{Mahalanobis Distance Matching}{
 Mahalanobis distance matching can be done one of two ways:
 
-1) If a propensity score needs to be estimated for any reason, e.g., for common support with \code{discard} or for creating a caliper, \code{distance} should be whatever method is used to estimate the propensity score or a vector of distance measures, i.e., it should not be \code{"mahalanobis"}. Use \code{mahvars} to specify the variables used to create the Mahalanobis distance. For example, to perform Mahalanobis within a propensity score caliper, the following could be run:
+1) If no propensity score needs to be estimated, \code{distance} should be set to \code{"mahalanobis"}, and Mahalanobis distance matching will occur on all the variables in \code{formula}. Arguments to \code{discard} and \code{mahvars} will be ignored, and a caliper can only be placed on named variables. For example, to perform simple Mahalanobis distance matching, the following could be run:
 
-\code{matchit(treat ~ X1 + X2 + X3, method = "full", distance = "glm",
-              caliper = .25, mahvars = ~ X1 + X2)}
-
-With this code, \code{X1}, \code{X2}, and \code{X3} are used to estimate the propensity score (using the \code{"glm"} method, which by default is logistic regression), which is used to create a matching caliper. The actual matching occurs on the Mahalanobis distance computed only using \code{X1} and \code{X2}, which are supplied to \code{mahvars}. Units whose propensity score difference is larger than the caliper will not be paired, and some treated units may therefore not receive a match. The estimated propensity scores will be included in the \code{distance} component of the \code{matchit} output.
-
-2) If no propensity score needs to be estimated, \code{distance} should be set to \code{"mahalanobis"}, and Mahalanobis distance matching will occur on all the variables in \code{formula}. Arguments to \code{discard} and \code{mahvars} will be ignored, and a caliper can only be placed on named variables. For example, to perform simple Mahalanobis distance matching, the following could be run:
-
-\code{matchit(treat ~ X1 + X2, method = "full", distance = "mahalanobis")}
+\preformatted{
+matchit(treat ~ X1 + X2, method = "nearest",
+        distance = "mahalanobis")
+}
 
 With this code, the Mahalanobis distance is computed using \code{X1} and \code{X2}, and matching occurs on this distance. The \code{distance} component of the \code{matchit} output will be empty.
+
+2) If a propensity score needs to be estimated for any reason, e.g., for common support with \code{discard} or for creating a caliper, \code{distance} should be whatever method is used to estimate the propensity score or a vector of distance measures, i.e., it should not be \code{"mahalanobis"}. Use \code{mahvars} to specify the variables used to create the Mahalanobis distance. For example, to perform Mahalanobis within a propensity score caliper, the following could be run:
+
+\preformatted{
+matchit(treat ~ X1 + X2 + X3, method = "nearest",
+        distance = "glm", caliper = .25,
+        mahvars = ~ X1 + X2)
+}
+
+With this code, \code{X1}, \code{X2}, and \code{X3} are used to estimate the propensity score (using the \code{"glm"} method, which by default is logistic regression), which is used to create a matching caliper. The actual matching occurs on the Mahalanobis distance computed only using \code{X1} and \code{X2}, which are supplied to \code{mahvars}. Units whose propensity score difference is larger than the caliper will not be paired, and some treated units may therefore not receive a match. The estimated propensity scores will be included in the \code{distance} component of the \code{matchit} output. See Examples.
+}
 
 }
 \references{
@@ -112,7 +124,7 @@ Theory is also developed in the following article:
 Hansen, B. B. (2004). Full Matching in an Observational Study of Coaching for the SAT. Journal of the American Statistical Association, 99(467), 609–618. \doi{10.1198/016214504000000647}
 
 }
-\examples{
+\examples{\dontshow{if (requireNamespace("optmatch", quietly = TRUE)) \{}
 data("lalonde")
 
 # Optimal full PS matching
@@ -140,4 +152,4 @@ m.out3 <- matchit(treat ~ age + educ + re74 + re75,
 m.out3
 summary(m.out3, addlvariables = ~race + nodegree + married,
         data = lalonde)
-}
+\dontshow{\}}}

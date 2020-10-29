@@ -11,7 +11,8 @@ This page details the allowable arguments with \code{method = "cem"}. See \code{
 Below is how \code{matchit} is used for coarsened exact matching:
 \preformatted{
 matchit(formula, data = NULL, method = "cem",
-        estimand = "ATT", verbose = FALSE, ...)
+        estimand = "ATT", s.weights = NULL,
+        verbose = FALSE, ...)
 }
 }
 \arguments{
@@ -27,12 +28,17 @@ set here to \code{"cem"}.
   \item{estimand}{
 a string containing the desired estimand. Allowable options include \code{"ATT"}, \code{"ATC"}, and \code{"ATE"}. The estimand controls how the weights are computed; see the Computing Weights section at \code{\link{matchit}} for details.
 }
+  \item{s.weights}{
+the variable containing sampling weights to be incorporated into balance statistics. These weights do not affect the matching process.
+}
   \item{verbose}{
 \code{logical}; whether information about the matching process should be printed to the console.
 }
   \item{\dots}{
-additional arguments passed to \code{\link[cem:cem]{cem}} in \pkg{cem}. Potentially useful options include \code{cutpoints}, \code{grouping}, \code{k2k}, and \code{method}. To supply and argument to \code{method} in \code{cem}, supply an argument to \code{k2k.method} in \code{matchit} in order to avoid a name conflict with \code{method} in \code{matchit}.
+additional arguments passed to \pkgfun{cem}{cem} in \pkg{cem}. Potentially useful options include \code{cutpoints}, \code{grouping}, \code{k2k}, and \code{method}. To supply an argument to \code{method} in \code{cem}, supply an argument to \code{k2k.method} in \code{matchit} in order to avoid a name conflict with \code{method} in \code{matchit}.
+
 }
+The arguments \code{distance} (and related arguments), \code{exact}, \code{mahvars}, \code{discard} (and related arguments), \code{replace}, \code{m.order}, \code{caliper} (and related arguments), and \code{ratio} are ignored with a warning.
 }
 \section{Outputs}{
 All outputs described in \code{\link{matchit}} are returned with \code{method = "cem"} except for \code{match.matrix}. This is because matching strata are not indexed by treated units as they are in some other forms of matching.
@@ -60,7 +66,7 @@ Iacus, S. M., King, G., & Porro, G. (2012). Causal Inference without Balance Che
 
 \code{\link{method_exact}} for exact matching, which performs exact matching on the covariates without coarsening.
 }
-\examples{
+\examples{\dontshow{if (requireNamespace("cem", quietly = TRUE)) \{}
 data("lalonde")
 
 # Coarsened exact matching on age, race, married, and educ with educ
@@ -72,4 +78,5 @@ m.out1 <- matchit(treat ~ age + race + married + educ, data = lalonde,
                                               "black")))
 m.out1
 summary(m.out1)
+\dontshow{\}}
 }
