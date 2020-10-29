@@ -5,12 +5,12 @@ date: "`r Sys.Date()`"
 output: 
     html_vignette:
         toc: true
-
 vignette: >
   %\VignetteIndexEntry{Estimating Effects}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 bibliography: references.bib
+link-citations: true
 ---
 
 ```{r, include = FALSE}
@@ -80,9 +80,11 @@ Y_S <- gen_Y_S(A, X)
 d <- data.frame(A, X, Y_C, Y_B, Y_S)
 ```
 
+## Introduction {#introduction}
+
 After assessing balance and deciding on a matching specification, it comes time to estimate the effect of the treatment in the matched sample. How the effect is estimated and interpreted depends on the desired estimand and the type of model used (if any). In addition to estimating effects, estimating the uncertainty of the effects is critical in communicating them and assessing whether the observed effect is compatible with there being no effect in the population. This guide explains how to estimate effects after various forms of matching and with various outcome types. There may be situations that are not covered here for which additional methodological research may be required, but some of the recommended methods here can be used to guide such applications.
 
-### Identifying the estimand
+### Identifying the estimand {#identifying-the-estimand}
 
 Before an effect is estimated, the estimand must be specified and clarified. Although some aspects of the estimand depend not only on how the effect is estimated after matching but also on the matching method itself, other aspects must be considered at the tine of effect estimation and interpretation. Here, we consider three aspects of the estimand: the population the effect is meant to generalize to (the target population), the effect measure, and whether the effect is marginal or conditional.
 
@@ -250,7 +252,7 @@ For binary outcomes, effect estimation can be a bit more challenging, especially
 fit4 <- glm(Y_B ~ A, data = md, family = binomial(link = "logit"))
 ```
 
-By specifying `link = "logit"`, we fit a logistic regression model to estimate the marginal OR for treatment. To estimate the marginal RR we can specify `link = "log"`, and to estimate the RD we can specify `link = "identity"` or use `lm()` instead of `glm()`. Below we estimate cluster-robust standard errors. Because we want the OR and the effects are estimated on the log OR scale, we have to exponentiate the coefficient on treatment to arrive at the OR (one would do this when estimating the OR or RR, but not the RD).
+By specifying `link = "logit"`, we fit a logistic regression model to estimate the marginal OR for treatment. To estimate the marginal RR we can specify `link = "log"`, and to estimate the RD we can specify `link = "identity"` or use `lm()` instead of `glm()`. Below we estimate cluster-robust standard errors, though it should be noted that these standard errors can be biased for the OR and should be used with caution [@austin2007a]. Because we want the OR and the effects are estimated on the log OR scale, we have to exponentiate the coefficient on treatment to arrive at the OR (one would do this when estimating the OR or RR, but not the RD).
 
 ```{r}
 #Cluster-robust standard errors
@@ -566,6 +568,11 @@ The `robust se` column contains the computed standard error, and the reported Z-
 
 ### After Full Matching
 
+```{r, include=FALSE}
+#In case optmatch goes offline, don't run lines below
+if (!requireNamespace("optmatch", quietly = TRUE)) knitr::opts_chunk$set(eval = FALSE)
+```
+
 Full matching presents fairly straightforward methods of effect and standard error estimation. The most common and recommended way to estimate effects after full matching is to use the computed matching weights to estimate weighted effects. These matching weights function essentially like inverse probability weights and can be treated as such in all analyses, including with respect to standard error estimation. For empirical comparisons between full matching and propensity score weighting, see Austin and Stuart [-@austin2015b; -@austin2017; -@austin2015a].
 
 Standard error estimation involves using a cluster-robust standard error as recommended by Austin and Stuart [-@austin2017]. Including covariates can improve precision and add robustness when valid. Note that the methods described here also work for other estimators that rely on matching weights, including matching without replacement. The main difference is that full matching can be used to estimate the ATE, which we demonstrate below.
@@ -659,6 +666,10 @@ coxph(Surv(Y_S) ~ A, data = md, robust = TRUE,
 To perform the log-rank test or compute survival curves after full matching, functions designed for performing these tasks with inverse probability weights can be used with the matching weights; the `RISCA` package offers functionality for this purpose.
 
 Including covariates in the model is less straightforward because the resulting HR estimate is conditional rather than marginal.
+
+```{r, include=FALSE, eval=TRUE}
+knitr::opts_chunk$set(eval = TRUE)
+```
 
 ### After Stratum Matching
 
@@ -848,7 +859,7 @@ Robust standard errors are required when using weights to estimate the treatment
 
 ### 3. Interpreting conditional effects as marginal effects
 
-The distinction between marginal and conditional effects is not always clear both in methodological and applied papers. Some statistical methods are valid only for estimating conditional effects and they should not be used to estimate marginal effects (without further modification). Sometimes conditional effects are desirable, and such methods may be useful for them, but when marginal effects are the target of inference, it is critical not to inappropriately interpret estimates resulting from statistical methods aimed at estimating conditional effects as marginal effects. Although this issue is particularly salient with binary and survival outcomes due to the general noncollapsibiltiy of the OR, RR, and HR, this can also occur with linear models for continuous outcomes or the RD.
+The distinction between marginal and conditional effects is not always clear both in methodological and applied papers. Some statistical methods are valid only for estimating conditional effects and they should not be used to estimate marginal effects (without further modification). Sometimes conditional effects are desirable, and such methods may be useful for them, but when marginal effects are the target of inference, it is critical not to inappropriately interpret estimates resulting from statistical methods aimed at estimating conditional effects as marginal effects. Although this issue is particularly salient with binary and survival outcomes due to the general noncollapsibility of the OR, RR, and HR, this can also occur with linear models for continuous outcomes or the RD.
 
 The following methods estimate **conditional effects** for binary or survival outcomes (with noncollapsible effect measures) and should **not** be used to estimate marginal effects:
 

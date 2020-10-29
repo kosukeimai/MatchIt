@@ -5,12 +5,12 @@ date: "`r Sys.Date()`"
 output: 
     html_vignette:
         toc: true
-
 vignette: >
   %\VignetteIndexEntry{Assessing Balance}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 bibliography: references.bib
+link-citations: true
 ---
 
 ```{r setup, include=FALSE}
@@ -18,6 +18,8 @@ knitr::opts_chunk$set(echo = TRUE, message = FALSE,
                       fig.width=7, fig.height=5)
 options(width = 200)
 ```
+
+## Introduction
 
 Covariate balance is the degree to which the distribution of covariates is similar across levels of the treatment. It has three main roles in causal effect estimation using matching: 1) as a target to optimize with matching, 2) as a method of assessing the quality of the resulting matches, and 3) as evidence to an audience that the estimated effect is close to the true effect. When covariate balance is achieved, the resulting effect estimate is less sensitive to model misspecification and ideally close to true treatment effect. The benefit of randomization is that covariate balance is achieved automatically (in expectation), which is why unadjusted effects estimated from randomized trial data (in the absence of drop-out) can be validly interpreted as causal effects. When using matching to recover causal effect estimates form observational data, balance is not guaranteed and must be assessed.
 
