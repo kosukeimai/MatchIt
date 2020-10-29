@@ -10,7 +10,7 @@ Description: Selects matched samples of the original treated and
 Authors@R: c(
   person("Daniel", "Ho", email = "daniel.e.ho@gmail.com", role = c("aut"),
          comment = c(ORCID = "0000-0002-2195-5469")),
-  person("Kosuke", "Imai", email = "Imai@Harvard.Edu", role = c("aut"),
+  person("Kosuke", "Imai", email = "imai@harvard.edu", role = c("aut"),
          comment = c(ORCID = "0000-0002-2748-1022")),
   person("Gary", "King", email = "king@harvard.edu", role = c("aut"),
          comment = c(ORCID = "0000-0002-5327-7631")),
