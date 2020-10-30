@@ -10,7 +10,7 @@ distance2glm <- function(formula, data, link = "logit", ...) {
   A <- list(...)
   A[!names(A) %in% c(names(formals(glm)), names(formals(glm.control)))] <- NULL
 
-  res <- do.call("glm", c(list(formula = formula, data = data, family = binomial(link = link)), A))
+  res <- do.call("glm", c(list(formula = formula, data = data, family = quasibinomial(link = link)), A))
 
   if (linear) pred <- predict(res, type = "link")
   else pred <- predict(res, type = "response")
@@ -28,7 +28,13 @@ distance2gam <- function(formula, data, link = "logit", ...) {
   }
   else linear <- FALSE
 
-  res <- mgcv::gam(formula, data, family = binomial(link), ...)
+  A <- list(...)
+  weights <- A$weights
+  A$weights <- NULL
+
+  res <- do.call(mgcv::gam, c(list(formula, data, family = quasibinomial(link),
+                                   weights = weights), A),
+                 quote = TRUE)
 
   if (linear) pred <- predict(res, type = "link")
   else pred <- predict(res, type = "response")
@@ -52,7 +58,12 @@ distance2rpart <- function(formula, data, link = NULL, ...) {
 #distance2nnet-----------------
 distance2nnet <- function(formula, data, link = NULL, ...) {
   check.package("nnet")
-  res <- nnet::nnet(formula, data, entropy = TRUE, ...)
+
+  A <- list(...)
+  weights <- A$weights
+  A$weights <- NULL
+
+  res <- do.call(nnet::nnet, c(list(formula, data, entropy = TRUE), A), quote = TRUE)
   return(list(model = res, distance = drop(fitted(res))))
 }
 
