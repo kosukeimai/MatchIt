@@ -719,13 +719,16 @@ ESS <- function(w) {
 }
 
 #Compute sample sizes
-nn <- function(treat, weights, discarded) {
-  n <- matrix(0, ncol=2, nrow=5, dimnames = list(c("All","Matched (ESS)","Matched", "Unmatched","Discarded"),
+nn <- function(treat, weights, discarded, s.weights) {
+  if (is.null(s.weights)) s.weights <- rep(1, length(treat))
+  weights <- weights * s.weights
+  n <- matrix(0, ncol=2, nrow=6, dimnames = list(c("All (ESS)", "All", "Matched (ESS)","Matched", "Unmatched","Discarded"),
                                                   c("Control", "Treated")))
 
   #                       Control                                    Treated
+  n["All (ESS)",] <-     c(ESS(s.weights[treat==0]),                ESS(s.weights[treat==1]))
   n["All",] <-           c(sum(treat==0),                           sum(treat==1))
-  n["Matched (ESS)",] <- c(ESS(weights[treat==0 & weights > 0]),    ESS(weights[treat==1 & weights > 0]))
+  n["Matched (ESS)",] <- c(ESS(weights[treat==0]),                  ESS(weights[treat==1]))
   n["Matched",] <-       c(sum(treat==0 & weights > 0),             sum(treat==1 & weights > 0))
   n["Unmatched",] <-     c(sum(treat==0 & weights==0 & !discarded), sum(treat==1 & weights==0 & !discarded))
   n["Discarded",] <-     c(sum(treat==0 & discarded),               sum(treat==1 & discarded))

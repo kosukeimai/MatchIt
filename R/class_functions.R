@@ -232,6 +232,10 @@ print.summary.matchit <- function(x, digits = max(3, getOption("digits") - 3), .
   }
   cat("\nSample Sizes:\n")
   nn <- x$nn
+  if (isTRUE(all.equal(nn["All (ESS)",], nn["All",]))) {
+    #Don't print ESS if same as matched SS
+    nn <- nn[rownames(nn) != "All (ESS)",]
+  }
   if (isTRUE(all.equal(nn["Matched (ESS)",], nn["Matched",]))) {
     #Don't print ESS if same as matched SS
     nn <- nn[rownames(nn) != "Matched (ESS)",]
@@ -263,7 +267,16 @@ print.summary.matchit.subclass <- function(x, digits = max(3, getOption("digits"
     print.data.frame(round_df_char(x$reduction[,-5, drop = FALSE], 1, pad = "0", na_vals = "."))
 
     cat("\nSample Sizes:\n")
-    print.data.frame(round_df_char(x$nn, 2, pad = " ", na_vals = "."))
+    nn <- x$nn
+    if (isTRUE(all.equal(nn["All (ESS)",], nn["All",]))) {
+      #Don't print ESS if same as matched SS
+      nn <- nn[rownames(nn) != "All (ESS)",]
+    }
+    if (isTRUE(all.equal(nn["Matched (ESS)",], nn["Matched",]))) {
+      #Don't print ESS if same as matched SS
+      nn <- nn[rownames(nn) != "Matched (ESS)",]
+    }
+    print.data.frame(round_df_char(nn, 2, pad = " ", na_vals = "."))
   }
   cat("\n")
 }
