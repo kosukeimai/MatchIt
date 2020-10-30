@@ -720,7 +720,6 @@ matchit2nearest <-  function(treat, data, distance, discarded,
 
   #Both produce matrix of indices of matched ctrl units
   if (fast) {
-    print(str(mget(ls())))
     mm <- nn_matchC(treat, ord, ratio, replace, discarded, distance, ex, caliper.dist,
                     caliper.covs, caliper.covs.mat, mahcovs, mahSigma_inv, verbose)
   }
