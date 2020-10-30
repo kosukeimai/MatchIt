@@ -60,17 +60,15 @@ match.data <- function(object, group = "all", distance = "distance", weights = "
     data[[subclass]] <- object$subclass
   }
 
-
-
   treat <- object$treat
-  rownames(data) <- names(treat)
+
   if (drop.unmatched && !is.null(object$weights)) {
-    data <- data[object$weights > 0,]
+    data <- data[object$weights > 0,,drop = FALSE]
     treat <- treat[object$weights > 0]
   }
 
   group <- match_arg(group, c("all", "treated", "control"))
-  if (group == "treated") data <- data[treat == 1,]
+  if (group == "treated") data <- data[treat == 1,,drop = FALSE]
   else if (group == "control") data <- data[treat == 0,]
 
   if (!is.null(object$distance)) attr(data, "distance") <- distance
@@ -100,13 +98,16 @@ get_matches <- function(object, distance = "distance", weights = "weights", subc
   if (!is.atomic(id) || !is.character(id) || length(id) != 1 || is.na(id)) {
     stop("The argument to 'id' must be a string of length 1.", call. = FALSE)
   }
-  if (id %in% names(data)) {
+
+  if (id %in% names(m.data)) {
     stop(paste0("\"", id, "\" is already the name of a variable in the data. Please choose another name for id using the 'id' argument."), call. = FALSE)
   }
 
-  m.data[[id]] <- rownames(m.data)
+  m.data[[id]] <- names(object$treat)[object$weights > 0]
 
-  m.data[c(weights, subclass)] <- NULL
+  for (i in c(weights, subclass)) {
+    if (i %in% names(m.data)) m.data[[i]] <- NULL
+  }
 
   mm <- object$match.matrix
   mm <- mm[!is.na(mm[,1]),,drop = FALSE]
@@ -121,7 +122,7 @@ get_matches <- function(object, distance = "distance", weights = "weights", subc
   matched[[subclass]] <- c(as.vector(col(tmm)[!is.na(tmm)]), seq_len(nrow(mm)))
   matched[[weights]] <- c(1/num.matches[matched[[subclass]][seq_len(sum(!is.na(mm)))]], rep(1, nrow(mm)))
 
-  if (!is.null(object$s.weights && include.s.weights)) {
+  if (!is.null(object$s.weights) && include.s.weights) {
     matched[[weights]] <- matched[[weights]] * object$s.weights[matched[[id]]]
   }
 
