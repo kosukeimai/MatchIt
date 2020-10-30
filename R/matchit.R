@@ -242,7 +242,7 @@ matchit <- function(formula, data = NULL, method = "nearest", distance = "glm",
   match.out$exact <- exact
   match.out$mahvars <- mahvars
   match.out$caliper <- caliper
-  match.out$nn <- nn(treat, match.out$weights, discarded)
+  match.out$nn <- nn(treat, match.out$weights, discarded, s.weights)
 
   return(match.out)
 }
