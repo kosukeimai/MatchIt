@@ -13,7 +13,7 @@ knitr::opts_chunk$set(
   fig.align='center',
   comment = "#>",
   fig.path = "inst/figures/README-",
-  R.options = list(width = 90)
+  R.options = list(width = 200)
 )
 ```
 # MatchIt: Nonparametric Preprocessing for Parametric Causal Inference 
@@ -35,7 +35,7 @@ m.out <- matchit(treat ~ age + educ + race + married + nodegree +
 Printing the `MatchIt` object provides details of the kind of matching performed. 
 
 ```{r}
-print(m.out)
+m.out
 ```
 
 We can view propensity score overlap and see which observations were matched and unmatched using a jitter plot:
