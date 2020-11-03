@@ -94,6 +94,7 @@ IntegerMatrix nn_matchC(const IntegerVector& treat,
 
   bool ps_diff_assigned = false;
 
+  //progress bar
   int prog_length;
   if (replace) prog_length = n1 + 1;
   else prog_length = max_rat*n1 + 1;
@@ -186,7 +187,6 @@ IntegerMatrix nn_matchC(const IntegerVector& treat,
           ps_diff_assigned = false; // reset for next iter
         } else {
           dt = distance[t_ind];
-          // NumericVector dc = distance[c_eligible];
           match_distance = abs(as<NumericVector>(distance[c_eligible]) - dt);
         }
       }
@@ -206,6 +206,7 @@ IntegerMatrix nn_matchC(const IntegerVector& treat,
           }
         }
         else {
+          //When matching w/ replacement, get t_rat closest control units
           indices = Range(0, num_eligible - 1);
 
           std::partial_sort(indices.begin(), indices.begin() + t_rat, indices.end(),
