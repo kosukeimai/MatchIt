@@ -36,7 +36,7 @@ matchit <- function(formula, data = NULL, method = "nearest", distance = "glm",
       s.weights <- s.weights[[1]]
     }
     else if (inherits(s.weights, "formula")) {
-      s.weights.form <- update(s.weights.form, NULL ~ .)
+      s.weights.form <- update(s.weights, NULL ~ .)
       s.weights <- model.frame(s.weights.form, data, na.action = "na.pass")
       if (ncol(s.weights) != 1) stop("'s.weights' can only contain one named variable.", call. = FALSE)
       s.weights <- s.weights[[1]]
@@ -49,6 +49,7 @@ matchit <- function(formula, data = NULL, method = "nearest", distance = "glm",
     if (length(s.weights) != n.obs) stop("'s.weights' must be the same length as the treatment vector.", call. = FALSE)
 
     names(s.weights) <- names(treat)
+
   }
 
   ## Process method
@@ -72,7 +73,9 @@ matchit <- function(formula, data = NULL, method = "nearest", distance = "glm",
 
   exactcovs <- mahcovs <- calcovs <- NULL
 
-  if (!is.null(method) && method %in% c("exact", "cem")) {
+  if (!is.null(method) && method %in% c("exact"
+                                        # , "cem" #CEM_REMOVED
+                                        )) {
     fn1 <- NULL
   }
   else {
@@ -139,56 +142,57 @@ matchit <- function(formula, data = NULL, method = "nearest", distance = "glm",
     dist.model <- distance <- link <- NULL
     discarded <- rep(FALSE, length(treat))
   }
+  else if (fn1 == "distance2user") {
+    dist.model <- link <- NULL
+    discarded <- discard(treat, distance, discard)
+  }
+  else if (fn1 == "distance2mahalanobis") {
+    distance <- link <- dist.model <- NULL
+    discarded <- discard(treat, distance, discard)
+  }
   else {
-    if (fn1 == "distance2user") {
-      dist.model <- link <- NULL
-      discarded <- discard(treat, distance, discard)
+    if (!is.null(s.weights)) attr(s.weights, "in_ps") <- !distance %in% c("bart", "randomForest")
+
+    #Estimate distance
+    if (is.null(distance.options$formula)) distance.options$formula <- formula
+    if (is.null(distance.options$data)) distance.options$data <- data
+    if (is.null(distance.options$verbose)) distance.options$verbose <- verbose
+    if (is.null(distance.options$estimand)) distance.options$estimand <- estimand
+    if (is.null(distance.options$weights) && !fn1 %in% c("distance2bart", "distance2randomforest")) {
+      distance.options$weights <- s.weights
     }
-    else if (fn1 == "distance2mahalanobis") {
-      distance <- link <- dist.model <- NULL
-      discarded <- discard(treat, distance, discard)
-    }
-    else {
-      #Estimate distance
-      if (is.null(distance.options$formula)) distance.options$formula <- formula
-      if (is.null(distance.options$data)) distance.options$data <- data
-      if (is.null(distance.options$verbose)) distance.options$verbose <- verbose
-      if (is.null(distance.options$estimand)) distance.options$estimand <- estimand
-      if (is.null(distance.options$weights) && !fn1 %in% c("distance2bart", "distance2randomforest")) {
-        distance.options$weights <- s.weights
-      }
 
-      if (!is.null(attr(distance, "link"))) distance.options$link <- attr(distance, "link")
-      else distance.options$link <- link
+    if (!is.null(attr(distance, "link"))) distance.options$link <- attr(distance, "link")
+    else distance.options$link <- link
 
-      dist.out <- do.call(fn1, distance.options, quote = TRUE)
+    dist.out <- do.call(fn1, distance.options, quote = TRUE)
 
-      dist.model <- dist.out$model
-      distance <- dist.out$distance
+    dist.model <- dist.out$model
+    distance <- dist.out$distance
 
-      #Discard
-      discarded <- discard(treat, dist.out$distance, discard)
+    #Discard
+    discarded <- discard(treat, dist.out$distance, discard)
 
-      #Optionally reestimate
-      if (reestimate && any(discarded)) {
-        for (i in seq_along(distance.options)) {
-          if (length(distance.options[[i]]) == n.obs) {
-            distance.options[[i]] <- distance.options[[i]][!discarded]
-          }
-          else if (length(dim(distance.options[[i]])) == 2 && nrow(distance.options[[i]]) == n.obs) {
-            distance.options[[i]] <- distance.options[[i]][!discarded,,drop = FALSE]
-          }
+    #Optionally reestimate
+    if (reestimate && any(discarded)) {
+      for (i in seq_along(distance.options)) {
+        if (length(distance.options[[i]]) == n.obs) {
+          distance.options[[i]] <- distance.options[[i]][!discarded]
         }
-        dist.out <- do.call(fn1, distance.options, quote = TRUE)
-        dist.model <- dist.out$model
-        distance[!discarded] <- dist.out$distance
+        else if (length(dim(distance.options[[i]])) == 2 && nrow(distance.options[[i]]) == n.obs) {
+          distance.options[[i]] <- distance.options[[i]][!discarded,,drop = FALSE]
+        }
       }
-
-      #Remove smoothing terms from gam formula
-      if (inherits(dist.model, "gam")) {
-        formula <- mgcv::interpret.gam(formula)$fake.formula
-      }
+      dist.out <- do.call(fn1, distance.options, quote = TRUE)
+      dist.model <- dist.out$model
+      distance[!discarded] <- dist.out$distance
     }
+
+    #Remove smoothing terms from gam formula
+    if (inherits(dist.model, "gam")) {
+      formula <- mgcv::interpret.gam(formula)$fake.formula
+    }
+
   }
 
   covs.formula <- delete.response(terms(formula, data = data))
