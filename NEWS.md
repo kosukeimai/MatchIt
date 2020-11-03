@@ -10,15 +10,17 @@ output:
 
 ## General Fixes and New Features
 
-* Added extensive documentation for every function, matching method, and distance specification. Documentation no longer links to `gking.harvard.edu/matchit` as it now stands alone.
-
 * `match.data()`, which is used to create matched datasets, has a few new arguments. The `data` argument can be supplied with a dataset that will have the matching weights and subclasses added. If not supplied, `match.data()` will try to figure out the appropriate dataset like it did in the past. The `drop.unmatched` argument controls whether unmatched units are dropped from the output. The default is `TRUE`, consistent with past behavior. Warnings are now more informative.
 
 * `get_matches()`, which seems to have been rarely used since it performed a similar function to `match.data()`, has been revamped. It creates a dataset with one row per unit per matched pair. If a unit is part of two separate pairs (e.g., as a result of matching with replacement), it will get two rows in the output dataset. The goal here was to be able to implement standard error estimators that rely both on repeated use of the same unit and subclass/pair membership, e.g., Austin & Cafri (2020). Otherwise, it functions similarly to `match.data()`. *NOTE: the changes to `get_matches()` are breaking changes! Legacy code will not work with the new syntax!*
 
 * `print.matchit()` has completely changed and now prints information about the matching type and specifications. `summary.matchit()` contains all the information that was in the old `print` method.
 
+* A new function, `add_s.weights()`, adds sampling weights to `matchit` objects for use in balance checking and effect estimation. Sampling weights can also be directly supplied to `matchit()` through the new `s.weights` argument. A new vignette describing how to using `MatchIt` with sampling weights is available at `vignette("Sampling Weights")`.
+
 * The included dataset, `lalonde`, now uses a `race` variable instead of separate `black` and `hispan` variables. This makes it easier to see how character variables are treated by `MatchIt` functions.
+
+* Added extensive documentation for every function, matching method, and distance specification. Documentation no longer links to `gking.harvard.edu/matchit` as it now stands alone.
 
 ## `matchit()`
 * An argument to `data` is no longer required if the variables in `formula` are present in the environment.
@@ -85,12 +87,17 @@ output:
 
 * A `subclass` component is now included in the output when `replace = FALSE` (the default), as it has been with optimal and full matching.
 
+### `method = "exact"`
+
+* The `estimand` argument can be set to `"ATT"`, `"ATC"`, or `"ATE"` to compute matching weights that correspond to the given estimand. Previously only ATT weights were computed. See `?matchit` for details on how weights are computed for each `estimand`.
+
+<!--
 ### `method = "cem"` and `method = "exact"`
 
 * With `method = "cem"`, the `k2k` argument is now recognized. Previously it was ignored unless an argument to `k2k.method` was supplied.
 
 * The `estimand` argument can be set to `"ATT"`, `"ATC"`, or `"ATE"` to compute matching weights that correspond to the given estimand. Previously only ATT weights were computed. See `?matchit` for details on how weights are computed for each `estimand`.
-
+-->
 ### `method = "subclass"`
 
 * Performance improvements.
@@ -132,6 +139,10 @@ output:
 * The default for `standardize` is now `TRUE`, so that standardized mean differences and eCDF statistics will be displayed by default.
 
 * A new column for the average absolute pair difference for each covariate is included in the output. The values indicate how far treated and control units within pairs are from each other. An additional argument to `summary.matchit()`, `pair.dist`, controls whether this value is computed. It can take a long time for some matching methods and could be omitted to speed up computation.
+
+* Balance prior to matching can now be suppressed by setting `un = FALSE`.
+
+* Percent balance improvement can now be suppressed by setting `improvement = FALSE`. When `un = FALSE`, `improvement` is automatically set to `FALSE`.
 
 ## `plot.matchit()`
 
