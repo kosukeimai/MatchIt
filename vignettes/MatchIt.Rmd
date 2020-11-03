@@ -38,7 +38,7 @@ head(lalonde)
 
 The statistical quantity of interest is the causal effect of the treatment (`treat`) on 1978 earnings (`re78`). The other variables are pre-treatment covariates. See `?lalonde` for more information on this dataset. In particular, the analysis is concerned with the marginal, total effect of the treatment for those who actually received the treatment.
 
-In what follows, we briefly the four steps of a matching analysis and how to implement them in `MatchIt`. For more details, we recommend reading the other vignettes, `vignette("Matching Methods")`, `vignette("Assessing Balance")`, and `vignette("Estimating Effects")`, especially for users less familiar with matching methods. It is important to recognize that the ease of using `MatchIt` does not imply the simplicity of matching methods; advanced statistical methods like matching that require many decisions to be made and caution in their use should only be performed by those with statistical training.
+In what follows, we briefly the four steps of a matching analysis and how to implement them in `MatchIt`. For more details, we recommend reading the other vignettes, `vignette("Matching Methods")`, `vignette("Assessing Balance")`, and `vignette("Estimating Effects")`, especially for users less familiar with matching methods. For the use of `MatchIt` with sampling weights, also see `vignette("Sampling Weights")`. It is important to recognize that the ease of using `MatchIt` does not imply the simplicity of matching methods; advanced statistical methods like matching that require many decisions to be made and caution in their use should only be performed by those with statistical training.
 
 ## Planning
 
@@ -52,22 +52,45 @@ The average treatment effect in the population (ATE) is the average effect of th
 
 **Selecting covariates to balance.** Selecting covariates carefully is critical for ensuring the resulting treatment effect estimate is free of confounding and can be validly interpreted as a causal effect. To estimate total causal effects, all covariates must be measured prior to treatment (or otherwise not be affected by the treatment). Covariates should be those that cause variation in the outcome and selection into treatment group; these are known as confounding variables. See VanderWeele [-@vanderweele2019] for a guide on covariate selection. Ideally these covariates are measured without error and are free of missingness.
 
-## Matching
+## Check Initial Imbalance
 
-After planning, matching can be performed. There are several different classes and methods of matching, described in `vignette("Matching Methods")`. Here, we begin by briefly demonstrating 1:1 nearest neighbor (NN) matching on the propensity score (PS), which is appropriate for estimating the ATT.
-
-Propensity score matching involves estimating the propensity score, a one-dimensional summary of all the included covariates, as the predicted probability of being the treated group given the covariates. By default, the propensity score is estimated using logistic regression, though several other methods are available (see `?distance`). One by one, each treated unit is paired with an available control unit that has the closest propensity score to it. Any remaining control units are left unmatched and excluded from further analysis. Due to the theoretical balancing properties of the propensity score described by Rosenbaum and Rubin [-@rosenbaum1983], propensity score matching can be an effective way to achieve covariate balance the treatment groups. Below we demonstrate the use of matching using `matchit()` to perform nearest neighbor propensity score matching.
+After planning and prior to matching, it can be a good idea to view the initial imbalance in one's data that matching is attempting to eliminate. We can do this using the code below:
 
 ```{r}
+# No matching; constructing a pre-match matchit object
+m.out0 <- matchit(treat ~ age + educ + race + married + 
+                   nodegree + re74 + re75, data = lalonde,
+                 method = NULL, distance = "glm")
+```
+
+The first argument is a `formula` relating the treatment to the covariates used in estimating the propensity score and for which balance is to be assessed. The `data` argument specifies the dataset where these variables exist. Typically, the `method` argument specifies the method of matching to be performed; here, we wet it to `NULL` so we can assess balance prior to matching[^1]. The `distance` argument specifies the method for estimating the propensity score, a one-dimensional summary of all the included covariates, computed as the predicted probability of being the treated group given the covariates; here, we set it to `"glm"` for generalized linear model, which implements logistic regression by default[^2] (see `?distance` for other options).
+
+[^1]: Note that the default for `method` is `"nearest"` to perform nearest neighbor matching. To prevent any matching from taking place in order to assess pre-matching imbalance, `method` must be set to `NULL`.
+
+[^2]: Note that setting `distance = "logit"`, which was the default in `MatchIt` version prior to 4.0.0, will also estimate logistic regression propensity scores. Because it is the default, the `distance` argument can actually be omitted if logistic regression propensity scores are desired.
+
+Below we assess balance on the unmatched data using `summary()`:
+
+```{r}
+# Checking balance prior to matching
+summary(m.out0)
+```
+
+We can see severe imbalances as measured by the standardized mean differences (`Std. Mean Diff.`), variance ratios (`Var. Ratio`), and empirical cumulative density function (eCDF) statistics. Values of standardized mean differences and eCDF statistics close to zero and values of variance ratios close to one indicate good balance, and here many of them are far from their ideal values.
+
+## Matching
+
+Now, matching can be performed. There are several different classes and methods of matching, described in `vignette("Matching Methods")`. Here, we begin by briefly demonstrating 1:1 nearest neighbor (NN) matching on the propensity score, which is appropriate for estimating the ATT. One by one, each treated unit is paired with an available control unit that has the closest propensity score to it. Any remaining control units are left unmatched and excluded from further analysis. Due to the theoretical balancing properties of the propensity score described by Rosenbaum and Rubin [-@rosenbaum1983], propensity score matching can be an effective way to achieve covariate balance in the treatment groups. Below we demonstrate the use of `matchit()` to perform nearest neighbor propensity score matching.
+
+```{r}
+# 1:1 NN PS matching w/o replacement
 m.out1 <- matchit(treat ~ age + educ + race + married + 
                    nodegree + re74 + re75, data = lalonde,
                  method = "nearest", distance = "glm")
 
 ```
 
-The first argument is a `formula` relating the treatment to the covariates used in estimating the propensity score. The `data` argument specifies the dataset where these variables exist. The `method` argument specifies the method of matching to be performed (here, `"nearest"` for nearest neighbor matching). The `distance` argument specifies the method for estimating the propensity score (here, `"glm"` for generalized linear model, which implements logistic regression by default)[^1]. Many other arguments are available for tuning the matching method and method of propensity score estimation.
-
-[^1]: Note that setting `distance = "logit"`, which was the default in `MatchIt` version prior to 4.0.0, will also estimate logistic regression propensity scores. Because it is the default, the `distance` argument can actually be omitted if logistic regression propensity scores are desired.
+We use the same syntax as before, but this time specify `method = "nearest"` to implement nearest neighbor matching, again using a logistic regression propensity score. Many other arguments are available for tuning the matching method and method of propensity score estimation.
 
 The matching outputs are contained in the `m.out1` object. Printing this object gives a description of the type of matching performed:
 
@@ -83,19 +106,16 @@ Although matching on the propensity score is often effective at eliminating diff
 
 In addition to covariate balance, the quality of the match is determined by how many units remain after matching. Matching often involves discarding units that are not paired with other units, and some matching options, such as setting restrictions for common support or calipers, can further decrease the number of remaining units. If, after matching, the remaining sample size is small, the resulting effect estimate may be imprecise. In many cases, there will be a trade-off between balance and remaining sample size. How to optimally choose among them is an instance of the fundamental bias-variance trade-off problem that cannot be resolved without substantive knowledge of the phenomena under study. Prospective power analyses can be used to determine how small a sample can be before necessary precision is sacrificed.
 
-To assess the quality of the resulting matches numerically, we can use the `summary()` function on `m.out1`.
+To assess the quality of the resulting matches numerically, we can use the `summary()` function on `m.out1` as before. Here we set `un = FALSE` to suppress display of the balance before matching for brevity and because we already saw it. (Leaving it as `TRUE`, its default, would display balance both before and after matching.)
 
 ```{r}
-summary(m.out1)
+# Checking balance after NN matching
+summary(m.out1, un = FALSE)
 ```
 
-At the top is a summary of covariate balance before matching. We can see severe imbalances as measured by the standardized mean differences (`Std. Mean Diff.`) and the empirical cumulative density function (eCDF) statistics. Values of these statistics close to zero indicate good balance, and here many of them are greater than zero.
+At the top is a summary of covariate balance after matching. Although balance has improved for some covariates, in general balance is still quite poor, indicating that nearest neighbor propensity score matching is not sufficient for removing confounding in this dataset. The final column, `Std. Pair Diff`, displays the average absolute within-pair difference of each covariate. When these values are small, better balance is typically achieved and estimated effects are more robust to misspecification of the outcome model [@king2019; @rubin1973a].
 
-Next is a summary of covariate balance after matching. Although balance has improved for some covariates, in general balance is still quite poor, indicating that nearest neighbor propensity score matching is not sufficient for removing confounding in this dataset. The final column, `Std. Pair Diff`, displays the average absolute within-pair difference of each covariate. When these values are small, better balance is typically achieved and estimated effects are more robust to misspecification of the outcome model [@king2019; @rubin1973a].
-
-Next is a table of the percent balance improvement after matching; ideally these values would be close to 100% (and no more!), indicating that all of the initial imbalance has been removed. Some early matching theory relied on these values [@cochran1973; @rubin1973a].
-
-Finally is a table of the sample sizes before and after matching. The matching procedure left 244 control units unmatched. Ideally, unmatched units would be those far from the treated units and would require greater extrapolation were they to have been retained. We can visualize the distribution of propensity scores of those who were matched using `plot()` with `type = "jitter"`:
+Next is a table of the sample sizes before and after matching. The matching procedure left 244 control units unmatched. Ideally, unmatched units would be those far from the treated units and would require greater extrapolation were they to have been retained. We can visualize the distribution of propensity scores of those who were matched using `plot()` with `type = "jitter"`:
 
 ```{r}
 plot(m.out1, type = "jitter", interactive = FALSE)
@@ -115,6 +135,7 @@ Points far from the solid diagonal line are the areas of the covariate distribut
 Given the poor performance of nearest neighbor matching in this example, we can try a different matching method or make other changes to the matching algorithm or distance specification. Below, we'll try full matching, which matches every treated unit to at least one control and every control to at least one treated unit [@hansen2004; @stuart2008a]. We'll also try a different link (probit) for the propensity score model.
 
 ```{r}
+# Full matching on a probit PS
 m.out2 <- matchit(treat ~ age + educ + race + married + 
                    nodegree + re74 + re75, data = lalonde,
                  method = "full", distance = "glm", link = "probit")
@@ -124,10 +145,11 @@ m.out2
 We can examine balance on this new matching specification.
 
 ```{r}
-summary(m.out2)
+# Checking balance after full matching
+summary(m.out2, un = FALSE)
 ```
 
-Balance is far better, as determined by the lower standardized mean differences and eCDF statistics. The balance should be reported when publishing the results of a matching analysis. This can be down either in a table, using the values resulting from `summary()`, or in a plot, such as a Love plot, which we can make by calling `plot()` on the `summary()` output:
+Balance is far better, as determined by the lower standardized mean differences and eCDF statistics. The balance should be reported when publishing the results of a matching analysis. This can be done either in a table, using the values resulting from `summary()`, or in a plot, such as a Love plot, which we can make by calling `plot()` on the `summary()` output:
 
 ```{r}
 plot(summary(m.out2))
@@ -147,9 +169,9 @@ m.data1 <- match.data(m.out1)
 head(m.data1)
 ```
 
-We can then estimate a treatment effect in this dataset using the standard regression functions in R, like `lm()` or `glm()`, being sure to include the matching weights (stored in the `weights` variable of the `match.data()` output) in the estimation[^2]. We recommend using cluster-robust standard errors for most analyses, with pair membership as the clustering variable; the `lmtest` and `sandwich` packages together make this straightforward.
+We can then estimate a treatment effect in this dataset using the standard regression functions in R, like `lm()` or `glm()`, being sure to include the matching weights (stored in the `weights` variable of the `match.data()` output) in the estimation[^3]. We recommend using cluster-robust standard errors for most analyses, with pair membership as the clustering variable; the `lmtest` and `sandwich` packages together make this straightforward.
 
-[^2]: With 1:1 nearest neighbor matching without replacement, excluding the matching weights does not change the estimates. For all other forms of matching, they are required, so we recommend always including them for consistency.
+[^3]: With 1:1 nearest neighbor matching without replacement, excluding the matching weights does not change the estimates. For all other forms of matching, they are required, so we recommend always including them for consistency.
 
 ```{r}
 library("lmtest") #coeftest
