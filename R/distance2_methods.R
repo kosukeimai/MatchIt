@@ -100,7 +100,9 @@ distance2cbps <- function(formula, data, link = NULL, ...) {
     A[["weights"]] <- NULL
   }
 
-  res <- do.call(CBPS::CBPS, c(list(formula, data), A), quote = TRUE)
+  capture.output({ #Keeps from printing message about treatment
+    res <- do.call(CBPS::CBPS, c(list(formula, data), A), quote = TRUE)
+  })
 
   pred <- fitted(res)
   if (linear) pred <- qlogis(pred)
