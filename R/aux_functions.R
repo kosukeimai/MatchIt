@@ -8,7 +8,9 @@ check.inputs <- function(method, distance, mcall, exact, mahvars, caliper, disca
     method <- "NULL"
   }
   else {
-    method <- match_arg(method, c("exact", "cem", "nearest", "optimal", "full", "genetic", "subclass"))
+    method <- match_arg(method, c("exact"
+                                  # , "cem" #CEM_REMOVED
+                                  , "nearest", "optimal", "full", "genetic", "subclass"))
   }
 
   ignored.inputs <- character(0)
@@ -109,7 +111,7 @@ check.inputs <- function(method, distance, mcall, exact, mahvars, caliper, disca
 
 #Function to process distance and give warnings about new syntax
 process.distance <- function(distance, method) {
-  if (is.null(distance) && !is.null(method)) stop(paste0("distance cannot be NULL with method = \"", method, "\"."), call. = FALSE)
+  if (is.null(distance) && !is.null(method)) stop(paste0("'distance' cannot be NULL with method = \"", method, "\"."), call. = FALSE)
   else if (is.vector(distance, "character") && length(distance) == 1) {
     allowable.distances <- c("glm", "cbps", "gam", "mahalanobis", "nnet", "rpart", "bart", "randomforest")
 
@@ -139,7 +141,7 @@ process.distance <- function(distance, method) {
 
   }
   else if (!is.vector(distance, "numeric")) {
-    stop("distance must be a string with the name of the distance measure to be used or a numeric vector containing distance measures.", call. = FALSE)
+    stop("'distance' must be a string with the name of the distance measure to be used or a numeric vector containing distance measures.", call. = FALSE)
   }
   return(distance)
 }
