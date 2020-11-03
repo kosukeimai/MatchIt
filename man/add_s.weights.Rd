@@ -4,7 +4,7 @@
 Add sampling weights to a matchit object
 }
 \description{
-Adds sampling weights to a \code{matchit} object so that they are incorporated into balance assessment and creation of the weights. This would typically only be used when an argument to \code{s.weights} was not supplied to \code{\link{matchit}} (i.e., because they were not to be included in the estimation of the propensity score) but sampling weights are required for generalizing an effect to the correct population. Without adding sampling weights to the \code{matchit} object, balance assessment tools (i.e., \code{\link{summary.matchit}} and \code{\link{plot.matchit}}) will not calculate balance statistics correctly, and the weights produced by \code{\link{match.data}} and \code{get_matches} will not incorproate the sampling weights.
+Adds sampling weights to a \code{matchit} object so that they are incorporated into balance assessment and creation of the weights. This would typically only be used when an argument to \code{s.weights} was not supplied to \code{\link{matchit}} (i.e., because they were not to be included in the estimation of the propensity score) but sampling weights are required for generalizing an effect to the correct population. Without adding sampling weights to the \code{matchit} object, balance assessment tools (i.e., \code{\link{summary.matchit}} and \code{\link{plot.matchit}}) will not calculate balance statistics correctly, and the weights produced by \code{\link{match.data}} and \code{get_matches} will not incorporate the sampling weights.
 }
 \usage{
 add_s.weights(m, s.weights = NULL, data = NULL)
