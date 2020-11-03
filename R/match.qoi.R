@@ -2,24 +2,26 @@
 qoi <- function(xx, tt, ww = NULL, s.weights, subclass = NULL, mm = NULL, s.d.denom = "treated", standardize = FALSE,
                 compute.pair.dist = TRUE) {
 
-  full.only <- is.null(ww) && is.null(mm) && is.null(subclass)
+  un <- is.null(ww)
   bin.var <- all(xx == 0 | xx == 1)
 
-  xsum <- matrix(NA_real_, nrow = 1, ncol = 7)
-  rownames(xsum) <- "Full"
+  xsum <- rep(NA_real_, 7)
   if (standardize)
-    colnames(xsum) <- c("Means Treated","Means Control", "Std. Mean Diff.",
-                        "Var. Ratio", "eCDF Mean", "eCDF Max", "Std. Pair Dist.")
+    names(xsum) <- c("Means Treated","Means Control", "Std. Mean Diff.",
+                     "Var. Ratio", "eCDF Mean", "eCDF Max", "Std. Pair Dist.")
   else
-    colnames(xsum) <- c("Means Treated","Means Control", "Mean Diff.",
-                        "Var. Ratio", "eQQ Mean", "eQQ Max", "Pair Dist.")
+    names(xsum) <- c("Means Treated","Means Control", "Mean Diff.",
+                     "Var. Ratio", "eQQ Mean", "eQQ Max", "Pair Dist.")
 
-  too.small <- sum(tt==1) < 2 || sum(tt==0) < 2
+  if (un) ww <- s.weights
+  else ww <- ww * s.weights
 
-  xsum["Full","Means Treated"] <- weighted.mean(xx[tt==1], s.weights[tt==1], na.rm=TRUE)
-  xsum["Full","Means Control"] <- weighted.mean(xx[tt==0], s.weights[tt==0], na.rm=TRUE)
+  too.small <- sum(ww[tt==1] > 0) < 2 || sum(ww[tt==0] > 0) < 2
 
-  mdiff <- xsum["Full","Means Treated"] - xsum["Full","Means Control"]
+  xsum["Means Treated"] <- weighted.mean(xx[tt==1], ww[tt==1], na.rm=TRUE)
+  xsum["Means Control"] <- weighted.mean(xx[tt==0], ww[tt==0], na.rm=TRUE)
+
+  mdiff <- xsum["Means Treated"] - xsum["Means Control"]
 
   if (standardize && abs(mdiff) > 1e-8) {
     if (!too.small) {
@@ -35,58 +37,26 @@ qoi <- function(xx, tt, ww = NULL, s.weights, subclass = NULL, mm = NULL, s.d.de
 
         if (std < sqrt(.Machine$double.eps)) std <- sqrt(wvar(xx, bin.var, s.weights)) #Avoid divide by zero
       }
-      xsum["Full", 3] <- mdiff/std
+
+      xsum[3] <- mdiff/std
+      if (!un && compute.pair.dist) xsum[7] <- pair.dist(xx, tt, subclass, mm, std)
     }
   }
   else {
-    xsum["Full", 3] <- mdiff
+    xsum[3] <- mdiff
+    if (!un && compute.pair.dist) xsum[7] <- pair.dist(xx, tt, subclass, mm)
   }
 
   if (bin.var) {
-    xsum["Full", 5:6] <- abs(mdiff)
+    xsum[5:6] <- abs(mdiff)
   }
   else if (!too.small) {
-    xsum["Full", "Var. Ratio"] <- wvar(xx[tt==1], bin.var, s.weights[tt==1]) / wvar(xx[tt==0], bin.var, s.weights[tt==0])
+    xsum["Var. Ratio"] <- wvar(xx[tt==1], bin.var, ww[tt==1]) / wvar(xx[tt==0], bin.var, ww[tt==0])
 
-    qqall <- qqsum(xx, tt, s.weights, standardize = standardize)
-    xsum["Full", 5:6] <- qqall[c("meandiff", "maxdiff")]
+    qqmat <- qqsum(xx, tt, ww, standardize = standardize)
+    xsum[5:6] <- qqmat[c("meandiff", "maxdiff")]
   }
 
-  if (!full.only) {
-    ww <- ww * s.weights
-    xsum.matched <- matrix(NA_real_, nrow = 1, ncol = 7)
-    rownames(xsum.matched) <- "Matched"
-    colnames(xsum.matched) <- colnames(xsum)
-
-    too.small <- sum(ww[tt==1] > 0) < 2 || sum(ww[tt==0] > 0) < 2
-
-    xsum.matched["Matched","Means Treated"] <- weighted.mean(xx[tt==1], ww[tt==1], na.rm=TRUE)
-    xsum.matched["Matched","Means Control"] <- weighted.mean(xx[tt==0], ww[tt==0], na.rm=TRUE)
-
-    mdiff <- xsum.matched["Matched","Means Treated"] - xsum.matched["Matched","Means Control"]
-
-    if (standardize && abs(mdiff) > 1e-8) {
-      if (!too.small) {
-        xsum.matched["Matched", 3] <- mdiff/std
-        if (compute.pair.dist) xsum.matched["Matched", 7] <- pair.dist(xx, tt, subclass, mm, std)
-      }
-    }
-    else {
-      xsum.matched["Matched", 3] <- mdiff
-      if (compute.pair.dist) xsum.matched["Matched", 7] <- pair.dist(xx, tt, subclass, mm)
-    }
-
-    if (bin.var) {
-      xsum.matched["Matched", 5:6] <- abs(mdiff)
-    }
-    else if (!too.small) {
-      xsum.matched["Matched", "Var. Ratio"] <- wvar(xx[tt==1], bin.var, ww[tt==1]) / wvar(xx[tt==0], bin.var, ww[tt==0])
-
-      qqmat <- qqsum(xx, tt, ww, standardize = standardize)
-      xsum.matched["Matched", 5:6] <- qqmat[c("meandiff", "maxdiff")]
-    }
-    xsum <- rbind(xsum, xsum.matched)
-  }
   xsum
 }
 
