@@ -151,7 +151,7 @@ matchit <- function(formula, data = NULL, method = "nearest", distance = "glm",
     discarded <- discard(treat, distance, discard)
   }
   else {
-    if (!is.null(s.weights)) attr(s.weights, "in_ps") <- !distance %in% c("bart", "randomForest")
+    if (!is.null(s.weights)) attr(s.weights, "in_ps") <- !distance %in% c("bart", "randomforest")
 
     #Estimate distance
     if (is.null(distance.options$formula)) distance.options$formula <- formula
@@ -240,7 +240,7 @@ matchit <- function(formula, data = NULL, method = "nearest", distance = "glm",
   match.out$estimand <- estimand
   match.out$formula <- formula
   match.out$treat <- treat
-  match.out$distance <- distance
+  match.out$distance <- if (!is.null(distance)) setNames(distance, names(treat))
   match.out$discarded <- discarded
   match.out$s.weights <- s.weights
   match.out$exact <- exact
