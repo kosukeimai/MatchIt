@@ -29,10 +29,11 @@ matchit(formula, data = NULL, method = "nearest",
 a two-sided \code{\link{formula}} object containing the treatment and covariates to be used in creating the distance measure used in the matching. This formula will be supplied to the functions that estimate the distance measure. The formula should be specified as \code{A ~ X1 + X2 + ...} where \code{A} represents the treatment variable and \code{X1} and \code{X2} are covariates.
 }
   \item{data}{
-a data frame containing the variables named in \code{formula}. If not found in \code{data}, the variables will be sought in the environment.
+a data frame containing the variables named in \code{formula} and possible other arguments. If not found in \code{data}, the variables will be sought in the environment.
 }
   \item{method}{
-the matching method to be used. The allowed methods are \code{\link[=method_nearest]{"nearest"}} for nearest neighbor matching (on the propensity score by default), \code{\link[=method_optimal]{"optimal"}} for optimal pair matching, \code{\link[=method_full]{"full"}} for optimal full matching, \code{\link[=method_genetic]{"genetic"}} for genetic matching, \code{\link[=method_cem]{"cem"}} for coarsened exact matching, \code{\link[=method_exact]{"exact"}} for exact matching, and \code{\link[=method_subclass]{"subclass"}} for subclassification. When set to \code{NULL}, no matching will occur, but propensity score estimation and common support restrictions will still occur if requested. See the linked pages for each method for more details on what these methods do, how the arguments below are used by each on, and what additional arguments are allowed.
+%the matching method to be used. The allowed methods are \code{\link[=method_nearest]{"nearest"}} for nearest neighbor matching (on the propensity score by default), \code{\link[=method_optimal]{"optimal"}} for optimal pair matching, \code{\link[=method_full]{"full"}} for optimal full matching, \code{\link[=method_genetic]{"genetic"}} for genetic matching, \code{\link[=method_cem]{"cem"}} for coarsened exact matching, \code{\link[=method_exact]{"exact"}} for exact matching, and \code{\link[=method_subclass]{"subclass"}} for subclassification. When set to \code{NULL}, no matching will occur, but propensity score estimation and common support restrictions will still occur if requested. See the linked pages for each method for more details on what these methods do, how the arguments below are used by each on, and what additional arguments are allowed. %CEM_REMOVED
+the matching method to be used. The allowed methods are \code{\link[=method_nearest]{"nearest"}} for nearest neighbor matching (on the propensity score by default), \code{\link[=method_optimal]{"optimal"}} for optimal pair matching, \code{\link[=method_full]{"full"}} for optimal full matching, \code{\link[=method_genetic]{"genetic"}} for genetic matching, \code{\link[=method_exact]{"exact"}} for exact matching, and \code{\link[=method_subclass]{"subclass"}} for subclassification. When set to \code{NULL}, no matching will occur, but propensity score estimation and common support restrictions will still occur if requested. See the linked pages for each method for more details on what these methods do, how the arguments below are used by each on, and what additional arguments are allowed.
 }
   \item{distance}{
 the distance measure to be used. Can be either a string containing the name of a distance measure or a vector of already-computed distance measures. The distance measures should be values whose pairwise difference is the distance between two units, e.g., propensity scores for propensity score matching. See \code{\link{distance}} for allowable options. The default is \code{"glm"} for propensity scores estimated with logistic regression using \code{\link{glm}}. Ignored for some methods; see individual methods pages for how the distance measure is used.
@@ -59,7 +60,7 @@ a string containing a method for discarding units outside a region of common sup
 if \code{discard} is not \code{"none"}, whether to re-estimate the propensity score in the remaining sample. Default is \code{FALSE} to use the propensity scores estimated in the original sample.
 }
   \item{s.weights}{
-an optional numeric vector of sampling weights to be incorporated into propensity score models and balance statistics. Can be specified as a string containing the name of variable in \code{data} to be used or a one-sided formula with the variable on the right-hand side (e.g., \code{~ SW}). Not all propensity score models accept sampling weights; see \code{\link{distance}} for information on which do and do not.
+an optional numeric vector of sampling weights to be incorporated into propensity score models and balance statistics. Can also be specified as a string containing the name of variable in \code{data} to be used or a one-sided formula with the variable on the right-hand side (e.g., \code{~ SW}). Not all propensity score models accept sampling weights; see \code{\link{distance}} for information on which do and do not.
 }
   \item{replace}{
 for methods that allow it, whether matching should be done with replacement (\code{TRUE}), where control units are allowed to be matched to several treated units, or without replacement (\code{FALSE}), where control units can only be matched to one treated unit each. See the individual methods pages for information on whether and how this argument is used. Default is \code{FALSE} for matching without replacement.
@@ -93,7 +94,7 @@ Details for the various matching methods can be found at the following help page
   \item{\code{\link{method_optimal}} for optimal pair matching}
   \item{\code{\link{method_full}} for optimal full matching}
   \item{\code{\link{method_genetic}} for genetic matching}
-  \item{\code{\link{method_cem}} for coarsened exact matching}
+  %\item{\code{\link{method_cem}} for coarsened exact matching} %CEM_REMOVED
   \item{\code{\link{method_exact}} for exact matching}
   \item{\code{\link{method_subclass}} for subclassification}
 }

@@ -50,7 +50,7 @@ In a manuscript, you don't need to cite another package when using \code{method 
 \seealso{
 \code{\link{matchit}} for a detailed explanation of the inputs and outputs of a call to \code{matchit}. The \code{exact} argument can be used with other methods to perform exact matching in combination with other matching methods.
 
-\code{\link{method_cem}} for coarsened exact matching, which performs exact matching on coarsened versions of the covariates.
+%\code{\link{method_cem}} for coarsened exact matching, which performs exact matching on coarsened versions of the covariates. %CEM_REMOVED
 }
 \examples{
 data("lalonde")

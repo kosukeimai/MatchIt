@@ -1,0 +1,13 @@
+When cem has returned to CRAN, perform the following steps to restore cem functionality in MatchIt.
+
+- Restore code in cem_code.R to its proper location in the package script
+
+- Uncomment cem lines  in all R files; these will be denoted by the tag CEM_REMOVED, which can be searched to find these files
+
+- Return method_cem.Rd to MatchIt/man/
+
+- Uncomment the cem lines in the following help files: method_exact.Rd, matchit.Rd
+
+- Add cem to Suggests in DESCRIPTION (with updated version number)
+
+- Update NEWS files to include cem changes; uncomment section on cem for original changes
