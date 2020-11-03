@@ -12,10 +12,12 @@ Computes and prints balance statistics for \code{matchit} and \code{matchit.subc
 \usage{
 \method{summary}{matchit}(object, interactions = FALSE,
         addlvariables = NULL, standardize = TRUE,
-        data = NULL, pair.dist = TRUE, ...)
+        data = NULL, pair.dist = TRUE, un = TRUE,
+        improvement = TRUE, ...)
 \method{summary}{matchit.subclass}(object, interactions = FALSE,
         addlvariables = NULL, standardize = TRUE,
-        data = NULL, pair.dist = FALSE, subclass = FALSE, ...)
+        data = NULL, pair.dist = FALSE, subclass = FALSE,
+        un = TRUE, improvement = TRUE, ...)
 
 \method{print}{summary.matchit}(x, digits = max(3, getOption("digits") - 3),
       ...)
@@ -40,6 +42,12 @@ a optional data frame containing variables named in \code{addlvariables} if spec
 }
   \item{pair.dist}{
 \code{logical}; whether to compute average absolute pair distances. For matching methods that don't include a \code{match.matrix} component in the output (i.e., exact matching, coarsened exact matching, full matching, and subclassification), computing pair differences can take a long time, especially for large datasets and with many covariates. For other methods (i.e., nearest neighbor, optimal, and genetic matching), computation is fairly quick. Default is \code{FALSE} for subclassification and \code{TRUE} otherwise.
+}
+  \item{un}{
+\code{logical}; whether to compute balance statistics for the unmatched sample. Default \code{TRUE}; set to \code{FALSE} for more concise output.
+}
+  \item{improvement}{
+\code{logical}; whether to compute the percent reduction in imbalance. Default \code{TRUE}; set to \code{FALSE} for more concise output.
 }
   \item{subclass}{
 after subclassification, whether to display balance for individual subclasses, and, if so, for which ones. Can be \code{TRUE} (display balance for all subclasses), \code{FALSE} (display balance only in aggregate), or the indices (e.g., \code{1:6}) of the specific subclasses for which to display balance. When anything other than \code{FALSE}, aggregate balance statistics will not be displayed. Default is \code{FALSE}.
@@ -77,23 +85,23 @@ When printing, \code{NA} values are replaced with periods (\code{.}), and the pa
 }
 \value{
 For \code{matchit} objects, a \code{summary.matchit} object, which is a list with the following components:
-\itemize{
-  \item{\code{call} - the original call to \code{\link{matchit}}}
-  \item{\code{nn} - a matrix of the sample sizes in the original (unmatched) and matched samples}
-  \item{\code{sum.all} - a matrix of balance statistics for each covariate in the original (unmatched) sample}
-  \item{\code{sum.matched} - a matrix of balance statistics for each covariate in the matched sample}
-  \item{\code{reduction} - a matrix of the percent reduction in imbalance for each covariate in the matched sample}
-}
+
+  \item{call}{the original call to \code{\link{matchit}}}
+  \item{nn}{a matrix of the sample sizes in the original (unmatched) and matched samples}
+  \item{sum.all}{if \code{un = TRUE}, a matrix of balance statistics for each covariate in the original (unmatched) sample}
+  \item{sum.matched}{a matrix of balance statistics for each covariate in the matched sample}
+  \item{reduction}{if \code{improvement = TRUE}, a matrix of the percent reduction in imbalance for each covariate in the matched sample}
+
 For \code{match.subclass} objects, a \code{summary.matchit.subclass} object, which is a list as above with the following additional components:
-\itemize{
-  \item{\code{call} - the original call to \code{\link{matchit}}}
-  \item{\code{sum.all} - a matrix of balance statistics for each covariate in the original sample}
-  \item{\code{sum.subclass} - if \code{subclass} is not \code{FALSE}, a list of matrices of balance statistics for each subclass}
-  \item{\code{sum.across} - a matrix of balance statistics for each covariate computed using the subclassification weights}
-  \item{\code{reduction} - a matrix of the percent reduction in imbalance for each covariate in the matched sample}
-  \item{\code{qn} - a matrix of sample sizes within each subclass}
-  \item{\code{nn} - a matrix of the sample sizes in the original (unmatched) and matched samples}
-}
+
+  \item{call}{the original call to \code{\link{matchit}}}
+  \item{sum.all}{if \code{un = TRUE}, a matrix of balance statistics for each covariate in the original sample}
+  \item{sum.subclass}{if \code{subclass} is not \code{FALSE}, a list of matrices of balance statistics for each subclass}
+  \item{sum.across}{a matrix of balance statistics for each covariate computed using the subclassification weights}
+  \item{reduction}{if \code{improvement = TRUE}, a matrix of the percent reduction in imbalance for each covariate in the matched sample}
+  \item{qn}{a matrix of sample sizes within each subclass}
+  \item{nn}{a matrix of the sample sizes in the original (unmatched) and matched samples}
+
 }
 \seealso{
 \code{\link{summary}} for the generic method; \code{\link{plot.summary.matchit}} for making a Love plot from \code{summary} output.
