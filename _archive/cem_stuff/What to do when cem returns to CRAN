@@ -11,3 +11,5 @@ When cem has returned to CRAN, perform the following steps to restore cem functi
 - Add cem to Suggests in DESCRIPTION (with updated version number)
 
 - Update NEWS files to include cem changes; uncomment section on cem for original changes
+
+- Update cem section in Matching Methods vignette

@@ -97,6 +97,8 @@ It is possible to use exact matching on some covariates and another form of matc
 
 ### Coarsened Exact Matching (`method = "cem"`)
 
+[**NOTE: coarsened exact matching is temporarily unavailable**]{.ul}
+
 Coarsened exact matching (CEM) is a form of stratum matching that involves first coarsening the covariates by creating bins and then performing exact matching on the new coarsened versions of the covariates [@iacus2012]. The degree and method of coarsening can be controlled by the user to manage the trade-off between exact and approximate balancing. For example, coarsening a covariate to two bins will mean that units that differ greatly on the covariate might be placed into the same subclass, while coarsening a variable to five bins may require units to be dropped due to not finding matches. Like exact matching, CEM is susceptible to the curse of dimensionality, making it a less viable solution with many covariates, especially with few units. Dropping units can also change the target population of the estimated effect. See `?method_cem` for the documentation for `matchit()` with `method = "cem"`. CEM in `MatchIt` depends on the `cem()` function in the `cem` package [@iacus2009] to perform the coarsening and matching. The subclassification weights are computed using the formulas in `MatchIt` rather than those in `cem`.
 
 ### Subclassification (`method = "subclass"`)
