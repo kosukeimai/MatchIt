@@ -3,8 +3,15 @@ matchit.covplot <- function(object, type = "qq", interactive = TRUE, which.xs = 
   #Create covariate matrix; include exact and mahvars
   if (!is.null(which.xs)) {
     if (!is.vector(which.xs, "character")) {
-      stop("which.xs should be a vector of variables for which balance is to be displayed.", call. = FALSE)
+      stop("'which.xs' should be a vector of variables for which balance is to be displayed.", call. = FALSE)
     }
+    if (!all(which.xs %in% names(object$X))) {
+      missing.vars <- setdiff(which.xs, names(object$X))
+      stop(paste0("The requested ", ngettext(length(missing.vars), "variable ", "variables "),
+                  word_list(missing.vars, is.are = TRUE, quotes = 2),
+                  " not present in the supplied matchit object."), call. = FALSE)
+    }
+
     which.xs.f <- terms(reformulate(which.xs))
 
     X <- get.covs.matrix(which.xs.f, data = object$X)
@@ -30,10 +37,8 @@ matchit.covplot <- function(object, type = "qq", interactive = TRUE, which.xs = 
   w <- object$weights * sw
   if (is.null(w)) w <- rep(1, length(t))
 
-  for (i in 0:1) {
-    w[t == i] <- w[t==i]/sum(w[t==i])
-    sw[t == i] <- sw[t==i]/sum(sw[t==i])
-  }
+  split(w, t) <- lapply(split(w, t), function(x) x/sum(x))
+  split(sw, t) <- lapply(split(sw, t), function(x) x/sum(x))
 
   varnames <- colnames(X)
 
@@ -94,8 +99,15 @@ matchit.covplot.subclass <- function(object, type = "qq", which.subclass = NULL,
   #Create covariate matrix; include exact and mahvars
   if (!is.null(which.xs)) {
     if (!is.vector(which.xs, "character")) {
-      stop("which.xs should be a vector of variables for which balance is to be displayed.", call. = FALSE)
+      stop("'which.xs' should be a vector of variables for which balance is to be displayed.", call. = FALSE)
     }
+    if (!all(which.xs %in% names(object$X))) {
+      missing.vars <- setdiff(which.xs, names(object$X))
+      stop(paste0("The requested ", ngettext(length(missing.vars), "variable ", "variables "),
+                  word_list(missing.vars, is.are = TRUE, quotes = 2),
+                  " not present in the supplied matchit object."), call. = FALSE)
+    }
+
     which.xs.f <- terms(reformulate(which.xs))
 
     X <- get.covs.matrix(which.xs.f, data = object$X)
@@ -143,10 +155,9 @@ matchit.covplot.subclass <- function(object, type = "qq", which.subclass = NULL,
 
     sw <- if (is.null(object$s.weights)) rep(1, length(t)) else object$s.weights
     w <- sw*(!is.na(object$subclass) & object$subclass == s)
-    for (i in 0:1) {
-      w[t == i] <- w[t==i]/sum(w[t==i])
-      sw[t == i] <- sw[t==i]/sum(sw[t==i])
-    }
+
+    split(w, t) <- lapply(split(w, t), function(x) x/sum(x))
+    split(sw, t) <- lapply(split(sw, t), function(x) x/sum(x))
 
     for (i in seq_along(varnames)){
 
