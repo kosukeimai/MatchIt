@@ -12,72 +12,14 @@ matchit2null <- function(discarded, ...) {
   return(res)
 }
 # MATCHIT method = cem--------------------------------------
-matchit2cem <- function(treat, covs, estimand = "ATT", verbose = FALSE, ...) {
-
-  check.package("cem")
-
-  if (verbose) cat("Coarsened exact matching...\n")
-
-  A <- list(...)
-  A[["method"]] <- A[["k2k.method"]]
-
-  n.obs <- length(treat)
-
-  estimand <- toupper(estimand)
-  estimand <- match_arg(estimand, c("ATT", "ATC", "ATE"))
-
-  # cem takes the data all together and wants the treatment specified
-  # with the column name of the data frame. Here we massage the matchit
-  # inputs to this format. Note that X has its proper column names, but
-  # treat does not have the original column name.
-  cem.data <- data.frame(covs, treat)
-
-  args.excluded <- c("treatment", "baseline.group", "data", "verbose", "eval.imbalance",
-                     "keep.all", "drop", "L1.breaks", "L1.grouping")
-  mat <- tryCatch({
-    withCallingHandlers({
-      do.call(cem::cem, c(list(treatment = names(cem.data)[ncol(cem.data)],
-                               data = cem.data,
-                               verbose = as.integer(verbose),
-                               eval.imbalance = FALSE,
-                               keep.all = FALSE,
-                               drop = NULL),
-                          A[names(A) %in% setdiff(names(formals(cem::cem)), args.excluded)]))
-    },
-    warning = function(w) {
-      warning(paste0("(from cem) ", conditionMessage(w)), call. = FALSE, immediate. = TRUE)
-      invokeRestart("muffleWarning")
-    })
-  },
-  error = function(e) {
-    if (startsWith(conditionMessage(e), "subscript out of bounds")) {
-      stop("No units were matched. Try changing the coarsening options using the 'cutpoints' and 'grouping' arguments in cem(). See ?method_cem or ?cem::cem for details.", call. = FALSE)
-    }
-    else {
-      stop(paste0("(from cem) ", conditionMessage(e)), call. = FALSE, immediate. = TRUE)
-    }
-  })
-
-  strat <- setNames(rep(NA_character_, n.obs), names(treat))
-  if (!is.null(mat)) strat[mat$matched] <- mat$strata[mat$matched]
-  strat <- setNames(factor(strat, labels = seq_along(unique(strat[!is.na(strat)]))), names(treat))
-
-  if (verbose) cat("Calculating matching weights... ")
-
-  res <- list(subclass = strat,
-              weights = weights.subclass(strat, treat, estimand))
-
-  if (verbose) cat("Done.\n")
-
-  class(res) <- "matchit"
-  return(res)
-}
 
 # MATCHIT method = exact------------------------------------
 matchit2exact <- function(treat, covs, data, estimand = "ATT", verbose = FALSE, ...){
 
   if(verbose)
     cat("Exact matching... \n")
+
+  if (length(covs) == 0) stop("Covariates must be specified in the input formula to use exact matching.", call. = FALSE)
 
   estimand <- toupper(estimand)
   estimand <- match_arg(estimand, c("ATT", "ATC", "ATE"))
@@ -130,6 +72,12 @@ matchit2full <- function(treat, formula, data, distance, discarded,
 
   treat_ <- setNames(as.integer(treat == focal), names(treat))
   treat_[discarded] <- NA
+
+  if (is.full.mahalanobis) {
+    if (length(attr(terms(formula, data = data), "term.labels")) == 0) {
+      stop("Covariates must be specified in the input formula when distance = \"mahalanobis\".", call. = FALSE)
+    }
+  }
 
   within.match <- NULL
   if (!is.null(exact)) {
@@ -193,7 +141,7 @@ matchit2full <- function(treat, formula, data, distance, discarded,
     invokeRestart("muffleWarning")
   },
   error = function(e) {
-    stop(paste0("(from optmatch) ", conditionMessage(e)), call. = FALSE, immediate. = TRUE)
+    stop(paste0("(from optmatch) ", conditionMessage(e)), call. = FALSE)
   })
 
   if (all(is.na(full))) stop("No matches were found.", call. = FALSE)
@@ -251,6 +199,12 @@ matchit2optimal <- function(treat, formula, data, distance, discarded,
 
   ratio <- process.ratio(ratio)
 
+  if (is.full.mahalanobis) {
+    if (length(attr(terms(formula, data = data), "term.labels")) == 0) {
+      stop("Covariates must be specified in the input formula when distance = \"mahalanobis\".", call. = FALSE)
+    }
+  }
+
   if (!is.null(exact)) {
     environment(exact) <- sys.frame(sys.nframe())
     exact.match <- optmatch::exactMatch(update(exact, treat_ ~ .), data = data)
@@ -301,7 +255,7 @@ matchit2optimal <- function(treat, formula, data, distance, discarded,
     invokeRestart("muffleWarning")
   },
   error = function(e) {
-    stop(paste0("(from optmatch) ", conditionMessage(e)), call. = FALSE, immediate. = TRUE)
+    stop(paste0("(from optmatch) ", conditionMessage(e)), call. = FALSE)
   })
 
   if (all(is.na(pair))) stop("No matches were found.", call. = FALSE)
@@ -402,6 +356,10 @@ matchit2genetic <- function(treat, data, distance, discarded,
     X <- cbind(covs_to_balance, distance)
   }
 
+  if (ncol(covs_to_balance) == 0) {
+    stop("Covariates must be specified in the input formula to use genetic matching.", call. = FALSE)
+  }
+
   #Process exact; exact.log will be supplied to GenMatch() and Match()
   if (!is.null(exact)) {
     #Add covariates in exact not in X to X
@@ -488,7 +446,7 @@ matchit2genetic <- function(treat, data, distance, discarded,
       invokeRestart("muffleWarning")
     },
     error = function(e) {
-      stop(paste0("(from Matching) ", conditionMessage(e)), call. = FALSE, immediate. = TRUE)
+      stop(paste0("(from Matching) ", conditionMessage(e)), call. = FALSE)
     })
   }
   else {
@@ -507,7 +465,9 @@ matchit2genetic <- function(treat, data, distance, discarded,
                              M = ratio, exact = exact.log, caliper = cal,
                              replace = replace, estimand = "ATT", ties = FALSE,
                              weights = s.weights, CommonSupport = FALSE, Weight = 3,
-                             Weight.matrix = if (use.genetic) g.out else generalized_inverse(cor(X)),
+                             Weight.matrix = if (use.genetic) g.out
+                             else if (is.null(s.weights)) generalized_inverse(cor(X_))
+                             else generalized_inverse(cov.wt(X_, s.weights, cor = TRUE)$cor),
                              version = "fast")
   },
   warning = function(w) {
@@ -517,7 +477,7 @@ matchit2genetic <- function(treat, data, distance, discarded,
     invokeRestart("muffleWarning")
   },
   error = function(e) {
-    stop(paste0("(from Matching) ", conditionMessage(e)), call. = FALSE, immediate. = TRUE)
+    stop(paste0("(from Matching) ", conditionMessage(e)), call. = FALSE)
   })
 
   #Note: must use character match.matrix because of re-ordering treat into treat_
@@ -576,7 +536,7 @@ matchit2genetic <- function(treat, data, distance, discarded,
 
 # MATCHIT method = nearest----------------------------------
 matchit2nearest <-  function(treat, data, distance, discarded,
-                             ratio = 1, replace = FALSE, m.order = NULL,
+                             ratio = 1, s.weights = NULL, replace = FALSE, m.order = NULL,
                              caliper = NULL, mahvars = NULL, exact = NULL,
                              formula = NULL, estimand = "ATT", verbose = FALSE,
                              is.full.mahalanobis, fast = TRUE,
@@ -651,11 +611,18 @@ matchit2nearest <-  function(treat, data, distance, discarded,
 
   if (is.full.mahalanobis) {
     mahcovs <- get.covs.matrix(formula, data)
-    mahSigma_inv <- generalized_inverse(cov(mahcovs))
+    if (ncol(mahcovs) == 0) stop("Covariates must be specified in the input formula when distance = \"mahalanobis\".", call. = FALSE)
+    if (is.null(s.weights))
+      mahSigma_inv <- generalized_inverse(cov(mahcovs))
+    else
+      mahSigma_inv <- generalized_inverse(cov.wt(mahcovs, s.weights)$cov)
   }
   else if (!is.null(mahvars)) {
     mahcovs <- get.covs.matrix(mahvars, data)
-    mahSigma_inv <- generalized_inverse(cov(mahcovs))
+    if (is.null(s.weights))
+      mahSigma_inv <- generalized_inverse(cov(mahcovs))
+    else
+      mahSigma_inv <- generalized_inverse(cov.wt(mahcovs, s.weights)$cov)
   }
   else {
     mahcovs <- mahSigma_inv <- NULL
