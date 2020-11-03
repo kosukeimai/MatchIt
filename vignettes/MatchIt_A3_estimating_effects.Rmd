@@ -13,8 +13,20 @@ bibliography: references.bib
 link-citations: true
 ---
 
+```{=html}
+<style>
+pre {
+  overflow-x: auto;
+}
+pre code {
+  word-wrap: normal;
+  white-space: pre;
+}
+</style>
+```
 ```{r, include = FALSE}
 knitr::opts_chunk$set(echo = TRUE, eval=T)
+options(width = 200, digits= 4)
 
 #Generatng data similar to Austin (2009) for demonstrating treatment effect estimation
 gen_X <- function(n) {
@@ -114,7 +126,9 @@ Uncertainty estimation (i.e., of standard errors, confidence intervals, and p-va
 
 **Robust standard errors.** Also known as sandwich standard errors (due to the form of the formula for computing them), heteroscedasticity-consistent standard errors, or Huber-White standard errors, robust standard errors are an adjustment to the usual maximum likelihood or ordinary least squares standard errors that are robust to violations of some of the assumptions required for usual standard errors to be valid [@mackinnon1985]. Although there has been some debate about their utility [@king2015], robust standard errors rarely degrade inferences and often improve them. Generally, robust standard errors **must** be used when any non-uniform weights are included in the estimation (e.g., with full matching or inverse probability weighting).
 
-**Cluster-robust standard errors.** A version of robust standard errors known as cluster-robust standard errors [@liang1986] can be used to account for dependence between observations within clusters (e.g., matched pairs). Abadie and Spiess [-@abadie2019] demonstrate analytically that cluster-robust standard errors are generally valid after matching, whereas regular robust standard errors can over- or under-estimate the true sampling variability of the effect estimator depending on the specification of the outcome model (if any) and degree of effect modification. A plethora of simulation studies have further confirmed the validity of cluster-robust standard errors after matching [e.g., @austin2009a; @austin2014; @gayat2012; @wan2019; @austin2013]. Given this evidence favoring the use of cluster-robust standard errors, we recommend them in most cases and use them judiciously in the this guide\^[Because they are only appropriate with a large number of clusters, cluster-robust standard errors are generally not used with subclassification methods. Regular robust standard errors are valid with these methods when using the subclassification weights to estimate marginal effects.].
+**Cluster-robust standard errors.** A version of robust standard errors known as cluster-robust standard errors [@liang1986] can be used to account for dependence between observations within clusters (e.g., matched pairs). Abadie and Spiess [-@abadie2019] demonstrate analytically that cluster-robust standard errors are generally valid after matching, whereas regular robust standard errors can over- or under-estimate the true sampling variability of the effect estimator depending on the specification of the outcome model (if any) and degree of effect modification. A plethora of simulation studies have further confirmed the validity of cluster-robust standard errors after matching [e.g., @austin2009a; @austin2014; @gayat2012; @wan2019; @austin2013]. Given this evidence favoring the use of cluster-robust standard errors, we recommend them in most cases and use them judiciously in the this guide[^1].
+
+[^1]: Because they are only appropriate with a large number of clusters, cluster-robust standard errors are generally not used with subclassification methods. Regular robust standard errors are valid with these methods when using the subclassification weights to estimate marginal effects.
 
 Here, we will use linear and generalized linear models as implemented by `lm()` and `glm()` and use `lmtest::coeftest()` and `lmtest::coefci()` along with `sandwich::vcovHC()` for robust standard errors and `sandwich::vcovCL()` for cluster-robust standard errors. There are several "types" (e.g., HC0, HC1, etc.) of robust standard errors that adjust the original standard errors in different ways; although more research is required on the benefits of using different types for estimating standard errors after matching, we use the default types here.
 
@@ -124,7 +138,9 @@ Bootstrapping is a technique used to simulate the sampling distribution of an es
 
 Typically, bootstrapping involves performing the entire estimation process in each bootstrap sample, including propensity score estimation, matching, and effect estimation. This tends to be the most straightforward route, though intervals from this method may be conservative in some cases (i.e., they are wider than necessary to achieve nominal coverage) [@austin2014]. Less conservative and more accurate intervals have been found when using different forms of the bootstrap, including the wild bootstrap develop by Bodory et al. [-@bodory2020] and the matched bootstrap described by Austin and Small [-\@austin2014] and Abadie and Spiess [@abadie2019]. The block bootstrap involves sampling matched pairs/strata of units from the matched sample and performing the analysis within each sample composed of the sampled pairs. Abadie and Spiess [@abadie2019] derived analytically that the block bootstrap is valid for estimating SEs and CIs in the same circumstances cluster robust SEs are; indeed, the block bootstrap SE is known to approximate the cluster-robust SE [@cameron2015]. We use `boot()` from the `boot` package to implement bootstrapping.
 
-With bootstrapping, more bootstrap replications are always better but can take time and increase the chances that at least one error will occur within the bootstrap analysis (e.g., a bootstrap sample with zero treated units or zero units with an event). In general, numbers of replications upwards of 999 are recommended, with values one less than a multiple of 100 preferred to avoid interpolation when using the percentiles as confidence interval limits [@mackinnon2006]. There are several methods of computing bootstrap confidence intervals, but the bias-corrected accelerated (BCa) bootstrap confidence interval often performs best [@austin2014; @carpenter2000] and is easy to implement, simply by setting `type = "bca"` in the call to `boot.ci()` after running `boot()`\^[Sometimes, an error will occur with this method, which usually means more bootstrap replications are required. The number of replicates must be greater than the original sample size when using the full bootstrap and greater than the number of pairs/strata when using the block bootstrap.].
+With bootstrapping, more bootstrap replications are always better but can take time and increase the chances that at least one error will occur within the bootstrap analysis (e.g., a bootstrap sample with zero treated units or zero units with an event). In general, numbers of replications upwards of 999 are recommended, with values one less than a multiple of 100 preferred to avoid interpolation when using the percentiles as confidence interval limits [@mackinnon2006]. There are several methods of computing bootstrap confidence intervals, but the bias-corrected accelerated (BCa) bootstrap confidence interval often performs best [@austin2014; @carpenter2000] and is easy to implement, simply by setting `type = "bca"` in the call to `boot.ci()` after running `boot()`[^2].
+
+[^2]: Sometimes, an error will occur with this method, which usually means more bootstrap replications are required. The number of replicates must be greater than the original sample size when using the full bootstrap and greater than the number of pairs/strata when using the block bootstrap.
 
 ## Estimating Treatment Effects and Standard Errors After Matching
 
@@ -147,7 +163,7 @@ We will need to the following packages to perform the desired analyses:
 
 Of course, we also need `MatchIt` to perform the matching.
 
-```{r,message=FALSE}
+```{r,message=FALSE,warning=FALSE}
 library("MatchIt")
 library("lmtest")
 library("sandwich")
@@ -159,7 +175,9 @@ Other packages may be of use but are not used here. The `margins` package can be
 
 ### After Pair Matching Without Replacement
 
-Pair matching without replacement yields the simplest way to estimate treatment effects and standard errors. In general, whether a caliper, common support restriction, exact matching specification, or k:1 matching specification is used, estimating the effect in the matched dataset (i.e., the output of `match.data()`) is straightforward and involves fitting a model for the outcome that incorporates the matching weights\^[The matching weights are not necessary when performing 1:1 matching, but we include them here for generality. When weights are not necessary, including them does not affect the estimates. Because it may not always be clear when weights are required, we recommend always including them.].
+Pair matching without replacement yields the simplest way to estimate treatment effects and standard errors. In general, whether a caliper, common support restriction, exact matching specification, or k:1 matching specification is used, estimating the effect in the matched dataset (i.e., the output of `match.data()`) is straightforward and involves fitting a model for the outcome that incorporates the matching weights[^3].
+
+[^3]: The matching weights are not necessary when performing 1:1 matching, but we include them here for generality. When weights are not necessary, including them does not affect the estimates. Because it may not always be clear when weights are required, we recommend always including them.
 
 First, we will perform nearest 1:1 neighbor propensity score matching without replacement.
 
@@ -234,7 +252,8 @@ The value `t1*` in the `Bootstrap Statistics` table contains the effect estimate
 ```{r}
 #Linear model with covariates
 fit3 <- lm(Y_C ~ A + X1 + X2 + X3 + X4 + X5 + 
-             X6 + X7 + X8 + X9, data = md)
+             X6 + X7 + X8 + X9, data = md,
+           weights = weights)
 
 coeftest(fit3, vcov. = vcovCL, cluster = ~subclass)["A",,drop=FALSE]
 ```
@@ -432,9 +451,9 @@ fit1gm <- lm(Y_C ~ A, data = gm, weights = weights)
 coeftest(fit1gm, vcov. = vcovCL, cluster = ~subclass + id)
 ```
 
-Note that the effect estimates are identical; only the standard errors and p-values differ between the approaches[^1].
+Note that the effect estimates are identical; only the standard errors and p-values differ between the approaches[^4].
 
-[^1]: It is possible to exactly reproduce the `match.data()` standard error using the `get_matches()` data, but doing so may require some fiddling due to the defaults in `sandwich`.
+[^4]: It is possible to exactly reproduce the `match.data()` standard error using the `get_matches()` data, but doing so may require some fiddling due to the defaults in `sandwich`.
 
 **Using the bootstrap.** We can also use bootstrapping to estimate standard errors and confidence intervals. Although Abadie and Imbens [-@abadie2008] demonstrated analytically that bootstrap standard errors may be invalid for matching with replacement, simulation work by Hill and Reiter [-@hill2006] and Bodory et al. [-@bodory2020] has found that bootstrap standard errors are adequate and generally slightly conservative. Given this disagreement, it may be worth proceeding with caution when using bootstrapping to estimate standard errors after matching with replacement. Simulation experiments with matching with replacement have only considered the full bootstrap and found it to yield confidence intervals with approximately nominal coverage, so we recommend this approach over the block bootstrap for now and demonstrate it below.
 
@@ -673,7 +692,9 @@ knitr::opts_chunk$set(eval = TRUE)
 
 ### After Stratum Matching
 
-Stratum matching includes exact matching, coarsened exact matching, and propensity score subclassification. There are two natural ways to estimate marginal effects after stratum matching: the first is to estimate stratum-specific treatment effects and pool them, and the second is to use the stratum weights to estimate a single marginal effect. This latter approach is also known as marginal mean weighting through stratification (MMWS), and is described in detail by Hong [-@hong2010]\^[It is also known as fine stratification weighting, described by Desai et al. [-@desai2017]]. When done properly, both methods should yield similar or identical estimates of the treatment effect. MMWS is generally preferable because it is far simpler to implement and avoids issues of noncollapsibility with non-continuous outcomes. All of the methods described above for use with full matching also work with MMWS because the formation of the weights is the same; the only difference is that it is not appropriate to use cluster-robust standard errors with MMWS because of how few clusters are present.
+Stratum matching includes exact matching, coarsened exact matching, and propensity score subclassification. There are two natural ways to estimate marginal effects after stratum matching: the first is to estimate stratum-specific treatment effects and pool them, and the second is to use the stratum weights to estimate a single marginal effect. This latter approach is also known as marginal mean weighting through stratification (MMWS), and is described in detail by Hong [-@hong2010][^5]. When done properly, both methods should yield similar or identical estimates of the treatment effect. MMWS is generally preferable because it is far simpler to implement and avoids issues of noncollapsibility with non-continuous outcomes. All of the methods described above for use with full matching also work with MMWS because the formation of the weights is the same; the only difference is that it is not appropriate to use cluster-robust standard errors with MMWS because of how few clusters are present.
+
+[^5]: It is also known as fine stratification weighting, described by Desai et al. [-@desai2017].
 
 Unless exact matching is used, estimating stratum-specific treatment effects can be fraught because balance may not be achieved within strata even if balance is achieved across strata. Stratum-specific effects should be interpreted with caution. Stratum-specific effects are conditional effects, but conditional on stratum membership, which may not always be a useful conditioning variable.
 
@@ -696,9 +717,9 @@ head(md)
 
 For continuous outcomes, we can use either MMWS or compute the weighted average of within-subclass effects. First we illustrate weighting.
 
-**Without covariate adjustment.** With weighting, we can supply the weights that are in the `match.data()` output to a call to `lm()` to perform weighted least squares regression, as we did with full matching. We need a robust standard error estimator to account for the weights. Note that the subclasses don't even need to enter this analysis; they are fully incorporated through the MMWS weights[^2]. We use `vcovHC()` to estimate the regular robust standard error instead of the cluster-robust standard error used with other methods.
+**Without covariate adjustment.** With weighting, we can supply the weights that are in the `match.data()` output to a call to `lm()` to perform weighted least squares regression, as we did with full matching. We need a robust standard error estimator to account for the weights. Note that the subclasses don't even need to enter this analysis; they are fully incorporated through the MMWS weights[^6]. We use `vcovHC()` to estimate the regular robust standard error instead of the cluster-robust standard error used with other methods.
 
-[^2]: Including subclass as a main effect in the MMWS-weighted regression will not change the effect estimate but may slightly decrease its estimated standard error.
+[^6]: Including subclass as a main effect in the MMWS-weighted regression will not change the effect estimate but may slightly decrease its estimated standard error.
 
 ```{r}
 fit1 <- lm(Y_C ~ A, data = md, weights = weights)
@@ -756,7 +777,7 @@ To include covariates in the model when combining subclass-specific effect estim
 
 Using stratification with binary outcomes is slightly more complicated than it is with continuous outcomes. This is because the OR and RR are not collapsible, so the marginal OR and RR cannot be computed as the weighted average of the stratum-specific effects. Instead, one must compute the average of the predicted stratum-specific risks under each treatment and then compute the marginal effect estimate from these marginal risks. Although stratum-specific conditional ORs are valid effect measures, they generally do not correspond to meaningful subpopulation effects unless the strata themselves are meaningful subpopulations. After exact matching or coarsened exact matching, strata may be meaningful because they correspond to specific combinations of covariates that may come close to designating specific patient attributes, but after propensity score subclassification, the strata correspond to propensity score bins, which are generally not meaningful. Although some researchers have interpreted stratum-specific effects after propensity score subclassification as representing effects at various risks or propensities for treatment, because the primary purpose of the propensity score is as a balancing score and not as an accurate estimate of propensity for treatment, such an interpretation should be regarded with caution.
 
-Austin [@austin2007] compared several methods of propensity score adjustment for estimating marginal ORs, including two methods based on propensity score stratification, one of which involved the stratified Mantel-Haenszel estimator, and the other of which involved averaging stratum-specific effects. Both of these estimate a common conditional OR, not a marginal OR [@stampf2010], and both yielded positively biased effect estimates for non-null treatment effects, a common pattern when using conditional effect estimates as estimates of marginal effects. Given the difficulties in estimating marginal ORs after stratification, the most straightforward way to do so is to use MMWS. We do, however, also demonstrate estimating the marginal odds ratio and its standard error using bootstrapping in a way that can incorporate covariate adjustment and allow for differential effect modification across strata.
+Austin [@austin2007] compared several methods of propensity score adjustment for estimating marginal ORs, including two methods based on propensity score stratification, one of which involved the stratified Mantel-Haenszel estimator, and the other of which involved averaging stratum-specific effects. Both of these estimate a common conditional OR, not a marginal OR [@forbes2008; @stampf2010], and both yielded positively biased effect estimates for non-null treatment effects, a common pattern when using conditional effect estimates as estimates of marginal effects. Given the difficulties in estimating marginal ORs after stratification, the most straightforward way to do so is to use MMWS. We do, however, also demonstrate estimating the marginal odds ratio and its standard error using bootstrapping in a way that can incorporate covariate adjustment and allow for differential effect modification across strata.
 
 **Without covariate adjustment.** As before, we can supply the stratification weights to a weighted generalized linear model with just the treatment as the sole predictor, and the coefficient on treatment will correspond to a marginal treatment effect. We use `vcovHC()` to estimate the regular robust standard error.
 
@@ -831,7 +852,28 @@ The robust standard error must be used because of the MMWS weights.
 
 As discussed previously, with binary and time-to-event outcomes, marginal and conditional effects generally differ. Though we have primarily focused on marginal effects, we offer some guidance here on estimating conditional effect as well. Estimating conditional effects typically involves modeling the outcome, and inferences are dependent on this model being correct, even in the presence is perfect covariate balance. Matching provides robustness to some forms of misspecification, however, by limiting the range of the covariate space. So, even though outcome modeling is required, matching prior to modeling the outcome can be beneficial in terms of reducing bias due to model misspecification.
 
-On some effect measures, conditional effects typically vary depending on the covariate values at which the conditional effect is to be estimated; for example, the decrease in the risk of death (i.e., on the RD scale) corresponding to receipt of a treatment for a patient with a high baseline risk of death will by higher than that for a patient with a low baseline risk of death. In this sense, there is necessarily effect modification of the RD by baseline risk (which depends on a patient's covariate values). Similarly, for an exposure that increases the risk by a factor (e.g., doubles the risk, for a RR of 2), a patient with a high baseline risk cannot experience the same change in risk as a patient with a low baseline risk could; for example, a RR of 2 is impossible for a patient with a baseline risk of .6 but is certainly plausible for a patient with a baseline risk of .02. In this sense, there is necessarily effect modification of the RR by baseline risk.
+On some effect measures, conditional effects typically vary depending on the covariate values at which the conditional effect is to be estimated; for example, the decrease in the risk of death (i.e., on the RD scale) corresponding to receipt of a treatment for a patient with a high baseline risk of death will by higher than that for a patient with a low baseline risk of death. In this sense, there is necessarily effect modification of the RD by baseline risk (which depends on a patient's covariate values). Similarly, for an exposure that increases the risk by a factor (e.g., doubles the risk, for a RR of 2), a patient with a high baseline risk cannot experience the same change in risk as a patient with a low baseline risk could; for example, a RR of 2 is impossible for a patient with a baseline risk of .6 but is certainly plausible for a patient with a baseline risk of .02. In this sense, there is necessarily effect modification of the RR by baseline risk. This is not true for the OR; it is plausible that the effect on the OR scale could be consistent across levels of levels of the predictors because any OR is compatible with possible baselines risks. For this reason, we only consider estimating the conditional OR and not other effect measures.
+
+Although several methods exist for estimating conditional ORs after matching or subclassification, the one that generally works well is to run a logistic regression of the outcome on the treatment and covariates and use the coefficient on treatment as an estimate of the effect on the log OR scale. We demonstrate this below using full matching for the ATT:
+
+```{r}
+mF <- matchit(A ~ X1 + X2 + X3 + X4 + X5 + 
+                 X6 + X7 + X8 + X9, data = d,
+              method = "full", estimand = "ATT")
+
+md <- match.data(mF)
+
+fitcond <- lm(Y_B ~ A + X1 + X2 + X3 + X4 + X5 + 
+                 X6 + X7 + X8 + X9, data = md, 
+             weights = weights)
+
+coeftest(fitcond, vcov. = vcovCL, cluster = ~subclass)["A",,drop = FALSE]
+exp(coef(fitcond)["A"])
+```
+
+As with other covariate-adjusted models, it is important not to interpret the coefficients on covariates other than treatment to avoid committing the table 2 fallacy. Other causes of the outcome can be included in the outcome model even if they were not the focus of matching as long as they are not (even possibly) caused by the treatment.
+
+Alternative methods of estimating conditional effects include conditional logistic regression after matching and estimating stratum-specific effects after subclassification. We recommend using covariate-adjusted logistic regression models instead because the conditional effect is better defined (i.e., conditional on the specific covariates included in the model) and depends less on the estimand targeted [@forbes2008].
 
 ### Reporting Results
 
@@ -871,35 +913,7 @@ The following methods estimate **conditional effects** for binary or survival ou
 
 In addition, with continuous outcomes, conditional effects can be mistakenly interpreted as marginal effect estimates when treatment-covariate interactions are present in the outcome model. If the covariates are not centered at their mean in the target population (e.g., the treated group for the ATT, the full sample for the ATE, or the remaining matched sample for an ATM), the coefficient on treatment will not correspond to the marginal effect in the target population; it will correspond to the effect of treatment when the covariate values are equal to zero, which may not be meaningful or plausible. Marginal effects procedures (e.g., using the `margins` package or manually with bootstrapping as demonstrated above) are always the safest way to include covariates in the outcome model, especially in the presence of treatment-covariate interactions. Appropriately centering the covariates is a shortcut that is required when using the coefficient on treatment as a marginal effect estimate for continuous outcomes (demonstrated previously for full matching).
 
-## References
-
-Abadie, A., & Imbens, G. W. (2008). On the Failure of the Bootstrap for Matching Estimators. Econometrica, 76(6), 1537--1557. JSTOR.
-
-Austin, P. C. (2007). The performance of different propensity score methods for estimating marginal odds ratios. Statistics in Medicine, 26(16), 3078--3094. <https://doi.org/10.1002/sim.2781>
-
-Austin, P. C. (2013). The performance of different propensity score methods for estimating marginal hazard ratios. Statistics in Medicine, 32(16), 2837--2849. <https://doi.org/10.1002/sim.5705>
-
-Austin, P. C. (2014). The use of propensity score methods with survival or time-to-event outcomes: Reporting measures of effect similar to those used in randomized experiments. Statistics in Medicine, 33(7), 1242--1258. <https://doi.org/10.1002/sim.5984>
-
-Austin, P. C., & Small, D. S. (2014). The use of bootstrapping when using propensity-score matching without replacement: A simulation study. Statistics in Medicine, 33(24), 4306--4319. <https://doi.org/10.1002/sim.6276>
-
-Austin, P. C., & Stuart, E. A. (2015). Optimal full matching for survival outcomes: A method that merits more widespread use. Statistics in Medicine, 34(30), 3949--3967. <https://doi.org/10.1002/sim.6602>
-
-Austin, P. C., & Stuart, E. A. (2017a). Estimating the effect of treatment on binary outcomes using full matching on the propensity score. Statistical Methods in Medical Research, 26(6), 2505--2525. <https://doi.org/10.1177/0962280215601134>
-
-Austin, P. C., & Stuart, E. A. (2017b). The performance of inverse probability of treatment weighting and full matching on the propensity score in the presence of model misspecification when estimating the effect of treatment on survival outcomes. Statistical Methods in Medical Research, 26(4), 1654--1670. <https://doi.org/10.1177/0962280215584401>
-
-Austin, P. C., Thomas, N., & Rubin, D. B. (2020). Covariate-adjusted survival analyses in propensity-score matched samples: Imputing potential time-to-event outcomes. Statistical Methods in Medical Research, 29(3), 728--751. <https://doi.org/10.1177/0962280218817926>
-
-Bodory, H., Camponovo, L., Huber, M., & Lechner, M. (2020). The Finite Sample Performance of Inference Methods for Propensity Score Matching and Weighting Estimators. Journal of Business & Economic Statistics, 38(1), 183--200. <https://doi.org/10.1080/07350015.2018.1476247>
-
-Hill, J., & Reiter, J. P. (2006). Interval estimation for treatment effects using propensity score matching. Statistics in Medicine, 25(13), 2230--2256. <https://doi.org/10.1002/sim.2277>
-
-Hong, G. (2010). Marginal mean weighting through stratification: Adjustment for selection bias in multilevel data. Journal of Educational and Behavioral Statistics, 35(5), 499--531. <https://doi.org/10.3102/1076998609359785>
-
-Nguyen, T.-L., Collins, G. S., Spence, J., Daurès, J.-P., Devereaux, P. J., Landais, P., & Le Manach, Y. (2017). Double-adjustment in propensity score matching analysis: Choosing a threshold for considering residual imbalance. BMC Medical Research Methodology, 17, 78. <https://doi.org/10.1186/s12874-017-0338-0>
-
-# Code to Generate Data used in Examples
+## Code to Generate Data used in Examples
 
 ```{r, eval = FALSE}
 #Generatng data similar to Austin (2009) for demonstrating treatment effect estimation
@@ -965,3 +979,5 @@ Y_S <- gen_Y_S(A, X)
 
 d <- data.frame(A, X, Y_C, Y_B, Y_S)
 ```
+
+## References

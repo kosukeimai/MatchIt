@@ -16,9 +16,20 @@ link-citations: true
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE, message = FALSE,
                       fig.width=7, fig.height=5)
-options(width = 200)
+options(width = 200, digits = 4)
 ```
 
+```{=html}
+<style>
+pre {
+  overflow-x: auto;
+}
+pre code {
+  word-wrap: normal;
+  white-space: pre;
+}
+</style>
+```
 ## Introduction
 
 Covariate balance is the degree to which the distribution of covariates is similar across levels of the treatment. It has three main roles in causal effect estimation using matching: 1) as a target to optimize with matching, 2) as a method of assessing the quality of the resulting matches, and 3) as evidence to an audience that the estimated effect is close to the true effect. When covariate balance is achieved, the resulting effect estimate is less sensitive to model misspecification and ideally close to true treatment effect. The benefit of randomization is that covariate balance is achieved automatically (in expectation), which is why unadjusted effects estimated from randomized trial data (in the absence of drop-out) can be validly interpreted as causal effects. When using matching to recover causal effect estimates form observational data, balance is not guaranteed and must be assessed.
@@ -91,6 +102,8 @@ When `summary()` is called on a `matchit` object, several tables of information 
 
 [^1]: Note that versions of `MatchIt` before 4.0.0 had `standardize` set to `FALSE` by default.
 
+In addition, the arguments `un` and `improvement` control whether balance prior to matching should be displayed and whether the percent balance improvement after matching should be displayed. These can be set to `FALSE` to reduce the output.
+
 Below, we call `summary.matchit()` with `addlvariables` to display balance on covariates and a few functions of them in the matched sample. In particular, we request balance on the square of `age`, the variables representing whether `re74` and `re75` were equal to 0, and the interaction between `educ` and `race`.
 
 ```{r}
@@ -98,15 +111,15 @@ summary(m.out, addlvariables = ~ I(age^2) + I(re74==0) +
           I(re75==0) + educ:race)
 ```
 
-Let's examine the output in detail. The first table (`Summary of Balance for All Data`) provides balance in the sample prior to matching. The included statistics are the mean of the covariates in the treated group (`Means Treated`), the mean of the covariate in the control group (`Means Control`), the SMDs (`Std. Mean Diff.`), the variance ratio (`Var. Ratio`), the average distance between the eCDFs of the covariate across the groups (`eCDF Mean`), and the largest distance between the eCDFs (`eCDF Max`).
+Let's examine the output in detail. The first table (`Summary of Balance for All Data`) provides balance in the sample prior to matching. The included statistics are the mean of the covariates in the treated group (`Means Treated`), the mean of the covariate in the control group (`Means Control`), the SMDs (`Std. Mean Diff.`), the variance ratio (`Var. Ratio`), the average distance between the eCDFs of the covariate across the groups (`eCDF Mean`), and the largest distance between the eCDFs (`eCDF Max`). Setting `un = FALSE` would have suppressed the creation of this table.
 
 The second table (`Summary of Balance for Matched Data`) contains all the same statistics in the matched sample. Because we implicitly request pair distance, an additional column for standardized pair distances (`Std. Pair Dist.`) is displayed.
 
-The third table (`Percent Balance Improvement`) contains the percent balance improvement for each covariate. This is computed as $100\frac{|\theta_M| - |\theta_U|}{|\theta_U|}$, where $\theta_M$ is a given balance statistic in the matched sample and $\theta_U$ is a the same balance statistic in the unmatched sample. Values between 0 and 100 indicate that balance improved after matching as measured by the statistic; values less than 0 indicate that balance got worse after matching. When balance is good on a covariate prior to matching, it can sometimes look like balance got a lot worse after matching even though the balance statistic is quite low, so these values should not be taken too seriously and should be used primarily as heuristics.
+The third table (`Percent Balance Improvement`) contains the percent balance improvement for each covariate. This is computed as $100\frac{|\theta_M| - |\theta_U|}{|\theta_U|}$, where $\theta_M$ is a given balance statistic in the matched sample and $\theta_U$ is a the same balance statistic in the unmatched sample. Values between 0 and 100 indicate that balance improved after matching as measured by the statistic; values less than 0 indicate that balance got worse after matching. When balance is good on a covariate prior to matching, it can sometimes look like balance got a lot worse after matching even though the balance statistic is quite low, so these values should not be taken too seriously and should be used primarily as heuristics. Setting `un = FALSE` or `improvement = FALSE` would have suppressed the creation of this table.
 
 The final table (`Sample Sizes`) contains the sizes of the samples before (`All`) and after (`Matched`) matching, as well as the number of units left unmatched (`Unmatched`) and the number of units dropped due to a common support restriction (`Discarded`).
 
-The SMDs are computed as the difference mean divided by a standardization factor computed in the **unmatched** sample. An SMD close to 0 indicates good balance; although a number of recommendations for acceptable values have appeared in the literature, we recommend absolute values less than .1 and less than .05 for potentially prognostically important variables.
+The SMDs are computed as the difference mean divided by a standardization factor computed in the **unmatched** sample. An absolute SMD close to 0 indicates good balance; although a number of recommendations for acceptable values have appeared in the literature, we recommend absolute values less than .1 and less than .05 for potentially prognostically important variables.
 
 The variance ratios are computed as the ratio of the variance of the treated group to that of the control group for each covariate. Variance ratios are not computed for binary covariates because they are a function of the prevalence in each group, which is captured in the mean difference and eCDF statistics. A variance ratio close to 1 indicates good balance; a commonly used recommendation is for variance ratios to be between .5 and 2.
 
@@ -173,10 +186,16 @@ s.out <- matchit(treat ~ age + educ + race + married +
 s.out
 ```
 
-When using `summary()`, the default is to display balance only in aggregate using the subclassification weights. An additional option in `summary()`, `subclass`, allows us to request balance for individual subclasses. `subclass` can be set to `TRUE` to display balance for all subclasses or the indices of individual subclasses for which balance is to be displayed. Below we call `summary()` and request balance to be displayed on all subclasses:
+When using `summary()`, the default is to display balance only in aggregate using the subclassification weights. This balance output looks similar to that for other matching methods.
 
 ```{r}
-summary(s.out, subclass = TRUE)
+summary(s.out)
+```
+
+An additional option in `summary()`, `subclass`, allows us to request balance for individual subclasses. `subclass` can be set to `TRUE` to display balance for all subclasses or the indices of individual subclasses for which balance is to be displayed. Below we call `summary()` and request balance to be displayed on all subclasses (setting `un = FALSE` to suppress balance in the original sample):
+
+```{r}
+summary(s.out, subclass = TRUE, un = FALSE)
 ```
 
 We can plot the standardized mean differences in a Love plot that also displays balance for the subclasses using `plot.summary.matchit()` on a `summary.matchit()` object with `subclass = TRUE`.
