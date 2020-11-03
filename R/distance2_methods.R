@@ -39,7 +39,7 @@ distance2gam <- function(formula, data, link = "logit", ...) {
   if (linear) pred <- predict(res, type = "link")
   else pred <- predict(res, type = "response")
 
-  return(list(model = res, distance = pred))
+  return(list(model = res, distance = as.numeric(pred)))
 }
 
 #distance2rpart-----------------
