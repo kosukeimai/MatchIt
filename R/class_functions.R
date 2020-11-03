@@ -195,7 +195,7 @@ print.matchit <- function(x, ...) {
   nm <- is.null(x[["method"]])
   cat("A matchit object")
   cat(paste0("\n - method: ", info.to.method(info)))
-  if (!is.null(x[["distance"]])) {
+  if (!is.null(x[["distance"]]) || info$mahalanobis) {
     cat("\n - distance: ")
     if (info$mahalanobis) cat("Mahalanobis")
     if (info$distance != "mahalanobis") {
