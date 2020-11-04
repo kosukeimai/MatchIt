@@ -156,3 +156,4 @@ Statistical Software*, 42(8).
 This citation can also be accessed using `citation("MatchIt")` in R. For
 reproducibility purposes, it is also important to include the version
 number for the version used.
+
