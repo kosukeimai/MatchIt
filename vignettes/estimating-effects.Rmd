@@ -6,7 +6,7 @@ output:
     html_vignette:
         toc: true
 vignette: >
-  %\VignetteIndexEntry{Estimating Effects}
+  %\VignetteIndexEntry{Estimating Effects After Matching}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 bibliography: references.bib

@@ -6,7 +6,7 @@ output:
     html_vignette:
         toc: true
 vignette: >
-  %\VignetteIndexEntry{Sampling Weights}
+  %\VignetteIndexEntry{Matching with Sampling Weights}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 bibliography: references.bib
