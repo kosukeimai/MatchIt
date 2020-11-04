@@ -25,7 +25,8 @@ library("MatchIt")
 data("lalonde", package = "MatchIt")
 
 # Nearest neighbor PS matching with replacement and a caliper
-m.out <- matchit(treat ~ age + educ + race + married + nodegree + re74 + re75, data = lalonde, ratio = 2, caliper = 0.025)
+m.out <- matchit(treat ~ age + educ + race + married + nodegree + 
+                   re74 + re75, data = lalonde, ratio = 2, caliper = 0.025)
 ```
 
 Printing the `MatchIt` object provides details of the kind of matching
