@@ -5,8 +5,8 @@
 
 [![Build
 Status](https://travis-ci.org/kosukeimai/MatchIt.svg?branch=master)](https://travis-ci.org/kosukeimai/MatchIt)
-[![CRAN\_Status\_Badge](http://www.r-pkg.org/badges/version/MatchIt)](https://cran.r-project.org/package=MatchIt)
-![CRAN downloads](http://cranlogs.r-pkg.org/badges/grand-total/MatchIt)
+[![CRAN\_Status\_Badge](https://www.r-pkg.org/badges/version/MatchIt)](https://cran.r-project.org/package=MatchIt)
+![CRAN downloads](https://cranlogs.r-pkg.org/badges/grand-total/MatchIt)
 
 `MatchIt` provides a simple and straightforward interface to various
 methods of matching for covariate balance in observational studies.
@@ -24,9 +24,9 @@ with a propensity score caliper and assessing overlap and balance:
 library("MatchIt")
 data("lalonde", package = "MatchIt")
 
-# Nearest neighbor PS matching with replacement and a caliper
-m.out <- matchit(treat ~ age + educ + race + married + nodegree + 
-                   re74 + re75, data = lalonde, ratio = 2, caliper = 0.025)
+#Nearest neighbor PS matching with replacement and a caliper
+m.out <- matchit(treat ~ age + educ + race + married + nodegree + re74 + re75, 
+                 data = lalonde, ratio = 2, caliper = .025)
 ```
 
 Printing the `MatchIt` object provides details of the kind of matching
@@ -49,7 +49,7 @@ We can view propensity score overlap and see which observations were
 matched and unmatched using a jitter plot:
 
 ``` r
-# Checking for PS overlap
+#Checking for PS overlap
 plot(m.out, type = "jitter", interactive = FALSE)
 ```
 
@@ -63,7 +63,7 @@ We can check covariate balance for the original and matched samples
 using `summary()`:
 
 ``` r
-# Checking balance before and after matching:
+#Checking balance before and after matching:
 summary(m.out)
 ```
 
@@ -128,7 +128,7 @@ mean differences in a Love plot for a clean, visual display of balance
 across the sample:
 
 ``` r
-# Plot balance
+#Plot balance
 plot(summary(m.out))
 ```
 
@@ -157,4 +157,3 @@ Statistical Software*, 42(8).
 This citation can also be accessed using `citation("MatchIt")` in R. For
 reproducibility purposes, it is also important to include the version
 number for the version used.
-
