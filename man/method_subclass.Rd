@@ -66,7 +66,7 @@ additional arguments that control the subclassification:
 The arguments \code{exact}, \code{mahvars}, \code{replace}, \code{m.order}, \code{caliper} (and related arguments), and \code{ratio} are ignored with a warning.
 }
 \section{Outputs}{
-All outputs described in \code{\link{matchit}} are returned with \code{method = "subclass"} except that \code{match.matrix} is excluded and an additional component, \code{q.cut}, is included, containing a vector of the distance measure cutpoints used to define the subclasses. Note that when \code{min.n > 0}, the subclass assignments may not strictly obey the quantiles listed in \code{q.cut}.
+All outputs described in \code{\link{matchit}} are returned with \code{method = "subclass"} except that \code{match.matrix} is excluded and two additional component, \code{q.cut} and \code{qn}, are included, containing a vector of the distance measure cutpoints used to define the subclasses and a matrix of the subclass sample sizes, respectively. Note that when \code{min.n > 0}, the subclass assignments may not strictly obey the quantiles listed in \code{q.cut}.
 }
 \details{
 After subclassification, effect estimates can be computed separately in the subclasses and combined, or a single marginal effect can be estimated by using the weights in the full sample. When using the weights, the method is sometimes referred to as marginal mean weighting through stratification (MMWS; Hong, 2010) or fine stratification weighting (Desai et al., 2017). The weights can be interpreted just like inverse probability weights.
@@ -86,9 +86,7 @@ It may be a good idea to cite Hong (2010) or Desai et al. (2017) if the treatmen
 Desai, R. J., Rothman, K. J., Bateman, B. . T., Hernandez-Diaz, S., & Huybrechts, K. F. (2017). A Propensity-score-based Fine Stratification Approach for Confounding Adjustment When Exposure Is Infrequent: Epidemiology, 28(2), 249–257. \doi{10.1097/EDE.0000000000000595}
 
 Hong, G. (2010). Marginal mean weighting through stratification: Adjustment for selection bias in multilevel data. Journal of Educational and Behavioral Statistics, 35(5), 499–531. \doi{10.3102/1076998609359785}
-
 }
-
 \seealso{
 \code{\link{matchit}} for a detailed explanation of the inputs and outputs of a call to \code{matchit}.
 
@@ -108,8 +106,8 @@ summary(s.out1, subclass = TRUE)
 # and at least 2 units in each group per subclass
 s.out2 <- matchit(treat ~ age + educ + race + nodegree +
                     married + re74 + re75, data = lalonde,
-                  method = "subclass", estimand = "ATE",
-                  subclass = 10,min.n = 2)
+                  method = "subclass", subclass = 10,
+                  estimand = "ATE", min.n = 2)
 s.out2
 summary(s.out2)
 }

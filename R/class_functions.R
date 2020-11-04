@@ -755,8 +755,7 @@ summary.matchit.subclass <- function(object, interactions = FALSE,
   }
 
   ## Sample size
-  qn <- table(treat[!object$discarded], subclass[!object$discarded])
-  dimnames(qn) <- list(c("Control", "Treated"), subclasses)
+  qn <- object$qn
 
   if (subs) {
     small.subclass.control <- which.subclass[qn["Control", as.character(which.subclass)] <= 1]
@@ -771,16 +770,6 @@ summary.matchit.subclass <- function(object, interactions = FALSE,
       else warning(paste0("Not enough treated units in subclasses ", word_list(small.subclass.treated), "."), call.= FALSE)
     }
   }
-
-  if (any(object$discarded)) {
-    qn <- cbind(qn, table(treat[object$discarded]))
-    colnames(qn)[ncol(qn)] <- "Discarded"
-  }
-  qn <- rbind(qn, colSums(qn))
-  rownames(qn)[nrow(qn)] <- "Total"
-
-  qn <- cbind(qn, rowSums(qn))
-  colnames(qn)[ncol(qn)] <- "All"
 
   ## output
   res <- list(call=object$call, sum.all = sum.all, sum.across = sum.matched,

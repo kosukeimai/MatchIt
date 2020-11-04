@@ -117,7 +117,7 @@ For matching without replacement, each unit is assigned to a subclass, which rep
 
 For matching with replacement, units are not assigned to unique subclasses. For the ATT, each treated unit gets a weight of 1. Each control unit is weighted as the sum of the inverse of the number of control units matched to the same treated unit across its matches. For example, if a control unit was matched to a treated unit that had two other control units matched to it, and that same control was matched to a treated unit that had one other control unit matched to it, the control unit in question would get a weight of 1/3 + 1/2 = 5/6. For the ATC, the same is true with the treated and control labels switched. The weights are computed using the \code{match.matrix} component of the \code{matchit} output object.
 
-In each treatment group, weights are divided by the sum of the weights in that treatment group to make the weights sum to the number of units in that treatment group. If sampling weights are included through the \code{s.weights} argument, they will be included in the \code{matchit} output object but not incorporated into the matching weights. When estimating a treatment effect, multiply the matching weights by the sampling weights.
+In each treatment group, weights are divided by the mean of the nonzero weights in that treatment group to make the weights sum to the number of units in that treatment group. If sampling weights are included through the \code{s.weights} argument, they will be included in the \code{matchit} output object but not incorporated into the matching weights. When estimating a treatment effect, multiply the matching weights by the sampling weights.
 }
 
 }
@@ -141,7 +141,7 @@ When \code{method} is something other than \code{"subclass"}, a \code{matchit} o
   \item{mahvars}{a one-sided formula containing the variables, if any, supplied to \code{mahvars}.}
   \item{nn}{a matrix of the sample sizes of the treated and control groups before and after matching. See \code{\link{summary.matchit}} for details.}
 
-When \code{method = "subclass"}, a \code{matchit.subclass} object with the same components as above except that \code{match.matrix} is excluded and an additional component, \code{q.cut}, is included, containing a vector of the distance measure cutpoints used to define the subclasses. See \code{\link{method_subclass}} for details.
+When \code{method = "subclass"}, a \code{matchit.subclass} object with the same components as above except that \code{match.matrix} is excluded and two additional components, \code{q.cut} and \code{qn}, are included, containing a vector of the distance measure cutpoints used to define the subclasses and a matrix of the subclass sample sizes, respectively. See \code{\link{method_subclass}} for details.
 }
 \references{
 Ho, D. E., Imai, K., King, G., & Stuart, E. A. (2007). Matching as Nonparametric Preprocessing for Reducing Model Dependence in Parametric Causal Inference. Political Analysis, 15(3), 199–236. \doi{10.1093/pan/mpl013}

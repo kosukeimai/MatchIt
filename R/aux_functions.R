@@ -738,6 +738,25 @@ nn <- function(treat, weights, discarded, s.weights) {
   return(n)
 }
 
+#Compute subclass sample sizes
+qn <- function(treat, subclass, discarded) {
+
+  qn <- table(treat[!discarded], subclass[!discarded])
+  dimnames(qn) <- list(c("Control", "Treated"), levels(subclass))
+
+  if (any(discarded)) {
+    qn <- cbind(qn, table(treat[discarded]))
+    colnames(qn)[ncol(qn)] <- "Discarded"
+  }
+  qn <- rbind(qn, colSums(qn))
+  rownames(qn)[nrow(qn)] <- "Total"
+
+  qn <- cbind(qn, rowSums(qn))
+  colnames(qn)[ncol(qn)] <- "All"
+
+  return(qn)
+}
+
 #Used to load backports functions. No need to touch, but must always be included somewhere.
 .onLoad <- function(libname, pkgname) {
   backports::import(pkgname)
