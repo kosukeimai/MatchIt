@@ -16,6 +16,7 @@ matchit <- function(formula, data = NULL, method = "nearest", distance = "glm",
   treat.mf <- model.frame(treat.form, data = data, na.action = "na.pass")
   treat <- model.response(treat.mf)
   if (anyNA(treat)) stop("Missing values are not allowed in the treatment.", call. = FALSE)
+  if (length(unique(treat)) != 2) stop("The treatment must be a binary variable.", call. = FALSE)
   treat <- binarize(treat) #make 0/1
   names(treat) <- rownames(treat.mf)
 
@@ -62,7 +63,7 @@ matchit <- function(formula, data = NULL, method = "nearest", distance = "glm",
     fn2 <- "matchit2null"
   }
   else {
-    stop("method must be the name of a supported matching method. See ?matchit for allowable options.", call. = FALSE)
+    stop("'method' must be the name of a supported matching method. See ?matchit for allowable options.", call. = FALSE)
   }
 
   #Process distance and discard

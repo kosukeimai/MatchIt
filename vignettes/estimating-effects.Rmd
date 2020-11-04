@@ -192,7 +192,7 @@ md <- match.data(mNN)
 head(md)
 ```
 
-Typically one would assess balance and ensure that this matching specification works, but we will skip that step here to focus on effect estimation. See `vignette("MatchIt")` and `vignette("Assessing Balance")` for more information on this necessary step. Because we did not use a caliper, the target estimand is the ATT.
+Typically one would assess balance and ensure that this matching specification works, but we will skip that step here to focus on effect estimation. See `vignette("MatchIt")` and `vignette("assessing-balance")` for more information on this necessary step. Because we did not use a caliper, the target estimand is the ATT.
 
 #### For continuous outcomes
 

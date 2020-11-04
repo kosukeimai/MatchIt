@@ -99,7 +99,7 @@ The \code{coef} and \code{vcov} methods extract the effect estimates and covaria
 Noah Greifer
 }
 \note{
-Although many combinations of standard error estimates and matching methods are supported, many of them have not been statistically validated. See \code{vignette("Estimating Effects")} for a summary of the research on estimating effects and their standard errors after various forms of matching.
+Although many combinations of standard error estimates and matching methods are supported, many of them have not been statistically validated. See \code{vignette("estimating-effects")} for a summary of the research on estimating effects and their standard errors after various forms of matching.
 }
 
 \seealso{
@@ -120,6 +120,6 @@ summary(m.out)
 est(re78 ~ treat + age + educ + married + nodegree +
        race + re74 + re75, m.out)
 
-#See vignette("Estimating Effects") for examples with
+#See vignette("estimating-effects") for examples with
 #other outcome types
 }

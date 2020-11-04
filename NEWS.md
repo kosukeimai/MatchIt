@@ -16,7 +16,7 @@ output:
 
 * `print.matchit()` has completely changed and now prints information about the matching type and specifications. `summary.matchit()` contains all the information that was in the old `print` method.
 
-* A new function, `add_s.weights()`, adds sampling weights to `matchit` objects for use in balance checking and effect estimation. Sampling weights can also be directly supplied to `matchit()` through the new `s.weights` argument. A new vignette describing how to using `MatchIt` with sampling weights is available at `vignette("Sampling Weights")`.
+* A new function, `add_s.weights()`, adds sampling weights to `matchit` objects for use in balance checking and effect estimation. Sampling weights can also be directly supplied to `matchit()` through the new `s.weights` argument. A new vignette describing how to using `MatchIt` with sampling weights is available at `vignette("sampling-weights")`.
 
 * The included dataset, `lalonde`, now uses a `race` variable instead of separate `black` and `hispan` variables. This makes it easier to see how character variables are treated by `MatchIt` functions.
 
