@@ -1,56 +1,83 @@
 \name{match.data}
-
 \alias{match.data}
+\alias{get_matches}
 
-\title{Output Matched Data Sets}
-
-\description{\code{match.data} outputs matched data sets from
-\code{matchit()}.
+\title{
+Construct a matched dataset from a \code{matchit} object
 }
-
+\description{
+\code{match.data} and \code{get_matches} create a data frame with additional variables for the distance measure, matching weights, and subclasses after matching. This dataset can be used to estimate treatment effects after matching or subclassification. \code{get_matches} is most useful after matching with replacement; otherwise, \code{match.data} is more flexible. See Details below for the difference between them.
+}
 \usage{
-  match.data(object, group="all", distance = "distance",
-weights = "weights", subclass = "subclass")
+match.data(object, group = "all", distance = "distance",
+           weights = "weights", subclass = "subclass",
+           data = NULL, include.s.weights = TRUE,
+           drop.unmatched = TRUE)
+
+get_matches(object, distance = "distance",
+            weights = "weights", subclass = "subclass",
+            id = "id", data = NULL, include.s.weights = TRUE)
 }
 
 \arguments{
-  \item{object}{The output object from \code{matchit}. This is
-    a required input.} 
-  \item{group}{This argument specifies for which matched group the user
-    wants to extract the data. Available options are \code{"all"} (all
-    matched units), \code{"treat"} (matched units in the treatment
-    group), and \code{"control"} (matched units in the control
-    group). The default is \code{"all"}.}
-  \item{distance}{This argument specifies the variable name used to
-    store the distance measure. The default is \code{"distance"}.}
-  \item{weights}{This argument specifies the variable name used to store
-    the resulting weights from matching. The default is \code{"weights"}.}
-  \item{subclass}{This argument specifies the variable name used to store the
-    subclass indicator. The default is \code{"subclass"}.}
+  \item{object}{
+a \code{matchit} object; the output of a call to \code{\link{matchit}}.
 }
+  \item{group}{
+which group should comprise the matched dataset: \code{"all"} for all units, \code{"treated"} for just treated units, or \code{"control"} for just control units. Default is \code{"all"}.
+}
+  \item{distance}{
+a string containing the name that should be given to the variable containing the distance measure in the data frame output. Default is \code{"distance"}, but \code{"prop.score"} or similar might be a good alternative if propensity scores were used in matching. Ignored if a distance measure was not supplied or estimated in the call to \code{matchit}.
+}
+  \item{weights}{
+a string containing the name that should be given to the variable containing the matching weights in the data frame output. Default is \code{"weights"}.
+}
+  \item{subclass}{
+a string containing the name that should be given to the variable containing the subclasses or matched pair membership in the data frame output. Default is \code{"subclass"}.
+}
+  \item{id}{
+a string containing the name that should be given to the variable containing the unit IDs in the data frame output. Default is \code{"id"}. Only used with \code{get_matches}; for \code{match.data}, the units IDs are stored in the row names of the returned data frame.
+}
+  \item{data}{
+a data frame containing the original dataset to which the computed output variables (\code{distance}, \code{weights}, and/or \code{sublcass}) should be appended. If empty, \code{match.data} will attempt to find the dataset using the environment of the \code{matchit} object, which can make this unreliable if \code{match.data} is used in a fresh R session or if the original dataset changed between calling \code{matchit} and \code{match.data}. It is always safest to supply a data frame, which should have as many rows as and be in the same order as the data in the original call to \code{matchit}. The same goes for \code{get_matches}, which calls \code{match.data} internally.
+}
+  \item{include.s.weights}{
+\code{logical}; whether to multiply the estimated weights by the sampling weights supplied to \code{matchit()}, if any. Default is \code{TRUE}. If \code{FALSE}, the weights in the \code{match.data} or \code{get_matches} output should be multiplied by the sampling weights before being supplied to the function estimating the treatment effect in the matched data.
+}
+  \item{drop.unmatched}{
+\code{logical}; whether the returned data frame should contain all units (\code{FALSE}) or only units that were matched (i.e., have a matching weight greater than zero) (\code{TRUE}). Default is \code{TRUE} to drop unmatched units.
+}
+}
+\details{
+\code{match.data} creates a dataset with one row per unit. It will be identical to the dataset supplied except that several new columns will be added containing information related to the matching. When \code{drop.unmatched = TRUE}, the default, units with weights of zero, which are those units that were discarded by common support or the caliper or were simply not matched, will be dropped from the dataset, leaving only the subset of matched units. The idea is for the output of \code{match.data} to be used as the dataset input in calls to \code{glm} or similar to estimate treatment effects in the matched sample. Unless 1:1 matching without replacement was performed, it is important to include the weights in the estimation of the effect and its standard error. The subclasses, when created, can be used as fixed effects, random effects, or as clusters for clustered standard errors. Subclasses will only be included if there is a \code{subclass} component in the \code{matchit} object, which does not occur with matching with replacement, in which case \code{get_matches} should be used.
 
+\code{get_matches} is similar to \code{match.data}; the primary difference occurs when matching is performed with replacement, i.e., when units do not belong to a single matched pair. In this case, the output of \code{get_matches} will be a dataset that contains one row per unit for each pair they are a part of. For example, if matching was performed with replacement and a control unit was matched to two treated units, that control unit will have two rows in the output dataset, one for each pair it is a part of. Weights are computed for each row, and are equal to the inverse of the number of control units in each control unit's subclass. Unmatched units are dropped. An additional column with unit IDs will be created (named using the \code{id} argument) to identify when the same unit is present in multiple rows. This dataset structure allows for the inclusion of both subclass membership and repeated use of units, unlike the output of \code{match.data}, which lacks subclass membership when matching is done with replacement. A \code{match.matrix} component of the \code{matchit} object must be present to use \code{get_matches}; in some forms of matching, it is absent, in which case \code{match.data} should be used instead.
+}
 \value{
-  Returns a subset of the original data set sent to
-    \code{matchit()}, with just the matched units.  The data set also
-    contains the additional variables \code{distance}, \code{weights},
-    and \code{subclass}. The variable \code{distance} gives
-    the estimated distance measure, and \code{weights} gives the
-    weights for each unit, generated in the matching procedure.
-    The variable \code{subclass} gives the subclass
-    index for each unit (if applicable).
-    See the \url{http://gking.harvard.edu/matchit/} for the complete
-    documentation and type \code{demo(match.data)} at the R prompt to
-    see a demonstration of the code.
+A data frame containing the data supplied in the \code{data} argument or in the original call to \code{matchit} with the computed output variables appended as additional columns, named according the arguments above. For \code{match.data}, the \code{group} and \code{drop.unmatched} arguments control whether only subsets of the data are returned. See Details above for how \code{match.data} and \code{get_matches} differ. Note that \code{get_matches} sorts the data by subclass and treatment status, unlike \code{match.data}, which uses the order of the data.
+
+If \code{data} or the original dataset supplied to \code{matchit} was a \code{data.table} or \code{tbl}, the \code{match.data} output will have the same class, but the \code{get_matches} output will always be a base R \code{data.frame}.
 }
 
-\seealso{Please use \code{help.matchit} to access the matchit reference
-  manual.  The complete document is available online at
-  \url{http://gking.harvard.edu/matchit}.}
-
-\author{
-  Daniel Ho \email{daniel.ho@yale.edu}; Kosuke Imai
-  \email{kimai@princeton.edu}; Gary King
-  \email{king@harvard.edu}; Elizabeth Stuart \email{estuart@jhsph.edu}
+\seealso{
+\code{\link{matchit}}
 }
+\examples{
+data("lalonde")
 
-\keyword{methods}
+# 4:1 matching w/replacement
+m.out1 <- matchit(treat ~ age + educ + married +
+                    race + nodegree + re74 + re75,
+                  data = lalonde, replace = TRUE,
+                  caliper = .05, ratio = 4)
+
+m.data1 <- match.data(m.out1, data = lalonde,
+                      distance = "prop.score")
+dim(m.data1) #one row per matched unit
+head(m.data1, 10)
+
+g.matches1 <- get_matches(m.out1, data = lalonde,
+                          distance = "prop.score")
+dim(g.matches1) #multiple rows per matched unit
+head(g.matches1, 10)
+}

@@ -1,43 +1,142 @@
-#' @export
-match.data <- function(object, group = "all", distance = "distance",
-                       weights = "weights", subclass = "subclass") {
+match.data <- function(object, group = "all", distance = "distance", weights = "weights", subclass = "subclass",
+                       data = NULL, include.s.weights = TRUE, drop.unmatched = TRUE) {
 
-  if (!is.null(object$model)) {
-    env <- attributes(terms(object$model))$.Environment
-  } else {
-    env <- parent.frame()
+  if (!inherits(object, "matchit")) {
+    stop("'object' must be a matchit object, the output of a call to matchit().", call. = FALSE)
   }
-  data <- eval(object$call$data, envir = env)
+  if (is.null(data)) {
+    if (!is.null(object$model)) {
+      env <- attributes(terms(object$model))$.Environment
+    } else {
+      env <- parent.frame()
+    }
+    data <- eval(object$call$data, envir = env)
+    if (length(data) == 0) stop("A dataset could not be found. Please supply an argument to 'data' containing the original dataset used in the matching.", call. = FALSE)
+  }
+  else {
+    if (!is.data.frame(data)) {
+      if (is.matrix(data)) data <- as.data.frame.matrix(data)
+      else stop("'data' must be a data frame.", call. = FALSE)
+    }
+    if (nrow(data) != length(object$treat)) {
+      stop("'data' must have as many rows as there were units in the original call to matchit().", call. = FALSE)
+    }
+  }
+
+  if (!is.null(object$distance)) {
+    if (is.null(distance)) stop("The argument to 'distance' cannot be NULL.", call. = FALSE)
+    if (!is.atomic(distance) || !is.character(distance) || length(distance) != 1 || is.na(distance)) {
+      stop("The argument to 'distance' must be a string of length 1.", call. = FALSE)
+    }
+    if (distance %in% names(data)) {
+      stop(paste0("\"", distance, "\" is already the name of a variable in the data. Please choose another name for distance using the 'distance' argument."), call. = FALSE)
+    }
+    data[[distance]] <- object$distance
+  }
+
+  if (!is.null(object$weights)) {
+    if (is.null(weights)) stop("The argument to 'weights' cannot be NULL.", call. = FALSE)
+    if (!is.atomic(weights) || !is.character(weights) || length(weights) != 1 || is.na(weights)) {
+      stop("The argument to 'weights' must be a string of length 1.", call. = FALSE)
+    }
+    if (weights %in% names(data)) {
+      stop(paste0("\"", weights, "\" is already the name of a variable in the data. Please choose another name for weights using the 'weights' argument."), call. = FALSE)
+    }
+    data[[weights]] <- object$weights
+
+    if (!is.null(object$s.weights) && include.s.weights) {
+      data[[weights]] <- data[[weights]] * object$s.weights
+    }
+  }
+
+  if (!is.null(object$subclass)) {
+    if (is.null(subclass)) stop("The argument to 'subclass' cannot be NULL.", call. = FALSE)
+    if (!is.atomic(subclass) || !is.character(subclass) || length(subclass) != 1 || is.na(subclass)) {
+      stop("The argument to 'subclass' must be a string of length 1.", call. = FALSE)
+    }
+    if (subclass %in% names(data)) {
+      stop(paste0("\"", subclass, "\" is already the name of a variable in the data. Please choose another name for subclass using the 'subclass' argument."), call. = FALSE)
+    }
+    data[[subclass]] <- object$subclass
+  }
+
   treat <- object$treat
-  wt <- object$weights
-  vars <- names(data)
-  if (distance %in% vars)
-    stop("invalid input for distance. choose a different name.")
-  else if (!is.null(object$distance)) {
-    dta <- data.frame(cbind(data, object$distance))
-    names(dta) <- c(names(data), distance)
-    data <- dta
+
+  if (drop.unmatched && !is.null(object$weights)) {
+    data <- data[object$weights > 0,,drop = FALSE]
+    treat <- treat[object$weights > 0]
   }
-  if (weights %in% vars)
-    stop("invalid input for weights. choose a different name.")
-  else if (!is.null(object$weights)){
-    dta <- data.frame(cbind(data, object$weights))
-    names(dta) <- c(names(data), weights)
-    data <- dta
+
+  group <- match_arg(group, c("all", "treated", "control"))
+  if (group == "treated") data <- data[treat == 1,,drop = FALSE]
+  else if (group == "control") data <- data[treat == 0,]
+
+  if (!is.null(object$distance)) attr(data, "distance") <- distance
+  if (!is.null(object$weights)) attr(data, "weights") <- weights
+  if (!is.null(object$subclass)) attr(data, "subclass") <- subclass
+
+  return(data)
+}
+
+get_matches <- function(object, distance = "distance", weights = "weights", subclass = "subclass",
+                        id = "id", data = NULL, include.s.weights = TRUE) {
+
+  if (!inherits(object, "matchit")) {
+    stop("'object' must be a matchit object, the output of a call to matchit().", call. = FALSE)
   }
-  if (subclass %in% vars)
-    stop("invalid input for subclass. choose a different name.")
-  else if (!is.null(object$subclass)){
-    dta <- data.frame(cbind(data, object$subclass))
-    names(dta) <- c(names(data), subclass)
-    data <- dta
+  if (is.null(object$match.matrix)) {
+    stop("A match.matrix component must be present in the matchit object, which does not occur with all types of matching. Use match.data() instead.", call. = FALSE)
   }
-  if (group == "all")
-    return(data[wt > 0,])
-  else if (group == "treat")
-    return(data[wt > 0 & treat == 1,])
-  else if (group == "control")
-    return(data[wt > 0 & treat == 0,])
-  else
-    stop("error: invalid input for group.")
+
+  #Get initial data using match.data; note weights and subclass will be removed,
+  #including them here just checks their names don't clash
+  m.data <- match.data(object, group = "all", distance = distance,
+                       weights = weights, subclass = subclass, data = data,
+                       include.s.weights = FALSE, drop.unmatched = TRUE)
+
+  if (is.null(id)) stop("The argument to 'id' cannot be NULL.", call. = FALSE)
+  if (!is.atomic(id) || !is.character(id) || length(id) != 1 || is.na(id)) {
+    stop("The argument to 'id' must be a string of length 1.", call. = FALSE)
+  }
+
+  if (id %in% names(m.data)) {
+    stop(paste0("\"", id, "\" is already the name of a variable in the data. Please choose another name for id using the 'id' argument."), call. = FALSE)
+  }
+
+  m.data[[id]] <- names(object$treat)[object$weights > 0]
+
+  for (i in c(weights, subclass)) {
+    if (i %in% names(m.data)) m.data[[i]] <- NULL
+  }
+
+  mm <- object$match.matrix
+  mm <- mm[!is.na(mm[,1]),,drop = FALSE]
+  tmm <- t(mm)
+
+  num.matches <- rowSums(!is.na(mm))
+
+  matched <- as.data.frame(matrix(NA_character_, nrow = nrow(mm) + sum(!is.na(mm)), ncol = 3))
+  names(matched) <- c(id, subclass, weights)
+
+  matched[[id]] <- c(as.vector(tmm[!is.na(tmm)]), rownames(mm))
+  matched[[subclass]] <- c(as.vector(col(tmm)[!is.na(tmm)]), seq_len(nrow(mm)))
+  matched[[weights]] <- c(1/num.matches[matched[[subclass]][seq_len(sum(!is.na(mm)))]], rep(1, nrow(mm)))
+
+  if (!is.null(object$s.weights) && include.s.weights) {
+    matched[[weights]] <- matched[[weights]] * object$s.weights[matched[[id]]]
+  }
+
+  out <- merge(matched, m.data, by = id, all.x = TRUE, sort = FALSE)
+
+  out <- out[order(out[[subclass]], object$treat[out[[id]]], method = "radix", decreasing = c(FALSE, TRUE)),]
+  rownames(out) <- NULL
+
+  out[[subclass]] <- factor(out[[subclass]], labels = seq_len(nrow(mm)))
+
+  if (!is.null(object$distance)) attr(out, "distance") <- distance
+  attr(out, "weights") <- weights
+  attr(out, "subclass") <- subclass
+  attr(out, "id") <- id
+
+  return(out)
 }

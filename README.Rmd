@@ -1,0 +1,70 @@
+---
+output: github_document
+---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r, echo = FALSE}
+knitr::opts_chunk$set(
+  collapse = FALSE,
+  warning = FALSE,
+  message = FALSE,
+  tidy = TRUE,
+  fig.align='center',
+  comment = "#>",
+  fig.path = "inst/figures/README-",
+  R.options = list(width = 200)
+)
+```
+# MatchIt: Nonparametric Preprocessing for Parametric Causal Inference 
+
+[![Build Status](https://travis-ci.org/kosukeimai/MatchIt.svg?branch=master)](https://travis-ci.org/kosukeimai/MatchIt)  [![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/MatchIt)](https://cran.r-project.org/package=MatchIt) ![CRAN downloads](http://cranlogs.r-pkg.org/badges/grand-total/MatchIt)
+
+`MatchIt` provides a simple and straightforward interface to various methods of matching for covariate balance in observational studies. Matching is one way to reduce confounding and model dependence when estimating treatment effects. Several matching methods are available, including nearest neighbor matching, optimal pair matching, optimal full matching, genetic matching, exact matching, coarsened exact matching, and subclassification, some of which rely on functions from other R packages. A variety of methods to estimate propensity scores for propensity score matching are included. Below is an example of the use of `MatchIt` to perform 2:1 nearest neighbor propensity score matching with a propensity score caliper and assessing overlap and balance:
+
+```{r}
+library("MatchIt")
+data("lalonde", package = "MatchIt")
+
+#Nearest neighbor PS matching with replacement and a caliper
+m.out <- matchit(treat ~ age + educ + race + married + nodegree +
+                     re74 + re75, data = lalonde, 
+                 ratio = 2, caliper = .025)
+```
+
+Printing the `MatchIt` object provides details of the kind of matching performed. 
+
+```{r}
+m.out
+```
+
+We can view propensity score overlap and see which observations were matched and unmatched using a jitter plot:
+
+```{r}
+#Checking for PS overlap
+plot(m.out, type = "jitter", interactive = FALSE)
+```
+
+With this we can see that most of the unmatched control units had small propensity scores, making them unlike the treated group. Other plots are available to view the distributions of propensity scores and covariates.
+
+We can check covariate balance for the original and matched samples using `summary()`:
+
+```{r}
+#Checking balance before and after matching:
+summary(m.out)
+```
+
+At the top is balance for the original sample. Below that is balance in the matched sample, followed by the percent reduction in imbalance and the sample sizes before and after matching. Smaller values for the balance statistics indicate better balance. We can plot the standardized mean differences in a Love plot for a clean, visual display of balance across the sample:
+
+```{r}
+#Plot balance
+plot(summary(m.out))
+```
+
+Although much has been written about matching theory, most of the theory relied upon in `MatchIt` is described well in [Ho, Imai, King, and Stuart (2007)](https//:doi.org/10.1093/pan/mpl013) and [Stuart (2010)](https://doi.org/10.1214/09-STS313). The *Journal of Statistical Software* article for `MatchIt` can be accessed [here](https://doi.org/10.18637/jss.v042.i08), though note that some options have changed, so the `MatchIt` reference pages should be used for understanding the functions and methods available. Further references for individual methods are present in their respective help pages.
+
+Please cite `MatchIt` when using it for analysis presented in publications, which you can do by citing the *Journal of Statistical Software* article below:
+
+Ho, D. E., Imai, K., King, G., & Stuart, E. A. (2011). MatchIt: Nonparametric Preprocessing for Parametric Causal Inference. *Journal of Statistical Software*, 42(8). [doi:10.18637/jss.v042.i08](https://doi.org/10.18637/jss.v042.i08)
+
+This citation can also be accessed using `citation("MatchIt")` in R. For reproducibility purposes, it is also important to include the version number for the version used.

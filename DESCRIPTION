@@ -1,6 +1,5 @@
 Package: MatchIt
-Version: 3.0.4
-Date: 2019-01-20
+Version: 4.0.0
 Title: Nonparametric Preprocessing for Parametric Causal Inference
 Description: Selects matched samples of the original treated and
     control groups with similar covariate distributions -- can be
@@ -9,32 +8,45 @@ Description: Selects matched samples of the original treated and
     package also implements a series of recommendations offered in
     Ho, Imai, King, and Stuart (2007) <DOI:10.1093/pan/mpl013>.
 Authors@R: c(
-  person("Daniel", "Ho", , "daniel.e.ho@gmail.com", c("aut")),
-  person("Kosuke", "Imai", , "Imai@Harvard.Edu", c("aut", "cre")),
-  person("Gary", "King", , "king@harvard.edu", c("aut")),
-  person("Elizabeth", "Stuart", , "estuart@jhu.edu", c("aut")),
-  person("Alex", "Whitworth", , "whitworth.alex@gmail.com", c("ctb"))
+  person("Daniel", "Ho", email = "daniel.e.ho@gmail.com", role = c("aut"),
+         comment = c(ORCID = "0000-0002-2195-5469")),
+  person("Kosuke", "Imai", email = "imai@harvard.edu", role = c("aut"),
+         comment = c(ORCID = "0000-0002-2748-1022")),
+  person("Gary", "King", email = "king@harvard.edu", role = c("aut"),
+         comment = c(ORCID = "0000-0002-5327-7631")),
+  person("Elizabeth", "Stuart", email = "estuart@jhu.edu", role = c("aut"),
+         comment = c(ORCID = "0000-0002-9042-8611")),
+  person("Alex", "Whitworth", email = "whitworth.alex@gmail.com", role = c("ctb")),
+  person("Noah", "Greifer", role = c("ctb", "cre"), 
+         email = "noah.greifer@gmail.com",
+	       comment = c(ORCID="0000-0003-3067-7154"))
   )
-Maintainer: Kosuke Imai <Imai@Harvard.Edu>
 Depends:
-    R (>= 2.6)
+    R (>= 3.0.0)
 Imports:
-    MASS, 
-    Matching
+    backports (>= 1.1.8),
+    Rcpp (>= 1.0.5)
 Suggests:
-    cem,
-    nnet,
     optmatch,
+    Matching,
+    rgenoud,
+    nnet,
     rpart,
     mgcv,
-    WhatIf,
-    R.rsp,
-    testthat,
-    rgenoud
-VignetteBuilder: R.rsp
-LazyLoad: yes
-LazyData: yes
+    CBPS,
+    dbarts,
+    randomForest,
+    cobalt (>= 4.2.3),
+    boot,
+    lmtest,
+    sandwich (>= 2.5-1),
+    survival,
+    RcppProgress (>= 0.4.2),
+    knitr,
+    rmarkdown
+LinkingTo: Rcpp, RcppProgress
+Encoding: UTF-8
+LazyData: true
 License: GPL (>=2)
-URL: http://gking.harvard.edu/matchit
 BugReports: https://github.com/kosukeimai/MatchIt/issues
-RoxygenNote: 6.0.1
+VignetteBuilder: knitr

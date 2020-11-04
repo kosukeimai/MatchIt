@@ -1,47 +1,32 @@
-weights.matrix <- function(match.matrix, treat, discarded){
-  
-  n <- length(treat)
-  labels <- names(treat) 
-  tlabels <- labels[treat==1]
-  clabels <- labels[treat==0]
+weights.matrix <- function(match.matrix, treat) {
 
-  in.sample <- !discarded
-  names(in.sample) <- labels
- 
-  match.matrix <- match.matrix[tlabels,,drop=F][in.sample[tlabels],,drop=F]
-  num.matches <- dim(match.matrix)[2]-apply(as.matrix(match.matrix),
-                                            1, function(x){sum(is.na(x))})
-  names(num.matches) <- tlabels[in.sample[tlabels]]
-  
-  t.units <- row.names(match.matrix)[num.matches>0]
-  c.units <- na.omit(as.vector(as.matrix(match.matrix)))
-  
-  weights <- rep(0,length(treat))
-  names(weights) <- labels
-  weights[t.units] <- 1
-  
-  for (cont in clabels) {
-    treats <- na.omit(row.names(match.matrix)[cont==match.matrix[,1]])
-    if (dim(match.matrix)[2]>1) 
-      for (j in 2:dim(match.matrix)[2]) 
-        treats <- c(na.omit(row.names(match.matrix)[cont==match.matrix[,j]]),treats)	
-    for (k in unique(treats))
-      weights[cont] <- weights[cont] + 1/num.matches[k]
+  in_t1 <- which(treat == 1)
+  in_t0 <- which(treat != 1)
+
+  weights <- rep(0, length(treat))
+
+  match.matrix[is.na(match.matrix)] <- 0L
+  num.matches <- rowSums(match.matrix != 0)
+
+  weights[in_t1[num.matches > 0]] <- 1
+
+  in_t0_matched <- in_t0[in_t0 %in% match.matrix]
+
+  for (i in in_t0_matched) {
+    in.match <- which(rowSums(match.matrix == i) > 0)
+    weights[i] <- sum(1/num.matches[in.match])
   }
-  
-  if (sum(weights[clabels])==0)
-    weights[clabels] <- rep(0, length(weights[clabels]))
-  else
-    weights[clabels] <- weights[clabels]*length(unique(c.units))/sum(weights[clabels])
-  
-  weights[!in.sample] <- 0
+
+  if (sum(weights[in_t0]) > 0) {
+    weights[in_t0] <- weights[in_t0]*sum(weights[in_t0] > 0)/sum(weights[in_t0])
+  }
+
   if (sum(weights)==0)
-    stop("No units were matched")
-  else if (sum(weights[tlabels])==0)
-    stop("No treated units were matched")
-  else if (sum(weights[clabels])==0)
-    stop("No control units were matched")
+    stop("No units were matched.", call. = FALSE)
+  else if (sum(weights[in_t1])==0)
+    stop("No treated units were matched.", call. = FALSE)
+  else if (sum(weights[in_t0])==0)
+    stop("No control units were matched.", call. = FALSE)
 
-  return(weights)
+  return(setNames(weights, names(treat)))
 }
-

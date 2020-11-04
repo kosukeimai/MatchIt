@@ -1,86 +1,224 @@
-## Function to calculate summary stats
-qoi <- function(xx,tt,ww, t.plot=NULL, c.plot=NULL, sds=NULL,
-                standardize = FALSE, std=F){
-  weighted.var <- function(x, w) {
-    sum(w * (x - weighted.mean(x,w))^2)/(sum(w) - 1)}
-  xsum <- matrix(NA,2,7)
-  xsum <- as.data.frame(xsum)
-  row.names(xsum) <- c("Full","Matched")
+## Functions to calculate summary stats
+qoi <- function(xx, tt, ww = NULL, s.weights, subclass = NULL, mm = NULL, s.d.denom = "treated", standardize = FALSE,
+                compute.pair.dist = TRUE) {
+
+  un <- is.null(ww)
+  bin.var <- all(xx == 0 | xx == 1)
+
+  xsum <- rep(NA_real_, 7)
   if (standardize)
-    names(xsum) <- c("Means Treated","Means Control",
-                     "SD Control", "Std. Mean Diff.",
-                     "eCDF Med", "eCDF Mean", "eCDF Max")
+    names(xsum) <- c("Means Treated","Means Control", "Std. Mean Diff.",
+                     "Var. Ratio", "eCDF Mean", "eCDF Max", "Std. Pair Dist.")
   else
-    names(xsum) <- c("Means Treated","Means Control",
-                     "SD Control", "Mean Diff",
-                     "eQQ Med", "eQQ Mean", "eQQ Max")
-  x1 <- xx[tt==1]
-  x0 <- xx[tt==0]
-  ww1 <- ww[tt==1]
-  ww0 <- ww[tt==0]
-  xsum[1,1] <- mean(x1,na.rm=T)
-  xsum[1,2] <- mean(x0,na.rm=T)
-  xsum[1,3] <- sd(x0,na.rm=T)
-  X.t.m <- xx[tt==1][ww1>0]
-  X.c.m <- xx[tt==0][ww0>0]
-  xsum[2,1] <- weighted.mean(X.t.m, ww1[ww1>0])
-  xsum[2,2] <- weighted.mean(X.c.m, ww0[ww0>0])
-  xsum[2,3] <- sqrt(weighted.var(X.c.m, ww0[ww0>0]))
-  if(!(sum(tt==1)<2|(sum(tt==0)<2))){ 
-    xsd <- sd(x1,na.rm=T)
-    qqall <- qqsum(x1,x0,standardize=standardize)
-    xsum[1,5:7] <- c(qqall$meddiff,qqall$meandiff,qqall$maxdiff)
-    if (standardize)
-      if (!is.null(sds))
-        xsum[1,4] <- (mean(x1,na.rm=T)-mean(x0,na.rm=T))/sds
-      else
-        xsum[1,4] <- (mean(x1,na.rm=T)-mean(x0,na.rm=T))/xsd
-    else
-      xsum[1,4] <- mean(x1,na.rm=T)-mean(x0,na.rm=T)
-    if(!is.null(t.plot))
-      qqmat <- qqsum(xx[t.plot],xx[c.plot],standardize=standardize)
-    else
-      qqmat <- qqsum(x1[ww1>0],x0[ww0>0],standardize=standardize)
-    xsum[2,5:7] <- c(qqmat$meddiff,qqmat$meandiff,qqmat$maxdiff)
-    if (standardize)
-      if (!is.null(sds))
-        xsum[2,4] <- (xsum[2,1]-xsum[2,2])/sds
-      else
-        xsum[2,4] <- (xsum[2,1]-xsum[2,2])/xsd
-    else
-      xsum[2,4] <- xsum[2,1]-xsum[2,2]
-  } 
-  if(!std){
-    xsum <- xsum[,c(1:2,4:7)]
+    names(xsum) <- c("Means Treated","Means Control", "Mean Diff.",
+                     "Var. Ratio", "eQQ Mean", "eQQ Max", "Pair Dist.")
+
+  if (un) ww <- s.weights
+  else ww <- ww * s.weights
+
+  too.small <- sum(ww[tt==1] > 0) < 2 || sum(ww[tt==0] > 0) < 2
+
+  xsum["Means Treated"] <- weighted.mean(xx[tt==1], ww[tt==1], na.rm=TRUE)
+  xsum["Means Control"] <- weighted.mean(xx[tt==0], ww[tt==0], na.rm=TRUE)
+
+  mdiff <- xsum["Means Treated"] - xsum["Means Control"]
+
+  if (standardize && abs(mdiff) > 1e-8) {
+    if (!too.small) {
+      if (is.numeric(s.d.denom)) {
+        std <- s.d.denom
+      }
+      else {
+        s.d.denom <- match_arg(s.d.denom, c("treated", "control", "pooled"))
+        std <- switch(s.d.denom,
+                      "treated" = sqrt(wvar(xx[tt==1], bin.var, s.weights[tt==1])),
+                      "control" = sqrt(wvar(xx[tt==0], bin.var, s.weights[tt==0])),
+                      "pooled" = sqrt(.5*(wvar(xx[tt==1], bin.var, s.weights[tt==1]) + wvar(xx[tt==0], bin.var, s.weights[tt==0]))))
+
+        if (std < sqrt(.Machine$double.eps)) std <- sqrt(wvar(xx, bin.var, s.weights)) #Avoid divide by zero
+      }
+
+      xsum[3] <- mdiff/std
+      if (!un && compute.pair.dist) xsum[7] <- pair.dist(xx, tt, subclass, mm, std)
+    }
   }
+  else {
+    xsum[3] <- mdiff
+    if (!un && compute.pair.dist) xsum[7] <- pair.dist(xx, tt, subclass, mm)
+  }
+
+  if (bin.var) {
+    xsum[5:6] <- abs(mdiff)
+  }
+  else if (!too.small) {
+    xsum["Var. Ratio"] <- wvar(xx[tt==1], bin.var, ww[tt==1]) / wvar(xx[tt==0], bin.var, ww[tt==0])
+
+    qqmat <- qqsum(xx, tt, ww, standardize = standardize)
+    xsum[5:6] <- qqmat[c("meandiff", "maxdiff")]
+  }
+
   xsum
 }
 
-## By subclass
-qoi.by.sub <- function(xx,tt,ww,qq,standardize=FALSE){
-  qbins <- max(qq,na.rm=TRUE)
-  q.table <- matrix(0,6,qbins)
-  qn <- matrix(0,3,qbins)
-  matched <- ww!=0
-  for (i in 1:qbins) {
-    qi <- qq[matched]==i & (!is.na(qq[matched]))
-    qx <- xx[matched][qi]
-    qt <- tt[matched][qi]
-    qw <- as.numeric(ww[matched][qi]!=0)
-    if(sum(qt==1)<2|(sum(qt==0)<2)){
-      if(sum(qt==1)<2)
-        warning("Not enough treatment units in subclass ",i,call.=FALSE)
-      else if(sum(qt==0)<2)
-        warning("Not enough control units in subclass ",i,call.=FALSE)
+qoi.subclass <- function(xx, tt, s.weights, subclass, s.d.denom = "treated", standardize = FALSE, which.subclass = NULL) {
+  #Within-subclass balance statistics
+  bin.var <- all(xx == 0 | xx == 1)
+  in.sub <- !is.na(subclass) & subclass == which.subclass
+
+  xsum <- matrix(NA_real_, nrow = 1, ncol = 6)
+  rownames(xsum) <- "Subclass"
+  if (standardize)
+    colnames(xsum) <- c("Means Treated","Means Control", "Std. Mean Diff.",
+                        "Var. Ratio", "eCDF Mean", "eCDF Max")
+  else
+    colnames(xsum) <- c("Means Treated","Means Control", "Mean Diff",
+                        "Var. Ratio", "eQQ Mean", "eQQ Max")
+
+  too.small <- sum(in.sub & tt==1) < 2 || sum(in.sub & tt==0) < 2
+
+  xsum["Subclass","Means Treated"] <- weighted.mean(xx[in.sub & tt==1], s.weights[in.sub & tt==1], na.rm=TRUE)
+  xsum["Subclass","Means Control"] <- weighted.mean(xx[in.sub & tt==0], s.weights[in.sub & tt==0], na.rm=TRUE)
+
+  mdiff <- xsum["Subclass","Means Treated"] - xsum["Subclass","Means Control"]
+
+  if (standardize && abs(mdiff) > 1e-8) {
+    if (!too.small) {
+      if (is.numeric(s.d.denom)) {
+        std <- s.d.denom
+      }
+      else {
+        #SD from full sample, not within subclass
+        s.d.denom <- match_arg(s.d.denom, c("treated", "control", "pooled"))
+        std <- switch(s.d.denom,
+                      "treated" = sqrt(wvar(xx[tt==1], bin.var, s.weights[tt==1])),
+                      "control" = sqrt(wvar(xx[tt==0], bin.var, s.weights[tt==0])),
+                      "pooled" = sqrt(.5*(wvar(xx[tt==1], bin.var, s.weights[tt==1]) + wvar(xx[tt==0], bin.var, s.weights[tt==0]))))
+      }
+
+      xsum["Subclass", 3] <- mdiff/std
     }
-    qoi.i <- qoi(qx,qt,qw, sds=sd(xx[tt==1],na.rm=T), standardize=standardize)
-    q.table[,i] <- as.numeric(qoi.i[1,])
-    qn[,i] <- c(sum(qt),sum(qt==0),length(qt))
   }
-  q.table <- as.data.frame(q.table)
-  qn <- as.data.frame(qn)
-  names(q.table) <- names(qn) <- paste("Subclass",1:qbins)
-  row.names(q.table) <- names(qoi.i)
-  row.names(qn) <- c("Treated","Control","Total")
-  list(q.table=q.table,qn=qn)
+  else {
+    xsum["Subclass", 3] <- mdiff
+  }
+
+  if (bin.var) {
+    xsum["Subclass", 5:6] <- abs(mdiff)
+  }
+  else if (!too.small) {
+    xsum["Subclass", "Var. Ratio"] <- wvar(xx[in.sub & tt==1], bin.var, s.weights[in.sub & tt==1]) / wvar(xx[in.sub & tt==0], bin.var, s.weights[in.sub & tt==0])
+
+    qqall <- qqsum(xx[in.sub], tt[in.sub], standardize = standardize)
+    xsum["Subclass", 5:6] <- qqall[c("meandiff", "maxdiff")]
+  }
+
+  xsum
+}
+
+#Compute within-pair/subclass distances
+pair.dist <- function(xx, tt, subclass = NULL, mm = NULL, std = NULL, fast = TRUE) {
+
+  if (!is.null(mm)) {
+    names(xx) <- names(tt)
+    xx_t <- xx[rownames(mm)]
+    xx_c <- matrix(0, nrow = nrow(mm), ncol = ncol(mm))
+    xx_c[] <- xx[mm]
+
+    mpdiff <- mean(abs(xx_t - xx_c), na.rm = TRUE)
+  }
+  else if (!is.null(subclass)) {
+    if (!fast) {
+      dists <- unlist(lapply(levels(subclass), function(s) {
+        t1 <- which(!is.na(subclass) & subclass == s & tt == 1)
+        t0 <- which(!is.na(subclass) & subclass == s & tt == 0)
+        if (length(t1) == 1 || length(t0) == 1) {
+          xx[t1] - xx[t0]
+        }
+        else {
+          outer(xx[t1], xx[t0], "-")
+        }
+      }))
+      mpdiff <- mean(abs(dists))
+    }
+    else {
+      mpdiff <- pairdistsubC(xx, tt, subclass, nlevels(subclass))
+    }
+  }
+  else return(NA_real_)
+
+  if (!is.null(std) && abs(mpdiff) > 1e-8) {
+      mpdiff <- mpdiff/std
+  }
+
+  mpdiff
+}
+
+## Function for QQ summary stats
+qqsum <- function(x, t, w = NULL, standardize = FALSE) {
+  #x = variable, t = treat, w = weights
+
+  n.obs <- length(x)
+
+  if (is.null(w)) w <- rep(1, n.obs)
+
+  if (all(x == 0 | x == 1)) {
+    #For binary variables, just difference in means
+    ediff <- abs(weighted.mean(x[t == t[1]], w[t == t[1]]) - weighted.mean(x[t != t[1]], w[t != t[1]]))
+    return(c(meandiff = ediff, meddiff = ediff, maxdiff = ediff))
+  }
+  else {
+    for (i in unique(t, nmax = 2)) w[t==i] <- w[t==i]/sum(w[t==i])
+
+    ord <- order(x)
+    x_ord <- x[ord]
+    w_ord <- w[ord]
+    t_ord <- t[ord]
+
+    if (standardize) {
+      #Difference between ecdf of x for each group
+      w_ord_ <- w_ord
+      w_ord_[t_ord==t_ord[1]] <- -w_ord_[t_ord==t_ord[1]]
+      ediff <- abs(cumsum(w_ord_))[c(diff(x_ord) != 0, TRUE)]
+    }
+    else {
+      #Horizontal distance of ecdf between groups
+      #Need to interpolate larger group to be same size as smaller group
+
+      u <- unique(x_ord)
+
+      wn1 <- sum(w[t == t_ord[1]] > 0)
+      wn0 <- sum(w[t != t_ord[1]] > 0)
+
+      w1 <- w_ord[t_ord == t_ord[1]]
+      w0 <- w_ord[t_ord != t_ord[1]]
+
+      x1 <- x_ord[t_ord == t_ord[1]][w1 > 0]
+      x0 <- x_ord[t_ord != t_ord[1]][w0 > 0]
+
+      if (wn1 < wn0) {
+        if (length(u) <= 5) {
+          x0probs <- vapply(u, function(u_) weighted.mean(x0 == u_, w0[w0 > 0]), numeric(1L))
+          x0cumprobs <- c(0, cumsum(x0probs)[-length(u)], 1)
+          x0 <- u[findInterval(cumsum(w1[w1 > 0]), x0cumprobs, rightmost.closed = TRUE)]
+        }
+        else {
+          x0 <- approx(cumsum(w0[w0 > 0]), y = x0, xout = cumsum(w1[w1 > 0]), rule = 2,
+                       method = "constant", ties = "ordered")$y
+        }
+      }
+      else {
+        if (length(u) <= 5) {
+          x1probs <- vapply(u, function(u_) weighted.mean(x1 == u_, w1[w1 > 0]), numeric(1L))
+          x1cumprobs <- c(0, cumsum(x1probs)[-length(u)], 1)
+          x1 <- u[findInterval(cumsum(w0[w0 > 0]), x1cumprobs, rightmost.closed = TRUE)]
+        }
+        else {
+          x1 <- approx(cumsum(w1[w1 > 0]), y = x1, xout = cumsum(w0[w0 > 0]), rule = 2,
+                       method = "constant", ties = "ordered")$y
+        }
+      }
+      ediff <- abs(x1 - x0)
+    }
+    return(c(meandiff = mean(ediff), meddiff = median(ediff), maxdiff = max(ediff)))
+  }
 }
