@@ -158,7 +158,7 @@ Version 4.0.0 update by Noah Greifer \email{noah.greifer@gmail.com}
 \seealso{
 \code{\link{summary.matchit}} for balance assessment after matching. \code{\link{plot.matchit}} for plots of covariate balance and propensity score overlap after matching.
 
-\code{vignette("MatchIt")} for an introduction to matching with MatchIt; \code{vignette("Matching Methods")} for descriptions of the variety of matching methods and options available; \code{vignette("Assessing Balance")} for information on assessing the quality of a matching specification; and \code{vignette("Estimating Effects")} for instructions on how to estimate treatment effects after matching.
+\code{vignette("MatchIt")} for an introduction to matching with MatchIt; \code{vignette("Matching Methods")} for descriptions of the variety of matching methods and options available; \code{vignette("Assessing Balance")} for information on assessing the quality of a matching specification; \code{vignette("Estimating Effects")} for instructions on how to estimate treatment effects after matching; and \code{vignette("Sampling Weights")} for a guide to using \pkg{MatchIt} with sampling weights.
 }
 \examples{
 data("lalonde")

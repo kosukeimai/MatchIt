@@ -98,7 +98,7 @@ The matching outputs are contained in the `m.out1` object. Printing this object 
 m.out1
 ```
 
-The key components of the `m.out1` object are `weights` (the computed matching weights), `subclass` (matching pair membership), `distance` (the estimated propensity score), and `match.matrix` (which control units are matched to each treated unit). How these can be used for estimating the effect of the treatment after matching is detailed in `vignette("Effect Estimation")`.
+The key components of the `m.out1` object are `weights` (the computed matching weights), `subclass` (matching pair membership), `distance` (the estimated propensity score), and `match.matrix` (which control units are matched to each treated unit). How these can be used for estimating the effect of the treatment after matching is detailed in `vignette("Estimating Effects")`.
 
 ## Assessing the Quality of Matches
 
