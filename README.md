@@ -5,8 +5,8 @@
 
 [![Build
 Status](https://travis-ci.org/kosukeimai/MatchIt.svg?branch=master)](https://travis-ci.org/kosukeimai/MatchIt)
-[![CRAN\_Status\_Badge](http://www.r-pkg.org/badges/version/MatchIt)](https://cran.r-project.org/package=MatchIt)
-![CRAN downloads](http://cranlogs.r-pkg.org/badges/grand-total/MatchIt)
+[![CRAN\_Status\_Badge](https://www.r-pkg.org/badges/version/MatchIt)](https://cran.r-project.org/package=MatchIt)
+![CRAN downloads](https://cranlogs.r-pkg.org/badges/grand-total/MatchIt)
 
 `MatchIt` provides a simple and straightforward interface to various
 methods of matching for covariate balance in observational studies.
