@@ -6,7 +6,7 @@ output:
 `MatchIt` News and Updates
 ======
 
-# MatchIt (development version)
+# MatchIt 4.0.0
 
 ## General Fixes and New Features
 
