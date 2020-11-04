@@ -114,13 +114,14 @@ For example, a sentence might read:
 
 \pkgfun{Matching}{GenMatch} and \pkgfun{Matching}{Match} in \pkg{Matching}, which do the work.
 }
-\examples{\dontshow{if (requireNamespace("Matching", quietly = TRUE)) \{}
+\examples{\dontshow{if (all(sapply(c("Matching", "rgenoud"), requireNamespace, quietly = TRUE))) \{}
 data("lalonde")
 
 # 1:1 genetic matching with PS as a covariate
 m.out1 <- matchit(treat ~ age + educ + race + nodegree +
                     married + re74 + re75, data = lalonde,
-                  method = "genetic")
+                  method = "genetic",
+                  pop.size = 24) #use larger pop.size
 m.out1
 summary(m.out1)
 
@@ -128,7 +129,8 @@ summary(m.out1)
 m.out2 <- matchit(treat ~ age + educ + race + nodegree +
                     married + re74 + re75, data = lalonde,
                   method = "genetic", replace = TRUE,
-                  ratio = 2, distance = "mahalanobis")
+                  ratio = 2, distance = "mahalanobis",
+                  pop.size = 24) #use larger pop.size
 m.out2
 summary(m.out2)
 
@@ -140,7 +142,8 @@ m.out3 <- matchit(treat ~ age + educ + race + nodegree +
                   method = "genetic",
                   mahvars = ~ age + educ + re74 + re75,
                   caliper = c(.05, educ = 2),
-                  std.caliper = c(TRUE, FALSE))
+                  std.caliper = c(TRUE, FALSE),
+                  pop.size = 24) #use larger pop.size
 m.out3
 summary(m.out3)
 \dontshow{\}}}
