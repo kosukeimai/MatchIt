@@ -53,7 +53,7 @@ matched and unmatched using a jitter plot:
 plot(m.out, type = "jitter", interactive = FALSE)
 ```
 
-<img src="inst/figures/README-unnamed-chunk-4-1.png" style="display: block; margin: auto;" />
+<img src="man/figures/README-unnamed-chunk-4-1.png" style="display: block; margin: auto;" />
 
 With this we can see that most of the unmatched control units had small
 propensity scores, making them unlike the treated group. Other plots are
@@ -132,7 +132,7 @@ across the sample:
 plot(summary(m.out))
 ```
 
-<img src="inst/figures/README-unnamed-chunk-6-1.png" style="display: block; margin: auto;" />
+<img src="man/figures/README-unnamed-chunk-6-1.png" style="display: block; margin: auto;" />
 
 Although much has been written about matching theory, most of the theory
 relied upon in `MatchIt` is described well in [Ho, Imai, King, and

@@ -74,9 +74,7 @@ matchit <- function(formula, data = NULL, method = "nearest", distance = "glm",
 
   exactcovs <- mahcovs <- calcovs <- NULL
 
-  if (!is.null(method) && method %in% c("exact"
-                                        # , "cem" #CEM_REMOVED
-                                        )) {
+  if (!is.null(method) && method %in% c("exact", "cem")) {
     fn1 <- NULL
   }
   else {

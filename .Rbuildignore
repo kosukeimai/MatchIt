@@ -5,3 +5,6 @@
 ^\.Rproj\.user$
 ^tests$
 ^\_archive$
+^_pkgdown\.yml$
+^docs$
+^pkgdown$

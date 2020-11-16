@@ -16,7 +16,7 @@ measured for each individual.
 \item "treat" is the treatment assignment (1=treated, 0=control).
 \item "age" is age in years.
 \item "educ" is education in number of years of schooling.
-\item "race" is the individual's race/ethnicity, (Black, Hispanic, or White).
+\item "race" is the individual's race/ethnicity, (Black, Hispanic, or White). Note previous versions of this dataset used indicator variables \code{black} and \code{hispan} instead of a single race variable.
 \item "married" is an indicator for married (1=married, 0=not married).
 \item "nodegree" is an indicator for whether the individual has a high school degree (1=no degree, 0=degree).
 \item "re74" is income in 1974, in U.S. dollars.

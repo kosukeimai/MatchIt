@@ -4,7 +4,7 @@
 \title{Coarsened Exact Matching}
 
 \description{
-In \code{\link{matchit}}, setting \code{method = "cem"} performs coarsened exact matching. With coarsened exact matching, covariates are coarsened into bins, and a complete cross of the coarsened covariates is used to form subclasses defined by each combination of the coarsened covariate levels. Any subclass that doesn't contain both treated and control units is discarded, leaving only subclasses containing treatment and control units that are exactly equal on the coarsened covariates. The coarsening process can be controlled by an algorithm or by manually specifying cutpoints and groupings. The benefits of coarsened exact matching are that the tradeoff between exact matching and approximate balancing can be managed to prevent discarding too many units, which can otherwise occur with exact matching. The method relies on and is a wrapper for the \pkgfun{cem}{cem} function in the \pkg{cem} package.
+In \code{\link{matchit}}, setting \code{method = "cem"} performs coarsened exact matching. With coarsened exact matching, covariates are coarsened into bins, and a complete cross of the coarsened covariates is used to form subclasses defined by each combination of the coarsened covariate levels. Any subclass that doesn't contain both treated and control units is discarded, leaving only subclasses containing treatment and control units that are exactly equal on the coarsened covariates. The coarsening process can be controlled by an algorithm or by manually specifying cutpoints and groupings. The benefits of coarsened exact matching are that the tradeoff between exact matching and approximate balancing can be managed to prevent discarding too many units, which can otherwise occur with exact matching. The method relies on and is a wrapper for \pkgfun2{cem}{cem}{cem::cem}.
 
 This page details the allowable arguments with \code{method = "cem"}. See \code{\link{matchit}} for an explanation of what each argument means in a general context and how it can be specified.
 
@@ -35,7 +35,7 @@ the variable containing sampling weights to be incorporated into balance statist
 \code{logical}; whether information about the matching process should be printed to the console.
 }
   \item{\dots}{
-additional arguments passed to \pkgfun{cem}{cem} in \pkg{cem}. Potentially useful options include \code{cutpoints}, \code{grouping}, \code{k2k}, and \code{method}. To supply an argument to \code{method} in \code{cem}, supply an argument to \code{k2k.method} in \code{matchit} in order to avoid a name conflict with \code{method} in \code{matchit}.
+additional arguments passed to \pkgfun2{cem}{cem}{cem::cem}. Potentially useful options include \code{cutpoints}, \code{grouping}, \code{k2k}, and \code{method}. To supply an argument to \code{method} in \code{cem}, supply an argument to \code{k2k.method} in \code{matchit} in order to avoid a name conflict with \code{method} in \code{matchit}.
 
 }
 The arguments \code{distance} (and related arguments), \code{exact}, \code{mahvars}, \code{discard} (and related arguments), \code{replace}, \code{m.order}, \code{caliper} (and related arguments), and \code{ratio} are ignored with a warning.
@@ -44,7 +44,7 @@ The arguments \code{distance} (and related arguments), \code{exact}, \code{mahva
 All outputs described in \code{\link{matchit}} are returned with \code{method = "cem"} except for \code{match.matrix}. This is because matching strata are not indexed by treated units as they are in some other forms of matching.
 }
 \note{
-If the coarsening is such that there are no exact matches with the coarsened variables, the \code{cutpoints} and \code{grouping} arguments in \pkgfun{cem}{cem} can be used to modify the matching specification. Reducing the number of cutpoints or grouping some variable values together can make it easier to find matches. See Examples below. Removing variables can also help (but they will likely not be balanced unless highly correlated with the included variables). To take advantage of coarsened exact matching without failing to find any matches, the covariates can be manually coarsened outside of \code{matchit()} and then supplied to the \code{exact} argument in a call to \code{matchit()} with another matching method.
+If the coarsening is such that there are no exact matches with the coarsened variables, the \code{cutpoints} and \code{grouping} arguments in \pkgfun2{cem}{cem}{cem::cem} can be used to modify the matching specification. Reducing the number of cutpoints or grouping some variable values together can make it easier to find matches. See Examples below. Removing variables can also help (but they will likely not be balanced unless highly correlated with the included variables). To take advantage of coarsened exact matching without failing to find any matches, the covariates can be manually coarsened outside of \code{matchit()} and then supplied to the \code{exact} argument in a call to \code{matchit()} with another matching method.
 }
 \references{
 In a manuscript, be sure to cite the following paper if using \code{matchit} with \code{method = "cem"}:
@@ -64,7 +64,7 @@ Iacus, S. M., King, G., & Porro, G. (2012). Causal Inference without Balance Che
 \seealso{
 \code{\link{matchit}} for a detailed explanation of the inputs and outputs of a call to \code{matchit}.
 
-\pkgfun{cem}{cem} in \pkg{cem}, which is the workhorse.
+\pkgfun2{cem}{cem}{cem::cem}, which is the workhorse.
 
 \code{\link{method_exact}} for exact matching, which performs exact matching on the covariates without coarsening.
 }

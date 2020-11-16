@@ -4,7 +4,7 @@
 \title{Optimal Pair Matching}
 
 \description{
-In \code{\link{matchit}}, setting \code{method = "optimal"} performs optimal pair matching. The matching is optimal in the sense that that sum of the absolute pairwise distances in the matched sample are as small as possible. The method relies on and is a wrapper for the \pkgfun{optmatch}{pairmatch} function in the \pkg{optmatch} package. Advantages of optimal pair matching include that the matching order is not required to be specified and it is less likely that extreme within-pair distances will be large, unlike with nearest neighbor matching. Generally, however, as a subset selection method, optimal pair matching tends to perform similarly to nearest neighbor matching in that similar subsets of units will be selected to be matched.
+In \code{\link{matchit}}, setting \code{method = "optimal"} performs optimal pair matching. The matching is optimal in the sense that that sum of the absolute pairwise distances in the matched sample are as small as possible. The method relies on and is a wrapper for \pkgfun2{optmatch}{pairmatch}{optmatch::pairmatch}. Advantages of optimal pair matching include that the matching order is not required to be specified and it is less likely that extreme within-pair distances will be large, unlike with nearest neighbor matching. Generally, however, as a subset selection method, optimal pair matching tends to perform similarly to nearest neighbor matching in that similar subsets of units will be selected to be matched.
 
 This page details the allowable arguments with \code{method = "optmatch"}. See \code{\link{matchit}} for an explanation of what each argument means in a general context and how it can be specified.
 
@@ -41,7 +41,7 @@ a named list containing additional arguments supplied to the function that estim
 a string containing the desired estimand. Allowable options include \code{"ATT"} and \code{"ATC"}. See Details.
 }
   \item{exact}{
-for which variables exact matching should take place. Exact matching is processed using \pkgfun{optmatch}{exactMatch} in \pkg{optmatch}.
+for which variables exact matching should take place. Exact matching is processed using \pkgfun2{optmatch}{exactMatch}{optmatch::exactMatch}.
 }
   \item{mahvars}{
 for which variables Mahalanobis distance matching should take place when a distance measure other than \code{"mahalanobis"} is used (e.g., to discard units for common support). If specified, the distance measure will not be used in matching.
@@ -62,7 +62,7 @@ how many control units should be matched to each treated unit for k:1 matching. 
 \code{logical}; whether information about the matching process should be printed to the console. What is printed depends on the matching method. Default is \code{FALSE} for no printing other than warnings.
 }
   \item{\dots}{
-additional arguments passed to \pkgfun{optmatch}{pairmatch} in \pkg{optmatch}. Only the \code{tols} argument, which is eventually passed to \pkgfun{optmatch}{fullmatch}, is allowed.
+additional arguments passed to \pkgfun2{optmatch}{pairmatch}{optmatch::pairmatch}. Only the \code{tols} argument, which is eventually passed to \pkgfun2{optmatch}{fullmatch}{optmatch::fullmatch}, is allowed.
 }
 
 The arguments \code{replace}, \code{caliper}, and \code{m.order} are ignored with a warning.
@@ -76,7 +76,7 @@ All outputs described in \code{\link{matchit}} are returned with \code{method = 
 \seealso{
 \code{\link{matchit}} for a detailed explanation of the inputs and outputs of a call to \code{matchit}.
 
-\pkgfun{optmatch}{pairmatch} in \pkg{optmatch}, which is the workhorse.
+\pkgfun2{optmatch}{pairmatch}{optmatch::pairmatch}, which is the workhorse.
 
 \code{\link{method_full}} for optimal full matching, of which optimal pair matching is a special case, and which relies on similar machinery.
 }

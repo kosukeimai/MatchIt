@@ -3,6 +3,8 @@
 #include <Rcpp.h>
 using namespace Rcpp;
 
+// [[Rcpp::plugins(cpp11)]]
+
 // [[Rcpp::export]]
 IntegerMatrix nn_matchC(const IntegerVector& treat,
                         const IntegerVector& ord,
@@ -25,7 +27,9 @@ IntegerMatrix nn_matchC(const IntegerVector& treat,
   double caliper_dist;
   NumericMatrix calcovs_covs_mat, mah_covs, mahSigma_inv, mah_covs_c;
   IntegerVector exact;
-  Function mah("mahalanobis");
+
+  Environment package_env("package:stats");
+  Function mah = package_env["mahalanobis"];
 
   bool use_exact = false;
   bool use_caliper_dist = false;
