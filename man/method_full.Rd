@@ -4,7 +4,7 @@
 \title{Optimal Full Matching}
 
 \description{
-In \code{\link{matchit}}, setting \code{method = "full"} performs optimal full matching, which is a form of subclassification wherein all units, both treatment and control (i.e., the "full" sample), are assigned to a subclass and receive at least one match. The matching is optimal in the sense that that sum of the absolute distances between the treated and control units in each subclass are as small as possible. The method relies on and is a wrapper for the \pkgfun{optmatch}{fullmatch} function in the \pkg{optmatch} package.
+In \code{\link{matchit}}, setting \code{method = "full"} performs optimal full matching, which is a form of subclassification wherein all units, both treatment and control (i.e., the "full" sample), are assigned to a subclass and receive at least one match. The matching is optimal in the sense that that sum of the absolute distances between the treated and control units in each subclass are as small as possible. The method relies on and is a wrapper for \pkgfun2{optmatch}{fullmatch}{optmatch::fullmatch}.
 
 Advantages of optimal full matching include that the matching order is not required to be specified, units do not need to be discarded, and it is less likely that extreme within-subclass distances will be large, unlike with standard subclassification. The primary output of full matching is a set of matching weights that can be applied to the matched sample; in this way, full matching can be seen as a robust alternative to propensity score weighting, robust in the sense that the propensity score model does not need to be correct to estimate the treatment effect without bias.
 
@@ -45,7 +45,7 @@ a named list containing additional arguments supplied to the function that estim
 a string containing the desired estimand. Allowable options include \code{"ATT"}, \code{"ATC"}, and \code{"ATE"}. The estimand controls how the weights are computed; see the Computing Weights section at \code{\link{matchit}} for details.
 }
   \item{exact}{
-for which variables exact matching should take place. Exact matching is processed using \pkgfun{optmatch}{exactMatch} in \pkg{optmatch}.
+for which variables exact matching should take place. Exact matching is processed using \pkgfun2{optmatch}{exactMatch}{optmatch::exactMatch}.
 }
   \item{mahvars}{
 for which variables Mahalanobis distance matching should take place when a distance measure other than \code{"mahalanobis"} is used (e.g., for caliper matching or to discard units for common support). If specified, the distance measure will not be used in matching.
@@ -69,7 +69,7 @@ the width(s) of the caliper(s) used for caliper matching. See Notes and Examples
 \code{logical}; whether information about the matching process should be printed to the console.
 }
   \item{\dots}{
-additional arguments passed to \pkgfun{optmatch}{fullmatch} in \pkg{optmatch}. Allowed arguments include \code{min.controls}, \code{max.controls}, \code{omit.fraction}, \code{mean.controls}, and \code{tol}. See the \pkgfun{optmatch}{fullmatch} documentation for details.
+additional arguments passed to \pkgfun2{optmatch}{fullmatch}{optmatch::fullmatch}. Allowed arguments include \code{min.controls}, \code{max.controls}, \code{omit.fraction}, \code{mean.controls}, and \code{tol}. See the \pkgfun2{optmatch}{fullmatch}{optmatch::fullmatch} documentation for details.
 }
 
 The arguments \code{replace}, \code{m.order}, and \code{ratio} are ignored with a warning.
@@ -83,7 +83,7 @@ All outputs described in \code{\link{matchit}} are returned with \code{method = 
 \seealso{
 \code{\link{matchit}} for a detailed explanation of the inputs and outputs of a call to \code{matchit}.
 
-\pkgfun{optmatch}{fullmatch} in \pkg{optmatch}, which is the workhorse.
+\pkgfun2{optmatch}{fullmatch}{optmatch::fullmatch}, which is the workhorse.
 
 \code{\link{method_optimal}} for optimal pair matching, which is a special case of optimal full matching, and which relies on similar machinery. Results from \code{method = "optimal"} can be replicated with \code{method = "full"} by setting \code{min.controls}, \code{max.controls}, and \code{mean.controls} to the desired \code{ratio}.
 }

@@ -4,7 +4,7 @@
 Genetic Matching
 }
 \description{
-In \code{\link{matchit}}, setting \code{method = "genetic"} performs genetic matching. Genetic matching is a form of nearest neighbor matching where distances are computed as the generalized Mahalanobis distance, which is a generalization of the Mahalanobis distance with a scaling factor for each covariate that represents the importance of that covariate to the distance. A genetic algorithm is used to select the scaling factors. The scaling factors are chosen as those which maximize a criterion related to covariate balance, which can be chosen, but which by default is the smallest p-value in covariate balance tests among the covariates. This method relies on and is a wrapper for the \pkgfun{Matching}{GenMatch} and \pkgfun{Matching}{Match} functions in the \pkg{Matching} package, which uses \pkgfun{rgenoud}{genoud} from the \pkg{rgenoud} package to perform the optimization using the genetic algorithm.
+In \code{\link{matchit}}, setting \code{method = "genetic"} performs genetic matching. Genetic matching is a form of nearest neighbor matching where distances are computed as the generalized Mahalanobis distance, which is a generalization of the Mahalanobis distance with a scaling factor for each covariate that represents the importance of that covariate to the distance. A genetic algorithm is used to select the scaling factors. The scaling factors are chosen as those which maximize a criterion related to covariate balance, which can be chosen, but which by default is the smallest p-value in covariate balance tests among the covariates. This method relies on and is a wrapper for \pkgfun2{Matching}{GenMatch}{Matching::GenMatch} and \pkgfun2{Matching}{Match}{Matching::Match}, which use \pkgfun2{rgenoud}{genoud}{rgenoud::genoud} to perform the optimization using the genetic algorithm.
 
 This page details the allowable arguments with \code{method = "genmatch"}. See \code{\link{matchit}} for an explanation of what each argument means in a general context and how it can be specified.
 
@@ -76,7 +76,7 @@ how many control units should be matched to each treated unit for k:1 matching. 
 \code{logical}; whether information about the matching process should be printed to the console. When \code{TRUE}, output from \code{GenMatch} with \code{print.level = 2} will be displayed. Default is \code{FALSE} for no printing other than warnings.
 }
   \item{\dots}{
-additional arguments passed to \pkgfun{Matching}{GenMatch} in \pkg{Matching}. Potentially useful options include \code{pop.size}, \code{max.generations}, and \code{fit.func}. If \code{pop.size} is not specified, a warning from \pkg{Matching} will be thrown reminding you to change it. Note that the \code{ties} and \code{CommonSupport} arguments are set to \code{FALSE} and cannot be changed.
+additional arguments passed to \pkgfun2{Matching}{GenMatch}{Matching::GenMatch}. Potentially useful options include \code{pop.size}, \code{max.generations}, and \code{fit.func}. If \code{pop.size} is not specified, a warning from \pkg{Matching} will be thrown reminding you to change it. Note that the \code{ties} and \code{CommonSupport} arguments are set to \code{FALSE} and cannot be changed.
 }
 }
 \section{Outputs}{
@@ -112,7 +112,7 @@ For example, a sentence might read:
 \seealso{
 \code{\link{matchit}} for a detailed explanation of the inputs and outputs of a call to \code{matchit}.
 
-\pkgfun{Matching}{GenMatch} and \pkgfun{Matching}{Match} in \pkg{Matching}, which do the work.
+\pkgfun2{Matching}{GenMatch}{Matching::GenMatch} and \pkgfun2{Matching}{Match}{Matching::Match}, which do the work.
 }
 \examples{\dontshow{if (all(sapply(c("Matching", "rgenoud"), requireNamespace, quietly = TRUE))) \{}
 data("lalonde")
@@ -121,7 +121,7 @@ data("lalonde")
 m.out1 <- matchit(treat ~ age + educ + race + nodegree +
                     married + re74 + re75, data = lalonde,
                   method = "genetic",
-                  pop.size = 24) #use larger pop.size
+                  pop.size = 10) #use much larger pop.size
 m.out1
 summary(m.out1)
 
@@ -130,7 +130,7 @@ m.out2 <- matchit(treat ~ age + educ + race + nodegree +
                     married + re74 + re75, data = lalonde,
                   method = "genetic", replace = TRUE,
                   ratio = 2, distance = "mahalanobis",
-                  pop.size = 24) #use larger pop.size
+                  pop.size = 10) #use much larger pop.size
 m.out2
 summary(m.out2)
 
@@ -143,7 +143,7 @@ m.out3 <- matchit(treat ~ age + educ + race + nodegree +
                   mahvars = ~ age + educ + re74 + re75,
                   caliper = c(.05, educ = 2),
                   std.caliper = c(TRUE, FALSE),
-                  pop.size = 24) #use larger pop.size
+                  pop.size = 10) #use much larger pop.size
 m.out3
 summary(m.out3)
 \dontshow{\}}}

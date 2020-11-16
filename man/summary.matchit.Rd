@@ -106,7 +106,7 @@ For \code{match.subclass} objects, a \code{summary.matchit.subclass} object, whi
 \seealso{
 \code{\link{summary}} for the generic method; \code{\link{plot.summary.matchit}} for making a Love plot from \code{summary} output.
 
-\pkgfun2{cobalt}{bal.tab.matchit}{bal.tab} in the \pkg{cobalt} package, which also displays balance for \code{matchit} objects.
+\pkgfun2{cobalt}{bal.tab.matchit}{cobalt::bal.tab}, which also displays balance for \code{matchit} objects.
 }
 \examples{
 data("lalonde")
