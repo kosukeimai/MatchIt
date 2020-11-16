@@ -1,0 +1,19 @@
+reference:
+- title: Matching
+- contents:
+  - matchit
+  - starts_with("method_")
+  - distance
+  - add_s.weights
+- title: Assessing Balance
+- contents:
+  - summary.matchit
+  - plot.summary.matchit
+  - plot.matchit
+- title: Extracting Matched Data
+- contents:
+  - match.data
+  - get_matches
+- title: Datasets
+- contents:
+  - lalonde

@@ -12,7 +12,7 @@ knitr::opts_chunk$set(
   tidy = FALSE,
   fig.align='center',
   comment = "#>",
-  fig.path = "inst/figures/README-",
+  fig.path = "man/figures/README-",
   R.options = list(width = 200)
 )
 ```
