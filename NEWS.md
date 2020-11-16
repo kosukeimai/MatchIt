@@ -6,6 +6,10 @@ output:
 `MatchIt` News and Updates
 ======
 
+# MatchIt (development version)
+
+* Restored `cem` functionality after it had been taken down and re-uploaded.
+
 # MatchIt 4.0.0
 
 ## General Fixes and New Features
@@ -87,17 +91,12 @@ output:
 
 * A `subclass` component is now included in the output when `replace = FALSE` (the default), as it has been with optimal and full matching.
 
-### `method = "exact"`
-
-* The `estimand` argument can be set to `"ATT"`, `"ATC"`, or `"ATE"` to compute matching weights that correspond to the given estimand. Previously only ATT weights were computed. See `?matchit` for details on how weights are computed for each `estimand`.
-
-<!--
 ### `method = "cem"` and `method = "exact"`
 
 * With `method = "cem"`, the `k2k` argument is now recognized. Previously it was ignored unless an argument to `k2k.method` was supplied.
 
 * The `estimand` argument can be set to `"ATT"`, `"ATC"`, or `"ATE"` to compute matching weights that correspond to the given estimand. Previously only ATT weights were computed. See `?matchit` for details on how weights are computed for each `estimand`.
--->
+
 ### `method = "subclass"`
 
 * Performance improvements.

@@ -8,9 +8,7 @@ check.inputs <- function(method, distance, mcall, exact, mahvars, caliper, disca
     method <- "NULL"
   }
   else {
-    method <- match_arg(method, c("exact"
-                                  # , "cem" #CEM_REMOVED
-                                  , "nearest", "optimal", "full", "genetic", "subclass"))
+    method <- match_arg(method, c("exact", "cem", "nearest", "optimal", "full", "genetic", "subclass"))
   }
 
   ignored.inputs <- character(0)
