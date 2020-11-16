@@ -96,6 +96,8 @@ d <- data.frame(A, X, Y_C, Y_B, Y_S)
 
 After assessing balance and deciding on a matching specification, it comes time to estimate the effect of the treatment in the matched sample. How the effect is estimated and interpreted depends on the desired estimand and the type of model used (if any). In addition to estimating effects, estimating the uncertainty of the effects is critical in communicating them and assessing whether the observed effect is compatible with there being no effect in the population. This guide explains how to estimate effects after various forms of matching and with various outcome types. There may be situations that are not covered here for which additional methodological research may be required, but some of the recommended methods here can be used to guide such applications.
 
+This guide is structured as follows: first, information on the concepts related to effect and standard error estimation is presented below. Then, instructions for how to estimate effects and standard errors are described. This section is split up first by the type of matching method performed (matching without replacement, matching with replacement, full matching, and subclassification) and then by the type of outcome (continuous, binary, and survival). Finally recommendations for reporting results and tips to avoid making common mistakes are presented.
+
 ### Identifying the estimand {#identifying-the-estimand}
 
 Before an effect is estimated, the estimand must be specified and clarified. Although some aspects of the estimand depend not only on how the effect is estimated after matching but also on the matching method itself, other aspects must be considered at the tine of effect estimation and interpretation. Here, we consider three aspects of the estimand: the population the effect is meant to generalize to (the target population), the effect measure, and whether the effect is marginal or conditional.
@@ -132,7 +134,7 @@ Uncertainty estimation (i.e., of standard errors, confidence intervals, and p-va
 
 Here, we will use linear and generalized linear models as implemented by `lm()` and `glm()` and use `lmtest::coeftest()` and `lmtest::coefci()` along with `sandwich::vcovHC()` for robust standard errors and `sandwich::vcovCL()` for cluster-robust standard errors. There are several "types" (e.g., HC0, HC1, etc.) of robust standard errors that adjust the original standard errors in different ways; although more research is required on the benefits of using different types for estimating standard errors after matching, we use the default types here.
 
-### Bootstrapping
+#### Bootstrapping
 
 Bootstrapping is a technique used to simulate the sampling distribution of an estimator by repeatedly drawing samples with replacement and estimating the effect in each bootstrap sample [@efron1993]. From the bootstrap distribution, standard errors and confidence interval can be computed in several ways, including using the standard deviation of the bootstrap estimates as the standard error estimate or using the 2.5 and 97.5 percentiles as 95% confidence interval bounds. Bootstrapping tends to be most useful when no analytic estimator of a standard error is possible or has been derived yet. Although Abadie and Imbens [-@abadie2008] found analytically that the bootstrap is inappropriate for matched samples, simulation evidence has found it to be adequate in many cases [@hill2006; @austin2014; @austin2017]. It is the most accessible method for computing standard errors after g-computation for nonlinear models.
 
