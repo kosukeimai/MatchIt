@@ -36,28 +36,34 @@ matchit2cem <- function(treat, covs, estimand = "ATT", verbose = FALSE, ...) {
 
   args.excluded <- c("treatment", "baseline.group", "data", "verbose", "eval.imbalance",
                      "keep.all", "drop", "L1.breaks", "L1.grouping")
-  mat <- tryCatch({
-    withCallingHandlers({
-      do.call(cem::cem, c(list(treatment = names(cem.data)[ncol(cem.data)],
-                               data = cem.data,
-                               verbose = as.integer(verbose),
-                               eval.imbalance = FALSE,
-                               keep.all = FALSE,
-                               drop = NULL),
-                          A[names(A) %in% setdiff(names(formals(cem::cem)), args.excluded)]))
+
+  if (verbose) eval.verbose <- base::eval
+  else eval.verbose <- utils::capture.output
+
+  eval.verbose({
+    mat <- tryCatch({
+      withCallingHandlers({
+        do.call(cem::cem, c(list(treatment = names(cem.data)[ncol(cem.data)],
+                                 data = cem.data,
+                                 verbose = TRUE, #verbosity controlled by eval.verbose
+                                 eval.imbalance = FALSE,
+                                 keep.all = FALSE,
+                                 drop = NULL),
+                            A[names(A) %in% setdiff(names(formals(cem::cem)), args.excluded)]))
+      },
+      warning = function(w) {
+        warning(paste0("(from cem) ", conditionMessage(w)), call. = FALSE, immediate. = TRUE)
+        invokeRestart("muffleWarning")
+      })
     },
-    warning = function(w) {
-      warning(paste0("(from cem) ", conditionMessage(w)), call. = FALSE, immediate. = TRUE)
-      invokeRestart("muffleWarning")
+    error = function(e) {
+      if (startsWith(conditionMessage(e), "subscript out of bounds")) {
+        stop("No units were matched. Try changing the coarsening options using the 'cutpoints' and 'grouping' arguments in cem(). See ?method_cem or ?cem::cem for details.", call. = FALSE)
+      }
+      else {
+        stop(paste0("(from cem) ", conditionMessage(e)), call. = FALSE)
+      }
     })
-  },
-  error = function(e) {
-    if (startsWith(conditionMessage(e), "subscript out of bounds")) {
-      stop("No units were matched. Try changing the coarsening options using the 'cutpoints' and 'grouping' arguments in cem(). See ?method_cem or ?cem::cem for details.", call. = FALSE)
-    }
-    else {
-      stop(paste0("(from cem) ", conditionMessage(e)), call. = FALSE)
-    }
   })
 
   strat <- setNames(rep(NA_character_, n.obs), names(treat))
