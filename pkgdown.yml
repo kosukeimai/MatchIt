@@ -1,0 +1,11 @@
+pandoc: 2.7.3
+pkgdown: 1.6.1
+pkgdown_sha: ~
+articles:
+  MatchIt: MatchIt.html
+  assessing-balance: assessing-balance.html
+  estimating-effects: estimating-effects.html
+  matching-methods: matching-methods.html
+  sampling-weights: sampling-weights.html
+last_built: 2020-11-17T03:46Z
+
