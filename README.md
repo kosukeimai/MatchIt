@@ -3,7 +3,7 @@
 
 # MatchIt: Nonparametric Preprocessing for Parametric Causal Inference <img src="man/figures/logo.png" align="right" width="150"/>
 
-## [![CRAN\_Status\_Badge](https://img.shields.io/cran/v/MatchIt?color=%952100)](https://cran.r-project.org/package=MatchIt) [![CRAN\_Downloads\_Badge](https://cranlogs.r-pkg.org/badges/MatchIt?color=%952100)](https://cran.r-project.org/package=MatchIt)
+## [![CRAN\_Status\_Badge](https://img.shields.io/cran/v/MatchIt?color=952100)](https://cran.r-project.org/package=MatchIt) [![CRAN\_Downloads\_Badge](https://cranlogs.r-pkg.org/badges/MatchIt?color=952100)](https://cran.r-project.org/package=MatchIt)
 
 ### Overview
 
