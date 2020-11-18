@@ -142,7 +142,7 @@ IntegerMatrix nn_matchC(const IntegerVector& treat,
 
       if (use_caliper_dist) {
         dt = distance[t_ind];
-        diff = abs(as<NumericVector>(distance[c_eligible]) - dt);
+        diff = Rcpp::abs(as<NumericVector>(distance[c_eligible]) - dt);
 
         ps_diff[c_eligible] = diff;
         ps_diff_assigned = true;
@@ -160,7 +160,7 @@ IntegerMatrix nn_matchC(const IntegerVector& treat,
 
           cal_var_t = cal_var[t_ind];
 
-          diff = abs(as<NumericVector>(cal_var[c_eligible]) - cal_var_t);
+          diff = Rcpp::abs(as<NumericVector>(cal_var[c_eligible]) - cal_var_t);
 
           cal_diff[c_eligible] = diff;
 
@@ -191,7 +191,7 @@ IntegerMatrix nn_matchC(const IntegerVector& treat,
           ps_diff_assigned = false; // reset for next iter
         } else {
           dt = distance[t_ind];
-          match_distance = abs(as<NumericVector>(distance[c_eligible]) - dt);
+          match_distance = Rcpp::abs(as<NumericVector>(distance[c_eligible]) - dt);
         }
       }
 

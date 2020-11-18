@@ -33,7 +33,8 @@ double pairdistsubC(const NumericVector& x_,
 
     for (i1 = 0; i1 < x_t1.size(); ++i1) {
       for (i0 = 0; i0 < x_t0.size(); ++i0) {
-        dist += abs(x_t1[i1] - x_t0[i0]);
+        dist += std::abs(x_t1[i1] - x_t0[i0]);
+        //Note: need std::abs because inner is float; see https://stackoverflow.com/questions/63586323/
         ++k;
       }
     }
