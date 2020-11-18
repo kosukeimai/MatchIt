@@ -17,3 +17,12 @@ reference:
 - title: Datasets
 - contents:
   - lalonde
+
+articles:
+- title: ~
+  navbar: ~
+  contents:
+  - matching-methods
+  - assessing-balance
+  - estimating-effects
+  - sampling-weights

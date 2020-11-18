@@ -1,12 +1,11 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# MatchIt: Nonparametric Preprocessing for Parametric Causal Inference
+# MatchIt: Nonparametric Preprocessing for Parametric Causal Inference <img src="man/figures/logo.png" align="right" width="150"/>
 
-[![Build
-Status](https://travis-ci.org/kosukeimai/MatchIt.svg?branch=master)](https://travis-ci.org/kosukeimai/MatchIt)
-[![CRAN\_Status\_Badge](https://www.r-pkg.org/badges/version/MatchIt)](https://cran.r-project.org/package=MatchIt)
-![CRAN downloads](https://cranlogs.r-pkg.org/badges/grand-total/MatchIt)
+## [![CRAN\_Status\_Badge](https://img.shields.io/cran/v/MatchIt?color=952100)](https://cran.r-project.org/package=MatchIt) [![CRAN\_Downloads\_Badge](https://cranlogs.r-pkg.org/badges/MatchIt?color=952100)](https://cran.r-project.org/package=MatchIt)
+
+### Overview
 
 `MatchIt` provides a simple and straightforward interface to various
 methods of matching for covariate balance in observational studies.
@@ -24,7 +23,7 @@ with a propensity score caliper and assessing overlap and balance:
 library("MatchIt")
 data("lalonde", package = "MatchIt")
 
-#Nearest neighbor PS matching with replacement and a caliper
+#Nearest neighbor PS matching without replacement and with a caliper
 m.out <- matchit(treat ~ age + educ + race + married + nodegree + re74 + re75, 
                  data = lalonde, ratio = 2, caliper = .025)
 ```
@@ -140,10 +139,12 @@ Stuart (2007)](https//:doi.org/10.1093/pan/mpl013) and [Stuart
 (2010)](https://doi.org/10.1214/09-STS313). The *Journal of Statistical
 Software* article for `MatchIt` can be accessed
 [here](https://doi.org/10.18637/jss.v042.i08), though note that some
-options have changed, so the `MatchIt` reference pages should be used
-for understanding the functions and methods available. Further
-references for individual methods are present in their respective help
-pages.
+options have changed, so the `MatchIt` reference pages and included
+vignettes should be used for understanding the functions and methods
+available. Further references for individual methods are present in
+their respective help pages.
+
+### Citing `MatchIt`
 
 Please cite `MatchIt` when using it for analysis presented in
 publications, which you can do by citing the *Journal of Statistical

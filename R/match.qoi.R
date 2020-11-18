@@ -141,7 +141,8 @@ pair.dist <- function(xx, tt, subclass = NULL, mm = NULL, std = NULL, fast = TRU
       mpdiff <- mean(abs(dists))
     }
     else {
-      mpdiff <- pairdistsubC(xx, tt, subclass, nlevels(subclass))
+      mpdiff <- pairdistsubC(as.numeric(xx), as.integer(tt),
+                             as.integer(subclass), nlevels(subclass))
     }
   }
   else return(NA_real_)

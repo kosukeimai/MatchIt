@@ -6,9 +6,13 @@ output:
 `MatchIt` News and Updates
 ======
 
-# MatchIt (development version)
+# MatchIt 4.0.1
 
 * Restored `cem` functionality after it had been taken down and re-uploaded.
+
+* Added `pkgdown` website.
+
+* Fixed issues with `Rcpp` code that required C++11. C++11 has been added to SystemRequirements in DESCRIPTION, and `MatchIt` now requires R version 3.1.0 or later.
 
 # MatchIt 4.0.0
 
