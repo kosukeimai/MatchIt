@@ -8,6 +8,13 @@
 
 <title>Matching for Causal Inference — matchit • MatchIt</title>
 
+<!-- favicons -->
+<link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
+<link rel="apple-touch-icon" type="image/png" sizes="180x180" href="../apple-touch-icon.png" />
+<link rel="apple-touch-icon" type="image/png" sizes="120x120" href="../apple-touch-icon-120x120.png" />
+<link rel="apple-touch-icon" type="image/png" sizes="76x76" href="../apple-touch-icon-76x76.png" />
+<link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png" />
 
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
@@ -42,6 +49,7 @@
 <meta property="og:title" content="Matching for Causal Inference — matchit" />
 <meta property="og:description" content="matchit is the main function of MatchIt and performs pairing, subset selection, and subclassification with the aim of creating treatment and control groups balanced on included covariates. MatchIt implements the suggestions of Ho, Imai, King, and Stuart (2007) for improving parametric statistical models by preprocessing data with nonparametric matching methods.  MatchIt implements a wide range of sophisticated matching methods, making it possible to greatly reduce the dependence of causal inferences on hard-to-justify, but commonly made, statistical modeling assumptions. The software also easily fits into existing research practices since, after preprocessing with MatchIt, researchers can use whatever parametric model they would have used without MatchIt, but produce inferences with substantially more robustness and less sensitivity to modeling assumptions.
 This page documents the overall use of matchit, but for specifics of how matchit works with individual matching methods, see the individual pages linked in the Details section below." />
+<meta property="og:image" content="/logo.png" />
 
 
 
@@ -73,7 +81,7 @@ This page documents the overall use of matchit, but for specifics of how matchit
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">MatchIt</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">4.0.0.9000</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">4.0.1</span>
       </span>
     </div>
 
@@ -99,13 +107,13 @@ This page documents the overall use of matchit, but for specifics of how matchit
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
+      <a href="../articles/matching-methods.html">Matching Methods</a>
+    </li>
+    <li>
       <a href="../articles/assessing-balance.html">Assessing Balance</a>
     </li>
     <li>
       <a href="../articles/estimating-effects.html">Estimating Effects After Matching</a>
-    </li>
-    <li>
-      <a href="../articles/matching-methods.html">Matching Methods</a>
     </li>
     <li>
       <a href="../articles/sampling-weights.html">Matching with Sampling Weights</a>

@@ -8,6 +8,13 @@
 
 <title>Changelog • MatchIt</title>
 
+<!-- favicons -->
+<link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
+<link rel="apple-touch-icon" type="image/png" sizes="180x180" href="../apple-touch-icon.png" />
+<link rel="apple-touch-icon" type="image/png" sizes="120x120" href="../apple-touch-icon-120x120.png" />
+<link rel="apple-touch-icon" type="image/png" sizes="76x76" href="../apple-touch-icon-76x76.png" />
+<link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png" />
 
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
@@ -40,6 +47,7 @@
 
 
 <meta property="og:title" content="Changelog" />
+<meta property="og:image" content="/logo.png" />
 
 
 
@@ -71,7 +79,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">MatchIt</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">4.0.0.9000</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">4.0.1</span>
       </span>
     </div>
 
@@ -97,13 +105,13 @@
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
+      <a href="../articles/matching-methods.html">Matching Methods</a>
+    </li>
+    <li>
       <a href="../articles/assessing-balance.html">Assessing Balance</a>
     </li>
     <li>
       <a href="../articles/estimating-effects.html">Estimating Effects After Matching</a>
-    </li>
-    <li>
-      <a href="../articles/matching-methods.html">Matching Methods</a>
     </li>
     <li>
       <a href="../articles/sampling-weights.html">Matching with Sampling Weights</a>
@@ -138,12 +146,14 @@
       <small>Source: <a href='https://github.com/kosukeimai/MatchIt/blob/master/NEWS.md'><code>NEWS.md</code></a></small>
     </div>
 
-    <div id="matchit-development-version" class="section level1">
-<h1 class="page-header" data-toc-text="development version">
-<a href="#matchit-development-version" class="anchor"></a>MatchIt (development version)<small> Unreleased </small>
+    <div id="matchit-401" class="section level1">
+<h1 class="page-header" data-toc-text="4.0.1">
+<a href="#matchit-401" class="anchor"></a>MatchIt 4.0.1<small> Unreleased </small>
 </h1>
 <ul>
-<li>Restored <code>cem</code> functionality after it had been taken down and re-uploaded.</li>
+<li><p>Restored <code>cem</code> functionality after it had been taken down and re-uploaded.</p></li>
+<li><p>Added <code>pkgdown</code> website.</p></li>
+<li><p>Fixed issues with <code>Rcpp</code> code that required C++11. C++11 has been added to SystemRequirements in DESCRIPTION, and <code>MatchIt</code> now requires R version 3.1.0 or later.</p></li>
 </ul>
 </div>
     <div id="matchit-400" class="section level1">

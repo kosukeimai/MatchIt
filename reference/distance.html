@@ -8,6 +8,13 @@
 
 <title>Propensity scores and other distance measures — distance • MatchIt</title>
 
+<!-- favicons -->
+<link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
+<link rel="apple-touch-icon" type="image/png" sizes="180x180" href="../apple-touch-icon.png" />
+<link rel="apple-touch-icon" type="image/png" sizes="120x120" href="../apple-touch-icon-120x120.png" />
+<link rel="apple-touch-icon" type="image/png" sizes="76x76" href="../apple-touch-icon-76x76.png" />
+<link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png" />
 
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
@@ -45,6 +52,7 @@ There are two ways to specify the distance argument: 1) as the string &quot;maha
 When distance is specified as one of the allowed strings (described below) other than &quot;mahalanobis&quot;, a propensity score is estimated using the variables in formula and the method corresponding to the given argument. This propensity score can be used to compute the distance between units as the absolute difference between the propensity scores of pairs of units. In this respect, the propensity score is more like a &quot;position&quot; measure than a distance measure, since it is the pairwise difference that form the distance rather than the propensity scores themselves. Still, this naming convention is used to reflect their primary purpose without committing to the status of the estimated values as propensity scores, since transformations of the scores are allowed and user-supplied values that are not propensity scores can also be supplied (detailed below). Propensity scores can also be used to create calipers and common support restrictions, whether or not they are used in the actual distance measure used in the matching, if any.
 In addition to the distance argument, two other arguments can be specified that relate to the estimation and manipulation of the propensity scores. The link argument allows for different links to be used in models that require them such as generalized linear models, for which the logit and probit links are allowed, among others. In addition to specifying the link, the link argument can be used to specify whether the propensity score or the linearized version of the propensity score should be used; by specifying link = &quot;linear.{link}&quot;, the linearized version will be used.
 The distance.options argument can also be specified, which should be a list of values passed to the propensity score-estimating function, for example, to choose specific options or tuning parameters for the estimation method. If formula, data, or verbose are not supplied to distance.options, the corresponding arguments from matchit will be automatically supplied. See the Examples for demonstrations of the uses of link and distance.options. When s.weights is supplied in the call to matchit, it will automatically be passed to the propensity score-estimating function as the weights argument unless otherwise described below." />
+<meta property="og:image" content="/logo.png" />
 
 
 
@@ -76,7 +84,7 @@ The distance.options argument can also be specified, which should be a list of v
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">MatchIt</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">4.0.0.9000</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">4.0.1</span>
       </span>
     </div>
 
@@ -102,13 +110,13 @@ The distance.options argument can also be specified, which should be a list of v
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
+      <a href="../articles/matching-methods.html">Matching Methods</a>
+    </li>
+    <li>
       <a href="../articles/assessing-balance.html">Assessing Balance</a>
     </li>
     <li>
       <a href="../articles/estimating-effects.html">Estimating Effects After Matching</a>
-    </li>
-    <li>
-      <a href="../articles/matching-methods.html">Matching Methods</a>
     </li>
     <li>
       <a href="../articles/sampling-weights.html">Matching with Sampling Weights</a>
