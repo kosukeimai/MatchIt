@@ -52,7 +52,9 @@ matchit2cem <- function(treat, covs, estimand = "ATT", verbose = FALSE, ...) {
                             A[names(A) %in% setdiff(names(formals(cem::cem)), args.excluded)]))
       },
       warning = function(w) {
-        warning(paste0("(from cem) ", conditionMessage(w)), call. = FALSE, immediate. = TRUE)
+        if (conditionMessage(w) != "no non-missing arguments to min; returning Inf") {
+          warning(paste0("(from cem) ", conditionMessage(w)), call. = FALSE, immediate. = TRUE)
+        }
         invokeRestart("muffleWarning")
       })
     },
