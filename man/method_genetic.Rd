@@ -31,7 +31,7 @@ a data frame containing the variables named in \code{formula}. If not found in \
 set here to \code{"genetic"}.
 }
   \item{distance}{
-the distance measure to be used. See \code{\link{distance}} for allowable options. When set to \code{"mahalanobis"}, only the covariates in \code{formula} are supplied to the generalized Mahalanobis distance matrix to have their scaling factors chosen. Otherwise, the distance measure is included with the covariates in \code{formula} to be supplied to the generalized Mahalanobis distance matrix.
+the distance measure to be used. See \code{\link{distance}} for allowable options. When set to \code{"mahalanobis"}, only the covariates in \code{formula} are supplied to the generalized Mahalanobis distance matrix to have their scaling factors chosen. Otherwise, the distance measure is included with the covariates in \code{formula} to be supplied to the generalized Mahalanobis distance matrix unless \code{mahvars} is specified.
 }
   \item{link}{
 when \code{distance} is specified as a string and not \code{"mahalanobis"}, an additional argument controlling the link function used in estimating the distance measure. See \code{\link{distance}} for allowable options with each option.
