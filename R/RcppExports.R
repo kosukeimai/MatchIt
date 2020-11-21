@@ -9,3 +9,7 @@ pairdistsubC <- function(x_, t_, s_, num_sub) {
     .Call(`_MatchIt_pairdistsubC`, x_, t_, s_, num_sub)
 }
 
+weights_matrix <- function(mm, treat) {
+    .Call(`_MatchIt_weights_matrix`, mm, treat)
+}
+
