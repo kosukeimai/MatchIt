@@ -142,7 +142,9 @@ Software* article for `MatchIt` can be accessed
 options have changed, so the `MatchIt` reference pages and included
 vignettes should be used for understanding the functions and methods
 available. Further references for individual methods are present in
-their respective help pages.
+their respective help pages. The `MatchIt`
+[website](https://kosukeimai.github.io/MatchIt/) provides access to
+vignettes and documentation files.
 
 ### Citing `MatchIt`
 

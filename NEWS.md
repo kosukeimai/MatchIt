@@ -12,6 +12,8 @@ output:
 
 * Added `pkgdown` website.
 
+* Computing matching weights after matching with replacement is faster due to programming in `Rcpp`.
+
 * Fixed issues with `Rcpp` code that required C++11. C++11 has been added to SystemRequirements in DESCRIPTION, and `MatchIt` now requires R version 3.1.0 or later.
 
 # MatchIt 4.0.0

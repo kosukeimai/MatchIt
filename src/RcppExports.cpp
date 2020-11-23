@@ -42,10 +42,23 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// weights_matrix
+NumericVector weights_matrix(const IntegerMatrix& mm, const IntegerVector& treat);
+RcppExport SEXP _MatchIt_weights_matrix(SEXP mmSEXP, SEXP treatSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const IntegerMatrix& >::type mm(mmSEXP);
+    Rcpp::traits::input_parameter< const IntegerVector& >::type treat(treatSEXP);
+    rcpp_result_gen = Rcpp::wrap(weights_matrix(mm, treat));
+    return rcpp_result_gen;
+END_RCPP
+}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_MatchIt_nn_matchC", (DL_FUNC) &_MatchIt_nn_matchC, 13},
     {"_MatchIt_pairdistsubC", (DL_FUNC) &_MatchIt_pairdistsubC, 4},
+    {"_MatchIt_weights_matrix", (DL_FUNC) &_MatchIt_weights_matrix, 2},
     {NULL, NULL, 0}
 };
 

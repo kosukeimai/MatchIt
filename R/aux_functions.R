@@ -683,14 +683,14 @@ charmm2nummm <- function(charmm, treat) {
 #Get subclass from match.matrix. Only to be used if replace = FALSE.
 mm2subclass <- function(mm, treat) {
   lab <- names(treat)
-  lab1 <- lab[treat == 1]
+  ind1 <- which(treat == 1)
 
   subclass <- setNames(rep(NA_character_, length(treat)), lab)
   no.match <- is.na(mm)
-  subclass[lab1[!no.match[,1]]] <- lab1[!no.match[,1]]
-  subclass[mm[!no.match]] <- lab1[row(mm)[!no.match]]
+  subclass[ind1[!no.match[,1]]] <- ind1[!no.match[,1]]
+  subclass[mm[!no.match]] <- ind1[row(mm)[!no.match]]
 
-  subclass <- setNames(factor(subclass, nmax = length(lab1)), lab)
+  subclass <- setNames(factor(subclass, nmax = length(ind1)), lab)
   levels(subclass) <- seq_len(nlevels(subclass))
 
   return(subclass)

@@ -333,12 +333,13 @@ matchit2optimal <- function(treat, formula, data, distance, discarded,
   psclass <- factor(pair, labels = seq_len(nlevels(pair)))
   names(psclass) <- names(treat)
   na.class <- is.na(psclass)
+  ind1 <- which(treat == focal)
 
   mm <- matrix(NA_character_, ncol = ratio, nrow = sum(treat == focal),
                dimnames = list(names(treat)[treat == focal], NULL))
 
-  for (i in rownames(mm)[!na.class[treat == focal]]) {
-    matched.units <- names(treat)[treat != focal & !na.class & psclass == psclass[i]]
+  for (i in which(!na.class[treat == focal])) {
+    matched.units <- names(treat)[treat != focal & !na.class & psclass == psclass[ind1[i]]]
     if (length(matched.units) > 0) mm[i, seq_along(matched.units)] <- matched.units
   }
 
@@ -529,6 +530,8 @@ matchit2genetic <- function(treat, data, distance, discarded,
 
   lab_ <- names(treat_)
 
+  ind_ <- seq_along(treat)[ord]
+
   # if (!isFALSE(A$use.Match)) {
   withCallingHandlers({
     m.out <- Matching::Match(Tr = treat_, X = X_,
@@ -551,15 +554,17 @@ matchit2genetic <- function(treat, data, distance, discarded,
   })
 
   #Note: must use character match.matrix because of re-ordering treat into treat_
-  mm <- matrix(NA_character_, nrow = n1, ncol = max(table(m.out$index.treated)),
+  mm <- matrix(NA_integer_, nrow = n1, ncol = max(table(m.out$index.treated)),
                dimnames = list(lab1, NULL))
 
   unique.matched.focal <- unique(m.out$index.treated, nmax = n1)
 
+  ind1__ <- match(lab_, lab1)
   for (i in unique.matched.focal) {
-    matched.units <- lab_[m.out$index.control[m.out$index.treated == i]]
-    mm[lab_[i], seq_along(matched.units)] <- matched.units
+    matched.units <- ind_[m.out$index.control[m.out$index.treated == i]]
+    mm[ind1__[i], seq_along(matched.units)] <- matched.units
   }
+
   # }
   # else {
   #   ord1 <- ord[ord %in% which(treat == 1)]
@@ -586,18 +591,16 @@ matchit2genetic <- function(treat, data, distance, discarded,
 
   if (replace) {
     psclass <- NULL
-    weights <- weights.matrix(charmm2nummm(mm, treat), treat)
   }
   else {
     psclass <- mm2subclass(mm, treat)
-    weights <- weights.subclass(psclass, treat)
   }
 
   if (verbose) cat("Done.\n")
 
-  res <- list(match.matrix = mm,
+  res <- list(match.matrix = nummm2charmm(mm, treat),
               subclass = psclass,
-              weights = weights,
+              weights = weights.matrix(mm, treat),
               obj = g.out)
 
   class(res) <- "matchit"
@@ -769,20 +772,16 @@ matchit2nearest <-  function(treat, data, distance, discarded,
 
   if (replace) {
     psclass <- NULL
-    weights <- weights.matrix(mm, treat)
-    mm <- nummm2charmm(mm, treat)
   }
   else {
-    mm <- nummm2charmm(mm, treat)
     psclass <- mm2subclass(mm, treat)
-    weights <- weights.subclass(psclass, treat)
   }
 
   if (verbose) cat("Done.\n")
 
-  res <- list(match.matrix = mm,
+  res <- list(match.matrix = nummm2charmm(mm, treat),
               subclass = psclass,
-              weights = weights)
+              weights = weights.matrix(mm, treat))
 
   class(res) <- "matchit"
 
