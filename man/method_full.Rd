@@ -76,6 +76,8 @@ The arguments \code{replace}, \code{m.order}, and \code{ratio} are ignored with 
 }
 \note{
 Due to what appears to be a bug in \pkg{optmatch} (version 0.9-13), calipers can only be used when \code{min.controls} is left at its default.
+
+The option \code{"optmatch_max_problem_size"} is automatically set to \code{Inf} during the matching process, different from its default in \pkg{optmatch}. This enables matching problems of any size to be run, but may also let huge, infeasible problems get through and potentially take a long time or crash R. See \pkgfun2{optmatch}{setMaxProblemSize}{optmatch::setMaxProblemSize} for more details.
 }
 \section{Outputs}{
 All outputs described in \code{\link{matchit}} are returned with \code{method = "full"} except for \code{match.matrix}. This is because matching strata are not indexed by treated units as they are in some other forms of matching.

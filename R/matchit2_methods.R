@@ -125,6 +125,11 @@ matchit2full <- function(treat, formula, data, distance, discarded,
   fm.args <- c("min.controls", "max.controls", "omit.fraction", "mean.controls", "tol")
   A[!names(A) %in% fm.args] <- NULL
 
+  #Set max problem size to Inf and return to original value after match
+  omps <- getOption("optmatch_max_problem_size")
+  on.exit(options(optmatch_max_problem_size = omps))
+  options(optmatch_max_problem_size = Inf)
+
   estimand <- toupper(estimand)
   estimand <- match_arg(estimand, c("ATT", "ATC", "ATE"))
   if (estimand == "ATC") {
@@ -237,15 +242,23 @@ matchit2full <- function(treat, formula, data, distance, discarded,
 matchit2optimal <- function(treat, formula, data, distance, discarded,
                             ratio = 1, caliper = NULL, mahvars = NULL, exact = NULL,
                             estimand = "ATT", verbose = FALSE,
-                            is.full.mahalanobis,...) {
+                            is.full.mahalanobis, min.controls = NULL,
+                            max.controls = NULL, ...) {
 
   check.package("optmatch")
 
   if (verbose) cat("Optimal matching... \n")
 
+  ratio <- process.ratio(ratio, max.controls)
+
   A <- list(...)
   pm.args <- c("tol")
   A[!names(A) %in% pm.args] <- NULL
+
+  #Set max problem size to Inf and return to original value after match
+  omps <- getOption("optmatch_max_problem_size")
+  on.exit(options(optmatch_max_problem_size = omps))
+  options(optmatch_max_problem_size = Inf)
 
   estimand <- toupper(estimand)
   estimand <- match_arg(estimand, c("ATT", "ATC"))
@@ -279,11 +292,33 @@ matchit2optimal <- function(treat, formula, data, distance, discarded,
     environment(exact) <- sys.frame(sys.nframe())
     exact.match <- optmatch::exactMatch(update(exact, treat_ ~ .), data = data)
   }
-  else exact.match <- NULL
+  else {
+    exact.match <- NULL
+
+  }
+
 
   if (!is.null(caliper)) {
     warning("Calipers are currently not compatible with method = \"optimal\" and will be ignored.", call. = FALSE, immediate. = TRUE)
     caliper <- NULL
+  }
+
+  if (!is.null(max.controls)) {
+    if (is.null(distance)) stop("'distance' cannot be \"mahalanobis\" for variable ratio matching.", call. = FALSE)
+    if (ratio <= 1) stop("'ratio' must be greater than 1 for variable ratio matching.", call. = FALSE)
+
+    max.controls <- ceiling(max.controls)
+    if (max.controls <= ratio) stop("'max.controls' must be greater than 'ratio' for variable ratio matching.", call. = FALSE)
+
+    if (is.null(min.controls)) min.controls <- 1
+    else min.controls <- floor(min.controls)
+
+    if (min.controls < 1) stop("'min.controls' cannot be less than 1 for variable ratio matching. Use full matching instead.", call. = FALSE)
+    else if (min.controls >= ratio) stop("'min.controls' must be less than 'ratio' for variable ratio matching.", call. = FALSE)
+
+  }
+  else {
+    min.controls <- max.controls <- ratio
   }
 
   withCallingHandlers({
@@ -291,11 +326,13 @@ matchit2optimal <- function(treat, formula, data, distance, discarded,
       formula <- update(formula, treat_ ~ .)
       environment(formula) <- sys.frame(sys.nframe())
 
-      pair <- do.call(optmatch::pairmatch,
+      pair <- do.call(optmatch::fullmatch,
                       c(list(formula,
                              data = data,
                              method = "mahalanobis",
-                             controls = ratio,
+                             mean.controls = ratio,
+                             min.controls = min.controls,
+                             max.controls = max.controls,
                              within = exact.match),
                         A))
     }
@@ -303,19 +340,23 @@ matchit2optimal <- function(treat, formula, data, distance, discarded,
       mahvars <- update(mahvars, treat_ ~ .)
       environment(mahvars) <- sys.frame(sys.nframe())
 
-      pair <- do.call(optmatch::pairmatch,
+      pair <- do.call(optmatch::fullmatch,
                       c(list(mahvars,
                              data = data,
                              method = "mahalanobis",
-                             controls = ratio,
+                             mean.controls = ratio,
+                             min.controls = min.controls,
+                             max.controls = max.controls,
                              within = exact.match),
                         A))
     }
     else {
-      pair <- do.call(optmatch::pairmatch,
+      pair <- do.call(optmatch::fullmatch,
                       c(list(treat_ ~ distance,
                              method = "euclidean", #slightly faster than Mahalanobis
-                             controls = ratio,
+                             mean.controls = ratio,
+                             min.controls = min.controls,
+                             max.controls = max.controls,
                              within = exact.match),
                         A))
     }
@@ -335,7 +376,7 @@ matchit2optimal <- function(treat, formula, data, distance, discarded,
   na.class <- is.na(psclass)
   ind1 <- which(treat == focal)
 
-  mm <- matrix(NA_character_, ncol = ratio, nrow = sum(treat == focal),
+  mm <- matrix(NA_character_, ncol = max.controls, nrow = sum(treat == focal),
                dimnames = list(names(treat)[treat == focal], NULL))
 
   for (i in which(!na.class[treat == focal])) {
@@ -727,8 +768,14 @@ matchit2nearest <-  function(treat, data, distance, discarded,
   if (!is.null(max.controls)) {
     if (is.null(distance)) stop("'distance' cannot be \"mahalanobis\" for variable ratio matching.", call. = FALSE)
     if (ratio <= 1) stop("'ratio' must be greater than 1 for variable ratio matching.", call. = FALSE)
+
+    max.controls <- ceiling(max.controls)
     if (max.controls <= ratio) stop("'max.controls' must be greater than 'ratio' for variable ratio matching.", call. = FALSE)
+
     if (is.null(min.controls)) min.controls <- 1
+    else min.controls <- floor(min.controls)
+
+    if (min.controls < 1) stop("'min.controls' cannot be less than 1 for variable ratio matching.", call. = FALSE)
     else if (min.controls >= ratio) stop("'min.controls' must be less than 'ratio' for variable ratio matching.", call. = FALSE)
 
     n1 <- sum(treat == 1)

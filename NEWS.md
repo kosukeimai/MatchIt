@@ -16,6 +16,8 @@ output:
 
 * Fixed issues with `Rcpp` code that required C++11. C++11 has been added to SystemRequirements in DESCRIPTION, and `MatchIt` now requires R version 3.1.0 or later.
 
+* Variable ratio matching is now compatible with `method = "optimal"` in the same way it is with `method = "nearest"`.
+
 # MatchIt 4.0.0
 
 ## General Fixes and New Features
