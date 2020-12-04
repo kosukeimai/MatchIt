@@ -16,16 +16,15 @@ matching, genetic matching, exact matching, coarsened exact matching,
 and subclassification, some of which rely on functions from other R
 packages. A variety of methods to estimate propensity scores for
 propensity score matching are included. Below is an example of the use
-of `MatchIt` to perform 2:1 nearest neighbor propensity score matching
-with a propensity score caliper and assessing overlap and balance:
+of `MatchIt` to perform full matching and assessing overlap and balance:
 
 ``` r
 library("MatchIt")
 data("lalonde", package = "MatchIt")
 
-#Nearest neighbor PS matching without replacement and with a caliper
+#Full matching on the propensity score
 m.out <- matchit(treat ~ age + educ + race + married + nodegree + re74 + re75, 
-                 data = lalonde, ratio = 2, caliper = .025)
+                 data = lalonde, method = "full")
 ```
 
 Printing the `MatchIt` object provides details of the kind of matching
@@ -36,27 +35,12 @@ m.out
 ```
 
     #> A matchit object
-    #>  - method: 2:1 nearest neighbor matching without replacement
-    #>  - distance: Propensity score [caliper]
+    #>  - method: Optimal full matching
+    #>  - distance: Propensity score
     #>              - estimated with logistic regression
-    #>  - caliper: <distance> (0.007)
-    #>  - number of obs.: 614 (original), 234 (matched)
+    #>  - number of obs.: 614 (original), 614 (matched)
     #>  - target estimand: ATT
     #>  - covariates: age, educ, race, married, nodegree, re74, re75
-
-We can view propensity score overlap and see which observations were
-matched and unmatched using a jitter plot:
-
-``` r
-#Checking for PS overlap
-plot(m.out, type = "jitter", interactive = FALSE)
-```
-
-<img src="man/figures/README-unnamed-chunk-4-1.png" style="display: block; margin: auto;" />
-
-With this we can see that most of the unmatched control units had small
-propensity scores, making them unlike the treated group. Other plots are
-available to view the distributions of propensity scores and covariates.
 
 We can check covariate balance for the original and matched samples
 using `summary()`:
@@ -69,7 +53,7 @@ summary(m.out)
     #> 
     #> Call:
     #> matchit(formula = treat ~ age + educ + race + married + nodegree + 
-    #>     re74 + re75, data = lalonde, caliper = 0.025, ratio = 2)
+    #>     re74 + re75, data = lalonde, method = "full")
     #> 
     #> Summary of Balance for All Data:
     #>            Means Treated Means Control Std. Mean Diff. Var. Ratio eCDF Mean eCDF Max
@@ -87,36 +71,36 @@ summary(m.out)
     #> 
     #> Summary of Balance for Matched Data:
     #>            Means Treated Means Control Std. Mean Diff. Var. Ratio eCDF Mean eCDF Max Std. Pair Dist.
-    #> distance          0.4962        0.4937          0.0115     1.0104    0.0043   0.0392          0.0131
-    #> age              25.3627       25.5637         -0.0281     0.4399    0.0800   0.2157          1.3150
-    #> educ             10.2549       10.4216         -0.0829     0.6076    0.0237   0.0784          1.0060
-    #> raceblack         0.7157        0.7157          0.0000          .    0.0000   0.0000          0.0379
-    #> racehispan        0.1078        0.1078          0.0000          .    0.0000   0.0000          0.1439
-    #> racewhite         0.1765        0.1765          0.0000          .    0.0000   0.0000          0.1364
-    #> married           0.2059        0.2157         -0.0250          .    0.0098   0.0098          0.6190
-    #> nodegree          0.6765        0.6422          0.0755          .    0.0343   0.0343          0.7832
-    #> re74           2409.1384     2573.6987         -0.0337     1.4815    0.0528   0.2598          0.7939
-    #> re75           1704.2015     1721.3424         -0.0053     1.6335    0.0391   0.1275          0.8505
+    #> distance          0.5774        0.5761          0.0060     0.9918    0.0039   0.0486          0.0192
+    #> age              25.8162       24.6928          0.1570     0.4853    0.0838   0.3220          1.2606
+    #> educ             10.3459       10.3227          0.0116     0.5577    0.0235   0.0620          1.2200
+    #> raceblack         0.8432        0.8347          0.0236          .    0.0086   0.0086          0.0378
+    #> racehispan        0.0595        0.0583          0.0049          .    0.0012   0.0012          0.5638
+    #> racewhite         0.0973        0.1071         -0.0329          .    0.0098   0.0098          0.4168
+    #> married           0.1892        0.1285          0.1549          .    0.0607   0.0607          0.4806
+    #> nodegree          0.7081        0.7040          0.0090          .    0.0041   0.0041          0.9143
+    #> re74           2095.5737     2199.7126         -0.0213     1.2008    0.0383   0.2350          0.8668
+    #> re75           1532.0553     1524.8362          0.0022     2.0048    0.0651   0.2308          0.7932
     #> 
     #> Percent Balance Improvement:
     #>            Std. Mean Diff. Var. Ratio eCDF Mean eCDF Max
-    #> distance              99.4       87.3      98.9     93.9
-    #> age                   90.9       -0.0       1.6    -36.7
-    #> educ                 -50.8       29.0      31.6     29.6
-    #> raceblack            100.0          .     100.0    100.0
-    #> racehispan           100.0          .     100.0    100.0
-    #> racewhite            100.0          .     100.0    100.0
-    #> married               97.0          .      97.0     97.0
-    #> nodegree              69.2          .      69.2     69.2
-    #> re74                  95.3       40.2      76.5     41.9
-    #> re75                  98.2     -998.1      70.8     55.7
+    #> distance              99.7       90.0      99.0     92.5
+    #> age                   49.3       11.9      -3.0   -104.2
+    #> educ                  78.9       16.8      32.4     44.3
+    #> raceblack             98.7          .      98.7     98.7
+    #> racehispan            98.6          .      98.6     98.6
+    #> racewhite             98.2          .      98.2     98.2
+    #> married               81.2          .      81.2     81.2
+    #> nodegree              96.3          .      96.3     96.3
+    #> re74                  97.0       72.2      83.0     47.4
+    #> re75                  99.2    -1456.4      51.5     19.8
     #> 
     #> Sample Sizes:
     #>               Control Treated
     #> All            429.       185
-    #> Matched (ESS)  119.59     102
-    #> Matched        132.       102
-    #> Unmatched      297.        83
+    #> Matched (ESS)   53.33     185
+    #> Matched        429.       185
+    #> Unmatched        0.         0
     #> Discarded        0.         0
 
 At the top is balance for the original sample. Below that is balance in
@@ -131,7 +115,7 @@ across the sample:
 plot(summary(m.out))
 ```
 
-<img src="man/figures/README-unnamed-chunk-6-1.png" style="display: block; margin: auto;" />
+<img src="man/figures/README-unnamed-chunk-5-1.png" style="display: block; margin: auto;" />
 
 Although much has been written about matching theory, most of the theory
 relied upon in `MatchIt` is described well in [Ho, Imai, King, and
