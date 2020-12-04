@@ -16,7 +16,7 @@ matching, genetic matching, exact matching, coarsened exact matching,
 and subclassification, some of which rely on functions from other R
 packages. A variety of methods to estimate propensity scores for
 propensity score matching are included. Below is an example of the use
-of `MatchIt` to perform full matching and assessing overlap and balance:
+of `MatchIt` to perform full matching and assess balance:
 
 ``` r
 library("MatchIt")
