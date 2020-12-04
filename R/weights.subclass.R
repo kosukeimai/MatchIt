@@ -12,8 +12,8 @@ weights.subclass <- function(psclass, treat, estimand = "ATT") {
     levels(psclass) <- seq_len(nlevels(psclass))
   }
 
-  treated_by_sub <- setNames(tabulate(psclass[i1], nlevels(psclass)), levels(psclass))
-  control_by_sub <- setNames(tabulate(psclass[i0], nlevels(psclass)), levels(psclass))
+  treated_by_sub <- setNames(tabulateC(psclass[i1], nlevels(psclass)), levels(psclass))
+  control_by_sub <- setNames(tabulateC(psclass[i0], nlevels(psclass)), levels(psclass))
 
   total_by_sub <- treated_by_sub + control_by_sub
 

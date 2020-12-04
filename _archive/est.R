@@ -269,7 +269,7 @@ est_effect <- function(formula, m, type, measure, nboot = NULL, boot.type = "per
       estfun <- function(data, i) {
 
         #Compute number of times each pair is present
-        numreps <- setNames(tabulate(data[i], length(pairs)), pairs)
+        numreps <- setNames(tabulateC(data[i], length(pairs)), pairs)
 
         #For each pair p, copy corresponding md row indices numreps[p] times
         ids <- unlist(lapply(pairs[numreps > 0], function(p) rep(which(md[[attr(md, "subclass")]] == p), numreps[p])))

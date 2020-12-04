@@ -680,7 +680,7 @@ charmm2nummm <- function(charmm, treat) {
   nummm
 }
 
-#Get subclass from match.matrix. Only to be used if replace = FALSE.
+#Get subclass from match.matrix. Only to be used if replace = FALSE. See subclass2mmC.cpp for reverse.
 mm2subclass <- function(mm, treat) {
   lab <- names(treat)
   ind1 <- which(treat == 1)
