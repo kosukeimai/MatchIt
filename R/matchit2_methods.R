@@ -13,68 +13,33 @@ matchit2null <- function(discarded, ...) {
 }
 # MATCHIT method = cem--------------------------------------
 matchit2cem <- function(treat, covs, estimand = "ATT", verbose = FALSE, ...) {
-
   if (length(covs) == 0) stop("Covariates must be specified in the input formula to use coarsened exact matching.", call. = FALSE)
-
-  check.package("cem")
 
   if (verbose) cat("Coarsened exact matching...\n")
 
   A <- list(...)
-  A[["method"]] <- A[["k2k.method"]]
-
-  n.obs <- length(treat)
 
   estimand <- toupper(estimand)
   estimand <- match_arg(estimand, c("ATT", "ATC", "ATE"))
 
-  # cem takes the data all together and wants the treatment specified
-  # with the column name of the data frame. Here we massage the matchit
-  # inputs to this format. Note that X has its proper column names, but
-  # treat does not have the original column name.
-  cem.data <- data.frame(covs, treat)
+  #Uses in-house cem, no need for cem package. See cem_matchit.R for code.
+  strat <- do.call("cem_matchit", c(list(treat = treat, X = covs, estimand = estimand),
+                                    A[names(A) %in% names(formals(cem_matchit))]),
+                   quote = TRUE)
 
-  args.excluded <- c("treatment", "baseline.group", "data", "verbose", "eval.imbalance",
-                     "keep.all", "drop", "L1.breaks", "L1.grouping")
+  levels(strat) <- seq_len(nlevels(strat))
+  names(strat) <- names(treat)
 
-  if (verbose) eval.verbose <- base::eval
-  else eval.verbose <- utils::capture.output
-
-  eval.verbose({
-    mat <- tryCatch({
-      withCallingHandlers({
-        do.call(cem::cem, c(list(treatment = names(cem.data)[ncol(cem.data)],
-                                 data = cem.data,
-                                 verbose = TRUE, #verbosity controlled by eval.verbose
-                                 eval.imbalance = FALSE,
-                                 keep.all = FALSE,
-                                 drop = NULL),
-                            A[names(A) %in% setdiff(names(formals(cem::cem)), args.excluded)]))
-      },
-      warning = function(w) {
-        if (conditionMessage(w) != "no non-missing arguments to min; returning Inf") {
-          warning(paste0("(from cem) ", conditionMessage(w)), call. = FALSE, immediate. = TRUE)
-        }
-        invokeRestart("muffleWarning")
-      })
-    },
-    error = function(e) {
-      if (startsWith(conditionMessage(e), "subscript out of bounds")) {
-        stop("No units were matched. Try changing the coarsening options using the 'cutpoints' and 'grouping' arguments in cem(). See ?method_cem or ?cem::cem for details.", call. = FALSE)
-      }
-      else {
-        stop(paste0("(from cem) ", conditionMessage(e)), call. = FALSE)
-      }
-    })
-  })
-
-  strat <- setNames(rep(NA_character_, n.obs), names(treat))
-  if (!is.null(mat)) strat[mat$matched] <- mat$strata[mat$matched]
-  strat <- setNames(factor(strat, labels = seq_along(unique(strat[!is.na(strat)]))), names(treat))
+  mm <- NULL
+  if (isTRUE(A[["k2k"]])) {
+    mm <- nummm2charmm(subclass2mmC(strat, treat, focal = switch(estimand, "ATC" = 0, 1)),
+                       treat)
+  }
 
   if (verbose) cat("Calculating matching weights... ")
 
-  res <- list(subclass = strat,
+  res <- list(match.matrix = mm,
+              subclass = strat,
               weights = weights.subclass(strat, treat, estimand))
 
   if (verbose) cat("Done.\n")
@@ -82,7 +47,6 @@ matchit2cem <- function(treat, covs, estimand = "ATT", verbose = FALSE, ...) {
   class(res) <- "matchit"
   return(res)
 }
-
 # MATCHIT method = exact------------------------------------
 matchit2exact <- function(treat, covs, data, estimand = "ATT", verbose = FALSE, ...){
 
@@ -297,7 +261,6 @@ matchit2optimal <- function(treat, formula, data, distance, discarded,
 
   }
 
-
   if (!is.null(caliper)) {
     warning("Calipers are currently not compatible with method = \"optimal\" and will be ignored.", call. = FALSE, immediate. = TRUE)
     caliper <- NULL
@@ -373,16 +336,8 @@ matchit2optimal <- function(treat, formula, data, distance, discarded,
 
   psclass <- factor(pair, labels = seq_len(nlevels(pair)))
   names(psclass) <- names(treat)
-  na.class <- is.na(psclass)
-  ind1 <- which(treat == focal)
 
-  mm <- matrix(NA_character_, ncol = max.controls, nrow = sum(treat == focal),
-               dimnames = list(names(treat)[treat == focal], NULL))
-
-  for (i in which(!na.class[treat == focal])) {
-    matched.units <- names(treat)[treat != focal & !na.class & psclass == psclass[ind1[i]]]
-    if (length(matched.units) > 0) mm[i, seq_along(matched.units)] <- matched.units
-  }
+  mm <- nummm2charmm(subclass2mmC(psclass, treat, focal), treat)
 
   if (verbose) cat("Calculating matching weights... ")
 
