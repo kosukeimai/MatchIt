@@ -6,6 +6,16 @@ output:
 `MatchIt` News and Updates
 ======
 
+# MatchIt (development version)
+
+* Coarsened exact matching (i.e., `matchit()` with `method = "cem"`) has been completely rewritten and no longer involves the `cem` package, eliminating some spurious warning messages and fixing some bugs. All the same arguments can still be used, so old code will run, though some results will differ slightly. Additional options are available for matching and performance has improved. See `?method_cem` for details on the differences between the implementation in the current version of `MatchIt` and that in `cem` and older versions of `MatchIt`. In general, these changes make coarsened exact matching function as one would expect it to, circumventing some peculiarities and bugs in the `cem` package.
+
+* Variable ratio matching is now compatible with `method = "optimal"` in the same way it is with `method = "nearest"`, i.e., by using the `min.controls` and `max.controls` arguments. 
+
+* With `method = "full"` and `method = "optimal"`, the maximum problem size has been set to unlimited, so that larger datasets can be used with these methods without error. They may take a long time to run, though.
+
+* Process improvements with `method = "optimal"` due to rewriting some functions in `Rcpp`.
+
 # MatchIt 4.0.1
 
 * Restored `cem` functionality after it had been taken down and re-uploaded.
@@ -15,8 +25,6 @@ output:
 * Computing matching weights after matching with replacement is faster due to programming in `Rcpp`.
 
 * Fixed issues with `Rcpp` code that required C++11. C++11 has been added to SystemRequirements in DESCRIPTION, and `MatchIt` now requires R version 3.1.0 or later.
-
-* Variable ratio matching is now compatible with `method = "optimal"` in the same way it is with `method = "nearest"`.
 
 # MatchIt 4.0.0
 
