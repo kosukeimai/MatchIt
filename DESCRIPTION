@@ -30,7 +30,6 @@ Suggests:
     optmatch,
     Matching,
     rgenoud,
-    cem (>= 1.1.27),
     nnet,
     rpart,
     mgcv,
