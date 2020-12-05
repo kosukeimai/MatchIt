@@ -50,7 +50,7 @@ the variable containing sampling weights to be incorporated into balance statist
      \code{character}; how the distance between units should be calculated if \code{k2k = TRUE}. Allowable arguments include \code{NULL} (for random matching), \code{"mahalanobis"} (for Mahalanobis distance matching), or any allowable argument to \code{method} in \code{\link{dist}}. Matching will take place on scaled versions of the original (non-coarsened) variables. The default is \code{"mahalanobis"}.
      }
      \item{\code{mpower}}{
-     if \code{k2k.method = "minkowski"}, the power used in creating the distance. This is passed to the \coe{p} argument of \code{\link{dist}}.
+     if \code{k2k.method = "minkowski"}, the power used in creating the distance. This is passed to the \code{p} argument of \code{\link{dist}}.
      }
   }
 }
@@ -67,7 +67,7 @@ This method does not rely on the \pkg{cem} package, instead using code written f
 \item{In \pkg{MatchIt}, when a single number is supplied to \code{cutpoints}, it describes the number of bins; in \pkg{cem} it describes the number of cutpoints separating bins. The \pkg{MatchIt} method is closer to how \code{\link{hist}} processes breaks points.}
 \item{When \code{cutpoints} are used, \code{"ss"} (for Shimazaki-Shinomoto's rule) can be used in \pkg{cem} but not in \pkg{MatchIt}.}
 \item{When \code{k2k = TRUE}, \pkg{MatchIt} matches on the original variables (scaled), whereas \pkg{cem} matches on the coarsened variables. Because the variables are already exactly matched on the coarsened variables, matching in \code{cem} is equivalent to random matching within strata.}
-\item{When \code{k2k = TRUE}, in \pkg{MatchIt} matched units are identified by pair membership, and the original stratum membership prior to 1:1 matching is discarded. In \pkg[cem}, pairs are not identified beyond the stratum the members are part of.}
+\item{When \code{k2k = TRUE}, in \pkg{MatchIt} matched units are identified by pair membership, and the original stratum membership prior to 1:1 matching is discarded. In \pkg{cem}, pairs are not identified beyond the stratum the members are part of.}
 \item{When \code{k2k = TRUE}, \code{k2k.method = "mahalanobis"} can be requested in \pkg{MatchIt} but not in \pkg{cem}.}
 }
 
