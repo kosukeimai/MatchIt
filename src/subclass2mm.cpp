@@ -1,5 +1,5 @@
 #include <Rcpp.h>
-#include <tabulateC.cpp>
+#include "internal.h"
 using namespace Rcpp;
 
 //Turns subclass vector given as a factor into a numeric match.matrix.
@@ -10,7 +10,7 @@ IntegerMatrix subclass2mmC(const IntegerVector& subclass,
                            const IntegerVector& treat,
                            const int& focal) {
 
-  IntegerVector tab = tabulateC(subclass);
+  IntegerVector tab = tabulateC_(subclass);
   int mm_col = max(tab) - 1;
 
   IntegerVector ind = Range(0, treat.size() - 1);
@@ -23,7 +23,7 @@ IntegerMatrix subclass2mmC(const IntegerVector& subclass,
 
   IntegerVector in_sub = ind[!is_na(subclass)];
   IntegerVector ind_in_sub = ind[in_sub];
-  IntegerVector ind0_in_sub = ind_in_sub[as<IntegerVector>(treat[in_sub]) == 0];
+  IntegerVector ind0_in_sub = ind_in_sub[as<IntegerVector>(treat[in_sub]) != focal];
   IntegerVector sub0_in_sub = subclass[ind0_in_sub];
 
   int i, t, s, nmc, mci;

@@ -9,7 +9,19 @@ pairdistsubC <- function(x_, t_, s_, num_sub) {
     .Call(`_MatchIt_pairdistsubC`, x_, t_, s_, num_sub)
 }
 
+subclass2mmC <- function(subclass, treat, focal) {
+    .Call(`_MatchIt_subclass2mmC`, subclass, treat, focal)
+}
+
+tabulateC <- function(bins, nbins = NULL) {
+    .Call(`_MatchIt_tabulateC`, bins, nbins)
+}
+
 weights_matrix <- function(mm, treat) {
     .Call(`_MatchIt_weights_matrix`, mm, treat)
 }
 
+# Register entry points for exported C++ functions
+methods::setLoadAction(function(ns) {
+    .Call('_MatchIt_RcppExport_registerCCallable', PACKAGE = 'MatchIt')
+})
