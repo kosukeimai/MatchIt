@@ -256,10 +256,7 @@ matchit2optimal <- function(treat, formula, data, distance, discarded,
     caliper <- NULL
   }
 
-  if (!is.null(max.controls)) {
-    if (is.null(distance)) stop("'distance' cannot be \"mahalanobis\" for variable ratio matching.", call. = FALSE)
-  }
-  else {
+  if (is.null(max.controls)) {
     min.controls <- max.controls <- ratio
   }
 
