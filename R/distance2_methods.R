@@ -1,5 +1,5 @@
 #distance2glm-----------------
-distance2glm <- function(formula, data, link = "logit", ...) {
+distance2glm <- function(formula, data = NULL, link = "logit", ...) {
 
   if (!is.null(link) && startsWith(as.character(link), "linear")) {
     linear <- TRUE
@@ -19,7 +19,7 @@ distance2glm <- function(formula, data, link = "logit", ...) {
 }
 
 #distance2gam-----------------
-distance2gam <- function(formula, data, link = "logit", ...) {
+distance2gam <- function(formula, data = NULL, link = "logit", ...) {
   check.package("mgcv")
 
   if (!is.null(link) && startsWith(as.character(link), "linear")) {
@@ -43,7 +43,7 @@ distance2gam <- function(formula, data, link = "logit", ...) {
 }
 
 #distance2rpart-----------------
-distance2rpart <- function(formula, data, link = NULL, ...) {
+distance2rpart <- function(formula, data = NULL, link = NULL, ...) {
   check.package("rpart")
   A <- list(...)
   A[!names(A) %in% c(names(formals(rpart::rpart)), names(formals(rpart::rpart.control)))] <- NULL
@@ -56,7 +56,7 @@ distance2rpart <- function(formula, data, link = NULL, ...) {
 }
 
 #distance2nnet-----------------
-distance2nnet <- function(formula, data, link = NULL, ...) {
+distance2nnet <- function(formula, data = NULL, link = NULL, ...) {
   check.package("nnet")
 
   A <- list(...)
@@ -68,7 +68,7 @@ distance2nnet <- function(formula, data, link = NULL, ...) {
 }
 
 #distance2cbps-----------------
-distance2cbps <- function(formula, data, link = NULL, ...) {
+distance2cbps <- function(formula, data = NULL, link = NULL, ...) {
   check.package("CBPS")
 
   if (!is.null(link) && startsWith(as.character(link), "linear")) {
@@ -111,7 +111,7 @@ distance2cbps <- function(formula, data, link = NULL, ...) {
 }
 
 #distance2bart----------------
-distance2bart <- function(formula, data, link = NULL, ...) {
+distance2bart <- function(formula, data = NULL, link = NULL, ...) {
   check.package("dbarts")
 
   if (!is.null(link) && startsWith(as.character(link), "linear")) {
@@ -175,7 +175,7 @@ distance2bart <- function(formula, data, link = NULL, ...) {
 # }
 
 #distance2randomforest-----------------
-distance2randomforest <- function(formula, data, link = NULL, ...) {
+distance2randomforest <- function(formula, data = NULL, link = NULL, ...) {
   check.package("randomForest")
   newdata <- get_all_vars(formula, data)
   treatvar <- as.character(formula[[2]])
