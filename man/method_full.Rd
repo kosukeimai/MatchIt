@@ -60,7 +60,7 @@ if \code{discard} is not \code{"none"}, whether to re-estimate the propensity sc
 the variable containing sampling weights to be incorporated into propensity score models and balance statistics.
 }
   \item{caliper}{
-the width(s) of the caliper(s) used for caliper matching. See Notes and Examples.
+the width(s) of the caliper(s) used for caliper matching. Calipers are processed by \pkgfun2{optmatch}{caliper}{optmatch::caliper} See Notes and Examples.
 }
   \item{std.caliper}{
 \code{logical}; when calipers are specified, whether they are in standard deviation units (\code{TRUE}) or raw units (\code{FALSE}).
@@ -75,9 +75,9 @@ additional arguments passed to \pkgfun2{optmatch}{fullmatch}{optmatch::fullmatch
 The arguments \code{replace}, \code{m.order}, and \code{ratio} are ignored with a warning.
 }
 \note{
-Due to what appears to be a bug in \pkg{optmatch} (version 0.9-13), calipers can only be used when \code{min.controls} is left at its default.
+Due to what appears to be a bug in \emph{optmatch} (version 0.9-13), calipers can only be used when \code{min.controls} is left at its default.
 
-The option \code{"optmatch_max_problem_size"} is automatically set to \code{Inf} during the matching process, different from its default in \pkg{optmatch}. This enables matching problems of any size to be run, but may also let huge, infeasible problems get through and potentially take a long time or crash R. See \pkgfun2{optmatch}{setMaxProblemSize}{optmatch::setMaxProblemSize} for more details.
+The option \code{"optmatch_max_problem_size"} is automatically set to \code{Inf} during the matching process, different from its default in \emph{optmatch}. This enables matching problems of any size to be run, but may also let huge, infeasible problems get through and potentially take a long time or crash R. See \pkgfun2{optmatch}{setMaxProblemSize}{optmatch::setMaxProblemSize} for more details.
 }
 \section{Outputs}{
 All outputs described in \code{\link{matchit}} are returned with \code{method = "full"} except for \code{match.matrix}. This is because matching strata are not indexed by treated units as they are in some other forms of matching.

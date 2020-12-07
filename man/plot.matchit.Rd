@@ -59,7 +59,7 @@ Sometimes, bugs in the plotting functions can cause strange layout or size issue
 
 \code{\link{plot.summary.matchit}} for plotting standardized mean differences in a Love plot.
 
-\pkgfun2{cobalt}{bal.plot}{cobalt::bal.plot} for displaying distributional balance in several other ways that are more easily customizable and produce \pkg{ggplot2} objects. \pkg{cobalt} functions natively support \code{matchit} objects.
+\pkgfun2{cobalt}{bal.plot}{cobalt::bal.plot} for displaying distributional balance in several other ways that are more easily customizable and produce \emph{ggplot2} objects. \emph{cobalt} functions natively support \code{matchit} objects.
 }
 \examples{
 data("lalonde")

@@ -76,7 +76,7 @@ how many control units should be matched to each treated unit for k:1 matching. 
 for variable ratio matching, the minimum and maximum number of controls units to be matched to each treated unit. See section "Variable Ratio Matching" in Details below.
 }
   \item{verbose}{
-\code{logical}; whether information about the matching process should be printed to the console. When \code{TRUE}, a progress bar implemented using \pkg{RcppProgress} will be displayed.
+\code{logical}; whether information about the matching process should be printed to the console. When \code{TRUE}, a progress bar implemented using \emph{RcppProgress} will be displayed.
 }
   \item{\dots}{
 ignored.
@@ -122,7 +122,7 @@ Variable ratio matching cannot be used with Mahalanobis distance matching. The c
 
 }
 \references{
-In a manuscript, you don't need to cite another package when using \code{method = "nearest"} because the matching is performed completely within \pkg{MatchIt}. For example, a sentence might read:
+In a manuscript, you don't need to cite another package when using \code{method = "nearest"} because the matching is performed completely within \emph{MatchIt}. For example, a sentence might read:
 
 \emph{Nearest neighbor matching was performed using the MatchIt package (Ho, Imai, King, & Stuart, 2011) in R.}
 }

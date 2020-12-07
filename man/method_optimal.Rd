@@ -72,11 +72,11 @@ additional arguments passed to \pkgfun2{optmatch}{pairmatch}{optmatch::pairmatch
 The arguments \code{replace}, \code{caliper}, and \code{m.order} are ignored with a warning.
 }
 \note{
-Calipers may eventually be compatible with this method, but due to what appears to be a bug in \pkg{optmatch} (version 0.9-13), they are currently disabled.
+Calipers may eventually be compatible with this method, but due to what appears to be a bug in \emph{optmatch} (version 0.9-13), they are currently disabled.
 
 Optimal pair matching is a restricted form of optimal full matching where the number of treated units in each subclass is equal to 1, whereas in unrestricted full matching, multiple treated units can be assigned to the same subclass. \pkgfun2{optmatch}{pairmatch}{optmatch::pairmatch} is simply a wrapper for \pkgfun2{optmatch}{fullmatch}{optmatch::fullmatch}, which performs optimal full matching and is the workhorse for \code{\link{method_full}}. In the same way, \code{matchit} uses \pkgfun2{optmatch}{fullmatch}{optmatch::fullmatch} under the hood, imposing the restrictions that make optimal full matching function like optimal pair matching (which is simply to set \code{min.controls >= 1} and to pass \code{ratio} to the \code{mean.controls} argument). This distinction is not important for regular use but may be of interest to those examining the source code.
 
-The option \code{"optmatch_max_problem_size"} is automatically set to \code{Inf} during the matching process, different from its default in \pkg{optmatch}. This enables matching problems of any size to be run, but may also let huge, infeasible problems get through and potentially take a long time or crash R. See \pkgfun2{optmatch}{setMaxProblemSize}{optmatch::setMaxProblemSize} for more details.
+The option \code{"optmatch_max_problem_size"} is automatically set to \code{Inf} during the matching process, different from its default in \emph{optmatch}. This enables matching problems of any size to be run, but may also let huge, infeasible problems get through and potentially take a long time or crash R. See \pkgfun2{optmatch}{setMaxProblemSize}{optmatch::setMaxProblemSize} for more details.
 }
 \section{Outputs}{
 All outputs described in \code{\link{matchit}} are returned with \code{method = "optimal"}.
