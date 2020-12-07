@@ -92,13 +92,13 @@ Y_S <- gen_Y_S(A, X)
 d <- data.frame(A, X, Y_C, Y_B, Y_S)
 ```
 
-## Introduction {#introduction}
+## Introduction
 
 After assessing balance and deciding on a matching specification, it comes time to estimate the effect of the treatment in the matched sample. How the effect is estimated and interpreted depends on the desired estimand and the type of model used (if any). In addition to estimating effects, estimating the uncertainty of the effects is critical in communicating them and assessing whether the observed effect is compatible with there being no effect in the population. This guide explains how to estimate effects after various forms of matching and with various outcome types. There may be situations that are not covered here for which additional methodological research may be required, but some of the recommended methods here can be used to guide such applications.
 
 This guide is structured as follows: first, information on the concepts related to effect and standard error estimation is presented below. Then, instructions for how to estimate effects and standard errors are described. This section is split up first by the type of matching method performed (matching without replacement, matching with replacement, full matching, and subclassification) and then by the type of outcome (continuous, binary, and survival). Finally recommendations for reporting results and tips to avoid making common mistakes are presented.
 
-### Identifying the estimand {#identifying-the-estimand}
+### Identifying the estimand
 
 Before an effect is estimated, the estimand must be specified and clarified. Although some aspects of the estimand depend not only on how the effect is estimated after matching but also on the matching method itself, other aspects must be considered at the tine of effect estimation and interpretation. Here, we consider three aspects of the estimand: the population the effect is meant to generalize to (the target population), the effect measure, and whether the effect is marginal or conditional.
 
@@ -174,6 +174,21 @@ library("survival")
 ```
 
 Other packages may be of use but are not used here. The `margins` package can be useful for computing marginal effects and standard errors without bootstrapping. Some examples using `margins` are presented. The `survey` package can be used to estimate robust standard errors incorporating weights and provides functions for survey-weighted generalized linear models and Cox-proportional hazards models. It is often used with propensity score weighting. The `Zelig` package provides a broad interface to estimating marginal and conditional effects using simulation and was included in the original documentation for `MatchIt`. The `lme4` (and `lmerTest`) package performs mixed effects modeling, which can be useful for accounting for pair membership or other clustering features of the data.
+
+Because different matching methods require different treatments, instructions for each method are organized in the following sections, as designated by the table below. It is important to ensure the right methods are used with the matching specification used in order for the estimated effects and standard errors to be valid.
+
+Section |  Matching Method
+ -------------- | -------------------- 
+[After Pair Matching Without Replacement](#after-pair-matching-without-replacement) | Nearest neighbor matching without replacement
+- | Optimal matching
+- | Genetic matching without replacement
+- | Coarsened exact matching with `k2k = TRUE`
+[After Pair Matching With Replacement](#after-pair-matching-with-replacement) | Nearest neighbor matching with replacement
+- | Genetic matching without replacement
+[After Full Matching](#after-full-matching) | Full matching
+[After Stratum Matching](#after-stratum-matching) | Propensity score subclassification
+- | Exact matching
+- | Coarsened exact matching with `k2k = FALSE` (the default)
 
 ### After Pair Matching Without Replacement
 
@@ -915,6 +930,10 @@ The following methods estimate **conditional effects** for binary or survival ou
 
 In addition, with continuous outcomes, conditional effects can be mistakenly interpreted as marginal effect estimates when treatment-covariate interactions are present in the outcome model. If the covariates are not centered at their mean in the target population (e.g., the treated group for the ATT, the full sample for the ATE, or the remaining matched sample for an ATM), the coefficient on treatment will not correspond to the marginal effect in the target population; it will correspond to the effect of treatment when the covariate values are equal to zero, which may not be meaningful or plausible. Marginal effects procedures (e.g., using the `margins` package or manually with bootstrapping as demonstrated above) are always the safest way to include covariates in the outcome model, especially in the presence of treatment-covariate interactions. Appropriately centering the covariates is a shortcut that is required when using the coefficient on treatment as a marginal effect estimate for continuous outcomes (demonstrated previously for full matching).
 
+## References
+
+<div id="refs"></div>
+
 ## Code to Generate Data used in Examples
 
 ```{r, eval = FALSE}
@@ -982,4 +1001,5 @@ Y_S <- gen_Y_S(A, X)
 d <- data.frame(A, X, Y_C, Y_B, Y_S)
 ```
 
-## References
+
+
