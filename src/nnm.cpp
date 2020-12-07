@@ -48,6 +48,7 @@ IntegerMatrix nn_matchC(const IntegerVector& treat,
   // Output matrix with sample indices of C units
   IntegerMatrix mm(n1, max_rat);
   mm.fill(NA_INTEGER);
+  rownames(mm) = as<CharacterVector>(treat.names())[ind1];
 
   // Store who has been matched; exclude discarded
   LogicalVector matched = clone(discarded);
@@ -106,6 +107,8 @@ IntegerMatrix nn_matchC(const IntegerVector& treat,
 
   //Counters
   int rat, i, x, j;
+
+  //Matching
   for (rat = 0; rat < max_rat; ++rat) {
     for (i = 0; i < n1; ++i) {
 
