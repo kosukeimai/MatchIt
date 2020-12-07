@@ -82,7 +82,8 @@ matchit2exact <- function(treat, covs, data, estimand = "ATT", verbose = FALSE, 
 matchit2full <- function(treat, formula, data, distance, discarded,
                          caliper = NULL, mahvars = NULL, exact = NULL,
                          estimand = "ATT", verbose = FALSE,
-                         is.full.mahalanobis, ...) {
+                         is.full.mahalanobis, min.controls = 0,
+                         max.controls = Inf, ...) {
 
   check.package("optmatch")
 
@@ -90,7 +91,7 @@ matchit2full <- function(treat, formula, data, distance, discarded,
 
   A <- list(...)
 
-  fm.args <- c("min.controls", "max.controls", "omit.fraction", "mean.controls", "tol")
+  fm.args <- c("omit.fraction", "mean.controls", "tol")
   A[!names(A) %in% fm.args] <- NULL
 
   #Set max problem size to Inf and return to original value after match
@@ -123,7 +124,10 @@ matchit2full <- function(treat, formula, data, distance, discarded,
   #Create distance matrix; note that Mahalanobis distance computed using entire
   #sample, like method2nearest, as opposed to within exact strata, like optmatch.
   if (!is.null(mahvars)) {
-    mo <- optmatch::match_on(mahvars, data = data,
+    mahvars <- update(mahvars, treat_ ~ .)
+    environment(mahvars) <- sys.frame(sys.nframe())
+
+    mo <- optmatch::match_on(mahvars, data = data[names(data) != "treat_"],
                              method = "mahalanobis")
   }
   else {
@@ -140,6 +144,10 @@ matchit2full <- function(treat, formula, data, distance, discarded,
   }
 
   if (!is.null(caliper)) {
+    if (min.controls != 0) {
+      stop("Calipers cannot be used with method = \"full\" when 'min.controls' is specified.", call. = FALSE)
+    }
+
     if (any(names(caliper) != "")) {
       cov.cals <- setdiff(names(caliper), "")
       calcovs <- get.covs.matrix(reformulate(cov.cals, intercept = FALSE), data = data)
@@ -161,7 +169,10 @@ matchit2full <- function(treat, formula, data, distance, discarded,
 
   withCallingHandlers({
     p <- do.call(optmatch::fullmatch,
-                 c(list(mo, data = treat), #just to get rownames; not actually used in matching
+                 c(list(mo,
+                        min.controls = min.controls,
+                        max.controls = max.controls,
+                        data = treat), #just to get rownames; not actually used in matching
                    A))
   },
   warning = function(w) {
@@ -289,12 +300,14 @@ matchit2optimal <- function(treat, formula, data, distance, discarded,
   #Create distance matrix; note that Mahalanobis distance computed using entire
   #sample, like method2nearest, as opposed to within exact strata, like optmatch.
   if (!is.null(mahvars)) {
-    mo <- optmatch::match_on(mahvars, data = data,
+    mahvars <- update(mahvars, treat_ ~ .)
+    environment(mahvars) <- sys.frame(sys.nframe())
+
+    mo <- optmatch::match_on(mahvars, data = data[names(data) != "treat_"],
                              method = "mahalanobis")
   }
   else {
-    mo <- optmatch::match_on(treat_ ~ distance[!discarded],
-                             method = "euclidean")  #slightly faster than Mahalanobis
+    mo <- optmatch::match_on(distance[!discarded], z = treat_)
   }
 
   #Initialize pair membership; must include names
