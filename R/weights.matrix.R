@@ -1,6 +1,6 @@
 weights.matrix <- function(match.matrix, treat) {
 
-  weights <- weights_matrix(match.matrix, treat)
+  weights <- weights_matrixC(match.matrix, treat)
 
   if (sum(weights)==0)
     stop("No units were matched.", call. = FALSE)

@@ -4,15 +4,15 @@ using namespace Rcpp;
 // Computes matching weights from match.matrix
 
 // [[Rcpp::export]]
-NumericVector weights_matrix(const IntegerMatrix& mm,
+NumericVector weights_matrixC(const IntegerMatrix& mm,
                              const IntegerVector& treat) {
   int n = treat.size();
   IntegerVector ind = Range(0, n - 1);
   IntegerVector ind0 = ind[treat == 0];
   IntegerVector ind1 = ind[treat == 1];
 
-  NumericVector weights (n);
-  weights.fill(0);
+  NumericVector weights = rep(0., n);
+  // weights.fill(0);
 
   int nr = mm.nrow();
   int nc = mm.ncol();
@@ -24,10 +24,10 @@ NumericVector weights_matrix(const IntegerMatrix& mm,
   for (r = 0; r < nr; r++) {
     row_r = na_omit(mm(r, _));
     row_not_na = row_r.size();
-    add_w = 1.0/static_cast<double>(row_not_na);
     if (row_not_na == 0) {
       continue;
     }
+    add_w = 1.0/static_cast<double>(row_not_na);
 
     for (c = 0; c < row_not_na; c++) {
       which_c = row_r[c] - 1;
@@ -44,9 +44,11 @@ NumericVector weights_matrix(const IntegerMatrix& mm,
   double sum_matched_c = sum(c_weights > 0);
   int n0 = ind0.size();
 
-  for (int i = 0; i < n0; i++ ) {
-    which_c = ind0[i];
-    weights[which_c] = c_weights[i] * sum_matched_c / sum_c_w;
+  if (sum_c_w > 0) {
+    for (int i = 0; i < n0; i++ ) {
+      which_c = ind0[i];
+      weights[which_c] = c_weights[i] * sum_matched_c / sum_c_w;
+    }
   }
 
   return weights;
