@@ -683,9 +683,9 @@ get.covs.matrix <- function(formula = NULL, data = NULL) {
 
 #Convert match.matrix (mm) using numerical indices to using char rownames
 nummm2charmm <- function(nummm, treat) {
-  control.level <- treat[nummm[!is.na(nummm[,1]),1][1]]
+  #Assumes nummm has rownames
   charmm <- matrix(NA_character_, nrow = nrow(nummm), ncol = ncol(nummm),
-                   dimnames = list(names(treat)[treat != control.level], NULL))
+                   dimnames = dimnames(nummm))
   charmm[] <- names(treat)[nummm]
   charmm
 }
