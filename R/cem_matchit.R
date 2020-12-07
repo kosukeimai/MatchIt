@@ -1,4 +1,4 @@
-cem_matchit <- function(treat, X, cutpoints = NULL, grouping = NULL, k2k = FALSE, k2k.method = "mahalanobis", mpower = 2, estimand = "ATT") {
+cem_matchit <- function(treat, X, cutpoints = "sturges", grouping = list(), k2k = FALSE, k2k.method = "mahalanobis", mpower = 2, estimand = "ATT") {
   #In-house implementation of cem. Basically the same except:
   #treat is a vector if treatment status, not the name of a variable
   #X is a data.frame of covariates
@@ -12,6 +12,53 @@ cem_matchit <- function(treat, X, cutpoints = NULL, grouping = NULL, k2k = FALSE
     k2k.method <- tolower(k2k.method)
     k2k.method <- match_arg(k2k.method, c("mahalanobis", "euclidean", "maximum", "manhattan", "canberra", "binary", "minkowski"))
     if (k2k.method == "mahalanobis") mahSigma_inv <- generalized_inverse(cov(X.match))
+  }
+  is.numeric.cov <- setNames(sapply(X, is.numeric), names(X))
+
+  #Process cutpoints
+  if (!is.list(cutpoints)) {
+    cutpoints <- setNames(as.list(rep(cutpoints, sum(is.numeric.cov))), names(X)[is.numeric.cov])
+  }
+
+  if (is.null(names(cutpoints))) stop("'cutpoints' must be a named list of binning values with an element for each numeric variable.", call. = FALSE)
+  bad.names <- setdiff(names(cutpoints), names(X))
+  nb <- length(bad.names)
+  if (nb > 0) {
+    warning(paste0(ngettext(nb, "The variable ", "The variables "),
+                   word_list(bad.names, quotes = 2), " named in 'cutpoints' ",
+                   ngettext(nb, "is ", "are "), "not in the variables supplied to matchit() and will be ignored."),
+            immediate. = TRUE, call. = FALSE)
+    cutpoints[bad.names] <- NULL
+  }
+
+  bad.cuts <- setNames(rep(FALSE, length(cutpoints)), names(cutpoints))
+  for (i in names(cutpoints)) {
+    if (length(cutpoints[[i]]) == 0) {
+      cutpoints[[i]] <- "sturges"
+    }
+    else if (length(cutpoints[[i]]) == 1) {
+      if (is.character(cutpoints[[i]])) {
+
+        bad.cuts[i] <- !(startsWith(cutpoints[[i]], "q") && can_str2num(substring(cutpoints[[i]], 2))) &&
+          is.na(pmatch(cutpoints[[i]], c("sturges", "fd", "scott")))
+      }
+      else if (is.numeric(cutpoints[[i]])) {
+        if      (!is.finite(cutpoints[[i]]) || cutpoints[[i]] < 0) bad.cuts[i] <- TRUE
+        if      (cutpoints[[i]] == 0) is.numeric.cov[i] <- FALSE #Will not be binned
+        else if (cutpoints[[i]] == 1) X[[i]] <- NULL #Removing from X, still in X.match
+      }
+    }
+    else {
+      bad.cuts[i] <- !is.numeric(cutpoints[[i]])
+    }
+  }
+  if (any(bad.cuts)) {
+    stop(paste0("All entries in the list supplied to 'cutpoints' must be one of the following:",
+                "\n\t- a string containing the name of an allowable binning method",
+                "\n\t- a single number corresponding to the number of bins",
+                "\n\t- a numeric vector containing the cut points separating bins",
+                "\nIncorrectly specified ", ngettext(sum(bad.cuts), "variable:\n\t", "variables:\n\t"),
+                paste(names(cutpoints)[bad.cuts], collapse = ", ")), call. = FALSE)
   }
 
   #Process grouping
@@ -28,34 +75,46 @@ cem_matchit <- function(treat, X, cutpoints = NULL, grouping = NULL, k2k = FALSE
     cutpoints[names(cutpoints) %in% names(grouping)] <- NULL
   }
 
-  #Process cutpoints
-  for (i in names(X)[sapply(X, is.numeric)]) {
-    if (is.null(cutpoints) || !i %in% names(cutpoints)) breaks <- "sturges"
-    else breaks <- cutpoints[[i]]
+  #Create bins for numeric variables
+  for (i in names(X)[is.numeric.cov]) {
+    if (is.null(cutpoints) || !i %in% names(cutpoints)) bins <- "sturges"
+    else bins <- cutpoints[[i]]
 
-    if (is.character(breaks)) {
-      breaks <- match_arg(tolower(breaks), c("sturges", "fd", "scott", "ss"))
-      breaks <- switch(breaks,
-                       sturges = nclass.Sturges(X[[i]]),
-                       fd = nclass.FD(X[[i]]),
-                       scott = nclass.scott(X[[i]]),
-                       stop("unknown 'breaks' algorithm"))
-    }
-    if (is.numeric(breaks)) {
-      if (length(breaks) == 1) {
-        #cutpoints is number of bins, unlike in cem
-        breaks <- seq(min(X[[i]]), max(X[[i]]), length = breaks + 1)
+    if (is.character(bins)) {
+      if (startsWith(bins, "q") || can_str2num(substring(bins, 2))) {
+        #Quantile bins
+        q <- str2num(substring(bins, 2))
+        bins <- quantile(X[[i]], probs = seq(1/q, 1 - 1/q, by = 1/q), names = FALSE) #Outer boundaries will be added later
       }
       else {
-        breaks <- sort(unique(breaks))
+        bins <- match_arg(tolower(bins), c("sturges", "fd", "scott"))
+        bins <- switch(bins,
+                       sturges = nclass.Sturges(X[[i]]),
+                       fd = nclass.FD(X[[i]]),
+                       scott = nclass.scott(X[[i]]))
+        #Breaks is now a single number
       }
     }
-    X[[i]] <- findInterval(X[[i]], breaks, all.inside = TRUE)
+
+    if (length(bins) == 1) {
+      #cutpoints is number of bins, unlike in cem
+      breaks <- seq(min(X[[i]]), max(X[[i]]), length = bins + 1)
+      breaks[c(1, bins + 1)] <- c(-Inf, Inf)
+    }
+    else {
+      breaks <- c(-Inf, sort(unique(bins)), Inf)
+    }
+
+    X[[i]] <- findInterval(X[[i]], breaks)
   }
 
   #Exact match
   xx <- exactify(X, names(treat))
   cc <- intersect(xx[treat==1], xx[treat==0])
+
+  if (length(cc) == 0) {
+    stop("No units were matched. Try coarsening the variables further or decrease the number of variables to match on.", call. = FALSE)
+  }
 
   subclass <- setNames(match(xx, cc), names(treat))
 
@@ -103,6 +162,7 @@ cem_matchit <- function(treat, X, cutpoints = NULL, grouping = NULL, k2k = FALSE
   }
 
   subclass <- factor(subclass, nmax = extra.sub)
+
 
   names(subclass) <- names(treat)
 
