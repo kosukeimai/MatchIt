@@ -17,8 +17,8 @@ tabulateC <- function(bins, nbins = NULL) {
     .Call(`_MatchIt_tabulateC`, bins, nbins)
 }
 
-weights_matrix <- function(mm, treat) {
-    .Call(`_MatchIt_weights_matrix`, mm, treat)
+weights_matrixC <- function(mm, treat) {
+    .Call(`_MatchIt_weights_matrixC`, mm, treat)
 }
 
 # Register entry points for exported C++ functions

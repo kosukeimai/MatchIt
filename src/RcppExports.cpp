@@ -70,15 +70,15 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// weights_matrix
-NumericVector weights_matrix(const IntegerMatrix& mm, const IntegerVector& treat);
-RcppExport SEXP _MatchIt_weights_matrix(SEXP mmSEXP, SEXP treatSEXP) {
+// weights_matrixC
+NumericVector weights_matrixC(const IntegerMatrix& mm, const IntegerVector& treat);
+RcppExport SEXP _MatchIt_weights_matrixC(SEXP mmSEXP, SEXP treatSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const IntegerMatrix& >::type mm(mmSEXP);
     Rcpp::traits::input_parameter< const IntegerVector& >::type treat(treatSEXP);
-    rcpp_result_gen = Rcpp::wrap(weights_matrix(mm, treat));
+    rcpp_result_gen = Rcpp::wrap(weights_matrixC(mm, treat));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -102,7 +102,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_MatchIt_pairdistsubC", (DL_FUNC) &_MatchIt_pairdistsubC, 4},
     {"_MatchIt_subclass2mmC", (DL_FUNC) &_MatchIt_subclass2mmC, 3},
     {"_MatchIt_tabulateC", (DL_FUNC) &_MatchIt_tabulateC, 2},
-    {"_MatchIt_weights_matrix", (DL_FUNC) &_MatchIt_weights_matrix, 2},
+    {"_MatchIt_weights_matrixC", (DL_FUNC) &_MatchIt_weights_matrixC, 2},
     {"_MatchIt_RcppExport_registerCCallable", (DL_FUNC) &_MatchIt_RcppExport_registerCCallable, 0},
     {NULL, NULL, 0}
 };
