@@ -16,6 +16,8 @@ output:
 
 * Processing improvements with `method = "optimal"` due to rewriting some functions in `Rcpp`.
 
+* Using `method = "optimal"` runs more smoothly when combining it with exact matching through the `exact` argument.
+
 * When using `ratio` different from 1 with `method = "nearest"` and `method = "optimal"` and with exact matching, errors and warnings about the number of units that will be matched are clearer. Certain `ratio`s that would produce errors now only produce warnings.
 
 * Fixed a bug when no argument was supplied to `data` in `matchit()`.
