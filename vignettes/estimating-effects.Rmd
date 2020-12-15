@@ -184,7 +184,7 @@ Section |  Matching Method
 - | Genetic matching without replacement
 - | Coarsened exact matching with `k2k = TRUE`
 [After Pair Matching With Replacement](#after-pair-matching-with-replacement) | Nearest neighbor matching with replacement
-- | Genetic matching without replacement
+- | Genetic matching with replacement
 [After Full Matching](#after-full-matching) | Full matching
 [After Stratum Matching](#after-stratum-matching) | Propensity score subclassification
 - | Exact matching
@@ -192,7 +192,7 @@ Section |  Matching Method
 
 ### After Pair Matching Without Replacement
 
-Pair matching without replacement yields the simplest way to estimate treatment effects and standard errors. In general, whether a caliper, common support restriction, exact matching specification, or k:1 matching specification is used, estimating the effect in the matched dataset (i.e., the output of `match.data()`) is straightforward and involves fitting a model for the outcome that incorporates the matching weights[^3].
+Pair matching without replacement yields the simplest way to estimate treatment effects and standard errors. In general, whether a caliper, common support restriction, exact matching specification, or $k$:1 matching specification is used, estimating the effect in the matched dataset (i.e., the output of `match.data()`) is straightforward and involves fitting a model for the outcome that incorporates the matching weights[^3].
 
 [^3]: The matching weights are not necessary when performing 1:1 matching, but we include them here for generality. When weights are not necessary, including them does not affect the estimates. Because it may not always be clear when weights are required, we recommend always including them.
 
