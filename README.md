@@ -21,6 +21,7 @@ of `MatchIt` to perform full matching and assess balance:
 ``` r
 library("MatchIt")
 data("lalonde", package = "MatchIt")
+
 #Full matching on the propensity score
 m.out <- matchit(treat ~ age + educ + race + married + nodegree + re74 + re75, 
                  data = lalonde, method = "full")

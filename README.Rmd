@@ -27,6 +27,7 @@ knitr::opts_chunk$set(
 ```{r}
 library("MatchIt")
 data("lalonde", package = "MatchIt")
+
 #Full matching on the propensity score
 m.out <- matchit(treat ~ age + educ + race + married + nodegree + re74 + re75, 
                  data = lalonde, method = "full")
