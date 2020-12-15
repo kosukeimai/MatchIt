@@ -92,7 +92,7 @@ matchit(formula, data = NULL, method = &quot;genetic&quot;,
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">MatchIt</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">4.0.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">4.1.0</span>
       </span>
     </div>
 
@@ -100,7 +100,7 @@ matchit(formula, data = NULL, method = &quot;genetic&quot;,
       <ul class="nav navbar-nav">
         <li>
   <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
+    <span class="fas fa-home fa-lg"></span>
      
   </a>
 </li>
@@ -138,7 +138,7 @@ matchit(formula, data = NULL, method = &quot;genetic&quot;,
       <ul class="nav navbar-nav navbar-right">
         <li>
   <a href="https://github.com/kosukeimai/MatchIt/">
-    <span class="fab fa fab fa-github fa-lg"></span>
+    <span class="fab fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -254,7 +254,7 @@ matchit(formula, data = NULL, method = &quot;genetic&quot;,
     </tr>
     <tr>
       <th>...</th>
-      <td><p>additional arguments passed to <code><a href='https://rdrr.io/pkg/Matching/man/GenMatch.html'>Matching::GenMatch</a></code>. Potentially useful options include <code>pop.size</code>, <code>max.generations</code>, and <code>fit.func</code>. If <code>pop.size</code> is not specified, a warning from <span class="pkg">Matching</span> will be thrown reminding you to change it. Note that the <code>ties</code> and <code>CommonSupport</code> arguments are set to <code>FALSE</code> and cannot be changed.</p></td>
+      <td><p>additional arguments passed to <code><a href='https://rdrr.io/pkg/Matching/man/GenMatch.html'>Matching::GenMatch</a></code>. Potentially useful options include <code>pop.size</code>, <code>max.generations</code>, and <code>fit.func</code>. If <code>pop.size</code> is not specified, a warning from <em>Matching</em> will be thrown reminding you to change it. Note that the <code>ties</code> and <code>CommonSupport</code> arguments are set to <code>FALSE</code> and cannot be changed.</p></td>
     </tr>
     </table>
 
@@ -267,7 +267,7 @@ matchit(formula, data = NULL, method = &quot;genetic&quot;,
 <p>1) When <code>distance = "mahalanobis"</code>, no propensity score is estimated, and the covariates in <code>formula</code> are used to form the generalized Mahalanobis distance matrix. In this sense, <code>"mahalanobis"</code> signals that no propensity score is to be estimated and that the matching variables are those in <code>formula</code>, consistent with setting <code>distance = "mahalanobis"</code> with other methods.</p>
 <p>2) When <code>distance</code> is not <code>"mahalanobis"</code> and <code>mahvars</code> <em>is not</em> specified, the covariates in <code>formula</code> along with the propensity score are used to form the generalized Mahalanobis distance matrix. This is the default and most typical use of <code>method = "genetic"</code> in <code>matchit</code>.</p>
 <p>3) When <code>distance</code> is not <code>"mahalanobis"</code> and <code>mahvars</code> <em>is</em> specified, the covariates in <code>mahvars</code> are used to form the generalized Mahalanobis distance matrix. The covariates in <code>formula</code> are used to estimate the propensity score and have their balance optimized by the genetic algorithm. The propensity score is not included in the generalized Mahalanobis distance matrix.</p>
-<p>When a caliper is specified, any variables mentioned in <code>caliper</code>, possibly including the propensity score, will be added to the matching variables used to form the generalized Mahalanobis distance matrix. This is because <span class="pkg">Matching</span> doesn't allow for the separation of caliper variables and matching variables in genetic matching.</p>
+<p>When a caliper is specified, any variables mentioned in <code>caliper</code>, possibly including the propensity score, will be added to the matching variables used to form the generalized Mahalanobis distance matrix. This is because <em>Matching</em> doesn't allow for the separation of caliper variables and matching variables in genetic matching.</p>
 <h3 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Estimand</h3>
 <p>The <code>estimand</code> argument controls whether control units are selected to be matched with treated units (<code>estimand = "ATT"</code>) or treated units are selected to be matched with control units (<code>estimand = "ATC"</code>). The "focal" group (e.g., the treated units for the ATT) is typically made to be the smaller treatment group, and a warning will be thrown if it is not set that way unless <code>replace = TRUE</code>. Setting <code>estimand = "ATC"</code> is equivalent to swapping all treated and control labels for the treatment variable. When <code>estimand = "ATC"</code>, the default <code>m.order</code> is <code>"smallest"</code>, and the <code>match.matrix</code> component of the output will have the names of the control units as the rownames and be filled with the names of the matched treated units (opposite to when <code>estimand = "ATT"</code>). Note that the argument supplied to <code>estimand</code> doesn't necessarily correspond to the estimand actually targeted; it is merely a switch to trigger which treatment group is considered "focal". Note that while <code>GenMatch()</code> and <code>Matching()</code> support the ATE as an estimand, <code><a href='matchit.html'>matchit()</a></code> only supports the ATT and ATC for genetic matching.</p>
 

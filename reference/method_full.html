@@ -93,7 +93,7 @@ matchit(formula, data = NULL, method = &quot;full&quot;,
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">MatchIt</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">4.0.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">4.1.0</span>
       </span>
     </div>
 
@@ -101,7 +101,7 @@ matchit(formula, data = NULL, method = &quot;full&quot;,
       <ul class="nav navbar-nav">
         <li>
   <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
+    <span class="fas fa-home fa-lg"></span>
      
   </a>
 </li>
@@ -139,7 +139,7 @@ matchit(formula, data = NULL, method = &quot;full&quot;,
       <ul class="nav navbar-nav navbar-right">
         <li>
   <a href="https://github.com/kosukeimai/MatchIt/">
-    <span class="fab fa fab fa-github fa-lg"></span>
+    <span class="fab fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -232,7 +232,7 @@ matchit(formula, data = NULL, method = &quot;full&quot;,
     </tr>
     <tr>
       <th>caliper</th>
-      <td><p>the width(s) of the caliper(s) used for caliper matching. See Notes and Examples.</p></td>
+      <td><p>the width(s) of the caliper(s) used for caliper matching. Calipers are processed by <code><a href='https://rdrr.io/pkg/optmatch/man/caliper-methods.html'>optmatch::caliper</a></code> See Notes and Examples.</p></td>
     </tr>
     <tr>
       <th>std.caliper</th>
@@ -250,7 +250,8 @@ matchit(formula, data = NULL, method = &quot;full&quot;,
 
     <h2 class="hasAnchor" id="note"><a class="anchor" href="#note"></a>Note</h2>
 
-    <p>Due to what appears to be a bug in <span class="pkg">optmatch</span> (version 0.9-13), calipers can only be used when <code>min.controls</code> is left at its default.</p>
+    <p>Due to what appears to be a bug in <em>optmatch</em> (version 0.9-13), calipers can only be used when <code>min.controls</code> is left at its default.</p>
+<p>The option <code>"optmatch_max_problem_size"</code> is automatically set to <code>Inf</code> during the matching process, different from its default in <em>optmatch</em>. This enables matching problems of any size to be run, but may also let huge, infeasible problems get through and potentially take a long time or crash R. See <code><a href='https://rdrr.io/pkg/optmatch/man/setMaxProblemSize.html'>optmatch::setMaxProblemSize</a></code> for more details.</p>
     <h2 class="hasAnchor" id="outputs"><a class="anchor" href="#outputs"></a>Outputs</h2>
 
     <p>All outputs described in <code><a href='matchit.html'>matchit</a></code> are returned with <code>method = "full"</code> except for <code>match.matrix</code>. This is because matching strata are not indexed by treated units as they are in some other forms of matching.</p>

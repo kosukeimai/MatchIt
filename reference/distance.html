@@ -84,7 +84,7 @@ The distance.options argument can also be specified, which should be a list of v
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">MatchIt</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">4.0.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">4.1.0</span>
       </span>
     </div>
 
@@ -92,7 +92,7 @@ The distance.options argument can also be specified, which should be a list of v
       <ul class="nav navbar-nav">
         <li>
   <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
+    <span class="fas fa-home fa-lg"></span>
      
   </a>
 </li>
@@ -130,7 +130,7 @@ The distance.options argument can also be specified, which should be a list of v
       <ul class="nav navbar-nav navbar-right">
         <li>
   <a href="https://github.com/kosukeimai/MatchIt/">
-    <span class="fab fa fab fa-github fa-lg"></span>
+    <span class="fab fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -183,7 +183,7 @@ The distance.options argument can also be specified, which should be a list of v
     <p>When specifying an argument to <code>distance</code> that estimates a propensity score, the output of the function called to estimate the propensity score (e.g., the <code>glm</code> object when <code>distance = "glm"</code>) will be included in the <code>matchit</code> output object in the <code>model</code> component. When <code>distance</code> is anything other than <code>"mahalanobis"</code>, the estimated or supplied distance measures will be included in the <code>matchit</code> output object in the <code>distance</code> component.</p>
     <h2 class="hasAnchor" id="note"><a class="anchor" href="#note"></a>Note</h2>
 
-    <p>In versions of <span class="pkg">MatchIt</span> prior to 4.0.0, <code>distance</code> was specified in a slightly different way. When specifying arguments using the old syntax, they will automatically be converted to the corresponding method in the new syntax but a warning will be thrown. <code>distance = "logit"</code>, the old default, will still work in the new syntax, though <code>distance = "glm", link = "logit"</code> is preferred (note that these are the default settings and don't need to be made explicit).</p>
+    <p>In versions of <em>MatchIt</em> prior to 4.0.0, <code>distance</code> was specified in a slightly different way. When specifying arguments using the old syntax, they will automatically be converted to the corresponding method in the new syntax but a warning will be thrown. <code>distance = "logit"</code>, the old default, will still work in the new syntax, though <code>distance = "glm", link = "logit"</code> is preferred (note that these are the default settings and don't need to be made explicit).</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='st'>"lalonde"</span><span class='op'>)</span>
@@ -234,7 +234,7 @@ The distance.options argument can also be specified, which should be a list of v
 #&gt; Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 #&gt; 
 #&gt; R-sq.(adj) =    0.5   Deviance explained = 46.1%
-#&gt; GCV = 0.69813  Scale est. = 1.0287    n = 614</div><div class='input'><span class='co'># Mahalanobis distance matching - no PS estimated</span>
+#&gt; GCV = 0.69813  Scale est. = 1.0287    n = 614</div><div class='output co'>#&gt; <span class='warning'>Warning: Fewer treated units than control units; not all control units will get a match.</span></div><div class='input'><span class='co'># Mahalanobis distance matching - no PS estimated</span>
 <span class='va'>m.out4</span> <span class='op'>&lt;-</span> <span class='fu'><a href='matchit.html'>matchit</a></span><span class='op'>(</span><span class='va'>treat</span> <span class='op'>~</span> <span class='va'>age</span> <span class='op'>+</span> <span class='va'>educ</span> <span class='op'>+</span> <span class='va'>race</span> <span class='op'>+</span> <span class='va'>married</span> <span class='op'>+</span>
                     <span class='va'>nodegree</span> <span class='op'>+</span> <span class='va'>re74</span> <span class='op'>+</span> <span class='va'>re75</span>, data <span class='op'>=</span> <span class='va'>lalonde</span>,
                   distance <span class='op'>=</span> <span class='st'>"mahalanobis"</span><span class='op'>)</span>

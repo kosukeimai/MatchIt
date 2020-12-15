@@ -80,7 +80,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">MatchIt</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">4.0.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">4.1.0</span>
       </span>
     </div>
 
@@ -88,7 +88,7 @@
       <ul class="nav navbar-nav">
         <li>
   <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
+    <span class="fas fa-home fa-lg"></span>
      
   </a>
 </li>
@@ -126,7 +126,7 @@
       <ul class="nav navbar-nav navbar-right">
         <li>
   <a href="https://github.com/kosukeimai/MatchIt/">
-    <span class="fab fa fab fa-github fa-lg"></span>
+    <span class="fab fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -190,7 +190,7 @@
     </tr>
     <tr>
       <th>data</th>
-      <td><p>a data frame containing the original dataset to which the computed output variables (<code>distance</code>, <code>weights</code>, and/or <code>sublcass</code>) should be appended. If empty, <code>match.data</code> will attempt to find the dataset using the environment of the <code>matchit</code> object, which can make this unreliable if <code>match.data</code> is used in a fresh R session or if the original dataset changed between calling <code>matchit</code> and <code>match.data</code>. It is always safest to supply a data frame, which should have as many rows as and be in the same order as the data in the original call to <code>matchit</code>. The same goes for <code>get_matches</code>, which calls <code>match.data</code> internally.</p></td>
+      <td><p>a data frame containing the original dataset to which the computed output variables (<code>distance</code>, <code>weights</code>, and/or <code>sublcass</code>) should be appended. If empty, <code>match.data</code> will attempt to find the dataset using the environment of the <code>matchit</code> object, which can make this unreliable if <code>match.data</code> is used in a fresh R session or environment different from the original calling environment (e.g., inside a function) or if the original dataset changed between calling <code>matchit</code> and <code>match.data</code>. It is always safest to supply a data frame, which should have as many rows as and be in the same order as the data in the original call to <code><a href='matchit.html'>matchit()</a></code>. The same goes for <code>get_matches</code>, which calls <code>match.data</code> internally.</p></td>
     </tr>
     <tr>
       <th>include.s.weights</th>
@@ -209,7 +209,16 @@
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
     <p>A data frame containing the data supplied in the <code>data</code> argument or in the original call to <code>matchit</code> with the computed output variables appended as additional columns, named according the arguments above. For <code>match.data</code>, the <code>group</code> and <code>drop.unmatched</code> arguments control whether only subsets of the data are returned. See Details above for how <code>match.data</code> and <code>get_matches</code> differ. Note that <code>get_matches</code> sorts the data by subclass and treatment status, unlike <code>match.data</code>, which uses the order of the data.</p>
-<p>If <code>data</code> or the original dataset supplied to <code>matchit</code> was a <code>data.table</code> or <code>tbl</code>, the <code>match.data</code> output will have the same class, but the <code>get_matches</code> output will always be a base R <code>data.frame</code>.</p>
+<p>The returned data frame will contain the variables in the original data set or dataset supplied to <code>data</code>, and the following columns:</p>
+<dt>distance</dt><dd><p>The propensity score, if estimated or supplied to the <code>distance</code> argument in <code><a href='matchit.html'>matchit()</a></code>.</p></dd>
+<dt>weights</dt><dd><p>The computed matching weights. These must be used in effect estimation to correctly incorporate the matching.</p></dd>
+<dt>subclass</dt><dd><p>Matching strata membership. Units with the same value are in the same stratum.</p></dd>
+<dt>id</dt><dd><p>The ID of each unit, corresponding to the row names in the original data or dataset supplied to <code>data</code>. Only included in <code>get_matches</code> output. This column can be used to identify which rows belong to the same unit since the same unit may appear multiple times if reused in matching with replacement.</p></dd>
+
+These columns will take on the name supplied to the corresponding arguments in the call to match.data or get_matches. See Examples for an example of rename the distance column to "prop.score".
+
+If data or the original dataset supplied to matchit was a data.table or tbl, the match.data output will have the same class, but the get_matches output will always be a base R data.frame.
+
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <div class='dont-index'><p><code><a href='matchit.html'>matchit</a></code></p>
@@ -223,7 +232,7 @@
                     <span class='va'>race</span> <span class='op'>+</span> <span class='va'>nodegree</span> <span class='op'>+</span> <span class='va'>re74</span> <span class='op'>+</span> <span class='va'>re75</span>,
                   data <span class='op'>=</span> <span class='va'>lalonde</span>, replace <span class='op'>=</span> <span class='cn'>TRUE</span>,
                   caliper <span class='op'>=</span> <span class='fl'>.05</span>, ratio <span class='op'>=</span> <span class='fl'>4</span><span class='op'>)</span>
-
+</div><div class='output co'>#&gt; <span class='warning'>Warning: Not all treated units will get 4 matches.</span></div><div class='input'>
 <span class='va'>m.data1</span> <span class='op'>&lt;-</span> <span class='fu'>match.data</span><span class='op'>(</span><span class='va'>m.out1</span>, data <span class='op'>=</span> <span class='va'>lalonde</span>,
                       distance <span class='op'>=</span> <span class='st'>"prop.score"</span><span class='op'>)</span>
 <span class='fu'><a href='https://rdrr.io/r/base/dim.html'>dim</a></span><span class='op'>(</span><span class='va'>m.data1</span><span class='op'>)</span> <span class='co'>#one row per matched unit</span>

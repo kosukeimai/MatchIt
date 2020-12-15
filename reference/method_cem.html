@@ -47,7 +47,7 @@
 
 
 <meta property="og:title" content="Coarsened Exact Matching — method_cem" />
-<meta property="og:description" content="In matchit, setting method = &quot;cem&quot; performs coarsened exact matching. With coarsened exact matching, covariates are coarsened into bins, and a complete cross of the coarsened covariates is used to form subclasses defined by each combination of the coarsened covariate levels. Any subclass that doesn't contain both treated and control units is discarded, leaving only subclasses containing treatment and control units that are exactly equal on the coarsened covariates. The coarsening process can be controlled by an algorithm or by manually specifying cutpoints and groupings. The benefits of coarsened exact matching are that the tradeoff between exact matching and approximate balancing can be managed to prevent discarding too many units, which can otherwise occur with exact matching. The method relies on and is a wrapper for cem::cem.
+<meta property="og:description" content="In matchit, setting method = &quot;cem&quot; performs coarsened exact matching. With coarsened exact matching, covariates are coarsened into bins, and a complete cross of the coarsened covariates is used to form subclasses defined by each combination of the coarsened covariate levels. Any subclass that doesn't contain both treated and control units is discarded, leaving only subclasses containing treatment and control units that are exactly equal on the coarsened covariates. The coarsening process can be controlled by an algorithm or by manually specifying cutpoints and groupings. The benefits of coarsened exact matching are that the tradeoff between exact matching and approximate balancing can be managed to prevent discarding too many units, which can otherwise occur with exact matching.
 This page details the allowable arguments with method = &quot;cem&quot;. See matchit for an explanation of what each argument means in a general context and how it can be specified.
 Below is how matchit is used for coarsened exact matching:
 matchit(formula, data = NULL, method = &quot;cem&quot;,
@@ -87,7 +87,7 @@ matchit(formula, data = NULL, method = &quot;cem&quot;,
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">MatchIt</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">4.0.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">4.1.0</span>
       </span>
     </div>
 
@@ -95,7 +95,7 @@ matchit(formula, data = NULL, method = &quot;cem&quot;,
       <ul class="nav navbar-nav">
         <li>
   <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
+    <span class="fas fa-home fa-lg"></span>
      
   </a>
 </li>
@@ -133,7 +133,7 @@ matchit(formula, data = NULL, method = &quot;cem&quot;,
       <ul class="nav navbar-nav navbar-right">
         <li>
   <a href="https://github.com/kosukeimai/MatchIt/">
-    <span class="fab fa fab fa-github fa-lg"></span>
+    <span class="fab fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -156,7 +156,7 @@ matchit(formula, data = NULL, method = &quot;cem&quot;,
     </div>
 
     <div class="ref-description">
-    <p>In <code><a href='matchit.html'>matchit</a></code>, setting <code>method = "cem"</code> performs coarsened exact matching. With coarsened exact matching, covariates are coarsened into bins, and a complete cross of the coarsened covariates is used to form subclasses defined by each combination of the coarsened covariate levels. Any subclass that doesn't contain both treated and control units is discarded, leaving only subclasses containing treatment and control units that are exactly equal on the coarsened covariates. The coarsening process can be controlled by an algorithm or by manually specifying cutpoints and groupings. The benefits of coarsened exact matching are that the tradeoff between exact matching and approximate balancing can be managed to prevent discarding too many units, which can otherwise occur with exact matching. The method relies on and is a wrapper for <code><a href='https://rdrr.io/pkg/cem/man/cem.html'>cem::cem</a></code>.</p>
+    <p>In <code><a href='matchit.html'>matchit</a></code>, setting <code>method = "cem"</code> performs coarsened exact matching. With coarsened exact matching, covariates are coarsened into bins, and a complete cross of the coarsened covariates is used to form subclasses defined by each combination of the coarsened covariate levels. Any subclass that doesn't contain both treated and control units is discarded, leaving only subclasses containing treatment and control units that are exactly equal on the coarsened covariates. The coarsening process can be controlled by an algorithm or by manually specifying cutpoints and groupings. The benefits of coarsened exact matching are that the tradeoff between exact matching and approximate balancing can be managed to prevent discarding too many units, which can otherwise occur with exact matching.</p>
 <p>This page details the allowable arguments with <code>method = "cem"</code>. See <code><a href='matchit.html'>matchit</a></code> for an explanation of what each argument means in a general context and how it can be specified.</p>
 <p>Below is how <code>matchit</code> is used for coarsened exact matching:</p><pre>
 <span class='fu'><a href='matchit.html'>matchit</a></span><span class='op'>(</span><span class='va'>formula</span>, data <span class='op'>=</span> <span class='cn'>NULL</span>, method <span class='op'>=</span> <span class='st'>"cem"</span>,
@@ -184,7 +184,7 @@ matchit(formula, data = NULL, method = &quot;cem&quot;,
     </tr>
     <tr>
       <th>estimand</th>
-      <td><p>a string containing the desired estimand. Allowable options include <code>"ATT"</code>, <code>"ATC"</code>, and <code>"ATE"</code>. The estimand controls how the weights are computed; see the Computing Weights section at <code><a href='matchit.html'>matchit</a></code> for details.</p></td>
+      <td><p>a string containing the desired estimand. Allowable options include <code>"ATT"</code>, <code>"ATC"</code>, and <code>"ATE"</code>. The estimand controls how the weights are computed; see the Computing Weights section at <code><a href='matchit.html'>matchit</a></code> for details. When <code>k2k = TRUE</code> (see below), <code>estimand</code> also controls how the matching is done.</p></td>
     </tr>
     <tr>
       <th>s.weights</th>
@@ -196,45 +196,199 @@ matchit(formula, data = NULL, method = &quot;cem&quot;,
     </tr>
     <tr>
       <th>...</th>
-      <td><p>additional arguments passed to <code><a href='https://rdrr.io/pkg/cem/man/cem.html'>cem::cem</a></code>. Potentially useful options include <code>cutpoints</code>, <code>grouping</code>, <code>k2k</code>, and <code>method</code>. To supply an argument to <code>method</code> in <code>cem</code>, supply an argument to <code>k2k.method</code> in <code>matchit</code> in order to avoid a name conflict with <code>method</code> in <code>matchit</code>.</p></td>
+      <td><p>additional arguments to control the matching process.</p><dl>
+  <dt><code>grouping</code></dt><dd><p>a named list with an (optional) entry for each categorical variable to be matched on. Each element should itself be a list, and each entry of the sublist should be a vector containing levels of the variable that should be combined to form a single level. Any categorical variables not included in <code>grouping</code> will remain as they are in the data, which means exact matching, with no coarsening, will take place on these variables. See Details.</p></dd>
+     <dt><code>cutpoints</code></dt><dd><p>a named list with an (optional) entry for each numeric variable to be matched on. Each element describes a way of coarsening the corresponding variable. They can be a vector of cutpoints that demarcate bins, a single number giving the number of bins, or a string corresponding to a method of computing the number of bins. Allowable strings include <code>"sturges"</code>, <code>"scott"</code>, and <code>"fd"</code>, which use the functions <code>nclass.Sturges</code>, <code>nclass.scott</code>, and <code>nclass.FD</code>, respectively. The default is <code>"sturges"</code> for variables that are not listed or if no argument is supplied. Can also be a single value to be applied to all numeric variables. See Details.</p></dd>
+     <dt><code>k2k</code></dt><dd><p>codelogical; whether 1:1 matching should occur within the matched strata. If <code>TRUE</code> nearest neighbor matching without replacement will take place within each stratum, and any unmatched units will be dropped (e.g., if there are more treated than control units in the stratum, the treated units without a match will be dropped). The <code>k2k.method</code> argument controls how the distance between units is calculated.</p></dd>
+     <dt><code>k2k.method</code></dt><dd><p><code>character</code>; how the distance between units should be calculated if <code>k2k = TRUE</code>. Allowable arguments include <code>NULL</code> (for random matching), <code>"mahalanobis"</code> (for Mahalanobis distance matching), or any allowable argument to <code>method</code> in <code><a href='https://rdrr.io/r/stats/dist.html'>dist</a></code>. Matching will take place on scaled versions of the original (non-coarsened) variables. The default is <code>"mahalanobis"</code>.</p></dd>
+     <dt><code>mpower</code></dt><dd><p>if <code>k2k.method = "minkowski"</code>, the power used in creating the distance. This is passed to the <code>p</code> argument of <code><a href='https://rdrr.io/r/stats/dist.html'>dist</a></code>.</p></dd>
+  
+</dl>
+</td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="outputs"><a class="anchor" href="#outputs"></a>Outputs</h2>
 
-    <p>All outputs described in <code><a href='matchit.html'>matchit</a></code> are returned with <code>method = "cem"</code> except for <code>match.matrix</code>. This is because matching strata are not indexed by treated units as they are in some other forms of matching.</p>
+    <p>All outputs described in <code><a href='matchit.html'>matchit</a></code> are returned with <code>method = "cem"</code> except for <code>match.matrix</code>. When <code>k2k = TRUE</code>, a <code>match.matrix</code> component with the matched pairs is also included.</p>
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p>If the coarsening is such that there are no exact matches with the coarsened variables, the <code>grouping</code> and <code>cutpoints</code> arguments can be used to modify the matching specification. Reducing the number of cutpoints or grouping some variable values together can make it easier to find matches. See Examples below. Removing variables can also help (but they will likely not be balanced unless highly correlated with the included variables). To take advantage of coarsened exact matching without failing to find any matches, the covariates can be manually coarsened outside of <code><a href='matchit.html'>matchit()</a></code> and then supplied to the <code>exact</code> argument in a call to <code><a href='matchit.html'>matchit()</a></code> with another matching method.</p>
+<p>Setting <code>k2k = TRUE</code> is equivalent to matching with <code>k2k = FALSE</code> and then supplying stratum membership as an exact matching variable (i.e., in <code>exact</code>) to another call to <code><a href='matchit.html'>matchit()</a></code> with <code>method = "nearest"</code>, <code>distance = "mahalanobis"</code> and an argument to <code>discard</code> denoting unmatched units. It is also equivalent to performing nearest neighbor matching supplying coarsened versions of the variables to <code>exact</code>, except that <code>method = "cem"</code> automatically coarsens the continuous variables. The <code>estimand</code> argument supplied with <code>method = "cem"</code> functions the same way it would in these alternate matching calls, i.e., by determining the "focal" group that controls the order of the matching.</p>
+<h3 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Grouping and Cutpoints</h3>
+<p>The <code>grouping</code> and <code>cutpoints</code> arguments allow one to fine-tune the coarsening of the covariates. <code>grouping</code> is used for combining categories of categorical covariates and <code>cutpoints</code> is used for binning numeric covariates. The values supplied to these arguments should be iteratively changed until a matching solution that balances covariate balance and remaining sample size is obtained. The arguments are described below.</p>
+<p>The argument to <code>grouping</code> must be a list, where each component has the name of a categorical variable, the levels of which are to be combined. Each component must itself be a list; this list contains one or more vectors of levels, where each vector corresponds to the levels that should be combined into a single category. For example, if a variable <code>amount</code> had levels <code>"none"</code>, <code>"some"</code>, and <code>"a lot"</code>, one could enter <code>grouping = list(amount = list(c("none"), c("some", "a lot")))</code>, which would group <code>"some"</code> and <code>"a lot"</code> into a single category and leave <code>"none"</code> in its own category. Any levels left out of the list for each variable will be left alone (so <code><a href='https://rdrr.io/r/base/c.html'>c("none")</a></code> could have been omitted from the previous code). Note that if a categorical variable does not appear in <code>grouping</code>, it will not be coarsened, so exact matching will take place on it. <code>grouping</code> should not be used for numeric variables; use <code>cutpoints</code>, described below, instead.</p>
+<p>The argument to <code>cutpoints</code> must also be a list, where each component has the name of a numeric variables that is to be binned. (As a shortcut, it can also be a single value that will be applied to all numeric variables). Each component can take one of three forms: a vector of cutpoints that separate the bins, a single number giving the number of bins, or a string corresponding to an algorithm used to compute the number of bins. Any values at a boundary will be placed into the higher bin; e.g., if the cutpoints were <code>(c(0, 5, 10))</code>, values of 5 would be placed into the same bin as values of 6, 7, 8, or 9, and values of 10 would be placed into a different bin. Internally, values of <code>-Inf</code> and <code>Inf</code> are appended to the beginning and end of the range. When given as a single number defining the number of bins, the bin boundaries are the maximum and minimum values of the variable with bin boundaries evenly spaced between them, i.e., not quantiles. A value of 0 will not perform any binning (equivalent to exact matching on the variable), and a value of 1 will remove the variable from the exact matching variables but it will be still used for pair matching when <code>k2k = TRUE</code>. The allowable strings include <code>"sturges"</code>, <code>"scott"</code>, and <code>"fd"</code>, which use the corresponding binning method, and <code>"q#"</code> where <code>#</code> is a number, which splits the variable into <code>#</code> equally-sized bins (i.e., quantiles).</p>
+<p>An example of a way to supply an argument to <code>cutpoints</code> would be the following:</p><pre>
+<span class='va'>cutpoints</span> <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span>X1 <span class='op'>=</span> <span class='fl'>4</span>,
+                 X2 <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1.7</span>, <span class='fl'>5.5</span>, <span class='fl'>10.2</span><span class='op'>)</span>,
+                 X3 <span class='op'>=</span> <span class='st'>"scott"</span>,
+                 X4 <span class='op'>=</span> <span class='st'>"q5"</span><span class='op'>)</span>
+</pre><p>This would split <code>X1</code> into 4 bins, <code>X2</code> into bins based on the provided boundaries, <code>X3</code> into a number of bins determined by <code>nclass.scott</code>, and <code>X4</code> into quintiles. All other numeric variables would be split into a number of bins determined by <code>nclass.Sturges</code>, the default.</p>
+
     <h2 class="hasAnchor" id="note"><a class="anchor" href="#note"></a>Note</h2>
 
-    <p>If the coarsening is such that there are no exact matches with the coarsened variables, the <code>cutpoints</code> and <code>grouping</code> arguments in <code><a href='https://rdrr.io/pkg/cem/man/cem.html'>cem::cem</a></code> can be used to modify the matching specification. Reducing the number of cutpoints or grouping some variable values together can make it easier to find matches. See Examples below. Removing variables can also help (but they will likely not be balanced unless highly correlated with the included variables). To take advantage of coarsened exact matching without failing to find any matches, the covariates can be manually coarsened outside of <code><a href='matchit.html'>matchit()</a></code> and then supplied to the <code>exact</code> argument in a call to <code><a href='matchit.html'>matchit()</a></code> with another matching method.</p>
+    <p>This method does not rely on the <em>cem</em> package, instead using code written for <em>MatchIt</em>, but its design is based on the original <em>cem</em> functions. Versions of <em>MatchIt</em> prior to 4.1.0 did rely on <em>cem</em>, so results may differ between versions. There are a few differences between the ways <em>MatchIt</em> and <em>cem</em> (and older versions of <em>MatchIt</em>) differ in executing coarsened exact matching, described below.</p><ul>
+<li><p>In <em>MatchIt</em>, when a single number is supplied to <code>cutpoints</code>, it describes the number of bins; in <em>cem</em>, it describes the number of cutpoints separating bins. The <em>MatchIt</em> method is closer to how <code><a href='https://rdrr.io/r/graphics/hist.html'>hist</a></code> processes breaks points to create bins.</p></li>
+<li><p>When <code>cutpoints</code> are used, <code>"ss"</code> (for Shimazaki-Shinomoto's rule) can be used in <em>cem</em> but not in <em>MatchIt</em>.</p></li>
+<li><p>When <code>k2k = TRUE</code>, <em>MatchIt</em> matches on the original variables (scaled), whereas <em>cem</em> matches on the coarsened variables. Because the variables are already exactly matched on the coarsened variables, matching in <em>cem</em> is equivalent to random matching within strata.</p></li>
+<li><p>When <code>k2k = TRUE</code>, in <em>MatchIt</em> matched units are identified by pair membership, and the original stratum membership prior to 1:1 matching is discarded. In <em>cem</em>, pairs are not identified beyond the stratum the members are part of.</p></li>
+<li><p>When <code>k2k = TRUE</code>, <code>k2k.method = "mahalanobis"</code> can be requested in <em>MatchIt</em> but not in <em>cem</em>.</p></li>
+</ul>
+
     <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
 
-    <p>In a manuscript, be sure to cite the following paper if using <code>matchit</code> with <code>method = "cem"</code>:</p>
-<p>Iacus, S., King, G., &amp; Porro, G. (2009). cem: Software for Coarsened Exact Matching. Journal of Statistical Software, 30(1), 1–27. doi: <a href='https://doi.org/10.18637/jss.v030.i09'>10.18637/jss.v030.i09</a></p>
-<p>For example, a sentence might read:</p>
-<p><em>Coarsened matching was performed using the MatchIt package (Ho, Imai, King, &amp; Stuart, 2011) in R, which calls functions from the cem package (Iacus, King, &amp; Porro, 2009).</em></p>
-<p>Theory is also developed in the following article:</p>
+    <p>In a manuscript, you don't need to cite another package when using <code>method = "cem"</code> because the matching is performed completely within <em>MatchIt</em>. For example, a sentence might read:</p>
+<p><em>Coarsened exact matching was performed using the MatchIt package (Ho, Imai, King, &amp; Stuart, 2011) in R.</em></p>
+<p>It would be a good idea to cite the following article, which develops the theory behind coarsened exact matching:</p>
 <p>Iacus, S. M., King, G., &amp; Porro, G. (2012). Causal Inference without Balance Checking: Coarsened Exact Matching. Political Analysis, 20(1), 1–24. doi: <a href='https://doi.org/10.1093/pan/mpr013'>10.1093/pan/mpr013</a></p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <div class='dont-index'><p><code><a href='matchit.html'>matchit</a></code> for a detailed explanation of the inputs and outputs of a call to <code>matchit</code>.</p>
-<p><code><a href='https://rdrr.io/pkg/cem/man/cem.html'>cem::cem</a></code>, which is the workhorse.</p>
+<p>The <em>cem</em> package, upon which this method is based and which provided the workhorse in previous versions of <em>MatchIt</em>.</p>
 <p><code><a href='method_exact.html'>method_exact</a></code> for exact matching, which performs exact matching on the covariates without coarsening.</p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='kw'>if</span> <span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/ns-load.html'>requireNamespace</a></span><span class='op'>(</span><span class='st'>"cem"</span>, quietly <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>{</span>
-<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='st'>"lalonde"</span><span class='op'>)</span>
+    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='st'>"lalonde"</span><span class='op'>)</span>
 
 <span class='co'># Coarsened exact matching on age, race, married, and educ with educ</span>
-<span class='co'># coarsened into 10 bins and race coarsened into 2 categories,</span>
+<span class='co'># coarsened into 5 bins and race coarsened into 2 categories,</span>
 <span class='co'># grouping "white" and "hispan" together</span>
 <span class='va'>m.out1</span> <span class='op'>&lt;-</span> <span class='fu'><a href='matchit.html'>matchit</a></span><span class='op'>(</span><span class='va'>treat</span> <span class='op'>~</span> <span class='va'>age</span> <span class='op'>+</span> <span class='va'>race</span> <span class='op'>+</span> <span class='va'>married</span> <span class='op'>+</span> <span class='va'>educ</span>, data <span class='op'>=</span> <span class='va'>lalonde</span>,
-                  method <span class='op'>=</span> <span class='st'>"cem"</span>, cutpoints <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span>educ <span class='op'>=</span> <span class='fl'>9</span><span class='op'>)</span>,
+                  method <span class='op'>=</span> <span class='st'>"cem"</span>, cutpoints <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span>educ <span class='op'>=</span> <span class='fl'>5</span><span class='op'>)</span>,
                   grouping <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span>race <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"white"</span>, <span class='st'>"hispan"</span><span class='op'>)</span>,
-                                              <span class='st'>"black"</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span>
+                                              <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"black"</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span>
 <span class='va'>m.out1</span>
-<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>m.out1</span><span class='op'>)</span>
-<span class='op'>}</span>
-</div></pre>
+</div><div class='output co'>#&gt; A matchit object
+#&gt;  - method: Coarsened exact matching
+#&gt;  - number of obs.: 614 (original), 393 (matched)
+#&gt;  - target estimand: ATT
+#&gt;  - covariates: age, race, married, educ</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>m.out1</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; 
+#&gt; Call:
+#&gt; matchit(formula = treat ~ age + race + married + educ, data = lalonde, 
+#&gt;     method = "cem", cutpoints = list(educ = 5), grouping = list(race = list(c("white", 
+#&gt;         "hispan"), c("black"))))
+#&gt; 
+#&gt; Summary of Balance for All Data:
+#&gt;            Means Treated Means Control Std. Mean Diff. Var. Ratio eCDF Mean
+#&gt; age              25.8162       28.0303         -0.3094     0.4400    0.0813
+#&gt; raceblack         0.8432        0.2028          1.7615          .    0.6404
+#&gt; racehispan        0.0595        0.1422         -0.3498          .    0.0827
+#&gt; racewhite         0.0973        0.6550         -1.8819          .    0.5577
+#&gt; married           0.1892        0.5128         -0.8263          .    0.3236
+#&gt; educ             10.3459       10.2354          0.0550     0.4959    0.0347
+#&gt;            eCDF Max
+#&gt; age          0.1577
+#&gt; raceblack    0.6404
+#&gt; racehispan   0.0827
+#&gt; racewhite    0.5577
+#&gt; married      0.3236
+#&gt; educ         0.1114
+#&gt; 
+#&gt; 
+#&gt; Summary of Balance for Matched Data:
+#&gt;            Means Treated Means Control Std. Mean Diff. Var. Ratio eCDF Mean
+#&gt; age              24.1007       23.7091          0.0547     0.8882    0.0140
+#&gt; raceblack         0.8188        0.8188          0.0000          .    0.0000
+#&gt; racehispan        0.0671        0.0360          0.1317          .    0.0312
+#&gt; racewhite         0.1141        0.1452         -0.1051          .    0.0312
+#&gt; married           0.1745        0.1745         -0.0000          .    0.0000
+#&gt; educ             10.5369       10.8649         -0.1631     0.7974    0.0177
+#&gt;            eCDF Max Std. Pair Dist.
+#&gt; age          0.0897          0.1555
+#&gt; raceblack    0.0000          0.0000
+#&gt; racehispan   0.0312          0.4829
+#&gt; racewhite    0.0312          0.3853
+#&gt; married      0.0000          0.0000
+#&gt; educ         0.1865          0.3962
+#&gt; 
+#&gt; Percent Balance Improvement:
+#&gt;            Std. Mean Diff. Var. Ratio eCDF Mean eCDF Max
+#&gt; age                   82.3       85.6      82.8     43.1
+#&gt; raceblack            100.0          .     100.0    100.0
+#&gt; racehispan            62.3          .      62.3     62.3
+#&gt; racewhite             94.4          .      94.4     94.4
+#&gt; married              100.0          .     100.0    100.0
+#&gt; educ                -196.7       67.7      49.1    -67.5
+#&gt; 
+#&gt; Sample Sizes:
+#&gt;               Control Treated
+#&gt; All            429.       185
+#&gt; Matched (ESS)   52.84     149
+#&gt; Matched        244.       149
+#&gt; Unmatched      185.        36
+#&gt; Discarded        0.         0
+#&gt; </div><div class='input'>
+<span class='co'># The same but requesting 1:1 Mahalanobis distance matching with</span>
+<span class='co'># the k2k and k2k.method argument. Note the remaining number of units</span>
+<span class='co'># is smaller than when retaining the full matched sample.</span>
+<span class='va'>m.out2</span> <span class='op'>&lt;-</span> <span class='fu'><a href='matchit.html'>matchit</a></span><span class='op'>(</span><span class='va'>treat</span> <span class='op'>~</span> <span class='va'>age</span> <span class='op'>+</span> <span class='va'>race</span> <span class='op'>+</span> <span class='va'>married</span> <span class='op'>+</span> <span class='va'>educ</span>, data <span class='op'>=</span> <span class='va'>lalonde</span>,
+                  method <span class='op'>=</span> <span class='st'>"cem"</span>, cutpoints <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span>educ <span class='op'>=</span> <span class='fl'>5</span><span class='op'>)</span>,
+                  grouping <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span>race <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"white"</span>, <span class='st'>"hispan"</span><span class='op'>)</span>,
+                                              <span class='st'>"black"</span><span class='op'>)</span><span class='op'>)</span>,
+                  k2k <span class='op'>=</span> <span class='cn'>TRUE</span>, k2k.method <span class='op'>=</span> <span class='st'>"mahalanobis"</span><span class='op'>)</span>
+<span class='va'>m.out2</span>
+</div><div class='output co'>#&gt; A matchit object
+#&gt;  - method: Coarsened exact matching
+#&gt;  - number of obs.: 614 (original), 170 (matched)
+#&gt;  - target estimand: ATT
+#&gt;  - covariates: age, race, married, educ</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>m.out2</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; 
+#&gt; Call:
+#&gt; matchit(formula = treat ~ age + race + married + educ, data = lalonde, 
+#&gt;     method = "cem", cutpoints = list(educ = 5), grouping = list(race = list(c("white", 
+#&gt;         "hispan"), "black")), k2k = TRUE, k2k.method = "mahalanobis")
+#&gt; 
+#&gt; Summary of Balance for All Data:
+#&gt;            Means Treated Means Control Std. Mean Diff. Var. Ratio eCDF Mean
+#&gt; age              25.8162       28.0303         -0.3094     0.4400    0.0813
+#&gt; raceblack         0.8432        0.2028          1.7615          .    0.6404
+#&gt; racehispan        0.0595        0.1422         -0.3498          .    0.0827
+#&gt; racewhite         0.0973        0.6550         -1.8819          .    0.5577
+#&gt; married           0.1892        0.5128         -0.8263          .    0.3236
+#&gt; educ             10.3459       10.2354          0.0550     0.4959    0.0347
+#&gt;            eCDF Max
+#&gt; age          0.1577
+#&gt; raceblack    0.6404
+#&gt; racehispan   0.0827
+#&gt; racewhite    0.5577
+#&gt; married      0.3236
+#&gt; educ         0.1114
+#&gt; 
+#&gt; 
+#&gt; Summary of Balance for Matched Data:
+#&gt;            Means Treated Means Control Std. Mean Diff. Var. Ratio eCDF Mean
+#&gt; age              23.6353       23.4118          0.0312     0.9022    0.0126
+#&gt; raceblack         0.6824        0.6824          0.0000          .    0.0000
+#&gt; racehispan        0.1176        0.0706          0.1990          .    0.0471
+#&gt; racewhite         0.2000        0.2471         -0.1588          .    0.0471
+#&gt; married           0.2118        0.2118          0.0000          .    0.0000
+#&gt; educ             10.2588       10.5176         -0.1287     0.8036    0.0149
+#&gt;            eCDF Max Std. Pair Dist.
+#&gt; age          0.0824          0.1036
+#&gt; raceblack    0.0000          0.0000
+#&gt; racehispan   0.0471          0.1990
+#&gt; racewhite    0.0471          0.1588
+#&gt; married      0.0000          0.0000
+#&gt; educ         0.1294          0.2106
+#&gt; 
+#&gt; Percent Balance Improvement:
+#&gt;            Std. Mean Diff. Var. Ratio eCDF Mean eCDF Max
+#&gt; age                   89.9       87.5      84.5     47.8
+#&gt; raceblack            100.0          .     100.0    100.0
+#&gt; racehispan            43.1          .      43.1     43.1
+#&gt; racewhite             91.6          .      91.6     91.6
+#&gt; married              100.0          .     100.0    100.0
+#&gt; educ                -134.2       68.8      57.2    -16.2
+#&gt; 
+#&gt; Sample Sizes:
+#&gt;           Control Treated
+#&gt; All           429     185
+#&gt; Matched        85      85
+#&gt; Unmatched     344     100
+#&gt; Discarded       0       0
+#&gt; </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
