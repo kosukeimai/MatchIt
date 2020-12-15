@@ -56,7 +56,7 @@ for methods that allow it, on which variables Mahalanobis distance matching shou
 a string containing a method for discarding units outside a region of common support. When a propensity score is estimated or supplied to \code{distance}, the options are \code{"none"}, \code{"treated"}, \code{"control"}, or \code{"both"}. For \code{"none"}, no units are discarded for common support. Otherwise, units whose propensity scores fall outside the corresponding region are discarded. Can also be a \code{logical} vector where \code{TRUE} indicates the unit is to be discarded. Default is \code{"none"} for no common support restriction. See Details.
 }
   \item{reestimate}{
-if \code{discard} is not \code{"none"} and propensit yscore are estimated, whether to re-estimate the propensity score in the remaining sample. Default is \code{FALSE} to use the propensity scores estimated in the original sample.
+if \code{discard} is not \code{"none"} and propensity scores are estimated, whether to re-estimate the propensity scores in the remaining sample. Default is \code{FALSE} to use the propensity scores estimated in the original sample.
 }
   \item{s.weights}{
 an optional numeric vector of sampling weights to be incorporated into propensity score models and balance statistics. Can also be specified as a string containing the name of variable in \code{data} to be used or a one-sided formula with the variable on the right-hand side (e.g., \code{~ SW}). Not all propensity score models accept sampling weights; see \code{\link{distance}} for information on which do and do not, and see \code{vignette("sampling-weights")} for details on how to use sampling weights in a matching analysis.

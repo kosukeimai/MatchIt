@@ -39,7 +39,7 @@ a string containing the name that should be given to the variable containing the
 a string containing the name that should be given to the variable containing the unit IDs in the data frame output. Default is \code{"id"}. Only used with \code{get_matches}; for \code{match.data}, the units IDs are stored in the row names of the returned data frame.
 }
   \item{data}{
-a data frame containing the original dataset to which the computed output variables (\code{distance}, \code{weights}, and/or \code{sublcass}) should be appended. If empty, \code{match.data} will attempt to find the dataset using the environment of the \code{matchit} object, which can make this unreliable if \code{match.data} is used in a fresh R session or if the original dataset changed between calling \code{matchit} and \code{match.data}. It is always safest to supply a data frame, which should have as many rows as and be in the same order as the data in the original call to \code{matchit}. The same goes for \code{get_matches}, which calls \code{match.data} internally.
+a data frame containing the original dataset to which the computed output variables (\code{distance}, \code{weights}, and/or \code{sublcass}) should be appended. If empty, \code{match.data} will attempt to find the dataset using the environment of the \code{matchit} object, which can make this unreliable if \code{match.data} is used in a fresh R session or environment different from the original calling environment (e.g., inside a function) or if the original dataset changed between calling \code{matchit} and \code{match.data}. It is always safest to supply a data frame, which should have as many rows as and be in the same order as the data in the original call to \code{matchit()}. The same goes for \code{get_matches}, which calls \code{match.data} internally.
 }
   \item{include.s.weights}{
 \code{logical}; whether to multiply the estimated weights by the sampling weights supplied to \code{matchit()}, if any. Default is \code{TRUE}. If \code{FALSE}, the weights in the \code{match.data} or \code{get_matches} output should be multiplied by the sampling weights before being supplied to the function estimating the treatment effect in the matched data.
@@ -61,7 +61,7 @@ The returned data frame will contain the variables in the original data set or d
 \item{distance}{The propensity score, if estimated or supplied to the \code{distance} argument in \code{matchit()}.}
 \item{weights}{The computed matching weights. These must be used in effect estimation to correctly incorporate the matching.}
 \item{subclass}{Matching strata membership. Units with the same value are in the same stratum.}
-\item{id}{The ID of each unit, corresponding to the row names in the original data or sataset supplied to \code{data}. Only included in \code{get_matches} output. This column can be used to identify which rows belong to the same unit since the same unit may appear multiple times if reused in matching with replacement.}
+\item{id}{The ID of each unit, corresponding to the row names in the original data or dataset supplied to \code{data}. Only included in \code{get_matches} output. This column can be used to identify which rows belong to the same unit since the same unit may appear multiple times if reused in matching with replacement.}
 
 These columns will take on the name supplied to the corresponding arguments in the call to \code{match.data} or \code{get_matches}. See Examples for an example of rename the \code{distance} column to \code{"prop.score"}.
 
