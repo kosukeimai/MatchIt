@@ -42,7 +42,7 @@ The arguments \code{distance} (and related arguments), \code{exact}, \code{mahva
 All outputs described in \code{\link{matchit}} are returned with \code{method = "exact"} except for \code{match.matrix}. This is because matching strata are not indexed by treated units as they are in some other forms of matching.
 }
 \references{
-In a manuscript, you don't need to cite another package when using \code{method = "exact"} because the matching is performed completely within \pkg{MatchIt}. For example, a sentence might read:
+In a manuscript, you don't need to cite another package when using \code{method = "exact"} because the matching is performed completely within \emph{MatchIt}. For example, a sentence might read:
 
 \emph{Exact matching was performed using the MatchIt package (Ho, Imai, King, & Stuart, 2011) in R.}
 }

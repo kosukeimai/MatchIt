@@ -13,68 +13,33 @@ matchit2null <- function(discarded, ...) {
 }
 # MATCHIT method = cem--------------------------------------
 matchit2cem <- function(treat, covs, estimand = "ATT", verbose = FALSE, ...) {
-
   if (length(covs) == 0) stop("Covariates must be specified in the input formula to use coarsened exact matching.", call. = FALSE)
-
-  check.package("cem")
 
   if (verbose) cat("Coarsened exact matching...\n")
 
   A <- list(...)
-  A[["method"]] <- A[["k2k.method"]]
-
-  n.obs <- length(treat)
 
   estimand <- toupper(estimand)
   estimand <- match_arg(estimand, c("ATT", "ATC", "ATE"))
 
-  # cem takes the data all together and wants the treatment specified
-  # with the column name of the data frame. Here we massage the matchit
-  # inputs to this format. Note that X has its proper column names, but
-  # treat does not have the original column name.
-  cem.data <- data.frame(covs, treat)
+  #Uses in-house cem, no need for cem package. See cem_matchit.R for code.
+  strat <- do.call("cem_matchit", c(list(treat = treat, X = covs, estimand = estimand),
+                                    A[names(A) %in% names(formals(cem_matchit))]),
+                   quote = TRUE)
 
-  args.excluded <- c("treatment", "baseline.group", "data", "verbose", "eval.imbalance",
-                     "keep.all", "drop", "L1.breaks", "L1.grouping")
+  levels(strat) <- seq_len(nlevels(strat))
+  names(strat) <- names(treat)
 
-  if (verbose) eval.verbose <- base::eval
-  else eval.verbose <- utils::capture.output
-
-  eval.verbose({
-    mat <- tryCatch({
-      withCallingHandlers({
-        do.call(cem::cem, c(list(treatment = names(cem.data)[ncol(cem.data)],
-                                 data = cem.data,
-                                 verbose = TRUE, #verbosity controlled by eval.verbose
-                                 eval.imbalance = FALSE,
-                                 keep.all = FALSE,
-                                 drop = NULL),
-                            A[names(A) %in% setdiff(names(formals(cem::cem)), args.excluded)]))
-      },
-      warning = function(w) {
-        if (conditionMessage(w) != "no non-missing arguments to min; returning Inf") {
-          warning(paste0("(from cem) ", conditionMessage(w)), call. = FALSE, immediate. = TRUE)
-        }
-        invokeRestart("muffleWarning")
-      })
-    },
-    error = function(e) {
-      if (startsWith(conditionMessage(e), "subscript out of bounds")) {
-        stop("No units were matched. Try changing the coarsening options using the 'cutpoints' and 'grouping' arguments in cem(). See ?method_cem or ?cem::cem for details.", call. = FALSE)
-      }
-      else {
-        stop(paste0("(from cem) ", conditionMessage(e)), call. = FALSE)
-      }
-    })
-  })
-
-  strat <- setNames(rep(NA_character_, n.obs), names(treat))
-  if (!is.null(mat)) strat[mat$matched] <- mat$strata[mat$matched]
-  strat <- setNames(factor(strat, labels = seq_along(unique(strat[!is.na(strat)]))), names(treat))
+  mm <- NULL
+  if (isTRUE(A[["k2k"]])) {
+    mm <- nummm2charmm(subclass2mmC(strat, treat, focal = switch(estimand, "ATC" = 0, 1)),
+                       treat)
+  }
 
   if (verbose) cat("Calculating matching weights... ")
 
-  res <- list(subclass = strat,
+  res <- list(match.matrix = mm,
+              subclass = strat,
               weights = weights.subclass(strat, treat, estimand))
 
   if (verbose) cat("Done.\n")
@@ -82,7 +47,6 @@ matchit2cem <- function(treat, covs, estimand = "ATT", verbose = FALSE, ...) {
   class(res) <- "matchit"
   return(res)
 }
-
 # MATCHIT method = exact------------------------------------
 matchit2exact <- function(treat, covs, data, estimand = "ATT", verbose = FALSE, ...){
 
@@ -96,6 +60,10 @@ matchit2exact <- function(treat, covs, data, estimand = "ATT", verbose = FALSE, 
 
   xx <- exactify(covs, names(treat))
   cc <- intersect(xx[treat==1], xx[treat==0])
+
+  if (length(cc) == 0) {
+    stop("No exact matches were found.", call. = FALSE)
+  }
 
   psclass <- setNames(factor(match(xx, cc), nmax = length(cc)), names(treat))
 
@@ -114,7 +82,8 @@ matchit2exact <- function(treat, covs, data, estimand = "ATT", verbose = FALSE, 
 matchit2full <- function(treat, formula, data, distance, discarded,
                          caliper = NULL, mahvars = NULL, exact = NULL,
                          estimand = "ATT", verbose = FALSE,
-                         is.full.mahalanobis, ...) {
+                         is.full.mahalanobis, min.controls = 0,
+                         max.controls = Inf, ...) {
 
   check.package("optmatch")
 
@@ -122,8 +91,13 @@ matchit2full <- function(treat, formula, data, distance, discarded,
 
   A <- list(...)
 
-  fm.args <- c("min.controls", "max.controls", "omit.fraction", "mean.controls", "tol")
+  fm.args <- c("omit.fraction", "mean.controls", "tol")
   A[!names(A) %in% fm.args] <- NULL
+
+  #Set max problem size to Inf and return to original value after match
+  omps <- getOption("optmatch_max_problem_size")
+  on.exit(options(optmatch_max_problem_size = omps))
+  options(optmatch_max_problem_size = Inf)
 
   estimand <- toupper(estimand)
   estimand <- match_arg(estimand, c("ATT", "ATC", "ATE"))
@@ -136,75 +110,70 @@ matchit2full <- function(treat, formula, data, distance, discarded,
     focal <- 1
   }
 
-  if (sum(!discarded & treat != focal) < sum(!discarded & treat == focal)) {
-    warning("Fewer ", tc[2], " units than ", tc[1], " units; some ", tc[2], " units will be matched to multiple ", tc[1], " units.", immediate. = TRUE, call. = FALSE)
-  }
+  treat_ <- setNames(as.integer(treat[!discarded] == focal), names(treat)[!discarded])
 
-  treat_ <- setNames(as.integer(treat == focal), names(treat))
-  treat_[discarded] <- NA
+  if (!is.null(data)) data <- data[!discarded,]
 
   if (is.full.mahalanobis) {
     if (length(attr(terms(formula, data = data), "term.labels")) == 0) {
       stop("Covariates must be specified in the input formula when distance = \"mahalanobis\".", call. = FALSE)
     }
+    mahvars <- formula
   }
 
-  within.match <- NULL
+  #Create distance matrix; note that Mahalanobis distance computed using entire
+  #sample, like method2nearest, as opposed to within exact strata, like optmatch.
+  if (!is.null(mahvars)) {
+    mahvars <- update(mahvars, treat_ ~ .)
+    environment(mahvars) <- sys.frame(sys.nframe())
+
+    mo <- optmatch::match_on(mahvars, data = data[names(data) != "treat_"],
+                             method = "mahalanobis")
+  }
+  else {
+    mo <- optmatch::match_on(distance[!discarded], z = treat_)
+  }
+
   if (!is.null(exact)) {
-    environment(exact) <- sys.frame(sys.nframe())
-    within.match <- optmatch::exactMatch(update(exact, treat_ ~ .), data = data)
+    ex <- exactify(model.frame(exact, data = data))
+
+    cc <- intersect(ex[treat_==1], ex[treat_==0])
+    if (length(cc) == 0) stop("No matches were found.", call. = FALSE)
+
+    mo <- mo + optmatch::exactMatch(ex, treat_)
   }
 
   if (!is.null(caliper)) {
+    if (min.controls != 0) {
+      stop("Calipers cannot be used with method = \"full\" when 'min.controls' is specified.", call. = FALSE)
+    }
+
     if (any(names(caliper) != "")) {
       cov.cals <- setdiff(names(caliper), "")
       calcovs <- get.covs.matrix(reformulate(cov.cals, intercept = FALSE), data = data)
     }
     for (i in seq_along(caliper)) {
       if (names(caliper)[i] == "") {
-        mo <- optmatch::match_on(distance, z = treat_)
+        mo_cal <- optmatch::match_on(distance[!discarded], z = treat_)
       }
       else {
-        mo <- optmatch::match_on(setNames(calcovs[,names(caliper)[i]], names(treat)), z = treat_)
+        mo_cal <- optmatch::match_on(setNames(calcovs[,names(caliper)[i]], names(treat_)), z = treat_)
       }
 
-      if (is.null(within.match)) within.match <- optmatch::caliper(mo, caliper[i])
-      else within.match <- within.match + optmatch::caliper(mo, caliper[i])
-
-      rm(mo)
+      mo <- mo + optmatch::caliper(mo_cal, caliper[i])
     }
+    rm(mo_cal)
   }
 
+  pair <- setNames(rep(NA_character_, length(treat)), names(treat))
+
   withCallingHandlers({
-    if (is.full.mahalanobis) {
-      formula <- update(formula, treat_ ~ .)
-      environment(formula) <- sys.frame(sys.nframe())
-
-      full <- do.call(optmatch::fullmatch,
-                      c(list(formula,
-                             data = data,
-                             method = "mahalanobis",
-                             within = within.match),
-                        A))
-    }
-    else if (!is.null(mahvars)) {
-      mahvars <- update(mahvars, treat_ ~ .)
-      environment(mahvars) <- sys.frame(sys.nframe())
-
-      full <- do.call(optmatch::fullmatch,
-                      c(list(mahvars,
-                             data = data,
-                             method = "mahalanobis",
-                             within = within.match),
-                        A))
-    }
-    else {
-      full <- do.call(optmatch::fullmatch,
-                      c(list(treat_ ~ distance,
-                             method = "euclidean", #slightly faster than Mahalanobis
-                             within = within.match),
-                        A))
-    }
+    p <- do.call(optmatch::fullmatch,
+                 c(list(mo,
+                        min.controls = min.controls,
+                        max.controls = max.controls,
+                        data = treat), #just to get rownames; not actually used in matching
+                   A))
   },
   warning = function(w) {
     warning(paste0("(from optmatch) ", conditionMessage(w)), call. = FALSE, immediate. = TRUE)
@@ -214,9 +183,12 @@ matchit2full <- function(treat, formula, data, distance, discarded,
     stop(paste0("(from optmatch) ", conditionMessage(e)), call. = FALSE)
   })
 
-  if (all(is.na(full))) stop("No matches were found.", call. = FALSE)
+  pair[names(p)[!is.na(p)]] <- as.character(p[!is.na(p)])
 
-  psclass <- factor(full, labels = seq_len(nlevels(full)), nmax = nlevels(full))
+  if (all(is.na(pair))) stop("No matches were found.", call. = FALSE)
+
+  psclass <- factor(pair, nmax = min(sum(treat_ == 1), sum(treat_ == 0)))
+  levels(psclass) <- seq_len(nlevels(psclass))
   names(psclass) <- names(treat)
 
   #No match.matrix because treated units don't index matched strata (i.e., more than one
@@ -237,7 +209,8 @@ matchit2full <- function(treat, formula, data, distance, discarded,
 matchit2optimal <- function(treat, formula, data, distance, discarded,
                             ratio = 1, caliper = NULL, mahvars = NULL, exact = NULL,
                             estimand = "ATT", verbose = FALSE,
-                            is.full.mahalanobis,...) {
+                            is.full.mahalanobis, min.controls = NULL,
+                            max.controls = NULL, ...) {
 
   check.package("optmatch")
 
@@ -246,6 +219,18 @@ matchit2optimal <- function(treat, formula, data, distance, discarded,
   A <- list(...)
   pm.args <- c("tol")
   A[!names(A) %in% pm.args] <- NULL
+
+  #Set max problem size to Inf and return to original value after match
+  omps <- getOption("optmatch_max_problem_size")
+  on.exit(options(optmatch_max_problem_size = omps))
+  options(optmatch_max_problem_size = Inf)
+
+  r <- process.ratio(ratio, min.controls, max.controls)
+  ratio <- r["ratio"]
+  if (!is.null(max.controls)) {
+    min.controls <- r["min.controls"]
+    max.controls <- r["max.controls"]
+  }
 
   estimand <- toupper(estimand)
   estimand <- match_arg(estimand, c("ATT", "ATC"))
@@ -258,90 +243,124 @@ matchit2optimal <- function(treat, formula, data, distance, discarded,
     focal <- 1
   }
 
-  if (sum(!discarded & treat != focal) < sum(!discarded & treat == focal)) {
-    warning("Fewer ", tc[2], " units than ", tc[1], " units; not all ", tc[1], " units will get a match.", immediate. = TRUE, call. = FALSE)    }
-  else if (sum(!discarded & treat != focal) < sum(!discarded & treat == focal)*ratio) {
-    stop(paste0("Not enough ", tc[2], " units for ", ratio, " matches for each ", tc[1], " unit."), call. = FALSE)
-  }
+  treat_ <- setNames(as.integer(treat[!discarded] == focal), names(treat)[!discarded])
 
-  treat_ <- setNames(as.integer(treat == focal), names(treat))
-  treat_[discarded] <- NA_integer_
-
-  ratio <- process.ratio(ratio)
+  if (!is.null(data)) data <- data[!discarded,]
 
   if (is.full.mahalanobis) {
     if (length(attr(terms(formula, data = data), "term.labels")) == 0) {
       stop("Covariates must be specified in the input formula when distance = \"mahalanobis\".", call. = FALSE)
     }
+    mahvars <- formula
   }
-
-  if (!is.null(exact)) {
-    environment(exact) <- sys.frame(sys.nframe())
-    exact.match <- optmatch::exactMatch(update(exact, treat_ ~ .), data = data)
-  }
-  else exact.match <- NULL
 
   if (!is.null(caliper)) {
     warning("Calipers are currently not compatible with method = \"optimal\" and will be ignored.", call. = FALSE, immediate. = TRUE)
     caliper <- NULL
   }
 
-  withCallingHandlers({
-    if (is.full.mahalanobis) {
-      formula <- update(formula, treat_ ~ .)
-      environment(formula) <- sys.frame(sys.nframe())
+  if (is.null(max.controls)) {
+    min.controls <- max.controls <- ratio
+  }
 
-      pair <- do.call(optmatch::pairmatch,
-                      c(list(formula,
-                             data = data,
-                             method = "mahalanobis",
-                             controls = ratio,
-                             within = exact.match),
-                        A))
+  #Exact matching strata
+  if (!is.null(exact)) {
+    ex <- factor(exactify(model.frame(exact, data = data)))
+
+    cc <- intersect(ex[treat_==1], ex[treat_==0])
+    if (length(cc) == 0) stop("No matches were found.", call. = FALSE)
+
+    e_ratios <- sapply(levels(ex), function(e) sum(treat_[ex == e] == 0)/sum(treat_[ex == e] == 1))
+
+    if (any(e_ratios < 1)) {
+      warning(paste0("Fewer ", tc[2], " units than ", tc[1], " units in some 'exact' strata; not all ", tc[1], " units will get a match."), immediate. = TRUE, call. = FALSE)
     }
-    else if (!is.null(mahvars)) {
-      mahvars <- update(mahvars, treat_ ~ .)
-      environment(mahvars) <- sys.frame(sys.nframe())
+    if (ratio > 1 && any(e_ratios < ratio)) {
+      if (ratio == max.controls)
+        warning(paste0("Not all ", tc[1], " units will get ", ratio, " matches."), immediate. = TRUE, call. = FALSE)
+      else
+        warning(paste0("Not enough ", tc[2], " units for an average of ", ratio, " matches per ", tc[1], " unit in all 'exact' strata."), immediate. = TRUE, call. = FALSE)
+    }
+  }
+  else {
+    ex <- factor(rep("_", length(treat_)), levels = "_")
+    e_ratios <- setNames(sum(treat_ == 0)/sum(treat_ == 1), levels(ex))
 
-      pair <- do.call(optmatch::pairmatch,
-                      c(list(mahvars,
-                             data = data,
-                             method = "mahalanobis",
-                             controls = ratio,
-                             within = exact.match),
-                        A))
+    if (e_ratios < 1) {
+      warning(paste0("Fewer ", tc[2], " units than ", tc[1], " units; not all ", tc[1], " units will get a match."), immediate. = TRUE, call. = FALSE)
+    }
+    else if (e_ratios < ratio) {
+      if (ratio == max.controls)
+        warning(paste0("Not all ", tc[1], " units will get ", ratio, " matches."), immediate. = TRUE, call. = FALSE)
+      else
+        warning(paste0("Not enough ", tc[2], " units for an average of ", ratio, " matches per ", tc[1], " unit."), immediate. = TRUE, call. = FALSE)
+    }
+  }
+
+  #Create distance matrix; note that Mahalanobis distance computed using entire
+  #sample, like method2nearest, as opposed to within exact strata, like optmatch.
+  if (!is.null(mahvars)) {
+    mahvars <- update(mahvars, treat_ ~ .)
+    environment(mahvars) <- sys.frame(sys.nframe())
+
+    mo <- optmatch::match_on(mahvars, data = data[names(data) != "treat_"],
+                             method = "mahalanobis")
+  }
+  else {
+    mo <- optmatch::match_on(distance[!discarded], z = treat_)
+  }
+
+  #Initialize pair membership; must include names
+  pair <- setNames(rep(NA_character_, length(treat)), names(treat))
+
+  for (e in levels(ex)) {
+    if (nlevels(ex) > 1) mo_ <- mo[ex[treat_==1] == e, ex[treat_==0] == e, drop = FALSE]
+
+    #Process ratio, etc., when available ratio in exact matching categories
+    #(e_ratio) differs from requested ratio
+    if (e_ratios[e] < 1) {
+      #Switch treatment and control labels; unmatched treated units are dropped
+      ratio_ <- min.controls_ <- max.controls_ <- 1
+      mo_ <- t(mo_)
+    }
+    else if (e_ratios[e] < ratio) {
+      #Lower ratio and min.controls.
+      ratio_ <- e_ratios[e]
+      min.controls_ <- min(min.controls, floor(e_ratios[e]))
+      max.controls_ <- max.controls
     }
     else {
-      pair <- do.call(optmatch::pairmatch,
-                      c(list(treat_ ~ distance,
-                             method = "euclidean", #slightly faster than Mahalanobis
-                             controls = ratio,
-                             within = exact.match),
-                        A))
+      ratio_ <- ratio
+      min.controls_ <- min.controls
+      max.controls_ <- max.controls
     }
-  },
-  warning = function(w) {
-    warning(paste0("(from optmatch) ", conditionMessage(w)), call. = FALSE, immediate. = TRUE)
-    invokeRestart("muffleWarning")
-  },
-  error = function(e) {
-    stop(paste0("(from optmatch) ", conditionMessage(e)), call. = FALSE)
-  })
+
+    withCallingHandlers({
+        p <- do.call(optmatch::fullmatch,
+                        c(list(if (nlevels(ex) > 1) mo_ else mo,
+                               mean.controls = ratio_,
+                               min.controls = min.controls_,
+                               max.controls = max.controls_,
+                               data = treat), #just to get rownames; not actually used in matching
+                          A))
+    },
+    warning = function(w) {
+      warning(paste0("(from optmatch) ", conditionMessage(w)), call. = FALSE, immediate. = TRUE)
+      invokeRestart("muffleWarning")
+    },
+    error = function(e) {
+      stop(paste0("(from optmatch) ", conditionMessage(e)), call. = FALSE)
+    })
+
+    pair[names(p)[!is.na(p)]] <- paste(as.character(p[!is.na(p)]), e, sep = "|")
+  }
 
   if (all(is.na(pair))) stop("No matches were found.", call. = FALSE)
 
-  psclass <- factor(pair, labels = seq_len(nlevels(pair)))
+  psclass <- factor(pair); levels(psclass) <- seq_len(nlevels(psclass))
   names(psclass) <- names(treat)
-  na.class <- is.na(psclass)
-  ind1 <- which(treat == focal)
 
-  mm <- matrix(NA_character_, ncol = ratio, nrow = sum(treat == focal),
-               dimnames = list(names(treat)[treat == focal], NULL))
-
-  for (i in which(!na.class[treat == focal])) {
-    matched.units <- names(treat)[treat != focal & !na.class & psclass == psclass[ind1[i]]]
-    if (length(matched.units) > 0) mm[i, seq_along(matched.units)] <- matched.units
-  }
+  mm <- nummm2charmm(subclass2mmC(psclass, treat, focal), treat)
 
   if (verbose) cat("Calculating matching weights... ")
 
@@ -435,6 +454,10 @@ matchit2genetic <- function(treat, data, distance, discarded,
   if (!is.null(exact)) {
     #Add covariates in exact not in X to X
     ex <- as.integer(factor(exactify(model.frame(exact, data = data), names(treat))))
+
+    cc <- intersect(ex[treat==1], ex[treat==0])
+    if (length(cc) == 0) stop("No matches were found.", call. = FALSE)
+
     X <- cbind(X, ex)
 
     exact.log <- c(rep(FALSE, ncol(X) - 1), TRUE)
@@ -620,7 +643,12 @@ matchit2nearest <-  function(treat, data, distance, discarded,
     cat("Nearest neighbor matching... \n")
   }
 
-  ratio <- process.ratio(ratio, max.controls)
+  r <- process.ratio(ratio, min.controls, max.controls)
+  ratio <- r["ratio"]
+  if (!is.null(max.controls)) {
+    min.controls <- r["min.controls"]
+    max.controls <- r["max.controls"]
+  }
 
   estimand <- toupper(estimand)
   estimand <- match_arg(estimand, c("ATT", "ATC"))
@@ -631,16 +659,6 @@ matchit2nearest <-  function(treat, data, distance, discarded,
   else {
     tc <- c("treated", "control")
     focal <- 1
-  }
-
-  if (!replace) {
-    if (sum(!discarded & treat != focal) < sum(!discarded & treat == focal)) {
-      warning("Fewer ", tc[2], " units than ", tc[1], " units; not all ", tc[1],
-              " units will get a match.", immediate. = TRUE, call. = FALSE)    }
-    else if (sum(!discarded & treat != focal) < sum(!discarded & treat == focal)*ratio) {
-      warning(paste0("Not enough ", tc[2], " units for ", round(ratio, 2), " matches for each ", tc[1],
-                     " unit. Some ", tc[1], " units will not be matched to ", round(ratio, 2), " ", tc[2], " units."), immediate. = TRUE, call. = FALSE)
-    }
   }
 
   treat <- setNames(as.integer(treat == focal), names(treat))
@@ -675,12 +693,6 @@ matchit2nearest <-  function(treat, data, distance, discarded,
     caliper.dist <- caliper.covs <- NULL
     caliper.covs.mat <- NULL
   }
-
-  if (!is.null(exact)) {
-    ex <- exactify(model.frame(exact, data = data))
-    ex <- setNames(as.integer(factor(ex)), lab)
-  }
-  else ex <- NULL
 
   if (is.full.mahalanobis) {
     mahcovs <- get.covs.matrix(formula, data)
@@ -722,18 +734,50 @@ matchit2nearest <-  function(treat, data, distance, discarded,
                   "data" = seq_len(n1))
   }
 
+  if (!is.null(exact)) {
+    ex <- factor(exactify(model.frame(exact, data = data)))
+
+    cc <- intersect(ex[treat==1], ex[treat==0])
+    if (length(cc) == 0) stop("No matches were found.", call. = FALSE)
+
+    e_ratios <- sapply(levels(ex), function(e) sum(treat[ex == e] == 0)/sum(treat[ex == e] == 1))
+
+    if (any(e_ratios < 1)) {
+      warning(paste0("Fewer ", tc[2], " units than ", tc[1], " units in some 'exact' strata; not all ", tc[1], " units will get a match."), immediate. = TRUE, call. = FALSE)
+    }
+    if (ratio > 1 && any(e_ratios < ratio)) {
+      if (is.null(max.controls) || ratio == max.controls)
+        warning(paste0("Not all ", tc[1], " units will get ", ratio, " matches."), immediate. = TRUE, call. = FALSE)
+      else
+        warning(paste0("Not enough ", tc[2], " units for an average of ", ratio, " matches per ", tc[1], " unit in all 'exact' strata."), immediate. = TRUE, call. = FALSE)
+    }
+
+    ex <- setNames(as.integer(factor(ex)), lab)
+  }
+  else {
+    ex <- NULL
+    # ex <- factor(rep("_", length(treat)), levels = "_")
+    e_ratios <- setNames(sum(treat == 0)/sum(treat == 1), levels(ex))
+
+    if (e_ratios < 1) {
+      warning(paste0("Fewer ", tc[2], " units than ", tc[1], " units; not all ", tc[1], " units will get a match."), immediate. = TRUE, call. = FALSE)
+    }
+    else if (e_ratios < ratio) {
+      if (is.null(max.controls) || ratio == max.controls)
+        warning(paste0("Not all ", tc[1], " units will get ", ratio, " matches."), immediate. = TRUE, call. = FALSE)
+      else
+        warning(paste0("Not enough ", tc[2], " units for an average of ", ratio, " matches per ", tc[1], " unit."), immediate. = TRUE, call. = FALSE)
+    }
+  }
+
   #Variable ratio (extremal matching), Ming & Rosenbaum (2000)
   #Each treated unit get its own value of ratio
   if (!is.null(max.controls)) {
     if (is.null(distance)) stop("'distance' cannot be \"mahalanobis\" for variable ratio matching.", call. = FALSE)
-    if (ratio <= 1) stop("'ratio' must be greater than 1 for variable ratio matching.", call. = FALSE)
-    if (max.controls <= ratio) stop("'max.controls' must be greater than 'ratio' for variable ratio matching.", call. = FALSE)
-    if (is.null(min.controls)) min.controls <- 1
-    else if (min.controls >= ratio) stop("'min.controls' must be less than 'ratio' for variable ratio matching.", call. = FALSE)
 
     n1 <- sum(treat == 1)
     m <- round(ratio * n1)
-    if (m > sum(treat == 0)) stop("'ratio' must be less than or equal to n0/n1.", call. = FALSE)
+    # if (m > sum(treat == 0)) stop("'ratio' must be less than or equal to n0/n1.", call. = FALSE)
 
     kmax <- floor((m - min.controls*(n1-1)) / (max.controls - min.controls))
     kmin <- n1 - kmax - 1
@@ -758,15 +802,15 @@ matchit2nearest <-  function(treat, data, distance, discarded,
     ratio <- rep(ratio, n1)
   }
 
-  #Both produce matrix of indices of matched ctrl units
-  if (fast) {
+  #Both produce matrix of indices of matched ctrl units (numerical)
+  # if (fast) {
     mm <- nn_matchC(treat, ord, ratio, replace, discarded, distance, ex, caliper.dist,
                     caliper.covs, caliper.covs.mat, mahcovs, mahSigma_inv, verbose)
-  }
-  else {
-    mm <- nn_match(treat, ord, ratio, replace, discarded, distance, ex, caliper.dist,
-                   caliper.covs, caliper.covs.mat, mahcovs, mahSigma_inv, verbose)
-  }
+  # }
+  # else {
+  #   mm <- nn_match(treat, ord, ratio, replace, discarded, distance, ex, caliper.dist,
+  #                  caliper.covs, caliper.covs.mat, mahcovs, mahSigma_inv, verbose)
+  # }
 
   if (verbose) cat("Calculating matching weights... ")
 

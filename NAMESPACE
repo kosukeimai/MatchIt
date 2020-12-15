@@ -2,7 +2,7 @@ useDynLib("MatchIt", .registration = TRUE)
 
 import(stats)
 import(graphics)
-importFrom("grDevices", "devAskNewPage")
+importFrom("grDevices", "devAskNewPage", "nclass.FD", "nclass.Sturges", "nclass.scott")
 importFrom("utils", "setTxtProgressBar", "txtProgressBar", "capture.output")
 importFrom("Rcpp", "evalCpp")
 

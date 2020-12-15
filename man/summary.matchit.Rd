@@ -79,7 +79,7 @@ The effective sample size (ESS) is a measure of the size of a hypothetical unwei
 
 After subclassification, the aggregate balance statistics are computed using the subclassification weights rather than averaging across subclasses.
 
-All balance statistics (except pair differences) are computed incorporating the sampling weights upplied to \code{matchit}, if any. The unadjusted balance statistics include the sampling weights and the adjusted balance statistics use the matching weights multiplied by the sampling weights.
+All balance statistics (except pair differences) are computed incorporating the sampling weights supplied to \code{matchit}, if any. The unadjusted balance statistics include the sampling weights and the adjusted balance statistics use the matching weights multiplied by the sampling weights.
 
 When printing, \code{NA} values are replaced with periods (\code{.}), and the pair distance column in the unmatched and percent balance improvement components of the output are omitted.
 }

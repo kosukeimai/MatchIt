@@ -145,13 +145,29 @@ process.distance <- function(distance, method) {
 }
 
 #Function to check ratio is acceptable
-process.ratio <- function(ratio, max.controls = NULL) {
+process.ratio <- function(ratio, min.controls = NULL, max.controls = NULL) {
   if (length(ratio) == 0) ratio <- 1
   if (!is.atomic(ratio) || !is.numeric(ratio) || length(ratio) > 1 || ratio < 1) {
-    stop("Ratio must be a single positive number.", call. = FALSE)
+    stop("'ratio' must be a single positive number.", call. = FALSE)
   }
-  if (is.null(max.controls)) ratio <- round(ratio)
-  ratio
+  if (is.null(max.controls)) {
+    ratio <- round(ratio)
+    return(c(ratio = ratio))
+  }
+  else {
+    if (ratio <= 1) stop("'ratio' must be greater than 1 for variable ratio matching.", call. = FALSE)
+
+    max.controls <- ceiling(max.controls)
+    if (max.controls <= ratio) stop("'max.controls' must be greater than 'ratio' for variable ratio matching.", call. = FALSE)
+
+    if (is.null(min.controls)) min.controls <- 1
+    else min.controls <- floor(min.controls)
+
+    if (min.controls < 1) stop("'min.controls' cannot be less than 1 for variable ratio matching.", call. = FALSE)
+    else if (min.controls >= ratio) stop("'min.controls' must be less than 'ratio' for variable ratio matching.", call. = FALSE)
+
+    return(c(ratio = ratio, min.controls = min.controls, max.controls = max.controls))
+  }
 }
 
 #Function to check if caliper is okay and process it
@@ -667,8 +683,9 @@ get.covs.matrix <- function(formula = NULL, data = NULL) {
 
 #Convert match.matrix (mm) using numerical indices to using char rownames
 nummm2charmm <- function(nummm, treat) {
+  #Assumes nummm has rownames
   charmm <- matrix(NA_character_, nrow = nrow(nummm), ncol = ncol(nummm),
-                   dimnames = list(names(treat)[treat == 1], NULL))
+                   dimnames = dimnames(nummm))
   charmm[] <- names(treat)[nummm]
   charmm
 }
@@ -680,7 +697,7 @@ charmm2nummm <- function(charmm, treat) {
   nummm
 }
 
-#Get subclass from match.matrix. Only to be used if replace = FALSE.
+#Get subclass from match.matrix. Only to be used if replace = FALSE. See subclass2mmC.cpp for reverse.
 mm2subclass <- function(mm, treat) {
   lab <- names(treat)
   ind1 <- which(treat == 1)

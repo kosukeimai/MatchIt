@@ -51,7 +51,7 @@ No propensity scores are estimated. Rather than using the propensity score diffe
 When specifying an argument to \code{distance} that estimates a propensity score, the output of the function called to estimate the propensity score (e.g., the \code{glm} object when \code{distance = "glm"}) will be included in the \code{matchit} output object in the \code{model} component. When \code{distance} is anything other than \code{"mahalanobis"}, the estimated or supplied distance measures will be included in the \code{matchit} output object in the \code{distance} component.
 }
 \note{
-In versions of \pkg{MatchIt} prior to 4.0.0, \code{distance} was specified in a slightly different way. When specifying arguments using the old syntax, they will automatically be converted to the corresponding method in the new syntax but a warning will be thrown. \code{distance = "logit"}, the old default, will still work in the new syntax, though \code{distance = "glm", link = "logit"} is preferred (note that these are the default settings and don't need to be made explicit).
+In versions of \emph{MatchIt} prior to 4.0.0, \code{distance} was specified in a slightly different way. When specifying arguments using the old syntax, they will automatically be converted to the corresponding method in the new syntax but a warning will be thrown. \code{distance = "logit"}, the old default, will still work in the new syntax, though \code{distance = "glm", link = "logit"} is preferred (note that these are the default settings and don't need to be made explicit).
 }
 \examples{
 data("lalonde")

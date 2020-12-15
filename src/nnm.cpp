@@ -28,8 +28,8 @@ IntegerMatrix nn_matchC(const IntegerVector& treat,
   NumericMatrix calcovs_covs_mat, mah_covs, mahSigma_inv, mah_covs_c;
   IntegerVector exact;
 
-  Environment package_env("package:stats");
-  Function mah = package_env["mahalanobis"];
+  Environment pkg = Environment::namespace_env("stats");
+  Function mah = pkg["mahalanobis"];
 
   bool use_exact = false;
   bool use_caliper_dist = false;
@@ -48,6 +48,7 @@ IntegerMatrix nn_matchC(const IntegerVector& treat,
   // Output matrix with sample indices of C units
   IntegerMatrix mm(n1, max_rat);
   mm.fill(NA_INTEGER);
+  rownames(mm) = as<CharacterVector>(treat.names())[ind1];
 
   // Store who has been matched; exclude discarded
   LogicalVector matched = clone(discarded);
@@ -106,6 +107,8 @@ IntegerMatrix nn_matchC(const IntegerVector& treat,
 
   //Counters
   int rat, i, x, j;
+
+  //Matching
   for (rat = 0; rat < max_rat; ++rat) {
     for (i = 0; i < n1; ++i) {
 
@@ -183,7 +186,7 @@ IntegerMatrix nn_matchC(const IntegerVector& treat,
           mah_covs_c(_,j) = as<NumericVector>(mah_covs_col[c_available]);
         }
         mah_covs_t = mah_covs( t_ind , _ );
-        match_distance = sqrt(mah(mah_covs_c, mah_covs_t, mahSigma_inv, true)); //mahalanobis in R
+        match_distance = sqrt(as<NumericVector>(mah(mah_covs_c, mah_covs_t, mahSigma_inv, true))); //mahalanobis in R
 
       } else {
         if (ps_diff_assigned) {

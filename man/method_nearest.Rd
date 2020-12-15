@@ -76,7 +76,7 @@ how many control units should be matched to each treated unit for k:1 matching. 
 for variable ratio matching, the minimum and maximum number of controls units to be matched to each treated unit. See section "Variable Ratio Matching" in Details below.
 }
   \item{verbose}{
-\code{logical}; whether information about the matching process should be printed to the console. When \code{TRUE}, a progress bar implemented using \pkg{RcppProgress} will be displayed.
+\code{logical}; whether information about the matching process should be printed to the console. When \code{TRUE}, a progress bar implemented using \emph{RcppProgress} will be displayed.
 }
   \item{\dots}{
 ignored.
@@ -117,12 +117,12 @@ The \code{estimand} argument controls whether control units are selected to be m
 \subsection{Variable Ratio Matching}{
 \code{matchit} can perform variable ratio "extremal" matching as described by Ming and Rosenbaum (2000). This method tends to result in better balance than fixed ratio matching at the expense of some precision. When \code{ratio > 1}, rather than requiring all treated units to receive \code{ratio} matches, each treated unit is assigned a value that corresponds to the number of control units they will be matched to. These values are controlled by the arguments \code{min.controls} and \code{max.controls}, which correspond to \ifelse{latex}{\out{$\alpha$}}{\ifelse{html}{\out{&alpha;}}{alpha}} and \ifelse{latex}{\out{$\beta$}}{\ifelse{html}{\out{&beta;}}{beta}}, respectively, in Ming and Rosenbaum (2000), and trigger variable ratio matching to occur. Some treated units will receive \code{min.controls} matches and others will receive \code{max.controls} matches (and one unit may have an intermediate number of matches); how many units are assigned each number of matches is determined by the algorithm described in Ming and Rosenbaum (2000, p119). \code{ratio} controls how many total control units will be matched: \code{n1 * ratio} control units will be matched, where \code{n1} is the number of treated units, yielding the same total number of matched controls as fixed ratio matching does.
 
-Variable ratio matching cannot be used with Mahalanobis distance matching. The calculations of the numbers of control units each treated unit will be matched to occurs without consideration of \code{caliper} or \code{discard}. \code{ratio} does not have to be an integer but must be greater than 1 and less than \code{n0/n1}, where \code{n0} and \code{n1} are the number of control and treated units, respectively. Setting \code{ratio = n0/n1} performs a crude form of full matching where all control units are matched. If \code{min.controls} is not specified, it is set to 1 by default. \code{min.controls} must be less than \code{ratio} and \code{max.controls} must be greater than \code{ratio}. See Examples below for an example their use.
+Variable ratio matching cannot be used with Mahalanobis distance matching. The calculations of the numbers of control units each treated unit will be matched to occurs without consideration of \code{caliper} or \code{discard}. \code{ratio} does not have to be an integer but must be greater than 1 and less than \code{n0/n1}, where \code{n0} and \code{n1} are the number of control and treated units, respectively. Setting \code{ratio = n0/n1} performs a crude form of full matching where all control units are matched. If \code{min.controls} is not specified, it is set to 1 by default. \code{min.controls} must be less than \code{ratio} and \code{max.controls} must be greater than \code{ratio}. See Examples below for an example of their use.
 }
 
 }
 \references{
-In a manuscript, you don't need to cite another package when using \code{method = "nearest"} because the matching is performed completely within \pkg{MatchIt}. For example, a sentence might read:
+In a manuscript, you don't need to cite another package when using \code{method = "nearest"} because the matching is performed completely within \emph{MatchIt}. For example, a sentence might read:
 
 \emph{Nearest neighbor matching was performed using the MatchIt package (Ho, Imai, King, & Stuart, 2011) in R.}
 }

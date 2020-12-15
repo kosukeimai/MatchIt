@@ -73,11 +73,11 @@ After subclassification, effect estimates can be computed separately in the subc
 
 Changing \code{min.n} can change the quality of the weights. Generally, a low \code{min.w} will yield better balance because subclasses only contain units with relatively similar distance values, but may yield higher variance because extreme weights can occur due to there being few members of a treatment group in some subclasses.
 
-Note that subclassification weights can also be estimated using \pkg{WeightIt}, which provides some additional methods for estimating propensity scores. Where propensity score-estimation methods overlap, both packages will yield the same weights.
+Note that subclassification weights can also be estimated using \emph{WeightIt}, which provides some additional methods for estimating propensity scores. Where propensity score-estimation methods overlap, both packages will yield the same weights.
 
 }
 \references{
-In a manuscript, you don't need to cite another package when using \code{method = "subclass"} because the subclassification is performed completely within \pkg{MatchIt}. For example, a sentence might read:
+In a manuscript, you don't need to cite another package when using \code{method = "subclass"} because the subclassification is performed completely within \emph{MatchIt}. For example, a sentence might read:
 
 \emph{Propensity score subclassification was performed using the MatchIt package (Ho, Imai, King, & Stuart, 2011) in R.}
 

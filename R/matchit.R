@@ -221,7 +221,7 @@ matchit <- function(formula, data = NULL, method = "nearest", distance = "glm",
                discard = discard,
                replace = if (!is.null(method) && method %in% c("nearest", "genetic")) replace else NULL,
                ratio = if (!is.null(method) && method %in% c("nearest", "optimal", "genetic")) ratio else NULL,
-               max.controls = if (!is.null(method) && method %in% c("nearest")) mcall[["max.controls"]] else NULL,
+               max.controls = if (!is.null(method) && method %in% c("nearest", "optimal")) mcall[["max.controls"]] else NULL,
                mahalanobis = is.full.mahalanobis || !is.null(mahvars),
                subclass = if (!is.null(method) && method == "subclass") length(unique(match.out$subclass[!is.na(match.out$subclass)])) else NULL)
 
