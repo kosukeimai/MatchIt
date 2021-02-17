@@ -285,7 +285,8 @@ For binary outcomes, effect estimation can be a bit more challenging, especially
 
 ```{r}
 #Generalized linear model without covariates
-fit4 <- glm(Y_B ~ A, data = md, family = binomial(link = "logit"))
+fit4 <- glm(Y_B ~ A, data = md, weights = weights, 
+            family = binomial(link = "logit"))
 ```
 
 By specifying `link = "logit"`, we fit a logistic regression model to estimate the marginal OR for treatment. To estimate the marginal RR we can specify `link = "log"`, and to estimate the RD we can specify `link = "identity"` or use `lm()` instead of `glm()`. Below we estimate cluster-robust standard errors, though it should be noted that these standard errors can be biased for the OR and should be used with caution [@austin2007a]. Because we want the OR and the effects are estimated on the log OR scale, we have to exponentiate the coefficient on treatment to arrive at the OR (one would do this when estimating the OR or RR, but not the RD).
@@ -356,7 +357,7 @@ There are several measures of effect size for survival outcomes. When using the 
 ```{r}
 #Cox Regression for marginal HR
 coxph(Surv(Y_S) ~ A, data = md, robust = TRUE, 
-      cluster = subclass)
+      weights = weights, cluster = subclass)
 ```
 
 The `coef` column contains the log HR, and `exp(coef)` contains the HR. Remember to always use the `robust se` for the standard error of the log HR. The displayed z-test p-value results from using the robust standard error.
@@ -383,7 +384,7 @@ est_fun <- function(pairs, i) {
   md_boot <- md[ids,]
   
   #Effect estimation
-  cox_fit_boot <- coxph(Surv(Y_S) ~ A, data = md_boot)
+  cox_fit_boot <- coxph(Surv(Y_S) ~ A, data = md_boot, weights = weights)
   
   #Compute the marginal HR by exponentiating the coefficient
   #on treatment
