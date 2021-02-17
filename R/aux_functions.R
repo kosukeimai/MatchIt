@@ -110,7 +110,7 @@ check.inputs <- function(method, distance, mcall, exact, mahvars, caliper, disca
 #Function to process distance and give warnings about new syntax
 process.distance <- function(distance, method) {
   if (is.null(distance) && !is.null(method)) stop(paste0("'distance' cannot be NULL with method = \"", method, "\"."), call. = FALSE)
-  else if (is.vector(distance, "character") && length(distance) == 1) {
+  else if (is.character(distance) && length(distance) == 1) {
     allowable.distances <- c("glm", "cbps", "gam", "mahalanobis", "nnet", "rpart", "bart", "randomforest")
 
     if (tolower(distance) %in% c("cauchit", "cloglog", "linear.cloglog", "linear.log", "linear.logit", "linear.probit",
@@ -138,7 +138,7 @@ process.distance <- function(distance, method) {
     }
 
   }
-  else if (!is.vector(distance, "numeric")) {
+  else if (!is.numeric(distance) || !is.null(dim(distance))) {
     stop("'distance' must be a string with the name of the distance measure to be used or a numeric vector containing distance measures.", call. = FALSE)
   }
   return(distance)

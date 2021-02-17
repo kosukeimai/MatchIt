@@ -848,7 +848,7 @@ matchit2subclass <- function(treat, distance, discarded,
 
   #Checks
   if (is.null(subclass)) subclass <- 6
-  else if (!is.vector(subclass, "numeric")) {
+  else if (!is.numeric(subclass, "numeric") || !is.null(dim(subclass))) {
     stop("subclass must be a numeric value.", call. = FALSE)
   }
   else if (length(subclass) == 1) {
@@ -863,7 +863,7 @@ matchit2subclass <- function(treat, distance, discarded,
 
   if (!is.null(sub.by)) {
     sub.by.choices <- c("treat", "control", "all")
-    if (!is.vector(sub.by, "character") || length(sub.by) != 1 || anyNA(pmatch(sub.by, sub.by.choices))) {
+    if (!is.character(sub.by) || length(sub.by) != 1 || anyNA(pmatch(sub.by, sub.by.choices))) {
       stop("'sub.by' is deprecated and can't be converted into a proper input. Please supply an argument to 'estimand' instead.", call. = FALSE)
     }
     else {
