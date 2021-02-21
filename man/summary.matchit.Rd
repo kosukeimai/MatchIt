@@ -92,7 +92,7 @@ For \code{matchit} objects, a \code{summary.matchit} object, which is a list wit
   \item{sum.matched}{a matrix of balance statistics for each covariate in the matched sample}
   \item{reduction}{if \code{improvement = TRUE}, a matrix of the percent reduction in imbalance for each covariate in the matched sample}
 
-For \code{match.subclass} objects, a \code{summary.matchit.subclass} object, which is a list as above with the following additional components:
+For \code{match.subclass} objects, a \code{summary.matchit.subclass} object, which is a list as above containing the following components:
 
   \item{call}{the original call to \code{\link{matchit}}}
   \item{sum.all}{if \code{un = TRUE}, a matrix of balance statistics for each covariate in the original sample}
