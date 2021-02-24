@@ -336,13 +336,13 @@ matchit2optimal <- function(treat, formula, data, distance, discarded,
     }
 
     withCallingHandlers({
-        p <- do.call(optmatch::fullmatch,
-                        c(list(if (nlevels(ex) > 1) mo_ else mo,
-                               mean.controls = ratio_,
-                               min.controls = min.controls_,
-                               max.controls = max.controls_,
-                               data = treat), #just to get rownames; not actually used in matching
-                          A))
+      p <- do.call(optmatch::fullmatch,
+                   c(list(if (nlevels(ex) > 1) mo_ else mo,
+                          mean.controls = ratio_,
+                          min.controls = min.controls_,
+                          max.controls = max.controls_,
+                          data = treat), #just to get rownames; not actually used in matching
+                     A))
     },
     warning = function(w) {
       warning(paste0("(from optmatch) ", conditionMessage(w)), call. = FALSE, immediate. = TRUE)
@@ -804,8 +804,8 @@ matchit2nearest <-  function(treat, data, distance, discarded,
 
   #Both produce matrix of indices of matched ctrl units (numerical)
   # if (fast) {
-    mm <- nn_matchC(treat, ord, ratio, replace, discarded, distance, ex, caliper.dist,
-                    caliper.covs, caliper.covs.mat, mahcovs, mahSigma_inv, verbose)
+  mm <- nn_matchC(treat, ord, ratio, replace, discarded, distance, ex, caliper.dist,
+                  caliper.covs, caliper.covs.mat, mahcovs, mahSigma_inv, verbose)
   # }
   # else {
   #   mm <- nn_match(treat, ord, ratio, replace, discarded, distance, ex, caliper.dist,
@@ -848,7 +848,7 @@ matchit2subclass <- function(treat, distance, discarded,
 
   #Checks
   if (is.null(subclass)) subclass <- 6
-  else if (!is.numeric(subclass, "numeric") || !is.null(dim(subclass))) {
+  else if (!is.numeric(subclass) || !is.null(dim(subclass))) {
     stop("subclass must be a numeric value.", call. = FALSE)
   }
   else if (length(subclass) == 1) {
