@@ -336,13 +336,13 @@ matchit2optimal <- function(treat, formula, data, distance, discarded,
     }
 
     withCallingHandlers({
-      p <- do.call(optmatch::fullmatch,
-                   c(list(if (nlevels(ex) > 1) mo_ else mo,
-                          mean.controls = ratio_,
-                          min.controls = min.controls_,
-                          max.controls = max.controls_,
-                          data = treat), #just to get rownames; not actually used in matching
-                     A))
+        p <- do.call(optmatch::fullmatch,
+                        c(list(if (nlevels(ex) > 1) mo_ else mo,
+                               mean.controls = ratio_,
+                               min.controls = min.controls_,
+                               max.controls = max.controls_,
+                               data = treat), #just to get rownames; not actually used in matching
+                          A))
     },
     warning = function(w) {
       warning(paste0("(from optmatch) ", conditionMessage(w)), call. = FALSE, immediate. = TRUE)
@@ -714,24 +714,7 @@ matchit2nearest <-  function(treat, data, distance, discarded,
   }
 
   if (replace) {
-    ord <- seq_len(n1)
-  }
-  else if (!is.null(distance)) {
-    if (is.null(m.order)) m.order <- if (estimand == "ATC") "smallest" else "largest"
-    else m.order <- match_arg(m.order, c("largest", "smallest", "random", "data"))
-
-    ord <- switch(m.order,
-                  "largest" = order(distance[treat == 1], decreasing = TRUE),
-                  "smallest" = order(distance[treat == 1]),
-                  "random" = sample(seq_len(n1), n1, replace = FALSE),
-                  "data" = seq_len(n1))
-  }
-  else {
-    m.order <- match_arg(m.order, c("data", "random"))
-
-    ord <- switch(m.order,
-                  "random" = sample(seq_len(n1), n1, replace = FALSE),
-                  "data" = seq_len(n1))
+    m.order <- "data"
   }
 
   if (!is.null(exact)) {
@@ -752,7 +735,7 @@ matchit2nearest <-  function(treat, data, distance, discarded,
         warning(paste0("Not enough ", tc[2], " units for an average of ", ratio, " matches per ", tc[1], " unit in all 'exact' strata."), immediate. = TRUE, call. = FALSE)
     }
 
-    ex <- setNames(as.integer(factor(ex)), lab)
+    ex <- setNames(factor(ex), lab)
   }
   else {
     ex <- NULL
@@ -768,6 +751,7 @@ matchit2nearest <-  function(treat, data, distance, discarded,
       else
         warning(paste0("Not enough ", tc[2], " units for an average of ", ratio, " matches per ", tc[1], " unit."), immediate. = TRUE, call. = FALSE)
     }
+
   }
 
   #Variable ratio (extremal matching), Ming & Rosenbaum (2000)
@@ -797,20 +781,57 @@ matchit2nearest <-  function(treat, data, distance, discarded,
     #Order by distance; treated are supposed to have higher values
     ratio[order(distance[treat == 1],
                 decreasing = mean(distance[treat == 1]) > mean(distance[treat != 1]))] <- ratio0
+    ratio <- as.integer(ratio)
   }
   else {
-    ratio <- rep(ratio, n1)
+    ratio <- as.integer(rep(ratio, n1))
+  }
+  max_rat <- max(ratio)
+
+  if (!is.null(distance)) {
+    if (is.null(m.order)) m.order <- if (estimand == "ATC") "smallest" else "largest"
+    else m.order <- match_arg(m.order, c("largest", "smallest", "random", "data"))
+  }
+  else {
+    m.order <- match_arg(m.order, c("data", "random"))
   }
 
-  #Both produce matrix of indices of matched ctrl units (numerical)
-  # if (fast) {
-  mm <- nn_matchC(treat, ord, ratio, replace, discarded, distance, ex, caliper.dist,
-                  caliper.covs, caliper.covs.mat, mahcovs, mahSigma_inv, verbose)
-  # }
-  # else {
-  #   mm <- nn_match(treat, ord, ratio, replace, discarded, distance, ex, caliper.dist,
-  #                  caliper.covs, caliper.covs.mat, mahcovs, mahSigma_inv, verbose)
-  # }
+  if (is.null(ex)) {
+    ord <- switch(m.order,
+                   "largest" = order(distance[treat == 1], decreasing = TRUE),
+                   "smallest" = order(distance[treat == 1]),
+                   "random" = sample(seq_len(n1), n1, replace = FALSE),
+                   "data" = seq_len(n1))
+
+    mm <- nn_matchC(treat, ord, ratio, max_rat, replace, discarded, distance, ex, caliper.dist,
+                    caliper.covs, caliper.covs.mat, mahcovs, mahSigma_inv, verbose)
+  }
+  else {
+    mm_list <- lapply(levels(ex), function(e) {
+      .e <- which(ex == e)
+      treat_ <- treat[.e]
+      discarded_ <- discarded[.e]
+      distance_ <- distance[.e]
+      caliper.covs.mat_ <- caliper.covs.mat[.e,,drop = FALSE]
+      mahcovs_ <- mahcovs[.e,,drop = FALSE]
+      ratio_ <- ratio[ex[treat==1]==e]
+
+      n1_ <- sum(treat_ == 1)
+      ord_ <- switch(m.order,
+                     "largest" = order(distance_[treat_ == 1], decreasing = TRUE),
+                     "smallest" = order(distance_[treat_ == 1]),
+                     "random" = sample(seq_len(n1_), n1_, replace = FALSE),
+                     "data" = seq_len(n1_))
+
+      mm_ <- nn_matchC(treat_, ord_, ratio_, max_rat, replace, discarded_, distance_, NULL, caliper.dist,
+                       caliper.covs, caliper.covs.mat_, mahcovs_, mahSigma_inv, verbose)
+
+      mm_[] <- seq_along(treat)[.e][mm_]
+      mm_
+    })
+
+    mm <- do.call("rbind", mm_list)[lab1,, drop = FALSE]
+  }
 
   if (verbose) cat("Calculating matching weights... ")
 
