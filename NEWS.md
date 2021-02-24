@@ -6,6 +6,16 @@ output:
 `MatchIt` News and Updates
 ======
 
+# MatchIt (development version)
+
+* Fixed a bug when trying to supply `distance` as a labelled numeric vector (i.e., resulting from `haven`).
+
+* Added `rbind.matchdata()` method for `matchdata` and `getmatches` objects (the output of `match.data()` and `get_matches()`, respectively) to avoid subclass conflicts when combining matched samples after matching within subgroups.
+
+* Added a section in `vignette("estimating-effects")` on moderation analysis with matching, making use of the new `rbind()` method.
+
+* Fixed some typos in the documentation and vignettes.
+
 # MatchIt 4.1.0
 
 * Coarsened exact matching (i.e., `matchit()` with `method = "cem"`) has been completely rewritten and no longer involves the `cem` package, eliminating some spurious warning messages and fixing some bugs. All the same arguments can still be used, so old code will run, though some results will differ slightly. Additional options are available for matching and performance has improved. See `?method_cem` for details on the differences between the implementation in the current version of `MatchIt` and that in `cem` and older versions of `MatchIt`. In general, these changes make coarsened exact matching function as one would expect it to, circumventing some peculiarities and bugs in the `cem` package.
