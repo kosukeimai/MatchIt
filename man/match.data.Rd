@@ -66,10 +66,14 @@ The returned data frame will contain the variables in the original data set or d
 These columns will take on the name supplied to the corresponding arguments in the call to \code{match.data} or \code{get_matches}. See Examples for an example of rename the \code{distance} column to \code{"prop.score"}.
 
 If \code{data} or the original dataset supplied to \code{matchit} was a \code{data.table} or \code{tbl}, the \code{match.data} output will have the same class, but the \code{get_matches} output will always be a base R \code{data.frame}.
+
+In addition to their base class (e.g., \code{data.frame} or \code{tbl}), returned objects have the class \code{matchdata} or \code{getmatches}. This class is important when using \code{\link[=rbind.matchdata]{rbind()}} to append matched datasets.
 }
 
 \seealso{
-\code{\link{matchit}}
+\code{\link[=matchit]{matchit()}}
+
+\code{\link[=rbind.matchdata]{rbind.matchit()}}
 
 \code{vignette("estimating-effects")} for uses of \code{match.data()} and \code{get_matches()} in estimating treatment effects.
 }
