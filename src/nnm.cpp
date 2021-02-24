@@ -9,6 +9,7 @@ using namespace Rcpp;
 IntegerMatrix nn_matchC(const IntegerVector& treat,
                         const IntegerVector& ord,
                         const IntegerVector& ratio,
+                        const int& max_rat,
                         const bool& replace,
                         const LogicalVector& discarded,
                         const Nullable<NumericVector>& distance_ = R_NilValue,
@@ -43,7 +44,7 @@ IntegerMatrix nn_matchC(const IntegerVector& treat,
   IntegerVector ind = Range(0, n - 1);
   IntegerVector ind1 = ind[treat == 1];
 
-  int max_rat = max(ratio);
+  // int max_rat = max(ratio);
 
   // Output matrix with sample indices of C units
   IntegerMatrix mm(n1, max_rat);
