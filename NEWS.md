@@ -14,6 +14,8 @@ output:
 
 * Added a section in `vignette("estimating-effects")` on moderation analysis with matching, making use of the new `rbind()` method.
 
+* Slight speed improvements for nearest neighbor matching with `exact` specified.
+
 * Fixed some typos in the documentation and vignettes.
 
 # MatchIt 4.1.0
