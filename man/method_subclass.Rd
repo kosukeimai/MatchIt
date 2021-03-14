@@ -11,11 +11,18 @@ This page details the allowable arguments with \code{method = "subclass"}. See \
 
 Below is how \code{matchit} is used for subclassification:
 \preformatted{
-matchit(formula, data = NULL, method = "subclass",
-        distance = "glm", link = "logit",
-        distance.options = list(), estimand = "ATT",
-        discard = "none", reestimate = FALSE,
-        s.weights = NULL, verbose = FALSE, ...)
+matchit(formula,
+        data = NULL,
+        method = "subclass",
+        distance = "glm",
+        link = "logit",
+        distance.options = list(),
+        estimand = "ATT",
+        discard = "none",
+        reestimate = FALSE,
+        s.weights = NULL,
+        verbose = FALSE,
+        ...)
 }
 }
 \arguments{

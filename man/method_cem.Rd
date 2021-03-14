@@ -10,9 +10,13 @@ This page details the allowable arguments with \code{method = "cem"}. See \code{
 
 Below is how \code{matchit} is used for coarsened exact matching:
 \preformatted{
-matchit(formula, data = NULL, method = "cem",
-        estimand = "ATT", s.weights = NULL,
-        verbose = FALSE, ...)
+matchit(formula,
+        data = NULL,
+        method = "cem",
+        estimand = "ATT",
+        s.weights = NULL,
+        verbose = FALSE,
+        ...)
 }
 }
 \arguments{

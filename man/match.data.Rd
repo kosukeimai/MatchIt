@@ -9,14 +9,22 @@ Construct a matched dataset from a \code{matchit} object
 \code{match.data} and \code{get_matches} create a data frame with additional variables for the distance measure, matching weights, and subclasses after matching. This dataset can be used to estimate treatment effects after matching or subclassification. \code{get_matches} is most useful after matching with replacement; otherwise, \code{match.data} is more flexible. See Details below for the difference between them.
 }
 \usage{
-match.data(object, group = "all", distance = "distance",
-           weights = "weights", subclass = "subclass",
-           data = NULL, include.s.weights = TRUE,
+match.data(object,
+           group = "all",
+           distance = "distance",
+           weights = "weights",
+           subclass = "subclass",
+           data = NULL,
+           include.s.weights = TRUE,
            drop.unmatched = TRUE)
 
-get_matches(object, distance = "distance",
-            weights = "weights", subclass = "subclass",
-            id = "id", data = NULL, include.s.weights = TRUE)
+get_matches(object,
+            distance = "distance",
+            weights = "weights",
+            subclass = "subclass",
+            id = "id",
+            data = NULL,
+            include.s.weights = TRUE)
 }
 
 \arguments{

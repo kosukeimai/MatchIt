@@ -9,9 +9,13 @@ This page details the allowable arguments with \code{method = "exact"}. See \cod
 
 Below is how \code{matchit} is used for exact matching:
 \preformatted{
-matchit(formula, data = NULL, method = "exact",
-        estimand = "ATT", s.weights = NULL,
-        verbose = FALSE, ...)
+matchit(formula,
+        data = NULL,
+        method = "exact",
+        estimand = "ATT",
+        s.weights = NULL,
+        verbose = FALSE,
+        ...)
 }
 }
 \arguments{
