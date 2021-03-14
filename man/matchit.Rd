@@ -11,14 +11,26 @@ Matching for Causal Inference
 This page documents the overall use of \code{matchit}, but for specifics of how \code{matchit} works with individual matching methods, see the individual pages linked in the Details section below.
 }
 \usage{
-matchit(formula, data = NULL, method = "nearest",
-        distance = "glm", link = "logit",
-        distance.options = list(), estimand = "ATT",
-        exact = NULL, mahvars = NULL, discard = "none",
-        reestimate = FALSE, s.weights = NULL,
-        replace = FALSE, m.order = NULL,
-        caliper = NULL, std.caliper = TRUE, ratio = 1,
-        verbose = FALSE, ...)
+matchit(formula,
+        data = NULL,
+        method = "nearest",
+        distance = "glm",
+        link = "logit",
+        distance.options = list(),
+        estimand = "ATT",
+        exact = NULL,
+        mahvars = NULL,
+        antiexact = NULL,
+        discard = "none",
+        reestimate = FALSE,
+        s.weights = NULL,
+        replace = FALSE,
+        m.order = NULL,
+        caliper = NULL,
+        std.caliper = TRUE,
+        ratio = 1,
+        verbose = FALSE,
+        ...)
 
 \method{print}{matchit}(x, ...)
 
@@ -51,6 +63,9 @@ for methods that allow it, for which variables exact matching should take place.
 }
   \item{mahvars}{
 for methods that allow it, on which variables Mahalanobis distance matching should take place when a distance measure other than \code{"mahalanobis"} is used. Usually used to perform Mahalanobis distance matching within propensity score calipers, where the propensity scores are computed using \code{formula} and \code{distance}. Can be specified as a string containing the names of variables in \code{data} to be used or a one-sided formula with the desired variables on the right-hand side (e.g., \code{~ X3 + X4}). See the individual methods pages for information on whether and how this argument is used.
+}
+  \item{antiexact}{
+for methods that allow it, for which variables anti-exact matching should take place. Anti-exact matching ensures paired individuals do not have the same value of the anti-exact matching variable(s). Can be specified as a string containing the names of variables in \code{data} to be used or a one-sided formula with the desired variables on the right-hand side (e.g., \code{~ X3 + X4}). See the individual methods pages for information on whether and how this argument is used.
 }
   \item{discard}{
 a string containing a method for discarding units outside a region of common support. When a propensity score is estimated or supplied to \code{distance}, the options are \code{"none"}, \code{"treated"}, \code{"control"}, or \code{"both"}. For \code{"none"}, no units are discarded for common support. Otherwise, units whose propensity scores fall outside the corresponding region are discarded. Can also be a \code{logical} vector where \code{TRUE} indicates the unit is to be discarded. Default is \code{"none"} for no common support restriction. See Details.
@@ -127,7 +142,7 @@ When \code{method} is something other than \code{"subclass"}, a \code{matchit} o
   \item{subclass}{a factor containing matching pair/stratum membership for each unit. Unmatched units will have a value of \code{NA}. Not included when \code{replace = TRUE}.}
   \item{weights}{a numeric vector of estimated matching weights. Unmatched and discarded units will have a weight of zero.}
   \item{model}{the fit object of the model used to estimate propensity scores when \code{distance} is specified and not \code{"mahalanobis"} or a numeric vector. When \code{reestimate = TRUE}, this is the model estimated after discarding units.}
-  \item{X}{a data frame of covariates mentioned in \code{formula}, \code{exact}, and \code{mahvars}.}
+  \item{X}{a data frame of covariates mentioned in \code{formula}, \code{exact}, \code{mahvars}, and \code{antiexact}.}
   \item{call}{the \code{matchit()} call.}
   \item{info}{information on the matching method and distance measures used.}
   \item{estimand}{the argument supplied to \code{estimand}.}

@@ -1,7 +1,7 @@
 #Auxiliary functions; some from WeightIt
 
 #Function to process inputs and throw warnings or errors if inputs are incompatible with methods
-check.inputs <- function(method, distance, mcall, exact, mahvars, caliper, discard, reestimate, s.weights, replace, ratio, m.order, estimand) {
+check.inputs <- function(method, distance, mcall, exact, mahvars, antiexact, caliper, discard, reestimate, s.weights, replace, ratio, m.order, estimand) {
 
   null.method <- is.null(method)
   if (null.method) {
@@ -14,21 +14,21 @@ check.inputs <- function(method, distance, mcall, exact, mahvars, caliper, disca
   ignored.inputs <- character(0)
   error.inputs <- character(0)
   if (null.method) {
-    for (i in c("exact", "mahvars", "caliper", "std.caliper", "replace", "ratio", "m.order")) {
+    for (i in c("exact", "mahvars", "antiexact", "caliper", "std.caliper", "replace", "ratio", "m.order")) {
       if (i %in% names(mcall) && !is.null(get0(i))) {
         ignored.inputs <- c(ignored.inputs, i)
       }
     }
   }
   else if (method == "exact") {
-    for (i in c("distance", "exact", "mahvars", "caliper", "std.caliper", "discard", "reestimate", "replace", "ratio", "m.order")) {
+    for (i in c("distance", "exact", "mahvars", "antiexact", "caliper", "std.caliper", "discard", "reestimate", "replace", "ratio", "m.order")) {
       if (i %in% names(mcall) && !is.null(get0(i))) {
         ignored.inputs <- c(ignored.inputs, i)
       }
     }
   }
   else if (method == "cem") {
-    for (i in c("distance", "exact", "mahvars", "caliper", "std.caliper", "discard", "reestimate", "replace", "ratio", "m.order")) {
+    for (i in c("distance", "exact", "mahvars", "antiexact", "caliper", "std.caliper", "discard", "reestimate", "replace", "ratio", "m.order")) {
       if (i %in% names(mcall) && !is.null(get0(i))) {
         ignored.inputs <- c(ignored.inputs, i)
       }
@@ -88,7 +88,7 @@ check.inputs <- function(method, distance, mcall, exact, mahvars, caliper, disca
       stop("distance = \"mahalanobis\" is not compatible with subclassification.", call. = FALSE)
     }
 
-    for (i in c("exact", "mahvars", "caliper", "std.caliper", "replace", "ratio", "m.order")) {
+    for (i in c("exact", "mahvars", "antiexact", "caliper", "std.caliper", "replace", "ratio", "m.order")) {
       if (i %in% names(mcall) && !is.null(get0(i))) {
         ignored.inputs <- c(ignored.inputs, i)
       }
@@ -677,7 +677,11 @@ get.covs.matrix <- function(formula = NULL, data = NULL) {
 
   X <- model.matrix(formula, data = mf,
                     contrasts.arg = lapply(Filter(is.factor, mf),
-                                           contrasts, contrasts = FALSE))[,-1,drop = FALSE]
+                                           contrasts, contrasts = FALSE))
+  assign <- attr(X, "assign")[-1]
+  X <- X[,-1,drop=FALSE]
+  attr(X, "assign") <- assign
+
   return(X)
 }
 

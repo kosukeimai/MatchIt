@@ -10,13 +10,24 @@ This page details the allowable arguments with \code{method = "genmatch"}. See \
 
 Below is how \code{matchit} is used for genetic matching:
 \preformatted{
-matchit(formula, data = NULL, method = "genetic",
-        distance = "glm", link = "logit",
-        distance.options = list(), estimand = "ATT",
-        exact = NULL, mahvars = NULL, discard = "none",
-        reestimate = FALSE, s.weights = NULL,
-        replace = FALSE, m.order = NULL,
-        caliper = NULL, ratio = 1, verbose = FALSE,
+matchit(formula,
+        data = NULL,
+        method = "genetic",
+        distance = "glm",
+        link = "logit",
+        distance.options = list(),
+        estimand = "ATT",
+        exact = NULL,
+        mahvars = NULL,
+        antiexact = NULL,
+        discard = "none",
+        reestimate = FALSE,
+        s.weights = NULL,
+        replace = FALSE,
+        m.order = NULL,
+        caliper = NULL,
+        ratio = 1,
+        verbose = FALSE,
         ...)
 }
 }
@@ -47,6 +58,9 @@ for which variables exact matching should take place.
 }
   \item{mahvars}{
 when a distance measure other than \code{"mahalanobis"} is used (e.g., for caliper matching or to discard units for common support), which covariates should be supplied to the generalized Mahalanobis distance matrix. If unspecified, all variables in \code{formula} will be supplied to the distance matrix. Use \code{mahvars} to only supply a subset. Even if \code{mahvars} is specified, balance will be optimized on all covariates in \code{formula}.
+}
+  \item{antiexact}{
+for which variables ant-exact matching should take place. Anti-exact matching is processed using the \code{restrict} argument to \code{Matching::GenMatch()} and \code{Matching::Match()}.
 }
   \item{discard}{
 a string containing a method for discarding units outside a region of common support. Only allowed when \code{distance} is not \code{"mahalanobis"}.

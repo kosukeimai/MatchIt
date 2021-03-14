@@ -10,13 +10,24 @@ This page details the allowable arguments with \code{method = "optmatch"}. See \
 
 Below is how \code{matchit} is used for optimal pair matching:
 \preformatted{
-matchit(formula, data = NULL, method = "optimal",
-        distance = "glm", link = "logit",
-        distance.options = list(), estimand = "ATT",
-        exact = NULL, mahvars = NULL, discard = "none",
-        reestimate = FALSE, s.weights = NULL,
-        ratio = 1, min.controls = NULL,
-        max.controls = NULL, verbose = FALSE, ...)
+matchit(formula,
+        data = NULL,
+        method = "optimal",
+        distance = "glm",
+        link = "logit",
+        distance.options = list(),
+        estimand = "ATT",
+        exact = NULL,
+        mahvars = NULL,
+        antiexact = NULL,
+        discard = "none",
+        reestimate = FALSE,
+        s.weights = NULL,
+        ratio = 1,
+        min.controls = NULL,
+        max.controls = NULL,
+        verbose = FALSE,
+        ...)
 }
 }
 \arguments{
@@ -46,6 +57,9 @@ for which variables exact matching should take place. Exact matching is processe
 }
   \item{mahvars}{
 for which variables Mahalanobis distance matching should take place when a distance measure other than \code{"mahalanobis"} is used (e.g., to discard units for common support). If specified, the distance measure will not be used in matching.
+}
+  \item{antiexact}{
+for which variables ant-exact matching should take place. Anti-exact matching is processed using \pkgfun2{optmatch}{antiExactMatch}{optmatch::antiExactMatch}.
 }
   \item{discard}{
 a string containing a method for discarding units outside a region of common support. Only allowed when \code{distance} is not \code{"mahalanobis"}.

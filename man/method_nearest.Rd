@@ -10,14 +10,26 @@ This page details the allowable arguments with \code{method = "nearest"}. See \c
 
 Below is how \code{matchit} is used for nearest neighbor matching:
 \preformatted{
-matchit(formula, data = NULL, method = "nearest",
-        distance = "glm", link = "logit",
-        distance.options = list(), estimand = "ATT",
-        exact = NULL, mahvars = NULL, discard = "none",
-        reestimate = FALSE, s.weights = NULL,
-        replace = TRUE, m.order = NULL, caliper = NULL,
-        ratio = 1, min.controls = NULL,
-        max.controls = NULL, verbose = FALSE, ...)
+matchit(formula,
+        data = NULL,
+        method = "nearest",
+        distance = "glm",
+        link = "logit",
+        distance.options = list(),
+        estimand = "ATT",
+        exact = NULL,
+        mahvars = NULL,
+        antiexact = NULL,
+        discard = "none",
+        reestimate = FALSE,
+        s.weights = NULL,
+        replace = TRUE,
+        m.order = NULL,
+        caliper = NULL,
+        ratio = 1,
+        min.controls = NULL,
+        max.controls = NULL,
+        verbose = FALSE, ...)
 }
 }
 \arguments{
@@ -47,6 +59,9 @@ for which variables exact matching should take place.
 }
   \item{mahvars}{
 for which variables Mahalanobis distance matching should take place when a distance measure other than \code{"mahalanobis"} is used (e.g., for caliper matching or to discard units for common support). If specified, the distance measure will not be used in matching.
+}
+  \item{antiexact}{
+for which variables ant-exact matching should take place.
 }
   \item{discard}{
 a string containing a method for discarding units outside a region of common support. Only allowed when \code{distance} is not \code{"mahalanobis"}.

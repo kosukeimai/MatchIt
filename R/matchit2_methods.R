@@ -83,7 +83,7 @@ matchit2full <- function(treat, formula, data, distance, discarded,
                          caliper = NULL, mahvars = NULL, exact = NULL,
                          estimand = "ATT", verbose = FALSE,
                          is.full.mahalanobis, min.controls = 0,
-                         max.controls = Inf, ...) {
+                         max.controls = Inf, antiexact = NULL, ...) {
 
   check.package("optmatch")
 
@@ -131,7 +131,7 @@ matchit2full <- function(treat, formula, data, distance, discarded,
                              method = "mahalanobis")
   }
   else {
-    mo <- optmatch::match_on(distance[!discarded], z = treat_)
+    mo <- optmatch::match_on(setNames(distance[!discarded], names(treat_)), z = treat_)
   }
 
   if (!is.null(exact)) {
@@ -141,6 +141,13 @@ matchit2full <- function(treat, formula, data, distance, discarded,
     if (length(cc) == 0) stop("No matches were found.", call. = FALSE)
 
     mo <- mo + optmatch::exactMatch(ex, treat_)
+  }
+
+  if (!is.null(antiexact)) {
+    antiexactcovs <- model.frame(antiexact, data)
+    for (i in seq_len(ncol(antiexactcovs))) {
+      mo <- mo + optmatch::antiExactMatch(antiexactcovs[[i]], z = treat_)
+    }
   }
 
   if (!is.null(caliper)) {
@@ -210,7 +217,7 @@ matchit2optimal <- function(treat, formula, data, distance, discarded,
                             ratio = 1, caliper = NULL, mahvars = NULL, exact = NULL,
                             estimand = "ATT", verbose = FALSE,
                             is.full.mahalanobis, min.controls = NULL,
-                            max.controls = NULL, ...) {
+                            max.controls = NULL, antiexact = NULL, ...) {
 
   check.package("optmatch")
 
@@ -307,14 +314,31 @@ matchit2optimal <- function(treat, formula, data, distance, discarded,
                              method = "mahalanobis")
   }
   else {
-    mo <- optmatch::match_on(distance[!discarded], z = treat_)
+    mo <- optmatch::match_on(setNames(distance[!discarded], names(treat_)), z = treat_)
+  }
+
+  if (!is.null(antiexact)) {
+    antiexactcovs <- model.frame(antiexact, data)
+    for (i in seq_len(ncol(antiexactcovs))) {
+      mo <- mo + optmatch::antiExactMatch(antiexactcovs[[i]], z = treat_)
+    }
   }
 
   #Initialize pair membership; must include names
   pair <- setNames(rep(NA_character_, length(treat)), names(treat))
 
   for (e in levels(ex)) {
-    if (nlevels(ex) > 1) mo_ <- mo[ex[treat_==1] == e, ex[treat_==0] == e, drop = FALSE]
+    if (nlevels(ex) > 1) {
+      mo_ <- mo[ex[treat_==1] == e, ex[treat_==0] == e, drop = FALSE]
+
+    }
+    else mo_ <- mo
+
+    if (any(dim(mo_) == 0)) next
+    if (all(dim(mo_)==1)) {
+      pair[c(rownames(mo_), colnames(mo_))] <- rownames(mo_)
+      next
+    }
 
     #Process ratio, etc., when available ratio in exact matching categories
     #(e_ratio) differs from requested ratio
@@ -337,7 +361,7 @@ matchit2optimal <- function(treat, formula, data, distance, discarded,
 
     withCallingHandlers({
         p <- do.call(optmatch::fullmatch,
-                        c(list(if (nlevels(ex) > 1) mo_ else mo,
+                        c(list(mo_,
                                mean.controls = ratio_,
                                min.controls = min.controls_,
                                max.controls = max.controls_,
@@ -379,7 +403,8 @@ matchit2genetic <- function(treat, data, distance, discarded,
                             ratio = 1, s.weights = NULL, replace = FALSE, m.order = NULL,
                             caliper = NULL, mahvars = NULL, exact = NULL,
                             formula = NULL, estimand = "ATT", verbose = FALSE,
-                            is.full.mahalanobis, use.genetic = TRUE, ...) {
+                            is.full.mahalanobis, use.genetic = TRUE,
+                            antiexact = NULL, ...) {
 
   check.package(c("Matching", "rgenoud"))
 
@@ -523,6 +548,21 @@ matchit2genetic <- function(treat, data, distance, discarded,
   X_ <- X[ord,,drop = FALSE]
   if (!is.null(s.weights)) s.weights <- s.weights[ord]
 
+  if (!is.null(antiexact)) {
+    antiexactcovs <- model.frame(antiexact, data)[ord,,drop = FALSE]
+    antiexact_restrict <- cbind(do.call("rbind", lapply(seq_len(ncol(antiexactcovs)), function(i) {
+      unique.vals <- unique(antiexactcovs[,i])
+      do.call("rbind", lapply(unique.vals, function(u) {
+        t(combn(which(antiexactcovs[,i] == u), 2))
+      }))
+    })), -1)
+    if (!is.null(A[["restrict"]])) A[["restrict"]] <- rbind(A[["restrict"]], antiexact_restrict)
+    else A[["restrict"]] <- antiexact_restrict
+  }
+  else {
+    antiexactcovs <- NULL
+  }
+
   if (use.genetic) {
     withCallingHandlers({
       g.out <- do.call(Matching::GenMatch,
@@ -564,7 +604,7 @@ matchit2genetic <- function(treat, data, distance, discarded,
                              Weight.matrix = if (use.genetic) g.out
                              else if (is.null(s.weights)) generalized_inverse(cor(X_))
                              else generalized_inverse(cov.wt(X_, s.weights, cor = TRUE)$cor),
-                             version = "fast")
+                             restrict = A[["restrict"]], version = "fast")
   },
   warning = function(w) {
     if (!startsWith(conditionMessage(w), "replace==FALSE, but there are more (weighted) treated obs than control obs.")) {
@@ -636,7 +676,8 @@ matchit2nearest <-  function(treat, data, distance, discarded,
                              caliper = NULL, mahvars = NULL, exact = NULL,
                              formula = NULL, estimand = "ATT", verbose = FALSE,
                              is.full.mahalanobis, fast = TRUE,
-                             min.controls = NULL, max.controls = NULL, ...){
+                             min.controls = NULL, max.controls = NULL,
+                             antiexact = NULL, ...){
 
   if (verbose) {
     if (fast) check.package("RcppProgress")
@@ -711,6 +752,16 @@ matchit2nearest <-  function(treat, data, distance, discarded,
   }
   else {
     mahcovs <- mahSigma_inv <- NULL
+  }
+
+  if (!is.null(antiexact)) {
+    antiexactcovs <- model.frame(antiexact, data)
+    antiexactcovs <- do.call("cbind", lapply(seq_len(ncol(antiexactcovs)), function(i) {
+      as.integer(as.factor(antiexactcovs[[i]]))
+    }))
+  }
+  else {
+    antiexactcovs <- NULL
   }
 
   if (replace) {
@@ -804,7 +855,7 @@ matchit2nearest <-  function(treat, data, distance, discarded,
                    "data" = seq_len(n1))
 
     mm <- nn_matchC(treat, ord, ratio, max_rat, replace, discarded, distance, ex, caliper.dist,
-                    caliper.covs, caliper.covs.mat, mahcovs, mahSigma_inv, verbose)
+                    caliper.covs, caliper.covs.mat, mahcovs, mahSigma_inv, antiexactcovs, verbose)
   }
   else {
     mm_list <- lapply(levels(ex), function(e) {
@@ -824,7 +875,7 @@ matchit2nearest <-  function(treat, data, distance, discarded,
                      "data" = seq_len(n1_))
 
       mm_ <- nn_matchC(treat_, ord_, ratio_, max_rat, replace, discarded_, distance_, NULL, caliper.dist,
-                       caliper.covs, caliper.covs.mat_, mahcovs_, mahSigma_inv, verbose)
+                       caliper.covs, caliper.covs.mat_, mahcovs_, mahSigma_inv, antiexactcovs, verbose)
 
       mm_[] <- seq_along(treat)[.e][mm_]
       mm_
