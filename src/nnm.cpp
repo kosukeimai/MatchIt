@@ -19,6 +19,7 @@ IntegerMatrix nn_matchC(const IntegerVector& treat,
                         const Nullable<NumericMatrix>& calcovs_covs_mat_ = R_NilValue,
                         const Nullable<NumericMatrix>& mah_covs_ = R_NilValue,
                         const Nullable<NumericMatrix>& mahSigma_inv_ = R_NilValue,
+                        const Nullable<IntegerMatrix>& antiexact_covs_ = R_NilValue,
                         const bool& disl_prog = false)
   {
 
@@ -27,7 +28,8 @@ IntegerMatrix nn_matchC(const IntegerVector& treat,
   NumericVector distance, caliper_covs;
   double caliper_dist;
   NumericMatrix calcovs_covs_mat, mah_covs, mahSigma_inv, mah_covs_c;
-  IntegerVector exact;
+  IntegerMatrix antiexact_covs;
+  IntegerVector exact, antiexact_col;
 
   Environment pkg = Environment::namespace_env("stats");
   Function mah = pkg["mahalanobis"];
@@ -36,6 +38,7 @@ IntegerMatrix nn_matchC(const IntegerVector& treat,
   bool use_caliper_dist = false;
   bool use_caliper_covs = false;
   bool use_mah_covs = false;
+  bool use_antiexact = false;
 
   int n = treat.size();
   int n1 = sum(treat);
@@ -57,7 +60,7 @@ IntegerMatrix nn_matchC(const IntegerVector& treat,
   // Indices of units to form control pool
   IntegerVector c_pool = ind;
 
-  int t, t_ind, min_ind, c_chosen, num_eligible, cal_len, t_rat;
+  int t, t_ind, min_ind, c_chosen, num_eligible, cal_len, t_rat, n_anti;
   double dt, cal_var_t;
 
   NumericVector cal_var, cal_diff, ps_diff, diff, mah_covs_t, mah_covs_col,
@@ -97,6 +100,11 @@ IntegerMatrix nn_matchC(const IntegerVector& treat,
   if (mahSigma_inv_.isNotNull()) {
     mahSigma_inv = as<NumericMatrix>(mahSigma_inv_);
   }
+  if (antiexact_covs_.isNotNull()) {
+    antiexact_covs = as<IntegerMatrix>(antiexact_covs_);
+    n_anti = antiexact_covs.ncol();
+    use_antiexact = true;
+  }
 
   bool ps_diff_assigned = false;
 
@@ -107,7 +115,7 @@ IntegerMatrix nn_matchC(const IntegerVector& treat,
   Progress p(prog_length, disl_prog);
 
   //Counters
-  int rat, i, x, j;
+  int rat, i, x, j, a;
 
   //Matching
   for (rat = 0; rat < max_rat; ++rat) {
@@ -138,6 +146,17 @@ IntegerMatrix nn_matchC(const IntegerVector& treat,
 
       if (use_exact) {
         c_eligible[exact != exact[t_ind]] = false;
+      }
+
+      if (any(c_eligible).is_false()) {
+        continue;
+      }
+
+      if (use_antiexact) {
+        for (a = 0; a < n_anti; ++a) {
+          antiexact_col = antiexact_covs(_, a);
+          c_eligible[antiexact_col == antiexact_col[t_ind]] = false;
+        }
       }
 
       if (any(c_eligible).is_false()) {
