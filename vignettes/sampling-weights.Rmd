@@ -117,15 +117,15 @@ mF <- add_s.weights(mF, ~SW)
 mF
 ```
 
-Now when we print the `matchit` objects, we can see lines have been added identifying that sampling weights are present but they were not used in the estimation of the propensity score used in the matching.
+Now when we print the `matchit` object, we can see lines have been added identifying that sampling weights are present but they were not used in the estimation of the propensity score used in the matching.
 
-Note that not all methods can involve sampling weights in the estimation. Only methods that use the propensity score will be affected by sampling weights; coarsened exact matching or Mahalanobis distance optimal pair matching, for example, ignore the sampling weights, and some propensity score estimation methods, like `randomForest` and `bart` (as presently implement), cannot incorporate sampling weights. Sampling weights should still be supplied to `matchit()` even when using these methods to avoid having to use `add_sweights()` and remembering which methods do or do not involve sampling weights.
+Note that not all methods can involve sampling weights in the estimation. Only methods that use the propensity score will be affected by sampling weights; coarsened exact matching or Mahalanobis distance optimal pair matching, for example, ignore the sampling weights, and some propensity score estimation methods, like `randomForest` and `bart` (as presently implemented), cannot incorporate sampling weights. Sampling weights should still be supplied to `matchit()` even when using these methods to avoid having to use `add_sweights()` and remembering which methods do or do not involve sampling weights.
 
 ## Assessing Balance
 
 Now we need to decide which matching specification is the best to use for effect estimation. We do this by selecting the one that yields the best balance without sacrificing remaining effective sample size. Because the sampling weights are incorporated into the `matchit` object, the balance assessment tools in `plot.matchit()` and `summary.matchit()` incorporate them into their output.
 
-We'll use `summary()` to examine balance on the two matching specifications. With sampling weights included, the balance statistics for the unmatched data are weighted by the sampling weights. The balance statistics for the matched data are weighted by the product of the sampling weights and the matching weights. It is the product of these weights that will be used in estimating the treatment effect. Below we use `summary()` to display balance for the two matching specifications. no additional arguments to `summary()` are required for it to use the sampling weights; as long as they are in the `matchit` object (either due to being supplied with the `s.weights` argument in the call to `matchit()` or to being added afterward by `add_s.weights()`), they will be correctly incorporated into the balance statistics.
+We'll use `summary()` to examine balance on the two matching specifications. With sampling weights included, the balance statistics for the unmatched data are weighted by the sampling weights. The balance statistics for the matched data are weighted by the product of the sampling weights and the matching weights. It is the product of these weights that will be used in estimating the treatment effect. Below we use `summary()` to display balance for the two matching specifications. No additional arguments to `summary()` are required for it to use the sampling weights; as long as they are in the `matchit` object (either due to being supplied with the `s.weights` argument in the call to `matchit()` or to being added afterward by `add_s.weights()`), they will be correctly incorporated into the balance statistics.
 
 ```{r}
 #Balance before matching and for the SW propensity score full matching
@@ -146,9 +146,6 @@ Estimating the treatment effect after matching is straightforward when using sam
 Below we estimate the effect of `A` on `Y_C` in the matched and sampling weighted sample, adjusting for the covariates to improve precision and decrease bias.
 
 ```{r}
-library(sandwich)
-library(lmtest)
-
 md_F_s <- match.data(mF_s)
 
 fit <- lm(Y_C ~ A + X1 + X2 + X3 + X4 + X5 + 
