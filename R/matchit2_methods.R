@@ -776,14 +776,16 @@ matchit2nearest <-  function(treat, data, distance, discarded,
 
     e_ratios <- sapply(levels(ex), function(e) sum(treat[ex == e] == 0)/sum(treat[ex == e] == 1))
 
-    if (any(e_ratios < 1)) {
-      warning(paste0("Fewer ", tc[2], " units than ", tc[1], " units in some 'exact' strata; not all ", tc[1], " units will get a match."), immediate. = TRUE, call. = FALSE)
-    }
-    if (ratio > 1 && any(e_ratios < ratio)) {
-      if (is.null(max.controls) || ratio == max.controls)
-        warning(paste0("Not all ", tc[1], " units will get ", ratio, " matches."), immediate. = TRUE, call. = FALSE)
-      else
-        warning(paste0("Not enough ", tc[2], " units for an average of ", ratio, " matches per ", tc[1], " unit in all 'exact' strata."), immediate. = TRUE, call. = FALSE)
+    if (!replace) {
+      if (any(e_ratios < 1)) {
+        warning(paste0("Fewer ", tc[2], " units than ", tc[1], " units in some 'exact' strata; not all ", tc[1], " units will get a match."), immediate. = TRUE, call. = FALSE)
+      }
+      if (ratio > 1 && any(e_ratios < ratio)) {
+        if (is.null(max.controls) || ratio == max.controls)
+          warning(paste0("Not all ", tc[1], " units will get ", ratio, " matches."), immediate. = TRUE, call. = FALSE)
+        else
+          warning(paste0("Not enough ", tc[2], " units for an average of ", ratio, " matches per ", tc[1], " unit in all 'exact' strata."), immediate. = TRUE, call. = FALSE)
+      }
     }
 
     ex <- setNames(factor(ex), lab)
@@ -793,14 +795,16 @@ matchit2nearest <-  function(treat, data, distance, discarded,
     # ex <- factor(rep("_", length(treat)), levels = "_")
     e_ratios <- setNames(sum(treat == 0)/sum(treat == 1), levels(ex))
 
-    if (e_ratios < 1) {
-      warning(paste0("Fewer ", tc[2], " units than ", tc[1], " units; not all ", tc[1], " units will get a match."), immediate. = TRUE, call. = FALSE)
-    }
-    else if (e_ratios < ratio) {
-      if (is.null(max.controls) || ratio == max.controls)
-        warning(paste0("Not all ", tc[1], " units will get ", ratio, " matches."), immediate. = TRUE, call. = FALSE)
-      else
-        warning(paste0("Not enough ", tc[2], " units for an average of ", ratio, " matches per ", tc[1], " unit."), immediate. = TRUE, call. = FALSE)
+    if (!replace) {
+      if (e_ratios < 1) {
+        warning(paste0("Fewer ", tc[2], " units than ", tc[1], " units; not all ", tc[1], " units will get a match."), immediate. = TRUE, call. = FALSE)
+      }
+      else if (e_ratios < ratio) {
+        if (is.null(max.controls) || ratio == max.controls)
+          warning(paste0("Not all ", tc[1], " units will get ", ratio, " matches."), immediate. = TRUE, call. = FALSE)
+        else
+          warning(paste0("Not enough ", tc[2], " units for an average of ", ratio, " matches per ", tc[1], " unit."), immediate. = TRUE, call. = FALSE)
+      }
     }
 
   }
