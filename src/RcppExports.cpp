@@ -8,11 +8,6 @@
 
 using namespace Rcpp;
 
-#ifdef RCPP_USE_GLOBAL_ROSTREAM
-Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
-Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
-#endif
-
 // nn_matchC
 IntegerMatrix nn_matchC(const IntegerVector& treat_, const IntegerVector& ord_, const IntegerVector& ratio, const int& max_rat, const bool& replace, const LogicalVector& discarded, const Nullable<NumericVector>& distance_, const Nullable<IntegerVector>& exact_, const Nullable<double>& caliper_dist_, const Nullable<NumericVector>& caliper_covs_, const Nullable<NumericMatrix>& calcovs_covs_mat_, const Nullable<NumericMatrix>& mah_covs_, const Nullable<NumericMatrix>& mahSigma_inv_, const Nullable<IntegerMatrix>& antiexact_covs_, const bool& disl_prog);
 RcppExport SEXP _MatchIt_nn_matchC(SEXP treat_SEXP, SEXP ord_SEXP, SEXP ratioSEXP, SEXP max_ratSEXP, SEXP replaceSEXP, SEXP discardedSEXP, SEXP distance_SEXP, SEXP exact_SEXP, SEXP caliper_dist_SEXP, SEXP caliper_covs_SEXP, SEXP calcovs_covs_mat_SEXP, SEXP mah_covs_SEXP, SEXP mahSigma_inv_SEXP, SEXP antiexact_covs_SEXP, SEXP disl_progSEXP) {
