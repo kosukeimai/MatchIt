@@ -336,6 +336,7 @@ summary.matchit <- function(object, interactions = FALSE,
   else {
     X <- get.covs.matrix(data = object$X)
   }
+  X_assign <- attr(X, "assign")
 
   if (!is.null(addlvariables)) {
     if (is.character(addlvariables)) {
@@ -363,14 +364,10 @@ summary.matchit <- function(object, interactions = FALSE,
     }
 
     if (is.data.frame(addlvariables)) {
-      if (!all(vapply(addlvariables, is.numeric, logical(1L)))) {
-        addlvariables <- get.covs.matrix(data = addlvariables)
-      }
-      else {
-        addlvariables <- as.matrix(addlvariables)
-      }
+      addlvariables <- get.covs.matrix(data = addlvariables)
     }
 
+    addl_assign <- attr(addlvariables, "assign")
     X <- cbind(X, addlvariables[, setdiff(colnames(addlvariables), colnames(X)), drop = FALSE])
   }
 
@@ -386,9 +383,7 @@ summary.matchit <- function(object, interactions = FALSE,
                                                              2, nchar(nam[startsWith(nam, "`") & endsWith(nam, "`")]) - 1)
   }
 
-
-
-  matched <- !is.null(object$method) || (!is.null(object$weights) && !all(object$weights == 1))
+  matched <- !is.null(object$info$method)
   un <- un || !matched
 
   if (standardize) {
