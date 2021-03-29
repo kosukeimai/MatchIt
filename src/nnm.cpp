@@ -122,14 +122,14 @@ IntegerMatrix nn_matchC(const IntegerVector& treat_,
 
       p.increment();
 
-      if (all(matched).is_true()) {
+      if (all(as<LogicalVector>(matched[ind0])).is_true()) {
         break;
       }
 
       t = ord_[i] - 1;   // index among treated
       t_ind = ind1_[t]; // index among sample
 
-      if (discarded[t_ind]) {
+      if (matched[t_ind]) {
         continue;
       }
 
