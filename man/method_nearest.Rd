@@ -4,9 +4,9 @@
 Nearest Neighbor Matching
 }
 \description{
-In \code{\link{matchit}}, setting \code{method = "nearest"} performs greedy nearest neighbor matching. A distance is computed between each treated unit and each control unit, and, one by one, each treated unit is assigned a control unit as a match. The matching is "greedy" in the sense that there is no action taken to optimize an overall criterion; each match is selected without considering the other matches that may occur subsequently.
+In \fun{matchit}, setting \code{method = "nearest"} performs greedy nearest neighbor matching. A distance is computed between each treated unit and each control unit, and, one by one, each treated unit is assigned a control unit as a match. The matching is "greedy" in the sense that there is no action taken to optimize an overall criterion; each match is selected without considering the other matches that may occur subsequently.
 
-This page details the allowable arguments with \code{method = "nearest"}. See \code{\link{matchit}} for an explanation of what each argument means in a general context and how it can be specified.
+This page details the allowable arguments with \code{method = "nearest"}. See \fun{matchit} for an explanation of what each argument means in a general context and how it can be specified.
 
 Below is how \code{matchit} is used for nearest neighbor matching:
 \preformatted{
@@ -34,7 +34,7 @@ matchit(formula,
 }
 \arguments{
    \item{formula}{
-a two-sided \code{\link{formula}} object containing the treatment and covariates to be used in creating the distance measure used in the matching.
+a two-sided \fun{formula} object containing the treatment and covariates to be used in creating the distance measure used in the matching.
 }
   \item{data}{
 a data frame containing the variables named in \code{formula}. If not found in \code{data}, the variables will be sought in the environment.
@@ -76,7 +76,7 @@ the variable containing sampling weights to be incorporated into propensity scor
 whether matching should be done with replacement.
 }
   \item{m.order}{
-the order that the matching takes place. The default for \code{distance = "mahalanobis"} is \code{"data"}. Otherwise, the default is \code{"largest"}. See \code{\link{matchit}} for allowable options.
+the order that the matching takes place. The default for \code{distance = "mahalanobis"} is \code{"data"}. Otherwise, the default is \code{"largest"}. See \fun{matchit} for allowable options.
 }
   \item{caliper}{
 the width(s) of the caliper(s) used for caliper matching. See Details and Examples.
@@ -98,7 +98,7 @@ ignored.
 }
 }
 \section{Outputs}{
-All outputs described in \code{\link{matchit}} are returned with \code{method = "nearest"}. When \code{replace = TRUE}, the \code{subclass} component is omitted.
+All outputs described in \fun{matchit} are returned with \code{method = "nearest"}. When \code{replace = TRUE}, the \code{subclass} component is omitted.
 }
 \details{
 \subsection{Mahalanobis Distance Matching}{
@@ -143,7 +143,7 @@ In a manuscript, you don't need to cite another package when using \code{method 
 }
 
 \seealso{
-\code{\link{matchit}} for a detailed explanation of the inputs and outputs of a call to \code{matchit}.
+\fun{matchit} for a detailed explanation of the inputs and outputs of a call to \code{matchit}.
 
 \code{\link{method_optimal}} for optimal pair matching, which is similar to nearest neighbor matching except that an overall distance criterion is minimized.
 }

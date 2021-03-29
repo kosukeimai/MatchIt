@@ -29,7 +29,7 @@ get_matches(object,
 
 \arguments{
   \item{object}{
-a \code{matchit} object; the output of a call to \code{\link{matchit}}.
+a \code{matchit} object; the output of a call to \fun{matchit}.
 }
   \item{group}{
 which group should comprise the matched dataset: \code{"all"} for all units, \code{"treated"} for just treated units, or \code{"control"} for just control units. Default is \code{"all"}.
@@ -79,9 +79,9 @@ In addition to their base class (e.g., \code{data.frame} or \code{tbl}), returne
 }
 
 \seealso{
-\code{\link[=matchit]{matchit()}}
+\fun{matchit}
 
-\code{\link[=rbind.matchdata]{rbind.matchit()}}
+\fun{rbind.matchdata}
 
 \code{vignette("estimating-effects")} for uses of \code{match.data()} and \code{get_matches()} in estimating treatment effects.
 }

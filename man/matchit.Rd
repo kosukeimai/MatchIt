@@ -38,7 +38,7 @@ matchit(formula,
 
 \arguments{
   \item{formula}{
-a two-sided \code{\link{formula}} object containing the treatment and covariates to be used in creating the distance measure used in the matching. This formula will be supplied to the functions that estimate the distance measure. The formula should be specified as \code{A ~ X1 + X2 + ...} where \code{A} represents the treatment variable and \code{X1} and \code{X2} are covariates.
+a two-sided \fun{formula} object containing the treatment and covariates to be used in creating the distance measure used in the matching. This formula will be supplied to the functions that estimate the distance measure. The formula should be specified as \code{A ~ X1 + X2 + ...} where \code{A} represents the treatment variable and \code{X1} and \code{X2} are covariates.
 }
   \item{data}{
 a data frame containing the variables named in \code{formula} and possible other arguments. If not found in \code{data}, the variables will be sought in the environment.
@@ -47,7 +47,7 @@ a data frame containing the variables named in \code{formula} and possible other
 the matching method to be used. The allowed methods are \code{\link[=method_nearest]{"nearest"}} for nearest neighbor matching (on the propensity score by default), \code{\link[=method_optimal]{"optimal"}} for optimal pair matching, \code{\link[=method_full]{"full"}} for optimal full matching, \code{\link[=method_genetic]{"genetic"}} for genetic matching, \code{\link[=method_cem]{"cem"}} for coarsened exact matching, \code{\link[=method_exact]{"exact"}} for exact matching, and \code{\link[=method_subclass]{"subclass"}} for subclassification. When set to \code{NULL}, no matching will occur, but propensity score estimation and common support restrictions will still occur if requested. See the linked pages for each method for more details on what these methods do, how the arguments below are used by each on, and what additional arguments are allowed.
 }
   \item{distance}{
-the distance measure to be used. Can be either a string containing the name of a distance measure or a vector of already-computed distance measures. The distance measures should be values whose pairwise difference is the distance between two units, e.g., propensity scores for propensity score matching. See \code{\link{distance}} for allowable options. The default is \code{"glm"} for propensity scores estimated with logistic regression using \code{\link{glm}}. Ignored for some methods; see individual methods pages for information on whether and how the distance measure is used.
+the distance measure to be used. Can be either a string containing the name of a distance measure or a vector of already-computed distance measures. The distance measures should be values whose pairwise difference is the distance between two units, e.g., propensity scores for propensity score matching. See \code{\link{distance}} for allowable options. The default is \code{"glm"} for propensity scores estimated with logistic regression using \fun{glm}. Ignored for some methods; see individual methods pages for information on whether and how the distance measure is used.
 }
   \item{link}{
 when \code{distance} is specified as a string, an additional argument controlling the link function used in estimating the distance measure. Allowable options depend on the specific \code{distance} value specified. See \code{\link{distance}} for allowable options with each option. The default is \code{"logit"}, which, along with \code{distance = "glm"}, identifies the default measure as logistic regression propensity scores.
@@ -80,7 +80,7 @@ an optional numeric vector of sampling weights to be incorporated into propensit
 for methods that allow it, whether matching should be done with replacement (\code{TRUE}), where control units are allowed to be matched to several treated units, or without replacement (\code{FALSE}), where control units can only be matched to one treated unit each. See the individual methods pages for information on whether and how this argument is used. Default is \code{FALSE} for matching without replacement.
 }
   \item{m.order}{
-for methods that allow it, the order that the matching takes place. Allowable options depend on the matching method but include \code{"largest"}, where matching takes place in descending order of distance measures; \code{"smallest"}, where matching takes place in ascending order of distance measures; \code{"random"}, where matching takes place in a random order; and \code{"data"} where matching takes place based on the order of units in the data. When \code{m.order = "random"}, results may differ across different runs of the same code unless a seed is set and specified with \code{\link{set.seed}}. See the individual methods pages for information on whether and how this argument is used. The default of \code{NULL} corresponds to \code{"largest"} when a propensity score is estimated or supplied and \code{"data"} otherwise.
+for methods that allow it, the order that the matching takes place. Allowable options depend on the matching method but include \code{"largest"}, where matching takes place in descending order of distance measures; \code{"smallest"}, where matching takes place in ascending order of distance measures; \code{"random"}, where matching takes place in a random order; and \code{"data"} where matching takes place based on the order of units in the data. When \code{m.order = "random"}, results may differ across different runs of the same code unless a seed is set and specified with \fun{set.seed}. See the individual methods pages for information on whether and how this argument is used. The default of \code{NULL} corresponds to \code{"largest"} when a propensity score is estimated or supplied and \code{"data"} otherwise.
 }
   \item{caliper}{
 for methods that allow it, the width(s) of the caliper(s) to use in matching. Should be a numeric vector with each value named according to the variable to which the caliper applies. To apply to the distance measure, the value should be unnamed. See the individual methods pages for information on whether and how this argument is used. The default is \code{NULL} for no caliper.
@@ -131,7 +131,7 @@ For matching without replacement, each unit is assigned to a subclass, which rep
 
 For matching with replacement, units are not assigned to unique strata. For the ATT, each treated unit gets a weight of 1. Each control unit is weighted as the sum of the inverse of the number of control units matched to the same treated unit across its matches. For example, if a control unit was matched to a treated unit that had two other control units matched to it, and that same control was matched to a treated unit that had one other control unit matched to it, the control unit in question would get a weight of 1/3 + 1/2 = 5/6. For the ATC, the same is true with the treated and control labels switched. The weights are computed using the \code{match.matrix} component of the \code{matchit} output object.
 
-In each treatment group, weights are divided by the mean of the nonzero weights in that treatment group to make the weights sum to the number of units in that treatment group. If sampling weights are included through the \code{s.weights} argument, they will be included in the \code{matchit} output object but not incorporated into the matching weights. \code{\link{match.data}}, which extracts the matched set from a \code{matchit} object, combines the matching weights and sampling weights.
+In each treatment group, weights are divided by the mean of the nonzero weights in that treatment group to make the weights sum to the number of units in that treatment group. If sampling weights are included through the \code{s.weights} argument, they will be included in the \code{matchit} output object but not incorporated into the matching weights. \fun{match.data}, which extracts the matched set from a \code{matchit} object, combines the matching weights and sampling weights.
 }
 
 }
@@ -153,7 +153,7 @@ When \code{method} is something other than \code{"subclass"}, a \code{matchit} o
   \item{s.weights}{the vector of sampling weights supplied to the \code{s.weights} argument, if any.}
   \item{exact}{a one-sided formula containing the variables, if any, supplied to \code{exact}.}
   \item{mahvars}{a one-sided formula containing the variables, if any, supplied to \code{mahvars}.}
-  \item{nn}{a matrix of the sample sizes of the treated and control groups before and after matching. See \code{\link{summary.matchit}} for details.}
+  \item{nn}{a matrix of the sample sizes of the treated and control groups before and after matching. See \fun{summary.matchit} for details.}
 
 When \code{method = "subclass"}, a \code{matchit.subclass} object with the same components as above except that \code{match.matrix} is excluded and two additional components, \code{q.cut} and \code{qn}, are included, containing a vector of the distance measure cutpoints used to define the subclasses and a matrix of the subclass sample sizes, respectively. See \code{\link{method_subclass}} for details.
 }
@@ -170,7 +170,7 @@ Version 4.0.0 update by Noah Greifer \email{noah.greifer@gmail.com}
 }
 
 \seealso{
-\code{\link{summary.matchit}} for balance assessment after matching. \code{\link{plot.matchit}} for plots of covariate balance and propensity score overlap after matching.
+\fun{summary.matchit} for balance assessment after matching. \fun{plot.matchit} for plots of covariate balance and propensity score overlap after matching.
 
 \code{vignette("MatchIt")} for an introduction to matching with MatchIt; \code{vignette("matching-methods")} for descriptions of the variety of matching methods and options available; \code{vignette("assessing-balance")} for information on assessing the quality of a matching specification; \code{vignette("estimating-effects")} for instructions on how to estimate treatment effects after matching; and \code{vignette("sampling-weights")} for a guide to using \emph{MatchIt} with sampling weights.
 }

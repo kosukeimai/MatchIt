@@ -4,14 +4,14 @@
 Add sampling weights to a \code{matchit} object
 }
 \description{
-Adds sampling weights to a \code{matchit} object so that they are incorporated into balance assessment and creation of the weights. This would typically only be used when an argument to \code{s.weights} was not supplied to \code{\link{matchit}} (i.e., because they were not to be included in the estimation of the propensity score) but sampling weights are required for generalizing an effect to the correct population. Without adding sampling weights to the \code{matchit} object, balance assessment tools (i.e., \code{\link{summary.matchit}} and \code{\link{plot.matchit}}) will not calculate balance statistics correctly, and the weights produced by \code{\link{match.data}} and \code{\link{get_matches}} will not incorporate the sampling weights.
+Adds sampling weights to a \code{matchit} object so that they are incorporated into balance assessment and creation of the weights. This would typically only be used when an argument to \code{s.weights} was not supplied to \fun{matchit} (i.e., because they were not to be included in the estimation of the propensity score) but sampling weights are required for generalizing an effect to the correct population. Without adding sampling weights to the \code{matchit} object, balance assessment tools (i.e., \fun{summary.matchit} and \fun{plot.matchit}) will not calculate balance statistics correctly, and the weights produced by \fun{match.data} and \fun{get_matches} will not incorporate the sampling weights.
 }
 \usage{
 add_s.weights(m, s.weights = NULL, data = NULL)
 }
 \arguments{
   \item{m}{
-a \code{matchit} object; the output of a call to \code{\link{matchit}}, typically with the \code{s.weights} argument unspecified.
+a \code{matchit} object; the output of a call to \fun{matchit}, typically with the \code{s.weights} argument unspecified.
 }
   \item{s.weights}{
 an numeric vector of sampling weights to be added to the \code{matchit} object. Can also be specified as a string containing the name of variable in \code{data} to be used or a one-sided formula with the variable on the right-hand side (e.g., \code{~ SW}).
@@ -27,7 +27,7 @@ a \code{matchit} object with an \code{s.weights} component containing the suppli
 Noah Greifer
 }
 \seealso{
-\code{\link{matchit}}; \code{\link{match.data}}
+\fun{matchit}; \fun{match.data}
 }
 \examples{
 data("lalonde")

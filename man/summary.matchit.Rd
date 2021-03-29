@@ -26,7 +26,7 @@ Computes and prints balance statistics for \code{matchit} and \code{matchit.subc
 }
 \arguments{
   \item{object}{
-a \code{matchit} object; the output of a call to \code{\link{matchit}}.
+a \code{matchit} object; the output of a call to \fun{matchit}.
 }
   \item{interactions}{
 \code{logical}; whether to compute balance statistics for two-way interactions and squares of covariates. Default is \code{FALSE}.
@@ -63,11 +63,11 @@ ignored.
 }
 }
 \details{
-\code{summary} computes a balance summary of a \code{matchit} object. This include balance before and after matching or subclassification, as well as the percent improvement in balance. The variables for which balance statistics are computed are those included in the \code{formula}, \code{exact}, and \code{mahvars} arguments to \code{\link{matchit}}, as well as the distance measure if \code{distance} is not \code{"mahalanobis"}. The \code{X} component of the \code{matchit} object is used to supply the covariates.
+\code{summary} computes a balance summary of a \code{matchit} object. This include balance before and after matching or subclassification, as well as the percent improvement in balance. The variables for which balance statistics are computed are those included in the \code{formula}, \code{exact}, and \code{mahvars} arguments to \fun{matchit}, as well as the distance measure if \code{distance} is not \code{"mahalanobis"}. The \code{X} component of the \code{matchit} object is used to supply the covariates.
 
 The standardized mean differences are computed both before and after matching or subclassification as the difference in treatment group means divided by a standardization factor computed in the unmatched (original) sample. The standardization factor depends on the argument supplied to \code{estimand} in \code{matchit}: for \code{"ATT"}, it is the standard deviation in the treated group; for \code{"ATC"}, it is the standard deviation in the control group; for \code{"ATE"}, it is the square root of the average of the variances within each treatment group. The post-matching mean difference is computed with weighted means in the treatment groups using the matching or subclassification weights.
 
-The variance ratio is computed as the ratio of the treatment group variances. Variance ratios are not computed for binary variables because their variance is a function solely of their mean. After matching, weighted variances are computed using the formula used in \code{\link{cov.wt}}. The percent reduction in bias is computed using the log of the variance ratios.
+The variance ratio is computed as the ratio of the treatment group variances. Variance ratios are not computed for binary variables because their variance is a function solely of their mean. After matching, weighted variances are computed using the formula used in \fun{cov.wt}. The percent reduction in bias is computed using the log of the variance ratios.
 
 The eCDF difference statistics are computed by creating a (weighted) eCDF for each group and taking the difference between them for each covariate value. The eCDF is a function that outputs the (weighted)  proportion of units with covariate values at or lower than the input value. The maximum eCDF difference is the same thing as the Kolmogorov-Smirnov statistic. The values are bounded at zero and one, with values closer to zero indicating good overlap between the covariate distributions in the treated and control groups. For binary variables, all eCDF differences are equal to the (weighted) difference in proportion and are computed that way.
 
@@ -86,7 +86,7 @@ When printing, \code{NA} values are replaced with periods (\code{.}), and the pa
 \value{
 For \code{matchit} objects, a \code{summary.matchit} object, which is a list with the following components:
 
-  \item{call}{the original call to \code{\link{matchit}}}
+  \item{call}{the original call to \fun{matchit}}
   \item{nn}{a matrix of the sample sizes in the original (unmatched) and matched samples}
   \item{sum.all}{if \code{un = TRUE}, a matrix of balance statistics for each covariate in the original (unmatched) sample}
   \item{sum.matched}{a matrix of balance statistics for each covariate in the matched sample}
@@ -94,7 +94,7 @@ For \code{matchit} objects, a \code{summary.matchit} object, which is a list wit
 
 For \code{match.subclass} objects, a \code{summary.matchit.subclass} object, which is a list as above containing the following components:
 
-  \item{call}{the original call to \code{\link{matchit}}}
+  \item{call}{the original call to \fun{matchit}}
   \item{sum.all}{if \code{un = TRUE}, a matrix of balance statistics for each covariate in the original sample}
   \item{sum.subclass}{if \code{subclass} is not \code{FALSE}, a list of matrices of balance statistics for each subclass}
   \item{sum.across}{a matrix of balance statistics for each covariate computed using the subclassification weights}
@@ -104,7 +104,7 @@ For \code{match.subclass} objects, a \code{summary.matchit.subclass} object, whi
 
 }
 \seealso{
-\code{\link{summary}} for the generic method; \code{\link{plot.summary.matchit}} for making a Love plot from \code{summary} output.
+\fun{summary} for the generic method; \fun{plot.summary.matchit} for making a Love plot from \code{summary} output.
 
 \pkgfun2{cobalt}{bal.tab.matchit}{cobalt::bal.tab}, which also displays balance for \code{matchit} objects.
 }

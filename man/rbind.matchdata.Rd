@@ -6,7 +6,7 @@
 Append matched datasets together
 }
 \description{
-These functions are \code{\link[=rbind]{rbind()}} methods for objects resulting from calls to \code{\link[=match.data]{match.data()}} and \code{\link[=get_matches]{get_matches()}}. They function nearly identically to \code{rbind.data.frame()}; see Details for how they differ.
+These functions are \fun{rbind} methods for objects resulting from calls to \fun{match.data} and \fun{get_matches}. They function nearly identically to \code{rbind.data.frame()}; see Details for how they differ.
 }
 \usage{
 \method{rbind}{matchdata}(\dots, deparse.level = 1)
@@ -15,10 +15,10 @@ These functions are \code{\link[=rbind]{rbind()}} methods for objects resulting 
 }
 \arguments{
   \item{\dots}{
-Two or more \code{matchdata} or \code{getmatches} objects the output of calls to \code{\link[=match.data]{match.data()}} and \code{\link[=get_matches]{get_matches()}}, respectively. Supplied objects must either be all \code{matchdata} objects or all \code{getmatches} objects.
+Two or more \code{matchdata} or \code{getmatches} objects the output of calls to \fun{match.data} and \fun{get_matches}, respectively. Supplied objects must either be all \code{matchdata} objects or all \code{getmatches} objects.
 }
   \item{deparse.level}{
-Passed to \code{\link[=rbind]{rbind()}}.
+Passed to \fun{rbind}.
 }
 }
 \details{
@@ -29,7 +29,7 @@ The supplied matched datasets must be generated from the same original dataset, 
 \code{rbind.getmatches()} and \code{rbind.matchdata()} are identical.
 }
 \value{
-An object of the same class as those supplied to it (i.e., a \code{matchdata} object if \code{matchdata} objects are supplied and a \code{getmatches} object if \code{getmatches} objects are supplied). \code{\link[=rbind]{rbind()}} is called on the objects after adjusting the variables so that the appropriate method will be dispatched corresponding to the class of the original data object.
+An object of the same class as those supplied to it (i.e., a \code{matchdata} object if \code{matchdata} objects are supplied and a \code{getmatches} object if \code{getmatches} objects are supplied). \fun{rbind} is called on the objects after adjusting the variables so that the appropriate method will be dispatched corresponding to the class of the original data object.
 }
 
 \author{
@@ -37,7 +37,7 @@ Noah Greifer
 }
 
 \seealso{
-\code{\link[=match.data]{match.data()}}, \code{\link[=rbind]{rbind()}}
+\fun{match.data}, \fun{rbind}
 
 See \code{vignettes("estimating-effects")} for details on using \code{rbind()} for effect estimation after subsetting the data.
 }

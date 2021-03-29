@@ -4,11 +4,11 @@
 \title{Optimal Full Matching}
 
 \description{
-In \code{\link{matchit}}, setting \code{method = "full"} performs optimal full matching, which is a form of subclassification wherein all units, both treatment and control (i.e., the "full" sample), are assigned to a subclass and receive at least one match. The matching is optimal in the sense that that sum of the absolute distances between the treated and control units in each subclass are as small as possible. The method relies on and is a wrapper for \pkgfun2{optmatch}{fullmatch}{optmatch::fullmatch}.
+In \fun{matchit}, setting \code{method = "full"} performs optimal full matching, which is a form of subclassification wherein all units, both treatment and control (i.e., the "full" sample), are assigned to a subclass and receive at least one match. The matching is optimal in the sense that that sum of the absolute distances between the treated and control units in each subclass are as small as possible. The method relies on and is a wrapper for \pkgfun2{optmatch}{fullmatch}{optmatch::fullmatch}.
 
 Advantages of optimal full matching include that the matching order is not required to be specified, units do not need to be discarded, and it is less likely that extreme within-subclass distances will be large, unlike with standard subclassification. The primary output of full matching is a set of matching weights that can be applied to the matched sample; in this way, full matching can be seen as a robust alternative to propensity score weighting, robust in the sense that the propensity score model does not need to be correct to estimate the treatment effect without bias.
 
-This page details the allowable arguments with \code{method = "fullmatch"}. See \code{\link{matchit}} for an explanation of what each argument means in a general context and how it can be specified.
+This page details the allowable arguments with \code{method = "fullmatch"}. See \fun{matchit} for an explanation of what each argument means in a general context and how it can be specified.
 
 Below is how \code{matchit} is used for optimal full matching:
 \preformatted{
@@ -34,7 +34,7 @@ matchit(formula,
 }
 \arguments{
   \item{formula}{
-a two-sided \code{\link{formula}} object containing the treatment and covariates to be used in creating the distance measure used in the matching. This formula will be supplied to the functions that estimate the distance measure.
+a two-sided \fun{formula} object containing the treatment and covariates to be used in creating the distance measure used in the matching. This formula will be supplied to the functions that estimate the distance measure.
 }
   \item{data}{
 a data frame containing the variables named in \code{formula}. If not found in \code{data}, the variables will be sought in the environment.
@@ -52,7 +52,7 @@ when \code{distance} is specified as a string and not \code{"mahalanobis"}, an a
 a named list containing additional arguments supplied to the function that estimates the distance measure as determined by the argument to \code{distance}.
 }
   \item{estimand}{
-a string containing the desired estimand. Allowable options include \code{"ATT"}, \code{"ATC"}, and \code{"ATE"}. The estimand controls how the weights are computed; see the Computing Weights section at \code{\link{matchit}} for details.
+a string containing the desired estimand. Allowable options include \code{"ATT"}, \code{"ATC"}, and \code{"ATE"}. The estimand controls how the weights are computed; see the Computing Weights section at \fun{matchit} for details.
 }
   \item{exact}{
 for which variables exact matching should take place. Exact matching is processed using \pkgfun2{optmatch}{exactMatch}{optmatch::exactMatch}.
@@ -93,10 +93,10 @@ Due to what appears to be a bug in \emph{optmatch} (version 0.9-13), calipers ca
 The option \code{"optmatch_max_problem_size"} is automatically set to \code{Inf} during the matching process, different from its default in \emph{optmatch}. This enables matching problems of any size to be run, but may also let huge, infeasible problems get through and potentially take a long time or crash R. See \pkgfun2{optmatch}{setMaxProblemSize}{optmatch::setMaxProblemSize} for more details.
 }
 \section{Outputs}{
-All outputs described in \code{\link{matchit}} are returned with \code{method = "full"} except for \code{match.matrix}. This is because matching strata are not indexed by treated units as they are in some other forms of matching.
+All outputs described in \fun{matchit} are returned with \code{method = "full"} except for \code{match.matrix}. This is because matching strata are not indexed by treated units as they are in some other forms of matching.
 }
 \seealso{
-\code{\link{matchit}} for a detailed explanation of the inputs and outputs of a call to \code{matchit}.
+\fun{matchit} for a detailed explanation of the inputs and outputs of a call to \code{matchit}.
 
 \pkgfun2{optmatch}{fullmatch}{optmatch::fullmatch}, which is the workhorse.
 

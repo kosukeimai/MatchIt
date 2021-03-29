@@ -20,10 +20,10 @@ est_effect(formula, m, type, measure, nboot, boot.type, robust.type = NULL, conf
 }
 \arguments{
   \item{formula}{
-a \code{\link{formula}} with the outcome variable on the left hand side and the treatment variable (and possibly covariates and treatment-covariate interactions) on the right-hand side. Including covariates in the outcome model is generally recommended when possible, as doing so usually improves precision and can reduce bias.
+a \fun{formula} with the outcome variable on the left hand side and the treatment variable (and possibly covariates and treatment-covariate interactions) on the right-hand side. Including covariates in the outcome model is generally recommended when possible, as doing so usually improves precision and can reduce bias.
 }
   \item{m}{
-a \code{matchit}; the result of a call to \code{\link{matchit}}. Running \code{\link{match.data}} on this object (possibly with other arguments passed through \dots) must produce a dataset containing all the variables named in \code{formula}.
+a \code{matchit}; the result of a call to \fun{matchit}. Running \code{\link{match.data}} on this object (possibly with other arguments passed through \dots) must produce a dataset containing all the variables named in \code{formula}.
 }
   \item{type}{
 the method used to estimate the standard error and confidence interval. Allowable options include \code{"clusterrobust"} for cluster-robust standard errors (with pair membership as the cluster), \code{"robust"} for robust standard errors that don't account for pairs, \code{"blockboot"} for the block bootstrap, and \code{"boot"} for the full (traditional) bootstrap. Not all methods are compatible with all inputs. See Details. The default after exact matching, coarsened exact matching, and propensity score subclassification is \code{"robust"}; otherwise the default is \code{"clusterrobust"}. Abbreviations are allowed.

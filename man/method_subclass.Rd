@@ -5,9 +5,9 @@
 Subclassification
 }
 \description{
-In \code{\link{matchit}}, setting \code{method = "subclass"} performs subclassification on the distance measure (i.e., propensity score). Treatment and control units are placed into subclasses based on quantiles of the propensity score in the treated group, in the control group, or overall, depending on the desired estimand. Weights are computed based on the proportion of treated units in each subclass. Subclassification implemented here does not rely on any other package.
+In \fun{matchit}, setting \code{method = "subclass"} performs subclassification on the distance measure (i.e., propensity score). Treatment and control units are placed into subclasses based on quantiles of the propensity score in the treated group, in the control group, or overall, depending on the desired estimand. Weights are computed based on the proportion of treated units in each subclass. Subclassification implemented here does not rely on any other package.
 
-This page details the allowable arguments with \code{method = "subclass"}. See \code{\link{matchit}} for an explanation of what each argument means in a general context and how it can be specified.
+This page details the allowable arguments with \code{method = "subclass"}. See \fun{matchit} for an explanation of what each argument means in a general context and how it can be specified.
 
 Below is how \code{matchit} is used for subclassification:
 \preformatted{
@@ -27,7 +27,7 @@ matchit(formula,
 }
 \arguments{
    \item{formula}{
-a two-sided \code{\link{formula}} object containing the treatment and covariates to be used in creating the distance measure used in the subclassification.
+a two-sided \fun{formula} object containing the treatment and covariates to be used in creating the distance measure used in the subclassification.
 }
   \item{data}{
 a data frame containing the variables named in \code{formula}. If not found in \code{data}, the variables will be sought in the environment.
@@ -45,7 +45,7 @@ when \code{distance} is specified as a string, an additional argument controllin
 a named list containing additional arguments supplied to the function that estimates the distance measure as determined by the argument to \code{distance}.
 }
   \item{estimand}{
-the target \code{estimand}. If \code{"ATT"}, the default, subclasses are formed based on quantiles of the distance measure in the treated group; if \code{"ATC"}, subclasses are formed based on quantiles of the distance measure in the control group; if \code{"ATE"}, subclasses are formed based on quantiles of the distance measure in the full sample. The estimand also controls how the subclassification weights are computed; see the Computing Weights section at \code{\link{matchit}} for details.
+the target \code{estimand}. If \code{"ATT"}, the default, subclasses are formed based on quantiles of the distance measure in the treated group; if \code{"ATC"}, subclasses are formed based on quantiles of the distance measure in the control group; if \code{"ATE"}, subclasses are formed based on quantiles of the distance measure in the full sample. The estimand also controls how the subclassification weights are computed; see the Computing Weights section at \fun{matchit} for details.
 }
   \item{discard}{
 a string containing a method for discarding units outside a region of common support.
@@ -73,7 +73,7 @@ additional arguments that control the subclassification:
 The arguments \code{exact}, \code{mahvars}, \code{replace}, \code{m.order}, \code{caliper} (and related arguments), and \code{ratio} are ignored with a warning.
 }
 \section{Outputs}{
-All outputs described in \code{\link{matchit}} are returned with \code{method = "subclass"} except that \code{match.matrix} is excluded and two additional component, \code{q.cut} and \code{qn}, are included, containing a vector of the distance measure cutpoints used to define the subclasses and a matrix of the subclass sample sizes, respectively. Note that when \code{min.n > 0}, the subclass assignments may not strictly obey the quantiles listed in \code{q.cut}.
+All outputs described in \fun{matchit} are returned with \code{method = "subclass"} except that \code{match.matrix} is excluded and two additional component, \code{q.cut} and \code{qn}, are included, containing a vector of the distance measure cutpoints used to define the subclasses and a matrix of the subclass sample sizes, respectively. Note that when \code{min.n > 0}, the subclass assignments may not strictly obey the quantiles listed in \code{q.cut}.
 }
 \details{
 After subclassification, effect estimates can be computed separately in the subclasses and combined, or a single marginal effect can be estimated by using the weights in the full sample. When using the weights, the method is sometimes referred to as marginal mean weighting through stratification (MMWS; Hong, 2010) or fine stratification weighting (Desai et al., 2017). The weights can be interpreted just like inverse probability weights.
@@ -95,7 +95,7 @@ Desai, R. J., Rothman, K. J., Bateman, B. . T., Hernandez-Diaz, S., & Huybrechts
 Hong, G. (2010). Marginal mean weighting through stratification: Adjustment for selection bias in multilevel data. Journal of Educational and Behavioral Statistics, 35(5), 499–531. \doi{10.3102/1076998609359785}
 }
 \seealso{
-\code{\link{matchit}} for a detailed explanation of the inputs and outputs of a call to \code{matchit}.
+\fun{matchit} for a detailed explanation of the inputs and outputs of a call to \code{matchit}.
 
 \code{\link{method_full}} for optimal full matching, which is similar to subclassification except that the number of subclasses and subclass membership are chosen to optimize the within-subclass distance.
 }
