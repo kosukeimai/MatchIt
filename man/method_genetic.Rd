@@ -94,7 +94,7 @@ additional arguments passed to \pkgfun2{Matching}{GenMatch}{Matching::GenMatch}.
 }
 }
 \section{Outputs}{
-All outputs described in \fun{matchit} are returned with \code{method = "genetic"}. When \code{repalce = TRUE}, the \code{subclass} component is omitted.
+All outputs described in \fun{matchit} are returned with \code{method = "genetic"}. When \code{replace = TRUE}, the \code{subclass} component is omitted.
 }
 \details{
 In genetic matching, covariates play three roles: 1) as the variables on which balance is optimized, 2) as the variables in the generalized Mahalanobis distance between units, and 3) in estimating the propensity score. Variables supplied to \code{formula} are always used for role (1), as the variables on which balance is optimized. When \code{distance} is not \code{"mahalanobis"}, the covariates are also used to estimate the propensity score (unless it is supplied). When \code{mahvars} is specified, the named variables will form the covariates that go into the distance matrix. Otherwise, the variables in \code{formula} along with the propensity score will go into the distance matrix. This leads to three ways to use \code{distance} and \code{mahvars} to perform the matching:
