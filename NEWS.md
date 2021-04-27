@@ -8,7 +8,7 @@ output:
 
 # MatchIt (development version)
 
-* Fixed a bug when trying to supply `distance` as a labelled numeric vector (i.e., resulting from `haven`).
+* `distance` can now be supplied as a distance matrix containing pairwise distances with nearest neighbor, optimal, and full matching. This means users can create a distance matrix outside `MatchIt` (e.g., using `optmatch::match_on()`) and `matchit()` will use those distances in the matching. See `?distance` for details.
 
 * Added `rbind.matchdata()` method for `matchdata` and `getmatches` objects (the output of `match.data()` and `get_matches()`, respectively) to avoid subclass conflicts when combining matched samples after matching within subgroups.
 
@@ -19,6 +19,8 @@ output:
 * Slight speed improvements for nearest neighbor matching, especially with `exact` specified.
 
 * A spurious warning that would appear when using a large `ratio` with `replace = TRUE` and `method = "nearest"` no longer appears.
+
+* Fixed a bug when trying to supply `distance` as a labelled numeric vector (i.e., resulting from `haven`).
 
 * Fixed some typos in the documentation and vignettes.
 
