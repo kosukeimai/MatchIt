@@ -78,11 +78,9 @@ matchit <- function(formula, data = NULL, method = "nearest", distance = "glm",
     fn1 <- NULL
   }
   else {
-    distance <- process.distance(distance, method)
+    distance <- process.distance(distance, method, treat)
 
     if (is.numeric(distance)) {
-      if (length(distance) != length(treat)) stop("'distance' must be the same length as the dataset if specified as a numeric vector.", call. = FALSE)
-      if (anyNA(distance)) stop("Missing values are not allowed in 'distance'.", call. = FALSE)
       fn1 <- "distance2user"
     }
     else {
@@ -212,7 +210,6 @@ matchit <- function(formula, data = NULL, method = "nearest", distance = "glm",
     if (inherits(dist.model, "gam")) {
       formula <- mgcv::interpret.gam(formula)$fake.formula
     }
-
   }
 
   covs.formula <- delete.response(terms(formula, data = data))
@@ -237,16 +234,11 @@ matchit <- function(formula, data = NULL, method = "nearest", distance = "glm",
                                  antiexact = antiexact, ...),
                        quote = TRUE)
 
-  info <- list(method = method,
-               distance = if (!is.null(fn1)) sub("distance2", "", fn1, fixed = TRUE) else NULL,
-               link = if (!is.null(link)) link else NULL,
-               discard = discard,
-               replace = if (!is.null(method) && method %in% c("nearest", "genetic")) replace else NULL,
-               ratio = if (!is.null(method) && method %in% c("nearest", "optimal", "genetic")) ratio else NULL,
-               max.controls = if (!is.null(method) && method %in% c("nearest", "optimal")) mcall[["max.controls"]] else NULL,
-               mahalanobis = is.full.mahalanobis || !is.null(mahvars),
-               subclass = if (!is.null(method) && method == "subclass") length(unique(match.out$subclass[!is.na(match.out$subclass)])) else NULL,
-               antiexact = if (!is.null(antiexact)) colnames(antiexactcovs) else NULL)
+  info <- create_info(method, fn1, link, discard, replace, ratio, mcall,
+                      mahalanobis = is.full.mahalanobis || !is.null(mahvars),
+                      subclass = match.out$subclass,
+                      antiexact = colnames(antiexactcovs),
+                      distance_is_matrix = !is.null(distance) && is.matrix(distance))
 
   #Create X.list for X output, removing duplicate variables
   X.list <- list(covs, exactcovs, mahcovs, calcovs, antiexactcovs)
@@ -262,7 +254,7 @@ matchit <- function(formula, data = NULL, method = "nearest", distance = "glm",
   match.out$estimand <- estimand
   match.out$formula <- formula
   match.out$treat <- treat
-  match.out$distance <- if (!is.null(distance)) setNames(distance, names(treat))
+  match.out$distance <- if (!is.null(distance) && !is.matrix(distance)) setNames(distance, names(treat))
   match.out$discarded <- discarded
   match.out$s.weights <- s.weights
   match.out$exact <- exact
