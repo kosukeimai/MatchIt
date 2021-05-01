@@ -605,9 +605,9 @@ binarize <- function(variable, zero = NULL, one = NULL) {
 }
 
 #Make interaction vector out of matrix of covs
-exactify <- function(X, nam = NULL, sep = "|") {
+exactify <- function(X, nam = NULL, sep = "|", include_vars = FALSE) {
   if (is.null(nam)) nam <- rownames(X)
-  if (is.matrix(X)) X <- lapply(seq_len(ncol(X)), function(i) X[,i])
+  if (is.matrix(X)) X <- setNames(lapply(seq_len(ncol(X)), function(i) X[,i]), colnames(X))
   if (!is.list(X)) stop("X must be a matrix, data frame, or list.")
 
   #Ensure no ambiguity is created by sep
@@ -615,6 +615,17 @@ exactify <- function(X, nam = NULL, sep = "|") {
   unique.x <- unlist(lapply(X, function(x) as.character(unique(x))))
   while (any(grepl(sep, unique.x, fixed = TRUE))) {
     sep0 <- paste0(sep0, sep)
+  }
+
+  if (include_vars) {
+    for (i in seq_along(X)) {
+      if (is.character(X[[i]]) || is.factor(X[[i]])) {
+        X[[i]] <- paste0(names(X)[i], ' = "', X[[i]], '"')
+      }
+      else {
+        X[[i]] <- paste0(names(X)[i], ' = ', X[[i]])
+      }
+    }
   }
 
   out <- do.call("paste", c(X, sep = sep0))

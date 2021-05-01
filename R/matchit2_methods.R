@@ -782,9 +782,9 @@ matchit2nearest <-  function(treat, data, distance, discarded,
   }
 
   if (!is.null(exact)) {
-    ex <- factor(exactify(model.frame(exact, data = data)))
+    ex <- factor(exactify(model.frame(exact, data = data), nam = lab, sep = ", ", include_vars = TRUE))
 
-    cc <- intersect(ex[treat==1], ex[treat==0])
+    cc <- intersect(as.integer(ex)[treat==1], as.integer(ex)[treat==0])
     if (length(cc) == 0) stop("No matches were found.", call. = FALSE)
 
     e_ratios <- sapply(levels(ex), function(e) sum(treat[ex == e] == 0)/sum(treat[ex == e] == 1))
@@ -800,8 +800,6 @@ matchit2nearest <-  function(treat, data, distance, discarded,
           warning(paste0("Not enough ", tc[2], " units for an average of ", ratio, " matches per ", tc[1], " unit in all 'exact' strata."), immediate. = TRUE, call. = FALSE)
       }
     }
-
-    ex <- setNames(factor(ex), lab)
   }
   else {
     ex <- NULL
@@ -880,6 +878,10 @@ matchit2nearest <-  function(treat, data, distance, discarded,
   }
   else {
     mm_list <- lapply(levels(ex), function(e) {
+      if (verbose) {
+        cat(paste0("Matching where ", e, "...\n"))
+      }
+
       distance_ <- caliper.covs.mat_ <- mahcovs_ <- distance_mat_ <- NULL
       .e <- which(ex == e)
       treat_ <- treat[.e]
