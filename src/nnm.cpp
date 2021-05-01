@@ -13,6 +13,7 @@ IntegerMatrix nn_matchC(const IntegerVector& treat_,
                         const bool& replace,
                         const LogicalVector& discarded,
                         const Nullable<NumericVector>& distance_ = R_NilValue,
+                        const Nullable<NumericMatrix>& distance_mat_ = R_NilValue,
                         const Nullable<IntegerVector>& exact_ = R_NilValue,
                         const Nullable<double>& caliper_dist_ = R_NilValue,
                         const Nullable<NumericVector>& caliper_covs_ = R_NilValue,
@@ -27,13 +28,14 @@ IntegerMatrix nn_matchC(const IntegerVector& treat_,
 
   NumericVector distance, caliper_covs;
   double caliper_dist;
-  NumericMatrix calcovs_covs_mat, mah_covs, mahSigma_inv, mah_covs_c;
+  NumericMatrix distance_mat, calcovs_covs_mat, mah_covs, mahSigma_inv, mah_covs_c;
   IntegerMatrix antiexact_covs;
   IntegerVector exact, exact_c, antiexact_col;
 
   Environment pkg = Environment::namespace_env("stats");
   Function mah = pkg["mahalanobis"];
 
+  bool use_dist_mat = false;
   bool use_exact = false;
   bool use_caliper_dist = false;
   bool use_caliper_covs = false;
@@ -44,7 +46,9 @@ IntegerMatrix nn_matchC(const IntegerVector& treat_,
   int n_ = treat_.size();
   IntegerVector ind_ = Range(0, n_ - 1);
   IntegerVector ind1_ = ind_[treat_ == 1];
+  IntegerVector ind0_ = ind_[treat_ == 0];
   int n1_ = ind1_.size();
+  int n0_ = n_ - n1_;
 
   // Output matrix with sample indices of C units
   IntegerMatrix mm(n1_, max_rat);
@@ -64,7 +68,7 @@ IntegerMatrix nn_matchC(const IntegerVector& treat_,
   int t, t_ind, min_ind, c_chosen, num_eligible, cal_len, t_rat, n_anti;
   double dt, cal_var_t;
 
-  NumericVector cal_var, cal_diff, ps_diff, diff, mah_covs_t, mah_covs_col,
+  NumericVector cal_var, cal_diff, ps_diff, diff, dist_t, mah_covs_t, mah_covs_col,
                 match_distance(n0);
 
   IntegerVector c_eligible(n0), indices(n0);
@@ -94,6 +98,13 @@ IntegerMatrix nn_matchC(const IntegerVector& treat_,
     mah_covs = as<NumericMatrix>(mah_covs_);
     use_mah_covs = true;
   } else {
+    if (distance_mat_.isNotNull()) {
+      distance_mat = as<NumericMatrix>(distance_mat_);
+
+      // IntegerVector ind0_ = ind_[treat_ == 0];
+      NumericVector dist_t(n0_);
+      use_dist_mat = true;
+    }
     ps_diff = NumericVector(n_);
   }
   if (mahSigma_inv_.isNotNull()) {
@@ -168,8 +179,13 @@ IntegerMatrix nn_matchC(const IntegerVector& treat_,
       ps_diff_assigned = false;
 
       if (use_caliper_dist) {
-        dt = distance[t_ind];
-        diff = Rcpp::abs(as<NumericVector>(distance[c_eligible]) - dt);
+        if (use_dist_mat) {
+          dist_t = distance_mat.row(t);
+          diff = dist_t[match(c_eligible, ind0_) - 1];
+        } else {
+          dt = distance[t_ind];
+          diff = Rcpp::abs(as<NumericVector>(distance[c_eligible]) - dt);
+        }
 
         ps_diff[c_eligible] = diff;
         ps_diff_assigned = true;
@@ -202,6 +218,14 @@ IntegerMatrix nn_matchC(const IntegerVector& treat_,
       //Compute distances among eligible
       num_eligible = c_eligible.size();
 
+      //If replace and few eligible controls, assign all and move on
+      if (replace && (num_eligible <= t_rat)) {
+        for (j = 0; j < num_eligible; ++j) {
+          mm( t , j ) = c_eligible[j] + 1;
+        }
+        continue;
+      }
+
       if (use_mah_covs) {
         mah_covs_c = NumericMatrix(num_eligible, mah_covs.ncol());
         for (j = 0; j < mah_covs.ncol(); ++j) {
@@ -211,41 +235,39 @@ IntegerMatrix nn_matchC(const IntegerVector& treat_,
         mah_covs_t = mah_covs( t_ind , _ );
         match_distance = sqrt(as<NumericVector>(mah(mah_covs_c, mah_covs_t, mahSigma_inv, true))); //mahalanobis in R
 
-      } else {
-        if (ps_diff_assigned) {
-          match_distance = ps_diff[c_eligible]; //c_eligible might have shrunk since previous assignment
-        } else {
-          dt = distance[t_ind];
-          match_distance = Rcpp::abs(as<NumericVector>(distance[c_eligible]) - dt);
+      } else if (ps_diff_assigned) {
+        match_distance = ps_diff[c_eligible]; //c_eligible might have shrunk since previous assignment
+      } else if (use_dist_mat) {
+        dist_t = distance_mat.row(t);
+        match_distance = dist_t[match(c_eligible, ind0_) - 1];
+        c_eligible = c_eligible[is_finite(match_distance)]; //remove Inf
+        if (c_eligible.size() == 0) {
+          continue;
         }
+      } else {
+        dt = distance[t_ind];
+        match_distance = Rcpp::abs(as<NumericVector>(distance[c_eligible]) - dt);
       }
 
-      if (!replace) {
+      if (replace) {
+        //When matching w/ replacement, get t_rat closest control units
+        indices = Range(0, num_eligible - 1);
+
+        std::partial_sort(indices.begin(), indices.begin() + t_rat, indices.end(),
+                          [&match_distance](int k, int j) {return match_distance[k] < match_distance[j];});
+
+        for (j = 0; j < t_rat; ++j) {
+          min_ind = indices[j];
+          mm( t , j ) = c_eligible[min_ind] + 1;
+        }
+      }
+      else {
         min_ind = which_min(match_distance);
         c_chosen = c_eligible[min_ind];
 
         mm( t , rat ) = c_chosen + 1; // + 1 because C indexing starts at 0 but mm is sent to R
 
         matched[c_chosen] = true;
-      }
-      else {
-        if (num_eligible <= t_rat) {
-          for (j = 0; j < num_eligible; ++j) {
-            mm( t , j ) = c_eligible[j] + 1;
-          }
-        }
-        else {
-          //When matching w/ replacement, get t_rat closest control units
-          indices = Range(0, num_eligible - 1);
-
-          std::partial_sort(indices.begin(), indices.begin() + t_rat, indices.end(),
-                            [&match_distance](int k, int j) {return match_distance[k] < match_distance[j];});
-
-          for (j = 0; j < t_rat; ++j) {
-            min_ind = indices[j];
-            mm( t , j ) = c_eligible[min_ind] + 1;
-          }
-        }
       }
     }
 

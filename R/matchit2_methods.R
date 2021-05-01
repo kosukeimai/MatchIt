@@ -130,6 +130,11 @@ matchit2full <- function(treat, formula, data, distance, discarded,
     mo <- optmatch::match_on(mahvars, data = data[names(data) != "treat_"],
                              method = "mahalanobis")
   }
+  else if (is.matrix(distance)) {
+    if (focal == 0) distance <- t(distance)
+    mo <- distance[!discarded[treat == focal], !discarded[treat != focal], drop = FALSE]
+    dimnames(mo) <- list(names(treat_)[treat_ == 1], names(treat_)[treat_ == 0])
+  }
   else {
     mo <- optmatch::match_on(setNames(distance[!discarded], names(treat_)), z = treat_)
   }
@@ -160,11 +165,14 @@ matchit2full <- function(treat, formula, data, distance, discarded,
       calcovs <- get.covs.matrix(reformulate(cov.cals, intercept = FALSE), data = data)
     }
     for (i in seq_along(caliper)) {
-      if (names(caliper)[i] == "") {
-        mo_cal <- optmatch::match_on(distance[!discarded], z = treat_)
+      if (names(caliper)[i] != "") {
+        mo_cal <- optmatch::match_on(setNames(calcovs[,names(caliper)[i]], names(treat_)), z = treat_)
+      }
+      else if (is.null(mahvars) || is.matrix(distance)) {
+        mo_cal <- mo
       }
       else {
-        mo_cal <- optmatch::match_on(setNames(calcovs[,names(caliper)[i]], names(treat_)), z = treat_)
+        mo_cal <- optmatch::match_on(setNames(distance[!discarded], names(treat_)), z = treat_)
       }
 
       mo <- mo + optmatch::caliper(mo_cal, caliper[i])
@@ -313,6 +321,11 @@ matchit2optimal <- function(treat, formula, data, distance, discarded,
     mo <- optmatch::match_on(mahvars, data = data[names(data) != "treat_"],
                              method = "mahalanobis")
   }
+  else if (is.matrix(distance)) {
+    if (focal == 0) distance <- t(distance)
+    mo <- distance[!discarded[treat == focal], !discarded[treat != focal], drop = FALSE]
+    dimnames(mo) <- list(names(treat_)[treat_ == 1], names(treat_)[treat_ == 0])
+  }
   else {
     mo <- optmatch::match_on(setNames(distance[!discarded], names(treat_)), z = treat_)
   }
@@ -458,16 +471,14 @@ matchit2genetic <- function(treat, data, distance, discarded,
   ord <- ord[!ord %in% which(discarded)]
 
   #Create X (matching variables) and covs_to_balance
+  covs_to_balance <- get.covs.matrix(formula, data = data)
   if (!is.null(mahvars)) {
-    covs_to_balance <- get.covs.matrix(formula, data = data)
     X <- get.covs.matrix(mahvars, data = data)
   }
   else if (is.full.mahalanobis) {
-    covs_to_balance <- get.covs.matrix(formula, data = data)
     X <- covs_to_balance
   }
   else {
-    covs_to_balance <- get.covs.matrix(formula, data = data)
     X <- cbind(covs_to_balance, distance)
   }
 
@@ -735,6 +746,7 @@ matchit2nearest <-  function(treat, data, distance, discarded,
     caliper.covs.mat <- NULL
   }
 
+  mahcovs <- mahSigma_inv <- distance_mat <- NULL
   if (is.full.mahalanobis) {
     mahcovs <- get.covs.matrix(formula, data)
     if (ncol(mahcovs) == 0) stop("Covariates must be specified in the input formula when distance = \"mahalanobis\".", call. = FALSE)
@@ -750,8 +762,9 @@ matchit2nearest <-  function(treat, data, distance, discarded,
     else
       mahSigma_inv <- generalized_inverse(cov.wt(mahcovs, s.weights)$cov)
   }
-  else {
-    mahcovs <- mahSigma_inv <- NULL
+  else if (is.matrix(distance)) {
+    distance_mat <- distance
+    distance <- NULL
   }
 
   if (!is.null(antiexact)) {
@@ -812,7 +825,10 @@ matchit2nearest <-  function(treat, data, distance, discarded,
   #Variable ratio (extremal matching), Ming & Rosenbaum (2000)
   #Each treated unit get its own value of ratio
   if (!is.null(max.controls)) {
-    if (is.null(distance)) stop("'distance' cannot be \"mahalanobis\" for variable ratio matching.", call. = FALSE)
+    if (is.null(distance)) {
+      if (is.null(distance_mat)) stop("'distance' cannot be \"mahalanobis\" for variable ratio matching.", call. = FALSE)
+      else stop("'distance' cannot be supplied as a matrix for variable ratio matching.", call. = FALSE)
+    }
 
     n1 <- sum(treat == 1)
     m <- round(ratio * n1)
@@ -848,6 +864,7 @@ matchit2nearest <-  function(treat, data, distance, discarded,
     else m.order <- match_arg(m.order, c("largest", "smallest", "random", "data"))
   }
   else {
+    #Mahalanobis or distance matrix
     m.order <- match_arg(m.order, c("data", "random"))
   }
 
@@ -858,17 +875,23 @@ matchit2nearest <-  function(treat, data, distance, discarded,
                    "random" = sample(seq_len(n1), n1, replace = FALSE),
                    "data" = seq_len(n1))
 
-    mm <- nn_matchC(treat, ord, ratio, max_rat, replace, discarded, distance, ex, caliper.dist,
+    mm <- nn_matchC(treat, ord, ratio, max_rat, replace, discarded, distance, distance_mat, ex, caliper.dist,
                     caliper.covs, caliper.covs.mat, mahcovs, mahSigma_inv, antiexactcovs, verbose)
   }
   else {
     mm_list <- lapply(levels(ex), function(e) {
+      distance_ <- caliper.covs.mat_ <- mahcovs_ <- distance_mat_ <- NULL
       .e <- which(ex == e)
       treat_ <- treat[.e]
       discarded_ <- discarded[.e]
-      distance_ <- distance[.e]
-      caliper.covs.mat_ <- caliper.covs.mat[.e,,drop = FALSE]
-      mahcovs_ <- mahcovs[.e,,drop = FALSE]
+      if (!is.null(distance)) distance_ <- distance[.e]
+      if (!is.null(caliper.covs.mat)) caliper.covs.mat_ <- caliper.covs.mat[.e,,drop = FALSE]
+      if (!is.null(mahcovs)) mahcovs_ <- mahcovs[.e,,drop = FALSE]
+      if (!is.null(distance_mat)) {
+        .e1 <- which(ex[treat==1] == e)
+        .e0 <- which(ex[treat==0] == e)
+        distance_mat_ <- distance_mat[.e1, .e0, drop = FALSE]
+      }
       ratio_ <- ratio[ex[treat==1]==e]
 
       n1_ <- sum(treat_ == 1)
@@ -878,7 +901,7 @@ matchit2nearest <-  function(treat, data, distance, discarded,
                      "random" = sample(seq_len(n1_), n1_, replace = FALSE),
                      "data" = seq_len(n1_))
 
-      mm_ <- nn_matchC(treat_, ord_, ratio_, max_rat, replace, discarded_, distance_, NULL, caliper.dist,
+      mm_ <- nn_matchC(treat_, ord_, ratio_, max_rat, replace, discarded_, distance_, distance_mat_, NULL, caliper.dist,
                        caliper.covs, caliper.covs.mat_, mahcovs_, mahSigma_inv, antiexactcovs, verbose)
 
       mm_[] <- seq_along(treat)[.e][mm_]
