@@ -8,7 +8,7 @@ In \fun{matchit}, setting \code{method = "cem"} performs coarsened exact matchin
 
 This page details the allowable arguments with \code{method = "cem"}. See \fun{matchit} for an explanation of what each argument means in a general context and how it can be specified.
 
-Below is how \code{matchit} is used for coarsened exact matching:
+Below is how \code{matchit()} is used for coarsened exact matching:
 \preformatted{
 matchit(formula,
         data = NULL,
@@ -107,7 +107,7 @@ Iacus, S. M., King, G., & Porro, G. (2012). Causal Inference without Balance Che
 }
 
 \seealso{
-\fun{matchit} for a detailed explanation of the inputs and outputs of a call to \code{matchit}.
+\fun{matchit} for a detailed explanation of the inputs and outputs of a call to \code{matchit()}.
 
 The \emph{cem} package, upon which this method is based and which provided the workhorse in previous versions of \emph{MatchIt}.
 

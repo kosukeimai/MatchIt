@@ -7,7 +7,7 @@ In \fun{matchit}, setting \code{method = "exact"} performs exact matching. With 
 
 This page details the allowable arguments with \code{method = "exact"}. See \fun{matchit} for an explanation of what each argument means in a general context and how it can be specified.
 
-Below is how \code{matchit} is used for exact matching:
+Below is how \code{matchit()} is used for exact matching:
 \preformatted{
 matchit(formula,
         data = NULL,
@@ -52,7 +52,7 @@ In a manuscript, you don't need to cite another package when using \code{method 
 }
 
 \seealso{
-\fun{matchit} for a detailed explanation of the inputs and outputs of a call to \code{matchit}. The \code{exact} argument can be used with other methods to perform exact matching in combination with other matching methods.
+\fun{matchit} for a detailed explanation of the inputs and outputs of a call to \code{matchit()}. The \code{exact} argument can be used with other methods to perform exact matching in combination with other matching methods.
 
 \code{\link{method_cem}} for coarsened exact matching, which performs exact matching on coarsened versions of the covariates.
 }

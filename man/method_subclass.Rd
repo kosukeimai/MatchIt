@@ -9,7 +9,7 @@ In \fun{matchit}, setting \code{method = "subclass"} performs subclassification 
 
 This page details the allowable arguments with \code{method = "subclass"}. See \fun{matchit} for an explanation of what each argument means in a general context and how it can be specified.
 
-Below is how \code{matchit} is used for subclassification:
+Below is how \code{matchit()} is used for subclassification:
 \preformatted{
 matchit(formula,
         data = NULL,
@@ -36,7 +36,7 @@ a data frame containing the variables named in \code{formula}. If not found in \
 set here to \code{"subclass"}.
 }
   \item{distance}{
-the distance measure to be used. See \code{\link{distance}} for allowable options. \code{distance = "mahalanobis"} is not allowed.
+the distance measure to be used. See \code{\link{distance}} for allowable options. \code{distance = "mahalanobis"} and supplying a matrix are not allowed.
 }
   \item{link}{
 when \code{distance} is specified as a string, an additional argument controlling the link function used in estimating the distance measure. See \code{\link{distance}} for allowable options with each option.
@@ -95,7 +95,7 @@ Desai, R. J., Rothman, K. J., Bateman, B. . T., Hernandez-Diaz, S., & Huybrechts
 Hong, G. (2010). Marginal mean weighting through stratification: Adjustment for selection bias in multilevel data. Journal of Educational and Behavioral Statistics, 35(5), 499–531. \doi{10.3102/1076998609359785}
 }
 \seealso{
-\fun{matchit} for a detailed explanation of the inputs and outputs of a call to \code{matchit}.
+\fun{matchit} for a detailed explanation of the inputs and outputs of a call to \code{matchit()}.
 
 \code{\link{method_full}} for optimal full matching, which is similar to subclassification except that the number of subclasses and subclass membership are chosen to optimize the within-subclass distance.
 }
