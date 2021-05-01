@@ -45,7 +45,7 @@ No propensity scores are estimated. Rather than using the propensity score diffe
 }
 }
 
-\code{distance} can also be supplied as a numeric vector whose values will be taken to function like propensity scores; their pairwise difference will define the distance between units. This might be useful for supplying propensity scores computed outside \code{matchit()} or resupplying \code{matchit()} with propensity scores estimated before without having to recompute them. \code{distance} can also be supplied as a matrix whose values represent the pairwise distances between units. The matrix should either be a square, with a row and column for each unit (e.g., as the output of a call to \code{as.matrix(\link{dist}(.))}), or have as many rows as there are treated units and as many columns as there are control units (e.g., as the output of a call to \pkgfun2{optmatch}{match_on}{optmatch::match_on}). When \code{distance} is a supplied as a numeric vector or matrix, \code{link} and \code{distance.options} are ignored.
+\code{distance} can also be supplied as a numeric vector whose values will be taken to function like propensity scores; their pairwise difference will define the distance between units. This might be useful for supplying propensity scores computed outside \code{matchit()} or resupplying \code{matchit()} with propensity scores estimated before without having to recompute them. \code{distance} can also be supplied as a matrix whose values represent the pairwise distances between units. The matrix should either be a square, with a row and column for each unit (e.g., as the output of a call to \code{as.matrix(\link{dist}(.))}), or have as many rows as there are treated units and as many columns as there are control units (e.g., as the output of a call to \pkgfun2{optmatch}{match_on}{optmatch::match_on}). Distance values of \code{Inf} will disallow the corresponding units to be matched. When \code{distance} is a supplied as a numeric vector or matrix, \code{link} and \code{distance.options} are ignored.
 }
 \section{Outputs}{
 When specifying an argument to \code{distance} that estimates a propensity score, the output of the function called to estimate the propensity score (e.g., the \code{glm} object when \code{distance = "glm"}) will be included in the \code{matchit()} output object in the \code{model} component. When \code{distance} is anything other than \code{"mahalanobis"} and not matrix, the estimated or supplied distance measures will be included in the \code{matchit()} output object in the \code{distance} component.
@@ -105,8 +105,7 @@ m.out6 <- matchit(treat ~ age + educ + race + married +
 dist_mat <- optmatch::match_on(
               treat ~ age + educ + race + nodegree +
                 married + re74 + re75, data = lalonde,
-              method = "rank_mahalanobis"
-)
+              method = "rank_mahalanobis")
 
 m.out7 <- matchit(treat ~ age + educ + race + nodegree +
                     married + re74 + re75, data = lalonde,
