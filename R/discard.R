@@ -22,8 +22,12 @@ discard <- function(treat, pscore = NULL, option = NULL) {
     }
     else {
       if (is.null(pscore)) {
-        stop("'discard' must be a logical vector in the absence of a propensity score.", call. = FALSE)
+        stop("'discard' must be a logical vector or \"none\" in the absence of a propensity score.", call. = FALSE)
       }
+      else if (is.matrix(pscore)) {
+        stop("'discard' must be a logical vector or \"none\" when 'distance' is supplied as a matrix.", call. = FALSE)
+      }
+
       pmax0 <- max(pscore[treat==0])
       pmax1 <- max(pscore[treat==1])
       pmin0 <- min(pscore[treat==0])

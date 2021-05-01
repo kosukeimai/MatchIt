@@ -177,20 +177,31 @@ Other packages may be of use but are not used here. The `margins` package can be
 
 Because different matching methods require different treatments, instructions for each method are organized in the following sections, as designated by the table below. It is important to ensure the right methods are used with the matching specification used in order for the estimated effects and standard errors to be valid.
 
-Section |  Matching Method
- -------------- | -------------------- 
-[After Pair Matching Without Replacement](#after-pair-matching-without-replacement) | Nearest neighbor matching without replacement
-- | Optimal matching
-- | Genetic matching without replacement
-- | Coarsened exact matching with `k2k = TRUE`
-[After Pair Matching With Replacement](#after-pair-matching-with-replacement) | Nearest neighbor matching with replacement
-- | Genetic matching with replacement
-[After Full Matching](#after-full-matching) | Full matching
-[After Stratum Matching](#after-stratum-matching) | Propensity score subclassification
-- | Exact matching
-- | Coarsened exact matching with `k2k = FALSE` (the default)
++-------------------------------------------------------------------------------------+-----------------------------------------------------------+
+| Section                                                                             | Matching Method                                           |
++=====================================================================================+===========================================================+
+| [After Pair Matching Without Replacement](#after-pair-matching-without-replacement) | Nearest neighbor matching without replacement             |
++-------------------------------------------------------------------------------------+-----------------------------------------------------------+
+| \-                                                                                  | Optimal matching                                          |
++-------------------------------------------------------------------------------------+-----------------------------------------------------------+
+| \-                                                                                  | Genetic matching without replacement                      |
++-------------------------------------------------------------------------------------+-----------------------------------------------------------+
+| \-                                                                                  | Coarsened exact matching with `k2k = TRUE`                |
++-------------------------------------------------------------------------------------+-----------------------------------------------------------+
+| [After Pair Matching With Replacement](#after-pair-matching-with-replacement)       | Nearest neighbor matching with replacement                |
++-------------------------------------------------------------------------------------+-----------------------------------------------------------+
+| \-                                                                                  | Genetic matching with replacement                         |
++-------------------------------------------------------------------------------------+-----------------------------------------------------------+
+| [After Full Matching](#after-full-matching)                                         | Full matching                                             |
++-------------------------------------------------------------------------------------+-----------------------------------------------------------+
+| [After Stratum Matching](#after-stratum-matching)                                   | Propensity score subclassification                        |
++-------------------------------------------------------------------------------------+-----------------------------------------------------------+
+| \-                                                                                  | Exact matching                                            |
++-------------------------------------------------------------------------------------+-----------------------------------------------------------+
+| \-                                                                                  | Coarsened exact matching with `k2k = FALSE` (the default) |
++-------------------------------------------------------------------------------------+-----------------------------------------------------------+
 
-### After Pair Matching Without Replacement
+### After Pair Matching Without Replacement {#after-pair-matching-without-replacement}
 
 Pair matching without replacement yields the simplest way to estimate treatment effects and standard errors. In general, whether a caliper, common support restriction, exact matching specification, or $k$:1 matching specification is used, estimating the effect in the matched dataset (i.e., the output of `match.data()`) is straightforward and involves fitting a model for the outcome that incorporates the matching weights[^3].
 
@@ -285,7 +296,8 @@ For binary outcomes, effect estimation can be a bit more challenging, especially
 
 ```{r}
 #Generalized linear model without covariates
-fit4 <- glm(Y_B ~ A, data = md, family = binomial(link = "logit"))
+fit4 <- glm(Y_B ~ A, data = md, weights = weights, 
+            family = binomial(link = "logit"))
 ```
 
 By specifying `link = "logit"`, we fit a logistic regression model to estimate the marginal OR for treatment. To estimate the marginal RR we can specify `link = "log"`, and to estimate the RD we can specify `link = "identity"` or use `lm()` instead of `glm()`. Below we estimate cluster-robust standard errors, though it should be noted that these standard errors can be biased for the OR and should be used with caution [@austin2007a]. Because we want the OR and the effects are estimated on the log OR scale, we have to exponentiate the coefficient on treatment to arrive at the OR (one would do this when estimating the OR or RR, but not the RD).
@@ -356,7 +368,7 @@ There are several measures of effect size for survival outcomes. When using the 
 ```{r}
 #Cox Regression for marginal HR
 coxph(Surv(Y_S) ~ A, data = md, robust = TRUE, 
-      cluster = subclass)
+      weights = weights, cluster = subclass)
 ```
 
 The `coef` column contains the log HR, and `exp(coef)` contains the HR. Remember to always use the `robust se` for the standard error of the log HR. The displayed z-test p-value results from using the robust standard error.
@@ -383,7 +395,7 @@ est_fun <- function(pairs, i) {
   md_boot <- md[ids,]
   
   #Effect estimation
-  cox_fit_boot <- coxph(Surv(Y_S) ~ A, data = md_boot)
+  cox_fit_boot <- coxph(Surv(Y_S) ~ A, data = md_boot, weights = weights)
   
   #Compute the marginal HR by exponentiating the coefficient
   #on treatment
@@ -400,7 +412,7 @@ boot.ci(boot_est, type = "bca")
 
 **With covariate adjustment.** As with binary outcomes, if covariates are included in the model, the resulting hazard ratios will be conditional rather than marginal. Austin, Thomas, and Rubin [-@austin2020] describe several ways of including covariates in a model to estimate the marginal HR, but because they do not develop standard errors and little research has been done on this method, we will not present it here.
 
-### After Pair Matching With Replacement
+### After Pair Matching With Replacement {#after-pair-matching-with-replacement}
 
 Pair matching with replacement makes estimating effects and standard errors a bit less straightforward. Control units paired with multiple treated units belong to multiple pairs at the same time and appear multiple times in the matched dataset. Effect and standard error estimation need to account for control unit multiplicity (i.e., repeated use) and within-pair correlations [@hill2006; @austin2020a].
 
@@ -602,7 +614,7 @@ fc
 
 The `robust se` column contains the computed standard error, and the reported Z-test uses this standard error. The `se(coef)` column should be ignored.
 
-### After Full Matching
+### After Full Matching {#after-full-matching}
 
 ```{r, include=FALSE}
 #In case optmatch goes offline, don't run lines below
@@ -707,7 +719,7 @@ Including covariates in the model is less straightforward because the resulting 
 knitr::opts_chunk$set(eval = TRUE)
 ```
 
-### After Stratum Matching
+### After Stratum Matching {#after-stratum-matching}
 
 Stratum matching includes exact matching, coarsened exact matching, and propensity score subclassification. There are two natural ways to estimate marginal effects after stratum matching: the first is to estimate stratum-specific treatment effects and pool them, and the second is to use the stratum weights to estimate a single marginal effect. This latter approach is also known as marginal mean weighting through stratification (MMWS), and is described in detail by Hong [-@hong2010][^5]. When done properly, both methods should yield similar or identical estimates of the treatment effect. MMWS is generally preferable because it is far simpler to implement and avoids issues of noncollapsibility with non-continuous outcomes. All of the methods described above for use with full matching also work with MMWS because the formation of the weights is the same; the only difference is that it is not appropriate to use cluster-robust standard errors with MMWS because of how few clusters are present.
 
@@ -892,6 +904,67 @@ As with other covariate-adjusted models, it is important not to interpret the co
 
 Alternative methods of estimating conditional effects include conditional logistic regression after matching and estimating stratum-specific effects after subclassification. We recommend using covariate-adjusted logistic regression models instead because the conditional effect is better defined (i.e., conditional on the specific covariates included in the model) and depends less on the estimand targeted [@forbes2008].
 
+### Moderation Analysis
+
+Moderation analysis involves determining whether a treatment effect differs across levels of another variable. The use of matching with moderation analysis is described in Stuart and Green [-@greenExaminingModerationAnalyses2014]. The goal is to achieve balance within each subgroup of the potential moderating variable, and there are several ways of doing so. Broadly, one can either perform matching in the full dataset, perhaps requiring exact matching on the moderator, or one can perform completely separate analyses in each subgroup. We'll demonstrate both approaches below. The chosen approach should be that which achieves the best balance, though we don't demonstrate assessing balance hear to maintain focus on effect estimation. We'll consider the binary variable `X5` to be the potential moderator of the effect of `A` on `Y_C`.
+
+The first approach involves pooling information across subgroups. This could involve estimating propensity scores using a single model for both groups but exact matching on the potential moderator. The propensity score model could include moderator-by-covariate interactions to allow the propensity score model to vary across subgroups on some covariates. Below, we'll estimate a propensity score using a single propensity score model with a few moderator-by-covariate interactions and exact matching on the moderator, `X5`. We'll perform nearest neighbor matching on the propensity score.
+
+```{r}
+mP <- matchit(A ~ X1 + X2 + X5*X3 + X4 + 
+                X5*X6 + X7 + X5*X8 + X9, data = d,
+              exact = ~X5, method = "nearest")
+mP
+```
+
+Although it is straightforward to assess balance overall using `summary()`, it is more challenging to assess balance within subgroups. The easiest way to check subgroup balance would be to use `cobalt::bal.tab()`, which has a `cluster` argument that can be used to assess balance within subgroups, e.g., by `cobalt::bal.tab(mP, cluster = "X5")`. See the vignette "Appendix 2: Using cobalt with Clustered, Multiply Imputed, and Other Segmented Data" on the `cobalt` [website](https://ngreifer.github.io/cobalt/index.html) for details.
+
+If we are satisfied with balance, we can then estimate the subgroup effects using an outcome model with an interaction between the treatment and the moderator.
+
+```{r}
+mdP <- match.data(mP)
+
+fitP <- lm(Y_C ~ A * X5, data = mdP, weights = weights)
+
+coeftest(fitP, vcov. = vcovCL, cluster = ~subclass)
+```
+
+A second approach is to perform the matching analyses separately and then combine the matched samples. We demonstrate this below. First, we split the data by levels of `X5`.
+
+```{r}
+d_X5_0 <- subset(d, X5 == 0)
+d_X5_1 <- subset(d, X5 == 1)
+```
+
+Next we perform separate matching analyses in each new dataset,
+
+```{r}
+mS0 <- matchit(A ~ X1 + X2 + X3 + X4 + 
+                 X6 + X7 + X8 + X9, data = d_X5_0,
+               method = "nearest")
+
+mS1 <- matchit(A ~ X1 + X2 + X3 + X4 + 
+                 X6 + X7 + X8 + X9, data = d_X5_1,
+               method = "nearest")
+```
+
+It is straightforward to assess balance within each subgroup using `summary()`, and `cobalt` functions can be used as well. We omit this step here, but you should not!
+
+To estimate the subgroup effects, we need to combine the matched datasets, which we can do using `rbind.matchdata()` (a special `rbind()` method for `matchdata` objects). Then we estimate the moderation effect just as we did previously.
+
+```{r}
+mdS0 <- match.data(mS0)
+mdS1 <- match.data(mS1)
+
+mdS <- rbind(mdS0, mdS1)
+
+fitS <- lm(Y_C ~ A * X5, data = mdS, weights = weights)
+
+coeftest(fitS, vcov. = vcovCL, cluster = ~subclass)
+```
+
+There are benefits to using either approach, and Stuart and Green [-@greenExaminingModerationAnalyses2014] find that either can be successful at balancing the subgroups. The first approach may be most effective with small samples, where separate propensity score models would be fit with greater uncertainty and an increased possibility of perfect prediction or failure to converge [@wangRelativePerformancePropensity2018]. The second approach may be more effective with larger samples or with matching methods that target balance in the matched sample, such as genetic matching [@kreifMethodsEstimatingSubgroup2012]. With genetic matching, separate subgroup analyses ensure balance is optimized within each subgroup rather than just overall.
+
 ### Reporting Results
 
 It is important to be as thorough and complete as possible when describing the methods of estimating the treatment effect and the results of the analysis. This improves transparency and replicability of the analysis. Results should at least include the following:
@@ -914,7 +987,7 @@ Several methods involve weights that are to be used in estimating the treatment 
 
 ### 2. Failing to use robust or cluster-robust standard errors
 
-Robust standard errors are required when using weights to estimate the treatment effect. The model-based standard errors resulting from weighted least squares or maximum likelihood are inaccurate when using matching weights because they assume weights are frequency weights rather than probability weights. Cluster-robust standard errors account for both the matching weights and pair membership and should be used when appropriate (i.e., with all matching methods other than stratification matching). Sometimes, researchers use functions in the `survey` package to estimate robust standard errors, especially with inverse probability weighting; this is a valid way to compute robust standard errors and will give similar results to `vcovHC()`.
+Robust standard errors are required when using weights to estimate the treatment effect. The model-based standard errors resulting from weighted least squares or maximum likelihood are inaccurate when using matching weights because they assume weights are frequency weights rather than probability weights. Cluster-robust standard errors account for both the matching weights and pair membership and should be used when appropriate (i.e., with all matching methods other than stratification matching). Sometimes, researchers use functions in the `survey` package to estimate robust standard errors, especially with inverse probability weighting; this is a valid way to compute robust standard errors and will give similar results to `sandwich::vcovHC()`.
 
 ### 3. Interpreting conditional effects as marginal effects
 
@@ -932,7 +1005,8 @@ In addition, with continuous outcomes, conditional effects can be mistakenly int
 
 ## References
 
-<div id="refs"></div>
+::: {#refs}
+:::
 
 ## Code to Generate Data used in Examples
 
@@ -1000,6 +1074,3 @@ Y_S <- gen_Y_S(A, X)
 
 d <- data.frame(A, X, Y_C, Y_B, Y_S)
 ```
-
-
-

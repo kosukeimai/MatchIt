@@ -4,20 +4,24 @@
 \title{Coarsened Exact Matching}
 
 \description{
-In \code{\link{matchit}}, setting \code{method = "cem"} performs coarsened exact matching. With coarsened exact matching, covariates are coarsened into bins, and a complete cross of the coarsened covariates is used to form subclasses defined by each combination of the coarsened covariate levels. Any subclass that doesn't contain both treated and control units is discarded, leaving only subclasses containing treatment and control units that are exactly equal on the coarsened covariates. The coarsening process can be controlled by an algorithm or by manually specifying cutpoints and groupings. The benefits of coarsened exact matching are that the tradeoff between exact matching and approximate balancing can be managed to prevent discarding too many units, which can otherwise occur with exact matching.
+In \fun{matchit}, setting \code{method = "cem"} performs coarsened exact matching. With coarsened exact matching, covariates are coarsened into bins, and a complete cross of the coarsened covariates is used to form subclasses defined by each combination of the coarsened covariate levels. Any subclass that doesn't contain both treated and control units is discarded, leaving only subclasses containing treatment and control units that are exactly equal on the coarsened covariates. The coarsening process can be controlled by an algorithm or by manually specifying cutpoints and groupings. The benefits of coarsened exact matching are that the tradeoff between exact matching and approximate balancing can be managed to prevent discarding too many units, which can otherwise occur with exact matching.
 
-This page details the allowable arguments with \code{method = "cem"}. See \code{\link{matchit}} for an explanation of what each argument means in a general context and how it can be specified.
+This page details the allowable arguments with \code{method = "cem"}. See \fun{matchit} for an explanation of what each argument means in a general context and how it can be specified.
 
-Below is how \code{matchit} is used for coarsened exact matching:
+Below is how \code{matchit()} is used for coarsened exact matching:
 \preformatted{
-matchit(formula, data = NULL, method = "cem",
-        estimand = "ATT", s.weights = NULL,
-        verbose = FALSE, ...)
+matchit(formula,
+        data = NULL,
+        method = "cem",
+        estimand = "ATT",
+        s.weights = NULL,
+        verbose = FALSE,
+        ...)
 }
 }
 \arguments{
    \item{formula}{
-a two-sided \code{\link{formula}} object containing the treatment and covariates to be used in creating the subclasses defined by a full cross of the coarsened covariate levels.
+a two-sided \fun{formula} object containing the treatment and covariates to be used in creating the subclasses defined by a full cross of the coarsened covariate levels.
 }
   \item{data}{
 a data frame containing the variables named in \code{formula}. If not found in \code{data}, the variables will be sought in the environment.
@@ -26,7 +30,7 @@ a data frame containing the variables named in \code{formula}. If not found in \
 set here to \code{"cem"}.
 }
   \item{estimand}{
-a string containing the desired estimand. Allowable options include \code{"ATT"}, \code{"ATC"}, and \code{"ATE"}. The estimand controls how the weights are computed; see the Computing Weights section at \code{\link{matchit}} for details. When \code{k2k = TRUE} (see below), \code{estimand} also controls how the matching is done.
+a string containing the desired estimand. Allowable options include \code{"ATT"}, \code{"ATC"}, and \code{"ATE"}. The estimand controls how the weights are computed; see the Computing Weights section at \fun{matchit} for details. When \code{k2k = TRUE} (see below), \code{estimand} also controls how the matching is done.
 }
   \item{s.weights}{
 the variable containing sampling weights to be incorporated into balance statistics. These weights do not affect the matching process.
@@ -47,17 +51,17 @@ the variable containing sampling weights to be incorporated into balance statist
      code{logical}; whether 1:1 matching should occur within the matched strata. If \code{TRUE} nearest neighbor matching without replacement will take place within each stratum, and any unmatched units will be dropped (e.g., if there are more treated than control units in the stratum, the treated units without a match will be dropped). The \code{k2k.method} argument controls how the distance between units is calculated.
      }
      \item{\code{k2k.method}}{
-     \code{character}; how the distance between units should be calculated if \code{k2k = TRUE}. Allowable arguments include \code{NULL} (for random matching), \code{"mahalanobis"} (for Mahalanobis distance matching), or any allowable argument to \code{method} in \code{\link{dist}}. Matching will take place on scaled versions of the original (non-coarsened) variables. The default is \code{"mahalanobis"}.
+     \code{character}; how the distance between units should be calculated if \code{k2k = TRUE}. Allowable arguments include \code{NULL} (for random matching), \code{"mahalanobis"} (for Mahalanobis distance matching), or any allowable argument to \code{method} in \fun{dist}. Matching will take place on scaled versions of the original (non-coarsened) variables. The default is \code{"mahalanobis"}.
      }
      \item{\code{mpower}}{
-     if \code{k2k.method = "minkowski"}, the power used in creating the distance. This is passed to the \code{p} argument of \code{\link{dist}}.
+     if \code{k2k.method = "minkowski"}, the power used in creating the distance. This is passed to the \code{p} argument of \fun{dist}.
      }
   }
 }
 The arguments \code{distance} (and related arguments), \code{exact}, \code{mahvars}, \code{discard} (and related arguments), \code{replace}, \code{m.order}, \code{caliper} (and related arguments), and \code{ratio} are ignored with a warning.
 }
 \section{Outputs}{
-All outputs described in \code{\link{matchit}} are returned with \code{method = "cem"} except for \code{match.matrix}. When \code{k2k = TRUE}, a \code{match.matrix} component with the matched pairs is also included.
+All outputs described in \fun{matchit} are returned with \code{method = "cem"} except for \code{match.matrix}. When \code{k2k = TRUE}, a \code{match.matrix} component with the matched pairs is also included.
 }
 \details{
 If the coarsening is such that there are no exact matches with the coarsened variables, the \code{grouping} and \code{cutpoints} arguments can be used to modify the matching specification. Reducing the number of cutpoints or grouping some variable values together can make it easier to find matches. See Examples below. Removing variables can also help (but they will likely not be balanced unless highly correlated with the included variables). To take advantage of coarsened exact matching without failing to find any matches, the covariates can be manually coarsened outside of \code{matchit()} and then supplied to the \code{exact} argument in a call to \code{matchit()} with another matching method.
@@ -84,7 +88,7 @@ This would split \code{X1} into 4 bins, \code{X2} into bins based on the provide
 \note{
 This method does not rely on the \emph{cem} package, instead using code written for \emph{MatchIt}, but its design is based on the original \emph{cem} functions. Versions of \emph{MatchIt} prior to 4.1.0 did rely on \emph{cem}, so results may differ between versions. There are a few differences between the ways \emph{MatchIt} and \emph{cem} (and older versions of \emph{MatchIt}) differ in executing coarsened exact matching, described below.
 \itemize{
-\item{In \emph{MatchIt}, when a single number is supplied to \code{cutpoints}, it describes the number of bins; in \emph{cem}, it describes the number of cutpoints separating bins. The \emph{MatchIt} method is closer to how \code{\link{hist}} processes breaks points to create bins.}
+\item{In \emph{MatchIt}, when a single number is supplied to \code{cutpoints}, it describes the number of bins; in \emph{cem}, it describes the number of cutpoints separating bins. The \emph{MatchIt} method is closer to how \fun{hist} processes breaks points to create bins.}
 \item{When \code{cutpoints} are used, \code{"ss"} (for Shimazaki-Shinomoto's rule) can be used in \emph{cem} but not in \emph{MatchIt}.}
 \item{When \code{k2k = TRUE}, \emph{MatchIt} matches on the original variables (scaled), whereas \emph{cem} matches on the coarsened variables. Because the variables are already exactly matched on the coarsened variables, matching in \emph{cem} is equivalent to random matching within strata.}
 \item{When \code{k2k = TRUE}, in \emph{MatchIt} matched units are identified by pair membership, and the original stratum membership prior to 1:1 matching is discarded. In \emph{cem}, pairs are not identified beyond the stratum the members are part of.}
@@ -103,7 +107,7 @@ Iacus, S. M., King, G., & Porro, G. (2012). Causal Inference without Balance Che
 }
 
 \seealso{
-\code{\link{matchit}} for a detailed explanation of the inputs and outputs of a call to \code{matchit}.
+\fun{matchit} for a detailed explanation of the inputs and outputs of a call to \code{matchit()}.
 
 The \emph{cem} package, upon which this method is based and which provided the workhorse in previous versions of \emph{MatchIt}.
 

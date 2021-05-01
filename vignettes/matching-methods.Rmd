@@ -123,6 +123,8 @@ The `distance` argument can also be specified as `"mahalanobis"`. For nearest ne
 
 where $\mathbf{x}$ is a $p \times 1$ vector containing the value of each of the $p$ included covariates for that unit, $S$ is the covariance matrix among all the covariates, and $S^{-1}$ is the (generalized) inverse of $S$. The R function `mahalanobis()` is used to compute this. Mahalanobis distance matching tends to work better with continuous covariates than with categorical covariates. For creating close pairs, Mahalanobis distance matching tends work better than propensity score matching because Mahalanobis distance-paired units will have close values on all of the covariates, whereas propensity score-paired units may be close on the propensity score but not on any of the covariates themselves. This feature was the basis of King and Nielsen's [-@king2019] warning against using propensity scores for matching.
 
+`distance` can also be supplied as a matrix of distance values between units. This makes it possible to use handcrafted distance matrices or distances created outside `MatchIt`, e.g., using `optmatch::match_on()`. Only nearest neighbor, optimal pair, and optimal full matching allow this specification.
+
 The propensity score can have uses other than as the basis for matching. It can be used to define a region of common support, outside which units are dropped prior to matching; this is implemented by the `discard` option. It can also be used to define a caliper, the maximum distance two units can be before they are prohibited from being paired with each other; this is implemented by the `caliper` argument. To estimate or supply a propensity score for one of these purposes but not use it as the distance measure for matching (e.g., to perform Mahalanobis distance matching instead), the `mahvars` argument can be specified. These options are described below.
 
 ### Implementing common support restrictions (`discard`)
@@ -140,6 +142,10 @@ To perform Mahalanobis distance matching without the need to estimate or use a p
 ### Exact matching (`exact`)
 
 To perform exact matching on all supplied covariates, the `method` argument can be set to `"exact"`. To perform exact matching only on some covariates and some other form of matching within exact matching strata on other covariates, the `exact` argument can be used. Covariates supplied to the `exact` argument will be matched exactly, and the form of matching specified by `method` (e.g., `"nearest"` for nearest neighbor matching) will take place within each exact matching stratum. This can be a good way to gain some of the benefits of exact matching without completely succumbing to the curse of dimensionality. As with exact matching performed with `method = "exact"`, any units in strata lacking members of one of the treatment groups will be left unmatched. Note that although matching occurs within each exact matching stratum, propensity score estimation and computation of the Mahalanobis distance occur in the full sample. **If units from the treated group are unmatched due to an exact matching restriction, the estimand no longer corresponds to the ATT.**
+
+### Anti-exact matching (`antiexact`)
+
+Anti-exact matching adds a restriction such that a treated and control unit with same values of any of the specified anti-exact matching variables cannot be paired. This can be useful when finding comparison units outside of a unit's group, such as when matching units in one group to units in another when units within the same group might otherwise be close matches. See examples [here](https://stackoverflow.com/questions/66526115/propensity-score-matching-with-panel-data) and [here](https://stackoverflow.com/questions/61120201/avoiding-duplicates-from-propensity-score-matching?rq=1).
 
 ### Matching with replacement (`replace`)
 

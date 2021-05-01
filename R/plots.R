@@ -2,7 +2,7 @@ matchit.covplot <- function(object, type = "qq", interactive = TRUE, which.xs = 
 
   #Create covariate matrix; include exact and mahvars
   if (!is.null(which.xs)) {
-    if (!is.vector(which.xs, "character")) {
+    if (!is.character(which.xs)) {
       stop("'which.xs' should be a vector of variables for which balance is to be displayed.", call. = FALSE)
     }
     if (!all(which.xs %in% names(object$X))) {
@@ -98,7 +98,7 @@ matchit.covplot.subclass <- function(object, type = "qq", which.subclass = NULL,
 
   #Create covariate matrix; include exact and mahvars
   if (!is.null(which.xs)) {
-    if (!is.vector(which.xs, "character")) {
+    if (!is.character(which.xs)) {
       stop("'which.xs' should be a vector of variables for which balance is to be displayed.", call. = FALSE)
     }
     if (!all(which.xs %in% names(object$X))) {

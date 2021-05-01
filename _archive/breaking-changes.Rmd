@@ -1,0 +1,33 @@
+---
+title: "Breaking Changes"
+author: "Noah Greifer"
+date: "12/7/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+`MatchIt` has gone through some major changes over the years. The change from version 3.0.2, released on 2018-01-09, to version 4.0.0, released on 2020-11-14, involved major changes, some of which are breaking changes (i.e., using old code yields errors), and others of which change the results of old code. This document attempts to catalogue all these changes.
+
+##Best practices for ensuring repricability of results
+
+To ensure replicability of results across time or even within a project, we recommend taking the following steps:
+
+- **Including a version number** when using a package in an analysis script and when rmentioning a package in a research report or article. To find the version of `MatchIt` you are using, you can run `packageVersion("MatchIt")`.
+- **Setting a seed**, especially if you are not certain that the analysis is completely deterministic. A seed marks the starting point for a random generator, which is used for determining the result of any random process, including drawing numbers from a distribution or using `sample()` to sample data (e.g., when bootstrapping). You can set a seed using `set.seed(100)`, replacing `100` with the whole number of your choice. This should be done at the start of each analysis script or before any analysis that involves a random process if the script is not to be run all at once. Examples of common methods that involve random processes include Monte Carlo simulations, bootstrapping, multiple imputation, Bayesian analysis, and k-fold cross-validation. When using a function that involve parallelization, read the function documentation for how you can ensure replicability correctly, as setting a seed normally will often not work.
+
+In `MatchIt`, random process can enter in a number of ways. In versions prior to 4.0.0, random processes occurred when using coarsened exact matching with `k2k = TRUE`, nearest neighbor matching with `m.order = "random"` or when ties were present, and genetic matching. In versions 4.0.0 and up, the number of random process has decreased to enhance replicability. These changes and others are described below.
+
+##How to install old versions of MatchIt
+
+If you updated `MatchIt` from an old version but find that your analysis depends on an older version, you can run the following to install the old version:
+```{r, eval=F}
+devtools::install_version("MatchIt", version = "3.0.2")
+```
+If your analysis script includes code to install packages that will be used, it might be better to use `devtools::install_version()` as above with the version number included than `install.packages()`, which always installs the most recent version of a package. This can be more complicated when a package was installed from GitHub, as these packages are not always stable and things can change without version numbers changing. It is always a good idea to use official packages on CRAN and Bioconductor to ensure replicable analyses.
+
+##Changes between MatchIt 3.0.2 and new versions
+
+A major part of the `MatchIt` 4.0.0 update was increasing the ease of using `MatchIt` correctly. Often this involved rewritting entire functions. Although effort was taken to ensure the arguments to functions was the same across versions, the internals and sometimes the outputs of functions may differ. The table below attempts to provide a comprehensive list of changes that may affect how your code runs. In particular, this table is meant to be a resource for understanding why the results of an analysis differ when using a newer version of `MatchIt` after using an older version to perform the original analysis.

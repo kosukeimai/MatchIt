@@ -195,12 +195,15 @@ print.matchit <- function(x, ...) {
   nm <- is.null(x[["method"]])
   cat("A matchit object")
   cat(paste0("\n - method: ", info.to.method(info)))
-  if (!is.null(x[["distance"]]) || info$mahalanobis) {
+  if (!is.null(x[["distance"]]) || info$mahalanobis || identical(info$distance, "user")) {
     cat("\n - distance: ")
     if (info$mahalanobis) cat("Mahalanobis")
     if (info$distance != "mahalanobis") {
       if (info$mahalanobis) cat(" [matching]\n             ")
-      if (info$distance == "user") cat("User-defined") else cat("Propensity score")
+
+      if (info$distance != "user") cat("Propensity score")
+      else if (info$distance_is_matrix) cat("User-defined (matrix)")
+      else cat("User-defined")
 
       if (cal || disl) {
         cat(" [")
@@ -336,6 +339,7 @@ summary.matchit <- function(object, interactions = FALSE,
   else {
     X <- get.covs.matrix(data = object$X)
   }
+  X_assign <- attr(X, "assign")
 
   if (!is.null(addlvariables)) {
     if (is.character(addlvariables)) {
@@ -363,14 +367,10 @@ summary.matchit <- function(object, interactions = FALSE,
     }
 
     if (is.data.frame(addlvariables)) {
-      if (!all(vapply(addlvariables, is.numeric, logical(1L)))) {
-        addlvariables <- get.covs.matrix(data = addlvariables)
-      }
-      else {
-        addlvariables <- as.matrix(addlvariables)
-      }
+      addlvariables <- get.covs.matrix(data = addlvariables)
     }
 
+    addl_assign <- attr(addlvariables, "assign")
     X <- cbind(X, addlvariables[, setdiff(colnames(addlvariables), colnames(X)), drop = FALSE])
   }
 
@@ -386,9 +386,7 @@ summary.matchit <- function(object, interactions = FALSE,
                                                              2, nchar(nam[startsWith(nam, "`") & endsWith(nam, "`")]) - 1)
   }
 
-
-
-  matched <- !is.null(object$method) || (!is.null(object$weights) && !all(object$weights == 1))
+  matched <- !is.null(object$info$method)
   un <- un || !matched
 
   if (standardize) {

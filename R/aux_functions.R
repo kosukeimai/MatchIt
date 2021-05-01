@@ -1,7 +1,7 @@
 #Auxiliary functions; some from WeightIt
 
 #Function to process inputs and throw warnings or errors if inputs are incompatible with methods
-check.inputs <- function(method, distance, mcall, exact, mahvars, caliper, discard, reestimate, s.weights, replace, ratio, m.order, estimand) {
+check.inputs <- function(method, distance, mcall, exact, mahvars, antiexact, caliper, discard, reestimate, s.weights, replace, ratio, m.order, estimand) {
 
   null.method <- is.null(method)
   if (null.method) {
@@ -14,21 +14,21 @@ check.inputs <- function(method, distance, mcall, exact, mahvars, caliper, disca
   ignored.inputs <- character(0)
   error.inputs <- character(0)
   if (null.method) {
-    for (i in c("exact", "mahvars", "caliper", "std.caliper", "replace", "ratio", "m.order")) {
+    for (i in c("exact", "mahvars", "antiexact", "caliper", "std.caliper", "replace", "ratio", "m.order")) {
       if (i %in% names(mcall) && !is.null(get0(i))) {
         ignored.inputs <- c(ignored.inputs, i)
       }
     }
   }
   else if (method == "exact") {
-    for (i in c("distance", "exact", "mahvars", "caliper", "std.caliper", "discard", "reestimate", "replace", "ratio", "m.order")) {
+    for (i in c("distance", "exact", "mahvars", "antiexact", "caliper", "std.caliper", "discard", "reestimate", "replace", "ratio", "m.order")) {
       if (i %in% names(mcall) && !is.null(get0(i))) {
         ignored.inputs <- c(ignored.inputs, i)
       }
     }
   }
   else if (method == "cem") {
-    for (i in c("distance", "exact", "mahvars", "caliper", "std.caliper", "discard", "reestimate", "replace", "ratio", "m.order")) {
+    for (i in c("distance", "exact", "mahvars", "antiexact", "caliper", "std.caliper", "discard", "reestimate", "replace", "ratio", "m.order")) {
       if (i %in% names(mcall) && !is.null(get0(i))) {
         ignored.inputs <- c(ignored.inputs, i)
       }
@@ -88,7 +88,7 @@ check.inputs <- function(method, distance, mcall, exact, mahvars, caliper, disca
       stop("distance = \"mahalanobis\" is not compatible with subclassification.", call. = FALSE)
     }
 
-    for (i in c("exact", "mahvars", "caliper", "std.caliper", "replace", "ratio", "m.order")) {
+    for (i in c("exact", "mahvars", "antiexact", "caliper", "std.caliper", "replace", "ratio", "m.order")) {
       if (i %in% names(mcall) && !is.null(get0(i))) {
         ignored.inputs <- c(ignored.inputs, i)
       }
@@ -108,9 +108,9 @@ check.inputs <- function(method, distance, mcall, exact, mahvars, caliper, disca
 }
 
 #Function to process distance and give warnings about new syntax
-process.distance <- function(distance, method) {
+process.distance <- function(distance, method, treat) {
   if (is.null(distance) && !is.null(method)) stop(paste0("'distance' cannot be NULL with method = \"", method, "\"."), call. = FALSE)
-  else if (is.vector(distance, "character") && length(distance) == 1) {
+  else if (is.character(distance) && length(distance) == 1) {
     allowable.distances <- c("glm", "cbps", "gam", "mahalanobis", "nnet", "rpart", "bart", "randomforest")
 
     if (tolower(distance) %in% c("cauchit", "cloglog", "linear.cloglog", "linear.log", "linear.logit", "linear.probit",
@@ -138,8 +138,35 @@ process.distance <- function(distance, method) {
     }
 
   }
-  else if (!is.vector(distance, "numeric")) {
-    stop("'distance' must be a string with the name of the distance measure to be used or a numeric vector containing distance measures.", call. = FALSE)
+  else if (!is.numeric(distance) || (!is.null(dim(distance)) && length(dim(distance)) != 2)) {
+    stop("'distance' must be a string with the name of the distance measure to be used or a numeric vector or matrix containing distance measures.", call. = FALSE)
+  }
+  else if (is.matrix(distance) && (is.null(method) || method %in% c("genetic", "subclass", "cem", "exact"))) {
+    if (is.null(method)) method <- "NULL" else method <- paste0('"', method, '"')
+    stop(paste0("'distance' cannot be supplied as a matrix with method = ", method, "."), call. = FALSE)
+  }
+
+  if (is.numeric(distance)) {
+    if (is.matrix(distance)) {
+      dim.distance <- dim(distance)
+      if (all(dim.distance == length(treat))) {
+        if (!is.null(rownames(distance))) distance <- distance[names(treat),, drop = FALSE]
+        if (!is.null(colnames(distance))) distance <- distance[,names(treat), drop = FALSE]
+        distance <- distance[treat == 1, treat == 0, drop = FALSE]
+      }
+      else if (all(dim.distance == c(sum(treat==1), sum(treat==0)))) {
+        if (!is.null(rownames(distance))) distance <- distance[names(treat)[treat == 1],, drop = FALSE]
+        if (!is.null(colnames(distance))) distance <- distance[,names(treat)[treat == 0], drop = FALSE]
+      }
+      else {
+        stop("When supplied as a matrix, 'distance' must have dimensions NxN or N1xN0. See ?distance for details.", call. = FALSE)
+      }
+    }
+    else {
+      if (length(distance) != length(treat)) stop("'distance' must be the same length as the dataset if specified as a numeric vector.", call. = FALSE)
+    }
+
+    if (anyNA(distance)) stop("Missing values are not allowed in 'distance'.", call. = FALSE)
   }
   return(distance)
 }
@@ -247,6 +274,9 @@ process.caliper <- function(caliper = NULL, method, data = NULL, covs = NULL, ma
   if (anyNA(std.caliper)) stop("'std.caliper' cannot be NA.", call. = FALSE)
 
   if (any(std.caliper)) {
+    if ("" %in% names(std.caliper) && isTRUE(std.caliper[names(std.caliper) == ""]) && is.matrix(distance)) {
+      stop("When 'distance' is supplied as a matrix and a caliper for it is specified, 'std.caliper' must be FALSE for the distance measure.", call. = FALSE)
+    }
     caliper[std.caliper] <- caliper[std.caliper] * vapply(names(caliper)[std.caliper], function(x) {
       if (x == "") sd(distance[!discarded])
       else if (cal.in.data[x]) sd(data[[x]][!discarded])
@@ -364,6 +394,24 @@ check.package <- function(package.name, alternative = FALSE) {
     }
   }
   else return(invisible(TRUE))
+}
+
+#Create info component of matchit object
+create_info <- function(method, fn1, link, discard, replace, ratio, mcall, mahalanobis, subclass, antiexact, distance_is_matrix) {
+  info <- list(method = method,
+               distance = if (is.null(fn1)) NULL else sub("distance2", "", fn1, fixed = TRUE),
+               link = if (is.null(link)) NULL else link,
+               discard = discard,
+               replace = if (!is.null(method) && method %in% c("nearest", "genetic")) replace else NULL,
+               ratio = if (!is.null(method) && method %in% c("nearest", "optimal", "genetic")) ratio else NULL,
+               max.controls = if (!is.null(method) && method %in% c("nearest", "optimal")) mcall[["max.controls"]] else NULL,
+               # mahalanobis = is.full.mahalanobis || !is.null(mahvars),
+               mahalanobis = mahalanobis,
+               # subclass = if (!is.null(method) && method == "subclass") length(unique(match.out$subclass[!is.na(match.out$subclass)])) else NULL,
+               subclass = if (!is.null(method) && method == "subclass") length(unique(subclass[!is.na(subclass)])) else NULL,
+               # antiexact = if (!is.null(antiexact)) colnames(antiexactcovs) else NULL
+               antiexact = antiexact,
+               distance_is_matrix = distance_is_matrix)
 }
 
 #Function to turn a method name into a phrase describing the method
@@ -557,9 +605,9 @@ binarize <- function(variable, zero = NULL, one = NULL) {
 }
 
 #Make interaction vector out of matrix of covs
-exactify <- function(X, nam = NULL, sep = "|") {
+exactify <- function(X, nam = NULL, sep = "|", include_vars = FALSE) {
   if (is.null(nam)) nam <- rownames(X)
-  if (is.matrix(X)) X <- lapply(seq_len(ncol(X)), function(i) X[,i])
+  if (is.matrix(X)) X <- setNames(lapply(seq_len(ncol(X)), function(i) X[,i]), colnames(X))
   if (!is.list(X)) stop("X must be a matrix, data frame, or list.")
 
   #Ensure no ambiguity is created by sep
@@ -567,6 +615,17 @@ exactify <- function(X, nam = NULL, sep = "|") {
   unique.x <- unlist(lapply(X, function(x) as.character(unique(x))))
   while (any(grepl(sep, unique.x, fixed = TRUE))) {
     sep0 <- paste0(sep0, sep)
+  }
+
+  if (include_vars) {
+    for (i in seq_along(X)) {
+      if (is.character(X[[i]]) || is.factor(X[[i]])) {
+        X[[i]] <- paste0(names(X)[i], ' = "', X[[i]], '"')
+      }
+      else {
+        X[[i]] <- paste0(names(X)[i], ' = ', X[[i]])
+      }
+    }
   }
 
   out <- do.call("paste", c(X, sep = sep0))
@@ -677,7 +736,11 @@ get.covs.matrix <- function(formula = NULL, data = NULL) {
 
   X <- model.matrix(formula, data = mf,
                     contrasts.arg = lapply(Filter(is.factor, mf),
-                                           contrasts, contrasts = FALSE))[,-1,drop = FALSE]
+                                           contrasts, contrasts = FALSE))
+  assign <- attr(X, "assign")[-1]
+  X <- X[,-1,drop=FALSE]
+  attr(X, "assign") <- assign
+
   return(X)
 }
 

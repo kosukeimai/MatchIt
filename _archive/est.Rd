@@ -20,10 +20,10 @@ est_effect(formula, m, type, measure, nboot, boot.type, robust.type = NULL, conf
 }
 \arguments{
   \item{formula}{
-a \code{\link{formula}} with the outcome variable on the left hand side and the treatment variable (and possibly covariates and treatment-covariate interactions) on the right-hand side. Including covariates in the outcome model is generally recommended when possible, as doing so usually improves precision and can reduce bias.
+a \fun{formula} with the outcome variable on the left hand side and the treatment variable (and possibly covariates and treatment-covariate interactions) on the right-hand side. Including covariates in the outcome model is generally recommended when possible, as doing so usually improves precision and can reduce bias.
 }
   \item{m}{
-a \code{matchit}; the result of a call to \code{\link{matchit}}. Running \code{\link{match.data}} on this object (possibly with other arguments passed through \dots) must produce a dataset containing all the variables named in \code{formula}.
+a \code{matchit} object; the result of a call to \fun{matchit}. Running \fun{match.data} on this object (possibly with other arguments passed through \dots) must produce a dataset containing all the variables named in \code{formula}.
 }
   \item{type}{
 the method used to estimate the standard error and confidence interval. Allowable options include \code{"clusterrobust"} for cluster-robust standard errors (with pair membership as the cluster), \code{"robust"} for robust standard errors that don't account for pairs, \code{"blockboot"} for the block bootstrap, and \code{"boot"} for the full (traditional) bootstrap. Not all methods are compatible with all inputs. See Details. The default after exact matching, coarsened exact matching, and propensity score subclassification is \code{"robust"}; otherwise the default is \code{"clusterrobust"}. Abbreviations are allowed.
@@ -44,22 +44,22 @@ when \code{type} is \code{"clusterrobust"} or \code{"robust"}, the type of stand
 the confidence level used for the confidence intervals. Default is .95. All intervals are two-sided.
 }
   \item{...}{
-for \code{est_effect}, arguments passed to \code{\link{match.data}} and \code{\link{get_matches}} (e.g., to ensure no variable name conflicts occur or to supply an alternate dataset) and to \code{\link[boot:boot]{boot}} to control running of the bootstrap. Ignored for other functions documented here.
+for \code{est_effect}, arguments passed to \fun{match.data} and \fun{get_matches} (e.g., to ensure no variable name conflicts occur or to supply an alternate dataset) and to \code{\link[boot:boot]{boot}} to control running of the bootstrap. Ignored for other functions documented here.
 }
   \item{x, object}{
-an \code{eff_matchit} object; the output of a call to \code{est_effect}.
+an \code{eff_matchit} object; the output of a call to \code{est_effect()}.
 }
   \item{digits}{
-the number of significant digits to print. This argument is passed to \code{\link{printCoefmat}}.
+the number of significant digits to print. This argument is passed to \fun{printCoefmat}.
 }
   \item{link}{
 whether to return the estimates on the link scale (\code{TRUE}; default) or outcome scale (\code{FALSE}). See Details.
 }
 }
 \details{
-\code{est_effect} estimates the marginal effect of treatment on the outcome using the matched dataset extracted from the supplied \code{matchit} object. For continuous and binary outcomes, a version of g-computation is used to estimate the marginal effects and expected potential outcomes under each treatment. For survival outcomes, a Cox proportional hazards model implemented in \code{\link[survival:coxph]{coxph}} is used.
+\code{est_effect()} estimates the marginal effect of treatment on the outcome using the matched dataset extracted from the supplied \code{matchit} object. For continuous and binary outcomes, a version of g-computation is used to estimate the marginal effects and expected potential outcomes under each treatment. For survival outcomes, a Cox proportional hazards model implemented in \code{\link[survival:coxph]{coxph}} is used.
 
-With continuous outcomes, a linear model is used to estimate the treatment effect. \code{formula} is passed to \code{\link{lm}} to fit the outcome model, and then linear contrasts are used to estimate the effect of treatment and the average potential outcomes under each treatment, averaging across the matched sample. When \code{type} is \code{"clusterrobust"} or \code{"robust"}, the corresponding variance-covariance matrix computed by \code{\link[sandwich:vcovCL]{vcovCL}} or \code{\link[sandwich:vcovHC]{vcovHC}} is used to estimate the standard errors, which are used in standard Wald tests and normal-theory confidence intervals. The critical test statistic and the p-value for the test are computed using a T-distribution with the degrees of freedom of the residual of the linear model. When \code{type} is \code{"blockboot"} or \code{"boot"}, the standard errors (whcih are only used in the hypothesis tests) are computed as the standard deviations of the bootstrapped estimates, and the confidence intervals are computed using the method supplied to \code{boot.type}.
+With continuous outcomes, a linear model is used to estimate the treatment effect. \code{formula} is passed to \fun{lm} to fit the outcome model, and then linear contrasts are used to estimate the effect of treatment and the average potential outcomes under each treatment, averaging across the matched sample. When \code{type} is \code{"clusterrobust"} or \code{"robust"}, the corresponding variance-covariance matrix computed by \code{\link[sandwich:vcovCL]{vcovCL}} or \code{\link[sandwich:vcovHC]{vcovHC}} is used to estimate the standard errors, which are used in standard Wald tests and normal-theory confidence intervals. The critical test statistic and the p-value for the test are computed using a T-distribution with the degrees of freedom of the residual of the linear model. When \code{type} is \code{"blockboot"} or \code{"boot"}, the standard errors (whcih are only used in the hypothesis tests) are computed as the standard deviations of the bootstrapped estimates, and the confidence intervals are computed using the method supplied to \code{boot.type}.
 
 With binary outcomes, the model used to estimate the treatment effect depends on the effect measure requested and the presence of covariates in the outcome model. When the outcome model has covariates (i.e., variables other than the treatment, either as main effects or interactions), the effects are estimated using g-computation, with the potential outcomes estimated using logistic regression models. The estimated conditional probabilities under each treatment are averaged across individuals to form average marginal risks, and the effect is computed as the contrast between the average risks based on the desired effect measure \emph{on the link scale}. Bootstrapping must be used to estimate the standard errors and confidence intervals when covariates are included in the outcome models. When the outcome doesn't contain covariates, a generalized linear model is used to estimate the effect on the link scale. Model-based (cluster-)robust standard errors can be computed from the models to be used in constructing confidence intervals and in hypothesis tests, or bootstrapping can be used. For the risk difference, a linear model (i.e., \code{\link{lm}} is used (note the estimate is the same as using a binomial generalized linear model with an identity link but is easier to compute). For the risk ratio, a \code{\link{quasipoisson}} model with a log link is fit using \code{\link{glm}} (note the estimate is the same as using a binomial generalized linear model with a log link but is less likely to have convergence issues). For the odds ratio, a \code{\link{quasibinomial}} model with a logit link is fit using \code{glm}.
 
