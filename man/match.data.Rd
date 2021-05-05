@@ -75,7 +75,8 @@ These columns will take on the name supplied to the corresponding arguments in t
 
 If \code{data} or the original dataset supplied to \code{matchit()} was a \code{data.table} or \code{tbl}, the \code{match.data()} output will have the same class, but the \code{get_matches()} output will always be a base R \code{data.frame}.
 
-In addition to their base class (e.g., \code{data.frame} or \code{tbl}), returned objects have the class \code{matchdata} or \code{getmatches}. This class is important when using \code{\link[=rbind.matchdata]{rbind()}} to append matched datasets.
+%In addition to their base class (e.g., \code{data.frame} or \code{tbl}), returned objects have the class \code{matchdata} or \code{getmatches}. This class is important when using \code{\link[=rbind.matchdata]{rbind()}} to append matched datasets.
+In addition to their base class (e.g., \code{data.frame} or \code{tbl}), returned objects have the class \code{matchdata} or \code{getmatches}. This class is important when using \code{rbind()} to append matched datasets.
 }
 
 \seealso{
