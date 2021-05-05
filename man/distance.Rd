@@ -59,7 +59,7 @@ data("lalonde")
 m.out1 <- matchit(treat ~ age + educ + race + married +
                     nodegree + re74 + re75, data = lalonde,
                   distance = "glm", link = "linear.probit")
-\dontshow{if (requireNamespace("CBPS", quietly = TRUE)) \{}
+\dontshow{if (requireNamespace("mgcv", quietly = TRUE)) \{}
 # GAM logistic PS with smoothing splines (s()):
 m.out2 <- matchit(treat ~ s(age) + s(educ) + race + married +
                     nodegree + re74 + re75, data = lalonde,
