@@ -58,15 +58,5 @@ m.out1 <- matchit(treat ~ age + educ + married +
                     race + nodegree + re74 + re75,
                   data = lalonde, replace = TRUE,
                   caliper = .05, ratio = 4)
-
-m.data1 <- match.data(m.out1, data = lalonde,
-                      distance = "prop.score")
-dim(m.data1) #one row per matched unit
-head(m.data1, 10)
-
-g.matches1 <- get_matches(m.out1, data = lalonde,
-                          distance = "prop.score")
-dim(g.matches1) #multiple rows per matched unit
-head(g.matches1, 10)
 }
 
