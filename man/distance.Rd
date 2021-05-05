@@ -54,12 +54,13 @@ When specifying an argument to \code{distance} that estimates a propensity score
 In versions of \emph{MatchIt} prior to 4.0.0, \code{distance} was specified in a slightly different way. When specifying arguments using the old syntax, they will automatically be converted to the corresponding method in the new syntax but a warning will be thrown. \code{distance = "logit"}, the old default, will still work in the new syntax, though \code{distance = "glm", link = "logit"} is preferred (note that these are the default settings and don't need to be made explicit).
 }
 \examples{
+\dontrun{
 data("lalonde")
 # Linearized probit regression PS:
 m.out1 <- matchit(treat ~ age + educ + race + married +
                     nodegree + re74 + re75, data = lalonde,
                   distance = "glm", link = "linear.probit")
-\dontshow{if (requireNamespace("CBPS", quietly = TRUE)) \{}
+\dontshow{if (requireNamespace("mgcv", quietly = TRUE)) \{}
 # GAM logistic PS with smoothing splines (s()):
 m.out2 <- matchit(treat ~ s(age) + s(educ) + race + married +
                     nodegree + re74 + re75, data = lalonde,
@@ -110,4 +111,4 @@ dist_mat <- optmatch::match_on(
 m.out7 <- matchit(treat ~ age + educ + race + nodegree +
                     married + re74 + re75, data = lalonde,
                   distance = dist_mat)
-\dontshow{\}}}
+\dontshow{\}}}}
