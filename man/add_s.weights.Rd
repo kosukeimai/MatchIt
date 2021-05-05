@@ -56,7 +56,6 @@ summary(m.out, improvement = FALSE)
 # 4:1 matching w/replacement
 m.out1 <- matchit(treat ~ age + educ + married +
                     race + nodegree + re74 + re75,
-                  data = lalonde, replace = FALSE,
-                  ratio = 1)
+                  data = lalonde)
 }
 
