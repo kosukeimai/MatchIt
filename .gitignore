@@ -4,3 +4,6 @@
 .Ruserdata
 inst/doc
 docs
+^*\.o$
+^*\.so$
+src\tabulateC.o
