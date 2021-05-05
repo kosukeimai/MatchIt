@@ -92,7 +92,7 @@ data("lalonde")
 # 4:1 matching w/replacement
 m.out1 <- matchit(treat ~ age + educ + married +
                     race + nodegree + re74 + re75,
-                  data = lalonde, replace = TRUE,
+                  data = lalonde, replace = FALSE,
                   caliper = .05, ratio = 4)
 
 m.data1 <- match.data(m.out1, data = lalonde,
