@@ -17,6 +17,7 @@
 
 %JUST FOR TEST
 \newcommand{\pkgfun2}{\code{#3()}}
+\newcommand{\pkgfun}{\code{#2()}}
 
 %E.g., \pkgfun2{sandwich}{vcovCL}{meatCL} is the same as \code{\link[sandwich:vcovCL]{meatCL}} if the sandwich package is installed and \code{meatCL} if not.
 
