@@ -57,6 +57,6 @@ summary(m.out, improvement = FALSE)
 m.out1 <- matchit(treat ~ age + educ + married +
                     race + nodegree + re74 + re75,
                   data = lalonde, replace = TRUE,
-                  caliper = .05, ratio = 4)
+                  caliper = .05, ratio = 1)
 }
 
