@@ -13,11 +13,7 @@
 
 %\pkgfun2{}{}{} does the same but allows the third argument to be printed, e.g., to use text that differs from the name of the function in the new package.
 %\newcommand{\pkgfun2}{\ifelse{\Sexpr[results=rd,stage=render]{requireNamespace("#1", quietly = TRUE)}}{\code{\link[#1:#2]{#3()}}}{\code{#3()}}}
-%\newcommand{\pkgfun2}{\code{\link[#1:#2]{#3()}}}
-
-%JUST FOR TEST
-\newcommand{\pkgfun2}{\code{#3()}}
-\newcommand{\pkgfun}{\code{#2()}}
+\newcommand{\pkgfun2}{\code{\link[#1:#2]{#3()}}}
 
 %E.g., \pkgfun2{sandwich}{vcovCL}{meatCL} is the same as \code{\link[sandwich:vcovCL]{meatCL}} if the sandwich package is installed and \code{meatCL} if not.
 
