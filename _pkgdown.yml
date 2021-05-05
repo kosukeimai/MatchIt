@@ -14,7 +14,7 @@ reference:
 - contents:
   - match.data
   - get_matches
-  - rbind
+  - rbind.matchdata
 - title: Datasets
 - contents:
   - lalonde
