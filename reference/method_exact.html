@@ -47,12 +47,16 @@
 
 
 <meta property="og:title" content="Exact Matching — method_exact" />
-<meta property="og:description" content="In matchit, setting method = &quot;exact&quot; performs exact matching. With exact matching, a complete cross of the covariates is used to form subclasses defined by each combination of the covariate levels. Any subclass that doesn't contain both treated and control units is discarded, leaving only subclasses containing treatment and control units that are exactly equal on the included covariates. The benefits of exact matching are that confounding due to the covariates included is completely eliminated, regardless of the functional form of the treatment or outcome models. The problem is that typically many units will be discarded, sometimes dramatically reducing precision and changing the target population of inference. To use exact matching in combination with another matching method (i.e., to exact match on some covariates and some other form of matching on others), use the exact argument with that method.
-This page details the allowable arguments with method = &quot;exact&quot;. See matchit for an explanation of what each argument means in a general context and how it can be specified.
-Below is how matchit is used for exact matching:
-matchit(formula, data = NULL, method = &quot;exact&quot;,
-        estimand = &quot;ATT&quot;, s.weights = NULL,
-        verbose = FALSE, ...)
+<meta property="og:description" content="In matchit(), setting method = &quot;exact&quot; performs exact matching. With exact matching, a complete cross of the covariates is used to form subclasses defined by each combination of the covariate levels. Any subclass that doesn't contain both treated and control units is discarded, leaving only subclasses containing treatment and control units that are exactly equal on the included covariates. The benefits of exact matching are that confounding due to the covariates included is completely eliminated, regardless of the functional form of the treatment or outcome models. The problem is that typically many units will be discarded, sometimes dramatically reducing precision and changing the target population of inference. To use exact matching in combination with another matching method (i.e., to exact match on some covariates and some other form of matching on others), use the exact argument with that method.
+This page details the allowable arguments with method = &quot;exact&quot;. See matchit() for an explanation of what each argument means in a general context and how it can be specified.
+Below is how matchit() is used for exact matching:
+matchit(formula,
+        data = NULL,
+        method = &quot;exact&quot;,
+        estimand = &quot;ATT&quot;,
+        s.weights = NULL,
+        verbose = FALSE,
+        ...)
 
 " />
 <meta property="og:image" content="/logo.png" />
@@ -87,7 +91,7 @@ matchit(formula, data = NULL, method = &quot;exact&quot;,
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">MatchIt</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">4.1.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">4.2.0</span>
       </span>
     </div>
 
@@ -156,12 +160,16 @@ matchit(formula, data = NULL, method = &quot;exact&quot;,
     </div>
 
     <div class="ref-description">
-    <p>In <code><a href='matchit.html'>matchit</a></code>, setting <code>method = "exact"</code> performs exact matching. With exact matching, a complete cross of the covariates is used to form subclasses defined by each combination of the covariate levels. Any subclass that doesn't contain both treated and control units is discarded, leaving only subclasses containing treatment and control units that are exactly equal on the included covariates. The benefits of exact matching are that confounding due to the covariates included is completely eliminated, regardless of the functional form of the treatment or outcome models. The problem is that typically many units will be discarded, sometimes dramatically reducing precision and changing the target population of inference. To use exact matching in combination with another matching method (i.e., to exact match on some covariates and some other form of matching on others), use the <code>exact</code> argument with that method.</p>
-<p>This page details the allowable arguments with <code>method = "exact"</code>. See <code><a href='matchit.html'>matchit</a></code> for an explanation of what each argument means in a general context and how it can be specified.</p>
-<p>Below is how <code>matchit</code> is used for exact matching:</p><pre>
-<span class='fu'><a href='matchit.html'>matchit</a></span><span class='op'>(</span><span class='va'>formula</span>, data <span class='op'>=</span> <span class='cn'>NULL</span>, method <span class='op'>=</span> <span class='st'>"exact"</span>,
-        estimand <span class='op'>=</span> <span class='st'>"ATT"</span>, s.weights <span class='op'>=</span> <span class='cn'>NULL</span>,
-        verbose <span class='op'>=</span> <span class='cn'>FALSE</span>, <span class='va'>...</span><span class='op'>)</span>
+    <p>In <code><a href='matchit.html'>matchit()</a></code>, setting <code>method = "exact"</code> performs exact matching. With exact matching, a complete cross of the covariates is used to form subclasses defined by each combination of the covariate levels. Any subclass that doesn't contain both treated and control units is discarded, leaving only subclasses containing treatment and control units that are exactly equal on the included covariates. The benefits of exact matching are that confounding due to the covariates included is completely eliminated, regardless of the functional form of the treatment or outcome models. The problem is that typically many units will be discarded, sometimes dramatically reducing precision and changing the target population of inference. To use exact matching in combination with another matching method (i.e., to exact match on some covariates and some other form of matching on others), use the <code>exact</code> argument with that method.</p>
+<p>This page details the allowable arguments with <code>method = "exact"</code>. See <code><a href='matchit.html'>matchit()</a></code> for an explanation of what each argument means in a general context and how it can be specified.</p>
+<p>Below is how <code><a href='matchit.html'>matchit()</a></code> is used for exact matching:</p><pre>
+<span class='fu'><a href='matchit.html'>matchit</a></span><span class='op'>(</span><span class='va'>formula</span>,
+        data <span class='op'>=</span> <span class='cn'>NULL</span>,
+        method <span class='op'>=</span> <span class='st'>"exact"</span>,
+        estimand <span class='op'>=</span> <span class='st'>"ATT"</span>,
+        s.weights <span class='op'>=</span> <span class='cn'>NULL</span>,
+        verbose <span class='op'>=</span> <span class='cn'>FALSE</span>,
+        <span class='va'>...</span><span class='op'>)</span>
 </pre>
 
     </div>
@@ -172,7 +180,7 @@ matchit(formula, data = NULL, method = &quot;exact&quot;,
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>formula</th>
-      <td><p>a two-sided <code><a href='https://rdrr.io/r/stats/formula.html'>formula</a></code> object containing the treatment and covariates to be used in creating the subclasses defined by a full cross of the covariate levels.</p></td>
+      <td><p>a two-sided <code><a href='https://rdrr.io/r/stats/formula.html'>formula()</a></code> object containing the treatment and covariates to be used in creating the subclasses defined by a full cross of the covariate levels.</p></td>
     </tr>
     <tr>
       <th>data</th>
@@ -184,7 +192,7 @@ matchit(formula, data = NULL, method = &quot;exact&quot;,
     </tr>
     <tr>
       <th>estimand</th>
-      <td><p>a string containing the desired estimand. Allowable options include <code>"ATT"</code>, <code>"ATC"</code>, and <code>"ATE"</code>. The estimand controls how the weights are computed; see the Computing Weights section at <code><a href='matchit.html'>matchit</a></code> for details.</p></td>
+      <td><p>a string containing the desired estimand. Allowable options include <code>"ATT"</code>, <code>"ATC"</code>, and <code>"ATE"</code>. The estimand controls how the weights are computed; see the Computing Weights section at <code><a href='matchit.html'>matchit()</a></code> for details.</p></td>
     </tr>
     <tr>
       <th>s.weights</th>
@@ -202,14 +210,14 @@ matchit(formula, data = NULL, method = &quot;exact&quot;,
 
     <h2 class="hasAnchor" id="outputs"><a class="anchor" href="#outputs"></a>Outputs</h2>
 
-    <p>All outputs described in <code><a href='matchit.html'>matchit</a></code> are returned with <code>method = "exact"</code> except for <code>match.matrix</code>. This is because matching strata are not indexed by treated units as they are in some other forms of matching.</p>
+    <p>All outputs described in <code><a href='matchit.html'>matchit()</a></code> are returned with <code>method = "exact"</code> except for <code>match.matrix</code>. This is because matching strata are not indexed by treated units as they are in some other forms of matching.</p>
     <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
 
     <p>In a manuscript, you don't need to cite another package when using <code>method = "exact"</code> because the matching is performed completely within <em>MatchIt</em>. For example, a sentence might read:</p>
 <p><em>Exact matching was performed using the MatchIt package (Ho, Imai, King, &amp; Stuart, 2011) in R.</em></p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p><code><a href='matchit.html'>matchit</a></code> for a detailed explanation of the inputs and outputs of a call to <code>matchit</code>. The <code>exact</code> argument can be used with other methods to perform exact matching in combination with other matching methods.</p>
+    <div class='dont-index'><p><code><a href='matchit.html'>matchit()</a></code> for a detailed explanation of the inputs and outputs of a call to <code><a href='matchit.html'>matchit()</a></code>. The <code>exact</code> argument can be used with other methods to perform exact matching in combination with other matching methods.</p>
 <p><code><a href='method_cem.html'>method_cem</a></code> for coarsened exact matching, which performs exact matching on coarsened versions of the covariates.</p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>

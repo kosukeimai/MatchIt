@@ -38,7 +38,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">MatchIt</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">4.1.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">4.2.0</span>
       </span>
     </div>
 
@@ -104,7 +104,7 @@
       <h1 data-toc-skip>Matching Methods</h1>
                         <h4 class="author">Noah Greifer</h4>
             
-            <h4 class="date">2020-12-15</h4>
+            <h4 class="date">2021-05-05</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/kosukeimai/MatchIt/blob/master/vignettes/matching-methods.Rmd"><code>vignettes/matching-methods.Rmd</code></a></small>
       <div class="hidden name"><code>matching-methods.Rmd</code></div>
@@ -202,6 +202,7 @@
 <p>The default <code>distance</code> argument is <code>"glm"</code>, which estimates propensity scores using logistic regression or another generalized linear model. The <code>link</code> and <code>distance.options</code> arguments can be supplied to further specify the options for the propensity score models, including whether to use the raw propensity score or a linearized version of it (e.g., the logit of a logistic regression propensity score, which has been commonly referred to and recommended in the propensity score literature <span class="citation">(Austin <a href="#ref-austin2011a" role="doc-biblioref">2011</a>; Stuart <a href="#ref-stuart2010" role="doc-biblioref">2010</a>)</span>). Allowable options for the propensity score model include parametric and machine learning-based models, each of which have their strengths and limitations and may perform differently depending on the unique qualities of each dataset. We recommend multiple types of models be tried to find one that yields the best balance, as there is no way to make a single recommendation that will work for all cases.</p>
 <p>The <code>distance</code> argument can also be specified as <code>"mahalanobis"</code>. For nearest neighbor and optimal (full or pair) matching, this triggers <code><a href="../reference/matchit.html">matchit()</a></code> not to estimate propensity scores but rather to use just the Mahalanobis distance, which is defined for a treated unit <span class="math inline">\(i\)</span> and a control unit <span class="math inline">\(j\)</span> as <span class="math display">\[\delta_{MD}(\mathbf{x}_i,\mathbf{x}_j)=\sqrt{(\mathbf{x}_i - \mathbf{x}_j)'S^{-1}(\mathbf{x}_i - \mathbf{x}_j)}\]</span></p>
 <p>where <span class="math inline">\(\mathbf{x}\)</span> is a <span class="math inline">\(p \times 1\)</span> vector containing the value of each of the <span class="math inline">\(p\)</span> included covariates for that unit, <span class="math inline">\(S\)</span> is the covariance matrix among all the covariates, and <span class="math inline">\(S^{-1}\)</span> is the (generalized) inverse of <span class="math inline">\(S\)</span>. The R function <code><a href="https://rdrr.io/r/stats/mahalanobis.html">mahalanobis()</a></code> is used to compute this. Mahalanobis distance matching tends to work better with continuous covariates than with categorical covariates. For creating close pairs, Mahalanobis distance matching tends work better than propensity score matching because Mahalanobis distance-paired units will have close values on all of the covariates, whereas propensity score-paired units may be close on the propensity score but not on any of the covariates themselves. This feature was the basis of King and Nielsen’s <span class="citation">(<a href="#ref-king2019" role="doc-biblioref">2019</a>)</span> warning against using propensity scores for matching.</p>
+<p><code>distance</code> can also be supplied as a matrix of distance values between units. This makes it possible to use handcrafted distance matrices or distances created outside <code>MatchIt</code>, e.g., using <code><a href="https://rdrr.io/pkg/optmatch/man/match_on-methods.html">optmatch::match_on()</a></code>. Only nearest neighbor, optimal pair, and optimal full matching allow this specification.</p>
 <p>The propensity score can have uses other than as the basis for matching. It can be used to define a region of common support, outside which units are dropped prior to matching; this is implemented by the <code>discard</code> option. It can also be used to define a caliper, the maximum distance two units can be before they are prohibited from being paired with each other; this is implemented by the <code>caliper</code> argument. To estimate or supply a propensity score for one of these purposes but not use it as the distance measure for matching (e.g., to perform Mahalanobis distance matching instead), the <code>mahvars</code> argument can be specified. These options are described below.</p>
 </div>
 <div id="implementing-common-support-restrictions-discard" class="section level3">
@@ -223,6 +224,11 @@
 <h3 class="hasAnchor">
 <a href="#exact-matching-exact" class="anchor"></a>Exact matching (<code>exact</code>)</h3>
 <p>To perform exact matching on all supplied covariates, the <code>method</code> argument can be set to <code>"exact"</code>. To perform exact matching only on some covariates and some other form of matching within exact matching strata on other covariates, the <code>exact</code> argument can be used. Covariates supplied to the <code>exact</code> argument will be matched exactly, and the form of matching specified by <code>method</code> (e.g., <code>"nearest"</code> for nearest neighbor matching) will take place within each exact matching stratum. This can be a good way to gain some of the benefits of exact matching without completely succumbing to the curse of dimensionality. As with exact matching performed with <code>method = "exact"</code>, any units in strata lacking members of one of the treatment groups will be left unmatched. Note that although matching occurs within each exact matching stratum, propensity score estimation and computation of the Mahalanobis distance occur in the full sample. <strong>If units from the treated group are unmatched due to an exact matching restriction, the estimand no longer corresponds to the ATT.</strong></p>
+</div>
+<div id="anti-exact-matching-antiexact" class="section level3">
+<h3 class="hasAnchor">
+<a href="#anti-exact-matching-antiexact" class="anchor"></a>Anti-exact matching (<code>antiexact</code>)</h3>
+<p>Anti-exact matching adds a restriction such that a treated and control unit with same values of any of the specified anti-exact matching variables cannot be paired. This can be useful when finding comparison units outside of a unit’s group, such as when matching units in one group to units in another when units within the same group might otherwise be close matches. See examples <a href="https://stackoverflow.com/questions/66526115/propensity-score-matching-with-panel-data">here</a> and <a href="https://stackoverflow.com/questions/61120201/avoiding-duplicates-from-propensity-score-matching?rq=1">here</a>.</p>
 </div>
 <div id="matching-with-replacement-replace" class="section level3">
 <h3 class="hasAnchor">

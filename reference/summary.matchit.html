@@ -80,7 +80,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">MatchIt</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">4.1.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">4.2.0</span>
       </span>
     </div>
 
@@ -175,7 +175,7 @@
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>object</th>
-      <td><p>a <code>matchit</code> object; the output of a call to <code><a href='matchit.html'>matchit</a></code>.</p></td>
+      <td><p>a <code>matchit</code> object; the output of a call to <code><a href='matchit.html'>matchit()</a></code>.</p></td>
     </tr>
     <tr>
       <th>interactions</th>
@@ -183,7 +183,7 @@
     </tr>
     <tr>
       <th>addlvariables</th>
-      <td><p>additional variable for which balance statistics are to be computed along with the covariates in the <code>matchit</code> object. Can be entered in one of three ways: as a data frame of covariates with as many rows as there were units in the original <code>matchit</code> call, as a string containing the names of variables in <code>data</code>, or as a right-sided <code>formula</code> with the additional variables (and possibly their transformations) found in <code>data</code>, the environment, or the <code>matchit</code> object. Balance on squares and interactions of the additional variables will be included if <code>interactions = TRUE</code>.</p></td>
+      <td><p>additional variable for which balance statistics are to be computed along with the covariates in the <code>matchit</code> object. Can be entered in one of three ways: as a data frame of covariates with as many rows as there were units in the original <code><a href='matchit.html'>matchit()</a></code> call, as a string containing the names of variables in <code>data</code>, or as a right-sided <code>formula</code> with the additional variables (and possibly their transformations) found in <code>data</code>, the environment, or the <code>matchit</code> object. Balance on squares and interactions of the additional variables will be included if <code>interactions = TRUE</code>.</p></td>
     </tr>
     <tr>
       <th>standardize</th>
@@ -215,7 +215,7 @@
     </tr>
     <tr>
       <th>x</th>
-      <td><p>a <code>summay.matchit</code> or <code>summary.matchit.subclass</code> object; the output of a call to <code>summary</code>.</p></td>
+      <td><p>a <code>summay.matchit</code> or <code>summary.matchit.subclass</code> object; the output of a call to <code><a href='https://rdrr.io/r/base/summary.html'>summary()</a></code>.</p></td>
     </tr>
     <tr>
       <th>...</th>
@@ -225,29 +225,29 @@
 
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p><code>summary</code> computes a balance summary of a <code>matchit</code> object. This include balance before and after matching or subclassification, as well as the percent improvement in balance. The variables for which balance statistics are computed are those included in the <code>formula</code>, <code>exact</code>, and <code>mahvars</code> arguments to <code><a href='matchit.html'>matchit</a></code>, as well as the distance measure if <code>distance</code> is not <code>"mahalanobis"</code>. The <code>X</code> component of the <code>matchit</code> object is used to supply the covariates.</p>
-<p>The standardized mean differences are computed both before and after matching or subclassification as the difference in treatment group means divided by a standardization factor computed in the unmatched (original) sample. The standardization factor depends on the argument supplied to <code>estimand</code> in <code>matchit</code>: for <code>"ATT"</code>, it is the standard deviation in the treated group; for <code>"ATC"</code>, it is the standard deviation in the control group; for <code>"ATE"</code>, it is the square root of the average of the variances within each treatment group. The post-matching mean difference is computed with weighted means in the treatment groups using the matching or subclassification weights.</p>
-<p>The variance ratio is computed as the ratio of the treatment group variances. Variance ratios are not computed for binary variables because their variance is a function solely of their mean. After matching, weighted variances are computed using the formula used in <code><a href='https://rdrr.io/r/stats/cov.wt.html'>cov.wt</a></code>. The percent reduction in bias is computed using the log of the variance ratios.</p>
+    <p><code><a href='https://rdrr.io/r/base/summary.html'>summary()</a></code> computes a balance summary of a <code>matchit</code> object. This include balance before and after matching or subclassification, as well as the percent improvement in balance. The variables for which balance statistics are computed are those included in the <code>formula</code>, <code>exact</code>, and <code>mahvars</code> arguments to <code><a href='matchit.html'>matchit()</a></code>, as well as the distance measure if <code>distance</code> is not <code>"mahalanobis"</code>. The <code>X</code> component of the <code>matchit</code> object is used to supply the covariates.</p>
+<p>The standardized mean differences are computed both before and after matching or subclassification as the difference in treatment group means divided by a standardization factor computed in the unmatched (original) sample. The standardization factor depends on the argument supplied to <code>estimand</code> in <code><a href='matchit.html'>matchit()</a></code>: for <code>"ATT"</code>, it is the standard deviation in the treated group; for <code>"ATC"</code>, it is the standard deviation in the control group; for <code>"ATE"</code>, it is the square root of the average of the variances within each treatment group. The post-matching mean difference is computed with weighted means in the treatment groups using the matching or subclassification weights.</p>
+<p>The variance ratio is computed as the ratio of the treatment group variances. Variance ratios are not computed for binary variables because their variance is a function solely of their mean. After matching, weighted variances are computed using the formula used in <code><a href='https://rdrr.io/r/stats/cov.wt.html'>cov.wt()</a></code>. The percent reduction in bias is computed using the log of the variance ratios.</p>
 <p>The eCDF difference statistics are computed by creating a (weighted) eCDF for each group and taking the difference between them for each covariate value. The eCDF is a function that outputs the (weighted)  proportion of units with covariate values at or lower than the input value. The maximum eCDF difference is the same thing as the Kolmogorov-Smirnov statistic. The values are bounded at zero and one, with values closer to zero indicating good overlap between the covariate distributions in the treated and control groups. For binary variables, all eCDF differences are equal to the (weighted) difference in proportion and are computed that way.</p>
 <p>The QQ difference statistics are computed by creating two samples of the same size by interpolating the values of the larger one. The values are arranged in order for each sample. The QQ difference for each quantile is the difference between the observed covariate values at that quantile between the two groups. The difference is on the scale of the original covariate. Values close to zero indicate good overlap between the covariate distributions in the treated and control groups. A weighted interpolation is used for post-matching QQ differences. For binary variables, all QQ differences are equal to the (weighted) difference in proportion and are computed that way.</p>
-<p>The pair distance is the average of the absolute differences of a variable between pairs. For example, if a treated unit was paired with four control units, that set of units would contribute four absolute differences to the average. Within a subclass, each combination of treated and control unit forms a pair that contributes once to the average. The pair distance is described in Stuart and Green (2008) and is the value that is minimized when using optimal (full) matching. When <code>standardize = TRUE</code>, the standardized versions of the variables are used, where the standardization factor is as described above for the standardized mean differences. Pair distances are not computed in the unmatched sample (because there are no pairs). Because pair distance can take a while to compute, especially with large datasets or for many covariates, setting <code>pair.dist = FALSE</code> is one way to speed up <code>summary</code>.</p>
+<p>The pair distance is the average of the absolute differences of a variable between pairs. For example, if a treated unit was paired with four control units, that set of units would contribute four absolute differences to the average. Within a subclass, each combination of treated and control unit forms a pair that contributes once to the average. The pair distance is described in Stuart and Green (2008) and is the value that is minimized when using optimal (full) matching. When <code>standardize = TRUE</code>, the standardized versions of the variables are used, where the standardization factor is as described above for the standardized mean differences. Pair distances are not computed in the unmatched sample (because there are no pairs). Because pair distance can take a while to compute, especially with large datasets or for many covariates, setting <code>pair.dist = FALSE</code> is one way to speed up <code><a href='https://rdrr.io/r/base/summary.html'>summary()</a></code>.</p>
 <p>The effective sample size (ESS) is a measure of the size of a hypothetical unweighted sample with roughly the same precision as a weighted sample. When non-uniform matching weights are computed (e.g., as a result of full matching, matching with replacement, or subclassification), the ESS can be used to quantify the potential precision remaining in the matched sample. The ESS will always be less than or equal to the matched sample size, reflecting the loss in precision due to using the weights. With non-uniform weights, it is printed in the sample size table; otherwise, it is removed because it does not contain additional information above the matched sample size.</p>
 <p>After subclassification, the aggregate balance statistics are computed using the subclassification weights rather than averaging across subclasses.</p>
-<p>All balance statistics (except pair differences) are computed incorporating the sampling weights supplied to <code>matchit</code>, if any. The unadjusted balance statistics include the sampling weights and the adjusted balance statistics use the matching weights multiplied by the sampling weights.</p>
+<p>All balance statistics (except pair differences) are computed incorporating the sampling weights supplied to <code><a href='matchit.html'>matchit()</a></code>, if any. The unadjusted balance statistics include the sampling weights and the adjusted balance statistics use the matching weights multiplied by the sampling weights.</p>
 <p>When printing, <code>NA</code> values are replaced with periods (<code>.</code>), and the pair distance column in the unmatched and percent balance improvement components of the output are omitted.</p>
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
     <p>For <code>matchit</code> objects, a <code>summary.matchit</code> object, which is a list with the following components:</p>
 <p></p>
-<dt>call</dt><dd><p>the original call to <code><a href='matchit.html'>matchit</a></code></p></dd>
+<dt>call</dt><dd><p>the original call to <code><a href='matchit.html'>matchit()</a></code></p></dd>
   <dt>nn</dt><dd><p>a matrix of the sample sizes in the original (unmatched) and matched samples</p></dd>
   <dt>sum.all</dt><dd><p>if <code>un = TRUE</code>, a matrix of balance statistics for each covariate in the original (unmatched) sample</p></dd>
   <dt>sum.matched</dt><dd><p>a matrix of balance statistics for each covariate in the matched sample</p></dd>
   <dt>reduction</dt><dd><p>if <code>improvement = TRUE</code>, a matrix of the percent reduction in imbalance for each covariate in the matched sample</p></dd>
 
-For match.subclass objects, a summary.matchit.subclass object, which is a list as above with the following additional components:
+For match.subclass objects, a summary.matchit.subclass object, which is a list as above containing the following components:
 
-  <dt>call</dt><dd><p>the original call to <code><a href='matchit.html'>matchit</a></code></p></dd>
+  <dt>call</dt><dd><p>the original call to <code><a href='matchit.html'>matchit()</a></code></p></dd>
   <dt>sum.all</dt><dd><p>if <code>un = TRUE</code>, a matrix of balance statistics for each covariate in the original sample</p></dd>
   <dt>sum.subclass</dt><dd><p>if <code>subclass</code> is not <code>FALSE</code>, a list of matrices of balance statistics for each subclass</p></dd>
   <dt>sum.across</dt><dd><p>a matrix of balance statistics for each covariate computed using the subclassification weights</p></dd>
@@ -258,8 +258,8 @@ For match.subclass objects, a summary.matchit.subclass object, which is a list a
 
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p><code><a href='https://rdrr.io/r/base/summary.html'>summary</a></code> for the generic method; <code><a href='plot.summary.matchit.html'>plot.summary.matchit</a></code> for making a Love plot from <code>summary</code> output.</p>
-<p><code><a href='https://ngreifer.github.io/cobalt/reference/bal.tab.html'>cobalt::bal.tab</a></code>, which also displays balance for <code>matchit</code> objects.</p></div>
+    <div class='dont-index'><p><code><a href='https://rdrr.io/r/base/summary.html'>summary()</a></code> for the generic method; <code><a href='plot.summary.matchit.html'>plot.summary.matchit()</a></code> for making a Love plot from <code><a href='https://rdrr.io/r/base/summary.html'>summary()</a></code> output.</p>
+<p><code><a href='https://ngreifer.github.io/cobalt/reference/bal.tab.matchit.html'>cobalt::bal.tab()</a></code>, which also displays balance for <code>matchit</code> objects.</p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='st'>"lalonde"</span><span class='op'>)</span>

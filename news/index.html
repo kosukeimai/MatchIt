@@ -79,7 +79,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">MatchIt</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">4.1.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">4.2.0</span>
       </span>
     </div>
 
@@ -146,6 +146,21 @@
       <small>Source: <a href='https://github.com/kosukeimai/MatchIt/blob/master/NEWS.md'><code>NEWS.md</code></a></small>
     </div>
 
+    <div id="matchit-420" class="section level1">
+<h1 class="page-header" data-toc-text="4.2.0">
+<a href="#matchit-420" class="anchor"></a>MatchIt 4.2.0<small> Unreleased </small>
+</h1>
+<ul>
+<li><p><code>distance</code> can now be supplied as a distance matrix containing pairwise distances with nearest neighbor, optimal, and full matching. This means users can create a distance matrix outside <code>MatchIt</code> (e.g., using <code><a href="https://rdrr.io/pkg/optmatch/man/match_on-methods.html">optmatch::match_on()</a></code>) and <code><a href="../reference/matchit.html">matchit()</a></code> will use those distances in the matching. See <code><a href="../reference/distance.html">?distance</a></code> for details.</p></li>
+<li><p>Added <code><a href="../reference/rbind.matchdata.html">rbind.matchdata()</a></code> method for <code>matchdata</code> and <code>getmatches</code> objects (the output of <code><a href="../reference/match.data.html">match.data()</a></code> and <code><a href="../reference/match.data.html">get_matches()</a></code>, respectively) to avoid subclass conflicts when combining matched samples after matching within subgroups.</p></li>
+<li><p>Added a section in <code><a href="../articles/estimating-effects.html">vignette("estimating-effects")</a></code> on moderation analysis with matching, making use of the new <code><a href="https://rdrr.io/r/base/cbind.html">rbind()</a></code> method.</p></li>
+<li><p>Added <code>antiexact</code> argument to perform anti-exact matching, i.e., matching that ensures treated and control units have different values of certain variables. See <a href="https://stackoverflow.com/questions/66526115/propensity-score-matching-with-panel-data">here</a> and <a href="https://stackoverflow.com/questions/61120201/avoiding-duplicates-from-propensity-score-matching?rq=1">here</a> for examples where this feature was requested and might be useful. Anti-exact matching works with nearest neighbor, optimal, full, and genetic matching. The argument to <code>antiexact</code> should be similar to an argument to <code>exact</code>: either a string or a one-sided <code>formula</code> containing the names of the anti-exact matching variables.</p></li>
+<li><p>Slight speed improvements for nearest neighbor matching, especially with <code>exact</code> specified.</p></li>
+<li><p>A spurious warning that would appear when using a large <code>ratio</code> with <code>replace = TRUE</code> and <code>method = "nearest"</code> no longer appears.</p></li>
+<li><p>Fixed a bug when trying to supply <code>distance</code> as a labelled numeric vector (i.e., resulting from <code>haven</code>).</p></li>
+<li><p>Fixed some typos in the documentation and vignettes.</p></li>
+</ul>
+</div>
     <div id="matchit-410" class="section level1">
 <h1 class="page-header" data-toc-text="4.1.0">
 <a href="#matchit-410" class="anchor"></a>MatchIt 4.1.0<small> 2020-12-15 </small>

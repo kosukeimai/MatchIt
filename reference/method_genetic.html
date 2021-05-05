@@ -47,16 +47,27 @@
 
 
 <meta property="og:title" content="Genetic Matching — method_genetic" />
-<meta property="og:description" content="In matchit, setting method = &quot;genetic&quot; performs genetic matching. Genetic matching is a form of nearest neighbor matching where distances are computed as the generalized Mahalanobis distance, which is a generalization of the Mahalanobis distance with a scaling factor for each covariate that represents the importance of that covariate to the distance. A genetic algorithm is used to select the scaling factors. The scaling factors are chosen as those which maximize a criterion related to covariate balance, which can be chosen, but which by default is the smallest p-value in covariate balance tests among the covariates. This method relies on and is a wrapper for Matching::GenMatch and Matching::Match, which use rgenoud::genoud to perform the optimization using the genetic algorithm.
-This page details the allowable arguments with method = &quot;genmatch&quot;. See matchit for an explanation of what each argument means in a general context and how it can be specified.
-Below is how matchit is used for genetic matching:
-matchit(formula, data = NULL, method = &quot;genetic&quot;,
-        distance = &quot;glm&quot;, link = &quot;logit&quot;,
-        distance.options = list(), estimand = &quot;ATT&quot;,
-        exact = NULL, mahvars = NULL, discard = &quot;none&quot;,
-        reestimate = FALSE, s.weights = NULL,
-        replace = FALSE, m.order = NULL,
-        caliper = NULL, ratio = 1, verbose = FALSE,
+<meta property="og:description" content="In matchit(), setting method = &quot;genetic&quot; performs genetic matching. Genetic matching is a form of nearest neighbor matching where distances are computed as the generalized Mahalanobis distance, which is a generalization of the Mahalanobis distance with a scaling factor for each covariate that represents the importance of that covariate to the distance. A genetic algorithm is used to select the scaling factors. The scaling factors are chosen as those which maximize a criterion related to covariate balance, which can be chosen, but which by default is the smallest p-value in covariate balance tests among the covariates. This method relies on and is a wrapper for Matching::GenMatch() and Matching::Match(), which use rgenoud::genoud() to perform the optimization using the genetic algorithm.
+This page details the allowable arguments with method = &quot;genetic&quot;. See matchit() for an explanation of what each argument means in a general context and how it can be specified.
+Below is how matchit() is used for genetic matching:
+matchit(formula,
+        data = NULL,
+        method = &quot;genetic&quot;,
+        distance = &quot;glm&quot;,
+        link = &quot;logit&quot;,
+        distance.options = list(),
+        estimand = &quot;ATT&quot;,
+        exact = NULL,
+        mahvars = NULL,
+        antiexact = NULL,
+        discard = &quot;none&quot;,
+        reestimate = FALSE,
+        s.weights = NULL,
+        replace = FALSE,
+        m.order = NULL,
+        caliper = NULL,
+        ratio = 1,
+        verbose = FALSE,
         ...)
 
 " />
@@ -92,7 +103,7 @@ matchit(formula, data = NULL, method = &quot;genetic&quot;,
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">MatchIt</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">4.1.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">4.2.0</span>
       </span>
     </div>
 
@@ -161,16 +172,27 @@ matchit(formula, data = NULL, method = &quot;genetic&quot;,
     </div>
 
     <div class="ref-description">
-    <p>In <code><a href='matchit.html'>matchit</a></code>, setting <code>method = "genetic"</code> performs genetic matching. Genetic matching is a form of nearest neighbor matching where distances are computed as the generalized Mahalanobis distance, which is a generalization of the Mahalanobis distance with a scaling factor for each covariate that represents the importance of that covariate to the distance. A genetic algorithm is used to select the scaling factors. The scaling factors are chosen as those which maximize a criterion related to covariate balance, which can be chosen, but which by default is the smallest p-value in covariate balance tests among the covariates. This method relies on and is a wrapper for <code><a href='https://rdrr.io/pkg/Matching/man/GenMatch.html'>Matching::GenMatch</a></code> and <code><a href='https://rdrr.io/pkg/Matching/man/Match.html'>Matching::Match</a></code>, which use <code><a href='https://rdrr.io/pkg/rgenoud/man/genoud.html'>rgenoud::genoud</a></code> to perform the optimization using the genetic algorithm.</p>
-<p>This page details the allowable arguments with <code>method = "genmatch"</code>. See <code><a href='matchit.html'>matchit</a></code> for an explanation of what each argument means in a general context and how it can be specified.</p>
-<p>Below is how <code>matchit</code> is used for genetic matching:</p><pre>
-<span class='fu'><a href='matchit.html'>matchit</a></span><span class='op'>(</span><span class='va'>formula</span>, data <span class='op'>=</span> <span class='cn'>NULL</span>, method <span class='op'>=</span> <span class='st'>"genetic"</span>,
-        distance <span class='op'>=</span> <span class='st'>"glm"</span>, link <span class='op'>=</span> <span class='st'>"logit"</span>,
-        distance.options <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span><span class='op'>)</span>, estimand <span class='op'>=</span> <span class='st'>"ATT"</span>,
-        exact <span class='op'>=</span> <span class='cn'>NULL</span>, mahvars <span class='op'>=</span> <span class='cn'>NULL</span>, discard <span class='op'>=</span> <span class='st'>"none"</span>,
-        reestimate <span class='op'>=</span> <span class='cn'>FALSE</span>, s.weights <span class='op'>=</span> <span class='cn'>NULL</span>,
-        replace <span class='op'>=</span> <span class='cn'>FALSE</span>, m.order <span class='op'>=</span> <span class='cn'>NULL</span>,
-        caliper <span class='op'>=</span> <span class='cn'>NULL</span>, ratio <span class='op'>=</span> <span class='fl'>1</span>, verbose <span class='op'>=</span> <span class='cn'>FALSE</span>,
+    <p>In <code><a href='matchit.html'>matchit()</a></code>, setting <code>method = "genetic"</code> performs genetic matching. Genetic matching is a form of nearest neighbor matching where distances are computed as the generalized Mahalanobis distance, which is a generalization of the Mahalanobis distance with a scaling factor for each covariate that represents the importance of that covariate to the distance. A genetic algorithm is used to select the scaling factors. The scaling factors are chosen as those which maximize a criterion related to covariate balance, which can be chosen, but which by default is the smallest p-value in covariate balance tests among the covariates. This method relies on and is a wrapper for <code><a href='https://rdrr.io/pkg/Matching/man/GenMatch.html'>Matching::GenMatch()</a></code> and <code><a href='https://rdrr.io/pkg/Matching/man/Match.html'>Matching::Match()</a></code>, which use <code><a href='https://rdrr.io/pkg/rgenoud/man/genoud.html'>rgenoud::genoud()</a></code> to perform the optimization using the genetic algorithm.</p>
+<p>This page details the allowable arguments with <code>method = "genetic"</code>. See <code><a href='matchit.html'>matchit()</a></code> for an explanation of what each argument means in a general context and how it can be specified.</p>
+<p>Below is how <code><a href='matchit.html'>matchit()</a></code> is used for genetic matching:</p><pre>
+<span class='fu'><a href='matchit.html'>matchit</a></span><span class='op'>(</span><span class='va'>formula</span>,
+        data <span class='op'>=</span> <span class='cn'>NULL</span>,
+        method <span class='op'>=</span> <span class='st'>"genetic"</span>,
+        distance <span class='op'>=</span> <span class='st'>"glm"</span>,
+        link <span class='op'>=</span> <span class='st'>"logit"</span>,
+        distance.options <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span><span class='op'>)</span>,
+        estimand <span class='op'>=</span> <span class='st'>"ATT"</span>,
+        exact <span class='op'>=</span> <span class='cn'>NULL</span>,
+        mahvars <span class='op'>=</span> <span class='cn'>NULL</span>,
+        antiexact <span class='op'>=</span> <span class='cn'>NULL</span>,
+        discard <span class='op'>=</span> <span class='st'>"none"</span>,
+        reestimate <span class='op'>=</span> <span class='cn'>FALSE</span>,
+        s.weights <span class='op'>=</span> <span class='cn'>NULL</span>,
+        replace <span class='op'>=</span> <span class='cn'>FALSE</span>,
+        m.order <span class='op'>=</span> <span class='cn'>NULL</span>,
+        caliper <span class='op'>=</span> <span class='cn'>NULL</span>,
+        ratio <span class='op'>=</span> <span class='fl'>1</span>,
+        verbose <span class='op'>=</span> <span class='cn'>FALSE</span>,
         <span class='va'>...</span><span class='op'>)</span>
 </pre>
 
@@ -182,7 +204,7 @@ matchit(formula, data = NULL, method = &quot;genetic&quot;,
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>formula</th>
-      <td><p>a two-sided <code><a href='https://rdrr.io/r/stats/formula.html'>formula</a></code> object containing the treatment and covariates to be used in creating the distance measure used in the matching. This formula will be supplied to the functions that estimate the distance measure and is used to determine the covariates whose balance is to be optimized.</p></td>
+      <td><p>a two-sided <code><a href='https://rdrr.io/r/stats/formula.html'>formula()</a></code> object containing the treatment and covariates to be used in creating the distance measure used in the matching. This formula will be supplied to the functions that estimate the distance measure and is used to determine the covariates whose balance is to be optimized.</p></td>
     </tr>
     <tr>
       <th>data</th>
@@ -194,7 +216,7 @@ matchit(formula, data = NULL, method = &quot;genetic&quot;,
     </tr>
     <tr>
       <th>distance</th>
-      <td><p>the distance measure to be used. See <code><a href='distance.html'>distance</a></code> for allowable options. When set to <code>"mahalanobis"</code>, only the covariates in <code>formula</code> are supplied to the generalized Mahalanobis distance matrix to have their scaling factors chosen. Otherwise, the distance measure is included with the covariates in <code>formula</code> to be supplied to the generalized Mahalanobis distance matrix unless <code>mahvars</code> is specified.</p></td>
+      <td><p>the distance measure to be used. See <code><a href='distance.html'>distance</a></code> for allowable options. When set to <code>"mahalanobis"</code>, only the covariates in <code>formula</code> are supplied to the generalized Mahalanobis distance matrix to have their scaling factors chosen. Otherwise, the distance measure is included with the covariates in <code>formula</code> to be supplied to the generalized Mahalanobis distance matrix unless <code>mahvars</code> is specified. <code>distance</code> <em>cannot</em> be supplied as a distance matrix.</p></td>
     </tr>
     <tr>
       <th>link</th>
@@ -217,6 +239,10 @@ matchit(formula, data = NULL, method = &quot;genetic&quot;,
       <td><p>when a distance measure other than <code>"mahalanobis"</code> is used (e.g., for caliper matching or to discard units for common support), which covariates should be supplied to the generalized Mahalanobis distance matrix. If unspecified, all variables in <code>formula</code> will be supplied to the distance matrix. Use <code>mahvars</code> to only supply a subset. Even if <code>mahvars</code> is specified, balance will be optimized on all covariates in <code>formula</code>.</p></td>
     </tr>
     <tr>
+      <th>antiexact</th>
+      <td><p>for which variables ant-exact matching should take place. Anti-exact matching is processed using the <code>restrict</code> argument to <code><a href='https://rdrr.io/pkg/Matching/man/GenMatch.html'>Matching::GenMatch()</a></code> and <code><a href='https://rdrr.io/pkg/Matching/man/Match.html'>Matching::Match()</a></code>.</p></td>
+    </tr>
+    <tr>
       <th>discard</th>
       <td><p>a string containing a method for discarding units outside a region of common support. Only allowed when <code>distance</code> is not <code>"mahalanobis"</code>.</p></td>
     </tr>
@@ -226,7 +252,7 @@ matchit(formula, data = NULL, method = &quot;genetic&quot;,
     </tr>
     <tr>
       <th>s.weights</th>
-      <td><p>the variable containing sampling weights to be incorporated into propensity score models and balance statistics. These are also supplied to <code>GenMatch</code> for use in computing the balance t-test p-values in the process of matching.</p></td>
+      <td><p>the variable containing sampling weights to be incorporated into propensity score models and balance statistics. These are also supplied to <code>GenMatch()</code> for use in computing the balance t-test p-values in the process of matching.</p></td>
     </tr>
     <tr>
       <th>replace</th>
@@ -234,7 +260,7 @@ matchit(formula, data = NULL, method = &quot;genetic&quot;,
     </tr>
     <tr>
       <th>m.order</th>
-      <td><p>the order that the matching takes place. The default for <code>distance = "mahalanobis"</code> is <code>"data"</code>. Otherwise, the default is <code>"largest"</code>. See <code><a href='matchit.html'>matchit</a></code> for allowable options.</p></td>
+      <td><p>the order that the matching takes place. The default for <code>distance = "mahalanobis"</code> is <code>"data"</code>. Otherwise, the default is <code>"largest"</code>. See <code><a href='matchit.html'>matchit()</a></code> for allowable options.</p></td>
     </tr>
     <tr>
       <th>caliper</th>
@@ -250,38 +276,38 @@ matchit(formula, data = NULL, method = &quot;genetic&quot;,
     </tr>
     <tr>
       <th>verbose</th>
-      <td><p><code>logical</code>; whether information about the matching process should be printed to the console. When <code>TRUE</code>, output from <code>GenMatch</code> with <code>print.level = 2</code> will be displayed. Default is <code>FALSE</code> for no printing other than warnings.</p></td>
+      <td><p><code>logical</code>; whether information about the matching process should be printed to the console. When <code>TRUE</code>, output from <code>GenMatch()</code> with <code>print.level = 2</code> will be displayed. Default is <code>FALSE</code> for no printing other than warnings.</p></td>
     </tr>
     <tr>
       <th>...</th>
-      <td><p>additional arguments passed to <code><a href='https://rdrr.io/pkg/Matching/man/GenMatch.html'>Matching::GenMatch</a></code>. Potentially useful options include <code>pop.size</code>, <code>max.generations</code>, and <code>fit.func</code>. If <code>pop.size</code> is not specified, a warning from <em>Matching</em> will be thrown reminding you to change it. Note that the <code>ties</code> and <code>CommonSupport</code> arguments are set to <code>FALSE</code> and cannot be changed.</p></td>
+      <td><p>additional arguments passed to <code><a href='https://rdrr.io/pkg/Matching/man/GenMatch.html'>Matching::GenMatch()</a></code>. Potentially useful options include <code>pop.size</code>, <code>max.generations</code>, and <code>fit.func</code>. If <code>pop.size</code> is not specified, a warning from <em>Matching</em> will be thrown reminding you to change it. Note that the <code>ties</code> and <code>CommonSupport</code> arguments are set to <code>FALSE</code> and cannot be changed.</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="outputs"><a class="anchor" href="#outputs"></a>Outputs</h2>
 
-    <p>All outputs described in <code><a href='matchit.html'>matchit</a></code> are returned with <code>method = "genetic"</code>. When <code>repalce = TRUE</code>, the <code>subclass</code> component is omitted.</p>
+    <p>All outputs described in <code><a href='matchit.html'>matchit()</a></code> are returned with <code>method = "genetic"</code>. When <code>replace = TRUE</code>, the <code>subclass</code> component is omitted.</p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
     <p>In genetic matching, covariates play three roles: 1) as the variables on which balance is optimized, 2) as the variables in the generalized Mahalanobis distance between units, and 3) in estimating the propensity score. Variables supplied to <code>formula</code> are always used for role (1), as the variables on which balance is optimized. When <code>distance</code> is not <code>"mahalanobis"</code>, the covariates are also used to estimate the propensity score (unless it is supplied). When <code>mahvars</code> is specified, the named variables will form the covariates that go into the distance matrix. Otherwise, the variables in <code>formula</code> along with the propensity score will go into the distance matrix. This leads to three ways to use <code>distance</code> and <code>mahvars</code> to perform the matching:</p>
 <p>1) When <code>distance = "mahalanobis"</code>, no propensity score is estimated, and the covariates in <code>formula</code> are used to form the generalized Mahalanobis distance matrix. In this sense, <code>"mahalanobis"</code> signals that no propensity score is to be estimated and that the matching variables are those in <code>formula</code>, consistent with setting <code>distance = "mahalanobis"</code> with other methods.</p>
-<p>2) When <code>distance</code> is not <code>"mahalanobis"</code> and <code>mahvars</code> <em>is not</em> specified, the covariates in <code>formula</code> along with the propensity score are used to form the generalized Mahalanobis distance matrix. This is the default and most typical use of <code>method = "genetic"</code> in <code>matchit</code>.</p>
+<p>2) When <code>distance</code> is not <code>"mahalanobis"</code> and <code>mahvars</code> <em>is not</em> specified, the covariates in <code>formula</code> along with the propensity score are used to form the generalized Mahalanobis distance matrix. This is the default and most typical use of <code>method = "genetic"</code> in <code><a href='matchit.html'>matchit()</a></code>.</p>
 <p>3) When <code>distance</code> is not <code>"mahalanobis"</code> and <code>mahvars</code> <em>is</em> specified, the covariates in <code>mahvars</code> are used to form the generalized Mahalanobis distance matrix. The covariates in <code>formula</code> are used to estimate the propensity score and have their balance optimized by the genetic algorithm. The propensity score is not included in the generalized Mahalanobis distance matrix.</p>
 <p>When a caliper is specified, any variables mentioned in <code>caliper</code>, possibly including the propensity score, will be added to the matching variables used to form the generalized Mahalanobis distance matrix. This is because <em>Matching</em> doesn't allow for the separation of caliper variables and matching variables in genetic matching.</p>
 <h3 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Estimand</h3>
-<p>The <code>estimand</code> argument controls whether control units are selected to be matched with treated units (<code>estimand = "ATT"</code>) or treated units are selected to be matched with control units (<code>estimand = "ATC"</code>). The "focal" group (e.g., the treated units for the ATT) is typically made to be the smaller treatment group, and a warning will be thrown if it is not set that way unless <code>replace = TRUE</code>. Setting <code>estimand = "ATC"</code> is equivalent to swapping all treated and control labels for the treatment variable. When <code>estimand = "ATC"</code>, the default <code>m.order</code> is <code>"smallest"</code>, and the <code>match.matrix</code> component of the output will have the names of the control units as the rownames and be filled with the names of the matched treated units (opposite to when <code>estimand = "ATT"</code>). Note that the argument supplied to <code>estimand</code> doesn't necessarily correspond to the estimand actually targeted; it is merely a switch to trigger which treatment group is considered "focal". Note that while <code>GenMatch()</code> and <code>Matching()</code> support the ATE as an estimand, <code><a href='matchit.html'>matchit()</a></code> only supports the ATT and ATC for genetic matching.</p>
+<p>The <code>estimand</code> argument controls whether control units are selected to be matched with treated units (<code>estimand = "ATT"</code>) or treated units are selected to be matched with control units (<code>estimand = "ATC"</code>). The "focal" group (e.g., the treated units for the ATT) is typically made to be the smaller treatment group, and a warning will be thrown if it is not set that way unless <code>replace = TRUE</code>. Setting <code>estimand = "ATC"</code> is equivalent to swapping all treated and control labels for the treatment variable. When <code>estimand = "ATC"</code>, the default <code>m.order</code> is <code>"smallest"</code>, and the <code>match.matrix</code> component of the output will have the names of the control units as the rownames and be filled with the names of the matched treated units (opposite to when <code>estimand = "ATT"</code>). Note that the argument supplied to <code>estimand</code> doesn't necessarily correspond to the estimand actually targeted; it is merely a switch to trigger which treatment group is considered "focal". Note that while <code>GenMatch()</code> and <code>Match()</code> support the ATE as an estimand, <code><a href='matchit.html'>matchit()</a></code> only supports the ATT and ATC for genetic matching.</p>
 
     <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
 
-    <p>In a manuscript, be sure to cite the following papers if using <code>matchit</code> with <code>method = "genetic"</code>:</p>
+    <p>In a manuscript, be sure to cite the following papers if using <code><a href='matchit.html'>matchit()</a></code> with <code>method = "genetic"</code>:</p>
 <p>Diamond, A., &amp; Sekhon, J. S. (2013). Genetic matching for estimating causal effects: A general multivariate matching method for achieving balance in observational studies. Review of Economics and Statistics, 95(3), 932–945. doi: <a href='https://doi.org/10.1162/REST_a_00318'>10.1162/REST_a_00318</a></p>
 <p>Sekhon, J. S. (2011). Multivariate and Propensity Score Matching Software with Automated Balance Optimization: The Matching package for R. Journal of Statistical Software, 42(1), 1–52. doi: <a href='https://doi.org/10.18637/jss.v042.i07'>10.18637/jss.v042.i07</a></p>
 <p>For example, a sentence might read:</p>
 <p><em>Genetic matching was performed using the MatchIt package (Ho, Imai, King, &amp; Stuart, 2011) in R, which calls functions from the Matching package (Diamond &amp; Sekhon, 2013; Sekhon, 2011).</em></p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p><code><a href='matchit.html'>matchit</a></code> for a detailed explanation of the inputs and outputs of a call to <code>matchit</code>.</p>
-<p><code><a href='https://rdrr.io/pkg/Matching/man/GenMatch.html'>Matching::GenMatch</a></code> and <code><a href='https://rdrr.io/pkg/Matching/man/Match.html'>Matching::Match</a></code>, which do the work.</p></div>
+    <div class='dont-index'><p><code><a href='matchit.html'>matchit()</a></code> for a detailed explanation of the inputs and outputs of a call to <code><a href='matchit.html'>matchit()</a></code>.</p>
+<p><code><a href='https://rdrr.io/pkg/Matching/man/GenMatch.html'>Matching::GenMatch()</a></code> and <code><a href='https://rdrr.io/pkg/Matching/man/Match.html'>Matching::Match()</a></code>, which do the work.</p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='kw'>if</span> <span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/all.html'>all</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/lapply.html'>sapply</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"Matching"</span>, <span class='st'>"rgenoud"</span><span class='op'>)</span>, <span class='va'>requireNamespace</span>, quietly <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>{</span>

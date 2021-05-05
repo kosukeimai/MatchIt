@@ -47,17 +47,29 @@
 
 
 <meta property="og:title" content="Nearest Neighbor Matching — method_nearest" />
-<meta property="og:description" content="In matchit, setting method = &quot;nearest&quot; performs greedy nearest neighbor matching. A distance is computed between each treated unit and each control unit, and, one by one, each treated unit is assigned a control unit as a match. The matching is &quot;greedy&quot; in the sense that there is no action taken to optimize an overall criterion; each match is selected without considering the other matches that may occur subsequently.
-This page details the allowable arguments with method = &quot;nearest&quot;. See matchit for an explanation of what each argument means in a general context and how it can be specified.
-Below is how matchit is used for nearest neighbor matching:
-matchit(formula, data = NULL, method = &quot;nearest&quot;,
-        distance = &quot;glm&quot;, link = &quot;logit&quot;,
-        distance.options = list(), estimand = &quot;ATT&quot;,
-        exact = NULL, mahvars = NULL, discard = &quot;none&quot;,
-        reestimate = FALSE, s.weights = NULL,
-        replace = TRUE, m.order = NULL, caliper = NULL,
-        ratio = 1, min.controls = NULL,
-        max.controls = NULL, verbose = FALSE, ...)
+<meta property="og:description" content="In matchit(), setting method = &quot;nearest&quot; performs greedy nearest neighbor matching. A distance is computed between each treated unit and each control unit, and, one by one, each treated unit is assigned a control unit as a match. The matching is &quot;greedy&quot; in the sense that there is no action taken to optimize an overall criterion; each match is selected without considering the other matches that may occur subsequently.
+This page details the allowable arguments with method = &quot;nearest&quot;. See matchit() for an explanation of what each argument means in a general context and how it can be specified.
+Below is how matchit() is used for nearest neighbor matching:
+matchit(formula,
+        data = NULL,
+        method = &quot;nearest&quot;,
+        distance = &quot;glm&quot;,
+        link = &quot;logit&quot;,
+        distance.options = list(),
+        estimand = &quot;ATT&quot;,
+        exact = NULL,
+        mahvars = NULL,
+        antiexact = NULL,
+        discard = &quot;none&quot;,
+        reestimate = FALSE,
+        s.weights = NULL,
+        replace = TRUE,
+        m.order = NULL,
+        caliper = NULL,
+        ratio = 1,
+        min.controls = NULL,
+        max.controls = NULL,
+        verbose = FALSE, ...)
 
 " />
 <meta property="og:image" content="/logo.png" />
@@ -92,7 +104,7 @@ matchit(formula, data = NULL, method = &quot;nearest&quot;,
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">MatchIt</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">4.1.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">4.2.0</span>
       </span>
     </div>
 
@@ -161,17 +173,29 @@ matchit(formula, data = NULL, method = &quot;nearest&quot;,
     </div>
 
     <div class="ref-description">
-    <p>In <code><a href='matchit.html'>matchit</a></code>, setting <code>method = "nearest"</code> performs greedy nearest neighbor matching. A distance is computed between each treated unit and each control unit, and, one by one, each treated unit is assigned a control unit as a match. The matching is "greedy" in the sense that there is no action taken to optimize an overall criterion; each match is selected without considering the other matches that may occur subsequently.</p>
-<p>This page details the allowable arguments with <code>method = "nearest"</code>. See <code><a href='matchit.html'>matchit</a></code> for an explanation of what each argument means in a general context and how it can be specified.</p>
-<p>Below is how <code>matchit</code> is used for nearest neighbor matching:</p><pre>
-<span class='fu'><a href='matchit.html'>matchit</a></span><span class='op'>(</span><span class='va'>formula</span>, data <span class='op'>=</span> <span class='cn'>NULL</span>, method <span class='op'>=</span> <span class='st'>"nearest"</span>,
-        distance <span class='op'>=</span> <span class='st'>"glm"</span>, link <span class='op'>=</span> <span class='st'>"logit"</span>,
-        distance.options <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span><span class='op'>)</span>, estimand <span class='op'>=</span> <span class='st'>"ATT"</span>,
-        exact <span class='op'>=</span> <span class='cn'>NULL</span>, mahvars <span class='op'>=</span> <span class='cn'>NULL</span>, discard <span class='op'>=</span> <span class='st'>"none"</span>,
-        reestimate <span class='op'>=</span> <span class='cn'>FALSE</span>, s.weights <span class='op'>=</span> <span class='cn'>NULL</span>,
-        replace <span class='op'>=</span> <span class='cn'>TRUE</span>, m.order <span class='op'>=</span> <span class='cn'>NULL</span>, caliper <span class='op'>=</span> <span class='cn'>NULL</span>,
-        ratio <span class='op'>=</span> <span class='fl'>1</span>, min.controls <span class='op'>=</span> <span class='cn'>NULL</span>,
-        max.controls <span class='op'>=</span> <span class='cn'>NULL</span>, verbose <span class='op'>=</span> <span class='cn'>FALSE</span>, <span class='va'>...</span><span class='op'>)</span>
+    <p>In <code><a href='matchit.html'>matchit()</a></code>, setting <code>method = "nearest"</code> performs greedy nearest neighbor matching. A distance is computed between each treated unit and each control unit, and, one by one, each treated unit is assigned a control unit as a match. The matching is "greedy" in the sense that there is no action taken to optimize an overall criterion; each match is selected without considering the other matches that may occur subsequently.</p>
+<p>This page details the allowable arguments with <code>method = "nearest"</code>. See <code><a href='matchit.html'>matchit()</a></code> for an explanation of what each argument means in a general context and how it can be specified.</p>
+<p>Below is how <code><a href='matchit.html'>matchit()</a></code> is used for nearest neighbor matching:</p><pre>
+<span class='fu'><a href='matchit.html'>matchit</a></span><span class='op'>(</span><span class='va'>formula</span>,
+        data <span class='op'>=</span> <span class='cn'>NULL</span>,
+        method <span class='op'>=</span> <span class='st'>"nearest"</span>,
+        distance <span class='op'>=</span> <span class='st'>"glm"</span>,
+        link <span class='op'>=</span> <span class='st'>"logit"</span>,
+        distance.options <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span><span class='op'>)</span>,
+        estimand <span class='op'>=</span> <span class='st'>"ATT"</span>,
+        exact <span class='op'>=</span> <span class='cn'>NULL</span>,
+        mahvars <span class='op'>=</span> <span class='cn'>NULL</span>,
+        antiexact <span class='op'>=</span> <span class='cn'>NULL</span>,
+        discard <span class='op'>=</span> <span class='st'>"none"</span>,
+        reestimate <span class='op'>=</span> <span class='cn'>FALSE</span>,
+        s.weights <span class='op'>=</span> <span class='cn'>NULL</span>,
+        replace <span class='op'>=</span> <span class='cn'>TRUE</span>,
+        m.order <span class='op'>=</span> <span class='cn'>NULL</span>,
+        caliper <span class='op'>=</span> <span class='cn'>NULL</span>,
+        ratio <span class='op'>=</span> <span class='fl'>1</span>,
+        min.controls <span class='op'>=</span> <span class='cn'>NULL</span>,
+        max.controls <span class='op'>=</span> <span class='cn'>NULL</span>,
+        verbose <span class='op'>=</span> <span class='cn'>FALSE</span>, <span class='va'>...</span><span class='op'>)</span>
 </pre>
 
     </div>
@@ -182,7 +206,7 @@ matchit(formula, data = NULL, method = &quot;nearest&quot;,
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>formula</th>
-      <td><p>a two-sided <code><a href='https://rdrr.io/r/stats/formula.html'>formula</a></code> object containing the treatment and covariates to be used in creating the distance measure used in the matching.</p></td>
+      <td><p>a two-sided <code><a href='https://rdrr.io/r/stats/formula.html'>formula()</a></code> object containing the treatment and covariates to be used in creating the distance measure used in the matching.</p></td>
     </tr>
     <tr>
       <th>data</th>
@@ -194,7 +218,7 @@ matchit(formula, data = NULL, method = &quot;nearest&quot;,
     </tr>
     <tr>
       <th>distance</th>
-      <td><p>the distance measure to be used. See <code><a href='distance.html'>distance</a></code> for allowable options.</p></td>
+      <td><p>the distance measure to be used. See <code><a href='distance.html'>distance</a></code> for allowable options. Can be supplied as a distance matrix.</p></td>
     </tr>
     <tr>
       <th>link</th>
@@ -217,8 +241,12 @@ matchit(formula, data = NULL, method = &quot;nearest&quot;,
       <td><p>for which variables Mahalanobis distance matching should take place when a distance measure other than <code>"mahalanobis"</code> is used (e.g., for caliper matching or to discard units for common support). If specified, the distance measure will not be used in matching.</p></td>
     </tr>
     <tr>
+      <th>antiexact</th>
+      <td><p>for which variables ant-exact matching should take place.</p></td>
+    </tr>
+    <tr>
       <th>discard</th>
-      <td><p>a string containing a method for discarding units outside a region of common support. Only allowed when <code>distance</code> is not <code>"mahalanobis"</code>.</p></td>
+      <td><p>a string containing a method for discarding units outside a region of common support. Only allowed when <code>distance</code> is not <code>"mahalanobis"</code> and not a matrix.</p></td>
     </tr>
     <tr>
       <th>reestimate</th>
@@ -234,7 +262,7 @@ matchit(formula, data = NULL, method = &quot;nearest&quot;,
     </tr>
     <tr>
       <th>m.order</th>
-      <td><p>the order that the matching takes place. The default for <code>distance = "mahalanobis"</code> is <code>"data"</code>. Otherwise, the default is <code>"largest"</code>. See <code><a href='matchit.html'>matchit</a></code> for allowable options.</p></td>
+      <td><p>the order that the matching takes place. The default for <code>distance = "mahalanobis"</code> or when <code>distance</code> is supplied as a matrix is <code>"data"</code>. Otherwise, the default is <code>"largest"</code>. See <code><a href='matchit.html'>matchit()</a></code> for allowable options.</p></td>
     </tr>
     <tr>
       <th>caliper</th>
@@ -264,7 +292,7 @@ matchit(formula, data = NULL, method = &quot;nearest&quot;,
 
     <h2 class="hasAnchor" id="outputs"><a class="anchor" href="#outputs"></a>Outputs</h2>
 
-    <p>All outputs described in <code><a href='matchit.html'>matchit</a></code> are returned with <code>method = "nearest"</code>. When <code>replace = TRUE</code>, the <code>subclass</code> component is omitted.</p>
+    <p>All outputs described in <code><a href='matchit.html'>matchit()</a></code> are returned with <code>method = "nearest"</code>. When <code>replace = TRUE</code>, the <code>subclass</code> component is omitted.</p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
     
@@ -276,7 +304,7 @@ matchit(formula, data = NULL, method = &quot;nearest&quot;,
         distance <span class='op'>=</span> <span class='st'>"mahalanobis"</span><span class='op'>)</span>
 </pre>
 
-<p>With this code, the Mahalanobis distance is computed using <code>X1</code> and <code>X2</code>, and matching occurs on this distance. The <code>distance</code> component of the <code>matchit</code> output will be empty.</p>
+<p>With this code, the Mahalanobis distance is computed using <code>X1</code> and <code>X2</code>, and matching occurs on this distance. The <code>distance</code> component of the <code><a href='matchit.html'>matchit()</a></code> output will be empty.</p>
 <p>2) If a propensity score needs to be estimated for any reason, e.g., for common support with <code>discard</code> or for creating a caliper, <code>distance</code> should be whatever method is used to estimate the propensity score or a vector of distance measures, i.e., it should not be <code>"mahalanobis"</code>. Use <code>mahvars</code> to specify the variables used to create the Mahalanobis distance. For example, to perform Mahalanobis within a propensity score caliper, the following could be run:</p>
 <pre>
 <span class='fu'><a href='matchit.html'>matchit</a></span><span class='op'>(</span><span class='va'>treat</span> <span class='op'>~</span> <span class='va'>X1</span> <span class='op'>+</span> <span class='va'>X2</span> <span class='op'>+</span> <span class='va'>X3</span>, method <span class='op'>=</span> <span class='st'>"nearest"</span>,
@@ -284,14 +312,15 @@ matchit(formula, data = NULL, method = &quot;nearest&quot;,
         mahvars <span class='op'>=</span> <span class='op'>~</span> <span class='va'>X1</span> <span class='op'>+</span> <span class='va'>X2</span><span class='op'>)</span>
 </pre>
 
-<p>With this code, <code>X1</code>, <code>X2</code>, and <code>X3</code> are used to estimate the propensity score (using the <code>"glm"</code> method, which by default is logistic regression), which is used to create a matching caliper. The actual matching occurs on the Mahalanobis distance computed only using <code>X1</code> and <code>X2</code>, which are supplied to <code>mahvars</code>. Units whose propensity score difference is larger than the caliper will not be paired, and some treated units may therefore not receive a match. The estimated propensity scores will be included in the <code>distance</code> component of the <code>matchit</code> output. See Examples.</p>
+<p>With this code, <code>X1</code>, <code>X2</code>, and <code>X3</code> are used to estimate the propensity score (using the <code>"glm"</code> method, which by default is logistic regression), which is used to create a matching caliper. The actual matching occurs on the Mahalanobis distance computed only using <code>X1</code> and <code>X2</code>, which are supplied to <code>mahvars</code>. Units whose propensity score difference is larger than the caliper will not be paired, and some treated units may therefore not receive a match. The estimated propensity scores will be included in the <code>distance</code> component of the <code><a href='matchit.html'>matchit()</a></code> output. See Examples.</p>
 <p>When sampling weights are supplied through the <code>s.weights</code> argument, the covariance matrix of the covariates used in the Mahalanobis distance is weighted by the sampling weights.</p>
+<p>Mahalanobis distance matching can also be done by supplying a Mahalanobis distance matrix (e.g., the output of a call to <code><a href='https://rdrr.io/pkg/optmatch/man/match_on-methods.html'>optmatch::match_on()</a></code>) to the <code>distance</code> argument. This makes it straightforward to use the robust rank-based Mahalanobis distance available in <span class="pkg">optmatch</span>.</p>
 <h3 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Estimand</h3>
 <p>The <code>estimand</code> argument controls whether control units are selected to be matched with treated units (<code>estimand = "ATT"</code>) or treated units are selected to be matched with control units (<code>estimand = "ATC"</code>). The "focal" group (e.g., the treated units for the ATT) is typically made to be the smaller treatment group, and a warning will be thrown if it is not set that way unless <code>replace = TRUE</code>. Setting <code>estimand = "ATC"</code> is equivalent to swapping all treated and control labels for the treatment variable. When <code>estimand = "ATC"</code>, the default <code>m.order</code> is <code>"smallest"</code>, and the <code>match.matrix</code> component of the output will have the names of the control units as the rownames and be filled with the names of the matched treated units (opposite to when <code>estimand = "ATT"</code>). Note that the argument supplied to <code>estimand</code> doesn't necessarily correspond to the estimand actually targeted; it is merely a switch to trigger which treatment group is considered "focal".</p>
 
 <h3 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Variable Ratio Matching</h3>
-<p><code>matchit</code> can perform variable ratio "extremal" matching as described by Ming and Rosenbaum (2000). This method tends to result in better balance than fixed ratio matching at the expense of some precision. When <code>ratio &gt; 1</code>, rather than requiring all treated units to receive <code>ratio</code> matches, each treated unit is assigned a value that corresponds to the number of control units they will be matched to. These values are controlled by the arguments <code>min.controls</code> and <code>max.controls</code>, which correspond to &alpha; and &beta;, respectively, in Ming and Rosenbaum (2000), and trigger variable ratio matching to occur. Some treated units will receive <code>min.controls</code> matches and others will receive <code>max.controls</code> matches (and one unit may have an intermediate number of matches); how many units are assigned each number of matches is determined by the algorithm described in Ming and Rosenbaum (2000, p119). <code>ratio</code> controls how many total control units will be matched: <code>n1 * ratio</code> control units will be matched, where <code>n1</code> is the number of treated units, yielding the same total number of matched controls as fixed ratio matching does.</p>
-<p>Variable ratio matching cannot be used with Mahalanobis distance matching. The calculations of the numbers of control units each treated unit will be matched to occurs without consideration of <code>caliper</code> or <code>discard</code>. <code>ratio</code> does not have to be an integer but must be greater than 1 and less than <code>n0/n1</code>, where <code>n0</code> and <code>n1</code> are the number of control and treated units, respectively. Setting <code>ratio = n0/n1</code> performs a crude form of full matching where all control units are matched. If <code>min.controls</code> is not specified, it is set to 1 by default. <code>min.controls</code> must be less than <code>ratio</code> and <code>max.controls</code> must be greater than <code>ratio</code>. See Examples below for an example of their use.</p>
+<p><code><a href='matchit.html'>matchit()</a></code> can perform variable ratio "extremal" matching as described by Ming and Rosenbaum (2000). This method tends to result in better balance than fixed ratio matching at the expense of some precision. When <code>ratio &gt; 1</code>, rather than requiring all treated units to receive <code>ratio</code> matches, each treated unit is assigned a value that corresponds to the number of control units they will be matched to. These values are controlled by the arguments <code>min.controls</code> and <code>max.controls</code>, which correspond to &alpha; and &beta;, respectively, in Ming and Rosenbaum (2000), and trigger variable ratio matching to occur. Some treated units will receive <code>min.controls</code> matches and others will receive <code>max.controls</code> matches (and one unit may have an intermediate number of matches); how many units are assigned each number of matches is determined by the algorithm described in Ming and Rosenbaum (2000, p119). <code>ratio</code> controls how many total control units will be matched: <code>n1 * ratio</code> control units will be matched, where <code>n1</code> is the number of treated units, yielding the same total number of matched controls as fixed ratio matching does.</p>
+<p>Variable ratio matching cannot be used with Mahalanobis distance matching or when <code>distance</code> is supplied as a matrix. The calculations of the numbers of control units each treated unit will be matched to occurs without consideration of <code>caliper</code> or <code>discard</code>. <code>ratio</code> does not have to be an integer but must be greater than 1 and less than <code>n0/n1</code>, where <code>n0</code> and <code>n1</code> are the number of control and treated units, respectively. Setting <code>ratio = n0/n1</code> performs a crude form of full matching where all control units are matched. If <code>min.controls</code> is not specified, it is set to 1 by default. <code>min.controls</code> must be less than <code>ratio</code>, and <code>max.controls</code> must be greater than <code>ratio</code>. See Examples below for an example of their use.</p>
 
 
     <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
@@ -300,7 +329,7 @@ matchit(formula, data = NULL, method = &quot;nearest&quot;,
 <p><em>Nearest neighbor matching was performed using the MatchIt package (Ho, Imai, King, &amp; Stuart, 2011) in R.</em></p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p><code><a href='matchit.html'>matchit</a></code> for a detailed explanation of the inputs and outputs of a call to <code>matchit</code>.</p>
+    <div class='dont-index'><p><code><a href='matchit.html'>matchit()</a></code> for a detailed explanation of the inputs and outputs of a call to <code><a href='matchit.html'>matchit()</a></code>.</p>
 <p><code><a href='method_optimal.html'>method_optimal</a></code> for optimal pair matching, which is similar to nearest neighbor matching except that an overall distance criterion is minimized.</p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
@@ -399,7 +428,7 @@ matchit(formula, data = NULL, method = &quot;nearest&quot;,
                   method <span class='op'>=</span> <span class='st'>"nearest"</span>, replace <span class='op'>=</span> <span class='cn'>TRUE</span>,
                   mahvars <span class='op'>=</span> <span class='op'>~</span> <span class='va'>age</span> <span class='op'>+</span> <span class='va'>educ</span> <span class='op'>+</span> <span class='va'>re74</span> <span class='op'>+</span> <span class='va'>re75</span>,
                   ratio <span class='op'>=</span> <span class='fl'>3</span>, caliper <span class='op'>=</span> <span class='fl'>.02</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span class='warning'>Warning: Not all treated units will get 3 matches.</span></div><div class='input'><span class='va'>m.out2</span>
+<span class='va'>m.out2</span>
 </div><div class='output co'>#&gt; A matchit object
 #&gt;  - method: 3:1 nearest neighbor matching with replacement
 #&gt;  - distance: Mahalanobis [matching]

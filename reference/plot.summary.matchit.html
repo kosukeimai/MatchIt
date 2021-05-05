@@ -47,7 +47,7 @@
 
 
 <meta property="og:title" content="Generate a Love Plot of Standardized Mean Differences — plot.summary.matchit" />
-<meta property="og:description" content="Generates a Love plot, which is a dot plot with variable names on the y-axis and standardized mean differences on the x-axis. Each point represents the standardized mean difference of the corresponding covariate in the matched or unmatched sample. Love plots are a simple way to display covariate balance before and after matching. The plots are generated using dotchart and points." />
+<meta property="og:description" content="Generates a Love plot, which is a dot plot with variable names on the y-axis and standardized mean differences on the x-axis. Each point represents the standardized mean difference of the corresponding covariate in the matched or unmatched sample. Love plots are a simple way to display covariate balance before and after matching. The plots are generated using dotchart() and points()." />
 <meta property="og:image" content="/logo.png" />
 
 
@@ -80,7 +80,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">MatchIt</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">4.1.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">4.2.0</span>
       </span>
     </div>
 
@@ -149,7 +149,7 @@
     </div>
 
     <div class="ref-description">
-    <p>Generates a Love plot, which is a dot plot with variable names on the y-axis and standardized mean differences on the x-axis. Each point represents the standardized mean difference of the corresponding covariate in the matched or unmatched sample. Love plots are a simple way to display covariate balance before and after matching. The plots are generated using <code><a href='https://rdrr.io/r/graphics/dotchart.html'>dotchart</a></code> and <code><a href='https://rdrr.io/r/graphics/points.html'>points</a></code>.</p>
+    <p>Generates a Love plot, which is a dot plot with variable names on the y-axis and standardized mean differences on the x-axis. Each point represents the standardized mean difference of the corresponding covariate in the matched or unmatched sample. Love plots are a simple way to display covariate balance before and after matching. The plots are generated using <code><a href='https://rdrr.io/r/graphics/dotchart.html'>dotchart()</a></code> and <code><a href='https://rdrr.io/r/graphics/points.html'>points()</a></code>.</p>
     </div>
 
     <pre class="usage"><span class='co'># S3 method for summary.matchit</span>
@@ -161,7 +161,7 @@
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>x</th>
-      <td><p>a <code>summary.matchit</code> object; the output of a call to <code><a href='summary.matchit.html'>summary.matchit</a></code>. The <code>standardize</code> argument must be set to <code>TRUE</code> (which is the default) in the call to <code>summary</code>.</p></td>
+      <td><p>a <code>summary.matchit</code> object; the output of a call to <code><a href='summary.matchit.html'>summary.matchit()</a></code>. The <code>standardize</code> argument must be set to <code>TRUE</code> (which is the default) in the call to <code>summary</code>.</p></td>
     </tr>
     <tr>
       <th>abs</th>
@@ -173,11 +173,11 @@
     </tr>
     <tr>
       <th>threshold</th>
-      <td><p>numeric values at which to place vertical lines indicating a balance threshold. These can make it easier to see for which variables balance has been achieved given a threshold. Multiple values can be supplied to add multiple lines. When <code>abs = FALSE</code>, the lines will be displayed on both sides of zero. The lines are drawn with <code>abline</code> with the linetype (<code>lty</code>) argument corresponding to the order of the entered variables (see options at <code><a href='https://rdrr.io/r/graphics/par.html'>par</a></code>). The default is <code><a href='https://rdrr.io/r/base/c.html'>c(.1, .05)</a></code> for a solid line (<code>lty = 1</code>) at .1 and a dashed line (<code>lty = 2</code>) at .05, indicating acceptable and good balance, respectively. Enter a value as <code>NA</code> to skip that value of <code>lty</code> (e.g., <code><a href='https://rdrr.io/r/base/c.html'>c(NA, .05)</a></code> to have only a dashed vertical line at .05).</p></td>
+      <td><p>numeric values at which to place vertical lines indicating a balance threshold. These can make it easier to see for which variables balance has been achieved given a threshold. Multiple values can be supplied to add multiple lines. When <code>abs = FALSE</code>, the lines will be displayed on both sides of zero. The lines are drawn with <code>abline</code> with the linetype (<code>lty</code>) argument corresponding to the order of the entered variables (see options at <code><a href='https://rdrr.io/r/graphics/par.html'>par()</a></code>). The default is <code><a href='https://rdrr.io/r/base/c.html'>c(.1, .05)</a></code> for a solid line (<code>lty = 1</code>) at .1 and a dashed line (<code>lty = 2</code>) at .05, indicating acceptable and good balance, respectively. Enter a value as <code>NA</code> to skip that value of <code>lty</code> (e.g., <code><a href='https://rdrr.io/r/base/c.html'>c(NA, .05)</a></code> to have only a dashed vertical line at .05).</p></td>
     </tr>
     <tr>
       <th>position</th>
-      <td><p>the position of the legend. Should be one of the allowed keyword options supplied to <code>x</code> in <code><a href='https://rdrr.io/r/graphics/legend.html'>legend</a></code> (e.g., <code>"right"</code>, <code>"bottomright"</code>, etc.). Default is <code>"bottomright"</code>. Set to <code>NULL</code> for no legend to be included. Note that the legend will cover up points if you are not careful; setting <code>var.order</code> appropriately can help in avoiding this.</p></td>
+      <td><p>the position of the legend. Should be one of the allowed keyword options supplied to <code>x</code> in <code><a href='https://rdrr.io/r/graphics/legend.html'>legend()</a></code> (e.g., <code>"right"</code>, <code>"bottomright"</code>, etc.). Default is <code>"bottomright"</code>. Set to <code>NULL</code> for no legend to be included. Note that the legend will cover up points if you are not careful; setting <code>var.order</code> appropriately can help in avoiding this.</p></td>
     </tr>
     <tr>
       <th>...</th>
@@ -196,8 +196,8 @@
     <p>Noah Greifer</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p><code><a href='summary.matchit.html'>summary.matchit</a></code>, <code><a href='https://rdrr.io/r/graphics/dotchart.html'>dotchart</a></code></p>
-<p><code><a href='https://ngreifer.github.io/cobalt/reference/love.plot.html'>cobalt::love.plot</a></code> is a more flexible and sophisticated function to make Love plots and is also natively compatible with <code>matchit</code> objects.</p></div>
+    <div class='dont-index'><p><code><a href='summary.matchit.html'>summary.matchit()</a></code>, <code><a href='https://rdrr.io/r/graphics/dotchart.html'>dotchart()</a></code></p>
+<p><code><a href='https://ngreifer.github.io/cobalt/reference/love.plot.html'>cobalt::love.plot()</a></code> is a more flexible and sophisticated function to make Love plots and is also natively compatible with <code>matchit</code> objects.</p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='st'>"lalonde"</span><span class='op'>)</span>

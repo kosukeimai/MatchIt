@@ -38,7 +38,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">MatchIt</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">4.1.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">4.2.0</span>
       </span>
     </div>
 
@@ -104,7 +104,7 @@
       <h1 data-toc-skip>Estimating Effects After Matching</h1>
                         <h4 class="author">Noah Greifer</h4>
             
-            <h4 class="date">2020-12-15</h4>
+            <h4 class="date">2021-05-05</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/kosukeimai/MatchIt/blob/master/vignettes/estimating-effects.Rmd"><code>vignettes/estimating-effects.Rmd</code></a></small>
       <div class="hidden name"><code>estimating-effects.Rmd</code></div>
@@ -153,7 +153,7 @@ pre code {
 <a href="#robust-and-cluster-robust-standard-errors" class="anchor"></a>Robust and Cluster-Robust Standard Errors</h4>
 <p><strong>Robust standard errors.</strong> Also known as sandwich standard errors (due to the form of the formula for computing them), heteroscedasticity-consistent standard errors, or Huber-White standard errors, robust standard errors are an adjustment to the usual maximum likelihood or ordinary least squares standard errors that are robust to violations of some of the assumptions required for usual standard errors to be valid <span class="citation">(MacKinnon and White <a href="#ref-mackinnon1985" role="doc-biblioref">1985</a>)</span>. Although there has been some debate about their utility <span class="citation">(King and Roberts <a href="#ref-king2015" role="doc-biblioref">2015</a>)</span>, robust standard errors rarely degrade inferences and often improve them. Generally, robust standard errors <strong>must</strong> be used when any non-uniform weights are included in the estimation (e.g., with full matching or inverse probability weighting).</p>
 <p><strong>Cluster-robust standard errors.</strong> A version of robust standard errors known as cluster-robust standard errors <span class="citation">(Liang and Zeger <a href="#ref-liang1986" role="doc-biblioref">1986</a>)</span> can be used to account for dependence between observations within clusters (e.g., matched pairs). Abadie and Spiess <span class="citation">(<a href="#ref-abadie2019" role="doc-biblioref">2019</a>)</span> demonstrate analytically that cluster-robust standard errors are generally valid after matching, whereas regular robust standard errors can over- or under-estimate the true sampling variability of the effect estimator depending on the specification of the outcome model (if any) and degree of effect modification. A plethora of simulation studies have further confirmed the validity of cluster-robust standard errors after matching <span class="citation">(e.g., Austin <a href="#ref-austin2009a" role="doc-biblioref">2009</a>, <a href="#ref-austin2013" role="doc-biblioref">2013</a><a href="#ref-austin2013" role="doc-biblioref">a</a>; Austin and Small <a href="#ref-austin2014" role="doc-biblioref">2014</a>; Gayat et al. <a href="#ref-gayat2012" role="doc-biblioref">2012</a>; Wan <a href="#ref-wan2019" role="doc-biblioref">2019</a>)</span>. Given this evidence favoring the use of cluster-robust standard errors, we recommend them in most cases and use them judiciously in the this guide<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a>.</p>
-<p>Here, we will use linear and generalized linear models as implemented by <code><a href="https://rdrr.io/r/stats/lm.html">lm()</a></code> and <code><a href="https://rdrr.io/r/stats/glm.html">glm()</a></code> and use <code><a href="https://rdrr.io/pkg/lmtest/man/coeftest.html">lmtest::coeftest()</a></code> and <code><a href="https://rdrr.io/pkg/lmtest/man/coeftest.html">lmtest::coefci()</a></code> along with <code><a href="http://sandwich.R-Forge.R-project.org//reference/vcovHC.html">sandwich::vcovHC()</a></code> for robust standard errors and <code><a href="http://sandwich.R-Forge.R-project.org//reference/vcovCL.html">sandwich::vcovCL()</a></code> for cluster-robust standard errors. There are several “types” (e.g., HC0, HC1, etc.) of robust standard errors that adjust the original standard errors in different ways; although more research is required on the benefits of using different types for estimating standard errors after matching, we use the default types here.</p>
+<p>Here, we will use linear and generalized linear models as implemented by <code><a href="https://rdrr.io/r/stats/lm.html">lm()</a></code> and <code><a href="https://rdrr.io/r/stats/glm.html">glm()</a></code> and use <code><a href="https://rdrr.io/pkg/lmtest/man/coeftest.html">lmtest::coeftest()</a></code> and <code><a href="https://rdrr.io/pkg/lmtest/man/coeftest.html">lmtest::coefci()</a></code> along with <code><a href="https://sandwich.R-Forge.R-project.org//reference/vcovHC.html">sandwich::vcovHC()</a></code> for robust standard errors and <code><a href="https://sandwich.R-Forge.R-project.org//reference/vcovCL.html">sandwich::vcovCL()</a></code> for cluster-robust standard errors. There are several “types” (e.g., HC0, HC1, etc.) of robust standard errors that adjust the original standard errors in different ways; although more research is required on the benefits of using different types for estimating standard errors after matching, we use the default types here.</p>
 </div>
 <div id="bootstrapping" class="section level4">
 <h4 class="hasAnchor">
@@ -184,7 +184,7 @@ pre code {
 <li>
 <code>lmtest</code> provides the <code><a href="https://rdrr.io/pkg/lmtest/man/coeftest.html">coeftest()</a></code> and <code><a href="https://rdrr.io/pkg/lmtest/man/coeftest.html">coefci()</a></code> functions for estimating coefficients, standard errors, and confidence intervals incorporating robust standard errors</li>
 <li>
-<code>sandwich</code> provides robust and cluster robust standard errors through the <code><a href="http://sandwich.R-Forge.R-project.org//reference/vcovHC.html">vcovHC()</a></code> and <code><a href="http://sandwich.R-Forge.R-project.org//reference/vcovCL.html">vcovCL()</a></code> functions, respectively</li>
+<code>sandwich</code> provides robust and cluster robust standard errors through the <code><a href="https://sandwich.R-Forge.R-project.org//reference/vcovHC.html">vcovHC()</a></code> and <code><a href="https://sandwich.R-Forge.R-project.org//reference/vcovCL.html">vcovCL()</a></code> functions, respectively</li>
 <li>
 <code>boot</code> provides the <code><a href="https://rdrr.io/pkg/boot/man/boot.html">boot()</a></code> and <code><a href="https://rdrr.io/pkg/boot/man/boot.ci.html">boot.ci()</a></code> functions for performing bootstrapping and estimating bootstrap effects, standard errors, and confidence intervals.</li>
 <li>
@@ -201,8 +201,8 @@ pre code {
 <p>Because different matching methods require different treatments, instructions for each method are organized in the following sections, as designated by the table below. It is important to ensure the right methods are used with the matching specification used in order for the estimated effects and standard errors to be valid.</p>
 <table class="table">
 <colgroup>
-<col width="41%">
 <col width="58%">
+<col width="41%">
 </colgroup>
 <thead><tr class="header">
 <th>Section</th>
@@ -374,7 +374,8 @@ pre code {
 <p><strong>Without covariate adjustment.</strong> When omitting covariates from the outcome model, effect and standard error estimation is fairly straightforward. Below we demonstrate how to estimate the marginal log OR after nearest neighbor matching without replacement.</p>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co">#Generalized linear model without covariates</span>
-<span class="va">fit4</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/glm.html">glm</a></span><span class="op">(</span><span class="va">Y_B</span> <span class="op">~</span> <span class="va">A</span>, data <span class="op">=</span> <span class="va">md</span>, family <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/family.html">binomial</a></span><span class="op">(</span>link <span class="op">=</span> <span class="st">"logit"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<span class="va">fit4</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/glm.html">glm</a></span><span class="op">(</span><span class="va">Y_B</span> <span class="op">~</span> <span class="va">A</span>, data <span class="op">=</span> <span class="va">md</span>, weights <span class="op">=</span> <span class="va">weights</span>, 
+            family <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/family.html">binomial</a></span><span class="op">(</span>link <span class="op">=</span> <span class="st">"logit"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <p>By specifying <code>link = "logit"</code>, we fit a logistic regression model to estimate the marginal OR for treatment. To estimate the marginal RR we can specify <code>link = "log"</code>, and to estimate the RD we can specify <code>link = "identity"</code> or use <code><a href="https://rdrr.io/r/stats/lm.html">lm()</a></code> instead of <code><a href="https://rdrr.io/r/stats/glm.html">glm()</a></code>. Below we estimate cluster-robust standard errors, though it should be noted that these standard errors can be biased for the OR and should be used with caution <span class="citation">(Austin <a href="#ref-austin2007a" role="doc-biblioref">2007</a>)</span>. Because we want the OR and the effects are estimated on the log OR scale, we have to exponentiate the coefficient on treatment to arrive at the OR (one would do this when estimating the OR or RR, but not the RD).</p>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co">#Cluster-robust standard errors</span>
@@ -470,9 +471,10 @@ pre code {
 <div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co">#Cox Regression for marginal HR</span>
 <span class="fu"><a href="https://rdrr.io/pkg/survival/man/coxph.html">coxph</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html">Surv</a></span><span class="op">(</span><span class="va">Y_S</span><span class="op">)</span> <span class="op">~</span> <span class="va">A</span>, data <span class="op">=</span> <span class="va">md</span>, robust <span class="op">=</span> <span class="cn">TRUE</span>, 
-      cluster <span class="op">=</span> <span class="va">subclass</span><span class="op">)</span></code></pre></div>
+      weights <span class="op">=</span> <span class="va">weights</span>, cluster <span class="op">=</span> <span class="va">subclass</span><span class="op">)</span></code></pre></div>
 <pre><code>## Call:
-## coxph(formula = Surv(Y_S) ~ A, data = md, robust = TRUE, cluster = subclass)
+## coxph(formula = Surv(Y_S) ~ A, data = md, weights = weights, 
+##     robust = TRUE, cluster = subclass)
 ## 
 ##   coef exp(coef) se(coef) robust se z     p
 ## A 0.43      1.53     0.07      0.07 6 1e-09
@@ -501,7 +503,7 @@ pre code {
   <span class="va">md_boot</span> <span class="op">&lt;-</span> <span class="va">md</span><span class="op">[</span><span class="va">ids</span>,<span class="op">]</span>
   
   <span class="co">#Effect estimation</span>
-  <span class="va">cox_fit_boot</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/survival/man/coxph.html">coxph</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html">Surv</a></span><span class="op">(</span><span class="va">Y_S</span><span class="op">)</span> <span class="op">~</span> <span class="va">A</span>, data <span class="op">=</span> <span class="va">md_boot</span><span class="op">)</span>
+  <span class="va">cox_fit_boot</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/survival/man/coxph.html">coxph</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html">Surv</a></span><span class="op">(</span><span class="va">Y_S</span><span class="op">)</span> <span class="op">~</span> <span class="va">A</span>, data <span class="op">=</span> <span class="va">md_boot</span>, weights <span class="op">=</span> <span class="va">weights</span><span class="op">)</span>
   
   <span class="co">#Compute the marginal HR by exponentiating the coefficient</span>
   <span class="co">#on treatment</span>
@@ -586,7 +588,7 @@ pre code {
 <h4 class="hasAnchor">
 <a href="#for-continuous-outcomes-1" class="anchor"></a>For continuous outcomes</h4>
 <p><strong>Without covariate adjustment.</strong> For continuous outcomes, we can regress the outcome on the treatment and include the weights in the estimation. We do this regardless of whether we are using the <code><a href="../reference/match.data.html">match.data()</a></code> output or the <code><a href="../reference/match.data.html">get_matches()</a></code> output (if we were doing 1:1 matching, the weights would not be necessary when using the <code><a href="../reference/match.data.html">get_matches()</a></code> output, but they don’t change the results if included).</p>
-<p>If we don’t mind ignoring pair membership, we can use the <code><a href="../reference/match.data.html">match.data()</a></code> output to estimate the effect and standard errors. Here we use <code><a href="http://sandwich.R-Forge.R-project.org//reference/vcovHC.html">vcovHC()</a></code> to estimate regular robust standard errors that ignoring pairing. Hill and Reiter <span class="citation">(<a href="#ref-hill2006" role="doc-biblioref">2006</a>)</span> found these standard errors to be conservative for continuous outcomes.</p>
+<p>If we don’t mind ignoring pair membership, we can use the <code><a href="../reference/match.data.html">match.data()</a></code> output to estimate the effect and standard errors. Here we use <code><a href="https://sandwich.R-Forge.R-project.org//reference/vcovHC.html">vcovHC()</a></code> to estimate regular robust standard errors that ignoring pairing. Hill and Reiter <span class="citation">(<a href="#ref-hill2006" role="doc-biblioref">2006</a>)</span> found these standard errors to be conservative for continuous outcomes.</p>
 <div class="sourceCode" id="cb43"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co">#match.data() output</span>
 <span class="va">fit1md</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html">lm</a></span><span class="op">(</span><span class="va">Y_C</span> <span class="op">~</span> <span class="va">A</span>, data <span class="op">=</span> <span class="va">md</span>, weights <span class="op">=</span> <span class="va">weights</span><span class="op">)</span>
@@ -930,7 +932,7 @@ pre code {
 <h4 class="hasAnchor">
 <a href="#for-continuous-outcomes-3" class="anchor"></a>For continuous outcomes</h4>
 <p>For continuous outcomes, we can use either MMWS or compute the weighted average of within-subclass effects. First we illustrate weighting.</p>
-<p><strong>Without covariate adjustment.</strong> With weighting, we can supply the weights that are in the <code><a href="../reference/match.data.html">match.data()</a></code> output to a call to <code><a href="https://rdrr.io/r/stats/lm.html">lm()</a></code> to perform weighted least squares regression, as we did with full matching. We need a robust standard error estimator to account for the weights. Note that the subclasses don’t even need to enter this analysis; they are fully incorporated through the MMWS weights<a href="#fn6" class="footnote-ref" id="fnref6"><sup>6</sup></a>. We use <code><a href="http://sandwich.R-Forge.R-project.org//reference/vcovHC.html">vcovHC()</a></code> to estimate the regular robust standard error instead of the cluster-robust standard error used with other methods.</p>
+<p><strong>Without covariate adjustment.</strong> With weighting, we can supply the weights that are in the <code><a href="../reference/match.data.html">match.data()</a></code> output to a call to <code><a href="https://rdrr.io/r/stats/lm.html">lm()</a></code> to perform weighted least squares regression, as we did with full matching. We need a robust standard error estimator to account for the weights. Note that the subclasses don’t even need to enter this analysis; they are fully incorporated through the MMWS weights<a href="#fn6" class="footnote-ref" id="fnref6"><sup>6</sup></a>. We use <code><a href="https://sandwich.R-Forge.R-project.org//reference/vcovHC.html">vcovHC()</a></code> to estimate the regular robust standard error instead of the cluster-robust standard error used with other methods.</p>
 <div class="sourceCode" id="cb78"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">fit1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html">lm</a></span><span class="op">(</span><span class="va">Y_C</span> <span class="op">~</span> <span class="va">A</span>, data <span class="op">=</span> <span class="va">md</span>, weights <span class="op">=</span> <span class="va">weights</span><span class="op">)</span>
 
@@ -965,7 +967,7 @@ pre code {
 <pre><code>## [1] 1.93</code></pre>
 <div class="sourceCode" id="cb83"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co">#SE of marginal effect</span>
-<span class="op">(</span><span class="va">se</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">sqrt</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/drop.html">drop</a></span><span class="op">(</span><span class="va">sub_w</span> <span class="op">%*%</span> <span class="fu"><a href="http://sandwich.R-Forge.R-project.org//reference/vcovHC.html">vcovHC</a></span><span class="op">(</span><span class="va">fit2</span><span class="op">)</span> <span class="op">%*%</span> <span class="va">sub_w</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<span class="op">(</span><span class="va">se</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">sqrt</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/drop.html">drop</a></span><span class="op">(</span><span class="va">sub_w</span> <span class="op">%*%</span> <span class="fu"><a href="https://sandwich.R-Forge.R-project.org//reference/vcovHC.html">vcovHC</a></span><span class="op">(</span><span class="va">fit2</span><span class="op">)</span> <span class="op">%*%</span> <span class="va">sub_w</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <pre><code>## [1] 0.4036</code></pre>
 <div class="sourceCode" id="cb85"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co">#CI</span>
@@ -977,7 +979,7 @@ pre code {
 <code class="sourceCode R"><span class="co">#Using margins() from margins</span>
 <span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="fu">margins</span><span class="fu">::</span><span class="fu">margins</span><span class="op">(</span><span class="va">fit2</span>, variables <span class="op">=</span> <span class="st">"A"</span>, 
                          data <span class="op">=</span> <span class="va">md</span><span class="op">[</span><span class="va">md</span><span class="op">$</span><span class="va">A</span> <span class="op">==</span> <span class="fl">1</span>,<span class="op">]</span>,
-                         vcov <span class="op">=</span> <span class="fu"><a href="http://sandwich.R-Forge.R-project.org//reference/vcovHC.html">vcovHC</a></span><span class="op">(</span><span class="va">fit2</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
+                         vcov <span class="op">=</span> <span class="fu"><a href="https://sandwich.R-Forge.R-project.org//reference/vcovHC.html">vcovHC</a></span><span class="op">(</span><span class="va">fit2</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
 <span class="co">#For ATE, omit the second line. </span></code></pre></div>
 <p><strong>With covariate adjustment.</strong> To include covariates in the model when using MMWS, we can modify the code used for weighting after full matching, the only difference being that regular robust standard errors should be used with MMWS. As before, treatment-covariate interactions are optional but can reduce bias and improve precision when there effect modification by the covariates. When including these interactions in the outcome model, it is important to center the covariates at their means in the target population (i.e., the full sample for the ATE and the treated units for the ATT) in order to interpret the coefficient on treatment as a marginal effect.</p>
 <p>To include covariates in the model when combining subclass-specific effect estimates, it can be challenging to correctly parameterize the model so that the linear contrast matrix method works as expected. The simplest way would be to include covariates as desired, which include as main effects, interactions with treatment, interactions with subclass, or all three, and use the <code>margins()</code> code above, which should automatically provide the correct output.</p>
@@ -987,7 +989,7 @@ pre code {
 <a href="#for-binary-outcomes-3" class="anchor"></a>For binary outcomes</h4>
 <p>Using stratification with binary outcomes is slightly more complicated than it is with continuous outcomes. This is because the OR and RR are not collapsible, so the marginal OR and RR cannot be computed as the weighted average of the stratum-specific effects. Instead, one must compute the average of the predicted stratum-specific risks under each treatment and then compute the marginal effect estimate from these marginal risks. Although stratum-specific conditional ORs are valid effect measures, they generally do not correspond to meaningful subpopulation effects unless the strata themselves are meaningful subpopulations. After exact matching or coarsened exact matching, strata may be meaningful because they correspond to specific combinations of covariates that may come close to designating specific patient attributes, but after propensity score subclassification, the strata correspond to propensity score bins, which are generally not meaningful. Although some researchers have interpreted stratum-specific effects after propensity score subclassification as representing effects at various risks or propensities for treatment, because the primary purpose of the propensity score is as a balancing score and not as an accurate estimate of propensity for treatment, such an interpretation should be regarded with caution.</p>
 <p>Austin <span class="citation">(<a href="#ref-austin2007a" role="doc-biblioref">2007</a>)</span> compared several methods of propensity score adjustment for estimating marginal ORs, including two methods based on propensity score stratification, one of which involved the stratified Mantel-Haenszel estimator, and the other of which involved averaging stratum-specific effects. Both of these estimate a common conditional OR, not a marginal OR <span class="citation">(Forbes and Shortreed <a href="#ref-forbes2008" role="doc-biblioref">2008</a>; Stampf et al. <a href="#ref-stampf2010" role="doc-biblioref">2010</a>)</span>, and both yielded positively biased effect estimates for non-null treatment effects, a common pattern when using conditional effect estimates as estimates of marginal effects. Given the difficulties in estimating marginal ORs after stratification, the most straightforward way to do so is to use MMWS. We do, however, also demonstrate estimating the marginal odds ratio and its standard error using bootstrapping in a way that can incorporate covariate adjustment and allow for differential effect modification across strata.</p>
-<p><strong>Without covariate adjustment.</strong> As before, we can supply the stratification weights to a weighted generalized linear model with just the treatment as the sole predictor, and the coefficient on treatment will correspond to a marginal treatment effect. We use <code><a href="http://sandwich.R-Forge.R-project.org//reference/vcovHC.html">vcovHC()</a></code> to estimate the regular robust standard error.</p>
+<p><strong>Without covariate adjustment.</strong> As before, we can supply the stratification weights to a weighted generalized linear model with just the treatment as the sole predictor, and the coefficient on treatment will correspond to a marginal treatment effect. We use <code><a href="https://sandwich.R-Forge.R-project.org//reference/vcovHC.html">vcovHC()</a></code> to estimate the regular robust standard error.</p>
 <div class="sourceCode" id="cb88"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">fit3</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/glm.html">glm</a></span><span class="op">(</span><span class="va">Y_B</span> <span class="op">~</span> <span class="va">A</span>, data <span class="op">=</span> <span class="va">md</span>, weights <span class="op">=</span> <span class="va">weights</span>,
             family <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/family.html">quasibinomial</a></span><span class="op">(</span>link <span class="op">=</span> <span class="st">"logit"</span><span class="op">)</span><span class="op">)</span>
@@ -1094,6 +1096,77 @@ pre code {
 <p>As with other covariate-adjusted models, it is important not to interpret the coefficients on covariates other than treatment to avoid committing the table 2 fallacy. Other causes of the outcome can be included in the outcome model even if they were not the focus of matching as long as they are not (even possibly) caused by the treatment.</p>
 <p>Alternative methods of estimating conditional effects include conditional logistic regression after matching and estimating stratum-specific effects after subclassification. We recommend using covariate-adjusted logistic regression models instead because the conditional effect is better defined (i.e., conditional on the specific covariates included in the model) and depends less on the estimand targeted <span class="citation">(Forbes and Shortreed <a href="#ref-forbes2008" role="doc-biblioref">2008</a>)</span>.</p>
 </div>
+<div id="moderation-analysis" class="section level3">
+<h3 class="hasAnchor">
+<a href="#moderation-analysis" class="anchor"></a>Moderation Analysis</h3>
+<p>Moderation analysis involves determining whether a treatment effect differs across levels of another variable. The use of matching with moderation analysis is described in Stuart and Green <span class="citation">(<a href="#ref-greenExaminingModerationAnalyses2014" role="doc-biblioref">2014</a>)</span>. The goal is to achieve balance within each subgroup of the potential moderating variable, and there are several ways of doing so. Broadly, one can either perform matching in the full dataset, perhaps requiring exact matching on the moderator, or one can perform completely separate analyses in each subgroup. We’ll demonstrate both approaches below. The chosen approach should be that which achieves the best balance, though we don’t demonstrate assessing balance hear to maintain focus on effect estimation. We’ll consider the binary variable <code>X5</code> to be the potential moderator of the effect of <code>A</code> on <code>Y_C</code>.</p>
+<p>The first approach involves pooling information across subgroups. This could involve estimating propensity scores using a single model for both groups but exact matching on the potential moderator. The propensity score model could include moderator-by-covariate interactions to allow the propensity score model to vary across subgroups on some covariates. Below, we’ll estimate a propensity score using a single propensity score model with a few moderator-by-covariate interactions and exact matching on the moderator, <code>X5</code>. We’ll perform nearest neighbor matching on the propensity score.</p>
+<div class="sourceCode" id="cb99"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">mP</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/matchit.html">matchit</a></span><span class="op">(</span><span class="va">A</span> <span class="op">~</span> <span class="va">X1</span> <span class="op">+</span> <span class="va">X2</span> <span class="op">+</span> <span class="va">X5</span><span class="op">*</span><span class="va">X3</span> <span class="op">+</span> <span class="va">X4</span> <span class="op">+</span> 
+                <span class="va">X5</span><span class="op">*</span><span class="va">X6</span> <span class="op">+</span> <span class="va">X7</span> <span class="op">+</span> <span class="va">X5</span><span class="op">*</span><span class="va">X8</span> <span class="op">+</span> <span class="va">X9</span>, data <span class="op">=</span> <span class="va">d</span>,
+              exact <span class="op">=</span> <span class="op">~</span><span class="va">X5</span>, method <span class="op">=</span> <span class="st">"nearest"</span><span class="op">)</span>
+<span class="va">mP</span></code></pre></div>
+<pre><code>## A matchit object
+##  - method: 1:1 nearest neighbor matching without replacement
+##  - distance: Propensity score
+##              - estimated with logistic regression
+##  - number of obs.: 2000 (original), 882 (matched)
+##  - target estimand: ATT
+##  - covariates: X1, X2, X5, X3, X4, X6, X7, X8, X9</code></pre>
+<p>Although it is straightforward to assess balance overall using <code><a href="https://rdrr.io/r/base/summary.html">summary()</a></code>, it is more challenging to assess balance within subgroups. The easiest way to check subgroup balance would be to use <code><a href="https://ngreifer.github.io/cobalt/reference/bal.tab.html">cobalt::bal.tab()</a></code>, which has a <code>cluster</code> argument that can be used to assess balance within subgroups, e.g., by <code><a href="https://ngreifer.github.io/cobalt/reference/bal.tab.html">cobalt::bal.tab(mP, cluster = "X5")</a></code>. See the vignette “Appendix 2: Using cobalt with Clustered, Multiply Imputed, and Other Segmented Data” on the <code>cobalt</code> <a href="https://ngreifer.github.io/cobalt/index.html">website</a> for details.</p>
+<p>If we are satisfied with balance, we can then estimate the subgroup effects using an outcome model with an interaction between the treatment and the moderator.</p>
+<div class="sourceCode" id="cb101"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">mdP</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/match.data.html">match.data</a></span><span class="op">(</span><span class="va">mP</span><span class="op">)</span>
+
+<span class="va">fitP</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html">lm</a></span><span class="op">(</span><span class="va">Y_C</span> <span class="op">~</span> <span class="va">A</span> <span class="op">*</span> <span class="va">X5</span>, data <span class="op">=</span> <span class="va">mdP</span>, weights <span class="op">=</span> <span class="va">weights</span><span class="op">)</span>
+
+<span class="fu"><a href="https://rdrr.io/pkg/lmtest/man/coeftest.html">coeftest</a></span><span class="op">(</span><span class="va">fitP</span>, vcov. <span class="op">=</span> <span class="va">vcovCL</span>, cluster <span class="op">=</span> <span class="op">~</span><span class="va">subclass</span><span class="op">)</span></code></pre></div>
+<pre><code>## 
+## t test of coefficients:
+## 
+##             Estimate Std. Error t value Pr(&gt;|t|)   
+## (Intercept)   0.7500     0.4515    1.66   0.0970 . 
+## A             2.2073     0.6703    3.29   0.0010 **
+## X5            1.7413     0.6070    2.87   0.0042 **
+## A:X5         -0.0275     0.8791   -0.03   0.9751   
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
+<p>A second approach is to perform the matching analyses separately and then combine the matched samples. We demonstrate this below. First, we split the data by levels of <code>X5</code>.</p>
+<div class="sourceCode" id="cb103"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">d_X5_0</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/subset.html">subset</a></span><span class="op">(</span><span class="va">d</span>, <span class="va">X5</span> <span class="op">==</span> <span class="fl">0</span><span class="op">)</span>
+<span class="va">d_X5_1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/subset.html">subset</a></span><span class="op">(</span><span class="va">d</span>, <span class="va">X5</span> <span class="op">==</span> <span class="fl">1</span><span class="op">)</span></code></pre></div>
+<p>Next we perform separate matching analyses in each new dataset,</p>
+<div class="sourceCode" id="cb104"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">mS0</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/matchit.html">matchit</a></span><span class="op">(</span><span class="va">A</span> <span class="op">~</span> <span class="va">X1</span> <span class="op">+</span> <span class="va">X2</span> <span class="op">+</span> <span class="va">X3</span> <span class="op">+</span> <span class="va">X4</span> <span class="op">+</span> 
+                 <span class="va">X6</span> <span class="op">+</span> <span class="va">X7</span> <span class="op">+</span> <span class="va">X8</span> <span class="op">+</span> <span class="va">X9</span>, data <span class="op">=</span> <span class="va">d_X5_0</span>,
+               method <span class="op">=</span> <span class="st">"nearest"</span><span class="op">)</span>
+
+<span class="va">mS1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/matchit.html">matchit</a></span><span class="op">(</span><span class="va">A</span> <span class="op">~</span> <span class="va">X1</span> <span class="op">+</span> <span class="va">X2</span> <span class="op">+</span> <span class="va">X3</span> <span class="op">+</span> <span class="va">X4</span> <span class="op">+</span> 
+                 <span class="va">X6</span> <span class="op">+</span> <span class="va">X7</span> <span class="op">+</span> <span class="va">X8</span> <span class="op">+</span> <span class="va">X9</span>, data <span class="op">=</span> <span class="va">d_X5_1</span>,
+               method <span class="op">=</span> <span class="st">"nearest"</span><span class="op">)</span></code></pre></div>
+<p>It is straightforward to assess balance within each subgroup using <code><a href="https://rdrr.io/r/base/summary.html">summary()</a></code>, and <code>cobalt</code> functions can be used as well. We omit this step here, but you should not!</p>
+<p>To estimate the subgroup effects, we need to combine the matched datasets, which we can do using <code><a href="../reference/rbind.matchdata.html">rbind.matchdata()</a></code> (a special <code><a href="https://rdrr.io/r/base/cbind.html">rbind()</a></code> method for <code>matchdata</code> objects). Then we estimate the moderation effect just as we did previously.</p>
+<div class="sourceCode" id="cb105"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">mdS0</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/match.data.html">match.data</a></span><span class="op">(</span><span class="va">mS0</span><span class="op">)</span>
+<span class="va">mdS1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/match.data.html">match.data</a></span><span class="op">(</span><span class="va">mS1</span><span class="op">)</span>
+
+<span class="va">mdS</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html">rbind</a></span><span class="op">(</span><span class="va">mdS0</span>, <span class="va">mdS1</span><span class="op">)</span>
+
+<span class="va">fitS</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html">lm</a></span><span class="op">(</span><span class="va">Y_C</span> <span class="op">~</span> <span class="va">A</span> <span class="op">*</span> <span class="va">X5</span>, data <span class="op">=</span> <span class="va">mdS</span>, weights <span class="op">=</span> <span class="va">weights</span><span class="op">)</span>
+
+<span class="fu"><a href="https://rdrr.io/pkg/lmtest/man/coeftest.html">coeftest</a></span><span class="op">(</span><span class="va">fitS</span>, vcov. <span class="op">=</span> <span class="va">vcovCL</span>, cluster <span class="op">=</span> <span class="op">~</span><span class="va">subclass</span><span class="op">)</span></code></pre></div>
+<pre><code>## 
+## t test of coefficients:
+## 
+##             Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)    0.720      0.297    2.42    0.016 *  
+## A              2.237      0.453    4.94  8.4e-07 ***
+## X5             2.160      0.414    5.22  2.0e-07 ***
+## A:X5          -0.446      0.593   -0.75    0.452    
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
+<p>There are benefits to using either approach, and Stuart and Green <span class="citation">(<a href="#ref-greenExaminingModerationAnalyses2014" role="doc-biblioref">2014</a>)</span> find that either can be successful at balancing the subgroups. The first approach may be most effective with small samples, where separate propensity score models would be fit with greater uncertainty and an increased possibility of perfect prediction or failure to converge <span class="citation">(Wang et al. <a href="#ref-wangRelativePerformancePropensity2018" role="doc-biblioref">2018</a>)</span>. The second approach may be more effective with larger samples or with matching methods that target balance in the matched sample, such as genetic matching <span class="citation">(Kreif et al. <a href="#ref-kreifMethodsEstimatingSubgroup2012" role="doc-biblioref">2012</a>)</span>. With genetic matching, separate subgroup analyses ensure balance is optimized within each subgroup rather than just overall.</p>
+</div>
 <div id="reporting-results" class="section level3">
 <h3 class="hasAnchor">
 <a href="#reporting-results" class="anchor"></a>Reporting Results</h3>
@@ -1102,7 +1175,7 @@ pre code {
 <li>a description of the outcome model used (e.g., logistic regression, a linear model with treatment-covariate interactions and mean-centered covariates, a Cox proportional hazards model with the matching weights applied)</li>
 <li>the way the effect was estimated (e.g., as the coefficient on treatment in the outcome model, as the result of a marginal effects procedure)</li>
 <li>the way standard errors and confidence intervals were estimated (e.g., using robust standard errors, using cluster-robust standard errors with pair membership as the cluster, using the BCa bootstrap with 4999 bootstrap replications and the entire process of matching and effect estimation included in each replication)</li>
-<li>R packages and functions used in estimating the effect and its standard error (e.g., <code><a href="https://rdrr.io/r/stats/glm.html">glm()</a></code> in base R, <code><a href="http://sandwich.R-Forge.R-project.org//reference/vcovCL.html">vcovCL()</a></code> in <code>sandwich</code>, <code>boot</code> and <code>boot.ci</code> in <code>boot</code>)</li>
+<li>R packages and functions used in estimating the effect and its standard error (e.g., <code><a href="https://rdrr.io/r/stats/glm.html">glm()</a></code> in base R, <code><a href="https://sandwich.R-Forge.R-project.org//reference/vcovCL.html">vcovCL()</a></code> in <code>sandwich</code>, <code>boot</code> and <code>boot.ci</code> in <code>boot</code>)</li>
 <li>The effect and its standard error and confidence interval</li>
 </ul>
 <p>All this is in addition to information about the matching method, propensity score estimation procedure (if used), balance assessment, etc. mentioned in the other vignettes.</p>
@@ -1120,7 +1193,7 @@ pre code {
 <div id="failing-to-use-robust-or-cluster-robust-standard-errors" class="section level3">
 <h3 class="hasAnchor">
 <a href="#failing-to-use-robust-or-cluster-robust-standard-errors" class="anchor"></a>2. Failing to use robust or cluster-robust standard errors</h3>
-<p>Robust standard errors are required when using weights to estimate the treatment effect. The model-based standard errors resulting from weighted least squares or maximum likelihood are inaccurate when using matching weights because they assume weights are frequency weights rather than probability weights. Cluster-robust standard errors account for both the matching weights and pair membership and should be used when appropriate (i.e., with all matching methods other than stratification matching). Sometimes, researchers use functions in the <code>survey</code> package to estimate robust standard errors, especially with inverse probability weighting; this is a valid way to compute robust standard errors and will give similar results to <code><a href="http://sandwich.R-Forge.R-project.org//reference/vcovHC.html">vcovHC()</a></code>.</p>
+<p>Robust standard errors are required when using weights to estimate the treatment effect. The model-based standard errors resulting from weighted least squares or maximum likelihood are inaccurate when using matching weights because they assume weights are frequency weights rather than probability weights. Cluster-robust standard errors account for both the matching weights and pair membership and should be used when appropriate (i.e., with all matching methods other than stratification matching). Sometimes, researchers use functions in the <code>survey</code> package to estimate robust standard errors, especially with inverse probability weighting; this is a valid way to compute robust standard errors and will give similar results to <code><a href="https://sandwich.R-Forge.R-project.org//reference/vcovHC.html">sandwich::vcovHC()</a></code>.</p>
 </div>
 <div id="interpreting-conditional-effects-as-marginal-effects" class="section level3">
 <h3 class="hasAnchor">
@@ -1198,6 +1271,9 @@ pre code {
 <div id="ref-gayat2012">
 <p>Gayat, Etienne, Matthieu Resche-Rigon, Jean-Yves Mary, and Raphaël Porcher. 2012. “Propensity Score Applied to Survival Data Analysis Through Proportional Hazards Models: A Monte Carlo Study.” <em>Pharmaceutical Statistics</em> 11 (3): 222–29. <a href="https://doi.org/10.1002/pst.537">https://doi.org/10.1002/pst.537</a>.</p>
 </div>
+<div id="ref-greenExaminingModerationAnalyses2014">
+<p>Green, Kerry M., and Elizabeth A. Stuart. 2014. “Examining Moderation Analyses in Propensity Score Methods: Application to Depression and Substance Use.” <em>Journal of Consulting and Clinical Psychology</em>, Advances in Data Analytic Methods, 82 (5): 773–83. <a href="https://doi.org/10.1037/a0036515">https://doi.org/10.1037/a0036515</a>.</p>
+</div>
 <div id="ref-hill2006">
 <p>Hill, Jennifer, and Jerome P. Reiter. 2006. “Interval Estimation for Treatment Effects Using Propensity Score Matching.” <em>Statistics in Medicine</em> 25 (13): 2230–56. <a href="https://doi.org/10.1002/sim.2277">https://doi.org/10.1002/sim.2277</a>.</p>
 </div>
@@ -1209,6 +1285,9 @@ pre code {
 </div>
 <div id="ref-king2015">
 <p>King, Gary, and Margaret E. Roberts. 2015. “How Robust Standard Errors Expose Methodological Problems They Do Not Fix, and What to Do About It.” <em>Political Analysis</em> 23 (2): 159–79. <a href="https://doi.org/10.1093/pan/mpu015">https://doi.org/10.1093/pan/mpu015</a>.</p>
+</div>
+<div id="ref-kreifMethodsEstimatingSubgroup2012">
+<p>Kreif, Noemi, Richard Grieve, Rosalba Radice, Zia Sadique, Roland Ramsahai, and Jasjeet S. Sekhon. 2012. “Methods for Estimating Subgroup Effects in Cost-Effectiveness Analyses That Use Observational Data.” <em>Medical Decision Making</em> 32 (6): 750–63. <a href="https://doi.org/10.1177/0272989X12448929">https://doi.org/10.1177/0272989X12448929</a>.</p>
 </div>
 <div id="ref-liang1986">
 <p>Liang, Kung-Yee, and Scott L. Zeger. 1986. “Longitudinal Data Analysis Using Generalized Linear Models.” <em>Biometrika</em> 73 (1): 13–22. <a href="https://doi.org/10.1093/biomet/73.1.13">https://doi.org/10.1093/biomet/73.1.13</a>.</p>
@@ -1237,6 +1316,9 @@ pre code {
 <div id="ref-wan2019">
 <p>Wan, Fei. 2019. “Matched or Unmatched Analyses with Propensity-Scorematched Data?” <em>Statistics in Medicine</em> 38 (2): 289–300. <a href="https://doi.org/10.1002/sim.7976">https://doi.org/10.1002/sim.7976</a>.</p>
 </div>
+<div id="ref-wangRelativePerformancePropensity2018">
+<p>Wang, Shirley V., Yinzhu Jin, Bruce Fireman, Susan Gruber, Mengdong He, Richard Wyss, HoJin Shin, et al. 2018. “Relative Performance of Propensity Score Matching Strategies for Subgroup Analyses.” <em>American Journal of Epidemiology</em> 187 (8): 1799–1807. <a href="https://doi.org/10.1093/aje/kwy049">https://doi.org/10.1093/aje/kwy049</a>.</p>
+</div>
 <div id="ref-westreich2013">
 <p>Westreich, D., and S. Greenland. 2013. “The Table 2 Fallacy: Presenting and Interpreting Confounder and Modifier Coefficients.” <em>American Journal of Epidemiology</em> 177 (4): 292–98. <a href="https://doi.org/10.1093/aje/kws412">https://doi.org/10.1093/aje/kws412</a>.</p>
 </div>
@@ -1245,7 +1327,7 @@ pre code {
 <div id="code-to-generate-data-used-in-examples" class="section level2">
 <h2 class="hasAnchor">
 <a href="#code-to-generate-data-used-in-examples" class="anchor"></a>Code to Generate Data used in Examples</h2>
-<div class="sourceCode" id="cb99"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb107"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co">#Generatng data similar to Austin (2009) for demonstrating treatment effect estimation</span>
 <span class="va">gen_X</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">n</span><span class="op">)</span> <span class="op">{</span>
   <span class="va">X</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">rnorm</a></span><span class="op">(</span><span class="fl">9</span> <span class="op">*</span> <span class="va">n</span><span class="op">)</span>, nrow <span class="op">=</span> <span class="va">n</span>, ncol <span class="op">=</span> <span class="fl">9</span><span class="op">)</span>

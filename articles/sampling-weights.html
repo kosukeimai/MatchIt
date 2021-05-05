@@ -38,7 +38,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">MatchIt</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">4.1.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">4.2.0</span>
       </span>
     </div>
 
@@ -104,7 +104,7 @@
       <h1 data-toc-skip>Matching with Sampling Weights</h1>
                         <h4 class="author">Noah Greifer</h4>
             
-            <h4 class="date">2020-12-15</h4>
+            <h4 class="date">2021-05-05</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/kosukeimai/MatchIt/blob/master/vignettes/sampling-weights.Rmd"><code>vignettes/sampling-weights.Rmd</code></a></small>
       <div class="hidden name"><code>sampling-weights.Rmd</code></div>
@@ -190,14 +190,14 @@ pre code {
 ##  - sampling weights: present
 ##  - target estimand: ATE
 ##  - covariates: X1, X2, X3, X4, X5, X6, X7, X8, X9</code></pre>
-<p>Now when we print the <code>matchit</code> objects, we can see lines have been added identifying that sampling weights are present but they were not used in the estimation of the propensity score used in the matching.</p>
-<p>Note that not all methods can involve sampling weights in the estimation. Only methods that use the propensity score will be affected by sampling weights; coarsened exact matching or Mahalanobis distance optimal pair matching, for example, ignore the sampling weights, and some propensity score estimation methods, like <code>randomForest</code> and <code>bart</code> (as presently implement), cannot incorporate sampling weights. Sampling weights should still be supplied to <code><a href="../reference/matchit.html">matchit()</a></code> even when using these methods to avoid having to use <code>add_sweights()</code> and remembering which methods do or do not involve sampling weights.</p>
+<p>Now when we print the <code>matchit</code> object, we can see lines have been added identifying that sampling weights are present but they were not used in the estimation of the propensity score used in the matching.</p>
+<p>Note that not all methods can involve sampling weights in the estimation. Only methods that use the propensity score will be affected by sampling weights; coarsened exact matching or Mahalanobis distance optimal pair matching, for example, ignore the sampling weights, and some propensity score estimation methods, like <code>randomForest</code> and <code>bart</code> (as presently implemented), cannot incorporate sampling weights. Sampling weights should still be supplied to <code><a href="../reference/matchit.html">matchit()</a></code> even when using these methods to avoid having to use <code>add_sweights()</code> and remembering which methods do or do not involve sampling weights.</p>
 </div>
 <div id="assessing-balance" class="section level2">
 <h2 class="hasAnchor">
 <a href="#assessing-balance" class="anchor"></a>Assessing Balance</h2>
 <p>Now we need to decide which matching specification is the best to use for effect estimation. We do this by selecting the one that yields the best balance without sacrificing remaining effective sample size. Because the sampling weights are incorporated into the <code>matchit</code> object, the balance assessment tools in <code><a href="../reference/plot.matchit.html">plot.matchit()</a></code> and <code><a href="../reference/summary.matchit.html">summary.matchit()</a></code> incorporate them into their output.</p>
-<p>We’ll use <code><a href="https://rdrr.io/r/base/summary.html">summary()</a></code> to examine balance on the two matching specifications. With sampling weights included, the balance statistics for the unmatched data are weighted by the sampling weights. The balance statistics for the matched data are weighted by the product of the sampling weights and the matching weights. It is the product of these weights that will be used in estimating the treatment effect. Below we use <code><a href="https://rdrr.io/r/base/summary.html">summary()</a></code> to display balance for the two matching specifications. no additional arguments to <code><a href="https://rdrr.io/r/base/summary.html">summary()</a></code> are required for it to use the sampling weights; as long as they are in the <code>matchit</code> object (either due to being supplied with the <code>s.weights</code> argument in the call to <code><a href="../reference/matchit.html">matchit()</a></code> or to being added afterward by <code><a href="../reference/add_s.weights.html">add_s.weights()</a></code>), they will be correctly incorporated into the balance statistics.</p>
+<p>We’ll use <code><a href="https://rdrr.io/r/base/summary.html">summary()</a></code> to examine balance on the two matching specifications. With sampling weights included, the balance statistics for the unmatched data are weighted by the sampling weights. The balance statistics for the matched data are weighted by the product of the sampling weights and the matching weights. It is the product of these weights that will be used in estimating the treatment effect. Below we use <code><a href="https://rdrr.io/r/base/summary.html">summary()</a></code> to display balance for the two matching specifications. No additional arguments to <code><a href="https://rdrr.io/r/base/summary.html">summary()</a></code> are required for it to use the sampling weights; as long as they are in the <code>matchit</code> object (either due to being supplied with the <code>s.weights</code> argument in the call to <code><a href="../reference/matchit.html">matchit()</a></code> or to being added afterward by <code><a href="../reference/add_s.weights.html">add_s.weights()</a></code>), they will be correctly incorporated into the balance statistics.</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co">#Balance before matching and for the SW propensity score full matching</span>
 <span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">mF_s</span>, improvement <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></code></pre></div>
@@ -280,10 +280,7 @@ pre code {
 <p>Estimating the treatment effect after matching is straightforward when using sampling weights. Effects are estimated in the same way as when sampling weights are excluded, except that the matching weights must be multiplied by the sampling weights to yield accurate, generalizable estimates. <code><a href="../reference/match.data.html">match.data()</a></code> and <code><a href="../reference/match.data.html">get_matches()</a></code> do this automatically, so the weights produced by these functions already are a product of the matching weights and the sampling weights. Note this will only be true if sampling weights are incorporated into the <code>matchit</code> object.</p>
 <p>Below we estimate the effect of <code>A</code> on <code>Y_C</code> in the matched and sampling weighted sample, adjusting for the covariates to improve precision and decrease bias.</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="http://sandwich.R-Forge.R-project.org/">sandwich</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">lmtest</span><span class="op">)</span>
-
-<span class="va">md_F_s</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/match.data.html">match.data</a></span><span class="op">(</span><span class="va">mF_s</span><span class="op">)</span>
+<code class="sourceCode R"><span class="va">md_F_s</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/match.data.html">match.data</a></span><span class="op">(</span><span class="va">mF_s</span><span class="op">)</span>
 
 <span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html">lm</a></span><span class="op">(</span><span class="va">Y_C</span> <span class="op">~</span> <span class="va">A</span> <span class="op">+</span> <span class="va">X1</span> <span class="op">+</span> <span class="va">X2</span> <span class="op">+</span> <span class="va">X3</span> <span class="op">+</span> <span class="va">X4</span> <span class="op">+</span> <span class="va">X5</span> <span class="op">+</span> 
              <span class="va">X6</span> <span class="op">+</span> <span class="va">X7</span> <span class="op">+</span> <span class="va">X8</span> <span class="op">+</span> <span class="va">X9</span>, data <span class="op">=</span> <span class="va">md_F_s</span>,

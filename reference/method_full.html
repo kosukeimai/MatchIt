@@ -47,17 +47,27 @@
 
 
 <meta property="og:title" content="Optimal Full Matching — method_full" />
-<meta property="og:description" content="In matchit, setting method = &quot;full&quot; performs optimal full matching, which is a form of subclassification wherein all units, both treatment and control (i.e., the &quot;full&quot; sample), are assigned to a subclass and receive at least one match. The matching is optimal in the sense that that sum of the absolute distances between the treated and control units in each subclass are as small as possible. The method relies on and is a wrapper for optmatch::fullmatch.
+<meta property="og:description" content="In matchit(), setting method = &quot;full&quot; performs optimal full matching, which is a form of subclassification wherein all units, both treatment and control (i.e., the &quot;full&quot; sample), are assigned to a subclass and receive at least one match. The matching is optimal in the sense that that sum of the absolute distances between the treated and control units in each subclass are as small as possible. The method relies on and is a wrapper for optmatch::fullmatch().
 Advantages of optimal full matching include that the matching order is not required to be specified, units do not need to be discarded, and it is less likely that extreme within-subclass distances will be large, unlike with standard subclassification. The primary output of full matching is a set of matching weights that can be applied to the matched sample; in this way, full matching can be seen as a robust alternative to propensity score weighting, robust in the sense that the propensity score model does not need to be correct to estimate the treatment effect without bias.
-This page details the allowable arguments with method = &quot;fullmatch&quot;. See matchit for an explanation of what each argument means in a general context and how it can be specified.
-Below is how matchit is used for optimal full matching:
-matchit(formula, data = NULL, method = &quot;full&quot;,
-        distance = &quot;glm&quot;, link = &quot;logit&quot;,
-        distance.options = list(), estimand = &quot;ATT&quot;,
-        exact = NULL, mahvars = NULL, discard = &quot;none&quot;,
-        reestimate = FALSE, s.weights = NULL,
-        caliper = NULL, std.caliper = TRUE,
-        verbose = FALSE, ...)
+This page details the allowable arguments with method = &quot;fullmatch&quot;. See matchit() for an explanation of what each argument means in a general context and how it can be specified.
+Below is how matchit() is used for optimal full matching:
+matchit(formula,
+        data = NULL,
+        method = &quot;full&quot;,
+        distance = &quot;glm&quot;,
+        link = &quot;logit&quot;,
+        distance.options = list(),
+        estimand = &quot;ATT&quot;,
+        exact = NULL,
+        mahvars = NULL,
+        anitexact = NULL,
+        discard = &quot;none&quot;,
+        reestimate = FALSE,
+        s.weights = NULL,
+        caliper = NULL,
+        std.caliper = TRUE,
+        verbose = FALSE,
+        ...)
 
 
 " />
@@ -93,7 +103,7 @@ matchit(formula, data = NULL, method = &quot;full&quot;,
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">MatchIt</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">4.1.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">4.2.0</span>
       </span>
     </div>
 
@@ -162,17 +172,27 @@ matchit(formula, data = NULL, method = &quot;full&quot;,
     </div>
 
     <div class="ref-description">
-    <p>In <code><a href='matchit.html'>matchit</a></code>, setting <code>method = "full"</code> performs optimal full matching, which is a form of subclassification wherein all units, both treatment and control (i.e., the "full" sample), are assigned to a subclass and receive at least one match. The matching is optimal in the sense that that sum of the absolute distances between the treated and control units in each subclass are as small as possible. The method relies on and is a wrapper for <code><a href='https://rdrr.io/pkg/optmatch/man/fullmatch.html'>optmatch::fullmatch</a></code>.</p>
+    <p>In <code><a href='matchit.html'>matchit()</a></code>, setting <code>method = "full"</code> performs optimal full matching, which is a form of subclassification wherein all units, both treatment and control (i.e., the "full" sample), are assigned to a subclass and receive at least one match. The matching is optimal in the sense that that sum of the absolute distances between the treated and control units in each subclass are as small as possible. The method relies on and is a wrapper for <code><a href='https://rdrr.io/pkg/optmatch/man/fullmatch.html'>optmatch::fullmatch()</a></code>.</p>
 <p>Advantages of optimal full matching include that the matching order is not required to be specified, units do not need to be discarded, and it is less likely that extreme within-subclass distances will be large, unlike with standard subclassification. The primary output of full matching is a set of matching weights that can be applied to the matched sample; in this way, full matching can be seen as a robust alternative to propensity score weighting, robust in the sense that the propensity score model does not need to be correct to estimate the treatment effect without bias.</p>
-<p>This page details the allowable arguments with <code>method = "fullmatch"</code>. See <code><a href='matchit.html'>matchit</a></code> for an explanation of what each argument means in a general context and how it can be specified.</p>
-<p>Below is how <code>matchit</code> is used for optimal full matching:</p><pre>
-<span class='fu'><a href='matchit.html'>matchit</a></span><span class='op'>(</span><span class='va'>formula</span>, data <span class='op'>=</span> <span class='cn'>NULL</span>, method <span class='op'>=</span> <span class='st'>"full"</span>,
-        distance <span class='op'>=</span> <span class='st'>"glm"</span>, link <span class='op'>=</span> <span class='st'>"logit"</span>,
-        distance.options <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span><span class='op'>)</span>, estimand <span class='op'>=</span> <span class='st'>"ATT"</span>,
-        exact <span class='op'>=</span> <span class='cn'>NULL</span>, mahvars <span class='op'>=</span> <span class='cn'>NULL</span>, discard <span class='op'>=</span> <span class='st'>"none"</span>,
-        reestimate <span class='op'>=</span> <span class='cn'>FALSE</span>, s.weights <span class='op'>=</span> <span class='cn'>NULL</span>,
-        caliper <span class='op'>=</span> <span class='cn'>NULL</span>, std.caliper <span class='op'>=</span> <span class='cn'>TRUE</span>,
-        verbose <span class='op'>=</span> <span class='cn'>FALSE</span>, <span class='va'>...</span><span class='op'>)</span>
+<p>This page details the allowable arguments with <code>method = "fullmatch"</code>. See <code><a href='matchit.html'>matchit()</a></code> for an explanation of what each argument means in a general context and how it can be specified.</p>
+<p>Below is how <code><a href='matchit.html'>matchit()</a></code> is used for optimal full matching:</p><pre>
+<span class='fu'><a href='matchit.html'>matchit</a></span><span class='op'>(</span><span class='va'>formula</span>,
+        data <span class='op'>=</span> <span class='cn'>NULL</span>,
+        method <span class='op'>=</span> <span class='st'>"full"</span>,
+        distance <span class='op'>=</span> <span class='st'>"glm"</span>,
+        link <span class='op'>=</span> <span class='st'>"logit"</span>,
+        distance.options <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span><span class='op'>)</span>,
+        estimand <span class='op'>=</span> <span class='st'>"ATT"</span>,
+        exact <span class='op'>=</span> <span class='cn'>NULL</span>,
+        mahvars <span class='op'>=</span> <span class='cn'>NULL</span>,
+        anitexact <span class='op'>=</span> <span class='cn'>NULL</span>,
+        discard <span class='op'>=</span> <span class='st'>"none"</span>,
+        reestimate <span class='op'>=</span> <span class='cn'>FALSE</span>,
+        s.weights <span class='op'>=</span> <span class='cn'>NULL</span>,
+        caliper <span class='op'>=</span> <span class='cn'>NULL</span>,
+        std.caliper <span class='op'>=</span> <span class='cn'>TRUE</span>,
+        verbose <span class='op'>=</span> <span class='cn'>FALSE</span>,
+        <span class='va'>...</span><span class='op'>)</span>
 
 </pre>
 
@@ -184,7 +204,7 @@ matchit(formula, data = NULL, method = &quot;full&quot;,
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>formula</th>
-      <td><p>a two-sided <code><a href='https://rdrr.io/r/stats/formula.html'>formula</a></code> object containing the treatment and covariates to be used in creating the distance measure used in the matching. This formula will be supplied to the functions that estimate the distance measure.</p></td>
+      <td><p>a two-sided <code><a href='https://rdrr.io/r/stats/formula.html'>formula()</a></code> object containing the treatment and covariates to be used in creating the distance measure used in the matching. This formula will be supplied to the functions that estimate the distance measure.</p></td>
     </tr>
     <tr>
       <th>data</th>
@@ -196,7 +216,7 @@ matchit(formula, data = NULL, method = &quot;full&quot;,
     </tr>
     <tr>
       <th>distance</th>
-      <td><p>the distance measure to be used. See <code><a href='distance.html'>distance</a></code> for allowable options. When set to <code>"mahalanobis"</code>, optimal full Mahalanobis distance matching will be performed on the variables named in <code>formula</code>.</p></td>
+      <td><p>the distance measure to be used. See <code><a href='distance.html'>distance</a></code> for allowable options. When set to <code>"mahalanobis"</code>, optimal full Mahalanobis distance matching will be performed on the variables named in <code>formula</code>. Can be supplied as a distance matrix.</p></td>
     </tr>
     <tr>
       <th>link</th>
@@ -208,19 +228,23 @@ matchit(formula, data = NULL, method = &quot;full&quot;,
     </tr>
     <tr>
       <th>estimand</th>
-      <td><p>a string containing the desired estimand. Allowable options include <code>"ATT"</code>, <code>"ATC"</code>, and <code>"ATE"</code>. The estimand controls how the weights are computed; see the Computing Weights section at <code><a href='matchit.html'>matchit</a></code> for details.</p></td>
+      <td><p>a string containing the desired estimand. Allowable options include <code>"ATT"</code>, <code>"ATC"</code>, and <code>"ATE"</code>. The estimand controls how the weights are computed; see the Computing Weights section at <code><a href='matchit.html'>matchit()</a></code> for details.</p></td>
     </tr>
     <tr>
       <th>exact</th>
-      <td><p>for which variables exact matching should take place. Exact matching is processed using <code><a href='https://rdrr.io/pkg/optmatch/man/exactMatch.html'>optmatch::exactMatch</a></code>.</p></td>
+      <td><p>for which variables exact matching should take place. Exact matching is processed using <code><a href='https://rdrr.io/pkg/optmatch/man/exactMatch.html'>optmatch::exactMatch()</a></code>.</p></td>
     </tr>
     <tr>
       <th>mahvars</th>
       <td><p>for which variables Mahalanobis distance matching should take place when a distance measure other than <code>"mahalanobis"</code> is used (e.g., for caliper matching or to discard units for common support). If specified, the distance measure will not be used in matching.</p></td>
     </tr>
     <tr>
+      <th>antiexact</th>
+      <td><p>for which variables ant-exact matching should take place. Anti-exact matching is processed using <code><a href='https://rdrr.io/pkg/optmatch/man/antiExactMatch.html'>optmatch::antiExactMatch()</a></code>.</p></td>
+    </tr>
+    <tr>
       <th>discard</th>
-      <td><p>a string containing a method for discarding units outside a region of common support. Only allowed when <code>distance</code> is not <code>"mahalanobis"</code>.</p></td>
+      <td><p>a string containing a method for discarding units outside a region of common support. Only allowed when <code>distance</code> is not <code>"mahalanobis"</code> and not a matrix.</p></td>
     </tr>
     <tr>
       <th>reestimate</th>
@@ -232,7 +256,7 @@ matchit(formula, data = NULL, method = &quot;full&quot;,
     </tr>
     <tr>
       <th>caliper</th>
-      <td><p>the width(s) of the caliper(s) used for caliper matching. Calipers are processed by <code><a href='https://rdrr.io/pkg/optmatch/man/caliper-methods.html'>optmatch::caliper</a></code> See Notes and Examples.</p></td>
+      <td><p>the width(s) of the caliper(s) used for caliper matching. Calipers are processed by <code><a href='https://rdrr.io/pkg/optmatch/man/caliper-methods.html'>optmatch::caliper()</a></code> See Notes and Examples.</p></td>
     </tr>
     <tr>
       <th>std.caliper</th>
@@ -244,21 +268,21 @@ matchit(formula, data = NULL, method = &quot;full&quot;,
     </tr>
     <tr>
       <th>...</th>
-      <td><p>additional arguments passed to <code><a href='https://rdrr.io/pkg/optmatch/man/fullmatch.html'>optmatch::fullmatch</a></code>. Allowed arguments include <code>min.controls</code>, <code>max.controls</code>, <code>omit.fraction</code>, <code>mean.controls</code>, and <code>tol</code>. See the <code><a href='https://rdrr.io/pkg/optmatch/man/fullmatch.html'>optmatch::fullmatch</a></code> documentation for details.</p></td>
+      <td><p>additional arguments passed to <code><a href='https://rdrr.io/pkg/optmatch/man/fullmatch.html'>optmatch::fullmatch()</a></code>. Allowed arguments include <code>min.controls</code>, <code>max.controls</code>, <code>omit.fraction</code>, <code>mean.controls</code>, and <code>tol</code>. See the <code><a href='https://rdrr.io/pkg/optmatch/man/fullmatch.html'>optmatch::fullmatch()</a></code> documentation for details.</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="note"><a class="anchor" href="#note"></a>Note</h2>
 
     <p>Due to what appears to be a bug in <em>optmatch</em> (version 0.9-13), calipers can only be used when <code>min.controls</code> is left at its default.</p>
-<p>The option <code>"optmatch_max_problem_size"</code> is automatically set to <code>Inf</code> during the matching process, different from its default in <em>optmatch</em>. This enables matching problems of any size to be run, but may also let huge, infeasible problems get through and potentially take a long time or crash R. See <code><a href='https://rdrr.io/pkg/optmatch/man/setMaxProblemSize.html'>optmatch::setMaxProblemSize</a></code> for more details.</p>
+<p>The option <code>"optmatch_max_problem_size"</code> is automatically set to <code>Inf</code> during the matching process, different from its default in <em>optmatch</em>. This enables matching problems of any size to be run, but may also let huge, infeasible problems get through and potentially take a long time or crash R. See <code><a href='https://rdrr.io/pkg/optmatch/man/setMaxProblemSize.html'>optmatch::setMaxProblemSize()</a></code> for more details.</p>
     <h2 class="hasAnchor" id="outputs"><a class="anchor" href="#outputs"></a>Outputs</h2>
 
-    <p>All outputs described in <code><a href='matchit.html'>matchit</a></code> are returned with <code>method = "full"</code> except for <code>match.matrix</code>. This is because matching strata are not indexed by treated units as they are in some other forms of matching.</p>
+    <p>All outputs described in <code><a href='matchit.html'>matchit()</a></code> are returned with <code>method = "full"</code> except for <code>match.matrix</code>. This is because matching strata are not indexed by treated units as they are in some other forms of matching.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p><code><a href='matchit.html'>matchit</a></code> for a detailed explanation of the inputs and outputs of a call to <code>matchit</code>.</p>
-<p><code><a href='https://rdrr.io/pkg/optmatch/man/fullmatch.html'>optmatch::fullmatch</a></code>, which is the workhorse.</p>
+    <div class='dont-index'><p><code><a href='matchit.html'>matchit()</a></code> for a detailed explanation of the inputs and outputs of a call to <code><a href='matchit.html'>matchit()</a></code>.</p>
+<p><code><a href='https://rdrr.io/pkg/optmatch/man/fullmatch.html'>optmatch::fullmatch()</a></code>, which is the workhorse.</p>
 <p><code><a href='method_optimal.html'>method_optimal</a></code> for optimal pair matching, which is a special case of optimal full matching, and which relies on similar machinery. Results from <code>method = "optimal"</code> can be replicated with <code>method = "full"</code> by setting <code>min.controls</code>, <code>max.controls</code>, and <code>mean.controls</code> to the desired <code>ratio</code>.</p></div>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
@@ -271,7 +295,7 @@ matchit(formula, data = NULL, method = &quot;full&quot;,
         distance <span class='op'>=</span> <span class='st'>"mahalanobis"</span><span class='op'>)</span>
 </pre>
 
-<p>With this code, the Mahalanobis distance is computed using <code>X1</code> and <code>X2</code>, and matching occurs on this distance. The <code>distance</code> component of the <code>matchit</code> output will be empty.</p>
+<p>With this code, the Mahalanobis distance is computed using <code>X1</code> and <code>X2</code>, and matching occurs on this distance. The <code>distance</code> component of the <code><a href='matchit.html'>matchit()</a></code> output will be empty.</p>
 <p>2) If a propensity score needs to be estimated for any reason, e.g., for common support with <code>discard</code> or for creating a caliper, <code>distance</code> should be whatever method is used to estimate the propensity score or a vector of distance measures, i.e., it should not be <code>"mahalanobis"</code>. Use <code>mahvars</code> to specify the variables used to create the Mahalanobis distance. For example, to perform Mahalanobis within a propensity score caliper, the following could be run:</p>
 <pre>
 <span class='fu'><a href='matchit.html'>matchit</a></span><span class='op'>(</span><span class='va'>treat</span> <span class='op'>~</span> <span class='va'>X1</span> <span class='op'>+</span> <span class='va'>X2</span> <span class='op'>+</span> <span class='va'>X3</span>, method <span class='op'>=</span> <span class='st'>"nearest"</span>,
@@ -279,13 +303,14 @@ matchit(formula, data = NULL, method = &quot;full&quot;,
         mahvars <span class='op'>=</span> <span class='op'>~</span> <span class='va'>X1</span> <span class='op'>+</span> <span class='va'>X2</span><span class='op'>)</span>
 </pre>
 
-<p>With this code, <code>X1</code>, <code>X2</code>, and <code>X3</code> are used to estimate the propensity score (using the <code>"glm"</code> method, which by default is logistic regression), which is used to create a matching caliper. The actual matching occurs on the Mahalanobis distance computed only using <code>X1</code> and <code>X2</code>, which are supplied to <code>mahvars</code>. Units whose propensity score difference is larger than the caliper will not be paired, and some treated units may therefore not receive a match. The estimated propensity scores will be included in the <code>distance</code> component of the <code>matchit</code> output. See Examples.</p>
+<p>With this code, <code>X1</code>, <code>X2</code>, and <code>X3</code> are used to estimate the propensity score (using the <code>"glm"</code> method, which by default is logistic regression), which is used to create a matching caliper. The actual matching occurs on the Mahalanobis distance computed only using <code>X1</code> and <code>X2</code>, which are supplied to <code>mahvars</code>. Units whose propensity score difference is larger than the caliper will not be paired, and some treated units may therefore not receive a match. The estimated propensity scores will be included in the <code>distance</code> component of the <code><a href='matchit.html'>matchit()</a></code> output. See Examples.</p>
 <p>When sampling weights are supplied through the <code>s.weights</code> argument, the covariance matrix of the covariates used in the Mahalanobis distance is <strong>not</strong> weighted by the sampling weights.</p>
+<p>Mahalanobis distance matching can also be done by supplying a Mahalanobis distance matrix (e.g., the output of a call to <code><a href='https://rdrr.io/pkg/optmatch/man/match_on-methods.html'>optmatch::match_on()</a></code>) to the <code>distance</code> argument. This makes it straightforward to use the robust rank-based Mahalanobis distance available in <span class="pkg">optmatch</span>.</p>
 
 
     <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
 
-    <p>In a manuscript, be sure to cite the following paper if using <code>matchit</code> with <code>method = "full"</code>:</p>
+    <p>In a manuscript, be sure to cite the following paper if using <code><a href='matchit.html'>matchit()</a></code> with <code>method = "full"</code>:</p>
 <p>Hansen, B. B., &amp; Klopfer, S. O. (2006). Optimal Full Matching and Related Designs via Network Flows. Journal of Computational and Graphical Statistics, 15(3), 609–627. doi: <a href='https://doi.org/10.1198/106186006X137047'>10.1198/106186006X137047</a></p>
 <p>For example, a sentence might read:</p>
 <p><em>Optimal full matching was performed using the MatchIt package (Ho, Imai, King, &amp; Stuart, 2011) in R, which calls functions from the optmatch package (Hansen &amp; Klopfer, 2006).</em></p>
