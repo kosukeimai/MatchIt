@@ -104,7 +104,7 @@
       <h1 data-toc-skip>MatchIt: Getting Started</h1>
                         <h4 class="author">Noah Greifer</h4>
             
-            <h4 class="date">2021-05-05</h4>
+            <h4 class="date">2021-05-26</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/kosukeimai/MatchIt/blob/master/vignettes/MatchIt.Rmd"><code>vignettes/MatchIt.Rmd</code></a></small>
       <div class="hidden name"><code>MatchIt.Rmd</code></div>
@@ -324,7 +324,7 @@
 <p>We can then estimate a treatment effect in this dataset using the standard regression functions in R, like <code><a href="https://rdrr.io/r/stats/lm.html">lm()</a></code> or <code><a href="https://rdrr.io/r/stats/glm.html">glm()</a></code>, being sure to include the matching weights (stored in the <code>weights</code> variable of the <code><a href="../reference/match.data.html">match.data()</a></code> output) in the estimation<a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a>. We recommend using cluster-robust standard errors for most analyses, with pair membership as the clustering variable; the <code>lmtest</code> and <code>sandwich</code> packages together make this straightforward.</p>
 <div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="st">"lmtest"</span><span class="op">)</span> <span class="co">#coeftest</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="st"><a href="http://sandwich.R-Forge.R-project.org/">"sandwich"</a></span><span class="op">)</span> <span class="co">#vcovCL</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="st"><a href="https://sandwich.R-Forge.R-project.org/">"sandwich"</a></span><span class="op">)</span> <span class="co">#vcovCL</span>
 
 <span class="va">fit1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html">lm</a></span><span class="op">(</span><span class="va">re78</span> <span class="op">~</span> <span class="va">treat</span> <span class="op">+</span> <span class="va">age</span> <span class="op">+</span> <span class="va">educ</span> <span class="op">+</span> <span class="va">race</span> <span class="op">+</span> <span class="va">married</span> <span class="op">+</span> <span class="va">nodegree</span> <span class="op">+</span> 
              <span class="va">re74</span> <span class="op">+</span> <span class="va">re75</span>, data <span class="op">=</span> <span class="va">m.data1</span>, weights <span class="op">=</span> <span class="va">weights</span><span class="op">)</span>
