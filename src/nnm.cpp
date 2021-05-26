@@ -72,6 +72,7 @@ IntegerMatrix nn_matchC(const IntegerVector& treat_,
                 match_distance(n0);
 
   IntegerVector c_eligible(n0), indices(n0);
+  LogicalVector finite_match_distance(n0);
 
   if (distance_.isNotNull()) {
     distance = distance_;
@@ -125,11 +126,15 @@ IntegerMatrix nn_matchC(const IntegerVector& treat_,
   Progress p(prog_length, disl_prog);
 
   //Counters
-  int rat, i, x, j, a;
+  int rat, i, x, j, a, k;
+  k = -1;
 
   //Matching
   for (rat = 0; rat < max_rat; ++rat) {
     for (i = 0; i < n1_; ++i) {
+
+      k++;
+      if (k % 500 == 0) Rcpp::checkUserInterrupt();
 
       p.increment();
 
@@ -240,14 +245,18 @@ IntegerMatrix nn_matchC(const IntegerVector& treat_,
       } else if (use_dist_mat) {
         dist_t = distance_mat.row(t);
         match_distance = dist_t[match(c_eligible, ind0_) - 1];
-        c_eligible = c_eligible[is_finite(match_distance)]; //remove Inf
-        if (c_eligible.size() == 0) {
-          continue;
-        }
       } else {
         dt = distance[t_ind];
         match_distance = Rcpp::abs(as<NumericVector>(distance[c_eligible]) - dt);
       }
+
+      //Remove infinite distances
+      finite_match_distance = is_finite(match_distance);
+      c_eligible = c_eligible[finite_match_distance];
+      if (c_eligible.size() == 0) {
+        continue;
+      }
+      match_distance = match_distance[finite_match_distance];
 
       if (replace) {
         //When matching w/ replacement, get t_rat closest control units

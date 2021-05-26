@@ -394,7 +394,8 @@ matchit2optimal <- function(treat, formula, data, distance, discarded,
 
   if (all(is.na(pair))) stop("No matches were found.", call. = FALSE)
 
-  psclass <- factor(pair); levels(psclass) <- seq_len(nlevels(psclass))
+  psclass <- factor(pair)
+  levels(psclass) <- seq_len(nlevels(psclass))
   names(psclass) <- names(treat)
 
   mm <- nummm2charmm(subclass2mmC(psclass, treat, focal), treat)
@@ -670,12 +671,12 @@ matchit2genetic <- function(treat, data, distance, discarded,
     psclass <- mm2subclass(mm, treat)
   }
 
-  if (verbose) cat("Done.\n")
-
   res <- list(match.matrix = nummm2charmm(mm, treat),
               subclass = psclass,
               weights = weights.matrix(mm, treat),
               obj = g.out)
+
+  if (verbose) cat("Done.\n")
 
   class(res) <- "matchit"
   return(res)
@@ -879,7 +880,7 @@ matchit2nearest <-  function(treat, data, distance, discarded,
   else {
     mm_list <- lapply(levels(ex), function(e) {
       if (verbose) {
-        cat(paste0("Matching where ", e, "...\n"))
+        cat(paste0("Matching subgroup ", match(e, levels(ex)), "/", nlevels(ex), ": ", e, "...\n"))
       }
 
       distance_ <- caliper.covs.mat_ <- mahcovs_ <- distance_mat_ <- NULL
@@ -922,11 +923,11 @@ matchit2nearest <-  function(treat, data, distance, discarded,
     psclass <- mm2subclass(mm, treat)
   }
 
-  if (verbose) cat("Done.\n")
-
   res <- list(match.matrix = nummm2charmm(mm, treat),
               subclass = psclass,
               weights = weights.matrix(mm, treat))
+
+  if (verbose) cat("Done.\n")
 
   class(res) <- "matchit"
 
@@ -1013,8 +1014,6 @@ matchit2subclass <- function(treat, distance, discarded,
   }
 
   psclass <- setNames(factor(psclass, nmax = length(q)), names(treat))
-
-  if (verbose) cat("Done\n")
 
   #warning for discrete data
 

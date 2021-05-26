@@ -8,7 +8,7 @@ output:
 
 # MatchIt 4.2.0
 
-* `distance` can now be supplied as a distance matrix containing pairwise distances with nearest neighbor, optimal, and full matching. This means users can create a distance matrix outside `MatchIt` (e.g., using `optmatch::match_on()`) and `matchit()` will use those distances in the matching. See `?distance` for details.
+* `distance` can now be supplied as a distance matrix containing pairwise distances with nearest neighbor, optimal, and full matching. This means users can create a distance matrix outside `MatchIt` (e.g., using `optmatch::match_on()` or `dist()`) and `matchit()` will use those distances in the matching. See `?distance` for details.
 
 * Added `rbind.matchdata()` method for `matchdata` and `getmatches` objects (the output of `match.data()` and `get_matches()`, respectively) to avoid subclass conflicts when combining matched samples after matching within subgroups.
 
@@ -17,6 +17,8 @@ output:
 * Added `antiexact` argument to perform anti-exact matching, i.e., matching that ensures treated and control units have different values of certain variables. See [here](https://stackoverflow.com/questions/66526115/propensity-score-matching-with-panel-data) and [here](https://stackoverflow.com/questions/61120201/avoiding-duplicates-from-propensity-score-matching?rq=1) for examples where this feature was requested and might be useful. Anti-exact matching works with nearest neighbor, optimal, full, and genetic matching. The argument to `antiexact` should be similar to an argument to `exact`: either a string or a one-sided `formula` containing the names of the anti-exact matching variables.
 
 * Slight speed improvements for nearest neighbor matching, especially with `exact` specified.
+
+* With `method = "nearest"`, `verbose = TRUE`, and `exact` specified, separate messages and progress bars will be shown for each subgroup of the `exact` variable(s).
 
 * A spurious warning that would appear when using a large `ratio` with `replace = TRUE` and `method = "nearest"` no longer appears.
 
