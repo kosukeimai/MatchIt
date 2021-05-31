@@ -264,7 +264,7 @@ print.summary.matchit <- function(x, digits = max(3, getOption("digits") - 3), .
     cat("\nSample Sizes:\n")
     nn <- x$nn
     if (isTRUE(all.equal(nn["All (ESS)",], nn["All",]))) {
-      #Don't print ESS if same as matched SS
+      #Don't print ESS if same as full SS
       nn <- nn[rownames(nn) != "All (ESS)",]
     }
     if (isTRUE(all.equal(nn["Matched (ESS)",], nn["Matched",]))) {
@@ -312,7 +312,7 @@ print.summary.matchit.subclass <- function(x, digits = max(3, getOption("digits"
       cat("\nSample Sizes:\n")
       nn <- x$nn
       if (isTRUE(all.equal(nn["All (ESS)",], nn["All",]))) {
-        #Don't print ESS if same as matched SS
+        #Don't print ESS if same as full SS
         nn <- nn[rownames(nn) != "All (ESS)",]
       }
       if (isTRUE(all.equal(nn["Matched (ESS)",], nn["Matched",]))) {
@@ -339,7 +339,7 @@ summary.matchit <- function(object, interactions = FALSE,
   else {
     X <- get.covs.matrix(data = object$X)
   }
-  X_assign <- attr(X, "assign")
+  X_assign <- get_assign(X)
 
   if (!is.null(addlvariables)) {
     if (is.character(addlvariables)) {
@@ -370,7 +370,7 @@ summary.matchit <- function(object, interactions = FALSE,
       addlvariables <- get.covs.matrix(data = addlvariables)
     }
 
-    addl_assign <- attr(addlvariables, "assign")
+    addl_assign <- get_assign(addlvariables)
     X <- cbind(X, addlvariables[, setdiff(colnames(addlvariables), colnames(X)), drop = FALSE])
   }
 
@@ -473,7 +473,7 @@ summary.matchit <- function(object, interactions = FALSE,
     if (un) {
       ad.all <- qoi(object$distance, tt = treat, ww = NULL, s.weights = s.weights,
                     standardize = standardize, s.d.denom = s.d.denom)
-      if (!exists("sum.all")) {
+      if (!exists("sum.all", inherits = FALSE)) {
         sum.all <- matrix(ad.all, nrow = 1, dimnames = list("distance", names(ad.all)))
       }
       else {
@@ -485,7 +485,7 @@ summary.matchit <- function(object, interactions = FALSE,
       ad.matched <- qoi(object$distance, tt = treat, ww = weights, s.weights = s.weights,
                         subclass = object$subclass, mm = object$match.matrix, standardize = standardize,
                         s.d.denom = s.d.denom, compute.pair.dist = pair.dist)
-      if (!exists("sum.matched")) {
+      if (!exists("sum.matched", inherits = FALSE)) {
         sum.matched <- matrix(ad.matched, nrow = 1, dimnames = list("distance", names(ad.matched)))
       }
       else {
