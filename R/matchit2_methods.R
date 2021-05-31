@@ -1033,3 +1033,102 @@ matchit2subclass <- function(treat, distance, discarded,
   return(res)
 }
 
+
+# MATCHIT method = cardinality----------------------------------
+matchit2cardinality <-  function(treat, data, discarded, formula,
+                             ratio = 1, s.weights = NULL, replace = FALSE, exact = NULL,
+                             estimand = "ATT", verbose = FALSE, tols = .05, std.tols = TRUE,
+                             solver = "glpk", time = 1*60, ...){
+
+  if (verbose) {
+    cat("Cardinality matching... \n")
+  }
+
+  estimand <- toupper(estimand)
+  estimand <- match_arg(estimand, c("ATT", "ATC", "ATE"))
+  if (estimand == "ATC") {
+    tc <- c("control", "treated")
+    focal <- 0
+  }
+  else {
+    tc <- c("treated", "control")
+    focal <- 1
+  }
+
+  lab <- names(treat)
+
+  ratio <- process.ratio(ratio, na.ok = TRUE)
+
+  weights <- setNames(rep(0, length(treat)), lab)
+
+  treat <- setNames(as.integer(treat == focal), lab)
+
+  X <- get.covs.matrix(formula, data = data)
+
+  if (!is.null(exact)) {
+    ex <- factor(exactify(model.frame(exact, data = data), nam = lab, sep = ", ", include_vars = TRUE))
+
+    cc <- intersect(as.integer(ex)[treat==1], as.integer(ex)[treat==0])
+    if (length(cc) == 0) stop("No matches were found.", call. = FALSE)
+  }
+  else {
+    ex <- NULL
+  }
+
+  #Process tols
+  assign <- get_assign(X)
+
+  if (length(tols) == 0 || !is.numeric(tols) || anyNA(tols)) stop("'tols' must be numeric.", call. = FALSE)
+  if (length(tols) == 1) tols <- rep(tols, ncol(X))
+  else if (length(tols) == max(assign)) {
+    tols <- tols[assign]
+  }
+  else if (length(tols) != ncol(X)) {
+    stop("'tols' must have length 1 or the number of covariates. See ?method_cardinality for details.", call. = FALSE)
+  }
+
+  if (length(std.tols) == 0 || !is.logical(std.tols) || anyNA(std.tols)) stop("'std.tols' must be logical (TRUE/FALSE).", call. = FALSE)
+  if (length(std.tols) == 1) std.tols <- rep(std.tols, ncol(X))
+  else if (length(std.tols) == max(assign)) {
+    std.tols <- std.tols[assign]
+  }
+  else if (length(std.tols) != ncol(X)) {
+    stop("'std.tols' must have length 1 or the number of covariates. See ?method_cardinality for details.", call. = FALSE)
+  }
+
+  #Apply std.tols
+  if (any(std.tols)) {
+    if (estimand == "ATE") {
+      sds <- sqrt(.5*(apply(X[treat==1,std.tols,drop=FALSE], 2, wvar, w = s.weights[treat==1]) +
+                        apply(X[treat!=1,std.tols,drop=FALSE], 2, wvar, w = s.weights[treat!=1])))
+    }
+    else {
+      sds <- sqrt(apply(X[treat==1,std.tols,drop=FALSE], 2, wvar, w = s.weights[treat==1]))
+    }
+    X[,std.tols] <- scale(X[,std.tols,drop=FALSE], center = FALSE, scale = sds)
+  }
+
+  for (e in (if (is.null(ex)) 1 else levels(ex))) {
+    if (is.null(ex)) in.exact <- which(!discarded)
+    else in.exact <- which(!discarded & ex == e)
+
+    out <- cardinality_matchit(treat[in.exact], X[in.exact,, drop = FALSE],
+                               estimand, tols,
+                               s.weights[in.exact], ratio,
+                               solver, time, verbose)
+
+    weights[in.exact] <- out$weights
+  }
+
+  psclass <- NULL
+
+  res <- list(subclass = psclass,
+              weights = weights)
+
+  if (verbose) cat("Done.\n")
+
+  class(res) <- "matchit"
+
+  return(res)
+
+}

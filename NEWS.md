@@ -6,6 +6,10 @@ output:
 `MatchIt` News and Updates
 ======
 
+# MatchIt (development version)
+
+* Cardinality matching can now be used by setting `method = "cardinality"`. Cardinality matching involves using mixed integer programming to directly select a matched subsample without pairing or stratifying units. See `?method_cardinality` and `vignettes("matching-methods")` for more information.
+
 # MatchIt 4.2.0
 
 * `distance` can now be supplied as a distance matrix containing pairwise distances with nearest neighbor, optimal, and full matching. This means users can create a distance matrix outside `MatchIt` (e.g., using `optmatch::match_on()` or `dist()`) and `matchit()` will use those distances in the matching. See `?distance` for details.
