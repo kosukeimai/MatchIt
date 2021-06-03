@@ -66,6 +66,7 @@ additional arguments that control the matching specification:
      }
   }
 }
+The arguments \code{distance} (and related arguments), \code{mahvars}, \code{replace}, \code{m.order}, and \code{caliper} (and related arguments) are ignored with a warning.
 }
 \section{Outputs}{
 Most outputs described in \fun{matchit} are returned with \code{method = "cardinality"}. The \code{match.matrix} and \code{subclass} components are omitted because no pairing or subclassification is done.
@@ -86,9 +87,10 @@ The weights are scaled so that the sum of the weights in each group is equal to 
 \subsection{Specifying Balance Constraints}{
 The balance constraints are on the (standardized) mean differences between the matched treatment groups for each covariate. Balance constraints should be set by supplying arguments to \code{tols} and \code{std.tols}. For example, setting \code{tols = .1} and \code{std.tols = TRUE} requests that all the mean differences in the matched sample should be within .1 standard deviations for each covariate. Different tolerances can be set for difference variables; it might be beneficial to constrain the mean differences for highly prognostic covariates more tightly than other variables. For example, one could specify \code{tols = c(.001, .05), std.tols = c(TRUE, FALSE)} to request that the standadized mean difference for the first covariate is less than .001 and the raw mean difference for the second covariate is less than .05. The values should be specified in the order they appear in \code{formula}, except when interactions are present. One can run the following code:
 
-\preformatted{MatchIt:::get_assign(model.matrix(~X1*X2 + X3, data = data))[-1]}
+\preformatted{MatchIt:::get_assign(model.matrix(~X1*X2 + X3,
+                                                data = data))[-1]}
 
-this will output a vector of numbers and the variable to which each number corresponds; the first entry in \code{tols} corresponds to the variable labeled 1, the second to the variable labeled 2, etc.
+which will output a vector of numbers and the variable to which each number corresponds; the first entry in \code{tols} corresponds to the variable labeled 1, the second to the variable labeled 2, etc.
 }
 
 \subsection{Dealing with Errors and Warnings}{
