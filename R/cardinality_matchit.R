@@ -172,7 +172,7 @@ cardinality_matchit <- function(treat, X, estimand = "ATT", tols = .05, s.weight
     Cdir[Cdir == "<"] <- "<="
     Cdir[Cdir == ">"] <- ">="
     opt.out <- Rsymphony::Rsymphony_solve_LP(obj = O, mat = C, dir = Cdir, rhs = Crhs, max = TRUE,
-                                             types = types, verbosity = if (verbose) -1 else -2,
+                                             types = types, verbosity = verbose - 2,
                                              # bounds = list(lower = lower.bound), #Spurious warning when using bounds
                                              time_limit = time)
   }
