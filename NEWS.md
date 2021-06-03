@@ -8,7 +8,7 @@ output:
 
 # MatchIt (development version)
 
-* Cardinality matching can now be used by setting `method = "cardinality"`. Cardinality matching involves using mixed integer programming to directly select a matched subsample without pairing or stratifying units. See `?method_cardinality` and `vignettes("matching-methods")` for more information.
+* Cardinality matching can now be used by setting `method = "cardinality"`. Cardinality matching uses mixed integer programming to directly select a matched subsample without pairing or stratifying units. See `?method_cardinality` and `vignettes("matching-methods")` for more information.
 
 # MatchIt 4.2.0
 
