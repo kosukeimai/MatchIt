@@ -24,7 +24,9 @@ matchit <- function(formula, data = NULL, method = "nearest", distance = "glm",
   #Process formula and data inputs
   if (!inherits(formula, "formula")) stop("'formula' must be a formula object.", call. = FALSE)
 
-  treat.form <- update(terms(formula, data = data), . ~ 0)
+  tt <- terms(formula, data = data)
+  if (attr(tt, "response") != 1) stop("A treatment variable must be included on the left-hand side of 'formula'.", call. = FALSE)
+  treat.form <- update(tt, . ~ 0)
   treat.mf <- model.frame(treat.form, data = data, na.action = "na.pass")
   treat <- model.response(treat.mf)
   if (anyNA(treat)) stop("Missing values are not allowed in the treatment.", call. = FALSE)
