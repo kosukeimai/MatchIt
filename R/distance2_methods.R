@@ -63,7 +63,7 @@ distance2nnet <- function(formula, data = NULL, link = NULL, ...) {
   weights <- A$weights
   A$weights <- NULL
 
-  res <- do.call(nnet::nnet, c(list(formula, data, entropy = TRUE), A), quote = TRUE)
+  res <- do.call(nnet::nnet, c(list(formula, data, weights = weights, entropy = TRUE), A), quote = TRUE)
   return(list(model = res, distance = drop(fitted(res))))
 }
 
@@ -182,4 +182,35 @@ distance2randomforest <- function(formula, data = NULL, link = NULL, ...) {
   newdata[[treatvar]] <- factor(newdata[[treatvar]], levels = c("0", "1"))
   res <- randomForest::randomForest(formula, data = newdata, ...)
   return(list(model = res, distance = predict(res, type = "prob")[,"1"]))
+}
+#distance2lasso--------------
+distance2glmnet <- function(formula, data = NULL, link = NULL, ...) {
+  if (!is.null(link) && startsWith(as.character(link), "linear")) {
+    linear <- TRUE
+    link <- sub("linear.", "", as.character(link), fixed = TRUE)
+  }
+  else linear <- FALSE
+
+  A <- list(...)
+  s <- A[["s"]]
+  A[!names(A) %in% c(names(formals(glmnet::glmnet)), names(formals(glmnet::cv.glmnet)))] <- NULL
+
+  if (is.null(link)) link <- "logit"
+  if (link == "logit") A$family <- "binomial"
+  else if (link == "log") A$family <- "poisson"
+  else A$family <- binomial(link = link)
+
+  mf <- model.frame(formula, data = data)
+
+  A$y <- model.response(mf)
+  A$x <- model.matrix(update(formula, . ~ . + 1), mf)[,-1,drop = FALSE]
+
+  res <- do.call(glmnet::cv.glmnet, A)
+
+  if (is.null(s)) s <- "lambda.1se"
+
+  pred <- drop(predict(res, newx = A$x, s = s,
+                  type = if (linear) "link" else "response"))
+
+  return(list(model = res, distance = pred))
 }

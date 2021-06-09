@@ -36,6 +36,7 @@ Suggests:
     CBPS (>= 0.17),
     dbarts,
     randomForest,
+    glmnet (>= 4.0),
     cobalt (>= 4.2.3),
     boot,
     lmtest,

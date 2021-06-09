@@ -10,6 +10,8 @@ output:
 
 * Cardinality matching can now be used by setting `method = "cardinality"` in `matchit()`. Cardinality matching uses mixed integer programming to directly select a matched subsample without pairing or stratifying units. See `?method_cardinality` and `vignettes("matching-methods")` for more information.
 
+* Added `"glmnet"` as an option for `distance`. This estimates propensity scores using lasso, ridge, or elastic net regression as implemented in the `glmnet` package.
+
 * A clearer error is now printed when the treatment variable is omitted from the `formula` argument to `matchit()`.
 
 # MatchIt 4.2.0
