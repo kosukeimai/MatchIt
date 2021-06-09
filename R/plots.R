@@ -226,7 +226,7 @@ qqplot_match <- function(x, t, w, sw, discrete.cutoff = 5, ...) {
 
   if (swn1 < swn0) {
     if (length(u) <= discrete.cutoff) {
-      x0probs <- vapply(u, function(u_) weighted.mean(x0 == u_, sw0[sw0 > 0]), numeric(1L))
+      x0probs <- vapply(u, function(u_) wm(x0 == u_, sw0[sw0 > 0]), numeric(1L))
       x0cumprobs <- c(0, cumsum(x0probs)[-length(u)], 1)
       x0 <- u[findInterval(cumsum(sw1[sw1 > 0]), x0cumprobs, rightmost.closed = TRUE)]
     }
@@ -237,7 +237,7 @@ qqplot_match <- function(x, t, w, sw, discrete.cutoff = 5, ...) {
   }
   else {
     if (length(u) <= discrete.cutoff) {
-      x1probs <- vapply(u, function(u_) weighted.mean(x1 == u_, sw1[sw1 > 0]), numeric(1L))
+      x1probs <- vapply(u, function(u_) wm(x1 == u_, sw1[sw1 > 0]), numeric(1L))
       x1cumprobs <- c(0, cumsum(x1probs)[-length(u)], 1)
       x1 <- u[findInterval(cumsum(sw0[sw0 > 0]), x1cumprobs, rightmost.closed = TRUE)]
     }
@@ -274,7 +274,7 @@ qqplot_match <- function(x, t, w, sw, discrete.cutoff = 5, ...) {
 
   if (wn1 < wn0) {
     if (length(u) <= discrete.cutoff) {
-      x0probs <- vapply(u, function(u_) weighted.mean(x0 == u_, w0[w0 > 0]), numeric(1L))
+      x0probs <- vapply(u, function(u_) wm(x0 == u_, w0[w0 > 0]), numeric(1L))
       x0cumprobs <- c(0, cumsum(x0probs)[-length(u)], 1)
       x0 <- u[findInterval(cumsum(w1[w1 > 0]), x0cumprobs, rightmost.closed = TRUE)]
     }
@@ -285,7 +285,7 @@ qqplot_match <- function(x, t, w, sw, discrete.cutoff = 5, ...) {
   }
   else {
     if (length(u) <= discrete.cutoff) {
-      x1probs <- vapply(u, function(u_) weighted.mean(x1 == u_, w1[w1 > 0]), numeric(1L))
+      x1probs <- vapply(u, function(u_) wm(x1 == u_, w1[w1 > 0]), numeric(1L))
       x1cumprobs <- c(0, cumsum(x1probs)[-length(u)], 1)
       x1 <- u[findInterval(cumsum(w0[w0 > 0]), x1cumprobs, rightmost.closed = TRUE)]
     }

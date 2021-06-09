@@ -28,7 +28,7 @@ cardinality_matchit <- function(treat, X, estimand = "ATT", tols = .05, s.weight
     )
 
     #Constraint matrix
-    target.means <- apply(X, 2, weighted.mean, w = s.weights)
+    target.means <- apply(X, 2, wm, w = s.weights)
     #One row per constraints, one column per coef
     C <- rbind(
       c(s.weights*(treat==1), -1, 0), #Num treated = n1
@@ -85,7 +85,7 @@ cardinality_matchit <- function(treat, X, estimand = "ATT", tols = .05, s.weight
     )
 
     #Constraint matrix
-    target.means <- apply(X[treat==1,,drop=FALSE], 2, weighted.mean, w = s.weights[treat==1])
+    target.means <- apply(X[treat==1,,drop=FALSE], 2, wm, w = s.weights[treat==1])
     #One row per constraints, one column per coef
     C <- rbind(
       c(s.weights[treat==0], -1), #Num control = k

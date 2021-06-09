@@ -94,6 +94,10 @@ matchit2full <- function(treat, formula, data, distance, discarded,
   fm.args <- c("omit.fraction", "mean.controls", "tol")
   A[!names(A) %in% fm.args] <- NULL
 
+  processed.ratio <- process.ratio(method = "full", min.controls = min.controls, max.controls = max.controls)
+  min.controls <- processed.ratio[["min.controls"]]
+  max.controls <- processed.ratio[["max.controls"]]
+
   #Set max problem size to Inf and return to original value after match
   omps <- getOption("optmatch_max_problem_size")
   on.exit(options(optmatch_max_problem_size = omps))
@@ -240,12 +244,12 @@ matchit2optimal <- function(treat, formula, data, distance, discarded,
   on.exit(options(optmatch_max_problem_size = omps))
   options(optmatch_max_problem_size = Inf)
 
-  r <- process.ratio(ratio, min.controls, max.controls)
-  ratio <- r["ratio"]
-  if (!is.null(max.controls)) {
-    min.controls <- r["min.controls"]
-    max.controls <- r["max.controls"]
-  }
+  processed.ratio <- process.ratio(ratio, method = "optimal",
+                                   min.controls = min.controls,
+                                   max.controls = max.controls)
+  ratio <- processed.ratio[["ratio"]]
+  min.controls <- processed.ratio[["min.controls"]]
+  max.controls <- processed.ratio[["max.controls"]]
 
   estimand <- toupper(estimand)
   estimand <- match_arg(estimand, c("ATT", "ATC"))
@@ -447,7 +451,8 @@ matchit2genetic <- function(treat, data, distance, discarded,
 
   treat <- setNames(as.integer(treat == focal), names(treat))
 
-  ratio <- process.ratio(ratio)
+  processed.ratio <- process.ratio(ratio, method = "genetic")
+  ratio <- processed.ratio[["ratio"]]
 
   n.obs <- length(treat)
   n1 <- sum(treat == 1)
@@ -696,12 +701,12 @@ matchit2nearest <-  function(treat, data, distance, discarded,
     cat("Nearest neighbor matching... \n")
   }
 
-  r <- process.ratio(ratio, min.controls, max.controls)
-  ratio <- r["ratio"]
-  if (!is.null(max.controls)) {
-    min.controls <- r["min.controls"]
-    max.controls <- r["max.controls"]
-  }
+  processed.ratio <- process.ratio(ratio, method = "nearest",
+                                   min.controls = min.controls,
+                                   max.controls = max.controls)
+  ratio <- processed.ratio[["ratio"]]
+  min.controls <- processed.ratio[["min.controls"]]
+  max.controls <- processed.ratio[["max.controls"]]
 
   estimand <- toupper(estimand)
   estimand <- match_arg(estimand, c("ATT", "ATC"))
@@ -1037,7 +1042,8 @@ matchit2subclass <- function(treat, distance, discarded,
 # MATCHIT method = cardinality----------------------------------
 matchit2cardinality <-  function(treat, data, discarded, formula,
                              ratio = 1, s.weights = NULL, replace = FALSE, exact = NULL,
-                             estimand = "ATT", verbose = FALSE, tols = .05, std.tols = TRUE,
+                             estimand = "ATT", verbose = FALSE,
+                             tols = .05, std.tols = TRUE,
                              solver = "glpk", time = 1*60, ...){
 
   if (verbose) {
@@ -1057,7 +1063,8 @@ matchit2cardinality <-  function(treat, data, discarded, formula,
 
   lab <- names(treat)
 
-  ratio <- process.ratio(ratio, na.ok = TRUE)
+  processed.ratio <- process.ratio(ratio, method = "cardinality")
+  ratio <- processed.ratio[["ratio"]]
 
   weights <- setNames(rep(0, length(treat)), lab)
 

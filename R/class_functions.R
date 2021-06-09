@@ -253,7 +253,7 @@ print.summary.matchit <- function(x, digits = max(3, getOption("digits") - 3), .
 
   if (!is.null(x$sum.matched)) {
     cat("\nSummary of Balance for Matched Data:\n")
-    if (all(is.na(x$sum.matched[,7]))) x$sum.matched <- x$sum.matched[,-7] #Remove pair dist if empty
+    if (all(is.na(x$sum.matched[,7]))) x$sum.matched <- x$sum.matched[,-7,drop = FALSE] #Remove pair dist if empty
     print.data.frame(round_df_char(x$sum.matched, digits, pad = "0", na_vals = "."))
   }
   if (!is.null(x$reduction)) {
@@ -265,11 +265,11 @@ print.summary.matchit <- function(x, digits = max(3, getOption("digits") - 3), .
     nn <- x$nn
     if (isTRUE(all.equal(nn["All (ESS)",], nn["All",]))) {
       #Don't print ESS if same as full SS
-      nn <- nn[rownames(nn) != "All (ESS)",]
+      nn <- nn[rownames(nn) != "All (ESS)",,drop = FALSE]
     }
     if (isTRUE(all.equal(nn["Matched (ESS)",], nn["Matched",]))) {
       #Don't print ESS if same as matched SS
-      nn <- nn[rownames(nn) != "Matched (ESS)",]
+      nn <- nn[rownames(nn) != "Matched (ESS)",,drop = FALSE]
     }
     print.data.frame(round_df_char(nn, 2, pad = " ", na_vals = "."))
   }
@@ -300,7 +300,7 @@ print.summary.matchit.subclass <- function(x, digits = max(3, getOption("digits"
   else {
     if (!is.null(x$sum.across)) {
       cat("\nSummary of Balance Across Subclasses\n")
-      if (all(is.na(x$sum.across[,7]))) x$sum.across <- x$sum.across[,-7]
+      if (all(is.na(x$sum.across[,7]))) x$sum.across <- x$sum.across[,-7,drop = FALSE]
       print.data.frame(round_df_char(x$sum.across, digits, pad = "0", na_vals = "."))
     }
     if (!is.null(x$reduction)) {
@@ -313,11 +313,11 @@ print.summary.matchit.subclass <- function(x, digits = max(3, getOption("digits"
       nn <- x$nn
       if (isTRUE(all.equal(nn["All (ESS)",], nn["All",]))) {
         #Don't print ESS if same as full SS
-        nn <- nn[rownames(nn) != "All (ESS)",]
+        nn <- nn[rownames(nn) != "All (ESS)",,drop = FALSE]
       }
       if (isTRUE(all.equal(nn["Matched (ESS)",], nn["Matched",]))) {
         #Don't print ESS if same as matched SS
-        nn <- nn[rownames(nn) != "Matched (ESS)",]
+        nn <- nn[rownames(nn) != "Matched (ESS)",,drop = FALSE]
       }
       print.data.frame(round_df_char(nn, 2, pad = " ", na_vals = "."))
     }

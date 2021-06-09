@@ -14,6 +14,8 @@ output:
 
 * A clearer error is now printed when the treatment variable is omitted from the `formula` argument to `matchit()`.
 
+* Fixed a bug that would occur when using `summary.matchit()` with just one covariate.
+
 # MatchIt 4.2.0
 
 * `distance` can now be supplied as a distance matrix containing pairwise distances with nearest neighbor, optimal, and full matching. This means users can create a distance matrix outside `MatchIt` (e.g., using `optmatch::match_on()` or `dist()`) and `matchit()` will use those distances in the matching. See `?distance` for details.
