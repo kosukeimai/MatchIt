@@ -120,8 +120,9 @@ See \code{vignette("matching-methods")} for more literature on cardinality match
 \examples{
 data("lalonde")
 
-#Choose your solver; "gurobi" is best, "glpk" is easiest to install
-solver = "glpk"
+#Choose your solver; "gurobi" is best, "glpk" is free and
+#easiest to install
+solver <- "glpk"
 
 # 1:1 cardinality matching
 m.out1 <- matchit(treat ~ age + educ + re74 + re75,
@@ -157,6 +158,7 @@ m.out4 <- matchit(treat ~ age + educ + re74 + re75,
 # Note that balance doesn't change but pair distances
 # are lower for the paired-upon variables
 summary(m.out4, un = FALSE)
+summary(m.out1, un = FALSE)
 
 # In these examples, a high tol was used and
 # few covariate matched on in order to not take too long;
