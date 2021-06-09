@@ -177,31 +177,19 @@ Other packages may be of use but are not used here. The `margins` package can be
 
 Because different matching methods require different treatments, instructions for each method are organized in the following sections, as designated by the table below. It is important to ensure the right methods are used with the matching specification used in order for the estimated effects and standard errors to be valid.
 
-+-------------------------------------------------------------------------------------+-----------------------------------------------------------+
 | Section                                                                             | Matching Method                                           |
-+=====================================================================================+===========================================================+
+|-------------------------------------------------------------------------------------|-----------------------------------------------------------|
 | [After Pair Matching Without Replacement](#after-pair-matching-without-replacement) | Nearest neighbor matching without replacement             |
-+-------------------------------------------------------------------------------------+-----------------------------------------------------------+
 | \-                                                                                  | Optimal matching                                          |
-+-------------------------------------------------------------------------------------+-----------------------------------------------------------+
 | \-                                                                                  | Genetic matching without replacement                      |
-+-------------------------------------------------------------------------------------+-----------------------------------------------------------+
 | \-                                                                                  | Coarsened exact matching with `k2k = TRUE`                |
-+-------------------------------------------------------------------------------------+-----------------------------------------------------------+
 | [After Pair Matching With Replacement](#after-pair-matching-with-replacement)       | Nearest neighbor matching with replacement                |
-+-------------------------------------------------------------------------------------+-----------------------------------------------------------+
 | \-                                                                                  | Genetic matching with replacement                         |
-+-------------------------------------------------------------------------------------+-----------------------------------------------------------+
 | [After Full Matching](#after-full-matching)                                         | Full matching                                             |
-+-------------------------------------------------------------------------------------+-----------------------------------------------------------+
 |                                                                                     | Cardinality and template matching                         |
-+-------------------------------------------------------------------------------------+-----------------------------------------------------------+
 | [After Stratum Matching](#after-stratum-matching)                                   | Propensity score subclassification                        |
-+-------------------------------------------------------------------------------------+-----------------------------------------------------------+
 | \-                                                                                  | Exact matching                                            |
-+-------------------------------------------------------------------------------------+-----------------------------------------------------------+
 | \-                                                                                  | Coarsened exact matching with `k2k = FALSE` (the default) |
-+-------------------------------------------------------------------------------------+-----------------------------------------------------------+
 
 ### After Pair Matching Without Replacement {#after-pair-matching-without-replacement}
 
