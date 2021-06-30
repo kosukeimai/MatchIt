@@ -210,10 +210,10 @@ cardinality_error_report <- function(out, solver) {
   if (solver == "glpk") {
     if (out$status == 1) {
       if (all(out$solution == 0)) {
-        stop("The optimization problem may be infeasible. Try increasing the value of 'tols'.", call. = FALSE)
+        stop("The optimization problem may be infeasible. Try increasing the value of 'tols'.\nSee ?method_cardinality for additional details.", call. = FALSE)
       }
       else {
-        warning("The optimizer failed to find an optimal solution in the time alotted. The returned solution may not be optimal.", call. = FALSE)
+        warning("The optimizer failed to find an optimal solution in the time alotted. The returned solution may not be optimal.\nSee ?method_cardinality for additional details.", call. = FALSE)
       }
     }
   }
@@ -222,15 +222,15 @@ cardinality_error_report <- function(out, solver) {
       warning("The optimizer failed to find an optimal solution in the time alotted. The returned solution may not be optimal.", call. = FALSE)
     }
     else if (names(out$status) != "TM_OPTIMAL_SOLUTION_FOUND") {
-      stop("The optimizer failed to find an optimal solution in the time alotted. The optimization problem may be infeasible. Try increasing the value of 'tols'.", call. = FALSE)
+      stop("The optimizer failed to find an optimal solution in the time alotted. The optimization problem may be infeasible. Try increasing the value of 'tols'.\nSee ?method_cardinality for additional details.", call. = FALSE)
     }
   }
   else if (solver == "gurobi") {
     if (out$status %in% c("TIME_LIMIT", "SUBOPTIMAL") && !all(out$solution == 0)) {
-      warning("The optimizer failed to find an optimal solution in the time alotted. The returned solution may not be optimal.", call. = FALSE)
+      warning("The optimizer failed to find an optimal solution in the time alotted. The returned solution may not be optimal.\nSee ?method_cardinality for additional details.", call. = FALSE)
     }
     else if (out$status %in% c("INFEASIBLE", "INF_OR_UNBD", "NUMERIC") || all(out$solution == 0)) {
-      stop("The optimization problem may be infeasible. Try increasing the value of 'tols'.", call. = FALSE)
+      stop("The optimization problem may be infeasible. Try increasing the value of 'tols'.\nSee ?method_cardinality for additional details.", call. = FALSE)
     }
   }
 }
