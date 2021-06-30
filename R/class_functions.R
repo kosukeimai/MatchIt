@@ -206,8 +206,9 @@ print.matchit <- function(x, ...) {
       else cat("User-defined")
 
       if (cal || disl) {
+        cal.ps <- "" %in% names(x[["caliper"]])
         cat(" [")
-        cat(paste(c("matching", "subclassification", "caliper", "common support")[c(!nm && !info$mahalanobis && info$method != "subclass", !nm && info$method == "subclass", cal, disl)], collapse = ", "))
+        cat(paste(c("matching", "subclassification", "caliper", "common support")[c(!nm && !info$mahalanobis && info$method != "subclass", !nm && info$method == "subclass", cal.ps, disl)], collapse = ", "))
         cat("]")
       }
       if (info$distance != "user") {
