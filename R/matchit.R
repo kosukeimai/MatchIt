@@ -165,6 +165,10 @@ matchit <- function(formula, data = NULL, method = "nearest", distance = "glm",
     dist.model <- link <- NULL
   }
   else {
+    if (verbose) {
+      cat("Estimating propensity scores... \n")
+    }
+
     if (!is.null(s.weights)) attr(s.weights, "in_ps") <- !distance %in% c("bart", "randomforest")
 
     #Estimate distance
