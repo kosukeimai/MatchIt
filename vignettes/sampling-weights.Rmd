@@ -87,7 +87,7 @@ library("sandwich")
 
 When using sampling weights with propensity score matching, one has the option of including the sampling weights in the model used to estimate the propensity scores. Although evidence is mixed on whether this is required [@austin2016; @lenis2019], it can be a good idea. The choice should depend on whether including the sampling weights improves the quality of the matches. Specifications including and excluding sampling weights should be tried to determine which is preferred.
 
-To supply sampling weights to the propensity score-estimating function in `matchit()`, the sampling weights variable should be supplied to the `s.weights` argument. It can be supplied either as a numerical vector containing the sampling weights, or a string or one-sided formula with the name of the sampling weights variable in the supplied dataset. Below we demonstrate including sampling weights into propensity score estimated using logistic regression for optimal full matching for the average treatment effect in the population (ATE) (note that all methods and steps apply the same way to all forms of matching and all estimands).
+To supply sampling weights to the propensity score-estimating function in `matchit()`, the sampling weights variable should be supplied to the `s.weights` argument. It can be supplied either as a numerical vector containing the sampling weights, or a string or one-sided formula with the name of the sampling weights variable in the supplied dataset. Below we demonstrate including sampling weights into propensity scores estimated using logistic regression for optimal full matching for the average treatment effect in the population (ATE) (note that all methods and steps apply the same way to all forms of matching and all estimands).
 
 ```{r}
 mF_s <- matchit(A ~ X1 + X2 + X3 + X4 + X5 + 
@@ -119,7 +119,7 @@ mF
 
 Now when we print the `matchit` object, we can see lines have been added identifying that sampling weights are present but they were not used in the estimation of the propensity score used in the matching.
 
-Note that not all methods can involve sampling weights in the estimation. Only methods that use the propensity score will be affected by sampling weights; coarsened exact matching or Mahalanobis distance optimal pair matching, for example, ignore the sampling weights, and some propensity score estimation methods, like `randomForest` and `bart` (as presently implemented), cannot incorporate sampling weights. Sampling weights should still be supplied to `matchit()` even when using these methods to avoid having to use `add_sweights()` and remembering which methods do or do not involve sampling weights.
+Note that not all methods can involve sampling weights in the estimation. Only methods that use the propensity score will be affected by sampling weights; coarsened exact matching or Mahalanobis distance optimal pair matching, for example, ignore the sampling weights, and some propensity score estimation methods, like `randomForest` and `bart` (as presently implemented), cannot incorporate sampling weights. Sampling weights should still be supplied to `matchit()` even when using these methods to avoid having to use `add_s.weights()` and remembering which methods do or do not involve sampling weights.
 
 ## Assessing Balance
 

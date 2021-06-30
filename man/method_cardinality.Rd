@@ -35,7 +35,7 @@ set here to \code{"cardinality"}.
 a string containing the desired estimand. Allowable options include \code{"ATT"}, \code{"ATC"}, and \code{"ATE"}. See Details.
 }
   \item{exact}{
-for which variables exact matching should take place. Seperate optimization will occur within each subgroup of the exact matching variables.
+for which variables exact matching should take place. Separate optimization will occur within each subgroup of the exact matching variables.
 }
   \item{discard}{
 a string containing a method for discarding units outside a region of common support.
@@ -59,7 +59,7 @@ additional arguments that control the matching specification:
         \code{logical}; whether each entry in \code{tols} corresponds to a raw or standardized mean difference. If only one value is supplied, it is applied to all. Default is \code{TRUE} for standardized mean differences. The standardization factor is the pooled standard deviation when \code{estimand = "ATE"}, the standard deviation of the treated group when \code{estimand = "ATT"}, and the standard deviation of the control group when \code{estimand = "ATC"} (the same as used in \fun{summary.matchit}).
      }
      \item{\code{solver}}{
-        the name of solver to use to solve the otpimziation problem. Available options include \code{"glpk"}, \code{"symphony"}, and \code{"gurobi"} for GLPK (implemented in the \code{Rglpk} package), SYMPHONY (implemented in the \code{Rsymphony} package), and Gurobi (implemented in the \code{"gurobi"} package). The differences between them are in speed and solving abaility. GLPK (the default) is the easiest to install, but Gurobi is recommended as it consistently outperforms other solvers and can find solutions even when others can't, and in less time. Gurobi is proprietary but can be used with a free trial or academic license.
+        the name of solver to use to solve the optimziation problem. Available options include \code{"glpk"}, \code{"symphony"}, and \code{"gurobi"} for GLPK (implemented in the \code{Rglpk} package), SYMPHONY (implemented in the \code{Rsymphony} package), and Gurobi (implemented in the \code{"gurobi"} package). The differences between them are in speed and solving ability. GLPK (the default) is the easiest to install, but Gurobi is recommended as it consistently outperforms other solvers and can find solutions even when others can't, and in less time. Gurobi is proprietary but can be used with a free trial or academic license.
      }
      \item{\code{time}}{
         the maximum amount of time before the optimization routine aborts, in seconds. Default is 120 (2 minutes). For large problems, this should be set much higher.
@@ -88,15 +88,15 @@ The weights are scaled so that the sum of the weights in each group is equal to 
 The balance constraints are on the (standardized) mean differences between the matched treatment groups for each covariate. Balance constraints should be set by supplying arguments to \code{tols} and \code{std.tols}. For example, setting \code{tols = .1} and \code{std.tols = TRUE} requests that all the mean differences in the matched sample should be within .1 standard deviations for each covariate. Different tolerances can be set for difference variables; it might be beneficial to constrain the mean differences for highly prognostic covariates more tightly than other variables. For example, one could specify \code{tols = c(.001, .05), std.tols = c(TRUE, FALSE)} to request that the standadized mean difference for the first covariate is less than .001 and the raw mean difference for the second covariate is less than .05. The values should be specified in the order they appear in \code{formula}, except when interactions are present. One can run the following code:
 
 \preformatted{MatchIt:::get_assign(model.matrix(~X1*X2 + X3,
-                                                data = data))[-1]}
+                                  data = data))[-1]}
 
 which will output a vector of numbers and the variable to which each number corresponds; the first entry in \code{tols} corresponds to the variable labeled 1, the second to the variable labeled 2, etc.
 }
 
 \subsection{Dealing with Errors and Warnings}{
-When the optimization cannot be solved at all, or at least within the time frame specified in the argument ot \code{time}, an error or warning will appear. Unfortunately, it is hard to know exactly the cause of the failure and what measures should be taken to rectify it.
+When the optimization cannot be solved at all, or at least within the time frame specified in the argument to \code{time}, an error or warning will appear. Unfortunately, it is hard to know exactly the cause of the failure and what measures should be taken to rectify it.
 
-A warning that says \code{"The optimizer failed to find an optimal solution in the time alotted. The returned solution may not be optimal."} usually means that an optimal solution may be possible to find with more time, in which case \code{time} should be increased or a faster solver should be used. Even with this warning, a potentially useable solution will be returned, so don't automatically take it to mean the optimization failed. Sometimes, when there are multiple solutions with the same resulting sample size, the optimziers will stall at one of them, not thinking it has found the optimum. The result should be checked to see if it can be used as the solution.
+A warning that says \code{"The optimizer failed to find an optimal solution in the time alotted. The returned solution may not be optimal."} usually means that an optimal solution may be possible to find with more time, in which case \code{time} should be increased or a faster solver should be used. Even with this warning, a potentially usable solution will be returned, so don't automatically take it to mean the optimization failed. Sometimes, when there are multiple solutions with the same resulting sample size, the optimizers will stall at one of them, not thinking it has found the optimum. The result should be checked to see if it can be used as the solution.
 
 An error that says \code{"The optimization problem may be infeasible."} usually means that there is a issue with the optimization problem, i.e., that there is no possible way to satisfy the constraints. To rectify this, one can try relaxing the constraints by increasing the value of \code{tols} or use another solver. Sometimes Gurobi can solve problems that the other solvers cannot.
 }

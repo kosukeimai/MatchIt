@@ -47,7 +47,7 @@ a string containing the name that should be given to the variable containing the
 a string containing the name that should be given to the variable containing the unit IDs in the data frame output. Default is \code{"id"}. Only used with \code{get_matches()}; for \code{match.data()}, the units IDs are stored in the row names of the returned data frame.
 }
   \item{data}{
-a data frame containing the original dataset to which the computed output variables (\code{distance}, \code{weights}, and/or \code{sublcass}) should be appended. If empty, \code{match.data()} and \code{get_matches()} will attempt to find the dataset using the environment of the \code{matchit} object, which can be unreliable; see Notes.
+a data frame containing the original dataset to which the computed output variables (\code{distance}, \code{weights}, and/or \code{subclass}) should be appended. If empty, \code{match.data()} and \code{get_matches()} will attempt to find the dataset using the environment of the \code{matchit} object, which can be unreliable; see Notes.
 }
   \item{include.s.weights}{
 \code{logical}; whether to multiply the estimated weights by the sampling weights supplied to \code{matchit()}, if any. Default is \code{TRUE}. If \code{FALSE}, the weights in the \code{match.data()} or \code{get_matches()} output should be multiplied by the sampling weights before being supplied to the function estimating the treatment effect in the matched data.
