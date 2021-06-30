@@ -1,6 +1,7 @@
 matchit.covplot <- function(object, type = "qq", interactive = TRUE, which.xs = NULL, ...) {
 
   #Create covariate matrix; include exact and mahvars
+  object$X <- droplevels(object$X)
   if (!is.null(which.xs)) {
     if (!is.character(which.xs)) {
       stop("'which.xs' should be a vector of variables for which balance is to be displayed.", call. = FALSE)
