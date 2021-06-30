@@ -8,13 +8,21 @@ output:
 
 # MatchIt (development version)
 
-* Cardinality matching can now be used by setting `method = "cardinality"` in `matchit()`. Cardinality matching uses mixed integer programming to directly select a matched subsample without pairing or stratifying units. See `?method_cardinality` and `vignettes("matching-methods")` for more information.
+* Cardinality and template matching can now be used by setting `method = "cardinality"` in `matchit()`. These methods use mixed integer programming to directly select a matched subsample without pairing or stratifying units. Their results can be dramatically improved when using the Gurobi Optimizer. See `?method_cardinality` and `vignettes("matching-methods")` for more information.
 
 * Added `"glmnet"` as an option for `distance`. This estimates propensity scores using lasso, ridge, or elastic net regression as implemented in the `glmnet` package.
 
 * A clearer error is now printed when the treatment variable is omitted from the `formula` argument to `matchit()`.
 
 * Fixed a bug that would occur when using `summary.matchit()` with just one covariate.
+
+* When `verbose = TRUE` and a propensity score is estimated (i.e., using the `distance` argument), a message saying so will be displayed.
+
+* Fixed a bug in `print.matchit()` where it would indicate that the propensity score was used in a caliper if any caliper was specified, even if not on the propensity score. Now, it will only indicate that the propensity score was used in a caliper if it actually was.
+
+* Fixed a bug in `plot.matchit()` that would occur when a level of a factor had no values.
+
+* Typo fixes in documentation and vignettes.
 
 # MatchIt 4.2.0
 

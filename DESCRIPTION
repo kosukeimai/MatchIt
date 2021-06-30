@@ -1,5 +1,5 @@
 Package: MatchIt
-Version: 4.2.0.9000
+Version: 4.2.0.9001
 Title: Nonparametric Preprocessing for Parametric Causal Inference
 Description: Selects matched samples of the original treated and
     control groups with similar covariate distributions -- can be
@@ -56,3 +56,5 @@ License: GPL (>=2)
 URL: https://kosukeimai.github.io/MatchIt/, https://github.com/kosukeimai/MatchIt
 BugReports: https://github.com/kosukeimai/MatchIt/issues
 VignetteBuilder: knitr
+Note: The 'gurobi' package, which is not on CRAN, is optional and comes with an installation
+      of the Gurobi Optimizer, available at <https://www.gurobi.com>.
