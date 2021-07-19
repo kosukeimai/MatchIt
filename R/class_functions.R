@@ -5,7 +5,7 @@ plot.matchit <- function(x, type = "qq", interactive = TRUE, which.xs = NULL, ..
   type <- tolower(type)
   type <- match_arg(type, c("qq", "jitter", "histogram", "ecdf"))
 
-  if (type %in% c("qq", "ecdf")) {
+  if (type %in% c("qq", "ecdf", "density")) {
     matchit.covplot(x, type = type, interactive=interactive,
                    which.xs = which.xs, ...)
   }
@@ -98,7 +98,6 @@ plot.matchit.subclass <- function(x, type = "qq", interactive = TRUE, which.xs =
 }
 
 plot.summary.matchit <- function(x, abs = TRUE, var.order = "data", threshold = c(.1, .05), position = "bottomright", ...) {
-
 
   .pardefault <- par(no.readonly = TRUE)
   on.exit(par(.pardefault))

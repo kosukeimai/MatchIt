@@ -48,9 +48,9 @@ matchit.covplot <- function(object, type = "qq", interactive = TRUE, which.xs = 
 
   oma <- c(2.25, 0, 3.75, 1.5)
   if (type == "qq") {
-  opar <- par(mfrow = c(3, 3), mar = rep.int(1/2, 4), oma = oma)
+    opar <- par(mfrow = c(3, 3), mar = rep.int(1/2, 4), oma = oma)
   }
-  else if (type == "ecdf") {
+  else if (type %in% c("ecdf", "density")) {
     opar <- par(mfrow = c(3, 3), mar = c(1.5,.5,1.5,.5), oma = oma)
   }
 
@@ -74,6 +74,12 @@ matchit.covplot <- function(object, type = "qq", interactive = TRUE, which.xs = 
         mtext("All", 3, .25, TRUE, 0.5, cex=1, font = 1)
         mtext("Matched", 3, .25, TRUE, 0.83, cex=1, font = 1)
       }
+      else if (type == "density") {
+        htext <- "Density Plots"
+        mtext(htext, 3, 2, TRUE, 0.5, cex=1.1, font = 2)
+        mtext("All", 3, .25, TRUE, 0.5, cex=1, font = 1)
+        mtext("Matched", 3, .25, TRUE, 0.83, cex=1, font = 1)
+      }
 
     }
 
@@ -88,6 +94,9 @@ matchit.covplot <- function(object, type = "qq", interactive = TRUE, which.xs = 
     else if (type == "ecdf") {
       ecdfplot_match(x = x, t = t, w = w, sw = sw, ...)
     }
+    else if (type == "density") {
+      densityplot_match(x = x, t = t, w = w, sw = sw, ...)
+    }
 
     devAskNewPage(ask = interactive)
   }
@@ -95,7 +104,7 @@ matchit.covplot <- function(object, type = "qq", interactive = TRUE, which.xs = 
 }
 
 matchit.covplot.subclass <- function(object, type = "qq", which.subclass = NULL,
-                                    interactive = TRUE, which.xs = NULL, ...) {
+                                     interactive = TRUE, which.xs = NULL, ...) {
 
   #Create covariate matrix; include exact and mahvars
   if (!is.null(which.xs)) {
@@ -350,3 +359,81 @@ ecdfplot_match <- function(x, t, w, sw, ...) {
   box()
 }
 
+densityplot_match <- function(x, t, w, sw, ...) {
+  x.min <- min(x)
+  x.max <- max(x)
+  x.range <- x.max - x.min
+
+  if (!all(x %in% c(x.min, x.max))) {
+    #Density plot for continuous variable
+    small.tr <- (0:1)[which.min(c(sum(t==0), sum(t==1)))]
+    x_small <- x[t==small.tr]
+
+    A <- list(...)
+
+    bw <- A[["bw"]]
+    if (is.null(bw)) A[["bw"]] <- bw.nrd0(x_small)
+    else if (is.character(bw)) {
+      bw <- tolower(bw)
+      bw <- match_arg(bw, c("nrd0", "nrd", "ucv", "bcv", "sj", "sj-ste", "sj-dpi"))
+      A[["bw"]] <- switch(bw, nrd0 = bw.nrd0(x_small), nrd = bw.nrd(x_small),
+                          ucv = bw.ucv(x_small), bcv = bw.bcv(x_small), sj = ,
+                          `sj-ste` = bw.SJ(x_small, method = "ste"),
+                          `sj-dpi` = bw.SJ(x_small, method = "dpi"))
+    }
+    if (is.null(A[["cut"]])) A[["cut"]] <- 3
+
+    d_unmatched <- do.call("rbind", lapply(0:1, function(tr) {
+      cbind(as.data.frame(do.call("density", c(list(x[t==tr], weights = sw[t==tr],
+                                                    from = x.min - A[["cut"]]*A[["bw"]],
+                                                    to = x.max + A[["cut"]]*A[["bw"]]), A))[1:2]),
+            t = tr)
+    }))
+
+    d_matched <- do.call("rbind", lapply(0:1, function(tr) {
+      cbind(as.data.frame(do.call("density", c(list(x[t==tr], weights = w[t==tr],
+                                                    from = x.min - A[["cut"]]*A[["bw"]],
+                                                    to = x.max + A[["cut"]]*A[["bw"]]), A))[1:2]),
+            t = tr)
+    }))
+
+    y.max <- max(d_unmatched$y, d_matched$y)
+
+    #Unmatched samples
+    plot(x = d_unmatched$x, y = d_unmatched$y, type = "n",
+         xlim = c(x.min - A[["cut"]]*A[["bw"]], x.max + A[["cut"]]*A[["bw"]]),
+         ylim = c(0, y.max), axes = TRUE, ...)
+
+    for (tr in 0:1) {
+      in.tr <- d_unmatched$t == tr
+      xt <- d_unmatched$x[in.tr]
+      yt <- d_unmatched$y[in.tr]
+
+      lines(x = xt, y = yt, type = "l", col = if (tr == 0) "grey60" else "black")
+    }
+
+    abline(h = 0)
+    box()
+
+    #Matched sample
+    plot(x = d_matched$x, y = d_matched$y, type = "n",
+         xlim = c(x.min - A[["cut"]]*A[["bw"]], x.max + A[["cut"]]*A[["bw"]]),
+         ylim = c(0, y.max), axes = FALSE, ...)
+
+    for (tr in 0:1) {
+      in.tr <- d_matched$t == tr
+      xt <- d_matched$x[in.tr]
+      yt <- d_matched$y[in.tr]
+
+      lines(x = xt, y = yt, type = "l", col = if (tr == 0) "grey60" else "black")
+    }
+
+    abline(h = 0)
+    axis(1)
+    box()
+  }
+  else {
+    #Bar plot for binary variable
+
+  }
+}
