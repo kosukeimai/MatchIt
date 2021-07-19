@@ -124,7 +124,7 @@ check.inputs <- function(mcall, method, distance, exact, mahvars, antiexact, cal
 process.distance <- function(distance, method, treat) {
   if (is.null(distance) && !is.null(method)) stop(paste0("'distance' cannot be NULL with method = \"", method, "\"."), call. = FALSE)
   else if (is.character(distance) && length(distance) == 1) {
-    allowable.distances <- c("glm", "cbps", "gam", "mahalanobis", "nnet", "rpart", "bart", "randomforest", "glmnet")
+    allowable.distances <- c("glm", "cbps", "gam", "mahalanobis", "nnet", "rpart", "bart", "randomforest", "glmnet", "gbm")
 
     if (tolower(distance) %in% c("cauchit", "cloglog", "linear.cloglog", "linear.log", "linear.logit", "linear.probit",
                         "linear.cauchit", "log", "probit")) {
@@ -134,8 +134,8 @@ process.distance <- function(distance, method, treat) {
       attr(distance, "link") <- link
     }
     else if (tolower(distance) %in% tolower(c("GAMcloglog", "GAMlog", "GAMlogit", "GAMprobit"))) {
-      warning(paste0("'distance = \"", distance, "\"' will be deprecated; please use 'distance = \"gam\", link = \"", sub("GAM", "", distance), "\"' in the future."), call. = FALSE, immediate. = TRUE)
-      link <- distance
+      link <- sub("GAM", "", distance)
+      warning(paste0("'distance = \"", distance, "\"' will be deprecated; please use 'distance = \"gam\", link = \"", link, "\"' in the future."), call. = FALSE, immediate. = TRUE)
       distance <- "gam"
       attr(distance, "link") <- link
     }
