@@ -8,7 +8,7 @@ In \fun{matchit}, setting \code{method = "cardinality"} performs cardinality mat
 
 This page details the allowable arguments with \code{method = "cardinality"}. See \fun{matchit} for an explanation of what each argument means in a general context and how it can be specified.
 
-Below is how \code{matchit()} is used for nearest neighbor matching:
+Below is how \code{matchit()} is used for cardinality matching:
 \preformatted{
 matchit(formula,
         data = NULL,
@@ -44,10 +44,10 @@ a string containing a method for discarding units outside a region of common sup
 the variable containing sampling weights to be incorporated into the optimization. The balance constraints refer to the product of the sampling weights and the matching weights, and the sum of the product of the sampling and matching weights will be maximized.
 }
   \item{ratio}{
-the desired ratio of control to treated units. Can be set to \code{NA} to maximize sample size without concern for this ratio. See \code{Details}.
+the desired ratio of control to treated units. Can be set to \code{NA} to maximize sample size without concern for this ratio. See Details.
 }
   \item{verbose}{
-\code{logical}; whether information about the matching process should be printed to the console. ###EDIT
+\code{logical}; whether information about the matching process should be printed to the console.
 }
   \item{\dots}{
 additional arguments that control the matching specification:
@@ -59,7 +59,7 @@ additional arguments that control the matching specification:
         \code{logical}; whether each entry in \code{tols} corresponds to a raw or standardized mean difference. If only one value is supplied, it is applied to all. Default is \code{TRUE} for standardized mean differences. The standardization factor is the pooled standard deviation when \code{estimand = "ATE"}, the standard deviation of the treated group when \code{estimand = "ATT"}, and the standard deviation of the control group when \code{estimand = "ATC"} (the same as used in \fun{summary.matchit}).
      }
      \item{\code{solver}}{
-        the name of solver to use to solve the optimziation problem. Available options include \code{"glpk"}, \code{"symphony"}, and \code{"gurobi"} for GLPK (implemented in the \code{Rglpk} package), SYMPHONY (implemented in the \code{Rsymphony} package), and Gurobi (implemented in the \code{"gurobi"} package). The differences between them are in speed and solving ability. GLPK (the default) is the easiest to install, but Gurobi is recommended as it consistently outperforms other solvers and can find solutions even when others can't, and in less time. Gurobi is proprietary but can be used with a free trial or academic license.
+        the name of solver to use to solve the optimziation problem. Available options include \code{"glpk"}, \code{"symphony"}, and \code{"gurobi"} for GLPK (implemented in the \emph{Rglpk} package), SYMPHONY (implemented in the \emph{Rsymphony} package), and Gurobi (implemented in the \emph{gurobi} package). The differences between them are in speed and solving ability. GLPK (the default) is the easiest to install, but Gurobi is recommended as it consistently outperforms other solvers and can find solutions even when others can't, and in less time. Gurobi is proprietary but can be used with a free trial or academic license. SYMPHONY may not produce reproducible results, even with a seed set.
      }
      \item{\code{time}}{
         the maximum amount of time before the optimization routine aborts, in seconds. Default is 120 (2 minutes). For large problems, this should be set much higher.
@@ -69,7 +69,7 @@ additional arguments that control the matching specification:
 The arguments \code{distance} (and related arguments), \code{mahvars}, \code{replace}, \code{m.order}, and \code{caliper} (and related arguments) are ignored with a warning.
 }
 \section{Outputs}{
-Most outputs described in \fun{matchit} are returned with \code{method = "cardinality"}. The \code{match.matrix} and \code{subclass} components are omitted because no pairing or subclassification is done.
+Most outputs described in \fun{matchit} are returned with \code{method = "cardinality"}. The \code{match.matrix} and \code{subclass} components are omitted because no pairing or subclassification is done. When \code{include.obj = TRUE} in the call to \code{matchit()}, the output of the optimization function will be included in the output. When \code{exact} is specified, this will be a list of such objects, one for each stratum of the exact variables.
 }
 \details{
 \subsection{Cardinality and Template Matching}{

@@ -61,7 +61,7 @@ the variable containing sampling weights to be incorporated into balance statist
 The arguments \code{distance} (and related arguments), \code{exact}, \code{mahvars}, \code{discard} (and related arguments), \code{replace}, \code{m.order}, \code{caliper} (and related arguments), and \code{ratio} are ignored with a warning.
 }
 \section{Outputs}{
-All outputs described in \fun{matchit} are returned with \code{method = "cem"} except for \code{match.matrix}. When \code{k2k = TRUE}, a \code{match.matrix} component with the matched pairs is also included.
+All outputs described in \fun{matchit} are returned with \code{method = "cem"} except for \code{match.matrix}. When \code{k2k = TRUE}, a \code{match.matrix} component with the matched pairs is also included. \code{include.obj} is ignored.
 }
 \details{
 If the coarsening is such that there are no exact matches with the coarsened variables, the \code{grouping} and \code{cutpoints} arguments can be used to modify the matching specification. Reducing the number of cutpoints or grouping some variable values together can make it easier to find matches. See Examples below. Removing variables can also help (but they will likely not be balanced unless highly correlated with the included variables). To take advantage of coarsened exact matching without failing to find any matches, the covariates can be manually coarsened outside of \code{matchit()} and then supplied to the \code{exact} argument in a call to \code{matchit()} with another matching method.

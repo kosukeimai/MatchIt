@@ -98,7 +98,7 @@ ignored.
 }
 }
 \section{Outputs}{
-All outputs described in \fun{matchit} are returned with \code{method = "nearest"}. When \code{replace = TRUE}, the \code{subclass} component is omitted.
+All outputs described in \fun{matchit} are returned with \code{method = "nearest"}. When \code{replace = TRUE}, the \code{subclass} component is omitted. \code{include.obj} is ignored.
 }
 \details{
 \subsection{Mahalanobis Distance Matching}{

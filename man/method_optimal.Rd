@@ -4,7 +4,7 @@
 \title{Optimal Pair Matching}
 
 \description{
-In \fun{matchit}, setting \code{method = "optimal"} performs optimal pair matching. The matching is optimal in the sense that that sum of the absolute pairwise distances in the matched sample are as small as possible. The method functionally relies on \pkgfun2{optmatch}{pairmatch}{optmatch::pairmatch}. Advantages of optimal pair matching include that the matching order is not required to be specified and it is less likely that extreme within-pair distances will be large, unlike with nearest neighbor matching. Generally, however, as a subset selection method, optimal pair matching tends to perform similarly to nearest neighbor matching in that similar subsets of units will be selected to be matched.
+In \fun{matchit}, setting \code{method = "optimal"} performs optimal pair matching. The matching is optimal in the sense that that sum of the absolute pairwise distances in the matched sample is as small as possible. The method functionally relies on \pkgfun2{optmatch}{pairmatch}{optmatch::pairmatch}. Advantages of optimal pair matching include that the matching order is not required to be specified and it is less likely that extreme within-pair distances will be large, unlike with nearest neighbor matching. Generally, however, as a subset selection method, optimal pair matching tends to perform similarly to nearest neighbor matching in that similar subsets of units will be selected to be matched.
 
 This page details the allowable arguments with \code{method = "optmatch"}. See \fun{matchit} for an explanation of what each argument means in a general context and how it can be specified.
 
@@ -93,7 +93,7 @@ Optimal pair matching is a restricted form of optimal full matching where the nu
 The option \code{"optmatch_max_problem_size"} is automatically set to \code{Inf} during the matching process, different from its default in \emph{optmatch}. This enables matching problems of any size to be run, but may also let huge, infeasible problems get through and potentially take a long time or crash R. See \pkgfun2{optmatch}{setMaxProblemSize}{optmatch::setMaxProblemSize} for more details.
 }
 \section{Outputs}{
-All outputs described in \fun{matchit} are returned with \code{method = "optimal"}.
+All outputs described in \fun{matchit} are returned with \code{method = "optimal"}. When \code{include.obj = TRUE} in the call to \code{matchit()}, the output of the call to \pkgfun2{optmatch}{fullmatch}{optmatch::fullmatch} will be included in the output. When \code{exact} is specified, this will be a list of such objects, one for each stratum of the exact variables.
 }
 \seealso{
 \fun{matchit} for a detailed explanation of the inputs and outputs of a call to \code{matchit()}.

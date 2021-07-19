@@ -30,6 +30,7 @@ matchit(formula,
         std.caliper = TRUE,
         ratio = 1,
         verbose = FALSE,
+        include.obj = FALSE,
         ...)
 
 \method{print}{matchit}(x, ...)
@@ -94,6 +95,9 @@ for methods that allow it, how many control units should be matched to each trea
   \item{verbose}{
 \code{logical}; whether information about the matching process should be printed to the console. What is printed depends on the matching method. Default is \code{FALSE} for no printing other than warnings.
 }
+  \item{include.obj}{
+\code{logical}; whether to include any objects created in the matching process in the output, i.e., by the functions from other packages \code{matchit()} calls. What is included depends on the matching method. Default is \code{FALSE}.
+}
   \item{\dots}{
 additional arguments passed to the functions used in the matching process. See the individual methods pages for information on what additional arguments are allowed for each method. Ignored for \code{print}.
 }
@@ -111,6 +115,7 @@ Details for the various matching methods can be found at the following help page
   \item{\code{\link{method_cem}} for coarsened exact matching}
   \item{\code{\link{method_exact}} for exact matching}
   \item{\code{\link{method_subclass}} for subclassification}
+  \item{\code{\link{method_cardinality}} for cardinality and template matching}
 }
 The pages contain information on what the method does, which of the arguments above are allowed with them and how they are interpreted, and what additional arguments can be supplied to further tune the method. Note that the default method with no arguments supplied other than \code{formula} and \code{data} is 1:1 nearest neighbor matching without replacement on a propensity score estimated using a logistic regression of the treatment on the covariates. This is not the same default offered by other matching programs, such as those in \emph{Matching}, \code{teffects} in Stata, or \code{PROC PSMATCH} in SAS, so care should be taken if trying to replicate the results of those programs.
 
@@ -154,7 +159,7 @@ When \code{method} is something other than \code{"subclass"}, a \code{matchit} o
   \item{exact}{a one-sided formula containing the variables, if any, supplied to \code{exact}.}
   \item{mahvars}{a one-sided formula containing the variables, if any, supplied to \code{mahvars}.}
   \item{nn}{a matrix of the sample sizes of the treated and control groups before and after matching. See \fun{summary.matchit} for details.}
-
+  \item{obj}{when \code{include.obj = TRUE}, an object containing the intermediate results of the matching procedure. See the individual methods pages for what this component will contain.}
 When \code{method = "subclass"}, a \code{matchit.subclass} object with the same components as above except that \code{match.matrix} is excluded and two additional components, \code{q.cut} and \code{qn}, are included, containing a vector of the distance measure cutpoints used to define the subclasses and a matrix of the subclass sample sizes, respectively. See \code{\link{method_subclass}} for details.
 }
 \references{
@@ -172,7 +177,7 @@ Version 4.0.0 update by Noah Greifer \email{noah.greifer@gmail.com}
 \seealso{
 \fun{summary.matchit} for balance assessment after matching. \fun{plot.matchit} for plots of covariate balance and propensity score overlap after matching.
 
-\code{vignette("MatchIt")} for an introduction to matching with MatchIt; \code{vignette("matching-methods")} for descriptions of the variety of matching methods and options available; \code{vignette("assessing-balance")} for information on assessing the quality of a matching specification; \code{vignette("estimating-effects")} for instructions on how to estimate treatment effects after matching; and \code{vignette("sampling-weights")} for a guide to using \emph{MatchIt} with sampling weights.
+\code{vignette("MatchIt")} for an introduction to matching with \emph{MatchIt}; \code{vignette("matching-methods")} for descriptions of the variety of matching methods and options available; \code{vignette("assessing-balance")} for information on assessing the quality of a matching specification; \code{vignette("estimating-effects")} for instructions on how to estimate treatment effects after matching; and \code{vignette("sampling-weights")} for a guide to using \emph{MatchIt} with sampling weights.
 }
 \examples{
 data("lalonde")

@@ -43,7 +43,7 @@ ignored.
 The arguments \code{distance} (and related arguments), \code{exact}, \code{mahvars}, \code{discard} (and related arguments), \code{replace}, \code{m.order}, \code{caliper} (and related arguments), and \code{ratio} are ignored with a warning.
 }
 \section{Outputs}{
-All outputs described in \fun{matchit} are returned with \code{method = "exact"} except for \code{match.matrix}. This is because matching strata are not indexed by treated units as they are in some other forms of matching.
+All outputs described in \fun{matchit} are returned with \code{method = "exact"} except for \code{match.matrix}. This is because matching strata are not indexed by treated units as they are in some other forms of matching. \code{include.obj} is ignored.
 }
 \references{
 In a manuscript, you don't need to cite another package when using \code{method = "exact"} because the matching is performed completely within \emph{MatchIt}. For example, a sentence might read:
