@@ -2,7 +2,8 @@ matchit <- function(formula, data = NULL, method = "nearest", distance = "glm",
                     link = "logit", distance.options = list(), estimand = "ATT",
                     exact = NULL, mahvars = NULL, antiexact = NULL, discard = "none",
                     reestimate = FALSE, s.weights = NULL, replace = FALSE, m.order = NULL,
-                    caliper = NULL, std.caliper = TRUE, ratio = 1, verbose = FALSE, ...) {
+                    caliper = NULL, std.caliper = TRUE, ratio = 1, verbose = FALSE,
+                    include.obj = FALSE, ...) {
 
   #Checking input format
   #data input
@@ -258,20 +259,27 @@ matchit <- function(formula, data = NULL, method = "nearest", distance = "glm",
   X.list[lengths(X.list) == 0] <- NULL
 
   ## putting all the results together
-  match.out$model <- dist.model
-  match.out$X <- do.call("cbind", X.list)
-  match.out$call <- mcall
-  match.out$info <- info
-  match.out$estimand <- estimand
-  match.out$formula <- formula
-  match.out$treat <- treat
-  match.out$distance <- if (!is.null(distance) && !is.matrix(distance)) setNames(distance, names(treat))
-  match.out$discarded <- discarded
-  match.out$s.weights <- s.weights
-  match.out$exact <- exact
-  match.out$mahvars <- mahvars
-  match.out$caliper <- caliper
-  match.out$nn <- nn(treat, match.out$weights, discarded, s.weights)
+  out <- list(
+    match.matrix = match.out[["match.matrix"]],
+    subclass = match.out[["subclass"]],
+    weights = match.out[["weights"]],
+    X = do.call("cbind", X.list),
+    call = mcall,
+    info = info,
+    estimand = estimand,
+    formula = formula,
+    treat = treat,
+    distance = if (!is.null(distance) && !is.matrix(distance)) setNames(distance, names(treat)),
+    discarded = discarded,
+    s.weights = s.weights,
+    exact = exact,
+    mahvars = mahvars,
+    caliper = caliper,
+    nn = nn(treat, match.out$weights, discarded, s.weights),
+    model = dist.model,
+    obj = if (include.obj) match.out[["obj"]]
+  )
 
-  return(match.out)
+  class(out) <- class(match.out)
+  return(out)
 }
