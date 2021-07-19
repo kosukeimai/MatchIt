@@ -162,36 +162,43 @@ cardinality_matchit <- function(treat, X, estimand = "ATT", tols = .05, s.weight
 
   weights <- NULL
 
-  if (solver == "glpk") {
-    opt.out <- Rglpk::Rglpk_solve_LP(obj = O, mat = C, dir = Cdir, rhs = Crhs, max = TRUE,
-                                     types = types,
-                                     # bounds = list(lower = lower.bound), #Spurious warning when using bounds
-                                     control = list(tm_limit = time*1000, verbose = verbose))
-  }
-  else if (solver == "symphony") {
-    Cdir[Cdir == "<"] <- "<="
-    Cdir[Cdir == ">"] <- ">="
-    opt.out <- Rsymphony::Rsymphony_solve_LP(obj = O, mat = C, dir = Cdir, rhs = Crhs, max = TRUE,
-                                             types = types, verbosity = verbose - 2,
-                                             # bounds = list(lower = lower.bound), #Spurious warning when using bounds
-                                             time_limit = time)
-  }
-  else if (solver == "gurobi") {
-    Cdir[Cdir == "=="] <- "="
-    opt.out <- gurobi::gurobi(list(A = C, obj = O, sense = Cdir, rhs = Crhs, vtype = types,
-                                   modelsense = "max", lb = lower.bound),
-                              params = list(OutputFlag = as.integer(verbose), TimeLimit = time))
-    names(opt.out)[names(opt.out) == "x"] <- "solution"
-  }
+  opt.out <- dispatch_optimizer(solver = solver, obj = O, mat = C, dir = Cdir,
+                                rhs = Crhs, types = types, max = TRUE, lb = lower.bound,
+                                ub = NULL, time = time, verbose = verbose)
+
+  # if (solver == "glpk") {
+  #   opt.out <- Rglpk::Rglpk_solve_LP(obj = O, mat = C, dir = Cdir, rhs = Crhs, max = TRUE,
+  #                                    types = types,
+  #                                    # bounds = list(lower = lower.bound), #Spurious warning when using bounds
+  #                                    control = list(tm_limit = time*1000, verbose = verbose))
+  # }
+  # else if (solver == "symphony") {
+  #   Cdir[Cdir == "<"] <- "<="
+  #   Cdir[Cdir == ">"] <- ">="
+  #   opt.out <- Rsymphony::Rsymphony_solve_LP(obj = O, mat = C, dir = Cdir, rhs = Crhs, max = TRUE,
+  #                                            types = types, verbosity = verbose - 2,
+  #                                            # bounds = list(lower = lower.bound), #Spurious warning when using bounds
+  #                                            time_limit = time)
+  # }
+  # else if (solver == "gurobi") {
+  #   Cdir[Cdir == "=="] <- "="
+  #   opt.out <- gurobi::gurobi(list(A = C, obj = O, sense = Cdir, rhs = Crhs, vtype = types,
+  #                                  modelsense = "max", lb = lower.bound),
+  #                             params = list(OutputFlag = as.integer(verbose), TimeLimit = time))
+  #   names(opt.out)[names(opt.out) == "x"] <- "solution"
+  # }
 
   cardinality_error_report(opt.out, solver)
 
+  sol <- switch(solver, "glpk" = opt.out$solution,
+                "symphony" = opt.out$solution,
+                "gurobi" = opt.out$x)
   if (match_type %in% c("template_ate", "cardinality")) {
-    weights <- opt.out$solution[seq_len(n)]
+    weights <- sol[seq_len(n)]
   }
   else if (match_type %in% c("template_att")) {
     weights <- rep(1, n)
-    weights[treat != 1] <- opt.out$solution[seq_len(n0)]
+    weights[treat != 1] <- sol[seq_len(n0)]
   }
 
   #Make sure sum of weights in both groups is the same (important for exact matching)
@@ -203,7 +210,7 @@ cardinality_matchit <- function(treat, X, estimand = "ATT", tols = .05, s.weight
     weights[treat != smaller.group] <- weights[treat != smaller.group]*sum(weights[treat == smaller.group])/sum(weights[treat != smaller.group])
   }
 
-  return(list(weights = weights))
+  return(list(weights = weights, opt.out = opt.out))
 }
 
 cardinality_error_report <- function(out, solver) {
@@ -226,11 +233,41 @@ cardinality_error_report <- function(out, solver) {
     }
   }
   else if (solver == "gurobi") {
-    if (out$status %in% c("TIME_LIMIT", "SUBOPTIMAL") && !all(out$solution == 0)) {
+    if (out$status %in% c("TIME_LIMIT", "SUBOPTIMAL") && !all(out$x == 0)) {
       warning("The optimizer failed to find an optimal solution in the time alotted. The returned solution may not be optimal.\nSee ?method_cardinality for additional details.", call. = FALSE)
     }
-    else if (out$status %in% c("INFEASIBLE", "INF_OR_UNBD", "NUMERIC") || all(out$solution == 0)) {
+    else if (out$status %in% c("INFEASIBLE", "INF_OR_UNBD", "NUMERIC") || all(out$x == 0)) {
       stop("The optimization problem may be infeasible. Try increasing the value of 'tols'.\nSee ?method_cardinality for additional details.", call. = FALSE)
     }
   }
+}
+
+dispatch_optimizer <- function(solver = "glpk", obj, mat, dir, rhs, types, max = TRUE, lb = NULL, ub = NULL, time = NULL, verbose = FALSE) {
+  if (solver == "glpk") {
+    dir[dir == "="] <- "=="
+    opt.out <- Rglpk::Rglpk_solve_LP(obj = obj, mat = mat, dir = dir, rhs = rhs, max = max,
+                                     types = types,
+                                     # bounds = list(lower = lb, upper = ub), #Spurious warning when using bounds
+                                     control = list(tm_limit = time*1000, verbose = verbose))
+  }
+  else if (solver == "symphony") {
+    dir[dir == "<"] <- "<="
+    dir[dir == ">"] <- ">="
+    dir[dir == "="] <- "=="
+    opt.out <- Rsymphony::Rsymphony_solve_LP(obj = obj, mat = mat, dir = dir, rhs = rhs, max = TRUE,
+                                             types = types, verbosity = verbose - 2,
+                                             # bounds = list(lower = lb, upper = ub), #Spurious warning when using bounds
+                                             time_limit = time)
+  }
+  else if (solver == "gurobi") {
+    dir[dir == "<="] <- "<"
+    dir[dir == ">="] <- ">"
+    dir[dir == "=="] <- "="
+    opt.out <- gurobi::gurobi(list(A = mat, obj = obj, sense = dir, rhs = rhs, vtype = types,
+                                   modelsense = "max", lb = lb, ub = ub),
+                              params = list(OutputFlag = as.integer(verbose), TimeLimit = time))
+    # names(opt.out)[names(opt.out) == "x"] <- "solution"
+  }
+
+  opt.out
 }
