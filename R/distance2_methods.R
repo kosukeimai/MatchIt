@@ -214,3 +214,47 @@ distance2glmnet <- function(formula, data = NULL, link = NULL, ...) {
 
   return(list(model = res, distance = pred))
 }
+#distance2gbm--------------
+distance2gbm <- function(formula, data = NULL, link = NULL, ...) {
+  if (!is.null(link) && startsWith(as.character(link), "linear")) {
+    linear <- TRUE
+  }
+  else linear <- FALSE
+
+  A <- list(...)
+
+  method <- A[["method"]]
+  A[!names(A) %in% names(formals(gbm::gbm))] <- NULL
+
+  A$formula <- formula
+  A$data <- data
+  A$distribution <- "bernoulli"
+
+  if (is.null(A[["n.trees"]])) A[["n.trees"]] <- 1e4
+  if (is.null(A[["interaction.depth"]])) A[["interaction.depth"]] <- 3
+  if (is.null(A[["shrinkage"]])) A[["shrinkage"]] <- .01
+  if (is.null(A[["bag.fraction"]])) A[["bag.fraction"]] <- 1
+  if (is.null(A[["cv.folds"]])) A[["cv.folds"]] <- 5
+  if (is.null(A[["keep.data"]])) A[["keep.data"]] <- FALSE
+
+  if (A[["cv.folds"]] <= 1 && A[["bag.fraction"]] == 1) {
+    stop("Either 'bag.fraction' must be less than 1 or 'cv.folds' must be greater than 1 when using distance = \"gbm\".",
+         call. = FALSE)
+  }
+  if (is.null(method)) {
+    if (A[["bag.fraction"]] < 1) method <- "OOB"
+    else method <- "cv"
+  }
+  else if (!tolower(method) %in% c("oob", "cv")) {
+    stop("distance.options$method should be one of \"OOB\" or \"cv\".", call. = FALSE)
+  }
+
+  res <- do.call(gbm::gbm, A)
+
+  best.tree <- gbm::gbm.perf(res, plot.it = FALSE, method = method)
+
+  pred <- drop(predict(res, newdata = data, n.trees = best.tree,
+                       type = if (linear) "link" else "response"))
+
+  return(list(model = res, distance = pred))
+}
