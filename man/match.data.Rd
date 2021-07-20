@@ -78,7 +78,9 @@ If \code{data} or the original dataset supplied to \code{matchit()} was a \code{
 In addition to their base class (e.g., \code{data.frame} or \code{tbl}), returned objects have the class \code{matchdata} or \code{getmatches}. This class is important when using \code{\link[=rbind.matchdata]{rbind()}} to append matched datasets.
 }
 \note{
-The most common way to use \code{match.data()} and \code{get_matches()} is by supplying just the \code{matchit} object, e.g., as \code{match.data(m.out)}. When called from an environment different from the one in which \code{matchit()} was originally called, this syntax will not work because the original dataset used to construct the matched dataset will not be found. This can occur when \code{matchit()} was run within an \fun{lapply} or \code{purrr::map()} call. The solution, which is recommended in all cases, is simply to supply the original dataset to the \code{data} argument of \code{match.data()}, e.g., as \code{match.data(m.out, data = original_data)}, as demonstrated in the Examples.
+The most common way to use \code{match.data()} and \code{get_matches()} is by supplying just the \code{matchit} object, e.g., as \code{match.data(m.out)}. A data set will first be searched in the environment of the \code{matchit} formula, then in the calling environment of \code{match.data()} or \code{get_matches()}, and finally in the \code{model} component of the \code{matchit} object if a propensity score was estimated.
+
+When called from an environment different from the one in which \code{matchit()} was originally called and a propensity score was not estimated (or was but with \code{discard} not \code{"none"} and \code{reestimate = TRUE}), this syntax may not work because the original dataset used to construct the matched dataset will not be found. This can occur when \code{matchit()} was run within an \fun{lapply} or \code{purrr::map()} call. The solution, which is recommended in all cases, is simply to supply the original dataset to the \code{data} argument of \code{match.data()}, e.g., as \code{match.data(m.out, data = original_data)}, as demonstrated in the Examples.
 }
 
 \seealso{

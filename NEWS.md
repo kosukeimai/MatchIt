@@ -18,6 +18,8 @@ output:
 
 * A clearer error is now printed when the treatment variable is omitted from the `formula` argument to `matchit()`.
 
+* Improvements in how `match.data()` finds the original dataset. It's still always safer to supply an argument to `data`, but now `match.data()` will look in the environment of the `matchit` formula, then the calling environment of `match.data()`, then the `model` component of the `matchit` object. A clearer error message is now printed when a valid dataset cannot be found in these places.
+
 * Fixed a bug that would occur when using `summary.matchit()` with just one covariate.
 
 * When `verbose = TRUE` and a propensity score is estimated (i.e., using the `distance` argument), a message saying so will be displayed.

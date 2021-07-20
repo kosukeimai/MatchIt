@@ -191,7 +191,9 @@ matchit <- function(formula, data = NULL, method = "nearest", distance = "glm",
 
     #Remove smoothing terms from gam formula
     if (inherits(dist.model, "gam")) {
+      env <- environment(formula)
       formula <- mgcv::interpret.gam(formula)$fake.formula
+      environment(formula) <- env
     }
   }
 
