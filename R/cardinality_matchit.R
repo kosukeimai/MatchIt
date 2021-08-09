@@ -166,28 +166,6 @@ cardinality_matchit <- function(treat, X, estimand = "ATT", tols = .05, s.weight
                                 rhs = Crhs, types = types, max = TRUE, lb = lower.bound,
                                 ub = NULL, time = time, verbose = verbose)
 
-  # if (solver == "glpk") {
-  #   opt.out <- Rglpk::Rglpk_solve_LP(obj = O, mat = C, dir = Cdir, rhs = Crhs, max = TRUE,
-  #                                    types = types,
-  #                                    # bounds = list(lower = lower.bound), #Spurious warning when using bounds
-  #                                    control = list(tm_limit = time*1000, verbose = verbose))
-  # }
-  # else if (solver == "symphony") {
-  #   Cdir[Cdir == "<"] <- "<="
-  #   Cdir[Cdir == ">"] <- ">="
-  #   opt.out <- Rsymphony::Rsymphony_solve_LP(obj = O, mat = C, dir = Cdir, rhs = Crhs, max = TRUE,
-  #                                            types = types, verbosity = verbose - 2,
-  #                                            # bounds = list(lower = lower.bound), #Spurious warning when using bounds
-  #                                            time_limit = time)
-  # }
-  # else if (solver == "gurobi") {
-  #   Cdir[Cdir == "=="] <- "="
-  #   opt.out <- gurobi::gurobi(list(A = C, obj = O, sense = Cdir, rhs = Crhs, vtype = types,
-  #                                  modelsense = "max", lb = lower.bound),
-  #                             params = list(OutputFlag = as.integer(verbose), TimeLimit = time))
-  #   names(opt.out)[names(opt.out) == "x"] <- "solution"
-  # }
-
   cardinality_error_report(opt.out, solver)
 
   sol <- switch(solver, "glpk" = opt.out$solution,
@@ -266,7 +244,6 @@ dispatch_optimizer <- function(solver = "glpk", obj, mat, dir, rhs, types, max =
     opt.out <- gurobi::gurobi(list(A = mat, obj = obj, sense = dir, rhs = rhs, vtype = types,
                                    modelsense = "max", lb = lb, ub = ub),
                               params = list(OutputFlag = as.integer(verbose), TimeLimit = time))
-    # names(opt.out)[names(opt.out) == "x"] <- "solution"
   }
 
   opt.out
