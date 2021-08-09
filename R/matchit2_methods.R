@@ -304,7 +304,7 @@ matchit2optimal <- function(treat, formula, data, distance, discarded,
     cc <- intersect(ex[treat_==1], ex[treat_==0])
     if (length(cc) == 0) stop("No matches were found.", call. = FALSE)
 
-    e_ratios <- sapply(levels(ex), function(e) sum(treat_[ex == e] == 0)/sum(treat_[ex == e] == 1))
+    e_ratios <- vapply(levels(ex), function(e) sum(treat_[ex == e] == 0)/sum(treat_[ex == e] == 1), numeric(1L))
 
     if (any(e_ratios < 1)) {
       warning(paste0("Fewer ", tc[2], " units than ", tc[1], " units in some 'exact' strata; not all ", tc[1], " units will get a match."), immediate. = TRUE, call. = FALSE)
@@ -811,7 +811,7 @@ matchit2nearest <-  function(treat, data, distance, discarded,
     cc <- intersect(as.integer(ex)[treat==1], as.integer(ex)[treat==0])
     if (length(cc) == 0) stop("No matches were found.", call. = FALSE)
 
-    e_ratios <- sapply(levels(ex), function(e) sum(treat[ex == e] == 0)/sum(treat[ex == e] == 1))
+    e_ratios <- vapply(levels(ex), function(e) sum(treat[ex == e] == 0)/sum(treat[ex == e] == 1), numeric(1L))
 
     if (!replace) {
       if (any(e_ratios < 1)) {
