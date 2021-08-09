@@ -36,6 +36,8 @@ output:
 
 * Fixed a bug where supplying a "GAM" string to the `distance` argument (i.e., using the syntax prior to version 4.0.0) would ignore the link supplied.
 
+* When an incompatible argument is supplied to `matchit()` (e.g., `reestimate` with `distance = "mahalanobis"`), an error or warning will only be produced when that argument has been set to a value other than its default (e.g., so setting `reestimate = FALSE` will no longer throw an error). This fixes an issue brought up by Vu Ng when using `MatchThem`.
+
 # MatchIt 4.2.0
 
 * `distance` can now be supplied as a distance matrix containing pairwise distances with nearest neighbor, optimal, and full matching. This means users can create a distance matrix outside `MatchIt` (e.g., using `optmatch::match_on()` or `dist()`) and `matchit()` will use those distances in the matching. See `?distance` for details.

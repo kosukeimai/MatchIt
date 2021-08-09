@@ -15,21 +15,21 @@ check.inputs <- function(mcall, method, distance, exact, mahvars, antiexact, cal
   error.inputs <- character(0)
   if (null.method) {
     for (i in c("exact", "mahvars", "antiexact", "caliper", "std.caliper", "replace", "ratio", "min.controls", "max.controls", "m.order")) {
-      if (i %in% names(mcall) && !is.null(get0(i, inherits = FALSE))) {
+      if (i %in% names(mcall) && !is.null(i_ <- get0(i, inherits = FALSE)) && !identical(i_, formals(MatchIt::matchit)[[i]])) {
         ignored.inputs <- c(ignored.inputs, i)
       }
     }
   }
   else if (method == "exact") {
     for (i in c("distance", "exact", "mahvars", "antiexact", "caliper", "std.caliper", "discard", "reestimate", "replace", "ratio", "min.controls", "max.controls", "m.order")) {
-      if (i %in% names(mcall) && !is.null(get0(i, inherits = FALSE))) {
+      if (i %in% names(mcall) && !is.null(i_ <- get0(i, inherits = FALSE)) && !identical(i_, formals(MatchIt::matchit)[[i]])) {
         ignored.inputs <- c(ignored.inputs, i)
       }
     }
   }
   else if (method == "cem") {
     for (i in c("distance", "exact", "mahvars", "antiexact", "caliper", "std.caliper", "discard", "reestimate", "replace", "ratio", "min.controls", "max.controls", "m.order")) {
-      if (i %in% names(mcall) && !is.null(get0(i, inherits = FALSE))) {
+      if (i %in% names(mcall) && !is.null(i_ <- get0(i, inherits = FALSE)) && !identical(i_, formals(MatchIt::matchit)[[i]])) {
         ignored.inputs <- c(ignored.inputs, i)
       }
     }
@@ -37,7 +37,7 @@ check.inputs <- function(mcall, method, distance, exact, mahvars, antiexact, cal
   else if (method == "nearest") {
     if (is.character(distance) && distance == "mahalanobis") {
       for (e in c("mahvars", "reestimate")) {
-        if (e %in% names(mcall) && !is.null(get0(e, inherits = FALSE))) {
+        if (e %in% names(mcall) && !is.null(e_ <- get0(e, inherits = FALSE)) && !identical(e_, formals(MatchIt::matchit)[[e]])) {
           error.inputs <- c(error.inputs, e)
         }
       }
@@ -46,14 +46,14 @@ check.inputs <- function(mcall, method, distance, exact, mahvars, antiexact, cal
   else if (method == "optimal") {
     if (is.character(distance) && distance == "mahalanobis") {
       for (e in c("mahvars", "reestimate")) {
-        if (e %in% names(mcall) && !is.null(get0(e, inherits = FALSE))) {
+        if (e %in% names(mcall) && !is.null(e_ <- get0(e, inherits = FALSE)) && !identical(e_, formals(MatchIt::matchit)[[e]])) {
           error.inputs <- c(error.inputs, e)
         }
       }
     }
 
     for (i in c("replace", "caliper", "std.caliper", "m.order")) {
-      if (i %in% names(mcall) && !is.null(get0(i, inherits = FALSE))) {
+      if (i %in% names(mcall) && !is.null(i_ <- get0(i, inherits = FALSE)) && !identical(i_, formals(MatchIt::matchit)[[i]])) {
         ignored.inputs <- c(ignored.inputs, i)
       }
     }
@@ -62,14 +62,14 @@ check.inputs <- function(mcall, method, distance, exact, mahvars, antiexact, cal
   else if (method == "full") {
     if (is.character(distance) && distance == "mahalanobis") {
       for (e in c("mahvars", "reestimate")) {
-        if (e %in% names(mcall) && !is.null(get0(e, inherits = FALSE))) {
+        if (e %in% names(mcall) && !is.null(e_ <- get0(e, inherits = FALSE)) && !identical(e_, formals(MatchIt::matchit)[[e]])) {
           error.inputs <- c(error.inputs, e)
         }
       }
     }
 
     for (i in c("replace", "ratio", "m.order")) {
-      if (i %in% names(mcall) && !is.null(get0(i, inherits = FALSE))) {
+      if (i %in% names(mcall) && !is.null(i_ <- get0(i, inherits = FALSE)) && !identical(i_, formals(MatchIt::matchit)[[i]])) {
         ignored.inputs <- c(ignored.inputs, i)
       }
     }
@@ -77,20 +77,20 @@ check.inputs <- function(mcall, method, distance, exact, mahvars, antiexact, cal
   else if (method == "genetic") {
     if (is.character(distance) && distance == "mahalanobis") {
       for (e in c("mahvars", "reestimate")) {
-        if (e %in% names(mcall) && !is.null(get0(e, inherits = FALSE))) {
+        if (e %in% names(mcall) && !is.null(e_ <- get0(e, inherits = FALSE)) && !identical(e_, formals(MatchIt::matchit)[[e]])) {
           error.inputs <- c(error.inputs, e)
         }
       }
     }
     for (i in c("min.controls", "max.controls")) {
-      if (i %in% names(mcall) && !is.null(get0(i, inherits = FALSE))) {
+      if (i %in% names(mcall) && !is.null(i_ <- get0(i, inherits = FALSE)) && !identical(i_, formals(MatchIt::matchit)[[i]])) {
         ignored.inputs <- c(ignored.inputs, i)
       }
     }
   }
   else if (method == "cardinality") {
     for (i in c("distance", "mahvars", "antiexact", "caliper", "std.caliper", "reestimate", "replace", "min.controls", "m.order")) {
-      if (i %in% names(mcall) && !is.null(get0(i, inherits = FALSE))) {
+      if (i %in% names(mcall) && !is.null(i_ <- get0(i, inherits = FALSE)) && !identical(i_, formals(MatchIt::matchit)[[i]])) {
         ignored.inputs <- c(ignored.inputs, i)
       }
     }
@@ -101,7 +101,7 @@ check.inputs <- function(mcall, method, distance, exact, mahvars, antiexact, cal
     }
 
     for (i in c("exact", "mahvars", "antiexact", "caliper", "std.caliper", "replace", "ratio", "min.controls", "max.controls", "m.order")) {
-      if (i %in% names(mcall) && !is.null(get0(i, inherits = FALSE))) {
+      if (i %in% names(mcall) && !is.null(i_ <- get0(i, inherits = FALSE)) && !identical(i_, formals(MatchIt::matchit)[[i]])) {
         ignored.inputs <- c(ignored.inputs, i)
       }
     }
