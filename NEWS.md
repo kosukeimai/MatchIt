@@ -8,13 +8,15 @@ output:
 
 # MatchIt (development version)
 
-* Cardinality and template matching can now be used by setting `method = "cardinality"` in `matchit()`. These methods use mixed integer programming to directly select a matched subsample without pairing or stratifying units. Their results can be dramatically improved when using the Gurobi optimizer. See `?method_cardinality` and `vignettes("matching-methods")` for more information.
+* Cardinality and template matching can now be used by setting `method = "cardinality"` in `matchit()`. These methods use mixed integer programming to directly select a matched subsample without pairing or stratifying units. Their results can be dramatically improved when using the Gurobi optimizer. See `?method_cardinality` and `vignette("matching-methods")` for more information.
 
 * Added `"glmnet"` as an option for `distance`. This estimates propensity scores using lasso, ridge, or elastic net regression as implemented in the `glmnet` package.
 
 * Added `"gbm"` as an option for `distance`. This estimates propensity scores using generalized boosted models as implemented in the `gbm` package. This implementation differs from that in `twang` by using cross-validation or out-of-bag error to choose the tuning parameter as opposed to balance.
 
 * A new argument, `include.obj`, has been added to `matchit()`. When `TRUE`, the intermediate matching object created internally will be included in the output in the `obj` component. See the individual methods pages for information on what is included in each output.  This is ignored for some methods.
+
+* Density plots can now be requested using `plot.matchit()` by setting `type = "density"`. These display the density of each covariate in the treatment groups before and after matching and are similar to the plots created by `cobalt::bal.plot()`. Density plots can be easier to interpret than eCDF plots. `vignette("assessing-balance")` has been updated with this addition.
 
 * A clearer error is now printed when the treatment variable is omitted from the `formula` argument to `matchit()`.
 

@@ -3,7 +3,7 @@
 plot.matchit <- function(x, type = "qq", interactive = TRUE, which.xs = NULL, ...) {
 
   type <- tolower(type)
-  type <- match_arg(type, c("qq", "jitter", "histogram", "ecdf"))
+  type <- match_arg(type, c("qq", "ecdf", "density", "jitter", "histogram"))
 
   if (type %in% c("qq", "ecdf", "density")) {
     matchit.covplot(x, type = type, interactive=interactive,
@@ -40,9 +40,9 @@ plot.matchit.subclass <- function(x, type = "qq", interactive = TRUE, which.xs =
   }
 
   type <- tolower(type)
-  type <- match_arg(type, c("qq", "ecdf", "jitter", "histogram"))
+  type <- match_arg(type, c("qq", "ecdf", "density", "jitter", "histogram"))
 
-  if (type %in% c("qq", "ecdf")) {
+  if (type %in% c("qq", "ecdf", "density")) {
     #If subclass = T, index, or range, display all or range of subclasses, using interactive to advance
     #If subclass = F, display aggregate across subclass, using interactive to advance
     #If subclass = NULL, if interactive, use to choose subclass, else display aggregate across subclass
@@ -64,7 +64,7 @@ plot.matchit.subclass <- function(x, type = "qq", interactive = TRUE, which.xs =
     else if (interactive && miss.sub) {
       subclasses <- levels(x$subclass)
       choices <- c("No (Exit)", paste0("Yes: Subclass ", subclasses), "Yes: In aggregate")
-      plot.name <- switch(type, "qq" = "quantile-quantile", "ecdf" = "empirical CDF")
+      plot.name <- switch(type, "qq" = "quantile-quantile", "ecdf" = "empirical CDF", "density" = "density")
       question <- paste("Would you like to see", plot.name, "plots of any subclasses? ")
       ans <- -1
       while(ans != 0) {
@@ -179,7 +179,7 @@ plot.summary.matchit <- function(x, abs = TRUE, var.order = "data", threshold = 
                                       "topleft", "top", "topright", "right", "center"))
     legend(position, legend = c("All", "Matched"),
            pt.bg = c("white", "black"), pch = 21,
-           inset = .015, xpd = T)
+           inset = .015, xpd = TRUE)
   }
   invisible(x)
 }
