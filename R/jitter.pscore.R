@@ -17,7 +17,7 @@ jitter.pscore <- function(x, interactive, pch = 1, ...){
 
   plot(pscore, xlim = c(minp - 0.05*(maxp-minp), maxp + 0.05*(maxp-minp)), ylim = c(-1.5,2.5),
        type="n", ylab="", xlab="Propensity Score",
-       axes=F,main="Distribution of Propensity Scores",...)
+       axes=FALSE,main="Distribution of Propensity Scores",...)
   if (!is.null(q.cut)) abline(v = q.cut, col = "grey", lty = 1)
 
   #Matched treated
