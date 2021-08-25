@@ -38,7 +38,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">MatchIt</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">4.2.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">4.2.0.9005</span>
       </span>
     </div>
 
@@ -104,7 +104,7 @@
       <h1 data-toc-skip>Assessing Balance</h1>
                         <h4 class="author">Noah Greifer</h4>
             
-            <h4 class="date">2021-05-26</h4>
+            <h4 class="date">2021-08-25</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/kosukeimai/MatchIt/blob/master/vignettes/assessing-balance.Rmd"><code>vignettes/assessing-balance.Rmd</code></a></small>
       <div class="hidden name"><code>assessing-balance.Rmd</code></div>
@@ -161,7 +161,7 @@ pre code {
 <h2 class="hasAnchor">
 <a href="#assessing-balance-with-matchit" class="anchor"></a>Assessing Balance with <code>MatchIt</code>
 </h2>
-<p><code>MatchIt</code> contains several tools to assess balance numerically and graphically. The primary balance assessment function is <code><a href="../reference/summary.matchit.html">summary.matchit()</a></code>, which is called when using <code><a href="https://rdrr.io/r/base/summary.html">summary()</a></code> on a <code>MatchIt</code> object and produces several tables of balance statistics before and after matching. <code><a href="../reference/plot.summary.matchit.html">plot.summary.matchit()</a></code> generates a Love plot using R’s base graphics system containing the standardized mean differences resulting from a call to <code><a href="../reference/summary.matchit.html">summary.matchit()</a></code> and provides a nice way to display balance visually for inclusion in an article or report. <code><a href="../reference/plot.matchit.html">plot.matchit()</a></code> generates several plots that display different elements of covariate balance, including propensity score overlap and empirical quantile-quantile (eQQ) plots of the covariates. These functions together form a suite that can be used to assess and report balance in a variety of ways.</p>
+<p><code>MatchIt</code> contains several tools to assess balance numerically and graphically. The primary balance assessment function is <code><a href="../reference/summary.matchit.html">summary.matchit()</a></code>, which is called when using <code><a href="https://rdrr.io/r/base/summary.html">summary()</a></code> on a <code>MatchIt</code> object and produces several tables of balance statistics before and after matching. <code><a href="../reference/plot.summary.matchit.html">plot.summary.matchit()</a></code> generates a Love plot using R’s base graphics system containing the standardized mean differences resulting from a call to <code><a href="../reference/summary.matchit.html">summary.matchit()</a></code> and provides a nice way to display balance visually for inclusion in an article or report. <code><a href="../reference/plot.matchit.html">plot.matchit()</a></code> generates several plots that display different elements of covariate balance, including propensity score overlap and distribution plots of the covariates. These functions together form a suite that can be used to assess and report balance in a variety of ways.</p>
 <p>To demonstrate <code>MatchIt</code>’s balance assessment capabilities, we will use the Lalonde data included in <code>MatchIt</code> and used in <code><a href="../articles/MatchIt.html">vignette("MatchIt")</a></code>. We will perform full matching on the propensity score, though the functionality is identical across all matching methods except propensity score subclassification, which we illustrate at the end.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="st"><a href="https://kosukeimai.github.io/MatchIt/">"MatchIt"</a></span><span class="op">)</span>
@@ -305,15 +305,15 @@ pre code {
 <h3 class="hasAnchor">
 <a href="#plot-matchit" class="anchor"></a><code>plot.matchit()</code>
 </h3>
-<p>In addition to numeric summaries of balance, <code>MatchIt</code> offers graphical summaries as well using <code><a href="../reference/plot.matchit.html">plot.matchit()</a></code> (i.e., using <code><a href="https://rdrr.io/r/graphics/plot.default.html">plot()</a></code> on a <code>matchit</code> object). We can create eQQ plots or eCDF plots of the covariates and histograms or jitter plots of the propensity score. Both eQQ and eCDF plots can provide a summary of the balance of the full marginal distribution of a covariate beyond just the mean and variance.</p>
+<p>In addition to numeric summaries of balance, <code>MatchIt</code> offers graphical summaries as well using <code><a href="../reference/plot.matchit.html">plot.matchit()</a></code> (i.e., using <code><a href="https://rdrr.io/r/graphics/plot.default.html">plot()</a></code> on a <code>matchit</code> object). We can create eQQ plots, eCDF plots, or density plots of the covariates and histograms or jitter plots of the propensity score. The covariate plots can provide a summary of the balance of the full marginal distribution of a covariate beyond just the mean and variance.</p>
 <p><code><a href="../reference/plot.matchit.html">plot.matchit()</a></code> has a few arguments to customize the output:</p>
 <ul>
 <li>
-<code>type</code> corresponds to the type of plot desired. Options include <code>"qq"</code> for eQQ plots (the default), <code>"ecdf"</code> for eCDF plots, <code>"jitter"</code> for jitter plots, and <code>"histogram"</code> for histograms.</li>
+<code>type</code> corresponds to the type of plot desired. Options include <code>"qq"</code> for eQQ plots (the default), <code>"ecdf"</code> for eCDF plots, <code>"density"</code> for density plots, <code>"jitter"</code> for jitter plots, and <code>"histogram"</code> for histograms.</li>
 <li>
-<code>interactive</code> controls whether the plot is interactive or not. For eQQ and eCDF plots, this allows us to control when the next page of covariates is to be displayed since only three can appear at a time. For jitter plots, this can allow us to select individual units with extreme values for further inspection. The default is <code>TRUE</code>.</li>
+<code>interactive</code> controls whether the plot is interactive or not. For eQQ, eCDF, and density plots, this allows us to control when the next page of covariates is to be displayed since only three can appear at a time. For jitter plots, this can allow us to select individual units with extreme values for further inspection. The default is <code>TRUE</code>.</li>
 <li>
-<code>which.xs</code> is used to specify for which covariates to display balance in eQQ and eCDF plots. The default is to display balance on all, but we can request balance just on a specific subset. If three or fewer are requested, <code>interactive</code> is ignored.</li>
+<code>which.xs</code> is used to specify for which covariates to display balance in eQQ, eCDF, and density plots. The default is to display balance on all, but we can request balance just on a specific subset. If three or fewer are requested, <code>interactive</code> is ignored.</li>
 </ul>
 <p>Below, we demonstrate the eQQ plot:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
@@ -326,14 +326,20 @@ pre code {
 <code class="sourceCode R"><span class="co">#eCDF plot</span>
 <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">m.out</span>, type <span class="op">=</span> <span class="st">"ecdf"</span>, which.xs <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"educ"</span>, <span class="st">"married"</span>, <span class="st">"re75"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <p><img src="assessing-balance_files/figure-html/unnamed-chunk-5-1.png" width="672"></p>
-<p>The x-axis display the covariate values and the y-axis display the proportion of the sample at or less than that covariate value. Perfectly overlapping lines indicate good balance. The black line corresponds to the treated group and the gray line to the control group. Although <code>educ</code> and <code>re75</code> were fairly well balanced before matching, their balance has improved nonetheless. <code>married</code> appears far better balanced after matching than before. The vertical difference between the eCDFs lines of each treatment group is used to compute the eCDF difference statistics that are displayed in <code><a href="../reference/summary.matchit.html">summary.matchit()</a></code> with <code>standardize = TRUE</code>.</p>
+<p>The x-axis display the covariate values and the y-axis displays the proportion of the sample at or less than that covariate value. Perfectly overlapping lines indicate good balance. The black line corresponds to the treated group and the gray line to the control group. Although <code>educ</code> and <code>re75</code> were fairly well balanced before matching, their balance has improved nonetheless. <code>married</code> appears far better balanced after matching than before. The vertical difference between the eCDFs lines of each treatment group is used to compute the eCDF difference statistics that are displayed in <code><a href="../reference/summary.matchit.html">summary.matchit()</a></code> with <code>standardize = TRUE</code>.</p>
+<p>Below, we demonstrate the density plot:</p>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co">#density plot</span>
+<span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">m.out</span>, type <span class="op">=</span> <span class="st">"density"</span>, which.xs <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"age"</span>, <span class="st">"educ"</span>, <span class="st">"married"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<p><img src="assessing-balance_files/figure-html/unnamed-chunk-6-1.png" width="672"></p>
+<p>The x-axis display the covariate values and the y-axis displays the density of the sample at that covariate value. For binary variables, the y-axis displays the proportion of the sample at that covariate value. Perfectly overlapping lines indicate good balance. The black line corresponds to the treated group and the gray line to the control group. Density plots display similar information to eCDF plots but may be more intuitive for some users because of their link to histograms.</p>
 </div>
 </div>
 <div id="assessing-balance-after-subclassification" class="section level2">
 <h2 class="hasAnchor">
 <a href="#assessing-balance-after-subclassification" class="anchor"></a>Assessing Balance After Subclassification</h2>
 <p>With subclassification, balance can be checked both within each subclass and overall. With <code><a href="../reference/summary.matchit.html">summary.matchit()</a></code>, we can request to view balance only in aggregate or in each subclass. The latter can help us decide if we can interpret effects estimated within each subclass as unbiased. The <code><a href="../reference/plot.summary.matchit.html">plot.summary.matchit()</a></code> and <code><a href="../reference/plot.matchit.html">plot.matchit()</a></code> outputs can be requested either in aggregate or for each subclass. We demonstrate this below. First we will perform propensity score subclassification using 4 subclasses (typically more is beneficial).</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co">#Subclassification on a logistic regression PS</span>
 <span class="va">s.out</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/matchit.html">matchit</a></span><span class="op">(</span><span class="va">treat</span> <span class="op">~</span> <span class="va">age</span> <span class="op">+</span> <span class="va">educ</span> <span class="op">+</span> <span class="va">race</span> <span class="op">+</span> <span class="va">married</span> <span class="op">+</span> 
                    <span class="va">nodegree</span> <span class="op">+</span> <span class="va">re74</span> <span class="op">+</span> <span class="va">re75</span>, data <span class="op">=</span> <span class="va">lalonde</span>,
@@ -347,7 +353,7 @@ pre code {
 ##  - target estimand: ATT
 ##  - covariates: age, educ, race, married, nodegree, re74, re75</code></pre>
 <p>When using <code><a href="https://rdrr.io/r/base/summary.html">summary()</a></code>, the default is to display balance only in aggregate using the subclassification weights. This balance output looks similar to that for other matching methods.</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">s.out</span><span class="op">)</span></code></pre></div>
 <pre><code>## 
 ## Call:
@@ -401,7 +407,7 @@ pre code {
 ## Unmatched         0.        0
 ## Discarded         0.        0</code></pre>
 <p>An additional option in <code><a href="https://rdrr.io/r/base/summary.html">summary()</a></code>, <code>subclass</code>, allows us to request balance for individual subclasses. <code>subclass</code> can be set to <code>TRUE</code> to display balance for all subclasses or the indices of individual subclasses for which balance is to be displayed. Below we call <code><a href="https://rdrr.io/r/base/summary.html">summary()</a></code> and request balance to be displayed on all subclasses (setting <code>un = FALSE</code> to suppress balance in the original sample):</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">s.out</span>, subclass <span class="op">=</span> <span class="cn">TRUE</span>, un <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></code></pre></div>
 <pre><code>## 
 ## Call:
@@ -460,24 +466,18 @@ pre code {
 ## married            0.000         0.000           0.000          .     0.000    0.000
 ## nodegree           0.894         0.786           0.237          .     0.108    0.108
 ## re74             291.783       540.618          -0.051      0.917     0.083    0.280
-## re75            1015.289       854.751           0.050      3.523     0.112    0.266
-## 
-## Sample Sizes by Subclass:
-##           1  2  3  4 All
-## Control 365 22 28 14 429
-## Treated  46 45 47 47 185
-## Total   411 67 75 61 614</code></pre>
+## re75            1015.289       854.751           0.050      3.523     0.112    0.266</code></pre>
 <p>We can plot the standardized mean differences in a Love plot that also displays balance for the subclasses using <code><a href="../reference/plot.summary.matchit.html">plot.summary.matchit()</a></code> on a <code><a href="../reference/summary.matchit.html">summary.matchit()</a></code> object with <code>subclass = TRUE</code>.</p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">s</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">s.out</span>, subclass <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">s</span>, var.order <span class="op">=</span> <span class="st">"unmatched"</span>, abs <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></code></pre></div>
-<p><img src="assessing-balance_files/figure-html/unnamed-chunk-9-1.png" width="672"></p>
+<p><img src="assessing-balance_files/figure-html/unnamed-chunk-10-1.png" width="672"></p>
 <p>Note that for some variables, while the groups are balanced in aggregate (black dots), the individual subclasses (gray numbers) may not be balanced, in which case unadjusted effect estimates within these subclasses should not be interpreted as unbiased.</p>
 <p>When we plot distributional balance using <code><a href="../reference/plot.matchit.html">plot.matchit()</a></code>, again we can choose whether balance should be displayed in aggregate or within subclasses again using the <code>subclass</code> option, which functions the same as it does with <code><a href="../reference/summary.matchit.html">summary.matchit()</a></code>. Below we demonstrate checking balance within a subclass.</p>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">s.out</span>, type <span class="op">=</span> <span class="st">"ecdf"</span>, which.xs <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"educ"</span>, <span class="st">"married"</span>, <span class="st">"re75"</span><span class="op">)</span>,
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">s.out</span>, type <span class="op">=</span> <span class="st">"density"</span>, which.xs <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"educ"</span>, <span class="st">"married"</span>, <span class="st">"re75"</span><span class="op">)</span>,
      subclass <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></code></pre></div>
-<p><img src="assessing-balance_files/figure-html/unnamed-chunk-10-1.png" width="672"></p>
+<p><img src="assessing-balance_files/figure-html/unnamed-chunk-11-1.png" width="672"></p>
 <p>If we had set <code>subclass = FALSE</code>, plots would have been displayed in aggregate using the subclassification weights. If <code>subclass</code> is unspecified, a prompt will ask us for which subclass we want to see balance.</p>
 </div>
 <div id="assessing-balance-with-cobalt" class="section level2">
@@ -485,14 +485,14 @@ pre code {
 <a href="#assessing-balance-with-cobalt" class="anchor"></a>Assessing Balance with <code>cobalt</code>
 </h2>
 <p>The <code>cobalt</code> package was designed specifically for checking balance before and after matching (and weighting). It offers three main functions, <code><a href="https://ngreifer.github.io/cobalt/reference/bal.tab.html">bal.tab()</a></code>, <code><a href="https://ngreifer.github.io/cobalt/reference/love.plot.html">love.plot()</a></code>, and <code><a href="https://ngreifer.github.io/cobalt/reference/bal.plot.html">bal.plot()</a></code>, which perform similar actions to <code><a href="../reference/summary.matchit.html">summary.matchit()</a></code>, <code><a href="../reference/plot.summary.matchit.html">plot.summary.matchit()</a></code>, and <code><a href="../reference/plot.matchit.html">plot.matchit()</a></code>, respectively. These functions directly interface with <code>matchit</code> objects, making <code>cobalt</code> straightforward to use in conjunction with <code>MatchIt</code>. <code>cobalt</code> can be used as a complement to <code>MatchIt</code>, especially for more advanced uses that are not accommodated by <code>MatchIt</code>, such as comparing balance across different matching schemes and even different packages, assessing balance in clustered or multiply imputed data, and assessing balance with multi-category, continuous, and time-varying treatments. The main <code>cobalt</code> vignette contains many examples of its use with <code>MatchIt</code> objects, so we only provide a short demonstration of its capabilities here.</p>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="st"><a href="https://ngreifer.github.io/cobalt/">"cobalt"</a></span><span class="op">)</span></code></pre></div>
 <div id="bal-tab" class="section level3">
 <h3 class="hasAnchor">
 <a href="#bal-tab" class="anchor"></a><code>bal.tab()</code>
 </h3>
 <p><code><a href="https://ngreifer.github.io/cobalt/reference/bal.tab.html">bal.tab()</a></code> produces tables of balance statistics similar to <code><a href="../reference/summary.matchit.html">summary.matchit()</a></code>. The columns displayed can be customized to limit how much information is displayed and isolate desired information. We call <code><a href="https://ngreifer.github.io/cobalt/reference/bal.tab.html">bal.tab()</a></code> with a few of its options specified below:</p>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://ngreifer.github.io/cobalt/reference/bal.tab.html">bal.tab</a></span><span class="op">(</span><span class="va">m.out</span>, un <span class="op">=</span> <span class="cn">TRUE</span>, stats <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"m"</span>, <span class="st">"v"</span>, <span class="st">"ks"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <pre><code>## Call
 ##  matchit(formula = treat ~ age + educ + race + married + nodegree + 
@@ -518,7 +518,7 @@ pre code {
 ## Matched (Unweighted)  429.       185</code></pre>
 <p>The output is very similar to that of <code><a href="../reference/summary.matchit.html">summary.matchit()</a></code>, except that the balance statistics computed before matching (with the suffix <code>.Un</code>) and those computed after matching (with the suffix <code>.Adj</code>) are in the same table. By default, only SMDs after matching (<code>Diff.Adj</code>) are displayed; by setting <code>un = TRUE</code>, we requested that the balance statistics before matching also be displayed, and by setting <code>stats = c("m", "v", "ks")</code> we requested mean differences, variance ratios, and Kolmogorov-Smirnov statistics. Other balance statistics and summary statistics can be requested as well. One important detail to note is that the default for binary covariates is to print the raw difference in proportion rather than the standardized mean difference, so there will be an apparent discrepancy for these variables between <code><a href="https://ngreifer.github.io/cobalt/reference/bal.tab.html">bal.tab()</a></code> and <code><a href="../reference/summary.matchit.html">summary.matchit()</a></code> output, though this behavior can be changed by setting <code>binary = "std"</code> in the call to <code><a href="https://ngreifer.github.io/cobalt/reference/bal.tab.html">bal.tab()</a></code>. Functionality for producing balance statistics for additional variables and for powers and interactions of the covariates is available using the <code>addl</code>, <code>poly</code>, and <code>int</code> options.</p>
 <p><code><a href="https://ngreifer.github.io/cobalt/reference/bal.tab.html">bal.tab()</a></code> and other <code>cobalt</code> functions can produce balance not just on a single <code>matchit</code> object but on several at the same time, which facilitates comparing balance across several matching specifications. For example, if we wanted to compare the full matching results to the results of nearest neighbor matching without replacement, we could supply both to <code><a href="https://ngreifer.github.io/cobalt/reference/bal.tab.html">bal.tab()</a></code>, which we demonstrate below:</p>
-<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co">#Nearest neighbor (NN) matching on the PS</span>
 <span class="va">m.out2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/matchit.html">matchit</a></span><span class="op">(</span><span class="va">treat</span> <span class="op">~</span> <span class="va">age</span> <span class="op">+</span> <span class="va">educ</span> <span class="op">+</span> <span class="va">race</span> <span class="op">+</span> <span class="va">married</span> <span class="op">+</span> 
                    <span class="va">nodegree</span> <span class="op">+</span> <span class="va">re74</span> <span class="op">+</span> <span class="va">re75</span>, data <span class="op">=</span> <span class="va">lalonde</span><span class="op">)</span>
@@ -551,11 +551,11 @@ pre code {
 <a href="#love-plot" class="anchor"></a><code>love.plot</code>
 </h3>
 <p><code><a href="https://ngreifer.github.io/cobalt/reference/love.plot.html">love.plot()</a></code> creates a Love plot of chosen balance statistics. It offers many options for customization, including the shape and colors of the points, how the variable names are displayed, and for which statistics balance is to be displayed. Below is an example of its basic use:</p>
-<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://ngreifer.github.io/cobalt/reference/love.plot.html">love.plot</a></span><span class="op">(</span><span class="va">m.out</span>, binary <span class="op">=</span> <span class="st">"std"</span><span class="op">)</span></code></pre></div>
-<p><img src="assessing-balance_files/figure-html/unnamed-chunk-14-1.png" width="672"></p>
-<p>The syntax is straightforward and similar to that of <code><a href="https://ngreifer.github.io/cobalt/reference/bal.tab.html">bal.tab()</a></code>. Below we demonstrate a more advanced use that customizes the appearance of the plot and displays balance not only on mean differences but also on Kolmogorov-Smirnov statistics and for both full matching and nearest neighbor matching simultaneously.</p>
 <div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://ngreifer.github.io/cobalt/reference/love.plot.html">love.plot</a></span><span class="op">(</span><span class="va">m.out</span>, binary <span class="op">=</span> <span class="st">"std"</span><span class="op">)</span></code></pre></div>
+<p><img src="assessing-balance_files/figure-html/unnamed-chunk-15-1.png" width="672"></p>
+<p>The syntax is straightforward and similar to that of <code><a href="https://ngreifer.github.io/cobalt/reference/bal.tab.html">bal.tab()</a></code>. Below we demonstrate a more advanced use that customizes the appearance of the plot and displays balance not only on mean differences but also on Kolmogorov-Smirnov statistics and for both full matching and nearest neighbor matching simultaneously.</p>
+<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://ngreifer.github.io/cobalt/reference/love.plot.html">love.plot</a></span><span class="op">(</span><span class="va">m.out</span>, stats <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"m"</span>, <span class="st">"ks"</span><span class="op">)</span>, poly <span class="op">=</span> <span class="fl">2</span>, abs <span class="op">=</span> <span class="cn">TRUE</span>,
           weights <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>nn <span class="op">=</span> <span class="va">m.out2</span><span class="op">)</span>,
           drop.distance <span class="op">=</span> <span class="cn">TRUE</span>, thresholds <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span>m <span class="op">=</span> <span class="fl">.1</span><span class="op">)</span>,
@@ -564,7 +564,7 @@ pre code {
           colors <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"blue"</span>, <span class="st">"darkgreen"</span>, <span class="st">"red"</span><span class="op">)</span>,
           sample.names <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Full Matching"</span>, <span class="st">"NN Matching"</span>, <span class="st">"Original"</span><span class="op">)</span>,
           position <span class="op">=</span> <span class="st">"bottom"</span><span class="op">)</span></code></pre></div>
-<p><img src="assessing-balance_files/figure-html/unnamed-chunk-15-1.png" width="672"></p>
+<p><img src="assessing-balance_files/figure-html/unnamed-chunk-16-1.png" width="672"></p>
 <p>The <code><a href="https://ngreifer.github.io/cobalt/reference/love.plot.html">love.plot()</a></code> documentation explains what each of these arguments do and the several other ones available. <code>cobalt</code> contains a vignette for other advanced customization of <code><a href="https://ngreifer.github.io/cobalt/reference/love.plot.html">love.plot()</a></code>.</p>
 </div>
 <div id="bal-plot" class="section level3">
@@ -572,19 +572,19 @@ pre code {
 <a href="#bal-plot" class="anchor"></a><code>bal.plot()</code>
 </h3>
 <p><code><a href="https://ngreifer.github.io/cobalt/reference/bal.plot.html">bal.plot()</a></code> displays distributional balance for a single covariate, similar to <code><a href="../reference/plot.matchit.html">plot.matchit()</a></code>. Its default is to display kernel density plots for continuous variables and bar graphs for categorical variables. It can also display eCDF plots and histograms. Below we demonstrate some of its uses:</p>
-<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co">#Density plot for continuous variables</span>
 <span class="fu"><a href="https://ngreifer.github.io/cobalt/reference/bal.plot.html">bal.plot</a></span><span class="op">(</span><span class="va">m.out</span>, var.name <span class="op">=</span> <span class="st">"educ"</span>, which <span class="op">=</span> <span class="st">"both"</span><span class="op">)</span></code></pre></div>
-<p><img src="assessing-balance_files/figure-html/unnamed-chunk-16-1.png" width="672"></p>
-<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
+<p><img src="assessing-balance_files/figure-html/unnamed-chunk-17-1.png" width="672"></p>
+<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co">#Bar graph for categorical variables</span>
 <span class="fu"><a href="https://ngreifer.github.io/cobalt/reference/bal.plot.html">bal.plot</a></span><span class="op">(</span><span class="va">m.out</span>, var.name <span class="op">=</span> <span class="st">"race"</span>, which <span class="op">=</span> <span class="st">"both"</span><span class="op">)</span></code></pre></div>
-<p><img src="assessing-balance_files/figure-html/unnamed-chunk-16-2.png" width="672"></p>
-<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
+<p><img src="assessing-balance_files/figure-html/unnamed-chunk-17-2.png" width="672"></p>
+<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co">#Mirrored histogram</span>
 <span class="fu"><a href="https://ngreifer.github.io/cobalt/reference/bal.plot.html">bal.plot</a></span><span class="op">(</span><span class="va">m.out</span>, var.name <span class="op">=</span> <span class="st">"distance"</span>, which <span class="op">=</span> <span class="st">"both"</span>,
          type <span class="op">=</span> <span class="st">"histogram"</span>, mirror <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
-<p><img src="assessing-balance_files/figure-html/unnamed-chunk-16-3.png" width="672"></p>
+<p><img src="assessing-balance_files/figure-html/unnamed-chunk-17-3.png" width="672"></p>
 <p>These plots help illuminate the specific ways in which the covariate distributions differ between treatment groups, which can aid in interpreting the balance statistics provided by <code><a href="https://ngreifer.github.io/cobalt/reference/bal.tab.html">bal.tab()</a></code> and <code><a href="../reference/summary.matchit.html">summary.matchit()</a></code>.</p>
 </div>
 </div>

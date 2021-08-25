@@ -38,7 +38,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">MatchIt</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">4.2.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">4.2.0.9005</span>
       </span>
     </div>
 
@@ -104,7 +104,7 @@
       <h1 data-toc-skip>Matching with Sampling Weights</h1>
                         <h4 class="author">Noah Greifer</h4>
             
-            <h4 class="date">2021-05-26</h4>
+            <h4 class="date">2021-08-25</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/kosukeimai/MatchIt/blob/master/vignettes/sampling-weights.Rmd"><code>vignettes/sampling-weights.Rmd</code></a></small>
       <div class="hidden name"><code>sampling-weights.Rmd</code></div>
@@ -145,7 +145,7 @@ pre code {
 <h2 class="hasAnchor">
 <a href="#matching" class="anchor"></a>Matching</h2>
 <p>When using sampling weights with propensity score matching, one has the option of including the sampling weights in the model used to estimate the propensity scores. Although evidence is mixed on whether this is required <span class="citation">(Austin, Jembere, and Chiu <a href="#ref-austin2016" role="doc-biblioref">2016</a>; Lenis et al. <a href="#ref-lenis2019" role="doc-biblioref">2019</a>)</span>, it can be a good idea. The choice should depend on whether including the sampling weights improves the quality of the matches. Specifications including and excluding sampling weights should be tried to determine which is preferred.</p>
-<p>To supply sampling weights to the propensity score-estimating function in <code><a href="../reference/matchit.html">matchit()</a></code>, the sampling weights variable should be supplied to the <code>s.weights</code> argument. It can be supplied either as a numerical vector containing the sampling weights, or a string or one-sided formula with the name of the sampling weights variable in the supplied dataset. Below we demonstrate including sampling weights into propensity score estimated using logistic regression for optimal full matching for the average treatment effect in the population (ATE) (note that all methods and steps apply the same way to all forms of matching and all estimands).</p>
+<p>To supply sampling weights to the propensity score-estimating function in <code><a href="../reference/matchit.html">matchit()</a></code>, the sampling weights variable should be supplied to the <code>s.weights</code> argument. It can be supplied either as a numerical vector containing the sampling weights, or a string or one-sided formula with the name of the sampling weights variable in the supplied dataset. Below we demonstrate including sampling weights into propensity scores estimated using logistic regression for optimal full matching for the average treatment effect in the population (ATE) (note that all methods and steps apply the same way to all forms of matching and all estimands).</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">mF_s</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/matchit.html">matchit</a></span><span class="op">(</span><span class="va">A</span> <span class="op">~</span> <span class="va">X1</span> <span class="op">+</span> <span class="va">X2</span> <span class="op">+</span> <span class="va">X3</span> <span class="op">+</span> <span class="va">X4</span> <span class="op">+</span> <span class="va">X5</span> <span class="op">+</span> 
                   <span class="va">X6</span> <span class="op">+</span> <span class="va">X7</span> <span class="op">+</span> <span class="va">X8</span> <span class="op">+</span> <span class="va">X9</span>, data <span class="op">=</span> <span class="va">d</span>,
@@ -191,7 +191,7 @@ pre code {
 ##  - target estimand: ATE
 ##  - covariates: X1, X2, X3, X4, X5, X6, X7, X8, X9</code></pre>
 <p>Now when we print the <code>matchit</code> object, we can see lines have been added identifying that sampling weights are present but they were not used in the estimation of the propensity score used in the matching.</p>
-<p>Note that not all methods can involve sampling weights in the estimation. Only methods that use the propensity score will be affected by sampling weights; coarsened exact matching or Mahalanobis distance optimal pair matching, for example, ignore the sampling weights, and some propensity score estimation methods, like <code>randomForest</code> and <code>bart</code> (as presently implemented), cannot incorporate sampling weights. Sampling weights should still be supplied to <code><a href="../reference/matchit.html">matchit()</a></code> even when using these methods to avoid having to use <code>add_sweights()</code> and remembering which methods do or do not involve sampling weights.</p>
+<p>Note that not all methods can involve sampling weights in the estimation. Only methods that use the propensity score will be affected by sampling weights; coarsened exact matching or Mahalanobis distance optimal pair matching, for example, ignore the sampling weights, and some propensity score estimation methods, like <code>randomForest</code> and <code>bart</code> (as presently implemented), cannot incorporate sampling weights. Sampling weights should still be supplied to <code><a href="../reference/matchit.html">matchit()</a></code> even when using these methods to avoid having to use <code><a href="../reference/add_s.weights.html">add_s.weights()</a></code> and remembering which methods do or do not involve sampling weights.</p>
 </div>
 <div id="assessing-balance" class="section level2">
 <h2 class="hasAnchor">

@@ -81,7 +81,7 @@ This page documents the overall use of matchit(), but for specifics of how match
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">MatchIt</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">4.2.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">4.2.0.9005</span>
       </span>
     </div>
 
@@ -173,6 +173,7 @@ This page documents the overall use of matchit(), but for specifics of how match
         std.caliper <span class='op'>=</span> <span class='cn'>TRUE</span>,
         ratio <span class='op'>=</span> <span class='fl'>1</span>,
         verbose <span class='op'>=</span> <span class='cn'>FALSE</span>,
+        include.obj <span class='op'>=</span> <span class='cn'>FALSE</span>,
         <span class='va'>...</span><span class='op'>)</span>
 
 <span class='co'># S3 method for matchit</span>
@@ -258,6 +259,10 @@ This page documents the overall use of matchit(), but for specifics of how match
       <td><p><code>logical</code>; whether information about the matching process should be printed to the console. What is printed depends on the matching method. Default is <code>FALSE</code> for no printing other than warnings.</p></td>
     </tr>
     <tr>
+      <th>include.obj</th>
+      <td><p><code>logical</code>; whether to include any objects created in the matching process in the output, i.e., by the functions from other packages <code>matchit()</code> calls. What is included depends on the matching method. Default is <code>FALSE</code>.</p></td>
+    </tr>
+    <tr>
       <th>...</th>
       <td><p>additional arguments passed to the functions used in the matching process. See the individual methods pages for information on what additional arguments are allowed for each method. Ignored for <code>print</code>.</p></td>
     </tr>
@@ -277,6 +282,7 @@ This page documents the overall use of matchit(), but for specifics of how match
 <li><p><code><a href='method_cem.html'>method_cem</a></code> for coarsened exact matching</p></li>
 <li><p><code><a href='method_exact.html'>method_exact</a></code> for exact matching</p></li>
 <li><p><code><a href='method_subclass.html'>method_subclass</a></code> for subclassification</p></li>
+<li><p><code><a href='method_cardinality.html'>method_cardinality</a></code> for cardinality and template matching</p></li>
 </ul><p>The pages contain information on what the method does, which of the arguments above are allowed with them and how they are interpreted, and what additional arguments can be supplied to further tune the method. Note that the default method with no arguments supplied other than <code>formula</code> and <code>data</code> is 1:1 nearest neighbor matching without replacement on a propensity score estimated using a logistic regression of the treatment on the covariates. This is not the same default offered by other matching programs, such as those in <em>Matching</em>, <code>teffects</code> in Stata, or <code>PROC PSMATCH</code> in SAS, so care should be taken if trying to replicate the results of those programs.</p>
 <p>When <code>method = NULL</code>, no matching will occur, but any propensity score estimation and common support restriction will. This can be a simple way to estimate the propensity score for use in future matching specifications without having to reestimate it each time. The <code>matchit()</code> output with no matching can be supplied to <code>summary</code> to examine balance prior to matching on any of the included covariates and on the propensity score if specified. All arguments other than <code>distance</code>, <code>discard</code>, and <code>reestimate</code> will be ignored.</p>
 <p>See the <code><a href='distance.html'>distance</a></code> argument for details on the several ways to specify the <code>distance</code> and <code>link</code> arguments to estimate propensity scores and create distance measures.</p>
@@ -310,7 +316,7 @@ This page documents the overall use of matchit(), but for specifics of how match
   <dt>exact</dt><dd><p>a one-sided formula containing the variables, if any, supplied to <code>exact</code>.</p></dd>
   <dt>mahvars</dt><dd><p>a one-sided formula containing the variables, if any, supplied to <code>mahvars</code>.</p></dd>
   <dt>nn</dt><dd><p>a matrix of the sample sizes of the treated and control groups before and after matching. See <code><a href='summary.matchit.html'>summary.matchit()</a></code> for details.</p></dd>
-
+  <dt>obj</dt><dd><p>when <code>include.obj = TRUE</code>, an object containing the intermediate results of the matching procedure. See the individual methods pages for what this component will contain.</p></dd>
 When method = "subclass", a matchit.subclass object with the same components as above except that match.matrix is excluded and two additional components, q.cut and qn, are included, containing a vector of the distance measure cutpoints used to define the subclasses and a matrix of the subclass sample sizes, respectively. See <a href='method_subclass.html'>method_subclass</a> for details.
 
     <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
@@ -324,7 +330,7 @@ When method = "subclass", a matchit.subclass object with the same components as 
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <div class='dont-index'><p><code><a href='summary.matchit.html'>summary.matchit()</a></code> for balance assessment after matching. <code><a href='plot.matchit.html'>plot.matchit()</a></code> for plots of covariate balance and propensity score overlap after matching.</p>
-<p><code><a href='../articles/MatchIt.html'>vignette("MatchIt")</a></code> for an introduction to matching with MatchIt; <code><a href='../articles/matching-methods.html'>vignette("matching-methods")</a></code> for descriptions of the variety of matching methods and options available; <code><a href='../articles/assessing-balance.html'>vignette("assessing-balance")</a></code> for information on assessing the quality of a matching specification; <code><a href='../articles/estimating-effects.html'>vignette("estimating-effects")</a></code> for instructions on how to estimate treatment effects after matching; and <code><a href='../articles/sampling-weights.html'>vignette("sampling-weights")</a></code> for a guide to using <em>MatchIt</em> with sampling weights.</p></div>
+<p><code><a href='../articles/MatchIt.html'>vignette("MatchIt")</a></code> for an introduction to matching with <em>MatchIt</em>; <code><a href='../articles/matching-methods.html'>vignette("matching-methods")</a></code> for descriptions of the variety of matching methods and options available; <code><a href='../articles/assessing-balance.html'>vignette("assessing-balance")</a></code> for information on assessing the quality of a matching specification; <code><a href='../articles/estimating-effects.html'>vignette("estimating-effects")</a></code> for instructions on how to estimate treatment effects after matching; and <code><a href='../articles/sampling-weights.html'>vignette("sampling-weights")</a></code> for a guide to using <em>MatchIt</em> with sampling weights.</p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='st'>"lalonde"</span><span class='op'>)</span>
@@ -335,7 +341,7 @@ When method = "subclass", a matchit.subclass object with the same components as 
                    <span class='va'>married</span> <span class='op'>+</span> <span class='va'>re74</span> <span class='op'>+</span> <span class='va'>re75</span>, data <span class='op'>=</span> <span class='va'>lalonde</span><span class='op'>)</span>
 <span class='va'>m.out1</span>
 </div><div class='output co'>#&gt; A matchit object
-#&gt;  - method: 1:1 nearest neighbor matching without replacement
+#&gt;  - method: Variable ratio 1:1 nearest neighbor matching without replacement
 #&gt;  - distance: Propensity score
 #&gt;              - estimated with logistic regression
 #&gt;  - number of obs.: 614 (original), 370 (matched)
@@ -424,7 +430,7 @@ When method = "subclass", a matchit.subclass object with the same components as 
                    exact <span class='op'>=</span> <span class='op'>~</span> <span class='va'>married</span> <span class='op'>+</span> <span class='va'>race</span><span class='op'>)</span>
 <span class='va'>m.out2</span>
 </div><div class='output co'>#&gt; A matchit object
-#&gt;  - method: 1:1 nearest neighbor matching with replacement
+#&gt;  - method: Variable ratio 1:1 nearest neighbor matching with replacement
 #&gt;  - distance: Mahalanobis
 #&gt;  - number of obs.: 614 (original), 263 (matched)
 #&gt;  - target estimand: ATT
@@ -510,7 +516,7 @@ When method = "subclass", a matchit.subclass object with the same components as 
                    caliper <span class='op'>=</span> <span class='fl'>.1</span>, ratio <span class='op'>=</span> <span class='fl'>2</span><span class='op'>)</span>
 <span class='va'>m.out3</span>
 </div><div class='output co'>#&gt; A matchit object
-#&gt;  - method: 2:1 nearest neighbor matching without replacement
+#&gt;  - method: Variable ratio 2:1 nearest neighbor matching without replacement
 #&gt;  - distance: Mahalanobis [matching]
 #&gt;              Propensity score [caliper]
 #&gt;              - estimated with probit regression

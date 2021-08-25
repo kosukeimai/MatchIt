@@ -47,7 +47,7 @@
 
 
 <meta property="og:title" content="Optimal Full Matching — method_full" />
-<meta property="og:description" content="In matchit(), setting method = &quot;full&quot; performs optimal full matching, which is a form of subclassification wherein all units, both treatment and control (i.e., the &quot;full&quot; sample), are assigned to a subclass and receive at least one match. The matching is optimal in the sense that that sum of the absolute distances between the treated and control units in each subclass are as small as possible. The method relies on and is a wrapper for optmatch::fullmatch().
+<meta property="og:description" content="In matchit(), setting method = &quot;full&quot; performs optimal full matching, which is a form of subclassification wherein all units, both treatment and control (i.e., the &quot;full&quot; sample), are assigned to a subclass and receive at least one match. The matching is optimal in the sense that that sum of the absolute distances between the treated and control units in each subclass is as small as possible. The method relies on and is a wrapper for optmatch::fullmatch().
 Advantages of optimal full matching include that the matching order is not required to be specified, units do not need to be discarded, and it is less likely that extreme within-subclass distances will be large, unlike with standard subclassification. The primary output of full matching is a set of matching weights that can be applied to the matched sample; in this way, full matching can be seen as a robust alternative to propensity score weighting, robust in the sense that the propensity score model does not need to be correct to estimate the treatment effect without bias.
 This page details the allowable arguments with method = &quot;fullmatch&quot;. See matchit() for an explanation of what each argument means in a general context and how it can be specified.
 Below is how matchit() is used for optimal full matching:
@@ -103,7 +103,7 @@ matchit(formula,
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">MatchIt</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">4.2.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">4.2.0.9005</span>
       </span>
     </div>
 
@@ -172,7 +172,7 @@ matchit(formula,
     </div>
 
     <div class="ref-description">
-    <p>In <code><a href='matchit.html'>matchit()</a></code>, setting <code>method = "full"</code> performs optimal full matching, which is a form of subclassification wherein all units, both treatment and control (i.e., the "full" sample), are assigned to a subclass and receive at least one match. The matching is optimal in the sense that that sum of the absolute distances between the treated and control units in each subclass are as small as possible. The method relies on and is a wrapper for <code><a href='https://rdrr.io/pkg/optmatch/man/fullmatch.html'>optmatch::fullmatch()</a></code>.</p>
+    <p>In <code><a href='matchit.html'>matchit()</a></code>, setting <code>method = "full"</code> performs optimal full matching, which is a form of subclassification wherein all units, both treatment and control (i.e., the "full" sample), are assigned to a subclass and receive at least one match. The matching is optimal in the sense that that sum of the absolute distances between the treated and control units in each subclass is as small as possible. The method relies on and is a wrapper for <code><a href='https://rdrr.io/pkg/optmatch/man/fullmatch.html'>optmatch::fullmatch()</a></code>.</p>
 <p>Advantages of optimal full matching include that the matching order is not required to be specified, units do not need to be discarded, and it is less likely that extreme within-subclass distances will be large, unlike with standard subclassification. The primary output of full matching is a set of matching weights that can be applied to the matched sample; in this way, full matching can be seen as a robust alternative to propensity score weighting, robust in the sense that the propensity score model does not need to be correct to estimate the treatment effect without bias.</p>
 <p>This page details the allowable arguments with <code>method = "fullmatch"</code>. See <code><a href='matchit.html'>matchit()</a></code> for an explanation of what each argument means in a general context and how it can be specified.</p>
 <p>Below is how <code><a href='matchit.html'>matchit()</a></code> is used for optimal full matching:</p><pre>
@@ -278,7 +278,7 @@ matchit(formula,
 <p>The option <code>"optmatch_max_problem_size"</code> is automatically set to <code>Inf</code> during the matching process, different from its default in <em>optmatch</em>. This enables matching problems of any size to be run, but may also let huge, infeasible problems get through and potentially take a long time or crash R. See <code><a href='https://rdrr.io/pkg/optmatch/man/setMaxProblemSize.html'>optmatch::setMaxProblemSize()</a></code> for more details.</p>
     <h2 class="hasAnchor" id="outputs"><a class="anchor" href="#outputs"></a>Outputs</h2>
 
-    <p>All outputs described in <code><a href='matchit.html'>matchit()</a></code> are returned with <code>method = "full"</code> except for <code>match.matrix</code>. This is because matching strata are not indexed by treated units as they are in some other forms of matching.</p>
+    <p>All outputs described in <code><a href='matchit.html'>matchit()</a></code> are returned with <code>method = "full"</code> except for <code>match.matrix</code>. This is because matching strata are not indexed by treated units as they are in some other forms of matching. When <code>include.obj = TRUE</code> in the call to <code><a href='matchit.html'>matchit()</a></code>, the output of the call to <code><a href='https://rdrr.io/pkg/optmatch/man/fullmatch.html'>optmatch::fullmatch()</a></code> will be included in the output. When <code>exact</code> is specified, this will be a list of such objects, one for each stratum of the exact variables.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <div class='dont-index'><p><code><a href='matchit.html'>matchit()</a></code> for a detailed explanation of the inputs and outputs of a call to <code><a href='matchit.html'>matchit()</a></code>.</p>
@@ -334,7 +334,7 @@ matchit(formula,
                   method <span class='op'>=</span> <span class='st'>"full"</span>, caliper <span class='op'>=</span> <span class='fl'>.01</span>,
                   mahvars <span class='op'>=</span> <span class='op'>~</span> <span class='va'>age</span> <span class='op'>+</span> <span class='va'>educ</span> <span class='op'>+</span> <span class='va'>re74</span> <span class='op'>+</span> <span class='va'>re75</span><span class='op'>)</span>
 <span class='va'>m.out2</span>
-<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>m.out2</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>m.out2</span>, un <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span>
 
 <span class='co'># Optimal full Mahalanobis distance matching within calipers</span>
 <span class='co'># of 500 on re74 and re75</span>
@@ -345,35 +345,12 @@ matchit(formula,
                   std.caliper <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span>
 <span class='va'>m.out3</span>
 <span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>m.out3</span>, addlvariables <span class='op'>=</span> <span class='op'>~</span><span class='va'>race</span> <span class='op'>+</span> <span class='va'>nodegree</span> <span class='op'>+</span> <span class='va'>married</span>,
-        data <span class='op'>=</span> <span class='va'>lalonde</span><span class='op'>)</span>
+        data <span class='op'>=</span> <span class='va'>lalonde</span>, un <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span>
 <span class='op'>}</span></div><div class='output co'>#&gt; 
 #&gt; Call:
 #&gt; matchit(formula = treat ~ age + educ + re74 + re75, data = lalonde, 
 #&gt;     method = "full", distance = "mahalanobis", caliper = c(re74 = 500, 
 #&gt;         re75 = 500), std.caliper = FALSE)
-#&gt; 
-#&gt; Summary of Balance for All Data:
-#&gt;            Means Treated Means Control Std. Mean Diff. Var. Ratio eCDF Mean
-#&gt; age              25.8162       28.0303         -0.3094     0.4400    0.0813
-#&gt; educ             10.3459       10.2354          0.0550     0.4959    0.0347
-#&gt; re74           2095.5737     5619.2365         -0.7211     0.5181    0.2248
-#&gt; re75           1532.0553     2466.4844         -0.2903     0.9563    0.1342
-#&gt; raceblack         0.8432        0.2028          1.7615          .    0.6404
-#&gt; racehispan        0.0595        0.1422         -0.3498          .    0.0827
-#&gt; racewhite         0.0973        0.6550         -1.8819          .    0.5577
-#&gt; nodegree          0.7081        0.5967          0.2450          .    0.1114
-#&gt; married           0.1892        0.5128         -0.8263          .    0.3236
-#&gt;            eCDF Max
-#&gt; age          0.1577
-#&gt; educ         0.1114
-#&gt; re74         0.4470
-#&gt; re75         0.2876
-#&gt; raceblack    0.6404
-#&gt; racehispan   0.0827
-#&gt; racewhite    0.5577
-#&gt; nodegree     0.1114
-#&gt; married      0.3236
-#&gt; 
 #&gt; 
 #&gt; Summary of Balance for Matched Data:
 #&gt;            Means Treated Means Control Std. Mean Diff. Var. Ratio eCDF Mean
@@ -396,18 +373,6 @@ matchit(formula,
 #&gt; racewhite    0.4560          1.8813
 #&gt; nodegree     0.0607          0.3165
 #&gt; married      0.3128          1.1113
-#&gt; 
-#&gt; Percent Balance Improvement:
-#&gt;            Std. Mean Diff. Var. Ratio eCDF Mean eCDF Max
-#&gt; age                   63.9       44.0      51.9     44.9
-#&gt; educ                  49.3       12.1      21.4     44.1
-#&gt; re74                  99.3       99.3      96.1     56.5
-#&gt; re75                  98.5       74.0      93.2     70.3
-#&gt; raceblack             15.9          .      15.9     15.9
-#&gt; racehispan            -0.3          .      -0.3     -0.3
-#&gt; racewhite             18.2          .      18.2     18.2
-#&gt; nodegree              45.5          .      45.5     45.5
-#&gt; married                3.3          .       3.3      3.3
 #&gt; 
 #&gt; Sample Sizes:
 #&gt;               Control Treated

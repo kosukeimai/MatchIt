@@ -80,7 +80,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">MatchIt</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">4.2.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">4.2.0.9005</span>
       </span>
     </div>
 
@@ -173,7 +173,7 @@
 
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p><code><a href='https://rdrr.io/r/base/cbind.html'>rbind()</a></code> appends two or more datasets row-wise. This can be useful when matching was performed seperately on subsets of the original data and they are to be combined into a single dataset for effect estimation. Using the regular <code>data.frame</code> method for <code><a href='https://rdrr.io/r/base/cbind.html'>rbind()</a></code> would pose a problem, however; the <code>subclass</code> variable would have repeated names across different datasets, even though units only belong to the subclasses in their respective datasets. <code>rbind.matchdata()</code> renames the subclasses so that the correct subclass membership is maintained.</p>
+    <p><code><a href='https://rdrr.io/r/base/cbind.html'>rbind()</a></code> appends two or more datasets row-wise. This can be useful when matching was performed separately on subsets of the original data and they are to be combined into a single dataset for effect estimation. Using the regular <code>data.frame</code> method for <code><a href='https://rdrr.io/r/base/cbind.html'>rbind()</a></code> would pose a problem, however; the <code>subclass</code> variable would have repeated names across different datasets, even though units only belong to the subclasses in their respective datasets. <code>rbind.matchdata()</code> renames the subclasses so that the correct subclass membership is maintained.</p>
 <p>The supplied matched datasets must be generated from the same original dataset, that is, having the same variables in it. The added components (e.g., weights, subclass) can be named differently in different datasets but will be changed to have the same name in the output.</p>
 <p><code>rbind.getmatches()</code> and <code>rbind.matchdata()</code> are identical.</p>
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
