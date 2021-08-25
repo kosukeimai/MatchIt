@@ -164,5 +164,5 @@ m.out2 <- matchit(treat ~ age + educ + race + nodegree +
                   method = "optimal", distance = "mahalanobis",
                   ratio = 2)
 m.out2
-summary(m.out2)
+summary(m.out2, un = FALSE)
 \dontshow{\}}}

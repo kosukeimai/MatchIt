@@ -161,7 +161,7 @@ m.out2 <- matchit(treat ~ age + educ + race + nodegree +
                   method = "full", caliper = .01,
                   mahvars = ~ age + educ + re74 + re75)
 m.out2
-summary(m.out2)
+summary(m.out2, un = FALSE)
 
 # Optimal full Mahalanobis distance matching within calipers
 # of 500 on re74 and re75
@@ -172,5 +172,5 @@ m.out3 <- matchit(treat ~ age + educ + re74 + re75,
                   std.caliper = FALSE)
 m.out3
 summary(m.out3, addlvariables = ~race + nodegree + married,
-        data = lalonde)
+        data = lalonde, un = FALSE)
 \dontshow{\}}}

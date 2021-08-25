@@ -136,5 +136,5 @@ m.out2 <- matchit(treat ~ age + race + married + educ, data = lalonde,
                                               "black")),
                   k2k = TRUE, k2k.method = "mahalanobis")
 m.out2
-summary(m.out2)
+summary(m.out2, un = FALSE)
 }

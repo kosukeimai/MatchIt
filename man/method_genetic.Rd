@@ -146,7 +146,7 @@ m.out2 <- matchit(treat ~ age + educ + race + nodegree +
                   ratio = 2, distance = "mahalanobis",
                   pop.size = 10) #use much larger pop.size
 m.out2
-summary(m.out2)
+summary(m.out2, un = FALSE)
 
 # 1:1 genetic matching on just age, educ, re74, and re75
 # within calipers on PS and educ; other variables are
@@ -159,5 +159,5 @@ m.out3 <- matchit(treat ~ age + educ + race + nodegree +
                   std.caliper = c(TRUE, FALSE),
                   pop.size = 10) #use much larger pop.size
 m.out3
-summary(m.out3)
+summary(m.out3, un = FALSE)
 \dontshow{\}}}
