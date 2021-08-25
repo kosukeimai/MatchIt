@@ -10,7 +10,7 @@ output:
 
 * Cardinality and template matching can now be used by setting `method = "cardinality"` in `matchit()`. These methods use mixed integer programming to directly select a matched subsample without pairing or stratifying units. Their results can be dramatically improved when using the Gurobi optimizer. See `?method_cardinality` and `vignette("matching-methods")` for more information.
 
-* Added `"glmnet"` as an option for `distance`. This estimates propensity scores using lasso, ridge, or elastic net regression as implemented in the `glmnet` package.
+* Added `"lasso"`, `"ridge"`, and `"elasticnet"` as options for `distance`. These estimate propensity scores using lasso, ridge, or elastic net regression, respectively, as implemented in the `glmnet` package.
 
 * Added `"gbm"` as an option for `distance`. This estimates propensity scores using generalized boosted models as implemented in the `gbm` package. This implementation differs from that in `twang` by using cross-validation or out-of-bag error to choose the tuning parameter as opposed to balance.
 

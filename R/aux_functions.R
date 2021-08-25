@@ -124,7 +124,8 @@ check.inputs <- function(mcall, method, distance, exact, mahvars, antiexact, cal
 process.distance <- function(distance, method, treat) {
   if (is.null(distance) && !is.null(method)) stop(paste0("'distance' cannot be NULL with method = \"", method, "\"."), call. = FALSE)
   else if (is.character(distance) && length(distance) == 1) {
-    allowable.distances <- c("glm", "cbps", "gam", "mahalanobis", "nnet", "rpart", "bart", "randomforest", "glmnet", "gbm")
+    allowable.distances <- c("glm", "cbps", "gam", "mahalanobis", "nnet", "rpart", "bart",
+                             "randomforest", "elasticnet", "lasso", "ridge", "gbm")
 
     if (tolower(distance) %in% c("cauchit", "cloglog", "linear.cloglog", "linear.log", "linear.logit", "linear.probit",
                         "linear.cauchit", "log", "probit")) {
@@ -143,8 +144,11 @@ process.distance <- function(distance, method, treat) {
       distance <- "glm"
       attr(distance, "link") <- "logit"
     }
+    else if (tolower(distance) == "glmnet") {
+      distance <- "elasticnet"
+    }
     else if (!tolower(distance) %in% allowable.distances) {
-      stop("The argument supplied to distance is not an allowable value. See ?matchit for allowable options.", call. = FALSE)
+      stop("The argument supplied to distance is not an allowable value. See ?distance for allowable options.", call. = FALSE)
     }
     else {
       distance <- tolower(distance)
@@ -185,41 +189,6 @@ process.distance <- function(distance, method, treat) {
 }
 
 #Function to check ratio is acceptable
-.process.ratio <- function(ratio = NULL, min.controls = NULL, max.controls = NULL, na.ok = FALSE) {
-  if (length(ratio) == 0) ratio <- 1
-  ratio.na <- anyNA(ratio)
-  if (!na.ok && ratio.na) stop("'ratio' cannot be NA.", call. = FALSE)
-  if (!ratio.na && (!is.atomic(ratio) || !is.numeric(ratio) || length(ratio) > 1 || ratio < 1)) {
-    stop("'ratio' must be a single positive number.", call. = FALSE)
-  }
-  if (is.null(max.controls)) {
-    ratio <- round(ratio)
-    return(c(ratio = ratio))
-  }
-  else if (anyNA(max.controls) || !is.atomic(max.controls) || !is.numeric(max.controls) || length(max.controls) > 1) {
-    stop("'max.controls' must be a single positive number.", call. = FALSE)
-  }
-  else if (ratio.na) {
-
-  }
-  else {
-    if (!ratio.na && ratio <= 1) stop("'ratio' must be greater than 1 for variable ratio matching.", call. = FALSE)
-
-    max.controls <- ceiling(max.controls)
-    if (max.controls <= ratio) stop("'max.controls' must be greater than 'ratio' for variable ratio matching.", call. = FALSE)
-
-    if (is.null(min.controls)) min.controls <- 1
-    else if (anyNA(max.controls) || !is.atomic(max.controls) || !is.numeric(max.controls) || length(max.controls) > 1) {
-        stop("'max.controls' must be a single positive number.", call. = FALSE)
-    }
-    else min.controls <- floor(min.controls)
-
-    if (min.controls < 1) stop("'min.controls' cannot be less than 1 for variable ratio matching.", call. = FALSE)
-    else if (min.controls >= ratio) stop("'min.controls' must be less than 'ratio' for variable ratio matching.", call. = FALSE)
-
-    return(c(ratio = ratio, min.controls = min.controls, max.controls = max.controls))
-  }
-}
 process.ratio <- function(ratio = NULL, method, min.controls = NULL, max.controls = NULL, ...) {
   #Should be run after process.inputs() and ignored inputs set to NULL
   ratio.null <- length(ratio) == 0
@@ -495,11 +464,8 @@ create_info <- function(method, fn1, link, discard, replace, ratio, max.controls
                replace = if (!is.null(method) && method %in% c("nearest", "genetic")) replace else NULL,
                ratio = if (!is.null(method) && method %in% c("nearest", "optimal", "genetic")) ratio else NULL,
                max.controls = if (!is.null(method) && method %in% c("nearest", "optimal")) max.controls else NULL,
-               # mahalanobis = is.full.mahalanobis || !is.null(mahvars),
                mahalanobis = mahalanobis,
-               # subclass = if (!is.null(method) && method == "subclass") length(unique(match.out$subclass[!is.na(match.out$subclass)])) else NULL,
                subclass = if (!is.null(method) && method == "subclass") length(unique(subclass[!is.na(subclass)])) else NULL,
-               # antiexact = if (!is.null(antiexact)) colnames(antiexactcovs) else NULL
                antiexact = antiexact,
                distance_is_matrix = distance_is_matrix)
 }
@@ -543,6 +509,19 @@ info.to.distance <- function(info) {
   }
   else if (distance == "gam") {
     dist <- paste("GAM with a", link, "link")
+  }
+  else if (distance == "gbm") {
+    dist <- "GBM"
+  }
+  else if (distance == "elasticnet") {
+    dist <- paste("an elastic net with a", link, "link")
+  }
+  else if (distance == "lasso") {
+    if (link == "logit") dist <- "lasso logistic regression"
+    else dist <- paste("lasso regression with a", link, "link")
+  }
+  else if (distance == "ridge") {
+    dist <- paste("ridge regression with a", link, "link")
   }
   else if (distance == "rpart") {
     dist <- "CART"
