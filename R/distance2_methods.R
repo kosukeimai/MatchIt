@@ -63,7 +63,7 @@ distance2nnet <- function(formula, data = NULL, link = NULL, ...) {
   weights <- A$weights
   A$weights <- NULL
 
-  res <- do.call(nnet::nnet, c(list(formula, data, entropy = TRUE), A), quote = TRUE)
+  res <- do.call(nnet::nnet, c(list(formula, data, weights = weights, entropy = TRUE), A), quote = TRUE)
   return(list(model = res, distance = drop(fitted(res))))
 }
 
@@ -182,4 +182,147 @@ distance2randomforest <- function(formula, data = NULL, link = NULL, ...) {
   newdata[[treatvar]] <- factor(newdata[[treatvar]], levels = c("0", "1"))
   res <- randomForest::randomForest(formula, data = newdata, ...)
   return(list(model = res, distance = predict(res, type = "prob")[,"1"]))
+}
+
+#distance2glmnet--------------
+distance2elasticnet <- function(formula, data = NULL, link = NULL, ...) {
+  if (!is.null(link) && startsWith(as.character(link), "linear")) {
+    linear <- TRUE
+    link <- sub("linear.", "", as.character(link), fixed = TRUE)
+  }
+  else linear <- FALSE
+
+  A <- list(...)
+  s <- A[["s"]]
+  A[!names(A) %in% c(names(formals(glmnet::glmnet)), names(formals(glmnet::cv.glmnet)))] <- NULL
+
+  if (is.null(link)) link <- "logit"
+  if (link == "logit") A$family <- "binomial"
+  else if (link == "log") A$family <- "poisson"
+  else A$family <- binomial(link = link)
+
+  if (is.null(A[["alpha"]])) A[["alpha"]] <- .5
+
+  mf <- model.frame(formula, data = data)
+
+  A$y <- model.response(mf)
+  A$x <- model.matrix(update(formula, . ~ . + 1), mf)[,-1,drop = FALSE]
+
+  res <- do.call(glmnet::cv.glmnet, A)
+
+  if (is.null(s)) s <- "lambda.1se"
+
+  pred <- drop(predict(res, newx = A$x, s = s,
+                  type = if (linear) "link" else "response"))
+
+  return(list(model = res, distance = pred))
+}
+distance2lasso <- function(formula, data = NULL, link = NULL, ...) {
+  if (!is.null(link) && startsWith(as.character(link), "linear")) {
+    linear <- TRUE
+    link <- sub("linear.", "", as.character(link), fixed = TRUE)
+  }
+  else linear <- FALSE
+
+  A <- list(...)
+  s <- A[["s"]]
+  A[!names(A) %in% c(names(formals(glmnet::glmnet)), names(formals(glmnet::cv.glmnet)))] <- NULL
+
+  if (is.null(link)) link <- "logit"
+  if (link == "logit") A$family <- "binomial"
+  else if (link == "log") A$family <- "poisson"
+  else A$family <- binomial(link = link)
+
+  A[["alpha"]] <- 1
+
+  mf <- model.frame(formula, data = data)
+
+  A$y <- model.response(mf)
+  A$x <- model.matrix(update(formula, . ~ . + 1), mf)[,-1,drop = FALSE]
+
+  res <- do.call(glmnet::cv.glmnet, A)
+
+  if (is.null(s)) s <- "lambda.1se"
+
+  pred <- drop(predict(res, newx = A$x, s = s,
+                       type = if (linear) "link" else "response"))
+
+  return(list(model = res, distance = pred))
+}
+distance2ridge <- function(formula, data = NULL, link = NULL, ...) {
+  if (!is.null(link) && startsWith(as.character(link), "linear")) {
+    linear <- TRUE
+    link <- sub("linear.", "", as.character(link), fixed = TRUE)
+  }
+  else linear <- FALSE
+
+  A <- list(...)
+  s <- A[["s"]]
+  A[!names(A) %in% c(names(formals(glmnet::glmnet)), names(formals(glmnet::cv.glmnet)))] <- NULL
+
+  if (is.null(link)) link <- "logit"
+  if (link == "logit") A$family <- "binomial"
+  else if (link == "log") A$family <- "poisson"
+  else A$family <- binomial(link = link)
+
+  A[["alpha"]] <- 0
+
+  mf <- model.frame(formula, data = data)
+
+  A$y <- model.response(mf)
+  A$x <- model.matrix(update(formula, . ~ . + 1), mf)[,-1,drop = FALSE]
+
+  res <- do.call(glmnet::cv.glmnet, A)
+
+  if (is.null(s)) s <- "lambda.1se"
+
+  pred <- drop(predict(res, newx = A$x, s = s,
+                       type = if (linear) "link" else "response"))
+
+  return(list(model = res, distance = pred))
+}
+
+#distance2gbm--------------
+distance2gbm <- function(formula, data = NULL, link = NULL, ...) {
+  if (!is.null(link) && startsWith(as.character(link), "linear")) {
+    linear <- TRUE
+  }
+  else linear <- FALSE
+
+  A <- list(...)
+
+  method <- A[["method"]]
+  A[!names(A) %in% names(formals(gbm::gbm))] <- NULL
+
+  A$formula <- formula
+  A$data <- data
+  A$distribution <- "bernoulli"
+
+  if (is.null(A[["n.trees"]])) A[["n.trees"]] <- 1e4
+  if (is.null(A[["interaction.depth"]])) A[["interaction.depth"]] <- 3
+  if (is.null(A[["shrinkage"]])) A[["shrinkage"]] <- .01
+  if (is.null(A[["bag.fraction"]])) A[["bag.fraction"]] <- 1
+  if (is.null(A[["cv.folds"]])) A[["cv.folds"]] <- 5
+  if (is.null(A[["keep.data"]])) A[["keep.data"]] <- FALSE
+
+  if (A[["cv.folds"]] <= 1 && A[["bag.fraction"]] == 1) {
+    stop("Either 'bag.fraction' must be less than 1 or 'cv.folds' must be greater than 1 when using distance = \"gbm\".",
+         call. = FALSE)
+  }
+  if (is.null(method)) {
+    if (A[["bag.fraction"]] < 1) method <- "OOB"
+    else method <- "cv"
+  }
+  else if (!tolower(method) %in% c("oob", "cv")) {
+    stop("distance.options$method should be one of \"OOB\" or \"cv\".", call. = FALSE)
+  }
+
+  res <- do.call(gbm::gbm, A)
+
+  best.tree <- gbm::gbm.perf(res, plot.it = FALSE, method = method)
+
+  pred <- drop(predict(res, newdata = data, n.trees = best.tree,
+                       type = if (linear) "link" else "response"))
+
+  return(list(model = res, distance = pred))
 }

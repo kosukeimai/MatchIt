@@ -61,7 +61,7 @@ the variable containing sampling weights to be incorporated into balance statist
 The arguments \code{distance} (and related arguments), \code{exact}, \code{mahvars}, \code{discard} (and related arguments), \code{replace}, \code{m.order}, \code{caliper} (and related arguments), and \code{ratio} are ignored with a warning.
 }
 \section{Outputs}{
-All outputs described in \fun{matchit} are returned with \code{method = "cem"} except for \code{match.matrix}. When \code{k2k = TRUE}, a \code{match.matrix} component with the matched pairs is also included.
+All outputs described in \fun{matchit} are returned with \code{method = "cem"} except for \code{match.matrix}. When \code{k2k = TRUE}, a \code{match.matrix} component with the matched pairs is also included. \code{include.obj} is ignored.
 }
 \details{
 If the coarsening is such that there are no exact matches with the coarsened variables, the \code{grouping} and \code{cutpoints} arguments can be used to modify the matching specification. Reducing the number of cutpoints or grouping some variable values together can make it easier to find matches. See Examples below. Removing variables can also help (but they will likely not be balanced unless highly correlated with the included variables). To take advantage of coarsened exact matching without failing to find any matches, the covariates can be manually coarsened outside of \code{matchit()} and then supplied to the \code{exact} argument in a call to \code{matchit()} with another matching method.
@@ -89,6 +89,7 @@ This would split \code{X1} into 4 bins, \code{X2} into bins based on the provide
 This method does not rely on the \emph{cem} package, instead using code written for \emph{MatchIt}, but its design is based on the original \emph{cem} functions. Versions of \emph{MatchIt} prior to 4.1.0 did rely on \emph{cem}, so results may differ between versions. There are a few differences between the ways \emph{MatchIt} and \emph{cem} (and older versions of \emph{MatchIt}) differ in executing coarsened exact matching, described below.
 \itemize{
 \item{In \emph{MatchIt}, when a single number is supplied to \code{cutpoints}, it describes the number of bins; in \emph{cem}, it describes the number of cutpoints separating bins. The \emph{MatchIt} method is closer to how \fun{hist} processes breaks points to create bins.}
+\item{In \emph{MatchIt}, values on the cutpoint boundaries will be placed into the higher bin; in \emph{cem}, they are placed into the lower bin. To avoid consequences of this choice, ensure the bin boundaries do not coincide with observed values of the variables.}
 \item{When \code{cutpoints} are used, \code{"ss"} (for Shimazaki-Shinomoto's rule) can be used in \emph{cem} but not in \emph{MatchIt}.}
 \item{When \code{k2k = TRUE}, \emph{MatchIt} matches on the original variables (scaled), whereas \emph{cem} matches on the coarsened variables. Because the variables are already exactly matched on the coarsened variables, matching in \emph{cem} is equivalent to random matching within strata.}
 \item{When \code{k2k = TRUE}, in \emph{MatchIt} matched units are identified by pair membership, and the original stratum membership prior to 1:1 matching is discarded. In \emph{cem}, pairs are not identified beyond the stratum the members are part of.}
@@ -135,5 +136,5 @@ m.out2 <- matchit(treat ~ age + race + married + educ, data = lalonde,
                                               "black")),
                   k2k = TRUE, k2k.method = "mahalanobis")
 m.out2
-summary(m.out2)
+summary(m.out2, un = FALSE)
 }

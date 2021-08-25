@@ -73,7 +73,7 @@ additional arguments that control the subclassification:
 The arguments \code{exact}, \code{mahvars}, \code{replace}, \code{m.order}, \code{caliper} (and related arguments), and \code{ratio} are ignored with a warning.
 }
 \section{Outputs}{
-All outputs described in \fun{matchit} are returned with \code{method = "subclass"} except that \code{match.matrix} is excluded and two additional component, \code{q.cut} and \code{qn}, are included, containing a vector of the distance measure cutpoints used to define the subclasses and a matrix of the subclass sample sizes, respectively. Note that when \code{min.n > 0}, the subclass assignments may not strictly obey the quantiles listed in \code{q.cut}.
+All outputs described in \fun{matchit} are returned with \code{method = "subclass"} except that \code{match.matrix} is excluded and two additional component, \code{q.cut} and \code{qn}, are included, containing a vector of the distance measure cutpoints used to define the subclasses and a matrix of the subclass sample sizes, respectively. Note that when \code{min.n > 0}, the subclass assignments may not strictly obey the quantiles listed in \code{q.cut}. \code{include.obj} is ignored.
 }
 \details{
 After subclassification, effect estimates can be computed separately in the subclasses and combined, or a single marginal effect can be estimated by using the weights in the full sample. When using the weights, the method is sometimes referred to as marginal mean weighting through stratification (MMWS; Hong, 2010) or fine stratification weighting (Desai et al., 2017). The weights can be interpreted just like inverse probability weights.

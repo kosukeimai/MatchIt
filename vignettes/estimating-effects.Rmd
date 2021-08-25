@@ -28,7 +28,7 @@ pre code {
 knitr::opts_chunk$set(echo = TRUE, eval=T)
 options(width = 200, digits= 4)
 
-#Generatng data similar to Austin (2009) for demonstrating treatment effect estimation
+#Generating data similar to Austin (2009) for demonstrating treatment effect estimation
 gen_X <- function(n) {
   X <- matrix(rnorm(9 * n), nrow = n, ncol = 9)
   X[,5] <- as.numeric(X[,5] < .5)
@@ -102,7 +102,7 @@ This guide is structured as follows: first, information on the concepts related 
 
 Before an effect is estimated, the estimand must be specified and clarified. Although some aspects of the estimand depend not only on how the effect is estimated after matching but also on the matching method itself, other aspects must be considered at the tine of effect estimation and interpretation. Here, we consider three aspects of the estimand: the population the effect is meant to generalize to (the target population), the effect measure, and whether the effect is marginal or conditional.
 
-**The target population.** Different matching methods allow you to estimate effects that can generalize to different target populations. The most common estimand in matching the average treatment effect in the treated (ATT), which is the average effect of treatment for those who receive treatment. This estimand is estimable for matching methods that do not change the treated units (i.e., by weighting or discarding units) and is requested in `matchit()` by setting `estimand = "ATT"` (which is the default). The average treatment effect in the population (ATE) is the average effect of treatment for the population from which the sample is a random sample. This estimand is estimable only for methods that allow the ATE and do not discard units from the sample, which in `MatchIt` is limited to full matching and subclassification when setting `estimand = "ATE"`. When treated units are discarded (e.g., through the use of common support restrictions, calipers, or [coarsened] exact matching), the estimand corresponds to neither the population ATT nor the population ATE, but rather to an average treatment effect in the remaining matched sample (ATM), which may not correspond to any specific target population.
+**The target population.** Different matching methods allow you to estimate effects that can generalize to different target populations. The most common estimand in matching the average treatment effect in the treated (ATT), which is the average effect of treatment for those who receive treatment. This estimand is estimable for matching methods that do not change the treated units (i.e., by weighting or discarding units) and is requested in `matchit()` by setting `estimand = "ATT"` (which is the default). The average treatment effect in the population (ATE) is the average effect of treatment for the population from which the sample is a random sample. This estimand is estimable only for methods that allow the ATE and either do not discard units from the sample or explicit target full sample balance, which in `MatchIt` is limited to full matching, subclassification, and template matching when setting `estimand = "ATE"`. When treated units are discarded (e.g., through the use of common support restrictions, calipers, cardinality matching, or [coarsened] exact matching), the estimand corresponds to neither the population ATT nor the population ATE, but rather to an average treatment effect in the remaining matched sample (ATM), which may not correspond to any specific target population.
 
 **Marginal and conditional effects.** A marginal effect is a comparison between the expected potential outcome under treatment and the expected potential outcome under control. This is the same quantity estimated in randomized trials without blocking or covariate adjustment and is particularly useful for quantifying the overall effect of a policy or population-wide intervention. A conditional effect is the comparison between the expected potential outcomes in the treatment groups within strata. This is useful for identifying the effect of a treatment for an individual patient or a subset of the population.
 
@@ -177,29 +177,19 @@ Other packages may be of use but are not used here. The `margins` package can be
 
 Because different matching methods require different treatments, instructions for each method are organized in the following sections, as designated by the table below. It is important to ensure the right methods are used with the matching specification used in order for the estimated effects and standard errors to be valid.
 
-+-------------------------------------------------------------------------------------+-----------------------------------------------------------+
 | Section                                                                             | Matching Method                                           |
-+=====================================================================================+===========================================================+
+|-------------------------------------------------------------------------------------|-----------------------------------------------------------|
 | [After Pair Matching Without Replacement](#after-pair-matching-without-replacement) | Nearest neighbor matching without replacement             |
-+-------------------------------------------------------------------------------------+-----------------------------------------------------------+
 | \-                                                                                  | Optimal matching                                          |
-+-------------------------------------------------------------------------------------+-----------------------------------------------------------+
 | \-                                                                                  | Genetic matching without replacement                      |
-+-------------------------------------------------------------------------------------+-----------------------------------------------------------+
 | \-                                                                                  | Coarsened exact matching with `k2k = TRUE`                |
-+-------------------------------------------------------------------------------------+-----------------------------------------------------------+
 | [After Pair Matching With Replacement](#after-pair-matching-with-replacement)       | Nearest neighbor matching with replacement                |
-+-------------------------------------------------------------------------------------+-----------------------------------------------------------+
 | \-                                                                                  | Genetic matching with replacement                         |
-+-------------------------------------------------------------------------------------+-----------------------------------------------------------+
 | [After Full Matching](#after-full-matching)                                         | Full matching                                             |
-+-------------------------------------------------------------------------------------+-----------------------------------------------------------+
+|                                                                                     | Cardinality and template matching                         |
 | [After Stratum Matching](#after-stratum-matching)                                   | Propensity score subclassification                        |
-+-------------------------------------------------------------------------------------+-----------------------------------------------------------+
 | \-                                                                                  | Exact matching                                            |
-+-------------------------------------------------------------------------------------+-----------------------------------------------------------+
 | \-                                                                                  | Coarsened exact matching with `k2k = FALSE` (the default) |
-+-------------------------------------------------------------------------------------+-----------------------------------------------------------+
 
 ### After Pair Matching Without Replacement {#after-pair-matching-without-replacement}
 
@@ -623,7 +613,7 @@ if (!requireNamespace("optmatch", quietly = TRUE)) knitr::opts_chunk$set(eval = 
 
 Full matching presents fairly straightforward methods of effect and standard error estimation. The most common and recommended way to estimate effects after full matching is to use the computed matching weights to estimate weighted effects. These matching weights function essentially like inverse probability weights and can be treated as such in all analyses, including with respect to standard error estimation. For empirical comparisons between full matching and propensity score weighting, see Austin and Stuart [-@austin2015b; -@austin2017; -@austin2015a].
 
-Standard error estimation involves using a cluster-robust standard error as recommended by Austin and Stuart [-@austin2017]. Including covariates can improve precision and add robustness when valid. Note that the methods described here also work for other estimators that rely on matching weights, including matching without replacement. The main difference is that full matching can be used to estimate the ATE, which we demonstrate below.
+Standard error estimation involves using a cluster-robust standard error as recommended by Austin and Stuart [-@austin2017]. Including covariates can improve precision and add robustness when valid. Note that the methods described here also work for other estimators that rely on matching weights, including cardinality and template matching and matching without replacement. The main difference is that full matching can be used to estimate the ATE, which we demonstrate below.
 
 Below, we perform optimal full propensity score matching. Here we use full matching to estimate the ATE, but the procedure is nearly identical when estimating the ATT, and we point out any differences.
 
@@ -643,7 +633,7 @@ A benefit of full matching is that no units are discarded, which has the potenti
 
 #### For continuous outcomes
 
-**Without covariate adjustment.** Estimating effects and standard errors for continuous outcomes after full matching involves including the matching weights in the outcome model and using a cluster-robust standard error.
+**Without covariate adjustment.** Estimating effects and standard errors for continuous outcomes after full matching involves including the matching weights in the outcome model and using a cluster-robust standard error. For cardinality or template matching, a regular robust standard error can be requested using `vcovHC` and omitting the `cluster` argument in the code below.
 
 ```{r}
 fit1 <- lm(Y_C ~ A, data = md, weights = weights)
@@ -1011,7 +1001,7 @@ In addition, with continuous outcomes, conditional effects can be mistakenly int
 ## Code to Generate Data used in Examples
 
 ```{r, eval = FALSE}
-#Generatng data similar to Austin (2009) for demonstrating treatment effect estimation
+#Generating data similar to Austin (2009) for demonstrating treatment effect estimation
 gen_X <- function(n) {
   X <- matrix(rnorm(9 * n), nrow = n, ncol = 9)
   X[,5] <- as.numeric(X[,5] < .5)

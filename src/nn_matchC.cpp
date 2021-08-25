@@ -6,7 +6,8 @@ using namespace Rcpp;
 // [[Rcpp::plugins(cpp11)]]
 
 // [[Rcpp::export]]
-IntegerMatrix nn_matchC(const IntegerVector& treat_,
+IntegerMatrix nn_matchC(const IntegerMatrix& mm_,
+                        const IntegerVector& treat_,
                         const IntegerVector& ord_,
                         const IntegerVector& ratio,
                         const int& max_rat,
@@ -51,9 +52,10 @@ IntegerMatrix nn_matchC(const IntegerVector& treat_,
   int n0_ = n_ - n1_;
 
   // Output matrix with sample indices of C units
-  IntegerMatrix mm(n1_, max_rat);
-  mm.fill(NA_INTEGER);
-  rownames(mm) = as<CharacterVector>(treat_.names())[ind1_];
+  // IntegerMatrix mm(n1_, max_rat);
+  // mm.fill(NA_INTEGER);
+  // rownames(mm) = as<CharacterVector>(treat_.names())[ind1_];
+  IntegerMatrix mm = mm_;
 
   // Store who has been matched
   LogicalVector matched = clone(discarded);
@@ -173,7 +175,7 @@ IntegerMatrix nn_matchC(const IntegerVector& treat_,
         for (a = 0; a < n_anti; ++a) {
           antiexact_col = antiexact_covs(_, a);
           antiexact_col = antiexact_col[c_eligible];
-          c_eligible = antiexact_col[antiexact_col != antiexact_col[t_ind]];
+          c_eligible = c_eligible[antiexact_col != antiexact_col[t_ind]];
         }
       }
 

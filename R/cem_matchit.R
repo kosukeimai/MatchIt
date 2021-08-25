@@ -13,7 +13,7 @@ cem_matchit <- function(treat, X, cutpoints = "sturges", grouping = list(), k2k 
     k2k.method <- match_arg(k2k.method, c("mahalanobis", "euclidean", "maximum", "manhattan", "canberra", "binary", "minkowski"))
     if (k2k.method == "mahalanobis") mahSigma_inv <- generalized_inverse(cov(X.match))
   }
-  is.numeric.cov <- setNames(sapply(X, is.numeric), names(X))
+  is.numeric.cov <- setNames(vapply(X, is.numeric, logical(1L)), names(X))
 
   #Process cutpoints
   if (!is.list(cutpoints)) {

@@ -3,9 +3,9 @@
 plot.matchit <- function(x, type = "qq", interactive = TRUE, which.xs = NULL, ...) {
 
   type <- tolower(type)
-  type <- match_arg(type, c("qq", "jitter", "histogram", "ecdf"))
+  type <- match_arg(type, c("qq", "ecdf", "density", "jitter", "histogram"))
 
-  if (type %in% c("qq", "ecdf")) {
+  if (type %in% c("qq", "ecdf", "density")) {
     matchit.covplot(x, type = type, interactive=interactive,
                    which.xs = which.xs, ...)
   }
@@ -40,9 +40,9 @@ plot.matchit.subclass <- function(x, type = "qq", interactive = TRUE, which.xs =
   }
 
   type <- tolower(type)
-  type <- match_arg(type, c("qq", "ecdf", "jitter", "histogram"))
+  type <- match_arg(type, c("qq", "ecdf", "density", "jitter", "histogram"))
 
-  if (type %in% c("qq", "ecdf")) {
+  if (type %in% c("qq", "ecdf", "density")) {
     #If subclass = T, index, or range, display all or range of subclasses, using interactive to advance
     #If subclass = F, display aggregate across subclass, using interactive to advance
     #If subclass = NULL, if interactive, use to choose subclass, else display aggregate across subclass
@@ -64,7 +64,7 @@ plot.matchit.subclass <- function(x, type = "qq", interactive = TRUE, which.xs =
     else if (interactive && miss.sub) {
       subclasses <- levels(x$subclass)
       choices <- c("No (Exit)", paste0("Yes: Subclass ", subclasses), "Yes: In aggregate")
-      plot.name <- switch(type, "qq" = "quantile-quantile", "ecdf" = "empirical CDF")
+      plot.name <- switch(type, "qq" = "quantile-quantile", "ecdf" = "empirical CDF", "density" = "density")
       question <- paste("Would you like to see", plot.name, "plots of any subclasses? ")
       ans <- -1
       while(ans != 0) {
@@ -98,7 +98,6 @@ plot.matchit.subclass <- function(x, type = "qq", interactive = TRUE, which.xs =
 }
 
 plot.summary.matchit <- function(x, abs = TRUE, var.order = "data", threshold = c(.1, .05), position = "bottomright", ...) {
-
 
   .pardefault <- par(no.readonly = TRUE)
   on.exit(par(.pardefault))
@@ -180,7 +179,7 @@ plot.summary.matchit <- function(x, abs = TRUE, var.order = "data", threshold = 
                                       "topleft", "top", "topright", "right", "center"))
     legend(position, legend = c("All", "Matched"),
            pt.bg = c("white", "black"), pch = 21,
-           inset = .015, xpd = T)
+           inset = .015, xpd = TRUE)
   }
   invisible(x)
 }
@@ -206,8 +205,9 @@ print.matchit <- function(x, ...) {
       else cat("User-defined")
 
       if (cal || disl) {
+        cal.ps <- "" %in% names(x[["caliper"]])
         cat(" [")
-        cat(paste(c("matching", "subclassification", "caliper", "common support")[c(!nm && !info$mahalanobis && info$method != "subclass", !nm && info$method == "subclass", cal, disl)], collapse = ", "))
+        cat(paste(c("matching", "subclassification", "caliper", "common support")[c(!nm && !info$mahalanobis && info$method != "subclass", !nm && info$method == "subclass", cal.ps, disl)], collapse = ", "))
         cat("]")
       }
       if (info$distance != "user") {
@@ -253,7 +253,7 @@ print.summary.matchit <- function(x, digits = max(3, getOption("digits") - 3), .
 
   if (!is.null(x$sum.matched)) {
     cat("\nSummary of Balance for Matched Data:\n")
-    if (all(is.na(x$sum.matched[,7]))) x$sum.matched <- x$sum.matched[,-7] #Remove pair dist if empty
+    if (all(is.na(x$sum.matched[,7]))) x$sum.matched <- x$sum.matched[,-7,drop = FALSE] #Remove pair dist if empty
     print.data.frame(round_df_char(x$sum.matched, digits, pad = "0", na_vals = "."))
   }
   if (!is.null(x$reduction)) {
@@ -264,12 +264,12 @@ print.summary.matchit <- function(x, digits = max(3, getOption("digits") - 3), .
     cat("\nSample Sizes:\n")
     nn <- x$nn
     if (isTRUE(all.equal(nn["All (ESS)",], nn["All",]))) {
-      #Don't print ESS if same as matched SS
-      nn <- nn[rownames(nn) != "All (ESS)",]
+      #Don't print ESS if same as full SS
+      nn <- nn[rownames(nn) != "All (ESS)",,drop = FALSE]
     }
     if (isTRUE(all.equal(nn["Matched (ESS)",], nn["Matched",]))) {
       #Don't print ESS if same as matched SS
-      nn <- nn[rownames(nn) != "Matched (ESS)",]
+      nn <- nn[rownames(nn) != "Matched (ESS)",,drop = FALSE]
     }
     print.data.frame(round_df_char(nn, 2, pad = " ", na_vals = "."))
   }
@@ -300,7 +300,7 @@ print.summary.matchit.subclass <- function(x, digits = max(3, getOption("digits"
   else {
     if (!is.null(x$sum.across)) {
       cat("\nSummary of Balance Across Subclasses\n")
-      if (all(is.na(x$sum.across[,7]))) x$sum.across <- x$sum.across[,-7]
+      if (all(is.na(x$sum.across[,7]))) x$sum.across <- x$sum.across[,-7,drop = FALSE]
       print.data.frame(round_df_char(x$sum.across, digits, pad = "0", na_vals = "."))
     }
     if (!is.null(x$reduction)) {
@@ -312,12 +312,12 @@ print.summary.matchit.subclass <- function(x, digits = max(3, getOption("digits"
       cat("\nSample Sizes:\n")
       nn <- x$nn
       if (isTRUE(all.equal(nn["All (ESS)",], nn["All",]))) {
-        #Don't print ESS if same as matched SS
-        nn <- nn[rownames(nn) != "All (ESS)",]
+        #Don't print ESS if same as full SS
+        nn <- nn[rownames(nn) != "All (ESS)",,drop = FALSE]
       }
       if (isTRUE(all.equal(nn["Matched (ESS)",], nn["Matched",]))) {
         #Don't print ESS if same as matched SS
-        nn <- nn[rownames(nn) != "Matched (ESS)",]
+        nn <- nn[rownames(nn) != "Matched (ESS)",,drop = FALSE]
       }
       print.data.frame(round_df_char(nn, 2, pad = " ", na_vals = "."))
     }
@@ -339,7 +339,7 @@ summary.matchit <- function(object, interactions = FALSE,
   else {
     X <- get.covs.matrix(data = object$X)
   }
-  X_assign <- attr(X, "assign")
+  X_assign <- get_assign(X)
 
   if (!is.null(addlvariables)) {
     if (is.character(addlvariables)) {
@@ -370,7 +370,7 @@ summary.matchit <- function(object, interactions = FALSE,
       addlvariables <- get.covs.matrix(data = addlvariables)
     }
 
-    addl_assign <- attr(addlvariables, "assign")
+    addl_assign <- get_assign(addlvariables)
     X <- cbind(X, addlvariables[, setdiff(colnames(addlvariables), colnames(X)), drop = FALSE])
   }
 
@@ -473,7 +473,7 @@ summary.matchit <- function(object, interactions = FALSE,
     if (un) {
       ad.all <- qoi(object$distance, tt = treat, ww = NULL, s.weights = s.weights,
                     standardize = standardize, s.d.denom = s.d.denom)
-      if (!exists("sum.all")) {
+      if (!exists("sum.all", inherits = FALSE)) {
         sum.all <- matrix(ad.all, nrow = 1, dimnames = list("distance", names(ad.all)))
       }
       else {
@@ -485,7 +485,7 @@ summary.matchit <- function(object, interactions = FALSE,
       ad.matched <- qoi(object$distance, tt = treat, ww = weights, s.weights = s.weights,
                         subclass = object$subclass, mm = object$match.matrix, standardize = standardize,
                         s.d.denom = s.d.denom, compute.pair.dist = pair.dist)
-      if (!exists("sum.matched")) {
+      if (!exists("sum.matched", inherits = FALSE)) {
         sum.matched <- matrix(ad.matched, nrow = 1, dimnames = list("distance", names(ad.matched)))
       }
       else {

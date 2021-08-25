@@ -1,6 +1,7 @@
 matchit.covplot <- function(object, type = "qq", interactive = TRUE, which.xs = NULL, ...) {
 
   #Create covariate matrix; include exact and mahvars
+  object$X <- droplevels(object$X)
   if (!is.null(which.xs)) {
     if (!is.character(which.xs)) {
       stop("'which.xs' should be a vector of variables for which balance is to be displayed.", call. = FALSE)
@@ -47,9 +48,9 @@ matchit.covplot <- function(object, type = "qq", interactive = TRUE, which.xs = 
 
   oma <- c(2.25, 0, 3.75, 1.5)
   if (type == "qq") {
-  opar <- par(mfrow = c(3, 3), mar = rep.int(1/2, 4), oma = oma)
+    opar <- par(mfrow = c(3, 3), mar = rep.int(1/2, 4), oma = oma)
   }
-  else if (type == "ecdf") {
+  else if (type %in% c("ecdf", "density")) {
     opar <- par(mfrow = c(3, 3), mar = c(1.5,.5,1.5,.5), oma = oma)
   }
 
@@ -73,6 +74,12 @@ matchit.covplot <- function(object, type = "qq", interactive = TRUE, which.xs = 
         mtext("All", 3, .25, TRUE, 0.5, cex=1, font = 1)
         mtext("Matched", 3, .25, TRUE, 0.83, cex=1, font = 1)
       }
+      else if (type == "density") {
+        htext <- "Density Plots"
+        mtext(htext, 3, 2, TRUE, 0.5, cex=1.1, font = 2)
+        mtext("All", 3, .25, TRUE, 0.5, cex=1, font = 1)
+        mtext("Matched", 3, .25, TRUE, 0.83, cex=1, font = 1)
+      }
 
     }
 
@@ -87,6 +94,9 @@ matchit.covplot <- function(object, type = "qq", interactive = TRUE, which.xs = 
     else if (type == "ecdf") {
       ecdfplot_match(x = x, t = t, w = w, sw = sw, ...)
     }
+    else if (type == "density") {
+      densityplot_match(x = x, t = t, w = w, sw = sw, ...)
+    }
 
     devAskNewPage(ask = interactive)
   }
@@ -94,7 +104,7 @@ matchit.covplot <- function(object, type = "qq", interactive = TRUE, which.xs = 
 }
 
 matchit.covplot.subclass <- function(object, type = "qq", which.subclass = NULL,
-                                    interactive = TRUE, which.xs = NULL, ...) {
+                                     interactive = TRUE, which.xs = NULL, ...) {
 
   #Create covariate matrix; include exact and mahvars
   if (!is.null(which.xs)) {
@@ -149,7 +159,7 @@ matchit.covplot.subclass <- function(object, type = "qq", which.subclass = NULL,
     if (type == "qq") {
       opar <- par(mfrow = c(3, 3), mar = rep.int(1/2, 4), oma = oma)
     }
-    else if (type == "ecdf") {
+    else if (type %in% c("ecdf", "density")) {
       opar <- par(mfrow = c(3, 3), mar = c(1.5,.5,1.5,.5), oma = oma)
     }
 
@@ -181,6 +191,12 @@ matchit.covplot.subclass <- function(object, type = "qq", which.subclass = NULL,
           mtext("All", 3, .25, TRUE, 0.5, cex=1, font = 1)
           mtext("Matched", 3, .25, TRUE, 0.83, cex=1, font = 1)
         }
+        else if (type == "density") {
+          htext <- paste0("Density Plots (Subclass ", s,")")
+          mtext(htext, 3, 2, TRUE, 0.5, cex=1.1, font = 2)
+          mtext("All", 3, .25, TRUE, 0.5, cex=1, font = 1)
+          mtext("Matched", 3, .25, TRUE, 0.83, cex=1, font = 1)
+        }
 
       }
 
@@ -195,6 +211,9 @@ matchit.covplot.subclass <- function(object, type = "qq", which.subclass = NULL,
       }
       else if (type == "ecdf") {
         ecdfplot_match(x = x, t = t, w = w, sw = sw, ...)
+      }
+      else if (type == "density") {
+        densityplot_match(x = x, t = t, w = w, sw = sw, ...)
       }
 
       devAskNewPage(ask = interactive)
@@ -226,7 +245,7 @@ qqplot_match <- function(x, t, w, sw, discrete.cutoff = 5, ...) {
 
   if (swn1 < swn0) {
     if (length(u) <= discrete.cutoff) {
-      x0probs <- vapply(u, function(u_) weighted.mean(x0 == u_, sw0[sw0 > 0]), numeric(1L))
+      x0probs <- vapply(u, function(u_) wm(x0 == u_, sw0[sw0 > 0]), numeric(1L))
       x0cumprobs <- c(0, cumsum(x0probs)[-length(u)], 1)
       x0 <- u[findInterval(cumsum(sw1[sw1 > 0]), x0cumprobs, rightmost.closed = TRUE)]
     }
@@ -237,7 +256,7 @@ qqplot_match <- function(x, t, w, sw, discrete.cutoff = 5, ...) {
   }
   else {
     if (length(u) <= discrete.cutoff) {
-      x1probs <- vapply(u, function(u_) weighted.mean(x1 == u_, sw1[sw1 > 0]), numeric(1L))
+      x1probs <- vapply(u, function(u_) wm(x1 == u_, sw1[sw1 > 0]), numeric(1L))
       x1cumprobs <- c(0, cumsum(x1probs)[-length(u)], 1)
       x1 <- u[findInterval(cumsum(sw0[sw0 > 0]), x1cumprobs, rightmost.closed = TRUE)]
     }
@@ -274,7 +293,7 @@ qqplot_match <- function(x, t, w, sw, discrete.cutoff = 5, ...) {
 
   if (wn1 < wn0) {
     if (length(u) <= discrete.cutoff) {
-      x0probs <- vapply(u, function(u_) weighted.mean(x0 == u_, w0[w0 > 0]), numeric(1L))
+      x0probs <- vapply(u, function(u_) wm(x0 == u_, w0[w0 > 0]), numeric(1L))
       x0cumprobs <- c(0, cumsum(x0probs)[-length(u)], 1)
       x0 <- u[findInterval(cumsum(w1[w1 > 0]), x0cumprobs, rightmost.closed = TRUE)]
     }
@@ -285,7 +304,7 @@ qqplot_match <- function(x, t, w, sw, discrete.cutoff = 5, ...) {
   }
   else {
     if (length(u) <= discrete.cutoff) {
-      x1probs <- vapply(u, function(u_) weighted.mean(x1 == u_, w1[w1 > 0]), numeric(1L))
+      x1probs <- vapply(u, function(u_) wm(x1 == u_, w1[w1 > 0]), numeric(1L))
       x1cumprobs <- c(0, cumsum(x1probs)[-length(u)], 1)
       x1 <- u[findInterval(cumsum(w0[w0 > 0]), x1cumprobs, rightmost.closed = TRUE)]
     }
@@ -349,3 +368,105 @@ ecdfplot_match <- function(x, t, w, sw, ...) {
   box()
 }
 
+densityplot_match <- function(x, t, w, sw, ...) {
+  x.min <- min(x)
+  x.max <- max(x)
+
+  if (!all(x %in% c(x.min, x.max))) {
+    #Density plot for continuous variable
+    small.tr <- (0:1)[which.min(c(sum(t==0), sum(t==1)))]
+    x_small <- x[t==small.tr]
+
+    A <- list(...)
+
+    bw <- A[["bw"]]
+    if (is.null(bw)) A[["bw"]] <- bw.nrd0(x_small)
+    else if (is.character(bw)) {
+      bw <- tolower(bw)
+      bw <- match_arg(bw, c("nrd0", "nrd", "ucv", "bcv", "sj", "sj-ste", "sj-dpi"))
+      A[["bw"]] <- switch(bw, nrd0 = bw.nrd0(x_small), nrd = bw.nrd(x_small),
+                          ucv = bw.ucv(x_small), bcv = bw.bcv(x_small), sj = ,
+                          `sj-ste` = bw.SJ(x_small, method = "ste"),
+                          `sj-dpi` = bw.SJ(x_small, method = "dpi"))
+    }
+    if (is.null(A[["cut"]])) A[["cut"]] <- 3
+
+    d_unmatched <- do.call("rbind", lapply(0:1, function(tr) {
+      cbind(as.data.frame(do.call("density", c(list(x[t==tr], weights = sw[t==tr],
+                                                    from = x.min - A[["cut"]]*A[["bw"]],
+                                                    to = x.max + A[["cut"]]*A[["bw"]]), A))[1:2]),
+            t = tr)
+    }))
+
+    d_matched <- do.call("rbind", lapply(0:1, function(tr) {
+      cbind(as.data.frame(do.call("density", c(list(x[t==tr], weights = w[t==tr],
+                                                    from = x.min - A[["cut"]]*A[["bw"]],
+                                                    to = x.max + A[["cut"]]*A[["bw"]]), A))[1:2]),
+            t = tr)
+    }))
+
+    y.max <- max(d_unmatched$y, d_matched$y)
+
+    #Unmatched samples
+    plot(x = d_unmatched$x, y = d_unmatched$y, type = "n",
+         xlim = c(x.min - A[["cut"]]*A[["bw"]], x.max + A[["cut"]]*A[["bw"]]),
+         ylim = c(0, 1.1*y.max), axes = TRUE, ...)
+
+    for (tr in 0:1) {
+      in.tr <- d_unmatched$t == tr
+      xt <- d_unmatched$x[in.tr]
+      yt <- d_unmatched$y[in.tr]
+
+      lines(x = xt, y = yt, type = "l", col = if (tr == 0) "grey60" else "black")
+    }
+
+    abline(h = 0)
+    box()
+
+    #Matched sample
+    plot(x = d_matched$x, y = d_matched$y, type = "n",
+         xlim = c(x.min - A[["cut"]]*A[["bw"]], x.max + A[["cut"]]*A[["bw"]]),
+         ylim = c(0, 1.1*y.max), axes = FALSE, ...)
+
+    for (tr in 0:1) {
+      in.tr <- d_matched$t == tr
+      xt <- d_matched$x[in.tr]
+      yt <- d_matched$y[in.tr]
+
+      lines(x = xt, y = yt, type = "l", col = if (tr == 0) "grey60" else "black")
+    }
+
+    abline(h = 0)
+    axis(1)
+    box()
+  }
+  else {
+    #Bar plot for binary variable
+    x1_t1_un <- wm(x[t==1] == x.max, sw[t==1])
+    x1_t0_un <- wm(x[t==0] == x.max, sw[t==0])
+    x0_t1_un <- 1 - x1_t1_un
+    x0_t0_un <- 1 - x1_t0_un
+
+    x1_t1_m <- wm(x[t==1] == x.max, w[t==1])
+    x1_t0_m <- wm(x[t==0] == x.max, w[t==0])
+    x0_t1_m <- 1 - x1_t1_m
+    x0_t0_m <- 1 - x1_t0_m
+
+    ylim <- c(0, 1.1*max(x1_t1_un, x1_t0_un, x0_t1_un, x0_t0_un,
+                          x1_t1_m, x1_t0_m, x0_t1_m, x0_t0_m))
+
+    barplot(setNames(c(x0_t0_un, x1_t0_un), c(x.min, x.max)), border = "grey60", col = "white",
+            ylim = ylim)
+    barplot(setNames(c(x0_t1_un, x1_t1_un), c(x.min, x.max)), border = "black", col = NA,
+            ylim = ylim, add = TRUE)
+    abline(h = 0:1)
+    box()
+
+    barplot(setNames(c(x0_t0_m, x1_t0_m), c(x.min, x.max)), border = "grey60", col = "white",
+            ylim = ylim, axes = FALSE)
+    barplot(setNames(c(x0_t1_m, x1_t1_m), c(x.min, x.max)), border = "black", col = NA,
+            ylim = ylim, axes = FALSE, add = TRUE)
+    abline(h = 0:1)
+    box()
+  }
+}

@@ -22,7 +22,7 @@ Passed to \fun{rbind}.
 }
 }
 \details{
-\code{rbind()} appends two or more datasets row-wise. This can be useful when matching was performed seperately on subsets of the original data and they are to be combined into a single dataset for effect estimation. Using the regular \code{data.frame} method for \code{rbind()} would pose a problem, however; the \code{subclass} variable would have repeated names across different datasets, even though units only belong to the subclasses in their respective datasets. \code{rbind.matchdata()} renames the subclasses so that the correct subclass membership is maintained.
+\code{rbind()} appends two or more datasets row-wise. This can be useful when matching was performed separately on subsets of the original data and they are to be combined into a single dataset for effect estimation. Using the regular \code{data.frame} method for \code{rbind()} would pose a problem, however; the \code{subclass} variable would have repeated names across different datasets, even though units only belong to the subclasses in their respective datasets. \code{rbind.matchdata()} renames the subclasses so that the correct subclass membership is maintained.
 
 The supplied matched datasets must be generated from the same original dataset, that is, having the same variables in it. The added components (e.g., weights, subclass) can be named differently in different datasets but will be changed to have the same name in the output.
 

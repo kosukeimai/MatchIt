@@ -1,35 +1,35 @@
 #Auxiliary functions; some from WeightIt
 
 #Function to process inputs and throw warnings or errors if inputs are incompatible with methods
-check.inputs <- function(method, distance, mcall, exact, mahvars, antiexact, caliper, discard, reestimate, s.weights, replace, ratio, m.order, estimand) {
+check.inputs <- function(mcall, method, distance, exact, mahvars, antiexact, caliper, discard, reestimate, s.weights, replace, ratio, min.controls = NULL, max.controls = NULL, m.order, estimand, ...) {
 
   null.method <- is.null(method)
   if (null.method) {
     method <- "NULL"
   }
   else {
-    method <- match_arg(method, c("exact", "cem", "nearest", "optimal", "full", "genetic", "subclass"))
+    method <- match_arg(method, c("exact", "cem", "nearest", "optimal", "full", "genetic", "subclass", "cardinality"))
   }
 
   ignored.inputs <- character(0)
   error.inputs <- character(0)
   if (null.method) {
-    for (i in c("exact", "mahvars", "antiexact", "caliper", "std.caliper", "replace", "ratio", "m.order")) {
-      if (i %in% names(mcall) && !is.null(get0(i))) {
+    for (i in c("exact", "mahvars", "antiexact", "caliper", "std.caliper", "replace", "ratio", "min.controls", "max.controls", "m.order")) {
+      if (i %in% names(mcall) && !is.null(i_ <- get0(i, inherits = FALSE)) && !identical(i_, formals(MatchIt::matchit)[[i]])) {
         ignored.inputs <- c(ignored.inputs, i)
       }
     }
   }
   else if (method == "exact") {
-    for (i in c("distance", "exact", "mahvars", "antiexact", "caliper", "std.caliper", "discard", "reestimate", "replace", "ratio", "m.order")) {
-      if (i %in% names(mcall) && !is.null(get0(i))) {
+    for (i in c("distance", "exact", "mahvars", "antiexact", "caliper", "std.caliper", "discard", "reestimate", "replace", "ratio", "min.controls", "max.controls", "m.order")) {
+      if (i %in% names(mcall) && !is.null(i_ <- get0(i, inherits = FALSE)) && !identical(i_, formals(MatchIt::matchit)[[i]])) {
         ignored.inputs <- c(ignored.inputs, i)
       }
     }
   }
   else if (method == "cem") {
-    for (i in c("distance", "exact", "mahvars", "antiexact", "caliper", "std.caliper", "discard", "reestimate", "replace", "ratio", "m.order")) {
-      if (i %in% names(mcall) && !is.null(get0(i))) {
+    for (i in c("distance", "exact", "mahvars", "antiexact", "caliper", "std.caliper", "discard", "reestimate", "replace", "ratio", "min.controls", "max.controls", "m.order")) {
+      if (i %in% names(mcall) && !is.null(i_ <- get0(i, inherits = FALSE)) && !identical(i_, formals(MatchIt::matchit)[[i]])) {
         ignored.inputs <- c(ignored.inputs, i)
       }
     }
@@ -37,7 +37,7 @@ check.inputs <- function(method, distance, mcall, exact, mahvars, antiexact, cal
   else if (method == "nearest") {
     if (is.character(distance) && distance == "mahalanobis") {
       for (e in c("mahvars", "reestimate")) {
-        if (e %in% names(mcall) && !is.null(get0(e))) {
+        if (e %in% names(mcall) && !is.null(e_ <- get0(e, inherits = FALSE)) && !identical(e_, formals(MatchIt::matchit)[[e]])) {
           error.inputs <- c(error.inputs, e)
         }
       }
@@ -46,14 +46,14 @@ check.inputs <- function(method, distance, mcall, exact, mahvars, antiexact, cal
   else if (method == "optimal") {
     if (is.character(distance) && distance == "mahalanobis") {
       for (e in c("mahvars", "reestimate")) {
-        if (e %in% names(mcall) && !is.null(get0(e))) {
+        if (e %in% names(mcall) && !is.null(e_ <- get0(e, inherits = FALSE)) && !identical(e_, formals(MatchIt::matchit)[[e]])) {
           error.inputs <- c(error.inputs, e)
         }
       }
     }
 
     for (i in c("replace", "caliper", "std.caliper", "m.order")) {
-      if (i %in% names(mcall) && !is.null(get0(i))) {
+      if (i %in% names(mcall) && !is.null(i_ <- get0(i, inherits = FALSE)) && !identical(i_, formals(MatchIt::matchit)[[i]])) {
         ignored.inputs <- c(ignored.inputs, i)
       }
     }
@@ -62,14 +62,14 @@ check.inputs <- function(method, distance, mcall, exact, mahvars, antiexact, cal
   else if (method == "full") {
     if (is.character(distance) && distance == "mahalanobis") {
       for (e in c("mahvars", "reestimate")) {
-        if (e %in% names(mcall) && !is.null(get0(e))) {
+        if (e %in% names(mcall) && !is.null(e_ <- get0(e, inherits = FALSE)) && !identical(e_, formals(MatchIt::matchit)[[e]])) {
           error.inputs <- c(error.inputs, e)
         }
       }
     }
 
     for (i in c("replace", "ratio", "m.order")) {
-      if (i %in% names(mcall) && !is.null(get0(i))) {
+      if (i %in% names(mcall) && !is.null(i_ <- get0(i, inherits = FALSE)) && !identical(i_, formals(MatchIt::matchit)[[i]])) {
         ignored.inputs <- c(ignored.inputs, i)
       }
     }
@@ -77,9 +77,21 @@ check.inputs <- function(method, distance, mcall, exact, mahvars, antiexact, cal
   else if (method == "genetic") {
     if (is.character(distance) && distance == "mahalanobis") {
       for (e in c("mahvars", "reestimate")) {
-        if (e %in% names(mcall) && !is.null(get0(e))) {
+        if (e %in% names(mcall) && !is.null(e_ <- get0(e, inherits = FALSE)) && !identical(e_, formals(MatchIt::matchit)[[e]])) {
           error.inputs <- c(error.inputs, e)
         }
+      }
+    }
+    for (i in c("min.controls", "max.controls")) {
+      if (i %in% names(mcall) && !is.null(i_ <- get0(i, inherits = FALSE)) && !identical(i_, formals(MatchIt::matchit)[[i]])) {
+        ignored.inputs <- c(ignored.inputs, i)
+      }
+    }
+  }
+  else if (method == "cardinality") {
+    for (i in c("distance", "mahvars", "antiexact", "caliper", "std.caliper", "reestimate", "replace", "min.controls", "m.order")) {
+      if (i %in% names(mcall) && !is.null(i_ <- get0(i, inherits = FALSE)) && !identical(i_, formals(MatchIt::matchit)[[i]])) {
+        ignored.inputs <- c(ignored.inputs, i)
       }
     }
   }
@@ -88,8 +100,8 @@ check.inputs <- function(method, distance, mcall, exact, mahvars, antiexact, cal
       stop("distance = \"mahalanobis\" is not compatible with subclassification.", call. = FALSE)
     }
 
-    for (i in c("exact", "mahvars", "antiexact", "caliper", "std.caliper", "replace", "ratio", "m.order")) {
-      if (i %in% names(mcall) && !is.null(get0(i))) {
+    for (i in c("exact", "mahvars", "antiexact", "caliper", "std.caliper", "replace", "ratio", "min.controls", "max.controls", "m.order")) {
+      if (i %in% names(mcall) && !is.null(i_ <- get0(i, inherits = FALSE)) && !identical(i_, formals(MatchIt::matchit)[[i]])) {
         ignored.inputs <- c(ignored.inputs, i)
       }
     }
@@ -105,13 +117,15 @@ check.inputs <- function(method, distance, mcall, exact, mahvars, antiexact, cal
                                             " not allowed with method = ", add_quotes(method, quotes = !null.method),
                                             " and distance = \"", distance, "\"."),
                                      call. = FALSE)
+  return(ignored.inputs)
 }
 
 #Function to process distance and give warnings about new syntax
 process.distance <- function(distance, method, treat) {
   if (is.null(distance) && !is.null(method)) stop(paste0("'distance' cannot be NULL with method = \"", method, "\"."), call. = FALSE)
   else if (is.character(distance) && length(distance) == 1) {
-    allowable.distances <- c("glm", "cbps", "gam", "mahalanobis", "nnet", "rpart", "bart", "randomforest")
+    allowable.distances <- c("glm", "cbps", "gam", "mahalanobis", "nnet", "rpart", "bart",
+                             "randomforest", "elasticnet", "lasso", "ridge", "gbm")
 
     if (tolower(distance) %in% c("cauchit", "cloglog", "linear.cloglog", "linear.log", "linear.logit", "linear.probit",
                         "linear.cauchit", "log", "probit")) {
@@ -121,8 +135,8 @@ process.distance <- function(distance, method, treat) {
       attr(distance, "link") <- link
     }
     else if (tolower(distance) %in% tolower(c("GAMcloglog", "GAMlog", "GAMlogit", "GAMprobit"))) {
-      warning(paste0("'distance = \"", distance, "\"' will be deprecated; please use 'distance = \"gam\", link = \"", sub("GAM", "", distance), "\"' in the future."), call. = FALSE, immediate. = TRUE)
-      link <- distance
+      link <- sub("GAM", "", distance)
+      warning(paste0("'distance = \"", distance, "\"' will be deprecated; please use 'distance = \"gam\", link = \"", link, "\"' in the future."), call. = FALSE, immediate. = TRUE)
       distance <- "gam"
       attr(distance, "link") <- link
     }
@@ -130,8 +144,11 @@ process.distance <- function(distance, method, treat) {
       distance <- "glm"
       attr(distance, "link") <- "logit"
     }
+    else if (tolower(distance) == "glmnet") {
+      distance <- "elasticnet"
+    }
     else if (!tolower(distance) %in% allowable.distances) {
-      stop("The argument supplied to distance is not an allowable value. See ?matchit for allowable options.", call. = FALSE)
+      stop("The argument supplied to distance is not an allowable value. See ?distance for allowable options.", call. = FALSE)
     }
     else {
       distance <- tolower(distance)
@@ -141,7 +158,7 @@ process.distance <- function(distance, method, treat) {
   else if (!is.numeric(distance) || (!is.null(dim(distance)) && length(dim(distance)) != 2)) {
     stop("'distance' must be a string with the name of the distance measure to be used or a numeric vector or matrix containing distance measures.", call. = FALSE)
   }
-  else if (is.matrix(distance) && (is.null(method) || method %in% c("genetic", "subclass", "cem", "exact"))) {
+  else if (is.matrix(distance) && (is.null(method) || !method %in% c("nearest", "optimal", "full"))) {
     if (is.null(method)) method <- "NULL" else method <- paste0('"', method, '"')
     stop(paste0("'distance' cannot be supplied as a matrix with method = ", method, "."), call. = FALSE)
   }
@@ -172,29 +189,71 @@ process.distance <- function(distance, method, treat) {
 }
 
 #Function to check ratio is acceptable
-process.ratio <- function(ratio, min.controls = NULL, max.controls = NULL) {
-  if (length(ratio) == 0) ratio <- 1
-  if (!is.atomic(ratio) || !is.numeric(ratio) || length(ratio) > 1 || ratio < 1) {
-    stop("'ratio' must be a single positive number.", call. = FALSE)
+process.ratio <- function(ratio = NULL, method, min.controls = NULL, max.controls = NULL, ...) {
+  #Should be run after process.inputs() and ignored inputs set to NULL
+  ratio.null <- length(ratio) == 0
+  ratio.na <- !ratio.null && anyNA(ratio)
+
+  if (method %in% c("nearest", "optimal")) {
+    if (ratio.null) ratio <- 1
+    else if (ratio.na) stop("'ratio' cannot be NA.", call. = FALSE)
+    else if (!is.atomic(ratio) || !is.numeric(ratio) || length(ratio) > 1 || ratio < 1) {
+      stop("'ratio' must be a single positive number greater than or equal to 1.", call. = FALSE)
+    }
+
+    if (is.null(max.controls)) {
+      ratio <- round(ratio)
+    }
+    else if (anyNA(max.controls) || !is.atomic(max.controls) || !is.numeric(max.controls) || length(max.controls) > 1) {
+      stop("'max.controls' must be a single positive number.", call. = FALSE)
+    }
+    else {
+      if (ratio <= 1) stop("'ratio' must be greater than 1 for variable ratio matching.", call. = FALSE)
+
+      max.controls <- ceiling(max.controls)
+      if (max.controls <= ratio) stop("'max.controls' must be greater than 'ratio' for variable ratio matching.", call. = FALSE)
+
+      if (is.null(min.controls)) min.controls <- 1
+      else if (anyNA(max.controls) || !is.atomic(max.controls) || !is.numeric(max.controls) || length(max.controls) > 1) {
+        stop("'max.controls' must be a single positive number.", call. = FALSE)
+      }
+      else min.controls <- floor(min.controls)
+
+      if (min.controls < 1) stop("'min.controls' cannot be less than 1 for variable ratio matching.", call. = FALSE)
+      else if (min.controls >= ratio) stop("'min.controls' must be less than 'ratio' for variable ratio matching.", call. = FALSE)
+    }
   }
-  if (is.null(max.controls)) {
+  else if (method == "full") {
+    if (!ratio.null) stop("'ratio' cannot be specified with full matching.", call. = FALSE) #should never be called because of process.inputs()
+    if (!is.null(max.controls) && (anyNA(max.controls) || !is.atomic(max.controls) || !is.numeric(max.controls) || length(max.controls) > 1)) {
+      stop("'max.controls' must be a single positive number.", call. = FALSE)
+    }
+
+    if (!is.null(min.controls) && (anyNA(min.controls) || !is.atomic(min.controls) || !is.numeric(min.controls) || length(min.controls) > 1)) {
+      stop("'min.controls' must be a single positive number.", call. = FALSE)
+    }
+  }
+  else if (method == "genetic") {
+    if (ratio.null) ratio <- 1
+    else if (ratio.na) stop("'ratio' cannot be NA.", call. = FALSE)
+    else if (!is.atomic(ratio) || !is.numeric(ratio) || length(ratio) > 1 || ratio < 1) {
+      stop("'ratio' must be a single positive number greater than or equal to 1.", call. = FALSE)
+    }
     ratio <- round(ratio)
-    return(c(ratio = ratio))
+
+    min.controls <- max.controls <- NULL
   }
-  else {
-    if (ratio <= 1) stop("'ratio' must be greater than 1 for variable ratio matching.", call. = FALSE)
+  else if (method == "cardinality") {
+    if (ratio.null) ratio <- 1
+    else if (!ratio.na && (!is.atomic(ratio) || !is.numeric(ratio) || length(ratio) > 1 || ratio < 0)) {
+      stop("'ratio' must be a single positive number or NA.", call. = FALSE)
+    }
 
-    max.controls <- ceiling(max.controls)
-    if (max.controls <= ratio) stop("'max.controls' must be greater than 'ratio' for variable ratio matching.", call. = FALSE)
-
-    if (is.null(min.controls)) min.controls <- 1
-    else min.controls <- floor(min.controls)
-
-    if (min.controls < 1) stop("'min.controls' cannot be less than 1 for variable ratio matching.", call. = FALSE)
-    else if (min.controls >= ratio) stop("'min.controls' must be less than 'ratio' for variable ratio matching.", call. = FALSE)
-
-    return(c(ratio = ratio, min.controls = min.controls, max.controls = max.controls))
+    min.controls <- max.controls <- NULL
   }
+
+  return(list(ratio = ratio, min.controls = min.controls, max.controls = max.controls))
+
 }
 
 #Function to check if caliper is okay and process it
@@ -397,19 +456,16 @@ check.package <- function(package.name, alternative = FALSE) {
 }
 
 #Create info component of matchit object
-create_info <- function(method, fn1, link, discard, replace, ratio, mcall, mahalanobis, subclass, antiexact, distance_is_matrix) {
+create_info <- function(method, fn1, link, discard, replace, ratio, max.controls, mcall, mahalanobis, subclass, antiexact, distance_is_matrix) {
   info <- list(method = method,
                distance = if (is.null(fn1)) NULL else sub("distance2", "", fn1, fixed = TRUE),
                link = if (is.null(link)) NULL else link,
                discard = discard,
                replace = if (!is.null(method) && method %in% c("nearest", "genetic")) replace else NULL,
                ratio = if (!is.null(method) && method %in% c("nearest", "optimal", "genetic")) ratio else NULL,
-               max.controls = if (!is.null(method) && method %in% c("nearest", "optimal")) mcall[["max.controls"]] else NULL,
-               # mahalanobis = is.full.mahalanobis || !is.null(mahvars),
+               max.controls = if (!is.null(method) && method %in% c("nearest", "optimal")) max.controls else NULL,
                mahalanobis = mahalanobis,
-               # subclass = if (!is.null(method) && method == "subclass") length(unique(match.out$subclass[!is.na(match.out$subclass)])) else NULL,
                subclass = if (!is.null(method) && method == "subclass") length(unique(subclass[!is.na(subclass)])) else NULL,
-               # antiexact = if (!is.null(antiexact)) colnames(antiexactcovs) else NULL
                antiexact = antiexact,
                distance_is_matrix = distance_is_matrix)
 }
@@ -427,7 +483,8 @@ info.to.method <- function(info) {
            "optimal" = "optimal pair matching",
            "full" = "optimal full matching",
            "genetic" = "genetic matching",
-           "subclass" = paste0("subclassification (", info$subclass, " subclasses)"))
+           "subclass" = paste0("subclassification (", info$subclass, " subclasses)"),
+           "cardinality" = "cardinality matching")
   out.list[["replace"]] <- if (!is.null(info$replace) && info$method %in% c("nearest", "optimal", "genetic")) {
     if (info$replace) "with replacement"
     else "without replacement"
@@ -452,6 +509,19 @@ info.to.distance <- function(info) {
   }
   else if (distance == "gam") {
     dist <- paste("GAM with a", link, "link")
+  }
+  else if (distance == "gbm") {
+    dist <- "GBM"
+  }
+  else if (distance == "elasticnet") {
+    dist <- paste("an elastic net with a", link, "link")
+  }
+  else if (distance == "lasso") {
+    if (link == "logit") dist <- "lasso logistic regression"
+    else dist <- paste("lasso regression with a", link, "link")
+  }
+  else if (distance == "ridge") {
+    dist <- paste("ridge regression with a", link, "link")
   }
   else if (distance == "rpart") {
     dist <- "CART"
@@ -487,19 +557,19 @@ word_list <- function(word.list = NULL, and.or = c("and", "or"), is.are = FALSE,
 
   if (L == 0) {
     out <- ""
-    attr(out, "plural") = FALSE
+    attr(out, "plural") <- FALSE
   }
   else {
     word.list <- word.list[!word.list %in% c(NA_character_, "")]
     L <- length(word.list)
     if (L == 0) {
       out <- ""
-      attr(out, "plural") = FALSE
+      attr(out, "plural") <- FALSE
     }
     else if (L == 1) {
       out <- word.list
       if (is.are) out <- paste(out, "is")
-      attr(out, "plural") = FALSE
+      attr(out, "plural") <- FALSE
     }
     else {
       and.or <- match_arg(and.or)
@@ -512,7 +582,7 @@ word_list <- function(word.list = NULL, and.or = c("and", "or"), is.are = FALSE,
 
       }
       if (is.are) out <- paste(out, "are")
-      attr(out, "plural") = TRUE
+      attr(out, "plural") <- TRUE
     }
 
   }
@@ -744,6 +814,13 @@ get.covs.matrix <- function(formula = NULL, data = NULL) {
   return(X)
 }
 
+#Extracts and names the "assign" attribute from get.covs.matrix()
+get_assign <- function(mat) {
+  if (is.null(attr(mat, "assign"))) return(NULL)
+
+  setNames(attr(mat, "assign"), colnames(mat))
+}
+
 #Convert match.matrix (mm) using numerical indices to using char rownames
 nummm2charmm <- function(nummm, treat) {
   #Assumes nummm has rownames
@@ -777,7 +854,7 @@ mm2subclass <- function(mm, treat) {
 }
 
 #(Weighted) variance that uses special formula for binary variables
-wvar <- function(x, bin.var = NULL, w = NULL, na.rm = TRUE) {
+wvar <- function(x, bin.var = NULL, w = NULL) {
   if (is.null(w)) w <- rep(1, length(x))
   if (is.null(bin.var)) bin.var <- all(x == 0 | x == 1)
 
@@ -790,6 +867,27 @@ wvar <- function(x, bin.var = NULL, w = NULL, na.rm = TRUE) {
   else {
     #Reliability weights variance; same as cov.wt()
     sum(w * (x - mx)^2)/(1 - sum(w^2))
+  }
+}
+
+#Weighted mean faster than weighted.mean()
+wm <- function(x, w = NULL, na.rm = TRUE) {
+  if (is.null(w)) {
+    if (anyNA(x)) {
+      if (!na.rm) return(NA_real_)
+      nas <- which(is.na(x))
+      x <- x[-nas]
+    }
+    return(sum(x)/length(x))
+  }
+  else {
+    if (anyNA(x) || anyNA(w)) {
+      if (!na.rm) return(NA_real_)
+      nas <- which(is.na(x) | is.na(w))
+      x <- x[-nas]
+      w <- w[-nas]
+    }
+    return(sum(x*w)/sum(w))
   }
 }
 

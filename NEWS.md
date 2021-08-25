@@ -6,6 +6,38 @@ output:
 `MatchIt` News and Updates
 ======
 
+# MatchIt (development version)
+
+* Cardinality and template matching can now be used by setting `method = "cardinality"` in `matchit()`. These methods use mixed integer programming to directly select a matched subsample without pairing or stratifying units. Their results can be dramatically improved when using the Gurobi optimizer. See `?method_cardinality` and `vignette("matching-methods")` for more information.
+
+* Added `"lasso"`, `"ridge"`, and `"elasticnet"` as options for `distance`. These estimate propensity scores using lasso, ridge, or elastic net regression, respectively, as implemented in the `glmnet` package.
+
+* Added `"gbm"` as an option for `distance`. This estimates propensity scores using generalized boosted models as implemented in the `gbm` package. This implementation differs from that in `twang` by using cross-validation or out-of-bag error to choose the tuning parameter as opposed to balance.
+
+* A new argument, `include.obj`, has been added to `matchit()`. When `TRUE`, the intermediate matching object created internally will be included in the output in the `obj` component. See the individual methods pages for information on what is included in each output.  This is ignored for some methods.
+
+* Density plots can now be requested using `plot.matchit()` by setting `type = "density"`. These display the density of each covariate in the treatment groups before and after matching and are similar to the plots created by `cobalt::bal.plot()`. Density plots can be easier to interpret than eCDF plots. `vignette("assessing-balance")` has been updated with this addition.
+
+* A clearer error is now printed when the treatment variable is omitted from the `formula` argument to `matchit()`.
+
+* Improvements in how `match.data()` finds the original dataset. It's still always safer to supply an argument to `data`, but now `match.data()` will look in the environment of the `matchit` formula, then the calling environment of `match.data()`, then the `model` component of the `matchit` object. A clearer error message is now printed when a valid dataset cannot be found in these places.
+
+* Fixed a bug that would occur when using `summary.matchit()` with just one covariate.
+
+* When `verbose = TRUE` and a propensity score is estimated (i.e., using the `distance` argument), a message saying so will be displayed.
+
+* Fixed a bug in `print.matchit()` where it would indicate that the propensity score was used in a caliper if any caliper was specified, even if not on the propensity score. Now, it will only indicate that the propensity score was used in a caliper if it actually was.
+
+* Fixed a bug in `plot.matchit()` that would occur when a level of a factor had no values.
+
+* Speed improvements for `method = "full"` with `exact` specified. These changes can make current results differ slightly from past results when the `tol` value is high. It is recommended to always use a low value of `tol`.
+
+* Typo fixes in documentation and vignettes.
+
+* Fixed a bug where supplying a "GAM" string to the `distance` argument (i.e., using the syntax prior to version 4.0.0) would ignore the link supplied.
+
+* When an incompatible argument is supplied to `matchit()` (e.g., `reestimate` with `distance = "mahalanobis"`), an error or warning will only be produced when that argument has been set to a value other than its default (e.g., so setting `reestimate = FALSE` will no longer throw an error). This fixes an issue brought up by Vu Ng when using `MatchThem`.
+
 # MatchIt 4.2.0
 
 * `distance` can now be supplied as a distance matrix containing pairwise distances with nearest neighbor, optimal, and full matching. This means users can create a distance matrix outside `MatchIt` (e.g., using `optmatch::match_on()` or `dist()`) and `matchit()` will use those distances in the matching. See `?distance` for details.

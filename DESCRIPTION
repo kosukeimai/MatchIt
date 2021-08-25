@@ -1,12 +1,15 @@
 Package: MatchIt
-Version: 4.2.0
+Version: 4.2.0.9005
 Title: Nonparametric Preprocessing for Parametric Causal Inference
 Description: Selects matched samples of the original treated and
     control groups with similar covariate distributions -- can be
     used to match exactly on covariates, to match on propensity
     scores, or perform a variety of other matching procedures.  The
     package also implements a series of recommendations offered in
-    Ho, Imai, King, and Stuart (2007) <DOI:10.1093/pan/mpl013>.
+    Ho, Imai, King, and Stuart (2007) <DOI:10.1093/pan/mpl013>. (The 
+    'gurobi' package, which is not on CRAN, is optional and comes with 
+    an installation of the Gurobi Optimizer, available at 
+    <https://www.gurobi.com>.)
 Authors@R: c(
   person("Daniel", "Ho", email = "daniel.e.ho@gmail.com", role = c("aut"),
          comment = c(ORCID = "0000-0002-2195-5469")),
@@ -36,12 +39,17 @@ Suggests:
     CBPS (>= 0.17),
     dbarts,
     randomForest,
+    glmnet (>= 4.0),
+    gbm (>= 2.1.7),
     cobalt (>= 4.2.3),
     boot,
     lmtest,
     sandwich (>= 2.5-1),
     survival,
     RcppProgress (>= 0.4.2),
+    Rglpk,
+    Rsymphony,
+    gurobi,
     knitr,
     rmarkdown
 LinkingTo: Rcpp, RcppProgress

@@ -18,8 +18,8 @@ qoi <- function(xx, tt, ww = NULL, s.weights, subclass = NULL, mm = NULL, s.d.de
 
   too.small <- sum(ww[tt==1] > 0) < 2 || sum(ww[tt==0] > 0) < 2
 
-  xsum["Means Treated"] <- weighted.mean(xx[tt==1], ww[tt==1], na.rm=TRUE)
-  xsum["Means Control"] <- weighted.mean(xx[tt==0], ww[tt==0], na.rm=TRUE)
+  xsum["Means Treated"] <- wm(xx[tt==1], ww[tt==1], na.rm=TRUE)
+  xsum["Means Control"] <- wm(xx[tt==0], ww[tt==0], na.rm=TRUE)
 
   mdiff <- xsum["Means Treated"] - xsum["Means Control"]
 
@@ -76,8 +76,8 @@ qoi.subclass <- function(xx, tt, s.weights, subclass, s.d.denom = "treated", sta
 
   too.small <- sum(in.sub & tt==1) < 2 || sum(in.sub & tt==0) < 2
 
-  xsum["Subclass","Means Treated"] <- weighted.mean(xx[in.sub & tt==1], s.weights[in.sub & tt==1], na.rm=TRUE)
-  xsum["Subclass","Means Control"] <- weighted.mean(xx[in.sub & tt==0], s.weights[in.sub & tt==0], na.rm=TRUE)
+  xsum["Subclass","Means Treated"] <- wm(xx[in.sub & tt==1], s.weights[in.sub & tt==1], na.rm=TRUE)
+  xsum["Subclass","Means Control"] <- wm(xx[in.sub & tt==0], s.weights[in.sub & tt==0], na.rm=TRUE)
 
   mdiff <- xsum["Subclass","Means Treated"] - xsum["Subclass","Means Control"]
 
@@ -164,7 +164,7 @@ qqsum <- function(x, t, w = NULL, standardize = FALSE) {
 
   if (all(x == 0 | x == 1)) {
     #For binary variables, just difference in means
-    ediff <- abs(weighted.mean(x[t == t[1]], w[t == t[1]]) - weighted.mean(x[t != t[1]], w[t != t[1]]))
+    ediff <- abs(wm(x[t == t[1]], w[t == t[1]]) - wm(x[t != t[1]], w[t != t[1]]))
     return(c(meandiff = ediff, meddiff = ediff, maxdiff = ediff))
   }
   else {
@@ -198,7 +198,7 @@ qqsum <- function(x, t, w = NULL, standardize = FALSE) {
 
       if (wn1 < wn0) {
         if (length(u) <= 5) {
-          x0probs <- vapply(u, function(u_) weighted.mean(x0 == u_, w0[w0 > 0]), numeric(1L))
+          x0probs <- vapply(u, function(u_) wm(x0 == u_, w0[w0 > 0]), numeric(1L))
           x0cumprobs <- c(0, cumsum(x0probs)[-length(u)], 1)
           x0 <- u[findInterval(cumsum(w1[w1 > 0]), x0cumprobs, rightmost.closed = TRUE)]
         }
@@ -209,7 +209,7 @@ qqsum <- function(x, t, w = NULL, standardize = FALSE) {
       }
       else {
         if (length(u) <= 5) {
-          x1probs <- vapply(u, function(u_) weighted.mean(x1 == u_, w1[w1 > 0]), numeric(1L))
+          x1probs <- vapply(u, function(u_) wm(x1 == u_, w1[w1 > 0]), numeric(1L))
           x1cumprobs <- c(0, cumsum(x1probs)[-length(u)], 1)
           x1 <- u[findInterval(cumsum(w0[w0 > 0]), x1cumprobs, rightmost.closed = TRUE)]
         }
@@ -220,6 +220,6 @@ qqsum <- function(x, t, w = NULL, standardize = FALSE) {
       }
       ediff <- abs(x1 - x0)
     }
-    return(c(meandiff = mean(ediff), meddiff = median(ediff), maxdiff = max(ediff)))
+    return(c(meandiff = mean(ediff), maxdiff = max(ediff)))
   }
 }
