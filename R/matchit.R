@@ -200,8 +200,11 @@ matchit <- function(formula, data = NULL, method = "nearest", distance = "glm",
   #Process covs
   covs.formula <- delete.response(terms(formula, data = data))
   covs <- model.frame(covs.formula, data = data, na.action = "na.pass")
-  if (anyNA(covs)) stop("Missing values are not allowed in the covariates.", call. = FALSE)
-  for (i in which(vapply(covs, is.character, logical(1L)))) covs[[i]] <- factor(covs[[i]])
+  for (i in seq_len(ncol(covs))) {
+    if (anyNA(covs[[i]])) stop("Missing values are not allowed in the covariates.", call. = FALSE)
+    if (any(!is.finite(covs[[i]]))) stop("Non-finite values are not allowed in the covariates.", call. = FALSE)
+    if (is.character(covs[[i]])) covs[[i]] <- factor(covs[[i]])
+  }
 
   #Process discard
   if (is.null(fn1) || fn1 %in% c("distance2mahalanobis", "distance2user")) {
