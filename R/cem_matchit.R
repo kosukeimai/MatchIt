@@ -110,7 +110,7 @@ cem_matchit <- function(treat, X, cutpoints = "sturges", grouping = list(), k2k 
 
   #Exact match
   xx <- exactify(X, names(treat))
-  cc <- intersect(xx[treat==1], xx[treat==0])
+  cc <- do.call("intersect", unname(split(xx, treat)))
 
   if (length(cc) == 0) {
     stop("No units were matched. Try coarsening the variables further or decrease the number of variables to match on.", call. = FALSE)
