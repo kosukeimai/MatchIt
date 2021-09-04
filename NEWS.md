@@ -18,7 +18,7 @@ output:
 
 * Density plots can now be requested using `plot.matchit()` by setting `type = "density"`. These display the density of each covariate in the treatment groups before and after matching and are similar to the plots created by `cobalt::bal.plot()`. Density plots can be easier to interpret than eCDF plots. `vignette("assessing-balance")` has been updated with this addition.
 
-* A clearer error is now printed when the treatment variable is omitted from the `formula` argument to `matchit()`.
+* A clearer error is now produced when the treatment variable is omitted from the `formula` argument to `matchit()`.
 
 * Improvements in how `match.data()` finds the original dataset. It's still always safer to supply an argument to `data`, but now `match.data()` will look in the environment of the `matchit` formula, then the calling environment of `match.data()`, then the `model` component of the `matchit` object. A clearer error message is now printed when a valid dataset cannot be found in these places.
 
@@ -37,6 +37,8 @@ output:
 * Fixed a bug where supplying a "GAM" string to the `distance` argument (i.e., using the syntax prior to version 4.0.0) would ignore the link supplied.
 
 * When an incompatible argument is supplied to `matchit()` (e.g., `reestimate` with `distance = "mahalanobis"`), an error or warning will only be produced when that argument has been set to a value other than its default (e.g., so setting `reestimate = FALSE` will no longer throw an error). This fixes an issue brought up by Vu Ng when using `MatchThem`.
+
+* A clearer error is produced when non-finite values are present in the covariates.
 
 # MatchIt 4.2.0
 
