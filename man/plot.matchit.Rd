@@ -51,9 +51,6 @@ With \code{type = "histogram"}, a histogram of distance values is displayed for 
 
 With all methods, sampling weights are incorporated into the weights if present.
 }
-\value{
-A plot is displayed, and \code{x} is invisibly returned.
-}
 \note{
 Sometimes, bugs in the plotting functions can cause strange layout or size issues. Running \fun{frame} or \fun{dev.off} can be used to reset the plotting pane (note the latter will delete any plots in the plot history).
 }
