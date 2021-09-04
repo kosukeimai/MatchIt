@@ -59,7 +59,7 @@ matchit2exact <- function(treat, covs, data, estimand = "ATT", verbose = FALSE, 
   estimand <- match_arg(estimand, c("ATT", "ATC", "ATE"))
 
   xx <- exactify(covs, names(treat))
-  cc <- intersect(xx[treat==1], xx[treat==0])
+  cc <- do.call("intersect", lapply(unique(treat), function(t) xx[treat == t]))
 
   if (length(cc) == 0) {
     stop("No exact matches were found.", call. = FALSE)
@@ -1067,7 +1067,7 @@ matchit2subclass <- function(treat, distance, discarded,
 
 # MATCHIT method = cardinality----------------------------------
 matchit2cardinality <-  function(treat, data, discarded, formula,
-                                 ratio = 1, s.weights = NULL, replace = FALSE, exact = NULL,
+                                 ratio = 1, focal = NULL, s.weights = NULL, replace = FALSE, exact = NULL,
                                  estimand = "ATT", verbose = FALSE,
                                  tols = .05, std.tols = TRUE,
                                  solver = "glpk", time = 1*60, ...){
@@ -1076,15 +1076,19 @@ matchit2cardinality <-  function(treat, data, discarded, formula,
     cat("Cardinality matching... \n")
   }
 
+  tvals <- unique(treat)
+  nt <- length(tvals)
+
   estimand <- toupper(estimand)
   estimand <- match_arg(estimand, c("ATT", "ATC", "ATE"))
-  if (estimand == "ATC") {
-    tc <- c("control", "treated")
-    focal <- 0
+  if (!is.null(focal)) {
+    if (!focal %in% tvals) stop("'focal' must be a value of the treatment.", call. = FALSE)
+  }
+  else if (estimand == "ATC") {
+    focal <- min(tvals)
   }
   else {
-    tc <- c("treated", "control")
-    focal <- 1
+    focal <- max(tvals)
   }
 
   lab <- names(treat)
@@ -1094,14 +1098,12 @@ matchit2cardinality <-  function(treat, data, discarded, formula,
 
   weights <- setNames(rep(0, length(treat)), lab)
 
-  treat <- setNames(as.integer(treat == focal), lab)
-
   X <- get.covs.matrix(formula, data = data)
 
   if (!is.null(exact)) {
     ex <- factor(exactify(model.frame(exact, data = data), nam = lab, sep = ", ", include_vars = TRUE))
 
-    cc <- intersect(as.integer(ex)[treat==1], as.integer(ex)[treat==0])
+    cc <- do.call("intersect", lapply(tvals, function(t) ex[treat == t]))
     if (length(cc) == 0) stop("No matches were found.", call. = FALSE)
   }
   else {
@@ -1132,13 +1134,14 @@ matchit2cardinality <-  function(treat, data, discarded, formula,
   #Apply std.tols
   if (any(std.tols)) {
     if (estimand == "ATE") {
-      sds <- sqrt(.5*(apply(X[treat==1,std.tols,drop=FALSE], 2, wvar, w = s.weights[treat==1]) +
-                        apply(X[treat!=1,std.tols,drop=FALSE], 2, wvar, w = s.weights[treat!=1])))
+      sds <- sqrt(Reduce("+", lapply(tvals, function(t) {
+        apply(X[treat==t, std.tols, drop = FALSE], 2, wvar, w = s.weights[treat==t])
+      }))/nt)
     }
     else {
-      sds <- sqrt(apply(X[treat==1,std.tols,drop=FALSE], 2, wvar, w = s.weights[treat==1]))
+      sds <- sqrt(apply(X[treat==focal,std.tols,drop=FALSE], 2, wvar, w = s.weights[treat==focal]))
     }
-    X[,std.tols] <- scale(X[,std.tols,drop=FALSE], center = FALSE, scale = sds)
+    X[,std.tols] <- scale(X[, std.tols, drop = FALSE], center = FALSE, scale = sds)
   }
 
   opt.out <- setNames(vector("list", if (is.null(ex)) 1L else nlevels(ex)), levels(ex))
@@ -1147,10 +1150,14 @@ matchit2cardinality <-  function(treat, data, discarded, formula,
     if (is.null(ex)) in.exact <- which(!discarded)
     else in.exact <- which(!discarded & ex == levels(ex)[i])
 
-    out <- cardinality_matchit(treat[in.exact], X[in.exact,, drop = FALSE],
-                               estimand, tols,
-                               s.weights[in.exact], ratio,
-                               solver, time, verbose)
+    out <- cardinality_matchit(treat = treat[in.exact],
+                               X = X[in.exact,, drop = FALSE],
+                               estimand = estimand, tols = tols,
+                               s.weights = s.weights[in.exact],
+                               ratio = ratio,
+                               focal = focal, tvals = tvals,
+                               solver = solver, time = time,
+                               verbose = verbose)
 
     weights[in.exact] <- out[["weights"]]
     opt.out[[i]] <- out[["opt.out"]]
