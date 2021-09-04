@@ -6,7 +6,7 @@ output:
 `MatchIt` News and Updates
 ======
 
-# MatchIt (development version)
+# MatchIt 4.3.0
 
 * Cardinality and template matching can now be used by setting `method = "cardinality"` in `matchit()`. These methods use mixed integer programming to directly select a matched subsample without pairing or stratifying units. Their results can be dramatically improved when using the Gurobi optimizer. See `?method_cardinality` and `vignette("matching-methods")` for more information.
 
@@ -54,7 +54,7 @@ output:
 
 * A spurious warning that would appear when using a large `ratio` with `replace = TRUE` and `method = "nearest"` no longer appears.
 
-* Fixed a bug when trying to supply `distance` as a labelled numeric vector (i.e., resulting from `haven`).
+* Fixed a bug when trying to supply `distance` as a labelled numeric vector (e.g., resulting from `haven`).
 
 * Fixed some typos in the documentation and vignettes.
 
