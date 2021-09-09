@@ -1,9 +1,0 @@
-exact		Demo of exact matching, using Lalonde dataset
-full		Demo of full matching, using Lalonde dataset
-genetic         Demo of genetic matching, using Lalonde dataset
-match.data      Demo of obtaining matched data
-nearest		Demos of nearest neighbor matching, using Lalonde dataset
-subclass	Demo of subclassification, using Lalonde dataset
-optimal		Demo of optimal matching, using Lalonde dataset
-analysis        Demo of using Zelig with MatchIt for parametric causal inference after matching
-cem             Demo of coarsened exact matching
