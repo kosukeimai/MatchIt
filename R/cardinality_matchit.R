@@ -56,13 +56,6 @@ cardinality_matchit <- function(treat, X, estimand = "ATT", tols = .05, s.weight
       Cdir[r2] <- ">"
     }
 
-    #Coef types
-    types <- c(rep("B", n), #Matching weights
-               rep("C", nt)) #Slack coefs for matched group size
-
-    lower.bound <- c(rep(0, n),
-                     rep(1, nt))
-
     #If ratio != 0, constrain n0 to be ratio*n1
     if (nt == 2L && is.finite(ratio)) {
       C_ratio <- c(rep(0, n), rep(-1, nt))
@@ -71,6 +64,14 @@ cardinality_matchit <- function(treat, X, estimand = "ATT", tols = .05, s.weight
       Crhs <- c(Crhs, 0)
       Cdir <- c(Cdir, "==")
     }
+
+    #Coef types
+    types <- c(rep("B", n), #Matching weights
+               rep("C", nt)) #Slack coefs for matched group size
+
+    lower.bound <- c(rep(0, n),
+                     rep(1, nt))
+    upper.bound <- NULL
   }
   else if (match_type == "template_att") {
     #Find largest control group that matches treated group
@@ -117,6 +118,7 @@ cardinality_matchit <- function(treat, X, estimand = "ATT", tols = .05, s.weight
 
     lower.bound <- c(rep(0, n0),
                      rep(0, nt - 1))
+    upper.bound <- NULL
   }
   else if (match_type == "cardinality") {
     #True cardinality matching: find largest balanced sample
@@ -162,14 +164,14 @@ cardinality_matchit <- function(treat, X, estimand = "ATT", tols = .05, s.weight
 
     lower.bound <- c(rep(0, n),
                      rep(0, 1))
-
+    upper.bound <- NULL
   }
 
   weights <- NULL
 
   opt.out <- dispatch_optimizer(solver = solver, obj = O, mat = C, dir = Cdir,
                                 rhs = Crhs, types = types, max = TRUE, lb = lower.bound,
-                                ub = NULL, time = time, verbose = verbose)
+                                ub = upper.bound, time = time, verbose = verbose)
 
   cardinality_error_report(opt.out, solver)
 
@@ -177,11 +179,11 @@ cardinality_matchit <- function(treat, X, estimand = "ATT", tols = .05, s.weight
                 "symphony" = opt.out$solution,
                 "gurobi" = opt.out$x)
   if (match_type %in% c("template_ate", "cardinality")) {
-    weights <- sol[seq_len(n)]
+    weights <- round(sol[seq_len(n)])
   }
   else if (match_type %in% c("template_att")) {
     weights <- rep(1, n)
-    weights[treat != focal] <- sol[seq_len(n0)]
+    weights[treat != focal] <- round(sol[seq_len(n0)])
   }
 
   #Make sure sum of weights in both groups is the same (important for exact matching)
@@ -256,199 +258,4 @@ dispatch_optimizer <- function(solver = "glpk", obj, mat, dir, rhs, types, max =
   }
 
   opt.out
-}
-
-.cardinality_matchit <- function(treat, X, estimand = "ATT", tols = .05, s.weights = NULL,
-                                 ratio = 1, solver = "glpk", time = 2*60, verbose = FALSE) {
-
-  n <- length(treat)
-
-  #Check inputs
-  if (is.null(s.weights)) s.weights <- rep(1, n)
-  else for (i in 0:1) s.weights[treat == i] <- s.weights[treat == i]/mean(s.weights[treat == i])
-
-  if (length(time) != 1 || !is.numeric(time) || time <= 0) stop("'time' must be a positive number.", call. = FALSE)
-
-  solver <- match_arg(solver, c("glpk", "symphony", "gurobi"))
-  check.package(switch(solver, glpk = "Rglpk", symphony = "Rsymphony", gurobi = "gurobi"))
-
-  #Select match type
-  if (estimand == "ATE") match_type <- "template_ate"
-  else if (!is.finite(ratio)) match_type <- "template_att"
-  else match_type <- "cardinality"
-
-  #Set objective and constraints
-  if (match_type == "template_ate") {
-    #Find largest sample that matches full sample
-
-    #Objective function: total sample size
-    O <- c(
-      s.weights, #weight for each unit
-      0, 0       #slack coefs for each sample size (n1, n0)
-    )
-
-    #Constraint matrix
-    target.means <- apply(X, 2, wm, w = s.weights)
-    #One row per constraints, one column per coef
-    C <- rbind(
-      c(s.weights*(treat==1), -1, 0), #Num treated = n1
-      c(s.weights*(treat!=1), 0, -1), #Num control = n0
-      t(rbind((treat==1)*s.weights*X, -target.means-tols/2, 0)), #Balance constraints
-      t(rbind((treat==1)*s.weights*X, -target.means+tols/2, 0)), #Means of each group must
-      t(rbind((treat!=1)*s.weights*X, 0, -target.means-tols/2)), #be within tols/2 of full
-      t(rbind((treat!=1)*s.weights*X, 0, -target.means+tols/2))  #sample means
-    )
-
-    #Constraint RHS
-    #One per constraint
-    Crhs <- c(0,
-              0,
-              rep(0, ncol(X)),
-              rep(0, ncol(X)),
-              rep(0, ncol(X)),
-              rep(0, ncol(X))
-    )
-
-    #Constraint direction
-    #One per constraint
-    Cdir <- c("==",
-              "==",
-              rep("<", ncol(X)),
-              rep(">", ncol(X)),
-              rep("<", ncol(X)),
-              rep(">", ncol(X))
-    )
-
-    #Coef types
-    types <- c(rep("B", n), #Matching weights
-               rep("C", 2)) #Slack coefs for matched group size (n1, n0)
-
-    lower.bound <- c(rep(0, n),
-                     rep(1, 2))
-
-    #If ratio != 0, constrain n0 to be ratio*n1
-    if (is.finite(ratio)) {
-      C <- rbind(C, c(rep(0, n), ratio*1, -1))
-      Crhs <- c(Crhs, 0)
-      Cdir <- c(Cdir, "==")
-    }
-  }
-  else if (match_type == "template_att") {
-    #Find largest control group that matches treated group
-
-    n0 <- sum(treat != 1)
-
-    #Objective function: size of matched control group
-    O <- c(
-      rep(1, n0), #weights for each control unit
-      0           #slack coef for size of control group
-    )
-
-    #Constraint matrix
-    target.means <- apply(X[treat==1,,drop=FALSE], 2, wm, w = s.weights[treat==1])
-    #One row per constraints, one column per coef
-    C <- rbind(
-      c(s.weights[treat==0], -1), #Num control = k
-      t(rbind(s.weights[treat!=1]*X[treat!=1,,drop=FALSE], -target.means-tols)),
-      t(rbind(s.weights[treat!=1]*X[treat!=1,,drop=FALSE], -target.means+tols))
-    )
-
-    #Constraint RHS
-    #One per constraint
-    Crhs <- c(
-      0,
-      rep(0, ncol(X)),
-      rep(0, ncol(X))
-    )
-
-    #Constraint direction
-    #One per constraint
-    Cdir <- c(
-      "==",
-      rep("<", ncol(X)),
-      rep(">", ncol(X))
-    )
-
-    #Coef types
-    types <- c(rep("B", n0), #Matching weights
-               rep("C", 1))  #Slack for num control matched
-
-    lower.bound <- c(rep(0, n0),
-                     rep(0, 1))
-  }
-  else if (match_type == "cardinality") {
-    #True cardinality matching: find largest balanced sample
-
-    #Objective function: total sample size
-    O <- c(
-      s.weights, #weight for each unit
-      0          #coef for treated sample size (n1)
-    )
-
-    #Constraint matrix
-    #One row per constraints, one column per coef
-    C <- rbind(
-      c(s.weights*(treat==1), -1),     #Num treated = n1
-      c(s.weights*(treat!=1), -ratio), #Num control = ratio*n1
-      t(rbind(((treat==1) - (treat!=1)/ratio)*s.weights*X, -tols)), #Balance constraints
-      t(rbind(((treat==1) - (treat!=1)/ratio)*s.weights*X, tols))
-    )
-
-    #Constraint RHS
-    #One per constraint
-    Crhs <- c(
-      0,
-      0,
-      rep(0, ncol(X)),
-      rep(0, ncol(X))
-    )
-
-    #Constraint direction
-    #One per constraint
-    Cdir <- c("==",
-              "==",
-              rep("<", ncol(X)),
-              rep(">", ncol(X))
-    )
-
-    #Coef types
-    types <- c(rep("B", n), #Matching weights
-               rep("C", 1)) #Slack coef for treated group size (n1)
-
-    lower.bound <- c(rep(0, n),
-                     rep(0, 1))
-
-  }
-
-  weights <- NULL
-
-  opt.out <- dispatch_optimizer(solver = solver, obj = O, mat = C, dir = Cdir,
-                                rhs = Crhs, types = types, max = TRUE, lb = lower.bound,
-                                ub = NULL, time = time, verbose = verbose)
-
-  cardinality_error_report(opt.out, solver)
-
-  sol <- switch(solver, "glpk" = opt.out$solution,
-                "symphony" = opt.out$solution,
-                "gurobi" = opt.out$x)
-  if (match_type %in% c("template_ate", "cardinality")) {
-    weights <- sol[seq_len(n)]
-  }
-  else if (match_type %in% c("template_att")) {
-    weights <- rep(1, n)
-    weights[treat != 1] <- sol[seq_len(n0)]
-  }
-
-  weights[weights < 0] <- 0 #negative weights due to numerical instability
-
-  #Make sure sum of weights in both groups is the same (important for exact matching)
-  if (match_type == "template_att" && (is.na(ratio) || ratio != 1)) {
-    weights[treat != 1] <- weights[treat != 1]*sum(weights[treat == 1])/sum(weights[treat != 1])
-  }
-  else {
-    smaller.group <- c(0,1)[which.min(c(sum(weights[treat != 1]), sum(weights[treat == 1])))]
-    weights[treat != smaller.group] <- weights[treat != smaller.group]*sum(weights[treat == smaller.group])/sum(weights[treat != smaller.group])
-  }
-
-  return(list(weights = weights, opt.out = opt.out))
 }
