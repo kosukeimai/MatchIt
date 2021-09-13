@@ -8,7 +8,7 @@ output:
 
 # MatchIt 4.3.0
 
-* Cardinality and template matching can now be used by setting `method = "cardinality"` in `matchit()`. These methods use mixed integer programming to directly select a matched subsample without pairing or stratifying units. Their results can be dramatically improved when using the Gurobi optimizer. See `?method_cardinality` and `vignette("matching-methods")` for more information.
+* Cardinality and template matching can now be used by setting `method = "cardinality"` in `matchit()`. These methods use mixed integer programming to directly select a matched subsample without pairing or stratifying units that satisfied user-supplied balance constraints. Their results can be dramatically improved when using the Gurobi optimizer. See `?method_cardinality` and `vignette("matching-methods")` for more information.
 
 * Added `"lasso"`, `"ridge"`, and `"elasticnet"` as options for `distance`. These estimate propensity scores using lasso, ridge, or elastic net regression, respectively, as implemented in the `glmnet` package.
 
