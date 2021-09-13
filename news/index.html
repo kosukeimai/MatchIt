@@ -79,7 +79,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">MatchIt</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">4.2.0.9005</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">4.3.0</span>
       </span>
     </div>
 
@@ -146,17 +146,17 @@
       <small>Source: <a href='https://github.com/kosukeimai/MatchIt/blob/master/NEWS.md'><code>NEWS.md</code></a></small>
     </div>
 
-    <div id="matchit-development-version" class="section level1">
-<h1 class="page-header" data-toc-text="development version">
-<a href="#matchit-development-version" class="anchor"></a>MatchIt (development version)<small> Unreleased </small>
+    <div id="matchit-430" class="section level1">
+<h1 class="page-header" data-toc-text="4.3.0">
+<a href="#matchit-430" class="anchor"></a>MatchIt 4.3.0<small> 2021-09-13 </small>
 </h1>
 <ul>
-<li><p>Cardinality and template matching can now be used by setting <code>method = "cardinality"</code> in <code><a href="../reference/matchit.html">matchit()</a></code>. These methods use mixed integer programming to directly select a matched subsample without pairing or stratifying units. Their results can be dramatically improved when using the Gurobi optimizer. See <code><a href="../reference/method_cardinality.html">?method_cardinality</a></code> and <code><a href="../articles/matching-methods.html">vignette("matching-methods")</a></code> for more information.</p></li>
+<li><p>Cardinality and template matching can now be used by setting <code>method = "cardinality"</code> in <code><a href="../reference/matchit.html">matchit()</a></code>. These methods use mixed integer programming to directly select a matched subsample without pairing or stratifying units that satisfied user-supplied balance constraints. Their results can be dramatically improved when using the Gurobi optimizer. See <code><a href="../reference/method_cardinality.html">?method_cardinality</a></code> and <code><a href="../articles/matching-methods.html">vignette("matching-methods")</a></code> for more information.</p></li>
 <li><p>Added <code>"lasso"</code>, <code>"ridge"</code>, and <code>"elasticnet"</code> as options for <code>distance</code>. These estimate propensity scores using lasso, ridge, or elastic net regression, respectively, as implemented in the <code>glmnet</code> package.</p></li>
 <li><p>Added <code>"gbm"</code> as an option for <code>distance</code>. This estimates propensity scores using generalized boosted models as implemented in the <code>gbm</code> package. This implementation differs from that in <code>twang</code> by using cross-validation or out-of-bag error to choose the tuning parameter as opposed to balance.</p></li>
 <li><p>A new argument, <code>include.obj</code>, has been added to <code><a href="../reference/matchit.html">matchit()</a></code>. When <code>TRUE</code>, the intermediate matching object created internally will be included in the output in the <code>obj</code> component. See the individual methods pages for information on what is included in each output. This is ignored for some methods.</p></li>
 <li><p>Density plots can now be requested using <code><a href="../reference/plot.matchit.html">plot.matchit()</a></code> by setting <code>type = "density"</code>. These display the density of each covariate in the treatment groups before and after matching and are similar to the plots created by <code><a href="https://ngreifer.github.io/cobalt/reference/bal.plot.html">cobalt::bal.plot()</a></code>. Density plots can be easier to interpret than eCDF plots. <code><a href="../articles/assessing-balance.html">vignette("assessing-balance")</a></code> has been updated with this addition.</p></li>
-<li><p>A clearer error is now printed when the treatment variable is omitted from the <code>formula</code> argument to <code><a href="../reference/matchit.html">matchit()</a></code>.</p></li>
+<li><p>A clearer error is now produced when the treatment variable is omitted from the <code>formula</code> argument to <code><a href="../reference/matchit.html">matchit()</a></code>.</p></li>
 <li><p>Improvements in how <code><a href="../reference/match.data.html">match.data()</a></code> finds the original dataset. It’s still always safer to supply an argument to <code>data</code>, but now <code><a href="../reference/match.data.html">match.data()</a></code> will look in the environment of the <code>matchit</code> formula, then the calling environment of <code><a href="../reference/match.data.html">match.data()</a></code>, then the <code>model</code> component of the <code>matchit</code> object. A clearer error message is now printed when a valid dataset cannot be found in these places.</p></li>
 <li><p>Fixed a bug that would occur when using <code><a href="../reference/summary.matchit.html">summary.matchit()</a></code> with just one covariate.</p></li>
 <li><p>When <code>verbose = TRUE</code> and a propensity score is estimated (i.e., using the <code>distance</code> argument), a message saying so will be displayed.</p></li>
@@ -166,6 +166,7 @@
 <li><p>Typo fixes in documentation and vignettes.</p></li>
 <li><p>Fixed a bug where supplying a “GAM” string to the <code>distance</code> argument (i.e., using the syntax prior to version 4.0.0) would ignore the link supplied.</p></li>
 <li><p>When an incompatible argument is supplied to <code><a href="../reference/matchit.html">matchit()</a></code> (e.g., <code>reestimate</code> with <code>distance = "mahalanobis"</code>), an error or warning will only be produced when that argument has been set to a value other than its default (e.g., so setting <code>reestimate = FALSE</code> will no longer throw an error). This fixes an issue brought up by Vu Ng when using <code>MatchThem</code>.</p></li>
+<li><p>A clearer error is produced when non-finite values are present in the covariates.</p></li>
 </ul>
 </div>
     <div id="matchit-420" class="section level1">
@@ -180,7 +181,7 @@
 <li><p>Slight speed improvements for nearest neighbor matching, especially with <code>exact</code> specified.</p></li>
 <li><p>With <code>method = "nearest"</code>, <code>verbose = TRUE</code>, and <code>exact</code> specified, separate messages and progress bars will be shown for each subgroup of the <code>exact</code> variable(s).</p></li>
 <li><p>A spurious warning that would appear when using a large <code>ratio</code> with <code>replace = TRUE</code> and <code>method = "nearest"</code> no longer appears.</p></li>
-<li><p>Fixed a bug when trying to supply <code>distance</code> as a labelled numeric vector (i.e., resulting from <code>haven</code>).</p></li>
+<li><p>Fixed a bug when trying to supply <code>distance</code> as a labelled numeric vector (e.g., resulting from <code>haven</code>).</p></li>
 <li><p>Fixed some typos in the documentation and vignettes.</p></li>
 </ul>
 </div>

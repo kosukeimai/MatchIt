@@ -104,7 +104,7 @@ matchit(formula,
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">MatchIt</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">4.2.0.9005</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">4.3.0</span>
       </span>
     </div>
 
@@ -323,6 +323,9 @@ matchit(formula,
 <p>Variable ratio matching cannot be used with Mahalanobis distance matching or when <code>distance</code> is supplied as a matrix. The calculations of the numbers of control units each treated unit will be matched to occurs without consideration of <code>caliper</code> or <code>discard</code>. <code>ratio</code> does not have to be an integer but must be greater than 1 and less than <code>n0/n1</code>, where <code>n0</code> and <code>n1</code> are the number of control and treated units, respectively. Setting <code>ratio = n0/n1</code> performs a crude form of full matching where all control units are matched. If <code>min.controls</code> is not specified, it is set to 1 by default. <code>min.controls</code> must be less than <code>ratio</code>, and <code>max.controls</code> must be greater than <code>ratio</code>. See Examples below for an example of their use.</p>
 
 
+    <h2 class="hasAnchor" id="note"><a class="anchor" href="#note"></a>Note</h2>
+
+    <p>Sometimes an error will be produced by <em>Rcpp</em> along the lines of <code>"function 'Rcpp_precious_remove' not provided by package 'Rcpp'"</code>. It is not immediately clear why this happens, though <a href='https://lists.r-forge.r-project.org/pipermail/rcpp-devel/2021-July/010648.html'>this</a> thread appears to provide some insight. In a fresh <span style="R">R</span> session, run <code><a href='https://rdrr.io/r/utils/remove.packages.html'>remove.packages(c("MatchIt", "Rcpp")); install.packages("MatchIt")</a></code>. This should sync <em>MatchIt</em> and <em>Rcpp</em> and ensure they work correctly.</p>
     <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
 
     <p>In a manuscript, you don't need to cite another package when using <code>method = "nearest"</code> because the matching is performed completely within <em>MatchIt</em>. For example, a sentence might read:</p>

@@ -93,7 +93,7 @@ matchit(formula,
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">MatchIt</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">4.2.0.9005</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">4.3.0</span>
       </span>
     </div>
 
@@ -162,7 +162,7 @@ matchit(formula,
     </div>
 
     <div class="ref-description">
-    <p>In <code><a href='matchit.html'>matchit()</a></code>, setting <code>method = "cardinality"</code> performs cardinality matching and other forms of matching using mixed integer programming. Rather than forming pairs, cardinality matching selects the largest subset of units that satisfies user-supplied balance constraints on mean differences. One of several available optimization programs can be used to solve the mixed integer program. The default is the GLPK library as implemented in the <code>Rglpk</code> package, but performance can be dramatically improved using Gurobi and the <code>gurobi</code> package, for which there is a free academic license.</p>
+    <p>In <code><a href='matchit.html'>matchit()</a></code>, setting <code>method = "cardinality"</code> performs cardinality matching and other forms of matching using mixed integer programming. Rather than forming pairs, cardinality matching selects the largest subset of units that satisfies user-supplied balance constraints on mean differences. One of several available optimization programs can be used to solve the mixed integer program. The default is the GLPK library as implemented in the <em>Rglpk</em> package, but performance can be dramatically improved using Gurobi and the <em>gurobi</em> package, for which there is a free academic license.</p>
 <p>This page details the allowable arguments with <code>method = "cardinality"</code>. See <code><a href='matchit.html'>matchit()</a></code> for an explanation of what each argument means in a general context and how it can be specified.</p>
 <p>Below is how <code><a href='matchit.html'>matchit()</a></code> is used for cardinality matching:</p><pre>
 <span class='fu'><a href='matchit.html'>matchit</a></span><span class='op'>(</span><span class='va'>formula</span>,
@@ -223,7 +223,7 @@ matchit(formula,
       <td><p>additional arguments that control the matching specification:</p><dl>
      <dt><code>tols</code></dt><dd><p><code>numeric</code>; a vector of imbalance tolerances for mean differences, one for each covariate in <code>formula</code>. If only one value is supplied, it is applied to all. See <code>std.tols</code> below. Default is <code>.05</code> for standardized mean differences of at most .05 for all covariates between the treatment groups in the matched sample.</p></dd>
      <dt><code>std.tols</code></dt><dd><p><code>logical</code>; whether each entry in <code>tols</code> corresponds to a raw or standardized mean difference. If only one value is supplied, it is applied to all. Default is <code>TRUE</code> for standardized mean differences. The standardization factor is the pooled standard deviation when <code>estimand = "ATE"</code>, the standard deviation of the treated group when <code>estimand = "ATT"</code>, and the standard deviation of the control group when <code>estimand = "ATC"</code> (the same as used in <code><a href='summary.matchit.html'>summary.matchit()</a></code>).</p></dd>
-     <dt><code>solver</code></dt><dd><p>the name of solver to use to solve the optimziation problem. Available options include <code>"glpk"</code>, <code>"symphony"</code>, and <code>"gurobi"</code> for GLPK (implemented in the <em>Rglpk</em> package), SYMPHONY (implemented in the <em>Rsymphony</em> package), and Gurobi (implemented in the <em>gurobi</em> package). The differences between them are in speed and solving ability. GLPK (the default) is the easiest to install, but Gurobi is recommended as it consistently outperforms other solvers and can find solutions even when others can't, and in less time. Gurobi is proprietary but can be used with a free trial or academic license. SYMPHONY may not produce reproducible results, even with a seed set.</p></dd>
+     <dt><code>solver</code></dt><dd><p>the name of solver to use to solve the optimization problem. Available options include <code>"glpk"</code>, <code>"symphony"</code>, and <code>"gurobi"</code> for GLPK (implemented in the <em>Rglpk</em> package), SYMPHONY (implemented in the <em>Rsymphony</em> package), and Gurobi (implemented in the <em>gurobi</em> package), respectively. The differences between them are in speed and solving ability. GLPK (the default) is the easiest to install, but Gurobi is recommended as it consistently outperforms other solvers and can find solutions even when others can't, and in less time. Gurobi is proprietary but can be used with a free trial or academic license. SYMPHONY may not produce reproducible results, even with a seed set.</p></dd>
      <dt><code>time</code></dt><dd><p>the maximum amount of time before the optimization routine aborts, in seconds. Default is 120 (2 minutes). For large problems, this should be set much higher.</p></dd>
   
 </dl>
@@ -245,7 +245,7 @@ matchit(formula,
 <p>The weights are scaled so that the sum of the weights in each group is equal to the number of matched units in the smaller group when cardinality matching or template matching for the ATE, and scaled so that the sum of the weights in the control group is equal to the number of treated units when template matching for the ATT. When the sample sizes of the matched groups is the same (i.e., when <code>ratio = 1</code>), no scaling is done. Robust standard errors should be used in effect estimation after cardinality or template matching (and cluster-robust standard errors if additional pairing is done in the matched sample). See <code><a href='../articles/estimating-effects.html'>vignette("estimating-effects")</a></code> for more information.</p>
 
 <h3 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Specifying Balance Constraints</h3>
-<p>The balance constraints are on the (standardized) mean differences between the matched treatment groups for each covariate. Balance constraints should be set by supplying arguments to <code>tols</code> and <code>std.tols</code>. For example, setting <code>tols = .1</code> and <code>std.tols = TRUE</code> requests that all the mean differences in the matched sample should be within .1 standard deviations for each covariate. Different tolerances can be set for difference variables; it might be beneficial to constrain the mean differences for highly prognostic covariates more tightly than other variables. For example, one could specify <code>tols = c(.001, .05), std.tols = c(TRUE, FALSE)</code> to request that the standadized mean difference for the first covariate is less than .001 and the raw mean difference for the second covariate is less than .05. The values should be specified in the order they appear in <code>formula</code>, except when interactions are present. One can run the following code:</p>
+<p>The balance constraints are on the (standardized) mean differences between the matched treatment groups for each covariate. Balance constraints should be set by supplying arguments to <code>tols</code> and <code>std.tols</code>. For example, setting <code>tols = .1</code> and <code>std.tols = TRUE</code> requests that all the mean differences in the matched sample should be within .1 standard deviations for each covariate. Different tolerances can be set for different variables; it might be beneficial to constrain the mean differences for highly prognostic covariates more tightly than for other variables. For example, one could specify <code>tols = c(.001, .05), std.tols = c(TRUE, FALSE)</code> to request that the standardized mean difference for the first covariate is less than .001 and the raw mean difference for the second covariate is less than .05. The values should be specified in the order they appear in <code>formula</code>, except when interactions are present. One can run the following code:</p>
 <pre><span class='fu'>MatchIt</span><span class='fu'>:::</span><span class='fu'>get_assign</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/stats/model.matrix.html'>model.matrix</a></span><span class='op'>(</span><span class='op'>~</span><span class='va'>X1</span><span class='op'>*</span><span class='va'>X2</span> <span class='op'>+</span> <span class='va'>X3</span>,
                                   data <span class='op'>=</span> <span class='va'>data</span><span class='op'>)</span><span class='op'>)</span><span class='op'>[</span><span class='op'>-</span><span class='fl'>1</span><span class='op'>]</span></pre>
 
@@ -276,7 +276,7 @@ matchit(formula,
 <span class='va'>solver</span> <span class='op'>&lt;-</span> <span class='st'>"glpk"</span>
 
 <span class='co'># 1:1 cardinality matching</span>
-<span class='va'>m.out1</span> <span class='op'>&lt;-</span> <span class='fu'><a href='matchit.html'>matchit</a></span><span class='op'>(</span><span class='va'>treat</span> <span class='op'>~</span> <span class='va'>age</span> <span class='op'>+</span> <span class='va'>educ</span> <span class='op'>+</span> <span class='va'>re74</span> <span class='op'>+</span> <span class='va'>re75</span>,
+<span class='va'>m.out1</span> <span class='op'>&lt;-</span> <span class='fu'><a href='matchit.html'>matchit</a></span><span class='op'>(</span><span class='va'>treat</span> <span class='op'>~</span> <span class='va'>age</span> <span class='op'>+</span> <span class='va'>educ</span> <span class='op'>+</span> <span class='va'>re74</span>,
                   data <span class='op'>=</span> <span class='va'>lalonde</span>, method <span class='op'>=</span> <span class='st'>"cardinality"</span>,
                   estimand <span class='op'>=</span> <span class='st'>"ATT"</span>, ratio <span class='op'>=</span> <span class='fl'>1</span>,
                   tols <span class='op'>=</span> <span class='fl'>.1</span>, solver <span class='op'>=</span> <span class='va'>solver</span><span class='op'>)</span>
@@ -285,10 +285,10 @@ matchit(formula,
 #&gt;  - method: Cardinality matching
 #&gt;  - number of obs.: 614 (original), 370 (matched)
 #&gt;  - target estimand: ATT
-#&gt;  - covariates: age, educ, re74, re75</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>m.out1</span><span class='op'>)</span>
+#&gt;  - covariates: age, educ, re74</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>m.out1</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; 
 #&gt; Call:
-#&gt; matchit(formula = treat ~ age + educ + re74 + re75, data = lalonde, 
+#&gt; matchit(formula = treat ~ age + educ + re74, data = lalonde, 
 #&gt;     method = "cardinality", estimand = "ATT", ratio = 1, tols = 0.1, 
 #&gt;     solver = solver)
 #&gt; 
@@ -297,22 +297,19 @@ matchit(formula,
 #&gt; age        25.8162       28.0303         -0.3094     0.4400    0.0813   0.1577
 #&gt; educ       10.3459       10.2354          0.0550     0.4959    0.0347   0.1114
 #&gt; re74     2095.5737     5619.2365         -0.7211     0.5181    0.2248   0.4470
-#&gt; re75     1532.0553     2466.4844         -0.2903     0.9563    0.1342   0.2876
 #&gt; 
 #&gt; 
 #&gt; Summary of Balance for Matched Data:
 #&gt;      Means Treated Means Control Std. Mean Diff. Var. Ratio eCDF Mean eCDF Max
-#&gt; age        25.8162       25.8649         -0.0068     0.4943    0.0688   0.2054
-#&gt; educ       10.3459       10.2000          0.0726     0.3979    0.0447   0.1135
-#&gt; re74     2095.5737     2570.5264         -0.0972     0.9780    0.0615   0.3243
-#&gt; re75     1532.0553     1852.2194         -0.0995     1.1566    0.0594   0.2054
+#&gt; age        25.8162       26.4000         -0.0816     0.5628    0.0489   0.1351
+#&gt; educ       10.3459       10.2216          0.0618     0.3940    0.0509   0.1405
+#&gt; re74     2095.5737     2575.8640         -0.0983     1.3457    0.0766   0.3892
 #&gt; 
 #&gt; Percent Balance Improvement:
 #&gt;      Std. Mean Diff. Var. Ratio eCDF Mean eCDF Max
-#&gt; age             97.8       14.2      15.4    -30.2
-#&gt; educ           -32.1      -31.4     -28.6     -1.9
-#&gt; re74            86.5       96.6      72.6     27.5
-#&gt; re75            65.7     -225.6      55.7     28.6
+#&gt; age             73.6       30.0      39.9     14.3
+#&gt; educ           -12.5      -32.8     -46.7    -26.2
+#&gt; re74            86.4       54.8      65.9     12.9
 #&gt; 
 #&gt; Sample Sizes:
 #&gt;           Control Treated
@@ -322,7 +319,7 @@ matchit(formula,
 #&gt; Discarded       0       0
 #&gt; </div><div class='input'>
 <span class='co'># Template matching for the ATT</span>
-<span class='va'>m.out2</span> <span class='op'>&lt;-</span> <span class='fu'><a href='matchit.html'>matchit</a></span><span class='op'>(</span><span class='va'>treat</span> <span class='op'>~</span> <span class='va'>age</span> <span class='op'>+</span> <span class='va'>educ</span> <span class='op'>+</span> <span class='va'>re74</span> <span class='op'>+</span> <span class='va'>re75</span>,
+<span class='va'>m.out2</span> <span class='op'>&lt;-</span> <span class='fu'><a href='matchit.html'>matchit</a></span><span class='op'>(</span><span class='va'>treat</span> <span class='op'>~</span> <span class='va'>age</span> <span class='op'>+</span> <span class='va'>educ</span> <span class='op'>+</span> <span class='va'>re74</span>,
                   data <span class='op'>=</span> <span class='va'>lalonde</span>, method <span class='op'>=</span> <span class='st'>"cardinality"</span>,
                   estimand <span class='op'>=</span> <span class='st'>"ATT"</span>, ratio <span class='op'>=</span> <span class='cn'>NA</span>,
                   tols <span class='op'>=</span> <span class='fl'>.1</span>, solver <span class='op'>=</span> <span class='va'>solver</span><span class='op'>)</span>
@@ -331,10 +328,10 @@ matchit(formula,
 #&gt;  - method: Cardinality matching
 #&gt;  - number of obs.: 614 (original), 521 (matched)
 #&gt;  - target estimand: ATT
-#&gt;  - covariates: age, educ, re74, re75</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>m.out2</span>, un <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span>
+#&gt;  - covariates: age, educ, re74</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>m.out2</span>, un <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; 
 #&gt; Call:
-#&gt; matchit(formula = treat ~ age + educ + re74 + re75, data = lalonde, 
+#&gt; matchit(formula = treat ~ age + educ + re74, data = lalonde, 
 #&gt;     method = "cardinality", estimand = "ATT", ratio = NA, tols = 0.1, 
 #&gt;     solver = solver)
 #&gt; 
@@ -343,7 +340,6 @@ matchit(formula,
 #&gt; age        25.8162       25.9643         -0.0207     0.4880    0.0687   0.1794
 #&gt; educ       10.3459       10.1518          0.0966     0.4933    0.0348   0.1046
 #&gt; re74     2095.5737     2583.5615         -0.0999     2.2916    0.1137   0.3748
-#&gt; re75     1532.0553     1739.6074         -0.0645     1.6897    0.0683   0.2310
 #&gt; 
 #&gt; Sample Sizes:
 #&gt;           Control Treated
@@ -352,41 +348,39 @@ matchit(formula,
 #&gt; Unmatched      93       0
 #&gt; Discarded       0       0
 #&gt; </div><div class='input'>
-<span class='co'># Template matching for the ATE with a constraint on</span>
-<span class='co'># sample size</span>
-<span class='va'>m.out3</span> <span class='op'>&lt;-</span> <span class='fu'><a href='matchit.html'>matchit</a></span><span class='op'>(</span><span class='va'>treat</span> <span class='op'>~</span> <span class='va'>age</span> <span class='op'>+</span> <span class='va'>educ</span> <span class='op'>+</span> <span class='va'>re74</span> <span class='op'>+</span> <span class='va'>re75</span>,
+<span class='co'># Template matching for the ATE</span>
+<span class='va'>m.out3</span> <span class='op'>&lt;-</span> <span class='fu'><a href='matchit.html'>matchit</a></span><span class='op'>(</span><span class='va'>treat</span> <span class='op'>~</span> <span class='va'>age</span> <span class='op'>+</span> <span class='va'>educ</span> <span class='op'>+</span> <span class='va'>re74</span>,
                   data <span class='op'>=</span> <span class='va'>lalonde</span>, method <span class='op'>=</span> <span class='st'>"cardinality"</span>,
-                  estimand <span class='op'>=</span> <span class='st'>"ATE"</span>, ratio <span class='op'>=</span> <span class='fl'>1</span>,
+                  estimand <span class='op'>=</span> <span class='st'>"ATE"</span>, ratio <span class='op'>=</span> <span class='cn'>NA</span>,
                   tols <span class='op'>=</span> <span class='fl'>.1</span>, solver <span class='op'>=</span> <span class='va'>solver</span><span class='op'>)</span>
 <span class='va'>m.out3</span>
 </div><div class='output co'>#&gt; A matchit object
 #&gt;  - method: Cardinality matching
-#&gt;  - number of obs.: 614 (original), 180 (matched)
+#&gt;  - number of obs.: 614 (original), 502 (matched)
 #&gt;  - target estimand: ATE
-#&gt;  - covariates: age, educ, re74, re75</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>m.out3</span>, un <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span>
+#&gt;  - covariates: age, educ, re74</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>m.out3</span>, un <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; 
 #&gt; Call:
-#&gt; matchit(formula = treat ~ age + educ + re74 + re75, data = lalonde, 
-#&gt;     method = "cardinality", estimand = "ATE", ratio = 1, tols = 0.1, 
+#&gt; matchit(formula = treat ~ age + educ + re74, data = lalonde, 
+#&gt;     method = "cardinality", estimand = "ATE", ratio = NA, tols = 0.1, 
 #&gt;     solver = solver)
 #&gt; 
 #&gt; Summary of Balance for Matched Data:
 #&gt;      Means Treated Means Control Std. Mean Diff. Var. Ratio eCDF Mean eCDF Max
-#&gt; age        27.2778       27.7000         -0.0461     0.5835    0.0506   0.1000
-#&gt; educ       10.1667       10.1667          0.0000     0.6634    0.0503   0.1444
-#&gt; re74     4276.6254     4815.2682         -0.0911     0.8934    0.0306   0.1111
-#&gt; re75     2346.7966     2345.2431          0.0005     1.0377    0.0470   0.1111
+#&gt; age        26.9778       27.6019         -0.0682     0.5238    0.0676   0.1236
+#&gt; educ       10.3222       10.1820          0.0568     0.6378    0.0216   0.0746
+#&gt; re74     4266.9249     4853.0468         -0.0991     1.2100    0.0535   0.1504
 #&gt; 
 #&gt; Sample Sizes:
 #&gt;           Control Treated
 #&gt; All           429     185
-#&gt; Matched        90      90
-#&gt; Unmatched     339      95
+#&gt; Matched       412      90
+#&gt; Unmatched      17      95
 #&gt; Discarded       0       0
 #&gt; </div><div class='input'>
 <span class='co'># Pairing after 1:1 cardinality matching:</span>
-<span class='va'>m.out4</span> <span class='op'>&lt;-</span> <span class='fu'><a href='matchit.html'>matchit</a></span><span class='op'>(</span><span class='va'>treat</span> <span class='op'>~</span> <span class='va'>age</span> <span class='op'>+</span> <span class='va'>educ</span> <span class='op'>+</span> <span class='va'>re74</span> <span class='op'>+</span> <span class='va'>re75</span>,
-                  data <span class='op'>=</span> <span class='va'>lalonde</span>, method <span class='op'>=</span> <span class='st'>"nearest"</span>,
+<span class='va'>m.out4</span> <span class='op'>&lt;-</span> <span class='fu'><a href='matchit.html'>matchit</a></span><span class='op'>(</span><span class='va'>treat</span> <span class='op'>~</span> <span class='va'>age</span> <span class='op'>+</span> <span class='va'>educ</span> <span class='op'>+</span> <span class='va'>re74</span>,
+                  data <span class='op'>=</span> <span class='va'>lalonde</span>, method <span class='op'>=</span> <span class='st'>"optimal"</span>,
                   distance <span class='op'>=</span> <span class='st'>"mahalanobis"</span>,
                   discard <span class='op'>=</span> <span class='va'>m.out1</span><span class='op'>$</span><span class='va'>weights</span> <span class='op'>==</span> <span class='fl'>0</span><span class='op'>)</span>
 
@@ -395,21 +389,19 @@ matchit(formula,
 <span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>m.out4</span>, un <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; 
 #&gt; Call:
-#&gt; matchit(formula = treat ~ age + educ + re74 + re75, data = lalonde, 
-#&gt;     method = "nearest", distance = "mahalanobis", discard = m.out1$weights == 
+#&gt; matchit(formula = treat ~ age + educ + re74, data = lalonde, 
+#&gt;     method = "optimal", distance = "mahalanobis", discard = m.out1$weights == 
 #&gt;         0)
 #&gt; 
 #&gt; Summary of Balance for Matched Data:
 #&gt;      Means Treated Means Control Std. Mean Diff. Var. Ratio eCDF Mean eCDF Max
-#&gt; age        25.8162       25.8649         -0.0068     0.4943    0.0688   0.2054
-#&gt; educ       10.3459       10.2000          0.0726     0.3979    0.0447   0.1135
-#&gt; re74     2095.5737     2570.5264         -0.0972     0.9780    0.0615   0.3243
-#&gt; re75     1532.0553     1852.2194         -0.0995     1.1566    0.0594   0.2054
+#&gt; age        25.8162       26.4000         -0.0816     0.5628    0.0489   0.1351
+#&gt; educ       10.3459       10.2216          0.0618     0.3940    0.0509   0.1405
+#&gt; re74     2095.5737     2575.8640         -0.0983     1.3457    0.0766   0.3892
 #&gt;      Std. Pair Dist.
-#&gt; age           0.6520
-#&gt; educ          0.6479
-#&gt; re74          0.4648
-#&gt; re75          0.5263
+#&gt; age           0.3838
+#&gt; educ          0.5511
+#&gt; re74          0.2068
 #&gt; 
 #&gt; Sample Sizes:
 #&gt;           Control Treated
@@ -420,16 +412,15 @@ matchit(formula,
 #&gt; </div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>m.out1</span>, un <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; 
 #&gt; Call:
-#&gt; matchit(formula = treat ~ age + educ + re74 + re75, data = lalonde, 
+#&gt; matchit(formula = treat ~ age + educ + re74, data = lalonde, 
 #&gt;     method = "cardinality", estimand = "ATT", ratio = 1, tols = 0.1, 
 #&gt;     solver = solver)
 #&gt; 
 #&gt; Summary of Balance for Matched Data:
 #&gt;      Means Treated Means Control Std. Mean Diff. Var. Ratio eCDF Mean eCDF Max
-#&gt; age        25.8162       25.8649         -0.0068     0.4943    0.0688   0.2054
-#&gt; educ       10.3459       10.2000          0.0726     0.3979    0.0447   0.1135
-#&gt; re74     2095.5737     2570.5264         -0.0972     0.9780    0.0615   0.3243
-#&gt; re75     1532.0553     1852.2194         -0.0995     1.1566    0.0594   0.2054
+#&gt; age        25.8162       26.4000         -0.0816     0.5628    0.0489   0.1351
+#&gt; educ       10.3459       10.2216          0.0618     0.3940    0.0509   0.1405
+#&gt; re74     2095.5737     2575.8640         -0.0983     1.3457    0.0766   0.3892
 #&gt; 
 #&gt; Sample Sizes:
 #&gt;           Control Treated
