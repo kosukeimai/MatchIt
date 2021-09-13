@@ -35,7 +35,7 @@ arguments passed to \fun{plot} to control the appearance of the plot. Not all op
 }
 }
 \details{
-\code{plot.matchit} makes one of five different plots depending on the argument supplied to \code{type}. The first three, \code{"qq"}, \code{"ecdf"}, and \code{"density"}, assess balace on the covariates. When \code{interactive = TRUE}, plots for three variables will be displayed at a time, and the prompt in the console allows you to move on to the next set of variables. When \code{interactive = FALSE}, multiple pages are plotted at the same time, but only the last few variables will be visible in the displayed plot. To see only a few specific variables at a time, use the \code{which.xs} argument to display plots for just those variables. If fewer than three variables are available (after expanding factors into their dummies), \code{interactive} is ignored.
+\code{plot.matchit} makes one of five different plots depending on the argument supplied to \code{type}. The first three, \code{"qq"}, \code{"ecdf"}, and \code{"density"}, assess balance on the covariates. When \code{interactive = TRUE}, plots for three variables will be displayed at a time, and the prompt in the console allows you to move on to the next set of variables. When \code{interactive = FALSE}, multiple pages are plotted at the same time, but only the last few variables will be visible in the displayed plot. To see only a few specific variables at a time, use the \code{which.xs} argument to display plots for just those variables. If fewer than three variables are available (after expanding factors into their dummies), \code{interactive} is ignored.
 
 With \code{type = "qq"}, empirical quantile-quantile (eQQ) plots are created for each covariate before and after matching. The plots involve interpolating points in the smaller group based on the weighted quantiles of the other group. When points are approximately on the 45-degree line, the distributions in the treatment and control groups are approximately equal. Major deviations indicate departures from distributional balance. With variable with fewer than 5 unique values, points are jittered to more easily visualize counts.
 
@@ -50,9 +50,6 @@ With \code{type = "jitter"}, a jitter plot is displayed for distance values befo
 With \code{type = "histogram"}, a histogram of distance values is displayed for the treatment and control groups before and after matching. This method requires a distance variable (e.g., a propensity score) to have been estimated or supplied in the call to \code{matchit()}. With subclassification, vertical lines representing the subclass boundaries are overlay on the plots.
 
 With all methods, sampling weights are incorporated into the weights if present.
-}
-\value{
-A plot is displayed, and \code{x} is invisibly returned.
 }
 \note{
 Sometimes, bugs in the plotting functions can cause strange layout or size issues. Running \fun{frame} or \fun{dev.off} can be used to reset the plotting pane (note the latter will delete any plots in the plot history).

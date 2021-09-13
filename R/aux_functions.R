@@ -484,8 +484,9 @@ info.to.method <- function(info) {
            "full" = "optimal full matching",
            "genetic" = "genetic matching",
            "subclass" = paste0("subclassification (", info$subclass, " subclasses)"),
-           "cardinality" = "cardinality matching")
-  out.list[["replace"]] <- if (!is.null(info$replace) && info$method %in% c("nearest", "optimal", "genetic")) {
+           "cardinality" = "cardinality matching",
+           "an unspecified matching method")
+  out.list[["replace"]] <- if (!is.null(info$replace) && info$method %in% c("nearest", "genetic")) {
     if (info$replace) "with replacement"
     else "without replacement"
   } else NULL
@@ -781,7 +782,7 @@ round_df_char <- function(df, digits, pad = "0", na_vals = "") {
 }
 
 #Generalized inverse; port of MASS::ginv()
-generalized_inverse <-function(sigma) {
+generalized_inverse <- function(sigma) {
   sigmasvd <- svd(sigma)
   pos <- sigmasvd$d > max(1e-8 * sigmasvd$d[1L], 0)
   sigma_inv <- sigmasvd$v[, pos, drop = FALSE] %*% (sigmasvd$d[pos]^-1 * t(sigmasvd$u[, pos, drop = FALSE]))

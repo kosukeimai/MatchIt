@@ -138,6 +138,9 @@ Variable ratio matching cannot be used with Mahalanobis distance matching or whe
 }
 
 }
+\note{
+Sometimes an error will be produced by \emph{Rcpp} along the lines of \code{"function 'Rcpp_precious_remove' not provided by package 'Rcpp'"}. It is not immediately clear why this happens, though \href{https://lists.r-forge.r-project.org/pipermail/rcpp-devel/2021-July/010648.html}{this} thread appears to provide some insight. In a fresh \R session, run \code{remove.packages(c("MatchIt", "Rcpp")); install.packages("MatchIt")}. This should sync \emph{MatchIt} and \emph{Rcpp} and ensure they work correctly.
+}
 \references{
 In a manuscript, you don't need to cite another package when using \code{method = "nearest"} because the matching is performed completely within \emph{MatchIt}. For example, a sentence might read:
 
