@@ -196,7 +196,11 @@ matchit2full <- function(treat, formula, data, distance, discarded,
     }
     else mo_ <- mo
 
-    if (any(dim(mo_) == 0)) next
+    if (any(dim(mo_) == 0) || !any(is.finite(mo_))) next
+    else if (all(dim(mo_) == 1)) {
+      pair[ex == e] <- paste(1, e, sep = "|")
+      next
+    }
 
     withCallingHandlers({
       p[[e]] <- do.call(optmatch::fullmatch,
@@ -210,8 +214,8 @@ matchit2full <- function(treat, formula, data, distance, discarded,
       warning(paste0("(from optmatch) ", conditionMessage(w)), call. = FALSE, immediate. = TRUE)
       invokeRestart("muffleWarning")
     },
-    error = function(e) {
-      stop(paste0("(from optmatch) ", conditionMessage(e)), call. = FALSE)
+    error = function(e1) {
+      stop(paste0("(from optmatch) ", conditionMessage(e1)), call. = FALSE)
     })
 
     pair[names(p[[e]])[!is.na(p[[e]])]] <- paste(as.character(p[[e]][!is.na(p[[e]])]), e, sep = "|")
@@ -367,8 +371,8 @@ matchit2optimal <- function(treat, formula, data, distance, discarded,
     else mo_ <- mo
 
     if (any(dim(mo_) == 0)) next
-    if (all(dim(mo_)==1)) {
-      pair[c(rownames(mo_), colnames(mo_))] <- rownames(mo_)
+    else if (all(dim(mo_) == 1)) {
+      pair[ex == e] <- paste(1, e, sep = "|")
       next
     }
 
@@ -404,8 +408,8 @@ matchit2optimal <- function(treat, formula, data, distance, discarded,
       warning(paste0("(from optmatch) ", conditionMessage(w)), call. = FALSE, immediate. = TRUE)
       invokeRestart("muffleWarning")
     },
-    error = function(e) {
-      stop(paste0("(from optmatch) ", conditionMessage(e)), call. = FALSE)
+    error = function(e1) {
+      stop(paste0("(from optmatch) ", conditionMessage(e1)), call. = FALSE)
     })
 
     pair[names(p[[e]])[!is.na(p[[e]])]] <- paste(as.character(p[[e]][!is.na(p[[e]])]), e, sep = "|")
