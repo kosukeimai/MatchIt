@@ -397,12 +397,12 @@ matchit2optimal <- function(treat, formula, data, distance, discarded,
 
     withCallingHandlers({
       p[[e]] <- do.call(optmatch::fullmatch,
-                   c(list(mo_,
-                          mean.controls = ratio_,
-                          min.controls = min.controls_,
-                          max.controls = max.controls_,
-                          data = treat), #just to get rownames; not actually used in matching
-                     A))
+                        c(list(mo_,
+                               mean.controls = ratio_,
+                               min.controls = min.controls_,
+                               max.controls = max.controls_,
+                               data = treat), #just to get rownames; not actually used in matching
+                          A))
     },
     warning = function(w) {
       warning(paste0("(from optmatch) ", conditionMessage(w)), call. = FALSE, immediate. = TRUE)
@@ -716,7 +716,7 @@ matchit2nearest <-  function(treat, data, distance, discarded,
                              formula = NULL, estimand = "ATT", verbose = FALSE,
                              is.full.mahalanobis, fast = TRUE,
                              min.controls = NULL, max.controls = NULL,
-                             antiexact = NULL, TEST = FALSE, ...){
+                             antiexact = NULL, TEST = FALSE, reuse.max = NULL, ...){
 
   if (verbose) {
     if (fast) check.package("RcppProgress")
@@ -805,7 +805,22 @@ matchit2nearest <-  function(treat, data, distance, discarded,
     antiexactcovs <- NULL
   }
 
-  if (replace) {
+  if (is.null(reuse.max)) {
+    if (replace) reuse.max <- n1
+    else reuse.max <- 1L
+  }
+  else if (length(reuse.max) == 1 && is.numeric(reuse.max) && !is.finite(reuse.max)
+           && !anyNA(reuse.max)) {
+    reuse.max <- n1
+  }
+  else if (abs(reuse.max - round(reuse.max)) > 1e-8 || length(reuse.max) != 1 ||
+           anyNA(reuse.max) || reuse.max < 1) {
+    stop("'reuse.max' must be an integer of length 1.", call. = FALSE)
+  }
+
+  reuse.max <- as.integer(reuse.max)
+
+  if (reuse.max >= n1) {
     m.order <- "data"
   }
 
@@ -815,9 +830,9 @@ matchit2nearest <-  function(treat, data, distance, discarded,
     cc <- intersect(as.integer(ex)[treat==1], as.integer(ex)[treat==0])
     if (length(cc) == 0) stop("No matches were found.", call. = FALSE)
 
-    e_ratios <- vapply(levels(ex), function(e) sum(treat[ex == e] == 0)/sum(treat[ex == e] == 1), numeric(1L))
+    e_ratios <- vapply(levels(ex), function(e) reuse.max*sum(treat[ex == e] == 0)/sum(treat[ex == e] == 1), numeric(1L))
 
-    if (!replace) {
+    if (reuse.max < n1) {
       if (any(e_ratios < 1)) {
         warning(paste0("Fewer ", tc[2], " units than ", tc[1], " units in some 'exact' strata; not all ", tc[1], " units will get a match."), immediate. = TRUE, call. = FALSE)
       }
@@ -832,9 +847,9 @@ matchit2nearest <-  function(treat, data, distance, discarded,
   else {
     ex <- NULL
     # ex <- factor(rep("_", length(treat)), levels = "_")
-    e_ratios <- setNames(sum(treat == 0)/sum(treat == 1), levels(ex))
+    e_ratios <- setNames(reuse.max*sum(treat == 0)/sum(treat == 1), levels(ex))
 
-    if (!replace) {
+    if (reuse.max < n1) {
       if (e_ratios < 1) {
         warning(paste0("Fewer ", tc[2], " units than ", tc[1], " units; not all ", tc[1], " units will get a match."), immediate. = TRUE, call. = FALSE)
       }
@@ -845,7 +860,6 @@ matchit2nearest <-  function(treat, data, distance, discarded,
           warning(paste0("Not enough ", tc[2], " units for an average of ", ratio, " matches per ", tc[1], " unit."), immediate. = TRUE, call. = FALSE)
       }
     }
-
   }
 
   #Variable ratio (extremal matching), Ming & Rosenbaum (2000)
@@ -896,19 +910,13 @@ matchit2nearest <-  function(treat, data, distance, discarded,
   if (is.null(ex)) {
     ord <- switch(m.order,
                   "largest" = order(distance[treat == 1], decreasing = TRUE),
-                  "smallest" = order(distance[treat == 1]),
+                  "smallest" = order(distance[treat == 1], decreasing = FALSE),
                   "random" = sample(seq_len(n1), n1, replace = FALSE),
                   "data" = seq_len(n1))
     mm <- matrix(NA_integer_, nrow = n1, ncol = max_rat, dimnames = list(lab1))
 
-    # if (TEST) {
-    #   mm <- fast_match(treat, discarded, distance, distance_mat, caliper.dist, caliper.covs, caliper.covs.mat,
-    #                    mahcovs, mahSigma_inv)
-    # }
-    # else {
-      mm <- nn_matchC(mm, treat, ord, ratio, max_rat, replace, discarded, distance, distance_mat, ex, caliper.dist,
-                      caliper.covs, caliper.covs.mat, mahcovs, mahSigma_inv, antiexactcovs, verbose)
-    # }
+    mm <- nn_matchC(mm, treat, ord, ratio, max_rat, discarded, reuse.max, distance, distance_mat, ex, caliper.dist,
+                    caliper.covs, caliper.covs.mat, mahcovs, mahSigma_inv, antiexactcovs, verbose)
   }
   else {
     mm_list <- lapply(levels(ex), function(e) {
@@ -933,13 +941,13 @@ matchit2nearest <-  function(treat, data, distance, discarded,
       n1_ <- sum(treat_ == 1)
       ord_ <- switch(m.order,
                      "largest" = order(distance_[treat_ == 1], decreasing = TRUE),
-                     "smallest" = order(distance_[treat_ == 1]),
+                     "smallest" = order(distance_[treat_ == 1], decreasing = FALSE),
                      "random" = sample(seq_len(n1_), n1_, replace = FALSE),
                      "data" = seq_len(n1_))
 
       mm_ <- matrix(NA_integer_, nrow = sum(treat_==1), ncol = max_rat, dimnames = list(names(treat_)[treat_ == 1]))
 
-      mm_ <- nn_matchC(mm_, treat_, ord_, ratio_, max_rat, replace, discarded_, distance_, distance_mat_, NULL, caliper.dist,
+      mm_ <- nn_matchC(mm_, treat_, ord_, ratio_, max_rat, discarded_, reuse.max, distance_, distance_mat_, NULL, caliper.dist,
                        caliper.covs, caliper.covs.mat_, mahcovs_, mahSigma_inv, antiexactcovs, verbose)
 
       mm_[] <- seq_along(treat)[.e][mm_]
@@ -951,7 +959,7 @@ matchit2nearest <-  function(treat, data, distance, discarded,
 
   if (verbose) cat("Calculating matching weights... ")
 
-  if (replace) {
+  if (reuse.max > 1) {
     psclass <- NULL
   }
   else {

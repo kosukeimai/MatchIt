@@ -11,8 +11,8 @@ IntegerMatrix nn_matchC(const IntegerMatrix& mm_,
                         const IntegerVector& ord_,
                         const IntegerVector& ratio,
                         const int& max_rat,
-                        const bool& replace,
                         const LogicalVector& discarded,
+                        const int& reuse_max,
                         const Nullable<NumericVector>& distance_ = R_NilValue,
                         const Nullable<NumericMatrix>& distance_mat_ = R_NilValue,
                         const Nullable<IntegerVector>& exact_ = R_NilValue,
@@ -42,6 +42,7 @@ IntegerMatrix nn_matchC(const IntegerMatrix& mm_,
   bool use_caliper_covs = false;
   bool use_mah_covs = false;
   bool use_antiexact = false;
+  bool use_reuse_max = false;
 
   // Info about original treat
   int n_ = treat_.size();
@@ -58,7 +59,9 @@ IntegerMatrix nn_matchC(const IntegerMatrix& mm_,
   IntegerMatrix mm = mm_;
 
   // Store who has been matched
-  LogicalVector matched = clone(discarded);
+  // LogicalVector matched = clone(discarded);
+  IntegerVector matched = rep(0, n_);
+  matched[discarded] = n1_;
 
   // After discarding
 
@@ -118,12 +121,15 @@ IntegerMatrix nn_matchC(const IntegerMatrix& mm_,
     n_anti = antiexact_covs.ncol();
     use_antiexact = true;
   }
+  if (reuse_max < n1_) {
+    use_reuse_max = true;
+  }
 
   bool ps_diff_assigned;
 
   //progress bar
   int prog_length;
-  if (replace) prog_length = n1_ + 1;
+  if (!use_reuse_max) prog_length = n1_ + 1;
   else prog_length = max_rat*n1_ + 1;
   Progress p(prog_length, disl_prog);
 
@@ -140,7 +146,11 @@ IntegerMatrix nn_matchC(const IntegerMatrix& mm_,
 
       p.increment();
 
-      if (all(as<LogicalVector>(matched[ind0])).is_true()) {
+      // if (all(as<LogicalVector>(matched[ind0])).is_true()) {
+      //   break;
+      // }
+
+      if (all(as<IntegerVector>(matched[ind0]) >= reuse_max).is_true()){
         break;
       }
 
@@ -160,7 +170,7 @@ IntegerMatrix nn_matchC(const IntegerMatrix& mm_,
 
       c_eligible = ind0; // index among sample
 
-      c_eligible = c_eligible[!as<LogicalVector>(matched[c_eligible])];
+      c_eligible = c_eligible[as<IntegerVector>(matched[c_eligible]) < reuse_max];
 
       if (use_exact) {
         exact_c = exact[c_eligible];
@@ -226,7 +236,7 @@ IntegerMatrix nn_matchC(const IntegerMatrix& mm_,
       num_eligible = c_eligible.size();
 
       //If replace and few eligible controls, assign all and move on
-      if (replace && (num_eligible <= t_rat)) {
+      if (!use_reuse_max && (num_eligible <= t_rat)) {
         for (j = 0; j < num_eligible; ++j) {
           mm( t , j ) = c_eligible[j] + 1;
         }
@@ -260,7 +270,7 @@ IntegerMatrix nn_matchC(const IntegerMatrix& mm_,
       }
       match_distance = match_distance[finite_match_distance];
 
-      if (replace) {
+      if (!use_reuse_max) {
         //When matching w/ replacement, get t_rat closest control units
         indices = Range(0, num_eligible - 1);
 
@@ -278,11 +288,11 @@ IntegerMatrix nn_matchC(const IntegerMatrix& mm_,
 
         mm( t , rat ) = c_chosen + 1; // + 1 because C indexing starts at 0 but mm is sent to R
 
-        matched[c_chosen] = true;
+        matched[c_chosen] = matched[c_chosen] + 1;
       }
     }
 
-    if (replace) break;
+    if (!use_reuse_max) break;
   }
 
   p.update(prog_length);
