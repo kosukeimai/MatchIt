@@ -12,6 +12,8 @@ output:
 
 * Fixed a bug where `method = "full"` would fail when some exact matching strata contained exactly one treated unit and exactly one control unit. (#88)
 
+* Fixed a bug introduced in 4.3.0 where the inclusion of character variables would cause the error `"Non-finite values are not allowed in the covariates."` Thanks to Moaath Mustafa.
+
 # MatchIt 4.3.0
 
 * Cardinality and template matching can now be used by setting `method = "cardinality"` in `matchit()`. These methods use mixed integer programming to directly select a matched subsample without pairing or stratifying units that satisfied user-supplied balance constraints. Their results can be dramatically improved when using the Gurobi optimizer. See `?method_cardinality` and `vignette("matching-methods")` for more information.

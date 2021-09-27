@@ -202,8 +202,8 @@ matchit <- function(formula, data = NULL, method = "nearest", distance = "glm",
   covs <- model.frame(covs.formula, data = data, na.action = "na.pass")
   for (i in seq_len(ncol(covs))) {
     if (anyNA(covs[[i]])) stop("Missing values are not allowed in the covariates.", call. = FALSE)
-    if (any(!is.finite(covs[[i]]))) stop("Non-finite values are not allowed in the covariates.", call. = FALSE)
     if (is.character(covs[[i]])) covs[[i]] <- factor(covs[[i]])
+    else if (any(!is.finite(covs[[i]]))) stop("Non-finite values are not allowed in the covariates.", call. = FALSE)
   }
 
   #Process discard
