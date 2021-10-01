@@ -93,7 +93,6 @@ for variable ratio matching, the minimum and maximum number of controls units to
   \item{verbose}{
 \code{logical}; whether information about the matching process should be printed to the console. When \code{TRUE}, a progress bar implemented using \emph{RcppProgress} will be displayed.
 }
-  \item{\dots}{
 \item{\dots}{
 additional arguments that control the matching specification:
   \describe{
