@@ -80,10 +80,10 @@ matchit2exact <- function(treat, covs, data, estimand = "ATT", verbose = FALSE, 
 
 # MATCHIT method = full-------------------------------------
 matchit2full <- function(treat, formula, data, distance, discarded,
+                         ratio = NULL, #min.controls and max.controls in attrs of replace
                          caliper = NULL, mahvars = NULL, exact = NULL,
                          estimand = "ATT", verbose = FALSE,
-                         is.full.mahalanobis, min.controls = 0,
-                         max.controls = Inf, antiexact = NULL, ...) {
+                         is.full.mahalanobis, antiexact = NULL, ...) {
 
   check.package("optmatch")
 
@@ -98,10 +98,6 @@ matchit2full <- function(treat, formula, data, distance, discarded,
   omps <- getOption("optmatch_max_problem_size")
   on.exit(options(optmatch_max_problem_size = omps))
   options(optmatch_max_problem_size = Inf)
-
-  processed.ratio <- process.ratio(method = "full", min.controls = min.controls, max.controls = max.controls)
-  min.controls <- processed.ratio[["min.controls"]]
-  max.controls <- processed.ratio[["max.controls"]]
 
   estimand <- toupper(estimand)
   estimand <- match_arg(estimand, c("ATT", "ATC", "ATE"))
@@ -124,6 +120,9 @@ matchit2full <- function(treat, formula, data, distance, discarded,
     }
     mahvars <- formula
   }
+
+  min.controls <- attr(ratio, "min.controls")
+  max.controls <- attr(ratio, "max.controls")
 
   #Exact matching strata
   if (!is.null(exact)) {
@@ -247,8 +246,7 @@ matchit2full <- function(treat, formula, data, distance, discarded,
 matchit2optimal <- function(treat, formula, data, distance, discarded,
                             ratio = 1, caliper = NULL, mahvars = NULL, exact = NULL,
                             estimand = "ATT", verbose = FALSE,
-                            is.full.mahalanobis, min.controls = NULL,
-                            max.controls = NULL, antiexact = NULL, ...) {
+                            is.full.mahalanobis,  antiexact = NULL, ...) {
 
   check.package("optmatch")
 
@@ -262,13 +260,6 @@ matchit2optimal <- function(treat, formula, data, distance, discarded,
   omps <- getOption("optmatch_max_problem_size")
   on.exit(options(optmatch_max_problem_size = omps))
   options(optmatch_max_problem_size = Inf)
-
-  processed.ratio <- process.ratio(ratio, method = "optimal",
-                                   min.controls = min.controls,
-                                   max.controls = max.controls)
-  ratio <- processed.ratio[["ratio"]]
-  min.controls <- processed.ratio[["min.controls"]]
-  max.controls <- processed.ratio[["max.controls"]]
 
   estimand <- toupper(estimand)
   estimand <- match_arg(estimand, c("ATT", "ATC"))
@@ -296,6 +287,9 @@ matchit2optimal <- function(treat, formula, data, distance, discarded,
     warning("Calipers are currently not compatible with method = \"optimal\" and will be ignored.", call. = FALSE, immediate. = TRUE)
     caliper <- NULL
   }
+
+  min.controls <- attr(ratio, "min.controls")
+  max.controls <- attr(ratio, "max.controls")
 
   if (is.null(max.controls)) {
     min.controls <- max.controls <- ratio
@@ -471,9 +465,6 @@ matchit2genetic <- function(treat, data, distance, discarded,
   }
 
   treat <- setNames(as.integer(treat == focal), names(treat))
-
-  processed.ratio <- process.ratio(ratio, method = "genetic")
-  ratio <- processed.ratio[["ratio"]]
 
   n.obs <- length(treat)
   n1 <- sum(treat == 1)
@@ -715,20 +706,12 @@ matchit2nearest <-  function(treat, data, distance, discarded,
                              caliper = NULL, mahvars = NULL, exact = NULL,
                              formula = NULL, estimand = "ATT", verbose = FALSE,
                              is.full.mahalanobis, fast = TRUE,
-                             min.controls = NULL, max.controls = NULL,
-                             antiexact = NULL, TEST = FALSE, reuse.max = NULL, ...){
+                             antiexact = NULL, ...){
 
   if (verbose) {
     if (fast) check.package("RcppProgress")
     cat("Nearest neighbor matching... \n")
   }
-
-  processed.ratio <- process.ratio(ratio, method = "nearest",
-                                   min.controls = min.controls,
-                                   max.controls = max.controls)
-  ratio <- processed.ratio[["ratio"]]
-  min.controls <- processed.ratio[["min.controls"]]
-  max.controls <- processed.ratio[["max.controls"]]
 
   estimand <- toupper(estimand)
   estimand <- match_arg(estimand, c("ATT", "ATC"))
@@ -753,27 +736,6 @@ matchit2nearest <-  function(treat, data, distance, discarded,
     names(distance) <- names(treat)
   }
 
-  if (!is.null(caliper)) {
-    if (any(names(caliper) != "")) {
-      caliper.covs <- caliper[names(caliper) != ""]
-      caliper.covs.mat <- get.covs.matrix(reformulate(names(caliper.covs)), data = data)
-    }
-    else {
-      caliper.covs.mat <- caliper.covs <- NULL
-    }
-
-    if (any(names(caliper) == "")) {
-      caliper.dist <- caliper[names(caliper) == ""]
-    }
-    else {
-      caliper.dist <- NULL
-    }
-  }
-  else {
-    caliper.dist <- caliper.covs <- NULL
-    caliper.covs.mat <- NULL
-  }
-
   mahcovs <- mahSigma_inv <- distance_mat <- NULL
   if (is.full.mahalanobis) {
     mahcovs <- get.covs.matrix(formula, data)
@@ -795,6 +757,30 @@ matchit2nearest <-  function(treat, data, distance, discarded,
     distance <- NULL
   }
 
+  min.controls <- attr(ratio, "min.controls")
+  max.controls <- attr(ratio, "max.controls")
+
+  if (!is.null(caliper)) {
+    if (any(names(caliper) != "")) {
+      caliper.covs <- caliper[names(caliper) != ""]
+      caliper.covs.mat <- get.covs.matrix(reformulate(names(caliper.covs)), data = data)
+    }
+    else {
+      caliper.covs.mat <- caliper.covs <- NULL
+    }
+
+    if (any(names(caliper) == "")) {
+      caliper.dist <- caliper[names(caliper) == ""]
+    }
+    else {
+      caliper.dist <- NULL
+    }
+  }
+  else {
+    caliper.dist <- caliper.covs <- NULL
+    caliper.covs.mat <- NULL
+  }
+
   if (!is.null(antiexact)) {
     antiexactcovs <- model.frame(antiexact, data)
     antiexactcovs <- do.call("cbind", lapply(seq_len(ncol(antiexactcovs)), function(i) {
@@ -805,20 +791,7 @@ matchit2nearest <-  function(treat, data, distance, discarded,
     antiexactcovs <- NULL
   }
 
-  if (is.null(reuse.max)) {
-    if (replace) reuse.max <- n1
-    else reuse.max <- 1L
-  }
-  else if (length(reuse.max) == 1 && is.numeric(reuse.max) && !is.finite(reuse.max)
-           && !anyNA(reuse.max)) {
-    reuse.max <- n1
-  }
-  else if (abs(reuse.max - round(reuse.max)) > 1e-8 || length(reuse.max) != 1 ||
-           anyNA(reuse.max) || reuse.max < 1) {
-    stop("'reuse.max' must be an integer of length 1.", call. = FALSE)
-  }
-
-  reuse.max <- as.integer(reuse.max)
+  reuse.max <- attr(replace, "reuse.max")
 
   if (reuse.max >= n1) {
     m.order <- "data"
@@ -830,9 +803,10 @@ matchit2nearest <-  function(treat, data, distance, discarded,
     cc <- intersect(as.integer(ex)[treat==1], as.integer(ex)[treat==0])
     if (length(cc) == 0) stop("No matches were found.", call. = FALSE)
 
-    e_ratios <- vapply(levels(ex), function(e) reuse.max*sum(treat[ex == e] == 0)/sum(treat[ex == e] == 1), numeric(1L))
-
     if (reuse.max < n1) {
+
+      e_ratios <- vapply(levels(ex), function(e) sum(treat[ex == e] == 0)*(reuse.max/sum(treat[ex == e] == 1)), numeric(1L))
+
       if (any(e_ratios < 1)) {
         warning(paste0("Fewer ", tc[2], " units than ", tc[1], " units in some 'exact' strata; not all ", tc[1], " units will get a match."), immediate. = TRUE, call. = FALSE)
       }
@@ -847,9 +821,11 @@ matchit2nearest <-  function(treat, data, distance, discarded,
   else {
     ex <- NULL
     # ex <- factor(rep("_", length(treat)), levels = "_")
-    e_ratios <- setNames(reuse.max*sum(treat == 0)/sum(treat == 1), levels(ex))
 
     if (reuse.max < n1) {
+
+      e_ratios <- setNames(sum(treat == 0)*(as.numeric(reuse.max)/sum(treat == 1)), levels(ex))
+
       if (e_ratios < 1) {
         warning(paste0("Fewer ", tc[2], " units than ", tc[1], " units; not all ", tc[1], " units will get a match."), immediate. = TRUE, call. = FALSE)
       }
@@ -1104,9 +1080,6 @@ matchit2cardinality <-  function(treat, data, discarded, formula,
   }
 
   lab <- names(treat)
-
-  processed.ratio <- process.ratio(ratio, method = "cardinality")
-  ratio <- processed.ratio[["ratio"]]
 
   weights <- setNames(rep(0, length(treat)), lab)
 

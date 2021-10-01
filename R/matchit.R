@@ -47,6 +47,12 @@ matchit <- function(formula, data = NULL, method = "nearest", distance = "glm",
     for (i in ignored.inputs) assign(i, NULL)
   }
 
+  #Process replace
+  replace <- process.replace(replace, method, ...)
+
+  #Process ratio
+  ratio <- process.ratio(ratio, method, ...)
+
   #Process s.weights
   if (!is.null(s.weights)) {
     if (is.character(s.weights)) {
