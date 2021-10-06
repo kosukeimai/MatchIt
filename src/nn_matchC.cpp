@@ -53,15 +53,11 @@ IntegerMatrix nn_matchC(const IntegerMatrix& mm_,
   int n0_ = n_ - n1_;
 
   // Output matrix with sample indices of C units
-  // IntegerMatrix mm(n1_, max_rat);
-  // mm.fill(NA_INTEGER);
-  // rownames(mm) = as<CharacterVector>(treat_.names())[ind1_];
   IntegerMatrix mm = mm_;
 
   // Store who has been matched
-  // LogicalVector matched = clone(discarded);
   IntegerVector matched = rep(0, n_);
-  matched[discarded] = n1_;
+  matched[discarded] = n1_; //discarded are unmatchable
 
   // After discarding
 
@@ -145,10 +141,6 @@ IntegerMatrix nn_matchC(const IntegerMatrix& mm_,
       if (k % 500 == 0) Rcpp::checkUserInterrupt();
 
       p.increment();
-
-      // if (all(as<LogicalVector>(matched[ind0])).is_true()) {
-      //   break;
-      // }
 
       if (all(as<IntegerVector>(matched[ind0]) >= reuse_max).is_true()){
         break;
