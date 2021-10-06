@@ -501,18 +501,19 @@ check.package <- function(package.name, alternative = FALSE) {
 }
 
 #Create info component of matchit object
-create_info <- function(method, fn1, link, discard, replace, ratio, max.controls, mcall, mahalanobis, subclass, antiexact, distance_is_matrix) {
+create_info <- function(method, fn1, link, discard, replace, ratio, mahalanobis, subclass, antiexact, distance_is_matrix) {
   info <- list(method = method,
                distance = if (is.null(fn1)) NULL else sub("distance2", "", fn1, fixed = TRUE),
                link = if (is.null(link)) NULL else link,
                discard = discard,
                replace = if (!is.null(method) && method %in% c("nearest", "genetic")) replace else NULL,
                ratio = if (!is.null(method) && method %in% c("nearest", "optimal", "genetic")) ratio else NULL,
-               max.controls = if (!is.null(method) && method %in% c("nearest", "optimal")) max.controls else NULL,
+               max.controls = if (!is.null(method) && method %in% c("nearest", "optimal")) attr(ratio, "max.controls") else NULL,
                mahalanobis = mahalanobis,
                subclass = if (!is.null(method) && method == "subclass") length(unique(subclass[!is.na(subclass)])) else NULL,
                antiexact = antiexact,
                distance_is_matrix = distance_is_matrix)
+  info
 }
 
 #Function to turn a method name into a phrase describing the method

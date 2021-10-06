@@ -257,7 +257,7 @@ matchit <- function(formula, data = NULL, method = "nearest", distance = "glm",
                                  antiexact = antiexact, ...),
                        quote = TRUE)
 
-  info <- create_info(method, fn1, link, discard, replace, ratio, mcall,
+  info <- create_info(method, fn1, link, discard, replace, ratio,
                       mahalanobis = is.full.mahalanobis || !is.null(mahvars),
                       subclass = match.out$subclass,
                       antiexact = colnames(antiexactcovs),
