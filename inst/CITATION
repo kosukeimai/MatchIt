@@ -11,12 +11,12 @@ citEntry(entry = "Article",
   volume       = "42",
   number       = "8",
   pages        = "1--28",
-  url          = "https://www.jstatsoft.org/v42/i08/",
+  doi          = "10.18637/jss.v042.i08",
 
   textVersion  =
   paste("Daniel E. Ho, Kosuke Imai, Gary King, Elizabeth A. Stuart (2011).",
         "MatchIt: Nonparametric Preprocessing for Parametric Causal Inference.",
         "Journal of Statistical Software, Vol. 42, No. 8, pp. 1-28.",
-        "URL https://www.jstatsoft.org/v42/i08/")
+        "https://doi.org/10.18637/jss.v042.i08")
 )
 
