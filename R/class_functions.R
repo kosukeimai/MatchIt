@@ -194,14 +194,18 @@ print.matchit <- function(x, ...) {
   nm <- is.null(x[["method"]])
   cat("A matchit object")
   cat(paste0("\n - method: ", info.to.method(info)))
-  if (!is.null(x[["distance"]]) || info$mahalanobis || identical(info$distance, "user")) {
+  # if (!is.null(x[["distance"]]) || info$mahalanobis || identical(info$distance, "user")) {
+  if (!is.null(info$distance) || info$mahalanobis) {
     cat("\n - distance: ")
-    if (info$mahalanobis) cat("Mahalanobis")
-    if (info$distance != "mahalanobis") {
+    if (info$mahalanobis) {
+      cat("Mahalanobis")
+    }
+    if (!is.null(info$distance) && info$distance != "mahalanobis") {
       if (info$mahalanobis) cat(" [matching]\n             ")
 
-      if (info$distance != "user") cat("Propensity score")
-      else if (info$distance_is_matrix) cat("User-defined (matrix)")
+      if (info$distance_is_matrix) cat("User-defined (matrix)")
+      else if (info$distance != "user") cat("Propensity score")
+      else if (!is.null(attr(info$distance, "custom"))) cat(attr(info$distance, "custom"))
       else cat("User-defined")
 
       if (cal || disl) {
