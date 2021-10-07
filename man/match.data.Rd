@@ -64,7 +64,7 @@ a data frame containing the original dataset to which the computed output variab
 \value{
 A data frame containing the data supplied in the \code{data} argument or in the original call to \code{matchit()} with the computed output variables appended as additional columns, named according the arguments above. For \code{match.data()}, the \code{group} and \code{drop.unmatched} arguments control whether only subsets of the data are returned. See Details above for how \code{match.data()} and \code{get_matches()} differ. Note that \code{get_matches} sorts the data by subclass and treatment status, unlike \code{match.data()}, which uses the order of the data.
 
-The returned data frame will contain the variables in the original data set or dataset supplied to \code{data}, and the following columns:
+The returned data frame will contain the variables in the original data set or dataset supplied to \code{data} and the following columns:
 
 \item{distance}{The propensity score, if estimated or supplied to the \code{distance} argument in \code{matchit()} as a vector.}
 \item{weights}{The computed matching weights. These must be used in effect estimation to correctly incorporate the matching.}
