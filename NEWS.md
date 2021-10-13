@@ -10,9 +10,13 @@ output:
 
 * Added `reuse.max` argument to `matchit()` with `method = "nearest"`. This controls the maximum number of times each control unit can be used as a match. Setting `reuse.max = 1` is equivalent to matching without replacement (i.e., like setting `replace = FALSE`), and setting `reuse.max = Inf` is equivalent to matching with replacement with no restriction on the reuse of controls (i.e., like setting `replace = TRUE`). Values in between restrict how many times each control unit can be used as a match. Higher values will tend to improve balance but decrease precision.
 
+* Mahalanobis distance matching with `method = "nearest"` is now a bit faster. 
+
 * Fixed a bug where `method = "full"` would fail when some exact matching strata contained exactly one treated unit and exactly one control unit. (#88)
 
 * Fixed a bug introduced in 4.3.0 where the inclusion of character variables would cause the error `"Non-finite values are not allowed in the covariates."` Thanks to Moaath Mustafa.
+
+* Documentation updates.
 
 # MatchIt 4.3.0
 
