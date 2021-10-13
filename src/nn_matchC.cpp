@@ -20,7 +20,6 @@ IntegerMatrix nn_matchC(const IntegerMatrix& mm_,
                         const Nullable<NumericVector>& caliper_covs_ = R_NilValue,
                         const Nullable<NumericMatrix>& calcovs_covs_mat_ = R_NilValue,
                         const Nullable<NumericMatrix>& mah_covs_ = R_NilValue,
-                        const Nullable<NumericMatrix>& mahSigma_inv_ = R_NilValue,
                         const Nullable<IntegerMatrix>& antiexact_covs_ = R_NilValue,
                         const bool& disl_prog = false)
   {
@@ -29,12 +28,9 @@ IntegerMatrix nn_matchC(const IntegerMatrix& mm_,
 
   NumericVector distance, caliper_covs;
   double caliper_dist;
-  NumericMatrix distance_mat, calcovs_covs_mat, mah_covs, mahSigma_inv, mah_covs_c;
+  NumericMatrix distance_mat, calcovs_covs_mat, mah_covs, mah_covs_c;
   IntegerMatrix antiexact_covs;
   IntegerVector exact, exact_c, antiexact_col;
-
-  Environment pkg = Environment::namespace_env("stats");
-  Function mah = pkg["mahalanobis"];
 
   bool use_dist_mat = false;
   bool use_exact = false;
@@ -69,7 +65,7 @@ IntegerMatrix nn_matchC(const IntegerMatrix& mm_,
   int t, t_ind, min_ind, c_chosen, num_eligible, cal_len, t_rat, n_anti;
   double dt, cal_var_t;
 
-  NumericVector cal_var, cal_diff, ps_diff, diff, dist_t, mah_covs_t, mah_covs_col,
+  NumericVector cal_var, cal_diff, ps_diff, diff, dist_t, mah_covs_t, mah_covs_row,
                 match_distance(n0);
 
   IntegerVector c_eligible(n0), indices(n0);
@@ -98,6 +94,7 @@ IntegerMatrix nn_matchC(const IntegerMatrix& mm_,
   }
   if (mah_covs_.isNotNull()) {
     mah_covs = as<NumericMatrix>(mah_covs_);
+    NumericVector mah_covs_row(mah_covs.ncol());
     use_mah_covs = true;
   } else {
     if (distance_mat_.isNotNull()) {
@@ -108,9 +105,6 @@ IntegerMatrix nn_matchC(const IntegerMatrix& mm_,
       use_dist_mat = true;
     }
     ps_diff = NumericVector(n_);
-  }
-  if (mahSigma_inv_.isNotNull()) {
-    mahSigma_inv = as<NumericMatrix>(mahSigma_inv_);
   }
   if (antiexact_covs_.isNotNull()) {
     antiexact_covs = as<IntegerMatrix>(antiexact_covs_);
@@ -130,7 +124,7 @@ IntegerMatrix nn_matchC(const IntegerMatrix& mm_,
   Progress p(prog_length, disl_prog);
 
   //Counters
-  int rat, i, x, j, a, k;
+  int rat, i, x, j, j_, a, k;
   k = -1;
 
   //Matching
@@ -236,13 +230,15 @@ IntegerMatrix nn_matchC(const IntegerMatrix& mm_,
       }
 
       if (use_mah_covs) {
-        mah_covs_c = NumericMatrix(num_eligible, mah_covs.ncol());
-        for (j = 0; j < mah_covs.ncol(); ++j) {
-          mah_covs_col = mah_covs.column(j);
-          mah_covs_c(_,j) = as<NumericVector>(mah_covs_col[c_eligible]);
-        }
+
+        match_distance = rep(0.0, num_eligible);
         mah_covs_t = mah_covs( t_ind , _ );
-        match_distance = sqrt(as<NumericVector>(mah(mah_covs_c, mah_covs_t, mahSigma_inv, true))); //mahalanobis in R
+
+        for (j = 0; j < num_eligible; j++) {
+          j_ = c_eligible[j];
+          mah_covs_row = mah_covs(c_eligible[j], _);
+          match_distance[j] = sqrt(sum(pow(mah_covs_t - mah_covs_row, 2.0)));
+        }
 
       } else if (ps_diff_assigned) {
         match_distance = ps_diff[c_eligible]; //c_eligible might have shrunk since previous assignment

@@ -744,6 +744,7 @@ matchit2nearest <-  function(treat, data, distance, discarded,
       mahSigma_inv <- generalized_inverse(cov(mahcovs))
     else
       mahSigma_inv <- generalized_inverse(cov.wt(mahcovs, s.weights)$cov)
+    mahcovs <- tcrossprod(mahcovs, chol2(mahSigma_inv))
   }
   else if (!is.null(mahvars)) {
     mahcovs <- get.covs.matrix(mahvars, data)
@@ -751,6 +752,7 @@ matchit2nearest <-  function(treat, data, distance, discarded,
       mahSigma_inv <- generalized_inverse(cov(mahcovs))
     else
       mahSigma_inv <- generalized_inverse(cov.wt(mahcovs, s.weights)$cov)
+    mahcovs <- tcrossprod(mahcovs, chol2(mahSigma_inv))
   }
   else if (is.matrix(distance)) {
     distance_mat <- distance
@@ -892,7 +894,7 @@ matchit2nearest <-  function(treat, data, distance, discarded,
     mm <- matrix(NA_integer_, nrow = n1, ncol = max_rat, dimnames = list(lab1))
 
     mm <- nn_matchC(mm, treat, ord, ratio, max_rat, discarded, reuse.max, distance, distance_mat, ex, caliper.dist,
-                    caliper.covs, caliper.covs.mat, mahcovs, mahSigma_inv, antiexactcovs, verbose)
+                    caliper.covs, caliper.covs.mat, mahcovs, antiexactcovs, verbose)
   }
   else {
     mm_list <- lapply(levels(ex), function(e) {
@@ -924,7 +926,7 @@ matchit2nearest <-  function(treat, data, distance, discarded,
       mm_ <- matrix(NA_integer_, nrow = sum(treat_==1), ncol = max_rat, dimnames = list(names(treat_)[treat_ == 1]))
 
       mm_ <- nn_matchC(mm_, treat_, ord_, ratio_, max_rat, discarded_, reuse.max, distance_, distance_mat_, NULL, caliper.dist,
-                       caliper.covs, caliper.covs.mat_, mahcovs_, mahSigma_inv, antiexactcovs, verbose)
+                       caliper.covs, caliper.covs.mat_, mahcovs_, antiexactcovs, verbose)
 
       mm_[] <- seq_along(treat)[.e][mm_]
       mm_

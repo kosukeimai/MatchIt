@@ -836,6 +836,13 @@ generalized_inverse <- function(sigma) {
   return(sigma_inv)
 }
 
+#Choleski decomp for non-negative definite matrices
+chol2 <- function(Sinv) {
+  ch <- suppressWarnings(chol(Sinv, pivot = TRUE))
+  p <- order(attr(ch, "pivot"))
+  return(ch[,p])
+}
+
 #Get covariates (RHS) vars from formula
 get.covs.matrix <- function(formula = NULL, data = NULL) {
 
