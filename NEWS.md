@@ -6,7 +6,7 @@ output:
 `MatchIt` News and Updates
 ======
 
-# MatchIt (development version)
+# MatchIt 4.3.1
 
 * Added the `reuse.max` argument to `matchit()` with `method = "nearest"`. This controls the maximum number of times each control unit can be used as a match. Setting `reuse.max = 1` is equivalent to matching without replacement (i.e., like setting `replace = FALSE`), and setting `reuse.max = Inf` is equivalent to matching with replacement with no restriction on the reuse of controls (i.e., like setting `replace = TRUE`). Values in between restrict how many times each control unit can be used as a match. Higher values will tend to improve balance but decrease precision.
 
