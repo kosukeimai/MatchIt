@@ -38,7 +38,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">MatchIt</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">4.3.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">4.3.1</span>
       </span>
     </div>
 
@@ -104,7 +104,7 @@
       <h1 data-toc-skip>Assessing Balance</h1>
                         <h4 class="author">Noah Greifer</h4>
             
-            <h4 class="date">2021-10-08</h4>
+            <h4 class="date">2021-11-09</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/kosukeimai/MatchIt/blob/master/vignettes/assessing-balance.Rmd"><code>vignettes/assessing-balance.Rmd</code></a></small>
       <div class="hidden name"><code>assessing-balance.Rmd</code></div>
@@ -289,7 +289,7 @@ pre code {
 <li>
 <code>var.order</code> controls how the variables are ordered on the y-axis. The options are <code>"data"</code> (the default), which orders the variables as they appear the in the <code><a href="../reference/summary.matchit.html">summary.matchit()</a></code> output; <code>"unmatched"</code>, which orders the variables based on their standardized mean differences before matching; <code>"matched"</code>, which orders the variables based on their standardized mean differences after matching; and <code>"alphabetical"</code>, which orders the variables alphabetically. Using <code>"unmatched"</code> tends to result in attractive plots and ensures the legend doesn’t overlap with points in its default position.</li>
 <li>
-<code>threshold</code> controls where vertical lines indicating chosen thresholds should appear on the x-axis. Should be a numeric vector. The default is <code><a href="https://rdrr.io/r/base/c.html">c(.1, .05)</a></code>, which display vertical lines at .1 and .05 standardized mean difference units.</li>
+<code>threshold</code> controls where vertical lines indicating chosen thresholds should appear on the x-axis. Should be a numeric vector. The default is <code>c(.1, .05)</code>, which display vertical lines at .1 and .05 standardized mean difference units.</li>
 <li>
 <code>position</code> controls the position of the legend. The default is <code>"bottomright"</code>, which puts the legend in the bottom right corner of the plot, and any keyword value available to supplied to <code>x</code> in <code><a href="https://rdrr.io/r/graphics/legend.html">legend()</a></code> is allowed.</li>
 </ul>
@@ -544,7 +544,7 @@ pre code {
 ## All   429.       185
 ## full   53.33     185
 ## nn    185.       185</code></pre>
-<p>This time, we supplied <code><a href="https://ngreifer.github.io/cobalt/reference/bal.tab.html">bal.tab()</a></code> with the covariates and dataset and supplied the <code>matchit</code> output objects in the <code>weights</code> argument (which extracts the matching weights from the objects). Here we can see that balance is comparable between the two matching methods, but full matching balances <code>age</code> better and yields a slightly higher effective sample size.</p>
+<p>This time, we supplied <code><a href="https://ngreifer.github.io/cobalt/reference/bal.tab.html">bal.tab()</a></code> with the covariates and dataset and supplied the <code>matchit</code> output objects in the <code>weights</code> argument (which extracts the matching weights from the objects). Here we can see that full matching yields better balance than nearest neighbor matching overall, though balance is slightly worse for <code>age</code> and <code>maried</code> and the effective sample size is lower.</p>
 </div>
 <div id="love-plot" class="section level3">
 <h3 class="hasAnchor">

@@ -79,7 +79,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">MatchIt</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">4.3.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">4.3.1</span>
       </span>
     </div>
 
@@ -146,6 +146,18 @@
       <small>Source: <a href='https://github.com/kosukeimai/MatchIt/blob/master/NEWS.md'><code>NEWS.md</code></a></small>
     </div>
 
+    <div id="matchit-431" class="section level1">
+<h1 class="page-header" data-toc-text="4.3.1">
+<a href="#matchit-431" class="anchor"></a>MatchIt 4.3.1<small> Unreleased </small>
+</h1>
+<ul>
+<li><p>Added the <code>reuse.max</code> argument to <code><a href="../reference/matchit.html">matchit()</a></code> with <code>method = "nearest"</code>. This controls the maximum number of times each control unit can be used as a match. Setting <code>reuse.max = 1</code> is equivalent to matching without replacement (i.e., like setting <code>replace = FALSE</code>), and setting <code>reuse.max = Inf</code> is equivalent to matching with replacement with no restriction on the reuse of controls (i.e., like setting <code>replace = TRUE</code>). Values in between restrict how many times each control unit can be used as a match. Higher values will tend to improve balance but decrease precision.</p></li>
+<li><p>Mahalanobis distance matching with <code>method = "nearest"</code> is now a bit faster.</p></li>
+<li><p>Fixed a bug where <code>method = "full"</code> would fail when some exact matching strata contained exactly one treated unit and exactly one control unit. (<a href='https://github.com/kosukeimai/MatchIt/issues/88'>#88</a>)</p></li>
+<li><p>Fixed a bug introduced in 4.3.0 where the inclusion of character variables would cause the error <code>"Non-finite values are not allowed in the covariates."</code> Thanks to Moaath Mustafa.</p></li>
+<li><p>Documentation updates.</p></li>
+</ul>
+</div>
     <div id="matchit-430" class="section level1">
 <h1 class="page-header" data-toc-text="4.3.0">
 <a href="#matchit-430" class="anchor"></a>MatchIt 4.3.0<small> 2021-09-13 </small>
@@ -343,7 +355,7 @@
 <li><p>Added a new plot type, <code>"ecdf"</code>, which creates empirical CDF plots before and after matching.</p></li>
 <li><p>The appearance of some plots has improved (e.g., text is appropriately centered, axes are more clearly labeled). For eQQ plots with binary variables or variables that take on only a few values, the plots look more like clusters than snakes.</p></li>
 <li><p>The argument to <code>type</code> can be abbreviated (e.g., <code>"j"</code> for jitter).</p></li>
-<li><p>Fixed a bug that caused all plots generated after using <code><a href="https://rdrr.io/r/graphics/plot.default.html">plot(., type = "hist")</a></code> to be small.</p></li>
+<li><p>Fixed a bug that caused all plots generated after using <code>plot(., type = "hist")</code> to be small.</p></li>
 <li><p>When specifying an argument to <code>which.xs</code> to control for which variables balance is displayed graphically, the input should be the name of the original variable rather than the version that appears in the <code><a href="https://rdrr.io/r/base/summary.html">summary()</a></code> output. In particular, if a factor variable was supplied to <code><a href="../reference/matchit.html">matchit()</a></code>, it should be referred to by its name rather than the names of its split dummies. This makes it easier to view balance on factor variables without having to know or type the names of all their levels.</p></li>
 <li><p>eQQ plots can now be used with all matching methods. Previously, attempting <code><a href="https://rdrr.io/r/graphics/plot.default.html">plot()</a></code> after <code>method = "exact"</code> would fail.</p></li>
 </ul>

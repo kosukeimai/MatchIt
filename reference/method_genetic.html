@@ -103,7 +103,7 @@ matchit(formula,
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">MatchIt</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">4.3.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">4.3.1</span>
       </span>
     </div>
 
@@ -310,76 +310,78 @@ matchit(formula,
 <p><code><a href='https://rdrr.io/pkg/Matching/man/GenMatch.html'>Matching::GenMatch()</a></code> and <code><a href='https://rdrr.io/pkg/Matching/man/Match.html'>Matching::Match()</a></code>, which do the work.</p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='kw'>if</span> <span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/all.html'>all</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/lapply.html'>sapply</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"Matching"</span>, <span class='st'>"rgenoud"</span><span class='op'>)</span>, <span class='va'>requireNamespace</span>, quietly <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>{</span>
-<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='st'>"lalonde"</span><span class='op'>)</span>
-
-<span class='co'># 1:1 genetic matching with PS as a covariate</span>
-<span class='va'>m.out1</span> <span class='op'>&lt;-</span> <span class='fu'><a href='matchit.html'>matchit</a></span><span class='op'>(</span><span class='va'>treat</span> <span class='op'>~</span> <span class='va'>age</span> <span class='op'>+</span> <span class='va'>educ</span> <span class='op'>+</span> <span class='va'>race</span> <span class='op'>+</span> <span class='va'>nodegree</span> <span class='op'>+</span>
-                    <span class='va'>married</span> <span class='op'>+</span> <span class='va'>re74</span> <span class='op'>+</span> <span class='va'>re75</span>, data <span class='op'>=</span> <span class='va'>lalonde</span>,
-                  method <span class='op'>=</span> <span class='st'>"genetic"</span>,
-                  pop.size <span class='op'>=</span> <span class='fl'>10</span><span class='op'>)</span> <span class='co'>#use much larger pop.size</span>
-<span class='va'>m.out1</span>
-<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>m.out1</span><span class='op'>)</span>
-
-<span class='co'># 2:1 genetic matching with replacement without PS</span>
-<span class='va'>m.out2</span> <span class='op'>&lt;-</span> <span class='fu'><a href='matchit.html'>matchit</a></span><span class='op'>(</span><span class='va'>treat</span> <span class='op'>~</span> <span class='va'>age</span> <span class='op'>+</span> <span class='va'>educ</span> <span class='op'>+</span> <span class='va'>race</span> <span class='op'>+</span> <span class='va'>nodegree</span> <span class='op'>+</span>
-                    <span class='va'>married</span> <span class='op'>+</span> <span class='va'>re74</span> <span class='op'>+</span> <span class='va'>re75</span>, data <span class='op'>=</span> <span class='va'>lalonde</span>,
-                  method <span class='op'>=</span> <span class='st'>"genetic"</span>, replace <span class='op'>=</span> <span class='cn'>TRUE</span>,
-                  ratio <span class='op'>=</span> <span class='fl'>2</span>, distance <span class='op'>=</span> <span class='st'>"mahalanobis"</span>,
-                  pop.size <span class='op'>=</span> <span class='fl'>10</span><span class='op'>)</span> <span class='co'>#use much larger pop.size</span>
-<span class='va'>m.out2</span>
-<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>m.out2</span>, un <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span>
-
-<span class='co'># 1:1 genetic matching on just age, educ, re74, and re75</span>
-<span class='co'># within calipers on PS and educ; other variables are</span>
-<span class='co'># used to estimate PS</span>
-<span class='va'>m.out3</span> <span class='op'>&lt;-</span> <span class='fu'><a href='matchit.html'>matchit</a></span><span class='op'>(</span><span class='va'>treat</span> <span class='op'>~</span> <span class='va'>age</span> <span class='op'>+</span> <span class='va'>educ</span> <span class='op'>+</span> <span class='va'>race</span> <span class='op'>+</span> <span class='va'>nodegree</span> <span class='op'>+</span>
-                    <span class='va'>married</span> <span class='op'>+</span> <span class='va'>re74</span> <span class='op'>+</span> <span class='va'>re75</span>, data <span class='op'>=</span> <span class='va'>lalonde</span>,
-                  method <span class='op'>=</span> <span class='st'>"genetic"</span>,
-                  mahvars <span class='op'>=</span> <span class='op'>~</span> <span class='va'>age</span> <span class='op'>+</span> <span class='va'>educ</span> <span class='op'>+</span> <span class='va'>re74</span> <span class='op'>+</span> <span class='va'>re75</span>,
-                  caliper <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>.05</span>, educ <span class='op'>=</span> <span class='fl'>2</span><span class='op'>)</span>,
-                  std.caliper <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='cn'>TRUE</span>, <span class='cn'>FALSE</span><span class='op'>)</span>,
-                  pop.size <span class='op'>=</span> <span class='fl'>10</span><span class='op'>)</span> <span class='co'>#use much larger pop.size</span>
-<span class='va'>m.out3</span>
-<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>m.out3</span>, un <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span>
-<span class='op'>}</span></div><div class='output co'>#&gt; 
-#&gt; Call:
-#&gt; matchit(formula = treat ~ age + educ + race + nodegree + married + 
-#&gt;     re74 + re75, data = lalonde, method = "genetic", mahvars = ~age + 
-#&gt;     educ + re74 + re75, caliper = c(0.05, educ = 2), std.caliper = c(TRUE, 
-#&gt;     FALSE), pop.size = 10)
-#&gt; 
-#&gt; Summary of Balance for Matched Data:
-#&gt;            Means Treated Means Control Std. Mean Diff. Var. Ratio eCDF Mean
-#&gt; distance          0.5003        0.4925          0.0352     1.0291    0.0115
-#&gt; age              25.7064       25.3211          0.0539     0.5815    0.0546
-#&gt; educ             10.2385       10.3486         -0.0548     0.5039    0.0319
-#&gt; raceblack         0.7339        0.7248          0.0252          .    0.0092
-#&gt; racehispan        0.1009        0.1009          0.0000          .    0.0000
-#&gt; racewhite         0.1651        0.1743         -0.0310          .    0.0092
-#&gt; nodegree          0.6881        0.6147          0.1614          .    0.0734
-#&gt; married           0.2385        0.2202          0.0468          .    0.0183
-#&gt; re74           2732.5276     2182.9648          0.1125     1.8146    0.0495
-#&gt; re75           2042.2572     1524.2050          0.1609     2.0152    0.0362
-#&gt;            eCDF Max Std. Pair Dist.
-#&gt; distance     0.0826          0.0434
-#&gt; age          0.1927          0.9335
-#&gt; educ         0.0826          1.0677
-#&gt; raceblack    0.0092          0.0757
-#&gt; racehispan   0.0000          0.0917
-#&gt; racewhite    0.0092          0.2167
-#&gt; nodegree     0.0734          0.8879
-#&gt; married      0.0183          0.6090
-#&gt; re74         0.2202          0.5711
-#&gt; re75         0.1101          0.5896
-#&gt; 
-#&gt; Sample Sizes:
-#&gt;           Control Treated
-#&gt; All           429     185
-#&gt; Matched       109     109
-#&gt; Unmatched     320      76
-#&gt; Discarded       0       0
-#&gt; </div></pre>
+    <pre class="examples"><span class='r-in'><span class='kw'>if</span> <span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/all.html'>all</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/lapply.html'>sapply</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"Matching"</span>, <span class='st'>"rgenoud"</span><span class='op'>)</span>, <span class='va'>requireNamespace</span>, quietly <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>{</span></span>
+<span class='r-in'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='st'>"lalonde"</span><span class='op'>)</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'># 1:1 genetic matching with PS as a covariate</span></span>
+<span class='r-in'><span class='va'>m.out1</span> <span class='op'>&lt;-</span> <span class='fu'><a href='matchit.html'>matchit</a></span><span class='op'>(</span><span class='va'>treat</span> <span class='op'>~</span> <span class='va'>age</span> <span class='op'>+</span> <span class='va'>educ</span> <span class='op'>+</span> <span class='va'>race</span> <span class='op'>+</span> <span class='va'>nodegree</span> <span class='op'>+</span></span>
+<span class='r-in'>                    <span class='va'>married</span> <span class='op'>+</span> <span class='va'>re74</span> <span class='op'>+</span> <span class='va'>re75</span>, data <span class='op'>=</span> <span class='va'>lalonde</span>,</span>
+<span class='r-in'>                  method <span class='op'>=</span> <span class='st'>"genetic"</span>,</span>
+<span class='r-in'>                  pop.size <span class='op'>=</span> <span class='fl'>10</span><span class='op'>)</span> <span class='co'>#use much larger pop.size</span></span>
+<span class='r-in'><span class='va'>m.out1</span></span>
+<span class='r-in'><span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>m.out1</span><span class='op'>)</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'># 2:1 genetic matching with replacement without PS</span></span>
+<span class='r-in'><span class='va'>m.out2</span> <span class='op'>&lt;-</span> <span class='fu'><a href='matchit.html'>matchit</a></span><span class='op'>(</span><span class='va'>treat</span> <span class='op'>~</span> <span class='va'>age</span> <span class='op'>+</span> <span class='va'>educ</span> <span class='op'>+</span> <span class='va'>race</span> <span class='op'>+</span> <span class='va'>nodegree</span> <span class='op'>+</span></span>
+<span class='r-in'>                    <span class='va'>married</span> <span class='op'>+</span> <span class='va'>re74</span> <span class='op'>+</span> <span class='va'>re75</span>, data <span class='op'>=</span> <span class='va'>lalonde</span>,</span>
+<span class='r-in'>                  method <span class='op'>=</span> <span class='st'>"genetic"</span>, replace <span class='op'>=</span> <span class='cn'>TRUE</span>,</span>
+<span class='r-in'>                  ratio <span class='op'>=</span> <span class='fl'>2</span>, distance <span class='op'>=</span> <span class='st'>"mahalanobis"</span>,</span>
+<span class='r-in'>                  pop.size <span class='op'>=</span> <span class='fl'>10</span><span class='op'>)</span> <span class='co'>#use much larger pop.size</span></span>
+<span class='r-in'><span class='va'>m.out2</span></span>
+<span class='r-in'><span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>m.out2</span>, un <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'># 1:1 genetic matching on just age, educ, re74, and re75</span></span>
+<span class='r-in'><span class='co'># within calipers on PS and educ; other variables are</span></span>
+<span class='r-in'><span class='co'># used to estimate PS</span></span>
+<span class='r-in'><span class='va'>m.out3</span> <span class='op'>&lt;-</span> <span class='fu'><a href='matchit.html'>matchit</a></span><span class='op'>(</span><span class='va'>treat</span> <span class='op'>~</span> <span class='va'>age</span> <span class='op'>+</span> <span class='va'>educ</span> <span class='op'>+</span> <span class='va'>race</span> <span class='op'>+</span> <span class='va'>nodegree</span> <span class='op'>+</span></span>
+<span class='r-in'>                    <span class='va'>married</span> <span class='op'>+</span> <span class='va'>re74</span> <span class='op'>+</span> <span class='va'>re75</span>, data <span class='op'>=</span> <span class='va'>lalonde</span>,</span>
+<span class='r-in'>                  method <span class='op'>=</span> <span class='st'>"genetic"</span>,</span>
+<span class='r-in'>                  mahvars <span class='op'>=</span> <span class='op'>~</span> <span class='va'>age</span> <span class='op'>+</span> <span class='va'>educ</span> <span class='op'>+</span> <span class='va'>re74</span> <span class='op'>+</span> <span class='va'>re75</span>,</span>
+<span class='r-in'>                  caliper <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>.05</span>, educ <span class='op'>=</span> <span class='fl'>2</span><span class='op'>)</span>,</span>
+<span class='r-in'>                  std.caliper <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='cn'>TRUE</span>, <span class='cn'>FALSE</span><span class='op'>)</span>,</span>
+<span class='r-in'>                  pop.size <span class='op'>=</span> <span class='fl'>10</span><span class='op'>)</span> <span class='co'>#use much larger pop.size</span></span>
+<span class='r-in'><span class='va'>m.out3</span></span>
+<span class='r-in'><span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>m.out3</span>, un <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span></span>
+<span class='r-in'><span class='op'>}</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> Call:</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> matchit(formula = treat ~ age + educ + race + nodegree + married + </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>     re74 + re75, data = lalonde, method = "genetic", mahvars = ~age + </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>     educ + re74 + re75, caliper = c(0.05, educ = 2), std.caliper = c(TRUE, </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>     FALSE), pop.size = 10)</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> Summary of Balance for Matched Data:</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>            Means Treated Means Control Std. Mean Diff. Var. Ratio eCDF Mean</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> distance          0.5003        0.4925          0.0352     1.0291    0.0115</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> age              25.7064       25.3211          0.0539     0.5815    0.0546</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> educ             10.2385       10.3486         -0.0548     0.5039    0.0319</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> raceblack         0.7339        0.7248          0.0252          .    0.0092</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> racehispan        0.1009        0.1009          0.0000          .    0.0000</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> racewhite         0.1651        0.1743         -0.0310          .    0.0092</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> nodegree          0.6881        0.6147          0.1614          .    0.0734</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> married           0.2385        0.2202          0.0468          .    0.0183</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> re74           2732.5276     2182.9648          0.1125     1.8146    0.0495</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> re75           2042.2572     1524.2050          0.1609     2.0152    0.0362</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>            eCDF Max Std. Pair Dist.</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> distance     0.0826          0.0434</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> age          0.1927          0.9335</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> educ         0.0826          1.0677</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> raceblack    0.0092          0.0757</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> racehispan   0.0000          0.0917</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> racewhite    0.0092          0.2167</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> nodegree     0.0734          0.8879</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> married      0.0183          0.6090</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> re74         0.2202          0.5711</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> re75         0.1101          0.5896</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> Sample Sizes:</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>           Control Treated</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> All           429     185</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> Matched       109     109</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> Unmatched     320      76</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> Discarded       0       0</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+</pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

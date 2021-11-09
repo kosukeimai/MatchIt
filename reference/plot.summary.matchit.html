@@ -80,7 +80,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">MatchIt</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">4.3.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">4.3.1</span>
       </span>
     </div>
 
@@ -173,7 +173,7 @@
     </tr>
     <tr>
       <th>threshold</th>
-      <td><p>numeric values at which to place vertical lines indicating a balance threshold. These can make it easier to see for which variables balance has been achieved given a threshold. Multiple values can be supplied to add multiple lines. When <code>abs = FALSE</code>, the lines will be displayed on both sides of zero. The lines are drawn with <code>abline</code> with the linetype (<code>lty</code>) argument corresponding to the order of the entered variables (see options at <code><a href='https://rdrr.io/r/graphics/par.html'>par()</a></code>). The default is <code><a href='https://rdrr.io/r/base/c.html'>c(.1, .05)</a></code> for a solid line (<code>lty = 1</code>) at .1 and a dashed line (<code>lty = 2</code>) at .05, indicating acceptable and good balance, respectively. Enter a value as <code>NA</code> to skip that value of <code>lty</code> (e.g., <code><a href='https://rdrr.io/r/base/c.html'>c(NA, .05)</a></code> to have only a dashed vertical line at .05).</p></td>
+      <td><p>numeric values at which to place vertical lines indicating a balance threshold. These can make it easier to see for which variables balance has been achieved given a threshold. Multiple values can be supplied to add multiple lines. When <code>abs = FALSE</code>, the lines will be displayed on both sides of zero. The lines are drawn with <code>abline</code> with the linetype (<code>lty</code>) argument corresponding to the order of the entered variables (see options at <code><a href='https://rdrr.io/r/graphics/par.html'>par()</a></code>). The default is <code>c(.1, .05)</code> for a solid line (<code>lty = 1</code>) at .1 and a dashed line (<code>lty = 2</code>) at .05, indicating acceptable and good balance, respectively. Enter a value as <code>NA</code> to skip that value of <code>lty</code> (e.g., <code>c(NA, .05)</code> to have only a dashed vertical line at .05).</p></td>
     </tr>
     <tr>
       <th>position</th>
@@ -200,19 +200,21 @@
 <p><code><a href='https://ngreifer.github.io/cobalt/reference/love.plot.html'>cobalt::love.plot()</a></code> is a more flexible and sophisticated function to make Love plots and is also natively compatible with <code>matchit</code> objects.</p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='st'>"lalonde"</span><span class='op'>)</span>
-<span class='va'>m.out</span> <span class='op'>&lt;-</span> <span class='fu'><a href='matchit.html'>matchit</a></span><span class='op'>(</span><span class='va'>treat</span> <span class='op'>~</span> <span class='va'>age</span> <span class='op'>+</span> <span class='va'>educ</span> <span class='op'>+</span> <span class='va'>married</span> <span class='op'>+</span>
-                   <span class='va'>race</span> <span class='op'>+</span> <span class='va'>re74</span>, data <span class='op'>=</span> <span class='va'>lalonde</span>,
-                 method <span class='op'>=</span> <span class='st'>"nearest"</span><span class='op'>)</span>
-<span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>m.out</span>, interactions <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>,
-     var.order <span class='op'>=</span> <span class='st'>"unmatched"</span><span class='op'>)</span>
-</div><div class='img'><img src='plot.summary.matchit-1.png' alt='' width='700' height='433' /></div><div class='input'>
-<span class='va'>s.out</span> <span class='op'>&lt;-</span> <span class='fu'><a href='matchit.html'>matchit</a></span><span class='op'>(</span><span class='va'>treat</span> <span class='op'>~</span> <span class='va'>age</span> <span class='op'>+</span> <span class='va'>educ</span> <span class='op'>+</span> <span class='va'>married</span> <span class='op'>+</span>
-                   <span class='va'>race</span> <span class='op'>+</span> <span class='va'>nodegree</span> <span class='op'>+</span> <span class='va'>re74</span> <span class='op'>+</span> <span class='va'>re75</span>,
-                 data <span class='op'>=</span> <span class='va'>lalonde</span>, method <span class='op'>=</span> <span class='st'>"subclass"</span><span class='op'>)</span>
-<span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>s.out</span>, subclass <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>,
-     var.order <span class='op'>=</span> <span class='st'>"unmatched"</span>, abs <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span>
-</div><div class='img'><img src='plot.summary.matchit-2.png' alt='' width='700' height='433' /></div></pre>
+    <pre class="examples"><span class='r-in'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='st'>"lalonde"</span><span class='op'>)</span></span>
+<span class='r-in'><span class='va'>m.out</span> <span class='op'>&lt;-</span> <span class='fu'><a href='matchit.html'>matchit</a></span><span class='op'>(</span><span class='va'>treat</span> <span class='op'>~</span> <span class='va'>age</span> <span class='op'>+</span> <span class='va'>educ</span> <span class='op'>+</span> <span class='va'>married</span> <span class='op'>+</span></span>
+<span class='r-in'>                   <span class='va'>race</span> <span class='op'>+</span> <span class='va'>re74</span>, data <span class='op'>=</span> <span class='va'>lalonde</span>,</span>
+<span class='r-in'>                 method <span class='op'>=</span> <span class='st'>"nearest"</span><span class='op'>)</span></span>
+<span class='r-in'><span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>m.out</span>, interactions <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>,</span>
+<span class='r-in'>     var.order <span class='op'>=</span> <span class='st'>"unmatched"</span><span class='op'>)</span></span>
+<span class='r-plt img'><img src='plot.summary.matchit-1.png' alt='' width='700' height='433' /></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='va'>s.out</span> <span class='op'>&lt;-</span> <span class='fu'><a href='matchit.html'>matchit</a></span><span class='op'>(</span><span class='va'>treat</span> <span class='op'>~</span> <span class='va'>age</span> <span class='op'>+</span> <span class='va'>educ</span> <span class='op'>+</span> <span class='va'>married</span> <span class='op'>+</span></span>
+<span class='r-in'>                   <span class='va'>race</span> <span class='op'>+</span> <span class='va'>nodegree</span> <span class='op'>+</span> <span class='va'>re74</span> <span class='op'>+</span> <span class='va'>re75</span>,</span>
+<span class='r-in'>                 data <span class='op'>=</span> <span class='va'>lalonde</span>, method <span class='op'>=</span> <span class='st'>"subclass"</span><span class='op'>)</span></span>
+<span class='r-in'><span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>s.out</span>, subclass <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>,</span>
+<span class='r-in'>     var.order <span class='op'>=</span> <span class='st'>"unmatched"</span>, abs <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span></span>
+<span class='r-plt img'><img src='plot.summary.matchit-2.png' alt='' width='700' height='433' /></span>
+</pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

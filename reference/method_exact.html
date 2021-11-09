@@ -91,7 +91,7 @@ matchit(formula,
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">MatchIt</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">4.3.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">4.3.1</span>
       </span>
     </div>
 
@@ -221,72 +221,74 @@ matchit(formula,
 <p><code><a href='method_cem.html'>method_cem</a></code> for coarsened exact matching, which performs exact matching on coarsened versions of the covariates.</p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='st'>"lalonde"</span><span class='op'>)</span>
-
-<span class='co'># Exact matching on age, race, married, and educ</span>
-<span class='va'>m.out1</span> <span class='op'>&lt;-</span> <span class='fu'><a href='matchit.html'>matchit</a></span><span class='op'>(</span><span class='va'>treat</span> <span class='op'>~</span> <span class='va'>age</span> <span class='op'>+</span> <span class='va'>race</span> <span class='op'>+</span> <span class='va'>married</span> <span class='op'>+</span> <span class='va'>educ</span>, data <span class='op'>=</span> <span class='va'>lalonde</span>,
-                  method <span class='op'>=</span> <span class='st'>"exact"</span><span class='op'>)</span>
-<span class='va'>m.out1</span>
-</div><div class='output co'>#&gt; A matchit object
-#&gt;  - method: Exact matching
-#&gt;  - number of obs.: 614 (original), 113 (matched)
-#&gt;  - target estimand: ATT
-#&gt;  - covariates: age, race, married, educ</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>m.out1</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; 
-#&gt; Call:
-#&gt; matchit(formula = treat ~ age + race + married + educ, data = lalonde, 
-#&gt;     method = "exact")
-#&gt; 
-#&gt; Summary of Balance for All Data:
-#&gt;            Means Treated Means Control Std. Mean Diff. Var. Ratio eCDF Mean
-#&gt; age              25.8162       28.0303         -0.3094     0.4400    0.0813
-#&gt; raceblack         0.8432        0.2028          1.7615          .    0.6404
-#&gt; racehispan        0.0595        0.1422         -0.3498          .    0.0827
-#&gt; racewhite         0.0973        0.6550         -1.8819          .    0.5577
-#&gt; married           0.1892        0.5128         -0.8263          .    0.3236
-#&gt; educ             10.3459       10.2354          0.0550     0.4959    0.0347
-#&gt;            eCDF Max
-#&gt; age          0.1577
-#&gt; raceblack    0.6404
-#&gt; racehispan   0.0827
-#&gt; racewhite    0.5577
-#&gt; married      0.3236
-#&gt; educ         0.1114
-#&gt; 
-#&gt; 
-#&gt; Summary of Balance for Matched Data:
-#&gt;            Means Treated Means Control Std. Mean Diff. Var. Ratio eCDF Mean
-#&gt; age              19.9815       19.9815               0     0.9936         0
-#&gt; raceblack         0.7778        0.7778               0          .         0
-#&gt; racehispan        0.0370        0.0370               0          .         0
-#&gt; racewhite         0.1852        0.1852               0          .         0
-#&gt; married           0.0370        0.0370               0          .         0
-#&gt; educ             10.3333       10.3333               0     0.9936         0
-#&gt;            eCDF Max Std. Pair Dist.
-#&gt; age               0               0
-#&gt; raceblack         0               0
-#&gt; racehispan        0               0
-#&gt; racewhite         0               0
-#&gt; married           0               0
-#&gt; educ              0               0
-#&gt; 
-#&gt; Percent Balance Improvement:
-#&gt;            Std. Mean Diff. Var. Ratio eCDF Mean eCDF Max
-#&gt; age                    100       99.2       100      100
-#&gt; raceblack              100          .       100      100
-#&gt; racehispan             100          .       100      100
-#&gt; racewhite              100          .       100      100
-#&gt; married                100          .       100      100
-#&gt; educ                   100       99.1       100      100
-#&gt; 
-#&gt; Sample Sizes:
-#&gt;               Control Treated
-#&gt; All            429.       185
-#&gt; Matched (ESS)   40.36      54
-#&gt; Matched         59.        54
-#&gt; Unmatched      370.       131
-#&gt; Discarded        0.         0
-#&gt; </div></pre>
+    <pre class="examples"><span class='r-in'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='st'>"lalonde"</span><span class='op'>)</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'># Exact matching on age, race, married, and educ</span></span>
+<span class='r-in'><span class='va'>m.out1</span> <span class='op'>&lt;-</span> <span class='fu'><a href='matchit.html'>matchit</a></span><span class='op'>(</span><span class='va'>treat</span> <span class='op'>~</span> <span class='va'>age</span> <span class='op'>+</span> <span class='va'>race</span> <span class='op'>+</span> <span class='va'>married</span> <span class='op'>+</span> <span class='va'>educ</span>, data <span class='op'>=</span> <span class='va'>lalonde</span>,</span>
+<span class='r-in'>                  method <span class='op'>=</span> <span class='st'>"exact"</span><span class='op'>)</span></span>
+<span class='r-in'><span class='va'>m.out1</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> A matchit object</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  - method: Exact matching</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  - number of obs.: 614 (original), 113 (matched)</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  - target estimand: ATT</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  - covariates: age, race, married, educ</span>
+<span class='r-in'><span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>m.out1</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> Call:</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> matchit(formula = treat ~ age + race + married + educ, data = lalonde, </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>     method = "exact")</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> Summary of Balance for All Data:</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>            Means Treated Means Control Std. Mean Diff. Var. Ratio eCDF Mean</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> age              25.8162       28.0303         -0.3094     0.4400    0.0813</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> raceblack         0.8432        0.2028          1.7615          .    0.6404</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> racehispan        0.0595        0.1422         -0.3498          .    0.0827</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> racewhite         0.0973        0.6550         -1.8819          .    0.5577</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> married           0.1892        0.5128         -0.8263          .    0.3236</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> educ             10.3459       10.2354          0.0550     0.4959    0.0347</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>            eCDF Max</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> age          0.1577</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> raceblack    0.6404</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> racehispan   0.0827</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> racewhite    0.5577</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> married      0.3236</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> educ         0.1114</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> Summary of Balance for Matched Data:</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>            Means Treated Means Control Std. Mean Diff. Var. Ratio eCDF Mean</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> age              19.9815       19.9815               0     0.9936         0</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> raceblack         0.7778        0.7778               0          .         0</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> racehispan        0.0370        0.0370               0          .         0</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> racewhite         0.1852        0.1852               0          .         0</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> married           0.0370        0.0370               0          .         0</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> educ             10.3333       10.3333               0     0.9936         0</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>            eCDF Max Std. Pair Dist.</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> age               0               0</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> raceblack         0               0</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> racehispan        0               0</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> racewhite         0               0</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> married           0               0</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> educ              0               0</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> Percent Balance Improvement:</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>            Std. Mean Diff. Var. Ratio eCDF Mean eCDF Max</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> age                    100       99.2       100      100</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> raceblack              100          .       100      100</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> racehispan             100          .       100      100</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> racewhite              100          .       100      100</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> married                100          .       100      100</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> educ                   100       99.1       100      100</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> Sample Sizes:</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>               Control Treated</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> All            429.       185</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> Matched (ESS)   40.36      54</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> Matched         59.        54</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> Unmatched      370.       131</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> Discarded        0.         0</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+</pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

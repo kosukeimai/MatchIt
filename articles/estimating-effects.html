@@ -38,7 +38,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">MatchIt</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">4.3.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">4.3.1</span>
       </span>
     </div>
 
@@ -104,7 +104,7 @@
       <h1 data-toc-skip>Estimating Effects After Matching</h1>
                         <h4 class="author">Noah Greifer</h4>
             
-            <h4 class="date">2021-10-08</h4>
+            <h4 class="date">2021-11-09</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/kosukeimai/MatchIt/blob/master/vignettes/estimating-effects.Rmd"><code>vignettes/estimating-effects.Rmd</code></a></small>
       <div class="hidden name"><code>estimating-effects.Rmd</code></div>
@@ -267,7 +267,7 @@ pre code {
 
 <span class="va">mNN</span></code></pre></div>
 <pre><code>## A matchit object
-##  - method: Variable ratio 1:1 nearest neighbor matching without replacement
+##  - method: 1:1 nearest neighbor matching without replacement
 ##  - distance: Propensity score
 ##              - estimated with logistic regression
 ##  - number of obs.: 2000 (original), 882 (matched)
@@ -318,7 +318,7 @@ pre code {
   <span class="va">numreps</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/table.html">table</a></span><span class="op">(</span><span class="va">pairs</span><span class="op">[</span><span class="va">i</span><span class="op">]</span><span class="op">)</span>
   
   <span class="co">#For each pair p, copy corresponding md row indices numreps[p] times</span>
-  <span class="va">ids</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/unlist.html">unlist</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/lapply.html">lapply</a></span><span class="op">(</span><span class="va">pair_ids</span><span class="op">[</span><span class="va">pair_ids</span> <span class="op">%in%</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">numreps</span><span class="op">)</span><span class="op">]</span>,
+  <span class="va">ids</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/unlist.html">unlist</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/lapply.html">lapply</a></span><span class="op">(</span><span class="va">pair_ids</span><span class="op">[</span><span class="va">pair_ids</span> <span class="op"><a href="https://rdrr.io/r/base/match.html">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">numreps</span><span class="op">)</span><span class="op">]</span>,
                        <span class="kw">function</span><span class="op">(</span><span class="va">p</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/which.html">which</a></span><span class="op">(</span><span class="va">md</span><span class="op">$</span><span class="va">subclass</span> <span class="op">==</span> <span class="va">p</span><span class="op">)</span>, 
                                               <span class="va">numreps</span><span class="op">[</span><span class="va">p</span><span class="op">]</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
   
@@ -409,7 +409,7 @@ pre code {
   <span class="va">numreps</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/table.html">table</a></span><span class="op">(</span><span class="va">pairs</span><span class="op">[</span><span class="va">i</span><span class="op">]</span><span class="op">)</span>
   
   <span class="co">#For each pair p, copy corresponding md row indices numreps[p] times</span>
-  <span class="va">ids</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/unlist.html">unlist</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/lapply.html">lapply</a></span><span class="op">(</span><span class="va">pair_ids</span><span class="op">[</span><span class="va">pair_ids</span> <span class="op">%in%</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">numreps</span><span class="op">)</span><span class="op">]</span>,
+  <span class="va">ids</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/unlist.html">unlist</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/lapply.html">lapply</a></span><span class="op">(</span><span class="va">pair_ids</span><span class="op">[</span><span class="va">pair_ids</span> <span class="op"><a href="https://rdrr.io/r/base/match.html">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">numreps</span><span class="op">)</span><span class="op">]</span>,
                        <span class="kw">function</span><span class="op">(</span><span class="va">p</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/which.html">which</a></span><span class="op">(</span><span class="va">md</span><span class="op">$</span><span class="va">subclass</span> <span class="op">==</span> <span class="va">p</span><span class="op">)</span>, 
                                               <span class="va">numreps</span><span class="op">[</span><span class="va">p</span><span class="op">]</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
   
@@ -485,7 +485,7 @@ pre code {
 ## 
 ## Likelihood ratio test=39  on 1 df, p=5e-10
 ## n= 882, number of events= 882</code></pre>
-<p>The <code>coef</code> column contains the log HR, and <code><a href="https://rdrr.io/r/base/Log.html">exp(coef)</a></code> contains the HR. Remember to always use the <code>robust se</code> for the standard error of the log HR. The displayed z-test p-value results from using the robust standard error.</p>
+<p>The <code>coef</code> column contains the log HR, and <code>exp(coef)</code> contains the HR. Remember to always use the <code>robust se</code> for the standard error of the log HR. The displayed z-test p-value results from using the robust standard error.</p>
 <p><strong>Using the bootstrap.</strong> Austin and Small <span class="citation">(<a href="#ref-austin2014" role="doc-biblioref">2014</a>)</span> found bootstrap confidence intervals to work well for marginal hazard ratios. Below we demonstrate this using similar code as before to implement the block bootstrap:</p>
 <div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co">#Block bootstrap confidence interval</span>
@@ -499,7 +499,7 @@ pre code {
   <span class="va">numreps</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/table.html">table</a></span><span class="op">(</span><span class="va">pairs</span><span class="op">[</span><span class="va">i</span><span class="op">]</span><span class="op">)</span>
   
   <span class="co">#For each pair p, copy corresponding md row indices numreps[p] times</span>
-  <span class="va">ids</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/unlist.html">unlist</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/lapply.html">lapply</a></span><span class="op">(</span><span class="va">pair_ids</span><span class="op">[</span><span class="va">pair_ids</span> <span class="op">%in%</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">numreps</span><span class="op">)</span><span class="op">]</span>,
+  <span class="va">ids</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/unlist.html">unlist</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/lapply.html">lapply</a></span><span class="op">(</span><span class="va">pair_ids</span><span class="op">[</span><span class="va">pair_ids</span> <span class="op"><a href="https://rdrr.io/r/base/match.html">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">numreps</span><span class="op">)</span><span class="op">]</span>,
                        <span class="kw">function</span><span class="op">(</span><span class="va">p</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/which.html">which</a></span><span class="op">(</span><span class="va">md</span><span class="op">$</span><span class="va">subclass</span> <span class="op">==</span> <span class="va">p</span><span class="op">)</span>, 
                                               <span class="va">numreps</span><span class="op">[</span><span class="va">p</span><span class="op">]</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
   
@@ -538,7 +538,7 @@ pre code {
 
 <span class="va">mNNr</span></code></pre></div>
 <pre><code>## A matchit object
-##  - method: Variable ratio 3:1 nearest neighbor matching with replacement
+##  - method: 3:1 nearest neighbor matching with replacement
 ##  - distance: Propensity score [caliper]
 ##              - estimated with logistic regression and linearized
 ##  - caliper: &lt;distance&gt; (0.13)
@@ -971,7 +971,7 @@ pre code {
 <pre><code>## [1] 1.93</code></pre>
 <div class="sourceCode" id="cb83"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co">#SE of marginal effect</span>
-<span class="op">(</span><span class="va">se</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">sqrt</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/drop.html">drop</a></span><span class="op">(</span><span class="va">sub_w</span> <span class="op">%*%</span> <span class="fu"><a href="https://sandwich.R-Forge.R-project.org//reference/vcovHC.html">vcovHC</a></span><span class="op">(</span><span class="va">fit2</span><span class="op">)</span> <span class="op">%*%</span> <span class="va">sub_w</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<span class="op">(</span><span class="va">se</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">sqrt</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/drop.html">drop</a></span><span class="op">(</span><span class="va">sub_w</span> <span class="op"><a href="https://rdrr.io/r/base/matmult.html">%*%</a></span> <span class="fu"><a href="https://sandwich.R-Forge.R-project.org//reference/vcovHC.html">vcovHC</a></span><span class="op">(</span><span class="va">fit2</span><span class="op">)</span> <span class="op"><a href="https://rdrr.io/r/base/matmult.html">%*%</a></span> <span class="va">sub_w</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <pre><code>## [1] 0.4036</code></pre>
 <div class="sourceCode" id="cb85"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co">#CI</span>
@@ -1111,13 +1111,13 @@ pre code {
               exact <span class="op">=</span> <span class="op">~</span><span class="va">X5</span>, method <span class="op">=</span> <span class="st">"nearest"</span><span class="op">)</span>
 <span class="va">mP</span></code></pre></div>
 <pre><code>## A matchit object
-##  - method: Variable ratio 1:1 nearest neighbor matching without replacement
+##  - method: 1:1 nearest neighbor matching without replacement
 ##  - distance: Propensity score
 ##              - estimated with logistic regression
 ##  - number of obs.: 2000 (original), 882 (matched)
 ##  - target estimand: ATT
 ##  - covariates: X1, X2, X5, X3, X4, X6, X7, X8, X9</code></pre>
-<p>Although it is straightforward to assess balance overall using <code><a href="https://rdrr.io/r/base/summary.html">summary()</a></code>, it is more challenging to assess balance within subgroups. The easiest way to check subgroup balance would be to use <code><a href="https://ngreifer.github.io/cobalt/reference/bal.tab.html">cobalt::bal.tab()</a></code>, which has a <code>cluster</code> argument that can be used to assess balance within subgroups, e.g., by <code><a href="https://ngreifer.github.io/cobalt/reference/bal.tab.html">cobalt::bal.tab(mP, cluster = "X5")</a></code>. See the vignette “Appendix 2: Using cobalt with Clustered, Multiply Imputed, and Other Segmented Data” on the <code>cobalt</code> <a href="https://ngreifer.github.io/cobalt/index.html">website</a> for details.</p>
+<p>Although it is straightforward to assess balance overall using <code><a href="https://rdrr.io/r/base/summary.html">summary()</a></code>, it is more challenging to assess balance within subgroups. The easiest way to check subgroup balance would be to use <code><a href="https://ngreifer.github.io/cobalt/reference/bal.tab.html">cobalt::bal.tab()</a></code>, which has a <code>cluster</code> argument that can be used to assess balance within subgroups, e.g., by <code>cobalt::bal.tab(mP, cluster = "X5")</code>. See the vignette “Appendix 2: Using cobalt with Clustered, Multiply Imputed, and Other Segmented Data” on the <code>cobalt</code> <a href="https://ngreifer.github.io/cobalt/index.html">website</a> for details.</p>
 <p>If we are satisfied with balance, we can then estimate the subgroup effects using an outcome model with an interaction between the treatment and the moderator.</p>
 <div class="sourceCode" id="cb101"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">mdP</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/match.data.html">match.data</a></span><span class="op">(</span><span class="va">mP</span><span class="op">)</span>

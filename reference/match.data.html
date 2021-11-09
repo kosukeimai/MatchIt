@@ -80,7 +80,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">MatchIt</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">4.3.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">4.3.1</span>
       </span>
     </div>
 
@@ -217,7 +217,7 @@
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
     <p>A data frame containing the data supplied in the <code>data</code> argument or in the original call to <code><a href='matchit.html'>matchit()</a></code> with the computed output variables appended as additional columns, named according the arguments above. For <code>match.data()</code>, the <code>group</code> and <code>drop.unmatched</code> arguments control whether only subsets of the data are returned. See Details above for how <code>match.data()</code> and <code>get_matches()</code> differ. Note that <code>get_matches</code> sorts the data by subclass and treatment status, unlike <code>match.data()</code>, which uses the order of the data.</p>
-<p>The returned data frame will contain the variables in the original data set or dataset supplied to <code>data</code>, and the following columns:</p>
+<p>The returned data frame will contain the variables in the original data set or dataset supplied to <code>data</code> and the following columns:</p>
 <dt>distance</dt><dd><p>The propensity score, if estimated or supplied to the <code>distance</code> argument in <code><a href='matchit.html'>matchit()</a></code> as a vector.</p></dd>
 <dt>weights</dt><dd><p>The computed matching weights. These must be used in effect estimation to correctly incorporate the matching.</p></dd>
 <dt>subclass</dt><dd><p>Matching strata membership. Units with the same value are in the same stratum.</p></dd>
@@ -240,66 +240,70 @@ In addition to their base class (e.g., data.frame or tbl), returned objects have
 <p><code><a href='../articles/estimating-effects.html'>vignette("estimating-effects")</a></code> for uses of <code>match.data()</code> and <code>get_matches()</code> in estimating treatment effects.</p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='st'>"lalonde"</span><span class='op'>)</span>
-
-<span class='co'># 4:1 matching w/replacement</span>
-<span class='va'>m.out1</span> <span class='op'>&lt;-</span> <span class='fu'><a href='matchit.html'>matchit</a></span><span class='op'>(</span><span class='va'>treat</span> <span class='op'>~</span> <span class='va'>age</span> <span class='op'>+</span> <span class='va'>educ</span> <span class='op'>+</span> <span class='va'>married</span> <span class='op'>+</span>
-                    <span class='va'>race</span> <span class='op'>+</span> <span class='va'>nodegree</span> <span class='op'>+</span> <span class='va'>re74</span> <span class='op'>+</span> <span class='va'>re75</span>,
-                  data <span class='op'>=</span> <span class='va'>lalonde</span>, replace <span class='op'>=</span> <span class='cn'>TRUE</span>,
-                  caliper <span class='op'>=</span> <span class='fl'>.05</span>, ratio <span class='op'>=</span> <span class='fl'>4</span><span class='op'>)</span>
-
-<span class='va'>m.data1</span> <span class='op'>&lt;-</span> <span class='fu'>match.data</span><span class='op'>(</span><span class='va'>m.out1</span>, data <span class='op'>=</span> <span class='va'>lalonde</span>,
-                      distance <span class='op'>=</span> <span class='st'>"prop.score"</span><span class='op'>)</span>
-<span class='fu'><a href='https://rdrr.io/r/base/dim.html'>dim</a></span><span class='op'>(</span><span class='va'>m.data1</span><span class='op'>)</span> <span class='co'>#one row per matched unit</span>
-</div><div class='output co'>#&gt; [1] 347  11</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='va'>m.data1</span>, <span class='fl'>10</span><span class='op'>)</span>
-</div><div class='output co'>#&gt;       treat age educ   race married nodegree re74 re75       re78 prop.score
-#&gt; NSW1      1  37   11  black       1        1    0    0  9930.0460 0.63876993
-#&gt; NSW2      1  22    9 hispan       0        1    0    0  3595.8940 0.22463424
-#&gt; NSW3      1  30   12  black       0        0    0    0 24909.4500 0.67824388
-#&gt; NSW4      1  27   11  black       0        1    0    0  7506.1460 0.77632408
-#&gt; NSW5      1  33    8  black       0        1    0    0   289.7899 0.70163874
-#&gt; NSW6      1  22    9  black       0        1    0    0  4056.4940 0.69906990
-#&gt; NSW7      1  23   12  black       0        0    0    0     0.0000 0.65368426
-#&gt; NSW8      1  32   11  black       0        1    0    0  8472.1580 0.78972311
-#&gt; NSW9      1  22   16  black       0        0    0    0  2164.0220 0.77983825
-#&gt; NSW10     1  33   12  white       1        0    0    0 12418.0700 0.04292461
-#&gt;       weights
-#&gt; NSW1        1
-#&gt; NSW2        1
-#&gt; NSW3        1
-#&gt; NSW4        1
-#&gt; NSW5        1
-#&gt; NSW6        1
-#&gt; NSW7        1
-#&gt; NSW8        1
-#&gt; NSW9        1
-#&gt; NSW10       1</div><div class='input'>
-<span class='va'>g.matches1</span> <span class='op'>&lt;-</span> <span class='fu'>get_matches</span><span class='op'>(</span><span class='va'>m.out1</span>, data <span class='op'>=</span> <span class='va'>lalonde</span>,
-                          distance <span class='op'>=</span> <span class='st'>"prop.score"</span><span class='op'>)</span>
-<span class='fu'><a href='https://rdrr.io/r/base/dim.html'>dim</a></span><span class='op'>(</span><span class='va'>g.matches1</span><span class='op'>)</span> <span class='co'>#multiple rows per matched unit</span>
-</div><div class='output co'>#&gt; [1] 820  13</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='va'>g.matches1</span>, <span class='fl'>10</span><span class='op'>)</span>
-</div><div class='output co'>#&gt;         id subclass weights treat age educ   race married nodegree        re74
-#&gt; 1     NSW1        1    1.00     1  37   11  black       1        1     0.00000
-#&gt; 2   PSID69        1    0.25     0  30   17  black       0        0 17827.37000
-#&gt; 3  PSID387        1    0.25     0  55    4  black       0        1     0.00000
-#&gt; 4  PSID386        1    0.25     0  20   12  black       0        0     0.00000
-#&gt; 5  PSID373        1    0.25     0  20   12  black       0        0     0.00000
-#&gt; 6     NSW2        2    1.00     1  22    9 hispan       0        1     0.00000
-#&gt; 7  PSID111        2    0.25     0  51   11  white       0        1    48.98167
-#&gt; 8   PSID66        2    0.25     0  26    8 hispan       0        1  3168.13400
-#&gt; 9  PSID339        2    0.25     0  26    9 hispan       0        1  1563.49500
-#&gt; 10 PSID150        2    0.25     0  22   11 hispan       0        1  7341.37300
-#&gt;        re75      re78 prop.score
-#&gt; 1     0.000  9930.046  0.6387699
-#&gt; 2  5546.419 14421.130  0.6385542
-#&gt; 3     0.000     0.000  0.6357539
-#&gt; 4     0.000 11594.240  0.6428929
-#&gt; 5     0.000     0.000  0.6428929
-#&gt; 6     0.000  3595.894  0.2246342
-#&gt; 7  3813.387  1525.014  0.2240794
-#&gt; 8  5872.258 11136.150  0.2225951
-#&gt; 9     0.000  2862.356  0.2161957
-#&gt; 10 2535.097 14187.650  0.2128728</div></pre>
+    <pre class="examples"><span class='r-in'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='st'>"lalonde"</span><span class='op'>)</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'># 4:1 matching w/replacement</span></span>
+<span class='r-in'><span class='va'>m.out1</span> <span class='op'>&lt;-</span> <span class='fu'><a href='matchit.html'>matchit</a></span><span class='op'>(</span><span class='va'>treat</span> <span class='op'>~</span> <span class='va'>age</span> <span class='op'>+</span> <span class='va'>educ</span> <span class='op'>+</span> <span class='va'>married</span> <span class='op'>+</span></span>
+<span class='r-in'>                    <span class='va'>race</span> <span class='op'>+</span> <span class='va'>nodegree</span> <span class='op'>+</span> <span class='va'>re74</span> <span class='op'>+</span> <span class='va'>re75</span>,</span>
+<span class='r-in'>                  data <span class='op'>=</span> <span class='va'>lalonde</span>, replace <span class='op'>=</span> <span class='cn'>TRUE</span>,</span>
+<span class='r-in'>                  caliper <span class='op'>=</span> <span class='fl'>.05</span>, ratio <span class='op'>=</span> <span class='fl'>4</span><span class='op'>)</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='va'>m.data1</span> <span class='op'>&lt;-</span> <span class='fu'>match.data</span><span class='op'>(</span><span class='va'>m.out1</span>, data <span class='op'>=</span> <span class='va'>lalonde</span>,</span>
+<span class='r-in'>                      distance <span class='op'>=</span> <span class='st'>"prop.score"</span><span class='op'>)</span></span>
+<span class='r-in'><span class='fu'><a href='https://rdrr.io/r/base/dim.html'>dim</a></span><span class='op'>(</span><span class='va'>m.data1</span><span class='op'>)</span> <span class='co'>#one row per matched unit</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] 347  11</span>
+<span class='r-in'><span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='va'>m.data1</span>, <span class='fl'>10</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>       treat age educ   race married nodegree re74 re75       re78 prop.score</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> NSW1      1  37   11  black       1        1    0    0  9930.0460 0.63876993</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> NSW2      1  22    9 hispan       0        1    0    0  3595.8940 0.22463424</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> NSW3      1  30   12  black       0        0    0    0 24909.4500 0.67824388</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> NSW4      1  27   11  black       0        1    0    0  7506.1460 0.77632408</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> NSW5      1  33    8  black       0        1    0    0   289.7899 0.70163874</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> NSW6      1  22    9  black       0        1    0    0  4056.4940 0.69906990</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> NSW7      1  23   12  black       0        0    0    0     0.0000 0.65368426</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> NSW8      1  32   11  black       0        1    0    0  8472.1580 0.78972311</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> NSW9      1  22   16  black       0        0    0    0  2164.0220 0.77983825</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> NSW10     1  33   12  white       1        0    0    0 12418.0700 0.04292461</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>       weights</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> NSW1        1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> NSW2        1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> NSW3        1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> NSW4        1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> NSW5        1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> NSW6        1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> NSW7        1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> NSW8        1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> NSW9        1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> NSW10       1</span>
+<span class='r-in'></span>
+<span class='r-in'><span class='va'>g.matches1</span> <span class='op'>&lt;-</span> <span class='fu'>get_matches</span><span class='op'>(</span><span class='va'>m.out1</span>, data <span class='op'>=</span> <span class='va'>lalonde</span>,</span>
+<span class='r-in'>                          distance <span class='op'>=</span> <span class='st'>"prop.score"</span><span class='op'>)</span></span>
+<span class='r-in'><span class='fu'><a href='https://rdrr.io/r/base/dim.html'>dim</a></span><span class='op'>(</span><span class='va'>g.matches1</span><span class='op'>)</span> <span class='co'>#multiple rows per matched unit</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] 820  13</span>
+<span class='r-in'><span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='va'>g.matches1</span>, <span class='fl'>10</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>         id subclass weights treat age educ   race married nodegree        re74</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 1     NSW1        1    1.00     1  37   11  black       1        1     0.00000</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 2   PSID69        1    0.25     0  30   17  black       0        0 17827.37000</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 3  PSID387        1    0.25     0  55    4  black       0        1     0.00000</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 4  PSID386        1    0.25     0  20   12  black       0        0     0.00000</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 5  PSID373        1    0.25     0  20   12  black       0        0     0.00000</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 6     NSW2        2    1.00     1  22    9 hispan       0        1     0.00000</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 7  PSID111        2    0.25     0  51   11  white       0        1    48.98167</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 8   PSID66        2    0.25     0  26    8 hispan       0        1  3168.13400</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 9  PSID339        2    0.25     0  26    9 hispan       0        1  1563.49500</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 10 PSID150        2    0.25     0  22   11 hispan       0        1  7341.37300</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>        re75      re78 prop.score</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 1     0.000  9930.046  0.6387699</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 2  5546.419 14421.130  0.6385542</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 3     0.000     0.000  0.6357539</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 4     0.000 11594.240  0.6428929</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 5     0.000     0.000  0.6428929</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 6     0.000  3595.894  0.2246342</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 7  3813.387  1525.014  0.2240794</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 8  5872.258 11136.150  0.2225951</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 9     0.000  2862.356  0.2161957</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 10 2535.097 14187.650  0.2128728</span>
+</pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

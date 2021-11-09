@@ -96,7 +96,7 @@ matchit(formula,
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">MatchIt</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">4.3.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">4.3.1</span>
       </span>
     </div>
 
@@ -264,308 +264,312 @@ matchit(formula,
 <p><code><a href='method_full.html'>method_full</a></code> for optimal full matching, which is similar to subclassification except that the number of subclasses and subclass membership are chosen to optimize the within-subclass distance.</p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='st'>"lalonde"</span><span class='op'>)</span>
-
-<span class='co'># PS subclassification for the ATT with 7 subclasses</span>
-<span class='va'>s.out1</span> <span class='op'>&lt;-</span> <span class='fu'><a href='matchit.html'>matchit</a></span><span class='op'>(</span><span class='va'>treat</span> <span class='op'>~</span> <span class='va'>age</span> <span class='op'>+</span> <span class='va'>educ</span> <span class='op'>+</span> <span class='va'>race</span> <span class='op'>+</span> <span class='va'>nodegree</span> <span class='op'>+</span>
-                    <span class='va'>married</span> <span class='op'>+</span> <span class='va'>re74</span> <span class='op'>+</span> <span class='va'>re75</span>, data <span class='op'>=</span> <span class='va'>lalonde</span>,
-                  method <span class='op'>=</span> <span class='st'>"subclass"</span>, subclass <span class='op'>=</span> <span class='fl'>7</span><span class='op'>)</span>
-<span class='va'>s.out1</span>
-</div><div class='output co'>#&gt; A matchit object
-#&gt;  - method: Subclassification (7 subclasses)
-#&gt;  - distance: Propensity score
-#&gt;              - estimated with logistic regression
-#&gt;  - number of obs.: 614 (original), 614 (matched)
-#&gt;  - target estimand: ATT
-#&gt;  - covariates: age, educ, race, nodegree, married, re74, re75</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>s.out1</span>, subclass <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; 
-#&gt; Call:
-#&gt; matchit(formula = treat ~ age + educ + race + nodegree + married + 
-#&gt;     re74 + re75, data = lalonde, method = "subclass", subclass = 7)
-#&gt; 
-#&gt; Summary of Balance for All Data:
-#&gt;            Means Treated Means Control Std. Mean Diff. Var. Ratio eCDF Mean
-#&gt; distance          0.5774        0.1822          1.7941     0.9211    0.3774
-#&gt; age              25.8162       28.0303         -0.3094     0.4400    0.0813
-#&gt; educ             10.3459       10.2354          0.0550     0.4959    0.0347
-#&gt; raceblack         0.8432        0.2028          1.7615          .    0.6404
-#&gt; racehispan        0.0595        0.1422         -0.3498          .    0.0827
-#&gt; racewhite         0.0973        0.6550         -1.8819          .    0.5577
-#&gt; nodegree          0.7081        0.5967          0.2450          .    0.1114
-#&gt; married           0.1892        0.5128         -0.8263          .    0.3236
-#&gt; re74           2095.5737     5619.2365         -0.7211     0.5181    0.2248
-#&gt; re75           1532.0553     2466.4844         -0.2903     0.9563    0.1342
-#&gt;            eCDF Max
-#&gt; distance     0.6444
-#&gt; age          0.1577
-#&gt; educ         0.1114
-#&gt; raceblack    0.6404
-#&gt; racehispan   0.0827
-#&gt; racewhite    0.5577
-#&gt; nodegree     0.1114
-#&gt; married      0.3236
-#&gt; re74         0.4470
-#&gt; re75         0.2876
-#&gt; 
-#&gt; Summary of Balance by Subclass:
-#&gt; 
-#&gt; - Subclass 1
-#&gt;            Means Treated Means Control Std. Mean Diff. Var. Ratio eCDF Mean
-#&gt; distance          0.1141        0.0674          0.2120     1.0379    0.2771
-#&gt; age              24.4815       28.6536         -0.5831     0.3615    0.1150
-#&gt; educ             10.7407       10.2590          0.2396     0.4213    0.0401
-#&gt; raceblack         0.0370        0.0030          0.0936          .    0.0340
-#&gt; racehispan        0.2963        0.1506          0.6161          .    0.1457
-#&gt; racewhite         0.6667        0.8464         -0.6064          .    0.1797
-#&gt; nodegree          0.5556        0.5723         -0.0368          .    0.0167
-#&gt; married           0.2593        0.5904         -0.8454          .    0.3311
-#&gt; re74           3205.1533     6429.1274         -0.6598     1.0648    0.2177
-#&gt; re75           1983.7216     2631.3105         -0.2012     0.9066    0.0980
-#&gt;            eCDF Max
-#&gt; distance     0.4934
-#&gt; age          0.2446
-#&gt; educ         0.1169
-#&gt; raceblack    0.0340
-#&gt; racehispan   0.1457
-#&gt; racewhite    0.1797
-#&gt; nodegree     0.0167
-#&gt; married      0.3311
-#&gt; re74         0.4266
-#&gt; re75         0.2263
-#&gt; 
-#&gt; - Subclass 2
-#&gt;            Means Treated Means Control Std. Mean Diff. Var. Ratio eCDF Mean
-#&gt; distance          0.4522        0.3958          0.2561     0.8134    0.1707
-#&gt; age              29.1154       29.5135         -0.0556     0.3486    0.1308
-#&gt; educ              9.1538        9.7568         -0.2999     0.9233    0.0599
-#&gt; raceblack         0.8846        0.7027          0.5003          .    0.1819
-#&gt; racehispan        0.1154        0.2973         -0.7692          .    0.1819
-#&gt; racewhite         0.0000        0.0000          0.0000          .    0.0000
-#&gt; nodegree          0.6923        0.6757          0.0366          .    0.0166
-#&gt; married           0.5000        0.5405         -0.1035          .    0.0405
-#&gt; re74           6754.9455     5617.3241          0.2328     1.5744    0.0817
-#&gt; re75           3312.9595     3257.5161          0.0172     1.5170    0.0581
-#&gt;            eCDF Max
-#&gt; distance     0.2994
-#&gt; age          0.3129
-#&gt; educ         0.1674
-#&gt; raceblack    0.1819
-#&gt; racehispan   0.1819
-#&gt; racewhite    0.0000
-#&gt; nodegree     0.0166
-#&gt; married      0.0405
-#&gt; re74         0.2453
-#&gt; re75         0.1746
-#&gt; 
-#&gt; - Subclass 3
-#&gt;            Means Treated Means Control Std. Mean Diff. Var. Ratio eCDF Mean
-#&gt; distance          0.5998        0.6097         -0.0451     1.2565    0.1421
-#&gt; age              26.6923       25.9000          0.1107     0.2696    0.2119
-#&gt; educ             10.3846        8.8000          0.7881     0.3682    0.1731
-#&gt; raceblack         1.0000        1.0000          0.0000          .    0.0000
-#&gt; racehispan        0.0000        0.0000          0.0000          .    0.0000
-#&gt; racewhite         0.0000        0.0000          0.0000          .    0.0000
-#&gt; nodegree          0.6923        0.5000          0.4230          .    0.1923
-#&gt; married           0.5000        0.0000          1.2766          .    0.5000
-#&gt; re74           2416.9731     1748.8415          0.1367     2.6567    0.1324
-#&gt; re75           1350.8111     1004.3709          0.1076     1.8285    0.0677
-#&gt;            eCDF Max
-#&gt; distance     0.3615
-#&gt; age          0.5077
-#&gt; educ         0.3846
-#&gt; raceblack    0.0000
-#&gt; racehispan   0.0000
-#&gt; racewhite    0.0000
-#&gt; nodegree     0.1923
-#&gt; married      0.5000
-#&gt; re74         0.2769
-#&gt; re75         0.2077
-#&gt; 
-#&gt; - Subclass 4
-#&gt;            Means Treated Means Control Std. Mean Diff. Var. Ratio eCDF Mean
-#&gt; distance          0.6582        0.6588         -0.0028     0.9551    0.0452
-#&gt; age              22.2963       24.2941         -0.2792     0.2181    0.1053
-#&gt; educ             10.4074       11.0588         -0.3240     0.5596    0.0787
-#&gt; raceblack         1.0000        1.0000          0.0000          .    0.0000
-#&gt; racehispan        0.0000        0.0000          0.0000          .    0.0000
-#&gt; racewhite         0.0000        0.0000          0.0000          .    0.0000
-#&gt; nodegree          0.4815        0.5294         -0.1054          .    0.0479
-#&gt; married           0.0370        0.2353         -0.5062          .    0.1983
-#&gt; re74            663.6473     1733.6054         -0.2190     0.1297    0.0617
-#&gt; re75            498.2558     1882.9978         -0.4301     0.1094    0.1153
-#&gt;            eCDF Max
-#&gt; distance     0.1307
-#&gt; age          0.1808
-#&gt; educ         0.1765
-#&gt; raceblack    0.0000
-#&gt; racehispan   0.0000
-#&gt; racewhite    0.0000
-#&gt; nodegree     0.0479
-#&gt; married      0.1983
-#&gt; re74         0.1678
-#&gt; re75         0.2048
-#&gt; 
-#&gt; - Subclass 5
-#&gt;            Means Treated Means Control Std. Mean Diff. Var. Ratio eCDF Mean
-#&gt; distance          0.7013        0.6979          0.0152     0.8887    0.0765
-#&gt; age              24.3846       22.2941          0.2922     0.7142    0.1296
-#&gt; educ             10.1154        9.8824          0.1159     1.3668    0.0637
-#&gt; raceblack         1.0000        1.0000          0.0000          .    0.0000
-#&gt; racehispan        0.0000        0.0000          0.0000          .    0.0000
-#&gt; racewhite         0.0000        0.0000          0.0000          .    0.0000
-#&gt; nodegree          0.7308        0.8235         -0.2040          .    0.0928
-#&gt; married           0.0385        0.0000          0.0982          .    0.0385
-#&gt; re74            932.1795      812.5195          0.0245     3.9223    0.0899
-#&gt; re75           1551.4350      586.9098          0.2996    23.9287    0.0601
-#&gt;            eCDF Max
-#&gt; distance     0.2805
-#&gt; age          0.3032
-#&gt; educ         0.0928
-#&gt; raceblack    0.0000
-#&gt; racehispan   0.0000
-#&gt; racewhite    0.0000
-#&gt; nodegree     0.0928
-#&gt; married      0.0385
-#&gt; re74         0.2783
-#&gt; re75         0.2014
-#&gt; 
-#&gt; - Subclass 6
-#&gt;            Means Treated Means Control Std. Mean Diff. Var. Ratio eCDF Mean
-#&gt; distance          0.7396        0.7425         -0.0135     1.4075    0.1214
-#&gt; age              23.8846       22.4615          0.1989     0.6952    0.1058
-#&gt; educ             10.3462       11.3846         -0.5165     0.4905    0.1202
-#&gt; raceblack         1.0000        1.0000          0.0000          .    0.0000
-#&gt; racehispan        0.0000        0.0000          0.0000          .    0.0000
-#&gt; racewhite         0.0000        0.0000          0.0000          .    0.0000
-#&gt; nodegree          0.9231        0.7692          0.3384          .    0.1538
-#&gt; married           0.0000        0.0000          0.0000          .    0.0000
-#&gt; re74            591.5328      517.2464          0.0152     2.0185    0.0545
-#&gt; re75            974.8401      479.1179          0.1540     4.6722    0.0769
-#&gt;            eCDF Max
-#&gt; distance     0.2692
-#&gt; age          0.3462
-#&gt; educ         0.3077
-#&gt; raceblack    0.0000
-#&gt; racehispan   0.0000
-#&gt; racewhite    0.0000
-#&gt; nodegree     0.1538
-#&gt; married      0.0000
-#&gt; re74         0.1538
-#&gt; re75         0.1923
-#&gt; 
-#&gt; - Subclass 7
-#&gt;            Means Treated Means Control Std. Mean Diff. Var. Ratio eCDF Mean
-#&gt; distance          0.7837        0.7774          0.0284     2.7433    0.1407
-#&gt; age              29.8889       25.6667          0.5901     0.3002    0.2333
-#&gt; educ             11.2222       10.6667          0.2763     6.5385    0.0679
-#&gt; raceblack         1.0000        1.0000          0.0000          .    0.0000
-#&gt; racehispan        0.0000        0.0000          0.0000          .    0.0000
-#&gt; racewhite         0.0000        0.0000          0.0000          .    0.0000
-#&gt; nodegree          0.8889        1.0000         -0.2444          .    0.1111
-#&gt; married           0.0000        0.0000          0.0000          .    0.0000
-#&gt; re74            190.2635      281.4813         -0.0187     1.3943    0.0889
-#&gt; re75           1091.6910     1912.6611         -0.2550     2.5440    0.2189
-#&gt;            eCDF Max
-#&gt; distance     0.2963
-#&gt; age          0.6667
-#&gt; educ         0.1481
-#&gt; raceblack    0.0000
-#&gt; racehispan   0.0000
-#&gt; racewhite    0.0000
-#&gt; nodegree     0.1111
-#&gt; married      0.0000
-#&gt; re74         0.2222
-#&gt; re75         0.7407
-#&gt; </div><div class='input'>
-<span class='co'># PS subclassification for the ATE with 10 subclasses</span>
-<span class='co'># and at least 2 units in each group per subclass</span>
-<span class='va'>s.out2</span> <span class='op'>&lt;-</span> <span class='fu'><a href='matchit.html'>matchit</a></span><span class='op'>(</span><span class='va'>treat</span> <span class='op'>~</span> <span class='va'>age</span> <span class='op'>+</span> <span class='va'>educ</span> <span class='op'>+</span> <span class='va'>race</span> <span class='op'>+</span> <span class='va'>nodegree</span> <span class='op'>+</span>
-                    <span class='va'>married</span> <span class='op'>+</span> <span class='va'>re74</span> <span class='op'>+</span> <span class='va'>re75</span>, data <span class='op'>=</span> <span class='va'>lalonde</span>,
-                  method <span class='op'>=</span> <span class='st'>"subclass"</span>, subclass <span class='op'>=</span> <span class='fl'>10</span>,
-                  estimand <span class='op'>=</span> <span class='st'>"ATE"</span>, min.n <span class='op'>=</span> <span class='fl'>2</span><span class='op'>)</span>
-<span class='va'>s.out2</span>
-</div><div class='output co'>#&gt; A matchit object
-#&gt;  - method: Subclassification (10 subclasses)
-#&gt;  - distance: Propensity score
-#&gt;              - estimated with logistic regression
-#&gt;  - number of obs.: 614 (original), 614 (matched)
-#&gt;  - target estimand: ATE
-#&gt;  - covariates: age, educ, race, nodegree, married, re74, re75</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>s.out2</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; 
-#&gt; Call:
-#&gt; matchit(formula = treat ~ age + educ + race + nodegree + married + 
-#&gt;     re74 + re75, data = lalonde, method = "subclass", estimand = "ATE", 
-#&gt;     subclass = 10, min.n = 2)
-#&gt; 
-#&gt; Summary of Balance for All Data:
-#&gt;            Means Treated Means Control Std. Mean Diff. Var. Ratio eCDF Mean
-#&gt; distance          0.5774        0.1822          1.7569     0.9211    0.3774
-#&gt; age              25.8162       28.0303         -0.2419     0.4400    0.0813
-#&gt; educ             10.3459       10.2354          0.0448     0.4959    0.0347
-#&gt; raceblack         0.8432        0.2028          1.6708          .    0.6404
-#&gt; racehispan        0.0595        0.1422         -0.2774          .    0.0827
-#&gt; racewhite         0.0973        0.6550         -1.4080          .    0.5577
-#&gt; nodegree          0.7081        0.5967          0.2355          .    0.1114
-#&gt; married           0.1892        0.5128         -0.7208          .    0.3236
-#&gt; re74           2095.5737     5619.2365         -0.5958     0.5181    0.2248
-#&gt; re75           1532.0553     2466.4844         -0.2870     0.9563    0.1342
-#&gt;            eCDF Max
-#&gt; distance     0.6444
-#&gt; age          0.1577
-#&gt; educ         0.1114
-#&gt; raceblack    0.6404
-#&gt; racehispan   0.0827
-#&gt; racewhite    0.5577
-#&gt; nodegree     0.1114
-#&gt; married      0.3236
-#&gt; re74         0.4470
-#&gt; re75         0.2876
-#&gt; 
-#&gt; Summary of Balance Across Subclasses
-#&gt;            Means Treated Means Control Std. Mean Diff. Var. Ratio eCDF Mean
-#&gt; distance          0.3104        0.2972          0.0585     1.0249    0.0454
-#&gt; age              25.1099       27.1896         -0.2272     0.3247    0.0996
-#&gt; educ             10.5836       10.3105          0.1106     0.5537    0.0332
-#&gt; raceblack         0.4040        0.3898          0.0371          .    0.0142
-#&gt; racehispan        0.0894        0.1233         -0.1139          .    0.0340
-#&gt; racewhite         0.5066        0.4869          0.0498          .    0.0197
-#&gt; nodegree          0.5194        0.6163         -0.2049          .    0.0969
-#&gt; married           0.2688        0.4150         -0.3257          .    0.1462
-#&gt; re74           2489.2647     4627.1084         -0.3614     0.5922    0.1342
-#&gt; re75           1532.5437     2199.1568         -0.2047     0.9287    0.0962
-#&gt;            eCDF Max
-#&gt; distance     0.1674
-#&gt; age          0.2203
-#&gt; educ         0.0969
-#&gt; raceblack    0.0142
-#&gt; racehispan   0.0340
-#&gt; racewhite    0.0197
-#&gt; nodegree     0.0969
-#&gt; married      0.1462
-#&gt; re74         0.3399
-#&gt; re75         0.1839
-#&gt; 
-#&gt; Percent Balance Improvement:
-#&gt;            Std. Mean Diff. Var. Ratio eCDF Mean eCDF Max
-#&gt; distance              96.7      -11.3      88.0     74.0
-#&gt; age                    6.1       26.2     -22.5    -39.7
-#&gt; educ                -147.1      -11.7       4.4     13.0
-#&gt; raceblack             97.8          .      97.8     97.8
-#&gt; racehispan            58.9          .      58.9     58.9
-#&gt; racewhite             96.5          .      96.5     96.5
-#&gt; nodegree              13.0          .      13.0     13.0
-#&gt; married               54.8          .      54.8     54.8
-#&gt; re74                  39.3      -14.3      40.3     24.0
-#&gt; re75                  28.7        2.9      28.3     36.1
-#&gt; 
-#&gt; Sample Sizes:
-#&gt;               Control Treated
-#&gt; All            429.    185.  
-#&gt; Matched (ESS)  332.11   42.66
-#&gt; Matched        429.    185.  
-#&gt; Unmatched        0.      0.  
-#&gt; Discarded        0.      0.  
-#&gt; </div></pre>
+    <pre class="examples"><span class='r-in'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='st'>"lalonde"</span><span class='op'>)</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'># PS subclassification for the ATT with 7 subclasses</span></span>
+<span class='r-in'><span class='va'>s.out1</span> <span class='op'>&lt;-</span> <span class='fu'><a href='matchit.html'>matchit</a></span><span class='op'>(</span><span class='va'>treat</span> <span class='op'>~</span> <span class='va'>age</span> <span class='op'>+</span> <span class='va'>educ</span> <span class='op'>+</span> <span class='va'>race</span> <span class='op'>+</span> <span class='va'>nodegree</span> <span class='op'>+</span></span>
+<span class='r-in'>                    <span class='va'>married</span> <span class='op'>+</span> <span class='va'>re74</span> <span class='op'>+</span> <span class='va'>re75</span>, data <span class='op'>=</span> <span class='va'>lalonde</span>,</span>
+<span class='r-in'>                  method <span class='op'>=</span> <span class='st'>"subclass"</span>, subclass <span class='op'>=</span> <span class='fl'>7</span><span class='op'>)</span></span>
+<span class='r-in'><span class='va'>s.out1</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> A matchit object</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  - method: Subclassification (7 subclasses)</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  - distance: Propensity score</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>              - estimated with logistic regression</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  - number of obs.: 614 (original), 614 (matched)</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  - target estimand: ATT</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  - covariates: age, educ, race, nodegree, married, re74, re75</span>
+<span class='r-in'><span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>s.out1</span>, subclass <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> Call:</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> matchit(formula = treat ~ age + educ + race + nodegree + married + </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>     re74 + re75, data = lalonde, method = "subclass", subclass = 7)</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> Summary of Balance for All Data:</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>            Means Treated Means Control Std. Mean Diff. Var. Ratio eCDF Mean</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> distance          0.5774        0.1822          1.7941     0.9211    0.3774</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> age              25.8162       28.0303         -0.3094     0.4400    0.0813</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> educ             10.3459       10.2354          0.0550     0.4959    0.0347</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> raceblack         0.8432        0.2028          1.7615          .    0.6404</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> racehispan        0.0595        0.1422         -0.3498          .    0.0827</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> racewhite         0.0973        0.6550         -1.8819          .    0.5577</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> nodegree          0.7081        0.5967          0.2450          .    0.1114</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> married           0.1892        0.5128         -0.8263          .    0.3236</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> re74           2095.5737     5619.2365         -0.7211     0.5181    0.2248</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> re75           1532.0553     2466.4844         -0.2903     0.9563    0.1342</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>            eCDF Max</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> distance     0.6444</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> age          0.1577</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> educ         0.1114</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> raceblack    0.6404</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> racehispan   0.0827</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> racewhite    0.5577</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> nodegree     0.1114</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> married      0.3236</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> re74         0.4470</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> re75         0.2876</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> Summary of Balance by Subclass:</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> - Subclass 1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>            Means Treated Means Control Std. Mean Diff. Var. Ratio eCDF Mean</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> distance          0.1141        0.0674          0.2120     1.0379    0.2771</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> age              24.4815       28.6536         -0.5831     0.3615    0.1150</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> educ             10.7407       10.2590          0.2396     0.4213    0.0401</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> raceblack         0.0370        0.0030          0.0936          .    0.0340</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> racehispan        0.2963        0.1506          0.6161          .    0.1457</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> racewhite         0.6667        0.8464         -0.6064          .    0.1797</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> nodegree          0.5556        0.5723         -0.0368          .    0.0167</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> married           0.2593        0.5904         -0.8454          .    0.3311</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> re74           3205.1533     6429.1274         -0.6598     1.0648    0.2177</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> re75           1983.7216     2631.3105         -0.2012     0.9066    0.0980</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>            eCDF Max</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> distance     0.4934</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> age          0.2446</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> educ         0.1169</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> raceblack    0.0340</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> racehispan   0.1457</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> racewhite    0.1797</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> nodegree     0.0167</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> married      0.3311</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> re74         0.4266</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> re75         0.2263</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> - Subclass 2</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>            Means Treated Means Control Std. Mean Diff. Var. Ratio eCDF Mean</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> distance          0.4522        0.3958          0.2561     0.8134    0.1707</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> age              29.1154       29.5135         -0.0556     0.3486    0.1308</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> educ              9.1538        9.7568         -0.2999     0.9233    0.0599</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> raceblack         0.8846        0.7027          0.5003          .    0.1819</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> racehispan        0.1154        0.2973         -0.7692          .    0.1819</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> racewhite         0.0000        0.0000          0.0000          .    0.0000</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> nodegree          0.6923        0.6757          0.0366          .    0.0166</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> married           0.5000        0.5405         -0.1035          .    0.0405</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> re74           6754.9455     5617.3241          0.2328     1.5744    0.0817</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> re75           3312.9595     3257.5161          0.0172     1.5170    0.0581</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>            eCDF Max</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> distance     0.2994</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> age          0.3129</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> educ         0.1674</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> raceblack    0.1819</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> racehispan   0.1819</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> racewhite    0.0000</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> nodegree     0.0166</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> married      0.0405</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> re74         0.2453</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> re75         0.1746</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> - Subclass 3</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>            Means Treated Means Control Std. Mean Diff. Var. Ratio eCDF Mean</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> distance          0.5998        0.6097         -0.0451     1.2565    0.1421</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> age              26.6923       25.9000          0.1107     0.2696    0.2119</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> educ             10.3846        8.8000          0.7881     0.3682    0.1731</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> raceblack         1.0000        1.0000          0.0000          .    0.0000</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> racehispan        0.0000        0.0000          0.0000          .    0.0000</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> racewhite         0.0000        0.0000          0.0000          .    0.0000</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> nodegree          0.6923        0.5000          0.4230          .    0.1923</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> married           0.5000        0.0000          1.2766          .    0.5000</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> re74           2416.9731     1748.8415          0.1367     2.6567    0.1324</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> re75           1350.8111     1004.3709          0.1076     1.8285    0.0677</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>            eCDF Max</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> distance     0.3615</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> age          0.5077</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> educ         0.3846</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> raceblack    0.0000</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> racehispan   0.0000</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> racewhite    0.0000</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> nodegree     0.1923</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> married      0.5000</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> re74         0.2769</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> re75         0.2077</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> - Subclass 4</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>            Means Treated Means Control Std. Mean Diff. Var. Ratio eCDF Mean</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> distance          0.6582        0.6588         -0.0028     0.9551    0.0452</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> age              22.2963       24.2941         -0.2792     0.2181    0.1053</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> educ             10.4074       11.0588         -0.3240     0.5596    0.0787</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> raceblack         1.0000        1.0000          0.0000          .    0.0000</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> racehispan        0.0000        0.0000          0.0000          .    0.0000</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> racewhite         0.0000        0.0000          0.0000          .    0.0000</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> nodegree          0.4815        0.5294         -0.1054          .    0.0479</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> married           0.0370        0.2353         -0.5062          .    0.1983</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> re74            663.6473     1733.6054         -0.2190     0.1297    0.0617</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> re75            498.2558     1882.9978         -0.4301     0.1094    0.1153</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>            eCDF Max</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> distance     0.1307</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> age          0.1808</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> educ         0.1765</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> raceblack    0.0000</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> racehispan   0.0000</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> racewhite    0.0000</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> nodegree     0.0479</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> married      0.1983</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> re74         0.1678</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> re75         0.2048</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> - Subclass 5</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>            Means Treated Means Control Std. Mean Diff. Var. Ratio eCDF Mean</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> distance          0.7013        0.6979          0.0152     0.8887    0.0765</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> age              24.3846       22.2941          0.2922     0.7142    0.1296</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> educ             10.1154        9.8824          0.1159     1.3668    0.0637</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> raceblack         1.0000        1.0000          0.0000          .    0.0000</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> racehispan        0.0000        0.0000          0.0000          .    0.0000</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> racewhite         0.0000        0.0000          0.0000          .    0.0000</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> nodegree          0.7308        0.8235         -0.2040          .    0.0928</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> married           0.0385        0.0000          0.0982          .    0.0385</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> re74            932.1795      812.5195          0.0245     3.9223    0.0899</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> re75           1551.4350      586.9098          0.2996    23.9287    0.0601</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>            eCDF Max</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> distance     0.2805</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> age          0.3032</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> educ         0.0928</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> raceblack    0.0000</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> racehispan   0.0000</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> racewhite    0.0000</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> nodegree     0.0928</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> married      0.0385</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> re74         0.2783</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> re75         0.2014</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> - Subclass 6</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>            Means Treated Means Control Std. Mean Diff. Var. Ratio eCDF Mean</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> distance          0.7396        0.7425         -0.0135     1.4075    0.1214</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> age              23.8846       22.4615          0.1989     0.6952    0.1058</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> educ             10.3462       11.3846         -0.5165     0.4905    0.1202</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> raceblack         1.0000        1.0000          0.0000          .    0.0000</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> racehispan        0.0000        0.0000          0.0000          .    0.0000</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> racewhite         0.0000        0.0000          0.0000          .    0.0000</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> nodegree          0.9231        0.7692          0.3384          .    0.1538</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> married           0.0000        0.0000          0.0000          .    0.0000</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> re74            591.5328      517.2464          0.0152     2.0185    0.0545</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> re75            974.8401      479.1179          0.1540     4.6722    0.0769</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>            eCDF Max</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> distance     0.2692</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> age          0.3462</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> educ         0.3077</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> raceblack    0.0000</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> racehispan   0.0000</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> racewhite    0.0000</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> nodegree     0.1538</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> married      0.0000</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> re74         0.1538</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> re75         0.1923</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> - Subclass 7</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>            Means Treated Means Control Std. Mean Diff. Var. Ratio eCDF Mean</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> distance          0.7837        0.7774          0.0284     2.7433    0.1407</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> age              29.8889       25.6667          0.5901     0.3002    0.2333</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> educ             11.2222       10.6667          0.2763     6.5385    0.0679</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> raceblack         1.0000        1.0000          0.0000          .    0.0000</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> racehispan        0.0000        0.0000          0.0000          .    0.0000</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> racewhite         0.0000        0.0000          0.0000          .    0.0000</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> nodegree          0.8889        1.0000         -0.2444          .    0.1111</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> married           0.0000        0.0000          0.0000          .    0.0000</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> re74            190.2635      281.4813         -0.0187     1.3943    0.0889</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> re75           1091.6910     1912.6611         -0.2550     2.5440    0.2189</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>            eCDF Max</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> distance     0.2963</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> age          0.6667</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> educ         0.1481</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> raceblack    0.0000</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> racehispan   0.0000</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> racewhite    0.0000</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> nodegree     0.1111</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> married      0.0000</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> re74         0.2222</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> re75         0.7407</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'># PS subclassification for the ATE with 10 subclasses</span></span>
+<span class='r-in'><span class='co'># and at least 2 units in each group per subclass</span></span>
+<span class='r-in'><span class='va'>s.out2</span> <span class='op'>&lt;-</span> <span class='fu'><a href='matchit.html'>matchit</a></span><span class='op'>(</span><span class='va'>treat</span> <span class='op'>~</span> <span class='va'>age</span> <span class='op'>+</span> <span class='va'>educ</span> <span class='op'>+</span> <span class='va'>race</span> <span class='op'>+</span> <span class='va'>nodegree</span> <span class='op'>+</span></span>
+<span class='r-in'>                    <span class='va'>married</span> <span class='op'>+</span> <span class='va'>re74</span> <span class='op'>+</span> <span class='va'>re75</span>, data <span class='op'>=</span> <span class='va'>lalonde</span>,</span>
+<span class='r-in'>                  method <span class='op'>=</span> <span class='st'>"subclass"</span>, subclass <span class='op'>=</span> <span class='fl'>10</span>,</span>
+<span class='r-in'>                  estimand <span class='op'>=</span> <span class='st'>"ATE"</span>, min.n <span class='op'>=</span> <span class='fl'>2</span><span class='op'>)</span></span>
+<span class='r-in'><span class='va'>s.out2</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> A matchit object</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  - method: Subclassification (10 subclasses)</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  - distance: Propensity score</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>              - estimated with logistic regression</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  - number of obs.: 614 (original), 614 (matched)</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  - target estimand: ATE</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  - covariates: age, educ, race, nodegree, married, re74, re75</span>
+<span class='r-in'><span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>s.out2</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> Call:</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> matchit(formula = treat ~ age + educ + race + nodegree + married + </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>     re74 + re75, data = lalonde, method = "subclass", estimand = "ATE", </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>     subclass = 10, min.n = 2)</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> Summary of Balance for All Data:</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>            Means Treated Means Control Std. Mean Diff. Var. Ratio eCDF Mean</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> distance          0.5774        0.1822          1.7569     0.9211    0.3774</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> age              25.8162       28.0303         -0.2419     0.4400    0.0813</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> educ             10.3459       10.2354          0.0448     0.4959    0.0347</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> raceblack         0.8432        0.2028          1.6708          .    0.6404</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> racehispan        0.0595        0.1422         -0.2774          .    0.0827</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> racewhite         0.0973        0.6550         -1.4080          .    0.5577</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> nodegree          0.7081        0.5967          0.2355          .    0.1114</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> married           0.1892        0.5128         -0.7208          .    0.3236</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> re74           2095.5737     5619.2365         -0.5958     0.5181    0.2248</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> re75           1532.0553     2466.4844         -0.2870     0.9563    0.1342</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>            eCDF Max</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> distance     0.6444</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> age          0.1577</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> educ         0.1114</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> raceblack    0.6404</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> racehispan   0.0827</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> racewhite    0.5577</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> nodegree     0.1114</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> married      0.3236</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> re74         0.4470</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> re75         0.2876</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> Summary of Balance Across Subclasses</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>            Means Treated Means Control Std. Mean Diff. Var. Ratio eCDF Mean</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> distance          0.3104        0.2972          0.0585     1.0249    0.0454</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> age              25.1099       27.1896         -0.2272     0.3247    0.0996</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> educ             10.5836       10.3105          0.1106     0.5537    0.0332</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> raceblack         0.4040        0.3898          0.0371          .    0.0142</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> racehispan        0.0894        0.1233         -0.1139          .    0.0340</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> racewhite         0.5066        0.4869          0.0498          .    0.0197</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> nodegree          0.5194        0.6163         -0.2049          .    0.0969</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> married           0.2688        0.4150         -0.3257          .    0.1462</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> re74           2489.2647     4627.1084         -0.3614     0.5922    0.1342</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> re75           1532.5437     2199.1568         -0.2047     0.9287    0.0962</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>            eCDF Max</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> distance     0.1674</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> age          0.2203</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> educ         0.0969</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> raceblack    0.0142</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> racehispan   0.0340</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> racewhite    0.0197</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> nodegree     0.0969</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> married      0.1462</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> re74         0.3399</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> re75         0.1839</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> Percent Balance Improvement:</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>            Std. Mean Diff. Var. Ratio eCDF Mean eCDF Max</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> distance              96.7      -11.3      88.0     74.0</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> age                    6.1       26.2     -22.5    -39.7</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> educ                -147.1      -11.7       4.4     13.0</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> raceblack             97.8          .      97.8     97.8</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> racehispan            58.9          .      58.9     58.9</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> racewhite             96.5          .      96.5     96.5</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> nodegree              13.0          .      13.0     13.0</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> married               54.8          .      54.8     54.8</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> re74                  39.3      -14.3      40.3     24.0</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> re75                  28.7        2.9      28.3     36.1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> Sample Sizes:</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>               Control Treated</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> All            429.    185.  </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> Matched (ESS)  332.11   42.66</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> Matched        429.    185.  </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> Unmatched        0.      0.  </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> Discarded        0.      0.  </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+</pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
