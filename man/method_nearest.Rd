@@ -76,7 +76,7 @@ the variable containing sampling weights to be incorporated into propensity scor
 whether matching should be done with replacement.
 }
   \item{m.order}{
-the order that the matching takes place. The default for \code{distance = "mahalanobis"} or when \code{distance} is supplied as a matrix is \code{"data"}. Otherwise, the default is \code{"largest"}. See \fun{matchit} for allowable options.
+the order that the matching takes place. The default is \code{"data"} for \code{distance = "mahalanobis"} or when \code{distance} is supplied as a matrix, and \code{"largest"} otherwise. See \fun{matchit} for allowable options.
 }
   \item{caliper}{
 the width(s) of the caliper(s) used for caliper matching. See Details and Examples.
@@ -93,8 +93,13 @@ for variable ratio matching, the minimum and maximum number of controls units to
   \item{verbose}{
 \code{logical}; whether information about the matching process should be printed to the console. When \code{TRUE}, a progress bar implemented using \emph{RcppProgress} will be displayed.
 }
-  \item{\dots}{
-ignored.
+\item{\dots}{
+additional arguments that control the matching specification:
+  \describe{
+     \item{\code{reuse.max}}{
+      \code{numeric}; the maximum number of times each control can be used as a match. Setting \code{reuse.max = 1} correpsonds to matching without replacement (i.e., \code{replace = FALSE}), and setting \code{reuse.max = Inf} corresponds to traditional matching with replacement (i.e., \code{replace = TRUE}) with no limit on the number of times each control unit can be matched. Other values restrict the number of times each control can be matched when matching with replacement. \code{replace} is ignored when \code{reuse.max} is specified.
+     }
+  }
 }
 }
 \section{Outputs}{

@@ -128,7 +128,7 @@ solver <- "glpk"
 m.out1 <- matchit(treat ~ age + educ + re74,
                   data = lalonde, method = "cardinality",
                   estimand = "ATT", ratio = 1,
-                  tols = .1, solver = solver)
+                  tols = .15, solver = solver)
 m.out1
 summary(m.out1)
 
@@ -136,7 +136,7 @@ summary(m.out1)
 m.out2 <- matchit(treat ~ age + educ + re74,
                   data = lalonde, method = "cardinality",
                   estimand = "ATT", ratio = NA,
-                  tols = .1, solver = solver)
+                  tols = .15, solver = solver)
 m.out2
 summary(m.out2, un = FALSE)
 
@@ -144,7 +144,7 @@ summary(m.out2, un = FALSE)
 m.out3 <- matchit(treat ~ age + educ + re74,
                   data = lalonde, method = "cardinality",
                   estimand = "ATE", ratio = NA,
-                  tols = .1, solver = solver)
+                  tols = .15, solver = solver)
 m.out3
 summary(m.out3, un = FALSE)
 

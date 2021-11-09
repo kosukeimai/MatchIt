@@ -7,7 +7,7 @@ plot.matchit <- function(x, type = "qq", interactive = TRUE, which.xs = NULL, ..
 
   if (type %in% c("qq", "ecdf", "density")) {
     matchit.covplot(x, type = type, interactive=interactive,
-                   which.xs = which.xs, ...)
+                    which.xs = which.xs, ...)
   }
   else if (type == "jitter") {
     if (is.null(x$distance)) {
@@ -59,7 +59,7 @@ plot.matchit.subclass <- function(x, type = "qq", interactive = TRUE, which.xs =
 
     if (!is.null(which.subclass)) {
       matchit.covplot.subclass(x, type = type, which.subclass = which.subclass,
-                     interactive = interactive, which.xs = which.xs, ...)
+                               interactive = interactive, which.xs = which.xs, ...)
     }
     else if (interactive && miss.sub) {
       subclasses <- levels(x$subclass)
@@ -194,14 +194,18 @@ print.matchit <- function(x, ...) {
   nm <- is.null(x[["method"]])
   cat("A matchit object")
   cat(paste0("\n - method: ", info.to.method(info)))
-  if (!is.null(x[["distance"]]) || info$mahalanobis || identical(info$distance, "user")) {
+  # if (!is.null(x[["distance"]]) || info$mahalanobis || identical(info$distance, "user")) {
+  if (!is.null(info$distance) || info$mahalanobis) {
     cat("\n - distance: ")
-    if (info$mahalanobis) cat("Mahalanobis")
-    if (info$distance != "mahalanobis") {
+    if (info$mahalanobis) {
+      cat("Mahalanobis")
+    }
+    if (!is.null(info$distance) && info$distance != "mahalanobis") {
       if (info$mahalanobis) cat(" [matching]\n             ")
 
-      if (info$distance != "user") cat("Propensity score")
-      else if (info$distance_is_matrix) cat("User-defined (matrix)")
+      if (info$distance_is_matrix) cat("User-defined (matrix)")
+      else if (info$distance != "user") cat("Propensity score")
+      else if (!is.null(attr(info$distance, "custom"))) cat(attr(info$distance, "custom"))
       else cat("User-defined")
 
       if (cal || disl) {
@@ -223,8 +227,8 @@ print.matchit <- function(x, ...) {
   }
   if (cal) {
     cat(paste0("\n - caliper: ", paste(vapply(seq_along(x[["caliper"]]), function(z) paste0(if (names(x[["caliper"]])[z] == "") "<distance>" else names(x[["caliper"]])[z],
-                                                                                          " (", format(round(x[["caliper"]][z], 3)), ")"), character(1L)),
-                                     collapse = ", ")))
+                                                                                            " (", format(round(x[["caliper"]][z], 3)), ")"), character(1L)),
+                                       collapse = ", ")))
   }
   if (disl) {
     cat("\n - common support: ")
@@ -399,74 +403,74 @@ summary.matchit <- function(object, interactions = FALSE,
 
   ## Summary Stats
   if (kk > 0) {
-  if (un) {
-    aa.all <- setNames(lapply(seq_len(kk), function(i) qoi(X[,i], tt = treat, ww = NULL, s.weights = s.weights,
-                                                           standardize = standardize, s.d.denom = s.d.denom)),
-                       colnames(X))
-    sum.all <- do.call("rbind", aa.all)
-    dimnames(sum.all) <- list(nam, names(aa.all[[1]]))
+    if (un) {
+      aa.all <- setNames(lapply(seq_len(kk), function(i) qoi(X[,i], tt = treat, ww = NULL, s.weights = s.weights,
+                                                             standardize = standardize, s.d.denom = s.d.denom)),
+                         colnames(X))
+      sum.all <- do.call("rbind", aa.all)
+      dimnames(sum.all) <- list(nam, names(aa.all[[1]]))
 
-    sum.all.int <- NULL
-  }
+      sum.all.int <- NULL
+    }
 
-  if (matched) {
-    aa.matched <- setNames(lapply(seq_len(kk), function(i) qoi(X[,i], tt = treat, ww = weights, s.weights = s.weights,
-                                                               subclass = object$subclass, mm = object$match.matrix,
-                                                               standardize = standardize, s.d.denom = s.d.denom,
-                                                               compute.pair.dist = pair.dist)),
-                           colnames(X))
-    sum.matched <- do.call("rbind", aa.matched)
-    dimnames(sum.matched) <- list(nam, names(aa.matched[[1]]))
+    if (matched) {
+      aa.matched <- setNames(lapply(seq_len(kk), function(i) qoi(X[,i], tt = treat, ww = weights, s.weights = s.weights,
+                                                                 subclass = object$subclass, mm = object$match.matrix,
+                                                                 standardize = standardize, s.d.denom = s.d.denom,
+                                                                 compute.pair.dist = pair.dist)),
+                             colnames(X))
+      sum.matched <- do.call("rbind", aa.matched)
+      dimnames(sum.matched) <- list(nam, names(aa.matched[[1]]))
 
-    sum.matched.int <- NULL
-  }
+      sum.matched.int <- NULL
+    }
 
-  if (interactions) {
-    n.int <- kk*(kk+1)/2
-    if (un) sum.all.int <- matrix(NA_real_, nrow = n.int, ncol = length(aa.all[[1]]), dimnames = list(NULL, names(aa.all[[1]])))
-    if (matched) sum.matched.int <- matrix(NA_real_, nrow = n.int, ncol = length(aa.matched[[1]]), dimnames = list(NULL, names(aa.matched[[1]])))
+    if (interactions) {
+      n.int <- kk*(kk+1)/2
+      if (un) sum.all.int <- matrix(NA_real_, nrow = n.int, ncol = length(aa.all[[1]]), dimnames = list(NULL, names(aa.all[[1]])))
+      if (matched) sum.matched.int <- matrix(NA_real_, nrow = n.int, ncol = length(aa.matched[[1]]), dimnames = list(NULL, names(aa.matched[[1]])))
 
-    to.remove <- rep(FALSE, n.int)
-    int.names <- character(n.int)
-    k <- 1
-    for (i in 1:kk) {
-      for (j in i:kk) {
-        x2 <- X[,i] * X[,j]
-        if (all(abs(x2) < sqrt(.Machine$double.eps)) ||
-            all(abs(x2 - X[,i]) < sqrt(.Machine$double.eps))) { #prevent interactions within same factors
-          to.remove[k] <- TRUE
-        }
-        else {
-          if (un) {
-            sum.all.int[k,] <- qoi(x2, tt = treat, ww = NULL, s.weights = s.weights,
-                                   standardize = standardize, s.d.denom = s.d.denom)
-          }
-          if (matched) {
-            sum.matched.int[k,] <- qoi(x2, tt = treat, ww = weights, s.weights = s.weights,
-                                       subclass = object$subclass, mm = object$match.matrix,
-                                       standardize = standardize, s.d.denom = s.d.denom,
-                                       compute.pair.dist = pair.dist)
-          }
-          if (i == j) {
-            int.names[k] <- paste0(nam[i], "\u00B2")
+      to.remove <- rep(FALSE, n.int)
+      int.names <- character(n.int)
+      k <- 1
+      for (i in 1:kk) {
+        for (j in i:kk) {
+          x2 <- X[,i] * X[,j]
+          if (all(abs(x2) < sqrt(.Machine$double.eps)) ||
+              all(abs(x2 - X[,i]) < sqrt(.Machine$double.eps))) { #prevent interactions within same factors
+            to.remove[k] <- TRUE
           }
           else {
-            int.names[k] <- paste(nam[i], nam[j], sep=" * ")
+            if (un) {
+              sum.all.int[k,] <- qoi(x2, tt = treat, ww = NULL, s.weights = s.weights,
+                                     standardize = standardize, s.d.denom = s.d.denom)
+            }
+            if (matched) {
+              sum.matched.int[k,] <- qoi(x2, tt = treat, ww = weights, s.weights = s.weights,
+                                         subclass = object$subclass, mm = object$match.matrix,
+                                         standardize = standardize, s.d.denom = s.d.denom,
+                                         compute.pair.dist = pair.dist)
+            }
+            if (i == j) {
+              int.names[k] <- paste0(nam[i], "\u00B2")
+            }
+            else {
+              int.names[k] <- paste(nam[i], nam[j], sep=" * ")
+            }
           }
+          k <- k + 1
         }
-        k <- k + 1
+      }
+
+      if (un) {
+        rownames(sum.all.int) <- int.names
+        sum.all <- rbind(sum.all, sum.all.int[!to.remove,,drop = FALSE])
+      }
+      if (matched) {
+        rownames(sum.matched.int) <- int.names
+        sum.matched <- rbind(sum.matched, sum.matched.int[!to.remove,,drop = FALSE])
       }
     }
-
-    if (un) {
-      rownames(sum.all.int) <- int.names
-      sum.all <- rbind(sum.all, sum.all.int[!to.remove,,drop = FALSE])
-    }
-    if (matched) {
-      rownames(sum.matched.int) <- int.names
-      sum.matched <- rbind(sum.matched, sum.matched.int[!to.remove,,drop = FALSE])
-    }
-  }
   }
 
   if (!is.null(object$distance)) {

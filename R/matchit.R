@@ -47,6 +47,12 @@ matchit <- function(formula, data = NULL, method = "nearest", distance = "glm",
     for (i in ignored.inputs) assign(i, NULL)
   }
 
+  #Process replace
+  replace <- process.replace(replace, method, ...)
+
+  #Process ratio
+  ratio <- process.ratio(ratio, method, ...)
+
   #Process s.weights
   if (!is.null(s.weights)) {
     if (is.character(s.weights)) {
@@ -202,8 +208,8 @@ matchit <- function(formula, data = NULL, method = "nearest", distance = "glm",
   covs <- model.frame(covs.formula, data = data, na.action = "na.pass")
   for (i in seq_len(ncol(covs))) {
     if (anyNA(covs[[i]])) stop("Missing values are not allowed in the covariates.", call. = FALSE)
-    if (any(!is.finite(covs[[i]]))) stop("Non-finite values are not allowed in the covariates.", call. = FALSE)
     if (is.character(covs[[i]])) covs[[i]] <- factor(covs[[i]])
+    else if (any(!is.finite(covs[[i]]))) stop("Non-finite values are not allowed in the covariates.", call. = FALSE)
   }
 
   #Process discard
@@ -251,7 +257,7 @@ matchit <- function(formula, data = NULL, method = "nearest", distance = "glm",
                                  antiexact = antiexact, ...),
                        quote = TRUE)
 
-  info <- create_info(method, fn1, link, discard, replace, ratio, mcall,
+  info <- create_info(method, fn1, link, discard, replace, ratio,
                       mahalanobis = is.full.mahalanobis || !is.null(mahvars),
                       subclass = match.out$subclass,
                       antiexact = colnames(antiexactcovs),

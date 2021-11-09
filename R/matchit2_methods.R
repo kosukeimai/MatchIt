@@ -80,10 +80,10 @@ matchit2exact <- function(treat, covs, data, estimand = "ATT", verbose = FALSE, 
 
 # MATCHIT method = full-------------------------------------
 matchit2full <- function(treat, formula, data, distance, discarded,
+                         ratio = NULL, #min.controls and max.controls in attrs of replace
                          caliper = NULL, mahvars = NULL, exact = NULL,
                          estimand = "ATT", verbose = FALSE,
-                         is.full.mahalanobis, min.controls = 0,
-                         max.controls = Inf, antiexact = NULL, ...) {
+                         is.full.mahalanobis, antiexact = NULL, ...) {
 
   check.package("optmatch")
 
@@ -98,10 +98,6 @@ matchit2full <- function(treat, formula, data, distance, discarded,
   omps <- getOption("optmatch_max_problem_size")
   on.exit(options(optmatch_max_problem_size = omps))
   options(optmatch_max_problem_size = Inf)
-
-  processed.ratio <- process.ratio(method = "full", min.controls = min.controls, max.controls = max.controls)
-  min.controls <- processed.ratio[["min.controls"]]
-  max.controls <- processed.ratio[["max.controls"]]
 
   estimand <- toupper(estimand)
   estimand <- match_arg(estimand, c("ATT", "ATC", "ATE"))
@@ -124,6 +120,9 @@ matchit2full <- function(treat, formula, data, distance, discarded,
     }
     mahvars <- formula
   }
+
+  min.controls <- attr(ratio, "min.controls")
+  max.controls <- attr(ratio, "max.controls")
 
   #Exact matching strata
   if (!is.null(exact)) {
@@ -196,7 +195,11 @@ matchit2full <- function(treat, formula, data, distance, discarded,
     }
     else mo_ <- mo
 
-    if (any(dim(mo_) == 0)) next
+    if (any(dim(mo_) == 0) || !any(is.finite(mo_))) next
+    else if (all(dim(mo_) == 1)) {
+      pair[ex == e] <- paste(1, e, sep = "|")
+      next
+    }
 
     withCallingHandlers({
       p[[e]] <- do.call(optmatch::fullmatch,
@@ -210,8 +213,8 @@ matchit2full <- function(treat, formula, data, distance, discarded,
       warning(paste0("(from optmatch) ", conditionMessage(w)), call. = FALSE, immediate. = TRUE)
       invokeRestart("muffleWarning")
     },
-    error = function(e) {
-      stop(paste0("(from optmatch) ", conditionMessage(e)), call. = FALSE)
+    error = function(e1) {
+      stop(paste0("(from optmatch) ", conditionMessage(e1)), call. = FALSE)
     })
 
     pair[names(p[[e]])[!is.na(p[[e]])]] <- paste(as.character(p[[e]][!is.na(p[[e]])]), e, sep = "|")
@@ -243,8 +246,7 @@ matchit2full <- function(treat, formula, data, distance, discarded,
 matchit2optimal <- function(treat, formula, data, distance, discarded,
                             ratio = 1, caliper = NULL, mahvars = NULL, exact = NULL,
                             estimand = "ATT", verbose = FALSE,
-                            is.full.mahalanobis, min.controls = NULL,
-                            max.controls = NULL, antiexact = NULL, ...) {
+                            is.full.mahalanobis,  antiexact = NULL, ...) {
 
   check.package("optmatch")
 
@@ -258,13 +260,6 @@ matchit2optimal <- function(treat, formula, data, distance, discarded,
   omps <- getOption("optmatch_max_problem_size")
   on.exit(options(optmatch_max_problem_size = omps))
   options(optmatch_max_problem_size = Inf)
-
-  processed.ratio <- process.ratio(ratio, method = "optimal",
-                                   min.controls = min.controls,
-                                   max.controls = max.controls)
-  ratio <- processed.ratio[["ratio"]]
-  min.controls <- processed.ratio[["min.controls"]]
-  max.controls <- processed.ratio[["max.controls"]]
 
   estimand <- toupper(estimand)
   estimand <- match_arg(estimand, c("ATT", "ATC"))
@@ -292,6 +287,9 @@ matchit2optimal <- function(treat, formula, data, distance, discarded,
     warning("Calipers are currently not compatible with method = \"optimal\" and will be ignored.", call. = FALSE, immediate. = TRUE)
     caliper <- NULL
   }
+
+  min.controls <- attr(ratio, "min.controls")
+  max.controls <- attr(ratio, "max.controls")
 
   if (is.null(max.controls)) {
     min.controls <- max.controls <- ratio
@@ -367,8 +365,8 @@ matchit2optimal <- function(treat, formula, data, distance, discarded,
     else mo_ <- mo
 
     if (any(dim(mo_) == 0)) next
-    if (all(dim(mo_)==1)) {
-      pair[c(rownames(mo_), colnames(mo_))] <- rownames(mo_)
+    else if (all(dim(mo_) == 1)) {
+      pair[ex == e] <- paste(1, e, sep = "|")
       next
     }
 
@@ -393,19 +391,19 @@ matchit2optimal <- function(treat, formula, data, distance, discarded,
 
     withCallingHandlers({
       p[[e]] <- do.call(optmatch::fullmatch,
-                   c(list(mo_,
-                          mean.controls = ratio_,
-                          min.controls = min.controls_,
-                          max.controls = max.controls_,
-                          data = treat), #just to get rownames; not actually used in matching
-                     A))
+                        c(list(mo_,
+                               mean.controls = ratio_,
+                               min.controls = min.controls_,
+                               max.controls = max.controls_,
+                               data = treat), #just to get rownames; not actually used in matching
+                          A))
     },
     warning = function(w) {
       warning(paste0("(from optmatch) ", conditionMessage(w)), call. = FALSE, immediate. = TRUE)
       invokeRestart("muffleWarning")
     },
-    error = function(e) {
-      stop(paste0("(from optmatch) ", conditionMessage(e)), call. = FALSE)
+    error = function(e1) {
+      stop(paste0("(from optmatch) ", conditionMessage(e1)), call. = FALSE)
     })
 
     pair[names(p[[e]])[!is.na(p[[e]])]] <- paste(as.character(p[[e]][!is.na(p[[e]])]), e, sep = "|")
@@ -467,9 +465,6 @@ matchit2genetic <- function(treat, data, distance, discarded,
   }
 
   treat <- setNames(as.integer(treat == focal), names(treat))
-
-  processed.ratio <- process.ratio(ratio, method = "genetic")
-  ratio <- processed.ratio[["ratio"]]
 
   n.obs <- length(treat)
   n1 <- sum(treat == 1)
@@ -711,20 +706,12 @@ matchit2nearest <-  function(treat, data, distance, discarded,
                              caliper = NULL, mahvars = NULL, exact = NULL,
                              formula = NULL, estimand = "ATT", verbose = FALSE,
                              is.full.mahalanobis, fast = TRUE,
-                             min.controls = NULL, max.controls = NULL,
-                             antiexact = NULL, TEST = FALSE, ...){
+                             antiexact = NULL, ...){
 
   if (verbose) {
     if (fast) check.package("RcppProgress")
     cat("Nearest neighbor matching... \n")
   }
-
-  processed.ratio <- process.ratio(ratio, method = "nearest",
-                                   min.controls = min.controls,
-                                   max.controls = max.controls)
-  ratio <- processed.ratio[["ratio"]]
-  min.controls <- processed.ratio[["min.controls"]]
-  max.controls <- processed.ratio[["max.controls"]]
 
   estimand <- toupper(estimand)
   estimand <- match_arg(estimand, c("ATT", "ATC"))
@@ -749,6 +736,32 @@ matchit2nearest <-  function(treat, data, distance, discarded,
     names(distance) <- names(treat)
   }
 
+  mahcovs <- mahSigma_inv <- distance_mat <- NULL
+  if (is.full.mahalanobis) {
+    mahcovs <- get.covs.matrix(formula, data)
+    if (ncol(mahcovs) == 0) stop("Covariates must be specified in the input formula when distance = \"mahalanobis\".", call. = FALSE)
+    if (is.null(s.weights))
+      mahSigma_inv <- generalized_inverse(cov(mahcovs))
+    else
+      mahSigma_inv <- generalized_inverse(cov.wt(mahcovs, s.weights)$cov)
+    mahcovs <- tcrossprod(mahcovs, chol2(mahSigma_inv))
+  }
+  else if (!is.null(mahvars)) {
+    mahcovs <- get.covs.matrix(mahvars, data)
+    if (is.null(s.weights))
+      mahSigma_inv <- generalized_inverse(cov(mahcovs))
+    else
+      mahSigma_inv <- generalized_inverse(cov.wt(mahcovs, s.weights)$cov)
+    mahcovs <- tcrossprod(mahcovs, chol2(mahSigma_inv))
+  }
+  else if (is.matrix(distance)) {
+    distance_mat <- distance
+    distance <- NULL
+  }
+
+  min.controls <- attr(ratio, "min.controls")
+  max.controls <- attr(ratio, "max.controls")
+
   if (!is.null(caliper)) {
     if (any(names(caliper) != "")) {
       caliper.covs <- caliper[names(caliper) != ""]
@@ -770,27 +783,6 @@ matchit2nearest <-  function(treat, data, distance, discarded,
     caliper.covs.mat <- NULL
   }
 
-  mahcovs <- mahSigma_inv <- distance_mat <- NULL
-  if (is.full.mahalanobis) {
-    mahcovs <- get.covs.matrix(formula, data)
-    if (ncol(mahcovs) == 0) stop("Covariates must be specified in the input formula when distance = \"mahalanobis\".", call. = FALSE)
-    if (is.null(s.weights))
-      mahSigma_inv <- generalized_inverse(cov(mahcovs))
-    else
-      mahSigma_inv <- generalized_inverse(cov.wt(mahcovs, s.weights)$cov)
-  }
-  else if (!is.null(mahvars)) {
-    mahcovs <- get.covs.matrix(mahvars, data)
-    if (is.null(s.weights))
-      mahSigma_inv <- generalized_inverse(cov(mahcovs))
-    else
-      mahSigma_inv <- generalized_inverse(cov.wt(mahcovs, s.weights)$cov)
-  }
-  else if (is.matrix(distance)) {
-    distance_mat <- distance
-    distance <- NULL
-  }
-
   if (!is.null(antiexact)) {
     antiexactcovs <- model.frame(antiexact, data)
     antiexactcovs <- do.call("cbind", lapply(seq_len(ncol(antiexactcovs)), function(i) {
@@ -801,7 +793,9 @@ matchit2nearest <-  function(treat, data, distance, discarded,
     antiexactcovs <- NULL
   }
 
-  if (replace) {
+  reuse.max <- attr(replace, "reuse.max")
+
+  if (reuse.max >= n1) {
     m.order <- "data"
   }
 
@@ -811,9 +805,10 @@ matchit2nearest <-  function(treat, data, distance, discarded,
     cc <- intersect(as.integer(ex)[treat==1], as.integer(ex)[treat==0])
     if (length(cc) == 0) stop("No matches were found.", call. = FALSE)
 
-    e_ratios <- vapply(levels(ex), function(e) sum(treat[ex == e] == 0)/sum(treat[ex == e] == 1), numeric(1L))
+    if (reuse.max < n1) {
 
-    if (!replace) {
+      e_ratios <- vapply(levels(ex), function(e) sum(treat[ex == e] == 0)*(reuse.max/sum(treat[ex == e] == 1)), numeric(1L))
+
       if (any(e_ratios < 1)) {
         warning(paste0("Fewer ", tc[2], " units than ", tc[1], " units in some 'exact' strata; not all ", tc[1], " units will get a match."), immediate. = TRUE, call. = FALSE)
       }
@@ -828,9 +823,11 @@ matchit2nearest <-  function(treat, data, distance, discarded,
   else {
     ex <- NULL
     # ex <- factor(rep("_", length(treat)), levels = "_")
-    e_ratios <- setNames(sum(treat == 0)/sum(treat == 1), levels(ex))
 
-    if (!replace) {
+    if (reuse.max < n1) {
+
+      e_ratios <- setNames(sum(treat == 0)*(as.numeric(reuse.max)/sum(treat == 1)), levels(ex))
+
       if (e_ratios < 1) {
         warning(paste0("Fewer ", tc[2], " units than ", tc[1], " units; not all ", tc[1], " units will get a match."), immediate. = TRUE, call. = FALSE)
       }
@@ -841,7 +838,6 @@ matchit2nearest <-  function(treat, data, distance, discarded,
           warning(paste0("Not enough ", tc[2], " units for an average of ", ratio, " matches per ", tc[1], " unit."), immediate. = TRUE, call. = FALSE)
       }
     }
-
   }
 
   #Variable ratio (extremal matching), Ming & Rosenbaum (2000)
@@ -892,19 +888,13 @@ matchit2nearest <-  function(treat, data, distance, discarded,
   if (is.null(ex)) {
     ord <- switch(m.order,
                   "largest" = order(distance[treat == 1], decreasing = TRUE),
-                  "smallest" = order(distance[treat == 1]),
+                  "smallest" = order(distance[treat == 1], decreasing = FALSE),
                   "random" = sample(seq_len(n1), n1, replace = FALSE),
                   "data" = seq_len(n1))
     mm <- matrix(NA_integer_, nrow = n1, ncol = max_rat, dimnames = list(lab1))
 
-    # if (TEST) {
-    #   mm <- fast_match(treat, discarded, distance, distance_mat, caliper.dist, caliper.covs, caliper.covs.mat,
-    #                    mahcovs, mahSigma_inv)
-    # }
-    # else {
-      mm <- nn_matchC(mm, treat, ord, ratio, max_rat, replace, discarded, distance, distance_mat, ex, caliper.dist,
-                      caliper.covs, caliper.covs.mat, mahcovs, mahSigma_inv, antiexactcovs, verbose)
-    # }
+    mm <- nn_matchC(mm, treat, ord, ratio, max_rat, discarded, reuse.max, distance, distance_mat, ex, caliper.dist,
+                    caliper.covs, caliper.covs.mat, mahcovs, antiexactcovs, verbose)
   }
   else {
     mm_list <- lapply(levels(ex), function(e) {
@@ -929,14 +919,14 @@ matchit2nearest <-  function(treat, data, distance, discarded,
       n1_ <- sum(treat_ == 1)
       ord_ <- switch(m.order,
                      "largest" = order(distance_[treat_ == 1], decreasing = TRUE),
-                     "smallest" = order(distance_[treat_ == 1]),
+                     "smallest" = order(distance_[treat_ == 1], decreasing = FALSE),
                      "random" = sample(seq_len(n1_), n1_, replace = FALSE),
                      "data" = seq_len(n1_))
 
       mm_ <- matrix(NA_integer_, nrow = sum(treat_==1), ncol = max_rat, dimnames = list(names(treat_)[treat_ == 1]))
 
-      mm_ <- nn_matchC(mm_, treat_, ord_, ratio_, max_rat, replace, discarded_, distance_, distance_mat_, NULL, caliper.dist,
-                       caliper.covs, caliper.covs.mat_, mahcovs_, mahSigma_inv, antiexactcovs, verbose)
+      mm_ <- nn_matchC(mm_, treat_, ord_, ratio_, max_rat, discarded_, reuse.max, distance_, distance_mat_, NULL, caliper.dist,
+                       caliper.covs, caliper.covs.mat_, mahcovs_, antiexactcovs, verbose)
 
       mm_[] <- seq_along(treat)[.e][mm_]
       mm_
@@ -947,7 +937,7 @@ matchit2nearest <-  function(treat, data, distance, discarded,
 
   if (verbose) cat("Calculating matching weights... ")
 
-  if (replace) {
+  if (reuse.max > 1) {
     psclass <- NULL
   }
   else {
@@ -1092,9 +1082,6 @@ matchit2cardinality <-  function(treat, data, discarded, formula,
   }
 
   lab <- names(treat)
-
-  processed.ratio <- process.ratio(ratio, method = "cardinality")
-  ratio <- processed.ratio[["ratio"]]
 
   weights <- setNames(rep(0, length(treat)), lab)
 

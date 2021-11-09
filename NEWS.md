@@ -6,6 +6,18 @@ output:
 `MatchIt` News and Updates
 ======
 
+# MatchIt 4.3.1
+
+* Added the `reuse.max` argument to `matchit()` with `method = "nearest"`. This controls the maximum number of times each control unit can be used as a match. Setting `reuse.max = 1` is equivalent to matching without replacement (i.e., like setting `replace = FALSE`), and setting `reuse.max = Inf` is equivalent to matching with replacement with no restriction on the reuse of controls (i.e., like setting `replace = TRUE`). Values in between restrict how many times each control unit can be used as a match. Higher values will tend to improve balance but decrease precision.
+
+* Mahalanobis distance matching with `method = "nearest"` is now a bit faster. 
+
+* Fixed a bug where `method = "full"` would fail when some exact matching strata contained exactly one treated unit and exactly one control unit. (#88)
+
+* Fixed a bug introduced in 4.3.0 where the inclusion of character variables would cause the error `"Non-finite values are not allowed in the covariates."` Thanks to Moaath Mustafa.
+
+* Documentation updates.
+
 # MatchIt 4.3.0
 
 * Cardinality and template matching can now be used by setting `method = "cardinality"` in `matchit()`. These methods use mixed integer programming to directly select a matched subsample without pairing or stratifying units that satisfied user-supplied balance constraints. Their results can be dramatically improved when using the Gurobi optimizer. See `?method_cardinality` and `vignette("matching-methods")` for more information.

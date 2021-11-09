@@ -143,7 +143,7 @@ In each treatment group, weights are divided by the mean of the nonzero weights 
 \value{
 When \code{method} is something other than \code{"subclass"}, a \code{matchit} object with the following components:
 
-  \item{match.matrix}{a matrix containing the matches. The rownames correspond to the treated units and the values in each row are the names (or indices) of the control units matched to each treated unit. When treated units are matched to different numbers of control units (e.g., with exact matching or matching with a caliper), empty spaces will be filled with \code{NA}. Not included when \code{method} is \code{"full"}, \code{"cem"}, or \code{"exact"}.}
+  \item{match.matrix}{a matrix containing the matches. The rownames correspond to the treated units and the values in each row are the names (or indices) of the control units matched to each treated unit. When treated units are matched to different numbers of control units (e.g., with exact matching or matching with a caliper), empty spaces will be filled with \code{NA}. Not included when \code{method} is \code{"full"}, \code{"cem"}, \code{"exact"}, or \code{"cardinality"}.}
   \item{subclass}{a factor containing matching pair/stratum membership for each unit. Unmatched units will have a value of \code{NA}. Not included when \code{replace = TRUE}.}
   \item{weights}{a numeric vector of estimated matching weights. Unmatched and discarded units will have a weight of zero.}
   \item{model}{the fit object of the model used to estimate propensity scores when \code{distance} is specified and not \code{"mahalanobis"} or a numeric vector. When \code{reestimate = TRUE}, this is the model estimated after discarding units.}

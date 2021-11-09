@@ -256,7 +256,7 @@ bal.tab(treat ~ age + educ + race + married +
         un = TRUE, weights = list(full = m.out, nn = m.out2))
 ```
 
-This time, we supplied `bal.tab()` with the covariates and dataset and supplied the `matchit` output objects in the `weights` argument (which extracts the matching weights from the objects). Here we can see that balance is comparable between the two matching methods, but full matching balances `age` better and yields a slightly higher effective sample size.
+This time, we supplied `bal.tab()` with the covariates and dataset and supplied the `matchit` output objects in the `weights` argument (which extracts the matching weights from the objects). Here we can see that full matching yields better balance than nearest neighbor matching overall, though balance is slightly worse for `age` and `maried` and the effective sample size is lower.
 
 ### `love.plot`
 

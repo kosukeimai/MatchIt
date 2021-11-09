@@ -11,8 +11,8 @@ IntegerMatrix nn_matchC(const IntegerMatrix& mm_,
                         const IntegerVector& ord_,
                         const IntegerVector& ratio,
                         const int& max_rat,
-                        const bool& replace,
                         const LogicalVector& discarded,
+                        const int& reuse_max,
                         const Nullable<NumericVector>& distance_ = R_NilValue,
                         const Nullable<NumericMatrix>& distance_mat_ = R_NilValue,
                         const Nullable<IntegerVector>& exact_ = R_NilValue,
@@ -20,7 +20,6 @@ IntegerMatrix nn_matchC(const IntegerMatrix& mm_,
                         const Nullable<NumericVector>& caliper_covs_ = R_NilValue,
                         const Nullable<NumericMatrix>& calcovs_covs_mat_ = R_NilValue,
                         const Nullable<NumericMatrix>& mah_covs_ = R_NilValue,
-                        const Nullable<NumericMatrix>& mahSigma_inv_ = R_NilValue,
                         const Nullable<IntegerMatrix>& antiexact_covs_ = R_NilValue,
                         const bool& disl_prog = false)
   {
@@ -29,12 +28,9 @@ IntegerMatrix nn_matchC(const IntegerMatrix& mm_,
 
   NumericVector distance, caliper_covs;
   double caliper_dist;
-  NumericMatrix distance_mat, calcovs_covs_mat, mah_covs, mahSigma_inv, mah_covs_c;
+  NumericMatrix distance_mat, calcovs_covs_mat, mah_covs, mah_covs_c;
   IntegerMatrix antiexact_covs;
   IntegerVector exact, exact_c, antiexact_col;
-
-  Environment pkg = Environment::namespace_env("stats");
-  Function mah = pkg["mahalanobis"];
 
   bool use_dist_mat = false;
   bool use_exact = false;
@@ -42,6 +38,7 @@ IntegerMatrix nn_matchC(const IntegerMatrix& mm_,
   bool use_caliper_covs = false;
   bool use_mah_covs = false;
   bool use_antiexact = false;
+  bool use_reuse_max = false;
 
   // Info about original treat
   int n_ = treat_.size();
@@ -52,13 +49,11 @@ IntegerMatrix nn_matchC(const IntegerMatrix& mm_,
   int n0_ = n_ - n1_;
 
   // Output matrix with sample indices of C units
-  // IntegerMatrix mm(n1_, max_rat);
-  // mm.fill(NA_INTEGER);
-  // rownames(mm) = as<CharacterVector>(treat_.names())[ind1_];
   IntegerMatrix mm = mm_;
 
   // Store who has been matched
-  LogicalVector matched = clone(discarded);
+  IntegerVector matched = rep(0, n_);
+  matched[discarded] = n1_; //discarded are unmatchable
 
   // After discarding
 
@@ -70,7 +65,7 @@ IntegerMatrix nn_matchC(const IntegerMatrix& mm_,
   int t, t_ind, min_ind, c_chosen, num_eligible, cal_len, t_rat, n_anti;
   double dt, cal_var_t;
 
-  NumericVector cal_var, cal_diff, ps_diff, diff, dist_t, mah_covs_t, mah_covs_col,
+  NumericVector cal_var, cal_diff, ps_diff, diff, dist_t, mah_covs_t, mah_covs_row,
                 match_distance(n0);
 
   IntegerVector c_eligible(n0), indices(n0);
@@ -99,6 +94,7 @@ IntegerMatrix nn_matchC(const IntegerMatrix& mm_,
   }
   if (mah_covs_.isNotNull()) {
     mah_covs = as<NumericMatrix>(mah_covs_);
+    NumericVector mah_covs_row(mah_covs.ncol());
     use_mah_covs = true;
   } else {
     if (distance_mat_.isNotNull()) {
@@ -110,25 +106,25 @@ IntegerMatrix nn_matchC(const IntegerMatrix& mm_,
     }
     ps_diff = NumericVector(n_);
   }
-  if (mahSigma_inv_.isNotNull()) {
-    mahSigma_inv = as<NumericMatrix>(mahSigma_inv_);
-  }
   if (antiexact_covs_.isNotNull()) {
     antiexact_covs = as<IntegerMatrix>(antiexact_covs_);
     n_anti = antiexact_covs.ncol();
     use_antiexact = true;
+  }
+  if (reuse_max < n1_) {
+    use_reuse_max = true;
   }
 
   bool ps_diff_assigned;
 
   //progress bar
   int prog_length;
-  if (replace) prog_length = n1_ + 1;
+  if (!use_reuse_max) prog_length = n1_ + 1;
   else prog_length = max_rat*n1_ + 1;
   Progress p(prog_length, disl_prog);
 
   //Counters
-  int rat, i, x, j, a, k;
+  int rat, i, x, j, j_, a, k;
   k = -1;
 
   //Matching
@@ -140,7 +136,7 @@ IntegerMatrix nn_matchC(const IntegerMatrix& mm_,
 
       p.increment();
 
-      if (all(as<LogicalVector>(matched[ind0])).is_true()) {
+      if (all(as<IntegerVector>(matched[ind0]) >= reuse_max).is_true()){
         break;
       }
 
@@ -160,7 +156,7 @@ IntegerMatrix nn_matchC(const IntegerMatrix& mm_,
 
       c_eligible = ind0; // index among sample
 
-      c_eligible = c_eligible[!as<LogicalVector>(matched[c_eligible])];
+      c_eligible = c_eligible[as<IntegerVector>(matched[c_eligible]) < reuse_max];
 
       if (use_exact) {
         exact_c = exact[c_eligible];
@@ -226,7 +222,7 @@ IntegerMatrix nn_matchC(const IntegerMatrix& mm_,
       num_eligible = c_eligible.size();
 
       //If replace and few eligible controls, assign all and move on
-      if (replace && (num_eligible <= t_rat)) {
+      if (!use_reuse_max && (num_eligible <= t_rat)) {
         for (j = 0; j < num_eligible; ++j) {
           mm( t , j ) = c_eligible[j] + 1;
         }
@@ -234,13 +230,15 @@ IntegerMatrix nn_matchC(const IntegerMatrix& mm_,
       }
 
       if (use_mah_covs) {
-        mah_covs_c = NumericMatrix(num_eligible, mah_covs.ncol());
-        for (j = 0; j < mah_covs.ncol(); ++j) {
-          mah_covs_col = mah_covs.column(j);
-          mah_covs_c(_,j) = as<NumericVector>(mah_covs_col[c_eligible]);
-        }
+
+        match_distance = rep(0.0, num_eligible);
         mah_covs_t = mah_covs( t_ind , _ );
-        match_distance = sqrt(as<NumericVector>(mah(mah_covs_c, mah_covs_t, mahSigma_inv, true))); //mahalanobis in R
+
+        for (j = 0; j < num_eligible; j++) {
+          j_ = c_eligible[j];
+          mah_covs_row = mah_covs(c_eligible[j], _);
+          match_distance[j] = sqrt(sum(pow(mah_covs_t - mah_covs_row, 2.0)));
+        }
 
       } else if (ps_diff_assigned) {
         match_distance = ps_diff[c_eligible]; //c_eligible might have shrunk since previous assignment
@@ -260,7 +258,7 @@ IntegerMatrix nn_matchC(const IntegerMatrix& mm_,
       }
       match_distance = match_distance[finite_match_distance];
 
-      if (replace) {
+      if (!use_reuse_max) {
         //When matching w/ replacement, get t_rat closest control units
         indices = Range(0, num_eligible - 1);
 
@@ -278,11 +276,11 @@ IntegerMatrix nn_matchC(const IntegerMatrix& mm_,
 
         mm( t , rat ) = c_chosen + 1; // + 1 because C indexing starts at 0 but mm is sent to R
 
-        matched[c_chosen] = true;
+        matched[c_chosen] = matched[c_chosen] + 1;
       }
     }
 
-    if (replace) break;
+    if (!use_reuse_max) break;
   }
 
   p.update(prog_length);
