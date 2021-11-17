@@ -286,10 +286,14 @@ matchit <- function(formula, data = NULL, method = "nearest", distance = "glm",
     exact = exact,
     mahvars = mahvars,
     caliper = caliper,
-    nn = nn(treat, match.out$weights, discarded, s.weights),
+    nn = nn(treat, match.out[["weights"]], discarded, s.weights),
+    qn = match.out[["qn"]],
+    q.cut = match.out[["q.cut"]],
     model = dist.model,
     obj = if (include.obj) match.out[["obj"]]
   )
+
+  out[lengths(out) == 0] <- NULL
 
   class(out) <- class(match.out)
   return(out)
