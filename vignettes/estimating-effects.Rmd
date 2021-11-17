@@ -177,19 +177,31 @@ Other packages may be of use but are not used here. The `margins` package can be
 
 Because different matching methods require different treatments, instructions for each method are organized in the following sections, as designated by the table below. It is important to ensure the right methods are used with the matching specification used in order for the estimated effects and standard errors to be valid.
 
++-------------------------------------------------------------------------------------+-----------------------------------------------------------+
 | Section                                                                             | Matching Method                                           |
-|-------------------------------------------------------------------------------------|-----------------------------------------------------------|
++=====================================================================================+===========================================================+
 | [After Pair Matching Without Replacement](#after-pair-matching-without-replacement) | Nearest neighbor matching without replacement             |
++-------------------------------------------------------------------------------------+-----------------------------------------------------------+
 | \-                                                                                  | Optimal matching                                          |
++-------------------------------------------------------------------------------------+-----------------------------------------------------------+
 | \-                                                                                  | Genetic matching without replacement                      |
++-------------------------------------------------------------------------------------+-----------------------------------------------------------+
 | \-                                                                                  | Coarsened exact matching with `k2k = TRUE`                |
++-------------------------------------------------------------------------------------+-----------------------------------------------------------+
 | [After Pair Matching With Replacement](#after-pair-matching-with-replacement)       | Nearest neighbor matching with replacement                |
++-------------------------------------------------------------------------------------+-----------------------------------------------------------+
 | \-                                                                                  | Genetic matching with replacement                         |
++-------------------------------------------------------------------------------------+-----------------------------------------------------------+
 | [After Full Matching](#after-full-matching)                                         | Full matching                                             |
++-------------------------------------------------------------------------------------+-----------------------------------------------------------+
 |                                                                                     | Cardinality and template matching                         |
++-------------------------------------------------------------------------------------+-----------------------------------------------------------+
 | [After Stratum Matching](#after-stratum-matching)                                   | Propensity score subclassification                        |
++-------------------------------------------------------------------------------------+-----------------------------------------------------------+
 | \-                                                                                  | Exact matching                                            |
++-------------------------------------------------------------------------------------+-----------------------------------------------------------+
 | \-                                                                                  | Coarsened exact matching with `k2k = FALSE` (the default) |
++-------------------------------------------------------------------------------------+-----------------------------------------------------------+
 
 ### After Pair Matching Without Replacement {#after-pair-matching-without-replacement}
 
@@ -962,7 +974,7 @@ It is important to be as thorough and complete as possible when describing the m
 -   a description of the outcome model used (e.g., logistic regression, a linear model with treatment-covariate interactions and mean-centered covariates, a Cox proportional hazards model with the matching weights applied)
 -   the way the effect was estimated (e.g., as the coefficient on treatment in the outcome model, as the result of a marginal effects procedure)
 -   the way standard errors and confidence intervals were estimated (e.g., using robust standard errors, using cluster-robust standard errors with pair membership as the cluster, using the BCa bootstrap with 4999 bootstrap replications and the entire process of matching and effect estimation included in each replication)
--   R packages and functions used in estimating the effect and its standard error (e.g., `glm()` in base R, `vcovCL()` in `sandwich`, `boot` and `boot.ci` in `boot`)
+-   R packages and functions used in estimating the effect and its standard error (e.g., `glm()` in base R, `vcovCL()` in `sandwich`, `boot()` and `boot.ci()` in `boot`)
 -   The effect and its standard error and confidence interval
 
 All this is in addition to information about the matching method, propensity score estimation procedure (if used), balance assessment, etc. mentioned in the other vignettes.

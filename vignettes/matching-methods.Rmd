@@ -74,14 +74,14 @@ The specification of the full matching optimization problem can be customized by
 
 Genetic matching is less a specific form of matching and more a way of specifying a distance measure for another form of matching. In practice, though, the form of matching used is nearest neighbor pair matching. Genetic matching uses a genetic algorithm, which is an optimization routine used for non-differentiable objective functions, to find scaling factors for each variable in a generalized Mahalanobis distance formula [@diamond2013]. The criterion optimized by the algorithm is one based on covariate balance. Once the scaling factors have been found, nearest neighbor matching is performed on the scaled generalized Mahalanobis distance. See `?method_genetic` for the documentation for `matchit()` with `method = "genetic"`. Genetic matching in `MatchIt` depends on the `GenMatch()` function in the `Matching` package [@sekhon2011] to perform the genetic search and uses the `Matching` function to perform the nearest neighbor match using the scaled generalized Mahalanobis distance.
 
-Genetic matching considers the generalized Mahalanobis distance between a treated unit $i$ and a control unit $j$ as $$\delta_{GMD}(\mathbf{x}_i,\mathbf{x}_j, \mathbf{W})=\sqrt{(\mathbf{x}_i - \mathbf{x}_j)'(\mathbf{S}^{-1/2})'\mathbf{W}(\mathbf{S}^{-1/2})(\mathbf{x}_i - \mathbf{x}_j)}$$ where $\mathbf{x}$ is a $p \times 1$ vector containing the value of each of the $p$ included covariates for that unit, $\mathbf{S}^{-1/2}$ is the Cholesky decomposition of the covariance matrix $\mathbf{S}$ of the covariates[\^1], and $\mathbf{W}$ is a diagonal matrix with scaling factors $w$ on the diagonal: $$
+Genetic matching considers the generalized Mahalanobis distance between a treated unit $i$ and a control unit $j$ as $$\delta_{GMD}(\mathbf{x}_i,\mathbf{x}_j, \mathbf{W})=\sqrt{(\mathbf{x}_i - \mathbf{x}_j)'(\mathbf{S}^{-1/2})'\mathbf{W}(\mathbf{S}^{-1/2})(\mathbf{x}_i - \mathbf{x}_j)}$$ where $\mathbf{x}$ is a $p \times 1$ vector containing the value of each of the $p$ included covariates for that unit, $\mathbf{S}^{-1/2}$ is the Cholesky decomposition of the covariance matrix $\mathbf{S}$ of the covariates, and $\mathbf{W}$ is a diagonal matrix with scaling factors $w$ on the diagonal: $$
 \mathbf{W}=\begin{bmatrix}
     w_1 &  & & \\
      & w_2 & & \\
      &  & \ddots &\\
      & & & w_p \\
     \end{bmatrix}
-$$ [\^1]: In the `Matching` implementation of genetic matching, $\mathbf{S}$ is actually a matrix with variances on the diagonals and zeroes on the off-diagonals.
+$$
 
 When $w_k=1$ for all covariates $k$, the computed distance is the standard Mahalanobis distance between units. Genetic matching estimates the optimal values of the $w_k$s, where a user-specified criterion is used to define what is optimal. The default is to maximize the smallest p-value among balance tests for the covariates in the matched sample (both Kolmogorov-Smirnov tests and t-tests for each covariate).
 
