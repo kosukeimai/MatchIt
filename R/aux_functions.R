@@ -948,7 +948,7 @@ wm <- function(x, w = NULL, na.rm = TRUE) {
 
 #Effective sample size
 ESS <- function(w) {
-  sum(w)^2/sum(w^2)
+  sum(abs(w))^2/sum(w^2)
 }
 
 #Compute sample sizes
