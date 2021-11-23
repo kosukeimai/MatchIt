@@ -10,7 +10,7 @@ output:
 
 * Fixed a bug where the `q.cut` component of the `matchit` object when `method = "subclass"` was not included. Now it is. Thanks to @aldencabajar. (#92)
 
-* The `nn` and `qn` components of the `matchit` object have been removed. They are now computed by `summary.matchit()` and included in the `sumnmary.matchit` object.
+* The `nn` and `qn` components of the `matchit` object have been removed. They are now computed by `summary.matchit()` and included in the `summary.matchit` object.
 
 * Removed the code to disable compiler checks to satisfy CRAN requirements.
 
