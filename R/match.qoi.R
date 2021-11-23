@@ -16,7 +16,7 @@ qoi <- function(xx, tt, ww = NULL, s.weights, subclass = NULL, mm = NULL, s.d.de
   if (un) ww <- s.weights
   else ww <- ww * s.weights
 
-  too.small <- sum(ww[tt==1] > 0) < 2 || sum(ww[tt==0] > 0) < 2
+  too.small <- sum(ww[tt==1] != 0) < 2 || sum(ww[tt==0] != 0) < 2
 
   xsum["Means Treated"] <- wm(xx[tt==1], ww[tt==1], na.rm=TRUE)
   xsum["Means Control"] <- wm(xx[tt==0], ww[tt==0], na.rm=TRUE)

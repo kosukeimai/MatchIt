@@ -521,8 +521,11 @@ summary.matchit <- function(object, interactions = FALSE,
     reduction <- NULL
   }
 
+  #Sample size
+  nn <- nn(treat, weights, object$discarded, s.weights)
+
   ## output
-  res <- list(call = object$call, nn = object$nn, sum.all = if (un) sum.all,
+  res <- list(call = object$call, nn = nn, sum.all = if (un) sum.all,
               sum.matched = if (matched) sum.matched, reduction = reduction)
   class(res) <- "summary.matchit"
   return(res)
@@ -757,7 +760,8 @@ summary.matchit.subclass <- function(object, interactions = FALSE,
   }
 
   ## Sample size
-  qn <- object$qn
+  qn <- qn(treat, subclass, object$discarded)
+  nn <- nn(treat, weights, object$discarded, s.weights)
 
   if (subs) {
     small.subclass.control <- which.subclass[qn["Control", as.character(which.subclass)] <= 1]
@@ -776,7 +780,7 @@ summary.matchit.subclass <- function(object, interactions = FALSE,
   ## output
   res <- list(call=object$call, sum.all = sum.all, sum.across = sum.matched,
               sum.subclass = sum.subclass, reduction = reduction,
-              qn = qn, nn = object$nn)
+              qn = qn, nn = nn)
   class(res) <- c("summary.matchit.subclass", "summary.matchit")
   return(res)
 }

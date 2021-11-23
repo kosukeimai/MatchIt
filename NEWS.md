@@ -6,6 +6,14 @@ output:
 `MatchIt` News and Updates
 ======
 
+# MatchIt 4.3.2
+
+* Fixed a bug where the `q.cut` component of the `matchit` object when `method = "subclass"` was not included. Now it is. Thanks to @aldencabajar. (#92)
+
+* The `nn` and `qn` components of the `matchit` object have been removed. They are now computed by `summary.matchit()` and included in the `summary.matchit` object.
+
+* Removed the code to disable compiler checks to satisfy CRAN requirements.
+
 # MatchIt 4.3.1
 
 * Added the `reuse.max` argument to `matchit()` with `method = "nearest"`. This controls the maximum number of times each control unit can be used as a match. Setting `reuse.max = 1` is equivalent to matching without replacement (i.e., like setting `replace = FALSE`), and setting `reuse.max = Inf` is equivalent to matching with replacement with no restriction on the reuse of controls (i.e., like setting `replace = TRUE`). Values in between restrict how many times each control unit can be used as a match. Higher values will tend to improve balance but decrease precision.

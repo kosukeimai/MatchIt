@@ -158,9 +158,8 @@ When \code{method} is something other than \code{"subclass"}, a \code{matchit} o
   \item{s.weights}{the vector of sampling weights supplied to the \code{s.weights} argument, if any.}
   \item{exact}{a one-sided formula containing the variables, if any, supplied to \code{exact}.}
   \item{mahvars}{a one-sided formula containing the variables, if any, supplied to \code{mahvars}.}
-  \item{nn}{a matrix of the sample sizes of the treated and control groups before and after matching. See \fun{summary.matchit} for details.}
   \item{obj}{when \code{include.obj = TRUE}, an object containing the intermediate results of the matching procedure. See the individual methods pages for what this component will contain.}
-When \code{method = "subclass"}, a \code{matchit.subclass} object with the same components as above except that \code{match.matrix} is excluded and two additional components, \code{q.cut} and \code{qn}, are included, containing a vector of the distance measure cutpoints used to define the subclasses and a matrix of the subclass sample sizes, respectively. See \code{\link{method_subclass}} for details.
+When \code{method = "subclass"}, a \code{matchit.subclass} object with the same components as above except that \code{match.matrix} is excluded and one additional component, \code{q.cut}, is included, containing a vector of the distance measure cutpoints used to define the subclasses. See \code{\link{method_subclass}} for details.
 }
 \references{
 Ho, D. E., Imai, K., King, G., & Stuart, E. A. (2007). Matching as Nonparametric Preprocessing for Reducing Model Dependence in Parametric Causal Inference. Political Analysis, 15(3), 199–236. \doi{10.1093/pan/mpl013}
