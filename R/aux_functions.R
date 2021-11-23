@@ -638,10 +638,10 @@ word_list <- function(word.list = NULL, and.or = c("and", "or"), is.are = FALSE,
 }
 
 #Add quotation marks around a string.
-add_quotes <- function(x, quotes = 2) {
+add_quotes <- function(x, quotes = 2L) {
   if (!isFALSE(quotes)) {
-    if (isTRUE(quotes) || as.integer(quotes) == 2) x <- paste0("\"", x, "\"")
-    else if (as.integer(quotes) == 1) x <- paste0("\'", x, "\'")
+    if (isTRUE(quotes) || as.integer(quotes) == 2L) x <- paste0("\"", x, "\"")
+    else if (as.integer(quotes) == 1L) x <- paste0("\'", x, "\'")
     else stop("'quotes' must be boolean, 1, or 2.")
   }
   x
