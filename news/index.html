@@ -79,7 +79,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">MatchIt</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">4.3.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">4.3.2</span>
       </span>
     </div>
 
@@ -146,6 +146,16 @@
       <small>Source: <a href='https://github.com/kosukeimai/MatchIt/blob/master/NEWS.md'><code>NEWS.md</code></a></small>
     </div>
 
+    <div id="matchit-432" class="section level1">
+<h1 class="page-header" data-toc-text="4.3.2">
+<a href="#matchit-432" class="anchor"></a>MatchIt 4.3.2<small> Unreleased </small>
+</h1>
+<ul>
+<li><p>Fixed a bug where the <code>q.cut</code> component of the <code>matchit</code> object when <code>method = "subclass"</code> was not included. Now it is. Thanks to <a href='https://github.com/aldencabajar'>@aldencabajar</a>. (<a href='https://github.com/kosukeimai/MatchIt/issues/92'>#92</a>)</p></li>
+<li><p>The <code>nn</code> and <code>qn</code> components of the <code>matchit</code> object have been removed. They are now computed by <code><a href="../reference/summary.matchit.html">summary.matchit()</a></code> and included in the <code>summary.matchit</code> object.</p></li>
+<li><p>Removed the code to disable compiler checks to satisfy CRAN requirements.</p></li>
+</ul>
+</div>
     <div id="matchit-431" class="section level1">
 <h1 class="page-header" data-toc-text="4.3.1">
 <a href="#matchit-431" class="anchor"></a>MatchIt 4.3.1<small> 2021-11-11 </small>

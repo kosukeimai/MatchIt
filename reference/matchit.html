@@ -81,7 +81,7 @@ This page documents the overall use of matchit(), but for specifics of how match
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">MatchIt</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">4.3.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">4.3.2</span>
       </span>
     </div>
 
@@ -315,9 +315,8 @@ This page documents the overall use of matchit(), but for specifics of how match
   <dt>s.weights</dt><dd><p>the vector of sampling weights supplied to the <code>s.weights</code> argument, if any.</p></dd>
   <dt>exact</dt><dd><p>a one-sided formula containing the variables, if any, supplied to <code>exact</code>.</p></dd>
   <dt>mahvars</dt><dd><p>a one-sided formula containing the variables, if any, supplied to <code>mahvars</code>.</p></dd>
-  <dt>nn</dt><dd><p>a matrix of the sample sizes of the treated and control groups before and after matching. See <code><a href='summary.matchit.html'>summary.matchit()</a></code> for details.</p></dd>
   <dt>obj</dt><dd><p>when <code>include.obj = TRUE</code>, an object containing the intermediate results of the matching procedure. See the individual methods pages for what this component will contain.</p></dd>
-When method = "subclass", a matchit.subclass object with the same components as above except that match.matrix is excluded and two additional components, q.cut and qn, are included, containing a vector of the distance measure cutpoints used to define the subclasses and a matrix of the subclass sample sizes, respectively. See <a href='method_subclass.html'>method_subclass</a> for details.
+When method = "subclass", a matchit.subclass object with the same components as above except that match.matrix is excluded and one additional component, q.cut, is included, containing a vector of the distance measure cutpoints used to define the subclasses. See <a href='method_subclass.html'>method_subclass</a> for details.
 
     <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
 

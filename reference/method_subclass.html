@@ -96,7 +96,7 @@ matchit(formula,
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">MatchIt</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">4.3.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">4.3.2</span>
       </span>
     </div>
 
@@ -245,7 +245,7 @@ matchit(formula,
 
     <h2 class="hasAnchor" id="outputs"><a class="anchor" href="#outputs"></a>Outputs</h2>
 
-    <p>All outputs described in <code><a href='matchit.html'>matchit()</a></code> are returned with <code>method = "subclass"</code> except that <code>match.matrix</code> is excluded and two additional component, <code>q.cut</code> and <code>qn</code>, are included, containing a vector of the distance measure cutpoints used to define the subclasses and a matrix of the subclass sample sizes, respectively. Note that when <code>min.n &gt; 0</code>, the subclass assignments may not strictly obey the quantiles listed in <code>q.cut</code>. <code>include.obj</code> is ignored.</p>
+    <p>All outputs described in <code><a href='matchit.html'>matchit()</a></code> are returned with <code>method = "subclass"</code> except that <code>match.matrix</code> is excluded and one additional component, <code>q.cut</code>, is included, containing a vector of the distance measure cutpoints used to define the subclasses. Note that when <code>min.n &gt; 0</code>, the subclass assignments may not strictly obey the quantiles listed in <code>q.cut</code>. <code>include.obj</code> is ignored.</p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
     <p>After subclassification, effect estimates can be computed separately in the subclasses and combined, or a single marginal effect can be estimated by using the weights in the full sample. When using the weights, the method is sometimes referred to as marginal mean weighting through stratification (MMWS; Hong, 2010) or fine stratification weighting (Desai et al., 2017). The weights can be interpreted just like inverse probability weights.</p>
@@ -477,6 +477,12 @@ matchit(formula,
 <span class='r-out co'><span class='r-pr'>#&gt;</span> married      0.0000</span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> re74         0.2222</span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> re75         0.7407</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> Sample Sizes by Subclass:</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>           1  2  3  4  5  6  7 All</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> Control 332 37 10 17 17 13  3 429</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> Treated  27 26 26 27 26 26 27 185</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> Total   359 63 36 44 43 39 30 614</span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
 <span class='r-in'></span>
 <span class='r-in'><span class='co'># PS subclassification for the ATE with 10 subclasses</span></span>
