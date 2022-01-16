@@ -1,5 +1,5 @@
 pandoc: 2.7.3
-pkgdown: 2.0.1
+pkgdown: 2.0.2
 pkgdown_sha: ~
 articles:
   MatchIt: MatchIt.html
@@ -7,5 +7,5 @@ articles:
   estimating-effects: estimating-effects.html
   matching-methods: matching-methods.html
   sampling-weights: sampling-weights.html
-last_built: 2022-01-01T22:03Z
+last_built: 2022-01-16T18:08Z
 

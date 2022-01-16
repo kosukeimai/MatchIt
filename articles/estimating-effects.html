@@ -40,7 +40,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">MatchIt</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">4.3.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">4.3.3</span>
       </span>
     </div>
 
@@ -100,7 +100,7 @@
       <h1 data-toc-skip>Estimating Effects After Matching</h1>
                         <h4 data-toc-skip class="author">Noah Greifer</h4>
             
-            <h4 data-toc-skip class="date">2022-01-01</h4>
+            <h4 data-toc-skip class="date">2022-01-16</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/kosukeimai/MatchIt/blob/HEAD/vignettes/estimating-effects.Rmd" class="external-link"><code>vignettes/estimating-effects.Rmd</code></a></small>
       <div class="hidden name"><code>estimating-effects.Rmd</code></div>
@@ -1159,10 +1159,10 @@ pre code {
 <span class="co">## t test of coefficients:</span>
 <span class="co">## </span>
 <span class="co">##             Estimate Std. Error t value Pr(&gt;|t|)    </span>
-<span class="co">## (Intercept)    0.720      0.297    2.42    0.016 *  </span>
-<span class="co">## A              2.237      0.453    4.94  8.4e-07 ***</span>
-<span class="co">## X5             2.160      0.414    5.22  2.0e-07 ***</span>
-<span class="co">## A:X5          -0.446      0.593   -0.75    0.452    </span>
+<span class="co">## (Intercept)    0.720      0.421    1.71  0.08766 .  </span>
+<span class="co">## A              2.237      0.641    3.49  0.00051 ***</span>
+<span class="co">## X5             2.160      0.576    3.75  0.00019 ***</span>
+<span class="co">## A:X5          -0.446      0.842   -0.53  0.59670    </span>
 <span class="co">## ---</span>
 <span class="co">## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</span></code></pre>
 <p>There are benefits to using either approach, and <span class="citation">Green and Stuart (<a href="#ref-greenExaminingModerationAnalyses2014" role="doc-biblioref">2014</a>)</span> find that either can be successful at balancing the subgroups. The first approach may be most effective with small samples, where separate propensity score models would be fit with greater uncertainty and an increased possibility of perfect prediction or failure to converge <span class="citation">(Wang et al. <a href="#ref-wangRelativePerformancePropensity2018" role="doc-biblioref">2018</a>)</span>. The second approach may be more effective with larger samples or with matching methods that target balance in the matched sample, such as genetic matching <span class="citation">(Kreif et al. <a href="#ref-kreifMethodsEstimatingSubgroup2012" role="doc-biblioref">2012</a>)</span>. With genetic matching, separate subgroup analyses ensure balance is optimized within each subgroup rather than just overall.</p>
@@ -1418,7 +1418,7 @@ pre code {
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.1.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
 </div>
 
       </footer>
