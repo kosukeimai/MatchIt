@@ -152,12 +152,17 @@ get_matches <- function(object, distance = "distance", weights = "weights", subc
 }
 
 rbind.matchdata <- function(..., deparse.level = 1) {
+
   allargs <- list(...)
   allargs <- allargs[lengths(allargs) > 0L]
-  if (is.null(names(allargs))) md_list <- allargs
-  else md_list <- allargs[names(allargs) == ""]
-
-  allargs[names(allargs) == ""] <- NULL
+  if (is.null(names(allargs))) {
+    md_list <- allargs
+    allargs <- list()
+  }
+  else {
+    md_list <- allargs[names(allargs) == ""]
+    allargs[names(allargs) == ""] <- NULL
+  }
   allargs$deparse.level <- deparse.level
 
   type <- intersect(c("matchdata", "getmatches"), unlist(lapply(md_list, class)))
