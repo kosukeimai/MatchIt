@@ -6,6 +6,10 @@ output:
 `MatchIt` News and Updates
 ======
 
+# MatchIt 4.3.3
+
+* Fixed a bug where `rbind.matchdata()` would produce datasets twice their expected length. Thanks to @sconti555. (#98)
+
 # MatchIt 4.3.2
 
 * Fixed a bug where the `q.cut` component of the `matchit` object when `method = "subclass"` was not included. Now it is. Thanks to @aldencabajar. (#92)
