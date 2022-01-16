@@ -6,7 +6,7 @@ output:
 `MatchIt` News and Updates
 ======
 
-# MatchIt (development version)
+# MatchIt 4.3.3
 
 * Fixed a bug where `rbind.matchdata()` would produce datasets twice their expected length. Thanks to @sconti555. (#98)
 
