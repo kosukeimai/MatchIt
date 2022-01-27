@@ -74,7 +74,7 @@ match.data <- function(object, group = "all", distance = "distance", weights = "
 
   group <- match_arg(group, c("all", "treated", "control"))
   if (group == "treated") data <- data[treat == 1,,drop = FALSE]
-  else if (group == "control") data <- data[treat == 0,]
+  else if (group == "control") data <- data[treat == 0,,drop = FALSE]
 
   if (!is.null(object$distance)) attr(data, "distance") <- distance
   if (!is.null(object$weights)) attr(data, "weights") <- weights
