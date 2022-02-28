@@ -6,6 +6,12 @@ output:
 `MatchIt` News and Updates
 ======
 
+# MatchIt (development version)
+
+* When `s.weights` are supplied with `distance = "randomforest"`, the weights are supplied to `randomForest::randomForest()`. The
+
+* Improved conditional use of packages, especially `optmatch`.
+
 # MatchIt 4.3.3
 
 * Fixed a bug where `rbind.matchdata()` would produce datasets twice their expected length. Thanks to @sconti555. (#98)

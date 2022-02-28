@@ -1,5 +1,5 @@
 Package: MatchIt
-Version: 4.3.3
+Version: 4.3.3.9000
 Title: Nonparametric Preprocessing for Parametric Causal Inference
 Description: Selects matched samples of the original treated and
     control groups with similar covariate distributions -- can be
@@ -9,7 +9,7 @@ Description: Selects matched samples of the original treated and
     Ho, Imai, King, and Stuart (2007) <DOI:10.1093/pan/mpl013>. (The 
     'gurobi' package, which is not on CRAN, is optional and comes with 
     an installation of the Gurobi Optimizer, available at 
-    <https://www.gurobi.com>.)
+    <https://www.gurobi.com>. Note also that the 'optmatch' package has an academic license.)
 Authors@R: c(
   person("Daniel", "Ho", email = "daniel.e.ho@gmail.com", role = c("aut"),
          comment = c(ORCID = "0000-0002-2195-5469")),
