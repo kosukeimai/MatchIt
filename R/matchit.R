@@ -176,7 +176,9 @@ matchit <- function(formula, data = NULL, method = "nearest", distance = "glm",
       cat("Estimating propensity scores... \n")
     }
 
-    if (!is.null(s.weights)) attr(s.weights, "in_ps") <- !distance %in% c("bart")
+    if (!is.null(s.weights)) {
+      attr(s.weights, "in_ps") <- !distance %in% c("bart", "randomforest"[packageVersion("randomForest") >= '4.7.1'])
+    }
 
     #Estimate distance
     if (is.null(distance.options$formula)) distance.options$formula <- formula
