@@ -144,7 +144,14 @@ Points far from the solid diagonal line are the areas of the covariate distribut
 ### Trying a Different Matching Specification
 
 Given the poor performance of nearest neighbor matching in this example, we can try a different matching method or make other changes to the matching algorithm or distance specification. Below, we'll try full matching, which matches every treated unit to at least one control and every control to at least one treated unit [@hansen2004; @stuart2008a]. We'll also try a different link (probit) for the propensity score model.
+```{asis, echo = !requireNamespace("optmatch", quietly = TRUE)}
 
+Note: if the `optmatch` package is not available, the subsequent lines will not run.
+```
+```{r, include=FALSE}
+#In case optmatch goes offline, don't run lines below
+if (!requireNamespace("optmatch", quietly = TRUE)) knitr::opts_chunk$set(eval = FALSE)
+```
 ```{r}
 # Full matching on a probit PS
 m.out2 <- matchit(treat ~ age + educ + race + married + 
@@ -168,6 +175,9 @@ plot(summary(m.out2))
 
 Love plots are a simple and straightforward way to summarize balance visually. See `vignette("assessing-balance")` for more information on how to customize `MatchIt`'s Love plot and how to use `cobalt`, a package designed specifically for balance assessment and reporting that is compatible with `MatchIt`.
 
+```{r, include=FALSE, eval=TRUE}
+knitr::opts_chunk$set(eval = TRUE)
+```
 ## Estimating the Treatment Effect
 
 How treatment effects are estimated depends on what form of matching was performed. See `vignette("estimating-effects")` for information on the variety of way to estimate effects and standard errors after each type of matching and for several outcome types. After 1:1 matching without replacement (i.e., the first matching specification above), we can run a simple regression of the outcome on the treatment in the matched sample (i.e., including the matching weights). With continuous outcomes, it is often a good idea to also include the covariates used in the matching in the effect estimation, as doing so can provide additional robustness to slight imbalances remaining after the matching and can improve precision.
@@ -197,7 +207,14 @@ coeftest(fit1, vcov. = vcovCL, cluster = ~subclass)
 The coefficient on `treat` is the estimated ATT. The other coefficients and tests should not be interpreted or reported. Estimating standard errors with matched data is an area of ongoing development. Generally, the approach demonstrated above works well for continuous outcomes. See `vignette("estimating-effects")` for more information on how to estimate standard errors with each type of matching and with different outcome types.
 
 A benefit of matching is that the outcome model used to estimate the treatment effect is robust to misspecification when balance has been achieved. With 1:1 nearest neighbor matching, we failed to achieve balance, so one should be cautious about trusting the estimated effect. With full matching, we were able to achieve balance, so the effect estimate should depend less on the form of the outcome model used. Below we estimate the effect and standard error of the treatment effect after full matching. As before, we'll use functions from the `lmtest` and `sandwich` packages here because they provide a fairly general interface to estimating coefficients and standard errors.
+```{asis, echo = !requireNamespace("optmatch", quietly = TRUE)}
 
+Note: if the `optmatch` package is not available, the subsequent lines will not run.
+```
+```{r, include=FALSE}
+#In case optmatch goes offline, don't run lines below
+if (!requireNamespace("optmatch", quietly = TRUE)) knitr::opts_chunk$set(eval = FALSE)
+```
 ```{r, message = FALSE}
 m.data2 <- match.data(m.out2)
 
@@ -210,7 +227,9 @@ coeftest(fit2, vcov. = vcovCL, cluster = ~subclass)
 Given the results of these two estimates, we would be inclined to trust the one resulting from the second analysis, i.e., using full matching, because better balance was achieved on all the variables, making the effect estimate less sensitive to the form of the outcome model we used.
 
 Effect estimation with nonlinear models (e.g., for binary or time-to-event event outcomes) is more complicated due to noncollapsibility of the estimated effects; including additional covariates in the model can change the meaning of the estimated effect. See `vignette("estimating-effects")` for more details. Note that for some models, effect and standard error estimation is still being researched.
-
+```{r, include=FALSE, eval=TRUE}
+knitr::opts_chunk$set(eval = TRUE)
+```
 ## Reporting Results
 
 To report matching results in a manuscript or research report, a few key pieces of information are required. One should be as detailed as possible about the matching procedure and the decisions made to ensure the analysis is replicable and can be adequately assessed for soundness by the audience. Key pieces of information to include are 1) the matching specification used (including the method and any additional options, like calipers or common support restrictions), 2) the distance measure used (including how it was estimated e.g., using logistic regression for propensity scores), 3) which other matching methods were tried prior to settling on a final specification and how the choices were made, 4) the balance of the final matching specification (including standardized mean differences and other balance statistics for the variables, their powers, and their interactions; some of these can be reported as summaries rather than in full detail), 5) the number of matched, unmatched, and discarded units included in the effect estimation, and 6) the method of estimating the treatment effect and standard error or confidence interval (including the specific model used and the specific type of standard error). See @thoemmes2011 for a complete list of specific details to report. Below is an example of how we might write up the prior analysis:

@@ -78,16 +78,16 @@ A variety of methods should be used when assessing balance to try to find an opt
 
 `MatchIt` contains several tools to assess balance numerically and graphically. The primary balance assessment function is `summary.matchit()`, which is called when using `summary()` on a `MatchIt` object and produces several tables of balance statistics before and after matching. `plot.summary.matchit()` generates a Love plot using R's base graphics system containing the standardized mean differences resulting from a call to `summary.matchit()` and provides a nice way to display balance visually for inclusion in an article or report. `plot.matchit()` generates several plots that display different elements of covariate balance, including propensity score overlap and distribution plots of the covariates. These functions together form a suite that can be used to assess and report balance in a variety of ways.
 
-To demonstrate `MatchIt`'s balance assessment capabilities, we will use the Lalonde data included in `MatchIt` and used in `vignette("MatchIt")`. We will perform full matching on the propensity score, though the functionality is identical across all matching methods except propensity score subclassification, which we illustrate at the end.
+To demonstrate `MatchIt`'s balance assessment capabilities, we will use the Lalonde data included in `MatchIt` and used in `vignette("MatchIt")`. We will perform 1:1 nearest neighbor matching with replacement on the propensity score, though the functionality is identical across all matching methods except propensity score subclassification, which we illustrate at the end.
 
 ```{r}
 library("MatchIt")
 data("lalonde", package = "MatchIt")
 
-#Full matching on a logistic regression PS
+#1:1 NN matching w/ replacement on a logistic regression PS
 m.out <- matchit(treat ~ age + educ + race + married + 
                    nodegree + re74 + re75, data = lalonde,
-                 method = "full")
+                 replace = TRUE)
 m.out
 ```
 
@@ -119,7 +119,7 @@ The third table (`Percent Balance Improvement`) contains the percent balance imp
 
 The final table (`Sample Sizes`) contains the sizes of the samples before (`All`) and after (`Matched`) matching, as well as the number of units left unmatched (`Unmatched`) and the number of units dropped due to a common support restriction (`Discarded`).
 
-The SMDs are computed as the difference mean divided by a standardization factor computed in the **unmatched** sample. An absolute SMD close to 0 indicates good balance; although a number of recommendations for acceptable values have appeared in the literature, we recommend absolute values less than .1 and less than .05 for potentially prognostically important variables.
+The SMDs are computed as the mean difference divided by a standardization factor computed in the **unmatched** sample. An absolute SMD close to 0 indicates good balance; although a number of recommendations for acceptable values have appeared in the literature, we recommend absolute values less than .1 and less than .05 for potentially prognostically important variables.
 
 The variance ratios are computed as the ratio of the variance of the treated group to that of the control group for each covariate. Variance ratios are not computed for binary covariates because they are a function of the prevalence in each group, which is captured in the mean difference and eCDF statistics. A variance ratio close to 1 indicates good balance; a commonly used recommendation is for variance ratios to be between .5 and 2.
 
@@ -140,7 +140,7 @@ Below we create a Love plot of the covariates.
 
 ```{r}
 m.sum <- summary(m.out, addlvariables = ~ I(age^2) + I(re74==0) + 
-          I(re75==0) + educ:race)
+                   I(re75==0) + educ:race)
 plot(m.sum, var.order = "unmatched")
 ```
 
@@ -172,7 +172,7 @@ Below, we demonstrate the eCDF plot:
 plot(m.out, type = "ecdf", which.xs = c("educ", "married", "re75"))
 ```
 
-The x-axis display the covariate values and the y-axis displays the proportion of the sample at or less than that covariate value. Perfectly overlapping lines indicate good balance. The black line corresponds to the treated group and the gray line to the control group. Although `educ` and `re75` were fairly well balanced before matching, their balance has improved nonetheless. `married` appears far better balanced after matching than before. The vertical difference between the eCDFs lines of each treatment group is used to compute the eCDF difference statistics that are displayed in `summary.matchit()` with `standardize = TRUE`.
+The x-axis displays the covariate values and the y-axis displays the proportion of the sample at or less than that covariate value. Perfectly overlapping lines indicate good balance. The black line corresponds to the treated group and the gray line to the control group. Although `educ` and `re75` were fairly well balanced before matching, their balance has improved nonetheless. `married` appears far better balanced after matching than before. The vertical difference between the eCDFs lines of each treatment group is used to compute the eCDF difference statistics that are displayed in `summary.matchit()` with `standardize = TRUE`.
 
 Below, we demonstrate the density plot:
 
@@ -181,7 +181,7 @@ Below, we demonstrate the density plot:
 plot(m.out, type = "density", which.xs = c("age", "educ", "married"))
 ```
 
-The x-axis display the covariate values and the y-axis displays the density of the sample at that covariate value. For binary variables, the y-axis displays the proportion of the sample at that covariate value. Perfectly overlapping lines indicate good balance. The black line corresponds to the treated group and the gray line to the control group. Density plots display similar information to eCDF plots but may be more intuitive for some users because of their link to histograms.
+The x-axis displays the covariate values and the y-axis displays the density of the sample at that covariate value. For binary variables, the y-axis displays the proportion of the sample at that covariate value. Perfectly overlapping lines indicate good balance. The black line corresponds to the treated group and the gray line to the control group. Density plots display similar information to eCDF plots but may be more intuitive for some users because of their link to histograms.
 
 ## Assessing Balance After Subclassification
 

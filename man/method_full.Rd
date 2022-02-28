@@ -4,7 +4,7 @@
 \title{Optimal Full Matching}
 
 \description{
-In \fun{matchit}, setting \code{method = "full"} performs optimal full matching, which is a form of subclassification wherein all units, both treatment and control (i.e., the "full" sample), are assigned to a subclass and receive at least one match. The matching is optimal in the sense that that sum of the absolute distances between the treated and control units in each subclass is as small as possible. The method relies on and is a wrapper for \pkgfun2{optmatch}{fullmatch}{optmatch::fullmatch}.
+In \fun{matchit}, setting \code{method = "full"} performs optimal full matching, which is a form of subclassification wherein all units, both treatment and control (i.e., the "full" sample), are assigned to a subclass and receive at least one match. The matching is optimal in the sense that that sum of the absolute distances between the treated and control units in each subclass is as small as possible. The method relies on and is a wrapper for \pkgfun{optmatch}{fullmatch}. Note that \pkg{optmatch} has an academic license that restricts its use (and thereby the use of \code{matchit()} with \code{method = "full"}) for users in non-academic institutions.
 
 Advantages of optimal full matching include that the matching order is not required to be specified, units do not need to be discarded, and it is less likely that extreme within-subclass distances will be large, unlike with standard subclassification. The primary output of full matching is a set of matching weights that can be applied to the matched sample; in this way, full matching can be seen as a robust alternative to propensity score weighting, robust in the sense that the propensity score model does not need to be correct to estimate the treatment effect without bias.
 
@@ -55,13 +55,13 @@ a named list containing additional arguments supplied to the function that estim
 a string containing the desired estimand. Allowable options include \code{"ATT"}, \code{"ATC"}, and \code{"ATE"}. The estimand controls how the weights are computed; see the Computing Weights section at \fun{matchit} for details.
 }
   \item{exact}{
-for which variables exact matching should take place. Exact matching is processed using \pkgfun2{optmatch}{exactMatch}{optmatch::exactMatch}.
+for which variables exact matching should take place. Exact matching is processed using \pkgfun{optmatch}{exactMatch}.
 }
   \item{mahvars}{
 for which variables Mahalanobis distance matching should take place when a distance measure other than \code{"mahalanobis"} is used (e.g., for caliper matching or to discard units for common support). If specified, the distance measure will not be used in matching.
 }
   \item{antiexact}{
-for which variables ant-exact matching should take place. Anti-exact matching is processed using \pkgfun2{optmatch}{antiExactMatch}{optmatch::antiExactMatch}.
+for which variables ant-exact matching should take place. Anti-exact matching is processed using \pkgfun{optmatch}{antiExactMatch}.
 }
   \item{discard}{
 a string containing a method for discarding units outside a region of common support. Only allowed when \code{distance} is not \code{"mahalanobis"} and not a matrix.
@@ -73,7 +73,7 @@ if \code{discard} is not \code{"none"}, whether to re-estimate the propensity sc
 the variable containing sampling weights to be incorporated into propensity score models and balance statistics.
 }
   \item{caliper}{
-the width(s) of the caliper(s) used for caliper matching. Calipers are processed by \pkgfun2{optmatch}{caliper}{optmatch::caliper} See Notes and Examples.
+the width(s) of the caliper(s) used for caliper matching. Calipers are processed by \pkgfun{optmatch}{caliper}. See Notes and Examples.
 }
   \item{std.caliper}{
 \code{logical}; when calipers are specified, whether they are in standard deviation units (\code{TRUE}) or raw units (\code{FALSE}).
@@ -82,7 +82,7 @@ the width(s) of the caliper(s) used for caliper matching. Calipers are processed
 \code{logical}; whether information about the matching process should be printed to the console.
 }
   \item{\dots}{
-additional arguments passed to \pkgfun2{optmatch}{fullmatch}{optmatch::fullmatch}. Allowed arguments include \code{min.controls}, \code{max.controls}, \code{omit.fraction}, \code{mean.controls}, and \code{tol}. See the \pkgfun2{optmatch}{fullmatch}{optmatch::fullmatch} documentation for details.
+additional arguments passed to \pkgfun{optmatch}{fullmatch}. Allowed arguments include \code{min.controls}, \code{max.controls}, \code{omit.fraction}, \code{mean.controls}, and \code{tol}. See the \pkgfun{optmatch}{fullmatch} documentation for details.
 }
 
 The arguments \code{replace}, \code{m.order}, and \code{ratio} are ignored with a warning.
@@ -90,15 +90,15 @@ The arguments \code{replace}, \code{m.order}, and \code{ratio} are ignored with 
 \note{
 Due to what appears to be a bug in \emph{optmatch} (version 0.9-13), calipers can only be used when \code{min.controls} is left at its default.
 
-The option \code{"optmatch_max_problem_size"} is automatically set to \code{Inf} during the matching process, different from its default in \emph{optmatch}. This enables matching problems of any size to be run, but may also let huge, infeasible problems get through and potentially take a long time or crash R. See \pkgfun2{optmatch}{setMaxProblemSize}{optmatch::setMaxProblemSize} for more details.
+The option \code{"optmatch_max_problem_size"} is automatically set to \code{Inf} during the matching process, different from its default in \emph{optmatch}. This enables matching problems of any size to be run, but may also let huge, infeasible problems get through and potentially take a long time or crash R. See \pkgfun{optmatch}{setMaxProblemSize} for more details.
 }
 \section{Outputs}{
-All outputs described in \fun{matchit} are returned with \code{method = "full"} except for \code{match.matrix}. This is because matching strata are not indexed by treated units as they are in some other forms of matching. When \code{include.obj = TRUE} in the call to \code{matchit()}, the output of the call to \pkgfun2{optmatch}{fullmatch}{optmatch::fullmatch} will be included in the output. When \code{exact} is specified, this will be a list of such objects, one for each stratum of the exact variables.
+All outputs described in \fun{matchit} are returned with \code{method = "full"} except for \code{match.matrix}. This is because matching strata are not indexed by treated units as they are in some other forms of matching. When \code{include.obj = TRUE} in the call to \code{matchit()}, the output of the call to \pkgfun{optmatch}{fullmatch} will be included in the output. When \code{exact} is specified, this will be a list of such objects, one for each stratum of the exact variables.
 }
 \seealso{
 \fun{matchit} for a detailed explanation of the inputs and outputs of a call to \code{matchit()}.
 
-\pkgfun2{optmatch}{fullmatch}{optmatch::fullmatch}, which is the workhorse.
+\pkgfun{optmatch}{fullmatch}, which is the workhorse.
 
 \code{\link{method_optimal}} for optimal pair matching, which is a special case of optimal full matching, and which relies on similar machinery. Results from \code{method = "optimal"} can be replicated with \code{method = "full"} by setting \code{min.controls}, \code{max.controls}, and \code{mean.controls} to the desired \code{ratio}.
 }
@@ -127,7 +127,7 @@ With this code, \code{X1}, \code{X2}, and \code{X3} are used to estimate the pro
 
 When sampling weights are supplied through the \code{s.weights} argument, the covariance matrix of the covariates used in the Mahalanobis distance is \strong{not} weighted by the sampling weights.
 
-Mahalanobis distance matching can also be done by supplying a Mahalanobis distance matrix (e.g., the output of a call to \pkgfun2{optmatch}{match_on}{optmatch::match_on}) to the \code{distance} argument. This makes it straightforward to use the robust rank-based Mahalanobis distance available in \pkg{optmatch}.
+Mahalanobis distance matching can also be done by supplying a Mahalanobis distance matrix (e.g., the output of a call to \pkgfun{optmatch}{match_on}) to the \code{distance} argument. This makes it straightforward to use the robust rank-based Mahalanobis distance available in \pkg{optmatch}.
 }
 
 }
@@ -145,7 +145,7 @@ Theory is also developed in the following article:
 Hansen, B. B. (2004). Full Matching in an Observational Study of Coaching for the SAT. Journal of the American Statistical Association, 99(467), 609–618. \doi{10.1198/016214504000000647}
 
 }
-\examples{\dontshow{if (requireNamespace("optmatch", quietly = TRUE)) \{}
+\examples{\dontshow{if (requireNamespace("optmatch", quietly = TRUE)) force(\{ # examplesIf}
 data("lalonde")
 
 # Optimal full PS matching
@@ -173,4 +173,4 @@ m.out3 <- matchit(treat ~ age + educ + re74 + re75,
 m.out3
 summary(m.out3, addlvariables = ~race + nodegree + married,
         data = lalonde, un = FALSE)
-\dontshow{\}}}
+\dontshow{\}) # examplesIf}}

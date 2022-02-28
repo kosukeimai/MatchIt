@@ -88,7 +88,14 @@ library("sandwich")
 When using sampling weights with propensity score matching, one has the option of including the sampling weights in the model used to estimate the propensity scores. Although evidence is mixed on whether this is required [@austin2016; @lenis2019], it can be a good idea. The choice should depend on whether including the sampling weights improves the quality of the matches. Specifications including and excluding sampling weights should be tried to determine which is preferred.
 
 To supply sampling weights to the propensity score-estimating function in `matchit()`, the sampling weights variable should be supplied to the `s.weights` argument. It can be supplied either as a numerical vector containing the sampling weights, or a string or one-sided formula with the name of the sampling weights variable in the supplied dataset. Below we demonstrate including sampling weights into propensity scores estimated using logistic regression for optimal full matching for the average treatment effect in the population (ATE) (note that all methods and steps apply the same way to all forms of matching and all estimands).
+```{asis, echo = !requireNamespace("optmatch", quietly = TRUE)}
 
+Note: if the `optmatch` package is not available, the subsequent lines will not run.
+```
+```{r, include=FALSE}
+#In case optmatch goes offline, don't run lines below
+if (!requireNamespace("optmatch", quietly = TRUE)) knitr::opts_chunk$set(eval = FALSE)
+```
 ```{r}
 mF_s <- matchit(A ~ X1 + X2 + X3 + X4 + X5 + 
                   X6 + X7 + X8 + X9, data = d,
@@ -168,7 +175,9 @@ coeftest(fit, vcov. = vcovCL, cluster = ~subclass)["A",,drop=FALSE]
 ```
 
 We get the same estimates using this syntax as we did above. Because one might to forget to multiply the two sets of weights together, it is easier to just use the default of `include.s.weights = TRUE` and ignore the sampling weights in the rest of the analysis (because they are already included in the returned weights).
-
+```{r, include=FALSE, eval=TRUE}
+knitr::opts_chunk$set(eval = TRUE)
+```
 ## Code to Generate Data used in Examples
 
 ```{r, eval = FALSE}

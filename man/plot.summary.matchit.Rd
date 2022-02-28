@@ -44,7 +44,7 @@ Noah Greifer
 \seealso{
 \fun{summary.matchit}, \fun{dotchart}
 
-\pkgfun2{cobalt}{love.plot}{cobalt::love.plot} is a more flexible and sophisticated function to make Love plots and is also natively compatible with \code{matchit} objects.
+\pkgfun{cobalt}{love.plot} is a more flexible and sophisticated function to make Love plots and is also natively compatible with \code{matchit} objects.
 }
 \examples{
 data("lalonde")
