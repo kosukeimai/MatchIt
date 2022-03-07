@@ -211,7 +211,7 @@ summary(m.out3)
 
 # Optimal full PS matching for the ATE within calipers on
 # PS, age, and educ
-
+\dontshow{if (requireNamespace("optmatch", quietly = TRUE)) force(\{ # examplesIf}
 m.out4 <- matchit(treat ~ age + educ + race + nodegree +
                    married + re74 + re75, data = lalonde,
                    method = "full", estimand = "ATE",
@@ -219,7 +219,7 @@ m.out4 <- matchit(treat ~ age + educ + race + nodegree +
                    std.caliper = c(TRUE, FALSE, FALSE))
 m.out4
 summary(m.out4)
-
+\dontshow{\}) # examplesIf}
 # Subclassification on a logistic PS with 10 subclasses after
 # discarding controls outside common support of PS
 

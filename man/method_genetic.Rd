@@ -4,7 +4,7 @@
 Genetic Matching
 }
 \description{
-In \fun{matchit}, setting \code{method = "genetic"} performs genetic matching. Genetic matching is a form of nearest neighbor matching where distances are computed as the generalized Mahalanobis distance, which is a generalization of the Mahalanobis distance with a scaling factor for each covariate that represents the importance of that covariate to the distance. A genetic algorithm is used to select the scaling factors. The scaling factors are chosen as those which maximize a criterion related to covariate balance, which can be chosen, but which by default is the smallest p-value in covariate balance tests among the covariates. This method relies on and is a wrapper for \pkgfun2{Matching}{GenMatch}{Matching::GenMatch} and \pkgfun2{Matching}{Match}{Matching::Match}, which use \pkgfun2{rgenoud}{genoud}{rgenoud::genoud} to perform the optimization using the genetic algorithm.
+In \fun{matchit}, setting \code{method = "genetic"} performs genetic matching. Genetic matching is a form of nearest neighbor matching where distances are computed as the generalized Mahalanobis distance, which is a generalization of the Mahalanobis distance with a scaling factor for each covariate that represents the importance of that covariate to the distance. A genetic algorithm is used to select the scaling factors. The scaling factors are chosen as those which maximize a criterion related to covariate balance, which can be chosen, but which by default is the smallest p-value in covariate balance tests among the covariates. This method relies on and is a wrapper for \pkgfun{Matching}{GenMatch} and \pkgfun{Matching}{Match}, which use \pkgfun{rgenoud}{genoud} to perform the optimization using the genetic algorithm.
 
 This page details the allowable arguments with \code{method = "genetic"}. See \fun{matchit} for an explanation of what each argument means in a general context and how it can be specified.
 
@@ -90,11 +90,11 @@ how many control units should be matched to each treated unit for k:1 matching. 
 \code{logical}; whether information about the matching process should be printed to the console. When \code{TRUE}, output from \code{GenMatch()} with \code{print.level = 2} will be displayed. Default is \code{FALSE} for no printing other than warnings.
 }
   \item{\dots}{
-additional arguments passed to \pkgfun2{Matching}{GenMatch}{Matching::GenMatch}. Potentially useful options include \code{pop.size}, \code{max.generations}, and \code{fit.func}. If \code{pop.size} is not specified, a warning from \emph{Matching} will be thrown reminding you to change it. Note that the \code{ties} and \code{CommonSupport} arguments are set to \code{FALSE} and cannot be changed.
+additional arguments passed to \pkgfun{Matching}{GenMatch}. Potentially useful options include \code{pop.size}, \code{max.generations}, and \code{fit.func}. If \code{pop.size} is not specified, a warning from \emph{Matching} will be thrown reminding you to change it. Note that the \code{ties} and \code{CommonSupport} arguments are set to \code{FALSE} and cannot be changed.
 }
 }
 \section{Outputs}{
-All outputs described in \fun{matchit} are returned with \code{method = "genetic"}. When \code{replace = TRUE}, the \code{subclass} component is omitted. When \code{include.obj = TRUE} in the call to \code{matchit()}, the output of the call to \pkgfun2{Matching}{GenMatch}{Matching::GenMatch} will be included in the output.
+All outputs described in \fun{matchit} are returned with \code{method = "genetic"}. When \code{replace = TRUE}, the \code{subclass} component is omitted. When \code{include.obj = TRUE} in the call to \code{matchit()}, the output of the call to \pkgfun{Matching}{GenMatch} will be included in the output.
 }
 \details{
 In genetic matching, covariates play three roles: 1) as the variables on which balance is optimized, 2) as the variables in the generalized Mahalanobis distance between units, and 3) in estimating the propensity score. Variables supplied to \code{formula} are always used for role (1), as the variables on which balance is optimized. When \code{distance} is not \code{"mahalanobis"}, the covariates are also used to estimate the propensity score (unless it is supplied). When \code{mahvars} is specified, the named variables will form the covariates that go into the distance matrix. Otherwise, the variables in \code{formula} along with the propensity score will go into the distance matrix. This leads to three ways to use \code{distance} and \code{mahvars} to perform the matching:
@@ -126,9 +126,9 @@ For example, a sentence might read:
 \seealso{
 \fun{matchit} for a detailed explanation of the inputs and outputs of a call to \code{matchit()}.
 
-\pkgfun2{Matching}{GenMatch}{Matching::GenMatch} and \pkgfun2{Matching}{Match}{Matching::Match}, which do the work.
+\pkgfun{Matching}{GenMatch} and \pkgfun{Matching}{Match}, which do the work.
 }
-\examples{\dontshow{if (all(sapply(c("Matching", "rgenoud"), requireNamespace, quietly = TRUE))) \{}
+\examples{\dontshow{if (all(sapply(c("Matching", "rgenoud"), requireNamespace, quietly = TRUE))) force(\{ # examplesIf}
 data("lalonde")
 
 # 1:1 genetic matching with PS as a covariate
@@ -160,4 +160,5 @@ m.out3 <- matchit(treat ~ age + educ + race + nodegree +
                   pop.size = 10) #use much larger pop.size
 m.out3
 summary(m.out3, un = FALSE)
-\dontshow{\}}}
+\dontshow{\}) # examplesIf}}
+

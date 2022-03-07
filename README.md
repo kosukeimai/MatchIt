@@ -3,7 +3,7 @@
 
 # MatchIt: Nonparametric Preprocessing for Parametric Causal Inference <img src="man/figures/logo.png" align="right" width="150"/>
 
-## [![CRAN\_Status\_Badge](https://img.shields.io/cran/v/MatchIt?color=952100)](https://cran.r-project.org/package=MatchIt) [![CRAN\_Downloads\_Badge](https://cranlogs.r-pkg.org/badges/MatchIt?color=952100)](https://cran.r-project.org/package=MatchIt)
+## [![CRAN_Status_Badge](https://img.shields.io/cran/v/MatchIt?color=952100)](https://cran.r-project.org/package=MatchIt) [![CRAN_Downloads_Badge](https://cranlogs.r-pkg.org/badges/MatchIt?color=952100)](https://cran.r-project.org/package=MatchIt)
 
 ### Overview
 
@@ -16,16 +16,19 @@ matching, genetic matching, exact matching, coarsened exact matching,
 cardinality matching, and subclassification, some of which rely on
 functions from other R packages. A variety of methods to estimate
 propensity scores for propensity score matching are included. Below is
-an example of the use of `MatchIt` to perform full matching and assess
-balance:
+an example of the use of `MatchIt` to perform Mahalanobis distance
+matching with replacement and assess balance:
 
 ``` r
 library("MatchIt")
 data("lalonde", package = "MatchIt")
 
-#Full matching on the propensity score
-m.out <- matchit(treat ~ age + educ + race + married + nodegree + re74 + re75, 
-                 data = lalonde, method = "full")
+# 1:1 nearest neighbor matching with replacement on 
+# the Mahalanobis distance
+m.out <- matchit(treat ~ age + educ + race + married + 
+                   nodegree + re74 + re75, 
+                 data = lalonde, distance = "mahalanobis",
+                 replace = TRUE)
 ```
 
 Printing the `MatchIt` object provides details of the kind of matching
@@ -36,10 +39,9 @@ m.out
 ```
 
     #> A matchit object
-    #>  - method: Optimal full matching
-    #>  - distance: Propensity score
-    #>              - estimated with logistic regression
-    #>  - number of obs.: 614 (original), 614 (matched)
+    #>  - method: 1:1 nearest neighbor matching with replacement
+    #>  - distance: Mahalanobis
+    #>  - number of obs.: 614 (original), 286 (matched)
     #>  - target estimand: ATT
     #>  - covariates: age, educ, race, married, nodegree, re74, re75
 
@@ -54,11 +56,10 @@ summary(m.out)
     #> 
     #> Call:
     #> matchit(formula = treat ~ age + educ + race + married + nodegree + 
-    #>     re74 + re75, data = lalonde, method = "full")
+    #>     re74 + re75, data = lalonde, distance = "mahalanobis", replace = TRUE)
     #> 
     #> Summary of Balance for All Data:
     #>            Means Treated Means Control Std. Mean Diff. Var. Ratio eCDF Mean eCDF Max
-    #> distance          0.5774        0.1822          1.7941     0.9211    0.3774   0.6444
     #> age              25.8162       28.0303         -0.3094     0.4400    0.0813   0.1577
     #> educ             10.3459       10.2354          0.0550     0.4959    0.0347   0.1114
     #> raceblack         0.8432        0.2028          1.7615          .    0.6404   0.6404
@@ -72,36 +73,34 @@ summary(m.out)
     #> 
     #> Summary of Balance for Matched Data:
     #>            Means Treated Means Control Std. Mean Diff. Var. Ratio eCDF Mean eCDF Max Std. Pair Dist.
-    #> distance          0.5774        0.5761          0.0060     0.9918    0.0039   0.0486          0.0192
-    #> age              25.8162       24.6928          0.1570     0.4853    0.0838   0.3220          1.2606
-    #> educ             10.3459       10.3227          0.0116     0.5577    0.0235   0.0620          1.2200
-    #> raceblack         0.8432        0.8347          0.0236          .    0.0086   0.0086          0.0378
-    #> racehispan        0.0595        0.0583          0.0049          .    0.0012   0.0012          0.5638
-    #> racewhite         0.0973        0.1071         -0.0329          .    0.0098   0.0098          0.4168
-    #> married           0.1892        0.1285          0.1549          .    0.0607   0.0607          0.4806
-    #> nodegree          0.7081        0.7040          0.0090          .    0.0041   0.0041          0.9143
-    #> re74           2095.5737     2199.7126         -0.0213     1.2008    0.0383   0.2350          0.8668
-    #> re75           1532.0553     1524.8362          0.0022     2.0048    0.0651   0.2308          0.7932
+    #> age              25.8162       25.8703         -0.0076     0.9296    0.0124   0.0865          0.2010
+    #> educ             10.3459       10.4486         -0.0511     0.8956    0.0100   0.0595          0.1694
+    #> raceblack         0.8432        0.3730          1.2935          .    0.4703   0.4703          1.6206
+    #> racehispan        0.0595        0.0919         -0.1371          .    0.0324   0.0324          0.5943
+    #> racewhite         0.0973        0.5351         -1.4774          .    0.4378   0.4378          1.8057
+    #> married           0.1892        0.4919         -0.7729          .    0.3027   0.3027          1.1593
+    #> nodegree          0.7081        0.6486          0.1308          .    0.0595   0.0595          0.1308
+    #> re74           2095.5737     2180.6956         -0.0174     1.1183    0.0270   0.2054          0.1221
+    #> re75           1532.0553     1475.2549          0.0176     1.1629    0.0111   0.0324          0.0989
     #> 
     #> Percent Balance Improvement:
     #>            Std. Mean Diff. Var. Ratio eCDF Mean eCDF Max
-    #> distance              99.7       90.0      99.0     92.5
-    #> age                   49.3       11.9      -3.0   -104.2
-    #> educ                  78.9       16.8      32.4     44.3
-    #> raceblack             98.7          .      98.7     98.7
-    #> racehispan            98.6          .      98.6     98.6
-    #> racewhite             98.2          .      98.2     98.2
-    #> married               81.2          .      81.2     81.2
-    #> nodegree              96.3          .      96.3     96.3
-    #> re74                  97.0       72.2      83.0     47.4
-    #> re75                  99.2    -1456.4      51.5     19.8
+    #> age                   97.6       91.1      84.7     45.2
+    #> educ                   7.1       84.3      71.3     46.6
+    #> raceblack             26.6          .      26.6     26.6
+    #> racehispan            60.8          .      60.8     60.8
+    #> racewhite             21.5          .      21.5     21.5
+    #> married                6.5          .       6.5      6.5
+    #> nodegree              46.6          .      46.6     46.6
+    #> re74                  97.6       83.0      88.0     54.1
+    #> re75                  93.9     -237.7      91.7     88.7
     #> 
     #> Sample Sizes:
     #>               Control Treated
     #> All            429.       185
-    #> Matched (ESS)   53.33     185
-    #> Matched        429.       185
-    #> Unmatched        0.         0
+    #> Matched (ESS)   48.14     185
+    #> Matched        101.       185
+    #> Unmatched      328.         0
     #> Discarded        0.         0
 
 At the top is balance for the original sample. Below that is balance in

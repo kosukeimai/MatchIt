@@ -3,7 +3,8 @@ useDynLib("MatchIt", .registration = TRUE)
 import(stats)
 import(graphics)
 importFrom("grDevices", "devAskNewPage", "nclass.FD", "nclass.Sturges", "nclass.scott")
-importFrom("utils", "setTxtProgressBar", "txtProgressBar", "capture.output", "combn")
+importFrom("utils", "setTxtProgressBar", "txtProgressBar", "capture.output", "combn",
+           "packageVersion")
 importFrom("Rcpp", "evalCpp")
 
 export(get_matches)

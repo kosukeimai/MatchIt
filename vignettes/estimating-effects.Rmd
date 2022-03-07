@@ -177,31 +177,19 @@ Other packages may be of use but are not used here. The `margins` package can be
 
 Because different matching methods require different treatments, instructions for each method are organized in the following sections, as designated by the table below. It is important to ensure the right methods are used with the matching specification used in order for the estimated effects and standard errors to be valid.
 
-+-------------------------------------------------------------------------------------+-----------------------------------------------------------+
 | Section                                                                             | Matching Method                                           |
-+=====================================================================================+===========================================================+
+|-------------------------------------------------------------------------------------|-----------------------------------------------------------|
 | [After Pair Matching Without Replacement](#after-pair-matching-without-replacement) | Nearest neighbor matching without replacement             |
-+-------------------------------------------------------------------------------------+-----------------------------------------------------------+
 | \-                                                                                  | Optimal matching                                          |
-+-------------------------------------------------------------------------------------+-----------------------------------------------------------+
 | \-                                                                                  | Genetic matching without replacement                      |
-+-------------------------------------------------------------------------------------+-----------------------------------------------------------+
 | \-                                                                                  | Coarsened exact matching with `k2k = TRUE`                |
-+-------------------------------------------------------------------------------------+-----------------------------------------------------------+
 | [After Pair Matching With Replacement](#after-pair-matching-with-replacement)       | Nearest neighbor matching with replacement                |
-+-------------------------------------------------------------------------------------+-----------------------------------------------------------+
 | \-                                                                                  | Genetic matching with replacement                         |
-+-------------------------------------------------------------------------------------+-----------------------------------------------------------+
 | [After Full Matching](#after-full-matching)                                         | Full matching                                             |
-+-------------------------------------------------------------------------------------+-----------------------------------------------------------+
 |                                                                                     | Cardinality and template matching                         |
-+-------------------------------------------------------------------------------------+-----------------------------------------------------------+
 | [After Stratum Matching](#after-stratum-matching)                                   | Propensity score subclassification                        |
-+-------------------------------------------------------------------------------------+-----------------------------------------------------------+
 | \-                                                                                  | Exact matching                                            |
-+-------------------------------------------------------------------------------------+-----------------------------------------------------------+
 | \-                                                                                  | Coarsened exact matching with `k2k = FALSE` (the default) |
-+-------------------------------------------------------------------------------------+-----------------------------------------------------------+
 
 ### After Pair Matching Without Replacement {#after-pair-matching-without-replacement}
 
@@ -618,6 +606,9 @@ The `robust se` column contains the computed standard error, and the reported Z-
 
 ### After Full Matching {#after-full-matching}
 
+```{asis, echo = !requireNamespace("optmatch", quietly = TRUE)}
+Note: if the `optmatch` package is not available, the subsequent lines will not run.
+```
 ```{r, include=FALSE}
 #In case optmatch goes offline, don't run lines below
 if (!requireNamespace("optmatch", quietly = TRUE)) knitr::opts_chunk$set(eval = FALSE)
@@ -720,7 +711,6 @@ Including covariates in the model is less straightforward because the resulting 
 ```{r, include=FALSE, eval=TRUE}
 knitr::opts_chunk$set(eval = TRUE)
 ```
-
 ### After Stratum Matching {#after-stratum-matching}
 
 Stratum matching includes exact matching, coarsened exact matching, and propensity score subclassification. There are two natural ways to estimate marginal effects after stratum matching: the first is to estimate stratum-specific treatment effects and pool them, and the second is to use the stratum weights to estimate a single marginal effect. This latter approach is also known as marginal mean weighting through stratification (MMWS), and is described in detail by @hong2010[^5]. When done properly, both methods should yield similar or identical estimates of the treatment effect. MMWS is generally preferable because it is far simpler to implement and avoids issues of noncollapsibility with non-continuous outcomes. All of the methods described above for use with full matching also work with MMWS because the formation of the weights is the same; the only difference is that it is not appropriate to use cluster-robust standard errors with MMWS because of how few clusters are present.
@@ -883,20 +873,20 @@ The robust standard error must be used because of the MMWS weights.
 
 As discussed previously, with binary and time-to-event outcomes, marginal and conditional effects generally differ. Though we have primarily focused on marginal effects, we offer some guidance here on estimating conditional effect as well. Estimating conditional effects typically involves modeling the outcome, and inferences are dependent on this model being correct, even in the presence is perfect covariate balance. Matching provides robustness to some forms of misspecification, however, by limiting the range of the covariate space. So, even though outcome modeling is required, matching prior to modeling the outcome can be beneficial in terms of reducing bias due to model misspecification.
 
-On some effect measures, conditional effects typically vary depending on the covariate values at which the conditional effect is to be estimated; for example, the decrease in the risk of death (i.e., on the RD scale) corresponding to receipt of a treatment for a patient with a high baseline risk of death will by higher than that for a patient with a low baseline risk of death. In this sense, there is necessarily effect modification of the RD by baseline risk (which depends on a patient's covariate values). Similarly, for an exposure that increases the risk by a factor (e.g., doubles the risk, for a RR of 2), a patient with a high baseline risk cannot experience the same change in risk as a patient with a low baseline risk could; for example, a RR of 2 is impossible for a patient with a baseline risk of .6 but is certainly plausible for a patient with a baseline risk of .02. In this sense, there is necessarily effect modification of the RR by baseline risk. This is not true for the OR; it is plausible that the effect on the OR scale could be consistent across levels of levels of the predictors because any OR is compatible with possible baselines risks. For this reason, we only consider estimating the conditional OR and not other effect measures.
+On some effect measures, conditional effects typically vary depending on the covariate values at which the conditional effect is to be estimated; for example, the decrease in the risk of death (i.e., on the RD scale) corresponding to receipt of a treatment for a patient with a high baseline risk of death will by higher than that for a patient with a low baseline risk of death. In this sense, there is necessarily effect modification of the RD by baseline risk (which depends on a patient's covariate values). Similarly, for an exposure that increases the risk by a factor (e.g., doubles the risk, for a RR of 2), a patient with a high baseline risk cannot experience the same change in risk as a patient with a low baseline risk could; for example, a RR of 2 is impossible for a patient with a baseline risk of .6 but is certainly plausible for a patient with a baseline risk of .02. In this sense, there is necessarily effect modification of the RR by baseline risk. This is not true for the OR; it is plausible that the effect on the OR scale could be consistent across levels of levels of the predictors because any OR is compatible with any possible baselines risk. For this reason, we only consider estimating the conditional OR and not other effect measures.
 
-Although several methods exist for estimating conditional ORs after matching or subclassification, the one that generally works well is to run a logistic regression of the outcome on the treatment and covariates and use the coefficient on treatment as an estimate of the effect on the log OR scale. We demonstrate this below using full matching for the ATT:
+Although several methods exist for estimating conditional ORs after matching or subclassification, the one that generally works well is to run a logistic regression of the outcome on the treatment and covariates and use the coefficient on treatment as an estimate of the effect on the log OR scale. We demonstrate this below using 1:1 nearest neighbor propensity score matching for the ATT:
 
 ```{r}
 mF <- matchit(A ~ X1 + X2 + X3 + X4 + X5 + 
                  X6 + X7 + X8 + X9, data = d,
-              method = "full", estimand = "ATT")
+              method = "nearest")
 
 md <- match.data(mF)
 
-fitcond <- lm(Y_B ~ A + X1 + X2 + X3 + X4 + X5 + 
+fitcond <- glm(Y_B ~ A + X1 + X2 + X3 + X4 + X5 + 
                  X6 + X7 + X8 + X9, data = md, 
-             weights = weights)
+             weights = weights, family = binomial)
 
 coeftest(fitcond, vcov. = vcovCL, cluster = ~subclass)["A",,drop = FALSE]
 exp(coef(fitcond)["A"])

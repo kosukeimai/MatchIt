@@ -117,7 +117,7 @@ See \code{vignette("matching-methods")} for more literature on cardinality match
 
 \CRANpkg{optweight}, which offers similar functionality but in the context of weighting rather than matching.
 }
-\examples{
+\examples{\dontshow{if (requireNamespace("Rglpk", quietly = TRUE)) force(\{ # examplesIf}
 data("lalonde")
 
 #Choose your solver; "gurobi" is best, "glpk" is free and
@@ -147,7 +147,7 @@ m.out3 <- matchit(treat ~ age + educ + re74,
                   tols = .15, solver = solver)
 m.out3
 summary(m.out3, un = FALSE)
-
+\dontshow{if (requireNamespace("optmatch", quietly = TRUE)) force(\{ # examplesIf}
 # Pairing after 1:1 cardinality matching:
 m.out4 <- matchit(treat ~ age + educ + re74,
                   data = lalonde, method = "optimal",
@@ -158,9 +158,9 @@ m.out4 <- matchit(treat ~ age + educ + re74,
 # are lower for the paired-upon variables
 summary(m.out4, un = FALSE)
 summary(m.out1, un = FALSE)
-
+\dontshow{\}) # examplesIf}
 # In these examples, a high tol was used and
 # few covariate matched on in order to not take too long;
 # with real data, tols should be much lower and more
 # covariates included if possible.
-}
+\dontshow{\}) # examplesIf}}
