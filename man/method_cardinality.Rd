@@ -163,4 +163,4 @@ summary(m.out1, un = FALSE)
 # few covariate matched on in order to not take too long;
 # with real data, tols should be much lower and more
 # covariates included if possible.
-\dontshow{\}) # examplesIf}}
+}
