@@ -6,11 +6,13 @@ output:
 `MatchIt` News and Updates
 ======
 
-# MatchIt (development version)
+# MatchIt 4.3.4
 
-* When `s.weights` are supplied with `distance = "randomforest"`, the weights are supplied to `randomForest::randomForest()`. The
+* `optmatch` has been removed from CRAN. Instructions on installing it are in `?method_optimal` and `?method_full`.
 
-* Improved conditional use of packages, especially `optmatch`.
+* When `s.weights` are supplied with `distance = "randomforest"`, the weights are supplied to `randomForest::randomForest()`.
+
+* Improved conditional use of packages, especially `optmatch`. This may mean that certain examples fail to run in the vignettes.
 
 # MatchIt 4.3.3
 

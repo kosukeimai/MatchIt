@@ -97,7 +97,7 @@ for variable ratio matching, the minimum and maximum number of controls units to
 additional arguments that control the matching specification:
   \describe{
      \item{\code{reuse.max}}{
-      \code{numeric}; the maximum number of times each control can be used as a match. Setting \code{reuse.max = 1} correpsonds to matching without replacement (i.e., \code{replace = FALSE}), and setting \code{reuse.max = Inf} corresponds to traditional matching with replacement (i.e., \code{replace = TRUE}) with no limit on the number of times each control unit can be matched. Other values restrict the number of times each control can be matched when matching with replacement. \code{replace} is ignored when \code{reuse.max} is specified.
+      \code{numeric}; the maximum number of times each control can be used as a match. Setting \code{reuse.max = 1} corresponds to matching without replacement (i.e., \code{replace = FALSE}), and setting \code{reuse.max = Inf} corresponds to traditional matching with replacement (i.e., \code{replace = TRUE}) with no limit on the number of times each control unit can be matched. Other values restrict the number of times each control can be matched when matching with replacement. \code{replace} is ignored when \code{reuse.max} is specified.
      }
   }
 }

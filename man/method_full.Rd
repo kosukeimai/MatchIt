@@ -4,6 +4,8 @@
 \title{Optimal Full Matching}
 
 \description{
+\strong{Note: optmatch, the package required for optimal full matching, has been removed from CRAN as of 2022/02/23. Therefore, it must be installed using other means. We recommend installing it from the developer's GitHub page using }\code{remotes::install_github("markmfredrickson/optmatch")}\strong{ or from Microsoft's MRAN repository using }\code{install.packages("optmatch", repos = "https://mran.microsoft.com/snapshot/2022-02-01")}\strong{. Please direct any questions about installing optmatch to the optmatch maintainers.}
+
 In \fun{matchit}, setting \code{method = "full"} performs optimal full matching, which is a form of subclassification wherein all units, both treatment and control (i.e., the "full" sample), are assigned to a subclass and receive at least one match. The matching is optimal in the sense that that sum of the absolute distances between the treated and control units in each subclass is as small as possible. The method relies on and is a wrapper for \pkgfun{optmatch}{fullmatch}. Note that \pkg{optmatch} has an academic license that restricts its use (and thereby the use of \code{matchit()} with \code{method = "full"}) for users in non-academic institutions.
 
 Advantages of optimal full matching include that the matching order is not required to be specified, units do not need to be discarded, and it is less likely that extreme within-subclass distances will be large, unlike with standard subclassification. The primary output of full matching is a set of matching weights that can be applied to the matched sample; in this way, full matching can be seen as a robust alternative to propensity score weighting, robust in the sense that the propensity score model does not need to be correct to estimate the treatment effect without bias.
@@ -88,12 +90,12 @@ additional arguments passed to \pkgfun{optmatch}{fullmatch}. Allowed arguments i
 The arguments \code{replace}, \code{m.order}, and \code{ratio} are ignored with a warning.
 }
 \note{
-Due to what appears to be a bug in \emph{optmatch} (version 0.9-13), calipers can only be used when \code{min.controls} is left at its default.
+Calipers can only be used when \code{min.controls} is left at its default.
 
 The option \code{"optmatch_max_problem_size"} is automatically set to \code{Inf} during the matching process, different from its default in \emph{optmatch}. This enables matching problems of any size to be run, but may also let huge, infeasible problems get through and potentially take a long time or crash R. See \pkgfun{optmatch}{setMaxProblemSize} for more details.
 }
 \section{Outputs}{
-All outputs described in \fun{matchit} are returned with \code{method = "full"} except for \code{match.matrix}. This is because matching strata are not indexed by treated units as they are in some other forms of matching. When \code{include.obj = TRUE} in the call to \code{matchit()}, the output of the call to \pkgfun{optmatch}{fullmatch} will be included in the output. When \code{exact} is specified, this will be a list of such objects, one for each stratum of the exact variables.
+All outputs described in \fun{matchit} are returned with \code{method = "full"} except for \code{match.matrix}. This is because matching strata are not indexed by treated units as they are in some other forms of matching. When \code{include.obj = TRUE} in the call to \code{matchit()}, the output of the call to \pkgfun{optmatch}{fullmatch} will be included in the output. When \code{exact} is specified, this will be a list of such objects, one for each stratum of the \code{exact} variables.
 }
 \seealso{
 \fun{matchit} for a detailed explanation of the inputs and outputs of a call to \code{matchit()}.

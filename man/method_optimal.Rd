@@ -4,6 +4,8 @@
 \title{Optimal Pair Matching}
 
 \description{
+\strong{Note: optmatch, the package required for optimal pair matching, has been removed from CRAN as of 2022/02/23. Therefore, it must be installed using other means. We recommend installing it from the developer's GitHub page using }\code{remotes::install_github("markmfredrickson/optmatch")}\strong{ or from Microsoft's MRAN repository using }\code{install.packages("optmatch", repos = "https://mran.microsoft.com/snapshot/2022-02-01")}\strong{. Please direct any questions about installing optmatch to the optmatch maintainers.}
+
 In \fun{matchit}, setting \code{method = "optimal"} performs optimal pair matching. The matching is optimal in the sense that that sum of the absolute pairwise distances in the matched sample is as small as possible. The method functionally relies on \pkgfun{optmatch}{pairmatch}. Note that \pkg{optmatch} has an academic license that restricts its use (and thereby the use of \code{matchit()} with \code{method = "optimal"}) for users in non-academic institutions.
 
 Advantages of optimal pair matching include that the matching order is not required to be specified and it is less likely that extreme within-pair distances will be large, unlike with nearest neighbor matching. Generally, however, as a subset selection method, optimal pair matching tends to perform similarly to nearest neighbor matching in that similar subsets of units will be selected to be matched.
@@ -88,14 +90,12 @@ additional arguments passed to \pkgfun{optmatch}{pairmatch}. Only the \code{tols
 The arguments \code{replace}, \code{caliper}, and \code{m.order} are ignored with a warning.
 }
 \note{
-Calipers may eventually be compatible with this method, but due to what appears to be a bug in \emph{optmatch} (version 0.9-13), they are currently disabled.
-
 Optimal pair matching is a restricted form of optimal full matching where the number of treated units in each subclass is equal to 1, whereas in unrestricted full matching, multiple treated units can be assigned to the same subclass. \pkgfun{optmatch}{pairmatch} is simply a wrapper for \pkgfun{optmatch}{fullmatch}, which performs optimal full matching and is the workhorse for \code{\link{method_full}}. In the same way, \code{matchit()} uses \pkgfun{optmatch}{fullmatch} under the hood, imposing the restrictions that make optimal full matching function like optimal pair matching (which is simply to set \code{min.controls >= 1} and to pass \code{ratio} to the \code{mean.controls} argument). This distinction is not important for regular use but may be of interest to those examining the source code.
 
 The option \code{"optmatch_max_problem_size"} is automatically set to \code{Inf} during the matching process, different from its default in \emph{optmatch}. This enables matching problems of any size to be run, but may also let huge, infeasible problems get through and potentially take a long time or crash R. See \pkgfun{optmatch}{setMaxProblemSize} for more details.
 }
 \section{Outputs}{
-All outputs described in \fun{matchit} are returned with \code{method = "optimal"}. When \code{include.obj = TRUE} in the call to \code{matchit()}, the output of the call to \pkgfun{optmatch}{fullmatch} will be included in the output. When \code{exact} is specified, this will be a list of such objects, one for each stratum of the exact variables.
+All outputs described in \fun{matchit} are returned with \code{method = "optimal"}. When \code{include.obj = TRUE} in the call to \code{matchit()}, the output of the call to \pkgfun{optmatch}{fullmatch} will be included in the output. When \code{exact} is specified, this will be a list of such objects, one for each stratum of the \code{exact} variables.
 }
 \seealso{
 \fun{matchit} for a detailed explanation of the inputs and outputs of a call to \code{matchit()}.
