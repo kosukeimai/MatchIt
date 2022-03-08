@@ -147,10 +147,10 @@ m.out3 <- matchit(treat ~ age + educ + re74,
                   tols = .15, solver = solver)
 m.out3
 summary(m.out3, un = FALSE)
-\dontshow{if (requireNamespace("optmatch", quietly = TRUE)) force(\{ # examplesIf}
+
 # Pairing after 1:1 cardinality matching:
 m.out4 <- matchit(treat ~ age + educ + re74,
-                  data = lalonde, method = "optimal",
+                  data = lalonde, method = "nearest",
                   distance = "mahalanobis",
                   discard = m.out1$weights == 0)
 
