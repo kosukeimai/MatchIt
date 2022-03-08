@@ -40,7 +40,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">MatchIt</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">4.3.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">4.3.4</span>
       </span>
     </div>
 
@@ -53,7 +53,7 @@
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
      
     <span class="caret"></span>
@@ -100,7 +100,7 @@
       <h1 data-toc-skip>MatchIt: Getting Started</h1>
                         <h4 data-toc-skip class="author">Noah Greifer</h4>
             
-            <h4 data-toc-skip class="date">2022-01-16</h4>
+            <h4 data-toc-skip class="date">2022-03-08</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/kosukeimai/MatchIt/blob/HEAD/vignettes/MatchIt.Rmd" class="external-link"><code>vignettes/MatchIt.Rmd</code></a></small>
       <div class="hidden name"><code>MatchIt.Rmd</code></div>
@@ -306,7 +306,7 @@ pre code {
 <p>Balance is far better, as determined by the lower standardized mean differences and eCDF statistics. The balance should be reported when publishing the results of a matching analysis. This can be done either in a table, using the values resulting from <code><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary()</a></code>, or in a plot, such as a Love plot, which we can make by calling <code><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot()</a></code> on the <code><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary()</a></code> output:</p>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">m.out2</span><span class="op">)</span><span class="op">)</span></code></pre></div>
-<p><img src="MatchIt_files/figure-html/unnamed-chunk-11-1.png" width="672"></p>
+<p><img src="MatchIt_files/figure-html/unnamed-chunk-13-1.png" width="672"></p>
 <p>Love plots are a simple and straightforward way to summarize balance visually. See <code><a href="../articles/assessing-balance.html">vignette("assessing-balance")</a></code> for more information on how to customize <code>MatchIt</code>’s Love plot and how to use <code>cobalt</code>, a package designed specifically for balance assessment and reporting that is compatible with <code>MatchIt</code>.</p>
 </div>
 </div>

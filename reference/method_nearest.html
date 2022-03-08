@@ -41,7 +41,7 @@ matchit(formula,
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">MatchIt</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">4.3.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">4.3.4</span>
       </span>
     </div>
 
@@ -53,7 +53,7 @@ matchit(formula,
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
      
     <span class="caret"></span>
@@ -165,7 +165,7 @@ matchit(formula,
 <dd><p><code>logical</code>; whether information about the matching process should be printed to the console. When <code>TRUE</code>, a progress bar implemented using <em>RcppProgress</em> will be displayed.</p></dd>
 <dt>...</dt>
 <dd><p>additional arguments that control the matching specification:</p><dl><dt><code>reuse.max</code></dt>
-<dd><p><code>numeric</code>; the maximum number of times each control can be used as a match. Setting <code>reuse.max = 1</code> correpsonds to matching without replacement (i.e., <code>replace = FALSE</code>), and setting <code>reuse.max = Inf</code> corresponds to traditional matching with replacement (i.e., <code>replace = TRUE</code>) with no limit on the number of times each control unit can be matched. Other values restrict the number of times each control can be matched when matching with replacement. <code>replace</code> is ignored when <code>reuse.max</code> is specified.</p></dd>
+<dd><p><code>numeric</code>; the maximum number of times each control can be used as a match. Setting <code>reuse.max = 1</code> corresponds to matching without replacement (i.e., <code>replace = FALSE</code>), and setting <code>reuse.max = Inf</code> corresponds to traditional matching with replacement (i.e., <code>replace = TRUE</code>) with no limit on the number of times each control unit can be matched. Other values restrict the number of times each control can be matched when matching with replacement. <code>replace</code> is ignored when <code>reuse.max</code> is specified.</p></dd>
 
   
 </dl></dd>

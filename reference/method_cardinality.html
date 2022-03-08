@@ -30,7 +30,7 @@ matchit(formula,
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">MatchIt</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">4.3.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">4.3.4</span>
       </span>
     </div>
 
@@ -42,7 +42,7 @@ matchit(formula,
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
      
     <span class="caret"></span>
@@ -302,7 +302,7 @@ matchit(formula,
 <span class="r-in"></span>
 <span class="r-in"><span class="co"># Pairing after 1:1 cardinality matching:</span></span>
 <span class="r-in"><span class="va">m.out4</span> <span class="op">&lt;-</span> <span class="fu"><a href="matchit.html">matchit</a></span><span class="op">(</span><span class="va">treat</span> <span class="op">~</span> <span class="va">age</span> <span class="op">+</span> <span class="va">educ</span> <span class="op">+</span> <span class="va">re74</span>,</span>
-<span class="r-in">                  data <span class="op">=</span> <span class="va">lalonde</span>, method <span class="op">=</span> <span class="st">"optimal"</span>,</span>
+<span class="r-in">                  data <span class="op">=</span> <span class="va">lalonde</span>, method <span class="op">=</span> <span class="st">"nearest"</span>,</span>
 <span class="r-in">                  distance <span class="op">=</span> <span class="st">"mahalanobis"</span>,</span>
 <span class="r-in">                  discard <span class="op">=</span> <span class="va">m.out1</span><span class="op">$</span><span class="va">weights</span> <span class="op">==</span> <span class="fl">0</span><span class="op">)</span></span>
 <span class="r-in"></span>
@@ -312,7 +312,7 @@ matchit(formula,
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Call:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> matchit(formula = treat ~ age + educ + re74, data = lalonde, </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     method = "optimal", distance = "mahalanobis", discard = m.out1$weights == </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     method = "nearest", distance = "mahalanobis", discard = m.out1$weights == </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>         0)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Summary of Balance for Matched Data:</span>
@@ -321,9 +321,9 @@ matchit(formula,
 <span class="r-out co"><span class="r-pr">#&gt;</span> educ       10.3459       10.0486          0.1479     0.4197    0.0441   0.1351</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> re74     2095.5737     2817.4574         -0.1477     0.8712    0.0695   0.3297</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>      Std. Pair Dist.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> age           0.4525</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> educ          0.5081</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> re74          0.2403</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> age           0.5779</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> educ          0.6264</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> re74          0.3792</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Sample Sizes:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>           Control Treated</span>
@@ -352,7 +352,6 @@ matchit(formula,
 <span class="r-out co"><span class="r-pr">#&gt;</span> Unmatched     244       0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Discarded       0       0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-in"></span>
 <span class="r-in"><span class="co"># In these examples, a high tol was used and</span></span>
 <span class="r-in"><span class="co"># few covariate matched on in order to not take too long;</span></span>
 <span class="r-in"><span class="co"># with real data, tols should be much lower and more</span></span>

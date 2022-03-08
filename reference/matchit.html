@@ -18,7 +18,7 @@ This page documents the overall use of matchit(), but for specifics of how match
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">MatchIt</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">4.3.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">4.3.4</span>
       </span>
     </div>
 
@@ -30,7 +30,7 @@ This page documents the overall use of matchit(), but for specifics of how match
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
      
     <span class="caret"></span>
@@ -506,7 +506,6 @@ This page documents the overall use of matchit(), but for specifics of how match
 <span class="r-in"></span>
 <span class="r-in"><span class="co"># Optimal full PS matching for the ATE within calipers on</span></span>
 <span class="r-in"><span class="co"># PS, age, and educ</span></span>
-<span class="r-in"></span>
 <span class="r-in"><span class="va">m.out4</span> <span class="op">&lt;-</span> <span class="fu">matchit</span><span class="op">(</span><span class="va">treat</span> <span class="op">~</span> <span class="va">age</span> <span class="op">+</span> <span class="va">educ</span> <span class="op">+</span> <span class="va">race</span> <span class="op">+</span> <span class="va">nodegree</span> <span class="op">+</span></span>
 <span class="r-in">                   <span class="va">married</span> <span class="op">+</span> <span class="va">re74</span> <span class="op">+</span> <span class="va">re75</span>, data <span class="op">=</span> <span class="va">lalonde</span>,</span>
 <span class="r-in">                   method <span class="op">=</span> <span class="st">"full"</span>, estimand <span class="op">=</span> <span class="st">"ATE"</span>,</span>
@@ -599,7 +598,6 @@ This page documents the overall use of matchit(), but for specifics of how match
 <span class="r-out co"><span class="r-pr">#&gt;</span> Unmatched      226.     74.  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Discarded        0.      0.  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-in"></span>
 <span class="r-in"><span class="co"># Subclassification on a logistic PS with 10 subclasses after</span></span>
 <span class="r-in"><span class="co"># discarding controls outside common support of PS</span></span>
 <span class="r-in"></span>
