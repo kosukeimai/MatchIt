@@ -6,6 +6,10 @@ output:
 `MatchIt` News and Updates
 ======
 
+# MatchIt (development version)
+
+* `optmatch` has returned to CRAN, now with an open-source license! A new `solver` argument can be passed to `matchit()` with `method = "full"` and `method = "optimal"` to control the solver used to perform the optimization used in the matching. Note that using the default (open source) solver LEMON may yield results different from those obtained prior to `optmatch` 0.10.0. For reproducibility questions, please contact the `optmatch` maintainers.
+
 # MatchIt 4.3.4
 
 * `optmatch` has been removed from CRAN. Instructions on installing it are in `?method_optimal` and `?method_full`.

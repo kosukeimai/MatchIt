@@ -4,9 +4,7 @@
 \title{Optimal Full Matching}
 
 \description{
-\strong{Note: optmatch, the package required for optimal full matching, has been removed from CRAN as of 2022/02/23. Therefore, it must be installed using other means. We recommend installing it from the developer's GitHub page using }\code{remotes::install_github("markmfredrickson/optmatch")}\strong{ or from Microsoft's MRAN repository using }\code{install.packages("optmatch", repos = "https://mran.microsoft.com/snapshot/2022-02-01")}\strong{. Please direct any questions about installing optmatch to the optmatch maintainers.}
-
-In \fun{matchit}, setting \code{method = "full"} performs optimal full matching, which is a form of subclassification wherein all units, both treatment and control (i.e., the "full" sample), are assigned to a subclass and receive at least one match. The matching is optimal in the sense that that sum of the absolute distances between the treated and control units in each subclass is as small as possible. The method relies on and is a wrapper for \pkgfun{optmatch}{fullmatch}. Note that \pkg{optmatch} has an academic license that restricts its use (and thereby the use of \code{matchit()} with \code{method = "full"}) for users in non-academic institutions.
+In \fun{matchit}, setting \code{method = "full"} performs optimal full matching, which is a form of subclassification wherein all units, both treatment and control (i.e., the "full" sample), are assigned to a subclass and receive at least one match. The matching is optimal in the sense that that sum of the absolute distances between the treated and control units in each subclass is as small as possible. The method relies on and is a wrapper for \pkgfun{optmatch}{fullmatch}.
 
 Advantages of optimal full matching include that the matching order is not required to be specified, units do not need to be discarded, and it is less likely that extreme within-subclass distances will be large, unlike with standard subclassification. The primary output of full matching is a set of matching weights that can be applied to the matched sample; in this way, full matching can be seen as a robust alternative to propensity score weighting, robust in the sense that the propensity score model does not need to be correct to estimate the treatment effect without bias.
 
@@ -84,7 +82,7 @@ the width(s) of the caliper(s) used for caliper matching. Calipers are processed
 \code{logical}; whether information about the matching process should be printed to the console.
 }
   \item{\dots}{
-additional arguments passed to \pkgfun{optmatch}{fullmatch}. Allowed arguments include \code{min.controls}, \code{max.controls}, \code{omit.fraction}, \code{mean.controls}, and \code{tol}. See the \pkgfun{optmatch}{fullmatch} documentation for details.
+additional arguments passed to \pkgfun{optmatch}{fullmatch}. Allowed arguments include \code{min.controls}, \code{max.controls}, \code{omit.fraction}, \code{mean.controls}, \code{tol}, and \code{solver}. See the \pkgfun{optmatch}{fullmatch} documentation for details. In general, \code{tol} should be set to a low number (e.g., \code{1e-7}) to get a more precise solution.
 }
 
 The arguments \code{replace}, \code{m.order}, and \code{ratio} are ignored with a warning.
