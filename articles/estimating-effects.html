@@ -40,7 +40,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">MatchIt</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">4.3.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">4.3.4.9000</span>
       </span>
     </div>
 
@@ -100,7 +100,7 @@
       <h1 data-toc-skip>Estimating Effects After Matching</h1>
                         <h4 data-toc-skip class="author">Noah Greifer</h4>
             
-            <h4 data-toc-skip class="date">2022-03-08</h4>
+            <h4 data-toc-skip class="date">2022-03-18</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/kosukeimai/MatchIt/blob/HEAD/vignettes/estimating-effects.Rmd" class="external-link"><code>vignettes/estimating-effects.Rmd</code></a></small>
       <div class="hidden name"><code>estimating-effects.Rmd</code></div>
@@ -800,12 +800,12 @@ pre code {
 
 <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">md</span><span class="op">)</span></code></pre></div>
 <pre><code><span class="co">##   A      X1      X2      X3       X4 X5      X6      X7      X8       X9      Y_C Y_B     Y_S distance weights subclass</span>
-<span class="co">## 1 0  0.1725 -1.4283 -0.4103 -2.36059  1 -1.1199  0.6398 -0.4840 -0.59385  0.07104   0  278.46  0.08461  0.8166       58</span>
+<span class="co">## 1 0  0.1725 -1.4283 -0.4103 -2.36059  1 -1.1199  0.6398 -0.4840 -0.59385  0.07104   0  278.46  0.08461  0.8315       57</span>
 <span class="co">## 2 0 -1.0959  0.8463  0.2456 -0.12333  1 -2.2687 -1.4491 -0.5514 -0.31439  0.15619   0  330.63  0.01855  0.7899      132</span>
-<span class="co">## 3 0  0.1768  0.7905 -0.8436  0.82366  1 -0.2221  0.2971 -0.6966 -0.69516 -0.85180   1  369.94  0.22210  1.0393       97</span>
-<span class="co">## 4 0 -0.4595  0.1726  1.9542 -0.62661  1 -0.4019 -0.8294 -0.5384  0.20729 -2.35184   0   91.06  0.04180  0.8445      136</span>
-<span class="co">## 5 1  0.3563 -1.8121  0.8135 -0.67189  1 -0.8297  1.7297 -0.6439 -0.02648  0.68058   0  182.73  0.43291  0.3307      204</span>
-<span class="co">## 6 0 -2.4313 -1.7984 -1.2940  0.04609  1 -1.2419 -1.1252 -1.8659 -0.56513 -5.62260   0 2563.73  0.04998  0.7990      168</span></code></pre>
+<span class="co">## 3 0  0.1768  0.7905 -0.8436  0.82366  1 -0.2221  0.2971 -0.6966 -0.69516 -0.85180   1  369.94  0.22210  0.9094       97</span>
+<span class="co">## 4 0 -0.4595  0.1726  1.9542 -0.62661  1 -0.4019 -0.8294 -0.5384  0.20729 -2.35184   0   91.06  0.04180  0.8166      136</span>
+<span class="co">## 5 1  0.3563 -1.8121  0.8135 -0.67189  1 -0.8297  1.7297 -0.6439 -0.02648  0.68058   0  182.73  0.43291  0.3307      205</span>
+<span class="co">## 6 0 -2.4313 -1.7984 -1.2940  0.04609  1 -1.2419 -1.1252 -1.8659 -0.56513 -5.62260   0 2563.73  0.04998  0.7976      169</span></code></pre>
 <p>A benefit of full matching is that no units are discarded, which has the potential to improve precision and prevent bias due to incomplete matching. However, the “effective” sample size implied by the matching weights is lower than the actual remaining sample size, so one should not always expect full matching to yield more precise estimates than other forms of matching.</p>
 <div class="section level4">
 <h4 id="for-continuous-outcomes-2">For continuous outcomes<a class="anchor" aria-label="anchor" href="#for-continuous-outcomes-2"></a>
@@ -819,8 +819,8 @@ pre code {
 <span class="co">## t test of coefficients:</span>
 <span class="co">## </span>
 <span class="co">##             Estimate Std. Error t value Pr(&gt;|t|)    </span>
-<span class="co">## (Intercept)    1.436      0.250    5.75    1e-08 ***</span>
-<span class="co">## A              1.892      0.519    3.65  0.00027 ***</span>
+<span class="co">## (Intercept)    1.454      0.252    5.76  9.9e-09 ***</span>
+<span class="co">## A              1.722      0.513    3.35  0.00081 ***</span>
 <span class="co">## ---</span>
 <span class="co">## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</span></code></pre>
 <p><strong>Using the bootstrap.</strong> Computing bootstrap standard errors and confidence intervals after full matching is identical to doing so after pair matching without replacement, so we do not demonstrate it again here. Covariates can be included in the outcome model used in the bootstrap replications. See below for a note on centering the covariates when including treatment-covariate interactions, as this must be done when using the bootstrap as well.</p>
@@ -846,8 +846,8 @@ pre code {
 <span class="co">#Only output the intercept and coefficient on treatment</span>
 <span class="fu"><a href="https://rdrr.io/pkg/lmtest/man/coeftest.html" class="external-link">coeftest</a></span><span class="op">(</span><span class="va">fit2</span>, vcov. <span class="op">=</span> <span class="va">vcovCL</span>, cluster <span class="op">=</span> <span class="op">~</span><span class="va">subclass</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">2</span>,<span class="op">]</span></code></pre></div>
 <pre><code><span class="co">##             Estimate Std. Error t value  Pr(&gt;|t|)</span>
-<span class="co">## (Intercept)    1.400     0.1645   8.511 3.349e-17</span>
-<span class="co">## A              1.979     0.4169   4.748 2.207e-06</span></code></pre>
+<span class="co">## (Intercept)    1.396     0.1643   8.497 3.754e-17</span>
+<span class="co">## A              1.844     0.4293   4.295 1.828e-05</span></code></pre>
 <p>Remember not to interpret the coefficients on the covariates or the treatment-covariate interactions, as they are likely confounded. To keep the output clean, above we restricted the output to just the intercept and coefficient on treatment. Another benefit of centering the covariates is that we can interpret the intercept as an estimate of the average potential outcome under control.</p>
 <p>Note that the above strategy can be applied to all matching methods when analyzing continuous outcomes (but not binary or survival outcomes, which require bootstrapping to validly estimate standard errors with covariate adjustment). It is critical to center the covariates at their means in the target group, which may require some additional programming for estimands other than the ATE.</p>
 </div>
@@ -865,14 +865,14 @@ pre code {
 <span class="co">## z test of coefficients:</span>
 <span class="co">## </span>
 <span class="co">##             Estimate Std. Error z value Pr(&gt;|z|)    </span>
-<span class="co">## (Intercept)  -0.9146     0.0826  -11.07   &lt;2e-16 ***</span>
-<span class="co">## A             0.5545     0.1722    3.22   0.0013 ** </span>
+<span class="co">## (Intercept)  -0.9125     0.0835   -10.9  &lt; 2e-16 ***</span>
+<span class="co">## A             0.5700     0.1727     3.3  0.00097 ***</span>
 <span class="co">## ---</span>
 <span class="co">## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</span></code></pre>
 <div class="sourceCode" id="cb70"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">exp</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/coef.html" class="external-link">coef</a></span><span class="op">(</span><span class="va">fit3</span><span class="op">)</span><span class="op">)</span> <span class="co">#OR</span></code></pre></div>
 <pre><code><span class="co">## (Intercept)           A </span>
-<span class="co">##      0.4007      1.7410</span></code></pre>
+<span class="co">##      0.4015      1.7683</span></code></pre>
 <p>As with matching with replacement, we include weights in the call to <code><a href="https://rdrr.io/r/stats/glm.html" class="external-link">glm()</a></code> and set <code>family = quasibinomial()</code> to prevent a warning that occurs when using weights with binomial regression models (though the results do not differ). Setting <code>link = "logit"</code> provides the marginal OR; for the marginal RR, we would replace <code>"logit"</code> with <code>"log"</code>, and for the marginal RD, we would replace <code>"logit"</code> with <code>"identity"</code> and not exponentiate the coefficient.</p>
 <p><strong>With covariate adjustment and bootstrapping.</strong> To include covariates in the model, a marginal effects procedure must be used with bootstrapping to recover the marginal effect because the coefficient on treatment in such a model corresponds to a conditional effect. A bootstrap must be used to estimate the standard error and confidence interval of the marginal effect. Either the full bootstrap or block bootstrap can be used, though the performance of the latter has not been formally evaluated (but because it is an approximation to cluster-robust standard errors, which are valid, it is likely valid). The code for the full bootstrap with full matching is identical to the code for bootstrapping with binary outcomes for pair matching with replacement (except that the call to <code><a href="../reference/matchit.html">matchit()</a></code> in the <code>est_fun</code> function must be adjusted to perform full matching), and the code for the block bootstrap with full matching is identical to the code for bootstrapping with binary outcomes for pair matching without replacement, so we do not repeat it here.</p>
 </div>
@@ -889,9 +889,9 @@ pre code {
 <span class="co">##     robust = TRUE, cluster = subclass)</span>
 <span class="co">## </span>
 <span class="co">##   coef exp(coef) se(coef) robust se z     p</span>
-<span class="co">## A 0.42      1.52     0.05      0.09 5 2e-06</span>
+<span class="co">## A 0.43      1.53     0.05      0.09 5 6e-07</span>
 <span class="co">## </span>
-<span class="co">## Likelihood ratio test=54  on 1 df, p=2e-13</span>
+<span class="co">## Likelihood ratio test=56  on 1 df, p=6e-14</span>
 <span class="co">## n= 2000, number of events= 2000</span></code></pre>
 <p>To perform the log-rank test or compute survival curves after full matching, functions designed for performing these tasks with inverse probability weights can be used with the matching weights; the <code>RISCA</code> package offers functionality for this purpose.</p>
 <p>Including covariates in the model is less straightforward because the resulting HR estimate is conditional rather than marginal.</p>

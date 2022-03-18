@@ -40,7 +40,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">MatchIt</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">4.3.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">4.3.4.9000</span>
       </span>
     </div>
 
@@ -100,7 +100,7 @@
       <h1 data-toc-skip>Matching with Sampling Weights</h1>
                         <h4 data-toc-skip class="author">Noah Greifer</h4>
             
-            <h4 data-toc-skip class="date">2022-03-08</h4>
+            <h4 data-toc-skip class="date">2022-03-18</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/kosukeimai/MatchIt/blob/HEAD/vignettes/sampling-weights.Rmd" class="external-link"><code>vignettes/sampling-weights.Rmd</code></a></small>
       <div class="hidden name"><code>sampling-weights.Rmd</code></div>
@@ -219,22 +219,22 @@ pre code {
 <span class="co">## </span>
 <span class="co">## Summary of Balance for Matched Data:</span>
 <span class="co">##          Means Treated Means Control Std. Mean Diff. Var. Ratio eCDF Mean eCDF Max Std. Pair Dist.</span>
-<span class="co">## distance         0.316         0.292           0.117      1.042     0.030    0.073           0.007</span>
-<span class="co">## X1               0.025        -0.035           0.057      1.211     0.038    0.086           0.974</span>
-<span class="co">## X2              -0.386        -0.274          -0.113      1.058     0.031    0.091           1.079</span>
-<span class="co">## X3              -0.101        -0.015          -0.092      0.656     0.046    0.109           1.133</span>
-<span class="co">## X4               0.353         0.338           0.014      1.186     0.023    0.068           0.910</span>
-<span class="co">## X5               0.669         0.667           0.003          .     0.002    0.002           0.830</span>
-<span class="co">## X6               0.043         0.061          -0.017      1.148     0.028    0.083           1.177</span>
-<span class="co">## X7               0.156         0.030           0.128      1.185     0.029    0.074           1.068</span>
-<span class="co">## X8              -0.171        -0.224           0.048      1.242     0.017    0.046           0.979</span>
-<span class="co">## X9               0.000         0.036          -0.037      1.139     0.026    0.086           1.146</span>
+<span class="co">## distance         0.321         0.292           0.142      1.064     0.035    0.077           0.007</span>
+<span class="co">## X1               0.045        -0.028           0.069      1.170     0.042    0.087           0.950</span>
+<span class="co">## X2              -0.331        -0.279          -0.053      1.069     0.017    0.071           1.077</span>
+<span class="co">## X3              -0.068        -0.019          -0.052      0.649     0.043    0.096           1.124</span>
+<span class="co">## X4               0.387         0.331           0.054      1.242     0.024    0.079           0.905</span>
+<span class="co">## X5               0.655         0.667          -0.026          .     0.012    0.012           0.844</span>
+<span class="co">## X6               0.051         0.061          -0.009      1.085     0.022    0.061           1.150</span>
+<span class="co">## X7               0.148         0.028           0.122      1.247     0.028    0.078           1.067</span>
+<span class="co">## X8              -0.172        -0.224           0.048      1.225     0.017    0.046           0.998</span>
+<span class="co">## X9               0.027         0.037          -0.010      1.156     0.021    0.076           1.145</span>
 <span class="co">## </span>
 <span class="co">## Sample Sizes:</span>
 <span class="co">##               Control Treated</span>
 <span class="co">## All (ESS)       987.1   177.1</span>
 <span class="co">## All            1559.    441. </span>
-<span class="co">## Matched (ESS)   517.4   152. </span>
+<span class="co">## Matched (ESS)   513.4   148.9</span>
 <span class="co">## Matched        1559.    441. </span>
 <span class="co">## Unmatched         0.      0. </span>
 <span class="co">## Discarded         0.      0.</span></code></pre>
@@ -248,22 +248,22 @@ pre code {
 <span class="co">## </span>
 <span class="co">## Summary of Balance for Matched Data:</span>
 <span class="co">##          Means Treated Means Control Std. Mean Diff. Var. Ratio eCDF Mean eCDF Max Std. Pair Dist.</span>
-<span class="co">## distance         0.285         0.275           0.051      0.995     0.021    0.057           0.009</span>
-<span class="co">## X1              -0.101         0.016          -0.110      1.082     0.030    0.066           0.932</span>
-<span class="co">## X2              -0.317        -0.250          -0.067      0.973     0.029    0.090           1.117</span>
-<span class="co">## X3              -0.037        -0.067           0.032      0.699     0.039    0.080           1.137</span>
-<span class="co">## X4               0.462         0.286           0.171      1.136     0.047    0.128           0.987</span>
-<span class="co">## X5               0.656         0.669          -0.026          .     0.012    0.012           0.806</span>
-<span class="co">## X6               0.036        -0.025           0.059      1.077     0.025    0.059           1.123</span>
-<span class="co">## X7               0.054         0.031           0.023      1.042     0.012    0.056           0.986</span>
-<span class="co">## X8              -0.200        -0.213           0.012      1.077     0.022    0.078           0.977</span>
-<span class="co">## X9              -0.026         0.042          -0.069      0.894     0.034    0.105           1.098</span>
+<span class="co">## distance         0.283         0.277           0.031      0.977     0.019    0.059           0.009</span>
+<span class="co">## X1              -0.114         0.014          -0.120      1.155     0.030    0.079           0.937</span>
+<span class="co">## X2              -0.320        -0.258          -0.063      0.994     0.027    0.093           1.110</span>
+<span class="co">## X3              -0.077        -0.057          -0.021      0.648     0.044    0.086           1.094</span>
+<span class="co">## X4               0.485         0.298           0.181      1.059     0.050    0.131           0.960</span>
+<span class="co">## X5               0.670         0.670          -0.001          .     0.000    0.000           0.802</span>
+<span class="co">## X6               0.039        -0.011           0.049      1.012     0.021    0.047           1.118</span>
+<span class="co">## X7               0.005         0.033          -0.029      1.086     0.018    0.054           1.014</span>
+<span class="co">## X8              -0.282        -0.216          -0.061      1.190     0.019    0.079           1.012</span>
+<span class="co">## X9              -0.027         0.027          -0.054      0.872     0.029    0.085           1.086</span>
 <span class="co">## </span>
 <span class="co">## Sample Sizes:</span>
 <span class="co">##               Control Treated</span>
 <span class="co">## All (ESS)       987.1   177.1</span>
 <span class="co">## All            1559.    441. </span>
-<span class="co">## Matched (ESS)   589.1   152.7</span>
+<span class="co">## Matched (ESS)   567.    130.9</span>
 <span class="co">## Matched        1559.    441. </span>
 <span class="co">## Unmatched         0.      0. </span>
 <span class="co">## Discarded         0.      0.</span></code></pre>
@@ -283,8 +283,8 @@ pre code {
           weights <span class="op">=</span> <span class="va">weights</span><span class="op">)</span>
 
 <span class="fu"><a href="https://rdrr.io/pkg/lmtest/man/coeftest.html" class="external-link">coeftest</a></span><span class="op">(</span><span class="va">fit</span>, vcov. <span class="op">=</span> <span class="va">vcovCL</span>, cluster <span class="op">=</span> <span class="op">~</span><span class="va">subclass</span><span class="op">)</span><span class="op">[</span><span class="st">"A"</span>,,drop<span class="op">=</span><span class="cn">FALSE</span><span class="op">]</span></code></pre></div>
-<pre><code><span class="co">##   Estimate Std. Error t value Pr(&gt;|t|)</span>
-<span class="co">## A     1.74     0.3815    4.56 5.43e-06</span></code></pre>
+<pre><code><span class="co">##   Estimate Std. Error t value  Pr(&gt;|t|)</span>
+<span class="co">## A    1.658     0.3693   4.489 7.552e-06</span></code></pre>
 <p>Note that <code><a href="../reference/match.data.html">match.data()</a></code> and <code>get_weights()</code> have the option <code>include.s.weights</code>, which, when set to <code>FALSE</code>, makes it so the returned weights do not incorporate the sampling weights and are simply the matching weights. To incorporate sampling weights into the effect estimation with this option, one must multiply the returned weights by the sampling weights when including them in the outcome model estimation. We demonstrate this below:</p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">md_F_s</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/match.data.html">match.data</a></span><span class="op">(</span><span class="va">mF_s</span>, include.s.weights <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
@@ -294,8 +294,8 @@ pre code {
           weights <span class="op">=</span> <span class="va">weights</span> <span class="op">*</span> <span class="va">SW</span><span class="op">)</span>
 
 <span class="fu"><a href="https://rdrr.io/pkg/lmtest/man/coeftest.html" class="external-link">coeftest</a></span><span class="op">(</span><span class="va">fit</span>, vcov. <span class="op">=</span> <span class="va">vcovCL</span>, cluster <span class="op">=</span> <span class="op">~</span><span class="va">subclass</span><span class="op">)</span><span class="op">[</span><span class="st">"A"</span>,,drop<span class="op">=</span><span class="cn">FALSE</span><span class="op">]</span></code></pre></div>
-<pre><code><span class="co">##   Estimate Std. Error t value Pr(&gt;|t|)</span>
-<span class="co">## A     1.74     0.3815    4.56 5.43e-06</span></code></pre>
+<pre><code><span class="co">##   Estimate Std. Error t value  Pr(&gt;|t|)</span>
+<span class="co">## A    1.658     0.3693   4.489 7.552e-06</span></code></pre>
 <p>We get the same estimates using this syntax as we did above. Because one might to forget to multiply the two sets of weights together, it is easier to just use the default of <code>include.s.weights = TRUE</code> and ignore the sampling weights in the rest of the analysis (because they are already included in the returned weights).</p>
 </div>
 <div class="section level2">

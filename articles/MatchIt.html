@@ -40,7 +40,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">MatchIt</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">4.3.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">4.3.4.9000</span>
       </span>
     </div>
 
@@ -100,7 +100,7 @@
       <h1 data-toc-skip>MatchIt: Getting Started</h1>
                         <h4 data-toc-skip class="author">Noah Greifer</h4>
             
-            <h4 data-toc-skip class="date">2022-03-08</h4>
+            <h4 data-toc-skip class="date">2022-03-18</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/kosukeimai/MatchIt/blob/HEAD/vignettes/MatchIt.Rmd" class="external-link"><code>vignettes/MatchIt.Rmd</code></a></small>
       <div class="hidden name"><code>MatchIt.Rmd</code></div>
@@ -285,21 +285,21 @@ pre code {
 <span class="co">## </span>
 <span class="co">## Summary of Balance for Matched Data:</span>
 <span class="co">##            Means Treated Means Control Std. Mean Diff. Var. Ratio eCDF Mean eCDF Max Std. Pair Dist.</span>
-<span class="co">## distance          0.5773        0.5765          0.0040     0.9943    0.0042   0.0541          0.0198</span>
-<span class="co">## age              25.8162       25.6722          0.0201     0.4614    0.0848   0.2846          1.2741</span>
-<span class="co">## educ             10.3459       10.3693         -0.0116     0.6173    0.0194   0.0597          1.2233</span>
+<span class="co">## distance          0.5773        0.5766          0.0034     0.9957    0.0042   0.0486          0.0198</span>
+<span class="co">## age              25.8162       25.3355          0.0672     0.4776    0.0810   0.2859          1.2683</span>
+<span class="co">## educ             10.3459       10.4480         -0.0508     0.6013    0.0232   0.0597          1.2042</span>
 <span class="co">## raceblack         0.8432        0.8389          0.0119          .    0.0043   0.0043          0.0162</span>
-<span class="co">## racehispan        0.0595        0.0500          0.0402          .    0.0095   0.0095          0.4985</span>
-<span class="co">## racewhite         0.0973        0.1111         -0.0467          .    0.0138   0.0138          0.3911</span>
-<span class="co">## married           0.1892        0.1580          0.0797          .    0.0312   0.0312          0.4866</span>
-<span class="co">## nodegree          0.7081        0.6898          0.0404          .    0.0184   0.0184          0.9593</span>
-<span class="co">## re74           2095.5737     2103.5534         -0.0016     1.3513    0.0328   0.2159          0.8533</span>
-<span class="co">## re75           1532.0553     1552.4673         -0.0063     1.5678    0.0496   0.2013          0.8279</span>
+<span class="co">## racehispan        0.0595        0.0484          0.0469          .    0.0111   0.0111          0.4911</span>
+<span class="co">## racewhite         0.0973        0.1127         -0.0520          .    0.0154   0.0154          0.3852</span>
+<span class="co">## married           0.1892        0.1623          0.0687          .    0.0269   0.0269          0.4725</span>
+<span class="co">## nodegree          0.7081        0.6767          0.0692          .    0.0315   0.0315          0.9439</span>
+<span class="co">## re74           2095.5737     2062.0642          0.0069     1.3524    0.0292   0.1983          0.8411</span>
+<span class="co">## re75           1532.0553     1619.7359         -0.0272     1.4936    0.0569   0.2213          0.8228</span>
 <span class="co">## </span>
 <span class="co">## Sample Sizes:</span>
 <span class="co">##               Control Treated</span>
 <span class="co">## All            429.       185</span>
-<span class="co">## Matched (ESS)   53.51     185</span>
+<span class="co">## Matched (ESS)   51.37     185</span>
 <span class="co">## Matched        429.       185</span>
 <span class="co">## Unmatched        0.         0</span>
 <span class="co">## Discarded        0.         0</span></code></pre>
@@ -364,16 +364,16 @@ pre code {
 <span class="co">## t test of coefficients:</span>
 <span class="co">## </span>
 <span class="co">##                Estimate  Std. Error t value  Pr(&gt;|t|)    </span>
-<span class="co">## (Intercept)  2.8493e+03  3.1547e+03  0.9032 0.3667819    </span>
-<span class="co">## treat        1.9797e+03  7.5611e+02  2.6183 0.0090589 ** </span>
-<span class="co">## age         -4.5799e+01  3.7917e+01 -1.2079 0.2275592    </span>
-<span class="co">## educ         2.3234e+02  2.0245e+02  1.1477 0.2515594    </span>
-<span class="co">## racehispan   9.6380e+02  1.4435e+03  0.6677 0.5045794    </span>
-<span class="co">## racewhite    1.7067e+03  8.2231e+02  2.0755 0.0383636 *  </span>
-<span class="co">## married      9.0378e+02  1.1858e+03  0.7622 0.4462384    </span>
-<span class="co">## nodegree    -1.2712e+03  1.2691e+03 -1.0017 0.3169017    </span>
-<span class="co">## re74        -1.1459e-02  1.4547e-01 -0.0788 0.9372369    </span>
-<span class="co">## re75         5.4080e-01  1.4212e-01  3.8053 0.0001561 ***</span>
+<span class="co">## (Intercept)  2.6929e+03  3.0762e+03  0.8754   0.38171    </span>
+<span class="co">## treat        2.0915e+03  6.7833e+02  3.0834   0.00214 ** </span>
+<span class="co">## age         -3.5164e+01  3.6614e+01 -0.9604   0.33724    </span>
+<span class="co">## educ         2.1371e+02  2.0154e+02  1.0604   0.28939    </span>
+<span class="co">## racehispan   1.0262e+03  1.4661e+03  0.7000   0.48420    </span>
+<span class="co">## racewhite    1.5550e+03  8.2045e+02  1.8953   0.05853 .  </span>
+<span class="co">## married      7.4987e+02  1.0759e+03  0.6970   0.48609    </span>
+<span class="co">## nodegree    -1.3684e+03  1.2127e+03 -1.1284   0.25960    </span>
+<span class="co">## re74        -1.9924e-02  1.4178e-01 -0.1405   0.88830    </span>
+<span class="co">## re75         5.9919e-01  1.3929e-01  4.3017 1.977e-05 ***</span>
 <span class="co">## ---</span>
 <span class="co">## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</span></code></pre>
 <p>Given the results of these two estimates, we would be inclined to trust the one resulting from the second analysis, i.e., using full matching, because better balance was achieved on all the variables, making the effect estimate less sensitive to the form of the outcome model we used.</p>

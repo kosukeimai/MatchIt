@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">MatchIt</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">4.3.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">4.3.4.9000</span>
       </span>
     </div>
 
@@ -70,7 +70,12 @@
     </div>
 
     <div class="section level2">
-<h2 class="page-header" data-toc-text="4.3.4" id="matchit-434">MatchIt 4.3.4<a class="anchor" aria-label="anchor" href="#matchit-434"></a></h2>
+<h2 class="page-header" data-toc-text="development version" id="matchit-development-version">MatchIt (development version)<a class="anchor" aria-label="anchor" href="#matchit-development-version"></a></h2>
+<ul><li>
+<code>optmatch</code> has returned to CRAN, now with an open-source license! A new <code>solver</code> argument can be passed to <code><a href="../reference/matchit.html">matchit()</a></code> with <code>method = "full"</code> and <code>method = "optimal"</code> to control the solver used to perform the optimization used in the matching. Note that using the default (open source) solver LEMON may yield results different from those obtained prior to <code>optmatch</code> 0.10.0. For reproducibility questions, please contact the <code>optmatch</code> maintainers.</li>
+</ul></div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="4.3.4" id="matchit-434">MatchIt 4.3.4<small>2022-03-08</small><a class="anchor" aria-label="anchor" href="#matchit-434"></a></h2>
 <ul><li><p><code>optmatch</code> has been removed from CRAN. Instructions on installing it are in <code><a href="../reference/method_optimal.html">?method_optimal</a></code> and <code><a href="../reference/method_full.html">?method_full</a></code>.</p></li>
 <li><p>When <code>s.weights</code> are supplied with <code>distance = "randomforest"</code>, the weights are supplied to <code><a href="https://rdrr.io/pkg/randomForest/man/randomForest.html" class="external-link">randomForest::randomForest()</a></code>.</p></li>
 <li><p>Improved conditional use of packages, especially <code>optmatch</code>. This may mean that certain examples fail to run in the vignettes.</p></li>
