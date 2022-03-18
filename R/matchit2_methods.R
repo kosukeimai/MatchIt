@@ -91,7 +91,7 @@ matchit2full <- function(treat, formula, data, distance, discarded,
 
   A <- list(...)
 
-  fm.args <- c("omit.fraction", "mean.controls", "tol")
+  fm.args <- c("omit.fraction", "mean.controls", "tol", "solver")
   A[!names(A) %in% fm.args] <- NULL
 
   #Set max problem size to Inf and return to original value after match
@@ -253,7 +253,7 @@ matchit2optimal <- function(treat, formula, data, distance, discarded,
   if (verbose) cat("Optimal matching... \n")
 
   A <- list(...)
-  pm.args <- c("tol")
+  pm.args <- c("tol", "solver")
   A[!names(A) %in% pm.args] <- NULL
 
   #Set max problem size to Inf and return to original value after match

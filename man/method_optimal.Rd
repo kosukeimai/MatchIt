@@ -4,9 +4,7 @@
 \title{Optimal Pair Matching}
 
 \description{
-\strong{Note: optmatch, the package required for optimal pair matching, has been removed from CRAN as of 2022/02/23. Therefore, it must be installed using other means. We recommend installing it from the developer's GitHub page using }\code{remotes::install_github("markmfredrickson/optmatch")}\strong{ or from Microsoft's MRAN repository using }\code{install.packages("optmatch", repos = "https://mran.microsoft.com/snapshot/2022-02-01")}\strong{. Please direct any questions about installing optmatch to the optmatch maintainers.}
-
-In \fun{matchit}, setting \code{method = "optimal"} performs optimal pair matching. The matching is optimal in the sense that that sum of the absolute pairwise distances in the matched sample is as small as possible. The method functionally relies on \pkgfun{optmatch}{pairmatch}. Note that \pkg{optmatch} has an academic license that restricts its use (and thereby the use of \code{matchit()} with \code{method = "optimal"}) for users in non-academic institutions.
+In \fun{matchit}, setting \code{method = "optimal"} performs optimal pair matching. The matching is optimal in the sense that that sum of the absolute pairwise distances in the matched sample is as small as possible. The method functionally relies on \pkgfun{optmatch}{pairmatch}.
 
 Advantages of optimal pair matching include that the matching order is not required to be specified and it is less likely that extreme within-pair distances will be large, unlike with nearest neighbor matching. Generally, however, as a subset selection method, optimal pair matching tends to perform similarly to nearest neighbor matching in that similar subsets of units will be selected to be matched.
 
@@ -84,7 +82,7 @@ for variable ratio matching, the minimum and maximum number of controls units to
 \code{logical}; whether information about the matching process should be printed to the console. What is printed depends on the matching method. Default is \code{FALSE} for no printing other than warnings.
 }
   \item{\dots}{
-additional arguments passed to \pkgfun{optmatch}{pairmatch}. Only the \code{tols} argument, which is eventually passed to \pkgfun{optmatch}{fullmatch}, is allowed.
+additional arguments passed to \pkgfun{optmatch}{fullmatch}. Allowed arguments include \code{tol} and \code{solver}. See the \pkgfun{optmatch}{fullmatch} documentation for details. In general, \code{tol} should be set to a low number (e.g., \code{1e-7}) to get a more precise solution.
 }
 
 The arguments \code{replace}, \code{caliper}, and \code{m.order} are ignored with a warning.
@@ -100,7 +98,7 @@ All outputs described in \fun{matchit} are returned with \code{method = "optimal
 \seealso{
 \fun{matchit} for a detailed explanation of the inputs and outputs of a call to \code{matchit()}.
 
-\pkgfun{optmatch}{pairmatch}, which is the workhorse.
+\pkgfun{optmatch}{fullmatch}, which is the workhorse.
 
 \code{\link{method_full}} for optimal full matching, of which optimal pair matching is a special case, and which relies on similar machinery.
 }
