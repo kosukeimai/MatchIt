@@ -27,3 +27,8 @@ articles:
   - assessing-balance
   - estimating-effects
   - sampling-weights
+
+home:
+  links:
+  - text: Ask a question
+    href: https://github.com/kosukeimai/MatchIt/issues
