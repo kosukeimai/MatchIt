@@ -236,7 +236,7 @@ IntegerMatrix nn_matchC(const IntegerMatrix& mm_,
 
         for (j = 0; j < num_eligible; j++) {
           j_ = c_eligible[j];
-          mah_covs_row = mah_covs(c_eligible[j], _);
+          mah_covs_row = mah_covs(j_, _);
           match_distance[j] = sqrt(sum(pow(mah_covs_t - mah_covs_row, 2.0)));
         }
 
