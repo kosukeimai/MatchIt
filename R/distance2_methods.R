@@ -1,11 +1,8 @@
 #distance2glm-----------------
 distance2glm <- function(formula, data = NULL, link = "logit", ...) {
 
-  if (!is.null(link) && startsWith(as.character(link), "linear")) {
-    linear <- TRUE
-    link <- sub("linear.", "", as.character(link), fixed = TRUE)
-  }
-  else linear <- FALSE
+  linear <- !is.null(link) && startsWith(as.character(link), "linear")
+  if (linear) link <- sub("linear.", "", as.character(link), fixed = TRUE)
 
   A <- list(...)
   A[!names(A) %in% c(names(formals(glm)), names(formals(glm.control)))] <- NULL
@@ -22,11 +19,8 @@ distance2glm <- function(formula, data = NULL, link = "logit", ...) {
 distance2gam <- function(formula, data = NULL, link = "logit", ...) {
   check.package("mgcv")
 
-  if (!is.null(link) && startsWith(as.character(link), "linear")) {
-    linear <- TRUE
-    link <- sub("linear.", "", as.character(link), fixed = TRUE)
-  }
-  else linear <- FALSE
+  linear <- !is.null(link) && startsWith(as.character(link), "linear")
+  if (linear) link <- sub("linear.", "", as.character(link), fixed = TRUE)
 
   A <- list(...)
   weights <- A$weights
@@ -71,10 +65,7 @@ distance2nnet <- function(formula, data = NULL, link = NULL, ...) {
 distance2cbps <- function(formula, data = NULL, link = NULL, ...) {
   check.package("CBPS")
 
-  if (!is.null(link) && startsWith(as.character(link), "linear")) {
-    linear <- TRUE
-  }
-  else linear <- FALSE
+  linear <- !is.null(link) && startsWith(as.character(link), "linear")
 
   A <- list(...)
 
@@ -114,10 +105,7 @@ distance2cbps <- function(formula, data = NULL, link = NULL, ...) {
 distance2bart <- function(formula, data = NULL, link = NULL, ...) {
   check.package("dbarts")
 
-  if (!is.null(link) && startsWith(as.character(link), "linear")) {
-    linear <- TRUE
-  }
-  else linear <- FALSE
+  linear <- !is.null(link) && startsWith(as.character(link), "linear")
 
   A <- list(...)
   A[!names(A) %in% c(names(formals(dbarts::bart2)), names(formals(dbarts::dbartsControl)))] <- NULL
@@ -186,11 +174,10 @@ distance2randomforest <- function(formula, data = NULL, link = NULL, ...) {
 
 #distance2glmnet--------------
 distance2elasticnet <- function(formula, data = NULL, link = NULL, ...) {
-  if (!is.null(link) && startsWith(as.character(link), "linear")) {
-    linear <- TRUE
-    link <- sub("linear.", "", as.character(link), fixed = TRUE)
-  }
-  else linear <- FALSE
+  check.package("glmnet")
+
+  linear <- !is.null(link) && startsWith(as.character(link), "linear")
+  if (linear) link <- sub("linear.", "", as.character(link), fixed = TRUE)
 
   A <- list(...)
   s <- A[["s"]]
@@ -218,11 +205,10 @@ distance2elasticnet <- function(formula, data = NULL, link = NULL, ...) {
   return(list(model = res, distance = pred))
 }
 distance2lasso <- function(formula, data = NULL, link = NULL, ...) {
-  if (!is.null(link) && startsWith(as.character(link), "linear")) {
-    linear <- TRUE
-    link <- sub("linear.", "", as.character(link), fixed = TRUE)
-  }
-  else linear <- FALSE
+  check.package("glmnet")
+
+  linear <- !is.null(link) && startsWith(as.character(link), "linear")
+  if (linear) link <- sub("linear.", "", as.character(link), fixed = TRUE)
 
   A <- list(...)
   s <- A[["s"]]
@@ -250,11 +236,10 @@ distance2lasso <- function(formula, data = NULL, link = NULL, ...) {
   return(list(model = res, distance = pred))
 }
 distance2ridge <- function(formula, data = NULL, link = NULL, ...) {
-  if (!is.null(link) && startsWith(as.character(link), "linear")) {
-    linear <- TRUE
-    link <- sub("linear.", "", as.character(link), fixed = TRUE)
-  }
-  else linear <- FALSE
+  check.package("glmnet")
+
+  linear <- !is.null(link) && startsWith(as.character(link), "linear")
+  if (linear) link <- sub("linear.", "", as.character(link), fixed = TRUE)
 
   A <- list(...)
   s <- A[["s"]]
@@ -284,10 +269,10 @@ distance2ridge <- function(formula, data = NULL, link = NULL, ...) {
 
 #distance2gbm--------------
 distance2gbm <- function(formula, data = NULL, link = NULL, ...) {
-  if (!is.null(link) && startsWith(as.character(link), "linear")) {
-    linear <- TRUE
-  }
-  else linear <- FALSE
+  check.package("gbm")
+
+  linear <- !is.null(link) && startsWith(as.character(link), "linear")
+  if (linear) link <- sub("linear.", "", as.character(link), fixed = TRUE)
 
   A <- list(...)
 
