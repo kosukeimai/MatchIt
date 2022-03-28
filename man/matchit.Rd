@@ -45,7 +45,7 @@ a two-sided \fun{formula} object containing the treatment and covariates to be u
 a data frame containing the variables named in \code{formula} and possible other arguments. If not found in \code{data}, the variables will be sought in the environment.
 }
   \item{method}{
-the matching method to be used. The allowed methods are \code{\link[=method_nearest]{"nearest"}} for nearest neighbor matching (on the propensity score by default), \code{\link[=method_optimal]{"optimal"}} for optimal pair matching, \code{\link[=method_full]{"full"}} for optimal full matching, \code{\link[=method_genetic]{"genetic"}} for genetic matching, \code{\link[=method_cem]{"cem"}} for coarsened exact matching, \code{\link[=method_exact]{"exact"}} for exact matching, and \code{\link[=method_subclass]{"subclass"}} for subclassification. When set to \code{NULL}, no matching will occur, but propensity score estimation and common support restrictions will still occur if requested. See the linked pages for each method for more details on what these methods do, how the arguments below are used by each on, and what additional arguments are allowed.
+the matching method to be used. The allowed methods are \code{\link[=method_nearest]{"nearest"}} for nearest neighbor matching (on the propensity score by default), \code{\link[=method_optimal]{"optimal"}} for optimal pair matching, \code{\link[=method_full]{"full"}} for optimal full matching, \code{\link[=method_genetic]{"genetic"}} for genetic matching, \code{\link[=method_cem]{"cem"}} for coarsened exact matching, \code{\link[=method_exact]{"exact"}} for exact matching, \code{\link[=method_cardinality]{"cardinality"}} for cardinality and template matching, and \code{\link[=method_subclass]{"subclass"}} for subclassification. When set to \code{NULL}, no matching will occur, but propensity score estimation and common support restrictions will still occur if requested. See the linked pages for each method for more details on what these methods do, how the arguments below are used by each on, and what additional arguments are allowed.
 }
   \item{distance}{
 the distance measure to be used. Can be either a string containing the name of a distance measure, a vector of already-computed distance measures, or a matrix of pairwise distances. When supplied as a vector, the distance measures should be values whose pairwise difference is the distance between two units, e.g., propensity scores for propensity score matching. When supplied as a matrix, each value should represent the pairwise distance between units. See \code{\link{distance}} for allowable options. The default is \code{"glm"} for propensity scores estimated with logistic regression using \fun{glm}. Ignored for some methods; see individual methods pages for information on whether and how the distance measure is used.
@@ -114,8 +114,8 @@ Details for the various matching methods can be found at the following help page
   \item{\code{\link{method_genetic}} for genetic matching}
   \item{\code{\link{method_cem}} for coarsened exact matching}
   \item{\code{\link{method_exact}} for exact matching}
-  \item{\code{\link{method_subclass}} for subclassification}
   \item{\code{\link{method_cardinality}} for cardinality and template matching}
+  \item{\code{\link{method_subclass}} for subclassification}
 }
 The pages contain information on what the method does, which of the arguments above are allowed with them and how they are interpreted, and what additional arguments can be supplied to further tune the method. Note that the default method with no arguments supplied other than \code{formula} and \code{data} is 1:1 nearest neighbor matching without replacement on a propensity score estimated using a logistic regression of the treatment on the covariates. This is not the same default offered by other matching programs, such as those in \emph{Matching}, \code{teffects} in Stata, or \code{PROC PSMATCH} in SAS, so care should be taken if trying to replicate the results of those programs.
 
@@ -123,16 +123,16 @@ When \code{method = NULL}, no matching will occur, but any propensity score esti
 
 See the \code{\link{distance}} argument for details on the several ways to specify the \code{distance} and \code{link} arguments to estimate propensity scores and create distance measures.
 
-When the treatment variable is not a \code{0/1} variable, it will be coerced to one and returned as such in the \code{matchit()} output (see section Value, below). The following rules are used: 1) if \code{0} is one of the values, it will be considered the control and the other value the treated; otherwise, 2) if the variable is a factor, \code{levels(treat)[1]} will be considered control and the other variable the treated; otherwise, 3) \code{sort(unique(treat))[1]} will be considered control and the other value the treated. It is safest to ensure the treatment variable is a \code{0/1} variable.
+When the treatment variable is not a \code{0/1} variable, it will be coerced to one and returned as such in the \code{matchit()} output (see section Value, below). The following rules are used: 1) if \code{0} is one of the values, it will be considered the control and the other value the treated; 2) otherwise, if the variable is a factor, \code{levels(treat)[1]} will be considered control and the other variable the treated; 3) otherwise, \code{sort(unique(treat))[1]} will be considered control and the other value the treated. It is safest to ensure the treatment variable is a \code{0/1} variable.
 
-The \code{discard} option implements a common support restriction. It can only be used when a distance measure is estimated or supplied as a vector, i.e., when \code{distance} is specified as something other than \code{"mahalanobis"} and is not a matrix, and is ignored for some matching methods. When specified as \code{"treated"}, treated units whose distance measure is outside the range of distance measures of the control units will be discarded. When specified as \code{"control"}, control units whose distance measure is outside the range of distance measures of the treated units will be discarded. When specified as \code{"both"}, treated and controls units whose distance measure is outside the intersection of the range of distance measures of the treated units and the range of distance measures of the control units will be discarded. When \code{reestimate = TRUE} and \code{distance} corresponds to a propensity score-estimating function, the propensity scores are re-estimated in the remaining units prior to being used for matching or calipers.
+The \code{discard} option implements a common support restriction. It can only be used when a distance measure is estimated or supplied as a vector, i.e., when \code{distance} is specified as something other than \code{"mahalanobis"} and is not a matrix, and is ignored for some matching methods. When specified as \code{"treated"}, treated units whose distance measure is outside the range of distance measures of the control units will be discarded. When specified as \code{"control"}, control units whose distance measure is outside the range of distance measures of the treated units will be discarded. When specified as \code{"both"}, treated and control units whose distance measure is outside the intersection of the range of distance measures of the treated units and the range of distance measures of the control units will be discarded. When \code{reestimate = TRUE} and \code{distance} corresponds to a propensity score-estimating function, the propensity scores are re-estimated in the remaining units prior to being used for matching or calipers.
 
 Caution should be used when interpreting effects estimated with various values of \code{estimand}. Setting \code{estimand = "ATT"} doesn't necessarily mean the average treatment effect in the treated is being estimated; it just means that for matching methods, treated units will be untouched and given weights of 1 and control units will be matched to them (and the opposite for \code{estimand = "ATC"}). If a caliper is supplied or treated units are removed for common support or some other reason (e.g., lacking matches when using exact matching), the actual estimand targeted is not the ATT but the treatment effect in the matched sample. The argument to \code{estimand} simply triggers which units are matched to which, and for stratification-based methods (exact matching, CEM, full matching, and subclassification), determines the formula used to compute the stratification weights.
 
 \subsection{How Matching Weights Are Computed}{
 Matching weights are computed in one of two ways depending on whether matching was done with replacement or not.
 
-For matching without replacement, each unit is assigned to a subclass, which represents the pair they are a part of (in the case of k:1 matching) or the stratum they belong to (in the case of exact matching, coarsened exact matching, full matching, or subclassification). The formula for computing the weights depends on the argument supplied to \code{estimand}. A new stratum "propensity score" (\code{p}) is computed as the proportion of units in each stratum that are in the treated group, and all units in that stratum are assigned that propensity score. Weights are then computed using the standard formulas for inverse probability weights: for the ATT, weights are 1 for the treated units and \code{p/(1-p)} for the control units; for the ATC, weights are \code{(1-p)/p} for the treated units and 1 for the control units; for the ATE, weights are \code{1/p} for the treated units and \code{1/(1-p)} for the control units.
+For matching without replacement (except for cardinality matching), each unit is assigned to a subclass, which represents the pair they are a part of (in the case of k:1 matching) or the stratum they belong to (in the case of exact matching, coarsened exact matching, full matching, or subclassification). The formula for computing the weights depends on the argument supplied to \code{estimand}. A new stratum "propensity score" (\code{p}) is computed as the proportion of units in each stratum that are in the treated group, and all units in that stratum are assigned that propensity score. Weights are then computed using the standard formulas for inverse probability weights: for the ATT, weights are 1 for the treated units and \code{p/(1-p)} for the control units; for the ATC, weights are \code{(1-p)/p} for the treated units and 1 for the control units; for the ATE, weights are \code{1/p} for the treated units and \code{1/(1-p)} for the control units. For cardinality matching, all matched units recieve a weight of 1.
 
 For matching with replacement, units are not assigned to unique strata. For the ATT, each treated unit gets a weight of 1. Each control unit is weighted as the sum of the inverse of the number of control units matched to the same treated unit across its matches. For example, if a control unit was matched to a treated unit that had two other control units matched to it, and that same control was matched to a treated unit that had one other control unit matched to it, the control unit in question would get a weight of 1/3 + 1/2 = 5/6. For the ATC, the same is true with the treated and control labels switched. The weights are computed using the \code{match.matrix} component of the \code{matchit()} output object.
 
@@ -143,7 +143,7 @@ In each treatment group, weights are divided by the mean of the nonzero weights 
 \value{
 When \code{method} is something other than \code{"subclass"}, a \code{matchit} object with the following components:
 
-  \item{match.matrix}{a matrix containing the matches. The rownames correspond to the treated units and the values in each row are the names (or indices) of the control units matched to each treated unit. When treated units are matched to different numbers of control units (e.g., with exact matching or matching with a caliper), empty spaces will be filled with \code{NA}. Not included when \code{method} is \code{"full"}, \code{"cem"}, \code{"exact"}, or \code{"cardinality"}.}
+  \item{match.matrix}{a matrix containing the matches. The rownames correspond to the treated units and the values in each row are the names (or indices) of the control units matched to each treated unit. When treated units are matched to different numbers of control units (e.g., with exact matching or matching with a caliper), empty spaces will be filled with \code{NA}. Not included when \code{method} is \code{"full"}, \code{"cem"} (unless \code{k2k = TRUE}), \code{"exact"}, or \code{"cardinality"}.}
   \item{subclass}{a factor containing matching pair/stratum membership for each unit. Unmatched units will have a value of \code{NA}. Not included when \code{replace = TRUE}.}
   \item{weights}{a numeric vector of estimated matching weights. Unmatched and discarded units will have a weight of zero.}
   \item{model}{the fit object of the model used to estimate propensity scores when \code{distance} is specified and not \code{"mahalanobis"} or a numeric vector. When \code{reestimate = TRUE}, this is the model estimated after discarding units.}
@@ -168,9 +168,9 @@ Ho, D. E., Imai, K., King, G., & Stuart, E. A. (2011). MatchIt: Nonparametric Pr
 
 }
 \author{
-Daniel Ho \email{dho@law.stanford.edu}; Kosuke Imai \email{imai@harvard.edu}; Gary King \email{king@harvard.edu}; Elizabeth Stuart \email{estuart@jhsph.edu}
+Daniel Ho (\email{dho@law.stanford.edu}); Kosuke Imai (\email{imai@harvard.edu}); Gary King (\email{king@harvard.edu}); Elizabeth Stuart (\email{estuart@jhsph.edu})
 
-Version 4.0.0 update by Noah Greifer \email{noah.greifer@gmail.com}
+Version 4.0.0 update by Noah Greifer (\email{noah.greifer@gmail.com})
 }
 
 \seealso{
@@ -196,7 +196,7 @@ m.out2 <- matchit(treat ~ age + educ + race + nodegree +
                    distance = "mahalanobis", replace = TRUE,
                    exact = ~ married + race)
 m.out2
-summary(m.out2)
+summary(m.out2, un = TRUE)
 
 # 2:1 NN Mahalanobis distance matching within caliper defined
 # by a probit pregression PS
@@ -207,7 +207,7 @@ m.out3 <- matchit(treat ~ age + educ + race + nodegree +
                    mahvars = ~ age + educ + re74 + re75,
                    caliper = .1, ratio = 2)
 m.out3
-summary(m.out3)
+summary(m.out3, un = TRUE)
 
 # Optimal full PS matching for the ATE within calipers on
 # PS, age, and educ
@@ -218,7 +218,7 @@ m.out4 <- matchit(treat ~ age + educ + race + nodegree +
                    caliper = c(.1, age = 2, educ = 1),
                    std.caliper = c(TRUE, FALSE, FALSE))
 m.out4
-summary(m.out4)
+summary(m.out4, un = TRUE)
 \dontshow{\}) # examplesIf}
 # Subclassification on a logistic PS with 10 subclasses after
 # discarding controls outside common support of PS
@@ -228,7 +228,7 @@ s.out1 <- matchit(treat ~ age + educ + race + nodegree +
                    method = "subclass", distance = "glm",
                    discard = "control", subclass = 10)
 s.out1
-summary(s.out1)
+summary(s.out1, un = TRUE)
 
 }
 
