@@ -13,29 +13,6 @@ Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
 Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
-// distC
-NumericMatrix distC(NumericMatrix x);
-RcppExport SEXP _MatchIt_distC(SEXP xSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericMatrix >::type x(xSEXP);
-    rcpp_result_gen = Rcpp::wrap(distC(x));
-    return rcpp_result_gen;
-END_RCPP
-}
-// distC2
-NumericMatrix distC2(NumericMatrix x, NumericMatrix y);
-RcppExport SEXP _MatchIt_distC2(SEXP xSEXP, SEXP ySEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericMatrix >::type x(xSEXP);
-    Rcpp::traits::input_parameter< NumericMatrix >::type y(ySEXP);
-    rcpp_result_gen = Rcpp::wrap(distC2(x, y));
-    return rcpp_result_gen;
-END_RCPP
-}
 // dist_to_matrixC
 NumericMatrix dist_to_matrixC(const NumericVector& d);
 RcppExport SEXP _MatchIt_dist_to_matrixC(SEXP dSEXP) {
@@ -44,21 +21,6 @@ BEGIN_RCPP
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const NumericVector& >::type d(dSEXP);
     rcpp_result_gen = Rcpp::wrap(dist_to_matrixC(d));
-    return rcpp_result_gen;
-END_RCPP
-}
-// do_matchingC
-IntegerMatrix do_matchingC(const NumericMatrix& distmat, const IntegerVector& treat, const IntegerVector& ord, const int& reuse_max, const IntegerVector& ratio);
-RcppExport SEXP _MatchIt_do_matchingC(SEXP distmatSEXP, SEXP treatSEXP, SEXP ordSEXP, SEXP reuse_maxSEXP, SEXP ratioSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const NumericMatrix& >::type distmat(distmatSEXP);
-    Rcpp::traits::input_parameter< const IntegerVector& >::type treat(treatSEXP);
-    Rcpp::traits::input_parameter< const IntegerVector& >::type ord(ordSEXP);
-    Rcpp::traits::input_parameter< const int& >::type reuse_max(reuse_maxSEXP);
-    Rcpp::traits::input_parameter< const IntegerVector& >::type ratio(ratioSEXP);
-    rcpp_result_gen = Rcpp::wrap(do_matchingC(distmat, treat, ord, reuse_max, ratio));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -155,10 +117,7 @@ RcppExport SEXP _MatchIt_RcppExport_registerCCallable() {
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_MatchIt_distC", (DL_FUNC) &_MatchIt_distC, 1},
-    {"_MatchIt_distC2", (DL_FUNC) &_MatchIt_distC2, 2},
     {"_MatchIt_dist_to_matrixC", (DL_FUNC) &_MatchIt_dist_to_matrixC, 1},
-    {"_MatchIt_do_matchingC", (DL_FUNC) &_MatchIt_do_matchingC, 5},
     {"_MatchIt_nn_matchC", (DL_FUNC) &_MatchIt_nn_matchC, 16},
     {"_MatchIt_pairdistsubC", (DL_FUNC) &_MatchIt_pairdistsubC, 4},
     {"_MatchIt_subclass2mmC", (DL_FUNC) &_MatchIt_subclass2mmC, 3},
