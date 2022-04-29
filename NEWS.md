@@ -10,6 +10,20 @@ output:
 
 * `optmatch` has returned to CRAN, now with an open-source license! A new `solver` argument can be passed to `matchit()` with `method = "full"` and `method = "optimal"` to control the solver used to perform the optimization used in the matching. Note that using the default (open source) solver LEMON may yield results different from those obtained prior to `optmatch` 0.10.0. For reproducibility questions, please contact the `optmatch` maintainers.
 
+* New distance options are available for `matchit()`: `"robust_mahalanobis"`, `"euclidean"`, and `"scaled_euclidean"`, which complement `"mahalanobis"`. Similar to `"mahalanobis"`, these do not involve estimating a propensity score but rather operate on the covariates directly. These can be used for nearest neighbor matching, optimal matching, full matching, and coarsened exact matching with `k2k = TRUE`.
+
+* The Mahalanobis distance is now computed as the pooled within-group covariance matrix (computed by treatment group-mean centering each covariate before computing the covariance in the full sample), in line with how it is computed in `optmatch` and recommended by Rubin (1980) among others. This will cause results to differ between this version and prior versions of `MatchIt` that used the Mahalanobis distance computed ignoring group membership.
+
+* Added the `group` argument (name may change) to `matchit()` with `method = "nearest"`, which defines "exclusivity groups", i.e., groups where if one control unit from the group is matched, no others from the same group can be matched. This is useful when, e.g., multiple rows correspond to the same control firm but you only want each control firm to be matched once, in which case firm ID would be supplied to `group`. NEEDS CODE UPDATING AND DOCUMENTAION. ALSO NEEDS A BETTER NAME.
+
+* Added clearer errors when required packages are missing for certain `distance` methods.
+
+* Fixed a bug when using `matchit()` with `method = "nearest"`, `ratio` greater than 1, and `reuse.max` specified. The bug allowed a previously matched control unit to be matched to the same treatment unit, thereby essentially ignoring the `ratio` argument. It now works as intended.
+
+* Fixed a bug in `matchit()` with `method = "nearest"` when `distance` was supplied as a matrix and `Inf` values were present.
+
+* Documentation updates.
+
 # MatchIt 4.3.4
 
 * `optmatch` has been removed from CRAN. Instructions on installing it are in `?method_optimal` and `?method_full`.
