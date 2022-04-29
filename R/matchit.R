@@ -129,7 +129,7 @@ matchit <- function(formula, data = NULL, method = "nearest", distance = "glm",
     }
 
     if (!is.null(s.weights)) {
-      attr(s.weights, "in_ps") <- !distance %in% c("bart", "randomforest"[packageVersion("randomForest") >= '4.7.1'])
+      attr(s.weights, "in_ps") <- !distance %in% c("bart")
     }
 
     #Estimate distance
