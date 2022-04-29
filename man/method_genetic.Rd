@@ -42,10 +42,10 @@ a data frame containing the variables named in \code{formula}. If not found in \
 set here to \code{"genetic"}.
 }
   \item{distance}{
-the distance measure to be used. See \code{\link{distance}} for allowable options. When set to \code{"mahalanobis"}, only the covariates in \code{formula} are supplied to the generalized Mahalanobis distance matrix to have their scaling factors chosen. Otherwise, the distance measure is included with the covariates in \code{formula} to be supplied to the generalized Mahalanobis distance matrix unless \code{mahvars} is specified. \code{distance} \emph{cannot} be supplied as a distance matrix.
+the distance measure to be used. See \code{\link{distance}} for allowable options. When set to a method of estimating propensity scores or a numeric vector of distance values, the distance measure is included with the covariates in \code{formula} to be supplied to the generalized Mahalanobis distance matrix unless \code{mahvars} is specified. Otherwise, only the covariates in \code{formula} are supplied to the generalized Mahalanobis distance matrix to have their scaling factors chosen. \code{distance} \emph{cannot} be supplied as a distance matrix. Supplying any method of computing a distance matrix (e.g., \code{"mahalanobis"}) has the same effect of omitting propensity score but does not affect how the distance between units is computed otherwise.
 }
   \item{link}{
-when \code{distance} is specified as a string and not \code{"mahalanobis"}, an additional argument controlling the link function used in estimating the distance measure. See \code{\link{distance}} for allowable options with each option.
+when \code{distance} is specified as a method of estimating propensity scores, an additional argument controlling the link function used in estimating the distance measure. See \code{\link{distance}} for allowable options with each option.
 }
   \item{distance.options}{
 a named list containing additional arguments supplied to the function that estimates the distance measure as determined by the argument to \code{distance}.
@@ -57,13 +57,13 @@ a string containing the desired estimand. Allowable options include \code{"ATT"}
 for which variables exact matching should take place.
 }
   \item{mahvars}{
-when a distance measure other than \code{"mahalanobis"} is used (e.g., for caliper matching or to discard units for common support), which covariates should be supplied to the generalized Mahalanobis distance matrix. If unspecified, all variables in \code{formula} will be supplied to the distance matrix. Use \code{mahvars} to only supply a subset. Even if \code{mahvars} is specified, balance will be optimized on all covariates in \code{formula}.
+when a distance corresponds to a propensity score (e.g., for caliper matching or to discard units for common support), which covariates should be supplied to the generalized Mahalanobis distance matrix for matching. If unspecified, all variables in \code{formula} will be supplied to the distance matrix. Use \code{mahvars} to only supply a subset. Even if \code{mahvars} is specified, balance will be optimized on all covariates in \code{formula}. See Details.
 }
   \item{antiexact}{
 for which variables ant-exact matching should take place. Anti-exact matching is processed using the \code{restrict} argument to \code{Matching::GenMatch()} and \code{Matching::Match()}.
 }
   \item{discard}{
-a string containing a method for discarding units outside a region of common support. Only allowed when \code{distance} is not \code{"mahalanobis"}.
+a string containing a method for discarding units outside a region of common support. Only allowed when \code{distance} corresponds to a propensity score.
 }
   \item{reestimate}{
 if \code{discard} is not \code{"none"}, whether to re-estimate the propensity score in the remaining sample prior to matching.
@@ -75,7 +75,7 @@ the variable containing sampling weights to be incorporated into propensity scor
 whether matching should be done with replacement.
 }
   \item{m.order}{
-the order that the matching takes place. The default for \code{distance = "mahalanobis"} is \code{"data"}. Otherwise, the default is \code{"largest"}. See \fun{matchit} for allowable options.
+the order that the matching takes place. The default is \code{"largest"} when \code{distance} corresponds to a propensity score and \code{"data"} otherwise. See \fun{matchit} for allowable options.
 }
   \item{caliper}{
 the width(s) of the caliper(s) used for caliper matching. See Details and Examples.
@@ -97,13 +97,13 @@ additional arguments passed to \pkgfun{Matching}{GenMatch}. Potentially useful o
 All outputs described in \fun{matchit} are returned with \code{method = "genetic"}. When \code{replace = TRUE}, the \code{subclass} component is omitted. When \code{include.obj = TRUE} in the call to \code{matchit()}, the output of the call to \pkgfun{Matching}{GenMatch} will be included in the output.
 }
 \details{
-In genetic matching, covariates play three roles: 1) as the variables on which balance is optimized, 2) as the variables in the generalized Mahalanobis distance between units, and 3) in estimating the propensity score. Variables supplied to \code{formula} are always used for role (1), as the variables on which balance is optimized. When \code{distance} is not \code{"mahalanobis"}, the covariates are also used to estimate the propensity score (unless it is supplied). When \code{mahvars} is specified, the named variables will form the covariates that go into the distance matrix. Otherwise, the variables in \code{formula} along with the propensity score will go into the distance matrix. This leads to three ways to use \code{distance} and \code{mahvars} to perform the matching:
+In genetic matching, covariates play three roles: 1) as the variables on which balance is optimized, 2) as the variables in the generalized Mahalanobis distance between units, and 3) in estimating the propensity score. Variables supplied to \code{formula} are always used for role (1), as the variables on which balance is optimized. When \code{distance} corresponds to a propensity score, the covariates are also used to estimate the propensity score (unless it is supplied). When \code{mahvars} is specified, the named variables will form the covariates that go into the distance matrix. Otherwise, the variables in \code{formula} along with the propensity score will go into the distance matrix. This leads to three ways to use \code{distance} and \code{mahvars} to perform the matching:
 
-1) When \code{distance = "mahalanobis"}, no propensity score is estimated, and the covariates in \code{formula} are used to form the generalized Mahalanobis distance matrix. In this sense, \code{"mahalanobis"} signals that no propensity score is to be estimated and that the matching variables are those in \code{formula}, consistent with setting \code{distance = "mahalanobis"} with other methods.
+1) When \code{distance} corresponds to a propensity score and \code{mahvars} \emph{is not} specified, the covariates in \code{formula} along with the propensity score are used to form the generalized Mahalanobis distance matrix. This is the default and most typical use of \code{method = "genetic"} in \code{matchit()}.
 
-2) When \code{distance} is not \code{"mahalanobis"} and \code{mahvars} \emph{is not} specified, the covariates in \code{formula} along with the propensity score are used to form the generalized Mahalanobis distance matrix. This is the default and most typical use of \code{method = "genetic"} in \code{matchit()}.
+2) When \code{distance} corresponds to a propensity score and \code{mahvars} \emph{is} specified, the covariates in \code{mahvars} are used to form the generalized Mahalanobis distance matrix. The covariates in \code{formula} are used to estimate the propensity score and have their balance optimized by the genetic algorithm. The propensity score is not included in the generalized Mahalanobis distance matrix.
 
-3) When \code{distance} is not \code{"mahalanobis"} and \code{mahvars} \emph{is} specified, the covariates in \code{mahvars} are used to form the generalized Mahalanobis distance matrix. The covariates in \code{formula} are used to estimate the propensity score and have their balance optimized by the genetic algorithm. The propensity score is not included in the generalized Mahalanobis distance matrix.
+3) When \code{distance} is a method of computing a distance matrix (e.g.,\code{"mahalanobis"}), no propensity score is estimated, and the covariates in \code{formula} are used to form the generalized Mahalanobis distance matrix. Which specific method is supplied has no bearing on how the disatnce matrix is computed; it simply serves as a signal to omit estimation of a propensity score.
 
 When a caliper is specified, any variables mentioned in \code{caliper}, possibly including the propensity score, will be added to the matching variables used to form the generalized Mahalanobis distance matrix. This is because \emph{Matching} doesn't allow for the separation of caliper variables and matching variables in genetic matching.
 

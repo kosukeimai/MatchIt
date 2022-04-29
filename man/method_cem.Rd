@@ -33,7 +33,7 @@ set here to \code{"cem"}.
 a string containing the desired estimand. Allowable options include \code{"ATT"}, \code{"ATC"}, and \code{"ATE"}. The estimand controls how the weights are computed; see the Computing Weights section at \fun{matchit} for details. When \code{k2k = TRUE} (see below), \code{estimand} also controls how the matching is done.
 }
   \item{s.weights}{
-the variable containing sampling weights to be incorporated into balance statistics. These weights do not affect the matching process.
+the variable containing sampling weights to be incorporated into balance statistics or the scaling factors when \code{k2k = TRUE} and certain methods are used.
 }
   \item{verbose}{
 \code{logical}; whether information about the matching process should be printed to the console.
@@ -51,7 +51,7 @@ the variable containing sampling weights to be incorporated into balance statist
      code{logical}; whether 1:1 matching should occur within the matched strata. If \code{TRUE} nearest neighbor matching without replacement will take place within each stratum, and any unmatched units will be dropped (e.g., if there are more treated than control units in the stratum, the treated units without a match will be dropped). The \code{k2k.method} argument controls how the distance between units is calculated.
      }
      \item{\code{k2k.method}}{
-     \code{character}; how the distance between units should be calculated if \code{k2k = TRUE}. Allowable arguments include \code{NULL} (for random matching), \code{"mahalanobis"} (for Mahalanobis distance matching), or any allowable argument to \code{method} in \fun{dist}. Matching will take place on scaled versions of the original (non-coarsened) variables. The default is \code{"mahalanobis"}.
+     \code{character}; how the distance between units should be calculated if \code{k2k = TRUE}. Allowable arguments include \code{NULL} (for random matching), any argument to \code{\link{distance}} for computing a distance matrix from covariates (e.g., \code{"mahalanobis"}), or any allowable argument to \code{method} in \fun{dist}. Matching will take place on scaled versions of the original (non-coarsened) variables. The default is \code{"mahalanobis"}.
      }
      \item{\code{mpower}}{
      if \code{k2k.method = "minkowski"}, the power used in creating the distance. This is passed to the \code{p} argument of \fun{dist}.
@@ -66,7 +66,7 @@ All outputs described in \fun{matchit} are returned with \code{method = "cem"} e
 \details{
 If the coarsening is such that there are no exact matches with the coarsened variables, the \code{grouping} and \code{cutpoints} arguments can be used to modify the matching specification. Reducing the number of cutpoints or grouping some variable values together can make it easier to find matches. See Examples below. Removing variables can also help (but they will likely not be balanced unless highly correlated with the included variables). To take advantage of coarsened exact matching without failing to find any matches, the covariates can be manually coarsened outside of \code{matchit()} and then supplied to the \code{exact} argument in a call to \code{matchit()} with another matching method.
 
-Setting \code{k2k = TRUE} is equivalent to matching with \code{k2k = FALSE} and then supplying stratum membership as an exact matching variable (i.e., in \code{exact}) to another call to \code{matchit()} with \code{method = "nearest"}, \code{distance = "mahalanobis"} and an argument to \code{discard} denoting unmatched units. It is also equivalent to performing nearest neighbor matching supplying coarsened versions of the variables to \code{exact}, except that \code{method = "cem"} automatically coarsens the continuous variables. The \code{estimand} argument supplied with \code{method = "cem"} functions the same way it would in these alternate matching calls, i.e., by determining the "focal" group that controls the order of the matching.
+Setting \code{k2k = TRUE} is equivalent to first doing coarsened exact matching with \code{k2k = FALSE} and then supplying stratum membership as an exact matching variable (i.e., in \code{exact}) to another call to \code{matchit()} with \code{method = "nearest"}, \code{distance = "mahalanobis"} and an argument to \code{discard} denoting unmatched units. It is also equivalent to performing nearest neighbor matching supplying coarsened versions of the variables to \code{exact}, except that \code{method = "cem"} automatically coarsens the continuous variables. The \code{estimand} argument supplied with \code{method = "cem"} functions the same way it would in these alternate matching calls, i.e., by determining the "focal" group that controls the order of the matching.
 
 \subsection{Grouping and Cutpoints}{
 The \code{grouping} and \code{cutpoints} arguments allow one to fine-tune the coarsening of the covariates. \code{grouping} is used for combining categories of categorical covariates and \code{cutpoints} is used for binning numeric covariates. The values supplied to these arguments should be iteratively changed until a matching solution that balances covariate balance and remaining sample size is obtained. The arguments are described below.

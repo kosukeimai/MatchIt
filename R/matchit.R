@@ -85,6 +85,7 @@ matchit <- function(formula, data = NULL, method = "nearest", distance = "glm",
   }
 
   #Process distance function
+  is.full.mahalanobis <- FALSE
   if (!is.null(method) && method %in% c("exact", "cem", "cardinality")) {
     fn1 <- NULL
   }
@@ -94,77 +95,28 @@ matchit <- function(formula, data = NULL, method = "nearest", distance = "glm",
     if (is.numeric(distance)) {
       fn1 <- "distance2user"
     }
+    else if (distance %in% matchit_distances()) {
+      fn1 <- "distance2mahalanobis"
+      is.full.mahalanobis <- TRUE
+      attr(is.full.mahalanobis, "transform") <- distance
+    }
     else {
       fn1 <- paste0("distance2", distance)
     }
   }
-  is.full.mahalanobis <- identical(fn1, "distance2mahalanobis")
 
   #Process exact, mahvars, and antiexact
-  exactcovs <- mahcovs <- antiexactcovs <- NULL
+  exactcovs <- process.variable.input(exact, data)
+  exact <- attr(exactcovs, "terms")
 
-  if (!is.null(exact)) {
-    if (is.character(exact)) {
-      if (is.null(data) || !is.data.frame(data)) {
-        stop("If 'exact' is specified as strings, a data frame containing the named variables must be supplied to 'data'.", call. = FALSE)
-      }
-      if (!all(exact %in% names(data))) {
-        stop("All names supplied to 'exact' must be variables in 'data'.", call. = FALSE)
-      }
-      exact <- reformulate(exact)
-    }
-    else if (inherits(exact, "formula")) {
-      exact <- update(exact, NULL ~ .)
-    }
-    else {
-      stop("'exact' must be supplied as a character vector of names or a one-sided formula.", call. = FALSE)
-    }
-    exactcovs <- model.frame(exact, data, na.action = "na.pass")
-    if (anyNA(exactcovs)) stop("Missing values are not allowed in the covariates named in 'exact'.", call. = FALSE)
-  }
+  mahcovs <- process.variable.input(mahvars, data)
+  mahvars <- attr(mahcovs, "terms")
 
-  if (!is.null(mahvars)) {
-    if (is.character(mahvars)) {
-      if (is.null(data) || !is.data.frame(data)) {
-        stop("If 'mahvars' is specified as strings, a data frame containing the named variables must be supplied to 'data'.", call. = FALSE)
-      }
-      if (!all(mahvars %in% names(data))) {
-        stop("All names supplied to 'mahvars' must be variables in 'data'.", call. = FALSE)
-      }
-      mahvars <- reformulate(mahvars)
-    }
-    else if (inherits(mahvars, "formula")) {
-      mahvars <- update(mahvars, NULL ~ .)
-    }
-    else {
-      stop("'mahvars' must be supplied as a character vector of names or a one-sided formula.", call. = FALSE)
-    }
-    mahcovs <- model.frame(mahvars, data, na.action = "na.pass")
-    if (anyNA(mahcovs)) stop("Missing values are not allowed in the covariates named in 'mahvars'.", call. = FALSE)
-  }
-
-  if (!is.null(antiexact)) {
-    if (is.character(antiexact)) {
-      if (is.null(data) || !is.data.frame(data)) {
-        stop("If 'antiexact' is specified as strings, a data frame containing the named variables must be supplied to 'data'.", call. = FALSE)
-      }
-      if (!all(antiexact %in% names(data))) {
-        stop("All names supplied to 'antiexact' must be variables in 'data'.", call. = FALSE)
-      }
-      antiexact <- reformulate(antiexact)
-    }
-    else if (inherits(antiexact, "formula")) {
-      antiexact <- update(antiexact, NULL ~ .)
-    }
-    else {
-      stop("'antiexact' must be supplied as a character vector of names or a one-sided formula.", call. = FALSE)
-    }
-    antiexactcovs <- model.frame(antiexact, data, na.action = "na.pass")
-    if (anyNA(antiexactcovs)) stop("Missing values are not allowed in the covariates named in 'antiexact'.", call. = FALSE)
-  }
+  antiexactcovs <- process.variable.input(antiexact, data)
+  antiexact <- attr(antiexactcovs, "terms")
 
   #Estimate distance, discard from common support, optionally re-estimate distance
-  if (is.null(fn1) || fn1 == "distance2mahalanobis") {
+  if (is.null(fn1) || is.full.mahalanobis) {
     #No distance measure
     dist.model <- distance <- link <- NULL
   }
@@ -215,7 +167,7 @@ matchit <- function(formula, data = NULL, method = "nearest", distance = "glm",
   }
 
   #Process discard
-  if (is.null(fn1) || fn1 %in% c("distance2mahalanobis", "distance2user")) {
+  if (is.null(fn1) || is.full.mahalanobis || fn1 == "distance2user") {
     discarded <- discard(treat, distance, discard)
   }
   else {
@@ -261,6 +213,7 @@ matchit <- function(formula, data = NULL, method = "nearest", distance = "glm",
 
   info <- create_info(method, fn1, link, discard, replace, ratio,
                       mahalanobis = is.full.mahalanobis || !is.null(mahvars),
+                      transform = attr(is.full.mahalanobis, "transform"),
                       subclass = match.out$subclass,
                       antiexact = colnames(antiexactcovs),
                       distance_is_matrix = !is.null(distance) && is.matrix(distance))

@@ -43,10 +43,10 @@ a data frame containing the variables named in \code{formula}. If not found in \
 set here to \code{"full"}.
 }
   \item{distance}{
-the distance measure to be used. See \code{\link{distance}} for allowable options. When set to \code{"mahalanobis"}, optimal full Mahalanobis distance matching will be performed on the variables named in \code{formula}. Can be supplied as a distance matrix.
+the distance measure to be used. See \code{\link{distance}} for allowable options. Can be supplied as a distance matrix.
 }
   \item{link}{
-when \code{distance} is specified as a string and not \code{"mahalanobis"}, an additional argument controlling the link function used in estimating the distance measure. See \code{\link{distance}} for allowable options with each option.
+when \code{distance} is specified as a method of estimating propensity scores, an additional argument controlling the link function used in estimating the distance measure. See \code{\link{distance}} for allowable options with each option.
 }
   \item{distance.options}{
 a named list containing additional arguments supplied to the function that estimates the distance measure as determined by the argument to \code{distance}.
@@ -58,13 +58,13 @@ a string containing the desired estimand. Allowable options include \code{"ATT"}
 for which variables exact matching should take place. Exact matching is processed using \pkgfun{optmatch}{exactMatch}.
 }
   \item{mahvars}{
-for which variables Mahalanobis distance matching should take place when a distance measure other than \code{"mahalanobis"} is used (e.g., for caliper matching or to discard units for common support). If specified, the distance measure will not be used in matching.
+for which variables Mahalanobis distance matching should take place when \code{distance} corresponds to a propensity score (e.g., for caliper matching or to discard units for common support). If specified, the distance measure will not be used in matching.
 }
   \item{antiexact}{
 for which variables ant-exact matching should take place. Anti-exact matching is processed using \pkgfun{optmatch}{antiExactMatch}.
 }
   \item{discard}{
-a string containing a method for discarding units outside a region of common support. Only allowed when \code{distance} is not \code{"mahalanobis"} and not a matrix.
+a string containing a method for discarding units outside a region of common support. Only allowed when \code{distance} corresponds to a propensity score.
 }
   \item{reestimate}{
 if \code{discard} is not \code{"none"}, whether to re-estimate the propensity score in the remaining sample prior to matching.
@@ -106,7 +106,7 @@ All outputs described in \fun{matchit} are returned with \code{method = "full"} 
 \subsection{Mahalanobis Distance Matching}{
 Mahalanobis distance matching can be done one of two ways:
 
-1) If no propensity score needs to be estimated, \code{distance} should be set to \code{"mahalanobis"}, and Mahalanobis distance matching will occur on all the variables in \code{formula}. Arguments to \code{discard} and \code{mahvars} will be ignored, and a caliper can only be placed on named variables. For example, to perform simple Mahalanobis distance matching, the following could be run:
+1) If no propensity score needs to be estimated, \code{distance} should be set to \code{"mahalanobis"}, and Mahalanobis distance matching will occur using all the variables in \code{formula}. Arguments to \code{discard} and \code{mahvars} will be ignored, and a caliper can only be placed on named variables. For example, to perform simple Mahalanobis distance matching, the following could be run:
 
 \preformatted{
 matchit(treat ~ X1 + X2, method = "nearest",
@@ -124,12 +124,10 @@ matchit(treat ~ X1 + X2 + X3, method = "nearest",
 }
 
 With this code, \code{X1}, \code{X2}, and \code{X3} are used to estimate the propensity score (using the \code{"glm"} method, which by default is logistic regression), which is used to create a matching caliper. The actual matching occurs on the Mahalanobis distance computed only using \code{X1} and \code{X2}, which are supplied to \code{mahvars}. Units whose propensity score difference is larger than the caliper will not be paired, and some treated units may therefore not receive a match. The estimated propensity scores will be included in the \code{distance} component of the \code{matchit()} output. See Examples.
-
-When sampling weights are supplied through the \code{s.weights} argument, the covariance matrix of the covariates used in the Mahalanobis distance is \strong{not} weighted by the sampling weights.
-
-Mahalanobis distance matching can also be done by supplying a Mahalanobis distance matrix (e.g., the output of a call to \pkgfun{optmatch}{match_on}) to the \code{distance} argument. This makes it straightforward to use the robust rank-based Mahalanobis distance available in \pkg{optmatch}.
 }
-
+}
+\note{
+The Mahalanobis distance and its robust rank-based version are computed differently between \emph{MatchIt} and \emph{optmatch}. The covariance matrix used in \emph{MatchIt} is the covariance matrix computed in the full sample, with sampling weights incorporated if supplied to \code{s.weights}. The covariance matrix used in \emph{optmatch} (i.e., using \pkgfun{optmatch}{match_on}) is computed as the average of the covariance matrices computed in the two treatment groups (what the package authors call a "pooled" covariance matrix). This is to say that results may differ when using \code{matchit(., method = "full", distance = "mahalanobis"} and when using \code{optmatch::fullmatch()} with a Mahalanobis matrix computed using \code{optmatch::match_on()}.
 }
 \references{
 In a manuscript, be sure to cite the following paper if using \code{matchit()} with \code{method = "full"}:

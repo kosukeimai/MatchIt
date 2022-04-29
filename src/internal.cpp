@@ -3,7 +3,7 @@ using namespace Rcpp;
 
 // Rcpp internal functions
 
-//C implementation of tabulate. Faster than base::tabulate(), but real
+//C implementation of tabulate(). Faster than base::tabulate(), but real
 //use is in subclass2mmC().
 
 // [[Rcpp::interfaces(cpp)]]
@@ -20,4 +20,12 @@ IntegerVector tabulateC_(const IntegerVector& bins,
       counts[bins[i] - 1]++;
   }
   return counts;
+}
+
+//Rcpp port of base::which
+
+// [[Rcpp::interfaces(cpp)]]
+IntegerVector which(const LogicalVector& x) {
+  IntegerVector ind = Range(0, x.size() - 1);
+  return ind[x];
 }

@@ -43,10 +43,10 @@ a data frame containing the variables named in \code{formula}. If not found in \
 set here to \code{"optimal"}.
 }
   \item{distance}{
-the distance measure to be used. See \code{\link{distance}} for allowable options. When set to \code{"mahalanobis"}, optimal Mahalanobis distance matching will be performed on the variables named in \code{formula}. Can be supplied as a distance matrix.
+the distance measure to be used. See \code{\link{distance}} for allowable options. Can be supplied as a distance matrix.
 }
   \item{link}{
-when \code{distance} is specified as a string and not \code{"mahalanobis"}, an additional argument controlling the link function used in estimating the distance measure. See \code{\link{distance}} for allowable options with each option.
+when \code{distance} is specified as a method of estimating propensity scores, an additional argument controlling the link function used in estimating the distance measure. See \code{\link{distance}} for allowable options with each option.
 }
   \item{distance.options}{
 a named list containing additional arguments supplied to the function that estimates the distance measure as determined by the argument to \code{distance}.
@@ -58,7 +58,7 @@ a string containing the desired estimand. Allowable options include \code{"ATT"}
 for which variables exact matching should take place. Exact matching is processed using \pkgfun{optmatch}{exactMatch}.
 }
   \item{mahvars}{
-for which variables Mahalanobis distance matching should take place when a distance measure other than \code{"mahalanobis"} is used (e.g., to discard units for common support). If specified, the distance measure will not be used in matching.
+for which variables Mahalanobis distance matching should take place when \code{distance} corresponds to a propensity score (e.g., for caliper matching or to discard units for common support). If specified, the distance measure will not be used in matching.
 }
   \item{antiexact}{
 for which variables ant-exact matching should take place. Anti-exact matching is processed using \pkgfun{optmatch}{antiExactMatch}.
@@ -106,7 +106,7 @@ All outputs described in \fun{matchit} are returned with \code{method = "optimal
 \subsection{Mahalanobis Distance Matching}{
 Mahalanobis distance matching can be done one of two ways:
 
-1) If no propensity score needs to be estimated, \code{distance} should be set to \code{"mahalanobis"}, and Mahalanobis distance matching will occur on all the variables in \code{formula}. Arguments to \code{discard} and \code{mahvars} will be ignored. For example, to perform simple Mahalanobis distance matching, the following could be run:
+1) If no propensity score needs to be estimated, \code{distance} should be set to \code{"mahalanobis"}, and Mahalanobis distance matching will occur using all the variables in \code{formula}. Arguments to \code{discard} and \code{mahvars} will be ignored. For example, to perform simple Mahalanobis distance matching, the following could be run:
 
 \preformatted{
 matchit(treat ~ X1 + X2, method = "nearest",
@@ -124,10 +124,6 @@ matchit(treat ~ X1 + X2 + X3, method = "nearest",
 }
 
 With this code, \code{X1}, \code{X2}, and \code{X3} are used to estimate the propensity score (using the \code{"glm"} method, which by default is logistic regression), which is used to identify the common support. The actual matching occurs on the Mahalanobis distance computed only using \code{X1} and \code{X2}, which are supplied to \code{mahvars}. The estimated propensity scores will be included in the \code{distance} component of the \code{matchit()} output.
-
-When sampling weights are supplied through the \code{s.weights} argument, the covariance matrix of the covariates used in the Mahalanobis distance is \strong{not} weighted by the sampling weights.
-
-Mahalanobis distance matching can also be done by supplying a Mahalanobis distance matrix (e.g., the output of a call to \pkgfun{optmatch}{match_on}) to the \code{distance} argument. This makes it straightforward to use the robust rank-based Mahalanobis distance available in \pkg{optmatch}.
 }
 \subsection{Estimand}{
 The \code{estimand} argument controls whether control units are selected to be matched with treated units (\code{estimand = "ATT"}) or treated units are selected to be matched with control units (\code{estimand = "ATC"}). The "focal" group (e.g., the treated units for the ATT) is typically made to be the smaller treatment group, and a warning will be thrown if it is not set that way unless \code{replace = TRUE}. Setting \code{estimand = "ATC"} is equivalent to swapping all treated and control labels for the treatment variable. When \code{estimand = "ATC"}, the \code{match.matrix} component of the output will have the names of the control units as the rownames and be filled with the names of the matched treated units (opposite to when \code{estimand = "ATT"}). Note that the argument supplied to \code{estimand} doesn't necessarily correspond to the estimand actually targeted; it is merely a switch to trigger which treatment group is considered "focal".
@@ -136,8 +132,11 @@ The \code{estimand} argument controls whether control units are selected to be m
 \subsection{Variable Ratio Matching}{
 \code{matchit()} can perform variable ratio matching, which involves matching a different number of control units to each treated unit. When \code{ratio > 1}, rather than requiring all treated units to receive \code{ratio} matches, the arguments to \code{max.controls} and \code{min.controls} can be specified to control the maximum and minimum number of matches each treated unit can have. \code{ratio} controls how many total control units will be matched: \code{n1 * ratio} control units will be matched, where \code{n1} is the number of treated units, yielding the same total number of matched controls as fixed ratio matching does.
 
-Variable ratio matching can be used with either propensity score matching or Mahalanobis distance matching, including when \code{distance} is supplied as a matrix. \code{ratio} does not have to be an integer but must be greater than 1 and less than \code{n0/n1}, where \code{n0} and \code{n1} are the number of control and treated units, respectively. Setting \code{ratio = n0/n1} performs a restricted form of full matching where all control units are matched. If \code{min.controls} is not specified, it is set to 1 by default. \code{min.controls} must be less than \code{ratio}, and \code{max.controls} must be greater than \code{ratio}. See the Examples section of \code{\link{method_nearest}} for an example of their use, which is the same as it is with optimal matching.
+Variable ratio matching can be used with any \code{distance} specification. \code{ratio} does not have to be an integer but must be greater than 1 and less than \code{n0/n1}, where \code{n0} and \code{n1} are the number of control and treated units, respectively. Setting \code{ratio = n0/n1} performs a restricted form of full matching where all control units are matched. If \code{min.controls} is not specified, it is set to 1 by default. \code{min.controls} must be less than \code{ratio}, and \code{max.controls} must be greater than \code{ratio}. See the Examples section of \code{\link{method_nearest}} for an example of their use, which is the same as it is with optimal matching.
 }
+}
+\note{
+The Mahalanobis distance and its robust rank-based version are computed differently between \emph{MatchIt} and \emph{optmatch}. The covariance matrix used in \emph{MatchIt} is the covariance matrix computed in the full sample, with sampling weights incorporated if supplied to \code{s.weights}. The covariance matrix used in \emph{optmatch} (i.e., using \pkgfun{optmatch}{match_on}) is computed as the average of the covariance matrices computed in the two treatment groups (what the package authors call a "pooled" covariance matrix). This is to say that results may differ when using \code{matchit(., method = "full", distance = "mahalanobis"} and when using \code{optmatch::fullmatch()} with a Mahalanobis matrix computed using \code{optmatch::match_on()}.
 }
 \references{
 In a manuscript, be sure to cite the following paper if using \code{matchit()} with \code{method = "optimal"}:

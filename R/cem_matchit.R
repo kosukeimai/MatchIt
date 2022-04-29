@@ -1,4 +1,4 @@
-cem_matchit <- function(treat, X, cutpoints = "sturges", grouping = list(), k2k = FALSE, k2k.method = "mahalanobis", mpower = 2, estimand = "ATT") {
+cem_matchit <- function(treat, X, cutpoints = "sturges", grouping = list(), k2k = FALSE, k2k.method = "mahalanobis", mpower = 2, s.weights = NULL, estimand = "ATT") {
   #In-house implementation of cem. Basically the same except:
   #treat is a vector if treatment status, not the name of a variable
   #X is a data.frame of covariates
@@ -8,10 +8,16 @@ cem_matchit <- function(treat, X, cutpoints = "sturges", grouping = list(), k2k 
   #k2k now works with single covariates (previously it was ignored). k2k uses original variables, not coarsened versions
 
   if (k2k && !is.null(k2k.method)) {
-    X.match <- scale(get.covs.matrix(data = X), center = FALSE)
+    # X.match <- scale(get.covs.matrix(data = X), center = FALSE)
+    # k2k.method <- tolower(k2k.method)
+    # k2k.method <- match_arg(k2k.method, c("mahalanobis", "euclidean", "maximum", "manhattan", "canberra", "binary", "minkowski"))
+    # if (k2k.method == "mahalanobis") mahSigma_inv <- generalized_inverse(cov(X.match))
+
     k2k.method <- tolower(k2k.method)
-    k2k.method <- match_arg(k2k.method, c("mahalanobis", "euclidean", "maximum", "manhattan", "canberra", "binary", "minkowski"))
-    if (k2k.method == "mahalanobis") mahSigma_inv <- generalized_inverse(cov(X.match))
+    k2k.method <- match_arg(k2k.method, c(matchit_distances(), "maximum", "manhattan", "canberra", "binary", "minkowski"))
+
+    X.match <- transform_covariates(data = X, s.weights = s.weights, treat = treat,
+                                    method = if (k2k.method %in% matchit_distances()) k2k.method else "euclidean")
   }
   is.numeric.cov <- setNames(vapply(X, is.numeric, logical(1L)), names(X))
 
@@ -131,18 +137,33 @@ cem_matchit <- function(treat, X, cutpoints = "sturges", grouping = list(), k2k 
       in.sub <- which(!na.sub & subclass == i)
 
       #Compute distance matrix; all 0s if k2k.method = NULL for matched based on data order
-      if (is.null(k2k.method)) dist.mat <- matrix(0, nrow = length(in.sub), ncol = length(in.sub),
-                                                  dimnames = list(names(treat)[in.sub], names(treat)[in.sub]))
-      else if (k2k.method == "mahalanobis") {
-        dist.mat <- matrix(0, nrow = length(in.sub), ncol = length(in.sub),
-                           dimnames = list(names(treat)[in.sub], names(treat)[in.sub]))
-        for (t in seq_along(in.sub)) dist.mat[t,] <- mahalanobis(X.match[in.sub,,drop = FALSE], X.match[in.sub[t],], mahSigma_inv, TRUE)
-      }
-      else dist.mat <- as.matrix(dist(X.match[in.sub,,drop = FALSE], method = k2k.method, p = mpower))
+      if (is.null(k2k.method)) {
+        # dist.mat <- matrix(0, nrow = length(in.sub), ncol = length(in.sub),
+        #                                           dimnames = list(names(treat)[in.sub], names(treat)[in.sub]))
+        # d.rows <- which(rownames(dist.mat) %in% names(treat[in.sub])[treat[in.sub] == s])
+        # dist.mat <- dist.mat[d.rows, -d.rows, drop = FALSE]
 
-      #Put smaller group on rows
-      d.rows <- which(rownames(dist.mat) %in% names(treat[in.sub])[treat[in.sub] == s])
-      dist.mat <- dist.mat[d.rows, -d.rows, drop = FALSE]
+        dist.mat <- matrix(0, nrow = sum(treat[in.sub] == s), ncol = sum(treat[in.sub] != s),
+                           dimnames = list(names(treat)[treat[in.sub] == s],
+                                           names(treat)[treat[in.sub] != s]))
+
+      }
+      else if (k2k.method %in% matchit_distances()) {
+        #X.match has been transformed
+        dist.mat <- eucdist_internal(X.match[in.sub,,drop = FALSE], treat[in.sub] == s)
+      }
+      # else if (k2k.method == "mahalanobis") {
+      #   dist.mat <- matrix(0, nrow = length(in.sub), ncol = length(in.sub),
+      #                      dimnames = list(names(treat)[in.sub], names(treat)[in.sub]))
+      #   for (t in seq_along(in.sub)) dist.mat[t,] <- mahalanobis(X.match[in.sub,,drop = FALSE], X.match[in.sub[t],], mahSigma_inv, TRUE)
+      # }
+      else {
+        dist.mat <- as.matrix(dist(X.match[in.sub,,drop = FALSE], method = k2k.method, p = mpower))
+
+        #Put smaller group on rows
+        d.rows <- which(rownames(dist.mat) %in% names(treat[in.sub])[treat[in.sub] == s])
+        dist.mat <- dist.mat[d.rows, -d.rows, drop = FALSE]
+      }
 
       #For each member of group on row, find closest remaining pair from cols
       while (all(dim(dist.mat) > 0)) {
@@ -162,7 +183,6 @@ cem_matchit <- function(treat, X, cutpoints = "sturges", grouping = list(), k2k 
   }
 
   subclass <- factor(subclass, nmax = extra.sub)
-
 
   names(subclass) <- names(treat)
 

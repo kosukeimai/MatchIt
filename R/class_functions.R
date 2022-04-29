@@ -194,13 +194,17 @@ print.matchit <- function(x, ...) {
   nm <- is.null(x[["method"]])
   cat("A matchit object")
   cat(paste0("\n - method: ", info.to.method(info)))
-  # if (!is.null(x[["distance"]]) || info$mahalanobis || identical(info$distance, "user")) {
+
   if (!is.null(info$distance) || info$mahalanobis) {
     cat("\n - distance: ")
     if (info$mahalanobis) {
-      cat("Mahalanobis")
+      if (is.null(info$transform)) #mahvars used
+        cat("Mahalanobis")
+      else {
+        cat(capwords(gsub("_", " ", info$transform, fixed = TRUE)))
+      }
     }
-    if (!is.null(info$distance) && info$distance != "mahalanobis") {
+    if (!is.null(info$distance) && !info$distance %in% matchit_distances()) {
       if (info$mahalanobis) cat(" [matching]\n             ")
 
       if (info$distance_is_matrix) cat("User-defined (matrix)")
