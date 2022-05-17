@@ -13,11 +13,11 @@ Computes and prints balance statistics for \code{matchit} and \code{matchit.subc
 \method{summary}{matchit}(object, interactions = FALSE,
         addlvariables = NULL, standardize = TRUE,
         data = NULL, pair.dist = TRUE, un = TRUE,
-        improvement = TRUE, ...)
+        improvement = FALSE, ...)
 \method{summary}{matchit.subclass}(object, interactions = FALSE,
         addlvariables = NULL, standardize = TRUE,
         data = NULL, pair.dist = FALSE, subclass = FALSE,
-        un = TRUE, improvement = TRUE, ...)
+        un = TRUE, improvement = FALSE, ...)
 
 \method{print}{summary.matchit}(x, digits = max(3, getOption("digits") - 3),
       ...)
@@ -47,7 +47,7 @@ a optional data frame containing variables named in \code{addlvariables} if spec
 \code{logical}; whether to compute balance statistics for the unmatched sample. Default \code{TRUE}; set to \code{FALSE} for more concise output.
 }
   \item{improvement}{
-\code{logical}; whether to compute the percent reduction in imbalance. Default \code{TRUE}; set to \code{FALSE} for more concise output.
+\code{logical}; whether to compute the percent reduction in imbalance. Default \code{FALSE}. Ignored if \code{un = FALSE}.
 }
   \item{subclass}{
 after subclassification, whether to display balance for individual subclasses, and, if so, for which ones. Can be \code{TRUE} (display balance for all subclasses), \code{FALSE} (display balance only in aggregate), or the indices (e.g., \code{1:6}) of the specific subclasses for which to display balance. When anything other than \code{FALSE}, aggregate balance statistics will not be displayed. Default is \code{FALSE}.
@@ -63,7 +63,7 @@ ignored.
 }
 }
 \details{
-\code{summary()} computes a balance summary of a \code{matchit} object. This include balance before and after matching or subclassification, as well as the percent improvement in balance. The variables for which balance statistics are computed are those included in the \code{formula}, \code{exact}, and \code{mahvars} arguments to \fun{matchit}, as well as the distance measure if \code{distance} is not \code{"mahalanobis"}. The \code{X} component of the \code{matchit} object is used to supply the covariates.
+\code{summary()} computes a balance summary of a \code{matchit} object. This include balance before and after matching or subclassification, as well as the percent improvement in balance. The variables for which balance statistics are computed are those included in the \code{formula}, \code{exact}, and \code{mahvars} arguments to \fun{matchit}, as well as the distance measure if \code{distance} is was supplied as a numeric vector or method of estimating propensity scores. The \code{X} component of the \code{matchit} object is used to supply the covariates.
 
 The standardized mean differences are computed both before and after matching or subclassification as the difference in treatment group means divided by a standardization factor computed in the unmatched (original) sample. The standardization factor depends on the argument supplied to \code{estimand} in \code{matchit()}: for \code{"ATT"}, it is the standard deviation in the treated group; for \code{"ATC"}, it is the standard deviation in the control group; for \code{"ATE"}, it is the square root of the average of the variances within each treatment group. The post-matching mean difference is computed with weighted means in the treatment groups using the matching or subclassification weights.
 

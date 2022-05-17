@@ -337,7 +337,7 @@ print.summary.matchit.subclass <- function(x, digits = max(3, getOption("digits"
 
 summary.matchit <- function(object, interactions = FALSE,
                             addlvariables = NULL, standardize = TRUE,
-                            data = NULL, pair.dist = TRUE, un = TRUE, improvement = TRUE, ...) {
+                            data = NULL, pair.dist = TRUE, un = TRUE, improvement = FALSE, ...) {
 
   #Create covariate matrix; include caliper, exact, and mahvars
 
@@ -538,7 +538,7 @@ summary.matchit <- function(object, interactions = FALSE,
 summary.matchit.subclass <- function(object, interactions = FALSE,
                                      addlvariables = NULL, standardize = TRUE,
                                      data = NULL, pair.dist = FALSE,
-                                     subclass = FALSE, un = TRUE, improvement = TRUE, ...) {
+                                     subclass = FALSE, un = TRUE, improvement = FALSE, ...) {
 
   #Create covariate matrix
   X <- get.covs.matrix(data = object$X)
