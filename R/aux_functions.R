@@ -778,25 +778,28 @@ exactify <- function(X, nam = NULL, sep = "|", include_vars = FALSE) {
   if (is.matrix(X)) X <- setNames(lapply(seq_len(ncol(X)), function(i) X[,i]), colnames(X))
   if (!is.list(X)) stop("X must be a matrix, data frame, or list.")
 
-  #Ensure no ambiguity is created by sep
-  sep0 <- sep
-  unique.x <- unlist(lapply(X, function(x) as.character(unique(x))))
-  while (any(grepl(sep, unique.x, fixed = TRUE))) {
-    sep0 <- paste0(sep0, sep)
-  }
-
   if (include_vars) {
     for (i in seq_along(X)) {
       if (is.character(X[[i]]) || is.factor(X[[i]])) {
-        X[[i]] <- paste0(names(X)[i], ' = "', X[[i]], '"')
+        X[[i]] <- sprintf('%s = "%s"', names(X)[i], X[[i]])
       }
       else {
-        X[[i]] <- paste0(names(X)[i], ' = ', X[[i]])
+        X[[i]] <- sprintf('%s = %s', names(X)[i], X[[i]])
+      }
+    }
+  }
+  else {
+    for (i in seq_along(X)) {
+      if (is.factor(X[[i]])) {
+        X[[i]] <- format(levels(X[[i]]), justify = "right")[X[[i]]]
+      }
+      else {
+        X[[i]] <- format(X[[i]], justify = "right")
       }
     }
   }
 
-  out <- do.call("paste", c(X, sep = sep0))
+  out <- do.call("paste", c(X, sep = sep))
   if (!is.null(nam)) names(out) <- nam
   out
 }
