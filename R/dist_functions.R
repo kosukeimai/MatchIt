@@ -1,56 +1,26 @@
 #Functions to compute distance matrices
-eucdist_internal <- function(X, treat = NULL) {
-
-  if (is.null(dim(X))) X <- as.matrix(X)
-
-  if (is.null(treat)) {
-    if (ncol(X) == 1) {
-      d <- abs(outer(drop(X), drop(X), "-"))
-    }
-    else {
-      d <- dist_to_matrixC(dist(X))
-    }
-    dimnames(d) <- list(rownames(X), rownames(X))
-  }
-  else {
-    treat_l <- as.logical(treat)
-    X1 <- X[treat_l,, drop = FALSE]
-    X0 <- X[!treat_l,, drop = FALSE]
-
-    if (ncol(X) == 1) {
-      d <- abs(outer(drop(X1), drop(X0), "-"))
-    }
-    else {
-      d <- dist_to_matrixC(dist(X))[treat == 1, treat == 0, drop = FALSE]
-    }
-    dimnames(d) <- list(rownames(X1), rownames(X0))
-  }
-
-  d
-}
-
-mahalanobis_dist <- function(formula = NULL, data = NULL, treat = NULL, s.weights = NULL, var = NULL, ...) {
+mahalanobis_dist <- function(formula = NULL, data = NULL, s.weights = NULL, var = NULL, discarded = NULL, ...) {
   X <- transform_covariates(formula, data, method = "mahalanobis",
                             s.weights = s.weights, var = var,
-                            treat = treat, ...)
+                            discarded = discarded)
   eucdist_internal(X, attr(X, "treat"))
 }
 
-scaled_euclidean_dist <- function(formula = NULL, data = NULL, treat = NULL, s.weights = NULL, ...) {
+scaled_euclidean_dist <- function(formula = NULL, data = NULL, s.weights = NULL, var = NULL, discarded = NULL, ...) {
   X <- transform_covariates(formula, data, method = "scaled_euclidean",
-                            s.weights = s.weights, treat = treat, ...)
+                            s.weights = s.weights, var = var,
+                            discarded = discarded)
   eucdist_internal(X, attr(X, "treat"))
 }
 
-robust_mahalanobis_dist <- function(formula = NULL, data = NULL, treat = NULL, s.weights = NULL, ...) {
+robust_mahalanobis_dist <- function(formula = NULL, data = NULL, s.weights = NULL, discarded = NULL, ...) {
   X <- transform_covariates(formula, data = data, method = "robust_mahalanobis",
-                            s.weights = s.weights, treat = treat, ...)
+                            s.weights = s.weights, discarded = discarded)
   eucdist_internal(X, attr(X, "treat"))
 }
 
-euclidean_dist <- function(formula = NULL, data = NULL, treat = NULL, ...) {
-  X <- transform_covariates(formula, data = data, method = "euclidean",
-                            treat = treat, ...)
+euclidean_dist <- function(formula = NULL, data = NULL, ...) {
+  X <- transform_covariates(formula, data = data, method = "euclidean")
   eucdist_internal(X, attr(X, "treat"))
 }
 
@@ -63,6 +33,17 @@ transform_covariates <- function(formula = NULL, data = NULL, method = "mahalano
 
   X <- check_X(X)
   treat <- check_treat(treat, X)
+
+  #If allvariables have no variance, use Euclidean to avoid errors
+  #If some have no variance, removes those to avoid messing up distances
+  no_variance <- which(apply(X, 2, function(x) abs(max(x) - min(x)) < sqrt(.Machine$double.eps)))
+  if (length(no_variance) == ncol(X)) {
+    method <- "euclidean"
+    X <- X[,1, drop = FALSE]
+  }
+  else if (length(no_variance) > 0) {
+    X <- X[,-no_variance, drop = FALSE]
+  }
 
   method <- match_arg(method, matchit_distances())
 
@@ -85,7 +66,7 @@ transform_covariates <- function(formula = NULL, data = NULL, method = "mahalano
       }
     }
     else if (!is.cov_like(var)) {
-      stop("bad var")
+      stop("If 'var' is not NULL, it must be a covariance matrix with as many entries as supplied variables.", call. = FALSE)
     }
 
     inv_var <- try(solve(var), silent = TRUE)
@@ -123,11 +104,22 @@ transform_covariates <- function(formula = NULL, data = NULL, method = "mahalano
     #Do nothing
   }
   else if (method == "scaled_euclidean") {
-    if (!is.null(treat)) {
-      sds <- pooled_sd(X[!discarded,, drop = FALSE], treat[!discarded], s.weights[!discarded])
+    if (is.null(var)) {
+      if (!is.null(treat)) {
+        sds <- pooled_sd(X[!discarded,, drop = FALSE], treat[!discarded], s.weights[!discarded])
+      }
+      else {
+        sds <- sqrt(apply(X[!discarded,, drop = FALSE], 2, wvar, w = s.weights))
+      }
+    }
+    else if (is.cov_like(var, X)) {
+      sds <- sqrt(diag(var))
+    }
+    else if (is.numeric(var) && is.cov_like(diag(var), X)) {
+      sds <- sqrt(var)
     }
     else {
-      sds <- sqrt(apply(X[!discarded,, drop = FALSE], 2, wvar, w = s.weights))
+      stop("If 'var' is not NULL, it must be a covariance matrix or a vector of variances with as many entries as supplied variables.", call. = FALSE)
     }
 
     for (i in seq_len(ncol(X))) {
@@ -137,6 +129,34 @@ transform_covariates <- function(formula = NULL, data = NULL, method = "mahalano
 
   attr(X, "treat") <- treat
   X
+}
+
+#Internal function for fast(ish) Euclidean distance
+eucdist_internal <- function(X, treat = NULL) {
+
+  if (is.null(dim(X))) X <- as.matrix(X)
+
+  if (is.null(treat)) {
+    if (ncol(X) == 1) {
+      d <- abs(outer(drop(X), drop(X), "-"))
+    }
+    else {
+      d <- dist_to_matrixC(dist(X))
+    }
+    dimnames(d) <- list(rownames(X), rownames(X))
+  }
+  else {
+    treat_l <- as.logical(treat)
+    if (ncol(X) == 1) {
+      d <- abs(outer(X[treat_l,], X[!treat_l,], "-"))
+    }
+    else {
+      d <- dist_to_matrixC(dist(X))[treat_l, !treat_l, drop = FALSE]
+    }
+    dimnames(d) <- list(rownames(X)[treat_l], rownames(X)[!treat_l])
+  }
+
+  d
 }
 
 #Get covariates (RHS) vars from formula; factor variable contrasts divided by sqrt(2)
@@ -164,8 +184,11 @@ get.covs.matrix.for.dist <- function(formula = NULL, data = NULL) {
   X <- model.matrix(formula, data = mf,
                     contrasts.arg = lapply(Filter(is.factor, mf),
                                            function(x) contrasts(x, contrasts = FALSE)/sqrt(2)))
-  assign <- attr(X, "assign")[-1]
-  X <- X[,-1, drop=FALSE]
+
+  if (ncol(X) > 1) {
+    assign <- attr(X, "assign")[-1]
+    X <- X[,-1, drop = FALSE]
+  }
   attr(X, "assign") <- assign
 
   attr(X, "treat") <-  model.response(mf)
@@ -175,33 +198,25 @@ get.covs.matrix.for.dist <- function(formula = NULL, data = NULL) {
 check_X <- function(X) {
   if (isTRUE(attr(X, "checked"))) return(X)
 
+  treat <- attr(X, "treat")
+
   if (is.data.frame(X)) X <- as.matrix(X)
   else if (is.numeric(X) && is.null(dim(X))) {
     X <- matrix(X, nrow = length(X),
                 dimnames = list(names(X), NULL))
   }
 
+  if (anyNA(X)) stop("Missing values are not allowed in the covariates.", call. = FALSE)
+  else if (any(!is.finite(X))) stop("Non-finite values are not allowed in the covariates.", call. = FALSE)
+
   if (!is.numeric(X) || length(dim(X)) != 2) {
     stop("bad X")
   }
   attr(X, "checked") <- TRUE
+  attr(X, "treat") <- treat
   X
 }
-check_treat <- function(treat = NULL, X) {
 
-  if (is.null(treat)) {
-    if (is.null(attr(X, "treat"))) return(NULL)
-    treat <- attr(X, "treat")
-  }
-  if (isTRUE(attr(treat, "checked"))) return(treat)
-
-  if (!is.atomic(treat) || !is.null(dim(treat)) || length(treat) != nrow(X)) {
-    stop("bad treat")
-  }
-  treat <- binarize(treat) #make 0/1
-  attr(treat, "checked") <- TRUE
-  treat
-}
 is.cov_like <- function(var, X) {
   is.numeric(var) &&
     length(dim(var)) == 2 &&
