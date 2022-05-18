@@ -99,8 +99,8 @@ additional arguments that control the matching specification:
      \item{\code{reuse.max}}{
       \code{numeric}; the maximum number of times each control can be used as a match. Setting \code{reuse.max = 1} corresponds to matching without replacement (i.e., \code{replace = FALSE}), and setting \code{reuse.max = Inf} corresponds to traditional matching with replacement (i.e., \code{replace = TRUE}) with no limit on the number of times each control unit can be matched. Other values restrict the number of times each control can be matched when matching with replacement. \code{replace} is ignored when \code{reuse.max} is specified.
      }
-     \item{\code{group}}{
-      one or more variables containing exclusivity group for each unit. Once a control unit has been matched, no other units in its exclusivity group can be used as matches. This ensures each control unit is used only once even if it has multiple rows associated with it, in which case \code{group} should correspond to the unit ID. Ignored when \code{replace = TRUE}.
+     \item{\code{unit.id}}{
+      one or more variables containing a unit ID for each observation, i.e., in case multiple observations correspond to the same unit. Once a control observation has been matched, no other observation with the same unit ID can be used as matches. This ensures each control unit is used only once even if it has multiple observation associated with it. Omitting this argument is the same as giving each observation a unique ID. Ignored when \code{replace = TRUE}.
      }
   }
 }
@@ -121,7 +121,7 @@ matchit(treat ~ X1 + X2, method = "nearest",
 
 With this code, the Mahalanobis distance is computed using \code{X1} and \code{X2}, and matching occurs on this distance. The \code{distance} component of the \code{matchit()} output will be empty.
 
-2) If a propensity score needs to be estimated for any reason, e.g., for common support with \code{discard} or for creating a caliper, \code{distance} should be whatever method is used to estimate the propensity score or a vector of distance measures, i.e., it should not be \code{"mahalanobis"}. Use \code{mahvars} to specify the variables used to create the Mahalanobis distance. For example, to perform Mahalanobis within a propensity score caliper, the following could be run:
+2) If a propensity score needs to be estimated for any reason, e.g., for common support with \code{discard} or for creating a caliper, \code{distance} should be whatever method is used to estimate the propensity score or a vector of distance measures. Use \code{mahvars} to specify the variables used to create the Mahalanobis distance. For example, to perform Mahalanobis within a propensity score caliper, the following could be run:
 
 \preformatted{
 matchit(treat ~ X1 + X2 + X3, method = "nearest",
@@ -130,8 +130,6 @@ matchit(treat ~ X1 + X2 + X3, method = "nearest",
 }
 
 With this code, \code{X1}, \code{X2}, and \code{X3} are used to estimate the propensity score (using the \code{"glm"} method, which by default is logistic regression), which is used to create a matching caliper. The actual matching occurs on the Mahalanobis distance computed only using \code{X1} and \code{X2}, which are supplied to \code{mahvars}. Units whose propensity score difference is larger than the caliper will not be paired, and some treated units may therefore not receive a match. The estimated propensity scores will be included in the \code{distance} component of the \code{matchit()} output. See Examples.
-
-%When sampling weights are supplied through the \code{s.weights} argument, the covariance matrix of the covariates used in the Mahalanobis distance is weighted by the sampling weights.
 }
 \subsection{Estimand}{
 The \code{estimand} argument controls whether control units are selected to be matched with treated units (\code{estimand = "ATT"}) or treated units are selected to be matched with control units (\code{estimand = "ATC"}). The "focal" group (e.g., the treated units for the ATT) is typically made to be the smaller treatment group, and a warning will be thrown if it is not set that way unless \code{replace = TRUE}. Setting \code{estimand = "ATC"} is equivalent to swapping all treated and control labels for the treatment variable. When \code{estimand = "ATC"}, the default \code{m.order} is \code{"smallest"}, and the \code{match.matrix} component of the output will have the names of the control units as the rownames and be filled with the names of the matched treated units (opposite to when \code{estimand = "ATT"}). Note that the argument supplied to \code{estimand} doesn't necessarily correspond to the estimand actually targeted; it is merely a switch to trigger which treatment group is considered "focal".

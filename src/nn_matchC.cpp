@@ -20,7 +20,7 @@ IntegerMatrix nn_matchC(const IntegerVector& treat_,
                         const Nullable<NumericMatrix>& calcovs_covs_mat_ = R_NilValue,
                         const Nullable<NumericMatrix>& mah_covs_ = R_NilValue,
                         const Nullable<IntegerMatrix>& antiexact_covs_ = R_NilValue,
-                        const Nullable<IntegerVector>& group_ = R_NilValue,
+                        const Nullable<IntegerVector>& unit_id_ = R_NilValue,
                         const bool& disl_prog = false)
   {
 
@@ -30,8 +30,8 @@ IntegerMatrix nn_matchC(const IntegerVector& treat_,
   double caliper_dist;
   NumericMatrix distance_mat, calcovs_covs_mat, mah_covs, mah_covs_c;
   IntegerMatrix antiexact_covs;
-  IntegerVector exact, exact_c, antiexact_col, group, units_in_group_of_chosen_unit;
-  int group_of_chosen_unit;
+  IntegerVector exact, exact_c, antiexact_col, unit_id, units_with_id_of_chosen_unit;
+  int id_of_chosen_unit;
 
   bool use_dist_mat = false;
   bool use_exact = false;
@@ -118,11 +118,11 @@ IntegerMatrix nn_matchC(const IntegerVector& treat_,
   if (reuse_max < n1_) {
     use_reuse_max = true;
   }
-  if (group_.isNotNull()) {
-    group = as<IntegerVector>(group_);
+  if (unit_id_.isNotNull()) {
+    unit_id = as<IntegerVector>(unit_id_);
   }
   else {
-    group = ind_;
+    unit_id = ind_;
   }
 
   bool ps_diff_assigned;
@@ -293,10 +293,10 @@ IntegerMatrix nn_matchC(const IntegerVector& treat_,
 
         mm( t , rat ) = c_chosen + 1; // + 1 because C indexing starts at 0 but mm is sent to R
 
-        group_of_chosen_unit = group[c_chosen];
-        units_in_group_of_chosen_unit = ind_[group == group_of_chosen_unit];
-        for (j = 0; j < units_in_group_of_chosen_unit.size(); ++j) {
-          matched[units_in_group_of_chosen_unit[j]] = matched[units_in_group_of_chosen_unit[j]] + 1;
+        id_of_chosen_unit = unit_id[c_chosen];
+        units_with_id_of_chosen_unit = ind_[unit_id == id_of_chosen_unit];
+        for (j = 0; j < units_with_id_of_chosen_unit.size(); ++j) {
+          matched[units_with_id_of_chosen_unit[j]] = matched[units_with_id_of_chosen_unit[j]] + 1;
         }
       }
     }
