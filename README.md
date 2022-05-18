@@ -83,18 +83,6 @@ summary(m.out)
     #> re74           2095.5737     1788.6941          0.0628     1.5689    0.0311   0.1730          0.2494
     #> re75           1532.0553     1087.7420          0.1380     2.1220    0.0330   0.0865          0.2360
     #> 
-    #> Percent Balance Improvement:
-    #>            Std. Mean Diff. Var. Ratio eCDF Mean eCDF Max
-    #> age                   88.5       48.3      43.3    -16.5
-    #> educ                  26.6       78.4      77.9     66.0
-    #> raceblack            100.0          .     100.0    100.0
-    #> racehispan           100.0          .     100.0    100.0
-    #> racewhite            100.0          .     100.0    100.0
-    #> married               96.7          .      96.7     96.7
-    #> nodegree             100.0          .     100.0    100.0
-    #> re74                  91.3       31.5      86.2     61.3
-    #> re75                  52.5    -1583.5      75.4     69.9
-    #> 
     #> Sample Sizes:
     #>               Control Treated
     #> All            429.       185
