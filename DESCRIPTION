@@ -1,5 +1,5 @@
 Package: MatchIt
-Version: 4.3.4.9002
+Version: 4.4.0
 Title: Nonparametric Preprocessing for Parametric Causal Inference
 Description: Selects matched samples of the original treated and
     control groups with similar covariate distributions -- can be
