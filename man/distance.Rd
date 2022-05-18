@@ -60,7 +60,7 @@ The Euclidean distance is the raw distance between units, computed as
 It is sensitive to the scale of the covariates, so covariates with larger scales will take higher priority.
 }
   \item{\code{"scaled_euclidean"}}{
-The scaled Euclidean distance is the Euclidean distance computed on the scaled (i.e., standardized) covariates. This ensures the covariates are on the same scale. The covariates are standardized usign the pooled within-group standard deviations, computed by treatment group-mean centering each covariate before computing the standard deviation in the full sample.
+The scaled Euclidean distance is the Euclidean distance computed on the scaled (i.e., standardized) covariates. This ensures the covariates are on the same scale. The covariates are standardized using the pooled within-group standard deviations, computed by treatment group-mean centering each covariate before computing the standard deviation in the full sample.
 }
   \item{\code{"mahalanobis"}}{
 The Mahalanobis distance is computed as

@@ -103,7 +103,7 @@ In genetic matching, covariates play three roles: 1) as the variables on which b
 
 2) When \code{distance} corresponds to a propensity score and \code{mahvars} \emph{is} specified, the covariates in \code{mahvars} are used to form the generalized Mahalanobis distance matrix. The covariates in \code{formula} are used to estimate the propensity score and have their balance optimized by the genetic algorithm. The propensity score is not included in the generalized Mahalanobis distance matrix.
 
-3) When \code{distance} is a method of computing a distance matrix (e.g.,\code{"mahalanobis"}), no propensity score is estimated, and the covariates in \code{formula} are used to form the generalized Mahalanobis distance matrix. Which specific method is supplied has no bearing on how the disatnce matrix is computed; it simply serves as a signal to omit estimation of a propensity score.
+3) When \code{distance} is a method of computing a distance matrix (e.g.,\code{"mahalanobis"}), no propensity score is estimated, and the covariates in \code{formula} are used to form the generalized Mahalanobis distance matrix. Which specific method is supplied has no bearing on how the distance matrix is computed; it simply serves as a signal to omit estimation of a propensity score.
 
 When a caliper is specified, any variables mentioned in \code{caliper}, possibly including the propensity score, will be added to the matching variables used to form the generalized Mahalanobis distance matrix. This is because \emph{Matching} doesn't allow for the separation of caliper variables and matching variables in genetic matching.
 

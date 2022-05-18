@@ -8,7 +8,7 @@
 Compute a Distance Matrix
 }
 \description{
-The functions compute a distance matrix, either for a single dataset (i.e., the distances between all pairs of units) or for two groups defined by a splitting variable (i.e., the distances between all units in one gorup and all unitsi n the other). These distance matrices include the Mahalanobis distance, Euclidean distance, scaled Euclidean distance, and robust (rank-based) Mahalanobs distance. These functions can be used as inputs to the \code{distance} argument to \fun{matchit} annd are used to compute the correspondign distance matrices within \code{matchit} when named.
+The functions compute a distance matrix, either for a single dataset (i.e., the distances between all pairs of units) or for two groups defined by a splitting variable (i.e., the distances between all units in one group and all units in the other). These distance matrices include the Mahalanobis distance, Euclidean distance, scaled Euclidean distance, and robust (rank-based) Mahalanobs distance. These functions can be used as inputs to the \code{distance} argument to \fun{matchit} and are used to compute the corresponding distance matrices within \code{matchit()} when named.
 }
 \usage{
 euclidean_dist(formula = NULL, data = NULL, ...)
@@ -49,7 +49,7 @@ ignored. Included to make cycling through these functions easier without having 
 \details{
 The \strong{Euclidean distance} (computed using \code{euclidean_dist()}) is the raw distance between units, computed as
 \deqn{d_{ij} = \sqrt{(x_i - x_j)(x_i - x_j)'}}
-where \eqn{x_i} and \eqn{x_j} are vectors of covariates for units \eqn{i} and \eqn{j}, respectively. The Euclidean distance is sensitive to the scales of the variables and their redundnacy (i.e., correlation). It should probably not be used for matching unless all of the variables have been previously scaled appropriately or are already on the same scale. It forms the basis of the other distance measures.
+where \eqn{x_i} and \eqn{x_j} are vectors of covariates for units \eqn{i} and \eqn{j}, respectively. The Euclidean distance is sensitive to the scales of the variables and their redundancy (i.e., correlation). It should probably not be used for matching unless all of the variables have been previously scaled appropriately or are already on the same scale. It forms the basis of the other distance measures.
 
 The \strong{scaled Euclidean distance} (computed using \code{scaled_euclidean_dist()}) is the Euclidean distance computed on the scaled covariates. Typically the covariates are scaled by dividing by their standard deviations, but any scaling factor can be supplied using the \code{var} argument. This leads to a distance measure computed as
 \deqn{d_{ij} = \sqrt{(x_i - x_j)S_d^{-1}(x_i - x_j)'}}
@@ -63,7 +63,7 @@ The Mahalanobis distance can be sensitive to outliers and long-tailed or otherwi
 
 The Mahalanobis distance and its robust variant are computed internally by transforming the covariates in such a way that the Euclidean distance computed on the scaled covariates is equal to the requested distance. For the Mahalanobis distance, this involves replacing the covariates vector \eqn{x_i} with \eqn{x_iS^{-.5}}, where \eqn{S^{-.5}} is the Cholesky decomposition of the (generalized) inverse of the covariance matrix \eqn{S}.
 
-When a left-hand-side splitting variable is present in \code{formula} and \code{var = NULL} (i.e., so that the scaling matrix is computed internally), the covariance matrix used is the "pooled" covariance matrix, which essentially is a weighted average of the covariance matrices computed seperately within each level of the splitting variable to capture within-group variation and reduce sensitivity to covariate imbalance. This is also true of the scaling factors used in the scaled Euclidean distance.
+When a left-hand-side splitting variable is present in \code{formula} and \code{var = NULL} (i.e., so that the scaling matrix is computed internally), the covariance matrix used is the "pooled" covariance matrix, which essentially is a weighted average of the covariance matrices computed separately within each level of the splitting variable to capture within-group variation and reduce sensitivity to covariate imbalance. This is also true of the scaling factors used in the scaled Euclidean distance.
 }
 \value{
 A numeric distance matrix. When \code{formula} has a left-hand-side (treatment) variable, the matrix will have one row for each treated unit and one column for each control unit. Otherwise, the matrix will have one row and one column for each treated unit.

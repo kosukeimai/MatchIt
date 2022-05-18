@@ -5,8 +5,8 @@ dist_to_matrixC <- function(d) {
     .Call(`_MatchIt_dist_to_matrixC`, d)
 }
 
-nn_matchC <- function(treat_, ord_, ratio, max_rat, discarded, reuse_max, distance_ = NULL, distance_mat_ = NULL, exact_ = NULL, caliper_dist_ = NULL, caliper_covs_ = NULL, calcovs_covs_mat_ = NULL, mah_covs_ = NULL, antiexact_covs_ = NULL, group_ = NULL, disl_prog = FALSE) {
-    .Call(`_MatchIt_nn_matchC`, treat_, ord_, ratio, max_rat, discarded, reuse_max, distance_, distance_mat_, exact_, caliper_dist_, caliper_covs_, calcovs_covs_mat_, mah_covs_, antiexact_covs_, group_, disl_prog)
+nn_matchC <- function(treat_, ord_, ratio, max_rat, discarded, reuse_max, distance_ = NULL, distance_mat_ = NULL, exact_ = NULL, caliper_dist_ = NULL, caliper_covs_ = NULL, calcovs_covs_mat_ = NULL, mah_covs_ = NULL, antiexact_covs_ = NULL, unit_id_ = NULL, disl_prog = FALSE) {
+    .Call(`_MatchIt_nn_matchC`, treat_, ord_, ratio, max_rat, discarded, reuse_max, distance_, distance_mat_, exact_, caliper_dist_, caliper_covs_, calcovs_covs_mat_, mah_covs_, antiexact_covs_, unit_id_, disl_prog)
 }
 
 pairdistsubC <- function(x_, t_, s_, num_sub) {
