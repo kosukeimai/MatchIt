@@ -51,7 +51,7 @@ The propensity scores are estimated using Bayesian additive regression trees (BA
 }
 
 \subsection{Methods for computing distances from covariates}{
-The following methods involve computing a distance matrix from the covariates themselves without estimating a propensity score. Calipers on the distance measure and common support restrictions cannot be used, and the \code{distance} component of the output object will be empty because no propensity scores are estimated. The \code{link} and \code{distance.options} arguments are ignored with these methods. See the individual matching methods pages for whether these distances are allowed and how they are used.
+The following methods involve computing a distance matrix from the covariates themselves without estimating a propensity score. Calipers on the distance measure and common support restrictions cannot be used, and the \code{distance} component of the output object will be empty because no propensity scores are estimated. The \code{link} and \code{distance.options} arguments are ignored with these methods. See the individual matching methods pages for whether these distances are allowed and how they are used. Each of these distance measures can also be calculated outside \code{matchit()} using its \link[=euclidean_dist]{corresponding function}.
 
 \describe{
  \item{\code{"euclidean"}}{
@@ -78,7 +78,7 @@ To perform Mahalanobis distance matching \emph{and} estimate propensity scores t
 \subsection{Distances supplied as a numeric vector or matrix}{
 \code{distance} can also be supplied as a numeric vector whose values will be taken to function like propensity scores; their pairwise difference will define the distance between units. This might be useful for supplying propensity scores computed outside \code{matchit()} or resupplying \code{matchit()} with propensity scores estimated previously without having to recompute them.
 
-\code{distance} can also be supplied as a matrix whose values represent the pairwise distances between units. The matrix should either be a square, with a row and column for each unit (e.g., as the output of a call to \code{as.matrix(\link{dist}(.))}), or have as many rows as there are treated units and as many columns as there are control units (e.g., as the output of a call to \pkgfun{optmatch}{match_on}). Distance values of \code{Inf} will disallow the corresponding units to be matched. When \code{distance} is a supplied as a numeric vector or matrix, \code{link} and \code{distance.options} are ignored.
+\code{distance} can also be supplied as a matrix whose values represent the pairwise distances between units. The matrix should either be a square, with a row and column for each unit (e.g., as the output of a call to \code{as.matrix(\link{dist}(.))}), or have as many rows as there are treated units and as many columns as there are control units (e.g., as the output of a call to \fun{mahalanobis_dist} or \pkgfun{optmatch}{match_on}). Distance values of \code{Inf} will disallow the corresponding units to be matched. When \code{distance} is a supplied as a numeric vector or matrix, \code{link} and \code{distance.options} are ignored.
 }
 }
 \section{Outputs}{

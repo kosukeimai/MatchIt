@@ -6,10 +6,11 @@ importFrom("grDevices", "devAskNewPage", "nclass.FD", "nclass.Sturges", "nclass.
 importFrom("utils", "setTxtProgressBar", "txtProgressBar", "capture.output", "combn")
 importFrom("Rcpp", "evalCpp")
 
-export(get_matches)
-export(match.data)
 export(matchit)
+export(match.data, get_matches)
 export(add_s.weights)
+export(euclidean_dist, scaled_euclidean_dist, mahalanobis_dist,
+       robust_mahalanobis_dist)
 
 S3method(plot, matchit)
 S3method(plot, matchit.subclass)
