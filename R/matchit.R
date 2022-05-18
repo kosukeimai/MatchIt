@@ -30,9 +30,11 @@ matchit <- function(formula, data = NULL, method = "nearest", distance = "glm",
   treat.form <- update(tt, . ~ 0)
   treat.mf <- model.frame(treat.form, data = data, na.action = "na.pass")
   treat <- model.response(treat.mf)
-  if (anyNA(treat)) stop("Missing values are not allowed in the treatment.", call. = FALSE)
-  if (length(unique(treat)) != 2) stop("The treatment must be a binary variable.", call. = FALSE)
-  treat <- binarize(treat) #make 0/1
+
+  #Check and binarize treat
+  treat <- check_treat(treat)
+  if (length(treat) == 0) stop("The treatment cannot be NULL.", call. = FALSE)
+
   names(treat) <- rownames(treat.mf)
 
   n.obs <- length(treat)

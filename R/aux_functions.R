@@ -106,23 +106,47 @@ check.inputs <- function(mcall, method, distance, exact, mahvars, antiexact,
     }
   }
 
-  if (length(ignored.inputs) > 0) warning(paste0(ngettext(length(ignored.inputs), "The argument ", "The arguments "),
-                                                 word_list(ignored.inputs, quotes = 1, is.are = TRUE),
-                                                 " not used with method = ", add_quotes(method, quotes = !null.method),
-                                                 " and will be ignored."),
+  if (length(ignored.inputs) > 0) warning(sprintf("The %s %s not used with method = %s and will be ignored.",
+                                                  ngettext(length(ignored.inputs), "argument", "arguments"),
+                                                  word_list(ignored.inputs, quotes = 1, is.are = TRUE),
+                                                  add_quotes(method, quotes = !null.method)),
                                           call. = FALSE, immediate. = TRUE)
-  if (length(error.inputs) > 0) stop(paste0(ngettext(length(error.inputs), "The argument ", "The arguments "),
-                                            word_list(error.inputs, quotes = 1, is.are = TRUE),
-                                            " not allowed with method = ", add_quotes(method, quotes = !null.method),
-                                            " and distance = \"", distance, "\"."),
+  if (length(error.inputs) > 0) stop(sprintf("The %s %s not used with method = %s and distance = \"%s\".",
+                                             ngettext(length(error.inputs), "argument", "arguments"),
+                                             word_list(error.inputs, quotes = 1, is.are = TRUE),
+                                             add_quotes(method, quotes = !null.method),
+                                             distance),
                                      call. = FALSE)
   return(ignored.inputs)
+}
+
+#Check treatment for type, binary, missing, num. rows
+check_treat <- function(treat = NULL, X = NULL) {
+
+  if (is.null(treat)) {
+    if (is.null(X) || is.null(attr(X, "treat"))) return(NULL)
+    treat <- attr(X, "treat")
+  }
+  if (isTRUE(attr(treat, "checked"))) return(treat)
+
+  if (!is.atomic(treat) || !is.null(dim(treat))) {
+    stop("The treatment must be a vector.", call. = FALSE)
+  }
+
+  if (anyNA(treat)) stop("Missing values are not allowed in the treatment.", call. = FALSE)
+  if (length(unique(treat)) != 2) stop("The treatment must be a binary variable.", call. = FALSE)
+  if (!is.null(X) && length(treat) != nrow(X)) stop("The treatment and covariates must have the same number of units.", call. = FALSE)
+
+  treat <- binarize(treat) #make 0/1
+  attr(treat, "checked") <- TRUE
+  treat
 }
 
 #Function to process distance and give warnings about new syntax
 process.distance <- function(distance, method = NULL, treat) {
   if (is.null(distance) && !is.null(method)) {
-    stop(paste0("'distance' cannot be NULL with method = \"", method, "\"."), call. = FALSE)
+    stop(sprintf("'distance' cannot be NULL with method = \"%s\".",
+                 method), call. = FALSE)
   }
   else if (is.character(distance) && length(distance) == 1) {
     allowable.distances <- c(
@@ -468,9 +492,8 @@ subclass_scoot <- function(sub, treat, x, min.n = 1) {
                   original.order)
 
   if (any(table(treat) < nsub * min.n)) {
-    stop(paste0("Not enough units to fit ", min.n, ngettext(min.n, " treated and control unit",
-                                                            " treated and control units"),
-                " in each subclass."), call. = FALSE)
+    stop(sprintf("Not enough units to fit treated and control %s in each subclass.",
+                 ngettext(min.n, "unit", "units")), call. = FALSE)
   }
 
   for (t in unique.treat) {
@@ -603,23 +626,23 @@ info.to.distance <- function(info) {
   if (distance == "glm") {
     if (link == "logit") dist <- "logistic regression"
     else if (link == "probit") dist <- "probit regression"
-    else dist <- paste("GLM with a", link, "link")
+    else dist <- sprintf("GLM with a %s link", link)
   }
   else if (distance == "gam") {
-    dist <- paste("GAM with a", link, "link")
+    dist <- sprintf("GAM with a %s link", link)
   }
   else if (distance == "gbm") {
     dist <- "GBM"
   }
   else if (distance == "elasticnet") {
-    dist <- paste("an elastic net with a", link, "link")
+    dist <- sprintf("an elastic net with a %s link", link)
   }
   else if (distance == "lasso") {
     if (link == "logit") dist <- "lasso logistic regression"
-    else dist <- paste("lasso regression with a", link, "link")
+    else dist <- sprintf("lasso regression with a %s link", link)
   }
   else if (distance == "ridge") {
-    dist <- paste("ridge regression with a", link, "link")
+    dist <- sprintf("ridge regression with a %s link", link)
   }
   else if (distance == "rpart") {
     dist <- "CART"
@@ -690,8 +713,8 @@ word_list <- function(word.list = NULL, and.or = c("and", "or"), is.are = FALSE,
 #Add quotation marks around a string.
 add_quotes <- function(x, quotes = 2L) {
   if (!isFALSE(quotes)) {
-    if (isTRUE(quotes) || as.integer(quotes) == 2L) x <- paste0("\"", x, "\"")
-    else if (as.integer(quotes) == 1L) x <- paste0("\'", x, "\'")
+    if (isTRUE(quotes) || as.integer(quotes) == 2L) x <- sprintf('"%s"', x)
+    else if (as.integer(quotes) == 1L) x <- sprintf("'%s'", x)
     else stop("'quotes' must be boolean, 1, or 2.")
   }
   x
@@ -703,7 +726,7 @@ match_arg <- function(arg, choices, several.ok = FALSE) {
   #of arg.
   if (missing(arg))
     stop("No argument was supplied to match_arg.", call. = FALSE)
-  arg.name <- paste(deparse(substitute(arg), width.cutoff = 500L), collapse = " ")
+  arg.name <- deparse1(substitute(arg), width.cutoff = 500L)
 
   if (missing(choices)) {
     formal.args <- formals(sys.function(sysP <- sys.parent()))
@@ -714,20 +737,21 @@ match_arg <- function(arg, choices, several.ok = FALSE) {
   if (is.null(arg))
     return(choices[1L])
   else if (!is.character(arg))
-    stop(paste0("The argument to '", arg.name, "' must be NULL or a character vector"), call. = FALSE)
+    stop(sprintf("The argument to '%s' must be NULL or a character vector", arg.name), call. = FALSE)
   if (!several.ok) {
     if (identical(arg, choices))
       return(arg[1L])
     if (length(arg) > 1L)
-      stop(paste0("The argument to '", arg.name, "' must be of length 1"), call. = FALSE)
+      stop(sprintf("The argument to '%s' must be of length 1", arg.name), call. = FALSE)
   }
   else if (length(arg) == 0)
-    stop(paste0("The argument to '", arg.name, "' must be of length >= 1"), call. = FALSE)
+    stop(sprintf("The argument to '%s' must be of length >= 1", arg.name), call. = FALSE)
 
   i <- pmatch(arg, choices, nomatch = 0L, duplicates.ok = TRUE)
   if (all(i == 0L))
-    stop(paste0("The argument to '", arg.name, "' should be ", if (length(choices) > 1) {if (several.ok) "at least one of " else "one of "} else "",
-                word_list(choices, and.or = "or", quotes = 2), "."),
+    stop(sprintf("The argument to '%s' should be %s %s.",
+                arg.name, ngettext(length(choices), "", if (several.ok) "at least one of " else "one of "),
+                word_list(choices, and.or = "or", quotes = 2)),
          call. = FALSE)
   i <- i[i > 0L]
   if (!several.ok && length(i) > 1)
@@ -738,7 +762,10 @@ match_arg <- function(arg, choices, several.ok = FALSE) {
 #Turn a vector into a 0/1 vector. 'zero' and 'one' can be supplied to make it clear which is
 #which; otherwise, a guess is used. From WeightIt.
 binarize <- function(variable, zero = NULL, one = NULL) {
-  if (length(unique(variable)) > 2) stop(paste0("Cannot binarize ", paste(deparse(substitute(variable)), collapse = " "), ": more than two levels."))
+  var.name <- deparse1(substitute(variable))
+  if (length(unique(variable)) > 2) {
+    stop(sprintf("Cannot binarize %s: more than two levels.", var.name), call. = FALSE)
+  }
   if (is.character(variable) || is.factor(variable)) {
     variable <- factor(variable, nmax = 2)
     unique.vals <- levels(variable)
@@ -829,7 +856,7 @@ firstup <- function(x) {
 capwords <- function(s, strict = FALSE) {
   cap <- function(s) paste0(toupper(substring(s, 1, 1)),
                            {s <- substring(s, 2); if(strict) tolower(s) else s},
-                           collapse = " " )
+                           collapse = " ")
   sapply(strsplit(s, split = " "), cap, USE.NAMES = !is.null(names(s)))
 }
 
