@@ -199,6 +199,8 @@ matchit2full <- function(treat, formula, data, distance, discarded,
   pair <- setNames(rep(NA_character_, length(treat)), names(treat))
   p <- setNames(vector("list", nlevels(ex)), levels(ex))
 
+  t_df <- data.frame(treat)
+
   for (e in levels(ex)) {
     if (nlevels(ex) > 1) {
       mo_ <- mo[ex[treat_==1] == e, ex[treat_==0] == e, drop = FALSE]
@@ -216,7 +218,7 @@ matchit2full <- function(treat, formula, data, distance, discarded,
                         c(list(mo_,
                                min.controls = min.controls,
                                max.controls = max.controls,
-                               data = treat), #just to get rownames; not actually used in matching
+                               data = t_df), #just to get rownames; not actually used in matching
                           A))
     },
     warning = function(w) {
@@ -317,13 +319,16 @@ matchit2optimal <- function(treat, formula, data, distance, discarded,
     e_ratios <- vapply(levels(ex), function(e) sum(treat_[ex == e] == 0)/sum(treat_[ex == e] == 1), numeric(1L))
 
     if (any(e_ratios < 1)) {
-      warning(paste0("Fewer ", tc[2], " units than ", tc[1], " units in some 'exact' strata; not all ", tc[1], " units will get a match."), immediate. = TRUE, call. = FALSE)
+      warning(sprintf("Fewer %s units than %s units in some 'exact' strata; not all %s units will get a match.",
+                      tc[2], tc[1], tc[1]), immediate. = TRUE, call. = FALSE)
     }
     if (ratio > 1 && any(e_ratios < ratio)) {
       if (ratio == max.controls)
-        warning(paste0("Not all ", tc[1], " units will get ", ratio, " matches."), immediate. = TRUE, call. = FALSE)
+        warning(sprintf("Not all %s units will get %s matches.",
+                        tc[1], ratio), immediate. = TRUE, call. = FALSE)
       else
-        warning(paste0("Not enough ", tc[2], " units for an average of ", ratio, " matches per ", tc[1], " unit in all 'exact' strata."), immediate. = TRUE, call. = FALSE)
+        warning(sprintf("Not enough %s units for an average of %s matches per %s unit in all 'exact' strata.",
+                        tc[2], ratio, tc[1]), immediate. = TRUE, call. = FALSE)
     }
   }
   else {
@@ -331,13 +336,16 @@ matchit2optimal <- function(treat, formula, data, distance, discarded,
     e_ratios <- setNames(sum(treat_ == 0)/sum(treat_ == 1), levels(ex))
 
     if (e_ratios < 1) {
-      warning(paste0("Fewer ", tc[2], " units than ", tc[1], " units; not all ", tc[1], " units will get a match."), immediate. = TRUE, call. = FALSE)
+      warning(sprintf("Fewer %s units than %s units; not all %s units will get a match.",
+                      tc[2], tc[1], tc[1]), immediate. = TRUE, call. = FALSE)
     }
     else if (e_ratios < ratio) {
       if (ratio == max.controls)
-        warning(paste0("Not all ", tc[1], " units will get ", ratio, " matches."), immediate. = TRUE, call. = FALSE)
+        warning(sprintf("Not all %s units will get %s matches.",
+                        tc[1], ratio), immediate. = TRUE, call. = FALSE)
       else
-        warning(paste0("Not enough ", tc[2], " units for an average of ", ratio, " matches per ", tc[1], " unit."), immediate. = TRUE, call. = FALSE)
+        warning(sprintf("Not enough %s units for an average of %s matches per %s unit.",
+                        tc[2], ratio, tc[1]), immediate. = TRUE, call. = FALSE)
     }
   }
 
@@ -378,6 +386,8 @@ matchit2optimal <- function(treat, formula, data, distance, discarded,
   pair <- setNames(rep(NA_character_, length(treat)), names(treat))
   p <- setNames(vector("list", nlevels(ex)), levels(ex))
 
+  t_df <- data.frame(treat)
+
   for (e in levels(ex)) {
     if (nlevels(ex) > 1) {
       mo_ <- mo[ex[treat_==1] == e, ex[treat_==0] == e, drop = FALSE]
@@ -415,7 +425,7 @@ matchit2optimal <- function(treat, formula, data, distance, discarded,
                                mean.controls = ratio_,
                                min.controls = min.controls_,
                                max.controls = max.controls_,
-                               data = treat), #just to get rownames; not actually used in matching
+                               data = t_df), #just to get rownames; not actually used in matching
                           A))
     },
     warning = function(w) {
@@ -478,9 +488,12 @@ matchit2genetic <- function(treat, data, distance, discarded,
 
   if (!replace) {
     if (sum(!discarded & treat != focal) < sum(!discarded & treat == focal)) {
-      warning("Fewer ", tc[2], " units than ", tc[1], " units; not all ", tc[1], " units will get a match.", immediate. = TRUE, call. = FALSE)    }
+      warning(sprintf("Fewer %s units than %s units; not all %s units will get a match.",
+                      tc[2], tc[1], tc[1]), immediate. = TRUE, call. = FALSE)
+    }
     else if (sum(!discarded & treat != focal) < sum(!discarded & treat == focal)*ratio) {
-      stop(paste0("Not enough ", tc[2], " units for ", ratio, " matches for each ", tc[1], " unit."), call. = FALSE)
+      stop(sprintf("Not enough %s units for %s matches for each %s unit.",
+                   tc[2], ratio, tc[1]), call. = FALSE)
     }
   }
 
@@ -723,7 +736,7 @@ matchit2nearest <-  function(treat, data, distance, discarded,
                              caliper = NULL, mahvars = NULL, exact = NULL,
                              formula = NULL, estimand = "ATT", verbose = FALSE,
                              is.full.mahalanobis, fast = TRUE,
-                             antiexact = NULL, group = NULL, ...){
+                             antiexact = NULL, unit.id = NULL, ...){
 
   if (verbose) {
     if (fast) check.package("RcppProgress")
@@ -815,17 +828,17 @@ matchit2nearest <-  function(treat, data, distance, discarded,
     m.order <- "data"
   }
 
-  if (!is.null(group) && reuse.max < n1) {
-    group <- process.variable.input(group, data)
-    group <- factor(exactify(model.frame(group, data = data),
+  if (!is.null(unit.id) && reuse.max < n1) {
+    unit.id <- process.variable.input(unit.id, data)
+    unit.id <- factor(exactify(model.frame(unit.id, data = data),
                              nam = lab, sep = ", ", include_vars = TRUE))
-    num_ctrl_groups <- length(unique(group[treat == 0]))
+    num_ctrl_unit.ids <- length(unique(unit.id[treat == 0]))
 
-    #If each control unit is a group, groups are meaningless
-    if (num_ctrl_groups == n0) group <- NULL
+    #If each control unit is a unit.id, unit.ids are meaningless
+    if (num_ctrl_unit.ids == n0) unit.id <- NULL
   }
   else {
-    group <- NULL
+    unit.id <- NULL
   }
 
   if (!is.null(exact)) {
@@ -837,19 +850,21 @@ matchit2nearest <-  function(treat, data, distance, discarded,
     if (reuse.max < n1) {
 
       e_ratios <- vapply(levels(ex), function(e) {
-        if (is.null(group)) sum(treat[ex == e] == 0)*(reuse.max/sum(treat[ex == e] == 1))
-        else length(unique(group[treat == 0 & ex == e]))*(reuse.max/sum(treat[ex == e] == 1))
+        if (is.null(unit.id)) sum(treat[ex == e] == 0)*(reuse.max/sum(treat[ex == e] == 1))
+        else length(unique(unit.id[treat == 0 & ex == e]))*(reuse.max/sum(treat[ex == e] == 1))
       }, numeric(1L))
 
-#Rewrite warnings using sprintf
       if (any(e_ratios < 1)) {
-        warning(paste0("Fewer ", tc[2], " units than ", tc[1], " units in some 'exact' strata; not all ", tc[1], " units will get a match."), immediate. = TRUE, call. = FALSE)
+        warning(sprintf("Fewer %s units than %s units in some 'exact' strata; not all %s units will get a match.",
+                       tc[2], tc[1], tc[1]), immediate. = TRUE, call. = FALSE)
       }
       if (ratio > 1 && any(e_ratios < ratio)) {
         if (is.null(max.controls) || ratio == max.controls)
-          warning(paste0("Not all ", tc[1], " units will get ", ratio, " matches."), immediate. = TRUE, call. = FALSE)
+          warning(sprintf("Not all %s units will get %s matches.",
+                          tc[1], ratio), immediate. = TRUE, call. = FALSE)
         else
-          warning(paste0("Not enough ", tc[2], " units for an average of ", ratio, " matches per ", tc[1], " unit in all 'exact' strata."), immediate. = TRUE, call. = FALSE)
+          warning(sprintf("Not enough %s units for an average of %s matches per %s unit in all 'exact' strata.",
+                          tc[2], ratio, tc[1]), immediate. = TRUE, call. = FALSE)
       }
     }
   }
@@ -859,13 +874,13 @@ matchit2nearest <-  function(treat, data, distance, discarded,
     if (reuse.max < n1) {
 
       e_ratios <- {
-        if (is.null(group)) as.numeric(reuse.max)*n0/n1
-        else as.numeric(reuse.max)*num_ctrl_groups/n1
+        if (is.null(unit.id)) as.numeric(reuse.max)*n0/n1
+        else as.numeric(reuse.max)*num_ctrl_unit.ids/n1
       }
 
       if (e_ratios < 1) {
         warning(sprintf("Fewer %s %s than %s units; not all %s units will get a match.",
-                        tc[2], if (is.null(group)) "units" else "groups", tc[1], tc[1]),
+                        tc[2], if (is.null(unit.id)) "units" else "unit IDs", tc[1], tc[1]),
                 immediate. = TRUE, call. = FALSE)
       }
       else if (e_ratios < ratio) {
@@ -875,7 +890,7 @@ matchit2nearest <-  function(treat, data, distance, discarded,
                   immediate. = TRUE, call. = FALSE)
         else
           warning(sprintf("Not enough %s %s for an average of %s matches per %s unit.",
-                          tc[2], if (is.null(group)) "units" else "groups", ratio, tc[1]),
+                          tc[2], if (is.null(unit.id)) "units" else "unit IDs", ratio, tc[1]),
                   immediate. = TRUE, call. = FALSE)
       }
     }
@@ -925,14 +940,14 @@ matchit2nearest <-  function(treat, data, distance, discarded,
     else "largest"
   }
 
-  if (is.null(ex) || !is.null(group)) {
+  if (is.null(ex) || !is.null(unit.id)) {
     ord <- switch(m.order,
                   "largest" = order(distance[treat == 1], decreasing = TRUE),
                   "smallest" = order(distance[treat == 1], decreasing = FALSE),
                   "random" = sample.int(n1),
                   "data" = seq_len(n1))
     mm <- nn_matchC(treat, ord, ratio, max_rat, discarded, reuse.max, distance, distance_mat, ex, caliper.dist,
-                    caliper.covs, caliper.covs.mat, mahcovs, antiexactcovs, group, verbose)
+                    caliper.covs, caliper.covs.mat, mahcovs, antiexactcovs, unit.id, verbose)
   }
   else {
     mm_list <- lapply(levels(ex), function(e) {
@@ -1030,7 +1045,8 @@ matchit2subclass <- function(treat, distance, discarded,
     else {
       sub.by <- sub.by.choices[pmatch(sub.by, sub.by.choices)]
       estimand <- switch(sub.by, "treat" = "ATT", "control" = "ATC", "ATE")
-      warning(paste0("'sub.by' is deprecated and has been replaced with 'estimand'. Setting 'estimand' to \"", estimand, "\"."), call. = FALSE, immediate. = TRUE)
+      warning(sprintf("'sub.by' is deprecated and has been replaced with 'estimand'. Setting 'estimand' to \"%s\".",
+                      estimand), call. = FALSE, immediate. = TRUE)
     }
   }
   else {
