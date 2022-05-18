@@ -40,7 +40,7 @@ matchit(formula,
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">MatchIt</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">4.3.4.9000</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">4.4.0</span>
       </span>
     </div>
 
@@ -94,7 +94,7 @@ matchit(formula,
     </div>
 
     <div class="ref-description">
-    <p>In <code><a href="matchit.html">matchit()</a></code>, setting <code>method = "optimal"</code> performs optimal pair matching. The matching is optimal in the sense that that sum of the absolute pairwise distances in the matched sample is as small as possible. The method functionally relies on <code><a href="https://rdrr.io/pkg/optmatch/man/pairmatch.html" class="external-link">optmatch::pairmatch()</a></code>.</p>
+    <p>In <code><a href="matchit.html">matchit()</a></code>, setting <code>method = "optimal"</code> performs optimal pair matching. The matching is optimal in the sense that that sum of the absolute pairwise distances in the matched sample is as small as possible. The method functionally relies on <code><a href="https://markmfredrickson.github.io/optmatch/reference/pairmatch.html" class="external-link">optmatch::pairmatch()</a></code>.</p>
 <p>Advantages of optimal pair matching include that the matching order is not required to be specified and it is less likely that extreme within-pair distances will be large, unlike with nearest neighbor matching. Generally, however, as a subset selection method, optimal pair matching tends to perform similarly to nearest neighbor matching in that similar subsets of units will be selected to be matched.</p>
 <p>This page details the allowable arguments with <code>method = "optmatch"</code>. See <code><a href="matchit.html">matchit()</a></code> for an explanation of what each argument means in a general context and how it can be specified.</p>
 <p>Below is how <code><a href="matchit.html">matchit()</a></code> is used for optimal pair matching:</p><div class="sourceCode"><pre><code><span class="fu"><a href="../reference/matchit.html">matchit</a></span><span class="op">(</span><span class="va">formula</span>,
@@ -128,19 +128,19 @@ matchit(formula,
 <dt>method</dt>
 <dd><p>set here to <code>"optimal"</code>.</p></dd>
 <dt>distance</dt>
-<dd><p>the distance measure to be used. See <code><a href="distance.html">distance</a></code> for allowable options. When set to <code>"mahalanobis"</code>, optimal Mahalanobis distance matching will be performed on the variables named in <code>formula</code>. Can be supplied as a distance matrix.</p></dd>
+<dd><p>the distance measure to be used. See <code><a href="distance.html">distance</a></code> for allowable options. Can be supplied as a distance matrix.</p></dd>
 <dt>link</dt>
-<dd><p>when <code>distance</code> is specified as a string and not <code>"mahalanobis"</code>, an additional argument controlling the link function used in estimating the distance measure. See <code><a href="distance.html">distance</a></code> for allowable options with each option.</p></dd>
+<dd><p>when <code>distance</code> is specified as a method of estimating propensity scores, an additional argument controlling the link function used in estimating the distance measure. See <code><a href="distance.html">distance</a></code> for allowable options with each option.</p></dd>
 <dt>distance.options</dt>
 <dd><p>a named list containing additional arguments supplied to the function that estimates the distance measure as determined by the argument to <code>distance</code>.</p></dd>
 <dt>estimand</dt>
 <dd><p>a string containing the desired estimand. Allowable options include <code>"ATT"</code> and <code>"ATC"</code>. See Details.</p></dd>
 <dt>exact</dt>
-<dd><p>for which variables exact matching should take place. Exact matching is processed using <code><a href="https://rdrr.io/pkg/optmatch/man/exactMatch.html" class="external-link">optmatch::exactMatch()</a></code>.</p></dd>
+<dd><p>for which variables exact matching should take place. Exact matching is processed using <code><a href="https://markmfredrickson.github.io/optmatch/reference/exactMatch.html" class="external-link">optmatch::exactMatch()</a></code>.</p></dd>
 <dt>mahvars</dt>
-<dd><p>for which variables Mahalanobis distance matching should take place when a distance measure other than <code>"mahalanobis"</code> is used (e.g., to discard units for common support). If specified, the distance measure will not be used in matching.</p></dd>
+<dd><p>for which variables Mahalanobis distance matching should take place when <code>distance</code> corresponds to a propensity score (e.g., for caliper matching or to discard units for common support). If specified, the distance measure will not be used in matching.</p></dd>
 <dt>antiexact</dt>
-<dd><p>for which variables ant-exact matching should take place. Anti-exact matching is processed using <code><a href="https://rdrr.io/pkg/optmatch/man/antiExactMatch.html" class="external-link">optmatch::antiExactMatch()</a></code>.</p></dd>
+<dd><p>for which variables ant-exact matching should take place. Anti-exact matching is processed using <code><a href="https://markmfredrickson.github.io/optmatch/reference/antiExactMatch.html" class="external-link">optmatch::antiExactMatch()</a></code>.</p></dd>
 <dt>discard</dt>
 <dd><p>a string containing a method for discarding units outside a region of common support. Only allowed when <code>distance</code> is not <code>"mahalanobis"</code> and not a matrix.</p></dd>
 <dt>reestimate</dt>
@@ -154,22 +154,22 @@ matchit(formula,
 <dt>verbose</dt>
 <dd><p><code>logical</code>; whether information about the matching process should be printed to the console. What is printed depends on the matching method. Default is <code>FALSE</code> for no printing other than warnings.</p></dd>
 <dt>...</dt>
-<dd><p>additional arguments passed to <code><a href="https://rdrr.io/pkg/optmatch/man/fullmatch.html" class="external-link">optmatch::fullmatch()</a></code>. Allowed arguments include <code>tol</code> and <code>solver</code>. See the <code><a href="https://rdrr.io/pkg/optmatch/man/fullmatch.html" class="external-link">optmatch::fullmatch()</a></code> documentation for details. In general, <code>tol</code> should be set to a low number (e.g., <code>1e-7</code>) to get a more precise solution.</p></dd>
+<dd><p>additional arguments passed to <code><a href="https://markmfredrickson.github.io/optmatch/reference/fullmatch.html" class="external-link">optmatch::fullmatch()</a></code>. Allowed arguments include <code>tol</code> and <code>solver</code>. See the <code><a href="https://markmfredrickson.github.io/optmatch/reference/fullmatch.html" class="external-link">optmatch::fullmatch()</a></code> documentation for details. In general, <code>tol</code> should be set to a low number (e.g., <code>1e-7</code>) to get a more precise solution.</p></dd>
 </dl><p>The arguments <code>replace</code>, <code>caliper</code>, and <code>m.order</code> are ignored with a warning.</p>
     </div>
     <div id="note">
     <h2>Note</h2>
-    <p>Optimal pair matching is a restricted form of optimal full matching where the number of treated units in each subclass is equal to 1, whereas in unrestricted full matching, multiple treated units can be assigned to the same subclass. <code><a href="https://rdrr.io/pkg/optmatch/man/pairmatch.html" class="external-link">optmatch::pairmatch()</a></code> is simply a wrapper for <code><a href="https://rdrr.io/pkg/optmatch/man/fullmatch.html" class="external-link">optmatch::fullmatch()</a></code>, which performs optimal full matching and is the workhorse for <code><a href="method_full.html">method_full</a></code>. In the same way, <code><a href="matchit.html">matchit()</a></code> uses <code><a href="https://rdrr.io/pkg/optmatch/man/fullmatch.html" class="external-link">optmatch::fullmatch()</a></code> under the hood, imposing the restrictions that make optimal full matching function like optimal pair matching (which is simply to set <code>min.controls &gt;= 1</code> and to pass <code>ratio</code> to the <code>mean.controls</code> argument). This distinction is not important for regular use but may be of interest to those examining the source code.</p>
-<p>The option <code>"optmatch_max_problem_size"</code> is automatically set to <code>Inf</code> during the matching process, different from its default in <em>optmatch</em>. This enables matching problems of any size to be run, but may also let huge, infeasible problems get through and potentially take a long time or crash R. See <code><a href="https://rdrr.io/pkg/optmatch/man/setMaxProblemSize.html" class="external-link">optmatch::setMaxProblemSize()</a></code> for more details.</p>
+    <p>Optimal pair matching is a restricted form of optimal full matching where the number of treated units in each subclass is equal to 1, whereas in unrestricted full matching, multiple treated units can be assigned to the same subclass. <code><a href="https://markmfredrickson.github.io/optmatch/reference/pairmatch.html" class="external-link">optmatch::pairmatch()</a></code> is simply a wrapper for <code><a href="https://markmfredrickson.github.io/optmatch/reference/fullmatch.html" class="external-link">optmatch::fullmatch()</a></code>, which performs optimal full matching and is the workhorse for <code><a href="method_full.html">method_full</a></code>. In the same way, <code><a href="matchit.html">matchit()</a></code> uses <code><a href="https://markmfredrickson.github.io/optmatch/reference/fullmatch.html" class="external-link">optmatch::fullmatch()</a></code> under the hood, imposing the restrictions that make optimal full matching function like optimal pair matching (which is simply to set <code>min.controls &gt;= 1</code> and to pass <code>ratio</code> to the <code>mean.controls</code> argument). This distinction is not important for regular use but may be of interest to those examining the source code.</p>
+<p>The option <code>"optmatch_max_problem_size"</code> is automatically set to <code>Inf</code> during the matching process, different from its default in <em>optmatch</em>. This enables matching problems of any size to be run, but may also let huge, infeasible problems get through and potentially take a long time or crash R. See <code><a href="https://markmfredrickson.github.io/optmatch/reference/setMaxProblemSize.html" class="external-link">optmatch::setMaxProblemSize()</a></code> for more details.</p>
     </div>
     <div id="outputs">
     <h2>Outputs</h2>
-    <p>All outputs described in <code><a href="matchit.html">matchit()</a></code> are returned with <code>method = "optimal"</code>. When <code>include.obj = TRUE</code> in the call to <code><a href="matchit.html">matchit()</a></code>, the output of the call to <code><a href="https://rdrr.io/pkg/optmatch/man/fullmatch.html" class="external-link">optmatch::fullmatch()</a></code> will be included in the output. When <code>exact</code> is specified, this will be a list of such objects, one for each stratum of the <code>exact</code> variables.</p>
+    <p>All outputs described in <code><a href="matchit.html">matchit()</a></code> are returned with <code>method = "optimal"</code>. When <code>include.obj = TRUE</code> in the call to <code><a href="matchit.html">matchit()</a></code>, the output of the call to <code><a href="https://markmfredrickson.github.io/optmatch/reference/fullmatch.html" class="external-link">optmatch::fullmatch()</a></code> will be included in the output. When <code>exact</code> is specified, this will be a list of such objects, one for each stratum of the <code>exact</code> variables.</p>
     </div>
     <div id="see-also">
     <h2>See also</h2>
     <div class="dont-index"><p><code><a href="matchit.html">matchit()</a></code> for a detailed explanation of the inputs and outputs of a call to <code><a href="matchit.html">matchit()</a></code>.</p>
-<p><code><a href="https://rdrr.io/pkg/optmatch/man/fullmatch.html" class="external-link">optmatch::fullmatch()</a></code>, which is the workhorse.</p>
+<p><code><a href="https://markmfredrickson.github.io/optmatch/reference/fullmatch.html" class="external-link">optmatch::fullmatch()</a></code>, which is the workhorse.</p>
 <p><code><a href="method_full.html">method_full</a></code> for optimal full matching, of which optimal pair matching is a special case, and which relies on similar machinery.</p></div>
     </div>
     <div id="details">
@@ -178,7 +178,7 @@ matchit(formula,
 <div class="section">
 <h3 id="mahalanobis-distance-matching">Mahalanobis Distance Matching<a class="anchor" aria-label="anchor" href="#mahalanobis-distance-matching"></a></h3>
 <p>Mahalanobis distance matching can be done one of two ways:</p>
-<p>1) If no propensity score needs to be estimated, <code>distance</code> should be set to <code>"mahalanobis"</code>, and Mahalanobis distance matching will occur on all the variables in <code>formula</code>. Arguments to <code>discard</code> and <code>mahvars</code> will be ignored. For example, to perform simple Mahalanobis distance matching, the following could be run:</p>
+<p>1) If no propensity score needs to be estimated, <code>distance</code> should be set to <code>"mahalanobis"</code>, and Mahalanobis distance matching will occur using all the variables in <code>formula</code>. Arguments to <code>discard</code> and <code>mahvars</code> will be ignored. For example, to perform simple Mahalanobis distance matching, the following could be run:</p>
 <div class="sourceCode"><pre><code><span class="fu"><a href="../reference/matchit.html">matchit</a></span><span class="op">(</span><span class="va">treat</span> <span class="op">~</span> <span class="va">X1</span> <span class="op">+</span> <span class="va">X2</span>, method <span class="op">=</span> <span class="st">"nearest"</span>,
         distance <span class="op">=</span> <span class="st">"mahalanobis"</span><span class="op">)</span></code></pre></div>
 
@@ -189,8 +189,6 @@ matchit(formula,
         mahvars <span class="op">=</span> <span class="op">~</span> <span class="va">X1</span> <span class="op">+</span> <span class="va">X2</span><span class="op">)</span></code></pre></div>
 
 <p>With this code, <code>X1</code>, <code>X2</code>, and <code>X3</code> are used to estimate the propensity score (using the <code>"glm"</code> method, which by default is logistic regression), which is used to identify the common support. The actual matching occurs on the Mahalanobis distance computed only using <code>X1</code> and <code>X2</code>, which are supplied to <code>mahvars</code>. The estimated propensity scores will be included in the <code>distance</code> component of the <code><a href="matchit.html">matchit()</a></code> output.</p>
-<p>When sampling weights are supplied through the <code>s.weights</code> argument, the covariance matrix of the covariates used in the Mahalanobis distance is <strong>not</strong> weighted by the sampling weights.</p>
-<p>Mahalanobis distance matching can also be done by supplying a Mahalanobis distance matrix (e.g., the output of a call to <code><a href="https://rdrr.io/pkg/optmatch/man/match_on-methods.html" class="external-link">optmatch::match_on()</a></code>) to the <code>distance</code> argument. This makes it straightforward to use the robust rank-based Mahalanobis distance available in <span class="pkg">optmatch</span>.</p>
 </div>
 <div class="section">
 <h3 id="estimand">Estimand<a class="anchor" aria-label="anchor" href="#estimand"></a></h3>
@@ -200,14 +198,18 @@ matchit(formula,
 <div class="section">
 <h3 id="variable-ratio-matching">Variable Ratio Matching<a class="anchor" aria-label="anchor" href="#variable-ratio-matching"></a></h3>
 <p><code><a href="matchit.html">matchit()</a></code> can perform variable ratio matching, which involves matching a different number of control units to each treated unit. When <code>ratio &gt; 1</code>, rather than requiring all treated units to receive <code>ratio</code> matches, the arguments to <code>max.controls</code> and <code>min.controls</code> can be specified to control the maximum and minimum number of matches each treated unit can have. <code>ratio</code> controls how many total control units will be matched: <code>n1 * ratio</code> control units will be matched, where <code>n1</code> is the number of treated units, yielding the same total number of matched controls as fixed ratio matching does.</p>
-<p>Variable ratio matching can be used with either propensity score matching or Mahalanobis distance matching, including when <code>distance</code> is supplied as a matrix. <code>ratio</code> does not have to be an integer but must be greater than 1 and less than <code>n0/n1</code>, where <code>n0</code> and <code>n1</code> are the number of control and treated units, respectively. Setting <code>ratio = n0/n1</code> performs a restricted form of full matching where all control units are matched. If <code>min.controls</code> is not specified, it is set to 1 by default. <code>min.controls</code> must be less than <code>ratio</code>, and <code>max.controls</code> must be greater than <code>ratio</code>. See the Examples section of <code><a href="method_nearest.html">method_nearest</a></code> for an example of their use, which is the same as it is with optimal matching.</p>
+<p>Variable ratio matching can be used with any <code>distance</code> specification. <code>ratio</code> does not have to be an integer but must be greater than 1 and less than <code>n0/n1</code>, where <code>n0</code> and <code>n1</code> are the number of control and treated units, respectively. Setting <code>ratio = n0/n1</code> performs a restricted form of full matching where all control units are matched. If <code>min.controls</code> is not specified, it is set to 1 by default. <code>min.controls</code> must be less than <code>ratio</code>, and <code>max.controls</code> must be greater than <code>ratio</code>. See the Examples section of <code><a href="method_nearest.html">method_nearest</a></code> for an example of their use, which is the same as it is with optimal matching.</p>
 </div>
 
+    </div>
+    <div id="note">
+    <h2>Note</h2>
+    <p>The Mahalanobis distance and its robust rank-based version are computed differently between <em>MatchIt</em> and <em>optmatch</em>. The covariance matrix used in <em>MatchIt</em> is the covariance matrix computed in the full sample, with sampling weights incorporated if supplied to <code>s.weights</code>. The covariance matrix used in <em>optmatch</em> (i.e., using <code><a href="https://markmfredrickson.github.io/optmatch/reference/match_on-methods.html" class="external-link">optmatch::match_on()</a></code>) is computed as the average of the covariance matrices computed in the two treatment groups (what the package authors call a "pooled" covariance matrix). This is to say that results may differ when using <code>matchit(., method = "full", distance = "mahalanobis"</code> and when using <code><a href="https://markmfredrickson.github.io/optmatch/reference/fullmatch.html" class="external-link">optmatch::fullmatch()</a></code> with a Mahalanobis matrix computed using <code><a href="https://markmfredrickson.github.io/optmatch/reference/match_on-methods.html" class="external-link">optmatch::match_on()</a></code>.</p>
     </div>
     <div id="references">
     <h2>References</h2>
     <p>In a manuscript, be sure to cite the following paper if using <code><a href="matchit.html">matchit()</a></code> with <code>method = "optimal"</code>:</p>
-<p>Hansen, B. B., &amp; Klopfer, S. O. (2006). Optimal Full Matching and Related Designs via Network Flows. Journal of Computational and Graphical Statistics, 15(3), 609–627. doi: <a href="https://doi.org/10.1198/106186006X137047" class="external-link">10.1198/106186006X137047</a></p>
+<p>Hansen, B. B., &amp; Klopfer, S. O. (2006). Optimal Full Matching and Related Designs via Network Flows. Journal of Computational and Graphical Statistics, 15(3), 609–627. <a href="https://doi.org/10.1198/106186006X137047" class="external-link">doi:10.1198/106186006X137047</a></p>
 <p>For example, a sentence might read:</p>
 <p><em>Optimal pair matching was performed using the MatchIt package (Ho, Imai, King, &amp; Stuart, 2011) in R, which calls functions from the optmatch package (Hansen &amp; Klopfer, 2006).</em></p>
     </div>
@@ -284,19 +286,6 @@ matchit(formula,
 <span class="r-out co"><span class="r-pr">#&gt;</span> re74         0.2586          0.8065</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> re75         0.1207          0.8471</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Percent Balance Improvement:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>            Std. Mean Diff. Var. Ratio eCDF Mean eCDF Max</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> distance              98.2       96.4      98.5     88.0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> age                   93.8        7.7       4.6    -42.1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> educ                  37.6       32.0      34.7     53.6</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> raceblack            100.0          .     100.0    100.0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> racehispan           100.0          .     100.0    100.0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> racewhite            100.0          .     100.0    100.0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> nodegree              84.5          .      84.5     84.5</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> married               92.0          .      92.0     92.0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> re74                  97.7       46.1      77.9     42.1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> re75                  98.3    -1041.1      72.3     58.0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Sample Sizes:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>           Control Treated</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> All           429     185</span>
@@ -367,7 +356,7 @@ matchit(formula,
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
 </div>
 
       </footer></div>

@@ -18,7 +18,7 @@ This page documents the overall use of matchit(), but for specifics of how match
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">MatchIt</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">4.3.4.9000</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">4.4.0</span>
       </span>
     </div>
 
@@ -110,9 +110,9 @@ This page documents the overall use of matchit(), but for specifics of how match
 <dt>data</dt>
 <dd><p>a data frame containing the variables named in <code>formula</code> and possible other arguments. If not found in <code>data</code>, the variables will be sought in the environment.</p></dd>
 <dt>method</dt>
-<dd><p>the matching method to be used. The allowed methods are <code><a href="method_nearest.html">"nearest"</a></code> for nearest neighbor matching (on the propensity score by default), <code><a href="method_optimal.html">"optimal"</a></code> for optimal pair matching, <code><a href="method_full.html">"full"</a></code> for optimal full matching, <code><a href="method_genetic.html">"genetic"</a></code> for genetic matching, <code><a href="method_cem.html">"cem"</a></code> for coarsened exact matching, <code><a href="method_exact.html">"exact"</a></code> for exact matching, and <code><a href="method_subclass.html">"subclass"</a></code> for subclassification. When set to <code>NULL</code>, no matching will occur, but propensity score estimation and common support restrictions will still occur if requested. See the linked pages for each method for more details on what these methods do, how the arguments below are used by each on, and what additional arguments are allowed.</p></dd>
+<dd><p>the matching method to be used. The allowed methods are <code><a href="method_nearest.html">"nearest"</a></code> for nearest neighbor matching (on the propensity score by default), <code><a href="method_optimal.html">"optimal"</a></code> for optimal pair matching, <code><a href="method_full.html">"full"</a></code> for optimal full matching, <code><a href="method_genetic.html">"genetic"</a></code> for genetic matching, <code><a href="method_cem.html">"cem"</a></code> for coarsened exact matching, <code><a href="method_exact.html">"exact"</a></code> for exact matching, <code><a href="method_cardinality.html">"cardinality"</a></code> for cardinality and template matching, and <code><a href="method_subclass.html">"subclass"</a></code> for subclassification. When set to <code>NULL</code>, no matching will occur, but propensity score estimation and common support restrictions will still occur if requested. See the linked pages for each method for more details on what these methods do, how the arguments below are used by each on, and what additional arguments are allowed.</p></dd>
 <dt>distance</dt>
-<dd><p>the distance measure to be used. Can be either a string containing the name of a distance measure, a vector of already-computed distance measures, or a matrix of pairwise distances. When supplied as a vector, the distance measures should be values whose pairwise difference is the distance between two units, e.g., propensity scores for propensity score matching. When supplied as a matrix, each value should represent the pairwise distance between units. See <code><a href="distance.html">distance</a></code> for allowable options. The default is <code>"glm"</code> for propensity scores estimated with logistic regression using <code><a href="https://rdrr.io/r/stats/glm.html" class="external-link">glm()</a></code>. Ignored for some methods; see individual methods pages for information on whether and how the distance measure is used.</p></dd>
+<dd><p>the distance measure to be used. Can be either the name of a method of estimating propensity scores (e.g., <code>"glm"</code>), the name of a method of computing a distance matrix from the covariates (e.g., <code>"mahalanobis"</code>), a vector of already-computed distance measures, or a matrix of pairwise distances. See <code><a href="distance.html">distance</a></code> for allowable options. The default is <code>"glm"</code> for propensity scores estimated with logistic regression using <code><a href="https://rdrr.io/r/stats/glm.html" class="external-link">glm()</a></code>. Ignored for some methods; see individual methods pages for information on whether and how the distance measure is used.</p></dd>
 <dt>link</dt>
 <dd><p>when <code>distance</code> is specified as a string, an additional argument controlling the link function used in estimating the distance measure. Allowable options depend on the specific <code>distance</code> value specified. See <code><a href="distance.html">distance</a></code> for allowable options with each option. The default is <code>"logit"</code>, which, along with <code>distance = "glm"</code>, identifies the default measure as logistic regression propensity scores.</p></dd>
 <dt>distance.options</dt>
@@ -122,7 +122,7 @@ This page documents the overall use of matchit(), but for specifics of how match
 <dt>exact</dt>
 <dd><p>for methods that allow it, for which variables exact matching should take place. Can be specified as a string containing the names of variables in <code>data</code> to be used or a one-sided formula with the desired variables on the right-hand side (e.g., <code>~ X3 + X4</code>). See the individual methods pages for information on whether and how this argument is used.</p></dd>
 <dt>mahvars</dt>
-<dd><p>for methods that allow it, on which variables Mahalanobis distance matching should take place when a distance measure other than <code>"mahalanobis"</code> is used. Usually used to perform Mahalanobis distance matching within propensity score calipers, where the propensity scores are computed using <code>formula</code> and <code>distance</code>. Can be specified as a string containing the names of variables in <code>data</code> to be used or a one-sided formula with the desired variables on the right-hand side (e.g., <code>~ X3 + X4</code>). See the individual methods pages for information on whether and how this argument is used.</p></dd>
+<dd><p>for methods that allow it, on which variables Mahalanobis distance matching should take place when <code>distance</code> corresponds to propensity scores. Usually used to perform Mahalanobis distance matching within propensity score calipers, where the propensity scores are computed using <code>formula</code> and <code>distance</code>. Can be specified as a string containing the names of variables in <code>data</code> to be used or a one-sided formula with the desired variables on the right-hand side (e.g., <code>~ X3 + X4</code>). See the individual methods pages for information on whether and how this argument is used.</p></dd>
 <dt>antiexact</dt>
 <dd><p>for methods that allow it, for which variables anti-exact matching should take place. Anti-exact matching ensures paired individuals do not have the same value of the anti-exact matching variable(s). Can be specified as a string containing the names of variables in <code>data</code> to be used or a one-sided formula with the desired variables on the right-hand side (e.g., <code>~ X3 + X4</code>). See the individual methods pages for information on whether and how this argument is used.</p></dd>
 <dt>discard</dt>
@@ -158,18 +158,18 @@ This page documents the overall use of matchit(), but for specifics of how match
 <li><p><code><a href="method_genetic.html">method_genetic</a></code> for genetic matching</p></li>
 <li><p><code><a href="method_cem.html">method_cem</a></code> for coarsened exact matching</p></li>
 <li><p><code><a href="method_exact.html">method_exact</a></code> for exact matching</p></li>
-<li><p><code><a href="method_subclass.html">method_subclass</a></code> for subclassification</p></li>
 <li><p><code><a href="method_cardinality.html">method_cardinality</a></code> for cardinality and template matching</p></li>
+<li><p><code><a href="method_subclass.html">method_subclass</a></code> for subclassification</p></li>
 </ul><p>The pages contain information on what the method does, which of the arguments above are allowed with them and how they are interpreted, and what additional arguments can be supplied to further tune the method. Note that the default method with no arguments supplied other than <code>formula</code> and <code>data</code> is 1:1 nearest neighbor matching without replacement on a propensity score estimated using a logistic regression of the treatment on the covariates. This is not the same default offered by other matching programs, such as those in <em>Matching</em>, <code>teffects</code> in Stata, or <code>PROC PSMATCH</code> in SAS, so care should be taken if trying to replicate the results of those programs.</p>
 <p>When <code>method = NULL</code>, no matching will occur, but any propensity score estimation and common support restriction will. This can be a simple way to estimate the propensity score for use in future matching specifications without having to reestimate it each time. The <code>matchit()</code> output with no matching can be supplied to <code>summary</code> to examine balance prior to matching on any of the included covariates and on the propensity score if specified. All arguments other than <code>distance</code>, <code>discard</code>, and <code>reestimate</code> will be ignored.</p>
-<p>See the <code><a href="distance.html">distance</a></code> argument for details on the several ways to specify the <code>distance</code> and <code>link</code> arguments to estimate propensity scores and create distance measures.</p>
-<p>When the treatment variable is not a <code>0/1</code> variable, it will be coerced to one and returned as such in the <code>matchit()</code> output (see section Value, below). The following rules are used: 1) if <code>0</code> is one of the values, it will be considered the control and the other value the treated; otherwise, 2) if the variable is a factor, <code>levels(treat)[1]</code> will be considered control and the other variable the treated; otherwise, 3) <code>sort(unique(treat))[1]</code> will be considered control and the other value the treated. It is safest to ensure the treatment variable is a <code>0/1</code> variable.</p>
-<p>The <code>discard</code> option implements a common support restriction. It can only be used when a distance measure is estimated or supplied as a vector, i.e., when <code>distance</code> is specified as something other than <code>"mahalanobis"</code> and is not a matrix, and is ignored for some matching methods. When specified as <code>"treated"</code>, treated units whose distance measure is outside the range of distance measures of the control units will be discarded. When specified as <code>"control"</code>, control units whose distance measure is outside the range of distance measures of the treated units will be discarded. When specified as <code>"both"</code>, treated and controls units whose distance measure is outside the intersection of the range of distance measures of the treated units and the range of distance measures of the control units will be discarded. When <code>reestimate = TRUE</code> and <code>distance</code> corresponds to a propensity score-estimating function, the propensity scores are re-estimated in the remaining units prior to being used for matching or calipers.</p>
+<p>See the <code><a href="distance.html">distance</a></code> argument for details on the several ways to specify the <code>distance</code>, <code>link</code>, and <code>distance.options</code> arguments to estimate propensity scores and create distance measures.</p>
+<p>When the treatment variable is not a <code>0/1</code> variable, it will be coerced to one and returned as such in the <code>matchit()</code> output (see section Value, below). The following rules are used: 1) if <code>0</code> is one of the values, it will be considered the control and the other value the treated; 2) otherwise, if the variable is a factor, <code>levels(treat)[1]</code> will be considered control and the other variable the treated; 3) otherwise, <code>sort(unique(treat))[1]</code> will be considered control and the other value the treated. It is safest to ensure the treatment variable is a <code>0/1</code> variable.</p>
+<p>The <code>discard</code> option implements a common support restriction. It can only be used when a distance measure is estimated or supplied as a vector, i.e., when <code>distance</code> is specified as something other than <code>"mahalanobis"</code> and is not a matrix, and is ignored for some matching methods. When specified as <code>"treated"</code>, treated units whose distance measure is outside the range of distance measures of the control units will be discarded. When specified as <code>"control"</code>, control units whose distance measure is outside the range of distance measures of the treated units will be discarded. When specified as <code>"both"</code>, treated and control units whose distance measure is outside the intersection of the range of distance measures of the treated units and the range of distance measures of the control units will be discarded. When <code>reestimate = TRUE</code> and <code>distance</code> corresponds to a propensity score-estimating function, the propensity scores are re-estimated in the remaining units prior to being used for matching or calipers.</p>
 <p>Caution should be used when interpreting effects estimated with various values of <code>estimand</code>. Setting <code>estimand = "ATT"</code> doesn't necessarily mean the average treatment effect in the treated is being estimated; it just means that for matching methods, treated units will be untouched and given weights of 1 and control units will be matched to them (and the opposite for <code>estimand = "ATC"</code>). If a caliper is supplied or treated units are removed for common support or some other reason (e.g., lacking matches when using exact matching), the actual estimand targeted is not the ATT but the treatment effect in the matched sample. The argument to <code>estimand</code> simply triggers which units are matched to which, and for stratification-based methods (exact matching, CEM, full matching, and subclassification), determines the formula used to compute the stratification weights.</p>
 <div class="section">
 <h3 id="how-matching-weights-are-computed">How Matching Weights Are Computed<a class="anchor" aria-label="anchor" href="#how-matching-weights-are-computed"></a></h3>
 <p>Matching weights are computed in one of two ways depending on whether matching was done with replacement or not.</p>
-<p>For matching without replacement, each unit is assigned to a subclass, which represents the pair they are a part of (in the case of k:1 matching) or the stratum they belong to (in the case of exact matching, coarsened exact matching, full matching, or subclassification). The formula for computing the weights depends on the argument supplied to <code>estimand</code>. A new stratum "propensity score" (<code>p</code>) is computed as the proportion of units in each stratum that are in the treated group, and all units in that stratum are assigned that propensity score. Weights are then computed using the standard formulas for inverse probability weights: for the ATT, weights are 1 for the treated units and <code>p/(1-p)</code> for the control units; for the ATC, weights are <code>(1-p)/p</code> for the treated units and 1 for the control units; for the ATE, weights are <code>1/p</code> for the treated units and <code>1/(1-p)</code> for the control units.</p>
+<p>For matching without replacement (except for cardinality matching), each unit is assigned to a subclass, which represents the pair they are a part of (in the case of k:1 matching) or the stratum they belong to (in the case of exact matching, coarsened exact matching, full matching, or subclassification). The formula for computing the weights depends on the argument supplied to <code>estimand</code>. A new stratum "propensity score" (<code>p</code>) is computed as the proportion of units in each stratum that are in the treated group, and all units in that stratum are assigned that propensity score. Weights are then computed using the standard formulas for inverse probability weights: for the ATT, weights are 1 for the treated units and <code>p/(1-p)</code> for the control units; for the ATC, weights are <code>(1-p)/p</code> for the treated units and 1 for the control units; for the ATE, weights are <code>1/p</code> for the treated units and <code>1/(1-p)</code> for the control units. For cardinality matching, all matched units receive a weight of 1.</p>
 <p>For matching with replacement, units are not assigned to unique strata. For the ATT, each treated unit gets a weight of 1. Each control unit is weighted as the sum of the inverse of the number of control units matched to the same treated unit across its matches. For example, if a control unit was matched to a treated unit that had two other control units matched to it, and that same control was matched to a treated unit that had one other control unit matched to it, the control unit in question would get a weight of 1/3 + 1/2 = 5/6. For the ATC, the same is true with the treated and control labels switched. The weights are computed using the <code>match.matrix</code> component of the <code>matchit()</code> output object.</p>
 <p>In each treatment group, weights are divided by the mean of the nonzero weights in that treatment group to make the weights sum to the number of units in that treatment group. If sampling weights are included through the <code>s.weights</code> argument, they will be included in the <code>matchit()</code> output object but not incorporated into the matching weights. <code><a href="match.data.html">match.data()</a></code>, which extracts the matched set from a <code>matchit</code> object, combines the matching weights and sampling weights.</p>
 </div>
@@ -180,7 +180,7 @@ This page documents the overall use of matchit(), but for specifics of how match
     <h2>Value</h2>
     <p>When <code>method</code> is something other than <code>"subclass"</code>, a <code>matchit</code> object with the following components:</p>
 <dl><dt>match.matrix</dt>
-<dd><p>a matrix containing the matches. The rownames correspond to the treated units and the values in each row are the names (or indices) of the control units matched to each treated unit. When treated units are matched to different numbers of control units (e.g., with exact matching or matching with a caliper), empty spaces will be filled with <code>NA</code>. Not included when <code>method</code> is <code>"full"</code>, <code>"cem"</code>, <code>"exact"</code>, or <code>"cardinality"</code>.</p></dd>
+<dd><p>a matrix containing the matches. The rownames correspond to the treated units and the values in each row are the names (or indices) of the control units matched to each treated unit. When treated units are matched to different numbers of control units (e.g., with exact matching or matching with a caliper), empty spaces will be filled with <code>NA</code>. Not included when <code>method</code> is <code>"full"</code>, <code>"cem"</code> (unless <code>k2k = TRUE</code>), <code>"exact"</code>, or <code>"cardinality"</code>.</p></dd>
 <dt>subclass</dt>
 <dd><p>a factor containing matching pair/stratum membership for each unit. Unmatched units will have a value of <code>NA</code>. Not included when <code>replace = TRUE</code>.</p></dd>
 <dt>weights</dt>
@@ -200,7 +200,7 @@ This page documents the overall use of matchit(), but for specifics of how match
 <dt>treat</dt>
 <dd><p>a vector of treatment status converted to zeros (0) and ones (1) if not already in that format.</p></dd>
 <dt>distance</dt>
-<dd><p>a vector of distance values (i.e., propensity scores) when <code>distance</code> is specified and not <code>"mahalanobis"</code> or a matrix.</p></dd>
+<dd><p>a vector of distance values (i.e., propensity scores) when <code>distance</code> is supplied as a method of estimating propensity scores or a numeric vector.</p></dd>
 <dt>discarded</dt>
 <dd><p>a logical vector denoting whether each observation was discarded (<code>TRUE</code>) or not (<code>FALSE</code>) by the argument to <code>discard</code>.</p></dd>
 <dt>s.weights</dt>
@@ -215,13 +215,13 @@ This page documents the overall use of matchit(), but for specifics of how match
     </div>
     <div id="references">
     <h2>References</h2>
-    <p>Ho, D. E., Imai, K., King, G., &amp; Stuart, E. A. (2007). Matching as Nonparametric Preprocessing for Reducing Model Dependence in Parametric Causal Inference. Political Analysis, 15(3), 199–236. doi: <a href="https://doi.org/10.1093/pan/mpl013" class="external-link">10.1093/pan/mpl013</a></p>
-<p>Ho, D. E., Imai, K., King, G., &amp; Stuart, E. A. (2011). MatchIt: Nonparametric Preprocessing for Parametric Causal Inference. Journal of Statistical Software, 42(8). doi: <a href="https://doi.org/10.18637/jss.v042.i08" class="external-link">10.18637/jss.v042.i08</a></p>
+    <p>Ho, D. E., Imai, K., King, G., &amp; Stuart, E. A. (2007). Matching as Nonparametric Preprocessing for Reducing Model Dependence in Parametric Causal Inference. Political Analysis, 15(3), 199–236. <a href="https://doi.org/10.1093/pan/mpl013" class="external-link">doi:10.1093/pan/mpl013</a></p>
+<p>Ho, D. E., Imai, K., King, G., &amp; Stuart, E. A. (2011). MatchIt: Nonparametric Preprocessing for Parametric Causal Inference. Journal of Statistical Software, 42(8). <a href="https://doi.org/10.18637/jss.v042.i08" class="external-link">doi:10.18637/jss.v042.i08</a></p>
     </div>
     <div id="author">
     <h2>Author</h2>
-    <p>Daniel Ho <a href="mailto:dho@law.stanford.edu">dho@law.stanford.edu</a>; Kosuke Imai <a href="mailto:imai@harvard.edu">imai@harvard.edu</a>; Gary King <a href="mailto:king@harvard.edu">king@harvard.edu</a>; Elizabeth Stuart <a href="mailto:estuart@jhsph.edu">estuart@jhsph.edu</a></p>
-<p>Version 4.0.0 update by Noah Greifer <a href="mailto:noah.greifer@gmail.com">noah.greifer@gmail.com</a></p>
+    <p>Daniel Ho (<a href="mailto:dho@law.stanford.edu">dho@law.stanford.edu</a>); Kosuke Imai (<a href="mailto:imai@harvard.edu">imai@harvard.edu</a>); Gary King (<a href="mailto:king@harvard.edu">king@harvard.edu</a>); Elizabeth Stuart (<a href="mailto:estuart@jhsph.edu">estuart@jhsph.edu</a>)</p>
+<p>Version 4.0.0 update by Noah Greifer (<a href="mailto:noah.greifer@gmail.com">noah.greifer@gmail.com</a>)</p>
     </div>
     <div id="see-also">
     <h2>See also</h2>
@@ -300,19 +300,6 @@ This page documents the overall use of matchit(), but for specifics of how match
 <span class="r-out co"><span class="r-pr">#&gt;</span> re74         0.2757          0.7965</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> re75         0.2054          0.7381</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Percent Balance Improvement:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>            Std. Mean Diff. Var. Ratio eCDF Mean eCDF Max</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> distance              45.7     -239.6      65.0     34.6</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> age                   76.8        4.6      -4.2    -61.1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> educ                -134.8       20.4      31.2     32.1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> raceblack             41.8          .      41.8     41.8</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> racehispan           -89.5          .     -89.5    -89.5</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> racewhite             61.2          .      61.2     61.2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> nodegree              36.9          .      36.9     36.9</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> married               93.3          .      93.3     93.3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> re74                  93.0       56.8      79.1     38.3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> re75                  91.2     -800.7      66.3     28.6</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Sample Sizes:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>           Control Treated</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> All           429     185</span>
@@ -335,7 +322,7 @@ This page documents the overall use of matchit(), but for specifics of how match
 <span class="r-out co"><span class="r-pr">#&gt;</span>  - number of obs.: 614 (original), 263 (matched)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  - target estimand: ATT</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  - covariates: age, educ, race, nodegree, married, re74, re75</span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">m.out2</span><span class="op">)</span></span>
+<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">m.out2</span>, un <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Call:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> matchit(formula = treat ~ age + educ + race + nodegree + married + </span>
@@ -367,42 +354,30 @@ This page documents the overall use of matchit(), but for specifics of how match
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Summary of Balance for Matched Data:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>            Means Treated Means Control Std. Mean Diff. Var. Ratio eCDF Mean</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> age              25.8162       24.8973          0.1284     0.8265    0.0330</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> educ             10.3459       10.5784         -0.1156     0.9046    0.0179</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> age              25.8162       25.5946          0.0310     0.6489    0.0472</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> educ             10.3459       10.3946         -0.0242     1.1553    0.0065</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> raceblack         0.8432        0.8432          0.0000          .    0.0000</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> racehispan        0.0595        0.0595         -0.0000          .    0.0000</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> racewhite         0.0973        0.0973          0.0000          .    0.0000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> nodegree          0.7081        0.5892          0.2616          .    0.1189</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> nodegree          0.7081        0.7135         -0.0119          .    0.0054</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> married           0.1892        0.1892          0.0000          .    0.0000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> re74           2095.5737     1780.4016          0.0645     1.8106    0.0429</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> re75           1532.0553     1161.2419          0.1152     2.0101    0.0258</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> re74           2095.5737     1861.6424          0.0479     1.4963    0.0286</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> re75           1532.0553     1091.6516          0.1368     2.0314    0.0347</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>            eCDF Max Std. Pair Dist.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> age          0.1676          0.3400</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> educ         0.1189          0.3038</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> age          0.1838          0.4918</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> educ         0.0324          0.2070</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> raceblack    0.0000          0.0000</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> racehispan   0.0000          0.0000</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> racewhite    0.0000          0.0000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> nodegree     0.1189          0.3329</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> nodegree     0.0054          0.0119</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> married      0.0000          0.0000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> re74         0.2000          0.2483</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> re75         0.0811          0.2086</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Percent Balance Improvement:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>            Std. Mean Diff. Var. Ratio eCDF Mean eCDF Max</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> age                   58.5       76.8      59.5     -6.2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> educ                -110.3       85.7      48.4     -6.8</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> raceblack            100.0          .     100.0    100.0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> racehispan           100.0          .     100.0    100.0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> racewhite            100.0          .     100.0    100.0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> nodegree              -6.8          .      -6.8     -6.8</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> married              100.0          .     100.0    100.0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> re74                  91.1        9.7      80.9     55.3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> re75                  60.3    -1462.3      80.8     71.8</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> re74         0.1784          0.2606</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> re75         0.0811          0.2445</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Sample Sizes:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>               Control Treated</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> All            429.       185</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Matched (ESS)   34.96     185</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Matched (ESS)   33.72     185</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Matched         78.       185</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Unmatched      351.         0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Discarded        0.         0</span>
@@ -426,7 +401,7 @@ This page documents the overall use of matchit(), but for specifics of how match
 <span class="r-out co"><span class="r-pr">#&gt;</span>  - number of obs.: 614 (original), 257 (matched)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  - target estimand: ATT</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  - covariates: age, educ, race, nodegree, married, re74, re75</span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">m.out3</span><span class="op">)</span></span>
+<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">m.out3</span>, un <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Call:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> matchit(formula = treat ~ age + educ + race + nodegree + married + </span>
@@ -460,40 +435,27 @@ This page documents the overall use of matchit(), but for specifics of how match
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Summary of Balance for Matched Data:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>            Means Treated Means Control Std. Mean Diff. Var. Ratio eCDF Mean</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> distance          0.5113        0.4932          0.0835     1.0779    0.0253</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> age              26.0721       24.9324          0.1593     0.4302    0.0931</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> distance          0.5113        0.4932          0.0835     1.0778    0.0253</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> age              26.0721       24.9459          0.1574     0.4310    0.0928</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> educ             10.4144       10.3514          0.0314     0.6279    0.0171</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> raceblack         0.7387        0.7252          0.0372          .    0.0135</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> racehispan        0.0991        0.0946          0.0190          .    0.0045</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> racewhite         0.1622        0.1802         -0.0608          .    0.0180</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> nodegree          0.6667        0.6396          0.0594          .    0.0270</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> married           0.1892        0.2297         -0.1035          .    0.0405</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> re74           3016.7936     2277.2506          0.1513     1.8730    0.0565</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> re74           3016.7936     2280.7013          0.1506     1.8738    0.0569</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> re75           2023.1731     1525.9838          0.1544     2.0215    0.0434</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>            eCDF Max Std. Pair Dist.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> distance     0.1441          0.0860</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> age          0.3198          0.9477</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> age          0.3198          0.9487</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> educ         0.0586          0.7324</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> raceblack    0.0135          0.0565</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> racehispan   0.0045          0.4924</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> racewhite    0.0180          0.3236</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> nodegree     0.0270          0.5725</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> married      0.0405          0.4722</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> re74         0.2117          0.5512</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> re74         0.2117          0.5502</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> re75         0.1081          0.5885</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Percent Balance Improvement:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>            Std. Mean Diff. Var. Ratio eCDF Mean eCDF Max</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> distance              95.4       42.5      93.3     77.5</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> age                   48.5       -2.7     -14.5   -102.8</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> educ                  42.9       33.7      50.8     47.4</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> raceblack             97.9          .      97.9     97.9</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> racehispan            94.6          .      94.6     94.6</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> racewhite             96.8          .      96.8     96.8</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> nodegree              75.7          .      75.7     75.7</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> married               87.5          .      87.5     87.5</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> re74                  79.0        4.6      74.9     52.6</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> re75                  46.8    -1474.9      67.6     62.4</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Sample Sizes:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>               Control Treated</span>
@@ -520,7 +482,7 @@ This page documents the overall use of matchit(), but for specifics of how match
 <span class="r-out co"><span class="r-pr">#&gt;</span>  - number of obs.: 614 (original), 314 (matched)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  - target estimand: ATE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  - covariates: age, educ, race, nodegree, married, re74, re75</span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">m.out4</span><span class="op">)</span></span>
+<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">m.out4</span>, un <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Call:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> matchit(formula = treat ~ age + educ + race + nodegree + married + </span>
@@ -577,19 +539,6 @@ This page documents the overall use of matchit(), but for specifics of how match
 <span class="r-out co"><span class="r-pr">#&gt;</span> re74         0.1942          0.5416</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> re75         0.1566          0.6606</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Percent Balance Improvement:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>            Std. Mean Diff. Var. Ratio eCDF Mean eCDF Max</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> distance              99.0       82.4      96.2     90.3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> age                   83.5       79.6      81.6     34.7</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> educ                  46.1       90.0      70.6     48.5</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> raceblack             99.5          .      99.5     99.5</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> racehispan            53.9          .      53.9     53.9</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> racewhite             92.6          .      92.6     92.6</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> nodegree              97.2          .      97.2     97.2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> married               94.3          .      94.3     94.3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> re74                  91.9       87.8      82.0     56.5</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> re75                  62.3     -283.9      56.5     45.6</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Sample Sizes:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>               Control Treated</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> All               429  185.  </span>
@@ -614,7 +563,7 @@ This page documents the overall use of matchit(), but for specifics of how match
 <span class="r-out co"><span class="r-pr">#&gt;</span>  - number of obs.: 614 (original), 557 (matched)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  - target estimand: ATT</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  - covariates: age, educ, race, nodegree, married, re74, re75</span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">s.out1</span><span class="op">)</span></span>
+<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">s.out1</span>, un <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Call:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> matchit(formula = treat ~ age + educ + race + nodegree + married + </span>
@@ -669,19 +618,6 @@ This page documents the overall use of matchit(), but for specifics of how match
 <span class="r-out co"><span class="r-pr">#&gt;</span> re74         0.2731</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> re75         0.1841</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Percent Balance Improvement:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>            Std. Mean Diff. Var. Ratio eCDF Mean eCDF Max</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> distance              98.4       -1.4      95.8     91.6</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> age                   79.9       -4.0      -6.4    -92.9</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> educ                  42.6      -39.0      56.7     61.9</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> raceblack             97.3          .      97.3     97.3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> racehispan            90.2          .      90.2     90.2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> racewhite             98.4          .      98.4     98.4</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> nodegree              73.1          .      73.1     73.1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> married               96.7          .      96.7     96.7</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> re74                  96.1     -152.9      80.0     38.9</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> re75                  88.1      -48.7      64.8     36.0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Sample Sizes:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>               Control Treated</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> All            429.       185</span>
@@ -705,7 +641,7 @@ This page documents the overall use of matchit(), but for specifics of how match
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
 </div>
 
       </footer></div>

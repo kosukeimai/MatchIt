@@ -40,7 +40,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">MatchIt</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">4.3.4.9000</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">4.4.0</span>
       </span>
     </div>
 
@@ -100,7 +100,7 @@
       <h1 data-toc-skip>Estimating Effects After Matching</h1>
                         <h4 data-toc-skip class="author">Noah Greifer</h4>
             
-            <h4 data-toc-skip class="date">2022-03-18</h4>
+            <h4 data-toc-skip class="date">2022-05-18</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/kosukeimai/MatchIt/blob/HEAD/vignettes/estimating-effects.Rmd" class="external-link"><code>vignettes/estimating-effects.Rmd</code></a></small>
       <div class="hidden name"><code>estimating-effects.Rmd</code></div>
@@ -127,7 +127,7 @@ pre code {
 <h3 id="identifying-the-estimand">Identifying the estimand<a class="anchor" aria-label="anchor" href="#identifying-the-estimand"></a>
 </h3>
 <p>Before an effect is estimated, the estimand must be specified and clarified. Although some aspects of the estimand depend not only on how the effect is estimated after matching but also on the matching method itself, other aspects must be considered at the tine of effect estimation and interpretation. Here, we consider three aspects of the estimand: the population the effect is meant to generalize to (the target population), the effect measure, and whether the effect is marginal or conditional.</p>
-<p><strong>The target population.</strong> Different matching methods allow you to estimate effects that can generalize to different target populations. The most common estimand in matching the average treatment effect in the treated (ATT), which is the average effect of treatment for those who receive treatment. This estimand is estimable for matching methods that do not change the treated units (i.e., by weighting or discarding units) and is requested in <code><a href="../reference/matchit.html">matchit()</a></code> by setting <code>estimand = "ATT"</code> (which is the default). The average treatment effect in the population (ATE) is the average effect of treatment for the population from which the sample is a random sample. This estimand is estimable only for methods that allow the ATE and either do not discard units from the sample or explicit target full sample balance, which in <code>MatchIt</code> is limited to full matching, subclassification, and template matching when setting <code>estimand = "ATE"</code>. When treated units are discarded (e.g., through the use of common support restrictions, calipers, cardinality matching, or [coarsened] exact matching), the estimand corresponds to neither the population ATT nor the population ATE, but rather to an average treatment effect in the remaining matched sample (ATM), which may not correspond to any specific target population.</p>
+<p><strong>The target population.</strong> Different matching methods allow you to estimate effects that can generalize to different target populations. The most common estimand in matching the average treatment effect in the treated (ATT), which is the average effect of treatment for those who receive treatment. This estimand is estimable for matching methods that do not change the treated units (i.e., by weighting or discarding units) and is requested in <code><a href="../reference/matchit.html">matchit()</a></code> by setting <code>estimand = "ATT"</code> (which is the default). The average treatment effect in the population (ATE) is the average effect of treatment for the population from which the sample is a random sample. This estimand is estimable only for methods that allow the ATE and either do not discard units from the sample or explicit target full sample balance, which in <code>MatchIt</code> is limited to full matching, subclassification, and template matching when setting <code>estimand = "ATE"</code>. When treated units are discarded (e.g., through the use of common support restrictions, calipers, cardinality matching, or [coarsened] exact matching), the estimand corresponds to neither the population ATT nor the population ATE, but rather to an average treatment effect in the remaining matched sample (ATM), which may not correspond to any specific target population. See <span class="citation">Greifer and Stuart (<a href="#ref-greiferChoosingEstimandWhen2021" role="doc-biblioref">2021</a>)</span> for a discussion on the substantive considerations involved when choosing the target population of the estimand.</p>
 <p><strong>Marginal and conditional effects.</strong> A marginal effect is a comparison between the expected potential outcome under treatment and the expected potential outcome under control. This is the same quantity estimated in randomized trials without blocking or covariate adjustment and is particularly useful for quantifying the overall effect of a policy or population-wide intervention. A conditional effect is the comparison between the expected potential outcomes in the treatment groups within strata. This is useful for identifying the effect of a treatment for an individual patient or a subset of the population.</p>
 <p><strong>Effect measures.</strong> The outcome types we consider here are continuous, with the effect measured by the mean difference; binary, with the effect measured by the risk difference (RD), risk ratio (RR), or odds ratio (OR); and time-to-event (i.e., survival), with the effect measured by the hazard ratio (HR). The RR, OR, and HR are <em>noncollapsible</em> effect measures, which means the marginal effect on that scale is not a (possibly) weighted average of the conditional effects within strata, even if the stratum-specific effects are of the same magnitude. For these effect measures, it is critical to distinguish between marginal and conditional effects because different statistical methods target different types of effects. The mean difference and RD are <em>collapsible</em> effect measures, so the same methods can be used to estimate marginal and conditional effects.</p>
 <p>In this guide, we will provide examples for estimating the ATT, ATE, and ATM for each of the three outcomes types. Our primary focus will be on marginal effects, which are appropriate for all effect measures, easily interpretable, and require few modeling assumptions. We will include a short section on estimating the conditional OR. The “Common Mistakes” section includes examples of commonly used methods that estimate conditional rather than marginal effects and should not be used when marginal effects are desired.</p>
@@ -1271,6 +1271,9 @@ pre code {
 <div id="ref-greenExaminingModerationAnalyses2014">
 <p>Green, Kerry M., and Elizabeth A. Stuart. 2014. “Examining Moderation Analyses in Propensity Score Methods: Application to Depression and Substance Use.” <em>Journal of Consulting and Clinical Psychology</em>, Advances in Data Analytic Methods, 82 (5): 773–83. <a href="https://doi.org/10.1037/a0036515" class="external-link">https://doi.org/10.1037/a0036515</a>.</p>
 </div>
+<div id="ref-greiferChoosingEstimandWhen2021">
+<p>Greifer, Noah, and Elizabeth A. Stuart. 2021. “Choosing the Estimand When Matching or Weighting in Observational Studies.” <em>arXiv:2106.10577 [Stat]</em>, June. <a href="https://arxiv.org/abs/2106.10577" class="external-link">https://arxiv.org/abs/2106.10577</a>.</p>
+</div>
 <div id="ref-hill2006">
 <p>Hill, Jennifer, and Jerome P. Reiter. 2006. “Interval Estimation for Treatment Effects Using Propensity Score Matching.” <em>Statistics in Medicine</em> 25 (13): 2230–56. <a href="https://doi.org/10.1002/sim.2277" class="external-link">https://doi.org/10.1002/sim.2277</a>.</p>
 </div>
@@ -1418,7 +1421,7 @@ pre code {
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
 </div>
 
       </footer>

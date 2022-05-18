@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">MatchIt</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">4.3.4.9000</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">4.4.0</span>
       </span>
     </div>
 
@@ -79,12 +79,12 @@
 <span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">object</span>, interactions <span class="op">=</span> <span class="cn">FALSE</span>,
         addlvariables <span class="op">=</span> <span class="cn">NULL</span>, standardize <span class="op">=</span> <span class="cn">TRUE</span>,
         data <span class="op">=</span> <span class="cn">NULL</span>, pair.dist <span class="op">=</span> <span class="cn">TRUE</span>, un <span class="op">=</span> <span class="cn">TRUE</span>,
-        improvement <span class="op">=</span> <span class="cn">TRUE</span>, <span class="va">...</span><span class="op">)</span>
+        improvement <span class="op">=</span> <span class="cn">FALSE</span>, <span class="va">...</span><span class="op">)</span>
 <span class="co"># S3 method for matchit.subclass</span>
 <span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">object</span>, interactions <span class="op">=</span> <span class="cn">FALSE</span>,
         addlvariables <span class="op">=</span> <span class="cn">NULL</span>, standardize <span class="op">=</span> <span class="cn">TRUE</span>,
         data <span class="op">=</span> <span class="cn">NULL</span>, pair.dist <span class="op">=</span> <span class="cn">FALSE</span>, subclass <span class="op">=</span> <span class="cn">FALSE</span>,
-        un <span class="op">=</span> <span class="cn">TRUE</span>, improvement <span class="op">=</span> <span class="cn">TRUE</span>, <span class="va">...</span><span class="op">)</span>
+        un <span class="op">=</span> <span class="cn">TRUE</span>, improvement <span class="op">=</span> <span class="cn">FALSE</span>, <span class="va">...</span><span class="op">)</span>
 
 <span class="co"># S3 method for summary.matchit</span>
 <span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">x</span>, digits <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span><span class="fl">3</span>, <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"digits"</span><span class="op">)</span> <span class="op">-</span> <span class="fl">3</span><span class="op">)</span>,
@@ -111,7 +111,7 @@
 <dt>un</dt>
 <dd><p><code>logical</code>; whether to compute balance statistics for the unmatched sample. Default <code>TRUE</code>; set to <code>FALSE</code> for more concise output.</p></dd>
 <dt>improvement</dt>
-<dd><p><code>logical</code>; whether to compute the percent reduction in imbalance. Default <code>TRUE</code>; set to <code>FALSE</code> for more concise output.</p></dd>
+<dd><p><code>logical</code>; whether to compute the percent reduction in imbalance. Default <code>FALSE</code>. Ignored if <code>un = FALSE</code>.</p></dd>
 <dt>subclass</dt>
 <dd><p>after subclassification, whether to display balance for individual subclasses, and, if so, for which ones. Can be <code>TRUE</code> (display balance for all subclasses), <code>FALSE</code> (display balance only in aggregate), or the indices (e.g., <code>1:6</code>) of the specific subclasses for which to display balance. When anything other than <code>FALSE</code>, aggregate balance statistics will not be displayed. Default is <code>FALSE</code>.</p></dd>
 <dt>digits</dt>
@@ -123,7 +123,7 @@
 </dl></div>
     <div id="details">
     <h2>Details</h2>
-    <p><code><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary()</a></code> computes a balance summary of a <code>matchit</code> object. This include balance before and after matching or subclassification, as well as the percent improvement in balance. The variables for which balance statistics are computed are those included in the <code>formula</code>, <code>exact</code>, and <code>mahvars</code> arguments to <code><a href="matchit.html">matchit()</a></code>, as well as the distance measure if <code>distance</code> is not <code>"mahalanobis"</code>. The <code>X</code> component of the <code>matchit</code> object is used to supply the covariates.</p>
+    <p><code><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary()</a></code> computes a balance summary of a <code>matchit</code> object. This include balance before and after matching or subclassification, as well as the percent improvement in balance. The variables for which balance statistics are computed are those included in the <code>formula</code>, <code>exact</code>, and <code>mahvars</code> arguments to <code><a href="matchit.html">matchit()</a></code>, as well as the distance measure if <code>distance</code> is was supplied as a numeric vector or method of estimating propensity scores. The <code>X</code> component of the <code>matchit</code> object is used to supply the covariates.</p>
 <p>The standardized mean differences are computed both before and after matching or subclassification as the difference in treatment group means divided by a standardization factor computed in the unmatched (original) sample. The standardization factor depends on the argument supplied to <code>estimand</code> in <code><a href="matchit.html">matchit()</a></code>: for <code>"ATT"</code>, it is the standard deviation in the treated group; for <code>"ATC"</code>, it is the standard deviation in the control group; for <code>"ATE"</code>, it is the square root of the average of the variances within each treatment group. The post-matching mean difference is computed with weighted means in the treatment groups using the matching or subclassification weights.</p>
 <p>The variance ratio is computed as the ratio of the treatment group variances. Variance ratios are not computed for binary variables because their variance is a function solely of their mean. After matching, weighted variances are computed using the formula used in <code><a href="https://rdrr.io/r/stats/cov.wt.html" class="external-link">cov.wt()</a></code>. The percent reduction in bias is computed using the log of the variance ratios.</p>
 <p>The eCDF difference statistics are computed by creating a (weighted) eCDF for each group and taking the difference between them for each covariate value. The eCDF is a function that outputs the (weighted)  proportion of units with covariate values at or lower than the input value. The maximum eCDF difference is the same thing as the Kolmogorov-Smirnov statistic. The values are bounded at zero and one, with values closer to zero indicating good overlap between the covariate distributions in the treated and control groups. For binary variables, all eCDF differences are equal to the (weighted) difference in proportion and are computed that way.</p>
@@ -307,38 +307,6 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> racewhite * re74        0.0069   0.0378          0.1735</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> re74²                   0.0544   0.2919          0.2207</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Percent Balance Improvement:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                      Std. Mean Diff. Var. Ratio eCDF Mean eCDF Max</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> distance                        99.9       81.9      99.2     93.3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> age                             93.7        2.7       6.0    -40.5</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> educ                          -134.8        9.3      -1.6    -69.9</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> married                        100.0          .     100.0    100.0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> raceblack                       98.3          .      98.3     98.3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> racehispan                     100.0          .     100.0    100.0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> racewhite                       98.1          .      98.1     98.1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> re74                            93.9       38.4      75.8     34.7</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> age²                            63.3        1.7       6.0    -40.5</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> age * educ                      92.4       30.6      40.0     18.1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> age * married                   98.1       93.2      94.6     80.0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> age * raceblack                 95.3    -4914.9      66.6     70.2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> age * racehispan                84.5       47.4      71.7     67.3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> age * racewhite                 96.6       69.8      93.3     95.2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> age * re74                      98.4       93.0      76.4     34.7</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> educ²                         -383.5        4.7      -1.6    -69.9</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> educ * married                  97.4       80.0      95.3     74.4</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> educ * raceblack                98.9    -1038.7      90.5     75.7</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> educ * racehispan               96.1       81.6      89.7     72.3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> educ * racewhite                97.3       79.2      97.2     96.1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> educ * re74                     96.1       46.1      76.8     33.7</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> married * raceblack             94.5          .      94.5     94.5</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> married * racehispan            89.5          .      89.5     89.5</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> married * racewhite            100.0          .     100.0    100.0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> married * re74                  96.2       34.7      93.2     76.1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> raceblack * re74                84.2       67.3      47.9    -63.2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> racehispan * re74               88.4       32.4      86.4     79.6</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> racewhite * re74                99.2       98.5      97.3     92.4</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> re74²                           81.8     -157.6      75.8     34.7</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Sample Sizes:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>               Control Treated</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> All            429.       185</span>
@@ -412,21 +380,6 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> re75                0.0644   0.2178</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> log(age)            0.0886   0.2558</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> I(re74 == 0)TRUE    0.2638   0.2638</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Percent Balance Improvement:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                  Std. Mean Diff. Var. Ratio eCDF Mean eCDF Max</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> distance                    95.9       11.2      90.3     87.3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> age                         80.3        0.6      -9.0    -62.2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> educ                        41.2      -28.9      57.7     55.2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> married                     83.5          .      83.5     83.5</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> raceblack                   97.6          .      97.6     97.6</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> racehispan                  71.7          .      71.7     71.7</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> racewhite                   93.0          .      93.0     93.0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> nodegree                    91.3          .      91.3     91.3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> re74                        79.7      -70.0      72.8     41.0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> re75                        67.6      -27.9      52.0     24.3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> log(age)                    57.7        4.1      -9.0    -62.2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> I(re74 == 0)TRUE            41.0          .      41.0     41.0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Sample Sizes:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>               Control Treated</span>
@@ -632,7 +585,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
 </div>
 
       </footer></div>

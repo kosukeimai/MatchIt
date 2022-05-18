@@ -28,7 +28,7 @@ matchit(formula,
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">MatchIt</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">4.3.4.9000</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">4.4.0</span>
       </span>
     </div>
 
@@ -106,7 +106,7 @@ matchit(formula,
 <dt>estimand</dt>
 <dd><p>a string containing the desired estimand. Allowable options include <code>"ATT"</code>, <code>"ATC"</code>, and <code>"ATE"</code>. The estimand controls how the weights are computed; see the Computing Weights section at <code><a href="matchit.html">matchit()</a></code> for details. When <code>k2k = TRUE</code> (see below), <code>estimand</code> also controls how the matching is done.</p></dd>
 <dt>s.weights</dt>
-<dd><p>the variable containing sampling weights to be incorporated into balance statistics. These weights do not affect the matching process.</p></dd>
+<dd><p>the variable containing sampling weights to be incorporated into balance statistics or the scaling factors when <code>k2k = TRUE</code> and certain methods are used.</p></dd>
 <dt>verbose</dt>
 <dd><p><code>logical</code>; whether information about the matching process should be printed to the console.</p></dd>
 <dt>...</dt>
@@ -120,7 +120,7 @@ matchit(formula,
 <dd><p>codelogical; whether 1:1 matching should occur within the matched strata. If <code>TRUE</code> nearest neighbor matching without replacement will take place within each stratum, and any unmatched units will be dropped (e.g., if there are more treated than control units in the stratum, the treated units without a match will be dropped). The <code>k2k.method</code> argument controls how the distance between units is calculated.</p></dd>
 
      <dt><code>k2k.method</code></dt>
-<dd><p><code>character</code>; how the distance between units should be calculated if <code>k2k = TRUE</code>. Allowable arguments include <code>NULL</code> (for random matching), <code>"mahalanobis"</code> (for Mahalanobis distance matching), or any allowable argument to <code>method</code> in <code><a href="https://rdrr.io/r/stats/dist.html" class="external-link">dist()</a></code>. Matching will take place on scaled versions of the original (non-coarsened) variables. The default is <code>"mahalanobis"</code>.</p></dd>
+<dd><p><code>character</code>; how the distance between units should be calculated if <code>k2k = TRUE</code>. Allowable arguments include <code>NULL</code> (for random matching), any argument to <code><a href="distance.html">distance</a></code> for computing a distance matrix from covariates (e.g., <code>"mahalanobis"</code>), or any allowable argument to <code>method</code> in <code><a href="https://rdrr.io/r/stats/dist.html" class="external-link">dist()</a></code>. Matching will take place on scaled versions of the original (non-coarsened) variables. The default is <code>"mahalanobis"</code>.</p></dd>
 
      <dt><code>mpower</code></dt>
 <dd><p>if <code>k2k.method = "minkowski"</code>, the power used in creating the distance. This is passed to the <code>p</code> argument of <code><a href="https://rdrr.io/r/stats/dist.html" class="external-link">dist()</a></code>.</p></dd>
@@ -136,7 +136,7 @@ matchit(formula,
     <div id="details">
     <h2>Details</h2>
     <p>If the coarsening is such that there are no exact matches with the coarsened variables, the <code>grouping</code> and <code>cutpoints</code> arguments can be used to modify the matching specification. Reducing the number of cutpoints or grouping some variable values together can make it easier to find matches. See Examples below. Removing variables can also help (but they will likely not be balanced unless highly correlated with the included variables). To take advantage of coarsened exact matching without failing to find any matches, the covariates can be manually coarsened outside of <code><a href="matchit.html">matchit()</a></code> and then supplied to the <code>exact</code> argument in a call to <code><a href="matchit.html">matchit()</a></code> with another matching method.</p>
-<p>Setting <code>k2k = TRUE</code> is equivalent to matching with <code>k2k = FALSE</code> and then supplying stratum membership as an exact matching variable (i.e., in <code>exact</code>) to another call to <code><a href="matchit.html">matchit()</a></code> with <code>method = "nearest"</code>, <code>distance = "mahalanobis"</code> and an argument to <code>discard</code> denoting unmatched units. It is also equivalent to performing nearest neighbor matching supplying coarsened versions of the variables to <code>exact</code>, except that <code>method = "cem"</code> automatically coarsens the continuous variables. The <code>estimand</code> argument supplied with <code>method = "cem"</code> functions the same way it would in these alternate matching calls, i.e., by determining the "focal" group that controls the order of the matching.</p>
+<p>Setting <code>k2k = TRUE</code> is equivalent to first doing coarsened exact matching with <code>k2k = FALSE</code> and then supplying stratum membership as an exact matching variable (i.e., in <code>exact</code>) to another call to <code><a href="matchit.html">matchit()</a></code> with <code>method = "nearest"</code>, <code>distance = "mahalanobis"</code> and an argument to <code>discard</code> denoting unmatched units. It is also equivalent to performing nearest neighbor matching supplying coarsened versions of the variables to <code>exact</code>, except that <code>method = "cem"</code> automatically coarsens the continuous variables. The <code>estimand</code> argument supplied with <code>method = "cem"</code> functions the same way it would in these alternate matching calls, i.e., by determining the "focal" group that controls the order of the matching.</p>
 <div class="section">
 <h3 id="grouping-and-cutpoints">Grouping and Cutpoints<a class="anchor" aria-label="anchor" href="#grouping-and-cutpoints"></a></h3>
 <p>The <code>grouping</code> and <code>cutpoints</code> arguments allow one to fine-tune the coarsening of the covariates. <code>grouping</code> is used for combining categories of categorical covariates and <code>cutpoints</code> is used for binning numeric covariates. The values supplied to these arguments should be iteratively changed until a matching solution that balances covariate balance and remaining sample size is obtained. The arguments are described below.</p>
@@ -163,7 +163,7 @@ matchit(formula,
     <p>In a manuscript, you don't need to cite another package when using <code>method = "cem"</code> because the matching is performed completely within <em>MatchIt</em>. For example, a sentence might read:</p>
 <p><em>Coarsened exact matching was performed using the MatchIt package (Ho, Imai, King, &amp; Stuart, 2011) in R.</em></p>
 <p>It would be a good idea to cite the following article, which develops the theory behind coarsened exact matching:</p>
-<p>Iacus, S. M., King, G., &amp; Porro, G. (2012). Causal Inference without Balance Checking: Coarsened Exact Matching. Political Analysis, 20(1), 1–24. doi: <a href="https://doi.org/10.1093/pan/mpr013" class="external-link">10.1093/pan/mpr013</a></p>
+<p>Iacus, S. M., King, G., &amp; Porro, G. (2012). Causal Inference without Balance Checking: Coarsened Exact Matching. Political Analysis, 20(1), 1–24. <a href="https://doi.org/10.1093/pan/mpr013" class="external-link">doi:10.1093/pan/mpr013</a></p>
     </div>
     <div id="see-also">
     <h2>See also</h2>
@@ -228,15 +228,6 @@ matchit(formula,
 <span class="r-out co"><span class="r-pr">#&gt;</span> racewhite    0.0312          0.3853</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> married      0.0000          0.0000</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> educ         0.1865          0.3962</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Percent Balance Improvement:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>            Std. Mean Diff. Var. Ratio eCDF Mean eCDF Max</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> age                   82.3       85.6      82.8     43.1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> raceblack            100.0          .     100.0    100.0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> racehispan            62.3          .      62.3     62.3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> racewhite             94.4          .      94.4     94.4</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> married              100.0          .     100.0    100.0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> educ                -196.7       67.7      49.1    -67.5</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Sample Sizes:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>               Control Treated</span>
@@ -305,7 +296,7 @@ matchit(formula,
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
 </div>
 
       </footer></div>
