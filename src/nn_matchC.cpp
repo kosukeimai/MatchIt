@@ -6,8 +6,7 @@ using namespace Rcpp;
 // [[Rcpp::plugins(cpp11)]]
 
 // [[Rcpp::export]]
-IntegerMatrix nn_matchC(const IntegerMatrix& mm_,
-                        const IntegerVector& treat_,
+IntegerMatrix nn_matchC(const IntegerVector& treat_,
                         const IntegerVector& ord_,
                         const IntegerVector& ratio,
                         const int& max_rat,
@@ -21,6 +20,7 @@ IntegerMatrix nn_matchC(const IntegerMatrix& mm_,
                         const Nullable<NumericMatrix>& calcovs_covs_mat_ = R_NilValue,
                         const Nullable<NumericMatrix>& mah_covs_ = R_NilValue,
                         const Nullable<IntegerMatrix>& antiexact_covs_ = R_NilValue,
+                        const Nullable<IntegerVector>& unit_id_ = R_NilValue,
                         const bool& disl_prog = false)
   {
 
@@ -30,7 +30,8 @@ IntegerMatrix nn_matchC(const IntegerMatrix& mm_,
   double caliper_dist;
   NumericMatrix distance_mat, calcovs_covs_mat, mah_covs, mah_covs_c;
   IntegerMatrix antiexact_covs;
-  IntegerVector exact, exact_c, antiexact_col;
+  IntegerVector exact, exact_c, antiexact_col, unit_id, units_with_id_of_chosen_unit;
+  int id_of_chosen_unit;
 
   bool use_dist_mat = false;
   bool use_exact = false;
@@ -47,9 +48,12 @@ IntegerMatrix nn_matchC(const IntegerMatrix& mm_,
   IntegerVector ind0_ = ind_[treat_ == 0];
   int n1_ = ind1_.size();
   int n0_ = n_ - n1_;
+  CharacterVector lab = treat_.names();
 
   // Output matrix with sample indices of C units
-  IntegerMatrix mm = mm_;
+  IntegerMatrix mm(n1_, max_rat);
+  mm.fill(NA_INTEGER);
+  rownames(mm) = lab[ind1_];
 
   // Store who has been matched
   IntegerVector matched = rep(0, n_);
@@ -114,6 +118,12 @@ IntegerMatrix nn_matchC(const IntegerMatrix& mm_,
   if (reuse_max < n1_) {
     use_reuse_max = true;
   }
+  if (unit_id_.isNotNull()) {
+    unit_id = as<IntegerVector>(unit_id_);
+  }
+  else {
+    unit_id = ind_;
+  }
 
   bool ps_diff_assigned;
 
@@ -141,9 +151,10 @@ IntegerMatrix nn_matchC(const IntegerMatrix& mm_,
       }
 
       t = ord_[i] - 1;   // index among treated
-      t_ind = ind1_[t]; // index among sample
+      t_ind = ind1_[t];  // index among sample
 
-      if (matched[t_ind]) {
+      // Skip discarded units (only discarded treated units have matched > 0)
+      if (matched[t_ind] > 0) {
         continue;
       }
 
@@ -156,7 +167,13 @@ IntegerMatrix nn_matchC(const IntegerMatrix& mm_,
 
       c_eligible = ind0; // index among sample
 
+      //Make ineligible control units that have been matched too many times
       c_eligible = c_eligible[as<IntegerVector>(matched[c_eligible]) < reuse_max];
+
+      //Prevent control units being matched to same treated unit again
+      if (rat > 0) {
+        c_eligible = as<IntegerVector>(c_eligible[!in(c_eligible, na_omit(mm.row(t)) - 1)]);
+      }
 
       if (use_exact) {
         exact_c = exact[c_eligible];
@@ -173,10 +190,9 @@ IntegerMatrix nn_matchC(const IntegerMatrix& mm_,
           antiexact_col = antiexact_col[c_eligible];
           c_eligible = c_eligible[antiexact_col != antiexact_col[t_ind]];
         }
-      }
-
-      if (c_eligible.size() == 0) {
-        continue;
+        if (c_eligible.size() == 0) {
+          continue;
+        }
       }
 
       ps_diff_assigned = false;
@@ -232,11 +248,11 @@ IntegerMatrix nn_matchC(const IntegerMatrix& mm_,
       if (use_mah_covs) {
 
         match_distance = rep(0.0, num_eligible);
-        mah_covs_t = mah_covs( t_ind , _ );
+        mah_covs_t = mah_covs.row(t_ind);
 
         for (j = 0; j < num_eligible; j++) {
           j_ = c_eligible[j];
-          mah_covs_row = mah_covs(c_eligible[j], _);
+          mah_covs_row = mah_covs.row(j_);
           match_distance[j] = sqrt(sum(pow(mah_covs_t - mah_covs_row, 2.0)));
         }
 
@@ -253,7 +269,8 @@ IntegerMatrix nn_matchC(const IntegerMatrix& mm_,
       //Remove infinite distances
       finite_match_distance = is_finite(match_distance);
       c_eligible = c_eligible[finite_match_distance];
-      if (c_eligible.size() == 0) {
+      num_eligible = c_eligible.size();
+      if (num_eligible == 0) {
         continue;
       }
       match_distance = match_distance[finite_match_distance];
@@ -276,7 +293,11 @@ IntegerMatrix nn_matchC(const IntegerMatrix& mm_,
 
         mm( t , rat ) = c_chosen + 1; // + 1 because C indexing starts at 0 but mm is sent to R
 
-        matched[c_chosen] = matched[c_chosen] + 1;
+        id_of_chosen_unit = unit_id[c_chosen];
+        units_with_id_of_chosen_unit = ind_[unit_id == id_of_chosen_unit];
+        for (j = 0; j < units_with_id_of_chosen_unit.size(); ++j) {
+          matched[units_with_id_of_chosen_unit[j]] = matched[units_with_id_of_chosen_unit[j]] + 1;
+        }
       }
     }
 

@@ -6,9 +6,33 @@ output:
 `MatchIt` News and Updates
 ======
 
-# MatchIt (development version)
+# MatchIt 4.4.0
 
 * `optmatch` has returned to CRAN, now with an open-source license! A new `solver` argument can be passed to `matchit()` with `method = "full"` and `method = "optimal"` to control the solver used to perform the optimization used in the matching. Note that using the default (open source) solver LEMON may yield results different from those obtained prior to `optmatch` 0.10.0. For reproducibility questions, please contact the `optmatch` maintainers.
+
+* New functions have been added to compute the Euclidean distance (`euclidean_dist()`), scaled Euclidean distance (`scaled_euclidean_dist()`), Mahalanobis distance (`mahalanobis_dist()`), and robust Mahalanobis distance (`robust_mahalanobis_dist()`). They produce distance matrices that can be supplied to the `distance` argument of `matchit()`, but see below.
+
+* New distance options are available for `matchit()` based on the distance functions above: `"robust_mahalanobis"`, `"euclidean"`, and `"scaled_euclidean"`, which complement `"mahalanobis"`. Similar to `"mahalanobis"`, these do not involve estimating a propensity score but rather operate on the covariates directly. These can be used for nearest neighbor matching, optimal matching, full matching, and coarsened exact matching with `k2k = TRUE`.
+
+* The Mahalanobis distance is now computed using the pooled within-group covariance matrix (computed by treatment group-mean centering each covariate before computing the covariance in the full sample), in line with how it is computed in `optmatch` and recommended by Rubin (1980) among others. This will cause results to differ between this version and prior versions of `MatchIt` that used the Mahalanobis distance computed ignoring group membership.
+
+* Added the `unit.id` argument to `matchit()` with `method = "nearest"`, which defines unit IDs so that if a control observation with a given unit ID has been matched to a treated unit, no other control units with the same ID can be used as future matches, ensuring each unit ID is used no more than once. This is useful when, e.g., multiple rows correspond to the same control firm but you only want each control firm to be matched once, in which case firm ID would be supplied to `unit.id`. See [here](https://stats.stackexchange.com/questions/349784/propensity-matching-and-analysis-of-resultant-data-on-a-data-set-with-repeated-m) for an example use case.
+
+* In `summary.matchit()`, `improvement` is now set to `FALSE` by default to hide the percentage improvement in balance. Set to `TRUE` to recover prior behavior.
+
+* Added clearer errors when required packages are missing for certain `distance` methods.
+
+* Fixed a bug when using `matchit()` with `method = "nearest"`, `ratio` greater than 1, and `reuse.max` specified. The bug allowed a previously matched control unit to be matched to the same treatment unit, thereby essentially ignoring the `ratio` argument. It now works as intended.
+
+* Fixed a bug in `matchit()` with `method = "nearest"` when `distance` was supplied as a matrix and `Inf` values were present.
+
+* Fixed a bug when using exact matching that caused an infinite loop when variable levels contained commas. Thanks to @bking124. (#111)
+
+* Fixed a bug introduced by `optmatch` version 0.10.3.
+
+* Documentation updates.
+
+* Updated the logo, thanks to [Ben Stillerman](https://stillben.com).
 
 # MatchIt 4.3.4
 

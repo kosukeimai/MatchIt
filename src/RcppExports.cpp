@@ -13,13 +13,23 @@ Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
 Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
-// nn_matchC
-IntegerMatrix nn_matchC(const IntegerMatrix& mm_, const IntegerVector& treat_, const IntegerVector& ord_, const IntegerVector& ratio, const int& max_rat, const LogicalVector& discarded, const int& reuse_max, const Nullable<NumericVector>& distance_, const Nullable<NumericMatrix>& distance_mat_, const Nullable<IntegerVector>& exact_, const Nullable<double>& caliper_dist_, const Nullable<NumericVector>& caliper_covs_, const Nullable<NumericMatrix>& calcovs_covs_mat_, const Nullable<NumericMatrix>& mah_covs_, const Nullable<IntegerMatrix>& antiexact_covs_, const bool& disl_prog);
-RcppExport SEXP _MatchIt_nn_matchC(SEXP mm_SEXP, SEXP treat_SEXP, SEXP ord_SEXP, SEXP ratioSEXP, SEXP max_ratSEXP, SEXP discardedSEXP, SEXP reuse_maxSEXP, SEXP distance_SEXP, SEXP distance_mat_SEXP, SEXP exact_SEXP, SEXP caliper_dist_SEXP, SEXP caliper_covs_SEXP, SEXP calcovs_covs_mat_SEXP, SEXP mah_covs_SEXP, SEXP antiexact_covs_SEXP, SEXP disl_progSEXP) {
+// dist_to_matrixC
+NumericMatrix dist_to_matrixC(const NumericVector& d);
+RcppExport SEXP _MatchIt_dist_to_matrixC(SEXP dSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const IntegerMatrix& >::type mm_(mm_SEXP);
+    Rcpp::traits::input_parameter< const NumericVector& >::type d(dSEXP);
+    rcpp_result_gen = Rcpp::wrap(dist_to_matrixC(d));
+    return rcpp_result_gen;
+END_RCPP
+}
+// nn_matchC
+IntegerMatrix nn_matchC(const IntegerVector& treat_, const IntegerVector& ord_, const IntegerVector& ratio, const int& max_rat, const LogicalVector& discarded, const int& reuse_max, const Nullable<NumericVector>& distance_, const Nullable<NumericMatrix>& distance_mat_, const Nullable<IntegerVector>& exact_, const Nullable<double>& caliper_dist_, const Nullable<NumericVector>& caliper_covs_, const Nullable<NumericMatrix>& calcovs_covs_mat_, const Nullable<NumericMatrix>& mah_covs_, const Nullable<IntegerMatrix>& antiexact_covs_, const Nullable<IntegerVector>& unit_id_, const bool& disl_prog);
+RcppExport SEXP _MatchIt_nn_matchC(SEXP treat_SEXP, SEXP ord_SEXP, SEXP ratioSEXP, SEXP max_ratSEXP, SEXP discardedSEXP, SEXP reuse_maxSEXP, SEXP distance_SEXP, SEXP distance_mat_SEXP, SEXP exact_SEXP, SEXP caliper_dist_SEXP, SEXP caliper_covs_SEXP, SEXP calcovs_covs_mat_SEXP, SEXP mah_covs_SEXP, SEXP antiexact_covs_SEXP, SEXP unit_id_SEXP, SEXP disl_progSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const IntegerVector& >::type treat_(treat_SEXP);
     Rcpp::traits::input_parameter< const IntegerVector& >::type ord_(ord_SEXP);
     Rcpp::traits::input_parameter< const IntegerVector& >::type ratio(ratioSEXP);
@@ -34,8 +44,9 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const Nullable<NumericMatrix>& >::type calcovs_covs_mat_(calcovs_covs_mat_SEXP);
     Rcpp::traits::input_parameter< const Nullable<NumericMatrix>& >::type mah_covs_(mah_covs_SEXP);
     Rcpp::traits::input_parameter< const Nullable<IntegerMatrix>& >::type antiexact_covs_(antiexact_covs_SEXP);
+    Rcpp::traits::input_parameter< const Nullable<IntegerVector>& >::type unit_id_(unit_id_SEXP);
     Rcpp::traits::input_parameter< const bool& >::type disl_prog(disl_progSEXP);
-    rcpp_result_gen = Rcpp::wrap(nn_matchC(mm_, treat_, ord_, ratio, max_rat, discarded, reuse_max, distance_, distance_mat_, exact_, caliper_dist_, caliper_covs_, calcovs_covs_mat_, mah_covs_, antiexact_covs_, disl_prog));
+    rcpp_result_gen = Rcpp::wrap(nn_matchC(treat_, ord_, ratio, max_rat, discarded, reuse_max, distance_, distance_mat_, exact_, caliper_dist_, caliper_covs_, calcovs_covs_mat_, mah_covs_, antiexact_covs_, unit_id_, disl_prog));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -106,6 +117,7 @@ RcppExport SEXP _MatchIt_RcppExport_registerCCallable() {
 }
 
 static const R_CallMethodDef CallEntries[] = {
+    {"_MatchIt_dist_to_matrixC", (DL_FUNC) &_MatchIt_dist_to_matrixC, 1},
     {"_MatchIt_nn_matchC", (DL_FUNC) &_MatchIt_nn_matchC, 16},
     {"_MatchIt_pairdistsubC", (DL_FUNC) &_MatchIt_pairdistsubC, 4},
     {"_MatchIt_subclass2mmC", (DL_FUNC) &_MatchIt_subclass2mmC, 3},

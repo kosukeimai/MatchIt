@@ -5,18 +5,19 @@
 
 \description{
 Several matching methods require or can involve the distance between treated and control units. Options include the Mahalanobis distance, propensity score distance, or distance between user-supplied values. Propensity scores are also used for common support via the \code{discard} options and for defining calipers. This page documents the options that can be supplied to the \code{distance} argument to \fun{matchit}.
+}
 
-There are four ways to specify the \code{distance} argument: 1) as the string \code{"mahalanobis"}, 2) as a string containing the name of a method for estimating propensity scores, 3) as a vector of values whose pairwise differences define the distance between units, or 4) as a distance matrix containing all pairwise differences.
+\section{Allowable options}{
+There are four ways to specify the \code{distance} argument: 1) as a string containing the name of a method for estimating propensity scores, 2) as a string containing the name of a method for computing pairwise distances from the covariates, 3) as a vector of values whose pairwise differences define the distance between units, or 4) as a distance matrix containing all pairwise distances. The options are detailed below.
 
-When \code{distance} is specified as one of the allowed strings (described below) other than \code{"mahalanobis"}, a propensity score is estimated using the variables in \code{formula} and the method corresponding to the given argument. This propensity score can be used to compute the distance between units as the absolute difference between the propensity scores of pairs of units. In this respect, the propensity score is more like a "position" measure than a distance measure, since it is the pairwise differences that form the distance rather than the propensity scores themselves. Still, this naming convention is used to reflect their primary purpose without committing to the status of the estimated values as propensity scores, since transformations of the scores are allowed and user-supplied values that are not propensity scores can also be supplied (detailed below). Propensity scores can also be used to create calipers and common support restrictions, whether or not they are used in the actual distance measure used in the matching, if any.
+\subsection{Propensity score estimation methods}{
+When \code{distance} is specified as the name of a method for estimating propensity scores (described below), a propensity score is estimated using the variables in \code{formula} and the method corresponding to the given argument. This propensity score can be used to compute the distance between units as the absolute difference between the propensity scores of pairs of units. Propensity scores can also be used to create calipers and common support restrictions, whether or not they are used in the actual distance measure used in the matching, if any.
 
 In addition to the \code{distance} argument, two other arguments can be specified that relate to the estimation and manipulation of the propensity scores. The \code{link} argument allows for different links to be used in models that require them such as generalized linear models, for which the logit and probit links are allowed, among others. In addition to specifying the link, the \code{link} argument can be used to specify whether the propensity score or the linearized version of the propensity score should be used; by specifying \code{link = "linear.{link}"}, the linearized version will be used.
 
 The \code{distance.options} argument can also be specified, which should be a list of values passed to the propensity score-estimating function, for example, to choose specific options or tuning parameters for the estimation method. If \code{formula}, \code{data}, or \code{verbose} are not supplied to \code{distance.options}, the corresponding arguments from \code{matchit()} will be automatically supplied. See the Examples for demonstrations of the uses of \code{link} and \code{distance.options}. When \code{s.weights} is supplied in the call to \code{matchit()}, it will automatically be passed to the propensity score-estimating function as the \code{weights} argument unless otherwise described below.
-}
 
-\section{Allowable options}{
-Below are the allowed options for \code{distance}:
+The following methods for estimating propensity scores are allowed:
 
 \describe{
   \item{\code{"glm"}}{
@@ -46,15 +47,42 @@ The propensity scores are estimated using the covariate balancing propensity sco
   \item{\code{"bart"}}{
 The propensity scores are estimated using Bayesian additive regression trees (BART). The \code{formula} supplied to \code{matchit()} is passed directly to \pkgfun2{dbarts}{bart}{dbarts::bart2}, and \pkgfun2{dbarts}{bart}{dbarts::fitted} is used to compute the propensity scores. The \code{link} argument can be specified as \code{"linear"} to use the linear predictor instead of the predicted probabilities. When \code{s.weights} is supplied to \code{matchit()}, it will not be passed to \code{bart2} because the \code{weights} argument in \code{bart2} does not correspond to sampling weights.
 }
-  \item{\code{"mahalanobis"}}{
-No propensity scores are estimated. Rather than using the propensity score difference as the distance between units, the Mahalanobis distance is used instead. See \fun{mahalanobis} for details on how it is computed. The Mahalanobis distance is always computed using all the variables in \code{formula}. With this specification, calipers and common support restrictions cannot be used and the \code{distance} component of the output object will be empty because no propensity scores are estimated. The \code{link} and \code{distance.options} arguments are ignored. See individual methods pages for whether the Mahalanobis distance is allowed and how it is used. Sometimes this setting is just a placeholder to indicate that no propensity score is to be estimated (e.g., with \code{method = "genetic"}). To perform Mahalanobis distance matching \emph{and} estimate propensity scores to be used for a purpose other than matching, the \code{mahvars} argument should be used along with a different specification to \code{distance}. See the individual matching method pages for details on how to use \code{mahvars}.
 }
 }
 
-\code{distance} can also be supplied as a numeric vector whose values will be taken to function like propensity scores; their pairwise difference will define the distance between units. This might be useful for supplying propensity scores computed outside \code{matchit()} or resupplying \code{matchit()} with propensity scores estimated before without having to recompute them. \code{distance} can also be supplied as a matrix whose values represent the pairwise distances between units. The matrix should either be a square, with a row and column for each unit (e.g., as the output of a call to \code{as.matrix(\link{dist}(.))}), or have as many rows as there are treated units and as many columns as there are control units (e.g., as the output of a call to \pkgfun{optmatch}{match_on}). Distance values of \code{Inf} will disallow the corresponding units to be matched. When \code{distance} is a supplied as a numeric vector or matrix, \code{link} and \code{distance.options} are ignored.
+\subsection{Methods for computing distances from covariates}{
+The following methods involve computing a distance matrix from the covariates themselves without estimating a propensity score. Calipers on the distance measure and common support restrictions cannot be used, and the \code{distance} component of the output object will be empty because no propensity scores are estimated. The \code{link} and \code{distance.options} arguments are ignored with these methods. See the individual matching methods pages for whether these distances are allowed and how they are used. Each of these distance measures can also be calculated outside \code{matchit()} using its \link[=euclidean_dist]{corresponding function}.
+
+\describe{
+ \item{\code{"euclidean"}}{
+The Euclidean distance is the raw distance between units, computed as
+\deqn{d_{ij} = \sqrt{(x_i - x_j)(x_i - x_j)'}}
+It is sensitive to the scale of the covariates, so covariates with larger scales will take higher priority.
+}
+  \item{\code{"scaled_euclidean"}}{
+The scaled Euclidean distance is the Euclidean distance computed on the scaled (i.e., standardized) covariates. This ensures the covariates are on the same scale. The covariates are standardized using the pooled within-group standard deviations, computed by treatment group-mean centering each covariate before computing the standard deviation in the full sample.
+}
+  \item{\code{"mahalanobis"}}{
+The Mahalanobis distance is computed as
+\deqn{d_{ij} = \sqrt{(x_i - x_j)\Sigma^{-1}(x_i - x_j)'}}
+where \eqn{\Sigma} is the pooled within-group covariance matrix of the covariates, computed by treatment group-mean centering each covariate before computing the covariance in the full sample. This ensures the variables are on the same scale and accounts for the correlation between covariates.
+}
+  \item{\code{"robust_mahalanobis"}}{
+The robust rank-based Mahalanobis distance is the Mahalanobis distance computed on the ranks of the covariates with an adjustment for ties. It is described in Rosenbaum (2010, ch. 8) as an alternative to the Mahalanobis distance that handles outliers and rare categories better than the standard Mahalanobis distance but is not affinely invariant.
+}
+}
+
+To perform Mahalanobis distance matching \emph{and} estimate propensity scores to be used for a purpose other than matching, the \code{mahvars} argument should be used along with a different specification to \code{distance}. See the individual matching method pages for details on how to use \code{mahvars}.
+}
+
+\subsection{Distances supplied as a numeric vector or matrix}{
+\code{distance} can also be supplied as a numeric vector whose values will be taken to function like propensity scores; their pairwise difference will define the distance between units. This might be useful for supplying propensity scores computed outside \code{matchit()} or resupplying \code{matchit()} with propensity scores estimated previously without having to recompute them.
+
+\code{distance} can also be supplied as a matrix whose values represent the pairwise distances between units. The matrix should either be a square, with a row and column for each unit (e.g., as the output of a call to \code{as.matrix(\link{dist}(.))}), or have as many rows as there are treated units and as many columns as there are control units (e.g., as the output of a call to \fun{mahalanobis_dist} or \pkgfun{optmatch}{match_on}). Distance values of \code{Inf} will disallow the corresponding units to be matched. When \code{distance} is a supplied as a numeric vector or matrix, \code{link} and \code{distance.options} are ignored.
+}
 }
 \section{Outputs}{
-When specifying an argument to \code{distance} that estimates a propensity score, the output of the function called to estimate the propensity score (e.g., the \code{glm} object when \code{distance = "glm"}) will be included in the \code{matchit()} output object in the \code{model} component. When \code{distance} is anything other than \code{"mahalanobis"} and not a matrix, the estimated or supplied distance measures will be included in the \code{matchit()} output object in the \code{distance} component.
+When specifying an argument to \code{distance} that estimates a propensity score, the output of the function called to estimate the propensity score (e.g., the \code{glm} object when \code{distance = "glm"}) will be included in the \code{matchit()} output object in the \code{model} component. When \code{distance} propensity score estimation method or a vector of distance values, the estimated or supplied distance measures will be included in the \code{matchit()} output object in the \code{distance} component. Otherwise, the \code{distance} component will be empty.
 }
 \note{
 In versions of \emph{MatchIt} prior to 4.0.0, \code{distance} was specified in a slightly different way. When specifying arguments using the old syntax, they will automatically be converted to the corresponding method in the new syntax but a warning will be thrown. \code{distance = "logit"}, the old default, will still work in the new syntax, though \code{distance = "glm", link = "logit"} is preferred (note that these are the default settings and don't need to be made explicit).

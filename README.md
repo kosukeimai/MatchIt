@@ -41,7 +41,7 @@ m.out
     #> A matchit object
     #>  - method: 1:1 nearest neighbor matching with replacement
     #>  - distance: Mahalanobis
-    #>  - number of obs.: 614 (original), 286 (matched)
+    #>  - number of obs.: 614 (original), 260 (matched)
     #>  - target estimand: ATT
     #>  - covariates: age, educ, race, married, nodegree, re74, re75
 
@@ -73,42 +73,43 @@ summary(m.out)
     #> 
     #> Summary of Balance for Matched Data:
     #>            Means Treated Means Control Std. Mean Diff. Var. Ratio eCDF Mean eCDF Max Std. Pair Dist.
-    #> age              25.8162       25.8703         -0.0076     0.9296    0.0124   0.0865          0.2010
-    #> educ             10.3459       10.4486         -0.0511     0.8956    0.0100   0.0595          0.1694
-    #> raceblack         0.8432        0.3730          1.2935          .    0.4703   0.4703          1.6206
-    #> racehispan        0.0595        0.0919         -0.1371          .    0.0324   0.0324          0.5943
-    #> racewhite         0.0973        0.5351         -1.4774          .    0.4378   0.4378          1.8057
-    #> married           0.1892        0.4919         -0.7729          .    0.3027   0.3027          1.1593
-    #> nodegree          0.7081        0.6486          0.1308          .    0.0595   0.0595          0.1308
-    #> re74           2095.5737     2180.6956         -0.0174     1.1183    0.0270   0.2054          0.1221
-    #> re75           1532.0553     1475.2549          0.0176     1.1629    0.0111   0.0324          0.0989
+    #> age              25.8162       25.5622          0.0355     0.6540    0.0461   0.1838          0.4827
+    #> educ             10.3459       10.4270         -0.0403     1.1635    0.0077   0.0378          0.1963
+    #> raceblack         0.8432        0.8432          0.0000          .    0.0000   0.0000          0.0000
+    #> racehispan        0.0595        0.0595          0.0000          .    0.0000   0.0000          0.0000
+    #> racewhite         0.0973        0.0973          0.0000          .    0.0000   0.0000          0.0000
+    #> married           0.1892        0.1784          0.0276          .    0.0108   0.0108          0.0276
+    #> nodegree          0.7081        0.7081         -0.0000          .    0.0000   0.0000          0.0000
+    #> re74           2095.5737     1788.6941          0.0628     1.5689    0.0311   0.1730          0.2494
+    #> re75           1532.0553     1087.7420          0.1380     2.1220    0.0330   0.0865          0.2360
     #> 
     #> Percent Balance Improvement:
     #>            Std. Mean Diff. Var. Ratio eCDF Mean eCDF Max
-    #> age                   97.6       91.1      84.7     45.2
-    #> educ                   7.1       84.3      71.3     46.6
-    #> raceblack             26.6          .      26.6     26.6
-    #> racehispan            60.8          .      60.8     60.8
-    #> racewhite             21.5          .      21.5     21.5
-    #> married                6.5          .       6.5      6.5
-    #> nodegree              46.6          .      46.6     46.6
-    #> re74                  97.6       83.0      88.0     54.1
-    #> re75                  93.9     -237.7      91.7     88.7
+    #> age                   88.5       48.3      43.3    -16.5
+    #> educ                  26.6       78.4      77.9     66.0
+    #> raceblack            100.0          .     100.0    100.0
+    #> racehispan           100.0          .     100.0    100.0
+    #> racewhite            100.0          .     100.0    100.0
+    #> married               96.7          .      96.7     96.7
+    #> nodegree             100.0          .     100.0    100.0
+    #> re74                  91.3       31.5      86.2     61.3
+    #> re75                  52.5    -1583.5      75.4     69.9
     #> 
     #> Sample Sizes:
     #>               Control Treated
     #> All            429.       185
-    #> Matched (ESS)   48.14     185
-    #> Matched        101.       185
-    #> Unmatched      328.         0
+    #> Matched (ESS)   32.94     185
+    #> Matched         75.       185
+    #> Unmatched      354.         0
     #> Discarded        0.         0
 
 At the top is balance for the original sample. Below that is balance in
 the matched sample, followed by the percent reduction in imbalance and
 the sample sizes before and after matching. Smaller values for the
-balance statistics indicate better balance. We can plot the standardized
-mean differences in a Love plot for a clean, visual display of balance
-across the sample:
+balance statistics indicate better balance. (In this case, good balance
+was not achieved and other matching methods should be tried). We can
+plot the standardized mean differences in a Love plot for a clean,
+visual display of balance across the sample:
 
 ``` r
 #Plot balance

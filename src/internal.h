@@ -7,5 +7,7 @@ using namespace Rcpp;
 IntegerVector tabulateC_(const IntegerVector& bins,
                          const Nullable<int>& nbins = R_NilValue);
 
+IntegerVector which(const LogicalVector& x);
+
 
 #endif

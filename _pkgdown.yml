@@ -4,6 +4,7 @@ reference:
   - matchit
   - starts_with("method_")
   - distance
+  - euclidean_dist
   - add_s.weights
 - title: Assessing Balance
 - contents:
