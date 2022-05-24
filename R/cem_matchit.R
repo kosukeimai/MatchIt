@@ -144,8 +144,8 @@ cem_matchit <- function(treat, X, cutpoints = "sturges", grouping = list(), k2k 
         # dist.mat <- dist.mat[d.rows, -d.rows, drop = FALSE]
 
         dist.mat <- matrix(0, nrow = sum(treat[in.sub] == s), ncol = sum(treat[in.sub] != s),
-                           dimnames = list(names(treat)[treat[in.sub] == s],
-                                           names(treat)[treat[in.sub] != s]))
+                           dimnames = list(names(treat)[in.sub][treat[in.sub] == s],
+                                           names(treat)[in.sub][treat[in.sub] != s]))
 
       }
       else if (k2k.method %in% matchit_distances()) {
@@ -158,7 +158,7 @@ cem_matchit <- function(treat, X, cutpoints = "sturges", grouping = list(), k2k 
       #   for (t in seq_along(in.sub)) dist.mat[t,] <- mahalanobis(X.match[in.sub,,drop = FALSE], X.match[in.sub[t],], mahSigma_inv, TRUE)
       # }
       else {
-        dist.mat <- as.matrix(dist(X.match[in.sub,,drop = FALSE], method = k2k.method, p = mpower))
+        dist.mat <- dist_to_matrixC(dist(X.match[in.sub,,drop = FALSE], method = k2k.method, p = mpower))
 
         #Put smaller group on rows
         d.rows <- which(rownames(dist.mat) %in% names(treat[in.sub])[treat[in.sub] == s])
