@@ -329,7 +329,7 @@ process.caliper <- function(caliper = NULL, method = NULL, data = NULL, covs = N
   else if (anyNA(names(caliper))) stop("'caliper' names cannot include NA.", call. = FALSE)
   else if (sum(names(caliper) == "") > 1) stop("No more than one entry in 'caliper' can have no name.", call. = FALSE)
 
-  if (any(names(caliper) == "") && is.null(distance)) stop("All entries in 'caliper' must be named when distance = \"mahalanobis\".", call. = FALSE)
+  if (any(names(caliper) == "") && is.null(distance)) stop("All entries in 'caliper' must be named when distance does not correspond to a propensity score.", call. = FALSE)
 
   #Check if caliper name is in available data
   cal.in.data <- setNames(names(caliper) %in% names(data), names(caliper))
