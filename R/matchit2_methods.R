@@ -117,7 +117,8 @@ matchit2full <- function(treat, formula, data, distance, discarded,
 
   if (is.full.mahalanobis) {
     if (length(attr(terms(formula, data = data), "term.labels")) == 0) {
-      stop("Covariates must be specified in the input formula when distance = \"mahalanobis\".", call. = FALSE)
+      stop(sprintf("Covariates must be specified in the input formula when distance = \"%s\".",
+                   attr(is.full.mahalanobis, "transform")), call. = FALSE)
     }
     mahvars <- formula
   }
@@ -291,7 +292,8 @@ matchit2optimal <- function(treat, formula, data, distance, discarded,
 
   if (is.full.mahalanobis) {
     if (length(attr(terms(formula, data = data), "term.labels")) == 0) {
-      stop("Covariates must be specified in the input formula when distance = \"mahalanobis\".", call. = FALSE)
+      stop(sprintf("Covariates must be specified in the input formula when distance = \"%s\".",
+                   attr(is.full.mahalanobis, "transform")), call. = FALSE)
     }
     mahvars <- formula
   }
@@ -758,7 +760,8 @@ matchit2nearest <-  function(treat, data, distance, discarded,
 
   if (is.full.mahalanobis) {
     if (length(attr(terms(formula, data = data), "term.labels")) == 0) {
-      stop("Covariates must be specified in the input formula when distance = \"mahalanobis\".", call. = FALSE)
+      stop(sprintf("Covariates must be specified in the input formula when distance = \"%s\".",
+                   attr(is.full.mahalanobis, "transform")), call. = FALSE)
     }
     mahvars <- formula
   }
