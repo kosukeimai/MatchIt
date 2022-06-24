@@ -88,10 +88,8 @@ matchit <- function(formula, data = NULL, method = "nearest", distance = "glm",
 
   #Process distance function
   is.full.mahalanobis <- FALSE
-  if (!is.null(method) && method %in% c("exact", "cem", "cardinality")) {
-    fn1 <- NULL
-  }
-  else {
+  fn1 <- NULL
+  if (is.null(method) || !method %in% c("exact", "cem", "cardinality")) {
     distance <- process.distance(distance, method, treat)
 
     if (is.numeric(distance)) {
@@ -105,6 +103,28 @@ matchit <- function(formula, data = NULL, method = "nearest", distance = "glm",
     else {
       fn1 <- paste0("distance2", distance)
     }
+  }
+
+  #Process covs
+  if (!is.null(fn1) && fn1 == "distance2gam") {
+    check.package("mgcv")
+    env <- environment(formula)
+    covs.formula <- mgcv::interpret.gam(formula)$fake.formula
+    environment(covs.formula) <- env
+    covs.formula <- delete.response(terms(covs.formula, data = data))
+  }
+  else {
+    covs.formula <- delete.response(terms(formula, data = data))
+  }
+  covs <- model.frame(covs.formula, data = data, na.action = "na.pass")
+  k <- ncol(covs)
+  for (i in seq_len(k)) {
+    if (anyNA(covs[[i]]) || any(!is.finite(covs[[i]]))) {
+      covariates.with.missingness <- names(covs)[i:k][vapply(i:k, function(j) anyNA(covs[[j]]) || any(!is.finite(covs[[j]])), logical(1L))]
+      stop(paste0("Missing and non-finite values are not allowed in the covariates. Covariates with missingness or non-finite values:\n\t",
+                  paste(covariates.with.missingness, collapse = ", ")), call. = FALSE)
+    }
+    if (is.character(covs[[i]])) covs[[i]] <- factor(covs[[i]])
   }
 
   #Process exact, mahvars, and antiexact
@@ -157,15 +177,6 @@ matchit <- function(formula, data = NULL, method = "nearest", distance = "glm",
       formula <- mgcv::interpret.gam(formula)$fake.formula
       environment(formula) <- env
     }
-  }
-
-  #Process covs
-  covs.formula <- delete.response(terms(formula, data = data))
-  covs <- model.frame(covs.formula, data = data, na.action = "na.pass")
-  for (i in seq_len(ncol(covs))) {
-    if (anyNA(covs[[i]])) stop("Missing values are not allowed in the covariates.", call. = FALSE)
-    if (is.character(covs[[i]])) covs[[i]] <- factor(covs[[i]])
-    else if (any(!is.finite(covs[[i]]))) stop("Non-finite values are not allowed in the covariates.", call. = FALSE)
   }
 
   #Process discard
