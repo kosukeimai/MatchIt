@@ -8,6 +8,8 @@ output:
 
 # MatchIt (development version)
 
+* The error message when covariates have missing or non-finite values is now clearer, identifying which variables are afflicted. This fixes a bug mentioned in #115.
+
 * Fixed a bug when using `matchit()` with `method = "cem"`, `k2k = TRUE`, and `k2k.method = NULL`. Thanks to Florian B. Mayr.
 
 * Fixed typos in the documentation and vignettes.
