@@ -1184,7 +1184,11 @@ matchit2cardinality <-  function(treat, data, discarded, formula,
     else {
       sds <- sqrt(apply(X[treat==focal,std.tols,drop=FALSE], 2, wvar, w = s.weights[treat==focal]))
     }
-    X[,std.tols] <- scale(X[, std.tols, drop = FALSE], center = FALSE, scale = sds)
+
+    zero.sds <- sds < 1e-10
+
+    X[,std.tols][,!zero.sds] <- scale(X[, std.tols, drop = FALSE][,!zero.sds, drop = FALSE],
+                                     center = FALSE, scale = sds[!zero.sds])
   }
 
   opt.out <- setNames(vector("list", if (is.null(ex)) 1L else nlevels(ex)), levels(ex))
