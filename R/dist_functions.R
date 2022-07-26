@@ -164,6 +164,7 @@ eucdist_internal <- function(X, treat = NULL) {
 get.covs.matrix.for.dist <- function(formula = NULL, data = NULL) {
 
   if (is.null(formula)) {
+    if (is.null(colnames(data))) colnames(data) <- paste0("X", seq_len(ncol(data)))
     fnames <- colnames(data)
     fnames[!startsWith(fnames, "`")] <- paste0("`", fnames[!startsWith(fnames, "`")], "`")
     data <- as.data.frame(data)
