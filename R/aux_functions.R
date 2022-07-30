@@ -1030,9 +1030,10 @@ wm <- function(x, w = NULL, na.rm = TRUE) {
 #Pooled within-group (weighted) covariance by group-mean centering covariates. Used
 #in Mahalanobis distance
 pooled_cov <- function(X, t, w = NULL) {
+  unique_t <- unique(t)
+  if (is.null(dim(X))) X <- matrix(X, nrow = length(X))
   if (is.null(w)) {
     n <- nrow(X)
-    unique_t <- unique(t)
     for (i in unique_t) {
       in_t <- which(t == i)
       for (j in seq_len(ncol(X))) {
@@ -1042,7 +1043,6 @@ pooled_cov <- function(X, t, w = NULL) {
     pooled_cov <- cov(X)*(n-1)/(n-length(unique_t))
   }
   else {
-    unique_t <- unique(t)
     for (i in unique_t) {
       in_t <- which(t == i)
       for (j in seq_len(ncol(X))) {
@@ -1054,16 +1054,65 @@ pooled_cov <- function(X, t, w = NULL) {
   return(pooled_cov)
 }
 
-pooled_sd <- function(X, t, w = NULL) {
+pooled_sd <- function(X, t, w = NULL, bin.var = NULL, contribution = "proportional") {
+  contribution <- match_arg(contribution, c("proportional", "equal"))
   unique_t <- unique(t)
-  for (i in unique_t) {
-    in_t <- which(t == i)
-    for (j in seq_len(ncol(X))) {
-      X[in_t, j] <- X[in_t, j] - wm(X[in_t, j], w[in_t])
-    }
-  }
-  pooled_var <- apply(X, 2, wvar, w = w)
+  if (is.null(dim(X))) X <- matrix(X, nrow = length(X))
+  n <- nrow(X)
+  if (is.null(bin.var)) bin.var <- apply(X, 2, function(x) all(x == 0 | x == 1))
 
+  if (contribution == "equal") {
+    vars <- matrix(0, nrow = length(unique_t), ncol = ncol(X))
+    for (i in seq_along(unique_t)) {
+      in_t <- which(t == unique_t[i])
+      vars[i,] <- vapply(seq_len(ncol(X)), function(j) {
+        x <- X[,j]
+        b <- bin.var[j]
+        wvar(x[in_t], w = w[in_t], bin.var = b)
+      }, numeric(1L))
+    }
+    pooled_var <- colMeans(vars)
+  }
+  else {
+    pooled_var <- vapply(seq_len(ncol(X)), function(j) {
+      x <- X[,j]
+      b <- bin.var[j]
+
+      if (b) {
+        if (is.null(w)) {
+          v <- vapply(unique_t, function(i) {
+            sxi <- sum(x[t == i])
+            ni <- sum(t == i)
+            sxi * (1 - sxi/ni) / n
+          }, numeric(1L))
+          return(sum(v))
+        }
+        else {
+          v <- vapply(unique_t, function(i) {
+            sxi <- sum(x[t == i] * w[t == i])
+            ni <- sum(w[t==i])
+            sxi * (1 - sxi/ni) / sum(w)
+          }, numeric(1L))
+          return(sum(v))
+        }
+      }
+      else {
+        if (is.null(w)) {
+          for (i in unique_t) {
+            x[t==i] <- x[t==i] - wm(x[t==i])
+          }
+          return(sum(x^2)/(n - length(unique_t)))
+        }
+        else {
+          for (i in unique_t) {
+            x[t==i] <- x[t==i] - wm(x[t==i], w[t==i])
+          }
+          w_ <- w/sum(w)
+          return(sum(w_ * x^2)/(1 - sum(w_^2)))
+        }
+      }
+    }, numeric(1L))
+  }
   return(sqrt(pooled_var))
 }
 
@@ -1073,7 +1122,9 @@ ESS <- function(w) {
 }
 
 #Compute sample sizes
-nn <- function(treat, weights, discarded, s.weights) {
+nn <- function(treat, weights, discarded = NULL, s.weights = NULL) {
+
+  if (is.null(discarded)) discarded <- rep(FALSE, length(treat))
   if (is.null(s.weights)) s.weights <- rep(1, length(treat))
   weights <- weights * s.weights
   n <- matrix(0, ncol=2, nrow=6, dimnames = list(c("All (ESS)", "All", "Matched (ESS)","Matched", "Unmatched","Discarded"),
@@ -1091,8 +1142,9 @@ nn <- function(treat, weights, discarded, s.weights) {
 }
 
 #Compute subclass sample sizes
-qn <- function(treat, subclass, discarded) {
+qn <- function(treat, subclass, discarded = NULL) {
 
+  if (is.null(discarded)) discarded <- rep(FALSE, length(treat))
   qn <- table(treat[!discarded], subclass[!discarded])
   dimnames(qn) <- list(c("Control", "Treated"), levels(subclass))
 

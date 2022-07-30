@@ -23,7 +23,7 @@ qoi <- function(xx, tt, ww = NULL, s.weights, subclass = NULL, mm = NULL, s.d.de
 
   mdiff <- xsum["Means Treated"] - xsum["Means Control"]
 
-  if (standardize && abs(mdiff) > 1e-8) {
+  if (standardize && abs(mdiff) > sqrt(.Machine$double.eps)) {
     if (!too.small) {
       if (is.numeric(s.d.denom)) {
         std <- s.d.denom
@@ -33,9 +33,12 @@ qoi <- function(xx, tt, ww = NULL, s.weights, subclass = NULL, mm = NULL, s.d.de
         std <- switch(s.d.denom,
                       "treated" = sqrt(wvar(xx[tt==1], bin.var, s.weights[tt==1])),
                       "control" = sqrt(wvar(xx[tt==0], bin.var, s.weights[tt==0])),
-                      "pooled" = sqrt(.5*(wvar(xx[tt==1], bin.var, s.weights[tt==1]) + wvar(xx[tt==0], bin.var, s.weights[tt==0]))))
+                      "pooled" = pooled_sd(xx, tt, w = s.weights, bin.var = bin.var, contribution = "equal"))
 
-        if (std < sqrt(.Machine$double.eps)) std <- sqrt(wvar(xx, bin.var, s.weights)) #Avoid divide by zero
+        #Avoid divide by zero
+        if (std < sqrt(.Machine$double.eps)) {
+          std <- pooled_sd(xx, tt, w = s.weights, bin.var = bin.var, contribution = "equal")
+        }
       }
 
       xsum[3] <- mdiff/std
@@ -92,7 +95,7 @@ qoi.subclass <- function(xx, tt, s.weights, subclass, s.d.denom = "treated", sta
         std <- switch(s.d.denom,
                       "treated" = sqrt(wvar(xx[tt==1], bin.var, s.weights[tt==1])),
                       "control" = sqrt(wvar(xx[tt==0], bin.var, s.weights[tt==0])),
-                      "pooled" = sqrt(.5*(wvar(xx[tt==1], bin.var, s.weights[tt==1]) + wvar(xx[tt==0], bin.var, s.weights[tt==0]))))
+                      "pooled" = pooled_sd(xx, tt, w = s.weights, bin.var = bin.var, contribution = "equal"))
       }
 
       xsum["Subclass", 3] <- mdiff/std
