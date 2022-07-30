@@ -12,6 +12,10 @@ output:
 
 * Fixed a bug when using `matchit()` with `method = "cem"`, `k2k = TRUE`, and `k2k.method = NULL`. Thanks to Florian B. Mayr.
 
+* Fixed a bug when using `method = "optimal"` and `method = "full"` with `exact` and `antiexact` specified, wherein a warning would occur about the `drop` argument in subsetting.
+
+* Fixed a bug where `antiexact` would not work correctly with `method = "nearest"`. Thanks to @gli-1. (#119)
+
 * Fixed typos in the documentation and vignettes.
 
 # MatchIt 4.4.0

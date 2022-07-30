@@ -161,6 +161,7 @@ matchit2full <- function(treat, formula, data, distance, discarded,
   dimnames(mo) <- list(names(treat_)[treat_ == 1], names(treat_)[treat_ == 0])
 
   mo <- optmatch::match_on(mo, data = data[!discarded,, drop = FALSE])
+  mo <- optmatch::as.InfinitySparseMatrix(mo)
 
   #Process antiexact
   if (!is.null(antiexact)) {
@@ -204,7 +205,7 @@ matchit2full <- function(treat, formula, data, distance, discarded,
 
   for (e in levels(ex)) {
     if (nlevels(ex) > 1) {
-      mo_ <- mo[ex[treat_==1] == e, ex[treat_==0] == e, drop = FALSE]
+      mo_ <- mo[ex[treat_==1] == e, ex[treat_==0] == e]
     }
     else mo_ <- mo
 
@@ -375,6 +376,7 @@ matchit2optimal <- function(treat, formula, data, distance, discarded,
   dimnames(mo) <- list(names(treat_)[treat_ == 1], names(treat_)[treat_ == 0])
 
   mo <- optmatch::match_on(mo, data = data[!discarded,, drop = FALSE])
+  mo <- optmatch::as.InfinitySparseMatrix(mo)
 
   #Process antiexact
   if (!is.null(antiexact)) {
@@ -392,7 +394,7 @@ matchit2optimal <- function(treat, formula, data, distance, discarded,
 
   for (e in levels(ex)) {
     if (nlevels(ex) > 1) {
-      mo_ <- mo[ex[treat_==1] == e, ex[treat_==0] == e, drop = FALSE]
+      mo_ <- mo[ex[treat_==1] == e, ex[treat_==0] == e]
     }
     else mo_ <- mo
 
@@ -953,19 +955,20 @@ matchit2nearest <-  function(treat, data, distance, discarded,
                     caliper.covs, caliper.covs.mat, mahcovs, antiexactcovs, unit.id, verbose)
   }
   else {
+    distance_ <- caliper.covs.mat_ <- mahcovs_ <- antiexactcovs_ <- distance_mat_ <- NULL
     mm_list <- lapply(levels(ex), function(e) {
       if (verbose) {
         cat(sprintf("Matching subgroup %s/%s: %s...\n",
                     match(e, levels(ex)), nlevels(ex), e))
       }
 
-      distance_ <- caliper.covs.mat_ <- mahcovs_ <- distance_mat_ <- NULL
       .e <- which(ex == e)
       treat_ <- treat[.e]
       discarded_ <- discarded[.e]
       if (!is.null(distance)) distance_ <- distance[.e]
       if (!is.null(caliper.covs.mat)) caliper.covs.mat_ <- caliper.covs.mat[.e,,drop = FALSE]
       if (!is.null(mahcovs)) mahcovs_ <- mahcovs[.e,,drop = FALSE]
+      if (!is.null(antiexactcovs)) antiexactcovs_ <- antiexactcovs[.e,,drop = FALSE]
       if (!is.null(distance_mat)) {
         .e1 <- which(ex[treat==1] == e)
         .e0 <- which(ex[treat==0] == e)
@@ -981,7 +984,7 @@ matchit2nearest <-  function(treat, data, distance, discarded,
                      "data" = seq_len(n1_))
 
       mm_ <- nn_matchC(treat_, ord_, ratio_, max_rat, discarded_, reuse.max, distance_, distance_mat_, NULL, caliper.dist,
-                       caliper.covs, caliper.covs.mat_, mahcovs_, antiexactcovs, NULL, verbose)
+                       caliper.covs, caliper.covs.mat_, mahcovs_, antiexactcovs_, NULL, verbose)
 
       #Ensure matched indices correspond to indices in full sample, not subgroup
       mm_[] <- seq_along(treat)[.e][mm_]

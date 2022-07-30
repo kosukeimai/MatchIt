@@ -66,7 +66,7 @@ IntegerMatrix nn_matchC(const IntegerVector& treat_,
   IntegerVector ind0 = ind[treat == 0];
   int n0 = ind0.size();
 
-  int t, t_ind, min_ind, c_chosen, num_eligible, cal_len, t_rat, n_anti;
+  int t, t_ind, min_ind, c_chosen, num_eligible, cal_len, t_rat, n_anti, antiexact_t;
   double dt, cal_var_t;
 
   NumericVector cal_var, cal_diff, ps_diff, diff, dist_t, mah_covs_t, mah_covs_row,
@@ -185,10 +185,11 @@ IntegerMatrix nn_matchC(const IntegerVector& treat_,
       }
 
       if (use_antiexact) {
-        for (a = 0; a < n_anti; ++a) {
+        for (a = 0; a < n_anti && c_eligible.size() > 0; ++a) {
           antiexact_col = antiexact_covs(_, a);
+          antiexact_t = antiexact_col[t_ind];
           antiexact_col = antiexact_col[c_eligible];
-          c_eligible = c_eligible[antiexact_col != antiexact_col[t_ind]];
+          c_eligible = c_eligible[antiexact_col != antiexact_t];
         }
         if (c_eligible.size() == 0) {
           continue;
