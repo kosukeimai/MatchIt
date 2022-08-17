@@ -395,8 +395,8 @@ round_df_char <- function(df, digits, pad = "0", na_vals = "") {
   #lines up. Should be "0" or " "; "" (the empty string) un-aligns decimals.
   #na_vals is what NA should print as.
 
-  if (NROW(df) == 0 || NCOL(df) == 0) return(df)
   if (!is.data.frame(df)) df <- as.data.frame.matrix(df, stringsAsFactors = FALSE)
+  if (NROW(df) == 0 || NCOL(df) == 0) return(df)
   rn <- rownames(df)
   cn <- colnames(df)
 
@@ -441,6 +441,8 @@ round_df_char <- function(df, digits, pad = "0", na_vals = "") {
 
   if (length(rn) > 0) rownames(df) <- rn
   if (length(cn) > 0) names(df) <- cn
+
+  df <- as.matrix(df)
 
   return(df)
 }
