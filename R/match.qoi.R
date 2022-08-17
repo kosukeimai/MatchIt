@@ -1,5 +1,5 @@
 ## Functions to calculate summary stats
-qoi <- function(xx, tt, ww = NULL, s.weights, subclass = NULL, mm = NULL, s.d.denom = "treated", standardize = FALSE,
+bal1var <- function(xx, tt, ww = NULL, s.weights, subclass = NULL, mm = NULL, s.d.denom = "treated", standardize = FALSE,
                 compute.pair.dist = TRUE) {
 
   un <- is.null(ww)
@@ -16,7 +16,7 @@ qoi <- function(xx, tt, ww = NULL, s.weights, subclass = NULL, mm = NULL, s.d.de
   if (un) ww <- s.weights
   else ww <- ww * s.weights
 
-  too.small <- sum(ww[tt==1] != 0) < 2 || sum(ww[tt==0] != 0) < 2
+  too.small <- sum(ww[tt==1] != 0) < 2 && sum(ww[tt==0] != 0) < 2
 
   xsum["Means Treated"] <- wm(xx[tt==1], ww[tt==1], na.rm=TRUE)
   xsum["Means Control"] <- wm(xx[tt==0], ww[tt==0], na.rm=TRUE)
@@ -36,8 +36,8 @@ qoi <- function(xx, tt, ww = NULL, s.weights, subclass = NULL, mm = NULL, s.d.de
                       "pooled" = pooled_sd(xx, tt, w = s.weights, bin.var = bin.var, contribution = "equal"))
 
         #Avoid divide by zero
-        if (std < sqrt(.Machine$double.eps)) {
-          std <- pooled_sd(xx, tt, w = s.weights, bin.var = bin.var, contribution = "equal")
+        if (!is.finite(std) || std < sqrt(.Machine$double.eps)) {
+          std <- pooled_sd(xx, tt, w = s.weights, bin.var = bin.var)
         }
       }
 
@@ -63,7 +63,7 @@ qoi <- function(xx, tt, ww = NULL, s.weights, subclass = NULL, mm = NULL, s.d.de
   xsum
 }
 
-qoi.subclass <- function(xx, tt, s.weights, subclass, s.d.denom = "treated", standardize = FALSE, which.subclass = NULL) {
+bal1var.subclass <- function(xx, tt, s.weights, subclass, s.d.denom = "treated", standardize = FALSE, which.subclass = NULL) {
   #Within-subclass balance statistics
   bin.var <- all(xx == 0 | xx == 1)
   in.sub <- !is.na(subclass) & subclass == which.subclass
@@ -77,7 +77,7 @@ qoi.subclass <- function(xx, tt, s.weights, subclass, s.d.denom = "treated", sta
     colnames(xsum) <- c("Means Treated","Means Control", "Mean Diff",
                         "Var. Ratio", "eQQ Mean", "eQQ Max")
 
-  too.small <- sum(in.sub & tt==1) < 2 || sum(in.sub & tt==0) < 2
+  too.small <- sum(in.sub & tt==1) < 2 && sum(in.sub & tt==0) < 2
 
   xsum["Subclass","Means Treated"] <- wm(xx[in.sub & tt==1], s.weights[in.sub & tt==1], na.rm=TRUE)
   xsum["Subclass","Means Control"] <- wm(xx[in.sub & tt==0], s.weights[in.sub & tt==0], na.rm=TRUE)
@@ -96,6 +96,11 @@ qoi.subclass <- function(xx, tt, s.weights, subclass, s.d.denom = "treated", sta
                       "treated" = sqrt(wvar(xx[tt==1], bin.var, s.weights[tt==1])),
                       "control" = sqrt(wvar(xx[tt==0], bin.var, s.weights[tt==0])),
                       "pooled" = pooled_sd(xx, tt, w = s.weights, bin.var = bin.var, contribution = "equal"))
+
+        #Avoid divide by zero
+        if (!is.finite(std) || std < sqrt(.Machine$double.eps)) {
+          std <- pooled_sd(xx, tt, w = s.weights, bin.var = bin.var)
+        }
       }
 
       xsum["Subclass", 3] <- mdiff/std
