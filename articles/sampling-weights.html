@@ -40,7 +40,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">MatchIt</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">4.4.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">4.4.0.9004</span>
       </span>
     </div>
 
@@ -100,7 +100,7 @@
       <h1 data-toc-skip>Matching with Sampling Weights</h1>
                         <h4 data-toc-skip class="author">Noah Greifer</h4>
             
-            <h4 data-toc-skip class="date">2022-05-23</h4>
+            <h4 data-toc-skip class="date">2022-08-17</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/kosukeimai/MatchIt/blob/HEAD/vignettes/sampling-weights.Rmd" class="external-link"><code>vignettes/sampling-weights.Rmd</code></a></small>
       <div class="hidden name"><code>sampling-weights.Rmd</code></div>
@@ -124,18 +124,18 @@ pre code {
 <p>Sampling weights (also known as survey weights) frequently appear when using large, representative datasets. They are required to ensure any estimated quantities generalize to a target population defined by the weights. Evidence suggests that sampling weights need to be incorporated into a propensity score matching analysis to obtain valid and unbiased estimates of the treatment effect in the sampling weighted population <span class="citation">(DuGoff, Schuler, and Stuart <a href="#ref-dugoff2014" role="doc-biblioref">2014</a>; Austin, Jembere, and Chiu <a href="#ref-austin2016" role="doc-biblioref">2016</a>; Lenis et al. <a href="#ref-lenis2019" role="doc-biblioref">2019</a>)</span>. In this guide, we demonstrate how to use sampling weights with <code>MatchIt</code> for propensity score estimation, balance assessment, and effect estimation. Fortunately, doing so is not complicated, but some care must be taken to ensure sampling weights are incorporated correctly. It is assumed one has read the other vignettes explaining matching (<code><a href="../articles/matching-methods.html">vignette("matching-methods")</a></code>), balance assessment (<code><a href="../articles/assessing-balance.html">vignette("assessing-balance")</a></code>), and effect estimation (<code><a href="../articles/estimating-effects.html">vignette("estimating-effects")</a></code>.</p>
 <p>We will use the same simulated toy dataset used in <code><a href="../articles/estimating-effects.html">vignette("estimating-effects")</a></code> except with the addition of a sampling weights variable, <code>SW</code>, which is used to generalize the sample to a specific target population with a distribution of covariates different from that of the sample. Code to generate the covariates, treatment, and outcome is at the bottom of <code><a href="../articles/estimating-effects.html">vignette("estimating-effects")</a></code> and code to generate the sampling weights is at the end of this document. We will consider the effect of binary treatment <code>A</code> on continuous outcome <code>Y_C</code>, adjusting for confounders <code>X1</code>-<code>X9</code>.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">d</span><span class="op">)</span></code></pre></div>
-<pre><code><span class="co">##   A      X1      X2      X3       X4 X5      X6      X7      X8       X9     Y_C     SW</span>
-<span class="co">## 1 0  0.1725 -1.4283 -0.4103 -2.36059  1 -1.1199  0.6398 -0.4840 -0.59385 -3.5907  1.675</span>
-<span class="co">## 2 0 -1.0959  0.8463  0.2456 -0.12333  1 -2.2687 -1.4491 -0.5514 -0.31439 -1.5481  1.411</span>
-<span class="co">## 3 0  0.1768  0.7905 -0.8436  0.82366  1 -0.2221  0.2971 -0.6966 -0.69516  6.0714  2.332</span>
-<span class="co">## 4 0 -0.4595  0.1726  1.9542 -0.62661  1 -0.4019 -0.8294 -0.5384  0.20729  2.4906  1.644</span>
-<span class="co">## 5 1  0.3563 -1.8121  0.8135 -0.67189  1 -0.8297  1.7297 -0.6439 -0.02648 -0.6687  2.722</span>
-<span class="co">## 6 0 -2.4313 -1.7984 -1.2940  0.04609  1 -1.2419 -1.1252 -1.8659 -0.56513 -9.8504 14.773</span></code></pre>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">d</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">##   A      X1      X2      X3       X4 X5      X6      X7      X8       X9     Y_C     SW</span></span>
+<span><span class="co">## 1 0  0.1725 -1.4283 -0.4103 -2.36059  1 -1.1199  0.6398 -0.4840 -0.59385 -3.5907  1.675</span></span>
+<span><span class="co">## 2 0 -1.0959  0.8463  0.2456 -0.12333  1 -2.2687 -1.4491 -0.5514 -0.31439 -1.5481  1.411</span></span>
+<span><span class="co">## 3 0  0.1768  0.7905 -0.8436  0.82366  1 -0.2221  0.2971 -0.6966 -0.69516  6.0714  2.332</span></span>
+<span><span class="co">## 4 0 -0.4595  0.1726  1.9542 -0.62661  1 -0.4019 -0.8294 -0.5384  0.20729  2.4906  1.644</span></span>
+<span><span class="co">## 5 1  0.3563 -1.8121  0.8135 -0.67189  1 -0.8297  1.7297 -0.6439 -0.02648 -0.6687  2.722</span></span>
+<span><span class="co">## 6 0 -2.4313 -1.7984 -1.2940  0.04609  1 -1.2419 -1.1252 -1.8659 -0.56513 -9.8504 14.773</span></span></code></pre>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://kosukeimai.github.io/MatchIt/" class="external-link">"MatchIt"</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st">"lmtest"</span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://sandwich.R-Forge.R-project.org/" class="external-link">"sandwich"</a></span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://kosukeimai.github.io/MatchIt/" class="external-link">"MatchIt"</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st">"lmtest"</span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://sandwich.R-Forge.R-project.org/" class="external-link">"sandwich"</a></span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="matching">Matching<a class="anchor" aria-label="anchor" href="#matching"></a>
@@ -143,49 +143,49 @@ pre code {
 <p>When using sampling weights with propensity score matching, one has the option of including the sampling weights in the model used to estimate the propensity scores. Although evidence is mixed on whether this is required <span class="citation">(Austin, Jembere, and Chiu <a href="#ref-austin2016" role="doc-biblioref">2016</a>; Lenis et al. <a href="#ref-lenis2019" role="doc-biblioref">2019</a>)</span>, it can be a good idea. The choice should depend on whether including the sampling weights improves the quality of the matches. Specifications including and excluding sampling weights should be tried to determine which is preferred.</p>
 <p>To supply sampling weights to the propensity score-estimating function in <code><a href="../reference/matchit.html">matchit()</a></code>, the sampling weights variable should be supplied to the <code>s.weights</code> argument. It can be supplied either as a numerical vector containing the sampling weights, or a string or one-sided formula with the name of the sampling weights variable in the supplied dataset. Below we demonstrate including sampling weights into propensity scores estimated using logistic regression for optimal full matching for the average treatment effect in the population (ATE) (note that all methods and steps apply the same way to all forms of matching and all estimands).</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">mF_s</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/matchit.html">matchit</a></span><span class="op">(</span><span class="va">A</span> <span class="op">~</span> <span class="va">X1</span> <span class="op">+</span> <span class="va">X2</span> <span class="op">+</span> <span class="va">X3</span> <span class="op">+</span> <span class="va">X4</span> <span class="op">+</span> <span class="va">X5</span> <span class="op">+</span> 
-                  <span class="va">X6</span> <span class="op">+</span> <span class="va">X7</span> <span class="op">+</span> <span class="va">X8</span> <span class="op">+</span> <span class="va">X9</span>, data <span class="op">=</span> <span class="va">d</span>,
-                method <span class="op">=</span> <span class="st">"full"</span>, distance <span class="op">=</span> <span class="st">"glm"</span>,
-                estimand <span class="op">=</span> <span class="st">"ATE"</span>, s.weights <span class="op">=</span> <span class="op">~</span><span class="va">SW</span><span class="op">)</span>
-<span class="va">mF_s</span></code></pre></div>
-<pre><code><span class="co">## A matchit object</span>
-<span class="co">##  - method: Optimal full matching</span>
-<span class="co">##  - distance: Propensity score</span>
-<span class="co">##              - estimated with logistic regression</span>
-<span class="co">##              - sampling weights included in estimation</span>
-<span class="co">##  - number of obs.: 2000 (original), 2000 (matched)</span>
-<span class="co">##  - sampling weights: present</span>
-<span class="co">##  - target estimand: ATE</span>
-<span class="co">##  - covariates: X1, X2, X3, X4, X5, X6, X7, X8, X9</span></code></pre>
+<code class="sourceCode R"><span><span class="va">mF_s</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/matchit.html">matchit</a></span><span class="op">(</span><span class="va">A</span> <span class="op">~</span> <span class="va">X1</span> <span class="op">+</span> <span class="va">X2</span> <span class="op">+</span> <span class="va">X3</span> <span class="op">+</span> <span class="va">X4</span> <span class="op">+</span> <span class="va">X5</span> <span class="op">+</span> </span>
+<span>                  <span class="va">X6</span> <span class="op">+</span> <span class="va">X7</span> <span class="op">+</span> <span class="va">X8</span> <span class="op">+</span> <span class="va">X9</span>, data <span class="op">=</span> <span class="va">d</span>,</span>
+<span>                method <span class="op">=</span> <span class="st">"full"</span>, distance <span class="op">=</span> <span class="st">"glm"</span>,</span>
+<span>                estimand <span class="op">=</span> <span class="st">"ATE"</span>, s.weights <span class="op">=</span> <span class="op">~</span><span class="va">SW</span><span class="op">)</span></span>
+<span><span class="va">mF_s</span></span></code></pre></div>
+<pre><code><span><span class="co">## A matchit object</span></span>
+<span><span class="co">##  - method: Optimal full matching</span></span>
+<span><span class="co">##  - distance: Propensity score</span></span>
+<span><span class="co">##              - estimated with logistic regression</span></span>
+<span><span class="co">##              - sampling weights included in estimation</span></span>
+<span><span class="co">##  - number of obs.: 2000 (original), 2000 (matched)</span></span>
+<span><span class="co">##  - sampling weights: present</span></span>
+<span><span class="co">##  - target estimand: ATE</span></span>
+<span><span class="co">##  - covariates: X1, X2, X3, X4, X5, X6, X7, X8, X9</span></span></code></pre>
 <p>Notice that the description of the matching specification when the <code>matchit</code> object is printed includes lines indicating that the sampling weights were included in the estimation of the propensity score and that they are present in the <code>matchit</code> object. It is stored in the <code>s.weights</code> component of the <code>matchit</code> object. Note that at this stage, the matching weights (stored in the <code>weights</code> component of the <code>matchit</code> object) do not incorporate the sampling weights; they are calculated simply as a result of the matching.</p>
 <p>Now let’s perform full matching on a propensity score that does not include the sampling weights in its estimation. Here we use the same specification as was used in <code><a href="../articles/estimating-effects.html">vignette("estimating-effects")</a></code>.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">mF</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/matchit.html">matchit</a></span><span class="op">(</span><span class="va">A</span> <span class="op">~</span> <span class="va">X1</span> <span class="op">+</span> <span class="va">X2</span> <span class="op">+</span> <span class="va">X3</span> <span class="op">+</span> <span class="va">X4</span> <span class="op">+</span> <span class="va">X5</span> <span class="op">+</span> 
-                <span class="va">X6</span> <span class="op">+</span> <span class="va">X7</span> <span class="op">+</span> <span class="va">X8</span> <span class="op">+</span> <span class="va">X9</span>, data <span class="op">=</span> <span class="va">d</span>,
-              method <span class="op">=</span> <span class="st">"full"</span>, distance <span class="op">=</span> <span class="st">"glm"</span>,
-              estimand <span class="op">=</span> <span class="st">"ATE"</span><span class="op">)</span>
-<span class="va">mF</span></code></pre></div>
-<pre><code><span class="co">## A matchit object</span>
-<span class="co">##  - method: Optimal full matching</span>
-<span class="co">##  - distance: Propensity score</span>
-<span class="co">##              - estimated with logistic regression</span>
-<span class="co">##  - number of obs.: 2000 (original), 2000 (matched)</span>
-<span class="co">##  - target estimand: ATE</span>
-<span class="co">##  - covariates: X1, X2, X3, X4, X5, X6, X7, X8, X9</span></code></pre>
+<code class="sourceCode R"><span><span class="va">mF</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/matchit.html">matchit</a></span><span class="op">(</span><span class="va">A</span> <span class="op">~</span> <span class="va">X1</span> <span class="op">+</span> <span class="va">X2</span> <span class="op">+</span> <span class="va">X3</span> <span class="op">+</span> <span class="va">X4</span> <span class="op">+</span> <span class="va">X5</span> <span class="op">+</span> </span>
+<span>                <span class="va">X6</span> <span class="op">+</span> <span class="va">X7</span> <span class="op">+</span> <span class="va">X8</span> <span class="op">+</span> <span class="va">X9</span>, data <span class="op">=</span> <span class="va">d</span>,</span>
+<span>              method <span class="op">=</span> <span class="st">"full"</span>, distance <span class="op">=</span> <span class="st">"glm"</span>,</span>
+<span>              estimand <span class="op">=</span> <span class="st">"ATE"</span><span class="op">)</span></span>
+<span><span class="va">mF</span></span></code></pre></div>
+<pre><code><span><span class="co">## A matchit object</span></span>
+<span><span class="co">##  - method: Optimal full matching</span></span>
+<span><span class="co">##  - distance: Propensity score</span></span>
+<span><span class="co">##              - estimated with logistic regression</span></span>
+<span><span class="co">##  - number of obs.: 2000 (original), 2000 (matched)</span></span>
+<span><span class="co">##  - target estimand: ATE</span></span>
+<span><span class="co">##  - covariates: X1, X2, X3, X4, X5, X6, X7, X8, X9</span></span></code></pre>
 <p>Notice that there is no mention of sampling weights in the description of the matching specification. However, to properly assess balance and estimate effects, we need the sampling weights to be included in the <code>matchit</code> object, even if they were not used at all in the matching. To do so, we use the function <code><a href="../reference/add_s.weights.html">add_s.weights()</a></code>, which adds sampling weights to the supplied <code>matchit</code> objects.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">mF</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/add_s.weights.html">add_s.weights</a></span><span class="op">(</span><span class="va">mF</span>, <span class="op">~</span><span class="va">SW</span><span class="op">)</span>
-
-<span class="va">mF</span></code></pre></div>
-<pre><code><span class="co">## A matchit object</span>
-<span class="co">##  - method: Optimal full matching</span>
-<span class="co">##  - distance: Propensity score</span>
-<span class="co">##              - estimated with logistic regression</span>
-<span class="co">##              - sampling weights not included in estimation</span>
-<span class="co">##  - number of obs.: 2000 (original), 2000 (matched)</span>
-<span class="co">##  - sampling weights: present</span>
-<span class="co">##  - target estimand: ATE</span>
-<span class="co">##  - covariates: X1, X2, X3, X4, X5, X6, X7, X8, X9</span></code></pre>
+<code class="sourceCode R"><span><span class="va">mF</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/add_s.weights.html">add_s.weights</a></span><span class="op">(</span><span class="va">mF</span>, <span class="op">~</span><span class="va">SW</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">mF</span></span></code></pre></div>
+<pre><code><span><span class="co">## A matchit object</span></span>
+<span><span class="co">##  - method: Optimal full matching</span></span>
+<span><span class="co">##  - distance: Propensity score</span></span>
+<span><span class="co">##              - estimated with logistic regression</span></span>
+<span><span class="co">##              - sampling weights not included in estimation</span></span>
+<span><span class="co">##  - number of obs.: 2000 (original), 2000 (matched)</span></span>
+<span><span class="co">##  - sampling weights: present</span></span>
+<span><span class="co">##  - target estimand: ATE</span></span>
+<span><span class="co">##  - covariates: X1, X2, X3, X4, X5, X6, X7, X8, X9</span></span></code></pre>
 <p>Now when we print the <code>matchit</code> object, we can see lines have been added identifying that sampling weights are present but they were not used in the estimation of the propensity score used in the matching.</p>
 <p>Note that not all methods can involve sampling weights in the estimation. Only methods that use the propensity score will be affected by sampling weights; coarsened exact matching or Mahalanobis distance optimal pair matching, for example, ignore the sampling weights, and some propensity score estimation methods, like <code>randomForest</code> and <code>bart</code> (as presently implemented), cannot incorporate sampling weights. Sampling weights should still be supplied to <code><a href="../reference/matchit.html">matchit()</a></code> even when using these methods to avoid having to use <code><a href="../reference/add_s.weights.html">add_s.weights()</a></code> and remembering which methods do or do not involve sampling weights.</p>
 </div>
@@ -195,78 +195,77 @@ pre code {
 <p>Now we need to decide which matching specification is the best to use for effect estimation. We do this by selecting the one that yields the best balance without sacrificing remaining effective sample size. Because the sampling weights are incorporated into the <code>matchit</code> object, the balance assessment tools in <code><a href="../reference/plot.matchit.html">plot.matchit()</a></code> and <code><a href="../reference/summary.matchit.html">summary.matchit()</a></code> incorporate them into their output.</p>
 <p>We’ll use <code><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary()</a></code> to examine balance on the two matching specifications. With sampling weights included, the balance statistics for the unmatched data are weighted by the sampling weights. The balance statistics for the matched data are weighted by the product of the sampling weights and the matching weights. It is the product of these weights that will be used in estimating the treatment effect. Below we use <code><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary()</a></code> to display balance for the two matching specifications. No additional arguments to <code><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary()</a></code> are required for it to use the sampling weights; as long as they are in the <code>matchit</code> object (either due to being supplied with the <code>s.weights</code> argument in the call to <code><a href="../reference/matchit.html">matchit()</a></code> or to being added afterward by <code><a href="../reference/add_s.weights.html">add_s.weights()</a></code>), they will be correctly incorporated into the balance statistics.</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co">#Balance before matching and for the SW propensity score full matching</span>
-<span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">mF_s</span>, improvement <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></code></pre></div>
-<pre><code><span class="co">## </span>
-<span class="co">## Call:</span>
-<span class="co">## matchit(formula = A ~ X1 + X2 + X3 + X4 + X5 + X6 + X7 + X8 + </span>
-<span class="co">##     X9, data = d, method = "full", distance = "glm", estimand = "ATE", </span>
-<span class="co">##     s.weights = ~SW)</span>
-<span class="co">## </span>
-<span class="co">## Summary of Balance for All Data:</span>
-<span class="co">##          Means Treated Means Control Std. Mean Diff. Var. Ratio eCDF Mean eCDF Max</span>
-<span class="co">## distance         0.470         0.225           1.200      1.533     0.281    0.467</span>
-<span class="co">## X1               0.185        -0.120           0.287      1.309     0.105    0.171</span>
-<span class="co">## X2              -0.565        -0.202          -0.368      0.854     0.108    0.194</span>
-<span class="co">## X3              -0.059        -0.057          -0.003      0.739     0.041    0.083</span>
-<span class="co">## X4               0.852         0.150           0.680      1.016     0.180    0.293</span>
-<span class="co">## X5               0.567         0.713          -0.307          .     0.146    0.146</span>
-<span class="co">## X6               0.169        -0.008           0.171      1.014     0.048    0.103</span>
-<span class="co">## X7               0.378        -0.089           0.474      1.205     0.130    0.210</span>
-<span class="co">## X8              -0.376        -0.142          -0.216      1.190     0.071    0.129</span>
-<span class="co">## X9               0.088        -0.001           0.090      0.945     0.027    0.066</span>
-<span class="co">## </span>
-<span class="co">## </span>
-<span class="co">## Summary of Balance for Matched Data:</span>
-<span class="co">##          Means Treated Means Control Std. Mean Diff. Var. Ratio eCDF Mean eCDF Max Std. Pair Dist.</span>
-<span class="co">## distance         0.321         0.292           0.142      1.064     0.035    0.077           0.007</span>
-<span class="co">## X1               0.045        -0.028           0.069      1.170     0.042    0.087           0.950</span>
-<span class="co">## X2              -0.331        -0.279          -0.053      1.069     0.017    0.071           1.077</span>
-<span class="co">## X3              -0.068        -0.019          -0.052      0.649     0.043    0.096           1.124</span>
-<span class="co">## X4               0.387         0.331           0.054      1.242     0.024    0.079           0.905</span>
-<span class="co">## X5               0.655         0.667          -0.026          .     0.012    0.012           0.844</span>
-<span class="co">## X6               0.051         0.061          -0.009      1.085     0.022    0.061           1.150</span>
-<span class="co">## X7               0.148         0.028           0.122      1.247     0.028    0.078           1.067</span>
-<span class="co">## X8              -0.172        -0.224           0.048      1.225     0.017    0.046           0.998</span>
-<span class="co">## X9               0.027         0.037          -0.010      1.156     0.021    0.076           1.145</span>
-<span class="co">## </span>
-<span class="co">## Sample Sizes:</span>
-<span class="co">##               Control Treated</span>
-<span class="co">## All (ESS)       987.1   177.1</span>
-<span class="co">## All            1559.    441. </span>
-<span class="co">## Matched (ESS)   513.4   148.9</span>
-<span class="co">## Matched        1559.    441. </span>
-<span class="co">## Unmatched         0.      0. </span>
-<span class="co">## Discarded         0.      0.</span></code></pre>
+<code class="sourceCode R"><span><span class="co">#Balance before matching and for the SW propensity score full matching</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">mF_s</span>, improvement <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## </span></span>
+<span><span class="co">## Call:</span></span>
+<span><span class="co">## matchit(formula = A ~ X1 + X2 + X3 + X4 + X5 + X6 + X7 + X8 + </span></span>
+<span><span class="co">##     X9, data = d, method = "full", distance = "glm", estimand = "ATE", </span></span>
+<span><span class="co">##     s.weights = ~SW)</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## Summary of Balance for All Data:</span></span>
+<span><span class="co">##          Means Treated Means Control Std. Mean Diff. Var. Ratio eCDF Mean eCDF Max</span></span>
+<span><span class="co">## distance         0.470         0.225           1.200      1.533     0.281    0.467</span></span>
+<span><span class="co">## X1               0.185        -0.120           0.287      1.309     0.105    0.171</span></span>
+<span><span class="co">## X2              -0.565        -0.202          -0.368      0.854     0.108    0.194</span></span>
+<span><span class="co">## X3              -0.059        -0.057          -0.003      0.739     0.041    0.083</span></span>
+<span><span class="co">## X4               0.852         0.150           0.680      1.016     0.180    0.293</span></span>
+<span><span class="co">## X5               0.567         0.713          -0.307          .     0.146    0.146</span></span>
+<span><span class="co">## X6               0.169        -0.008           0.171      1.014     0.048    0.103</span></span>
+<span><span class="co">## X7               0.378        -0.089           0.474      1.205     0.130    0.210</span></span>
+<span><span class="co">## X8              -0.376        -0.142          -0.216      1.190     0.071    0.129</span></span>
+<span><span class="co">## X9               0.088        -0.001           0.090      0.945     0.027    0.066</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## Summary of Balance for Matched Data:</span></span>
+<span><span class="co">##          Means Treated Means Control Std. Mean Diff. Var. Ratio eCDF Mean eCDF Max Std. Pair Dist.</span></span>
+<span><span class="co">## distance         0.321         0.292           0.142      1.064     0.035    0.077           0.007</span></span>
+<span><span class="co">## X1               0.045        -0.028           0.069      1.170     0.042    0.087           0.950</span></span>
+<span><span class="co">## X2              -0.331        -0.279          -0.053      1.069     0.017    0.071           1.077</span></span>
+<span><span class="co">## X3              -0.068        -0.019          -0.052      0.649     0.043    0.096           1.124</span></span>
+<span><span class="co">## X4               0.387         0.331           0.054      1.242     0.024    0.079           0.905</span></span>
+<span><span class="co">## X5               0.655         0.667          -0.026          .     0.012    0.012           0.844</span></span>
+<span><span class="co">## X6               0.051         0.061          -0.009      1.085     0.022    0.061           1.150</span></span>
+<span><span class="co">## X7               0.148         0.028           0.122      1.247     0.028    0.078           1.067</span></span>
+<span><span class="co">## X8              -0.172        -0.224           0.048      1.225     0.017    0.046           0.998</span></span>
+<span><span class="co">## X9               0.027         0.037          -0.010      1.156     0.021    0.076           1.145</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## Sample Sizes:</span></span>
+<span><span class="co">##               Control Treated</span></span>
+<span><span class="co">## All (ESS)       987.1   177.1</span></span>
+<span><span class="co">## All            1559.    441. </span></span>
+<span><span class="co">## Matched (ESS)   513.4   148.9</span></span>
+<span><span class="co">## Matched        1559.    441. </span></span>
+<span><span class="co">## Unmatched         0.      0. </span></span>
+<span><span class="co">## Discarded         0.      0.</span></span></code></pre>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co">#Balance for the non-SW propensity score full matching</span>
-<span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">mF</span>, un <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></code></pre></div>
-<pre><code><span class="co">## </span>
-<span class="co">## Call:</span>
-<span class="co">## matchit(formula = A ~ X1 + X2 + X3 + X4 + X5 + X6 + X7 + X8 + </span>
-<span class="co">##     X9, data = d, method = "full", distance = "glm", estimand = "ATE")</span>
-<span class="co">## </span>
-<span class="co">## Summary of Balance for Matched Data:</span>
-<span class="co">##          Means Treated Means Control Std. Mean Diff. Var. Ratio eCDF Mean eCDF Max Std. Pair Dist.</span>
-<span class="co">## distance         0.283         0.277           0.031      0.977     0.019    0.059           0.009</span>
-<span class="co">## X1              -0.114         0.014          -0.120      1.155     0.030    0.079           0.937</span>
-<span class="co">## X2              -0.320        -0.258          -0.063      0.994     0.027    0.093           1.110</span>
-<span class="co">## X3              -0.077        -0.057          -0.021      0.648     0.044    0.086           1.094</span>
-<span class="co">## X4               0.485         0.298           0.181      1.059     0.050    0.131           0.960</span>
-<span class="co">## X5               0.670         0.670          -0.001          .     0.000    0.000           0.802</span>
-<span class="co">## X6               0.039        -0.011           0.049      1.012     0.021    0.047           1.118</span>
-<span class="co">## X7               0.005         0.033          -0.029      1.086     0.018    0.054           1.014</span>
-<span class="co">## X8              -0.282        -0.216          -0.061      1.190     0.019    0.079           1.012</span>
-<span class="co">## X9              -0.027         0.027          -0.054      0.872     0.029    0.085           1.086</span>
-<span class="co">## </span>
-<span class="co">## Sample Sizes:</span>
-<span class="co">##               Control Treated</span>
-<span class="co">## All (ESS)       987.1   177.1</span>
-<span class="co">## All            1559.    441. </span>
-<span class="co">## Matched (ESS)   567.    130.9</span>
-<span class="co">## Matched        1559.    441. </span>
-<span class="co">## Unmatched         0.      0. </span>
-<span class="co">## Discarded         0.      0.</span></code></pre>
+<code class="sourceCode R"><span><span class="co">#Balance for the non-SW propensity score full matching</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">mF</span>, un <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## </span></span>
+<span><span class="co">## Call:</span></span>
+<span><span class="co">## matchit(formula = A ~ X1 + X2 + X3 + X4 + X5 + X6 + X7 + X8 + </span></span>
+<span><span class="co">##     X9, data = d, method = "full", distance = "glm", estimand = "ATE")</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## Summary of Balance for Matched Data:</span></span>
+<span><span class="co">##          Means Treated Means Control Std. Mean Diff. Var. Ratio eCDF Mean eCDF Max Std. Pair Dist.</span></span>
+<span><span class="co">## distance         0.283         0.277           0.031      0.977     0.019    0.059           0.009</span></span>
+<span><span class="co">## X1              -0.114         0.014          -0.120      1.155     0.030    0.079           0.937</span></span>
+<span><span class="co">## X2              -0.320        -0.258          -0.063      0.994     0.027    0.093           1.110</span></span>
+<span><span class="co">## X3              -0.077        -0.057          -0.021      0.648     0.044    0.086           1.094</span></span>
+<span><span class="co">## X4               0.485         0.298           0.181      1.059     0.050    0.131           0.960</span></span>
+<span><span class="co">## X5               0.670         0.670          -0.001          .     0.000    0.000           0.802</span></span>
+<span><span class="co">## X6               0.039        -0.011           0.049      1.012     0.021    0.047           1.118</span></span>
+<span><span class="co">## X7               0.005         0.033          -0.029      1.086     0.018    0.054           1.014</span></span>
+<span><span class="co">## X8              -0.282        -0.216          -0.061      1.190     0.019    0.079           1.012</span></span>
+<span><span class="co">## X9              -0.027         0.027          -0.054      0.872     0.029    0.085           1.086</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## Sample Sizes:</span></span>
+<span><span class="co">##               Control Treated</span></span>
+<span><span class="co">## All (ESS)       987.1   177.1</span></span>
+<span><span class="co">## All            1559.    441. </span></span>
+<span><span class="co">## Matched (ESS)   567.    130.9</span></span>
+<span><span class="co">## Matched        1559.    441. </span></span>
+<span><span class="co">## Unmatched         0.      0. </span></span>
+<span><span class="co">## Discarded         0.      0.</span></span></code></pre>
 <p>The results of the two matching specifications are similar. Balance appears to be slightly better when using the sampling weight-estimated propensity scores than when using the unweighted propensity scores. However, the effective sample size for the control group is larger when using the unweighted propensity scores. Neither propensity score specification achieves excellent balance, and more fiddling with the matching specification (e.g., by changing the method of estimating propensity scores, the type of matching, or the options used with the matching) might yield a better matched set. For the purposes of this analysis, we will move forward with the matching that used the sampling weight-estimated propensity scores (<code>mF_s</code>) because of its superior balance. Some of the remaining imbalance may be eliminated by adjusting for the covariates in the outcome model.</p>
 <p>Note that had we not added sampling weights to <code>mF</code>, the matching specification that did not include the sampling weights, our balance assessment would be inaccurate because the balance statistics would not include the sampling weights. In this case, in fact, assessing balance on <code>mF</code> without incorporated the sampling weights would have yielded radically different results and a different conclusion. It is critical to incorporate sampling weights into the <code>matchit</code> object using <code><a href="../reference/add_s.weights.html">add_s.weights()</a></code> even if they are not included in the propensity score estimation.</p>
 </div>
@@ -276,73 +275,73 @@ pre code {
 <p>Estimating the treatment effect after matching is straightforward when using sampling weights. Effects are estimated in the same way as when sampling weights are excluded, except that the matching weights must be multiplied by the sampling weights to yield accurate, generalizable estimates. <code><a href="../reference/match.data.html">match.data()</a></code> and <code><a href="../reference/match.data.html">get_matches()</a></code> do this automatically, so the weights produced by these functions already are a product of the matching weights and the sampling weights. Note this will only be true if sampling weights are incorporated into the <code>matchit</code> object.</p>
 <p>Below we estimate the effect of <code>A</code> on <code>Y_C</code> in the matched and sampling weighted sample, adjusting for the covariates to improve precision and decrease bias.</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">md_F_s</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/match.data.html">match.data</a></span><span class="op">(</span><span class="va">mF_s</span><span class="op">)</span>
-
-<span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html" class="external-link">lm</a></span><span class="op">(</span><span class="va">Y_C</span> <span class="op">~</span> <span class="va">A</span> <span class="op">+</span> <span class="va">X1</span> <span class="op">+</span> <span class="va">X2</span> <span class="op">+</span> <span class="va">X3</span> <span class="op">+</span> <span class="va">X4</span> <span class="op">+</span> <span class="va">X5</span> <span class="op">+</span> 
-             <span class="va">X6</span> <span class="op">+</span> <span class="va">X7</span> <span class="op">+</span> <span class="va">X8</span> <span class="op">+</span> <span class="va">X9</span>, data <span class="op">=</span> <span class="va">md_F_s</span>,
-          weights <span class="op">=</span> <span class="va">weights</span><span class="op">)</span>
-
-<span class="fu"><a href="https://rdrr.io/pkg/lmtest/man/coeftest.html" class="external-link">coeftest</a></span><span class="op">(</span><span class="va">fit</span>, vcov. <span class="op">=</span> <span class="va">vcovCL</span>, cluster <span class="op">=</span> <span class="op">~</span><span class="va">subclass</span><span class="op">)</span><span class="op">[</span><span class="st">"A"</span>,,drop<span class="op">=</span><span class="cn">FALSE</span><span class="op">]</span></code></pre></div>
-<pre><code><span class="co">##   Estimate Std. Error t value  Pr(&gt;|t|)</span>
-<span class="co">## A    1.658     0.3693   4.489 7.552e-06</span></code></pre>
+<code class="sourceCode R"><span><span class="va">md_F_s</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/match.data.html">match.data</a></span><span class="op">(</span><span class="va">mF_s</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html" class="external-link">lm</a></span><span class="op">(</span><span class="va">Y_C</span> <span class="op">~</span> <span class="va">A</span> <span class="op">+</span> <span class="va">X1</span> <span class="op">+</span> <span class="va">X2</span> <span class="op">+</span> <span class="va">X3</span> <span class="op">+</span> <span class="va">X4</span> <span class="op">+</span> <span class="va">X5</span> <span class="op">+</span> </span>
+<span>             <span class="va">X6</span> <span class="op">+</span> <span class="va">X7</span> <span class="op">+</span> <span class="va">X8</span> <span class="op">+</span> <span class="va">X9</span>, data <span class="op">=</span> <span class="va">md_F_s</span>,</span>
+<span>          weights <span class="op">=</span> <span class="va">weights</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/lmtest/man/coeftest.html" class="external-link">coeftest</a></span><span class="op">(</span><span class="va">fit</span>, vcov. <span class="op">=</span> <span class="va">vcovCL</span>, cluster <span class="op">=</span> <span class="op">~</span><span class="va">subclass</span><span class="op">)</span><span class="op">[</span><span class="st">"A"</span>,,drop<span class="op">=</span><span class="cn">FALSE</span><span class="op">]</span></span></code></pre></div>
+<pre><code><span><span class="co">##   Estimate Std. Error t value  Pr(&gt;|t|)</span></span>
+<span><span class="co">## A    1.658     0.3693   4.489 7.552e-06</span></span></code></pre>
 <p>Note that <code><a href="../reference/match.data.html">match.data()</a></code> and <code>get_weights()</code> have the option <code>include.s.weights</code>, which, when set to <code>FALSE</code>, makes it so the returned weights do not incorporate the sampling weights and are simply the matching weights. To incorporate sampling weights into the effect estimation with this option, one must multiply the returned weights by the sampling weights when including them in the outcome model estimation. We demonstrate this below:</p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">md_F_s</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/match.data.html">match.data</a></span><span class="op">(</span><span class="va">mF_s</span>, include.s.weights <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
-
-<span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html" class="external-link">lm</a></span><span class="op">(</span><span class="va">Y_C</span> <span class="op">~</span> <span class="va">A</span> <span class="op">+</span> <span class="va">X1</span> <span class="op">+</span> <span class="va">X2</span> <span class="op">+</span> <span class="va">X3</span> <span class="op">+</span> <span class="va">X4</span> <span class="op">+</span> <span class="va">X5</span> <span class="op">+</span> 
-             <span class="va">X6</span> <span class="op">+</span> <span class="va">X7</span> <span class="op">+</span> <span class="va">X8</span> <span class="op">+</span> <span class="va">X9</span>, data <span class="op">=</span> <span class="va">md_F_s</span>,
-          weights <span class="op">=</span> <span class="va">weights</span> <span class="op">*</span> <span class="va">SW</span><span class="op">)</span>
-
-<span class="fu"><a href="https://rdrr.io/pkg/lmtest/man/coeftest.html" class="external-link">coeftest</a></span><span class="op">(</span><span class="va">fit</span>, vcov. <span class="op">=</span> <span class="va">vcovCL</span>, cluster <span class="op">=</span> <span class="op">~</span><span class="va">subclass</span><span class="op">)</span><span class="op">[</span><span class="st">"A"</span>,,drop<span class="op">=</span><span class="cn">FALSE</span><span class="op">]</span></code></pre></div>
-<pre><code><span class="co">##   Estimate Std. Error t value  Pr(&gt;|t|)</span>
-<span class="co">## A    1.658     0.3693   4.489 7.552e-06</span></code></pre>
+<code class="sourceCode R"><span><span class="va">md_F_s</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/match.data.html">match.data</a></span><span class="op">(</span><span class="va">mF_s</span>, include.s.weights <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html" class="external-link">lm</a></span><span class="op">(</span><span class="va">Y_C</span> <span class="op">~</span> <span class="va">A</span> <span class="op">+</span> <span class="va">X1</span> <span class="op">+</span> <span class="va">X2</span> <span class="op">+</span> <span class="va">X3</span> <span class="op">+</span> <span class="va">X4</span> <span class="op">+</span> <span class="va">X5</span> <span class="op">+</span> </span>
+<span>             <span class="va">X6</span> <span class="op">+</span> <span class="va">X7</span> <span class="op">+</span> <span class="va">X8</span> <span class="op">+</span> <span class="va">X9</span>, data <span class="op">=</span> <span class="va">md_F_s</span>,</span>
+<span>          weights <span class="op">=</span> <span class="va">weights</span> <span class="op">*</span> <span class="va">SW</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/lmtest/man/coeftest.html" class="external-link">coeftest</a></span><span class="op">(</span><span class="va">fit</span>, vcov. <span class="op">=</span> <span class="va">vcovCL</span>, cluster <span class="op">=</span> <span class="op">~</span><span class="va">subclass</span><span class="op">)</span><span class="op">[</span><span class="st">"A"</span>,,drop<span class="op">=</span><span class="cn">FALSE</span><span class="op">]</span></span></code></pre></div>
+<pre><code><span><span class="co">##   Estimate Std. Error t value  Pr(&gt;|t|)</span></span>
+<span><span class="co">## A    1.658     0.3693   4.489 7.552e-06</span></span></code></pre>
 <p>We get the same estimates using this syntax as we did above. Because one might to forget to multiply the two sets of weights together, it is easier to just use the default of <code>include.s.weights = TRUE</code> and ignore the sampling weights in the rest of the analysis (because they are already included in the returned weights).</p>
 </div>
 <div class="section level2">
 <h2 id="code-to-generate-data-used-in-examples">Code to Generate Data used in Examples<a class="anchor" aria-label="anchor" href="#code-to-generate-data-used-in-examples"></a>
 </h2>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co">#Generatng data similar to Austin (2009) for demonstrating </span>
-<span class="co">#treatment effect estimation with sampling weights</span>
-<span class="va">gen_X</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">n</span><span class="op">)</span> <span class="op">{</span>
-  <span class="va">X</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">9</span> <span class="op">*</span> <span class="va">n</span><span class="op">)</span>, nrow <span class="op">=</span> <span class="va">n</span>, ncol <span class="op">=</span> <span class="fl">9</span><span class="op">)</span>
-  <span class="va">X</span><span class="op">[</span>,<span class="fl">5</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="va">X</span><span class="op">[</span>,<span class="fl">5</span><span class="op">]</span> <span class="op">&lt;</span> <span class="fl">.5</span><span class="op">)</span>
-  <span class="va">X</span>
-<span class="op">}</span>
-
-<span class="co">#~20% treated</span>
-<span class="va">gen_A</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">X</span><span class="op">)</span> <span class="op">{</span>
-  <span class="va">LP_A</span> <span class="op">&lt;-</span> <span class="op">-</span> <span class="fl">1.2</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="fl">2</span><span class="op">)</span><span class="op">*</span><span class="va">X</span><span class="op">[</span>,<span class="fl">1</span><span class="op">]</span> <span class="op">-</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="fl">1.5</span><span class="op">)</span><span class="op">*</span><span class="va">X</span><span class="op">[</span>,<span class="fl">2</span><span class="op">]</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="fl">2</span><span class="op">)</span><span class="op">*</span><span class="va">X</span><span class="op">[</span>,<span class="fl">4</span><span class="op">]</span> <span class="op">-</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="fl">2.4</span><span class="op">)</span><span class="op">*</span><span class="va">X</span><span class="op">[</span>,<span class="fl">5</span><span class="op">]</span> <span class="op">+</span> 
-    <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="fl">2</span><span class="op">)</span><span class="op">*</span><span class="va">X</span><span class="op">[</span>,<span class="fl">7</span><span class="op">]</span> <span class="op">-</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="fl">1.5</span><span class="op">)</span><span class="op">*</span><span class="va">X</span><span class="op">[</span>,<span class="fl">8</span><span class="op">]</span>
-  <span class="va">P_A</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Logistic.html" class="external-link">plogis</a></span><span class="op">(</span><span class="va">LP_A</span><span class="op">)</span>
-  <span class="fu"><a href="https://rdrr.io/r/stats/Binomial.html" class="external-link">rbinom</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">X</span><span class="op">)</span>, <span class="fl">1</span>, <span class="va">P_A</span><span class="op">)</span>
-<span class="op">}</span>
-
-<span class="co"># Continuous outcome</span>
-<span class="va">gen_Y_C</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">A</span>, <span class="va">X</span><span class="op">)</span> <span class="op">{</span>
-  <span class="fl">2</span><span class="op">*</span><span class="va">A</span> <span class="op">+</span> <span class="fl">2</span><span class="op">*</span><span class="va">X</span><span class="op">[</span>,<span class="fl">1</span><span class="op">]</span> <span class="op">+</span> <span class="fl">2</span><span class="op">*</span><span class="va">X</span><span class="op">[</span>,<span class="fl">2</span><span class="op">]</span> <span class="op">+</span> <span class="fl">2</span><span class="op">*</span><span class="va">X</span><span class="op">[</span>,<span class="fl">3</span><span class="op">]</span> <span class="op">+</span> <span class="fl">1</span><span class="op">*</span><span class="va">X</span><span class="op">[</span>,<span class="fl">4</span><span class="op">]</span> <span class="op">+</span> <span class="fl">2</span><span class="op">*</span><span class="va">X</span><span class="op">[</span>,<span class="fl">5</span><span class="op">]</span> <span class="op">+</span> <span class="fl">1</span><span class="op">*</span><span class="va">X</span><span class="op">[</span>,<span class="fl">6</span><span class="op">]</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">A</span><span class="op">)</span>, <span class="fl">0</span>, <span class="fl">5</span><span class="op">)</span>
-<span class="op">}</span>
-<span class="co">#Conditional:</span>
-<span class="co">#  MD: 2</span>
-<span class="co">#Marginal:</span>
-<span class="co">#  MD: 2</span>
-
-<span class="va">gen_SW</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">X</span><span class="op">)</span> <span class="op">{</span>
-  <span class="va">e</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Binomial.html" class="external-link">rbinom</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">X</span><span class="op">)</span>, <span class="fl">1</span>, <span class="fl">.3</span><span class="op">)</span>
-  <span class="fl">1</span><span class="op">/</span><span class="fu"><a href="https://rdrr.io/r/stats/Logistic.html" class="external-link">plogis</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="fl">1.4</span><span class="op">)</span><span class="op">*</span><span class="va">X</span><span class="op">[</span>,<span class="fl">2</span><span class="op">]</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="fl">.7</span><span class="op">)</span><span class="op">*</span><span class="va">X</span><span class="op">[</span>,<span class="fl">4</span><span class="op">]</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="fl">.9</span><span class="op">)</span><span class="op">*</span><span class="va">X</span><span class="op">[</span>,<span class="fl">6</span><span class="op">]</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="fl">1.5</span><span class="op">)</span><span class="op">*</span><span class="va">X</span><span class="op">[</span>,<span class="fl">8</span><span class="op">]</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="fl">.9</span><span class="op">)</span><span class="op">*</span><span class="va">e</span> <span class="op">+</span>
-             <span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="fl">.5</span><span class="op">)</span><span class="op">*</span><span class="va">e</span><span class="op">*</span><span class="va">X</span><span class="op">[</span>,<span class="fl">2</span><span class="op">]</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="fl">.6</span><span class="op">)</span><span class="op">*</span><span class="va">e</span><span class="op">*</span><span class="va">X</span><span class="op">[</span>,<span class="fl">4</span><span class="op">]</span><span class="op">)</span>
-<span class="op">}</span>
-
-<span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">19599</span><span class="op">)</span>
-
-<span class="va">n</span> <span class="op">&lt;-</span> <span class="fl">2000</span>
-<span class="va">X</span> <span class="op">&lt;-</span> <span class="fu">gen_X</span><span class="op">(</span><span class="va">n</span><span class="op">)</span>
-<span class="va">A</span> <span class="op">&lt;-</span> <span class="fu">gen_A</span><span class="op">(</span><span class="va">X</span><span class="op">)</span>
-<span class="va">SW</span> <span class="op">&lt;-</span> <span class="fu">gen_SW</span><span class="op">(</span><span class="va">X</span><span class="op">)</span>
-
-<span class="va">Y_C</span> <span class="op">&lt;-</span> <span class="fu">gen_Y_C</span><span class="op">(</span><span class="va">A</span>, <span class="va">X</span><span class="op">)</span>
-
-<span class="va">d</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span><span class="va">A</span>, <span class="va">X</span>, <span class="va">Y_C</span>, <span class="va">SW</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="co">#Generatng data similar to Austin (2009) for demonstrating </span></span>
+<span><span class="co">#treatment effect estimation with sampling weights</span></span>
+<span><span class="va">gen_X</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">n</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="va">X</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">9</span> <span class="op">*</span> <span class="va">n</span><span class="op">)</span>, nrow <span class="op">=</span> <span class="va">n</span>, ncol <span class="op">=</span> <span class="fl">9</span><span class="op">)</span></span>
+<span>  <span class="va">X</span><span class="op">[</span>,<span class="fl">5</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="va">X</span><span class="op">[</span>,<span class="fl">5</span><span class="op">]</span> <span class="op">&lt;</span> <span class="fl">.5</span><span class="op">)</span></span>
+<span>  <span class="va">X</span></span>
+<span><span class="op">}</span></span>
+<span></span>
+<span><span class="co">#~20% treated</span></span>
+<span><span class="va">gen_A</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">X</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="va">LP_A</span> <span class="op">&lt;-</span> <span class="op">-</span> <span class="fl">1.2</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="fl">2</span><span class="op">)</span><span class="op">*</span><span class="va">X</span><span class="op">[</span>,<span class="fl">1</span><span class="op">]</span> <span class="op">-</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="fl">1.5</span><span class="op">)</span><span class="op">*</span><span class="va">X</span><span class="op">[</span>,<span class="fl">2</span><span class="op">]</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="fl">2</span><span class="op">)</span><span class="op">*</span><span class="va">X</span><span class="op">[</span>,<span class="fl">4</span><span class="op">]</span> <span class="op">-</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="fl">2.4</span><span class="op">)</span><span class="op">*</span><span class="va">X</span><span class="op">[</span>,<span class="fl">5</span><span class="op">]</span> <span class="op">+</span> </span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="fl">2</span><span class="op">)</span><span class="op">*</span><span class="va">X</span><span class="op">[</span>,<span class="fl">7</span><span class="op">]</span> <span class="op">-</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="fl">1.5</span><span class="op">)</span><span class="op">*</span><span class="va">X</span><span class="op">[</span>,<span class="fl">8</span><span class="op">]</span></span>
+<span>  <span class="va">P_A</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Logistic.html" class="external-link">plogis</a></span><span class="op">(</span><span class="va">LP_A</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/stats/Binomial.html" class="external-link">rbinom</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">X</span><span class="op">)</span>, <span class="fl">1</span>, <span class="va">P_A</span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span></span>
+<span><span class="co"># Continuous outcome</span></span>
+<span><span class="va">gen_Y_C</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">A</span>, <span class="va">X</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="fl">2</span><span class="op">*</span><span class="va">A</span> <span class="op">+</span> <span class="fl">2</span><span class="op">*</span><span class="va">X</span><span class="op">[</span>,<span class="fl">1</span><span class="op">]</span> <span class="op">+</span> <span class="fl">2</span><span class="op">*</span><span class="va">X</span><span class="op">[</span>,<span class="fl">2</span><span class="op">]</span> <span class="op">+</span> <span class="fl">2</span><span class="op">*</span><span class="va">X</span><span class="op">[</span>,<span class="fl">3</span><span class="op">]</span> <span class="op">+</span> <span class="fl">1</span><span class="op">*</span><span class="va">X</span><span class="op">[</span>,<span class="fl">4</span><span class="op">]</span> <span class="op">+</span> <span class="fl">2</span><span class="op">*</span><span class="va">X</span><span class="op">[</span>,<span class="fl">5</span><span class="op">]</span> <span class="op">+</span> <span class="fl">1</span><span class="op">*</span><span class="va">X</span><span class="op">[</span>,<span class="fl">6</span><span class="op">]</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">A</span><span class="op">)</span>, <span class="fl">0</span>, <span class="fl">5</span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span><span class="co">#Conditional:</span></span>
+<span><span class="co">#  MD: 2</span></span>
+<span><span class="co">#Marginal:</span></span>
+<span><span class="co">#  MD: 2</span></span>
+<span></span>
+<span><span class="va">gen_SW</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">X</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="va">e</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Binomial.html" class="external-link">rbinom</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">X</span><span class="op">)</span>, <span class="fl">1</span>, <span class="fl">.3</span><span class="op">)</span></span>
+<span>  <span class="fl">1</span><span class="op">/</span><span class="fu"><a href="https://rdrr.io/r/stats/Logistic.html" class="external-link">plogis</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="fl">1.4</span><span class="op">)</span><span class="op">*</span><span class="va">X</span><span class="op">[</span>,<span class="fl">2</span><span class="op">]</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="fl">.7</span><span class="op">)</span><span class="op">*</span><span class="va">X</span><span class="op">[</span>,<span class="fl">4</span><span class="op">]</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="fl">.9</span><span class="op">)</span><span class="op">*</span><span class="va">X</span><span class="op">[</span>,<span class="fl">6</span><span class="op">]</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="fl">1.5</span><span class="op">)</span><span class="op">*</span><span class="va">X</span><span class="op">[</span>,<span class="fl">8</span><span class="op">]</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="fl">.9</span><span class="op">)</span><span class="op">*</span><span class="va">e</span> <span class="op">+</span></span>
+<span>             <span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="fl">.5</span><span class="op">)</span><span class="op">*</span><span class="va">e</span><span class="op">*</span><span class="va">X</span><span class="op">[</span>,<span class="fl">2</span><span class="op">]</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="fl">.6</span><span class="op">)</span><span class="op">*</span><span class="va">e</span><span class="op">*</span><span class="va">X</span><span class="op">[</span>,<span class="fl">4</span><span class="op">]</span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">19599</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">n</span> <span class="op">&lt;-</span> <span class="fl">2000</span></span>
+<span><span class="va">X</span> <span class="op">&lt;-</span> <span class="fu">gen_X</span><span class="op">(</span><span class="va">n</span><span class="op">)</span></span>
+<span><span class="va">A</span> <span class="op">&lt;-</span> <span class="fu">gen_A</span><span class="op">(</span><span class="va">X</span><span class="op">)</span></span>
+<span><span class="va">SW</span> <span class="op">&lt;-</span> <span class="fu">gen_SW</span><span class="op">(</span><span class="va">X</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">Y_C</span> <span class="op">&lt;-</span> <span class="fu">gen_Y_C</span><span class="op">(</span><span class="va">A</span>, <span class="va">X</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">d</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span><span class="va">A</span>, <span class="va">X</span>, <span class="va">Y_C</span>, <span class="va">SW</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2 unnumbered">
 <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
@@ -378,7 +377,7 @@ pre code {
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer>

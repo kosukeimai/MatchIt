@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">MatchIt</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">4.4.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">4.4.0.9004</span>
       </span>
     </div>
 
@@ -69,6 +69,18 @@
       <small>Source: <a href="https://github.com/kosukeimai/MatchIt/blob/HEAD/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="development version" id="matchit-development-version">MatchIt (development version)<a class="anchor" aria-label="anchor" href="#matchit-development-version"></a></h2>
+<ul><li><p>When <code>method = "subclass"</code> and <code>min.n = 0</code> (which is not the default), any units not placed into a subclass are now considered “unmatched” and given weights of 0. Previously they were left in.</p></li>
+<li><p>The error message when covariates have missing or non-finite values is now clearer, identifying which variables are afflicted. This fixes a bug mentioned in <a href="https://github.com/kosukeimai/MatchIt/issues/115" class="external-link">#115</a>.</p></li>
+<li><p>Fixed a bug when using <code><a href="../reference/matchit.html">matchit()</a></code> with <code>method = "cem"</code>, <code>k2k = TRUE</code>, and <code>k2k.method = NULL</code>. Thanks to Florian B. Mayr.</p></li>
+<li><p>Fixed a bug when using <code>method = "optimal"</code> and <code>method = "full"</code> with <code>exact</code> and <code>antiexact</code> specified, wherein a warning would occur about the <code>drop</code> argument in subsetting.</p></li>
+<li><p>Fixed a bug where <code>antiexact</code> would not work correctly with <code>method = "nearest"</code>. Thanks to <a href="https://github.com/gli-1" class="external-link">@gli-1</a>. (<a href="https://github.com/kosukeimai/MatchIt/issues/119" class="external-link">#119</a>)</p></li>
+<li><p>Fixed typos in the documentation and vignettes.</p></li>
+<li><p>Improved printing of balance results when no covariates are supplied.</p></li>
+<li><p>Updates to the Estimating Effects vignette (<code><a href="../articles/estimating-effects.html">vignette("estimating-effects")</a></code>) that dramatically increase the speed of the cluster bootstrap for average marginal effects after matching. Thanks to Yohei Hashimoto for pointing out the inefficiency.</p></li>
+<li><p>The source code has been reorganized.</p></li>
+</ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="4.4.0" id="matchit-440">MatchIt 4.4.0<small>2022-05-18</small><a class="anchor" aria-label="anchor" href="#matchit-440"></a></h2>
 <ul><li><p><code>optmatch</code> has returned to CRAN, now with an open-source license! A new <code>solver</code> argument can be passed to <code><a href="../reference/matchit.html">matchit()</a></code> with <code>method = "full"</code> and <code>method = "optimal"</code> to control the solver used to perform the optimization used in the matching. Note that using the default (open source) solver LEMON may yield results different from those obtained prior to <code>optmatch</code> 0.10.0. For reproducibility questions, please contact the <code>optmatch</code> maintainers.</p></li>
@@ -275,7 +287,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

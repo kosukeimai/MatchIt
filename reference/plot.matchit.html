@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">MatchIt</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">4.4.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">4.4.0.9004</span>
       </span>
     </div>
 
@@ -75,29 +75,35 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="co"># S3 method for matchit</span>
-<span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">x</span>, type <span class="op">=</span> <span class="st">"qq"</span>, interactive <span class="op">=</span> <span class="cn">TRUE</span>,
-     which.xs <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">...</span><span class="op">)</span>
-
-<span class="co"># S3 method for matchit.subclass</span>
-<span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">x</span>, type <span class="op">=</span> <span class="st">"qq"</span>, interactive <span class="op">=</span> <span class="cn">TRUE</span>,
-     which.xs <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">subclass</span>, <span class="va">...</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="co"># S3 method for matchit</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">x</span>, type <span class="op">=</span> <span class="st">"qq"</span>, interactive <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>     which.xs <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S3 method for matchit.subclass</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">x</span>, type <span class="op">=</span> <span class="st">"qq"</span>, interactive <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>     which.xs <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">subclass</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>x</dt>
 <dd><p>a <code>matchit</code> object; the output of a call to <code><a href="matchit.html">matchit()</a></code>.</p></dd>
-<dt>type</dt>
+
+  <dt>type</dt>
 <dd><p>the type of plot to display. Options include <code>"qq"</code>, <code>"ecdf"</code>, <code>"density"</code>, <code>"jitter"</code>, and <code>"histogram"</code>. See Details. Default is <code>"qq"</code>. Abbreviations allowed.</p></dd>
-<dt>interactive</dt>
+
+  <dt>interactive</dt>
 <dd><p><code>logical</code>; whether the graphs should be displayed in an interactive way. Only applies for <code>type = "qq"</code>, <code>"ecdf"</code>, <code>"density"</code>, and <code>"jitter"</code>. See Details.</p></dd>
-<dt>which.xs</dt>
+
+  <dt>which.xs</dt>
 <dd><p>with <code>type = "qq"</code>, <code>"ecdf"</code>, or <code>"density"</code>, for which covariate(s) plots should be displayed. Factor variables should be named by the original variable name rather than the names of individual dummy variables created after expansion with <code>model.matrix</code>.</p></dd>
-<dt>subclass</dt>
+
+  <dt>subclass</dt>
 <dd><p>with subclassification and <code>type = "qq"</code>, <code>"ecdf"</code>, or <code>"density"</code>, whether to display balance for individual subclasses, and, if so, for which ones. Can be <code>TRUE</code> (display plots for all subclasses), <code>FALSE</code> (display plots only in aggregate), or the indices (e.g., <code>1:6</code>) of the specific subclasses for which to display balance. When unspecified, if <code>interactive = TRUE</code>, you will be asked for which subclasses plots are desired, and otherwise, plots will be displayed only in aggregate.</p></dd>
-<dt>...</dt>
+
+  <dt>...</dt>
 <dd><p>arguments passed to <code><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot()</a></code> to control the appearance of the plot. Not all options are accepted.</p></dd>
+
 </dl></div>
     <div id="details">
     <h2>Details</h2>
@@ -123,24 +129,24 @@
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"lalonde"</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">m.out</span> <span class="op">&lt;-</span> <span class="fu"><a href="matchit.html">matchit</a></span><span class="op">(</span><span class="va">treat</span> <span class="op">~</span> <span class="va">age</span> <span class="op">+</span> <span class="va">educ</span> <span class="op">+</span> <span class="va">married</span> <span class="op">+</span></span>
-<span class="r-in">                   <span class="va">race</span> <span class="op">+</span> <span class="va">re74</span>, data <span class="op">=</span> <span class="va">lalonde</span>,</span>
-<span class="r-in">                 method <span class="op">=</span> <span class="st">"nearest"</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">m.out</span>, type <span class="op">=</span> <span class="st">"qq"</span>, interactive <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span class="r-in">     which.xs <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"age"</span>, <span class="st">"educ"</span>, <span class="st">"married"</span><span class="op">)</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"lalonde"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">m.out</span> <span class="op">&lt;-</span> <span class="fu"><a href="matchit.html">matchit</a></span><span class="op">(</span><span class="va">treat</span> <span class="op">~</span> <span class="va">age</span> <span class="op">+</span> <span class="va">educ</span> <span class="op">+</span> <span class="va">married</span> <span class="op">+</span></span></span>
+<span class="r-in"><span>                   <span class="va">race</span> <span class="op">+</span> <span class="va">re74</span>, data <span class="op">=</span> <span class="va">lalonde</span>,</span></span>
+<span class="r-in"><span>                 method <span class="op">=</span> <span class="st">"nearest"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">m.out</span>, type <span class="op">=</span> <span class="st">"qq"</span>, interactive <span class="op">=</span> <span class="cn">FALSE</span>,</span></span>
+<span class="r-in"><span>     which.xs <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"age"</span>, <span class="st">"educ"</span>, <span class="st">"married"</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="plot.matchit-1.png" alt="" width="700" height="433"></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">m.out</span>, type <span class="op">=</span> <span class="st">"histogram"</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">m.out</span>, type <span class="op">=</span> <span class="st">"histogram"</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="plot.matchit-2.png" alt="" width="700" height="433"></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="va">s.out</span> <span class="op">&lt;-</span> <span class="fu"><a href="matchit.html">matchit</a></span><span class="op">(</span><span class="va">treat</span> <span class="op">~</span> <span class="va">age</span> <span class="op">+</span> <span class="va">educ</span> <span class="op">+</span> <span class="va">married</span> <span class="op">+</span></span>
-<span class="r-in">                   <span class="va">race</span> <span class="op">+</span> <span class="va">nodegree</span> <span class="op">+</span> <span class="va">re74</span> <span class="op">+</span> <span class="va">re75</span>,</span>
-<span class="r-in">                 data <span class="op">=</span> <span class="va">lalonde</span>, method <span class="op">=</span> <span class="st">"subclass"</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">s.out</span>, type <span class="op">=</span> <span class="st">"density"</span>, interactive <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span class="r-in">     which.xs <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"age"</span>, <span class="st">"educ"</span>, <span class="st">"married"</span><span class="op">)</span>,</span>
-<span class="r-in">     subclass <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">s.out</span> <span class="op">&lt;-</span> <span class="fu"><a href="matchit.html">matchit</a></span><span class="op">(</span><span class="va">treat</span> <span class="op">~</span> <span class="va">age</span> <span class="op">+</span> <span class="va">educ</span> <span class="op">+</span> <span class="va">married</span> <span class="op">+</span></span></span>
+<span class="r-in"><span>                   <span class="va">race</span> <span class="op">+</span> <span class="va">nodegree</span> <span class="op">+</span> <span class="va">re74</span> <span class="op">+</span> <span class="va">re75</span>,</span></span>
+<span class="r-in"><span>                 data <span class="op">=</span> <span class="va">lalonde</span>, method <span class="op">=</span> <span class="st">"subclass"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">s.out</span>, type <span class="op">=</span> <span class="st">"density"</span>, interactive <span class="op">=</span> <span class="cn">FALSE</span>,</span></span>
+<span class="r-in"><span>     which.xs <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"age"</span>, <span class="st">"educ"</span>, <span class="st">"married"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>     subclass <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="plot.matchit-3.png" alt="" width="700" height="433"></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">s.out</span>, type <span class="op">=</span> <span class="st">"jitter"</span>, interactive <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">s.out</span>, type <span class="op">=</span> <span class="st">"jitter"</span>, interactive <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="plot.matchit-4.png" alt="" width="700" height="433"></span>
 </code></pre></div>
     </div>
@@ -156,7 +162,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">MatchIt</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">4.4.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">4.4.0.9004</span>
       </span>
     </div>
 
@@ -75,51 +75,65 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="co"># S3 method for matchit</span>
-<span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">object</span>, interactions <span class="op">=</span> <span class="cn">FALSE</span>,
-        addlvariables <span class="op">=</span> <span class="cn">NULL</span>, standardize <span class="op">=</span> <span class="cn">TRUE</span>,
-        data <span class="op">=</span> <span class="cn">NULL</span>, pair.dist <span class="op">=</span> <span class="cn">TRUE</span>, un <span class="op">=</span> <span class="cn">TRUE</span>,
-        improvement <span class="op">=</span> <span class="cn">FALSE</span>, <span class="va">...</span><span class="op">)</span>
-<span class="co"># S3 method for matchit.subclass</span>
-<span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">object</span>, interactions <span class="op">=</span> <span class="cn">FALSE</span>,
-        addlvariables <span class="op">=</span> <span class="cn">NULL</span>, standardize <span class="op">=</span> <span class="cn">TRUE</span>,
-        data <span class="op">=</span> <span class="cn">NULL</span>, pair.dist <span class="op">=</span> <span class="cn">FALSE</span>, subclass <span class="op">=</span> <span class="cn">FALSE</span>,
-        un <span class="op">=</span> <span class="cn">TRUE</span>, improvement <span class="op">=</span> <span class="cn">FALSE</span>, <span class="va">...</span><span class="op">)</span>
-
-<span class="co"># S3 method for summary.matchit</span>
-<span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">x</span>, digits <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span><span class="fl">3</span>, <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"digits"</span><span class="op">)</span> <span class="op">-</span> <span class="fl">3</span><span class="op">)</span>,
-      <span class="va">...</span><span class="op">)</span>
-<span class="co"># S3 method for summary.matchit.subclass</span>
-<span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">x</span>, digits <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span><span class="fl">3</span>, <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"digits"</span><span class="op">)</span> <span class="op">-</span> <span class="fl">3</span><span class="op">)</span>,
-      <span class="va">...</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="co"># S3 method for matchit</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">object</span>, interactions <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>        addlvariables <span class="op">=</span> <span class="cn">NULL</span>, standardize <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>        data <span class="op">=</span> <span class="cn">NULL</span>, pair.dist <span class="op">=</span> <span class="cn">TRUE</span>, un <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>        improvement <span class="op">=</span> <span class="cn">FALSE</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S3 method for matchit.subclass</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">object</span>, interactions <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>        addlvariables <span class="op">=</span> <span class="cn">NULL</span>, standardize <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>        data <span class="op">=</span> <span class="cn">NULL</span>, pair.dist <span class="op">=</span> <span class="cn">FALSE</span>, subclass <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>        un <span class="op">=</span> <span class="cn">TRUE</span>, improvement <span class="op">=</span> <span class="cn">FALSE</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S3 method for summary.matchit</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">x</span>, digits <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span><span class="fl">3</span>, <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"digits"</span><span class="op">)</span> <span class="op">-</span> <span class="fl">3</span><span class="op">)</span>,</span>
+<span>      <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S3 method for summary.matchit.subclass</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">x</span>, digits <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span><span class="fl">3</span>, <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"digits"</span><span class="op">)</span> <span class="op">-</span> <span class="fl">3</span><span class="op">)</span>,</span>
+<span>      <span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>object</dt>
 <dd><p>a <code>matchit</code> object; the output of a call to <code><a href="matchit.html">matchit()</a></code>.</p></dd>
-<dt>interactions</dt>
+
+  <dt>interactions</dt>
 <dd><p><code>logical</code>; whether to compute balance statistics for two-way interactions and squares of covariates. Default is <code>FALSE</code>.</p></dd>
-<dt>addlvariables</dt>
+
+  <dt>addlvariables</dt>
 <dd><p>additional variable for which balance statistics are to be computed along with the covariates in the <code>matchit</code> object. Can be entered in one of three ways: as a data frame of covariates with as many rows as there were units in the original <code><a href="matchit.html">matchit()</a></code> call, as a string containing the names of variables in <code>data</code>, or as a right-sided <code>formula</code> with the additional variables (and possibly their transformations) found in <code>data</code>, the environment, or the <code>matchit</code> object. Balance on squares and interactions of the additional variables will be included if <code>interactions = TRUE</code>.</p></dd>
-<dt>standardize</dt>
+
+  <dt>standardize</dt>
 <dd><p><code>logical</code>; whether to compute standardized (<code>TRUE</code>) or unstandardized (<code>FALSE</code>) statistics. The standardized statistics are the standardized mean difference and the mean and maximum of the difference in the (weighted) empirical cumulative distribution functions (ECDFs). The unstandardized statistics are the raw mean difference and the mean and maximum of the quantile-quantile (QQ) difference. Variance ratios are produced either way. See Details below. Default is <code>TRUE</code>.</p></dd>
-<dt>data</dt>
+
+  <dt>data</dt>
 <dd><p>a optional data frame containing variables named in <code>addlvariables</code> if specified as a string or formula.</p></dd>
-<dt>pair.dist</dt>
+
+  <dt>pair.dist</dt>
 <dd><p><code>logical</code>; whether to compute average absolute pair distances. For matching methods that don't include a <code>match.matrix</code> component in the output (i.e., exact matching, coarsened exact matching, full matching, and subclassification), computing pair differences can take a long time, especially for large datasets and with many covariates. For other methods (i.e., nearest neighbor, optimal, and genetic matching), computation is fairly quick. Default is <code>FALSE</code> for subclassification and <code>TRUE</code> otherwise.</p></dd>
-<dt>un</dt>
+
+  <dt>un</dt>
 <dd><p><code>logical</code>; whether to compute balance statistics for the unmatched sample. Default <code>TRUE</code>; set to <code>FALSE</code> for more concise output.</p></dd>
-<dt>improvement</dt>
+
+  <dt>improvement</dt>
 <dd><p><code>logical</code>; whether to compute the percent reduction in imbalance. Default <code>FALSE</code>. Ignored if <code>un = FALSE</code>.</p></dd>
-<dt>subclass</dt>
+
+  <dt>subclass</dt>
 <dd><p>after subclassification, whether to display balance for individual subclasses, and, if so, for which ones. Can be <code>TRUE</code> (display balance for all subclasses), <code>FALSE</code> (display balance only in aggregate), or the indices (e.g., <code>1:6</code>) of the specific subclasses for which to display balance. When anything other than <code>FALSE</code>, aggregate balance statistics will not be displayed. Default is <code>FALSE</code>.</p></dd>
-<dt>digits</dt>
+
+  <dt>digits</dt>
 <dd><p>the number of digits to round balance statistics to.</p></dd>
-<dt>x</dt>
+
+  <dt>x</dt>
 <dd><p>a <code>summay.matchit</code> or <code>summary.matchit.subclass</code> object; the output of a call to <code><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary()</a></code>.</p></dd>
-<dt>...</dt>
+
+  <dt>...</dt>
 <dd><p>ignored.</p></dd>
+
 </dl></div>
     <div id="details">
     <h2>Details</h2>
@@ -136,32 +150,48 @@
     </div>
     <div id="value">
     <h2>Value</h2>
-    <p>For <code>matchit</code> objects, a <code>summary.matchit</code> object, which is a list with the following components:</p>
+    
+
+<p>For <code>matchit</code> objects, a <code>summary.matchit</code> object, which is a list with the following components:</p>
 <dl><dt>call</dt>
 <dd><p>the original call to <code><a href="matchit.html">matchit()</a></code></p></dd>
-<dt>nn</dt>
+
+  <dt>nn</dt>
 <dd><p>a matrix of the sample sizes in the original (unmatched) and matched samples</p></dd>
-<dt>sum.all</dt>
+
+  <dt>sum.all</dt>
 <dd><p>if <code>un = TRUE</code>, a matrix of balance statistics for each covariate in the original (unmatched) sample</p></dd>
-<dt>sum.matched</dt>
+
+  <dt>sum.matched</dt>
 <dd><p>a matrix of balance statistics for each covariate in the matched sample</p></dd>
-<dt>reduction</dt>
+
+  <dt>reduction</dt>
 <dd><p>if <code>improvement = TRUE</code>, a matrix of the percent reduction in imbalance for each covariate in the matched sample</p></dd>
+
+
 </dl><p>For <code>match.subclass</code> objects, a <code>summary.matchit.subclass</code> object, which is a list as above containing the following components:</p>
 <dl><dt>call</dt>
 <dd><p>the original call to <code><a href="matchit.html">matchit()</a></code></p></dd>
-<dt>sum.all</dt>
+
+  <dt>sum.all</dt>
 <dd><p>if <code>un = TRUE</code>, a matrix of balance statistics for each covariate in the original sample</p></dd>
-<dt>sum.subclass</dt>
+
+  <dt>sum.subclass</dt>
 <dd><p>if <code>subclass</code> is not <code>FALSE</code>, a list of matrices of balance statistics for each subclass</p></dd>
-<dt>sum.across</dt>
+
+  <dt>sum.across</dt>
 <dd><p>a matrix of balance statistics for each covariate computed using the subclassification weights</p></dd>
-<dt>reduction</dt>
+
+  <dt>reduction</dt>
 <dd><p>if <code>improvement = TRUE</code>, a matrix of the percent reduction in imbalance for each covariate in the matched sample</p></dd>
-<dt>qn</dt>
+
+  <dt>qn</dt>
 <dd><p>a matrix of sample sizes within each subclass</p></dd>
-<dt>nn</dt>
+
+  <dt>nn</dt>
 <dd><p>a matrix of the sample sizes in the original (unmatched) and matched samples</p></dd>
+
+
 </dl></div>
     <div id="see-also">
     <h2>See also</h2>
@@ -171,12 +201,12 @@
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"lalonde"</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">m.out</span> <span class="op">&lt;-</span> <span class="fu"><a href="matchit.html">matchit</a></span><span class="op">(</span><span class="va">treat</span> <span class="op">~</span> <span class="va">age</span> <span class="op">+</span> <span class="va">educ</span> <span class="op">+</span> <span class="va">married</span> <span class="op">+</span></span>
-<span class="r-in">                   <span class="va">race</span> <span class="op">+</span> <span class="va">re74</span>, data <span class="op">=</span> <span class="va">lalonde</span>,</span>
-<span class="r-in">                 method <span class="op">=</span> <span class="st">"nearest"</span>, exact <span class="op">=</span> <span class="op">~</span> <span class="va">married</span>,</span>
-<span class="r-in">                 replace <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">m.out</span>, interactions <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"lalonde"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">m.out</span> <span class="op">&lt;-</span> <span class="fu"><a href="matchit.html">matchit</a></span><span class="op">(</span><span class="va">treat</span> <span class="op">~</span> <span class="va">age</span> <span class="op">+</span> <span class="va">educ</span> <span class="op">+</span> <span class="va">married</span> <span class="op">+</span></span></span>
+<span class="r-in"><span>                   <span class="va">race</span> <span class="op">+</span> <span class="va">re74</span>, data <span class="op">=</span> <span class="va">lalonde</span>,</span></span>
+<span class="r-in"><span>                 method <span class="op">=</span> <span class="st">"nearest"</span>, exact <span class="op">=</span> <span class="op">~</span> <span class="va">married</span>,</span></span>
+<span class="r-in"><span>                 replace <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">m.out</span>, interactions <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Call:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> matchit(formula = treat ~ age + educ + married + race + re74, </span>
@@ -243,7 +273,6 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> racehispan * re74       0.0405   0.0794</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> racewhite * re74        0.2539   0.4959</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> re74²                   0.2248   0.4470</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Summary of Balance for Matched Data:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                      Means Treated Means Control Std. Mean Diff. Var. Ratio</span>
@@ -315,11 +344,11 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> Unmatched      347.         0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Discarded        0.         0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-in"></span>
-<span class="r-in"><span class="va">s.out</span> <span class="op">&lt;-</span> <span class="fu"><a href="matchit.html">matchit</a></span><span class="op">(</span><span class="va">treat</span> <span class="op">~</span> <span class="va">age</span> <span class="op">+</span> <span class="va">educ</span> <span class="op">+</span> <span class="va">married</span> <span class="op">+</span></span>
-<span class="r-in">                   <span class="va">race</span> <span class="op">+</span> <span class="va">nodegree</span> <span class="op">+</span> <span class="va">re74</span> <span class="op">+</span> <span class="va">re75</span>,</span>
-<span class="r-in">                 data <span class="op">=</span> <span class="va">lalonde</span>, method <span class="op">=</span> <span class="st">"subclass"</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">s.out</span>, addlvariables <span class="op">=</span> <span class="op">~</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="va">age</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/base/AsIs.html" class="external-link">I</a></span><span class="op">(</span><span class="va">re74</span><span class="op">==</span><span class="fl">0</span><span class="op">)</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">s.out</span> <span class="op">&lt;-</span> <span class="fu"><a href="matchit.html">matchit</a></span><span class="op">(</span><span class="va">treat</span> <span class="op">~</span> <span class="va">age</span> <span class="op">+</span> <span class="va">educ</span> <span class="op">+</span> <span class="va">married</span> <span class="op">+</span></span></span>
+<span class="r-in"><span>                   <span class="va">race</span> <span class="op">+</span> <span class="va">nodegree</span> <span class="op">+</span> <span class="va">re74</span> <span class="op">+</span> <span class="va">re75</span>,</span></span>
+<span class="r-in"><span>                 data <span class="op">=</span> <span class="va">lalonde</span>, method <span class="op">=</span> <span class="st">"subclass"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">s.out</span>, addlvariables <span class="op">=</span> <span class="op">~</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="va">age</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/base/AsIs.html" class="external-link">I</a></span><span class="op">(</span><span class="va">re74</span><span class="op">==</span><span class="fl">0</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Call:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> matchit(formula = treat ~ age + educ + married + race + nodegree + </span>
@@ -389,7 +418,7 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> Unmatched        0.         0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Discarded        0.         0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">s.out</span>, subclass <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">s.out</span>, subclass <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Call:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> matchit(formula = treat ~ age + educ + married + race + nodegree + </span>
@@ -585,7 +614,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

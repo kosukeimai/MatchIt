@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">MatchIt</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">4.4.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">4.4.0.9004</span>
       </span>
     </div>
 
@@ -155,16 +155,16 @@ where \(\Sigma\) is the pooled within-group covariance matrix of the covariates,
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"lalonde"</span><span class="op">)</span></span>
-<span class="r-in"><span class="co"># Linearized probit regression PS:</span></span>
-<span class="r-in"><span class="va">m.out1</span> <span class="op">&lt;-</span> <span class="fu"><a href="matchit.html">matchit</a></span><span class="op">(</span><span class="va">treat</span> <span class="op">~</span> <span class="va">age</span> <span class="op">+</span> <span class="va">educ</span> <span class="op">+</span> <span class="va">race</span> <span class="op">+</span> <span class="va">married</span> <span class="op">+</span></span>
-<span class="r-in">                    <span class="va">nodegree</span> <span class="op">+</span> <span class="va">re74</span> <span class="op">+</span> <span class="va">re75</span>, data <span class="op">=</span> <span class="va">lalonde</span>,</span>
-<span class="r-in">                  distance <span class="op">=</span> <span class="st">"glm"</span>, link <span class="op">=</span> <span class="st">"linear.probit"</span><span class="op">)</span></span>
-<span class="r-in"><span class="co"># GAM logistic PS with smoothing splines (s()):</span></span>
-<span class="r-in"><span class="va">m.out2</span> <span class="op">&lt;-</span> <span class="fu"><a href="matchit.html">matchit</a></span><span class="op">(</span><span class="va">treat</span> <span class="op">~</span> <span class="fu">s</span><span class="op">(</span><span class="va">age</span><span class="op">)</span> <span class="op">+</span> <span class="fu">s</span><span class="op">(</span><span class="va">educ</span><span class="op">)</span> <span class="op">+</span> <span class="va">race</span> <span class="op">+</span> <span class="va">married</span> <span class="op">+</span></span>
-<span class="r-in">                    <span class="va">nodegree</span> <span class="op">+</span> <span class="va">re74</span> <span class="op">+</span> <span class="va">re75</span>, data <span class="op">=</span> <span class="va">lalonde</span>,</span>
-<span class="r-in">                  distance <span class="op">=</span> <span class="st">"gam"</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">m.out2</span><span class="op">$</span><span class="va">model</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"lalonde"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># Linearized probit regression PS:</span></span></span>
+<span class="r-in"><span><span class="va">m.out1</span> <span class="op">&lt;-</span> <span class="fu"><a href="matchit.html">matchit</a></span><span class="op">(</span><span class="va">treat</span> <span class="op">~</span> <span class="va">age</span> <span class="op">+</span> <span class="va">educ</span> <span class="op">+</span> <span class="va">race</span> <span class="op">+</span> <span class="va">married</span> <span class="op">+</span></span></span>
+<span class="r-in"><span>                    <span class="va">nodegree</span> <span class="op">+</span> <span class="va">re74</span> <span class="op">+</span> <span class="va">re75</span>, data <span class="op">=</span> <span class="va">lalonde</span>,</span></span>
+<span class="r-in"><span>                  distance <span class="op">=</span> <span class="st">"glm"</span>, link <span class="op">=</span> <span class="st">"linear.probit"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># GAM logistic PS with smoothing splines (s()):</span></span></span>
+<span class="r-in"><span><span class="va">m.out2</span> <span class="op">&lt;-</span> <span class="fu"><a href="matchit.html">matchit</a></span><span class="op">(</span><span class="va">treat</span> <span class="op">~</span> <span class="fu">s</span><span class="op">(</span><span class="va">age</span><span class="op">)</span> <span class="op">+</span> <span class="fu">s</span><span class="op">(</span><span class="va">educ</span><span class="op">)</span> <span class="op">+</span> <span class="va">race</span> <span class="op">+</span> <span class="va">married</span> <span class="op">+</span></span></span>
+<span class="r-in"><span>                    <span class="va">nodegree</span> <span class="op">+</span> <span class="va">re74</span> <span class="op">+</span> <span class="va">re75</span>, data <span class="op">=</span> <span class="va">lalonde</span>,</span></span>
+<span class="r-in"><span>                  distance <span class="op">=</span> <span class="st">"gam"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">m.out2</span><span class="op">$</span><span class="va">model</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Family: quasibinomial </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Link function: logit </span>
@@ -194,30 +194,30 @@ where \(\Sigma\) is the pooled within-group covariance matrix of the covariates,
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> R-sq.(adj) =    0.5   Deviance explained = 46.1%</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> GCV = 0.69813  Scale est. = 1.0287    n = 614</span>
-<span class="r-in"><span class="co"># CBPS for ATC matching w/replacement, using the just-</span></span>
-<span class="r-in"><span class="co"># identified version of CBPS (setting method = "exact"):</span></span>
-<span class="r-in"><span class="va">m.out3</span> <span class="op">&lt;-</span> <span class="fu"><a href="matchit.html">matchit</a></span><span class="op">(</span><span class="va">treat</span> <span class="op">~</span> <span class="va">age</span> <span class="op">+</span> <span class="va">educ</span> <span class="op">+</span> <span class="va">race</span> <span class="op">+</span> <span class="va">married</span> <span class="op">+</span></span>
-<span class="r-in">                    <span class="va">nodegree</span> <span class="op">+</span> <span class="va">re74</span> <span class="op">+</span> <span class="va">re75</span>, data <span class="op">=</span> <span class="va">lalonde</span>,</span>
-<span class="r-in">                  distance <span class="op">=</span> <span class="st">"cbps"</span>, estimand <span class="op">=</span> <span class="st">"ATC"</span>,</span>
-<span class="r-in">                  distance.options <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>method <span class="op">=</span> <span class="st">"exact"</span><span class="op">)</span>,</span>
-<span class="r-in">                  replace <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span class="r-in"><span class="co"># Mahalanobis distance matching - no PS estimated</span></span>
-<span class="r-in"><span class="va">m.out4</span> <span class="op">&lt;-</span> <span class="fu"><a href="matchit.html">matchit</a></span><span class="op">(</span><span class="va">treat</span> <span class="op">~</span> <span class="va">age</span> <span class="op">+</span> <span class="va">educ</span> <span class="op">+</span> <span class="va">race</span> <span class="op">+</span> <span class="va">married</span> <span class="op">+</span></span>
-<span class="r-in">                    <span class="va">nodegree</span> <span class="op">+</span> <span class="va">re74</span> <span class="op">+</span> <span class="va">re75</span>, data <span class="op">=</span> <span class="va">lalonde</span>,</span>
-<span class="r-in">                  distance <span class="op">=</span> <span class="st">"mahalanobis"</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="va">m.out4</span><span class="op">$</span><span class="va">distance</span> <span class="co">#NULL</span></span>
+<span class="r-in"><span><span class="co"># CBPS for ATC matching w/replacement, using the just-</span></span></span>
+<span class="r-in"><span><span class="co"># identified version of CBPS (setting method = "exact"):</span></span></span>
+<span class="r-in"><span><span class="va">m.out3</span> <span class="op">&lt;-</span> <span class="fu"><a href="matchit.html">matchit</a></span><span class="op">(</span><span class="va">treat</span> <span class="op">~</span> <span class="va">age</span> <span class="op">+</span> <span class="va">educ</span> <span class="op">+</span> <span class="va">race</span> <span class="op">+</span> <span class="va">married</span> <span class="op">+</span></span></span>
+<span class="r-in"><span>                    <span class="va">nodegree</span> <span class="op">+</span> <span class="va">re74</span> <span class="op">+</span> <span class="va">re75</span>, data <span class="op">=</span> <span class="va">lalonde</span>,</span></span>
+<span class="r-in"><span>                  distance <span class="op">=</span> <span class="st">"cbps"</span>, estimand <span class="op">=</span> <span class="st">"ATC"</span>,</span></span>
+<span class="r-in"><span>                  distance.options <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>method <span class="op">=</span> <span class="st">"exact"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>                  replace <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># Mahalanobis distance matching - no PS estimated</span></span></span>
+<span class="r-in"><span><span class="va">m.out4</span> <span class="op">&lt;-</span> <span class="fu"><a href="matchit.html">matchit</a></span><span class="op">(</span><span class="va">treat</span> <span class="op">~</span> <span class="va">age</span> <span class="op">+</span> <span class="va">educ</span> <span class="op">+</span> <span class="va">race</span> <span class="op">+</span> <span class="va">married</span> <span class="op">+</span></span></span>
+<span class="r-in"><span>                    <span class="va">nodegree</span> <span class="op">+</span> <span class="va">re74</span> <span class="op">+</span> <span class="va">re75</span>, data <span class="op">=</span> <span class="va">lalonde</span>,</span></span>
+<span class="r-in"><span>                  distance <span class="op">=</span> <span class="st">"mahalanobis"</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">m.out4</span><span class="op">$</span><span class="va">distance</span> <span class="co">#NULL</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> NULL</span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># Mahalanobis distance matching with PS estimated</span></span>
-<span class="r-in"><span class="co"># for use in a caliper; matching done on mahvars</span></span>
-<span class="r-in"><span class="va">m.out5</span> <span class="op">&lt;-</span> <span class="fu"><a href="matchit.html">matchit</a></span><span class="op">(</span><span class="va">treat</span> <span class="op">~</span> <span class="va">age</span> <span class="op">+</span> <span class="va">educ</span> <span class="op">+</span> <span class="va">race</span> <span class="op">+</span> <span class="va">married</span> <span class="op">+</span></span>
-<span class="r-in">                    <span class="va">nodegree</span> <span class="op">+</span> <span class="va">re74</span> <span class="op">+</span> <span class="va">re75</span>, data <span class="op">=</span> <span class="va">lalonde</span>,</span>
-<span class="r-in">                  distance <span class="op">=</span> <span class="st">"glm"</span>, caliper <span class="op">=</span> <span class="fl">.1</span>,</span>
-<span class="r-in">                  mahvars <span class="op">=</span> <span class="op">~</span> <span class="va">age</span> <span class="op">+</span> <span class="va">educ</span> <span class="op">+</span> <span class="va">race</span> <span class="op">+</span> <span class="va">married</span> <span class="op">+</span></span>
-<span class="r-in">                                <span class="va">nodegree</span> <span class="op">+</span> <span class="va">re74</span> <span class="op">+</span> <span class="va">re75</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">m.out5</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Mahalanobis distance matching with PS estimated</span></span></span>
+<span class="r-in"><span><span class="co"># for use in a caliper; matching done on mahvars</span></span></span>
+<span class="r-in"><span><span class="va">m.out5</span> <span class="op">&lt;-</span> <span class="fu"><a href="matchit.html">matchit</a></span><span class="op">(</span><span class="va">treat</span> <span class="op">~</span> <span class="va">age</span> <span class="op">+</span> <span class="va">educ</span> <span class="op">+</span> <span class="va">race</span> <span class="op">+</span> <span class="va">married</span> <span class="op">+</span></span></span>
+<span class="r-in"><span>                    <span class="va">nodegree</span> <span class="op">+</span> <span class="va">re74</span> <span class="op">+</span> <span class="va">re75</span>, data <span class="op">=</span> <span class="va">lalonde</span>,</span></span>
+<span class="r-in"><span>                  distance <span class="op">=</span> <span class="st">"glm"</span>, caliper <span class="op">=</span> <span class="fl">.1</span>,</span></span>
+<span class="r-in"><span>                  mahvars <span class="op">=</span> <span class="op">~</span> <span class="va">age</span> <span class="op">+</span> <span class="va">educ</span> <span class="op">+</span> <span class="va">race</span> <span class="op">+</span> <span class="va">married</span> <span class="op">+</span></span></span>
+<span class="r-in"><span>                                <span class="va">nodegree</span> <span class="op">+</span> <span class="va">re74</span> <span class="op">+</span> <span class="va">re75</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">m.out5</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Call:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> matchit(formula = treat ~ age + educ + race + married + nodegree + </span>
@@ -247,7 +247,6 @@ where \(\Sigma\) is the pooled within-group covariance matrix of the covariates,
 <span class="r-out co"><span class="r-pr">#&gt;</span> nodegree     0.1114</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> re74         0.4470</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> re75         0.2876</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Summary of Balance for Matched Data:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>            Means Treated Means Control Std. Mean Diff. Var. Ratio eCDF Mean</span>
@@ -280,25 +279,25 @@ where \(\Sigma\) is the pooled within-group covariance matrix of the covariates,
 <span class="r-out co"><span class="r-pr">#&gt;</span> Unmatched     318      74</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Discarded       0       0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># User-supplied propensity scores</span></span>
-<span class="r-in"><span class="va">p.score</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/fitted.values.html" class="external-link">fitted</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/glm.html" class="external-link">glm</a></span><span class="op">(</span><span class="va">treat</span> <span class="op">~</span> <span class="va">age</span> <span class="op">+</span> <span class="va">educ</span> <span class="op">+</span> <span class="va">race</span> <span class="op">+</span> <span class="va">married</span> <span class="op">+</span></span>
-<span class="r-in">                        <span class="va">nodegree</span> <span class="op">+</span> <span class="va">re74</span> <span class="op">+</span> <span class="va">re75</span>, data <span class="op">=</span> <span class="va">lalonde</span>,</span>
-<span class="r-in">                      family <span class="op">=</span> <span class="va">binomial</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="va">m.out6</span> <span class="op">&lt;-</span> <span class="fu"><a href="matchit.html">matchit</a></span><span class="op">(</span><span class="va">treat</span> <span class="op">~</span> <span class="va">age</span> <span class="op">+</span> <span class="va">educ</span> <span class="op">+</span> <span class="va">race</span> <span class="op">+</span> <span class="va">married</span> <span class="op">+</span></span>
-<span class="r-in">                    <span class="va">nodegree</span> <span class="op">+</span> <span class="va">re74</span> <span class="op">+</span> <span class="va">re75</span>, data <span class="op">=</span> <span class="va">lalonde</span>,</span>
-<span class="r-in">                  distance <span class="op">=</span> <span class="va">p.score</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># User-supplied distance matrix using optmatch::match_on()</span></span>
-<span class="r-in"><span class="va">dist_mat</span> <span class="op">&lt;-</span> <span class="fu">optmatch</span><span class="fu">::</span><span class="fu"><a href="https://markmfredrickson.github.io/optmatch/reference/match_on-methods.html" class="external-link">match_on</a></span><span class="op">(</span></span>
-<span class="r-in">              <span class="va">treat</span> <span class="op">~</span> <span class="va">age</span> <span class="op">+</span> <span class="va">educ</span> <span class="op">+</span> <span class="va">race</span> <span class="op">+</span> <span class="va">nodegree</span> <span class="op">+</span></span>
-<span class="r-in">                <span class="va">married</span> <span class="op">+</span> <span class="va">re74</span> <span class="op">+</span> <span class="va">re75</span>, data <span class="op">=</span> <span class="va">lalonde</span>,</span>
-<span class="r-in">              method <span class="op">=</span> <span class="st">"rank_mahalanobis"</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="va">m.out7</span> <span class="op">&lt;-</span> <span class="fu"><a href="matchit.html">matchit</a></span><span class="op">(</span><span class="va">treat</span> <span class="op">~</span> <span class="va">age</span> <span class="op">+</span> <span class="va">educ</span> <span class="op">+</span> <span class="va">race</span> <span class="op">+</span> <span class="va">nodegree</span> <span class="op">+</span></span>
-<span class="r-in">                    <span class="va">married</span> <span class="op">+</span> <span class="va">re74</span> <span class="op">+</span> <span class="va">re75</span>, data <span class="op">=</span> <span class="va">lalonde</span>,</span>
-<span class="r-in">                  distance <span class="op">=</span> <span class="va">dist_mat</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># User-supplied propensity scores</span></span></span>
+<span class="r-in"><span><span class="va">p.score</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/fitted.values.html" class="external-link">fitted</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/glm.html" class="external-link">glm</a></span><span class="op">(</span><span class="va">treat</span> <span class="op">~</span> <span class="va">age</span> <span class="op">+</span> <span class="va">educ</span> <span class="op">+</span> <span class="va">race</span> <span class="op">+</span> <span class="va">married</span> <span class="op">+</span></span></span>
+<span class="r-in"><span>                        <span class="va">nodegree</span> <span class="op">+</span> <span class="va">re74</span> <span class="op">+</span> <span class="va">re75</span>, data <span class="op">=</span> <span class="va">lalonde</span>,</span></span>
+<span class="r-in"><span>                      family <span class="op">=</span> <span class="va">binomial</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">m.out6</span> <span class="op">&lt;-</span> <span class="fu"><a href="matchit.html">matchit</a></span><span class="op">(</span><span class="va">treat</span> <span class="op">~</span> <span class="va">age</span> <span class="op">+</span> <span class="va">educ</span> <span class="op">+</span> <span class="va">race</span> <span class="op">+</span> <span class="va">married</span> <span class="op">+</span></span></span>
+<span class="r-in"><span>                    <span class="va">nodegree</span> <span class="op">+</span> <span class="va">re74</span> <span class="op">+</span> <span class="va">re75</span>, data <span class="op">=</span> <span class="va">lalonde</span>,</span></span>
+<span class="r-in"><span>                  distance <span class="op">=</span> <span class="va">p.score</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># User-supplied distance matrix using optmatch::match_on()</span></span></span>
+<span class="r-in"><span><span class="va">dist_mat</span> <span class="op">&lt;-</span> <span class="fu">optmatch</span><span class="fu">::</span><span class="fu"><a href="https://markmfredrickson.github.io/optmatch/reference/match_on-methods.html" class="external-link">match_on</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>              <span class="va">treat</span> <span class="op">~</span> <span class="va">age</span> <span class="op">+</span> <span class="va">educ</span> <span class="op">+</span> <span class="va">race</span> <span class="op">+</span> <span class="va">nodegree</span> <span class="op">+</span></span></span>
+<span class="r-in"><span>                <span class="va">married</span> <span class="op">+</span> <span class="va">re74</span> <span class="op">+</span> <span class="va">re75</span>, data <span class="op">=</span> <span class="va">lalonde</span>,</span></span>
+<span class="r-in"><span>              method <span class="op">=</span> <span class="st">"rank_mahalanobis"</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">m.out7</span> <span class="op">&lt;-</span> <span class="fu"><a href="matchit.html">matchit</a></span><span class="op">(</span><span class="va">treat</span> <span class="op">~</span> <span class="va">age</span> <span class="op">+</span> <span class="va">educ</span> <span class="op">+</span> <span class="va">race</span> <span class="op">+</span> <span class="va">nodegree</span> <span class="op">+</span></span></span>
+<span class="r-in"><span>                    <span class="va">married</span> <span class="op">+</span> <span class="va">re74</span> <span class="op">+</span> <span class="va">re75</span>, data <span class="op">=</span> <span class="va">lalonde</span>,</span></span>
+<span class="r-in"><span>                  distance <span class="op">=</span> <span class="va">dist_mat</span><span class="op">)</span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -313,7 +312,7 @@ where \(\Sigma\) is the pooled within-group covariance matrix of the covariates,
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

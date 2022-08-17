@@ -28,7 +28,7 @@ matchit(formula,
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">MatchIt</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">4.4.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">4.4.0.9004</span>
       </span>
     </div>
 
@@ -84,13 +84,14 @@ matchit(formula,
     <div class="ref-description">
     <p>In <code><a href="matchit.html">matchit()</a></code>, setting <code>method = "exact"</code> performs exact matching. With exact matching, a complete cross of the covariates is used to form subclasses defined by each combination of the covariate levels. Any subclass that doesn't contain both treated and control units is discarded, leaving only subclasses containing treatment and control units that are exactly equal on the included covariates. The benefits of exact matching are that confounding due to the covariates included is completely eliminated, regardless of the functional form of the treatment or outcome models. The problem is that typically many units will be discarded, sometimes dramatically reducing precision and changing the target population of inference. To use exact matching in combination with another matching method (i.e., to exact match on some covariates and some other form of matching on others), use the <code>exact</code> argument with that method.</p>
 <p>This page details the allowable arguments with <code>method = "exact"</code>. See <code><a href="matchit.html">matchit()</a></code> for an explanation of what each argument means in a general context and how it can be specified.</p>
-<p>Below is how <code><a href="matchit.html">matchit()</a></code> is used for exact matching:</p><div class="sourceCode"><pre><code><span class="fu"><a href="../reference/matchit.html">matchit</a></span><span class="op">(</span><span class="va">formula</span>,
-        data <span class="op">=</span> <span class="cn">NULL</span>,
-        method <span class="op">=</span> <span class="st">"exact"</span>,
-        estimand <span class="op">=</span> <span class="st">"ATT"</span>,
-        s.weights <span class="op">=</span> <span class="cn">NULL</span>,
-        verbose <span class="op">=</span> <span class="cn">FALSE</span>,
-        <span class="va">...</span><span class="op">)</span></code></pre></div>
+<p>Below is how <code><a href="matchit.html">matchit()</a></code> is used for exact matching:</p><div class="sourceCode"><pre><code><span></span>
+<span><span class="fu"><a href="../reference/matchit.html">matchit</a></span><span class="op">(</span><span class="va">formula</span>,</span>
+<span>        data <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>        method <span class="op">=</span> <span class="st">"exact"</span>,</span>
+<span>        estimand <span class="op">=</span> <span class="st">"ATT"</span>,</span>
+<span>        s.weights <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>        verbose <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>        <span class="va">...</span><span class="op">)</span></span></code></pre></div>
 
     </div>
 
@@ -99,18 +100,25 @@ matchit(formula,
     <h2>Arguments</h2>
     <dl><dt>formula</dt>
 <dd><p>a two-sided <code><a href="https://rdrr.io/r/stats/formula.html" class="external-link">formula()</a></code> object containing the treatment and covariates to be used in creating the subclasses defined by a full cross of the covariate levels.</p></dd>
-<dt>data</dt>
+
+  <dt>data</dt>
 <dd><p>a data frame containing the variables named in <code>formula</code>. If not found in <code>data</code>, the variables will be sought in the environment.</p></dd>
-<dt>method</dt>
+
+  <dt>method</dt>
 <dd><p>set here to <code>"exact"</code>.</p></dd>
-<dt>estimand</dt>
+
+  <dt>estimand</dt>
 <dd><p>a string containing the desired estimand. Allowable options include <code>"ATT"</code>, <code>"ATC"</code>, and <code>"ATE"</code>. The estimand controls how the weights are computed; see the Computing Weights section at <code><a href="matchit.html">matchit()</a></code> for details.</p></dd>
-<dt>s.weights</dt>
+
+  <dt>s.weights</dt>
 <dd><p>the variable containing sampling weights to be incorporated into balance statistics. These weights do not affect the matching process.</p></dd>
-<dt>verbose</dt>
+
+  <dt>verbose</dt>
 <dd><p><code>logical</code>; whether information about the matching process should be printed to the console.</p></dd>
-<dt>...</dt>
+
+  <dt>...</dt>
 <dd><p>ignored.</p></dd>
+
 </dl><p>The arguments <code>distance</code> (and related arguments), <code>exact</code>, <code>mahvars</code>, <code>discard</code> (and related arguments), <code>replace</code>, <code>m.order</code>, <code>caliper</code> (and related arguments), and <code>ratio</code> are ignored with a warning.</p>
     </div>
     <div id="outputs">
@@ -130,18 +138,18 @@ matchit(formula,
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"lalonde"</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># Exact matching on age, race, married, and educ</span></span>
-<span class="r-in"><span class="va">m.out1</span> <span class="op">&lt;-</span> <span class="fu"><a href="matchit.html">matchit</a></span><span class="op">(</span><span class="va">treat</span> <span class="op">~</span> <span class="va">age</span> <span class="op">+</span> <span class="va">race</span> <span class="op">+</span> <span class="va">married</span> <span class="op">+</span> <span class="va">educ</span>, data <span class="op">=</span> <span class="va">lalonde</span>,</span>
-<span class="r-in">                  method <span class="op">=</span> <span class="st">"exact"</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">m.out1</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"lalonde"</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Exact matching on age, race, married, and educ</span></span></span>
+<span class="r-in"><span><span class="va">m.out1</span> <span class="op">&lt;-</span> <span class="fu"><a href="matchit.html">matchit</a></span><span class="op">(</span><span class="va">treat</span> <span class="op">~</span> <span class="va">age</span> <span class="op">+</span> <span class="va">race</span> <span class="op">+</span> <span class="va">married</span> <span class="op">+</span> <span class="va">educ</span>, data <span class="op">=</span> <span class="va">lalonde</span>,</span></span>
+<span class="r-in"><span>                  method <span class="op">=</span> <span class="st">"exact"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">m.out1</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> A matchit object</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  - method: Exact matching</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  - number of obs.: 614 (original), 113 (matched)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  - target estimand: ATT</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  - covariates: age, race, married, educ</span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">m.out1</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">m.out1</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Call:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> matchit(formula = treat ~ age + race + married + educ, data = lalonde, </span>
@@ -162,7 +170,6 @@ matchit(formula,
 <span class="r-out co"><span class="r-pr">#&gt;</span> racewhite    0.5577</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> married      0.3236</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> educ         0.1114</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Summary of Balance for Matched Data:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>            Means Treated Means Control Std. Mean Diff. Var. Ratio eCDF Mean</span>
@@ -202,7 +209,7 @@ matchit(formula,
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

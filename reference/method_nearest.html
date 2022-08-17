@@ -41,7 +41,7 @@ matchit(formula,
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">MatchIt</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">4.4.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">4.4.0.9004</span>
       </span>
     </div>
 
@@ -97,26 +97,27 @@ matchit(formula,
     <div class="ref-description">
     <p>In <code><a href="matchit.html">matchit()</a></code>, setting <code>method = "nearest"</code> performs greedy nearest neighbor matching. A distance is computed between each treated unit and each control unit, and, one by one, each treated unit is assigned a control unit as a match. The matching is "greedy" in the sense that there is no action taken to optimize an overall criterion; each match is selected without considering the other matches that may occur subsequently.</p>
 <p>This page details the allowable arguments with <code>method = "nearest"</code>. See <code><a href="matchit.html">matchit()</a></code> for an explanation of what each argument means in a general context and how it can be specified.</p>
-<p>Below is how <code><a href="matchit.html">matchit()</a></code> is used for nearest neighbor matching:</p><div class="sourceCode"><pre><code><span class="fu"><a href="../reference/matchit.html">matchit</a></span><span class="op">(</span><span class="va">formula</span>,
-        data <span class="op">=</span> <span class="cn">NULL</span>,
-        method <span class="op">=</span> <span class="st">"nearest"</span>,
-        distance <span class="op">=</span> <span class="st">"glm"</span>,
-        link <span class="op">=</span> <span class="st">"logit"</span>,
-        distance.options <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>,
-        estimand <span class="op">=</span> <span class="st">"ATT"</span>,
-        exact <span class="op">=</span> <span class="cn">NULL</span>,
-        mahvars <span class="op">=</span> <span class="cn">NULL</span>,
-        antiexact <span class="op">=</span> <span class="cn">NULL</span>,
-        discard <span class="op">=</span> <span class="st">"none"</span>,
-        reestimate <span class="op">=</span> <span class="cn">FALSE</span>,
-        s.weights <span class="op">=</span> <span class="cn">NULL</span>,
-        replace <span class="op">=</span> <span class="cn">TRUE</span>,
-        m.order <span class="op">=</span> <span class="cn">NULL</span>,
-        caliper <span class="op">=</span> <span class="cn">NULL</span>,
-        ratio <span class="op">=</span> <span class="fl">1</span>,
-        min.controls <span class="op">=</span> <span class="cn">NULL</span>,
-        max.controls <span class="op">=</span> <span class="cn">NULL</span>,
-        verbose <span class="op">=</span> <span class="cn">FALSE</span>, <span class="va">...</span><span class="op">)</span></code></pre></div>
+<p>Below is how <code><a href="matchit.html">matchit()</a></code> is used for nearest neighbor matching:</p><div class="sourceCode"><pre><code><span></span>
+<span><span class="fu"><a href="../reference/matchit.html">matchit</a></span><span class="op">(</span><span class="va">formula</span>,</span>
+<span>        data <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>        method <span class="op">=</span> <span class="st">"nearest"</span>,</span>
+<span>        distance <span class="op">=</span> <span class="st">"glm"</span>,</span>
+<span>        link <span class="op">=</span> <span class="st">"logit"</span>,</span>
+<span>        distance.options <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>        estimand <span class="op">=</span> <span class="st">"ATT"</span>,</span>
+<span>        exact <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>        mahvars <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>        antiexact <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>        discard <span class="op">=</span> <span class="st">"none"</span>,</span>
+<span>        reestimate <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>        s.weights <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>        replace <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>        m.order <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>        caliper <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>        ratio <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>        min.controls <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>        max.controls <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>        verbose <span class="op">=</span> <span class="cn">FALSE</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
 
     </div>
 
@@ -125,53 +126,74 @@ matchit(formula,
     <h2>Arguments</h2>
     <dl><dt>formula</dt>
 <dd><p>a two-sided <code><a href="https://rdrr.io/r/stats/formula.html" class="external-link">formula()</a></code> object containing the treatment and covariates to be used in creating the distance measure used in the matching.</p></dd>
-<dt>data</dt>
+
+  <dt>data</dt>
 <dd><p>a data frame containing the variables named in <code>formula</code>. If not found in <code>data</code>, the variables will be sought in the environment.</p></dd>
-<dt>method</dt>
+
+  <dt>method</dt>
 <dd><p>set here to <code>"nearest"</code>.</p></dd>
-<dt>distance</dt>
+
+  <dt>distance</dt>
 <dd><p>the distance measure to be used. See <code><a href="distance.html">distance</a></code> for allowable options. Can be supplied as a distance matrix.</p></dd>
-<dt>link</dt>
+
+  <dt>link</dt>
 <dd><p>when <code>distance</code> is specified as a method of estimating propensity scores, an additional argument controlling the link function used in estimating the distance measure. See <code><a href="distance.html">distance</a></code> for allowable options with each option.</p></dd>
-<dt>distance.options</dt>
+
+  <dt>distance.options</dt>
 <dd><p>a named list containing additional arguments supplied to the function that estimates the distance measure as determined by the argument to <code>distance</code>.</p></dd>
-<dt>estimand</dt>
+
+  <dt>estimand</dt>
 <dd><p>a string containing the desired estimand. Allowable options include <code>"ATT"</code> and <code>"ATC"</code>. See Details.</p></dd>
-<dt>exact</dt>
+
+  <dt>exact</dt>
 <dd><p>for which variables exact matching should take place.</p></dd>
-<dt>mahvars</dt>
+
+  <dt>mahvars</dt>
 <dd><p>for which variables Mahalanobis distance matching should take place when <code>distance</code> corresponds to a propensity score (e.g., for caliper matching or to discard units for common support). If specified, the distance measure will not be used in matching.</p></dd>
-<dt>antiexact</dt>
+
+  <dt>antiexact</dt>
 <dd><p>for which variables ant-exact matching should take place.</p></dd>
-<dt>discard</dt>
+
+  <dt>discard</dt>
 <dd><p>a string containing a method for discarding units outside a region of common support. Only allowed when <code>distance</code> corresponds to a propensity score.</p></dd>
-<dt>reestimate</dt>
+
+  <dt>reestimate</dt>
 <dd><p>if <code>discard</code> is not <code>"none"</code>, whether to re-estimate the propensity score in the remaining sample prior to matching.</p></dd>
-<dt>s.weights</dt>
+
+  <dt>s.weights</dt>
 <dd><p>the variable containing sampling weights to be incorporated into propensity score models and balance statistics.</p></dd>
-<dt>replace</dt>
+
+  <dt>replace</dt>
 <dd><p>whether matching should be done with replacement.</p></dd>
-<dt>m.order</dt>
+
+  <dt>m.order</dt>
 <dd><p>the order that the matching takes place. The default is <code>"largest"</code> when <code>distance</code> corresponds to a propensity score and <code>"data"</code> otherwise. See <code><a href="matchit.html">matchit()</a></code> for allowable options.</p></dd>
-<dt>caliper</dt>
+
+  <dt>caliper</dt>
 <dd><p>the width(s) of the caliper(s) used for caliper matching. See Details and Examples.</p></dd>
-<dt>std.caliper</dt>
+
+  <dt>std.caliper</dt>
 <dd><p><code>logical</code>; when calipers are specified, whether they are in standard deviation units (<code>TRUE</code>) or raw units (<code>FALSE</code>).</p></dd>
-<dt>ratio</dt>
+
+  <dt>ratio</dt>
 <dd><p>how many control units should be matched to each treated unit for k:1 matching. For variable ratio matching, see section "Variable Ratio Matching" in Details below.</p></dd>
-<dt>min.controls, max.controls</dt>
+
+  <dt>min.controls, max.controls</dt>
 <dd><p>for variable ratio matching, the minimum and maximum number of controls units to be matched to each treated unit. See section "Variable Ratio Matching" in Details below.</p></dd>
-<dt>verbose</dt>
+
+  <dt>verbose</dt>
 <dd><p><code>logical</code>; whether information about the matching process should be printed to the console. When <code>TRUE</code>, a progress bar implemented using <em>RcppProgress</em> will be displayed.</p></dd>
+
 <dt>...</dt>
 <dd><p>additional arguments that control the matching specification:</p><dl><dt><code>reuse.max</code></dt>
 <dd><p><code>numeric</code>; the maximum number of times each control can be used as a match. Setting <code>reuse.max = 1</code> corresponds to matching without replacement (i.e., <code>replace = FALSE</code>), and setting <code>reuse.max = Inf</code> corresponds to traditional matching with replacement (i.e., <code>replace = TRUE</code>) with no limit on the number of times each control unit can be matched. Other values restrict the number of times each control can be matched when matching with replacement. <code>replace</code> is ignored when <code>reuse.max</code> is specified.</p></dd>
 
      <dt><code>unit.id</code></dt>
-<dd><p>one or more variables containing a unit ID for each observation, i.e., in case multiple observations correspond to the same unit. Once a control observation has been matched, no other observation with the same unit ID can be used as matches. This ensures each control unit is used only once even if it has multiple observation associated with it. Omitting this argument is the same as giving each observation a unique ID. Ignored when <code>replace = TRUE</code>.</p></dd>
+<dd><p>one or more variables containing a unit ID for each observation, i.e., in case multiple observations correspond to the same unit. Once a control observation has been matched, no other observation with the same unit ID can be used as matches. This ensures each control unit is used only once even if it has multiple observations associated with it. Omitting this argument is the same as giving each observation a unique ID. Ignored when <code>replace = TRUE</code>.</p></dd>
 
   
 </dl></dd>
+
 </dl></div>
     <div id="outputs">
     <h2>Outputs</h2>
@@ -184,14 +206,16 @@ matchit(formula,
 <h3 id="mahalanobis-distance-matching">Mahalanobis Distance Matching<a class="anchor" aria-label="anchor" href="#mahalanobis-distance-matching"></a></h3>
 <p>Mahalanobis distance matching can be done one of two ways:</p>
 <p>1) If no propensity score needs to be estimated, <code>distance</code> should be set to <code>"mahalanobis"</code>, and Mahalanobis distance matching will occur using all the variables in <code>formula</code>. Arguments to <code>discard</code> and <code>mahvars</code> will be ignored, and a caliper can only be placed on named variables. For example, to perform simple Mahalanobis distance matching, the following could be run:</p>
-<div class="sourceCode"><pre><code><span class="fu"><a href="../reference/matchit.html">matchit</a></span><span class="op">(</span><span class="va">treat</span> <span class="op">~</span> <span class="va">X1</span> <span class="op">+</span> <span class="va">X2</span>, method <span class="op">=</span> <span class="st">"nearest"</span>,
-        distance <span class="op">=</span> <span class="st">"mahalanobis"</span><span class="op">)</span></code></pre></div>
+<div class="sourceCode"><pre><code><span></span>
+<span><span class="fu"><a href="../reference/matchit.html">matchit</a></span><span class="op">(</span><span class="va">treat</span> <span class="op">~</span> <span class="va">X1</span> <span class="op">+</span> <span class="va">X2</span>, method <span class="op">=</span> <span class="st">"nearest"</span>,</span>
+<span>        distance <span class="op">=</span> <span class="st">"mahalanobis"</span><span class="op">)</span></span></code></pre></div>
 
 <p>With this code, the Mahalanobis distance is computed using <code>X1</code> and <code>X2</code>, and matching occurs on this distance. The <code>distance</code> component of the <code><a href="matchit.html">matchit()</a></code> output will be empty.</p>
 <p>2) If a propensity score needs to be estimated for any reason, e.g., for common support with <code>discard</code> or for creating a caliper, <code>distance</code> should be whatever method is used to estimate the propensity score or a vector of distance measures. Use <code>mahvars</code> to specify the variables used to create the Mahalanobis distance. For example, to perform Mahalanobis within a propensity score caliper, the following could be run:</p>
-<div class="sourceCode"><pre><code><span class="fu"><a href="../reference/matchit.html">matchit</a></span><span class="op">(</span><span class="va">treat</span> <span class="op">~</span> <span class="va">X1</span> <span class="op">+</span> <span class="va">X2</span> <span class="op">+</span> <span class="va">X3</span>, method <span class="op">=</span> <span class="st">"nearest"</span>,
-        distance <span class="op">=</span> <span class="st">"glm"</span>, caliper <span class="op">=</span> <span class="fl">.25</span>,
-        mahvars <span class="op">=</span> <span class="op">~</span> <span class="va">X1</span> <span class="op">+</span> <span class="va">X2</span><span class="op">)</span></code></pre></div>
+<div class="sourceCode"><pre><code><span></span>
+<span><span class="fu"><a href="../reference/matchit.html">matchit</a></span><span class="op">(</span><span class="va">treat</span> <span class="op">~</span> <span class="va">X1</span> <span class="op">+</span> <span class="va">X2</span> <span class="op">+</span> <span class="va">X3</span>, method <span class="op">=</span> <span class="st">"nearest"</span>,</span>
+<span>        distance <span class="op">=</span> <span class="st">"glm"</span>, caliper <span class="op">=</span> <span class="fl">.25</span>,</span>
+<span>        mahvars <span class="op">=</span> <span class="op">~</span> <span class="va">X1</span> <span class="op">+</span> <span class="va">X2</span><span class="op">)</span></span></code></pre></div>
 
 <p>With this code, <code>X1</code>, <code>X2</code>, and <code>X3</code> are used to estimate the propensity score (using the <code>"glm"</code> method, which by default is logistic regression), which is used to create a matching caliper. The actual matching occurs on the Mahalanobis distance computed only using <code>X1</code> and <code>X2</code>, which are supplied to <code>mahvars</code>. Units whose propensity score difference is larger than the caliper will not be paired, and some treated units may therefore not receive a match. The estimated propensity scores will be included in the <code>distance</code> component of the <code><a href="matchit.html">matchit()</a></code> output. See Examples.</p>
 </div>
@@ -202,7 +226,7 @@ matchit(formula,
 
 <div class="section">
 <h3 id="variable-ratio-matching">Variable Ratio Matching<a class="anchor" aria-label="anchor" href="#variable-ratio-matching"></a></h3>
-<p><code><a href="matchit.html">matchit()</a></code> can perform variable ratio "extremal" matching as described by Ming and Rosenbaum (2000). This method tends to result in better balance than fixed ratio matching at the expense of some precision. When <code>ratio &gt; 1</code>, rather than requiring all treated units to receive <code>ratio</code> matches, each treated unit is assigned a value that corresponds to the number of control units they will be matched to. These values are controlled by the arguments <code>min.controls</code> and <code>max.controls</code>, which correspond to α and β, respectively, in Ming and Rosenbaum (2000), and trigger variable ratio matching to occur. Some treated units will receive <code>min.controls</code> matches and others will receive <code>max.controls</code> matches (and one unit may have an intermediate number of matches); how many units are assigned each number of matches is determined by the algorithm described in Ming and Rosenbaum (2000, p119). <code>ratio</code> controls how many total control units will be matched: <code>n1 * ratio</code> control units will be matched, where <code>n1</code> is the number of treated units, yielding the same total number of matched controls as fixed ratio matching does.</p>
+<p><code><a href="matchit.html">matchit()</a></code> can perform variable ratio "extremal" matching as described by Ming and Rosenbaum (2000). This method tends to result in better balance than fixed ratio matching at the expense of some precision. When <code>ratio &gt; 1</code>, rather than requiring all treated units to receive <code>ratio</code> matches, each treated unit is assigned a value that corresponds to the number of control units they will be matched to. These values are controlled by the arguments <code>min.controls</code> and <code>max.controls</code>, which correspond to \(\alpha\) and \(\beta\), respectively, in Ming and Rosenbaum (2000), and trigger variable ratio matching to occur. Some treated units will receive <code>min.controls</code> matches and others will receive <code>max.controls</code> matches (and one unit may have an intermediate number of matches); how many units are assigned each number of matches is determined by the algorithm described in Ming and Rosenbaum (2000, p119). <code>ratio</code> controls how many total control units will be matched: <code>n1 * ratio</code> control units will be matched, where <code>n1</code> is the number of treated units, yielding the same total number of matched controls as fixed ratio matching does.</p>
 <p>Variable ratio matching cannot be used with Mahalanobis distance matching or when <code>distance</code> is supplied as a matrix. The calculations of the numbers of control units each treated unit will be matched to occurs without consideration of <code>caliper</code> or <code>discard</code>. <code>ratio</code> does not have to be an integer but must be greater than 1 and less than <code>n0/n1</code>, where <code>n0</code> and <code>n1</code> are the number of control and treated units, respectively. Setting <code>ratio = n0/n1</code> performs a crude form of full matching where all control units are matched. If <code>min.controls</code> is not specified, it is set to 1 by default. <code>min.controls</code> must be less than <code>ratio</code>, and <code>max.controls</code> must be greater than <code>ratio</code>. See Examples below for an example of their use.</p>
 </div>
 
@@ -225,13 +249,13 @@ matchit(formula,
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"lalonde"</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># 1:1 greedy NN matching on the PS</span></span>
-<span class="r-in"><span class="va">m.out1</span> <span class="op">&lt;-</span> <span class="fu"><a href="matchit.html">matchit</a></span><span class="op">(</span><span class="va">treat</span> <span class="op">~</span> <span class="va">age</span> <span class="op">+</span> <span class="va">educ</span> <span class="op">+</span> <span class="va">race</span> <span class="op">+</span> <span class="va">nodegree</span> <span class="op">+</span></span>
-<span class="r-in">                    <span class="va">married</span> <span class="op">+</span> <span class="va">re74</span> <span class="op">+</span> <span class="va">re75</span>, data <span class="op">=</span> <span class="va">lalonde</span>,</span>
-<span class="r-in">                  method <span class="op">=</span> <span class="st">"nearest"</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">m.out1</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"lalonde"</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># 1:1 greedy NN matching on the PS</span></span></span>
+<span class="r-in"><span><span class="va">m.out1</span> <span class="op">&lt;-</span> <span class="fu"><a href="matchit.html">matchit</a></span><span class="op">(</span><span class="va">treat</span> <span class="op">~</span> <span class="va">age</span> <span class="op">+</span> <span class="va">educ</span> <span class="op">+</span> <span class="va">race</span> <span class="op">+</span> <span class="va">nodegree</span> <span class="op">+</span></span></span>
+<span class="r-in"><span>                    <span class="va">married</span> <span class="op">+</span> <span class="va">re74</span> <span class="op">+</span> <span class="va">re75</span>, data <span class="op">=</span> <span class="va">lalonde</span>,</span></span>
+<span class="r-in"><span>                  method <span class="op">=</span> <span class="st">"nearest"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">m.out1</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> A matchit object</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  - method: 1:1 nearest neighbor matching without replacement</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  - distance: Propensity score</span>
@@ -239,7 +263,7 @@ matchit(formula,
 <span class="r-out co"><span class="r-pr">#&gt;</span>  - number of obs.: 614 (original), 370 (matched)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  - target estimand: ATT</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  - covariates: age, educ, race, nodegree, married, re74, re75</span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">m.out1</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">m.out1</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Call:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> matchit(formula = treat ~ age + educ + race + nodegree + married + </span>
@@ -268,7 +292,6 @@ matchit(formula,
 <span class="r-out co"><span class="r-pr">#&gt;</span> married      0.3236</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> re74         0.4470</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> re75         0.2876</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Summary of Balance for Matched Data:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>            Means Treated Means Control Std. Mean Diff. Var. Ratio eCDF Mean</span>
@@ -301,15 +324,15 @@ matchit(formula,
 <span class="r-out co"><span class="r-pr">#&gt;</span> Unmatched     244       0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Discarded       0       0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># 3:1 NN Mahalanobis distance matching with</span></span>
-<span class="r-in"><span class="co"># replacement within a PS caliper</span></span>
-<span class="r-in"><span class="va">m.out2</span> <span class="op">&lt;-</span> <span class="fu"><a href="matchit.html">matchit</a></span><span class="op">(</span><span class="va">treat</span> <span class="op">~</span> <span class="va">age</span> <span class="op">+</span> <span class="va">educ</span> <span class="op">+</span> <span class="va">race</span> <span class="op">+</span> <span class="va">nodegree</span> <span class="op">+</span></span>
-<span class="r-in">                    <span class="va">married</span> <span class="op">+</span> <span class="va">re74</span> <span class="op">+</span> <span class="va">re75</span>, data <span class="op">=</span> <span class="va">lalonde</span>,</span>
-<span class="r-in">                  method <span class="op">=</span> <span class="st">"nearest"</span>, replace <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span class="r-in">                  mahvars <span class="op">=</span> <span class="op">~</span> <span class="va">age</span> <span class="op">+</span> <span class="va">educ</span> <span class="op">+</span> <span class="va">re74</span> <span class="op">+</span> <span class="va">re75</span>,</span>
-<span class="r-in">                  ratio <span class="op">=</span> <span class="fl">3</span>, caliper <span class="op">=</span> <span class="fl">.02</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">m.out2</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># 3:1 NN Mahalanobis distance matching with</span></span></span>
+<span class="r-in"><span><span class="co"># replacement within a PS caliper</span></span></span>
+<span class="r-in"><span><span class="va">m.out2</span> <span class="op">&lt;-</span> <span class="fu"><a href="matchit.html">matchit</a></span><span class="op">(</span><span class="va">treat</span> <span class="op">~</span> <span class="va">age</span> <span class="op">+</span> <span class="va">educ</span> <span class="op">+</span> <span class="va">race</span> <span class="op">+</span> <span class="va">nodegree</span> <span class="op">+</span></span></span>
+<span class="r-in"><span>                    <span class="va">married</span> <span class="op">+</span> <span class="va">re74</span> <span class="op">+</span> <span class="va">re75</span>, data <span class="op">=</span> <span class="va">lalonde</span>,</span></span>
+<span class="r-in"><span>                  method <span class="op">=</span> <span class="st">"nearest"</span>, replace <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
+<span class="r-in"><span>                  mahvars <span class="op">=</span> <span class="op">~</span> <span class="va">age</span> <span class="op">+</span> <span class="va">educ</span> <span class="op">+</span> <span class="va">re74</span> <span class="op">+</span> <span class="va">re75</span>,</span></span>
+<span class="r-in"><span>                  ratio <span class="op">=</span> <span class="fl">3</span>, caliper <span class="op">=</span> <span class="fl">.02</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">m.out2</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> A matchit object</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  - method: 3:1 nearest neighbor matching with replacement</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  - distance: Mahalanobis [matching]</span>
@@ -319,7 +342,7 @@ matchit(formula,
 <span class="r-out co"><span class="r-pr">#&gt;</span>  - number of obs.: 614 (original), 299 (matched)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  - target estimand: ATT</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  - covariates: age, educ, race, nodegree, married, re74, re75</span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">m.out2</span>, un <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">m.out2</span>, un <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Call:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> matchit(formula = treat ~ age + educ + race + nodegree + married + </span>
@@ -358,15 +381,15 @@ matchit(formula,
 <span class="r-out co"><span class="r-pr">#&gt;</span> Unmatched      292.        23</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Discarded        0.         0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># 1:1 NN Mahalanobis distance matching within calipers</span></span>
-<span class="r-in"><span class="co"># on re74 and re75 and exact matching on married and race</span></span>
-<span class="r-in"><span class="va">m.out3</span> <span class="op">&lt;-</span> <span class="fu"><a href="matchit.html">matchit</a></span><span class="op">(</span><span class="va">treat</span> <span class="op">~</span> <span class="va">age</span> <span class="op">+</span> <span class="va">educ</span> <span class="op">+</span> <span class="va">re74</span> <span class="op">+</span> <span class="va">re75</span>, data <span class="op">=</span> <span class="va">lalonde</span>,</span>
-<span class="r-in">                  method <span class="op">=</span> <span class="st">"nearest"</span>, distance <span class="op">=</span> <span class="st">"mahalanobis"</span>,</span>
-<span class="r-in">                  exact <span class="op">=</span> <span class="op">~</span> <span class="va">married</span> <span class="op">+</span> <span class="va">race</span>,</span>
-<span class="r-in">                  caliper <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>re74 <span class="op">=</span> <span class="fl">.2</span>, re75 <span class="op">=</span> <span class="fl">.15</span><span class="op">)</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># 1:1 NN Mahalanobis distance matching within calipers</span></span></span>
+<span class="r-in"><span><span class="co"># on re74 and re75 and exact matching on married and race</span></span></span>
+<span class="r-in"><span><span class="va">m.out3</span> <span class="op">&lt;-</span> <span class="fu"><a href="matchit.html">matchit</a></span><span class="op">(</span><span class="va">treat</span> <span class="op">~</span> <span class="va">age</span> <span class="op">+</span> <span class="va">educ</span> <span class="op">+</span> <span class="va">re74</span> <span class="op">+</span> <span class="va">re75</span>, data <span class="op">=</span> <span class="va">lalonde</span>,</span></span>
+<span class="r-in"><span>                  method <span class="op">=</span> <span class="st">"nearest"</span>, distance <span class="op">=</span> <span class="st">"mahalanobis"</span>,</span></span>
+<span class="r-in"><span>                  exact <span class="op">=</span> <span class="op">~</span> <span class="va">married</span> <span class="op">+</span> <span class="va">race</span>,</span></span>
+<span class="r-in"><span>                  caliper <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>re74 <span class="op">=</span> <span class="fl">.2</span>, re75 <span class="op">=</span> <span class="fl">.15</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Fewer control units than treated units in some 'exact' strata; not all treated units will get a match.</span>
-<span class="r-in"><span class="va">m.out3</span></span>
+<span class="r-in"><span><span class="va">m.out3</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> A matchit object</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  - method: 1:1 nearest neighbor matching without replacement</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  - distance: Mahalanobis</span>
@@ -374,7 +397,7 @@ matchit(formula,
 <span class="r-out co"><span class="r-pr">#&gt;</span>  - number of obs.: 614 (original), 166 (matched)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  - target estimand: ATT</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  - covariates: age, educ, re74, re75, married, race</span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">m.out3</span>, un <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">m.out3</span>, un <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Call:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> matchit(formula = treat ~ age + educ + re74 + re75, data = lalonde, </span>
@@ -408,13 +431,13 @@ matchit(formula,
 <span class="r-out co"><span class="r-pr">#&gt;</span> Unmatched     346     102</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Discarded       0       0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># 2:1 variable ratio NN matching on the PS</span></span>
-<span class="r-in"><span class="va">m.out4</span> <span class="op">&lt;-</span> <span class="fu"><a href="matchit.html">matchit</a></span><span class="op">(</span><span class="va">treat</span> <span class="op">~</span> <span class="va">age</span> <span class="op">+</span> <span class="va">educ</span> <span class="op">+</span> <span class="va">race</span> <span class="op">+</span> <span class="va">nodegree</span> <span class="op">+</span></span>
-<span class="r-in">                    <span class="va">married</span> <span class="op">+</span> <span class="va">re74</span> <span class="op">+</span> <span class="va">re75</span>, data <span class="op">=</span> <span class="va">lalonde</span>,</span>
-<span class="r-in">                  method <span class="op">=</span> <span class="st">"nearest"</span>, ratio <span class="op">=</span> <span class="fl">2</span>,</span>
-<span class="r-in">                  min.controls <span class="op">=</span> <span class="fl">1</span>, max.controls <span class="op">=</span> <span class="fl">12</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">m.out4</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># 2:1 variable ratio NN matching on the PS</span></span></span>
+<span class="r-in"><span><span class="va">m.out4</span> <span class="op">&lt;-</span> <span class="fu"><a href="matchit.html">matchit</a></span><span class="op">(</span><span class="va">treat</span> <span class="op">~</span> <span class="va">age</span> <span class="op">+</span> <span class="va">educ</span> <span class="op">+</span> <span class="va">race</span> <span class="op">+</span> <span class="va">nodegree</span> <span class="op">+</span></span></span>
+<span class="r-in"><span>                    <span class="va">married</span> <span class="op">+</span> <span class="va">re74</span> <span class="op">+</span> <span class="va">re75</span>, data <span class="op">=</span> <span class="va">lalonde</span>,</span></span>
+<span class="r-in"><span>                  method <span class="op">=</span> <span class="st">"nearest"</span>, ratio <span class="op">=</span> <span class="fl">2</span>,</span></span>
+<span class="r-in"><span>                  min.controls <span class="op">=</span> <span class="fl">1</span>, max.controls <span class="op">=</span> <span class="fl">12</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">m.out4</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> A matchit object</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  - method: Variable ratio 2:1 nearest neighbor matching without replacement</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  - distance: Propensity score</span>
@@ -422,7 +445,7 @@ matchit(formula,
 <span class="r-out co"><span class="r-pr">#&gt;</span>  - number of obs.: 614 (original), 555 (matched)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  - target estimand: ATT</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  - covariates: age, educ, race, nodegree, married, re74, re75</span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">m.out4</span>, un <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">m.out4</span>, un <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Call:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> matchit(formula = treat ~ age + educ + race + nodegree + married + </span>
@@ -461,9 +484,9 @@ matchit(formula,
 <span class="r-out co"><span class="r-pr">#&gt;</span> Unmatched          59       0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Discarded           0       0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># Some units received 1 match and some received 12</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="va">m.out4</span><span class="op">$</span><span class="va">subclass</span><span class="op">[</span><span class="va">m.out4</span><span class="op">$</span><span class="va">treat</span> <span class="op">==</span> <span class="fl">0</span><span class="op">]</span><span class="op">)</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Some units received 1 match and some received 12</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="va">m.out4</span><span class="op">$</span><span class="va">subclass</span><span class="op">[</span><span class="va">m.out4</span><span class="op">$</span><span class="va">treat</span> <span class="op">==</span> <span class="fl">0</span><span class="op">]</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   1  10  12 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 168   1  16 </span>
@@ -481,7 +504,7 @@ matchit(formula,
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

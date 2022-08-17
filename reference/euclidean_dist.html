@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">MatchIt</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">4.4.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">4.4.0.9004</span>
       </span>
     </div>
 
@@ -75,35 +75,41 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">euclidean_dist</span><span class="op">(</span>formula <span class="op">=</span> <span class="cn">NULL</span>, data <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">...</span><span class="op">)</span>
-
-<span class="fu">scaled_euclidean_dist</span><span class="op">(</span>formula <span class="op">=</span> <span class="cn">NULL</span>, data <span class="op">=</span> <span class="cn">NULL</span>,
-                      s.weights <span class="op">=</span> <span class="cn">NULL</span>, var <span class="op">=</span> <span class="cn">NULL</span>,
-                      discarded <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">...</span><span class="op">)</span>
-
-<span class="fu">mahalanobis_dist</span><span class="op">(</span>formula <span class="op">=</span> <span class="cn">NULL</span>, data <span class="op">=</span> <span class="cn">NULL</span>,
-                 s.weights <span class="op">=</span> <span class="cn">NULL</span>, var <span class="op">=</span> <span class="cn">NULL</span>,
-                 discarded <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">...</span><span class="op">)</span>
-
-<span class="fu">robust_mahalanobis_dist</span><span class="op">(</span>formula <span class="op">=</span> <span class="cn">NULL</span>, data <span class="op">=</span> <span class="cn">NULL</span>,
-                        s.weights <span class="op">=</span> <span class="cn">NULL</span>, discarded <span class="op">=</span> <span class="cn">NULL</span>,
-                        <span class="va">...</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">euclidean_dist</span><span class="op">(</span>formula <span class="op">=</span> <span class="cn">NULL</span>, data <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">scaled_euclidean_dist</span><span class="op">(</span>formula <span class="op">=</span> <span class="cn">NULL</span>, data <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>                      s.weights <span class="op">=</span> <span class="cn">NULL</span>, var <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>                      discarded <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">mahalanobis_dist</span><span class="op">(</span>formula <span class="op">=</span> <span class="cn">NULL</span>, data <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>                 s.weights <span class="op">=</span> <span class="cn">NULL</span>, var <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>                 discarded <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">robust_mahalanobis_dist</span><span class="op">(</span>formula <span class="op">=</span> <span class="cn">NULL</span>, data <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>                        s.weights <span class="op">=</span> <span class="cn">NULL</span>, discarded <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>                        <span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>formula</dt>
 <dd><p>a formula with the treatment (i.e., splitting variable) on the left side and the covariates used to compute the distance matrix on the right side. If there is no left-hand-side variable, the distances will be computed between all pairs of units. If <code>NULL</code>, all the variables in <code>data</code> will be used as covariates.</p></dd>
-<dt>data</dt>
+
+  <dt>data</dt>
 <dd><p>a data frame containing the variables named in <code>formula</code>. If <code>formula</code> is <code>NULL</code>, all variables in <code>data</code> will be used as covariates.</p></dd>
-<dt>s.weights</dt>
+
+  <dt>s.weights</dt>
 <dd><p>when <code>var = NULL</code>, an optional vector of sampling weights used to compute the variances used in the Mahalanobis, scaled Euclidean, and robust Mahalanobis distances.</p></dd>
-<dt>var</dt>
+
+  <dt>var</dt>
 <dd><p>for <code>mahalanobis_dist()</code>, a covariance matrix used to scale the covariates. For <code>scaled_euclidean_dist()</code>, either a covariance matrix (from which only the diagonal elements will be used) or a vector of variances used to scale the covariates. If <code>NULL</code>, these values will be calculated using formulas described in Details.</p></dd>
-<dt>discarded</dt>
+
+  <dt>discarded</dt>
 <dd><p>a <code>logical</code> vector denoting which units are to be discarded or not. This is used only when <code>var = NULL</code>. The scaling factors will be computed only using the non-discarded units, but the distance matrix will be computed for all units (discarded and non-discarded).</p></dd>
-<dt>...</dt>
+
+  <dt>...</dt>
 <dd><p>ignored. Included to make cycling through these functions easier without having to change the arguments supplied.</p></dd>
+
 </dl></div>
     <div id="details">
     <h2>Details</h2>
@@ -122,7 +128,9 @@ where \(S\) is a scaling matrix, typically the covariance matrix of the covariat
     </div>
     <div id="value">
     <h2>Value</h2>
-    <p>A numeric distance matrix. When <code>formula</code> has a left-hand-side (treatment) variable, the matrix will have one row for each treated unit and one column for each control unit. Otherwise, the matrix will have one row and one column for each treated unit.</p>
+    
+
+<p>A numeric distance matrix. When <code>formula</code> has a left-hand-side (treatment) variable, the matrix will have one row for each treated unit and one column for each control unit. Otherwise, the matrix will have one row and one column for each treated unit.</p>
     </div>
     <div id="references">
     <h2>References</h2>
@@ -142,40 +150,40 @@ where \(S\) is a scaling matrix, typically the covariance matrix of the covariat
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"lalonde"</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># Computing the scaled Euclidean distance between all units:</span></span>
-<span class="r-in"><span class="va">d</span> <span class="op">&lt;-</span> <span class="fu">scaled_euclidean_dist</span><span class="op">(</span><span class="op">~</span> <span class="va">age</span> <span class="op">+</span> <span class="va">educ</span> <span class="op">+</span> <span class="va">race</span> <span class="op">+</span> <span class="va">married</span>,</span>
-<span class="r-in">                           data <span class="op">=</span> <span class="va">lalonde</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># Another interface using the data argument:</span></span>
-<span class="r-in"><span class="va">dat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="va">lalonde</span>, select <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">age</span>, <span class="va">educ</span>, <span class="va">race</span>, <span class="va">married</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">d</span> <span class="op">&lt;-</span> <span class="fu">scaled_euclidean_dist</span><span class="op">(</span>data <span class="op">=</span> <span class="va">dat</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># Computing the Mahalanobis distance between treated and</span></span>
-<span class="r-in"><span class="co"># control units:</span></span>
-<span class="r-in"><span class="va">d</span> <span class="op">&lt;-</span> <span class="fu">mahalanobis_dist</span><span class="op">(</span><span class="va">treat</span> <span class="op">~</span> <span class="va">age</span> <span class="op">+</span> <span class="va">educ</span> <span class="op">+</span> <span class="va">race</span> <span class="op">+</span> <span class="va">married</span>,</span>
-<span class="r-in">                      data <span class="op">=</span> <span class="va">lalonde</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># Supplying a covariance matrix or vector of variances (note:</span></span>
-<span class="r-in"><span class="co"># a bit more complicated with factor variables)</span></span>
-<span class="r-in"><span class="va">dat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="va">lalonde</span>, select <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">age</span>, <span class="va">educ</span>, <span class="va">married</span>, <span class="va">re74</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">vars</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">sapply</a></span><span class="op">(</span><span class="va">dat</span>, <span class="va">var</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="va">d</span> <span class="op">&lt;-</span> <span class="fu">scaled_euclidean_dist</span><span class="op">(</span>data <span class="op">=</span> <span class="va">dat</span>, var <span class="op">=</span> <span class="va">vars</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># Same result:</span></span>
-<span class="r-in"><span class="va">d</span> <span class="op">&lt;-</span> <span class="fu">scaled_euclidean_dist</span><span class="op">(</span>data <span class="op">=</span> <span class="va">dat</span>, var <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/diag.html" class="external-link">diag</a></span><span class="op">(</span><span class="va">vars</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># Discard units:</span></span>
-<span class="r-in"><span class="va">discard</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">TRUE</span>, <span class="cn">FALSE</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">lalonde</span><span class="op">)</span>,</span>
-<span class="r-in">                  replace <span class="op">=</span> <span class="cn">TRUE</span>, prob <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">.2</span>, <span class="fl">.8</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="va">d</span> <span class="op">&lt;-</span> <span class="fu">mahalanobis_dist</span><span class="op">(</span><span class="va">treat</span> <span class="op">~</span> <span class="va">age</span> <span class="op">+</span> <span class="va">educ</span> <span class="op">+</span> <span class="va">race</span> <span class="op">+</span> <span class="va">married</span>,</span>
-<span class="r-in">                      data <span class="op">=</span> <span class="va">lalonde</span>, discarded <span class="op">=</span> <span class="va">discard</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/dim.html" class="external-link">dim</a></span><span class="op">(</span><span class="va">d</span><span class="op">)</span> <span class="co">#all units present in distance matrix</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"lalonde"</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Computing the scaled Euclidean distance between all units:</span></span></span>
+<span class="r-in"><span><span class="va">d</span> <span class="op">&lt;-</span> <span class="fu">scaled_euclidean_dist</span><span class="op">(</span><span class="op">~</span> <span class="va">age</span> <span class="op">+</span> <span class="va">educ</span> <span class="op">+</span> <span class="va">race</span> <span class="op">+</span> <span class="va">married</span>,</span></span>
+<span class="r-in"><span>                           data <span class="op">=</span> <span class="va">lalonde</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Another interface using the data argument:</span></span></span>
+<span class="r-in"><span><span class="va">dat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="va">lalonde</span>, select <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">age</span>, <span class="va">educ</span>, <span class="va">race</span>, <span class="va">married</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">d</span> <span class="op">&lt;-</span> <span class="fu">scaled_euclidean_dist</span><span class="op">(</span>data <span class="op">=</span> <span class="va">dat</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Computing the Mahalanobis distance between treated and</span></span></span>
+<span class="r-in"><span><span class="co"># control units:</span></span></span>
+<span class="r-in"><span><span class="va">d</span> <span class="op">&lt;-</span> <span class="fu">mahalanobis_dist</span><span class="op">(</span><span class="va">treat</span> <span class="op">~</span> <span class="va">age</span> <span class="op">+</span> <span class="va">educ</span> <span class="op">+</span> <span class="va">race</span> <span class="op">+</span> <span class="va">married</span>,</span></span>
+<span class="r-in"><span>                      data <span class="op">=</span> <span class="va">lalonde</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Supplying a covariance matrix or vector of variances (note:</span></span></span>
+<span class="r-in"><span><span class="co"># a bit more complicated with factor variables)</span></span></span>
+<span class="r-in"><span><span class="va">dat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="va">lalonde</span>, select <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">age</span>, <span class="va">educ</span>, <span class="va">married</span>, <span class="va">re74</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">vars</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">sapply</a></span><span class="op">(</span><span class="va">dat</span>, <span class="va">var</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">d</span> <span class="op">&lt;-</span> <span class="fu">scaled_euclidean_dist</span><span class="op">(</span>data <span class="op">=</span> <span class="va">dat</span>, var <span class="op">=</span> <span class="va">vars</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Same result:</span></span></span>
+<span class="r-in"><span><span class="va">d</span> <span class="op">&lt;-</span> <span class="fu">scaled_euclidean_dist</span><span class="op">(</span>data <span class="op">=</span> <span class="va">dat</span>, var <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/diag.html" class="external-link">diag</a></span><span class="op">(</span><span class="va">vars</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Discard units:</span></span></span>
+<span class="r-in"><span><span class="va">discard</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">TRUE</span>, <span class="cn">FALSE</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">lalonde</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>                  replace <span class="op">=</span> <span class="cn">TRUE</span>, prob <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">.2</span>, <span class="fl">.8</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">d</span> <span class="op">&lt;-</span> <span class="fu">mahalanobis_dist</span><span class="op">(</span><span class="va">treat</span> <span class="op">~</span> <span class="va">age</span> <span class="op">+</span> <span class="va">educ</span> <span class="op">+</span> <span class="va">race</span> <span class="op">+</span> <span class="va">married</span>,</span></span>
+<span class="r-in"><span>                      data <span class="op">=</span> <span class="va">lalonde</span>, discarded <span class="op">=</span> <span class="va">discard</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/dim.html" class="external-link">dim</a></span><span class="op">(</span><span class="va">d</span><span class="op">)</span> <span class="co">#all units present in distance matrix</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 185 429</span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="va">lalonde</span><span class="op">$</span><span class="va">treat</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="va">lalonde</span><span class="op">$</span><span class="va">treat</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   0   1 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 429 185 </span>
@@ -193,7 +201,7 @@ where \(S\) is a scaling matrix, typically the covariance matrix of the covariat
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

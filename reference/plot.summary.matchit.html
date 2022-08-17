@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">MatchIt</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">4.4.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">4.4.0.9004</span>
       </span>
     </div>
 
@@ -75,25 +75,31 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="co"># S3 method for summary.matchit</span>
-<span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">x</span>, abs <span class="op">=</span> <span class="cn">TRUE</span>, var.order <span class="op">=</span> <span class="st">"data"</span>,
-       threshold <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">.1</span>, <span class="fl">.05</span><span class="op">)</span>, position <span class="op">=</span> <span class="st">"bottomright"</span>, <span class="va">...</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="co"># S3 method for summary.matchit</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">x</span>, abs <span class="op">=</span> <span class="cn">TRUE</span>, var.order <span class="op">=</span> <span class="st">"data"</span>,</span>
+<span>       threshold <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">.1</span>, <span class="fl">.05</span><span class="op">)</span>, position <span class="op">=</span> <span class="st">"bottomright"</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>x</dt>
 <dd><p>a <code>summary.matchit</code> object; the output of a call to <code><a href="summary.matchit.html">summary.matchit()</a></code>. The <code>standardize</code> argument must be set to <code>TRUE</code> (which is the default) in the call to <code>summary</code>.</p></dd>
-<dt>abs</dt>
+
+  <dt>abs</dt>
 <dd><p><code>logical</code>; whether the standardized mean differences should be displayed in absolute value (<code>TRUE</code>, default) or not <code>FALSE</code>.</p></dd>
-<dt>var.order</dt>
+
+  <dt>var.order</dt>
 <dd><p>how the variables should be ordered. Allowable options include <code>"data"</code>, ordering the variables as they appear in the <code>summary</code> output; <code>"unmatched"</code>, ordered the variables based on their standardized mean differences before matching; <code>"matched"</code>, ordered the variables based on their standardized mean differences after matching; and <code>"alphabetical"</code>, ordering the variables alphabetically. Default is <code>"data"</code>. Abbreviations allowed.</p></dd>
-<dt>threshold</dt>
+
+  <dt>threshold</dt>
 <dd><p>numeric values at which to place vertical lines indicating a balance threshold. These can make it easier to see for which variables balance has been achieved given a threshold. Multiple values can be supplied to add multiple lines. When <code>abs = FALSE</code>, the lines will be displayed on both sides of zero. The lines are drawn with <code>abline</code> with the linetype (<code>lty</code>) argument corresponding to the order of the entered variables (see options at <code><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par()</a></code>). The default is <code>c(.1, .05)</code> for a solid line (<code>lty = 1</code>) at .1 and a dashed line (<code>lty = 2</code>) at .05, indicating acceptable and good balance, respectively. Enter a value as <code>NA</code> to skip that value of <code>lty</code> (e.g., <code>c(NA, .05)</code> to have only a dashed vertical line at .05).</p></dd>
-<dt>position</dt>
+
+  <dt>position</dt>
 <dd><p>the position of the legend. Should be one of the allowed keyword options supplied to <code>x</code> in <code><a href="https://rdrr.io/r/graphics/legend.html" class="external-link">legend()</a></code> (e.g., <code>"right"</code>, <code>"bottomright"</code>, etc.). Default is <code>"bottomright"</code>. Set to <code>NULL</code> for no legend to be included. Note that the legend will cover up points if you are not careful; setting <code>var.order</code> appropriately can help in avoiding this.</p></dd>
-<dt>...</dt>
+
+  <dt>...</dt>
 <dd><p>ignored.</p></dd>
+
 </dl></div>
     <div id="details">
     <h2>Details</h2>
@@ -101,7 +107,9 @@
     </div>
     <div id="value">
     <h2>Value</h2>
-    <p>A plot is displayed, and <code>x</code> is invisibly returned.</p>
+    
+
+<p>A plot is displayed, and <code>x</code> is invisibly returned.</p>
     </div>
     <div id="author">
     <h2>Author</h2>
@@ -115,19 +123,19 @@
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"lalonde"</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">m.out</span> <span class="op">&lt;-</span> <span class="fu"><a href="matchit.html">matchit</a></span><span class="op">(</span><span class="va">treat</span> <span class="op">~</span> <span class="va">age</span> <span class="op">+</span> <span class="va">educ</span> <span class="op">+</span> <span class="va">married</span> <span class="op">+</span></span>
-<span class="r-in">                   <span class="va">race</span> <span class="op">+</span> <span class="va">re74</span>, data <span class="op">=</span> <span class="va">lalonde</span>,</span>
-<span class="r-in">                 method <span class="op">=</span> <span class="st">"nearest"</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">m.out</span>, interactions <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>,</span>
-<span class="r-in">     var.order <span class="op">=</span> <span class="st">"unmatched"</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"lalonde"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">m.out</span> <span class="op">&lt;-</span> <span class="fu"><a href="matchit.html">matchit</a></span><span class="op">(</span><span class="va">treat</span> <span class="op">~</span> <span class="va">age</span> <span class="op">+</span> <span class="va">educ</span> <span class="op">+</span> <span class="va">married</span> <span class="op">+</span></span></span>
+<span class="r-in"><span>                   <span class="va">race</span> <span class="op">+</span> <span class="va">re74</span>, data <span class="op">=</span> <span class="va">lalonde</span>,</span></span>
+<span class="r-in"><span>                 method <span class="op">=</span> <span class="st">"nearest"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">m.out</span>, interactions <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>     var.order <span class="op">=</span> <span class="st">"unmatched"</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="plot.summary.matchit-1.png" alt="" width="700" height="433"></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="va">s.out</span> <span class="op">&lt;-</span> <span class="fu"><a href="matchit.html">matchit</a></span><span class="op">(</span><span class="va">treat</span> <span class="op">~</span> <span class="va">age</span> <span class="op">+</span> <span class="va">educ</span> <span class="op">+</span> <span class="va">married</span> <span class="op">+</span></span>
-<span class="r-in">                   <span class="va">race</span> <span class="op">+</span> <span class="va">nodegree</span> <span class="op">+</span> <span class="va">re74</span> <span class="op">+</span> <span class="va">re75</span>,</span>
-<span class="r-in">                 data <span class="op">=</span> <span class="va">lalonde</span>, method <span class="op">=</span> <span class="st">"subclass"</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">s.out</span>, subclass <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>,</span>
-<span class="r-in">     var.order <span class="op">=</span> <span class="st">"unmatched"</span>, abs <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">s.out</span> <span class="op">&lt;-</span> <span class="fu"><a href="matchit.html">matchit</a></span><span class="op">(</span><span class="va">treat</span> <span class="op">~</span> <span class="va">age</span> <span class="op">+</span> <span class="va">educ</span> <span class="op">+</span> <span class="va">married</span> <span class="op">+</span></span></span>
+<span class="r-in"><span>                   <span class="va">race</span> <span class="op">+</span> <span class="va">nodegree</span> <span class="op">+</span> <span class="va">re74</span> <span class="op">+</span> <span class="va">re75</span>,</span></span>
+<span class="r-in"><span>                 data <span class="op">=</span> <span class="va">lalonde</span>, method <span class="op">=</span> <span class="st">"subclass"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">s.out</span>, subclass <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>     var.order <span class="op">=</span> <span class="st">"unmatched"</span>, abs <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="plot.summary.matchit-2.png" alt="" width="700" height="433"></span>
 </code></pre></div>
     </div>
@@ -143,7 +151,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

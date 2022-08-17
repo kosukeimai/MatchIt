@@ -48,7 +48,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">MatchIt</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">4.4.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">4.4.0.9004</span>
       </span>
     </div>
 
@@ -117,18 +117,18 @@
 </h3>
 <p><code>MatchIt</code> provides a simple and straightforward interface to various methods of matching for covariate balance in observational studies. Matching is one way to reduce confounding and model dependence when estimating treatment effects. Several matching methods are available, including nearest neighbor matching, optimal pair matching, optimal full matching, genetic matching, exact matching, coarsened exact matching, cardinality matching, and subclassification, some of which rely on functions from other R packages. A variety of methods to estimate propensity scores for propensity score matching are included. Below is an example of the use of <code>MatchIt</code> to perform Mahalanobis distance matching with replacement and assess balance:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://kosukeimai.github.io/MatchIt/" class="external-link">"MatchIt"</a></span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"lalonde"</span>, package <span class="op">=</span> <span class="st">"MatchIt"</span><span class="op">)</span>
-
-<span class="co"># 1:1 nearest neighbor matching with replacement on </span>
-<span class="co"># the Mahalanobis distance</span>
-<span class="va">m.out</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/matchit.html">matchit</a></span><span class="op">(</span><span class="va">treat</span> <span class="op">~</span> <span class="va">age</span> <span class="op">+</span> <span class="va">educ</span> <span class="op">+</span> <span class="va">race</span> <span class="op">+</span> <span class="va">married</span> <span class="op">+</span> 
-                   <span class="va">nodegree</span> <span class="op">+</span> <span class="va">re74</span> <span class="op">+</span> <span class="va">re75</span>, 
-                 data <span class="op">=</span> <span class="va">lalonde</span>, distance <span class="op">=</span> <span class="st">"mahalanobis"</span>,
-                 replace <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://kosukeimai.github.io/MatchIt/" class="external-link">"MatchIt"</a></span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"lalonde"</span>, package <span class="op">=</span> <span class="st">"MatchIt"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># 1:1 nearest neighbor matching with replacement on </span></span>
+<span><span class="co"># the Mahalanobis distance</span></span>
+<span><span class="va">m.out</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/matchit.html">matchit</a></span><span class="op">(</span><span class="va">treat</span> <span class="op">~</span> <span class="va">age</span> <span class="op">+</span> <span class="va">educ</span> <span class="op">+</span> <span class="va">race</span> <span class="op">+</span> <span class="va">married</span> <span class="op">+</span> </span>
+<span>                   <span class="va">nodegree</span> <span class="op">+</span> <span class="va">re74</span> <span class="op">+</span> <span class="va">re75</span>, </span>
+<span>                 data <span class="op">=</span> <span class="va">lalonde</span>, distance <span class="op">=</span> <span class="st">"mahalanobis"</span>,</span>
+<span>                 replace <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <p>Printing the <code>MatchIt</code> object provides details of the kind of matching performed.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">m.out</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">m.out</span></span></code></pre></div>
 <div class="sourceCode" id="cb3"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a><span class="co">#&gt; A matchit object</span></span>
 <span id="cb3-2"><a href="#cb3-2"></a><span class="co">#&gt;  - method: 1:1 nearest neighbor matching with replacement</span></span>
 <span id="cb3-3"><a href="#cb3-3"></a><span class="co">#&gt;  - distance: Mahalanobis</span></span>
@@ -137,8 +137,8 @@
 <span id="cb3-6"><a href="#cb3-6"></a><span class="co">#&gt;  - covariates: age, educ, race, married, nodegree, re74, re75</span></span></code></pre></div>
 <p>We can check covariate balance for the original and matched samples using <code><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary()</a></code>:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co">#Checking balance before and after matching:</span>
-<span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">m.out</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="co">#Checking balance before and after matching:</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">m.out</span><span class="op">)</span></span></code></pre></div>
 <div class="sourceCode" id="cb5"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1"></a><span class="co">#&gt; </span></span>
 <span id="cb5-2"><a href="#cb5-2"></a><span class="co">#&gt; Call:</span></span>
 <span id="cb5-3"><a href="#cb5-3"></a><span class="co">#&gt; matchit(formula = treat ~ age + educ + race + married + nodegree + </span></span>
@@ -178,8 +178,8 @@
 <span id="cb5-37"><a href="#cb5-37"></a><span class="co">#&gt; Discarded        0.         0</span></span></code></pre></div>
 <p>At the top is balance for the original sample. Below that is balance in the matched sample, followed by the percent reduction in imbalance and the sample sizes before and after matching. Smaller values for the balance statistics indicate better balance. (In this case, good balance was not achieved and other matching methods should be tried). We can plot the standardized mean differences in a Love plot for a clean, visual display of balance across the sample:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co">#Plot balance</span>
-<span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">m.out</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="co">#Plot balance</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">m.out</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p><img src="reference/figures/README-unnamed-chunk-5-1.png" style="display: block; margin: auto;"></p>
 <p>Although much has been written about matching theory, most of the theory relied upon in <code>MatchIt</code> is described well in <a href="https//:doi.org/10.1093/pan/mpl013">Ho, Imai, King, and Stuart (2007)</a> and <a href="https://doi.org/10.1214/09-STS313" class="external-link">Stuart (2010)</a>. The <em>Journal of Statistical Software</em> article for <code>MatchIt</code> can be accessed <a href="https://doi.org/10.18637/jss.v042.i08" class="external-link">here</a>, though note that some options have changed, so the <code>MatchIt</code> reference pages and included vignettes should be used for understanding the functions and methods available. Further references for individual methods are present in their respective help pages. The <code>MatchIt</code> <a href="https://kosukeimai.github.io/MatchIt/" class="external-link">website</a> provides access to vignettes and documentation files.</p>
 </div>
@@ -246,7 +246,7 @@
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer>

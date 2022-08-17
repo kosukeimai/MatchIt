@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">MatchIt</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">4.4.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">4.4.0.9004</span>
       </span>
     </div>
 
@@ -75,21 +75,26 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">add_s.weights</span><span class="op">(</span><span class="va">m</span>, s.weights <span class="op">=</span> <span class="cn">NULL</span>, data <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">add_s.weights</span><span class="op">(</span><span class="va">m</span>, s.weights <span class="op">=</span> <span class="cn">NULL</span>, data <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>m</dt>
 <dd><p>a <code>matchit</code> object; the output of a call to <code><a href="matchit.html">matchit()</a></code>, typically with the <code>s.weights</code> argument unspecified.</p></dd>
-<dt>s.weights</dt>
+
+  <dt>s.weights</dt>
 <dd><p>an numeric vector of sampling weights to be added to the <code>matchit</code> object. Can also be specified as a string containing the name of variable in <code>data</code> to be used or a one-sided formula with the variable on the right-hand side (e.g., <code>~ SW</code>).</p></dd>
-<dt>data</dt>
+
+  <dt>data</dt>
 <dd><p>a data frame containing the sampling weights if given as a string or formula. If unspecified, <code>add_s.weights</code> will attempt to find the dataset using the environment of the <code>matchit</code> object.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>a <code>matchit</code> object with an <code>s.weights</code> component containing the supplied sampling weights. The <code>nn</code> component containing the sample sizes before and after matching will be adjusted to incorporate the sampling weights. If <code>s.weights = NULL</code>, the original <code>matchit</code> object is returned.</p>
+    
+
+<p>a <code>matchit</code> object with an <code>s.weights</code> component containing the supplied sampling weights. The <code>nn</code> component containing the sample sizes before and after matching will be adjusted to incorporate the sampling weights. If <code>s.weights = NULL</code>, the original <code>matchit</code> object is returned.</p>
     </div>
     <div id="author">
     <h2>Author</h2>
@@ -102,18 +107,18 @@
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"lalonde"</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># Generate random sampling weights, just</span></span>
-<span class="r-in"><span class="co"># for this example</span></span>
-<span class="r-in"><span class="va">sw</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Chisquare.html" class="external-link">rchisq</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">lalonde</span><span class="op">)</span>, <span class="fl">2</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># NN PS match using logistic regression PS that doesn't</span></span>
-<span class="r-in"><span class="co"># include sampling weights</span></span>
-<span class="r-in"><span class="va">m.out</span> <span class="op">&lt;-</span> <span class="fu"><a href="matchit.html">matchit</a></span><span class="op">(</span><span class="va">treat</span> <span class="op">~</span> <span class="va">age</span> <span class="op">+</span> <span class="va">educ</span> <span class="op">+</span> <span class="va">race</span> <span class="op">+</span> <span class="va">nodegree</span> <span class="op">+</span></span>
-<span class="r-in">                   <span class="va">married</span>  <span class="op">+</span> <span class="va">re74</span> <span class="op">+</span> <span class="va">re75</span>, data <span class="op">=</span> <span class="va">lalonde</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="va">m.out</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"lalonde"</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Generate random sampling weights, just</span></span></span>
+<span class="r-in"><span><span class="co"># for this example</span></span></span>
+<span class="r-in"><span><span class="va">sw</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Chisquare.html" class="external-link">rchisq</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">lalonde</span><span class="op">)</span>, <span class="fl">2</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># NN PS match using logistic regression PS that doesn't</span></span></span>
+<span class="r-in"><span><span class="co"># include sampling weights</span></span></span>
+<span class="r-in"><span><span class="va">m.out</span> <span class="op">&lt;-</span> <span class="fu"><a href="matchit.html">matchit</a></span><span class="op">(</span><span class="va">treat</span> <span class="op">~</span> <span class="va">age</span> <span class="op">+</span> <span class="va">educ</span> <span class="op">+</span> <span class="va">race</span> <span class="op">+</span> <span class="va">nodegree</span> <span class="op">+</span></span></span>
+<span class="r-in"><span>                   <span class="va">married</span>  <span class="op">+</span> <span class="va">re74</span> <span class="op">+</span> <span class="va">re75</span>, data <span class="op">=</span> <span class="va">lalonde</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">m.out</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> A matchit object</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  - method: 1:1 nearest neighbor matching without replacement</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  - distance: Propensity score</span>
@@ -121,11 +126,11 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span>  - number of obs.: 614 (original), 370 (matched)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  - target estimand: ATT</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  - covariates: age, educ, race, nodegree, married, re74, re75</span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># Add s.weights to the matchit object</span></span>
-<span class="r-in"><span class="va">m.out</span> <span class="op">&lt;-</span> <span class="fu">add_s.weights</span><span class="op">(</span><span class="va">m.out</span>, <span class="va">sw</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="va">m.out</span> <span class="co">#note additional output</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Add s.weights to the matchit object</span></span></span>
+<span class="r-in"><span><span class="va">m.out</span> <span class="op">&lt;-</span> <span class="fu">add_s.weights</span><span class="op">(</span><span class="va">m.out</span>, <span class="va">sw</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">m.out</span> <span class="co">#note additional output</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> A matchit object</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  - method: 1:1 nearest neighbor matching without replacement</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  - distance: Propensity score</span>
@@ -135,10 +140,10 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span>  - sampling weights: present</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  - target estimand: ATT</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  - covariates: age, educ, race, nodegree, married, re74, re75</span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># Check balance; note that sample sizes incorporate</span></span>
-<span class="r-in"><span class="co"># s.weights</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">m.out</span>, improvement <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Check balance; note that sample sizes incorporate</span></span></span>
+<span class="r-in"><span><span class="co"># s.weights</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">m.out</span>, improvement <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Call:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> matchit(formula = treat ~ age + educ + race + nodegree + married + </span>
@@ -146,58 +151,57 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Summary of Balance for All Data:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>            Means Treated Means Control Std. Mean Diff. Var. Ratio eCDF Mean</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> distance          0.5985        0.1735          1.9670     0.8839    0.4183</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> age              25.7389       27.8643         -0.3288     0.3850    0.0794</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> educ             10.3565        9.9456          0.1934     0.5632    0.0340</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> raceblack         0.8598        0.1968          1.9095          .    0.6630</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> racehispan        0.0684        0.1341         -0.2600          .    0.0656</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> racewhite         0.0718        0.6692         -2.3140          .    0.5974</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> nodegree          0.7236        0.6372          0.1932          .    0.0864</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> married           0.1542        0.5688         -1.1484          .    0.4147</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> re74           2274.8427     5932.2172         -0.7689     0.5148    0.2363</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> re75           1649.3699     2672.0005         -0.2849     1.1245    0.1454</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> distance          0.5746        0.1657          1.8786     1.0280    0.3920</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> age              26.0369       28.6816         -0.3448     0.5013    0.0766</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> educ             10.3761       10.1808          0.0969     0.4257    0.0371</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> raceblack         0.8437        0.1873          1.8073          .    0.6564</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> racehispan        0.0568        0.1399         -0.3591          .    0.0831</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> racewhite         0.0995        0.6728         -1.9148          .    0.5732</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> nodegree          0.6712        0.5794          0.1955          .    0.0918</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> married           0.1930        0.5469         -0.8967          .    0.3539</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> re74           1883.3500     6299.4784         -0.9771     0.4120    0.2752</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> re75           1292.3462     2662.7411         -0.4534     0.7998    0.1829</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>            eCDF Max</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> distance     0.6725</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> age          0.1493</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> educ         0.1336</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> raceblack    0.6630</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> racehispan   0.0656</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> racewhite    0.5974</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> nodegree     0.0864</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> married      0.4147</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> re74         0.4890</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> re75         0.2593</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> distance     0.6739</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> age          0.1690</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> educ         0.0918</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> raceblack    0.6564</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> racehispan   0.0831</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> racewhite    0.5732</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> nodegree     0.0918</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> married      0.3539</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> re74         0.5195</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> re75         0.3106</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Summary of Balance for Matched Data:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>            Means Treated Means Control Std. Mean Diff. Var. Ratio eCDF Mean</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> distance          0.5985        0.3707          1.0542     0.6948    0.1509</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> age              25.7389       24.1106          0.2519     0.4384    0.0940</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> educ             10.3565       10.5549         -0.0934     0.7766    0.0159</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> raceblack         0.8598        0.4938          1.0540          .    0.3660</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> racehispan        0.0684        0.1964         -0.5070          .    0.1280</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> racewhite         0.0718        0.3098         -0.9218          .    0.2380</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> nodegree          0.7236        0.6504          0.1637          .    0.0732</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> married           0.1542        0.2319         -0.2154          .    0.0778</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> re74           2274.8427     2488.6444         -0.0449     1.1731    0.0499</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> re75           1649.3699     1883.2912         -0.0652     1.4143    0.0514</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> distance          0.5746        0.3475          1.0433     0.8066    0.1361</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> age              26.0369       25.6957          0.0445     0.5662    0.0664</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> educ             10.3761       10.2527          0.0612     0.4103    0.0332</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> raceblack         0.8437        0.4659          1.0400          .    0.3777</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> racehispan        0.0568        0.2147         -0.6822          .    0.1579</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> racewhite         0.0995        0.3194         -0.7342          .    0.2198</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> nodegree          0.6712        0.6574          0.0293          .    0.0138</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> married           0.1930        0.2190         -0.0658          .    0.0260</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> re74           1883.3500     2370.6244         -0.1078     1.1248    0.0639</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> re75           1292.3462     1614.2231         -0.1065     1.1089    0.0564</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>            eCDF Max Std. Pair Dist.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> distance     0.4275          0.9929</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> age          0.3049          1.5427</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> educ         0.0732          1.1805</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> raceblack    0.3660          1.0742</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> racehispan   0.1280          1.0063</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> racewhite    0.2380          0.9632</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> nodegree     0.0732          1.0274</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> married      0.0778          0.8982</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> re74         0.3173          0.8182</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> re75         0.1613          0.6620</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> distance     0.4756          0.9857</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> age          0.1919          1.3002</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> educ         0.0645          1.2445</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> raceblack    0.3777          1.0270</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> racehispan   0.1579          1.0975</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> racewhite    0.2198          0.8306</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> nodegree     0.0138          0.9780</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> married      0.0260          0.8218</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> re74         0.3741          0.8611</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> re75         0.1743          0.7862</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Sample Sizes:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>               Control Treated</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> All (ESS)      191.6    83.34</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> All (ESS)      217.32   98.13</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> All            429.    185.  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Matched (ESS)   90.52   83.34</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Matched (ESS)   89.07   98.13</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Matched        185.    185.  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Unmatched      244.      0.  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Discarded        0.      0.  </span>
@@ -216,7 +220,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

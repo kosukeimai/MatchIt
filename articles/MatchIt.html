@@ -40,7 +40,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">MatchIt</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">4.4.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">4.4.0.9004</span>
       </span>
     </div>
 
@@ -100,7 +100,7 @@
       <h1 data-toc-skip>MatchIt: Getting Started</h1>
                         <h4 data-toc-skip class="author">Noah Greifer</h4>
             
-            <h4 data-toc-skip class="date">2022-05-23</h4>
+            <h4 data-toc-skip class="date">2022-08-17</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/kosukeimai/MatchIt/blob/HEAD/vignettes/MatchIt.Rmd" class="external-link"><code>vignettes/MatchIt.Rmd</code></a></small>
       <div class="hidden name"><code>MatchIt.Rmd</code></div>
@@ -126,17 +126,17 @@ pre code {
 <p>A matching analysis involves four primary steps: 1) planning, 2) matching, 3) assessing the quality of matches, and 4) estimating the treatment effect and its uncertainty. Here we briefly discuss these steps and how they can be implemented with <code>MatchIt</code>; in the other included vignettes, these steps are discussed in more detail.</p>
 <p>We will use Lalonde’s data on the evaluation of the National Supported Work program to demonstrate <code>MatchIt</code>’s capabilities. First, we load <code>MatchIt</code> and bring in the <code>lalonde</code> dataset.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://kosukeimai.github.io/MatchIt/" class="external-link">"MatchIt"</a></span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"lalonde"</span><span class="op">)</span>
-
-<span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">lalonde</span><span class="op">)</span></code></pre></div>
-<pre><code><span class="co">##      treat age educ   race married nodegree re74 re75       re78</span>
-<span class="co">## NSW1     1  37   11  black       1        1    0    0  9930.0460</span>
-<span class="co">## NSW2     1  22    9 hispan       0        1    0    0  3595.8940</span>
-<span class="co">## NSW3     1  30   12  black       0        0    0    0 24909.4500</span>
-<span class="co">## NSW4     1  27   11  black       0        1    0    0  7506.1460</span>
-<span class="co">## NSW5     1  33    8  black       0        1    0    0   289.7899</span>
-<span class="co">## NSW6     1  22    9  black       0        1    0    0  4056.4940</span></code></pre>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://kosukeimai.github.io/MatchIt/" class="external-link">"MatchIt"</a></span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"lalonde"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">lalonde</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">##      treat age educ   race married nodegree re74 re75       re78</span></span>
+<span><span class="co">## NSW1     1  37   11  black       1        1    0    0  9930.0460</span></span>
+<span><span class="co">## NSW2     1  22    9 hispan       0        1    0    0  3595.8940</span></span>
+<span><span class="co">## NSW3     1  30   12  black       0        0    0    0 24909.4500</span></span>
+<span><span class="co">## NSW4     1  27   11  black       0        1    0    0  7506.1460</span></span>
+<span><span class="co">## NSW5     1  33    8  black       0        1    0    0   289.7899</span></span>
+<span><span class="co">## NSW6     1  22    9  black       0        1    0    0  4056.4940</span></span></code></pre>
 <p>The statistical quantity of interest is the causal effect of the treatment (<code>treat</code>) on 1978 earnings (<code>re78</code>). The other variables are pre-treatment covariates. See <code><a href="../reference/lalonde.html">?lalonde</a></code> for more information on this dataset. In particular, the analysis is concerned with the marginal, total effect of the treatment for those who actually received the treatment.</p>
 <p>In what follows, we briefly describe the four steps of a matching analysis and how to implement them in <code>MatchIt</code>. For more details, we recommend reading the other vignettes, <code><a href="../articles/matching-methods.html">vignette("matching-methods")</a></code>, <code><a href="../articles/assessing-balance.html">vignette("assessing-balance")</a></code>, and <code><a href="../articles/estimating-effects.html">vignette("estimating-effects")</a></code>, especially for users less familiar with matching methods. For the use of <code>MatchIt</code> with sampling weights, also see <code><a href="../articles/sampling-weights.html">vignette("sampling-weights")</a></code>. It is important to recognize that the ease of using <code>MatchIt</code> does not imply the simplicity of matching methods; advanced statistical methods like matching that require many decisions to be made and caution in their use should only be performed by those with statistical training.</p>
 </div>
@@ -154,40 +154,39 @@ pre code {
 </h2>
 <p>After planning and prior to matching, it can be a good idea to view the initial imbalance in one’s data that matching is attempting to eliminate. We can do this using the code below:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># No matching; constructing a pre-match matchit object</span>
-<span class="va">m.out0</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/matchit.html">matchit</a></span><span class="op">(</span><span class="va">treat</span> <span class="op">~</span> <span class="va">age</span> <span class="op">+</span> <span class="va">educ</span> <span class="op">+</span> <span class="va">race</span> <span class="op">+</span> <span class="va">married</span> <span class="op">+</span> 
-                   <span class="va">nodegree</span> <span class="op">+</span> <span class="va">re74</span> <span class="op">+</span> <span class="va">re75</span>, data <span class="op">=</span> <span class="va">lalonde</span>,
-                 method <span class="op">=</span> <span class="cn">NULL</span>, distance <span class="op">=</span> <span class="st">"glm"</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="co"># No matching; constructing a pre-match matchit object</span></span>
+<span><span class="va">m.out0</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/matchit.html">matchit</a></span><span class="op">(</span><span class="va">treat</span> <span class="op">~</span> <span class="va">age</span> <span class="op">+</span> <span class="va">educ</span> <span class="op">+</span> <span class="va">race</span> <span class="op">+</span> <span class="va">married</span> <span class="op">+</span> </span>
+<span>                   <span class="va">nodegree</span> <span class="op">+</span> <span class="va">re74</span> <span class="op">+</span> <span class="va">re75</span>, data <span class="op">=</span> <span class="va">lalonde</span>,</span>
+<span>                 method <span class="op">=</span> <span class="cn">NULL</span>, distance <span class="op">=</span> <span class="st">"glm"</span><span class="op">)</span></span></code></pre></div>
 <p>The first argument is a <code>formula</code> relating the treatment to the covariates used in estimating the propensity score and for which balance is to be assessed. The <code>data</code> argument specifies the dataset where these variables exist. Typically, the <code>method</code> argument specifies the method of matching to be performed; here, we set it to <code>NULL</code> so we can assess balance prior to matching<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a>. The <code>distance</code> argument specifies the method for estimating the propensity score, a one-dimensional summary of all the included covariates, computed as the predicted probability of being the treated group given the covariates; here, we set it to <code>"glm"</code> for generalized linear model, which implements logistic regression by default<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a> (see <code><a href="../reference/distance.html">?distance</a></code> for other options).</p>
 <p>Below we assess balance on the unmatched data using <code><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary()</a></code>:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># Checking balance prior to matching</span>
-<span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">m.out0</span><span class="op">)</span></code></pre></div>
-<pre><code><span class="co">## </span>
-<span class="co">## Call:</span>
-<span class="co">## matchit(formula = treat ~ age + educ + race + married + nodegree + </span>
-<span class="co">##     re74 + re75, data = lalonde, method = NULL, distance = "glm")</span>
-<span class="co">## </span>
-<span class="co">## Summary of Balance for All Data:</span>
-<span class="co">##            Means Treated Means Control Std. Mean Diff. Var. Ratio eCDF Mean eCDF Max</span>
-<span class="co">## distance          0.5774        0.1822          1.7941     0.9211    0.3774   0.6444</span>
-<span class="co">## age              25.8162       28.0303         -0.3094     0.4400    0.0813   0.1577</span>
-<span class="co">## educ             10.3459       10.2354          0.0550     0.4959    0.0347   0.1114</span>
-<span class="co">## raceblack         0.8432        0.2028          1.7615          .    0.6404   0.6404</span>
-<span class="co">## racehispan        0.0595        0.1422         -0.3498          .    0.0827   0.0827</span>
-<span class="co">## racewhite         0.0973        0.6550         -1.8819          .    0.5577   0.5577</span>
-<span class="co">## married           0.1892        0.5128         -0.8263          .    0.3236   0.3236</span>
-<span class="co">## nodegree          0.7081        0.5967          0.2450          .    0.1114   0.1114</span>
-<span class="co">## re74           2095.5737     5619.2365         -0.7211     0.5181    0.2248   0.4470</span>
-<span class="co">## re75           1532.0553     2466.4844         -0.2903     0.9563    0.1342   0.2876</span>
-<span class="co">## </span>
-<span class="co">## </span>
-<span class="co">## Sample Sizes:</span>
-<span class="co">##           Control Treated</span>
-<span class="co">## All           429     185</span>
-<span class="co">## Matched       429     185</span>
-<span class="co">## Unmatched       0       0</span>
-<span class="co">## Discarded       0       0</span></code></pre>
+<code class="sourceCode R"><span><span class="co"># Checking balance prior to matching</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">m.out0</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## </span></span>
+<span><span class="co">## Call:</span></span>
+<span><span class="co">## matchit(formula = treat ~ age + educ + race + married + nodegree + </span></span>
+<span><span class="co">##     re74 + re75, data = lalonde, method = NULL, distance = "glm")</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## Summary of Balance for All Data:</span></span>
+<span><span class="co">##            Means Treated Means Control Std. Mean Diff. Var. Ratio eCDF Mean eCDF Max</span></span>
+<span><span class="co">## distance          0.5774        0.1822          1.7941     0.9211    0.3774   0.6444</span></span>
+<span><span class="co">## age              25.8162       28.0303         -0.3094     0.4400    0.0813   0.1577</span></span>
+<span><span class="co">## educ             10.3459       10.2354          0.0550     0.4959    0.0347   0.1114</span></span>
+<span><span class="co">## raceblack         0.8432        0.2028          1.7615          .    0.6404   0.6404</span></span>
+<span><span class="co">## racehispan        0.0595        0.1422         -0.3498          .    0.0827   0.0827</span></span>
+<span><span class="co">## racewhite         0.0973        0.6550         -1.8819          .    0.5577   0.5577</span></span>
+<span><span class="co">## married           0.1892        0.5128         -0.8263          .    0.3236   0.3236</span></span>
+<span><span class="co">## nodegree          0.7081        0.5967          0.2450          .    0.1114   0.1114</span></span>
+<span><span class="co">## re74           2095.5737     5619.2365         -0.7211     0.5181    0.2248   0.4470</span></span>
+<span><span class="co">## re75           1532.0553     2466.4844         -0.2903     0.9563    0.1342   0.2876</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## Sample Sizes:</span></span>
+<span><span class="co">##           Control Treated</span></span>
+<span><span class="co">## All           429     185</span></span>
+<span><span class="co">## Matched       429     185</span></span>
+<span><span class="co">## Unmatched       0       0</span></span>
+<span><span class="co">## Discarded       0       0</span></span></code></pre>
 <p>We can see severe imbalances as measured by the standardized mean differences (<code>Std. Mean Diff.</code>), variance ratios (<code>Var. Ratio</code>), and empirical cumulative density function (eCDF) statistics. Values of standardized mean differences and eCDF statistics close to zero and values of variance ratios close to one indicate good balance, and here many of them are far from their ideal values.</p>
 </div>
 <div class="section level2">
@@ -195,21 +194,21 @@ pre code {
 </h2>
 <p>Now, matching can be performed. There are several different classes and methods of matching, described in <code><a href="../articles/matching-methods.html">vignette("matching-methods")</a></code>. Here, we begin by briefly demonstrating 1:1 nearest neighbor (NN) matching on the propensity score, which is appropriate for estimating the ATT. One by one, each treated unit is paired with an available control unit that has the closest propensity score to it. Any remaining control units are left unmatched and excluded from further analysis. Due to the theoretical balancing properties of the propensity score described by <span class="citation">Rosenbaum and Rubin (<a href="#ref-rosenbaum1983" role="doc-biblioref">1983</a>)</span>, propensity score matching can be an effective way to achieve covariate balance in the treatment groups. Below we demonstrate the use of <code><a href="../reference/matchit.html">matchit()</a></code> to perform nearest neighbor propensity score matching.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># 1:1 NN PS matching w/o replacement</span>
-<span class="va">m.out1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/matchit.html">matchit</a></span><span class="op">(</span><span class="va">treat</span> <span class="op">~</span> <span class="va">age</span> <span class="op">+</span> <span class="va">educ</span> <span class="op">+</span> <span class="va">race</span> <span class="op">+</span> <span class="va">married</span> <span class="op">+</span> 
-                   <span class="va">nodegree</span> <span class="op">+</span> <span class="va">re74</span> <span class="op">+</span> <span class="va">re75</span>, data <span class="op">=</span> <span class="va">lalonde</span>,
-                 method <span class="op">=</span> <span class="st">"nearest"</span>, distance <span class="op">=</span> <span class="st">"glm"</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="co"># 1:1 NN PS matching w/o replacement</span></span>
+<span><span class="va">m.out1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/matchit.html">matchit</a></span><span class="op">(</span><span class="va">treat</span> <span class="op">~</span> <span class="va">age</span> <span class="op">+</span> <span class="va">educ</span> <span class="op">+</span> <span class="va">race</span> <span class="op">+</span> <span class="va">married</span> <span class="op">+</span> </span>
+<span>                   <span class="va">nodegree</span> <span class="op">+</span> <span class="va">re74</span> <span class="op">+</span> <span class="va">re75</span>, data <span class="op">=</span> <span class="va">lalonde</span>,</span>
+<span>                 method <span class="op">=</span> <span class="st">"nearest"</span>, distance <span class="op">=</span> <span class="st">"glm"</span><span class="op">)</span></span></code></pre></div>
 <p>We use the same syntax as before, but this time specify <code>method = "nearest"</code> to implement nearest neighbor matching, again using a logistic regression propensity score. Many other arguments are available for tuning the matching method and method of propensity score estimation.</p>
 <p>The matching outputs are contained in the <code>m.out1</code> object. Printing this object gives a description of the type of matching performed:</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">m.out1</span></code></pre></div>
-<pre><code><span class="co">## A matchit object</span>
-<span class="co">##  - method: 1:1 nearest neighbor matching without replacement</span>
-<span class="co">##  - distance: Propensity score</span>
-<span class="co">##              - estimated with logistic regression</span>
-<span class="co">##  - number of obs.: 614 (original), 370 (matched)</span>
-<span class="co">##  - target estimand: ATT</span>
-<span class="co">##  - covariates: age, educ, race, married, nodegree, re74, re75</span></code></pre>
+<code class="sourceCode R"><span><span class="va">m.out1</span></span></code></pre></div>
+<pre><code><span><span class="co">## A matchit object</span></span>
+<span><span class="co">##  - method: 1:1 nearest neighbor matching without replacement</span></span>
+<span><span class="co">##  - distance: Propensity score</span></span>
+<span><span class="co">##              - estimated with logistic regression</span></span>
+<span><span class="co">##  - number of obs.: 614 (original), 370 (matched)</span></span>
+<span><span class="co">##  - target estimand: ATT</span></span>
+<span><span class="co">##  - covariates: age, educ, race, married, nodegree, re74, re75</span></span></code></pre>
 <p>The key components of the <code>m.out1</code> object are <code>weights</code> (the computed matching weights), <code>subclass</code> (matching pair membership), <code>distance</code> (the estimated propensity score), and <code>match.matrix</code> (which control units are matched to each treated unit). How these can be used for estimating the effect of the treatment after matching is detailed in <code><a href="../articles/estimating-effects.html">vignette("estimating-effects")</a></code>.</p>
 </div>
 <div class="section level2">
@@ -219,41 +218,41 @@ pre code {
 <p>In addition to covariate balance, the quality of the match is determined by how many units remain after matching. Matching often involves discarding units that are not paired with other units, and some matching options, such as setting restrictions for common support or calipers, can further decrease the number of remaining units. If, after matching, the remaining sample size is small, the resulting effect estimate may be imprecise. In many cases, there will be a trade-off between balance and remaining sample size. How to optimally choose among them is an instance of the fundamental bias-variance trade-off problem that cannot be resolved without substantive knowledge of the phenomena under study. Prospective power analyses can be used to determine how small a sample can be before necessary precision is sacrificed.</p>
 <p>To assess the quality of the resulting matches numerically, we can use the <code><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary()</a></code> function on <code>m.out1</code> as before. Here we set <code>un = FALSE</code> to suppress display of the balance before matching for brevity and because we already saw it. (Leaving it as <code>TRUE</code>, its default, would display balance both before and after matching.)</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># Checking balance after NN matching</span>
-<span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">m.out1</span>, un <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></code></pre></div>
-<pre><code><span class="co">## </span>
-<span class="co">## Call:</span>
-<span class="co">## matchit(formula = treat ~ age + educ + race + married + nodegree + </span>
-<span class="co">##     re74 + re75, data = lalonde, method = "nearest", distance = "glm")</span>
-<span class="co">## </span>
-<span class="co">## Summary of Balance for Matched Data:</span>
-<span class="co">##            Means Treated Means Control Std. Mean Diff. Var. Ratio eCDF Mean eCDF Max Std. Pair Dist.</span>
-<span class="co">## distance          0.5774        0.3629          0.9739     0.7566    0.1321   0.4216          0.9740</span>
-<span class="co">## age              25.8162       25.3027          0.0718     0.4568    0.0847   0.2541          1.3938</span>
-<span class="co">## educ             10.3459       10.6054         -0.1290     0.5721    0.0239   0.0757          1.2474</span>
-<span class="co">## raceblack         0.8432        0.4703          1.0259          .    0.3730   0.3730          1.0259</span>
-<span class="co">## racehispan        0.0595        0.2162         -0.6629          .    0.1568   0.1568          1.0743</span>
-<span class="co">## racewhite         0.0973        0.3135         -0.7296          .    0.2162   0.2162          0.8390</span>
-<span class="co">## married           0.1892        0.2108         -0.0552          .    0.0216   0.0216          0.8281</span>
-<span class="co">## nodegree          0.7081        0.6378          0.1546          .    0.0703   0.0703          1.0106</span>
-<span class="co">## re74           2095.5737     2342.1076         -0.0505     1.3289    0.0469   0.2757          0.7965</span>
-<span class="co">## re75           1532.0553     1614.7451         -0.0257     1.4956    0.0452   0.2054          0.7381</span>
-<span class="co">## </span>
-<span class="co">## Sample Sizes:</span>
-<span class="co">##           Control Treated</span>
-<span class="co">## All           429     185</span>
-<span class="co">## Matched       185     185</span>
-<span class="co">## Unmatched     244       0</span>
-<span class="co">## Discarded       0       0</span></code></pre>
+<code class="sourceCode R"><span><span class="co"># Checking balance after NN matching</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">m.out1</span>, un <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## </span></span>
+<span><span class="co">## Call:</span></span>
+<span><span class="co">## matchit(formula = treat ~ age + educ + race + married + nodegree + </span></span>
+<span><span class="co">##     re74 + re75, data = lalonde, method = "nearest", distance = "glm")</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## Summary of Balance for Matched Data:</span></span>
+<span><span class="co">##            Means Treated Means Control Std. Mean Diff. Var. Ratio eCDF Mean eCDF Max Std. Pair Dist.</span></span>
+<span><span class="co">## distance          0.5774        0.3629          0.9739     0.7566    0.1321   0.4216          0.9740</span></span>
+<span><span class="co">## age              25.8162       25.3027          0.0718     0.4568    0.0847   0.2541          1.3938</span></span>
+<span><span class="co">## educ             10.3459       10.6054         -0.1290     0.5721    0.0239   0.0757          1.2474</span></span>
+<span><span class="co">## raceblack         0.8432        0.4703          1.0259          .    0.3730   0.3730          1.0259</span></span>
+<span><span class="co">## racehispan        0.0595        0.2162         -0.6629          .    0.1568   0.1568          1.0743</span></span>
+<span><span class="co">## racewhite         0.0973        0.3135         -0.7296          .    0.2162   0.2162          0.8390</span></span>
+<span><span class="co">## married           0.1892        0.2108         -0.0552          .    0.0216   0.0216          0.8281</span></span>
+<span><span class="co">## nodegree          0.7081        0.6378          0.1546          .    0.0703   0.0703          1.0106</span></span>
+<span><span class="co">## re74           2095.5737     2342.1076         -0.0505     1.3289    0.0469   0.2757          0.7965</span></span>
+<span><span class="co">## re75           1532.0553     1614.7451         -0.0257     1.4956    0.0452   0.2054          0.7381</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## Sample Sizes:</span></span>
+<span><span class="co">##           Control Treated</span></span>
+<span><span class="co">## All           429     185</span></span>
+<span><span class="co">## Matched       185     185</span></span>
+<span><span class="co">## Unmatched     244       0</span></span>
+<span><span class="co">## Discarded       0       0</span></span></code></pre>
 <p>At the top is a summary of covariate balance after matching. Although balance has improved for some covariates, in general balance is still quite poor, indicating that nearest neighbor propensity score matching is not sufficient for removing confounding in this dataset. The final column, <code>Std. Pair Diff</code>, displays the average absolute within-pair difference of each covariate. When these values are small, better balance is typically achieved and estimated effects are more robust to misspecification of the outcome model <span class="citation">(King and Nielsen <a href="#ref-king2019" role="doc-biblioref">2019</a>; Rubin <a href="#ref-rubin1973a" role="doc-biblioref">1973</a>)</span>.</p>
 <p>Next is a table of the sample sizes before and after matching. The matching procedure left 244 control units unmatched. Ideally, unmatched units would be those far from the treated units and would require greater extrapolation were they to have been retained. We can visualize the distribution of propensity scores of those who were matched using <code><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot()</a></code> with <code>type = "jitter"</code>:</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">m.out1</span>, type <span class="op">=</span> <span class="st">"jitter"</span>, interactive <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">m.out1</span>, type <span class="op">=</span> <span class="st">"jitter"</span>, interactive <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
 <p><img src="MatchIt_files/figure-html/unnamed-chunk-7-1.png" width="672"></p>
 <p>We can visually examine balance on the covariates using <code><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot()</a></code> with <code>type = "qq"</code>:</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">m.out1</span>, type <span class="op">=</span> <span class="st">"qq"</span>, interactive <span class="op">=</span> <span class="cn">FALSE</span>,
-     which.xs <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"age"</span>, <span class="st">"married"</span>, <span class="st">"re75"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">m.out1</span>, type <span class="op">=</span> <span class="st">"qq"</span>, interactive <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>     which.xs <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"age"</span>, <span class="st">"married"</span>, <span class="st">"re75"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p><img src="MatchIt_files/figure-html/unnamed-chunk-8-1.png" width="672"></p>
 <p>Points far from the solid diagonal line are the areas of the covariate distributions that differ between the treatment groups. Although <code>married</code> and <code>re75</code> appear to have improved balance after matching, the case is mixed for <code>age</code>.</p>
 <div class="section level3">
@@ -261,52 +260,52 @@ pre code {
 </h3>
 <p>Given the poor performance of nearest neighbor matching in this example, we can try a different matching method or make other changes to the matching algorithm or distance specification. Below, we’ll try full matching, which matches every treated unit to at least one control and every control to at least one treated unit <span class="citation">(Hansen <a href="#ref-hansen2004" role="doc-biblioref">2004</a>; Stuart and Green <a href="#ref-stuart2008a" role="doc-biblioref">2008</a>)</span>. We’ll also try a different link (probit) for the propensity score model.</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># Full matching on a probit PS</span>
-<span class="va">m.out2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/matchit.html">matchit</a></span><span class="op">(</span><span class="va">treat</span> <span class="op">~</span> <span class="va">age</span> <span class="op">+</span> <span class="va">educ</span> <span class="op">+</span> <span class="va">race</span> <span class="op">+</span> <span class="va">married</span> <span class="op">+</span> 
-                   <span class="va">nodegree</span> <span class="op">+</span> <span class="va">re74</span> <span class="op">+</span> <span class="va">re75</span>, data <span class="op">=</span> <span class="va">lalonde</span>,
-                 method <span class="op">=</span> <span class="st">"full"</span>, distance <span class="op">=</span> <span class="st">"glm"</span>, link <span class="op">=</span> <span class="st">"probit"</span><span class="op">)</span>
-<span class="va">m.out2</span></code></pre></div>
-<pre><code><span class="co">## A matchit object</span>
-<span class="co">##  - method: Optimal full matching</span>
-<span class="co">##  - distance: Propensity score</span>
-<span class="co">##              - estimated with probit regression</span>
-<span class="co">##  - number of obs.: 614 (original), 614 (matched)</span>
-<span class="co">##  - target estimand: ATT</span>
-<span class="co">##  - covariates: age, educ, race, married, nodegree, re74, re75</span></code></pre>
+<code class="sourceCode R"><span><span class="co"># Full matching on a probit PS</span></span>
+<span><span class="va">m.out2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/matchit.html">matchit</a></span><span class="op">(</span><span class="va">treat</span> <span class="op">~</span> <span class="va">age</span> <span class="op">+</span> <span class="va">educ</span> <span class="op">+</span> <span class="va">race</span> <span class="op">+</span> <span class="va">married</span> <span class="op">+</span> </span>
+<span>                   <span class="va">nodegree</span> <span class="op">+</span> <span class="va">re74</span> <span class="op">+</span> <span class="va">re75</span>, data <span class="op">=</span> <span class="va">lalonde</span>,</span>
+<span>                 method <span class="op">=</span> <span class="st">"full"</span>, distance <span class="op">=</span> <span class="st">"glm"</span>, link <span class="op">=</span> <span class="st">"probit"</span><span class="op">)</span></span>
+<span><span class="va">m.out2</span></span></code></pre></div>
+<pre><code><span><span class="co">## A matchit object</span></span>
+<span><span class="co">##  - method: Optimal full matching</span></span>
+<span><span class="co">##  - distance: Propensity score</span></span>
+<span><span class="co">##              - estimated with probit regression</span></span>
+<span><span class="co">##  - number of obs.: 614 (original), 614 (matched)</span></span>
+<span><span class="co">##  - target estimand: ATT</span></span>
+<span><span class="co">##  - covariates: age, educ, race, married, nodegree, re74, re75</span></span></code></pre>
 <p>We can examine balance on this new matching specification.</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># Checking balance after full matching</span>
-<span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">m.out2</span>, un <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></code></pre></div>
-<pre><code><span class="co">## </span>
-<span class="co">## Call:</span>
-<span class="co">## matchit(formula = treat ~ age + educ + race + married + nodegree + </span>
-<span class="co">##     re74 + re75, data = lalonde, method = "full", distance = "glm", </span>
-<span class="co">##     link = "probit")</span>
-<span class="co">## </span>
-<span class="co">## Summary of Balance for Matched Data:</span>
-<span class="co">##            Means Treated Means Control Std. Mean Diff. Var. Ratio eCDF Mean eCDF Max Std. Pair Dist.</span>
-<span class="co">## distance          0.5773        0.5766          0.0034     0.9957    0.0042   0.0486          0.0198</span>
-<span class="co">## age              25.8162       25.3355          0.0672     0.4776    0.0810   0.2859          1.2683</span>
-<span class="co">## educ             10.3459       10.4480         -0.0508     0.6013    0.0232   0.0597          1.2042</span>
-<span class="co">## raceblack         0.8432        0.8389          0.0119          .    0.0043   0.0043          0.0162</span>
-<span class="co">## racehispan        0.0595        0.0484          0.0469          .    0.0111   0.0111          0.4911</span>
-<span class="co">## racewhite         0.0973        0.1127         -0.0520          .    0.0154   0.0154          0.3852</span>
-<span class="co">## married           0.1892        0.1623          0.0687          .    0.0269   0.0269          0.4725</span>
-<span class="co">## nodegree          0.7081        0.6767          0.0692          .    0.0315   0.0315          0.9439</span>
-<span class="co">## re74           2095.5737     2062.0642          0.0069     1.3524    0.0292   0.1983          0.8411</span>
-<span class="co">## re75           1532.0553     1619.7359         -0.0272     1.4936    0.0569   0.2213          0.8228</span>
-<span class="co">## </span>
-<span class="co">## Sample Sizes:</span>
-<span class="co">##               Control Treated</span>
-<span class="co">## All            429.       185</span>
-<span class="co">## Matched (ESS)   51.37     185</span>
-<span class="co">## Matched        429.       185</span>
-<span class="co">## Unmatched        0.         0</span>
-<span class="co">## Discarded        0.         0</span></code></pre>
+<code class="sourceCode R"><span><span class="co"># Checking balance after full matching</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">m.out2</span>, un <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## </span></span>
+<span><span class="co">## Call:</span></span>
+<span><span class="co">## matchit(formula = treat ~ age + educ + race + married + nodegree + </span></span>
+<span><span class="co">##     re74 + re75, data = lalonde, method = "full", distance = "glm", </span></span>
+<span><span class="co">##     link = "probit")</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## Summary of Balance for Matched Data:</span></span>
+<span><span class="co">##            Means Treated Means Control Std. Mean Diff. Var. Ratio eCDF Mean eCDF Max Std. Pair Dist.</span></span>
+<span><span class="co">## distance          0.5773        0.5766          0.0034     0.9957    0.0042   0.0486          0.0198</span></span>
+<span><span class="co">## age              25.8162       25.3355          0.0672     0.4776    0.0810   0.2859          1.2683</span></span>
+<span><span class="co">## educ             10.3459       10.4480         -0.0508     0.6013    0.0232   0.0597          1.2042</span></span>
+<span><span class="co">## raceblack         0.8432        0.8389          0.0119          .    0.0043   0.0043          0.0162</span></span>
+<span><span class="co">## racehispan        0.0595        0.0484          0.0469          .    0.0111   0.0111          0.4911</span></span>
+<span><span class="co">## racewhite         0.0973        0.1127         -0.0520          .    0.0154   0.0154          0.3852</span></span>
+<span><span class="co">## married           0.1892        0.1623          0.0687          .    0.0269   0.0269          0.4725</span></span>
+<span><span class="co">## nodegree          0.7081        0.6767          0.0692          .    0.0315   0.0315          0.9439</span></span>
+<span><span class="co">## re74           2095.5737     2062.0642          0.0069     1.3524    0.0292   0.1983          0.8411</span></span>
+<span><span class="co">## re75           1532.0553     1619.7359         -0.0272     1.4936    0.0569   0.2213          0.8228</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## Sample Sizes:</span></span>
+<span><span class="co">##               Control Treated</span></span>
+<span><span class="co">## All            429.       185</span></span>
+<span><span class="co">## Matched (ESS)   51.37     185</span></span>
+<span><span class="co">## Matched        429.       185</span></span>
+<span><span class="co">## Unmatched        0.         0</span></span>
+<span><span class="co">## Discarded        0.         0</span></span></code></pre>
 <p>Balance is far better, as determined by the lower standardized mean differences and eCDF statistics. The balance should be reported when publishing the results of a matching analysis. This can be done either in a table, using the values resulting from <code><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary()</a></code>, or in a plot, such as a Love plot, which we can make by calling <code><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot()</a></code> on the <code><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary()</a></code> output:</p>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">m.out2</span><span class="op">)</span><span class="op">)</span></code></pre></div>
-<p><img src="MatchIt_files/figure-html/unnamed-chunk-13-1.png" width="672"></p>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">m.out2</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<p><img src="MatchIt_files/figure-html/unnamed-chunk-12-1.png" width="672"></p>
 <p>Love plots are a simple and straightforward way to summarize balance visually. See <code><a href="../articles/assessing-balance.html">vignette("assessing-balance")</a></code> for more information on how to customize <code>MatchIt</code>’s Love plot and how to use <code>cobalt</code>, a package designed specifically for balance assessment and reporting that is compatible with <code>MatchIt</code>.</p>
 </div>
 </div>
@@ -316,66 +315,66 @@ pre code {
 <p>How treatment effects are estimated depends on what form of matching was performed. See <code><a href="../articles/estimating-effects.html">vignette("estimating-effects")</a></code> for information on the variety of way to estimate effects and standard errors after each type of matching and for several outcome types. After 1:1 matching without replacement (i.e., the first matching specification above), we can run a simple regression of the outcome on the treatment in the matched sample (i.e., including the matching weights). With continuous outcomes, it is often a good idea to also include the covariates used in the matching in the effect estimation, as doing so can provide additional robustness to slight imbalances remaining after the matching and can improve precision.</p>
 <p>Even though the 1:1 matching was not successful, we’ll demonstrate here how to estimate a treatment effect after performing such an analysis. First, we’ll extract the matched dataset from the <code>matchit</code> object using <code><a href="../reference/match.data.html">match.data()</a></code>. This dataset only contains the matched units and adds columns for <code>distance</code>, <code>weights</code>, and <code>subclass</code> (described previously).</p>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">m.data1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/match.data.html">match.data</a></span><span class="op">(</span><span class="va">m.out1</span><span class="op">)</span>
-
-<span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">m.data1</span><span class="op">)</span></code></pre></div>
-<pre><code><span class="co">##      treat age educ   race married nodegree re74 re75       re78  distance weights subclass</span>
-<span class="co">## NSW1     1  37   11  black       1        1    0    0  9930.0460 0.6387699       1        1</span>
-<span class="co">## NSW2     1  22    9 hispan       0        1    0    0  3595.8940 0.2246342       1       98</span>
-<span class="co">## NSW3     1  30   12  black       0        0    0    0 24909.4500 0.6782439       1      109</span>
-<span class="co">## NSW4     1  27   11  black       0        1    0    0  7506.1460 0.7763241       1      120</span>
-<span class="co">## NSW5     1  33    8  black       0        1    0    0   289.7899 0.7016387       1      131</span>
-<span class="co">## NSW6     1  22    9  black       0        1    0    0  4056.4940 0.6990699       1      142</span></code></pre>
+<code class="sourceCode R"><span><span class="va">m.data1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/match.data.html">match.data</a></span><span class="op">(</span><span class="va">m.out1</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">m.data1</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">##      treat age educ   race married nodegree re74 re75       re78  distance weights subclass</span></span>
+<span><span class="co">## NSW1     1  37   11  black       1        1    0    0  9930.0460 0.6387699       1        1</span></span>
+<span><span class="co">## NSW2     1  22    9 hispan       0        1    0    0  3595.8940 0.2246342       1       98</span></span>
+<span><span class="co">## NSW3     1  30   12  black       0        0    0    0 24909.4500 0.6782439       1      109</span></span>
+<span><span class="co">## NSW4     1  27   11  black       0        1    0    0  7506.1460 0.7763241       1      120</span></span>
+<span><span class="co">## NSW5     1  33    8  black       0        1    0    0   289.7899 0.7016387       1      131</span></span>
+<span><span class="co">## NSW6     1  22    9  black       0        1    0    0  4056.4940 0.6990699       1      142</span></span></code></pre>
 <p>We can then estimate a treatment effect in this dataset using the standard regression functions in R, like <code><a href="https://rdrr.io/r/stats/lm.html" class="external-link">lm()</a></code> or <code><a href="https://rdrr.io/r/stats/glm.html" class="external-link">glm()</a></code>, being sure to include the matching weights (stored in the <code>weights</code> variable of the <code><a href="../reference/match.data.html">match.data()</a></code> output) in the estimation<a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a>. We recommend using cluster-robust standard errors for most analyses, with pair membership as the clustering variable; the <code>lmtest</code> and <code>sandwich</code> packages together make this straightforward.</p>
 <div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st">"lmtest"</span><span class="op">)</span> <span class="co">#coeftest</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://sandwich.R-Forge.R-project.org/" class="external-link">"sandwich"</a></span><span class="op">)</span> <span class="co">#vcovCL</span>
-
-<span class="va">fit1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html" class="external-link">lm</a></span><span class="op">(</span><span class="va">re78</span> <span class="op">~</span> <span class="va">treat</span> <span class="op">+</span> <span class="va">age</span> <span class="op">+</span> <span class="va">educ</span> <span class="op">+</span> <span class="va">race</span> <span class="op">+</span> <span class="va">married</span> <span class="op">+</span> <span class="va">nodegree</span> <span class="op">+</span> 
-             <span class="va">re74</span> <span class="op">+</span> <span class="va">re75</span>, data <span class="op">=</span> <span class="va">m.data1</span>, weights <span class="op">=</span> <span class="va">weights</span><span class="op">)</span>
-
-<span class="fu"><a href="https://rdrr.io/pkg/lmtest/man/coeftest.html" class="external-link">coeftest</a></span><span class="op">(</span><span class="va">fit1</span>, vcov. <span class="op">=</span> <span class="va">vcovCL</span>, cluster <span class="op">=</span> <span class="op">~</span><span class="va">subclass</span><span class="op">)</span></code></pre></div>
-<pre><code><span class="co">## </span>
-<span class="co">## t test of coefficients:</span>
-<span class="co">## </span>
-<span class="co">##                Estimate  Std. Error t value Pr(&gt;|t|)   </span>
-<span class="co">## (Intercept) -2.5816e+03  3.3209e+03 -0.7774 0.437439   </span>
-<span class="co">## treat        1.3449e+03  7.3084e+02  1.8403 0.066552 . </span>
-<span class="co">## age          7.8035e+00  4.4148e+01  0.1768 0.859797   </span>
-<span class="co">## educ         6.0220e+02  2.1007e+02  2.8667 0.004391 **</span>
-<span class="co">## racehispan   1.5335e+03  1.0248e+03  1.4964 0.135417   </span>
-<span class="co">## racewhite    4.6943e+02  8.9854e+02  0.5224 0.601687   </span>
-<span class="co">## married     -1.5825e+02  9.3354e+02 -0.1695 0.865482   </span>
-<span class="co">## nodegree     9.2328e+02  1.1496e+03  0.8032 0.422412   </span>
-<span class="co">## re74         2.6362e-02  1.6646e-01  0.1584 0.874257   </span>
-<span class="co">## re75         2.2068e-01  1.6771e-01  1.3158 0.189069   </span>
-<span class="co">## ---</span>
-<span class="co">## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</span></code></pre>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st">"lmtest"</span><span class="op">)</span> <span class="co">#coeftest</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://sandwich.R-Forge.R-project.org/" class="external-link">"sandwich"</a></span><span class="op">)</span> <span class="co">#vcovCL</span></span>
+<span></span>
+<span><span class="va">fit1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html" class="external-link">lm</a></span><span class="op">(</span><span class="va">re78</span> <span class="op">~</span> <span class="va">treat</span> <span class="op">+</span> <span class="va">age</span> <span class="op">+</span> <span class="va">educ</span> <span class="op">+</span> <span class="va">race</span> <span class="op">+</span> <span class="va">married</span> <span class="op">+</span> <span class="va">nodegree</span> <span class="op">+</span> </span>
+<span>             <span class="va">re74</span> <span class="op">+</span> <span class="va">re75</span>, data <span class="op">=</span> <span class="va">m.data1</span>, weights <span class="op">=</span> <span class="va">weights</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/lmtest/man/coeftest.html" class="external-link">coeftest</a></span><span class="op">(</span><span class="va">fit1</span>, vcov. <span class="op">=</span> <span class="va">vcovCL</span>, cluster <span class="op">=</span> <span class="op">~</span><span class="va">subclass</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## </span></span>
+<span><span class="co">## t test of coefficients:</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">##                Estimate  Std. Error t value Pr(&gt;|t|)   </span></span>
+<span><span class="co">## (Intercept) -2.5816e+03  3.3209e+03 -0.7774 0.437439   </span></span>
+<span><span class="co">## treat        1.3449e+03  7.3084e+02  1.8403 0.066552 . </span></span>
+<span><span class="co">## age          7.8035e+00  4.4148e+01  0.1768 0.859797   </span></span>
+<span><span class="co">## educ         6.0220e+02  2.1007e+02  2.8667 0.004391 **</span></span>
+<span><span class="co">## racehispan   1.5335e+03  1.0248e+03  1.4964 0.135417   </span></span>
+<span><span class="co">## racewhite    4.6943e+02  8.9854e+02  0.5224 0.601687   </span></span>
+<span><span class="co">## married     -1.5825e+02  9.3354e+02 -0.1695 0.865482   </span></span>
+<span><span class="co">## nodegree     9.2328e+02  1.1496e+03  0.8032 0.422412   </span></span>
+<span><span class="co">## re74         2.6362e-02  1.6646e-01  0.1584 0.874257   </span></span>
+<span><span class="co">## re75         2.2068e-01  1.6771e-01  1.3158 0.189069   </span></span>
+<span><span class="co">## ---</span></span>
+<span><span class="co">## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</span></span></code></pre>
 <p>The coefficient on <code>treat</code> is the estimated ATT. The other coefficients and tests should not be interpreted or reported. Estimating standard errors with matched data is an area of ongoing development. Generally, the approach demonstrated above works well for continuous outcomes. See <code><a href="../articles/estimating-effects.html">vignette("estimating-effects")</a></code> for more information on how to estimate standard errors with each type of matching and with different outcome types.</p>
 <p>A benefit of matching is that the outcome model used to estimate the treatment effect is robust to misspecification when balance has been achieved. With 1:1 nearest neighbor matching, we failed to achieve balance, so one should be cautious about trusting the estimated effect. With full matching, we were able to achieve balance, so the effect estimate should depend less on the form of the outcome model used. Below we estimate the effect and standard error of the treatment effect after full matching. As before, we’ll use functions from the <code>lmtest</code> and <code>sandwich</code> packages here because they provide a fairly general interface to estimating coefficients and standard errors.</p>
 <div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">m.data2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/match.data.html">match.data</a></span><span class="op">(</span><span class="va">m.out2</span><span class="op">)</span>
-
-<span class="va">fit2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html" class="external-link">lm</a></span><span class="op">(</span><span class="va">re78</span> <span class="op">~</span> <span class="va">treat</span> <span class="op">+</span> <span class="va">age</span> <span class="op">+</span> <span class="va">educ</span> <span class="op">+</span> <span class="va">race</span> <span class="op">+</span> <span class="va">married</span> <span class="op">+</span> <span class="va">nodegree</span> <span class="op">+</span> 
-             <span class="va">re74</span> <span class="op">+</span> <span class="va">re75</span>, data <span class="op">=</span> <span class="va">m.data2</span>, weights <span class="op">=</span> <span class="va">weights</span><span class="op">)</span>
-
-<span class="fu"><a href="https://rdrr.io/pkg/lmtest/man/coeftest.html" class="external-link">coeftest</a></span><span class="op">(</span><span class="va">fit2</span>, vcov. <span class="op">=</span> <span class="va">vcovCL</span>, cluster <span class="op">=</span> <span class="op">~</span><span class="va">subclass</span><span class="op">)</span></code></pre></div>
-<pre><code><span class="co">## </span>
-<span class="co">## t test of coefficients:</span>
-<span class="co">## </span>
-<span class="co">##                Estimate  Std. Error t value  Pr(&gt;|t|)    </span>
-<span class="co">## (Intercept)  2.6929e+03  3.0762e+03  0.8754   0.38171    </span>
-<span class="co">## treat        2.0915e+03  6.7833e+02  3.0834   0.00214 ** </span>
-<span class="co">## age         -3.5164e+01  3.6614e+01 -0.9604   0.33724    </span>
-<span class="co">## educ         2.1371e+02  2.0154e+02  1.0604   0.28939    </span>
-<span class="co">## racehispan   1.0262e+03  1.4661e+03  0.7000   0.48420    </span>
-<span class="co">## racewhite    1.5550e+03  8.2045e+02  1.8953   0.05853 .  </span>
-<span class="co">## married      7.4987e+02  1.0759e+03  0.6970   0.48609    </span>
-<span class="co">## nodegree    -1.3684e+03  1.2127e+03 -1.1284   0.25960    </span>
-<span class="co">## re74        -1.9924e-02  1.4178e-01 -0.1405   0.88830    </span>
-<span class="co">## re75         5.9919e-01  1.3929e-01  4.3017 1.977e-05 ***</span>
-<span class="co">## ---</span>
-<span class="co">## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</span></code></pre>
+<code class="sourceCode R"><span><span class="va">m.data2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/match.data.html">match.data</a></span><span class="op">(</span><span class="va">m.out2</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">fit2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html" class="external-link">lm</a></span><span class="op">(</span><span class="va">re78</span> <span class="op">~</span> <span class="va">treat</span> <span class="op">+</span> <span class="va">age</span> <span class="op">+</span> <span class="va">educ</span> <span class="op">+</span> <span class="va">race</span> <span class="op">+</span> <span class="va">married</span> <span class="op">+</span> <span class="va">nodegree</span> <span class="op">+</span> </span>
+<span>             <span class="va">re74</span> <span class="op">+</span> <span class="va">re75</span>, data <span class="op">=</span> <span class="va">m.data2</span>, weights <span class="op">=</span> <span class="va">weights</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/lmtest/man/coeftest.html" class="external-link">coeftest</a></span><span class="op">(</span><span class="va">fit2</span>, vcov. <span class="op">=</span> <span class="va">vcovCL</span>, cluster <span class="op">=</span> <span class="op">~</span><span class="va">subclass</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## </span></span>
+<span><span class="co">## t test of coefficients:</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">##                Estimate  Std. Error t value  Pr(&gt;|t|)    </span></span>
+<span><span class="co">## (Intercept)  2.6929e+03  3.0762e+03  0.8754   0.38171    </span></span>
+<span><span class="co">## treat        2.0915e+03  6.7833e+02  3.0834   0.00214 ** </span></span>
+<span><span class="co">## age         -3.5164e+01  3.6614e+01 -0.9604   0.33724    </span></span>
+<span><span class="co">## educ         2.1371e+02  2.0154e+02  1.0604   0.28939    </span></span>
+<span><span class="co">## racehispan   1.0262e+03  1.4661e+03  0.7000   0.48420    </span></span>
+<span><span class="co">## racewhite    1.5550e+03  8.2045e+02  1.8953   0.05853 .  </span></span>
+<span><span class="co">## married      7.4987e+02  1.0759e+03  0.6970   0.48609    </span></span>
+<span><span class="co">## nodegree    -1.3684e+03  1.2127e+03 -1.1284   0.25960    </span></span>
+<span><span class="co">## re74        -1.9924e-02  1.4178e-01 -0.1405   0.88830    </span></span>
+<span><span class="co">## re75         5.9919e-01  1.3929e-01  4.3017 1.977e-05 ***</span></span>
+<span><span class="co">## ---</span></span>
+<span><span class="co">## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</span></span></code></pre>
 <p>Given the results of these two estimates, we would be inclined to trust the one resulting from the second analysis, i.e., using full matching, because better balance was achieved on all the variables, making the effect estimate less sensitive to the form of the outcome model we used.</p>
 <p>Effect estimation with nonlinear models (e.g., for binary or time-to-event event outcomes) is more complicated due to noncollapsibility of the estimated effects; including additional covariates in the model can change the meaning of the estimated effect. See <code><a href="../articles/estimating-effects.html">vignette("estimating-effects")</a></code> for more details. Note that for some models, effect and standard error estimation is still being researched.</p>
 </div>
@@ -384,9 +383,9 @@ pre code {
 </h2>
 <p>To report matching results in a manuscript or research report, a few key pieces of information are required. One should be as detailed as possible about the matching procedure and the decisions made to ensure the analysis is replicable and can be adequately assessed for soundness by the audience. Key pieces of information to include are 1) the matching specification used (including the method and any additional options, like calipers or common support restrictions), 2) the distance measure used (including how it was estimated e.g., using logistic regression for propensity scores), 3) which other matching methods were tried prior to settling on a final specification and how the choices were made, 4) the balance of the final matching specification (including standardized mean differences and other balance statistics for the variables, their powers, and their interactions; some of these can be reported as summaries rather than in full detail), 5) the number of matched, unmatched, and discarded units included in the effect estimation, and 6) the method of estimating the treatment effect and standard error or confidence interval (including the specific model used and the specific type of standard error). See <span class="citation">Thoemmes and Kim (<a href="#ref-thoemmes2011" role="doc-biblioref">2011</a>)</span> for a complete list of specific details to report. Below is an example of how we might write up the prior analysis:</p>
 <blockquote>
-<p>We used propensity score matching to estimate the average marginal effect of the treatment on 1978 earnings on those who received it accounting for confounding by the included covariates. We first attempted 1:1 nearest neighbor propensity score matching without replacement with a propensity score estimated using logistic regression of the treatment on the covariates. This matching yielded poor balance, so we instead tried full matching on the propensity score, which yielded adequate balance, as indicated in Table 1 and Figure 1. The propensity score was estimated using a probit regression of the treatment on the covariates, which yielded better balance than did a logistic regression. After matching, all standardized mean differences for the covariates were below 0.1 and all standardized mean differences for squares and two-way interactions between covariates were below .15, indicating adequate balance. Full matching uses all treated and all control units, so no units were discarded by the matching.</p>
-<p>To estimate the treatment effect and its standard error, we fit a linear regression model with 1978 earnings as the outcome and the treatment and the covariates as additive predictors and included the full matching weights in the estimation. The coefficient on the treatment was taken to be the estimate of the treatment effect. The <code><a href="https://rdrr.io/r/stats/lm.html" class="external-link">lm()</a></code> function was used to estimate the effect, and a cluster-robust variance as implemented in the <code><a href="https://sandwich.R-Forge.R-project.org//reference/vcovCL.html" class="external-link">vcovCL()</a></code> function in the <code>sandwich</code> package was used to estimate its standard error with matching stratum membership as the clustering variable.</p>
-<p>The estimated effect was $1980 (SE = 756.1, p = .009), indicating that the average effect of the treatment for those who received it is to increase earnings.</p>
+<p>We used propensity score matching to estimate the average marginal effect of the treatment on 1978 earnings on those who received it accounting for confounding by the included covariates. We first attempted 1:1 nearest neighbor propensity score matching without replacement with a propensity score estimated using logistic regression of the treatment on the covariates. This matching specification yielded poor balance, so we instead tried full matching on the propensity score, which yielded adequate balance, as indicated in Table 1 and Figure 1. The propensity score was estimated using a probit regression of the treatment on the covariates, which yielded better balance than did a logistic regression. After matching, all standardized mean differences for the covariates were below 0.1 and all standardized mean differences for squares and two-way interactions between covariates were below .15, indicating adequate balance. Full matching uses all treated and all control units, so no units were discarded by the matching.</p>
+<p>To estimate the treatment effect and its standard error, we fit a linear regression model with 1978 earnings as the outcome and the treatment and the covariates as additive predictors and included the full matching weights in the estimation. The coefficient on the treatment was taken to be the estimate of the treatment effect. The <code><a href="https://rdrr.io/r/stats/lm.html" class="external-link">lm()</a></code> function was used to estimate the effect, and a cluster-robust variance as implemented in the <code><a href="https://sandwich.R-Forge.R-project.org/reference/vcovCL.html" class="external-link">vcovCL()</a></code> function in the <code>sandwich</code> package was used to estimate its standard error with matching stratum membership as the clustering variable.</p>
+<p>The estimated effect was $2092 (SE = 678.3, p = 0.002), indicating that the average effect of the treatment for those who received it is to increase earnings.</p>
 </blockquote>
 </div>
 <div class="section level2">
@@ -460,7 +459,7 @@ pre code {
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer>

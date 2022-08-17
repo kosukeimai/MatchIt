@@ -30,7 +30,7 @@ matchit(formula,
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">MatchIt</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">4.4.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">4.4.0.9004</span>
       </span>
     </div>
 
@@ -86,15 +86,16 @@ matchit(formula,
     <div class="ref-description">
     <p>In <code><a href="matchit.html">matchit()</a></code>, setting <code>method = "cardinality"</code> performs cardinality matching and other forms of matching that use mixed integer programming. Rather than forming pairs, cardinality matching selects the largest subset of units that satisfies user-supplied balance constraints on mean differences. One of several available optimization programs can be used to solve the mixed integer program. The default is the GLPK library as implemented in the <em>Rglpk</em> package, but performance can be dramatically improved using Gurobi and the <em>gurobi</em> package, for which there is a free academic license.</p>
 <p>This page details the allowable arguments with <code>method = "cardinality"</code>. See <code><a href="matchit.html">matchit()</a></code> for an explanation of what each argument means in a general context and how it can be specified.</p>
-<p>Below is how <code><a href="matchit.html">matchit()</a></code> is used for cardinality matching:</p><div class="sourceCode"><pre><code><span class="fu"><a href="../reference/matchit.html">matchit</a></span><span class="op">(</span><span class="va">formula</span>,
-        data <span class="op">=</span> <span class="cn">NULL</span>,
-        method <span class="op">=</span> <span class="st">"cardinality"</span>,
-        estimand <span class="op">=</span> <span class="st">"ATT"</span>,
-        exact <span class="op">=</span> <span class="cn">NULL</span>,
-        discard <span class="op">=</span> <span class="st">"none"</span>,
-        s.weights <span class="op">=</span> <span class="cn">NULL</span>,
-        ratio <span class="op">=</span> <span class="fl">1</span>,
-        verbose <span class="op">=</span> <span class="cn">FALSE</span>, <span class="va">...</span><span class="op">)</span></code></pre></div>
+<p>Below is how <code><a href="matchit.html">matchit()</a></code> is used for cardinality matching:</p><div class="sourceCode"><pre><code><span></span>
+<span><span class="fu"><a href="../reference/matchit.html">matchit</a></span><span class="op">(</span><span class="va">formula</span>,</span>
+<span>        data <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>        method <span class="op">=</span> <span class="st">"cardinality"</span>,</span>
+<span>        estimand <span class="op">=</span> <span class="st">"ATT"</span>,</span>
+<span>        exact <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>        discard <span class="op">=</span> <span class="st">"none"</span>,</span>
+<span>        s.weights <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>        ratio <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>        verbose <span class="op">=</span> <span class="cn">FALSE</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
 
     </div>
 
@@ -103,23 +104,32 @@ matchit(formula,
     <h2>Arguments</h2>
     <dl><dt>formula</dt>
 <dd><p>a two-sided <code><a href="https://rdrr.io/r/stats/formula.html" class="external-link">formula()</a></code> object containing the treatment and covariates to be balanced.</p></dd>
-<dt>data</dt>
+
+  <dt>data</dt>
 <dd><p>a data frame containing the variables named in <code>formula</code>. If not found in <code>data</code>, the variables will be sought in the environment.</p></dd>
-<dt>method</dt>
+
+  <dt>method</dt>
 <dd><p>set here to <code>"cardinality"</code>.</p></dd>
-<dt>estimand</dt>
+
+  <dt>estimand</dt>
 <dd><p>a string containing the desired estimand. Allowable options include <code>"ATT"</code>, <code>"ATC"</code>, and <code>"ATE"</code>. See Details.</p></dd>
-<dt>exact</dt>
+
+  <dt>exact</dt>
 <dd><p>for which variables exact matching should take place. Separate optimization will occur within each subgroup of the exact matching variables.</p></dd>
-<dt>discard</dt>
+
+  <dt>discard</dt>
 <dd><p>a string containing a method for discarding units outside a region of common support.</p></dd>
-<dt>s.weights</dt>
+
+  <dt>s.weights</dt>
 <dd><p>the variable containing sampling weights to be incorporated into the optimization. The balance constraints refer to the product of the sampling weights and the matching weights, and the sum of the product of the sampling and matching weights will be maximized.</p></dd>
-<dt>ratio</dt>
+
+  <dt>ratio</dt>
 <dd><p>the desired ratio of control to treated units. Can be set to <code>NA</code> to maximize sample size without concern for this ratio. See Details.</p></dd>
-<dt>verbose</dt>
+
+  <dt>verbose</dt>
 <dd><p><code>logical</code>; whether information about the matching process should be printed to the console.</p></dd>
-<dt>...</dt>
+
+  <dt>...</dt>
 <dd><p>additional arguments that control the matching specification:</p><dl><dt><code>tols</code></dt>
 <dd><p><code>numeric</code>; a vector of imbalance tolerances for mean differences, one for each covariate in <code>formula</code>. If only one value is supplied, it is applied to all. See <code>std.tols</code> below. Default is <code>.05</code> for standardized mean differences of at most .05 for all covariates between the treatment groups in the matched sample.</p></dd>
 
@@ -134,6 +144,7 @@ matchit(formula,
 
   
 </dl></dd>
+
 </dl><p>The arguments <code>distance</code> (and related arguments), <code>mahvars</code>, <code>replace</code>, <code>m.order</code>, and <code>caliper</code> (and related arguments) are ignored with a warning.</p>
     </div>
     <div id="outputs">
@@ -155,8 +166,8 @@ matchit(formula,
 <div class="section">
 <h3 id="specifying-balance-constraints">Specifying Balance Constraints<a class="anchor" aria-label="anchor" href="#specifying-balance-constraints"></a></h3>
 <p>The balance constraints are on the (standardized) mean differences between the matched treatment groups for each covariate. Balance constraints should be set by supplying arguments to <code>tols</code> and <code>std.tols</code>. For example, setting <code>tols = .1</code> and <code>std.tols = TRUE</code> requests that all the mean differences in the matched sample should be within .1 standard deviations for each covariate. Different tolerances can be set for different variables; it might be beneficial to constrain the mean differences for highly prognostic covariates more tightly than for other variables. For example, one could specify <code>tols = c(.001, .05), std.tols = c(TRUE, FALSE)</code> to request that the standardized mean difference for the first covariate is less than .001 and the raw mean difference for the second covariate is less than .05. The values should be specified in the order they appear in <code>formula</code>, except when interactions are present. One can run the following code:</p>
-<div class="sourceCode"><pre><code><span class="fu">MatchIt</span><span class="fu">:::</span><span class="fu">get_assign</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/model.matrix.html" class="external-link">model.matrix</a></span><span class="op">(</span><span class="op">~</span><span class="va">X1</span><span class="op">*</span><span class="va">X2</span> <span class="op">+</span> <span class="va">X3</span>,
-                                  data <span class="op">=</span> <span class="va">data</span><span class="op">)</span><span class="op">)</span><span class="op">[</span><span class="op">-</span><span class="fl">1</span><span class="op">]</span></code></pre></div>
+<div class="sourceCode"><pre><code><span><span class="fu">MatchIt</span><span class="fu">:::</span><span class="fu">get_assign</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/model.matrix.html" class="external-link">model.matrix</a></span><span class="op">(</span><span class="op">~</span><span class="va">X1</span><span class="op">*</span><span class="va">X2</span> <span class="op">+</span> <span class="va">X3</span>,</span>
+<span>                                  data <span class="op">=</span> <span class="va">data</span><span class="op">)</span><span class="op">)</span><span class="op">[</span><span class="op">-</span><span class="fl">1</span><span class="op">]</span></span></code></pre></div>
 
 <p>which will output a vector of numbers and the variable to which each number corresponds; the first entry in <code>tols</code> corresponds to the variable labeled 1, the second to the variable labeled 2, etc.</p>
 </div>
@@ -185,24 +196,24 @@ matchit(formula,
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"lalonde"</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">#Choose your solver; "gurobi" is best, "glpk" is free and</span></span>
-<span class="r-in"><span class="co">#easiest to install</span></span>
-<span class="r-in"><span class="va">solver</span> <span class="op">&lt;-</span> <span class="st">"glpk"</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># 1:1 cardinality matching</span></span>
-<span class="r-in"><span class="va">m.out1</span> <span class="op">&lt;-</span> <span class="fu"><a href="matchit.html">matchit</a></span><span class="op">(</span><span class="va">treat</span> <span class="op">~</span> <span class="va">age</span> <span class="op">+</span> <span class="va">educ</span> <span class="op">+</span> <span class="va">re74</span>,</span>
-<span class="r-in">                  data <span class="op">=</span> <span class="va">lalonde</span>, method <span class="op">=</span> <span class="st">"cardinality"</span>,</span>
-<span class="r-in">                  estimand <span class="op">=</span> <span class="st">"ATT"</span>, ratio <span class="op">=</span> <span class="fl">1</span>,</span>
-<span class="r-in">                  tols <span class="op">=</span> <span class="fl">.15</span>, solver <span class="op">=</span> <span class="va">solver</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">m.out1</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"lalonde"</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">#Choose your solver; "gurobi" is best, "glpk" is free and</span></span></span>
+<span class="r-in"><span><span class="co">#easiest to install</span></span></span>
+<span class="r-in"><span><span class="va">solver</span> <span class="op">&lt;-</span> <span class="st">"glpk"</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># 1:1 cardinality matching</span></span></span>
+<span class="r-in"><span><span class="va">m.out1</span> <span class="op">&lt;-</span> <span class="fu"><a href="matchit.html">matchit</a></span><span class="op">(</span><span class="va">treat</span> <span class="op">~</span> <span class="va">age</span> <span class="op">+</span> <span class="va">educ</span> <span class="op">+</span> <span class="va">re74</span>,</span></span>
+<span class="r-in"><span>                  data <span class="op">=</span> <span class="va">lalonde</span>, method <span class="op">=</span> <span class="st">"cardinality"</span>,</span></span>
+<span class="r-in"><span>                  estimand <span class="op">=</span> <span class="st">"ATT"</span>, ratio <span class="op">=</span> <span class="fl">1</span>,</span></span>
+<span class="r-in"><span>                  tols <span class="op">=</span> <span class="fl">.15</span>, solver <span class="op">=</span> <span class="va">solver</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">m.out1</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> A matchit object</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  - method: Cardinality matching</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  - number of obs.: 614 (original), 370 (matched)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  - target estimand: ATT</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  - covariates: age, educ, re74</span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">m.out1</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">m.out1</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Call:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> matchit(formula = treat ~ age + educ + re74, data = lalonde, </span>
@@ -214,7 +225,6 @@ matchit(formula,
 <span class="r-out co"><span class="r-pr">#&gt;</span> age        25.8162       28.0303         -0.3094     0.4400    0.0813   0.1577</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> educ       10.3459       10.2354          0.0550     0.4959    0.0347   0.1114</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> re74     2095.5737     5619.2365         -0.7211     0.5181    0.2248   0.4470</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Summary of Balance for Matched Data:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>      Means Treated Means Control Std. Mean Diff. Var. Ratio eCDF Mean eCDF Max</span>
@@ -229,19 +239,19 @@ matchit(formula,
 <span class="r-out co"><span class="r-pr">#&gt;</span> Unmatched     244       0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Discarded       0       0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># Template matching for the ATT</span></span>
-<span class="r-in"><span class="va">m.out2</span> <span class="op">&lt;-</span> <span class="fu"><a href="matchit.html">matchit</a></span><span class="op">(</span><span class="va">treat</span> <span class="op">~</span> <span class="va">age</span> <span class="op">+</span> <span class="va">educ</span> <span class="op">+</span> <span class="va">re74</span>,</span>
-<span class="r-in">                  data <span class="op">=</span> <span class="va">lalonde</span>, method <span class="op">=</span> <span class="st">"cardinality"</span>,</span>
-<span class="r-in">                  estimand <span class="op">=</span> <span class="st">"ATT"</span>, ratio <span class="op">=</span> <span class="cn">NA</span>,</span>
-<span class="r-in">                  tols <span class="op">=</span> <span class="fl">.15</span>, solver <span class="op">=</span> <span class="va">solver</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">m.out2</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Template matching for the ATT</span></span></span>
+<span class="r-in"><span><span class="va">m.out2</span> <span class="op">&lt;-</span> <span class="fu"><a href="matchit.html">matchit</a></span><span class="op">(</span><span class="va">treat</span> <span class="op">~</span> <span class="va">age</span> <span class="op">+</span> <span class="va">educ</span> <span class="op">+</span> <span class="va">re74</span>,</span></span>
+<span class="r-in"><span>                  data <span class="op">=</span> <span class="va">lalonde</span>, method <span class="op">=</span> <span class="st">"cardinality"</span>,</span></span>
+<span class="r-in"><span>                  estimand <span class="op">=</span> <span class="st">"ATT"</span>, ratio <span class="op">=</span> <span class="cn">NA</span>,</span></span>
+<span class="r-in"><span>                  tols <span class="op">=</span> <span class="fl">.15</span>, solver <span class="op">=</span> <span class="va">solver</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">m.out2</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> A matchit object</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  - method: Cardinality matching</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  - number of obs.: 614 (original), 531 (matched)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  - target estimand: ATT</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  - covariates: age, educ, re74</span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">m.out2</span>, un <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">m.out2</span>, un <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Call:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> matchit(formula = treat ~ age + educ + re74, data = lalonde, </span>
@@ -261,19 +271,19 @@ matchit(formula,
 <span class="r-out co"><span class="r-pr">#&gt;</span> Unmatched      83       0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Discarded       0       0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># Template matching for the ATE</span></span>
-<span class="r-in"><span class="va">m.out3</span> <span class="op">&lt;-</span> <span class="fu"><a href="matchit.html">matchit</a></span><span class="op">(</span><span class="va">treat</span> <span class="op">~</span> <span class="va">age</span> <span class="op">+</span> <span class="va">educ</span> <span class="op">+</span> <span class="va">re74</span>,</span>
-<span class="r-in">                  data <span class="op">=</span> <span class="va">lalonde</span>, method <span class="op">=</span> <span class="st">"cardinality"</span>,</span>
-<span class="r-in">                  estimand <span class="op">=</span> <span class="st">"ATE"</span>, ratio <span class="op">=</span> <span class="cn">NA</span>,</span>
-<span class="r-in">                  tols <span class="op">=</span> <span class="fl">.15</span>, solver <span class="op">=</span> <span class="va">solver</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">m.out3</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Template matching for the ATE</span></span></span>
+<span class="r-in"><span><span class="va">m.out3</span> <span class="op">&lt;-</span> <span class="fu"><a href="matchit.html">matchit</a></span><span class="op">(</span><span class="va">treat</span> <span class="op">~</span> <span class="va">age</span> <span class="op">+</span> <span class="va">educ</span> <span class="op">+</span> <span class="va">re74</span>,</span></span>
+<span class="r-in"><span>                  data <span class="op">=</span> <span class="va">lalonde</span>, method <span class="op">=</span> <span class="st">"cardinality"</span>,</span></span>
+<span class="r-in"><span>                  estimand <span class="op">=</span> <span class="st">"ATE"</span>, ratio <span class="op">=</span> <span class="cn">NA</span>,</span></span>
+<span class="r-in"><span>                  tols <span class="op">=</span> <span class="fl">.15</span>, solver <span class="op">=</span> <span class="va">solver</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">m.out3</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> A matchit object</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  - method: Cardinality matching</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  - number of obs.: 614 (original), 509 (matched)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  - target estimand: ATE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  - covariates: age, educ, re74</span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">m.out3</span>, un <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">m.out3</span>, un <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Call:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> matchit(formula = treat ~ age + educ + re74, data = lalonde, </span>
@@ -293,16 +303,16 @@ matchit(formula,
 <span class="r-out co"><span class="r-pr">#&gt;</span> Unmatched      14      91</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Discarded       0       0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># Pairing after 1:1 cardinality matching:</span></span>
-<span class="r-in"><span class="va">m.out4</span> <span class="op">&lt;-</span> <span class="fu"><a href="matchit.html">matchit</a></span><span class="op">(</span><span class="va">treat</span> <span class="op">~</span> <span class="va">age</span> <span class="op">+</span> <span class="va">educ</span> <span class="op">+</span> <span class="va">re74</span>,</span>
-<span class="r-in">                  data <span class="op">=</span> <span class="va">lalonde</span>, method <span class="op">=</span> <span class="st">"nearest"</span>,</span>
-<span class="r-in">                  distance <span class="op">=</span> <span class="st">"mahalanobis"</span>,</span>
-<span class="r-in">                  discard <span class="op">=</span> <span class="va">m.out1</span><span class="op">$</span><span class="va">weights</span> <span class="op">==</span> <span class="fl">0</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># Note that balance doesn't change but pair distances</span></span>
-<span class="r-in"><span class="co"># are lower for the paired-upon variables</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">m.out4</span>, un <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Pairing after 1:1 cardinality matching:</span></span></span>
+<span class="r-in"><span><span class="va">m.out4</span> <span class="op">&lt;-</span> <span class="fu"><a href="matchit.html">matchit</a></span><span class="op">(</span><span class="va">treat</span> <span class="op">~</span> <span class="va">age</span> <span class="op">+</span> <span class="va">educ</span> <span class="op">+</span> <span class="va">re74</span>,</span></span>
+<span class="r-in"><span>                  data <span class="op">=</span> <span class="va">lalonde</span>, method <span class="op">=</span> <span class="st">"nearest"</span>,</span></span>
+<span class="r-in"><span>                  distance <span class="op">=</span> <span class="st">"mahalanobis"</span>,</span></span>
+<span class="r-in"><span>                  discard <span class="op">=</span> <span class="va">m.out1</span><span class="op">$</span><span class="va">weights</span> <span class="op">==</span> <span class="fl">0</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Note that balance doesn't change but pair distances</span></span></span>
+<span class="r-in"><span><span class="co"># are lower for the paired-upon variables</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">m.out4</span>, un <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Call:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> matchit(formula = treat ~ age + educ + re74, data = lalonde, </span>
@@ -326,7 +336,7 @@ matchit(formula,
 <span class="r-out co"><span class="r-pr">#&gt;</span> Unmatched       0       0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Discarded     244       0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">m.out1</span>, un <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">m.out1</span>, un <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Call:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> matchit(formula = treat ~ age + educ + re74, data = lalonde, </span>
@@ -346,10 +356,10 @@ matchit(formula,
 <span class="r-out co"><span class="r-pr">#&gt;</span> Unmatched     244       0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Discarded       0       0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-in"><span class="co"># In these examples, a high tol was used and</span></span>
-<span class="r-in"><span class="co"># few covariate matched on in order to not take too long;</span></span>
-<span class="r-in"><span class="co"># with real data, tols should be much lower and more</span></span>
-<span class="r-in"><span class="co"># covariates included if possible.</span></span>
+<span class="r-in"><span><span class="co"># In these examples, a high tol was used and</span></span></span>
+<span class="r-in"><span><span class="co"># few covariate matched on in order to not take too long;</span></span></span>
+<span class="r-in"><span><span class="co"># with real data, tols should be much lower and more</span></span></span>
+<span class="r-in"><span><span class="co"># covariates included if possible.</span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -364,7 +374,7 @@ matchit(formula,
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

@@ -28,7 +28,7 @@ matchit(formula,
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">MatchIt</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">4.4.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">4.4.0.9004</span>
       </span>
     </div>
 
@@ -84,13 +84,14 @@ matchit(formula,
     <div class="ref-description">
     <p>In <code><a href="matchit.html">matchit()</a></code>, setting <code>method = "cem"</code> performs coarsened exact matching. With coarsened exact matching, covariates are coarsened into bins, and a complete cross of the coarsened covariates is used to form subclasses defined by each combination of the coarsened covariate levels. Any subclass that doesn't contain both treated and control units is discarded, leaving only subclasses containing treatment and control units that are exactly equal on the coarsened covariates. The coarsening process can be controlled by an algorithm or by manually specifying cutpoints and groupings. The benefits of coarsened exact matching are that the tradeoff between exact matching and approximate balancing can be managed to prevent discarding too many units, which can otherwise occur with exact matching.</p>
 <p>This page details the allowable arguments with <code>method = "cem"</code>. See <code><a href="matchit.html">matchit()</a></code> for an explanation of what each argument means in a general context and how it can be specified.</p>
-<p>Below is how <code><a href="matchit.html">matchit()</a></code> is used for coarsened exact matching:</p><div class="sourceCode"><pre><code><span class="fu"><a href="../reference/matchit.html">matchit</a></span><span class="op">(</span><span class="va">formula</span>,
-        data <span class="op">=</span> <span class="cn">NULL</span>,
-        method <span class="op">=</span> <span class="st">"cem"</span>,
-        estimand <span class="op">=</span> <span class="st">"ATT"</span>,
-        s.weights <span class="op">=</span> <span class="cn">NULL</span>,
-        verbose <span class="op">=</span> <span class="cn">FALSE</span>,
-        <span class="va">...</span><span class="op">)</span></code></pre></div>
+<p>Below is how <code><a href="matchit.html">matchit()</a></code> is used for coarsened exact matching:</p><div class="sourceCode"><pre><code><span></span>
+<span><span class="fu"><a href="../reference/matchit.html">matchit</a></span><span class="op">(</span><span class="va">formula</span>,</span>
+<span>        data <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>        method <span class="op">=</span> <span class="st">"cem"</span>,</span>
+<span>        estimand <span class="op">=</span> <span class="st">"ATT"</span>,</span>
+<span>        s.weights <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>        verbose <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>        <span class="va">...</span><span class="op">)</span></span></code></pre></div>
 
     </div>
 
@@ -99,17 +100,23 @@ matchit(formula,
     <h2>Arguments</h2>
     <dl><dt>formula</dt>
 <dd><p>a two-sided <code><a href="https://rdrr.io/r/stats/formula.html" class="external-link">formula()</a></code> object containing the treatment and covariates to be used in creating the subclasses defined by a full cross of the coarsened covariate levels.</p></dd>
-<dt>data</dt>
+
+  <dt>data</dt>
 <dd><p>a data frame containing the variables named in <code>formula</code>. If not found in <code>data</code>, the variables will be sought in the environment.</p></dd>
-<dt>method</dt>
+
+  <dt>method</dt>
 <dd><p>set here to <code>"cem"</code>.</p></dd>
-<dt>estimand</dt>
+
+  <dt>estimand</dt>
 <dd><p>a string containing the desired estimand. Allowable options include <code>"ATT"</code>, <code>"ATC"</code>, and <code>"ATE"</code>. The estimand controls how the weights are computed; see the Computing Weights section at <code><a href="matchit.html">matchit()</a></code> for details. When <code>k2k = TRUE</code> (see below), <code>estimand</code> also controls how the matching is done.</p></dd>
-<dt>s.weights</dt>
+
+  <dt>s.weights</dt>
 <dd><p>the variable containing sampling weights to be incorporated into balance statistics or the scaling factors when <code>k2k = TRUE</code> and certain methods are used.</p></dd>
-<dt>verbose</dt>
+
+  <dt>verbose</dt>
 <dd><p><code>logical</code>; whether information about the matching process should be printed to the console.</p></dd>
-<dt>...</dt>
+
+  <dt>...</dt>
 <dd><p>additional arguments to control the matching process.</p><dl><dt><code>grouping</code></dt>
 <dd><p>a named list with an (optional) entry for each categorical variable to be matched on. Each element should itself be a list, and each entry of the sublist should be a vector containing levels of the variable that should be combined to form a single level. Any categorical variables not included in <code>grouping</code> will remain as they are in the data, which means exact matching, with no coarsening, will take place on these variables. See Details.</p></dd>
 
@@ -127,6 +134,7 @@ matchit(formula,
 
   
 </dl></dd>
+
 </dl><p>The arguments <code>distance</code> (and related arguments), <code>exact</code>, <code>mahvars</code>, <code>discard</code> (and related arguments), <code>replace</code>, <code>m.order</code>, <code>caliper</code> (and related arguments), and <code>ratio</code> are ignored with a warning.</p>
     </div>
     <div id="outputs">
@@ -142,10 +150,11 @@ matchit(formula,
 <p>The <code>grouping</code> and <code>cutpoints</code> arguments allow one to fine-tune the coarsening of the covariates. <code>grouping</code> is used for combining categories of categorical covariates and <code>cutpoints</code> is used for binning numeric covariates. The values supplied to these arguments should be iteratively changed until a matching solution that balances covariate balance and remaining sample size is obtained. The arguments are described below.</p>
 <p>The argument to <code>grouping</code> must be a list, where each component has the name of a categorical variable, the levels of which are to be combined. Each component must itself be a list; this list contains one or more vectors of levels, where each vector corresponds to the levels that should be combined into a single category. For example, if a variable <code>amount</code> had levels <code>"none"</code>, <code>"some"</code>, and <code>"a lot"</code>, one could enter <code>grouping = list(amount = list(c("none"), c("some", "a lot")))</code>, which would group <code>"some"</code> and <code>"a lot"</code> into a single category and leave <code>"none"</code> in its own category. Any levels left out of the list for each variable will be left alone (so <code>c("none")</code> could have been omitted from the previous code). Note that if a categorical variable does not appear in <code>grouping</code>, it will not be coarsened, so exact matching will take place on it. <code>grouping</code> should not be used for numeric variables; use <code>cutpoints</code>, described below, instead.</p>
 <p>The argument to <code>cutpoints</code> must also be a list, where each component has the name of a numeric variables that is to be binned. (As a shortcut, it can also be a single value that will be applied to all numeric variables). Each component can take one of three forms: a vector of cutpoints that separate the bins, a single number giving the number of bins, or a string corresponding to an algorithm used to compute the number of bins. Any values at a boundary will be placed into the higher bin; e.g., if the cutpoints were <code>(c(0, 5, 10))</code>, values of 5 would be placed into the same bin as values of 6, 7, 8, or 9, and values of 10 would be placed into a different bin. Internally, values of <code>-Inf</code> and <code>Inf</code> are appended to the beginning and end of the range. When given as a single number defining the number of bins, the bin boundaries are the maximum and minimum values of the variable with bin boundaries evenly spaced between them, i.e., not quantiles. A value of 0 will not perform any binning (equivalent to exact matching on the variable), and a value of 1 will remove the variable from the exact matching variables but it will be still used for pair matching when <code>k2k = TRUE</code>. The allowable strings include <code>"sturges"</code>, <code>"scott"</code>, and <code>"fd"</code>, which use the corresponding binning method, and <code>"q#"</code> where <code>#</code> is a number, which splits the variable into <code>#</code> equally-sized bins (i.e., quantiles).</p>
-<p>An example of a way to supply an argument to <code>cutpoints</code> would be the following:</p><div class="sourceCode"><pre><code><span class="va">cutpoints</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>X1 <span class="op">=</span> <span class="fl">4</span>,
-                 X2 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1.7</span>, <span class="fl">5.5</span>, <span class="fl">10.2</span><span class="op">)</span>,
-                 X3 <span class="op">=</span> <span class="st">"scott"</span>,
-                 X4 <span class="op">=</span> <span class="st">"q5"</span><span class="op">)</span></code></pre></div><p>This would split <code>X1</code> into 4 bins, <code>X2</code> into bins based on the provided boundaries, <code>X3</code> into a number of bins determined by <code><a href="https://rdrr.io/r/grDevices/nclass.html" class="external-link">nclass.scott()</a></code>, and <code>X4</code> into quintiles. All other numeric variables would be split into a number of bins determined by <code><a href="https://rdrr.io/r/grDevices/nclass.html" class="external-link">nclass.Sturges()</a></code>, the default.</p>
+<p>An example of a way to supply an argument to <code>cutpoints</code> would be the following:</p><div class="sourceCode"><pre><code><span></span>
+<span><span class="va">cutpoints</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>X1 <span class="op">=</span> <span class="fl">4</span>,</span>
+<span>                 X2 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1.7</span>, <span class="fl">5.5</span>, <span class="fl">10.2</span><span class="op">)</span>,</span>
+<span>                 X3 <span class="op">=</span> <span class="st">"scott"</span>,</span>
+<span>                 X4 <span class="op">=</span> <span class="st">"q5"</span><span class="op">)</span></span></code></pre></div><p>This would split <code>X1</code> into 4 bins, <code>X2</code> into bins based on the provided boundaries, <code>X3</code> into a number of bins determined by <code><a href="https://rdrr.io/r/grDevices/nclass.html" class="external-link">nclass.scott()</a></code>, and <code>X4</code> into quintiles. All other numeric variables would be split into a number of bins determined by <code><a href="https://rdrr.io/r/grDevices/nclass.html" class="external-link">nclass.Sturges()</a></code>, the default.</p>
 </div>
 
     </div>
@@ -174,22 +183,22 @@ matchit(formula,
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"lalonde"</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># Coarsened exact matching on age, race, married, and educ with educ</span></span>
-<span class="r-in"><span class="co"># coarsened into 5 bins and race coarsened into 2 categories,</span></span>
-<span class="r-in"><span class="co"># grouping "white" and "hispan" together</span></span>
-<span class="r-in"><span class="va">m.out1</span> <span class="op">&lt;-</span> <span class="fu"><a href="matchit.html">matchit</a></span><span class="op">(</span><span class="va">treat</span> <span class="op">~</span> <span class="va">age</span> <span class="op">+</span> <span class="va">race</span> <span class="op">+</span> <span class="va">married</span> <span class="op">+</span> <span class="va">educ</span>, data <span class="op">=</span> <span class="va">lalonde</span>,</span>
-<span class="r-in">                  method <span class="op">=</span> <span class="st">"cem"</span>, cutpoints <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>educ <span class="op">=</span> <span class="fl">5</span><span class="op">)</span>,</span>
-<span class="r-in">                  grouping <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>race <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"white"</span>, <span class="st">"hispan"</span><span class="op">)</span>,</span>
-<span class="r-in">                                              <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"black"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">m.out1</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"lalonde"</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Coarsened exact matching on age, race, married, and educ with educ</span></span></span>
+<span class="r-in"><span><span class="co"># coarsened into 5 bins and race coarsened into 2 categories,</span></span></span>
+<span class="r-in"><span><span class="co"># grouping "white" and "hispan" together</span></span></span>
+<span class="r-in"><span><span class="va">m.out1</span> <span class="op">&lt;-</span> <span class="fu"><a href="matchit.html">matchit</a></span><span class="op">(</span><span class="va">treat</span> <span class="op">~</span> <span class="va">age</span> <span class="op">+</span> <span class="va">race</span> <span class="op">+</span> <span class="va">married</span> <span class="op">+</span> <span class="va">educ</span>, data <span class="op">=</span> <span class="va">lalonde</span>,</span></span>
+<span class="r-in"><span>                  method <span class="op">=</span> <span class="st">"cem"</span>, cutpoints <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>educ <span class="op">=</span> <span class="fl">5</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>                  grouping <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>race <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"white"</span>, <span class="st">"hispan"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>                                              <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"black"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">m.out1</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> A matchit object</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  - method: Coarsened exact matching</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  - number of obs.: 614 (original), 393 (matched)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  - target estimand: ATT</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  - covariates: age, race, married, educ</span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">m.out1</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">m.out1</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Call:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> matchit(formula = treat ~ age + race + married + educ, data = lalonde, </span>
@@ -211,7 +220,6 @@ matchit(formula,
 <span class="r-out co"><span class="r-pr">#&gt;</span> racewhite    0.5577</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> married      0.3236</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> educ         0.1114</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Summary of Balance for Matched Data:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>            Means Treated Means Control Std. Mean Diff. Var. Ratio eCDF Mean</span>
@@ -237,22 +245,22 @@ matchit(formula,
 <span class="r-out co"><span class="r-pr">#&gt;</span> Unmatched      185.        36</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Discarded        0.         0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># The same but requesting 1:1 Mahalanobis distance matching with</span></span>
-<span class="r-in"><span class="co"># the k2k and k2k.method argument. Note the remaining number of units</span></span>
-<span class="r-in"><span class="co"># is smaller than when retaining the full matched sample.</span></span>
-<span class="r-in"><span class="va">m.out2</span> <span class="op">&lt;-</span> <span class="fu"><a href="matchit.html">matchit</a></span><span class="op">(</span><span class="va">treat</span> <span class="op">~</span> <span class="va">age</span> <span class="op">+</span> <span class="va">race</span> <span class="op">+</span> <span class="va">married</span> <span class="op">+</span> <span class="va">educ</span>, data <span class="op">=</span> <span class="va">lalonde</span>,</span>
-<span class="r-in">                  method <span class="op">=</span> <span class="st">"cem"</span>, cutpoints <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>educ <span class="op">=</span> <span class="fl">5</span><span class="op">)</span>,</span>
-<span class="r-in">                  grouping <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>race <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"white"</span>, <span class="st">"hispan"</span><span class="op">)</span>,</span>
-<span class="r-in">                                              <span class="st">"black"</span><span class="op">)</span><span class="op">)</span>,</span>
-<span class="r-in">                  k2k <span class="op">=</span> <span class="cn">TRUE</span>, k2k.method <span class="op">=</span> <span class="st">"mahalanobis"</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">m.out2</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># The same but requesting 1:1 Mahalanobis distance matching with</span></span></span>
+<span class="r-in"><span><span class="co"># the k2k and k2k.method argument. Note the remaining number of units</span></span></span>
+<span class="r-in"><span><span class="co"># is smaller than when retaining the full matched sample.</span></span></span>
+<span class="r-in"><span><span class="va">m.out2</span> <span class="op">&lt;-</span> <span class="fu"><a href="matchit.html">matchit</a></span><span class="op">(</span><span class="va">treat</span> <span class="op">~</span> <span class="va">age</span> <span class="op">+</span> <span class="va">race</span> <span class="op">+</span> <span class="va">married</span> <span class="op">+</span> <span class="va">educ</span>, data <span class="op">=</span> <span class="va">lalonde</span>,</span></span>
+<span class="r-in"><span>                  method <span class="op">=</span> <span class="st">"cem"</span>, cutpoints <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>educ <span class="op">=</span> <span class="fl">5</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>                  grouping <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>race <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"white"</span>, <span class="st">"hispan"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>                                              <span class="st">"black"</span><span class="op">)</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>                  k2k <span class="op">=</span> <span class="cn">TRUE</span>, k2k.method <span class="op">=</span> <span class="st">"mahalanobis"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">m.out2</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> A matchit object</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  - method: Coarsened exact matching</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  - number of obs.: 614 (original), 170 (matched)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  - target estimand: ATT</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  - covariates: age, race, married, educ</span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">m.out2</span>, un <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">m.out2</span>, un <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Call:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> matchit(formula = treat ~ age + race + married + educ, data = lalonde, </span>
@@ -296,7 +304,7 @@ matchit(formula,
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>
