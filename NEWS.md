@@ -8,6 +8,8 @@ output:
 
 # MatchIt (development version)
 
+* When `method = "subclass"` and `min.n = 0` (which is not the default), any units not placed into a subclass are now considered "unmatched" and given weights of 0. Previously they were left in.
+
 * The error message when covariates have missing or non-finite values is now clearer, identifying which variables are afflicted. This fixes a bug mentioned in #115.
 
 * Fixed a bug when using `matchit()` with `method = "cem"`, `k2k = TRUE`, and `k2k.method = NULL`. Thanks to Florian B. Mayr.

@@ -1087,20 +1087,24 @@ matchit2subclass <- function(treat, distance, discarded,
   psclass <- setNames(rep(NA_integer_, n.obs), names(treat))
   psclass[!discarded] <- as.integer(findInterval(distance[!discarded], q, all.inside = TRUE))
 
-  ## If any subclasses don't have members of a treatment group, fill them
-  ## by "scooting" units from nearby subclasses until each subclass has a unit
-  ## from each treatment group
-  if (any(table(treat, psclass) < min.n)) {
+  if (length(unique(na.omit(psclass))) != subclass){
+    warning("Due to discreteness in the distance measure, fewer subclasses were generated than were requested.", call.=FALSE)
+  }
+
+  if (min.n == 0) {
+    ## If any subclass are missing treated or control units, set all to NA
+    is.na(psclass)[!discarded & !psclass %in% intersect(psclass[!discarded & treat == 1],
+                                                        psclass[!discarded & treat == 0])] <- TRUE
+  }
+  else if (any(table(treat, psclass) < min.n)) {
+    ## If any subclasses don't have members of a treatment group, fill them
+    ## by "scooting" units from nearby subclasses until each subclass has a unit
+    ## from each treatment group
     psclass[!discarded] <- subclass_scoot(psclass[!discarded], treat[!discarded], distance[!discarded], min.n)
   }
 
   psclass <- setNames(factor(psclass, nmax = length(q)), names(treat))
-
-  #warning for discrete data
-
-  if (nlevels(psclass) != subclass){
-    warning("Due to discreteness in the distance measure, fewer subclasses were generated than were requested.", call.=FALSE)
-  }
+  levels(psclass) <- as.character(seq_len(nlevels(psclass)))
 
   if (verbose) cat("Calculating matching weights... ")
 

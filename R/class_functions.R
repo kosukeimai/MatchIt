@@ -603,7 +603,8 @@ summary.matchit.subclass <- function(object, interactions = FALSE,
   if (isTRUE(which.subclass)) which.subclass <- subclasses
   else if (isFALSE(which.subclass)) which.subclass <- NULL
   else if (!is.atomic(which.subclass) || !all(which.subclass %in% seq_along(subclasses))) {
-    stop("'subclass' should be TRUE, FALSE, or a vector of subclass indices for which subclass balance is to be displayed.")
+    stop("'subclass' should be TRUE, FALSE, or a vector of subclass indices for which subclass balance is to be displayed.",
+         call. = FALSE)
   }
   else which.subclass <- subclasses[which.subclass]
 
@@ -767,22 +768,22 @@ summary.matchit.subclass <- function(object, interactions = FALSE,
   qn <- qn(treat, subclass, object$discarded)
   nn <- nn(treat, weights, object$discarded, s.weights)
 
-  if (subs) {
-    small.subclass.control <- which.subclass[qn["Control", as.character(which.subclass)] <= 1]
-    if (length(small.subclass.control) > 0) {
-      if (length(small.subclass.control) == 1) warning(paste0("Not enough control units in subclass ", small.subclass.control, "."), call.= FALSE)
-      else warning(paste0("Not enough control units in subclasses ", word_list(small.subclass.control), "."), call.= FALSE)
-    }
-
-    small.subclass.treated <- which.subclass[qn["Treated", as.character(which.subclass)] <= 1]
-    if (length(small.subclass.treated) > 0) {
-      if (length(small.subclass.treated) == 1) warning(paste0("Not enough treated units in subclass ", small.subclass.treated, "."), call.= FALSE)
-      else warning(paste0("Not enough treated units in subclasses ", word_list(small.subclass.treated), "."), call.= FALSE)
-    }
-  }
+  # if (subs) {
+  #   small.subclass.control <- which.subclass[qn["Control", as.character(which.subclass)] <= 1]
+  #   if (length(small.subclass.control) > 0) {
+  #     if (length(small.subclass.control) == 1) warning(paste0("Not enough control units in subclass ", small.subclass.control, "."), call.= FALSE)
+  #     else warning(paste0("Not enough control units in subclasses ", word_list(small.subclass.control), "."), call. = FALSE)
+  #   }
+  #
+  #   small.subclass.treated <- which.subclass[qn["Treated", as.character(which.subclass)] <= 1]
+  #   if (length(small.subclass.treated) > 0) {
+  #     if (length(small.subclass.treated) == 1) warning(paste0("Not enough treated units in subclass ", small.subclass.treated, "."), call.= FALSE)
+  #     else warning(paste0("Not enough treated units in subclasses ", word_list(small.subclass.treated), "."), call. = FALSE)
+  #   }
+  # }
 
   ## output
-  res <- list(call=object$call, sum.all = sum.all, sum.across = sum.matched,
+  res <- list(call = object$call, sum.all = sum.all, sum.across = sum.matched,
               sum.subclass = sum.subclass, reduction = reduction,
               qn = qn, nn = nn)
   class(res) <- c("summary.matchit.subclass", "summary.matchit")
