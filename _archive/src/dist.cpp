@@ -52,3 +52,18 @@ NumericMatrix distC2(NumericMatrix x, NumericMatrix y){
   }
   return out;
 }
+
+// [[Rcpp::export]]
+NumericMatrix distC2a(const SEXP& X, const SEXP& Y){
+  NumericMatrix x(X), y(Y);
+  NumericMatrix out(x.nrow(), y.nrow());
+  int i, j;
+
+  for (i = 0; i < x.nrow(); i++){
+    for (j = 0; j < y.nrow(); j++) {
+      out(i, j) = sqrt(sum(pow(x.row(i) - y.row(j), 2)));
+    }
+  }
+  return out;
+}
+

@@ -14,6 +14,7 @@ Computes and prints balance statistics for \code{matchit} and \code{matchit.subc
         addlvariables = NULL, standardize = TRUE,
         data = NULL, pair.dist = TRUE, un = TRUE,
         improvement = FALSE, ...)
+
 \method{summary}{matchit.subclass}(object, interactions = FALSE,
         addlvariables = NULL, standardize = TRUE,
         data = NULL, pair.dist = FALSE, subclass = FALSE,
@@ -21,6 +22,7 @@ Computes and prints balance statistics for \code{matchit} and \code{matchit.subc
 
 \method{print}{summary.matchit}(x, digits = max(3, getOption("digits") - 3),
       ...)
+
 \method{print}{summary.matchit.subclass}(x, digits = max(3, getOption("digits") - 3),
       ...)
 }

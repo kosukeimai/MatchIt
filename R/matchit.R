@@ -88,10 +88,8 @@ matchit <- function(formula, data = NULL, method = "nearest", distance = "glm",
 
   #Process distance function
   is.full.mahalanobis <- FALSE
-  if (!is.null(method) && method %in% c("exact", "cem", "cardinality")) {
-    fn1 <- NULL
-  }
-  else {
+  fn1 <- NULL
+  if (is.null(method) || !method %in% c("exact", "cem", "cardinality")) {
     distance <- process.distance(distance, method, treat)
 
     if (is.numeric(distance)) {
@@ -105,6 +103,28 @@ matchit <- function(formula, data = NULL, method = "nearest", distance = "glm",
     else {
       fn1 <- paste0("distance2", distance)
     }
+  }
+
+  #Process covs
+  if (!is.null(fn1) && fn1 == "distance2gam") {
+    check.package("mgcv")
+    env <- environment(formula)
+    covs.formula <- mgcv::interpret.gam(formula)$fake.formula
+    environment(covs.formula) <- env
+    covs.formula <- delete.response(terms(covs.formula, data = data))
+  }
+  else {
+    covs.formula <- delete.response(terms(formula, data = data))
+  }
+  covs <- model.frame(covs.formula, data = data, na.action = "na.pass")
+  k <- ncol(covs)
+  for (i in seq_len(k)) {
+    if (anyNA(covs[[i]]) || any(!is.finite(covs[[i]]))) {
+      covariates.with.missingness <- names(covs)[i:k][vapply(i:k, function(j) anyNA(covs[[j]]) || any(!is.finite(covs[[j]])), logical(1L))]
+      stop(paste0("Missing and non-finite values are not allowed in the covariates. Covariates with missingness or non-finite values:\n\t",
+                  paste(covariates.with.missingness, collapse = ", ")), call. = FALSE)
+    }
+    if (is.character(covs[[i]])) covs[[i]] <- factor(covs[[i]])
   }
 
   #Process exact, mahvars, and antiexact
@@ -157,15 +177,6 @@ matchit <- function(formula, data = NULL, method = "nearest", distance = "glm",
       formula <- mgcv::interpret.gam(formula)$fake.formula
       environment(formula) <- env
     }
-  }
-
-  #Process covs
-  covs.formula <- delete.response(terms(formula, data = data))
-  covs <- model.frame(covs.formula, data = data, na.action = "na.pass")
-  for (i in seq_len(ncol(covs))) {
-    if (anyNA(covs[[i]])) stop("Missing values are not allowed in the covariates.", call. = FALSE)
-    if (is.character(covs[[i]])) covs[[i]] <- factor(covs[[i]])
-    else if (any(!is.finite(covs[[i]]))) stop("Non-finite values are not allowed in the covariates.", call. = FALSE)
   }
 
   #Process discard
@@ -252,4 +263,67 @@ matchit <- function(formula, data = NULL, method = "nearest", distance = "glm",
 
   class(out) <- class(match.out)
   return(out)
+}
+
+print.matchit <- function(x, ...) {
+  info <- x[["info"]]
+  cal <- !is.null(x[["caliper"]])
+  dis <- c("both", "control", "treat")[pmatch(info$discard, c("both", "control", "treat"), 0L)]
+  disl <- length(dis) > 0
+  nm <- is.null(x[["method"]])
+  cat("A matchit object")
+  cat(paste0("\n - method: ", info.to.method(info)))
+
+  if (!is.null(info$distance) || info$mahalanobis) {
+    cat("\n - distance: ")
+    if (info$mahalanobis) {
+      if (is.null(info$transform)) #mahvars used
+        cat("Mahalanobis")
+      else {
+        cat(capwords(gsub("_", " ", info$transform, fixed = TRUE)))
+      }
+    }
+    if (!is.null(info$distance) && !info$distance %in% matchit_distances()) {
+      if (info$mahalanobis) cat(" [matching]\n             ")
+
+      if (info$distance_is_matrix) cat("User-defined (matrix)")
+      else if (info$distance != "user") cat("Propensity score")
+      else if (!is.null(attr(info$distance, "custom"))) cat(attr(info$distance, "custom"))
+      else cat("User-defined")
+
+      if (cal || disl) {
+        cal.ps <- "" %in% names(x[["caliper"]])
+        cat(" [")
+        cat(paste(c("matching", "subclassification", "caliper", "common support")[c(!nm && !info$mahalanobis && info$method != "subclass", !nm && info$method == "subclass", cal.ps, disl)], collapse = ", "))
+        cat("]")
+      }
+      if (info$distance != "user") {
+        cat("\n             - estimated with ")
+        cat(info.to.distance(info))
+        if (!is.null(x[["s.weights"]])) {
+          if (isTRUE(attr(x[["s.weights"]], "in_ps")))
+            cat("\n             - sampling weights included in estimation")
+          else cat("\n             - sampling weights not included in estimation")
+        }
+      }
+    }
+  }
+  if (cal) {
+    cat(paste0("\n - caliper: ", paste(vapply(seq_along(x[["caliper"]]), function(z) paste0(if (names(x[["caliper"]])[z] == "") "<distance>" else names(x[["caliper"]])[z],
+                                                                                            " (", format(round(x[["caliper"]][z], 3)), ")"), character(1L)),
+                                       collapse = ", ")))
+  }
+  if (disl) {
+    cat("\n - common support: ")
+    if (dis == "both") cat("units from both groups")
+    else if (dis == "treat") cat("treated units")
+    else if (dis == "control") cat("control units")
+    cat(" dropped")
+  }
+  cat(paste0("\n - number of obs.: ", length(x[["treat"]]), " (original)", if (!all(x[["weights"]] == 1)) paste0(", ", sum(x[["weights"]] != 0), " (matched)")))
+  if (!is.null(x[["s.weights"]])) cat("\n - sampling weights: present")
+  if (!is.null(x[["estimand"]])) cat(paste0("\n - target estimand: ", x[["estimand"]]))
+  if (!is.null(x[["X"]])) cat(paste0("\n - covariates: ", ifelse(length(names(x[["X"]])) > 40, "too many to name", paste(names(x[["X"]]), collapse = ", "))))
+  cat("\n")
+  invisible(x)
 }

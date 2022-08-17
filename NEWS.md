@@ -8,9 +8,23 @@ output:
 
 # MatchIt (development version)
 
+* When `method = "subclass"` and `min.n = 0` (which is not the default), any units not placed into a subclass are now considered "unmatched" and given weights of 0. Previously they were left in.
+
+* The error message when covariates have missing or non-finite values is now clearer, identifying which variables are afflicted. This fixes a bug mentioned in #115.
+
 * Fixed a bug when using `matchit()` with `method = "cem"`, `k2k = TRUE`, and `k2k.method = NULL`. Thanks to Florian B. Mayr.
 
+* Fixed a bug when using `method = "optimal"` and `method = "full"` with `exact` and `antiexact` specified, wherein a warning would occur about the `drop` argument in subsetting.
+
+* Fixed a bug where `antiexact` would not work correctly with `method = "nearest"`. Thanks to @gli-1. (#119)
+
 * Fixed typos in the documentation and vignettes.
+
+* Improved printing of balance results when no covariates are supplied.
+
+* Updates to the Estimating Effects vignette (`vignette("estimating-effects")`) that dramatically increase the speed of the cluster bootstrap for average marginal effects after matching. Thanks to Yohei Hashimoto for pointing out the inefficiency.
+
+* The source code has been reorganized.
 
 # MatchIt 4.4.0
 
