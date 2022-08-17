@@ -20,6 +20,12 @@ output:
 
 * Fixed typos in the documentation and vignettes.
 
+* Improved printing of balance results when no covariates are supplied.
+
+* Updates to the Estimating Effects vignette (`vignette("estimating-effects")`) that dramatically increase the speed of the cluster bootstrap for average marginal effects after matching. Thanks to Yohei Hashimoto for pointing out the inefficiency.
+
+* The source code has been reorganized.
+
 # MatchIt 4.4.0
 
 * `optmatch` has returned to CRAN, now with an open-source license! A new `solver` argument can be passed to `matchit()` with `method = "full"` and `method = "optimal"` to control the solver used to perform the optimization used in the matching. Note that using the default (open source) solver LEMON may yield results different from those obtained prior to `optmatch` 0.10.0. For reproducibility questions, please contact the `optmatch` maintainers.
