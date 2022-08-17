@@ -1,349 +1,4 @@
-### PLOT METHODS-------------------------------------------
-
-plot.matchit <- function(x, type = "qq", interactive = TRUE, which.xs = NULL, ...) {
-
-  type <- tolower(type)
-  type <- match_arg(type, c("qq", "ecdf", "density", "jitter", "histogram"))
-
-  if (type %in% c("qq", "ecdf", "density")) {
-    matchit.covplot(x, type = type, interactive=interactive,
-                    which.xs = which.xs, ...)
-  }
-  else if (type == "jitter") {
-    if (is.null(x$distance)) {
-      stop("type = \"jitter\" cannot be used if a distance measure is not estimated or supplied. No plots generated.", call. = FALSE)
-    }
-    jitter.pscore(x, interactive = interactive,...)
-  }
-  else if (type =="histogram") {
-    if (is.null(x$distance)) {
-      stop("type = \"hist\" cannot be used if a distance measure is not estimated or supplied. No plots generated.", call. = FALSE)
-    }
-    hist.pscore(x,...)
-  }
-}
-
-plot.matchit.subclass <- function(x, type = "qq", interactive = TRUE, which.xs = NULL, subclass, ...) {
-  choice.menu <- function(choices, question) {
-    k <- length(choices)-1
-    Choices <- data.frame(choices)
-    row.names(Choices) <- 0:k
-    names(Choices) <- "Choices"
-    print.data.frame(Choices, right=FALSE)
-    ans <- readline(question)
-    while (!ans %in% 0:k) {
-      message("Not valid -- please pick one of the choices")
-      print.data.frame(Choices, right=FALSE)
-      ans <- readline(question)
-    }
-    return(ans)
-  }
-
-  type <- tolower(type)
-  type <- match_arg(type, c("qq", "ecdf", "density", "jitter", "histogram"))
-
-  if (type %in% c("qq", "ecdf", "density")) {
-    #If subclass = T, index, or range, display all or range of subclasses, using interactive to advance
-    #If subclass = F, display aggregate across subclass, using interactive to advance
-    #If subclass = NULL, if interactive, use to choose subclass, else display aggregate across subclass
-
-    subclasses <- levels(x$subclass)
-    miss.sub <- missing(subclass) || is.null(subclass)
-    if (miss.sub || isFALSE(subclass)) which.subclass <- NULL
-    else if (isTRUE(subclass)) which.subclass <- subclasses
-    else if (!is.atomic(subclass) || !all(subclass %in% seq_along(subclasses))) {
-      stop("'subclass' should be TRUE, FALSE, or a vector of subclass indices for which subclass balance is to be displayed.",
-           call. = FALSE)
-    }
-    else which.subclass <- subclasses[subclass]
-
-    if (!is.null(which.subclass)) {
-      matchit.covplot.subclass(x, type = type, which.subclass = which.subclass,
-                               interactive = interactive, which.xs = which.xs, ...)
-    }
-    else if (interactive && miss.sub) {
-      subclasses <- levels(x$subclass)
-      choices <- c("No (Exit)", paste0("Yes: Subclass ", subclasses), "Yes: In aggregate")
-      plot.name <- switch(type, "qq" = "quantile-quantile", "ecdf" = "empirical CDF", "density" = "density")
-      question <- paste("Would you like to see", plot.name, "plots of any subclasses? ")
-      ans <- -1
-      while(ans != 0) {
-        ans <- as.numeric(choice.menu(choices, question))
-        if (ans %in% seq_along(subclasses) && any(x$subclass == subclasses[ans])) {
-          matchit.covplot.subclass(x, type = type, which.subclass = subclasses[ans],
-                                   interactive = interactive, which.xs = which.xs, ...)
-        }
-        else if (ans != 0) {
-          matchit.covplot(x, type = type, interactive = interactive, which.xs = which.xs, ...)
-        }
-      }
-    }
-    else {
-      matchit.covplot(x, type = type, interactive = interactive, which.xs = which.xs, ...)
-    }
-  }
-  else if (type=="jitter") {
-    if (is.null(x$distance)) {
-      stop("type = \"jitter\" cannot be used when no distance variable was estimated or supplied.", call. = FALSE)
-    }
-    jitter.pscore(x, interactive = interactive, ...)
-  }
-  else if (type == "histogram") {
-    if (is.null(x$distance)) {
-      stop("type = \"histogram\" cannot be used when no distance variable was estimated or supplied.", call. = FALSE)
-    }
-    hist.pscore(x,...)
-  }
-  invisible(x)
-}
-
-plot.summary.matchit <- function(x, abs = TRUE, var.order = "data", threshold = c(.1, .05), position = "bottomright", ...) {
-
-  .pardefault <- par(no.readonly = TRUE)
-  on.exit(par(.pardefault))
-
-  sub <- inherits(x, "summary.matchit.subclass")
-  matched <- sub || !is.null(x[["sum.matched"]])
-  un <- !is.null(x[["sum.all"]])
-
-  standard.sum <- if (un) x[["sum.all"]] else x[[if (sub) "sum.across" else "sum.matched"]]
-
-  if (!"Std. Mean Diff." %in% colnames(standard.sum)) {
-    stop("Not appropriate for unstandardized summary.  Run summary() with the standardize = TRUE option, and then plot.", call. = FALSE)
-  }
-
-  if (un) {
-    sd.all <- x[["sum.all"]][,"Std. Mean Diff."]
-  }
-  if (matched) {
-    sd.matched <- x[[if (sub) "sum.across" else "sum.matched"]][,"Std. Mean Diff."]
-  }
-
-  var.names <- rownames(standard.sum)
-
-  var.order <- match_arg(var.order, c("data", "matched", "unmatched", "alphabetical"))
-
-  if (!un && var.order == "unmatched") stop("'var.order' cannot be \"unmatched\" if un = TRUE in the call to summary().", call. = FALSE)
-  if (!matched && var.order == "matched") stop("'var.order' cannot be \"matched\" if method = NULL in the original call to matchit().", call. = FALSE)
-
-  if (abs) {
-    if (un) sd.all <- abs(sd.all)
-    if (matched) sd.matched <- abs(sd.matched)
-    xlab <- "Absolute Standardized\nMean Difference"
-  }
-  else {
-    xlab <- "Standardized Mean Difference"
-  }
-
-  ord <- switch(var.order,
-                "data" = rev(seq_along(var.names)),
-                "matched" = order(sd.matched),
-                "unmatched" = order(sd.all),
-                "alphabetical" = order(var.names, decreasing = TRUE))
-
-  dotchart(if (un) sd.all[ord] else sd.matched[ord],
-           labels = var.names[ord], xlab = xlab,
-           bg = NA, color = NA, ...)
-  abline(v = 0)
-
-  if (sub && length(x$sum.subclass) > 0) {
-    for (i in seq_along(x$sum.subclass)) {
-      sd.sub <- x$sum.subclass[[i]][,"Std. Mean Diff."]
-      if (abs) sd.sub <- abs(sd.sub)
-      points(x = sd.sub[ord], y = seq_along(sd.sub),
-             pch = as.character(i), col = "gray60", cex = .6)
-    }
-  }
-
-  if (un) {
-    points(x = sd.all[ord], y = seq_along(sd.all),
-           pch = 21, bg = "white", col = "black")
-  }
-  if (matched) {
-    points(x = sd.matched[ord], y = seq_along(sd.matched),
-           pch = 21, bg = "black", col = "black")
-  }
-
-  if (!is.null(threshold)) {
-    if (abs) {
-      abline(v = threshold, lty = seq_along(threshold))
-    }
-    else {
-      abline(v = threshold, lty = seq_along(threshold))
-      abline(v = -threshold, lty = seq_along(threshold))
-    }
-  }
-
-  if (sum(matched, un) > 1 && !is.null(position)) {
-    position <- match_arg(position, c("bottomright", "bottom", "bottomleft", "left",
-                                      "topleft", "top", "topright", "right", "center"))
-    legend(position, legend = c("All", "Matched"),
-           pt.bg = c("white", "black"), pch = 21,
-           inset = .015, xpd = TRUE)
-  }
-  invisible(x)
-}
-
-### PRINT METHODS------------------------------------------
-
-print.matchit <- function(x, ...) {
-  info <- x[["info"]]
-  cal <- !is.null(x[["caliper"]])
-  dis <- c("both", "control", "treat")[pmatch(info$discard, c("both", "control", "treat"), 0L)]
-  disl <- length(dis) > 0
-  nm <- is.null(x[["method"]])
-  cat("A matchit object")
-  cat(paste0("\n - method: ", info.to.method(info)))
-
-  if (!is.null(info$distance) || info$mahalanobis) {
-    cat("\n - distance: ")
-    if (info$mahalanobis) {
-      if (is.null(info$transform)) #mahvars used
-        cat("Mahalanobis")
-      else {
-        cat(capwords(gsub("_", " ", info$transform, fixed = TRUE)))
-      }
-    }
-    if (!is.null(info$distance) && !info$distance %in% matchit_distances()) {
-      if (info$mahalanobis) cat(" [matching]\n             ")
-
-      if (info$distance_is_matrix) cat("User-defined (matrix)")
-      else if (info$distance != "user") cat("Propensity score")
-      else if (!is.null(attr(info$distance, "custom"))) cat(attr(info$distance, "custom"))
-      else cat("User-defined")
-
-      if (cal || disl) {
-        cal.ps <- "" %in% names(x[["caliper"]])
-        cat(" [")
-        cat(paste(c("matching", "subclassification", "caliper", "common support")[c(!nm && !info$mahalanobis && info$method != "subclass", !nm && info$method == "subclass", cal.ps, disl)], collapse = ", "))
-        cat("]")
-      }
-      if (info$distance != "user") {
-        cat("\n             - estimated with ")
-        cat(info.to.distance(info))
-        if (!is.null(x[["s.weights"]])) {
-          if (isTRUE(attr(x[["s.weights"]], "in_ps")))
-            cat("\n             - sampling weights included in estimation")
-          else cat("\n             - sampling weights not included in estimation")
-        }
-      }
-    }
-  }
-  if (cal) {
-    cat(paste0("\n - caliper: ", paste(vapply(seq_along(x[["caliper"]]), function(z) paste0(if (names(x[["caliper"]])[z] == "") "<distance>" else names(x[["caliper"]])[z],
-                                                                                            " (", format(round(x[["caliper"]][z], 3)), ")"), character(1L)),
-                                       collapse = ", ")))
-  }
-  if (disl) {
-    cat("\n - common support: ")
-    if (dis == "both") cat("units from both groups")
-    else if (dis == "treat") cat("treated units")
-    else if (dis == "control") cat("control units")
-    cat(" dropped")
-  }
-  cat(paste0("\n - number of obs.: ", length(x[["treat"]]), " (original)", if (!all(x[["weights"]] == 1)) paste0(", ", sum(x[["weights"]] != 0), " (matched)")))
-  if (!is.null(x[["s.weights"]])) cat("\n - sampling weights: present")
-  if (!is.null(x[["estimand"]])) cat(paste0("\n - target estimand: ", x[["estimand"]]))
-  if (!is.null(x[["X"]])) cat(paste0("\n - covariates: ", ifelse(length(names(x[["X"]])) > 40, "too many to name", paste(names(x[["X"]]), collapse = ", "))))
-  cat("\n")
-  invisible(x)
-}
-
-print.summary.matchit <- function(x, digits = max(3, getOption("digits") - 3), ...){
-
-  if (!is.null(x$call)) cat("\nCall:", deparse(x$call), sep = "\n")
-
-  if (!is.null(x$sum.all)) {
-    cat("\nSummary of Balance for All Data:\n")
-    print(round_df_char(x$sum.all[,-7, drop = FALSE], digits, pad = "0", na_vals = "."),
-          right = TRUE, quote = FALSE)
-  }
-
-  if (!is.null(x$sum.matched)) {
-    cat("\nSummary of Balance for Matched Data:\n")
-    if (all(is.na(x$sum.matched[,7]))) x$sum.matched <- x$sum.matched[,-7,drop = FALSE] #Remove pair dist if empty
-    print(round_df_char(x$sum.matched, digits, pad = "0", na_vals = "."),
-          right = TRUE, quote = FALSE)
-  }
-  if (!is.null(x$reduction)) {
-    cat("\nPercent Balance Improvement:\n")
-    print(round_df_char(x$reduction[,-5, drop = FALSE], 1, pad = "0", na_vals = "."), right = TRUE,
-          quote = FALSE)
-  }
-  if (!is.null(x$nn)) {
-    cat("\nSample Sizes:\n")
-    nn <- x$nn
-    if (isTRUE(all.equal(nn["All (ESS)",], nn["All",]))) {
-      #Don't print ESS if same as full SS
-      nn <- nn[rownames(nn) != "All (ESS)",,drop = FALSE]
-    }
-    if (isTRUE(all.equal(nn["Matched (ESS)",], nn["Matched",]))) {
-      #Don't print ESS if same as matched SS
-      nn <- nn[rownames(nn) != "Matched (ESS)",,drop = FALSE]
-    }
-    print(round_df_char(nn, 2, pad = " ", na_vals = "."), right = TRUE,
-          quote = FALSE)
-  }
-  cat("\n")
-  invisible(x)
-}
-
-print.summary.matchit.subclass <- function(x, digits = max(3, getOption("digits") -  3), ...){
-
-  if (!is.null(x$call)) cat("\nCall:", deparse(x$call), sep = "\n")
-
-  if (!is.null(x$sum.all)) {
-    cat("\nSummary of Balance for All Data:\n")
-    print(round_df_char(x$sum.all[,-7, drop = FALSE], digits, pad = "0", na_vals = "."),
-          right = TRUE, quote = FALSE)
-  }
-
-  if (length(x$sum.subclass) > 0) {
-    cat("\nSummary of Balance by Subclass:\n")
-    for (s in seq_along(x$sum.subclass)) {
-      cat(paste0("\n- ", names(x$sum.subclass)[s], "\n"))
-      print(round_df_char(x$sum.subclass[[s]][,-7, drop = FALSE], digits, pad = "0", na_vals = "."),
-            right = TRUE, quote = FALSE)
-    }
-    if (!is.null(x$qn)) {
-      cat("\nSample Sizes by Subclass:\n")
-      print(round_df_char(x$qn, 2, pad = " ", na_vals = "."),
-            right = TRUE, quote = FALSE)
-    }
-  }
-  else {
-    if (!is.null(x$sum.across)) {
-      cat("\nSummary of Balance Across Subclasses\n")
-      if (all(is.na(x$sum.across[,7]))) x$sum.across <- x$sum.across[,-7,drop = FALSE]
-      print(round_df_char(x$sum.across, digits, pad = "0", na_vals = "."),
-            right = TRUE, quote = FALSE)
-    }
-    if (!is.null(x$reduction)) {
-      cat("\nPercent Balance Improvement:\n")
-      print(round_df_char(x$reduction[,-5, drop = FALSE], 1, pad = "0", na_vals = "."),
-            right = TRUE, quote = FALSE)
-    }
-
-    if (!is.null(x$nn)) {
-      cat("\nSample Sizes:\n")
-      nn <- x$nn
-      if (isTRUE(all.equal(nn["All (ESS)",], nn["All",]))) {
-        #Don't print ESS if same as full SS
-        nn <- nn[rownames(nn) != "All (ESS)",,drop = FALSE]
-      }
-      if (isTRUE(all.equal(nn["Matched (ESS)",], nn["Matched",]))) {
-        #Don't print ESS if same as matched SS
-        nn <- nn[rownames(nn) != "Matched (ESS)",,drop = FALSE]
-      }
-      print(round_df_char(nn, 2, pad = " ", na_vals = "."),
-            right = TRUE, quote = FALSE)
-    }
-  }
-  cat("\n")
-}
-
-### SUMMARY METHODS----------------------------------------
-
+## summary methods----
 summary.matchit <- function(object, interactions = FALSE,
                             addlvariables = NULL, standardize = TRUE,
                             data = NULL, pair.dist = TRUE, un = TRUE, improvement = FALSE, ...) {
@@ -639,7 +294,7 @@ summary.matchit.subclass <- function(object, interactions = FALSE,
 
   if (un) {
     aa.all <- setNames(lapply(seq_len(kk), function(i) bal1var(X[,i], tt = treat, ww = NULL, s.weights = s.weights,
-                                                           standardize = standardize, s.d.denom = s.d.denom)),
+                                                               standardize = standardize, s.d.denom = s.d.denom)),
                        colnames(X))
     sum.all <- do.call("rbind", aa.all)
     dimnames(sum.all) <- list(nam, names(aa.all[[1]]))
@@ -649,8 +304,8 @@ summary.matchit.subclass <- function(object, interactions = FALSE,
 
   if (matched) {
     aa.matched <- setNames(lapply(seq_len(kk), function(i) bal1var(X[,i], tt = treat, ww = weights, s.weights = s.weights,
-                                                               subclass = subclass, standardize = standardize,
-                                                               s.d.denom = s.d.denom, compute.pair.dist = pair.dist)),
+                                                                   subclass = subclass, standardize = standardize,
+                                                                   s.d.denom = s.d.denom, compute.pair.dist = pair.dist)),
                            colnames(X))
     sum.matched <- do.call("rbind", aa.matched)
     dimnames(sum.matched) <- list(nam, names(aa.matched[[1]]))
@@ -676,12 +331,12 @@ summary.matchit.subclass <- function(object, interactions = FALSE,
         else {
           if (un) {
             sum.all.int[k,] <- bal1var(x2, tt = treat, ww = NULL, s.weights = s.weights,
-                                   standardize = standardize, s.d.denom = s.d.denom)
+                                       standardize = standardize, s.d.denom = s.d.denom)
           }
           if (matched) {
             sum.matched.int[k,] <- bal1var(x2, tt = treat, ww = weights, s.weights = s.weights,
-                                       subclass = subclass, standardize = standardize,
-                                       compute.pair.dist = pair.dist)
+                                           subclass = subclass, standardize = standardize,
+                                           compute.pair.dist = pair.dist)
           }
           if (i == j) {
             int.names[k] <- paste0(nam[i], "\u00B2")
@@ -707,14 +362,14 @@ summary.matchit.subclass <- function(object, interactions = FALSE,
   if (!is.null(object$distance)) {
     if (un) {
       ad.all <- bal1var(object$distance, tt = treat, ww = NULL, s.weights = s.weights,
-                    standardize = standardize, s.d.denom = s.d.denom)
+                        standardize = standardize, s.d.denom = s.d.denom)
       sum.all <- rbind(ad.all, sum.all)
       rownames(sum.all)[1] <- "distance"
     }
     if (matched) {
       ad.matched <- bal1var(object$distance, tt = treat, ww = weights, s.weights = s.weights,
-                        subclass = subclass, standardize = standardize,
-                        s.d.denom = s.d.denom, compute.pair.dist = pair.dist)
+                            subclass = subclass, standardize = standardize,
+                            s.d.denom = s.d.denom, compute.pair.dist = pair.dist)
       sum.matched <- rbind(ad.matched, sum.matched)
       rownames(sum.matched)[1] <- "distance"
     }
@@ -774,7 +429,7 @@ summary.matchit.subclass <- function(object, interactions = FALSE,
 
       if (!is.null(object$distance)) {
         ad <- bal1var.subclass(object$distance, tt = treat, s.weights = s.weights, subclass = subclass,
-                           s.d.denom = s.d.denom, standardize = standardize, which.subclass = s)
+                               s.d.denom = s.d.denom, standardize = standardize, which.subclass = s)
         sum.sub <- rbind(ad, sum.sub)
         rownames(sum.sub)[1] <- "distance"
       }
@@ -808,4 +463,188 @@ summary.matchit.subclass <- function(object, interactions = FALSE,
               qn = qn, nn = nn)
   class(res) <- c("summary.matchit.subclass", "summary.matchit")
   return(res)
+}
+
+## print methods for summary----
+
+print.summary.matchit <- function(x, digits = max(3, getOption("digits") - 3), ...){
+
+  if (!is.null(x$call)) cat("\nCall:", deparse(x$call), sep = "\n")
+
+  if (!is.null(x$sum.all)) {
+    cat("\nSummary of Balance for All Data:\n")
+    print(round_df_char(x$sum.all[,-7, drop = FALSE], digits, pad = "0", na_vals = "."),
+          right = TRUE, quote = FALSE)
+  }
+
+  if (!is.null(x$sum.matched)) {
+    cat("\nSummary of Balance for Matched Data:\n")
+    if (all(is.na(x$sum.matched[,7]))) x$sum.matched <- x$sum.matched[,-7,drop = FALSE] #Remove pair dist if empty
+    print(round_df_char(x$sum.matched, digits, pad = "0", na_vals = "."),
+          right = TRUE, quote = FALSE)
+  }
+  if (!is.null(x$reduction)) {
+    cat("\nPercent Balance Improvement:\n")
+    print(round_df_char(x$reduction[,-5, drop = FALSE], 1, pad = "0", na_vals = "."), right = TRUE,
+          quote = FALSE)
+  }
+  if (!is.null(x$nn)) {
+    cat("\nSample Sizes:\n")
+    nn <- x$nn
+    if (isTRUE(all.equal(nn["All (ESS)",], nn["All",]))) {
+      #Don't print ESS if same as full SS
+      nn <- nn[rownames(nn) != "All (ESS)",,drop = FALSE]
+    }
+    if (isTRUE(all.equal(nn["Matched (ESS)",], nn["Matched",]))) {
+      #Don't print ESS if same as matched SS
+      nn <- nn[rownames(nn) != "Matched (ESS)",,drop = FALSE]
+    }
+    print(round_df_char(nn, 2, pad = " ", na_vals = "."), right = TRUE,
+          quote = FALSE)
+  }
+  cat("\n")
+  invisible(x)
+}
+
+print.summary.matchit.subclass <- function(x, digits = max(3, getOption("digits") -  3), ...){
+
+  if (!is.null(x$call)) cat("\nCall:", deparse(x$call), sep = "\n")
+
+  if (!is.null(x$sum.all)) {
+    cat("\nSummary of Balance for All Data:\n")
+    print(round_df_char(x$sum.all[,-7, drop = FALSE], digits, pad = "0", na_vals = "."),
+          right = TRUE, quote = FALSE)
+  }
+
+  if (length(x$sum.subclass) > 0) {
+    cat("\nSummary of Balance by Subclass:\n")
+    for (s in seq_along(x$sum.subclass)) {
+      cat(paste0("\n- ", names(x$sum.subclass)[s], "\n"))
+      print(round_df_char(x$sum.subclass[[s]][,-7, drop = FALSE], digits, pad = "0", na_vals = "."),
+            right = TRUE, quote = FALSE)
+    }
+    if (!is.null(x$qn)) {
+      cat("\nSample Sizes by Subclass:\n")
+      print(round_df_char(x$qn, 2, pad = " ", na_vals = "."),
+            right = TRUE, quote = FALSE)
+    }
+  }
+  else {
+    if (!is.null(x$sum.across)) {
+      cat("\nSummary of Balance Across Subclasses\n")
+      if (all(is.na(x$sum.across[,7]))) x$sum.across <- x$sum.across[,-7,drop = FALSE]
+      print(round_df_char(x$sum.across, digits, pad = "0", na_vals = "."),
+            right = TRUE, quote = FALSE)
+    }
+    if (!is.null(x$reduction)) {
+      cat("\nPercent Balance Improvement:\n")
+      print(round_df_char(x$reduction[,-5, drop = FALSE], 1, pad = "0", na_vals = "."),
+            right = TRUE, quote = FALSE)
+    }
+
+    if (!is.null(x$nn)) {
+      cat("\nSample Sizes:\n")
+      nn <- x$nn
+      if (isTRUE(all.equal(nn["All (ESS)",], nn["All",]))) {
+        #Don't print ESS if same as full SS
+        nn <- nn[rownames(nn) != "All (ESS)",,drop = FALSE]
+      }
+      if (isTRUE(all.equal(nn["Matched (ESS)",], nn["Matched",]))) {
+        #Don't print ESS if same as matched SS
+        nn <- nn[rownames(nn) != "Matched (ESS)",,drop = FALSE]
+      }
+      print(round_df_char(nn, 2, pad = " ", na_vals = "."),
+            right = TRUE, quote = FALSE)
+    }
+  }
+  cat("\n")
+}
+
+## plot method for summary----
+
+plot.summary.matchit <- function(x, abs = TRUE, var.order = "data", threshold = c(.1, .05), position = "bottomright", ...) {
+
+  .pardefault <- par(no.readonly = TRUE)
+  on.exit(par(.pardefault))
+
+  sub <- inherits(x, "summary.matchit.subclass")
+  matched <- sub || !is.null(x[["sum.matched"]])
+  un <- !is.null(x[["sum.all"]])
+
+  standard.sum <- if (un) x[["sum.all"]] else x[[if (sub) "sum.across" else "sum.matched"]]
+
+  if (!"Std. Mean Diff." %in% colnames(standard.sum)) {
+    stop("Not appropriate for unstandardized summary.  Run summary() with the standardize = TRUE option, and then plot.", call. = FALSE)
+  }
+
+  if (un) {
+    sd.all <- x[["sum.all"]][,"Std. Mean Diff."]
+  }
+  if (matched) {
+    sd.matched <- x[[if (sub) "sum.across" else "sum.matched"]][,"Std. Mean Diff."]
+  }
+
+  var.names <- rownames(standard.sum)
+
+  var.order <- match_arg(var.order, c("data", "matched", "unmatched", "alphabetical"))
+
+  if (!un && var.order == "unmatched") stop("'var.order' cannot be \"unmatched\" if un = TRUE in the call to summary().", call. = FALSE)
+  if (!matched && var.order == "matched") stop("'var.order' cannot be \"matched\" if method = NULL in the original call to matchit().", call. = FALSE)
+
+  if (abs) {
+    if (un) sd.all <- abs(sd.all)
+    if (matched) sd.matched <- abs(sd.matched)
+    xlab <- "Absolute Standardized\nMean Difference"
+  }
+  else {
+    xlab <- "Standardized Mean Difference"
+  }
+
+  ord <- switch(var.order,
+                "data" = rev(seq_along(var.names)),
+                "matched" = order(sd.matched),
+                "unmatched" = order(sd.all),
+                "alphabetical" = order(var.names, decreasing = TRUE))
+
+  dotchart(if (un) sd.all[ord] else sd.matched[ord],
+           labels = var.names[ord], xlab = xlab,
+           bg = NA, color = NA, ...)
+  abline(v = 0)
+
+  if (sub && length(x$sum.subclass) > 0) {
+    for (i in seq_along(x$sum.subclass)) {
+      sd.sub <- x$sum.subclass[[i]][,"Std. Mean Diff."]
+      if (abs) sd.sub <- abs(sd.sub)
+      points(x = sd.sub[ord], y = seq_along(sd.sub),
+             pch = as.character(i), col = "gray60", cex = .6)
+    }
+  }
+
+  if (un) {
+    points(x = sd.all[ord], y = seq_along(sd.all),
+           pch = 21, bg = "white", col = "black")
+  }
+  if (matched) {
+    points(x = sd.matched[ord], y = seq_along(sd.matched),
+           pch = 21, bg = "black", col = "black")
+  }
+
+  if (!is.null(threshold)) {
+    if (abs) {
+      abline(v = threshold, lty = seq_along(threshold))
+    }
+    else {
+      abline(v = threshold, lty = seq_along(threshold))
+      abline(v = -threshold, lty = seq_along(threshold))
+    }
+  }
+
+  if (sum(matched, un) > 1 && !is.null(position)) {
+    position <- match_arg(position, c("bottomright", "bottom", "bottomleft", "left",
+                                      "topleft", "top", "topright", "right", "center"))
+    legend(position, legend = c("All", "Matched"),
+           pt.bg = c("white", "black"), pch = 21,
+           inset = .015, xpd = TRUE)
+  }
+  invisible(x)
 }

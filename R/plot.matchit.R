@@ -1,6 +1,109 @@
+## plot methods----
+plot.matchit <- function(x, type = "qq", interactive = TRUE, which.xs = NULL, ...) {
+
+  type <- tolower(type)
+  type <- match_arg(type, c("qq", "ecdf", "density", "jitter", "histogram"))
+
+  if (type %in% c("qq", "ecdf", "density")) {
+    matchit.covplot(x, type = type, interactive=interactive,
+                    which.xs = which.xs, ...)
+  }
+  else if (type == "jitter") {
+    if (is.null(x$distance)) {
+      stop("type = \"jitter\" cannot be used if a distance measure is not estimated or supplied. No plots generated.", call. = FALSE)
+    }
+    jitter.pscore(x, interactive = interactive,...)
+  }
+  else if (type =="histogram") {
+    if (is.null(x$distance)) {
+      stop("type = \"hist\" cannot be used if a distance measure is not estimated or supplied. No plots generated.", call. = FALSE)
+    }
+    hist.pscore(x,...)
+  }
+}
+
+plot.matchit.subclass <- function(x, type = "qq", interactive = TRUE, which.xs = NULL, subclass, ...) {
+  choice.menu <- function(choices, question) {
+    k <- length(choices)-1
+    Choices <- data.frame(choices)
+    row.names(Choices) <- 0:k
+    names(Choices) <- "Choices"
+    print.data.frame(Choices, right=FALSE)
+    ans <- readline(question)
+    while (!ans %in% 0:k) {
+      message("Not valid -- please pick one of the choices")
+      print.data.frame(Choices, right=FALSE)
+      ans <- readline(question)
+    }
+    return(ans)
+  }
+
+  type <- tolower(type)
+  type <- match_arg(type, c("qq", "ecdf", "density", "jitter", "histogram"))
+
+  if (type %in% c("qq", "ecdf", "density")) {
+    #If subclass = T, index, or range, display all or range of subclasses, using interactive to advance
+    #If subclass = F, display aggregate across subclass, using interactive to advance
+    #If subclass = NULL, if interactive, use to choose subclass, else display aggregate across subclass
+
+    subclasses <- levels(x$subclass)
+    miss.sub <- missing(subclass) || is.null(subclass)
+    if (miss.sub || isFALSE(subclass)) which.subclass <- NULL
+    else if (isTRUE(subclass)) which.subclass <- subclasses
+    else if (!is.atomic(subclass) || !all(subclass %in% seq_along(subclasses))) {
+      stop("'subclass' should be TRUE, FALSE, or a vector of subclass indices for which subclass balance is to be displayed.",
+           call. = FALSE)
+    }
+    else which.subclass <- subclasses[subclass]
+
+    if (!is.null(which.subclass)) {
+      matchit.covplot.subclass(x, type = type, which.subclass = which.subclass,
+                               interactive = interactive, which.xs = which.xs, ...)
+    }
+    else if (interactive && miss.sub) {
+      subclasses <- levels(x$subclass)
+      choices <- c("No (Exit)", paste0("Yes: Subclass ", subclasses), "Yes: In aggregate")
+      plot.name <- switch(type, "qq" = "quantile-quantile", "ecdf" = "empirical CDF", "density" = "density")
+      question <- paste("Would you like to see", plot.name, "plots of any subclasses? ")
+      ans <- -1
+      while(ans != 0) {
+        ans <- as.numeric(choice.menu(choices, question))
+        if (ans %in% seq_along(subclasses) && any(x$subclass == subclasses[ans])) {
+          matchit.covplot.subclass(x, type = type, which.subclass = subclasses[ans],
+                                   interactive = interactive, which.xs = which.xs, ...)
+        }
+        else if (ans != 0) {
+          matchit.covplot(x, type = type, interactive = interactive, which.xs = which.xs, ...)
+        }
+      }
+    }
+    else {
+      matchit.covplot(x, type = type, interactive = interactive, which.xs = which.xs, ...)
+    }
+  }
+  else if (type=="jitter") {
+    if (is.null(x$distance)) {
+      stop("type = \"jitter\" cannot be used when no distance variable was estimated or supplied.", call. = FALSE)
+    }
+    jitter.pscore(x, interactive = interactive, ...)
+  }
+  else if (type == "histogram") {
+    if (is.null(x$distance)) {
+      stop("type = \"histogram\" cannot be used when no distance variable was estimated or supplied.", call. = FALSE)
+    }
+    hist.pscore(x,...)
+  }
+  invisible(x)
+}
+
+## plot helper functions----
 matchit.covplot <- function(object, type = "qq", interactive = TRUE, which.xs = NULL, ...) {
 
   #Create covariate matrix; include exact and mahvars
+  if (length(object$X) == 0) {
+    warning("No covariates to plot.", call. = FALSE)
+    return(invisible(NULL))
+  }
   object$X <- droplevels(object$X)
   if (!is.null(which.xs)) {
     if (!is.character(which.xs)) {
@@ -101,12 +204,19 @@ matchit.covplot <- function(object, type = "qq", interactive = TRUE, which.xs = 
     devAskNewPage(ask = interactive)
   }
   devAskNewPage(ask = FALSE)
+
+  return(invisible(NULL))
 }
 
 matchit.covplot.subclass <- function(object, type = "qq", which.subclass = NULL,
                                      interactive = TRUE, which.xs = NULL, ...) {
 
   #Create covariate matrix; include exact and mahvars
+  if (length(object$X) == 0) {
+    warning("No covariates to plot.", call. = FALSE)
+    return(invisible(NULL))
+  }
+  object$X <- droplevels(object$X)
   if (!is.null(which.xs)) {
     if (!is.character(which.xs)) {
       stop("'which.xs' should be a vector of variables for which balance is to be displayed.", call. = FALSE)
@@ -136,8 +246,6 @@ matchit.covplot.subclass <- function(object, type = "qq", which.subclass = NULL,
       X <- cbind(X, Xmahvars[,setdiff(colnames(Xmahvars), colnames(X)), drop = FALSE])
     }
   }
-
-  discrete.cutoff <- 5
 
   t <- object$treat
 
@@ -220,6 +328,8 @@ matchit.covplot.subclass <- function(object, type = "qq", which.subclass = NULL,
     }
   }
   devAskNewPage(ask = FALSE)
+
+  return(invisible(NULL))
 }
 
 qqplot_match <- function(x, t, w, sw, discrete.cutoff = 5, ...) {
