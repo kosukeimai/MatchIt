@@ -237,11 +237,12 @@ coeftest(fit1, vcov. = vcovCL, cluster = ~subclass)
 # library(boot)
 
 pair_ids <- levels(md$subclass)
+split_ids <- split(seq_len(nrow(md)), md$subclass)
 
 est_fun <- function(pairs, i) {
   
   #Extract IDs corresponding to selected pairs
-  ids <- unlist(split(seq_len(nrow(md)), md$subclass)[pairs[i]])
+  ids <- unlist(split_ids[pairs[i]])
   
   #Subset md with block bootstrapped ids
   md_boot <- md[ids,]
@@ -300,11 +301,12 @@ exp(coef(fit4)) #OR
 # library(boot)
 
 pair_ids <- levels(md$subclass)
+split_ids <- split(seq_len(nrow(md)), md$subclass)
 
 est_fun <- function(pairs, i) {
   
   #Extract IDs corresponding to selected pairs
-  ids <- unlist(split(seq_len(nrow(md)), md$subclass)[pairs[i]])
+  ids <- unlist(split_ids[pairs[i]])
   
   #Subset md with block bootstrapped ids
   md_boot <- md[ids,]
@@ -360,11 +362,12 @@ The `coef` column contains the log HR, and `exp(coef)` contains the HR. Remember
 # library(boot)
 
 pair_ids <- levels(md$subclass)
+split_ids <- split(seq_len(nrow(md)), md$subclass)
 
 est_fun <- function(pairs, i) {
   
   #Extract IDs corresponding to selected pairs
-  ids <- unlist(split(seq_len(nrow(md)), md$subclass)[pairs[i]])
+  ids <- unlist(split_ids[pairs[i]])
   
   #Subset md with block bootstrapped ids
   md_boot <- md[ids,]
