@@ -178,7 +178,7 @@ Other packages may be of use but are not used here. The `margins` package can be
 Because different matching methods require different treatments, instructions for each method are organized in the following sections, as designated by the table below. It is important to ensure the right methods are used with the matching specification used in order for the estimated effects and standard errors to be valid.
 
 | Section                                                                             | Matching Method                                           |
-|-------------------------------------------------------------------------------------|-----------------------------------------------------------|
+|------------------------------------------|------------------------------|
 | [After Pair Matching Without Replacement](#after-pair-matching-without-replacement) | Nearest neighbor matching without replacement             |
 | \-                                                                                  | Optimal matching                                          |
 | \-                                                                                  | Genetic matching without replacement                      |
@@ -240,13 +240,8 @@ pair_ids <- levels(md$subclass)
 
 est_fun <- function(pairs, i) {
   
-  #Compute number of times each pair is present
-  numreps <- table(pairs[i])
-  
-  #For each pair p, copy corresponding md row indices numreps[p] times
-  ids <- unlist(lapply(pair_ids[pair_ids %in% names(numreps)],
-                       function(p) rep(which(md$subclass == p), 
-                                              numreps[p])))
+  #Extract IDs corresponding to selected pairs
+  ids <- unlist(split(seq_len(nrow(md)), md$subclass)[pairs[i]])
   
   #Subset md with block bootstrapped ids
   md_boot <- md[ids,]
@@ -308,13 +303,8 @@ pair_ids <- levels(md$subclass)
 
 est_fun <- function(pairs, i) {
   
-  #Compute number of times each pair is present
-  numreps <- table(pairs[i])
-  
-  #For each pair p, copy corresponding md row indices numreps[p] times
-  ids <- unlist(lapply(pair_ids[pair_ids %in% names(numreps)],
-                       function(p) rep(which(md$subclass == p), 
-                                              numreps[p])))
+  #Extract IDs corresponding to selected pairs
+  ids <- unlist(split(seq_len(nrow(md)), md$subclass)[pairs[i]])
   
   #Subset md with block bootstrapped ids
   md_boot <- md[ids,]
@@ -373,13 +363,8 @@ pair_ids <- levels(md$subclass)
 
 est_fun <- function(pairs, i) {
   
-  #Compute number of times each pair is present
-  numreps <- table(pairs[i])
-  
-  #For each pair p, copy corresponding md row indices numreps[p] times
-  ids <- unlist(lapply(pair_ids[pair_ids %in% names(numreps)],
-                       function(p) rep(which(md$subclass == p), 
-                                              numreps[p])))
+  #Extract IDs corresponding to selected pairs
+  ids <- unlist(split(seq_len(nrow(md)), md$subclass)[pairs[i]])
   
   #Subset md with block bootstrapped ids
   md_boot <- md[ids,]
