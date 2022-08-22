@@ -491,14 +491,13 @@ get_assign <- function(mat) {
 #Convert match.matrix (mm) using numerical indices to using char rownames
 nummm2charmm <- function(nummm, treat) {
   #Assumes nummm has rownames
-  charmm <- matrix(NA_character_, nrow = nrow(nummm), ncol = ncol(nummm),
-                   dimnames = dimnames(nummm))
+  charmm <- array(NA_character_, dim = dim(nummm), dimnames = dimnames(nummm))
   charmm[] <- names(treat)[nummm]
   charmm
 }
 
 charmm2nummm <- function(charmm, treat) {
-  nummm <- matrix(NA_integer_, nrow = nrow(charmm), ncol = ncol(charmm))
+  nummm <- array(NA_integer_, dim = dim(charmm))
   n_index <- setNames(seq_along(treat), names(treat))
   nummm[] <- n_index[charmm]
   nummm
