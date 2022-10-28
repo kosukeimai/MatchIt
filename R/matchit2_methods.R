@@ -626,6 +626,10 @@ matchit2genetic <- function(treat, data, distance, discarded,
     antiexactcovs <- NULL
   }
 
+  if (is.null(A[["distance.tolerance"]])) {
+    A[["distance.tolerance"]] <- 0
+  }
+
   if (use.genetic) {
     withCallingHandlers({
       g.out <- do.call(Matching::GenMatch,
@@ -663,7 +667,8 @@ matchit2genetic <- function(treat, data, distance, discarded,
     m.out <- Matching::Match(Tr = treat_, X = X,
                              M = ratio, exact = exact.log, caliper = cal,
                              replace = replace, estimand = "ATT", ties = FALSE,
-                             weights = s.weights, CommonSupport = FALSE, Weight = 3,
+                             weights = s.weights, CommonSupport = FALSE,
+                             distance.tolerance = A[["distance.tolerance"]], Weight = 3,
                              Weight.matrix = if (use.genetic) g.out
                              else if (is.null(s.weights)) generalized_inverse(cor(X))
                              else generalized_inverse(cov.wt(X, s.weights, cor = TRUE)$cor),
@@ -782,7 +787,7 @@ matchit2nearest <-  function(treat, data, distance, discarded,
   min.controls <- attr(ratio, "min.controls")
   max.controls <- attr(ratio, "max.controls")
 
-  mahcovs <- mahSigma_inv <- distance_mat <- NULL
+  mahcovs <- distance_mat <- NULL
   if (!is.null(mahvars)) {
     transform <- if (is.full.mahalanobis) attr(is.full.mahalanobis, "transform") else "mahalanobis"
     mahcovs <- transform_covariates(mahvars, data = data, method = transform,
@@ -1120,7 +1125,8 @@ matchit2subclass <- function(treat, distance, discarded,
 
 # MATCHIT method = cardinality----------------------------------
 matchit2cardinality <-  function(treat, data, discarded, formula,
-                                 ratio = 1, focal = NULL, s.weights = NULL, replace = FALSE, exact = NULL,
+                                 ratio = 1, focal = NULL, s.weights = NULL,
+                                 replace = FALSE, mahvars = NULL, exact = NULL,
                                  estimand = "ATT", verbose = FALSE,
                                  tols = .05, std.tols = TRUE,
                                  solver = "glpk", time = 1*60, ...){
@@ -1218,6 +1224,10 @@ matchit2cardinality <-  function(treat, data, discarded, formula,
   }
 
   if (length(opt.out) == 1L) out <- out[[1]]
+
+  # if (!is.null(mahvars)) {
+  #
+  # }
 
   psclass <- NULL
 

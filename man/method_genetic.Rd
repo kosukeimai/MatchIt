@@ -90,7 +90,7 @@ how many control units should be matched to each treated unit for k:1 matching. 
 \code{logical}; whether information about the matching process should be printed to the console. When \code{TRUE}, output from \code{GenMatch()} with \code{print.level = 2} will be displayed. Default is \code{FALSE} for no printing other than warnings.
 }
   \item{\dots}{
-additional arguments passed to \pkgfun{Matching}{GenMatch}. Potentially useful options include \code{pop.size}, \code{max.generations}, and \code{fit.func}. If \code{pop.size} is not specified, a warning from \emph{Matching} will be thrown reminding you to change it. Note that the \code{ties} and \code{CommonSupport} arguments are set to \code{FALSE} and cannot be changed.
+additional arguments passed to \pkgfun{Matching}{GenMatch}. Potentially useful options include \code{pop.size}, \code{max.generations}, and \code{fit.func}. If \code{pop.size} is not specified, a warning from \emph{Matching} will be thrown reminding you to change it. Note that the \code{ties} and \code{CommonSupport} arguments are set to \code{FALSE} and cannot be changed. If \code{distance.tolerance} is not specified, it is set to 0, whereas the default in \emph{Matching} is 1e-5.
 }
 }
 \section{Outputs}{
