@@ -1,3 +1,4 @@
+url: https://kosukeimai.github.io/MatchIt/
 reference:
 - title: Matching
 - contents:
@@ -17,9 +18,7 @@ reference:
   - get_matches
   - rbind.matchdata
 - title: Datasets
-- contents:
-  - lalonde
-
+- contents: lalonde
 articles:
 - title: ~
   navbar: ~
@@ -28,8 +27,8 @@ articles:
   - assessing-balance
   - estimating-effects
   - sampling-weights
-
 home:
   links:
   - text: Ask a question
     href: https://github.com/kosukeimai/MatchIt/issues
+

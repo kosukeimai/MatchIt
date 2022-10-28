@@ -57,6 +57,7 @@ SystemRequirements: C++11
 Encoding: UTF-8
 LazyData: true
 License: GPL (>=2)
-URL: https://kosukeimai.github.io/MatchIt/, https://github.com/kosukeimai/MatchIt
+URL: https://kosukeimai.github.io/MatchIt/,
+    https://github.com/kosukeimai/MatchIt
 BugReports: https://github.com/kosukeimai/MatchIt/issues
 VignetteBuilder: knitr
