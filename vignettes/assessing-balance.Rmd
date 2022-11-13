@@ -152,7 +152,7 @@ In addition to numeric summaries of balance, `MatchIt` offers graphical summarie
 
 `plot.matchit()` has a few arguments to customize the output:
 
--   `type` corresponds to the type of plot desired. Options include `"qq"` for eQQ plots (the default), `"ecdf"` for eCDF plots, `"density"` for density plots, `"jitter"` for jitter plots, and `"histogram"` for histograms.
+-   `type` corresponds to the type of plot desired. Options include `"qq"` for eQQ plots (the default), `"ecdf"` for eCDF plots, `"density"` for density plots (or bar plots for categorical variables), `"jitter"` for jitter plots, and `"histogram"` for histograms.
 -   `interactive` controls whether the plot is interactive or not. For eQQ, eCDF, and density plots, this allows us to control when the next page of covariates is to be displayed since only three can appear at a time. For jitter plots, this can allow us to select individual units with extreme values for further inspection. The default is `TRUE`.
 -   `which.xs` is used to specify for which covariates to display balance in eQQ, eCDF, and density plots. The default is to display balance on all, but we can request balance just on a specific subset. If three or fewer are requested, `interactive` is ignored.
 
@@ -160,7 +160,7 @@ Below, we demonstrate the eQQ plot:
 
 ```{r}
 #eQQ plot
-plot(m.out, type = "qq", which.xs = c("age", "nodegree", "re74"))
+plot(m.out, type = "qq", which.xs = ~age + nodegree + re74)
 ```
 
 The y-axis displays the each value of the covariate for the treated units, and the x-axis displays the the value of the covariate at the corresponding quantile in the control group. When values fall on the 45 degree line, the groups are balanced. Above, we can see that `age` remains somewhat imbalanced, but `nodegree` and `re74` have much better balance after matching than before. The difference between the x and y values of each point are used to compute the eQQ difference statistics that are displayed in `summary.matchit()` with `standardize = FALSE`.
@@ -169,7 +169,7 @@ Below, we demonstrate the eCDF plot:
 
 ```{r}
 #eCDF plot
-plot(m.out, type = "ecdf", which.xs = c("educ", "married", "re75"))
+plot(m.out, type = "ecdf", which.xs = ~educ + married + re75)
 ```
 
 The x-axis displays the covariate values and the y-axis displays the proportion of the sample at or less than that covariate value. Perfectly overlapping lines indicate good balance. The black line corresponds to the treated group and the gray line to the control group. Although `educ` and `re75` were fairly well balanced before matching, their balance has improved nonetheless. `married` appears far better balanced after matching than before. The vertical difference between the eCDFs lines of each treatment group is used to compute the eCDF difference statistics that are displayed in `summary.matchit()` with `standardize = TRUE`.
@@ -178,10 +178,10 @@ Below, we demonstrate the density plot:
 
 ```{r}
 #density plot
-plot(m.out, type = "density", which.xs = c("age", "educ", "married"))
+plot(m.out, type = "density", which.xs = ~age + educ + race)
 ```
 
-The x-axis displays the covariate values and the y-axis displays the density of the sample at that covariate value. For binary variables, the y-axis displays the proportion of the sample at that covariate value. Perfectly overlapping lines indicate good balance. The black line corresponds to the treated group and the gray line to the control group. Density plots display similar information to eCDF plots but may be more intuitive for some users because of their link to histograms.
+The x-axis displays the covariate values and the y-axis displays the density of the sample at that covariate value. For categorical variables, the y-axis displays the proportion of the sample at that covariate value. The black line corresponds to the treated group and the gray line to the control group. Perfectly overlapping lines indicate good balance. Density plots display similar information to eCDF plots but may be more intuitive for some users because of their link to histograms.
 
 ## Assessing Balance After Subclassification
 
