@@ -1,12 +1,151 @@
-## plot methods----
-plot.matchit <- function(x, type = "qq", interactive = TRUE, which.xs = NULL, ...) {
+#' Generate Balance Plots after Matching and Subclassification
+#'
+#' Generates plots displaying distributional balance and overlap on covariates
+#' and propensity scores before and after matching and subclassification. For
+#' displaying balance solely on covariate standardized mean differences, see
+#' [plot.summary.matchit()]. The plots here can be used to assess to what
+#' degree covariate and propensity score distributions are balanced and how
+#' weighting and discarding affect the distribution of propensity scores.
+#'
+#' @aliases plot.matchit plot.matchit.subclass
+#'
+#' @param x a `matchit` object; the output of a call to [matchit()].
+#' @param type the type of plot to display. Options include `"qq"`,
+#' `"ecdf"`, `"density"`, `"jitter"`, and `"histogram"`.
+#' See Details. Default is `"qq"`. Abbreviations allowed.
+#' @param interactive `logical`; whether the graphs should be displayed in
+#' an interactive way. Only applies for `type = "qq"`, `"ecdf"`,
+#' `"density"`, and `"jitter"`. See Details.
+#' @param which.xs with `type = "qq"`, `"ecdf"`, or `"density"`,
+#' for which covariate(s) plots should be displayed. Factor variables should be
+#' named by the original variable name rather than the names of individual
+#' dummy variables created after expansion with `model.matrix`. Can be supplied as a character vector or a one-sided formula.
+#' @param data an optional data frame containing variables named in `which.xs` but not present in the `matchit` object.
+#' @param subclass with subclassification and `type = "qq"`,
+#' `"ecdf"`, or `"density"`, whether to display balance for
+#' individual subclasses, and, if so, for which ones. Can be `TRUE`
+#' (display plots for all subclasses), `FALSE` (display plots only in
+#' aggregate), or the indices (e.g., `1:6`) of the specific subclasses for
+#' which to display balance. When unspecified, if `interactive = TRUE`,
+#' you will be asked for which subclasses plots are desired, and otherwise,
+#' plots will be displayed only in aggregate.
+#' @param \dots arguments passed to [plot()] to control the appearance of the
+#' plot. Not all options are accepted.
+#'
+#' @details
+#' `plot.matchit()` makes one of five different plots depending on the
+#' argument supplied to `type`. The first three, `"qq"`,
+#' `"ecdf"`, and `"density"`, assess balance on the covariates. When
+#' `interactive = TRUE`, plots for three variables will be displayed at a
+#' time, and the prompt in the console allows you to move on to the next set of
+#' variables. When `interactive = FALSE`, multiple pages are plotted at
+#' the same time, but only the last few variables will be visible in the
+#' displayed plot. To see only a few specific variables at a time, use the
+#' `which.xs` argument to display plots for just those variables. If fewer
+#' than three variables are available (after expanding factors into their
+#' dummies), `interactive` is ignored.
+#'
+#' With `type = "qq"`, empirical quantile-quantile (eQQ) plots are created
+#' for each covariate before and after matching. The plots involve
+#' interpolating points in the smaller group based on the weighted quantiles of
+#' the other group. When points are approximately on the 45-degree line, the
+#' distributions in the treatment and control groups are approximately equal.
+#' Major deviations indicate departures from distributional balance. With
+#' variable with fewer than 5 unique values, points are jittered to more easily
+#' visualize counts.
+#'
+#' With `type = "ecdf"`, empirical cumulative density function (eCDF)
+#' plots are created for each covariate before and after matching. Two eCDF
+#' lines are produced in each plot: a gray one for control units and a black
+#' one for treated units. Each point on the lines corresponds to the proportion
+#' of units (or proportionate share of weights) less than or equal to the
+#' corresponding covariate value (on the x-axis). Deviations between the lines
+#' on the same plot indicates distributional imbalance between the treatment
+#' groups for the covariate. The eCDF and eQQ statistics in [summary.matchit()]
+#' correspond to these plots: the eCDF max (also known as the
+#' Kolmogorov-Smirnov statistic) and mean are the largest and average vertical
+#' distance between the lines, and the eQQ max and mean are the largest and
+#' average horizontal distance between the lines.
+#'
+#' With `type = "density"`, density plots are created for each covariate
+#' before and after matching. Two densities are produced in each plot: a gray
+#' one for control units and a black one for treated units. The x-axis
+#' corresponds to the value of the covariate and the y-axis corresponds to the
+#' density or probability of that covariate value in the corresponding group.
+#' For binary covariates, bar plots are produced, having the same
+#' interpretation. Deviations between the black and gray lines represent
+#' imbalances in the covariate distribution; when the lines coincide (i.e.,
+#' when only the black line is visible), the distributions are identical.
+#'
+#' The last two plots, `"jitter"` and `"histogram"`, visualize the
+#' distance (i.e., propensity score) distributions. These plots are more for
+#' heuristic purposes since the purpose of matching is to achieve balance on
+#' the covariates themselves, not the propensity score.
+#'
+#' With `type = "jitter"`, a jitter plot is displayed for distance values
+#' before and after matching. This method requires a distance variable (e.g., a
+#' propensity score) to have been estimated or supplied in the call to
+#' `matchit()`. The plot displays individuals values for matched and
+#' unmatched treatment and control units arranged horizontally by their
+#' propensity scores. Points are jitter so counts are easier to see. The size
+#' of the points increases when they receive higher weights. When
+#' `interactive = TRUE`, you can click on points in the graph to identify
+#' their rownames and indices to further probe extreme values, for example.
+#' With subclassification, vertical lines representing the subclass boundaries
+#' are overlay on the plots.
+#'
+#' With `type = "histogram"`, a histogram of distance values is displayed
+#' for the treatment and control groups before and after matching. This method
+#' requires a distance variable (e.g., a propensity score) to have been
+#' estimated or supplied in the call to `matchit()`. With
+#' subclassification, vertical lines representing the subclass boundaries are
+#' overlay on the plots.
+#'
+#' With all methods, sampling weights are incorporated into the weights if
+#' present.
+#'
+#' @note Sometimes, bugs in the plotting functions can cause strange layout or
+#' size issues. Running [frame()] or [dev.off()] can be used to reset the
+#' plotting pane (note the latter will delete any plots in the plot history).
+#'
+#' @seealso [summary.matchit()] for numerical summaries of balance, including
+#' those that rely on the eQQ and eCDF plots.
+#'
+#' [plot.summary.matchit()] for plotting standardized mean differences in a
+#' Love plot.
+#'
+#' \pkgfun{cobalt}{bal.plot} for displaying distributional balance in several other
+#' ways that are more easily customizable and produce *ggplot2* objects.
+#' *cobalt* functions natively support `matchit` objects.
+#'
+#' @examples
+#' data("lalonde")
+#'
+#' m.out <- matchit(treat ~ age + educ + married +
+#'                    race + re74, data = lalonde,
+#'                  method = "nearest")
+#' plot(m.out, type = "qq", interactive = FALSE,
+#'      which.xs = ~age + educ + re74)
+#' plot(m.out, type = "histogram")
+#'
+#' s.out <- matchit(treat ~ age + educ + married +
+#'                    race + nodegree + re74 + re75,
+#'                  data = lalonde, method = "subclass")
+#' plot(s.out, type = "density", interactive = FALSE,
+#'      which.xs = ~age + educ + re74,
+#'      subclass = 3)
+#' plot(s.out, type = "jitter", interactive = FALSE)
+#'
+
+#' @exportS3Method plot matchit
+plot.matchit <- function(x, type = "qq", interactive = TRUE, which.xs = NULL, data = NULL, ...) {
 
   type <- tolower(type)
   type <- match_arg(type, c("qq", "ecdf", "density", "jitter", "histogram"))
 
   if (type %in% c("qq", "ecdf", "density")) {
-    matchit.covplot(x, type = type, interactive=interactive,
-                    which.xs = which.xs, ...)
+    matchit.covplot(x, type = type, interactive = interactive,
+                    which.xs = which.xs, data = data, ...)
   }
   else if (type == "jitter") {
     if (is.null(x$distance)) {
@@ -14,14 +153,17 @@ plot.matchit <- function(x, type = "qq", interactive = TRUE, which.xs = NULL, ..
     }
     jitter.pscore(x, interactive = interactive,...)
   }
-  else if (type =="histogram") {
+  else if (type == "histogram") {
     if (is.null(x$distance)) {
       stop("type = \"hist\" cannot be used if a distance measure is not estimated or supplied. No plots generated.", call. = FALSE)
     }
     hist.pscore(x,...)
   }
+  invisible(x)
 }
 
+#' @exportS3Method plot matchit.subclass
+#' @rdname plot.matchit
 plot.matchit.subclass <- function(x, type = "qq", interactive = TRUE, which.xs = NULL, subclass, ...) {
   choice.menu <- function(choices, question) {
     k <- length(choices)-1
@@ -96,44 +238,74 @@ plot.matchit.subclass <- function(x, type = "qq", interactive = TRUE, which.xs =
   invisible(x)
 }
 
-## plot helper functions----
-matchit.covplot <- function(object, type = "qq", interactive = TRUE, which.xs = NULL, ...) {
+## plot helper functions
+matchit.covplot <- function(object, type = "qq", interactive = TRUE, which.xs = NULL, data = NULL, ...) {
 
-  #Create covariate matrix; include exact and mahvars
-  if (length(object$X) == 0) {
-    warning("No covariates to plot.", call. = FALSE)
-    return(invisible(NULL))
-  }
-  object$X <- droplevels(object$X)
-  if (!is.null(which.xs)) {
-    if (!is.character(which.xs)) {
-      stop("'which.xs' should be a vector of variables for which balance is to be displayed.", call. = FALSE)
+  if (is.null(which.xs)) {
+    if (length(object$X) == 0) {
+      warning("No covariates to plot.", call. = FALSE)
+      return(invisible(NULL))
     }
-    if (!all(which.xs %in% names(object$X))) {
-      missing.vars <- setdiff(which.xs, names(object$X))
-      stop(paste0("The requested ", ngettext(length(missing.vars), "variable ", "variables "),
-                  word_list(missing.vars, is.are = TRUE, quotes = 2),
-                  " not present in the supplied matchit object."), call. = FALSE)
-    }
-
-    which.xs.f <- terms(reformulate(which.xs))
-
-    X <- get.covs.matrix(which.xs.f, data = object$X)
-  }
-  else {
-    #Create covariate matrix; include exact and mahvars
-    X <- get.covs.matrix(object$formula, data = object$X)
+    X <- object$X
 
     if (!is.null(object$exact)) {
-      Xexact <- get.covs.matrix(object$exact, data = object$X)
-      X <- cbind(X, Xexact[,setdiff(colnames(Xexact), colnames(X)), drop = FALSE])
+      Xexact <- model.frame(object$exact, data = object$X)
+      X <- cbind(X, Xexact[setdiff(names(Xexact), names(X))])
     }
 
     if (!is.null(object$mahvars)) {
-      Xmahvars <- get.covs.matrix(object$mahvars, data = object$X)
-      X <- cbind(X, Xmahvars[,setdiff(colnames(Xmahvars), colnames(X)), drop = FALSE])
+      Xmahvars <- model.frame(object$mahvars, data = object$X)
+      X <- cbind(X, Xmahvars[setdiff(names(Xmahvars), names(X))])
     }
   }
+  else {
+    if (!is.null(data)) {
+      if (!is.data.frame(data) || nrow(data) != length(object$treat)) {
+        stop("'data' must be a data frame with as many rows as there are units in the supplied 'matchit' object.",
+             call. = FALSE)
+      }
+      data <- cbind(data, object$X[setdiff(names(object$X), names(data))])
+    }
+    else {
+      data <- object$X
+    }
+
+    if (!is.null(object$exact)) {
+      Xexact <- model.frame(object$exact, data = object$X)
+      data <- cbind(data, Xexact[setdiff(names(Xexact), names(data))])
+    }
+
+    if (!is.null(object$mahvars)) {
+      Xmahvars <- model.frame(object$mahvars, data = object$X)
+      data <- cbind(data, Xmahvars[setdiff(names(Xmahvars), names(data))])
+    }
+
+    if (is.character(which.xs)) {
+      if (!all(which.xs %in% names(data))) {
+        stop("All variables in 'which.xs' must be in the supplied 'matchit' object or in 'data'.",
+             call. = FALSE)
+      }
+      X <- data[which.xs]
+    }
+    else if (inherits(which.xs, "formula")) {
+      which.xs <- update(which.xs, NULL ~ .)
+      X <- model.frame(which.xs, data, na.action = "na.pass")
+
+      if (anyNA(X)) {
+        stop("Missing values are not allowed in the covariates named in 'which.xs'.",
+             call. = FALSE)
+      }
+    }
+    else {
+      stop("'which.xs' must be supplied as a character vector of names or a one-sided formula.",
+           call. = FALSE)
+    }
+  }
+
+  chars.in.X <- vapply(X, is.character, logical(1L))
+  X[chars.in.X] <- lapply(X[chars.in.X], factor)
+
+  X <- droplevels(X)
 
   t <- object$treat
 
@@ -144,7 +316,13 @@ matchit.covplot <- function(object, type = "qq", interactive = TRUE, which.xs = 
   split(w, t) <- lapply(split(w, t), function(x) x/sum(x))
   split(sw, t) <- lapply(split(sw, t), function(x) x/sum(x))
 
-  varnames <- colnames(X)
+  if (type == "density") {
+    varnames <- names(X)
+  }
+  else {
+    X <- get.covs.matrix(data = X)
+    varnames <- colnames(X)
+  }
 
   .pardefault <- par(no.readonly = TRUE)
   on.exit(par(.pardefault))
@@ -158,9 +336,10 @@ matchit.covplot <- function(object, type = "qq", interactive = TRUE, which.xs = 
   }
 
   for (i in seq_along(varnames)){
-    x <- X[,i]
+    x <- if (type == "density") X[[i]] else X[,i]
 
-    plot(x, type= "n" , axes=FALSE)
+    plot.new()
+
     if (((i-1)%%3)==0) {
 
       if (type == "qq") {
@@ -209,43 +388,73 @@ matchit.covplot <- function(object, type = "qq", interactive = TRUE, which.xs = 
 }
 
 matchit.covplot.subclass <- function(object, type = "qq", which.subclass = NULL,
-                                     interactive = TRUE, which.xs = NULL, ...) {
+                                     interactive = TRUE, which.xs = NULL, data = NULL, ...) {
 
-  #Create covariate matrix; include exact and mahvars
-  if (length(object$X) == 0) {
-    warning("No covariates to plot.", call. = FALSE)
-    return(invisible(NULL))
-  }
-  object$X <- droplevels(object$X)
-  if (!is.null(which.xs)) {
-    if (!is.character(which.xs)) {
-      stop("'which.xs' should be a vector of variables for which balance is to be displayed.", call. = FALSE)
+  if (is.null(which.xs)) {
+    if (length(object$X) == 0) {
+      warning("No covariates to plot.", call. = FALSE)
+      return(invisible(NULL))
     }
-    if (!all(which.xs %in% names(object$X))) {
-      missing.vars <- setdiff(which.xs, names(object$X))
-      stop(paste0("The requested ", ngettext(length(missing.vars), "variable ", "variables "),
-                  word_list(missing.vars, is.are = TRUE, quotes = 2),
-                  " not present in the supplied matchit object."), call. = FALSE)
-    }
-
-    which.xs.f <- terms(reformulate(which.xs))
-
-    X <- get.covs.matrix(which.xs.f, data = object$X)
-  }
-  else {
-    #Create covariate matrix; include exact and mahvars
-    X <- get.covs.matrix(object$formula, data = object$X)
+    X <- object$X
 
     if (!is.null(object$exact)) {
-      Xexact <- get.covs.matrix(object$exact, data = object$X)
-      X <- cbind(X, Xexact[,setdiff(colnames(Xexact), colnames(X)), drop = FALSE])
+      Xexact <- model.frame(object$exact, data = object$X)
+      X <- cbind(X, Xexact[setdiff(names(Xexact), names(X))])
     }
 
     if (!is.null(object$mahvars)) {
-      Xmahvars <- get.covs.matrix(object$mahvars, data = object$X)
-      X <- cbind(X, Xmahvars[,setdiff(colnames(Xmahvars), colnames(X)), drop = FALSE])
+      Xmahvars <- model.frame(object$mahvars, data = object$X)
+      X <- cbind(X, Xmahvars[setdiff(names(Xmahvars), names(X))])
     }
   }
+  else {
+    if (!is.null(data)) {
+      if (!is.data.frame(data) || nrow(data) != length(object$treat)) {
+        stop("'data' must be a data frame with as many rows as there are units in the supplied 'matchit' object.",
+             call. = FALSE)
+      }
+      data <- cbind(data, object$X[setdiff(names(object$X), names(data))])
+    }
+    else {
+      data <- object$X
+    }
+
+    if (!is.null(object$exact)) {
+      Xexact <- model.frame(object$exact, data = object$X)
+      data <- cbind(data, Xexact[setdiff(names(Xexact), names(data))])
+    }
+
+    if (!is.null(object$mahvars)) {
+      Xmahvars <- model.frame(object$mahvars, data = object$X)
+      data <- cbind(data, Xmahvars[setdiff(names(Xmahvars), names(data))])
+    }
+
+    if (is.character(which.xs)) {
+      if (!all(which.xs %in% names(data))) {
+        stop("All variables in 'which.xs' must be in the supplied 'matchit' object or in 'data'.",
+             call. = FALSE)
+      }
+      X <- data[which.xs]
+    }
+    else if (inherits(which.xs, "formula")) {
+      which.xs <- update(which.xs, NULL ~ .)
+      X <- model.frame(which.xs, data, na.action = "na.pass")
+
+      if (anyNA(X)) {
+        stop("Missing values are not allowed in the covariates named in 'which.xs'.",
+             call. = FALSE)
+      }
+    }
+    else {
+      stop("'which.xs' must be supplied as a character vector of names or a one-sided formula.",
+           call. = FALSE)
+    }
+  }
+
+  chars.in.X <- vapply(X, is.character, logical(1L))
+  X[chars.in.X] <- lapply(X[chars.in.X], factor)
+
+  X <- droplevels(X)
 
   t <- object$treat
 
@@ -256,7 +465,13 @@ matchit.covplot.subclass <- function(object, type = "qq", which.subclass = NULL,
     stop("The argument supplied to 'subclass' is not the index of any subclass in the matchit object.", call. = FALSE)
   }
 
-  varnames <- colnames(X)
+  if (type == "density") {
+    varnames <- names(X)
+  }
+  else {
+    X <- get.covs.matrix(data = X)
+    varnames <- colnames(X)
+  }
 
   .pardefault <- par(no.readonly = TRUE)
   on.exit(par(.pardefault))
@@ -279,9 +494,9 @@ matchit.covplot.subclass <- function(object, type = "qq", which.subclass = NULL,
 
     for (i in seq_along(varnames)){
 
-      x <- X[,i]
+      x <- if (type == "density") X[[i]] else X[,i]
 
-      plot(x, type = "n" , axes = FALSE)
+      plot.new()
 
       if (((i-1)%%3)==0) {
 
@@ -479,14 +694,17 @@ ecdfplot_match <- function(x, t, w, sw, ...) {
 }
 
 densityplot_match <- function(x, t, w, sw, ...) {
-  x.min <- min(x)
-  x.max <- max(x)
 
-  if (!all(x %in% c(x.min, x.max))) {
+  if (length(unique(x)) == 2L) x <- factor(x)
+
+  if (!is.factor(x)) {
     #Density plot for continuous variable
     small.tr <- (0:1)[which.min(c(sum(t==0), sum(t==1)))]
     x_small <- x[t==small.tr]
 
+    x.min <- min(x)
+    x.max <- max(x)
+    #
     A <- list(...)
 
     bw <- A[["bw"]]
@@ -552,31 +770,141 @@ densityplot_match <- function(x, t, w, sw, ...) {
   }
   else {
     #Bar plot for binary variable
-    x1_t1_un <- wm(x[t==1] == x.max, sw[t==1])
-    x1_t0_un <- wm(x[t==0] == x.max, sw[t==0])
-    x0_t1_un <- 1 - x1_t1_un
-    x0_t0_un <- 1 - x1_t0_un
+    x_t_un <- lapply(sort(unique(t)), function(t_) {
+      vapply(levels(x), function(i) {
+      wm(x[t==t_] == i, sw[t==t_])
+    }, numeric(1L))})
 
-    x1_t1_m <- wm(x[t==1] == x.max, w[t==1])
-    x1_t0_m <- wm(x[t==0] == x.max, w[t==0])
-    x0_t1_m <- 1 - x1_t1_m
-    x0_t0_m <- 1 - x1_t0_m
+    x_t_m <- lapply(sort(unique(t)), function(t_) {
+      vapply(levels(x), function(i) {
+        wm(x[t==t_] == i, w[t==t_])
+      }, numeric(1L))})
 
-    ylim <- c(0, 1.1*max(x1_t1_un, x1_t0_un, x0_t1_un, x0_t0_un,
-                          x1_t1_m, x1_t0_m, x0_t1_m, x0_t0_m))
+    ylim <- c(0, 1.1*max(unlist(x_t_un), unlist(x_t_m)))
 
-    barplot(setNames(c(x0_t0_un, x1_t0_un), c(x.min, x.max)), border = "grey60", col = "white",
-            ylim = ylim)
-    barplot(setNames(c(x0_t1_un, x1_t1_un), c(x.min, x.max)), border = "black", col = NA,
-            ylim = ylim, add = TRUE)
+    borders <- c("grey60", "black")
+    for (i in seq_along(x_t_un)) {
+      barplot(x_t_un[[i]], border = borders[i],
+              col = if (i == 1) "white" else NA_character_,
+              ylim = ylim, add = i != 1L)
+    }
+
     abline(h = 0:1)
     box()
 
-    barplot(setNames(c(x0_t0_m, x1_t0_m), c(x.min, x.max)), border = "grey60", col = "white",
-            ylim = ylim, axes = FALSE)
-    barplot(setNames(c(x0_t1_m, x1_t1_m), c(x.min, x.max)), border = "black", col = NA,
-            ylim = ylim, axes = FALSE, add = TRUE)
+    for (i in seq_along(x_t_m)) {
+      barplot(x_t_m[[i]], border = borders[i],
+              col = if (i == 1) "white" else NA_character_,
+              ylim = ylim, add = i != 1L, axes = FALSE)
+    }
+
     abline(h = 0:1)
     box()
+  }
+}
+
+hist.pscore <- function(x, xlab = "Propensity Score", freq = FALSE, ...){
+  .pardefault <- par(no.readonly = TRUE)
+  on.exit(par(.pardefault))
+
+  treat <- x$treat
+  pscore <- x$distance[!is.na(x$distance)]
+  s.weights <- if (is.null(x$s.weights)) rep(1, length(treat)) else x$s.weights
+  weights <- x$weights * s.weights
+  matched <- weights != 0
+  q.cut <- x$q.cut
+
+  minp <- min(pscore)
+  maxp <- max(pscore)
+  ratio <- x$call$ratio
+
+  if (is.null(ratio)) ratio <- 1
+
+  for (i in unique(treat, nmax = 2)) {
+    if (freq) s.weights[treat == i] <- s.weights[treat == i]/mean(s.weights[treat == i])
+    else s.weights[treat == i] <- s.weights[treat == i]/sum(s.weights[treat == i])
+
+    if (freq) weights[treat == i] <- weights[treat == i]/mean(weights[treat == i])
+    else weights[treat == i] <- weights[treat == i]/sum(weights[treat == i])
+  }
+
+  ylab <- if (freq) "Count" else "Proportion"
+
+  par(mfrow = c(2,2))
+  # breaks <- pretty(na.omit(pscore), 10)
+  breaks <- seq(minp, maxp, length = 11)
+  xlim <- range(breaks)
+
+  for (n in c("Raw Treated", "Matched Treated", "Raw Control", "Matched Control")) {
+    if (startsWith(n, "Raw")) w <- s.weights
+    else w <- weights
+
+    if (endsWith(n, "Treated")) t <- 1
+    else t <- 0
+
+    #Create histogram using weights
+    #Manually assign density, which is used as height of the bars. The scaling
+    #of the weights above determine whether they are "counts" or "proportions".
+    #Regardless, set freq = FALSE in plot() to ensure density is used for bar
+    #height rather than count.
+    pm <- hist(pscore[treat==t], plot = FALSE, breaks = breaks)
+    pm[["density"]] <- vapply(seq_len(length(pm$breaks) - 1), function(i) {
+      sum(w[treat == t & pscore >= pm$breaks[i] & pscore < pm$breaks[i+1]])
+    }, numeric(1L))
+    plot(pm, xlim = xlim, xlab = xlab, main = n, ylab = ylab,
+         freq = FALSE, col = "lightgray", ...)
+
+    if (!startsWith(n, "Raw") && !is.null(q.cut)) abline(v = q.cut, lty=2)
+  }
+
+}
+
+jitter.pscore <- function(x, interactive, pch = 1, ...){
+
+  .pardefault <- par(no.readonly = TRUE)
+  on.exit(par(.pardefault))
+
+  treat <- x$treat
+  pscore <- x$distance
+  s.weights <- if (is.null(x$s.weights)) rep(1, length(treat)) else x$s.weights
+  weights <- x$weights * s.weights
+  matched <- weights > 0
+  q.cut <- x$q.cut
+  jitp <- jitter(rep(1,length(treat)), factor=6)+(treat==1)*(weights==0)-(treat==0) - (weights==0)*(treat==0)
+  cswt <- sqrt(s.weights)
+  cwt <- sqrt(weights)
+  minp <- min(pscore, na.rm = TRUE)
+  maxp <- max(pscore, na.rm = TRUE)
+
+  plot(pscore, xlim = c(minp - 0.05*(maxp-minp), maxp + 0.05*(maxp-minp)), ylim = c(-1.5,2.5),
+       type="n", ylab="", xlab="Propensity Score",
+       axes=FALSE,main="Distribution of Propensity Scores",...)
+  if (!is.null(q.cut)) abline(v = q.cut, col = "grey", lty = 1)
+
+  #Matched treated
+  points(pscore[treat==1 & matched], jitp[treat==1 & matched],
+         pch = pch, cex = cwt[treat==1 & matched], ...)
+  #Matched control
+  points(pscore[treat==0 & matched], jitp[treat==0 & matched],
+         pch = pch, cex = cwt[treat==0 & matched], ...)
+  #Unmatched treated
+  points(pscore[treat==1 & !matched], jitp[treat==1 & !matched],
+         pch = pch, cex = cswt[treat==1 & matched],...)
+  #Unmatched control
+  points(pscore[treat==0 & !matched], jitp[treat==0 & !matched],
+         pch = pch, cex = cswt[treat==0 & matched], ...)
+
+  axis(1)
+
+  center <- mean(par("usr")[1:2])
+  text(center, 2.5, "Unmatched Treated Units", adj = .5)
+  text(center, 1.5, "Matched Treated Units", adj = .5)
+  text(center, 0.5, "Matched Control Units", adj = .5)
+  text(center, -0.5, "Unmatched Control Units", adj = .5)
+  box()
+
+  if (interactive) {
+    print("To identify the units, use first mouse button; to stop, use second.")
+    identify(pscore, jitp, names(treat), atpen = TRUE)
   }
 }
