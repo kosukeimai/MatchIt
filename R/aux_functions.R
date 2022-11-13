@@ -130,6 +130,7 @@ info.to.method <- function(info) {
            "nearest" = "nearest neighbor matching",
            "optimal" = "optimal pair matching",
            "full" = "optimal full matching",
+           "quick" = "generalized full matching",
            "genetic" = "genetic matching",
            "subclass" = paste0("subclassification (", info$subclass, " subclasses)"),
            "cardinality" = "cardinality matching",
@@ -470,6 +471,8 @@ get.covs.matrix <- function(formula = NULL, data = NULL) {
 
   chars.in.mf <- vapply(mf, is.character, logical(1L))
   mf[chars.in.mf] <- lapply(mf[chars.in.mf], factor)
+
+  mf <- droplevels(mf)
 
   X <- model.matrix(formula, data = mf,
                     contrasts.arg = lapply(Filter(is.factor, mf),
