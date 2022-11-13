@@ -1,4 +1,63 @@
-add_s.weights <- function(m, s.weights = NULL, data = NULL) {
+#' Add sampling weights to a `matchit` object
+#'
+#' @description
+#' Adds sampling weights to a `matchit` object so that they are
+#' incorporated into balance assessment and creation of the weights. This would
+#' typically only be used when an argument to `s.weights` was not supplied
+#' to [matchit()] (i.e., because they were not to be included in the estimation
+#' of the propensity score) but sampling weights are required for generalizing
+#' an effect to the correct population. Without adding sampling weights to the
+#' `matchit` object, balance assessment tools (i.e., [summary.matchit()]
+#' and [plot.matchit()]) will not calculate balance statistics correctly, and
+#' the weights produced by [match.data()] and [get_matches()] will not
+#' incorporate the sampling weights.
+#'
+#' @param m a `matchit` object; the output of a call to [matchit()],
+#' typically with the `s.weights` argument unspecified.
+#' @param s.weights an numeric vector of sampling weights to be added to the
+#' `matchit` object. Can also be specified as a string containing the name
+#' of variable in `data` to be used or a one-sided formula with the
+#' variable on the right-hand side (e.g., `~ SW`).
+#' @param data a data frame containing the sampling weights if given as a
+#' string or formula. If unspecified, `add_s.weights()` will attempt to find
+#' the dataset using the environment of the `matchit` object.
+#'
+#' @return a `matchit` object with an `s.weights` component
+#' containing the supplied sampling weights. If `s.weights = NULL`, the original
+#' `matchit` object is returned.
+#'
+#' @author Noah Greifer
+#'
+#' @seealso [matchit()]; [match.data()]
+#'
+#' @examples
+#'
+#' data("lalonde")
+#'
+#' # Generate random sampling weights, just
+#' # for this example
+#' sw <- rchisq(nrow(lalonde), 2)
+#'
+#' # NN PS match using logistic regression PS that doesn't
+#' # include sampling weights
+#' m.out <- matchit(treat ~ age + educ + race + nodegree +
+#'                    married  + re74 + re75, data = lalonde)
+#'
+#' m.out
+#'
+#' # Add s.weights to the matchit object
+#' m.out <- add_s.weights(m.out, sw)
+#'
+#' m.out #note additional output
+#'
+#' # Check balance; note that sample sizes incorporate
+#' # s.weights
+#' summary(m.out, improvement = FALSE)
+#'
+#' @export
+add_s.weights <- function(m,
+                          s.weights = NULL,
+                          data = NULL) {
 
   if (!inherits(m, "matchit")) stop("'m' must be a matchit object, the output of a call to matchit().", call. = FALSE)
 
