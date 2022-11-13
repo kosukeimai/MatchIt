@@ -12,12 +12,12 @@ methods of matching for covariate balance in observational studies.
 Matching is one way to reduce confounding and model dependence when
 estimating treatment effects. Several matching methods are available,
 including nearest neighbor matching, optimal pair matching, optimal full
-matching, genetic matching, exact matching, coarsened exact matching,
-cardinality matching, and subclassification, some of which rely on
-functions from other R packages. A variety of methods to estimate
-propensity scores for propensity score matching are included. Below is
-an example of the use of `MatchIt` to perform Mahalanobis distance
-matching with replacement and assess balance:
+matching, generalized full matching, genetic matching, exact matching,
+coarsened exact matching, cardinality matching, and subclassification,
+some of which rely on functions from other R packages. A variety of
+methods to estimate propensity scores for propensity score matching are
+included. Below is an example of the use of `MatchIt` to perform
+Mahalanobis distance matching with replacement and assess balance:
 
 ``` r
 library("MatchIt")
@@ -69,7 +69,6 @@ summary(m.out)
     #> nodegree          0.7081        0.5967          0.2450          .    0.1114   0.1114
     #> re74           2095.5737     5619.2365         -0.7211     0.5181    0.2248   0.4470
     #> re75           1532.0553     2466.4844         -0.2903     0.9563    0.1342   0.2876
-    #> 
     #> 
     #> Summary of Balance for Matched Data:
     #>            Means Treated Means Control Std. Mean Diff. Var. Ratio eCDF Mean eCDF Max Std. Pair Dist.
