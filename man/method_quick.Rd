@@ -67,7 +67,7 @@ matching, which is a form of subclassification wherein all units, both
 treatment and control (i.e., the "full" sample), are assigned to a subclass
 and receive at least one match. It uses an algorithm that is extremely fast
 compared to optimal full matching, which is why it is labelled as "quick", at the
-expense of true optimality. The method relies on and is a wrapper
+expense of true optimality. The method is described in Sävje, Higgins, & Sekhon (2021). The method relies on and is a wrapper
 for \pkgfun{quickmatch}{quickmatch}.
 
 Advantages of generalized full matching include that the matching order is not
@@ -104,7 +104,7 @@ matchit(formula,
 }
 }
 \details{
-DETAILS
+Generalized full matching is similar to optimal full matching, but has some additional flexibility that can be controlled by some of the extra arguments available. By default, \code{method = "quick"} performs a standard full match in which all units are matched (unless restricted by the caliper) and assigned to a subclass. Each subclass could contain multiple units from each treatment group. The subclasses are chosen to minimize the largest within-subclass distance between units (including between units of the same treatment group). Notably, generalized full matching requires less memory and can run much faster than optimal full matching and optimal pair matching and, in some cases, even than nearest neighbor matching, and it can be used with huge datasets (e.g., in the millions) while running in under a minute.
 }
 \section{Outputs}{
 
@@ -134,7 +134,7 @@ summary(m.out1)
 In a manuscript, be sure to cite the \emph{quickmatch} package if using
 \code{matchit()} with \code{method = "quick"}:
 
-Savje, F., Sekhon, J., & Higgins, M. (2018). quickmatch: Quick generalized full matching. \url{https://CRAN.R-project.org/package=quickmatch}
+Sävje, F., Sekhon, J., & Higgins, M. (2018). quickmatch: Quick generalized full matching. \url{https://CRAN.R-project.org/package=quickmatch}
 
 For example, a sentence might read:
 
