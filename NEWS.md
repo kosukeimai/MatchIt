@@ -20,6 +20,8 @@ output:
 
 * When a factor variable is supplied to `plot.matchit()` with `type = "density"`, the plot now displays all factor levels in the same plot instead of in separate plots for each level, similar to `cobalt::bal.plot()`.
 
+* The "Estimating Effects" vignette (`vignette("estimating-effects")`) has been rewritten to be much shorter (and hopefully clearer) and to use the `marginaleffects` package, which is now a Suggested package. The new vignette focuses on using g-computation to estimate treatment effects using a single workflow with slight modifications for different situations.
+
 * The error message when covariates have missing or non-finite values is now clearer, identifying which variables are afflicted. This fixes a bug mentioned in #115.
 
 * Fixed a bug when using `matchit()` with `method = "cem"`, `k2k = TRUE`, and `k2k.method = NULL`. Thanks to Florian B. Mayr.
@@ -32,7 +34,11 @@ output:
 
 * Improved printing of balance results when no covariates are supplied.
 
-* Updates to the Estimating Effects vignette (`vignette("estimating-effects")`) that dramatically increase the speed of the cluster bootstrap for average marginal effects after matching. Thanks to Yohei Hashimoto for pointing out the inefficiency.
+* Updates to the Estimating Effects vignette that dramatically increase the speed of the cluster bootstrap for average marginal effects after matching. Thanks to Yohei Hashimoto for pointing out the inefficiency.
+
+* Updates to the Assessing Balance vignette to fix errors
+
+* All vignettes and help files are better protected against Suggested packages not available on CRAN.
 
 # MatchIt 4.4.0
 
