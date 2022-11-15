@@ -1,4 +1,4 @@
-pandoc: 2.7.3
+pandoc: 2.19.2
 pkgdown: 2.0.6
 pkgdown_sha: ~
 articles:
@@ -7,5 +7,8 @@ articles:
   estimating-effects: estimating-effects.html
   matching-methods: matching-methods.html
   sampling-weights: sampling-weights.html
-last_built: 2022-08-17T17:29Z
+last_built: 2022-11-15T08:04Z
+urls:
+  reference: https://kosukeimai.github.io/MatchIt/reference
+  article: https://kosukeimai.github.io/MatchIt/articles
 
