@@ -160,7 +160,12 @@
 
 #Functions to compute distance matrices
 #' @export
-mahalanobis_dist <- function(formula = NULL, data = NULL, s.weights = NULL, var = NULL, discarded = NULL, ...) {
+mahalanobis_dist <- function(formula = NULL,
+                             data = NULL,
+                             s.weights = NULL,
+                             var = NULL,
+                             discarded = NULL,
+                             ...) {
   X <- transform_covariates(formula, data, method = "mahalanobis",
                             s.weights = s.weights, var = var,
                             discarded = discarded)
@@ -169,7 +174,12 @@ mahalanobis_dist <- function(formula = NULL, data = NULL, s.weights = NULL, var 
 
 #' @export
 #' @rdname mahalanobis_dist
-scaled_euclidean_dist <- function(formula = NULL, data = NULL, s.weights = NULL, var = NULL, discarded = NULL, ...) {
+scaled_euclidean_dist <- function(formula = NULL,
+                                  data = NULL,
+                                  s.weights = NULL,
+                                  var = NULL,
+                                  discarded = NULL,
+                                  ...) {
   X <- transform_covariates(formula, data, method = "scaled_euclidean",
                             s.weights = s.weights, var = var,
                             discarded = discarded)
@@ -178,7 +188,11 @@ scaled_euclidean_dist <- function(formula = NULL, data = NULL, s.weights = NULL,
 
 #' @export
 #' @rdname mahalanobis_dist
-robust_mahalanobis_dist <- function(formula = NULL, data = NULL, s.weights = NULL, discarded = NULL, ...) {
+robust_mahalanobis_dist <- function(formula = NULL,
+                                    data = NULL,
+                                    s.weights = NULL,
+                                    discarded = NULL,
+                                    ...) {
   X <- transform_covariates(formula, data = data, method = "robust_mahalanobis",
                             s.weights = s.weights, discarded = discarded)
   eucdist_internal(X, attr(X, "treat"))

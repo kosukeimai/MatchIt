@@ -165,8 +165,7 @@
 #' specified in the order they appear in `formula`, except when
 #' interactions are present. One can run the following code:
 #'
-#' \preformatted{MatchIt:::get_assign(model.matrix(~X1*X2 + X3, data =
-#' data))[-1]}
+#' \preformatted{MatchIt:::get_assign(model.matrix(~X1*X2 + X3, data = data))[-1]}
 #'
 #' which will output a vector of numbers and the variable to which each number
 #' corresponds; the first entry in `tols` corresponds to the variable
@@ -263,6 +262,7 @@
 #' # few covariate matched on in order to not take too long;
 #' # with real data, tols should be much lower and more
 #' # covariates included if possible.
+NULL
 
 matchit2cardinality <-  function(treat, data, discarded, formula,
                                  ratio = 1, focal = NULL, s.weights = NULL,

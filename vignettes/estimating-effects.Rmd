@@ -101,11 +101,11 @@ d <- data.frame(A, X, Y_C, Y_B, Y_S)
 
 After assessing balance and deciding on a matching specification, it comes time to estimate the effect of the treatment in the matched sample. How the effect is estimated and interpreted depends on the desired estimand and the type of model used (if any). In addition to estimating effects, estimating the uncertainty of the effects is critical in communicating them and assessing whether the observed effect is compatible with there being no effect in the population. This guide explains how to estimate effects after various forms of matching and with various outcome types. There may be situations that are not covered here for which additional methodological research may be required, but some of the recommended methods here can be used to guide such applications.
 
-This guide is structured as follows: first, information on the concepts related to effect and standard error (SE) estimation is presented below. Then, instructions for how to estimate effects and SEs are described. This section is split up first by the type of matching method performed (matching without replacement, matching with replacement, full matching, and subclassification) and then by the type of outcome (continuous, binary, and survival). Finally recommendations for reporting results and tips to avoid making common mistakes are presented.
+This guide is structured as follows: first, information on the concepts related to effect and standard error (SE) estimation is presented below. Then, instructions for how to estimate effects and SEs are described for the standard case (matching for the ATT with a continuous outcome) and some other common circumstances. Finally, recommendations for reporting results and tips to avoid making common mistakes are presented.
 
 ### Identifying the estimand
 
-Before an effect is estimated, the estimand must be specified and clarified. Although some aspects of the estimand depend not only on how the effect is estimated after matching but also on the matching method itself, other aspects must be considered at the tine of effect estimation and interpretation. Here, we consider three aspects of the estimand: the population the effect is meant to generalize to (the target population), the effect measure, and whether the effect is marginal or conditional.
+Before an effect is estimated, the estimand must be specified and clarified. Although some aspects of the estimand depend not only on how the effect is estimated after matching but also on the matching method itself, other aspects must be considered at the time of effect estimation and interpretation. Here, we consider three aspects of the estimand: the population the effect is meant to generalize to (the target population), the effect measure, and whether the effect is marginal or conditional.
 
 **The target population.** Different matching methods allow you to estimate effects that can generalize to different target populations. The most common estimand in matching the average treatment effect in the treated (ATT), which is the average effect of treatment for those who receive treatment. This estimand is estimable for matching methods that do not change the treated units (i.e., by weighting or discarding units) and is requested in `matchit()` by setting `estimand = "ATT"` (which is the default). The average treatment effect in the population (ATE) is the average effect of treatment for the population from which the sample is a random sample. This estimand is estimable only for methods that allow the ATE and either do not discard units from the sample or explicit target full sample balance, which in `MatchIt` is limited to full matching, subclassification, and template matching when setting `estimand = "ATE"`. When treated units are discarded (e.g., through the use of common support restrictions, calipers, cardinality matching, or [coarsened] exact matching), the estimand corresponds to neither the population ATT nor the population ATE, but rather to an average treatment effect in the remaining matched sample (ATM), which may not correspond to any specific target population. See @greiferChoosingEstimandWhen2021 for a discussion on the substantive considerations involved when choosing the target population of the estimand.
 
@@ -173,7 +173,7 @@ head(d)
 
 We will need to the following packages to perform the desired analyses:
 
--   `marginaleffects` provides the `comparions()` function for performing g-computation and estimating the SEs and confidence intervals of the average estimate potential outcomes and treatment effects
+-   `marginaleffects` provides the `comparisons()` function for performing g-computation and estimating the SEs and confidence intervals of the average estimate potential outcomes and treatment effects
 -   `sandwich` is used internally by `marginaleffects` to compute robust and cluster-robust SEs
 -   `survival` provides `coxph()` to estimate the coefficients in a Cox-proportional hazards model for the marginal hazard ratio, which we will use for survival outcomes.
 
@@ -186,7 +186,7 @@ library("MatchIt")
 library("marginaleffects")
 ```
 
-All effect estimates will be computed using `marginaleffects::comparions()`, even when its use may be superfluous (e.g., for performing a t-test in the matched set). As previously mentioned, this is because it is useful to have a single workflow that works no matter the situation, perhaps with very slight modifications to accommodate different contexts. Using `comparisons()` has several advantages, even when the alternatives are simple: it only provides the effect estimate, and not other coefficients; it automatically incorporates robust and cluster-robust SEs if requested, and it always produces average marginal effects for the correct population.
+All effect estimates will be computed using `marginaleffects::comparions()`, even when its use may be superfluous (e.g., for performing a t-test in the matched set). As previously mentioned, this is because it is useful to have a single workflow that works no matter the situation, perhaps with very slight modifications to accommodate different contexts. Using `comparisons()` has several advantages, even when the alternatives are simple: it only provides the effect estimate, and not other coefficients; it automatically incorporates robust and cluster-robust SEs if requested; and it always produces average marginal effects for the correct population if requested.
 
 Other packages may be of use but are not used here. There are alternatives to the `marginaleffects` package for computing average marginal effects, including `margins` and `stdReg`. The `survey` package can be used to estimate robust SEs incorporating weights and provides functions for survey-weighted generalized linear models and Cox-proportional hazards models. It is often used with propensity score weighting.
 
@@ -262,35 +262,43 @@ We can see that the difference in potential outcome means is equal to the averag
 
 This section explains how the procedure might differ if any of the following special circumstances occur.
 
-**Matching for the ATE.** When matching for the ATE (including [coarsened] exact matching, full matching, subclassification, and cardinality matching), everything is identical to the Standard Case except that in the calls to `comparisons()` and `predicitions()`, the `newdata` argument is omitted (or can be replaced with `newdata = md`). This is because the estimated potential outcomes are computed for the full matched sample rather than just the treated units.
+**Matching for the ATE.** When matching for the ATE (including [coarsened] exact matching, full matching, subclassification, and cardinality matching), everything is identical to the Standard Case except that in the calls to `comparisons()` and `predictions()`, the `newdata` argument is omitted (or can be replaced with `newdata = md`). This is because the estimated potential outcomes are computed for the full matched sample rather than just the treated units.
 
-**Matching with replacement.** When matching with replacement (i.e., nearest neighbor or genetic matching with `replace = TRUE`), effect and SE estimation need to account for control unit multiplicity (i.e., repeated use) and within-pair correlations [@hill2006; @austin2020a]. Although @abadie2008 demonstrated analytically that bootstrap SEs may be invalid for matching with replacement, simulation work by @hill2006 and @bodory2020 has found that bootstrap SEs are adequate and generally slightly conservative. See the section "Using Bootstrapping to Estimate Confidence Intervals" for instructions on using the bootstrap.
+**Matching with replacement.** When matching with replacement (i.e., nearest neighbor or genetic matching with `replace = TRUE`), effect and SE estimation need to account for control unit multiplicity (i.e., repeated use) and within-pair correlations [@hill2006; @austin2020a]. Although @abadie2008 demonstrated analytically that bootstrap SEs may be invalid for matching with replacement, simulation work by @hill2006 and @bodory2020 has found that bootstrap SEs are adequate and generally slightly conservative. See the section "Using Bootstrapping to Estimate Confidence Intervals" for instructions on using the bootstrap and an example that use matching with replacement.
 
-Because control units do not belong to unique pairs, there is no pair membership in the `match.data()` output. One can simply change `vcov = ~subclass` to `vcov = "HC3"` in the calls to `comparisons()` and `predicitions()` to use robust SEs instead of cluster-robust SEs, as recommended by @hill2006. There is some evidence for an alternative approach that incorporates pair membership and adjusts for reuse of control units, though this has only been studied for survival outcomes [@austin2020a]. This adjustment involves using two-way cluster-robust SEs with pair membership and unit ID as the clustering variables. For continuous and binary outcomes, this involves the following two changes: 1) replace `match.data()` with `get_matches()`, which produces a dataset with a row per unit per pair, meaning control units matched to multiple treated units will appear multiple times in the dataset; 2) set `vcov = ~subclass + id` in the calls to `comparisons()` and `predicitions()`. For survival outcomes, a special procedure must be used; see the section on survival outcomes below.
+Because control units do not belong to unique pairs, there is no pair membership in the `match.data()` output. One can simply change `vcov = ~subclass` to `vcov = "HC3"` in the calls to `comparisons()` and `predictions()` to use robust SEs instead of cluster-robust SEs, as recommended by @hill2006. There is some evidence for an alternative approach that incorporates pair membership and adjusts for reuse of control units, though this has only been studied for survival outcomes [@austin2020a]. This adjustment involves using two-way cluster-robust SEs with pair membership and unit ID as the clustering variables. For continuous and binary outcomes, this involves the following two changes: 1) replace `match.data()` with `get_matches()`, which produces a dataset with a row per unit per pair, meaning control units matched to multiple treated units will appear multiple times in the dataset; 2) set `vcov = ~subclass + id` in the calls to `comparisons()` and `predictions()`. For survival outcomes, a special procedure must be used; see the section on survival outcomes below.
 
-**Matching without pairing.** Some matching methods do not involve creating pairs; these include cardinality and template matching, exact matching, and coarsened exact matching with `k2k = FALSE` (the default). The only change that needs to be made to the Standard Case is that one should change `vcov = ~subclass` to `vcov = "HC3"` in the calls to `comparisons()` and `predicitions()` to use robust SEs instead of cluster-robust SEs. Remember that if matching is done for the ATE (even if units are dropped), the `newdata` argument should be dropped.
+**Matching without pairing.** Some matching methods do not involve creating pairs; these include cardinality and template matching, exact matching, and coarsened exact matching with `k2k = FALSE` (the default). The only change that needs to be made to the Standard Case is that one should change `vcov = ~subclass` to `vcov = "HC3"` in the calls to `comparisons()` and `predictions()` to use robust SEs instead of cluster-robust SEs. Remember that if matching is done for the ATE (even if units are dropped), the `newdata` argument should be dropped.
 
 **Propensity score subclassification.** There are two natural ways to estimate marginal effects after subclassification: the first is to estimate subclass-specific treatment effects and pool them using an average marginal effects procedure, and the second is to use the stratum weights to estimate a single average marginal effect. This latter approach is also known as marginal mean weighting through stratification (MMWS), and is described in detail by @hong2010[^5]. When done properly, both methods should yield similar or identical estimates of the treatment effect.
 
 [^5]: It is also known as fine stratification weighting, described by @desai2017.
 
-All of the methods described above for the Standard Case also work with MMWS because the formation of the weights is the same; the only difference is that it is not appropriate to use cluster-robust SEs with MMWS because of how few clusters are present, so one should change `vcov = ~subclass` to `vcov = "HC3"` in the calls to `comparisons()` and `predicitions()` to use robust SEs instead of cluster-robust SEs. The subclasses can optionally be included in the outcome model (optionally interacting with treatment) as an alternative to including the propensity score.
+All of the methods described above for the Standard Case also work with MMWS because the formation of the weights is the same; the only difference is that it is not appropriate to use cluster-robust SEs with MMWS because of how few clusters are present, so one should change `vcov = ~subclass` to `vcov = "HC3"` in the calls to `comparisons()` and `predictions()` to use robust SEs instead of cluster-robust SEs. The subclasses can optionally be included in the outcome model (optionally interacting with treatment) as an alternative to including the propensity score.
 
-The subclass-specific approach omits the weights and uses the subclasses directly. It is only appropriate when there are a small number of subclasses relative to the sample size. In the outcome model, `subclass` should interact with all other predictors in the model (including the treatment, covariates, and interactions, if any), and the `weights` argument should be omitted. In the calls to `comparisons()` and `predictions()`, the `wts` argument should be omitted. As with MMWS, one should change `vcov = ~subclass` to `vcov = "HC3"` in the calls to `comparisons()` and `predicitions()`. See an example below:
+The subclass-specific approach omits the weights and uses the subclasses directly. It is only appropriate when there are a small number of subclasses relative to the sample size. In the outcome model, `subclass` should interact with all other predictors in the model (including the treatment, covariates, and interactions, if any), and the `weights` argument should be omitted. In the calls to `comparisons()` and `predictions()`, the `wts` argument should be omitted. As with MMWS, one should change `vcov = ~subclass` to `vcov = "HC3"` in the calls to `comparisons()` and `predictions()`. See an example below:
 
-```{r, eval=F}
-fit1 <- lm(Y_C ~ subclass * (A * (X1 + X2 + X3 + X4 + X5 + 
+```{r, eval=me_ok}
+#Subclassification on the PS for the ATT
+mS <- matchit(A ~ X1 + X2 + X3 + X4 + X5 + 
+                 X6 + X7 + X8 + X9, data = d,
+               method = "subclass", estimand = "ATT")
+
+#Extract matched data
+md <- match.data(mS)
+
+fitS <- lm(Y_C ~ subclass * (A * (X1 + X2 + X3 + X4 + X5 + 
                                     X6 + X7 + X8 + X9)),
            data = md)
 
-comp1 <- comparisons(fit1,
+compS <- comparisons(fitS,
                      variables = "A",
                      vcov = "HC3",
                      newdata = subset(md, A == 1))
-summary(comp1)
+summary(compS)
 ```
 
-A model with fewer terms may be required when subclasses are small; removing covariates or their interactions with treatment maybe required and can increase precision in smaller datasets. Remember that if subclassification is done for the ATE (even if units are dropped), the `newdata` argument should be dropped.
+A model with fewer terms may be required when subclasses are small; removing covariates or their interactions with treatment may be required and can increase precision in smaller datasets. Remember that if subclassification is done for the ATE (even if units are dropped), the `newdata` argument should be dropped.
 
 **Binary outcomes.** Estimating effects on binary outcomes is essentially the same as for continuous outcomes. The main difference is that there are several measures of the effect one can consider, which include the odds ratio (OR), risk ratio/relative risk (RR), and risk difference (RD), and the syntax to `comparisons()` depends on which one is desired. The outcome model should be one appropriate for binary outcomes (e.g., logistic regression) but is unrelated to the desired effect measure because we can compute any of the above effect measures using `comparisons()` after the logistic regression.
 
@@ -310,9 +318,12 @@ fit2 <- glm(Y_B ~ A * (X1 + X2 + X3 + X4 + X5 +
             family = quasibinomial())
 
 #Compute effects
-comp2 <- comparisons(fit2, variables = "A",
-                     vcov = ~subclass, newdata = subset(md, A == 1),
-                     wts = "weights", transform_pre = "lnratioavg")
+comp2 <- comparisons(fit2,
+                     variables = "A",
+                     vcov = ~subclass,
+                     newdata = subset(md, A == 1),
+                     wts = "weights",
+                     transform_pre = "lnratioavg")
 
 #Log RR, standard error, and Z value
 summary(comp2)
@@ -348,6 +359,9 @@ For matching with replacement, a special procedure described by @austin2020a can
 Doing so must be done manually for survival models using `get_matches()` and several calls to `coxph()` as demonstrated in the appendix of @austin2020a. We demonstrate this below:
 
 ```{r, eval = F}
+#get_matches() after matching with replacement
+gm <- get_matches(mR)
+
 #Austin & Cafri's (2020) SE estimator
 fs <- coxph(Surv(Y_S) ~ A, data = gm, robust = TRUE, 
       weights = weights, cluster = subclass)
@@ -378,11 +392,9 @@ The bootstrap is an alternative to the delta method for estimating confidence in
 
 #### The standard bootstrap
 
-For the standard bootstrap, we need a function that takes in the original dataset and a vector of sampled unit indices and returns the estimated quantity of interest. This function should perform the matching on the bootstrap sample, fit the outcome model, and estimate the treatment effect using g-computation. Here, we'll use matching with replacement, since the standard bootstrap has been found to work well with it [@bodoryFiniteSamplePerformance2020; @hill2006], despite some analytic results recommending otherwise [@abadieFailureBootstrapMatching2008].
+For the standard bootstrap, we need a function that takes in the original dataset and a vector of sampled unit indices and returns the estimated quantity of interest. This function should perform the matching on the bootstrap sample, fit the outcome model, and estimate the treatment effect using g-computation. In this example, we'll use matching with replacement, since the standard bootstrap has been found to work well with it [@bodory2020; @hill2006], despite some analytic results recommending otherwise [@abadie2008]. We'll implement g-computation manually rather than using `comparisons()`, as this dramatically improves the speed of the estimation since we don't require standard errors to be estimated in each sample (or other processing `comparisons()` does). We'll consider the marginal RR ATT of `A` on the binary outcome `Y_B`.
 
-In this example, we'll implement g-computation manually rather than using `comparisons()`, as this dramatically improves the speed of the estimation since we don't require standard errors to be estimated in each sample (and other processing `comparisons()` does). We'll consider the marginal RR ATT of `A` on the binary outcome `Y_B`.
-
-The first step is to write the estimation function, we we call `boot_fun`. This function returns the marginal RR.
+The first step is to write the estimation function, we we call `boot_fun`. This function returns the marginal RR. In it, we perform the matching, estimate the effect, and return the estimate of interest.
 
 ```{r}
 boot_fun <- function(data, i) {
@@ -422,7 +434,7 @@ boot_fun <- function(data, i) {
 }
 ```
 
-Next, we call `boot::boot()` with this function and the original dataset supplied to perform the bootstrapping. We'll request 199 bootstrap replications here, but in practice you should use many more, upwards of 999. More is always better. Using more also allows you to use the bias-corrected and accelerated (BCa) bootstrap confidence intervals, which are known to be the most accurate. See `?boot.ci` for details. Here, we'll just use a percentile confidence interval.
+Next, we call `boot::boot()` with this function and the original dataset supplied to perform the bootstrapping. We'll request 199 bootstrap replications here, but in practice you should use many more, upwards of 999. More is always better. Using more also allows you to use the bias-corrected and accelerated (BCa) bootstrap confidence intervals (which you can request by setting `type = "bca"` in the call to `boot.ci()`), which are known to be the most accurate. See `?boot.ci` for details. Here, we'll just use a percentile confidence interval.
 
 ```{r, eval = boot_ok, message=F, warning=F}
 library("boot")
