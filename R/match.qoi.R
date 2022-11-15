@@ -178,8 +178,9 @@ qqsum <- function(x, t, w = NULL, standardize = FALSE) {
   if (is.null(w)) w <- rep(1, n.obs)
 
   if (all(x == 0 | x == 1)) {
+    t1 <- t == t[1]
     #For binary variables, just difference in means
-    ediff <- abs(wm(x[t == t[1]], w[t == t[1]]) - wm(x[t != t[1]], w[t != t[1]]))
+    ediff <- abs(wm(x[t1], w[t1]) - wm(x[-t1], w[-t1]))
     return(c(meandiff = ediff, meddiff = ediff, maxdiff = ediff))
   }
 
@@ -190,11 +191,13 @@ qqsum <- function(x, t, w = NULL, standardize = FALSE) {
   w_ord <- w[ord]
   t_ord <- t[ord]
 
+  t1 <- which(t_ord==t_ord[1])
+
   if (standardize) {
     #Difference between ecdf of x for each group
     w_ord_ <- w_ord
-    w_ord_[t_ord==t_ord[1]] <- -w_ord_[t_ord==t_ord[1]]
-    ediff <- abs(cumsum(w_ord_))[c(diff(x_ord) != 0, TRUE)]
+    w_ord_[t1] <- -w_ord_[t1]
+    ediff <- abs(cumsum(w_ord_))[c(diff1(x_ord) != 0, TRUE)]
   }
   else {
     #Horizontal distance of ecdf between groups
@@ -202,14 +205,14 @@ qqsum <- function(x, t, w = NULL, standardize = FALSE) {
 
     u <- unique(x_ord)
 
-    wn1 <- sum(w[t == t_ord[1]] > 0)
-    wn0 <- sum(w[t != t_ord[1]] > 0)
+    wn1 <- sum(w[t1] > 0)
+    wn0 <- sum(w[-t1] > 0)
 
-    w1 <- w_ord[t_ord == t_ord[1]]
-    w0 <- w_ord[t_ord != t_ord[1]]
+    w1 <- w_ord[t1]
+    w0 <- w_ord[-t1]
 
-    x1 <- x_ord[t_ord == t_ord[1]][w1 > 0]
-    x0 <- x_ord[t_ord != t_ord[1]][w0 > 0]
+    x1 <- x_ord[t1][w1 > 0]
+    x0 <- x_ord[-t1][w0 > 0]
 
     if (wn1 < wn0) {
       if (length(u) <= 5) {

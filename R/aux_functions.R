@@ -697,3 +697,8 @@ qn <- function(treat, subclass, discarded = NULL) {
 
   return(qn)
 }
+
+#Faster diff()
+diff1 <- function(x) {
+  x[-1] - x[-length(x)]
+}

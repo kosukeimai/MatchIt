@@ -8,7 +8,7 @@ output:
 
 # MatchIt (development version)
 
-* Generalized full matching, as described by Sävje, Higgins, and Sekhon (2021), can now be implemented by setting `method = "quick"` in `matchit()`. It is a dramatically faster alternative to optimal full matching that can support much larger datasets and otherwise has similar balancing performance. See `?method_quick` and `vignette("matching-methods")` for more information. This functionality relies on the `quickmatch` package.
+* Generalized full matching, as described by [Sävje, Higgins, and Sekhon (2021)](https://doi.org/10.1017/pan.2020.32), can now be implemented by setting `method = "quick"` in `matchit()`. It is a dramatically faster alternative to optimal full matching that can support much larger datasets and otherwise has similar balancing performance. See `?method_quick` and `vignette("matching-methods")` for more information. This functionality relies on the `quickmatch` package.
 
 * The package structure has been updated, include with the use of Roxygen for documentation. This should not affect use, but the source code will look different from that of previous versions.
 
@@ -31,6 +31,8 @@ output:
 * Fixed a bug where `antiexact` would not work correctly with `method = "nearest"`. Thanks to @gli-1. (#119)
 
 * Fixed typos in the documentation and vignettes.
+
+* Calculating pair distances in `summary()` with `pair.dist = TRUE` is now faster.
 
 * Improved printing of balance results when no covariates are supplied.
 
