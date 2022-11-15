@@ -1,7 +1,207 @@
-## summary methods----
-summary.matchit <- function(object, interactions = FALSE,
-                            addlvariables = NULL, standardize = TRUE,
-                            data = NULL, pair.dist = TRUE, un = TRUE, improvement = FALSE, ...) {
+#' View a balance summary of a `matchit` object
+#'
+#' Computes and prints balance statistics for `matchit` and
+#' `matchit.subclass` objects. Balance should be assessed to ensure the
+#' matching or subclassification was effective at eliminating treatment group
+#' imbalance and should be reported in the write-up of the results of the
+#' analysis.
+#'
+#' @aliases summary.matchit summary.matchit.subclass print.summary.matchit
+#' print.summary.matchit.subclass
+#'
+#' @param object a `matchit` object; the output of a call to [matchit()].
+#' @param interactions `logical`; whether to compute balance statistics
+#' for two-way interactions and squares of covariates. Default is `FALSE`.
+#' @param addlvariables additional variable for which balance statistics are to
+#' be computed along with the covariates in the `matchit` object. Can be
+#' entered in one of three ways: as a data frame of covariates with as many
+#' rows as there were units in the original `matchit()` call, as a string
+#' containing the names of variables in `data`, or as a right-sided
+#' `formula` with the additional variables (and possibly their
+#' transformations) found in `data`, the environment, or the
+#' `matchit` object. Balance on squares and interactions of the additional
+#' variables will be included if `interactions = TRUE`.
+#' @param standardize `logical`; whether to compute standardized
+#' (`TRUE`) or unstandardized (`FALSE`) statistics. The standardized
+#' statistics are the standardized mean difference and the mean and maximum of
+#' the difference in the (weighted) empirical cumulative distribution functions
+#' (ECDFs). The unstandardized statistics are the raw mean difference and the
+#' mean and maximum of the quantile-quantile (QQ) difference. Variance ratios
+#' are produced either way. See Details below. Default is `TRUE`.
+#' @param data a optional data frame containing variables named in
+#' `addlvariables` if specified as a string or formula.
+#' @param pair.dist `logical`; whether to compute average absolute pair
+#' distances. For matching methods that don't include a `match.matrix`
+#' component in the output (i.e., exact matching, coarsened exact matching,
+#' full matching, and subclassification), computing pair differences can take a
+#' long time, especially for large datasets and with many covariates. For other
+#' methods (i.e., nearest neighbor, optimal, and genetic matching), computation
+#' is fairly quick. Default is `FALSE` for subclassification and
+#' `TRUE` otherwise.
+#' @param un `logical`; whether to compute balance statistics for the
+#' unmatched sample. Default `TRUE`; set to `FALSE` for more concise
+#' output.
+#' @param improvement `logical`; whether to compute the percent reduction
+#' in imbalance. Default `FALSE`. Ignored if `un = FALSE`.
+#' @param subclass after subclassification, whether to display balance for
+#' individual subclasses, and, if so, for which ones. Can be `TRUE`
+#' (display balance for all subclasses), `FALSE` (display balance only in
+#' aggregate), or the indices (e.g., `1:6`) of the specific subclasses for
+#' which to display balance. When anything other than `FALSE`, aggregate
+#' balance statistics will not be displayed. Default is `FALSE`.
+#' @param digits the number of digits to round balance statistics to.
+#' @param x a `summay.matchit` or `summary.matchit.subclass` object;
+#' the output of a call to `summary()`.
+#' @param \dots ignored.
+#'
+#' @return For `matchit` objects, a `summary.matchit` object, which
+#' is a list with the following components:
+#'
+#' \item{call}{the original call to [matchit()]}
+#' \item{nn}{a matrix of the
+#' sample sizes in the original (unmatched) and matched samples}
+#' \item{sum.all}{if `un = TRUE`, a matrix of balance statistics for each
+#' covariate in the original (unmatched) sample}
+#' \item{sum.matched}{a matrix of
+#' balance statistics for each covariate in the matched sample}
+#' \item{reduction}{if `improvement = TRUE`, a matrix of the percent
+#' reduction in imbalance for each covariate in the matched sample}
+#'
+#' For `match.subclass` objects, a `summary.matchit.subclass` object,
+#' which is a list as above containing the following components:
+#'
+#' \item{call}{the original call to [matchit()]}
+#' \item{sum.all}{if `un = TRUE`, a matrix of balance statistics for each covariate in the original
+#' sample}
+#' \item{sum.subclass}{if `subclass` is not `FALSE`, a list
+#' of matrices of balance statistics for each subclass}
+#' \item{sum.across}{a
+#' matrix of balance statistics for each covariate computed using the
+#' subclassification weights}
+#' \item{reduction}{if `improvement = TRUE`, a
+#' matrix of the percent reduction in imbalance for each covariate in the
+#' matched sample}
+#' \item{qn}{a matrix of sample sizes within each subclass}
+#' \item{nn}{a matrix of the sample sizes in the original (unmatched) and
+#' matched samples}
+#'
+#' @details
+#' `summary()` computes a balance summary of a `matchit` object. This
+#' include balance before and after matching or subclassification, as well as
+#' the percent improvement in balance. The variables for which balance
+#' statistics are computed are those included in the `formula`,
+#' `exact`, and `mahvars` arguments to [matchit()], as well as the
+#' distance measure if `distance` is was supplied as a numeric vector or
+#' method of estimating propensity scores. The `X` component of the
+#' `matchit` object is used to supply the covariates.
+#'
+#' The standardized mean differences are computed both before and after
+#' matching or subclassification as the difference in treatment group means
+#' divided by a standardization factor computed in the unmatched (original)
+#' sample. The standardization factor depends on the argument supplied to
+#' `estimand` in `matchit()`: for `"ATT"`, it is the standard
+#' deviation in the treated group; for `"ATC"`, it is the standard
+#' deviation in the control group; for `"ATE"`, it is the square root of
+#' the average of the variances within each treatment group. The post-matching
+#' mean difference is computed with weighted means in the treatment groups
+#' using the matching or subclassification weights.
+#'
+#' The variance ratio is computed as the ratio of the treatment group
+#' variances. Variance ratios are not computed for binary variables because
+#' their variance is a function solely of their mean. After matching, weighted
+#' variances are computed using the formula used in [cov.wt()]. The percent
+#' reduction in bias is computed using the log of the variance ratios.
+#'
+#' The eCDF difference statistics are computed by creating a (weighted) eCDF
+#' for each group and taking the difference between them for each covariate
+#' value. The eCDF is a function that outputs the (weighted) proportion of
+#' units with covariate values at or lower than the input value. The maximum
+#' eCDF difference is the same thing as the Kolmogorov-Smirnov statistic. The
+#' values are bounded at zero and one, with values closer to zero indicating
+#' good overlap between the covariate distributions in the treated and control
+#' groups. For binary variables, all eCDF differences are equal to the
+#' (weighted) difference in proportion and are computed that way.
+#'
+#' The QQ difference statistics are computed by creating two samples of the
+#' same size by interpolating the values of the larger one. The values are
+#' arranged in order for each sample. The QQ difference for each quantile is
+#' the difference between the observed covariate values at that quantile
+#' between the two groups. The difference is on the scale of the original
+#' covariate. Values close to zero indicate good overlap between the covariate
+#' distributions in the treated and control groups. A weighted interpolation is
+#' used for post-matching QQ differences. For binary variables, all QQ
+#' differences are equal to the (weighted) difference in proportion and are
+#' computed that way.
+#'
+#' The pair distance is the average of the absolute differences of a variable
+#' between pairs. For example, if a treated unit was paired with four control
+#' units, that set of units would contribute four absolute differences to the
+#' average. Within a subclass, each combination of treated and control unit
+#' forms a pair that contributes once to the average. The pair distance is
+#' described in Stuart and Green (2008) and is the value that is minimized when
+#' using optimal (full) matching. When `standardize = TRUE`, the
+#' standardized versions of the variables are used, where the standardization
+#' factor is as described above for the standardized mean differences. Pair
+#' distances are not computed in the unmatched sample (because there are no
+#' pairs). Because pair distance can take a while to compute, especially with
+#' large datasets or for many covariates, setting `pair.dist = FALSE` is
+#' one way to speed up `summary()`.
+#'
+#' The effective sample size (ESS) is a measure of the size of a hypothetical
+#' unweighted sample with roughly the same precision as a weighted sample. When
+#' non-uniform matching weights are computed (e.g., as a result of full
+#' matching, matching with replacement, or subclassification), the ESS can be
+#' used to quantify the potential precision remaining in the matched sample.
+#' The ESS will always be less than or equal to the matched sample size,
+#' reflecting the loss in precision due to using the weights. With non-uniform
+#' weights, it is printed in the sample size table; otherwise, it is removed
+#' because it does not contain additional information above the matched sample
+#' size.
+#'
+#' After subclassification, the aggregate balance statistics are computed using
+#' the subclassification weights rather than averaging across subclasses.
+#'
+#' All balance statistics (except pair differences) are computed incorporating
+#' the sampling weights supplied to `matchit()`, if any. The unadjusted
+#' balance statistics include the sampling weights and the adjusted balance
+#' statistics use the matching weights multiplied by the sampling weights.
+#'
+#' When printing, `NA` values are replaced with periods (`.`), and
+#' the pair distance column in the unmatched and percent balance improvement
+#' components of the output are omitted.
+#'
+#' @seealso [summary()] for the generic method; [plot.summary.matchit()] for
+#' making a Love plot from `summary()` output.
+#'
+#' \pkgfun{cobalt}{bal.tab.matchit}, which also displays balance for `matchit`
+#' objects.
+#'
+#' @examples
+#'
+#' data("lalonde")
+#' m.out <- matchit(treat ~ age + educ + married +
+#'                    race + re74, data = lalonde,
+#'                  method = "nearest", exact = ~ married,
+#'                  replace = TRUE)
+#' summary(m.out, interactions = TRUE)
+#'
+#' s.out <- matchit(treat ~ age + educ + married +
+#'                    race + nodegree + re74 + re75,
+#'                  data = lalonde, method = "subclass")
+#' summary(s.out, addlvariables = ~log(age) + I(re74==0))
+#' summary(s.out, subclass = TRUE)
+#'
+
+#' @exportS3Method summary matchit
+summary.matchit <- function(object,
+                            interactions = FALSE,
+                            addlvariables = NULL,
+                            standardize = TRUE,
+                            data = NULL,
+                            pair.dist = TRUE,
+                            un = TRUE,
+                            improvement = FALSE,
+                            ...) {
 
   #Create covariate matrix; include caliper, exact, and mahvars
 
@@ -29,7 +229,10 @@ summary.matchit <- function(object, interactions = FALSE,
     }
     else if (inherits(addlvariables, "formula")) {
       vars.in.formula <- all.vars(addlvariables)
-      if (!is.null(data) && is.data.frame(data)) data <- data.frame(data[names(data) %in% vars.in.formula], object$X[names(data) %in% setdiff(vars.in.formula, names(data))])
+      if (!is.null(data) && is.data.frame(data)) {
+        data <- data.frame(data[names(data) %in% vars.in.formula],
+                           object$X[names(object$X) %in% setdiff(vars.in.formula, names(data))])
+      }
       else data <- object$X
 
       addlvariables <- get.covs.matrix(addlvariables, data = data)
@@ -210,10 +413,18 @@ summary.matchit <- function(object, interactions = FALSE,
   return(res)
 }
 
-summary.matchit.subclass <- function(object, interactions = FALSE,
-                                     addlvariables = NULL, standardize = TRUE,
-                                     data = NULL, pair.dist = FALSE,
-                                     subclass = FALSE, un = TRUE, improvement = FALSE, ...) {
+#' @exportS3Method summary matchit.subclass
+#' @rdname summary.matchit
+summary.matchit.subclass <- function(object,
+                                     interactions = FALSE,
+                                     addlvariables = NULL,
+                                     standardize = TRUE,
+                                     data = NULL,
+                                     pair.dist = FALSE,
+                                     subclass = FALSE,
+                                     un = TRUE,
+                                     improvement = FALSE,
+                                     ...) {
 
   #Create covariate matrix
   X <- get.covs.matrix(data = object$X)
@@ -465,9 +676,10 @@ summary.matchit.subclass <- function(object, interactions = FALSE,
   return(res)
 }
 
-## print methods for summary----
-
-print.summary.matchit <- function(x, digits = max(3, getOption("digits") - 3), ...){
+#' @exportS3Method print summary.matchit
+#' @rdname summary.matchit
+print.summary.matchit <- function(x, digits = max(3, getOption("digits") - 3),
+                                  ...){
 
   if (!is.null(x$call)) cat("\nCall:", deparse(x$call), sep = "\n")
 
@@ -506,6 +718,7 @@ print.summary.matchit <- function(x, digits = max(3, getOption("digits") - 3), .
   invisible(x)
 }
 
+#' @exportS3Method print summary.matchit.subclass
 print.summary.matchit.subclass <- function(x, digits = max(3, getOption("digits") -  3), ...){
 
   if (!is.null(x$call)) cat("\nCall:", deparse(x$call), sep = "\n")
@@ -558,93 +771,4 @@ print.summary.matchit.subclass <- function(x, digits = max(3, getOption("digits"
     }
   }
   cat("\n")
-}
-
-## plot method for summary----
-
-plot.summary.matchit <- function(x, abs = TRUE, var.order = "data", threshold = c(.1, .05), position = "bottomright", ...) {
-
-  .pardefault <- par(no.readonly = TRUE)
-  on.exit(par(.pardefault))
-
-  sub <- inherits(x, "summary.matchit.subclass")
-  matched <- sub || !is.null(x[["sum.matched"]])
-  un <- !is.null(x[["sum.all"]])
-
-  standard.sum <- if (un) x[["sum.all"]] else x[[if (sub) "sum.across" else "sum.matched"]]
-
-  if (!"Std. Mean Diff." %in% colnames(standard.sum)) {
-    stop("Not appropriate for unstandardized summary.  Run summary() with the standardize = TRUE option, and then plot.", call. = FALSE)
-  }
-
-  if (un) {
-    sd.all <- x[["sum.all"]][,"Std. Mean Diff."]
-  }
-  if (matched) {
-    sd.matched <- x[[if (sub) "sum.across" else "sum.matched"]][,"Std. Mean Diff."]
-  }
-
-  var.names <- rownames(standard.sum)
-
-  var.order <- match_arg(var.order, c("data", "matched", "unmatched", "alphabetical"))
-
-  if (!un && var.order == "unmatched") stop("'var.order' cannot be \"unmatched\" if un = TRUE in the call to summary().", call. = FALSE)
-  if (!matched && var.order == "matched") stop("'var.order' cannot be \"matched\" if method = NULL in the original call to matchit().", call. = FALSE)
-
-  if (abs) {
-    if (un) sd.all <- abs(sd.all)
-    if (matched) sd.matched <- abs(sd.matched)
-    xlab <- "Absolute Standardized\nMean Difference"
-  }
-  else {
-    xlab <- "Standardized Mean Difference"
-  }
-
-  ord <- switch(var.order,
-                "data" = rev(seq_along(var.names)),
-                "matched" = order(sd.matched),
-                "unmatched" = order(sd.all),
-                "alphabetical" = order(var.names, decreasing = TRUE))
-
-  dotchart(if (un) sd.all[ord] else sd.matched[ord],
-           labels = var.names[ord], xlab = xlab,
-           bg = NA, color = NA, ...)
-  abline(v = 0)
-
-  if (sub && length(x$sum.subclass) > 0) {
-    for (i in seq_along(x$sum.subclass)) {
-      sd.sub <- x$sum.subclass[[i]][,"Std. Mean Diff."]
-      if (abs) sd.sub <- abs(sd.sub)
-      points(x = sd.sub[ord], y = seq_along(sd.sub),
-             pch = as.character(i), col = "gray60", cex = .6)
-    }
-  }
-
-  if (un) {
-    points(x = sd.all[ord], y = seq_along(sd.all),
-           pch = 21, bg = "white", col = "black")
-  }
-  if (matched) {
-    points(x = sd.matched[ord], y = seq_along(sd.matched),
-           pch = 21, bg = "black", col = "black")
-  }
-
-  if (!is.null(threshold)) {
-    if (abs) {
-      abline(v = threshold, lty = seq_along(threshold))
-    }
-    else {
-      abline(v = threshold, lty = seq_along(threshold))
-      abline(v = -threshold, lty = seq_along(threshold))
-    }
-  }
-
-  if (sum(matched, un) > 1 && !is.null(position)) {
-    position <- match_arg(position, c("bottomright", "bottom", "bottomleft", "left",
-                                      "topleft", "top", "topright", "right", "center"))
-    legend(position, legend = c("All", "Matched"),
-           pt.bg = c("white", "black"), pch = 21,
-           inset = .015, xpd = TRUE)
-  }
-  invisible(x)
 }

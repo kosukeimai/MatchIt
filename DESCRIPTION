@@ -1,5 +1,5 @@
 Package: MatchIt
-Version: 4.4.0.9004
+Version: 4.4.0.9005
 Title: Nonparametric Preprocessing for Parametric Causal Inference
 Description: Selects matched samples of the original treated and
     control groups with similar covariate distributions -- can be
@@ -20,7 +20,7 @@ Authors@R: c(
   person("Elizabeth", "Stuart", email = "estuart@jhu.edu", role = c("aut"),
          comment = c(ORCID = "0000-0002-9042-8611")),
   person("Alex", "Whitworth", email = "whitworth.alex@gmail.com", role = c("ctb")),
-  person("Noah", "Greifer", role = c("ctb", "cre", "aut"), 
+  person("Noah", "Greifer", role = c("cre", "aut"), 
          email = "noah.greifer@gmail.com",
 	       comment = c(ORCID="0000-0003-3067-7154"))
   )
@@ -28,11 +28,12 @@ Depends:
     R (>= 3.1.0)
 Imports:
     backports (>= 1.1.9),
-    Rcpp (>= 1.0.7)
+    Rcpp
 Suggests:
     optmatch (>= 0.10.0),
     Matching,
     rgenoud,
+    quickmatch (>= 0.2.1),
     nnet,
     rpart,
     mgcv,
@@ -43,7 +44,7 @@ Suggests:
     gbm (>= 2.1.7),
     cobalt (>= 4.2.3),
     boot,
-    lmtest,
+    marginaleffects (>= 0.8.0),
     sandwich (>= 2.5-1),
     survival,
     RcppProgress (>= 0.4.2),
@@ -57,6 +58,9 @@ SystemRequirements: C++11
 Encoding: UTF-8
 LazyData: true
 License: GPL (>=2)
-URL: https://kosukeimai.github.io/MatchIt/, https://github.com/kosukeimai/MatchIt
+URL: https://kosukeimai.github.io/MatchIt/,
+    https://github.com/kosukeimai/MatchIt
 BugReports: https://github.com/kosukeimai/MatchIt/issues
 VignetteBuilder: knitr
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.2.1

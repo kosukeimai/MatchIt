@@ -130,6 +130,7 @@ info.to.method <- function(info) {
            "nearest" = "nearest neighbor matching",
            "optimal" = "optimal pair matching",
            "full" = "optimal full matching",
+           "quick" = "generalized full matching",
            "genetic" = "genetic matching",
            "subclass" = paste0("subclassification (", info$subclass, " subclasses)"),
            "cardinality" = "cardinality matching",
@@ -471,6 +472,8 @@ get.covs.matrix <- function(formula = NULL, data = NULL) {
   chars.in.mf <- vapply(mf, is.character, logical(1L))
   mf[chars.in.mf] <- lapply(mf[chars.in.mf], factor)
 
+  mf <- droplevels(mf)
+
   X <- model.matrix(formula, data = mf,
                     contrasts.arg = lapply(Filter(is.factor, mf),
                                            contrasts, contrasts = FALSE))
@@ -491,14 +494,13 @@ get_assign <- function(mat) {
 #Convert match.matrix (mm) using numerical indices to using char rownames
 nummm2charmm <- function(nummm, treat) {
   #Assumes nummm has rownames
-  charmm <- matrix(NA_character_, nrow = nrow(nummm), ncol = ncol(nummm),
-                   dimnames = dimnames(nummm))
+  charmm <- array(NA_character_, dim = dim(nummm), dimnames = dimnames(nummm))
   charmm[] <- names(treat)[nummm]
   charmm
 }
 
 charmm2nummm <- function(charmm, treat) {
-  nummm <- matrix(NA_integer_, nrow = nrow(charmm), ncol = ncol(charmm))
+  nummm <- array(NA_integer_, dim = dim(charmm))
   n_index <- setNames(seq_along(treat), names(treat))
   nummm[] <- n_index[charmm]
   nummm
@@ -694,4 +696,9 @@ qn <- function(treat, subclass, discarded = NULL) {
   colnames(qn)[ncol(qn)] <- "All"
 
   return(qn)
+}
+
+#Faster diff()
+diff1 <- function(x) {
+  x[-1] - x[-length(x)]
 }

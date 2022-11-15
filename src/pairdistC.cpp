@@ -1,4 +1,5 @@
 #include <Rcpp.h>
+#include "internal.h"
 using namespace Rcpp;
 
 // [[Rcpp::export]]
@@ -15,29 +16,26 @@ double pairdistsubC(const NumericVector& x_,
   IntegerVector s = s_[not_na_sub];
 
   int n = t.size();
-  LogicalVector t_i(n), in_s_i(n);
-  NumericVector x_t1(n), x_t0(n);
+  LogicalVector in_s_i(n);
+  NumericVector x_t0(n);
+  IntegerVector t_ind_s(n), c_ind_s(n);
 
   int k = 0;
-  int i, i1, i0;
+  int i, i1, n1_s;
   for (i = 1; i <= num_sub; ++i) {
     in_s_i = (s == i);
 
-    t_i = (t == 1);
-    t_i[!in_s_i] = false;
-    x_t1 = x[t_i];
+    t_ind_s = which(t == 1 & in_s_i);
+    c_ind_s = which(t == 0 & in_s_i);
 
-    t_i = (t == 0);
-    t_i[!in_s_i] = false;
-    x_t0 = x[t_i];
+    n1_s = t_ind_s.size();
 
-    for (i1 = 0; i1 < x_t1.size(); ++i1) {
-      for (i0 = 0; i0 < x_t0.size(); ++i0) {
-        dist += std::abs(x_t1[i1] - x_t0[i0]);
-        //Note: need std::abs because inner is float; see https://stackoverflow.com/questions/63586323/
-        ++k;
-      }
+    x_t0 = x[c_ind_s];
+
+    for (i1 = 0; i1 < n1_s; ++i1) {
+      dist += sum(Rcpp::abs(x[t_ind_s[i1]] - x_t0));
     }
+    k += n1_s * c_ind_s.size();
   }
 
   dist /= k;

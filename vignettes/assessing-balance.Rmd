@@ -102,7 +102,7 @@ When `summary()` is called on a `matchit` object, several tables of information 
 
 [^1]: Note that versions of `MatchIt` before 4.0.0 had `standardize` set to `FALSE` by default.
 
-In addition, the arguments `un` and `improvement` control whether balance prior to matching should be displayed and whether the percent balance improvement after matching should be displayed. These can be set to `FALSE` to reduce the output.
+In addition, the arguments `un` (default: `TRUE`) and `improvement` (default: `FALSE`) control whether balance prior to matching should be displayed and whether the percent balance improvement after matching should be displayed. These can be set to `FALSE` to reduce the output.
 
 Below, we call `summary.matchit()` with `addlvariables` to display balance on covariates and a few functions of them in the matched sample. In particular, we request balance on the square of `age`, the variables representing whether `re74` and `re75` were equal to 0, and the interaction between `educ` and `race`.
 
@@ -114,8 +114,6 @@ summary(m.out, addlvariables = ~ I(age^2) + I(re74==0) +
 Let's examine the output in detail. The first table (`Summary of Balance for All Data`) provides balance in the sample prior to matching. The included statistics are the mean of the covariates in the treated group (`Means Treated`), the mean of the covariate in the control group (`Means Control`), the SMDs (`Std. Mean Diff.`), the variance ratio (`Var. Ratio`), the average distance between the eCDFs of the covariate across the groups (`eCDF Mean`), and the largest distance between the eCDFs (`eCDF Max`). Setting `un = FALSE` would have suppressed the creation of this table.
 
 The second table (`Summary of Balance for Matched Data`) contains all the same statistics in the matched sample. Because we implicitly request pair distance, an additional column for standardized pair distances (`Std. Pair Dist.`) is displayed.
-
-The third table (`Percent Balance Improvement`) contains the percent balance improvement for each covariate. This is computed as $100\frac{|\theta_M| - |\theta_U|}{|\theta_U|}$, where $\theta_M$ is a given balance statistic in the matched sample and $\theta_U$ is a the same balance statistic in the unmatched sample. Values between 0 and 100 indicate that balance improved after matching as measured by the statistic; values less than 0 indicate that balance got worse after matching. When balance is good on a covariate prior to matching, it can sometimes look like balance got a lot worse after matching even though the balance statistic is quite low, so these values should not be taken too seriously and should be used primarily as heuristics. Setting `un = FALSE` or `improvement = FALSE` would have suppressed the creation of this table.
 
 The final table (`Sample Sizes`) contains the sizes of the samples before (`All`) and after (`Matched`) matching, as well as the number of units left unmatched (`Unmatched`) and the number of units dropped due to a common support restriction (`Discarded`).
 
@@ -152,15 +150,15 @@ In addition to numeric summaries of balance, `MatchIt` offers graphical summarie
 
 `plot.matchit()` has a few arguments to customize the output:
 
--   `type` corresponds to the type of plot desired. Options include `"qq"` for eQQ plots (the default), `"ecdf"` for eCDF plots, `"density"` for density plots, `"jitter"` for jitter plots, and `"histogram"` for histograms.
+-   `type` corresponds to the type of plot desired. Options include `"qq"` for eQQ plots (the default), `"ecdf"` for eCDF plots, `"density"` for density plots (or bar plots for categorical variables), `"jitter"` for jitter plots, and `"histogram"` for histograms.
 -   `interactive` controls whether the plot is interactive or not. For eQQ, eCDF, and density plots, this allows us to control when the next page of covariates is to be displayed since only three can appear at a time. For jitter plots, this can allow us to select individual units with extreme values for further inspection. The default is `TRUE`.
--   `which.xs` is used to specify for which covariates to display balance in eQQ, eCDF, and density plots. The default is to display balance on all, but we can request balance just on a specific subset. If three or fewer are requested, `interactive` is ignored.
+-   `which.xs` is used to specify for which covariates to display balance in eQQ, eCDF, and density plots. The default is to display balance on all, but we can request balance just on a specific subset. If three or fewer are requested, `interactive` is ignored. The argument can be supplied as a one-sided formula with the variables of interest on the right or a character vector containing the names of the desired variables. If any variables are not in the `matchit` object, a `data` argument can be supplied with a data set containing the named variables.
 
 Below, we demonstrate the eQQ plot:
 
 ```{r}
 #eQQ plot
-plot(m.out, type = "qq", which.xs = c("age", "nodegree", "re74"))
+plot(m.out, type = "qq", which.xs = ~age + nodegree + re74)
 ```
 
 The y-axis displays the each value of the covariate for the treated units, and the x-axis displays the the value of the covariate at the corresponding quantile in the control group. When values fall on the 45 degree line, the groups are balanced. Above, we can see that `age` remains somewhat imbalanced, but `nodegree` and `re74` have much better balance after matching than before. The difference between the x and y values of each point are used to compute the eQQ difference statistics that are displayed in `summary.matchit()` with `standardize = FALSE`.
@@ -169,7 +167,7 @@ Below, we demonstrate the eCDF plot:
 
 ```{r}
 #eCDF plot
-plot(m.out, type = "ecdf", which.xs = c("educ", "married", "re75"))
+plot(m.out, type = "ecdf", which.xs = ~educ + married + re75)
 ```
 
 The x-axis displays the covariate values and the y-axis displays the proportion of the sample at or less than that covariate value. Perfectly overlapping lines indicate good balance. The black line corresponds to the treated group and the gray line to the control group. Although `educ` and `re75` were fairly well balanced before matching, their balance has improved nonetheless. `married` appears far better balanced after matching than before. The vertical difference between the eCDFs lines of each treatment group is used to compute the eCDF difference statistics that are displayed in `summary.matchit()` with `standardize = TRUE`.
@@ -178,10 +176,10 @@ Below, we demonstrate the density plot:
 
 ```{r}
 #density plot
-plot(m.out, type = "density", which.xs = c("age", "educ", "married"))
+plot(m.out, type = "density", which.xs = ~age + educ + race)
 ```
 
-The x-axis displays the covariate values and the y-axis displays the density of the sample at that covariate value. For binary variables, the y-axis displays the proportion of the sample at that covariate value. Perfectly overlapping lines indicate good balance. The black line corresponds to the treated group and the gray line to the control group. Density plots display similar information to eCDF plots but may be more intuitive for some users because of their link to histograms.
+The x-axis displays the covariate values and the y-axis displays the density of the sample at that covariate value. For categorical variables, the y-axis displays the proportion of the sample at that covariate value. The black line corresponds to the treated group and the gray line to the control group. Perfectly overlapping lines indicate good balance. Density plots display similar information to eCDF plots but may be more intuitive for some users because of their link to histograms.
 
 ## Assessing Balance After Subclassification
 
@@ -219,7 +217,7 @@ Note that for some variables, while the groups are balanced in aggregate (black 
 When we plot distributional balance using `plot.matchit()`, again we can choose whether balance should be displayed in aggregate or within subclasses again using the `subclass` option, which functions the same as it does with `summary.matchit()`. Below we demonstrate checking balance within a subclass.
 
 ```{r}
-plot(s.out, type = "density", which.xs = c("educ", "married", "re75"),
+plot(s.out, type = "density", which.xs = ~educ + married + re75,
      subclass = 1)
 ```
 
@@ -227,9 +225,13 @@ If we had set `subclass = FALSE`, plots would have been displayed in aggregate u
 
 ## Assessing Balance with `cobalt`
 
-The `cobalt` package was designed specifically for checking balance before and after matching (and weighting). It offers three main functions, `bal.tab()`, `love.plot()`, and `bal.plot()`, which perform similar actions to `summary.matchit()`, `plot.summary.matchit()`, and `plot.matchit()`, respectively. These functions directly interface with `matchit` objects, making `cobalt` straightforward to use in conjunction with `MatchIt`. `cobalt` can be used as a complement to `MatchIt`, especially for more advanced uses that are not accommodated by `MatchIt`, such as comparing balance across different matching schemes and even different packages, assessing balance in clustered or multiply imputed data, and assessing balance with multi-category, continuous, and time-varying treatments. The main `cobalt` vignette contains many examples of its use with `MatchIt` objects, so we only provide a short demonstration of its capabilities here.
+```{r, include=FALSE}
+ok <- requireNamespace("cobalt", quietly = TRUE)
+```
 
-```{r, message = F}
+The `cobalt` package was designed specifically for checking balance before and after matching (and weighting). It offers three main functions, `bal.tab()`, `love.plot()`, and `bal.plot()`, which perform similar actions to `summary.matchit()`, `plot.summary.matchit()`, and `plot.matchit()`, respectively. These functions directly interface with `matchit` objects, making `cobalt` straightforward to use in conjunction with `MatchIt`. `cobalt` can be used as a complement to `MatchIt`, especially for more advanced uses that are not accommodated by `MatchIt`, such as comparing balance across different matching schemes and even different packages, assessing balance in clustered or multiply imputed data, and assessing balance with multi-category, continuous, and time-varying treatments. The main `cobalt` vignette (`vignette("cobalt", package = "cobalt")`) contains many examples of its use with `MatchIt` objects, so we only provide a short demonstration of its capabilities here.
+
+```{r, message = F, eval = ok}
 library("cobalt")
 ```
 
@@ -237,7 +239,7 @@ library("cobalt")
 
 `bal.tab()` produces tables of balance statistics similar to `summary.matchit()`. The columns displayed can be customized to limit how much information is displayed and isolate desired information. We call `bal.tab()` with a few of its options specified below:
 
-```{r}
+```{r, eval = ok}
 bal.tab(m.out, un = TRUE, stats = c("m", "v", "ks"))
 ```
 
@@ -245,7 +247,7 @@ The output is very similar to that of `summary.matchit()`, except that the balan
 
 `bal.tab()` and other `cobalt` functions can produce balance not just on a single `matchit` object but on several at the same time, which facilitates comparing balance across several matching specifications. For example, if we wanted to compare the full matching results to the results of nearest neighbor matching without replacement, we could supply both to `bal.tab()`, which we demonstrate below:
 
-```{r}
+```{r, eval = ok}
 #Nearest neighbor (NN) matching on the PS
 m.out2 <- matchit(treat ~ age + educ + race + married + 
                    nodegree + re74 + re75, data = lalonde)
@@ -258,34 +260,34 @@ bal.tab(treat ~ age + educ + race + married +
 
 This time, we supplied `bal.tab()` with the covariates and dataset and supplied the `matchit` output objects in the `weights` argument (which extracts the matching weights from the objects). Here we can see that full matching yields better balance than nearest neighbor matching overall, though balance is slightly worse for `age` and `maried` and the effective sample size is lower.
 
-### `love.plot`
+### `love.plot()`
 
 `love.plot()` creates a Love plot of chosen balance statistics. It offers many options for customization, including the shape and colors of the points, how the variable names are displayed, and for which statistics balance is to be displayed. Below is an example of its basic use:
 
-```{r}
+```{r, eval = ok}
 love.plot(m.out, binary = "std")
 ```
 
 The syntax is straightforward and similar to that of `bal.tab()`. Below we demonstrate a more advanced use that customizes the appearance of the plot and displays balance not only on mean differences but also on Kolmogorov-Smirnov statistics and for both full matching and nearest neighbor matching simultaneously.
 
-```{r, fig.width=7}
+```{r, fig.width=7, eval = ok}
 love.plot(m.out, stats = c("m", "ks"), poly = 2, abs = TRUE,
           weights = list(nn = m.out2),
           drop.distance = TRUE, thresholds = c(m = .1),
           var.order = "unadjusted", binary = "std",
-          shapes = c("triangle", "square", "circle"), 
-          colors = c("blue", "darkgreen", "red"),
-          sample.names = c("Full Matching", "NN Matching", "Original"),
+          shapes = c("circle filled", "triangle", "square"), 
+          colors = c("red", "blue", "darkgreen"),
+          sample.names = c("Original", "Full Matching", "NN Matching"),
           position = "bottom")
 ```
 
-The `love.plot()` documentation explains what each of these arguments do and the several other ones available. `cobalt` contains a vignette for other advanced customization of `love.plot()`.
+The `love.plot()` documentation explains what each of these arguments do and the several other ones available. See `vignette("cobalt_A4_love.plot", package = "cobalt")` for other advanced customization of `love.plot()`.
 
 ### `bal.plot()`
 
 `bal.plot()` displays distributional balance for a single covariate, similar to `plot.matchit()`. Its default is to display kernel density plots for continuous variables and bar graphs for categorical variables. It can also display eCDF plots and histograms. Below we demonstrate some of its uses:
 
-```{r}
+```{r, eval = ok}
 #Density plot for continuous variables
 bal.plot(m.out, var.name = "educ", which = "both")
 
