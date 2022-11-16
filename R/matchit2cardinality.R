@@ -389,14 +389,14 @@ cardinality_matchit <- function(treat, X, estimand = "ATT", tols = .05, s.weight
                                 time = 2*60, verbose = FALSE) {
 
   n <- length(treat)
-  if (is.null(tvals)) tvals <- unique(treat)
+  if (is.null(tvals)) tvals <- if (is.factor(treat)) levels(treat) else sort(unique(treat))
   nt <- length(tvals)
 
   #Check inputs
   if (is.null(s.weights)) s.weights <- rep(1, n)
   else for (i in tvals) s.weights[treat == i] <- s.weights[treat == i]/mean(s.weights[treat == i])
 
-  if (is.null(focal)) focal <- max(tvals)
+  if (is.null(focal)) focal <- tvals[length(tvals)]
 
   if (length(time) != 1 || !is.numeric(time) || time <= 0) stop("'time' must be a positive number.", call. = FALSE)
 

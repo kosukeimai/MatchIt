@@ -304,7 +304,11 @@ cem_matchit <- function(treat, X, cutpoints = "sturges", grouping = list(), k2k 
   #k2k.method is used instead of method. When k2k.method = NULL, units are matched based on order rather than random. Default is "mahalanobis" (not available in cem).
   #k2k now works with single covariates (previously it was ignored). k2k uses original variables, not coarsened versions
 
-  if (k2k && !is.null(k2k.method)) {
+  if (k2k) {
+    if (length(unique(treat)) > 2) {
+      stop("`k2k` cannot be `TRUE` with a multi-cateory treatment.", call. = FALSE)
+    }
+    if (!is.null(k2k.method)) {
     # X.match <- scale(get.covs.matrix(data = X), center = FALSE)
     # k2k.method <- tolower(k2k.method)
     # k2k.method <- match_arg(k2k.method, c("mahalanobis", "euclidean", "maximum", "manhattan", "canberra", "binary", "minkowski"))
@@ -315,6 +319,7 @@ cem_matchit <- function(treat, X, cutpoints = "sturges", grouping = list(), k2k 
 
     X.match <- transform_covariates(data = X, s.weights = s.weights, treat = treat,
                                     method = if (k2k.method %in% matchit_distances()) k2k.method else "euclidean")
+    }
   }
   is.numeric.cov <- setNames(vapply(X, is.numeric, logical(1L)), names(X))
 
@@ -323,12 +328,12 @@ cem_matchit <- function(treat, X, cutpoints = "sturges", grouping = list(), k2k 
     cutpoints <- setNames(as.list(rep(cutpoints, sum(is.numeric.cov))), names(X)[is.numeric.cov])
   }
 
-  if (is.null(names(cutpoints))) stop("'cutpoints' must be a named list of binning values with an element for each numeric variable.", call. = FALSE)
+  if (is.null(names(cutpoints))) stop("`cutpoints` must be a named list of binning values with an element for each numeric variable.", call. = FALSE)
   bad.names <- setdiff(names(cutpoints), names(X))
   nb <- length(bad.names)
   if (nb > 0) {
     warning(paste0(ngettext(nb, "The variable ", "The variables "),
-                   word_list(bad.names, quotes = 2), " named in 'cutpoints' ",
+                   word_list(bad.names, quotes = 2), " named in `cutpoints` ",
                    ngettext(nb, "is ", "are "), "not in the variables supplied to matchit() and will be ignored."),
             immediate. = TRUE, call. = FALSE)
     cutpoints[bad.names] <- NULL
@@ -356,7 +361,7 @@ cem_matchit <- function(treat, X, cutpoints = "sturges", grouping = list(), k2k 
     }
   }
   if (any(bad.cuts)) {
-    stop(paste0("All entries in the list supplied to 'cutpoints' must be one of the following:",
+    stop(paste0("All entries in the list supplied to `cutpoints` must be one of the following:",
                 "\n\t- a string containing the name of an allowable binning method",
                 "\n\t- a single number corresponding to the number of bins",
                 "\n\t- a numeric vector containing the cut points separating bins",
@@ -435,11 +440,6 @@ cem_matchit <- function(treat, X, cutpoints = "sturges", grouping = list(), k2k 
 
       #Compute distance matrix; all 0s if k2k.method = NULL for matched based on data order
       if (is.null(k2k.method)) {
-        # dist.mat <- matrix(0, nrow = length(in.sub), ncol = length(in.sub),
-        #                                           dimnames = list(names(treat)[in.sub], names(treat)[in.sub]))
-        # d.rows <- which(rownames(dist.mat) %in% names(treat[in.sub])[treat[in.sub] == s])
-        # dist.mat <- dist.mat[d.rows, -d.rows, drop = FALSE]
-
         dist.mat <- matrix(0, nrow = sum(treat[in.sub] == s), ncol = sum(treat[in.sub] != s),
                            dimnames = list(names(treat)[in.sub][treat[in.sub] == s],
                                            names(treat)[in.sub][treat[in.sub] != s]))
@@ -449,11 +449,6 @@ cem_matchit <- function(treat, X, cutpoints = "sturges", grouping = list(), k2k 
         #X.match has been transformed
         dist.mat <- eucdist_internal(X.match[in.sub,,drop = FALSE], treat[in.sub] == s)
       }
-      # else if (k2k.method == "mahalanobis") {
-      #   dist.mat <- matrix(0, nrow = length(in.sub), ncol = length(in.sub),
-      #                      dimnames = list(names(treat)[in.sub], names(treat)[in.sub]))
-      #   for (t in seq_along(in.sub)) dist.mat[t,] <- mahalanobis(X.match[in.sub,,drop = FALSE], X.match[in.sub[t],], mahSigma_inv, TRUE)
-      # }
       else {
         dist.mat <- dist_to_matrixC(dist(X.match[in.sub,,drop = FALSE], method = k2k.method, p = mpower))
 
