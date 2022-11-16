@@ -54,7 +54,7 @@ matchit(formula,
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">MatchIt</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">4.4.0.9005</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">4.5.0</span>
       </span>
     </div>
 
@@ -256,31 +256,27 @@ precise solution.</p>
 <h3 id="mahalanobis-distance-matching">Mahalanobis Distance Matching<a class="anchor" aria-label="anchor" href="#mahalanobis-distance-matching"></a></h3>
 
 
-<p>Mahalanobis distance matching can be done one of two ways:</p><ol><li><p>If no propensity score needs to be estimated, <code>distance</code> should be
+<p>Mahalanobis distance matching can be done one of two ways:</p>
+<ol><li><p>If no propensity score needs to be estimated, <code>distance</code> should be
 set to <code>"mahalanobis"</code>, and Mahalanobis distance matching will occur
 using all the variables in <code>formula</code>. Arguments to <code>discard</code> and
 <code>mahvars</code> will be ignored, and a caliper can only be placed on named
 variables. For example, to perform simple Mahalanobis distance matching, the
-following could be run:</p></li>
-</ol><div class="sourceCode"><pre><code><span></span>
+following could be run:</p><div class="sourceCode"><pre><code><span></span>
 <span><span class="fu"><a href="../reference/matchit.html">matchit</a></span><span class="op">(</span><span class="va">treat</span> <span class="op">~</span> <span class="va">X1</span> <span class="op">+</span> <span class="va">X2</span>, method <span class="op">=</span> <span class="st">"nearest"</span>,</span>
-<span>        distance <span class="op">=</span> <span class="st">"mahalanobis"</span><span class="op">)</span> </span></code></pre></div>
-
-<p>With this code, the Mahalanobis distance is computed using <code>X1</code> and
+<span>        distance <span class="op">=</span> <span class="st">"mahalanobis"</span><span class="op">)</span> </span></code></pre></div>With this code, the Mahalanobis distance is computed using <code>X1</code> and
 <code>X2</code>, and matching occurs on this distance. The <code>distance</code>
-component of the <code><a href="matchit.html">matchit()</a></code> output will be empty.</p><ol><li><p>If a propensity score needs to be estimated for any reason, e.g., for
+component of the <code><a href="matchit.html">matchit()</a></code> output will be empty.</li>
+<li><p>If a propensity score needs to be estimated for any reason, e.g., for
 common support with <code>discard</code> or for creating a caliper,
 <code>distance</code> should be whatever method is used to estimate the propensity
 score or a vector of distance measures, i.e., it should not be
 <code>"mahalanobis"</code>. Use <code>mahvars</code> to specify the variables used to
 create the Mahalanobis distance. For example, to perform Mahalanobis within
-a propensity score caliper, the following could be run:</p></li>
-</ol><div class="sourceCode"><pre><code><span></span>
+a propensity score caliper, the following could be run:</p><div class="sourceCode"><pre><code><span></span>
 <span><span class="fu"><a href="../reference/matchit.html">matchit</a></span><span class="op">(</span><span class="va">treat</span> <span class="op">~</span> <span class="va">X1</span> <span class="op">+</span> <span class="va">X2</span> <span class="op">+</span> <span class="va">X3</span>, method <span class="op">=</span> <span class="st">"nearest"</span>,</span>
 <span>        distance <span class="op">=</span>  <span class="st">"glm"</span>, caliper <span class="op">=</span> <span class="fl">.25</span>,</span>
-<span>        mahvars <span class="op">=</span> <span class="op">~</span> <span class="va">X1</span> <span class="op">+</span> <span class="va">X2</span><span class="op">)</span> </span></code></pre></div>
-
-<p>With this code, <code>X1</code>, <code>X2</code>, and <code>X3</code> are used to estimate the
+<span>        mahvars <span class="op">=</span> <span class="op">~</span> <span class="va">X1</span> <span class="op">+</span> <span class="va">X2</span><span class="op">)</span> </span></code></pre></div>With this code, <code>X1</code>, <code>X2</code>, and <code>X3</code> are used to estimate the
 propensity score (using the <code>"glm"</code> method, which by default is
 logistic regression), which is used to create a matching caliper. The actual
 matching occurs on the Mahalanobis distance computed only using <code>X1</code>
@@ -288,8 +284,8 @@ and <code>X2</code>, which are supplied to <code>mahvars</code>. Units whose pro
 score difference is larger than the caliper will not be paired, and some
 treated units may therefore not receive a match. The estimated propensity
 scores will be included in the <code>distance</code> component of the
-<code><a href="matchit.html">matchit()</a></code> output. See Examples.</p>
-</div>
+<code><a href="matchit.html">matchit()</a></code> output. See Examples.</li>
+</ol></div>
 
     </div>
     <div id="note">

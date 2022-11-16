@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">MatchIt</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">4.4.0.9005</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">4.5.0</span>
       </span>
     </div>
 
@@ -70,7 +70,7 @@
     </div>
 
     <div class="section level2">
-<h2 class="page-header" data-toc-text="development version" id="matchit-development-version">MatchIt (development version)<a class="anchor" aria-label="anchor" href="#matchit-development-version"></a></h2>
+<h2 class="page-header" data-toc-text="4.5.0" id="matchit-450">MatchIt 4.5.0<small>2022-11-16</small><a class="anchor" aria-label="anchor" href="#matchit-450"></a></h2>
 <ul><li><p>Generalized full matching, as described by <a href="https://doi.org/10.1017/pan.2020.32" class="external-link">Sävje, Higgins, and Sekhon (2021)</a>, can now be implemented by setting <code>method = "quick"</code> in <code><a href="../reference/matchit.html">matchit()</a></code>. It is a dramatically faster alternative to optimal full matching that can support much larger datasets and otherwise has similar balancing performance. See <code><a href="../reference/method_quick.html">?method_quick</a></code> and <code><a href="../articles/matching-methods.html">vignette("matching-methods")</a></code> for more information. This functionality relies on the <code>quickmatch</code> package.</p></li>
 <li><p>The package structure has been updated, include with the use of Roxygen for documentation. This should not affect use, but the source code will look different from that of previous versions.</p></li>
 <li><p>When <code>method = "subclass"</code> and <code>min.n = 0</code> (which is not the default), any units not placed into a subclass are now considered “unmatched” and given weights of 0. Previously they were left in.</p></li>

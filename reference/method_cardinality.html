@@ -41,7 +41,7 @@ matchit(formula,
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">MatchIt</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">4.4.0.9005</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">4.5.0</span>
       </span>
     </div>
 
@@ -125,21 +125,30 @@ means in a general context and how it can be specified.</p>
 
     <div id="arguments">
     <h2>Arguments</h2>
-    <dl><dt>data</dt>
+    <dl><dt>formula</dt>
+<dd><p>a two-sided <a href="https://rdrr.io/r/stats/formula.html" class="external-link">formula</a> object containing the treatment and
+covariates to be balanced.</p></dd>
+
+
+<dt>data</dt>
 <dd><p>a data frame containing the variables named in <code>formula</code>.
 If not found in <code>data</code>, the variables will be sought in the
 environment.</p></dd>
 
 
-<dt>formula</dt>
-<dd><p>a two-sided <a href="https://rdrr.io/r/stats/formula.html" class="external-link">formula</a> object containing the treatment and
-covariates to be balanced.</p></dd>
+<dt>method</dt>
+<dd><p>set here to <code>"cardinality"</code>.</p></dd>
 
 
-<dt>ratio</dt>
-<dd><p>the desired ratio of control to treated units. Can be set to
-<code>NA</code> to maximize sample size without concern for this ratio. See
-Details.</p></dd>
+<dt>estimand</dt>
+<dd><p>a string containing the desired estimand. Allowable options
+include <code>"ATT"</code>, <code>"ATC"</code>, and <code>"ATE"</code>. See Details.</p></dd>
+
+
+<dt>exact</dt>
+<dd><p>for which variables exact matching should take place. Separate
+optimization will occur within each subgroup of the exact matching
+variables.</p></dd>
 
 
 <dt>s.weights</dt>
@@ -149,15 +158,10 @@ sampling weights and the matching weights, and the sum of the product of the
 sampling and matching weights will be maximized.</p></dd>
 
 
-<dt>exact</dt>
-<dd><p>for which variables exact matching should take place. Separate
-optimization will occur within each subgroup of the exact matching
-variables.</p></dd>
-
-
-<dt>estimand</dt>
-<dd><p>a string containing the desired estimand. Allowable options
-include <code>"ATT"</code>, <code>"ATC"</code>, and <code>"ATE"</code>. See Details.</p></dd>
+<dt>ratio</dt>
+<dd><p>the desired ratio of control to treated units. Can be set to
+<code>NA</code> to maximize sample size without concern for this ratio. See
+Details.</p></dd>
 
 
 <dt>verbose</dt>
@@ -203,10 +207,6 @@ minutes). For large problems, this should be set much higher.</p></dd>
 
 
 </dl><p>The arguments <code>distance</code> (and related arguments), <code>mahvars</code>, <code>replace</code>, <code>m.order</code>, and <code>caliper</code> (and related arguments) are ignored with a warning.</p></dd>
-
-
-<dt>method</dt>
-<dd><p>set here to <code>"cardinality"</code>.</p></dd>
 
 </dl></div>
     <div id="details">
@@ -279,8 +279,7 @@ mean difference for the first covariate is less than .001 and the raw mean
 difference for the second covariate is less than .05. The values should be
 specified in the order they appear in <code>formula</code>, except when
 interactions are present. One can run the following code:</p>
-<div class="sourceCode"><pre><code><span><span class="fu">MatchIt</span><span class="fu">:::</span><span class="fu">get_assign</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/model.matrix.html" class="external-link">model.matrix</a></span><span class="op">(</span><span class="op">~</span><span class="va">X1</span><span class="op">*</span><span class="va">X2</span> <span class="op">+</span> <span class="va">X3</span>, data <span class="op">=</span></span>
-<span><span class="va">data</span><span class="op">)</span><span class="op">)</span><span class="op">[</span><span class="op">-</span><span class="fl">1</span><span class="op">]</span></span></code></pre></div>
+<div class="sourceCode"><pre><code><span><span class="fu">MatchIt</span><span class="fu">:::</span><span class="fu">get_assign</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/model.matrix.html" class="external-link">model.matrix</a></span><span class="op">(</span><span class="op">~</span><span class="va">X1</span><span class="op">*</span><span class="va">X2</span> <span class="op">+</span> <span class="va">X3</span>, data <span class="op">=</span> <span class="va">data</span><span class="op">)</span><span class="op">)</span><span class="op">[</span><span class="op">-</span><span class="fl">1</span><span class="op">]</span></span></code></pre></div>
 
 <p>which will output a vector of numbers and the variable to which each number
 corresponds; the first entry in <code>tols</code> corresponds to the variable
