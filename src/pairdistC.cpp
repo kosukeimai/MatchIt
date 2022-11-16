@@ -25,8 +25,8 @@ double pairdistsubC(const NumericVector& x_,
   for (i = 1; i <= num_sub; ++i) {
     in_s_i = (s == i);
 
-    t_ind_s = which(t == 1 & in_s_i);
-    c_ind_s = which(t == 0 & in_s_i);
+    t_ind_s = which((t == 1) & in_s_i);
+    c_ind_s = which((t == 0) & in_s_i);
 
     n1_s = t_ind_s.size();
 
