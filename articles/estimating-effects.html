@@ -601,19 +601,26 @@ arguments to <code><a href="https://vincentarelbundock.github.io/marginaleffects
 </h3>
 <p>This section explains how the procedure might differ if any of the
 following special circumstances occur.</p>
-<p><strong>Matching for the ATE.</strong> When matching for the ATE
-(including [coarsened] exact matching, full matching, subclassification,
-and cardinality matching), everything is identical to the Standard Case
-except that in the calls to <code><a href="https://vincentarelbundock.github.io/marginaleffects/reference/comparisons.html" class="external-link">comparisons()</a></code> and
-<code><a href="https://vincentarelbundock.github.io/marginaleffects/reference/predictions.html" class="external-link">predictions()</a></code>, the <code>newdata</code> argument is omitted
-(or can be replaced with <code>newdata = md</code>). This is because the
-estimated potential outcomes are computed for the full matched sample
-rather than just the treated units.</p>
-<p><strong>Matching with replacement.</strong> When matching with
-replacement (i.e., nearest neighbor or genetic matching with
-<code>replace = TRUE</code>), effect and SE estimation need to account
-for control unit multiplicity (i.e., repeated use) and within-pair
-correlations <span class="citation">(<a href="#ref-hill2006" role="doc-biblioref">Hill and Reiter 2006</a>; <a href="#ref-austin2020a" role="doc-biblioref">Austin and Cafri
+<div class="section level4">
+<h4 id="matching-for-the-ate">
+<strong>Matching for the ATE</strong><a class="anchor" aria-label="anchor" href="#matching-for-the-ate"></a>
+</h4>
+<p>When matching for the ATE (including [coarsened] exact matching, full
+matching, subclassification, and cardinality matching), everything is
+identical to the Standard Case except that in the calls to
+<code><a href="https://vincentarelbundock.github.io/marginaleffects/reference/comparisons.html" class="external-link">comparisons()</a></code> and <code><a href="https://vincentarelbundock.github.io/marginaleffects/reference/predictions.html" class="external-link">predictions()</a></code>, the
+<code>newdata</code> argument is omitted (or can be replaced with
+<code>newdata = md</code>). This is because the estimated potential
+outcomes are computed for the full matched sample rather than just the
+treated units.</p>
+</div>
+<div class="section level4">
+<h4 id="matching-with-replacement">Matching with replacement<a class="anchor" aria-label="anchor" href="#matching-with-replacement"></a>
+</h4>
+<p>When matching with replacement (i.e., nearest neighbor or genetic
+matching with <code>replace = TRUE</code>), effect and SE estimation
+need to account for control unit multiplicity (i.e., repeated use) and
+within-pair correlations <span class="citation">(<a href="#ref-hill2006" role="doc-biblioref">Hill and Reiter 2006</a>; <a href="#ref-austin2020a" role="doc-biblioref">Austin and Cafri
 2020</a>)</span>. Although <span class="citation">Abadie and Imbens (<a href="#ref-abadie2008" role="doc-biblioref">2008</a>)</span>
 demonstrated analytically that bootstrap SEs may be invalid for matching
 with replacement, simulation work by <span class="citation">Hill and
@@ -641,23 +648,30 @@ will appear multiple times in the dataset; 2) set
 <code><a href="https://vincentarelbundock.github.io/marginaleffects/reference/comparisons.html" class="external-link">comparisons()</a></code> and <code><a href="https://vincentarelbundock.github.io/marginaleffects/reference/predictions.html" class="external-link">predictions()</a></code>. For survival
 outcomes, a special procedure must be used; see the section on survival
 outcomes below.</p>
-<p><strong>Matching without pairing.</strong> Some matching methods do
-not involve creating pairs; these include cardinality and template
-matching, exact matching, and coarsened exact matching with
-<code>k2k = FALSE</code> (the default). The only change that needs to be
-made to the Standard Case is that one should change
+</div>
+<div class="section level4">
+<h4 id="matching-without-pairing">Matching without pairing<a class="anchor" aria-label="anchor" href="#matching-without-pairing"></a>
+</h4>
+<p>Some matching methods do not involve creating pairs; these include
+cardinality and template matching, exact matching, and coarsened exact
+matching with <code>k2k = FALSE</code> (the default). The only change
+that needs to be made to the Standard Case is that one should change
 <code>vcov = ~subclass</code> to <code>vcov = "HC3"</code> in the calls
 to <code><a href="https://vincentarelbundock.github.io/marginaleffects/reference/comparisons.html" class="external-link">comparisons()</a></code> and <code><a href="https://vincentarelbundock.github.io/marginaleffects/reference/predictions.html" class="external-link">predictions()</a></code> to use
 robust SEs instead of cluster-robust SEs. Remember that if matching is
 done for the ATE (even if units are dropped), the <code>newdata</code>
 argument should be dropped.</p>
-<p><strong>Propensity score subclassification.</strong> There are two
-natural ways to estimate marginal effects after subclassification: the
-first is to estimate subclass-specific treatment effects and pool them
-using an average marginal effects procedure, and the second is to use
-the stratum weights to estimate a single average marginal effect. This
-latter approach is also known as marginal mean weighting through
-stratification (MMWS), and is described in detail by <span class="citation">Hong (<a href="#ref-hong2010" role="doc-biblioref">2010</a>)</span><a href="#fn5" class="footnote-ref" id="fnref5"><sup>5</sup></a>. When done properly, both methods should
+</div>
+<div class="section level4">
+<h4 id="propensity-score-subclassification">Propensity score subclassification<a class="anchor" aria-label="anchor" href="#propensity-score-subclassification"></a>
+</h4>
+<p>There are two natural ways to estimate marginal effects after
+subclassification: the first is to estimate subclass-specific treatment
+effects and pool them using an average marginal effects procedure, and
+the second is to use the stratum weights to estimate a single average
+marginal effect. This latter approach is also known as marginal mean
+weighting through stratification (MMWS), and is described in detail by
+<span class="citation">Hong (<a href="#ref-hong2010" role="doc-biblioref">2010</a>)</span><a href="#fn5" class="footnote-ref" id="fnref5"><sup>5</sup></a>. When done properly, both methods should
 yield similar or identical estimates of the treatment effect.</p>
 <p>All of the methods described above for the Standard Case also work
 with MMWS because the formation of the weights is the same; the only
@@ -707,15 +721,19 @@ removing covariates or their interactions with treatment may be required
 and can increase precision in smaller datasets. Remember that if
 subclassification is done for the ATE (even if units are dropped), the
 <code>newdata</code> argument should be dropped.</p>
-<p><strong>Binary outcomes.</strong> Estimating effects on binary
-outcomes is essentially the same as for continuous outcomes. The main
-difference is that there are several measures of the effect one can
-consider, which include the odds ratio (OR), risk ratio/relative risk
-(RR), and risk difference (RD), and the syntax to
-<code><a href="https://vincentarelbundock.github.io/marginaleffects/reference/comparisons.html" class="external-link">comparisons()</a></code> depends on which one is desired. The outcome
-model should be one appropriate for binary outcomes (e.g., logistic
-regression) but is unrelated to the desired effect measure because we
-can compute any of the above effect measures using
+</div>
+<div class="section level4">
+<h4 id="binary-outcomes">
+<strong>Binary outcomes</strong><a class="anchor" aria-label="anchor" href="#binary-outcomes"></a>
+</h4>
+<p>Estimating effects on binary outcomes is essentially the same as for
+continuous outcomes. The main difference is that there are several
+measures of the effect one can consider, which include the odds ratio
+(OR), risk ratio/relative risk (RR), and risk difference (RD), and the
+syntax to <code><a href="https://vincentarelbundock.github.io/marginaleffects/reference/comparisons.html" class="external-link">comparisons()</a></code> depends on which one is desired.
+The outcome model should be one appropriate for binary outcomes (e.g.,
+logistic regression) but is unrelated to the desired effect measure
+because we can compute any of the above effect measures using
 <code><a href="https://vincentarelbundock.github.io/marginaleffects/reference/comparisons.html" class="external-link">comparisons()</a></code> after the logistic regression.</p>
 <p>To fit a logistic regression model, change <code><a href="https://rdrr.io/r/stats/lm.html" class="external-link">lm()</a></code> to
 <code><a href="https://rdrr.io/r/stats/glm.html" class="external-link">glm()</a></code> and set <code>family = quasibinomial()</code><a href="#fn6" class="footnote-ref" id="fnref6"><sup>6</sup></a>. To
@@ -771,9 +789,10 @@ displayed. You can confirm this by manually exponentiating the log risk
 ratio computed just before.)</p>
 <p>For the marginal OR, the only thing that needs to change is that
 <code>transform_pre</code> should be set to <code>"lnoravg"</code>.</p>
-<div class="section level6">
-<h6 id="for-survival-outcomes">For survival outcomes<a class="anchor" aria-label="anchor" href="#for-survival-outcomes"></a>
-</h6>
+</div>
+<div class="section level4">
+<h4 id="survival-outcomes">Survival outcomes<a class="anchor" aria-label="anchor" href="#survival-outcomes"></a>
+</h4>
 <p>There are several measures of effect size for survival outcomes. When
 using the Cox proportional hazards model, the quantity of interest is
 the hazard ratio (HR) between the treated and control groups. As with
