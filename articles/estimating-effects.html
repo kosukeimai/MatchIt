@@ -771,15 +771,18 @@ displayed. You can confirm this by manually exponentiating the log risk
 ratio computed just before.)</p>
 <p>For the marginal OR, the only thing that needs to change is that
 <code>transform_pre</code> should be set to <code>"lnoravg"</code>.</p>
-<p><strong>For survival outcomes.</strong> There are several measures of
-effect size for survival outcomes. When using the Cox proportional
-hazards model, the quantity of interest is the hazard ratio (HR) between
-the treated and control groups. As with the OR, the HR is
-non-collapsible, which means the estimated HR will only be a valid
-estimate of the marginal HR when no other covariates are included in the
-model. Other effect measures, such as the difference in mean survival
-times or probability of survival after a given time, can be treated just
-like continuous and binary outcomes as previously described.</p>
+<div class="section level6">
+<h6 id="for-survival-outcomes">For survival outcomes<a class="anchor" aria-label="anchor" href="#for-survival-outcomes"></a>
+</h6>
+<p>There are several measures of effect size for survival outcomes. When
+using the Cox proportional hazards model, the quantity of interest is
+the hazard ratio (HR) between the treated and control groups. As with
+the OR, the HR is non-collapsible, which means the estimated HR will
+only be a valid estimate of the marginal HR when no other covariates are
+included in the model. Other effect measures, such as the difference in
+mean survival times or probability of survival after a given time, can
+be treated just like continuous and binary outcomes as previously
+described.</p>
 <p>For the HR, we cannot compute average marginal effects and must use
 the coefficient on treatment in a Cox model fit without covariates<a href="#fn8" class="footnote-ref" id="fnref8"><sup>8</sup></a>. This
 means that we cannot use the procedures from the Standard Case. Here we
@@ -852,6 +855,7 @@ demonstrate this below:</p>
 <p>The <code>robust se</code> column contains the computed SE, and the
 reported Z-test uses this SE. The <code>se(coef)</code> column should be
 ignored.</p>
+</div>
 </div>
 <div class="section level3">
 <h3 id="using-bootstrapping-to-estimate-confidence-intervals">Using Bootstrapping to Estimate Confidence Intervals<a class="anchor" aria-label="anchor" href="#using-bootstrapping-to-estimate-confidence-intervals"></a>
