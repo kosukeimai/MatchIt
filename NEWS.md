@@ -6,7 +6,7 @@ output:
 `MatchIt` News and Updates
 ======
 
-# MatchIt (development version)
+# MatchIt 4.5.0
 
 * Generalized full matching, as described by [Sävje, Higgins, and Sekhon (2021)](https://doi.org/10.1017/pan.2020.32), can now be implemented by setting `method = "quick"` in `matchit()`. It is a dramatically faster alternative to optimal full matching that can support much larger datasets and otherwise has similar balancing performance. See `?method_quick` and `vignette("matching-methods")` for more information. This functionality relies on the `quickmatch` package.
 

@@ -146,23 +146,27 @@ specified, the named variables will form the covariates that go into the
 distance matrix. Otherwise, the variables in \code{formula} along with the
 propensity score will go into the distance matrix. This leads to three ways
 to use \code{distance} and \code{mahvars} to perform the matching:
+
 \enumerate{
-\item When \code{distance} corresponds to a propensity score and \code{mahvars}
+\item{When \code{distance} corresponds to a propensity score and \code{mahvars}
 \emph{is not} specified, the covariates in \code{formula} along with the
 propensity score are used to form the generalized Mahalanobis distance
 matrix. This is the default and most typical use of \code{method = "genetic"} in \code{matchit()}.
-\item When \code{distance} corresponds to a propensity score and \code{mahvars}
+}
+\item{When \code{distance} corresponds to a propensity score and \code{mahvars}
 \emph{is} specified, the covariates in \code{mahvars} are used to form the
 generalized Mahalanobis distance matrix. The covariates in \code{formula}
 are used to estimate the propensity score and have their balance optimized
 by the genetic algorithm. The propensity score is not included in the
 generalized Mahalanobis distance matrix.
-\item When \code{distance} is a method of computing a distance matrix
+}
+\item{When \code{distance} is a method of computing a distance matrix
 (e.g.,\code{"mahalanobis"}), no propensity score is estimated, and the
 covariates in \code{formula} are used to form the generalized Mahalanobis
 distance matrix. Which specific method is supplied has no bearing on how the
 distance matrix is computed; it simply serves as a signal to omit estimation
 of a propensity score.
+}
 }
 
 When a caliper is specified, any variables mentioned in \code{caliper},

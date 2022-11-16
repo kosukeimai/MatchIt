@@ -1,5 +1,5 @@
 #' Subclassification
-#' @rdname method_subclass
+#' @name method_subclass
 #' @aliases method_subclass
 #' @usage NULL
 #'
@@ -110,7 +110,7 @@
 #' @seealso [matchit()] for a detailed explanation of the inputs and outputs of
 #' a call to `matchit()`.
 #'
-#' [`method_full`] for optimal full matching, which is similar to
+#' [`method_full`] for optimal full matching and [`method_quick`] for generalized full matching, which are similar to
 #' subclassification except that the number of subclasses and subclass
 #' membership are chosen to optimize the within-subclass distance.
 #'
@@ -153,6 +153,7 @@
 #' s.out2
 #' summary(s.out2)
 #'
+NULL
 
 matchit2subclass <- function(treat, distance, discarded,
                              replace = FALSE, exact = NULL,
@@ -170,29 +171,20 @@ matchit2subclass <- function(treat, distance, discarded,
   #Checks
   if (is.null(subclass)) subclass <- 6
   else if (!is.numeric(subclass) || !is.null(dim(subclass))) {
-    stop("subclass must be a numeric value.", call. = FALSE)
+    stop("`subclass` must be a numeric value.", call. = FALSE)
   }
   else if (length(subclass) == 1) {
     if (round(subclass) <= 1) {
-      stop("subclass must be greater than 1.",call.=FALSE)
+      stop("`subclass` must be greater than 1.",call.=FALSE)
     }
   }
   else if (!all(subclass <= 1 & subclass >= 0)) {
-    stop("When specifying subclass as a vector of quantiles, all values must be between 0 and 1.",
+    stop("When specifying `subclass` as a vector of quantiles, all values must be between 0 and 1.",
          call. = FALSE)
   }
 
   if (!is.null(sub.by)) {
-    sub.by.choices <- c("treat", "control", "all")
-    if (!is.character(sub.by) || length(sub.by) != 1 || anyNA(pmatch(sub.by, sub.by.choices))) {
-      stop("'sub.by' is deprecated and can't be converted into a proper input. Please supply an argument to 'estimand' instead.", call. = FALSE)
-    }
-    else {
-      sub.by <- sub.by.choices[pmatch(sub.by, sub.by.choices)]
-      estimand <- switch(sub.by, "treat" = "ATT", "control" = "ATC", "ATE")
-      warning(sprintf("'sub.by' is deprecated and has been replaced with 'estimand'. Setting 'estimand' to \"%s\".",
-                      estimand), call. = FALSE, immediate. = TRUE)
-    }
+    stop("`sub.by` is defunct and has been replaced with `estimand`.", call. = FALSE)
   }
   else {
     estimand <- toupper(estimand)
@@ -201,7 +193,7 @@ matchit2subclass <- function(treat, distance, discarded,
 
   if (is.null(min.n)) min.n <- 1
   else if (!is.numeric(min.n) || length(min.n) != 1) {
-    stop("'min.n' must be a single number.", call. = FALSE)
+    stop("`min.n` must be a single number.", call. = FALSE)
   }
 
   n.obs <- length(treat)
@@ -220,7 +212,7 @@ matchit2subclass <- function(treat, distance, discarded,
   q <- switch(estimand,
               "ATT" = quantile(distance[treat==1], probs = sprobs, na.rm = TRUE),
               "ATC" = quantile(distance[treat==0], probs = sprobs, na.rm = TRUE),
-              "ATE" = quantile(distance, probs = sprobs, na.rm = TRUE))
+              quantile(distance, probs = sprobs, na.rm = TRUE))
 
   ## Calculating Subclasses
   psclass <- setNames(rep(NA_integer_, n.obs), names(treat))

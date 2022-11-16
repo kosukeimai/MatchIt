@@ -114,12 +114,11 @@ matchit(formula,
 
 Mahalanobis distance matching can be done one of two ways:
 \enumerate{
-\item If no propensity score needs to be estimated, \code{distance} should be
+\item{If no propensity score needs to be estimated, \code{distance} should be
 set to \code{"mahalanobis"}, and Mahalanobis distance matching will occur
 using all the variables in \code{formula}. Arguments to \code{discard} and
 \code{mahvars} will be ignored. For example, to perform simple Mahalanobis
 distance matching, the following could be run:
-}
 
 \preformatted{
 matchit(treat ~ X1 + X2, method = "nearest",
@@ -128,15 +127,14 @@ matchit(treat ~ X1 + X2, method = "nearest",
 With this code, the Mahalanobis distance is computed using \code{X1} and
 \code{X2}, and matching occurs on this distance. The \code{distance}
 component of the \code{matchit()} output will be empty.
-\enumerate{
-\item If a propensity score needs to be estimated for common support with
+}
+\item{If a propensity score needs to be estimated for common support with
 \code{discard}, \code{distance} should be whatever method is used to
 estimate the propensity score or a vector of distance measures, i.e., it
 should not be \code{"mahalanobis"}. Use \code{mahvars} to specify the
 variables used to create the Mahalanobis distance. For example, to perform
 Mahalanobis after discarding units outside the common support of the
 propensity score in both groups, the following could be run:
-}
 
 \preformatted{
 matchit(treat ~ X1 + X2 + X3, method = "nearest",
@@ -150,6 +148,8 @@ actual matching occurs on the Mahalanobis distance computed only using
 \code{X1} and \code{X2}, which are supplied to \code{mahvars}. The estimated
 propensity scores will be included in the \code{distance} component of the
 \code{matchit()} output.
+}
+}
 }
 
 \subsection{Estimand}{

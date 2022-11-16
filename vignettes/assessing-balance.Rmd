@@ -36,7 +36,7 @@ Covariate balance is the degree to which the distribution of covariates is simil
 
 This document provides instructions for assessing and reporting covariate balance as part of a matching analysis. The tools available in `MatchIt` for balance assessment should be used during the process of selecting a good matching scheme and ensuring that the chosen scheme is adequate. These tools implement the recommendations of @ho2007 and others for assessing balance.
 
-In addition to the tools available in `matchIt`, the `cobalt` package has a suite of functions designed to assess and display balance and is directly compatible with `MatchIt` objects. `cobalt` has extensive documentation, but we describe some of its functionality here as a complement to the tools in `MatchIt`.
+In addition to the tools available in `MatchIt`, the `cobalt` package has a suite of functions designed to assess and display balance and is directly compatible with `MatchIt` objects. `cobalt` has extensive documentation, but we describe some of its functionality here as a complement to the tools in `MatchIt`.
 
 The structure of this document is as follows: first, we describe some of the recommendations for balance checking and their rationale; next, we describe the tools for assessing balance present in `MatchIt` and display their use in evaluating several matching schemes; finally; we briefly describe some of the functionality in `cobalt` to extend that in `MatchIt`.
 

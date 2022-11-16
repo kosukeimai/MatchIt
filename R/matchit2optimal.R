@@ -105,8 +105,8 @@
 #' ## Mahalanobis Distance Matching
 #'
 #' Mahalanobis distance matching can be done one of two ways:
-#'
-#' 1) If no propensity score needs to be estimated, `distance` should be
+#' \enumerate{
+#' \item{If no propensity score needs to be estimated, `distance` should be
 #' set to `"mahalanobis"`, and Mahalanobis distance matching will occur
 #' using all the variables in `formula`. Arguments to `discard` and
 #' `mahvars` will be ignored. For example, to perform simple Mahalanobis
@@ -119,8 +119,8 @@
 #' With this code, the Mahalanobis distance is computed using `X1` and
 #' `X2`, and matching occurs on this distance. The `distance`
 #' component of the `matchit()` output will be empty.
-#'
-#' 2) If a propensity score needs to be estimated for common support with
+#' }
+#' \item{If a propensity score needs to be estimated for common support with
 #' `discard`, `distance` should be whatever method is used to
 #' estimate the propensity score or a vector of distance measures, i.e., it
 #' should not be `"mahalanobis"`. Use `mahvars` to specify the
@@ -140,7 +140,8 @@
 #' `X1` and `X2`, which are supplied to `mahvars`. The estimated
 #' propensity scores will be included in the `distance` component of the
 #' `matchit()` output.
-#'
+#' }
+#' }
 #' ## Estimand
 #'
 #' The `estimand` argument controls whether control units are selected to be matched with treated units

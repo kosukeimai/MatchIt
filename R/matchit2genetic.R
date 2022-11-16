@@ -134,25 +134,28 @@
 #' propensity score will go into the distance matrix. This leads to three ways
 #' to use `distance` and `mahvars` to perform the matching:
 #'
-#' 1) When `distance` corresponds to a propensity score and `mahvars`
+#' \enumerate{
+#' \item{When `distance` corresponds to a propensity score and `mahvars`
 #' *is not* specified, the covariates in `formula` along with the
 #' propensity score are used to form the generalized Mahalanobis distance
 #' matrix. This is the default and most typical use of `method =
 #' "genetic"` in `matchit()`.
-#'
-#' 2) When `distance` corresponds to a propensity score and `mahvars`
+#' }
+#' \item{When `distance` corresponds to a propensity score and `mahvars`
 #' *is* specified, the covariates in `mahvars` are used to form the
 #' generalized Mahalanobis distance matrix. The covariates in `formula`
 #' are used to estimate the propensity score and have their balance optimized
 #' by the genetic algorithm. The propensity score is not included in the
 #' generalized Mahalanobis distance matrix.
-#'
-#' 3) When `distance` is a method of computing a distance matrix
+#' }
+#' \item{When `distance` is a method of computing a distance matrix
 #' (e.g.,`"mahalanobis"`), no propensity score is estimated, and the
 #' covariates in `formula` are used to form the generalized Mahalanobis
 #' distance matrix. Which specific method is supplied has no bearing on how the
 #' distance matrix is computed; it simply serves as a signal to omit estimation
 #' of a propensity score.
+#' }
+#' }
 #'
 #' When a caliper is specified, any variables mentioned in `caliper`,
 #' possibly including the propensity score, will be added to the matching

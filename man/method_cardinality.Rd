@@ -2,31 +2,32 @@
 % Please edit documentation in R/matchit2cardinality.R
 \name{method_cardinality}
 \alias{method_cardinality}
-\alias{matchit2cardinality}
 \title{Cardinality Matching}
 \arguments{
+\item{formula}{a two-sided \link{formula} object containing the treatment and
+covariates to be balanced.}
+
 \item{data}{a data frame containing the variables named in \code{formula}.
 If not found in \code{data}, the variables will be sought in the
 environment.}
 
-\item{formula}{a two-sided \link{formula} object containing the treatment and
-covariates to be balanced.}
+\item{method}{set here to \code{"cardinality"}.}
 
-\item{ratio}{the desired ratio of control to treated units. Can be set to
-\code{NA} to maximize sample size without concern for this ratio. See
-Details.}
+\item{estimand}{a string containing the desired estimand. Allowable options
+include \code{"ATT"}, \code{"ATC"}, and \code{"ATE"}. See Details.}
+
+\item{exact}{for which variables exact matching should take place. Separate
+optimization will occur within each subgroup of the exact matching
+variables.}
 
 \item{s.weights}{the variable containing sampling weights to be incorporated
 into the optimization. The balance constraints refer to the product of the
 sampling weights and the matching weights, and the sum of the product of the
 sampling and matching weights will be maximized.}
 
-\item{exact}{for which variables exact matching should take place. Separate
-optimization will occur within each subgroup of the exact matching
-variables.}
-
-\item{estimand}{a string containing the desired estimand. Allowable options
-include \code{"ATT"}, \code{"ATC"}, and \code{"ATE"}. See Details.}
+\item{ratio}{the desired ratio of control to treated units. Can be set to
+\code{NA} to maximize sample size without concern for this ratio. See
+Details.}
 
 \item{verbose}{\code{logical}; whether information about the matching
 process should be printed to the console.}
@@ -64,8 +65,6 @@ minutes). For large problems, this should be set much higher.  }
 }
 
 The arguments \code{distance} (and related arguments), \code{mahvars}, \code{replace}, \code{m.order}, and \code{caliper} (and related arguments) are ignored with a warning.}
-
-\item{method}{set here to \code{"cardinality"}.}
 }
 \description{
 In \code{\link[=matchit]{matchit()}}, setting \code{method = "cardinality"} performs cardinality
@@ -165,8 +164,7 @@ difference for the second covariate is less than .05. The values should be
 specified in the order they appear in \code{formula}, except when
 interactions are present. One can run the following code:
 
-\preformatted{MatchIt:::get_assign(model.matrix(~X1*X2 + X3, data =
-data))[-1]}
+\preformatted{MatchIt:::get_assign(model.matrix(~X1*X2 + X3, data = data))[-1]}
 
 which will output a vector of numbers and the variable to which each number
 corresponds; the first entry in \code{tols} corresponds to the variable
