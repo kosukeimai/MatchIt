@@ -131,7 +131,7 @@ The goal of the outcome model is to generate good predictions for use in the g-c
 
 An additional decision to make is whether (and how) to include covariates in the outcome model. One may ask, why use matching at all if you are going to model the outcome with covariates anyway? Matching reduces the dependence of the effect estimate on correct specification of the outcome model; this is the central thesis of @ho2007. Including covariates in the outcome model after matching has several functions: it can increase precision in the effect estimate, reduce the bias due to residual imbalance, and make the effect estimate "doubly robust", which means it is consistent if either the matching reduces sufficient imbalance in the covariates or if the outcome model is correct. For these reasons, we recommend covariate adjustment after matching when possible. There is some evidence that covariate adjustment is most helpful for covariates with standardized mean differences greater than .1 [@nguyen2017], so these covariates and covariates thought to be highly predictive of the outcome should be prioritized in treatment effect models if not all can be included due to sample size constraints.
 
-Although there are many possible ways to include covariates (e.g., not just main effects but interactions, smoothing terms like splines, or other nonlinear transformations), it is important not to engage in specification search (i.e., trying many outcomes models in search of the "best" one). Doing so can invalidate results and yield a conclusion that fails to replicate. For this reason, we recommend only including the same terms included in the propensity score model unless there is a strong *a priori* and justifiable reason to model the outcome differently. 
+Although there are many possible ways to include covariates (e.g., not just main effects but interactions, smoothing terms like splines, or other nonlinear transformations), it is important not to engage in specification search (i.e., trying many outcomes models in search of the "best" one). Doing so can invalidate results and yield a conclusion that fails to replicate. For this reason, we recommend only including the same terms included in the propensity score model unless there is a strong *a priori* and justifiable reason to model the outcome differently.
 
 It is important not to interpret the coefficients and tests of covariates in the outcome model. These are not causal effects and their estimates may be severely confounded. Only the treatment effect estimate can be interpreted as causal assuming the relevant assumptions about unconfoundedness are met. Inappropriately interpreting the coefficients of covariates in the outcome model is known as the Table 2 fallacy [@westreich2013]. To avoid this, we only display the results of the g-computation procedure and do not examine or interpret the outcome models themselves.
 
@@ -182,6 +182,7 @@ Of course, we also need `MatchIt` to perform the matching.
 ```{r,message=FALSE,warning=FALSE}
 library("MatchIt")
 ```
+
 ```{r,message=FALSE,warning=FALSE, eval=me_ok}
 library("marginaleffects")
 ```
@@ -262,15 +263,23 @@ We can see that the difference in potential outcome means is equal to the averag
 
 This section explains how the procedure might differ if any of the following special circumstances occur.
 
-**Matching for the ATE.** When matching for the ATE (including [coarsened] exact matching, full matching, subclassification, and cardinality matching), everything is identical to the Standard Case except that in the calls to `comparisons()` and `predictions()`, the `newdata` argument is omitted (or can be replaced with `newdata = md`). This is because the estimated potential outcomes are computed for the full matched sample rather than just the treated units.
+#### **Matching for the ATE**
 
-**Matching with replacement.** When matching with replacement (i.e., nearest neighbor or genetic matching with `replace = TRUE`), effect and SE estimation need to account for control unit multiplicity (i.e., repeated use) and within-pair correlations [@hill2006; @austin2020a]. Although @abadie2008 demonstrated analytically that bootstrap SEs may be invalid for matching with replacement, simulation work by @hill2006 and @bodory2020 has found that bootstrap SEs are adequate and generally slightly conservative. See the section "Using Bootstrapping to Estimate Confidence Intervals" for instructions on using the bootstrap and an example that use matching with replacement.
+When matching for the ATE (including [coarsened] exact matching, full matching, subclassification, and cardinality matching), everything is identical to the Standard Case except that in the calls to `comparisons()` and `predictions()`, the `newdata` argument is omitted (or can be replaced with `newdata = md`). This is because the estimated potential outcomes are computed for the full matched sample rather than just the treated units.
+
+#### Matching with replacement
+
+When matching with replacement (i.e., nearest neighbor or genetic matching with `replace = TRUE`), effect and SE estimation need to account for control unit multiplicity (i.e., repeated use) and within-pair correlations [@hill2006; @austin2020a]. Although @abadie2008 demonstrated analytically that bootstrap SEs may be invalid for matching with replacement, simulation work by @hill2006 and @bodory2020 has found that bootstrap SEs are adequate and generally slightly conservative. See the section "Using Bootstrapping to Estimate Confidence Intervals" for instructions on using the bootstrap and an example that use matching with replacement.
 
 Because control units do not belong to unique pairs, there is no pair membership in the `match.data()` output. One can simply change `vcov = ~subclass` to `vcov = "HC3"` in the calls to `comparisons()` and `predictions()` to use robust SEs instead of cluster-robust SEs, as recommended by @hill2006. There is some evidence for an alternative approach that incorporates pair membership and adjusts for reuse of control units, though this has only been studied for survival outcomes [@austin2020a]. This adjustment involves using two-way cluster-robust SEs with pair membership and unit ID as the clustering variables. For continuous and binary outcomes, this involves the following two changes: 1) replace `match.data()` with `get_matches()`, which produces a dataset with a row per unit per pair, meaning control units matched to multiple treated units will appear multiple times in the dataset; 2) set `vcov = ~subclass + id` in the calls to `comparisons()` and `predictions()`. For survival outcomes, a special procedure must be used; see the section on survival outcomes below.
 
-**Matching without pairing.** Some matching methods do not involve creating pairs; these include cardinality and template matching, exact matching, and coarsened exact matching with `k2k = FALSE` (the default). The only change that needs to be made to the Standard Case is that one should change `vcov = ~subclass` to `vcov = "HC3"` in the calls to `comparisons()` and `predictions()` to use robust SEs instead of cluster-robust SEs. Remember that if matching is done for the ATE (even if units are dropped), the `newdata` argument should be dropped.
+#### Matching without pairing
 
-**Propensity score subclassification.** There are two natural ways to estimate marginal effects after subclassification: the first is to estimate subclass-specific treatment effects and pool them using an average marginal effects procedure, and the second is to use the stratum weights to estimate a single average marginal effect. This latter approach is also known as marginal mean weighting through stratification (MMWS), and is described in detail by @hong2010[^5]. When done properly, both methods should yield similar or identical estimates of the treatment effect.
+Some matching methods do not involve creating pairs; these include cardinality and template matching, exact matching, and coarsened exact matching with `k2k = FALSE` (the default). The only change that needs to be made to the Standard Case is that one should change `vcov = ~subclass` to `vcov = "HC3"` in the calls to `comparisons()` and `predictions()` to use robust SEs instead of cluster-robust SEs. Remember that if matching is done for the ATE (even if units are dropped), the `newdata` argument should be dropped.
+
+#### Propensity score subclassification
+
+There are two natural ways to estimate marginal effects after subclassification: the first is to estimate subclass-specific treatment effects and pool them using an average marginal effects procedure, and the second is to use the stratum weights to estimate a single average marginal effect. This latter approach is also known as marginal mean weighting through stratification (MMWS), and is described in detail by @hong2010[^5]. When done properly, both methods should yield similar or identical estimates of the treatment effect.
 
 [^5]: It is also known as fine stratification weighting, described by @desai2017.
 
@@ -300,7 +309,9 @@ summary(compS)
 
 A model with fewer terms may be required when subclasses are small; removing covariates or their interactions with treatment may be required and can increase precision in smaller datasets. Remember that if subclassification is done for the ATE (even if units are dropped), the `newdata` argument should be dropped.
 
-**Binary outcomes.** Estimating effects on binary outcomes is essentially the same as for continuous outcomes. The main difference is that there are several measures of the effect one can consider, which include the odds ratio (OR), risk ratio/relative risk (RR), and risk difference (RD), and the syntax to `comparisons()` depends on which one is desired. The outcome model should be one appropriate for binary outcomes (e.g., logistic regression) but is unrelated to the desired effect measure because we can compute any of the above effect measures using `comparisons()` after the logistic regression.
+#### **Binary outcomes**
+
+Estimating effects on binary outcomes is essentially the same as for continuous outcomes. The main difference is that there are several measures of the effect one can consider, which include the odds ratio (OR), risk ratio/relative risk (RR), and risk difference (RD), and the syntax to `comparisons()` depends on which one is desired. The outcome model should be one appropriate for binary outcomes (e.g., logistic regression) but is unrelated to the desired effect measure because we can compute any of the above effect measures using `comparisons()` after the logistic regression.
 
 To fit a logistic regression model, change `lm()` to `glm()` and set `family = quasibinomial()`[^6]. To compute the marginal RD, we can use exactly the same syntax as in the Standard Case; nothing needs to change[^7].
 
@@ -336,14 +347,15 @@ The first `summary()` output displays the marginal log RR, its SE, Z-value, the 
 
 For the marginal OR, the only thing that needs to change is that `transform_pre` should be set to `"lnoravg"`.
 
-###### For survival outcomes
+#### Survival outcomes
+
 There are several measures of effect size for survival outcomes. When using the Cox proportional hazards model, the quantity of interest is the hazard ratio (HR) between the treated and control groups. As with the OR, the HR is non-collapsible, which means the estimated HR will only be a valid estimate of the marginal HR when no other covariates are included in the model. Other effect measures, such as the difference in mean survival times or probability of survival after a given time, can be treated just like continuous and binary outcomes as previously described.
 
-For the HR, we cannot compute average marginal effects and must use the coefficient on treatment in a Cox model fit without covariates[^9]. This means that we cannot use the procedures from the Standard Case. Here we describe estimating the marginal HR using `coxph()` from the `survival` package. (See `help("coxph", package = "survival")` for more information on this model.) To request cluster-robust SEs as recommended by @austin2013a, we need to supply pair membership (stored in the `subclass` column of `md`) to the `cluster` argument and set `robust = TRUE`. For matching methods that don't involve pairing (e.g., cardinality and template matching and [coarsened] exact matching), we can omit the `cluster` argument (but keep `robust = TRUE`)[^10].
+For the HR, we cannot compute average marginal effects and must use the coefficient on treatment in a Cox model fit without covariates[^8]. This means that we cannot use the procedures from the Standard Case. Here we describe estimating the marginal HR using `coxph()` from the `survival` package. (See `help("coxph", package = "survival")` for more information on this model.) To request cluster-robust SEs as recommended by @austin2013a, we need to supply pair membership (stored in the `subclass` column of `md`) to the `cluster` argument and set `robust = TRUE`. For matching methods that don't involve pairing (e.g., cardinality and template matching and [coarsened] exact matching), we can omit the `cluster` argument (but keep `robust = TRUE`)[^9].
 
-[^9]: It is not immediately clear how to estimate a marginal HR when covariates are included in the outcome model; though @austin2020 describe several ways of including covariates in a model to estimate the marginal HR, they do not develop SEs and little research has been done on this method, so we will not present it here. Instead, we fit a simple Cox model with the treatment as the sole predictor.
+[^8]: It is not immediately clear how to estimate a marginal HR when covariates are included in the outcome model; though @austin2020 describe several ways of including covariates in a model to estimate the marginal HR, they do not develop SEs and little research has been done on this method, so we will not present it here. Instead, we fit a simple Cox model with the treatment as the sole predictor.
 
-[^10]: For subclassification, only MMWS can be used; this is done simply by including the stratification weights in the Cox model and omitting the `cluster` argument.
+[^9]: For subclassification, only MMWS can be used; this is done simply by including the stratification weights in the Cox model and omitting the `cluster` argument.
 
 ```{r, eval=su_ok}
 library("survival")
@@ -355,7 +367,7 @@ coxph(Surv(Y_S) ~ A, data = md, robust = TRUE,
 
 The `coef` column contains the log HR, and `exp(coef)` contains the HR. Remember to always use the `robust se` for the SE of the log HR. The displayed z-test p-value results from using the robust SE.
 
-For matching with replacement, a special procedure described by @austin2020a can be necessary for valid inference. According to the results of their simulation studies, when the treatment prevalence is low (<30%), a SE that does not involve pair membership (i.e., the `match.data()` approach, as demonstrated above) is sufficient. When treatment prevalence is higher, the SE that ignores pair membership may be too low, and the authors recommend using a custom SE estimator that uses information about both multiplicity and pairing.
+For matching with replacement, a special procedure described by @austin2020a can be necessary for valid inference. According to the results of their simulation studies, when the treatment prevalence is low (\<30%), a SE that does not involve pair membership (i.e., the `match.data()` approach, as demonstrated above) is sufficient. When treatment prevalence is higher, the SE that ignores pair membership may be too low, and the authors recommend using a custom SE estimator that uses information about both multiplicity and pairing.
 
 Doing so must be done manually for survival models using `get_matches()` and several calls to `coxph()` as demonstrated in the appendix of @austin2020a. We demonstrate this below:
 
@@ -606,9 +618,9 @@ Several methods involve weights that are to be used in estimating the treatment 
 
 ### 2. Failing to use robust or cluster-robust standard errors
 
-Robust SEs are required when using weights to estimate the treatment effect. The model-based SEs resulting from weighted least squares or maximum likelihood are inaccurate when using matching weights because they assume weights are frequency weights rather than probability weights. Cluster-robust SEs account for both the matching weights and pair membership and should be used when appropriate. Sometimes, researchers use functions in the `survey` package to estimate robust SEs, especially with inverse probability weighting; this is a valid way to compute robust SEs and will give similar results to `sandwich::vcovHC()`.[^svy]
+Robust SEs are required when using weights to estimate the treatment effect. The model-based SEs resulting from weighted least squares or maximum likelihood are inaccurate when using matching weights because they assume weights are frequency weights rather than probability weights. Cluster-robust SEs account for both the matching weights and pair membership and should be used when appropriate. Sometimes, researchers use functions in the `survey` package to estimate robust SEs, especially with inverse probability weighting; this is a valid way to compute robust SEs and will give similar results to `sandwich::vcovHC()`.[^10]
 
-[^svy]: To use `survey` to adjust for pair membership, one can use the following code to specify the survey design to be used with `svyglm()`: `svydesign(ids = ~subclass, weights = ~weights, data = md)` where `md` is the output of `match.data()`. After `svyglm()`, `comparisons()` can be used, and the `vcov` argument does not need to be specified.
+[^10]: To use `survey` to adjust for pair membership, one can use the following code to specify the survey design to be used with `svyglm()`: `svydesign(ids = ~subclass, weights = ~weights, data = md)` where `md` is the output of `match.data()`. After `svyglm()`, `comparisons()` can be used, and the `vcov` argument does not need to be specified.
 
 ### 3. Interpreting conditional effects as marginal effects
 
