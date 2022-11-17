@@ -263,7 +263,7 @@ We can see that the difference in potential outcome means is equal to the averag
 
 This section explains how the procedure might differ if any of the following special circumstances occur.
 
-#### **Matching for the ATE**
+#### Matching for the ATE
 
 When matching for the ATE (including [coarsened] exact matching, full matching, subclassification, and cardinality matching), everything is identical to the Standard Case except that in the calls to `comparisons()` and `predictions()`, the `newdata` argument is omitted (or can be replaced with `newdata = md`). This is because the estimated potential outcomes are computed for the full matched sample rather than just the treated units.
 
@@ -309,7 +309,7 @@ summary(compS)
 
 A model with fewer terms may be required when subclasses are small; removing covariates or their interactions with treatment may be required and can increase precision in smaller datasets. Remember that if subclassification is done for the ATE (even if units are dropped), the `newdata` argument should be dropped.
 
-#### **Binary outcomes**
+#### Binary outcomes
 
 Estimating effects on binary outcomes is essentially the same as for continuous outcomes. The main difference is that there are several measures of the effect one can consider, which include the odds ratio (OR), risk ratio/relative risk (RR), and risk difference (RD), and the syntax to `comparisons()` depends on which one is desired. The outcome model should be one appropriate for binary outcomes (e.g., logistic regression) but is unrelated to the desired effect measure because we can compute any of the above effect measures using `comparisons()` after the logistic regression.
 
