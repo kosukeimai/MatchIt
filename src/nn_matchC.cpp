@@ -9,7 +9,6 @@ using namespace Rcpp;
 IntegerMatrix nn_matchC(const IntegerVector& treat_,
                         const IntegerVector& ord_,
                         const IntegerVector& ratio,
-                        const int& max_rat,
                         const LogicalVector& discarded,
                         const int& reuse_max,
                         const Nullable<NumericVector>& distance_ = R_NilValue,
@@ -17,7 +16,7 @@ IntegerMatrix nn_matchC(const IntegerVector& treat_,
                         const Nullable<IntegerVector>& exact_ = R_NilValue,
                         const Nullable<double>& caliper_dist_ = R_NilValue,
                         const Nullable<NumericVector>& caliper_covs_ = R_NilValue,
-                        const Nullable<NumericMatrix>& calcovs_covs_mat_ = R_NilValue,
+                        const Nullable<NumericMatrix>& caliper_covs_mat_ = R_NilValue,
                         const Nullable<NumericMatrix>& mah_covs_ = R_NilValue,
                         const Nullable<IntegerMatrix>& antiexact_covs_ = R_NilValue,
                         const Nullable<IntegerVector>& unit_id_ = R_NilValue,
@@ -28,7 +27,7 @@ IntegerMatrix nn_matchC(const IntegerVector& treat_,
 
   NumericVector distance, caliper_covs;
   double caliper_dist;
-  NumericMatrix distance_mat, calcovs_covs_mat, mah_covs, mah_covs_c;
+  NumericMatrix distance_mat, caliper_covs_mat, mah_covs, mah_covs_c;
   IntegerMatrix antiexact_covs;
   IntegerVector exact, exact_c, antiexact_col, unit_id, units_with_id_of_chosen_unit;
   int id_of_chosen_unit;
@@ -51,6 +50,7 @@ IntegerMatrix nn_matchC(const IntegerVector& treat_,
   CharacterVector lab = treat_.names();
 
   // Output matrix with sample indices of C units
+  int max_rat = max(ratio);
   IntegerMatrix mm(n1_, max_rat);
   mm.fill(NA_INTEGER);
   rownames(mm) = lab[ind1_];
@@ -93,8 +93,8 @@ IntegerMatrix nn_matchC(const IntegerVector& treat_,
     cal_len = caliper_covs.size();
     cal_diff = NumericVector(n0);
   }
-  if (calcovs_covs_mat_.isNotNull()) {
-    calcovs_covs_mat = as<NumericMatrix>(calcovs_covs_mat_);
+  if (caliper_covs_mat_.isNotNull()) {
+    caliper_covs_mat = as<NumericMatrix>(caliper_covs_mat_);
   }
   if (mah_covs_.isNotNull()) {
     mah_covs = as<NumericMatrix>(mah_covs_);
@@ -219,7 +219,7 @@ IntegerMatrix nn_matchC(const IntegerVector& treat_,
 
       if (use_caliper_covs) {
         for (x = 0; (x < cal_len) && c_eligible.size() > 0; ++x) {
-          cal_var = calcovs_covs_mat( _ , x );
+          cal_var = caliper_covs_mat( _ , x );
 
           cal_var_t = cal_var[t_ind];
 
