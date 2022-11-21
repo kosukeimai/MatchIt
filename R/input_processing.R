@@ -91,7 +91,7 @@ check.inputs <- function(mcall, method, distance, exact, mahvars, antiexact,
     }
   }
   else if (method == "cardinality") {
-    for (i in c("distance", "mahvars", "antiexact", "caliper", "std.caliper", "reestimate", "replace", "min.controls", "m.order")) {
+    for (i in c("distance", "antiexact", "caliper", "std.caliper", "reestimate", "replace", "min.controls", "m.order")) {
       if (i %in% names(mcall) && !is.null(i_ <- get0(i, inherits = FALSE)) && !identical(i_, formals(matchit)[[i]])) {
         ignored.inputs <- c(ignored.inputs, i)
       }
@@ -120,12 +120,12 @@ check.inputs <- function(mcall, method, distance, exact, mahvars, antiexact,
     }
   }
 
-  if (length(ignored.inputs) > 0) warning(sprintf("The %s %s not used with method = %s and will be ignored.",
+  if (length(ignored.inputs) > 0) warning(sprintf("The %s %s not used with `method = %s` and will be ignored.",
                                                   ngettext(length(ignored.inputs), "argument", "arguments"),
                                                   word_list(ignored.inputs, quotes = 1, is.are = TRUE),
                                                   add_quotes(method, quotes = !null.method)),
                                           call. = FALSE, immediate. = TRUE)
-  if (length(error.inputs) > 0) stop(sprintf("The %s %s not used with method = %s and distance = \"%s\".",
+  if (length(error.inputs) > 0) stop(sprintf("The %s %s not used with `method = %s` and distance = \"%s\".",
                                              ngettext(length(error.inputs), "argument", "arguments"),
                                              word_list(error.inputs, quotes = 1, is.are = TRUE),
                                              add_quotes(method, quotes = !null.method),
@@ -159,7 +159,7 @@ check_treat <- function(treat = NULL, X = NULL) {
 #Function to process distance and give warnings about new syntax
 process.distance <- function(distance, method = NULL, treat) {
   if (is.null(distance) && !is.null(method) %% !method %in% c("cem", "exact", "cardinality")) {
-    stop(sprintf("`distance` cannot be NULL with method = \"%s\".",
+    stop(sprintf("`distance` cannot be `NULL` with `method = \"%s\"`.",
                  method), call. = FALSE)
   }
 
@@ -195,7 +195,7 @@ process.distance <- function(distance, method = NULL, treat) {
       distance <- "elasticnet"
     }
     else if (!tolower(distance) %in% allowable.distances) {
-      stop("The argument supplied to distance is not an allowable value. See help(\"distance\") for allowable options.", call. = FALSE)
+      stop("The argument supplied to `distance` is not an allowable value. See `help(\"distance\")` for allowable options.", call. = FALSE)
     }
     else if (!is.null(method) && method == "subclass" && tolower(distance) %in% matchit_distances()) {
       stop(sprintf("`distance` cannot be %s with `method = \"subclass\"`.",
@@ -210,7 +210,7 @@ process.distance <- function(distance, method = NULL, treat) {
     stop("`distance` must be a string with the name of the distance measure to be used or a numeric vector or matrix containing distance measures.", call. = FALSE)
   }
   else if (is.matrix(distance) && (is.null(method) || !method %in% c("nearest", "optimal", "full"))) {
-    stop(sprintf("`distance` cannot be supplied as a matrix with method = %s.",
+    stop(sprintf("`distance` cannot be supplied as a matrix with `method = %s`.",
                  add_quotes(method, quotes = !is.null(method))), call. = FALSE)
   }
 
@@ -258,6 +258,10 @@ process.ratio <- function(ratio, method = NULL, ..., min.controls = NULL, max.co
     }
 
     if (is.null(max.controls)) {
+      if (!is_whole_number(ratio)) {
+        stop("`ratio` must be a whole number when `max.controls` is not specified.",
+             call. = FALSE)
+      }
       ratio <- round(ratio)
     }
     else if (anyNA(max.controls) || !is.atomic(max.controls) || !is.numeric(max.controls) || length(max.controls) > 1) {
@@ -295,8 +299,9 @@ process.ratio <- function(ratio, method = NULL, ..., min.controls = NULL, max.co
   else if (method == "genetic") {
     if (ratio.null) ratio <- 1
     else if (ratio.na) stop("`ratio` cannot be NA.", call. = FALSE)
-    else if (!is.atomic(ratio) || !is.numeric(ratio) || length(ratio) > 1 || ratio < 1) {
-      stop("`ratio` must be a single number greater than or equal to 1.", call. = FALSE)
+    else if (!is.atomic(ratio) || !is.numeric(ratio) || length(ratio) > 1 || ratio < 1 ||
+             !is_whole_number(ratio)) {
+      stop("`ratio` must be a single whole number greater than or equal to 1.", call. = FALSE)
     }
     ratio <- round(ratio)
 

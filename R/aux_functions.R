@@ -702,3 +702,8 @@ qn <- function(treat, subclass, discarded = NULL) {
 diff1 <- function(x) {
   x[-1] - x[-length(x)]
 }
+
+#Check if is a whole number
+is_whole_number <- function(x) {
+  abs(x - round(x)) < .Machine$double.eps
+}

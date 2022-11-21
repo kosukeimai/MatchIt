@@ -20,6 +20,8 @@ include \code{"ATT"}, \code{"ATC"}, and \code{"ATE"}. See Details.}
 optimization will occur within each subgroup of the exact matching
 variables.}
 
+\item{mahvars}{which variables should be used for pairing after subset selection. Can only be set when \code{ratio} is a whole number. See Details.}
+
 \item{s.weights}{the variable containing sampling weights to be incorporated
 into the optimization. The balance constraints refer to the product of the
 sampling weights and the matching weights, and the sum of the product of the
@@ -64,7 +66,7 @@ time before the optimization routine aborts, in seconds. Default is 120 (2
 minutes). For large problems, this should be set much higher.  }
 }
 
-The arguments \code{distance} (and related arguments), \code{mahvars}, \code{replace}, \code{m.order}, and \code{caliper} (and related arguments) are ignored with a warning.}
+The arguments \code{distance} (and related arguments), \code{replace}, \code{m.order}, and \code{caliper} (and related arguments) are ignored with a warning.}
 }
 \description{
 In \code{\link[=matchit]{matchit()}}, setting \code{method = "cardinality"} performs cardinality
@@ -87,6 +89,7 @@ matchit(formula,
         method = "cardinality",
         estimand = "ATT",
         exact = NULL,
+        mahvars = NULL,
         s.weights = NULL,
         ratio = 1,
         verbose = FALSE,
@@ -130,9 +133,8 @@ retains the requested estimand if a solution is found.
 
 Neither method involves creating pairs in the matched set, but it is
 possible to perform an additional round of pairing within the matched sample
-after cardinality matching or template matching for the ATE with a fixed
-sample size ratio. See Examples for an example of optimal pair matching
-after cardinality matching. The balance will not change, but additional
+after cardinality matching or template matching for the ATE with a fixed whole number
+sample size ratio by supplying the desired pairing variables to \code{mahvars}. Doing so will trigger \link[=method_optimal]{optimal matching} using \code{optmatch::pairmatch()} on the Mahalanobis distance computed using the variables supplied to \code{mahvars}. The balance or composition of the matched sample will not change, but additional
 precision and robustness can be gained by forming the pairs.
 
 The weights are scaled so that the sum of the weights in each group is equal
@@ -201,7 +203,7 @@ solvers cannot.
 
 
 Most outputs described in \code{\link[=matchit]{matchit()}} are returned with
-\code{method = "cardinality"}. The \code{match.matrix} and \code{subclass}
+\code{method = "cardinality"}. Unless \code{mahvars} is specified, the \code{match.matrix} and \code{subclass}
 components are omitted because no pairing or subclassification is done. When
 \code{include.obj = TRUE} in the call to \code{matchit()}, the output of the
 optimization function will be included in the output. When \code{exact} is
@@ -240,16 +242,18 @@ m.out3 <- matchit(treat ~ age + educ + re74,
                   tols = .15, solver = solver)
 m.out3
 summary(m.out3, un = FALSE)
-
+\dontshow{\}) # examplesIf}
+\dontshow{if ((requireNamespace("Rglpk", quietly = TRUE) && requireNamespace("optmatch", quietly = TRUE))) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
 # Pairing after 1:1 cardinality matching:
-m.out4 <- matchit(treat ~ age + educ + re74,
-                  data = lalonde, method = "nearest",
-                  distance = "mahalanobis",
-                  discard = m.out1$weights == 0)
+m.out1b <- matchit(treat ~ age + educ + re74,
+                   data = lalonde, method = "cardinality",
+                   estimand = "ATT", ratio = 1,
+                   tols = .15, solver = solver,
+                   mahvars = ~ age + educ + re74)
 
 # Note that balance doesn't change but pair distances
 # are lower for the paired-upon variables
-summary(m.out4, un = FALSE)
+summary(m.out1b, un = FALSE)
 summary(m.out1, un = FALSE)
 
 # In these examples, a high tol was used and
