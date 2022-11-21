@@ -275,7 +275,7 @@ Because control units do not belong to unique pairs, there is no pair membership
 
 #### Matching without pairing
 
-Some matching methods do not involve creating pairs; these include cardinality and template matching, exact matching, and coarsened exact matching with `k2k = FALSE` (the default). The only change that needs to be made to the Standard Case is that one should change `vcov = ~subclass` to `vcov = "HC3"` in the calls to `comparisons()` and `predictions()` to use robust SEs instead of cluster-robust SEs. Remember that if matching is done for the ATE (even if units are dropped), the `newdata` argument should be dropped.
+Some matching methods do not involve creating pairs; these include cardinality and template matching with `mahvars = NULL` (the default), exact matching, and coarsened exact matching with `k2k = FALSE` (the default). The only change that needs to be made to the Standard Case is that one should change `vcov = ~subclass` to `vcov = "HC3"` in the calls to `comparisons()` and `predictions()` to use robust SEs instead of cluster-robust SEs. Remember that if matching is done for the ATE (even if units are dropped), the `newdata` argument should be dropped.
 
 #### Propensity score subclassification
 
@@ -594,7 +594,7 @@ comp <- comparisons(fitP, variables = "A",
 summary(comp)
 ```
 
-As expected, the difference between the subgroup treatment effects is small and significant, so there is no evidence of moderation by `X5`.
+As expected, the difference between the subgroup treatment effects is small and nonsignificant, so there is no evidence of moderation by `X5`.
 
 ### Reporting Results
 

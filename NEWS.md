@@ -6,6 +6,14 @@ output:
 `MatchIt` News and Updates
 ======
 
+# MatchIt (development version)
+
+* Nearest neighbor matching now uses a much faster algorithm (up to 6x times faster) when `distance` is a propensity score and `mahvars` is not specified. Differences in sort order might cause results to differ from previous versions if there are units with identical propensity scores.
+
+* After cardinality or template matching using `method = "cardinality"` with `ratio` set to a whole number, it is possible to perform optimal Mahalanobis distance matching in the matched sample by supplying the desired matching variables to `mahvars`. Previously, the user had to run a separate pairing step.
+
+* Fixed some typos in the vignettes.
+
 # MatchIt 4.5.0
 
 * Generalized full matching, as described by [Sävje, Higgins, and Sekhon (2021)](https://doi.org/10.1017/pan.2020.32), can now be implemented by setting `method = "quick"` in `matchit()`. It is a dramatically faster alternative to optimal full matching that can support much larger datasets and otherwise has similar balancing performance. See `?method_quick` and `vignette("matching-methods")` for more information. This functionality relies on the `quickmatch` package.
