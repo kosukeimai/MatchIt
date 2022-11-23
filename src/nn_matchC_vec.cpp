@@ -424,7 +424,10 @@ IntegerMatrix nn_matchC_vec(const IntegerVector& treat_,
         }
       }
 
-      if (any(can_be_matched).is_false()) return mm;
+      if (any(can_be_matched).is_false()) {
+        p.update(prog_length);
+        return mm;
+      }
 
       if (!can_be_matched[t[first_control]]) {
         first_control = min(as<IntegerVector>(ind0[can_be_matched]));
