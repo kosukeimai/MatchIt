@@ -467,7 +467,6 @@ matchit2nearest <-  function(treat, data, distance, discarded,
   else {
     ratio <- as.integer(rep(ratio, n1))
   }
-  max_rat <- max(ratio)
 
   m.order <- {
     if (is.null(distance)) match_arg(m.order, c("data", "random"))
@@ -482,8 +481,11 @@ matchit2nearest <-  function(treat, data, distance, discarded,
                   "smallest" = order(distance[treat == 1], decreasing = FALSE),
                   "random" = sample.int(n1),
                   "data" = seq_len(n1))
-    mm <- nn_matchC(treat, ord, ratio, max_rat, discarded, reuse.max, distance, distance_mat, ex, caliper.dist,
-                    caliper.covs, caliper.covs.mat, mahcovs, antiexactcovs, unit.id, verbose)
+
+    mm <- nn_matchC_dispatch(treat, ord, ratio, discarded, reuse.max, distance, distance_mat,
+                             ex, caliper.dist, caliper.covs, caliper.covs.mat, mahcovs,
+                             antiexactcovs, unit.id, verbose)
+
   }
   else {
     distance_ <- caliper.covs.mat_ <- mahcovs_ <- antiexactcovs_ <- distance_mat_ <- NULL
@@ -514,8 +516,9 @@ matchit2nearest <-  function(treat, data, distance, discarded,
                      "random" = sample.int(n1_),
                      "data" = seq_len(n1_))
 
-      mm_ <- nn_matchC(treat_, ord_, ratio_, max_rat, discarded_, reuse.max, distance_, distance_mat_, NULL, caliper.dist,
-                       caliper.covs, caliper.covs.mat_, mahcovs_, antiexactcovs_, NULL, verbose)
+      mm_ <- nn_matchC_dispatch(treat_, ord_, ratio_, discarded_, reuse.max, distance_, distance_mat_,
+                               NULL, caliper.dist, caliper.covs, caliper.covs.mat_, mahcovs_,
+                               antiexactcovs_, NULL, verbose)
 
       #Ensure matched indices correspond to indices in full sample, not subgroup
       mm_[] <- seq_along(treat)[.e][mm_]
@@ -543,4 +546,21 @@ matchit2nearest <-  function(treat, data, distance, discarded,
   class(res) <- "matchit"
 
   return(res)
+}
+
+# Dispatches Rcpp function for NN matching
+# nn_matchC_vec() if distance_mat and mahcovs are NULL
+# nn_matchC() otherwise
+nn_matchC_dispatch <- function(treat, ord, ratio, discarded, reuse.max, distance, distance_mat, ex, caliper.dist,
+                               caliper.covs, caliper.covs.mat, mahcovs, antiexactcovs, unit.id, verbose) {
+  if (is.null(distance_mat) && is.null(mahcovs)) {
+    nn_matchC_vec(treat, ord, ratio, discarded, reuse.max, distance,
+                  ex, caliper.dist, caliper.covs, caliper.covs.mat,
+                  antiexactcovs, unit.id, verbose)
+  }
+  else {
+    nn_matchC(treat, ord, ratio, discarded, reuse.max, distance, distance_mat,
+              ex, caliper.dist, caliper.covs, caliper.covs.mat, mahcovs,
+              antiexactcovs, unit.id, verbose)
+  }
 }

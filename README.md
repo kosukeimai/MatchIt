@@ -103,7 +103,7 @@ visual display of balance across the sample:
 plot(summary(m.out))
 ```
 
-<img src="man/figures/README-unnamed-chunk-5-1.png" style="display: block; margin: auto;" />
+<img src="man/figures/README-unnamed-chunk-5-1.png" alt="Love plot of balance before and after matching." style="display: block; margin: auto;" />
 
 Although much has been written about matching theory, most of the theory
 relied upon in `MatchIt` is described well in [Ho, Imai, King, and
