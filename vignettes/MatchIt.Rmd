@@ -137,13 +137,13 @@ At the top is a summary of covariate balance after matching. Although balance ha
 
 Next is a table of the sample sizes before and after matching. The matching procedure left 244 control units unmatched. Ideally, unmatched units would be those far from the treated units and would require greater extrapolation were they to have been retained. We can visualize the distribution of propensity scores of those who were matched using `plot()` with `type = "jitter"`:
 
-```{r}
+```{r, fig.alt="Jitter plot of the propensity scores, which shows that no treated unit were dropped, and a large number of control units with low propensity scores were dropped."}
 plot(m.out1, type = "jitter", interactive = FALSE)
 ```
 
 We can visually examine balance on the covariates using `plot()` with `type = "density"`:
 
-```{r}
+```{r, fig.alt="Density plots of age, married and re75 in the unmatched and matched samples."}
 plot(m.out1, type = "density", interactive = FALSE,
      which.xs = ~age + married + re75)
 ```
@@ -178,7 +178,7 @@ summary(m.out2, un = FALSE)
 
 Balance is far better, as determined by the lower standardized mean differences and eCDF statistics. The balance should be reported when publishing the results of a matching analysis. This can be done either in a table, using the values resulting from `summary()`, or in a plot, such as a Love plot, which we can make by calling `plot()` on the `summary()` output:
 
-```{r, eval = (use != "none")}
+```{r, eval = (use != "none"), fig.alt = "A love plot with matched dots below the threshold lines, indicaitng good balance after matching, in contrast to the unmatched dots far from the treshold lines, indicating poor balance before matching."}
 plot(summary(m.out2))
 ```
 

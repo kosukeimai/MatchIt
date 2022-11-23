@@ -51,7 +51,7 @@ summary(m.out)
 
 At the top is balance for the original sample. Below that is balance in the matched sample, followed by the percent reduction in imbalance and the sample sizes before and after matching. Smaller values for the balance statistics indicate better balance. (In this case, good balance was not achieved and other matching methods should be tried). We can plot the standardized mean differences in a Love plot for a clean, visual display of balance across the sample:
 
-```{r}
+```{r, fig.alt ="Love plot of balance before and after matching."}
 #Plot balance
 plot(summary(m.out))
 ```

@@ -136,7 +136,7 @@ A Love plot is a clean way to visually summarize balance. Using `plot` on the ou
 
 Below we create a Love plot of the covariates.
 
-```{r}
+```{r, fig.alt="A love plot with most matched dots below the threshold lines, indicaitng good balance after matching, in contrast to the unmatched dots far from the treshold lines, indicating poor balance before matching."}
 m.sum <- summary(m.out, addlvariables = ~ I(age^2) + I(re74==0) + 
                    I(re75==0) + educ:race)
 plot(m.sum, var.order = "unmatched")
@@ -156,7 +156,7 @@ In addition to numeric summaries of balance, `MatchIt` offers graphical summarie
 
 Below, we demonstrate the eQQ plot:
 
-```{r}
+```{r, fig.alt ="eQQ plots of age, nodegree, and re74 in the unmatched and matched samples."}
 #eQQ plot
 plot(m.out, type = "qq", which.xs = ~age + nodegree + re74)
 ```
@@ -165,7 +165,7 @@ The y-axis displays the each value of the covariate for the treated units, and t
 
 Below, we demonstrate the eCDF plot:
 
-```{r}
+```{r, fig.alt ="eCDF plots of educ, married, and re75 in the unmatched and matched samples."}
 #eCDF plot
 plot(m.out, type = "ecdf", which.xs = ~educ + married + re75)
 ```
@@ -174,7 +174,7 @@ The x-axis displays the covariate values and the y-axis displays the proportion 
 
 Below, we demonstrate the density plot:
 
-```{r}
+```{r, fig.alt ="Density plots of age, educ, and race in the unmatched and matched samples."}
 #density plot
 plot(m.out, type = "density", which.xs = ~age + educ + race)
 ```
@@ -207,7 +207,7 @@ summary(s.out, subclass = TRUE, un = FALSE)
 
 We can plot the standardized mean differences in a Love plot that also displays balance for the subclasses using `plot.summary.matchit()` on a `summary.matchit()` object with `subclass = TRUE`.
 
-```{r}
+```{r, fig.alt ="Love plot of balance before and after subclassification, with subclass IDs representing balance within each subclass in addition to dots representing balance overall."}
 s <- summary(s.out, subclass = TRUE)
 plot(s, var.order = "unmatched", abs = FALSE)
 ```
@@ -216,7 +216,7 @@ Note that for some variables, while the groups are balanced in aggregate (black 
 
 When we plot distributional balance using `plot.matchit()`, again we can choose whether balance should be displayed in aggregate or within subclasses again using the `subclass` option, which functions the same as it does with `summary.matchit()`. Below we demonstrate checking balance within a subclass.
 
-```{r}
+```{r, fig.alt ="Density plots of educ, married, and re75 in the unmatched sample and in subclass 1."}
 plot(s.out, type = "density", which.xs = ~educ + married + re75,
      subclass = 1)
 ```
@@ -264,13 +264,13 @@ This time, we supplied `bal.tab()` with the covariates and dataset and supplied 
 
 `love.plot()` creates a Love plot of chosen balance statistics. It offers many options for customization, including the shape and colors of the points, how the variable names are displayed, and for which statistics balance is to be displayed. Below is an example of its basic use:
 
-```{r, eval = ok}
+```{r, eval = ok, fig.alt ="Minimal love plot of balance before and after matching."}
 love.plot(m.out, binary = "std")
 ```
 
 The syntax is straightforward and similar to that of `bal.tab()`. Below we demonstrate a more advanced use that customizes the appearance of the plot and displays balance not only on mean differences but also on Kolmogorov-Smirnov statistics and for both full matching and nearest neighbor matching simultaneously.
 
-```{r, fig.width=7, eval = ok}
+```{r, fig.width=7, eval = ok, fig.alt ="A more elaborate love plot displaying some of the cobalt's capabilities for making publication-ready plots."}
 love.plot(m.out, stats = c("m", "ks"), poly = 2, abs = TRUE,
           weights = list(nn = m.out2),
           drop.distance = TRUE, thresholds = c(m = .1),
@@ -287,7 +287,7 @@ The `love.plot()` documentation explains what each of these arguments do and the
 
 `bal.plot()` displays distributional balance for a single covariate, similar to `plot.matchit()`. Its default is to display kernel density plots for continuous variables and bar graphs for categorical variables. It can also display eCDF plots and histograms. Below we demonstrate some of its uses:
 
-```{r, eval = ok}
+```{r, eval = ok, fig.alt = c("Density plot for educ before and after matching.", "Bar graph for race before and after matching.", "Mirrored histograms of propensity scores before and after matching.")}
 #Density plot for continuous variables
 bal.plot(m.out, var.name = "educ", which = "both")
 
