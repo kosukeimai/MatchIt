@@ -40,7 +40,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">MatchIt</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">4.5.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">4.5.0.9000</span>
       </span>
     </div>
 
@@ -101,7 +101,7 @@
                         <h4 data-toc-skip class="author">Noah
 Greifer</h4>
             
-            <h4 data-toc-skip class="date">2022-11-16</h4>
+            <h4 data-toc-skip class="date">2022-11-23</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/kosukeimai/MatchIt/blob/HEAD/vignettes/estimating-effects.Rmd" class="external-link"><code>vignettes/estimating-effects.Rmd</code></a></small>
       <div class="hidden name"><code>estimating-effects.Rmd</code></div>
@@ -602,8 +602,7 @@ arguments to <code><a href="https://vincentarelbundock.github.io/marginaleffects
 <p>This section explains how the procedure might differ if any of the
 following special circumstances occur.</p>
 <div class="section level4">
-<h4 id="matching-for-the-ate">
-<strong>Matching for the ATE</strong><a class="anchor" aria-label="anchor" href="#matching-for-the-ate"></a>
+<h4 id="matching-for-the-ate">Matching for the ATE<a class="anchor" aria-label="anchor" href="#matching-for-the-ate"></a>
 </h4>
 <p>When matching for the ATE (including [coarsened] exact matching, full
 matching, subclassification, and cardinality matching), everything is
@@ -653,9 +652,10 @@ outcomes below.</p>
 <h4 id="matching-without-pairing">Matching without pairing<a class="anchor" aria-label="anchor" href="#matching-without-pairing"></a>
 </h4>
 <p>Some matching methods do not involve creating pairs; these include
-cardinality and template matching, exact matching, and coarsened exact
-matching with <code>k2k = FALSE</code> (the default). The only change
-that needs to be made to the Standard Case is that one should change
+cardinality and template matching with <code>mahvars = NULL</code> (the
+default), exact matching, and coarsened exact matching with
+<code>k2k = FALSE</code> (the default). The only change that needs to be
+made to the Standard Case is that one should change
 <code>vcov = ~subclass</code> to <code>vcov = "HC3"</code> in the calls
 to <code><a href="https://vincentarelbundock.github.io/marginaleffects/reference/comparisons.html" class="external-link">comparisons()</a></code> and <code><a href="https://vincentarelbundock.github.io/marginaleffects/reference/predictions.html" class="external-link">predictions()</a></code> to use
 robust SEs instead of cluster-robust SEs. Remember that if matching is
@@ -723,8 +723,7 @@ subclassification is done for the ATE (even if units are dropped), the
 <code>newdata</code> argument should be dropped.</p>
 </div>
 <div class="section level4">
-<h4 id="binary-outcomes">
-<strong>Binary outcomes</strong><a class="anchor" aria-label="anchor" href="#binary-outcomes"></a>
+<h4 id="binary-outcomes">Binary outcomes<a class="anchor" aria-label="anchor" href="#binary-outcomes"></a>
 </h4>
 <p>Estimating effects on binary outcomes is essentially the same as for
 continuous outcomes. The main difference is that there are several
@@ -971,7 +970,7 @@ percentile confidence interval.</p>
 <span><span class="co">## </span></span>
 <span><span class="co">## Bootstrap Statistics :</span></span>
 <span><span class="co">##     original  bias    std. error</span></span>
-<span><span class="co">## t1*    1.347  0.1417      0.1937</span></span></code></pre>
+<span><span class="co">## t1*    1.305   0.193      0.1923</span></span></code></pre>
 <div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/boot/man/boot.ci.html" class="external-link">boot.ci</a></span><span class="op">(</span><span class="va">boot_out</span>, type <span class="op">=</span> <span class="st">"perc"</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## BOOTSTRAP CONFIDENCE INTERVAL CALCULATIONS</span></span>
@@ -982,10 +981,10 @@ percentile confidence interval.</p>
 <span><span class="co">## </span></span>
 <span><span class="co">## Intervals : </span></span>
 <span><span class="co">## Level     Percentile     </span></span>
-<span><span class="co">## 95%   ( 1.144,  1.891 )  </span></span>
+<span><span class="co">## 95%   ( 1.163,  2.002 )  </span></span>
 <span><span class="co">## Calculations and Intervals on Original Scale</span></span>
 <span><span class="co">## Some percentile intervals may be unstable</span></span></code></pre>
-<p>We find a RR of 1.347 with a confidence interval of (1.144, 1.891).
+<p>We find a RR of 1.305 with a confidence interval of (1.163, 2.002).
 If we had wanted a risk difference, we could have changed the final line
 in <code>boot_fun()</code> to be <code>Ep1 - Ep0</code>.</p>
 </div>
@@ -1084,8 +1083,8 @@ confidence interval.</p>
 <span><span class="co">## </span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## Bootstrap Statistics :</span></span>
-<span><span class="co">##     original  bias    std. error</span></span>
-<span><span class="co">## t1*    1.588 0.01304      0.1313</span></span></code></pre>
+<span><span class="co">##     original   bias    std. error</span></span>
+<span><span class="co">## t1*    1.549 0.005733      0.1234</span></span></code></pre>
 <div class="sourceCode" id="cb34"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/boot/man/boot.ci.html" class="external-link">boot.ci</a></span><span class="op">(</span><span class="va">cluster_boot_out</span>, type <span class="op">=</span> <span class="st">"perc"</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## BOOTSTRAP CONFIDENCE INTERVAL CALCULATIONS</span></span>
@@ -1096,10 +1095,10 @@ confidence interval.</p>
 <span><span class="co">## </span></span>
 <span><span class="co">## Intervals : </span></span>
 <span><span class="co">## Level     Percentile     </span></span>
-<span><span class="co">## 95%   ( 1.348,  1.877 )  </span></span>
+<span><span class="co">## 95%   ( 1.331,  1.838 )  </span></span>
 <span><span class="co">## Calculations and Intervals on Original Scale</span></span>
 <span><span class="co">## Some percentile intervals may be unstable</span></span></code></pre>
-<p>We find a RR of 1.588 with a confidence interval of (1.348, 1.877).
+<p>We find a RR of 1.549 with a confidence interval of (1.331, 1.838).
 If we had wanted a risk difference, we could have changed the final line
 in <code>cluster_boot_fun()</code> to be <code>Ep1 - Ep0</code>.</p>
 </div>
@@ -1182,8 +1181,8 @@ want treatment effects stratified by the moderator.</p>
 <span>                    by <span class="op">=</span> <span class="st">"X5"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">comp</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##   Term          Contrast X5 Effect Std. Error z value Pr(&gt;|z|) 2.5 % 97.5 %</span></span>
-<span><span class="co">## 1    A mean(1) - mean(0)  1   2.18      0.569    3.83  0.00013 1.065   3.29</span></span>
-<span><span class="co">## 2    A mean(1) - mean(0)  0   2.21      0.670    3.29  0.00099 0.894   3.52</span></span>
+<span><span class="co">## 1    A mean(1) - mean(0)  1   1.77      0.566    3.12  0.00181 0.657   2.88</span></span>
+<span><span class="co">## 2    A mean(1) - mean(0)  0   2.17      0.650    3.33  0.00086 0.892   3.44</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## Model type:  lm </span></span>
 <span><span class="co">## Prediction type:  response</span></span></code></pre>
@@ -1200,13 +1199,13 @@ subgroups:</p>
 <span>                    by <span class="op">=</span> <span class="st">"X5"</span>,</span>
 <span>                    hypothesis <span class="op">=</span> <span class="st">"pairwise"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">comp</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">##    Term  Effect Std. Error z value Pr(&gt;|z|) 2.5 % 97.5 %</span></span>
-<span><span class="co">## 1 1 - 0 -0.0275      0.879 -0.0313     0.98 -1.75    1.7</span></span>
+<pre><code><span><span class="co">##    Term Effect Std. Error z value Pr(&gt;|z|) 2.5 % 97.5 %</span></span>
+<span><span class="co">## 1 1 - 0 -0.399      0.862  -0.463     0.64 -2.09   1.29</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## Model type:  lm </span></span>
 <span><span class="co">## Prediction type:  response</span></span></code></pre>
 <p>As expected, the difference between the subgroup treatment effects is
-small and significant, so there is no evidence of moderation by
+small and nonsignificant, so there is no evidence of moderation by
 <code>X5</code>.</p>
 </div>
 <div class="section level3">

@@ -40,7 +40,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">MatchIt</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">4.5.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">4.5.0.9000</span>
       </span>
     </div>
 
@@ -101,7 +101,7 @@
                         <h4 data-toc-skip class="author">Noah
 Greifer</h4>
             
-            <h4 data-toc-skip class="date">2022-11-16</h4>
+            <h4 data-toc-skip class="date">2022-11-23</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/kosukeimai/MatchIt/blob/HEAD/vignettes/MatchIt.Rmd" class="external-link"><code>vignettes/MatchIt.Rmd</code></a></small>
       <div class="hidden name"><code>MatchIt.Rmd</code></div>
@@ -407,16 +407,16 @@ both before and after matching.)</p>
 <span><span class="co">## </span></span>
 <span><span class="co">## Summary of Balance for Matched Data:</span></span>
 <span><span class="co">##            Means Treated Means Control Std. Mean Diff. Var. Ratio eCDF Mean eCDF Max Std. Pair Dist.</span></span>
-<span><span class="co">## distance          0.5774        0.3629          0.9739     0.7566    0.1321   0.4216          0.9740</span></span>
-<span><span class="co">## age              25.8162       25.3027          0.0718     0.4568    0.0847   0.2541          1.3938</span></span>
-<span><span class="co">## educ             10.3459       10.6054         -0.1290     0.5721    0.0239   0.0757          1.2474</span></span>
+<span><span class="co">## distance          0.5774        0.3629          0.9740     0.7564    0.1321   0.4216          0.9740</span></span>
+<span><span class="co">## age              25.8162       25.2054          0.0854     0.4633    0.0839   0.2541          1.3893</span></span>
+<span><span class="co">## educ             10.3459       10.5838         -0.1183     0.5862    0.0222   0.0649          1.2205</span></span>
 <span><span class="co">## raceblack         0.8432        0.4703          1.0259          .    0.3730   0.3730          1.0259</span></span>
-<span><span class="co">## racehispan        0.0595        0.2162         -0.6629          .    0.1568   0.1568          1.0743</span></span>
-<span><span class="co">## racewhite         0.0973        0.3135         -0.7296          .    0.2162   0.2162          0.8390</span></span>
-<span><span class="co">## married           0.1892        0.2108         -0.0552          .    0.0216   0.0216          0.8281</span></span>
-<span><span class="co">## nodegree          0.7081        0.6378          0.1546          .    0.0703   0.0703          1.0106</span></span>
-<span><span class="co">## re74           2095.5737     2342.1076         -0.0505     1.3289    0.0469   0.2757          0.7965</span></span>
-<span><span class="co">## re75           1532.0553     1614.7451         -0.0257     1.4956    0.0452   0.2054          0.7381</span></span>
+<span><span class="co">## racehispan        0.0595        0.2108         -0.6400          .    0.1514   0.1514          1.0514</span></span>
+<span><span class="co">## racewhite         0.0973        0.3189         -0.7478          .    0.2216   0.2216          0.8208</span></span>
+<span><span class="co">## married           0.1892        0.2000         -0.0276          .    0.0108   0.0108          0.8005</span></span>
+<span><span class="co">## nodegree          0.7081        0.6486          0.1308          .    0.0595   0.0595          0.9868</span></span>
+<span><span class="co">## re74           2095.5737     2476.9475         -0.0780     1.2629    0.0546   0.2865          0.8160</span></span>
+<span><span class="co">## re75           1532.0553     1669.7419         -0.0428     1.4712    0.0508   0.2108          0.7552</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## Sample Sizes:</span></span>
 <span><span class="co">##           Control Treated</span></span>
@@ -442,13 +442,13 @@ the distribution of propensity scores of those who were matched using
 <code><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot()</a></code> with <code>type = "jitter"</code>:</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">m.out1</span>, type <span class="op">=</span> <span class="st">"jitter"</span>, interactive <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
-<p><img src="MatchIt_files/figure-html/unnamed-chunk-7-1.png" width="672"></p>
+<p><img src="MatchIt_files/figure-html/unnamed-chunk-7-1.png" alt="Jitter plot of the propensity scores, which shows that no treated unit were dropped, and a large number of control units with low propensity scores were dropped." width="672"></p>
 <p>We can visually examine balance on the covariates using
 <code><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot()</a></code> with <code>type = "density"</code>:</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">m.out1</span>, type <span class="op">=</span> <span class="st">"density"</span>, interactive <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>     which.xs <span class="op">=</span> <span class="op">~</span><span class="va">age</span> <span class="op">+</span> <span class="va">married</span> <span class="op">+</span> <span class="va">re75</span><span class="op">)</span></span></code></pre></div>
-<p><img src="MatchIt_files/figure-html/unnamed-chunk-8-1.png" width="672"></p>
+<p><img src="MatchIt_files/figure-html/unnamed-chunk-8-1.png" alt="Density plots of age, married and re75 in the unmatched and matched samples." width="672"></p>
 <p>Imbalances are represented by the differences between the black
 (treated) and gray (control) distributions. Although
 <code>married</code> and <code>re75</code> appear to have improved
@@ -514,7 +514,7 @@ in a plot, such as a Love plot, which we can make by calling
 <code><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot()</a></code> on the <code><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary()</a></code> output:</p>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">m.out2</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<p><img src="MatchIt_files/figure-html/unnamed-chunk-12-1.png" width="672"></p>
+<p><img src="MatchIt_files/figure-html/unnamed-chunk-12-1.png" alt="A love plot with matched dots below the threshold lines, indicaitng good balance after matching, in contrast to the unmatched dots far from the treshold lines, indicating poor balance before matching." width="672"></p>
 <p>Love plots are a simple and straightforward way to summarize balance
 visually. See <code><a href="../articles/assessing-balance.html">vignette("assessing-balance")</a></code> for more
 information on how to customize <code>MatchIt</code>’s Love plot and how

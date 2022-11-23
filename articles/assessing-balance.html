@@ -40,7 +40,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">MatchIt</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">4.5.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">4.5.0.9000</span>
       </span>
     </div>
 
@@ -101,7 +101,7 @@
                         <h4 data-toc-skip class="author">Noah
 Greifer</h4>
             
-            <h4 data-toc-skip class="date">2022-11-16</h4>
+            <h4 data-toc-skip class="date">2022-11-23</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/kosukeimai/MatchIt/blob/HEAD/vignettes/assessing-balance.Rmd" class="external-link"><code>vignettes/assessing-balance.Rmd</code></a></small>
       <div class="hidden name"><code>assessing-balance.Rmd</code></div>
@@ -336,7 +336,7 @@ illustrate at the end.</p>
 <span><span class="co">##  - method: 1:1 nearest neighbor matching with replacement</span></span>
 <span><span class="co">##  - distance: Propensity score</span></span>
 <span><span class="co">##              - estimated with logistic regression</span></span>
-<span><span class="co">##  - number of obs.: 614 (original), 265 (matched)</span></span>
+<span><span class="co">##  - number of obs.: 614 (original), 258 (matched)</span></span>
 <span><span class="co">##  - target estimand: ATT</span></span>
 <span><span class="co">##  - covariates: age, educ, race, married, nodegree, re74, re75</span></span></code></pre>
 <div class="section level3">
@@ -436,29 +436,29 @@ interaction between <code>educ</code> and <code>race</code>.</p>
 <span><span class="co">## </span></span>
 <span><span class="co">## Summary of Balance for Matched Data:</span></span>
 <span><span class="co">##                  Means Treated Means Control Std. Mean Diff. Var. Ratio eCDF Mean eCDF Max Std. Pair Dist.</span></span>
-<span><span class="co">## distance                 0.577         0.576           0.004      0.991     0.003    0.049           0.013</span></span>
-<span><span class="co">## age                     25.816        24.103           0.239      0.556     0.077    0.341           1.262</span></span>
-<span><span class="co">## educ                    10.346        10.378          -0.016      0.576     0.022    0.059           1.086</span></span>
+<span><span class="co">## distance                 0.577         0.572           0.026      0.993     0.005    0.086           0.026</span></span>
+<span><span class="co">## age                     25.816        23.346           0.345      0.581     0.087    0.411           1.305</span></span>
+<span><span class="co">## educ                    10.346        10.346           0.000      0.670     0.014    0.049           2.119</span></span>
 <span><span class="co">## raceblack                0.843         0.838           0.015          .     0.005    0.005           0.045</span></span>
-<span><span class="co">## racehispan               0.059         0.065          -0.023          .     0.005    0.005           0.297</span></span>
-<span><span class="co">## racewhite                0.097         0.097           0.000          .     0.000    0.000           0.054</span></span>
-<span><span class="co">## married                  0.189         0.130           0.152          .     0.059    0.059           0.511</span></span>
-<span><span class="co">## nodegree                 0.708         0.703           0.012          .     0.005    0.005           0.868</span></span>
-<span><span class="co">## re74                  2095.574      2336.463          -0.049      1.035     0.041    0.216           0.609</span></span>
-<span><span class="co">## re75                  1532.055      1503.929           0.009      2.126     0.068    0.238           0.650</span></span>
-<span><span class="co">## I(age^2)               717.395       670.946           0.108      0.509     0.077    0.341           1.196</span></span>
-<span><span class="co">## I(re74 == 0)TRUE         0.708         0.492           0.476          .     0.216    0.216           0.975</span></span>
-<span><span class="co">## I(re75 == 0)TRUE         0.600         0.362           0.485          .     0.238    0.238           1.037</span></span>
-<span><span class="co">## educ:raceblack           8.697         8.589           0.026      0.868     0.024    0.054           0.468</span></span>
-<span><span class="co">## educ:racehispan          0.578         0.638          -0.026      0.826     0.007    0.022           0.336</span></span>
-<span><span class="co">## educ:racewhite           1.070         1.151          -0.024      0.845     0.005    0.022           0.220</span></span>
+<span><span class="co">## racehispan               0.059         0.043           0.069          .     0.016    0.016           0.251</span></span>
+<span><span class="co">## racewhite                0.097         0.119          -0.073          .     0.022    0.022           0.182</span></span>
+<span><span class="co">## married                  0.189         0.141           0.124          .     0.049    0.049           0.483</span></span>
+<span><span class="co">## nodegree                 0.708         0.697           0.024          .     0.011    0.011           0.832</span></span>
+<span><span class="co">## re74                  2095.574      2136.808          -0.008      1.124     0.025    0.141           0.650</span></span>
+<span><span class="co">## re75                  1532.055      1769.574          -0.074      1.711     0.081    0.286           0.764</span></span>
+<span><span class="co">## I(age^2)               717.395       630.849           0.201      0.524     0.087    0.411           1.220</span></span>
+<span><span class="co">## I(re74 == 0)TRUE         0.708         0.568           0.309          .     0.141    0.141           0.999</span></span>
+<span><span class="co">## I(re75 == 0)TRUE         0.600         0.314           0.585          .     0.286    0.286           1.159</span></span>
+<span><span class="co">## educ:raceblack           8.697         8.557           0.033      0.929     0.013    0.043           0.468</span></span>
+<span><span class="co">## educ:racehispan          0.578         0.341           0.102      1.874     0.016    0.027           0.255</span></span>
+<span><span class="co">## educ:racewhite           1.070         1.449          -0.114      0.664     0.020    0.038           0.235</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## Sample Sizes:</span></span>
 <span><span class="co">##               Control Treated</span></span>
 <span><span class="co">## All            429.       185</span></span>
-<span><span class="co">## Matched (ESS)   43.49     185</span></span>
-<span><span class="co">## Matched         80.       185</span></span>
-<span><span class="co">## Unmatched      349.         0</span></span>
+<span><span class="co">## Matched (ESS)   37.16     185</span></span>
+<span><span class="co">## Matched         73.       185</span></span>
+<span><span class="co">## Unmatched      356.         0</span></span>
 <span><span class="co">## Discarded        0.         0</span></span></code></pre>
 <p>Let’s examine the output in detail. The first table
 (<code>Summary of Balance for All Data</code>) provides balance in the
@@ -547,7 +547,7 @@ supplied to <code>x</code> in <code><a href="https://rdrr.io/r/graphics/legend.h
 <code class="sourceCode R"><span><span class="va">m.sum</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">m.out</span>, addlvariables <span class="op">=</span> <span class="op">~</span> <span class="fu"><a href="https://rdrr.io/r/base/AsIs.html" class="external-link">I</a></span><span class="op">(</span><span class="va">age</span><span class="op">^</span><span class="fl">2</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/base/AsIs.html" class="external-link">I</a></span><span class="op">(</span><span class="va">re74</span><span class="op">==</span><span class="fl">0</span><span class="op">)</span> <span class="op">+</span> </span>
 <span>                   <span class="fu"><a href="https://rdrr.io/r/base/AsIs.html" class="external-link">I</a></span><span class="op">(</span><span class="va">re75</span><span class="op">==</span><span class="fl">0</span><span class="op">)</span> <span class="op">+</span> <span class="va">educ</span><span class="op">:</span><span class="va">race</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">m.sum</span>, var.order <span class="op">=</span> <span class="st">"unmatched"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="assessing-balance_files/figure-html/unnamed-chunk-3-1.png" width="672"></p>
+<p><img src="assessing-balance_files/figure-html/unnamed-chunk-3-1.png" alt="A love plot with most matched dots below the threshold lines, indicaitng good balance after matching, in contrast to the unmatched dots far from the treshold lines, indicating poor balance before matching." width="672"></p>
 <p>From this plot it is clear to see that balance was quite poor prior
 to matching, but full matching improved balance on all covariates, and
 most within a threshold of .1. To make the variable names cleaner, the
@@ -599,7 +599,7 @@ supplied with a data set containing the named variables.</li>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">#eQQ plot</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">m.out</span>, type <span class="op">=</span> <span class="st">"qq"</span>, which.xs <span class="op">=</span> <span class="op">~</span><span class="va">age</span> <span class="op">+</span> <span class="va">nodegree</span> <span class="op">+</span> <span class="va">re74</span><span class="op">)</span></span></code></pre></div>
-<p><img src="assessing-balance_files/figure-html/unnamed-chunk-4-1.png" width="672"></p>
+<p><img src="assessing-balance_files/figure-html/unnamed-chunk-4-1.png" alt="eQQ plots of age, nodegree, and re74 in the unmatched and matched samples." width="672"></p>
 <p>The y-axis displays the each value of the covariate for the treated
 units, and the x-axis displays the the value of the covariate at the
 corresponding quantile in the control group. When values fall on the 45
@@ -614,7 +614,7 @@ to compute the eQQ difference statistics that are displayed in
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">#eCDF plot</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">m.out</span>, type <span class="op">=</span> <span class="st">"ecdf"</span>, which.xs <span class="op">=</span> <span class="op">~</span><span class="va">educ</span> <span class="op">+</span> <span class="va">married</span> <span class="op">+</span> <span class="va">re75</span><span class="op">)</span></span></code></pre></div>
-<p><img src="assessing-balance_files/figure-html/unnamed-chunk-5-1.png" width="672"></p>
+<p><img src="assessing-balance_files/figure-html/unnamed-chunk-5-1.png" alt="eCDF plots of educ, married, and re75 in the unmatched and matched samples." width="672"></p>
 <p>The x-axis displays the covariate values and the y-axis displays the
 proportion of the sample at or less than that covariate value. Perfectly
 overlapping lines indicate good balance. The black line corresponds to
@@ -629,7 +629,7 @@ compute the eCDF difference statistics that are displayed in
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">#density plot</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">m.out</span>, type <span class="op">=</span> <span class="st">"density"</span>, which.xs <span class="op">=</span> <span class="op">~</span><span class="va">age</span> <span class="op">+</span> <span class="va">educ</span> <span class="op">+</span> <span class="va">race</span><span class="op">)</span></span></code></pre></div>
-<p><img src="assessing-balance_files/figure-html/unnamed-chunk-6-1.png" width="672"></p>
+<p><img src="assessing-balance_files/figure-html/unnamed-chunk-6-1.png" alt="Density plots of age, educ, and race in the unmatched and matched samples." width="672"></p>
 <p>The x-axis displays the covariate values and the y-axis displays the
 density of the sample at that covariate value. For categorical
 variables, the y-axis displays the proportion of the sample at that
@@ -789,7 +789,7 @@ object with <code>subclass = TRUE</code>.</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">s</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">s.out</span>, subclass <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">s</span>, var.order <span class="op">=</span> <span class="st">"unmatched"</span>, abs <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
-<p><img src="assessing-balance_files/figure-html/unnamed-chunk-10-1.png" width="672"></p>
+<p><img src="assessing-balance_files/figure-html/unnamed-chunk-10-1.png" alt="Love plot of balance before and after subclassification, with subclass IDs representing balance within each subclass in addition to dots representing balance overall." width="672"></p>
 <p>Note that for some variables, while the groups are balanced in
 aggregate (black dots), the individual subclasses (gray numbers) may not
 be balanced, in which case unadjusted effect estimates within these
@@ -803,7 +803,7 @@ within a subclass.</p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">s.out</span>, type <span class="op">=</span> <span class="st">"density"</span>, which.xs <span class="op">=</span> <span class="op">~</span><span class="va">educ</span> <span class="op">+</span> <span class="va">married</span> <span class="op">+</span> <span class="va">re75</span>,</span>
 <span>     subclass <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></code></pre></div>
-<p><img src="assessing-balance_files/figure-html/unnamed-chunk-11-1.png" width="672"></p>
+<p><img src="assessing-balance_files/figure-html/unnamed-chunk-11-1.png" alt="Density plots of educ, married, and re75 in the unmatched sample and in subclass 1." width="672"></p>
 <p>If we had set <code>subclass = FALSE</code>, plots would have been
 displayed in aggregate using the subclassification weights. If
 <code>subclass</code> is unspecified, a prompt will ask us for which
@@ -845,23 +845,23 @@ options specified below:</p>
 <code class="sourceCode R"><span><span class="fu"><a href="https://ngreifer.github.io/cobalt/reference/bal.tab.html" class="external-link">bal.tab</a></span><span class="op">(</span><span class="va">m.out</span>, un <span class="op">=</span> <span class="cn">TRUE</span>, stats <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"m"</span>, <span class="st">"v"</span>, <span class="st">"ks"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## <span style="text-decoration: underline;">Balance Measures</span></span></span>
 <span><span class="co">##                 Type Diff.Un V.Ratio.Un KS.Un Diff.Adj V.Ratio.Adj KS.Adj</span></span>
-<span><span class="co">## distance    Distance   1.794      0.921 0.644    0.004       0.991  0.049</span></span>
-<span><span class="co">## age          Contin.  -0.309      0.440 0.158    0.239       0.556  0.341</span></span>
-<span><span class="co">## educ         Contin.   0.055      0.496 0.111   -0.016       0.576  0.059</span></span>
+<span><span class="co">## distance    Distance   1.794      0.921 0.644    0.026       0.993  0.086</span></span>
+<span><span class="co">## age          Contin.  -0.309      0.440 0.158    0.345       0.581  0.411</span></span>
+<span><span class="co">## educ         Contin.   0.055      0.496 0.111    0.000       0.670  0.049</span></span>
 <span><span class="co">## race_black    Binary   0.640          . 0.640    0.005           .  0.005</span></span>
-<span><span class="co">## race_hispan   Binary  -0.083          . 0.083   -0.005           .  0.005</span></span>
-<span><span class="co">## race_white    Binary  -0.558          . 0.558    0.000           .  0.000</span></span>
-<span><span class="co">## married       Binary  -0.324          . 0.324    0.059           .  0.059</span></span>
-<span><span class="co">## nodegree      Binary   0.111          . 0.111    0.005           .  0.005</span></span>
-<span><span class="co">## re74         Contin.  -0.721      0.518 0.447   -0.049       1.035  0.216</span></span>
-<span><span class="co">## re75         Contin.  -0.290      0.956 0.288    0.009       2.126  0.238</span></span>
+<span><span class="co">## race_hispan   Binary  -0.083          . 0.083    0.016           .  0.016</span></span>
+<span><span class="co">## race_white    Binary  -0.558          . 0.558   -0.022           .  0.022</span></span>
+<span><span class="co">## married       Binary  -0.324          . 0.324    0.049           .  0.049</span></span>
+<span><span class="co">## nodegree      Binary   0.111          . 0.111    0.011           .  0.011</span></span>
+<span><span class="co">## re74         Contin.  -0.721      0.518 0.447   -0.008       1.124  0.141</span></span>
+<span><span class="co">## re75         Contin.  -0.290      0.956 0.288   -0.074       1.711  0.286</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## <span style="text-decoration: underline;">Sample sizes</span></span></span>
 <span><span class="co">##                      Control Treated</span></span>
 <span><span class="co">## All                   429.       185</span></span>
-<span><span class="co">## Matched (ESS)          43.49     185</span></span>
-<span><span class="co">## Matched (Unweighted)   80.       185</span></span>
-<span><span class="co">## Unmatched             349.         0</span></span></code></pre>
+<span><span class="co">## Matched (ESS)          37.16     185</span></span>
+<span><span class="co">## Matched (Unweighted)   73.       185</span></span>
+<span><span class="co">## Unmatched             356.         0</span></span></code></pre>
 <p>The output is very similar to that of <code><a href="../reference/summary.matchit.html">summary.matchit()</a></code>,
 except that the balance statistics computed before matching (with the
 suffix <code>.Un</code>) and those computed after matching (with the
@@ -899,20 +899,20 @@ which we demonstrate below:</p>
 <span>        un <span class="op">=</span> <span class="cn">TRUE</span>, weights <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>full <span class="op">=</span> <span class="va">m.out</span>, nn <span class="op">=</span> <span class="va">m.out2</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## <span style="text-decoration: underline;">Balance Measures</span></span></span>
 <span><span class="co">##                Type Diff.Un Diff.full Diff.nn</span></span>
-<span><span class="co">## age         Contin.  -0.309     0.239   0.072</span></span>
-<span><span class="co">## educ        Contin.   0.055    -0.016  -0.129</span></span>
+<span><span class="co">## age         Contin.  -0.309     0.345   0.085</span></span>
+<span><span class="co">## educ        Contin.   0.055     0.000  -0.118</span></span>
 <span><span class="co">## race_black   Binary   0.640     0.005   0.373</span></span>
-<span><span class="co">## race_hispan  Binary  -0.083    -0.005  -0.157</span></span>
-<span><span class="co">## race_white   Binary  -0.558     0.000  -0.216</span></span>
-<span><span class="co">## married      Binary  -0.324     0.059  -0.022</span></span>
-<span><span class="co">## nodegree     Binary   0.111     0.005   0.070</span></span>
-<span><span class="co">## re74        Contin.  -0.721    -0.049  -0.050</span></span>
-<span><span class="co">## re75        Contin.  -0.290     0.009  -0.026</span></span>
+<span><span class="co">## race_hispan  Binary  -0.083     0.016  -0.151</span></span>
+<span><span class="co">## race_white   Binary  -0.558    -0.022  -0.222</span></span>
+<span><span class="co">## married      Binary  -0.324     0.049  -0.011</span></span>
+<span><span class="co">## nodegree     Binary   0.111     0.011   0.059</span></span>
+<span><span class="co">## re74        Contin.  -0.721    -0.008  -0.078</span></span>
+<span><span class="co">## re75        Contin.  -0.290    -0.074  -0.043</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## <span style="text-decoration: underline;">Effective sample sizes</span></span></span>
 <span><span class="co">##      Control Treated</span></span>
 <span><span class="co">## All   429.       185</span></span>
-<span><span class="co">## full   43.49     185</span></span>
+<span><span class="co">## full   37.16     185</span></span>
 <span><span class="co">## nn    185.       185</span></span></code></pre>
 <p>This time, we supplied <code><a href="https://ngreifer.github.io/cobalt/reference/bal.tab.html" class="external-link">bal.tab()</a></code> with the covariates and
 dataset and supplied the <code>matchit</code> output objects in the
@@ -933,7 +933,7 @@ and for which statistics balance is to be displayed. Below is an example
 of its basic use:</p>
 <div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://ngreifer.github.io/cobalt/reference/love.plot.html" class="external-link">love.plot</a></span><span class="op">(</span><span class="va">m.out</span>, binary <span class="op">=</span> <span class="st">"std"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="assessing-balance_files/figure-html/unnamed-chunk-16-1.png" width="672"></p>
+<p><img src="assessing-balance_files/figure-html/unnamed-chunk-16-1.png" alt="Minimal love plot of balance before and after matching." width="672"></p>
 <p>The syntax is straightforward and similar to that of
 <code><a href="https://ngreifer.github.io/cobalt/reference/bal.tab.html" class="external-link">bal.tab()</a></code>. Below we demonstrate a more advanced use that
 customizes the appearance of the plot and displays balance not only on
@@ -948,7 +948,7 @@ full matching and nearest neighbor matching simultaneously.</p>
 <span>          colors <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"red"</span>, <span class="st">"blue"</span>, <span class="st">"darkgreen"</span><span class="op">)</span>,</span>
 <span>          sample.names <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Original"</span>, <span class="st">"Full Matching"</span>, <span class="st">"NN Matching"</span><span class="op">)</span>,</span>
 <span>          position <span class="op">=</span> <span class="st">"bottom"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="assessing-balance_files/figure-html/unnamed-chunk-17-1.png" width="672"></p>
+<p><img src="assessing-balance_files/figure-html/unnamed-chunk-17-1.png" alt="A more elaborate love plot displaying some of the cobalt's capabilities for making publication-ready plots." width="672"></p>
 <p>The <code><a href="https://ngreifer.github.io/cobalt/reference/love.plot.html" class="external-link">love.plot()</a></code> documentation explains what each of
 these arguments do and the several other ones available. See
 <code><a href="https://ngreifer.github.io/cobalt/articles/cobalt_A4_love.plot.html" class="external-link">vignette("cobalt_A4_love.plot", package = "cobalt")</a></code> for
@@ -969,16 +969,16 @@ Below we demonstrate some of its uses:</p>
 <pre><code><span><span class="co">## Warning: The following aesthetics were dropped during statistical transformation: <span style="color: #00BB00;">weight</span></span></span>
 <span><span class="co">## <span style="color: #00BBBB;">ℹ</span> This can happen when ggplot fails to infer the correct grouping structure in the data.</span></span>
 <span><span class="co">## <span style="color: #00BBBB;">ℹ</span> Did you forget to specify a `group` aesthetic or to convert a numerical variable into a factor?</span></span></code></pre>
-<p><img src="assessing-balance_files/figure-html/unnamed-chunk-18-1.png" width="672"></p>
+<p><img src="assessing-balance_files/figure-html/unnamed-chunk-18-1.png" alt="Density plot for educ before and after matching." width="672"></p>
 <div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">#Bar graph for categorical variables</span></span>
 <span><span class="fu"><a href="https://ngreifer.github.io/cobalt/reference/bal.plot.html" class="external-link">bal.plot</a></span><span class="op">(</span><span class="va">m.out</span>, var.name <span class="op">=</span> <span class="st">"race"</span>, which <span class="op">=</span> <span class="st">"both"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="assessing-balance_files/figure-html/unnamed-chunk-18-2.png" width="672"></p>
+<p><img src="assessing-balance_files/figure-html/unnamed-chunk-18-2.png" alt="Bar graph for race before and after matching." width="672"></p>
 <div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">#Mirrored histogram</span></span>
 <span><span class="fu"><a href="https://ngreifer.github.io/cobalt/reference/bal.plot.html" class="external-link">bal.plot</a></span><span class="op">(</span><span class="va">m.out</span>, var.name <span class="op">=</span> <span class="st">"distance"</span>, which <span class="op">=</span> <span class="st">"both"</span>,</span>
 <span>         type <span class="op">=</span> <span class="st">"histogram"</span>, mirror <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
-<p><img src="assessing-balance_files/figure-html/unnamed-chunk-18-3.png" width="672"></p>
+<p><img src="assessing-balance_files/figure-html/unnamed-chunk-18-3.png" alt="Mirrored histograms of propensity scores before and after matching." width="672"></p>
 <p>These plots help illuminate the specific ways in which the covariate
 distributions differ between treatment groups, which can aid in
 interpreting the balance statistics provided by <code><a href="https://ngreifer.github.io/cobalt/reference/bal.tab.html" class="external-link">bal.tab()</a></code>

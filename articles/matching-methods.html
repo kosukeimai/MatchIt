@@ -40,7 +40,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">MatchIt</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">4.5.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">4.5.0.9000</span>
       </span>
     </div>
 
@@ -101,7 +101,7 @@
                         <h4 data-toc-skip class="author">Noah
 Greifer</h4>
             
-            <h4 data-toc-skip class="date">2022-11-16</h4>
+            <h4 data-toc-skip class="date">2022-11-23</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/kosukeimai/MatchIt/blob/HEAD/vignettes/matching-methods.Rmd" class="external-link"><code>vignettes/matching-methods.Rmd</code></a></small>
       <div class="hidden name"><code>matching-methods.Rmd</code></div>
@@ -619,7 +619,12 @@ tolerance of the mean of the covariate in the full sample, and for the
 ATT, this requires the mean of each covariate in the control group to be
 within a given tolerance of the mean of the covariate in the treated
 group, which is left intact. The balance tolerances are controlled by
-the <code>tols</code> and <code>std.tols</code> arguments.</p>
+the <code>tols</code> and <code>std.tols</code> arguments. One can also
+create pairs in the matched sample by using the <code>mahvars</code>
+argument, which requests that optimal Mahalanobis matching be done after
+subset selection; doing so can add additional precision and robustness
+<span class="citation">(<a href="#ref-zubizarretaMatchingBalancePairing2014" role="doc-biblioref">Zubizarreta, Paredes, and Rosenbaum
+2014b</a>)</span>.</p>
 <p>The optimization problem requires a special solver to solve.
 Currently, the available options in <code>MatchIt</code> are the GLPK
 solver (through the <code>Rglpk</code> package), the SYMPHONY solver
@@ -786,7 +791,9 @@ of estimating the propensity score (e.g., <code>"glm"</code> for
 logistic regression), the <code>caliper</code> argument should be
 specified to the desired caliper width, and <code>mahvars</code> should
 be specified to perform Mahalanobis distance matching on the desired
-covariates within the caliper.</p>
+covariates within the caliper. <code>mahvars</code> has a special
+meaning for genetic matching and cardinality matching; see their
+respective help pages for details.</p>
 </div>
 <div class="section level3">
 <h3 id="exact-matching-exact">Exact matching (<code>exact</code>)<a class="anchor" aria-label="anchor" href="#exact-matching-exact"></a>
@@ -839,14 +846,15 @@ are not well understood for non-continuous outcomes. Matching with
 replacement will tend to yield better balance though, because the
 problem of “running out” of close control units to match to treated
 units is avoided, though the reuse of control units will decrease the
-effect sample size, thereby worsening precision. (This problem occurs in
-the Lalonde dataset used in <code><a href="../articles/MatchIt.html">vignette("MatchIt")</a></code>, which is
-why nearest neighbor matching without replacement is not very effective
-there.) After matching with replacement, control units are assigned to
-more than one subclass, so the <code><a href="../reference/match.data.html">get_matches()</a></code> function
-should be used instead of <code><a href="../reference/match.data.html">match.data()</a></code> after matching with
-replacement if subclasses are to be used in follow-up analyses; see
-<code>vignette("Estimating Effects")</code> for details.</p>
+effect sample size, thereby worsening precision <span class="citation">(<a href="#ref-austin2013b" role="doc-biblioref">Austin
+2013</a>)</span>. (This problem occurs in the Lalonde dataset used in
+<code><a href="../articles/MatchIt.html">vignette("MatchIt")</a></code>, which is why nearest neighbor matching
+without replacement is not very effective there.) After matching with
+replacement, control units are assigned to more than one subclass, so
+the <code><a href="../reference/match.data.html">get_matches()</a></code> function should be used instead of
+<code><a href="../reference/match.data.html">match.data()</a></code> after matching with replacement if subclasses
+are to be used in follow-up analyses; see
+<code><a href="../articles/estimating-effects.html">vignette("estimating-effects")</a></code> for details.</p>
 <p>The <code>reuse.max</code> argument can also be used with
 <code>method = "nearest"</code> to control how many times each control
 unit can be reused as a match. Setting <code>reuse.max = 1</code> is

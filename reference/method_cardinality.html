@@ -16,6 +16,7 @@ matchit(formula,
         method = "cardinality",
         estimand = "ATT",
         exact = NULL,
+        mahvars = NULL,
         s.weights = NULL,
         ratio = 1,
         verbose = FALSE,
@@ -41,7 +42,7 @@ matchit(formula,
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">MatchIt</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">4.5.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">4.5.0.9000</span>
       </span>
     </div>
 
@@ -112,6 +113,7 @@ means in a general context and how it can be specified.</p>
 <span>        method <span class="op">=</span> <span class="st">"cardinality"</span>,</span>
 <span>        estimand <span class="op">=</span> <span class="st">"ATT"</span>,</span>
 <span>        exact <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>        mahvars <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>        s.weights <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>        ratio <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>        verbose <span class="op">=</span> <span class="cn">FALSE</span>,</span>
@@ -149,6 +151,10 @@ include <code>"ATT"</code>, <code>"ATC"</code>, and <code>"ATE"</code>. See Deta
 <dd><p>for which variables exact matching should take place. Separate
 optimization will occur within each subgroup of the exact matching
 variables.</p></dd>
+
+
+<dt>mahvars</dt>
+<dd><p>which variables should be used for pairing after subset selection. Can only be set when <code>ratio</code> is a whole number. See Details.</p></dd>
 
 
 <dt>s.weights</dt>
@@ -206,7 +212,7 @@ time before the optimization routine aborts, in seconds. Default is 120 (2
 minutes). For large problems, this should be set much higher.</p></dd>
 
 
-</dl><p>The arguments <code>distance</code> (and related arguments), <code>mahvars</code>, <code>replace</code>, <code>m.order</code>, and <code>caliper</code> (and related arguments) are ignored with a warning.</p></dd>
+</dl><p>The arguments <code>distance</code> (and related arguments), <code>replace</code>, <code>m.order</code>, and <code>caliper</code> (and related arguments) are ignored with a warning.</p></dd>
 
 </dl></div>
     <div id="details">
@@ -245,9 +251,8 @@ mimicking k:1 matching. Unlike cardinality matching, template matching
 retains the requested estimand if a solution is found.</p>
 <p>Neither method involves creating pairs in the matched set, but it is
 possible to perform an additional round of pairing within the matched sample
-after cardinality matching or template matching for the ATE with a fixed
-sample size ratio. See Examples for an example of optimal pair matching
-after cardinality matching. The balance will not change, but additional
+after cardinality matching or template matching for the ATE with a fixed whole number
+sample size ratio by supplying the desired pairing variables to <code>mahvars</code>. Doing so will trigger <a href="method_optimal.html">optimal matching</a> using <code><a href="https://rdrr.io/pkg/optmatch/man/pairmatch.html" class="external-link">optmatch::pairmatch()</a></code> on the Mahalanobis distance computed using the variables supplied to <code>mahvars</code>. The balance or composition of the matched sample will not change, but additional
 precision and robustness can be gained by forming the pairs.</p>
 <p>The weights are scaled so that the sum of the weights in each group is equal
 to the number of matched units in the smaller group when cardinality
@@ -319,7 +324,7 @@ solvers cannot.</p>
 
 
 <p>Most outputs described in <code><a href="matchit.html">matchit()</a></code> are returned with
-<code>method = "cardinality"</code>. The <code>match.matrix</code> and <code>subclass</code>
+<code>method = "cardinality"</code>. Unless <code>mahvars</code> is specified, the <code>match.matrix</code> and <code>subclass</code>
 components are omitted because no pairing or subclassification is done. When
 <code>include.obj = TRUE</code> in the call to <code><a href="matchit.html">matchit()</a></code>, the output of the
 optimization function will be included in the output. When <code>exact</code> is
@@ -455,21 +460,21 @@ than matching.</p></div>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Unmatched      14      91</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Discarded       0       0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Pairing after 1:1 cardinality matching:</span></span></span>
-<span class="r-in"><span><span class="va">m.out4</span> <span class="op">&lt;-</span> <span class="fu"><a href="matchit.html">matchit</a></span><span class="op">(</span><span class="va">treat</span> <span class="op">~</span> <span class="va">age</span> <span class="op">+</span> <span class="va">educ</span> <span class="op">+</span> <span class="va">re74</span>,</span></span>
-<span class="r-in"><span>                  data <span class="op">=</span> <span class="va">lalonde</span>, method <span class="op">=</span> <span class="st">"nearest"</span>,</span></span>
-<span class="r-in"><span>                  distance <span class="op">=</span> <span class="st">"mahalanobis"</span>,</span></span>
-<span class="r-in"><span>                  discard <span class="op">=</span> <span class="va">m.out1</span><span class="op">$</span><span class="va">weights</span> <span class="op">==</span> <span class="fl">0</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">m.out1b</span> <span class="op">&lt;-</span> <span class="fu"><a href="matchit.html">matchit</a></span><span class="op">(</span><span class="va">treat</span> <span class="op">~</span> <span class="va">age</span> <span class="op">+</span> <span class="va">educ</span> <span class="op">+</span> <span class="va">re74</span>,</span></span>
+<span class="r-in"><span>                   data <span class="op">=</span> <span class="va">lalonde</span>, method <span class="op">=</span> <span class="st">"cardinality"</span>,</span></span>
+<span class="r-in"><span>                   estimand <span class="op">=</span> <span class="st">"ATT"</span>, ratio <span class="op">=</span> <span class="fl">1</span>,</span></span>
+<span class="r-in"><span>                   tols <span class="op">=</span> <span class="fl">.15</span>, solver <span class="op">=</span> <span class="va">solver</span>,</span></span>
+<span class="r-in"><span>                   mahvars <span class="op">=</span> <span class="op">~</span> <span class="va">age</span> <span class="op">+</span> <span class="va">educ</span> <span class="op">+</span> <span class="va">re74</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Note that balance doesn't change but pair distances</span></span></span>
 <span class="r-in"><span><span class="co"># are lower for the paired-upon variables</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">m.out4</span>, un <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">m.out1b</span>, un <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Call:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> matchit(formula = treat ~ age + educ + re74, data = lalonde, </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     method = "nearest", distance = "mahalanobis", discard = m.out1$weights == </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         0)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     method = "cardinality", estimand = "ATT", mahvars = ~age + </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         educ + re74, ratio = 1, tols = 0.15, solver = solver)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Summary of Balance for Matched Data:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>      Means Treated Means Control Std. Mean Diff. Var. Ratio eCDF Mean eCDF Max</span>
@@ -477,16 +482,16 @@ than matching.</p></div>
 <span class="r-out co"><span class="r-pr">#&gt;</span> educ       10.3459       10.0486          0.1479     0.4197    0.0441   0.1351</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> re74     2095.5737     2817.4574         -0.1477     0.8712    0.0695   0.3297</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>      Std. Pair Dist.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> age           0.5794</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> educ          0.6103</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> re74          0.2903</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> age           0.4525</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> educ          0.5027</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> re74          0.2470</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Sample Sizes:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>           Control Treated</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> All           429     185</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Matched       185     185</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Unmatched       0       0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Discarded     244       0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Unmatched     244       0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Discarded       0       0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">m.out1</span>, un <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>

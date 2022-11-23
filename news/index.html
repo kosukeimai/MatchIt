@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">MatchIt</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">4.5.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">4.5.0.9000</span>
       </span>
     </div>
 
@@ -69,6 +69,13 @@
       <small>Source: <a href="https://github.com/kosukeimai/MatchIt/blob/HEAD/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="development version" id="matchit-development-version">MatchIt (development version)<a class="anchor" aria-label="anchor" href="#matchit-development-version"></a></h2>
+<ul><li><p>Nearest neighbor matching now uses a much faster algorithm (up to 6x times faster) when <code>distance</code> is a propensity score and <code>mahvars</code> is not specified. Differences in sort order might cause results to differ from previous versions if there are units with identical propensity scores.</p></li>
+<li><p>After cardinality or template matching using <code>method = "cardinality"</code> with <code>ratio</code> set to a whole number, it is possible to perform optimal Mahalanobis distance matching in the matched sample by supplying the desired matching variables to <code>mahvars</code>. Previously, the user had to run a separate pairing step.</p></li>
+<li><p>Fixed some typos in the vignettes.</p></li>
+<li><p>Added alt text to images in README and vignettes. (<a href="https://github.com/kosukeimai/MatchIt/issues/134" class="external-link">#134</a>)</p></li>
+</ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="4.5.0" id="matchit-450">MatchIt 4.5.0<small>2022-11-16</small><a class="anchor" aria-label="anchor" href="#matchit-450"></a></h2>
 <ul><li><p>Generalized full matching, as described by <a href="https://doi.org/10.1017/pan.2020.32" class="external-link">Sävje, Higgins, and Sekhon (2021)</a>, can now be implemented by setting <code>method = "quick"</code> in <code><a href="../reference/matchit.html">matchit()</a></code>. It is a dramatically faster alternative to optimal full matching that can support much larger datasets and otherwise has similar balancing performance. See <code><a href="../reference/method_quick.html">?method_quick</a></code> and <code><a href="../articles/matching-methods.html">vignette("matching-methods")</a></code> for more information. This functionality relies on the <code>quickmatch</code> package.</p></li>
