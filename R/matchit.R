@@ -527,8 +527,10 @@ matchit <- function(formula,
   covs <- model.frame(covs.formula, data = data, na.action = "na.pass")
   k <- ncol(covs)
   for (i in seq_len(k)) {
-    if (anyNA(covs[[i]]) || any(!is.finite(covs[[i]]))) {
-      covariates.with.missingness <- names(covs)[i:k][vapply(i:k, function(j) anyNA(covs[[j]]) || any(!is.finite(covs[[j]])), logical(1L))]
+    if (anyNA(covs[[i]]) || (is.numeric(covs[[i]]) && any(!is.finite(covs[[i]])))) {
+      covariates.with.missingness <- names(covs)[i:k][vapply(i:k, function(j) anyNA(covs[[j]]) ||
+                                                               (is.numeric(covs[[j]]) && any(!is.finite(covs[[j]]))),
+                                                             logical(1L))]
       stop(paste0("Missing and non-finite values are not allowed in the covariates. Covariates with missingness or non-finite values:\n\t",
                   paste(covariates.with.missingness, collapse = ", ")), call. = FALSE)
     }
