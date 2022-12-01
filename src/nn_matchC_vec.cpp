@@ -18,7 +18,6 @@ bool check_in(int x,
 int find_right(int ii,
                int last_control,
                IntegerVector treat,
-               IntegerVector t,
                LogicalVector can_be_matched,
                int r,
                IntegerVector row,
@@ -36,7 +35,7 @@ int find_right(int ii,
 
   int k = ii + 1;
   bool found = false, okay;
-  int ck, i;
+  int i;
 
   int n_anti;
   if (use_antiexact) n_anti = antiexact_covs.ncol();
@@ -58,8 +57,7 @@ int find_right(int ii,
       }
     }
 
-    ck = t[k];
-    if (!can_be_matched[ck]) {
+    if (!can_be_matched[k]) {
       k++; //if unit is matched, move right
       continue;
     }
@@ -72,7 +70,7 @@ int find_right(int ii,
     }
 
     if (use_exact) {
-      if (exact[d_ord[ii]] != exact[d_ord[k]]) {
+      if (exact[ii] != exact[k]) {
         k++; //if not exact match, move right
         continue;
       }
@@ -82,7 +80,7 @@ int find_right(int ii,
       i = 0;
       okay = true;
       while (okay && (i < n_anti)) {
-        if (antiexact_covs(d_ord[ii], i) == antiexact_covs(d_ord[k], i)) {
+        if (antiexact_covs(ii, i) == antiexact_covs(k, i)) {
           okay = false;
         }
         i++;
@@ -97,7 +95,7 @@ int find_right(int ii,
       i = 0;
       okay = true;
       while (okay && (i < n_cal_covs)) {
-        if (abs(caliper_covs_mat(d_ord[ii], i) - caliper_covs_mat(d_ord[k], i)) > caliper_covs[i]) {
+        if (abs(caliper_covs_mat(ii, i) - caliper_covs_mat(k, i)) > caliper_covs[i]) {
           okay = false;
         }
         i++;
@@ -119,7 +117,6 @@ int find_right(int ii,
 int find_left(int ii,
               int first_control,
               IntegerVector treat,
-              IntegerVector t,
               LogicalVector can_be_matched,
               int r,
               IntegerVector row,
@@ -137,7 +134,7 @@ int find_left(int ii,
 
   int k = ii - 1;
   bool found = false, okay;
-  int ck, i;
+  int i;
 
   int n_anti;
   if (use_antiexact) n_anti = antiexact_covs.ncol();
@@ -159,8 +156,7 @@ int find_left(int ii,
       }
     }
 
-    ck = t[k];
-    if (!can_be_matched[ck]) {
+    if (!can_be_matched[k]) {
       k--; //if unit is matched, move left
       continue;
     }
@@ -173,7 +169,7 @@ int find_left(int ii,
     }
 
     if (use_exact) {
-      if (exact[d_ord[ii]] != exact[d_ord[k]]) {
+      if (exact[ii] != exact[k]) {
         k--; //if not exact match, move left
         continue;
       }
@@ -183,7 +179,7 @@ int find_left(int ii,
       i = 0;
       okay = true;
       while (okay && (i < n_anti)) {
-        if (antiexact_covs(d_ord[ii], i) == antiexact_covs(d_ord[k], i)) {
+        if (antiexact_covs(ii, i) == antiexact_covs(k, i)) {
           okay = false;
         }
         i++;
@@ -198,7 +194,7 @@ int find_left(int ii,
       i = 0;
       okay = true;
       while (okay && (i < n_cal_covs)) {
-        if (abs(caliper_covs_mat(d_ord[ii], i) - caliper_covs_mat(d_ord[k], i)) > caliper_covs[i]) {
+        if (abs(caliper_covs_mat(ii, i) - caliper_covs_mat(k, i)) > caliper_covs[i]) {
           okay = false;
         }
         i++;
@@ -269,16 +265,9 @@ IntegerMatrix nn_matchC_vec(const IntegerVector& treat_,
   IntegerVector t(n);
   IntegerVector t0(n0), t1(n1);
   int i;
-  for (i = 0; i < n0; i++) {
-    t[ind0[i]] = i;
-  }
-  for (i = 0; i < n1; i++) {
-    t[ind1[i]] = i;
-  }
 
   //ind:  1 2 3 4 5 6 7 8
   //ind1:   2 3   5   7
-  //t:    1 1 2 2 3 3 4 4
 
   IntegerMatrix mm(n1, max_ratio);
   mm.fill(NA_INTEGER);
@@ -301,6 +290,12 @@ IntegerMatrix nn_matchC_vec(const IntegerVector& treat_,
   if (caliper_covs_.isNotNull()) {
     caliper_covs = as<NumericVector>(caliper_covs_);
     caliper_covs_mat = as<NumericMatrix>(caliper_covs_mat_);
+    NumericVector tmp_cc(caliper_covs_mat.nrow());
+    for (int i = 0; i < caliper_covs_mat.ncol(); i++) {
+      tmp_cc = caliper_covs_mat(_, i);
+      tmp_cc = tmp_cc[d_ord];
+      caliper_covs_mat(_, i) = tmp_cc;
+    }
     use_caliper_covs = true;
   }
 
@@ -308,7 +303,7 @@ IntegerMatrix nn_matchC_vec(const IntegerVector& treat_,
   bool use_exact = false;
   IntegerVector exact;
   if (exact_.isNotNull()) {
-    exact = exact_;
+    exact = as<IntegerVector>(exact_)[d_ord];
     use_exact = true;
   }
 
@@ -317,23 +312,29 @@ IntegerMatrix nn_matchC_vec(const IntegerVector& treat_,
   bool use_antiexact = false;
   if (antiexact_covs_.isNotNull()) {
     antiexact_covs = as<IntegerMatrix>(antiexact_covs_);
+    NumericVector tmp_ae(antiexact_covs.nrow());
+    for (int i = 0; i < antiexact_covs.ncol(); i++) {
+      tmp_ae = antiexact_covs(_, i);
+      tmp_ae = tmp_ae[d_ord];
+      antiexact_covs(_, i) = tmp_ae;
+    }
     use_antiexact = true;
   }
 
   //unit_id
-  IntegerVector unit_id, unit_id0;
+  IntegerVector unit_id;
   bool use_unit_id = false;
   if (unit_id_.isNotNull()) {
     unit_id = as<IntegerVector>(unit_id_)[d_ord];
-    IntegerVector unit_id0 = unit_id[ind0];
     use_unit_id = true;
   }
 
-  IntegerVector times_matched = rep(0, n0);
-  LogicalVector can_be_matched = !as<LogicalVector>(discarded[ind0]);
+  IntegerVector times_matched = rep(0, n);
+  LogicalVector can_be_matched = (!as<LogicalVector>(discarded)) & (treat != 1);
 
-  int first_control = min(as<IntegerVector>(ind0[can_be_matched]));
-  int last_control = max(as<IntegerVector>(ind0[can_be_matched]));
+  IntegerVector ind_cbm = ind[can_be_matched];
+  int first_control = ind_cbm[0];
+  int last_control = ind_cbm[ind_cbm.size() - 1];
 
   //progress bar
   int prog_length;
@@ -364,7 +365,7 @@ IntegerMatrix nn_matchC_vec(const IntegerVector& treat_,
 
       //find control unit to left and right
       k_left = find_left(ii, first_control,
-                         treat, t,
+                         treat,
                          can_be_matched,
                          r, mm_row,
                          d_ord,
@@ -374,7 +375,7 @@ IntegerMatrix nn_matchC_vec(const IntegerVector& treat_,
                          use_antiexact, antiexact_covs);
 
       k_right = find_right(ii, last_control,
-                           treat, t,
+                           treat,
                            can_be_matched,
                            r, mm_row,
                            d_ord,
@@ -406,7 +407,7 @@ IntegerMatrix nn_matchC_vec(const IntegerVector& treat_,
       mm( row_to_fill, r ) = d_ord[k] + 1;
 
       if (use_unit_id) {
-        ck_ = t[as<IntegerVector>(ind0[unit_id0 == unit_id[k]])];
+        ck_ = ind[unit_id == unit_id[k]];
 
         for (j = 0; j < ck_.size(); j++) {
           ck = ck_[j];
@@ -417,10 +418,9 @@ IntegerMatrix nn_matchC_vec(const IntegerVector& treat_,
         }
       }
       else {
-        ck = t[k];
-        times_matched[ck]++;
-        if (times_matched[ck] >= reuse_max) {
-          can_be_matched[ck] = false;
+        times_matched[k]++;
+        if (times_matched[k] >= reuse_max) {
+          can_be_matched[k] = false;
         }
       }
 
@@ -429,11 +429,12 @@ IntegerMatrix nn_matchC_vec(const IntegerVector& treat_,
         return mm;
       }
 
-      if (!can_be_matched[t[first_control]]) {
-        first_control = min(as<IntegerVector>(ind0[can_be_matched]));
+      ind_cbm = ind[can_be_matched];
+      if (!can_be_matched[first_control]) {
+        first_control = ind_cbm[0];
       }
-      if (!can_be_matched[t[last_control]]) {
-        last_control = max(as<IntegerVector>(ind0[can_be_matched]));
+      if (!can_be_matched[last_control]) {
+        last_control = ind_cbm[ind_cbm.size() - 1];
       }
     }
   }
