@@ -14,6 +14,8 @@ output:
 
 * Fixed some typos in the vignettes.
 
+* Fixed a bug where character variables would be flagged as non-finite. Thanks to @isfraser. (#138)
+
 * Added alt text to images in README and vignettes. (#134)
 
 # MatchIt 4.5.0
