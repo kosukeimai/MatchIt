@@ -1,5 +1,5 @@
 Package: MatchIt
-Version: 4.5.0.9001
+Version: 4.5.1
 Title: Nonparametric Preprocessing for Parametric Causal Inference
 Description: Selects matched samples of the original treated and
     control groups with similar covariate distributions -- can be
@@ -30,7 +30,7 @@ Imports:
     backports (>= 1.1.9),
     Rcpp
 Suggests:
-    optmatch (>= 0.10.0),
+    optmatch (>= 0.10.6),
     Matching,
     rgenoud,
     quickmatch (>= 0.2.1),
@@ -56,7 +56,6 @@ Suggests:
 LinkingTo: 
     Rcpp,
     RcppProgress
-SystemRequirements: C++11
 Encoding: UTF-8
 LazyData: true
 License: GPL (>=2)
@@ -65,4 +64,4 @@ URL: https://kosukeimai.github.io/MatchIt/,
 BugReports: https://github.com/kosukeimai/MatchIt/issues
 VignetteBuilder: knitr
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.2.1
+RoxygenNote: 7.2.3
