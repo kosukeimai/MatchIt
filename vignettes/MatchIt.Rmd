@@ -216,7 +216,13 @@ avg_comparisons(fit,
 ```
 ```{r, include = FALSE}
 est <- {
-  if (use != "none" && me_ok) summary(comp)
+  if (use != "none" && me_ok) {
+    avg_comparisons(fit,
+                variables = "treat",
+                vcov = ~subclass,
+                newdata = subset(m.data, treat == 1),
+                wts = "weights")
+  }
   else data.frame(type = "response", term = "1 - 0", estimate = 2114, 
                   std.error = 646, statistic = 3.27, 
                   p.value = 0.0011, conf.low = 848, 
