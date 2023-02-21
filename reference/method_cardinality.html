@@ -42,7 +42,7 @@ matchit(formula,
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">MatchIt</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">4.5.0.9000</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">4.5.1</span>
       </span>
     </div>
 
@@ -219,12 +219,12 @@ minutes). For large problems, this should be set much higher.</p></dd>
     <h2>Details</h2>
     
 <div class="section">
-<h3 id="cardinality-and-template-matching">Cardinality and Template Matching<a class="anchor" aria-label="anchor" href="#cardinality-and-template-matching"></a></h3>
+<h3 id="cardinality-and-profile-matching">Cardinality and Profile Matching<a class="anchor" aria-label="anchor" href="#cardinality-and-profile-matching"></a></h3>
 
 
 <p>Two types of matching are
 available with <code>method = "cardinality"</code>: cardinality matching and
-template matching.</p>
+profile matching.</p>
 <p><strong>Cardinality matching</strong> finds the largest matched set that satisfies the
 balance constraints between treatment groups, with the additional constraint
 that the ratio of the number of matched control to matched treated units is
@@ -235,33 +235,33 @@ retaining the ATT is desired. To request cardinality matching,
 <code>estimand</code> should be set to <code>"ATT"</code> or <code>"ATC"</code> and
 <code>ratio</code> should be set to a positive integer. 1:1 cardinality matching
 is the default method when no arguments are specified.</p>
-<p><strong>Template matching</strong> finds the largest matched set that satisfies balance
+<p><strong>Profile matching</strong> finds the largest matched set that satisfies balance
 constraints between each treatment group and a specified target sample. When
 <code>estimand = "ATT"</code>, it will find the largest subset of the control
 units that satisfies the balance constraints with respect to the treated
 group, which is left intact. When <code>estimand = "ATE"</code>, it will find the
 largest subsets of the treated group and of the control group that are
-balanced to the overall sample. To request template matching for the ATT,
+balanced to the overall sample. To request profile matching for the ATT,
 <code>estimand</code> should be set to <code>"ATT"</code> and <code>ratio</code> to <code>NA</code>.
-To request template matching for the ATE, <code>estimand</code> should be set to
+To request profile matching for the ATE, <code>estimand</code> should be set to
 <code>"ATE"</code> and <code>ratio</code> can be set either to <code>NA</code> to maximize the
 size of each sample independently or to a positive integer to ensure that
 the ratio of matched control units to matched treated treats is fixed,
-mimicking k:1 matching. Unlike cardinality matching, template matching
+mimicking k:1 matching. Unlike cardinality matching, profile matching
 retains the requested estimand if a solution is found.</p>
 <p>Neither method involves creating pairs in the matched set, but it is
 possible to perform an additional round of pairing within the matched sample
-after cardinality matching or template matching for the ATE with a fixed whole number
+after cardinality matching or profile matching for the ATE with a fixed whole number
 sample size ratio by supplying the desired pairing variables to <code>mahvars</code>. Doing so will trigger <a href="method_optimal.html">optimal matching</a> using <code><a href="https://rdrr.io/pkg/optmatch/man/pairmatch.html" class="external-link">optmatch::pairmatch()</a></code> on the Mahalanobis distance computed using the variables supplied to <code>mahvars</code>. The balance or composition of the matched sample will not change, but additional
 precision and robustness can be gained by forming the pairs.</p>
 <p>The weights are scaled so that the sum of the weights in each group is equal
 to the number of matched units in the smaller group when cardinality
-matching or template matching for the ATE, and scaled so that the sum of the
+matching or profile matching for the ATE, and scaled so that the sum of the
 weights in the control group is equal to the number of treated units when
-template matching for the ATT. When the sample sizes of the matched groups
+profile matching for the ATT. When the sample sizes of the matched groups
 is the same (i.e., when <code>ratio = 1</code>), no scaling is done. Robust
 standard errors should be used in effect estimation after cardinality or
-template matching (and cluster-robust standard errors if additional pairing
+profile matching (and cluster-robust standard errors if additional pairing
 is done in the matched sample). See <code><a href="../articles/estimating-effects.html">vignette("estimating-effects")</a></code>
 for more information.</p>
 </div>
@@ -344,7 +344,7 @@ matching.</p>
     <h2>See also</h2>
     <div class="dont-index"><p><code><a href="matchit.html">matchit()</a></code> for a detailed explanation of the inputs and outputs of
 a call to <code><a href="matchit.html">matchit()</a></code>.</p>
-<p><em><a href="https://CRAN.R-project.org/package=designmatch" class="external-link"><span class="pkg">designmatch</span></a></em>, which performs cardinality and template matching with many more options and
+<p><em><a href="https://CRAN.R-project.org/package=designmatch" class="external-link"><span class="pkg">designmatch</span></a></em>, which performs cardinality and profile matching with many more options and
 more flexibility. The implementations of cardinality matching differ between
 <em>MatchIt</em> and <em>designmatch</em>, so their results might differ.</p>
 <p><em><a href="https://CRAN.R-project.org/package=optweight" class="external-link"><span class="pkg">optweight</span></a></em>, which offers similar functionality but in the context of weighting rather
@@ -397,7 +397,7 @@ than matching.</p></div>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Discarded       0       0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Template matching for the ATT</span></span></span>
+<span class="r-in"><span><span class="co"># Profile matching for the ATT</span></span></span>
 <span class="r-in"><span><span class="va">m.out2</span> <span class="op">&lt;-</span> <span class="fu"><a href="matchit.html">matchit</a></span><span class="op">(</span><span class="va">treat</span> <span class="op">~</span> <span class="va">age</span> <span class="op">+</span> <span class="va">educ</span> <span class="op">+</span> <span class="va">re74</span>,</span></span>
 <span class="r-in"><span>                  data <span class="op">=</span> <span class="va">lalonde</span>, method <span class="op">=</span> <span class="st">"cardinality"</span>,</span></span>
 <span class="r-in"><span>                  estimand <span class="op">=</span> <span class="st">"ATT"</span>, ratio <span class="op">=</span> <span class="cn">NA</span>,</span></span>
@@ -429,7 +429,7 @@ than matching.</p></div>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Discarded       0       0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Template matching for the ATE</span></span></span>
+<span class="r-in"><span><span class="co"># Profile matching for the ATE</span></span></span>
 <span class="r-in"><span><span class="va">m.out3</span> <span class="op">&lt;-</span> <span class="fu"><a href="matchit.html">matchit</a></span><span class="op">(</span><span class="va">treat</span> <span class="op">~</span> <span class="va">age</span> <span class="op">+</span> <span class="va">educ</span> <span class="op">+</span> <span class="va">re74</span>,</span></span>
 <span class="r-in"><span>                  data <span class="op">=</span> <span class="va">lalonde</span>, method <span class="op">=</span> <span class="st">"cardinality"</span>,</span></span>
 <span class="r-in"><span>                  estimand <span class="op">=</span> <span class="st">"ATE"</span>, ratio <span class="op">=</span> <span class="cn">NA</span>,</span></span>
@@ -532,7 +532,7 @@ than matching.</p></div>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer></div>

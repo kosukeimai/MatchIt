@@ -40,7 +40,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">MatchIt</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">4.5.0.9000</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">4.5.1</span>
       </span>
     </div>
 
@@ -101,7 +101,7 @@
                         <h4 data-toc-skip class="author">Noah
 Greifer</h4>
             
-            <h4 data-toc-skip class="date">2022-11-23</h4>
+            <h4 data-toc-skip class="date">2023-02-21</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/kosukeimai/MatchIt/blob/HEAD/vignettes/matching-methods.Rmd" class="external-link"><code>vignettes/matching-methods.Rmd</code></a></small>
       <div class="hidden name"><code>matching-methods.Rmd</code></div>
@@ -244,13 +244,13 @@ weights.</p>
 original sample without considering the distance between individual
 units or strata that units might fall into. Subsets are selected to
 optimize a criterion subject to constraint on balance and remaining
-sample size. Cardinality and template matching
+sample size. Cardinality and profile matching
 (<code>method = "cardinality"</code>) are the methods of pure subset
 selection implemented in <code>MatchIt</code>. Both methods allow the
 user to specify the largest imbalance allowed in the resulting matched
 sample, and an optimization routine attempts to find the largest matched
 sample that satisfies those balance constraints. While cardinality
-matching does not target a specific estimand, template matching can be
+matching does not target a specific estimand, profile matching can be
 used to target the ATT, ATC, or ATE.</p>
 <p>Below, we describe each of the matching methods implemented in
 <code>MatchIt</code>.</p>
@@ -582,10 +582,10 @@ stratification weighting <span class="citation">(<a href="#ref-desai2017" role="
 package.</p>
 </div>
 <div class="section level3">
-<h3 id="cardinality-and-template-matching-method-cardinality">Cardinality and Template Matching
-(<code>method = "cardinality"</code>)<a class="anchor" aria-label="anchor" href="#cardinality-and-template-matching-method-cardinality"></a>
+<h3 id="cardinality-and-profile-matching-method-cardinality">Cardinality and Profile Matching
+(<code>method = "cardinality"</code>)<a class="anchor" aria-label="anchor" href="#cardinality-and-profile-matching-method-cardinality"></a>
 </h3>
-<p>Cardinality and template matching are pure subset selection methods
+<p>Cardinality and profile matching are pure subset selection methods
 that involve selecting a subset of the original sample without
 considering the distance between individual units or assigning units to
 pairs or subclasses. They can be thought of as a weighting method where
@@ -595,15 +595,15 @@ constraints and constraints on the ratio of matched treated to matched
 control units <span class="citation">(<a href="#ref-zubizarretaMatchingBalancePairing2014" role="doc-biblioref">Zubizarreta, Paredes, and Rosenbaum
 2014b</a>)</span>. It does not consider a specific estimand and can be a
 useful alternative to matching with a caliper for handling data with
-little overlap <span class="citation">(<a href="#ref-visconti2018" role="doc-biblioref">Visconti and Zubizarreta 2018</a>)</span>. Template
+little overlap <span class="citation">(<a href="#ref-visconti2018" role="doc-biblioref">Visconti and Zubizarreta 2018</a>)</span>. Profile
 matching involves identifying a target distribution (e.g., the full
 sample for the ATE or the treated units for the ATT) and finding the
 largest subset of the treated and control groups that satisfy
-user-supplied balance constraints with respect to that target <span class="citation">(<a href="#ref-bennettBuildingRepresentativeMatched2020" role="doc-biblioref">Bennett, Vielma, and Zubizarreta 2020</a>)</span>.
-See <code><a href="../reference/method_cardinality.html">?method_cardinality</a></code> for the documentation for using
+user-supplied balance constraints with respect to that target <span class="citation">(<a href="#ref-cohnProfileMatchingGeneralization2021" role="doc-biblioref">Cohn and Zubizarreta 2021</a>)</span>. See
+<code><a href="../reference/method_cardinality.html">?method_cardinality</a></code> for the documentation for using
 <code><a href="../reference/matchit.html">matchit()</a></code> with <code>method = "cardinality"</code>,
 including which inputs are required to request either cardinality
-matching or template matching.</p>
+matching or profile matching.</p>
 <p>Subset selection is performed by solving a mixed integer programming
 optimization problem with linear constraints. The problem involves
 maximizing the size of the matched sample subject to constraints on
@@ -611,7 +611,7 @@ balance and sample size. For cardinality matching, the balance
 constraints refer to the mean difference for each covariate between the
 matched treated and control groups, and the sample size constraints
 require the matched treated and control groups to be the same size (or
-differ by a user-supplied factor). For template matching, the balance
+differ by a user-supplied factor). For profile matching, the balance
 constraints refer to the mean difference for each covariate between each
 treatment group and the target distribution; for the ATE, this requires
 the mean of each covariate in each treatment group to be within a given
@@ -921,7 +921,7 @@ successful at reducing imbalance, there may be another specification
 that could reduce it even further, thereby increasing the robustness of
 the inference and the plausibility of an unbiased effect estimate.</p>
 <p>If the target of inference is the ATE, optimal or generalized full
-matching, subclassification, or template matching can be used. If the
+matching, subclassification, or profile matching can be used. If the
 target of inference is the ATT or ATC, any matching method may be used.
 When retaining the target estimand is not so important, additional
 options become available that involve discarding units in such a way
@@ -944,14 +944,14 @@ combine exact or coarsened exact matching on some covariates with
 another form of matching on the others (i.e., by using the
 <code>exact</code> argument).</p>
 <p>When estimating the ATE, either subclassification, full matching, or
-template matching can be used. Optimal and generalized full matching can
+profile matching can be used. Optimal and generalized full matching can
 be effective because they optimize a balance criterion, often leading to
 better balance. With full matching, it’s also possible to exact match on
 some variables and match using the Mahalanobis distance, eliminating the
-need to estimate propensity scores. Template matching also ensures good
+need to estimate propensity scores. Profile matching also ensures good
 balance, but because units are only given weights of zero or one, a
 solution may not be feasible and many units may have to be discarded.
-For large datasets, neither optimal full matching nor template matching
+For large datasets, neither optimal full matching nor profile matching
 may be possible, in which case generalized full matching and
 subclassification are faster solutions. When using subclassification,
 the number of subclasses should be varied. With large samples, higher
@@ -962,7 +962,7 @@ of 5 without trying several other numbers.</p>
 matching can perform well at achieving good balance because it directly
 optimizes covariate balance. With larger datasets, it may take a long
 time to reach a good solution (though that solution will tend to be good
-as well). Template matching also will achieve good balance if a solution
+as well). Profile matching also will achieve good balance if a solution
 is feasible because balance is controlled by the user. Optimal pair
 matching and nearest neighbor matching without replacement tend to
 perform similarly to each other; nearest neighbor matching may be
@@ -1108,12 +1108,11 @@ Estimating the Effect of Treatment on Survival Outcomes.”</span>
 Using Full Matching on the Propensity Score.”</span> <em>Statistical
 Methods in Medical Research</em> 26 (6): 2505–25. <a href="https://doi.org/10.1177/0962280215601134" class="external-link">https://doi.org/10.1177/0962280215601134</a>.
 </div>
-<div id="ref-bennettBuildingRepresentativeMatched2020" class="csl-entry">
-Bennett, Magdalena, Juan Pablo Vielma, and José R. Zubizarreta. 2020.
-<span>“Building <span>Representative Matched Samples With
-Multi</span>-<span>Valued Treatments</span> in <span>Large Observational
-Studies</span>.”</span> <em>Journal of Computational and Graphical
-Statistics</em>, May, 1–29. <a href="https://doi.org/10.1080/10618600.2020.1753532" class="external-link">https://doi.org/10.1080/10618600.2020.1753532</a>.
+<div id="ref-cohnProfileMatchingGeneralization2021" class="csl-entry">
+Cohn, Eric R., and Jose R. Zubizarreta. 2021. <span>“Profile
+<span>Matching</span> for the <span>Generalization</span> and
+<span>Personalization</span> of <span>Causal Inferences</span>.”</span>
+<em>arXiv:2105.10060 [Stat]</em>, May. <a href="https://arxiv.org/abs/2105.10060" class="external-link">https://arxiv.org/abs/2105.10060</a>.
 </div>
 <div id="ref-delosangelesresaDirectStableWeight2020" class="csl-entry">
 de los Angeles Resa, María, and José R. Zubizarreta. 2020. <span>“Direct
@@ -1324,7 +1323,7 @@ Annals of Applied Statistics</em> 8 (1): 204–31. <a href="https://doi.org/10.1
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer>
