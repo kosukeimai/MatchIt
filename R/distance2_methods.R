@@ -371,10 +371,7 @@ distance2cbps <- function(formula, data = NULL, link = NULL, ...) {
     }
   }
   if (is.null(A[["method"]])) {
-    if (is.null(A[["over"]])) A[["method"]] <- "over"
-    else {
-      A[["method"]] <- if (isFALSE(A[["over"]])) "exact" else "over"
-    }
+    A[["method"]] <- if (isFALSE(A[["over"]])) "exact" else "over"
   }
   A[c("estimand", "over")] <- NULL
 
@@ -497,66 +494,16 @@ distance2elasticnet <- function(formula, data = NULL, link = NULL, ...) {
   return(list(model = res, distance = pred))
 }
 distance2lasso <- function(formula, data = NULL, link = NULL, ...) {
-  check.package("glmnet")
-
-  linear <- !is.null(link) && startsWith(as.character(link), "linear")
-  if (linear) link <- sub("linear.", "", as.character(link), fixed = TRUE)
-
   A <- list(...)
-  s <- A[["s"]]
-  A[!names(A) %in% c(names(formals(glmnet::glmnet)), names(formals(glmnet::cv.glmnet)))] <- NULL
-
-  if (is.null(link)) link <- "logit"
-  if (link == "logit") A$family <- "binomial"
-  else if (link == "log") A$family <- "poisson"
-  else A$family <- binomial(link = link)
-
-  A[["alpha"]] <- 1
-
-  mf <- model.frame(formula, data = data)
-
-  A$y <- model.response(mf)
-  A$x <- model.matrix(update(formula, . ~ . + 1), mf)[,-1,drop = FALSE]
-
-  res <- do.call(glmnet::cv.glmnet, A)
-
-  if (is.null(s)) s <- "lambda.1se"
-
-  pred <- drop(predict(res, newx = A$x, s = s,
-                       type = if (linear) "link" else "response"))
-
-  return(list(model = res, distance = pred))
+  A$alpha <- 1
+  do.call("distance2elasticnet", c(list(formula, data = data, link = link), A),
+          quote = TRUE)
 }
 distance2ridge <- function(formula, data = NULL, link = NULL, ...) {
-  check.package("glmnet")
-
-  linear <- !is.null(link) && startsWith(as.character(link), "linear")
-  if (linear) link <- sub("linear.", "", as.character(link), fixed = TRUE)
-
   A <- list(...)
-  s <- A[["s"]]
-  A[!names(A) %in% c(names(formals(glmnet::glmnet)), names(formals(glmnet::cv.glmnet)))] <- NULL
-
-  if (is.null(link)) link <- "logit"
-  if (link == "logit") A$family <- "binomial"
-  else if (link == "log") A$family <- "poisson"
-  else A$family <- binomial(link = link)
-
-  A[["alpha"]] <- 0
-
-  mf <- model.frame(formula, data = data)
-
-  A$y <- model.response(mf)
-  A$x <- model.matrix(update(formula, . ~ . + 1), mf)[,-1,drop = FALSE]
-
-  res <- do.call(glmnet::cv.glmnet, A)
-
-  if (is.null(s)) s <- "lambda.1se"
-
-  pred <- drop(predict(res, newx = A$x, s = s,
-                       type = if (linear) "link" else "response"))
-
-  return(list(model = res, distance = pred))
+  A$alpha <- 0
+  do.call("distance2elasticnet", c(list(formula, data = data, link = link), A),
+          quote = TRUE)
 }
 
 #distance2gbm--------------
@@ -564,7 +511,6 @@ distance2gbm <- function(formula, data = NULL, link = NULL, ...) {
   check.package("gbm")
 
   linear <- !is.null(link) && startsWith(as.character(link), "linear")
-  if (linear) link <- sub("linear.", "", as.character(link), fixed = TRUE)
 
   A <- list(...)
 
@@ -583,7 +529,7 @@ distance2gbm <- function(formula, data = NULL, link = NULL, ...) {
   if (is.null(A[["keep.data"]])) A[["keep.data"]] <- FALSE
 
   if (A[["cv.folds"]] <= 1 && A[["bag.fraction"]] == 1) {
-    stop("Either 'bag.fraction' must be less than 1 or 'cv.folds' must be greater than 1 when using distance = \"gbm\".",
+    stop("Either `bag.fraction` must be less than 1 or `cv.folds` must be greater than 1 when using `distance = \"gbm\"`.",
          call. = FALSE)
   }
   if (is.null(method)) {
@@ -591,7 +537,7 @@ distance2gbm <- function(formula, data = NULL, link = NULL, ...) {
     else method <- "cv"
   }
   else if (!tolower(method) %in% c("oob", "cv")) {
-    stop("distance.options$method should be one of \"OOB\" or \"cv\".", call. = FALSE)
+    stop("`distance.options$method` should be one of \"OOB\" or \"cv\".", call. = FALSE)
   }
 
   res <- do.call(gbm::gbm, A)

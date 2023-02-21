@@ -225,18 +225,18 @@ of such objects, one for each stratum of the \code{exact} variables.
 \dontshow{if (requireNamespace("optmatch", quietly = TRUE)) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
 data("lalonde")
 
-# 1:1 optimal PS matching with exact matching on race
+#1:1 optimal PS matching with exact matching on race
 m.out1 <- matchit(treat ~ age + educ + race + nodegree +
                     married + re74 + re75, data = lalonde,
                   method = "optimal", exact = ~race)
 m.out1
 summary(m.out1)
 
-#2:1 optimal Mahalanobis distance matching
+#2:1 optimal matching on the scaled Euclidean distance
 m.out2 <- matchit(treat ~ age + educ + race + nodegree +
                     married + re74 + re75, data = lalonde,
-                  method = "optimal", distance = "mahalanobis",
-                  ratio = 2)
+                  method = "optimal", ratio = 2,
+                  distance = "scaled_euclidean")
 m.out2
 summary(m.out2, un = FALSE)
 \dontshow{\}) # examplesIf}

@@ -160,15 +160,14 @@ fit <- lm(Y_C ~ A * (X1 + X2 + X3 + X4 + X5 +
           weights = weights)
 
 library("marginaleffects")
-comp <- comparisons(fit,
-                     variables = "A",
-                     vcov = ~subclass,
-                     newdata = subset(md_F_s, A == 1),
-                     wts = "weights")
-summary(comp)
+avg_comparisons(fit,
+                variables = "A",
+                vcov = ~subclass,
+                newdata = subset(md_F_s, A == 1),
+                wts = "weights")
 ```
 
-Note that `match.data()` and `get_weights()` have the option `include.s.weights`, which, when set to `FALSE`, makes it so the returned weights do not incorporate the sampling weights and are simply the matching weights. Because one might to forget to multiply the two sets of weights together, it is easier to just use the default of `include.s.weights = TRUE` and ignore the sampling weights in the rest of the analysis (because they are already included in the returned weights). `comparisons()` also works more smoothly when the weights supplied to `weights` is a single variable rather than the product of two.
+Note that `match.data()` and `get_weights()` have the option `include.s.weights`, which, when set to `FALSE`, makes it so the returned weights do not incorporate the sampling weights and are simply the matching weights. Because one might to forget to multiply the two sets of weights together, it is easier to just use the default of `include.s.weights = TRUE` and ignore the sampling weights in the rest of the analysis (because they are already included in the returned weights). `avg_comparisons()` also works more smoothly when the weights supplied to `weights` is a single variable rather than the product of two.
 
 ```{r, include=FALSE, eval=TRUE}
 knitr::opts_chunk$set(eval = TRUE)
