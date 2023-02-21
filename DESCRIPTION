@@ -44,7 +44,7 @@ Suggests:
     gbm (>= 2.1.7),
     cobalt (>= 4.2.3),
     boot,
-    marginaleffects (>= 0.8.0),
+    marginaleffects (>= 0.9.0),
     sandwich (>= 2.5-1),
     survival,
     RcppProgress (>= 0.4.2),

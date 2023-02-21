@@ -198,7 +198,7 @@ m.data <- match.data(m.out2)
 head(m.data)
 ```
 
-We can then model the outcome in this dataset using the standard regression functions in R, like `lm()` or `glm()`, being sure to include the matching weights (stored in the `weights` variable of the `match.data()` output) in the estimation[^3]. Finally, we use `marginaleffects::comparisons()` to perform g-computation to estimate the ATT. We recommend using cluster-robust standard errors for most analyses, with pair membership as the clustering variable; `comparisons()` makes this straightforward.
+We can then model the outcome in this dataset using the standard regression functions in R, like `lm()` or `glm()`, being sure to include the matching weights (stored in the `weights` variable of the `match.data()` output) in the estimation[^3]. Finally, we use `marginaleffects::avg_comparisons()` to perform g-computation to estimate the ATT. We recommend using cluster-robust standard errors for most analyses, with pair membership as the clustering variable; `avg_comparisons()` makes this straightforward.
 
 [^3]: With 1:1 nearest neighbor matching without replacement, excluding the matching weights does not change the estimates. For all other forms of matching, they are required, so we recommend always including them for consistency.
 
@@ -208,12 +208,11 @@ library("marginaleffects")
 fit <- lm(re78 ~ treat * (age + educ + race + married + nodegree + 
              re74 + re75), data = m.data, weights = weights)
 
-comp <- comparisons(fit,
-                     variables = "treat",
-                     vcov = ~subclass,
-                     newdata = subset(m.data, treat == 1),
-                     wts = "weights")
-summary(comp)
+avg_comparisons(fit,
+                variables = "treat",
+                vcov = ~subclass,
+                newdata = subset(m.data, treat == 1),
+                wts = "weights")
 ```
 ```{r, include = FALSE}
 est <- {
