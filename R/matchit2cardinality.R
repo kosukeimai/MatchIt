@@ -100,11 +100,11 @@
 #' exact variables.
 #'
 #' @details
-#' ## Cardinality and Template Matching
+#' ## Cardinality and Profile Matching
 #'
 #' Two types of matching are
 #' available with `method = "cardinality"`: cardinality matching and
-#' template matching.
+#' profile matching.
 #'
 #' **Cardinality matching** finds the largest matched set that satisfies the
 #' balance constraints between treatment groups, with the additional constraint
@@ -117,35 +117,35 @@
 #' `ratio` should be set to a positive integer. 1:1 cardinality matching
 #' is the default method when no arguments are specified.
 #'
-#' **Template matching** finds the largest matched set that satisfies balance
+#' **Profile matching** finds the largest matched set that satisfies balance
 #' constraints between each treatment group and a specified target sample. When
 #' `estimand = "ATT"`, it will find the largest subset of the control
 #' units that satisfies the balance constraints with respect to the treated
 #' group, which is left intact. When `estimand = "ATE"`, it will find the
 #' largest subsets of the treated group and of the control group that are
-#' balanced to the overall sample. To request template matching for the ATT,
+#' balanced to the overall sample. To request profile matching for the ATT,
 #' `estimand` should be set to `"ATT"` and `ratio` to `NA`.
-#' To request template matching for the ATE, `estimand` should be set to
+#' To request profile matching for the ATE, `estimand` should be set to
 #' `"ATE"` and `ratio` can be set either to `NA` to maximize the
 #' size of each sample independently or to a positive integer to ensure that
 #' the ratio of matched control units to matched treated treats is fixed,
-#' mimicking k:1 matching. Unlike cardinality matching, template matching
+#' mimicking k:1 matching. Unlike cardinality matching, profile matching
 #' retains the requested estimand if a solution is found.
 #'
 #' Neither method involves creating pairs in the matched set, but it is
 #' possible to perform an additional round of pairing within the matched sample
-#' after cardinality matching or template matching for the ATE with a fixed whole number
+#' after cardinality matching or profile matching for the ATE with a fixed whole number
 #' sample size ratio by supplying the desired pairing variables to `mahvars`. Doing so will trigger [optimal matching][method_optimal] using `optmatch::pairmatch()` on the Mahalanobis distance computed using the variables supplied to `mahvars`. The balance or composition of the matched sample will not change, but additional
 #' precision and robustness can be gained by forming the pairs.
 #'
 #' The weights are scaled so that the sum of the weights in each group is equal
 #' to the number of matched units in the smaller group when cardinality
-#' matching or template matching for the ATE, and scaled so that the sum of the
+#' matching or profile matching for the ATE, and scaled so that the sum of the
 #' weights in the control group is equal to the number of treated units when
-#' template matching for the ATT. When the sample sizes of the matched groups
+#' profile matching for the ATT. When the sample sizes of the matched groups
 #' is the same (i.e., when `ratio = 1`), no scaling is done. Robust
 #' standard errors should be used in effect estimation after cardinality or
-#' template matching (and cluster-robust standard errors if additional pairing
+#' profile matching (and cluster-robust standard errors if additional pairing
 #' is done in the matched sample). See `vignette("estimating-effects")`
 #' for more information.
 #'
@@ -201,7 +201,7 @@
 #' @seealso [matchit()] for a detailed explanation of the inputs and outputs of
 #' a call to `matchit()`.
 #'
-#' *\CRANpkg{designmatch}*, which performs cardinality and template matching with many more options and
+#' *\CRANpkg{designmatch}*, which performs cardinality and profile matching with many more options and
 #' more flexibility. The implementations of cardinality matching differ between
 #' *MatchIt* and *designmatch*, so their results might differ.
 #'
@@ -232,7 +232,7 @@
 #' m.out1
 #' summary(m.out1)
 #'
-#' # Template matching for the ATT
+#' # Profile matching for the ATT
 #' m.out2 <- matchit(treat ~ age + educ + re74,
 #'                   data = lalonde, method = "cardinality",
 #'                   estimand = "ATT", ratio = NA,
@@ -240,7 +240,7 @@
 #' m.out2
 #' summary(m.out2, un = FALSE)
 #'
-#' # Template matching for the ATE
+#' # Profile matching for the ATE
 #' m.out3 <- matchit(treat ~ age + educ + re74,
 #'                   data = lalonde, method = "cardinality",
 #'                   estimand = "ATE", ratio = NA,
@@ -445,12 +445,12 @@ cardinality_matchit <- function(treat, X, estimand = "ATT", tols = .05, s.weight
   check.package(switch(solver, glpk = "Rglpk", symphony = "Rsymphony", gurobi = "gurobi"))
 
   #Select match type
-  if (estimand == "ATE") match_type <- "template_ate"
-  else if (!is.finite(ratio)) match_type <- "template_att"
+  if (estimand == "ATE") match_type <- "profile_ate"
+  else if (!is.finite(ratio)) match_type <- "profile_att"
   else match_type <- "cardinality"
 
   #Set objective and constraints
-  if (match_type == "template_ate") {
+  if (match_type == "profile_ate") {
     #Find largest sample that matches full sample
 
     #Objective function: total sample size
@@ -501,7 +501,7 @@ cardinality_matchit <- function(treat, X, estimand = "ATT", tols = .05, s.weight
                      rep(1, nt))
     upper.bound <- NULL
   }
-  else if (match_type == "template_att") {
+  else if (match_type == "profile_att") {
     #Find largest control group that matches treated group
 
     nonf <- which(treat != focal)
@@ -606,16 +606,16 @@ cardinality_matchit <- function(treat, X, estimand = "ATT", tols = .05, s.weight
   sol <- switch(solver, "glpk" = opt.out$solution,
                 "symphony" = opt.out$solution,
                 "gurobi" = opt.out$x)
-  if (match_type %in% c("template_ate", "cardinality")) {
+  if (match_type %in% c("profile_ate", "cardinality")) {
     weights <- round(sol[seq_len(n)])
   }
-  else if (match_type %in% c("template_att")) {
+  else if (match_type %in% c("profile_att")) {
     weights <- rep(1, n)
     weights[treat != focal] <- round(sol[seq_len(n0)])
   }
 
   #Make sure sum of weights in both groups is the same (important for exact matching)
-  if (match_type == "template_att" && (is.na(ratio) || ratio != 1)) {
+  if (match_type == "profile_att" && (is.na(ratio) || ratio != 1)) {
     for (t in setdiff(tvals, focal)) {
       weights[treat == t] <- weights[treat == t]*sum(weights[treat == focal])/sum(weights[treat == t])
     }
