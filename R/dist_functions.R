@@ -210,7 +210,8 @@ euclidean_dist <- function(formula = NULL,
 #Transforms covariates so that Euclidean distance computed on transforms covariates is equivalent to
 #requested distance. When discarded is not NULL, statistics relevant to transformation are computed
 #using retained units, but full covariate matrix is returned.
-transform_covariates <- function(formula = NULL, data = NULL, method = "mahalanobis", s.weights = NULL, var = NULL, treat = NULL,
+transform_covariates <- function(formula = NULL, data = NULL, method = "mahalanobis",
+                                 s.weights = NULL, var = NULL, treat = NULL,
                                  discarded = NULL) {
   X <- get.covs.matrix.for.dist(formula, data)
 
@@ -222,10 +223,10 @@ transform_covariates <- function(formula = NULL, data = NULL, method = "mahalano
   no_variance <- which(apply(X, 2, function(x) abs(max(x) - min(x)) < sqrt(.Machine$double.eps)))
   if (length(no_variance) == ncol(X)) {
     method <- "euclidean"
-    X <- X[,1, drop = FALSE]
+    X <- X[, 1, drop = FALSE]
   }
   else if (length(no_variance) > 0) {
-    X <- X[,-no_variance, drop = FALSE]
+    X <- X[, -no_variance, drop = FALSE]
   }
 
   method <- match_arg(method, matchit_distances())
@@ -254,11 +255,11 @@ transform_covariates <- function(formula = NULL, data = NULL, method = "mahalano
 
     inv_var <- NULL
     d <- det(var)
-    if (d > 1e-10) {
+    if (d > 1e-8) {
       inv_var <- try(solve(var), silent = TRUE)
     }
 
-    if (d <= 1e-10 || inherits(inv_var, "try-error")) {
+    if (d <= 1e-8 || inherits(inv_var, "try-error")) {
       inv_var <- generalized_inverse(var)
     }
 
@@ -276,9 +277,14 @@ transform_covariates <- function(formula = NULL, data = NULL, method = "mahalano
     multiplier <- sd(seq_len(sum(!discarded)))/sqrt(diag(var_r))
     var_r <- var_r * outer(multiplier, multiplier, "*")
 
-    inv_var <- try(solve(var_r), silent = TRUE)
-    if (inherits(inv_var, "try-error")) {
-      inv_var <- generalized_inverse(var_r)
+    inv_var <- NULL
+    d <- det(var)
+    if (d > 1e-8) {
+      inv_var <- try(solve(var), silent = TRUE)
+    }
+
+    if (d <= 1e-8 || inherits(inv_var, "try-error")) {
+      inv_var <- generalized_inverse(var)
     }
 
     if (any(discarded)) {
@@ -376,7 +382,7 @@ get.covs.matrix.for.dist <- function(formula = NULL, data = NULL) {
 
   if (ncol(X) > 1) {
     assign <- attr(X, "assign")[-1]
-    X <- X[,-1, drop = FALSE]
+    X <- X[, -1, drop = FALSE]
   }
   attr(X, "assign") <- assign
 
@@ -413,9 +419,11 @@ is.cov_like <- function(var, X) {
     isSymmetric(var) &&
     all(diag(var) >= 0)
 }
+
 matchit_distances <- function() {
   c("mahalanobis", "robust_mahalanobis", "euclidean", "scaled_euclidean")
 }
+
 mahalanobize <- function(X, inv_var) {
   ## Mahalanobize covariates by computing cholesky decomp,
   ## allowing for NPD cov matrix by pivoting
