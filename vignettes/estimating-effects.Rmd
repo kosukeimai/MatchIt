@@ -242,7 +242,7 @@ Let's break down the call to `avg_comparisons()`: to the first argument, we supp
 
 If, in addition to the effect estimate, we want the average estimated potential outcomes, we can use `marginaleffects::avg_predictions()`, which we demonstrate below. Note the interpretation of the resulting estimates as the expected potential outcomes is only valid if all covariates present in the outcome model (if any) are interacted with the treatment.
 
-```{r, eval=me_ok}
+```{r, eval=me_ok && packageVersion("marginaleffects") > "0.10.0"}
 avg_predictions(fit1, variables = "A",
                 vcov = ~subclass,
                 newdata = subset(md, A == 1),
@@ -250,7 +250,7 @@ avg_predictions(fit1, variables = "A",
                 by = "A")
 ```
 
-We can see that the difference in potential outcome means is equal to the average treatment effect computed previously[^4]. Almost all of the arguments to `avg_predictions()` are the same as those to `avg_comparisons()`; the only difference is that the `by` argument needs to be specified naming the treatment.
+We can see that the difference in potential outcome means is equal to the average treatment effect computed previously[^4]. Almost all of the arguments to `avg_predictions()` are the same as those to `avg_comparisons()`; the only difference is that the `by` argument needs to be specified naming the treatment. (Note: due to a bug, the above code will not evaluate unless `marginaleffects` is a version greater than 0.10.0.)
 
 [^4]: To verify that they are equal, add the argument `hypothesis = "revpairwise"` to the call to `predictions()`; this explicitly compares the average potential outcomes and should yield identical estimates to the `comparisons()` call.
 
