@@ -252,8 +252,13 @@ transform_covariates <- function(formula = NULL, data = NULL, method = "mahalano
       stop("If 'var' is not NULL, it must be a covariance matrix with as many entries as supplied variables.", call. = FALSE)
     }
 
-    inv_var <- try(solve(var), silent = TRUE)
-    if (inherits(inv_var, "try-error")) {
+    inv_var <- NULL
+    d <- det(var)
+    if (d > 1e-10) {
+      inv_var <- try(solve(var), silent = TRUE)
+    }
+
+    if (d <= 1e-10 || inherits(inv_var, "try-error")) {
       inv_var <- generalized_inverse(var)
     }
 
