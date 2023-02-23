@@ -28,7 +28,7 @@ Depends:
     R (>= 3.5.0)
 Imports:
     backports (>= 1.1.9),
-    Rcpp
+    Rcpp (>= 1.0.10)
 Suggests:
     optmatch (>= 0.10.6),
     Matching,
