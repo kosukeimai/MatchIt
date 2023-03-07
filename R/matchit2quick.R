@@ -220,12 +220,12 @@ matchit2quick <- function(treat, formula, data, distance, discarded,
     }
     else distcovs_ <- distcovs
 
-    if (nrow(distcovs) == 0) next
+    if (nrow(distcovs_) == 0) next
 
     withCallingHandlers({
       p[[e]] <- do.call(quickmatch::quickmatch,
-                        c(list(distcovs,
-                               treatments = treat_,
+                        c(list(distcovs_,
+                               treatments = treat_[ex == e],
                                caliper = caliper),
                           A))
     },

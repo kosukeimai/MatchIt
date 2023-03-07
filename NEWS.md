@@ -6,6 +6,10 @@ output:
 `MatchIt` News and Updates
 ======
 
+# MatchIt (development version)
+
+* Fixed a bug when using `method = "quick"` with `exact` specified. Thanks to @m-marquis. (#149)
+
 # MatchIt 4.5.1
 
 * Nearest neighbor matching now uses a much faster algorithm (up to 6x times faster) when `distance` is a propensity score and `mahvars` is not specified. Differences in sort order might cause results to differ from previous versions if there are units with identical propensity scores.

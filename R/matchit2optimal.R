@@ -412,7 +412,7 @@ matchit2optimal <- function(treat, formula, data, distance, discarded,
                                mean.controls = ratio_,
                                min.controls = min.controls_,
                                max.controls = max.controls_,
-                               data = t_df), #just to get rownames; not actually used in matching
+                               data = t_df[ex == e,, drop = FALSE]), #just to get rownames; not actually used in matching
                           A))
     },
     warning = function(w) {
