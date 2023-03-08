@@ -278,13 +278,13 @@ transform_covariates <- function(formula = NULL, data = NULL, method = "mahalano
     var_r <- var_r * outer(multiplier, multiplier, "*")
 
     inv_var <- NULL
-    d <- det(var)
+    d <- det(var_r)
     if (d > 1e-8) {
-      inv_var <- try(solve(var), silent = TRUE)
+      inv_var <- try(solve(var_r), silent = TRUE)
     }
 
     if (d <= 1e-8 || inherits(inv_var, "try-error")) {
-      inv_var <- generalized_inverse(var)
+      inv_var <- generalized_inverse(var_r)
     }
 
     if (any(discarded)) {
