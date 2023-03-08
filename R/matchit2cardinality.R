@@ -301,11 +301,12 @@ matchit2cardinality <-  function(treat, data, discarded, formula,
   if (!is.null(exact)) {
     ex <- factor(exactify(model.frame(exact, data = data), nam = lab, sep = ", ", include_vars = TRUE))
 
-    cc <- do.call("intersect", lapply(tvals, function(t) ex[treat == t]))
+    cc <- do.call("intersect", lapply(tvals, function(t) as.integer(ex)[treat == t]))
     if (length(cc) == 0) stop("No matches were found.", call. = FALSE)
   }
   else {
     ex <- gl(1, length(treat))
+    cc <- 1
   }
 
   #Process mahvars
@@ -369,7 +370,7 @@ matchit2cardinality <-  function(treat, data, discarded, formula,
 
   opt.out <- setNames(vector("list", nlevels(ex)), levels(ex))
 
-  for (e in levels(ex)) {
+  for (e in levels(ex)[cc]) {
     in.exact <- which(!discarded & ex == e)
 
     treat_in.exact <- treat[in.exact]
