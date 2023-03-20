@@ -6,11 +6,11 @@ output:
 `MatchIt` News and Updates
 ======
 
-# MatchIt (development version)
+# MatchIt 4.5.2
 
 * Fixed a bug when using `method = "quick"` with `exact` specified. Thanks to @m-marquis. (#149)
 
-* Improved performance and fixed some bugs when using `exact` in cases where some strata contain units from only one treatment group. Thanks to @m-marquis for point these out.
+* Improved performance and fixed some bugs when using `exact` in cases where some strata contain units from only one treatment group. Thanks to @m-marquis and others for pointing these out.
 
 # MatchIt 4.5.1
 
