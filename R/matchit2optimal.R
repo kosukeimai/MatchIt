@@ -350,7 +350,7 @@ matchit2optimal <- function(treat, formula, data, distance, discarded,
     mo <- distance
   }
   else {
-    mo <- eucdist_internal(setNames(distance, names(treat)), treat)
+    mo <- eucdist_internal(setNames(as.numeric(distance), names(treat)), treat)
   }
 
   #Transpose distance mat as needed
