@@ -465,6 +465,7 @@ process.replace <- function(replace, method = NULL, ..., reuse.max = NULL) {
 }
 
 #Process variable input, e.g., to exact or mahvars, that accept a string or rhs formula
+#Returns a model.frame object
 process.variable.input <- function(x, data = NULL) {
   n <- deparse1(substitute(x))
 

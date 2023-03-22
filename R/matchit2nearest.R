@@ -489,7 +489,7 @@ matchit2nearest <-  function(treat, data, distance, discarded,
   }
   else {
     distance_ <- caliper.covs.mat_ <- mahcovs_ <- antiexactcovs_ <- distance_mat_ <- NULL
-    mm_list <- lapply(levels(ex), function(e) {
+    mm_list <- lapply(levels(ex)[cc], function(e) {
       if (verbose) {
         cat(sprintf("Matching subgroup %s/%s: %s...\n",
                     match(e, levels(ex)), nlevels(ex), e))
@@ -525,7 +525,14 @@ matchit2nearest <-  function(treat, data, distance, discarded,
       mm_
     })
 
-    mm <- do.call("rbind", mm_list)[lab1,, drop = FALSE]
+    #Construct match.matrix
+    mm <- matrix(NA_integer_, nrow = length(lab1),
+                 ncol = max(vapply(mm_list, ncol, numeric(1L))),
+                 dimnames = list(lab1, NULL))
+
+    for (m in mm_list) {
+      mm[rownames(m), seq_len(ncol(m))] <- m
+    }
   }
 
   if (verbose) cat("Calculating matching weights... ")

@@ -176,11 +176,13 @@ matchit2quick <- function(treat, formula, data, distance, discarded,
   if (!is.null(exact)) {
     ex <- factor(exactify(model.frame(exact, data = data),
                           sep = ", ", include_vars = TRUE)[!discarded])
-    cc <- intersect(ex[treat_==1], ex[treat_==0])
+    cc <- intersect(as.integer(ex)[treat_==1], as.integer(ex)[treat_==0])
     if (length(cc) == 0) stop("No matches were found.", call. = FALSE)
+
   }
   else {
     ex <- factor(rep("_", length(treat_)), levels = "_")
+    cc <- 1
   }
 
   #Create distance matrix; note that Mahalanobis distance computed using entire
@@ -214,18 +216,14 @@ matchit2quick <- function(treat, formula, data, distance, discarded,
   pair <- setNames(rep(NA_character_, length(treat)), names(treat))
   p <- setNames(vector("list", nlevels(ex)), levels(ex))
 
-  for (e in levels(ex)) {
-    if (nlevels(ex) > 1) {
-      distcovs_ <- distcovs[ex == e,, drop = FALSE]
-    }
-    else distcovs_ <- distcovs
+  for (e in levels(ex)[cc]) {
 
-    if (nrow(distcovs) == 0) next
+    distcovs_ <- distcovs[ex == e,, drop = FALSE]
 
     withCallingHandlers({
       p[[e]] <- do.call(quickmatch::quickmatch,
-                        c(list(distcovs,
-                               treatments = treat_,
+                        c(list(distcovs_,
+                               treatments = treat_[ex == e],
                                caliper = caliper),
                           A))
     },

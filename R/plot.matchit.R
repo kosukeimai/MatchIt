@@ -290,20 +290,33 @@ matchit.covplot <- function(object, type = "qq", interactive = TRUE, which.xs = 
     else if (inherits(which.xs, "formula")) {
       which.xs <- update(which.xs, NULL ~ .)
       X <- model.frame(which.xs, data, na.action = "na.pass")
-
-      if (anyNA(X)) {
-        stop("Missing values are not allowed in the covariates named in 'which.xs'.",
-             call. = FALSE)
-      }
     }
     else {
       stop("'which.xs' must be supplied as a character vector of names or a one-sided formula.",
            call. = FALSE)
     }
+
+    # if (anyNA(X)) {
+    #   stop("Missing values are not allowed in the covariates named in 'which.xs'.",
+    #        call. = FALSE)
+    # }
+
+    k <- ncol(X)
+    for (i in seq_len(k)) {
+      if (anyNA(X[[i]]) || (is.numeric(X[[i]]) && any(!is.finite(X[[i]])))) {
+        covariates.with.missingness <- names(X)[i:k][vapply(i:k, function(j) anyNA(X[[j]]) ||
+                                                                          (is.numeric(X[[j]]) &&
+                                                                             any(!is.finite(X[[j]]))),
+                                                                        logical(1L))]
+        stop(paste0("Missing and non-finite values are not allowed in the covariates named in 'which.xs'. Variables with missingness or non-finite values:\n\t",
+                    paste(covariates.with.missingness, collapse = ", ")), call. = FALSE)
+      }
+      if (is.character(X[[i]])) X[[i]] <- factor(X[[i]])
+    }
   }
 
-  chars.in.X <- vapply(X, is.character, logical(1L))
-  X[chars.in.X] <- lapply(X[chars.in.X], factor)
+  # chars.in.X <- vapply(X, is.character, logical(1L))
+  # X[chars.in.X] <- lapply(X[chars.in.X], factor)
 
   X <- droplevels(X)
 

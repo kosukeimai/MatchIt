@@ -299,7 +299,7 @@ matchit2optimal <- function(treat, formula, data, distance, discarded,
     ex <- factor(exactify(model.frame(exact, data = data),
                           sep = ", ", include_vars = TRUE)[!discarded])
 
-    cc <- intersect(ex[treat_==1], ex[treat_==0])
+    cc <- intersect(as.integer(ex)[treat_==1], as.integer(ex)[treat_==0])
     if (length(cc) == 0) stop("No matches were found.", call. = FALSE)
 
     e_ratios <- vapply(levels(ex), function(e) sum(treat_[ex == e] == 0)/sum(treat_[ex == e] == 1), numeric(1L))
@@ -319,6 +319,8 @@ matchit2optimal <- function(treat, formula, data, distance, discarded,
   }
   else {
     ex <- factor(rep("_", length(treat_)), levels = "_")
+    cc <- 1
+
     e_ratios <- setNames(sum(treat_ == 0)/sum(treat_ == 1), levels(ex))
 
     if (e_ratios < 1) {
@@ -348,7 +350,7 @@ matchit2optimal <- function(treat, formula, data, distance, discarded,
     mo <- distance
   }
   else {
-    mo <- eucdist_internal(setNames(distance, names(treat)), treat)
+    mo <- eucdist_internal(setNames(as.numeric(distance), names(treat)), treat)
   }
 
   #Transpose distance mat as needed
@@ -375,14 +377,14 @@ matchit2optimal <- function(treat, formula, data, distance, discarded,
 
   t_df <- data.frame(treat)
 
-  for (e in levels(ex)) {
+  for (e in levels(ex)[cc]) {
     if (nlevels(ex) > 1) {
       mo_ <- mo[ex[treat_==1] == e, ex[treat_==0] == e]
     }
     else mo_ <- mo
 
-    if (any(dim(mo_) == 0)) next
-    else if (all(dim(mo_) == 1)) {
+    if (any(dim(mo_) == 0) || !any(is.finite(mo_))) next
+    else if (all(dim(mo_) == 1) && all(is.finite(mo_))) {
       pair[ex == e] <- paste(1, e, sep = "|")
       next
     }
@@ -412,7 +414,7 @@ matchit2optimal <- function(treat, formula, data, distance, discarded,
                                mean.controls = ratio_,
                                min.controls = min.controls_,
                                max.controls = max.controls_,
-                               data = t_df), #just to get rownames; not actually used in matching
+                               data = t_df[ex == e,, drop = FALSE]), #just to get rownames; not actually used in matching
                           A))
     },
     warning = function(w) {

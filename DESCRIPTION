@@ -1,5 +1,5 @@
 Package: MatchIt
-Version: 4.5.1
+Version: 4.5.2
 Title: Nonparametric Preprocessing for Parametric Causal Inference
 Description: Selects matched samples of the original treated and
     control groups with similar covariate distributions -- can be
@@ -28,7 +28,8 @@ Depends:
     R (>= 3.5.0)
 Imports:
     backports (>= 1.1.9),
-    Rcpp (>= 1.0.10)
+    Rcpp (>= 1.0.10),
+    utils, stats, graphics
 Suggests:
     optmatch (>= 0.10.6),
     Matching,
