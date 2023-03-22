@@ -40,7 +40,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">MatchIt</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">4.5.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">4.5.2</span>
       </span>
     </div>
 
@@ -101,7 +101,7 @@
                         <h4 data-toc-skip class="author">Noah
 Greifer</h4>
             
-            <h4 data-toc-skip class="date">2023-02-23</h4>
+            <h4 data-toc-skip class="date">2023-03-22</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/kosukeimai/MatchIt/blob/HEAD/vignettes/estimating-effects.Rmd" class="external-link"><code>vignettes/estimating-effects.Rmd</code></a></small>
       <div class="hidden name"><code>estimating-effects.Rmd</code></div>
@@ -551,10 +551,9 @@ the ATT.</p>
 <span>                wts <span class="op">=</span> <span class="st">"weights"</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## </span></span>
 <span><span class="co">##  Term Contrast Estimate Std. Error    z Pr(&gt;|z|) 2.5 % 97.5 %</span></span>
-<span><span class="co">##     A    1 - 0     1.71      0.496 3.44  0.00057 0.735   2.68</span></span>
+<span><span class="co">##     A    1 - 0     1.71      0.496 3.44   &lt;0.001 0.735   2.68</span></span>
 <span><span class="co">## </span></span>
-<span><span class="co">## Prediction type:  response </span></span>
-<span><span class="co">## Columns: type, term, contrast, estimate, std.error, statistic, p.value, conf.low, conf.high</span></span></code></pre>
+<span><span class="co">## Columns: term, contrast, estimate, std.error, statistic, p.value, conf.low, conf.high</span></span></code></pre>
 <p>Let’s break down the call to <code><a href="https://vincentarelbundock.github.io/marginaleffects/reference/comparisons.html" class="external-link">avg_comparisons()</a></code>: to the
 first argument, we supply the model fit, <code>fit</code>; to the
 <code>variables</code> argument, the name of the treatment
@@ -580,6 +579,12 @@ the outcome model (if any) are interacted with the treatment.</p>
 <span>                newdata <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="va">md</span>, <span class="va">A</span> <span class="op">==</span> <span class="fl">1</span><span class="op">)</span>,</span>
 <span>                wts <span class="op">=</span> <span class="st">"weights"</span>,</span>
 <span>                by <span class="op">=</span> <span class="st">"A"</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## </span></span>
+<span><span class="co">##  A Estimate Std. Error     z Pr(&gt;|z|) 2.5 % 97.5 %</span></span>
+<span><span class="co">##  0     2.19      0.391  5.59   &lt;0.001  1.42   2.95</span></span>
+<span><span class="co">##  1     3.89      0.229 17.04   &lt;0.001  3.45   4.34</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## Columns: A, estimate, std.error, statistic, p.value, conf.low, conf.high</span></span></code></pre>
 <p>We can see that the difference in potential outcome means is equal to
 the average treatment effect computed previously<a href="#fn4" class="footnote-ref" id="fnref4"><sup>4</sup></a>. Almost all of the
 arguments to <code><a href="https://vincentarelbundock.github.io/marginaleffects/reference/predictions.html" class="external-link">avg_predictions()</a></code> are the same as those to
@@ -685,7 +690,7 @@ and the <code>weights</code> argument should be omitted. In the calls to
 change <code>vcov = ~subclass</code> to <code>vcov = "HC3"</code> in the
 calls to <code><a href="https://vincentarelbundock.github.io/marginaleffects/reference/comparisons.html" class="external-link">avg_comparisons()</a></code> and
 <code><a href="https://vincentarelbundock.github.io/marginaleffects/reference/predictions.html" class="external-link">avg_predictions()</a></code>. See an example below:</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">#Subclassification on the PS for the ATT</span></span>
 <span><span class="va">mS</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/matchit.html">matchit</a></span><span class="op">(</span><span class="va">A</span> <span class="op">~</span> <span class="va">X1</span> <span class="op">+</span> <span class="va">X2</span> <span class="op">+</span> <span class="va">X3</span> <span class="op">+</span> <span class="va">X4</span> <span class="op">+</span> <span class="va">X5</span> <span class="op">+</span> </span>
 <span>                 <span class="va">X6</span> <span class="op">+</span> <span class="va">X7</span> <span class="op">+</span> <span class="va">X8</span> <span class="op">+</span> <span class="va">X9</span>, data <span class="op">=</span> <span class="va">d</span>,</span>
@@ -704,10 +709,9 @@ calls to <code><a href="https://vincentarelbundock.github.io/marginaleffects/ref
 <span>                newdata <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="va">md</span>, <span class="va">A</span> <span class="op">==</span> <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## </span></span>
 <span><span class="co">##  Term Contrast Estimate Std. Error    z Pr(&gt;|z|) 2.5 % 97.5 %</span></span>
-<span><span class="co">##     A    1 - 0     1.65      0.364 4.54  5.6e-06  0.94   2.37</span></span>
+<span><span class="co">##     A    1 - 0     1.65      0.364 4.54   &lt;0.001  0.94   2.37</span></span>
 <span><span class="co">## </span></span>
-<span><span class="co">## Prediction type:  response </span></span>
-<span><span class="co">## Columns: type, term, contrast, estimate, std.error, statistic, p.value, conf.low, conf.high</span></span></code></pre>
+<span><span class="co">## Columns: term, contrast, estimate, std.error, statistic, p.value, conf.low, conf.high</span></span></code></pre>
 <p>A model with fewer terms may be required when subclasses are small;
 removing covariates or their interactions with treatment may be required
 and can increase precision in smaller datasets. Remember that if
@@ -737,7 +741,7 @@ get the marginal RR, we need to add <code>transform_post = "exp"</code>
 to <code><a href="https://vincentarelbundock.github.io/marginaleffects/reference/comparisons.html" class="external-link">avg_comparisons()</a></code>, which exponentiates the marginal log
 RR and its confidence interval. The code below computes the effects and
 displays the statistics of interest:</p>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">#Logistic regression model with covariates</span></span>
 <span><span class="va">fit2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/glm.html" class="external-link">glm</a></span><span class="op">(</span><span class="va">Y_B</span> <span class="op">~</span> <span class="va">A</span> <span class="op">*</span> <span class="op">(</span><span class="va">X1</span> <span class="op">+</span> <span class="va">X2</span> <span class="op">+</span> <span class="va">X3</span> <span class="op">+</span> <span class="va">X4</span> <span class="op">+</span> <span class="va">X5</span> <span class="op">+</span> </span>
 <span>                        <span class="va">X6</span> <span class="op">+</span> <span class="va">X7</span> <span class="op">+</span> <span class="va">X8</span> <span class="op">+</span> <span class="va">X9</span><span class="op">)</span>,</span>
@@ -754,11 +758,9 @@ displays the statistics of interest:</p>
 <span>                transform_post <span class="op">=</span> <span class="st">"exp"</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## </span></span>
 <span><span class="co">##  Term              Contrast Estimate Pr(&gt;|z|) 2.5 % 97.5 %</span></span>
-<span><span class="co">##     A ln(mean(1) / mean(0))     1.57   &lt;2e-16  1.41   1.75</span></span>
+<span><span class="co">##     A ln(mean(1) / mean(0))     1.57   &lt;0.001  1.41   1.75</span></span>
 <span><span class="co">## </span></span>
-<span><span class="co">## Prediction type:  response </span></span>
-<span><span class="co">## Post-transformation:  exp </span></span>
-<span><span class="co">## Columns: type, term, contrast, estimate, p.value, conf.low, conf.high, predicted, predicted_hi, predicted_lo</span></span></code></pre>
+<span><span class="co">## Columns: term, contrast, estimate, p.value, conf.low, conf.high, predicted, predicted_hi, predicted_lo</span></span></code></pre>
 <p>The output displays the marginal RR, its Z-value, the p-value for the
 Z-test against 0, and its confidence interval. (Note that even though
 the <code>Contrast</code> label still suggests the log risk ratio, the
@@ -794,7 +796,7 @@ membership (stored in the <code>subclass</code> column of
 pairing (e.g., cardinality and template matching and [coarsened] exact
 matching), we can omit the <code>cluster</code> argument (but keep
 <code>robust = TRUE</code>)<a href="#fn9" class="footnote-ref" id="fnref9"><sup>9</sup></a>.</p>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://github.com/therneau/survival" class="external-link">"survival"</a></span><span class="op">)</span></span>
 <span></span>
 <span><span class="co">#Cox Regression for marginal HR</span></span>
@@ -826,7 +828,7 @@ multiplicity and pairing.</p>
 demonstrated in the appendix of <span class="citation">Austin and Cafri
 (<a href="#ref-austin2020a" role="doc-biblioref">2020</a>)</span>. We
 demonstrate this below:</p>
-<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">#get_matches() after matching with replacement</span></span>
 <span><span class="va">gm</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/match.data.html">get_matches</a></span><span class="op">(</span><span class="va">mR</span><span class="op">)</span></span>
 <span></span>
@@ -889,7 +891,7 @@ of <code>A</code> on the binary outcome <code>Y_B</code>.</p>
 <code>boot_fun</code>. This function returns the marginal RR. In it, we
 perform the matching, estimate the effect, and return the estimate of
 interest.</p>
-<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">boot_fun</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">data</span>, <span class="va">i</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="va">boot_data</span> <span class="op">&lt;-</span> <span class="va">data</span><span class="op">[</span><span class="va">i</span>,<span class="op">]</span></span>
 <span>  </span>
@@ -934,7 +936,7 @@ intervals (which you can request by setting <code>type = "bca"</code> in
 the call to <code><a href="https://rdrr.io/pkg/boot/man/boot.ci.html" class="external-link">boot.ci()</a></code>), which are known to be the most
 accurate. See <code><a href="https://rdrr.io/pkg/boot/man/boot.ci.html" class="external-link">?boot.ci</a></code> for details. Here, we’ll just use a
 percentile confidence interval.</p>
-<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st">"boot"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">54321</span><span class="op">)</span></span>
 <span><span class="va">boot_out</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/boot/man/boot.html" class="external-link">boot</a></span><span class="op">(</span><span class="va">d</span>, <span class="va">boot_fun</span>, R <span class="op">=</span> <span class="fl">199</span><span class="op">)</span></span>
@@ -951,7 +953,7 @@ percentile confidence interval.</p>
 <span><span class="co">## Bootstrap Statistics :</span></span>
 <span><span class="co">##     original  bias    std. error</span></span>
 <span><span class="co">## t1*    1.305   0.193      0.1923</span></span></code></pre>
-<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/boot/man/boot.ci.html" class="external-link">boot.ci</a></span><span class="op">(</span><span class="va">boot_out</span>, type <span class="op">=</span> <span class="st">"perc"</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## BOOTSTRAP CONFIDENCE INTERVAL CALCULATIONS</span></span>
 <span><span class="co">## Based on 199 bootstrap replicates</span></span>
@@ -987,7 +989,7 @@ and we’ll do so manually rather than using
 bootstrap is already much faster than the standard bootstrap because
 matching does not need to occur within each bootstrap sample. First,
 we’ll do a round of matching.</p>
-<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">mNN</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/matchit.html">matchit</a></span><span class="op">(</span><span class="va">A</span> <span class="op">~</span> <span class="va">X1</span> <span class="op">+</span> <span class="va">X2</span> <span class="op">+</span> <span class="va">X3</span> <span class="op">+</span> <span class="va">X4</span> <span class="op">+</span> <span class="va">X5</span> <span class="op">+</span> </span>
 <span>                 <span class="va">X6</span> <span class="op">+</span> <span class="va">X7</span> <span class="op">+</span> <span class="va">X8</span> <span class="op">+</span> <span class="va">X9</span>, data <span class="op">=</span> <span class="va">d</span><span class="op">)</span></span>
 <span><span class="va">mNN</span></span></code></pre></div>
@@ -998,11 +1000,11 @@ we’ll do a round of matching.</p>
 <span><span class="co">##  - number of obs.: 2000 (original), 882 (matched)</span></span>
 <span><span class="co">##  - target estimand: ATT</span></span>
 <span><span class="co">##  - covariates: X1, X2, X3, X4, X5, X6, X7, X8, X9</span></span></code></pre>
-<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">md</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/match.data.html">match.data</a></span><span class="op">(</span><span class="va">mNN</span><span class="op">)</span></span></code></pre></div>
 <p>Next, we’ll write the function that takes in cluster membership and
 the sampled indices and returns an estimate.</p>
-<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">#Unique pair IDs</span></span>
 <span><span class="va">pair_ids</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/levels.html" class="external-link">levels</a></span><span class="op">(</span><span class="va">md</span><span class="op">$</span><span class="va">subclass</span><span class="op">)</span></span>
 <span></span>
@@ -1048,7 +1050,7 @@ to use the bias-corrected and accelerated (BCa) boot strap confidence
 intervals, which are known to be the most accurate. See
 <code><a href="https://rdrr.io/pkg/boot/man/boot.ci.html" class="external-link">?boot.ci</a></code> for details. Here, we’ll just use a percentile
 confidence interval.</p>
-<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st">"boot"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">54321</span><span class="op">)</span></span>
 <span><span class="va">cluster_boot_out</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/boot/man/boot.html" class="external-link">boot</a></span><span class="op">(</span><span class="va">pair_ids</span>, <span class="va">cluster_boot_fun</span>,</span>
@@ -1066,7 +1068,7 @@ confidence interval.</p>
 <span><span class="co">## Bootstrap Statistics :</span></span>
 <span><span class="co">##     original   bias    std. error</span></span>
 <span><span class="co">## t1*    1.549 0.005733      0.1234</span></span></code></pre>
-<div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/boot/man/boot.ci.html" class="external-link">boot.ci</a></span><span class="op">(</span><span class="va">cluster_boot_out</span>, type <span class="op">=</span> <span class="st">"perc"</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## BOOTSTRAP CONFIDENCE INTERVAL CALCULATIONS</span></span>
 <span><span class="co">## Based on 199 bootstrap replicates</span></span>
@@ -1123,7 +1125,7 @@ Below, we’ll estimate a propensity score using a single propensity score
 model with a few moderator-by-covariate interactions. We’ll perform
 nearest neighbor matching on the propensity score and exact matching on
 the moderator, <code>X5</code>.</p>
-<div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb34"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">mP</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/matchit.html">matchit</a></span><span class="op">(</span><span class="va">A</span> <span class="op">~</span> <span class="va">X1</span> <span class="op">+</span> <span class="va">X2</span> <span class="op">+</span> <span class="va">X5</span><span class="op">*</span><span class="va">X3</span> <span class="op">+</span> <span class="va">X4</span> <span class="op">+</span> </span>
 <span>                <span class="va">X5</span><span class="op">*</span><span class="va">X6</span> <span class="op">+</span> <span class="va">X7</span> <span class="op">+</span> <span class="va">X5</span><span class="op">*</span><span class="va">X8</span> <span class="op">+</span> <span class="va">X9</span>, data <span class="op">=</span> <span class="va">d</span>,</span>
 <span>              exact <span class="op">=</span> <span class="op">~</span><span class="va">X5</span>, method <span class="op">=</span> <span class="st">"nearest"</span><span class="op">)</span></span>
@@ -1146,7 +1148,7 @@ Segmented Data” on the <code>cobalt</code> <a href="https://ngreifer.github.io
 details.</p>
 <p>If we are satisfied with balance, we can then model the outcome with
 an interaction between the treatment and the moderator.</p>
-<div class="sourceCode" id="cb35"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb36"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">mdP</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/match.data.html">match.data</a></span><span class="op">(</span><span class="va">mP</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">fitP</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html" class="external-link">lm</a></span><span class="op">(</span><span class="va">Y_C</span> <span class="op">~</span> <span class="va">A</span> <span class="op">*</span> <span class="va">X5</span>, data <span class="op">=</span> <span class="va">mdP</span>, weights <span class="op">=</span> <span class="va">weights</span><span class="op">)</span></span></code></pre></div>
@@ -1154,7 +1156,7 @@ an interaction between the treatment and the moderator.</p>
 <code><a href="https://vincentarelbundock.github.io/marginaleffects/reference/comparisons.html" class="external-link">avg_comparisons()</a></code>, this time specifying the <code>by</code>
 argument to signify that we want treatment effects stratified by the
 moderator.</p>
-<div class="sourceCode" id="cb36"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb37"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://vincentarelbundock.github.io/marginaleffects/reference/comparisons.html" class="external-link">avg_comparisons</a></span><span class="op">(</span><span class="va">fitP</span>, variables <span class="op">=</span> <span class="st">"A"</span>,</span>
 <span>                vcov <span class="op">=</span> <span class="op">~</span><span class="va">subclass</span>,</span>
 <span>                newdata <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="va">md</span>, <span class="va">A</span> <span class="op">==</span> <span class="fl">1</span><span class="op">)</span>,</span>
@@ -1162,17 +1164,16 @@ moderator.</p>
 <span>                by <span class="op">=</span> <span class="st">"X5"</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## </span></span>
 <span><span class="co">##  Term          Contrast X5 Estimate Std. Error    z Pr(&gt;|z|) 2.5 % 97.5 %</span></span>
+<span><span class="co">##     A mean(1) - mean(0)  0     2.17      0.650 3.33  &lt; 0.001 0.892   3.44</span></span>
 <span><span class="co">##     A mean(1) - mean(0)  1     1.77      0.566 3.12  0.00181 0.657   2.88</span></span>
-<span><span class="co">##     A mean(1) - mean(0)  0     2.17      0.650 3.33  0.00086 0.892   3.44</span></span>
 <span><span class="co">## </span></span>
-<span><span class="co">## Prediction type:  response </span></span>
-<span><span class="co">## Columns: type, term, contrast, X5, estimate, std.error, statistic, p.value, conf.low, conf.high, predicted, predicted_hi, predicted_lo</span></span></code></pre>
+<span><span class="co">## Columns: term, contrast, X5, estimate, std.error, statistic, p.value, conf.low, conf.high, predicted, predicted_hi, predicted_lo</span></span></code></pre>
 <p>We can see that the subgroup mean differences are quite similar to
 each other. Finally, we can test for moderation using another call to
 <code><a href="https://vincentarelbundock.github.io/marginaleffects/reference/comparisons.html" class="external-link">avg_comparisons()</a></code>, this time using the
 <code>hypothesis</code> argument to signify that we want to compare
 effects between subgroups:</p>
-<div class="sourceCode" id="cb38"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb39"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://vincentarelbundock.github.io/marginaleffects/reference/comparisons.html" class="external-link">avg_comparisons</a></span><span class="op">(</span><span class="va">fitP</span>, variables <span class="op">=</span> <span class="st">"A"</span>,</span>
 <span>                vcov <span class="op">=</span> <span class="op">~</span><span class="va">subclass</span>,</span>
 <span>                newdata <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="va">md</span>, <span class="va">A</span> <span class="op">==</span> <span class="fl">1</span><span class="op">)</span>,</span>
@@ -1180,11 +1181,10 @@ effects between subgroups:</p>
 <span>                by <span class="op">=</span> <span class="st">"X5"</span>,</span>
 <span>                hypothesis <span class="op">=</span> <span class="st">"pairwise"</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## </span></span>
-<span><span class="co">##                                               Term Estimate Std. Error      z Pr(&gt;|z|) 2.5 % 97.5 %</span></span>
-<span><span class="co">##  (1,A,mean(1) - mean(0)) - (0,A,mean(1) - mean(0))   -0.399      0.862 -0.463     0.64 -2.09   1.29</span></span>
+<span><span class="co">##   Term Estimate Std. Error      z Pr(&gt;|z|) 2.5 % 97.5 %</span></span>
+<span><span class="co">##  1 - 0   -0.399      0.862 -0.463    0.644 -2.09   1.29</span></span>
 <span><span class="co">## </span></span>
-<span><span class="co">## Prediction type:  response </span></span>
-<span><span class="co">## Columns: type, term, estimate, std.error, statistic, p.value, conf.low, conf.high</span></span></code></pre>
+<span><span class="co">## Columns: term, estimate, std.error, statistic, p.value, conf.low, conf.high</span></span></code></pre>
 <p>As expected, the difference between the subgroup treatment effects is
 small and nonsignificant, so there is no evidence of moderation by
 <code>X5</code>.</p>
@@ -1496,7 +1496,7 @@ Coefficients.”</span> <em>American Journal of Epidemiology</em> 177 (4):
 <div class="section level2">
 <h2 id="code-to-generate-data-used-in-examples">Code to Generate Data used in Examples<a class="anchor" aria-label="anchor" href="#code-to-generate-data-used-in-examples"></a>
 </h2>
-<div class="sourceCode" id="cb40"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb41"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">#Generating data similar to Austin (2009) for demonstrating treatment effect estimation</span></span>
 <span><span class="va">gen_X</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">n</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="va">X</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">9</span> <span class="op">*</span> <span class="va">n</span><span class="op">)</span>, nrow <span class="op">=</span> <span class="va">n</span>, ncol <span class="op">=</span> <span class="fl">9</span><span class="op">)</span></span>

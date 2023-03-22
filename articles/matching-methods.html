@@ -40,7 +40,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">MatchIt</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">4.5.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">4.5.2</span>
       </span>
     </div>
 
@@ -101,7 +101,7 @@
                         <h4 data-toc-skip class="author">Noah
 Greifer</h4>
             
-            <h4 data-toc-skip class="date">2023-02-23</h4>
+            <h4 data-toc-skip class="date">2023-03-22</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/kosukeimai/MatchIt/blob/HEAD/vignettes/matching-methods.Rmd" class="external-link"><code>vignettes/matching-methods.Rmd</code></a></small>
       <div class="hidden name"><code>matching-methods.Rmd</code></div>
@@ -812,10 +812,10 @@ dimensionality. As with exact matching performed with
 <code>method = "exact"</code>, any units in strata lacking members of
 one of the treatment groups will be left unmatched. Note that although
 matching occurs within each exact matching stratum, propensity score
-estimation and computation of the Mahalanobis distance occur in the full
-sample. <strong>If units from the treated group are unmatched due to an
-exact matching restriction, the estimand no longer corresponds to the
-ATT.</strong></p>
+estimation and computation of the Mahalanobis or other distance matrix
+occur in the full sample. <strong>If units from the treated group are
+unmatched due to an exact matching restriction, the estimand no longer
+corresponds to the ATT.</strong></p>
 </div>
 <div class="section level3">
 <h3 id="anti-exact-matching-antiexact">Anti-exact matching (<code>antiexact</code>)<a class="anchor" aria-label="anchor" href="#anti-exact-matching-antiexact"></a>

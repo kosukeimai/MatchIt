@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">MatchIt</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">4.5.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">4.5.2</span>
       </span>
     </div>
 
@@ -69,6 +69,11 @@
       <small>Source: <a href="https://github.com/kosukeimai/MatchIt/blob/HEAD/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="4.5.2" id="matchit-452">MatchIt 4.5.2<small>2023-03-22</small><a class="anchor" aria-label="anchor" href="#matchit-452"></a></h2>
+<ul><li><p>Fixed a bug when using <code>method = "quick"</code> with <code>exact</code> specified. Thanks to <a href="https://github.com/m-marquis" class="external-link">@m-marquis</a>. (<a href="https://github.com/kosukeimai/MatchIt/issues/149" class="external-link">#149</a>)</p></li>
+<li><p>Improved performance and fixed some bugs when using <code>exact</code> in cases where some strata contain units from only one treatment group. Thanks to <a href="https://github.com/m-marquis" class="external-link">@m-marquis</a> and others for pointing these out.</p></li>
+</ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="4.5.1" id="matchit-451">MatchIt 4.5.1<small>2023-02-23</small><a class="anchor" aria-label="anchor" href="#matchit-451"></a></h2>
 <ul><li><p>Nearest neighbor matching now uses a much faster algorithm (up to 6x times faster) when <code>distance</code> is a propensity score and <code>mahvars</code> is not specified. Differences in sort order might cause results to differ from previous versions if there are units with identical propensity scores.</p></li>
