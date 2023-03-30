@@ -6,6 +6,10 @@ output:
 `MatchIt` News and Updates
 ======
 
+# MatchIt (development version)
+
+* Fixed a bug when using `method = "nearest"` with `replace = TRUE` and `ratio` greater than 1. Thanks to Julia Kretschmann.
+
 # MatchIt 4.5.2
 
 * Fixed a bug when using `method = "quick"` with `exact` specified. Thanks to @m-marquis. (#149)

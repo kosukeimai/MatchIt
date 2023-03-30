@@ -9,7 +9,10 @@ using namespace Rcpp;
 
 bool check_in(int x,
               IntegerVector table) {
-  for (int j = 0; j < table.size(); j++) {
+  int t = table.size();
+  if (t < 1) return false;
+
+  for (int j = 0; j < t; j++) {
     if (x == table[j]) return true;
   }
   return false;
@@ -232,8 +235,8 @@ IntegerMatrix nn_matchC_vec(const IntegerVector& treat_,
 
   CharacterVector lab_ = treat_.names();
 
-  //Use base::sort.list() because faster than Rcpp implementation of order()
-  Function o("sort.list");
+  //Use base::order() because faster than Rcpp implementation of order()
+  Function o("order");
 
   IntegerVector d_ord = o(distance_, Named("decreasing") = false);
   d_ord = d_ord - 1;
@@ -273,7 +276,7 @@ IntegerMatrix nn_matchC_vec(const IntegerVector& treat_,
   mm.fill(NA_INTEGER);
   CharacterVector lab1 = lab[ind1];
   CharacterVector mm_nm = lab_[treat_ == 1];
-  rownames(mm) = mm_nm;
+
 
   //caliper_dist
   double caliper_dist;
@@ -403,8 +406,7 @@ IntegerMatrix nn_matchC_vec(const IntegerVector& treat_,
         continue;
       }
 
-
-      mm( row_to_fill, r ) = d_ord[k] + 1;
+      mm( row_to_fill, r ) = d_ord[k];
 
       if (use_unit_id) {
         ck_ = ind[unit_id == unit_id[k]];
@@ -440,6 +442,9 @@ IntegerMatrix nn_matchC_vec(const IntegerVector& treat_,
   }
 
   p.update(prog_length);
+
+  mm = mm + 1;
+  rownames(mm) = mm_nm;
 
   return mm;
 }
