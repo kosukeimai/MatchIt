@@ -10,6 +10,8 @@ output:
 
 * Fixed a bug when using `method = "nearest"` with `replace = TRUE` and `ratio` greater than 1. Thanks to Julia Kretschmann.
 
+* Fixed a bug when using `method = "nearest"` with `exact` and `ratio` greater than 1. Thanks to Sarah Conner.
+
 # MatchIt 4.5.2
 
 * Fixed a bug when using `method = "quick"` with `exact` specified. Thanks to @m-marquis. (#149)
