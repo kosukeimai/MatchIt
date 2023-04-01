@@ -349,6 +349,7 @@ IntegerMatrix nn_matchC_vec(const IntegerVector& treat_,
   double dti;
   String labi;
   IntegerVector mm_row, ck_;
+  bool done = false;
 
   for (r = 0; r < max_ratio; r++) {
     for (i = 0; i < n1; i++) {
@@ -427,8 +428,8 @@ IntegerMatrix nn_matchC_vec(const IntegerVector& treat_,
       }
 
       if (any(can_be_matched).is_false()) {
-        p.update(prog_length);
-        return mm;
+        done = true;
+        break;
       }
 
       ind_cbm = ind[can_be_matched];
@@ -439,6 +440,8 @@ IntegerMatrix nn_matchC_vec(const IntegerVector& treat_,
         last_control = ind_cbm[ind_cbm.size() - 1];
       }
     }
+
+    if (done) break;
   }
 
   p.update(prog_length);

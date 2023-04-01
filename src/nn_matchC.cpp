@@ -53,7 +53,7 @@ IntegerMatrix nn_matchC(const IntegerVector& treat_,
   int max_rat = max(ratio);
   IntegerMatrix mm(n1_, max_rat);
   mm.fill(NA_INTEGER);
-  rownames(mm) = lab[ind1_];
+  // rownames(mm) = lab[ind1_];
 
   // Store who has been matched
   IntegerVector matched = rep(0, n_);
@@ -172,7 +172,7 @@ IntegerMatrix nn_matchC(const IntegerVector& treat_,
 
       //Prevent control units being matched to same treated unit again
       if (rat > 0) {
-        c_eligible = as<IntegerVector>(c_eligible[!in(c_eligible, na_omit(mm.row(t)) - 1)]);
+        c_eligible = as<IntegerVector>(c_eligible[!in(c_eligible, na_omit(mm.row(t)))]);
       }
 
       if (use_exact) {
@@ -241,7 +241,7 @@ IntegerMatrix nn_matchC(const IntegerVector& treat_,
       //If replace and few eligible controls, assign all and move on
       if (!use_reuse_max && (num_eligible <= t_rat)) {
         for (j = 0; j < num_eligible; ++j) {
-          mm( t , j ) = c_eligible[j] + 1;
+          mm( t , j ) = c_eligible[j];
         }
         continue;
       }
@@ -285,14 +285,14 @@ IntegerMatrix nn_matchC(const IntegerVector& treat_,
 
         for (j = 0; j < t_rat; ++j) {
           min_ind = indices[j];
-          mm( t , j ) = c_eligible[min_ind] + 1;
+          mm( t , j ) = c_eligible[min_ind];
         }
       }
       else {
         min_ind = which_min(match_distance);
         c_chosen = c_eligible[min_ind];
 
-        mm( t , rat ) = c_chosen + 1; // + 1 because C indexing starts at 0 but mm is sent to R
+        mm( t , rat ) = c_chosen;
 
         id_of_chosen_unit = unit_id[c_chosen];
         units_with_id_of_chosen_unit = ind_[unit_id == id_of_chosen_unit];
@@ -306,6 +306,9 @@ IntegerMatrix nn_matchC(const IntegerVector& treat_,
   }
 
   p.update(prog_length);
+
+  mm = mm + 1; // + 1 because C indexing starts at 0 but mm is sent to R
+  rownames(mm) = lab[ind1_];
 
   return mm;
 }
