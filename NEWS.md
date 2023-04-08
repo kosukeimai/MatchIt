@@ -8,15 +8,23 @@ output:
 
 # MatchIt (development version)
 
-* Fixed a bug when using `method = "nearest"` with `replace = TRUE` and `ratio` greater than 1. Thanks to Julia Kretschmann.
+* Error messages have been improved using `chk` and `rlang`, which are now dependencies.
+
+* Fixed a bug when using `method = "nearest"` with `replace = TRUE` and `ratio` greater than 1. Thanks to Julia Kretschmann. (#159)
 
 * Fixed a bug when using `method = "nearest"` with `exact` and `ratio` greater than 1. Thanks to Sarah Conner.
+
+* Fixed a bug that would occur due to numerical imprecision in `plot.matchit()`. Thanks to @hkmztrk. (#158)
+
+* Fixed some typos in the vignettes. Thanks to @fBedecarrats. (#156)
+
+* Updated vignettes to use `marginaleffects` v0.11.0 syntax.
 
 # MatchIt 4.5.2
 
 * Fixed a bug when using `method = "quick"` with `exact` specified. Thanks to @m-marquis. (#149)
 
-* Improved performance and fixed some bugs when using `exact` in cases where some strata contain units from only one treatment group. Thanks to @m-marquis and others for pointing these out.
+* Improved performance and fixed some bugs when using `exact` in cases where some strata contain units from only one treatment group. Thanks to @m-marquis and others for pointing these out. (#151)
 
 # MatchIt 4.5.1
 
