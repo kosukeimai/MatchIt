@@ -41,7 +41,7 @@
 #' @return A numeric distance matrix. When `formula` has a left-hand-side
 #' (treatment) variable, the matrix will have one row for each treated unit and
 #' one column for each control unit. Otherwise, the matrix will have one row
-#' and one column for each treated unit.
+#' and one column for each unit.
 #'
 #' @details
 #' The **Euclidean distance** (computed using `euclidean_dist()`) is
@@ -369,12 +369,17 @@ get.covs.matrix.for.dist <- function(formula = NULL, data = NULL) {
     formula <- terms(formula, data = data)
   }
 
+  if (attr(formula, "response") == 0) {
+    formula <- update(formula, ~ . + 1)
+  }
+  else {
+    formula <- update(formula, . ~ . + 1)
+  }
+
   mf <- model.frame(formula, data, na.action = na.pass)
 
   chars.in.mf <- vapply(mf, is.character, logical(1L))
   mf[chars.in.mf] <- lapply(mf[chars.in.mf], factor)
-
-  formula <- update(formula, NULL ~ . + 1)
 
   X <- model.matrix(formula, data = mf,
                     contrasts.arg = lapply(Filter(is.factor, mf),
