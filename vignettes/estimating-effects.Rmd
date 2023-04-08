@@ -173,7 +173,7 @@ head(d)
 
 We will need to the following packages to perform the desired analyses:
 
--   `marginaleffects` provides the `comparisons()` function for performing g-computation and estimating the SEs and confidence intervals of the average estimate potential outcomes and treatment effects
+-   `marginaleffects` provides the `avg_comparisons()` function for performing g-computation and estimating the SEs and confidence intervals of the average estimate potential outcomes and treatment effects
 -   `sandwich` is used internally by `marginaleffects` to compute robust and cluster-robust SEs
 -   `survival` provides `coxph()` to estimate the coefficients in a Cox-proportional hazards model for the marginal hazard ratio, which we will use for survival outcomes.
 
@@ -187,7 +187,7 @@ library("MatchIt")
 library("marginaleffects")
 ```
 
-All effect estimates will be computed using `marginaleffects::comparions()`, even when its use may be superfluous (e.g., for performing a t-test in the matched set). As previously mentioned, this is because it is useful to have a single workflow that works no matter the situation, perhaps with very slight modifications to accommodate different contexts. Using `comparisons()` has several advantages, even when the alternatives are simple: it only provides the effect estimate, and not other coefficients; it automatically incorporates robust and cluster-robust SEs if requested; and it always produces average marginal effects for the correct population if requested.
+All effect estimates will be computed using `marginaleffects::avg_comparions()`, even when its use may be superfluous (e.g., for performing a t-test in the matched set). As previously mentioned, this is because it is useful to have a single workflow that works no matter the situation, perhaps with very slight modifications to accommodate different contexts. Using `avg_comparions()` has several advantages, even when the alternatives are simple: it only provides the effect estimate, and not other coefficients; it automatically incorporates robust and cluster-robust SEs if requested; and it always produces average marginal effects for the correct population if requested.
 
 Other packages may be of use but are not used here. There are alternatives to the `marginaleffects` package for computing average marginal effects, including `margins` and `stdReg`. The `survey` package can be used to estimate robust SEs incorporating weights and provides functions for survey-weighted generalized linear models and Cox-proportional hazards models. It is often used with propensity score weighting.
 
@@ -238,7 +238,7 @@ avg_comparisons(fit1, variables = "A",
                 wts = "weights")
 ```
 
-Let's break down the call to `avg_comparisons()`: to the first argument, we supply the model fit, `fit`; to the `variables` argument, the name of the treatment (`"A"`); to the `vcov` argument, a formula with subclass membership (`~subclass`) to request cluster-robust SEs; to the `newdata` argument, a version of the matched dataset containing only the treated units (`subset(md, A == 1)`) to request the ATT; and to the `wts` argument, the names of the variable in `md` containing the matching weights (`"weights"`) to ensure they are included in the analysis. Some of these arguments differ depending on the specifics of the matching method and outcome type; see the sections below for information.
+Let's break down the call to `avg_comparisons()`: to the first argument, we supply the model fit, `fit1`; to the `variables` argument, the name of the treatment (`"A"`); to the `vcov` argument, a formula with subclass membership (`~subclass`) to request cluster-robust SEs; to the `newdata` argument, a version of the matched dataset containing only the treated units (`subset(md, A == 1)`) to request the ATT; and to the `wts` argument, the names of the variable in `md` containing the matching weights (`"weights"`) to ensure they are included in the analysis. Some of these arguments differ depending on the specifics of the matching method and outcome type; see the sections below for information.
 
 If, in addition to the effect estimate, we want the average estimated potential outcomes, we can use `marginaleffects::avg_predictions()`, which we demonstrate below. Note the interpretation of the resulting estimates as the expected potential outcomes is only valid if all covariates present in the outcome model (if any) are interacted with the treatment.
 

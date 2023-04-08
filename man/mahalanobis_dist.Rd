@@ -69,7 +69,7 @@ easier without having to change the arguments supplied.}
 A numeric distance matrix. When \code{formula} has a left-hand-side
 (treatment) variable, the matrix will have one row for each treated unit and
 one column for each control unit. Otherwise, the matrix will have one row
-and one column for each treated unit.
+and one column for each unit.
 }
 \description{
 The functions compute a distance matrix, either for a single dataset (i.e.,
