@@ -417,6 +417,7 @@ matchit <- function(formula,
   mcall <- match.call()
 
   ## Process method
+  .chk_null_or(method, chk::chk_string)
   if (length(method) == 1 && is.character(method)) {
     method <- tolower(method)
     method <- match_arg(method, c("exact", "cem", "nearest", "optimal", "full", "genetic", "subclass", "cardinality",
@@ -427,21 +428,20 @@ matchit <- function(formula,
     fn2 <- "matchit2null"
   }
   else {
-    stop("'method' must be the name of a supported matching method. See ?matchit for allowable options.", call. = FALSE)
+    .err("`method` must be the name of a supported matching method. See `?matchit` for allowable options")
   }
 
   #Process formula and data inputs
-  if (!inherits(formula, "formula")) stop("'formula' must be a formula object.", call. = FALSE)
+  .chk_formula(formula, sides = 2)
 
   tt <- terms(formula, data = data)
-  if (attr(tt, "response") != 1) stop("A treatment variable must be included on the left-hand side of 'formula'.", call. = FALSE)
   treat.form <- update(tt, . ~ 0)
   treat.mf <- model.frame(treat.form, data = data, na.action = "na.pass")
   treat <- model.response(treat.mf)
 
   #Check and binarize treat
   treat <- check_treat(treat)
-  if (length(treat) == 0) stop("The treatment cannot be NULL.", call. = FALSE)
+  if (length(treat) == 0) .err("the treatment cannot be `NULL`")
 
   names(treat) <- rownames(treat.mf)
 
@@ -467,28 +467,28 @@ matchit <- function(formula,
   if (!is.null(s.weights)) {
     if (is.character(s.weights)) {
       if (is.null(data) || !is.data.frame(data)) {
-        stop("If 's.weights' is specified a string, a data frame containing the named variable must be supplied to 'data'.", call. = FALSE)
+        .err("if `s.weights` is specified a string, a data frame containing the named variable must be supplied to `data`")
       }
       if (!all(s.weights %in% names(data))) {
-        stop("The name supplied to 's.weights' must be a variable in 'data'.", call. = FALSE)
+        .err("the name supplied to `s.weights` must be a variable in `data`")
       }
       s.weights.form <- reformulate(s.weights)
       s.weights <- model.frame(s.weights.form, data, na.action = "na.pass")
-      if (ncol(s.weights) != 1) stop("'s.weights' can only contain one named variable.", call. = FALSE)
+      if (ncol(s.weights) != 1) .err("`s.weights` can only contain one named variable")
       s.weights <- s.weights[[1]]
     }
     else if (inherits(s.weights, "formula")) {
       s.weights.form <- update(s.weights, NULL ~ .)
       s.weights <- model.frame(s.weights.form, data, na.action = "na.pass")
-      if (ncol(s.weights) != 1) stop("'s.weights' can only contain one named variable.", call. = FALSE)
+      if (ncol(s.weights) != 1) .err("`s.weights` can only contain one named variable")
       s.weights <- s.weights[[1]]
     }
     else if (!is.numeric(s.weights)) {
-      stop("'s.weights' must be supplied as a numeric vector, string, or one-sided formula.", call. = FALSE)
+      .err("`s.weights` must be supplied as a numeric vector, string, or one-sided formula")
     }
 
-    if (anyNA(s.weights)) stop("Missing values are not allowed in 's.weights'.", call. = FALSE)
-    if (length(s.weights) != n.obs) stop("'s.weights' must be the same length as the treatment vector.", call. = FALSE)
+    chk::chk_not_any_na(s.weights)
+    if (length(s.weights) != n.obs) .err("`s.weights` must be the same length as the treatment vector")
 
     names(s.weights) <- names(treat)
 
@@ -515,7 +515,7 @@ matchit <- function(formula,
 
   #Process covs
   if (!is.null(fn1) && fn1 == "distance2gam") {
-    check.package("mgcv")
+    rlang::check_installed("mgcv")
     env <- environment(formula)
     covs.formula <- mgcv::interpret.gam(formula)$fake.formula
     environment(covs.formula) <- env
@@ -531,8 +531,8 @@ matchit <- function(formula,
       covariates.with.missingness <- names(covs)[i:k][vapply(i:k, function(j) anyNA(covs[[j]]) ||
                                                                (is.numeric(covs[[j]]) && any(!is.finite(covs[[j]]))),
                                                              logical(1L))]
-      stop(paste0("Missing and non-finite values are not allowed in the covariates. Covariates with missingness or non-finite values:\n\t",
-                  paste(covariates.with.missingness, collapse = ", ")), call. = FALSE)
+      .err(paste0("Missing and non-finite values are not allowed in the covariates. Covariates with missingness or non-finite values:\n\t",
+                  paste(covariates.with.missingness, collapse = ", ")), tidy = FALSE)
     }
     if (is.character(covs[[i]])) covs[[i]] <- factor(covs[[i]])
   }
@@ -620,7 +620,7 @@ matchit <- function(formula,
 
     if (!is.null(attr(caliper, "cal.formula"))) {
       calcovs <- model.frame(attr(caliper, "cal.formula"), data, na.action = "na.pass")
-      if (anyNA(calcovs)) stop("Missing values are not allowed in the covariates named in 'caliper'.", call. = FALSE)
+      if (anyNA(calcovs)) .err("missing values are not allowed in the covariates named in `caliper`")
       attr(caliper, "cal.formula") <- NULL
     }
   }

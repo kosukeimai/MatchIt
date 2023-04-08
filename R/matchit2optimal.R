@@ -246,7 +246,7 @@ matchit2optimal <- function(treat, formula, data, distance, discarded,
                             estimand = "ATT", verbose = FALSE,
                             is.full.mahalanobis,  antiexact = NULL, ...) {
 
-  check.package("optmatch")
+  rlang::check_installed("optmatch")
 
   if (verbose) cat("Optimal matching... \n")
 
@@ -276,14 +276,14 @@ matchit2optimal <- function(treat, formula, data, distance, discarded,
 
   if (is.full.mahalanobis) {
     if (length(attr(terms(formula, data = data), "term.labels")) == 0) {
-      stop(sprintf("Covariates must be specified in the input formula when distance = \"%s\".",
-                   attr(is.full.mahalanobis, "transform")), call. = FALSE)
+      .err(sprintf("covariates must be specified in the input formula when `distance = \"%s\"`",
+                   attr(is.full.mahalanobis, "transform")))
     }
     mahvars <- formula
   }
 
   if (!is.null(caliper)) {
-    warning("Calipers are currently not compatible with method = \"optimal\" and will be ignored.", call. = FALSE, immediate. = TRUE)
+    .wrn("calipers are currently not compatible with `method = \"optimal\"` and will be ignored")
     caliper <- NULL
   }
 
@@ -300,21 +300,21 @@ matchit2optimal <- function(treat, formula, data, distance, discarded,
                           sep = ", ", include_vars = TRUE)[!discarded])
 
     cc <- intersect(as.integer(ex)[treat_==1], as.integer(ex)[treat_==0])
-    if (length(cc) == 0) stop("No matches were found.", call. = FALSE)
+    if (length(cc) == 0) .err("No matches were found")
 
     e_ratios <- vapply(levels(ex), function(e) sum(treat_[ex == e] == 0)/sum(treat_[ex == e] == 1), numeric(1L))
 
     if (any(e_ratios < 1)) {
-      warning(sprintf("Fewer %s units than %s units in some 'exact' strata; not all %s units will get a match.",
-                      tc[2], tc[1], tc[1]), immediate. = TRUE, call. = FALSE)
+      .wrn(sprintf("Fewer %s units than %s units in some `exact` strata; not all %s units will get a match",
+                      tc[2], tc[1], tc[1]))
     }
     if (ratio > 1 && any(e_ratios < ratio)) {
       if (ratio == max.controls)
-        warning(sprintf("Not all %s units will get %s matches.",
-                        tc[1], ratio), immediate. = TRUE, call. = FALSE)
+        .wrn(sprintf("Not all %s units will get %s matches",
+                        tc[1], ratio))
       else
-        warning(sprintf("Not enough %s units for an average of %s matches per %s unit in all 'exact' strata.",
-                        tc[2], ratio, tc[1]), immediate. = TRUE, call. = FALSE)
+        .wrn(sprintf("Not enough %s units for an average of %s matches per %s unit in all `exact` strata",
+                        tc[2], ratio, tc[1]))
     }
   }
   else {
@@ -324,16 +324,16 @@ matchit2optimal <- function(treat, formula, data, distance, discarded,
     e_ratios <- setNames(sum(treat_ == 0)/sum(treat_ == 1), levels(ex))
 
     if (e_ratios < 1) {
-      warning(sprintf("Fewer %s units than %s units; not all %s units will get a match.",
-                      tc[2], tc[1], tc[1]), immediate. = TRUE, call. = FALSE)
+      .wrn(sprintf("Fewer %s units than %s units; not all %s units will get a match",
+                      tc[2], tc[1], tc[1]))
     }
     else if (e_ratios < ratio) {
       if (ratio == max.controls)
-        warning(sprintf("Not all %s units will get %s matches.",
-                        tc[1], ratio), immediate. = TRUE, call. = FALSE)
+        .wrn(sprintf("Not all %s units will get %s matches",
+                        tc[1], ratio))
       else
-        warning(sprintf("Not enough %s units for an average of %s matches per %s unit.",
-                        tc[2], ratio, tc[1]), immediate. = TRUE, call. = FALSE)
+        .wrn(sprintf("Not enough %s units for an average of %s matches per %s unit",
+                        tc[2], ratio, tc[1]))
     }
   }
 
@@ -418,17 +418,17 @@ matchit2optimal <- function(treat, formula, data, distance, discarded,
                           A))
     },
     warning = function(w) {
-      warning(paste0("(from optmatch) ", conditionMessage(w)), call. = FALSE, immediate. = TRUE)
+      .wrn(paste0("(from optmatch) ", conditionMessage(w)), tidy = FALSE)
       invokeRestart("muffleWarning")
     },
     error = function(e1) {
-      stop(paste0("(from optmatch) ", conditionMessage(e1)), call. = FALSE)
+      .err(paste0("(from optmatch) ", conditionMessage(e1)), tidy = FALSE)
     })
 
     pair[names(p[[e]])[!is.na(p[[e]])]] <- paste(as.character(p[[e]][!is.na(p[[e]])]), e, sep = "|")
   }
 
-  if (all(is.na(pair))) stop("No matches were found.", call. = FALSE)
+  if (all(is.na(pair))) .err("No matches were found")
   if (length(p) == 1) p <- p[[1]]
 
   psclass <- factor(pair)
@@ -448,5 +448,5 @@ matchit2optimal <- function(treat, formula, data, distance, discarded,
   if (verbose) cat("Done.\n")
 
   class(res) <- "matchit"
-  return(res)
+  res
 }

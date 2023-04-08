@@ -283,7 +283,7 @@ matchit2cardinality <-  function(treat, data, discarded, formula,
   estimand <- toupper(estimand)
   estimand <- match_arg(estimand, c("ATT", "ATC", "ATE"))
   if (!is.null(focal)) {
-    if (!focal %in% tvals) stop("'focal' must be a value of the treatment.", call. = FALSE)
+    if (!focal %in% tvals) .err("`focal` must be a value of the treatment")
   }
   else if (estimand == "ATC") {
     focal <- min(tvals)
@@ -302,7 +302,7 @@ matchit2cardinality <-  function(treat, data, discarded, formula,
     ex <- factor(exactify(model.frame(exact, data = data), nam = lab, sep = ", ", include_vars = TRUE))
 
     cc <- do.call("intersect", lapply(tvals, function(t) as.integer(ex)[treat == t]))
-    if (length(cc) == 0) stop("No matches were found.", call. = FALSE)
+    if (length(cc) == 0) .err("no matches were found")
   }
   else {
     ex <- gl(1, length(treat))
@@ -311,11 +311,10 @@ matchit2cardinality <-  function(treat, data, discarded, formula,
 
   #Process mahvars
   if (!is.null(mahvars)) {
-    if (!is.finite(ratio) || !is_whole_number(ratio)) {
-      stop("`mahvars` can only be used with `method = \"cardinality\"` when `ratio` is a whole number.",
-           call. = FALSE)
+    if (!is.finite(ratio) || !chk::vld_whole_number(ratio)) {
+      .err("`mahvars` can only be used with `method = \"cardinality\"` when `ratio` is a whole number")
     }
-    check.package("optmatch")
+    rlang::check_installed("optmatch")
     mahcovs <- transform_covariates(mahvars, data = data, method = "mahalanobis",
                                     s.weights = s.weights, treat = treat,
                                     discarded = discarded)
@@ -333,33 +332,33 @@ matchit2cardinality <-  function(treat, data, discarded, formula,
   #Process tols
   assign <- get_assign(X)
 
-  if (length(tols) == 0 || !is.numeric(tols) || anyNA(tols)) stop("'tols' must be numeric.", call. = FALSE)
+  chk::chk_numeric(tols)
   if (length(tols) == 1) tols <- rep(tols, ncol(X))
   else if (length(tols) == max(assign)) {
     tols <- tols[assign]
   }
   else if (length(tols) != ncol(X)) {
-    stop("'tols' must have length 1 or the number of covariates. See ?method_cardinality for details.", call. = FALSE)
+    .err("`tols` must have length 1 or the number of covariates. See `?method_cardinality` for details")
   }
 
-  if (length(std.tols) == 0 || !is.logical(std.tols) || anyNA(std.tols)) stop("'std.tols' must be logical (TRUE/FALSE).", call. = FALSE)
+  chk::chk_logical(std.tols)
   if (length(std.tols) == 1) std.tols <- rep(std.tols, ncol(X))
   else if (length(std.tols) == max(assign)) {
     std.tols <- std.tols[assign]
   }
   else if (length(std.tols) != ncol(X)) {
-    stop("'std.tols' must have length 1 or the number of covariates. See ?method_cardinality for details.", call. = FALSE)
+    .err("`std.tols` must have length 1 or the number of covariates. See `?method_cardinality` for details")
   }
 
   #Apply std.tols
   if (any(std.tols)) {
     if (estimand == "ATE") {
       sds <- sqrt(Reduce("+", lapply(tvals, function(t) {
-        apply(X[treat==t, std.tols, drop = FALSE], 2, wvar, w = s.weights[treat==t])
+        apply(X[treat == t, std.tols, drop = FALSE], 2, wvar, w = s.weights[treat == t])
       }))/nt)
     }
     else {
-      sds <- sqrt(apply(X[treat==focal,std.tols,drop=FALSE], 2, wvar, w = s.weights[treat==focal]))
+      sds <- sqrt(apply(X[treat == focal, std.tols, drop = FALSE], 2, wvar, w = s.weights[treat == focal]))
     }
 
     zero.sds <- sds < 1e-10
@@ -421,8 +420,7 @@ matchit2cardinality <-  function(treat, data, discarded, formula,
 
   class(res) <- "matchit"
 
-  return(res)
-
+  res
 }
 
 ## Function to actually do the matching
@@ -440,10 +438,12 @@ cardinality_matchit <- function(treat, X, estimand = "ATT", tols = .05, s.weight
 
   if (is.null(focal)) focal <- tvals[length(tvals)]
 
-  if (length(time) != 1 || !is.numeric(time) || time <= 0) stop("'time' must be a positive number.", call. = FALSE)
+  chk::chk_number(time)
+  chk::chk_gt(time, 0)
 
+  chk::chk_string(solver)
   solver <- match_arg(solver, c("glpk", "symphony", "gurobi"))
-  check.package(switch(solver, glpk = "Rglpk", symphony = "Rsymphony", gurobi = "gurobi"))
+  rlang::check_installed(switch(solver, glpk = "Rglpk", symphony = "Rsymphony", gurobi = "gurobi"))
 
   #Select match type
   if (estimand == "ATE") match_type <- "profile_ate"
@@ -628,34 +628,34 @@ cardinality_matchit <- function(treat, X, estimand = "ATT", tols = .05, s.weight
     }
   }
 
-  return(list(weights = weights, opt.out = opt.out))
+  list(weights = weights, opt.out = opt.out)
 }
 
 cardinality_error_report <- function(out, solver) {
   if (solver == "glpk") {
     if (out$status == 1) {
       if (all(out$solution == 0)) {
-        stop("The optimization problem may be infeasible. Try increasing the value of 'tols'.\nSee ?method_cardinality for additional details.", call. = FALSE)
+        .err("the optimization problem may be infeasible. Try increasing the value of `tols`.\nSee `?method_cardinality` for additional details")
       }
       else {
-        warning("The optimizer failed to find an optimal solution in the time alotted. The returned solution may not be optimal.\nSee ?method_cardinality for additional details.", call. = FALSE)
+        .wrn("the optimizer failed to find an optimal solution in the time alotted. The returned solution may not be optimal.\nSee `?method_cardinality` for additional details")
       }
     }
   }
   else if (solver == "symphony") {
     if (names(out$status) %in% c("TM_TIME_LIMIT_EXCEEDED") && !all(out$solution == 0) && all(out$solution <= 1)) {
-      warning("The optimizer failed to find an optimal solution in the time alotted. The returned solution may not be optimal.", call. = FALSE)
+      .wrn("the optimizer failed to find an optimal solution in the time alotted. The returned solution may not be optimal")
     }
     else if (names(out$status) != "TM_OPTIMAL_SOLUTION_FOUND") {
-      stop("The optimizer failed to find an optimal solution in the time alotted. The optimization problem may be infeasible. Try increasing the value of 'tols'.\nSee ?method_cardinality for additional details.", call. = FALSE)
+      .err("the optimizer failed to find an optimal solution in the time alotted. The optimization problem may be infeasible. Try increasing the value of 'tols'.\nSee `?method_cardinality` for additional details")
     }
   }
   else if (solver == "gurobi") {
     if (out$status %in% c("TIME_LIMIT", "SUBOPTIMAL") && !all(out$x == 0)) {
-      warning("The optimizer failed to find an optimal solution in the time alotted. The returned solution may not be optimal.\nSee ?method_cardinality for additional details.", call. = FALSE)
+      .wrn("the optimizer failed to find an optimal solution in the time alotted. The returned solution may not be optimal.\nSee `?method_cardinality` for additional details")
     }
     else if (out$status %in% c("INFEASIBLE", "INF_OR_UNBD", "NUMERIC") || all(out$x == 0)) {
-      stop("The optimization problem may be infeasible. Try increasing the value of 'tols'.\nSee ?method_cardinality for additional details.", call. = FALSE)
+      .err("The optimization problem may be infeasible. Try increasing the value of `tols`.\nSee `?method_cardinality` for additional details")
     }
   }
 }

@@ -21,8 +21,8 @@ subclass_scoot <- function(sub, treat, x, min.n = 1) {
                   original.order)
 
   if (any(table(treat) < nsub * min.n)) {
-    stop(sprintf("Not enough units to fit treated and control %s in each subclass.",
-                 ngettext(min.n, "unit", "units")), call. = FALSE)
+    .err(sprintf("not enough units to fit %s treated and control %s in each subclass",
+                 min.n, ngettext(min.n, "unit", "units")))
   }
 
   for (t in unique.treat) {
@@ -80,25 +80,7 @@ subclass_scoot <- function(sub, treat, x, min.n = 1) {
     sub <- sub[names(sub)]
   }
 
-  return(sub)
-}
-
-#Function to check if package is installed. From WeightIt.
-check.package <- function(package.name, alternative = FALSE) {
-  packages.not.installed <- package.name[!vapply(package.name, requireNamespace, logical(1L),
-                                                 quietly = TRUE)]
-  if (length(packages.not.installed) > 0) {
-    if (alternative) return(FALSE)
-    else {
-      plural <- length(packages.not.installed) > 1
-      stop(paste0("Package", if (plural) "s " else " ",
-                  word_list(packages.not.installed, quotes = 1, is.are = TRUE),
-                  " needed for this function to work. Please install ",
-                  if (plural) "them" else "it","."),
-           call. = FALSE)
-    }
-  }
-  else return(invisible(TRUE))
+  sub
 }
 
 #Create info component of matchit object
@@ -223,13 +205,13 @@ word_list <- function(word.list = NULL, and.or = c("and", "or"), is.are = FALSE,
       attr(out, "plural") <- FALSE
     }
     else {
-      and.or <- match_arg(and.or)
+      and.or <- match_arg(and.or, c("and", "or"))
       if (L == 2) {
-        out <- paste(word.list, collapse = paste0(" ", and.or," "))
+        out <- paste(word.list, collapse = paste0(" ", and.or, " "))
       }
       else {
-        out <- paste(paste(word.list[seq_len(L-1)], collapse = ", "),
-                     word.list[L], sep = paste0(", ", and.or," "))
+        out <- paste(paste(word.list[seq_len(L - 1)], collapse = ", "),
+                     word.list[L], sep = paste0(", ", and.or, " "))
 
       }
       if (is.are) out <- paste(out, "are")
@@ -240,22 +222,32 @@ word_list <- function(word.list = NULL, and.or = c("and", "or"), is.are = FALSE,
   return(out)
 }
 
-#Add quotation marks around a string.
+#Add quotes to a string
 add_quotes <- function(x, quotes = 2L) {
-  if (!isFALSE(quotes)) {
-    if (isTRUE(quotes) || as.integer(quotes) == 2L) x <- sprintf('"%s"', x)
-    else if (as.integer(quotes) == 1L) x <- sprintf("'%s'", x)
-    else stop("'quotes' must be boolean, 1, or 2.")
+  if (isFALSE(quotes)) return(x)
+
+  if (isTRUE(quotes)) quotes <- 2
+
+  if (chk::vld_string(quotes)) x <- paste0(quotes, x, quotes)
+  else if (chk::vld_whole_number(quotes)) {
+    if (as.integer(quotes) == 0) return(x)
+    else if (as.integer(quotes) == 1) x <- paste0("\'", x, "\'")
+    else if (as.integer(quotes) == 2) x <- paste0("\"", x, "\"")
+    else stop("`quotes` must be boolean, 1, 2, or a string.")
   }
+  else {
+    stop("`quotes` must be boolean, 1, 2, or a string.")
+  }
+
   x
 }
 
-#More informative and cleaner version of base::match.arg. From WeightIt.
+#More informative and cleaner version of base::match.arg(). Uses chk.
 match_arg <- function(arg, choices, several.ok = FALSE) {
   #Replaces match.arg() but gives cleaner error message and processing
   #of arg.
   if (missing(arg))
-    stop("No argument was supplied to match_arg.", call. = FALSE)
+    stop("No argument was supplied to match_arg.")
   arg.name <- deparse1(substitute(arg), width.cutoff = 500L)
 
   if (missing(choices)) {
@@ -264,28 +256,23 @@ match_arg <- function(arg, choices, several.ok = FALSE) {
                     envir = sys.frame(sysP))
   }
 
-  if (is.null(arg))
-    return(choices[1L])
-  else if (!is.character(arg))
-    stop(sprintf("The argument to '%s' must be NULL or a character vector", arg.name), call. = FALSE)
-  if (!several.ok) {
-    if (identical(arg, choices))
-      return(arg[1L])
-    if (length(arg) > 1L)
-      stop(sprintf("The argument to '%s' must be of length 1", arg.name), call. = FALSE)
+  if (length(arg) == 0) return(choices[1L])
+
+  if (several.ok) {
+    chk::chk_character(arg, add_quotes(arg.name, "`"))
   }
-  else if (length(arg) == 0)
-    stop(sprintf("The argument to '%s' must be of length >= 1", arg.name), call. = FALSE)
+  else {
+    chk::chk_string(arg, add_quotes(arg.name, "`"))
+    if (identical(arg, choices)) return(arg[1L])
+  }
 
   i <- pmatch(arg, choices, nomatch = 0L, duplicates.ok = TRUE)
   if (all(i == 0L))
-    stop(sprintf("The argument to '%s' should be %s %s.",
+    .err(sprintf("the argument to `%s` should be %s%s.",
                 arg.name, ngettext(length(choices), "", if (several.ok) "at least one of " else "one of "),
-                word_list(choices, and.or = "or", quotes = 2)),
-         call. = FALSE)
+                word_list(choices, and.or = "or", quotes = 2)))
   i <- i[i > 0L]
-  if (!several.ok && length(i) > 1)
-    stop("There is more than one match in 'match_arg'")
+
   choices[i]
 }
 
@@ -294,7 +281,7 @@ match_arg <- function(arg, choices, several.ok = FALSE) {
 binarize <- function(variable, zero = NULL, one = NULL) {
   var.name <- deparse1(substitute(variable))
   if (length(unique(variable)) > 2) {
-    stop(sprintf("Cannot binarize %s: more than two levels.", var.name), call. = FALSE)
+    stop(sprintf("Cannot binarize %s: more than two levels.", var.name))
   }
   if (is.character(variable) || is.factor(variable)) {
     variable <- factor(variable, nmax = 2)
@@ -320,12 +307,12 @@ binarize <- function(variable, zero = NULL, one = NULL) {
     }
     else {
       if (one %in% unique.vals) return(setNames(as.integer(variable == one), names(variable)))
-      else stop("The argument to 'one' is not the name of a level of variable.", call. = FALSE)
+      else stop("The argument to 'one' is not the name of a level of variable.")
     }
   }
   else {
     if (zero %in% unique.vals) return(setNames(as.integer(variable != zero), names(variable)))
-    else stop("The argument to 'zero' is not the name of a level of variable.", call. = FALSE)
+    else stop("The argument to 'zero' is not the name of a level of variable.")
   }
 }
 
@@ -365,7 +352,7 @@ exactify <- function(X, nam = NULL, sep = "|", include_vars = FALSE) {
 can_str2num <- function(x) {
   nas <- is.na(x)
   suppressWarnings(x_num <- as.numeric(as.character(x[!nas])))
-  return(!anyNA(x_num))
+ !anyNA(x_num)
 }
 
 #Cleanly coerces a character vector to numeric; best to use after can_str2num()
@@ -373,7 +360,7 @@ str2num <- function(x) {
   nas <- is.na(x)
   suppressWarnings(x_num <- as.numeric(as.character(x)))
   is.na(x_num)[nas] <- TRUE
-  return(x_num)
+  x_num
 }
 
 #Capitalize first letter of string
@@ -443,9 +430,7 @@ round_df_char <- function(df, digits, pad = "0", na_vals = "") {
   if (length(rn) > 0) rownames(df) <- rn
   if (length(cn) > 0) names(df) <- cn
 
-  df <- as.matrix(df)
-
-  return(df)
+  as.matrix(df)
 }
 
 #Generalized inverse; port of MASS::ginv()
@@ -453,7 +438,7 @@ generalized_inverse <- function(sigma) {
   sigmasvd <- svd(sigma)
   pos <- sigmasvd$d > max(1e-8 * sigmasvd$d[1L], 0)
   sigma_inv <- sigmasvd$v[, pos, drop = FALSE] %*% (sigmasvd$d[pos]^-1 * t(sigmasvd$u[, pos, drop = FALSE]))
-  return(sigma_inv)
+  sigma_inv
 }
 
 #Get covariates (RHS) vars from formula
@@ -481,7 +466,7 @@ get.covs.matrix <- function(formula = NULL, data = NULL) {
   X <- X[,-1,drop=FALSE]
   attr(X, "assign") <- assign
 
-  return(X)
+  X
 }
 
 #Extracts and names the "assign" attribute from get.covs.matrix()
@@ -519,7 +504,7 @@ mm2subclass <- function(mm, treat) {
   subclass <- setNames(factor(subclass, nmax = length(ind1)), lab)
   levels(subclass) <- seq_len(nlevels(subclass))
 
-  return(subclass)
+  subclass
 }
 
 #(Weighted) variance that uses special formula for binary variables
@@ -531,12 +516,11 @@ wvar <- function(x, bin.var = NULL, w = NULL) {
   mx <- sum(w * x) #weighted mean
 
   if (bin.var) {
-    mx*(1-mx)
+    return(mx*(1-mx))
   }
-  else {
-    #Reliability weights variance; same as cov.wt()
-    sum(w * (x - mx)^2)/(1 - sum(w^2))
-  }
+
+  #Reliability weights variance; same as cov.wt()
+  sum(w * (x - mx)^2)/(1 - sum(w^2))
 }
 
 #Weighted mean faster than weighted.mean()
@@ -549,15 +533,15 @@ wm <- function(x, w = NULL, na.rm = TRUE) {
     }
     return(sum(x)/length(x))
   }
-  else {
-    if (anyNA(x) || anyNA(w)) {
-      if (!na.rm) return(NA_real_)
-      nas <- which(is.na(x) | is.na(w))
-      x <- x[-nas]
-      w <- w[-nas]
-    }
-    return(sum(x*w)/sum(w))
+
+  if (anyNA(x) || anyNA(w)) {
+    if (!na.rm) return(NA_real_)
+    nas <- which(is.na(x) | is.na(w))
+    x <- x[-nas]
+    w <- w[-nas]
   }
+
+  sum(x*w)/sum(w)
 }
 
 #Pooled within-group (weighted) covariance by group-mean centering covariates. Used
@@ -565,6 +549,7 @@ wm <- function(x, w = NULL, na.rm = TRUE) {
 pooled_cov <- function(X, t, w = NULL) {
   unique_t <- unique(t)
   if (is.null(dim(X))) X <- matrix(X, nrow = length(X))
+
   if (is.null(w)) {
     n <- nrow(X)
     for (i in unique_t) {
@@ -573,18 +558,16 @@ pooled_cov <- function(X, t, w = NULL) {
         X[in_t, j] <- X[in_t, j] - mean(X[in_t, j])
       }
     }
-    pooled_cov <- cov(X)*(n-1)/(n-length(unique_t))
+    return(cov(X)*(n-1)/(n-length(unique_t)))
   }
-  else {
-    for (i in unique_t) {
-      in_t <- which(t == i)
-      for (j in seq_len(ncol(X))) {
-        X[in_t, j] <- X[in_t, j] - wm(X[in_t, j], w[in_t])
-      }
+
+  for (i in unique_t) {
+    in_t <- which(t == i)
+    for (j in seq_len(ncol(X))) {
+      X[in_t, j] <- X[in_t, j] - wm(X[in_t, j], w[in_t])
     }
-    pooled_cov <- cov.wt(X, w)$cov
   }
-  return(pooled_cov)
+  cov.wt(X, w)$cov
 }
 
 pooled_sd <- function(X, t, w = NULL, bin.var = NULL, contribution = "proportional") {
@@ -640,13 +623,14 @@ pooled_sd <- function(X, t, w = NULL, bin.var = NULL, contribution = "proportion
           for (i in unique_t) {
             x[t==i] <- x[t==i] - wm(x[t==i], w[t==i])
           }
-          w_ <- w/sum(w)
+          w_ <- .make_sum_to_1(w)
           return(sum(w_ * x^2)/(1 - sum(w_^2)))
         }
       }
     }, numeric(1L))
   }
-  return(sqrt(pooled_var))
+
+  sqrt(pooled_var)
 }
 
 #Effective sample size
@@ -671,7 +655,7 @@ nn <- function(treat, weights, discarded = NULL, s.weights = NULL) {
   n["Unmatched",] <-     c(sum(treat==0 & weights==0 & !discarded), sum(treat==1 & weights==0 & !discarded))
   n["Discarded",] <-     c(sum(treat==0 & discarded),               sum(treat==1 & discarded))
 
-  return(n)
+  n
 }
 
 #Compute subclass sample sizes
@@ -695,7 +679,7 @@ qn <- function(treat, subclass, discarded = NULL) {
   qn <- cbind(qn, rowSums(qn))
   colnames(qn)[ncol(qn)] <- "All"
 
-  return(qn)
+  qn
 }
 
 #Faster diff()
@@ -703,7 +687,114 @@ diff1 <- function(x) {
   x[-1] - x[-length(x)]
 }
 
-#Check if is a whole number
-is_whole_number <- function(x) {
-  abs(x - round(x)) < .Machine$double.eps
+#cumsum() for probabilities to ensure they are between 0 and 1
+.cumsum_prob <- function(x) {
+  s <- cumsum(x)
+  s / s[length(s)]
+}
+
+#Make vector sum to 1, optionally by group
+.make_sum_to_1 <- function(x, by = NULL) {
+  if (is.null(by)) {
+    return(x / sum(x))
+  }
+
+  for (i in unique(by)) {
+    in_i <- which(by == i)
+    x[in_i] <- x[in_i] / sum(x[in_i])
+  }
+
+  x
+}
+
+#Make vector sum to n (average of 1), optionally by group
+.make_sum_to_n <- function(x, by = NULL) {
+  if (is.null(by)) {
+    return(length(x) * x / sum(x))
+  }
+
+  for (i in unique(by)) {
+    in_i <- which(by == i)
+    x[in_i] <- length(in_i) * x[in_i] / sum(x[in_i])
+  }
+
+  x
+}
+
+#Functions for error handling; based on chk and rlang
+pkg_caller_call <- function(start = 1) {
+  package.funs <- c(getNamespaceExports(utils::packageName()),
+                    .getNamespaceInfo(asNamespace(utils::packageName()), "S3methods")[, 3])
+  k <- start #skip checking pkg_caller_call()
+  e_max <- start
+  while (!is.null(e <- rlang::caller_call(k))) {
+    if (!is.null(n <- rlang::call_name(e)) &&
+        n %in% package.funs) e_max <- k
+    k <- k + 1
+  }
+  rlang::caller_call(e_max)
+}
+
+.err <- function(...) {
+  chk::err(..., call = pkg_caller_call(start = 2))
+}
+.wrn <- function(...) {
+  chk::wrn(...)
+}
+.msg <- function(...) {
+  chk::msg(...)
+}
+
+#De-bugged version of chk::chk_null_or()
+.chk_null_or <- function(x, chk, ..., x_name = NULL) {
+  if (is.null(x_name)) {
+    x_name <- deparse1(substitute(x))
+  }
+
+  x_name <- add_quotes(x_name, "`")
+
+  if (is.null(x)) {
+    return(invisible(x))
+  }
+
+  tryCatch(chk(x, ..., x_name = x_name),
+           error = function(e) {
+             msg <- sub("[.]$", " or `NULL`.",
+                        conditionMessage(e))
+             chk::err(msg, .subclass = "chk_error")
+           })
+}
+
+.chk_formula <- function(x, sides = NULL, x_name = NULL) {
+  if (is.null(sides)) {
+    if (rlang::is_formula(x)) {
+      return(invisible(x))
+    }
+    if (is.null(x_name)) {
+      x_name <- chk::deparse_backtick_chk(substitute(x))
+    }
+    chk::abort_chk(x_name, " must be a formula",
+                   x = x)
+  }
+  else if (sides == 1) {
+    if (rlang::is_formula(x, lhs = FALSE)) {
+      return(invisible(x))
+    }
+    if (is.null(x_name)) {
+      x_name <- chk::deparse_backtick_chk(substitute(x))
+    }
+    chk::abort_chk(x_name, " must be a formula with no left-hand side",
+                   x = x)
+  }
+  else if (sides == 2) {
+    if (rlang::is_formula(x, lhs = TRUE)) {
+      return(invisible(x))
+    }
+    if (is.null(x_name)) {
+      x_name <- chk::deparse_backtick_chk(substitute(x))
+    }
+    chk::abort_chk(x_name, " must be a formula with a left-hand side",
+                   x = x)
+  }
+  else stop("`sides` must be NULL, 1, or 2")
 }

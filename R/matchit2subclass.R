@@ -170,31 +170,24 @@ matchit2subclass <- function(treat, distance, discarded,
 
   #Checks
   if (is.null(subclass)) subclass <- 6
-  else if (!is.numeric(subclass) || !is.null(dim(subclass))) {
-    stop("`subclass` must be a numeric value.", call. = FALSE)
-  }
-  else if (length(subclass) == 1) {
-    if (round(subclass) <= 1) {
-      stop("`subclass` must be greater than 1.",call.=FALSE)
-    }
+  chk::chk_numeric(subclass)
+
+  if (length(subclass) == 1) {
+    chk::chk_gt(subclass, 1)
   }
   else if (!all(subclass <= 1 & subclass >= 0)) {
-    stop("When specifying `subclass` as a vector of quantiles, all values must be between 0 and 1.",
-         call. = FALSE)
+    .err("When specifying `subclass` as a vector of quantiles, all values must be between 0 and 1")
   }
 
   if (!is.null(sub.by)) {
-    stop("`sub.by` is defunct and has been replaced with `estimand`.", call. = FALSE)
-  }
-  else {
-    estimand <- toupper(estimand)
-    estimand <- match_arg(estimand, c("ATT", "ATC", "ATE"))
+    .err("`sub.by` is defunct and has been replaced with `estimand`")
   }
 
+  estimand <- toupper(estimand)
+  estimand <- match_arg(estimand, c("ATT", "ATC", "ATE"))
+
   if (is.null(min.n)) min.n <- 1
-  else if (!is.numeric(min.n) || length(min.n) != 1) {
-    stop("`min.n` must be a single number.", call. = FALSE)
-  }
+  chk::chk_whole_number(min.n)
 
   n.obs <- length(treat)
 
@@ -219,7 +212,7 @@ matchit2subclass <- function(treat, distance, discarded,
   psclass[!discarded] <- as.integer(findInterval(distance[!discarded], q, all.inside = TRUE))
 
   if (length(unique(na.omit(psclass))) != subclass){
-    warning("Due to discreteness in the distance measure, fewer subclasses were generated than were requested.", call.=FALSE)
+    .wrn("Due to discreteness in the distance measure, fewer subclasses were generated than were requested")
   }
 
   if (min.n == 0) {
@@ -245,5 +238,5 @@ matchit2subclass <- function(treat, distance, discarded,
   if (verbose) cat("Done.\n")
 
   class(res) <- c("matchit.subclass", "matchit")
-  return(res)
+  res
 }

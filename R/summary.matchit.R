@@ -230,6 +230,12 @@ summary.matchit <- function(object,
   matched <- !is.null(object$info$method)
   un <- un || !matched
 
+  chk::chk_flag(interactions)
+  chk::chk_flag(standardize)
+  chk::chk_flag(pair.dist)
+  chk::chk_flag(un)
+  chk::chk_flag(improvement)
+
   if (standardize) {
     s.d.denom <- switch(object$estimand,
                         "ATT" = "treated",
@@ -295,7 +301,7 @@ summary.matchit <- function(object,
             int.names[k] <- paste0(nam[i], "\u00B2")
           }
           else {
-            int.names[k] <- paste(nam[i], nam[j], sep=" * ")
+            int.names[k] <- paste(nam[i], nam[j], sep = " * ")
           }
         }
         k <- k + 1
@@ -366,8 +372,10 @@ summary.matchit <- function(object,
   ## output
   res <- list(call = object$call, nn = nn, sum.all = if (un) sum.all,
               sum.matched = if (matched) sum.matched, reduction = reduction)
+
   class(res) <- "summary.matchit"
-  return(res)
+
+  res
 }
 
 #' @exportS3Method summary matchit.subclass
@@ -397,6 +405,12 @@ summary.matchit.subclass <- function(object,
   kk <- ncol(X)
   subclasses <- levels(subclass)
 
+  chk::chk_flag(interactions)
+  chk::chk_flag(standardize)
+  chk::chk_flag(pair.dist)
+  chk::chk_flag(un)
+  chk::chk_flag(improvement)
+
   if (standardize) {
     s.d.denom <- switch(object$estimand,
                         "ATT" = "treated",
@@ -408,8 +422,7 @@ summary.matchit.subclass <- function(object,
   if (isTRUE(which.subclass)) which.subclass <- subclasses
   else if (isFALSE(which.subclass)) which.subclass <- NULL
   else if (!is.atomic(which.subclass) || !all(which.subclass %in% seq_along(subclasses))) {
-    stop("'subclass' should be TRUE, FALSE, or a vector of subclass indices for which subclass balance is to be displayed.",
-         call. = FALSE)
+    .err("`subclass` should be `TRUE`, `FALSE`, or a vector of subclass indices for which subclass balance is to be displayed")
   }
   else which.subclass <- subclasses[which.subclass]
 
@@ -573,26 +586,14 @@ summary.matchit.subclass <- function(object,
   qn <- qn(treat, subclass, object$discarded)
   nn <- nn(treat, weights, object$discarded, s.weights)
 
-  # if (subs) {
-  #   small.subclass.control <- which.subclass[qn["Control", as.character(which.subclass)] <= 1]
-  #   if (length(small.subclass.control) > 0) {
-  #     if (length(small.subclass.control) == 1) warning(paste0("Not enough control units in subclass ", small.subclass.control, "."), call.= FALSE)
-  #     else warning(paste0("Not enough control units in subclasses ", word_list(small.subclass.control), "."), call. = FALSE)
-  #   }
-  #
-  #   small.subclass.treated <- which.subclass[qn["Treated", as.character(which.subclass)] <= 1]
-  #   if (length(small.subclass.treated) > 0) {
-  #     if (length(small.subclass.treated) == 1) warning(paste0("Not enough treated units in subclass ", small.subclass.treated, "."), call.= FALSE)
-  #     else warning(paste0("Not enough treated units in subclasses ", word_list(small.subclass.treated), "."), call. = FALSE)
-  #   }
-  # }
-
   ## output
   res <- list(call = object$call, sum.all = sum.all, sum.across = sum.matched,
               sum.subclass = sum.subclass, reduction = reduction,
               qn = qn, nn = nn)
+
   class(res) <- c("summary.matchit.subclass", "summary.matchit")
-  return(res)
+
+  res
 }
 
 #' @exportS3Method print summary.matchit
@@ -729,11 +730,11 @@ print.summary.matchit.subclass <- function(x, digits = max(3, getOption("digits"
           addlvariables <- data[addlvariables]
         }
         else {
-          stop("All variables in 'addlvariables' must be in 'data'.", call. = FALSE)
+          .err("All variables in `addlvariables` must be in `data`")
         }
       }
       else {
-        stop("If 'addlvariables' is specified as a string, a data frame argument must be supplied to 'data'.", call. = FALSE)
+        .err("If `addlvariables` is specified as a string, a data frame argument must be supplied to `data`")
       }
     }
     else if (inherits(addlvariables, "formula")) {
@@ -747,7 +748,7 @@ print.summary.matchit.subclass <- function(x, digits = max(3, getOption("digits"
       # addlvariables <- get.covs.matrix(addlvariables, data = data)
     }
     else if (!is.matrix(addlvariables) && !is.data.frame(addlvariables)) {
-      stop("The argument to 'addlvariables' must be in one of the accepted forms. See ?summary.matchit for details.", call. = FALSE)
+      .err("The argument to `addlvariables` must be in one of the accepted forms. See `?summary.matchit` for details")
     }
 
 
@@ -758,12 +759,10 @@ print.summary.matchit.subclass <- function(x, digits = max(3, getOption("digits"
 
     if (nrow(addlvariables) != length(object$treat)) {
       if (is.null(data) || data.fram.matchit) {
-        stop("Variables specified in 'addlvariables' must have the same number of units as are present in the original call to matchit().",
-             call. = FALSE)
+        .err("Variables specified in `addlvariables` must have the same number of units as are present in the original call to `matchit()`")
       }
       else {
-        stop("'data' must have the same number of units as are present in the original call to matchit().",
-             call. = FALSE)
+        .err("`data` must have the same number of units as are present in the original call to `matchit()`")
       }
     }
 
@@ -774,8 +773,8 @@ print.summary.matchit.subclass <- function(x, digits = max(3, getOption("digits"
                                                                           (is.numeric(addlvariables[[j]]) &&
                                                                              any(!is.finite(addlvariables[[j]]))),
                                                                         logical(1L))]
-        stop(paste0("Missing and non-finite values are not allowed in addlvariables. Variables with missingness or non-finite values:\n\t",
-                    paste(covariates.with.missingness, collapse = ", ")), call. = FALSE)
+        .err(paste0("Missing and non-finite values are not allowed in `addlvariables`. Variables with missingness or non-finite values:\n\t",
+                    paste(covariates.with.missingness, collapse = ", ")), tidy = FALSE)
       }
       if (is.character(addlvariables[[i]])) addlvariables[[i]] <- factor(addlvariables[[i]])
     }

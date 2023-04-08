@@ -304,12 +304,12 @@ distance2glm <- function(formula, data = NULL, link = "logit", ...) {
   if (linear) pred <- predict(res, type = "link")
   else pred <- predict(res, type = "response")
 
-  return(list(model = res, distance = pred))
+  list(model = res, distance = pred)
 }
 
 #distance2gam-----------------
 distance2gam <- function(formula, data = NULL, link = "logit", ...) {
-  check.package("mgcv")
+  rlang::check_installed("mgcv")
 
   linear <- !is.null(link) && startsWith(as.character(link), "linear")
   if (linear) link <- sub("linear.", "", as.character(link), fixed = TRUE)
@@ -325,12 +325,12 @@ distance2gam <- function(formula, data = NULL, link = "logit", ...) {
   if (linear) pred <- predict(res, type = "link")
   else pred <- predict(res, type = "response")
 
-  return(list(model = res, distance = as.numeric(pred)))
+  list(model = res, distance = as.numeric(pred))
 }
 
 #distance2rpart-----------------
 distance2rpart <- function(formula, data = NULL, link = NULL, ...) {
-  check.package("rpart")
+  rlang::check_installed("rpart")
   A <- list(...)
   A[!names(A) %in% c(names(formals(rpart::rpart)), names(formals(rpart::rpart.control)))] <- NULL
   A$formula <- formula
@@ -338,24 +338,24 @@ distance2rpart <- function(formula, data = NULL, link = NULL, ...) {
   A$method <- "class"
 
   res <- do.call(rpart::rpart, A)
-  return(list(model = res, distance = predict(res, type = "prob")[,"1"]))
+  list(model = res, distance = predict(res, type = "prob")[,"1"])
 }
 
 #distance2nnet-----------------
 distance2nnet <- function(formula, data = NULL, link = NULL, ...) {
-  check.package("nnet")
+  rlang::check_installed("nnet")
 
   A <- list(...)
   weights <- A$weights
   A$weights <- NULL
 
   res <- do.call(nnet::nnet, c(list(formula, data, weights = weights, entropy = TRUE), A), quote = TRUE)
-  return(list(model = res, distance = drop(fitted(res))))
+  list(model = res, distance = drop(fitted(res)))
 }
 
 #distance2cbps-----------------
 distance2cbps <- function(formula, data = NULL, link = NULL, ...) {
-  check.package("CBPS")
+  rlang::check_installed("CBPS")
 
   linear <- !is.null(link) && startsWith(as.character(link), "linear")
 
@@ -387,12 +387,12 @@ distance2cbps <- function(formula, data = NULL, link = NULL, ...) {
   pred <- fitted(res)
   if (linear) pred <- qlogis(pred)
 
-  return(list(model = res, distance = pred))
+  list(model = res, distance = pred)
 }
 
 #distance2bart----------------
 distance2bart <- function(formula, data = NULL, link = NULL, ...) {
-  check.package("dbarts")
+  rlang::check_installed("dbarts")
 
   linear <- !is.null(link) && startsWith(as.character(link), "linear")
 
@@ -406,11 +406,11 @@ distance2bart <- function(formula, data = NULL, link = NULL, ...) {
   if (linear) pred <- fitted(res, type = "link")
   else pred <- fitted(res, type = "response")
 
-  return(list(model = res, distance = pred))
+  list(model = res, distance = pred)
 }
 
 # distance2bart <- function(formula, data, link = NULL, ...) {
-#   check.package("BART")
+#   rlang::check_installed("BART")
 #
 #   if (!is.null(link) && startsWith(as.character(link), "linear")) {
 #     linear <- TRUE
@@ -453,17 +453,18 @@ distance2bart <- function(formula, data = NULL, link = NULL, ...) {
 
 #distance2randomforest-----------------
 distance2randomforest <- function(formula, data = NULL, link = NULL, ...) {
-  check.package("randomForest")
+  rlang::check_installed("randomForest")
   newdata <- get_all_vars(formula, data)
   treatvar <- as.character(formula[[2]])
   newdata[[treatvar]] <- factor(newdata[[treatvar]], levels = c("0", "1"))
   res <- randomForest::randomForest(formula, data = newdata, ...)
-  return(list(model = res, distance = predict(res, type = "prob")[,"1"]))
+
+ list(model = res, distance = predict(res, type = "prob")[,"1"])
 }
 
 #distance2glmnet--------------
 distance2elasticnet <- function(formula, data = NULL, link = NULL, ...) {
-  check.package("glmnet")
+  rlang::check_installed("glmnet")
 
   linear <- !is.null(link) && startsWith(as.character(link), "linear")
   if (linear) link <- sub("linear.", "", as.character(link), fixed = TRUE)
@@ -491,7 +492,7 @@ distance2elasticnet <- function(formula, data = NULL, link = NULL, ...) {
   pred <- drop(predict(res, newx = A$x, s = s,
                   type = if (linear) "link" else "response"))
 
-  return(list(model = res, distance = pred))
+  list(model = res, distance = pred)
 }
 distance2lasso <- function(formula, data = NULL, link = NULL, ...) {
   A <- list(...)
@@ -508,7 +509,7 @@ distance2ridge <- function(formula, data = NULL, link = NULL, ...) {
 
 #distance2gbm--------------
 distance2gbm <- function(formula, data = NULL, link = NULL, ...) {
-  check.package("gbm")
+  rlang::check_installed("gbm")
 
   linear <- !is.null(link) && startsWith(as.character(link), "linear")
 
@@ -529,15 +530,14 @@ distance2gbm <- function(formula, data = NULL, link = NULL, ...) {
   if (is.null(A[["keep.data"]])) A[["keep.data"]] <- FALSE
 
   if (A[["cv.folds"]] <= 1 && A[["bag.fraction"]] == 1) {
-    stop("Either `bag.fraction` must be less than 1 or `cv.folds` must be greater than 1 when using `distance = \"gbm\"`.",
-         call. = FALSE)
+    .err('either `bag.fraction` must be less than 1 or `cv.folds` must be greater than 1 when using `distance = "gbm"`')
   }
   if (is.null(method)) {
     if (A[["bag.fraction"]] < 1) method <- "OOB"
     else method <- "cv"
   }
   else if (!tolower(method) %in% c("oob", "cv")) {
-    stop("`distance.options$method` should be one of \"OOB\" or \"cv\".", call. = FALSE)
+    .err('`distance.options$method` should be one of "OOB" or "cv"')
   }
 
   res <- do.call(gbm::gbm, A)
@@ -547,5 +547,5 @@ distance2gbm <- function(formula, data = NULL, link = NULL, ...) {
   pred <- drop(predict(res, newdata = data, n.trees = best.tree,
                        type = if (linear) "link" else "response"))
 
-  return(list(model = res, distance = pred))
+ list(model = res, distance = pred)
 }

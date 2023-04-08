@@ -24,30 +24,30 @@ weights.subclass <- function(psclass, treat, estimand = "ATT") {
     weights[i0] <- (treated_by_sub/control_by_sub)[psclass[i0]]
 
     #Weights average 1
-    weights[i0] <- weights[i0]*sum(i0)/sum(weights[i0])
+    weights[i0] <- .make_sum_to_n(weights[i0])
   }
   else if (estimand == "ATC") {
     weights[i1] <- (control_by_sub/treated_by_sub)[psclass[i1]]
     weights[i0] <- 1
 
     #Weights average 1
-    weights[i1] <- weights[i1]*sum(i1)/sum(weights[i1])
+    weights[i1] <- .make_sum_to_n(weights[i1])
   }
   else if (estimand == "ATE") {
     weights[i1] <- (total_by_sub/treated_by_sub)[psclass[i1]]
     weights[i0] <- (total_by_sub/control_by_sub)[psclass[i0]]
 
     #Weights average 1
-    weights[i1] <- weights[i1]*sum(i1)/sum(weights[i1])
-    weights[i0] <- weights[i0]*sum(i0)/sum(weights[i0])
+    weights[i1] <- .make_sum_to_n(weights[i1])
+    weights[i0] <- .make_sum_to_n(weights[i0])
   }
 
-  if (sum(weights)==0)
-    stop("No units were matched.", call. = FALSE)
-  else if (sum(weights[treat == 1])==0)
-    stop("No treated units were matched.", call. = FALSE)
-  else if (sum(weights[treat == 0])==0)
-    stop("No control units were matched.", call. = FALSE)
+  if (sum(weights) == 0)
+    .err("No units were matched")
+  if (sum(weights[treat == 1]) == 0)
+    .err("No treated units were matched")
+  if (sum(weights[treat == 0]) == 0)
+    .err("No control units were matched")
 
-  return(weights)
+  weights
 }

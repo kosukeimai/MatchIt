@@ -176,9 +176,7 @@
 match.data <- function(object, group = "all", distance = "distance", weights = "weights", subclass = "subclass",
                        data = NULL, include.s.weights = TRUE, drop.unmatched = TRUE) {
 
-  if (!inherits(object, "matchit")) {
-    stop("'object' must be a matchit object, the output of a call to matchit().", call. = FALSE)
-  }
+  chk::chk_is(object, "matchit")
 
   if (is.null(data)) {
     env <- environment(object$formula)
@@ -189,7 +187,7 @@ match.data <- function(object, group = "all", distance = "distance", weights = "
       if (length(data) == 0 || inherits(data, "try-error") || length(dim(data)) != 2 || nrow(data) != length(object[["treat"]])) {
         data <- object[["model"]][["data"]]
         if (length(data) == 0 || nrow(data) != length(object[["treat"]])) {
-          stop("A valid dataset could not be found. Please supply an argument to 'data' containing the original dataset used in the matching.", call. = FALSE)
+          .err("a valid dataset could not be found. Please supply an argument to `data` containing the original dataset used in the matching")
         }
       }
     }
@@ -197,30 +195,28 @@ match.data <- function(object, group = "all", distance = "distance", weights = "
 
   if (!is.data.frame(data)) {
     if (is.matrix(data)) data <- as.data.frame.matrix(data)
-    else stop("'data' must be a data frame.", call. = FALSE)
+    else .err("`data` must be a data frame")
   }
   if (nrow(data) != length(object$treat)) {
-    stop("'data' must have as many rows as there were units in the original call to matchit().", call. = FALSE)
+    .err("`data` must have as many rows as there were units in the original call to `matchit()`")
   }
 
   if (!is.null(object$distance)) {
-    if (is.null(distance)) stop("The argument to 'distance' cannot be NULL.", call. = FALSE)
-    if (!is.atomic(distance) || !is.character(distance) || length(distance) != 1 || is.na(distance)) {
-      stop("The argument to 'distance' must be a string of length 1.", call. = FALSE)
-    }
+    chk::chk_not_null(distance)
+    chk::chk_string(distance)
     if (distance %in% names(data)) {
-      stop(paste0("\"", distance, "\" is already the name of a variable in the data. Please choose another name for distance using the 'distance' argument."), call. = FALSE)
+      .err(sprintf("%s is already the name of a variable in the data. Please choose another name for distance using the `distance` argument",
+                   add_quotes(distance)))
     }
     data[[distance]] <- object$distance
   }
 
   if (!is.null(object$weights)) {
-    if (is.null(weights)) stop("The argument to 'weights' cannot be NULL.", call. = FALSE)
-    if (!is.atomic(weights) || !is.character(weights) || length(weights) != 1 || is.na(weights)) {
-      stop("The argument to 'weights' must be a string of length 1.", call. = FALSE)
-    }
+    chk::chk_not_null(weights)
+    chk::chk_string(weights)
     if (weights %in% names(data)) {
-      stop(paste0("\"", weights, "\" is already the name of a variable in the data. Please choose another name for weights using the 'weights' argument."), call. = FALSE)
+      .err(sprintf("%s is already the name of a variable in the data. Please choose another name for weights using the `weights` argument",
+                   add_quotes(weights)))
     }
     data[[weights]] <- object$weights
 
@@ -230,12 +226,11 @@ match.data <- function(object, group = "all", distance = "distance", weights = "
   }
 
   if (!is.null(object$subclass)) {
-    if (is.null(subclass)) stop("The argument to 'subclass' cannot be NULL.", call. = FALSE)
-    if (!is.atomic(subclass) || !is.character(subclass) || length(subclass) != 1 || is.na(subclass)) {
-      stop("The argument to 'subclass' must be a string of length 1.", call. = FALSE)
-    }
+    chk::chk_not_null(subclass)
+    chk::chk_string(subclass)
     if (subclass %in% names(data)) {
-      stop(paste0("\"", subclass, "\" is already the name of a variable in the data. Please choose another name for subclass using the 'subclass' argument."), call. = FALSE)
+      .err(sprintf("%s is already the name of a variable in the data. Please choose another name for subclass using the `subclass` argument",
+                   add_quotes(subclass)))
     }
     data[[subclass]] <- object$subclass
   }
@@ -257,7 +252,7 @@ match.data <- function(object, group = "all", distance = "distance", weights = "
 
   class(data) <- c("matchdata", class(data))
 
-  return(data)
+  data
 }
 
 #' @export
@@ -265,12 +260,10 @@ match.data <- function(object, group = "all", distance = "distance", weights = "
 get_matches <- function(object, distance = "distance", weights = "weights", subclass = "subclass",
                         id = "id", data = NULL, include.s.weights = TRUE) {
 
-  if (!inherits(object, "matchit")) {
-    stop("'object' must be a matchit object, the output of a call to matchit().", call. = FALSE)
-  }
+  chk::chk_is(object, "matchit")
 
   if (is.null(object$match.matrix)) {
-    stop("A match.matrix component must be present in the matchit object, which does not occur with all types of matching. Use match.data() instead.", call. = FALSE)
+    .err("a match.matrix component must be present in the matchit object, which does not occur with all types of matching. Use `match.data()` instead")
   }
 
   #Get initial data using match.data; note weights and subclass will be removed,
@@ -279,13 +272,12 @@ get_matches <- function(object, distance = "distance", weights = "weights", subc
                        weights = weights, subclass = subclass, data = data,
                        include.s.weights = FALSE, drop.unmatched = TRUE)
 
-  if (is.null(id)) stop("The argument to 'id' cannot be NULL.", call. = FALSE)
-  if (!is.atomic(id) || !is.character(id) || length(id) != 1 || is.na(id)) {
-    stop("The argument to 'id' must be a string of length 1.", call. = FALSE)
-  }
+  chk::chk_not_null(id)
+  chk::chk_string(id)
 
   if (id %in% names(m.data)) {
-    stop(paste0("\"", id, "\" is already the name of a variable in the data. Please choose another name for id using the 'id' argument."), call. = FALSE)
+    .err(sprintf("%s is already the name of a variable in the data. Please choose another name for id using the `id` argument",
+                 add_quotes(id)))
   }
 
   m.data[[id]] <- names(object$treat)[object$weights > 0]
@@ -325,5 +317,5 @@ get_matches <- function(object, distance = "distance", weights = "weights", subc
 
   class(out) <- c("getmatches", class(out))
 
-  return(out)
+  out
 }

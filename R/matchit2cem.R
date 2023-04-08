@@ -259,7 +259,9 @@
 NULL
 
 matchit2cem <- function(treat, covs, estimand = "ATT", s.weights = NULL, verbose = FALSE, ...) {
-  if (length(covs) == 0) stop("Covariates must be specified in the input formula to use coarsened exact matching.", call. = FALSE)
+  if (length(covs) == 0) {
+    .err("Covariates must be specified in the input formula to use coarsened exact matching")
+  }
 
   if (verbose) cat("Coarsened exact matching...\n")
 
@@ -292,10 +294,13 @@ matchit2cem <- function(treat, covs, estimand = "ATT", s.weights = NULL, verbose
   if (verbose) cat("Done.\n")
 
   class(res) <- "matchit"
-  return(res)
+
+  res
 }
 
-cem_matchit <- function(treat, X, cutpoints = "sturges", grouping = list(), k2k = FALSE, k2k.method = "mahalanobis", mpower = 2, s.weights = NULL, estimand = "ATT") {
+cem_matchit <- function(treat, X, cutpoints = "sturges", grouping = list(), k2k = FALSE,
+                        k2k.method = "mahalanobis", mpower = 2, s.weights = NULL,
+                        estimand = "ATT") {
   #In-house implementation of cem. Basically the same except:
   #treat is a vector if treatment status, not the name of a variable
   #X is a data.frame of covariates
@@ -306,7 +311,7 @@ cem_matchit <- function(treat, X, cutpoints = "sturges", grouping = list(), k2k 
 
   if (k2k) {
     if (length(unique(treat)) > 2) {
-      stop("`k2k` cannot be `TRUE` with a multi-cateory treatment.", call. = FALSE)
+      .err("`k2k` cannot be `TRUE` with a multi-cateory treatment")
     }
     if (!is.null(k2k.method)) {
     # X.match <- scale(get.covs.matrix(data = X), center = FALSE)
@@ -328,14 +333,13 @@ cem_matchit <- function(treat, X, cutpoints = "sturges", grouping = list(), k2k 
     cutpoints <- setNames(as.list(rep(cutpoints, sum(is.numeric.cov))), names(X)[is.numeric.cov])
   }
 
-  if (is.null(names(cutpoints))) stop("`cutpoints` must be a named list of binning values with an element for each numeric variable.", call. = FALSE)
+  if (is.null(names(cutpoints))) {
+    .err("`cutpoints` must be a named list of binning values with an element for each numeric variable")
+  }
   bad.names <- setdiff(names(cutpoints), names(X))
   nb <- length(bad.names)
   if (nb > 0) {
-    warning(paste0(ngettext(nb, "The variable ", "The variables "),
-                   word_list(bad.names, quotes = 2), " named in `cutpoints` ",
-                   ngettext(nb, "is ", "are "), "not in the variables supplied to matchit() and will be ignored."),
-            immediate. = TRUE, call. = FALSE)
+    .wrn(sprintf("the variable%%s %s named in `cutpoints` %%r not in the variables supplied to `matchit()` and will be ignored", word_list(bad.names, quotes = 2, and.or = "and")), n = nb)
     cutpoints[bad.names] <- NULL
   }
 
@@ -361,12 +365,13 @@ cem_matchit <- function(treat, X, cutpoints = "sturges", grouping = list(), k2k 
     }
   }
   if (any(bad.cuts)) {
-    stop(paste0("All entries in the list supplied to `cutpoints` must be one of the following:",
+    .err(paste0("All entries in the list supplied to `cutpoints` must be one of the following:",
                 "\n\t- a string containing the name of an allowable binning method",
                 "\n\t- a single number corresponding to the number of bins",
                 "\n\t- a numeric vector containing the cut points separating bins",
-                "\nIncorrectly specified ", ngettext(sum(bad.cuts), "variable:\n\t", "variables:\n\t"),
-                paste(names(cutpoints)[bad.cuts], collapse = ", ")), call. = FALSE)
+                "\nIncorrectly specified variable%%s:\n\t"),
+                paste(names(cutpoints)[bad.cuts], collapse = ", "),
+         tidy = FALSE, n = sum(bad.cuts))
   }
 
   #Process grouping
@@ -421,7 +426,7 @@ cem_matchit <- function(treat, X, cutpoints = "sturges", grouping = list(), k2k 
   cc <- do.call("intersect", unname(split(xx, treat)))
 
   if (length(cc) == 0) {
-    stop("No units were matched. Try coarsening the variables further or decrease the number of variables to match on.", call. = FALSE)
+    .err("no units were matched. Try coarsening the variables further or decrease the number of variables to match on")
   }
 
   subclass <- setNames(match(xx, cc), names(treat))
@@ -478,5 +483,5 @@ cem_matchit <- function(treat, X, cutpoints = "sturges", grouping = list(), k2k 
 
   names(subclass) <- names(treat)
 
-  return(subclass)
+  subclass
 }
