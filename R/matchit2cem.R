@@ -128,6 +128,8 @@
 #' solution that balances covariate balance and remaining sample size is
 #' obtained. The arguments are described below.
 #'
+#' ### `grouping`
+#'
 #' The argument to `grouping` must be a list, where each component has the
 #' name of a categorical variable, the levels of which are to be combined. Each
 #' component must itself be a list; this list contains one or more vectors of
@@ -141,7 +143,9 @@
 #' omitted from the previous code). Note that if a categorical variable does
 #' not appear in `grouping`, it will not be coarsened, so exact matching
 #' will take place on it. `grouping` should not be used for numeric
-#' variables; use `cutpoints`, described below, instead.
+#' variables with more than a few values; use `cutpoints`, described below, instead.
+#'
+#' ### `cutpoints`
 #'
 #' The argument to `cutpoints` must also be a list, where each component
 #' has the name of a numeric variables that is to be binned. (As a shortcut, it
@@ -150,7 +154,7 @@
 #' separate the bins, a single number giving the number of bins, or a string
 #' corresponding to an algorithm used to compute the number of bins. Any values
 #' at a boundary will be placed into the higher bin; e.g., if the cutpoints
-#' were `(c(0, 5, 10))`, values of 5 would be placed into the same bin as
+#' were `c(0, 5, 10)`, values of 5 would be placed into the same bin as
 #' values of 6, 7, 8, or 9, and values of 10 would be placed into a different
 #' bin. Internally, values of `-Inf` and `Inf` are appended to the
 #' beginning and end of the range. When given as a single number defining the
@@ -311,14 +315,9 @@ cem_matchit <- function(treat, X, cutpoints = "sturges", grouping = list(), k2k 
 
   if (k2k) {
     if (length(unique(treat)) > 2) {
-      .err("`k2k` cannot be `TRUE` with a multi-cateory treatment")
+      .err("`k2k` cannot be `TRUE` with a multi-category treatment")
     }
     if (!is.null(k2k.method)) {
-    # X.match <- scale(get.covs.matrix(data = X), center = FALSE)
-    # k2k.method <- tolower(k2k.method)
-    # k2k.method <- match_arg(k2k.method, c("mahalanobis", "euclidean", "maximum", "manhattan", "canberra", "binary", "minkowski"))
-    # if (k2k.method == "mahalanobis") mahSigma_inv <- generalized_inverse(cov(X.match))
-
     k2k.method <- tolower(k2k.method)
     k2k.method <- match_arg(k2k.method, c(matchit_distances(), "maximum", "manhattan", "canberra", "binary", "minkowski"))
 
@@ -326,11 +325,61 @@ cem_matchit <- function(treat, X, cutpoints = "sturges", grouping = list(), k2k 
                                     method = if (k2k.method %in% matchit_distances()) k2k.method else "euclidean")
     }
   }
+
+  for (i in names(X)) {
+    if (is.ordered(X[[i]])) X[[i]] <- as.numeric(X[[i]])
+  }
   is.numeric.cov <- setNames(vapply(X, is.numeric, logical(1L)), names(X))
+
+  #Process grouping
+  if (length(grouping) > 0) {
+    if (!is.list(grouping) || is.null(names(grouping))) {
+      .err("`grouping` must be a named list of grouping values with an element for each variable whose values are to be binned")
+    }
+
+    bad.names <- setdiff(names(grouping), names(X))
+    nb <- length(bad.names)
+    if (nb > 0) {
+      .wrn(sprintf("the variable%%s %s named in `grouping` %%r not in the variables supplied to `matchit()` and will be ignored",
+                   word_list(bad.names, quotes = 2, and.or = "and")), n = nb)
+      grouping[bad.names] <- NULL
+    }
+
+    for (i in names(grouping)) {
+      X[[i]] <- as.character(X[[i]])
+    }
+
+    bag.groupings <- names(grouping)[vapply(grouping, function(g) {
+      !is.list(g) ||
+        !all(vapply(g, function(gg) is.atomic(gg) && is.vector(gg), logical(1L)))
+    }, logical(1L))]
+    nbg <- length(bag.groupings)
+    if (nbg > 0) {
+      .err(paste0("Each entry in the list supplied to `groupings` must be a list with entries containing values of the corresponding variable.",
+                  "\nIncorrectly specified variable%s:\n\t"),
+           paste(bag.groupings, collapse = ", "),
+           tidy = FALSE, n = nbg)
+    }
+
+    for (g in names(grouping)) {
+      x <- X[[g]]
+      groups <- grouping[[g]]
+
+      for (i in seq_along(groups)) {
+        groups[[i]] <- as.character(groups[[i]])
+        x[x %in% groups[[i]]] <- groups[[i]][1]
+      }
+      X[[g]] <- x
+
+      #Remove cutpoints if variable named in `grouping`
+      is.numeric.cov[g] <- FALSE
+    }
+  }
 
   #Process cutpoints
   if (!is.list(cutpoints)) {
-    cutpoints <- setNames(as.list(rep(cutpoints, sum(is.numeric.cov))), names(X)[is.numeric.cov])
+    cutpoints <- setNames(lapply(names(X)[is.numeric.cov], function(i) cutpoints), names(X)[is.numeric.cov])
+    # cutpoints <- setNames(as.list(rep(cutpoints, sum(is.numeric.cov))), names(X)[is.numeric.cov])
   }
 
   if (is.null(names(cutpoints))) {
@@ -339,8 +388,28 @@ cem_matchit <- function(treat, X, cutpoints = "sturges", grouping = list(), k2k 
   bad.names <- setdiff(names(cutpoints), names(X))
   nb <- length(bad.names)
   if (nb > 0) {
-    .wrn(sprintf("the variable%%s %s named in `cutpoints` %%r not in the variables supplied to `matchit()` and will be ignored", word_list(bad.names, quotes = 2, and.or = "and")), n = nb)
+    .wrn(sprintf("the variable%%s %s named in `cutpoints` %%r not in the variables supplied to `matchit()` and will be ignored",
+                 word_list(bad.names, quotes = 2, and.or = "and")), n = nb)
     cutpoints[bad.names] <- NULL
+  }
+
+  if (length(grouping) > 0) {
+    grouping.cutpoint.names <- intersect(names(grouping), names(cutpoints))
+    ngc <- length(grouping.cutpoint.names)
+    if (ngc > 0) {
+      .wrn(sprintf("the variable%%s %s %%r named in both `grouping` and `cutpoints`; %s entr%%y%%s in `cutpoints` will be ignored",
+                   word_list(grouping.cutpoint.names, quotes = 2, and.or = "and"),
+                   ngettext(ngc, "its", "their")), n = ngc)
+      cutpoints[grouping.cutpoint.names] <- NULL
+    }
+  }
+
+  non.numeric.in.cutpoints <- intersect(names(X)[!is.numeric.cov], names(cutpoints))
+  nnnic <- length(non.numeric.in.cutpoints)
+  if (nnnic > 0) {
+    .wrn(sprintf("the variable%%s %s named in `cutpoints` %%r not numeric and %s cutpoints will not be applied. Use `grouping` for non-numeric variables",
+                 word_list(non.numeric.in.cutpoints, quotes = 2, and.or = "and"),
+                 ngettext(nnnic, "its", "their")), n = nnnic)
   }
 
   bad.cuts <- setNames(rep(FALSE, length(cutpoints)), names(cutpoints))
@@ -349,43 +418,40 @@ cem_matchit <- function(treat, X, cutpoints = "sturges", grouping = list(), k2k 
       cutpoints[[i]] <- "sturges"
     }
     else if (length(cutpoints[[i]]) == 1) {
-      if (is.character(cutpoints[[i]])) {
-
+      if (is.na(cutpoints[[i]])) is.numeric.cov[i] <- FALSE #Will not be binned
+      else if (is.character(cutpoints[[i]])) {
         bad.cuts[i] <- !(startsWith(cutpoints[[i]], "q") && can_str2num(substring(cutpoints[[i]], 2))) &&
           is.na(pmatch(cutpoints[[i]], c("sturges", "fd", "scott")))
       }
       else if (is.numeric(cutpoints[[i]])) {
-        if      (!is.finite(cutpoints[[i]]) || cutpoints[[i]] < 0) bad.cuts[i] <- TRUE
-        if      (cutpoints[[i]] == 0) is.numeric.cov[i] <- FALSE #Will not be binned
-        else if (cutpoints[[i]] == 1) X[[i]] <- NULL #Removing from X, still in X.match
+        if (!is.finite(cutpoints[[i]]) || cutpoints[[i]] < 0) {
+          bad.cuts[i] <- TRUE
+        }
+        else if (cutpoints[[i]] == 0) {
+          is.numeric.cov[i] <- FALSE #Will not be binned
+        }
+        else if (cutpoints[[i]] == 1) {
+          X[[i]] <- NULL #Removing from X, still in X.match
+          is.numeric.cov <- is.numeric.cov[names(is.numeric.cov) != i]
+        }
+      }
+      else {
+        bad.cuts[i] <- TRUE
       }
     }
     else {
       bad.cuts[i] <- !is.numeric(cutpoints[[i]])
     }
   }
+
   if (any(bad.cuts)) {
     .err(paste0("All entries in the list supplied to `cutpoints` must be one of the following:",
                 "\n\t- a string containing the name of an allowable binning method",
                 "\n\t- a single number corresponding to the number of bins",
                 "\n\t- a numeric vector containing the cut points separating bins",
-                "\nIncorrectly specified variable%%s:\n\t"),
+                "\nIncorrectly specified variable%s:\n\t"),
                 paste(names(cutpoints)[bad.cuts], collapse = ", "),
          tidy = FALSE, n = sum(bad.cuts))
-  }
-
-  #Process grouping
-  if (!is.null(grouping) && !is.null(names(grouping))) {
-    X[names(grouping)] <- lapply(names(grouping), function(g) {
-      x <- X[[g]]
-      groups <- grouping[[g]]
-
-      for (i in seq_along(groups)) {
-        x[x %in% groups[[i]]] <- groups[[i]][1]
-      }
-      x
-    })
-    cutpoints[names(cutpoints) %in% names(grouping)] <- NULL
   }
 
   #Create bins for numeric variables
@@ -474,14 +540,12 @@ cem_matchit <- function(treat, X, cutpoints = "sturges", grouping = list(), k2k 
       }
 
       #If any unmatched units remain, give them NA subclass
-      if (any(dim(dist.mat) > 0)) subclass[unlist(dimnames(dist.mat))] <- NA_integer_
+      if (any(dim(dist.mat) > 0)) is.na(subclass)[unlist(dimnames(dist.mat))] <- TRUE
 
     }
   }
 
   subclass <- factor(subclass, nmax = extra.sub)
 
-  names(subclass) <- names(treat)
-
-  subclass
+  setNames(subclass, names(treat))
 }
