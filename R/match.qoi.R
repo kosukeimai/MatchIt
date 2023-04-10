@@ -197,7 +197,7 @@ qqsum <- function(x, t, w = NULL, standardize = FALSE) {
     #Difference between ecdf of x for each group
     w_ord_ <- w_ord
     w_ord_[t1] <- -w_ord_[t1]
-    ediff <- abs(.cumsum_prob(w_ord_))[c(diff1(x_ord) != 0, TRUE)]
+    ediff <- abs(cumsum(w_ord_))[c(diff1(x_ord) != 0, TRUE)]
   }
   else {
     #Horizontal distance of ecdf between groups
