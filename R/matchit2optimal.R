@@ -408,7 +408,7 @@ matchit2optimal <- function(treat, formula, data, distance, discarded,
       max.controls_ <- max.controls
     }
 
-    withCallingHandlers({
+    matchit_try({
       p[[e]] <- do.call(optmatch::fullmatch,
                         c(list(mo_,
                                mean.controls = ratio_,
@@ -416,14 +416,7 @@ matchit2optimal <- function(treat, formula, data, distance, discarded,
                                max.controls = max.controls_,
                                data = t_df[ex == e,, drop = FALSE]), #just to get rownames; not actually used in matching
                           A))
-    },
-    warning = function(w) {
-      .wrn(paste0("(from optmatch) ", conditionMessage(w)), tidy = FALSE)
-      invokeRestart("muffleWarning")
-    },
-    error = function(e1) {
-      .err(paste0("(from optmatch) ", conditionMessage(e1)), tidy = FALSE)
-    })
+    }, from = "optmatch")
 
     pair[names(p[[e]])[!is.na(p[[e]])]] <- paste(as.character(p[[e]][!is.na(p[[e]])]), e, sep = "|")
   }

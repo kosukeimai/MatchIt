@@ -174,7 +174,7 @@ info.to.distance <- function(info) {
 
   if (linear) dist <- paste(dist, "and linearized")
 
-  return(dist)
+  dist
 }
 
 #Function to turn a vector into a string with "," and "and" or "or" for clean messages. 'and.or'
@@ -219,7 +219,8 @@ word_list <- function(word.list = NULL, and.or = c("and", "or"), is.are = FALSE,
     }
 
   }
-  return(out)
+
+  out
 }
 
 #Add quotes to a string
@@ -516,7 +517,7 @@ wvar <- function(x, bin.var = NULL, w = NULL) {
   mx <- sum(w * x) #weighted mean
 
   if (bin.var) {
-    return(mx*(1-mx))
+    return(mx * (1 - mx))
   }
 
   #Reliability weights variance; same as cov.wt()
@@ -797,4 +798,23 @@ pkg_caller_call <- function(start = 1) {
                    x = x)
   }
   else stop("`sides` must be NULL, 1, or 2")
+}
+
+#Function to capture and print errors and warnings better
+matchit_try <- function(expr, from = NULL, dont_warn_if = NULL) {
+  tryCatch({
+    withCallingHandlers({
+     expr
+    },
+    warning = function(w) {
+      if (is.null(dont_warn_if) || !grepl(dont_warn_if, conditionMessage(w), fixed = TRUE)) {
+        if (is.null(from)) .wrn(conditionMessage(w), tidy = FALSE)
+        else .wrn(sprintf("(from %s) %s", from, conditionMessage(w)), tidy = FALSE)
+      }
+      invokeRestart("muffleWarning")
+    })},
+    error = function(e) {
+      if (is.null(from)) .err(conditionMessage(e), tidy = FALSE)
+      else .err(sprintf("(from %s) %s", from, conditionMessage(e)), tidy = FALSE)
+    })
 }

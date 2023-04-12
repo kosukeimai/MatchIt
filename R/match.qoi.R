@@ -181,7 +181,7 @@ qqsum <- function(x, t, w = NULL, standardize = FALSE) {
     t1 <- t == t[1]
     #For binary variables, just difference in means
     ediff <- abs(wm(x[t1], w[t1]) - wm(x[-t1], w[-t1]))
-    return(c(meandiff = ediff, meddiff = ediff, maxdiff = ediff))
+    return(c(meandiff = ediff, maxdiff = ediff))
   }
 
   w <- .make_sum_to_1(w, by = t)

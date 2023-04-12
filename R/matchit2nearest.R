@@ -266,7 +266,7 @@
 #'
 NULL
 
-matchit2nearest <-  function(treat, data, distance, discarded,
+matchit2nearest <- function(treat, data, distance, discarded,
                              ratio = 1, s.weights = NULL, replace = FALSE, m.order = NULL,
                              caliper = NULL, mahvars = NULL, exact = NULL,
                              formula = NULL, estimand = "ATT", verbose = FALSE,

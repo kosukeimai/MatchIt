@@ -672,7 +672,7 @@ matchit <- function(formula,
   out[lengths(out) == 0] <- NULL
 
   class(out) <- class(match.out)
-  return(out)
+  out
 }
 
 #' @export
@@ -745,5 +745,5 @@ matchit2null <- function(discarded, ...) {
   res <- list(weights = as.numeric(!discarded))
   class(res) <- "matchit"
 
-  return(res)
+  res
 }

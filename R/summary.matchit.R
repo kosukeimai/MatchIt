@@ -577,7 +577,7 @@ summary.matchit.subclass <- function(object,
         rownames(sum.sub)[1] <- "distance"
       }
 
-      return(sum.sub)
+      sum.sub
     })
     names(sum.subclass) <- paste("Subclass", which.subclass)
   }

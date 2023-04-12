@@ -166,7 +166,7 @@ matchit2quick <- function(treat, formula, data, distance, discarded,
 
   if (is.full.mahalanobis) {
     if (length(attr(terms(formula, data = data), "term.labels")) == 0) {
-      .err(sprintf("Covariates must be specified in the input formula when `distance = \"%s\"`",
+      .err(sprintf("covariates must be specified in the input formula when `distance = \"%s\"`",
                    attr(is.full.mahalanobis, "transform")))
     }
     mahvars <- formula
@@ -177,7 +177,7 @@ matchit2quick <- function(treat, formula, data, distance, discarded,
     ex <- factor(exactify(model.frame(exact, data = data),
                           sep = ", ", include_vars = TRUE)[!discarded])
     cc <- intersect(as.integer(ex)[treat_==1], as.integer(ex)[treat_==0])
-    if (length(cc) == 0) .err("No matches were found")
+    if (length(cc) == 0) .err("no matches were found")
 
   }
   else {
@@ -205,10 +205,10 @@ matchit2quick <- function(treat, formula, data, distance, discarded,
   #Process caliper
   if (!is.null(caliper)) {
     if (!is.null(mahvars)) {
-      .err("With `method = \"quick\"`, a caliper can only be used when `distance` is a propensity score or vector and `mahvars` is not specified")
+      .err("with `method = \"quick\"`, a caliper can only be used when `distance` is a propensity score or vector and `mahvars` is not specified")
     }
     if (length(caliper) > 1 || !identical(names(caliper), "")) {
-      .err("With `method = \"quick\"`, calipers cannot be placed on covariates")
+      .err("with `method = \"quick\"`, calipers cannot be placed on covariates")
     }
   }
 
@@ -220,25 +220,18 @@ matchit2quick <- function(treat, formula, data, distance, discarded,
 
     distcovs_ <- distcovs[ex == e,, drop = FALSE]
 
-    withCallingHandlers({
+    matchit_try({
       p[[e]] <- do.call(quickmatch::quickmatch,
                         c(list(distcovs_,
                                treatments = treat_[ex == e],
                                caliper = caliper),
                           A))
-    },
-    warning = function(w) {
-      .wrn(paste0("(from quickmatch) ", conditionMessage(w)), tidy = FALSE)
-      invokeRestart("muffleWarning")
-    },
-    error = function(e1) {
-      .err(paste0("(from quickmatch) ", conditionMessage(e1)), tidy = FALSE)
-    })
+    }, from = "quickmatch")
 
     pair[which(ex == e)[!is.na(p[[e]])]] <- paste(as.character(p[[e]][!is.na(p[[e]])]), e, sep = "|")
   }
 
-  if (all(is.na(pair))) .err("No matches were found")
+  if (all(is.na(pair))) .err("no matches were found")
   if (length(p) == 1) p <- p[[1]]
 
   psclass <- factor(pair)

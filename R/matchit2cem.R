@@ -379,7 +379,6 @@ cem_matchit <- function(treat, X, cutpoints = "sturges", grouping = list(), k2k 
   #Process cutpoints
   if (!is.list(cutpoints)) {
     cutpoints <- setNames(lapply(names(X)[is.numeric.cov], function(i) cutpoints), names(X)[is.numeric.cov])
-    # cutpoints <- setNames(as.list(rep(cutpoints, sum(is.numeric.cov))), names(X)[is.numeric.cov])
   }
 
   if (is.null(names(cutpoints))) {
@@ -487,15 +486,20 @@ cem_matchit <- function(treat, X, cutpoints = "sturges", grouping = list(), k2k 
     X[[i]] <- findInterval(X[[i]], breaks)
   }
 
-  #Exact match
-  xx <- exactify(X, names(treat))
-  cc <- do.call("intersect", unname(split(xx, treat)))
-
-  if (length(cc) == 0) {
-    .err("no units were matched. Try coarsening the variables further or decrease the number of variables to match on")
+  if (length(X) == 0) {
+    subclass <- setNames(rep(1, length(treat)), names(treat))
   }
+  else {
+    #Exact match
+    xx <- exactify(X, names(treat))
+    cc <- do.call("intersect", unname(split(xx, treat)))
 
-  subclass <- setNames(match(xx, cc), names(treat))
+    if (length(cc) == 0) {
+      .err("no units were matched. Try coarsening the variables further or decrease the number of variables to match on")
+    }
+
+    subclass <- setNames(match(xx, cc), names(treat))
+  }
 
   extra.sub <- max(subclass, na.rm = TRUE)
 

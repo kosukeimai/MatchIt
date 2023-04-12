@@ -358,21 +358,14 @@ matchit2full <- function(treat, formula, data, distance, discarded,
       next
     }
 
-    withCallingHandlers({
+    matchit_try({
       p[[e]] <- do.call(optmatch::fullmatch,
                         c(list(mo_,
                                min.controls = min.controls,
                                max.controls = max.controls,
                                data = t_df), #just to get rownames; not actually used in matching
                           A))
-    },
-    warning = function(w) {
-      .wrn(paste0("(from optmatch) ", conditionMessage(w)), tidy = FALSE)
-      invokeRestart("muffleWarning")
-    },
-    error = function(e1) {
-      .err(paste0("(from optmatch) ", conditionMessage(e1)), tidy = FALSE)
-    })
+    }, from = "optmatch")
 
     pair[names(p[[e]])[!is.na(p[[e]])]] <- paste(as.character(p[[e]][!is.na(p[[e]])]), e, sep = "|")
   }

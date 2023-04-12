@@ -404,7 +404,7 @@ matchit2genetic <- function(treat, data, distance, discarded,
   }
 
   if (use.genetic) {
-    withCallingHandlers({
+    matchit_try({
       g.out <- do.call(Matching::GenMatch,
                        c(list(Tr = treat_, X = X, BalanceMatrix = covs_to_balance,
                               M = ratio, exact = exact.log, caliper = cal,
@@ -412,16 +412,8 @@ matchit2genetic <- function(treat, data, distance, discarded,
                               CommonSupport = FALSE, verbose = verbose,
                               weights = s.weights, print.level = 2*verbose),
                          A[names(A) %in% names(formals(Matching::GenMatch))]))
-    },
-    warning = function(w) {
-      if (!startsWith(conditionMessage(w), "replace==FALSE, but there are more (weighted) treated obs than control obs.")) {
-        .wrn(paste0("(from Matching) ", conditionMessage(w)), tidy = FALSE)
-      }
-      invokeRestart("muffleWarning")
-    },
-    error = function(e) {
-      .err(paste0("(from Matching) ", conditionMessage(e)), tidy = FALSE)
-    })
+    }, from = "Matching",
+    dont_warn_if = "replace==FALSE, but there are more (weighted) treated obs than control obs.")
   }
   else {
     #For debugging
@@ -429,14 +421,14 @@ matchit2genetic <- function(treat, data, distance, discarded,
   }
 
   lab <- names(treat)
-  lab1 <- names(treat[treat == 1])
+  lab1 <- lab[treat == 1]
 
   lab_ <- names(treat_)
 
   ind_ <- seq_along(treat)[ord]
 
   # if (!isFALSE(A$use.Match)) {
-  withCallingHandlers({
+  matchit_try({
     m.out <- Matching::Match(Tr = treat_, X = X,
                              M = ratio, exact = exact.log, caliper = cal,
                              replace = replace, estimand = "ATT", ties = FALSE,
@@ -446,16 +438,8 @@ matchit2genetic <- function(treat, data, distance, discarded,
                              else if (is.null(s.weights)) generalized_inverse(cor(X))
                              else generalized_inverse(cov.wt(X, s.weights, cor = TRUE)$cor),
                              restrict = A[["restrict"]], version = "fast")
-  },
-  warning = function(w) {
-    if (!startsWith(conditionMessage(w), "replace==FALSE, but there are more (weighted) treated obs than control obs.")) {
-      .wrn(paste0("(from Matching) ", conditionMessage(w)), tidy = FALSE)
-    }
-    invokeRestart("muffleWarning")
-  },
-  error = function(e) {
-    .err(paste0("(from Matching) ", conditionMessage(e)), tidt = FALSE)
-  })
+  }, from = "Matching",
+  dont_warn_if = "replace==FALSE, but there are more (weighted) treated obs than control obs.")
 
   #Note: must use character match.matrix because of re-ordering treat into treat_
   mm <- matrix(NA_integer_, nrow = n1, ncol = max(table(m.out$index.treated)),
