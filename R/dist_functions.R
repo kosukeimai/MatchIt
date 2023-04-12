@@ -360,7 +360,7 @@ get.covs.matrix.for.dist <- function(formula = NULL, data = NULL) {
   if (is.null(formula)) {
     if (is.null(colnames(data))) colnames(data) <- paste0("X", seq_len(ncol(data)))
     fnames <- colnames(data)
-    fnames[!startsWith(fnames, "`")] <- paste0("`", fnames[!startsWith(fnames, "`")], "`")
+    fnames[!startsWith(fnames, "`")] <- add_quotes(fnames[!startsWith(fnames, "`")], "`")
     data <- as.data.frame(data)
     formula <- reformulate(fnames)
   }
@@ -407,7 +407,7 @@ get.covs.matrix.for.dist <- function(formula = NULL, data = NULL) {
   }
 
   if (anyNA(X)) .err("missing values are not allowed in the covariates")
-  else if (any(!is.finite(X))) .err("Non-finite values are not allowed in the covariates")
+  if (any(!is.finite(X))) .err("Non-finite values are not allowed in the covariates")
 
   if (!is.numeric(X) || length(dim(X)) != 2) {
     stop("bad X")
