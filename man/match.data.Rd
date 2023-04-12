@@ -72,8 +72,8 @@ Only used with \code{get_matches()}; for \code{match.data()}, the units IDs
 are stored in the row names of the returned data frame.}
 }
 \value{
-A data frame containing the data supplied in the \code{data}
-argument or in the original call to \code{matchit()} with the computed
+A data frame containing the data supplied in the \code{data} argument or in the
+original call to \code{matchit()} with the computed
 output variables appended as additional columns, named according the
 arguments above. For \code{match.data()}, the \code{group} and
 \code{drop.unmatched} arguments control whether only subsets of the data are
@@ -130,7 +130,7 @@ subset of matched units. The idea is for the output of \code{match.data()}
 to be used as the dataset input in calls to \code{glm()} or similar to
 estimate treatment effects in the matched sample. It is important to include
 the weights in the estimation of the effect and its standard error. The
-subclass column, when created, contains par or subclass membership and
+subclass column, when created, contains pair or subclass membership and
 should be used to estimate the effect and its standard error. Subclasses
 will only be included if there is a \code{subclass} component in the
 \code{matchit} object, which does not occur with matching with replacement,
@@ -145,8 +145,8 @@ units do not belong to a single matched pair. In this case, the output of
 each pair they are a part of. For example, if matching was performed with
 replacement and a control unit was matched to two treated units, that
 control unit will have two rows in the output dataset, one for each pair it
-is a part of. Weights are computed for each row, and are equal to the
-inverse of the number of control units in each control unit's subclass.
+is a part of. Weights are computed for each row, and, for control units, are equal to the
+inverse of the number of control units in each control unit's subclass; treated units get a weight of 1.
 Unmatched units are dropped. An additional column with unit IDs will be
 created (named using the \code{id} argument) to identify when the same unit
 is present in multiple rows. This dataset structure allows for the inclusion
