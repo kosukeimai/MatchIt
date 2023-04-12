@@ -16,6 +16,8 @@ output:
 
 * Fixed a bug that would occur due to numerical imprecision in `plot.matchit()`. Thanks to @hkmztrk. (#158)
 
+* Fixed bugs when using `method = "cem"` where a covariate was to be omitted from coarsening. Thanks to @jfhelmer. (#160)
+
 * Fixed some typos in the vignettes. Thanks to @fBedecarrats. (#156)
 
 * Updated vignettes to use `marginaleffects` v0.11.0 syntax.
