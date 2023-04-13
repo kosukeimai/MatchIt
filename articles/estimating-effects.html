@@ -40,7 +40,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">MatchIt</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">4.5.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">4.5.3</span>
       </span>
     </div>
 
@@ -101,7 +101,7 @@
                         <h4 data-toc-skip class="author">Noah
 Greifer</h4>
             
-            <h4 data-toc-skip class="date">2023-03-22</h4>
+            <h4 data-toc-skip class="date">2023-04-13</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/kosukeimai/MatchIt/blob/HEAD/vignettes/estimating-effects.Rmd" class="external-link"><code>vignettes/estimating-effects.Rmd</code></a></small>
       <div class="hidden name"><code>estimating-effects.Rmd</code></div>
@@ -154,24 +154,25 @@ target population), the effect measure, and whether the effect is
 marginal or conditional.</p>
 <p><strong>The target population.</strong> Different matching methods
 allow you to estimate effects that can generalize to different target
-populations. The most common estimand in matching the average treatment
-effect in the treated (ATT), which is the average effect of treatment
-for those who receive treatment. This estimand is estimable for matching
-methods that do not change the treated units (i.e., by weighting or
-discarding units) and is requested in <code><a href="../reference/matchit.html">matchit()</a></code> by setting
-<code>estimand = "ATT"</code> (which is the default). The average
-treatment effect in the population (ATE) is the average effect of
-treatment for the population from which the sample is a random sample.
-This estimand is estimable only for methods that allow the ATE and
-either do not discard units from the sample or explicit target full
-sample balance, which in <code>MatchIt</code> is limited to full
-matching, subclassification, and template matching when setting
-<code>estimand = "ATE"</code>. When treated units are discarded (e.g.,
-through the use of common support restrictions, calipers, cardinality
-matching, or [coarsened] exact matching), the estimand corresponds to
-neither the population ATT nor the population ATE, but rather to an
-average treatment effect in the remaining matched sample (ATM), which
-may not correspond to any specific target population. See <span class="citation">Greifer and Stuart (<a href="#ref-greiferChoosingEstimandWhen2021" role="doc-biblioref">2021</a>)</span> for a discussion on the
+populations. The most common estimand in matching is the average
+treatment effect in the treated (ATT), which is the average effect of
+treatment for those who receive treatment. This estimand is estimable
+for matching methods that do not change the treated units (i.e., by
+weighting or discarding units) and is requested in
+<code><a href="../reference/matchit.html">matchit()</a></code> by setting <code>estimand = "ATT"</code> (which
+is the default). The average treatment effect in the population (ATE) is
+the average effect of treatment for the population from which the sample
+is a random sample. This estimand is estimable only for methods that
+allow the ATE and either do not discard units from the sample or
+explicit target full sample balance, which in <code>MatchIt</code> is
+limited to full matching, subclassification, and template matching when
+setting <code>estimand = "ATE"</code>. When treated units are discarded
+(e.g., through the use of common support restrictions, calipers,
+cardinality matching, or [coarsened] exact matching), the estimand
+corresponds to neither the population ATT nor the population ATE, but
+rather to an average treatment effect in the remaining matched sample
+(ATM), which may not correspond to any specific target population. See
+<span class="citation">Greifer and Stuart (<a href="#ref-greiferChoosingEstimandWhen2021" role="doc-biblioref">2021</a>)</span> for a discussion on the
 substantive considerations involved when choosing the target population
 of the estimand.</p>
 <p><strong>Marginal and conditional effects.</strong> A marginal effect
@@ -340,7 +341,7 @@ the effect estimator depending on the specification of the outcome model
 studies have further confirmed the validity of cluster-robust SEs after
 matching <span class="citation">(e.g., <a href="#ref-austin2009a" role="doc-biblioref">Austin 2009</a>, <a href="#ref-austin2013" role="doc-biblioref">2013a</a>; <a href="#ref-austin2014" role="doc-biblioref">Austin and Small 2014</a>; <a href="#ref-gayat2012" role="doc-biblioref">Gayat et al. 2012</a>; <a href="#ref-wan2019" role="doc-biblioref">Wan 2019</a>)</span>. Given this evidence favoring
 the use of cluster-robust SEs, we recommend them in most cases and use
-them judiciously in the this guide<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a>.</p>
+them judiciously in this guide<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a>.</p>
 </div>
 <div class="section level4">
 <h4 id="bootstrapping">Bootstrapping<a class="anchor" aria-label="anchor" href="#bootstrapping"></a>
@@ -428,10 +429,10 @@ survival outcome.</p>
 analyses:</p>
 <ul>
 <li>
-<code>marginaleffects</code> provides the <code><a href="https://vincentarelbundock.github.io/marginaleffects/reference/comparisons.html" class="external-link">comparisons()</a></code>
-function for performing g-computation and estimating the SEs and
-confidence intervals of the average estimate potential outcomes and
-treatment effects</li>
+<code>marginaleffects</code> provides the
+<code><a href="https://vincentarelbundock.github.io/marginaleffects/reference/comparisons.html" class="external-link">avg_comparisons()</a></code> function for performing g-computation and
+estimating the SEs and confidence intervals of the average estimate
+potential outcomes and treatment effects</li>
 <li>
 <code>sandwich</code> is used internally by
 <code>marginaleffects</code> to compute robust and cluster-robust
@@ -448,12 +449,12 @@ matching.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://vincentarelbundock.github.io/marginaleffects/" class="external-link">"marginaleffects"</a></span><span class="op">)</span></span></code></pre></div>
 <p>All effect estimates will be computed using
-<code>marginaleffects::comparions()</code>, even when its use may be
+<code>marginaleffects::avg_comparions()</code>, even when its use may be
 superfluous (e.g., for performing a t-test in the matched set). As
 previously mentioned, this is because it is useful to have a single
 workflow that works no matter the situation, perhaps with very slight
 modifications to accommodate different contexts. Using
-<code><a href="https://vincentarelbundock.github.io/marginaleffects/reference/comparisons.html" class="external-link">comparisons()</a></code> has several advantages, even when the
+<code>avg_comparions()</code> has several advantages, even when the
 alternatives are simple: it only provides the effect estimate, and not
 other coefficients; it automatically incorporates robust and
 cluster-robust SEs if requested; and it always produces average marginal
@@ -542,8 +543,8 @@ example.</p>
 <span><span class="va">fit1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html" class="external-link">lm</a></span><span class="op">(</span><span class="va">Y_C</span> <span class="op">~</span> <span class="va">A</span> <span class="op">*</span> <span class="op">(</span><span class="va">X1</span> <span class="op">+</span> <span class="va">X2</span> <span class="op">+</span> <span class="va">X3</span> <span class="op">+</span> <span class="va">X4</span> <span class="op">+</span> <span class="va">X5</span> <span class="op">+</span> </span>
 <span>                        <span class="va">X6</span> <span class="op">+</span> <span class="va">X7</span> <span class="op">+</span> <span class="va">X8</span> <span class="op">+</span> <span class="va">X9</span><span class="op">)</span>,</span>
 <span>           data <span class="op">=</span> <span class="va">md</span>, weights <span class="op">=</span> <span class="va">weights</span><span class="op">)</span></span></code></pre></div>
-<p>Next, we use <code><a href="https://vincentarelbundock.github.io/marginaleffects/reference/comparisons.html" class="external-link">marginaleffects::comparisons()</a></code> to estimate
-the ATT.</p>
+<p>Next, we use <code><a href="https://vincentarelbundock.github.io/marginaleffects/reference/comparisons.html" class="external-link">marginaleffects::avg_comparisons()</a></code> to
+estimate the ATT.</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://vincentarelbundock.github.io/marginaleffects/reference/comparisons.html" class="external-link">avg_comparisons</a></span><span class="op">(</span><span class="va">fit1</span>, variables <span class="op">=</span> <span class="st">"A"</span>,</span>
 <span>                vcov <span class="op">=</span> <span class="op">~</span><span class="va">subclass</span>,</span>
@@ -555,7 +556,7 @@ the ATT.</p>
 <span><span class="co">## </span></span>
 <span><span class="co">## Columns: term, contrast, estimate, std.error, statistic, p.value, conf.low, conf.high</span></span></code></pre>
 <p>Let’s break down the call to <code><a href="https://vincentarelbundock.github.io/marginaleffects/reference/comparisons.html" class="external-link">avg_comparisons()</a></code>: to the
-first argument, we supply the model fit, <code>fit</code>; to the
+first argument, we supply the model fit, <code>fit1</code>; to the
 <code>variables</code> argument, the name of the treatment
 (<code>"A"</code>); to the <code>vcov</code> argument, a formula with
 subclass membership (<code>~subclass</code>) to request cluster-robust
@@ -577,8 +578,7 @@ the outcome model (if any) are interacted with the treatment.</p>
 <code class="sourceCode R"><span><span class="fu"><a href="https://vincentarelbundock.github.io/marginaleffects/reference/predictions.html" class="external-link">avg_predictions</a></span><span class="op">(</span><span class="va">fit1</span>, variables <span class="op">=</span> <span class="st">"A"</span>,</span>
 <span>                vcov <span class="op">=</span> <span class="op">~</span><span class="va">subclass</span>,</span>
 <span>                newdata <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="va">md</span>, <span class="va">A</span> <span class="op">==</span> <span class="fl">1</span><span class="op">)</span>,</span>
-<span>                wts <span class="op">=</span> <span class="st">"weights"</span>,</span>
-<span>                by <span class="op">=</span> <span class="st">"A"</span><span class="op">)</span></span></code></pre></div>
+<span>                wts <span class="op">=</span> <span class="st">"weights"</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## </span></span>
 <span><span class="co">##  A Estimate Std. Error     z Pr(&gt;|z|) 2.5 % 97.5 %</span></span>
 <span><span class="co">##  0     2.19      0.391  5.59   &lt;0.001  1.42   2.95</span></span>
@@ -586,12 +586,9 @@ the outcome model (if any) are interacted with the treatment.</p>
 <span><span class="co">## </span></span>
 <span><span class="co">## Columns: A, estimate, std.error, statistic, p.value, conf.low, conf.high</span></span></code></pre>
 <p>We can see that the difference in potential outcome means is equal to
-the average treatment effect computed previously<a href="#fn4" class="footnote-ref" id="fnref4"><sup>4</sup></a>. Almost all of the
-arguments to <code><a href="https://vincentarelbundock.github.io/marginaleffects/reference/predictions.html" class="external-link">avg_predictions()</a></code> are the same as those to
-<code><a href="https://vincentarelbundock.github.io/marginaleffects/reference/comparisons.html" class="external-link">avg_comparisons()</a></code>; the only difference is that the
-<code>by</code> argument needs to be specified naming the treatment.
-(Note: due to a bug, the above code will not evaluate unless
-<code>marginaleffects</code> is a version greater than 0.10.0.)</p>
+the average treatment effect computed previously<a href="#fn4" class="footnote-ref" id="fnref4"><sup>4</sup></a>. All of the arguments
+to <code><a href="https://vincentarelbundock.github.io/marginaleffects/reference/predictions.html" class="external-link">avg_predictions()</a></code> are the same as those to
+<code><a href="https://vincentarelbundock.github.io/marginaleffects/reference/comparisons.html" class="external-link">avg_comparisons()</a></code>.</p>
 </div>
 <div class="section level3">
 <h3 id="adjustments-to-the-standard-case">Adjustments to the Standard Case<a class="anchor" aria-label="anchor" href="#adjustments-to-the-standard-case"></a>
@@ -637,9 +634,9 @@ outcomes <span class="citation">(<a href="#ref-austin2020a" role="doc-biblioref"
 involves using two-way cluster-robust SEs with pair membership and unit
 ID as the clustering variables. For continuous and binary outcomes, this
 involves the following two changes: 1) replace <code><a href="../reference/match.data.html">match.data()</a></code>
-with <code><a href="../reference/match.data.html">get_matches()</a></code>, which produces a dataset with a row per
-unit per pair, meaning control units matched to multiple treated units
-will appear multiple times in the dataset; 2) set
+with <code><a href="../reference/match.data.html">get_matches()</a></code>, which produces a dataset with one row
+per unit per pair, meaning control units matched to multiple treated
+units will appear multiple times in the dataset; 2) set
 <code>vcov = ~subclass + id</code> in the calls to
 <code><a href="https://vincentarelbundock.github.io/marginaleffects/reference/comparisons.html" class="external-link">avg_comparisons()</a></code> and <code><a href="https://vincentarelbundock.github.io/marginaleffects/reference/predictions.html" class="external-link">avg_predictions()</a></code>. For
 survival outcomes, a special procedure must be used; see the section on
@@ -735,11 +732,11 @@ measure because we can compute any of the above effect measures using
 compute the marginal RD, we can use exactly the same syntax as in the
 Standard Case; nothing needs to change<a href="#fn7" class="footnote-ref" id="fnref7"><sup>7</sup></a>.</p>
 <p>To compute the marginal RR, we need to add
-<code>transform_pre = "lnratioavg"</code> to
+<code>comparison = "lnratioavg"</code> to
 <code><a href="https://vincentarelbundock.github.io/marginaleffects/reference/comparisons.html" class="external-link">avg_comparisons()</a></code>; this computes the marginal log RR. To
-get the marginal RR, we need to add <code>transform_post = "exp"</code>
-to <code><a href="https://vincentarelbundock.github.io/marginaleffects/reference/comparisons.html" class="external-link">avg_comparisons()</a></code>, which exponentiates the marginal log
-RR and its confidence interval. The code below computes the effects and
+get the marginal RR, we need to add <code>transform = "exp"</code> to
+<code><a href="https://vincentarelbundock.github.io/marginaleffects/reference/comparisons.html" class="external-link">avg_comparisons()</a></code>, which exponentiates the marginal log RR
+and its confidence interval. The code below computes the effects and
 displays the statistics of interest:</p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">#Logistic regression model with covariates</span></span>
@@ -754,22 +751,20 @@ displays the statistics of interest:</p>
 <span>                vcov <span class="op">=</span> <span class="op">~</span><span class="va">subclass</span>,</span>
 <span>                newdata <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="va">md</span>, <span class="va">A</span> <span class="op">==</span> <span class="fl">1</span><span class="op">)</span>,</span>
 <span>                wts <span class="op">=</span> <span class="st">"weights"</span>,</span>
-<span>                transform_pre <span class="op">=</span> <span class="st">"lnratioavg"</span>,</span>
-<span>                transform_post <span class="op">=</span> <span class="st">"exp"</span><span class="op">)</span></span></code></pre></div>
+<span>                comparison <span class="op">=</span> <span class="st">"lnratioavg"</span>,</span>
+<span>                transform <span class="op">=</span> <span class="st">"exp"</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## </span></span>
 <span><span class="co">##  Term              Contrast Estimate Pr(&gt;|z|) 2.5 % 97.5 %</span></span>
 <span><span class="co">##     A ln(mean(1) / mean(0))     1.57   &lt;0.001  1.41   1.75</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## Columns: term, contrast, estimate, p.value, conf.low, conf.high, predicted, predicted_hi, predicted_lo</span></span></code></pre>
 <p>The output displays the marginal RR, its Z-value, the p-value for the
-Z-test against 0, and its confidence interval. (Note that even though
-the <code>Contrast</code> label still suggests the log risk ratio, the
-risk ratio is actually displayed. You can confirm this by manually
-exponentiating the log risk ratio computed just before.) To view the log
-RR and its standard error, omit the <code>transform_post</code>
-argument.</p>
+Z-test of the log RR against 0, and its confidence interval. (Note that
+even though the <code>Contrast</code> label still suggests the log RR,
+the RR is actually displayed.) To view the log RR and its standard
+error, omit the <code>transform</code> argument.</p>
 <p>For the marginal OR, the only thing that needs to change is that
-<code>transform_pre</code> should be set to <code>"lnoravg"</code>.</p>
+<code>comparison</code> should be set to <code>"lnoravg"</code>.</p>
 </div>
 <div class="section level4">
 <h4 id="survival-outcomes">Survival outcomes<a class="anchor" aria-label="anchor" href="#survival-outcomes"></a>
@@ -887,7 +882,7 @@ speed of the estimation since we don’t require standard errors to be
 estimated in each sample (or other processing
 <code><a href="https://vincentarelbundock.github.io/marginaleffects/reference/comparisons.html" class="external-link">avg_comparisons()</a></code> does). We’ll consider the marginal RR ATT
 of <code>A</code> on the binary outcome <code>Y_B</code>.</p>
-<p>The first step is to write the estimation function, we we call
+<p>The first step is to write the estimation function, we call
 <code>boot_fun</code>. This function returns the marginal RR. In it, we
 perform the matching, estimate the effect, and return the estimate of
 interest.</p>
@@ -1578,11 +1573,11 @@ the block bootstrap.<a href="#fnref2" class="footnote-back">↩︎</a></p></li>
 not necessary, including them does not affect the estimates. Because it
 may not always be clear when weights are required, we recommend always
 including them.<a href="#fnref3" class="footnote-back">↩︎</a></p></li>
-<li id="fn4"><p>To verify that they are equal, add the argument
-<code>hypothesis = "revpairwise"</code> to the call to
-<code><a href="https://vincentarelbundock.github.io/marginaleffects/reference/predictions.html" class="external-link">predictions()</a></code>; this explicitly compares the average
-potential outcomes and should yield identical estimates to the
-<code><a href="https://vincentarelbundock.github.io/marginaleffects/reference/comparisons.html" class="external-link">comparisons()</a></code> call.<a href="#fnref4" class="footnote-back">↩︎</a></p></li>
+<li id="fn4"><p>To verify that they are equal, supply the output of
+<code><a href="https://vincentarelbundock.github.io/marginaleffects/reference/predictions.html" class="external-link">avg_predictions()</a></code> to
+<code>hypotheses(), e.g.,</code>avg_predictions(…) |&gt;
+hypotheses(“revpairwise”)<code>; this explicitly compares the average potential outcomes and should yield identical estimates to the</code>avg_comparisons()`
+call.<a href="#fnref4" class="footnote-back">↩︎</a></p></li>
 <li id="fn5"><p>It is also known as fine stratification weighting,
 described by <span class="citation">Desai et al. (<a href="#ref-desai2017" role="doc-biblioref">2017</a>)</span>.<a href="#fnref5" class="footnote-back">↩︎</a></p></li>
 <li id="fn6"><p>We use <code><a href="https://rdrr.io/r/stats/family.html" class="external-link">quasibinomial()</a></code> instead of

@@ -39,7 +39,7 @@ matchit(formula,
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">MatchIt</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">4.5.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">4.5.3</span>
       </span>
     </div>
 
@@ -236,7 +236,10 @@ arguments allow one to fine-tune the coarsening of the covariates.
 and <code>cutpoints</code> is used for binning numeric covariates. The values
 supplied to these arguments should be iteratively changed until a matching
 solution that balances covariate balance and remaining sample size is
-obtained. The arguments are described below.</p>
+obtained. The arguments are described below.</p><div class="section">
+<h4 id="grouping"><code>grouping</code><a class="anchor" aria-label="anchor" href="#grouping"></a></h4>
+
+
 <p>The argument to <code>grouping</code> must be a list, where each component has the
 name of a categorical variable, the levels of which are to be combined. Each
 component must itself be a list; this list contains one or more vectors of
@@ -250,7 +253,13 @@ each variable will be left alone (so <code>c("none")</code> could have been
 omitted from the previous code). Note that if a categorical variable does
 not appear in <code>grouping</code>, it will not be coarsened, so exact matching
 will take place on it. <code>grouping</code> should not be used for numeric
-variables; use <code>cutpoints</code>, described below, instead.</p>
+variables with more than a few values; use <code>cutpoints</code>, described below, instead.</p>
+</div>
+
+<div class="section">
+<h4 id="cutpoints"><code>cutpoints</code><a class="anchor" aria-label="anchor" href="#cutpoints"></a></h4>
+
+
 <p>The argument to <code>cutpoints</code> must also be a list, where each component
 has the name of a numeric variables that is to be binned. (As a shortcut, it
 can also be a single value that will be applied to all numeric variables).
@@ -258,7 +267,7 @@ Each component can take one of three forms: a vector of cutpoints that
 separate the bins, a single number giving the number of bins, or a string
 corresponding to an algorithm used to compute the number of bins. Any values
 at a boundary will be placed into the higher bin; e.g., if the cutpoints
-were <code>(c(0, 5, 10))</code>, values of 5 would be placed into the same bin as
+were <code>c(0, 5, 10)</code>, values of 5 would be placed into the same bin as
 values of 6, 7, 8, or 9, and values of 10 would be placed into a different
 bin. Internally, values of <code>-Inf</code> and <code>Inf</code> are appended to the
 beginning and end of the range. When given as a single number defining the
@@ -283,6 +292,9 @@ into bins based on the provided boundaries, <code>X3</code> into a number of bin
 determined by <code><a href="https://rdrr.io/r/grDevices/nclass.html" class="external-link">grDevices::nclass.scott()</a></code>, and <code>X4</code> into
 quintiles. All other numeric variables would be split into a number of bins
 determined by <code><a href="https://rdrr.io/r/grDevices/nclass.html" class="external-link">grDevices::nclass.Sturges()</a></code>, the default.</p>
+</div>
+
+
 </div>
 
     </div>

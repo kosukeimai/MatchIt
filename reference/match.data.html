@@ -22,7 +22,7 @@ more flexible. See Details below for the difference between them."><meta propert
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">MatchIt</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">4.5.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">4.5.3</span>
       </span>
     </div>
 
@@ -175,10 +175,8 @@ are stored in the row names of the returned data frame.</p></dd>
     <h2>Value</h2>
     
 
-<p>A data frame containing the data supplied in the <code>data</code></p>
-
-
-<p>argument or in the original call to <code><a href="matchit.html">matchit()</a></code> with the computed
+<p>A data frame containing the data supplied in the <code>data</code> argument or in the
+original call to <code><a href="matchit.html">matchit()</a></code> with the computed
 output variables appended as additional columns, named according the
 arguments above. For <code>match.data()</code>, the <code>group</code> and
 <code>drop.unmatched</code> arguments control whether only subsets of the data are
@@ -238,7 +236,7 @@ subset of matched units. The idea is for the output of <code>match.data()</code>
 to be used as the dataset input in calls to <code><a href="https://rdrr.io/r/stats/glm.html" class="external-link">glm()</a></code> or similar to
 estimate treatment effects in the matched sample. It is important to include
 the weights in the estimation of the effect and its standard error. The
-subclass column, when created, contains par or subclass membership and
+subclass column, when created, contains pair or subclass membership and
 should be used to estimate the effect and its standard error. Subclasses
 will only be included if there is a <code>subclass</code> component in the
 <code>matchit</code> object, which does not occur with matching with replacement,
@@ -252,8 +250,8 @@ units do not belong to a single matched pair. In this case, the output of
 each pair they are a part of. For example, if matching was performed with
 replacement and a control unit was matched to two treated units, that
 control unit will have two rows in the output dataset, one for each pair it
-is a part of. Weights are computed for each row, and are equal to the
-inverse of the number of control units in each control unit's subclass.
+is a part of. Weights are computed for each row, and, for control units, are equal to the
+inverse of the number of control units in each control unit's subclass; treated units get a weight of 1.
 Unmatched units are dropped. An additional column with unit IDs will be
 created (named using the <code>id</code> argument) to identify when the same unit
 is present in multiple rows. This dataset structure allows for the inclusion
@@ -306,7 +304,7 @@ is simply to supply the original dataset to the <code>data</code> argument of
 <span class="r-in"><span><span class="va">m.data1</span> <span class="op">&lt;-</span> <span class="fu">match.data</span><span class="op">(</span><span class="va">m.out1</span>, data <span class="op">=</span> <span class="va">lalonde</span>,</span></span>
 <span class="r-in"><span>                      distance <span class="op">=</span> <span class="st">"prop.score"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/dim.html" class="external-link">dim</a></span><span class="op">(</span><span class="va">m.data1</span><span class="op">)</span> <span class="co">#one row per matched unit</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 258  11</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 353  11</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">m.data1</span>, <span class="fl">10</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>       treat age educ   race married nodegree re74 re75       re78 prop.score</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> NSW1      1  37   11  black       1        1    0    0  9930.0460 0.63876993</span>
@@ -339,25 +337,25 @@ is simply to supply the original dataset to the <code>data</code> argument of
 <span class="r-out co"><span class="r-pr">#&gt;</span>         id subclass weights treat age educ   race married nodegree        re74</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1     NSW1        1    1.00     1  37   11  black       1        1     0.00000</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2   PSID69        1    0.25     0  30   17  black       0        0 17827.37000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3   PSID69        1    0.25     0  30   17  black       0        0 17827.37000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4   PSID69        1    0.25     0  30   17  black       0        0 17827.37000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5   PSID69        1    0.25     0  30   17  black       0        0 17827.37000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3  PSID387        1    0.25     0  55    4  black       0        1     0.00000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4  PSID191        1    0.25     0  18   12  black       0        0  1579.16900</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5  PSID419        1    0.25     0  51    4  black       0        1     0.00000</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 6     NSW2        2    1.00     1  22    9 hispan       0        1     0.00000</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 7  PSID111        2    0.25     0  51   11  white       0        1    48.98167</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8  PSID111        2    0.25     0  51   11  white       0        1    48.98167</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9  PSID111        2    0.25     0  51   11  white       0        1    48.98167</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10 PSID111        2    0.25     0  51   11  white       0        1    48.98167</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8   PSID66        2    0.25     0  26    8 hispan       0        1  3168.13400</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9  PSID339        2    0.25     0  26    9 hispan       0        1  1563.49500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10 PSID150        2    0.25     0  22   11 hispan       0        1  7341.37300</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>        re75      re78 prop.score</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1     0.000  9930.046  0.6387699</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2  5546.419 14421.130  0.6385542</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3  5546.419 14421.130  0.6385542</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4  5546.419 14421.130  0.6385542</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5  5546.419 14421.130  0.6385542</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3     0.000     0.000  0.6357539</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4  1408.984  3057.416  0.6267609</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5     0.000     0.000  0.6210185</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 6     0.000  3595.894  0.2246342</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 7  3813.387  1525.014  0.2240794</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8  3813.387  1525.014  0.2240794</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9  3813.387  1525.014  0.2240794</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10 3813.387  1525.014  0.2240794</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8  5872.258 11136.150  0.2225951</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9     0.000  2862.356  0.2161957</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10 2535.097 14187.650  0.2128728</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
