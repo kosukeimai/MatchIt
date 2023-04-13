@@ -383,7 +383,7 @@ matchit2full <- function(treat, formula, data, distance, discarded,
   if (verbose) cat("Calculating matching weights... ")
 
   res <- list(subclass = psclass,
-              weights = weights.subclass(psclass, treat, estimand),
+              weights = get_weights_from_subclass(psclass, treat, estimand),
               obj = p)
 
   if (verbose) cat("Done.\n")

@@ -233,7 +233,7 @@ matchit2subclass <- function(treat, distance, discarded,
   if (verbose) cat("Calculating matching weights... ")
 
   res <- list(subclass = psclass, q.cut = q,
-              weights = weights.subclass(psclass, treat, estimand))
+              weights = get_weights_from_subclass(psclass, treat, estimand))
 
   if (verbose) cat("Done.\n")
 

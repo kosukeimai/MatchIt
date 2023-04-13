@@ -1,4 +1,4 @@
-weights.matrix <- function(match.matrix, treat) {
+get_weights_from_mm <- function(match.matrix, treat) {
 
   if (!is.integer(match.matrix)) match.matrix <- charmm2nummm(match.matrix, treat)
 

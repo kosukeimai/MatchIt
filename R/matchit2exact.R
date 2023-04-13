@@ -109,7 +109,7 @@ matchit2exact <- function(treat, covs, data, estimand = "ATT", verbose = FALSE, 
   if (verbose) cat("Calculating matching weights... ")
 
   res <- list(subclass = psclass,
-              weights = weights.subclass(psclass, treat, estimand))
+              weights = get_weights_from_subclass(psclass, treat, estimand))
 
   if (verbose) cat("Done.\n")
 

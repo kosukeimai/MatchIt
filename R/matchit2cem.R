@@ -293,7 +293,7 @@ matchit2cem <- function(treat, covs, estimand = "ATT", s.weights = NULL, verbose
 
   res <- list(match.matrix = mm,
               subclass = strat,
-              weights = weights.subclass(strat, treat, estimand))
+              weights = get_weights_from_subclass(strat, treat, estimand))
 
   if (verbose) cat("Done.\n")
 

@@ -543,7 +543,7 @@ matchit2nearest <- function(treat, data, distance, discarded,
 
   res <- list(match.matrix = nummm2charmm(mm, treat),
               subclass = psclass,
-              weights = weights.matrix(mm, treat))
+              weights = get_weights_from_mm(mm, treat))
 
   if (verbose) cat("Done.\n")
 

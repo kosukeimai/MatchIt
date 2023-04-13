@@ -1,4 +1,4 @@
-weights.subclass <- function(psclass, treat, estimand = "ATT") {
+get_weights_from_subclass <- function(psclass, treat, estimand = "ATT") {
 
   NAsub <- is.na(psclass)
 

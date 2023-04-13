@@ -8,7 +8,7 @@
 #' matching, which is a form of subclassification wherein all units, both
 #' treatment and control (i.e., the "full" sample), are assigned to a subclass
 #' and receive at least one match. It uses an algorithm that is extremely fast
-#' compared to optimal full matching, which is why it is labelled as "quick", at the
+#' compared to optimal full matching, which is why it is labeled as "quick", at the
 #' expense of true optimality. The method is described in Sävje, Higgins, & Sekhon (2021). The method relies on and is a wrapper
 #' for \pkgfun{quickmatch}{quickmatch}.
 #'
@@ -244,7 +244,7 @@ matchit2quick <- function(treat, formula, data, distance, discarded,
   if (verbose) cat("Calculating matching weights... ")
 
   res <- list(subclass = psclass,
-              weights = weights.subclass(psclass, treat, estimand),
+              weights = get_weights_from_subclass(psclass, treat, estimand),
               obj = p)
 
   if (verbose) cat("Done.\n")

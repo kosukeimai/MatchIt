@@ -435,7 +435,7 @@ matchit2optimal <- function(treat, formula, data, distance, discarded,
   ## calculate weights and return the results
   res <- list(match.matrix = mm,
               subclass = psclass,
-              weights = weights.subclass(psclass, treat, estimand),
+              weights = get_weights_from_subclass(psclass, treat, estimand),
               obj = p)
 
   if (verbose) cat("Done.\n")
