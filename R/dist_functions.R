@@ -7,7 +7,7 @@
 #' splitting variable (i.e., the distances between all units in one group and
 #' all units in the other). These distance matrices include the Mahalanobis
 #' distance, Euclidean distance, scaled Euclidean distance, and robust
-#' (rank-based) Mahalanobs distance. These functions can be used as inputs to
+#' (rank-based) Mahalanobis distance. These functions can be used as inputs to
 #' the `distance` argument to [matchit()] and are used to compute the
 #' corresponding distance matrices within `matchit()` when named.
 #'
@@ -41,7 +41,7 @@
 #' @return A numeric distance matrix. When `formula` has a left-hand-side
 #' (treatment) variable, the matrix will have one row for each treated unit and
 #' one column for each control unit. Otherwise, the matrix will have one row
-#' and one column for each treated unit.
+#' and one column for each unit.
 #'
 #' @details
 #' The **Euclidean distance** (computed using `euclidean_dist()`) is
@@ -215,7 +215,7 @@ transform_covariates <- function(formula = NULL, data = NULL, method = "mahalano
                                  discarded = NULL) {
   X <- get.covs.matrix.for.dist(formula, data)
 
-  X <- check_X(X)
+  X <- .check_X(X)
   treat <- check_treat(treat, X)
 
   #If allvariables have no variance, use Euclidean to avoid errors
@@ -250,7 +250,7 @@ transform_covariates <- function(formula = NULL, data = NULL, method = "mahalano
       }
     }
     else if (!is.cov_like(var)) {
-      stop("If 'var' is not NULL, it must be a covariance matrix with as many entries as supplied variables.", call. = FALSE)
+      .err("if `var` is not `NULL`, it must be a covariance matrix with as many entries as supplied variables")
     }
 
     inv_var <- NULL
@@ -313,7 +313,7 @@ transform_covariates <- function(formula = NULL, data = NULL, method = "mahalano
       sds <- sqrt(var)
     }
     else {
-      stop("If 'var' is not NULL, it must be a covariance matrix or a vector of variances with as many entries as supplied variables.", call. = FALSE)
+      .err("if `var` is not `NULL`, it must be a covariance matrix or a vector of variances with as many entries as supplied variables")
     }
 
     for (i in seq_len(ncol(X))) {
@@ -360,21 +360,26 @@ get.covs.matrix.for.dist <- function(formula = NULL, data = NULL) {
   if (is.null(formula)) {
     if (is.null(colnames(data))) colnames(data) <- paste0("X", seq_len(ncol(data)))
     fnames <- colnames(data)
-    fnames[!startsWith(fnames, "`")] <- paste0("`", fnames[!startsWith(fnames, "`")], "`")
+    fnames[!startsWith(fnames, "`")] <- add_quotes(fnames[!startsWith(fnames, "`")], "`")
     data <- as.data.frame(data)
-    formula <- terms(reformulate(fnames), data = data)
+    formula <- reformulate(fnames)
   }
   else {
     data <- as.data.frame(data)
-    formula <- terms(formula, data = data)
   }
 
+  if (rlang::is_formula(formula, lhs = FALSE)) {
+    formula <- update(formula, ~ . + 1)
+  }
+  else {
+    formula <- update(formula, . ~ . + 1)
+  }
+
+  formula <- terms(formula, data = data)
   mf <- model.frame(formula, data, na.action = na.pass)
 
   chars.in.mf <- vapply(mf, is.character, logical(1L))
   mf[chars.in.mf] <- lapply(mf[chars.in.mf], factor)
-
-  formula <- update(formula, NULL ~ . + 1)
 
   X <- model.matrix(formula, data = mf,
                     contrasts.arg = lapply(Filter(is.factor, mf),
@@ -388,9 +393,9 @@ get.covs.matrix.for.dist <- function(formula = NULL, data = NULL) {
 
   attr(X, "treat") <-  model.response(mf)
 
-  return(X)
+  X
 }
-check_X <- function(X) {
+.check_X <- function(X) {
   if (isTRUE(attr(X, "checked"))) return(X)
 
   treat <- attr(X, "treat")
@@ -401,8 +406,8 @@ check_X <- function(X) {
                 dimnames = list(names(X), NULL))
   }
 
-  if (anyNA(X)) stop("Missing values are not allowed in the covariates.", call. = FALSE)
-  else if (any(!is.finite(X))) stop("Non-finite values are not allowed in the covariates.", call. = FALSE)
+  if (anyNA(X)) .err("missing values are not allowed in the covariates")
+  if (any(!is.finite(X))) .err("Non-finite values are not allowed in the covariates")
 
   if (!is.numeric(X) || length(dim(X)) != 2) {
     stop("bad X")

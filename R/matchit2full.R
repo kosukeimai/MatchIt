@@ -228,7 +228,7 @@ matchit2full <- function(treat, formula, data, distance, discarded,
                          estimand = "ATT", verbose = FALSE,
                          is.full.mahalanobis, antiexact = NULL, ...) {
 
-  check.package("optmatch")
+  rlang::check_installed("optmatch")
 
   if (verbose) cat("Full matching... \n")
 
@@ -259,8 +259,8 @@ matchit2full <- function(treat, formula, data, distance, discarded,
 
   if (is.full.mahalanobis) {
     if (length(attr(terms(formula, data = data), "term.labels")) == 0) {
-      stop(sprintf("Covariates must be specified in the input formula when distance = \"%s\".",
-                   attr(is.full.mahalanobis, "transform")), call. = FALSE)
+      .err(sprintf("covariates must be specified in the input formula when `distance = \"%s\"`",
+                   attr(is.full.mahalanobis, "transform")))
     }
     mahvars <- formula
   }
@@ -273,7 +273,7 @@ matchit2full <- function(treat, formula, data, distance, discarded,
     ex <- factor(exactify(model.frame(exact, data = data),
                           sep = ", ", include_vars = TRUE)[!discarded])
     cc <- intersect(as.integer(ex)[treat_==1], as.integer(ex)[treat_==0])
-    if (length(cc) == 0) stop("No matches were found.", call. = FALSE)
+    if (length(cc) == 0) .err("No matches were found")
   }
   else {
     ex <- factor(rep("_", length(treat_)), levels = "_")
@@ -317,7 +317,7 @@ matchit2full <- function(treat, formula, data, distance, discarded,
   #Process caliper
   if (!is.null(caliper)) {
     if (min.controls != 0) {
-      stop("Calipers cannot be used with method = \"full\" when 'min.controls' is specified.", call. = FALSE)
+      .err("calipers cannot be used with `method = \"full\"` when `min.controls` is specified")
     }
 
     if (any(names(caliper) != "")) {
@@ -358,26 +358,19 @@ matchit2full <- function(treat, formula, data, distance, discarded,
       next
     }
 
-    withCallingHandlers({
+    matchit_try({
       p[[e]] <- do.call(optmatch::fullmatch,
                         c(list(mo_,
                                min.controls = min.controls,
                                max.controls = max.controls,
                                data = t_df), #just to get rownames; not actually used in matching
                           A))
-    },
-    warning = function(w) {
-      warning(paste0("(from optmatch) ", conditionMessage(w)), call. = FALSE, immediate. = TRUE)
-      invokeRestart("muffleWarning")
-    },
-    error = function(e1) {
-      stop(paste0("(from optmatch) ", conditionMessage(e1)), call. = FALSE)
-    })
+    }, from = "optmatch")
 
     pair[names(p[[e]])[!is.na(p[[e]])]] <- paste(as.character(p[[e]][!is.na(p[[e]])]), e, sep = "|")
   }
 
-  if (all(is.na(pair))) stop("No matches were found.", call. = FALSE)
+  if (all(is.na(pair))) .err("No matches were found")
   if (length(p) == 1) p <- p[[1]]
 
   psclass <- factor(pair)
@@ -390,11 +383,11 @@ matchit2full <- function(treat, formula, data, distance, discarded,
   if (verbose) cat("Calculating matching weights... ")
 
   res <- list(subclass = psclass,
-              weights = weights.subclass(psclass, treat, estimand),
+              weights = get_weights_from_subclass(psclass, treat, estimand),
               obj = p)
 
   if (verbose) cat("Done.\n")
 
   class(res) <- c("matchit")
-  return(res)
+  res
 }

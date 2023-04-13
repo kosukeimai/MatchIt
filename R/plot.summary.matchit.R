@@ -91,7 +91,7 @@ plot.summary.matchit <- function(x,
   standard.sum <- if (un) x[["sum.all"]] else x[[if (sub) "sum.across" else "sum.matched"]]
 
   if (!"Std. Mean Diff." %in% colnames(standard.sum)) {
-    stop("Not appropriate for unstandardized summary.  Run summary() with the standardize = TRUE option, and then plot.", call. = FALSE)
+    .err("Not appropriate for unstandardized summary. Run `summary()` with the `standardize = TRUE` option, and then plot")
   }
 
   if (un) {
@@ -101,12 +101,15 @@ plot.summary.matchit <- function(x,
     sd.matched <- x[[if (sub) "sum.across" else "sum.matched"]][,"Std. Mean Diff."]
   }
 
+  chk::chk_flag(abs)
+
   var.names <- rownames(standard.sum)
 
+  chk::chk_string(var.order)
   var.order <- match_arg(var.order, c("data", "matched", "unmatched", "alphabetical"))
 
-  if (!un && var.order == "unmatched") stop("'var.order' cannot be \"unmatched\" if un = TRUE in the call to summary().", call. = FALSE)
-  if (!matched && var.order == "matched") stop("'var.order' cannot be \"matched\" if method = NULL in the original call to matchit().", call. = FALSE)
+  if (!un && var.order == "unmatched") .err("`var.order` cannot be \"unmatched\" if `un = TRUE` in the call to `summary()`")
+  if (!matched && var.order == "matched") .err("`var.order` cannot be \"matched\" if `method = NULL` in the original call to `matchit()`")
 
   if (abs) {
     if (un) sd.all <- abs(sd.all)

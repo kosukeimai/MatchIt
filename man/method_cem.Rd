@@ -125,6 +125,7 @@ and \code{cutpoints} is used for binning numeric covariates. The values
 supplied to these arguments should be iteratively changed until a matching
 solution that balances covariate balance and remaining sample size is
 obtained. The arguments are described below.
+\subsection{\code{grouping}}{
 
 The argument to \code{grouping} must be a list, where each component has the
 name of a categorical variable, the levels of which are to be combined. Each
@@ -139,7 +140,10 @@ each variable will be left alone (so \code{c("none")} could have been
 omitted from the previous code). Note that if a categorical variable does
 not appear in \code{grouping}, it will not be coarsened, so exact matching
 will take place on it. \code{grouping} should not be used for numeric
-variables; use \code{cutpoints}, described below, instead.
+variables with more than a few values; use \code{cutpoints}, described below, instead.
+}
+
+\subsection{\code{cutpoints}}{
 
 The argument to \code{cutpoints} must also be a list, where each component
 has the name of a numeric variables that is to be binned. (As a shortcut, it
@@ -148,7 +152,7 @@ Each component can take one of three forms: a vector of cutpoints that
 separate the bins, a single number giving the number of bins, or a string
 corresponding to an algorithm used to compute the number of bins. Any values
 at a boundary will be placed into the higher bin; e.g., if the cutpoints
-were \code{(c(0, 5, 10))}, values of 5 would be placed into the same bin as
+were \code{c(0, 5, 10)}, values of 5 would be placed into the same bin as
 values of 6, 7, 8, or 9, and values of 10 would be placed into a different
 bin. Internally, values of \code{-Inf} and \code{Inf} are appended to the
 beginning and end of the range. When given as a single number defining the
@@ -175,6 +179,8 @@ into bins based on the provided boundaries, \code{X3} into a number of bins
 determined by \code{\link[grDevices:nclass]{grDevices::nclass.scott()}}, and \code{X4} into
 quintiles. All other numeric variables would be split into a number of bins
 determined by \code{\link[grDevices:nclass]{grDevices::nclass.Sturges()}}, the default.
+}
+
 }
 }
 \note{

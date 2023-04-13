@@ -120,18 +120,16 @@ check.inputs <- function(mcall, method, distance, exact, mahvars, antiexact,
     }
   }
 
-  if (length(ignored.inputs) > 0) warning(sprintf("The %s %s not used with `method = %s` and will be ignored.",
+  if (length(ignored.inputs) > 0) .wrn(sprintf("the %s %s not used with `method = %s` and will be ignored",
                                                   ngettext(length(ignored.inputs), "argument", "arguments"),
                                                   word_list(ignored.inputs, quotes = 1, is.are = TRUE),
-                                                  add_quotes(method, quotes = !null.method)),
-                                          call. = FALSE, immediate. = TRUE)
-  if (length(error.inputs) > 0) stop(sprintf("The %s %s not used with `method = %s` and distance = \"%s\".",
+                                                  add_quotes(method, quotes = !null.method)))
+  if (length(error.inputs) > 0) .err(sprintf("the %s %s not used with `method = %s` and `distance = \"%s\"`",
                                              ngettext(length(error.inputs), "argument", "arguments"),
                                              word_list(error.inputs, quotes = 1, is.are = TRUE),
                                              add_quotes(method, quotes = !null.method),
-                                             distance),
-                                     call. = FALSE)
-  return(ignored.inputs)
+                                             distance))
+  ignored.inputs
 }
 
 #Check treatment for type, binary, missing, num. rows
@@ -144,12 +142,12 @@ check_treat <- function(treat = NULL, X = NULL) {
   if (isTRUE(attr(treat, "checked"))) return(treat)
 
   if (!is.atomic(treat) || !is.null(dim(treat))) {
-    stop("The treatment must be a vector.", call. = FALSE)
+    .err("the treatment must be a vector")
   }
 
-  if (anyNA(treat)) stop("Missing values are not allowed in the treatment.", call. = FALSE)
-  if (length(unique(treat)) != 2) stop("The treatment must be a binary variable.", call. = FALSE)
-  if (!is.null(X) && length(treat) != nrow(X)) stop("The treatment and covariates must have the same number of units.", call. = FALSE)
+  if (anyNA(treat)) .err("missing values are not allowed in the treatment")
+  if (length(unique(treat)) != 2) .err("the treatment must be a binary variable")
+  if (!is.null(X) && length(treat) != nrow(X)) .err("the treatment and covariates must have the same number of units")
 
   treat <- binarize(treat) #make 0/1
   attr(treat, "checked") <- TRUE
@@ -159,8 +157,8 @@ check_treat <- function(treat = NULL, X = NULL) {
 #Function to process distance and give warnings about new syntax
 process.distance <- function(distance, method = NULL, treat) {
   if (is.null(distance) && !is.null(method) %% !method %in% c("cem", "exact", "cardinality")) {
-    stop(sprintf("`distance` cannot be `NULL` with `method = \"%s\"`.",
-                 method), call. = FALSE)
+    .err(sprintf("`distance` cannot be `NULL` with `method = \"%s\"`",
+                 method))
   }
 
   if (is.character(distance) && length(distance) == 1) {
@@ -175,15 +173,15 @@ process.distance <- function(distance, method = NULL, treat) {
     if (tolower(distance) %in% c("cauchit", "cloglog", "linear.cloglog", "linear.log", "linear.logit", "linear.probit",
                                  "linear.cauchit", "log", "probit")) {
       link <- tolower(distance)
-      warning(sprintf("`distance = \"%s\"` will be deprecated; please use `distance = \"glm\", link = \"%s\"` in the future.",
-                      distance, link), call. = FALSE, immediate. = TRUE)
+      .wrn(sprintf("`distance = \"%s\"` will be deprecated; please use `distance = \"glm\", link = \"%s\"` in the future",
+                      distance, link))
       distance <- "glm"
       attr(distance, "link") <- link
     }
     else if (tolower(distance) %in% tolower(c("GAMcloglog", "GAMlog", "GAMlogit", "GAMprobit"))) {
       link <- tolower(substr(distance, 4, nchar(distance)))
-      warning(sprintf("`distance = \"%s\"` will be deprecated; please use `distance = \"gam\", link = \"%s\"` in the future.",
-                      distance, link), call. = FALSE, immediate. = TRUE)
+      .wrn(sprintf("`distance = \"%s\"` will be deprecated; please use `distance = \"gam\", link = \"%s\"` in the future",
+                      distance, link))
       distance <- "gam"
       attr(distance, "link") <- link
     }
@@ -195,11 +193,11 @@ process.distance <- function(distance, method = NULL, treat) {
       distance <- "elasticnet"
     }
     else if (!tolower(distance) %in% allowable.distances) {
-      stop("The argument supplied to `distance` is not an allowable value. See `help(\"distance\")` for allowable options.", call. = FALSE)
+      .err("the argument supplied to `distance` is not an allowable value. See `help(\"distance\")` for allowable options")
     }
     else if (!is.null(method) && method == "subclass" && tolower(distance) %in% matchit_distances()) {
-      stop(sprintf("`distance` cannot be %s with `method = \"subclass\"`.",
-                   add_quotes(distance)), call. = FALSE)
+      .err(sprintf("`distance` cannot be %s with `method = \"subclass\"`",
+                   add_quotes(distance)))
     }
     else {
       distance <- tolower(distance)
@@ -207,11 +205,11 @@ process.distance <- function(distance, method = NULL, treat) {
 
   }
   else if (!is.numeric(distance) || (!is.null(dim(distance)) && length(dim(distance)) != 2)) {
-    stop("`distance` must be a string with the name of the distance measure to be used or a numeric vector or matrix containing distance measures.", call. = FALSE)
+    .err("`distance` must be a string with the name of the distance measure to be used or a numeric vector or matrix containing distance measures")
   }
   else if (is.matrix(distance) && (is.null(method) || !method %in% c("nearest", "optimal", "full"))) {
-    stop(sprintf("`distance` cannot be supplied as a matrix with `method = %s`.",
-                 add_quotes(method, quotes = !is.null(method))), call. = FALSE)
+    .err(sprintf("`distance` cannot be supplied as a matrix with `method = %s`",
+                 add_quotes(method, quotes = !is.null(method))))
   }
 
   if (is.numeric(distance)) {
@@ -227,20 +225,19 @@ process.distance <- function(distance, method = NULL, treat) {
         if (!is.null(colnames(distance))) distance <- distance[,names(treat)[treat == 0], drop = FALSE]
       }
       else {
-        stop("When supplied as a matrix, `distance` must have dimensions NxN or N1xN0. See `help(\"distance\")` for details.", call. = FALSE)
+        .err("when supplied as a matrix, `distance` must have dimensions NxN or N1xN0. See `help(\"distance\")` for details")
       }
     }
     else {
       if (length(distance) != length(treat)) {
-        stop("`distance` must be the same length as the dataset if specified as a numeric vector.", call. = FALSE)
+        .err("`distance` must be the same length as the dataset if specified as a numeric vector")
       }
     }
 
-    if (anyNA(distance)) {
-      stop("Missing values are not allowed in `distance`.", call. = FALSE)
-    }
+    chk::chk_not_any_na(distance)
   }
-  return(distance)
+
+  distance
 }
 
 #Function to check ratio is acceptable
@@ -252,56 +249,55 @@ process.ratio <- function(ratio, method = NULL, ..., min.controls = NULL, max.co
   if (is.null(method)) return(1)
   else if (method %in% c("nearest", "optimal")) {
     if (ratio.null) ratio <- 1
-    else if (ratio.na) stop("`ratio` cannot be NA.", call. = FALSE)
+    else if (ratio.na) .err("`ratio` cannot be `NA`")
     else if (!is.atomic(ratio) || !is.numeric(ratio) || length(ratio) > 1 || ratio < 1) {
-      stop("`ratio` must be a single number greater than or equal to 1.", call. = FALSE)
+      .err("`ratio` must be a single number greater than or equal to 1")
     }
 
     if (is.null(max.controls)) {
-      if (!is_whole_number(ratio)) {
-        stop("`ratio` must be a whole number when `max.controls` is not specified.",
-             call. = FALSE)
+      if (!chk::vld_whole_number(ratio)) {
+        .err("`ratio` must be a whole number when `max.controls` is not specified")
       }
       ratio <- round(ratio)
     }
     else if (anyNA(max.controls) || !is.atomic(max.controls) || !is.numeric(max.controls) || length(max.controls) > 1) {
-      stop("`max.controls` must be a single positive number.", call. = FALSE)
+      .err("`max.controls` must be a single positive number")
     }
     else {
-      if (ratio <= 1) stop("`ratio` must be greater than 1 for variable ratio matching.", call. = FALSE)
+      if (ratio <= 1) .err("`ratio` must be greater than 1 for variable ratio matching")
 
       max.controls <- ceiling(max.controls)
-      if (max.controls <= ratio) stop("`max.controls` must be greater than `ratio` for variable ratio matching.", call. = FALSE)
+      if (max.controls <= ratio) .err("`max.controls` must be greater than `ratio` for variable ratio matching")
 
       if (is.null(min.controls)) min.controls <- 1
       else if (anyNA(max.controls) || !is.atomic(max.controls) || !is.numeric(max.controls) || length(max.controls) > 1) {
-        stop("`max.controls` must be a single positive number.", call. = FALSE)
+        .err("`max.controls` must be a single positive number")
       }
       else min.controls <- floor(min.controls)
 
-      if (min.controls < 1) stop("`min.controls` cannot be less than 1 for variable ratio matching.", call. = FALSE)
-      else if (min.controls >= ratio) stop("`min.controls` must be less than `ratio` for variable ratio matching.", call. = FALSE)
+      if (min.controls < 1) .err("`min.controls` cannot be less than 1 for variable ratio matching")
+      if (min.controls >= ratio) .err("`min.controls` must be less than `ratio` for variable ratio matching")
     }
   }
   else if (method == "full") {
     if (is.null(max.controls)) max.controls <- Inf
     else if ((anyNA(max.controls) || !is.atomic(max.controls) || !is.numeric(max.controls) || length(max.controls) > 1)) {
-      stop("`max.controls` must be a single positive number.", call. = FALSE)
+      .err("`max.controls` must be a single positive number")
     }
 
     if (is.null(min.controls)) min.controls <- 0
     else if ((anyNA(min.controls) || !is.atomic(min.controls) || !is.numeric(min.controls) || length(min.controls) > 1)) {
-      stop("`min.controls` must be a single positive number.", call. = FALSE)
+      .err("`min.controls` must be a single positive number")
     }
 
     ratio <- 1 #Just to get min.controls and max.controls out
   }
   else if (method == "genetic") {
     if (ratio.null) ratio <- 1
-    else if (ratio.na) stop("`ratio` cannot be NA.", call. = FALSE)
+    else if (ratio.na) .err("`ratio` cannot be `NA`")
     else if (!is.atomic(ratio) || !is.numeric(ratio) || length(ratio) > 1 || ratio < 1 ||
-             !is_whole_number(ratio)) {
-      stop("`ratio` must be a single whole number greater than or equal to 1.", call. = FALSE)
+             !chk::vld_whole_number(ratio)) {
+      .err("`ratio` must be a single whole number greater than or equal to 1")
     }
     ratio <- round(ratio)
 
@@ -310,7 +306,7 @@ process.ratio <- function(ratio, method = NULL, ..., min.controls = NULL, max.co
   else if (method == "cardinality") {
     if (ratio.null) ratio <- 1
     else if (!ratio.na && (!is.atomic(ratio) || !is.numeric(ratio) || length(ratio) > 1 || ratio < 0)) {
-      stop("`ratio` must be a single positive number or NA.", call. = FALSE)
+      .err("`ratio` must be a single positive number or `NA`")
     }
 
     min.controls <- max.controls <- NULL
@@ -323,7 +319,8 @@ process.ratio <- function(ratio, method = NULL, ..., min.controls = NULL, max.co
     attr(ratio, "min.controls") <- min.controls
     attr(ratio, "max.controls") <- max.controls
   }
-  return(ratio)
+
+  ratio
 }
 
 #Function to check if caliper is okay and process it
@@ -342,34 +339,42 @@ process.caliper <- function(caliper = NULL, method = NULL, data = NULL, covs = N
   if (length(caliper) == 0 || is.null(method) || !method %in% c("nearest", "genetic", "full", "quick")) return(NULL)
 
   #Check if form of caliper is okay
-  if (!is.atomic(caliper) || !is.numeric(caliper)) stop("`caliper` must be a numeric vector.", call. = FALSE)
+  if (!is.atomic(caliper) || !is.numeric(caliper)) .err("`caliper` must be a numeric vector")
 
   #Check caliper names
-  if (length(caliper) == 1 && (is.null(names(caliper)) || identical(names(caliper), ""))) names(caliper) <- ""
-  else if (is.null(names(caliper))) stop("`caliper` must be a named vector with names corresponding to the variables for which a caliper is to be applied.", call. = FALSE)
-  else if (anyNA(names(caliper))) stop("`caliper` names cannot include NA.", call. = FALSE)
-  else if (sum(names(caliper) == "") > 1) stop("No more than one entry in `caliper` can have no name.", call. = FALSE)
+  if (length(caliper) == 1 && (is.null(names(caliper)) || identical(names(caliper), ""))) {
+    names(caliper) <- ""
+  }
+  else if (is.null(names(caliper))) {
+    .err("`caliper` must be a named vector with names corresponding to the variables for which a caliper is to be applied")
+  }
+  else if (anyNA(names(caliper))) {
+    .err("`caliper` names cannot include `NA`")
+  }
+  else if (sum(names(caliper) == "") > 1) {
+    .err("no more than one entry in `caliper` can have no name")
+  }
 
-  if (any(names(caliper) == "") && is.null(distance)) stop("All entries in `caliper` must be named when distance does not correspond to a propensity score.", call. = FALSE)
+  if (any(names(caliper) == "") && is.null(distance)) {
+    .err("all entries in `caliper` must be named when `distance` does not correspond to a propensity score")
+  }
 
   #Check if caliper name is in available data
   cal.in.data <- setNames(names(caliper) %in% names(data), names(caliper))
   cal.in.covs <- setNames(names(caliper) %in% names(covs), names(caliper))
   cal.in.mahcovs <- setNames(names(caliper) %in% names(mahcovs), names(caliper))
   if (any(names(caliper) != "" & !cal.in.covs & !cal.in.data)) {
-    stop(paste0("All variables named in `caliper` must be in `data`. Variables not in `data`:\n\t",
-                paste0(names(caliper)[names(caliper) != "" & !cal.in.data & !cal.in.covs & !cal.in.mahcovs], collapse = ", ")), call. = FALSE)
+    .err(paste0("All variables named in `caliper` must be in `data`. Variables not in `data`:\n\t",
+                paste0(names(caliper)[names(caliper) != "" & !cal.in.data & !cal.in.covs & !cal.in.mahcovs], collapse = ", ")), tidy = FALSE)
   }
 
   #Check std.caliper
-  if (length(std.caliper) == 0 || !is.atomic(std.caliper) || !is.logical(std.caliper)) {
-    stop("`std.caliper` must be a logical (TRUE/FALSE) vector.", call. = FALSE)
-  }
+  chk::chk_logical(std.caliper)
   if (length(std.caliper) == 1) {
     std.caliper <- setNames(rep.int(std.caliper, length(caliper)), names(caliper))
   }
   else if (length(std.caliper) != length(caliper)) {
-    stop("`std.caliper` must be the same length as `caliper`", call. = FALSE)
+    .err("`std.caliper` must be the same length as `caliper`")
   }
   else names(std.caliper) <- names(caliper)
 
@@ -392,28 +397,28 @@ process.caliper <- function(caliper = NULL, method = NULL, data = NULL, covs = N
   #Ensure no calipers on categorical variables
   cat.vars <- vapply(names(caliper), function(x) {
     if (num.unique[names(num.unique) == x] == 2) return(TRUE)
-    else {
-      if (x == "") var <- distance
-      else if (cal.in.data[x]) var <- data[[x]]
-      else if (cal.in.covs[x]) var <- covs[[x]]
-      else var <- mahcovs[[x]]
 
-      return(is.factor(var) || is.character(var))
-    }
+    if (x == "") var <- distance
+    else if (cal.in.data[x]) var <- data[[x]]
+    else if (cal.in.covs[x]) var <- covs[[x]]
+    else var <- mahcovs[[x]]
+
+    is.factor(var) || is.character(var)
   }, logical(1L))
 
   if (any(cat.vars)) {
-    stop(paste0("Calipers cannot be used with binary, factor, or character variables. Offending variables:\n\t",
-                paste0(ifelse(names(caliper) == "", "<distance>", names(caliper))[cat.vars], collapse = ", ")), call. = FALSE)
+    .err(paste0("Calipers cannot be used with binary, factor, or character variables. Offending variables:\n\t",
+                paste0(ifelse(names(caliper) == "", "<distance>", names(caliper))[cat.vars], collapse = ", ")),
+         tidy = FALSE)
   }
 
   #Process calipers according to std.caliper
   std.caliper <- std.caliper[names(std.caliper) %in% names(caliper)]
-  if (anyNA(std.caliper)) stop("`std.caliper` cannot be NA.", call. = FALSE)
+  chk::chk_not_any_na(std.caliper)
 
   if (any(std.caliper)) {
     if ("" %in% names(std.caliper) && isTRUE(std.caliper[names(std.caliper) == ""]) && is.matrix(distance)) {
-      stop("When `distance` is supplied as a matrix and a caliper for it is specified, `std.caliper` must be FALSE for the distance measure.", call. = FALSE)
+      .err("when `distance` is supplied as a matrix and a caliper for it is specified, `std.caliper` must be `FALSE` for the distance measure")
     }
     caliper[std.caliper] <- caliper[std.caliper] * vapply(names(caliper)[std.caliper], function(x) {
       if (x == "") sd(distance[!discarded])
@@ -428,8 +433,7 @@ process.caliper <- function(caliper = NULL, method = NULL, data = NULL, covs = N
     attr(caliper, "cal.formula") <- reformulate(names(caliper)[names(caliper) != "" & !cal.in.covs[names(caliper)] & !cal.in.mahcovs[names(caliper)]])
   }
 
-  return(abs(caliper))
-
+  abs(caliper)
 }
 
 #Function to process replace argument
@@ -438,9 +442,7 @@ process.replace <- function(replace, method = NULL, ..., reuse.max = NULL) {
   if (is.null(method)) return(FALSE)
 
   if (is.null(replace)) replace <- FALSE
-  else if (anyNA(replace) || length(replace) != 1 || !is.logical(replace)) {
-    stop("`replace` must be TRUE or FALSE.", call. = FALSE)
-  }
+  chk::chk_flag(replace)
 
   if (method %in% c("nearest")) {
     if (is.null(reuse.max)) {
@@ -454,7 +456,7 @@ process.replace <- function(replace, method = NULL, ..., reuse.max = NULL) {
     }
     else if (abs(reuse.max - round(reuse.max)) > 1e-8 || length(reuse.max) != 1 ||
              anyNA(reuse.max) || reuse.max < 1) {
-      stop("`reuse.max` must be a positive integer of length 1.", call. = FALSE)
+      .err("`reuse.max` must be a positive integer of length 1")
     }
 
     replace <- reuse.max != 1L
@@ -473,23 +475,26 @@ process.variable.input <- function(x, data = NULL) {
 
   if (is.character(x)) {
     if (is.null(data) || !is.data.frame(data)) {
-      stop(sprintf("If `%s` is specified as strings, a data frame containing the named variables must be supplied to `data`.",
-                   n), call. = FALSE)
+      .err(sprintf("if `%s` is specified as strings, a data frame containing the named variables must be supplied to `data`",
+                   n))
     }
     if (!all(x %in% names(data))) {
-      stop(sprintf("All names supplied to `%s` must be variables in `data`. Variables not in `data`:\n\t%s", n,
-                   paste(add_quotes(setdiff(x, names(data))), collapse = ", ")), call. = FALSE)
+      .err(sprintf("All names supplied to `%s` must be variables in `data`. Variables not in `data`:\n\t%s", n,
+                   paste(add_quotes(setdiff(x, names(data))), collapse = ", ")), tidy = FALSE)
     }
     x <- reformulate(x)
   }
-  else if (inherits(x, "formula")) {
+  else if (rlang::is_formula(x)) {
     x <- update(x, NULL ~ .)
   }
   else {
-    stop(sprintf("`%s` must be supplied as a character vector of names or a one-sided formula.", n), call. = FALSE)
+    .err(sprintf("`%s` must be supplied as a character vector of names or a one-sided formula.", n))
   }
+
   x_covs <- model.frame(x, data, na.action = "na.pass")
-  if (anyNA(x_covs)) stop(sprintf("Missing values are not allowed in the covariates named in `%s`.", n), call. = FALSE)
+  if (anyNA(x_covs)) {
+    .err(sprintf("missing values are not allowed in the covariates named in `%s`", n))
+  }
 
   x_covs
 }

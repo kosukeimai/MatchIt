@@ -84,8 +84,8 @@ rbind.matchdata <- function(..., deparse.level = 1) {
   allargs$deparse.level <- deparse.level
 
   type <- intersect(c("matchdata", "getmatches"), unlist(lapply(md_list, class)))
-  if (length(type) == 0) stop("A matchdata or getmatches object must be supplied.", call. = FALSE)
-  else if (length(type) == 2) stop("Supplied objects must be all matchdata objects or all getmatches objects.", call. = FALSE)
+  if (length(type) == 0) .err("A `matchdata` or `getmatches` object must be supplied")
+  else if (length(type) == 2) .err("Supplied objects must be all `matchdata` objects or all `getmatches` objects")
 
   attrs <- c("distance", "weights", "subclass", "id")
   attr_list <- setNames(vector("list", length(attrs)), attrs)
@@ -108,7 +108,8 @@ rbind.matchdata <- function(..., deparse.level = 1) {
   })
   for (d in seq_along(md_list)[-1]) {
     if (length(other_col_list[[d]]) != length(other_col_list[[1]]) || !all(other_col_list[[d]] %in% other_col_list[[1]])) {
-      stop(paste("The", switch(type, "matchdata" = "match.data()", "get_matches()"), "inputs must come from the same dataset."), call. = FALSE)
+      .err(sprintf("the %s inputs must come from the same dataset",
+                 switch(type, "matchdata" = "`match.data()`", "`get_matches()`")))
     }
   }
 

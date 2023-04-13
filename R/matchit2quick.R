@@ -8,7 +8,7 @@
 #' matching, which is a form of subclassification wherein all units, both
 #' treatment and control (i.e., the "full" sample), are assigned to a subclass
 #' and receive at least one match. It uses an algorithm that is extremely fast
-#' compared to optimal full matching, which is why it is labelled as "quick", at the
+#' compared to optimal full matching, which is why it is labeled as "quick", at the
 #' expense of true optimality. The method is described in Sävje, Higgins, & Sekhon (2021). The method relies on and is a wrapper
 #' for \pkgfun{quickmatch}{quickmatch}.
 #'
@@ -141,7 +141,7 @@ matchit2quick <- function(treat, formula, data, distance, discarded,
                           estimand = "ATT", verbose = FALSE,
                           is.full.mahalanobis, ...) {
 
-  check.package("quickmatch")
+  rlang::check_installed("quickmatch")
 
   if (verbose) cat("Generalized full matching... \n")
 
@@ -166,8 +166,8 @@ matchit2quick <- function(treat, formula, data, distance, discarded,
 
   if (is.full.mahalanobis) {
     if (length(attr(terms(formula, data = data), "term.labels")) == 0) {
-      stop(sprintf("Covariates must be specified in the input formula when distance = \"%s\".",
-                   attr(is.full.mahalanobis, "transform")), call. = FALSE)
+      .err(sprintf("covariates must be specified in the input formula when `distance = \"%s\"`",
+                   attr(is.full.mahalanobis, "transform")))
     }
     mahvars <- formula
   }
@@ -177,7 +177,7 @@ matchit2quick <- function(treat, formula, data, distance, discarded,
     ex <- factor(exactify(model.frame(exact, data = data),
                           sep = ", ", include_vars = TRUE)[!discarded])
     cc <- intersect(as.integer(ex)[treat_==1], as.integer(ex)[treat_==0])
-    if (length(cc) == 0) stop("No matches were found.", call. = FALSE)
+    if (length(cc) == 0) .err("no matches were found")
 
   }
   else {
@@ -205,10 +205,10 @@ matchit2quick <- function(treat, formula, data, distance, discarded,
   #Process caliper
   if (!is.null(caliper)) {
     if (!is.null(mahvars)) {
-      stop("With method = \"quick\", a caliper can only be used when 'distance' is a propensity score or vector and 'mahvars' is not specified.", call. = FALSE)
+      .err("with `method = \"quick\"`, a caliper can only be used when `distance` is a propensity score or vector and `mahvars` is not specified")
     }
     if (length(caliper) > 1 || !identical(names(caliper), "")) {
-      stop("With method = \"quick\", calipers cannot be placed on covariates.", call. = FALSE)
+      .err("with `method = \"quick\"`, calipers cannot be placed on covariates")
     }
   }
 
@@ -220,25 +220,18 @@ matchit2quick <- function(treat, formula, data, distance, discarded,
 
     distcovs_ <- distcovs[ex == e,, drop = FALSE]
 
-    withCallingHandlers({
+    matchit_try({
       p[[e]] <- do.call(quickmatch::quickmatch,
                         c(list(distcovs_,
                                treatments = treat_[ex == e],
                                caliper = caliper),
                           A))
-    },
-    warning = function(w) {
-      warning(paste0("(from quickmatch) ", conditionMessage(w)), call. = FALSE, immediate. = TRUE)
-      invokeRestart("muffleWarning")
-    },
-    error = function(e1) {
-      stop(paste0("(from quickmatch) ", conditionMessage(e1)), call. = FALSE)
-    })
+    }, from = "quickmatch")
 
     pair[which(ex == e)[!is.na(p[[e]])]] <- paste(as.character(p[[e]][!is.na(p[[e]])]), e, sep = "|")
   }
 
-  if (all(is.na(pair))) stop("No matches were found.", call. = FALSE)
+  if (all(is.na(pair))) .err("no matches were found")
   if (length(p) == 1) p <- p[[1]]
 
   psclass <- factor(pair)
@@ -251,11 +244,11 @@ matchit2quick <- function(treat, formula, data, distance, discarded,
   if (verbose) cat("Calculating matching weights... ")
 
   res <- list(subclass = psclass,
-              weights = weights.subclass(psclass, treat, estimand),
+              weights = get_weights_from_subclass(psclass, treat, estimand),
               obj = p)
 
   if (verbose) cat("Done.\n")
 
   class(res) <- c("matchit")
-  return(res)
+  res
 }

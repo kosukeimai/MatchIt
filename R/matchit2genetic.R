@@ -246,7 +246,7 @@ matchit2genetic <- function(treat, data, distance, discarded,
                             is.full.mahalanobis, use.genetic = TRUE,
                             antiexact = NULL, ...) {
 
-  check.package(c("Matching", "rgenoud"))
+  rlang::check_installed(c("Matching", "rgenoud"))
 
   if (verbose) cat("Genetic matching... \n")
 
@@ -265,12 +265,12 @@ matchit2genetic <- function(treat, data, distance, discarded,
 
   if (!replace) {
     if (sum(!discarded & treat != focal) < sum(!discarded & treat == focal)) {
-      warning(sprintf("Fewer %s units than %s units; not all %s units will get a match.",
-                      tc[2], tc[1], tc[1]), immediate. = TRUE, call. = FALSE)
+      .wrn(sprintf("fewer %s units than %s units; not all %s units will get a match",
+                      tc[2], tc[1], tc[1]))
     }
     else if (sum(!discarded & treat != focal) < sum(!discarded & treat == focal)*ratio) {
-      stop(sprintf("Not enough %s units for %s matches for each %s unit.",
-                   tc[2], ratio, tc[1]), call. = FALSE)
+      .err(sprintf("not enough %s units for %s matches for each %s unit",
+                   tc[2], ratio, tc[1]))
     }
   }
 
@@ -308,7 +308,7 @@ matchit2genetic <- function(treat, data, distance, discarded,
   }
 
   if (ncol(covs_to_balance) == 0) {
-    stop("Covariates must be specified in the input formula to use genetic matching.", call. = FALSE)
+    .err("covariates must be specified in the input formula to use genetic matching")
   }
 
   #Process exact; exact.log will be supplied to GenMatch() and Match()
@@ -317,7 +317,7 @@ matchit2genetic <- function(treat, data, distance, discarded,
     ex <- as.integer(factor(exactify(model.frame(exact, data = data), names(treat), sep = ", ", include_vars = TRUE)))
 
     cc <- intersect(ex[treat==1], ex[treat==0])
-    if (length(cc) == 0) stop("No matches were found.", call. = FALSE)
+    if (length(cc) == 0) .err("No matches were found")
 
     X <- cbind(X, ex)
 
@@ -404,7 +404,7 @@ matchit2genetic <- function(treat, data, distance, discarded,
   }
 
   if (use.genetic) {
-    withCallingHandlers({
+    matchit_try({
       g.out <- do.call(Matching::GenMatch,
                        c(list(Tr = treat_, X = X, BalanceMatrix = covs_to_balance,
                               M = ratio, exact = exact.log, caliper = cal,
@@ -412,16 +412,8 @@ matchit2genetic <- function(treat, data, distance, discarded,
                               CommonSupport = FALSE, verbose = verbose,
                               weights = s.weights, print.level = 2*verbose),
                          A[names(A) %in% names(formals(Matching::GenMatch))]))
-    },
-    warning = function(w) {
-      if (!startsWith(conditionMessage(w), "replace==FALSE, but there are more (weighted) treated obs than control obs.")) {
-        warning(paste0("(from Matching) ", conditionMessage(w)), call. = FALSE, immediate. = TRUE)
-      }
-      invokeRestart("muffleWarning")
-    },
-    error = function(e) {
-      stop(paste0("(from Matching) ", conditionMessage(e)), call. = FALSE)
-    })
+    }, from = "Matching",
+    dont_warn_if = "replace==FALSE, but there are more (weighted) treated obs than control obs.")
   }
   else {
     #For debugging
@@ -429,14 +421,14 @@ matchit2genetic <- function(treat, data, distance, discarded,
   }
 
   lab <- names(treat)
-  lab1 <- names(treat[treat == 1])
+  lab1 <- lab[treat == 1]
 
   lab_ <- names(treat_)
 
   ind_ <- seq_along(treat)[ord]
 
   # if (!isFALSE(A$use.Match)) {
-  withCallingHandlers({
+  matchit_try({
     m.out <- Matching::Match(Tr = treat_, X = X,
                              M = ratio, exact = exact.log, caliper = cal,
                              replace = replace, estimand = "ATT", ties = FALSE,
@@ -446,16 +438,8 @@ matchit2genetic <- function(treat, data, distance, discarded,
                              else if (is.null(s.weights)) generalized_inverse(cor(X))
                              else generalized_inverse(cov.wt(X, s.weights, cor = TRUE)$cor),
                              restrict = A[["restrict"]], version = "fast")
-  },
-  warning = function(w) {
-    if (!startsWith(conditionMessage(w), "replace==FALSE, but there are more (weighted) treated obs than control obs.")) {
-      warning(paste0("(from Matching) ", conditionMessage(w)), call. = FALSE, immediate. = TRUE)
-    }
-    invokeRestart("muffleWarning")
-  },
-  error = function(e) {
-    stop(paste0("(from Matching) ", conditionMessage(e)), call. = FALSE)
-  })
+  }, from = "Matching",
+  dont_warn_if = "replace==FALSE, but there are more (weighted) treated obs than control obs.")
 
   #Note: must use character match.matrix because of re-ordering treat into treat_
   mm <- matrix(NA_integer_, nrow = n1, ncol = max(table(m.out$index.treated)),
@@ -503,11 +487,11 @@ matchit2genetic <- function(treat, data, distance, discarded,
 
   res <- list(match.matrix = nummm2charmm(mm, treat),
               subclass = psclass,
-              weights = weights.matrix(mm, treat),
+              weights = get_weights_from_mm(mm, treat),
               obj = g.out)
 
   if (verbose) cat("Done.\n")
 
   class(res) <- "matchit"
-  return(res)
+  res
 }

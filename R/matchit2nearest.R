@@ -266,15 +266,15 @@
 #'
 NULL
 
-matchit2nearest <-  function(treat, data, distance, discarded,
+matchit2nearest <- function(treat, data, distance, discarded,
                              ratio = 1, s.weights = NULL, replace = FALSE, m.order = NULL,
                              caliper = NULL, mahvars = NULL, exact = NULL,
                              formula = NULL, estimand = "ATT", verbose = FALSE,
-                             is.full.mahalanobis, fast = TRUE,
+                             is.full.mahalanobis,
                              antiexact = NULL, unit.id = NULL, ...){
 
   if (verbose) {
-    if (fast) check.package("RcppProgress")
+    rlang::check_installed("RcppProgress")
     cat("Nearest neighbor matching... \n")
   }
 
@@ -293,8 +293,8 @@ matchit2nearest <-  function(treat, data, distance, discarded,
 
   if (is.full.mahalanobis) {
     if (length(attr(terms(formula, data = data), "term.labels")) == 0) {
-      stop(sprintf("Covariates must be specified in the input formula when distance = \"%s\".",
-                   attr(is.full.mahalanobis, "transform")), call. = FALSE)
+      .err(sprintf("covariates must be specified in the input formula when `distance = \"%s\"`",
+                   attr(is.full.mahalanobis, "transform")))
     }
     mahvars <- formula
   }
@@ -381,7 +381,7 @@ matchit2nearest <-  function(treat, data, distance, discarded,
     ex <- factor(exactify(model.frame(exact, data = data), nam = lab, sep = ", ", include_vars = TRUE))
 
     cc <- intersect(as.integer(ex)[treat==1], as.integer(ex)[treat==0])
-    if (length(cc) == 0) stop("No matches were found.", call. = FALSE)
+    if (length(cc) == 0) .err("No matches were found")
 
     if (reuse.max < n1) {
 
@@ -391,16 +391,16 @@ matchit2nearest <-  function(treat, data, distance, discarded,
       }, numeric(1L))
 
       if (any(e_ratios < 1)) {
-        warning(sprintf("Fewer %s units than %s units in some 'exact' strata; not all %s units will get a match.",
-                        tc[2], tc[1], tc[1]), immediate. = TRUE, call. = FALSE)
+        .wrn(sprintf("fewer %s units than %s units in some `exact` strata; not all %s units will get a match",
+                        tc[2], tc[1], tc[1]))
       }
       if (ratio > 1 && any(e_ratios < ratio)) {
         if (is.null(max.controls) || ratio == max.controls)
-          warning(sprintf("Not all %s units will get %s matches.",
-                          tc[1], ratio), immediate. = TRUE, call. = FALSE)
+          .wrn(sprintf("not all %s units will get %s matches",
+                          tc[1], ratio))
         else
-          warning(sprintf("Not enough %s units for an average of %s matches per %s unit in all 'exact' strata.",
-                          tc[2], ratio, tc[1]), immediate. = TRUE, call. = FALSE)
+          .wrn(sprintf("not enough %s units for an average of %s matches per %s unit in all `exact` strata",
+                          tc[2], ratio, tc[1]))
       }
     }
   }
@@ -415,19 +415,16 @@ matchit2nearest <-  function(treat, data, distance, discarded,
       }
 
       if (e_ratios < 1) {
-        warning(sprintf("Fewer %s %s than %s units; not all %s units will get a match.",
-                        tc[2], if (is.null(unit.id)) "units" else "unit IDs", tc[1], tc[1]),
-                immediate. = TRUE, call. = FALSE)
+        .wrn(sprintf("fewer %s %s than %s units; not all %s units will get a match",
+                        tc[2], if (is.null(unit.id)) "units" else "unit IDs", tc[1], tc[1]))
       }
       else if (e_ratios < ratio) {
         if (is.null(max.controls) || ratio == max.controls)
-          warning(sprintf("Not all %s units will get %s matches.",
-                          tc[1], ratio),
-                  immediate. = TRUE, call. = FALSE)
+          .wrn(sprintf("not all %s units will get %s matches",
+                          tc[1], ratio))
         else
-          warning(sprintf("Not enough %s %s for an average of %s matches per %s unit.",
-                          tc[2], if (is.null(unit.id)) "units" else "unit IDs", ratio, tc[1]),
-                  immediate. = TRUE, call. = FALSE)
+          .wrn(sprintf("not enough %s %s for an average of %s matches per %s unit",
+                          tc[2], if (is.null(unit.id)) "units" else "unit IDs", ratio, tc[1]))
       }
     }
   }
@@ -436,13 +433,13 @@ matchit2nearest <-  function(treat, data, distance, discarded,
   #Each treated unit get its own value of ratio
   if (!is.null(max.controls)) {
     if (is.null(distance)) {
-      if (is.full.mahalanobis) stop(sprintf("'distance' cannot be \"%s\" for variable ratio matching.",
-                                            transform), call. = FALSE)
-      else stop("'distance' cannot be supplied as a matrix for variable ratio matching.", call. = FALSE)
+      if (is.full.mahalanobis) .err(sprintf("`distance` cannot be \"%s\" for variable ratio matching",
+                                            transform))
+      .err("`distance` cannot be supplied as a matrix for variable ratio matching")
     }
 
     m <- round(ratio * n1)
-    # if (m > sum(treat == 0)) stop("'ratio' must be less than or equal to n0/n1.", call. = FALSE)
+    # if (m > sum(treat == 0)) stop("'ratio' must be less than or equal to n0/n1")
 
     kmax <- floor((m - min.controls*(n1-1)) / (max.controls - min.controls))
     kmin <- n1 - kmax - 1
@@ -546,13 +543,13 @@ matchit2nearest <-  function(treat, data, distance, discarded,
 
   res <- list(match.matrix = nummm2charmm(mm, treat),
               subclass = psclass,
-              weights = weights.matrix(mm, treat))
+              weights = get_weights_from_mm(mm, treat))
 
   if (verbose) cat("Done.\n")
 
   class(res) <- "matchit"
 
-  return(res)
+  res
 }
 
 # Dispatches Rcpp function for NN matching

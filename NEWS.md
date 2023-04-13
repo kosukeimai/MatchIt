@@ -6,11 +6,27 @@ output:
 `MatchIt` News and Updates
 ======
 
+# MatchIt 4.5.3
+
+* Error messages have been improved using `chk` and `rlang`, which are now dependencies.
+
+* Fixed a bug when using `method = "nearest"` with `replace = TRUE` and `ratio` greater than 1. Thanks to Julia Kretschmann. (#159)
+
+* Fixed a bug when using `method = "nearest"` with `exact` and `ratio` greater than 1. Thanks to Sarah Conner.
+
+* Fixed a bug that would occur due to numerical imprecision in `plot.matchit()`. Thanks to @hkmztrk. (#158)
+
+* Fixed bugs when using `method = "cem"` where a covariate was to be omitted from coarsening. Thanks to @jfhelmer. (#160)
+
+* Fixed some typos in the vignettes. Thanks to @fBedecarrats. (#156)
+
+* Updated vignettes to use `marginaleffects` v0.11.0 syntax.
+
 # MatchIt 4.5.2
 
 * Fixed a bug when using `method = "quick"` with `exact` specified. Thanks to @m-marquis. (#149)
 
-* Improved performance and fixed some bugs when using `exact` in cases where some strata contain units from only one treatment group. Thanks to @m-marquis and others for pointing these out.
+* Improved performance and fixed some bugs when using `exact` in cases where some strata contain units from only one treatment group. Thanks to @m-marquis and others for pointing these out. (#151)
 
 # MatchIt 4.5.1
 
@@ -172,7 +188,7 @@ output:
 
 * A spurious warning that would appear when using a large `ratio` with `replace = TRUE` and `method = "nearest"` no longer appears.
 
-* Fixed a bug when trying to supply `distance` as a labelled numeric vector (e.g., resulting from `haven`).
+* Fixed a bug when trying to supply `distance` as a labeled numeric vector (e.g., resulting from `haven`).
 
 * Fixed some typos in the documentation and vignettes.
 

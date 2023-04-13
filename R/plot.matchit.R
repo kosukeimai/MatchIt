@@ -140,6 +140,7 @@
 #' @exportS3Method plot matchit
 plot.matchit <- function(x, type = "qq", interactive = TRUE, which.xs = NULL, data = NULL, ...) {
 
+  chk::chk_string(type)
   type <- tolower(type)
   type <- match_arg(type, c("qq", "ecdf", "density", "jitter", "histogram"))
 
@@ -149,13 +150,13 @@ plot.matchit <- function(x, type = "qq", interactive = TRUE, which.xs = NULL, da
   }
   else if (type == "jitter") {
     if (is.null(x$distance)) {
-      stop("type = \"jitter\" cannot be used if a distance measure is not estimated or supplied. No plots generated.", call. = FALSE)
+      .err("`type = \"jitter\"` cannot be used if a distance measure is not estimated or supplied. No plots generated")
     }
     jitter.pscore(x, interactive = interactive,...)
   }
   else if (type == "histogram") {
     if (is.null(x$distance)) {
-      stop("type = \"hist\" cannot be used if a distance measure is not estimated or supplied. No plots generated.", call. = FALSE)
+      .err("`type = \"hist\"` cannot be used if a distance measure is not estimated or supplied. No plots generated")
     }
     hist.pscore(x,...)
   }
@@ -177,7 +178,8 @@ plot.matchit.subclass <- function(x, type = "qq", interactive = TRUE, which.xs =
       print.data.frame(Choices, right=FALSE)
       ans <- readline(question)
     }
-    return(ans)
+
+    ans
   }
 
   type <- tolower(type)
@@ -193,8 +195,7 @@ plot.matchit.subclass <- function(x, type = "qq", interactive = TRUE, which.xs =
     if (miss.sub || isFALSE(subclass)) which.subclass <- NULL
     else if (isTRUE(subclass)) which.subclass <- subclasses
     else if (!is.atomic(subclass) || !all(subclass %in% seq_along(subclasses))) {
-      stop("'subclass' should be TRUE, FALSE, or a vector of subclass indices for which subclass balance is to be displayed.",
-           call. = FALSE)
+      .err("`subclass` should be `TRUE`, `FALSE`, or a vector of subclass indices for which subclass balance is to be displayed")
     }
     else which.subclass <- subclasses[subclass]
 
@@ -206,9 +207,9 @@ plot.matchit.subclass <- function(x, type = "qq", interactive = TRUE, which.xs =
       subclasses <- levels(x$subclass)
       choices <- c("No (Exit)", paste0("Yes: Subclass ", subclasses), "Yes: In aggregate")
       plot.name <- switch(type, "qq" = "quantile-quantile", "ecdf" = "empirical CDF", "density" = "density")
-      question <- paste("Would you like to see", plot.name, "plots of any subclasses? ")
+      question <- sprintf("Would you like to see %s plots of any subclasses? ", plot.name)
       ans <- -1
-      while(ans != 0) {
+      while (ans != 0) {
         ans <- as.numeric(choice.menu(choices, question))
         if (ans %in% seq_along(subclasses) && any(x$subclass == subclasses[ans])) {
           matchit.covplot.subclass(x, type = type, which.subclass = subclasses[ans],
@@ -225,13 +226,13 @@ plot.matchit.subclass <- function(x, type = "qq", interactive = TRUE, which.xs =
   }
   else if (type=="jitter") {
     if (is.null(x$distance)) {
-      stop("type = \"jitter\" cannot be used when no distance variable was estimated or supplied.", call. = FALSE)
+      .err("`type = \"jitter\"` cannot be used when no distance variable was estimated or supplied")
     }
     jitter.pscore(x, interactive = interactive, ...)
   }
   else if (type == "histogram") {
     if (is.null(x$distance)) {
-      stop("type = \"histogram\" cannot be used when no distance variable was estimated or supplied.", call. = FALSE)
+      .err("`type = \"histogram\"` cannot be used when no distance variable was estimated or supplied")
     }
     hist.pscore(x,...)
   }
@@ -243,7 +244,7 @@ matchit.covplot <- function(object, type = "qq", interactive = TRUE, which.xs = 
 
   if (is.null(which.xs)) {
     if (length(object$X) == 0) {
-      warning("No covariates to plot.", call. = FALSE)
+      .wrn("No covariates to plot")
       return(invisible(NULL))
     }
     X <- object$X
@@ -261,8 +262,7 @@ matchit.covplot <- function(object, type = "qq", interactive = TRUE, which.xs = 
   else {
     if (!is.null(data)) {
       if (!is.data.frame(data) || nrow(data) != length(object$treat)) {
-        stop("'data' must be a data frame with as many rows as there are units in the supplied 'matchit' object.",
-             call. = FALSE)
+        .err("`data` must be a data frame with as many rows as there are units in the supplied `matchit` object")
       }
       data <- cbind(data, object$X[setdiff(names(object$X), names(data))])
     }
@@ -282,22 +282,20 @@ matchit.covplot <- function(object, type = "qq", interactive = TRUE, which.xs = 
 
     if (is.character(which.xs)) {
       if (!all(which.xs %in% names(data))) {
-        stop("All variables in 'which.xs' must be in the supplied 'matchit' object or in 'data'.",
-             call. = FALSE)
+        .err("All variables in `which.xs` must be in the supplied `matchit` object or in `data`")
       }
       X <- data[which.xs]
     }
-    else if (inherits(which.xs, "formula")) {
+    else if (rlang::is_formula(which.xs)) {
       which.xs <- update(which.xs, NULL ~ .)
       X <- model.frame(which.xs, data, na.action = "na.pass")
     }
     else {
-      stop("'which.xs' must be supplied as a character vector of names or a one-sided formula.",
-           call. = FALSE)
+      .err("`which.xs` must be supplied as a character vector of names or a one-sided formula")
     }
 
     # if (anyNA(X)) {
-    #   stop("Missing values are not allowed in the covariates named in 'which.xs'.",
+    #   stop("Missing values are not allowed in the covariates named in `which.xs`.",
     #        call. = FALSE)
     # }
 
@@ -308,8 +306,8 @@ matchit.covplot <- function(object, type = "qq", interactive = TRUE, which.xs = 
                                                                           (is.numeric(X[[j]]) &&
                                                                              any(!is.finite(X[[j]]))),
                                                                         logical(1L))]
-        stop(paste0("Missing and non-finite values are not allowed in the covariates named in 'which.xs'. Variables with missingness or non-finite values:\n\t",
-                    paste(covariates.with.missingness, collapse = ", ")), call. = FALSE)
+        .err(paste0("Missing and non-finite values are not allowed in the covariates named in `which.xs`. Variables with missingness or non-finite values:\n\t",
+                    paste(covariates.with.missingness, collapse = ", ")), tidy = FALSE)
       }
       if (is.character(X[[i]])) X[[i]] <- factor(X[[i]])
     }
@@ -326,8 +324,8 @@ matchit.covplot <- function(object, type = "qq", interactive = TRUE, which.xs = 
   w <- object$weights * sw
   if (is.null(w)) w <- rep(1, length(t))
 
-  split(w, t) <- lapply(split(w, t), function(x) x/sum(x))
-  split(sw, t) <- lapply(split(sw, t), function(x) x/sum(x))
+  w <- .make_sum_to_1(w, by = t)
+  sw <- .make_sum_to_1(sw, by = t)
 
   if (type == "density") {
     varnames <- names(X)
@@ -397,7 +395,7 @@ matchit.covplot <- function(object, type = "qq", interactive = TRUE, which.xs = 
   }
   devAskNewPage(ask = FALSE)
 
-  return(invisible(NULL))
+  invisible(NULL)
 }
 
 matchit.covplot.subclass <- function(object, type = "qq", which.subclass = NULL,
@@ -405,7 +403,7 @@ matchit.covplot.subclass <- function(object, type = "qq", which.subclass = NULL,
 
   if (is.null(which.xs)) {
     if (length(object$X) == 0) {
-      warning("No covariates to plot.", call. = FALSE)
+      .wrn("No covariates to plot")
       return(invisible(NULL))
     }
     X <- object$X
@@ -423,8 +421,7 @@ matchit.covplot.subclass <- function(object, type = "qq", which.subclass = NULL,
   else {
     if (!is.null(data)) {
       if (!is.data.frame(data) || nrow(data) != length(object$treat)) {
-        stop("'data' must be a data frame with as many rows as there are units in the supplied 'matchit' object.",
-             call. = FALSE)
+        .err("`data` must be a data frame with as many rows as there are units in the supplied `matchit` object")
       }
       data <- cbind(data, object$X[setdiff(names(object$X), names(data))])
     }
@@ -444,8 +441,7 @@ matchit.covplot.subclass <- function(object, type = "qq", which.subclass = NULL,
 
     if (is.character(which.xs)) {
       if (!all(which.xs %in% names(data))) {
-        stop("All variables in 'which.xs' must be in the supplied 'matchit' object or in 'data'.",
-             call. = FALSE)
+        .err("All variables in `which.xs` must be in the supplied `matchit` object or in `data`")
       }
       X <- data[which.xs]
     }
@@ -454,13 +450,11 @@ matchit.covplot.subclass <- function(object, type = "qq", which.subclass = NULL,
       X <- model.frame(which.xs, data, na.action = "na.pass")
 
       if (anyNA(X)) {
-        stop("Missing values are not allowed in the covariates named in 'which.xs'.",
-             call. = FALSE)
+        .err("Missing values are not allowed in the covariates named in `which.xs`")
       }
     }
     else {
-      stop("'which.xs' must be supplied as a character vector of names or a one-sided formula.",
-           call. = FALSE)
+      .err("`which.xs` must be supplied as a character vector of names or a one-sided formula")
     }
   }
 
@@ -472,10 +466,10 @@ matchit.covplot.subclass <- function(object, type = "qq", which.subclass = NULL,
   t <- object$treat
 
   if (!is.atomic(which.subclass)) {
-    stop("The argument to 'subclass' must be NULL or the indices of the subclasses for which to display covariate distributions.", call. = FALSE)
+    .err("The argument to `subclass` must be NULL or the indices of the subclasses for which to display covariate distributions")
   }
   if (!all(which.subclass %in% object$subclass[!is.na(object$subclass)])) {
-    stop("The argument supplied to 'subclass' is not the index of any subclass in the matchit object.", call. = FALSE)
+    .err("The argument supplied to `subclass` is not the index of any subclass in the matchit object")
   }
 
   if (type == "density") {
@@ -502,8 +496,8 @@ matchit.covplot.subclass <- function(object, type = "qq", which.subclass = NULL,
     sw <- if (is.null(object$s.weights)) rep(1, length(t)) else object$s.weights
     w <- sw*(!is.na(object$subclass) & object$subclass == s)
 
-    split(w, t) <- lapply(split(w, t), function(x) x/sum(x))
-    split(sw, t) <- lapply(split(sw, t), function(x) x/sum(x))
+    w <- .make_sum_to_1(w, by = t)
+    sw <- .make_sum_to_1(sw, by = t)
 
     for (i in seq_along(varnames)){
 
@@ -557,7 +551,7 @@ matchit.covplot.subclass <- function(object, type = "qq", which.subclass = NULL,
   }
   devAskNewPage(ask = FALSE)
 
-  return(invisible(NULL))
+ invisible(NULL)
 }
 
 qqplot_match <- function(x, t, w, sw, discrete.cutoff = 5, ...) {
@@ -578,36 +572,39 @@ qqplot_match <- function(x, t, w, sw, discrete.cutoff = 5, ...) {
   x1 <- x_ord[t_ord == 1][sw1 > 0]
   x0 <- x_ord[t_ord != 1][sw0 > 0]
 
-  swn1 <- sum(sw[t==1] > 0)
-  swn0 <- sum(sw[t==0] > 0)
+  sw1 <- sw1[sw1 > 0]
+  sw0 <- sw0[sw0 > 0]
+
+  swn1 <- length(sw1)
+  swn0 <- length(sw0)
 
   if (swn1 < swn0) {
     if (length(u) <= discrete.cutoff) {
-      x0probs <- vapply(u, function(u_) wm(x0 == u_, sw0[sw0 > 0]), numeric(1L))
-      x0cumprobs <- c(0, cumsum(x0probs)[-length(u)], 1)
-      x0 <- u[findInterval(cumsum(sw1[sw1 > 0]), x0cumprobs, rightmost.closed = TRUE)]
+      x0probs <- vapply(u, function(u_) wm(x0 == u_, sw0), numeric(1L))
+      x0cumprobs <- c(0, .cumsum_prob(x0probs))
+      x0 <- u[findInterval(.cumsum_prob(sw1), x0cumprobs, rightmost.closed = TRUE)]
     }
     else {
-      x0 <- approx(cumsum(sw0[sw0 > 0]), y = x0, xout = cumsum(sw1[sw1 > 0]), rule = 2,
+      x0 <- approx(.cumsum_prob(sw0), y = x0, xout = .cumsum_prob(sw1), rule = 2,
                    method = "constant", ties = "ordered")$y
     }
   }
-  else {
+  else if (swn1 > swn0) {
     if (length(u) <= discrete.cutoff) {
-      x1probs <- vapply(u, function(u_) wm(x1 == u_, sw1[sw1 > 0]), numeric(1L))
-      x1cumprobs <- c(0, cumsum(x1probs)[-length(u)], 1)
-      x1 <- u[findInterval(cumsum(sw0[sw0 > 0]), x1cumprobs, rightmost.closed = TRUE)]
+      x1probs <- vapply(u, function(u_) wm(x1 == u_, sw1), numeric(1L))
+      x1cumprobs <- c(0, .cumsum_prob(x1probs))
+      x1 <- u[findInterval(.cumsum_prob(sw0), x1cumprobs, rightmost.closed = TRUE)]
     }
     else {
-      x1 <- approx(cumsum(sw1[sw1 > 0]), y = x1, xout = cumsum(sw0[sw0 > 0]), rule = 2,
+      x1 <- approx(.cumsum_prob(sw1), y = x1, xout = .cumsum_prob(sw0), rule = 2,
                    method = "constant", ties = "ordered")$y
     }
   }
 
   if (length(u) <= discrete.cutoff) {
     md <- min(diff(u))
-    x0 <- jitter(x0, amount = .1*md)
-    x1 <- jitter(x1, amount = .1*md)
+    x0 <- jitter(x0, amount = .1 * md)
+    x1 <- jitter(x1, amount = .1 * md)
   }
 
   rr <- range(c(x0, x1))
@@ -626,36 +623,39 @@ qqplot_match <- function(x, t, w, sw, discrete.cutoff = 5, ...) {
   x1 <- x_ord[t_ord == 1][w1 > 0]
   x0 <- x_ord[t_ord != 1][w0 > 0]
 
-  wn1 <- sum(w[t==1] > 0)
-  wn0 <- sum(w[t==0] > 0)
+  w1 <- w1[w1 > 0]
+  w0 <- w0[w0 > 0]
+
+  wn1 <- length(w1)
+  wn0 <- length(w0)
 
   if (wn1 < wn0) {
     if (length(u) <= discrete.cutoff) {
-      x0probs <- vapply(u, function(u_) wm(x0 == u_, w0[w0 > 0]), numeric(1L))
-      x0cumprobs <- c(0, cumsum(x0probs)[-length(u)], 1)
-      x0 <- u[findInterval(cumsum(w1[w1 > 0]), x0cumprobs, rightmost.closed = TRUE)]
+      x0probs <- vapply(u, function(u_) wm(x0 == u_, w0), numeric(1L))
+      x0cumprobs <- c(0, .cumsum_prob(x0probs))
+      x0 <- u[findInterval(.cumsum_prob(w1), x0cumprobs, rightmost.closed = TRUE)]
     }
     else {
-      x0 <- approx(cumsum(w0[w0 > 0]), y = x0, xout = cumsum(w1[w1 > 0]), rule = 2,
+      x0 <- approx(.cumsum_prob(w0), y = x0, xout = .cumsum_prob(w1), rule = 2,
                    method = "constant", ties = "ordered")$y
     }
   }
-  else {
+  else if (wn1 > wn0) {
     if (length(u) <= discrete.cutoff) {
-      x1probs <- vapply(u, function(u_) wm(x1 == u_, w1[w1 > 0]), numeric(1L))
-      x1cumprobs <- c(0, cumsum(x1probs)[-length(u)], 1)
-      x1 <- u[findInterval(cumsum(w0[w0 > 0]), x1cumprobs, rightmost.closed = TRUE)]
+      x1probs <- vapply(u, function(u_) wm(x1 == u_, w1), numeric(1L))
+      x1cumprobs <- c(0, .cumsum_prob(x1probs))
+      x1 <- u[findInterval(.cumsum_prob(w0), x1cumprobs, rightmost.closed = TRUE)]
     }
     else {
-      x1 <- approx(cumsum(w1[w1 > 0]), y = x1, xout = cumsum(w0[w0 > 0]), rule = 2,
+      x1 <- approx(.cumsum_prob(w1), y = x1, xout = .cumsum_prob(w0), rule = 2,
                    method = "constant", ties = "ordered")$y
     }
   }
 
   if (length(u) <= discrete.cutoff) {
     md <- min(diff(u))
-    x0 <- jitter(x0, amount = .1*md)
-    x1 <- jitter(x1, amount = .1*md)
+    x0 <- jitter(x0, amount = .1 * md)
+    x1 <- jitter(x1, amount = .1 * md)
   }
 
   plot(x0, x1, xlab = "", ylab = "", xlim = rr, ylim = rr, axes = FALSE, ...)
@@ -678,11 +678,10 @@ ecdfplot_match <- function(x, t, w, sw, ...) {
   for (tr in 0:1) {
     in.tr <- t[ord] == tr
     ordt <- ord[in.tr]
-    cswt <- c(0, cumsum(sw[ordt]), 1)
+    cswt <- c(0, .cumsum_prob(sw[ordt]), 1)
     xt <- c(x.min - .02 * x.range, x[ordt], x.max + .02 * x.range)
 
     lines(x = xt, y = cswt, type = "s", col = if (tr == 0) "grey60" else "black")
-
   }
 
   abline(h = 0:1)
@@ -694,7 +693,7 @@ ecdfplot_match <- function(x, t, w, sw, ...) {
   for (tr in 0:1) {
     in.tr <- t[ord] == tr
     ordt <- ord[in.tr]
-    cwt <- c(0, cumsum(w[ordt]), 1)
+    cwt <- c(0, .cumsum_prob(w[ordt]), 1)
     xt <- c(x.min - .02 * x.range, x[ordt], x.max + .02 * x.range)
 
     lines(x = xt, y = cwt, type = "s", col = if (tr == 0) "grey60" else "black")
@@ -833,12 +832,13 @@ hist.pscore <- function(x, xlab = "Propensity Score", freq = FALSE, ...){
 
   if (is.null(ratio)) ratio <- 1
 
-  for (i in unique(treat, nmax = 2)) {
-    if (freq) s.weights[treat == i] <- s.weights[treat == i]/mean(s.weights[treat == i])
-    else s.weights[treat == i] <- s.weights[treat == i]/sum(s.weights[treat == i])
-
-    if (freq) weights[treat == i] <- weights[treat == i]/mean(weights[treat == i])
-    else weights[treat == i] <- weights[treat == i]/sum(weights[treat == i])
+  if (freq) {
+    weights <- .make_sum_to_n(weights, by = treat)
+    s.weights <- .make_sum_to_n(s.weights, by = treat)
+  }
+  else {
+    weights <- .make_sum_to_1(weights, by = treat)
+    s.weights <- .make_sum_to_1(s.weights, by = treat)
   }
 
   ylab <- if (freq) "Count" else "Proportion"
@@ -890,8 +890,8 @@ jitter.pscore <- function(x, interactive, pch = 1, ...){
   maxp <- max(pscore, na.rm = TRUE)
 
   plot(pscore, xlim = c(minp - 0.05*(maxp-minp), maxp + 0.05*(maxp-minp)), ylim = c(-1.5,2.5),
-       type="n", ylab="", xlab="Propensity Score",
-       axes=FALSE,main="Distribution of Propensity Scores",...)
+       type = "n", ylab = "", xlab = "Propensity Score",
+       axes = FALSE, main = "Distribution of Propensity Scores", ...)
   if (!is.null(q.cut)) abline(v = q.cut, col = "grey", lty = 1)
 
   #Matched treated
@@ -917,7 +917,7 @@ jitter.pscore <- function(x, interactive, pch = 1, ...){
   box()
 
   if (interactive) {
-    print("To identify the units, use first mouse button; to stop, use second.")
+    cat("To identify the units, use first mouse button; to stop, use second.\n")
     identify(pscore, jitp, names(treat), atpen = TRUE)
   }
 }

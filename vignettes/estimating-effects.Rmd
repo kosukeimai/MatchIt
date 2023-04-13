@@ -107,7 +107,7 @@ This guide is structured as follows: first, information on the concepts related 
 
 Before an effect is estimated, the estimand must be specified and clarified. Although some aspects of the estimand depend not only on how the effect is estimated after matching but also on the matching method itself, other aspects must be considered at the time of effect estimation and interpretation. Here, we consider three aspects of the estimand: the population the effect is meant to generalize to (the target population), the effect measure, and whether the effect is marginal or conditional.
 
-**The target population.** Different matching methods allow you to estimate effects that can generalize to different target populations. The most common estimand in matching the average treatment effect in the treated (ATT), which is the average effect of treatment for those who receive treatment. This estimand is estimable for matching methods that do not change the treated units (i.e., by weighting or discarding units) and is requested in `matchit()` by setting `estimand = "ATT"` (which is the default). The average treatment effect in the population (ATE) is the average effect of treatment for the population from which the sample is a random sample. This estimand is estimable only for methods that allow the ATE and either do not discard units from the sample or explicit target full sample balance, which in `MatchIt` is limited to full matching, subclassification, and template matching when setting `estimand = "ATE"`. When treated units are discarded (e.g., through the use of common support restrictions, calipers, cardinality matching, or [coarsened] exact matching), the estimand corresponds to neither the population ATT nor the population ATE, but rather to an average treatment effect in the remaining matched sample (ATM), which may not correspond to any specific target population. See @greiferChoosingEstimandWhen2021 for a discussion on the substantive considerations involved when choosing the target population of the estimand.
+**The target population.** Different matching methods allow you to estimate effects that can generalize to different target populations. The most common estimand in matching is the average treatment effect in the treated (ATT), which is the average effect of treatment for those who receive treatment. This estimand is estimable for matching methods that do not change the treated units (i.e., by weighting or discarding units) and is requested in `matchit()` by setting `estimand = "ATT"` (which is the default). The average treatment effect in the population (ATE) is the average effect of treatment for the population from which the sample is a random sample. This estimand is estimable only for methods that allow the ATE and either do not discard units from the sample or explicit target full sample balance, which in `MatchIt` is limited to full matching, subclassification, and template matching when setting `estimand = "ATE"`. When treated units are discarded (e.g., through the use of common support restrictions, calipers, cardinality matching, or [coarsened] exact matching), the estimand corresponds to neither the population ATT nor the population ATE, but rather to an average treatment effect in the remaining matched sample (ATM), which may not correspond to any specific target population. See @greiferChoosingEstimandWhen2021 for a discussion on the substantive considerations involved when choosing the target population of the estimand.
 
 **Marginal and conditional effects.** A marginal effect is a comparison between the expected potential outcome under treatment and the expected potential outcome under control. This is the same quantity estimated in randomized trials without blocking or covariate adjustment and is particularly useful for quantifying the overall effect of a policy or population-wide intervention. A conditional effect is the comparison between the expected potential outcomes in the treatment groups within strata. This is useful for identifying the effect of a treatment for an individual patient or a subset of the population.
 
@@ -145,7 +145,7 @@ To compute SEs after g-computation, a method known as the delta method is used; 
 
 **Robust standard errors.** Also known as sandwich SEs (due to the form of the formula for computing them), heteroscedasticity-consistent SEs, or Huber-White SEs, robust SEs are an adjustment to the usual maximum likelihood or ordinary least squares SEs that are robust to violations of some of the assumptions required for usual SEs to be valid [@mackinnon1985]. Although there has been some debate about their utility [@king2015], robust SEs rarely degrade inferences and often improve them. Generally, robust SEs **must** be used when any non-uniform weights are included in the estimation (e.g., with matching with replacement or inverse probability weighting).
 
-**Cluster-robust standard errors.** A version of robust SEs known as cluster-robust SEs [@liang1986] can be used to account for dependence between observations within clusters (e.g., matched pairs). @abadie2019 demonstrate analytically that cluster-robust SEs are generally valid after matching, whereas regular robust SEs can over- or under-estimate the true sampling variability of the effect estimator depending on the specification of the outcome model (if any) and degree of effect modification. A plethora of simulation studies have further confirmed the validity of cluster-robust SEs after matching [e.g., @austin2009a; @austin2014; @gayat2012; @wan2019; @austin2013]. Given this evidence favoring the use of cluster-robust SEs, we recommend them in most cases and use them judiciously in the this guide[^1].
+**Cluster-robust standard errors.** A version of robust SEs known as cluster-robust SEs [@liang1986] can be used to account for dependence between observations within clusters (e.g., matched pairs). @abadie2019 demonstrate analytically that cluster-robust SEs are generally valid after matching, whereas regular robust SEs can over- or under-estimate the true sampling variability of the effect estimator depending on the specification of the outcome model (if any) and degree of effect modification. A plethora of simulation studies have further confirmed the validity of cluster-robust SEs after matching [e.g., @austin2009a; @austin2014; @gayat2012; @wan2019; @austin2013]. Given this evidence favoring the use of cluster-robust SEs, we recommend them in most cases and use them judiciously in this guide[^1].
 
 [^1]: Because they are only appropriate with a large number of clusters, cluster-robust SEs are generally not used with subclassification methods. Regular robust SEs are valid with these methods when using the subclassification weights to estimate marginal effects.
 
@@ -173,7 +173,7 @@ head(d)
 
 We will need to the following packages to perform the desired analyses:
 
--   `marginaleffects` provides the `comparisons()` function for performing g-computation and estimating the SEs and confidence intervals of the average estimate potential outcomes and treatment effects
+-   `marginaleffects` provides the `avg_comparisons()` function for performing g-computation and estimating the SEs and confidence intervals of the average estimate potential outcomes and treatment effects
 -   `sandwich` is used internally by `marginaleffects` to compute robust and cluster-robust SEs
 -   `survival` provides `coxph()` to estimate the coefficients in a Cox-proportional hazards model for the marginal hazard ratio, which we will use for survival outcomes.
 
@@ -187,7 +187,7 @@ library("MatchIt")
 library("marginaleffects")
 ```
 
-All effect estimates will be computed using `marginaleffects::comparions()`, even when its use may be superfluous (e.g., for performing a t-test in the matched set). As previously mentioned, this is because it is useful to have a single workflow that works no matter the situation, perhaps with very slight modifications to accommodate different contexts. Using `comparisons()` has several advantages, even when the alternatives are simple: it only provides the effect estimate, and not other coefficients; it automatically incorporates robust and cluster-robust SEs if requested; and it always produces average marginal effects for the correct population if requested.
+All effect estimates will be computed using `marginaleffects::avg_comparions()`, even when its use may be superfluous (e.g., for performing a t-test in the matched set). As previously mentioned, this is because it is useful to have a single workflow that works no matter the situation, perhaps with very slight modifications to accommodate different contexts. Using `avg_comparions()` has several advantages, even when the alternatives are simple: it only provides the effect estimate, and not other coefficients; it automatically incorporates robust and cluster-robust SEs if requested; and it always produces average marginal effects for the correct population if requested.
 
 Other packages may be of use but are not used here. There are alternatives to the `marginaleffects` package for computing average marginal effects, including `margins` and `stdReg`. The `survey` package can be used to estimate robust SEs incorporating weights and provides functions for survey-weighted generalized linear models and Cox-proportional hazards models. It is often used with propensity score weighting.
 
@@ -229,7 +229,7 @@ fit1 <- lm(Y_C ~ A * (X1 + X2 + X3 + X4 + X5 +
            data = md, weights = weights)
 ```
 
-Next, we use `marginaleffects::comparisons()` to estimate the ATT.
+Next, we use `marginaleffects::avg_comparisons()` to estimate the ATT.
 
 ```{r, eval=me_ok}
 avg_comparisons(fit1, variables = "A",
@@ -238,21 +238,20 @@ avg_comparisons(fit1, variables = "A",
                 wts = "weights")
 ```
 
-Let's break down the call to `avg_comparisons()`: to the first argument, we supply the model fit, `fit`; to the `variables` argument, the name of the treatment (`"A"`); to the `vcov` argument, a formula with subclass membership (`~subclass`) to request cluster-robust SEs; to the `newdata` argument, a version of the matched dataset containing only the treated units (`subset(md, A == 1)`) to request the ATT; and to the `wts` argument, the names of the variable in `md` containing the matching weights (`"weights"`) to ensure they are included in the analysis. Some of these arguments differ depending on the specifics of the matching method and outcome type; see the sections below for information.
+Let's break down the call to `avg_comparisons()`: to the first argument, we supply the model fit, `fit1`; to the `variables` argument, the name of the treatment (`"A"`); to the `vcov` argument, a formula with subclass membership (`~subclass`) to request cluster-robust SEs; to the `newdata` argument, a version of the matched dataset containing only the treated units (`subset(md, A == 1)`) to request the ATT; and to the `wts` argument, the names of the variable in `md` containing the matching weights (`"weights"`) to ensure they are included in the analysis. Some of these arguments differ depending on the specifics of the matching method and outcome type; see the sections below for information.
 
 If, in addition to the effect estimate, we want the average estimated potential outcomes, we can use `marginaleffects::avg_predictions()`, which we demonstrate below. Note the interpretation of the resulting estimates as the expected potential outcomes is only valid if all covariates present in the outcome model (if any) are interacted with the treatment.
 
-```{r, eval=me_ok && packageVersion("marginaleffects") > "0.10.0"}
+```{r, eval=me_ok && packageVersion("marginaleffects") >= "0.11.0"}
 avg_predictions(fit1, variables = "A",
                 vcov = ~subclass,
                 newdata = subset(md, A == 1),
-                wts = "weights",
-                by = "A")
+                wts = "weights")
 ```
 
-We can see that the difference in potential outcome means is equal to the average treatment effect computed previously[^4]. Almost all of the arguments to `avg_predictions()` are the same as those to `avg_comparisons()`; the only difference is that the `by` argument needs to be specified naming the treatment. (Note: due to a bug, the above code will not evaluate unless `marginaleffects` is a version greater than 0.10.0.)
+We can see that the difference in potential outcome means is equal to the average treatment effect computed previously[^4]. All of the arguments to `avg_predictions()` are the same as those to `avg_comparisons()`.
 
-[^4]: To verify that they are equal, add the argument `hypothesis = "revpairwise"` to the call to `predictions()`; this explicitly compares the average potential outcomes and should yield identical estimates to the `comparisons()` call.
+[^4]: To verify that they are equal, supply the output of `avg_predictions()` to `hypotheses(), e.g., `avg_predictions(...) |> hypotheses("revpairwise")`; this explicitly compares the average potential outcomes and should yield identical estimates to the `avg_comparisons()` call.
 
 ### Adjustments to the Standard Case
 
@@ -266,7 +265,7 @@ When matching for the ATE (including [coarsened] exact matching, full matching, 
 
 When matching with replacement (i.e., nearest neighbor or genetic matching with `replace = TRUE`), effect and SE estimation need to account for control unit multiplicity (i.e., repeated use) and within-pair correlations [@hill2006; @austin2020a]. Although @abadie2008 demonstrated analytically that bootstrap SEs may be invalid for matching with replacement, simulation work by @hill2006 and @bodory2020 has found that bootstrap SEs are adequate and generally slightly conservative. See the section "Using Bootstrapping to Estimate Confidence Intervals" for instructions on using the bootstrap and an example that use matching with replacement.
 
-Because control units do not belong to unique pairs, there is no pair membership in the `match.data()` output. One can simply change `vcov = ~subclass` to `vcov = "HC3"` in the calls to `comparisons()` and `predictions()` to use robust SEs instead of cluster-robust SEs, as recommended by @hill2006. There is some evidence for an alternative approach that incorporates pair membership and adjusts for reuse of control units, though this has only been studied for survival outcomes [@austin2020a]. This adjustment involves using two-way cluster-robust SEs with pair membership and unit ID as the clustering variables. For continuous and binary outcomes, this involves the following two changes: 1) replace `match.data()` with `get_matches()`, which produces a dataset with a row per unit per pair, meaning control units matched to multiple treated units will appear multiple times in the dataset; 2) set `vcov = ~subclass + id` in the calls to `avg_comparisons()` and `avg_predictions()`. For survival outcomes, a special procedure must be used; see the section on survival outcomes below.
+Because control units do not belong to unique pairs, there is no pair membership in the `match.data()` output. One can simply change `vcov = ~subclass` to `vcov = "HC3"` in the calls to `comparisons()` and `predictions()` to use robust SEs instead of cluster-robust SEs, as recommended by @hill2006. There is some evidence for an alternative approach that incorporates pair membership and adjusts for reuse of control units, though this has only been studied for survival outcomes [@austin2020a]. This adjustment involves using two-way cluster-robust SEs with pair membership and unit ID as the clustering variables. For continuous and binary outcomes, this involves the following two changes: 1) replace `match.data()` with `get_matches()`, which produces a dataset with one row per unit per pair, meaning control units matched to multiple treated units will appear multiple times in the dataset; 2) set `vcov = ~subclass + id` in the calls to `avg_comparisons()` and `avg_predictions()`. For survival outcomes, a special procedure must be used; see the section on survival outcomes below.
 
 #### Matching without pairing
 
@@ -313,7 +312,7 @@ To fit a logistic regression model, change `lm()` to `glm()` and set `family = q
 
 [^7]: Note that for low or high average expected risks computed with `predictions()`, the confidence intervals may go below 0 or above 1; this is because an approximation is used. To avoid this problem, bootstrapping or simulation-based inference can be used instead.
 
-To compute the marginal RR, we need to add `transform_pre = "lnratioavg"` to `avg_comparisons()`; this computes the marginal log RR. To get the marginal RR, we need to add `transform_post = "exp"` to `avg_comparisons()`, which exponentiates the marginal log RR and its confidence interval. The code below computes the effects and displays the statistics of interest:
+To compute the marginal RR, we need to add `comparison = "lnratioavg"` to `avg_comparisons()`; this computes the marginal log RR. To get the marginal RR, we need to add `transform = "exp"` to `avg_comparisons()`, which exponentiates the marginal log RR and its confidence interval. The code below computes the effects and displays the statistics of interest:
 
 ```{r, eval=me_ok}
 #Logistic regression model with covariates
@@ -328,13 +327,13 @@ avg_comparisons(fit2,
                 vcov = ~subclass,
                 newdata = subset(md, A == 1),
                 wts = "weights",
-                transform_pre = "lnratioavg",
-                transform_post = "exp")
+                comparison = "lnratioavg",
+                transform = "exp")
 ```
 
-The output displays the marginal RR, its Z-value, the p-value for the Z-test against 0, and its confidence interval. (Note that even though the `Contrast` label still suggests the log risk ratio, the risk ratio is actually displayed. You can confirm this by manually exponentiating the log risk ratio computed just before.) To view the log RR and its standard error, omit the `transform_post` argument.
+The output displays the marginal RR, its Z-value, the p-value for the Z-test of the log RR against 0, and its confidence interval. (Note that even though the `Contrast` label still suggests the log RR, the RR is actually displayed.) To view the log RR and its standard error, omit the `transform` argument.
 
-For the marginal OR, the only thing that needs to change is that `transform_pre` should be set to `"lnoravg"`.
+For the marginal OR, the only thing that needs to change is that `comparison` should be set to `"lnoravg"`.
 
 #### Survival outcomes
 
@@ -396,7 +395,7 @@ The bootstrap is an alternative to the delta method for estimating confidence in
 
 For the standard bootstrap, we need a function that takes in the original dataset and a vector of sampled unit indices and returns the estimated quantity of interest. This function should perform the matching on the bootstrap sample, fit the outcome model, and estimate the treatment effect using g-computation. In this example, we'll use matching with replacement, since the standard bootstrap has been found to work well with it [@bodory2020; @hill2006], despite some analytic results recommending otherwise [@abadie2008]. We'll implement g-computation manually rather than using `avg_comparisons()`, as this dramatically improves the speed of the estimation since we don't require standard errors to be estimated in each sample (or other processing `avg_comparisons()` does). We'll consider the marginal RR ATT of `A` on the binary outcome `Y_B`.
 
-The first step is to write the estimation function, we we call `boot_fun`. This function returns the marginal RR. In it, we perform the matching, estimate the effect, and return the estimate of interest.
+The first step is to write the estimation function, we call `boot_fun`. This function returns the marginal RR. In it, we perform the matching, estimate the effect, and return the estimate of interest.
 
 ```{r}
 boot_fun <- function(data, i) {
