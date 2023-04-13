@@ -77,7 +77,7 @@ the distances between all pairs of units) or for two groups defined by a
 splitting variable (i.e., the distances between all units in one group and
 all units in the other). These distance matrices include the Mahalanobis
 distance, Euclidean distance, scaled Euclidean distance, and robust
-(rank-based) Mahalanobs distance. These functions can be used as inputs to
+(rank-based) Mahalanobis distance. These functions can be used as inputs to
 the \code{distance} argument to \code{\link[=matchit]{matchit()}} and are used to compute the
 corresponding distance matrices within \code{matchit()} when named.
 }

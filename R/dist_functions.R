@@ -7,7 +7,7 @@
 #' splitting variable (i.e., the distances between all units in one group and
 #' all units in the other). These distance matrices include the Mahalanobis
 #' distance, Euclidean distance, scaled Euclidean distance, and robust
-#' (rank-based) Mahalanobs distance. These functions can be used as inputs to
+#' (rank-based) Mahalanobis distance. These functions can be used as inputs to
 #' the `distance` argument to [matchit()] and are used to compute the
 #' corresponding distance matrices within `matchit()` when named.
 #'

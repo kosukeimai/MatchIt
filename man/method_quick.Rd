@@ -66,7 +66,7 @@ In \code{\link[=matchit]{matchit()}}, setting \code{method = "quick"} performs g
 matching, which is a form of subclassification wherein all units, both
 treatment and control (i.e., the "full" sample), are assigned to a subclass
 and receive at least one match. It uses an algorithm that is extremely fast
-compared to optimal full matching, which is why it is labelled as "quick", at the
+compared to optimal full matching, which is why it is labeled as "quick", at the
 expense of true optimality. The method is described in Sävje, Higgins, & Sekhon (2021). The method relies on and is a wrapper
 for \pkgfun{quickmatch}{quickmatch}.
 

@@ -188,7 +188,7 @@ output:
 
 * A spurious warning that would appear when using a large `ratio` with `replace = TRUE` and `method = "nearest"` no longer appears.
 
-* Fixed a bug when trying to supply `distance` as a labelled numeric vector (e.g., resulting from `haven`).
+* Fixed a bug when trying to supply `distance` as a labeled numeric vector (e.g., resulting from `haven`).
 
 * Fixed some typos in the documentation and vignettes.
 
