@@ -503,13 +503,15 @@ matchit <- function(formula,
     if (is.numeric(distance)) {
       fn1 <- "distance2user"
     }
-    else if (distance %in% matchit_distances()) {
-      fn1 <- "distance2mahalanobis"
-      is.full.mahalanobis <- TRUE
-      attr(is.full.mahalanobis, "transform") <- distance
-    }
-    else {
-      fn1 <- paste0("distance2", distance)
+    else if (is.character(distance)) {
+      if (distance %in% matchit_distances()) {
+        fn1 <- "distance2mahalanobis"
+        is.full.mahalanobis <- TRUE
+        attr(is.full.mahalanobis, "transform") <- distance
+      }
+      else {
+        fn1 <- paste0("distance2", distance)
+      }
     }
   }
 
@@ -645,7 +647,7 @@ matchit <- function(formula,
   X.list <- list(covs, exactcovs, mahcovs, calcovs, antiexactcovs)
   all.covs <- lapply(X.list, names)
   for (i in seq_along(X.list)[-1]) if (!is.null(X.list[[i]])) X.list[[i]][names(X.list[[i]]) %in% unlist(all.covs[1:(i-1)])] <- NULL
-  X.list[lengths(X.list) == 0] <- NULL
+  X.list[vapply(X.list, is.null, logical(1L))] <- NULL
 
   ## putting all the results together
   out <- list(
@@ -669,7 +671,7 @@ matchit <- function(formula,
     obj = if (include.obj) match.out[["obj"]]
   )
 
-  out[lengths(out) == 0] <- NULL
+  out[vapply(out, is.null, logical(1L))] <- NULL
 
   class(out) <- class(match.out)
   out
