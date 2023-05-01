@@ -489,10 +489,11 @@ matchit2nearest <- function(treat, data, distance, discarded,
     mm_list <- lapply(levels(ex)[cc], function(e) {
       if (verbose) {
         cat(sprintf("Matching subgroup %s/%s: %s...\n",
-                    match(e, levels(ex)), nlevels(ex), e))
+                    match(e, levels(ex)[cc]), length(cc), e))
       }
 
       .e <- which(ex == e)
+      .e1 <- which(ex[treat==1] == e)
       treat_ <- treat[.e]
       discarded_ <- discarded[.e]
       if (!is.null(distance)) distance_ <- distance[.e]
@@ -500,11 +501,10 @@ matchit2nearest <- function(treat, data, distance, discarded,
       if (!is.null(mahcovs)) mahcovs_ <- mahcovs[.e,,drop = FALSE]
       if (!is.null(antiexactcovs)) antiexactcovs_ <- antiexactcovs[.e,,drop = FALSE]
       if (!is.null(distance_mat)) {
-        .e1 <- which(ex[treat==1] == e)
         .e0 <- which(ex[treat==0] == e)
         distance_mat_ <- distance_mat[.e1, .e0, drop = FALSE]
       }
-      ratio_ <- ratio[ex[treat==1]==e]
+      ratio_ <- ratio[.e1]
 
       n1_ <- sum(treat_ == 1)
       ord_ <- switch(m.order,

@@ -370,6 +370,11 @@ matchit2cardinality <-  function(treat, data, discarded, formula,
   opt.out <- setNames(vector("list", nlevels(ex)), levels(ex))
 
   for (e in levels(ex)[cc]) {
+    if (nlevels(ex) > 1 && verbose) {
+      cat(sprintf("Matching subgroup %s/%s: %s...\n",
+                  match(e, levels(ex)[cc]), length(cc), e))
+    }
+
     in.exact <- which(!discarded & ex == e)
 
     treat_in.exact <- treat[in.exact]
