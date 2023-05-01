@@ -6,6 +6,12 @@ output:
 `MatchIt` News and Updates
 ======
 
+# MatchIt (development version)
+
+* Fixed bugs when `distance = NULL` and no covariates are specified in `matchit()`.
+
+* Changed "empirical cumulative density function" to "empirical cumulative distribution function" in documentation. (#166)
+
 # MatchIt 4.5.3
 
 * Error messages have been improved using `chk` and `rlang`, which are now dependencies.
