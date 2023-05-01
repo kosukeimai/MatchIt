@@ -185,7 +185,7 @@ IntegerMatrix nn_matchC(const IntegerVector& treat_,
       }
 
       if (use_antiexact) {
-        for (a = 0; a < n_anti && c_eligible.size() > 0; ++a) {
+        for (a = 0; (a < n_anti) && (c_eligible.size() > 0); ++a) {
           antiexact_col = antiexact_covs(_, a);
           antiexact_t = antiexact_col[t_ind];
           antiexact_col = antiexact_col[c_eligible];
@@ -218,7 +218,7 @@ IntegerMatrix nn_matchC(const IntegerVector& treat_,
       }
 
       if (use_caliper_covs) {
-        for (x = 0; (x < cal_len) && c_eligible.size() > 0; ++x) {
+        for (x = 0; (x < cal_len) && (c_eligible.size() > 0); ++x) {
           cal_var = caliper_covs_mat( _ , x );
 
           cal_var_t = cal_var[t_ind];

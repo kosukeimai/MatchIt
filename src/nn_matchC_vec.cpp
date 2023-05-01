@@ -52,6 +52,11 @@ int find_right(int ii,
       continue;
     }
 
+    if (!can_be_matched[k]) {
+      k++; //if unit is matched, move right
+      continue;
+    }
+
     //if unit has already been matched to unit i, skip
     if (r > 0) {
       if (check_in(d_ord[k], row)) {
@@ -60,13 +65,8 @@ int find_right(int ii,
       }
     }
 
-    if (!can_be_matched[k]) {
-      k++; //if unit is matched, move right
-      continue;
-    }
-
     if (use_caliper_dist) {
-      if (abs(distance[ii] - distance[k]) > caliper_dist) {
+      if (std::abs(distance[ii] - distance[k]) > caliper_dist) {
         //if closest is outside caliper, break; none can be found
         break;
       }
@@ -98,7 +98,7 @@ int find_right(int ii,
       i = 0;
       okay = true;
       while (okay && (i < n_cal_covs)) {
-        if (abs(caliper_covs_mat(ii, i) - caliper_covs_mat(k, i)) > caliper_covs[i]) {
+        if (std::abs(caliper_covs_mat(ii, i) - caliper_covs_mat(k, i)) > caliper_covs[i]) {
           okay = false;
         }
         i++;
@@ -151,6 +151,11 @@ int find_left(int ii,
       continue;
     }
 
+    if (!can_be_matched[k]) {
+      k--; //if unit is matched, move left
+      continue;
+    }
+
     //if unit has already been matched to unit i, skip
     if (r > 0) {
       if (check_in(d_ord[k], row)) {
@@ -159,13 +164,8 @@ int find_left(int ii,
       }
     }
 
-    if (!can_be_matched[k]) {
-      k--; //if unit is matched, move left
-      continue;
-    }
-
     if (use_caliper_dist) {
-      if (abs(distance[ii] - distance[k]) > caliper_dist) {
+      if (std::abs(distance[ii] - distance[k]) > caliper_dist) {
         //if closest is outside caliper, break
         break;
       }
@@ -197,7 +197,7 @@ int find_left(int ii,
       i = 0;
       okay = true;
       while (okay && (i < n_cal_covs)) {
-        if (abs(caliper_covs_mat(ii, i) - caliper_covs_mat(k, i)) > caliper_covs[i]) {
+        if (std::abs(caliper_covs_mat(ii, i) - caliper_covs_mat(k, i)) > caliper_covs[i]) {
           okay = false;
         }
         i++;
@@ -215,6 +215,8 @@ int find_left(int ii,
 
   return k;
 }
+
+// [[Rcpp::plugins(cpp11)]]
 
 // [[Rcpp::export]]
 IntegerMatrix nn_matchC_vec(const IntegerVector& treat_,
@@ -250,10 +252,6 @@ IntegerMatrix nn_matchC_vec(const IntegerVector& treat_,
   ratio_tmp[treat_ == 1] = ratio_;
   IntegerVector ratio = ratio_tmp[d_ord];
 
-  // IntegerVector ord_tmp(n);
-  // ord_tmp[treat_ == 1] = ord_;
-  // IntegerVector ord = ord_tmp[d_ord];
-  // ord = ord - 1;
   IntegerVector ord = ord_ - 1;
 
   int max_ratio = max(ratio);
@@ -390,7 +388,7 @@ IntegerMatrix nn_matchC_vec(const IntegerVector& treat_,
 
       if ((k_left >= 0) && (k_right >= 0)) {
         dti = distance[ii];
-        if (abs(distance[k_left] - dti) <= abs(distance[k_right] - dti)) {
+        if (std::abs(distance[k_left] - dti) <= std::abs(distance[k_right] - dti)) {
           k = k_left;
         }
         else {
