@@ -395,6 +395,7 @@ get.covs.matrix.for.dist <- function(formula = NULL, data = NULL) {
 
   X
 }
+
 .check_X <- function(X) {
   if (isTRUE(attr(X, "checked"))) return(X)
 

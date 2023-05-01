@@ -85,7 +85,7 @@ rbind.matchdata <- function(..., deparse.level = 1) {
 
   type <- intersect(c("matchdata", "getmatches"), unlist(lapply(md_list, class)))
   if (length(type) == 0) .err("A `matchdata` or `getmatches` object must be supplied")
-  else if (length(type) == 2) .err("Supplied objects must be all `matchdata` objects or all `getmatches` objects")
+  if (length(type) == 2) .err("Supplied objects must be all `matchdata` objects or all `getmatches` objects")
 
   attrs <- c("distance", "weights", "subclass", "id")
   attr_list <- setNames(vector("list", length(attrs)), attrs)

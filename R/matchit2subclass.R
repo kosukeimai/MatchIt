@@ -187,7 +187,7 @@ matchit2subclass <- function(treat, distance, discarded,
   estimand <- match_arg(estimand, c("ATT", "ATC", "ATE"))
 
   if (is.null(min.n)) min.n <- 1
-  chk::chk_whole_number(min.n)
+  chk::chk_count(min.n)
 
   n.obs <- length(treat)
 
