@@ -12,6 +12,8 @@ output:
 
 * Changed "empirical cumulative density function" to "empirical cumulative distribution function" in documentation. (#166)
 
+* Fixed a bug where calipers would not work properly on some systems. Thanks to Bill Dunlap for the solution. (#163)
+
 # MatchIt 4.5.3
 
 * Error messages have been improved using `chk` and `rlang`, which are now dependencies.
