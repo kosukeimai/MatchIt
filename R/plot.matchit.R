@@ -288,7 +288,7 @@ matchit.covplot <- function(object, type = "qq", interactive = TRUE, which.xs = 
       X <- data[which.xs]
     }
     else if (rlang::is_formula(which.xs)) {
-      which.xs <- update(which.xs, NULL ~ .)
+      which.xs <- update(terms(which.xs, data = data), NULL ~ .)
       X <- model.frame(which.xs, data, na.action = "na.pass")
     }
     else {
@@ -443,8 +443,8 @@ matchit.covplot.subclass <- function(object, type = "qq", which.subclass = NULL,
       }
       X <- data[which.xs]
     }
-    else if (inherits(which.xs, "formula")) {
-      which.xs <- update(which.xs, NULL ~ .)
+    else if (rlang::is_formula(which.xs)) {
+      which.xs <- update(terms(which.xs, data = data), NULL ~ .)
       X <- model.frame(which.xs, data, na.action = "na.pass")
 
       if (anyNA(X)) {

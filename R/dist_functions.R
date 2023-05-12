@@ -368,6 +368,8 @@ get.covs.matrix.for.dist <- function(formula = NULL, data = NULL) {
     data <- as.data.frame(data)
   }
 
+  formula <- terms(formula, data = data)
+
   if (rlang::is_formula(formula, lhs = FALSE)) {
     formula <- update(formula, ~ . + 1)
   }
@@ -375,7 +377,6 @@ get.covs.matrix.for.dist <- function(formula = NULL, data = NULL) {
     formula <- update(formula, . ~ . + 1)
   }
 
-  formula <- terms(formula, data = data)
   mf <- model.frame(formula, data, na.action = na.pass)
 
   chars.in.mf <- vapply(mf, is.character, logical(1L))

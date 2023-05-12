@@ -434,8 +434,7 @@ matchit <- function(formula,
   #Process formula and data inputs
   .chk_formula(formula, sides = 2)
 
-  tt <- terms(formula, data = data)
-  treat.form <- update(tt, . ~ 0)
+  treat.form <- update(terms(formula, data = data), . ~ 0)
   treat.mf <- model.frame(treat.form, data = data, na.action = "na.pass")
   treat <- model.response(treat.mf)
 
@@ -478,7 +477,7 @@ matchit <- function(formula,
       s.weights <- s.weights[[1]]
     }
     else if (inherits(s.weights, "formula")) {
-      s.weights.form <- update(s.weights, NULL ~ .)
+      s.weights.form <- update(terms(s.weights, data = data), NULL ~ .)
       s.weights <- model.frame(s.weights.form, data, na.action = "na.pass")
       if (ncol(s.weights) != 1) .err("`s.weights` can only contain one named variable")
       s.weights <- s.weights[[1]]
@@ -526,6 +525,8 @@ matchit <- function(formula,
   else {
     covs.formula <- delete.response(terms(formula, data = data))
   }
+
+  covs.formula <- update(covs.formula, ~ .)
   covs <- model.frame(covs.formula, data = data, na.action = "na.pass")
   k <- ncol(covs)
   for (i in seq_len(k)) {

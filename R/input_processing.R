@@ -488,7 +488,7 @@ process.variable.input <- function(x, data = NULL) {
     x <- reformulate(x)
   }
   else if (rlang::is_formula(x)) {
-    x <- update(x, NULL ~ .)
+    x <- update(terms(x, data = data), NULL ~ .)
   }
   else {
     .err(sprintf("`%s` must be supplied as a character vector of names or a one-sided formula.", n))

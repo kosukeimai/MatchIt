@@ -14,6 +14,8 @@ output:
 
 * Fixed a bug where calipers would not work properly on some systems. Thanks to Bill Dunlap for the solution. (#163)
 
+* Fixed a bug when `.` was present in formulas. Thanks to @dmolitor. (#167)
+
 # MatchIt 4.5.3
 
 * Error messages have been improved using `chk` and `rlang`, which are now dependencies.
