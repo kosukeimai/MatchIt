@@ -8,6 +8,8 @@ output:
 
 # MatchIt (development version)
 
+* With `method = "nearest"`, `m.order` can now be set to `"closest"` to request that the closest potential pars are matched first. This can be used whether a propensity score is used or not.
+
 * Fixed bugs when `distance = NULL` and no covariates are specified in `matchit()`.
 
 * Changed "empirical cumulative density function" to "empirical cumulative distribution function" in documentation. (#166)

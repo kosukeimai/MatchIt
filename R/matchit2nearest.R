@@ -70,9 +70,17 @@
 #' @param s.weights the variable containing sampling weights to be incorporated
 #' into propensity score models and balance statistics.
 #' @param replace whether matching should be done with replacement.
-#' @param m.order the order that the matching takes place. The default is
-#' `"largest"` when `distance` corresponds to a propensity score and
-#' `"data"` otherwise. See [matchit()] for allowable options.
+#' @param m.order the order that the matching takes place. Allowable options
+#'   include `"largest"`, where matching takes place in descending order of
+#'   distance measures; `"smallest"`, where matching takes place in ascending
+#'   order of distance measures; `"closest"`, where matching takes place in
+#'   order of the distance between units; `"random"`, where matching takes place
+#'   in a random order; and `"data"` where matching takes place based on the
+#'   order of units in the data. When `m.order = "random"`, results may differ
+#'   across different runs of the same code unless a seed is set and specified
+#'   with [set.seed()]. The default of `NULL` corresponds to `"largest"` when a
+#'   propensity score is estimated or supplied as a vector and `"data"`
+#'   otherwise.
 #' @param caliper the width(s) of the caliper(s) used for caliper matching. See
 #' Details and Examples.
 #' @param std.caliper `logical`; when calipers are specified, whether they
@@ -210,6 +218,10 @@
 #' specified, it is set to 1 by default. `min.controls` must be less than
 #' `ratio`, and `max.controls` must be greater than `ratio`. See
 #' Examples below for an example of their use.
+#'
+#' ## Using `m.order = "closest"`
+#'
+#' As of version 4.6.0, `m.order` can be set to `"closest"`, which works regardless of how the distance measure is specified. This matches in order of the distance between units. The closest pair of units across all potential pairs of units will be matched first; the second closest pair of all potential pairs will be matched second, etc. This ensures that the best possible matches are given priority, and in that sense performs similarly to `m.order = "smallest"`.
 #'
 #' @seealso [matchit()] for a detailed explanation of the inputs and outputs of
 #' a call to `matchit()`.
@@ -466,22 +478,44 @@ matchit2nearest <- function(treat, data, distance, discarded,
   }
 
   m.order <- {
-    if (is.null(distance)) match_arg(m.order, c("data", "random"))
-    else if (!is.null(m.order)) match_arg(m.order, c("largest", "smallest", "random", "data"))
+    if (is.null(distance)) match_arg(m.order, c("data", "random", "closest"))
+    else if (!is.null(m.order)) match_arg(m.order, c("largest", "smallest", "data", "random", "closest"))
     else if (estimand == "ATC") "smallest"
     else "largest"
   }
 
   if (is.null(ex) || !is.null(unit.id)) {
-    ord <- switch(m.order,
-                  "largest" = order(distance[treat == 1], decreasing = TRUE),
-                  "smallest" = order(distance[treat == 1], decreasing = FALSE),
-                  "random" = sample.int(n1),
-                  "data" = seq_len(n1))
+    if (m.order == "closest") {
+      if (!is.null(mahcovs)) {
+        distance_mat <- eucdist_internal(mahcovs, treat)
+
+        # If caliper on PS (distance), treat it as a covariate
+        if (!is.null(distance) && !is.null(caliper.dist)) {
+          caliper.covs.mat <- {
+            if (is.null(caliper.covs)) as.matrix(distance)
+            else cbind(caliper.covs.mat, distance)
+          }
+          caliper.covs <- c(caliper.covs, caliper.dist)
+          caliper.dist <- NULL
+        }
+      }
+      else if (is.null(distance_mat)) {
+        distance_mat <- eucdist_internal(distance, treat)
+      }
+
+      ord <- NULL
+    }
+    else {
+      ord <- switch(m.order,
+                    "largest" = order(distance[treat == 1], decreasing = TRUE),
+                    "smallest" = order(distance[treat == 1], decreasing = FALSE),
+                    "random" = sample.int(n1),
+                    "data" = seq_len(n1))
+    }
 
     mm <- nn_matchC_dispatch(treat, ord, ratio, discarded, reuse.max, distance, distance_mat,
                              ex, caliper.dist, caliper.covs, caliper.covs.mat, mahcovs,
-                             antiexactcovs, unit.id, verbose)
+                             antiexactcovs, unit.id, m.order, verbose)
 
   }
   else {
@@ -507,15 +541,29 @@ matchit2nearest <- function(treat, data, distance, discarded,
       ratio_ <- ratio[.e1]
 
       n1_ <- sum(treat_ == 1)
-      ord_ <- switch(m.order,
-                     "largest" = order(distance_[treat_ == 1], decreasing = TRUE),
-                     "smallest" = order(distance_[treat_ == 1], decreasing = FALSE),
-                     "random" = sample.int(n1_),
-                     "data" = seq_len(n1_))
+
+
+      if (m.order == "closest") {
+        if (!is.null(mahcovs)) {
+          distance_mat_ <- eucdist_internal(mahcovs_, treat_)
+        }
+        else if (is.null(distance_mat)) {
+          distance_mat_ <- eucdist_internal(distance_, treat_)
+        }
+
+        ord <- NULL
+      }
+      else {
+        ord_ <- switch(m.order,
+                       "largest" = order(distance_[treat_ == 1], decreasing = TRUE),
+                       "smallest" = order(distance_[treat_ == 1], decreasing = FALSE),
+                       "random" = sample.int(n1_),
+                       "data" = seq_len(n1_))
+      }
 
       mm_ <- nn_matchC_dispatch(treat_, ord_, ratio_, discarded_, reuse.max, distance_, distance_mat_,
                                NULL, caliper.dist, caliper.covs, caliper.covs.mat_, mahcovs_,
-                               antiexactcovs_, NULL, verbose)
+                               antiexactcovs_, NULL, m.order, verbose)
 
       #Ensure matched indices correspond to indices in full sample, not subgroup
       mm_[] <- seq_along(treat)[.e][mm_]
@@ -556,8 +604,13 @@ matchit2nearest <- function(treat, data, distance, discarded,
 # nn_matchC_vec() if distance_mat and mahcovs are NULL
 # nn_matchC() otherwise
 nn_matchC_dispatch <- function(treat, ord, ratio, discarded, reuse.max, distance, distance_mat, ex, caliper.dist,
-                               caliper.covs, caliper.covs.mat, mahcovs, antiexactcovs, unit.id, verbose) {
-  if (is.null(distance_mat) && is.null(mahcovs)) {
+                               caliper.covs, caliper.covs.mat, mahcovs, antiexactcovs, unit.id, m.order, verbose) {
+  if (m.order == "closest") {
+    nn_matchC_closest(distance_mat, treat, ratio, discarded, reuse.max,
+                      ex, caliper.dist, caliper.covs, caliper.covs.mat,
+                      antiexactcovs, unit.id, verbose)
+  }
+  else if (is.null(distance_mat) && is.null(mahcovs)) {
     nn_matchC_vec(treat, ord, ratio, discarded, reuse.max, distance,
                   ex, caliper.dist, caliper.covs, caliper.covs.mat,
                   antiexactcovs, unit.id, verbose)
