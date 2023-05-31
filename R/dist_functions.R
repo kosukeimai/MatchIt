@@ -345,7 +345,8 @@ eucdist_internal <- function(X, treat = NULL) {
       d <- abs(outer(X[treat_l,], X[!treat_l,], "-"))
     }
     else {
-      d <- dist_to_matrixC(dist(X))[treat_l, !treat_l, drop = FALSE]
+      d <- dist(X)
+      d <- dist_to_matrixC(d)[treat_l, !treat_l, drop = FALSE]
     }
     dimnames(d) <- list(rownames(X)[treat_l], rownames(X)[!treat_l])
   }

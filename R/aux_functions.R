@@ -181,7 +181,7 @@ info.to.distance <- function(info) {
 #controls whether words are separated by "and" or "or"; 'is.are' controls whether the list is
 #followed by "is" or "are" (to avoid manually figuring out if plural); quotes controls whether
 #quotes should be placed around words in string. From WeightIt.
-word_list <- function(word.list = NULL, and.or = c("and", "or"), is.are = FALSE, quotes = FALSE) {
+word_list <- function(word.list = NULL, and.or = "and", is.are = FALSE, quotes = FALSE) {
   #When given a vector of strings, creates a string of the form "a and b"
   #or "a, b, and c"
   #If is.are, adds "is" or "are" appropriately
