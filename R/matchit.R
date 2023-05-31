@@ -109,15 +109,7 @@
 #' individual methods pages for information on whether and how this argument is
 #' used. Default is `FALSE` for matching without replacement.
 #' @param m.order for methods that allow it, the order that the matching takes
-#' place. Allowable options depend on the matching method but include
-#' `"largest"`, where matching takes place in descending order of distance
-#' measures; `"smallest"`, where matching takes place in ascending order
-#' of distance measures; `"random"`, where matching takes place in a
-#' random order; and `"data"` where matching takes place based on the
-#' order of units in the data. When `m.order = "random"`, results may
-#' differ across different runs of the same code unless a seed is set and
-#' specified with [set.seed()]. See the individual methods pages for
-#' information on whether and how this argument is used. The default of
+#' place. Allowable options depend on the matching method. The default of
 #' `NULL` corresponds to `"largest"` when a propensity score is
 #' estimated or supplied as a vector and `"data"` otherwise.
 #' @param caliper for methods that allow it, the width(s) of the caliper(s) to
@@ -230,14 +222,14 @@
 #' (in the case of k:1 matching) or the stratum they belong to (in the case of
 #' exact matching, coarsened exact matching, full matching, or
 #' subclassification). The formula for computing the weights depends on the
-#' argument supplied to `estimand`. A new stratum "propensity score"
-#' (`p`) is computed as the proportion of units in each stratum that are
+#' argument supplied to `estimand`. A new "stratum propensity score"
+#' (`sp`) is computed as the proportion of units in each stratum that are
 #' in the treated group, and all units in that stratum are assigned that
-#' propensity score. Weights are then computed using the standard formulas for
-#' inverse probability weights: for the ATT, weights are 1 for the treated
-#' units and `p/(1-p)` for the control units; for the ATC, weights are
-#' `(1-p)/p` for the treated units and 1 for the control units; for the
-#' ATE, weights are `1/p` for the treated units and `1/(1-p)` for the
+#' stratum propensity score. This is distinct from the propensity score used for matching, if any. Weights are then computed using the standard formulas for
+#' inverse probability weights with the stratum propensity score inserted: for the ATT, weights are 1 for the treated
+#' units and `sp/(1-sp)` for the control units; for the ATC, weights are
+#' `(1-sp)/sp` for the treated units and 1 for the control units; for the
+#' ATE, weights are `1/sp` for the treated units and `1/(1-sp)` for the
 #' control units. For cardinality matching, all matched units receive a weight
 #' of 1.
 #'

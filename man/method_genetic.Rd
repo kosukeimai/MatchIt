@@ -68,9 +68,16 @@ process of matching.}
 
 \item{replace}{whether matching should be done with replacement.}
 
-\item{m.order}{the order that the matching takes place. The default is
-\code{"largest"} when \code{distance} corresponds to a propensity score and
-\code{"data"} otherwise. See \code{\link[=matchit]{matchit()}} for allowable options.}
+\item{m.order}{the order that the matching takes place. Allowable options
+include \code{"largest"}, where matching takes place in descending order of
+distance measures; \code{"smallest"}, where matching takes place in ascending
+order of distance measures; \code{"random"}, where matching takes place
+in a random order; and \code{"data"} where matching takes place based on the
+order of units in the data. When \code{m.order = "random"}, results may differ
+across different runs of the same code unless a seed is set and specified
+with \code{\link[=set.seed]{set.seed()}}. The default of \code{NULL} corresponds to \code{"largest"} when a
+propensity score is estimated or supplied as a vector and \code{"data"}
+otherwise.}
 
 \item{caliper}{the width(s) of the caliper(s) used for caliper matching. See
 Details and Examples.}
