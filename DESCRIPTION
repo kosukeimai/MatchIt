@@ -28,9 +28,12 @@ Depends:
     R (>= 3.5.0)
 Imports:
     backports (>= 1.1.9),
-    chk (>= 0.8.1), rlang (>= 1.1.0),
-    Rcpp (>= 1.0.10),
-    utils, stats, graphics
+    chk (>= 0.8.1),
+    rlang (>= 1.1.0),
+    Rcpp,
+    utils,
+    stats,
+    graphics
 Suggests:
     optmatch (>= 0.10.6),
     Matching,
