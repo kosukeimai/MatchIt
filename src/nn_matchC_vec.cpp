@@ -331,7 +331,7 @@ IntegerMatrix nn_matchC_vec(const IntegerVector& treat_,
   }
 
   IntegerVector times_matched = rep(0, n);
-  LogicalVector can_be_matched = (!as<LogicalVector>(discarded)) & (treat != 1);
+  LogicalVector can_be_matched = !as<LogicalVector>(discarded);
 
   IntegerVector ind_cbm = ind[can_be_matched];
   int first_control = ind_cbm[0];
@@ -359,9 +359,7 @@ IntegerMatrix nn_matchC_vec(const IntegerVector& treat_,
 
       ii = ind1[labi]; //ii'th unit overall
 
-      if (discarded[ii]) continue;
-
-      if (ratio[ii] < r + 1) continue;
+      if (!can_be_matched[ii]) continue;
 
       mm_row = na_omit(mm(row_to_fill, _));
 
@@ -402,12 +400,23 @@ IntegerMatrix nn_matchC_vec(const IntegerVector& treat_,
         k = k_right;
       }
       else {
+        can_be_matched[ii] = false;
         continue;
       }
 
       mm( row_to_fill, r ) = d_ord[k];
 
       if (use_unit_id) {
+        ck_ = ind[unit_id == unit_id[ii]];
+
+        for (j = 0; j < ck_.size(); j++) {
+          ck = ck_[j];
+          times_matched[ck]++;
+          if (times_matched[ck] >= ratio[ck]) {
+            can_be_matched[ck] = false;
+          }
+        }
+
         ck_ = ind[unit_id == unit_id[k]];
 
         for (j = 0; j < ck_.size(); j++) {
@@ -419,18 +428,32 @@ IntegerMatrix nn_matchC_vec(const IntegerVector& treat_,
         }
       }
       else {
+        times_matched[ii]++;
+        if (times_matched[ii] >= ratio[ii]) {
+          can_be_matched[ii] = false;
+        }
+
         times_matched[k]++;
         if (times_matched[k] >= reuse_max) {
           can_be_matched[k] = false;
         }
       }
 
-      if (any(can_be_matched).is_false()) {
-        done = true;
-        break;
+      if (!can_be_matched[ii]) {
+        if (any(as<LogicalVector>(can_be_matched[treat == 1])).is_false()) {
+          done = true;
+          break;
+        }
       }
 
-      ind_cbm = ind[can_be_matched];
+      if (!can_be_matched[k]) {
+        if (any(as<LogicalVector>(can_be_matched[treat == 0])).is_false()) {
+          done = true;
+          break;
+        }
+      }
+
+      ind_cbm = ind[can_be_matched & (treat == 0)];
       if (!can_be_matched[first_control]) {
         first_control = ind_cbm[0];
       }
