@@ -6,9 +6,9 @@ output:
 `MatchIt` News and Updates
 ======
 
-# MatchIt (development version)
+# MatchIt 4.5.4
 
-* With `method = "nearest"`, `m.order` can now be set to `"closest"` to request that the closest potential pars are matched first. This can be used whether a propensity score is used or not.
+* With `method = "nearest"`, `m.order` can now be set to `"closest"` to request that the closest potential pairs are matched first. This can be used whether a propensity score is used or not.
 
 * Fixed bugs when `distance = NULL` and no covariates are specified in `matchit()`.
 
