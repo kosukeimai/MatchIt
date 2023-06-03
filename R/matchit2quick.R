@@ -197,7 +197,6 @@ matchit2quick <- function(treat, formula, data, distance, discarded,
     distcovs <- as.matrix(distance)
   }
 
-
   #Remove discarded units from distance mat
   distcovs <- distcovs[!discarded, , drop = FALSE]
   rownames(distcovs) <- names(treat_)
@@ -217,7 +216,7 @@ matchit2quick <- function(treat, formula, data, distance, discarded,
   p <- setNames(vector("list", nlevels(ex)), levels(ex))
 
   for (e in levels(ex)[cc]) {
-    if (nlevels(ex) > 1 && verbose) {
+    if (verbose && nlevels(ex) > 1) {
       cat(sprintf("Matching subgroup %s/%s: %s...\n",
                   match(e, levels(ex)[cc]), length(cc), e))
     }
