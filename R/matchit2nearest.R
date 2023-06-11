@@ -335,6 +335,8 @@ matchit2nearest <- function(treat, data, distance, discarded,
   else if (is.matrix(distance)) {
     distance_mat <- distance
     distance <- NULL
+
+    if (focal == 0) distance_mat <- t(distance_mat)
   }
 
   #Process caliper

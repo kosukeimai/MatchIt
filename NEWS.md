@@ -18,6 +18,8 @@ output:
 
 * Fixed a bug when `.` was present in formulas. Thanks to @dmolitor. (#167)
 
+* Fixed a bug when nearest neighbor matching for the ATC with `distance` supplied as a numeric distance matrix.
+
 # MatchIt 4.5.3
 
 * Error messages have been improved using `chk` and `rlang`, which are now dependencies.
