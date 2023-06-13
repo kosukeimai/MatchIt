@@ -632,7 +632,7 @@ pooled_sd <- function(X, t, w = NULL, bin.var = NULL, contribution = "proportion
     }, numeric(1L))
   }
 
-  sqrt(pooled_var)
+  setNames(sqrt(pooled_var), colnames(X))
 }
 
 #Effective sample size

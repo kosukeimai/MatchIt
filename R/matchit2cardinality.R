@@ -352,13 +352,15 @@ matchit2cardinality <-  function(treat, data, discarded, formula,
 
   #Apply std.tols
   if (any(std.tols)) {
-    if (estimand == "ATE") {
-      sds <- sqrt(Reduce("+", lapply(tvals, function(t) {
-        apply(X[treat == t, std.tols, drop = FALSE], 2, wvar, w = s.weights[treat == t])
-      }))/nt)
-    }
-    else {
-      sds <- sqrt(apply(X[treat == focal, std.tols, drop = FALSE], 2, wvar, w = s.weights[treat == focal]))
+    sds <- {
+      if (estimand == "ATE") {
+        pooled_sd(X[, std.tols, drop = FALSE], t = treat,
+                  w = s.weights, contribution = "equal")
+      }
+      else {
+        sqrt(apply(X[treat == focal, std.tols, drop = FALSE], 2,
+                   wvar, w = s.weights[treat == focal]))
+      }
     }
 
     zero.sds <- sds < 1e-10
@@ -609,9 +611,11 @@ cardinality_matchit <- function(treat, X, estimand = "ATT", tols = .05, s.weight
 
   cardinality_error_report(opt.out, solver)
 
-  sol <- switch(solver, "glpk" = opt.out$solution,
+  sol <- switch(solver,
+                "glpk" = opt.out$solution,
                 "symphony" = opt.out$solution,
                 "gurobi" = opt.out$x)
+
   if (match_type %in% c("profile_ate", "cardinality")) {
     weights <- round(sol[seq_len(n)])
   }
@@ -642,9 +646,7 @@ cardinality_error_report <- function(out, solver) {
       if (all(out$solution == 0)) {
         .err("the optimization problem may be infeasible. Try increasing the value of `tols`.\nSee `?method_cardinality` for additional details")
       }
-      else {
-        .wrn("the optimizer failed to find an optimal solution in the time alotted. The returned solution may not be optimal.\nSee `?method_cardinality` for additional details")
-      }
+      .wrn("the optimizer failed to find an optimal solution in the time alotted. The returned solution may not be optimal.\nSee `?method_cardinality` for additional details")
     }
   }
   else if (solver == "symphony") {
