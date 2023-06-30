@@ -1,5 +1,5 @@
 Package: MatchIt
-Version: 4.5.4
+Version: 4.5.4.9000
 Title: Nonparametric Preprocessing for Parametric Causal Inference
 Description: Selects matched samples of the original treated and
     control groups with similar covariate distributions -- can be
@@ -53,6 +53,7 @@ Suggests:
     sandwich (>= 2.5-1),
     survival,
     RcppProgress (>= 0.4.2),
+    highs,
     Rglpk,
     Rsymphony,
     gurobi,
