@@ -3,9 +3,6 @@ n <- nrow(lalonde)
 n1 <- sum(lalonde$treat == 1)
 n0 <- n - n1
 
-#put what you've done into a different file, move what you've done from helper
-#wait til end of day Friday
-
 test_that("1:1 NN PSM w/o replacement works", {
   expect_no_condition({
     m <- matchit(treat ~ age + educ + race + married + nodegree +
@@ -24,11 +21,6 @@ test_that("1:1 NN PSM w/o replacement works", {
   expect_equal(sum(!is.na(m$subclass)), 2*n1)
 
   #More tests...
-  expect_length(m$match.matrix, 5:7)
-  expect 1 value per row
-  expect a string
-  expect unique value for each row
-
 })
 
 test_that("2:1 NN PSM w/o replacement works", {
