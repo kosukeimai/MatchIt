@@ -143,12 +143,156 @@ test_that("1:1 NN PSM w/o replacement w/ anti-exact matching works", {
 
   mf_antiexact <- model.frame(m$antiexact, data = lalonde)
 
-  for (r in 1:ncol(m$match.matrix)) {
-    for (i in 1:nrow(m$match.matrix)) {
-      if (!is.na(m$match.matrix[i, r])) {
+#  for (r in 1:ncol(m$match.matrix)) {
+ #   for (i in 1:nrow(m$match.matrix)) {
+#      if (!is.na(m$match.matrix[i, r])) {
 
-      }
-    }
-  }
+ #     }
+  #  }
+  #}
 
 })
+
+test_that("Mahvars is NULL and reestimate is FALSE", {
+  expect_error({
+    m <- matchit(treat ~ age + educ + race + married + nodegree +
+                   re74 + re75, data = lalonde, method = "nearest",
+                 ratio = 1, replace = FALSE, distance = "glm",
+                 estimand = "ATT",
+                 antiexact = ~race + married, reestimate = TRUE)
+  })
+  expect_error({
+    m <- matchit(treat ~ age + educ + race + married + nodegree +
+                   re74 + re75, data = lalonde, method = "nearest",
+                 ratio = 1, replace = FALSE, distance = "glm",
+                 estimand = "ATT",
+                 antiexact = ~race + married, mahvars = 1)
+  })
+
+})
+
+test_that("Method is optimal, nearest or full when supplied distance matrix", {
+  expect_error({
+    m <- matchit(treat ~ age + educ + race + married + nodegree +
+                   re74 + re75, data = lalonde, method = "quick",
+                 ratio = 1, replace = FALSE, distance = "glm",
+                 estimand = "ATT",
+                 antiexact = ~race + married)
+  })
+  expect_error({
+    m <- matchit(treat ~ age + educ + race + married + nodegree +
+                   re74 + re75, data = lalonde, method = "genetic",
+                 ratio = 1, replace = FALSE, distance = "glm",
+                 estimand = "ATT",
+                 antiexact = ~race + married)
+  })
+  expect_error({
+    m <- matchit(treat ~ age + educ + race + married + nodegree +
+                   re74 + re75, data = lalonde, method = "exact",
+                 ratio = 1, replace = FALSE, distance = "glm",
+                 estimand = "ATT",
+                 antiexact = ~race + married)
+  })
+  expect_error({
+    m <- matchit(treat ~ age + educ + race + married + nodegree +
+                   re74 + re75, data = lalonde, method = "quick",
+                 ratio = 1, replace = FALSE, distance = "cem",
+                 estimand = "ATT",
+                 antiexact = ~race + married)
+  })
+  expect_error({
+    m <- matchit(treat ~ age + educ + race + married + nodegree +
+                   re74 + re75, data = lalonde, method = "subclass",
+                 ratio = 1, replace = FALSE, distance = "glm",
+                 estimand = "ATT",
+                 antiexact = ~race + married)
+  })
+  expect_error({
+    m <- matchit(treat ~ age + educ + race + married + nodegree +
+                   re74 + re75, data = lalonde, method = "cardinality",
+                 ratio = 1, replace = FALSE, distance = "glm",
+                 estimand = "ATT",
+                 antiexact = ~race + married)
+  })
+})
+
+  test_that("Ratio is an integer greater than or equal to 1", {
+    expect_error({
+      m <- matchit(treat ~ age + educ + race + married + nodegree +
+                     re74 + re75, data = lalonde, method = "quick",
+                   ratio = 0, replace = FALSE, distance = "glm",
+                   estimand = "ATT",
+                   antiexact = ~race + married)
+    })
+    expect_error({
+      m <- matchit(treat ~ age + educ + race + married + nodegree +
+                     re74 + re75, data = lalonde, method = "quick",
+                   ratio = NA, replace = FALSE, distance = "glm",
+                   estimand = "ATT",
+                   antiexact = ~race + married)
+    })
+    expect_error({
+      m <- matchit(treat ~ age + educ + race + married + nodegree +
+                     re74 + re75, data = lalonde, method = "quick",
+                   ratio = NULL, replace = FALSE, distance = "glm",
+                   estimand = "ATT",
+                   antiexact = ~race + married)
+    })
+  })
+
+  test_that("Ratio must be a whole number when max.controls is NULL", {
+    expect_error({
+      m <- matchit(treat ~ age + educ + race + married + nodegree +
+                     re74 + re75, data = lalonde, method = "quick",
+                   ratio = .5, replace = FALSE, distance = "glm",
+                   estimand = "ATT",
+                   antiexact = ~race + married, max.controls = NULL)
+    })
+  })
+
+  test_that("Max.controls must be a single numeric value and not contain NAs", {
+    expect_error({
+      m <- matchit(treat ~ age + educ + race + married + nodegree +
+                     re74 + re75, data = lalonde, method = "quick",
+                   ratio = .5, replace = FALSE, distance = "glm",
+                   estimand = "ATT",
+                   antiexact = ~race + married, max.controls = NULL)
+    })
+    expect_error({
+      m <- matchit(treat ~ age + educ + race + married + nodegree +
+                     re74 + re75, data = lalonde, method = "quick",
+                   ratio = .5, replace = FALSE, distance = "glm",
+                   estimand = "ATT",
+                   antiexact = ~race + married, max.controls = -1)
+    })
+    expect_error({
+      m <- matchit(treat ~ age + educ + race + married + nodegree +
+                     re74 + re75, data = lalonde, method = "quick",
+                   ratio = .5, replace = FALSE, distance = "glm",
+                   estimand = "ATT",
+                   antiexact = ~race + married, max.controls = c(6, 7))
+    })
+
+
+  expect_false(is.null(m$max.controls))
+  expect_false(anyNA(m$max.controls))
+  })
+
+  test_that("Length of caliper is not 0", {
+    expect_error({
+      m <- matchit(treat ~ age + educ + race + married + nodegree +
+                     re74 + re75, data = lalonde, method = "quick",
+                   ratio = .5, replace = FALSE, distance = "glm",
+                   estimand = "ATT",
+                   antiexact = ~race + married, caliper = 0)
+    })
+  })
+    test_that("Caliper is a numeric or atomic vector", {
+      expect_error({
+        m <- matchit(treat ~ age + educ + race + married + nodegree +
+                       re74 + re75, data = lalonde, method = "quick",
+                     ratio = .5, replace = FALSE, distance = "glm",
+                     estimand = "ATT",
+                     antiexact = ~race + married, caliper = c("A", 2))
+      })
+    })
