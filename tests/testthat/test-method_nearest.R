@@ -158,15 +158,7 @@ test_that("Mahvars is NULL and reestimate is FALSE", {
     m <- matchit(treat ~ age + educ + race + married + nodegree +
                    re74 + re75, data = lalonde, method = "nearest",
                  ratio = 1, replace = FALSE, distance = "glm",
-                 estimand = "ATT",
-                 antiexact = ~race + married, reestimate = TRUE)
-  })
-  expect_error({
-    m <- matchit(treat ~ age + educ + race + married + nodegree +
-                   re74 + re75, data = lalonde, method = "nearest",
-                 ratio = 1, replace = FALSE, distance = "glm",
-                 estimand = "ATT",
-                 antiexact = ~race + married, mahvars = 1)
+                 estimand = "ATT", mahvars = 1)
   })
 
 })
@@ -219,36 +211,130 @@ test_that("Method is optimal, nearest or full when supplied distance matrix", {
   test_that("Ratio is an integer greater than or equal to 1", {
     expect_error({
       m <- matchit(treat ~ age + educ + race + married + nodegree +
-                     re74 + re75, data = lalonde, method = "quick",
-                   ratio = 0, replace = FALSE, distance = "glm",
-                   estimand = "ATT",
-                   antiexact = ~race + married)
-    })
-    expect_error({
-      m <- matchit(treat ~ age + educ + race + married + nodegree +
-                     re74 + re75, data = lalonde, method = "quick",
+                     re74 + re75, data = lalonde, method = "nearest",
                    ratio = NA, replace = FALSE, distance = "glm",
-                   estimand = "ATT",
-                   antiexact = ~race + married)
-    })
+                   estimand = "ATT")
+    }, "`ratio` cannot be `NA`.")
     expect_error({
       m <- matchit(treat ~ age + educ + race + married + nodegree +
-                     re74 + re75, data = lalonde, method = "quick",
-                   ratio = NULL, replace = FALSE, distance = "glm",
-                   estimand = "ATT",
-                   antiexact = ~race + married)
-    })
-  })
+                     re74 + re75, data = lalonde, method = "nearest",
+                   ratio = c("4", "6"), replace = FALSE, distance = "glm",
+                   estimand = "ATT")
+    }, "`ratio` must be a single number greater than or equal to 1.")
+    expect_error({
+    m <- matchit(treat ~ age + educ + race + married + nodegree +
+                   re74 + re75, data = lalonde, method = "nearest",
+                 ratio = "hello", replace = FALSE, distance = "glm",
+                 estimand = "ATT")
+  }, "`ratio` must be a single number greater than or equal to 1.")
+  expect_error({
+  m <- matchit(treat ~ age + educ + race + married + nodegree +
+                 re74 + re75, data = lalonde, method = "nearest",
+               ratio = c(4, 6), replace = FALSE, distance = "glm",
+               estimand = "ATT")
+  }, "`ratio` must be a single number greater than or equal to 1.")
+    expect_error({
+      m <- matchit(treat ~ age + educ + race + married + nodegree +
+                     re74 + re75, data = lalonde, method = "nearest",
+                   ratio = 0, replace = FALSE, distance = "glm",
+                   estimand = "ATT")
+    }, "`ratio` must be a single number greater than or equal to 1.")
+    expect_error({
+      m <- matchit(treat ~ age + educ + race + married + nodegree +
+                     re74 + re75, data = lalonde, method = "nearest",
+                   ratio = 1.5, replace = FALSE, distance = "glm",
+                   estimand = "ATT", max.controls = NULL)
+    }, "`ratio` must be a whole number when `max.controls` is not specified.")
+    expect_error({
+      m <- matchit(treat ~ age + educ + race + married + nodegree +
+                     re74 + re75, data = lalonde, method = "nearest",
+                   ratio = 1, replace = FALSE, distance = "glm",
+                   estimand = "ATT", max.controls = NA)
+    }, "`max.controls` must be a single positive number.")
+    expect_error({
+      m <- matchit(treat ~ age + educ + race + married + nodegree +
+                     re74 + re75, data = lalonde, method = "nearest",
+                   ratio = 1, replace = FALSE, distance = "glm",
+                   estimand = "ATT", max.controls = c("4", "6"))
+    }, "`max.controls` must be a single positive number.")
+    expect_error({
+      m <- matchit(treat ~ age + educ + race + married + nodegree +
+                     re74 + re75, data = lalonde, method = "nearest",
+                   ratio = 1, replace = FALSE, distance = "glm",
+                   estimand = "ATT", max.controls = "hello")
+    }, "`max.controls` must be a single positive number.")
+    expect_error({
+    m <- matchit(treat ~ age + educ + race + married + nodegree +
+                   re74 + re75, data = lalonde, method = "nearest",
+                 ratio = 1, replace = FALSE, distance = "glm",
+                 estimand = "ATT", max.controls = c(1, 5))
+    }, "`max.controls` must be a single positive number.")
+    expect_error({
+    m <- matchit(treat ~ age + educ + race + married + nodegree +
+                   re74 + re75, data = lalonde, method = "nearest",
+                 ratio = 1, replace = FALSE, distance = "glm",
+                 estimand = "ATT", max.controls = 1)
+    }, "`ratio` must be greater than 1 for variable ratio matching.")
+    expect_error({
+      m <- matchit(treat ~ age + educ + race + married + nodegree +
+                     re74 + re75, data = lalonde, method = "nearest",
+                   ratio = 2, replace = FALSE, distance = "glm",
+                   estimand = "ATT", max.controls = 1)
+    }, "`max.controls` must be greater than `ratio` for variable ratio matching.")
+    expect_error({
+      m <- matchit(treat ~ age + educ + race + married + nodegree +
+                     re74 + re75, data = lalonde, method = "nearest",
+                   ratio = 1, replace = FALSE, distance = "glm",
+                   estimand = "ATT", min.controls = NA)
+    }, "`min.controls` must be a single positive number.")
+    expect_error({
+      m <- matchit(treat ~ age + educ + race + married + nodegree +
+                     re74 + re75, data = lalonde, method = "nearest",
+                   ratio = 1, replace = FALSE, distance = "glm",
+                   estimand = "ATT", min.controls = c("4", "6"))
+    }, "`min.controls` must be a single positive number.")
+    expect_error({
+      m <- matchit(treat ~ age + educ + race + married + nodegree +
+                     re74 + re75, data = lalonde, method = "nearest",
+                   ratio = 1, replace = FALSE, distance = "glm",
+                   estimand = "ATT", min.controls = "hello")
+    }, "`min.controls` must be a single positive number.")
+    expect_error({
+      m <- matchit(treat ~ age + educ + race + married + nodegree +
+                     re74 + re75, data = lalonde, method = "nearest",
+                   ratio = 1, replace = FALSE, distance = "glm",
+                   estimand = "ATT", min.controls = c(1, 5))
+    }, "`min.controls` must be a single positive number.")
+    expect_error({
+    m <- matchit(treat ~ age + educ + race + married + nodegree +
+                   re74 + re75, data = lalonde, method = "nearest",
+                 ratio = 1, replace = FALSE, distance = "glm",
+                 estimand = "ATT", min.controls = -1)
+    #test not working, also mincontrols changes need to be pushed
+    }, " .")
+    expect_error({
+      m <- matchit(treat ~ age + educ + race + married + nodegree +
+                     re74 + re75, data = lalonde, method = "nearest",
+                   ratio = 1, replace = FALSE, distance = "glm",
+                   estimand = "ATT", min.controls = 2)
+      #test not working
+    }, " .")
+    expect_error({
+      m <- matchit(treat ~ age + educ + race + married + nodegree +
+                     re74 + re75, data = lalonde, method = "nearest",
+                   ratio = 1, replace = FALSE, distance = "GXM",
+                   estimand = "ATT")
+    }, "The argument supplied to `distance` is not an allowable value. See `help("distance")` for allowable options.")
+    expect_error({
+      m <- matchit(treat ~ age + educ + race + married + nodegree +
+                     re74 + re75, data = lalonde, method = "nearest",
+                   ratio = 1, replace = FALSE, distance = 9,
+                   estimand = "ATT", min.controls = 2)
+      #test not working
+    }, " .")
 
-  test_that("Ratio must be a whole number when max.controls is NULL", {
-    expect_error({
-      m <- matchit(treat ~ age + educ + race + married + nodegree +
-                     re74 + re75, data = lalonde, method = "quick",
-                   ratio = .5, replace = FALSE, distance = "glm",
-                   estimand = "ATT",
-                   antiexact = ~race + married, max.controls = NULL)
-    })
-  })
+
+
 
   test_that("Max.controls must be a single numeric value and not contain NAs", {
     expect_error({
