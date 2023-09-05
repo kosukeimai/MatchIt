@@ -143,72 +143,43 @@ test_that("1:1 NN PSM w/o replacement w/ anti-exact matching works", {
 
   mf_antiexact <- model.frame(m$antiexact, data = lalonde)
 
-#  for (r in 1:ncol(m$match.matrix)) {
- #   for (i in 1:nrow(m$match.matrix)) {
-#      if (!is.na(m$match.matrix[i, r])) {
+  for (r in 1:ncol(m$match.matrix)) {
+   for (i in 1:nrow(m$match.matrix)) {
+      if (!is.na(m$match.matrix[i, r])) {
 
  #     }
   #  }
   #}
 
+  #test that each treated unit is matched to a control unit
+  #test that they have different values
+  #check that each value is different
+  #create a vector with trues and falses
+  #each unit should satisfy test
+  #expect that they are false
+
 })
 
-test_that("Mahvars is NULL and reestimate is FALSE", {
-  expect_error({
+test_that("1:1 NN PSM w/ replacement w/ exact and anti-exact matching works", {
+  expect_no_condition({
     m <- matchit(treat ~ age + educ + race + married + nodegree +
                    re74 + re75, data = lalonde, method = "nearest",
-                 ratio = 1, replace = FALSE, distance = "glm",
-                 estimand = "ATT", mahvars = 1)
-  })
+                 ratio = 1, replace = TRUE, distance = "glm",
+                 estimand = "ATT", exact = ~race + married, antiexact = ~race + married)
+  }, "No units were matched.")
+
+
+  expect_no_condition({
+    m <- matchit(treat ~ age + educ + race + married + nodegree +
+                   re74 + re75, data = lalonde, method = "nearest",
+                 ratio = 1, replace = TRUE, distance = "glm",
+                 estimand = "ATT", exact = ~race + married, antiexact = ~race + age)
+  }, "No units were matched.") #why not to lower function here
+
 
 })
 
-test_that("Method is optimal, nearest or full when supplied distance matrix", {
-  expect_error({
-    m <- matchit(treat ~ age + educ + race + married + nodegree +
-                   re74 + re75, data = lalonde, method = "quick",
-                 ratio = 1, replace = FALSE, distance = "glm",
-                 estimand = "ATT",
-                 antiexact = ~race + married)
-  })
-  expect_error({
-    m <- matchit(treat ~ age + educ + race + married + nodegree +
-                   re74 + re75, data = lalonde, method = "genetic",
-                 ratio = 1, replace = FALSE, distance = "glm",
-                 estimand = "ATT",
-                 antiexact = ~race + married)
-  })
-  expect_error({
-    m <- matchit(treat ~ age + educ + race + married + nodegree +
-                   re74 + re75, data = lalonde, method = "exact",
-                 ratio = 1, replace = FALSE, distance = "glm",
-                 estimand = "ATT",
-                 antiexact = ~race + married)
-  })
-  expect_error({
-    m <- matchit(treat ~ age + educ + race + married + nodegree +
-                   re74 + re75, data = lalonde, method = "quick",
-                 ratio = 1, replace = FALSE, distance = "cem",
-                 estimand = "ATT",
-                 antiexact = ~race + married)
-  })
-  expect_error({
-    m <- matchit(treat ~ age + educ + race + married + nodegree +
-                   re74 + re75, data = lalonde, method = "subclass",
-                 ratio = 1, replace = FALSE, distance = "glm",
-                 estimand = "ATT",
-                 antiexact = ~race + married)
-  })
-  expect_error({
-    m <- matchit(treat ~ age + educ + race + married + nodegree +
-                   re74 + re75, data = lalonde, method = "cardinality",
-                 ratio = 1, replace = FALSE, distance = "glm",
-                 estimand = "ATT",
-                 antiexact = ~race + married)
-  })
-})
-
-  test_that("Ratio is an integer greater than or equal to 1", {
+  test_that("Ratio checks work", {
     expect_error({
       m <- matchit(treat ~ age + educ + race + married + nodegree +
                      re74 + re75, data = lalonde, method = "nearest",
@@ -218,9 +189,9 @@ test_that("Method is optimal, nearest or full when supplied distance matrix", {
     expect_error({
       m <- matchit(treat ~ age + educ + race + married + nodegree +
                      re74 + re75, data = lalonde, method = "nearest",
-                   ratio = c("4", "6"), replace = FALSE, distance = "glm",
+                   ratio = NA, replace = FALSE, distance = "glm",
                    estimand = "ATT")
-    }, "`ratio` must be a single number greater than or equal to 1.")
+    }, "`ratio` cannot be `NA`.")
     expect_error({
     m <- matchit(treat ~ age + educ + race + married + nodegree +
                    re74 + re75, data = lalonde, method = "nearest",
@@ -308,77 +279,68 @@ test_that("Method is optimal, nearest or full when supplied distance matrix", {
     expect_error({
     m <- matchit(treat ~ age + educ + race + married + nodegree +
                    re74 + re75, data = lalonde, method = "nearest",
-                 ratio = 1, replace = FALSE, distance = "glm",
-                 estimand = "ATT", min.controls = -1)
-    #test not working, also mincontrols changes need to be pushed
-    }, " .")
+                 ratio = 2, replace = FALSE, distance = "glm",
+                 estimand = "ATT", min.controls = 0.5, max.controls = 3)
+    }, "`min.controls` cannot be less than 1 for variable ratio matching.")
     expect_error({
       m <- matchit(treat ~ age + educ + race + married + nodegree +
                      re74 + re75, data = lalonde, method = "nearest",
-                   ratio = 1, replace = FALSE, distance = "glm",
-                   estimand = "ATT", min.controls = 2)
-      #test not working
-    }, " .")
+                   ratio = 2, replace = FALSE, distance = "glm",
+                   estimand = "ATT", min.controls = 2, max.controls = 3)
+    }, "`min.controls` must be less than `ratio` for variable ratio matching.")
     expect_error({
       m <- matchit(treat ~ age + educ + race + married + nodegree +
                      re74 + re75, data = lalonde, method = "nearest",
                    ratio = 1, replace = FALSE, distance = "GXM",
                    estimand = "ATT")
-    }, "The argument supplied to `distance` is not an allowable value. See `help("distance")` for allowable options.")
+    }, "The argument supplied to `distance` is not an allowable value. See `help(\"distance\")` for allowable options.")
     expect_error({
       m <- matchit(treat ~ age + educ + race + married + nodegree +
                      re74 + re75, data = lalonde, method = "nearest",
-                   ratio = 1, replace = FALSE, distance = 9,
-                   estimand = "ATT", min.controls = 2)
-      #test not working
-    }, " .")
-
-
-
-
-  test_that("Max.controls must be a single numeric value and not contain NAs", {
-    expect_error({
-      m <- matchit(treat ~ age + educ + race + married + nodegree +
-                     re74 + re75, data = lalonde, method = "quick",
-                   ratio = .5, replace = FALSE, distance = "glm",
-                   estimand = "ATT",
-                   antiexact = ~race + married, max.controls = NULL)
-    })
-    expect_error({
-      m <- matchit(treat ~ age + educ + race + married + nodegree +
-                     re74 + re75, data = lalonde, method = "quick",
-                   ratio = .5, replace = FALSE, distance = "glm",
-                   estimand = "ATT",
-                   antiexact = ~race + married, max.controls = -1)
-    })
-    expect_error({
-      m <- matchit(treat ~ age + educ + race + married + nodegree +
-                     re74 + re75, data = lalonde, method = "quick",
-                   ratio = .5, replace = FALSE, distance = "glm",
-                   estimand = "ATT",
-                   antiexact = ~race + married, max.controls = c(6, 7))
-    })
-
-
-  expect_false(is.null(m$max.controls))
-  expect_false(anyNA(m$max.controls))
+                   ratio = 1, replace = FALSE, distance = list(1),
+                   estimand = "ATT")
+    }, "`distance` must be a string with the name of the distance measure to be used or a numeric vector or matrix containing distance measures.")
   })
-
+    test_that("Method accepts abbreviations", {
+    expect_no_error({
+      m <- matchit(treat ~ age + educ + race + married + nodegree +
+                     re74 + re75, data = lalonde, method = "near",
+                   ratio = 1, replace = FALSE, distance = "glm",
+                   estimand = "ATT")
+    })
+  })
+    test_that("Identifying s.weights ", {
+      expect_error({
+        m <- matchit(treat ~ age + educ + race + married + nodegree +
+                       re74 + re75, data = lalonde, method = "nearest",
+                     ratio = 1, replace = FALSE, distance = "glm",
+                     estimand = "ATT", s.weights = "5")
+      }, "The name supplied to `s.weights` must be a variable in `data`.")
+      expect_error({
+        m <- matchit(lalonde$treat ~ lalonde$age, method = "nearest",
+                     ratio = 1, replace = FALSE, distance = "glm",
+                     estimand = "ATT", s.weights = "age")
+      }, "If `s.weights` is specified a string, a data frame containing the named variable must be supplied to `data`..")
+      expect_error({
+        m <- matchit(treat ~ age + educ + race + married + nodegree +
+                       re74 + re75, data = lalonde, method = "nearest",
+                     ratio = 1, replace = FALSE, distance = "glm",
+                     estimand = "ATT", s.weights = age)
+      }, "The name supplied to `s.weights` must be a variable in `data`.")
+    })
   test_that("Length of caliper is not 0", {
     expect_error({
       m <- matchit(treat ~ age + educ + race + married + nodegree +
                      re74 + re75, data = lalonde, method = "quick",
                    ratio = .5, replace = FALSE, distance = "glm",
-                   estimand = "ATT",
-                   antiexact = ~race + married, caliper = 0)
+                   estimand = "ATT", caliper = 0)
+    }, "(from quickmatch) `caliper` must be positive or `NULL`.")
     })
-  })
     test_that("Caliper is a numeric or atomic vector", {
       expect_error({
         m <- matchit(treat ~ age + educ + race + married + nodegree +
                        re74 + re75, data = lalonde, method = "quick",
                      ratio = .5, replace = FALSE, distance = "glm",
-                     estimand = "ATT",
-                     antiexact = ~race + married, caliper = c("A", 2))
+                     estimand = "ATT", caliper = c("A", 2))
+      }, "`caliper` must be a numeric vector.")
       })
-    })
