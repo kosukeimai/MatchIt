@@ -58,7 +58,8 @@ Suggests:
     Rsymphony,
     gurobi,
     knitr,
-    rmarkdown
+    rmarkdown,
+    testthat (>= 3.0.0)
 LinkingTo: 
     Rcpp,
     RcppProgress
@@ -71,3 +72,4 @@ BugReports: https://github.com/kosukeimai/MatchIt/issues
 VignetteBuilder: knitr
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.3
+Config/testthat/edition: 3
