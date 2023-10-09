@@ -211,8 +211,7 @@
 #' @references In a manuscript, you should reference the solver used in the
 #' optimization. For example, a sentence might read:
 #'
-#' *Cardinality matching was performed using the MatchIt package (Ho,
-#' Imai, King, & Stuart, 2011) in R with the optimization performed by HiGHs (Huangfu & Hall, 2018).*
+#' *Cardinality matching was performed using the MatchIt package (Ho, Imai, King, & Stuart, 2011) in R with the optimization performed by HiGHs (Huangfu & Hall, 2018).*
 #'
 #' See `vignette("matching-methods")` for more literature on cardinality
 #' matching.
@@ -228,7 +227,7 @@
 #' m.out1 <- matchit(treat ~ age + educ + re74,
 #'                   data = lalonde, method = "cardinality",
 #'                   estimand = "ATT", ratio = 1,
-#'                   tols = .15, solver = solver)
+#'                   tols = .2, solver = solver)
 #' m.out1
 #' summary(m.out1)
 #'
@@ -236,7 +235,7 @@
 #' m.out2 <- matchit(treat ~ age + educ + re74,
 #'                   data = lalonde, method = "cardinality",
 #'                   estimand = "ATT", ratio = NA,
-#'                   tols = .15, solver = solver)
+#'                   tols = .2, solver = solver)
 #' m.out2
 #' summary(m.out2, un = FALSE)
 #'
@@ -244,10 +243,10 @@
 #' m.out3 <- matchit(treat ~ age + educ + re74,
 #'                   data = lalonde, method = "cardinality",
 #'                   estimand = "ATE", ratio = NA,
-#'                   tols = .15, solver = solver)
+#'                   tols = .2, solver = solver)
 #' m.out3
 #' summary(m.out3, un = FALSE)
-#' @examplesIf (requireNamespace("Rglpk", quietly = TRUE) && requireNamespace("optmatch", quietly = TRUE))
+#' @examplesIf (requireNamespace("highs", quietly = TRUE) && requireNamespace("optmatch", quietly = TRUE))
 #' # Pairing after 1:1 cardinality matching:
 #' m.out1b <- matchit(treat ~ age + educ + re74,
 #'                    data = lalonde, method = "cardinality",
@@ -333,7 +332,9 @@ matchit2cardinality <-  function(treat, data, discarded, formula,
   assign <- get_assign(X)
 
   chk::chk_numeric(tols)
-  if (length(tols) == 1) tols <- rep(tols, ncol(X))
+  if (length(tols) == 1) {
+    tols <- rep(tols, ncol(X))
+  }
   else if (length(tols) == max(assign)) {
     tols <- tols[assign]
   }
@@ -342,7 +343,9 @@ matchit2cardinality <-  function(treat, data, discarded, formula,
   }
 
   chk::chk_logical(std.tols)
-  if (length(std.tols) == 1) std.tols <- rep(std.tols, ncol(X))
+  if (length(std.tols) == 1) {
+    std.tols <- rep(std.tols, ncol(X))
+  }
   else if (length(std.tols) == max(assign)) {
     std.tols <- std.tols[assign]
   }
@@ -713,7 +716,7 @@ dispatch_optimizer <- function(solver = "glpk", obj, mat, dir, rhs, types, max =
     rhs_h[dir == ">"] <- Inf
     lhs_h[dir == "<"] <- -Inf
 
-    types[types == "B"] <- "C"
+    types[types == "B"] <- "I"
 
     opt.out <- highs::highs_solve(L = obj, lower = lb, upper = ub,
                                   A = mat, lhs = lhs_h, rhs = rhs_h,
