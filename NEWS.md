@@ -8,7 +8,7 @@ output:
 
 # MatchIt (development version)
 
-* When using `method = "cardinality"`, a new solver, HiGHS, can be requested by setting `solver = "high"`, which relies on the `highs` package. This is much faster and more reliable than GLPK and is free and easy to install as a regular R package with no additional requirements.
+* When using `method = "cardinality"`, a new solver, HiGHS, can be requested by setting `solver = "highs"`, which relies on the `highs` package. This is much faster and more reliable than GLPK and is free and easy to install as a regular R package with no additional requirements.
 
 * Fixed a bug when using `method = "optimal"` with `discard` and `exact` specified. Thanks to @NikNakk for the issue and fix. (#171)
 

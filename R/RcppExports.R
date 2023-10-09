@@ -35,5 +35,5 @@ weights_matrixC <- function(mm, treat) {
 
 # Register entry points for exported C++ functions
 methods::setLoadAction(function(ns) {
-    .Call('_MatchIt_RcppExport_registerCCallable', PACKAGE = 'MatchIt')
+    .Call(`_MatchIt_RcppExport_registerCCallable`)
 })
