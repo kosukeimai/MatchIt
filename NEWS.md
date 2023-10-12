@@ -6,7 +6,7 @@ output:
 `MatchIt` News and Updates
 ======
 
-# MatchIt (development version)
+# MatchIt 4.5.5
 
 * When using `method = "cardinality"`, a new solver, HiGHS, can be requested by setting `solver = "highs"`, which relies on the `highs` package. This is much faster and more reliable than GLPK and is free and easy to install as a regular R package with no additional requirements.
 
