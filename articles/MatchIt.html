@@ -40,7 +40,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">MatchIt</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">4.5.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">4.5.5</span>
       </span>
     </div>
 
@@ -101,7 +101,7 @@
                         <h4 data-toc-skip class="author">Noah
 Greifer</h4>
             
-            <h4 data-toc-skip class="date">2023-04-13</h4>
+            <h4 data-toc-skip class="date">2023-10-13</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/kosukeimai/MatchIt/blob/HEAD/vignettes/MatchIt.Rmd" class="external-link"><code>vignettes/MatchIt.Rmd</code></a></small>
       <div class="hidden name"><code>MatchIt.Rmd</code></div>
@@ -316,9 +316,9 @@ default<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a>
 <span><span class="co">## Discarded       0       0</span></span></code></pre>
 <p>We can see severe imbalances as measured by the standardized mean
 differences (<code>Std. Mean Diff.</code>), variance ratios
-(<code>Var. Ratio</code>), and empirical cumulative density function
-(eCDF) statistics. Values of standardized mean differences and eCDF
-statistics close to zero and values of variance ratios close to one
+(<code>Var. Ratio</code>), and empirical cumulative distribution
+function (eCDF) statistics. Values of standardized mean differences and
+eCDF statistics close to zero and values of variance ratios close to one
 indicate good balance, and here many of them are far from their ideal
 values.</p>
 </div>
@@ -407,16 +407,16 @@ both before and after matching.)</p>
 <span><span class="co">## </span></span>
 <span><span class="co">## Summary of Balance for Matched Data:</span></span>
 <span><span class="co">##            Means Treated Means Control Std. Mean Diff. Var. Ratio eCDF Mean eCDF Max Std. Pair Dist.</span></span>
-<span><span class="co">## distance          0.5774        0.3629          0.9740     0.7564    0.1321   0.4216          0.9740</span></span>
-<span><span class="co">## age              25.8162       25.2054          0.0854     0.4633    0.0839   0.2541          1.3893</span></span>
-<span><span class="co">## educ             10.3459       10.5838         -0.1183     0.5862    0.0222   0.0649          1.2205</span></span>
+<span><span class="co">## distance          0.5774        0.3629          0.9739     0.7566    0.1321   0.4216          0.9740</span></span>
+<span><span class="co">## age              25.8162       25.3027          0.0718     0.4568    0.0847   0.2541          1.3938</span></span>
+<span><span class="co">## educ             10.3459       10.6054         -0.1290     0.5721    0.0239   0.0757          1.2474</span></span>
 <span><span class="co">## raceblack         0.8432        0.4703          1.0259          .    0.3730   0.3730          1.0259</span></span>
-<span><span class="co">## racehispan        0.0595        0.2108         -0.6400          .    0.1514   0.1514          1.0514</span></span>
-<span><span class="co">## racewhite         0.0973        0.3189         -0.7478          .    0.2216   0.2216          0.8208</span></span>
-<span><span class="co">## married           0.1892        0.2000         -0.0276          .    0.0108   0.0108          0.8005</span></span>
-<span><span class="co">## nodegree          0.7081        0.6486          0.1308          .    0.0595   0.0595          0.9868</span></span>
-<span><span class="co">## re74           2095.5737     2476.9475         -0.0780     1.2629    0.0546   0.2865          0.8160</span></span>
-<span><span class="co">## re75           1532.0553     1669.7419         -0.0428     1.4712    0.0508   0.2108          0.7552</span></span>
+<span><span class="co">## racehispan        0.0595        0.2162         -0.6629          .    0.1568   0.1568          1.0743</span></span>
+<span><span class="co">## racewhite         0.0973        0.3135         -0.7296          .    0.2162   0.2162          0.8390</span></span>
+<span><span class="co">## married           0.1892        0.2108         -0.0552          .    0.0216   0.0216          0.8281</span></span>
+<span><span class="co">## nodegree          0.7081        0.6378          0.1546          .    0.0703   0.0703          1.0106</span></span>
+<span><span class="co">## re74           2095.5737     2342.1076         -0.0505     1.3289    0.0469   0.2757          0.7965</span></span>
+<span><span class="co">## re75           1532.0553     1614.7451         -0.0257     1.4956    0.0452   0.2054          0.7381</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## Sample Sizes:</span></span>
 <span><span class="co">##           Control Treated</span></span>
@@ -534,7 +534,7 @@ full matching and most other matching methods, we can run a regression
 of the outcome on the treatment and covariates in the matched sample
 (i.e., including the matching weights) and estimate the treatment effect
 using g-computation as implemented in
-<code><a href="https://vincentarelbundock.github.io/marginaleffects/reference/comparisons.html" class="external-link">marginaleffects::comparisons()</a></code><a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a>. Including the
+<code><a href="https://rdrr.io/pkg/marginaleffects/man/comparisons.html" class="external-link">marginaleffects::comparisons()</a></code><a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a>. Including the
 covariates used in the matching in the effect estimation can provide
 additional robustness to slight imbalances remaining after matching and
 can improve precision.</p>
@@ -561,26 +561,31 @@ regression functions in R, like <code><a href="https://rdrr.io/r/stats/lm.html" 
 being sure to include the matching weights (stored in the
 <code>weights</code> variable of the <code><a href="../reference/match.data.html">match.data()</a></code> output)
 in the estimation<a href="#fn4" class="footnote-ref" id="fnref4"><sup>4</sup></a>. Finally, we use
-<code><a href="https://vincentarelbundock.github.io/marginaleffects/reference/comparisons.html" class="external-link">marginaleffects::avg_comparisons()</a></code> to perform g-computation
+<code><a href="https://rdrr.io/pkg/marginaleffects/man/comparisons.html" class="external-link">marginaleffects::avg_comparisons()</a></code> to perform g-computation
 to estimate the ATT. We recommend using cluster-robust standard errors
 for most analyses, with pair membership as the clustering variable;
-<code><a href="https://vincentarelbundock.github.io/marginaleffects/reference/comparisons.html" class="external-link">avg_comparisons()</a></code> makes this straightforward.</p>
+<code><a href="https://rdrr.io/pkg/marginaleffects/man/comparisons.html" class="external-link">avg_comparisons()</a></code> makes this straightforward.</p>
 <div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://vincentarelbundock.github.io/marginaleffects/" class="external-link">"marginaleffects"</a></span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://marginaleffects.com/" class="external-link">"marginaleffects"</a></span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html" class="external-link">lm</a></span><span class="op">(</span><span class="va">re78</span> <span class="op">~</span> <span class="va">treat</span> <span class="op">*</span> <span class="op">(</span><span class="va">age</span> <span class="op">+</span> <span class="va">educ</span> <span class="op">+</span> <span class="va">race</span> <span class="op">+</span> <span class="va">married</span> <span class="op">+</span> <span class="va">nodegree</span> <span class="op">+</span> </span>
 <span>             <span class="va">re74</span> <span class="op">+</span> <span class="va">re75</span><span class="op">)</span>, data <span class="op">=</span> <span class="va">m.data</span>, weights <span class="op">=</span> <span class="va">weights</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="https://vincentarelbundock.github.io/marginaleffects/reference/comparisons.html" class="external-link">avg_comparisons</a></span><span class="op">(</span><span class="va">fit</span>,</span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/marginaleffects/man/comparisons.html" class="external-link">avg_comparisons</a></span><span class="op">(</span><span class="va">fit</span>,</span>
 <span>                variables <span class="op">=</span> <span class="st">"treat"</span>,</span>
 <span>                vcov <span class="op">=</span> <span class="op">~</span><span class="va">subclass</span>,</span>
 <span>                newdata <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="va">m.data</span>, <span class="va">treat</span> <span class="op">==</span> <span class="fl">1</span><span class="op">)</span>,</span>
 <span>                wts <span class="op">=</span> <span class="st">"weights"</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## Warning: The `treat` variable is treated as a categorical (factor) variable, but the original data is of class integer. It is safer and faster to convert such variables to factor before</span></span>
+<span><span class="co">##   fitting the model and calling `slopes` functions.</span></span>
+<span><span class="co">##   </span></span>
+<span><span class="co">##   This warning appears once per session.</span></span></code></pre>
 <pre><code><span><span class="co">## </span></span>
-<span><span class="co">##   Term Contrast Estimate Std. Error   z Pr(&gt;|z|) 2.5 % 97.5 %</span></span>
-<span><span class="co">##  treat    1 - 0     1912        765 2.5   0.0124   413   3411</span></span>
+<span><span class="co">##   Term Contrast Estimate Std. Error   z Pr(&gt;|z|)   S 2.5 % 97.5 %</span></span>
+<span><span class="co">##  treat    1 - 0     1912        765 2.5   0.0124 6.3   413   3411</span></span>
 <span><span class="co">## </span></span>
-<span><span class="co">## Columns: term, contrast, estimate, std.error, statistic, p.value, conf.low, conf.high</span></span></code></pre>
+<span><span class="co">## Columns: term, contrast, estimate, std.error, statistic, p.value, s.value, conf.low, conf.high </span></span>
+<span><span class="co">## Type:  response</span></span></code></pre>
 <p>The outcome model coefficients and tests should not be interpreted or
 reported. See <code><a href="../articles/estimating-effects.html">vignette("estimating-effects")</a></code> for more
 information on how to estimate effects and standard errors with
@@ -635,7 +640,7 @@ control units, so no units were discarded by the matching.</p>
 linear regression model with 1978 earnings as the outcome and the
 treatment, covariates, and their interaction as predictors and included
 the full matching weights in the estimation. The <code><a href="https://rdrr.io/r/stats/lm.html" class="external-link">lm()</a></code>
-function was used to fit the outcome, and the <code><a href="https://vincentarelbundock.github.io/marginaleffects/reference/comparisons.html" class="external-link">comparisons()</a></code>
+function was used to fit the outcome, and the <code><a href="https://rdrr.io/pkg/marginaleffects/man/comparisons.html" class="external-link">comparisons()</a></code>
 function in the <code>marginaleffects</code> package was used to perform
 g-computation in the matched sample to estimate the ATT. A
 cluster-robust variance was used to estimate its standard error with

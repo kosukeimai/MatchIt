@@ -25,7 +25,7 @@ individual pages linked in the Details section below."><meta property="og:image"
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">MatchIt</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">4.5.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">4.5.5</span>
       </span>
     </div>
 
@@ -259,15 +259,7 @@ used. Default is <code>FALSE</code> for matching without replacement.</p></dd>
 
 <dt>m.order</dt>
 <dd><p>for methods that allow it, the order that the matching takes
-place. Allowable options depend on the matching method but include
-<code>"largest"</code>, where matching takes place in descending order of distance
-measures; <code>"smallest"</code>, where matching takes place in ascending order
-of distance measures; <code>"random"</code>, where matching takes place in a
-random order; and <code>"data"</code> where matching takes place based on the
-order of units in the data. When <code>m.order = "random"</code>, results may
-differ across different runs of the same code unless a seed is set and
-specified with <code><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed()</a></code>. See the individual methods pages for
-information on whether and how this argument is used. The default of
+place. Allowable options depend on the matching method. The default of
 <code>NULL</code> corresponds to <code>"largest"</code> when a propensity score is
 estimated or supplied as a vector and <code>"data"</code> otherwise.</p></dd>
 
@@ -481,14 +473,14 @@ unit is assigned to a subclass, which represents the pair they are a part of
 (in the case of k:1 matching) or the stratum they belong to (in the case of
 exact matching, coarsened exact matching, full matching, or
 subclassification). The formula for computing the weights depends on the
-argument supplied to <code>estimand</code>. A new stratum "propensity score"
-(<code>p</code>) is computed as the proportion of units in each stratum that are
+argument supplied to <code>estimand</code>. A new "stratum propensity score"
+(<code>sp</code>) is computed as the proportion of units in each stratum that are
 in the treated group, and all units in that stratum are assigned that
-propensity score. Weights are then computed using the standard formulas for
-inverse probability weights: for the ATT, weights are 1 for the treated
-units and <code>p/(1-p)</code> for the control units; for the ATC, weights are
-<code>(1-p)/p</code> for the treated units and 1 for the control units; for the
-ATE, weights are <code>1/p</code> for the treated units and <code>1/(1-p)</code> for the
+stratum propensity score. This is distinct from the propensity score used for matching, if any. Weights are then computed using the standard formulas for
+inverse probability weights with the stratum propensity score inserted: for the ATT, weights are 1 for the treated
+units and <code>sp/(1-sp)</code> for the control units; for the ATC, weights are
+<code>(1-sp)/sp</code> for the treated units and 1 for the control units; for the
+ATE, weights are <code>1/sp</code> for the treated units and <code>1/(1-sp)</code> for the
 control units. For cardinality matching, all matched units receive a weight
 of 1.</p>
 <p>For matching <em>with</em> replacement, units are not assigned to unique strata. For
@@ -588,27 +580,27 @@ Elizabeth Stuart (<a href="mailto:estuart@jhsph.edu">estuart@jhsph.edu</a>)</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Summary of Balance for Matched Data:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>            Means Treated Means Control Std. Mean Diff. Var. Ratio eCDF Mean</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> distance          0.5774        0.3629          0.9740     0.7564    0.1321</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> age              25.8162       25.2054          0.0854     0.4633    0.0839</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> educ             10.3459       10.5838         -0.1183     0.5862    0.0222</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> distance          0.5774        0.3629          0.9739     0.7566    0.1321</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> age              25.8162       25.3027          0.0718     0.4568    0.0847</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> educ             10.3459       10.6054         -0.1290     0.5721    0.0239</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> raceblack         0.8432        0.4703          1.0259          .    0.3730</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> racehispan        0.0595        0.2108         -0.6400          .    0.1514</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> racewhite         0.0973        0.3189         -0.7478          .    0.2216</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> nodegree          0.7081        0.6486          0.1308          .    0.0595</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> married           0.1892        0.2000         -0.0276          .    0.0108</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> re74           2095.5737     2476.9475         -0.0780     1.2629    0.0546</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> re75           1532.0553     1669.7419         -0.0428     1.4712    0.0508</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> racehispan        0.0595        0.2162         -0.6629          .    0.1568</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> racewhite         0.0973        0.3135         -0.7296          .    0.2162</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> nodegree          0.7081        0.6378          0.1546          .    0.0703</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> married           0.1892        0.2108         -0.0552          .    0.0216</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> re74           2095.5737     2342.1076         -0.0505     1.3289    0.0469</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> re75           1532.0553     1614.7451         -0.0257     1.4956    0.0452</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>            eCDF Max Std. Pair Dist.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> distance     0.4216          0.9740</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> age          0.2541          1.3893</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> educ         0.0649          1.2205</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> age          0.2541          1.3938</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> educ         0.0757          1.2474</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> raceblack    0.3730          1.0259</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> racehispan   0.1514          1.0514</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> racewhite    0.2216          0.8208</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> nodegree     0.0595          0.9868</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> married      0.0108          0.8005</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> re74         0.2865          0.8160</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> re75         0.2108          0.7552</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> racehispan   0.1568          1.0743</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> racewhite    0.2162          0.8390</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> nodegree     0.0703          1.0106</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> married      0.0216          0.8281</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> re74         0.2757          0.7965</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> re75         0.2054          0.7381</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Sample Sizes:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>           Control Treated</span>
@@ -629,7 +621,7 @@ Elizabeth Stuart (<a href="mailto:estuart@jhsph.edu">estuart@jhsph.edu</a>)</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> A matchit object</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  - method: 1:1 nearest neighbor matching with replacement</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  - distance: Mahalanobis</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  - number of obs.: 614 (original), 262 (matched)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  - number of obs.: 614 (original), 263 (matched)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  - target estimand: ATT</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  - covariates: age, educ, race, nodegree, married, re74, re75</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">m.out2</span>, un <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
@@ -663,17 +655,17 @@ Elizabeth Stuart (<a href="mailto:estuart@jhsph.edu">estuart@jhsph.edu</a>)</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Summary of Balance for Matched Data:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>            Means Treated Means Control Std. Mean Diff. Var. Ratio eCDF Mean</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> age              25.8162       25.6162          0.0280     0.6506    0.0466</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> educ             10.3459       10.3946         -0.0242     1.1552    0.0065</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> age              25.8162       25.5946          0.0310     0.6489    0.0472</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> educ             10.3459       10.3946         -0.0242     1.1553    0.0065</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> raceblack         0.8432        0.8432          0.0000          .    0.0000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> racehispan        0.0595        0.0595          0.0000          .    0.0000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> racehispan        0.0595        0.0595         -0.0000          .    0.0000</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> racewhite         0.0973        0.0973          0.0000          .    0.0000</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> nodegree          0.7081        0.7135         -0.0119          .    0.0054</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> married           0.1892        0.1892          0.0000          .    0.0000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> re74           2095.5737     1861.6424          0.0479     1.4962    0.0286</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> re75           1532.0553     1091.6516          0.1368     2.0313    0.0347</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> re74           2095.5737     1861.6424          0.0479     1.4963    0.0286</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> re75           1532.0553     1091.6516          0.1368     2.0314    0.0347</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>            eCDF Max Std. Pair Dist.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> age          0.1784          0.4918</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> age          0.1838          0.4918</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> educ         0.0324          0.2070</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> raceblack    0.0000          0.0000</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> racehispan   0.0000          0.0000</span>
@@ -686,9 +678,9 @@ Elizabeth Stuart (<a href="mailto:estuart@jhsph.edu">estuart@jhsph.edu</a>)</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Sample Sizes:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>               Control Treated</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> All            429.       185</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Matched (ESS)   33.65     185</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Matched         77.       185</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Unmatched      352.         0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Matched (ESS)   33.72     185</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Matched         78.       185</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Unmatched      351.         0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Discarded        0.         0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span></span></span>

@@ -40,7 +40,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">MatchIt</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">4.5.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">4.5.5</span>
       </span>
     </div>
 
@@ -101,7 +101,7 @@
                         <h4 data-toc-skip class="author">Noah
 Greifer</h4>
             
-            <h4 data-toc-skip class="date">2023-04-13</h4>
+            <h4 data-toc-skip class="date">2023-10-13</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/kosukeimai/MatchIt/blob/HEAD/vignettes/matching-methods.Rmd" class="external-link"><code>vignettes/matching-methods.Rmd</code></a></small>
       <div class="hidden name"><code>matching-methods.Rmd</code></div>
@@ -886,10 +886,39 @@ squared error. In general, it makes sense to use higher values of <span class="m
 satisfactory.</p>
 <p>With nearest neighbor and optimal pair matching, variable <span class="math inline">\(k\)</span>:1 matching, in which the number of
 controls matched to each treated unit varies, can also be used; this can
-have improved performance over “fixed” <span class="math inline">\(k\)</span>:1 matching <span class="citation">(<a href="#ref-ming2000" role="doc-biblioref">Ming and Rosenbaum
-2000</a>)</span>. See <code><a href="../reference/method_nearest.html">?method_nearest</a></code> and
-<code><a href="../reference/method_optimal.html">?method_optimal</a></code> for information on implementing variable
-<span class="math inline">\(k\)</span>:1 matching.</p>
+have improved performance over “fixed” <span class="math inline">\(k\)</span>:1 matching <span class="citation">(<a href="#ref-ming2000" role="doc-biblioref">Ming and Rosenbaum 2000</a>;
+<a href="#ref-rassenOnetomanyPropensityScore2012" role="doc-biblioref">Rassen et al. 2012</a>)</span>. See
+<code><a href="../reference/method_nearest.html">?method_nearest</a></code> and <code><a href="../reference/method_optimal.html">?method_optimal</a></code> for
+information on implementing variable <span class="math inline">\(k\)</span>:1 matching.</p>
+</div>
+<div class="section level3">
+<h3 id="matching-order-m-order">Matching order (<code>m.order</code>)<a class="anchor" aria-label="anchor" href="#matching-order-m-order"></a>
+</h3>
+<p>For nearest neighbor matching (including genetic matching), units are
+matched in an order, and that order can affect the quality of individual
+matches and of the resulting matched sample. With
+<code>method = "nearest"</code>, the allowable options to
+<code>m.order</code> to control the matching order are
+<code>"largest"</code>, <code>"smallest"</code>, <code>"closest"</code>,
+<code>"random"</code>, and <code>"data"</code>. With
+<code>method = "genetic"</code>, all but <code>"closest"</code> can be
+used. Requesting <code>"largest"</code> means that treated units with
+the largest propensity scores, i.e., those least like the control units,
+will be matched first, which prevents them from having bad matches after
+all the close control units have been used up. <code>"smallest"</code>
+means that treated units with the smallest propensity scores are matched
+first. <code>"closest"</code> means that potential pairs with the
+smallest distance between units will be matched first, which ensures
+that the best possible matches are included in the matched sample but
+can yield poor matches for units whose best match is far from them; this
+makes it particularly useful when matching with a caliper.
+<code>"random"</code> matches in a random order and <code>"data"</code>
+matches in order of the data. A propensity score is required for
+<code>"largest"</code> and <code>"smallest"</code> but not for the other
+options. <span class="citation">Rubin (<a href="#ref-rubin1973" role="doc-biblioref">1973</a>)</span> recommends using
+<code>"largest"</code> or <code>"random"</code>, though <span class="citation">Austin (<a href="#ref-austin2013b" role="doc-biblioref">2013</a>)</span> recommends against
+<code>"largest"</code> and instead favors <code>"closest"</code> or
+<code>"random"</code>.</p>
 </div>
 </div>
 <div class="section level2">
@@ -1191,6 +1220,12 @@ Bias Reduction from Matching with a Variable Number of Controls.”</span>
 Orihara, Shunichiro, and Etsuo Hamada. 2021. <span>“Determination of the
 Optimal Number of Strata for Propensity Score Subclassification.”</span>
 <em>Statistics &amp; Probability Letters</em> 168 (January): 108951. <a href="https://doi.org/10.1016/j.spl.2020.108951" class="external-link">https://doi.org/10.1016/j.spl.2020.108951</a>.
+</div>
+<div id="ref-rassenOnetomanyPropensityScore2012" class="csl-entry">
+Rassen, Jeremy A., Abhi A. Shelat, Jessica Myers, Robert J. Glynn,
+Kenneth J. Rothman, and Sebastian Schneeweiss. 2012. <span>“One-to-Many
+Propensity Score Matching in Cohort Studies.”</span>
+<em>Pharmacoepidemiology and Drug Safety</em> 21 (S2): 69–80. <a href="https://doi.org/10.1002/pds.3263" class="external-link">https://doi.org/10.1002/pds.3263</a>.
 </div>
 <div id="ref-ripolloneImplicationsPropensityScore2018" class="csl-entry">
 Ripollone, John E., Krista F. Huybrechts, Kenneth J. Rothman, Ryan E.

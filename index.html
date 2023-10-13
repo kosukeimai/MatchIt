@@ -48,7 +48,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">MatchIt</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">4.5.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">4.5.5</span>
       </span>
     </div>
 
@@ -132,7 +132,7 @@
 <div class="sourceCode" id="cb3"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; A matchit object</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  - method: 1:1 nearest neighbor matching with replacement</span></span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  - distance: Mahalanobis</span></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  - number of obs.: 614 (original), 260 (matched)</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  - number of obs.: 614 (original), 261 (matched)</span></span>
 <span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  - target estimand: ATT</span></span>
 <span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  - covariates: age, educ, race, married, nodegree, re74, re75</span></span></code></pre></div>
 <p>We can check covariate balance for the original and matched samples using <code><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary()</a></code>:</p>
@@ -158,29 +158,29 @@
 <span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
 <span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Summary of Balance for Matched Data:</span></span>
 <span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;            Means Treated Means Control Std. Mean Diff. Var. Ratio eCDF Mean eCDF Max Std. Pair Dist.</span></span>
-<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; age              25.8162       25.5622          0.0355     0.6540    0.0461   0.1838          0.4827</span></span>
-<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; educ             10.3459       10.4270         -0.0403     1.1635    0.0077   0.0378          0.1963</span></span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; age              25.8162       25.5405          0.0385     0.6524    0.0466   0.1892          0.4827</span></span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; educ             10.3459       10.4270         -0.0403     1.1636    0.0077   0.0378          0.1963</span></span>
 <span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; raceblack         0.8432        0.8432          0.0000          .    0.0000   0.0000          0.0000</span></span>
 <span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; racehispan        0.0595        0.0595          0.0000          .    0.0000   0.0000          0.0000</span></span>
 <span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; racewhite         0.0973        0.0973          0.0000          .    0.0000   0.0000          0.0000</span></span>
 <span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; married           0.1892        0.1784          0.0276          .    0.0108   0.0108          0.0276</span></span>
-<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; nodegree          0.7081        0.7081         -0.0000          .    0.0000   0.0000          0.0000</span></span>
-<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; re74           2095.5737     1788.6941          0.0628     1.5689    0.0311   0.1730          0.2494</span></span>
-<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; re75           1532.0553     1087.7420          0.1380     2.1220    0.0330   0.0865          0.2360</span></span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; nodegree          0.7081        0.7081          0.0000          .    0.0000   0.0000          0.0000</span></span>
+<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; re74           2095.5737     1788.6941          0.0628     1.5690    0.0311   0.1730          0.2494</span></span>
+<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; re75           1532.0553     1087.7420          0.1380     2.1221    0.0330   0.0865          0.2360</span></span>
 <span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
 <span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Sample Sizes:</span></span>
 <span id="cb5-31"><a href="#cb5-31" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;               Control Treated</span></span>
-<span id="cb5-32"><a href="#cb5-32" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; All            429.       185</span></span>
-<span id="cb5-33"><a href="#cb5-33" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Matched (ESS)   32.94     185</span></span>
-<span id="cb5-34"><a href="#cb5-34" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Matched         75.       185</span></span>
-<span id="cb5-35"><a href="#cb5-35" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Unmatched      354.         0</span></span>
-<span id="cb5-36"><a href="#cb5-36" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Discarded        0.         0</span></span></code></pre></div>
+<span id="cb5-32"><a href="#cb5-32" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; All               429     185</span></span>
+<span id="cb5-33"><a href="#cb5-33" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Matched (ESS)      33     185</span></span>
+<span id="cb5-34"><a href="#cb5-34" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Matched            76     185</span></span>
+<span id="cb5-35"><a href="#cb5-35" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Unmatched         353       0</span></span>
+<span id="cb5-36"><a href="#cb5-36" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Discarded           0       0</span></span></code></pre></div>
 <p>At the top is balance for the original sample. Below that is balance in the matched sample, followed by the percent reduction in imbalance and the sample sizes before and after matching. Smaller values for the balance statistics indicate better balance. (In this case, good balance was not achieved and other matching methods should be tried). We can plot the standardized mean differences in a Love plot for a clean, visual display of balance across the sample:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">#Plot balance</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">m.out</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p><img src="reference/figures/README-unnamed-chunk-5-1.png" alt="Love plot of balance before and after matching." style="display: block; margin: auto;"></p>
-<p>Although much has been written about matching theory, most of the theory relied upon in <code>MatchIt</code> is described well in <a href="https//:doi.org/10.1093/pan/mpl013">Ho, Imai, King, and Stuart (2007)</a> and <a href="https://doi.org/10.1214/09-STS313" class="external-link">Stuart (2010)</a>. The <em>Journal of Statistical Software</em> article for <code>MatchIt</code> can be accessed <a href="https://doi.org/10.18637/jss.v042.i08" class="external-link">here</a>, though note that some options have changed, so the <code>MatchIt</code> reference pages and included vignettes should be used for understanding the functions and methods available. Further references for individual methods are present in their respective help pages. The <code>MatchIt</code> <a href="https://kosukeimai.github.io/MatchIt/">website</a> provides access to vignettes and documentation files.</p>
+<p>Although much has been written about matching theory, most of the theory relied upon in <code>MatchIt</code> is described well in <a href="https//:doi.org/10.1093/pan/mpl013">Ho, Imai, King, and Stuart (2007)</a>, <a href="https://doi.org/10.1214/09-STS313" class="external-link">Stuart (2010)</a>, and <a href="https://doi.org/10.1093/epirev/mxab003" class="external-link">Greifer and Stuart (2021)</a>. The <em>Journal of Statistical Software</em> article for <code>MatchIt</code> can be accessed <a href="https://doi.org/10.18637/jss.v042.i08" class="external-link">here</a>, though note that some options have changed, so the <code>MatchIt</code> reference pages and included vignettes should be used for understanding the functions and methods available. Further references for individual methods are present in their respective help pages. The <code>MatchIt</code> <a href="https://kosukeimai.github.io/MatchIt/">website</a> provides access to vignettes and documentation files.</p>
 </div>
 <div class="section level3">
 <h3 id="citing-matchit">Citing <code>MatchIt</code>

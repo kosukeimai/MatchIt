@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">MatchIt</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">4.5.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">4.5.5</span>
       </span>
     </div>
 
@@ -69,6 +69,20 @@
       <small>Source: <a href="https://github.com/kosukeimai/MatchIt/blob/HEAD/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="4.5.5" id="matchit-455">MatchIt 4.5.5<small>2023-10-13</small><a class="anchor" aria-label="anchor" href="#matchit-455"></a></h2>
+<ul><li><p>When using <code>method = "cardinality"</code>, a new solver, HiGHS, can be requested by setting <code>solver = "highs"</code>, which relies on the <code>highs</code> package. This is much faster and more reliable than GLPK and is free and easy to install as a regular R package with no additional requirements.</p></li>
+<li><p>Fixed a bug when using <code>method = "optimal"</code> with <code>discard</code> and <code>exact</code> specified. Thanks to <a href="https://github.com/NikNakk" class="external-link">@NikNakk</a> for the issue and fix. (<a href="https://github.com/kosukeimai/MatchIt/issues/171" class="external-link">#171</a>)</p></li>
+</ul></div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="4.5.4" id="matchit-454">MatchIt 4.5.4<small>2023-06-14</small><a class="anchor" aria-label="anchor" href="#matchit-454"></a></h2>
+<ul><li><p>With <code>method = "nearest"</code>, <code>m.order</code> can now be set to <code>"closest"</code> to request that the closest potential pairs are matched first. This can be used whether a propensity score is used or not.</p></li>
+<li><p>Fixed bugs when <code>distance = NULL</code> and no covariates are specified in <code><a href="../reference/matchit.html">matchit()</a></code>.</p></li>
+<li><p>Changed “empirical cumulative density function” to “empirical cumulative distribution function” in documentation. (<a href="https://github.com/kosukeimai/MatchIt/issues/166" class="external-link">#166</a>)</p></li>
+<li><p>Fixed a bug where calipers would not work properly on some systems. Thanks to Bill Dunlap for the solution. (<a href="https://github.com/kosukeimai/MatchIt/issues/163" class="external-link">#163</a>)</p></li>
+<li><p>Fixed a bug when <code>.</code> was present in formulas. Thanks to <a href="https://github.com/dmolitor" class="external-link">@dmolitor</a>. (<a href="https://github.com/kosukeimai/MatchIt/issues/167" class="external-link">#167</a>)</p></li>
+<li><p>Fixed a bug when nearest neighbor matching for the ATC with <code>distance</code> supplied as a numeric distance matrix.</p></li>
+</ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="4.5.3" id="matchit-453">MatchIt 4.5.3<small>2023-04-13</small><a class="anchor" aria-label="anchor" href="#matchit-453"></a></h2>
 <ul><li><p>Error messages have been improved using <code>chk</code> and <code>rlang</code>, which are now dependencies.</p></li>

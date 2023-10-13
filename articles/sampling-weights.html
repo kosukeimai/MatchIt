@@ -40,7 +40,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">MatchIt</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">4.5.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">4.5.5</span>
       </span>
     </div>
 
@@ -101,7 +101,7 @@
                         <h4 data-toc-skip class="author">Noah
 Greifer</h4>
             
-            <h4 data-toc-skip class="date">2023-04-13</h4>
+            <h4 data-toc-skip class="date">2023-10-13</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/kosukeimai/MatchIt/blob/HEAD/vignettes/sampling-weights.Rmd" class="external-link"><code>vignettes/sampling-weights.Rmd</code></a></small>
       <div class="hidden name"><code>sampling-weights.Rmd</code></div>
@@ -400,17 +400,22 @@ to improve precision and decrease bias.</p>
 <span>             <span class="va">X6</span> <span class="op">+</span> <span class="va">X7</span> <span class="op">+</span> <span class="va">X8</span> <span class="op">+</span> <span class="va">X9</span><span class="op">)</span>, data <span class="op">=</span> <span class="va">md_F_s</span>,</span>
 <span>          weights <span class="op">=</span> <span class="va">weights</span><span class="op">)</span></span>
 <span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://vincentarelbundock.github.io/marginaleffects/" class="external-link">"marginaleffects"</a></span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://vincentarelbundock.github.io/marginaleffects/reference/comparisons.html" class="external-link">avg_comparisons</a></span><span class="op">(</span><span class="va">fit</span>,</span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://marginaleffects.com/" class="external-link">"marginaleffects"</a></span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/marginaleffects/man/comparisons.html" class="external-link">avg_comparisons</a></span><span class="op">(</span><span class="va">fit</span>,</span>
 <span>                variables <span class="op">=</span> <span class="st">"A"</span>,</span>
 <span>                vcov <span class="op">=</span> <span class="op">~</span><span class="va">subclass</span>,</span>
 <span>                newdata <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="va">md_F_s</span>, <span class="va">A</span> <span class="op">==</span> <span class="fl">1</span><span class="op">)</span>,</span>
 <span>                wts <span class="op">=</span> <span class="st">"weights"</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## Warning: The `A` variable is treated as a categorical (factor) variable, but the original data is of class integer. It is safer and faster to convert such variables to factor before fitting</span></span>
+<span><span class="co">##   the model and calling `slopes` functions.</span></span>
+<span><span class="co">##   </span></span>
+<span><span class="co">##   This warning appears once per session.</span></span></code></pre>
 <pre><code><span><span class="co">## </span></span>
-<span><span class="co">##  Term Contrast Estimate Std. Error    z Pr(&gt;|z|) 2.5 % 97.5 %</span></span>
-<span><span class="co">##     A    1 - 0     1.69       0.34 4.97   &lt;0.001  1.03   2.36</span></span>
+<span><span class="co">##  Term Contrast Estimate Std. Error    z Pr(&gt;|z|)    S 2.5 % 97.5 %</span></span>
+<span><span class="co">##     A    1 - 0     1.69       0.34 4.97   &lt;0.001 20.5  1.03   2.36</span></span>
 <span><span class="co">## </span></span>
-<span><span class="co">## Columns: term, contrast, estimate, std.error, statistic, p.value, conf.low, conf.high</span></span></code></pre>
+<span><span class="co">## Columns: term, contrast, estimate, std.error, statistic, p.value, s.value, conf.low, conf.high </span></span>
+<span><span class="co">## Type:  response</span></span></code></pre>
 <p>Note that <code><a href="../reference/match.data.html">match.data()</a></code> and <code>get_weights()</code>
 have the option <code>include.s.weights</code>, which, when set to
 <code>FALSE</code>, makes it so the returned weights do not incorporate
@@ -419,14 +424,14 @@ might to forget to multiply the two sets of weights together, it is
 easier to just use the default of <code>include.s.weights = TRUE</code>
 and ignore the sampling weights in the rest of the analysis (because
 they are already included in the returned weights).
-<code><a href="https://vincentarelbundock.github.io/marginaleffects/reference/comparisons.html" class="external-link">avg_comparisons()</a></code> also works more smoothly when the weights
+<code><a href="https://rdrr.io/pkg/marginaleffects/man/comparisons.html" class="external-link">avg_comparisons()</a></code> also works more smoothly when the weights
 supplied to <code>weights</code> is a single variable rather than the
 product of two.</p>
 </div>
 <div class="section level2">
 <h2 id="code-to-generate-data-used-in-examples">Code to Generate Data used in Examples<a class="anchor" aria-label="anchor" href="#code-to-generate-data-used-in-examples"></a>
 </h2>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">#Generatng data similar to Austin (2009) for demonstrating </span></span>
 <span><span class="co">#treatment effect estimation with sampling weights</span></span>
 <span><span class="va">gen_X</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">n</span><span class="op">)</span> <span class="op">{</span></span>
