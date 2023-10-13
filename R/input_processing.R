@@ -156,9 +156,12 @@ check_treat <- function(treat = NULL, X = NULL) {
 
 #Function to process distance and give warnings about new syntax
 process.distance <- function(distance, method = NULL, treat) {
-  if (is.null(distance) && !is.null(method) %% !method %in% c("cem", "exact", "cardinality")) {
-    .err(sprintf("`distance` cannot be `NULL` with `method = \"%s\"`",
-                 method))
+  if (is.null(distance)) {
+    if (!is.null(method) && !method %in% c("cem", "exact", "cardinality")) {
+      .err(sprintf("`distance` cannot be `NULL` with `method = \"%s\"`",
+                   method))
+    }
+    return(distance)
   }
 
   if (is.character(distance) && length(distance) == 1) {
@@ -247,7 +250,7 @@ process.ratio <- function(ratio, method = NULL, ..., min.controls = NULL, max.co
   ratio.na <- !ratio.null && anyNA(ratio)
 
   if (is.null(method)) return(1)
-  else if (method %in% c("nearest", "optimal")) {
+  if (method %in% c("nearest", "optimal")) {
     if (ratio.null) ratio <- 1
     else if (ratio.na) .err("`ratio` cannot be `NA`")
     else if (!is.atomic(ratio) || !is.numeric(ratio) || length(ratio) > 1 || ratio < 1) {
@@ -485,7 +488,7 @@ process.variable.input <- function(x, data = NULL) {
     x <- reformulate(x)
   }
   else if (rlang::is_formula(x)) {
-    x <- update(x, NULL ~ .)
+    x <- update(terms(x, data = data), NULL ~ .)
   }
   else {
     .err(sprintf("`%s` must be supplied as a character vector of names or a one-sided formula.", n))

@@ -91,7 +91,7 @@ plot.summary.matchit <- function(x,
   standard.sum <- if (un) x[["sum.all"]] else x[[if (sub) "sum.across" else "sum.matched"]]
 
   if (!"Std. Mean Diff." %in% colnames(standard.sum)) {
-    .err("Not appropriate for unstandardized summary. Run `summary()` with the `standardize = TRUE` option, and then plot")
+    .err("not appropriate for unstandardized summary. Run `summary()` with the `standardize = TRUE` option, and then plot")
   }
 
   if (un) {

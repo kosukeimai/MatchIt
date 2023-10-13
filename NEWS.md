@@ -6,6 +6,26 @@ output:
 `MatchIt` News and Updates
 ======
 
+# MatchIt 4.5.5
+
+* When using `method = "cardinality"`, a new solver, HiGHS, can be requested by setting `solver = "highs"`, which relies on the `highs` package. This is much faster and more reliable than GLPK and is free and easy to install as a regular R package with no additional requirements.
+
+* Fixed a bug when using `method = "optimal"` with `discard` and `exact` specified. Thanks to @NikNakk for the issue and fix. (#171)
+
+# MatchIt 4.5.4
+
+* With `method = "nearest"`, `m.order` can now be set to `"closest"` to request that the closest potential pairs are matched first. This can be used whether a propensity score is used or not.
+
+* Fixed bugs when `distance = NULL` and no covariates are specified in `matchit()`.
+
+* Changed "empirical cumulative density function" to "empirical cumulative distribution function" in documentation. (#166)
+
+* Fixed a bug where calipers would not work properly on some systems. Thanks to Bill Dunlap for the solution. (#163)
+
+* Fixed a bug when `.` was present in formulas. Thanks to @dmolitor. (#167)
+
+* Fixed a bug when nearest neighbor matching for the ATC with `distance` supplied as a numeric distance matrix.
+
 # MatchIt 4.5.3
 
 * Error messages have been improved using `chk` and `rlang`, which are now dependencies.

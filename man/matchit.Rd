@@ -141,15 +141,7 @@ individual methods pages for information on whether and how this argument is
 used. Default is \code{FALSE} for matching without replacement.}
 
 \item{m.order}{for methods that allow it, the order that the matching takes
-place. Allowable options depend on the matching method but include
-\code{"largest"}, where matching takes place in descending order of distance
-measures; \code{"smallest"}, where matching takes place in ascending order
-of distance measures; \code{"random"}, where matching takes place in a
-random order; and \code{"data"} where matching takes place based on the
-order of units in the data. When \code{m.order = "random"}, results may
-differ across different runs of the same code unless a seed is set and
-specified with \code{\link[=set.seed]{set.seed()}}. See the individual methods pages for
-information on whether and how this argument is used. The default of
+place. Allowable options depend on the matching method. The default of
 \code{NULL} corresponds to \code{"largest"} when a propensity score is
 estimated or supplied as a vector and \code{"data"} otherwise.}
 
@@ -334,14 +326,14 @@ unit is assigned to a subclass, which represents the pair they are a part of
 (in the case of k:1 matching) or the stratum they belong to (in the case of
 exact matching, coarsened exact matching, full matching, or
 subclassification). The formula for computing the weights depends on the
-argument supplied to \code{estimand}. A new stratum "propensity score"
-(\code{p}) is computed as the proportion of units in each stratum that are
+argument supplied to \code{estimand}. A new "stratum propensity score"
+(\code{sp}) is computed as the proportion of units in each stratum that are
 in the treated group, and all units in that stratum are assigned that
-propensity score. Weights are then computed using the standard formulas for
-inverse probability weights: for the ATT, weights are 1 for the treated
-units and \code{p/(1-p)} for the control units; for the ATC, weights are
-\code{(1-p)/p} for the treated units and 1 for the control units; for the
-ATE, weights are \code{1/p} for the treated units and \code{1/(1-p)} for the
+stratum propensity score. This is distinct from the propensity score used for matching, if any. Weights are then computed using the standard formulas for
+inverse probability weights with the stratum propensity score inserted: for the ATT, weights are 1 for the treated
+units and \code{sp/(1-sp)} for the control units; for the ATC, weights are
+\code{(1-sp)/sp} for the treated units and 1 for the control units; for the
+ATE, weights are \code{1/sp} for the treated units and \code{1/(1-sp)} for the
 control units. For cardinality matching, all matched units receive a weight
 of 1.
 

@@ -11,7 +11,7 @@
 #' differences. One of several available optimization programs can be used to
 #' solve the mixed integer program. The default is the GLPK library as
 #' implemented in the *Rglpk* package, but performance can be dramatically
-#' improved using Gurobi and the *gurobi* package, for which there is a
+#' improved using the HiGHS and the *highs* package, which are free, or Gurobi and the *gurobi* package, for which there is a
 #' free academic license.
 #'
 #' This page details the allowable arguments with `method =
@@ -72,12 +72,12 @@
 #' group when `estimand = "ATC"` (the same as used in
 #' [summary.matchit()]).}
 #' \item{`solver`}{ the name of solver to use to
-#' solve the optimization problem. Available options include `"glpk"`,
-#' `"symphony"`, and `"gurobi"` for GLPK (implemented in the
+#' solve the optimization problem. Available options include `"highs"`, `"glpk"`,
+#' `"symphony"`, and `"gurobi"` for HiGHS (implemented in the *highs* package), GLPK (implemented in the
 #' *Rglpk* package), SYMPHONY (implemented in the *Rsymphony*
 #' package), and Gurobi (implemented in the *gurobi* package),
 #' respectively. The differences between them are in speed and solving ability.
-#' GLPK (the default) is the easiest to install, but Gurobi is recommended as
+#' GLPK (the default) and HiGHS are the easiest to install, but Gurobi is recommended as
 #' it consistently outperforms other solvers and can find solutions even when
 #' others can't, and in less time. Gurobi is proprietary but can be used with a
 #' free trial or academic license. SYMPHONY may not produce reproducible
@@ -211,24 +211,23 @@
 #' @references In a manuscript, you should reference the solver used in the
 #' optimization. For example, a sentence might read:
 #'
-#' *Cardinality matching was performed using the MatchIt package (Ho,
-#' Imai, King, & Stuart, 2011) in R with the optimization performed by GLPK.*
+#' *Cardinality matching was performed using the MatchIt package (Ho, Imai, King, & Stuart, 2011) in R with the optimization performed by HiGHs (Huangfu & Hall, 2018).*
 #'
 #' See `vignette("matching-methods")` for more literature on cardinality
 #' matching.
 #'
-#' @examplesIf requireNamespace("Rglpk", quietly = TRUE)
+#' @examplesIf requireNamespace("highs", quietly = TRUE)
 #' data("lalonde")
 #'
-#' #Choose your solver; "gurobi" is best, "glpk" is free and
-#' #easiest to install
-#' solver <- "glpk"
+#' #Choose your solver; "gurobi" is best, "highs" is free and
+#' #easy to install
+#' solver <- "highs"
 #'
 #' # 1:1 cardinality matching
 #' m.out1 <- matchit(treat ~ age + educ + re74,
 #'                   data = lalonde, method = "cardinality",
 #'                   estimand = "ATT", ratio = 1,
-#'                   tols = .15, solver = solver)
+#'                   tols = .2, solver = solver)
 #' m.out1
 #' summary(m.out1)
 #'
@@ -236,7 +235,7 @@
 #' m.out2 <- matchit(treat ~ age + educ + re74,
 #'                   data = lalonde, method = "cardinality",
 #'                   estimand = "ATT", ratio = NA,
-#'                   tols = .15, solver = solver)
+#'                   tols = .2, solver = solver)
 #' m.out2
 #' summary(m.out2, un = FALSE)
 #'
@@ -244,10 +243,10 @@
 #' m.out3 <- matchit(treat ~ age + educ + re74,
 #'                   data = lalonde, method = "cardinality",
 #'                   estimand = "ATE", ratio = NA,
-#'                   tols = .15, solver = solver)
+#'                   tols = .2, solver = solver)
 #' m.out3
 #' summary(m.out3, un = FALSE)
-#' @examplesIf (requireNamespace("Rglpk", quietly = TRUE) && requireNamespace("optmatch", quietly = TRUE))
+#' @examplesIf (requireNamespace("highs", quietly = TRUE) && requireNamespace("optmatch", quietly = TRUE))
 #' # Pairing after 1:1 cardinality matching:
 #' m.out1b <- matchit(treat ~ age + educ + re74,
 #'                    data = lalonde, method = "cardinality",
@@ -333,7 +332,9 @@ matchit2cardinality <-  function(treat, data, discarded, formula,
   assign <- get_assign(X)
 
   chk::chk_numeric(tols)
-  if (length(tols) == 1) tols <- rep(tols, ncol(X))
+  if (length(tols) == 1) {
+    tols <- rep(tols, ncol(X))
+  }
   else if (length(tols) == max(assign)) {
     tols <- tols[assign]
   }
@@ -342,7 +343,9 @@ matchit2cardinality <-  function(treat, data, discarded, formula,
   }
 
   chk::chk_logical(std.tols)
-  if (length(std.tols) == 1) std.tols <- rep(std.tols, ncol(X))
+  if (length(std.tols) == 1) {
+    std.tols <- rep(std.tols, ncol(X))
+  }
   else if (length(std.tols) == max(assign)) {
     std.tols <- std.tols[assign]
   }
@@ -352,13 +355,15 @@ matchit2cardinality <-  function(treat, data, discarded, formula,
 
   #Apply std.tols
   if (any(std.tols)) {
-    if (estimand == "ATE") {
-      sds <- sqrt(Reduce("+", lapply(tvals, function(t) {
-        apply(X[treat == t, std.tols, drop = FALSE], 2, wvar, w = s.weights[treat == t])
-      }))/nt)
-    }
-    else {
-      sds <- sqrt(apply(X[treat == focal, std.tols, drop = FALSE], 2, wvar, w = s.weights[treat == focal]))
+    sds <- {
+      if (estimand == "ATE") {
+        pooled_sd(X[, std.tols, drop = FALSE], t = treat,
+                  w = s.weights, contribution = "equal")
+      }
+      else {
+        sqrt(apply(X[treat == focal, std.tols, drop = FALSE], 2,
+                   wvar, w = s.weights[treat == focal]))
+      }
     }
 
     zero.sds <- sds < 1e-10
@@ -370,6 +375,11 @@ matchit2cardinality <-  function(treat, data, discarded, formula,
   opt.out <- setNames(vector("list", nlevels(ex)), levels(ex))
 
   for (e in levels(ex)[cc]) {
+    if (nlevels(ex) > 1 && verbose) {
+      cat(sprintf("Matching subgroup %s/%s: %s...\n",
+                  match(e, levels(ex)[cc]), length(cc), e))
+    }
+
     in.exact <- which(!discarded & ex == e)
 
     treat_in.exact <- treat[in.exact]
@@ -425,7 +435,7 @@ matchit2cardinality <-  function(treat, data, discarded, formula,
 
 ## Function to actually do the matching
 cardinality_matchit <- function(treat, X, estimand = "ATT", tols = .05, s.weights = NULL,
-                                ratio = 1, focal = NULL, tvals = NULL, solver = "glpk",
+                                ratio = 1, focal = NULL, tvals = NULL, solver = "highs",
                                 time = 2*60, verbose = FALSE) {
 
   n <- length(treat)
@@ -442,8 +452,9 @@ cardinality_matchit <- function(treat, X, estimand = "ATT", tols = .05, s.weight
   chk::chk_gt(time, 0)
 
   chk::chk_string(solver)
-  solver <- match_arg(solver, c("glpk", "symphony", "gurobi"))
-  rlang::check_installed(switch(solver, glpk = "Rglpk", symphony = "Rsymphony", gurobi = "gurobi"))
+  solver <- match_arg(solver, c("highs", "glpk", "symphony", "gurobi"))
+  rlang::check_installed(switch(solver, glpk = "Rglpk", symphony = "Rsymphony", gurobi = "gurobi",
+                                highs = "highs"))
 
   #Select match type
   if (estimand == "ATE") match_type <- "profile_ate"
@@ -500,7 +511,8 @@ cardinality_matchit <- function(treat, X, estimand = "ATT", tols = .05, s.weight
 
     lower.bound <- c(rep(0, n),
                      rep(1, nt))
-    upper.bound <- NULL
+    upper.bound <- c(rep(1, n),
+                     rep(Inf, nt))
   }
   else if (match_type == "profile_att") {
     #Find largest control group that matches treated group
@@ -547,7 +559,8 @@ cardinality_matchit <- function(treat, X, estimand = "ATT", tols = .05, s.weight
 
     lower.bound <- c(rep(0, n0),
                      rep(0, nt - 1))
-    upper.bound <- NULL
+    upper.bound <- c(rep(1, n0),
+                     rep(Inf, nt - 1))
   }
   else if (match_type == "cardinality") {
     #True cardinality matching: find largest balanced sample
@@ -593,7 +606,8 @@ cardinality_matchit <- function(treat, X, estimand = "ATT", tols = .05, s.weight
 
     lower.bound <- c(rep(0, n),
                      rep(0, 1))
-    upper.bound <- NULL
+    upper.bound <- c(rep(1, n),
+                     rep(min(tabulateC(treat)), 1))
   }
 
   weights <- NULL
@@ -604,9 +618,12 @@ cardinality_matchit <- function(treat, X, estimand = "ATT", tols = .05, s.weight
 
   cardinality_error_report(opt.out, solver)
 
-  sol <- switch(solver, "glpk" = opt.out$solution,
+  sol <- switch(solver,
+                "glpk" = opt.out$solution,
                 "symphony" = opt.out$solution,
-                "gurobi" = opt.out$x)
+                "gurobi" = opt.out$x,
+                "highs" = opt.out$primal_solution)
+
   if (match_type %in% c("profile_ate", "cardinality")) {
     weights <- round(sol[seq_len(n)])
   }
@@ -637,9 +654,7 @@ cardinality_error_report <- function(out, solver) {
       if (all(out$solution == 0)) {
         .err("the optimization problem may be infeasible. Try increasing the value of `tols`.\nSee `?method_cardinality` for additional details")
       }
-      else {
-        .wrn("the optimizer failed to find an optimal solution in the time alotted. The returned solution may not be optimal.\nSee `?method_cardinality` for additional details")
-      }
+      .wrn("the optimizer failed to find an optimal solution in the time alotted. The returned solution may not be optimal.\nSee `?method_cardinality` for additional details")
     }
   }
   else if (solver == "symphony") {
@@ -656,6 +671,16 @@ cardinality_error_report <- function(out, solver) {
     }
     else if (out$status %in% c("INFEASIBLE", "INF_OR_UNBD", "NUMERIC") || all(out$x == 0)) {
       .err("The optimization problem may be infeasible. Try increasing the value of `tols`.\nSee `?method_cardinality` for additional details")
+    }
+  }
+  else if (solver == "highs") {
+    if (out$status_message %in% c("Infeasible", "Primal infeasible or unbounded")) {
+      # if (out$status_message %in% c("Infeasible", "Primal infeasible or unbounded") ||
+      #     all(abs(out$primal_solution) < 1e-8)) {
+      .err("the optimization problem may be infeasible. Try increasing the value of `tols`.\nSee `?method_cardinality` for additional details")
+    }
+    if (out$status_message %in% c("Time limit reached", "Iteration limit reached")) {
+      .err("the optimizer failed to find an optimal solution in the time alotted. Try increasing the value of `time`.\nSee `?method_cardinality` for additional details")
     }
   }
 }
@@ -684,6 +709,21 @@ dispatch_optimizer <- function(solver = "glpk", obj, mat, dir, rhs, types, max =
     opt.out <- gurobi::gurobi(list(A = mat, obj = obj, sense = dir, rhs = rhs, vtype = types,
                                    modelsense = "max", lb = lb, ub = ub),
                               params = list(OutputFlag = as.integer(verbose), TimeLimit = time))
+  }
+  else if (solver == "highs") {
+    rhs_h <- lhs_h <- rhs
+
+    rhs_h[dir == ">"] <- Inf
+    lhs_h[dir == "<"] <- -Inf
+
+    types[types == "B"] <- "I"
+
+    opt.out <- highs::highs_solve(L = obj, lower = lb, upper = ub,
+                                  A = mat, lhs = lhs_h, rhs = rhs_h,
+                                  types = types,
+                                  maximum = max,
+                                  control = list(time_limit = time,
+                                                 log_to_console = verbose))
   }
 
   opt.out

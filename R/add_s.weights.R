@@ -96,8 +96,8 @@ add_s.weights <- function(m,
         if (ncol(s.weights) != 1) .err("`s.weights` can only contain one named variable")
         s.weights <- s.weights[[1]]
       }
-      else if (inherits(s.weights, "formula")) {
-        s.weights.form <- update(s.weights, NULL ~ .)
+      else if (rlang::is_formula(s.weights)) {
+        s.weights.form <- update(terms(s.weights, data = data), NULL ~ .)
         s.weights <- model.frame(s.weights.form, data, na.action = "na.pass")
         if (ncol(s.weights) != 1) .err("`s.weights` can only contain one named variable")
         s.weights <- s.weights[[1]]

@@ -181,7 +181,7 @@ info.to.distance <- function(info) {
 #controls whether words are separated by "and" or "or"; 'is.are' controls whether the list is
 #followed by "is" or "are" (to avoid manually figuring out if plural); quotes controls whether
 #quotes should be placed around words in string. From WeightIt.
-word_list <- function(word.list = NULL, and.or = c("and", "or"), is.are = FALSE, quotes = FALSE) {
+word_list <- function(word.list = NULL, and.or = "and", is.are = FALSE, quotes = FALSE) {
   #When given a vector of strings, creates a string of the form "a and b"
   #or "a, b, and c"
   #If is.are, adds "is" or "are" appropriately
@@ -384,8 +384,9 @@ round_df_char <- function(df, digits, pad = "0", na_vals = "") {
   #lines up. Should be "0" or " "; "" (the empty string) un-aligns decimals.
   #na_vals is what NA should print as.
 
+  if (NROW(df) == 0 || NCOL(df) == 0) return(as.matrix(df))
   if (!is.data.frame(df)) df <- as.data.frame.matrix(df, stringsAsFactors = FALSE)
-  if (NROW(df) == 0 || NCOL(df) == 0) return(df)
+
   rn <- rownames(df)
   cn <- colnames(df)
 
@@ -631,7 +632,7 @@ pooled_sd <- function(X, t, w = NULL, bin.var = NULL, contribution = "proportion
     }, numeric(1L))
   }
 
-  sqrt(pooled_var)
+  setNames(sqrt(pooled_var), colnames(X))
 }
 
 #Effective sample size

@@ -375,10 +375,14 @@ matchit2optimal <- function(treat, formula, data, distance, discarded,
   pair <- setNames(rep(NA_character_, length(treat)), names(treat))
   p <- setNames(vector("list", nlevels(ex)), levels(ex))
 
-  t_df <- data.frame(treat)
+  t_df <- data.frame(treat_)
 
   for (e in levels(ex)[cc]) {
     if (nlevels(ex) > 1) {
+      if (verbose) {
+        cat(sprintf("Matching subgroup %s/%s: %s...\n",
+                    match(e, levels(ex)[cc]), length(cc), e))
+      }
       mo_ <- mo[ex[treat_==1] == e, ex[treat_==0] == e]
     }
     else mo_ <- mo

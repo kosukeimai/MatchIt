@@ -93,9 +93,16 @@
 #' to `GenMatch()` for use in computing the balance t-test p-values in the
 #' process of matching.
 #' @param replace whether matching should be done with replacement.
-#' @param m.order the order that the matching takes place. The default is
-#' `"largest"` when `distance` corresponds to a propensity score and
-#' `"data"` otherwise. See [matchit()] for allowable options.
+#' @param m.order the order that the matching takes place. Allowable options
+#'   include `"largest"`, where matching takes place in descending order of
+#'   distance measures; `"smallest"`, where matching takes place in ascending
+#'   order of distance measures; `"random"`, where matching takes place
+#'   in a random order; and `"data"` where matching takes place based on the
+#'   order of units in the data. When `m.order = "random"`, results may differ
+#'   across different runs of the same code unless a seed is set and specified
+#'   with [set.seed()]. The default of `NULL` corresponds to `"largest"` when a
+#'   propensity score is estimated or supplied as a vector and `"data"`
+#'   otherwise.
 #' @param caliper the width(s) of the caliper(s) used for caliper matching. See
 #' Details and Examples.
 #' @param std.caliper `logical`; when calipers are specified, whether they

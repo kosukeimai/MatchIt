@@ -54,7 +54,7 @@
 #' variable with fewer than 5 unique values, points are jittered to more easily
 #' visualize counts.
 #'
-#' With `type = "ecdf"`, empirical cumulative density function (eCDF)
+#' With `type = "ecdf"`, empirical cumulative distribution function (eCDF)
 #' plots are created for each covariate before and after matching. Two eCDF
 #' lines are produced in each plot: a gray one for control units and a black
 #' one for treated units. Each point on the lines corresponds to the proportion
@@ -182,6 +182,7 @@ plot.matchit.subclass <- function(x, type = "qq", interactive = TRUE, which.xs =
     ans
   }
 
+  chk::chk_string(type)
   type <- tolower(type)
   type <- match_arg(type, c("qq", "ecdf", "density", "jitter", "histogram"))
 
@@ -287,7 +288,7 @@ matchit.covplot <- function(object, type = "qq", interactive = TRUE, which.xs = 
       X <- data[which.xs]
     }
     else if (rlang::is_formula(which.xs)) {
-      which.xs <- update(which.xs, NULL ~ .)
+      which.xs <- update(terms(which.xs, data = data), NULL ~ .)
       X <- model.frame(which.xs, data, na.action = "na.pass")
     }
     else {
@@ -312,9 +313,6 @@ matchit.covplot <- function(object, type = "qq", interactive = TRUE, which.xs = 
       if (is.character(X[[i]])) X[[i]] <- factor(X[[i]])
     }
   }
-
-  # chars.in.X <- vapply(X, is.character, logical(1L))
-  # X[chars.in.X] <- lapply(X[chars.in.X], factor)
 
   X <- droplevels(X)
 
@@ -445,8 +443,8 @@ matchit.covplot.subclass <- function(object, type = "qq", which.subclass = NULL,
       }
       X <- data[which.xs]
     }
-    else if (inherits(which.xs, "formula")) {
-      which.xs <- update(which.xs, NULL ~ .)
+    else if (rlang::is_formula(which.xs)) {
+      which.xs <- update(terms(which.xs, data = data), NULL ~ .)
       X <- model.frame(which.xs, data, na.action = "na.pass")
 
       if (anyNA(X)) {

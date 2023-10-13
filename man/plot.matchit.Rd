@@ -69,7 +69,7 @@ Major deviations indicate departures from distributional balance. With
 variable with fewer than 5 unique values, points are jittered to more easily
 visualize counts.
 
-With \code{type = "ecdf"}, empirical cumulative density function (eCDF)
+With \code{type = "ecdf"}, empirical cumulative distribution function (eCDF)
 plots are created for each covariate before and after matching. Two eCDF
 lines are produced in each plot: a gray one for control units and a black
 one for treated units. Each point on the lines corresponds to the proportion

@@ -51,12 +51,12 @@ when \code{estimand = "ATT"}, and the standard deviation of the control
 group when \code{estimand = "ATC"} (the same as used in
 \code{\link[=summary.matchit]{summary.matchit()}}).}
 \item{\code{solver}}{ the name of solver to use to
-solve the optimization problem. Available options include \code{"glpk"},
-\code{"symphony"}, and \code{"gurobi"} for GLPK (implemented in the
+solve the optimization problem. Available options include \code{"highs"}, \code{"glpk"},
+\code{"symphony"}, and \code{"gurobi"} for HiGHS (implemented in the \emph{highs} package), GLPK (implemented in the
 \emph{Rglpk} package), SYMPHONY (implemented in the \emph{Rsymphony}
 package), and Gurobi (implemented in the \emph{gurobi} package),
 respectively. The differences between them are in speed and solving ability.
-GLPK (the default) is the easiest to install, but Gurobi is recommended as
+GLPK (the default) and HiGHS are the easiest to install, but Gurobi is recommended as
 it consistently outperforms other solvers and can find solutions even when
 others can't, and in less time. Gurobi is proprietary but can be used with a
 free trial or academic license. SYMPHONY may not produce reproducible
@@ -76,7 +76,7 @@ of units that satisfies user-supplied balance constraints on mean
 differences. One of several available optimization programs can be used to
 solve the mixed integer program. The default is the GLPK library as
 implemented in the \emph{Rglpk} package, but performance can be dramatically
-improved using Gurobi and the \emph{gurobi} package, for which there is a
+improved using the HiGHS and the \emph{highs} package, which are free, or Gurobi and the \emph{gurobi} package, for which there is a
 free academic license.
 
 This page details the allowable arguments with \code{method = "cardinality"}. See \code{\link[=matchit]{matchit()}} for an explanation of what each argument
@@ -212,18 +212,18 @@ exact variables.
 }
 
 \examples{
-\dontshow{if (requireNamespace("Rglpk", quietly = TRUE)) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
+\dontshow{if (requireNamespace("highs", quietly = TRUE)) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
 data("lalonde")
 
-#Choose your solver; "gurobi" is best, "glpk" is free and
-#easiest to install
-solver <- "glpk"
+#Choose your solver; "gurobi" is best, "highs" is free and
+#easy to install
+solver <- "highs"
 
 # 1:1 cardinality matching
 m.out1 <- matchit(treat ~ age + educ + re74,
                   data = lalonde, method = "cardinality",
                   estimand = "ATT", ratio = 1,
-                  tols = .15, solver = solver)
+                  tols = .2, solver = solver)
 m.out1
 summary(m.out1)
 
@@ -231,7 +231,7 @@ summary(m.out1)
 m.out2 <- matchit(treat ~ age + educ + re74,
                   data = lalonde, method = "cardinality",
                   estimand = "ATT", ratio = NA,
-                  tols = .15, solver = solver)
+                  tols = .2, solver = solver)
 m.out2
 summary(m.out2, un = FALSE)
 
@@ -239,11 +239,11 @@ summary(m.out2, un = FALSE)
 m.out3 <- matchit(treat ~ age + educ + re74,
                   data = lalonde, method = "cardinality",
                   estimand = "ATE", ratio = NA,
-                  tols = .15, solver = solver)
+                  tols = .2, solver = solver)
 m.out3
 summary(m.out3, un = FALSE)
 \dontshow{\}) # examplesIf}
-\dontshow{if ((requireNamespace("Rglpk", quietly = TRUE) && requireNamespace("optmatch", quietly = TRUE))) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
+\dontshow{if ((requireNamespace("highs", quietly = TRUE) && requireNamespace("optmatch", quietly = TRUE))) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
 # Pairing after 1:1 cardinality matching:
 m.out1b <- matchit(treat ~ age + educ + re74,
                    data = lalonde, method = "cardinality",
@@ -266,8 +266,7 @@ summary(m.out1, un = FALSE)
 In a manuscript, you should reference the solver used in the
 optimization. For example, a sentence might read:
 
-\emph{Cardinality matching was performed using the MatchIt package (Ho,
-Imai, King, & Stuart, 2011) in R with the optimization performed by GLPK.}
+\emph{Cardinality matching was performed using the MatchIt package (Ho, Imai, King, & Stuart, 2011) in R with the optimization performed by HiGHs (Huangfu & Hall, 2018).}
 
 See \code{vignette("matching-methods")} for more literature on cardinality
 matching.

@@ -345,7 +345,8 @@ eucdist_internal <- function(X, treat = NULL) {
       d <- abs(outer(X[treat_l,], X[!treat_l,], "-"))
     }
     else {
-      d <- dist_to_matrixC(dist(X))[treat_l, !treat_l, drop = FALSE]
+      d <- dist(X)
+      d <- dist_to_matrixC(d)[treat_l, !treat_l, drop = FALSE]
     }
     dimnames(d) <- list(rownames(X)[treat_l], rownames(X)[!treat_l])
   }
@@ -368,6 +369,8 @@ get.covs.matrix.for.dist <- function(formula = NULL, data = NULL) {
     data <- as.data.frame(data)
   }
 
+  formula <- terms(formula, data = data)
+
   if (rlang::is_formula(formula, lhs = FALSE)) {
     formula <- update(formula, ~ . + 1)
   }
@@ -375,7 +378,6 @@ get.covs.matrix.for.dist <- function(formula = NULL, data = NULL) {
     formula <- update(formula, . ~ . + 1)
   }
 
-  formula <- terms(formula, data = data)
   mf <- model.frame(formula, data, na.action = na.pass)
 
   chars.in.mf <- vapply(mf, is.character, logical(1L))
@@ -395,6 +397,7 @@ get.covs.matrix.for.dist <- function(formula = NULL, data = NULL) {
 
   X
 }
+
 .check_X <- function(X) {
   if (isTRUE(attr(X, "checked"))) return(X)
 

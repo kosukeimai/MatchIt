@@ -1,5 +1,5 @@
 Package: MatchIt
-Version: 4.5.3
+Version: 4.5.5
 Title: Nonparametric Preprocessing for Parametric Causal Inference
 Description: Selects matched samples of the original treated and
     control groups with similar covariate distributions -- can be
@@ -28,9 +28,12 @@ Depends:
     R (>= 3.5.0)
 Imports:
     backports (>= 1.1.9),
-    chk (>= 0.8.1), rlang (>= 1.1.0),
-    Rcpp (>= 1.0.10),
-    utils, stats, graphics
+    chk (>= 0.8.1),
+    rlang (>= 1.1.0),
+    Rcpp,
+    utils,
+    stats,
+    graphics
 Suggests:
     optmatch (>= 0.10.6),
     Matching,
@@ -50,11 +53,13 @@ Suggests:
     sandwich (>= 2.5-1),
     survival,
     RcppProgress (>= 0.4.2),
+    highs,
     Rglpk,
     Rsymphony,
     gurobi,
     knitr,
-    rmarkdown
+    rmarkdown,
+    testthat (>= 3.0.0)
 LinkingTo: 
     Rcpp,
     RcppProgress
@@ -67,3 +72,4 @@ BugReports: https://github.com/kosukeimai/MatchIt/issues
 VignetteBuilder: knitr
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.3
+Config/testthat/edition: 3

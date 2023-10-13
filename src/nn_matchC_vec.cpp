@@ -52,6 +52,11 @@ int find_right(int ii,
       continue;
     }
 
+    if (!can_be_matched[k]) {
+      k++; //if unit is matched, move right
+      continue;
+    }
+
     //if unit has already been matched to unit i, skip
     if (r > 0) {
       if (check_in(d_ord[k], row)) {
@@ -60,13 +65,8 @@ int find_right(int ii,
       }
     }
 
-    if (!can_be_matched[k]) {
-      k++; //if unit is matched, move right
-      continue;
-    }
-
     if (use_caliper_dist) {
-      if (abs(distance[ii] - distance[k]) > caliper_dist) {
+      if (std::abs(distance[ii] - distance[k]) > caliper_dist) {
         //if closest is outside caliper, break; none can be found
         break;
       }
@@ -98,7 +98,7 @@ int find_right(int ii,
       i = 0;
       okay = true;
       while (okay && (i < n_cal_covs)) {
-        if (abs(caliper_covs_mat(ii, i) - caliper_covs_mat(k, i)) > caliper_covs[i]) {
+        if (std::abs(caliper_covs_mat(ii, i) - caliper_covs_mat(k, i)) > caliper_covs[i]) {
           okay = false;
         }
         i++;
@@ -151,6 +151,11 @@ int find_left(int ii,
       continue;
     }
 
+    if (!can_be_matched[k]) {
+      k--; //if unit is matched, move left
+      continue;
+    }
+
     //if unit has already been matched to unit i, skip
     if (r > 0) {
       if (check_in(d_ord[k], row)) {
@@ -159,13 +164,8 @@ int find_left(int ii,
       }
     }
 
-    if (!can_be_matched[k]) {
-      k--; //if unit is matched, move left
-      continue;
-    }
-
     if (use_caliper_dist) {
-      if (abs(distance[ii] - distance[k]) > caliper_dist) {
+      if (std::abs(distance[ii] - distance[k]) > caliper_dist) {
         //if closest is outside caliper, break
         break;
       }
@@ -197,7 +197,7 @@ int find_left(int ii,
       i = 0;
       okay = true;
       while (okay && (i < n_cal_covs)) {
-        if (abs(caliper_covs_mat(ii, i) - caliper_covs_mat(k, i)) > caliper_covs[i]) {
+        if (std::abs(caliper_covs_mat(ii, i) - caliper_covs_mat(k, i)) > caliper_covs[i]) {
           okay = false;
         }
         i++;
@@ -215,6 +215,8 @@ int find_left(int ii,
 
   return k;
 }
+
+// [[Rcpp::plugins(cpp11)]]
 
 // [[Rcpp::export]]
 IntegerMatrix nn_matchC_vec(const IntegerVector& treat_,
@@ -250,10 +252,6 @@ IntegerMatrix nn_matchC_vec(const IntegerVector& treat_,
   ratio_tmp[treat_ == 1] = ratio_;
   IntegerVector ratio = ratio_tmp[d_ord];
 
-  // IntegerVector ord_tmp(n);
-  // ord_tmp[treat_ == 1] = ord_;
-  // IntegerVector ord = ord_tmp[d_ord];
-  // ord = ord - 1;
   IntegerVector ord = ord_ - 1;
 
   int max_ratio = max(ratio);
@@ -333,7 +331,7 @@ IntegerMatrix nn_matchC_vec(const IntegerVector& treat_,
   }
 
   IntegerVector times_matched = rep(0, n);
-  LogicalVector can_be_matched = (!as<LogicalVector>(discarded)) & (treat != 1);
+  LogicalVector can_be_matched = !as<LogicalVector>(discarded);
 
   IntegerVector ind_cbm = ind[can_be_matched];
   int first_control = ind_cbm[0];
@@ -361,9 +359,7 @@ IntegerMatrix nn_matchC_vec(const IntegerVector& treat_,
 
       ii = ind1[labi]; //ii'th unit overall
 
-      if (discarded[ii]) continue;
-
-      if (ratio[ii] < r + 1) continue;
+      if (!can_be_matched[ii]) continue;
 
       mm_row = na_omit(mm(row_to_fill, _));
 
@@ -390,7 +386,7 @@ IntegerMatrix nn_matchC_vec(const IntegerVector& treat_,
 
       if ((k_left >= 0) && (k_right >= 0)) {
         dti = distance[ii];
-        if (abs(distance[k_left] - dti) <= abs(distance[k_right] - dti)) {
+        if (std::abs(distance[k_left] - dti) <= std::abs(distance[k_right] - dti)) {
           k = k_left;
         }
         else {
@@ -404,12 +400,23 @@ IntegerMatrix nn_matchC_vec(const IntegerVector& treat_,
         k = k_right;
       }
       else {
+        can_be_matched[ii] = false;
         continue;
       }
 
       mm( row_to_fill, r ) = d_ord[k];
 
       if (use_unit_id) {
+        ck_ = ind[unit_id == unit_id[ii]];
+
+        for (j = 0; j < ck_.size(); j++) {
+          ck = ck_[j];
+          times_matched[ck]++;
+          if (times_matched[ck] >= ratio[ck]) {
+            can_be_matched[ck] = false;
+          }
+        }
+
         ck_ = ind[unit_id == unit_id[k]];
 
         for (j = 0; j < ck_.size(); j++) {
@@ -421,18 +428,32 @@ IntegerMatrix nn_matchC_vec(const IntegerVector& treat_,
         }
       }
       else {
+        times_matched[ii]++;
+        if (times_matched[ii] >= ratio[ii]) {
+          can_be_matched[ii] = false;
+        }
+
         times_matched[k]++;
         if (times_matched[k] >= reuse_max) {
           can_be_matched[k] = false;
         }
       }
 
-      if (any(can_be_matched).is_false()) {
-        done = true;
-        break;
+      if (!can_be_matched[ii]) {
+        if (any(as<LogicalVector>(can_be_matched[treat == 1])).is_false()) {
+          done = true;
+          break;
+        }
       }
 
-      ind_cbm = ind[can_be_matched];
+      if (!can_be_matched[k]) {
+        if (any(as<LogicalVector>(can_be_matched[treat == 0])).is_false()) {
+          done = true;
+          break;
+        }
+      }
+
+      ind_cbm = ind[can_be_matched & (treat == 0)];
       if (!can_be_matched[first_control]) {
         first_control = ind_cbm[0];
       }

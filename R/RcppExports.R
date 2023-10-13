@@ -9,6 +9,10 @@ nn_matchC <- function(treat_, ord_, ratio, discarded, reuse_max, distance_ = NUL
     .Call(`_MatchIt_nn_matchC`, treat_, ord_, ratio, discarded, reuse_max, distance_, distance_mat_, exact_, caliper_dist_, caliper_covs_, caliper_covs_mat_, mah_covs_, antiexact_covs_, unit_id_, disl_prog)
 }
 
+nn_matchC_closest <- function(distance_mat, treat, ratio, discarded, reuse_max, exact_ = NULL, caliper_dist_ = NULL, caliper_covs_ = NULL, caliper_covs_mat_ = NULL, antiexact_covs_ = NULL, unit_id_ = NULL, disl_prog = FALSE) {
+    .Call(`_MatchIt_nn_matchC_closest`, distance_mat, treat, ratio, discarded, reuse_max, exact_, caliper_dist_, caliper_covs_, caliper_covs_mat_, antiexact_covs_, unit_id_, disl_prog)
+}
+
 nn_matchC_vec <- function(treat_, ord_, ratio_, discarded_, reuse_max, distance_, exact_ = NULL, caliper_dist_ = NULL, caliper_covs_ = NULL, caliper_covs_mat_ = NULL, antiexact_covs_ = NULL, unit_id_ = NULL, disl_prog = FALSE) {
     .Call(`_MatchIt_nn_matchC_vec`, treat_, ord_, ratio_, discarded_, reuse_max, distance_, exact_, caliper_dist_, caliper_covs_, caliper_covs_mat_, antiexact_covs_, unit_id_, disl_prog)
 }
@@ -31,5 +35,5 @@ weights_matrixC <- function(mm, treat) {
 
 # Register entry points for exported C++ functions
 methods::setLoadAction(function(ns) {
-    .Call('_MatchIt_RcppExport_registerCCallable', PACKAGE = 'MatchIt')
+    .Call(`_MatchIt_RcppExport_registerCCallable`)
 })

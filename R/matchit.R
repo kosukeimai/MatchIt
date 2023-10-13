@@ -109,15 +109,7 @@
 #' individual methods pages for information on whether and how this argument is
 #' used. Default is `FALSE` for matching without replacement.
 #' @param m.order for methods that allow it, the order that the matching takes
-#' place. Allowable options depend on the matching method but include
-#' `"largest"`, where matching takes place in descending order of distance
-#' measures; `"smallest"`, where matching takes place in ascending order
-#' of distance measures; `"random"`, where matching takes place in a
-#' random order; and `"data"` where matching takes place based on the
-#' order of units in the data. When `m.order = "random"`, results may
-#' differ across different runs of the same code unless a seed is set and
-#' specified with [set.seed()]. See the individual methods pages for
-#' information on whether and how this argument is used. The default of
+#' place. Allowable options depend on the matching method. The default of
 #' `NULL` corresponds to `"largest"` when a propensity score is
 #' estimated or supplied as a vector and `"data"` otherwise.
 #' @param caliper for methods that allow it, the width(s) of the caliper(s) to
@@ -230,14 +222,14 @@
 #' (in the case of k:1 matching) or the stratum they belong to (in the case of
 #' exact matching, coarsened exact matching, full matching, or
 #' subclassification). The formula for computing the weights depends on the
-#' argument supplied to `estimand`. A new stratum "propensity score"
-#' (`p`) is computed as the proportion of units in each stratum that are
+#' argument supplied to `estimand`. A new "stratum propensity score"
+#' (`sp`) is computed as the proportion of units in each stratum that are
 #' in the treated group, and all units in that stratum are assigned that
-#' propensity score. Weights are then computed using the standard formulas for
-#' inverse probability weights: for the ATT, weights are 1 for the treated
-#' units and `p/(1-p)` for the control units; for the ATC, weights are
-#' `(1-p)/p` for the treated units and 1 for the control units; for the
-#' ATE, weights are `1/p` for the treated units and `1/(1-p)` for the
+#' stratum propensity score. This is distinct from the propensity score used for matching, if any. Weights are then computed using the standard formulas for
+#' inverse probability weights with the stratum propensity score inserted: for the ATT, weights are 1 for the treated
+#' units and `sp/(1-sp)` for the control units; for the ATC, weights are
+#' `(1-sp)/sp` for the treated units and 1 for the control units; for the
+#' ATE, weights are `1/sp` for the treated units and `1/(1-sp)` for the
 #' control units. For cardinality matching, all matched units receive a weight
 #' of 1.
 #'
@@ -434,8 +426,7 @@ matchit <- function(formula,
   #Process formula and data inputs
   .chk_formula(formula, sides = 2)
 
-  tt <- terms(formula, data = data)
-  treat.form <- update(tt, . ~ 0)
+  treat.form <- update(terms(formula, data = data), . ~ 0)
   treat.mf <- model.frame(treat.form, data = data, na.action = "na.pass")
   treat <- model.response(treat.mf)
 
@@ -478,7 +469,7 @@ matchit <- function(formula,
       s.weights <- s.weights[[1]]
     }
     else if (inherits(s.weights, "formula")) {
-      s.weights.form <- update(s.weights, NULL ~ .)
+      s.weights.form <- update(terms(s.weights, data = data), NULL ~ .)
       s.weights <- model.frame(s.weights.form, data, na.action = "na.pass")
       if (ncol(s.weights) != 1) .err("`s.weights` can only contain one named variable")
       s.weights <- s.weights[[1]]
@@ -503,13 +494,15 @@ matchit <- function(formula,
     if (is.numeric(distance)) {
       fn1 <- "distance2user"
     }
-    else if (distance %in% matchit_distances()) {
-      fn1 <- "distance2mahalanobis"
-      is.full.mahalanobis <- TRUE
-      attr(is.full.mahalanobis, "transform") <- distance
-    }
-    else {
-      fn1 <- paste0("distance2", distance)
+    else if (is.character(distance)) {
+      if (distance %in% matchit_distances()) {
+        fn1 <- "distance2mahalanobis"
+        is.full.mahalanobis <- TRUE
+        attr(is.full.mahalanobis, "transform") <- distance
+      }
+      else {
+        fn1 <- paste0("distance2", distance)
+      }
     }
   }
 
@@ -524,6 +517,8 @@ matchit <- function(formula,
   else {
     covs.formula <- delete.response(terms(formula, data = data))
   }
+
+  covs.formula <- update(covs.formula, ~ .)
   covs <- model.frame(covs.formula, data = data, na.action = "na.pass")
   k <- ncol(covs)
   for (i in seq_len(k)) {
@@ -645,7 +640,7 @@ matchit <- function(formula,
   X.list <- list(covs, exactcovs, mahcovs, calcovs, antiexactcovs)
   all.covs <- lapply(X.list, names)
   for (i in seq_along(X.list)[-1]) if (!is.null(X.list[[i]])) X.list[[i]][names(X.list[[i]]) %in% unlist(all.covs[1:(i-1)])] <- NULL
-  X.list[lengths(X.list) == 0] <- NULL
+  X.list[vapply(X.list, is.null, logical(1L))] <- NULL
 
   ## putting all the results together
   out <- list(
@@ -669,7 +664,7 @@ matchit <- function(formula,
     obj = if (include.obj) match.out[["obj"]]
   )
 
-  out[lengths(out) == 0] <- NULL
+  out[vapply(out, is.null, logical(1L))] <- NULL
 
   class(out) <- class(match.out)
   out

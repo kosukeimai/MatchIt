@@ -56,7 +56,7 @@ At the top is balance for the original sample. Below that is balance in the matc
 plot(summary(m.out))
 ```
 
-Although much has been written about matching theory, most of the theory relied upon in `MatchIt` is described well in [Ho, Imai, King, and Stuart (2007)](https//:doi.org/10.1093/pan/mpl013) and [Stuart (2010)](https://doi.org/10.1214/09-STS313). The *Journal of Statistical Software* article for `MatchIt` can be accessed [here](https://doi.org/10.18637/jss.v042.i08), though note that some options have changed, so the `MatchIt` reference pages and included vignettes should be used for understanding the functions and methods available. Further references for individual methods are present in their respective help pages. The `MatchIt` [website](https://kosukeimai.github.io/MatchIt/) provides access to vignettes and documentation files.
+Although much has been written about matching theory, most of the theory relied upon in `MatchIt` is described well in [Ho, Imai, King, and Stuart (2007)](https//:doi.org/10.1093/pan/mpl013), [Stuart (2010)](https://doi.org/10.1214/09-STS313), and [Greifer and Stuart (2021)](https://doi.org/10.1093/epirev/mxab003). The *Journal of Statistical Software* article for `MatchIt` can be accessed [here](https://doi.org/10.18637/jss.v042.i08), though note that some options have changed, so the `MatchIt` reference pages and included vignettes should be used for understanding the functions and methods available. Further references for individual methods are present in their respective help pages. The `MatchIt` [website](https://kosukeimai.github.io/MatchIt/) provides access to vignettes and documentation files.
 
 ### Citing `MatchIt`
 

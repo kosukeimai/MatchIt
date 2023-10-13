@@ -41,7 +41,7 @@ m.out
     #> A matchit object
     #>  - method: 1:1 nearest neighbor matching with replacement
     #>  - distance: Mahalanobis
-    #>  - number of obs.: 614 (original), 260 (matched)
+    #>  - number of obs.: 614 (original), 261 (matched)
     #>  - target estimand: ATT
     #>  - covariates: age, educ, race, married, nodegree, re74, re75
 
@@ -72,23 +72,23 @@ summary(m.out)
     #> 
     #> Summary of Balance for Matched Data:
     #>            Means Treated Means Control Std. Mean Diff. Var. Ratio eCDF Mean eCDF Max Std. Pair Dist.
-    #> age              25.8162       25.5622          0.0355     0.6540    0.0461   0.1838          0.4827
-    #> educ             10.3459       10.4270         -0.0403     1.1635    0.0077   0.0378          0.1963
+    #> age              25.8162       25.5405          0.0385     0.6524    0.0466   0.1892          0.4827
+    #> educ             10.3459       10.4270         -0.0403     1.1636    0.0077   0.0378          0.1963
     #> raceblack         0.8432        0.8432          0.0000          .    0.0000   0.0000          0.0000
     #> racehispan        0.0595        0.0595          0.0000          .    0.0000   0.0000          0.0000
     #> racewhite         0.0973        0.0973          0.0000          .    0.0000   0.0000          0.0000
     #> married           0.1892        0.1784          0.0276          .    0.0108   0.0108          0.0276
-    #> nodegree          0.7081        0.7081         -0.0000          .    0.0000   0.0000          0.0000
-    #> re74           2095.5737     1788.6941          0.0628     1.5689    0.0311   0.1730          0.2494
-    #> re75           1532.0553     1087.7420          0.1380     2.1220    0.0330   0.0865          0.2360
+    #> nodegree          0.7081        0.7081          0.0000          .    0.0000   0.0000          0.0000
+    #> re74           2095.5737     1788.6941          0.0628     1.5690    0.0311   0.1730          0.2494
+    #> re75           1532.0553     1087.7420          0.1380     2.1221    0.0330   0.0865          0.2360
     #> 
     #> Sample Sizes:
     #>               Control Treated
-    #> All            429.       185
-    #> Matched (ESS)   32.94     185
-    #> Matched         75.       185
-    #> Unmatched      354.         0
-    #> Discarded        0.         0
+    #> All               429     185
+    #> Matched (ESS)      33     185
+    #> Matched            76     185
+    #> Unmatched         353       0
+    #> Discarded           0       0
 
 At the top is balance for the original sample. Below that is balance in
 the matched sample, followed by the percent reduction in imbalance and
@@ -107,9 +107,10 @@ plot(summary(m.out))
 
 Although much has been written about matching theory, most of the theory
 relied upon in `MatchIt` is described well in [Ho, Imai, King, and
-Stuart (2007)](https//:doi.org/10.1093/pan/mpl013) and [Stuart
-(2010)](https://doi.org/10.1214/09-STS313). The *Journal of Statistical
-Software* article for `MatchIt` can be accessed
+Stuart (2007)](https//:doi.org/10.1093/pan/mpl013), [Stuart
+(2010)](https://doi.org/10.1214/09-STS313), and [Greifer and Stuart
+(2021)](https://doi.org/10.1093/epirev/mxab003). The *Journal of
+Statistical Software* article for `MatchIt` can be accessed
 [here](https://doi.org/10.18637/jss.v042.i08), though note that some
 options have changed, so the `MatchIt` reference pages and included
 vignettes should be used for understanding the functions and methods

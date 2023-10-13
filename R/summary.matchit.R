@@ -695,11 +695,9 @@ print.summary.matchit.subclass <- function(x, digits = max(3, getOption("digits"
 
 .process_X <- function(object, addlvariables = NULL, data = NULL) {
 
-  if (is.null(object$X)) {
-    X <- matrix(nrow = length(object$treat), ncol = 0)
-  }
-  else {
-    X <- get.covs.matrix(data = object$X)
+  X <- {
+    if (length(object$X) == 0) matrix(nrow = length(object$treat), ncol = 0)
+    else get.covs.matrix(data = object$X)
   }
 
   if (!is.null(addlvariables)) {
