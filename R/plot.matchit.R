@@ -900,10 +900,10 @@ jitter.pscore <- function(x, interactive, pch = 1, ...){
          pch = pch, cex = cwt[treat==0 & matched], ...)
   #Unmatched treated
   points(pscore[treat==1 & !matched], jitp[treat==1 & !matched],
-         pch = pch, cex = cswt[treat==1 & matched],...)
+         pch = pch, cex = cswt[treat==1 & !matched],...)
   #Unmatched control
   points(pscore[treat==0 & !matched], jitp[treat==0 & !matched],
-         pch = pch, cex = cswt[treat==0 & matched], ...)
+         pch = pch, cex = cswt[treat==0 & !matched], ...)
 
   axis(1)
 
