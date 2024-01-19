@@ -133,3 +133,26 @@ Statistical Software*, 42(8).
 This citation can also be accessed using `citation("MatchIt")` in R. For
 reproducibility purposes, it is also important to include the version
 number for the version used.
+
+### Installation
+
+To download and install the latest stable version of `MatchIt` from
+CRAN, run the following:
+
+``` r
+install.packages("MatchIt")
+```
+
+To install a development version, which may have a bug fixed or a new
+feature, run the following:
+
+``` r
+install.packages("remotes") #If not yet installed
+
+remotes::install_github("ngreifer/MatchIt")
+```
+
+This will require R to compile C++ code, which might require additional
+software be installed on your computer. If you need the development
+version but can’t compile the package, ask the maintainer for a binary
+version of the package.
