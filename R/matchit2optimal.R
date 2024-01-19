@@ -244,7 +244,7 @@ matchit2optimal <- function(treat, formula, data, distance, discarded,
                             ratio = 1, s.weights = NULL, caliper = NULL,
                             mahvars = NULL, exact = NULL,
                             estimand = "ATT", verbose = FALSE,
-                            is.full.mahalanobis,  antiexact = NULL, ...) {
+                            is.full.mahalanobis, antiexact = NULL, ...) {
 
   rlang::check_installed("optmatch")
 
@@ -360,7 +360,7 @@ matchit2optimal <- function(treat, formula, data, distance, discarded,
   mo <- mo[!discarded[treat == focal], !discarded[treat != focal], drop = FALSE]
   dimnames(mo) <- list(names(treat_)[treat_ == 1], names(treat_)[treat_ == 0])
 
-  mo <- optmatch::match_on(mo, data = data[!discarded,, drop = FALSE])
+  mo <- optmatch::match_on(mo, data = as.data.frame(data)[!discarded,, drop = FALSE])
   mo <- optmatch::as.InfinitySparseMatrix(mo)
 
   #Process antiexact
