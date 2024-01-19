@@ -40,7 +40,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">MatchIt</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">4.5.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">4.5.5.9000</span>
       </span>
     </div>
 
@@ -101,7 +101,7 @@
                         <h4 data-toc-skip class="author">Noah
 Greifer</h4>
             
-            <h4 data-toc-skip class="date">2023-10-13</h4>
+            <h4 data-toc-skip class="date">2024-01-19</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/kosukeimai/MatchIt/blob/HEAD/vignettes/sampling-weights.Rmd" class="external-link"><code>vignettes/sampling-weights.Rmd</code></a></small>
       <div class="hidden name"><code>sampling-weights.Rmd</code></div>
@@ -306,22 +306,22 @@ the balance statistics.</p>
 <span><span class="co">## </span></span>
 <span><span class="co">## Summary of Balance for Matched Data:</span></span>
 <span><span class="co">##          Means Treated Means Control Std. Mean Diff. Var. Ratio eCDF Mean eCDF Max Std. Pair Dist.</span></span>
-<span><span class="co">## distance         0.317         0.292           0.125      1.026     0.035    0.088           0.007</span></span>
-<span><span class="co">## X1              -0.025        -0.030           0.004      1.298     0.034    0.084           0.956</span></span>
-<span><span class="co">## X2              -0.387        -0.278          -0.111      1.099     0.032    0.109           1.081</span></span>
-<span><span class="co">## X3              -0.083        -0.018          -0.070      0.639     0.047    0.105           1.124</span></span>
-<span><span class="co">## X4               0.386         0.335           0.049      1.198     0.023    0.081           0.904</span></span>
-<span><span class="co">## X5               0.666         0.668          -0.004          .     0.002    0.002           0.853</span></span>
-<span><span class="co">## X6               0.021         0.056          -0.035      1.093     0.028    0.086           1.165</span></span>
-<span><span class="co">## X7               0.152         0.028           0.126      1.169     0.027    0.075           1.066</span></span>
-<span><span class="co">## X8              -0.217        -0.223           0.005      1.355     0.022    0.059           0.996</span></span>
-<span><span class="co">## X9               0.001         0.038          -0.037      1.142     0.023    0.085           1.139</span></span>
+<span><span class="co">## distance         0.310         0.292           0.087      1.011     0.025    0.061           0.007</span></span>
+<span><span class="co">## X1               0.091        -0.025           0.109      1.089     0.047    0.104           0.955</span></span>
+<span><span class="co">## X2              -0.310        -0.282          -0.028      1.030     0.014    0.061           1.067</span></span>
+<span><span class="co">## X3              -0.095        -0.016          -0.084      0.647     0.046    0.104           1.126</span></span>
+<span><span class="co">## X4               0.297         0.334          -0.036      1.127     0.022    0.064           0.899</span></span>
+<span><span class="co">## X5               0.660         0.669          -0.020          .     0.009    0.009           0.842</span></span>
+<span><span class="co">## X6               0.028         0.061          -0.031      1.065     0.024    0.065           1.123</span></span>
+<span><span class="co">## X7               0.147         0.028           0.120      1.130     0.027    0.062           1.050</span></span>
+<span><span class="co">## X8              -0.225        -0.226           0.001      1.137     0.014    0.052           1.010</span></span>
+<span><span class="co">## X9               0.015         0.034          -0.019      1.192     0.020    0.066           1.164</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## Sample Sizes:</span></span>
 <span><span class="co">##               Control Treated</span></span>
 <span><span class="co">## All (ESS)       987.1   177.1</span></span>
 <span><span class="co">## All            1559.    441. </span></span>
-<span><span class="co">## Matched (ESS)   513.1   126.5</span></span>
+<span><span class="co">## Matched (ESS)   513.3   175.3</span></span>
 <span><span class="co">## Matched        1559.    441. </span></span>
 <span><span class="co">## Unmatched         0.      0. </span></span>
 <span><span class="co">## Discarded         0.      0.</span></span></code></pre>
@@ -335,25 +335,25 @@ the balance statistics.</p>
 <span><span class="co">## </span></span>
 <span><span class="co">## Summary of Balance for Matched Data:</span></span>
 <span><span class="co">##          Means Treated Means Control Std. Mean Diff. Var. Ratio eCDF Mean eCDF Max Std. Pair Dist.</span></span>
-<span><span class="co">## distance         0.282         0.276           0.034      0.953     0.024    0.077           0.008</span></span>
-<span><span class="co">## X1              -0.219         0.025          -0.229      1.252     0.055    0.119           0.944</span></span>
-<span><span class="co">## X2              -0.360        -0.256          -0.106      0.987     0.043    0.122           1.110</span></span>
-<span><span class="co">## X3              -0.044        -0.067           0.025      0.654     0.049    0.086           1.111</span></span>
-<span><span class="co">## X4               0.541         0.284           0.248      1.113     0.068    0.157           0.989</span></span>
-<span><span class="co">## X5               0.676         0.672           0.008          .     0.004    0.004           0.817</span></span>
-<span><span class="co">## X6               0.021        -0.014           0.034      1.056     0.025    0.075           1.125</span></span>
-<span><span class="co">## X7               0.029         0.032          -0.003      1.031     0.016    0.054           0.985</span></span>
-<span><span class="co">## X8              -0.324        -0.211          -0.104      1.276     0.024    0.085           0.979</span></span>
-<span><span class="co">## X9              -0.024         0.043          -0.068      0.860     0.037    0.119           1.083</span></span>
+<span><span class="co">## distance         0.282         0.276           0.033      0.970     0.021    0.070           0.009</span></span>
+<span><span class="co">## X1              -0.182         0.020          -0.190      1.253     0.046    0.110           0.948</span></span>
+<span><span class="co">## X2              -0.324        -0.255          -0.070      1.015     0.033    0.101           1.147</span></span>
+<span><span class="co">## X3              -0.062        -0.073           0.012      0.661     0.048    0.081           1.112</span></span>
+<span><span class="co">## X4               0.503         0.280           0.217      1.136     0.058    0.143           0.962</span></span>
+<span><span class="co">## X5               0.663         0.672          -0.018          .     0.009    0.009           0.817</span></span>
+<span><span class="co">## X6               0.062        -0.016           0.075      1.021     0.027    0.053           1.121</span></span>
+<span><span class="co">## X7               0.026         0.038          -0.013      1.059     0.017    0.056           0.984</span></span>
+<span><span class="co">## X8              -0.312        -0.221          -0.085      1.260     0.019    0.080           0.988</span></span>
+<span><span class="co">## X9              -0.032         0.036          -0.070      0.881     0.032    0.107           1.101</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## Sample Sizes:</span></span>
 <span><span class="co">##               Control Treated</span></span>
-<span><span class="co">## All (ESS)       987.1  177.14</span></span>
-<span><span class="co">## All            1559.   441.  </span></span>
-<span><span class="co">## Matched (ESS)   583.8   96.07</span></span>
-<span><span class="co">## Matched        1559.   441.  </span></span>
-<span><span class="co">## Unmatched         0.     0.  </span></span>
-<span><span class="co">## Discarded         0.     0.</span></span></code></pre>
+<span><span class="co">## All (ESS)       987.1   177.1</span></span>
+<span><span class="co">## All            1559.    441. </span></span>
+<span><span class="co">## Matched (ESS)   582.5   108.6</span></span>
+<span><span class="co">## Matched        1559.    441. </span></span>
+<span><span class="co">## Unmatched         0.      0. </span></span>
+<span><span class="co">## Discarded         0.      0.</span></span></code></pre>
 <p>The results of the two matching specifications are similar. Balance
 appears to be slightly better when using the sampling weight-estimated
 propensity scores than when using the unweighted propensity scores.
@@ -406,13 +406,9 @@ to improve precision and decrease bias.</p>
 <span>                vcov <span class="op">=</span> <span class="op">~</span><span class="va">subclass</span>,</span>
 <span>                newdata <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="va">md_F_s</span>, <span class="va">A</span> <span class="op">==</span> <span class="fl">1</span><span class="op">)</span>,</span>
 <span>                wts <span class="op">=</span> <span class="st">"weights"</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## Warning: The `A` variable is treated as a categorical (factor) variable, but the original data is of class integer. It is safer and faster to convert such variables to factor before fitting</span></span>
-<span><span class="co">##   the model and calling `slopes` functions.</span></span>
-<span><span class="co">##   </span></span>
-<span><span class="co">##   This warning appears once per session.</span></span></code></pre>
 <pre><code><span><span class="co">## </span></span>
 <span><span class="co">##  Term Contrast Estimate Std. Error    z Pr(&gt;|z|)    S 2.5 % 97.5 %</span></span>
-<span><span class="co">##     A    1 - 0     1.69       0.34 4.97   &lt;0.001 20.5  1.03   2.36</span></span>
+<span><span class="co">##     A    1 - 0      1.6      0.328 4.87   &lt;0.001 19.8 0.955   2.24</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## Columns: term, contrast, estimate, std.error, statistic, p.value, s.value, conf.low, conf.high </span></span>
 <span><span class="co">## Type:  response</span></span></code></pre>
@@ -431,7 +427,7 @@ product of two.</p>
 <div class="section level2">
 <h2 id="code-to-generate-data-used-in-examples">Code to Generate Data used in Examples<a class="anchor" aria-label="anchor" href="#code-to-generate-data-used-in-examples"></a>
 </h2>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">#Generatng data similar to Austin (2009) for demonstrating </span></span>
 <span><span class="co">#treatment effect estimation with sampling weights</span></span>
 <span><span class="va">gen_X</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">n</span><span class="op">)</span> <span class="op">{</span></span>

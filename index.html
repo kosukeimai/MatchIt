@@ -48,7 +48,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">MatchIt</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">4.5.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">4.5.5.9000</span>
       </span>
     </div>
 
@@ -189,6 +189,19 @@
 <p>Please cite <code>MatchIt</code> when using it for analysis presented in publications, which you can do by citing the <em>Journal of Statistical Software</em> article below:</p>
 <p>Ho, D. E., Imai, K., King, G., &amp; Stuart, E. A. (2011). MatchIt: Nonparametric Preprocessing for Parametric Causal Inference. <em>Journal of Statistical Software</em>, 42(8). <a href="https://doi.org/10.18637/jss.v042.i08" class="external-link">doi:10.18637/jss.v042.i08</a></p>
 <p>This citation can also be accessed using <code>citation("MatchIt")</code> in R. For reproducibility purposes, it is also important to include the version number for the version used.</p>
+</div>
+<div class="section level3">
+<h3 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
+</h3>
+<p>To download and install the latest stable version of <code>MatchIt</code> from CRAN, run the following:</p>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"MatchIt"</span><span class="op">)</span></span></code></pre></div>
+<p>To install a development version, which may have a bug fixed or a new feature, run the following:</p>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"remotes"</span><span class="op">)</span> <span class="co">#If not yet installed</span></span>
+<span></span>
+<span><span class="fu">remotes</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"ngreifer/MatchIt"</span><span class="op">)</span></span></code></pre></div>
+<p>This will require R to compile C++ code, which might require additional software be installed on your computer. If you need the development version but can’t compile the package, ask the maintainer for a binary version of the package.</p>
 </div>
 </div>
 </div>

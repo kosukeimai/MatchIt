@@ -40,7 +40,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">MatchIt</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">4.5.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">4.5.5.9000</span>
       </span>
     </div>
 
@@ -101,7 +101,7 @@
                         <h4 data-toc-skip class="author">Noah
 Greifer</h4>
             
-            <h4 data-toc-skip class="date">2023-10-13</h4>
+            <h4 data-toc-skip class="date">2024-01-19</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/kosukeimai/MatchIt/blob/HEAD/vignettes/MatchIt.Rmd" class="external-link"><code>vignettes/MatchIt.Rmd</code></a></small>
       <div class="hidden name"><code>MatchIt.Rmd</code></div>
@@ -488,21 +488,21 @@ propensity score model.</p>
 <span><span class="co">## </span></span>
 <span><span class="co">## Summary of Balance for Matched Data:</span></span>
 <span><span class="co">##            Means Treated Means Control Std. Mean Diff. Var. Ratio eCDF Mean eCDF Max Std. Pair Dist.</span></span>
-<span><span class="co">## distance          0.5773        0.5766          0.0036     0.9946    0.0042   0.0541          0.0197</span></span>
-<span><span class="co">## age              25.8162       25.6335          0.0255     0.4674    0.0819   0.2764          1.2686</span></span>
-<span><span class="co">## educ             10.3459       10.4590         -0.0562     0.6138    0.0221   0.0595          1.1950</span></span>
+<span><span class="co">## distance          0.5773        0.5764          0.0045     0.9949    0.0043   0.0486          0.0198</span></span>
+<span><span class="co">## age              25.8162       25.5347          0.0393     0.4790    0.0787   0.2742          1.2843</span></span>
+<span><span class="co">## educ             10.3459       10.5381         -0.0956     0.6192    0.0253   0.0730          1.2179</span></span>
 <span><span class="co">## raceblack         0.8432        0.8389          0.0119          .    0.0043   0.0043          0.0162</span></span>
-<span><span class="co">## racehispan        0.0595        0.0469          0.0532          .    0.0126   0.0126          0.5068</span></span>
-<span><span class="co">## racewhite         0.0973        0.1142         -0.0571          .    0.0169   0.0169          0.3978</span></span>
-<span><span class="co">## married           0.1892        0.1555          0.0860          .    0.0337   0.0337          0.4866</span></span>
-<span><span class="co">## nodegree          0.7081        0.6711          0.0814          .    0.0370   0.0370          0.9550</span></span>
-<span><span class="co">## re74           2095.5737     2108.4175         -0.0026     1.3485    0.0330   0.2067          0.8421</span></span>
-<span><span class="co">## re75           1532.0553     1557.1654         -0.0078     1.5659    0.0509   0.2059          0.8367</span></span>
+<span><span class="co">## racehispan        0.0595        0.0492          0.0435          .    0.0103   0.0103          0.4412</span></span>
+<span><span class="co">## racewhite         0.0973        0.1119         -0.0493          .    0.0146   0.0146          0.3454</span></span>
+<span><span class="co">## married           0.1892        0.1633          0.0660          .    0.0259   0.0259          0.4473</span></span>
+<span><span class="co">## nodegree          0.7081        0.6577          0.1110          .    0.0504   0.0504          0.9872</span></span>
+<span><span class="co">## re74           2095.5737     2100.2150         -0.0009     1.3467    0.0314   0.1881          0.8387</span></span>
+<span><span class="co">## re75           1532.0553     1561.4420         -0.0091     1.5906    0.0536   0.1984          0.8240</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## Sample Sizes:</span></span>
 <span><span class="co">##               Control Treated</span></span>
 <span><span class="co">## All            429.       185</span></span>
-<span><span class="co">## Matched (ESS)   51.66     185</span></span>
+<span><span class="co">## Matched (ESS)   50.76     185</span></span>
 <span><span class="co">## Matched        429.       185</span></span>
 <span><span class="co">## Unmatched        0.         0</span></span>
 <span><span class="co">## Discarded        0.         0</span></span></code></pre>
@@ -551,11 +551,11 @@ This dataset only contains the matched units and adds columns for
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">m.data</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##      treat age educ   race married nodegree re74 re75       re78  distance weights subclass</span></span>
 <span><span class="co">## NSW1     1  37   11  black       1        1    0    0  9930.0460 0.6356769       1        1</span></span>
-<span><span class="co">## NSW2     1  22    9 hispan       0        1    0    0  3595.8940 0.2298151       1       53</span></span>
-<span><span class="co">## NSW3     1  30   12  black       0        0    0    0 24909.4500 0.6813558       1       62</span></span>
-<span><span class="co">## NSW4     1  27   11  black       0        1    0    0  7506.1460 0.7690590       1       68</span></span>
-<span><span class="co">## NSW5     1  33    8  black       0        1    0    0   289.7899 0.6954138       1       77</span></span>
-<span><span class="co">## NSW6     1  22    9  black       0        1    0    0  4056.4940 0.6943658       1       85</span></span></code></pre>
+<span><span class="co">## NSW2     1  22    9 hispan       0        1    0    0  3595.8940 0.2298151       1       55</span></span>
+<span><span class="co">## NSW3     1  30   12  black       0        0    0    0 24909.4500 0.6813558       1       63</span></span>
+<span><span class="co">## NSW4     1  27   11  black       0        1    0    0  7506.1460 0.7690590       1       70</span></span>
+<span><span class="co">## NSW5     1  33    8  black       0        1    0    0   289.7899 0.6954138       1       79</span></span>
+<span><span class="co">## NSW6     1  22    9  black       0        1    0    0  4056.4940 0.6943658       1       86</span></span></code></pre>
 <p>We can then model the outcome in this dataset using the standard
 regression functions in R, like <code><a href="https://rdrr.io/r/stats/lm.html" class="external-link">lm()</a></code> or <code><a href="https://rdrr.io/r/stats/glm.html" class="external-link">glm()</a></code>,
 being sure to include the matching weights (stored in the
@@ -576,13 +576,9 @@ for most analyses, with pair membership as the clustering variable;
 <span>                vcov <span class="op">=</span> <span class="op">~</span><span class="va">subclass</span>,</span>
 <span>                newdata <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="va">m.data</span>, <span class="va">treat</span> <span class="op">==</span> <span class="fl">1</span><span class="op">)</span>,</span>
 <span>                wts <span class="op">=</span> <span class="st">"weights"</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## Warning: The `treat` variable is treated as a categorical (factor) variable, but the original data is of class integer. It is safer and faster to convert such variables to factor before</span></span>
-<span><span class="co">##   fitting the model and calling `slopes` functions.</span></span>
-<span><span class="co">##   </span></span>
-<span><span class="co">##   This warning appears once per session.</span></span></code></pre>
 <pre><code><span><span class="co">## </span></span>
-<span><span class="co">##   Term Contrast Estimate Std. Error   z Pr(&gt;|z|)   S 2.5 % 97.5 %</span></span>
-<span><span class="co">##  treat    1 - 0     1912        765 2.5   0.0124 6.3   413   3411</span></span>
+<span><span class="co">##   Term Contrast Estimate Std. Error    z Pr(&gt;|z|)   S 2.5 % 97.5 %</span></span>
+<span><span class="co">##  treat    1 - 0     1977        704 2.81  0.00501 7.6   596   3357</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## Columns: term, contrast, estimate, std.error, statistic, p.value, s.value, conf.low, conf.high </span></span>
 <span><span class="co">## Type:  response</span></span></code></pre>
@@ -645,7 +641,7 @@ function in the <code>marginaleffects</code> package was used to perform
 g-computation in the matched sample to estimate the ATT. A
 cluster-robust variance was used to estimate its standard error with
 matching stratum membership as the clustering variable.</p>
-<p>The estimated effect was $1912 (SE = 764.7, p = 0.012), indicating
+<p>The estimated effect was $1977 (SE = 704.3, p = 0.005), indicating
 that the average effect of the treatment for those who received it is to
 increase earnings.</p>
 </blockquote>
