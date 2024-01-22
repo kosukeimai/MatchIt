@@ -1,4 +1,9 @@
 url: https://kosukeimai.github.io/MatchIt/
+template:
+  bootstrap: 5
+  bslib:
+    primary: "#952100"
+
 reference:
 - title: Matching
 - contents:
