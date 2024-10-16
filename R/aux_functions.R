@@ -4,87 +4,28 @@
 #from other subclasses. From WeightIt.
 subclass_scoot <- function(sub, treat, x, min.n = 1) {
   #Reassigns subclasses so there are no empty subclasses
-  #for each treatment group. Copied from WeightIt with
-  #slight modifications.
+  #for each treatment group.
+  subtab <- table(treat, sub)
 
-  treat <- as.character(treat)
-  unique.treat <- unique(treat, nmax = 2)
+  if (all(subtab >= min.n)) {
+    return(sub)
+  }
 
-  names(x) <- seq_along(x)
-  names(sub) <- seq_along(sub)
-  original.order <- names(x)
+  nsub <- ncol(subtab)
 
-  nsub <- length(unique(sub))
-
-  #Turn subs into a contiguous sequence
-  sub <- setNames(setNames(seq_len(nsub), sort(unique(sub)))[as.character(sub)],
-                  original.order)
-
-  if (any(table(treat) < nsub * min.n)) {
+  if (any(rowSums(subtab) < nsub * min.n)) {
     .err(sprintf("not enough units to fit %s treated and control %s in each subclass",
                  min.n, ngettext(min.n, "unit", "units")))
   }
 
-  for (t in unique.treat) {
-    if (length(x[treat == t]) == nsub) {
-      sub[treat == t] <- seq_len(nsub)
-    }
-  }
-
-  sub_tab <- table(treat, sub)
-
-  if (any(sub_tab < min.n)) {
-
-    soft_thresh <- function(x, minus = 1) {
-      x <- x - minus
-      x[x < 0] <- 0
-      x
-    }
-
-    for (t in unique.treat) {
-      for (n in seq_len(min.n)) {
-        while (any(sub_tab[t,] == 0)) {
-          first_0 <- which(sub_tab[t,] == 0)[1]
-
-          if (first_0 == nsub ||
-              (first_0 != 1 &&
-               sum(soft_thresh(sub_tab[t, seq(1, first_0 - 1)]) / abs(first_0 - seq(1, first_0 - 1))) >=
-               sum(soft_thresh(sub_tab[t, seq(first_0 + 1, nsub)]) / abs(first_0 - seq(first_0 + 1, nsub))))) {
-            #If there are more and closer nonzero subs to the left...
-            first_non0_to_left <- max(seq(1, first_0 - 1)[sub_tab[t, seq(1, first_0 - 1)] > 0])
-
-            name_to_move <- names(sub)[which(x == max(x[treat == t & sub == first_non0_to_left]) & treat == t & sub == first_non0_to_left)[1]]
-
-            sub[name_to_move] <- first_0
-            sub_tab[t, first_0] <- 1L
-            sub_tab[t, first_non0_to_left] <- sub_tab[t, first_non0_to_left] - 1L
-
-          }
-          else {
-            #If there are more and closer nonzero subs to the right...
-            first_non0_to_right <- min(seq(first_0 + 1, nsub)[sub_tab[t, seq(first_0 + 1, nsub)] > 0])
-
-            name_to_move <- names(sub)[which(x == min(x[treat == t & sub == first_non0_to_right]) & treat == t & sub == first_non0_to_right)[1]]
-
-            sub[name_to_move] <- first_0
-            sub_tab[t, first_0] <- 1L
-            sub_tab[t, first_non0_to_right] <- sub_tab[t, first_non0_to_right] - 1L
-          }
-        }
-
-        sub_tab[t,] <- sub_tab[t,] - 1
-      }
-    }
-
-    #Unsort
-    sub <- sub[names(sub)]
-  }
-
-  sub
+  subclass_scootC(as.integer(sub), as.integer(treat),
+                  as.numeric(x), as.integer(min.n))
 }
 
 #Create info component of matchit object
-create_info <- function(method, fn1, link, discard, replace, ratio, mahalanobis, transform, subclass, antiexact, distance_is_matrix) {
+create_info <- function(method, fn1, link, discard, replace, ratio,
+                        mahalanobis, transform, subclass, antiexact,
+                        distance_is_matrix) {
   info <- list(method = method,
                distance = if (is.null(fn1)) NULL else sub("distance2", "", fn1, fixed = TRUE),
                link = if (is.null(link)) NULL else link,
@@ -104,24 +45,33 @@ create_info <- function(method, fn1, link, discard, replace, ratio, mahalanobis,
 info.to.method <- function(info) {
 
   out.list <- setNames(vector("list", 3), c("kto1", "type", "replace"))
-  out.list[["kto1"]] <- if (!is.null(info$ratio)) paste0(if (!is.null(info$max.controls)) "variable ratio ", round(info$ratio, 2), ":1") else NULL
-  out.list[["type"]] <- if (is.null(info$method)) "none (no matching)" else
-    switch(info$method,
-           "exact" = "exact matching",
-           "cem" = "coarsened exact matching",
-           "nearest" = "nearest neighbor matching",
-           "optimal" = "optimal pair matching",
-           "full" = "optimal full matching",
-           "quick" = "generalized full matching",
-           "genetic" = "genetic matching",
-           "subclass" = paste0("subclassification (", info$subclass, " subclasses)"),
-           "cardinality" = "cardinality matching",
-           if (is.null(attr(info$method, "method"))) "an unspecified matching method"
-           else attr(info$method, "method"))
-  out.list[["replace"]] <- if (!is.null(info$replace) && info$method %in% c("nearest", "genetic")) {
-    if (info$replace) "with replacement"
+
+  out.list[["kto1"]] <- {
+    if (!is.null(info$ratio)) paste0(if (!is.null(info$max.controls)) "variable ratio ", round(info$ratio, 2), ":1")
+    else NULL
+  }
+
+  out.list[["type"]] <- {
+    if (is.null(info$method)) "none (no matching)"
+    else switch(info$method,
+                "exact" = "exact matching",
+                "cem" = "coarsened exact matching",
+                "nearest" = "nearest neighbor matching",
+                "optimal" = "optimal pair matching",
+                "full" = "optimal full matching",
+                "quick" = "generalized full matching",
+                "genetic" = "genetic matching",
+                "subclass" = sprintf("subclassification (%s subclasses)", info$subclass),
+                "cardinality" = "cardinality matching",
+                if (is.null(attr(info$method, "method"))) "an unspecified matching method"
+                else attr(info$method, "method"))
+  }
+
+  out.list[["replace"]] <- {
+    if (is.null(info$replace) || !info$method %in% c("nearest", "genetic")) NULL
+    else if (info$replace) "with replacement"
     else "without replacement"
-  } else NULL
+  }
 
   firstup(do.call("paste", c(unname(out.list), list(sep = " "))))
 }
@@ -270,8 +220,8 @@ match_arg <- function(arg, choices, several.ok = FALSE) {
   i <- pmatch(arg, choices, nomatch = 0L, duplicates.ok = TRUE)
   if (all(i == 0L))
     .err(sprintf("the argument to `%s` should be %s%s.",
-                arg.name, ngettext(length(choices), "", if (several.ok) "at least one of " else "one of "),
-                word_list(choices, and.or = "or", quotes = 2)))
+                 arg.name, ngettext(length(choices), "", if (several.ok) "at least one of " else "one of "),
+                 word_list(choices, and.or = "or", quotes = 2)))
   i <- i[i > 0L]
 
   choices[i]
@@ -318,34 +268,40 @@ binarize <- function(variable, zero = NULL, one = NULL) {
 }
 
 #Make interaction vector out of matrix of covs; similar to interaction()
-exactify <- function(X, nam = NULL, sep = "|", include_vars = FALSE) {
+exactify <- function(X, nam = NULL, sep = "|", include_vars = FALSE, justify = "right") {
   if (is.null(nam)) nam <- rownames(X)
   if (is.matrix(X)) X <- setNames(lapply(seq_len(ncol(X)), function(i) X[,i]), colnames(X))
   if (!is.list(X)) stop("X must be a matrix, data frame, or list.")
 
-  if (include_vars) {
-    for (i in seq_along(X)) {
-      if (is.character(X[[i]]) || is.factor(X[[i]])) {
-        X[[i]] <- sprintf('%s = "%s"', names(X)[i], X[[i]])
-      }
-      else {
-        X[[i]] <- sprintf('%s = %s', names(X)[i], X[[i]])
-      }
+  for (i in seq_along(X)) {
+    unique_x <- {
+      if (is.factor(X[[i]])) levels(X[[i]])
+      else sort(unique(X[[i]]))
     }
-  }
-  else {
-    for (i in seq_along(X)) {
-      if (is.factor(X[[i]])) {
-        X[[i]] <- format(levels(X[[i]]), justify = "right")[X[[i]]]
+
+    lev <- {
+      if (include_vars) {
+        sprintf("%s = %s",
+                names(X)[i],
+                add_quotes(unique_x, is.character(X[[i]]) || is.factor(X[[i]])))
       }
-      else {
-        X[[i]] <- format(X[[i]], justify = "right")
-      }
+      else if (is.null(justify)) unique_x
+      else format(unique_x, justify = justify)
     }
+
+    X[[i]] <- factor(X[[i]], levels = unique_x, labels = lev)
   }
 
+  all_levels <- do.call("paste", c(rev(expand.grid(rev(lapply(X, levels)),
+                                                   KEEP.OUT.ATTRS = FALSE, stringsAsFactors = FALSE)),
+                                   sep = sep))
+
   out <- do.call("paste", c(X, sep = sep))
+
+  out <- factor(out, levels = all_levels[all_levels %in% out])
+
   if (!is.null(nam)) names(out) <- nam
+
   out
 }
 
@@ -353,7 +309,7 @@ exactify <- function(X, nam = NULL, sep = "|", include_vars = FALSE) {
 can_str2num <- function(x) {
   nas <- is.na(x)
   suppressWarnings(x_num <- as.numeric(as.character(x[!nas])))
- !anyNA(x_num)
+  !anyNA(x_num)
 }
 
 #Cleanly coerces a character vector to numeric; best to use after can_str2num()
@@ -373,8 +329,8 @@ firstup <- function(x) {
 #Capitalize first letter of each word
 capwords <- function(s, strict = FALSE) {
   cap <- function(s) paste0(toupper(substring(s, 1, 1)),
-                           {s <- substring(s, 2); if(strict) tolower(s) else s},
-                           collapse = " ")
+                            {s <- substring(s, 2); if(strict) tolower(s) else s},
+                            collapse = " ")
   sapply(strsplit(s, split = " "), cap, USE.NAMES = !is.null(names(s)))
 }
 
@@ -465,7 +421,7 @@ get.covs.matrix <- function(formula = NULL, data = NULL) {
                     contrasts.arg = lapply(Filter(is.factor, mf),
                                            contrasts, contrasts = FALSE))
   assign <- attr(X, "assign")[-1]
-  X <- X[,-1,drop=FALSE]
+  X <- X[,-1, drop = FALSE]
   attr(X, "assign") <- assign
 
   X
@@ -481,13 +437,15 @@ get_assign <- function(mat) {
 #Convert match.matrix (mm) using numerical indices to using char rownames
 nummm2charmm <- function(nummm, treat) {
   #Assumes nummm has rownames
-  charmm <- array(NA_character_, dim = dim(nummm), dimnames = dimnames(nummm))
+  charmm <- array(NA_character_, dim = dim(nummm),
+                  dimnames = dimnames(nummm))
   charmm[] <- names(treat)[nummm]
   charmm
 }
 
 charmm2nummm <- function(charmm, treat) {
-  nummm <- array(NA_integer_, dim = dim(charmm))
+  nummm <- array(NA_integer_, dim = dim(charmm),
+                 dimnames = dimnames(charmm))
   n_index <- setNames(seq_along(treat), names(treat))
   nummm[] <- n_index[charmm]
   nummm
@@ -496,14 +454,16 @@ charmm2nummm <- function(charmm, treat) {
 #Get subclass from match.matrix. Only to be used if replace = FALSE. See subclass2mmC.cpp for reverse.
 mm2subclass <- function(mm, treat) {
   lab <- names(treat)
-  ind1 <- which(treat == 1)
+  mmlab <- rownames(mm)
+  no.match <- is.na(mm)
 
   subclass <- setNames(rep(NA_character_, length(treat)), lab)
-  no.match <- is.na(mm)
-  subclass[ind1[!no.match[,1]]] <- ind1[!no.match[,1]]
-  subclass[mm[!no.match]] <- ind1[row(mm)[!no.match]]
 
-  subclass <- setNames(factor(subclass, nmax = length(ind1)), lab)
+  subclass[mmlab[!no.match[,1]]] <- mmlab[!no.match[,1]]
+
+  subclass[mm[!no.match]] <- mmlab[row(mm)[!no.match]]
+
+  subclass <- setNames(factor(subclass, nmax = length(mmlab)), lab)
   levels(subclass) <- seq_len(nlevels(subclass))
 
   subclass
@@ -646,7 +606,8 @@ nn <- function(treat, weights, discarded = NULL, s.weights = NULL) {
   if (is.null(discarded)) discarded <- rep(FALSE, length(treat))
   if (is.null(s.weights)) s.weights <- rep(1, length(treat))
   weights <- weights * s.weights
-  n <- matrix(0, ncol=2, nrow=6, dimnames = list(c("All (ESS)", "All", "Matched (ESS)","Matched", "Unmatched","Discarded"),
+  n <- matrix(0, ncol=2, nrow=6, dimnames = list(c("All (ESS)", "All", "Matched (ESS)",
+                                                   "Matched", "Unmatched","Discarded"),
                                                  c("Control", "Treated")))
 
   #                      Control                                    Treated
@@ -671,10 +632,12 @@ qn <- function(treat, subclass, discarded = NULL) {
     qn <- cbind(qn, table(treat[is.na(subclass) & !discarded]))
     colnames(qn)[ncol(qn)] <- "Unmatched"
   }
+
   if (any(discarded)) {
     qn <- cbind(qn, table(treat[discarded]))
     colnames(qn)[ncol(qn)] <- "Discarded"
   }
+
   qn <- rbind(qn, colSums(qn))
   rownames(qn)[nrow(qn)] <- "Total"
 
@@ -805,7 +768,7 @@ pkg_caller_call <- function(start = 1) {
 matchit_try <- function(expr, from = NULL, dont_warn_if = NULL) {
   tryCatch({
     withCallingHandlers({
-     expr
+      expr
     },
     warning = function(w) {
       if (is.null(dont_warn_if) || !grepl(dont_warn_if, conditionMessage(w), fixed = TRUE)) {
