@@ -279,11 +279,11 @@
 NULL
 
 matchit2nearest <- function(treat, data, distance, discarded,
-                             ratio = 1, s.weights = NULL, replace = FALSE, m.order = NULL,
-                             caliper = NULL, mahvars = NULL, exact = NULL,
-                             formula = NULL, estimand = "ATT", verbose = FALSE,
-                             is.full.mahalanobis,
-                             antiexact = NULL, unit.id = NULL, ...){
+                            ratio = 1, s.weights = NULL, replace = FALSE, m.order = NULL,
+                            caliper = NULL, mahvars = NULL, exact = NULL,
+                            formula = NULL, estimand = "ATT", verbose = FALSE,
+                            is.full.mahalanobis,
+                            antiexact = NULL, unit.id = NULL, ...){
 
   if (verbose) {
     rlang::check_installed("RcppProgress")
@@ -336,14 +336,28 @@ matchit2nearest <- function(treat, data, distance, discarded,
     distance_mat <- distance
     distance <- NULL
 
-    if (focal == 0) distance_mat <- t(distance_mat)
+    if (focal == 0) {
+      distance_mat <- t(distance_mat)
+    }
   }
 
   #Process caliper
+  ex.caliper.list <- list()
   if (!is.null(caliper)) {
     if (any(names(caliper) != "")) {
       caliper.covs <- caliper[names(caliper) != ""]
       caliper.covs.mat <- get.covs.matrix(reformulate(names(caliper.covs)), data = data)
+
+      ex.caliper.list <- setNames(lapply(names(caliper.covs), function(i) {
+        splits <- get_splitsC(as.numeric(caliper.covs.mat[,i]),
+                              as.numeric(caliper.covs[i]))
+
+        if (length(splits) == 0) return(NULL)
+
+        cut(caliper.covs.mat[,i],
+            breaks = splits,
+            include.lowest = TRUE)
+      }), names(caliper.covs))
     }
     else {
       caliper.covs.mat <- caliper.covs <- NULL
@@ -351,14 +365,42 @@ matchit2nearest <- function(treat, data, distance, discarded,
 
     if (any(names(caliper) == "")) {
       caliper.dist <- caliper[names(caliper) == ""]
+
+      if (!is.null(distance)) {
+        splits <- get_splitsC(as.numeric(distance),
+                              as.numeric(caliper.dist))
+
+        ex.caliper.list <- c(ex.caliper.list,
+                             list(distance = cut(distance,
+                                                 breaks = splits,
+                                                 include.lowest = TRUE)))
+      }
     }
     else {
       caliper.dist <- NULL
+    }
+
+    if (length(ex.caliper.list) > 0L) {
+      ex.caliper.list <- ex.caliper.list[lengths(ex.caliper.list) > 0L]
+
+      for (i in seq_along(ex.caliper.list)) {
+        levels(ex.caliper.list[[i]]) <- paste(names(ex.caliper.list)[i], "\u2208", levels(ex.caliper.list[[i]]))
+      }
     }
   }
   else {
     caliper.dist <- caliper.covs <- NULL
     caliper.covs.mat <- NULL
+  }
+
+  ####
+  ex.caliper.list <- list()
+  ####
+
+  ex.caliper <- {
+    if (length(ex.caliper.list) == 0) NULL
+    else as.factor(exactify(ex.caliper.list, nam = lab, sep = ", ",
+                            justify = NULL))
   }
 
   #Process antiexact
@@ -383,22 +425,49 @@ matchit2nearest <- function(treat, data, distance, discarded,
     unit.id <- factor(exactify(model.frame(unit.id, data = data),
                                nam = lab, sep = ", ", include_vars = TRUE))
     num_ctrl_unit.ids <- length(unique(unit.id[treat == 0]))
+    num_trt_unit.ids <- length(unique(unit.id[treat == 1]))
 
-    #If each control unit is a unit.id, unit.ids are meaningless
-    if (num_ctrl_unit.ids == n0) unit.id <- NULL
+    #If each unit is a unit.id, unit.ids are meaningless
+    if (num_ctrl_unit.ids == n0 && num_trt_unit.ids == n1) {
+      # unit.id <- NULL
+    }
   }
   else {
     unit.id <- NULL
   }
 
+  #Process exact
   if (!is.null(exact)) {
-    ex <- factor(exactify(model.frame(exact, data = data), nam = lab, sep = ", ", include_vars = TRUE))
+    ex <- as.factor(exactify(model.frame(exact, data = data), nam = lab, sep = ", ", include_vars = TRUE))
+  }
+  else {
+    ex <- NULL
+  }
 
-    cc <- intersect(as.integer(ex)[treat==1], as.integer(ex)[treat==0])
-    if (length(cc) == 0) .err("No matches were found")
+  if (!is.null(ex) || !is.null(ex.caliper)) {
+    ex0 <- {
+      if (!is.null(ex) && !is.null(ex.caliper)) {
+        as.factor(exactify(list(ex, ex.caliper), nam = lab, sep = ", ",
+                           justify = NULL))
+      }
+      else if (!is.null(ex)) ex
+      else ex.caliper
+    }
 
-    if (reuse.max < n1) {
+    cc <- intersect(as.integer(ex0)[treat==1], as.integer(ex0)[treat==0])
 
+    if (length(cc) == 0L) {
+      .err("No matches were found")
+    }
+
+    cc <- sort(cc)
+  }
+  else {
+    ex0 <- NULL
+  }
+
+  if (reuse.max < n1) {
+    if (!is.null(ex)) {
       e_ratios <- vapply(levels(ex), function(e) {
         if (is.null(unit.id)) sum(treat[ex == e] == 0)*(reuse.max/sum(treat[ex == e] == 1))
         else length(unique(unit.id[treat == 0 & ex == e]))*(reuse.max/sum(treat[ex == e] == 1))
@@ -406,23 +475,18 @@ matchit2nearest <- function(treat, data, distance, discarded,
 
       if (any(e_ratios < 1)) {
         .wrn(sprintf("fewer %s units than %s units in some `exact` strata; not all %s units will get a match",
-                        tc[2], tc[1], tc[1]))
+                     tc[2], tc[1], tc[1]))
       }
       if (ratio > 1 && any(e_ratios < ratio)) {
         if (is.null(max.controls) || ratio == max.controls)
           .wrn(sprintf("not all %s units will get %s matches",
-                          tc[1], ratio))
+                       tc[1], ratio))
         else
           .wrn(sprintf("not enough %s units for an average of %s matches per %s unit in all `exact` strata",
-                          tc[2], ratio, tc[1]))
+                       tc[2], ratio, tc[1]))
       }
     }
-  }
-  else {
-    ex <- NULL
-
-    if (reuse.max < n1) {
-
+    else {
       e_ratios <- {
         if (is.null(unit.id)) as.numeric(reuse.max)*n0/n1
         else as.numeric(reuse.max)*num_ctrl_unit.ids/n1
@@ -430,15 +494,15 @@ matchit2nearest <- function(treat, data, distance, discarded,
 
       if (e_ratios < 1) {
         .wrn(sprintf("fewer %s %s than %s units; not all %s units will get a match",
-                        tc[2], if (is.null(unit.id)) "units" else "unit IDs", tc[1], tc[1]))
+                     tc[2], if (is.null(unit.id)) "units" else "unit IDs", tc[1], tc[1]))
       }
       else if (e_ratios < ratio) {
         if (is.null(max.controls) || ratio == max.controls)
           .wrn(sprintf("not all %s units will get %s matches",
-                          tc[1], ratio))
+                       tc[1], ratio))
         else
           .wrn(sprintf("not enough %s %s for an average of %s matches per %s unit",
-                          tc[2], if (is.null(unit.id)) "units" else "unit IDs", ratio, tc[1]))
+                       tc[2], if (is.null(unit.id)) "units" else "unit IDs", ratio, tc[1]))
       }
     }
   }
@@ -447,8 +511,10 @@ matchit2nearest <- function(treat, data, distance, discarded,
   #Each treated unit get its own value of ratio
   if (!is.null(max.controls)) {
     if (is.null(distance)) {
-      if (is.full.mahalanobis) .err(sprintf("`distance` cannot be \"%s\" for variable ratio matching",
-                                            transform))
+      if (is.full.mahalanobis) {
+        .err(sprintf("`distance` cannot be \"%s\" for variable ratio matching",
+                     transform))
+      }
       .err("`distance` cannot be supplied as a matrix for variable ratio matching")
     }
 
@@ -486,7 +552,7 @@ matchit2nearest <- function(treat, data, distance, discarded,
     else "largest"
   }
 
-  if (is.null(ex) || !is.null(unit.id)) {
+  if (is.null(ex0) || !is.null(unit.id) || (is.null(mahcovs) && is.null(distance_mat))) {
     if (m.order == "closest") {
       if (!is.null(mahcovs)) {
         distance_mat <- eucdist_internal(mahcovs, treat)
@@ -501,9 +567,6 @@ matchit2nearest <- function(treat, data, distance, discarded,
           caliper.dist <- NULL
         }
       }
-      else if (is.null(distance_mat)) {
-        distance_mat <- eucdist_internal(distance, treat)
-      }
 
       ord <- NULL
     }
@@ -516,41 +579,48 @@ matchit2nearest <- function(treat, data, distance, discarded,
     }
 
     mm <- nn_matchC_dispatch(treat, ord, ratio, discarded, reuse.max, distance, distance_mat,
-                             ex, caliper.dist, caliper.covs, caliper.covs.mat, mahcovs,
+                             ex0, caliper.dist, caliper.covs, caliper.covs.mat, mahcovs,
                              antiexactcovs, unit.id, m.order, verbose)
-
   }
   else {
     distance_ <- caliper.covs.mat_ <- mahcovs_ <- antiexactcovs_ <- distance_mat_ <- NULL
-    mm_list <- lapply(levels(ex)[cc], function(e) {
+
+    mm_list <- lapply(levels(ex0)[cc], function(e) {
       if (verbose) {
         cat(sprintf("Matching subgroup %s/%s: %s...\n",
-                    match(e, levels(ex)[cc]), length(cc), e))
+                    match(e, levels(ex0)[cc]), length(cc), e))
       }
 
-      .e <- which(ex == e)
-      .e1 <- which(ex[treat==1] == e)
+      .e <- which(ex0 == e)
+      .e1 <- which(ex0[treat==1] == e)
       treat_ <- treat[.e]
+
       discarded_ <- discarded[.e]
       if (!is.null(distance)) distance_ <- distance[.e]
       if (!is.null(caliper.covs.mat)) caliper.covs.mat_ <- caliper.covs.mat[.e,,drop = FALSE]
       if (!is.null(mahcovs)) mahcovs_ <- mahcovs[.e,,drop = FALSE]
       if (!is.null(antiexactcovs)) antiexactcovs_ <- antiexactcovs[.e,,drop = FALSE]
       if (!is.null(distance_mat)) {
-        .e0 <- which(ex[treat==0] == e)
+        .e0 <- which(ex0[treat==0] == e)
         distance_mat_ <- distance_mat[.e1, .e0, drop = FALSE]
       }
       ratio_ <- ratio[.e1]
 
       n1_ <- sum(treat_ == 1)
 
-
       if (m.order == "closest") {
         if (!is.null(mahcovs)) {
           distance_mat_ <- eucdist_internal(mahcovs_, treat_)
-        }
-        else if (is.null(distance_mat)) {
-          distance_mat_ <- eucdist_internal(distance_, treat_)
+
+          # If caliper on PS (distance), treat it as a covariate
+          if (!is.null(distance) && !is.null(caliper.dist)) {
+            caliper.covs.mat <- {
+              if (is.null(caliper.covs)) as.matrix(distance_)
+              else cbind(caliper.covs.mat_, distance_)
+            }
+            caliper.covs <- c(caliper.covs, caliper.dist)
+            caliper.dist <- NULL
+          }
         }
 
         ord <- NULL
@@ -564,8 +634,8 @@ matchit2nearest <- function(treat, data, distance, discarded,
       }
 
       mm_ <- nn_matchC_dispatch(treat_, ord_, ratio_, discarded_, reuse.max, distance_, distance_mat_,
-                               NULL, caliper.dist, caliper.covs, caliper.covs.mat_, mahcovs_,
-                               antiexactcovs_, NULL, m.order, verbose)
+                                NULL, caliper.dist, caliper.covs, caliper.covs.mat_, mahcovs_,
+                                antiexactcovs_, NULL, m.order, verbose)
 
       #Ensure matched indices correspond to indices in full sample, not subgroup
       mm_[] <- seq_along(treat)[.e][mm_]
@@ -608,18 +678,27 @@ matchit2nearest <- function(treat, data, distance, discarded,
 nn_matchC_dispatch <- function(treat, ord, ratio, discarded, reuse.max, distance, distance_mat, ex, caliper.dist,
                                caliper.covs, caliper.covs.mat, mahcovs, antiexactcovs, unit.id, m.order, verbose) {
   if (m.order == "closest") {
-    nn_matchC_closest(distance_mat, treat, ratio, discarded, reuse.max,
-                      ex, caliper.dist, caliper.covs, caliper.covs.mat,
-                      antiexactcovs, unit.id, verbose)
-  }
-  else if (is.null(distance_mat) && is.null(mahcovs)) {
-    nn_matchC_vec(treat, ord, ratio, discarded, reuse.max, distance,
-                  ex, caliper.dist, caliper.covs, caliper.covs.mat,
-                  antiexactcovs, unit.id, verbose)
+    if (is.null(distance_mat) && is.null(mahcovs)) {
+      nn_matchC_vec_closest(treat, ratio, discarded, reuse.max, distance,
+                            ex, caliper.dist, caliper.covs, caliper.covs.mat,
+                            antiexactcovs, unit.id, verbose)
+    }
+    else {
+      nn_matchC_closest(distance_mat, treat, ratio, discarded, reuse.max,
+                        ex, caliper.dist, caliper.covs, caliper.covs.mat,
+                        antiexactcovs, unit.id, verbose)
+    }
   }
   else {
-    nn_matchC(treat, ord, ratio, discarded, reuse.max, distance, distance_mat,
-              ex, caliper.dist, caliper.covs, caliper.covs.mat, mahcovs,
-              antiexactcovs, unit.id, verbose)
+    if (is.null(distance_mat) && is.null(mahcovs)) {
+      nn_matchC_vec(treat, ord, ratio, discarded, reuse.max, 1L, distance,
+                    ex, caliper.dist, caliper.covs, caliper.covs.mat,
+                    antiexactcovs, unit.id, verbose)
+    }
+    else {
+      nn_matchC(treat, ord, ratio, discarded, reuse.max, 1L, distance, distance_mat,
+                ex, caliper.dist, caliper.covs, caliper.covs.mat, mahcovs,
+                antiexactcovs, unit.id, verbose)
+    }
   }
 }
