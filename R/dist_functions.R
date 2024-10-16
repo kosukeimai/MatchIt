@@ -328,26 +328,28 @@ transform_covariates <- function(formula = NULL, data = NULL, method = "mahalano
 #Internal function for fast(ish) Euclidean distance
 eucdist_internal <- function(X, treat = NULL) {
 
-  if (is.null(dim(X))) X <- as.matrix(X)
-
   if (is.null(treat)) {
-    if (ncol(X) == 1) {
+    if (NCOL(X) == 1L) {
       d <- abs(outer(drop(X), drop(X), "-"))
     }
     else {
-      d <- dist_to_matrixC(dist(X))
+      d <- as.matrix(dist(X))
     }
+
     dimnames(d) <- list(rownames(X), rownames(X))
   }
   else {
     treat_l <- as.logical(treat)
-    if (ncol(X) == 1) {
-      d <- abs(outer(X[treat_l,], X[!treat_l,], "-"))
+
+    if (NCOL(X) == 1L) {
+      d <- abs(outer(X[treat_l], X[!treat_l], "-"))
     }
     else {
-      d <- dist(X)
-      d <- dist_to_matrixC(d)[treat_l, !treat_l, drop = FALSE]
+      # d <- dist(X)
+      # d <- as.matrix(d)[treat_l, !treat_l, drop = FALSE]
+      d <- eucdistC_N1xN0(X, as.integer(treat))
     }
+
     dimnames(d) <- list(rownames(X)[treat_l], rownames(X)[!treat_l])
   }
 
