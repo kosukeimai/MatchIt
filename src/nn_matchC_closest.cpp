@@ -22,38 +22,39 @@ IntegerMatrix nn_matchC_closest(const NumericMatrix& distance_mat,
 {
 
   int r = distance_mat.nrow();
-  int c = distance_mat.ncol();
+
+  int n = treat.size();
 
   IntegerMatrix mm(r, max(ratio));
   mm.fill(NA_INTEGER);
 
   CharacterVector lab = treat.names();
 
-  IntegerVector matched_t = rep(0, r);
-  IntegerVector matched_c = rep(0, c);
 
-  // IntegerVector ind = seq(0, treat.size() - 1);
-  IntegerVector ind0 = which(treat == 0);
-  IntegerVector ind1 = which(treat == 1);
+  IntegerVector ind = Range(0, n - 1);
+  IntegerVector ind0 = ind[treat == 0];
+  IntegerVector ind1 = ind[treat == 1];
 
   //caliper_dist
-  bool use_caliper_dist = false;
   double caliper_dist;
   if (caliper_dist_.isNotNull()) {
     caliper_dist = as<double>(caliper_dist_);
-    use_caliper_dist = true;
+  }
+  else {
+    caliper_dist = max_finite(distance_mat) + 1;
   }
 
   //caliper_covs
   NumericVector caliper_covs;
   NumericMatrix caliper_covs_mat;
-  bool use_caliper_covs = false;
-  double n_cal_covs;
+  int ncc;
   if (caliper_covs_.isNotNull()) {
     caliper_covs = as<NumericVector>(caliper_covs_);
     caliper_covs_mat = as<NumericMatrix>(caliper_covs_mat_);
-    n_cal_covs = caliper_covs_mat.ncol();
-    use_caliper_covs = true;
+    ncc = caliper_covs_mat.ncol();
+  }
+  else {
+    ncc = 0;
   }
 
   //exact
@@ -66,12 +67,13 @@ IntegerMatrix nn_matchC_closest(const NumericMatrix& distance_mat,
 
   //antiexact
   IntegerMatrix antiexact_covs;
-  bool use_antiexact = false;
-  int n_anti;
+  int aenc;
   if (antiexact_covs_.isNotNull()) {
     antiexact_covs = as<IntegerMatrix>(antiexact_covs_);
-    n_anti = antiexact_covs.ncol();
-    use_antiexact = true;
+    aenc = antiexact_covs.ncol();
+  }
+  else {
+    aenc = 0;
   }
 
   //unit_id
@@ -81,6 +83,15 @@ IntegerMatrix nn_matchC_closest(const NumericMatrix& distance_mat,
     unit_id = as<IntegerVector>(unit_id_);
     use_unit_id = true;
   }
+
+  IntegerVector times_matched = rep(0, n);
+  LogicalVector eligible = rep(true, n);
+  eligible[discarded] = false;
+  IntegerVector times_matched_allowed = rep(reuse_max, n);
+  times_matched_allowed[ind1] = ratio;
+
+  int n_eligible0 = sum(as<LogicalVector>(eligible[treat == 0]));
+  int n_eligible1 = sum(as<LogicalVector>(eligible[treat == 1]));
 
   //progress bar
   int prog_length;
@@ -93,17 +104,22 @@ IntegerMatrix nn_matchC_closest(const NumericMatrix& distance_mat,
   IntegerVector d_ord = o(distance_mat);
   d_ord = d_ord - 1; //Because R uses 1-indexing
 
-  int rj, cj, dj, i, ind0i, ind1i;
-  bool okay;
+  int rj, cj, c_id_i, t_id_i;
 
-  for (int j = 0; j < d_ord.size(); j++) {
+  for (int dj : d_ord) {
 
-    dj = d_ord[j];
+    if (n_eligible1 <= 0) {
+      break;
+    }
 
-    // If distance is greater tha distance caliper, stop the whole thing because
+    if (n_eligible0 <= 0) {
+      break;
+    }
+
+    // If distance is greater than distance caliper, stop the whole thing because
     // no remaining distance will be smaller
-    if (use_caliper_dist) {
-      if (distance_mat[dj] > caliper_dist) break;
+    if (distance_mat[dj] > caliper_dist) {
+      break;
     }
 
     // Get row and column index of potential pair
@@ -111,81 +127,63 @@ IntegerMatrix nn_matchC_closest(const NumericMatrix& distance_mat,
     cj = dj / r;
 
     // Get sample indices of members of potential pair
-    ind1i = ind1[rj];
-    ind0i = ind0[cj];
+    t_id_i = ind1[rj];
+    c_id_i = ind0[cj];
 
     // If either member is discarded, move on
-    if (discarded[ind1i]) continue;
-    if (discarded[ind0i]) continue;
-
-    // If either member has been matched enough times, move on
-    if (matched_t[rj] >= ratio[rj]) continue;
-    if (matched_c[cj] >= reuse_max) continue;
-
-    // Exact matching criterion
-    if (use_exact) {
-      if (exact[ind1i] != exact[ind0i]) {
-        continue;
-      }
+    if (!eligible[t_id_i]) {
+      continue;
     }
 
-    // Covariate caliper criterion
-    if (use_caliper_covs) {
-      i = 0;
-      okay = true;
-      while (okay && (i < n_cal_covs)) {
-        if (std::abs(caliper_covs_mat(ind1i, i) - caliper_covs_mat(ind0i, i)) > caliper_covs[i]) {
-          okay = false;
-        }
-        i++;
-      }
-      if (!okay) continue;
+    if (!eligible[c_id_i]) {
+      continue;
+    }
+
+    // Exact matching criterion
+    if (!exact_okay(use_exact, t_id_i, c_id_i, exact)) {
+      continue;
     }
 
     // Antiexact criterion
-    if (use_antiexact) {
-      i = 0;
-      okay = true;
-      while (okay && (i < n_anti)) {
-        if (antiexact_covs(ind1i, i) == antiexact_covs(ind0i, i)) {
-          okay = false;
-        }
-        i++;
-      }
-      if (!okay) continue;
+    if (!antiexact_okay(aenc, t_id_i, c_id_i, antiexact_covs)) {
+      continue;
+    }
+
+    // Covariate caliper criterion
+    if (!caliper_covs_okay(ncc, t_id_i, c_id_i, caliper_covs_mat, caliper_covs)) {
+      continue;
     }
 
     // If all criteria above are satisfied, potential pair becomes a pair!
+    mm(rj, sum(!is_na(mm(rj, _)))) = c_id_i;
 
     // If unit_id used, increase match count of all units with that ID
     if (use_unit_id) {
-      ck_ = which(as<IntegerVector>(unit_id[ind1]) == unit_id[ind1i]);
-
-      for (i = 0; i < ck_.size(); i++) {
-        matched_t[ck_[i]]++;
-      }
-
-      ck_ = which(as<IntegerVector>(unit_id[ind0]) == unit_id[ind0i]);
-
-      for (i = 0; i < ck_.size(); i++) {
-        matched_c[ck_[i]]++;
-      }
+      ck_ = ind[unit_id == unit_id[t_id_i] | unit_id == unit_id[c_id_i]];
     }
     else {
-      matched_t[rj]++;
-      matched_c[cj]++;
+      ck_ = {t_id_i, c_id_i};
     }
 
-    mm(rj, matched_t[rj] - 1) = ind0i;
+    for (int ck : ck_) {
+
+      if (!eligible[ck]) {
+        continue;
+      }
+
+      times_matched[ck]++;
+      if (times_matched[ck] >= times_matched_allowed[ck]) {
+        eligible[ck] = false;
+        if (treat[ck] == 1) {
+          n_eligible1--;
+        }
+        else {
+          n_eligible0--;
+        }
+      }
+    }
 
     p.increment();
-
-    if (matched_t[rj] >= ratio[rj]) {
-      if (all(matched_t >= ratio).is_true()) break;
-    }
-    if (matched_c[cj] >= reuse_max) {
-      if (all(matched_c >= reuse_max).is_true()) break;
-    }
   }
 
   p.update(prog_length);

@@ -4,227 +4,16 @@
 #include "internal.h"
 using namespace Rcpp;
 
-// Version of nn_matchC that works when `distance` is a vector.
-// Doesn't accept `distance_mat_` or `mah_covs_`.
-
-bool check_in(int x,
-              IntegerVector table) {
-  int t = table.size();
-  if (t < 1) return false;
-
-  for (int j = 0; j < t; j++) {
-    if (x == table[j]) return true;
-  }
-  return false;
-}
-
-int find_right(int ii,
-               int last_control,
-               IntegerVector treat,
-               LogicalVector can_be_matched,
-               int r,
-               IntegerVector row,
-               IntegerVector d_ord,
-               NumericVector distance,
-               bool use_caliper_dist,
-               double caliper_dist,
-               bool use_caliper_covs,
-               NumericVector caliper_covs,
-               NumericMatrix caliper_covs_mat,
-               bool use_exact,
-               IntegerVector exact,
-               bool use_antiexact,
-               IntegerMatrix antiexact_covs) {
-
-  int k = ii + 1;
-  bool found = false, okay;
-  int i;
-
-  int n_anti;
-  if (use_antiexact) n_anti = antiexact_covs.ncol();
-
-  int n_cal_covs;
-  if (use_caliper_covs) n_cal_covs = caliper_covs_mat.ncol();
-
-  while (!found && k <= last_control) {
-    if (treat[k] == 1) {
-      k++; //if unit is treated, move right
-      continue;
-    }
-
-    if (!can_be_matched[k]) {
-      k++; //if unit is matched, move right
-      continue;
-    }
-
-    //if unit has already been matched to unit i, skip
-    if (r > 0) {
-      if (check_in(d_ord[k], row)) {
-        k++;
-        continue;
-      }
-    }
-
-    if (use_caliper_dist) {
-      if (std::abs(distance[ii] - distance[k]) > caliper_dist) {
-        //if closest is outside caliper, break; none can be found
-        break;
-      }
-    }
-
-    if (use_exact) {
-      if (exact[ii] != exact[k]) {
-        k++; //if not exact match, move right
-        continue;
-      }
-    }
-
-    if (use_antiexact) {
-      i = 0;
-      okay = true;
-      while (okay && (i < n_anti)) {
-        if (antiexact_covs(ii, i) == antiexact_covs(k, i)) {
-          okay = false;
-        }
-        i++;
-      }
-      if (!okay) {
-        k++; //if any antiexact checks failed, move right
-        continue;
-      }
-    }
-
-    if (use_caliper_covs) {
-      i = 0;
-      okay = true;
-      while (okay && (i < n_cal_covs)) {
-        if (std::abs(caliper_covs_mat(ii, i) - caliper_covs_mat(k, i)) > caliper_covs[i]) {
-          okay = false;
-        }
-        i++;
-      }
-      if (!okay) {
-        k++; //if any cov caliper checks failed, move right
-        continue;
-      }
-    }
-
-    found = true;
-  }
-
-  if (!found) k = -1;
-
-  return k;
-}
-
-int find_left(int ii,
-              int first_control,
-              IntegerVector treat,
-              LogicalVector can_be_matched,
-              int r,
-              IntegerVector row,
-              IntegerVector d_ord,
-              NumericVector distance,
-              bool use_caliper_dist,
-              double caliper_dist,
-              bool use_caliper_covs,
-              NumericVector caliper_covs,
-              NumericMatrix caliper_covs_mat,
-              bool use_exact,
-              IntegerVector exact,
-              bool use_antiexact,
-              IntegerMatrix antiexact_covs) {
-
-  int k = ii - 1;
-  bool found = false, okay;
-  int i;
-
-  int n_anti;
-  if (use_antiexact) n_anti = antiexact_covs.ncol();
-
-  int n_cal_covs;
-  if (use_caliper_covs) n_cal_covs = caliper_covs_mat.ncol();
-
-  while (!found && k >= first_control) {
-    if (treat[k] == 1) {
-      k--; //if unit is treated, move left
-      continue;
-    }
-
-    if (!can_be_matched[k]) {
-      k--; //if unit is matched, move left
-      continue;
-    }
-
-    //if unit has already been matched to unit i, skip
-    if (r > 0) {
-      if (check_in(d_ord[k], row)) {
-        k--;
-        continue;
-      }
-    }
-
-    if (use_caliper_dist) {
-      if (std::abs(distance[ii] - distance[k]) > caliper_dist) {
-        //if closest is outside caliper, break
-        break;
-      }
-    }
-
-    if (use_exact) {
-      if (exact[ii] != exact[k]) {
-        k--; //if not exact match, move left
-        continue;
-      }
-    }
-
-    if (use_antiexact) {
-      i = 0;
-      okay = true;
-      while (okay && (i < n_anti)) {
-        if (antiexact_covs(ii, i) == antiexact_covs(k, i)) {
-          okay = false;
-        }
-        i++;
-      }
-      if (!okay) {
-        k--; //if any antiexact checks failed, move left
-        continue;
-      }
-    }
-
-    if (use_caliper_covs) {
-      i = 0;
-      okay = true;
-      while (okay && (i < n_cal_covs)) {
-        if (std::abs(caliper_covs_mat(ii, i) - caliper_covs_mat(k, i)) > caliper_covs[i]) {
-          okay = false;
-        }
-        i++;
-      }
-      if (!okay) {
-        k--; //if any cov caliper checks failed, move left
-        continue;
-      }
-    }
-
-    found = true;
-  }
-
-  if (!found) k = -1;
-
-  return k;
-}
-
 // [[Rcpp::plugins(cpp11)]]
 
 // [[Rcpp::export]]
 IntegerMatrix nn_matchC_vec(const IntegerVector& treat_,
-                            const IntegerVector& ord_,
-                            const IntegerVector& ratio_,
-                            const LogicalVector& discarded_,
+                            const IntegerVector& ord,
+                            const IntegerVector& ratio,
+                            const LogicalVector& discarded,
                             const int& reuse_max,
-                            const NumericVector& distance_,
+                            const int& focal_,
+                            const NumericVector& distance,
                             const Nullable<IntegerMatrix>& exact_ = R_NilValue,
                             const Nullable<double>& caliper_dist_ = R_NilValue,
                             const Nullable<NumericVector>& caliper_covs_ = R_NilValue,
@@ -233,242 +22,241 @@ IntegerMatrix nn_matchC_vec(const IntegerVector& treat_,
                             const Nullable<IntegerVector>& unit_id_ = R_NilValue,
                             const bool& disl_prog = false) {
 
-  int n = treat_.size();
+  IntegerVector unique_treat = unique(treat_);
+  std::sort(unique_treat.begin(), unique_treat.end());
+  int g = unique_treat.size();
+  IntegerVector treat = match(treat_, unique_treat) - 1;
+  int focal;
+  for (focal = 0; focal < g; focal++) {
+    if (unique_treat[focal] == focal_) {
+      break;
+    }
+  }
 
-  CharacterVector lab_ = treat_.names();
+  int n = treat.size();
+  IntegerVector ind = Range(0, n - 1);
+
+  int i, gi;
+  IntegerVector indt(n);
+  IntegerVector indt_begin(g), indt_end(g);
+  IntegerVector indt_tmp;
+  IntegerVector nt(g);
+  IntegerVector ind_match = rep(NA_INTEGER, n);
+
+  IntegerVector times_matched = rep(0, n);
+  LogicalVector eligible = !discarded;
+
+  IntegerVector g_c = Range(0, g - 1);
+  g_c = g_c[g_c != focal];
+
+  for (gi = 0; gi < g; gi++) {
+    nt[gi] = sum(treat == gi);
+  }
+
+  int nf = nt[focal];
+
+  indt_begin[0] = 0;
+  indt_end[0] = nt[0];
+
+  for (gi = 0; gi < g; gi++) {
+    if (gi > 0) {
+      indt_begin[gi] = indt_end[gi - 1];
+      indt_end[gi] = indt_begin[gi] + nt[gi];
+    }
+
+    indt_tmp = ind[treat == gi];
+
+    for (i = 0; i < nt[gi]; i++) {
+      indt[indt_begin[gi] + i] = indt_tmp[i];
+      ind_match[indt_tmp[i]] = i;
+    }
+  }
+
+  IntegerVector ind_focal = indt[Range(indt_begin[focal], indt_end[focal] - 1)];
+
+  IntegerVector times_matched_allowed = rep(reuse_max, n);
+  times_matched_allowed[ind_focal] = ratio;
+
+  IntegerVector n_eligible(unique_treat.size());
+  for (i = 0; i < n; i++) {
+    if (eligible[i]) {
+      n_eligible[treat[i]]++;
+    }
+  }
+
+  int max_ratio = max(ratio);
+
+  // Output matrix with sample indices of control units
+  IntegerMatrix mm(nf, max_ratio);
+  mm.fill(NA_INTEGER);
+  CharacterVector lab = treat_.names();
 
   //Use base::order() because faster than Rcpp implementation of order()
   Function o("order");
 
-  IntegerVector d_ord = o(distance_, Named("decreasing") = false);
-  d_ord = d_ord - 1;
+  IntegerVector ind_d_ord = o(distance, Named("decreasing") = false);
+  ind_d_ord = ind_d_ord - 1; //location of each unit after sorting
 
-  IntegerVector treat = treat_[d_ord];
-  NumericVector distance = distance_[d_ord];
-  CharacterVector lab = lab_[d_ord];
-  LogicalVector discarded = discarded_[d_ord];
+  IntegerVector match_d_ord = match(ind, ind_d_ord) - 1;
 
-  IntegerVector ratio_tmp(n);
-  ratio_tmp[treat_ == 1] = ratio_;
-  IntegerVector ratio = ratio_tmp[d_ord];
-
-  IntegerVector ord = ord_ - 1;
-
-  int max_ratio = max(ratio);
-
-  IntegerVector ind = Range(0, n - 1);
-  IntegerVector ind0 = ind[treat == 0];
-  IntegerVector ind1 = ind[treat == 1];
-  int n0 = ind0.size();
-  int n1 = ind1.size();
-  ind1.names() = lab[ind1];
-
-  IntegerVector t(n);
-  IntegerVector t0(n0), t1(n1);
-  int i;
-
-  //ind:  1 2 3 4 5 6 7 8
-  //ind1:   2 3   5   7
-
-  IntegerMatrix mm(n1, max_ratio);
-  mm.fill(NA_INTEGER);
-  CharacterVector lab1 = lab[ind1];
-  CharacterVector mm_nm = lab_[treat_ == 1];
-
-
-  //caliper_dist
-  double caliper_dist;
-  bool use_caliper_dist = false;
-  if (caliper_dist_.isNotNull()) {
-    caliper_dist = as<double>(caliper_dist_);
-    use_caliper_dist = true;
-  }
-
-  //caliper_covs
-  NumericVector caliper_covs;
-  NumericMatrix caliper_covs_mat;
-  bool use_caliper_covs = false;
-  if (caliper_covs_.isNotNull()) {
-    caliper_covs = as<NumericVector>(caliper_covs_);
-    caliper_covs_mat = as<NumericMatrix>(caliper_covs_mat_);
-    NumericVector tmp_cc(caliper_covs_mat.nrow());
-    for (int i = 0; i < caliper_covs_mat.ncol(); i++) {
-      tmp_cc = caliper_covs_mat(_, i);
-      tmp_cc = tmp_cc[d_ord];
-      caliper_covs_mat(_, i) = tmp_cc;
-    }
-    use_caliper_covs = true;
-  }
+  IntegerVector first_control = rep(0, g);
+  IntegerVector last_control = rep(n - 1, g);
 
   //exact
   bool use_exact = false;
   IntegerVector exact;
   if (exact_.isNotNull()) {
-    exact = as<IntegerVector>(exact_)[d_ord];
+    exact = as<IntegerVector>(exact_);
     use_exact = true;
+  }
+
+  //caliper_dist
+  double caliper_dist;
+  if (caliper_dist_.isNotNull()) {
+    caliper_dist = as<double>(caliper_dist_);
+  }
+  else {
+    caliper_dist = max_finite(distance) - min_finite(distance) + 1;
+  }
+
+  //caliper_covs
+  NumericVector caliper_covs;
+  NumericMatrix caliper_covs_mat;
+  int ncc = 0;
+  if (caliper_covs_.isNotNull()) {
+    caliper_covs = as<NumericVector>(caliper_covs_);
+    caliper_covs_mat = as<NumericMatrix>(caliper_covs_mat_);
+    ncc = caliper_covs_mat.ncol();
   }
 
   //antiexact
   IntegerMatrix antiexact_covs;
-  bool use_antiexact = false;
+  int aenc = 0;
   if (antiexact_covs_.isNotNull()) {
     antiexact_covs = as<IntegerMatrix>(antiexact_covs_);
-    NumericVector tmp_ae(antiexact_covs.nrow());
-    for (int i = 0; i < antiexact_covs.ncol(); i++) {
-      tmp_ae = antiexact_covs(_, i);
-      tmp_ae = tmp_ae[d_ord];
-      antiexact_covs(_, i) = tmp_ae;
-    }
-    use_antiexact = true;
+    aenc = antiexact_covs.ncol();
   }
 
   //unit_id
   IntegerVector unit_id;
   bool use_unit_id = false;
   if (unit_id_.isNotNull()) {
-    unit_id = as<IntegerVector>(unit_id_)[d_ord];
+    unit_id = as<IntegerVector>(unit_id_);
     use_unit_id = true;
   }
 
-  IntegerVector times_matched = rep(0, n);
-  LogicalVector can_be_matched = !as<LogicalVector>(discarded);
-
-  IntegerVector ind_cbm = ind[can_be_matched];
-  int first_control = ind_cbm[0];
-  int last_control = ind_cbm[ind_cbm.size() - 1];
+  IntegerVector matches_i(g);
+  int k_total;
 
   //progress bar
-  int prog_length;
-  prog_length = max_ratio*n1 + 1;
+  int prog_length = sum(ratio) + 1;
   Progress p(prog_length, disl_prog);
 
-  int ii, k, j, ck, r, row_to_fill;
-  int k_left, k_right;
-  double dti;
-  String labi;
-  IntegerVector mm_row, ck_;
-  bool done = false;
+  int r, t_id_t_i, t_id_i, c_id_i, c;
+  IntegerVector ck_;
+  // bool check = true;
 
-  for (r = 0; r < max_ratio; r++) {
-    for (i = 0; i < n1; i++) {
-      p.increment();
+  int counter = -1;
 
-      row_to_fill = ord[i];
+  for (r = 1; r <= max_ratio; r++) {
+    for (i = 0; i < nf && max(as<IntegerVector>(n_eligible[g_c])) > 0; i++) {
+      // i: generic looping index
+      // t_id_t_i; index of treated unit to match among treated units
+      // t_id_i: index of treated unit to match among all units
+      counter++;
+      if (counter % 500 == 0) Rcpp::checkUserInterrupt();
 
-      labi = mm_nm[row_to_fill];
+      t_id_t_i = ord[i] - 1;
+      t_id_i = ind_focal[t_id_t_i];
 
-      ii = ind1[labi]; //ii'th unit overall
-
-      if (!can_be_matched[ii]) continue;
-
-      mm_row = na_omit(mm(row_to_fill, _));
-
-      //find control unit to left and right
-      k_left = find_left(ii, first_control,
-                         treat,
-                         can_be_matched,
-                         r, mm_row,
-                         d_ord,
-                         distance, use_caliper_dist, caliper_dist,
-                         use_caliper_covs, caliper_covs, caliper_covs_mat,
-                         use_exact, exact,
-                         use_antiexact, antiexact_covs);
-
-      k_right = find_right(ii, last_control,
-                           treat,
-                           can_be_matched,
-                           r, mm_row,
-                           d_ord,
-                           distance, use_caliper_dist, caliper_dist,
-                           use_caliper_covs, caliper_covs, caliper_covs_mat,
-                           use_exact, exact,
-                           use_antiexact,  antiexact_covs);
-
-      if ((k_left >= 0) && (k_right >= 0)) {
-        dti = distance[ii];
-        if (std::abs(distance[k_left] - dti) <= std::abs(distance[k_right] - dti)) {
-          k = k_left;
-        }
-        else {
-          k = k_right;
-        }
-      }
-      else if (k_left >= 0) {
-        k = k_left;
-      }
-      else if (k_right >= 0) {
-        k = k_right;
-      }
-      else {
-        can_be_matched[ii] = false;
+      if (r > times_matched_allowed[t_id_i]) {
         continue;
       }
 
-      mm( row_to_fill, r ) = d_ord[k];
+      p.increment();
+
+      if (!eligible[t_id_i]) {
+        continue;
+      }
+
+      k_total = 0;
+
+      for (int gi : g_c) {
+        while (!eligible[ind_d_ord[first_control[gi]]] || treat[ind_d_ord[first_control[gi]]] != gi) {
+          first_control[gi]++;
+        }
+        while (!eligible[ind_d_ord[last_control[gi]]] || treat[ind_d_ord[last_control[gi]]] != gi) {
+          last_control[gi]--;
+        }
+
+        c_id_i = find_both(t_id_i,
+                           ind_d_ord,
+                           match_d_ord,
+                           treat,
+                           distance,
+                           eligible,
+                           gi,
+                           r,
+                           mm.row(t_id_t_i),
+                           ncc,
+                           caliper_covs_mat,
+                           caliper_covs,
+                           caliper_dist,
+                           use_exact,
+                           exact,
+                           aenc,
+                           antiexact_covs,
+                           first_control[gi],
+                           last_control[gi]);
+
+        if (c_id_i < 0) {
+          if (r == 1) {
+            k_total = 0;
+            break;
+          }
+          continue;
+        }
+
+        matches_i[k_total] = c_id_i;
+        k_total++;
+      }
+
+      if (k_total == 0) {
+        eligible[t_id_i] = false;
+        n_eligible[focal]--;
+        continue;
+      }
+
+      for (c = 0; c < k_total; c++) {
+        mm(t_id_t_i, sum(!is_na(mm(t_id_t_i, _)))) = matches_i[c];
+      }
+
+      matches_i[k_total] = t_id_i;
+
+      ck_ = matches_i[Range(0, k_total)];
 
       if (use_unit_id) {
-        ck_ = ind[unit_id == unit_id[ii]];
-
-        for (j = 0; j < ck_.size(); j++) {
-          ck = ck_[j];
-          times_matched[ck]++;
-          if (times_matched[ck] >= ratio[ck]) {
-            can_be_matched[ck] = false;
-          }
-        }
-
-        ck_ = ind[unit_id == unit_id[k]];
-
-        for (j = 0; j < ck_.size(); j++) {
-          ck = ck_[j];
-          times_matched[ck]++;
-          if (times_matched[ck] >= reuse_max) {
-            can_be_matched[ck] = false;
-          }
-        }
-      }
-      else {
-        times_matched[ii]++;
-        if (times_matched[ii] >= ratio[ii]) {
-          can_be_matched[ii] = false;
-        }
-
-        times_matched[k]++;
-        if (times_matched[k] >= reuse_max) {
-          can_be_matched[k] = false;
-        }
+        ck_ = ind[match(unit_id, as<IntegerVector>(unit_id[ck_])) > 0];
       }
 
-      if (!can_be_matched[ii]) {
-        if (any(as<LogicalVector>(can_be_matched[treat == 1])).is_false()) {
-          done = true;
-          break;
+      for (int ck : ck_) {
+        if (!eligible[ck]) {
+          continue;
         }
-      }
 
-      if (!can_be_matched[k]) {
-        if (any(as<LogicalVector>(can_be_matched[treat == 0])).is_false()) {
-          done = true;
-          break;
+        times_matched[ck]++;
+        if (times_matched[ck] >= times_matched_allowed[ck]) {
+          eligible[ck] = false;
+          n_eligible[treat[ck]]--;
         }
-      }
-
-      ind_cbm = ind[can_be_matched & (treat == 0)];
-      if (!can_be_matched[first_control]) {
-        first_control = ind_cbm[0];
-      }
-      if (!can_be_matched[last_control]) {
-        last_control = ind_cbm[ind_cbm.size() - 1];
       }
     }
-
-    if (done) break;
   }
 
   p.update(prog_length);
 
   mm = mm + 1;
-  rownames(mm) = mm_nm;
+  rownames(mm) = lab[ind_focal];
 
   return mm;
 }
