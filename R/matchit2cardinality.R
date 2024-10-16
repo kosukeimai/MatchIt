@@ -355,6 +355,8 @@ matchit2cardinality <-  function(treat, data, discarded, formula,
 
   #Apply std.tols
   if (any(std.tols)) {
+    std.tols <- which(std.tols)
+
     sds <- {
       if (estimand == "ATE") {
         pooled_sd(X[, std.tols, drop = FALSE], t = treat,
@@ -366,10 +368,9 @@ matchit2cardinality <-  function(treat, data, discarded, formula,
       }
     }
 
-    zero.sds <- sds < 1e-10
-
-    X[,std.tols][,!zero.sds] <- scale(X[, std.tols, drop = FALSE][,!zero.sds, drop = FALSE],
-                                      center = FALSE, scale = sds[!zero.sds])
+    for (i in which(sds >= 1e-10)) {
+      X[,std.tols[i]] <- X[,std.tols[i]] / sds[i]
+    }
   }
 
   opt.out <- setNames(vector("list", nlevels(ex)), levels(ex))
@@ -457,9 +458,11 @@ cardinality_matchit <- function(treat, X, estimand = "ATT", tols = .05, s.weight
                                 highs = "highs"))
 
   #Select match type
-  if (estimand == "ATE") match_type <- "profile_ate"
-  else if (!is.finite(ratio)) match_type <- "profile_att"
-  else match_type <- "cardinality"
+  match_type <- {
+    if (estimand == "ATE") "profile_ate"
+    else if (!is.finite(ratio)) "profile_att"
+    else "cardinality"
+  }
 
   #Set objective and constraints
   if (match_type == "profile_ate") {
