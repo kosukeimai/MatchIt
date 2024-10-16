@@ -212,7 +212,7 @@ matchit2subclass <- function(treat, distance, discarded,
   psclass[!discarded] <- as.integer(findInterval(distance[!discarded], q, all.inside = TRUE))
 
   if (length(unique(na.omit(psclass))) != subclass){
-    .wrn("Due to discreteness in the distance measure, fewer subclasses were generated than were requested")
+    .wrn("due to discreteness in the distance measure, fewer subclasses were generated than were requested")
   }
 
   if (min.n == 0) {
@@ -220,11 +220,14 @@ matchit2subclass <- function(treat, distance, discarded,
     is.na(psclass)[!discarded & !psclass %in% intersect(psclass[!discarded & treat == 1],
                                                         psclass[!discarded & treat == 0])] <- TRUE
   }
-  else if (any(table(treat, psclass) < min.n)) {
+  else {
     ## If any subclasses don't have members of a treatment group, fill them
     ## by "scooting" units from nearby subclasses until each subclass has a unit
     ## from each treatment group
-    psclass[!discarded] <- subclass_scoot(psclass[!discarded], treat[!discarded], distance[!discarded], min.n)
+    psclass[!discarded] <- subclass_scoot(psclass[!discarded],
+                                          treat[!discarded],
+                                          distance[!discarded],
+                                          min.n)
   }
 
   psclass <- setNames(factor(psclass, nmax = length(q)), names(treat))

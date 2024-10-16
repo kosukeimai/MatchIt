@@ -176,9 +176,12 @@ matchit2quick <- function(treat, formula, data, distance, discarded,
   if (!is.null(exact)) {
     ex <- factor(exactify(model.frame(exact, data = data),
                           sep = ", ", include_vars = TRUE)[!discarded])
-    cc <- intersect(as.integer(ex)[treat_==1], as.integer(ex)[treat_==0])
-    if (length(cc) == 0) .err("no matches were found")
 
+    cc <- intersect(as.integer(ex)[treat_==1], as.integer(ex)[treat_==0])
+
+    if (length(cc) == 0L) {
+      .err("no matches were found")
+    }
   }
   else {
     ex <- factor(rep("_", length(treat_)), levels = "_")
@@ -234,8 +237,13 @@ matchit2quick <- function(treat, formula, data, distance, discarded,
     pair[which(ex == e)[!is.na(p[[e]])]] <- paste(as.character(p[[e]][!is.na(p[[e]])]), e, sep = "|")
   }
 
-  if (all(is.na(pair))) .err("no matches were found")
-  if (length(p) == 1) p <- p[[1]]
+  if (all(is.na(pair))) {
+    .err("no matches were found")
+  }
+
+  if (length(p) == 1L) {
+    p <- p[[1]]
+  }
 
   psclass <- factor(pair)
   levels(psclass) <- seq_len(nlevels(psclass))

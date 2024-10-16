@@ -181,10 +181,12 @@ match.data <- function(object, group = "all", distance = "distance", weights = "
   if (is.null(data)) {
     env <- environment(object$formula)
     data <- try(eval(object$call$data, envir = env), silent = TRUE)
-    if (length(data) == 0 || inherits(data, "try-error") || length(dim(data)) != 2 || nrow(data) != length(object[["treat"]])) {
+    if (length(data) == 0 || inherits(data, "try-error") ||
+        length(dim(data)) != 2 || nrow(data) != length(object[["treat"]])) {
       env <- parent.frame()
       data <- try(eval(object$call$data, envir = env), silent = TRUE)
-      if (length(data) == 0 || inherits(data, "try-error") || length(dim(data)) != 2 || nrow(data) != length(object[["treat"]])) {
+      if (length(data) == 0 || inherits(data, "try-error") ||
+          length(dim(data)) != 2 || nrow(data) != length(object[["treat"]])) {
         data <- object[["model"]][["data"]]
         if (length(data) == 0 || nrow(data) != length(object[["treat"]])) {
           .err("a valid dataset could not be found. Please supply an argument to `data` containing the original dataset used in the matching")
@@ -194,9 +196,12 @@ match.data <- function(object, group = "all", distance = "distance", weights = "
   }
 
   if (!is.data.frame(data)) {
-    if (is.matrix(data)) data <- as.data.frame.matrix(data)
-    else .err("`data` must be a data frame")
+    if (!is.matrix(data)) {
+      .err("`data` must be a data frame")
+    }
+    data <- as.data.frame.matrix(data)
   }
+
   if (nrow(data) != length(object$treat)) {
     .err("`data` must have as many rows as there were units in the original call to `matchit()`")
   }

@@ -273,7 +273,7 @@ matchit2genetic <- function(treat, data, distance, discarded,
   if (!replace) {
     if (sum(!discarded & treat != focal) < sum(!discarded & treat == focal)) {
       .wrn(sprintf("fewer %s units than %s units; not all %s units will get a match",
-                      tc[2], tc[1], tc[1]))
+                   tc[2], tc[1], tc[1]))
     }
     else if (sum(!discarded & treat != focal) < sum(!discarded & treat == focal)*ratio) {
       .err(sprintf("not enough %s units for %s matches for each %s unit",
@@ -314,7 +314,7 @@ matchit2genetic <- function(treat, data, distance, discarded,
     X <- cbind(covs_to_balance, distance)
   }
 
-  if (ncol(covs_to_balance) == 0) {
+  if (ncol(covs_to_balance) == 0L) {
     .err("covariates must be specified in the input formula to use genetic matching")
   }
 
@@ -330,7 +330,9 @@ matchit2genetic <- function(treat, data, distance, discarded,
 
     exact.log <- c(rep(FALSE, ncol(X) - 1), TRUE)
   }
-  else exact.log <- ex <- NULL
+  else {
+    exact.log <- ex <- NULL
+  }
 
   #Process caliper; cal will be supplied to GenMatch() and Match()
   if (!is.null(caliper)) {
@@ -343,7 +345,9 @@ matchit2genetic <- function(treat, data, distance, discarded,
       #Expand exact.log for newly added covariates
       if (!is.null(exact.log)) exact.log <- c(exact.log, rep(FALSE, ncol(calcovs)))
     }
-    else cov.cals <- NULL
+    else {
+      cov.cals <- NULL
+    }
 
     #Matching::Match multiplies calipers by pop SD, so we need to divide by pop SD to unstandardize
     pop.sd <- function(x) sqrt(sum((x-mean(x))^2)/length(x))
@@ -376,8 +380,9 @@ matchit2genetic <- function(treat, data, distance, discarded,
         cal[ncol(covs_to_balance) + 1] <- dist.cal
       }
     }
-    else dist.cal <- NULL
-
+    else {
+      dist.cal <- NULL
+    }
   }
   else {
     cal <- dist.cal <- cov.cals <- NULL
@@ -399,6 +404,7 @@ matchit2genetic <- function(treat, data, distance, discarded,
         t(combn(which(antiexactcovs[,i] == u), 2))
       }))
     })), -1)
+
     if (!is.null(A[["restrict"]])) A[["restrict"]] <- rbind(A[["restrict"]], antiexact_restrict)
     else A[["restrict"]] <- antiexact_restrict
   }
@@ -441,9 +447,11 @@ matchit2genetic <- function(treat, data, distance, discarded,
                              replace = replace, estimand = "ATT", ties = FALSE,
                              weights = s.weights, CommonSupport = FALSE,
                              distance.tolerance = A[["distance.tolerance"]], Weight = 3,
-                             Weight.matrix = if (use.genetic) g.out
-                             else if (is.null(s.weights)) generalized_inverse(cor(X))
-                             else generalized_inverse(cov.wt(X, s.weights, cor = TRUE)$cor),
+                             Weight.matrix = {
+                               if (use.genetic) g.out
+                               else if (is.null(s.weights)) generalized_inverse(cor(X))
+                               else generalized_inverse(cov.wt(X, s.weights, cor = TRUE)$cor)
+                             },
                              restrict = A[["restrict"]], version = "fast")
   }, from = "Matching",
   dont_warn_if = "replace==FALSE, but there are more (weighted) treated obs than control obs.")

@@ -1,5 +1,6 @@
 ## Functions to calculate summary stats
-bal1var <- function(xx, tt, ww = NULL, s.weights, subclass = NULL, mm = NULL, s.d.denom = "treated", standardize = FALSE,
+bal1var <- function(xx, tt, ww = NULL, s.weights, subclass = NULL, mm = NULL,
+                    s.d.denom = "treated", standardize = FALSE,
                     compute.pair.dist = TRUE) {
 
   un <- is.null(ww)
@@ -67,7 +68,8 @@ bal1var <- function(xx, tt, ww = NULL, s.weights, subclass = NULL, mm = NULL, s.
   xsum
 }
 
-bal1var.subclass <- function(xx, tt, s.weights, subclass, s.d.denom = "treated", standardize = FALSE, which.subclass = NULL) {
+bal1var.subclass <- function(xx, tt, s.weights, subclass, s.d.denom = "treated",
+                             standardize = FALSE, which.subclass = NULL) {
   #Within-subclass balance statistics
   bin.var <- all(xx == 0 | xx == 1)
   in.sub <- !is.na(subclass) & subclass == which.subclass
@@ -157,10 +159,12 @@ pair.dist <- function(xx, tt, subclass = NULL, mm = NULL, std = NULL, fast = TRU
     }
     else {
       mpdiff <- pairdistsubC(as.numeric(xx), as.integer(tt),
-                             as.integer(subclass), nlevels(subclass))
+                             as.integer(subclass))
     }
   }
-  else return(NA_real_)
+  else {
+    return(NA_real_)
+  }
 
   if (!is.null(std) && abs(mpdiff) > 1e-8) {
     mpdiff <- mpdiff/std
@@ -243,5 +247,4 @@ qqsum <- function(x, t, w = NULL, standardize = FALSE) {
   }
 
   c(meandiff = mean(ediff), maxdiff = max(ediff))
-
 }

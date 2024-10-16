@@ -152,13 +152,13 @@ plot.matchit <- function(x, type = "qq", interactive = TRUE, which.xs = NULL, da
     if (is.null(x$distance)) {
       .err("`type = \"jitter\"` cannot be used if a distance measure is not estimated or supplied. No plots generated")
     }
-    jitter.pscore(x, interactive = interactive,...)
+    jitter_pscore(x, interactive = interactive,...)
   }
   else if (type == "histogram") {
     if (is.null(x$distance)) {
       .err("`type = \"hist\"` cannot be used if a distance measure is not estimated or supplied. No plots generated")
     }
-    hist.pscore(x,...)
+    hist_pscore(x,...)
   }
   invisible(x)
 }
@@ -229,13 +229,13 @@ plot.matchit.subclass <- function(x, type = "qq", interactive = TRUE, which.xs =
     if (is.null(x$distance)) {
       .err("`type = \"jitter\"` cannot be used when no distance variable was estimated or supplied")
     }
-    jitter.pscore(x, interactive = interactive, ...)
+    jitter_pscore(x, interactive = interactive, ...)
   }
   else if (type == "histogram") {
     if (is.null(x$distance)) {
       .err("`type = \"histogram\"` cannot be used when no distance variable was estimated or supplied")
     }
-    hist.pscore(x,...)
+    hist_pscore(x,...)
   }
   invisible(x)
 }
@@ -244,7 +244,7 @@ plot.matchit.subclass <- function(x, type = "qq", interactive = TRUE, which.xs =
 matchit.covplot <- function(object, type = "qq", interactive = TRUE, which.xs = NULL, data = NULL, ...) {
 
   if (is.null(which.xs)) {
-    if (length(object$X) == 0) {
+    if (length(object$X) == 0L) {
       .wrn("No covariates to plot")
       return(invisible(NULL))
     }
@@ -283,7 +283,7 @@ matchit.covplot <- function(object, type = "qq", interactive = TRUE, which.xs = 
 
     if (is.character(which.xs)) {
       if (!all(which.xs %in% names(data))) {
-        .err("All variables in `which.xs` must be in the supplied `matchit` object or in `data`")
+        .err("all variables in `which.xs` must be in the supplied `matchit` object or in `data`")
       }
       X <- data[which.xs]
     }
@@ -400,7 +400,7 @@ matchit.covplot.subclass <- function(object, type = "qq", which.subclass = NULL,
                                      interactive = TRUE, which.xs = NULL, data = NULL, ...) {
 
   if (is.null(which.xs)) {
-    if (length(object$X) == 0) {
+    if (length(object$X) == 0L) {
       .wrn("No covariates to plot")
       return(invisible(NULL))
     }
@@ -439,7 +439,7 @@ matchit.covplot.subclass <- function(object, type = "qq", which.subclass = NULL,
 
     if (is.character(which.xs)) {
       if (!all(which.xs %in% names(data))) {
-        .err("All variables in `which.xs` must be in the supplied `matchit` object or in `data`")
+        .err("all variables in `which.xs` must be in the supplied `matchit` object or in `data`")
       }
       X <- data[which.xs]
     }
@@ -448,7 +448,7 @@ matchit.covplot.subclass <- function(object, type = "qq", which.subclass = NULL,
       X <- model.frame(which.xs, data, na.action = "na.pass")
 
       if (anyNA(X)) {
-        .err("Missing values are not allowed in the covariates named in `which.xs`")
+        .err("missing values are not allowed in the covariates named in `which.xs`")
       }
     }
     else {
@@ -466,6 +466,7 @@ matchit.covplot.subclass <- function(object, type = "qq", which.subclass = NULL,
   if (!is.atomic(which.subclass)) {
     .err("The argument to `subclass` must be NULL or the indices of the subclasses for which to display covariate distributions")
   }
+
   if (!all(which.subclass %in% object$subclass[!is.na(object$subclass)])) {
     .err("The argument supplied to `subclass` is not the index of any subclass in the matchit object")
   }
@@ -813,7 +814,7 @@ densityplot_match <- function(x, t, w, sw, ...) {
   }
 }
 
-hist.pscore <- function(x, xlab = "Propensity Score", freq = FALSE, ...){
+hist_pscore <- function(x, xlab = "Propensity Score", freq = FALSE, ...) {
   .pardefault <- par(no.readonly = TRUE)
   on.exit(par(.pardefault))
 
@@ -870,7 +871,7 @@ hist.pscore <- function(x, xlab = "Propensity Score", freq = FALSE, ...){
 
 }
 
-jitter.pscore <- function(x, interactive, pch = 1, ...){
+jitter_pscore <- function(x, interactive, pch = 1, ...) {
 
   .pardefault <- par(no.readonly = TRUE)
   on.exit(par(.pardefault))

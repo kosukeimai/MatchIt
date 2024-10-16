@@ -272,8 +272,12 @@ matchit2full <- function(treat, formula, data, distance, discarded,
   if (!is.null(exact)) {
     ex <- factor(exactify(model.frame(exact, data = data),
                           sep = ", ", include_vars = TRUE)[!discarded])
+
     cc <- intersect(as.integer(ex)[treat_==1], as.integer(ex)[treat_==0])
-    if (length(cc) == 0) .err("No matches were found")
+
+    if (length(cc) == 0L) {
+      .err("No matches were found")
+    }
   }
   else {
     ex <- factor(rep("_", length(treat_)), levels = "_")
@@ -324,6 +328,7 @@ matchit2full <- function(treat, formula, data, distance, discarded,
       cov.cals <- setdiff(names(caliper), "")
       calcovs <- get.covs.matrix(reformulate(cov.cals, intercept = FALSE), data = data)
     }
+
     for (i in seq_along(caliper)) {
       if (names(caliper)[i] != "") {
         mo_cal <- optmatch::match_on(setNames(calcovs[!discarded, names(caliper)[i]], names(treat_)), z = treat_)
@@ -337,6 +342,7 @@ matchit2full <- function(treat, formula, data, distance, discarded,
 
       mo <- mo + optmatch::caliper(mo_cal, caliper[i])
     }
+
     rm(mo_cal)
   }
 
@@ -356,8 +362,11 @@ matchit2full <- function(treat, formula, data, distance, discarded,
     }
     else mo_ <- mo
 
-    if (any(dim(mo_) == 0) || !any(is.finite(mo_))) next
-    else if (all(dim(mo_) == 1) && all(is.finite(mo_))) {
+    if (any(dim(mo_) == 0) || !any(is.finite(mo_))) {
+      next
+    }
+
+    if (all(dim(mo_) == 1) && all(is.finite(mo_))) {
       pair[ex == e] <- paste(1, e, sep = "|")
       next
     }
@@ -374,8 +383,13 @@ matchit2full <- function(treat, formula, data, distance, discarded,
     pair[names(p[[e]])[!is.na(p[[e]])]] <- paste(as.character(p[[e]][!is.na(p[[e]])]), e, sep = "|")
   }
 
-  if (all(is.na(pair))) .err("No matches were found")
-  if (length(p) == 1) p <- p[[1]]
+  if (all(is.na(pair))) {
+    .err("No matches were found")
+  }
+
+  if (length(p) == 1L) {
+    p <- p[[1]]
+  }
 
   psclass <- factor(pair)
   levels(psclass) <- seq_len(nlevels(psclass))

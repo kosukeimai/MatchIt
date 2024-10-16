@@ -300,7 +300,10 @@ matchit2optimal <- function(treat, formula, data, distance, discarded,
                           sep = ", ", include_vars = TRUE)[!discarded])
 
     cc <- intersect(as.integer(ex)[treat_==1], as.integer(ex)[treat_==0])
-    if (length(cc) == 0) .err("No matches were found")
+
+    if (length(cc) == 0L) {
+      .err("No matches were found")
+    }
 
     e_ratios <- vapply(levels(ex), function(e) sum(treat_[ex == e] == 0)/sum(treat_[ex == e] == 1), numeric(1L))
 
@@ -387,8 +390,11 @@ matchit2optimal <- function(treat, formula, data, distance, discarded,
     }
     else mo_ <- mo
 
-    if (any(dim(mo_) == 0) || !any(is.finite(mo_))) next
-    else if (all(dim(mo_) == 1) && all(is.finite(mo_))) {
+    if (any(dim(mo_) == 0) || !any(is.finite(mo_))) {
+      next
+    }
+
+    if (all(dim(mo_) == 1) && all(is.finite(mo_))) {
       pair[ex == e] <- paste(1, e, sep = "|")
       next
     }
@@ -425,8 +431,13 @@ matchit2optimal <- function(treat, formula, data, distance, discarded,
     pair[names(p[[e]])[!is.na(p[[e]])]] <- paste(as.character(p[[e]][!is.na(p[[e]])]), e, sep = "|")
   }
 
-  if (all(is.na(pair))) .err("No matches were found")
-  if (length(p) == 1) p <- p[[1]]
+  if (all(is.na(pair))) {
+    .err("No matches were found")
+  }
+
+  if (length(p) == 1L) {
+    p <- p[[1]]
+  }
 
   psclass <- factor(pair)
   levels(psclass) <- seq_len(nlevels(psclass))
