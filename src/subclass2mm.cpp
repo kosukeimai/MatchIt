@@ -6,42 +6,77 @@ using namespace Rcpp;
 //focal is the treatment level (0/1) that corresponds to the rownames.
 
 // [[Rcpp::export]]
-IntegerMatrix subclass2mmC(const IntegerVector& subclass,
+IntegerMatrix subclass2mmC(const IntegerVector& subclass_,
                            const IntegerVector& treat,
                            const int& focal) {
 
-  IntegerVector tab = tabulateC_(subclass);
-  int mm_col = max(tab) - 1;
+  LogicalVector na_sub = is_na(subclass_);
+  IntegerVector unique_sub = unique(as<IntegerVector>(subclass_[!na_sub]));
+  IntegerVector subclass = match(subclass_, unique_sub) - 1;
 
-  IntegerVector ind = Range(0, treat.size() - 1);
-  IntegerVector ind1 = ind[treat == focal];
-  int n1 = ind1.size();
+  int nsub = unique_sub.size();
+
+  int n = treat.size();
+  IntegerVector ind = Range(0, n - 1);
+  IntegerVector ind_focal = ind[treat == focal];
+  int n1 = ind_focal.size();
+
+  IntegerVector subtab = rep(-1, nsub);
+
+  int i;
+  for (i = 0; i < n; i++) {
+    if (na_sub[i]) {
+      continue;
+    }
+
+    subtab[subclass[i]]++;
+  }
+
+  int mm_col = max(subtab);
 
   IntegerMatrix mm(n1, mm_col);
   mm.fill(NA_INTEGER);
-  rownames(mm) = as<CharacterVector>(treat.names())[ind1];
+  CharacterVector lab = treat.names();
 
-  IntegerVector in_sub = ind[!is_na(subclass)];
-  IntegerVector ind_in_sub = ind[in_sub];
-  IntegerVector ind0_in_sub = ind_in_sub[as<IntegerVector>(treat[in_sub]) != focal];
-  IntegerVector sub0_in_sub = subclass[ind0_in_sub];
+  IntegerVector ss = rep(NA_INTEGER, n1);
 
-  int i, t, s, nmc, mci;
-  IntegerVector mc(mm_col);
-
+  int s, si;
   for (i = 0; i < n1; i++) {
-    t = ind1[i];
-    s = subclass[t];
+    if (na_sub[ind_focal[i]]) {
+      continue;
+    }
 
-    if (s != NA_INTEGER) {
-      mc = ind0_in_sub[sub0_in_sub == s];
-      nmc = mc.size();
-      for (mci = 0; mci < nmc; mci++) {
-        mm(i, mci) = mc[mci] + 1;
+      ss[i] = subclass[ind_focal[i]];
+  }
+
+  for (i = 0; i < n; i++) {
+    if (treat[i] == focal) {
+      continue;
+    }
+
+    if (na_sub[i]) {
+      continue;
+    }
+
+    si = subclass[i];
+
+    for (s = 0; s < n1; s++) {
+      if (!std::isfinite(ss[s])) {
+        continue;
       }
+
+      if (si != ss[s]) {
+        continue;
+      }
+
+      mm(s, sum(!is_na(mm(s, _)))) = i;
+      break;
     }
   }
 
+  mm = mm + 1;
+
+  rownames(mm) = lab[ind_focal];
+
   return mm;
 }
-

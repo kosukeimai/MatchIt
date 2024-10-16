@@ -1,53 +1,89 @@
 #include <Rcpp.h>
+#include "internal.h"
+#include <cmath>
 using namespace Rcpp;
 
-// Computes matching weights from match.matrix
+// [[Rcpp::plugins(cpp11)]]
 
+// Computes matching weights from match.matrix
 // [[Rcpp::export]]
 NumericVector weights_matrixC(const IntegerMatrix& mm,
-                             const IntegerVector& treat) {
+                              const IntegerVector& treat_) {
+
+  CharacterVector lab = treat_.names();
+  IntegerVector unique_treat = unique(treat_);
+  std::sort(unique_treat.begin(), unique_treat.end());
+  int g = unique_treat.size();
+  IntegerVector treat = match(treat_, unique_treat) - 1;
+
   int n = treat.size();
-  IntegerVector ind = Range(0, n - 1);
-  IntegerVector ind0 = ind[treat == 0];
-  IntegerVector ind1 = ind[treat == 1];
+  int gi;
 
   NumericVector weights = rep(0., n);
-  // weights.fill(0);
+  weights.names() = lab;
+
+  IntegerVector row_ind = match(as<CharacterVector>(rownames(mm)), lab) - 1;
+  NumericVector matches_g = rep(0.0, g);
 
   int nr = mm.nrow();
-  int nc = mm.ncol();
 
-  int r, c, row_not_na, which_c, t_ind;
-  double weights_c, add_w;
-  IntegerVector row_r(nc);
+  int r, rn, i;
+  IntegerVector row_r(mm.ncol());
 
   for (r = 0; r < nr; r++) {
-    row_r = na_omit(mm(r, _));
-    row_not_na = row_r.size();
-    if (row_not_na == 0) {
+
+    row_r = na_omit(mm.row(r));
+
+    rn = row_r.size();
+
+    if (rn == 0) {
       continue;
     }
-    add_w = 1.0/static_cast<double>(row_not_na);
 
-    for (c = 0; c < row_not_na; c++) {
-      which_c = row_r[c] - 1;
-      weights_c = weights[which_c];
-      weights[which_c] = weights_c + add_w;
+    for (gi = 0; gi < g; gi++) {
+      matches_g[gi] = 0.0;
     }
 
-    t_ind = ind1[r];
-    weights[t_ind] = 1;
+    for (i = 0; i < rn; i++) {
+      matches_g[treat[row_r[i] - 1]] += 1.0;
+    }
+
+    for (i = 0; i < rn; i++) {
+      if (matches_g[treat[row_r[i] - 1]] == 0.0) {
+        continue;
+      }
+
+      weights[row_r[i] - 1] += 1.0/matches_g[treat[row_r[i] - 1]];
+    }
+
+    weights[row_ind[r]] += 1.0;
   }
 
-  NumericVector c_weights = weights[ind0];
-  double sum_c_w = sum(c_weights);
-  double sum_matched_c = sum(c_weights > 0);
-  int n0 = ind0.size();
+  //Scale control weights to sum to number of matched controls
+  NumericVector weights_gi;
+  IntegerVector indg;
+  double sum_w;
+  double sum_matched;
 
-  if (sum_c_w > 0) {
-    for (int i = 0; i < n0; i++ ) {
-      which_c = ind0[i];
-      weights[which_c] = c_weights[i] * sum_matched_c / sum_c_w;
+  for (gi = 0; gi < g; gi++) {
+    indg = which(treat == gi);
+
+    weights_gi = weights[indg];
+
+    sum_w = sum(weights_gi);
+
+    if (sum_w == 0) {
+      continue;
+    }
+
+    sum_matched = sum(weights_gi > 0);
+
+    if (sum_matched == sum_w) {
+      continue;
+    }
+
+    for (int i : indg) {
+      weights[i] *= sum_matched / sum_w;
     }
   }
 
