@@ -2,7 +2,7 @@ discard <- function(treat, pscore = NULL, option = NULL) {
 
   n.obs <- length(treat)
 
-  if (length(option) == 0){
+  if (is_null(option)){
     # keep all units
     return(setNames(rep(FALSE, n.obs), names(treat)))
   }
@@ -23,7 +23,7 @@ discard <- function(treat, pscore = NULL, option = NULL) {
     return(setNames(rep(FALSE, n.obs), names(treat)))
   }
 
-  if (is.null(pscore)) {
+  if (is_null(pscore)) {
     .err('`discard` must be a logical vector or "none" in the absence of a propensity score')
   }
 

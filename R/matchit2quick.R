@@ -165,7 +165,7 @@ matchit2quick <- function(treat, formula, data, distance, discarded,
   # treat_ <- setNames(as.integer(treat[!discarded] == focal), names(treat)[!discarded])
 
   if (is.full.mahalanobis) {
-    if (length(attr(terms(formula, data = data), "term.labels")) == 0) {
+    if (is_null(attr(terms(formula, data = data), "term.labels"))) {
       .err(sprintf("covariates must be specified in the input formula when `distance = \"%s\"`",
                    attr(is.full.mahalanobis, "transform")))
     }
@@ -173,13 +173,13 @@ matchit2quick <- function(treat, formula, data, distance, discarded,
   }
 
   #Exact matching strata
-  if (!is.null(exact)) {
+  if (is_not_null(exact)) {
     ex <- factor(exactify(model.frame(exact, data = data),
                           sep = ", ", include_vars = TRUE)[!discarded])
 
     cc <- intersect(as.integer(ex)[treat_==1], as.integer(ex)[treat_==0])
 
-    if (length(cc) == 0L) {
+    if (is_null(cc)) {
       .err("no matches were found")
     }
   }
@@ -190,7 +190,7 @@ matchit2quick <- function(treat, formula, data, distance, discarded,
 
   #Create distance matrix; note that Mahalanobis distance computed using entire
   #sample (minus discarded), like method2nearest, as opposed to within exact strata, like optmatch.
-  if (!is.null(mahvars)) {
+  if (is_not_null(mahvars)) {
     transform <- if (is.full.mahalanobis) attr(is.full.mahalanobis, "transform") else "mahalanobis"
     distcovs <- transform_covariates(mahvars, data = data, method = transform,
                                      s.weights = s.weights, treat = treat,
@@ -205,8 +205,8 @@ matchit2quick <- function(treat, formula, data, distance, discarded,
   rownames(distcovs) <- names(treat_)
 
   #Process caliper
-  if (!is.null(caliper)) {
-    if (!is.null(mahvars)) {
+  if (is_not_null(caliper)) {
+    if (is_not_null(mahvars)) {
       .err("with `method = \"quick\"`, a caliper can only be used when `distance` is a propensity score or vector and `mahvars` is not specified")
     }
     if (length(caliper) > 1 || !identical(names(caliper), "")) {

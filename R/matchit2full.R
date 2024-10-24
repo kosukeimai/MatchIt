@@ -72,7 +72,7 @@
 #' place when `distance` corresponds to a propensity score (e.g., for
 #' caliper matching or to discard units for common support). If specified, the
 #' distance measure will not be used in matching.
-#' @param antiexact for which variables ant-exact matching should take place.
+#' @param antiexact for which variables anti-exact matching should take place.
 #' Anti-exact matching is processed using \pkgfun{optmatch}{antiExactMatch}.
 #' @param discard a string containing a method for discarding units outside a
 #' region of common support. Only allowed when `distance` corresponds to a
@@ -255,10 +255,10 @@ matchit2full <- function(treat, formula, data, distance, discarded,
 
   treat_ <- setNames(as.integer(treat[!discarded] == focal), names(treat)[!discarded])
 
-  # if (!is.null(data)) data <- data[!discarded,]
+  # if (is_not_null(data)) data <- data[!discarded,]
 
   if (is.full.mahalanobis) {
-    if (length(attr(terms(formula, data = data), "term.labels")) == 0) {
+    if (is_null(attr(terms(formula, data = data), "term.labels"))) {
       .err(sprintf("covariates must be specified in the input formula when `distance = \"%s\"`",
                    attr(is.full.mahalanobis, "transform")))
     }
@@ -269,13 +269,13 @@ matchit2full <- function(treat, formula, data, distance, discarded,
   max.controls <- attr(ratio, "max.controls")
 
   #Exact matching strata
-  if (!is.null(exact)) {
+  if (is_not_null(exact)) {
     ex <- factor(exactify(model.frame(exact, data = data),
                           sep = ", ", include_vars = TRUE)[!discarded])
 
     cc <- intersect(as.integer(ex)[treat_==1], as.integer(ex)[treat_==0])
 
-    if (length(cc) == 0L) {
+    if (is_null(cc)) {
       .err("No matches were found")
     }
   }
@@ -286,7 +286,7 @@ matchit2full <- function(treat, formula, data, distance, discarded,
 
   #Create distance matrix; note that Mahalanobis distance computed using entire
   #sample (minus discarded), like method2nearest, as opposed to within exact strata, like optmatch.
-  if (!is.null(mahvars)) {
+  if (is_not_null(mahvars)) {
     transform <- if (is.full.mahalanobis) attr(is.full.mahalanobis, "transform") else "mahalanobis"
     mahcovs <- transform_covariates(mahvars, data = data, method = transform,
                                     s.weights = s.weights, treat = treat,
@@ -311,7 +311,7 @@ matchit2full <- function(treat, formula, data, distance, discarded,
   mo <- optmatch::as.InfinitySparseMatrix(mo)
 
   #Process antiexact
-  if (!is.null(antiexact)) {
+  if (is_not_null(antiexact)) {
     antiexactcovs <- model.frame(antiexact, data)
     for (i in seq_len(ncol(antiexactcovs))) {
       mo <- mo + optmatch::antiExactMatch(antiexactcovs[[i]][!discarded], z = treat_)
@@ -319,7 +319,7 @@ matchit2full <- function(treat, formula, data, distance, discarded,
   }
 
   #Process caliper
-  if (!is.null(caliper)) {
+  if (is_not_null(caliper)) {
     if (min.controls != 0) {
       .err("calipers cannot be used with `method = \"full\"` when `min.controls` is specified")
     }
@@ -333,7 +333,7 @@ matchit2full <- function(treat, formula, data, distance, discarded,
       if (names(caliper)[i] != "") {
         mo_cal <- optmatch::match_on(setNames(calcovs[!discarded, names(caliper)[i]], names(treat_)), z = treat_)
       }
-      else if (is.null(mahvars) || is.matrix(distance)) {
+      else if (is_null(mahvars) || is.matrix(distance)) {
         mo_cal <- mo
       }
       else {

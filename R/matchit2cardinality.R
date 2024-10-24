@@ -281,8 +281,10 @@ matchit2cardinality <-  function(treat, data, discarded, formula,
 
   estimand <- toupper(estimand)
   estimand <- match_arg(estimand, c("ATT", "ATC", "ATE"))
-  if (!is.null(focal)) {
-    if (!focal %in% tvals) .err("`focal` must be a value of the treatment")
+  if (is_not_null(focal)) {
+    if (!focal %in% tvals) {
+      .err("`focal` must be a value of the treatment")
+    }
   }
   else if (estimand == "ATC") {
     focal <- min(tvals)
@@ -297,11 +299,14 @@ matchit2cardinality <-  function(treat, data, discarded, formula,
 
   X <- get.covs.matrix(formula, data = data)
 
-  if (!is.null(exact)) {
+  if (is_not_null(exact)) {
     ex <- factor(exactify(model.frame(exact, data = data), nam = lab, sep = ", ", include_vars = TRUE))
 
-    cc <- do.call("intersect", lapply(tvals, function(t) as.integer(ex)[treat == t]))
-    if (length(cc) == 0) .err("no matches were found")
+    cc <- Reduce("intersect", lapply(tvals, function(t) as.integer(ex)[treat==t]))
+
+    if (is_null(cc)) {
+      .err("no matches were found")
+    }
   }
   else {
     ex <- gl(1, length(treat))
@@ -309,11 +314,13 @@ matchit2cardinality <-  function(treat, data, discarded, formula,
   }
 
   #Process mahvars
-  if (!is.null(mahvars)) {
+  if (is_not_null(mahvars)) {
     if (!is.finite(ratio) || !chk::vld_whole_number(ratio)) {
       .err("`mahvars` can only be used with `method = \"cardinality\"` when `ratio` is a whole number")
     }
+
     rlang::check_installed("optmatch")
+
     mahcovs <- transform_covariates(mahvars, data = data, method = "mahalanobis",
                                     s.weights = s.weights, treat = treat,
                                     discarded = discarded)
@@ -332,7 +339,7 @@ matchit2cardinality <-  function(treat, data, discarded, formula,
   assign <- get_assign(X)
 
   chk::chk_numeric(tols)
-  if (length(tols) == 1) {
+  if (length(tols) == 1L) {
     tols <- rep(tols, ncol(X))
   }
   else if (length(tols) == max(assign)) {
@@ -343,7 +350,7 @@ matchit2cardinality <-  function(treat, data, discarded, formula,
   }
 
   chk::chk_logical(std.tols)
-  if (length(std.tols) == 1) {
+  if (length(std.tols) == 1L) {
     std.tols <- rep(std.tols, ncol(X))
   }
   else if (length(std.tols) == max(assign)) {
@@ -396,7 +403,7 @@ matchit2cardinality <-  function(treat, data, discarded, formula,
     weights[in.exact] <- out[["weights"]]
     opt.out[[e]] <- out[["opt.out"]]
 
-    if (!is.null(mahvars)) {
+    if (is_not_null(mahvars)) {
       mo <- eucdist_internal(mahcovs[in.exact[out[["weights"]] > 0],, drop = FALSE],
                              treat_in.exact[out[["weights"]] > 0])
 
@@ -408,7 +415,7 @@ matchit2cardinality <-  function(treat, data, discarded, formula,
     }
   }
 
-  if (!is.null(pair)) {
+  if (is_not_null(pair)) {
     psclass <- factor(pair)
     levels(psclass) <- seq_len(nlevels(psclass))
     names(psclass) <- names(treat)
@@ -440,20 +447,27 @@ cardinality_matchit <- function(treat, X, estimand = "ATT", tols = .05, s.weight
                                 time = 2*60, verbose = FALSE) {
 
   n <- length(treat)
-  if (is.null(tvals)) tvals <- if (is.factor(treat)) levels(treat) else sort(unique(treat))
+  if (is_null(tvals)) tvals <- if (is.factor(treat)) levels(treat) else sort(unique(treat))
   nt <- length(tvals)
 
   #Check inputs
-  if (is.null(s.weights)) s.weights <- rep(1, n)
-  else for (i in tvals) s.weights[treat == i] <- s.weights[treat == i]/mean(s.weights[treat == i])
+  if (is_null(s.weights)) {
+    s.weights <- rep(1, n)
+  }
+  else {
+    for (i in tvals) {
+      s.weights[treat == i] <- s.weights[treat == i]/mean(s.weights[treat == i])
+    }
+  }
 
-  if (is.null(focal)) focal <- tvals[length(tvals)]
+  if (is_null(focal)) focal <- tvals[length(tvals)]
 
   chk::chk_number(time)
   chk::chk_gt(time, 0)
 
   chk::chk_string(solver)
   solver <- match_arg(solver, c("highs", "glpk", "symphony", "gurobi"))
+
   rlang::check_installed(switch(solver, glpk = "Rglpk", symphony = "Rsymphony", gurobi = "gurobi",
                                 highs = "highs"))
 
@@ -688,7 +702,8 @@ cardinality_error_report <- function(out, solver) {
   }
 }
 
-dispatch_optimizer <- function(solver = "glpk", obj, mat, dir, rhs, types, max = TRUE, lb = NULL, ub = NULL, time = NULL, verbose = FALSE) {
+dispatch_optimizer <- function(solver = "glpk", obj, mat, dir, rhs, types, max = TRUE,
+                               lb = NULL, ub = NULL, time = NULL, verbose = FALSE) {
   if (solver == "glpk") {
     dir[dir == "="] <- "=="
     opt.out <- Rglpk::Rglpk_solve_LP(obj = obj, mat = mat, dir = dir, rhs = rhs, max = max,

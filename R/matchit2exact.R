@@ -92,7 +92,9 @@ matchit2exact <- function(treat, covs, data, estimand = "ATT", verbose = FALSE, 
   if(verbose)
     cat("Exact matching... \n")
 
-  if (length(covs) == 0) .err("covariates must be specified in the input formula to use exact matching")
+  if (is_null(covs)) {
+    .err("covariates must be specified in the input formula to use exact matching")
+  }
 
   estimand <- toupper(estimand)
   estimand <- match_arg(estimand, c("ATT", "ATC", "ATE"))
@@ -100,8 +102,8 @@ matchit2exact <- function(treat, covs, data, estimand = "ATT", verbose = FALSE, 
   xx <- exactify(covs, names(treat))
   cc <- do.call("intersect", lapply(unique(treat), function(t) xx[treat == t]))
 
-  if (length(cc) == 0) {
-    .err("No exact matches were found")
+  if (is_null(cc)) {
+    .err("no exact matches were found")
   }
 
   psclass <- setNames(factor(match(xx, cc), nmax = length(cc)), names(treat))

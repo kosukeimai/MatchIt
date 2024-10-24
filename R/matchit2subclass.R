@@ -169,49 +169,49 @@ matchit2subclass <- function(treat, distance, discarded,
   min.n <- A[["min.n"]]
 
   #Checks
-  if (is.null(subclass)) subclass <- 6
+  if (is_null(subclass)) subclass <- 6
   chk::chk_numeric(subclass)
 
-  if (length(subclass) == 1) {
+  if (length(subclass) == 1L) {
     chk::chk_gt(subclass, 1)
   }
   else if (!all(subclass <= 1 & subclass >= 0)) {
     .err("When specifying `subclass` as a vector of quantiles, all values must be between 0 and 1")
   }
 
-  if (!is.null(sub.by)) {
+  if (is_not_null(sub.by)) {
     .err("`sub.by` is defunct and has been replaced with `estimand`")
   }
 
   estimand <- toupper(estimand)
   estimand <- match_arg(estimand, c("ATT", "ATC", "ATE"))
 
-  if (is.null(min.n)) min.n <- 1
+  if (is_null(min.n)) min.n <- 1
   chk::chk_count(min.n)
 
   n.obs <- length(treat)
 
   ## Setting Cut Points
-  if (length(subclass) == 1) {
+  if (length(subclass) == 1L) {
     sprobs <- seq(0, 1, length.out = round(subclass) + 1)
   }
   else {
     sprobs <- sort(subclass)
     if (sprobs[1] != 0) sprobs <- c(0, sprobs)
     if (sprobs[length(sprobs)] != 1) sprobs <- c(sprobs, 1)
-    subclass <- length(sprobs) - 1
+    subclass <- length(sprobs) - 1L
   }
 
   q <- switch(estimand,
-              "ATT" = quantile(distance[treat==1], probs = sprobs, na.rm = TRUE),
-              "ATC" = quantile(distance[treat==0], probs = sprobs, na.rm = TRUE),
+              "ATT" = quantile(distance[treat == 1], probs = sprobs, na.rm = TRUE),
+              "ATC" = quantile(distance[treat == 0], probs = sprobs, na.rm = TRUE),
               quantile(distance, probs = sprobs, na.rm = TRUE))
 
   ## Calculating Subclasses
   psclass <- setNames(rep(NA_integer_, n.obs), names(treat))
   psclass[!discarded] <- as.integer(findInterval(distance[!discarded], q, all.inside = TRUE))
 
-  if (length(unique(na.omit(psclass))) != subclass){
+  if (!has_n_unique(na.omit(psclass), subclass)) {
     .wrn("due to discreteness in the distance measure, fewer subclasses were generated than were requested")
   }
 

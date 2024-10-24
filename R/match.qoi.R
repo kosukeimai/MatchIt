@@ -3,7 +3,7 @@ bal1var <- function(xx, tt, ww = NULL, s.weights, subclass = NULL, mm = NULL,
                     s.d.denom = "treated", standardize = FALSE,
                     compute.pair.dist = TRUE) {
 
-  un <- is.null(ww)
+  un <- is_null(ww)
   bin.var <- all(xx == 0 | xx == 1)
 
   xsum <- rep(NA_real_, 7)
@@ -133,9 +133,13 @@ bal1var.subclass <- function(xx, tt, s.weights, subclass, s.d.denom = "treated",
 }
 
 #Compute within-pair/subclass distances
-pair.dist <- function(xx, tt, subclass = NULL, mm = NULL, std = NULL, fast = TRUE) {
+pair.dist <- function(xx, tt, subclass = NULL, mm = NULL, std = NULL) {
 
-  if (!is.null(mm)) {
+  if (is_not_null(subclass)) {
+    mpdiff <- pairdistsubC(as.numeric(xx), as.integer(tt),
+                           as.integer(subclass))
+  }
+  else if (is_not_null(mm)) {
     names(xx) <- names(tt)
     xx_t <- xx[rownames(mm)]
     xx_c <- matrix(0, nrow = nrow(mm), ncol = ncol(mm))
@@ -143,30 +147,11 @@ pair.dist <- function(xx, tt, subclass = NULL, mm = NULL, std = NULL, fast = TRU
 
     mpdiff <- mean(abs(xx_t - xx_c), na.rm = TRUE)
   }
-  else if (!is.null(subclass)) {
-    if (!fast) {
-      dists <- unlist(lapply(levels(subclass), function(s) {
-        t1 <- which(!is.na(subclass) & subclass == s & tt == 1)
-        t0 <- which(!is.na(subclass) & subclass == s & tt == 0)
-        if (length(t1) == 1 || length(t0) == 1) {
-          xx[t1] - xx[t0]
-        }
-        else {
-          outer(xx[t1], xx[t0], "-")
-        }
-      }))
-      mpdiff <- mean(abs(dists))
-    }
-    else {
-      mpdiff <- pairdistsubC(as.numeric(xx), as.integer(tt),
-                             as.integer(subclass))
-    }
-  }
   else {
     return(NA_real_)
   }
 
-  if (!is.null(std) && abs(mpdiff) > 1e-8) {
+  if (is_not_null(std) && abs(mpdiff) > 1e-8) {
     mpdiff <- mpdiff/std
   }
 
@@ -179,7 +164,7 @@ qqsum <- function(x, t, w = NULL, standardize = FALSE) {
 
   n.obs <- length(x)
 
-  if (is.null(w)) w <- rep(1, n.obs)
+  if (is_null(w)) w <- rep(1, n.obs)
 
   if (all(x == 0 | x == 1)) {
     t1 <- t == t[1]
