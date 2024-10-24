@@ -1,5 +1,6 @@
 // [[Rcpp::depends(RcppProgress)]]
 #include <progress.hpp>
+#include "eta_progress_bar.h"
 #include <Rcpp.h>
 #include "internal.h"
 #include <cmath>
@@ -36,17 +37,20 @@ IntegerMatrix nn_matchC(const IntegerVector& treat_,
     }
   }
 
-  int n = treat.size();
+  R_xlen_t n = treat.size();
   IntegerVector ind = Range(0, n - 1);
 
-  int i, gi;
+  R_xlen_t i;
+  int gi;
   IntegerVector indt(n);
-  IntegerVector indt_begin(g), indt_end(g);
+  IntegerVector indt_sep(g + 1);
   IntegerVector indt_tmp;
   IntegerVector nt(g);
-  IntegerVector ind_match = rep(NA_INTEGER, n);
+  IntegerVector ind_match(n);
+  ind_match.fill(NA_INTEGER);
 
-  IntegerVector times_matched = rep(0, n);
+  IntegerVector times_matched(n);
+  times_matched.fill(0);
   LogicalVector eligible = !discarded;
 
   IntegerVector g_c = Range(0, g - 1);
@@ -60,26 +64,23 @@ IntegerMatrix nn_matchC(const IntegerVector& treat_,
 
   int max_nc = max(as<IntegerVector>(nt[g_c]));
 
-  indt_begin[0] = 0;
-  indt_end[0] = nt[0];
+  indt_sep[0] = 0;
 
   for (gi = 0; gi < g; gi++) {
-    if (gi > 0) {
-      indt_begin[gi] = indt_end[gi - 1];
-      indt_end[gi] = indt_begin[gi] + nt[gi];
-    }
+    indt_sep[gi + 1] = indt_sep[gi] + nt[gi];
 
     indt_tmp = ind[treat == gi];
 
     for (i = 0; i < nt[gi]; i++) {
-      indt[indt_begin[gi] + i] = indt_tmp[i];
+      indt[indt_sep[gi] + i] = indt_tmp[i];
       ind_match[indt_tmp[i]] = i;
     }
   }
 
-  IntegerVector ind_focal = indt[Range(indt_begin[focal], indt_end[focal] - 1)];
+  IntegerVector ind_focal = indt[Range(indt_sep[focal], indt_sep[focal + 1] - 1)];
 
-  IntegerVector times_matched_allowed = rep(reuse_max, n);
+  IntegerVector times_matched_allowed(n);
+  times_matched_allowed.fill(reuse_max);
   times_matched_allowed[ind_focal] = ratio;
 
   IntegerVector n_eligible(unique_treat.size());
@@ -174,7 +175,8 @@ IntegerMatrix nn_matchC(const IntegerVector& treat_,
   int prog_length;
   if (use_reuse_max) prog_length = sum(ratio) + 1;
   else prog_length = nf + 1;
-  Progress p(prog_length, disl_prog);
+  ETAProgressBar pb;
+  Progress p(prog_length, disl_prog, pb);
 
   //Counters
   int r, t_id_t_i, t_id_i, c_id_i, c, k;
@@ -190,7 +192,7 @@ IntegerMatrix nn_matchC(const IntegerVector& treat_,
       for (i = 0; i < nf && max(as<IntegerVector>(n_eligible[g_c])) > 0; i++) {
 
         counter++;
-        if (counter % 500 == 0) Rcpp::checkUserInterrupt();
+        if (counter % 200 == 0) Rcpp::checkUserInterrupt();
 
         t_id_t_i = ord[i] - 1; // index among treated
         t_id_i = ind_focal[t_id_t_i]; // index among sample
@@ -211,7 +213,7 @@ IntegerMatrix nn_matchC(const IntegerVector& treat_,
           k = 0;
 
           if (n_eligible[gi] > 0) {
-            for (c = indt_begin[gi]; c < indt_end[gi]; c++) {
+            for (c = indt_sep[gi]; c < indt_sep[gi + 1]; c++) {
               c_id_i = indt[c];
 
               if (!eligible[c_id_i]) {
@@ -254,7 +256,7 @@ IntegerMatrix nn_matchC(const IntegerVector& treat_,
 
               //Compute distances among eligible
               if (use_mah_covs) {
-                dist = sqrt(sum(pow(mah_covs.row(t_id_i) - mah_covs.row(c_id_i), 2.0)));
+                dist = sum(pow(mah_covs.row(t_id_i) - mah_covs.row(c_id_i), 2.0));
               }
               else if (ps_diff_calculated) {
                 dist = ps_diff;
@@ -314,7 +316,7 @@ IntegerMatrix nn_matchC(const IntegerVector& treat_,
         ck_ = matches_i[Range(0, k_total)];
 
         if (use_unit_id) {
-          ck_ = ind[match(unit_id, as<IntegerVector>(unit_id[ck_])) > 0];
+          ck_ = which(!is_na(match(unit_id, as<IntegerVector>(unit_id[ck_]))));
         }
 
         for (int ck : ck_) {
@@ -354,7 +356,7 @@ IntegerMatrix nn_matchC(const IntegerVector& treat_,
         k = 0;
 
         if (n_eligible[gi] > 0) {
-          for (c = indt_begin[gi]; c < indt_end[gi]; c++) {
+          for (c = indt_sep[gi]; c < indt_sep[gi + 1]; c++) {
             c_id_i = indt[c];
 
             if (!eligible[c_id_i]) {

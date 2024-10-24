@@ -1,5 +1,6 @@
 // [[Rcpp::depends(RcppProgress)]]
 #include <progress.hpp>
+#include "eta_progress_bar.h"
 #include <Rcpp.h>
 #include "internal.h"
 using namespace Rcpp;
@@ -33,17 +34,20 @@ IntegerMatrix nn_matchC_vec(const IntegerVector& treat_,
     }
   }
 
-  int n = treat.size();
+  R_xlen_t n = treat.size();
   IntegerVector ind = Range(0, n - 1);
 
-  int i, gi;
+  R_xlen_t i;
+  int gi;
   IntegerVector indt(n);
-  IntegerVector indt_begin(g), indt_end(g);
+  IntegerVector indt_sep(g + 1);
   IntegerVector indt_tmp;
   IntegerVector nt(g);
-  IntegerVector ind_match = rep(NA_INTEGER, n);
+  IntegerVector ind_match(n);
+  ind_match.fill(NA_INTEGER);
 
-  IntegerVector times_matched = rep(0, n);
+  IntegerVector times_matched(n);
+  times_matched.fill(0);
   LogicalVector eligible = !discarded;
 
   IntegerVector g_c = Range(0, g - 1);
@@ -55,29 +59,26 @@ IntegerMatrix nn_matchC_vec(const IntegerVector& treat_,
 
   int nf = nt[focal];
 
-  indt_begin[0] = 0;
-  indt_end[0] = nt[0];
+  indt_sep[0] = 0;
 
   for (gi = 0; gi < g; gi++) {
-    if (gi > 0) {
-      indt_begin[gi] = indt_end[gi - 1];
-      indt_end[gi] = indt_begin[gi] + nt[gi];
-    }
+    indt_sep[gi + 1] = indt_sep[gi] + nt[gi];
 
     indt_tmp = ind[treat == gi];
 
     for (i = 0; i < nt[gi]; i++) {
-      indt[indt_begin[gi] + i] = indt_tmp[i];
+      indt[indt_sep[gi] + i] = indt_tmp[i];
       ind_match[indt_tmp[i]] = i;
     }
   }
 
-  IntegerVector ind_focal = indt[Range(indt_begin[focal], indt_end[focal] - 1)];
+  IntegerVector ind_focal = indt[Range(indt_sep[focal], indt_sep[focal + 1] - 1)];
 
-  IntegerVector times_matched_allowed = rep(reuse_max, n);
+  IntegerVector times_matched_allowed(n);
+  times_matched_allowed.fill(reuse_max);
   times_matched_allowed[ind_focal] = ratio;
 
-  IntegerVector n_eligible(unique_treat.size());
+  IntegerVector n_eligible(g);
   for (i = 0; i < n; i++) {
     if (eligible[i]) {
       n_eligible[treat[i]]++;
@@ -94,13 +95,15 @@ IntegerMatrix nn_matchC_vec(const IntegerVector& treat_,
   //Use base::order() because faster than Rcpp implementation of order()
   Function o("order");
 
-  IntegerVector ind_d_ord = o(distance, Named("decreasing") = false);
+  IntegerVector ind_d_ord = o(distance);
   ind_d_ord = ind_d_ord - 1; //location of each unit after sorting
 
   IntegerVector match_d_ord = match(ind, ind_d_ord) - 1;
 
-  IntegerVector first_control = rep(0, g);
-  IntegerVector last_control = rep(n - 1, g);
+  IntegerVector last_control(g);
+  last_control.fill(n - 1);
+  IntegerVector first_control(g);
+  first_control.fill(0);
 
   //exact
   bool use_exact = false;
@@ -150,7 +153,8 @@ IntegerMatrix nn_matchC_vec(const IntegerVector& treat_,
 
   //progress bar
   int prog_length = sum(ratio) + 1;
-  Progress p(prog_length, disl_prog);
+  ETAProgressBar pb;
+  Progress p(prog_length, disl_prog, pb);
 
   int r, t_id_t_i, t_id_i, c_id_i, c;
   IntegerVector ck_;
@@ -164,7 +168,7 @@ IntegerMatrix nn_matchC_vec(const IntegerVector& treat_,
       // t_id_t_i; index of treated unit to match among treated units
       // t_id_i: index of treated unit to match among all units
       counter++;
-      if (counter % 500 == 0) Rcpp::checkUserInterrupt();
+      if (counter % 200 == 0) Rcpp::checkUserInterrupt();
 
       t_id_t_i = ord[i] - 1;
       t_id_i = ind_focal[t_id_t_i];
@@ -182,12 +186,12 @@ IntegerMatrix nn_matchC_vec(const IntegerVector& treat_,
       k_total = 0;
 
       for (int gi : g_c) {
-        while (!eligible[ind_d_ord[first_control[gi]]] || treat[ind_d_ord[first_control[gi]]] != gi) {
-          first_control[gi]++;
-        }
-        while (!eligible[ind_d_ord[last_control[gi]]] || treat[ind_d_ord[last_control[gi]]] != gi) {
-          last_control[gi]--;
-        }
+        update_first_and_last_control(first_control,
+                                      last_control,
+                                      ind_d_ord,
+                                      eligible,
+                                      treat,
+                                      gi);
 
         c_id_i = find_both(t_id_i,
                            ind_d_ord,
@@ -206,8 +210,8 @@ IntegerMatrix nn_matchC_vec(const IntegerVector& treat_,
                            exact,
                            aenc,
                            antiexact_covs,
-                           first_control[gi],
-                           last_control[gi]);
+                           first_control,
+                           last_control);
 
         if (c_id_i < 0) {
           if (r == 1) {
@@ -236,7 +240,7 @@ IntegerMatrix nn_matchC_vec(const IntegerVector& treat_,
       ck_ = matches_i[Range(0, k_total)];
 
       if (use_unit_id) {
-        ck_ = ind[match(unit_id, as<IntegerVector>(unit_id[ck_])) > 0];
+        ck_ = which(!is_na(match(unit_id, as<IntegerVector>(unit_id[ck_]))));
       }
 
       for (int ck : ck_) {

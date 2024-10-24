@@ -1,5 +1,6 @@
 // [[Rcpp::depends(RcppProgress)]]
 #include <progress.hpp>
+#include "eta_progress_bar.h"
 #include <Rcpp.h>
 #include "internal.h"
 using namespace Rcpp;
@@ -18,22 +19,74 @@ IntegerMatrix nn_matchC_closest(const NumericMatrix& distance_mat,
                                 const Nullable<NumericMatrix>& caliper_covs_mat_ = R_NilValue,
                                 const Nullable<IntegerMatrix>& antiexact_covs_ = R_NilValue,
                                 const Nullable<IntegerVector>& unit_id_ = R_NilValue,
-                                const bool& disl_prog = false)
-{
+                                const bool& disl_prog = false) {
 
-  int r = distance_mat.nrow();
+  IntegerVector unique_treat = {0, 1};
+  int g = unique_treat.size();
+  int focal = 1;
 
-  int n = treat.size();
+  R_xlen_t n = treat.size();
+  IntegerVector ind = Range(0, n - 1);
 
-  IntegerMatrix mm(r, max(ratio));
+  R_xlen_t i;
+  int gi;
+  IntegerVector indt(n);
+  IntegerVector indt_sep(g + 1);
+  IntegerVector indt_tmp;
+  IntegerVector nt(g);
+  IntegerVector ind_match(n);
+  ind_match.fill(NA_INTEGER);
+
+  IntegerVector times_matched(n);
+  times_matched.fill(0);
+  LogicalVector eligible = !discarded;
+
+  for (gi = 0; gi < g; gi++) {
+    nt[gi] = sum(treat == gi);
+  }
+
+  int nf = nt[focal];
+
+  indt_sep[0] = 0;
+
+  for (gi = 0; gi < g; gi++) {
+    indt_sep[gi + 1] = indt_sep[gi] + nt[gi];
+
+    indt_tmp = ind[treat == gi];
+
+    for (i = 0; i < nt[gi]; i++) {
+      indt[indt_sep[gi] + i] = indt_tmp[i];
+      ind_match[indt_tmp[i]] = i;
+    }
+  }
+
+  IntegerVector ind_focal = indt[Range(indt_sep[focal], indt_sep[focal + 1] - 1)];
+
+  IntegerVector times_matched_allowed(n);
+  times_matched_allowed.fill(reuse_max);
+  times_matched_allowed[ind_focal] = ratio;
+
+  IntegerVector n_eligible(g);
+  for (i = 0; i < n; i++) {
+    if (eligible[i]) {
+      n_eligible[treat[i]]++;
+    }
+  }
+
+  int max_ratio = max(ratio);
+
+  // Output matrix with sample indices of control units
+  IntegerMatrix mm(nf, max_ratio);
   mm.fill(NA_INTEGER);
-
   CharacterVector lab = treat.names();
 
-
-  IntegerVector ind = Range(0, n - 1);
-  IntegerVector ind0 = ind[treat == 0];
-  IntegerVector ind1 = ind[treat == 1];
+  //exact
+  bool use_exact = false;
+  IntegerVector exact;
+  if (exact_.isNotNull()) {
+    exact = as<IntegerVector>(exact_);
+    use_exact = true;
+  }
 
   //caliper_dist
   double caliper_dist;
@@ -41,7 +94,7 @@ IntegerMatrix nn_matchC_closest(const NumericMatrix& distance_mat,
     caliper_dist = as<double>(caliper_dist_);
   }
   else {
-    caliper_dist = max_finite(distance_mat) + 1;
+    caliper_dist = max_finite(distance_mat) + .1;
   }
 
   //caliper_covs
@@ -55,14 +108,6 @@ IntegerMatrix nn_matchC_closest(const NumericMatrix& distance_mat,
   }
   else {
     ncc = 0;
-  }
-
-  //exact
-  bool use_exact = false;
-  IntegerVector exact;
-  if (exact_.isNotNull()) {
-    exact = as<IntegerVector>(exact_);
-    use_exact = true;
   }
 
   //antiexact
@@ -84,35 +129,29 @@ IntegerMatrix nn_matchC_closest(const NumericMatrix& distance_mat,
     use_unit_id = true;
   }
 
-  IntegerVector times_matched = rep(0, n);
-  LogicalVector eligible = rep(true, n);
-  eligible[discarded] = false;
-  IntegerVector times_matched_allowed = rep(reuse_max, n);
-  times_matched_allowed[ind1] = ratio;
-
-  int n_eligible0 = sum(as<LogicalVector>(eligible[treat == 0]));
-  int n_eligible1 = sum(as<LogicalVector>(eligible[treat == 1]));
-
   //progress bar
   int prog_length;
   prog_length = sum(ratio) + 1;
-  Progress p(prog_length, disl_prog);
-  p.increment();
+  ETAProgressBar pb;
+  Progress p(prog_length, disl_prog, pb);
 
   Function o("order");
 
   IntegerVector d_ord = o(distance_mat);
   d_ord = d_ord - 1; //Because R uses 1-indexing
 
+  gi = 0;
+
+  R_xlen_t r = distance_mat.nrow();
+
   int rj, cj, c_id_i, t_id_i;
+  int counter = -1;
 
-  for (int dj : d_ord) {
+  for (R_xlen_t dj : d_ord) {
+    counter++;
+    if (counter % 200 == 0) Rcpp::checkUserInterrupt();
 
-    if (n_eligible1 <= 0) {
-      break;
-    }
-
-    if (n_eligible0 <= 0) {
+    if (min(n_eligible) <= 0) {
       break;
     }
 
@@ -127,13 +166,14 @@ IntegerMatrix nn_matchC_closest(const NumericMatrix& distance_mat,
     cj = dj / r;
 
     // Get sample indices of members of potential pair
-    t_id_i = ind1[rj];
-    c_id_i = ind0[cj];
+    t_id_i = ind_focal[rj];
 
     // If either member is discarded, move on
     if (!eligible[t_id_i]) {
       continue;
     }
+
+    c_id_i = indt[indt_sep[gi] + cj];
 
     if (!eligible[c_id_i]) {
       continue;
@@ -158,11 +198,10 @@ IntegerMatrix nn_matchC_closest(const NumericMatrix& distance_mat,
     mm(rj, sum(!is_na(mm(rj, _)))) = c_id_i;
 
     // If unit_id used, increase match count of all units with that ID
+    ck_ = {t_id_i, c_id_i};
+
     if (use_unit_id) {
-      ck_ = ind[unit_id == unit_id[t_id_i] | unit_id == unit_id[c_id_i]];
-    }
-    else {
-      ck_ = {t_id_i, c_id_i};
+      ck_ = which(!is_na(match(unit_id, as<IntegerVector>(unit_id[ck_]))));
     }
 
     for (int ck : ck_) {
@@ -174,12 +213,7 @@ IntegerMatrix nn_matchC_closest(const NumericMatrix& distance_mat,
       times_matched[ck]++;
       if (times_matched[ck] >= times_matched_allowed[ck]) {
         eligible[ck] = false;
-        if (treat[ck] == 1) {
-          n_eligible1--;
-        }
-        else {
-          n_eligible0--;
-        }
+        n_eligible[treat[ck]]--;
       }
     }
 
@@ -189,7 +223,7 @@ IntegerMatrix nn_matchC_closest(const NumericMatrix& distance_mat,
   p.update(prog_length);
 
   mm = mm + 1;
-  rownames(mm) = lab[treat == 1];
+  rownames(mm) = lab[ind_focal];
 
   return mm;
 }
