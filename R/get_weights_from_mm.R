@@ -1,10 +1,10 @@
-get_weights_from_mm <- function(match.matrix, treat) {
+get_weights_from_mm <- function(match.matrix, treat, focal = NULL) {
 
   if (!is.integer(match.matrix)) {
     match.matrix <- charmm2nummm(match.matrix, treat)
   }
 
-  weights <- weights_matrixC(match.matrix, treat)
+  weights <- weights_matrixC(match.matrix, treat, focal)
 
   if (sum(weights) == 0)
     .err("No units were matched")
