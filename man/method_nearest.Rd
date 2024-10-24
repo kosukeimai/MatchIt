@@ -28,14 +28,14 @@ by the argument to \code{distance}.}
 \item{estimand}{a string containing the desired estimand. Allowable options
 include \code{"ATT"} and \code{"ATC"}. See Details.}
 
-\item{exact}{for which variables exact matching should take place.}
+\item{exact}{for which variables exact matching should take place; two units with different values of an exact matching variable will not be paired.}
 
 \item{mahvars}{for which variables Mahalanobis distance matching should take
 place when \code{distance} corresponds to a propensity score (e.g., for
 caliper matching or to discard units for common support). If specified, the
 distance measure will not be used in matching.}
 
-\item{antiexact}{for which variables ant-exact matching should take place.}
+\item{antiexact}{for which variables anti-exact matching should take place; two units with the same value of an anti-exact matching variable will not be paired.}
 
 \item{discard}{a string containing a method for discarding units outside a
 region of common support. Only allowed when \code{distance} corresponds to a
@@ -47,13 +47,13 @@ re-estimate the propensity score in the remaining sample prior to matching.}
 \item{s.weights}{the variable containing sampling weights to be incorporated
 into propensity score models and balance statistics.}
 
-\item{replace}{whether matching should be done with replacement.}
+\item{replace}{whether matching should be done with replacement (i.e., whether control units can be used as matches multiple times). See also the \code{reuse.max} argument below. Default is \code{FALSE} for matching without replacement.}
 
 \item{m.order}{the order that the matching takes place. Allowable options
 include \code{"largest"}, where matching takes place in descending order of
 distance measures; \code{"smallest"}, where matching takes place in ascending
 order of distance measures; \code{"closest"}, where matching takes place in
-order of the distance between units; \code{"random"}, where matching takes place
+ascending order of the distance between units; \code{"random"}, where matching takes place
 in a random order; and \code{"data"} where matching takes place based on the
 order of units in the data. When \code{m.order = "random"}, results may differ
 across different runs of the same code unless a seed is set and specified
@@ -61,8 +61,7 @@ with \code{\link[=set.seed]{set.seed()}}. The default of \code{NULL} corresponds
 propensity score is estimated or supplied as a vector and \code{"data"}
 otherwise.}
 
-\item{caliper}{the width(s) of the caliper(s) used for caliper matching. See
-Details and Examples.}
+\item{caliper}{the width(s) of the caliper(s) used for caliper matching. Two units with a difference on a caliper variable larger than the caliper will not be paired. See Details and Examples.}
 
 \item{std.caliper}{\code{logical}; when calipers are specified, whether they
 are in standard deviation units (\code{TRUE}) or raw units (\code{FALSE}).}
@@ -77,7 +76,7 @@ section "Variable Ratio Matching" in Details below.}
 
 \item{verbose}{\code{logical}; whether information about the matching
 process should be printed to the console. When \code{TRUE}, a progress bar
-implemented using \emph{RcppProgress} will be displayed.}
+implemented using \emph{RcppProgress} will be displayed along with an estimate of the time remaining.}
 
 \item{\dots}{additional arguments that control the matching specification:
 \describe{
@@ -94,8 +93,7 @@ observation, i.e., in case multiple observations correspond to the same
 unit. Once a control observation has been matched, no other observation with
 the same unit ID can be used as matches. This ensures each control unit is
 used only once even if it has multiple observations associated with it.
-Omitting this argument is the same as giving each observation a unique ID.
-Ignored when \code{replace = TRUE}.  }
+Omitting this argument is the same as giving each observation a unique ID.}
 }}
 }
 \description{
@@ -198,8 +196,7 @@ switch to trigger which treatment group is considered "focal".
 
 \subsection{Variable Ratio Matching}{
 
-\code{matchit()} can perform variable
-ratio "extremal" matching as described by Ming and Rosenbaum (2000). This
+\code{matchit()} can perform variable ratio "extremal" matching as described by Ming and Rosenbaum (2000). This
 method tends to result in better balance than fixed ratio matching at the
 expense of some precision. When \code{ratio > 1}, rather than requiring all
 treated units to receive \code{ratio} matches, each treated unit is assigned
@@ -231,7 +228,12 @@ Examples below for an example of their use.
 
 \subsection{Using \code{m.order = "closest"}}{
 
-As of version 4.6.0, \code{m.order} can be set to \code{"closest"}, which works regardless of how the distance measure is specified. This matches in order of the distance between units. The closest pair of units across all potential pairs of units will be matched first; the second closest pair of all potential pairs will be matched second, etc. This ensures that the best possible matches are given priority, and in that sense performs similarly to \code{m.order = "smallest"}.
+As of version 4.6.0, \code{m.order} can be set to \code{"closest"}, which works regardless of how the distance measure is specified. This matches in order of the distance between units. The closest pair of units across all potential pairs of units will be matched first; the second closest pair of all potential pairs will be matched second, etc. This ensures that the best possible matches are given priority, and in that sense performs similarly to \code{m.order = "smallest"}. When \code{distance} is a vector or a method of estimating a propensity score, an algorithm described by \href{https://doi.org/10.1002/pds.3263}{Rassen et al. (2012)} is used.
+}
+
+\subsection{Reproducibility}{
+
+Nearest neighbor matching involves a random component only when \code{m.order = "random"}, so a seed must be set in that case using \code{\link[=set.seed]{set.seed()}} to ensure reproducibility. Otherwise, it is purely deterministic, and any ties are broken based on the order in which the data appear.
 }
 }
 \note{

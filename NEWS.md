@@ -8,7 +8,21 @@ output:
 
 # MatchIt (development version)
 
+Most improvements are related to performance. Some of these dramatically improve speeds for large datasets. Most come from improvements to `Rcpp` code.
+
+* Speed improvements to `method = "nearest"`, especially when matching on a propensity score.
+
+* Speed improvements to `summary()` when `pair.dist = TRUE` and a `match.matrix` component is not included in the output (e.g., for `method = "full"` or `method = "quick"`).
+
+* Speed improvements to `method = "subclass"` with `min.n` greater than 0.
+
+* When using `method = "nearest"` with `m.order = "closest"`, the full distance matrix is no longer computed, which increases support for larger samples. This uses an adaptation of an algorithm described by [Rassen et al. (2012)](https://doi.org/10.1002/pds.3263).
+
+* When using `method = "nearest"` with `verbose = TRUE`, the progress bar now displays an estimate of how much time remains.
+
 * Fixed a bug when using `method = "optimal"` or `method = "full"` with `discard` specified and `data` given as a tibble (`tbl_df` object). (#185)
+
+* Fixed a bug when using `method = "cardinality"` with a single covariate. (#194)
 
 # MatchIt 4.5.5
 

@@ -33,6 +33,7 @@ me_ok <- requireNamespace("marginaleffects", quietly = TRUE) &&
 su_ok <- requireNamespace("survival", quietly = TRUE)
 boot_ok <- requireNamespace("boot", quietly = TRUE)
 ```
+
 ```{r, include = FALSE}
 #Generating data similar to Austin (2009) for demonstrating treatment effect estimation
 gen_X <- function(n) {
@@ -190,7 +191,7 @@ library("marginaleffects")
 
 All effect estimates will be computed using `marginaleffects::avg_comparions()`, even when its use may be superfluous (e.g., for performing a t-test in the matched set). As previously mentioned, this is because it is useful to have a single workflow that works no matter the situation, perhaps with very slight modifications to accommodate different contexts. Using `avg_comparions()` has several advantages, even when the alternatives are simple: it only provides the effect estimate, and not other coefficients; it automatically incorporates robust and cluster-robust SEs if requested; and it always produces average marginal effects for the correct population if requested.
 
-Other packages may be of use but are not used here. There are alternatives to the `marginaleffects` package for computing average marginal effects, including `margins` and `stdReg`. The `survey` package can be used to estimate robust SEs incorporating weights and provides functions for survey-weighted generalized linear models and Cox-proportional hazards models. It is often used with propensity score weighting.
+Other packages may be of use but are not used here. There are alternatives to the `marginaleffects` package for computing average marginal effects, including `margins` and `stdReg`. The `survey` package can be used to estimate robust SEs incorporating weights and provides functions for survey-weighted generalized linear models and Cox-proportional hazards models.
 
 ### The Standard Case
 
@@ -235,24 +236,22 @@ Next, we use `marginaleffects::avg_comparisons()` to estimate the ATT.
 ```{r, eval=me_ok}
 avg_comparisons(fit1, variables = "A",
                 vcov = ~subclass,
-                newdata = subset(md, A == 1),
-                wts = "weights")
+                newdata = subset(A == 1))
 ```
 
-Let's break down the call to `avg_comparisons()`: to the first argument, we supply the model fit, `fit1`; to the `variables` argument, the name of the treatment (`"A"`); to the `vcov` argument, a formula with subclass membership (`~subclass`) to request cluster-robust SEs; to the `newdata` argument, a version of the matched dataset containing only the treated units (`subset(md, A == 1)`) to request the ATT; and to the `wts` argument, the names of the variable in `md` containing the matching weights (`"weights"`) to ensure they are included in the analysis. Some of these arguments differ depending on the specifics of the matching method and outcome type; see the sections below for information.
+Let's break down the call to `avg_comparisons()`: to the first argument, we supply the model fit, `fit1`; to the `variables` argument, the name of the treatment (`"A"`); to the `vcov` argument, a formula with subclass membership (`~subclass`) to request cluster-robust SEs; and to the `newdata` argument, a version of the matched dataset containing only the treated units (`subset(A == 1)`) to request the ATT. Some of these arguments differ depending on the specifics of the matching method and outcome type; see the sections below for information.
 
 If, in addition to the effect estimate, we want the average estimated potential outcomes, we can use `marginaleffects::avg_predictions()`, which we demonstrate below. Note the interpretation of the resulting estimates as the expected potential outcomes is only valid if all covariates present in the outcome model (if any) are interacted with the treatment.
 
 ```{r, eval=me_ok && packageVersion("marginaleffects") >= "0.11.0"}
 avg_predictions(fit1, variables = "A",
                 vcov = ~subclass,
-                newdata = subset(md, A == 1),
-                wts = "weights")
+                newdata = subset(A == 1))
 ```
 
 We can see that the difference in potential outcome means is equal to the average treatment effect computed previously[^4]. All of the arguments to `avg_predictions()` are the same as those to `avg_comparisons()`.
 
-[^4]: To verify that they are equal, supply the output of `avg_predictions()` to `hypotheses(), e.g., `avg_predictions(...) |> hypotheses("revpairwise")`; this explicitly compares the average potential outcomes and should yield identical estimates to the `avg_comparisons()` call.
+[^4]: To verify that they are equal, supply the output of `avg_predictions()` to `hypotheses(), e.g.,`avg_predictions(...) \|\> hypotheses("revpairwise")`; this explicitly compares the average potential outcomes and should yield identical estimates to the`avg_comparisons()\` call.
 
 ### Adjustments to the Standard Case
 
@@ -260,7 +259,7 @@ This section explains how the procedure might differ if any of the following spe
 
 #### Matching for the ATE
 
-When matching for the ATE (including [coarsened] exact matching, full matching, subclassification, and cardinality matching), everything is identical to the Standard Case except that in the calls to `avg_comparisons()` and `avg_predictions()`, the `newdata` argument is omitted (or can be replaced with `newdata = md`). This is because the estimated potential outcomes are computed for the full matched sample rather than just the treated units.
+When matching for the ATE (including [coarsened] exact matching, full matching, subclassification, and cardinality matching), everything is identical to the Standard Case except that in the calls to `avg_comparisons()` and `avg_predictions()`, the `newdata` argument is omitted. This is because the estimated potential outcomes are computed for the full sample rather than just the treated units.
 
 #### Matching with replacement
 
@@ -280,7 +279,7 @@ There are two natural ways to estimate marginal effects after subclassification:
 
 All of the methods described above for the Standard Case also work with MMWS because the formation of the weights is the same; the only difference is that it is not appropriate to use cluster-robust SEs with MMWS because of how few clusters are present, so one should change `vcov = ~subclass` to `vcov = "HC3"` in the calls to `avg_comparisons()` and `avg_predictions()` to use robust SEs instead of cluster-robust SEs. The subclasses can optionally be included in the outcome model (optionally interacting with treatment) as an alternative to including the propensity score.
 
-The subclass-specific approach omits the weights and uses the subclasses directly. It is only appropriate when there are a small number of subclasses relative to the sample size. In the outcome model, `subclass` should interact with all other predictors in the model (including the treatment, covariates, and interactions, if any), and the `weights` argument should be omitted. In the calls to `avg_comparisons()` and `avg_predictions()`, the `wts` argument should be omitted. As with MMWS, one should change `vcov = ~subclass` to `vcov = "HC3"` in the calls to `avg_comparisons()` and `avg_predictions()`. See an example below:
+The subclass-specific approach omits the weights and uses the subclasses directly. It is only appropriate when there are a small number of subclasses relative to the sample size. In the outcome model, `subclass` should interact with all other predictors in the model (including the treatment, covariates, and interactions, if any), and the `weights` argument should be omitted. As with MMWS, one should change `vcov = ~subclass` to `vcov = "HC3"` in the calls to `avg_comparisons()` and `avg_predictions()`. See an example below:
 
 ```{r, eval=me_ok}
 #Subclassification on the PS for the ATT
@@ -298,7 +297,7 @@ fitS <- lm(Y_C ~ subclass * (A * (X1 + X2 + X3 + X4 + X5 +
 avg_comparisons(fitS,
                 variables = "A",
                 vcov = "HC3",
-                newdata = subset(md, A == 1))
+                newdata = subset(A == 1))
 ```
 
 A model with fewer terms may be required when subclasses are small; removing covariates or their interactions with treatment may be required and can increase precision in smaller datasets. Remember that if subclassification is done for the ATE (even if units are dropped), the `newdata` argument should be dropped.
@@ -311,7 +310,7 @@ To fit a logistic regression model, change `lm()` to `glm()` and set `family = q
 
 [^6]: We use `quasibinomial()` instead of `binomial()` simply to avoid a spurious warning that can occur with certain kinds of matching; the results will be identical regardless.
 
-[^7]: Note that for low or high average expected risks computed with `predictions()`, the confidence intervals may go below 0 or above 1; this is because an approximation is used. To avoid this problem, bootstrapping or simulation-based inference can be used instead.
+[^7]: Note that for low or high average expected risks computed with `avg_predictions()`, the confidence intervals may go below 0 or above 1; this is because an approximation is used. To avoid this problem, bootstrapping or simulation-based inference can be used instead.
 
 To compute the marginal RR, we need to add `comparison = "lnratioavg"` to `avg_comparisons()`; this computes the marginal log RR. To get the marginal RR, we need to add `transform = "exp"` to `avg_comparisons()`, which exponentiates the marginal log RR and its confidence interval. The code below computes the effects and displays the statistics of interest:
 
@@ -326,8 +325,7 @@ fit2 <- glm(Y_B ~ A * (X1 + X2 + X3 + X4 + X5 +
 avg_comparisons(fit2,
                 variables = "A",
                 vcov = ~subclass,
-                newdata = subset(md, A == 1),
-                wts = "weights",
+                newdata = subset(A == 1),
                 comparison = "lnratioavg",
                 transform = "exp")
 ```
@@ -424,12 +422,12 @@ boot_fun <- function(data, i) {
   #Estimated potential outcomes under treatment
   p1 <- predict(fit, type = "response",
                 newdata = transform(md1, A = 1))
-  Ep1 <- weighted.mean(p1, md1$weights)
+  Ep1 <- mean(p1)
   
   #Estimated potential outcomes under control
   p0 <- predict(fit, type = "response",
                 newdata = transform(md1, A = 0))
-  Ep0 <- weighted.mean(p0, md1$weights)
+  Ep0 <- mean(p0)
   
   #Risk ratio
   return(Ep1 / Ep0)
@@ -500,12 +498,12 @@ cluster_boot_fun <- function(pairs, i) {
   #Estimated potential outcomes under treatment
   p1 <- predict(fit, type = "response",
                 newdata = transform(md1, A = 1))
-  Ep1 <- weighted.mean(p1, md1$weights)
+  Ep1 <- mean(p1)
   
   #Estimated potential outcomes under control
   p0 <- predict(fit, type = "response",
                 newdata = transform(md1, A = 0))
-  Ep0 <- weighted.mean(p0, md1$weights)
+  Ep0 <- mean(p0)
   
   #Risk ratio
   return(Ep1 / Ep0)
@@ -565,8 +563,7 @@ To estimate the subgroup ATTs, we can use `avg_comparisons()`, this time specify
 ```{r, eval=me_ok}
 avg_comparisons(fitP, variables = "A",
                 vcov = ~subclass,
-                newdata = subset(md, A == 1),
-                wts = "weights",
+                newdata = subset(A == 1),
                 by = "X5")
 ```
 
@@ -575,8 +572,7 @@ We can see that the subgroup mean differences are quite similar to each other. F
 ```{r, eval=me_ok}
 avg_comparisons(fitP, variables = "A",
                 vcov = ~subclass,
-                newdata = subset(md, A == 1),
-                wts = "weights",
+                newdata = subset(A == 1),
                 by = "X5",
                 hypothesis = "pairwise")
 ```

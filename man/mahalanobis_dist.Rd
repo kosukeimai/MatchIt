@@ -177,8 +177,7 @@ table(lalonde$treat)
 
 }
 \references{
-Rosenbaum, P. R. (2010). \emph{Design of observational studies}.
-Springer.
+Rosenbaum, P. R. (2010). \emph{Design of observational studies}. Springer.
 
 Rosenbaum, P. R., & Rubin, D. B. (1985). Constructing a Control Group Using
 Multivariate Matched Sampling Methods That Incorporate the Propensity Score.
@@ -189,7 +188,7 @@ Rubin, D. B. (1980). Bias Reduction Using Mahalanobis-Metric Matching.
 }
 \seealso{
 \code{\link{distance}}, \code{\link[=matchit]{matchit()}}, \code{\link[=dist]{dist()}} (which is used
-internally to compute Euclidean distances)
+internally to compute some Euclidean distances)
 
 \pkgfun{optmatch}{match_on}, which provides similar functionality but with fewer
 options and a focus on efficient storage of the output.
