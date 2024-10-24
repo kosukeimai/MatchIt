@@ -9,30 +9,36 @@ double pairdistsubC(const NumericVector& x,
 
   double dist = 0;
 
-  int n = t.size();
-  int i, j;
+  R_xlen_t i, j;
+  int s_i, ord_i, ord_j;
   int k = 0;
 
-  for (i = 0; i < n - 1; i++) {
-    if (!std::isfinite(s[i])) {
-      continue;
-    }
+  Function o("order");
+  IntegerVector ord = o(s);
+  ord = ord - 1;
+
+  R_xlen_t n = sum(!is_na(s));
+
+
+  for (i = 0; i < n; i++) {
+    ord_i = ord[i];
+    s_i = s[ord_i];
 
     for (j = i + 1; j < n; j++) {
-      if (s[i] != s[j]) {
+      ord_j = ord[j];
+
+      if (s[ord_j] != s_i) {
+        break;
+      }
+
+      if (t[ord_j] == t[ord_i]) {
         continue;
       }
 
-      if (t[i] == t[j]) {
-        continue;
-      }
-
-      dist += std::abs(x[i] - x[j]);
       k++;
+      dist += (std::abs(x[ord_j] - x[ord_i]) - dist) / k;
     }
   }
-
-  dist /= k;
 
   return dist;
 }

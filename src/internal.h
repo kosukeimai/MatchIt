@@ -5,7 +5,7 @@
 using namespace Rcpp;
 
 IntegerVector tabulateC_(const IntegerVector& bins,
-                         const Nullable<int>& nbins = R_NilValue);
+                         const int& nbins = 0);
 
 IntegerVector which(const LogicalVector& x);
 
@@ -26,8 +26,8 @@ int find_both(const int& t_id,
               const IntegerVector& exact,
               const int& aenc,
               const IntegerMatrix& antiexact_covs,
-              const int& first_control,
-              const int& last_control);
+              const IntegerVector& first_control,
+              const IntegerVector& last_control);
 
 int find_lr(const int& prev_match,
             const int& t_id,
@@ -45,35 +45,42 @@ int find_lr(const int& prev_match,
             const IntegerVector& exact,
             const int& aenc,
             const IntegerMatrix& antiexact_covs,
-            const int& first_control,
-            const int& last_control);
+            const IntegerVector& first_control,
+            const IntegerVector& last_control);
 
 bool antiexact_okay(const int& aenc,
-                    const int& ii,
                     const int& i,
+                    const int& j,
                     const IntegerMatrix& antiexact_covs);
 
 bool caliper_covs_okay(const int& ncc,
-                       const int& ii,
                        const int& i,
+                       const int& j,
                        const NumericMatrix& caliper_covs_mat,
                        const NumericVector& caliper_covs);
 
 bool mm_okay(const int& r,
              const int& i,
-             const IntegerVector& mm_ordi);
+             const IntegerVector& mm_rowi);
 
 bool exact_okay(const bool& use_exact,
-                const int& ii,
                 const int& i,
+                const int& j,
                 const IntegerVector& exact);
 
-IntegerVector swap_pos(IntegerVector x,
-                       const int& a,
-                       const int& b);
+void swap_pos(IntegerVector x,
+              const int& a,
+              const int& b);
 
 double max_finite(const NumericVector& x);
 
 double min_finite(const NumericVector& x);
+
+void update_first_and_last_control(IntegerVector first_control,
+                                   IntegerVector last_control,
+                                   const IntegerVector& ind_d_ord,
+                                   const LogicalVector& eligible,
+                                   const IntegerVector& treat,
+                                   const int& gi);
 
 #endif

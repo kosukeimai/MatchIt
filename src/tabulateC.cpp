@@ -5,5 +5,9 @@ using namespace Rcpp;
 // [[Rcpp::export]]
 IntegerVector tabulateC(const IntegerVector& bins,
                         const Nullable<int>& nbins = R_NilValue) {
-  return tabulateC_(bins, nbins);
+
+  int nbins_ = 0;
+  if (nbins.isNotNull()) nbins_ = as<int>(nbins);
+
+  return tabulateC_(bins, nbins_);
 }

@@ -11,10 +11,10 @@ using namespace Rcpp;
 
 // [[Rcpp::interfaces(cpp)]]
 IntegerVector tabulateC_(const IntegerVector& bins,
-                         const Nullable<int>& nbins = R_NilValue) {
+                         const int& nbins = 0) {
   int max_bin;
 
-  if (nbins.isNotNull()) max_bin = as<int>(nbins);
+  if (nbins > 0) max_bin = nbins;
   else max_bin = max(na_omit(bins));
 
   IntegerVector counts(max_bin);
@@ -38,15 +38,15 @@ IntegerVector which(const LogicalVector& x) {
 
 // [[Rcpp::interfaces(cpp)]]
 bool antiexact_okay(const int& aenc,
-                    const int& ii,
                     const int& i,
+                    const int& j,
                     const IntegerMatrix& antiexact_covs) {
   if (aenc == 0) {
     return true;
   }
 
-  for (int j = 0; j < aenc; j++) {
-    if (antiexact_covs(ii, j) == antiexact_covs(i, j)) {
+  for (int k = 0; k < aenc; k++) {
+    if (antiexact_covs(i, k) == antiexact_covs(j, k)) {
       return false;
     }
   }
@@ -56,22 +56,22 @@ bool antiexact_okay(const int& aenc,
 
 // [[Rcpp::interfaces(cpp)]]
 bool caliper_covs_okay(const int& ncc,
-                       const int& ii,
                        const int& i,
+                       const int& j,
                        const NumericMatrix& caliper_covs_mat,
                        const NumericVector& caliper_covs) {
   if (ncc == 0) {
     return true;
   }
 
-  for (int j = 0; j < ncc; j++) {
-    if (caliper_covs[j] >= 0) {
-      if (std::abs(caliper_covs_mat(ii, j) - caliper_covs_mat(i, j)) > caliper_covs[j]) {
+  for (int k = 0; k < ncc; k++) {
+    if (caliper_covs[k] >= 0) {
+      if (std::abs(caliper_covs_mat(i, k) - caliper_covs_mat(j, k)) > caliper_covs[k]) {
         return false;
       }
     }
     else {
-      if (std::abs(caliper_covs_mat(ii, j) - caliper_covs_mat(i, j)) <= -caliper_covs[j]) {
+      if (std::abs(caliper_covs_mat(i, k) - caliper_covs_mat(j, k)) <= -caliper_covs[k]) {
         return false;
       }
     }
@@ -83,10 +83,10 @@ bool caliper_covs_okay(const int& ncc,
 // [[Rcpp::interfaces(cpp)]]
 bool mm_okay(const int& r,
              const int& i,
-             const IntegerVector& mm_ordi) {
+             const IntegerVector& mm_rowi) {
 
   if (r > 1) {
-    for (int j : mm_ordi) {
+    for (int j : na_omit(mm_rowi)) {
       if (i == j) {
         return false;
       }
@@ -98,15 +98,15 @@ bool mm_okay(const int& r,
 
 // [[Rcpp::interfaces(cpp)]]
 bool exact_okay(const bool& use_exact,
-                const int& ii,
                 const int& i,
+                const int& j,
                 const IntegerVector& exact) {
 
   if (!use_exact) {
     return true;
   }
 
-  return exact[ii] == exact[i];
+  return exact[i] == exact[j];
 }
 
 // [[Rcpp::interfaces(cpp)]]
@@ -127,13 +127,13 @@ int find_both(const int& t_id,
               const IntegerVector& exact,
               const int& aenc,
               const IntegerMatrix& antiexact_covs,
-              const int& first_control,
-              const int& last_control) {
+              const IntegerVector& first_control,
+              const IntegerVector& last_control) {
 
   int ii = match_d_ord[t_id];
 
-  int min_ii = first_control;
-  int max_ii = last_control;
+  int min_ii = first_control[gi];
+  int max_ii = last_control[gi];
 
   int iil = ii;
   int iir = ii;
@@ -259,8 +259,8 @@ int find_lr(const int& prev_match,
             const IntegerVector& exact,
             const int& aenc,
             const IntegerMatrix& antiexact_covs,
-            const int& first_control,
-            const int& last_control) {
+            const IntegerVector& first_control,
+            const IntegerVector& last_control) {
 
   int ik, iik;
   double dist;
@@ -277,7 +277,7 @@ int find_lr(const int& prev_match,
       z = 1;
     }
 
-    prev_pos = ii + z;
+    prev_pos = ii;
   }
   else {
     prev_pos = match_d_ord[prev_match];
@@ -293,13 +293,22 @@ int find_lr(const int& prev_match,
   int max_ii = ind_d_ord.size() - 1;
 
   if (z == -1) {
-    min_ii = first_control;
+    min_ii = first_control[gi];
   }
   else {
-    max_ii = last_control;
+    max_ii = last_control[gi];
   }
 
-  for (iik = prev_pos; iik >= min_ii && iik <= max_ii; iik = iik + z) {
+  int start = prev_pos + z;
+  if (start > last_control[gi]) {
+    start = last_control[gi];
+  }
+  else if (start < first_control[gi]) {
+    start = first_control[gi];
+  }
+
+  for (iik = start; iik >= min_ii && iik <= max_ii; iik += z) {
+
     ik = ind_d_ord[iik];
 
     if (!eligible[ik]) {
@@ -335,23 +344,21 @@ int find_lr(const int& prev_match,
 }
 
 // [[Rcpp::interfaces(cpp)]]
-IntegerVector swap_pos(IntegerVector x,
-                       const int& a,
-                       const int& b) {
+void swap_pos(IntegerVector x,
+              const int& a,
+              const int& b) {
   int xa = x[a];
 
   x[a] = x[b];
   x[b] = xa;
-
-  return x;
 }
 
 // [[Rcpp::interfaces(cpp)]]
 double max_finite(const NumericVector& x) {
   double m = NA_REAL;
 
-  int n = x.size();
-  int i;
+  R_xlen_t n = x.size();
+  R_xlen_t i;
   bool found = false;
 
   //Find first finite value
@@ -369,8 +376,8 @@ double max_finite(const NumericVector& x) {
   }
 
   //Find largest finite value
-  for (int j = i + 1; j < n; j++) {
-    if (!std::isfinite(x[i])) {
+  for (R_xlen_t j = i + 1; j < n; j++) {
+    if (!std::isfinite(x[j])) {
       continue;
     }
 
@@ -386,8 +393,8 @@ double max_finite(const NumericVector& x) {
 double min_finite(const NumericVector& x) {
   double m = NA_REAL;
 
-  int n = x.size();
-  int i;
+  R_xlen_t n = x.size();
+  R_xlen_t i;
   bool found = false;
 
   //Find first finite value
@@ -405,8 +412,8 @@ double min_finite(const NumericVector& x) {
   }
 
   //Find smallest finite value
-  for (int j = i + 1; j < n; j++) {
-    if (!std::isfinite(x[i])) {
+  for (R_xlen_t j = i + 1; j < n; j++) {
+    if (!std::isfinite(x[j])) {
       continue;
     }
 
@@ -416,4 +423,38 @@ double min_finite(const NumericVector& x) {
   }
 
   return m;
+}
+
+// [[Rcpp::interfaces(cpp)]]
+void update_first_and_last_control(IntegerVector first_control,
+                                   IntegerVector last_control,
+                                   const IntegerVector& ind_d_ord,
+                                   const LogicalVector& eligible,
+                                   const IntegerVector& treat,
+                                   const int& gi) {
+  R_xlen_t c;
+
+  // Update first_control
+  if (!eligible[ind_d_ord[first_control[gi]]]) {
+    for (c = first_control[gi] + 1; c <= last_control[gi]; c++) {
+      if (eligible[ind_d_ord[c]]) {
+        if (treat[ind_d_ord[c]] == gi) {
+          first_control[gi] = c;
+          break;
+        }
+      }
+    }
+  }
+
+  // Update last_control
+  if (!eligible[ind_d_ord[last_control[gi]]]) {
+    for (c = last_control[gi] - 1; c >= first_control[gi]; c--) {
+      if (eligible[ind_d_ord[c]]) {
+        if (treat[ind_d_ord[c]] == gi) {
+          last_control[gi] = c;
+          break;
+        }
+      }
+    }
+  }
 }

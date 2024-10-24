@@ -2,6 +2,7 @@
 #include "internal.h"
 using namespace Rcpp;
 
+// [[Rcpp::plugins(cpp11)]]
 
 // [[Rcpp::export]]
 IntegerVector subclass_scootC(const IntegerVector& subclass_,
@@ -14,8 +15,9 @@ IntegerVector subclass_scootC(const IntegerVector& subclass_,
   }
 
   int m, i, s, s2;
-  int best_i, nt;
+  int best_i;
   double best_x, score;
+  R_xlen_t nt;
 
   LogicalVector na_sub = is_na(subclass_);
 
@@ -23,7 +25,7 @@ IntegerVector subclass_scootC(const IntegerVector& subclass_,
   IntegerVector treat = treat_[!na_sub];
   NumericVector x = x_[!na_sub];
 
-  int n = subclass.size();
+  R_xlen_t n = subclass.size();
 
   IntegerVector unique_sub = unique(subclass);
   std::sort(unique_sub.begin(), unique_sub.end());
@@ -45,7 +47,7 @@ IntegerVector subclass_scootC(const IntegerVector& subclass_,
     //Tabulate
     subtab = rep(0, nsub);
     for (int i : indt) {
-        subtab[subclass[i]]++;
+      subtab[subclass[i]]++;
     }
 
     for (m = 0; m < min_n; m++) {
@@ -107,7 +109,7 @@ IntegerVector subclass_scootC(const IntegerVector& subclass_,
         }
 
         for (i = best_i + 1; i < nt; i++) {
-            if (subclass[indt[i]] != s2) {
+          if (subclass[indt[i]] != s2) {
             continue;
           }
 
@@ -141,7 +143,8 @@ IntegerVector subclass_scootC(const IntegerVector& subclass_,
     subclass[i] = unique_sub[subclass[i]];
   }
 
-  IntegerVector sub_out = rep(NA_INTEGER, subclass_.size());
+  IntegerVector sub_out(subclass_.size());
+  sub_out.fill(NA_INTEGER);
 
   sub_out[!na_sub] = subclass;
 

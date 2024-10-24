@@ -8,7 +8,8 @@ using namespace Rcpp;
 // Computes matching weights from match.matrix
 // [[Rcpp::export]]
 NumericVector weights_matrixC(const IntegerMatrix& mm,
-                              const IntegerVector& treat_) {
+                              const IntegerVector& treat_,
+                              const Nullable<int>& focal = R_NilValue) {
 
   CharacterVector lab = treat_.names();
   IntegerVector unique_treat = unique(treat_);
@@ -16,44 +17,43 @@ NumericVector weights_matrixC(const IntegerMatrix& mm,
   int g = unique_treat.size();
   IntegerVector treat = match(treat_, unique_treat) - 1;
 
-  int n = treat.size();
+  R_xlen_t n = treat.size();
   int gi;
 
-  NumericVector weights = rep(0., n);
+  NumericVector weights(n);
+  weights.fill(0.0);
   weights.names() = lab;
 
-  IntegerVector row_ind = match(as<CharacterVector>(rownames(mm)), lab) - 1;
+  IntegerVector row_ind;
+  if (focal.isNotNull()) {
+    row_ind = which(treat == as<int>(focal));
+  }
+  else {
+    row_ind = match(as<CharacterVector>(rownames(mm)), lab) - 1;
+  }
+
   NumericVector matches_g = rep(0.0, g);
 
-  int nr = mm.nrow();
-
-  int r, rn, i;
   IntegerVector row_r(mm.ncol());
 
-  for (r = 0; r < nr; r++) {
+  for (int r : which(!is_na(mm(_, 0)))) {
 
     row_r = na_omit(mm.row(r));
-
-    rn = row_r.size();
-
-    if (rn == 0) {
-      continue;
-    }
 
     for (gi = 0; gi < g; gi++) {
       matches_g[gi] = 0.0;
     }
 
-    for (i = 0; i < rn; i++) {
-      matches_g[treat[row_r[i] - 1]] += 1.0;
+    for (int i : row_r - 1) {
+      matches_g[treat[i]] += 1.0;
     }
 
-    for (i = 0; i < rn; i++) {
-      if (matches_g[treat[row_r[i] - 1]] == 0.0) {
+    for (int i : row_r - 1) {
+      if (matches_g[treat[i]] == 0.0) {
         continue;
       }
 
-      weights[row_r[i] - 1] += 1.0/matches_g[treat[row_r[i] - 1]];
+      weights[i] += 1.0/matches_g[treat[i]];
     }
 
     weights[row_ind[r]] += 1.0;
