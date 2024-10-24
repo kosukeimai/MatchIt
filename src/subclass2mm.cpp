@@ -16,14 +16,14 @@ IntegerMatrix subclass2mmC(const IntegerVector& subclass_,
 
   int nsub = unique_sub.size();
 
-  int n = treat.size();
+  R_xlen_t n = treat.size();
   IntegerVector ind = Range(0, n - 1);
   IntegerVector ind_focal = ind[treat == focal];
-  int n1 = ind_focal.size();
+  R_xlen_t n1 = ind_focal.size();
 
   IntegerVector subtab = rep(-1, nsub);
 
-  int i;
+  R_xlen_t i;
   for (i = 0; i < n; i++) {
     if (na_sub[i]) {
       continue;
@@ -38,7 +38,8 @@ IntegerMatrix subclass2mmC(const IntegerVector& subclass_,
   mm.fill(NA_INTEGER);
   CharacterVector lab = treat.names();
 
-  IntegerVector ss = rep(NA_INTEGER, n1);
+  IntegerVector ss(n1);
+  ss.fill(NA_INTEGER);
 
   int s, si;
   for (i = 0; i < n1; i++) {
@@ -46,7 +47,7 @@ IntegerMatrix subclass2mmC(const IntegerVector& subclass_,
       continue;
     }
 
-      ss[i] = subclass[ind_focal[i]];
+    ss[i] = subclass[ind_focal[i]];
   }
 
   for (i = 0; i < n; i++) {
@@ -79,4 +80,47 @@ IntegerMatrix subclass2mmC(const IntegerVector& subclass_,
   rownames(mm) = lab[ind_focal];
 
   return mm;
+}
+
+// [[Rcpp::export]]
+IntegerVector mm2subclassC(const IntegerMatrix& mm,
+                           const IntegerVector& treat,
+                           const Nullable<int>& focal = R_NilValue) {
+
+  CharacterVector lab = treat.names();
+
+  IntegerVector subclass(treat.size());
+  subclass.fill(NA_INTEGER);
+  subclass.names() = lab;
+
+  IntegerVector ind1;
+  if (focal.isNotNull()) {
+    ind1 = which(treat == as<int>(focal));
+  }
+  else {
+    ind1 = match(as<CharacterVector>(rownames(mm)), lab) - 1;
+  }
+
+  int r = mm.nrow();
+  int ki = 0;
+
+  for (int i : which(!is_na(mm))) {
+    if (i / r == 0) {
+      //If first entry in row, increment ki and assign subclass of treated
+      ki++;
+      subclass[ind1[i % r]] = ki;
+    }
+
+    subclass[mm[i] - 1] = ki;
+  }
+
+  CharacterVector levs(ki);
+  for (int j = 0; j < ki; j++){
+    levs[j] = std::to_string(j + 1);
+  }
+
+  subclass.attr("class") = "factor";
+  subclass.attr("levels") = levs;
+
+  return subclass;
 }
