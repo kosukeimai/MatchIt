@@ -244,19 +244,6 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// weights_subclassC
-NumericVector weights_subclassC(const IntegerVector& subclass_, const IntegerVector& treat_, const Nullable<int>& focal_);
-RcppExport SEXP _MatchIt_weights_subclassC(SEXP subclass_SEXP, SEXP treat_SEXP, SEXP focal_SEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const IntegerVector& >::type subclass_(subclass_SEXP);
-    Rcpp::traits::input_parameter< const IntegerVector& >::type treat_(treat_SEXP);
-    Rcpp::traits::input_parameter< const Nullable<int>& >::type focal_(focal_SEXP);
-    rcpp_result_gen = Rcpp::wrap(weights_subclassC(subclass_, treat_, focal_));
-    return rcpp_result_gen;
-END_RCPP
-}
 
 // validate (ensure exported C++ functions exist before calling them)
 static int _MatchIt_RcppExport_validate(const char* sig) { 
@@ -287,7 +274,6 @@ static const R_CallMethodDef CallEntries[] = {
     {"_MatchIt_subclass_scootC", (DL_FUNC) &_MatchIt_subclass_scootC, 4},
     {"_MatchIt_tabulateC", (DL_FUNC) &_MatchIt_tabulateC, 2},
     {"_MatchIt_weights_matrixC", (DL_FUNC) &_MatchIt_weights_matrixC, 3},
-    {"_MatchIt_weights_subclassC", (DL_FUNC) &_MatchIt_weights_subclassC, 3},
     {"_MatchIt_RcppExport_registerCCallable", (DL_FUNC) &_MatchIt_RcppExport_registerCCallable, 0},
     {NULL, NULL, 0}
 };

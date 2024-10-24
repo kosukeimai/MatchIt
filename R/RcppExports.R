@@ -57,10 +57,6 @@ weights_matrixC <- function(mm, treat_, focal = NULL) {
     .Call(`_MatchIt_weights_matrixC`, mm, treat_, focal)
 }
 
-weights_subclassC <- function(subclass_, treat_, focal_ = NULL) {
-    .Call(`_MatchIt_weights_subclassC`, subclass_, treat_, focal_)
-}
-
 # Register entry points for exported C++ functions
 methods::setLoadAction(function(ns) {
     .Call(`_MatchIt_RcppExport_registerCCallable`)
