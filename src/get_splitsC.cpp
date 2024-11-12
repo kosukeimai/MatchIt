@@ -1,5 +1,7 @@
-#include <Rcpp.h>
+#include "internal.h"
 using namespace Rcpp;
+
+// [[Rcpp::plugins(cpp11)]]
 
 // [[Rcpp::export]]
 NumericVector get_splitsC(const NumericVector& x,
@@ -10,7 +12,7 @@ NumericVector get_splitsC(const NumericVector& x,
   NumericVector x_ = unique(x);
   NumericVector x_sorted = x_.sort();
 
-  int n = x_sorted.size();
+  R_xlen_t n = x_sorted.size();
 
   if (n <= 1) {
     return splits;

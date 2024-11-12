@@ -1,6 +1,7 @@
-#include <Rcpp.h>
 #include "internal.h"
 using namespace Rcpp;
+
+// [[Rcpp::plugins(cpp11)]]
 
 //Turns subclass vector given as a factor into a numeric match.matrix.
 //focal is the treatment level (0/1) that corresponds to the rownames.
@@ -14,14 +15,15 @@ IntegerMatrix subclass2mmC(const IntegerVector& subclass_,
   IntegerVector unique_sub = unique(as<IntegerVector>(subclass_[!na_sub]));
   IntegerVector subclass = match(subclass_, unique_sub) - 1;
 
-  int nsub = unique_sub.size();
+  R_xlen_t nsub = unique_sub.size();
 
   R_xlen_t n = treat.size();
   IntegerVector ind = Range(0, n - 1);
   IntegerVector ind_focal = ind[treat == focal];
   R_xlen_t n1 = ind_focal.size();
 
-  IntegerVector subtab = rep(-1, nsub);
+  IntegerVector subtab(nsub);
+  subtab.fill(-1);
 
   R_xlen_t i;
   for (i = 0; i < n; i++) {
@@ -76,8 +78,7 @@ IntegerMatrix subclass2mmC(const IntegerVector& subclass_,
   }
 
   mm = mm + 1;
-
-  rownames(mm) = lab[ind_focal];
+  rownames(mm) = as<CharacterVector>(lab[ind_focal]);
 
   return mm;
 }
@@ -89,7 +90,9 @@ IntegerVector mm2subclassC(const IntegerMatrix& mm,
 
   CharacterVector lab = treat.names();
 
-  IntegerVector subclass(treat.size());
+  R_xlen_t n1 = treat.size();
+
+  IntegerVector subclass(n1);
   subclass.fill(NA_INTEGER);
   subclass.names() = lab;
 
@@ -101,10 +104,10 @@ IntegerVector mm2subclassC(const IntegerMatrix& mm,
     ind1 = match(as<CharacterVector>(rownames(mm)), lab) - 1;
   }
 
-  int r = mm.nrow();
-  int ki = 0;
+  R_xlen_t r = mm.nrow();
+  R_xlen_t ki = 0;
 
-  for (int i : which(!is_na(mm))) {
+  for (R_xlen_t i : which(!is_na(mm))) {
     if (i / r == 0) {
       //If first entry in row, increment ki and assign subclass of treated
       ki++;
@@ -115,7 +118,7 @@ IntegerVector mm2subclassC(const IntegerMatrix& mm,
   }
 
   CharacterVector levs(ki);
-  for (int j = 0; j < ki; j++){
+  for (R_xlen_t j = 0; j < ki; j++){
     levs[j] = std::to_string(j + 1);
   }
 

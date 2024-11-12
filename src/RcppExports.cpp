@@ -13,6 +13,18 @@ Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
 Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
+// all_equal_to
+bool all_equal_to(RObject x, RObject y);
+RcppExport SEXP _MatchIt_all_equal_to(SEXP xSEXP, SEXP ySEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< RObject >::type x(xSEXP);
+    Rcpp::traits::input_parameter< RObject >::type y(ySEXP);
+    rcpp_result_gen = Rcpp::wrap(all_equal_to(x, y));
+    return rcpp_result_gen;
+END_RCPP
+}
 // eucdistC_N1xN0
 NumericVector eucdistC_N1xN0(const NumericMatrix& x, const IntegerVector& t);
 RcppExport SEXP _MatchIt_eucdistC_N1xN0(SEXP xSEXP, SEXP tSEXP) {
@@ -49,9 +61,9 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// nn_matchC
-IntegerMatrix nn_matchC(const IntegerVector& treat_, const IntegerVector& ord, const IntegerVector& ratio, const LogicalVector& discarded, const int& reuse_max, const int& focal_, const Nullable<NumericVector>& distance_, const Nullable<NumericMatrix>& distance_mat_, const Nullable<IntegerVector>& exact_, const Nullable<double>& caliper_dist_, const Nullable<NumericVector>& caliper_covs_, const Nullable<NumericMatrix>& caliper_covs_mat_, const Nullable<NumericMatrix>& mah_covs_, const Nullable<IntegerMatrix>& antiexact_covs_, const Nullable<IntegerVector>& unit_id_, const bool& disl_prog);
-RcppExport SEXP _MatchIt_nn_matchC(SEXP treat_SEXP, SEXP ordSEXP, SEXP ratioSEXP, SEXP discardedSEXP, SEXP reuse_maxSEXP, SEXP focal_SEXP, SEXP distance_SEXP, SEXP distance_mat_SEXP, SEXP exact_SEXP, SEXP caliper_dist_SEXP, SEXP caliper_covs_SEXP, SEXP caliper_covs_mat_SEXP, SEXP mah_covs_SEXP, SEXP antiexact_covs_SEXP, SEXP unit_id_SEXP, SEXP disl_progSEXP) {
+// nn_matchC_distmat
+IntegerMatrix nn_matchC_distmat(const IntegerVector& treat_, const IntegerVector& ord, const IntegerVector& ratio, const LogicalVector& discarded, const int& reuse_max, const int& focal_, const NumericMatrix& distance_mat, const Nullable<IntegerMatrix>& exact_, const Nullable<double>& caliper_dist_, const Nullable<NumericVector>& caliper_covs_, const Nullable<NumericMatrix>& caliper_covs_mat_, const Nullable<IntegerMatrix>& antiexact_covs_, const Nullable<IntegerVector>& unit_id_, const bool& disl_prog);
+RcppExport SEXP _MatchIt_nn_matchC_distmat(SEXP treat_SEXP, SEXP ordSEXP, SEXP ratioSEXP, SEXP discardedSEXP, SEXP reuse_maxSEXP, SEXP focal_SEXP, SEXP distance_matSEXP, SEXP exact_SEXP, SEXP caliper_dist_SEXP, SEXP caliper_covs_SEXP, SEXP caliper_covs_mat_SEXP, SEXP antiexact_covs_SEXP, SEXP unit_id_SEXP, SEXP disl_progSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -61,31 +73,7 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const LogicalVector& >::type discarded(discardedSEXP);
     Rcpp::traits::input_parameter< const int& >::type reuse_max(reuse_maxSEXP);
     Rcpp::traits::input_parameter< const int& >::type focal_(focal_SEXP);
-    Rcpp::traits::input_parameter< const Nullable<NumericVector>& >::type distance_(distance_SEXP);
-    Rcpp::traits::input_parameter< const Nullable<NumericMatrix>& >::type distance_mat_(distance_mat_SEXP);
-    Rcpp::traits::input_parameter< const Nullable<IntegerVector>& >::type exact_(exact_SEXP);
-    Rcpp::traits::input_parameter< const Nullable<double>& >::type caliper_dist_(caliper_dist_SEXP);
-    Rcpp::traits::input_parameter< const Nullable<NumericVector>& >::type caliper_covs_(caliper_covs_SEXP);
-    Rcpp::traits::input_parameter< const Nullable<NumericMatrix>& >::type caliper_covs_mat_(caliper_covs_mat_SEXP);
-    Rcpp::traits::input_parameter< const Nullable<NumericMatrix>& >::type mah_covs_(mah_covs_SEXP);
-    Rcpp::traits::input_parameter< const Nullable<IntegerMatrix>& >::type antiexact_covs_(antiexact_covs_SEXP);
-    Rcpp::traits::input_parameter< const Nullable<IntegerVector>& >::type unit_id_(unit_id_SEXP);
-    Rcpp::traits::input_parameter< const bool& >::type disl_prog(disl_progSEXP);
-    rcpp_result_gen = Rcpp::wrap(nn_matchC(treat_, ord, ratio, discarded, reuse_max, focal_, distance_, distance_mat_, exact_, caliper_dist_, caliper_covs_, caliper_covs_mat_, mah_covs_, antiexact_covs_, unit_id_, disl_prog));
-    return rcpp_result_gen;
-END_RCPP
-}
-// nn_matchC_closest
-IntegerMatrix nn_matchC_closest(const NumericMatrix& distance_mat, const IntegerVector& treat, const IntegerVector& ratio, const LogicalVector& discarded, const int& reuse_max, const Nullable<IntegerMatrix>& exact_, const Nullable<double>& caliper_dist_, const Nullable<NumericVector>& caliper_covs_, const Nullable<NumericMatrix>& caliper_covs_mat_, const Nullable<IntegerMatrix>& antiexact_covs_, const Nullable<IntegerVector>& unit_id_, const bool& disl_prog);
-RcppExport SEXP _MatchIt_nn_matchC_closest(SEXP distance_matSEXP, SEXP treatSEXP, SEXP ratioSEXP, SEXP discardedSEXP, SEXP reuse_maxSEXP, SEXP exact_SEXP, SEXP caliper_dist_SEXP, SEXP caliper_covs_SEXP, SEXP caliper_covs_mat_SEXP, SEXP antiexact_covs_SEXP, SEXP unit_id_SEXP, SEXP disl_progSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const NumericMatrix& >::type distance_mat(distance_matSEXP);
-    Rcpp::traits::input_parameter< const IntegerVector& >::type treat(treatSEXP);
-    Rcpp::traits::input_parameter< const IntegerVector& >::type ratio(ratioSEXP);
-    Rcpp::traits::input_parameter< const LogicalVector& >::type discarded(discardedSEXP);
-    Rcpp::traits::input_parameter< const int& >::type reuse_max(reuse_maxSEXP);
     Rcpp::traits::input_parameter< const Nullable<IntegerMatrix>& >::type exact_(exact_SEXP);
     Rcpp::traits::input_parameter< const Nullable<double>& >::type caliper_dist_(caliper_dist_SEXP);
     Rcpp::traits::input_parameter< const Nullable<NumericVector>& >::type caliper_covs_(caliper_covs_SEXP);
@@ -93,13 +81,61 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const Nullable<IntegerMatrix>& >::type antiexact_covs_(antiexact_covs_SEXP);
     Rcpp::traits::input_parameter< const Nullable<IntegerVector>& >::type unit_id_(unit_id_SEXP);
     Rcpp::traits::input_parameter< const bool& >::type disl_prog(disl_progSEXP);
-    rcpp_result_gen = Rcpp::wrap(nn_matchC_closest(distance_mat, treat, ratio, discarded, reuse_max, exact_, caliper_dist_, caliper_covs_, caliper_covs_mat_, antiexact_covs_, unit_id_, disl_prog));
+    rcpp_result_gen = Rcpp::wrap(nn_matchC_distmat(treat_, ord, ratio, discarded, reuse_max, focal_, distance_mat, exact_, caliper_dist_, caliper_covs_, caliper_covs_mat_, antiexact_covs_, unit_id_, disl_prog));
+    return rcpp_result_gen;
+END_RCPP
+}
+// nn_matchC_distmat_closest
+IntegerMatrix nn_matchC_distmat_closest(const IntegerVector& treat, const IntegerVector& ratio, const LogicalVector& discarded, const int& reuse_max, const NumericMatrix& distance_mat, const Nullable<IntegerMatrix>& exact_, const Nullable<double>& caliper_dist_, const Nullable<NumericVector>& caliper_covs_, const Nullable<NumericMatrix>& caliper_covs_mat_, const Nullable<IntegerMatrix>& antiexact_covs_, const Nullable<IntegerVector>& unit_id_, const bool& close, const bool& disl_prog);
+RcppExport SEXP _MatchIt_nn_matchC_distmat_closest(SEXP treatSEXP, SEXP ratioSEXP, SEXP discardedSEXP, SEXP reuse_maxSEXP, SEXP distance_matSEXP, SEXP exact_SEXP, SEXP caliper_dist_SEXP, SEXP caliper_covs_SEXP, SEXP caliper_covs_mat_SEXP, SEXP antiexact_covs_SEXP, SEXP unit_id_SEXP, SEXP closeSEXP, SEXP disl_progSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const IntegerVector& >::type treat(treatSEXP);
+    Rcpp::traits::input_parameter< const IntegerVector& >::type ratio(ratioSEXP);
+    Rcpp::traits::input_parameter< const LogicalVector& >::type discarded(discardedSEXP);
+    Rcpp::traits::input_parameter< const int& >::type reuse_max(reuse_maxSEXP);
+    Rcpp::traits::input_parameter< const NumericMatrix& >::type distance_mat(distance_matSEXP);
+    Rcpp::traits::input_parameter< const Nullable<IntegerMatrix>& >::type exact_(exact_SEXP);
+    Rcpp::traits::input_parameter< const Nullable<double>& >::type caliper_dist_(caliper_dist_SEXP);
+    Rcpp::traits::input_parameter< const Nullable<NumericVector>& >::type caliper_covs_(caliper_covs_SEXP);
+    Rcpp::traits::input_parameter< const Nullable<NumericMatrix>& >::type caliper_covs_mat_(caliper_covs_mat_SEXP);
+    Rcpp::traits::input_parameter< const Nullable<IntegerMatrix>& >::type antiexact_covs_(antiexact_covs_SEXP);
+    Rcpp::traits::input_parameter< const Nullable<IntegerVector>& >::type unit_id_(unit_id_SEXP);
+    Rcpp::traits::input_parameter< const bool& >::type close(closeSEXP);
+    Rcpp::traits::input_parameter< const bool& >::type disl_prog(disl_progSEXP);
+    rcpp_result_gen = Rcpp::wrap(nn_matchC_distmat_closest(treat, ratio, discarded, reuse_max, distance_mat, exact_, caliper_dist_, caliper_covs_, caliper_covs_mat_, antiexact_covs_, unit_id_, close, disl_prog));
+    return rcpp_result_gen;
+END_RCPP
+}
+// nn_matchC_mahcovs
+IntegerMatrix nn_matchC_mahcovs(const IntegerVector& treat_, const IntegerVector& ord, const IntegerVector& ratio, const LogicalVector& discarded, const int& reuse_max, const int& focal_, const NumericMatrix& mah_covs, const Nullable<NumericVector>& distance_, const Nullable<IntegerMatrix>& exact_, const Nullable<double>& caliper_dist_, const Nullable<NumericVector>& caliper_covs_, const Nullable<NumericMatrix>& caliper_covs_mat_, const Nullable<IntegerMatrix>& antiexact_covs_, const Nullable<IntegerVector>& unit_id_, const bool& disl_prog);
+RcppExport SEXP _MatchIt_nn_matchC_mahcovs(SEXP treat_SEXP, SEXP ordSEXP, SEXP ratioSEXP, SEXP discardedSEXP, SEXP reuse_maxSEXP, SEXP focal_SEXP, SEXP mah_covsSEXP, SEXP distance_SEXP, SEXP exact_SEXP, SEXP caliper_dist_SEXP, SEXP caliper_covs_SEXP, SEXP caliper_covs_mat_SEXP, SEXP antiexact_covs_SEXP, SEXP unit_id_SEXP, SEXP disl_progSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const IntegerVector& >::type treat_(treat_SEXP);
+    Rcpp::traits::input_parameter< const IntegerVector& >::type ord(ordSEXP);
+    Rcpp::traits::input_parameter< const IntegerVector& >::type ratio(ratioSEXP);
+    Rcpp::traits::input_parameter< const LogicalVector& >::type discarded(discardedSEXP);
+    Rcpp::traits::input_parameter< const int& >::type reuse_max(reuse_maxSEXP);
+    Rcpp::traits::input_parameter< const int& >::type focal_(focal_SEXP);
+    Rcpp::traits::input_parameter< const NumericMatrix& >::type mah_covs(mah_covsSEXP);
+    Rcpp::traits::input_parameter< const Nullable<NumericVector>& >::type distance_(distance_SEXP);
+    Rcpp::traits::input_parameter< const Nullable<IntegerMatrix>& >::type exact_(exact_SEXP);
+    Rcpp::traits::input_parameter< const Nullable<double>& >::type caliper_dist_(caliper_dist_SEXP);
+    Rcpp::traits::input_parameter< const Nullable<NumericVector>& >::type caliper_covs_(caliper_covs_SEXP);
+    Rcpp::traits::input_parameter< const Nullable<NumericMatrix>& >::type caliper_covs_mat_(caliper_covs_mat_SEXP);
+    Rcpp::traits::input_parameter< const Nullable<IntegerMatrix>& >::type antiexact_covs_(antiexact_covs_SEXP);
+    Rcpp::traits::input_parameter< const Nullable<IntegerVector>& >::type unit_id_(unit_id_SEXP);
+    Rcpp::traits::input_parameter< const bool& >::type disl_prog(disl_progSEXP);
+    rcpp_result_gen = Rcpp::wrap(nn_matchC_mahcovs(treat_, ord, ratio, discarded, reuse_max, focal_, mah_covs, distance_, exact_, caliper_dist_, caliper_covs_, caliper_covs_mat_, antiexact_covs_, unit_id_, disl_prog));
     return rcpp_result_gen;
 END_RCPP
 }
 // nn_matchC_mahcovs_closest
-IntegerMatrix nn_matchC_mahcovs_closest(const IntegerVector& treat, const IntegerVector& ratio, const LogicalVector& discarded, const int& reuse_max, const NumericMatrix& mah_covs, const Nullable<NumericVector>& distance_, const Nullable<IntegerMatrix>& exact_, const Nullable<double>& caliper_dist_, const Nullable<NumericVector>& caliper_covs_, const Nullable<NumericMatrix>& caliper_covs_mat_, const Nullable<IntegerMatrix>& antiexact_covs_, const Nullable<IntegerVector>& unit_id_, const bool& disl_prog);
-RcppExport SEXP _MatchIt_nn_matchC_mahcovs_closest(SEXP treatSEXP, SEXP ratioSEXP, SEXP discardedSEXP, SEXP reuse_maxSEXP, SEXP mah_covsSEXP, SEXP distance_SEXP, SEXP exact_SEXP, SEXP caliper_dist_SEXP, SEXP caliper_covs_SEXP, SEXP caliper_covs_mat_SEXP, SEXP antiexact_covs_SEXP, SEXP unit_id_SEXP, SEXP disl_progSEXP) {
+IntegerMatrix nn_matchC_mahcovs_closest(const IntegerVector& treat, const IntegerVector& ratio, const LogicalVector& discarded, const int& reuse_max, const NumericMatrix& mah_covs, const Nullable<NumericVector>& distance_, const Nullable<IntegerMatrix>& exact_, const Nullable<double>& caliper_dist_, const Nullable<NumericVector>& caliper_covs_, const Nullable<NumericMatrix>& caliper_covs_mat_, const Nullable<IntegerMatrix>& antiexact_covs_, const Nullable<IntegerVector>& unit_id_, const bool& close, const bool& disl_prog);
+RcppExport SEXP _MatchIt_nn_matchC_mahcovs_closest(SEXP treatSEXP, SEXP ratioSEXP, SEXP discardedSEXP, SEXP reuse_maxSEXP, SEXP mah_covsSEXP, SEXP distance_SEXP, SEXP exact_SEXP, SEXP caliper_dist_SEXP, SEXP caliper_covs_SEXP, SEXP caliper_covs_mat_SEXP, SEXP antiexact_covs_SEXP, SEXP unit_id_SEXP, SEXP closeSEXP, SEXP disl_progSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -115,8 +151,9 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const Nullable<NumericMatrix>& >::type caliper_covs_mat_(caliper_covs_mat_SEXP);
     Rcpp::traits::input_parameter< const Nullable<IntegerMatrix>& >::type antiexact_covs_(antiexact_covs_SEXP);
     Rcpp::traits::input_parameter< const Nullable<IntegerVector>& >::type unit_id_(unit_id_SEXP);
+    Rcpp::traits::input_parameter< const bool& >::type close(closeSEXP);
     Rcpp::traits::input_parameter< const bool& >::type disl_prog(disl_progSEXP);
-    rcpp_result_gen = Rcpp::wrap(nn_matchC_mahcovs_closest(treat, ratio, discarded, reuse_max, mah_covs, distance_, exact_, caliper_dist_, caliper_covs_, caliper_covs_mat_, antiexact_covs_, unit_id_, disl_prog));
+    rcpp_result_gen = Rcpp::wrap(nn_matchC_mahcovs_closest(treat, ratio, discarded, reuse_max, mah_covs, distance_, exact_, caliper_dist_, caliper_covs_, caliper_covs_mat_, antiexact_covs_, unit_id_, close, disl_prog));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -145,8 +182,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // nn_matchC_vec_closest
-IntegerMatrix nn_matchC_vec_closest(const IntegerVector& treat, const IntegerVector& ratio, const LogicalVector& discarded, const int& reuse_max, const NumericVector& distance, const Nullable<IntegerMatrix>& exact_, const Nullable<double>& caliper_dist_, const Nullable<NumericVector>& caliper_covs_, const Nullable<NumericMatrix>& caliper_covs_mat_, const Nullable<IntegerMatrix>& antiexact_covs_, const Nullable<IntegerVector>& unit_id_, const bool& disl_prog);
-RcppExport SEXP _MatchIt_nn_matchC_vec_closest(SEXP treatSEXP, SEXP ratioSEXP, SEXP discardedSEXP, SEXP reuse_maxSEXP, SEXP distanceSEXP, SEXP exact_SEXP, SEXP caliper_dist_SEXP, SEXP caliper_covs_SEXP, SEXP caliper_covs_mat_SEXP, SEXP antiexact_covs_SEXP, SEXP unit_id_SEXP, SEXP disl_progSEXP) {
+IntegerMatrix nn_matchC_vec_closest(const IntegerVector& treat, const IntegerVector& ratio, const LogicalVector& discarded, const int& reuse_max, const NumericVector& distance, const Nullable<IntegerMatrix>& exact_, const Nullable<double>& caliper_dist_, const Nullable<NumericVector>& caliper_covs_, const Nullable<NumericMatrix>& caliper_covs_mat_, const Nullable<IntegerMatrix>& antiexact_covs_, const Nullable<IntegerVector>& unit_id_, const bool& close, const bool& disl_prog);
+RcppExport SEXP _MatchIt_nn_matchC_vec_closest(SEXP treatSEXP, SEXP ratioSEXP, SEXP discardedSEXP, SEXP reuse_maxSEXP, SEXP distanceSEXP, SEXP exact_SEXP, SEXP caliper_dist_SEXP, SEXP caliper_covs_SEXP, SEXP caliper_covs_mat_SEXP, SEXP antiexact_covs_SEXP, SEXP unit_id_SEXP, SEXP closeSEXP, SEXP disl_progSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -161,8 +198,9 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const Nullable<NumericMatrix>& >::type caliper_covs_mat_(caliper_covs_mat_SEXP);
     Rcpp::traits::input_parameter< const Nullable<IntegerMatrix>& >::type antiexact_covs_(antiexact_covs_SEXP);
     Rcpp::traits::input_parameter< const Nullable<IntegerVector>& >::type unit_id_(unit_id_SEXP);
+    Rcpp::traits::input_parameter< const bool& >::type close(closeSEXP);
     Rcpp::traits::input_parameter< const bool& >::type disl_prog(disl_progSEXP);
-    rcpp_result_gen = Rcpp::wrap(nn_matchC_vec_closest(treat, ratio, discarded, reuse_max, distance, exact_, caliper_dist_, caliper_covs_, caliper_covs_mat_, antiexact_covs_, unit_id_, disl_prog));
+    rcpp_result_gen = Rcpp::wrap(nn_matchC_vec_closest(treat, ratio, discarded, reuse_max, distance, exact_, caliper_dist_, caliper_covs_, caliper_covs_mat_, antiexact_covs_, unit_id_, close, disl_prog));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -260,14 +298,16 @@ RcppExport SEXP _MatchIt_RcppExport_registerCCallable() {
 }
 
 static const R_CallMethodDef CallEntries[] = {
+    {"_MatchIt_all_equal_to", (DL_FUNC) &_MatchIt_all_equal_to, 2},
     {"_MatchIt_eucdistC_N1xN0", (DL_FUNC) &_MatchIt_eucdistC_N1xN0, 2},
     {"_MatchIt_get_splitsC", (DL_FUNC) &_MatchIt_get_splitsC, 2},
     {"_MatchIt_has_n_unique", (DL_FUNC) &_MatchIt_has_n_unique, 2},
-    {"_MatchIt_nn_matchC", (DL_FUNC) &_MatchIt_nn_matchC, 16},
-    {"_MatchIt_nn_matchC_closest", (DL_FUNC) &_MatchIt_nn_matchC_closest, 12},
-    {"_MatchIt_nn_matchC_mahcovs_closest", (DL_FUNC) &_MatchIt_nn_matchC_mahcovs_closest, 13},
+    {"_MatchIt_nn_matchC_distmat", (DL_FUNC) &_MatchIt_nn_matchC_distmat, 14},
+    {"_MatchIt_nn_matchC_distmat_closest", (DL_FUNC) &_MatchIt_nn_matchC_distmat_closest, 13},
+    {"_MatchIt_nn_matchC_mahcovs", (DL_FUNC) &_MatchIt_nn_matchC_mahcovs, 15},
+    {"_MatchIt_nn_matchC_mahcovs_closest", (DL_FUNC) &_MatchIt_nn_matchC_mahcovs_closest, 14},
     {"_MatchIt_nn_matchC_vec", (DL_FUNC) &_MatchIt_nn_matchC_vec, 14},
-    {"_MatchIt_nn_matchC_vec_closest", (DL_FUNC) &_MatchIt_nn_matchC_vec_closest, 12},
+    {"_MatchIt_nn_matchC_vec_closest", (DL_FUNC) &_MatchIt_nn_matchC_vec_closest, 13},
     {"_MatchIt_pairdistsubC", (DL_FUNC) &_MatchIt_pairdistsubC, 3},
     {"_MatchIt_subclass2mmC", (DL_FUNC) &_MatchIt_subclass2mmC, 3},
     {"_MatchIt_mm2subclassC", (DL_FUNC) &_MatchIt_mm2subclassC, 3},

@@ -1,6 +1,7 @@
-#include <Rcpp.h>
 #include "internal.h"
 using namespace Rcpp;
+
+// [[Rcpp::plugins(cpp11)]]
 
 // [[Rcpp::export]]
 double pairdistsubC(const NumericVector& x,
@@ -18,7 +19,6 @@ double pairdistsubC(const NumericVector& x,
   ord = ord - 1;
 
   R_xlen_t n = sum(!is_na(s));
-
 
   for (i = 0; i < n; i++) {
     ord_i = ord[i];

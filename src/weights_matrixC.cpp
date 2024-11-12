@@ -1,6 +1,4 @@
-#include <Rcpp.h>
 #include "internal.h"
-#include <cmath>
 using namespace Rcpp;
 
 // [[Rcpp::plugins(cpp11)]]
@@ -57,34 +55,6 @@ NumericVector weights_matrixC(const IntegerMatrix& mm,
     }
 
     weights[row_ind[r]] += 1.0;
-  }
-
-  //Scale control weights to sum to number of matched controls
-  NumericVector weights_gi;
-  IntegerVector indg;
-  double sum_w;
-  double sum_matched;
-
-  for (gi = 0; gi < g; gi++) {
-    indg = which(treat == gi);
-
-    weights_gi = weights[indg];
-
-    sum_w = sum(weights_gi);
-
-    if (sum_w == 0) {
-      continue;
-    }
-
-    sum_matched = sum(weights_gi > 0);
-
-    if (sum_matched == sum_w) {
-      continue;
-    }
-
-    for (int i : indg) {
-      weights[i] *= sum_matched / sum_w;
-    }
   }
 
   return weights;

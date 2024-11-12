@@ -1,6 +1,6 @@
-#include <Rcpp.h>
 #include "internal.h"
 using namespace Rcpp;
+
 // [[Rcpp::plugins(cpp11)]]
 
 // [[Rcpp::export]]

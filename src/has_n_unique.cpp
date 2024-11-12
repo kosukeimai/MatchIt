@@ -1,5 +1,4 @@
-#include <Rcpp.h>
-#include <unordered_set>
+#include "internal.h"
 using namespace Rcpp;
 
 // [[Rcpp::plugins(cpp11)]]

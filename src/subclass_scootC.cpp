@@ -1,4 +1,3 @@
-#include <Rcpp.h>
 #include "internal.h"
 using namespace Rcpp;
 
@@ -32,9 +31,9 @@ IntegerVector subclass_scootC(const IntegerVector& subclass_,
 
   subclass = match(subclass, unique_sub) - 1;
 
-  int nsub = unique_sub.size();
+  R_xlen_t nsub = unique_sub.size();
 
-  IntegerVector subtab(nsub);
+  NumericVector subtab(nsub);
   IntegerVector indt;
   bool left = false;
 
@@ -45,7 +44,8 @@ IntegerVector subclass_scootC(const IntegerVector& subclass_,
     nt = indt.size();
 
     //Tabulate
-    subtab = rep(0, nsub);
+    subtab.fill(0.0);
+
     for (int i : indt) {
       subtab[subclass[i]]++;
     }
@@ -77,7 +77,7 @@ IntegerVector subclass_scootC(const IntegerVector& subclass_,
               continue;
             }
 
-            score += static_cast<double>(subtab[s2] - 1) / static_cast<double>(s2 - s);
+            score += (subtab[s2] - 1) / static_cast<double>(s2 - s);
           }
 
           left = (score <= 0);
