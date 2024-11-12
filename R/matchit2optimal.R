@@ -323,7 +323,7 @@ matchit2optimal <- function(treat, formula, data, distance, discarded,
     }
   }
   else {
-    ex <- factor(rep("_", length(treat_)), levels = "_")
+    ex <- gl(1, length(treat_), labels = "_")
     cc <- 1
 
     e_ratios <- setNames(sum(treat_ == 0)/sum(treat_ == 1), levels(ex))
@@ -377,7 +377,7 @@ matchit2optimal <- function(treat, formula, data, distance, discarded,
   }
 
   #Initialize pair membership; must include names
-  pair <- setNames(rep(NA_character_, length(treat)), names(treat))
+  pair <- rep_with(NA_character_, treat)
   p <- setNames(vector("list", nlevels(ex)), levels(ex))
 
   t_df <- data.frame(treat_)
@@ -420,14 +420,14 @@ matchit2optimal <- function(treat, formula, data, distance, discarded,
       max.controls_ <- max.controls
     }
 
+    A$x <- mo_
+    A$mean.controls <- ratio_
+    A$min.controls <- min.controls_
+    A$max.controls <- max.controls_
+    A$data <- t_df[ex == e,, drop = FALSE] #just to get rownames; not actually used in matching
+
     matchit_try({
-      p[[e]] <- do.call(optmatch::fullmatch,
-                        c(list(mo_,
-                               mean.controls = ratio_,
-                               min.controls = min.controls_,
-                               max.controls = max.controls_,
-                               data = t_df[ex == e,, drop = FALSE]), #just to get rownames; not actually used in matching
-                          A))
+      p[[e]] <- do.call(optmatch::fullmatch, A)
     }, from = "optmatch")
 
     pair[names(p[[e]])[!is.na(p[[e]])]] <- paste(as.character(p[[e]][!is.na(p[[e]])]), e, sep = "|")

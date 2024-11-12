@@ -338,7 +338,7 @@ matchit2genetic <- function(treat, data, distance, discarded,
 
     X <- cbind(X, ex)
 
-    exact.log <- c(rep(FALSE, ncol(X) - 1), TRUE)
+    exact.log <- c(rep.int(FALSE, ncol(X) - 1L), TRUE)
   }
   else {
     exact.log <- ex <- NULL
@@ -353,7 +353,9 @@ matchit2genetic <- function(treat, data, distance, discarded,
       X <- cbind(X, calcovs)
 
       #Expand exact.log for newly added covariates
-      if (is_not_null(exact.log)) exact.log <- c(exact.log, rep(FALSE, ncol(calcovs)))
+      if (is_not_null(exact.log)) {
+        exact.log <- c(exact.log, rep.int(FALSE, ncol(calcovs)))
+      }
     }
     else {
       cov.cals <- NULL
@@ -367,7 +369,7 @@ matchit2genetic <- function(treat, data, distance, discarded,
     }, numeric(1L))
 
     #cal needs one value per variable in X
-    cal <- setNames(rep(Inf, ncol(X)), colnames(X))
+    cal <- setNames(rep.int(Inf, ncol(X)), colnames(X))
 
     #First put covariate calipers into cal
     if (is_not_null(cov.cals)) {

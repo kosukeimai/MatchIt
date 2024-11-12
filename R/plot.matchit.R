@@ -473,7 +473,9 @@ matchit.covplot.subclass <- function(object, type = "qq", which.subclass = NULL,
   }
 
   chars.in.X <- vapply(X, is.character, logical(1L))
-  X[chars.in.X] <- lapply(X[chars.in.X], factor)
+  for (i in which(chars.in.X)) {
+    X[[i]] <- factor(X[[i]])
+  }
 
   X <- droplevels(X)
 

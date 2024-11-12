@@ -71,7 +71,7 @@ info.to.method <- function(info) {
     else "without replacement"
   }
 
-  firstup(do.call("paste", c(unname(out.list), list(sep = " "))))
+  firstup(do.call("paste", unname(out.list)))
 }
 
 info.to.distance <- function(info) {
@@ -153,11 +153,9 @@ exactify <- function(X, nam = NULL, sep = "|", include_vars = FALSE, justify = "
     }
 
     lev <- {
-      if (include_vars) {
-        sprintf("%s = %s",
-                names(X)[i],
-                add_quotes(unique_x, is.character(X[[i]]) || is.factor(X[[i]])))
-      }
+      if (include_vars) sprintf("%s = %s",
+                                names(X)[i],
+                                add_quotes(unique_x, chk::vld_character_or_factor(X[[i]])))
       else if (is_null(justify)) unique_x
       else format(unique_x, justify = justify)
     }
@@ -190,7 +188,9 @@ get.covs.matrix <- function(formula = NULL, data = NULL) {
                     na.action = na.pass)
 
   chars.in.mf <- vapply(mf, is.character, logical(1L))
-  mf[chars.in.mf] <- lapply(mf[chars.in.mf], as.factor)
+  for (i in which(chars.in.mf)) {
+    mf[[i]] <- as.factor(mf[[i]])
+  }
 
   mf <- droplevels(mf)
 

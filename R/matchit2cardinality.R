@@ -270,7 +270,7 @@ matchit2cardinality <- function(treat, data, discarded, formula,
                                 replace = FALSE, mahvars = NULL, exact = NULL,
                                 estimand = "ATT", verbose = FALSE,
                                 tols = .05, std.tols = TRUE,
-                                solver = "glpk", time = 1*60, ...) {
+                                solver = "highs", time = 1*60, ...) {
 
   .cat_verbose("Cardinality matching... \n", verbose = verbose)
 
@@ -293,7 +293,7 @@ matchit2cardinality <- function(treat, data, discarded, formula,
 
   lab <- names(treat)
 
-  weights <- setNames(rep(0, length(treat)), lab)
+  weights <- rep_with(0, treat)
 
   X <- get.covs.matrix(formula, data = data)
 
@@ -322,7 +322,7 @@ matchit2cardinality <- function(treat, data, discarded, formula,
     mahcovs <- transform_covariates(mahvars, data = data, method = "mahalanobis",
                                     s.weights = s.weights, treat = treat,
                                     discarded = discarded)
-    pair <- setNames(rep(NA_character_, length(treat)), lab)
+    pair <- rep_with(NA_character_, treat)
 
     #Set max problem size to Inf and return to original value after match
     omps <- getOption("optmatch_max_problem_size")
@@ -338,7 +338,7 @@ matchit2cardinality <- function(treat, data, discarded, formula,
 
   chk::chk_numeric(tols)
   if (length(tols) == 1L) {
-    tols <- rep(tols, ncol(X))
+    tols <- rep.int(tols, ncol(X))
   }
   else if (length(tols) == max(assign)) {
     tols <- tols[assign]
@@ -349,7 +349,7 @@ matchit2cardinality <- function(treat, data, discarded, formula,
 
   chk::chk_logical(std.tols)
   if (length(std.tols) == 1L) {
-    std.tols <- rep(std.tols, ncol(X))
+    std.tols <- rep.int(std.tols, ncol(X))
   }
   else if (length(std.tols) == max(assign)) {
     std.tols <- std.tols[assign]
@@ -381,9 +381,10 @@ matchit2cardinality <- function(treat, data, discarded, formula,
   opt.out <- setNames(vector("list", nlevels(ex)), levels(ex))
 
   for (e in levels(ex)[cc]) {
-    if (nlevels(ex) > 1 && verbose) {
-      cat(sprintf("Matching subgroup %s/%s: %s...\n",
-                  match(e, levels(ex)[cc]), length(cc), e))
+    if (nlevels(ex) > 1) {
+      .cat_verbose(sprintf("Matching subgroup %s/%s: %s...\n",
+                           match(e, levels(ex)[cc]), length(cc), e),
+                   verbose = verbose)
     }
 
     .e <- which(!discarded & ex == e)
@@ -425,7 +426,9 @@ matchit2cardinality <- function(treat, data, discarded, formula,
     mm <- psclass <- NULL
   }
 
-  if (length(opt.out) == 1L) out <- out[[1]]
+  if (length(opt.out) == 1L) {
+    out <- out[[1]]
+  }
 
   res <- list(match.matrix = mm,
               subclass = psclass,
@@ -450,15 +453,15 @@ cardinality_matchit <- function(treat, X, estimand = "ATT", tols = .05, s.weight
 
   #Check inputs
   if (is_null(s.weights)) {
-    s.weights <- rep(1, n)
+    s.weights <- rep.int(1, n)
   }
   else {
-    for (i in tvals) {
-      s.weights[treat == i] <- s.weights[treat == i]/mean(s.weights[treat == i])
-    }
+    s.weights <- .make_sum_to_n(s.weights, treat)
   }
 
-  if (is_null(focal)) focal <- tvals[length(tvals)]
+  if (is_null(focal)) {
+    focal <- tvals[length(tvals)]
+  }
 
   chk::chk_number(time)
   chk::chk_gt(time, 0)
@@ -483,15 +486,15 @@ cardinality_matchit <- function(treat, X, estimand = "ATT", tols = .05, s.weight
     #Objective function: total sample size
     O <- c(
       s.weights, #weight for each unit
-      rep(0, nt)       #slack coefs for each sample size (n1, n0)
+      rep.int(0, nt)       #slack coefs for each sample size (n1, n0)
     )
 
     #Constraint matrix
     target.means <- apply(X, 2, wm, w = s.weights)
 
     C <- matrix(0, nrow = nt * (1 + 2*ncol(X)), ncol = length(O))
-    Crhs <- rep(0, nrow(C))
-    Cdir <- rep("==", nrow(C))
+    Crhs <- rep.int(0, nrow(C))
+    Cdir <- rep.int("==", nrow(C))
 
     for (i in seq_len(nt)) {
       #Num in group i = ni
@@ -513,7 +516,7 @@ cardinality_matchit <- function(treat, X, estimand = "ATT", tols = .05, s.weight
 
     #If ratio != 0, constrain n0 to be ratio*n1
     if (nt == 2L && is.finite(ratio)) {
-      C_ratio <- c(rep(0, n), rep(-1, nt))
+      C_ratio <- c(rep.int(0, n), rep.int(-1, nt))
       C_ratio[n + which(tvals == focal)] <- ratio
       C <- rbind(C, C_ratio)
       Crhs <- c(Crhs, 0)
@@ -521,13 +524,13 @@ cardinality_matchit <- function(treat, X, estimand = "ATT", tols = .05, s.weight
     }
 
     #Coef types
-    types <- c(rep("B", n), #Matching weights
-               rep("C", nt)) #Slack coefs for matched group size
+    types <- c(rep.int("B", n), #Matching weights
+               rep.int("C", nt)) #Slack coefs for matched group size
 
-    lower.bound <- c(rep(0, n),
-                     rep(1, nt))
-    upper.bound <- c(rep(1, n),
-                     rep(Inf, nt))
+    lower.bound <- c(rep.int(0, n),
+                     rep.int(1, nt))
+    upper.bound <- c(rep.int(1, n),
+                     rep.int(Inf, nt))
   }
   else if (match_type == "profile_att") {
     #Find largest control group that matches treated group
@@ -538,8 +541,8 @@ cardinality_matchit <- function(treat, X, estimand = "ATT", tols = .05, s.weight
 
     #Objective function: size of matched control group
     O <- c(
-      rep(1, n0), #weights for each non-focal unit
-      rep(0, nt - 1)  #slack coef for size of non-focal groups
+      rep.int(1, n0), #weights for each non-focal unit
+      rep.int(0, nt - 1)  #slack coef for size of non-focal groups
     )
 
     #Constraint matrix
@@ -547,8 +550,8 @@ cardinality_matchit <- function(treat, X, estimand = "ATT", tols = .05, s.weight
     #One row per constraint, one column per coef
 
     C <- matrix(0, nrow = (nt - 1) * (1 + 2*ncol(X)), ncol = length(O))
-    Crhs <- rep(0, nrow(C))
-    Cdir <- rep("==", nrow(C))
+    Crhs <- rep.int(0, nrow(C))
+    Cdir <- rep.int("==", nrow(C))
 
     for (i in seq_len(nt - 1)) {
       #Num in group i = ni
@@ -569,13 +572,13 @@ cardinality_matchit <- function(treat, X, estimand = "ATT", tols = .05, s.weight
     }
 
     #Coef types
-    types <- c(rep("B", n0), #Matching weights
-               rep("C", nt - 1))  #Slack for num control matched
+    types <- c(rep.int("B", n0), #Matching weights
+               rep.int("C", nt - 1))  #Slack for num control matched
 
-    lower.bound <- c(rep(0, n0),
-                     rep(0, nt - 1))
-    upper.bound <- c(rep(1, n0),
-                     rep(Inf, nt - 1))
+    lower.bound <- c(rep.int(0, n0),
+                     rep.int(0, nt - 1))
+    upper.bound <- c(rep.int(1, n0),
+                     rep.int(Inf, nt - 1))
   }
   else if (match_type == "cardinality") {
     #True cardinality matching: find largest balanced sample
@@ -591,8 +594,8 @@ cardinality_matchit <- function(treat, X, estimand = "ATT", tols = .05, s.weight
     t_combs <- combn(tvals, 2, simplify = FALSE)
 
     C <- matrix(0, nrow = nt + 2*ncol(X)*length(t_combs), ncol = length(O))
-    Crhs <- rep(0, nrow(C))
-    Cdir <- rep("==", nrow(C))
+    Crhs <- rep.int(0, nrow(C))
+    Cdir <- rep.int("==", nrow(C))
 
     for (i in seq_len(nt)) {
       #Num in group i = ni
@@ -616,13 +619,13 @@ cardinality_matchit <- function(treat, X, estimand = "ATT", tols = .05, s.weight
     }
 
     #Coef types
-    types <- c(rep("B", n), #Matching weights
-               rep("C", 1)) #Slack coef for treated group size (n1)
+    types <- c(rep.int("B", n), #Matching weights
+               rep.int("C", 1)) #Slack coef for treated group size (n1)
 
-    lower.bound <- c(rep(0, n),
-                     rep(0, 1))
-    upper.bound <- c(rep(1, n),
-                     rep(min(tabulateC(treat)), 1))
+    lower.bound <- c(rep.int(0, n),
+                     rep.int(0, 1))
+    upper.bound <- c(rep.int(1, n),
+                     rep.int(min(tabulateC(treat)), 1))
   }
 
   weights <- NULL
@@ -643,7 +646,7 @@ cardinality_matchit <- function(treat, X, estimand = "ATT", tols = .05, s.weight
     weights <- round(sol[seq_len(n)])
   }
   else if (match_type %in% c("profile_att")) {
-    weights <- rep(1, n)
+    weights <- rep.int(1, n)
     weights[treat != focal] <- round(sol[seq_len(n0)])
   }
 
@@ -700,7 +703,7 @@ cardinality_error_report <- function(out, solver) {
   }
 }
 
-dispatch_optimizer <- function(solver = "glpk", obj, mat, dir, rhs, types, max = TRUE,
+dispatch_optimizer <- function(solver = "highs", obj, mat, dir, rhs, types, max = TRUE,
                                lb = NULL, ub = NULL, time = NULL, verbose = FALSE) {
   if (solver == "glpk") {
     dir[dir == "="] <- "=="
@@ -722,9 +725,9 @@ dispatch_optimizer <- function(solver = "glpk", obj, mat, dir, rhs, types, max =
     dir[dir == "<="] <- "<"
     dir[dir == ">="] <- ">"
     dir[dir == "=="] <- "="
-    # opt.out <- gurobi::gurobi(list(A = mat, obj = obj, sense = dir, rhs = rhs, vtype = types,
-    #                                modelsense = "max", lb = lb, ub = ub),
-    #                           params = list(OutputFlag = as.integer(verbose), TimeLimit = time))
+    opt.out <- gurobi::gurobi(list(A = mat, obj = obj, sense = dir, rhs = rhs, vtype = types,
+                                   modelsense = "max", lb = lb, ub = ub),
+                              params = list(OutputFlag = as.integer(verbose), TimeLimit = time))
   }
   else if (solver == "highs") {
     rhs_h <- lhs_h <- rhs

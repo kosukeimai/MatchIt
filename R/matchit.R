@@ -49,8 +49,7 @@
 #' argument controlling the link function used in estimating the distance
 #' measure. Allowable options depend on the specific `distance` value
 #' specified. See [`distance`] for allowable options with each
-#' option. The default is `"logit"`, which, along with `distance = "glm"`, identifies the default measure as logistic regression propensity
-#' scores.
+#' option. The default is `"logit"`, which, along with `distance = "glm"`, identifies the default measure as logistic regression propensity scores.
 #' @param distance.options a named list containing additional arguments
 #' supplied to the function that estimates the distance measure as determined
 #' by the argument to `distance`. See [`distance`] for an
@@ -70,8 +69,7 @@
 #' within propensity score calipers, where the propensity scores are computed
 #' using `formula` and `distance`. Can be specified as a string
 #' containing the names of variables in `data` to be used or a one-sided
-#' formula with the desired variables on the right-hand side (e.g., `~ X3 + X4`). See the individual methods pages for information on whether and how
-#' this argument is used.
+#' formula with the desired variables on the right-hand side (e.g., `~ X3 + X4`). See the individual methods pages for information on whether and how this argument is used.
 #' @param antiexact for methods that allow it, for which variables anti-exact
 #' matching should take place. Anti-exact matching ensures paired individuals
 #' do not have the same value of the anti-exact matching variable(s). Can be
@@ -246,8 +244,7 @@
 #' treated unit across its matches. For example, if a control unit was matched
 #' to a treated unit that had two other control units matched to it, and that
 #' same control was matched to a treated unit that had one other control unit
-#' matched to it, the control unit in question would get a weight of 1/3 + 1/2
-#' = 5/6. For the ATC, the same is true with the treated and control labels
+#' matched to it, the control unit in question would get a weight of \eqn{1/3 + 1/2 = 5/6}. For the ATC, the same is true with the treated and control labels
 #' switched. The weights are computed using the `match.matrix` component
 #' of the `matchit()` output object.
 #'
@@ -268,7 +265,7 @@
 #' @return When `method` is something other than `"subclass"`, a
 #' `matchit` object with the following components:
 #'
-#' \item{match.matrix}{a matrix containing the matches. The rownames correspond
+#' \item{match.matrix}{a matrix containing the matches. The row names correspond
 #' to the treated units and the values in each row are the names (or indices)
 #' of the control units matched to each treated unit. When treated units are
 #' matched to different numbers of control units (e.g., with variable ratio matching or
@@ -284,13 +281,10 @@
 #' specified as a method of estimating propensity scores. When
 #' `reestimate = TRUE`, this is the model estimated after discarding
 #' units.}
-#' \item{X}{a data frame of covariates mentioned in `formula`,
-#' `exact`, `mahvars`, `caliper`, and `antiexact`.}
+#' \item{X}{a data frame of covariates mentioned in `formula`, `exact`, `mahvars`, `caliper`, and `antiexact`.}
 #' \item{call}{the `matchit()` call.}
-#' \item{info}{information on the matching method and
-#' distance measures used.}
-#' \item{estimand}{the argument supplied to
-#' `estimand`.}
+#' \item{info}{information on the matching method and distance measures used.}
+#' \item{estimand}{the argument supplied to `estimand`.}
 #' \item{formula}{the `formula` supplied.}
 #' \item{treat}{a vector of treatment status converted to zeros (0) and ones
 #' (1) if not already in that format.}
@@ -298,16 +292,11 @@
 #' values (i.e., propensity scores) when `distance` is supplied as a
 #' method of estimating propensity scores or a numeric vector.}
 #' \item{discarded}{a logical vector denoting whether each observation was
-#' discarded (`TRUE`) or not (`FALSE`) by the argument to
-#' `discard`.}
-#' \item{s.weights}{the vector of sampling weights supplied to
-#' the `s.weights` argument, if any.}
-#' \item{exact}{a one-sided formula
-#' containing the variables, if any, supplied to `exact`.}
-#' \item{mahvars}{a one-sided formula containing the variables, if any,
-#' supplied to `mahvars`.}
-#' \item{obj}{when `include.obj = TRUE`, an
-#' object containing the intermediate results of the matching procedure. See
+#' discarded (`TRUE`) or not (`FALSE`) by the argument to `discard`.}
+#' \item{s.weights}{the vector of sampling weights supplied to the `s.weights` argument, if any.}
+#' \item{exact}{a one-sided formula containing the variables, if any, supplied to `exact`.}
+#' \item{mahvars}{a one-sided formula containing the variables, if any, supplied to `mahvars`.}
+#' \item{obj}{when `include.obj = TRUE`, an object containing the intermediate results of the matching procedure. See
 #' the individual methods pages for what this component will contain.}
 #'
 #' When `method = "subclass"`, a `matchit.subclass` object with the same
@@ -386,7 +375,7 @@
 #'                    discard = "control", subclass = 10)
 #' s.out1
 #' summary(s.out1, un = TRUE)
-#'
+
 #' @export
 matchit <- function(formula,
                     data = NULL,
@@ -429,7 +418,7 @@ matchit <- function(formula,
   }
 
   #Process formula and data inputs
-  if (is_null(formula) || !rlang::is_formula(formula, lhs = TRUE)) {
+  if (!rlang::is_formula(formula, lhs = TRUE)) {
     .err("`formula` must be a formula relating treatment to covariates")
   }
 
@@ -453,8 +442,8 @@ matchit <- function(formula,
                                  reestimate = reestimate, s.weights = s.weights, replace = replace,
                                  ratio = ratio, m.order = m.order, estimand = estimand)
 
-  if (is_not_null(ignored.inputs)) {
-    for (i in ignored.inputs) assign(i, NULL)
+  for (i in ignored.inputs) {
+    assign(i, NULL)
   }
 
   #Process replace
@@ -692,13 +681,15 @@ matchit <- function(formula,
   for (i in X.list.nm) {
     X_tmp <- get0(i, inherits = FALSE)
 
-    if (is_not_null(X_tmp)) {
-      if (is_null(X)) {
-        X <- X_tmp
-      }
-      else if (!all(hasName(X, names(X_tmp)))) {
-        X <- cbind(X, X_tmp[!names(X_tmp) %in% names(X)])
-      }
+    if (is_null(X_tmp)) {
+      next
+    }
+
+    if (is_null(X)) {
+      X <- X_tmp
+    }
+    else if (!all(hasName(X, names(X_tmp)))) {
+      X <- cbind(X, X_tmp[!names(X_tmp) %in% names(X)])
     }
   }
 

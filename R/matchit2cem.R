@@ -391,7 +391,7 @@ cem_matchit <- function(treat, X, cutpoints = "sturges", grouping = list(), ...)
 
   #Process cutpoints
   if (!is.list(cutpoints)) {
-    cutpoints <- setNames(rep(list(cutpoints), sum(is.numeric.cov)), names(X)[is.numeric.cov])
+    cutpoints <- setNames(rep.int(list(cutpoints), sum(is.numeric.cov)), names(X)[is.numeric.cov])
   }
 
   if (is_null(names(cutpoints))) {
@@ -431,7 +431,7 @@ cem_matchit <- function(treat, X, cutpoints = "sturges", grouping = list(), ...)
                  ngettext(nnnic, "its", "their")), n = nnnic)
   }
 
-  bad.cuts <- setNames(rep(FALSE, length(cutpoints)), names(cutpoints))
+  bad.cuts <- rep_with(FALSE, cutpoints)
 
   for (i in names(cutpoints)) {
     if (is_null(cutpoints[[i]])) {
@@ -470,7 +470,7 @@ cem_matchit <- function(treat, X, cutpoints = "sturges", grouping = list(), ...)
   }
 
   if (is_null(X)) {
-    return(setNames(rep(1L, length(treat)), names(treat)))
+    return(rep_with(1L, treat))
   }
 
   #Create bins for numeric variables
@@ -549,7 +549,7 @@ do_k2k <- function(treat, X, subclass, k2k.method = "mahalanobis", mpower = 2, s
   else {
     k2k.method <- "euclidean"
     X.match <- NULL
-    distance <- rep(0.0, length(treat))
+    distance <- rep.int(0.0, length(treat))
   }
 
   reuse.max <- 1L
@@ -557,7 +557,7 @@ do_k2k <- function(treat, X, subclass, k2k.method = "mahalanobis", mpower = 2, s
 
   if (k2k.method %in% matchit_distances()) {
     discarded <- is.na(subclass)
-    ratio <- rep(1L, sum(treat == focal))
+    ratio <- rep.int(1L, sum(treat == focal))
 
     mm <- nn_matchC_dispatch(treat, focal, ratio, discarded, reuse.max, distance, NULL,
                              subclass, caliper.dist, caliper.covs, caliper.covs.mat, X.match,
@@ -570,9 +570,9 @@ do_k2k <- function(treat, X, subclass, k2k.method = "mahalanobis", mpower = 2, s
     for (s in levels(subclass)) {
       .e <- which(subclass == s)
       treat_ <- treat[.e]
-      discarded_ <- rep(FALSE, length(.e))
+      discarded_ <- rep.int(FALSE, length(.e))
       ex_ <- NULL
-      ratio_ <- rep(1L, sum(treat_ == focal))
+      ratio_ <- rep.int(1L, sum(treat_ == focal))
       distance_mat <- as.matrix(dist(X.match[.e,,drop = FALSE],
                                      method = k2k.method, p = mpower))[treat_ == focal, treat_ != focal, drop = FALSE]
 

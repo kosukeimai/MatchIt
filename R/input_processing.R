@@ -441,7 +441,7 @@ process.caliper <- function(caliper = NULL, method = NULL, data = NULL, covs = N
   #Check std.caliper
   chk::chk_logical(std.caliper)
   if (length(std.caliper) == 1L) {
-    std.caliper <- setNames(rep.int(std.caliper, length(caliper)), names(caliper))
+    std.caliper <- rep_with(std.caliper, caliper)
   }
   else if (length(std.caliper) == length(caliper)) {
     names(std.caliper) <- names(caliper)
@@ -464,7 +464,7 @@ process.caliper <- function(caliper = NULL, method = NULL, data = NULL, covs = N
     else if (cal.in.covs[x]) var <- covs[[x]]
     else var <- mahcovs[[x]]
 
-    is.factor(var) || is.character(var)
+    chk::vld_character_or_factor(var)
   }, logical(1L))
 
   if (any(cat.vars)) {

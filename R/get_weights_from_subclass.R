@@ -16,7 +16,7 @@ get_weights_from_subclass <- function(psclass, treat, estimand = "ATT") {
     .err("No control units were matched")
   }
 
-  weights <- setNames(rep(0.0, length(treat)), names(treat))
+  weights <- rep_with(0.0, treat)
 
   if (!is.factor(psclass)) {
     psclass <- factor(psclass, nmax = min(length(i1), length(i0)))

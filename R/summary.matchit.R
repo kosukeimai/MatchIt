@@ -727,13 +727,13 @@ print.summary.matchit.subclass <- function(x, digits = max(3, getOption("digits"
   #Attempt to extract data from matchit object; same as match.data()
   data.found <- FALSE
   for (i in 1:4) {
-    if (i == 2) {
+    if (i == 2L) {
       data <- try(eval(object$call$data, envir = environment(object$formula)), silent = TRUE)
     }
-    else if (i == 3) {
+    else if (i == 3L) {
       data <- try(eval(object$call$data, envir = parent.frame()), silent = TRUE)
     }
-    else if (i == 4) {
+    else if (i == 4L) {
       data <- object[["model"]][["data"]]
     }
 

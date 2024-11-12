@@ -279,7 +279,7 @@ matchit2full <- function(treat, formula, data, distance, discarded,
     }
   }
   else {
-    ex <- factor(rep("_", length(treat_)), levels = "_")
+    ex <- gl(1, length(treat_), labels = "_")
     cc <- 1
   }
 
@@ -346,10 +346,12 @@ matchit2full <- function(treat, formula, data, distance, discarded,
   }
 
   #Initialize pair membership; must include names
-  pair <- setNames(rep(NA_character_, length(treat)), names(treat))
+  pair <- rep_with(NA_character_, treat)
   p <- setNames(vector("list", nlevels(ex)), levels(ex))
 
-  t_df <- data.frame(treat)
+  A$data <- data.frame(treat) #just to get rownames; not actually used in matching
+  A$min.controls <- min.controls
+  A$max.controls <- max.controls
 
   for (e in levels(ex)[cc]) {
     if (nlevels(ex) > 1L) {
@@ -372,13 +374,10 @@ matchit2full <- function(treat, formula, data, distance, discarded,
       next
     }
 
+    A$x <- mo_
+
     matchit_try({
-      p[[e]] <- do.call(optmatch::fullmatch,
-                        c(list(mo_,
-                               min.controls = min.controls,
-                               max.controls = max.controls,
-                               data = t_df), #just to get rownames; not actually used in matching
-                          A))
+      p[[e]] <- do.call(optmatch::fullmatch, A)
     }, from = "optmatch")
 
     pair[names(p[[e]])[!is.na(p[[e]])]] <- paste(as.character(p[[e]][!is.na(p[[e]])]), e, sep = "|")

@@ -305,9 +305,12 @@ get_matches <- function(object, distance = "distance", weights = "weights", subc
   matched <- as.data.frame(matrix(NA_character_, nrow = nrow(mm) + sum(!is.na(mm)), ncol = 3))
   names(matched) <- c(id, subclass, weights)
 
-  matched[[id]] <- c(as.vector(tmm[!is.na(tmm)]), rownames(mm))
-  matched[[subclass]] <- c(as.vector(col(tmm)[!is.na(tmm)]), seq_len(nrow(mm)))
-  matched[[weights]] <- c(1/num.matches[matched[[subclass]][seq_len(sum(!is.na(mm)))]], rep(1, nrow(mm)))
+  matched[[id]] <- c(as.vector(tmm[!is.na(tmm)]),
+                     rownames(mm))
+  matched[[subclass]] <- c(as.vector(col(tmm)[!is.na(tmm)]),
+                           seq_len(nrow(mm)))
+  matched[[weights]] <- c(1 / num.matches[matched[[subclass]][seq_len(sum(!is.na(mm)))]],
+                          rep.int(1, nrow(mm)))
 
   if (is_not_null(object$s.weights) && include.s.weights) {
     matched[[weights]] <- matched[[weights]] * object$s.weights[matched[[id]]]

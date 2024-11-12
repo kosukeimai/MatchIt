@@ -6,7 +6,7 @@ bal1var <- function(xx, tt, ww = NULL, s.weights, subclass = NULL, mm = NULL,
   un <- is_null(ww)
   bin.var <- all(xx == 0 | xx == 1)
 
-  xsum <- rep(NA_real_, 7)
+  xsum <- rep.int(NA_real_, 7L)
   if (standardize)
     names(xsum) <- c("Means Treated","Means Control", "Std. Mean Diff.",
                      "Var. Ratio", "eCDF Mean", "eCDF Max", "Std. Pair Dist.")
@@ -170,7 +170,7 @@ qqsum <- function(x, t, w = NULL, standardize = FALSE) {
   n.obs <- length(x)
 
   if (is_null(w)) {
-    w <- rep(1, n.obs)
+    w <- rep.int(1, n.obs)
   }
 
   if (has_n_unique(x, 2) && all(x == 0 | x == 1)) {

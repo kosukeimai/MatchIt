@@ -165,8 +165,8 @@ interaction2 <- function(..., sep = ".", lex.order = TRUE) {
 
   lev <- {
     if (is.null(lex.order)) unique(out)
-    else if (lex.order) unique(out[order(do.call("paste", c(args_char, sep = sep)))])
-    else unique(out[order(do.call("paste", c(rev(args_char), sep = sep)))])
+    else if (lex.order) unique(out[order(do.call("paste", c(args_char, list(sep = sep))))])
+    else unique(out[order(do.call("paste", c(rev(args_char), list(sep = sep))))])
   }
 
   factor(out, levels = lev)
@@ -178,7 +178,7 @@ binarize <- function(variable, zero = NULL, one = NULL) {
   var.name <- deparse1(substitute(variable))
 
   if (has_n_unique(variable, 1L)) {
-    return(setNames(rep.int(1L, length(variable)), names(variable)))
+    return(rep_with(1L, variable))
   }
 
   if (!has_n_unique(variable, 2L)) {
@@ -427,6 +427,7 @@ diff1 <- function(x) {
   x
 }
 
+#Extract variables from ..., similar to ...elt(), by name without evaluating list(...)
 ...get <- function(x, ...) {
   m <- match(x, ...names(), 0L)
 
@@ -435,6 +436,11 @@ diff1 <- function(x) {
   }
 
   ...elt(m)
+}
+
+#Helper function to fill named vectors with x and given names of y
+rep_with <- function(x, y) {
+  setNames(rep.int(x, length(y)), names(y))
 }
 
 #cat() if verbose = TRUE (default sep = "", line wrapping)

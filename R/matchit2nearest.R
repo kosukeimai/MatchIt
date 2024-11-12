@@ -385,9 +385,8 @@ matchit2nearest <- function(treat, data, distance, discarded,
   #Process antiexact
   antiexactcovs <- NULL
   if (is_not_null(antiexact)) {
-    antiexactcovs <- model.frame(antiexact, data)
-    antiexactcovs <- do.call("cbind", lapply(seq_len(ncol(antiexactcovs)), function(i) {
-      unclass(as.factor(antiexactcovs[[i]]))
+    antiexactcovs <- do.call("cbind", lapply(model.frame(antiexact, data), function(i) {
+      unclass(as.factor(i))
     }))
   }
 
@@ -492,7 +491,7 @@ matchit2nearest <- function(treat, data, distance, discarded,
     kmin <- n1 - kmax - 1
     kmed <- m - (min.controls * kmin + max.controls * kmax)
 
-    ratio0 <- c(rep(min.controls, kmin), kmed, rep(max.controls, kmax))
+    ratio0 <- c(rep.int(min.controls, kmin), kmed, rep.int(max.controls, kmax))
 
     #Make sure no units are assigned 0 matches
     while (any(ratio0 == 0)) {

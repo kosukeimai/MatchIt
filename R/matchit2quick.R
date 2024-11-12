@@ -184,7 +184,7 @@ matchit2quick <- function(treat, formula, data, distance, discarded,
     }
   }
   else {
-    ex <- factor(rep("_", length(treat_)), levels = "_")
+    ex <- gl(1, length(treat_), labels = "_")
     cc <- 1
   }
 
@@ -215,8 +215,10 @@ matchit2quick <- function(treat, formula, data, distance, discarded,
     }
   }
 
+  A$caliper <- caliper
+
   #Initialize pair membership; must include names
-  pair <- setNames(rep(NA_character_, length(treat)), names(treat))
+  pair <- rep_with(NA_character_, treat)
   p <- setNames(vector("list", nlevels(ex)), levels(ex))
 
   for (e in levels(ex)[cc]) {
@@ -226,14 +228,11 @@ matchit2quick <- function(treat, formula, data, distance, discarded,
                    verbose = verbose)
     }
 
-    distcovs_ <- distcovs[ex == e,, drop = FALSE]
+    A$distances <- distcovs[ex == e,, drop = FALSE]
+    A$treatments <- treat_[ex == e]
 
     matchit_try({
-      p[[e]] <- do.call(quickmatch::quickmatch,
-                        c(list(distcovs_,
-                               treatments = treat_[ex == e],
-                               caliper = caliper),
-                          A))
+      p[[e]] <- do.call(quickmatch::quickmatch, A)
     }, from = "quickmatch")
 
     pair[which(ex == e)[!is.na(p[[e]])]] <- paste(as.character(p[[e]][!is.na(p[[e]])]), e, sep = "|")

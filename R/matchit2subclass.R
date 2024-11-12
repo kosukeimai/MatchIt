@@ -201,7 +201,7 @@ matchit2subclass <- function(treat, distance, discarded,
               quantile(distance, probs = sprobs, na.rm = TRUE))
 
   ## Calculating Subclasses
-  psclass <- setNames(rep(NA_integer_, n.obs), names(treat))
+  psclass <- rep_with(NA_integer_, treat)
   psclass[!discarded] <- as.integer(findInterval(distance[!discarded], q, all.inside = TRUE))
 
   if (!has_n_unique(na.omit(psclass), subclass)) {
