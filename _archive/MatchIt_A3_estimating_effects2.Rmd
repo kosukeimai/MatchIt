@@ -8,7 +8,7 @@ output:
 
 vignette: >
   %\VignetteIndexEntry{Estimating Effects}
-  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEngine{knitr::rmarkdown_notangle}
   %\VignetteEncoding{UTF-8}
 bibliography: references.bib
 ---

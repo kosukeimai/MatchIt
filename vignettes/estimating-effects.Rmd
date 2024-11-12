@@ -7,7 +7,7 @@ output:
         toc: true
 vignette: >
   %\VignetteIndexEntry{Estimating Effects After Matching}
-  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEngine{knitr::rmarkdown_notangle}
   %\VignetteEncoding{UTF-8}
 bibliography: references.bib
 link-citations: true
