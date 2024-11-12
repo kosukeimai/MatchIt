@@ -722,9 +722,9 @@ dispatch_optimizer <- function(solver = "glpk", obj, mat, dir, rhs, types, max =
     dir[dir == "<="] <- "<"
     dir[dir == ">="] <- ">"
     dir[dir == "=="] <- "="
-    opt.out <- gurobi::gurobi(list(A = mat, obj = obj, sense = dir, rhs = rhs, vtype = types,
-                                   modelsense = "max", lb = lb, ub = ub),
-                              params = list(OutputFlag = as.integer(verbose), TimeLimit = time))
+    # opt.out <- gurobi::gurobi(list(A = mat, obj = obj, sense = dir, rhs = rhs, vtype = types,
+    #                                modelsense = "max", lb = lb, ub = ub),
+    #                           params = list(OutputFlag = as.integer(verbose), TimeLimit = time))
   }
   else if (solver == "highs") {
     rhs_h <- lhs_h <- rhs
