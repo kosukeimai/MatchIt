@@ -53,13 +53,14 @@ into propensity score models and balance statistics.}
 include \code{"largest"}, where matching takes place in descending order of
 distance measures; \code{"smallest"}, where matching takes place in ascending
 order of distance measures; \code{"closest"}, where matching takes place in
-ascending order of the distance between units; \code{"random"}, where matching takes place
+ascending order of the smallest distance between units; \code{"farthest"}, where matching takes place in
+descending order of the smallest distance between units; \code{"random"}, where matching takes place
 in a random order; and \code{"data"} where matching takes place based on the
 order of units in the data. When \code{m.order = "random"}, results may differ
 across different runs of the same code unless a seed is set and specified
 with \code{\link[=set.seed]{set.seed()}}. The default of \code{NULL} corresponds to \code{"largest"} when a
 propensity score is estimated or supplied as a vector and \code{"data"}
-otherwise.}
+otherwise. See Details for more information.}
 
 \item{caliper}{the width(s) of the caliper(s) used for caliper matching. Two units with a difference on a caliper variable larger than the caliper will not be paired. See Details and Examples.}
 
@@ -68,7 +69,7 @@ are in standard deviation units (\code{TRUE}) or raw units (\code{FALSE}).}
 
 \item{ratio}{how many control units should be matched to each treated unit
 for k:1 matching. For variable ratio matching, see section "Variable Ratio
-Matching" in Details below.}
+Matching" in Details below. When \code{ratio} is greater than 1, all treated units will be attempted to be matched with a control unit before any treated unit is matched with a second control unit, etc. This reduces the possibility that control units will be used up before some treated units receive any matches.}
 
 \item{min.controls, max.controls}{for variable ratio matching, the minimum
 and maximum number of controls units to be matched to each treated unit. See
@@ -226,14 +227,16 @@ specified, it is set to 1 by default. \code{min.controls} must be less than
 Examples below for an example of their use.
 }
 
-\subsection{Using \code{m.order = "closest"}}{
+\subsection{Using \code{m.order = "closest"} or \code{"farthest"}}{
 
-As of version 4.6.0, \code{m.order} can be set to \code{"closest"}, which works regardless of how the distance measure is specified. This matches in order of the distance between units. The closest pair of units across all potential pairs of units will be matched first; the second closest pair of all potential pairs will be matched second, etc. This ensures that the best possible matches are given priority, and in that sense performs similarly to \code{m.order = "smallest"}. When \code{distance} is a vector or a method of estimating a propensity score, an algorithm described by \href{https://doi.org/10.1002/pds.3263}{Rassen et al. (2012)} is used.
+\code{m.order} can be set to \code{"closest"} or \code{"farthest"}, which work regardless of how the distance measure is specified. This matches in order of the distance between units. First, all the closest match is found for all treated units and the pairwise distances computed; when \code{m.order = "closest"} the pair with the smallest of the distances is matched first, and when \code{m.order = "farthest"}, the pair with the largest of the distances is matched first. Then, the pair with the second smallest (or largest) is matched second. If the matched control is ineligible (i.e., because it has already been used in a prior match), a new match is found for the treated unit, the new pair's distance is re-computed, and the pairs are re-ordered by distance.
+
+Using \code{m.order = "closest"} ensures that the best possible matches are given priority, and in that sense should perform similarly to \code{m.order = "smallest"}. It can be used to ensure the best matches, especially when matching with a caliper. Using \code{m.order = "farthest"} ensures that the hardest units to match are given their best chance to find a close match, and in that sense should perform similarly to \code{m.order = "largest"}. It can be used to reduce the possibility of extreme imbalance when there are hard-to-match units competing for controls. Note that \code{m.order = "farthest"} \strong{does not} implement "far matching" (i.e., finding the farthest control unit from each treated unit); it defines the order in which the closest matches are selected.
 }
 
 \subsection{Reproducibility}{
 
-Nearest neighbor matching involves a random component only when \code{m.order = "random"}, so a seed must be set in that case using \code{\link[=set.seed]{set.seed()}} to ensure reproducibility. Otherwise, it is purely deterministic, and any ties are broken based on the order in which the data appear.
+Nearest neighbor matching involves a random component only when \code{m.order = "random"} (or when the propensity is estimated using a method with randomness; see \code{\link{distance}} for details), so a seed must be set in that case using \code{\link[=set.seed]{set.seed()}} to ensure reproducibility. Otherwise, it is purely deterministic, and any ties are broken based on the order in which the data appear.
 }
 }
 \note{
@@ -306,6 +309,6 @@ within \emph{MatchIt}. For example, a sentence might read:
 a call to \code{matchit()}.
 
 \code{\link[=method_optimal]{method_optimal()}} for optimal pair matching, which is similar to
-nearest neighbor matching except that an overall distance criterion is
-minimized.
+nearest neighbor matching without replacement except that an overall distance criterion is
+minimized (i.e., as an alternative to specifying \code{m.order}).
 }
