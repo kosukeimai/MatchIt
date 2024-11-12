@@ -75,18 +75,29 @@
 #' the stratum, the treated units without a match will be dropped). The
 #' `k2k.method` argument controls how the distance between units is
 #' calculated.  }
-#' \item{`k2k.method`}{ `character`; how the distance
+#' \item{`k2k.method`}{`character`; how the distance
 #' between units should be calculated if `k2k = TRUE`. Allowable arguments
 #' include `NULL` (for random matching), any argument to
 #' [distance()] for computing a distance matrix from covariates
 #' (e.g., `"mahalanobis"`), or any allowable argument to `method` in
 #' [dist()]. Matching will take place on the original
-#' (non-coarsened) variables. The default is `"mahalanobis"`.  }
-#' \item{`mpower`}{ if `k2k.method = "minkowski"`, the power used in
-#' creating the distance. This is passed to the `p` argument of [dist()].}
+#' (non-coarsened) variables. The default is `"mahalanobis"`.
+#' }
+#' \item{`mpower`}{if `k2k.method = "minkowski"`, the power used in
+#' creating the distance. This is passed to the `p` argument of [dist()].
+#' }
+#' \item{`m.order`}{`character`; the order that the matching takes place when `k2k = TRUE`. Allowable options
+#'   include `"closest"`, where matching takes place in
+#'   ascending order of the smallest distance between units; `"farthest"`, where matching takes place in
+#'   descending order of the smallest distance between units; `"random"`, where matching takes place
+#'   in a random order; and `"data"` where matching takes place based on the
+#'   order of units in the data. When `m.order = "random"`, results may differ
+#'   across different runs of the same code unless a seed is set and specified
+#'   with [set.seed()]. The default of `NULL` corresponds to `"data"`. See [`method_nearest`] for more information.
+#'   }
 #' }
 #'
-#' The arguments `distance` (and related arguments), `exact`, `mahvars`, `discard` (and related arguments), `replace`, `m.order`, `caliper` (and related arguments), and `ratio` are ignored with a warning.
+#' The arguments `distance` (and related arguments), `exact`, `mahvars`, `discard` (and related arguments), `replace`, `caliper` (and related arguments), and `ratio` are ignored with a warning.
 #'
 #' @section Outputs:
 #'
@@ -109,8 +120,7 @@
 #' Setting `k2k = TRUE` is equivalent to first doing coarsened exact
 #' matching with `k2k = FALSE` and then supplying stratum membership as an
 #' exact matching variable (i.e., in `exact`) to another call to
-#' `matchit()` with `method = "nearest"`, `distance =
-#' "mahalanobis"` and an argument to `discard` denoting unmatched units.
+#' `matchit()` with `method = "nearest"`.
 #' It is also equivalent to performing nearest neighbor matching supplying
 #' coarsened versions of the variables to `exact`, except that
 #' `method = "cem"` automatically coarsens the continuous variables. The
@@ -262,14 +272,12 @@
 
 NULL
 
-matchit2cem <- function(treat, covs, estimand = "ATT", s.weights = NULL, verbose = FALSE, TEST = 1, ...) {
+matchit2cem <- function(treat, covs, estimand = "ATT", s.weights = NULL, m.order = NULL, verbose = FALSE, ...) {
   if (is_null(covs)) {
     .err("Covariates must be specified in the input formula to use coarsened exact matching")
   }
 
-  if (verbose) cat("Coarsened exact matching...\n")
-
-  A <- list(...)
+  .cat_verbose("Coarsened exact matching... \n", verbose = verbose)
 
   # if (isTRUE(A[["k2k"]])) {
   #   if (!has_n_unique(treat, 2L)) {
@@ -281,57 +289,55 @@ matchit2cem <- function(treat, covs, estimand = "ATT", s.weights = NULL, verbose
   estimand <- match_arg(estimand, c("ATT", "ATC", "ATE"))
 
   #Uses in-house cem, no need for cem package.
-  strat <- do.call("cem_matchit", c(list(treat = treat, X = covs),
-                                    A[names(A) %in% names(formals(cem_matchit))]))
-
-  levels(strat) <- seq_len(nlevels(strat))
-  names(strat) <- names(treat)
+  strat <- cem_matchit(treat = treat, X = covs, ...)
 
   mm <- NULL
-  if (isTRUE(A[["k2k"]])) {
+  if (isTRUE(...get("k2k", ...))) {
     focal <- switch(estimand, "ATC" = 0, 1)
 
-    strat <- do.call("do_k2k", c(list(treat = treat, X = covs, subclass = strat,
-                                      estimand = estimand,
-                                      s.weights = s.weights),
-                                 A[names(A) %in% names(formals(do_k2k))]))
+    mm <- do_k2k(treat = treat,
+                 X = covs,
+                 subclass = strat,
+                 s.weights = s.weights,
+                 focal = focal,
+                 m.order = m.order,
+                 verbose = verbose,
+                 ...)
 
-    strat <- setNames(factor(strat), names(treat))
+    strat <- mm2subclass(mm, treat, focal = focal)
     levels(strat) <- seq_len(nlevels(strat))
 
-    mm <- nummm2charmm(subclass2mmC(strat, treat, focal = focal),
-                       treat)
+    mm <- nummm2charmm(mm, treat)
 
     weights <- get_weights_from_mm(mm, treat, focal)
   }
   else {
-    strat <- setNames(factor(strat), names(treat))
     levels(strat) <- seq_len(nlevels(strat))
 
     weights <- get_weights_from_subclass(strat, treat, estimand)
   }
 
-  if (verbose) cat("Calculating matching weights... ")
+  .cat_verbose("Calculating matching weights... ", verbose = verbose)
 
   res <- list(match.matrix = mm,
               subclass = strat,
               weights = weights)
 
-  if (verbose) cat("Done.\n")
+  .cat_verbose("Done.\n", verbose = verbose)
 
   class(res) <- "matchit"
 
   res
 }
 
-cem_matchit <- function(treat, X, cutpoints = "sturges", grouping = list()) {
+cem_matchit <- function(treat, X, cutpoints = "sturges", grouping = list(), ...) {
   #In-house implementation of cem. Basically the same except:
   #treat is a vector if treatment status, not the name of a variable
   #X is a data.frame of covariates
   #when cutpoints are given as integer or string, they define the number of bins, not the number of breakpoints. "ss" is no longer allowed.
 
-  for (i in names(X)) {
-    if (is.ordered(X[[i]])) X[[i]] <- as.numeric(X[[i]])
+  for (i in seq_along(X)) {
+    if (is.ordered(X[[i]])) X[[i]] <- unclass(X[[i]])
   }
 
   is.numeric.cov <- setNames(vapply(X, is.numeric, logical(1L)), names(X))
@@ -385,7 +391,7 @@ cem_matchit <- function(treat, X, cutpoints = "sturges", grouping = list()) {
 
   #Process cutpoints
   if (!is.list(cutpoints)) {
-    cutpoints <- setNames(lapply(names(X)[is.numeric.cov], function(i) cutpoints), names(X)[is.numeric.cov])
+    cutpoints <- setNames(rep(list(cutpoints), sum(is.numeric.cov)), names(X)[is.numeric.cov])
   }
 
   if (is_null(names(cutpoints))) {
@@ -441,10 +447,7 @@ cem_matchit <- function(treat, X, cutpoints = "sturges", grouping = list()) {
       bad.cuts[i] <- !(startsWith(cutpoints[[i]], "q") && can_str2num(substring(cutpoints[[i]], 2))) &&
         is.na(pmatch(cutpoints[[i]], c("sturges", "fd", "scott")))
     }
-    else if (!is.numeric(cutpoints[[i]])) {
-      bad.cuts[i] <- TRUE
-    }
-    else if (!is.finite(cutpoints[[i]]) || cutpoints[[i]] < 0) {
+    else if (!is.numeric(cutpoints[[i]]) || !is.finite(cutpoints[[i]]) || cutpoints[[i]] < 0) {
       bad.cuts[i] <- TRUE
     }
     else if (cutpoints[[i]] == 0) {
@@ -466,10 +469,14 @@ cem_matchit <- function(treat, X, cutpoints = "sturges", grouping = list()) {
          tidy = FALSE, n = sum(bad.cuts))
   }
 
+  if (is_null(X)) {
+    return(setNames(rep(1L, length(treat)), names(treat)))
+  }
+
   #Create bins for numeric variables
   for (i in names(X)[is.numeric.cov]) {
     bins <- {
-      if (is_not_null(cutpoints) && i %in% names(cutpoints)) cutpoints[[i]]
+      if (is_not_null(cutpoints) && any(names(cutpoints) == i)) cutpoints[[i]]
       else "sturges"
     }
 
@@ -501,81 +508,83 @@ cem_matchit <- function(treat, X, cutpoints = "sturges", grouping = list()) {
     X[[i]] <- findInterval(X[[i]], breaks)
   }
 
-  if (is_null(X)) {
-    subclass <- setNames(rep(1L, length(treat)), names(treat))
-  }
-  else {
-    #Exact match
-    xx <- exactify(X, names(treat))
+  #Exact match
+  ex <- unclass(exactify(X, names(treat)))
 
-    cc <- do.call("intersect", unname(split(xx, treat)))
+  cc <- Reduce("intersect", lapply(unique(treat), function(t) ex[treat==t]))
 
-    if (is_null(cc)) {
-      .err("no units were matched. Try coarsening the variables further or decrease the number of variables to match on")
-    }
-
-    subclass <- setNames(match(xx, cc), names(treat))
+  if (is_null(cc)) {
+    .err("no units were matched. Try coarsening the variables further or decrease the number of variables to match on")
   }
 
-  subclass
+  setNames(factor(match(ex, cc), nmax = length(cc)), names(treat))
 }
 
 do_k2k <- function(treat, X, subclass, k2k.method = "mahalanobis", mpower = 2, s.weights = NULL,
-                   estimand = "ATT") {
+                   focal, m.order = "data", verbose = FALSE, k2k = TRUE, ...) {
+  #Note: need k2k argument to prevent partial matching for k2k.method
 
-    if (is_not_null(k2k.method)) {
+  m.order <- match_arg(m.order, c("data", "random", "closest", "farthest"))
+
+  .cat_verbose("K:K matching...\n", verbose = verbose)
+
+  if (is_not_null(k2k.method)) {
+    chk::chk_string(k2k.method)
     k2k.method <- tolower(k2k.method)
     k2k.method <- match_arg(k2k.method, c(matchit_distances(), "maximum", "manhattan", "canberra", "binary", "minkowski"))
 
+    if (k2k.method == "minkowski") {
+      chk::chk_number(mpower)
+      chk::chk_gt(mpower, 0)
+
+      if (mpower == 2) {
+        k2k.method <- "euclidean"
+      }
+    }
+
     X.match <- transform_covariates(data = X, s.weights = s.weights, treat = treat,
                                     method = if (k2k.method %in% matchit_distances()) k2k.method else "euclidean")
+    distance <- NULL
+  }
+  else {
+    k2k.method <- "euclidean"
+    X.match <- NULL
+    distance <- rep(0.0, length(treat))
   }
 
-  na.sub <- is.na(subclass)
+  reuse.max <- 1L
+  caliper.dist <- caliper.covs <- caliper.covs.mat <- antiexactcovs <- unit.id <- NULL
 
-  s <- switch(estimand, "ATC" = 0, 1)
+  if (k2k.method %in% matchit_distances()) {
+    discarded <- is.na(subclass)
+    ratio <- rep(1L, sum(treat == focal))
 
-  extra.sub <- max(subclass, na.rm = TRUE)
+    mm <- nn_matchC_dispatch(treat, focal, ratio, discarded, reuse.max, distance, NULL,
+                             subclass, caliper.dist, caliper.covs, caliper.covs.mat, X.match,
+                             antiexactcovs, unit.id, m.order, verbose)
+  }
+  else {
+    mm <- matrix(NA_integer_,  ncol = 1, nrow = sum(treat == 1),
+                 dimnames = list(names(treat)[treat == 1], NULL))
 
-  for (i in which(tabulateC(subclass[!na.sub]) > 2)) {
+    for (s in levels(subclass)) {
+      .e <- which(subclass == s)
+      treat_ <- treat[.e]
+      discarded_ <- rep(FALSE, length(.e))
+      ex_ <- NULL
+      ratio_ <- rep(1L, sum(treat_ == focal))
+      distance_mat <- as.matrix(dist(X.match[.e,,drop = FALSE],
+                                     method = k2k.method, p = mpower))[treat_ == focal, treat_ != focal, drop = FALSE]
 
-    in.sub <- which(!na.sub & subclass == i)
+      mm_ <- nn_matchC_dispatch(treat_, focal, ratio_, discarded_, reuse.max, distance, distance_mat,
+                                ex_, caliper.dist, caliper.covs, caliper.covs.mat, NULL,
+                                antiexactcovs, unit.id, m.order, FALSE)
 
-    #Compute distance matrix; all 0s if k2k.method = NULL for matched based on data order
-    if (is_null(k2k.method)) {
-      dist.mat <- matrix(0, nrow = sum(treat[in.sub] == s), ncol = sum(treat[in.sub] != s),
-                         dimnames = list(names(treat)[in.sub][treat[in.sub] == s],
-                                         names(treat)[in.sub][treat[in.sub] != s]))
-
-    }
-    else if (k2k.method %in% matchit_distances()) {
-      #X.match has been transformed
-      dist.mat <- eucdist_internal(X.match[in.sub,,drop = FALSE], treat[in.sub] == s)
-    }
-    else {
-      dist.mat <- as.matrix(dist(X.match[in.sub,,drop = FALSE], method = k2k.method, p = mpower))
-
-      #Put smaller group on rows
-      d.rows <- which(rownames(dist.mat) %in% names(treat[in.sub])[treat[in.sub] == s])
-      dist.mat <- dist.mat[d.rows, -d.rows, drop = FALSE]
-    }
-
-    #For each member of group on row, find closest remaining pair from cols
-    while (all(dim(dist.mat) > 0)) {
-      extra.sub <- extra.sub + 1
-
-      closest <- which.min(dist.mat[1,])
-      subclass[c(rownames(dist.mat)[1], colnames(dist.mat)[closest])] <- extra.sub
-
-      #Drop already paired units from dist.mat
-      dist.mat <- dist.mat[-1,-closest, drop = FALSE]
-    }
-
-    #If any unmatched units remain, give them NA subclass
-    if (any(dim(dist.mat) > 0)) {
-      is.na(subclass)[unlist(dimnames(dist.mat))] <- TRUE
+      #Ensure matched indices correspond to indices in full sample, not subgroup
+      mm_[] <- .e[mm_]
+      mm[rownames(mm_),] <- mm_
     }
   }
 
-  subclass
+  mm
 }
