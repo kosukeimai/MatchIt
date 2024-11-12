@@ -46,7 +46,9 @@ word_list <- function(word.list = NULL, and.or = "and", is.are = FALSE, quotes =
     }
   }
 
-  if (is.are) out <- sprintf("%s are", out)
+  if (is.are) {
+    out <- sprintf("%s are", out)
+  }
 
   attr(out, "plural") <- TRUE
 
@@ -107,18 +109,67 @@ match_arg <- function(arg, choices, several.ok = FALSE) {
   }
   else {
     chk::chk_string(arg, x_name = add_quotes(arg.name, "`"))
-    if (identical(arg, choices)) return(arg[1L])
+
+    if (identical(arg, choices)) {
+      return(arg[1L])
+    }
   }
 
   i <- pmatch(arg, choices, nomatch = 0L, duplicates.ok = TRUE)
-  if (all(i == 0L))
+
+  if (all_equal_to(i, 0L)) {
     .err(sprintf("the argument to `%s` should be %s%s",
                  arg.name,
                  ngettext(length(choices), "", if (several.ok) "at least one of " else "one of "),
                  word_list(choices, and.or = "or", quotes = 2)))
+  }
+
   i <- i[i > 0L]
 
   choices[i]
+}
+
+# Version of interaction(., drop = TRUE) that doesn't succumb to vector limit reached by
+# avoiding Cartesian expansion. Falls back to interaction() for small problems.
+interaction2 <- function(..., sep = ".", lex.order = TRUE) {
+
+  narg <- ...length()
+
+  if (narg == 0L) {
+    stop("No factors specified")
+  }
+
+  if (narg == 1L && is.list(..1)) {
+    args <- ..1
+    narg <- length(args)
+  }
+  else {
+    args <- list(...)
+  }
+
+  for (i in seq_len(narg)) {
+    args[[i]] <- as.factor(args[[i]])
+  }
+
+  if (do.call("prod", lapply(args, nlevels)) <= 1e6) {
+    return(interaction(args, drop = TRUE, sep = sep,
+                       lex.order = if (is.null(lex.order)) TRUE else lex.order))
+  }
+
+  out <- do.call(function(...) paste(..., sep = sep), args)
+
+  args_char <- lapply(args, function(x) {
+    x <- unclass(x)
+    formatC(x, format = "d", flag = "0", width = ceiling(log10(max(x))))
+  })
+
+  lev <- {
+    if (is.null(lex.order)) unique(out)
+    else if (lex.order) unique(out[order(do.call("paste", c(args_char, sep = sep)))])
+    else unique(out[order(do.call("paste", c(rev(args_char), sep = sep)))])
+  }
+
+  factor(out, levels = lev)
 }
 
 #Turn a vector into a 0/1 vector. 'zero' and 'one' can be supplied to make it clear which is
@@ -135,7 +186,7 @@ binarize <- function(variable, zero = NULL, one = NULL) {
   }
 
   if (is.character(variable) || is.factor(variable)) {
-    variable <- factor(variable, nmax = if (is.factor(variable)) nlevels(variable) else NA)
+    variable <- factor(variable, nmax = 2L)
     unique.vals <- levels(variable)
   }
   else {
@@ -173,7 +224,7 @@ binarize <- function(variable, zero = NULL, one = NULL) {
 
   variable.numeric <- {
     if (can_str2num(unique.vals)) setNames(str2num(unique.vals), unique.vals)[variable]
-    else as.numeric(factor(variable, levels = unique.vals))
+    else unclass(factor(variable, levels = unique.vals))
   }
 
   zero <- {
@@ -219,7 +270,8 @@ firstup <- function(x) {
 #Capitalize first letter of each word
 capwords <- function(s, strict = FALSE) {
   cap <- function(s) paste0(toupper(substring(s, 1, 1)),
-                            {s <- substring(s, 2); if(strict) tolower(s) else s},
+                            {s <- substring(s, 2)
+                            if (strict) tolower(s) else s},
                             collapse = " ")
   sapply(strsplit(s, split = " "), cap, USE.NAMES = is_not_null(names(s)))
 }
@@ -240,6 +292,7 @@ round_df_char <- function(df, digits, pad = "0", na_vals = "") {
   infs <- o.negs <- array(FALSE, dim = dim(df))
   nas <- is.na(df)
   nums <- vapply(df, is.numeric, logical(1))
+
   for (i in which(nums)) {
     infs[,i] <- !nas[,i] & !is.finite(df[[i]])
   }
@@ -254,19 +307,24 @@ round_df_char <- function(df, digits, pad = "0", na_vals = "") {
   o.negs[,nums] <- !nas[,nums] & df[nums] < 0 & round(df[nums], digits) == 0
   df[nums] <- round(df[nums], digits = digits)
 
+  pad0 <- identical(as.character(pad), "0")
+
   for (i in which(nums)) {
     df[[i]] <- format(df[[i]], scientific = FALSE, justify = "none", trim = TRUE,
-                      drop0trailing = !identical(as.character(pad), "0"))
+                      drop0trailing = !pad0)
 
-    if (!identical(as.character(pad), "0") && any(grepl(".", df[[i]], fixed = TRUE))) {
+    if (!pad0 && any(grepl(".", df[[i]], fixed = TRUE))) {
       s <- strsplit(df[[i]], ".", fixed = TRUE)
       lengths <- lengths(s)
       digits.r.of.. <- rep.int(0, NROW(df))
       digits.r.of..[lengths > 1] <- nchar(vapply(s[lengths > 1], `[[`, character(1L), 2))
-      max.dig <- max(digits.r.of..)
 
-      dots <- ifelse(lengths > 1, "", if (as.character(pad) != "") "." else pad)
-      pads <- vapply(max.dig - digits.r.of.., function(n) paste(rep.int(pad, n), collapse = ""), character(1L))
+      dots <- rep.int("", length(s))
+      dots[lengths <= 1] <- if (as.character(pad) != "") "." else pad
+
+      pads <- vapply(max(digits.r.of..) - digits.r.of..,
+                     function(n) paste(rep.int(pad, n), collapse = ""),
+                     character(1L))
 
       df[[i]] <- paste0(df[[i]], dots, pads)
     }
@@ -285,17 +343,17 @@ round_df_char <- function(df, digits, pad = "0", na_vals = "") {
 }
 
 #Generalized inverse; port of MASS::ginv()
-generalized_inverse <- function(sigma) {
+generalized_inverse <- function(sigma, tol = 1e-8) {
   sigmasvd <- svd(sigma)
 
-  pos <- sigmasvd$d > max(1e-8 * sigmasvd$d[1L], 0)
+  pos <- sigmasvd$d > max(tol * sigmasvd$d[1L], 0)
 
   sigmasvd$v[, pos, drop = FALSE] %*% (sigmasvd$d[pos]^-1 * t(sigmasvd$u[, pos, drop = FALSE]))
 }
 
 #(Weighted) variance that uses special formula for binary variables
 wvar <- function(x, bin.var = NULL, w = NULL) {
-  if (is_null(w)) w <- rep(1, length(x))
+  if (is_null(w)) w <- rep.int(1, length(x))
   if (is_null(bin.var)) bin.var <- all(x == 0 | x == 1)
 
   w <- w / sum(w) #weights normalized to sum to 1
@@ -367,6 +425,27 @@ diff1 <- function(x) {
   }
 
   x
+}
+
+...get <- function(x, ...) {
+  m <- match(x, ...names(), 0L)
+
+  if (m == 0L) {
+    return(NULL)
+  }
+
+  ...elt(m)
+}
+
+#cat() if verbose = TRUE (default sep = "", line wrapping)
+.cat_verbose <- function(..., verbose = TRUE, sep = "") {
+  if (!verbose) {
+    return(invisible(NULL))
+  }
+
+  m <- do.call(function(...) paste(..., sep = sep), list(...))
+
+  cat(paste(strwrap(m), collapse = "\n"))
 }
 
 #Functions for error handling; based on chk and rlang
