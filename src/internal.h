@@ -2,6 +2,11 @@
 #define INTERNAL_H
 
 #include <Rcpp.h>
+#include <algorithm>
+#include <functional>
+#include <cmath>
+#include <utility>
+#include <tuple>
 using namespace Rcpp;
 
 IntegerVector tabulateC_(const IntegerVector& bins,
@@ -9,44 +14,68 @@ IntegerVector tabulateC_(const IntegerVector& bins,
 
 IntegerVector which(const LogicalVector& x);
 
-int find_both(const int& t_id,
-              const IntegerVector& ind_d_ord,
-              const IntegerVector& match_d_ord,
-              const IntegerVector& treat,
-              const NumericVector& distance,
-              const LogicalVector& eligible,
-              const int& gi,
-              const int& r,
-              const IntegerVector& mm_ordi,
-              const int& ncc,
-              const NumericMatrix& caliper_covs_mat,
-              const NumericVector& caliper_covs,
-              const double& caliper_dist,
-              const bool& use_exact,
-              const IntegerVector& exact,
-              const int& aenc,
-              const IntegerMatrix& antiexact_covs,
-              const IntegerVector& first_control,
-              const IntegerVector& last_control);
+std::vector<int> find_control_vec(const int& t_id,
+                                  const IntegerVector& ind_d_ord,
+                                  const IntegerVector& match_d_ord,
+                                  const IntegerVector& treat,
+                                  const NumericVector& distance,
+                                  const LogicalVector& eligible,
+                                  const int& gi,
+                                  const int& r,
+                                  const IntegerVector& mm_rowi_,
+                                  const int& ncc,
+                                  const NumericMatrix& caliper_covs_mat,
+                                  const NumericVector& caliper_covs,
+                                  const double& caliper_dist,
+                                  const bool& use_exact,
+                                  const IntegerVector& exact,
+                                  const int& aenc,
+                                  const IntegerMatrix& antiexact_covs,
+                                  const IntegerVector& first_control,
+                                  const IntegerVector& last_control,
+                                  const int& ratio = 1,
+                                  const int& prev_start = -1);
 
-int find_lr(const int& prev_match,
-            const int& t_id,
-            const IntegerVector& ind_d_ord,
-            const IntegerVector& match_d_ord,
-            const IntegerVector& treat,
-            const NumericVector& distance,
-            const LogicalVector& eligible,
-            const int& gi,
-            const int& ncc,
-            const NumericMatrix& caliper_covs_mat,
-            const NumericVector& caliper_covs,
-            const double& caliper_dist,
-            const bool& use_exact,
-            const IntegerVector& exact,
-            const int& aenc,
-            const IntegerMatrix& antiexact_covs,
-            const IntegerVector& first_control,
-            const IntegerVector& last_control);
+std::vector<int> find_control_mahcovs(const int& t_id,
+                                      const IntegerVector& ind_d_ord,
+                                      const IntegerVector& match_d_ord,
+                                      const NumericVector& match_var,
+                                      const double& match_var_caliper,
+                                      const IntegerVector& treat,
+                                      const NumericVector& distance,
+                                      const LogicalVector& eligible,
+                                      const int& gi,
+                                      const int& r,
+                                      const IntegerVector& mm_rowi,
+                                      const NumericMatrix& mah_covs,
+                                      const int& ncc,
+                                      const NumericMatrix& caliper_covs_mat,
+                                      const NumericVector& caliper_covs,
+                                      const bool& use_caliper_dist,
+                                      const double& caliper_dist,
+                                      const bool& use_exact,
+                                      const IntegerVector& exact,
+                                      const int& aenc,
+                                      const IntegerMatrix& antiexact_covs,
+                                      const int& ratio = 1);
+
+std::vector<int> find_control_mat(const int& t_id,
+                                  const IntegerVector& treat,
+                                  const IntegerVector& ind_non_focal,
+                                  const NumericVector& distance_mat_row_i,
+                                  const LogicalVector& eligible,
+                                  const int& gi,
+                                  const int& r,
+                                  const IntegerVector& mm_rowi,
+                                  const int& ncc,
+                                  const NumericMatrix& caliper_covs_mat,
+                                  const NumericVector& caliper_covs,
+                                  const double& caliper_dist,
+                                  const bool& use_exact,
+                                  const IntegerVector& exact,
+                                  const int& aenc,
+                                  const IntegerMatrix& antiexact_covs,
+                                  const int& ratio = 1);
 
 bool antiexact_okay(const int& aenc,
                     const int& i,
@@ -59,6 +88,12 @@ bool caliper_covs_okay(const int& ncc,
                        const NumericMatrix& caliper_covs_mat,
                        const NumericVector& caliper_covs);
 
+bool caliper_dist_okay(const bool& use_caliper_dist,
+                       const int& i,
+                       const int& j,
+                       const NumericVector& distance,
+                       const double& caliper_dist);
+
 bool mm_okay(const int& r,
              const int& i,
              const IntegerVector& mm_rowi);
@@ -67,10 +102,6 @@ bool exact_okay(const bool& use_exact,
                 const int& i,
                 const int& j,
                 const IntegerVector& exact);
-
-void swap_pos(IntegerVector x,
-              const int& a,
-              const int& b);
 
 double max_finite(const NumericVector& x);
 
