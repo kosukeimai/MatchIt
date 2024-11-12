@@ -67,6 +67,10 @@ SW <- gen_SW(X)
 Y_C <- gen_Y_C(A, X)
 
 d <- data.frame(A, X, Y_C, SW)
+
+eval_est <- (requireNamespace("optmatch", quietly = TRUE) &&
+               requireNamespace("marginaleffects", quietly = TRUE) &&
+               requireNamespace("sandwich", quietly = TRUE))
 ```
 
 ## Introduction
@@ -86,17 +90,11 @@ library("MatchIt")
 When using sampling weights with propensity score matching, one has the option of including the sampling weights in the model used to estimate the propensity scores. Although evidence is mixed on whether this is required [@austin2016; @lenis2019], it can be a good idea. The choice should depend on whether including the sampling weights improves the quality of the matches. Specifications including and excluding sampling weights should be tried to determine which is preferred.
 
 To supply sampling weights to the propensity score-estimating function in `matchit()`, the sampling weights variable should be supplied to the `s.weights` argument. It can be supplied either as a numerical vector containing the sampling weights, or a string or one-sided formula with the name of the sampling weights variable in the supplied dataset. Below we demonstrate including sampling weights into propensity scores estimated using logistic regression for optimal full matching for the average treatment effect in the population (ATE) (note that all methods and steps apply the same way to all forms of matching and all estimands).
-```{asis, echo = !requireNamespace("optmatch", quietly = TRUE)}
+```{asis, echo = eval_est}
 
 Note: if the `optmatch`, `marginaleffects`, or `sandwich` packages are not available, the subsequent lines will not run.
 ```
-```{r, include=FALSE}
-#In case packages goes offline, don't run lines below
-if (!requireNamespace("optmatch", quietly = TRUE) ||
-    !requireNamespace("marginaleffects", quietly = TRUE) ||
-    !requireNamespace("sandwich", quietly = TRUE)) knitr::opts_chunk$set(eval = FALSE)
-```
-```{r}
+```{r, eval = eval_est}
 mF_s <- matchit(A ~ X1 + X2 + X3 + X4 + X5 + 
                   X6 + X7 + X8 + X9, data = d,
                 method = "full", distance = "glm",
@@ -108,7 +106,7 @@ Notice that the description of the matching specification when the `matchit` obj
 
 Now let's perform full matching on a propensity score that does not include the sampling weights in its estimation. Here we use the same specification as was used in `vignette("estimating-effects")`.
 
-```{r}
+```{r, eval = eval_est}
 mF <- matchit(A ~ X1 + X2 + X3 + X4 + X5 + 
                 X6 + X7 + X8 + X9, data = d,
               method = "full", distance = "glm",
@@ -118,7 +116,7 @@ mF
 
 Notice that there is no mention of sampling weights in the description of the matching specification. However, to properly assess balance and estimate effects, we need the sampling weights to be included in the `matchit` object, even if they were not used at all in the matching. To do so, we use the function `add_s.weights()`, which adds sampling weights to the supplied `matchit` objects.
 
-```{r}
+```{r, eval = eval_est}
 mF <- add_s.weights(mF, ~SW)
 
 mF
@@ -134,7 +132,7 @@ Now we need to decide which matching specification is the best to use for effect
 
 We'll use `summary()` to examine balance on the two matching specifications. With sampling weights included, the balance statistics for the unmatched data are weighted by the sampling weights. The balance statistics for the matched data are weighted by the product of the sampling weights and the matching weights. It is the product of these weights that will be used in estimating the treatment effect. Below we use `summary()` to display balance for the two matching specifications. No additional arguments to `summary()` are required for it to use the sampling weights; as long as they are in the `matchit` object (either due to being supplied with the `s.weights` argument in the call to `matchit()` or to being added afterward by `add_s.weights()`), they will be correctly incorporated into the balance statistics.
 
-```{r}
+```{r, eval = eval_est}
 #Balance before matching and for the SW propensity score full matching
 summary(mF_s)
 
@@ -152,7 +150,7 @@ Estimating the treatment effect after matching is straightforward when using sam
 
 Below we estimate the effect of `A` on `Y_C` in the matched and sampling weighted sample, adjusting for the covariates to improve precision and decrease bias.
 
-```{r}
+```{r, eval = eval_est}
 md_F_s <- match.data(mF_s)
 
 fit <- lm(Y_C ~ A * (X1 + X2 + X3 + X4 + X5 + 
@@ -163,15 +161,12 @@ library("marginaleffects")
 avg_comparisons(fit,
                 variables = "A",
                 vcov = ~subclass,
-                newdata = subset(md_F_s, A == 1),
-                wts = "weights")
+                newdata = subset(A == 1),
+                wts = "SW")
 ```
 
 Note that `match.data()` and `get_weights()` have the option `include.s.weights`, which, when set to `FALSE`, makes it so the returned weights do not incorporate the sampling weights and are simply the matching weights. Because one might to forget to multiply the two sets of weights together, it is easier to just use the default of `include.s.weights = TRUE` and ignore the sampling weights in the rest of the analysis (because they are already included in the returned weights). `avg_comparisons()` also works more smoothly when the weights supplied to `weights` is a single variable rather than the product of two.
 
-```{r, include=FALSE, eval=TRUE}
-knitr::opts_chunk$set(eval = TRUE)
-```
 ## Code to Generate Data used in Examples
 
 ```{r, eval = FALSE}

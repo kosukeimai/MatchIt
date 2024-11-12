@@ -447,7 +447,7 @@ boot.ci(boot_out, type = "perc")
 
 ```{r, include = FALSE}
 b <- {
-  if (boot_ok) boot.ci(boot_out, type = "perc")
+  if (boot_ok) boot::boot.ci(boot_out, type = "perc")
   else list(t0 = 1.347, percent = c(0, 0, 0, 1.144, 1.891))
 }
 ```
@@ -524,7 +524,7 @@ boot.ci(cluster_boot_out, type = "perc")
 
 ```{r, include = FALSE}
 b <- {
-  if (boot_ok) boot.ci(cluster_boot_out, type = "perc")
+  if (boot_ok) boot::boot.ci(cluster_boot_out, type = "perc")
   else list(t0 = 1.588, percent = c(0,0,0, 1.348, 1.877))
 } 
 ```
