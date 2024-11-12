@@ -17,6 +17,7 @@
 #include <sstream>
 #include <string.h>
 
+#include <progress.hpp>
 #include "progress_bar.hpp"
 
 // for unices only
@@ -53,21 +54,25 @@ class ETAProgressBar: public ProgressBar{
         // stop if already finalized
         if (_finalized) return;
 
+        // measure current time
+        time(&current_time);
+
         // start time measurement when update() is called the first time
         if (_timer_flag) {
           _timer_flag = false;
           // measure start time
-          time(&start);
-          last_refresh = start;
-          current_old = start;
-          progress_old = progress;
+          time_at_start = current_time;
 
-          ema_rate = 0;
+          time_at_last_refresh = current_time;
+
+          progress_at_last_refresh = progress;
+
+          _num_ticks = _compute_nb_ticks(progress);
 
           time_string = "calculating...";
 
           // create progress bar string
-          std::string progress_bar_string = _current_ticks_display(progress);
+          std::string progress_bar_string = _current_ticks_display(_num_ticks);
 
           // merge progress bar and time string
           std::stringstream strs;
@@ -80,67 +85,82 @@ class ETAProgressBar: public ProgressBar{
           REprintf("%s", char_type);
         } else {
 
-          // measure current time
-          time(&current_new);
+          double time_since_start = std::difftime(current_time, time_at_start);
 
           if (progress != 1) {
-            // create progress bar string
-            std::string progress_bar_string = _current_ticks_display(progress);
-
             // ensure overwriting of old time info
             int empty_length = time_string.length();
 
-            double time_since_start = std::difftime(current_new, start);
+            int _num_ticks_current = _compute_nb_ticks(progress);
 
-            if (time_since_start <= 1) {
-              ema_rate = progress / time_since_start;
-            }
-            else {
-              double time_since_last_refresh = std::difftime(current_new, last_refresh);
+            bool update_bar = (_num_ticks_current != _num_ticks);
+
+            _num_ticks = _num_ticks_current;
+
+            if (progress > 0 && time_since_start > 1) {
+              double time_since_last_refresh = std::difftime(current_time, time_at_last_refresh);
 
               if (time_since_last_refresh >= .5) {
-                double current_rate = (progress - progress_old) / time_since_last_refresh;
+                update_bar = true;
 
+                double progress_since_last_refresh = progress - progress_at_last_refresh;
+
+                double total_rate = progress / time_since_start;
+
+                if (progress_since_last_refresh == 0) {
+                  progress_since_last_refresh = .0000001;
+                }
+
+                double current_rate = progress_since_last_refresh / time_since_last_refresh;
+
+                //alpha weights average rate against recent recent (current) rate;
+                //alpha = 1 => estimate based on on total_rate (treats as constant)
+                //alpha = 0 => estimate based on recent rate (high fluctuation)
                 double alpha = .8;
 
-                ema_rate = alpha * ema_rate + (1 - alpha) * current_rate;
+                double eta = (1 - progress) * (alpha / total_rate + (1 - alpha) / current_rate);
 
                 // convert seconds to time string
                 time_string = "~";
-                time_string += _time_to_string((1 - progress) / ema_rate);
+                time_string += _time_to_string(eta);
 
-                last_refresh = current_new;
-                progress_old = progress;
+                time_at_last_refresh = current_time;
+                progress_at_last_refresh = progress;
               }
             }
 
-            std::string empty_space = std::string(std::fdim(empty_length,  time_string.length()), ' ');
+            if (update_bar) {
+              // create progress bar string
+              std::string progress_bar_string = _current_ticks_display(_num_ticks);
 
-            // merge progress bar and time string
-            std::stringstream strs;
-            strs << "|" << progress_bar_string << "| ETA: " << time_string << empty_space;
-            std::string temp_str = strs.str();
-            char const* char_type = temp_str.c_str();
+              std::string empty_space = std::string(std::fdim(empty_length, time_string.length()), ' ');
 
-            // print: remove old and replace with new
-            REprintf("\r");
-            REprintf("%s", char_type);
+              // merge progress bar and time string
+              std::stringstream strs;
+              strs << "|" << progress_bar_string << "| ETA: " << time_string << empty_space;
+              std::string temp_str = strs.str();
+              char const* char_type = temp_str.c_str();
 
-            current_old = current_new;
+              // print: remove old and replace with new
+              REprintf("\r");
+              REprintf("%s", char_type);
+            }
 
           } else {
             // ensure overwriting of old time info
             int empty_length = time_string.length();
 
             // finalize display when ready
-            double time_since_start = std::difftime(current_new, start);
+
             // convert seconds to time string
             std::string time_string = _time_to_string(time_since_start);
 
             std::string empty_space = std::string(std::fdim(empty_length, time_string.length()), ' ');
 
             // create progress bar string
-            std::string progress_bar_string = _current_ticks_display(progress);
+            _num_ticks = _compute_nb_ticks(progress);
+
+            std::string progress_bar_string = _current_ticks_display(_num_ticks);
 
             // merge progress bar and time string
             std::stringstream strs;
@@ -189,17 +209,7 @@ class ETAProgressBar: public ProgressBar{
         }
 
         // update the ticks display corresponding to progress
-        std::string _current_ticks_display(float progress) {
-
-          int nb_ticks = _compute_nb_ticks(progress);
-
-          std::string cur_display = _construct_ticks_display_string(nb_ticks);
-
-          return cur_display;
-        }
-
-        // construct progress bar display
-        std::string _construct_ticks_display_string(int nb) {
+        std::string _current_ticks_display(int nb) {
 
           std::stringstream ticks_strs;
           for (int i = 0; i < (_max_ticks - 1); ++i) {
@@ -237,10 +247,11 @@ class ETAProgressBar: public ProgressBar{
 
         private: // ===== INSTANCE VARIABLES ====
           int _max_ticks;   		// the total number of ticks to print
+          int _num_ticks;
           bool _finalized;
           bool _timer_flag;
-          time_t start, current_new, last_refresh, current_old;
-          double ema_rate, progress_old;
+          time_t time_at_start, current_time, time_at_last_refresh;
+          float progress_at_last_refresh;
           std::string time_string;
 
 };
