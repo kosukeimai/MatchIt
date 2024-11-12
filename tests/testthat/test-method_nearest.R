@@ -16,57 +16,67 @@ test_that("distance vector, mah vars, and distance matrix yield identical result
 
     M <- list()
     if (any(which == 1)) {
-      m <- matchit(a ~ p + p_, data = d,
-                   distance = d$p,
-                   ...)
+      matchit_try({
+        m <- matchit(a ~ p + p_, data = d,
+                     distance = d$p,
+                     ...)
+      }, dont_warn_if = "Fewer control")
       expect_good_matchit(m, expect_distance = TRUE, expect_match.matrix = TRUE,
                           expect_subclass = !m$info$replace, replace = m$info$replace,
                           ratio = m$info$ratio)
       M <- c(M, list(m))
     }
     if (any(which == 2)) {
-      m <- matchit(a ~ p + p_, data = d,
-                   distance = "euclidean",
-                   ...)
+      matchit_try({
+        m <- matchit(a ~ p + p_, data = d,
+                     distance = "euclidean",
+                     ...)
+      }, dont_warn_if = "Fewer control")
       expect_good_matchit(m, expect_distance = FALSE, expect_match.matrix = TRUE,
                           expect_subclass = !m$info$replace, replace = m$info$replace,
                           ratio = m$info$ratio)
       M <- c(M, list(m))
     }
     if (any(which == 3)) {
-      m <- matchit(a ~ p + p_, data = d,
-                   distance = d$p,
-                   mahvars = ~p + p_,
-                   ...)
+      matchit_try({
+        m <- matchit(a ~ p + p_, data = d,
+                     distance = d$p,
+                     mahvars = ~p + p_,
+                     ...)
+      }, dont_warn_if = "Fewer control")
       expect_good_matchit(m, expect_distance = TRUE, expect_match.matrix = TRUE,
                           expect_subclass = !m$info$replace, replace = m$info$replace,
                           ratio = m$info$ratio)
       M <- c(M, list(m))
     }
     if (any(which == 4)) {
-      m <- matchit(a ~ p + p_, data = d,
-                   distance = dd,
-                   ...)
+      matchit_try({
+        m <- matchit(a ~ p + p_, data = d,
+                     distance = dd,
+                     ...)
+      }, dont_warn_if = "Fewer control")
       expect_good_matchit(m, expect_distance = FALSE, expect_match.matrix = TRUE,
                           expect_subclass = !m$info$replace, replace = m$info$replace,
                           ratio = m$info$ratio)
       M <- c(M, list(m))
     }
 
-    all(unlist(lapply(combn(seq_along(M), 2, simplify = FALSE),
-                      function(i) isTRUE(all.equal(M[[i[1]]]$match.matrix,
-                                                   M[[i[2]]]$match.matrix)))))
+    all(unlist(lapply(M[-1], function(m) isTRUE(all.equal(M[[1]]$match.matrix,
+                                                          m$match.matrix)))))
   }
 
   expect_true(test_all(m.order = "data"))
   expect_true(test_all(m.order = "closest"))
+  expect_true(test_all(m.order = "farthest"))
   expect_true(test_all(m.order = "largest", which = c(1, 3)))
+  expect_true(test_all(m.order = "smallest", which = c(1, 3)))
 
   expect_true(test_all(m.order = "data", ratio = 2))
   expect_true(test_all(m.order = "closest", ratio = 2))
 
   expect_true(test_all(m.order = "data", ratio = 2, max.controls = 3, which = c(1, 3)))
   expect_true(test_all(m.order = "closest", ratio = 2, max.controls = 3, which = c(1, 3)))
+  expect_true(test_all(m.order = "largest", ratio = 2, max.controls = 3, which = c(1, 3)))
 
   expect_true(test_all(m.order = "data", ratio = 2, replace = TRUE))
   expect_true(test_all(m.order = "closest", ratio = 2, replace = TRUE))
@@ -76,6 +86,7 @@ test_that("distance vector, mah vars, and distance matrix yield identical result
 
   expect_true(test_all(m.order = "data", ratio = 2, caliper = .001, std.caliper = FALSE, which = c(1, 3)))
   expect_true(test_all(m.order = "closest", ratio = 2, caliper = .001, std.caliper = FALSE, which = c(1, 3)))
+  expect_true(test_all(m.order = "largest", ratio = 2, caliper = .001, std.caliper = FALSE, which = c(1, 3)))
 
   expect_true(test_all(m.order = "data", ratio = 2, caliper = c(p = .001), std.caliper = FALSE))
   expect_true(test_all(m.order = "closest", ratio = 2, caliper = c(p = .001), std.caliper = FALSE))
