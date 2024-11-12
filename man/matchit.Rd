@@ -71,8 +71,7 @@ used.}
 argument controlling the link function used in estimating the distance
 measure. Allowable options depend on the specific \code{distance} value
 specified. See \code{\link{distance}} for allowable options with each
-option. The default is \code{"logit"}, which, along with \code{distance = "glm"}, identifies the default measure as logistic regression propensity
-scores.}
+option. The default is \code{"logit"}, which, along with \code{distance = "glm"}, identifies the default measure as logistic regression propensity scores.}
 
 \item{distance.options}{a named list containing additional arguments
 supplied to the function that estimates the distance measure as determined
@@ -96,8 +95,7 @@ propensity scores. Usually used to perform Mahalanobis distance matching
 within propensity score calipers, where the propensity scores are computed
 using \code{formula} and \code{distance}. Can be specified as a string
 containing the names of variables in \code{data} to be used or a one-sided
-formula with the desired variables on the right-hand side (e.g., \code{~ X3 + X4}). See the individual methods pages for information on whether and how
-this argument is used.}
+formula with the desired variables on the right-hand side (e.g., \code{~ X3 + X4}). See the individual methods pages for information on whether and how this argument is used.}
 
 \item{antiexact}{for methods that allow it, for which variables anti-exact
 matching should take place. Anti-exact matching ensures paired individuals
@@ -180,7 +178,7 @@ additional arguments are allowed for each method.}
 When \code{method} is something other than \code{"subclass"}, a
 \code{matchit} object with the following components:
 
-\item{match.matrix}{a matrix containing the matches. The rownames correspond
+\item{match.matrix}{a matrix containing the matches. The row names correspond
 to the treated units and the values in each row are the names (or indices)
 of the control units matched to each treated unit. When treated units are
 matched to different numbers of control units (e.g., with variable ratio matching or
@@ -196,13 +194,10 @@ the model used to estimate propensity scores when \code{distance} is
 specified as a method of estimating propensity scores. When
 \code{reestimate = TRUE}, this is the model estimated after discarding
 units.}
-\item{X}{a data frame of covariates mentioned in \code{formula},
-\code{exact}, \code{mahvars}, \code{caliper}, and \code{antiexact}.}
+\item{X}{a data frame of covariates mentioned in \code{formula}, \code{exact}, \code{mahvars}, \code{caliper}, and \code{antiexact}.}
 \item{call}{the \code{matchit()} call.}
-\item{info}{information on the matching method and
-distance measures used.}
-\item{estimand}{the argument supplied to
-\code{estimand}.}
+\item{info}{information on the matching method and distance measures used.}
+\item{estimand}{the argument supplied to \code{estimand}.}
 \item{formula}{the \code{formula} supplied.}
 \item{treat}{a vector of treatment status converted to zeros (0) and ones
 (1) if not already in that format.}
@@ -210,16 +205,11 @@ distance measures used.}
 values (i.e., propensity scores) when \code{distance} is supplied as a
 method of estimating propensity scores or a numeric vector.}
 \item{discarded}{a logical vector denoting whether each observation was
-discarded (\code{TRUE}) or not (\code{FALSE}) by the argument to
-\code{discard}.}
-\item{s.weights}{the vector of sampling weights supplied to
-the \code{s.weights} argument, if any.}
-\item{exact}{a one-sided formula
-containing the variables, if any, supplied to \code{exact}.}
-\item{mahvars}{a one-sided formula containing the variables, if any,
-supplied to \code{mahvars}.}
-\item{obj}{when \code{include.obj = TRUE}, an
-object containing the intermediate results of the matching procedure. See
+discarded (\code{TRUE}) or not (\code{FALSE}) by the argument to \code{discard}.}
+\item{s.weights}{the vector of sampling weights supplied to the \code{s.weights} argument, if any.}
+\item{exact}{a one-sided formula containing the variables, if any, supplied to \code{exact}.}
+\item{mahvars}{a one-sided formula containing the variables, if any, supplied to \code{mahvars}.}
+\item{obj}{when \code{include.obj = TRUE}, an object containing the intermediate results of the matching procedure. See
 the individual methods pages for what this component will contain.}
 
 When \code{method = "subclass"}, a \code{matchit.subclass} object with the same
@@ -352,8 +342,7 @@ as the sum of the inverse of the number of control units matched to the same
 treated unit across its matches. For example, if a control unit was matched
 to a treated unit that had two other control units matched to it, and that
 same control was matched to a treated unit that had one other control unit
-matched to it, the control unit in question would get a weight of 1/3 + 1/2
-= 5/6. For the ATC, the same is true with the treated and control labels
+matched to it, the control unit in question would get a weight of \eqn{1/3 + 1/2 = 5/6}. For the ATC, the same is true with the treated and control labels
 switched. The weights are computed using the \code{match.matrix} component
 of the \code{matchit()} output object.
 }
@@ -427,7 +416,6 @@ s.out1 <- matchit(treat ~ age + educ + race + nodegree +
                    discard = "control", subclass = 10)
 s.out1
 summary(s.out1, un = TRUE)
-
 }
 \references{
 Ho, D. E., Imai, K., King, G., & Stuart, E. A. (2007). Matching

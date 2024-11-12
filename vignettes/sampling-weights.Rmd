@@ -146,7 +146,7 @@ Note that had we not added sampling weights to `mF`, the matching specification 
 
 ## Estimating the Effect
 
-Estimating the treatment effect after matching is straightforward when using sampling weights. Effects are estimated in the same way as when sampling weights are excluded, except that the matching weights must be multiplied by the sampling weights to yield accurate, generalizable estimates. `match.data()` and `get_matches()` do this automatically, so the weights produced by these functions already are a product of the matching weights and the sampling weights. Note this will only be true if sampling weights are incorporated into the `matchit` object.
+Estimating the treatment effect after matching is straightforward when using sampling weights. Effects are estimated in the same way as when sampling weights are excluded, except that the matching weights must be multiplied by the sampling weights for use in the outcome model to yield accurate, generalizable estimates. `match.data()` and `get_matches()` do this automatically, so the weights produced by these functions already are a product of the matching weights and the sampling weights. Note this will only be true if sampling weights are incorporated into the `matchit` object. With `avg_comparisons()`, only the sampling weights should be included when estimating the treatment effect.
 
 Below we estimate the effect of `A` on `Y_C` in the matched and sampling weighted sample, adjusting for the covariates to improve precision and decrease bias.
 
@@ -165,7 +165,7 @@ avg_comparisons(fit,
                 wts = "SW")
 ```
 
-Note that `match.data()` and `get_weights()` have the option `include.s.weights`, which, when set to `FALSE`, makes it so the returned weights do not incorporate the sampling weights and are simply the matching weights. Because one might to forget to multiply the two sets of weights together, it is easier to just use the default of `include.s.weights = TRUE` and ignore the sampling weights in the rest of the analysis (because they are already included in the returned weights). `avg_comparisons()` also works more smoothly when the weights supplied to `weights` is a single variable rather than the product of two.
+Note that `match.data()` and `get_weights()` have the option `include.s.weights`, which, when set to `FALSE`, makes it so the returned weights do not incorporate the sampling weights and are simply the matching weights. Because one might to forget to multiply the two sets of weights together, it is easier to just use the default of `include.s.weights = TRUE` and ignore the sampling weights in the rest of the analysis (because they are already included in the returned weights).
 
 ## Code to Generate Data used in Examples
 
