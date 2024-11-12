@@ -81,6 +81,19 @@ bool caliper_covs_okay(const int& ncc,
 }
 
 // [[Rcpp::interfaces(cpp)]]
+bool caliper_dist_okay(const bool& use_caliper_dist,
+                       const int& i,
+                       const int& j,
+                       const NumericVector& distance,
+                       const double& caliper_dist) {
+  if (!use_caliper_dist) {
+    return true;
+  }
+
+  return std::abs(distance[i] - distance[j]) <= caliper_dist;
+}
+
+// [[Rcpp::interfaces(cpp)]]
 bool mm_okay(const int& r,
              const int& i,
              const IntegerVector& mm_rowi) {
@@ -110,247 +123,577 @@ bool exact_okay(const bool& use_exact,
 }
 
 // [[Rcpp::interfaces(cpp)]]
-int find_both(const int& t_id,
-              const IntegerVector& ind_d_ord,
-              const IntegerVector& match_d_ord,
-              const IntegerVector& treat,
-              const NumericVector& distance,
-              const LogicalVector& eligible,
-              const int& gi,
-              const int& r,
-              const IntegerVector& mm_ordi,
-              const int& ncc,
-              const NumericMatrix& caliper_covs_mat,
-              const NumericVector& caliper_covs,
-              const double& caliper_dist,
-              const bool& use_exact,
-              const IntegerVector& exact,
-              const int& aenc,
-              const IntegerMatrix& antiexact_covs,
-              const IntegerVector& first_control,
-              const IntegerVector& last_control) {
+std::vector<int> find_control_vec(const int& t_id,
+                                  const IntegerVector& ind_d_ord,
+                                  const IntegerVector& match_d_ord,
+                                  const IntegerVector& treat,
+                                  const NumericVector& distance,
+                                  const LogicalVector& eligible,
+                                  const int& gi,
+                                  const int& r,
+                                  const IntegerVector& mm_rowi_,
+                                  const int& ncc,
+                                  const NumericMatrix& caliper_covs_mat,
+                                  const NumericVector& caliper_covs,
+                                  const double& caliper_dist,
+                                  const bool& use_exact,
+                                  const IntegerVector& exact,
+                                  const int& aenc,
+                                  const IntegerMatrix& antiexact_covs,
+                                  const IntegerVector& first_control,
+                                  const IntegerVector& last_control,
+                                  const int& ratio = 1,
+                                  const int& prev_start = -1) {
 
   int ii = match_d_ord[t_id];
+
+  IntegerVector mm_rowi;
+  std::vector<int> possible_starts;
+
+
+  if (r > 1) {
+    mm_rowi = na_omit(mm_rowi_);
+    mm_rowi = mm_rowi[as<IntegerVector>(treat[mm_rowi]) == gi];
+    possible_starts.reserve(mm_rowi.size() + 2);
+
+    for (int mmi : mm_rowi) {
+      possible_starts.push_back(match_d_ord[mmi]);
+    }
+  }
+  else {
+    possible_starts.reserve(2);
+  }
+
+  possible_starts.push_back(ii);
+
+  if (prev_start >= 0) {
+    possible_starts.push_back(match_d_ord[prev_start]);
+  }
+
+  int iil, iir;
+  double min_dist;
+
+  if (possible_starts.size() == 1) {
+    iil = ii;
+    iir = ii;
+    min_dist = 0;
+  }
+  else {
+    iil = *std::min_element(possible_starts.begin(), possible_starts.end());
+    iir = *std::max_element(possible_starts.begin(), possible_starts.end());
+
+    if (iil == ii) {
+      min_dist = std::abs(distance[t_id] - distance[ind_d_ord[iir]]);
+    }
+    else if (iir == ii) {
+      min_dist = std::abs(distance[t_id] - distance[ind_d_ord[iil]]);
+    }
+    else {
+      min_dist = std::max(std::abs(distance[t_id] - distance[ind_d_ord[iil]]),
+                          std::abs(distance[t_id] - distance[ind_d_ord[iir]]));
+    }
+  }
 
   int min_ii = first_control[gi];
   int max_ii = last_control[gi];
 
-  int iil = ii;
-  int iir = ii;
-  int il = -1;
-  int ir = -1;
-
-  bool l_found = (iil <= min_ii);
-  bool r_found = (iir >= max_ii);
-
   double di = distance[t_id];
-  double distl, distr;
 
-  while (!l_found || !r_found) {
-    if (!l_found) {
-      if (iil == min_ii) {
-        l_found = true;
-        il = -1;
+  bool l_stop = false;
+  bool r_stop = false;
+
+  double dist_c;
+
+  std::vector<int> potential_matches_id;
+  potential_matches_id.reserve(2 * ratio);
+  std::vector<double> potential_matches_dist;
+  potential_matches_dist.reserve(2 * ratio);
+
+  int num_matches_l = 0;
+  int num_matches_r = 0;
+
+  int iz;
+  int z = 1;
+  int num_closer_than_dist_c;
+
+  while (!l_stop || !r_stop) {
+    if (l_stop) {
+      z = 1;
+    }
+    else if (r_stop) {
+      z = -1;
+    }
+    else {
+      z *= -1;
+    }
+
+    if (z == -1) {
+      if (iil <= min_ii || num_matches_l == ratio) {
+        l_stop = true;
+        continue;
       }
-      else {
-        iil--;
-        il = ind_d_ord[iil];
 
-        //Left
-        if (eligible[il]) {
-          if (treat[il] == gi) {
-            if (mm_okay(r, il, mm_ordi)) {
+      iil += z;
+      iz = ind_d_ord[iil];
+    }
+    else {
+      if (iir >= max_ii || num_matches_r == ratio) {
+        r_stop = true;
+        continue;
+      }
 
-              distl = std::abs(di - distance[il]);
+      iir += z;
+      iz = ind_d_ord[iir];
+    }
 
-              if (r_found && ir >= 0 && distl > distr) {
-                return ir;
-              }
+    if (!eligible[iz]) {
+      continue;
+    }
 
-              if (distl > caliper_dist) {
-                il = -1;
-                l_found = true;
-              }
-              else {
-                if (exact_okay(use_exact, t_id, il, exact)) {
-                  if (antiexact_okay(aenc, t_id, il, antiexact_covs)) {
-                    if (caliper_covs_okay(ncc, t_id, il, caliper_covs_mat, caliper_covs)) {
-                      l_found = true;
-                    }
-                  }
-                }
-              }
-            }
+    if (treat[iz] != gi) {
+      continue;
+    }
+
+    if (!mm_okay(r, iz, mm_rowi)) {
+      continue;
+    }
+
+    dist_c = std::abs(di - distance[iz]);
+
+    //If current dist is worse than ratio dists, continue
+    if (potential_matches_id.size() >= ratio) {
+      num_closer_than_dist_c = 0;
+      for (double d : potential_matches_dist) {
+        if (d < dist_c) {
+          num_closer_than_dist_c++;
+          if (num_closer_than_dist_c == ratio) {
+            break;
           }
         }
       }
+
+      if (num_closer_than_dist_c >= ratio) {
+        if (z == -1) {
+          l_stop = true;
+        }
+        else {
+          r_stop = true;
+        }
+        continue;
+      }
     }
 
-    if (!r_found) {
-      if (iir == max_ii) {
-        r_found = true;
-        ir = -1;
+    if (dist_c > caliper_dist) {
+      if (z == -1) {
+        l_stop = true;
       }
       else {
-        iir++;
-        ir = ind_d_ord[iir];
+        r_stop = true;
+      }
+      continue;
+    }
 
-        //Right
-        if (eligible[ir]) {
-          if (treat[ir] == gi) {
-            if (mm_okay(r, ir, mm_ordi)) {
+    if (dist_c < min_dist) {
+      continue;
+    }
 
-              distr = std::abs(di - distance[ir]);
+    if (!exact_okay(use_exact, t_id, iz, exact)) {
+      continue;
+    }
 
-              if (l_found && il >= 0 && distl <= distr) {
-                return il;
-              }
+    if (!antiexact_okay(aenc, t_id, iz, antiexact_covs)) {
+      continue;
+    }
 
-              if (distr > caliper_dist) {
-                ir = -1;
-                r_found = true;
-              }
-              else {
-                if (exact_okay(use_exact, t_id, ir, exact)) {
-                  if (antiexact_okay(aenc, t_id, ir, antiexact_covs)) {
-                    if (caliper_covs_okay(ncc, t_id, ir, caliper_covs_mat, caliper_covs)) {
-                      r_found = true;
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
+    if (!caliper_covs_okay(ncc, t_id, iz, caliper_covs_mat, caliper_covs)) {
+      continue;
+    }
+
+    potential_matches_id.push_back(iz);
+    potential_matches_dist.push_back(dist_c);
+
+    if (z == -1) {
+      num_matches_l++;
+      if (num_matches_l == ratio) {
+        l_stop = true;
+      }
+    }
+    else {
+      num_matches_r++;
+      if (num_matches_r == ratio) {
+        r_stop = true;
       }
     }
   }
 
-  if (il < 0) {
-    return ir;
+  int n_potential_matches = potential_matches_id.size();
+
+  if (n_potential_matches <= 1) {
+    return potential_matches_id;
   }
 
-  if (ir < 0) {
-    return il;
+  if (n_potential_matches <= ratio &&
+      std::is_sorted(potential_matches_dist.begin(),
+                     potential_matches_dist.end())) {
+    return potential_matches_id;
   }
 
-  if (distl <= distr) {
-    return il;
+  std::vector<int> ind(n_potential_matches);
+  std::iota(ind.begin(), ind.end(), 0);
+
+  std::vector<int> matches_out;
+
+  if (n_potential_matches > ratio) {
+    std::partial_sort(ind.begin(), ind.begin() + ratio, ind.end(),
+                      [&potential_matches_dist](int a, int b){
+                        return potential_matches_dist[a] < potential_matches_dist[b];
+                      });
+
+    matches_out.reserve(ratio);
+
+    for (auto it = ind.begin(); it != ind.begin() + ratio; ++it) {
+      matches_out.push_back(potential_matches_id[*it]);
+    }
   }
   else {
-    return ir;
+    std::sort(ind.begin(), ind.end(),
+              [&potential_matches_dist](int a, int b){
+                return potential_matches_dist[a] < potential_matches_dist[b];
+              });
+
+    matches_out.reserve(n_potential_matches);
+
+    for (auto it = ind.begin(); it != ind.end(); ++it) {
+      matches_out.push_back(potential_matches_id[*it]);
+    }
   }
+
+  return matches_out;
 }
 
 // [[Rcpp::interfaces(cpp)]]
-int find_lr(const int& prev_match,
-            const int& t_id,
-            const IntegerVector& ind_d_ord,
-            const IntegerVector& match_d_ord,
-            const IntegerVector& treat,
-            const NumericVector& distance,
-            const LogicalVector& eligible,
-            const int& gi,
-            const int& ncc,
-            const NumericMatrix& caliper_covs_mat,
-            const NumericVector& caliper_covs,
-            const double& caliper_dist,
-            const bool& use_exact,
-            const IntegerVector& exact,
-            const int& aenc,
-            const IntegerMatrix& antiexact_covs,
-            const IntegerVector& first_control,
-            const IntegerVector& last_control) {
+std::vector<int> find_control_mahcovs(const int& t_id,
+                                       const IntegerVector& ind_d_ord,
+                                       const IntegerVector& match_d_ord,
+                                       const NumericVector& match_var,
+                                       const double& match_var_caliper,
+                                       const IntegerVector& treat,
+                                       const NumericVector& distance,
+                                       const LogicalVector& eligible,
+                                       const int& gi,
+                                       const int& r,
+                                       const IntegerVector& mm_rowi,
+                                       const NumericMatrix& mah_covs,
+                                       const int& ncc,
+                                       const NumericMatrix& caliper_covs_mat,
+                                       const NumericVector& caliper_covs,
+                                       const bool& use_caliper_dist,
+                                       const double& caliper_dist,
+                                       const bool& use_exact,
+                                       const IntegerVector& exact,
+                                       const int& aenc,
+                                       const IntegerMatrix& antiexact_covs,
+                                       const int& ratio = 1) {
 
-  int ik, iik;
-  double dist;
-
-  int prev_pos;
   int ii = match_d_ord[t_id];
 
-  int z;
-  if (prev_match < 0) {
-    if (prev_match == -1) {
-      z = -1;
-    }
-    else {
-      z = 1;
-    }
+  int iil, iir;
 
-    prev_pos = ii;
-  }
-  else {
-    prev_pos = match_d_ord[prev_match];
-    if (prev_pos < ii) {
-      z = -1;
-    }
-    else {
-      z = 1;
-    }
-  }
+  iil = ii;
+  iir = ii;
 
   int min_ii = 0;
-  int max_ii = ind_d_ord.size() - 1;
+  int max_ii = match_d_ord.size() - 1;
 
-  if (z == -1) {
-    min_ii = first_control[gi];
-  }
-  else {
-    max_ii = last_control[gi];
-  }
+  bool l_stop = false;
+  bool r_stop = false;
 
-  int start = prev_pos + z;
-  if (start > last_control[gi]) {
-    start = last_control[gi];
-  }
-  else if (start < first_control[gi]) {
-    start = first_control[gi];
-  }
+  double dist_c;
 
-  for (iik = start; iik >= min_ii && iik <= max_ii; iik += z) {
+  std::vector<std::pair<int, double>> potential_matches;
+  potential_matches.reserve(ratio);
 
-    ik = ind_d_ord[iik];
+  std::pair<int,double> new_match;
 
-    if (!eligible[ik]) {
+  int num_matches_l = 0;
+  int num_matches_r = 0;
+
+  double mv_i = match_var[t_id];
+  double mv_dist;
+
+  int iz;
+  int z = 1;
+
+  auto dist_comp = [](std::pair<int, double> a, std::pair<int, double> b) {
+    return a.second < b.second;
+  };
+
+  while (!l_stop || !r_stop) {
+    if (l_stop) {
+      z = 1;
+    }
+    else if (r_stop) {
+      z = -1;
+    }
+    else {
+      z *= -1;
+    }
+
+    if (z == -1) {
+      if (iil <= min_ii || num_matches_l == ratio) {
+        l_stop = true;
+        continue;
+      }
+
+      iil += z;
+      iz = ind_d_ord[iil];
+    }
+    else {
+      if (iir >= max_ii || num_matches_r == ratio) {
+        r_stop = true;
+        continue;
+      }
+
+      iir += z;
+      iz = ind_d_ord[iir];
+    }
+
+    if (!eligible[iz]) {
       continue;
     }
 
-    if (treat[ik] != gi) {
+    if (treat[iz] != gi) {
       continue;
     }
 
-    dist = std::abs(distance[t_id] - distance[ik]);
-
-    if (dist > caliper_dist) {
-      return -1;
-    }
-
-    if (!exact_okay(use_exact, t_id, ik, exact)) {
+    if (!mm_okay(r, iz, mm_rowi)) {
       continue;
     }
 
-    if (!antiexact_okay(aenc, t_id, ik, antiexact_covs)) {
+    mv_dist = pow(mv_i - match_var[iz], 2);
+
+    if (mv_dist > match_var_caliper) {
+      if (z == -1) {
+        l_stop = true;
+      }
+      else {
+        r_stop = true;
+      }
+
       continue;
     }
 
-    if (!caliper_covs_okay(ncc, t_id, ik, caliper_covs_mat, caliper_covs)) {
+    //If current dist is worse than ratio dists, continue
+    if (potential_matches.size() == ratio) {
+      if (potential_matches.back().second < mv_dist) {
+        if (z == -1) {
+          l_stop = true;
+        }
+        else {
+          r_stop = true;
+        }
+
+        continue;
+      }
+    }
+
+    if (!exact_okay(use_exact, t_id, iz, exact)) {
       continue;
     }
 
-    return ik;
+    if (!caliper_dist_okay(use_caliper_dist, t_id, iz, distance, caliper_dist)) {
+      continue;
+    }
+
+    if (!antiexact_okay(aenc, t_id, iz, antiexact_covs)) {
+      continue;
+    }
+
+    if (!caliper_covs_okay(ncc, t_id, iz, caliper_covs_mat, caliper_covs)) {
+      continue;
+    }
+
+    dist_c = sum(pow(mah_covs.row(t_id) - mah_covs.row(iz), 2.0));
+
+    if (!std::isfinite(dist_c)) {
+      continue;
+    }
+
+    new_match = std::pair<int,double>(iz, dist_c);
+
+    if (potential_matches.empty()) {
+      potential_matches.push_back(new_match);
+    }
+    else if (dist_c > potential_matches.back().second) {
+      if (potential_matches.size() == ratio) {
+        continue;
+      }
+
+      potential_matches.push_back(new_match);
+    }
+    else if (ratio == 1) {
+      potential_matches[0] = new_match;
+    }
+    else {
+      if (potential_matches.size() == ratio) {
+        potential_matches.pop_back();
+      }
+
+      if (dist_c > potential_matches.back().second) {
+        potential_matches.push_back(new_match);
+      }
+      else {
+        potential_matches.insert(std::lower_bound(potential_matches.begin(), potential_matches.end(),
+                                                  new_match, dist_comp),
+                                                  new_match);
+      }
+    }
   }
 
-  return -1;
+  std::vector<int> matches_out;
+  matches_out.reserve(potential_matches.size());
+
+  for (auto p : potential_matches) {
+    matches_out.push_back(p.first);
+  }
+
+  return matches_out;
 }
 
 // [[Rcpp::interfaces(cpp)]]
-void swap_pos(IntegerVector x,
-              const int& a,
-              const int& b) {
-  int xa = x[a];
+std::vector<int> find_control_mat(const int& t_id,
+                                  const IntegerVector& treat,
+                                  const IntegerVector& ind_non_focal,
+                                  const NumericVector& distance_mat_row_i,
+                                  const LogicalVector& eligible,
+                                  const int& gi,
+                                  const int& r,
+                                  const IntegerVector& mm_rowi,
+                                  const int& ncc,
+                                  const NumericMatrix& caliper_covs_mat,
+                                  const NumericVector& caliper_covs,
+                                  const double& caliper_dist,
+                                  const bool& use_exact,
+                                  const IntegerVector& exact,
+                                  const int& aenc,
+                                  const IntegerMatrix& antiexact_covs,
+                                  const int& ratio = 1) {
 
-  x[a] = x[b];
-  x[b] = xa;
+  int c_id_i;
+  double dist_c;
+
+  std::vector<int> potential_matches_id;
+
+  if (ratio < 1) {
+    return potential_matches_id;
+  }
+
+  std::vector<double> potential_matches_dist;
+  double max_dist;
+
+  R_xlen_t nc = distance_mat_row_i.size();
+
+  potential_matches_id.reserve(nc);
+  potential_matches_dist.reserve(nc);
+
+  for (R_xlen_t c = 0; c < nc; c++) {
+
+    dist_c = distance_mat_row_i[c];
+
+    if (potential_matches_id.size() == ratio) {
+      if (dist_c > max_dist) {
+        continue;
+      }
+    }
+
+    if (dist_c > caliper_dist) {
+      continue;
+    }
+
+    if (!std::isfinite(dist_c)) {
+      continue;
+    }
+
+    c_id_i = ind_non_focal[c];
+
+    if (!eligible[c_id_i]) {
+      continue;
+    }
+
+    if (treat[c_id_i] != gi) {
+      continue;
+    }
+
+    if (!mm_okay(r, c_id_i, mm_rowi)) {
+      continue;
+    }
+
+    if (!exact_okay(use_exact, t_id, c_id_i, exact)) {
+      continue;
+    }
+
+    if (!antiexact_okay(aenc, t_id, c_id_i, antiexact_covs)) {
+      continue;
+    }
+
+    if (!caliper_covs_okay(ncc, t_id, c_id_i, caliper_covs_mat, caliper_covs)) {
+      continue;
+    }
+
+    potential_matches_id.push_back(c_id_i);
+    potential_matches_dist.push_back(dist_c);
+
+    if (potential_matches_id.size() == 1) {
+      max_dist = dist_c;
+    }
+    else if (dist_c > max_dist) {
+      max_dist = dist_c;
+    }
+  }
+
+  int n_potential_matches = potential_matches_id.size();
+
+  if (n_potential_matches <= 1) {
+    return potential_matches_id;
+  }
+
+  if (n_potential_matches <= ratio &&
+      std::is_sorted(potential_matches_dist.begin(),
+                     potential_matches_dist.end())) {
+    return potential_matches_id;
+  }
+
+  std::vector<int> ind(n_potential_matches);
+  std::iota(ind.begin(), ind.end(), 0);
+
+  std::vector<int> matches_out;
+
+  if (n_potential_matches > ratio) {
+    std::partial_sort(ind.begin(), ind.begin() + ratio, ind.end(),
+                      [&potential_matches_dist](int a, int b){
+                        return potential_matches_dist[a] < potential_matches_dist[b];
+                      });
+
+    matches_out.reserve(ratio);
+
+    for (auto it = ind.begin(); it != ind.begin() + ratio; ++it) {
+      matches_out.push_back(potential_matches_id[*it]);
+    }
+  }
+  else {
+    std::sort(ind.begin(), ind.end(),
+              [&potential_matches_dist](int a, int b){
+                return potential_matches_dist[a] < potential_matches_dist[b];
+              });
+
+    matches_out.reserve(n_potential_matches);
+
+    for (auto it = ind.begin(); it != ind.end(); ++it) {
+      matches_out.push_back(potential_matches_id[*it]);
+    }
+  }
+
+  return matches_out;
 }
 
 // [[Rcpp::interfaces(cpp)]]
