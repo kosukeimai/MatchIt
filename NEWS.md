@@ -10,15 +10,27 @@ output:
 
 Most improvements are related to performance. Some of these dramatically improve speeds for large datasets. Most come from improvements to `Rcpp` code.
 
+* When using `method = "nearest"`, `m.order` can now be set to `"farthest"` to prioritize hard-to-match treated units. Note this **does not** implement "far matching" but simply changes the order in which the closest matches are selected.
+
 * Speed improvements to `method = "nearest"`, especially when matching on a propensity score.
 
 * Speed improvements to `summary()` when `pair.dist = TRUE` and a `match.matrix` component is not included in the output (e.g., for `method = "full"` or `method = "quick"`).
 
 * Speed improvements to `method = "subclass"` with `min.n` greater than 0.
 
+* A new `normalize` argument has been added to `matchit()`. When set to `TRUE` (the default, which used to be the only option), the nonzero weights in each treatment group are rescaled to have an average of 1. When `FALSE`, the weights generated directly by the matching are returned instead.
+
 * When using `method = "nearest"` with `m.order = "closest"`, the full distance matrix is no longer computed, which increases support for larger samples. This uses an adaptation of an algorithm described by [Rassen et al. (2012)](https://doi.org/10.1002/pds.3263).
 
 * When using `method = "nearest"` with `verbose = TRUE`, the progress bar now displays an estimate of how much time remains.
+
+* When using `method = "nearest"` with `m.order = "closest"` and `ratio` greater than 1, all eligible units will receive their first match before any receive their second, etc. Previously, the closest pairs would be matched regardless of whether other units had been matched. This ensures consistency with other `m.order` arguments.
+
+* Speed and memory improvements to `method = "cem"` with many covariates and a large sample size. Previous versions used a Cartesian expansion of all levels of factor variables, which could easily explode.
+
+* When using `method = "cem"` with `k2k = TRUE`, `m.order` can be set to select the matching order. Allowable options include `"data"` (the default), `"closest"`, `"farthest"`, and `"random"`. `"closest"` is recommended, but `"data"` is the default for now to remain consistent with previous versions.
+
+* Documentation updates.
 
 * Fixed a bug when using `method = "optimal"` or `method = "full"` with `discard` specified and `data` given as a tibble (`tbl_df` object). (#185)
 
