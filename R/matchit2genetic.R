@@ -259,9 +259,11 @@ matchit2genetic <- function(treat, data, distance, discarded,
 
   rlang::check_installed(c("Matching", "rgenoud"))
 
-  if (verbose) cat("Genetic matching... \n")
+  .cat_verbose("Genetic matching...\n", verbose = verbose)
 
-  A <- list(...)
+  args <- names(formals(Matching::GenMatch))
+  A <- setNames(lapply(args, ...get, ...), args)
+  A[lengths(A) == 0L] <- NULL
 
   estimand <- toupper(estimand)
   estimand <- match_arg(estimand, c("ATT", "ATC"))
@@ -325,9 +327,11 @@ matchit2genetic <- function(treat, data, distance, discarded,
   #Process exact; exact.log will be supplied to GenMatch() and Match()
   if (is_not_null(exact)) {
     #Add covariates in exact not in X to X
-    ex <- as.integer(factor(exactify(model.frame(exact, data = data), names(treat), sep = ", ", include_vars = TRUE)))
+    ex <- unclass(exactify(model.frame(exact, data = data), names(treat),
+                           sep = ", ", include_vars = TRUE))
 
     cc <- intersect(ex[treat==1], ex[treat==0])
+
     if (is_null(cc)) {
       .err("No matches were found")
     }
@@ -371,7 +375,7 @@ matchit2genetic <- function(treat, data, distance, discarded,
     }
 
     #Then put distance caliper into cal
-    if ("" %in% names(caliper)) {
+    if (hasName(caliper, "")) {
       dist.cal <- caliper[names(caliper) == ""]
       if (is_not_null(mahvars)) {
         #If mahvars specified, distance is not yet in X, so add it to X
@@ -430,7 +434,7 @@ matchit2genetic <- function(treat, data, distance, discarded,
                               replace = replace, estimand = "ATT", ties = FALSE,
                               CommonSupport = FALSE, verbose = verbose,
                               weights = s.weights, print.level = 2*verbose),
-                         A[names(A) %in% names(formals(Matching::GenMatch))]))
+                         A[names(A) %in% args]))
     }, from = "Matching",
     dont_warn_if = "replace==FALSE, but there are more (weighted) treated obs than control obs.")
   }
@@ -497,7 +501,7 @@ matchit2genetic <- function(treat, data, distance, discarded,
   #   dimnames(mm) <- list(lab1, seq_len(ratio))
   # }
 
-  if (verbose) cat("Calculating matching weights... ")
+  .cat_verbose("Calculating matching weights... ", verbose = verbose)
 
   if (replace) {
     psclass <- NULL
@@ -513,7 +517,7 @@ matchit2genetic <- function(treat, data, distance, discarded,
               weights = weights,
               obj = g.out)
 
-  if (verbose) cat("Done.\n")
+  .cat_verbose("Done.\n", verbose = verbose)
 
   class(res) <- "matchit"
   res

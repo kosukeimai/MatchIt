@@ -158,35 +158,28 @@ NULL
 matchit2subclass <- function(treat, distance, discarded,
                              replace = FALSE, exact = NULL,
                              estimand = "ATT", verbose = FALSE,
+                             subclass = 6L, min.n = 1L,
                              ...) {
 
-  if(verbose)
-    cat("Subclassifying... \n")
-
-  A <- list(...)
-  subclass <- A[["subclass"]]
-  sub.by <- A[["sub.by"]]
-  min.n <- A[["min.n"]]
+  .cat_verbose("Subclassifying...\n", verbose = verbose)
 
   #Checks
-  if (is_null(subclass)) subclass <- 6
   chk::chk_numeric(subclass)
 
   if (length(subclass) == 1L) {
     chk::chk_gt(subclass, 1)
   }
-  else if (!all(subclass <= 1 & subclass >= 0)) {
-    .err("When specifying `subclass` as a vector of quantiles, all values must be between 0 and 1")
+  else if (any(subclass > 1) || any(subclass < 0)) {
+    .err("when specifying `subclass` as a vector of quantiles, all values must be between 0 and 1")
   }
 
-  if (is_not_null(sub.by)) {
+  if (is_not_null(...get("sub.by", ...))) {
     .err("`sub.by` is defunct and has been replaced with `estimand`")
   }
 
   estimand <- toupper(estimand)
   estimand <- match_arg(estimand, c("ATT", "ATC", "ATE"))
 
-  if (is_null(min.n)) min.n <- 1
   chk::chk_count(min.n)
 
   n.obs <- length(treat)
@@ -233,12 +226,13 @@ matchit2subclass <- function(treat, distance, discarded,
   psclass <- setNames(factor(psclass, nmax = length(q)), names(treat))
   levels(psclass) <- as.character(seq_len(nlevels(psclass)))
 
-  if (verbose) cat("Calculating matching weights... ")
+  .cat_verbose("Calculating matching weights... ", verbose = verbose)
 
-  res <- list(subclass = psclass, q.cut = q,
+  res <- list(subclass = psclass,
+              q.cut = q,
               weights = get_weights_from_subclass(psclass, treat, estimand))
 
-  if (verbose) cat("Done.\n")
+  .cat_verbose("Done.\n", verbose = verbose)
 
   class(res) <- c("matchit.subclass", "matchit")
   res

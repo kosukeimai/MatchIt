@@ -69,10 +69,13 @@ add_s.weights <- function(m,
     if (is_null(data)) {
       if (is_not_null(m$model)) {
         env <- attributes(terms(m$model))$.Environment
-      } else {
+      }
+      else {
         env <- parent.frame()
       }
+
       data <- eval(m$call$data, envir = env)
+
       if (is_null(data)) {
         .err("a dataset could not be found. Please supply an argument to `data` containing the original dataset used in the matching")
       }
@@ -95,7 +98,7 @@ add_s.weights <- function(m,
         .err("if `s.weights` is specified a string, a data frame containing the named variable must be supplied to `data`")
       }
 
-      if (!all(s.weights %in% names(data))) {
+      if (!all(hasName(data, s.weights))) {
         .err("the name supplied to `s.weights` must be a variable in `data`")
       }
 
@@ -124,6 +127,7 @@ add_s.weights <- function(m,
   }
 
   chk::chk_not_any_na(s.weights)
+
   if (length(s.weights) != length(m$treat)) {
     .err("`s.weights` must be the same length as the treatment vector")
   }

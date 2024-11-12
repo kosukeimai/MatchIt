@@ -225,13 +225,15 @@ transform_covariates <- function(formula = NULL, data = NULL, method = "mahalano
     method <- "euclidean"
     X <- X[, 1, drop = FALSE]
   }
-  else if (length(no_variance) > 0) {
+  else if (is_not_null(no_variance)) {
     X <- X[, -no_variance, drop = FALSE]
   }
 
   method <- match_arg(method, matchit_distances())
 
-  if (is_null(discarded)) discarded <- rep(FALSE, nrow(X))
+  if (is_null(discarded)) {
+    discarded <- rep.int(FALSE, nrow(X))
+  }
 
   if (method == "mahalanobis") {
     # X <- sweep(X, 2, colMeans(X))
@@ -270,7 +272,9 @@ transform_covariates <- function(formula = NULL, data = NULL, method = "mahalano
     X_r <- matrix(0, nrow = sum(!discarded), ncol = ncol(X),
                   dimnames = list(rownames(X)[!discarded], colnames(X)))
 
-    for (i in seq_len(ncol(X_r))) X_r[,i] <- rank(X[!discarded, i])
+    for (i in seq_len(ncol(X_r))) {
+      X_r[,i] <- rank(X[!discarded, i])
+    }
 
     var_r <- {
       if (is_null(s.weights)) cov(X_r)
@@ -293,7 +297,9 @@ transform_covariates <- function(formula = NULL, data = NULL, method = "mahalano
 
     if (any(discarded)) {
       X_r <- array(0, dim = dim(X), dimnames = dimnames(X))
-      for (i in seq_len(ncol(X_r))) X_r[!discarded,i] <- rank(X[!discarded,i])
+      for (i in seq_len(ncol(X_r))) {
+        X_r[!discarded,i] <- rank(X[!discarded,i])
+      }
     }
 
     X <- mahalanobize(X_r, inv_var)
@@ -326,6 +332,7 @@ transform_covariates <- function(formula = NULL, data = NULL, method = "mahalano
   }
 
   attr(X, "treat") <- treat
+
   X
 }
 
@@ -359,7 +366,10 @@ eucdist_internal <- function(X, treat = NULL) {
 get.covs.matrix.for.dist <- function(formula = NULL, data = NULL) {
 
   if (is_null(formula)) {
-    if (is_null(colnames(data))) colnames(data) <- paste0("X", seq_len(ncol(data)))
+    if (is_null(colnames(data))) {
+      colnames(data) <- paste0("X", seq_len(ncol(data)))
+    }
+
     fnames <- colnames(data)
     fnames[!startsWith(fnames, "`")] <- add_quotes(fnames[!startsWith(fnames, "`")], "`")
     data <- as.data.frame(data)
@@ -387,9 +397,9 @@ get.covs.matrix.for.dist <- function(formula = NULL, data = NULL) {
                     contrasts.arg = lapply(Filter(is.factor, mf),
                                            function(x) contrasts(x, contrasts = FALSE)/sqrt(2)))
 
-  if (ncol(X) > 1) {
-    assign <- attr(X, "assign")[-1]
-    X <- X[, -1, drop = FALSE]
+  if (ncol(X) > 1L) {
+    assign <- attr(X, "assign")[-1L]
+    X <- X[, -1L, drop = FALSE]
   }
   attr(X, "assign") <- assign
 
@@ -399,7 +409,9 @@ get.covs.matrix.for.dist <- function(formula = NULL, data = NULL) {
 }
 
 .check_X <- function(X) {
-  if (isTRUE(attr(X, "checked"))) return(X)
+  if (isTRUE(attr(X, "checked"))) {
+    return(X)
+  }
 
   treat <- attr(X, "treat")
 
@@ -411,12 +423,10 @@ get.covs.matrix.for.dist <- function(formula = NULL, data = NULL) {
                 dimnames = list(names(X), NULL))
   }
 
-  if (anyNA(X)) {
-    .err("missing values are not allowed in the covariates")
-  }
+  chk::chk_not_any_na(X, "the covariates")
 
   if (any(!is.finite(X))) {
-    .err("Non-finite values are not allowed in the covariates")
+    .err("non-finite values are not allowed in the covariates")
   }
 
   if (!is.numeric(X) || length(dim(X)) != 2) {
@@ -430,7 +440,7 @@ get.covs.matrix.for.dist <- function(formula = NULL, data = NULL) {
 
 is.cov_like <- function(var, X) {
   is.numeric(var) &&
-    length(dim(var)) == 2 &&
+    length(dim(var)) == 2L &&
     (missing(X) || all(dim(var) == ncol(X))) &&
     isSymmetric(var) &&
     all(diag(var) >= 0)

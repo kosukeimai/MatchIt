@@ -248,11 +248,11 @@ matchit2optimal <- function(treat, formula, data, distance, discarded,
 
   rlang::check_installed("optmatch")
 
-  if (verbose) cat("Optimal matching... \n")
+  .cat_verbose("Optimal matching...\n", verbose = verbose)
 
-  A <- list(...)
-  pm.args <- c("tol", "solver")
-  A[!names(A) %in% pm.args] <- NULL
+  args <- c("tol", "solver")
+  A <- setNames(lapply(args, ...get, ...), args)
+  A[lengths(A) == 0L] <- NULL
 
   #Set max problem size to Inf and return to original value after match
   omps <- getOption("optmatch_max_problem_size")
@@ -299,25 +299,27 @@ matchit2optimal <- function(treat, formula, data, distance, discarded,
     ex <- factor(exactify(model.frame(exact, data = data),
                           sep = ", ", include_vars = TRUE)[!discarded])
 
-    cc <- intersect(as.integer(ex)[treat_==1], as.integer(ex)[treat_==0])
+    cc <- Reduce("intersect", lapply(unique(treat_), function(t) unclass(ex)[treat_==t]))
 
     if (is_null(cc) ) {
       .err("no matches were found")
     }
 
-    e_ratios <- vapply(levels(ex), function(e) sum(treat_[ex == e] == 0)/sum(treat_[ex == e] == 1), numeric(1L))
+    e_ratios <- vapply(levels(ex), function(e) {
+      sum(treat_[ex == e] == 0)/sum(treat_[ex == e] == 1)
+    }, numeric(1L))
 
     if (any(e_ratios < 1)) {
       .wrn(sprintf("Fewer %s units than %s units in some `exact` strata; not all %s units will get a match",
-                      tc[2], tc[1], tc[1]))
+                   tc[2], tc[1], tc[1]))
     }
     if (ratio > 1 && any(e_ratios < ratio)) {
       if (ratio == max.controls)
         .wrn(sprintf("Not all %s units will get %s matches",
-                        tc[1], ratio))
+                     tc[1], ratio))
       else
         .wrn(sprintf("Not enough %s units for an average of %s matches per %s unit in all `exact` strata",
-                        tc[2], ratio, tc[1]))
+                     tc[2], ratio, tc[1]))
     }
   }
   else {
@@ -328,15 +330,15 @@ matchit2optimal <- function(treat, formula, data, distance, discarded,
 
     if (e_ratios < 1) {
       .wrn(sprintf("Fewer %s units than %s units; not all %s units will get a match",
-                      tc[2], tc[1], tc[1]))
+                   tc[2], tc[1], tc[1]))
     }
     else if (e_ratios < ratio) {
       if (ratio == max.controls)
         .wrn(sprintf("Not all %s units will get %s matches",
-                        tc[1], ratio))
+                     tc[1], ratio))
       else
         .wrn(sprintf("Not enough %s units for an average of %s matches per %s unit",
-                        tc[2], ratio, tc[1]))
+                     tc[2], ratio, tc[1]))
     }
   }
 
@@ -381,11 +383,11 @@ matchit2optimal <- function(treat, formula, data, distance, discarded,
   t_df <- data.frame(treat_)
 
   for (e in levels(ex)[cc]) {
-    if (nlevels(ex) > 1) {
-      if (verbose) {
-        cat(sprintf("Matching subgroup %s/%s: %s...\n",
-                    match(e, levels(ex)[cc]), length(cc), e))
-      }
+    if (nlevels(ex) > 1L) {
+      .cat_verbose(sprintf("Matching subgroup %s/%s: %s...\n",
+                           match(e, levels(ex)[cc]), length(cc), e),
+                   verbose = verbose)
+
       mo_ <- mo[ex[treat_==1] == e, ex[treat_==0] == e]
     }
     else mo_ <- mo
@@ -394,7 +396,7 @@ matchit2optimal <- function(treat, formula, data, distance, discarded,
       next
     }
 
-    if (all(dim(mo_) == 1) && all(is.finite(mo_))) {
+    if (all_equal_to(dim(mo_), 1) && all(is.finite(mo_))) {
       pair[ex == e] <- paste(1, e, sep = "|")
       next
     }
@@ -431,10 +433,6 @@ matchit2optimal <- function(treat, formula, data, distance, discarded,
     pair[names(p[[e]])[!is.na(p[[e]])]] <- paste(as.character(p[[e]][!is.na(p[[e]])]), e, sep = "|")
   }
 
-  if (all(is.na(pair))) {
-    .err("No matches were found")
-  }
-
   if (length(p) == 1L) {
     p <- p[[1]]
   }
@@ -445,7 +443,7 @@ matchit2optimal <- function(treat, formula, data, distance, discarded,
 
   mm <- nummm2charmm(subclass2mmC(psclass, treat, focal), treat)
 
-  if (verbose) cat("Calculating matching weights... ")
+  .cat_verbose("Calculating matching weights... ", verbose = verbose)
 
   ## calculate weights and return the results
   res <- list(match.matrix = mm,
@@ -453,7 +451,7 @@ matchit2optimal <- function(treat, formula, data, distance, discarded,
               weights = get_weights_from_subclass(psclass, treat, estimand),
               obj = p)
 
-  if (verbose) cat("Done.\n")
+  .cat_verbose("Done.\n", verbose = verbose)
 
   class(res) <- "matchit"
   res

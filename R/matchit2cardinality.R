@@ -265,16 +265,14 @@
 #' # covariates included if possible.
 NULL
 
-matchit2cardinality <-  function(treat, data, discarded, formula,
-                                 ratio = 1, focal = NULL, s.weights = NULL,
-                                 replace = FALSE, mahvars = NULL, exact = NULL,
-                                 estimand = "ATT", verbose = FALSE,
-                                 tols = .05, std.tols = TRUE,
-                                 solver = "glpk", time = 1*60, ...){
+matchit2cardinality <- function(treat, data, discarded, formula,
+                                ratio = 1, focal = NULL, s.weights = NULL,
+                                replace = FALSE, mahvars = NULL, exact = NULL,
+                                estimand = "ATT", verbose = FALSE,
+                                tols = .05, std.tols = TRUE,
+                                solver = "glpk", time = 1*60, ...) {
 
-  if (verbose) {
-    cat("Cardinality matching... \n")
-  }
+  .cat_verbose("Cardinality matching... \n", verbose = verbose)
 
   tvals <- unique(treat)
   nt <- length(tvals)
@@ -300,9 +298,9 @@ matchit2cardinality <-  function(treat, data, discarded, formula,
   X <- get.covs.matrix(formula, data = data)
 
   if (is_not_null(exact)) {
-    ex <- factor(exactify(model.frame(exact, data = data), nam = lab, sep = ", ", include_vars = TRUE))
+    ex <- exactify(model.frame(exact, data = data), nam = lab, sep = ", ", include_vars = TRUE)
 
-    cc <- Reduce("intersect", lapply(tvals, function(t) as.integer(ex)[treat==t]))
+    cc <- Reduce("intersect", lapply(tvals, function(t) unclass(ex)[treat==t]))
 
     if (is_null(cc)) {
       .err("no matches were found")
@@ -388,23 +386,23 @@ matchit2cardinality <-  function(treat, data, discarded, formula,
                   match(e, levels(ex)[cc]), length(cc), e))
     }
 
-    in.exact <- which(!discarded & ex == e)
+    .e <- which(!discarded & ex == e)
 
-    treat_in.exact <- treat[in.exact]
+    treat_in.exact <- treat[.e]
     out <- cardinality_matchit(treat = treat_in.exact,
-                               X = X[in.exact,, drop = FALSE],
+                               X = X[.e,, drop = FALSE],
                                estimand = estimand, tols = tols,
-                               s.weights = s.weights[in.exact],
+                               s.weights = s.weights[.e],
                                ratio = ratio,
                                focal = focal, tvals = tvals,
                                solver = solver, time = time,
                                verbose = verbose)
 
-    weights[in.exact] <- out[["weights"]]
+    weights[.e] <- out[["weights"]]
     opt.out[[e]] <- out[["opt.out"]]
 
     if (is_not_null(mahvars)) {
-      mo <- eucdist_internal(mahcovs[in.exact[out[["weights"]] > 0],, drop = FALSE],
+      mo <- eucdist_internal(mahcovs[.e[out[["weights"]] > 0],, drop = FALSE],
                              treat_in.exact[out[["weights"]] > 0])
 
       pm <- optmatch::pairmatch(mo,
@@ -434,7 +432,7 @@ matchit2cardinality <-  function(treat, data, discarded, formula,
               weights = weights,
               obj = opt.out)
 
-  if (verbose) cat("Done.\n")
+  .cat_verbose("Done.\n", verbose = verbose)
 
   class(res) <- "matchit"
 
@@ -668,7 +666,7 @@ cardinality_matchit <- function(treat, X, estimand = "ATT", tols = .05, s.weight
 cardinality_error_report <- function(out, solver) {
   if (solver == "glpk") {
     if (out$status == 1) {
-      if (all(out$solution == 0)) {
+      if (all_equal_to(out$solution, 0)) {
         .err("the optimization problem may be infeasible. Try increasing the value of `tols`.\nSee `?method_cardinality` for additional details")
       }
       .wrn("the optimizer failed to find an optimal solution in the time alotted. The returned solution may not be optimal.\nSee `?method_cardinality` for additional details")

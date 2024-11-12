@@ -724,24 +724,23 @@ print.summary.matchit.subclass <- function(x, digits = max(3, getOption("digits"
     return(X)
   }
 
-  #Attempt to extrct data from matchit object; same as match.data()
-  data.fram.matchit <- FALSE
-  if (is_null(data)) {
-    env <- environment(object$formula)
-    data <- try(eval(object$call$data, envir = env), silent = TRUE)
-    if (null_or_error(data) || length(dim(data)) != 2 || nrow(data) != length(object[["treat"]])) {
-      env <- parent.frame()
-      data <- try(eval(object$call$data, envir = env), silent = TRUE)
-      if (null_or_error(data) || length(dim(data)) != 2 || nrow(data) != length(object[["treat"]])) {
-        data <- object[["model"]][["data"]]
-        if (is_null(data) || nrow(data) != length(object[["treat"]])) {
-          data <- NULL
-        }
-        else data.fram.matchit <- TRUE
-      }
-      else data.fram.matchit <- TRUE
+  #Attempt to extract data from matchit object; same as match.data()
+  data.found <- FALSE
+  for (i in 1:4) {
+    if (i == 2) {
+      data <- try(eval(object$call$data, envir = environment(object$formula)), silent = TRUE)
     }
-    else data.fram.matchit <- TRUE
+    else if (i == 3) {
+      data <- try(eval(object$call$data, envir = parent.frame()), silent = TRUE)
+    }
+    else if (i == 4) {
+      data <- object[["model"]][["data"]]
+    }
+
+    if (!null_or_error(data) && length(dim(data)) == 2L && nrow(data) == length(object[["treat"]])) {
+      data.found <- TRUE
+      break
+    }
   }
 
   if (is.character(addlvariables)) {
@@ -749,34 +748,34 @@ print.summary.matchit.subclass <- function(x, digits = max(3, getOption("digits"
       .err("if `addlvariables` is specified as a string, a data frame argument must be supplied to `data`")
     }
 
-    if (!all(addlvariables %in% names(data))) {
+    if (!all(hasName(data, addlvariables))) {
       .err("all variables in `addlvariables` must be in `data`")
     }
 
     addlvariables <- data[addlvariables]
   }
-  else if (inherits(addlvariables, "formula")) {
-    vars.in.formula <- all.vars(addlvariables)
+  else if (rlang::is_formula(addlvariables)) {
     if (is_not_null(data) && is.data.frame(data)) {
-      data <- data.frame(data[names(data) %in% vars.in.formula],
-                         object$X[names(object$X) %in% setdiff(vars.in.formula, names(data))])
+      vars.in.formula <- all.vars(addlvariables)
+      data <- cbind(data[names(data) %in% vars.in.formula],
+                    object$X[names(object$X) %in% setdiff(vars.in.formula, names(data))])
     }
-    else data <- object$X
-
-    # addlvariables <- get.covs.matrix(addlvariables, data = data)
+    else {
+      data <- object$X
+    }
   }
   else if (!is.matrix(addlvariables) && !is.data.frame(addlvariables)) {
     .err("the argument to `addlvariables` must be in one of the accepted forms. See `?summary.matchit` for details")
   }
 
 
-  if (af <- inherits(addlvariables, "formula")) {
+  if (af <- rlang::is_formula(addlvariables)) {
     addvariables_f <- addlvariables
     addlvariables <- model.frame(addvariables_f, data = data, na.action = "na.pass")
   }
 
   if (nrow(addlvariables) != length(object$treat)) {
-    if (is_null(data) || data.fram.matchit) {
+    if (is_null(data) || data.found) {
       .err("variables specified in `addlvariables` must have the same number of units as are present in the original call to `matchit()`")
     }
     else {

@@ -22,8 +22,8 @@ bal1var <- function(xx, tt, ww = NULL, s.weights, subclass = NULL, mm = NULL,
 
   too.small <- sum(ww[i1] != 0) < 2 && sum(ww[i0] != 0) < 2
 
-  xsum["Means Treated"] <- wm(xx[i1], ww[i1], na.rm=TRUE)
-  xsum["Means Control"] <- wm(xx[i0], ww[i0], na.rm=TRUE)
+  xsum["Means Treated"] <- wm(xx[i1], ww[i1], na.rm = TRUE)
+  xsum["Means Control"] <- wm(xx[i0], ww[i0], na.rm = TRUE)
 
   mdiff <- xsum["Means Treated"] - xsum["Means Control"]
 
@@ -47,12 +47,17 @@ bal1var <- function(xx, tt, ww = NULL, s.weights, subclass = NULL, mm = NULL,
       }
 
       xsum[3] <- mdiff/std
-      if (!un && compute.pair.dist) xsum[7] <- pair.dist(xx, tt, subclass, mm, std)
+      if (!un && compute.pair.dist) {
+        xsum[7] <- pair.dist(xx, tt, subclass, mm, std)
+      }
     }
   }
   else {
     xsum[3] <- mdiff
-    if (!un && compute.pair.dist) xsum[7] <- pair.dist(xx, tt, subclass, mm)
+
+    if (!un && compute.pair.dist) {
+      xsum[7] <- pair.dist(xx, tt, subclass, mm)
+    }
   }
 
   if (bin.var) {
@@ -86,10 +91,10 @@ bal1var.subclass <- function(xx, tt, s.weights, subclass, s.d.denom = "treated",
   i1 <- which(in.sub & tt == 1)
   i0 <- which(in.sub & tt == 0)
 
-  too.small <- length(i1) < 2 && length(i0) < 2
+  too.small <- length(i1) < 2L && length(i0) < 2L
 
-  xsum["Subclass","Means Treated"] <- wm(xx[i1], s.weights[i1], na.rm=TRUE)
-  xsum["Subclass","Means Control"] <- wm(xx[i0], s.weights[i0], na.rm=TRUE)
+  xsum["Subclass","Means Treated"] <- wm(xx[i1], s.weights[i1], na.rm = TRUE)
+  xsum["Subclass","Means Control"] <- wm(xx[i0], s.weights[i0], na.rm = TRUE)
 
   mdiff <- xsum["Subclass","Means Treated"] - xsum["Subclass","Means Control"]
 
@@ -152,7 +157,7 @@ pair.dist <- function(xx, tt, subclass = NULL, mm = NULL, std = NULL) {
   }
 
   if (is_not_null(std) && abs(mpdiff) > 1e-8) {
-    mpdiff <- mpdiff/std
+    return(mpdiff/std)
   }
 
   mpdiff
@@ -164,12 +169,15 @@ qqsum <- function(x, t, w = NULL, standardize = FALSE) {
 
   n.obs <- length(x)
 
-  if (is_null(w)) w <- rep(1, n.obs)
+  if (is_null(w)) {
+    w <- rep(1, n.obs)
+  }
 
-  if (all(x == 0 | x == 1)) {
+  if (has_n_unique(x, 2) && all(x == 0 | x == 1)) {
     t1 <- t == t[1]
     #For binary variables, just difference in means
     ediff <- abs(wm(x[t1], w[t1]) - wm(x[-t1], w[-t1]))
+
     return(c(meandiff = ediff, maxdiff = ediff))
   }
 
@@ -228,6 +236,7 @@ qqsum <- function(x, t, w = NULL, standardize = FALSE) {
                      method = "constant", ties = "ordered")$y
       }
     }
+
     ediff <- abs(x1 - x0)
   }
 

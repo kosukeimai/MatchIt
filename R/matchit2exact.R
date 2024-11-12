@@ -89,8 +89,7 @@ NULL
 
 matchit2exact <- function(treat, covs, data, estimand = "ATT", verbose = FALSE, ...){
 
-  if(verbose)
-    cat("Exact matching... \n")
+  .cat_verbose("Exact matching...\n", verbose = verbose)
 
   if (is_null(covs)) {
     .err("covariates must be specified in the input formula to use exact matching")
@@ -100,7 +99,7 @@ matchit2exact <- function(treat, covs, data, estimand = "ATT", verbose = FALSE, 
   estimand <- match_arg(estimand, c("ATT", "ATC", "ATE"))
 
   xx <- exactify(covs, names(treat))
-  cc <- do.call("intersect", lapply(unique(treat), function(t) xx[treat == t]))
+  cc <- Reduce("intersect", lapply(unique(treat), function(t) xx[treat == t]))
 
   if (is_null(cc)) {
     .err("no exact matches were found")
@@ -108,12 +107,12 @@ matchit2exact <- function(treat, covs, data, estimand = "ATT", verbose = FALSE, 
 
   psclass <- setNames(factor(match(xx, cc), nmax = length(cc)), names(treat))
 
-  if (verbose) cat("Calculating matching weights... ")
+  .cat_verbose("Calculating matching weights... ", verbose = verbose)
 
   res <- list(subclass = psclass,
               weights = get_weights_from_subclass(psclass, treat, estimand))
 
-  if (verbose) cat("Done.\n")
+  .cat_verbose("Done.\n", verbose = verbose)
 
   class(res) <- "matchit"
   res

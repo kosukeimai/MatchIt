@@ -143,7 +143,7 @@ matchit2quick <- function(treat, formula, data, distance, discarded,
 
   rlang::check_installed("quickmatch")
 
-  if (verbose) cat("Generalized full matching... \n")
+  .cat_verbose("Generalized full matching...\n", verbose = verbose)
 
   A <- list(...)
 
@@ -177,7 +177,7 @@ matchit2quick <- function(treat, formula, data, distance, discarded,
     ex <- factor(exactify(model.frame(exact, data = data),
                           sep = ", ", include_vars = TRUE)[!discarded])
 
-    cc <- intersect(as.integer(ex)[treat_==1], as.integer(ex)[treat_==0])
+    cc <- Reduce("intersect", lapply(unique(treat_), function(t) unclass(ex)[treat_==t]))
 
     if (is_null(cc)) {
       .err("no matches were found")
@@ -209,7 +209,8 @@ matchit2quick <- function(treat, formula, data, distance, discarded,
     if (is_not_null(mahvars)) {
       .err("with `method = \"quick\"`, a caliper can only be used when `distance` is a propensity score or vector and `mahvars` is not specified")
     }
-    if (length(caliper) > 1 || !identical(names(caliper), "")) {
+
+    if (length(caliper) > 1L || !identical(names(caliper), "")) {
       .err("with `method = \"quick\"`, calipers cannot be placed on covariates")
     }
   }
@@ -219,9 +220,10 @@ matchit2quick <- function(treat, formula, data, distance, discarded,
   p <- setNames(vector("list", nlevels(ex)), levels(ex))
 
   for (e in levels(ex)[cc]) {
-    if (verbose && nlevels(ex) > 1) {
-      cat(sprintf("Matching subgroup %s/%s: %s...\n",
-                  match(e, levels(ex)[cc]), length(cc), e))
+    if (nlevels(ex) > 1L) {
+      .cat_verbose(sprintf("Matching subgroup %s/%s: %s...\n",
+                           match(e, levels(ex)[cc]), length(cc), e),
+                   verbose = verbose)
     }
 
     distcovs_ <- distcovs[ex == e,, drop = FALSE]
@@ -237,10 +239,6 @@ matchit2quick <- function(treat, formula, data, distance, discarded,
     pair[which(ex == e)[!is.na(p[[e]])]] <- paste(as.character(p[[e]][!is.na(p[[e]])]), e, sep = "|")
   }
 
-  if (all(is.na(pair))) {
-    .err("no matches were found")
-  }
-
   if (length(p) == 1L) {
     p <- p[[1]]
   }
@@ -252,13 +250,13 @@ matchit2quick <- function(treat, formula, data, distance, discarded,
   #No match.matrix because treated units don't index matched strata (i.e., more than one
   #treated unit can be in the same stratum). Stratum information is contained in subclass.
 
-  if (verbose) cat("Calculating matching weights... ")
+  .cat_verbose("Calculating matching weights... ", verbose = verbose)
 
   res <- list(subclass = psclass,
               weights = get_weights_from_subclass(psclass, treat, estimand),
               obj = p)
 
-  if (verbose) cat("Done.\n")
+  .cat_verbose("Done.\n", verbose = verbose)
 
   class(res) <- c("matchit")
   res

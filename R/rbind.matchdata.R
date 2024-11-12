@@ -107,7 +107,7 @@ rbind.matchdata <- function(..., deparse.level = 1) {
       attr_list[[i]] <- NULL
     }
     else {
-      key_attrs[i] <- attr_list[[i]][which(!is.na(attr_list[[i]]))[1]]
+      key_attrs[i] <- Find(Negate(is.na), attr_list[[i]])
     }
   }
   attrs <- names(attr_list)
@@ -119,7 +119,8 @@ rbind.matchdata <- function(..., deparse.level = 1) {
   })
 
   for (d in seq_along(md_list)[-1]) {
-    if (length(other_col_list[[d]]) != length(other_col_list[[1]]) || !all(other_col_list[[d]] %in% other_col_list[[1]])) {
+    if (length(other_col_list[[d]]) != length(other_col_list[[1]]) ||
+        !all(other_col_list[[d]] %in% other_col_list[[1]])) {
       .err(sprintf("the %s inputs must come from the same dataset",
                  switch(type, "matchdata" = "`match.data()`", "`get_matches()`")))
     }

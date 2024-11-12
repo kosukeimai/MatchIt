@@ -230,12 +230,11 @@ matchit2full <- function(treat, formula, data, distance, discarded,
 
   rlang::check_installed("optmatch")
 
-  if (verbose) cat("Full matching... \n")
-
-  A <- list(...)
+  .cat_verbose("Full matching... \n", verbose = verbose)
 
   fm.args <- c("omit.fraction", "mean.controls", "tol", "solver")
-  A[!names(A) %in% fm.args] <- NULL
+  A <- setNames(lapply(fm.args, ...get, ...), fm.args)
+  A[lengths(A) == 0L] <- NULL
 
   #Set max problem size to Inf and return to original value after match
   omps <- getOption("optmatch_max_problem_size")
@@ -273,7 +272,7 @@ matchit2full <- function(treat, formula, data, distance, discarded,
     ex <- factor(exactify(model.frame(exact, data = data),
                           sep = ", ", include_vars = TRUE)[!discarded])
 
-    cc <- intersect(as.integer(ex)[treat_==1], as.integer(ex)[treat_==0])
+    cc <- Reduce("intersect", lapply(unique(treat_), function(t) unclass(ex)[treat_==t]))
 
     if (is_null(cc)) {
       .err("No matches were found")
@@ -353,20 +352,22 @@ matchit2full <- function(treat, formula, data, distance, discarded,
   t_df <- data.frame(treat)
 
   for (e in levels(ex)[cc]) {
-    if (nlevels(ex) > 1) {
-      if (verbose) {
-        cat(sprintf("Matching subgroup %s/%s: %s...\n",
-                    match(e, levels(ex)[cc]), length(cc), e))
-      }
+    if (nlevels(ex) > 1L) {
+      .cat_verbose(sprintf("Matching subgroup %s/%s: %s...\n",
+                           match(e, levels(ex)[cc]), length(cc), e),
+                   verbose = verbose)
+
       mo_ <- mo[ex[treat_==1] == e, ex[treat_==0] == e]
     }
-    else mo_ <- mo
+    else {
+      mo_ <- mo
+    }
 
     if (any(dim(mo_) == 0) || !any(is.finite(mo_))) {
       next
     }
 
-    if (all(dim(mo_) == 1) && all(is.finite(mo_))) {
+    if (all_equal_to(dim(mo_), 1) && all(is.finite(mo_))) {
       pair[ex == e] <- paste(1, e, sep = "|")
       next
     }
@@ -398,13 +399,14 @@ matchit2full <- function(treat, formula, data, distance, discarded,
   #No match.matrix because treated units don't index matched strata (i.e., more than one
   #treated unit can be in the same stratum). Stratum information is contained in subclass.
 
-  if (verbose) cat("Calculating matching weights... ")
+  .cat_verbose("Calculating matching weights... ",
+               verbose = verbose)
 
   res <- list(subclass = psclass,
               weights = get_weights_from_subclass(psclass, treat, estimand),
               obj = p)
 
-  if (verbose) cat("Done.\n")
+  .cat_verbose("Done.\n", verbose = verbose)
 
   class(res) <- c("matchit")
   res

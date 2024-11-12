@@ -134,11 +134,16 @@ exactify <- function(X, nam = NULL, sep = "|", include_vars = FALSE, justify = "
   }
 
   if (is.matrix(X)) {
-    X <- setNames(lapply(seq_len(ncol(X)), function(i) X[,i]), colnames(X))
+    X <- as.data.frame.matrix(X)
+  }
+  else if (!is.list(X)) {
+    stop("X must be a matrix, data frame, or list.")
   }
 
-  if (!is.list(X)) {
-    stop("X must be a matrix, data frame, or list.")
+  X <- X[lengths(X) > 0]
+
+  if (is_null(X)) {
+    return(NULL)
   }
 
   for (i in seq_along(X)) {
@@ -160,17 +165,13 @@ exactify <- function(X, nam = NULL, sep = "|", include_vars = FALSE, justify = "
     X[[i]] <- factor(X[[i]], levels = unique_x, labels = lev)
   }
 
-  all_levels <- do.call("paste", c(rev(expand.grid(rev(lapply(X, levels)),
-                                                   KEEP.OUT.ATTRS = FALSE, stringsAsFactors = FALSE)),
-                                   sep = sep))
+  out <- interaction2(X, sep = sep, lex.order = if (include_vars) TRUE else NULL)
 
-  out <- do.call("paste", c(X, sep = sep))
+  if (is_null(nam)) {
+    return(out)
+  }
 
-  out <- factor(out, levels = all_levels[all_levels %in% out])
-
-  if (is_not_null(nam)) names(out) <- nam
-
-  out
+  setNames(out, nam)
 }
 
 #Get covariates (RHS) vars from formula
@@ -178,7 +179,7 @@ get.covs.matrix <- function(formula = NULL, data = NULL) {
 
   if (is_null(formula)) {
     fnames <- colnames(data)
-    fnames[!startsWith(fnames, "`")] <- paste0("`", fnames[!startsWith(fnames, "`")], "`")
+    fnames[!startsWith(fnames, "`")] <- add_quotes(fnames[!startsWith(fnames, "`")], "`")
     formula <- reformulate(fnames)
   }
   else {
@@ -189,15 +190,17 @@ get.covs.matrix <- function(formula = NULL, data = NULL) {
                     na.action = na.pass)
 
   chars.in.mf <- vapply(mf, is.character, logical(1L))
-  mf[chars.in.mf] <- lapply(mf[chars.in.mf], factor)
+  mf[chars.in.mf] <- lapply(mf[chars.in.mf], as.factor)
 
   mf <- droplevels(mf)
 
   X <- model.matrix(formula, data = mf,
                     contrasts.arg = lapply(Filter(is.factor, mf),
                                            contrasts, contrasts = FALSE))
+
   assign <- attr(X, "assign")[-1]
   X <- X[,-1, drop = FALSE]
+
   attr(X, "assign") <- assign
 
   X
@@ -252,6 +255,7 @@ pooled_cov <- function(X, t, w = NULL) {
         X[in_t, j] <- X[in_t, j] - mean(X[in_t, j])
       }
     }
+
     return(cov(X)*(n-1)/(n-length(unique_t)))
   }
 
@@ -261,6 +265,7 @@ pooled_cov <- function(X, t, w = NULL) {
       X[in_t, j] <- X[in_t, j] - wm(X[in_t, j], w[in_t])
     }
   }
+
   cov.wt(X, w)$cov
 }
 
@@ -269,10 +274,14 @@ pooled_sd <- function(X, t, w = NULL, bin.var = NULL, contribution = "proportion
   unique_t <- unique(t)
   if (is_null(dim(X))) X <- matrix(X, nrow = length(X))
   n <- nrow(X)
-  if (is_null(bin.var)) bin.var <- apply(X, 2, function(x) all(x == 0 | x == 1))
+
+  if (is_null(bin.var)) {
+    bin.var <- apply(X, 2, function(x) all(x == 0 | x == 1))
+  }
 
   if (contribution == "equal") {
     vars <- matrix(0, nrow = length(unique_t), ncol = ncol(X))
+
     for (i in seq_along(unique_t)) {
       in_t <- which(t == unique_t[i])
       vars[i,] <- vapply(seq_len(ncol(X)), function(j) {
@@ -281,6 +290,7 @@ pooled_sd <- function(X, t, w = NULL, bin.var = NULL, contribution = "proportion
         wvar(x[in_t], w = w[in_t], bin.var = b)
       }, numeric(1L))
     }
+
     pooled_var <- colMeans(vars)
   }
   else {
@@ -335,12 +345,20 @@ ESS <- function(w) {
 #Compute sample sizes
 nn <- function(treat, weights, discarded = NULL, s.weights = NULL) {
 
-  if (is_null(discarded)) discarded <- rep(FALSE, length(treat))
-  if (is_null(s.weights)) s.weights <- rep(1, length(treat))
+  if (is_null(discarded)) {
+    discarded <- rep.int(FALSE, length(treat))
+  }
+
+  if (is_null(s.weights)) {
+    s.weights <- rep.int(1, length(treat))
+  }
+
   weights <- weights * s.weights
-  n <- matrix(0, ncol=2, nrow=6, dimnames = list(c("All (ESS)", "All", "Matched (ESS)",
-                                                   "Matched", "Unmatched","Discarded"),
-                                                 c("Control", "Treated")))
+
+  n <- matrix(0, ncol = 2L, nrow = 6L,
+              dimnames = list(c("All (ESS)", "All", "Matched (ESS)",
+                                "Matched", "Unmatched","Discarded"),
+                              c("Control", "Treated")))
 
   #                      Control                                    Treated
   n["All (ESS)",] <-     c(ESS(s.weights[treat==0]),                ESS(s.weights[treat==1]))
@@ -357,7 +375,11 @@ nn <- function(treat, weights, discarded = NULL, s.weights = NULL) {
 qn <- function(treat, subclass, discarded = NULL) {
 
   treat <- factor(treat, levels = 0:1, labels = c("Control", "Treated"))
-  if (is_null(discarded)) discarded <- rep(FALSE, length(treat))
+
+  if (is_null(discarded)) {
+    discarded <- rep.int(FALSE, length(treat))
+  }
+
   qn <- table(treat[!discarded], subclass[!discarded])
 
   if (any(is.na(subclass) & !discarded)) {
