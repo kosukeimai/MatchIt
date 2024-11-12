@@ -1,5 +1,5 @@
 Package: MatchIt
-Version: 4.5.5.9003
+Version: 4.6.0
 Title: Nonparametric Preprocessing for Parametric Causal Inference
 Description: Selects matched samples of the original treated and
     control groups with similar covariate distributions -- can be
@@ -48,6 +48,7 @@ Suggests:
     randomForest (>= 4.7-1),
     glmnet (>= 4.0),
     gbm (>= 2.1.7),
+    gurobi,
     cobalt (>= 4.2.3),
     boot,
     marginaleffects (>= 0.19.0),

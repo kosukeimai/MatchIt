@@ -6,7 +6,7 @@ output:
 `MatchIt` News and Updates
 ======
 
-# MatchIt (development version)
+# MatchIt 4.6.0
 
 Most improvements are related to performance. Some of these dramatically improve speeds for large datasets. Most come from improvements to `Rcpp` code.
 
