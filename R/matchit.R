@@ -30,7 +30,7 @@
 #' matching, [`"cem"`][method_cem] for coarsened exact matching,
 #' [`"exact"`][method_exact] for exact matching,
 #' [`"cardinality"`][method_cardinality] for cardinality and
-#' template matching, and [`"subclass"`][method_subclass] for
+#' profile matching, and [`"subclass"`][method_subclass] for
 #' subclassification. When set to `NULL`, no matching will occur, but
 #' propensity score estimation and common support restrictions will still occur
 #' if requested. See the linked pages for each method for more details on what

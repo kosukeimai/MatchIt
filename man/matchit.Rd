@@ -50,7 +50,7 @@ full matching, \code{\link[=method_genetic]{"genetic"}} for genetic
 matching, \code{\link[=method_cem]{"cem"}} for coarsened exact matching,
 \code{\link[=method_exact]{"exact"}} for exact matching,
 \code{\link[=method_cardinality]{"cardinality"}} for cardinality and
-template matching, and \code{\link[=method_subclass]{"subclass"}} for
+profile matching, and \code{\link[=method_subclass]{"subclass"}} for
 subclassification. When set to \code{NULL}, no matching will occur, but
 propensity score estimation and common support restrictions will still occur
 if requested. See the linked pages for each method for more details on what
