@@ -1,9 +1,6 @@
 // [[Rcpp::depends(RcppProgress)]]
-#include <progress.hpp>
 #include "eta_progress_bar.h"
-#include <Rcpp.h>
 #include "internal.h"
-#include <algorithm>
 using namespace Rcpp;
 
 // [[Rcpp::plugins(cpp11)]]
@@ -20,6 +17,7 @@ IntegerMatrix nn_matchC_vec_closest(const IntegerVector& treat,
                                     const Nullable<NumericMatrix>& caliper_covs_mat_ = R_NilValue,
                                     const Nullable<IntegerMatrix>& antiexact_covs_ = R_NilValue,
                                     const Nullable<IntegerVector>& unit_id_ = R_NilValue,
+                                    const bool& close = true,
                                     const bool& disl_prog = false) {
 
   IntegerVector unique_treat = {0, 1};
@@ -38,15 +36,18 @@ IntegerMatrix nn_matchC_vec_closest(const IntegerVector& treat,
   IntegerVector ind_match(n);
   ind_match.fill(NA_INTEGER);
 
-  IntegerVector times_matched(n);
-  times_matched.fill(0);
   LogicalVector eligible = !discarded;
 
   // IntegerVector g_c = Range(0, g - 1);
   // g_c = g_c[g_c != focal];
 
-  for (gi = 0; gi < g; gi++) {
-    nt[gi] = sum(treat == gi);
+  IntegerVector n_eligible(g);
+  for (i = 0; i < n; i++) {
+    nt[treat[i]]++;
+
+    if (eligible[i]) {
+      n_eligible[treat[i]]++;
+    }
   }
 
   int nf = nt[focal];
@@ -66,15 +67,11 @@ IntegerMatrix nn_matchC_vec_closest(const IntegerVector& treat,
 
   IntegerVector ind_focal = indt[Range(indt_sep[focal], indt_sep[focal + 1] - 1)];
 
-  IntegerVector times_matched_allowed(n);
-  times_matched_allowed.fill(reuse_max);
-  times_matched_allowed[ind_focal] = ratio;
+  std::vector<int> times_matched(n, 0);
 
-  IntegerVector n_eligible(g);
-  for (i = 0; i < n; i++) {
-    if (eligible[i]) {
-      n_eligible[treat[i]]++;
-    }
+  std::vector<int> times_matched_allowed(n, reuse_max);
+  for (i = 0; i < nf; i++) {
+    times_matched_allowed[ind_focal[i]] = ratio[i];
   }
 
   int max_ratio = max(ratio);
@@ -84,13 +81,14 @@ IntegerMatrix nn_matchC_vec_closest(const IntegerVector& treat,
   mm.fill(NA_INTEGER);
   CharacterVector lab = treat.names();
 
-  //Use base::order() because faster than Rcpp implementation of order()
+  //Use base::order() because faster than C++ std::sort()
   Function o("order");
 
   IntegerVector ind_d_ord = o(distance);
-  ind_d_ord = ind_d_ord - 1; //location of each unit after sorting
+  ind_d_ord = ind_d_ord - 1;
 
-  IntegerVector match_d_ord = match(ind, ind_d_ord) - 1;
+  IntegerVector match_d_ord = o(ind_d_ord);
+  match_d_ord = match_d_ord - 1;
 
   IntegerVector last_control(g);
   last_control.fill(n - 1);
@@ -141,25 +139,14 @@ IntegerMatrix nn_matchC_vec_closest(const IntegerVector& treat,
   }
 
   //storing closeness
-  IntegerVector t_id = rep_each(ind_focal, 2);
-  IntegerVector c_id = rep(-1, 2 * nf);
-  NumericVector dist = rep(R_PosInf, 2 * nf);
-  for (i = 0; i < nf; i++) {
-    c_id[2 * i] = -2;
-  }
-
-  LogicalVector skipped_once = rep(false, nf);
-
-  //progress bar
-  int prog_length = sum(ratio) + 1;
-  ETAProgressBar pb;
-  Progress p(prog_length, disl_prog, pb);
-
-  IntegerVector ck_;
-
-  int t_id_i, c_id_i, t_id_t_i, c, k;
+  std::vector<int> t_id, c_id;
+  std::vector<double> dist;
+  t_id.reserve(n_eligible[focal]);
+  c_id.reserve(n_eligible[focal]);
+  dist.reserve(n_eligible[focal]);
 
   gi = 0;
+
   update_first_and_last_control(first_control,
                                 last_control,
                                 ind_d_ord,
@@ -167,173 +154,195 @@ IntegerMatrix nn_matchC_vec_closest(const IntegerVector& treat,
                                 treat,
                                 gi);
 
-  //Find left and right matches for each treated unit
-  for (i = 0; i < (2 * nf); i++) {
-    t_id_i = t_id[i];
+  IntegerVector ck_;
 
-    if (!eligible[t_id_i]) {
-      continue;
-    }
+  int c_id_i, t_id_t_i, t_id_i;
 
-    c_id_i = c_id[i];
+  int counter = 0;
+  int r = 1;
 
-    k = find_lr(c_id_i,
-                t_id_i,
-                ind_d_ord,
-                match_d_ord,
-                treat,
-                distance,
-                eligible,
-                gi,
-                ncc,
-                caliper_covs_mat,
-                caliper_covs,
-                caliper_dist,
-                use_exact,
-                exact,
-                aenc,
-                antiexact_covs,
-                first_control,
-                last_control);
+  IntegerVector heap_ord;
+  std::vector<int> k(1);
+  R_xlen_t hi;
 
-    if (k < 0) {
-      continue;
-    }
+  //progress bar
+  R_xlen_t prog_length = sum(ratio) + 1;
+  ETAProgressBar pb;
+  Progress p(prog_length, disl_prog, pb);
 
-    c_id[i] = k;
-    dist[i] = std::abs(distance[t_id_i] - distance[k]);
+  IntegerVector::iterator ci;
+
+  std::function<bool(int, int)> cmp;
+  if (close) {
+    cmp = [&dist](const int& a, const int& b) {return dist[a] < dist[b];};
+  }
+  else {
+    cmp = [&dist](const int& a, const int& b) {return dist[a] >= dist[b];};
   }
 
-  //Order the list
-  IntegerVector heap_ord = o(dist);
-  heap_ord = heap_ord - 1;
+  for (r = 1; r <= max_ratio; r++) {
+    //Find closest control unit to each treated unit
+    for (int ti : ind_focal) {
 
-  //Go down the list; update as needed
-  int hi;
-  int counter = -1;
-  bool find_new = false;
-
-  i = 0;
-  while (min(n_eligible) > 0 && i < (2 * nf)) {
-
-    counter++;
-    if (counter % 200 == 0) Rcpp::checkUserInterrupt();
-
-    hi = heap_ord[i];
-
-    if (dist[hi] >= caliper_dist) {
-      break;
-    }
-
-    t_id_i = t_id[hi];
-
-    if (!eligible[t_id_i]) {
-      i++;
-      continue;
-    }
-
-    c_id_i = c_id[hi];
-
-    t_id_t_i = ind_match[t_id_i];
-
-    if (c_id_i < 0) {
-      if (skipped_once[t_id_t_i]) {
-        eligible[t_id_i] = false;
-        n_eligible[focal]--;
-      }
-      else {
-        skipped_once[t_id_t_i] = true;
-      }
-      i++;
-      continue;
-    }
-
-    find_new = false;
-    if (!eligible[c_id_i]) {
-      find_new = true;
-    }
-    else if (!mm_okay(times_matched[t_id_i] + 1, c_id_i, mm.row(t_id_t_i))) {
-      find_new = true;
-    }
-
-    if (find_new) {
-      // If control isn't eligible, find new control and try again
-
-      update_first_and_last_control(first_control,
-                                    last_control,
-                                    ind_d_ord,
-                                    eligible,
-                                    treat,
-                                    gi);
-
-      k = find_lr(c_id_i,
-                  t_id_i,
-                  ind_d_ord,
-                  match_d_ord,
-                  treat,
-                  distance,
-                  eligible,
-                  gi,
-                  ncc,
-                  caliper_covs_mat,
-                  caliper_covs,
-                  caliper_dist,
-                  use_exact,
-                  exact,
-                  aenc,
-                  antiexact_covs,
-                  first_control,
-                  last_control);
-
-      c_id[hi] = k;
-
-      //If no new control found, continue
-      if (k < 0) {
+      if (!eligible[ti]) {
         continue;
       }
 
-      dist[hi] = std::abs(distance[t_id_i] - distance[k]);
+      counter++;
+      if (counter == 200) {
+        counter = 0;
+        Rcpp::checkUserInterrupt();
+      }
 
-      //Find new position of pair in heap
-      for (c = i; c < (2 * nf) - 1; c++) {
-        if (dist[heap_ord[c]] < dist[heap_ord[c + 1]]) {
-          break;
+      t_id_t_i = ind_match[ti];
+
+      k = find_control_vec(ti,
+                           ind_d_ord,
+                           match_d_ord,
+                           treat,
+                           distance,
+                           eligible,
+                           gi,
+                           r,
+                           mm.row(t_id_t_i),
+                           ncc,
+                           caliper_covs_mat,
+                           caliper_covs,
+                           caliper_dist,
+                           use_exact,
+                           exact,
+                           aenc,
+                           antiexact_covs,
+                           first_control,
+                           last_control);
+
+      if (k.empty()) {
+        eligible[ti] = false;
+        n_eligible[focal]--;
+        continue;
+      }
+
+      t_id.push_back(ti);
+      c_id.push_back(k[0]);
+      dist.push_back(std::abs(distance[ti] - distance[k[0]]));
+    }
+
+    nf = dist.size();
+
+    //Order the list
+    heap_ord = o(dist, _["decreasing"] = !close);
+    heap_ord = heap_ord - 1;
+
+    i = 0;
+
+    //Go through ordered list and assign matches, re-matching when necessary
+    while (min(n_eligible) > 0 && i < nf) {
+      counter++;
+      if (counter == 200) {
+        counter = 0;
+        Rcpp::checkUserInterrupt();
+      }
+
+      hi = heap_ord[i];
+
+      t_id_i = t_id[hi];
+
+      if (!eligible[t_id_i]) {
+        i++;
+        continue;
+      }
+
+      t_id_t_i = ind_match[t_id_i];
+
+      c_id_i = c_id[hi];
+
+      if (!eligible[c_id_i]) {
+        // If control isn't eligible, find new control and try again
+        update_first_and_last_control(first_control,
+                                      last_control,
+                                      ind_d_ord,
+                                      eligible,
+                                      treat,
+                                      gi);
+
+        k = find_control_vec(t_id_i,
+                             ind_d_ord,
+                             match_d_ord,
+                             treat,
+                             distance,
+                             eligible,
+                             gi,
+                             r,
+                             mm.row(t_id_t_i),
+                             ncc,
+                             caliper_covs_mat,
+                             caliper_covs,
+                             caliper_dist,
+                             use_exact,
+                             exact,
+                             aenc,
+                             antiexact_covs,
+                             first_control,
+                             last_control,
+                             1,
+                             c_id_i);
+
+        //If no matches...
+        if (k.empty()) {
+          eligible[t_id_i] = false;
+          n_eligible[focal]--;
+          continue;
         }
 
-        swap_pos(heap_ord, c, c + 1);
-      }
+        c_id[hi] = k[0];
+        dist[hi] = std::abs(distance[t_id_i] - distance[k[0]]);
 
-      continue;
-    }
+        // Find new position of pair in heap
+        ci = std::lower_bound(heap_ord.begin() + i, heap_ord.end(), hi,
+                              cmp);
 
-    mm(t_id_t_i, sum(!is_na(mm(t_id_t_i, _)))) = c_id_i;
+        if (ci != heap_ord.begin() + i) {
+          std::rotate(heap_ord.begin() + i, heap_ord.begin() + i + 1, ci);
+        }
 
-    ck_ = {c_id_i, t_id_i};
-
-    if (use_unit_id) {
-      ck_ = which(!is_na(match(unit_id, as<IntegerVector>(unit_id[ck_]))));
-    }
-
-    for (int ck : ck_) {
-
-      if (!eligible[ck]) {
         continue;
       }
 
-      times_matched[ck]++;
-      if (times_matched[ck] >= times_matched_allowed[ck]) {
-        eligible[ck] = false;
-        n_eligible[treat[ck]]--;
+      mm(t_id_t_i, sum(!is_na(mm(t_id_t_i, _)))) = c_id_i;
+
+      ck_ = {c_id_i, t_id_i};
+
+      if (use_unit_id) {
+        ck_ = which(!is_na(match(unit_id, as<IntegerVector>(unit_id[ck_]))));
       }
+
+      for (int ck : ck_) {
+
+        if (!eligible[ck]) {
+          continue;
+        }
+
+        times_matched[ck]++;
+        if (times_matched[ck] >= times_matched_allowed[ck]) {
+          eligible[ck] = false;
+          n_eligible[treat[ck]]--;
+        }
+      }
+
+      p.increment();
+
+      i++;
     }
 
-    p.increment();
+    t_id.clear();
+    c_id.clear();
+    dist.clear();
   }
 
   p.update(prog_length);
 
   mm = mm + 1;
-  rownames(mm) = lab[ind_focal];
+  rownames(mm) = as<CharacterVector>(lab[ind_focal]);
 
   return mm;
 }
