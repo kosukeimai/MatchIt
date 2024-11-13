@@ -1,96 +1,34 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>https://kosukeimai.github.io/MatchIt/404.html</loc>
-  </url>
-  <url>
-    <loc>https://kosukeimai.github.io/MatchIt/articles/MatchIt.html</loc>
-  </url>
-  <url>
-    <loc>https://kosukeimai.github.io/MatchIt/articles/assessing-balance.html</loc>
-  </url>
-  <url>
-    <loc>https://kosukeimai.github.io/MatchIt/articles/estimating-effects.html</loc>
-  </url>
-  <url>
-    <loc>https://kosukeimai.github.io/MatchIt/articles/index.html</loc>
-  </url>
-  <url>
-    <loc>https://kosukeimai.github.io/MatchIt/articles/matching-methods.html</loc>
-  </url>
-  <url>
-    <loc>https://kosukeimai.github.io/MatchIt/articles/sampling-weights.html</loc>
-  </url>
-  <url>
-    <loc>https://kosukeimai.github.io/MatchIt/authors.html</loc>
-  </url>
-  <url>
-    <loc>https://kosukeimai.github.io/MatchIt/index.html</loc>
-  </url>
-  <url>
-    <loc>https://kosukeimai.github.io/MatchIt/news/index.html</loc>
-  </url>
-  <url>
-    <loc>https://kosukeimai.github.io/MatchIt/reference/MatchIt-package.html</loc>
-  </url>
-  <url>
-    <loc>https://kosukeimai.github.io/MatchIt/reference/add_s.weights.html</loc>
-  </url>
-  <url>
-    <loc>https://kosukeimai.github.io/MatchIt/reference/distance.html</loc>
-  </url>
-  <url>
-    <loc>https://kosukeimai.github.io/MatchIt/reference/index.html</loc>
-  </url>
-  <url>
-    <loc>https://kosukeimai.github.io/MatchIt/reference/lalonde.html</loc>
-  </url>
-  <url>
-    <loc>https://kosukeimai.github.io/MatchIt/reference/mahalanobis_dist.html</loc>
-  </url>
-  <url>
-    <loc>https://kosukeimai.github.io/MatchIt/reference/match.data.html</loc>
-  </url>
-  <url>
-    <loc>https://kosukeimai.github.io/MatchIt/reference/matchit.html</loc>
-  </url>
-  <url>
-    <loc>https://kosukeimai.github.io/MatchIt/reference/method_cardinality.html</loc>
-  </url>
-  <url>
-    <loc>https://kosukeimai.github.io/MatchIt/reference/method_cem.html</loc>
-  </url>
-  <url>
-    <loc>https://kosukeimai.github.io/MatchIt/reference/method_exact.html</loc>
-  </url>
-  <url>
-    <loc>https://kosukeimai.github.io/MatchIt/reference/method_full.html</loc>
-  </url>
-  <url>
-    <loc>https://kosukeimai.github.io/MatchIt/reference/method_genetic.html</loc>
-  </url>
-  <url>
-    <loc>https://kosukeimai.github.io/MatchIt/reference/method_nearest.html</loc>
-  </url>
-  <url>
-    <loc>https://kosukeimai.github.io/MatchIt/reference/method_optimal.html</loc>
-  </url>
-  <url>
-    <loc>https://kosukeimai.github.io/MatchIt/reference/method_quick.html</loc>
-  </url>
-  <url>
-    <loc>https://kosukeimai.github.io/MatchIt/reference/method_subclass.html</loc>
-  </url>
-  <url>
-    <loc>https://kosukeimai.github.io/MatchIt/reference/plot.matchit.html</loc>
-  </url>
-  <url>
-    <loc>https://kosukeimai.github.io/MatchIt/reference/plot.summary.matchit.html</loc>
-  </url>
-  <url>
-    <loc>https://kosukeimai.github.io/MatchIt/reference/rbind.matchdata.html</loc>
-  </url>
-  <url>
-    <loc>https://kosukeimai.github.io/MatchIt/reference/summary.matchit.html</loc>
-  </url>
+<urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
+<url><loc>https://kosukeimai.github.io/MatchIt/404.html</loc></url>
+<url><loc>https://kosukeimai.github.io/MatchIt/articles/MatchIt.html</loc></url>
+<url><loc>https://kosukeimai.github.io/MatchIt/articles/assessing-balance.html</loc></url>
+<url><loc>https://kosukeimai.github.io/MatchIt/articles/estimating-effects.html</loc></url>
+<url><loc>https://kosukeimai.github.io/MatchIt/articles/index.html</loc></url>
+<url><loc>https://kosukeimai.github.io/MatchIt/articles/matching-methods.html</loc></url>
+<url><loc>https://kosukeimai.github.io/MatchIt/articles/sampling-weights.html</loc></url>
+<url><loc>https://kosukeimai.github.io/MatchIt/authors.html</loc></url>
+<url><loc>https://kosukeimai.github.io/MatchIt/index.html</loc></url>
+<url><loc>https://kosukeimai.github.io/MatchIt/news/index.html</loc></url>
+<url><loc>https://kosukeimai.github.io/MatchIt/reference/MatchIt-package.html</loc></url>
+<url><loc>https://kosukeimai.github.io/MatchIt/reference/add_s.weights.html</loc></url>
+<url><loc>https://kosukeimai.github.io/MatchIt/reference/distance.html</loc></url>
+<url><loc>https://kosukeimai.github.io/MatchIt/reference/index.html</loc></url>
+<url><loc>https://kosukeimai.github.io/MatchIt/reference/lalonde.html</loc></url>
+<url><loc>https://kosukeimai.github.io/MatchIt/reference/mahalanobis_dist.html</loc></url>
+<url><loc>https://kosukeimai.github.io/MatchIt/reference/match.data.html</loc></url>
+<url><loc>https://kosukeimai.github.io/MatchIt/reference/matchit.html</loc></url>
+<url><loc>https://kosukeimai.github.io/MatchIt/reference/method_cardinality.html</loc></url>
+<url><loc>https://kosukeimai.github.io/MatchIt/reference/method_cem.html</loc></url>
+<url><loc>https://kosukeimai.github.io/MatchIt/reference/method_exact.html</loc></url>
+<url><loc>https://kosukeimai.github.io/MatchIt/reference/method_full.html</loc></url>
+<url><loc>https://kosukeimai.github.io/MatchIt/reference/method_genetic.html</loc></url>
+<url><loc>https://kosukeimai.github.io/MatchIt/reference/method_nearest.html</loc></url>
+<url><loc>https://kosukeimai.github.io/MatchIt/reference/method_optimal.html</loc></url>
+<url><loc>https://kosukeimai.github.io/MatchIt/reference/method_quick.html</loc></url>
+<url><loc>https://kosukeimai.github.io/MatchIt/reference/method_subclass.html</loc></url>
+<url><loc>https://kosukeimai.github.io/MatchIt/reference/plot.matchit.html</loc></url>
+<url><loc>https://kosukeimai.github.io/MatchIt/reference/plot.summary.matchit.html</loc></url>
+<url><loc>https://kosukeimai.github.io/MatchIt/reference/rbind.matchdata.html</loc></url>
+<url><loc>https://kosukeimai.github.io/MatchIt/reference/summary.matchit.html</loc></url>
 </urlset>
+

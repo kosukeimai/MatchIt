@@ -5,7 +5,6 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<meta name="description" content="MatchIt">
 <title>Assessing Balance • MatchIt</title>
 <!-- favicons --><link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
 <link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
@@ -15,67 +14,49 @@
 <link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png">
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
-<!-- bootstrap-toc --><script src="https://cdn.jsdelivr.net/gh/afeld/bootstrap-toc@v1.0.1/dist/bootstrap-toc.min.js" integrity="sha256-4veVQbu7//Lk5TSmc7YV48MxtMy98e26cf5MrgZYnwo=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Assessing Balance">
-<meta property="og:description" content="MatchIt">
-<meta property="og:image" content="https://kosukeimai.github.io/MatchIt/logo.png">
-<!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
-<script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
-<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-<![endif]-->
+<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.4.2/css/all.min.css" rel="stylesheet">
+<link href="../deps/font-awesome-6.4.2/css/v4-shims.min.css" rel="stylesheet">
+<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Assessing Balance">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
-    
 
-    <nav class="navbar fixed-top navbar-light navbar-expand-lg bg-light"><div class="container">
-    
+
+    <nav class="navbar navbar-expand-lg fixed-top bg-light" data-bs-theme="light" aria-label="Site navigation"><div class="container">
+
     <a class="navbar-brand me-2" href="../index.html">MatchIt</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.5.5.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.6.0</small>
 
-    
+
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
 
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto">
-<li class="nav-item">
-  <a class="nav-link" href="../articles/MatchIt.html">Get started</a>
-</li>
-<li class="nav-item">
-  <a class="nav-link" href="../reference/index.html">Reference</a>
-</li>
+<li class="nav-item"><a class="nav-link" href="../articles/MatchIt.html">Get started</a></li>
+<li class="nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
 <li class="active nav-item dropdown">
-  <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
-  <div class="dropdown-menu" aria-labelledby="dropdown-articles">
-    <a class="dropdown-item" href="../articles/matching-methods.html">Matching Methods</a>
-    <a class="dropdown-item" href="../articles/assessing-balance.html">Assessing Balance</a>
-    <a class="dropdown-item" href="../articles/estimating-effects.html">Estimating Effects After Matching</a>
-    <a class="dropdown-item" href="../articles/sampling-weights.html">Matching with Sampling Weights</a>
-  </div>
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
+<li><a class="dropdown-item" href="../articles/matching-methods.html">Matching Methods</a></li>
+    <li><a class="dropdown-item" href="../articles/assessing-balance.html">Assessing Balance</a></li>
+    <li><a class="dropdown-item" href="../articles/estimating-effects.html">Estimating Effects After Matching</a></li>
+    <li><a class="dropdown-item" href="../articles/sampling-weights.html">Matching with Sampling Weights</a></li>
+  </ul>
 </li>
-<li class="nav-item">
-  <a class="nav-link" href="../news/index.html">Changelog</a>
-</li>
+<li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul>
-<form class="form-inline my-2 my-lg-0" role="search">
-        <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="../search.json" id="search-input" placeholder="Search for" autocomplete="off">
-</form>
-
-      <ul class="navbar-nav">
-<li class="nav-item">
-  <a class="external-link nav-link" href="https://github.com/kosukeimai/MatchIt/" aria-label="github">
-    <span class="fab fa fab fa-github fa-lg"></span>
-     
-  </a>
-</li>
+<ul class="navbar-nav">
+<li class="nav-item"><form class="form-inline" role="search">
+ <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json">
+</form></li>
+<li class="nav-item"><a class="external-link nav-link" href="https://github.com/kosukeimai/MatchIt/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
       </ul>
 </div>
 
-    
+
   </div>
 </nav><div class="container template-article">
 
@@ -88,9 +69,9 @@
                         <h4 data-toc-skip class="author">Noah
 Greifer</h4>
             
-            <h4 data-toc-skip class="date">2024-01-22</h4>
+            <h4 data-toc-skip class="date">2024-11-13</h4>
       
-      <small class="dont-index">Source: <a href="https://github.com/kosukeimai/MatchIt/blob/HEAD/vignettes/assessing-balance.Rmd" class="external-link"><code>vignettes/assessing-balance.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/kosukeimai/MatchIt/blob/master/vignettes/assessing-balance.Rmd" class="external-link"><code>vignettes/assessing-balance.Rmd</code></a></small>
       <div class="d-none name"><code>assessing-balance.Rmd</code></div>
     </div>
 
@@ -126,8 +107,8 @@ assessed.</p>
 covariate balance as part of a matching analysis. The tools available in
 <code>MatchIt</code> for balance assessment should be used during the
 process of selecting a good matching scheme and ensuring that the chosen
-scheme is adequate. These tools implement the recommendations of <span class="citation">Ho et al. (<a href="#ref-ho2007" role="doc-biblioref">2007</a>)</span> and others for assessing
-balance.</p>
+scheme is adequate. These tools implement the recommendations of <span class="citation">Ho et al. (<a href="#ref-ho2007">2007</a>)</span> and
+others for assessing balance.</p>
 <p>In addition to the tools available in <code>MatchIt</code>, the
 <code>cobalt</code> package has a suite of functions designed to assess
 and display balance and is directly compatible with <code>MatchIt</code>
@@ -180,75 +161,73 @@ sample. In addition to computing SMDs on the covariates themselves, it
 is important to compute them on squares, cubes, and higher exponents as
 well as interactions between covariates. Several empirical studies have
 examined the appropriateness for using SMDs in balance assessment,
-including <span class="citation">Belitser et al. (<a href="#ref-belitser2011" role="doc-biblioref">2011</a>)</span>, <span class="citation">Ali et al. (<a href="#ref-ali2014" role="doc-biblioref">2014</a>)</span>, and <span class="citation">Stuart, Lee, and Leacy (<a href="#ref-stuart2013" role="doc-biblioref">2013</a>)</span>; in general, there is often a high
-correlation between the mean or maximum absolute SMD and the degree of
-bias in the treatment effect.</p></li>
+including <span class="citation">Belitser et al. (<a href="#ref-belitser2011">2011</a>)</span>, <span class="citation">Ali et
+al. (<a href="#ref-ali2014">2014</a>)</span>, and <span class="citation">Stuart, Lee, and Leacy (<a href="#ref-stuart2013">2013</a>)</span>; in general, there is often a
+high correlation between the mean or maximum absolute SMD and the degree
+of bias in the treatment effect.</p></li>
 <li><p><strong>Variance Ratios</strong>. The variance ratio is the ratio
 of the variance of a covariate in one group to that in the other.
 Variance ratios close to 1 indicate good balance because they imply the
-variances of the samples are similar <span class="citation">(<a href="#ref-austin2009" role="doc-biblioref">Austin
-2009</a>)</span>.</p></li>
+variances of the samples are similar <span class="citation">(<a href="#ref-austin2009">Austin 2009</a>)</span>.</p></li>
 <li><p><strong>Empirical CDF Statistics</strong>. Statistics related to
 the difference in the empirical cumulative distribution functions
 (eCDFs) of each covariate between groups allow assessment of imbalance
 across the entire covariate distribution of that covariate rather than
 just its mean or variance. The maximum eCDF difference, also known as
 the Kolmogorov-Smirnov statistic, is sometimes recommended as a useful
-supplement to SMDs for assessing balance <span class="citation">(<a href="#ref-austin2015" role="doc-biblioref">Austin and Stuart
-2015</a>)</span> and is often used as a criterion to use in propensity
-score methods that attempt to optimize balance <span class="citation">(e.g., <a href="#ref-mccaffrey2004" role="doc-biblioref">McCaffrey, Ridgeway, and Morral 2004</a>; <a href="#ref-diamond2013" role="doc-biblioref">Diamond and Sekhon
-2013</a>)</span>. Although the mean eCDF difference has not been as well
-studied, it provides a summary of imbalance that may be missed by
-relying solely on the maximum difference.</p></li>
+supplement to SMDs for assessing balance <span class="citation">(<a href="#ref-austin2015">Austin and Stuart 2015</a>)</span> and is often
+used as a criterion to use in propensity score methods that attempt to
+optimize balance <span class="citation">(e.g., <a href="#ref-mccaffrey2004">McCaffrey, Ridgeway, and Morral 2004</a>; <a href="#ref-diamond2013">Diamond and Sekhon 2013</a>)</span>. Although
+the mean eCDF difference has not been as well studied, it provides a
+summary of imbalance that may be missed by relying solely on the maximum
+difference.</p></li>
 <li><p><strong>Visual Diagnostics</strong>. Visual diagnostics such as
 eCDF plots, empirical quantile-quantile (eQQ) plots, and kernel density
 plots can be used to see exactly how the covariate distributions differ
 from each other, i.e., where in the distribution the greatest imbalances
-are <span class="citation">(<a href="#ref-ho2007" role="doc-biblioref">Ho et al. 2007</a>; <a href="#ref-austin2009" role="doc-biblioref">Austin 2009</a>)</span>. This can help to figure
+are <span class="citation">(<a href="#ref-ho2007">Ho et al. 2007</a>; <a href="#ref-austin2009">Austin 2009</a>)</span>. This can help to figure
 out how to tailor a matching method to target imbalance in a specific
 region of the covariate distribution.</p></li>
 <li><p><strong>Prognostic scores</strong>. The prognostic score is an
-estimate of the potential outcome under control for each unit <span class="citation">(<a href="#ref-hansen2008" role="doc-biblioref">Hansen
-2008</a>)</span>. Balance on the prognostic score has been shown to be
-highly correlated with bias in the effect estimate, making it a useful
-tool in balance assessment <span class="citation">(<a href="#ref-stuart2013" role="doc-biblioref">Stuart, Lee, and Leacy
-2013</a>)</span>. Estimating the prognostic score requires having access
-to the outcome data, and using it may be seen as violating the principle
-of separating the design and analysis stages of a matching analysis
-<span class="citation">(<a href="#ref-rubin2001" role="doc-biblioref">Rubin 2001</a>)</span>. However, because only the
+estimate of the potential outcome under control for each unit <span class="citation">(<a href="#ref-hansen2008">Hansen 2008</a>)</span>.
+Balance on the prognostic score has been shown to be highly correlated
+with bias in the effect estimate, making it a useful tool in balance
+assessment <span class="citation">(<a href="#ref-stuart2013">Stuart,
+Lee, and Leacy 2013</a>)</span>. Estimating the prognostic score
+requires having access to the outcome data, and using it may be seen as
+violating the principle of separating the design and analysis stages of
+a matching analysis <span class="citation">(<a href="#ref-rubin2001">Rubin 2001</a>)</span>. However, because only the
 outcome values from the control group are required to use the prognostic
 score, some separation is maintained.</p></li>
 </ul>
 <p>Several multivariate statistics exist that summarize balance across
 the entire joint covariate distribution. These can be functions of the
 above measures, like the mean or maximum absolute SMD or the generalized
-weighted distance [GWD; <span class="citation">Franklin et al. (<a href="#ref-franklin2014" role="doc-biblioref">2014</a>)</span>], which
-is the sum of SMDs for the covariates and their squares and
-interactions, or separate statistics that measure quantities that
-abstract away from the distribution of individual covariates, like the
-L1 distance <span class="citation">(<a href="#ref-iacus2011" role="doc-biblioref">Iacus, King, and Porro 2011</a>)</span>,
-cross-match test <span class="citation">(<a href="#ref-heller2010" role="doc-biblioref">Heller, Rosenbaum, and Small 2010</a>)</span>, or
-energy distance <span class="citation">(<a href="#ref-huling2020" role="doc-biblioref">Huling and Mak 2020</a>)</span>.</p>
+weighted distance [GWD; <span class="citation">Franklin et al. (<a href="#ref-franklin2014">2014</a>)</span>], which is the sum of SMDs for
+the covariates and their squares and interactions, or separate
+statistics that measure quantities that abstract away from the
+distribution of individual covariates, like the L1 distance <span class="citation">(<a href="#ref-iacus2011">Iacus, King, and Porro
+2011</a>)</span>, cross-match test <span class="citation">(<a href="#ref-heller2010">Heller, Rosenbaum, and Small 2010</a>)</span>, or
+energy distance <span class="citation">(<a href="#ref-huling2020">Huling
+and Mak 2020</a>)</span>.</p>
 <p>Balance on the propensity score has often been considered a useful
 measure of balance, but we do not necessarily recommend it except as a
 supplement to balance on the covariates. Propensity score balance will
 generally be good with any matching method regardless of the covariate
 balancing potential of the propensity score, so a balanced propensity
-score does not imply balanced covariates <span class="citation">(<a href="#ref-austin2009" role="doc-biblioref">Austin 2009</a>)</span>.
-Similarly, it may happen that covariates may be well balanced even if
-the propensity score is not balanced, such as when covariates are
-prioritized above the propensity score in the matching specification
-(e.g., with genetic matching). Given these observations, the propensity
-score should not be relied upon for assessing covariate balance.
-Simulation studies by <span class="citation">Stuart, Lee, and Leacy (<a href="#ref-stuart2013" role="doc-biblioref">2013</a>)</span> provide
-evidence for this recommendation against relying on propensity score
-balance.</p>
+score does not imply balanced covariates <span class="citation">(<a href="#ref-austin2009">Austin 2009</a>)</span>. Similarly, it may happen
+that covariates may be well balanced even if the propensity score is not
+balanced, such as when covariates are prioritized above the propensity
+score in the matching specification (e.g., with genetic matching). Given
+these observations, the propensity score should not be relied upon for
+assessing covariate balance. Simulation studies by <span class="citation">Stuart, Lee, and Leacy (<a href="#ref-stuart2013">2013</a>)</span> provide evidence for this
+recommendation against relying on propensity score balance.</p>
 <p>There has been some debate about the use of hypothesis tests, such as
 t-tests or Kolmogorov-Smirnov tests, for assessing covariate balance.
 The idea is that balance tests test the null hypothesis that the matched
 sample has equivalent balance to a randomized experiment. There are
-several problems with balance tests, described by <span class="citation">Ho et al. (<a href="#ref-ho2007" role="doc-biblioref">2007</a>)</span> and <span class="citation">Imai,
-King, and Stuart (<a href="#ref-imai2008" role="doc-biblioref">2008</a>)</span>: 1) balance is a property of the
+several problems with balance tests, described by <span class="citation">Ho et al. (<a href="#ref-ho2007">2007</a>)</span> and
+<span class="citation">Imai, King, and Stuart (<a href="#ref-imai2008">2008</a>)</span>: 1) balance is a property of the
 sample, not a of a population from which the sample was drawn; 2) the
 power of balance tests depends on the sample size, which changes during
 matching even if balance does not change; and 3) the use of hypothesis
@@ -318,10 +297,9 @@ illustrate at the end.</p>
 <span>                   <span class="va">nodegree</span> <span class="op">+</span> <span class="va">re74</span> <span class="op">+</span> <span class="va">re75</span>, data <span class="op">=</span> <span class="va">lalonde</span>,</span>
 <span>                 replace <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="va">m.out</span></span></code></pre></div>
-<pre><code><span><span class="co">## A matchit object</span></span>
+<pre><code><span><span class="co">## A `matchit` object</span></span>
 <span><span class="co">##  - method: 1:1 nearest neighbor matching with replacement</span></span>
-<span><span class="co">##  - distance: Propensity score</span></span>
-<span><span class="co">##              - estimated with logistic regression</span></span>
+<span><span class="co">##  - distance: Propensity score             - estimated with logistic regression</span></span>
 <span><span class="co">##  - number of obs.: 614 (original), 267 (matched)</span></span>
 <span><span class="co">##  - target estimand: ATT</span></span>
 <span><span class="co">##  - covariates: age, educ, race, married, nodegree, re74, re75</span></span></code></pre>
@@ -645,10 +623,9 @@ beneficial).</p>
 <span>                   <span class="va">nodegree</span> <span class="op">+</span> <span class="va">re74</span> <span class="op">+</span> <span class="va">re75</span>, data <span class="op">=</span> <span class="va">lalonde</span>,</span>
 <span>                 method <span class="op">=</span> <span class="st">"subclass"</span>, subclass <span class="op">=</span> <span class="fl">4</span><span class="op">)</span></span>
 <span><span class="va">s.out</span></span></code></pre></div>
-<pre><code><span><span class="co">## A matchit object</span></span>
+<pre><code><span><span class="co">## A `matchit` object</span></span>
 <span><span class="co">##  - method: Subclassification (4 subclasses)</span></span>
-<span><span class="co">##  - distance: Propensity score</span></span>
-<span><span class="co">##              - estimated with logistic regression</span></span>
+<span><span class="co">##  - distance: Propensity score             - estimated with logistic regression</span></span>
 <span><span class="co">##  - number of obs.: 614 (original), 614 (matched)</span></span>
 <span><span class="co">##  - target estimand: ATT</span></span>
 <span><span class="co">##  - covariates: age, educ, race, married, nodegree, re74, re75</span></span></code></pre>
@@ -938,8 +915,8 @@ full matching and nearest neighbor matching simultaneously.</p>
 <p><img src="assessing-balance_files/figure-html/unnamed-chunk-17-1.png" alt="A more elaborate love plot displaying some of the cobalt's capabilities for making publication-ready plots." width="672"></p>
 <p>The <code><a href="https://ngreifer.github.io/cobalt/reference/love.plot.html" class="external-link">love.plot()</a></code> documentation explains what each of
 these arguments do and the several other ones available. See
-<code>vignette("cobalt_A4_love.plot", package = "cobalt")</code> for
-other advanced customization of <code><a href="https://ngreifer.github.io/cobalt/reference/love.plot.html" class="external-link">love.plot()</a></code>.</p>
+<code><a href="https://ngreifer.github.io/cobalt/articles/love.plot.html" class="external-link">vignette("love.plot", package = "cobalt")</a></code> for other
+advanced customization of <code><a href="https://ngreifer.github.io/cobalt/reference/love.plot.html" class="external-link">love.plot()</a></code>.</p>
 </div>
 <div class="section level3">
 <h3 id="bal-plot">
@@ -984,7 +961,7 @@ reporting.</p>
 <div class="section level2 unnumbered">
 <h2 class="unnumbered" id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
 </h2>
-<div id="refs" class="references csl-bib-body hanging-indent">
+<div id="refs" class="references csl-bib-body hanging-indent" entry-spacing="0">
 <div id="ref-ali2014" class="csl-entry">
 Ali, M. Sanni, Rolf H. H. Groenwold, Wiebe R. Pestman, Svetlana V.
 Belitser, Kit C. B. Roes, Arno W. Hoes, Anthonius de Boer, and Olaf H.
@@ -1078,28 +1055,26 @@ Research.”</span> <em>Journal of Clinical Epidemiology</em> 66 (8): S84.
 </div>
 </div>
 
-  </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
+  </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>
 </div>
 
 
 
     <footer><div class="pkgdown-footer-left">
-  <p></p>
-<p>Developed by Daniel Ho, Kosuke Imai, Gary King, Elizabeth Stuart, Noah Greifer.</p>
+  <p>Developed by Daniel Ho, Kosuke Imai, Gary King, Elizabeth Stuart, Noah Greifer.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
 </div>
 
     </footer>
 </div>
 
-  
 
-  
+
+
 
   </body>
 </html>
