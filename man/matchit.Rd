@@ -2,7 +2,6 @@
 % Please edit documentation in R/matchit.R
 \name{matchit}
 \alias{matchit}
-\alias{print.matchit}
 \title{Matching for Causal Inference}
 \usage{
 matchit(
@@ -26,10 +25,9 @@ matchit(
   ratio = 1,
   verbose = FALSE,
   include.obj = FALSE,
+  normalize = TRUE,
   ...
 )
-
-\method{print}{matchit}(x, ...)
 }
 \arguments{
 \item{formula}{a two-sided \code{\link{formula}} object containing the treatment and
@@ -47,11 +45,12 @@ will be sought in the environment.}
 \code{\link[=method_nearest]{"nearest"}} for nearest neighbor matching (on
 the propensity score by default), \code{\link[=method_optimal]{"optimal"}}
 for optimal pair matching, \code{\link[=method_full]{"full"}} for optimal
+full matching, \code{\link[=method_quick]{"quick"}} for generalized (quick)
 full matching, \code{\link[=method_genetic]{"genetic"}} for genetic
 matching, \code{\link[=method_cem]{"cem"}} for coarsened exact matching,
 \code{\link[=method_exact]{"exact"}} for exact matching,
 \code{\link[=method_cardinality]{"cardinality"}} for cardinality and
-template matching, and \code{\link[=method_subclass]{"subclass"}} for
+profile matching, and \code{\link[=method_subclass]{"subclass"}} for
 subclassification. When set to \code{NULL}, no matching will occur, but
 propensity score estimation and common support restrictions will still occur
 if requested. See the linked pages for each method for more details on what
@@ -72,17 +71,15 @@ used.}
 argument controlling the link function used in estimating the distance
 measure. Allowable options depend on the specific \code{distance} value
 specified. See \code{\link{distance}} for allowable options with each
-option. The default is \code{"logit"}, which, along with \code{distance = "glm"}, identifies the default measure as logistic regression propensity
-scores.}
+option. The default is \code{"logit"}, which, along with \code{distance = "glm"}, identifies the default measure as logistic regression propensity scores.}
 
 \item{distance.options}{a named list containing additional arguments
 supplied to the function that estimates the distance measure as determined
-by the argument to \code{distance}. See \link{distance} for an
+by the argument to \code{distance}. See \code{\link{distance}} for an
 example of its use.}
 
 \item{estimand}{a string containing the name of the target estimand desired.
-Can be one of \code{"ATT"} or \code{"ATC"}. Some methods accept \code{"ATE"}
-as well. Default is \code{"ATT"}. See Details and the individual methods
+Can be one of \code{"ATT"}, \code{"ATC"}, or \code{"ATE"}. Default is \code{"ATT"}. See Details and the individual methods
 pages for information on how this argument is used.}
 
 \item{exact}{for methods that allow it, for which variables exact matching
@@ -98,8 +95,7 @@ propensity scores. Usually used to perform Mahalanobis distance matching
 within propensity score calipers, where the propensity scores are computed
 using \code{formula} and \code{distance}. Can be specified as a string
 containing the names of variables in \code{data} to be used or a one-sided
-formula with the desired variables on the right-hand side (e.g., \code{~ X3 + X4}). See the individual methods pages for information on whether and how
-this argument is used.}
+formula with the desired variables on the right-hand side (e.g., \code{~ X3 + X4}). See the individual methods pages for information on whether and how this argument is used.}
 
 \item{antiexact}{for methods that allow it, for which variables anti-exact
 matching should take place. Anti-exact matching ensures paired individuals
@@ -129,7 +125,7 @@ incorporated into propensity score models and balance statistics. Can also
 be specified as a string containing the name of variable in \code{data} to
 be used or a one-sided formula with the variable on the right-hand side
 (e.g., \code{~ SW}). Not all propensity score models accept sampling
-weights; see \link{distance} for information on which do and do not,
+weights; see \code{\link{distance}} for information on which do and do not,
 and see \code{vignette("sampling-weights")} for details on how to use
 sampling weights in a matching analysis.}
 
@@ -172,39 +168,36 @@ the matching process in the output, i.e., by the functions from other
 packages \code{matchit()} calls. What is included depends on the matching
 method. Default is \code{FALSE}.}
 
+\item{normalize}{\code{logical}; whether to rescale the nonzero weights in each treatment group to have an average of 1. Default is \code{TRUE}. See "How Matching Weights Are Computed" below for more details.}
+
 \item{\dots}{additional arguments passed to the functions used in the
 matching process. See the individual methods pages for information on what
-additional arguments are allowed for each method. Ignored for \code{print()}.}
-
-\item{x}{a \code{matchit} object.}
+additional arguments are allowed for each method.}
 }
 \value{
 When \code{method} is something other than \code{"subclass"}, a
 \code{matchit} object with the following components:
 
-\item{match.matrix}{a matrix containing the matches. The rownames correspond
+\item{match.matrix}{a matrix containing the matches. The row names correspond
 to the treated units and the values in each row are the names (or indices)
 of the control units matched to each treated unit. When treated units are
-matched to different numbers of control units (e.g., with exact matching or
+matched to different numbers of control units (e.g., with variable ratio matching or
 matching with a caliper), empty spaces will be filled with \code{NA}. Not
-included when \code{method} is \code{"full"}, \code{"cem"} (unless \code{k2k = TRUE}), \code{"exact"}, or \code{"cardinality"}.}
+included when \code{method} is \code{"full"}, \code{"cem"} (unless \code{k2k = TRUE}), \code{"exact"}, \code{"quick"}, or \code{"cardinality"} (unless \code{mahvars} is supplied and \code{ratio} is an integer).}
 \item{subclass}{a factor
 containing matching pair/stratum membership for each unit. Unmatched units
-will have a value of \code{NA}. Not included when \code{replace = TRUE}.}
+will have a value of \code{NA}. Not included when \code{replace = TRUE} or when \code{method = "cardinality"} unless \code{mahvars} is supplied and \code{ratio} is an integer.}
 \item{weights}{a numeric vector of estimated matching weights. Unmatched and
 discarded units will have a weight of zero.}
 \item{model}{the fit object of
 the model used to estimate propensity scores when \code{distance} is
-specified and not \code{"mahalanobis"} or a numeric vector. When
+specified as a method of estimating propensity scores. When
 \code{reestimate = TRUE}, this is the model estimated after discarding
 units.}
-\item{X}{a data frame of covariates mentioned in \code{formula},
-\code{exact}, \code{mahvars}, and \code{antiexact}.}
+\item{X}{a data frame of covariates mentioned in \code{formula}, \code{exact}, \code{mahvars}, \code{caliper}, and \code{antiexact}.}
 \item{call}{the \code{matchit()} call.}
-\item{info}{information on the matching method and
-distance measures used.}
-\item{estimand}{the argument supplied to
-\code{estimand}.}
+\item{info}{information on the matching method and distance measures used.}
+\item{estimand}{the argument supplied to \code{estimand}.}
 \item{formula}{the \code{formula} supplied.}
 \item{treat}{a vector of treatment status converted to zeros (0) and ones
 (1) if not already in that format.}
@@ -212,16 +205,11 @@ distance measures used.}
 values (i.e., propensity scores) when \code{distance} is supplied as a
 method of estimating propensity scores or a numeric vector.}
 \item{discarded}{a logical vector denoting whether each observation was
-discarded (\code{TRUE}) or not (\code{FALSE}) by the argument to
-\code{discard}.}
-\item{s.weights}{the vector of sampling weights supplied to
-the \code{s.weights} argument, if any.}
-\item{exact}{a one-sided formula
-containing the variables, if any, supplied to \code{exact}.}
-\item{mahvars}{a one-sided formula containing the variables, if any,
-supplied to \code{mahvars}.}
-\item{obj}{when \code{include.obj = TRUE}, an
-object containing the intermediate results of the matching procedure. See
+discarded (\code{TRUE}) or not (\code{FALSE}) by the argument to \code{discard}.}
+\item{s.weights}{the vector of sampling weights supplied to the \code{s.weights} argument, if any.}
+\item{exact}{a one-sided formula containing the variables, if any, supplied to \code{exact}.}
+\item{mahvars}{a one-sided formula containing the variables, if any, supplied to \code{mahvars}.}
+\item{obj}{when \code{include.obj = TRUE}, an object containing the intermediate results of the matching procedure. See
 the individual methods pages for what this component will contain.}
 
 When \code{method = "subclass"}, a \code{matchit.subclass} object with the same
@@ -249,10 +237,11 @@ pages:
 \item \code{\link{method_nearest}} for nearest neighbor matching
 \item \code{\link{method_optimal}} for optimal pair matching
 \item \code{\link{method_full}} for optimal full matching
+\item \code{\link{method_quick}} for generalized (quick) full matching
 \item \code{\link{method_genetic}} for genetic matching
 \item \code{\link{method_cem}} for coarsened exact matching
 \item \code{\link{method_exact}} for exact matching
-\item \code{\link{method_cardinality}} for cardinality and template matching
+\item \code{\link{method_cardinality}} for cardinality and profile matching
 \item \code{\link{method_subclass}} for subclassification
 }
 
@@ -276,7 +265,7 @@ matching on any of the included covariates and on the propensity score if
 specified. All arguments other than \code{distance}, \code{discard}, and
 \code{reestimate} will be ignored.
 
-See \link{distance} for details on the several ways to
+See \code{\link{distance}} for details on the several ways to
 specify the \code{distance}, \code{link}, and \code{distance.options}
 arguments to estimate propensity scores and create distance measures.
 
@@ -285,7 +274,7 @@ to one and returned as such in the \code{matchit()} output (see section
 Value, below). The following rules are used: 1) if \code{0} is one of the
 values, it will be considered the control and the other value the treated;
 2) otherwise, if the variable is a factor, \code{levels(treat)[1]} will be
-considered control and the other variable the treated; 3) otherwise,
+considered control and the other value the treated; 3) otherwise,
 \code{sort(unique(treat))[1]} will be considered control and the other value
 the treated. It is safest to ensure the treatment variable is a \code{0/1}
 variable.
@@ -320,22 +309,32 @@ stratification weights.
 
 Matching weights are computed in one of two ways depending on whether matching was done with replacement
 or not.
+\subsection{Matching without replacement and subclassification}{
 
-For matching \emph{without} replacement (except for cardinality matching), each
+For matching \emph{without} replacement (except for cardinality matching), including subclassification, each
 unit is assigned to a subclass, which represents the pair they are a part of
 (in the case of k:1 matching) or the stratum they belong to (in the case of
 exact matching, coarsened exact matching, full matching, or
 subclassification). The formula for computing the weights depends on the
 argument supplied to \code{estimand}. A new "stratum propensity score"
-(\code{sp}) is computed as the proportion of units in each stratum that are
-in the treated group, and all units in that stratum are assigned that
+(\eqn{p^s_i}) is computed for each unit \eqn{i} as \eqn{p^s_i = \frac{1}{n_s}\sum_{j: s_j =s_i}{I(A_j=1)}} where \eqn{n_s} is the size of subclass \eqn{s} and \eqn{I(A_j=1)} is 1 if unit \eqn{j} is treated and 0 otherwise. That is, the stratum propensity score for stratum \eqn{s} is the proportion of units in stratum \eqn{s} that are
+in the treated group, and all units in stratum \eqn{s} are assigned that
 stratum propensity score. This is distinct from the propensity score used for matching, if any. Weights are then computed using the standard formulas for
-inverse probability weights with the stratum propensity score inserted: for the ATT, weights are 1 for the treated
-units and \code{sp/(1-sp)} for the control units; for the ATC, weights are
-\code{(1-sp)/sp} for the treated units and 1 for the control units; for the
-ATE, weights are \code{1/sp} for the treated units and \code{1/(1-sp)} for the
-control units. For cardinality matching, all matched units receive a weight
+inverse probability weights with the stratum propensity score inserted:
+\itemize{
+\item for the ATT, weights are 1 for the treated
+units and \eqn{\frac{p^s}{1-p^s}} for the control units
+\item for the ATC, weights are
+\eqn{\frac{1-p^s}{p^s}} for the treated units and 1 for the control units
+\item for the ATE, weights are \eqn{\frac{1}{p^s}} for the treated units and \eqn{\frac{1}{1-p^s}} for the
+control units.
+}
+
+For cardinality matching, all matched units receive a weight
 of 1.
+}
+
+\subsection{Matching witht replacement}{
 
 For matching \emph{with} replacement, units are not assigned to unique strata. For
 the ATT, each treated unit gets a weight of 1. Each control unit is weighted
@@ -343,18 +342,27 @@ as the sum of the inverse of the number of control units matched to the same
 treated unit across its matches. For example, if a control unit was matched
 to a treated unit that had two other control units matched to it, and that
 same control was matched to a treated unit that had one other control unit
-matched to it, the control unit in question would get a weight of 1/3 + 1/2
-= 5/6. For the ATC, the same is true with the treated and control labels
+matched to it, the control unit in question would get a weight of \eqn{1/3 + 1/2 = 5/6}. For the ATC, the same is true with the treated and control labels
 switched. The weights are computed using the \code{match.matrix} component
 of the \code{matchit()} output object.
+}
 
-In each treatment group, weights are divided by the mean of the nonzero
+\subsection{Normalized weights}{
+
+When \code{normalize = TRUE} (the default), in each treatment group, weights are divided by the mean of the nonzero
 weights in that treatment group to make the weights sum to the number of
-units in that treatment group. If sampling weights are included through the
+units in that treatment group (i.e., to have an average of 1).
+}
+
+\subsection{Sampling weights}{
+
+If sampling weights are included through the
 \code{s.weights} argument, they will be included in the \code{matchit()}
 output object but not incorporated into the matching weights.
 \code{\link[=match.data]{match.data()}}, which extracts the matched set from a \code{matchit} object,
 combines the matching weights and sampling weights.
+}
+
 }
 }
 \examples{
@@ -408,7 +416,6 @@ s.out1 <- matchit(treat ~ age + educ + race + nodegree +
                    discard = "control", subclass = 10)
 s.out1
 summary(s.out1, un = TRUE)
-
 }
 \references{
 Ho, D. E., Imai, K., King, G., & Stuart, E. A. (2007). Matching
@@ -421,20 +428,14 @@ Statistical Software}, 42(8). \doi{10.18637/jss.v042.i08}
 }
 \seealso{
 \code{\link[=summary.matchit]{summary.matchit()}} for balance assessment after matching, \code{\link[=plot.matchit]{plot.matchit()}} for plots of covariate balance and propensity score overlap after matching.
-
-\code{vignette("MatchIt")} for an introduction to matching with
-\emph{MatchIt}; \code{vignette("matching-methods")} for descriptions of the
-variety of matching methods and options available;
-\code{vignette("assessing-balance")} for information on assessing the
-quality of a matching specification; \code{vignette("estimating-effects")}
-for instructions on how to estimate treatment effects after matching; and
-\code{vignette("sampling-weights")} for a guide to using \emph{MatchIt} with
-sampling weights.
+\itemize{
+\item \code{vignette("MatchIt")} for an introduction to matching with \emph{MatchIt}
+\item \code{vignette("matching-methods")} for descriptions of the variety of matching methods and options available
+\item \code{vignette("assessing-balance")} for information on assessing the quality of a matching specification
+\item \code{vignette("estimating-effects")} for instructions on how to estimate treatment effects after matching
+\item \code{vignette("sampling-weights")} for a guide to using \emph{MatchIt} with sampling weights.
+}
 }
 \author{
-Daniel Ho (\email{dho@law.stanford.edu}); Kosuke Imai
-(\email{imai@harvard.edu}); Gary King (\email{king@harvard.edu});
-Elizabeth Stuart (\email{estuart@jhsph.edu})
-
-Version 4.0.0 update by Noah Greifer (\email{noah.greifer@gmail.com})
+Daniel Ho, Kosuke Imai, Gary King, and Elizabeth Stuart wrote the original package. Starting with version 4.0.0, Noah Greifer is the primary maintainer and developer.
 }

@@ -6,20 +6,20 @@ using namespace Rcpp;
 // [[Rcpp::plugins(cpp11)]]
 
 // [[Rcpp::export]]
-IntegerMatrix nn_matchC_vec(const IntegerVector& treat_,
-                            const IntegerVector& ord,
-                            const IntegerVector& ratio,
-                            const LogicalVector& discarded,
-                            const int& reuse_max,
-                            const int& focal_,
-                            const NumericVector& distance,
-                            const Nullable<IntegerMatrix>& exact_ = R_NilValue,
-                            const Nullable<double>& caliper_dist_ = R_NilValue,
-                            const Nullable<NumericVector>& caliper_covs_ = R_NilValue,
-                            const Nullable<NumericMatrix>& caliper_covs_mat_ = R_NilValue,
-                            const Nullable<IntegerMatrix>& antiexact_covs_ = R_NilValue,
-                            const Nullable<IntegerVector>& unit_id_ = R_NilValue,
-                            const bool& disl_prog = false) {
+IntegerMatrix nn_matchC_distmat(const IntegerVector& treat_,
+                                const IntegerVector& ord,
+                                const IntegerVector& ratio,
+                                const LogicalVector& discarded,
+                                const int& reuse_max,
+                                const int& focal_,
+                                const NumericMatrix& distance_mat,
+                                const Nullable<IntegerMatrix>& exact_ = R_NilValue,
+                                const Nullable<double>& caliper_dist_ = R_NilValue,
+                                const Nullable<NumericVector>& caliper_covs_ = R_NilValue,
+                                const Nullable<NumericMatrix>& caliper_covs_mat_ = R_NilValue,
+                                const Nullable<IntegerMatrix>& antiexact_covs_ = R_NilValue,
+                                const Nullable<IntegerVector>& unit_id_ = R_NilValue,
+                                const bool& disl_prog = false) {
 
   IntegerVector unique_treat = unique(treat_);
   std::sort(unique_treat.begin(), unique_treat.end());
@@ -69,7 +69,6 @@ IntegerMatrix nn_matchC_vec(const IntegerVector& treat_,
 
     for (i = 0; i < nt[gi]; i++) {
       indt[indt_sep[gi] + i] = indt_tmp[i];
-      ind_match[indt_tmp[i]] = i;
     }
   }
 
@@ -84,24 +83,20 @@ IntegerMatrix nn_matchC_vec(const IntegerVector& treat_,
 
   int max_ratio = max(ratio);
 
+  IntegerVector ind_non_focal = which(treat != focal);
+
+  for (i = 0; i < n - nf; i++) {
+    ind_match[ind_non_focal[i]] = i;
+  }
+
+  for (i = 0; i < nf; i++) {
+    ind_match[ind_focal[i]] = i;
+  }
+
   // Output matrix with sample indices of control units
   IntegerMatrix mm(nf, max_ratio);
   mm.fill(NA_INTEGER);
   CharacterVector lab = treat_.names();
-
-  //Use base::order() because faster than Rcpp implementation of order()
-  Function o("order");
-
-  IntegerVector ind_d_ord = o(distance);
-  ind_d_ord = ind_d_ord - 1; //location of each unit after sorting
-
-  IntegerVector match_d_ord = o(ind_d_ord);
-  match_d_ord = match_d_ord - 1;
-
-  IntegerVector last_control(g);
-  last_control.fill(n - 1);
-  IntegerVector first_control(g);
-  first_control.fill(0);
 
   //exact
   bool use_exact = false;
@@ -117,7 +112,7 @@ IntegerMatrix nn_matchC_vec(const IntegerVector& treat_,
     caliper_dist = as<double>(caliper_dist_);
   }
   else {
-    caliper_dist = max_finite(distance) - min_finite(distance) + 1;
+    caliper_dist = max_finite(distance_mat) + .1;
   }
 
   //caliper_covs
@@ -195,32 +190,22 @@ IntegerMatrix nn_matchC_vec(const IntegerVector& treat_,
         k_total = 0;
 
         for (int gi : g_c) {
-          update_first_and_last_control(first_control,
-                                        last_control,
-                                        ind_d_ord,
-                                        eligible,
-                                        treat,
-                                        gi);
-
-          k = find_control_vec(t_id_i,
-                               ind_d_ord,
-                               match_d_ord,
-                               treat,
-                               distance,
-                               eligible,
-                               gi,
-                               r,
-                               mm.row(t_id_t_i),
-                               ncc,
-                               caliper_covs_mat,
-                               caliper_covs,
-                               caliper_dist,
-                               use_exact,
-                               exact,
-                               aenc,
-                               antiexact_covs,
-                               first_control,
-                               last_control);
+          k = find_control_mat(t_id_i,
+                                treat,
+                                ind_non_focal,
+                                distance_mat.row(t_id_t_i),
+                                eligible,
+                                gi,
+                                r,
+                                mm.row(t_id_t_i),
+                                ncc,
+                                caliper_covs_mat,
+                                caliper_covs,
+                                caliper_dist,
+                                use_exact,
+                                exact,
+                                aenc,
+                                antiexact_covs);
 
           if (k.empty()) {
             if (r == 1) {
@@ -289,26 +274,23 @@ IntegerMatrix nn_matchC_vec(const IntegerVector& treat_,
       k_total = 0;
 
       for (int gi : g_c) {
-        k = find_control_vec(t_id_i,
-                             ind_d_ord,
-                             match_d_ord,
-                             treat,
-                             distance,
-                             eligible,
-                             gi,
-                             1,
-                             mm.row(t_id_t_i),
-                             ncc,
-                             caliper_covs_mat,
-                             caliper_covs,
-                             caliper_dist,
-                             use_exact,
-                             exact,
-                             aenc,
-                             antiexact_covs,
-                             first_control,
-                             last_control,
-                             ratio[t_id_t_i]);
+        k = find_control_mat(t_id_i,
+                              treat,
+                              ind_non_focal,
+                              distance_mat.row(t_id_t_i),
+                              eligible,
+                              gi,
+                              1,
+                              mm.row(t_id_t_i),
+                              ncc,
+                              caliper_covs_mat,
+                              caliper_covs,
+                              caliper_dist,
+                              use_exact,
+                              exact,
+                              aenc,
+                              antiexact_covs,
+                              ratio[t_id_t_i]);
 
         if (k.empty()) {
           k_total = 0;

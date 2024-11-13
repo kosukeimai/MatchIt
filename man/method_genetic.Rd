@@ -50,7 +50,7 @@ to the distance matrix. Use \code{mahvars} to only supply a subset. Even if
 \code{mahvars} is specified, balance will be optimized on all covariates in
 \code{formula}. See Details.}
 
-\item{antiexact}{for which variables ant-exact matching should take place.
+\item{antiexact}{for which variables anti-exact matching should take place.
 Anti-exact matching is processed using the \code{restrict} argument to
 \code{Matching::GenMatch()} and \code{Matching::Match()}.}
 
@@ -199,6 +199,11 @@ targeted; it is merely a switch to trigger which treatment group is
 considered "focal". Note that while \code{GenMatch()} and \code{Match()}
 support the ATE as an estimand, \code{matchit()} only supports the ATT and
 ATC for genetic matching.
+}
+
+\subsection{Reproducibility}{
+
+Genetic matching involves a random component, so a seed must be set using \code{\link[=set.seed]{set.seed()}} to ensure reproducibility. When \code{cluster} is used for parallel processing, the seed must be compatible with parallel processing (e.g., by setting \code{type = "L'Ecuyer-CMRG"}).
 }
 }
 \section{Outputs}{

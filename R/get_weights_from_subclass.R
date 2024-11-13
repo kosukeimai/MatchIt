@@ -2,52 +2,58 @@ get_weights_from_subclass <- function(psclass, treat, estimand = "ATT") {
 
   NAsub <- is.na(psclass)
 
-  i1 <- treat == 1 & !NAsub
-  i0 <- treat == 0 & !NAsub
+  i1 <- which(treat == 1 & !NAsub)
+  i0 <- which(treat == 0 & !NAsub)
 
-  weights <- setNames(rep(0, length(treat)), names(treat))
+  if (is_null(i1)) {
+    if (is_null(i0)) {
+      .err("No units were matched")
+    }
 
-  if (!is.factor(psclass)) {
-    psclass <- factor(psclass, nmax = min(sum(i1), sum(i0)))
-    levels(psclass) <- seq_len(nlevels(psclass))
+    .err("No treated units were matched")
+  }
+  else if (is_null(i0)) {
+    .err("No control units were matched")
   }
 
-  treated_by_sub <- setNames(tabulateC(psclass[i1], nlevels(psclass)), levels(psclass))
-  control_by_sub <- setNames(tabulateC(psclass[i0], nlevels(psclass)), levels(psclass))
+  weights <- rep_with(0.0, treat)
 
-  total_by_sub <- treated_by_sub + control_by_sub
+  if (!is.factor(psclass)) {
+    psclass <- factor(psclass, nmax = min(length(i1), length(i0)))
+  }
 
-  psclass <- as.character(psclass)
+  treated_by_sub <- tabulate(psclass[i1], nlevels(psclass))
+  control_by_sub <- tabulate(psclass[i0], nlevels(psclass))
+
+  psclass <- unclass(psclass)
 
   if (estimand == "ATT") {
-    weights[i1] <- 1
+    weights[i1] <- 1.0
     weights[i0] <- (treated_by_sub/control_by_sub)[psclass[i0]]
-
-    #Weights average 1
-    weights[i0] <- .make_sum_to_n(weights[i0])
   }
   else if (estimand == "ATC") {
     weights[i1] <- (control_by_sub/treated_by_sub)[psclass[i1]]
-    weights[i0] <- 1
-
-    #Weights average 1
-    weights[i1] <- .make_sum_to_n(weights[i1])
+    weights[i0] <- 1.0
   }
   else if (estimand == "ATE") {
-    weights[i1] <- (total_by_sub/treated_by_sub)[psclass[i1]]
-    weights[i0] <- (total_by_sub/control_by_sub)[psclass[i0]]
-
-    #Weights average 1
-    weights[i1] <- .make_sum_to_n(weights[i1])
-    weights[i0] <- .make_sum_to_n(weights[i0])
+    weights[i1] <- 1.0 + (control_by_sub/treated_by_sub)[psclass[i1]]
+    weights[i0] <- 1.0 + (treated_by_sub/control_by_sub)[psclass[i0]]
   }
-
-  if (sum(weights) == 0)
-    .err("No units were matched")
-  if (sum(weights[treat == 1]) == 0)
-    .err("No treated units were matched")
-  if (sum(weights[treat == 0]) == 0)
-    .err("No control units were matched")
 
   weights
 }
+
+# get_weights_from_subclass2 <- function(psclass, treat, estimand = "ATT") {
+#
+#   weights <- weights_subclassC(psclass, treat,
+#                                switch(estimand, "ATT" = 1, "ATC" = 0, NULL))
+#
+#   if (sum(weights) == 0)
+#     .err("No units were matched")
+#   if (sum(weights[treat == 1]) == 0)
+#     .err("No treated units were matched")
+#   if (sum(weights[treat == 0]) == 0)
+#     .err("No control units were matched")
+#
+#   weights
+# }

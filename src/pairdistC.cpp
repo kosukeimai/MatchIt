@@ -1,44 +1,44 @@
-#include <Rcpp.h>
 #include "internal.h"
 using namespace Rcpp;
 
+// [[Rcpp::plugins(cpp11)]]
+
 // [[Rcpp::export]]
-double pairdistsubC(const NumericVector& x_,
-                    const IntegerVector& t_,
-                    const IntegerVector& s_,
-                    const int& num_sub) {
+double pairdistsubC(const NumericVector& x,
+                    const IntegerVector& t,
+                    const IntegerVector& s) {
 
   double dist = 0;
 
-  LogicalVector not_na_sub = !is_na(s_);
-  NumericVector x = x_[not_na_sub];
-  IntegerVector t = t_[not_na_sub];
-  IntegerVector s = s_[not_na_sub];
-
-  int n = t.size();
-  LogicalVector in_s_i(n);
-  NumericVector x_t0(n);
-  IntegerVector t_ind_s(n), c_ind_s(n);
-
+  R_xlen_t i, j;
+  int s_i, ord_i, ord_j;
   int k = 0;
-  int i, i1, n1_s;
-  for (i = 1; i <= num_sub; ++i) {
-    in_s_i = (s == i);
 
-    t_ind_s = which((t == 1) & in_s_i);
-    c_ind_s = which((t == 0) & in_s_i);
+  Function o("order");
+  IntegerVector ord = o(s);
+  ord = ord - 1;
 
-    n1_s = t_ind_s.size();
+  R_xlen_t n = sum(!is_na(s));
 
-    x_t0 = x[c_ind_s];
+  for (i = 0; i < n; i++) {
+    ord_i = ord[i];
+    s_i = s[ord_i];
 
-    for (i1 = 0; i1 < n1_s; ++i1) {
-      dist += sum(Rcpp::abs(x[t_ind_s[i1]] - x_t0));
+    for (j = i + 1; j < n; j++) {
+      ord_j = ord[j];
+
+      if (s[ord_j] != s_i) {
+        break;
+      }
+
+      if (t[ord_j] == t[ord_i]) {
+        continue;
+      }
+
+      k++;
+      dist += (std::abs(x[ord_j] - x[ord_i]) - dist) / k;
     }
-    k += n1_s * c_ind_s.size();
   }
-
-  dist /= k;
 
   return dist;
 }

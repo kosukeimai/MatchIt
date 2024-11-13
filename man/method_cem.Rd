@@ -54,18 +54,29 @@ units will be dropped (e.g., if there are more treated than control units in
 the stratum, the treated units without a match will be dropped). The
 \code{k2k.method} argument controls how the distance between units is
 calculated.  }
-\item{\code{k2k.method}}{ \code{character}; how the distance
+\item{\code{k2k.method}}{\code{character}; how the distance
 between units should be calculated if \code{k2k = TRUE}. Allowable arguments
 include \code{NULL} (for random matching), any argument to
 \code{\link[=distance]{distance()}} for computing a distance matrix from covariates
 (e.g., \code{"mahalanobis"}), or any allowable argument to \code{method} in
 \code{\link[=dist]{dist()}}. Matching will take place on the original
-(non-coarsened) variables. The default is \code{"mahalanobis"}.  }
-\item{\code{mpower}}{ if \code{k2k.method = "minkowski"}, the power used in
-creating the distance. This is passed to the \code{p} argument of \code{\link[=dist]{dist()}}.}
+(non-coarsened) variables. The default is \code{"mahalanobis"}.
+}
+\item{\code{mpower}}{if \code{k2k.method = "minkowski"}, the power used in
+creating the distance. This is passed to the \code{p} argument of \code{\link[=dist]{dist()}}.
+}
+\item{\code{m.order}}{\code{character}; the order that the matching takes place when \code{k2k = TRUE}. Allowable options
+include \code{"closest"}, where matching takes place in
+ascending order of the smallest distance between units; \code{"farthest"}, where matching takes place in
+descending order of the smallest distance between units; \code{"random"}, where matching takes place
+in a random order; and \code{"data"} where matching takes place based on the
+order of units in the data. When \code{m.order = "random"}, results may differ
+across different runs of the same code unless a seed is set and specified
+with \code{\link[=set.seed]{set.seed()}}. The default of \code{NULL} corresponds to \code{"data"}. See \code{\link{method_nearest}} for more information.
+}
 }
 
-The arguments \code{distance} (and related arguments), \code{exact}, \code{mahvars}, \code{discard} (and related arguments), \code{replace}, \code{m.order}, \code{caliper} (and related arguments), and \code{ratio} are ignored with a warning.}
+The arguments \code{distance} (and related arguments), \code{exact}, \code{mahvars}, \code{discard} (and related arguments), \code{replace}, \code{caliper} (and related arguments), and \code{ratio} are ignored with a warning.}
 }
 \description{
 In \code{\link[=matchit]{matchit()}}, setting \code{method = "cem"} performs coarsened exact
@@ -109,7 +120,7 @@ matches, the covariates can be manually coarsened outside of
 Setting \code{k2k = TRUE} is equivalent to first doing coarsened exact
 matching with \code{k2k = FALSE} and then supplying stratum membership as an
 exact matching variable (i.e., in \code{exact}) to another call to
-\code{matchit()} with \code{method = "nearest"}, \code{distance = "mahalanobis"} and an argument to \code{discard} denoting unmatched units.
+\code{matchit()} with \code{method = "nearest"}.
 It is also equivalent to performing nearest neighbor matching supplying
 coarsened versions of the variables to \code{exact}, except that
 \code{method = "cem"} automatically coarsens the continuous variables. The
@@ -246,7 +257,6 @@ m.out2 <- matchit(treat ~ age + race + married + educ, data = lalonde,
                   k2k = TRUE, k2k.method = "mahalanobis")
 m.out2
 summary(m.out2, un = FALSE)
-
 }
 \references{
 In a manuscript, you don't need to cite another package when

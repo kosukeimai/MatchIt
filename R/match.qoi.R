@@ -1,11 +1,12 @@
 ## Functions to calculate summary stats
-bal1var <- function(xx, tt, ww = NULL, s.weights, subclass = NULL, mm = NULL, s.d.denom = "treated", standardize = FALSE,
+bal1var <- function(xx, tt, ww = NULL, s.weights, subclass = NULL, mm = NULL,
+                    s.d.denom = "treated", standardize = FALSE,
                     compute.pair.dist = TRUE) {
 
-  un <- is.null(ww)
+  un <- is_null(ww)
   bin.var <- all(xx == 0 | xx == 1)
 
-  xsum <- rep(NA_real_, 7)
+  xsum <- rep.int(NA_real_, 7L)
   if (standardize)
     names(xsum) <- c("Means Treated","Means Control", "Std. Mean Diff.",
                      "Var. Ratio", "eCDF Mean", "eCDF Max", "Std. Pair Dist.")
@@ -21,8 +22,8 @@ bal1var <- function(xx, tt, ww = NULL, s.weights, subclass = NULL, mm = NULL, s.
 
   too.small <- sum(ww[i1] != 0) < 2 && sum(ww[i0] != 0) < 2
 
-  xsum["Means Treated"] <- wm(xx[i1], ww[i1], na.rm=TRUE)
-  xsum["Means Control"] <- wm(xx[i0], ww[i0], na.rm=TRUE)
+  xsum["Means Treated"] <- wm(xx[i1], ww[i1], na.rm = TRUE)
+  xsum["Means Control"] <- wm(xx[i0], ww[i0], na.rm = TRUE)
 
   mdiff <- xsum["Means Treated"] - xsum["Means Control"]
 
@@ -46,12 +47,17 @@ bal1var <- function(xx, tt, ww = NULL, s.weights, subclass = NULL, mm = NULL, s.
       }
 
       xsum[3] <- mdiff/std
-      if (!un && compute.pair.dist) xsum[7] <- pair.dist(xx, tt, subclass, mm, std)
+      if (!un && compute.pair.dist) {
+        xsum[7] <- pair.dist(xx, tt, subclass, mm, std)
+      }
     }
   }
   else {
     xsum[3] <- mdiff
-    if (!un && compute.pair.dist) xsum[7] <- pair.dist(xx, tt, subclass, mm)
+
+    if (!un && compute.pair.dist) {
+      xsum[7] <- pair.dist(xx, tt, subclass, mm)
+    }
   }
 
   if (bin.var) {
@@ -67,7 +73,8 @@ bal1var <- function(xx, tt, ww = NULL, s.weights, subclass = NULL, mm = NULL, s.
   xsum
 }
 
-bal1var.subclass <- function(xx, tt, s.weights, subclass, s.d.denom = "treated", standardize = FALSE, which.subclass = NULL) {
+bal1var.subclass <- function(xx, tt, s.weights, subclass, s.d.denom = "treated",
+                             standardize = FALSE, which.subclass = NULL) {
   #Within-subclass balance statistics
   bin.var <- all(xx == 0 | xx == 1)
   in.sub <- !is.na(subclass) & subclass == which.subclass
@@ -84,10 +91,10 @@ bal1var.subclass <- function(xx, tt, s.weights, subclass, s.d.denom = "treated",
   i1 <- which(in.sub & tt == 1)
   i0 <- which(in.sub & tt == 0)
 
-  too.small <- length(i1) < 2 && length(i0) < 2
+  too.small <- length(i1) < 2L && length(i0) < 2L
 
-  xsum["Subclass","Means Treated"] <- wm(xx[i1], s.weights[i1], na.rm=TRUE)
-  xsum["Subclass","Means Control"] <- wm(xx[i0], s.weights[i0], na.rm=TRUE)
+  xsum["Subclass","Means Treated"] <- wm(xx[i1], s.weights[i1], na.rm = TRUE)
+  xsum["Subclass","Means Control"] <- wm(xx[i0], s.weights[i0], na.rm = TRUE)
 
   mdiff <- xsum["Subclass","Means Treated"] - xsum["Subclass","Means Control"]
 
@@ -131,9 +138,13 @@ bal1var.subclass <- function(xx, tt, s.weights, subclass, s.d.denom = "treated",
 }
 
 #Compute within-pair/subclass distances
-pair.dist <- function(xx, tt, subclass = NULL, mm = NULL, std = NULL, fast = TRUE) {
+pair.dist <- function(xx, tt, subclass = NULL, mm = NULL, std = NULL) {
 
-  if (!is.null(mm)) {
+  if (is_not_null(subclass)) {
+    mpdiff <- pairdistsubC(as.numeric(xx), as.integer(tt),
+                           as.integer(subclass))
+  }
+  else if (is_not_null(mm)) {
     names(xx) <- names(tt)
     xx_t <- xx[rownames(mm)]
     xx_c <- matrix(0, nrow = nrow(mm), ncol = ncol(mm))
@@ -141,29 +152,12 @@ pair.dist <- function(xx, tt, subclass = NULL, mm = NULL, std = NULL, fast = TRU
 
     mpdiff <- mean(abs(xx_t - xx_c), na.rm = TRUE)
   }
-  else if (!is.null(subclass)) {
-    if (!fast) {
-      dists <- unlist(lapply(levels(subclass), function(s) {
-        t1 <- which(!is.na(subclass) & subclass == s & tt == 1)
-        t0 <- which(!is.na(subclass) & subclass == s & tt == 0)
-        if (length(t1) == 1 || length(t0) == 1) {
-          xx[t1] - xx[t0]
-        }
-        else {
-          outer(xx[t1], xx[t0], "-")
-        }
-      }))
-      mpdiff <- mean(abs(dists))
-    }
-    else {
-      mpdiff <- pairdistsubC(as.numeric(xx), as.integer(tt),
-                             as.integer(subclass), nlevels(subclass))
-    }
+  else {
+    return(NA_real_)
   }
-  else return(NA_real_)
 
-  if (!is.null(std) && abs(mpdiff) > 1e-8) {
-    mpdiff <- mpdiff/std
+  if (is_not_null(std) && abs(mpdiff) > 1e-8) {
+    return(mpdiff/std)
   }
 
   mpdiff
@@ -175,12 +169,15 @@ qqsum <- function(x, t, w = NULL, standardize = FALSE) {
 
   n.obs <- length(x)
 
-  if (is.null(w)) w <- rep(1, n.obs)
+  if (is_null(w)) {
+    w <- rep.int(1, n.obs)
+  }
 
-  if (all(x == 0 | x == 1)) {
+  if (has_n_unique(x, 2) && all(x == 0 | x == 1)) {
     t1 <- t == t[1]
     #For binary variables, just difference in means
     ediff <- abs(wm(x[t1], w[t1]) - wm(x[-t1], w[-t1]))
+
     return(c(meandiff = ediff, maxdiff = ediff))
   }
 
@@ -239,9 +236,9 @@ qqsum <- function(x, t, w = NULL, standardize = FALSE) {
                      method = "constant", ties = "ordered")$y
       }
     }
+
     ediff <- abs(x1 - x0)
   }
 
   c(meandiff = mean(ediff), maxdiff = max(ediff))
-
 }

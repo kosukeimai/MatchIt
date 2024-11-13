@@ -149,16 +149,16 @@ plot.matchit <- function(x, type = "qq", interactive = TRUE, which.xs = NULL, da
                     which.xs = which.xs, data = data, ...)
   }
   else if (type == "jitter") {
-    if (is.null(x$distance)) {
+    if (is_null(x$distance)) {
       .err("`type = \"jitter\"` cannot be used if a distance measure is not estimated or supplied. No plots generated")
     }
-    jitter.pscore(x, interactive = interactive,...)
+    jitter_pscore(x, interactive = interactive,...)
   }
   else if (type == "histogram") {
-    if (is.null(x$distance)) {
+    if (is_null(x$distance)) {
       .err("`type = \"hist\"` cannot be used if a distance measure is not estimated or supplied. No plots generated")
     }
-    hist.pscore(x,...)
+    hist_pscore(x,...)
   }
   invisible(x)
 }
@@ -192,15 +192,22 @@ plot.matchit.subclass <- function(x, type = "qq", interactive = TRUE, which.xs =
     #If subclass = NULL, if interactive, use to choose subclass, else display aggregate across subclass
 
     subclasses <- levels(x$subclass)
-    miss.sub <- missing(subclass) || is.null(subclass)
-    if (miss.sub || isFALSE(subclass)) which.subclass <- NULL
-    else if (isTRUE(subclass)) which.subclass <- subclasses
-    else if (!is.atomic(subclass) || !all(subclass %in% seq_along(subclasses))) {
+    miss.sub <- missing(subclass) || is_null(subclass)
+
+    if (miss.sub || isFALSE(subclass)) {
+      which.subclass <- NULL
+    }
+    else if (isTRUE(subclass)) {
+      which.subclass <- subclasses
+    }
+    else if (is.atomic(subclass) && all(subclass %in% seq_along(subclasses))) {
+      which.subclass <- subclasses[subclass]
+    }
+    else {
       .err("`subclass` should be `TRUE`, `FALSE`, or a vector of subclass indices for which subclass balance is to be displayed")
     }
-    else which.subclass <- subclasses[subclass]
 
-    if (!is.null(which.subclass)) {
+    if (is_not_null(which.subclass)) {
       matchit.covplot.subclass(x, type = type, which.subclass = which.subclass,
                                interactive = interactive, which.xs = which.xs, ...)
     }
@@ -226,16 +233,16 @@ plot.matchit.subclass <- function(x, type = "qq", interactive = TRUE, which.xs =
     }
   }
   else if (type=="jitter") {
-    if (is.null(x$distance)) {
+    if (is_null(x$distance)) {
       .err("`type = \"jitter\"` cannot be used when no distance variable was estimated or supplied")
     }
-    jitter.pscore(x, interactive = interactive, ...)
+    jitter_pscore(x, interactive = interactive, ...)
   }
   else if (type == "histogram") {
-    if (is.null(x$distance)) {
+    if (is_null(x$distance)) {
       .err("`type = \"histogram\"` cannot be used when no distance variable was estimated or supplied")
     }
-    hist.pscore(x,...)
+    hist_pscore(x,...)
   }
   invisible(x)
 }
@@ -243,25 +250,26 @@ plot.matchit.subclass <- function(x, type = "qq", interactive = TRUE, which.xs =
 ## plot helper functions
 matchit.covplot <- function(object, type = "qq", interactive = TRUE, which.xs = NULL, data = NULL, ...) {
 
-  if (is.null(which.xs)) {
-    if (length(object$X) == 0) {
+  if (is_null(which.xs)) {
+    if (is_null(object$X)) {
       .wrn("No covariates to plot")
       return(invisible(NULL))
     }
+
     X <- object$X
 
-    if (!is.null(object$exact)) {
+    if (is_not_null(object$exact)) {
       Xexact <- model.frame(object$exact, data = object$X)
       X <- cbind(X, Xexact[setdiff(names(Xexact), names(X))])
     }
 
-    if (!is.null(object$mahvars)) {
+    if (is_not_null(object$mahvars)) {
       Xmahvars <- model.frame(object$mahvars, data = object$X)
       X <- cbind(X, Xmahvars[setdiff(names(Xmahvars), names(X))])
     }
   }
   else {
-    if (!is.null(data)) {
+    if (is_not_null(data)) {
       if (!is.data.frame(data) || nrow(data) != length(object$treat)) {
         .err("`data` must be a data frame with as many rows as there are units in the supplied `matchit` object")
       }
@@ -271,19 +279,19 @@ matchit.covplot <- function(object, type = "qq", interactive = TRUE, which.xs = 
       data <- object$X
     }
 
-    if (!is.null(object$exact)) {
+    if (is_not_null(object$exact)) {
       Xexact <- model.frame(object$exact, data = object$X)
       data <- cbind(data, Xexact[setdiff(names(Xexact), names(data))])
     }
 
-    if (!is.null(object$mahvars)) {
+    if (is_not_null(object$mahvars)) {
       Xmahvars <- model.frame(object$mahvars, data = object$X)
       data <- cbind(data, Xmahvars[setdiff(names(Xmahvars), names(data))])
     }
 
     if (is.character(which.xs)) {
-      if (!all(which.xs %in% names(data))) {
-        .err("All variables in `which.xs` must be in the supplied `matchit` object or in `data`")
+      if (!all(hasName(data, which.xs))) {
+        .err("all variables in `which.xs` must be in the supplied `matchit` object or in `data`")
       }
       X <- data[which.xs]
     }
@@ -304,13 +312,16 @@ matchit.covplot <- function(object, type = "qq", interactive = TRUE, which.xs = 
     for (i in seq_len(k)) {
       if (anyNA(X[[i]]) || (is.numeric(X[[i]]) && any(!is.finite(X[[i]])))) {
         covariates.with.missingness <- names(X)[i:k][vapply(i:k, function(j) anyNA(X[[j]]) ||
-                                                                          (is.numeric(X[[j]]) &&
-                                                                             any(!is.finite(X[[j]]))),
-                                                                        logical(1L))]
+                                                              (is.numeric(X[[j]]) &&
+                                                                 any(!is.finite(X[[j]]))),
+                                                            logical(1L))]
         .err(paste0("Missing and non-finite values are not allowed in the covariates named in `which.xs`. Variables with missingness or non-finite values:\n\t",
                     paste(covariates.with.missingness, collapse = ", ")), tidy = FALSE)
       }
-      if (is.character(X[[i]])) X[[i]] <- factor(X[[i]])
+
+      if (is.character(X[[i]])) {
+        X[[i]] <- factor(X[[i]])
+      }
     }
   }
 
@@ -318,9 +329,13 @@ matchit.covplot <- function(object, type = "qq", interactive = TRUE, which.xs = 
 
   t <- object$treat
 
-  sw <- if (is.null(object$s.weights)) rep(1, length(t)) else object$s.weights
+  sw <- {
+    if (is_null(object$s.weights)) rep(1, length(t))
+    else object$s.weights
+  }
+
   w <- object$weights * sw
-  if (is.null(w)) w <- rep(1, length(t))
+  if (is_null(w)) w <- rep(1, length(t))
 
   w <- .make_sum_to_1(w, by = t)
   sw <- .make_sum_to_1(sw, by = t)
@@ -391,6 +406,7 @@ matchit.covplot <- function(object, type = "qq", interactive = TRUE, which.xs = 
 
     devAskNewPage(ask = interactive)
   }
+
   devAskNewPage(ask = FALSE)
 
   invisible(NULL)
@@ -399,25 +415,27 @@ matchit.covplot <- function(object, type = "qq", interactive = TRUE, which.xs = 
 matchit.covplot.subclass <- function(object, type = "qq", which.subclass = NULL,
                                      interactive = TRUE, which.xs = NULL, data = NULL, ...) {
 
-  if (is.null(which.xs)) {
-    if (length(object$X) == 0) {
-      .wrn("No covariates to plot")
+  if (is_null(which.xs)) {
+    if (is_null(object$X)) {
+      .wrn("no covariates to plot")
+
       return(invisible(NULL))
     }
+
     X <- object$X
 
-    if (!is.null(object$exact)) {
+    if (is_not_null(object$exact)) {
       Xexact <- model.frame(object$exact, data = object$X)
       X <- cbind(X, Xexact[setdiff(names(Xexact), names(X))])
     }
 
-    if (!is.null(object$mahvars)) {
+    if (is_not_null(object$mahvars)) {
       Xmahvars <- model.frame(object$mahvars, data = object$X)
       X <- cbind(X, Xmahvars[setdiff(names(Xmahvars), names(X))])
     }
   }
   else {
-    if (!is.null(data)) {
+    if (is_not_null(data)) {
       if (!is.data.frame(data) || nrow(data) != length(object$treat)) {
         .err("`data` must be a data frame with as many rows as there are units in the supplied `matchit` object")
       }
@@ -427,19 +445,19 @@ matchit.covplot.subclass <- function(object, type = "qq", which.subclass = NULL,
       data <- object$X
     }
 
-    if (!is.null(object$exact)) {
+    if (is_not_null(object$exact)) {
       Xexact <- model.frame(object$exact, data = object$X)
       data <- cbind(data, Xexact[setdiff(names(Xexact), names(data))])
     }
 
-    if (!is.null(object$mahvars)) {
+    if (is_not_null(object$mahvars)) {
       Xmahvars <- model.frame(object$mahvars, data = object$X)
       data <- cbind(data, Xmahvars[setdiff(names(Xmahvars), names(data))])
     }
 
     if (is.character(which.xs)) {
-      if (!all(which.xs %in% names(data))) {
-        .err("All variables in `which.xs` must be in the supplied `matchit` object or in `data`")
+      if (!all(hasName(data, which.xs))) {
+        .err("all variables in `which.xs` must be in the supplied `matchit` object or in `data`")
       }
       X <- data[which.xs]
     }
@@ -447,9 +465,7 @@ matchit.covplot.subclass <- function(object, type = "qq", which.subclass = NULL,
       which.xs <- update(terms(which.xs, data = data), NULL ~ .)
       X <- model.frame(which.xs, data, na.action = "na.pass")
 
-      if (anyNA(X)) {
-        .err("Missing values are not allowed in the covariates named in `which.xs`")
-      }
+      chk::chk_not_any_na(X, "the covariates named in `which.xs`")
     }
     else {
       .err("`which.xs` must be supplied as a character vector of names or a one-sided formula")
@@ -457,17 +473,20 @@ matchit.covplot.subclass <- function(object, type = "qq", which.subclass = NULL,
   }
 
   chars.in.X <- vapply(X, is.character, logical(1L))
-  X[chars.in.X] <- lapply(X[chars.in.X], factor)
+  for (i in which(chars.in.X)) {
+    X[[i]] <- factor(X[[i]])
+  }
 
   X <- droplevels(X)
 
   t <- object$treat
 
   if (!is.atomic(which.subclass)) {
-    .err("The argument to `subclass` must be NULL or the indices of the subclasses for which to display covariate distributions")
+    .err("the argument to `subclass` must be `NULL` or the indices of the subclasses for which to display covariate distributions")
   }
+
   if (!all(which.subclass %in% object$subclass[!is.na(object$subclass)])) {
-    .err("The argument supplied to `subclass` is not the index of any subclass in the matchit object")
+    .err("the argument supplied to `subclass` is not the index of any subclass in the `matchit` object")
   }
 
   if (type == "density") {
@@ -491,39 +510,43 @@ matchit.covplot.subclass <- function(object, type = "qq", which.subclass = NULL,
       opar <- par(mfrow = c(3, 3), mar = c(1.5,.5,1.5,.5), oma = oma)
     }
 
-    sw <- if (is.null(object$s.weights)) rep(1, length(t)) else object$s.weights
-    w <- sw*(!is.na(object$subclass) & object$subclass == s)
+    sw <- {
+      if (is_null(object$s.weights)) rep.int(1, length(t))
+      else object$s.weights
+    }
+
+    w <- sw * (!is.na(object$subclass) & object$subclass == s)
 
     w <- .make_sum_to_1(w, by = t)
     sw <- .make_sum_to_1(sw, by = t)
 
     for (i in seq_along(varnames)){
 
-      x <- if (type == "density") X[[i]] else X[,i]
+      x <- switch(type, "density" = X[[i]], X[,i])
 
       plot.new()
 
-      if (((i-1)%%3)==0) {
+      if (((i-1) %% 3) == 0) {
 
         if (type == "qq") {
-          htext <- paste0("eQQ Plots (Subclass ", s,")")
-          mtext(htext, 3, 2, TRUE, 0.5, cex=1.1, font = 2)
-          mtext("All", 3, .25, TRUE, 0.5, cex=1, font = 1)
-          mtext("Matched", 3, .25, TRUE, 0.83, cex=1, font = 1)
-          mtext("Control Units", 1, 0, TRUE, 2/3, cex=1, font = 1)
-          mtext("Treated Units", 4, 0, TRUE, 0.5, cex=1, font = 1)
+          htext <- sprintf("eQQ Plots (Subclass %s)", s)
+          mtext(htext, 3, 2, TRUE, 0.5, cex = 1.1, font = 2)
+          mtext("All", 3, .25, TRUE, 0.5, cex = 1, font = 1)
+          mtext("Matched", 3, .25, TRUE, 0.83, cex = 1, font = 1)
+          mtext("Control Units", 1, 0, TRUE, 2/3, cex = 1, font = 1)
+          mtext("Treated Units", 4, 0, TRUE, 0.5, cex = 1, font = 1)
         }
         else if (type == "ecdf") {
-          htext <- paste0("eCDF Plots (Subclass ", s,")")
-          mtext(htext, 3, 2, TRUE, 0.5, cex=1.1, font = 2)
-          mtext("All", 3, .25, TRUE, 0.5, cex=1, font = 1)
-          mtext("Matched", 3, .25, TRUE, 0.83, cex=1, font = 1)
+          htext <- sprintf("eCDF Plots (Subclass %s)", s)
+          mtext(htext, 3, 2, TRUE, 0.5, cex = 1.1, font = 2)
+          mtext("All", 3, .25, TRUE, 0.5, cex = 1, font = 1)
+          mtext("Matched", 3, .25, TRUE, 0.83, cex = 1, font = 1)
         }
         else if (type == "density") {
-          htext <- paste0("Density Plots (Subclass ", s,")")
-          mtext(htext, 3, 2, TRUE, 0.5, cex=1.1, font = 2)
-          mtext("All", 3, .25, TRUE, 0.5, cex=1, font = 1)
-          mtext("Matched", 3, .25, TRUE, 0.83, cex=1, font = 1)
+          htext <- sprintf("Density Plots (Subclass %s)", s)
+          mtext(htext, 3, 2, TRUE, 0.5, cex = 1.1, font = 2)
+          mtext("All", 3, .25, TRUE, 0.5, cex = 1, font = 1)
+          mtext("Matched", 3, .25, TRUE, 0.83, cex = 1, font = 1)
         }
 
       }
@@ -547,9 +570,10 @@ matchit.covplot.subclass <- function(object, type = "qq", which.subclass = NULL,
       devAskNewPage(ask = interactive)
     }
   }
+
   devAskNewPage(ask = FALSE)
 
- invisible(NULL)
+  invisible(NULL)
 }
 
 qqplot_match <- function(x, t, w, sw, discrete.cutoff = 5, ...) {
@@ -608,8 +632,8 @@ qqplot_match <- function(x, t, w, sw, discrete.cutoff = 5, ...) {
   rr <- range(c(x0, x1))
   plot(x0, x1, xlab = "", ylab = "", xlim = rr, ylim = rr, axes = FALSE, ...)
   abline(a = 0, b = 1)
-  abline(a = (rr[2]-rr[1])*0.1, b = 1, lty = 2)
-  abline(a = -(rr[2]-rr[1])*0.1, b = 1, lty = 2)
+  abline(a = (rr[2]-rr[1]) * 0.1, b = 1, lty = 2)
+  abline(a = -(rr[2]-rr[1]) * 0.1, b = 1, lty = 2)
   axis(2)
   box()
 
@@ -658,8 +682,8 @@ qqplot_match <- function(x, t, w, sw, discrete.cutoff = 5, ...) {
 
   plot(x0, x1, xlab = "", ylab = "", xlim = rr, ylim = rr, axes = FALSE, ...)
   abline(a = 0, b = 1)
-  abline(a = (rr[2]-rr[1])*0.1, b = 1, lty = 2)
-  abline(a = -(rr[2]-rr[1])*0.1, b = 1, lty = 2)
+  abline(a = (rr[2]-rr[1]) * 0.1, b = 1, lty = 2)
+  abline(a = -(rr[2]-rr[1]) * 0.1, b = 1, lty = 2)
   box()
 }
 
@@ -670,7 +694,8 @@ ecdfplot_match <- function(x, t, w, sw, ...) {
   x.range <- x.max - x.min
 
   #Unmatched samples
-  plot(x = x, y = w, type= "n" , xlim = c(x.min - .02 * x.range, x.max + .02 * x.range),
+  plot(x = x, y = w, type = "n" ,
+       xlim = c(x.min - .02 * x.range, x.max + .02 * x.range),
        ylim = c(0, 1), axes = TRUE, ...)
 
   for (tr in 0:1) {
@@ -686,8 +711,10 @@ ecdfplot_match <- function(x, t, w, sw, ...) {
   box()
 
   #Matched sample
-  plot(x = x, y = w, type= "n" , xlim = c(x.min - .02 * x.range, x.max + .02 * x.range),
+  plot(x = x, y = w, type = "n" ,
+       xlim = c(x.min - .02 * x.range, x.max + .02 * x.range),
        ylim = c(0, 1), axes = FALSE, ...)
+
   for (tr in 0:1) {
     in.tr <- t[ord] == tr
     ordt <- ord[in.tr]
@@ -703,43 +730,49 @@ ecdfplot_match <- function(x, t, w, sw, ...) {
   box()
 }
 
-densityplot_match <- function(x, t, w, sw, ...) {
+densityplot_match <- function(x, t, w, sw, bw = NULL, cut = 3, ...) {
 
-  if (length(unique(x)) == 2L) x <- factor(x)
+  if (has_n_unique(x, 2L)) {
+    x <- factor(x, nmax = 2)
+  }
+
+  u <- unique(t)
 
   if (!is.factor(x)) {
     #Density plot for continuous variable
-    small.tr <- (0:1)[which.min(c(sum(t==0), sum(t==1)))]
-    x_small <- x[t==small.tr]
+    small.tr <- u[which.min(vapply(u, function(tr) sum(t == tr), numeric(1L)))]
+    x_small <- x[t == small.tr]
 
     x.min <- min(x)
     x.max <- max(x)
-    #
-    A <- list(...)
 
-    bw <- A[["bw"]]
-    if (is.null(bw)) A[["bw"]] <- bw.nrd0(x_small)
+    if (is_null(bw)) {
+      bw <- bw.nrd0(x_small)
+    }
     else if (is.character(bw)) {
       bw <- tolower(bw)
       bw <- match_arg(bw, c("nrd0", "nrd", "ucv", "bcv", "sj", "sj-ste", "sj-dpi"))
-      A[["bw"]] <- switch(bw, nrd0 = bw.nrd0(x_small), nrd = bw.nrd(x_small),
-                          ucv = bw.ucv(x_small), bcv = bw.bcv(x_small), sj = ,
-                          `sj-ste` = bw.SJ(x_small, method = "ste"),
-                          `sj-dpi` = bw.SJ(x_small, method = "dpi"))
+      bw <- switch(bw, nrd0 = bw.nrd0(x_small), nrd = bw.nrd(x_small),
+                   ucv = bw.ucv(x_small), bcv = bw.bcv(x_small), sj = ,
+                   `sj-ste` = bw.SJ(x_small, method = "ste"),
+                   `sj-dpi` = bw.SJ(x_small, method = "dpi"))
     }
-    if (is.null(A[["cut"]])) A[["cut"]] <- 3
 
-    d_unmatched <- do.call("rbind", lapply(0:1, function(tr) {
-      cbind(as.data.frame(do.call("density", c(list(x[t==tr], weights = sw[t==tr],
-                                                    from = x.min - A[["cut"]]*A[["bw"]],
-                                                    to = x.max + A[["cut"]]*A[["bw"]]), A))[1:2]),
+    d_unmatched <- do.call("rbind", lapply(u, function(tr) {
+      cbind(as.data.frame(density(x[t == tr],
+                                  weights = sw[t==tr],
+                                  from = x.min - cut * bw,
+                                  to = x.max + cut * bw,
+                                  bw = bw, cut = cut, ...)[1:2]),
             t = tr)
     }))
 
-    d_matched <- do.call("rbind", lapply(0:1, function(tr) {
-      cbind(as.data.frame(do.call("density", c(list(x[t==tr], weights = w[t==tr],
-                                                    from = x.min - A[["cut"]]*A[["bw"]],
-                                                    to = x.max + A[["cut"]]*A[["bw"]]), A))[1:2]),
+    d_matched <- do.call("rbind", lapply(u, function(tr) {
+      cbind(as.data.frame(density(x[t == tr],
+                                  weights = w[t == tr],
+                                  from = x.min - cut * bw,
+                                  to = x.max + cut * bw,
+                                  bw = bw, cut = cut, ...)[1:2]),
             t = tr)
     }))
 
@@ -747,8 +780,9 @@ densityplot_match <- function(x, t, w, sw, ...) {
 
     #Unmatched samples
     plot(x = d_unmatched$x, y = d_unmatched$y, type = "n",
-         xlim = c(x.min - A[["cut"]]*A[["bw"]], x.max + A[["cut"]]*A[["bw"]]),
-         ylim = c(0, 1.1*y.max), axes = TRUE, ...)
+         xlim = c(x.min - cut * bw, x.max + cut * bw),
+         ylim = c(0, 1.1 * y.max),
+         axes = TRUE, ...)
 
     for (tr in 0:1) {
       in.tr <- d_unmatched$t == tr
@@ -763,8 +797,9 @@ densityplot_match <- function(x, t, w, sw, ...) {
 
     #Matched sample
     plot(x = d_matched$x, y = d_matched$y, type = "n",
-         xlim = c(x.min - A[["cut"]]*A[["bw"]], x.max + A[["cut"]]*A[["bw"]]),
-         ylim = c(0, 1.1*y.max), axes = FALSE, ...)
+         xlim = c(x.min - cut * bw, x.max + cut * bw),
+         ylim = c(0, 1.1 * y.max),
+         axes = FALSE, ...)
 
     for (tr in 0:1) {
       in.tr <- d_matched$t == tr
@@ -782,15 +817,15 @@ densityplot_match <- function(x, t, w, sw, ...) {
     #Bar plot for binary variable
     x_t_un <- lapply(sort(unique(t)), function(t_) {
       vapply(levels(x), function(i) {
-      wm(x[t==t_] == i, sw[t==t_])
-    }, numeric(1L))})
+        wm(x[t == t_] == i, sw[t == t_])
+      }, numeric(1L))})
 
     x_t_m <- lapply(sort(unique(t)), function(t_) {
       vapply(levels(x), function(i) {
-        wm(x[t==t_] == i, w[t==t_])
+        wm(x[t == t_] == i, w[t == t_])
       }, numeric(1L))})
 
-    ylim <- c(0, 1.1*max(unlist(x_t_un), unlist(x_t_m)))
+    ylim <- c(0, 1.1 * max(unlist(x_t_un), unlist(x_t_m)))
 
     borders <- c("grey60", "black")
     for (i in seq_along(x_t_un)) {
@@ -813,22 +848,24 @@ densityplot_match <- function(x, t, w, sw, ...) {
   }
 }
 
-hist.pscore <- function(x, xlab = "Propensity Score", freq = FALSE, ...){
+hist_pscore <- function(x, xlab = "Propensity Score", freq = FALSE, ...) {
   .pardefault <- par(no.readonly = TRUE)
   on.exit(par(.pardefault))
 
   treat <- x$treat
   pscore <- x$distance[!is.na(x$distance)]
-  s.weights <- if (is.null(x$s.weights)) rep(1, length(treat)) else x$s.weights
+
+  s.weights <- {
+    if (is_null(x$s.weights)) rep(1, length(treat))
+    else x$s.weights
+  }
+
   weights <- x$weights * s.weights
   matched <- weights != 0
   q.cut <- x$q.cut
 
   minp <- min(pscore)
   maxp <- max(pscore)
-  ratio <- x$call$ratio
-
-  if (is.null(ratio)) ratio <- 1
 
   if (freq) {
     weights <- .make_sum_to_n(weights, by = treat)
@@ -847,11 +884,9 @@ hist.pscore <- function(x, xlab = "Propensity Score", freq = FALSE, ...){
   xlim <- range(breaks)
 
   for (n in c("Raw Treated", "Matched Treated", "Raw Control", "Matched Control")) {
-    if (startsWith(n, "Raw")) w <- s.weights
-    else w <- weights
+    w <- if (startsWith(n, "Raw")) s.weights else weights
 
-    if (endsWith(n, "Treated")) t <- 1
-    else t <- 0
+    t <- if (endsWith(n, "Treated")) 1 else 0
 
     #Create histogram using weights
     #Manually assign density, which is used as height of the bars. The scaling
@@ -862,35 +897,41 @@ hist.pscore <- function(x, xlab = "Propensity Score", freq = FALSE, ...){
     pm[["density"]] <- vapply(seq_len(length(pm$breaks) - 1), function(i) {
       sum(w[treat == t & pscore >= pm$breaks[i] & pscore < pm$breaks[i+1]])
     }, numeric(1L))
+
     plot(pm, xlim = xlim, xlab = xlab, main = n, ylab = ylab,
          freq = FALSE, col = "lightgray", ...)
 
-    if (!startsWith(n, "Raw") && !is.null(q.cut)) abline(v = q.cut, lty=2)
+    if (!startsWith(n, "Raw") && is_not_null(q.cut)) {
+      abline(v = q.cut, lty = 2)
+    }
   }
 
 }
 
-jitter.pscore <- function(x, interactive, pch = 1, ...){
+jitter_pscore <- function(x, interactive, pch = 1, ...) {
 
   .pardefault <- par(no.readonly = TRUE)
   on.exit(par(.pardefault))
 
   treat <- x$treat
   pscore <- x$distance
-  s.weights <- if (is.null(x$s.weights)) rep(1, length(treat)) else x$s.weights
+  s.weights <- if (is_null(x$s.weights)) rep.int(1, length(treat)) else x$s.weights
   weights <- x$weights * s.weights
   matched <- weights > 0
   q.cut <- x$q.cut
-  jitp <- jitter(rep(1,length(treat)), factor=6)+(treat==1)*(weights==0)-(treat==0) - (weights==0)*(treat==0)
+  jitp <- jitter(rep.int(1, length(treat)), factor = 6) + (treat==1) * (weights == 0) - (treat==0) - (weights==0) * (treat==0)
   cswt <- sqrt(s.weights)
   cwt <- sqrt(weights)
   minp <- min(pscore, na.rm = TRUE)
   maxp <- max(pscore, na.rm = TRUE)
 
-  plot(pscore, xlim = c(minp - 0.05*(maxp-minp), maxp + 0.05*(maxp-minp)), ylim = c(-1.5,2.5),
+  plot(pscore, xlim = c(minp - 0.05*(maxp-minp), maxp + 0.05 * (maxp - minp)), ylim = c(-1.5, 2.5),
        type = "n", ylab = "", xlab = "Propensity Score",
        axes = FALSE, main = "Distribution of Propensity Scores", ...)
-  if (!is.null(q.cut)) abline(v = q.cut, col = "grey", lty = 1)
+
+  if (is_not_null(q.cut)) {
+    abline(v = q.cut, col = "grey", lty = 1)
+  }
 
   #Matched treated
   points(pscore[treat==1 & matched], jitp[treat==1 & matched],

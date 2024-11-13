@@ -72,7 +72,7 @@
 #' place when `distance` corresponds to a propensity score (e.g., for
 #' caliper matching or to discard units for common support). If specified, the
 #' distance measure will not be used in matching.
-#' @param antiexact for which variables ant-exact matching should take place.
+#' @param antiexact for which variables anti-exact matching should take place.
 #' Anti-exact matching is processed using \pkgfun{optmatch}{antiExactMatch}.
 #' @param discard a string containing a method for discarding units outside a
 #' region of common support. Only allowed when `distance` corresponds to a
@@ -230,12 +230,11 @@ matchit2full <- function(treat, formula, data, distance, discarded,
 
   rlang::check_installed("optmatch")
 
-  if (verbose) cat("Full matching... \n")
-
-  A <- list(...)
+  .cat_verbose("Full matching... \n", verbose = verbose)
 
   fm.args <- c("omit.fraction", "mean.controls", "tol", "solver")
-  A[!names(A) %in% fm.args] <- NULL
+  A <- setNames(lapply(fm.args, ...get, ...), fm.args)
+  A[lengths(A) == 0L] <- NULL
 
   #Set max problem size to Inf and return to original value after match
   omps <- getOption("optmatch_max_problem_size")
@@ -255,10 +254,10 @@ matchit2full <- function(treat, formula, data, distance, discarded,
 
   treat_ <- setNames(as.integer(treat[!discarded] == focal), names(treat)[!discarded])
 
-  # if (!is.null(data)) data <- data[!discarded,]
+  # if (is_not_null(data)) data <- data[!discarded,]
 
   if (is.full.mahalanobis) {
-    if (length(attr(terms(formula, data = data), "term.labels")) == 0) {
+    if (is_null(attr(terms(formula, data = data), "term.labels"))) {
       .err(sprintf("covariates must be specified in the input formula when `distance = \"%s\"`",
                    attr(is.full.mahalanobis, "transform")))
     }
@@ -269,20 +268,24 @@ matchit2full <- function(treat, formula, data, distance, discarded,
   max.controls <- attr(ratio, "max.controls")
 
   #Exact matching strata
-  if (!is.null(exact)) {
+  if (is_not_null(exact)) {
     ex <- factor(exactify(model.frame(exact, data = data),
                           sep = ", ", include_vars = TRUE)[!discarded])
-    cc <- intersect(as.integer(ex)[treat_==1], as.integer(ex)[treat_==0])
-    if (length(cc) == 0) .err("No matches were found")
+
+    cc <- Reduce("intersect", lapply(unique(treat_), function(t) unclass(ex)[treat_==t]))
+
+    if (is_null(cc)) {
+      .err("No matches were found")
+    }
   }
   else {
-    ex <- factor(rep("_", length(treat_)), levels = "_")
+    ex <- gl(1, length(treat_), labels = "_")
     cc <- 1
   }
 
   #Create distance matrix; note that Mahalanobis distance computed using entire
   #sample (minus discarded), like method2nearest, as opposed to within exact strata, like optmatch.
-  if (!is.null(mahvars)) {
+  if (is_not_null(mahvars)) {
     transform <- if (is.full.mahalanobis) attr(is.full.mahalanobis, "transform") else "mahalanobis"
     mahcovs <- transform_covariates(mahvars, data = data, method = transform,
                                     s.weights = s.weights, treat = treat,
@@ -307,7 +310,7 @@ matchit2full <- function(treat, formula, data, distance, discarded,
   mo <- optmatch::as.InfinitySparseMatrix(mo)
 
   #Process antiexact
-  if (!is.null(antiexact)) {
+  if (is_not_null(antiexact)) {
     antiexactcovs <- model.frame(antiexact, data)
     for (i in seq_len(ncol(antiexactcovs))) {
       mo <- mo + optmatch::antiExactMatch(antiexactcovs[[i]][!discarded], z = treat_)
@@ -315,7 +318,7 @@ matchit2full <- function(treat, formula, data, distance, discarded,
   }
 
   #Process caliper
-  if (!is.null(caliper)) {
+  if (is_not_null(caliper)) {
     if (min.controls != 0) {
       .err("calipers cannot be used with `method = \"full\"` when `min.controls` is specified")
     }
@@ -324,11 +327,12 @@ matchit2full <- function(treat, formula, data, distance, discarded,
       cov.cals <- setdiff(names(caliper), "")
       calcovs <- get.covs.matrix(reformulate(cov.cals, intercept = FALSE), data = data)
     }
+
     for (i in seq_along(caliper)) {
       if (names(caliper)[i] != "") {
         mo_cal <- optmatch::match_on(setNames(calcovs[!discarded, names(caliper)[i]], names(treat_)), z = treat_)
       }
-      else if (is.null(mahvars) || is.matrix(distance)) {
+      else if (is_null(mahvars) || is.matrix(distance)) {
         mo_cal <- mo
       }
       else {
@@ -337,45 +341,55 @@ matchit2full <- function(treat, formula, data, distance, discarded,
 
       mo <- mo + optmatch::caliper(mo_cal, caliper[i])
     }
+
     rm(mo_cal)
   }
 
   #Initialize pair membership; must include names
-  pair <- setNames(rep(NA_character_, length(treat)), names(treat))
+  pair <- rep_with(NA_character_, treat)
   p <- setNames(vector("list", nlevels(ex)), levels(ex))
 
-  t_df <- data.frame(treat)
+  A$data <- data.frame(treat) #just to get rownames; not actually used in matching
+  A$min.controls <- min.controls
+  A$max.controls <- max.controls
 
   for (e in levels(ex)[cc]) {
-    if (nlevels(ex) > 1) {
-      if (verbose) {
-        cat(sprintf("Matching subgroup %s/%s: %s...\n",
-                    match(e, levels(ex)[cc]), length(cc), e))
-      }
+    if (nlevels(ex) > 1L) {
+      .cat_verbose(sprintf("Matching subgroup %s/%s: %s...\n",
+                           match(e, levels(ex)[cc]), length(cc), e),
+                   verbose = verbose)
+
       mo_ <- mo[ex[treat_==1] == e, ex[treat_==0] == e]
     }
-    else mo_ <- mo
+    else {
+      mo_ <- mo
+    }
 
-    if (any(dim(mo_) == 0) || !any(is.finite(mo_))) next
-    else if (all(dim(mo_) == 1) && all(is.finite(mo_))) {
+    if (any(dim(mo_) == 0) || !any(is.finite(mo_))) {
+      next
+    }
+
+    if (all_equal_to(dim(mo_), 1) && all(is.finite(mo_))) {
       pair[ex == e] <- paste(1, e, sep = "|")
       next
     }
 
+    A$x <- mo_
+
     matchit_try({
-      p[[e]] <- do.call(optmatch::fullmatch,
-                        c(list(mo_,
-                               min.controls = min.controls,
-                               max.controls = max.controls,
-                               data = t_df), #just to get rownames; not actually used in matching
-                          A))
+      p[[e]] <- do.call(optmatch::fullmatch, A)
     }, from = "optmatch")
 
     pair[names(p[[e]])[!is.na(p[[e]])]] <- paste(as.character(p[[e]][!is.na(p[[e]])]), e, sep = "|")
   }
 
-  if (all(is.na(pair))) .err("No matches were found")
-  if (length(p) == 1) p <- p[[1]]
+  if (all(is.na(pair))) {
+    .err("No matches were found")
+  }
+
+  if (length(p) == 1L) {
+    p <- p[[1]]
+  }
 
   psclass <- factor(pair)
   levels(psclass) <- seq_len(nlevels(psclass))
@@ -384,13 +398,14 @@ matchit2full <- function(treat, formula, data, distance, discarded,
   #No match.matrix because treated units don't index matched strata (i.e., more than one
   #treated unit can be in the same stratum). Stratum information is contained in subclass.
 
-  if (verbose) cat("Calculating matching weights... ")
+  .cat_verbose("Calculating matching weights... ",
+               verbose = verbose)
 
   res <- list(subclass = psclass,
               weights = get_weights_from_subclass(psclass, treat, estimand),
               obj = p)
 
-  if (verbose) cat("Done.\n")
+  .cat_verbose("Done.\n", verbose = verbose)
 
   class(res) <- c("matchit")
   res

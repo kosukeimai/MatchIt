@@ -2,9 +2,9 @@ discard <- function(treat, pscore = NULL, option = NULL) {
 
   n.obs <- length(treat)
 
-  if (length(option) == 0){
+  if (is_null(option)){
     # keep all units
-    return(setNames(rep(FALSE, n.obs), names(treat)))
+    return(rep_with(FALSE, treat))
   }
 
   if (is.logical(option) && length(option) == n.obs && !anyNA(option)) {
@@ -20,10 +20,10 @@ discard <- function(treat, pscore = NULL, option = NULL) {
 
   if (option == "none") {
     # keep all units
-    return(setNames(rep(FALSE, n.obs), names(treat)))
+    return(rep_with(FALSE, treat))
   }
 
-  if (is.null(pscore)) {
+  if (is_null(pscore)) {
     .err('`discard` must be a logical vector or "none" in the absence of a propensity score')
   }
 
@@ -50,7 +50,7 @@ discard <- function(treat, pscore = NULL, option = NULL) {
   #   X <- model.matrix(reformulate(names(covs), intercept = FALSE), data = covs,
   #                     contrasts.arg = lapply(Filter(is.factor, covs),
   #                                            function(x) contrasts(x, contrasts = nlevels(x) == 1)))
-  #   discarded <- rep(FALSE, n.obs)
+  #   discarded <- rep.int(FALSE, n.obs)
   #   if (option == "hull.control"){ # discard units not in T convex hull
   #     wif <- WhatIf::whatif(cfact = X[treat==0,], data = X[treat==1,])
   #     discarded[treat==0] <- !wif$in.hull

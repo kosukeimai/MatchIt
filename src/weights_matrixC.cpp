@@ -1,54 +1,60 @@
-#include <Rcpp.h>
+#include "internal.h"
 using namespace Rcpp;
 
-// Computes matching weights from match.matrix
+// [[Rcpp::plugins(cpp11)]]
 
+// Computes matching weights from match.matrix
 // [[Rcpp::export]]
 NumericVector weights_matrixC(const IntegerMatrix& mm,
-                             const IntegerVector& treat) {
-  int n = treat.size();
-  IntegerVector ind = Range(0, n - 1);
-  IntegerVector ind0 = ind[treat == 0];
-  IntegerVector ind1 = ind[treat == 1];
+                              const IntegerVector& treat_,
+                              const Nullable<int>& focal = R_NilValue) {
 
-  NumericVector weights = rep(0., n);
-  // weights.fill(0);
+  CharacterVector lab = treat_.names();
+  IntegerVector unique_treat = unique(treat_);
+  std::sort(unique_treat.begin(), unique_treat.end());
+  int g = unique_treat.size();
+  IntegerVector treat = match(treat_, unique_treat) - 1;
 
-  int nr = mm.nrow();
-  int nc = mm.ncol();
+  R_xlen_t n = treat.size();
+  int gi;
 
-  int r, c, row_not_na, which_c, t_ind;
-  double weights_c, add_w;
-  IntegerVector row_r(nc);
+  NumericVector weights(n);
+  weights.fill(0.0);
+  weights.names() = lab;
 
-  for (r = 0; r < nr; r++) {
-    row_r = na_omit(mm(r, _));
-    row_not_na = row_r.size();
-    if (row_not_na == 0) {
-      continue;
-    }
-    add_w = 1.0/static_cast<double>(row_not_na);
-
-    for (c = 0; c < row_not_na; c++) {
-      which_c = row_r[c] - 1;
-      weights_c = weights[which_c];
-      weights[which_c] = weights_c + add_w;
-    }
-
-    t_ind = ind1[r];
-    weights[t_ind] = 1;
+  IntegerVector row_ind;
+  if (focal.isNotNull()) {
+    row_ind = which(treat == as<int>(focal));
+  }
+  else {
+    row_ind = match(as<CharacterVector>(rownames(mm)), lab) - 1;
   }
 
-  NumericVector c_weights = weights[ind0];
-  double sum_c_w = sum(c_weights);
-  double sum_matched_c = sum(c_weights > 0);
-  int n0 = ind0.size();
+  NumericVector matches_g = rep(0.0, g);
 
-  if (sum_c_w > 0) {
-    for (int i = 0; i < n0; i++ ) {
-      which_c = ind0[i];
-      weights[which_c] = c_weights[i] * sum_matched_c / sum_c_w;
+  IntegerVector row_r(mm.ncol());
+
+  for (int r : which(!is_na(mm(_, 0)))) {
+
+    row_r = na_omit(mm.row(r));
+
+    for (gi = 0; gi < g; gi++) {
+      matches_g[gi] = 0.0;
     }
+
+    for (int i : row_r - 1) {
+      matches_g[treat[i]] += 1.0;
+    }
+
+    for (int i : row_r - 1) {
+      if (matches_g[treat[i]] == 0.0) {
+        continue;
+      }
+
+      weights[i] += 1.0/matches_g[treat[i]];
+    }
+
+    weights[row_ind[r]] += 1.0;
   }
 
   return weights;

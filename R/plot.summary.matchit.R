@@ -85,8 +85,8 @@ plot.summary.matchit <- function(x,
   on.exit(par(.pardefault))
 
   sub <- inherits(x, "summary.matchit.subclass")
-  matched <- sub || !is.null(x[["sum.matched"]])
-  un <- !is.null(x[["sum.all"]])
+  matched <- sub || is_not_null(x[["sum.matched"]])
+  un <- is_not_null(x[["sum.all"]])
 
   standard.sum <- if (un) x[["sum.all"]] else x[[if (sub) "sum.across" else "sum.matched"]]
 
@@ -131,7 +131,7 @@ plot.summary.matchit <- function(x,
            bg = NA, color = NA, ...)
   abline(v = 0)
 
-  if (sub && length(x$sum.subclass) > 0) {
+  if (sub && is_not_null(x$sum.subclass)) {
     for (i in seq_along(x$sum.subclass)) {
       sd.sub <- x$sum.subclass[[i]][,"Std. Mean Diff."]
       if (abs) sd.sub <- abs(sd.sub)
@@ -149,7 +149,7 @@ plot.summary.matchit <- function(x,
            pch = 21, bg = "black", col = "black")
   }
 
-  if (!is.null(threshold)) {
+  if (is_not_null(threshold)) {
     if (abs) {
       abline(v = threshold, lty = seq_along(threshold))
     }
@@ -159,7 +159,7 @@ plot.summary.matchit <- function(x,
     }
   }
 
-  if (sum(matched, un) > 1 && !is.null(position)) {
+  if (sum(matched, un) > 1 && is_not_null(position)) {
     position <- match_arg(position, c("bottomright", "bottom", "bottomleft", "left",
                                       "topleft", "top", "topright", "right", "center"))
     legend(position, legend = c("All", "Matched"),

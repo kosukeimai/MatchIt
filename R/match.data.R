@@ -178,57 +178,67 @@ match.data <- function(object, group = "all", distance = "distance", weights = "
 
   chk::chk_is(object, "matchit")
 
-  if (is.null(data)) {
-    env <- environment(object$formula)
-    data <- try(eval(object$call$data, envir = env), silent = TRUE)
-    if (length(data) == 0 || inherits(data, "try-error") || length(dim(data)) != 2 || nrow(data) != length(object[["treat"]])) {
-      env <- parent.frame()
-      data <- try(eval(object$call$data, envir = env), silent = TRUE)
-      if (length(data) == 0 || inherits(data, "try-error") || length(dim(data)) != 2 || nrow(data) != length(object[["treat"]])) {
-        data <- object[["model"]][["data"]]
-        if (length(data) == 0 || nrow(data) != length(object[["treat"]])) {
-          .err("a valid dataset could not be found. Please supply an argument to `data` containing the original dataset used in the matching")
-        }
-      }
+  data.found <- FALSE
+  for (i in 1:4) {
+    if (i == 2) {
+      data <- try(eval(object$call$data, envir = environment(object$formula)), silent = TRUE)
+    }
+    else if (i == 3) {
+      data <- try(eval(object$call$data, envir = parent.frame()), silent = TRUE)
+    }
+    else if (i == 4) {
+      data <- object[["model"]][["data"]]
+    }
+
+    if (!null_or_error(data) && length(dim(data)) == 2L && nrow(data) == length(object[["treat"]])) {
+      data.found <- TRUE
+      break
     }
   }
 
-  if (!is.data.frame(data)) {
-    if (is.matrix(data)) data <- as.data.frame.matrix(data)
-    else .err("`data` must be a data frame")
+  if (!data.found) {
+    .err("a valid dataset could not be found. Please supply an argument to `data` containing the original dataset used in the matching")
   }
+
+  if (!is.data.frame(data)) {
+    if (!is.matrix(data)) {
+      .err("`data` must be a data frame")
+    }
+    data <- as.data.frame.matrix(data)
+  }
+
   if (nrow(data) != length(object$treat)) {
     .err("`data` must have as many rows as there were units in the original call to `matchit()`")
   }
 
-  if (!is.null(object$distance)) {
+  if (is_not_null(object$distance)) {
     chk::chk_not_null(distance)
     chk::chk_string(distance)
-    if (distance %in% names(data)) {
+    if (hasName(data, distance)) {
       .err(sprintf("%s is already the name of a variable in the data. Please choose another name for distance using the `distance` argument",
                    add_quotes(distance)))
     }
     data[[distance]] <- object$distance
   }
 
-  if (!is.null(object$weights)) {
+  if (is_not_null(object$weights)) {
     chk::chk_not_null(weights)
     chk::chk_string(weights)
-    if (weights %in% names(data)) {
+    if (hasName(data, weights)) {
       .err(sprintf("%s is already the name of a variable in the data. Please choose another name for weights using the `weights` argument",
                    add_quotes(weights)))
     }
     data[[weights]] <- object$weights
 
-    if (!is.null(object$s.weights) && include.s.weights) {
+    if (is_not_null(object$s.weights) && include.s.weights) {
       data[[weights]] <- data[[weights]] * object$s.weights
     }
   }
 
-  if (!is.null(object$subclass)) {
+  if (is_not_null(object$subclass)) {
     chk::chk_not_null(subclass)
     chk::chk_string(subclass)
-    if (subclass %in% names(data)) {
+    if (hasName(data, subclass)) {
       .err(sprintf("%s is already the name of a variable in the data. Please choose another name for subclass using the `subclass` argument",
                    add_quotes(subclass)))
     }
@@ -237,7 +247,7 @@ match.data <- function(object, group = "all", distance = "distance", weights = "
 
   treat <- object$treat
 
-  if (drop.unmatched && !is.null(object$weights)) {
+  if (drop.unmatched && is_not_null(object$weights)) {
     data <- data[object$weights > 0,,drop = FALSE]
     treat <- treat[object$weights > 0]
   }
@@ -246,9 +256,9 @@ match.data <- function(object, group = "all", distance = "distance", weights = "
   if (group == "treated") data <- data[treat == 1,,drop = FALSE]
   else if (group == "control") data <- data[treat == 0,,drop = FALSE]
 
-  if (!is.null(object$distance)) attr(data, "distance") <- distance
-  if (!is.null(object$weights)) attr(data, "weights") <- weights
-  if (!is.null(object$subclass)) attr(data, "subclass") <- subclass
+  if (is_not_null(object$distance)) attr(data, "distance") <- distance
+  if (is_not_null(object$weights)) attr(data, "weights") <- weights
+  if (is_not_null(object$subclass)) attr(data, "subclass") <- subclass
 
   class(data) <- c("matchdata", class(data))
 
@@ -262,7 +272,7 @@ get_matches <- function(object, distance = "distance", weights = "weights", subc
 
   chk::chk_is(object, "matchit")
 
-  if (is.null(object$match.matrix)) {
+  if (is_null(object$match.matrix)) {
     .err("a match.matrix component must be present in the matchit object, which does not occur with all types of matching. Use `match.data()` instead")
   }
 
@@ -275,7 +285,7 @@ get_matches <- function(object, distance = "distance", weights = "weights", subc
   chk::chk_not_null(id)
   chk::chk_string(id)
 
-  if (id %in% names(m.data)) {
+  if (hasName(m.data, id)) {
     .err(sprintf("%s is already the name of a variable in the data. Please choose another name for id using the `id` argument",
                  add_quotes(id)))
   }
@@ -283,7 +293,7 @@ get_matches <- function(object, distance = "distance", weights = "weights", subc
   m.data[[id]] <- names(object$treat)[object$weights > 0]
 
   for (i in c(weights, subclass)) {
-    if (i %in% names(m.data)) m.data[[i]] <- NULL
+    if (hasName(m.data, i)) m.data[[i]] <- NULL
   }
 
   mm <- object$match.matrix
@@ -295,11 +305,14 @@ get_matches <- function(object, distance = "distance", weights = "weights", subc
   matched <- as.data.frame(matrix(NA_character_, nrow = nrow(mm) + sum(!is.na(mm)), ncol = 3))
   names(matched) <- c(id, subclass, weights)
 
-  matched[[id]] <- c(as.vector(tmm[!is.na(tmm)]), rownames(mm))
-  matched[[subclass]] <- c(as.vector(col(tmm)[!is.na(tmm)]), seq_len(nrow(mm)))
-  matched[[weights]] <- c(1/num.matches[matched[[subclass]][seq_len(sum(!is.na(mm)))]], rep(1, nrow(mm)))
+  matched[[id]] <- c(as.vector(tmm[!is.na(tmm)]),
+                     rownames(mm))
+  matched[[subclass]] <- c(as.vector(col(tmm)[!is.na(tmm)]),
+                           seq_len(nrow(mm)))
+  matched[[weights]] <- c(1 / num.matches[matched[[subclass]][seq_len(sum(!is.na(mm)))]],
+                          rep.int(1, nrow(mm)))
 
-  if (!is.null(object$s.weights) && include.s.weights) {
+  if (is_not_null(object$s.weights) && include.s.weights) {
     matched[[weights]] <- matched[[weights]] * object$s.weights[matched[[id]]]
   }
 
@@ -310,7 +323,7 @@ get_matches <- function(object, distance = "distance", weights = "weights", subc
 
   out[[subclass]] <- factor(out[[subclass]], labels = seq_len(nrow(mm)))
 
-  if (!is.null(object$distance)) attr(out, "distance") <- distance
+  if (is_not_null(object$distance)) attr(out, "distance") <- distance
   attr(out, "weights") <- weights
   attr(out, "subclass") <- subclass
   attr(out, "id") <- id

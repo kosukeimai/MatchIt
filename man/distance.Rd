@@ -12,12 +12,13 @@ defining calipers. This page documents the options that can be supplied to
 the \code{distance} argument to \code{\link[=matchit]{matchit()}}.
 }
 \note{
-In versions of \emph{MatchIt} prior to 4.0.0, \code{distance} was
-specified in a slightly different way. When specifying arguments using the
-old syntax, they will automatically be converted to the corresponding method
-in the new syntax but a warning will be thrown. \code{distance = "logit"},
-the old default, will still work in the new syntax, though \verb{distance = "glm", link = "logit"} is preferred (note that these are the default
-settings and don't need to be made explicit).
+In versions of \emph{MatchIt} prior to 4.0.0, \code{distance} was specified in a
+slightly different way. When specifying arguments using the old syntax, they
+will automatically be converted to the corresponding method in the new syntax
+but a warning will be thrown. \code{distance = "logit"}, the old default, will
+still work in the new syntax, though \verb{distance = "glm", link = "logit"} is
+preferred (note that these are the default settings and don't need to be made
+explicit).
 }
 \section{Allowable options}{
 
@@ -104,8 +105,11 @@ defaults as used in \emph{WeightIt} and \emph{twang}, except for
 generalized boosted modeling as in \emph{twang}; here, the number of trees is
 chosen based on cross-validation or out-of-bag error, rather than based on
 optimizing balance. \pkg{twang} should not be cited when using this method
-to estimate propensity scores. }
-\item{\code{"lasso"}, \code{"ridge"}, \code{"elasticnet"}}{ The propensity
+to estimate propensity scores. Note that because there is a random component to choosing the tuning
+parameter, results will vary across runs unless a \link[=set.seed]{seed} is
+set.}
+\item{\code{"lasso"}, \code{"ridge"}, \code{"elasticnet"}}{
+The propensity
 scores are estimated using a lasso, ridge, or elastic net model,
 respectively. The \code{formula} supplied to \code{matchit()} is processed
 with \code{\link[=model.matrix]{model.matrix()}} and passed to \pkgfun{glmnet}{cv.glmnet}, and
@@ -136,7 +140,8 @@ random forest. The \code{formula} supplied to \code{matchit()} is passed
 directly to \pkgfun{randomForest}{randomForest}, and
 \pkgfun{randomForest}{predict.randomForest} is used to compute the propensity
 scores. The \code{link} argument is ignored, and predicted probabilities are
-always returned as the distance measure.}
+always returned as the distance measure. Note that because there is a random component, results will vary across runs unless a \link[=set.seed]{seed} is
+set. }
 \item{\code{"nnet"}}{ The
 propensity scores are estimated using a single-hidden-layer neural network.
 The \code{formula} supplied to \code{matchit()} is passed directly to
@@ -164,36 +169,35 @@ scores. The \code{link} argument can be specified as \code{"linear"} to use
 the linear predictor instead of the predicted probabilities. When
 \code{s.weights} is supplied to \code{matchit()}, it will not be passed to
 \code{bart2} because the \code{weights} argument in \code{bart2} does not
-correspond to sampling weights. }
+correspond to sampling weights. Note that because there is a random component to choosing the tuning
+parameter, results will vary across runs unless the \code{seed} argument is supplied to \code{distance.options}. Note that setting a seed using \code{\link[=set.seed]{set.seed()}} is not sufficient to guarantee reproducibility unless single-threading is used. See \pkgfun{dbarts}{bart2} for details.}
 }
 }
 
 \subsection{Methods for computing distances from covariates}{
 
-The following methods involve computing a distance matrix from the covariates themselves
-without estimating a propensity score. Calipers on the distance measure and
-common support restrictions cannot be used, and the \code{distance}
-component of the output object will be empty because no propensity scores
-are estimated. The \code{link} and \code{distance.options} arguments are
-ignored with these methods. See the individual matching methods pages for
-whether these distances are allowed and how they are used. Each of these
-distance measures can also be calculated outside \code{matchit()} using its
-\link[=euclidean_dist]{corresponding function}.
+The following methods involve computing a distance matrix from the covariates
+themselves without estimating a propensity score. Calipers on the distance
+measure and common support restrictions cannot be used, and the \code{distance}
+component of the output object will be empty because no propensity scores are
+estimated. The \code{link} and \code{distance.options} arguments are ignored with these
+methods. See the individual matching methods pages for whether these
+distances are allowed and how they are used. Each of these distance measures
+can also be calculated outside \code{matchit()} using its \link[=euclidean_dist]{corresponding function}.
 
 \describe{
 \item{\code{"euclidean"}}{ The Euclidean distance is the raw
-distance between units, computed as \deqn{d_{ij} = \sqrt{(x_i - x_j)(x_i -
-x_j)'}} It is sensitive to the scale of the covariates, so covariates with
+distance between units, computed as \deqn{d_{ij} = \sqrt{(x_i - x_j)(x_i - x_j)'}} It is sensitive to the scale of the covariates, so covariates with
 larger scales will take higher priority. }
-\item{\code{"scaled_euclidean"}}{ The scaled Euclidean distance is the
+\item{\code{"scaled_euclidean"}}{
+The scaled Euclidean distance is the
 Euclidean distance computed on the scaled (i.e., standardized) covariates.
 This ensures the covariates are on the same scale. The covariates are
 standardized using the pooled within-group standard deviations, computed by
 treatment group-mean centering each covariate before computing the standard
-deviation in the full sample. }
-\item{\code{"mahalanobis"}}{ The
-Mahalanobis distance is computed as \deqn{d_{ij} = \sqrt{(x_i -
-x_j)\Sigma^{-1}(x_i - x_j)'}} where \eqn{\Sigma} is the pooled within-group
+deviation in the full sample.
+}
+\item{\code{"mahalanobis"}}{ The Mahalanobis distance is computed as \deqn{d_{ij} = \sqrt{(x_i - x_j)\Sigma^{-1}(x_i - x_j)'}} where \eqn{\Sigma} is the pooled within-group
 covariance matrix of the covariates, computed by treatment group-mean
 centering each covariate before computing the covariance in the full sample.
 This ensures the variables are on the same scale and accounts for the
@@ -206,30 +210,29 @@ that handles outliers and rare categories better than the standard
 Mahalanobis distance but is not affinely invariant. }
 }
 
-To perform Mahalanobis distance matching \emph{and} estimate propensity
-scores to be used for a purpose other than matching, the \code{mahvars}
-argument should be used along with a different specification to
-\code{distance}. See the individual matching method pages for details on how
-to use \code{mahvars}.
+To perform Mahalanobis distance matching \emph{and} estimate propensity scores to
+be used for a purpose other than matching, the \code{mahvars} argument should be
+used along with a different specification to \code{distance}. See the individual
+matching method pages for details on how to use \code{mahvars}.
 }
 
 \subsection{Distances supplied as a numeric vector or matrix}{
 
-\code{distance} can also be supplied as a numeric vector whose values will be taken to
-function like propensity scores; their pairwise difference will define the
-distance between units. This might be useful for supplying propensity scores
-computed outside \code{matchit()} or resupplying \code{matchit()} with
-propensity scores estimated previously without having to recompute them.
+\code{distance} can also be supplied as a numeric vector whose values will be
+taken to function like propensity scores; their pairwise difference will
+define the distance between units. This might be useful for supplying
+propensity scores computed outside \code{matchit()} or resupplying \code{matchit()}
+with propensity scores estimated previously without having to recompute them.
 
 \code{distance} can also be supplied as a matrix whose values represent the
 pairwise distances between units. The matrix should either be a square, with
 a row and column for each unit (e.g., as the output of a call to
-\verb{as.matrix(}\code{\link{dist}}\verb{(.))}), or have as many rows as there are treated
-units and as many columns as there are control units (e.g., as the output of
-a call to \code{\link[=mahalanobis_dist]{mahalanobis_dist()}} or \pkgfun{optmatch}{match_on}). Distance values
-of \code{Inf} will disallow the corresponding units to be matched. When
-\code{distance} is a supplied as a numeric vector or matrix, \code{link} and
-\code{distance.options} are ignored.
+\verb{as.matrix(}\code{\link{dist}}\verb{(.))}), or have as many rows as there are treated units
+and as many columns as there are control units (e.g., as the output of a call
+to \code{\link[=mahalanobis_dist]{mahalanobis_dist()}} or \pkgfun{optmatch}{match_on}). Distance values of
+\code{Inf} will disallow the corresponding units to be matched. When \code{distance} is
+a supplied as a numeric vector or matrix, \code{link} and \code{distance.options} are
+ignored.
 }
 }
 

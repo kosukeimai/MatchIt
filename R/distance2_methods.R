@@ -96,8 +96,11 @@
 #' generalized boosted modeling as in *twang*; here, the number of trees is
 #' chosen based on cross-validation or out-of-bag error, rather than based on
 #' optimizing balance. \pkg{twang} should not be cited when using this method
-#' to estimate propensity scores. }
-#' \item{`"lasso"`, `"ridge"`, `"elasticnet"`}{ The propensity
+#' to estimate propensity scores. Note that because there is a random component to choosing the tuning
+#' parameter, results will vary across runs unless a [seed][set.seed] is
+#' set.}
+#' \item{`"lasso"`, `"ridge"`, `"elasticnet"`}{
+#'   The propensity
 #' scores are estimated using a lasso, ridge, or elastic net model,
 #' respectively. The `formula` supplied to `matchit()` is processed
 #' with [model.matrix()] and passed to \pkgfun{glmnet}{cv.glmnet}, and
@@ -128,7 +131,8 @@
 #' directly to \pkgfun{randomForest}{randomForest}, and
 #' \pkgfun{randomForest}{predict.randomForest} is used to compute the propensity
 #' scores. The `link` argument is ignored, and predicted probabilities are
-#' always returned as the distance measure.}
+#' always returned as the distance measure. Note that because there is a random component, results will vary across runs unless a [seed][set.seed] is
+#' set. }
 #' \item{`"nnet"`}{ The
 #' propensity scores are estimated using a single-hidden-layer neural network.
 #' The `formula` supplied to `matchit()` is passed directly to
@@ -156,35 +160,35 @@
 #' the linear predictor instead of the predicted probabilities. When
 #' `s.weights` is supplied to `matchit()`, it will not be passed to
 #' `bart2` because the `weights` argument in `bart2` does not
-#' correspond to sampling weights. }
+#' correspond to sampling weights. Note that because there is a random component to choosing the tuning
+#' parameter, results will vary across runs unless the `seed` argument is supplied to `distance.options`. Note that setting a seed using [set.seed()] is not sufficient to guarantee reproducibility unless single-threading is used. See \pkgfun{dbarts}{bart2} for details.}
 #' }
 #'
 #' ## Methods for computing distances from covariates
 #'
-#' The following methods involve computing a distance matrix from the covariates themselves
-#' without estimating a propensity score. Calipers on the distance measure and
-#' common support restrictions cannot be used, and the `distance`
-#' component of the output object will be empty because no propensity scores
-#' are estimated. The `link` and `distance.options` arguments are
-#' ignored with these methods. See the individual matching methods pages for
-#' whether these distances are allowed and how they are used. Each of these
-#' distance measures can also be calculated outside `matchit()` using its
-#' [corresponding function][euclidean_dist].
+#' The following methods involve computing a distance matrix from the covariates
+#' themselves without estimating a propensity score. Calipers on the distance
+#' measure and common support restrictions cannot be used, and the `distance`
+#' component of the output object will be empty because no propensity scores are
+#' estimated. The `link` and `distance.options` arguments are ignored with these
+#' methods. See the individual matching methods pages for whether these
+#' distances are allowed and how they are used. Each of these distance measures
+#' can also be calculated outside `matchit()` using its [corresponding
+#' function][euclidean_dist].
 #'
 #' \describe{
 #' \item{`"euclidean"`}{ The Euclidean distance is the raw
-#' distance between units, computed as \deqn{d_{ij} = \sqrt{(x_i - x_j)(x_i -
-#' x_j)'}} It is sensitive to the scale of the covariates, so covariates with
+#' distance between units, computed as \deqn{d_{ij} = \sqrt{(x_i - x_j)(x_i - x_j)'}} It is sensitive to the scale of the covariates, so covariates with
 #' larger scales will take higher priority. }
-#' \item{`"scaled_euclidean"`}{ The scaled Euclidean distance is the
+#' \item{`"scaled_euclidean"`}{
+#'  The scaled Euclidean distance is the
 #' Euclidean distance computed on the scaled (i.e., standardized) covariates.
 #' This ensures the covariates are on the same scale. The covariates are
 #' standardized using the pooled within-group standard deviations, computed by
 #' treatment group-mean centering each covariate before computing the standard
-#' deviation in the full sample. }
-#' \item{`"mahalanobis"`}{ The
-#' Mahalanobis distance is computed as \deqn{d_{ij} = \sqrt{(x_i -
-#' x_j)\Sigma^{-1}(x_i - x_j)'}} where \eqn{\Sigma} is the pooled within-group
+#' deviation in the full sample.
+#'  }
+#' \item{`"mahalanobis"`}{ The Mahalanobis distance is computed as \deqn{d_{ij} = \sqrt{(x_i - x_j)\Sigma^{-1}(x_i - x_j)'}} where \eqn{\Sigma} is the pooled within-group
 #' covariance matrix of the covariates, computed by treatment group-mean
 #' centering each covariate before computing the covariance in the full sample.
 #' This ensures the variables are on the same scale and accounts for the
@@ -197,37 +201,36 @@
 #' Mahalanobis distance but is not affinely invariant. }
 #' }
 #'
-#' To perform Mahalanobis distance matching *and* estimate propensity
-#' scores to be used for a purpose other than matching, the `mahvars`
-#' argument should be used along with a different specification to
-#' `distance`. See the individual matching method pages for details on how
-#' to use `mahvars`.
+#' To perform Mahalanobis distance matching *and* estimate propensity scores to
+#' be used for a purpose other than matching, the `mahvars` argument should be
+#' used along with a different specification to `distance`. See the individual
+#' matching method pages for details on how to use `mahvars`.
 #'
 #' ## Distances supplied as a numeric vector or matrix
 #'
-#' `distance` can also be supplied as a numeric vector whose values will be taken to
-#' function like propensity scores; their pairwise difference will define the
-#' distance between units. This might be useful for supplying propensity scores
-#' computed outside `matchit()` or resupplying `matchit()` with
-#' propensity scores estimated previously without having to recompute them.
+#' `distance` can also be supplied as a numeric vector whose values will be
+#' taken to function like propensity scores; their pairwise difference will
+#' define the distance between units. This might be useful for supplying
+#' propensity scores computed outside `matchit()` or resupplying `matchit()`
+#' with propensity scores estimated previously without having to recompute them.
 #'
 #' `distance` can also be supplied as a matrix whose values represent the
 #' pairwise distances between units. The matrix should either be a square, with
 #' a row and column for each unit (e.g., as the output of a call to
-#' `as.matrix(`[`dist`]`(.))`), or have as many rows as there are treated
-#' units and as many columns as there are control units (e.g., as the output of
-#' a call to [mahalanobis_dist()] or \pkgfun{optmatch}{match_on}). Distance values
-#' of `Inf` will disallow the corresponding units to be matched. When
-#' `distance` is a supplied as a numeric vector or matrix, `link` and
-#' `distance.options` are ignored.
+#' `as.matrix(`[`dist`]`(.))`), or have as many rows as there are treated units
+#' and as many columns as there are control units (e.g., as the output of a call
+#' to [mahalanobis_dist()] or \pkgfun{optmatch}{match_on}). Distance values of
+#' `Inf` will disallow the corresponding units to be matched. When `distance` is
+#' a supplied as a numeric vector or matrix, `link` and `distance.options` are
+#' ignored.
 #'
-#' @note
-#' In versions of *MatchIt* prior to 4.0.0, `distance` was
-#' specified in a slightly different way. When specifying arguments using the
-#' old syntax, they will automatically be converted to the corresponding method
-#' in the new syntax but a warning will be thrown. `distance = "logit"`,
-#' the old default, will still work in the new syntax, though `distance = "glm", link = "logit"` is preferred (note that these are the default
-#' settings and don't need to be made explicit).
+#' @note In versions of *MatchIt* prior to 4.0.0, `distance` was specified in a
+#' slightly different way. When specifying arguments using the old syntax, they
+#' will automatically be converted to the corresponding method in the new syntax
+#' but a warning will be thrown. `distance = "logit"`, the old default, will
+#' still work in the new syntax, though `distance = "glm", link = "logit"` is
+#' preferred (note that these are the default settings and don't need to be made
+#' explicit).
 #'
 #' @examples
 #' data("lalonde")
@@ -293,16 +296,16 @@ NULL
 #distance2glm-----------------
 distance2glm <- function(formula, data = NULL, link = "logit", ...) {
 
-  linear <- !is.null(link) && startsWith(as.character(link), "linear")
+  linear <- is_not_null(link) && startsWith(as.character(link), "linear")
   if (linear) link <- sub("linear.", "", as.character(link), fixed = TRUE)
 
-  A <- list(...)
-  A[!names(A) %in% c(names(formals(glm)), names(formals(glm.control)))] <- NULL
+  args <- c(names(formals(glm)), names(formals(glm.control)))
+  A <- setNames(lapply(args, ...get, ...), args)
+  A[lengths(A) == 0L] <- NULL
 
   res <- do.call("glm", c(list(formula = formula, data = data, family = quasibinomial(link = link)), A))
 
-  if (linear) pred <- predict(res, type = "link")
-  else pred <- predict(res, type = "response")
+  pred <- predict(res, type = if (linear) "link" else "response")
 
   list(model = res, distance = pred)
 }
@@ -311,7 +314,7 @@ distance2glm <- function(formula, data = NULL, link = "logit", ...) {
 distance2gam <- function(formula, data = NULL, link = "logit", ...) {
   rlang::check_installed("mgcv")
 
-  linear <- !is.null(link) && startsWith(as.character(link), "linear")
+  linear <- is_not_null(link) && startsWith(as.character(link), "linear")
   if (linear) link <- sub("linear.", "", as.character(link), fixed = TRUE)
 
   A <- list(...)
@@ -322,8 +325,7 @@ distance2gam <- function(formula, data = NULL, link = "logit", ...) {
                                    weights = weights), A),
                  quote = TRUE)
 
-  if (linear) pred <- predict(res, type = "link")
-  else pred <- predict(res, type = "response")
+  pred <- predict(res, type = if (linear) "link" else "response")
 
   list(model = res, distance = as.numeric(pred))
 }
@@ -331,8 +333,11 @@ distance2gam <- function(formula, data = NULL, link = "logit", ...) {
 #distance2rpart-----------------
 distance2rpart <- function(formula, data = NULL, link = NULL, ...) {
   rlang::check_installed("rpart")
-  A <- list(...)
-  A[!names(A) %in% c(names(formals(rpart::rpart)), names(formals(rpart::rpart.control)))] <- NULL
+
+  args <- c(names(formals(rpart::rpart)), names(formals(rpart::rpart.control)))
+  A <- setNames(lapply(args, ...get, ...), args)
+  A[lengths(A) == 0L] <- NULL
+
   A$formula <- formula
   A$data <- data
   A$method <- "class"
@@ -357,25 +362,30 @@ distance2nnet <- function(formula, data = NULL, link = NULL, ...) {
 distance2cbps <- function(formula, data = NULL, link = NULL, ...) {
   rlang::check_installed("CBPS")
 
-  linear <- !is.null(link) && startsWith(as.character(link), "linear")
+  linear <- is_not_null(link) && startsWith(as.character(link), "linear")
 
   A <- list(...)
 
   A[["standardized"]] <- FALSE
-  if (is.null(A[["ATT"]])) {
-    if (is.null(A[["estimand"]])) A[["ATT"]] <- 1
+
+  if (is_null(A[["ATT"]])) {
+    if (is_null(A[["estimand"]])) {
+      A[["ATT"]] <- 1
+    }
     else {
       estimand <- toupper(A[["estimand"]])
       estimand <- match_arg(estimand, c("ATT", "ATC", "ATE"))
       A[["ATT"]] <- switch(estimand, "ATT" = 1, "ATC" = 2, 0)
     }
   }
-  if (is.null(A[["method"]])) {
+
+  if (is_null(A[["method"]])) {
     A[["method"]] <- if (isFALSE(A[["over"]])) "exact" else "over"
   }
+
   A[c("estimand", "over")] <- NULL
 
-  if (!is.null(A[["weights"]])) {
+  if (is_not_null(A[["weights"]])) {
     A[["sample.weights"]] <- A[["weights"]]
     A[["weights"]] <- NULL
   }
@@ -394,17 +404,18 @@ distance2cbps <- function(formula, data = NULL, link = NULL, ...) {
 distance2bart <- function(formula, data = NULL, link = NULL, ...) {
   rlang::check_installed("dbarts")
 
-  linear <- !is.null(link) && startsWith(as.character(link), "linear")
+  linear <- is_not_null(link) && startsWith(as.character(link), "linear")
 
-  A <- list(...)
-  A[!names(A) %in% c(names(formals(dbarts::bart2)), names(formals(dbarts::dbartsControl)))] <- NULL
+  args <- c(names(formals(dbarts::bart2)), names(formals(dbarts::dbartsControl)))
+  A <- setNames(lapply(args, ...get, ...), args)
+  A[lengths(A) == 0L] <- NULL
+
   A$formula <- formula
   A$data <- data
 
   res <- do.call(dbarts::bart2, A)
 
-  if (linear) pred <- fitted(res, type = "link")
-  else pred <- fitted(res, type = "response")
+  pred <- fitted(res, type = if (linear) "link" else "response")
 
   list(model = res, distance = pred)
 }
@@ -412,7 +423,7 @@ distance2bart <- function(formula, data = NULL, link = NULL, ...) {
 # distance2bart <- function(formula, data, link = NULL, ...) {
 #   rlang::check_installed("BART")
 #
-#   if (!is.null(link) && startsWith(as.character(link), "linear")) {
+#   if (is_not_null(link) && startsWith(as.character(link), "linear")) {
 #     linear <- TRUE
 #     link <- sub("linear.", "", as.character(link), fixed = TRUE)
 #   }
@@ -421,7 +432,7 @@ distance2bart <- function(formula, data = NULL, link = NULL, ...) {
 #   #Keep link probit because default in matchit is logit but probit is much faster with BART
 #   link <- "probit"
 #
-#   # if (is.null(link)) link <- "probit"
+#   # if (is_null(link)) link <- "probit"
 #   # else if (!link %in% c("probit", "logit")) {
 #   #   stop("'link' must be \"probit\" or \"logit\" with distance = \"bart\".", call. = FALSE)
 #   # }
@@ -436,7 +447,7 @@ distance2bart <- function(formula, data = NULL, link = NULL, ...) {
 #
 #   A <- list(...)
 #
-#   if (!is.null(A[["mc.cores"]]) && A[["mc.cores"]][1] > 1) fun <- BART::mc.gbart
+#   if (is_not_null(A[["mc.cores"]]) && A[["mc.cores"]][1] > 1) fun <- BART::mc.gbart
 #   else fun <- BART::gbart
 #
 #   res <- do.call(fun, c(list(X,
@@ -459,26 +470,35 @@ distance2randomforest <- function(formula, data = NULL, link = NULL, ...) {
   newdata[[treatvar]] <- factor(newdata[[treatvar]], levels = c("0", "1"))
   res <- randomForest::randomForest(formula, data = newdata, ...)
 
- list(model = res, distance = predict(res, type = "prob")[,"1"])
+  list(model = res, distance = predict(res, type = "prob")[,"1"])
 }
 
 #distance2glmnet--------------
 distance2elasticnet <- function(formula, data = NULL, link = NULL, ...) {
   rlang::check_installed("glmnet")
 
-  linear <- !is.null(link) && startsWith(as.character(link), "linear")
+  linear <- is_not_null(link) && startsWith(as.character(link), "linear")
   if (linear) link <- sub("linear.", "", as.character(link), fixed = TRUE)
 
-  A <- list(...)
-  s <- A[["s"]]
-  A[!names(A) %in% c(names(formals(glmnet::glmnet)), names(formals(glmnet::cv.glmnet)))] <- NULL
+  s <- ...get("s", ...)
+  if (is_null(s)) {
+    s <- "lambda.1se"
+  }
 
-  if (is.null(link)) link <- "logit"
-  if (link == "logit") A$family <- "binomial"
-  else if (link == "log") A$family <- "poisson"
-  else A$family <- binomial(link = link)
+  args <- c(names(formals(glmnet::glmnet)), names(formals(glmnet::cv.glmnet)))
+  A <- setNames(lapply(args, ...get, ...), args)
+  A[lengths(A) == 0L] <- NULL
 
-  if (is.null(A[["alpha"]])) A[["alpha"]] <- .5
+  if (is_null(link)) link <- "logit"
+
+  A$family <- switch(link,
+                     "logit" = "binomial",
+                     "log" = "poisson",
+                     binomial(link = link))
+
+  if (is_null(A[["alpha"]])) {
+    A[["alpha"]] <- .5
+  }
 
   mf <- model.frame(formula, data = data)
 
@@ -487,52 +507,70 @@ distance2elasticnet <- function(formula, data = NULL, link = NULL, ...) {
 
   res <- do.call(glmnet::cv.glmnet, A)
 
-  if (is.null(s)) s <- "lambda.1se"
-
   pred <- drop(predict(res, newx = A$x, s = s,
-                  type = if (linear) "link" else "response"))
+                       type = if (linear) "link" else "response"))
 
   list(model = res, distance = pred)
 }
 distance2lasso <- function(formula, data = NULL, link = NULL, ...) {
-  A <- list(...)
-  A$alpha <- 1
-  do.call("distance2elasticnet", c(list(formula, data = data, link = link), A),
-          quote = TRUE)
+  if ("alpha" %in% ...names()) {
+    args <- c("s", names(formals(glmnet::glmnet)), names(formals(glmnet::cv.glmnet)))
+    A <- setNames(lapply(args, ...get, ...), args)
+    A[lengths(A) == 0L] <- NULL
+
+    A$alpha <- 1
+    do.call("distance2elasticnet", c(list(formula, data = data, link = link), A),
+            quote = TRUE)
+  }
+  else {
+    distance2elasticnet(formula = formula, data = data, link = link, alpha = 1, ...)
+  }
 }
 distance2ridge <- function(formula, data = NULL, link = NULL, ...) {
-  A <- list(...)
-  A$alpha <- 0
-  do.call("distance2elasticnet", c(list(formula, data = data, link = link), A),
-          quote = TRUE)
+  if ("alpha" %in% ...names()) {
+    args <- c("s", names(formals(glmnet::glmnet)), names(formals(glmnet::cv.glmnet)))
+    A <- setNames(lapply(args, ...get, ...), args)
+    A[lengths(A) == 0L] <- NULL
+
+    A$alpha <- 0
+    do.call("distance2elasticnet", c(list(formula, data = data, link = link), A),
+            quote = TRUE)
+  }
+  else {
+    distance2elasticnet(formula = formula, data = data, link = link, alpha = 0, ...)
+  }
 }
 
 #distance2gbm--------------
 distance2gbm <- function(formula, data = NULL, link = NULL, ...) {
   rlang::check_installed("gbm")
 
-  linear <- !is.null(link) && startsWith(as.character(link), "linear")
+  linear <- is_not_null(link) && startsWith(as.character(link), "linear")
 
   A <- list(...)
 
-  method <- A[["method"]]
-  A[!names(A) %in% names(formals(gbm::gbm))] <- NULL
+  method <- ...get("method", ...)
+
+  args <- names(formals(gbm::gbm))
+  A <- setNames(lapply(args, ...get, ...), args)
+  A[lengths(A) == 0L] <- NULL
 
   A$formula <- formula
   A$data <- data
   A$distribution <- "bernoulli"
 
-  if (is.null(A[["n.trees"]])) A[["n.trees"]] <- 1e4
-  if (is.null(A[["interaction.depth"]])) A[["interaction.depth"]] <- 3
-  if (is.null(A[["shrinkage"]])) A[["shrinkage"]] <- .01
-  if (is.null(A[["bag.fraction"]])) A[["bag.fraction"]] <- 1
-  if (is.null(A[["cv.folds"]])) A[["cv.folds"]] <- 5
-  if (is.null(A[["keep.data"]])) A[["keep.data"]] <- FALSE
+  if (is_null(A[["n.trees"]])) A[["n.trees"]] <- 1e4
+  if (is_null(A[["interaction.depth"]])) A[["interaction.depth"]] <- 3
+  if (is_null(A[["shrinkage"]])) A[["shrinkage"]] <- .01
+  if (is_null(A[["bag.fraction"]])) A[["bag.fraction"]] <- 1
+  if (is_null(A[["cv.folds"]])) A[["cv.folds"]] <- 5
+  if (is_null(A[["keep.data"]])) A[["keep.data"]] <- FALSE
 
   if (A[["cv.folds"]] <= 1 && A[["bag.fraction"]] == 1) {
     .err('either `bag.fraction` must be less than 1 or `cv.folds` must be greater than 1 when using `distance = "gbm"`')
   }
-  if (is.null(method)) {
+
+  if (is_null(method)) {
     if (A[["bag.fraction"]] < 1) method <- "OOB"
     else method <- "cv"
   }
@@ -547,5 +585,5 @@ distance2gbm <- function(formula, data = NULL, link = NULL, ...) {
   pred <- drop(predict(res, newdata = data, n.trees = best.tree,
                        type = if (linear) "link" else "response"))
 
- list(model = res, distance = pred)
+  list(model = res, distance = pred)
 }

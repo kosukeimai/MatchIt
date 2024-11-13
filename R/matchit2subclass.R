@@ -158,61 +158,54 @@ NULL
 matchit2subclass <- function(treat, distance, discarded,
                              replace = FALSE, exact = NULL,
                              estimand = "ATT", verbose = FALSE,
+                             subclass = 6L, min.n = 1L,
                              ...) {
 
-  if(verbose)
-    cat("Subclassifying... \n")
-
-  A <- list(...)
-  subclass <- A[["subclass"]]
-  sub.by <- A[["sub.by"]]
-  min.n <- A[["min.n"]]
+  .cat_verbose("Subclassifying...\n", verbose = verbose)
 
   #Checks
-  if (is.null(subclass)) subclass <- 6
   chk::chk_numeric(subclass)
 
-  if (length(subclass) == 1) {
+  if (length(subclass) == 1L) {
     chk::chk_gt(subclass, 1)
   }
-  else if (!all(subclass <= 1 & subclass >= 0)) {
-    .err("When specifying `subclass` as a vector of quantiles, all values must be between 0 and 1")
+  else if (any(subclass > 1) || any(subclass < 0)) {
+    .err("when specifying `subclass` as a vector of quantiles, all values must be between 0 and 1")
   }
 
-  if (!is.null(sub.by)) {
+  if (is_not_null(...get("sub.by", ...))) {
     .err("`sub.by` is defunct and has been replaced with `estimand`")
   }
 
   estimand <- toupper(estimand)
   estimand <- match_arg(estimand, c("ATT", "ATC", "ATE"))
 
-  if (is.null(min.n)) min.n <- 1
   chk::chk_count(min.n)
 
   n.obs <- length(treat)
 
   ## Setting Cut Points
-  if (length(subclass) == 1) {
+  if (length(subclass) == 1L) {
     sprobs <- seq(0, 1, length.out = round(subclass) + 1)
   }
   else {
     sprobs <- sort(subclass)
     if (sprobs[1] != 0) sprobs <- c(0, sprobs)
     if (sprobs[length(sprobs)] != 1) sprobs <- c(sprobs, 1)
-    subclass <- length(sprobs) - 1
+    subclass <- length(sprobs) - 1L
   }
 
   q <- switch(estimand,
-              "ATT" = quantile(distance[treat==1], probs = sprobs, na.rm = TRUE),
-              "ATC" = quantile(distance[treat==0], probs = sprobs, na.rm = TRUE),
+              "ATT" = quantile(distance[treat == 1], probs = sprobs, na.rm = TRUE),
+              "ATC" = quantile(distance[treat == 0], probs = sprobs, na.rm = TRUE),
               quantile(distance, probs = sprobs, na.rm = TRUE))
 
   ## Calculating Subclasses
-  psclass <- setNames(rep(NA_integer_, n.obs), names(treat))
+  psclass <- rep_with(NA_integer_, treat)
   psclass[!discarded] <- as.integer(findInterval(distance[!discarded], q, all.inside = TRUE))
 
-  if (length(unique(na.omit(psclass))) != subclass){
-    .wrn("Due to discreteness in the distance measure, fewer subclasses were generated than were requested")
+  if (!has_n_unique(na.omit(psclass), subclass)) {
+    .wrn("due to discreteness in the distance measure, fewer subclasses were generated than were requested")
   }
 
   if (min.n == 0) {
@@ -220,22 +213,26 @@ matchit2subclass <- function(treat, distance, discarded,
     is.na(psclass)[!discarded & !psclass %in% intersect(psclass[!discarded & treat == 1],
                                                         psclass[!discarded & treat == 0])] <- TRUE
   }
-  else if (any(table(treat, psclass) < min.n)) {
+  else {
     ## If any subclasses don't have members of a treatment group, fill them
     ## by "scooting" units from nearby subclasses until each subclass has a unit
     ## from each treatment group
-    psclass[!discarded] <- subclass_scoot(psclass[!discarded], treat[!discarded], distance[!discarded], min.n)
+    psclass[!discarded] <- subclass_scoot(psclass[!discarded],
+                                          treat[!discarded],
+                                          distance[!discarded],
+                                          min.n)
   }
 
   psclass <- setNames(factor(psclass, nmax = length(q)), names(treat))
   levels(psclass) <- as.character(seq_len(nlevels(psclass)))
 
-  if (verbose) cat("Calculating matching weights... ")
+  .cat_verbose("Calculating matching weights... ", verbose = verbose)
 
-  res <- list(subclass = psclass, q.cut = q,
+  res <- list(subclass = psclass,
+              q.cut = q,
               weights = get_weights_from_subclass(psclass, treat, estimand))
 
-  if (verbose) cat("Done.\n")
+  .cat_verbose("Done.\n", verbose = verbose)
 
   class(res) <- c("matchit.subclass", "matchit")
   res

@@ -49,7 +49,7 @@ We can check covariate balance for the original and matched samples using `summa
 summary(m.out)
 ```
 
-At the top is balance for the original sample. Below that is balance in the matched sample, followed by the percent reduction in imbalance and the sample sizes before and after matching. Smaller values for the balance statistics indicate better balance. (In this case, good balance was not achieved and other matching methods should be tried). We can plot the standardized mean differences in a Love plot for a clean, visual display of balance across the sample:
+At the top is balance for the original sample. Below that is balance in the matched sample. Smaller values for the balance statistics indicate better balance. (In this case, fairly good balance was achieved, but other matching methods should be tried). We can plot the standardized mean differences in a Love plot for a clean, visual display of balance across the sample:
 
 ```{r, fig.alt ="Love plot of balance before and after matching."}
 #Plot balance
@@ -77,9 +77,9 @@ install.packages("MatchIt")
 To install a development version, which may have a bug fixed or a new feature, run the following:
 
 ```{r, eval=F}
-install.packages("remotes") #If not yet installed
+install.packages("pak") #If not yet installed
 
-remotes::install_github("ngreifer/MatchIt")
+pak::pkg_install("ngreifer/MatchIt")
 ```
 
-This will require R to compile C++ code, which might require additional software be installed on your computer. If you need the development version but can't compile the package, ask the maintainer for a binary version of the package.
+This will require R to compile C++ code, which might require additional software to be installed on your computer. If you need the development version but can't compile the package, ask the maintainer for a binary version of the package.

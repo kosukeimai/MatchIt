@@ -208,9 +208,12 @@ summary.matchit <- function(object,
 
   treat <- object$treat
   weights <- object$weights
-  s.weights <- if (is.null(object$s.weights)) rep(1, length(weights)) else object$s.weights
+  s.weights <- {
+    if (is_null(object$s.weights)) rep(1, length(weights))
+    else object$s.weights
+  }
 
-  no_x <- length(X) == 0
+  no_x <- is_null(X)
 
   if (no_x) {
     X <- matrix(1, nrow = length(treat), ncol = 1,
@@ -227,7 +230,7 @@ summary.matchit <- function(object,
 
   kk <- ncol(X)
 
-  matched <- !is.null(object$info$method)
+  matched <- is_not_null(object$info$method)
   un <- un || !matched
 
   chk::chk_flag(interactions)
@@ -272,8 +275,10 @@ summary.matchit <- function(object,
 
   if (!no_x && interactions) {
     n.int <- kk*(kk+1)/2
-    if (un) sum.all.int <- matrix(NA_real_, nrow = n.int, ncol = length(aa.all[[1]]), dimnames = list(NULL, names(aa.all[[1]])))
-    if (matched) sum.matched.int <- matrix(NA_real_, nrow = n.int, ncol = length(aa.matched[[1]]), dimnames = list(NULL, names(aa.matched[[1]])))
+    if (un) sum.all.int <- matrix(NA_real_, nrow = n.int, ncol = length(aa.all[[1]]),
+                                  dimnames = list(NULL, names(aa.all[[1]])))
+    if (matched) sum.matched.int <- matrix(NA_real_, nrow = n.int, ncol = length(aa.matched[[1]]),
+                                           dimnames = list(NULL, names(aa.matched[[1]])))
 
     to.remove <- rep(FALSE, n.int)
     int.names <- character(n.int)
@@ -312,13 +317,14 @@ summary.matchit <- function(object,
       rownames(sum.all.int) <- int.names
       sum.all <- rbind(sum.all, sum.all.int[!to.remove,,drop = FALSE])
     }
+
     if (matched) {
       rownames(sum.matched.int) <- int.names
       sum.matched <- rbind(sum.matched, sum.matched.int[!to.remove,,drop = FALSE])
     }
   }
 
-  if (!is.null(object$distance)) {
+  if (is_not_null(object$distance)) {
     if (un) {
       ad.all <- bal1var(object$distance, tt = treat, ww = NULL, s.weights = s.weights,
                         standardize = standardize, s.d.denom = s.d.denom)
@@ -397,7 +403,10 @@ summary.matchit.subclass <- function(object,
   which.subclass <- subclass
   treat <- object$treat
   weights <- object$weights
-  s.weights <- if (is.null(object$s.weights)) rep(1, length(weights)) else object$s.weights
+  s.weights <- {
+    if (is_null(object$s.weights)) rep(1, length(weights))
+    else object$s.weights
+  }
   subclass <- object$subclass
 
   nam <- colnames(X)
@@ -411,13 +420,13 @@ summary.matchit.subclass <- function(object,
   chk::chk_flag(un)
   chk::chk_flag(improvement)
 
-  if (standardize) {
-    s.d.denom <- switch(object$estimand,
-                        "ATT" = "treated",
-                        "ATC" = "control",
-                        "ATE" = "pooled")
+  s.d.denom <- {
+    if (standardize) switch(object$estimand,
+                            "ATT" = "treated",
+                            "ATC" = "control",
+                            "ATE" = "pooled")
+    else NULL
   }
-  else s.d.denom <- NULL
 
   if (isTRUE(which.subclass)) which.subclass <- subclasses
   else if (isFALSE(which.subclass)) which.subclass <- NULL
@@ -427,7 +436,7 @@ summary.matchit.subclass <- function(object,
   else which.subclass <- subclasses[which.subclass]
 
   matched <- TRUE #always compute aggregate balance so plot.summary can use it
-  subs <- !is.null(which.subclass)
+  subs <- is_not_null(which.subclass)
 
   ## Aggregate Subclass
   #Use the estimated weights to compute aggregate balance.
@@ -458,13 +467,15 @@ summary.matchit.subclass <- function(object,
 
   if (interactions) {
     n.int <- kk*(kk+1)/2
-    if (un) sum.all.int <- matrix(NA_real_, nrow = n.int, ncol = length(aa.all[[1]]), dimnames = list(NULL, names(aa.all[[1]])))
-    if (matched) sum.matched.int <- matrix(NA_real_, nrow = n.int, ncol = length(aa.matched[[1]]), dimnames = list(NULL, names(aa.matched[[1]])))
+    if (un) sum.all.int <- matrix(NA_real_, nrow = n.int, ncol = length(aa.all[[1]]),
+                                  dimnames = list(NULL, names(aa.all[[1]])))
+    if (matched) sum.matched.int <- matrix(NA_real_, nrow = n.int, ncol = length(aa.matched[[1]]),
+                                           dimnames = list(NULL, names(aa.matched[[1]])))
 
     to.remove <- rep(FALSE, n.int)
     int.names <- character(n.int)
     k <- 1
-    for (i in 1:kk) {
+    for (i in seq_len(kk)) {
       for (j in i:kk) {
         x2 <- X[,i] * X[,j]
         if (all(abs(x2) < sqrt(.Machine$double.eps)) ||
@@ -502,7 +513,7 @@ summary.matchit.subclass <- function(object,
     }
   }
 
-  if (!is.null(object$distance)) {
+  if (is_not_null(object$distance)) {
     if (un) {
       ad.all <- bal1var(object$distance, tt = treat, ww = NULL, s.weights = s.weights,
                         standardize = standardize, s.d.denom = s.d.denom)
@@ -535,7 +546,9 @@ summary.matchit.subclass <- function(object,
       #bal1var.subclass only returns unmatched stats, which is all we need within
       #subclasses. Otherwise, identical to matched stats.
       aa <- setNames(lapply(seq_len(kk), function(i) {
-        bal1var.subclass(X[,i], tt = treat, s.weights = s.weights, subclass = subclass, s.d.denom = s.d.denom, standardize = standardize, which.subclass = s)
+        bal1var.subclass(X[,i], tt = treat, s.weights = s.weights,
+                         subclass = subclass, s.d.denom = s.d.denom,
+                         standardize = standardize, which.subclass = s)
       }), colnames(X))
 
       sum.sub <- matrix(NA_real_, nrow = kk, ncol = ncol(aa[[1]]), dimnames = list(nam, colnames(aa[[1]])))
@@ -545,7 +558,8 @@ summary.matchit.subclass <- function(object,
         sum.sub[i,] <- aa[[i]]
       }
       if (interactions) {
-        sum.sub.int <- matrix(NA_real_, nrow = kk*(kk+1)/2, ncol = length(aa[[1]]), dimnames = list(NULL, names(aa[[1]])))
+        sum.sub.int <- matrix(NA_real_, nrow = kk*(kk+1)/2, ncol = length(aa[[1]]),
+                              dimnames = list(NULL, names(aa[[1]])))
         to.remove <- rep(FALSE, nrow(sum.sub.int))
         int.names <- character(nrow(sum.sub.int))
         k <- 1
@@ -553,7 +567,9 @@ summary.matchit.subclass <- function(object,
           for (j in i:kk) {
             if (!to.remove[k]) { #to.remove defined above
               x2 <- X[,i] * X[,j]
-              jqoi <- bal1var.subclass(x2, tt = treat, s.weights = s.weights, subclass = subclass, s.d.denom = s.d.denom, standardize = standardize, which.subclass = s)
+              jqoi <- bal1var.subclass(x2, tt = treat, s.weights = s.weights,
+                                       subclass = subclass, s.d.denom = s.d.denom,
+                                       standardize = standardize, which.subclass = s)
               sum.sub.int[k,] <- jqoi
               if (i == j) {
                 int.names[k] <- paste0(nam[i], "\u00B2")
@@ -570,7 +586,7 @@ summary.matchit.subclass <- function(object,
         sum.sub <- rbind(sum.sub, sum.sub.int[!to.remove,,drop = FALSE])
       }
 
-      if (!is.null(object$distance)) {
+      if (is_not_null(object$distance)) {
         ad <- bal1var.subclass(object$distance, tt = treat, s.weights = s.weights, subclass = subclass,
                                s.d.denom = s.d.denom, standardize = standardize, which.subclass = s)
         sum.sub <- rbind(ad, sum.sub)
@@ -599,28 +615,30 @@ summary.matchit.subclass <- function(object,
 #' @exportS3Method print summary.matchit
 #' @rdname summary.matchit
 print.summary.matchit <- function(x, digits = max(3, getOption("digits") - 3),
-                                  ...){
+                                  ...) {
 
-  if (!is.null(x$call)) cat("\nCall:", deparse(x$call), sep = "\n")
+  if (is_not_null(x$call)) {
+    cat("\nCall:", deparse(x$call), sep = "\n")
+  }
 
-  if (!is.null(x$sum.all)) {
+  if (is_not_null(x$sum.all)) {
     cat("\nSummary of Balance for All Data:\n")
     print(round_df_char(x$sum.all[,-7, drop = FALSE], digits, pad = "0", na_vals = "."),
           right = TRUE, quote = FALSE)
   }
 
-  if (!is.null(x$sum.matched)) {
+  if (is_not_null(x$sum.matched)) {
     cat("\nSummary of Balance for Matched Data:\n")
     if (all(is.na(x$sum.matched[,7]))) x$sum.matched <- x$sum.matched[,-7,drop = FALSE] #Remove pair dist if empty
     print(round_df_char(x$sum.matched, digits, pad = "0", na_vals = "."),
           right = TRUE, quote = FALSE)
   }
-  if (!is.null(x$reduction)) {
+  if (is_not_null(x$reduction)) {
     cat("\nPercent Balance Improvement:\n")
     print(round_df_char(x$reduction[,-5, drop = FALSE], 1, pad = "0", na_vals = "."), right = TRUE,
           quote = FALSE)
   }
-  if (!is.null(x$nn)) {
+  if (is_not_null(x$nn)) {
     cat("\nSample Sizes:\n")
     nn <- x$nn
     if (isTRUE(all.equal(nn["All (ESS)",], nn["All",]))) {
@@ -641,41 +659,43 @@ print.summary.matchit <- function(x, digits = max(3, getOption("digits") - 3),
 #' @exportS3Method print summary.matchit.subclass
 print.summary.matchit.subclass <- function(x, digits = max(3, getOption("digits") -  3), ...){
 
-  if (!is.null(x$call)) cat("\nCall:", deparse(x$call), sep = "\n")
+  if (is_not_null(x$call)) {
+    cat("\nCall:", deparse(x$call), sep = "\n")
+  }
 
-  if (!is.null(x$sum.all)) {
+  if (is_not_null(x$sum.all)) {
     cat("\nSummary of Balance for All Data:\n")
     print(round_df_char(x$sum.all[,-7, drop = FALSE], digits, pad = "0", na_vals = "."),
           right = TRUE, quote = FALSE)
   }
 
-  if (length(x$sum.subclass) > 0) {
+  if (is_not_null(x$sum.subclass)) {
     cat("\nSummary of Balance by Subclass:\n")
     for (s in seq_along(x$sum.subclass)) {
       cat(paste0("\n- ", names(x$sum.subclass)[s], "\n"))
       print(round_df_char(x$sum.subclass[[s]][,-7, drop = FALSE], digits, pad = "0", na_vals = "."),
             right = TRUE, quote = FALSE)
     }
-    if (!is.null(x$qn)) {
+    if (is_not_null(x$qn)) {
       cat("\nSample Sizes by Subclass:\n")
       print(round_df_char(x$qn, 2, pad = " ", na_vals = "."),
             right = TRUE, quote = FALSE)
     }
   }
   else {
-    if (!is.null(x$sum.across)) {
+    if (is_not_null(x$sum.across)) {
       cat("\nSummary of Balance Across Subclasses\n")
       if (all(is.na(x$sum.across[,7]))) x$sum.across <- x$sum.across[,-7,drop = FALSE]
       print(round_df_char(x$sum.across, digits, pad = "0", na_vals = "."),
             right = TRUE, quote = FALSE)
     }
-    if (!is.null(x$reduction)) {
+    if (is_not_null(x$reduction)) {
       cat("\nPercent Balance Improvement:\n")
       print(round_df_char(x$reduction[,-5, drop = FALSE], 1, pad = "0", na_vals = "."),
             right = TRUE, quote = FALSE)
     }
 
-    if (!is.null(x$nn)) {
+    if (is_not_null(x$nn)) {
       cat("\nSample Sizes:\n")
       nn <- x$nn
       if (isTRUE(all.equal(nn["All (ESS)",], nn["All",]))) {
@@ -696,98 +716,97 @@ print.summary.matchit.subclass <- function(x, digits = max(3, getOption("digits"
 .process_X <- function(object, addlvariables = NULL, data = NULL) {
 
   X <- {
-    if (length(object$X) == 0) matrix(nrow = length(object$treat), ncol = 0)
+    if (is_null(object$X)) matrix(nrow = length(object$treat), ncol = 0)
     else get.covs.matrix(data = object$X)
   }
 
-  if (!is.null(addlvariables)) {
-
-    #Attempt to extrct data from matchit object; same as match.data()
-    data.fram.matchit <- FALSE
-    if (is.null(data)) {
-      env <- environment(object$formula)
-      data <- try(eval(object$call$data, envir = env), silent = TRUE)
-      if (length(data) == 0 || inherits(data, "try-error") || length(dim(data)) != 2 || nrow(data) != length(object[["treat"]])) {
-        env <- parent.frame()
-        data <- try(eval(object$call$data, envir = env), silent = TRUE)
-        if (length(data) == 0 || inherits(data, "try-error") || length(dim(data)) != 2 || nrow(data) != length(object[["treat"]])) {
-          data <- object[["model"]][["data"]]
-          if (length(data) == 0 || nrow(data) != length(object[["treat"]])) {
-            data <- NULL
-          }
-          else data.fram.matchit <- TRUE
-        }
-        else data.fram.matchit <- TRUE
-      }
-      else data.fram.matchit <- TRUE
-    }
-
-    if (is.character(addlvariables)) {
-      if (!is.null(data) && is.data.frame(data)) {
-        if (all(addlvariables %in% names(data))) {
-          addlvariables <- data[addlvariables]
-        }
-        else {
-          .err("All variables in `addlvariables` must be in `data`")
-        }
-      }
-      else {
-        .err("If `addlvariables` is specified as a string, a data frame argument must be supplied to `data`")
-      }
-    }
-    else if (inherits(addlvariables, "formula")) {
-      vars.in.formula <- all.vars(addlvariables)
-      if (!is.null(data) && is.data.frame(data)) {
-        data <- data.frame(data[names(data) %in% vars.in.formula],
-                           object$X[names(object$X) %in% setdiff(vars.in.formula, names(data))])
-      }
-      else data <- object$X
-
-      # addlvariables <- get.covs.matrix(addlvariables, data = data)
-    }
-    else if (!is.matrix(addlvariables) && !is.data.frame(addlvariables)) {
-      .err("The argument to `addlvariables` must be in one of the accepted forms. See `?summary.matchit` for details")
-    }
-
-
-    if (af <- inherits(addlvariables, "formula")) {
-      addvariables_f <- addlvariables
-      addlvariables <- model.frame(addvariables_f, data = data, na.action = "na.pass")
-    }
-
-    if (nrow(addlvariables) != length(object$treat)) {
-      if (is.null(data) || data.fram.matchit) {
-        .err("Variables specified in `addlvariables` must have the same number of units as are present in the original call to `matchit()`")
-      }
-      else {
-        .err("`data` must have the same number of units as are present in the original call to `matchit()`")
-      }
-    }
-
-    k <- ncol(addlvariables)
-    for (i in seq_len(k)) {
-      if (anyNA(addlvariables[[i]]) || (is.numeric(addlvariables[[i]]) && any(!is.finite(addlvariables[[i]])))) {
-        covariates.with.missingness <- names(addlvariables)[i:k][vapply(i:k, function(j) anyNA(addlvariables[[j]]) ||
-                                                                          (is.numeric(addlvariables[[j]]) &&
-                                                                             any(!is.finite(addlvariables[[j]]))),
-                                                                        logical(1L))]
-        .err(paste0("Missing and non-finite values are not allowed in `addlvariables`. Variables with missingness or non-finite values:\n\t",
-                    paste(covariates.with.missingness, collapse = ", ")), tidy = FALSE)
-      }
-      if (is.character(addlvariables[[i]])) addlvariables[[i]] <- factor(addlvariables[[i]])
-    }
-
-    if (af) {
-      addlvariables <- get.covs.matrix(addvariables_f, data = data)
-    }
-    else {
-      addlvariables <- get.covs.matrix(data = addlvariables)
-    }
-
-
-    # addl_assign <- get_assign(addlvariables)
-    X <- cbind(X, addlvariables[, setdiff(colnames(addlvariables), colnames(X)), drop = FALSE])
+  if (is_null(addlvariables)) {
+    return(X)
   }
 
-  X
+  #Attempt to extract data from matchit object; same as match.data()
+  data.found <- FALSE
+  for (i in 1:4) {
+    if (i == 2L) {
+      data <- try(eval(object$call$data, envir = environment(object$formula)), silent = TRUE)
+    }
+    else if (i == 3L) {
+      data <- try(eval(object$call$data, envir = parent.frame()), silent = TRUE)
+    }
+    else if (i == 4L) {
+      data <- object[["model"]][["data"]]
+    }
+
+    if (!null_or_error(data) && length(dim(data)) == 2L && nrow(data) == length(object[["treat"]])) {
+      data.found <- TRUE
+      break
+    }
+  }
+
+  if (is.character(addlvariables)) {
+    if (is_null(data) || !is.data.frame(data)) {
+      .err("if `addlvariables` is specified as a string, a data frame argument must be supplied to `data`")
+    }
+
+    if (!all(hasName(data, addlvariables))) {
+      .err("all variables in `addlvariables` must be in `data`")
+    }
+
+    addlvariables <- data[addlvariables]
+  }
+  else if (rlang::is_formula(addlvariables)) {
+    if (is_not_null(data) && is.data.frame(data)) {
+      vars.in.formula <- all.vars(addlvariables)
+      data <- cbind(data[names(data) %in% vars.in.formula],
+                    object$X[names(object$X) %in% setdiff(vars.in.formula, names(data))])
+    }
+    else {
+      data <- object$X
+    }
+  }
+  else if (!is.matrix(addlvariables) && !is.data.frame(addlvariables)) {
+    .err("the argument to `addlvariables` must be in one of the accepted forms. See `?summary.matchit` for details")
+  }
+
+
+  if (af <- rlang::is_formula(addlvariables)) {
+    addvariables_f <- addlvariables
+    addlvariables <- model.frame(addvariables_f, data = data, na.action = "na.pass")
+  }
+
+  if (nrow(addlvariables) != length(object$treat)) {
+    if (is_null(data) || data.found) {
+      .err("variables specified in `addlvariables` must have the same number of units as are present in the original call to `matchit()`")
+    }
+    else {
+      .err("`data` must have the same number of units as are present in the original call to `matchit()`")
+    }
+  }
+
+  k <- ncol(addlvariables)
+  for (i in seq_len(k)) {
+    if (anyNA(addlvariables[[i]]) || (is.numeric(addlvariables[[i]]) && any(!is.finite(addlvariables[[i]])))) {
+      covariates.with.missingness <- names(addlvariables)[i:k][vapply(i:k, function(j) anyNA(addlvariables[[j]]) ||
+                                                                        (is.numeric(addlvariables[[j]]) &&
+                                                                           any(!is.finite(addlvariables[[j]]))),
+                                                                      logical(1L))]
+      .err(paste0("Missing and non-finite values are not allowed in `addlvariables`. Variables with missingness or non-finite values:\n\t",
+                  paste(covariates.with.missingness, collapse = ", ")), tidy = FALSE)
+    }
+
+    if (is.character(addlvariables[[i]])) {
+      addlvariables[[i]] <- factor(addlvariables[[i]])
+    }
+  }
+
+  if (af) {
+    addlvariables <- get.covs.matrix(addvariables_f, data = data)
+  }
+  else {
+    addlvariables <- get.covs.matrix(data = addlvariables)
+  }
+
+  # addl_assign <- get_assign(addlvariables)
+  cbind(X, addlvariables[, setdiff(colnames(addlvariables), colnames(X)), drop = FALSE])
+
 }

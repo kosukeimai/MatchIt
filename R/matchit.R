@@ -1,7 +1,5 @@
 #' Matching for Causal Inference
 #'
-#' @aliases matchit print.matchit
-#'
 #' @description
 #' `matchit()` is the main function of *MatchIt* and performs
 #' pairing, subset selection, and subclassification with the aim of creating
@@ -27,11 +25,12 @@
 #' [`"nearest"`][method_nearest] for nearest neighbor matching (on
 #' the propensity score by default), [`"optimal"`][method_optimal]
 #' for optimal pair matching, [`"full"`][method_full] for optimal
+#' full matching, [`"quick"`][method_quick] for generalized (quick)
 #' full matching, [`"genetic"`][method_genetic] for genetic
 #' matching, [`"cem"`][method_cem] for coarsened exact matching,
 #' [`"exact"`][method_exact] for exact matching,
 #' [`"cardinality"`][method_cardinality] for cardinality and
-#' template matching, and [`"subclass"`][method_subclass] for
+#' profile matching, and [`"subclass"`][method_subclass] for
 #' subclassification. When set to `NULL`, no matching will occur, but
 #' propensity score estimation and common support restrictions will still occur
 #' if requested. See the linked pages for each method for more details on what
@@ -50,15 +49,13 @@
 #' argument controlling the link function used in estimating the distance
 #' measure. Allowable options depend on the specific `distance` value
 #' specified. See [`distance`] for allowable options with each
-#' option. The default is `"logit"`, which, along with `distance = "glm"`, identifies the default measure as logistic regression propensity
-#' scores.
+#' option. The default is `"logit"`, which, along with `distance = "glm"`, identifies the default measure as logistic regression propensity scores.
 #' @param distance.options a named list containing additional arguments
 #' supplied to the function that estimates the distance measure as determined
-#' by the argument to `distance`. See [distance] for an
+#' by the argument to `distance`. See [`distance`] for an
 #' example of its use.
 #' @param estimand a string containing the name of the target estimand desired.
-#' Can be one of `"ATT"` or `"ATC"`. Some methods accept `"ATE"`
-#' as well. Default is `"ATT"`. See Details and the individual methods
+#' Can be one of `"ATT"`, `"ATC"`, or `"ATE"`. Default is `"ATT"`. See Details and the individual methods
 #' pages for information on how this argument is used.
 #' @param exact for methods that allow it, for which variables exact matching
 #' should take place. Can be specified as a string containing the names of
@@ -72,8 +69,7 @@
 #' within propensity score calipers, where the propensity scores are computed
 #' using `formula` and `distance`. Can be specified as a string
 #' containing the names of variables in `data` to be used or a one-sided
-#' formula with the desired variables on the right-hand side (e.g., `~ X3 + X4`). See the individual methods pages for information on whether and how
-#' this argument is used.
+#' formula with the desired variables on the right-hand side (e.g., `~ X3 + X4`). See the individual methods pages for information on whether and how this argument is used.
 #' @param antiexact for methods that allow it, for which variables anti-exact
 #' matching should take place. Anti-exact matching ensures paired individuals
 #' do not have the same value of the anti-exact matching variable(s). Can be
@@ -99,7 +95,7 @@
 #' be specified as a string containing the name of variable in `data` to
 #' be used or a one-sided formula with the variable on the right-hand side
 #' (e.g., `~ SW`). Not all propensity score models accept sampling
-#' weights; see [distance] for information on which do and do not,
+#' weights; see [`distance`] for information on which do and do not,
 #' and see `vignette("sampling-weights")` for details on how to use
 #' sampling weights in a matching analysis.
 #' @param replace for methods that allow it, whether matching should be done
@@ -134,10 +130,10 @@
 #' the matching process in the output, i.e., by the functions from other
 #' packages `matchit()` calls. What is included depends on the matching
 #' method. Default is `FALSE`.
+#' @param normalize `logical`; whether to rescale the nonzero weights in each treatment group to have an average of 1. Default is `TRUE`. See "How Matching Weights Are Computed" below for more details.
 #' @param \dots additional arguments passed to the functions used in the
 #' matching process. See the individual methods pages for information on what
-#' additional arguments are allowed for each method. Ignored for `print()`.
-#' @param x a `matchit` object.
+#' additional arguments are allowed for each method.
 #'
 #' @details
 #' Details for the various matching methods can be found at the following help
@@ -145,10 +141,11 @@
 #' * [`method_nearest`] for nearest neighbor matching
 #' * [`method_optimal`] for optimal pair matching
 #' * [`method_full`] for optimal full matching
+#' * [`method_quick`] for generalized (quick) full matching
 #' * [`method_genetic`] for genetic matching
 #' * [`method_cem`] for coarsened exact matching
 #' * [`method_exact`] for exact matching
-#' * [`method_cardinality`] for cardinality and template matching
+#' * [`method_cardinality`] for cardinality and profile matching
 #' * [`method_subclass`] for subclassification
 #'
 #' The pages contain information on what the method does, which of the arguments above are
@@ -171,7 +168,7 @@
 #' specified. All arguments other than `distance`, `discard`, and
 #' `reestimate` will be ignored.
 #'
-#' See [distance] for details on the several ways to
+#' See [`distance`] for details on the several ways to
 #' specify the `distance`, `link`, and `distance.options`
 #' arguments to estimate propensity scores and create distance measures.
 #'
@@ -180,7 +177,7 @@
 #' Value, below). The following rules are used: 1) if `0` is one of the
 #' values, it will be considered the control and the other value the treated;
 #' 2) otherwise, if the variable is a factor, `levels(treat)[1]` will be
-#' considered control and the other variable the treated; 3) otherwise,
+#' considered control and the other value the treated; 3) otherwise,
 #' `sort(unique(treat))[1]` will be considered control and the other value
 #' the treated. It is safest to ensure the treatment variable is a `0/1`
 #' variable.
@@ -217,21 +214,29 @@
 #' Matching weights are computed in one of two ways depending on whether matching was done with replacement
 #' or not.
 #'
-#' For matching *without* replacement (except for cardinality matching), each
+#' ### Matching without replacement and subclassification
+#'
+#' For matching *without* replacement (except for cardinality matching), including subclassification, each
 #' unit is assigned to a subclass, which represents the pair they are a part of
 #' (in the case of k:1 matching) or the stratum they belong to (in the case of
 #' exact matching, coarsened exact matching, full matching, or
 #' subclassification). The formula for computing the weights depends on the
 #' argument supplied to `estimand`. A new "stratum propensity score"
-#' (`sp`) is computed as the proportion of units in each stratum that are
-#' in the treated group, and all units in that stratum are assigned that
+#' (\eqn{p^s_i}) is computed for each unit \eqn{i} as \eqn{p^s_i = \frac{1}{n_s}\sum_{j: s_j =s_i}{I(A_j=1)}} where \eqn{n_s} is the size of subclass \eqn{s} and \eqn{I(A_j=1)} is 1 if unit \eqn{j} is treated and 0 otherwise. That is, the stratum propensity score for stratum \eqn{s} is the proportion of units in stratum \eqn{s} that are
+#' in the treated group, and all units in stratum \eqn{s} are assigned that
 #' stratum propensity score. This is distinct from the propensity score used for matching, if any. Weights are then computed using the standard formulas for
-#' inverse probability weights with the stratum propensity score inserted: for the ATT, weights are 1 for the treated
-#' units and `sp/(1-sp)` for the control units; for the ATC, weights are
-#' `(1-sp)/sp` for the treated units and 1 for the control units; for the
-#' ATE, weights are `1/sp` for the treated units and `1/(1-sp)` for the
-#' control units. For cardinality matching, all matched units receive a weight
+#' inverse probability weights with the stratum propensity score inserted:
+#' * for the ATT, weights are 1 for the treated
+#' units and \eqn{\frac{p^s}{1-p^s}} for the control units
+#' * for the ATC, weights are
+#' \eqn{\frac{1-p^s}{p^s}} for the treated units and 1 for the control units
+#' * for the ATE, weights are \eqn{\frac{1}{p^s}} for the treated units and \eqn{\frac{1}{1-p^s}} for the
+#' control units.
+#'
+#' For cardinality matching, all matched units receive a weight
 #' of 1.
+#'
+#' ### Matching witht replacement
 #'
 #' For matching *with* replacement, units are not assigned to unique strata. For
 #' the ATT, each treated unit gets a weight of 1. Each control unit is weighted
@@ -239,14 +244,19 @@
 #' treated unit across its matches. For example, if a control unit was matched
 #' to a treated unit that had two other control units matched to it, and that
 #' same control was matched to a treated unit that had one other control unit
-#' matched to it, the control unit in question would get a weight of 1/3 + 1/2
-#' = 5/6. For the ATC, the same is true with the treated and control labels
+#' matched to it, the control unit in question would get a weight of \eqn{1/3 + 1/2 = 5/6}. For the ATC, the same is true with the treated and control labels
 #' switched. The weights are computed using the `match.matrix` component
 #' of the `matchit()` output object.
 #'
-#' In each treatment group, weights are divided by the mean of the nonzero
+#' ### Normalized weights
+#'
+#' When `normalize = TRUE` (the default), in each treatment group, weights are divided by the mean of the nonzero
 #' weights in that treatment group to make the weights sum to the number of
-#' units in that treatment group. If sampling weights are included through the
+#' units in that treatment group (i.e., to have an average of 1).
+#'
+#' ### Sampling weights
+#'
+#' If sampling weights are included through the
 #' `s.weights` argument, they will be included in the `matchit()`
 #' output object but not incorporated into the matching weights.
 #' [match.data()], which extracts the matched set from a `matchit` object,
@@ -255,30 +265,26 @@
 #' @return When `method` is something other than `"subclass"`, a
 #' `matchit` object with the following components:
 #'
-#' \item{match.matrix}{a matrix containing the matches. The rownames correspond
+#' \item{match.matrix}{a matrix containing the matches. The row names correspond
 #' to the treated units and the values in each row are the names (or indices)
 #' of the control units matched to each treated unit. When treated units are
-#' matched to different numbers of control units (e.g., with exact matching or
+#' matched to different numbers of control units (e.g., with variable ratio matching or
 #' matching with a caliper), empty spaces will be filled with `NA`. Not
-#' included when `method` is `"full"`, `"cem"` (unless `k2k
-#' = TRUE`), `"exact"`, or `"cardinality"`.}
+#' included when `method` is `"full"`, `"cem"` (unless `k2k = TRUE`), `"exact"`, `"quick"`, or `"cardinality"` (unless `mahvars` is supplied and `ratio` is an integer).}
 #' \item{subclass}{a factor
 #' containing matching pair/stratum membership for each unit. Unmatched units
-#' will have a value of `NA`. Not included when `replace = TRUE`.}
+#' will have a value of `NA`. Not included when `replace = TRUE` or when `method = "cardinality"` unless `mahvars` is supplied and `ratio` is an integer.}
 #' \item{weights}{a numeric vector of estimated matching weights. Unmatched and
 #' discarded units will have a weight of zero.}
 #' \item{model}{the fit object of
 #' the model used to estimate propensity scores when `distance` is
-#' specified and not `"mahalanobis"` or a numeric vector. When
+#' specified as a method of estimating propensity scores. When
 #' `reestimate = TRUE`, this is the model estimated after discarding
 #' units.}
-#' \item{X}{a data frame of covariates mentioned in `formula`,
-#' `exact`, `mahvars`, and `antiexact`.}
+#' \item{X}{a data frame of covariates mentioned in `formula`, `exact`, `mahvars`, `caliper`, and `antiexact`.}
 #' \item{call}{the `matchit()` call.}
-#' \item{info}{information on the matching method and
-#' distance measures used.}
-#' \item{estimand}{the argument supplied to
-#' `estimand`.}
+#' \item{info}{information on the matching method and distance measures used.}
+#' \item{estimand}{the argument supplied to `estimand`.}
 #' \item{formula}{the `formula` supplied.}
 #' \item{treat}{a vector of treatment status converted to zeros (0) and ones
 #' (1) if not already in that format.}
@@ -286,16 +292,11 @@
 #' values (i.e., propensity scores) when `distance` is supplied as a
 #' method of estimating propensity scores or a numeric vector.}
 #' \item{discarded}{a logical vector denoting whether each observation was
-#' discarded (`TRUE`) or not (`FALSE`) by the argument to
-#' `discard`.}
-#' \item{s.weights}{the vector of sampling weights supplied to
-#' the `s.weights` argument, if any.}
-#' \item{exact}{a one-sided formula
-#' containing the variables, if any, supplied to `exact`.}
-#' \item{mahvars}{a one-sided formula containing the variables, if any,
-#' supplied to `mahvars`.}
-#' \item{obj}{when `include.obj = TRUE`, an
-#' object containing the intermediate results of the matching procedure. See
+#' discarded (`TRUE`) or not (`FALSE`) by the argument to `discard`.}
+#' \item{s.weights}{the vector of sampling weights supplied to the `s.weights` argument, if any.}
+#' \item{exact}{a one-sided formula containing the variables, if any, supplied to `exact`.}
+#' \item{mahvars}{a one-sided formula containing the variables, if any, supplied to `mahvars`.}
+#' \item{obj}{when `include.obj = TRUE`, an object containing the intermediate results of the matching procedure. See
 #' the individual methods pages for what this component will contain.}
 #'
 #' When `method = "subclass"`, a `matchit.subclass` object with the same
@@ -304,24 +305,18 @@
 #' distance measure cutpoints used to define the subclasses. See
 #' [`method_subclass`] for details.
 #'
-#' @author Daniel Ho (\email{dho@@law.stanford.edu}); Kosuke Imai
-#' (\email{imai@@harvard.edu}); Gary King (\email{king@@harvard.edu});
-#' Elizabeth Stuart (\email{estuart@@jhsph.edu})
-#'
-#' Version 4.0.0 update by Noah Greifer (\email{noah.greifer@@gmail.com})
+#' @author Daniel Ho, Kosuke Imai, Gary King, and Elizabeth Stuart wrote the original package. Starting with version 4.0.0, Noah Greifer is the primary maintainer and developer.
 #'
 #' @seealso [summary.matchit()] for balance assessment after matching, [plot.matchit()] for plots of covariate balance and propensity score overlap after matching.
 #'
-#' `vignette("MatchIt")` for an introduction to matching with
-#' *MatchIt*; `vignette("matching-methods")` for descriptions of the
-#' variety of matching methods and options available;
-#' `vignette("assessing-balance")` for information on assessing the
-#' quality of a matching specification; `vignette("estimating-effects")`
-#' for instructions on how to estimate treatment effects after matching; and
-#' `vignette("sampling-weights")` for a guide to using *MatchIt* with
-#' sampling weights.
+#' * `vignette("MatchIt")` for an introduction to matching with *MatchIt*
+#' * `vignette("matching-methods")` for descriptions of the variety of matching methods and options available
+#' * `vignette("assessing-balance")` for information on assessing the quality of a matching specification
+#' * `vignette("estimating-effects")` for instructions on how to estimate treatment effects after matching
+#' * `vignette("sampling-weights")` for a guide to using *MatchIt* with sampling weights.
 #'
-#' @references Ho, D. E., Imai, K., King, G., & Stuart, E. A. (2007). Matching
+#' @references
+#' Ho, D. E., Imai, K., King, G., & Stuart, E. A. (2007). Matching
 #' as Nonparametric Preprocessing for Reducing Model Dependence in Parametric
 #' Causal Inference. *Political Analysis*, 15(3), 199–236. \doi{10.1093/pan/mpl013}
 #'
@@ -380,7 +375,7 @@
 #'                    discard = "control", subclass = 10)
 #' s.out1
 #' summary(s.out1, un = TRUE)
-#'
+
 #' @export
 matchit <- function(formula,
                     data = NULL,
@@ -402,6 +397,7 @@ matchit <- function(formula,
                     ratio = 1,
                     verbose = FALSE,
                     include.obj = FALSE,
+                    normalize = TRUE,
                     ...) {
 
   #Checking input format
@@ -409,22 +405,22 @@ matchit <- function(formula,
   mcall <- match.call()
 
   ## Process method
-  .chk_null_or(method, chk::chk_string)
-  if (length(method) == 1 && is.character(method)) {
-    method <- tolower(method)
-    method <- match_arg(method, c("exact", "cem", "nearest", "optimal", "full", "genetic", "subclass", "cardinality",
-                                  "quick"))
-    fn2 <- paste0("matchit2", method)
-  }
-  else if (is.null(method)) {
+  chk::chk_null_or(method, vld = chk::vld_string)
+  if (is_null(method)) {
     fn2 <- "matchit2null"
   }
   else {
-    .err("`method` must be the name of a supported matching method. See `?matchit` for allowable options")
+    method <- tolower(method)
+    method <- match_arg(method, c("exact", "cem", "nearest", "optimal",
+                                  "full", "genetic", "subclass", "cardinality",
+                                  "quick"))
+    fn2 <- paste0("matchit2", method)
   }
 
   #Process formula and data inputs
-  .chk_formula(formula, sides = 2)
+  if (!rlang::is_formula(formula, lhs = TRUE)) {
+    .err("`formula` must be a formula relating treatment to covariates")
+  }
 
   treat.form <- update(terms(formula, data = data), . ~ 0)
   treat.mf <- model.frame(treat.form, data = data, na.action = "na.pass")
@@ -432,7 +428,9 @@ matchit <- function(formula,
 
   #Check and binarize treat
   treat <- check_treat(treat)
-  if (length(treat) == 0) .err("the treatment cannot be `NULL`")
+  if (is_null(treat)) {
+    .err("the treatment cannot be `NULL`")
+  }
 
   names(treat) <- rownames(treat.mf)
 
@@ -444,8 +442,8 @@ matchit <- function(formula,
                                  reestimate = reestimate, s.weights = s.weights, replace = replace,
                                  ratio = ratio, m.order = m.order, estimand = estimand)
 
-  if (length(ignored.inputs) > 0) {
-    for (i in ignored.inputs) assign(i, NULL)
+  for (i in ignored.inputs) {
+    assign(i, NULL)
   }
 
   #Process replace
@@ -455,40 +453,51 @@ matchit <- function(formula,
   ratio <- process.ratio(ratio, method, ...)
 
   #Process s.weights
-  if (!is.null(s.weights)) {
+  if (is_not_null(s.weights)) {
     if (is.character(s.weights)) {
-      if (is.null(data) || !is.data.frame(data)) {
+      if (is_null(data) || !is.data.frame(data)) {
         .err("if `s.weights` is specified a string, a data frame containing the named variable must be supplied to `data`")
       }
-      if (!all(s.weights %in% names(data))) {
+
+      if (!all(hasName(data, s.weights))) {
         .err("the name supplied to `s.weights` must be a variable in `data`")
       }
+
       s.weights.form <- reformulate(s.weights)
       s.weights <- model.frame(s.weights.form, data, na.action = "na.pass")
-      if (ncol(s.weights) != 1) .err("`s.weights` can only contain one named variable")
-      s.weights <- s.weights[[1]]
+
+      if (ncol(s.weights) != 1L) {
+        .err("`s.weights` can only contain one named variable")
+      }
+
+      s.weights <- s.weights[[1L]]
     }
-    else if (inherits(s.weights, "formula")) {
+    else if (rlang::is_formula(s.weights)) {
       s.weights.form <- update(terms(s.weights, data = data), NULL ~ .)
       s.weights <- model.frame(s.weights.form, data, na.action = "na.pass")
-      if (ncol(s.weights) != 1) .err("`s.weights` can only contain one named variable")
-      s.weights <- s.weights[[1]]
+
+      if (ncol(s.weights) != 1L) {
+        .err("`s.weights` can only contain one named variable")
+      }
+
+      s.weights <- s.weights[[1L]]
     }
     else if (!is.numeric(s.weights)) {
       .err("`s.weights` must be supplied as a numeric vector, string, or one-sided formula")
     }
 
     chk::chk_not_any_na(s.weights)
-    if (length(s.weights) != n.obs) .err("`s.weights` must be the same length as the treatment vector")
+    if (length(s.weights) != n.obs) {
+      .err("`s.weights` must be the same length as the treatment vector")
+    }
 
     names(s.weights) <- names(treat)
-
   }
 
   #Process distance function
   is.full.mahalanobis <- FALSE
   fn1 <- NULL
-  if (is.null(method) || !method %in% c("exact", "cem", "cardinality")) {
+  if (is_null(method) || !method %in% c("exact", "cem", "cardinality")) {
     distance <- process.distance(distance, method, treat)
 
     if (is.numeric(distance)) {
@@ -507,7 +516,7 @@ matchit <- function(formula,
   }
 
   #Process covs
-  if (!is.null(fn1) && fn1 == "distance2gam") {
+  if (is_not_null(fn1) && fn1 == "distance2gam") {
     rlang::check_installed("mgcv")
     env <- environment(formula)
     covs.formula <- mgcv::interpret.gam(formula)$fake.formula
@@ -529,7 +538,10 @@ matchit <- function(formula,
       .err(paste0("Missing and non-finite values are not allowed in the covariates. Covariates with missingness or non-finite values:\n\t",
                   paste(covariates.with.missingness, collapse = ", ")), tidy = FALSE)
     }
-    if (is.character(covs[[i]])) covs[[i]] <- factor(covs[[i]])
+
+    if (is.character(covs[[i]])) {
+      covs[[i]] <- factor(covs[[i]])
+    }
   }
 
   #Process exact, mahvars, and antiexact
@@ -542,8 +554,11 @@ matchit <- function(formula,
   antiexactcovs <- process.variable.input(antiexact, data)
   antiexact <- attr(antiexactcovs, "terms")
 
+  chk::chk_flag(verbose)
+  chk::chk_flag(normalize)
+
   #Estimate distance, discard from common support, optionally re-estimate distance
-  if (is.null(fn1) || is.full.mahalanobis) {
+  if (is_null(fn1) || is.full.mahalanobis) {
     #No distance measure
     dist.model <- distance <- link <- NULL
   }
@@ -551,25 +566,36 @@ matchit <- function(formula,
     dist.model <- link <- NULL
   }
   else {
-    if (verbose) {
-      cat("Estimating propensity scores... \n")
-    }
+    .cat_verbose("Estimating propensity scores... \n", verbose = verbose)
 
-    if (!is.null(s.weights)) {
+    if (is_not_null(s.weights)) {
       attr(s.weights, "in_ps") <- !distance %in% c("bart")
     }
 
     #Estimate distance
-    if (is.null(distance.options$formula)) distance.options$formula <- formula
-    if (is.null(distance.options$data)) distance.options$data <- data
-    if (is.null(distance.options$verbose)) distance.options$verbose <- verbose
-    if (is.null(distance.options$estimand)) distance.options$estimand <- estimand
-    if (is.null(distance.options$weights) && !fn1 %in% c("distance2bart")) {
+    if (is_null(distance.options)) {
+      distance.options <- list(formula = formula,
+                               data = data,
+                               verbose = verbose,
+                               estimand = estimand)
+    }
+    else {
+      chk::chk_list(distance.options)
+
+      if (is_null(distance.options$formula)) distance.options$formula <- formula
+      if (is_null(distance.options$data)) distance.options$data <- data
+      if (is_null(distance.options$verbose)) distance.options$verbose <- verbose
+      if (is_null(distance.options$estimand)) distance.options$estimand <- estimand
+    }
+
+    if (is_null(distance.options$weights) && !fn1 %in% c("distance2bart")) {
       distance.options$weights <- s.weights
     }
 
-    if (!is.null(attr(distance, "link"))) distance.options$link <- attr(distance, "link")
-    else distance.options$link <- link
+    distance.options$link <- {
+      if (is_not_null(attr(distance, "link"))) attr(distance, "link")
+      else link
+    }
 
     dist.out <- do.call(fn1, distance.options, quote = TRUE)
 
@@ -585,7 +611,7 @@ matchit <- function(formula,
   }
 
   #Process discard
-  if (is.null(fn1) || is.full.mahalanobis || fn1 == "distance2user") {
+  if (is_null(fn1) || is.full.mahalanobis || identical(fn1, "distance2user")) {
     discarded <- discard(treat, distance, discard)
   }
   else {
@@ -597,7 +623,7 @@ matchit <- function(formula,
         if (length(distance.options[[i]]) == n.obs) {
           distance.options[[i]] <- distance.options[[i]][!discarded]
         }
-        else if (length(dim(distance.options[[i]])) == 2 && nrow(distance.options[[i]]) == n.obs) {
+        else if (length(dim(distance.options[[i]])) == 2L && nrow(distance.options[[i]]) == n.obs) {
           distance.options[[i]] <- distance.options[[i]][!discarded,,drop = FALSE]
         }
       }
@@ -610,12 +636,17 @@ matchit <- function(formula,
   #Process caliper
   calcovs <- NULL
 
-  if (!is.null(caliper)) {
+  if (is_not_null(caliper)) {
     caliper <- process.caliper(caliper, method, data, covs, mahcovs, distance, discarded, std.caliper)
 
-    if (!is.null(attr(caliper, "cal.formula"))) {
-      calcovs <- model.frame(attr(caliper, "cal.formula"), data, na.action = "na.pass")
-      if (anyNA(calcovs)) .err("missing values are not allowed in the covariates named in `caliper`")
+    if (is_not_null(attr(caliper, "cal.formula"))) {
+      calcovs <- model.frame(attr(caliper, "cal.formula"), data = data,
+                             na.action = "na.pass")
+
+      if (anyNA(calcovs)) {
+        .err("missing values are not allowed in the covariates named in `caliper`")
+      }
+
       attr(caliper, "cal.formula") <- NULL
     }
   }
@@ -629,31 +660,51 @@ matchit <- function(formula,
                                  antiexact = antiexact, ...),
                        quote = TRUE)
 
+  weights <- match.out[["weights"]]
+
+  #Normalize weights
+  if (normalize) {
+    wi <- which(weights > 0)
+    weights[wi] <- .make_sum_to_n(weights[wi], treat[wi])
+  }
+
   info <- create_info(method, fn1, link, discard, replace, ratio,
-                      mahalanobis = is.full.mahalanobis || !is.null(mahvars),
+                      mahalanobis = is.full.mahalanobis || is_not_null(mahvars),
                       transform = attr(is.full.mahalanobis, "transform"),
                       subclass = match.out$subclass,
                       antiexact = colnames(antiexactcovs),
-                      distance_is_matrix = !is.null(distance) && is.matrix(distance))
+                      distance_is_matrix = is_not_null(distance) && is.matrix(distance))
 
-  #Create X.list for X output, removing duplicate variables
-  X.list <- list(covs, exactcovs, mahcovs, calcovs, antiexactcovs)
-  all.covs <- lapply(X.list, names)
-  for (i in seq_along(X.list)[-1]) if (!is.null(X.list[[i]])) X.list[[i]][names(X.list[[i]]) %in% unlist(all.covs[1:(i-1)])] <- NULL
-  X.list[vapply(X.list, is.null, logical(1L))] <- NULL
+  #Create X output, removing duplicate variables
+  X.list.nm <- c("covs", "exactcovs", "mahcovs", "calcovs", "antiexactcovs")
+  X <- NULL
+  for (i in X.list.nm) {
+    X_tmp <- get0(i, inherits = FALSE)
+
+    if (is_null(X_tmp)) {
+      next
+    }
+
+    if (is_null(X)) {
+      X <- X_tmp
+    }
+    else if (!all(hasName(X, names(X_tmp)))) {
+      X <- cbind(X, X_tmp[!names(X_tmp) %in% names(X)])
+    }
+  }
 
   ## putting all the results together
   out <- list(
     match.matrix = match.out[["match.matrix"]],
     subclass = match.out[["subclass"]],
-    weights = match.out[["weights"]],
-    X = do.call("cbind", X.list),
+    weights = weights,
+    X = X,
     call = mcall,
     info = info,
     estimand = estimand,
     formula = formula,
     treat = treat,
-    distance = if (!is.null(distance) && !is.matrix(distance)) setNames(distance, names(treat)),
+    distance = if (is_not_null(distance) && !is.matrix(distance)) setNames(distance, names(treat)),
     discarded = discarded,
     s.weights = s.weights,
     exact = exact,
@@ -664,74 +715,100 @@ matchit <- function(formula,
     obj = if (include.obj) match.out[["obj"]]
   )
 
-  out[vapply(out, is.null, logical(1L))] <- NULL
+  out[lengths(out) == 0L] <- NULL
 
   class(out) <- class(match.out)
+
   out
 }
 
-#' @export
-#' @rdname matchit
+#' @exportS3Method print matchit
 print.matchit <- function(x, ...) {
   info <- x[["info"]]
-  cal <- !is.null(x[["caliper"]])
+  cal <- is_not_null(x[["caliper"]])
   dis <- c("both", "control", "treat")[pmatch(info$discard, c("both", "control", "treat"), 0L)]
-  disl <- length(dis) > 0
-  nm <- is.null(x[["method"]])
-  cat("A matchit object")
-  cat(paste0("\n - method: ", info.to.method(info)))
+  disl <- is_not_null(dis)
+  nm <- is_null(x[["method"]])
 
-  if (!is.null(info$distance) || info$mahalanobis) {
-    cat("\n - distance: ")
+  cat("A `matchit` object\n")
+
+  cat(sprintf(" - method: %s\n", info.to.method(info)))
+
+  if (is_not_null(info$distance) || info$mahalanobis) {
+    cat(" - distance: ")
     if (info$mahalanobis) {
-      if (is.null(info$transform)) #mahvars used
+      if (is_null(info$transform)) #mahvars used
         cat("Mahalanobis")
       else {
         cat(capwords(gsub("_", " ", info$transform, fixed = TRUE)))
       }
     }
-    if (!is.null(info$distance) && !info$distance %in% matchit_distances()) {
+
+    if (is_not_null(info$distance) && !info$distance %in% matchit_distances()) {
       if (info$mahalanobis) cat(" [matching]\n             ")
 
       if (info$distance_is_matrix) cat("User-defined (matrix)")
       else if (info$distance != "user") cat("Propensity score")
-      else if (!is.null(attr(info$distance, "custom"))) cat(attr(info$distance, "custom"))
+      else if (is_not_null(attr(info$distance, "custom"))) cat(attr(info$distance, "custom"))
       else cat("User-defined")
 
       if (cal || disl) {
-        cal.ps <- "" %in% names(x[["caliper"]])
-        cat(" [")
-        cat(paste(c("matching", "subclassification", "caliper", "common support")[c(!nm && !info$mahalanobis && info$method != "subclass", !nm && info$method == "subclass", cal.ps, disl)], collapse = ", "))
-        cat("]")
+        cal.ps <- hasName(x[["caliper"]], "")
+        cat(sprintf(" [%s]\n",
+                    paste(c("matching", "subclassification", "caliper", "common support")[c(!nm && !info$mahalanobis && info$method != "subclass", !nm && info$method == "subclass", cal.ps, disl)], collapse = ", ")))
       }
+
       if (info$distance != "user") {
-        cat("\n             - estimated with ")
-        cat(info.to.distance(info))
-        if (!is.null(x[["s.weights"]])) {
-          if (isTRUE(attr(x[["s.weights"]], "in_ps")))
-            cat("\n             - sampling weights included in estimation")
-          else cat("\n             - sampling weights not included in estimation")
+        cat(sprintf("             - estimated with %s\n",
+                    info.to.distance(info)))
+        if (is_not_null(x[["s.weights"]])) {
+          cat(sprintf("             - sampling weights %sincluded in estimation\n",
+                      if (isTRUE(attr(x[["s.weights"]], "in_ps"))) "" else "not "))
         }
       }
     }
   }
+
   if (cal) {
-    cat(paste0("\n - caliper: ", paste(vapply(seq_along(x[["caliper"]]), function(z) paste0(if (names(x[["caliper"]])[z] == "") "<distance>" else names(x[["caliper"]])[z],
-                                                                                            " (", format(round(x[["caliper"]][z], 3)), ")"), character(1L)),
-                                       collapse = ", ")))
+    cat(sprintf(" - caliper: %s\n",
+                paste(vapply(seq_along(x[["caliper"]]),
+                             function(z) {
+                               sprintf("%s (%s)",
+                                       if (names(x[["caliper"]])[z] == "") "<distance>"
+                                       else names(x[["caliper"]])[z],
+                                       format(round(x[["caliper"]][z], 3)))
+                             }, character(1L)),
+                      collapse = ", ")))
   }
+
   if (disl) {
-    cat("\n - common support: ")
-    if (dis == "both") cat("units from both groups")
-    else if (dis == "treat") cat("treated units")
-    else if (dis == "control") cat("control units")
-    cat(" dropped")
+    cat(sprintf(" - common support: %s dropped\n",
+                switch(dis,
+                       "both" = "units from both groups",
+                       "treat" = "treated units",
+                       "control" = "control units")))
   }
-  cat(paste0("\n - number of obs.: ", length(x[["treat"]]), " (original)", if (!all(x[["weights"]] == 1)) paste0(", ", sum(x[["weights"]] != 0), " (matched)")))
-  if (!is.null(x[["s.weights"]])) cat("\n - sampling weights: present")
-  if (!is.null(x[["estimand"]])) cat(paste0("\n - target estimand: ", x[["estimand"]]))
-  if (!is.null(x[["X"]])) cat(paste0("\n - covariates: ", ifelse(length(names(x[["X"]])) > 40, "too many to name", paste(names(x[["X"]]), collapse = ", "))))
-  cat("\n")
+
+  cat(sprintf(" - number of obs.: %s (original)%s\n",
+              length(x[["treat"]]),
+              if (!all_equal_to(x[["weights"]], 1))
+                sprintf(", %s (matched)", sum(x[["weights"]] != 0))
+              else ""))
+
+  if (is_not_null(x[["s.weights"]])) {
+    cat(" - sampling weights: present\n")
+  }
+
+  if (is_not_null(x[["estimand"]])) {
+    cat(sprintf(" - target estimand: %s\n", x[["estimand"]]))
+  }
+
+  if (is_not_null(x[["X"]])) {
+    cat(sprintf(" - covariates: %s\n",
+                if (length(names(x[["X"]])) > 40L) "too many to name"
+                else paste(names(x[["X"]]), collapse = ", ")))
+  }
+
   invisible(x)
 }
 

@@ -61,63 +61,84 @@ add_s.weights <- function(m,
 
   chk::chk_is(m, "matchit")
 
-  if (!is.null(s.weights)) {
-    if (!is.numeric(s.weights)) {
-      if (is.null(data)) {
-        if (!is.null(m$model)) {
-          env <- attributes(terms(m$model))$.Environment
-        } else {
-          env <- parent.frame()
-        }
-        data <- eval(m$call$data, envir = env)
-        if (length(data) == 0) {
-          .err("a dataset could not be found. Please supply an argument to `data` containing the original dataset used in the matching")
-        }
+  if (is_null(s.weights)) {
+    return(m)
+  }
+
+  if (!is.numeric(s.weights)) {
+    if (is_null(data)) {
+      if (is_not_null(m$model)) {
+        env <- attributes(terms(m$model))$.Environment
       }
       else {
-        if (!is.data.frame(data)) {
-          if (is.matrix(data)) data <- as.data.frame.matrix(data)
-          else .err("`data` must be a data frame")
-        }
-        if (nrow(data) != length(m$treat)) {
-          .err("`data` must have as many rows as there were units in the original call to `matchit()`")
-        }
+        env <- parent.frame()
       }
 
-      if (is.character(s.weights)) {
-        if (is.null(data) || !is.data.frame(data)) {
-          .err("if `s.weights` is specified a string, a data frame containing the named variable must be supplied to `data`")
-        }
-        if (!all(s.weights %in% names(data))) {
-          .err("the name supplied to `s.weights` must be a variable in `data`")
-        }
-        s.weights.form <- reformulate(s.weights)
-        s.weights <- model.frame(s.weights.form, data, na.action = "na.pass")
-        if (ncol(s.weights) != 1) .err("`s.weights` can only contain one named variable")
-        s.weights <- s.weights[[1]]
+      data <- eval(m$call$data, envir = env)
+
+      if (is_null(data)) {
+        .err("a dataset could not be found. Please supply an argument to `data` containing the original dataset used in the matching")
       }
-      else if (rlang::is_formula(s.weights)) {
-        s.weights.form <- update(terms(s.weights, data = data), NULL ~ .)
-        s.weights <- model.frame(s.weights.form, data, na.action = "na.pass")
-        if (ncol(s.weights) != 1) .err("`s.weights` can only contain one named variable")
-        s.weights <- s.weights[[1]]
+    }
+    else {
+      if (!is.data.frame(data)) {
+        if (!is.matrix(data)) {
+          .err("`data` must be a data frame")
+        }
+        data <- as.data.frame.matrix(data)
       }
-      else {
-        .err("`s.weights` must be supplied as a numeric vector, string, or one-sided formula")
+
+      if (nrow(data) != length(m$treat)) {
+        .err("`data` must have as many rows as there were units in the original call to `matchit()`")
       }
     }
 
-    chk::chk_not_any_na(s.weights)
-    if (length(s.weights) != length(m$treat)) .err("`s.weights` must be the same length as the treatment vector")
+    if (is.character(s.weights)) {
+      if (is_null(data) || !is.data.frame(data)) {
+        .err("if `s.weights` is specified a string, a data frame containing the named variable must be supplied to `data`")
+      }
 
-    names(s.weights) <- names(m$treat)
+      if (!all(hasName(data, s.weights))) {
+        .err("the name supplied to `s.weights` must be a variable in `data`")
+      }
 
-    attr(s.weights, "in_ps") <- isTRUE(all.equal(s.weights, m$s.weights))
+      s.weights.form <- reformulate(s.weights)
+      s.weights <- model.frame(s.weights.form, data, na.action = "na.pass")
 
-    m$s.weights <- s.weights
+      if (ncol(s.weights) != 1L) {
+        .err("`s.weights` can only contain one named variable")
+      }
 
-    m$nn <- nn(m$treat, m$weights, m$discarded, s.weights)
+      s.weights <- s.weights[[1L]]
+    }
+    else if (rlang::is_formula(s.weights)) {
+      s.weights.form <- update(terms(s.weights, data = data), NULL ~ .)
+      s.weights <- model.frame(s.weights.form, data, na.action = "na.pass")
+
+      if (ncol(s.weights) != 1L) {
+        .err("`s.weights` can only contain one named variable")
+      }
+
+      s.weights <- s.weights[[1L]]
+    }
+    else {
+      .err("`s.weights` must be supplied as a numeric vector, string, or one-sided formula")
+    }
   }
+
+  chk::chk_not_any_na(s.weights)
+
+  if (length(s.weights) != length(m$treat)) {
+    .err("`s.weights` must be the same length as the treatment vector")
+  }
+
+  names(s.weights) <- names(m$treat)
+
+  attr(s.weights, "in_ps") <- isTRUE(all.equal(s.weights, m$s.weights))
+
+  m$s.weights <- s.weights
+
+  m$nn <- nn(m$treat, m$weights, m$discarded, s.weights)
 
   m
 }

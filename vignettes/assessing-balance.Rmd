@@ -7,7 +7,7 @@ output:
         toc: true
 vignette: >
   %\VignetteIndexEntry{Assessing Balance}
-  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEngine{knitr::rmarkdown_notangle}
   %\VignetteEncoding{UTF-8}
 bibliography: references.bib
 link-citations: true
@@ -281,7 +281,7 @@ love.plot(m.out, stats = c("m", "ks"), poly = 2, abs = TRUE,
           position = "bottom")
 ```
 
-The `love.plot()` documentation explains what each of these arguments do and the several other ones available. See `vignette("cobalt_A4_love.plot", package = "cobalt")` for other advanced customization of `love.plot()`.
+The `love.plot()` documentation explains what each of these arguments do and the several other ones available. See `vignette("love.plot", package = "cobalt")` for other advanced customization of `love.plot()`.
 
 ### `bal.plot()`
 

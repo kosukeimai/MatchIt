@@ -38,10 +38,9 @@ performed.
 m.out
 ```
 
-    #> A matchit object
+    #> A `matchit` object
     #>  - method: 1:1 nearest neighbor matching with replacement
-    #>  - distance: Mahalanobis
-    #>  - number of obs.: 614 (original), 261 (matched)
+    #>  - distance: Mahalanobis - number of obs.: 614 (original), 264 (matched)
     #>  - target estimand: ATT
     #>  - covariates: age, educ, race, married, nodegree, re74, re75
 
@@ -72,31 +71,30 @@ summary(m.out)
     #> 
     #> Summary of Balance for Matched Data:
     #>            Means Treated Means Control Std. Mean Diff. Var. Ratio eCDF Mean eCDF Max Std. Pair Dist.
-    #> age              25.8162       25.5405          0.0385     0.6524    0.0466   0.1892          0.4827
-    #> educ             10.3459       10.4270         -0.0403     1.1636    0.0077   0.0378          0.1963
+    #> age              25.8162       25.5405          0.0385     0.6531    0.0466   0.1892          0.4827
+    #> educ             10.3459       10.4270         -0.0403     1.1649    0.0077   0.0378          0.1963
     #> raceblack         0.8432        0.8432          0.0000          .    0.0000   0.0000          0.0000
     #> racehispan        0.0595        0.0595          0.0000          .    0.0000   0.0000          0.0000
     #> racewhite         0.0973        0.0973          0.0000          .    0.0000   0.0000          0.0000
     #> married           0.1892        0.1784          0.0276          .    0.0108   0.0108          0.0276
     #> nodegree          0.7081        0.7081          0.0000          .    0.0000   0.0000          0.0000
-    #> re74           2095.5737     1788.6941          0.0628     1.5690    0.0311   0.1730          0.2494
-    #> re75           1532.0553     1087.7420          0.1380     2.1221    0.0330   0.0865          0.2360
+    #> re74           2095.5737     1788.6941          0.0628     1.5707    0.0311   0.1730          0.2494
+    #> re75           1532.0553     1087.7420          0.1380     2.1244    0.0330   0.0865          0.2360
     #> 
     #> Sample Sizes:
     #>               Control Treated
-    #> All               429     185
-    #> Matched (ESS)      33     185
-    #> Matched            76     185
-    #> Unmatched         353       0
-    #> Discarded           0       0
+    #> All            429.       185
+    #> Matched (ESS)   34.19     185
+    #> Matched         79.       185
+    #> Unmatched      350.         0
+    #> Discarded        0.         0
 
 At the top is balance for the original sample. Below that is balance in
-the matched sample, followed by the percent reduction in imbalance and
-the sample sizes before and after matching. Smaller values for the
-balance statistics indicate better balance. (In this case, good balance
-was not achieved and other matching methods should be tried). We can
-plot the standardized mean differences in a Love plot for a clean,
-visual display of balance across the sample:
+the matched sample. Smaller values for the balance statistics indicate
+better balance. (In this case, fairly good balance was achieved, but
+other matching methods should be tried). We can plot the standardized
+mean differences in a Love plot for a clean, visual display of balance
+across the sample:
 
 ``` r
 #Plot balance
@@ -147,12 +145,12 @@ To install a development version, which may have a bug fixed or a new
 feature, run the following:
 
 ``` r
-install.packages("remotes") #If not yet installed
+install.packages("pak") #If not yet installed
 
-remotes::install_github("ngreifer/MatchIt")
+pak::pkg_install("ngreifer/MatchIt")
 ```
 
 This will require R to compile C++ code, which might require additional
-software be installed on your computer. If you need the development
+software to be installed on your computer. If you need the development
 version but can’t compile the package, ask the maintainer for a binary
 version of the package.

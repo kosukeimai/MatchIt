@@ -37,7 +37,7 @@ place when \code{distance} corresponds to a propensity score (e.g., for
 caliper matching or to discard units for common support). If specified, the
 distance measure will not be used in matching.}
 
-\item{antiexact}{for which variables ant-exact matching should take place.
+\item{antiexact}{for which variables anti-exact matching should take place.
 Anti-exact matching is processed using \pkgfun{optmatch}{antiExactMatch}.}
 
 \item{discard}{a string containing a method for discarding units outside a

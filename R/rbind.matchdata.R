@@ -73,7 +73,7 @@ rbind.matchdata <- function(..., deparse.level = 1) {
 
   allargs <- list(...)
   allargs <- allargs[lengths(allargs) > 0L]
-  if (is.null(names(allargs))) {
+  if (is_null(names(allargs))) {
     md_list <- allargs
     allargs <- list()
   }
@@ -84,20 +84,31 @@ rbind.matchdata <- function(..., deparse.level = 1) {
   allargs$deparse.level <- deparse.level
 
   type <- intersect(c("matchdata", "getmatches"), unlist(lapply(md_list, class)))
-  if (length(type) == 0) .err("A `matchdata` or `getmatches` object must be supplied")
-  if (length(type) == 2) .err("Supplied objects must be all `matchdata` objects or all `getmatches` objects")
+
+  if (is_null(type)) {
+    .err("A `matchdata` or `getmatches` object must be supplied")
+  }
+
+  if (length(type) == 2L) {
+    .err("Supplied objects must be all `matchdata` objects or all `getmatches` objects")
+  }
 
   attrs <- c("distance", "weights", "subclass", "id")
   attr_list <- setNames(vector("list", length(attrs)), attrs)
-  key_attrs <- setNames(rep(NA_character_, length(attrs)), attrs)
+  key_attrs <- setNames(rep.int(NA_character_, length(attrs)), attrs)
 
   for (i in attrs) {
     attr_list[[i]] <- unlist(lapply(md_list, function(m) {
       a <- attr(m, i)
-      if (length(a) == 0) NA_character_ else a
+      if (is_null(a)) NA_character_ else a
     }))
-    if (all(is.na(attr_list[[i]]))) attr_list[[i]] <- NULL
-    else key_attrs[i] <- attr_list[[i]][which(!is.na(attr_list[[i]]))[1]]
+
+    if (all(is.na(attr_list[[i]]))) {
+      attr_list[[i]] <- NULL
+    }
+    else {
+      key_attrs[i] <- Find(Negate(is.na), attr_list[[i]])
+    }
   }
   attrs <- names(attr_list)
   key_attrs <- key_attrs[attrs]
@@ -106,8 +117,10 @@ rbind.matchdata <- function(..., deparse.level = 1) {
   other_col_list <- lapply(seq_along(md_list), function(d) {
     setdiff(names(md_list[[d]]), unlist(lapply(attr_list, `[`, d)))
   })
+
   for (d in seq_along(md_list)[-1]) {
-    if (length(other_col_list[[d]]) != length(other_col_list[[1]]) || !all(other_col_list[[d]] %in% other_col_list[[1]])) {
+    if (length(other_col_list[[d]]) != length(other_col_list[[1]]) ||
+        !all(other_col_list[[d]] %in% other_col_list[[1]])) {
       .err(sprintf("the %s inputs must come from the same dataset",
                  switch(type, "matchdata" = "`match.data()`", "`get_matches()`")))
     }
@@ -116,13 +129,21 @@ rbind.matchdata <- function(..., deparse.level = 1) {
   for (d in seq_along(md_list)) {
     for (i in attrs) {
       #Rename columns of each attribute the same across datasets
-      if (is.null(attr(md_list[[d]], i))) md_list[[d]] <- setNames(cbind(md_list[[d]], NA), c(names(md_list[[d]]), key_attrs[i]))
-      else names(md_list[[d]])[names(md_list[[d]]) == attr_list[[i]][d]] <- key_attrs[i]
+      if (is_null(attr(md_list[[d]], i))) {
+        md_list[[d]] <- setNames(cbind(md_list[[d]], NA), c(names(md_list[[d]]), key_attrs[i]))
+      }
+      else {
+        names(md_list[[d]])[names(md_list[[d]]) == attr_list[[i]][d]] <- key_attrs[i]
+      }
 
       #Give subclasses unique values across datasets
       if (i == "subclass") {
-        if (all(is.na(md_list[[d]][[key_attrs[i]]]))) md_list[[d]][[key_attrs[i]]] <- factor(md_list[[d]][[key_attrs[i]]], levels = NA)
-        else levels(md_list[[d]][[key_attrs[i]]]) <- paste(d, levels(md_list[[d]][[key_attrs[i]]]), sep = "_")
+        if (all(is.na(md_list[[d]][[key_attrs[i]]]))) {
+          md_list[[d]][[key_attrs[i]]] <- factor(md_list[[d]][[key_attrs[i]]], levels = NA)
+        }
+        else {
+          levels(md_list[[d]][[key_attrs[i]]]) <- paste(d, levels(md_list[[d]][[key_attrs[i]]]), sep = "_")
+        }
       }
     }
 
@@ -130,7 +151,8 @@ rbind.matchdata <- function(..., deparse.level = 1) {
     if (d > 1) {
       md_list[[d]] <- md_list[[d]][names(md_list[[1]])]
     }
-    class(md_list[[d]]) <- class(md_list[[d]])[class(md_list[[d]]) != type]
+
+    class(md_list[[d]]) <- setdiff(class(md_list[[d]]), type)
   }
 
   out <- do.call("rbind", c(md_list, allargs))
