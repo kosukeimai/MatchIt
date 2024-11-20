@@ -150,7 +150,6 @@ std::vector<int> find_control_vec(const int& t_id,
   IntegerVector mm_rowi;
   std::vector<int> possible_starts;
 
-
   if (r > 1) {
     mm_rowi = na_omit(mm_rowi_);
     mm_rowi = mm_rowi[as<IntegerVector>(treat[mm_rowi]) == gi];
@@ -193,6 +192,10 @@ std::vector<int> find_control_vec(const int& t_id,
                           std::abs(distance[t_id] - distance[ind_d_ord[iir]]));
     }
   }
+
+  // if (r == 5) {
+  //   Rcout << "t: " << t_id << " ii: " << ii << " iil: " << iil << " iir: " << iir << "\n";
+  // }
 
   int min_ii = first_control[gi];
   int max_ii = last_control[gi];

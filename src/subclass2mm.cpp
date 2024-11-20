@@ -106,20 +106,80 @@ IntegerVector mm2subclassC(const IntegerMatrix& mm,
 
   R_xlen_t r = mm.nrow();
   R_xlen_t ki = 0;
+  R_xlen_t ri;
+
+  IntegerVector s(r);
+  std::vector<std::string> levs;
+  levs.reserve(r);
 
   for (R_xlen_t i : which(!is_na(mm))) {
+    ri = i % r; //row
+
     if (i / r == 0) {
-      //If first entry in row, increment ki and assign subclass of treated
       ki++;
-      subclass[ind1[i % r]] = ki;
+
+      s[ri] = ki;
+      subclass[ind1[ri]] = ki;
+
+      levs.push_back(std::to_string(ki));
     }
 
-    subclass[mm[i] - 1] = ki;
+    subclass[mm[i] - 1] = s[ri];
   }
 
-  CharacterVector levs(ki);
-  for (R_xlen_t j = 0; j < ki; j++){
-    levs[j] = std::to_string(j + 1);
+  subclass.attr("class") = "factor";
+  subclass.attr("levels") = levs;
+
+  return subclass;
+}
+
+// [[Rcpp::export]]
+IntegerVector mm2subclassC2(const IntegerMatrix& mm,
+                            const IntegerVector& treat,
+                            const Nullable<int>& focal = R_NilValue) {
+
+  CharacterVector lab = treat.names();
+
+  R_xlen_t n1 = treat.size();
+
+  IntegerVector subclass(n1);
+  subclass.fill(NA_INTEGER);
+  subclass.names() = lab;
+
+  IntegerVector ind1;
+  if (focal.isNotNull()) {
+    ind1 = which(treat == as<int>(focal));
+  }
+  else {
+    ind1 = match(as<CharacterVector>(rownames(mm)), lab) - 1;
+  }
+
+  R_xlen_t r = mm.nrow();
+  R_xlen_t ki = 0;
+  R_xlen_t ri;
+
+  IntegerVector s(r);
+  std::vector<std::string> levs;
+  levs.reserve(r);
+
+  IntegerVector mmcol = mm.column(0);
+
+  for (R_xlen_t i : which(!is_na(mmcol))) {
+    ki++;
+
+    s[i] = ki;
+    subclass[ind1[i]] = ki;
+
+    levs.push_back(std::to_string(ki));
+
+    subclass[mm(i, 0) - 1] = s[i];
+  }
+
+  for (int c = 1; c < mm.ncol(); c++) {
+    mmcol = mm.column(c);
+    for (R_xlen_t i : which(!is_na(mmcol))) {
+      subclass[mmcol(i) - 1] = s[i];
+    }
   }
 
   subclass.attr("class") = "factor";

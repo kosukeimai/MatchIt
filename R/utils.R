@@ -451,7 +451,14 @@ rep_with <- function(x, y) {
 
   m <- do.call(function(...) paste(..., sep = sep), list(...))
 
-  cat(paste(strwrap(m), collapse = "\n"))
+  if (endsWith(m, "\n")) {
+    m <- paste0(paste(strwrap(m), collapse = "\n"), "\n")
+  }
+  else {
+    m <- paste(strwrap(m), collapse = "\n")
+  }
+
+  cat(paste(m, collapse = "\n"))
 }
 
 #Functions for error handling; based on chk and rlang

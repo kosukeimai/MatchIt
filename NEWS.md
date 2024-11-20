@@ -6,6 +6,12 @@ output:
 `MatchIt` News and Updates
 ======
 
+# MatchIt (development version)
+
+* Fixed a bug when matching with a nonzero `ratio` where subclass membership was incorrectly calculated.
+
+* Fixed a bug with printing.
+
 # MatchIt 4.6.0
 
 Most improvements are related to performance. Some of these dramatically improve speeds for large datasets. Most come from improvements to `Rcpp` code.

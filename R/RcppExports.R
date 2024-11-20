@@ -53,6 +53,10 @@ mm2subclassC <- function(mm, treat, focal = NULL) {
     .Call(`_MatchIt_mm2subclassC`, mm, treat, focal)
 }
 
+mm2subclassC2 <- function(mm, treat, focal = NULL) {
+    .Call(`_MatchIt_mm2subclassC2`, mm, treat, focal)
+}
+
 subclass_scootC <- function(subclass_, treat_, x_, min_n) {
     .Call(`_MatchIt_subclass_scootC`, subclass_, treat_, x_, min_n)
 }

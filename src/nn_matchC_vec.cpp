@@ -161,15 +161,19 @@ IntegerMatrix nn_matchC_vec(const IntegerVector& treat_,
   Progress p(prog_length, disl_prog, pb);
 
   R_xlen_t c;
-  int r, t_id_t_i, t_id_i;
+  int r, t_id_i;
   IntegerVector ck_;
   std::vector<int> k(max_ratio);
 
   int counter = 0;
 
   if (use_reuse_max) {
+    IntegerVector ord_r(nf);
+
     for (r = 1; r <= max_ratio; r++) {
-      for (auto it = ord.begin(); it != ord.end() && max(as<IntegerVector>(n_eligible[g_c])) > 0; ++it) {
+      ord_r = ord[as<IntegerVector>(ratio[ord - 1]) >= r];
+
+      for (int t_id_t_i : ord_r - 1) {
         // i: generic looping index
         // t_id_t_i; index of treated unit to match among treated units
         // t_id_i: index of treated unit to match among all units
@@ -179,12 +183,7 @@ IntegerMatrix nn_matchC_vec(const IntegerVector& treat_,
           Rcpp::checkUserInterrupt();
         }
 
-        t_id_t_i = *it - 1;
         t_id_i = ind_focal[t_id_t_i];
-
-        if (r > times_matched_allowed[t_id_i]) {
-          continue;
-        }
 
         p.increment();
 
@@ -267,7 +266,7 @@ IntegerMatrix nn_matchC_vec(const IntegerVector& treat_,
     }
   }
   else {
-    for (auto it = ord.begin(); it != ord.end(); ++it) {
+    for (int t_id_t_i : ord - 1) {
       // i: generic looping index
       // t_id_t_i; index of treated unit to match among treated units
       // t_id_i: index of treated unit to match among all units
@@ -277,7 +276,6 @@ IntegerMatrix nn_matchC_vec(const IntegerVector& treat_,
         Rcpp::checkUserInterrupt();
       }
 
-      t_id_t_i = *it - 1;
       t_id_i = ind_focal[t_id_t_i];
 
       p.increment();
