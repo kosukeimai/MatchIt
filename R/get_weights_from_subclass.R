@@ -1,6 +1,6 @@
-get_weights_from_subclass <- function(psclass, treat, estimand = "ATT") {
+get_weights_from_subclass <- function(subclass, treat, estimand = "ATT") {
 
-  NAsub <- is.na(psclass)
+  NAsub <- is.na(subclass)
 
   i1 <- which(treat == 1 & !NAsub)
   i0 <- which(treat == 0 & !NAsub)
@@ -18,34 +18,34 @@ get_weights_from_subclass <- function(psclass, treat, estimand = "ATT") {
 
   weights <- rep_with(0.0, treat)
 
-  if (!is.factor(psclass)) {
-    psclass <- factor(psclass, nmax = min(length(i1), length(i0)))
+  if (!is.factor(subclass)) {
+    subclass <- factor(subclass, nmax = min(length(i1), length(i0)))
   }
 
-  treated_by_sub <- tabulate(psclass[i1], nlevels(psclass))
-  control_by_sub <- tabulate(psclass[i0], nlevels(psclass))
+  treated_by_sub <- tabulate(subclass[i1], nlevels(subclass))
+  control_by_sub <- tabulate(subclass[i0], nlevels(subclass))
 
-  psclass <- unclass(psclass)
+  subclass <- unclass(subclass)
 
   if (estimand == "ATT") {
     weights[i1] <- 1.0
-    weights[i0] <- (treated_by_sub/control_by_sub)[psclass[i0]]
+    weights[i0] <- (treated_by_sub/control_by_sub)[subclass[i0]]
   }
   else if (estimand == "ATC") {
-    weights[i1] <- (control_by_sub/treated_by_sub)[psclass[i1]]
+    weights[i1] <- (control_by_sub/treated_by_sub)[subclass[i1]]
     weights[i0] <- 1.0
   }
   else if (estimand == "ATE") {
-    weights[i1] <- 1.0 + (control_by_sub/treated_by_sub)[psclass[i1]]
-    weights[i0] <- 1.0 + (treated_by_sub/control_by_sub)[psclass[i0]]
+    weights[i1] <- 1.0 + (control_by_sub/treated_by_sub)[subclass[i1]]
+    weights[i0] <- 1.0 + (treated_by_sub/control_by_sub)[subclass[i0]]
   }
 
   weights
 }
 
-# get_weights_from_subclass2 <- function(psclass, treat, estimand = "ATT") {
+# get_weights_from_subclass2 <- function(subclass, treat, estimand = "ATT") {
 #
-#   weights <- weights_subclassC(psclass, treat,
+#   weights <- weights_subclassC(subclass, treat,
 #                                switch(estimand, "ATT" = 1, "ATC" = 0, NULL))
 #
 #   if (sum(weights) == 0)

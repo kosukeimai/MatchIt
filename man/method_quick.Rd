@@ -48,7 +48,7 @@ re-estimate the propensity score in the remaining sample prior to matching.}
 \item{s.weights}{the variable containing sampling weights to be incorporated
 into propensity score models and balance statistics.}
 
-\item{caliper}{the width of the caliper used for caliper matching. A caliper can only be placed on the propensity score.}
+\item{caliper}{the width of the caliper used for caliper matching. A caliper can only be placed on the propensity score and cannot be negative.}
 
 \item{std.caliper}{\code{logical}; when a caliper is specified, whether it
 is in standard deviation units (\code{TRUE}) or raw units (\code{FALSE}).}

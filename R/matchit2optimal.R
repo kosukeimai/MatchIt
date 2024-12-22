@@ -251,7 +251,7 @@ matchit2optimal <- function(treat, formula, data, distance, discarded,
   .cat_verbose("Optimal matching...\n", verbose = verbose)
 
   args <- c("tol", "solver")
-  A <- setNames(lapply(args, ...get, ...), args)
+  A <- ...mget(args)
   A[lengths(A) == 0L] <- NULL
 
   #Set max problem size to Inf and return to original value after match
@@ -359,7 +359,9 @@ matchit2optimal <- function(treat, formula, data, distance, discarded,
   }
 
   #Transpose distance mat as needed
-  if (focal == 0) mo <- t(mo)
+  if (focal == 0) {
+    mo <- t(mo)
+  }
 
   #Remove discarded units from distance mat
   mo <- mo[!discarded[treat == focal], !discarded[treat != focal], drop = FALSE]

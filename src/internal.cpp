@@ -90,7 +90,12 @@ bool caliper_dist_okay(const bool& use_caliper_dist,
     return true;
   }
 
-  return std::abs(distance[i] - distance[j]) <= caliper_dist;
+  if (caliper_dist >= 0) {
+    return std::abs(distance[i] - distance[j]) <= caliper_dist;
+  }
+  else {
+    return std::abs(distance[i] - distance[j]) > -caliper_dist;
+  }
 }
 
 // [[Rcpp::interfaces(cpp)]]
@@ -163,8 +168,6 @@ std::vector<int> find_control_vec(const int& t_id,
     possible_starts.reserve(2);
   }
 
-  possible_starts.push_back(ii);
-
   if (prev_start >= 0) {
     possible_starts.push_back(match_d_ord[prev_start]);
   }
@@ -172,12 +175,14 @@ std::vector<int> find_control_vec(const int& t_id,
   int iil, iir;
   double min_dist;
 
-  if (possible_starts.size() == 1) {
+  if (possible_starts.empty()) {
     iil = ii;
     iir = ii;
     min_dist = 0;
   }
   else {
+    possible_starts.push_back(ii);
+
     iil = *std::min_element(possible_starts.begin(), possible_starts.end());
     iir = *std::max_element(possible_starts.begin(), possible_starts.end());
 
@@ -192,10 +197,6 @@ std::vector<int> find_control_vec(const int& t_id,
                           std::abs(distance[t_id] - distance[ind_d_ord[iir]]));
     }
   }
-
-  // if (r == 5) {
-  //   Rcout << "t: " << t_id << " ii: " << ii << " iil: " << iil << " iir: " << iir << "\n";
-  // }
 
   int min_ii = first_control[gi];
   int max_ii = last_control[gi];
@@ -263,6 +264,23 @@ std::vector<int> find_control_vec(const int& t_id,
 
     dist_c = std::abs(di - distance[iz]);
 
+    if (caliper_dist > 0) {
+      if (dist_c > caliper_dist) {
+        if (z == -1) {
+          l_stop = true;
+        }
+        else {
+          r_stop = true;
+        }
+        continue;
+      }
+    }
+    else {
+      if (dist_c <= -caliper_dist) {
+        continue;
+      }
+    }
+
     //If current dist is worse than ratio dists, continue
     if (potential_matches_id.size() >= ratio) {
       num_closer_than_dist_c = 0;
@@ -284,16 +302,6 @@ std::vector<int> find_control_vec(const int& t_id,
         }
         continue;
       }
-    }
-
-    if (dist_c > caliper_dist) {
-      if (z == -1) {
-        l_stop = true;
-      }
-      else {
-        r_stop = true;
-      }
-      continue;
     }
 
     if (dist_c < min_dist) {
@@ -376,27 +384,27 @@ std::vector<int> find_control_vec(const int& t_id,
 
 // [[Rcpp::interfaces(cpp)]]
 std::vector<int> find_control_mahcovs(const int& t_id,
-                                       const IntegerVector& ind_d_ord,
-                                       const IntegerVector& match_d_ord,
-                                       const NumericVector& match_var,
-                                       const double& match_var_caliper,
-                                       const IntegerVector& treat,
-                                       const NumericVector& distance,
-                                       const LogicalVector& eligible,
-                                       const int& gi,
-                                       const int& r,
-                                       const IntegerVector& mm_rowi,
-                                       const NumericMatrix& mah_covs,
-                                       const int& ncc,
-                                       const NumericMatrix& caliper_covs_mat,
-                                       const NumericVector& caliper_covs,
-                                       const bool& use_caliper_dist,
-                                       const double& caliper_dist,
-                                       const bool& use_exact,
-                                       const IntegerVector& exact,
-                                       const int& aenc,
-                                       const IntegerMatrix& antiexact_covs,
-                                       const int& ratio = 1) {
+                                      const IntegerVector& ind_d_ord,
+                                      const IntegerVector& match_d_ord,
+                                      const NumericVector& match_var,
+                                      const double& match_var_caliper,
+                                      const IntegerVector& treat,
+                                      const NumericVector& distance,
+                                      const LogicalVector& eligible,
+                                      const int& gi,
+                                      const int& r,
+                                      const IntegerVector& mm_rowi,
+                                      const NumericMatrix& mah_covs,
+                                      const int& ncc,
+                                      const NumericMatrix& caliper_covs_mat,
+                                      const NumericVector& caliper_covs,
+                                      const bool& use_caliper_dist,
+                                      const double& caliper_dist,
+                                      const bool& use_exact,
+                                      const IntegerVector& exact,
+                                      const int& aenc,
+                                      const IntegerMatrix& antiexact_covs,
+                                      const int& ratio = 1) {
 
   int ii = match_d_ord[t_id];
 
@@ -609,8 +617,15 @@ std::vector<int> find_control_mat(const int& t_id,
       }
     }
 
-    if (dist_c > caliper_dist) {
-      continue;
+    if (caliper_dist >= 0) {
+      if (dist_c > caliper_dist) {
+        continue;
+      }
+    }
+    else {
+      if (dist_c <= -caliper_dist) {
+        continue;
+      }
     }
 
     if (!std::isfinite(dist_c)) {

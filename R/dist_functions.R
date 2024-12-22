@@ -212,7 +212,7 @@ euclidean_dist <- function(formula = NULL,
 transform_covariates <- function(formula = NULL, data = NULL, method = "mahalanobis",
                                  s.weights = NULL, var = NULL, treat = NULL,
                                  discarded = NULL) {
-  X <- get.covs.matrix.for.dist(formula, data)
+  X <- get_covs_matrix.for.dist(formula, data)
 
   X <- .check_X(X)
   treat <- check_treat(treat, X)
@@ -347,7 +347,7 @@ eucdist_internal <- function(X, treat = NULL) {
 
     dimnames(d) <- list(rownames(X), rownames(X))
   }
-  else {
+  else if (!isTRUE(attr(treat, "type") == "multi")) {
     treat_l <- as.logical(treat)
 
     d <- {
@@ -357,13 +357,16 @@ eucdist_internal <- function(X, treat = NULL) {
 
     dimnames(d) <- list(rownames(X)[treat_l], rownames(X)[!treat_l])
   }
+  else {
+    stop("`eucdist_internal()` cannot use a multi-category treat.")
+  }
 
   d
 }
 
 #Get covariates (RHS) vars from formula; factor variable contrasts divided by sqrt(2)
 #to ensure same result as when non-factor binary variable supplied (see optmatch:::contr.match_on)
-get.covs.matrix.for.dist <- function(formula = NULL, data = NULL) {
+get_covs_matrix.for.dist <- function(formula = NULL, data = NULL) {
 
   if (is_null(formula)) {
     if (is_null(colnames(data))) {

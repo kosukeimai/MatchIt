@@ -145,8 +145,7 @@ estimated or supplied as a vector and \code{"data"} otherwise.}
 use in matching. Should be a numeric vector with each value named according
 to the variable to which the caliper applies. To apply to the distance
 measure, the value should be unnamed. See the individual methods pages for
-information on whether and how this argument is used. The default is
-\code{NULL} for no caliper.}
+information on whether and how this argument is used. Positive values require the distance between paired units to be no larger than the supplied caliper; negative values require the distance between paired units to be larger than the absolute value value of the supplied caliper. The default is \code{NULL} for no caliper.}
 
 \item{std.caliper}{\code{logical}; when a caliper is specified, whether the
 the caliper is in standard deviation units (\code{TRUE}) or raw units

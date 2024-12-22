@@ -9,13 +9,12 @@
 #' Rather than forming pairs, cardinality matching selects the largest subset
 #' of units that satisfies user-supplied balance constraints on mean
 #' differences. One of several available optimization programs can be used to
-#' solve the mixed integer program. The default is the GLPK library as
-#' implemented in the *Rglpk* package, but performance can be dramatically
-#' improved using the HiGHS and the *highs* package, which are free, or Gurobi and the *gurobi* package, for which there is a
+#' solve the mixed integer program. The default is the HiGHS library as
+#' implemented in the *highs* package, both of which are free, but performance can be
+#' improved using Gurobi and the *gurobi* package, for which there is a
 #' free academic license.
 #'
-#' This page details the allowable arguments with `method =
-#' "cardinality"`. See [matchit()] for an explanation of what each argument
+#' This page details the allowable arguments with `method = "cardinality"`. See [matchit()] for an explanation of what each argument
 #' means in a general context and how it can be specified.
 #'
 #' Below is how `matchit()` is used for cardinality matching:
@@ -31,7 +30,7 @@
 #'         verbose = FALSE,
 #'         tols = .05,
 #'         std.tols = TRUE,
-#'         solver = "glpk",
+#'         solver = "highs",
 #'         ...) }
 #'
 #' @param formula a two-sided [formula] object containing the treatment and
@@ -57,13 +56,13 @@
 #' process should be printed to the console.
 #' @param \dots additional arguments that control the matching specification:
 #' \describe{
-#' \item{`tols`}{ `numeric`; a vector of imbalance
+#' \item{`tols`}{`numeric`; a vector of imbalance
 #' tolerances for mean differences, one for each covariate in `formula`.
 #' If only one value is supplied, it is applied to all. See `std.tols`
 #' below. Default is `.05` for standardized mean differences of at most
 #' .05 for all covariates between the treatment groups in the matched sample.
 #' }
-#' \item{`std.tols`}{ `logical`; whether each entry in `tols`
+#' \item{`std.tols`}{`logical`; whether each entry in `tols`
 #' corresponds to a raw or standardized mean difference. If only one value is
 #' supplied, it is applied to all. Default is `TRUE` for standardized mean
 #' differences. The standardization factor is the pooled standard deviation
@@ -77,7 +76,7 @@
 #' *Rglpk* package), SYMPHONY (implemented in the *Rsymphony*
 #' package), and Gurobi (implemented in the *gurobi* package),
 #' respectively. The differences between them are in speed and solving ability.
-#' GLPK (the default) and HiGHS are the easiest to install, but Gurobi is recommended as
+#' HiGHS (the default) and GLPK are the easiest to install, but Gurobi is recommended as
 #' it consistently outperforms other solvers and can find solutions even when
 #' others can't, and in less time. Gurobi is proprietary but can be used with a
 #' free trial or academic license. SYMPHONY may not produce reproducible
@@ -180,8 +179,7 @@
 #' to know exactly the cause of the failure and what measures should be taken
 #' to rectify it.
 #'
-#' A warning that says `"The optimizer failed to find an optimal solution
-#' in the time alotted. The returned solution may not be optimal."` usually
+#' A warning that says `"The optimizer failed to find an optimal solution in the time alotted. The returned solution may not be optimal."` usually
 #' means that an optimal solution may be possible to find with more time, in
 #' which case `time` should be increased or a faster solver should be
 #' used. Even with this warning, a potentially usable solution will be
@@ -270,7 +268,7 @@ matchit2cardinality <- function(treat, data, discarded, formula,
                                 replace = FALSE, mahvars = NULL, exact = NULL,
                                 estimand = "ATT", verbose = FALSE,
                                 tols = .05, std.tols = TRUE,
-                                solver = "highs", time = 1*60, ...) {
+                                solver = "highs", time = 2*60, ...) {
 
   .cat_verbose("Cardinality matching... \n", verbose = verbose)
 
@@ -293,9 +291,9 @@ matchit2cardinality <- function(treat, data, discarded, formula,
 
   lab <- names(treat)
 
-  weights <- rep_with(0, treat)
+  weights <- rep_with(0.0, treat)
 
-  X <- get.covs.matrix(formula, data = data)
+  X <- get_covs_matrix(formula, data = data)
 
   if (is_not_null(exact)) {
     ex <- exactify(model.frame(exact, data = data), nam = lab, sep = ", ", include_vars = TRUE)
@@ -381,7 +379,7 @@ matchit2cardinality <- function(treat, data, discarded, formula,
   opt.out <- setNames(vector("list", nlevels(ex)), levels(ex))
 
   for (e in levels(ex)[cc]) {
-    if (nlevels(ex) > 1) {
+    if (nlevels(ex) > 1L) {
       .cat_verbose(sprintf("Matching subgroup %s/%s: %s...\n",
                            match(e, levels(ex)[cc]), length(cc), e),
                    verbose = verbose)
@@ -427,7 +425,7 @@ matchit2cardinality <- function(treat, data, discarded, formula,
   }
 
   if (length(opt.out) == 1L) {
-    out <- out[[1]]
+    out <- out[[1L]]
   }
 
   res <- list(match.matrix = mm,
@@ -492,7 +490,7 @@ cardinality_matchit <- function(treat, X, estimand = "ATT", tols = .05, s.weight
     #Constraint matrix
     target.means <- apply(X, 2, wm, w = s.weights)
 
-    C <- matrix(0, nrow = nt * (1 + 2*ncol(X)), ncol = length(O))
+    C <- matrix(0, nrow = nt * (1 + 2 * ncol(X)), ncol = length(O))
     Crhs <- rep.int(0, nrow(C))
     Cdir <- rep.int("==", nrow(C))
 
@@ -502,14 +500,14 @@ cardinality_matchit <- function(treat, X, estimand = "ATT", tols = .05, s.weight
       C[i, n + i] <- -1
 
       #Cov means must be less than target.means+tols/2
-      r1 <- nt + (i - 1)*2*ncol(X) + 1:ncol(X)
-      C[r1, seq_len(n)] <- t((treat==tvals[i])*s.weights*X)
-      C[r1, n + i] <- -target.means-tols/2
+      r1 <- nt + (i - 1) * 2 * ncol(X) + seq_len(ncol(X))
+      C[r1, seq_len(n)] <- t((treat == tvals[i]) * s.weights * X)
+      C[r1, n + i] <- -target.means - tols / 2
       Cdir[r1] <- "<"
 
       #Cov means must be greater than target.means-tols/2
       r2 <- r1 + ncol(X)
-      C[r2, seq_len(n)] <- t((treat==tvals[i])*s.weights*X)
+      C[r2, seq_len(n)] <- t((treat == tvals[i]) * s.weights * X)
       C[r2, n + i] <- -target.means+tols/2
       Cdir[r2] <- ">"
     }
@@ -546,10 +544,10 @@ cardinality_matchit <- function(treat, X, estimand = "ATT", tols = .05, s.weight
     )
 
     #Constraint matrix
-    target.means <- apply(X[treat==focal,,drop=FALSE], 2, wm, w = s.weights[treat==focal])
+    target.means <- apply(X[treat == focal,,drop=FALSE], 2, wm, w = s.weights[treat == focal])
     #One row per constraint, one column per coef
 
-    C <- matrix(0, nrow = (nt - 1) * (1 + 2*ncol(X)), ncol = length(O))
+    C <- matrix(0, nrow = (nt - 1) * (1 + 2 * ncol(X)), ncol = length(O))
     Crhs <- rep.int(0, nrow(C))
     Cdir <- rep.int("==", nrow(C))
 
@@ -559,26 +557,26 @@ cardinality_matchit <- function(treat, X, estimand = "ATT", tols = .05, s.weight
       C[i, n0 + i] <- -1
 
       #Cov means must be less than target.means+tols
-      r1 <- nt - 1 + (i - 1)*2*ncol(X) + 1:ncol(X)
-      C[r1, seq_len(n0)] <- t((treat[nonf]==tvals_[i])*s.weights[nonf]*X[nonf,,drop = FALSE])
-      C[r1, n0 + i] <- -target.means-tols
+      r1 <- nt - 1 + (i - 1) * 2 * ncol(X) + seq_len(ncol(X))
+      C[r1, seq_len(n0)] <- t((treat[nonf] == tvals_[i]) * s.weights[nonf] * X[nonf,,drop = FALSE])
+      C[r1, n0 + i] <- -target.means - tols
       Cdir[r1] <- "<"
 
       #Cov means must be greater than target.means-tols
       r2 <- r1 + ncol(X)
-      C[r2, seq_len(n0)] <- t((treat[nonf]==tvals_[i])*s.weights[nonf]*X[nonf,,drop = FALSE])
-      C[r2, n0 + i] <- -target.means+tols
+      C[r2, seq_len(n0)] <- t((treat[nonf]==tvals_[i]) * s.weights[nonf] * X[nonf,,drop = FALSE])
+      C[r2, n0 + i] <- -target.means + tols
       Cdir[r2] <- ">"
     }
 
     #Coef types
     types <- c(rep.int("B", n0), #Matching weights
-               rep.int("C", nt - 1))  #Slack for num control matched
+               rep.int("C", nt - 1L))  #Slack for num control matched
 
     lower.bound <- c(rep.int(0, n0),
-                     rep.int(0, nt - 1))
+                     rep.int(0, nt - 1L))
     upper.bound <- c(rep.int(1, n0),
-                     rep.int(Inf, nt - 1))
+                     rep.int(Inf, nt - 1L))
   }
   else if (match_type == "cardinality") {
     #True cardinality matching: find largest balanced sample
@@ -591,41 +589,41 @@ cardinality_matchit <- function(treat, X, estimand = "ATT", tols = .05, s.weight
     )
 
     #Constraint matrix
-    t_combs <- combn(tvals, 2, simplify = FALSE)
+    t_combs <- combn(tvals, 2L, simplify = FALSE)
 
-    C <- matrix(0, nrow = nt + 2*ncol(X)*length(t_combs), ncol = length(O))
+    C <- matrix(0, nrow = nt + 2 * ncol(X) * length(t_combs), ncol = length(O))
     Crhs <- rep.int(0, nrow(C))
     Cdir <- rep.int("==", nrow(C))
 
     for (i in seq_len(nt)) {
       #Num in group i = ni
       C[i, seq_len(n)] <- s.weights * (treat == tvals[i])
-      C[i, n + 1] <- if (tvals[i] == focal) -1 else -ratio
+      C[i, n + 1L] <- if (tvals[i] == focal) -1 else -ratio
     }
 
     for (j in seq_along(t_combs)) {
       t_comb <- t_combs[[j]]
-      if (t_comb[2] == focal) t_comb <- rev(t_comb)
+      if (t_comb[2L] == focal) t_comb <- rev(t_comb)
 
-      r1 <- nt + (j - 1)*2*ncol(X) + 1:ncol(X)
-      C[r1, seq_len(n)] <- t(((treat==t_comb[1]) - (treat==t_comb[2])/ratio)*s.weights*X)
-      C[r1, n + 1] <- -tols
+      r1 <- nt + (j - 1) * 2 * ncol(X) + seq_len(ncol(X))
+      C[r1, seq_len(n)] <- t(((treat == t_comb[1L]) - (treat == t_comb[2L]) / ratio) * s.weights * X)
+      C[r1, n + 1L] <- -tols
       Cdir[r1] <- "<"
 
       r2 <- r1 + ncol(X)
-      C[r2, seq_len(n)] <- t(((treat==t_comb[1]) - (treat==t_comb[2])/ratio)*s.weights*X)
-      C[r2, n + 1] <- tols
+      C[r2, seq_len(n)] <- t(((treat == t_comb[1L]) - (treat == t_comb[2L])/ratio) * s.weights * X)
+      C[r2, n + 1L] <- tols
       Cdir[r2] <- ">"
     }
 
     #Coef types
     types <- c(rep.int("B", n), #Matching weights
-               rep.int("C", 1)) #Slack coef for treated group size (n1)
+               rep.int("C", 1L)) #Slack coef for treated group size (n1)
 
     lower.bound <- c(rep.int(0, n),
-                     rep.int(0, 1))
+                     rep.int(0, 1L))
     upper.bound <- c(rep.int(1, n),
-                     rep.int(min(tabulateC(treat)), 1))
+                     rep.int(min(tabulateC(treat)), 1L))
   }
 
   weights <- NULL
@@ -653,13 +651,13 @@ cardinality_matchit <- function(treat, X, estimand = "ATT", tols = .05, s.weight
   #Make sure sum of weights in both groups is the same (important for exact matching)
   if (match_type == "profile_att" && (is.na(ratio) || ratio != 1)) {
     for (t in setdiff(tvals, focal)) {
-      weights[treat == t] <- weights[treat == t]*sum(weights[treat == focal])/sum(weights[treat == t])
+      weights[treat == t] <- weights[treat == t] * sum(weights[treat == focal]) / sum(weights[treat == t])
     }
   }
   else {
     smallest.group <- tvals[which.min(vapply(tvals, function(t) sum(treat == t), numeric(1L)))]
     for (t in setdiff(tvals, smallest.group)) {
-      weights[treat == t] <- weights[treat == t]*sum(weights[treat == smallest.group])/sum(weights[treat == t])
+      weights[treat == t] <- weights[treat == t] * sum(weights[treat == smallest.group]) / sum(weights[treat == t])
     }
   }
 
@@ -710,7 +708,7 @@ dispatch_optimizer <- function(solver = "highs", obj, mat, dir, rhs, types, max 
     opt.out <- Rglpk::Rglpk_solve_LP(obj = obj, mat = mat, dir = dir, rhs = rhs, max = max,
                                      types = types,
                                      # bounds = list(lower = lb, upper = ub), #Spurious warning when using bounds
-                                     control = list(tm_limit = time*1000, verbose = verbose))
+                                     control = list(tm_limit = time * 1000, verbose = verbose))
   }
   else if (solver == "symphony") {
     dir[dir == "<"] <- "<="

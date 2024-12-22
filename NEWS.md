@@ -6,11 +6,15 @@ output:
 `MatchIt` News and Updates
 ======
 
-# MatchIt (development version)
+# MatchIt 4.6.1
 
-* Fixed a bug when matching with a nonzero `ratio` where subclass membership was incorrectly calculated.
+* For nearest neighbor matching, optimal full matching, and genetic matching, calipers can now be negative, which forces paired units to be further away from each other on the given variables.
+
+* Fixed a bug when matching with a nonzero `ratio` where subclass membership was incorrectly calculated. Thanks to Simon Loewe (@simon-lowe) for originally pointing it out. (#207, #208)
 
 * Fixed a bug with printing.
+
+* Documentation fixes.
 
 # MatchIt 4.6.0
 

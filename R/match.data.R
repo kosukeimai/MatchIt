@@ -297,7 +297,7 @@ get_matches <- function(object, distance = "distance", weights = "weights", subc
   }
 
   mm <- object$match.matrix
-  mm <- mm[!is.na(mm[,1]),,drop = FALSE]
+  mm <- mm[!is.na(mm[,1L]),,drop = FALSE]
   tmm <- t(mm)
 
   num.matches <- rowSums(!is.na(mm))

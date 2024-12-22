@@ -82,7 +82,7 @@
 #' @param s.weights the variable containing sampling weights to be incorporated
 #' into propensity score models and balance statistics.
 #' @param caliper the width(s) of the caliper(s) used for caliper matching.
-#' Calipers are processed by \pkgfun{optmatch}{caliper}. See Notes and Examples.
+#' Calipers are processed by \pkgfun{optmatch}{caliper}. Positive and negative calipers are allowed. See Notes and Examples.
 #' @param std.caliper `logical`; when calipers are specified, whether they
 #' are in standard deviation units (`TRUE`) or raw units (`FALSE`).
 #' @param verbose `logical`; whether information about the matching
@@ -233,7 +233,7 @@ matchit2full <- function(treat, formula, data, distance, discarded,
   .cat_verbose("Full matching... \n", verbose = verbose)
 
   fm.args <- c("omit.fraction", "mean.controls", "tol", "solver")
-  A <- setNames(lapply(fm.args, ...get, ...), fm.args)
+  A <- ...mget(fm.args)
   A[lengths(A) == 0L] <- NULL
 
   #Set max problem size to Inf and return to original value after match
@@ -300,7 +300,9 @@ matchit2full <- function(treat, formula, data, distance, discarded,
   }
 
   #Transpose distance mat as needed
-  if (focal == 0) mo <- t(mo)
+  if (focal == 0) {
+    mo <- t(mo)
+  }
 
   #Remove discarded units from distance mat
   mo <- mo[!discarded[treat == focal], !discarded[treat != focal], drop = FALSE]
@@ -325,7 +327,7 @@ matchit2full <- function(treat, formula, data, distance, discarded,
 
     if (any(names(caliper) != "")) {
       cov.cals <- setdiff(names(caliper), "")
-      calcovs <- get.covs.matrix(reformulate(cov.cals, intercept = FALSE), data = data)
+      calcovs <- get_covs_matrix(reformulate(cov.cals, intercept = FALSE), data = data)
     }
 
     for (i in seq_along(caliper)) {
@@ -339,7 +341,8 @@ matchit2full <- function(treat, formula, data, distance, discarded,
         mo_cal <- optmatch::match_on(setNames(distance[!discarded], names(treat_)), z = treat_)
       }
 
-      mo <- mo + optmatch::caliper(mo_cal, caliper[i])
+      mo <- mo + optmatch::caliper(mo_cal, abs(caliper[i]),
+                                   compare = if (caliper[i] >= 0) `<=` else `>=`)
     }
 
     rm(mo_cal)

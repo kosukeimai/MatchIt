@@ -40,7 +40,7 @@ create_info <- function(method, fn1, link, discard, replace, ratio,
 }
 
 #Function to turn a method name into a phrase describing the method
-info.to.method <- function(info) {
+info_to_method <- function(info) {
 
   out.list <- setNames(vector("list", 3), c("kto1", "type", "replace"))
 
@@ -74,7 +74,7 @@ info.to.method <- function(info) {
   firstup(do.call("paste", unname(out.list)))
 }
 
-info.to.distance <- function(info) {
+info_to_distance <- function(info) {
   distance <- info$distance
   link <- info$link
   if (is_not_null(link) && startsWith(as.character(link), "linear")) {
@@ -173,7 +173,7 @@ exactify <- function(X, nam = NULL, sep = "|", include_vars = FALSE, justify = "
 }
 
 #Get covariates (RHS) vars from formula
-get.covs.matrix <- function(formula = NULL, data = NULL) {
+get_covs_matrix <- function(formula = NULL, data = NULL) {
 
   if (is_null(formula)) {
     fnames <- colnames(data)
@@ -198,15 +198,15 @@ get.covs.matrix <- function(formula = NULL, data = NULL) {
                     contrasts.arg = lapply(Filter(is.factor, mf),
                                            contrasts, contrasts = FALSE))
 
-  assign <- attr(X, "assign")[-1]
-  X <- X[,-1, drop = FALSE]
+  assign <- attr(X, "assign")[-1L]
+  X <- X[,-1L, drop = FALSE]
 
   attr(X, "assign") <- assign
 
   X
 }
 
-#Extracts and names the "assign" attribute from get.covs.matrix()
+#Extracts and names the "assign" attribute from get_covs_matrix()
 get_assign <- function(mat) {
   if (is_null(attr(mat, "assign"))) {
     return(NULL)
@@ -408,7 +408,7 @@ matchit_try <- function(expr, from = NULL, dont_warn_if = NULL) {
       expr
     },
     warning = function(w) {
-      if (is_null(dont_warn_if) || !grepl(dont_warn_if, conditionMessage(w), fixed = TRUE)) {
+      if (is_null(dont_warn_if) || !any(vapply(dont_warn_if, grepl, logical(1L), conditionMessage(w), fixed = TRUE))) {
         if (is_null(from)) .wrn(conditionMessage(w), tidy = FALSE)
         else .wrn(sprintf("(from %s) %s", from, conditionMessage(w)), tidy = FALSE)
       }

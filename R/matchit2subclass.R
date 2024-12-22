@@ -173,7 +173,7 @@ matchit2subclass <- function(treat, distance, discarded,
     .err("when specifying `subclass` as a vector of quantiles, all values must be between 0 and 1")
   }
 
-  if (is_not_null(...get("sub.by", ...))) {
+  if (is_not_null(...get("sub.by"))) {
     .err("`sub.by` is defunct and has been replaced with `estimand`")
   }
 

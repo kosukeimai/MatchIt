@@ -427,15 +427,34 @@ diff1 <- function(x) {
   x
 }
 
-#Extract variables from ..., similar to ...elt(), by name without evaluating list(...)
-...get <- function(x, ...) {
-  m <- match(x, ...names(), 0L)
+#A faster na.omit for vectors
+na.rem <- function(x) {
+  x[!is.na(x)]
+}
 
-  if (m == 0L) {
-    return(NULL)
+#Extract variables from ..., similar to ...elt() or get0(), by name without evaluating list(...)
+...get <- function(x, ifnotfound = NULL) {
+  eval(quote(if (!anyNA(m1 <- match(x, ...names())) && is_not_null(m2 <- ...elt(m1))) m2 else ifnotfound),
+       pairlist(x = x[1L], ifnotfound = ifnotfound),
+       parent.frame(1L))
+}
+
+#Extract multiple variables from ..., similar to mget(), by name without evaluating list(...)
+...mget <- function(x) {
+
+  empty_env <- new.env()
+
+  x <- setdiff(x, "...")
+
+  out <- setNames(vector("list", length(x)), x)
+
+  for (i in seq_along(x)) {
+    out[[i]] <- eval(quote(...get(xi, ifnotfound)),
+                     pairlist(xi = x[i], ifnotfound = empty_env),
+                     parent.frame(1L))
   }
 
-  ...elt(m)
+  out[!vapply(out, identical, logical(1L), empty_env)]
 }
 
 #Helper function to fill named vectors with x and given names of y
@@ -462,24 +481,30 @@ rep_with <- function(x, y) {
 }
 
 #Functions for error handling; based on chk and rlang
-pkg_caller_call <- function(start = 1) {
+pkg_caller_call <- function() {
   pn <- utils::packageName()
   package.funs <- c(getNamespaceExports(pn),
                     .getNamespaceInfo(asNamespace(pn), "S3methods")[, 3])
-  k <- start #skip checking pkg_caller_call()
-  e_max <- start
-  while (is_not_null(e <- rlang::caller_call(k))) {
-    if (is_not_null(n <- rlang::call_name(e)) &&
-        n %in% package.funs) e_max <- k
-    k <- k + 1
+
+  for (i in seq_len(sys.nframe())) {
+    e <- sys.call(i)
+
+    if (is_null(n <- rlang::call_name(e))) {
+      next
+    }
+
+    if (n %in% package.funs) {
+      return(e)
+    }
   }
-  rlang::caller_call(e_max)
+
+  NULL
 }
 
 .err <- function(..., n = NULL, tidy = TRUE) {
   m <- chk::message_chk(..., n = n, tidy = tidy)
   rlang::abort(paste(strwrap(m), collapse = "\n"),
-               call = pkg_caller_call(start = 2))
+               call = pkg_caller_call())
 }
 .wrn <- function(..., n = NULL, tidy = TRUE, immediate = TRUE) {
   if (immediate && isTRUE(all.equal(0, getOption("warn")))) {

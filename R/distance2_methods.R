@@ -299,11 +299,20 @@ distance2glm <- function(formula, data = NULL, link = "logit", ...) {
   linear <- is_not_null(link) && startsWith(as.character(link), "linear")
   if (linear) link <- sub("linear.", "", as.character(link), fixed = TRUE)
 
-  args <- c(names(formals(glm)), names(formals(glm.control)))
-  A <- setNames(lapply(args, ...get, ...), args)
+  args <- unique(c(names(formals(glm)), names(formals(glm.control))))
+  A <- ...mget(args)
   A[lengths(A) == 0L] <- NULL
 
-  res <- do.call("glm", c(list(formula = formula, data = data, family = quasibinomial(link = link)), A))
+  family <- {
+    if (is_null(A[["weights"]])) binomial(link = link)
+    else quasibinomial(link = link)
+  }
+
+  A[["data"]] <- data
+  A[["formula"]] <- formula
+  A[["family"]] <- family
+
+  res <- do.call("glm", A)
 
   pred <- predict(res, type = if (linear) "link" else "response")
 
@@ -334,8 +343,8 @@ distance2gam <- function(formula, data = NULL, link = "logit", ...) {
 distance2rpart <- function(formula, data = NULL, link = NULL, ...) {
   rlang::check_installed("rpart")
 
-  args <- c(names(formals(rpart::rpart)), names(formals(rpart::rpart.control)))
-  A <- setNames(lapply(args, ...get, ...), args)
+  args <- unique(c(names(formals(rpart::rpart)), names(formals(rpart::rpart.control))))
+  A <- ...mget(args)
   A[lengths(A) == 0L] <- NULL
 
   A$formula <- formula
@@ -354,7 +363,7 @@ distance2nnet <- function(formula, data = NULL, link = NULL, ...) {
   weights <- A$weights
   A$weights <- NULL
 
-  res <- do.call(nnet::nnet, c(list(formula, data, weights = weights, entropy = TRUE), A), quote = TRUE)
+  res <- do.call(nnet::nnet, c(list(formula, data = data, weights = weights, entropy = TRUE), A), quote = TRUE)
   list(model = res, distance = drop(fitted(res)))
 }
 
@@ -390,8 +399,11 @@ distance2cbps <- function(formula, data = NULL, link = NULL, ...) {
     A[["weights"]] <- NULL
   }
 
+  A[["formula"]] <- formula
+  A[["data"]] <- data
+
   capture.output({ #Keeps from printing message about treatment
-    res <- do.call(CBPS::CBPS, c(list(formula, data), A), quote = TRUE)
+    res <- do.call(CBPS::CBPS, A, quote = TRUE)
   })
 
   pred <- fitted(res)
@@ -406,8 +418,8 @@ distance2bart <- function(formula, data = NULL, link = NULL, ...) {
 
   linear <- is_not_null(link) && startsWith(as.character(link), "linear")
 
-  args <- c(names(formals(dbarts::bart2)), names(formals(dbarts::dbartsControl)))
-  A <- setNames(lapply(args, ...get, ...), args)
+  args <- unique(c(names(formals(dbarts::bart2)), names(formals(dbarts::dbartsControl))))
+  A <- ...mget(args)
   A[lengths(A) == 0L] <- NULL
 
   A$formula <- formula
@@ -466,7 +478,7 @@ distance2bart <- function(formula, data = NULL, link = NULL, ...) {
 distance2randomforest <- function(formula, data = NULL, link = NULL, ...) {
   rlang::check_installed("randomForest")
   newdata <- get_all_vars(formula, data)
-  treatvar <- as.character(formula[[2]])
+  treatvar <- as.character(formula[[2L]])
   newdata[[treatvar]] <- factor(newdata[[treatvar]], levels = c("0", "1"))
   res <- randomForest::randomForest(formula, data = newdata, ...)
 
@@ -480,13 +492,13 @@ distance2elasticnet <- function(formula, data = NULL, link = NULL, ...) {
   linear <- is_not_null(link) && startsWith(as.character(link), "linear")
   if (linear) link <- sub("linear.", "", as.character(link), fixed = TRUE)
 
-  s <- ...get("s", ...)
+  s <- ...get("s")
   if (is_null(s)) {
     s <- "lambda.1se"
   }
 
-  args <- c(names(formals(glmnet::glmnet)), names(formals(glmnet::cv.glmnet)))
-  A <- setNames(lapply(args, ...get, ...), args)
+  args <- unique(c(names(formals(glmnet::glmnet)), names(formals(glmnet::cv.glmnet))))
+  A <- ...mget(args)
   A[lengths(A) == 0L] <- NULL
 
   if (is_null(link)) link <- "logit"
@@ -514,8 +526,8 @@ distance2elasticnet <- function(formula, data = NULL, link = NULL, ...) {
 }
 distance2lasso <- function(formula, data = NULL, link = NULL, ...) {
   if ("alpha" %in% ...names()) {
-    args <- c("s", names(formals(glmnet::glmnet)), names(formals(glmnet::cv.glmnet)))
-    A <- setNames(lapply(args, ...get, ...), args)
+    args <- unique(c("s", names(formals(glmnet::glmnet)), names(formals(glmnet::cv.glmnet))))
+    A <- ...mget(args)
     A[lengths(A) == 0L] <- NULL
 
     A$alpha <- 1
@@ -528,8 +540,8 @@ distance2lasso <- function(formula, data = NULL, link = NULL, ...) {
 }
 distance2ridge <- function(formula, data = NULL, link = NULL, ...) {
   if ("alpha" %in% ...names()) {
-    args <- c("s", names(formals(glmnet::glmnet)), names(formals(glmnet::cv.glmnet)))
-    A <- setNames(lapply(args, ...get, ...), args)
+    args <- unique(c("s", names(formals(glmnet::glmnet)), names(formals(glmnet::cv.glmnet))))
+    A <- ...mget(args)
     A[lengths(A) == 0L] <- NULL
 
     A$alpha <- 0
@@ -547,12 +559,10 @@ distance2gbm <- function(formula, data = NULL, link = NULL, ...) {
 
   linear <- is_not_null(link) && startsWith(as.character(link), "linear")
 
-  A <- list(...)
-
-  method <- ...get("method", ...)
+  method <- ...get("method")
 
   args <- names(formals(gbm::gbm))
-  A <- setNames(lapply(args, ...get, ...), args)
+  A <- ...mget(args)
   A[lengths(A) == 0L] <- NULL
 
   A$formula <- formula

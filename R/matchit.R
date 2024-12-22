@@ -112,8 +112,7 @@
 #' use in matching. Should be a numeric vector with each value named according
 #' to the variable to which the caliper applies. To apply to the distance
 #' measure, the value should be unnamed. See the individual methods pages for
-#' information on whether and how this argument is used. The default is
-#' `NULL` for no caliper.
+#' information on whether and how this argument is used. Positive values require the distance between paired units to be no larger than the supplied caliper; negative values require the distance between paired units to be larger than the absolute value value of the supplied caliper. The default is `NULL` for no caliper.
 #' @param std.caliper `logical`; when a caliper is specified, whether the
 #' the caliper is in standard deviation units (`TRUE`) or raw units
 #' (`FALSE`). Can either be of length 1, applying to all calipers, or of
@@ -597,7 +596,7 @@ matchit <- function(formula,
       else link
     }
 
-    dist.out <- do.call(fn1, distance.options, quote = TRUE)
+    dist.out <- do.call(fn1, distance.options)
 
     dist.model <- dist.out$model
     distance <- dist.out$distance
@@ -732,7 +731,7 @@ print.matchit <- function(x, ...) {
 
   cat("A `matchit` object\n")
 
-  cat(sprintf(" - method: %s\n", info.to.method(info)))
+  cat(sprintf(" - method: %s\n", info_to_method(info)))
 
   if (is_not_null(info$distance) || info$mahalanobis) {
     cat(" - distance: ")
@@ -760,7 +759,7 @@ print.matchit <- function(x, ...) {
 
       if (info$distance != "user") {
         cat(sprintf("             - estimated with %s\n",
-                    info.to.distance(info)))
+                    info_to_distance(info)))
         if (is_not_null(x[["s.weights"]])) {
           cat(sprintf("             - sampling weights %sincluded in estimation\n",
                       if (isTRUE(attr(x[["s.weights"]], "in_ps"))) "" else "not "))

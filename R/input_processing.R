@@ -164,16 +164,49 @@ check_treat <- function(treat = NULL, X = NULL) {
     .err("missing values are not allowed in the treatment")
   }
 
-  if (!has_n_unique(treat, 2L)) {
-    .err("the treatment must be a binary variable")
+  if (TRUE) {
+    if (!has_n_unique(treat, 2L)) {
+      .err("the treatment must be a binary variable")
+    }
+
+    treat <- binarize(treat) #make 0/1
+  }
+  else {
+    if (has_n_unique(treat, 2L)) {
+      treat <- {
+        if (is.logical(treat) || all(as.character(treat) %in% c("0", "1")))
+          factor(treat, levels = sort(unique(treat, nmax = 2)),
+                 labels = c("control", "treated"), ordered = FALSE)
+        else factor(treat, nmax = 2, ordered = FALSE)
+      }
+
+      # treat <- binarize(treat) #make 0/1
+
+      attr(treat, "type") <- "binary"
+      attr(treat, "treated") <- levels(treat)[2L]
+      attr(treat, "ordered") <- FALSE
+    }
+    else {
+      .err("the treatment must be a binary variable") #Remove to support multi
+
+      if (!chk::vld_character_or_factor(treat)) {
+        .err("the treatment must be a factor variable if it takes on more than 2 unique values")
+      }
+
+      treat <- droplevels(as.factor(treat))
+
+      attr(treat, "type") <- "multi"
+      # attr(treat, "treated") <- levels(treat)[which.min(tabulateC(treat))]
+      attr(treat, "ordered") <- is.ordered(treat)
+    }
   }
 
   if (is_not_null(X) && length(treat) != nrow(X)) {
     .err("the treatment and covariates must have the same number of units")
   }
 
-  treat <- binarize(treat) #make 0/1
   attr(treat, "checked") <- TRUE
+
   treat
 }
 
@@ -276,7 +309,7 @@ process.distance <- function(distance, method = NULL, treat) {
     }
   }
   else if (length(distance) != length(treat)) {
-      .err("`distance` must be the same length as the dataset if specified as a numeric vector")
+    .err("`distance` must be the same length as the dataset if specified as a numeric vector")
   }
 
   chk::chk_not_any_na(distance)
@@ -490,12 +523,16 @@ process.caliper <- function(caliper = NULL, method = NULL, data = NULL, covs = N
     }, numeric(1L))
   }
 
+  if (any(caliper < 0) && !method %in% c("nearest", "genetic", "full")) {
+    .err(sprintf("calipers cannot be negative with `method = %s`", add_quotes(method)))
+  }
+
   #Add cal.formula
   if (any(names(caliper) != "" & !cal.in.covs[names(caliper)] & !cal.in.mahcovs[names(caliper)])) {
     attr(caliper, "cal.formula") <- reformulate(names(caliper)[names(caliper) != "" & !cal.in.covs[names(caliper)] & !cal.in.mahcovs[names(caliper)]])
   }
 
-  abs(caliper)
+  caliper
 }
 
 #Function to process replace argument
