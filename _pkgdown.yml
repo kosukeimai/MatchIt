@@ -14,7 +14,7 @@ reference:
   - plot.matchit
 - title: Extracting Matched Data
 - contents:
-  - match.data
+  - match_data
   - get_matches
   - rbind.matchdata
 - title: Datasets

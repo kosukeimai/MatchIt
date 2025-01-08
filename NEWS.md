@@ -12,6 +12,8 @@ output:
 
 * Fixed a bug when matching with a nonzero `ratio` where subclass membership was incorrectly calculated. Thanks to Simon Loewe (@simon-lowe) for originally pointing it out. (#207, #208)
 
+* `match.data()` has been renamed to `match_data()`, but `match.data()` will remain as an alias for backward compatibility.
+
 * Fixed a bug with printing.
 
 * Documentation fixes.

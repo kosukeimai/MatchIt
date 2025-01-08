@@ -258,7 +258,7 @@
 #' If sampling weights are included through the
 #' `s.weights` argument, they will be included in the `matchit()`
 #' output object but not incorporated into the matching weights.
-#' [match.data()], which extracts the matched set from a `matchit` object,
+#' [match_data()], which extracts the matched set from a `matchit` object,
 #' combines the matching weights and sampling weights.
 #'
 #' @return When `method` is something other than `"subclass"`, a

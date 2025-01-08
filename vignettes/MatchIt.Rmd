@@ -190,15 +190,15 @@ How treatment effects are estimated depends on what form of matching was perform
 
 [^est]: In some cases, the coefficient on the treatment variable in the outcome model can be used as the effect estimate, but g-computation always yields a valid effect estimate regardless of the form of the outcome model and its use is the same regardless of the outcome model type or matching method (with some slight variations), so we always recommend performing g-computation after fitting the outcome model. G-computation is explained in detail in `vignette("estimating-effects")`.
 
-Because full matching was successful at balancing the covariates, we'll demonstrate here how to estimate a treatment effect after performing such an analysis. First, we'll extract the matched dataset from the `matchit` object using `match.data()`. This dataset only contains the matched units and adds columns for `distance`, `weights`, and `subclass` (described previously). `r if (use == "none") notice`
+Because full matching was successful at balancing the covariates, we'll demonstrate here how to estimate a treatment effect after performing such an analysis. First, we'll extract the matched dataset from the `matchit` object using `match_data()`. This dataset only contains the matched units and adds columns for `distance`, `weights`, and `subclass` (described previously). `r if (use == "none") notice`
 
 ```{r, eval = (use != "none")}
-m.data <- match.data(m.out2)
+m.data <- match_data(m.out2)
 
 head(m.data)
 ```
 
-We can then model the outcome in this dataset using the standard regression functions in R, like `lm()` or `glm()`, being sure to include the matching weights (stored in the `weights` variable of the `match.data()` output) in the estimation[^3]. Finally, we use `marginaleffects::avg_comparisons()` to perform g-computation to estimate the ATT. We recommend using cluster-robust standard errors for most analyses, with pair membership as the clustering variable; `avg_comparisons()` makes this straightforward.
+We can then model the outcome in this dataset using the standard regression functions in R, like `lm()` or `glm()`, being sure to include the matching weights (stored in the `weights` variable of the `match_data()` output) in the estimation[^3]. Finally, we use `marginaleffects::avg_comparisons()` to perform g-computation to estimate the ATT. We recommend using cluster-robust standard errors for most analyses, with pair membership as the clustering variable; `avg_comparisons()` makes this straightforward.
 
 [^3]: With 1:1 nearest neighbor matching without replacement, excluding the matching weights does not change the estimates. For all other forms of matching, they are required, so we recommend always including them for consistency.
 

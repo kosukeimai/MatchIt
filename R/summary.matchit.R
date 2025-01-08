@@ -724,7 +724,7 @@ print.summary.matchit.subclass <- function(x, digits = max(3, getOption("digits"
     return(X)
   }
 
-  #Attempt to extract data from matchit object; same as match.data()
+  #Attempt to extract data from matchit object; same as match_data()
   data.found <- FALSE
   for (i in 1:4) {
     if (i == 2L) {

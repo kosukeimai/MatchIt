@@ -358,7 +358,7 @@ units in that treatment group (i.e., to have an average of 1).
 If sampling weights are included through the
 \code{s.weights} argument, they will be included in the \code{matchit()}
 output object but not incorporated into the matching weights.
-\code{\link[=match.data]{match.data()}}, which extracts the matched set from a \code{matchit} object,
+\code{\link[=match_data]{match_data()}}, which extracts the matched set from a \code{matchit} object,
 combines the matching weights and sampling weights.
 }
 
