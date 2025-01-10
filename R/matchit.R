@@ -758,11 +758,11 @@ print.matchit <- function(x, ...) {
       }
 
       if (info$distance != "user") {
-        cat(sprintf("             - estimated with %s\n",
+        cat(sprintf("\n             - estimated with %s\n",
                     info_to_distance(info)))
         if (is_not_null(x[["s.weights"]])) {
-          cat(sprintf("             - sampling weights %sincluded in estimation\n",
-                      if (isTRUE(attr(x[["s.weights"]], "in_ps"))) "" else "not "))
+          cat(sprintf("             - sampling weights %s in estimation\n",
+                      if (isTRUE(attr(x[["s.weights"]], "in_ps"))) "included" else "not included"))
         }
       }
     }

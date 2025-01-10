@@ -16,11 +16,11 @@ link-citations: true
 ```{=html}
 <style>
 pre {
-  overflow-x: auto;
+overflow-x: auto;
 }
 pre code {
-  word-wrap: normal;
-  white-space: pre;
+word-wrap: normal;
+white-space: pre;
 }
 </style>
 ```
@@ -203,17 +203,18 @@ There are a few adjustments that need to be made for certain scenarios, which we
 
 Here, we demonstrate the faster analytic approach to estimating confidence intervals; for the bootstrap approach, see the section "Using Bootstrapping to Estimate Confidence Intervals" below.
 
-First, we will perform full matching on the propensity score for the ATT. Remember, all matching methods use this exact procedure or a slight variation, so this section is critical even if you are using a different matching method.
+First, we will perform variable-ratio nearest neighbor matching without replacement on the propensity score for the ATT. Remember, all matching methods use this exact procedure or a slight variation, so this section is critical even if you are using a different matching method.
 
 ```{r}
 #Optimal full matching on the PS for the ATT
-mF <- matchit(A ~ X1 + X2 + X3 + X4 + X5 + 
-                 X6 + X7 + X8 + X9, data = d,
-               method = "full", estimand = "ATT")
-mF
+mV <- matchit(A ~ X1 + X2 + X3 + X4 + X5 + 
+                X6 + X7 + X8 + X9, data = d,
+              method = "nearest", estimand = "ATT",
+              ratio = 2, max.controls = 4)
+mV
 
 #Extract matched data
-md <- match_data(mF)
+md <- match_data(mV)
 
 head(md)
 ```
@@ -284,8 +285,8 @@ The subclass-specific approach omits the weights and uses the subclasses directl
 ```{r, eval=me_ok}
 #Subclassification on the PS for the ATT
 mS <- matchit(A ~ X1 + X2 + X3 + X4 + X5 + 
-                 X6 + X7 + X8 + X9, data = d,
-               method = "subclass", estimand = "ATT")
+                X6 + X7 + X8 + X9, data = d,
+              method = "subclass", estimand = "ATT")
 
 #Extract matched data
 md <- match_data(mS)
@@ -317,7 +318,7 @@ To compute the marginal RR, we need to add `comparison = "lnratioavg"` to `avg_c
 ```{r, eval=me_ok}
 #Logistic regression model with covariates
 fit2 <- glm(Y_B ~ A * (X1 + X2 + X3 + X4 + X5 + 
-                        X6 + X7 + X8 + X9),
+                         X6 + X7 + X8 + X9),
             data = md, weights = weights,
             family = quasibinomial())
 
@@ -332,7 +333,7 @@ avg_comparisons(fit2,
 
 The output displays the marginal RR, its Z-value, the p-value for the Z-test of the log RR against 0, and its confidence interval. (Note that even though the `Contrast` label still suggests the log RR, the RR is actually displayed.) To view the log RR and its standard error, omit the `transform` argument.
 
-For the marginal OR, the only thing that needs to change is that `comparison` should be set to `"lnoravg"`.
+For the marginal OR, the only thing that needs to change is that `comparison` should be set to `"lnoravg"`. For the marginal RD, both the `comparison` and `transform` arguments can be removed (yielding the same call as in the standard case).
 
 #### Survival outcomes
 
@@ -364,17 +365,17 @@ gm <- get_matches(mR)
 
 #Austin & Cafri's (2020) SE estimator
 fs <- coxph(Surv(Y_S) ~ A, data = gm, robust = TRUE, 
-      weights = weights, cluster = subclass)
+            weights = weights, cluster = subclass)
 Vs <- fs$var
 ks <- nlevels(gm$subclass)
 
 fi <- coxph(Surv(Y_S) ~ A, data = gm, robust = TRUE, 
-      weights = weights, cluster = id)
+            weights = weights, cluster = id)
 Vi <- fi$var
 ki <- length(unique(gm$id))
 
 fc <- coxph(Surv(Y_S) ~ A, data = gm, robust = TRUE, 
-      weights = weights)
+            weights = weights)
 Vc <- fc$var
 kc <- nrow(gm)
 
@@ -411,7 +412,7 @@ boot_fun <- function(data, i) {
   
   #Fit outcome model
   fit <- glm(Y_B ~ A * (X1 + X2 + X3 + X4 + X5 + 
-                 X6 + X7 + X8 + X9),
+                          X6 + X7 + X8 + X9),
              data = md, weights = weights,
              family = quasibinomial())
   
@@ -430,7 +431,7 @@ boot_fun <- function(data, i) {
   Ep0 <- mean(p0)
   
   #Risk ratio
-  return(Ep1 / Ep0)
+  Ep1 / Ep0
 }
 ```
 
@@ -487,7 +488,7 @@ cluster_boot_fun <- function(pairs, i) {
   
   #Fit outcome model
   fit <- glm(Y_B ~ A * (X1 + X2 + X3 + X4 + X5 + 
-                 X6 + X7 + X8 + X9),
+                          X6 + X7 + X8 + X9),
              data = boot_md, weights = weights,
              family = quasibinomial())
   
@@ -506,7 +507,7 @@ cluster_boot_fun <- function(pairs, i) {
   Ep0 <- mean(p0)
   
   #Risk ratio
-  return(Ep1 / Ep0)
+  Ep1 / Ep0
 }
 ```
 

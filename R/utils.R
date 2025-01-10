@@ -61,18 +61,19 @@ add_quotes <- function(x, quotes = 2L) {
     return(x)
   }
 
-  if (isTRUE(quotes))
+  if (isTRUE(quotes)) {
     quotes <- '"'
+  }
 
   if (chk::vld_string(quotes)) {
-    return(paste0(quotes, x, quotes))
+    return(paste0(quotes, x, str_rev(quotes)))
   }
 
   if (!chk::vld_count(quotes) || quotes > 2) {
     stop("`quotes` must be boolean, 1, 2, or a string.")
   }
 
-  if (quotes == 0L) {
+  if (quotes == 0) {
     return(x)
   }
 
@@ -276,6 +277,11 @@ capwords <- function(s, strict = FALSE) {
   sapply(strsplit(s, split = " "), cap, USE.NAMES = is_not_null(names(s)))
 }
 
+#Reverse a string
+str_rev <- function(x) {
+  vapply(lapply(strsplit(x, NULL), rev), paste, character(1L), collapse = "")
+}
+
 #Clean printing of data frames with numeric and NA elements.
 round_df_char <- function(df, digits, pad = "0", na_vals = "") {
   if (NROW(df) == 0L || NCOL(df) == 0L) {
@@ -434,27 +440,27 @@ na.rem <- function(x) {
 
 #Extract variables from ..., similar to ...elt() or get0(), by name without evaluating list(...)
 ...get <- function(x, ifnotfound = NULL) {
-  eval(quote(if (!anyNA(m1 <- match(x, ...names())) && is_not_null(m2 <- ...elt(m1))) m2 else ifnotfound),
-       pairlist(x = x[1L], ifnotfound = ifnotfound),
+  eval(quote(if (!anyNA(.m1 <- match(.x, ...names())) && is_not_null(.m2 <- ...elt(.m1))) .m2
+             else .ifnotfound),
+       pairlist(.x = x[1L], .ifnotfound = ifnotfound),
        parent.frame(1L))
 }
 
 #Extract multiple variables from ..., similar to mget(), by name without evaluating list(...)
 ...mget <- function(x) {
+  found <- match(x, eval(quote(...names()), parent.frame(1L)))
 
-  empty_env <- new.env()
+  not_found <- is.na(found)
 
-  x <- setdiff(x, "...")
-
-  out <- setNames(vector("list", length(x)), x)
-
-  for (i in seq_along(x)) {
-    out[[i]] <- eval(quote(...get(xi, ifnotfound)),
-                     pairlist(xi = x[i], ifnotfound = empty_env),
-                     parent.frame(1L))
+  if (all(not_found)) {
+    return(list())
   }
 
-  out[!vapply(out, identical, logical(1L), empty_env)]
+  setNames(lapply(found[!not_found], function(z) {
+    eval(quote(...elt(.z)),
+         pairlist(.z = z),
+         parent.frame(3L))
+  }), x[!not_found])
 }
 
 #Helper function to fill named vectors with x and given names of y
