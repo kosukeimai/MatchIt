@@ -61,18 +61,19 @@ add_quotes <- function(x, quotes = 2L) {
     return(x)
   }
 
-  if (isTRUE(quotes))
+  if (isTRUE(quotes)) {
     quotes <- '"'
+  }
 
   if (chk::vld_string(quotes)) {
-    return(paste0(quotes, x, quotes))
+    return(paste0(quotes, x, str_rev(quotes)))
   }
 
   if (!chk::vld_count(quotes) || quotes > 2) {
     stop("`quotes` must be boolean, 1, 2, or a string.")
   }
 
-  if (quotes == 0L) {
+  if (quotes == 0) {
     return(x)
   }
 
@@ -276,6 +277,11 @@ capwords <- function(s, strict = FALSE) {
   sapply(strsplit(s, split = " "), cap, USE.NAMES = is_not_null(names(s)))
 }
 
+#Reverse a string
+str_rev <- function(x) {
+  vapply(lapply(strsplit(x, NULL), rev), paste, character(1L), collapse = "")
+}
+
 #Clean printing of data frames with numeric and NA elements.
 round_df_char <- function(df, digits, pad = "0", na_vals = "") {
   if (NROW(df) == 0L || NCOL(df) == 0L) {
@@ -427,15 +433,34 @@ diff1 <- function(x) {
   x
 }
 
-#Extract variables from ..., similar to ...elt(), by name without evaluating list(...)
-...get <- function(x, ...) {
-  m <- match(x, ...names(), 0L)
+#A faster na.omit for vectors
+na.rem <- function(x) {
+  x[!is.na(x)]
+}
 
-  if (m == 0L) {
-    return(NULL)
+#Extract variables from ..., similar to ...elt() or get0(), by name without evaluating list(...)
+...get <- function(x, ifnotfound = NULL) {
+  eval(quote(if (!anyNA(.m1 <- match(.x, ...names())) && is_not_null(.m2 <- ...elt(.m1))) .m2
+             else .ifnotfound),
+       pairlist(.x = x[1L], .ifnotfound = ifnotfound),
+       parent.frame(1L))
+}
+
+#Extract multiple variables from ..., similar to mget(), by name without evaluating list(...)
+...mget <- function(x) {
+  found <- match(x, eval(quote(...names()), parent.frame(1L)))
+
+  not_found <- is.na(found)
+
+  if (all(not_found)) {
+    return(list())
   }
 
-  ...elt(m)
+  setNames(lapply(found[!not_found], function(z) {
+    eval(quote(...elt(.z)),
+         pairlist(.z = z),
+         parent.frame(3L))
+  }), x[!not_found])
 }
 
 #Helper function to fill named vectors with x and given names of y
@@ -451,28 +476,41 @@ rep_with <- function(x, y) {
 
   m <- do.call(function(...) paste(..., sep = sep), list(...))
 
-  cat(paste(strwrap(m), collapse = "\n"))
+  if (endsWith(m, "\n")) {
+    m <- paste0(paste(strwrap(m), collapse = "\n"), "\n")
+  }
+  else {
+    m <- paste(strwrap(m), collapse = "\n")
+  }
+
+  cat(paste(m, collapse = "\n"))
 }
 
 #Functions for error handling; based on chk and rlang
-pkg_caller_call <- function(start = 1) {
+pkg_caller_call <- function() {
   pn <- utils::packageName()
   package.funs <- c(getNamespaceExports(pn),
                     .getNamespaceInfo(asNamespace(pn), "S3methods")[, 3])
-  k <- start #skip checking pkg_caller_call()
-  e_max <- start
-  while (is_not_null(e <- rlang::caller_call(k))) {
-    if (is_not_null(n <- rlang::call_name(e)) &&
-        n %in% package.funs) e_max <- k
-    k <- k + 1
+
+  for (i in seq_len(sys.nframe())) {
+    e <- sys.call(i)
+
+    if (is_null(n <- rlang::call_name(e))) {
+      next
+    }
+
+    if (n %in% package.funs) {
+      return(e)
+    }
   }
-  rlang::caller_call(e_max)
+
+  NULL
 }
 
 .err <- function(..., n = NULL, tidy = TRUE) {
   m <- chk::message_chk(..., n = n, tidy = tidy)
   rlang::abort(paste(strwrap(m), collapse = "\n"),
-               call = pkg_caller_call(start = 2))
+               call = pkg_caller_call())
 }
 .wrn <- function(..., n = NULL, tidy = TRUE, immediate = TRUE) {
   if (immediate && isTRUE(all.equal(0, getOption("warn")))) {

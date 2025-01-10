@@ -5,7 +5,7 @@ date: "`r Sys.Date()`"
 output:
   html_vignette:
     toc: yes
-vignette: |
+vignette: >
   %\VignetteIndexEntry{MatchIt: Getting Started} 
   %\VignetteEngine{knitr::rmarkdown_notangle} 
   %\VignetteEncoding{UTF-8}
@@ -15,7 +15,8 @@ link-citations: true
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE, message = FALSE,
-                      fig.width=7, fig.height=5)
+                      fig.width=7, fig.height=5,
+                      fig.align = "center")
 options(width = 200)
 
 notice <- "Note: if the `optmatch` package is not available, the subsequent lines will not run."
@@ -80,8 +81,10 @@ After planning and prior to matching, it can be a good idea to view the initial 
 ```{r}
 # No matching; constructing a pre-match matchit object
 m.out0 <- matchit(treat ~ age + educ + race + married + 
-                   nodegree + re74 + re75, data = lalonde,
-                 method = NULL, distance = "glm")
+                    nodegree + re74 + re75,
+                  data = lalonde,
+                  method = NULL,
+                  distance = "glm")
 ```
 
 The first argument is a `formula` relating the treatment to the covariates used in estimating the propensity score and for which balance is to be assessed. The `data` argument specifies the dataset where these variables exist. Typically, the `method` argument specifies the method of matching to be performed; here, we set it to `NULL` so we can assess balance prior to matching[^1]. The `distance` argument specifies the method for estimating the propensity score, a one-dimensional summary of all the included covariates, computed as the predicted probability of being the treated group given the covariates; here, we set it to `"glm"` for generalized linear model, which implements logistic regression by default[^2] (see `?distance` for other options).
@@ -106,8 +109,10 @@ Now, matching can be performed. There are several different classes and methods 
 ```{r}
 # 1:1 NN PS matching w/o replacement
 m.out1 <- matchit(treat ~ age + educ + race + married + 
-                   nodegree + re74 + re75, data = lalonde,
-                 method = "nearest", distance = "glm")
+                   nodegree + re74 + re75,
+                  data = lalonde,
+                  method = "nearest",
+                  distance = "glm")
 ```
 
 We use the same syntax as before, but this time specify `method = "nearest"` to implement nearest neighbor matching, again using a logistic regression propensity score. Many other arguments are available for tuning the matching method and method of propensity score estimation.
@@ -157,15 +162,21 @@ Given the poor performance of nearest neighbor matching in this example, we can 
 ```{r, eval = (use == "full"), include= (use %in% c("full", "none"))}
 # Full matching on a probit PS
 m.out2 <- matchit(treat ~ age + educ + race + married + 
-                   nodegree + re74 + re75, data = lalonde,
-                 method = "full", distance = "glm", link = "probit")
+                   nodegree + re74 + re75,
+                  data = lalonde,
+                  method = "full",
+                  distance = "glm",
+                  link = "probit")
 m.out2
 ```
 ```{r, eval = (use == "quick"), include = (use == "quick")}
 # Full matching on a probit PS
 m.out2 <- matchit(treat ~ age + educ + race + married + 
-                   nodegree + re74 + re75, data = lalonde,
-                 method = "quick", distance = "glm", link = "probit")
+                    nodegree + re74 + re75,
+                  data = lalonde,
+                  method = "quick",
+                  distance = "glm",
+                  link = "probit")
 m.out2
 ```
 
@@ -186,33 +197,34 @@ Love plots are a simple and straightforward way to summarize balance visually. S
 
 ## Estimating the Treatment Effect
 
-How treatment effects are estimated depends on what form of matching was performed. See `vignette("estimating-effects")` for information on how to estimate treatment effects in a variety of scenarios (i.e., different matching methods and outcome types). After full matching and most other matching methods, we can run a regression of the outcome on the treatment and covariates in the matched sample (i.e., including the matching weights) and estimate the treatment effect using g-computation as implemented in `marginaleffects::comparisons()`[^est]. Including the covariates used in the matching in the effect estimation can provide additional robustness to slight imbalances remaining after matching and can improve precision.
+How treatment effects are estimated depends on what form of matching was performed. See `vignette("estimating-effects")` for information on how to estimate treatment effects in a variety of scenarios (i.e., different matching methods and outcome types). After full matching and most other matching methods, we can run a regression of the outcome on the treatment and covariates in the matched sample (i.e., including the matching weights) and estimate the treatment effect using g-computation as implemented in `marginaleffects::avg_comparisons()`[^est]. Including the covariates used in the matching in the effect estimation can provide additional robustness to slight imbalances remaining after matching and can improve precision.
 
 [^est]: In some cases, the coefficient on the treatment variable in the outcome model can be used as the effect estimate, but g-computation always yields a valid effect estimate regardless of the form of the outcome model and its use is the same regardless of the outcome model type or matching method (with some slight variations), so we always recommend performing g-computation after fitting the outcome model. G-computation is explained in detail in `vignette("estimating-effects")`.
 
-Because full matching was successful at balancing the covariates, we'll demonstrate here how to estimate a treatment effect after performing such an analysis. First, we'll extract the matched dataset from the `matchit` object using `match.data()`. This dataset only contains the matched units and adds columns for `distance`, `weights`, and `subclass` (described previously). `r if (use == "none") notice`
+Because full matching was successful at balancing the covariates, we'll demonstrate here how to estimate a treatment effect after performing such an analysis. First, we'll extract the matched dataset from the `matchit` object using `match_data()`. This dataset only contains the matched units and adds columns for `distance`, `weights`, and `subclass` (described previously). `r if (use == "none") notice`
 
 ```{r, eval = (use != "none")}
-m.data <- match.data(m.out2)
+m.data <- match_data(m.out2)
 
 head(m.data)
 ```
 
-We can then model the outcome in this dataset using the standard regression functions in R, like `lm()` or `glm()`, being sure to include the matching weights (stored in the `weights` variable of the `match.data()` output) in the estimation[^3]. Finally, we use `marginaleffects::avg_comparisons()` to perform g-computation to estimate the ATT. We recommend using cluster-robust standard errors for most analyses, with pair membership as the clustering variable; `avg_comparisons()` makes this straightforward.
+We can then model the outcome in this dataset using the standard regression functions in R, like `lm()` or `glm()`, being sure to include the matching weights (stored in the `weights` variable of the `match_data()` output) in the estimation[^3]. Finally, we use `marginaleffects::avg_comparisons()` to perform g-computation to estimate the ATT. We recommend using cluster-robust standard errors for most analyses, with pair membership as the clustering variable; `avg_comparisons()` makes this straightforward.
 
 [^3]: With 1:1 nearest neighbor matching without replacement, excluding the matching weights does not change the estimates. For all other forms of matching, they are required, so we recommend always including them for consistency.
 
 ```{r, eval = (use != "none" && me_ok)}
 library("marginaleffects")
 
-fit <- lm(re78 ~ treat * (age + educ + race + married + nodegree + 
-             re74 + re75), data = m.data, weights = weights)
+fit <- lm(re78 ~ treat * (age + educ + race + married +
+                            nodegree + re74 + re75),
+          data = m.data,
+          weights = weights)
 
 avg_comparisons(fit,
                 variables = "treat",
                 vcov = ~subclass,
-                newdata = subset(m.data, treat == 1),
-                wts = "weights")
+                newdata = subset(treat == 1))
 ```
 ```{r, include = FALSE}
 est <- {
@@ -220,8 +232,7 @@ est <- {
     avg_comparisons(fit,
                 variables = "treat",
                 vcov = ~subclass,
-                newdata = subset(m.data, treat == 1),
-                wts = "weights")
+                newdata = subset(treat == 1))
   }
   else data.frame(type = "response", term = "1 - 0", estimate = 2114, 
                   std.error = 646, statistic = 3.27, 
@@ -240,7 +251,7 @@ To report matching results in a manuscript or research report, a few key pieces 
 
 > We used propensity score matching to estimate the average marginal effect of the treatment on 1978 earnings on those who received it accounting for confounding by the included covariates. We first attempted 1:1 nearest neighbor propensity score matching without replacement with a propensity score estimated using logistic regression of the treatment on the covariates. This matching specification yielded poor balance, so we instead tried full matching on the propensity score, which yielded adequate balance, as indicated in Table 1 and Figure 1. The propensity score was estimated using a probit regression of the treatment on the covariates, which yielded better balance than did a logistic regression. After matching, all standardized mean differences for the covariates were below 0.1 and all standardized mean differences for squares and two-way interactions between covariates were below .15, indicating adequate balance. Full matching uses all treated and all control units, so no units were discarded by the matching.
 >
-> To estimate the treatment effect and its standard error, we fit a linear regression model with 1978 earnings as the outcome and the treatment, covariates, and their interaction as predictors and included the full matching weights in the estimation. The `lm()` function was used to fit the outcome, and the `comparisons()` function in the `marginaleffects` package was used to perform g-computation in the matched sample to estimate the ATT. A cluster-robust variance was used to estimate its standard error with matching stratum membership as the clustering variable.
+> To estimate the treatment effect and its standard error, we fit a linear regression model with 1978 earnings as the outcome and the treatment, covariates, and their interaction as predictors and included the full matching weights in the estimation. The `lm()` function was used to fit the outcome, and the `avg_comparisons()` function in the `marginaleffects` package was used to perform g-computation in the matched sample to estimate the ATT. A cluster-robust variance was used to estimate its standard error with matching stratum membership as the clustering variable.
 >
 > The estimated effect was \$`r round(est$estimate)` (SE = `r round(est$std.error, 1)`, p = `r round(est$p.value, 3)`), indicating that the average effect of the treatment for those who received it is to increase earnings.
 

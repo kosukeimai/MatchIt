@@ -9,7 +9,7 @@
 #' an effect to the correct population. Without adding sampling weights to the
 #' `matchit` object, balance assessment tools (i.e., [summary.matchit()]
 #' and [plot.matchit()]) will not calculate balance statistics correctly, and
-#' the weights produced by [match.data()] and [get_matches()] will not
+#' the weights produced by [match_data()] and [get_matches()] will not
 #' incorporate the sampling weights.
 #'
 #' @param m a `matchit` object; the output of a call to [matchit()],
@@ -28,7 +28,7 @@
 #'
 #' @author Noah Greifer
 #'
-#' @seealso [matchit()]; [match.data()]
+#' @seealso [matchit()]; [match_data()]
 #'
 #' @examples
 #'

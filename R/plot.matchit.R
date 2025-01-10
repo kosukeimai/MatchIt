@@ -330,12 +330,12 @@ matchit.covplot <- function(object, type = "qq", interactive = TRUE, which.xs = 
   t <- object$treat
 
   sw <- {
-    if (is_null(object$s.weights)) rep(1, length(t))
+    if (is_null(object$s.weights)) rep.int(1, length(t))
     else object$s.weights
   }
 
   w <- object$weights * sw
-  if (is_null(w)) w <- rep(1, length(t))
+  if (is_null(w)) w <- rep.int(1, length(t))
 
   w <- .make_sum_to_1(w, by = t)
   sw <- .make_sum_to_1(sw, by = t)
@@ -344,7 +344,7 @@ matchit.covplot <- function(object, type = "qq", interactive = TRUE, which.xs = 
     varnames <- names(X)
   }
   else {
-    X <- get.covs.matrix(data = X)
+    X <- get_covs_matrix(data = X)
     varnames <- colnames(X)
   }
 
@@ -364,7 +364,7 @@ matchit.covplot <- function(object, type = "qq", interactive = TRUE, which.xs = 
 
     plot.new()
 
-    if (((i-1)%%3)==0) {
+    if (((i-1) %% 3) == 0) {
 
       if (type == "qq") {
         htext <- "eQQ Plots"
@@ -493,7 +493,7 @@ matchit.covplot.subclass <- function(object, type = "qq", which.subclass = NULL,
     varnames <- names(X)
   }
   else {
-    X <- get.covs.matrix(data = X)
+    X <- get_covs_matrix(data = X)
     varnames <- colnames(X)
   }
 
@@ -624,7 +624,7 @@ qqplot_match <- function(x, t, w, sw, discrete.cutoff = 5, ...) {
   }
 
   if (length(u) <= discrete.cutoff) {
-    md <- min(diff(u))
+    md <- min(diff1(u))
     x0 <- jitter(x0, amount = .1 * md)
     x1 <- jitter(x1, amount = .1 * md)
   }
@@ -632,8 +632,8 @@ qqplot_match <- function(x, t, w, sw, discrete.cutoff = 5, ...) {
   rr <- range(c(x0, x1))
   plot(x0, x1, xlab = "", ylab = "", xlim = rr, ylim = rr, axes = FALSE, ...)
   abline(a = 0, b = 1)
-  abline(a = (rr[2]-rr[1]) * 0.1, b = 1, lty = 2)
-  abline(a = -(rr[2]-rr[1]) * 0.1, b = 1, lty = 2)
+  abline(a = (rr[2L] - rr[1L]) * 0.1, b = 1, lty = 2)
+  abline(a = (rr[1L] - rr[2L]) * 0.1, b = 1, lty = 2)
   axis(2)
   box()
 
@@ -675,15 +675,15 @@ qqplot_match <- function(x, t, w, sw, discrete.cutoff = 5, ...) {
   }
 
   if (length(u) <= discrete.cutoff) {
-    md <- min(diff(u))
+    md <- min(diff1(u))
     x0 <- jitter(x0, amount = .1 * md)
     x1 <- jitter(x1, amount = .1 * md)
   }
 
   plot(x0, x1, xlab = "", ylab = "", xlim = rr, ylim = rr, axes = FALSE, ...)
   abline(a = 0, b = 1)
-  abline(a = (rr[2]-rr[1]) * 0.1, b = 1, lty = 2)
-  abline(a = -(rr[2]-rr[1]) * 0.1, b = 1, lty = 2)
+  abline(a = (rr[2L] - rr[1L]) * 0.1, b = 1, lty = 2)
+  abline(a = (rr[1L] - rr[2L]) * 0.1, b = 1, lty = 2)
   box()
 }
 
@@ -856,7 +856,7 @@ hist_pscore <- function(x, xlab = "Propensity Score", freq = FALSE, ...) {
   pscore <- x$distance[!is.na(x$distance)]
 
   s.weights <- {
-    if (is_null(x$s.weights)) rep(1, length(treat))
+    if (is_null(x$s.weights)) rep.int(1, length(treat))
     else x$s.weights
   }
 

@@ -1,13 +1,13 @@
 #' Construct a matched dataset from a `matchit` object
-#' @name match.data
-#' @aliases match.data get_matches
+#' @name match_data
+#' @aliases match_data match.data get_matches
 #'
 #' @description
-#' `match.data()` and `get_matches()` create a data frame with
+#' `match_data()` and `get_matches()` create a data frame with
 #' additional variables for the distance measure, matching weights, and
 #' subclasses after matching. This dataset can be used to estimate treatment
 #' effects after matching or subclassification. `get_matches()` is most
-#' useful after matching with replacement; otherwise, `match.data()` is
+#' useful after matching with replacement; otherwise, `match_data()` is
 #' more flexible. See Details below for the difference between them.
 #'
 #' @param object a `matchit` object; the output of a call to [matchit()].
@@ -28,32 +28,33 @@
 #' frame output. Default is `"subclass"`.
 #' @param id a string containing the name that should be given to the variable
 #' containing the unit IDs in the data frame output. Default is `"id"`.
-#' Only used with `get_matches()`; for `match.data()`, the units IDs
+#' Only used with `get_matches()`; for `match_data()`, the units IDs
 #' are stored in the row names of the returned data frame.
 #' @param data a data frame containing the original dataset to which the
 #' computed output variables (`distance`, `weights`, and/or
-#' `subclass`) should be appended. If empty, `match.data()` and
+#' `subclass`) should be appended. If empty, `match_data()` and
 #' `get_matches()` will attempt to find the dataset using the environment
 #' of the `matchit` object, which can be unreliable; see Notes.
 #' @param include.s.weights `logical`; whether to multiply the estimated
 #' weights by the sampling weights supplied to `matchit()`, if any.
 #' Default is `TRUE`. If `FALSE`, the weights in the
-#' `match.data()` or `get_matches()` output should be multiplied by
+#' `match_data()` or `get_matches()` output should be multiplied by
 #' the sampling weights before being supplied to the function estimating the
 #' treatment effect in the matched data.
 #' @param drop.unmatched `logical`; whether the returned data frame should
 #' contain all units (`FALSE`) or only units that were matched (i.e., have
 #' a matching weight greater than zero) (`TRUE`). Default is `TRUE`
 #' to drop unmatched units.
+#' @param \dots arguments passed to `match_data()`.
 #'
 #' @details
-#' `match.data()` creates a dataset with one row per unit. It will be
+#' `match_data()` creates a dataset with one row per unit. It will be
 #' identical to the dataset supplied except that several new columns will be
 #' added containing information related to the matching. When
 #' `drop.unmatched = TRUE`, the default, units with weights of zero, which
 #' are those units that were discarded by common support or the caliper or were
 #' simply not matched, will be dropped from the dataset, leaving only the
-#' subset of matched units. The idea is for the output of `match.data()`
+#' subset of matched units. The idea is for the output of `match_data()`
 #' to be used as the dataset input in calls to `glm()` or similar to
 #' estimate treatment effects in the matched sample. It is important to include
 #' the weights in the estimation of the effect and its standard error. The
@@ -63,9 +64,9 @@
 #' `matchit` object, which does not occur with matching with replacement,
 #' in which case `get_matches()` should be used. See
 #' `vignette("estimating-effects")` for information on how to use
-#' `match.data()` output to estimate effects.
+#' `match_data()` output to estimate effects. `match.data()` is an alias for `match_data()`.
 #'
-#' `get_matches()` is similar to `match.data()`; the primary
+#' `get_matches()` is similar to `match_data()`; the primary
 #' difference occurs when matching is performed with replacement, i.e., when
 #' units do not belong to a single matched pair. In this case, the output of
 #' `get_matches()` will be a dataset that contains one row per unit for
@@ -78,10 +79,10 @@
 #' created (named using the `id` argument) to identify when the same unit
 #' is present in multiple rows. This dataset structure allows for the inclusion
 #' of both subclass membership and repeated use of units, unlike the output of
-#' `match.data()`, which lacks subclass membership when matching is done
+#' `match_data()`, which lacks subclass membership when matching is done
 #' with replacement. A `match.matrix` component of the `matchit`
 #' object must be present to use `get_matches()`; in some forms of
-#' matching, it is absent, in which case `match.data()` should be used
+#' matching, it is absent, in which case `match_data()` should be used
 #' instead. See `vignette("estimating-effects")` for information on how to
 #' use `get_matches()` output to estimate effects after matching with
 #' replacement.
@@ -90,11 +91,11 @@
 #' A data frame containing the data supplied in the `data` argument or in the
 #' original call to `matchit()` with the computed
 #' output variables appended as additional columns, named according the
-#' arguments above. For `match.data()`, the `group` and
+#' arguments above. For `match_data()`, the `group` and
 #' `drop.unmatched` arguments control whether only subsets of the data are
-#' returned. See Details above for how `match.data()` and
+#' returned. See Details above for how `match_data()` and
 #' `get_matches()` differ. Note that `get_matches` sorts the data by
-#' subclass and treatment status, unlike `match.data()`, which uses the
+#' subclass and treatment status, unlike `match_data()`, which uses the
 #' order of the data.
 #'
 #' The returned data frame will contain the variables in the original data set
@@ -113,11 +114,11 @@
 #' reused in matching with replacement.}
 #'
 #' These columns will take on the name supplied to the corresponding arguments
-#' in the call to `match.data()` or `get_matches()`. See Examples for
+#' in the call to `match_data()` or `get_matches()`. See Examples for
 #' an example of rename the `distance` column to `"prop.score"`.
 #'
 #' If `data` or the original dataset supplied to `matchit()` was a
-#' `data.table` or `tbl`, the `match.data()` output will have
+#' `data.table` or `tbl`, the `match_data()` output will have
 #' the same class, but the `get_matches()` output will always be a base R
 #' `data.frame`.
 #'
@@ -126,11 +127,11 @@
 #' class is important when using [`rbind()`][rbind.matchdata] to
 #' append matched datasets.
 #'
-#' @note The most common way to use `match.data()` and
+#' @note The most common way to use `match_data()` and
 #' `get_matches()` is by supplying just the `matchit` object, e.g.,
-#' as `match.data(m.out)`. A data set will first be searched in the
+#' as `match_data(m.out)`. A data set will first be searched in the
 #' environment of the `matchit` formula, then in the calling environment
-#' of `match.data()` or `get_matches()`, and finally in the
+#' of `match_data()` or `get_matches()`, and finally in the
 #' `model` component of the `matchit` object if a propensity score
 #' was estimated.
 #'
@@ -142,13 +143,13 @@
 #' occur when `matchit()` was run within an [lapply()] or
 #' `purrr::map()` call. The solution, which is recommended in all cases,
 #' is simply to supply the original dataset to the `data` argument of
-#' `match.data()`, e.g., as `match.data(m.out, data = original_data)`, as demonstrated in the Examples.
+#' `match_data()`, e.g., as `match_data(m.out, data = original_data)`, as demonstrated in the Examples.
 #'
 #' @seealso
 #'
 #' [matchit()]; [rbind.matchdata()]
 #'
-#' `vignette("estimating-effects")` for uses of `match.data()` and
+#' `vignette("estimating-effects")` for uses of `match_data()` and
 #' `get_matches()` in estimating treatment effects.
 #'
 #' @examples
@@ -161,7 +162,7 @@
 #'                   data = lalonde, replace = TRUE,
 #'                   caliper = .05, ratio = 4)
 #'
-#' m.data1 <- match.data(m.out1, data = lalonde,
+#' m.data1 <- match_data(m.out1, data = lalonde,
 #'                       distance = "prop.score")
 #' dim(m.data1) #one row per matched unit
 #' head(m.data1, 10)
@@ -173,7 +174,7 @@
 #'
 
 #' @export
-match.data <- function(object, group = "all", distance = "distance", weights = "weights", subclass = "subclass",
+match_data <- function(object, group = "all", distance = "distance", weights = "weights", subclass = "subclass",
                        data = NULL, include.s.weights = TRUE, drop.unmatched = TRUE) {
 
   chk::chk_is(object, "matchit")
@@ -266,19 +267,25 @@ match.data <- function(object, group = "all", distance = "distance", weights = "
 }
 
 #' @export
-#' @rdname match.data
+#' @rdname match_data
+match.data <- function(...) {
+  match_data(...)
+}
+
+#' @export
+#' @rdname match_data
 get_matches <- function(object, distance = "distance", weights = "weights", subclass = "subclass",
                         id = "id", data = NULL, include.s.weights = TRUE) {
 
   chk::chk_is(object, "matchit")
 
   if (is_null(object$match.matrix)) {
-    .err("a match.matrix component must be present in the matchit object, which does not occur with all types of matching. Use `match.data()` instead")
+    .err("a match.matrix component must be present in the matchit object, which does not occur with all types of matching. Use `match_data()` instead")
   }
 
-  #Get initial data using match.data; note weights and subclass will be removed,
+  #Get initial data using match_data; note weights and subclass will be removed,
   #including them here just checks their names don't clash
-  m.data <- match.data(object, group = "all", distance = distance,
+  m.data <- match_data(object, group = "all", distance = distance,
                        weights = weights, subclass = subclass, data = data,
                        include.s.weights = FALSE, drop.unmatched = TRUE)
 
@@ -297,7 +304,7 @@ get_matches <- function(object, distance = "distance", weights = "weights", subc
   }
 
   mm <- object$match.matrix
-  mm <- mm[!is.na(mm[,1]),,drop = FALSE]
+  mm <- mm[!is.na(mm[,1L]),,drop = FALSE]
   tmm <- t(mm)
 
   num.matches <- rowSums(!is.na(mm))

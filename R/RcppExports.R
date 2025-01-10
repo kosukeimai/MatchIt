@@ -45,6 +45,10 @@ pairdistsubC <- function(x, t, s) {
     .Call(`_MatchIt_pairdistsubC`, x, t, s)
 }
 
+preprocess_matchC <- function(t, p) {
+    .Call(`_MatchIt_preprocess_matchC`, t, p)
+}
+
 subclass2mmC <- function(subclass_, treat, focal) {
     .Call(`_MatchIt_subclass2mmC`, subclass_, treat, focal)
 }

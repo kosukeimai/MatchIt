@@ -53,7 +53,7 @@ re-estimate the propensity score in the remaining sample prior to matching.}
 into propensity score models and balance statistics.}
 
 \item{caliper}{the width(s) of the caliper(s) used for caliper matching.
-Calipers are processed by \pkgfun{optmatch}{caliper}. See Notes and Examples.}
+Calipers are processed by \pkgfun{optmatch}{caliper}. Positive and negative calipers are allowed. See Notes and Examples.}
 
 \item{std.caliper}{\code{logical}; when calipers are specified, whether they
 are in standard deviation units (\code{TRUE}) or raw units (\code{FALSE}).}

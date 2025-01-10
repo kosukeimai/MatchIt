@@ -348,9 +348,13 @@ matchit2nearest <- function(treat, data, distance, discarded,
   if (is_not_null(caliper)) {
     if (any(names(caliper) != "")) {
       caliper.covs <- caliper[names(caliper) != ""]
-      caliper.covs.mat <- get.covs.matrix(reformulate(names(caliper.covs)), data = data)
+      caliper.covs.mat <- get_covs_matrix(reformulate(names(caliper.covs)), data = data)
 
       ex.caliper.list <- setNames(lapply(names(caliper.covs), function(i) {
+        if (caliper.covs[i] < 0) {
+          return(integer(0))
+        }
+
         splits <- get_splitsC(as.numeric(caliper.covs.mat[,i]),
                               as.numeric(caliper.covs[i]))
 
@@ -363,7 +367,7 @@ matchit2nearest <- function(treat, data, distance, discarded,
             include.lowest = TRUE)
       }), names(caliper.covs))
 
-      ex.caliper.list <- ex.caliper.list[lengths(ex.caliper.list) > 0L]
+      ex.caliper.list[lengths(ex.caliper.list) == 0L] <- NULL
 
       # ex.caliper.list <- Filter(ex.caliper.list, f = function(x) nlevels(x) > 1)
 

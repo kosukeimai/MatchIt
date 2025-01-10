@@ -36,13 +36,13 @@ process should be printed to the console.}
 
 \item{\dots}{additional arguments that control the matching specification:
 \describe{
-\item{\code{tols}}{ \code{numeric}; a vector of imbalance
+\item{\code{tols}}{\code{numeric}; a vector of imbalance
 tolerances for mean differences, one for each covariate in \code{formula}.
 If only one value is supplied, it is applied to all. See \code{std.tols}
 below. Default is \code{.05} for standardized mean differences of at most
 .05 for all covariates between the treatment groups in the matched sample.
 }
-\item{\code{std.tols}}{ \code{logical}; whether each entry in \code{tols}
+\item{\code{std.tols}}{\code{logical}; whether each entry in \code{tols}
 corresponds to a raw or standardized mean difference. If only one value is
 supplied, it is applied to all. Default is \code{TRUE} for standardized mean
 differences. The standardization factor is the pooled standard deviation
@@ -56,7 +56,7 @@ solve the optimization problem. Available options include \code{"highs"}, \code{
 \emph{Rglpk} package), SYMPHONY (implemented in the \emph{Rsymphony}
 package), and Gurobi (implemented in the \emph{gurobi} package),
 respectively. The differences between them are in speed and solving ability.
-GLPK (the default) and HiGHS are the easiest to install, but Gurobi is recommended as
+HiGHS (the default) and GLPK are the easiest to install, but Gurobi is recommended as
 it consistently outperforms other solvers and can find solutions even when
 others can't, and in less time. Gurobi is proprietary but can be used with a
 free trial or academic license. SYMPHONY may not produce reproducible
@@ -74,9 +74,9 @@ matching and other forms of matching that use mixed integer programming.
 Rather than forming pairs, cardinality matching selects the largest subset
 of units that satisfies user-supplied balance constraints on mean
 differences. One of several available optimization programs can be used to
-solve the mixed integer program. The default is the GLPK library as
-implemented in the \emph{Rglpk} package, but performance can be dramatically
-improved using the HiGHS and the \emph{highs} package, which are free, or Gurobi and the \emph{gurobi} package, for which there is a
+solve the mixed integer program. The default is the HiGHS library as
+implemented in the \emph{highs} package, both of which are free, but performance can be
+improved using Gurobi and the \emph{gurobi} package, for which there is a
 free academic license.
 
 This page details the allowable arguments with \code{method = "cardinality"}. See \code{\link[=matchit]{matchit()}} for an explanation of what each argument
@@ -95,7 +95,7 @@ matchit(formula,
         verbose = FALSE,
         tols = .05,
         std.tols = TRUE,
-        solver = "glpk",
+        solver = "highs",
         ...) }
 }
 \details{
@@ -217,7 +217,7 @@ data("lalonde")
 
 #Choose your solver; "gurobi" is best, "highs" is free and
 #easy to install
-solver <- "highs"
+\donttest{solver <- "highs"
 
 # 1:1 cardinality matching
 m.out1 <- matchit(treat ~ age + educ + re74,
@@ -241,10 +241,10 @@ m.out3 <- matchit(treat ~ age + educ + re74,
                   estimand = "ATE", ratio = NA,
                   tols = .2, solver = solver)
 m.out3
-summary(m.out3, un = FALSE)
+summary(m.out3, un = FALSE)}
 \dontshow{\}) # examplesIf}
 \dontshow{if ((requireNamespace("highs", quietly = TRUE) && requireNamespace("optmatch", quietly = TRUE))) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
-# Pairing after 1:1 cardinality matching:
+\donttest{# Pairing after 1:1 cardinality matching:
 m.out1b <- matchit(treat ~ age + educ + re74,
                    data = lalonde, method = "cardinality",
                    estimand = "ATT", ratio = 1,
@@ -254,7 +254,7 @@ m.out1b <- matchit(treat ~ age + educ + re74,
 # Note that balance doesn't change but pair distances
 # are lower for the paired-upon variables
 summary(m.out1b, un = FALSE)
-summary(m.out1, un = FALSE)
+summary(m.out1, un = FALSE)}
 
 # In these examples, a high tol was used and
 # few covariate matched on in order to not take too long;
@@ -266,7 +266,7 @@ summary(m.out1, un = FALSE)
 In a manuscript, you should reference the solver used in the
 optimization. For example, a sentence might read:
 
-\emph{Cardinality matching was performed using the MatchIt package (Ho, Imai, King, & Stuart, 2011) in R with the optimization performed by HiGHs (Huangfu & Hall, 2018).}
+\emph{Cardinality matching was performed using the MatchIt package (Ho, Imai, King, & Stuart, 2011) in R with the optimization performed by HiGHS (Huangfu & Hall, 2018).}
 
 See \code{vignette("matching-methods")} for more literature on cardinality
 matching.

@@ -88,7 +88,7 @@
 #' Allowed arguments include `tol` and `solver`. See the
 #' \pkgfun{optmatch}{fullmatch} documentation for details. In general, `tol`
 #' should be set to a low number (e.g., `1e-7`) to get a more precise
-#' solution.
+#' solution (default is `1e-3`).
 #'
 #' The arguments `replace`, `caliper`, and `m.order` are ignored with a warning.
 #'
@@ -148,13 +148,11 @@
 #' (`estimand = "ATT"`) or treated units are selected to be matched with
 #' control units (`estimand = "ATC"`). The "focal" group (e.g., the
 #' treated units for the ATT) is typically made to be the smaller treatment
-#' group, and a warning will be thrown if it is not set that way unless
-#' `replace = TRUE`. Setting `estimand = "ATC"` is equivalent to
+#' group, and a warning will be thrown if it is not set that. Setting `estimand = "ATC"` is equivalent to
 #' swapping all treated and control labels for the treatment variable. When
 #' `estimand = "ATC"`, the `match.matrix` component of the output
 #' will have the names of the control units as the rownames and be filled with
-#' the names of the matched treated units (opposite to when `estimand =
-#' "ATT"`). Note that the argument supplied to `estimand` doesn't
+#' the names of the matched treated units (opposite to when `estimand = "ATT"`). Note that the argument supplied to `estimand` doesn't
 #' necessarily correspond to the estimand actually targeted; it is merely a
 #' switch to trigger which treatment group is considered "focal".
 #'
@@ -166,7 +164,8 @@
 #' treated units to receive `ratio` matches, the arguments to
 #' `max.controls` and `min.controls` can be specified to control the
 #' maximum and minimum number of matches each treated unit can have.
-#' `ratio` controls how many total control units will be matched: `n1 * ratio` control units will be matched, where `n1` is the number of
+#' `ratio` controls how many total control units will be matched: `n1 * ratio` control
+#' units will be matched, where `n1` is the number of
 #' treated units, yielding the same total number of matched controls as fixed
 #' ratio matching does.
 #'
@@ -199,6 +198,8 @@
 #' *optmatch*. This enables matching problems of any size to be run, but
 #' may also let huge, infeasible problems get through and potentially take a
 #' long time or crash R. See \pkgfun{optmatch}{setMaxProblemSize} for more details.
+#'
+#' A preprocessing algorithm describe by [Sävje (2020)](https://doi.org/10.1214/19-STS739) is used to improve the speed of the matching when 1:1 matching on a propensity score. It does so by adding an additional constraint that guarantees a solution as optimal as the solution that would have been found without the constraint, and that constraint often dramatically reduces the size of the matching problem at no cost. However, this may introduce differences between the results obtained by *MatchIt* and by *optmatch*, though such differences will shrink when smaller values of `tol` are used.
 #'
 #' @seealso [matchit()] for a detailed explanation of the inputs and outputs of
 #' a call to `matchit()`.
@@ -248,10 +249,8 @@ matchit2optimal <- function(treat, formula, data, distance, discarded,
 
   rlang::check_installed("optmatch")
 
-  .cat_verbose("Optimal matching...\n", verbose = verbose)
-
   args <- c("tol", "solver")
-  A <- setNames(lapply(args, ...get, ...), args)
+  A <- ...mget(args)
   A[lengths(A) == 0L] <- NULL
 
   #Set max problem size to Inf and return to original value after match
@@ -310,15 +309,15 @@ matchit2optimal <- function(treat, formula, data, distance, discarded,
     }, numeric(1L))
 
     if (any(e_ratios < 1)) {
-      .wrn(sprintf("Fewer %s units than %s units in some `exact` strata; not all %s units will get a match",
+      .wrn(sprintf("fewer %s units than %s units in some `exact` strata; not all %s units will get a match",
                    tc[2], tc[1], tc[1]))
     }
     if (ratio > 1 && any(e_ratios < ratio)) {
       if (ratio == max.controls)
-        .wrn(sprintf("Not all %s units will get %s matches",
+        .wrn(sprintf("not all %s units will get %s matches",
                      tc[1], ratio))
       else
-        .wrn(sprintf("Not enough %s units for an average of %s matches per %s unit in all `exact` strata",
+        .wrn(sprintf("not enough %s units for an average of %s matches per %s unit in all `exact` strata",
                      tc[2], ratio, tc[1]))
     }
   }
@@ -329,15 +328,15 @@ matchit2optimal <- function(treat, formula, data, distance, discarded,
     e_ratios <- setNames(sum(treat_ == 0)/sum(treat_ == 1), levels(ex))
 
     if (e_ratios < 1) {
-      .wrn(sprintf("Fewer %s units than %s units; not all %s units will get a match",
+      .wrn(sprintf("fewer %s units than %s units; not all %s units will get a match",
                    tc[2], tc[1], tc[1]))
     }
     else if (e_ratios < ratio) {
       if (ratio == max.controls)
-        .wrn(sprintf("Not all %s units will get %s matches",
+        .wrn(sprintf("not all %s units will get %s matches",
                      tc[1], ratio))
       else
-        .wrn(sprintf("Not enough %s units for an average of %s matches per %s unit",
+        .wrn(sprintf("not enough %s units for an average of %s matches per %s unit",
                      tc[2], ratio, tc[1]))
     }
   }
@@ -359,7 +358,9 @@ matchit2optimal <- function(treat, formula, data, distance, discarded,
   }
 
   #Transpose distance mat as needed
-  if (focal == 0) mo <- t(mo)
+  if (focal == 0) {
+    mo <- t(mo)
+  }
 
   #Remove discarded units from distance mat
   mo <- mo[!discarded[treat == focal], !discarded[treat != focal], drop = FALSE]
@@ -367,6 +368,20 @@ matchit2optimal <- function(treat, formula, data, distance, discarded,
 
   mo <- optmatch::match_on(mo, data = as.data.frame(data)[!discarded,, drop = FALSE])
   mo <- optmatch::as.InfinitySparseMatrix(mo)
+
+  if (is_null(mahvars) && !is.matrix(distance) && nlevels(ex) == 1L &&
+      ratio == 1 && max.controls == 1) {
+    .cat_verbose("Preprocessing to reduce problem size...\n", verbose = verbose)
+
+    #Preprocess by pruning unnecessary edges as in Sävje (2020) https://doi.org/10.1214/19-STS699
+    keep <- preprocess_matchC(treat_, distance[!discarded])
+
+    if (length(keep) < length(mo)) {
+      mo <- .subset_infsm(mo, keep)
+    }
+  }
+
+  .cat_verbose("Optimal matching...\n", verbose = verbose)
 
   #Process antiexact
   if (is_not_null(antiexact)) {
@@ -390,7 +405,9 @@ matchit2optimal <- function(treat, formula, data, distance, discarded,
 
       mo_ <- mo[ex[treat_==1] == e, ex[treat_==0] == e]
     }
-    else mo_ <- mo
+    else {
+      mo_ <- mo
+    }
 
     if (any(dim(mo_) == 0) || !any(is.finite(mo_))) {
       next
@@ -443,7 +460,7 @@ matchit2optimal <- function(treat, formula, data, distance, discarded,
 
   mm <- nummm2charmm(subclass2mmC(psclass, treat, focal), treat)
 
-  .cat_verbose("Calculating matching weights... ", verbose = verbose)
+  .cat_verbose("Calculating matching weights...", verbose = verbose)
 
   ## calculate weights and return the results
   res <- list(match.matrix = mm,
@@ -455,4 +472,13 @@ matchit2optimal <- function(treat, formula, data, distance, discarded,
 
   class(res) <- "matchit"
   res
+}
+
+#Subset InfinitySparseMatrix using vector indices
+.subset_infsm <- function(y, ss) {
+  y@.Data <- y[ss]
+  y@cols <- y@cols[ss]
+  y@rows <- y@rows[ss]
+
+  y
 }

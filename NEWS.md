@@ -6,6 +6,20 @@ output:
 `MatchIt` News and Updates
 ======
 
+# MatchIt 4.7.0
+
+* For nearest neighbor matching, optimal full matching, and genetic matching, calipers can now be negative, which forces paired units to be further away from each other on the given variables.
+
+* When using `method = "optimal"` to do 1:1 matching on a propensity score, a new preprocessing algorithm is used to speed up the matching process. This algorithm ensures the resulting match is as good as a match that would have been found without the preprocessing step while shrinking the size of the matching problem. Typically, the same matched set will be selected, but units may be paired differently (this is because the general optimization problem often has multiple solutions with the same value of the objective function; this algorithm adds an additional constraint to select among fewer such solutions). This algorithm is described in [Sävje (2020)](https://doi.org/10.1214/19-STS739) and is implemented in C++ to be fast.
+
+* Fixed a bug when matching with a nonzero `ratio` where subclass membership was incorrectly calculated. Thanks to Simon Loewe (@simon-lowe) for originally pointing it out. (#207, #208)
+
+* `match.data()` has been renamed to `match_data()`, but `match.data()` will remain as an alias for backward compatibility.
+
+* Fixed a bug with printing.
+
+* Documentation fixes.
+
 # MatchIt 4.6.0
 
 Most improvements are related to performance. Some of these dramatically improve speeds for large datasets. Most come from improvements to `Rcpp` code.

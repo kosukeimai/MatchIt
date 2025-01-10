@@ -33,7 +33,7 @@ of the propensity score) but sampling weights are required for generalizing
 an effect to the correct population. Without adding sampling weights to the
 \code{matchit} object, balance assessment tools (i.e., \code{\link[=summary.matchit]{summary.matchit()}}
 and \code{\link[=plot.matchit]{plot.matchit()}}) will not calculate balance statistics correctly, and
-the weights produced by \code{\link[=match.data]{match.data()}} and \code{\link[=get_matches]{get_matches()}} will not
+the weights produced by \code{\link[=match_data]{match_data()}} and \code{\link[=get_matches]{get_matches()}} will not
 incorporate the sampling weights.
 }
 \examples{
@@ -62,7 +62,7 @@ summary(m.out, improvement = FALSE)
 
 }
 \seealso{
-\code{\link[=matchit]{matchit()}}; \code{\link[=match.data]{match.data()}}
+\code{\link[=matchit]{matchit()}}; \code{\link[=match_data]{match_data()}}
 }
 \author{
 Noah Greifer

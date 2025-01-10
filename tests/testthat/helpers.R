@@ -44,15 +44,16 @@ expect_good_matchit <- function(m, expect_subclass = NULL, expect_distance = NUL
 
       if (!is.null(replace)) {
         if (replace) {
-          #May not be duplicates incidentally; make sure examples induce duplicates
-          expect_true(!isTRUE(all.equal(anyDuplicated(na.omit(m$match.matrix)), 0)))
+          #May not be duplicates incidentally; make sure examples induce duplicates;
+          #if not expected to, set replace = FALSE
+          expect_true(max(table(m$match.matrix)) > 0)
 
           if (!is.null(attr(replace, "reuse.max"))) {
             expect_true(max(table(m$match.matrix)) <= attr(replace, "reuse.max"))
           }
         }
         else {
-          expect_equal(anyDuplicated(na.omit(m$match.matrix)), 0)
+          expect_true(max(table(m$match.matrix)) == 1)
         }
       }
     }
@@ -73,6 +74,71 @@ expect_good_matchit <- function(m, expect_subclass = NULL, expect_distance = NUL
     }
     else {
       expect_null(m$distance)
+    }
+  }
+
+  #Check that weights are equal when computed from subclasses or match.matrix
+  if (!is.null(m$subclass) && !is.null(m$match.matrix)) {
+    expect_equal(get_weights_from_mm(m$match.matrix, m$treat, switch(m$estimand, ATC = 0, 1)),
+                 get_weights_from_subclass(m$subclass, m$treat, m$estimand))
+  }
+
+  #Check that calipers work as expected
+  if (!is.null(m$caliper)) {
+    if (!is.null(m$match.matrix)) {
+      expect_true(all(vapply(seq_along(m$caliper), function(i) {
+        if (is.null(names(m$caliper))) {
+          cc <- m$caliper[1L]
+          xx <- m$distance
+        }
+        else if (names(m$caliper)[i] == "") {
+          cc <- m$caliper[i]
+          xx <- m$distance
+        }
+        else {
+          cc <- m$caliper[i]
+          xx <- setNames(m$X[[names(m$caliper)[i]]], names(m$treat))
+        }
+
+        all(vapply(rownames(m$match.matrix), function(t1) {
+          all(vapply(na.omit(m$match.matrix[t1, ]), function(t0) {
+            if (cc >= 0) {
+              abs(xx[t1] - xx[t0]) <= cc
+            }
+            else {
+              abs(xx[t1] - xx[t0]) > -cc
+            }
+          }, logical(1L)))
+        }, logical(1L)))
+      }, logical(1L))))
+    }
+
+    if (!is.null(m$subclass)) {
+      expect_true(all(vapply(seq_along(m$caliper), function(i) {
+        if (is.null(names(m$caliper))) {
+          cc <- m$caliper[1L]
+          xx <- m$distance
+        }
+        else if (names(m$caliper)[i] == "") {
+          cc <- m$caliper[i]
+          xx <- m$distance
+        }
+        else {
+          cc <- m$caliper[i]
+          xx <- setNames(m$X[[names(m$caliper)[i]]], names(m$treat))
+        }
+
+        all(vapply(which(m$treat == 1 & !is.na(m$subclass)), function(t1) {
+          all(vapply(which(m$treat == 0 & !is.na(m$subclass) & m$subclass == m$subclass[t1]), function(t0) {
+            if (cc >= 0) {
+              abs(xx[t1] - xx[t0]) <= cc
+            }
+            else {
+              abs(xx[t1] - xx[t0]) > -cc
+            }
+          }, logical(1L)))
+        }, logical(1L)))
+      }, logical(1L))))
     }
   }
 

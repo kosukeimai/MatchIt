@@ -1,13 +1,13 @@
 #' Append matched datasets together
 #'
 #' These functions are [rbind()] methods for objects resulting from calls to
-#' [match.data()] and [get_matches()]. They function nearly identically to
+#' [match_data()] and [get_matches()]. They function nearly identically to
 #' `rbind.data.frame()`; see Details for how they differ.
 #'
 #' @aliases rbind.matchdata rbind.getmatches
 #'
 #' @param \dots Two or more `matchdata` or `getmatches` objects the
-#' output of calls to [match.data()] and [get_matches()], respectively.
+#' output of calls to [match_data()] and [get_matches()], respectively.
 #' Supplied objects must either be all `matchdata` objects or all
 #' `getmatches` objects.
 #' @param deparse.level Passed to [rbind()].
@@ -37,7 +37,7 @@
 #' `rbind.getmatches()` and `rbind.matchdata()` are identical.
 #'
 #' @author Noah Greifer
-#' @seealso [match.data()], [rbind()]
+#' @seealso [match_data()], [rbind()]
 #'
 #' See `vignettes("estimating-effects")` for details on using
 #' `rbind()` for effect estimation after subsetting the data.
@@ -50,17 +50,17 @@
 #' m.out_b <- matchit(treat ~ age + educ + married +
 #'                     nodegree + re74 + re75,
 #'                   data = subset(lalonde, race == "black"))
-#' md_b <- match.data(m.out_b)
+#' md_b <- match_data(m.out_b)
 #'
 #' m.out_h <- matchit(treat ~ age + educ + married +
 #'                     nodegree + re74 + re75,
 #'                   data = subset(lalonde, race == "hispan"))
-#' md_h <- match.data(m.out_h)
+#' md_h <- match_data(m.out_h)
 #'
 #' m.out_w <- matchit(treat ~ age + educ + married +
 #'                     nodegree + re74 + re75,
 #'                   data = subset(lalonde, race == "white"))
-#' md_w <- match.data(m.out_w)
+#' md_w <- match_data(m.out_w)
 #'
 #' #Bind the datasets together
 #' md_all <- rbind(md_b, md_h, md_w)
@@ -118,11 +118,11 @@ rbind.matchdata <- function(..., deparse.level = 1) {
     setdiff(names(md_list[[d]]), unlist(lapply(attr_list, `[`, d)))
   })
 
-  for (d in seq_along(md_list)[-1]) {
-    if (length(other_col_list[[d]]) != length(other_col_list[[1]]) ||
-        !all(other_col_list[[d]] %in% other_col_list[[1]])) {
+  for (d in seq_along(md_list)[-1L]) {
+    if (length(other_col_list[[d]]) != length(other_col_list[[1L]]) ||
+        !all(other_col_list[[d]] %in% other_col_list[[1L]])) {
       .err(sprintf("the %s inputs must come from the same dataset",
-                 switch(type, "matchdata" = "`match.data()`", "`get_matches()`")))
+                 switch(type, "matchdata" = "`match_data()`", "`get_matches()`")))
     }
   }
 
@@ -149,7 +149,7 @@ rbind.matchdata <- function(..., deparse.level = 1) {
 
     #Put all columns in the same order
     if (d > 1) {
-      md_list[[d]] <- md_list[[d]][names(md_list[[1]])]
+      md_list[[d]] <- md_list[[d]][names(md_list[[1L]])]
     }
 
     class(md_list[[d]]) <- setdiff(class(md_list[[d]]), type)

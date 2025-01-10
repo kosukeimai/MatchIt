@@ -11,7 +11,7 @@
 }
 \arguments{
 \item{\dots}{Two or more \code{matchdata} or \code{getmatches} objects the
-output of calls to \code{\link[=match.data]{match.data()}} and \code{\link[=get_matches]{get_matches()}}, respectively.
+output of calls to \code{\link[=match_data]{match_data()}} and \code{\link[=get_matches]{get_matches()}}, respectively.
 Supplied objects must either be all \code{matchdata} objects or all
 \code{getmatches} objects.}
 
@@ -27,7 +27,7 @@ original data object.
 }
 \description{
 These functions are \code{\link[=rbind]{rbind()}} methods for objects resulting from calls to
-\code{\link[=match.data]{match.data()}} and \code{\link[=get_matches]{get_matches()}}. They function nearly identically to
+\code{\link[=match_data]{match_data()}} and \code{\link[=get_matches]{get_matches()}}. They function nearly identically to
 \code{rbind.data.frame()}; see Details for how they differ.
 }
 \details{
@@ -55,17 +55,17 @@ data("lalonde")
 m.out_b <- matchit(treat ~ age + educ + married +
                     nodegree + re74 + re75,
                   data = subset(lalonde, race == "black"))
-md_b <- match.data(m.out_b)
+md_b <- match_data(m.out_b)
 
 m.out_h <- matchit(treat ~ age + educ + married +
                     nodegree + re74 + re75,
                   data = subset(lalonde, race == "hispan"))
-md_h <- match.data(m.out_h)
+md_h <- match_data(m.out_h)
 
 m.out_w <- matchit(treat ~ age + educ + married +
                     nodegree + re74 + re75,
                   data = subset(lalonde, race == "white"))
-md_w <- match.data(m.out_w)
+md_w <- match_data(m.out_w)
 
 #Bind the datasets together
 md_all <- rbind(md_b, md_h, md_w)
@@ -75,7 +75,7 @@ levels(md_all$subclass)
 
 }
 \seealso{
-\code{\link[=match.data]{match.data()}}, \code{\link[=rbind]{rbind()}}
+\code{\link[=match_data]{match_data()}}, \code{\link[=rbind]{rbind()}}
 
 See \code{vignettes("estimating-effects")} for details on using
 \code{rbind()} for effect estimation after subsetting the data.

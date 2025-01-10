@@ -209,7 +209,7 @@ summary.matchit <- function(object,
   treat <- object$treat
   weights <- object$weights
   s.weights <- {
-    if (is_null(object$s.weights)) rep(1, length(weights))
+    if (is_null(object$s.weights)) rep_with(1, weights)
     else object$s.weights
   }
 
@@ -280,7 +280,7 @@ summary.matchit <- function(object,
     if (matched) sum.matched.int <- matrix(NA_real_, nrow = n.int, ncol = length(aa.matched[[1]]),
                                            dimnames = list(NULL, names(aa.matched[[1]])))
 
-    to.remove <- rep(FALSE, n.int)
+    to.remove <- rep.int(FALSE, n.int)
     int.names <- character(n.int)
     k <- 1
     for (i in 1:kk) {
@@ -404,7 +404,7 @@ summary.matchit.subclass <- function(object,
   treat <- object$treat
   weights <- object$weights
   s.weights <- {
-    if (is_null(object$s.weights)) rep(1, length(weights))
+    if (is_null(object$s.weights)) rep_with(1, weights)
     else object$s.weights
   }
   subclass <- object$subclass
@@ -472,7 +472,7 @@ summary.matchit.subclass <- function(object,
     if (matched) sum.matched.int <- matrix(NA_real_, nrow = n.int, ncol = length(aa.matched[[1]]),
                                            dimnames = list(NULL, names(aa.matched[[1]])))
 
-    to.remove <- rep(FALSE, n.int)
+    to.remove <- rep.int(FALSE, n.int)
     int.names <- character(n.int)
     k <- 1
     for (i in seq_len(kk)) {
@@ -560,7 +560,7 @@ summary.matchit.subclass <- function(object,
       if (interactions) {
         sum.sub.int <- matrix(NA_real_, nrow = kk*(kk+1)/2, ncol = length(aa[[1]]),
                               dimnames = list(NULL, names(aa[[1]])))
-        to.remove <- rep(FALSE, nrow(sum.sub.int))
+        to.remove <- rep.int(FALSE, nrow(sum.sub.int))
         int.names <- character(nrow(sum.sub.int))
         k <- 1
         for (i in 1:kk) {
@@ -717,14 +717,14 @@ print.summary.matchit.subclass <- function(x, digits = max(3, getOption("digits"
 
   X <- {
     if (is_null(object$X)) matrix(nrow = length(object$treat), ncol = 0)
-    else get.covs.matrix(data = object$X)
+    else get_covs_matrix(data = object$X)
   }
 
   if (is_null(addlvariables)) {
     return(X)
   }
 
-  #Attempt to extract data from matchit object; same as match.data()
+  #Attempt to extract data from matchit object; same as match_data()
   data.found <- FALSE
   for (i in 1:4) {
     if (i == 2L) {
@@ -800,10 +800,10 @@ print.summary.matchit.subclass <- function(x, digits = max(3, getOption("digits"
   }
 
   if (af) {
-    addlvariables <- get.covs.matrix(addvariables_f, data = data)
+    addlvariables <- get_covs_matrix(addvariables_f, data = data)
   }
   else {
-    addlvariables <- get.covs.matrix(data = addlvariables)
+    addlvariables <- get_covs_matrix(data = addlvariables)
   }
 
   # addl_assign <- get_assign(addlvariables)

@@ -145,8 +145,7 @@ estimated or supplied as a vector and \code{"data"} otherwise.}
 use in matching. Should be a numeric vector with each value named according
 to the variable to which the caliper applies. To apply to the distance
 measure, the value should be unnamed. See the individual methods pages for
-information on whether and how this argument is used. The default is
-\code{NULL} for no caliper.}
+information on whether and how this argument is used. Positive values require the distance between paired units to be no larger than the supplied caliper; negative values require the distance between paired units to be larger than the absolute value value of the supplied caliper. The default is \code{NULL} for no caliper.}
 
 \item{std.caliper}{\code{logical}; when a caliper is specified, whether the
 the caliper is in standard deviation units (\code{TRUE}) or raw units
@@ -334,7 +333,7 @@ For cardinality matching, all matched units receive a weight
 of 1.
 }
 
-\subsection{Matching witht replacement}{
+\subsection{Matching with replacement}{
 
 For matching \emph{with} replacement, units are not assigned to unique strata. For
 the ATT, each treated unit gets a weight of 1. Each control unit is weighted
@@ -359,7 +358,7 @@ units in that treatment group (i.e., to have an average of 1).
 If sampling weights are included through the
 \code{s.weights} argument, they will be included in the \code{matchit()}
 output object but not incorporated into the matching weights.
-\code{\link[=match.data]{match.data()}}, which extracts the matched set from a \code{matchit} object,
+\code{\link[=match_data]{match_data()}}, which extracts the matched set from a \code{matchit} object,
 combines the matching weights and sampling weights.
 }
 

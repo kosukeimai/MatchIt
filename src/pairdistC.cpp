@@ -35,6 +35,7 @@ double pairdistsubC(const NumericVector& x,
         continue;
       }
 
+      //Numerically stable formula for adding new observation to a mean
       k++;
       dist += (std::abs(x[ord_j] - x[ord_i]) - dist) / k;
     }

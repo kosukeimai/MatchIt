@@ -106,20 +106,26 @@ IntegerVector mm2subclassC(const IntegerMatrix& mm,
 
   R_xlen_t r = mm.nrow();
   R_xlen_t ki = 0;
+  int ri;
+
+  IntegerVector s(r);
+  std::vector<std::string> levs;
+  levs.reserve(r);
 
   for (R_xlen_t i : which(!is_na(mm))) {
+    ri = i % r; //row
+
+    //If first in column, assign subclass
     if (i / r == 0) {
-      //If first entry in row, increment ki and assign subclass of treated
       ki++;
-      subclass[ind1[i % r]] = ki;
+
+      s[ri] = ki;
+      subclass[ind1[ri]] = ki;
+
+      levs.push_back(std::to_string(ki));
     }
 
-    subclass[mm[i] - 1] = ki;
-  }
-
-  CharacterVector levs(ki);
-  for (R_xlen_t j = 0; j < ki; j++){
-    levs[j] = std::to_string(j + 1);
+    subclass[mm[i] - 1] = s[ri];
   }
 
   subclass.attr("class") = "factor";

@@ -83,3 +83,7 @@ pak::pkg_install("ngreifer/MatchIt")
 ```
 
 This will require R to compile C++ code, which might require additional software to be installed on your computer. If you need the development version but can't compile the package, ask the maintainer for a binary version of the package.
+
+### Questions and Bug Reports
+
+If you have questions about `MatchIt` or want to submit a bug report, please do so using the GitHub [issues page](https://github.com/kosukeimai/MatchIt/issues) for the package. Suggestions for new features and kind words of support are encouraged as well. Remember this software is free and developed by volunteers.

@@ -46,28 +46,28 @@ bal1var <- function(xx, tt, ww = NULL, s.weights, subclass = NULL, mm = NULL,
         }
       }
 
-      xsum[3] <- mdiff/std
+      xsum[3L] <- mdiff/std
       if (!un && compute.pair.dist) {
-        xsum[7] <- pair.dist(xx, tt, subclass, mm, std)
+        xsum[7L] <- pair.dist(xx, tt, subclass, mm, std)
       }
     }
   }
   else {
-    xsum[3] <- mdiff
+    xsum[3L] <- mdiff
 
     if (!un && compute.pair.dist) {
-      xsum[7] <- pair.dist(xx, tt, subclass, mm)
+      xsum[7L] <- pair.dist(xx, tt, subclass, mm)
     }
   }
 
   if (bin.var) {
-    xsum[5:6] <- abs(mdiff)
+    xsum[5L:6L] <- abs(mdiff)
   }
   else if (!too.small) {
     xsum["Var. Ratio"] <- wvar(xx[i1], bin.var, ww[i1]) / wvar(xx[i0], bin.var, ww[i0])
 
     qqmat <- qqsum(xx, tt, ww, standardize = standardize)
-    xsum[5:6] <- qqmat[c("meandiff", "maxdiff")]
+    xsum[5L:6L] <- qqmat[c("meandiff", "maxdiff")]
   }
 
   xsum
@@ -79,7 +79,7 @@ bal1var.subclass <- function(xx, tt, s.weights, subclass, s.d.denom = "treated",
   bin.var <- all(xx == 0 | xx == 1)
   in.sub <- !is.na(subclass) & subclass == which.subclass
 
-  xsum <- matrix(NA_real_, nrow = 1, ncol = 6)
+  xsum <- matrix(NA_real_, nrow = 1L, ncol = 6L)
   rownames(xsum) <- "Subclass"
   if (standardize)
     colnames(xsum) <- c("Means Treated","Means Control", "Std. Mean Diff.",
@@ -117,21 +117,21 @@ bal1var.subclass <- function(xx, tt, s.weights, subclass, s.d.denom = "treated",
         }
       }
 
-      xsum["Subclass", 3] <- mdiff/std
+      xsum["Subclass", 3L] <- mdiff/std
     }
   }
   else {
-    xsum["Subclass", 3] <- mdiff
+    xsum["Subclass", 3L] <- mdiff
   }
 
   if (bin.var) {
-    xsum["Subclass", 5:6] <- abs(mdiff)
+    xsum["Subclass", 5L:6L] <- abs(mdiff)
   }
   else if (!too.small) {
     xsum["Subclass", "Var. Ratio"] <- wvar(xx[i1], bin.var, s.weights[i1]) / wvar(xx[i0], bin.var, s.weights[i0])
 
     qqall <- qqsum(xx[in.sub], tt[in.sub], standardize = standardize)
-    xsum["Subclass", 5:6] <- qqall[c("meandiff", "maxdiff")]
+    xsum["Subclass", 5L:6L] <- qqall[c("meandiff", "maxdiff")]
   }
 
   xsum
@@ -173,8 +173,8 @@ qqsum <- function(x, t, w = NULL, standardize = FALSE) {
     w <- rep.int(1, n.obs)
   }
 
-  if (has_n_unique(x, 2) && all(x == 0 | x == 1)) {
-    t1 <- t == t[1]
+  if (has_n_unique(x, 2L) && all(x == 0 | x == 1)) {
+    t1 <- t == t[1L]
     #For binary variables, just difference in means
     ediff <- abs(wm(x[t1], w[t1]) - wm(x[-t1], w[-t1]))
 
@@ -188,7 +188,7 @@ qqsum <- function(x, t, w = NULL, standardize = FALSE) {
   w_ord <- w[ord]
   t_ord <- t[ord]
 
-  t1 <- which(t_ord == t_ord[1])
+  t1 <- which(t_ord == t_ord[1L])
 
   if (standardize) {
     #Difference between ecdf of x for each group

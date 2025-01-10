@@ -272,7 +272,8 @@
 
 NULL
 
-matchit2cem <- function(treat, covs, estimand = "ATT", s.weights = NULL, m.order = NULL, verbose = FALSE, ...) {
+matchit2cem <- function(treat, covs, estimand = "ATT", s.weights = NULL,
+                        m.order = NULL, verbose = FALSE, ...) {
   if (is_null(covs)) {
     .err("Covariates must be specified in the input formula to use coarsened exact matching")
   }
@@ -292,7 +293,7 @@ matchit2cem <- function(treat, covs, estimand = "ATT", s.weights = NULL, m.order
   strat <- cem_matchit(treat = treat, X = covs, ...)
 
   mm <- NULL
-  if (isTRUE(...get("k2k", ...))) {
+  if (isTRUE(...get("k2k"))) {
     focal <- switch(estimand, "ATC" = 0, 1)
 
     mm <- do_k2k(treat = treat,

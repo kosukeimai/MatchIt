@@ -16,11 +16,11 @@ link-citations: true
 ```{=html}
 <style>
 pre {
-  overflow-x: auto;
+overflow-x: auto;
 }
 pre code {
-  word-wrap: normal;
-  white-space: pre;
+word-wrap: normal;
+white-space: pre;
 }
 </style>
 ```
@@ -181,11 +181,8 @@ We will need to the following packages to perform the desired analyses:
 
 Of course, we also need `MatchIt` to perform the matching.
 
-```{r,message=FALSE,warning=FALSE}
+```{r,message=FALSE,warning=FALSE, eval = which(c(TRUE, me_ok))}
 library("MatchIt")
-```
-
-```{r,message=FALSE,warning=FALSE, eval=me_ok}
 library("marginaleffects")
 ```
 
@@ -203,17 +200,19 @@ There are a few adjustments that need to be made for certain scenarios, which we
 
 Here, we demonstrate the faster analytic approach to estimating confidence intervals; for the bootstrap approach, see the section "Using Bootstrapping to Estimate Confidence Intervals" below.
 
-First, we will perform full matching on the propensity score for the ATT. Remember, all matching methods use this exact procedure or a slight variation, so this section is critical even if you are using a different matching method.
+First, we will perform variable-ratio nearest neighbor matching without replacement on the propensity score for the ATT. Remember, all matching methods use this exact procedure or a slight variation, so this section is critical even if you are using a different matching method.
 
 ```{r}
-#Optimal full matching on the PS for the ATT
-mF <- matchit(A ~ X1 + X2 + X3 + X4 + X5 + 
-                 X6 + X7 + X8 + X9, data = d,
-               method = "full", estimand = "ATT")
-mF
+#Variable-ratio NN matching on the PS for the ATT
+mV <- matchit(A ~ X1 + X2 + X3 + X4 + X5 + 
+                X6 + X7 + X8 + X9,
+              data = d,
+              ratio = 2,
+              max.controls = 4)
+mV
 
 #Extract matched data
-md <- match.data(mF)
+md <- match_data(mV)
 
 head(md)
 ```
@@ -222,19 +221,21 @@ Typically one would assess balance and ensure that this matching specification w
 
 We perform all analyses using the matched dataset, `md`, which, for matching methods that involve dropping units, contains only the units retained in the sample.
 
-First, we fit a model for the outcome given the treatment and (optionally) the covariates. It's usually a good idea to include treatment-covariate interactions, which we do below, but this is not always necessary, especially when excellent balance has been achieved. You can also include the propensity score (usually labeled `distance` in the `match.data()` output), which can add some robustness, especially when modeled flexibly (e.g., with polynomial terms or splines) [@austinDoublePropensityscoreAdjustment2017]; see [here](https://stats.stackexchange.com/a/580174/116195) for an example.
+First, we fit a model for the outcome given the treatment and (optionally) the covariates. It's usually a good idea to include treatment-covariate interactions, which we do below, but this is not always necessary, especially when excellent balance has been achieved. You can also include the propensity score (usually labeled `distance` in the `match_data()` output), which can add some robustness, especially when modeled flexibly (e.g., with polynomial terms or splines) [@austinDoublePropensityscoreAdjustment2017]; see [here](https://stats.stackexchange.com/a/580174/116195) for an example.
 
 ```{r}
 #Linear model with covariates
 fit1 <- lm(Y_C ~ A * (X1 + X2 + X3 + X4 + X5 + 
                         X6 + X7 + X8 + X9),
-           data = md, weights = weights)
+           data = md,
+           weights = weights)
 ```
 
 Next, we use `marginaleffects::avg_comparisons()` to estimate the ATT.
 
 ```{r, eval=me_ok}
-avg_comparisons(fit1, variables = "A",
+avg_comparisons(fit1,
+                variables = "A",
                 vcov = ~subclass,
                 newdata = subset(A == 1))
 ```
@@ -244,14 +245,15 @@ Let's break down the call to `avg_comparisons()`: to the first argument, we supp
 If, in addition to the effect estimate, we want the average estimated potential outcomes, we can use `marginaleffects::avg_predictions()`, which we demonstrate below. Note the interpretation of the resulting estimates as the expected potential outcomes is only valid if all covariates present in the outcome model (if any) are interacted with the treatment.
 
 ```{r, eval=me_ok && packageVersion("marginaleffects") >= "0.11.0"}
-avg_predictions(fit1, variables = "A",
+avg_predictions(fit1,
+                variables = "A",
                 vcov = ~subclass,
                 newdata = subset(A == 1))
 ```
 
 We can see that the difference in potential outcome means is equal to the average treatment effect computed previously[^4]. All of the arguments to `avg_predictions()` are the same as those to `avg_comparisons()`.
 
-[^4]: To verify that they are equal, supply the output of `avg_predictions()` to `hypotheses(), e.g.,`avg_predictions(...) \|\> hypotheses("revpairwise")`; this explicitly compares the average potential outcomes and should yield identical estimates to the`avg_comparisons()\` call.
+[^4]: To verify that they are equal, supply the output of `avg_predictions()` to `hypotheses()`, e.g., `avg_predictions(...) |> hypotheses("revpairwise")`; this explicitly compares the average potential outcomes and should yield identical estimates to the `avg_comparisons()` call.
 
 ### Adjustments to the Standard Case
 
@@ -265,7 +267,7 @@ When matching for the ATE (including [coarsened] exact matching, full matching, 
 
 When matching with replacement (i.e., nearest neighbor or genetic matching with `replace = TRUE`), effect and SE estimation need to account for control unit multiplicity (i.e., repeated use) and within-pair correlations [@hill2006; @austin2020a]. Although @abadie2008 demonstrated analytically that bootstrap SEs may be invalid for matching with replacement, simulation work by @hill2006 and @bodory2020 has found that bootstrap SEs are adequate and generally slightly conservative. See the section "Using Bootstrapping to Estimate Confidence Intervals" for instructions on using the bootstrap and an example that use matching with replacement.
 
-Because control units do not belong to unique pairs, there is no pair membership in the `match.data()` output. One can simply change `vcov = ~subclass` to `vcov = "HC3"` in the calls to `comparisons()` and `predictions()` to use robust SEs instead of cluster-robust SEs, as recommended by @hill2006. There is some evidence for an alternative approach that incorporates pair membership and adjusts for reuse of control units, though this has only been studied for survival outcomes [@austin2020a]. This adjustment involves using two-way cluster-robust SEs with pair membership and unit ID as the clustering variables. For continuous and binary outcomes, this involves the following two changes: 1) replace `match.data()` with `get_matches()`, which produces a dataset with one row per unit per pair, meaning control units matched to multiple treated units will appear multiple times in the dataset; 2) set `vcov = ~subclass + id` in the calls to `avg_comparisons()` and `avg_predictions()`. For survival outcomes, a special procedure must be used; see the section on survival outcomes below.
+Because control units do not belong to unique pairs, there is no pair membership in the `match_data()` output. One can simply change `vcov = ~subclass` to `vcov = "HC3"` in the calls to `avg_comparisons()` and `avg_predictions()` to use robust SEs instead of cluster-robust SEs, as recommended by @hill2006. There is some evidence for an alternative approach that incorporates pair membership and adjusts for reuse of control units, though this has only been studied for survival outcomes [@austin2020a]. This adjustment involves using two-way cluster-robust SEs with pair membership and unit ID as the clustering variables. For continuous and binary outcomes, this involves the following two changes: 1) replace `match_data()` with `get_matches()`, which produces a dataset with one row per unit per pair, meaning control units matched to multiple treated units will appear multiple times in the dataset; 2) set `vcov = ~subclass + id` in the calls to `avg_comparisons()` and `avg_predictions()`. For survival outcomes, a special procedure must be used; see the section on survival outcomes below.
 
 #### Matching without pairing
 
@@ -284,11 +286,13 @@ The subclass-specific approach omits the weights and uses the subclasses directl
 ```{r, eval=me_ok}
 #Subclassification on the PS for the ATT
 mS <- matchit(A ~ X1 + X2 + X3 + X4 + X5 + 
-                 X6 + X7 + X8 + X9, data = d,
-               method = "subclass", estimand = "ATT")
+                X6 + X7 + X8 + X9,
+              data = d,
+              method = "subclass",
+              estimand = "ATT")
 
 #Extract matched data
-md <- match.data(mS)
+md <- match_data(mS)
 
 fitS <- lm(Y_C ~ subclass * (A * (X1 + X2 + X3 + X4 + X5 + 
                                     X6 + X7 + X8 + X9)),
@@ -317,8 +321,9 @@ To compute the marginal RR, we need to add `comparison = "lnratioavg"` to `avg_c
 ```{r, eval=me_ok}
 #Logistic regression model with covariates
 fit2 <- glm(Y_B ~ A * (X1 + X2 + X3 + X4 + X5 + 
-                        X6 + X7 + X8 + X9),
-            data = md, weights = weights,
+                         X6 + X7 + X8 + X9),
+            data = md,
+            weights = weights,
             family = quasibinomial())
 
 #Compute effects; RR and confidence interval
@@ -332,7 +337,7 @@ avg_comparisons(fit2,
 
 The output displays the marginal RR, its Z-value, the p-value for the Z-test of the log RR against 0, and its confidence interval. (Note that even though the `Contrast` label still suggests the log RR, the RR is actually displayed.) To view the log RR and its standard error, omit the `transform` argument.
 
-For the marginal OR, the only thing that needs to change is that `comparison` should be set to `"lnoravg"`.
+For the marginal OR, the only thing that needs to change is that `comparison` should be set to `"lnoravg"`. For the marginal RD, both the `comparison` and `transform` arguments can be removed (yielding the same call as in the standard case).
 
 #### Survival outcomes
 
@@ -348,13 +353,16 @@ For the HR, we cannot compute average marginal effects and must use the coeffici
 library("survival")
 
 #Cox Regression for marginal HR
-coxph(Surv(Y_S) ~ A, data = md, robust = TRUE, 
-      weights = weights, cluster = subclass)
+coxph(Surv(Y_S) ~ A,
+      data = md,
+      robust = TRUE, 
+      weights = weights,
+      cluster = subclass)
 ```
 
 The `coef` column contains the log HR, and `exp(coef)` contains the HR. Remember to always use the `robust se` for the SE of the log HR. The displayed z-test p-value results from using the robust SE.
 
-For matching with replacement, a special procedure described by @austin2020a can be necessary for valid inference. According to the results of their simulation studies, when the treatment prevalence is low (\<30%), a SE that does not involve pair membership (i.e., the `match.data()` approach, as demonstrated above) is sufficient. When treatment prevalence is higher, the SE that ignores pair membership may be too low, and the authors recommend using a custom SE estimator that uses information about both multiplicity and pairing.
+For matching with replacement, a special procedure described by @austin2020a can be necessary for valid inference. According to the results of their simulation studies, when the treatment prevalence is low (\<30%), a SE that does not involve pair membership (i.e., the `match_data()` approach, as demonstrated above) is sufficient. When treatment prevalence is higher, the SE that ignores pair membership may be too low, and the authors recommend using a custom SE estimator that uses information about both multiplicity and pairing.
 
 Doing so must be done manually for survival models using `get_matches()` and several calls to `coxph()` as demonstrated in the appendix of @austin2020a. We demonstrate this below:
 
@@ -364,17 +372,17 @@ gm <- get_matches(mR)
 
 #Austin & Cafri's (2020) SE estimator
 fs <- coxph(Surv(Y_S) ~ A, data = gm, robust = TRUE, 
-      weights = weights, cluster = subclass)
+            weights = weights, cluster = subclass)
 Vs <- fs$var
 ks <- nlevels(gm$subclass)
 
 fi <- coxph(Surv(Y_S) ~ A, data = gm, robust = TRUE, 
-      weights = weights, cluster = id)
+            weights = weights, cluster = id)
 Vi <- fi$var
 ki <- length(unique(gm$id))
 
 fc <- coxph(Surv(Y_S) ~ A, data = gm, robust = TRUE, 
-      weights = weights)
+            weights = weights)
 Vc <- fc$var
 kc <- nrow(gm)
 
@@ -407,11 +415,11 @@ boot_fun <- function(data, i) {
                replace = TRUE)
   
   #Extract matched dataset
-  md <- match.data(m, data = boot_data)
+  md <- match_data(m, data = boot_data)
   
   #Fit outcome model
   fit <- glm(Y_B ~ A * (X1 + X2 + X3 + X4 + X5 + 
-                 X6 + X7 + X8 + X9),
+                          X6 + X7 + X8 + X9),
              data = md, weights = weights,
              family = quasibinomial())
   
@@ -430,7 +438,7 @@ boot_fun <- function(data, i) {
   Ep0 <- mean(p0)
   
   #Risk ratio
-  return(Ep1 / Ep0)
+  Ep1 / Ep0
 }
 ```
 
@@ -465,7 +473,7 @@ mNN <- matchit(A ~ X1 + X2 + X3 + X4 + X5 +
                  X6 + X7 + X8 + X9, data = d)
 mNN
 
-md <- match.data(mNN)
+md <- match_data(mNN)
 ```
 
 Next, we'll write the function that takes in cluster membership and the sampled indices and returns an estimate.
@@ -487,7 +495,7 @@ cluster_boot_fun <- function(pairs, i) {
   
   #Fit outcome model
   fit <- glm(Y_B ~ A * (X1 + X2 + X3 + X4 + X5 + 
-                 X6 + X7 + X8 + X9),
+                          X6 + X7 + X8 + X9),
              data = boot_md, weights = weights,
              family = quasibinomial())
   
@@ -506,7 +514,7 @@ cluster_boot_fun <- function(pairs, i) {
   Ep0 <- mean(p0)
   
   #Risk ratio
-  return(Ep1 / Ep0)
+  Ep1 / Ep0
 }
 ```
 
@@ -543,8 +551,9 @@ We'll consider the binary variable `X5` to be the potential moderator of the eff
 
 ```{r}
 mP <- matchit(A ~ X1 + X2 + X5*X3 + X4 + 
-                X5*X6 + X7 + X5*X8 + X9, data = d,
-              exact = ~X5, method = "nearest")
+                X5*X6 + X7 + X5*X8 + X9,
+              data = d,
+              exact = ~X5)
 mP
 ```
 
@@ -553,7 +562,7 @@ Although it is straightforward to assess balance overall using `summary()`, it i
 If we are satisfied with balance, we can then model the outcome with an interaction between the treatment and the moderator.
 
 ```{r}
-mdP <- match.data(mP)
+mdP <- match_data(mP)
 
 fitP <- lm(Y_C ~ A * X5, data = mdP, weights = weights)
 ```
@@ -561,7 +570,8 @@ fitP <- lm(Y_C ~ A * X5, data = mdP, weights = weights)
 To estimate the subgroup ATTs, we can use `avg_comparisons()`, this time specifying the `by` argument to signify that we want treatment effects stratified by the moderator.
 
 ```{r, eval=me_ok}
-avg_comparisons(fitP, variables = "A",
+avg_comparisons(fitP,
+                variables = "A",
                 vcov = ~subclass,
                 newdata = subset(A == 1),
                 by = "X5")
@@ -570,7 +580,8 @@ avg_comparisons(fitP, variables = "A",
 We can see that the subgroup mean differences are quite similar to each other. Finally, we can test for moderation using another call to `avg_comparisons()`, this time using the `hypothesis` argument to signify that we want to compare effects between subgroups:
 
 ```{r, eval=me_ok}
-avg_comparisons(fitP, variables = "A",
+avg_comparisons(fitP,
+                variables = "A",
                 vcov = ~subclass,
                 newdata = subset(A == 1),
                 by = "X5",
@@ -597,13 +608,13 @@ There are a few common mistakes that should be avoided. It is important not only
 
 ### 1. Failing to include weights
 
-Several methods involve weights that are to be used in estimating the treatment effect. With full matching and stratification matching (when analyzed using MMWS), the weights do the entire work of balancing the covariates across the treatment groups. Omitting weights essentially ignores the entire purpose of matching. Some cases are less obvious. When performing matching with replacement and estimating the treatment effect using the `match.data()` output, weights must be included to ensure control units matched to multiple treated units are weighted accordingly. Similarly, when performing k:1 matching where not all treated units receive k matches, weights are required to account for the differential weight of the matched control units. The only time weights can be omitted after pair matching is when performing 1:1 matching without replacement. Including weights even in this scenario will not affect the analysis and it can be good practice to always include weights to prevent this error from occurring. There are some scenarios where weights are not useful because the conditioning occurs through some other means, such as when using the direct subclass strategy rather than MMWS for estimating marginal effects after stratification.
+Several methods involve weights that are to be used in estimating the treatment effect. With full matching and stratification matching (when analyzed using MMWS), the weights do the entire work of balancing the covariates across the treatment groups. Omitting weights essentially ignores the entire purpose of matching. Some cases are less obvious. When performing matching with replacement and estimating the treatment effect using the `match_data()` output, weights must be included to ensure control units matched to multiple treated units are weighted accordingly. Similarly, when performing k:1 matching where not all treated units receive k matches, weights are required to account for the differential weight of the matched control units. The only time weights can be omitted after pair matching is when performing 1:1 matching without replacement. Including weights even in this scenario will not affect the analysis and it can be good practice to always include weights to prevent this error from occurring. There are some scenarios where weights are not useful because the conditioning occurs through some other means, such as when using the direct subclass strategy rather than MMWS for estimating marginal effects after stratification.
 
 ### 2. Failing to use robust or cluster-robust standard errors
 
 Robust SEs are required when using weights to estimate the treatment effect. The model-based SEs resulting from weighted least squares or maximum likelihood are inaccurate when using matching weights because they assume weights are frequency weights rather than probability weights. Cluster-robust SEs account for both the matching weights and pair membership and should be used when appropriate. Sometimes, researchers use functions in the `survey` package to estimate robust SEs, especially with inverse probability weighting; this is a valid way to compute robust SEs and will give similar results to `sandwich::vcovHC()`.[^10]
 
-[^10]: To use `survey` to adjust for pair membership, one can use the following code to specify the survey design to be used with `svyglm()`: `svydesign(ids = ~subclass, weights = ~weights, data = md)` where `md` is the output of `match.data()`. After `svyglm()`, `comparisons()` can be used, and the `vcov` argument does not need to be specified.
+[^10]: To use `survey` to adjust for pair membership, one can use the following code to specify the survey design to be used with `svyglm()`: `svydesign(ids = ~subclass, weights = ~weights, data = md)` where `md` is the output of `match_data()`. After `svyglm()`, `avg_comparisons()` can be used, and the `vcov` argument does not need to be specified.
 
 ### 3. Interpreting conditional effects as marginal effects
 
@@ -612,8 +623,8 @@ The distinction between marginal and conditional effects is not always clear bot
 The following methods estimate **conditional effects** for binary or survival outcomes (with noncollapsible effect measures) and should **not** be used to estimate marginal effects:
 
 -   Logistic regression or Cox proportional hazards model with covariates and/or the propensity score included, using the coefficient on treatment as the effect estimate
--   Conditional logistic regression after matching
--   Stratified Cox regression after matching
+-   Conditional logistic regression after matching (e.g., using `survival::clogit()`)
+-   Stratified Cox regression after matching (e.g., using `survival::coxph()` with `strata()` in the model formula)
 -   Averaging stratum-specific effect estimates after stratification, including using Mantel-Haenszel OR pooling
 -   Including pair or stratum fixed or random effects in a logistic regression model, using the coefficient on treatment as the effect estimate
 

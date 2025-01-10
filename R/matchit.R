@@ -112,8 +112,7 @@
 #' use in matching. Should be a numeric vector with each value named according
 #' to the variable to which the caliper applies. To apply to the distance
 #' measure, the value should be unnamed. See the individual methods pages for
-#' information on whether and how this argument is used. The default is
-#' `NULL` for no caliper.
+#' information on whether and how this argument is used. Positive values require the distance between paired units to be no larger than the supplied caliper; negative values require the distance between paired units to be larger than the absolute value value of the supplied caliper. The default is `NULL` for no caliper.
 #' @param std.caliper `logical`; when a caliper is specified, whether the
 #' the caliper is in standard deviation units (`TRUE`) or raw units
 #' (`FALSE`). Can either be of length 1, applying to all calipers, or of
@@ -236,7 +235,7 @@
 #' For cardinality matching, all matched units receive a weight
 #' of 1.
 #'
-#' ### Matching witht replacement
+#' ### Matching with replacement
 #'
 #' For matching *with* replacement, units are not assigned to unique strata. For
 #' the ATT, each treated unit gets a weight of 1. Each control unit is weighted
@@ -259,7 +258,7 @@
 #' If sampling weights are included through the
 #' `s.weights` argument, they will be included in the `matchit()`
 #' output object but not incorporated into the matching weights.
-#' [match.data()], which extracts the matched set from a `matchit` object,
+#' [match_data()], which extracts the matched set from a `matchit` object,
 #' combines the matching weights and sampling weights.
 #'
 #' @return When `method` is something other than `"subclass"`, a
@@ -597,7 +596,7 @@ matchit <- function(formula,
       else link
     }
 
-    dist.out <- do.call(fn1, distance.options, quote = TRUE)
+    dist.out <- do.call(fn1, distance.options)
 
     dist.model <- dist.out$model
     distance <- dist.out$distance
@@ -732,7 +731,7 @@ print.matchit <- function(x, ...) {
 
   cat("A `matchit` object\n")
 
-  cat(sprintf(" - method: %s\n", info.to.method(info)))
+  cat(sprintf(" - method: %s\n", info_to_method(info)))
 
   if (is_not_null(info$distance) || info$mahalanobis) {
     cat(" - distance: ")
@@ -759,11 +758,11 @@ print.matchit <- function(x, ...) {
       }
 
       if (info$distance != "user") {
-        cat(sprintf("             - estimated with %s\n",
-                    info.to.distance(info)))
+        cat(sprintf("\n             - estimated with %s\n",
+                    info_to_distance(info)))
         if (is_not_null(x[["s.weights"]])) {
-          cat(sprintf("             - sampling weights %sincluded in estimation\n",
-                      if (isTRUE(attr(x[["s.weights"]], "in_ps"))) "" else "not "))
+          cat(sprintf("             - sampling weights %s in estimation\n",
+                      if (isTRUE(attr(x[["s.weights"]], "in_ps"))) "included" else "not included"))
         }
       }
     }
