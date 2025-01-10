@@ -219,7 +219,7 @@
 #'
 #' #Choose your solver; "gurobi" is best, "highs" is free and
 #' #easy to install
-#' solver <- "highs"
+#' \donttest{solver <- "highs"
 #'
 #' # 1:1 cardinality matching
 #' m.out1 <- matchit(treat ~ age + educ + re74,
@@ -243,9 +243,9 @@
 #'                   estimand = "ATE", ratio = NA,
 #'                   tols = .2, solver = solver)
 #' m.out3
-#' summary(m.out3, un = FALSE)
+#' summary(m.out3, un = FALSE)}
 #' @examplesIf (requireNamespace("highs", quietly = TRUE) && requireNamespace("optmatch", quietly = TRUE))
-#' # Pairing after 1:1 cardinality matching:
+#' \donttest{# Pairing after 1:1 cardinality matching:
 #' m.out1b <- matchit(treat ~ age + educ + re74,
 #'                    data = lalonde, method = "cardinality",
 #'                    estimand = "ATT", ratio = 1,
@@ -255,7 +255,7 @@
 #' # Note that balance doesn't change but pair distances
 #' # are lower for the paired-upon variables
 #' summary(m.out1b, un = FALSE)
-#' summary(m.out1, un = FALSE)
+#' summary(m.out1, un = FALSE)}
 #'
 #' # In these examples, a high tol was used and
 #' # few covariate matched on in order to not take too long;
