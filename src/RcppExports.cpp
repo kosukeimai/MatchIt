@@ -217,6 +217,18 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// preprocess_matchC
+IntegerVector preprocess_matchC(IntegerVector t, NumericVector p);
+RcppExport SEXP _MatchIt_preprocess_matchC(SEXP tSEXP, SEXP pSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< IntegerVector >::type t(tSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type p(pSEXP);
+    rcpp_result_gen = Rcpp::wrap(preprocess_matchC(t, p));
+    return rcpp_result_gen;
+END_RCPP
+}
 // subclass2mmC
 IntegerMatrix subclass2mmC(const IntegerVector& subclass_, const IntegerVector& treat, const int& focal);
 RcppExport SEXP _MatchIt_subclass2mmC(SEXP subclass_SEXP, SEXP treatSEXP, SEXP focalSEXP) {
@@ -309,6 +321,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_MatchIt_nn_matchC_vec", (DL_FUNC) &_MatchIt_nn_matchC_vec, 14},
     {"_MatchIt_nn_matchC_vec_closest", (DL_FUNC) &_MatchIt_nn_matchC_vec_closest, 13},
     {"_MatchIt_pairdistsubC", (DL_FUNC) &_MatchIt_pairdistsubC, 3},
+    {"_MatchIt_preprocess_matchC", (DL_FUNC) &_MatchIt_preprocess_matchC, 2},
     {"_MatchIt_subclass2mmC", (DL_FUNC) &_MatchIt_subclass2mmC, 3},
     {"_MatchIt_mm2subclassC", (DL_FUNC) &_MatchIt_mm2subclassC, 3},
     {"_MatchIt_subclass_scootC", (DL_FUNC) &_MatchIt_subclass_scootC, 4},

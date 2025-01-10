@@ -67,7 +67,7 @@ warnings.}
 Allowed arguments include \code{tol} and \code{solver}. See the
 \pkgfun{optmatch}{fullmatch} documentation for details. In general, \code{tol}
 should be set to a low number (e.g., \code{1e-7}) to get a more precise
-solution.
+solution (default is \code{1e-3}).
 
 The arguments \code{replace}, \code{caliper}, and \code{m.order} are ignored with a warning.}
 }
@@ -158,8 +158,7 @@ The \code{estimand} argument controls whether control units are selected to be m
 (\code{estimand = "ATT"}) or treated units are selected to be matched with
 control units (\code{estimand = "ATC"}). The "focal" group (e.g., the
 treated units for the ATT) is typically made to be the smaller treatment
-group, and a warning will be thrown if it is not set that way unless
-\code{replace = TRUE}. Setting \code{estimand = "ATC"} is equivalent to
+group, and a warning will be thrown if it is not set that. Setting \code{estimand = "ATC"} is equivalent to
 swapping all treated and control labels for the treatment variable. When
 \code{estimand = "ATC"}, the \code{match.matrix} component of the output
 will have the names of the control units as the rownames and be filled with
@@ -176,7 +175,8 @@ to each treated unit. When \code{ratio > 1}, rather than requiring all
 treated units to receive \code{ratio} matches, the arguments to
 \code{max.controls} and \code{min.controls} can be specified to control the
 maximum and minimum number of matches each treated unit can have.
-\code{ratio} controls how many total control units will be matched: \code{n1 * ratio} control units will be matched, where \code{n1} is the number of
+\code{ratio} controls how many total control units will be matched: \code{n1 * ratio} control
+units will be matched, where \code{n1} is the number of
 treated units, yielding the same total number of matched controls as fixed
 ratio matching does.
 
@@ -210,6 +210,8 @@ The option \code{"optmatch_max_problem_size"} is automatically set to
 \emph{optmatch}. This enables matching problems of any size to be run, but
 may also let huge, infeasible problems get through and potentially take a
 long time or crash R. See \pkgfun{optmatch}{setMaxProblemSize} for more details.
+
+A preprocessing algorithm describe by \href{https://doi.org/10.1214/19-STS739}{Sävje (2020)} is used to improve the speed of the matching when 1:1 matching on a propensity score. It does so by adding an additional constraint that guarantees a solution as optimal as the solution that would have been found without the constraint, and that constraint often dramatically reduces the size of the matching problem at no cost. However, this may introduce differences between the results obtained by \emph{MatchIt} and by \emph{optmatch}, though such differences will shrink when smaller values of \code{tol} are used.
 }
 \section{Outputs}{
 
