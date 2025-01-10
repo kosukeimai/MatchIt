@@ -110,7 +110,7 @@
 #'
 #' *Generalized full matching was performed using the MatchIt package (Ho,
 #' Imai, King, & Stuart, 2011) in R, which calls functions from the quickmatch
-#' package (Savje, Sekhon, & Higgins, 2018).*
+#' package (Sävje, Sekhon, & Higgins, 2018).*
 #'
 #' You should also cite the following paper, which develops and describes the method:
 #'

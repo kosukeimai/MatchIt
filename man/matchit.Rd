@@ -333,7 +333,7 @@ For cardinality matching, all matched units receive a weight
 of 1.
 }
 
-\subsection{Matching witht replacement}{
+\subsection{Matching with replacement}{
 
 For matching \emph{with} replacement, units are not assigned to unique strata. For
 the ATT, each treated unit gets a weight of 1. Each control unit is weighted

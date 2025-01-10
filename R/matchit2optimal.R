@@ -373,7 +373,7 @@ matchit2optimal <- function(treat, formula, data, distance, discarded,
       ratio == 1 && max.controls == 1) {
     .cat_verbose("Preprocessing to reduce problem size...\n", verbose = verbose)
 
-    #Preprocess by pruning unnecessary edges as in Savje (2020) https://doi.org/10.1214/19-STS699
+    #Preprocess by pruning unnecessary edges as in Sävje (2020) https://doi.org/10.1214/19-STS699
     keep <- preprocess_matchC(treat_, distance[!discarded])
 
     if (length(keep) < length(mo)) {

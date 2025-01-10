@@ -15,7 +15,8 @@ link-citations: true
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE, message = FALSE,
-                      fig.width=7, fig.height=5)
+                      fig.width=7, fig.height=5,
+                      fig.align = "center")
 options(width = 200, digits = 4)
 ```
 

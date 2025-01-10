@@ -1,5 +1,5 @@
 Package: MatchIt
-Version: 4.6.0.9001
+Version: 4.6.1
 Title: Nonparametric Preprocessing for Parametric Causal Inference
 Description: Selects matched samples of the original treated and
     control groups with similar covariate distributions -- can be
@@ -66,8 +66,7 @@ LinkingTo:
 Encoding: UTF-8
 LazyData: true
 License: GPL (>=2)
-URL: https://kosukeimai.github.io/MatchIt/,
-    https://github.com/kosukeimai/MatchIt
+URL: https://kosukeimai.github.io/MatchIt/, https://github.com/kosukeimai/MatchIt
 BugReports: https://github.com/kosukeimai/MatchIt/issues
 VignetteBuilder: knitr
 Roxygen: list(markdown = TRUE)

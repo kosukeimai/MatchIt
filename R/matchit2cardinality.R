@@ -209,7 +209,7 @@
 #' @references In a manuscript, you should reference the solver used in the
 #' optimization. For example, a sentence might read:
 #'
-#' *Cardinality matching was performed using the MatchIt package (Ho, Imai, King, & Stuart, 2011) in R with the optimization performed by HiGHs (Huangfu & Hall, 2018).*
+#' *Cardinality matching was performed using the MatchIt package (Ho, Imai, King, & Stuart, 2011) in R with the optimization performed by HiGHS (Huangfu & Hall, 2018).*
 #'
 #' See `vignette("matching-methods")` for more literature on cardinality
 #' matching.

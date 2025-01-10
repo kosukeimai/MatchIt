@@ -3,7 +3,7 @@ using namespace Rcpp;
 
 // [[Rcpp::plugins(cpp11)]]
 
-//Preprocess by pruning unnecessary edges as in Savje (2020) https://doi.org/10.1214/19-STS699.
+//Preprocess by pruning unnecessary edges as in Sävje (2020) https://doi.org/10.1214/19-STS699.
 //Returns a vector of matrix indices for n1xn0 distance matrix.
 
 // [[Rcpp::export]]
