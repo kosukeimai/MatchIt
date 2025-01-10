@@ -212,7 +212,7 @@ euclidean_dist <- function(formula = NULL,
 transform_covariates <- function(formula = NULL, data = NULL, method = "mahalanobis",
                                  s.weights = NULL, var = NULL, treat = NULL,
                                  discarded = NULL) {
-  X <- get_covs_matrix.for.dist(formula, data)
+  X <- get_covs_matrix_for_dist(formula, data)
 
   X <- .check_X(X)
   treat <- check_treat(treat, X)
@@ -366,7 +366,7 @@ eucdist_internal <- function(X, treat = NULL) {
 
 #Get covariates (RHS) vars from formula; factor variable contrasts divided by sqrt(2)
 #to ensure same result as when non-factor binary variable supplied (see optmatch:::contr.match_on)
-get_covs_matrix.for.dist <- function(formula = NULL, data = NULL) {
+get_covs_matrix_for_dist <- function(formula = NULL, data = NULL) {
 
   if (is_null(formula)) {
     if (is_null(colnames(data))) {

@@ -311,7 +311,7 @@ matchit2genetic <- function(treat, data, distance, discarded,
   #Create X (matching variables) and covs_to_balance
   covs_to_balance <- get_covs_matrix(formula, data = data)
   if (is_not_null(mahvars)) {
-    X <- get_covs_matrix.for.dist(mahvars, data = data)
+    X <- get_covs_matrix_for_dist(mahvars, data = data)
   }
   else if (is.full.mahalanobis) {
     X <- covs_to_balance
