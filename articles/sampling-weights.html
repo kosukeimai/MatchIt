@@ -14,8 +14,8 @@
 <link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png">
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.4.2/css/all.min.css" rel="stylesheet">
-<link href="../deps/font-awesome-6.4.2/css/v4-shims.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
+<link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Matching with Sampling Weights">
 </head>
 <body>
@@ -26,7 +26,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">MatchIt</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.6.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.7.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -69,7 +69,7 @@
                         <h4 data-toc-skip class="author">Noah
 Greifer</h4>
             
-            <h4 data-toc-skip class="date">2024-11-13</h4>
+            <h4 data-toc-skip class="date">2025-01-10</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/kosukeimai/MatchIt/blob/master/vignettes/sampling-weights.Rmd" class="external-link"><code>vignettes/sampling-weights.Rmd</code></a></small>
       <div class="d-none name"><code>sampling-weights.Rmd</code></div>
@@ -161,7 +161,8 @@ will not run.</p>
 <span><span class="va">mF_s</span></span></code></pre></div>
 <pre><code><span><span class="co">## A `matchit` object</span></span>
 <span><span class="co">##  - method: Optimal full matching</span></span>
-<span><span class="co">##  - distance: Propensity score             - estimated with logistic regression</span></span>
+<span><span class="co">##  - distance: Propensity score</span></span>
+<span><span class="co">##              - estimated with logistic regression</span></span>
 <span><span class="co">##              - sampling weights included in estimation</span></span>
 <span><span class="co">##  - number of obs.: 2000 (original), 2000 (matched)</span></span>
 <span><span class="co">##  - sampling weights: present</span></span>
@@ -188,7 +189,8 @@ specification as was used in
 <span><span class="va">mF</span></span></code></pre></div>
 <pre><code><span><span class="co">## A `matchit` object</span></span>
 <span><span class="co">##  - method: Optimal full matching</span></span>
-<span><span class="co">##  - distance: Propensity score             - estimated with logistic regression</span></span>
+<span><span class="co">##  - distance: Propensity score</span></span>
+<span><span class="co">##              - estimated with logistic regression</span></span>
 <span><span class="co">##  - number of obs.: 2000 (original), 2000 (matched)</span></span>
 <span><span class="co">##  - target estimand: ATE</span></span>
 <span><span class="co">##  - covariates: X1, X2, X3, X4, X5, X6, X7, X8, X9</span></span></code></pre>
@@ -205,7 +207,8 @@ supplied <code>matchit</code> objects.</p>
 <span><span class="va">mF</span></span></code></pre></div>
 <pre><code><span><span class="co">## A `matchit` object</span></span>
 <span><span class="co">##  - method: Optimal full matching</span></span>
-<span><span class="co">##  - distance: Propensity score             - estimated with logistic regression</span></span>
+<span><span class="co">##  - distance: Propensity score</span></span>
+<span><span class="co">##              - estimated with logistic regression</span></span>
 <span><span class="co">##              - sampling weights not included in estimation</span></span>
 <span><span class="co">##  - number of obs.: 2000 (original), 2000 (matched)</span></span>
 <span><span class="co">##  - sampling weights: present</span></span>
@@ -352,25 +355,25 @@ they are not included in the propensity score estimation.</p>
 when using sampling weights. Effects are estimated in the same way as
 when sampling weights are excluded, except that the matching weights
 must be multiplied by the sampling weights for use in the outcome model
-to yield accurate, generalizable estimates. <code><a href="../reference/match.data.html">match.data()</a></code>
-and <code><a href="../reference/match.data.html">get_matches()</a></code> do this automatically, so the weights
+to yield accurate, generalizable estimates. <code><a href="../reference/match_data.html">match_data()</a></code>
+and <code><a href="../reference/match_data.html">get_matches()</a></code> do this automatically, so the weights
 produced by these functions already are a product of the matching
 weights and the sampling weights. Note this will only be true if
 sampling weights are incorporated into the <code>matchit</code> object.
-With <code><a href="https://rdrr.io/pkg/marginaleffects/man/comparisons.html" class="external-link">avg_comparisons()</a></code>, only the sampling weights should be
+With <code><a href="https://marginaleffects.com/man/r/comparisons.html" class="external-link">avg_comparisons()</a></code>, only the sampling weights should be
 included when estimating the treatment effect.</p>
 <p>Below we estimate the effect of <code>A</code> on <code>Y_C</code> in
 the matched and sampling weighted sample, adjusting for the covariates
 to improve precision and decrease bias.</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">md_F_s</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/match.data.html">match.data</a></span><span class="op">(</span><span class="va">mF_s</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">md_F_s</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/match_data.html">match_data</a></span><span class="op">(</span><span class="va">mF_s</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html" class="external-link">lm</a></span><span class="op">(</span><span class="va">Y_C</span> <span class="op">~</span> <span class="va">A</span> <span class="op">*</span> <span class="op">(</span><span class="va">X1</span> <span class="op">+</span> <span class="va">X2</span> <span class="op">+</span> <span class="va">X3</span> <span class="op">+</span> <span class="va">X4</span> <span class="op">+</span> <span class="va">X5</span> <span class="op">+</span> </span>
 <span>             <span class="va">X6</span> <span class="op">+</span> <span class="va">X7</span> <span class="op">+</span> <span class="va">X8</span> <span class="op">+</span> <span class="va">X9</span><span class="op">)</span>, data <span class="op">=</span> <span class="va">md_F_s</span>,</span>
 <span>          weights <span class="op">=</span> <span class="va">weights</span><span class="op">)</span></span>
 <span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://marginaleffects.com/" class="external-link">"marginaleffects"</a></span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/pkg/marginaleffects/man/comparisons.html" class="external-link">avg_comparisons</a></span><span class="op">(</span><span class="va">fit</span>,</span>
+<span><span class="fu"><a href="https://marginaleffects.com/man/r/comparisons.html" class="external-link">avg_comparisons</a></span><span class="op">(</span><span class="va">fit</span>,</span>
 <span>                variables <span class="op">=</span> <span class="st">"A"</span>,</span>
 <span>                vcov <span class="op">=</span> <span class="op">~</span><span class="va">subclass</span>,</span>
 <span>                newdata <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="va">A</span> <span class="op">==</span> <span class="fl">1</span><span class="op">)</span>,</span>
@@ -381,9 +384,9 @@ to improve precision and decrease bias.</p>
 <span><span class="co">## </span></span>
 <span><span class="co">## Term: A</span></span>
 <span><span class="co">## Type:  response </span></span>
-<span><span class="co">## Comparison: mean(1) - mean(0)</span></span>
+<span><span class="co">## Comparison: 1 - 0</span></span>
 <span><span class="co">## Columns: term, contrast, estimate, std.error, statistic, p.value, s.value, conf.low, conf.high, predicted_lo, predicted_hi, predicted</span></span></code></pre>
-<p>Note that <code><a href="../reference/match.data.html">match.data()</a></code> and <code>get_weights()</code>
+<p>Note that <code><a href="../reference/match_data.html">match_data()</a></code> and <code>get_weights()</code>
 have the option <code>include.s.weights</code>, which, when set to
 <code>FALSE</code>, makes it so the returned weights do not incorporate
 the sampling weights and are simply the matching weights. Because one

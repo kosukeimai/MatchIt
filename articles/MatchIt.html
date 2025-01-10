@@ -14,8 +14,8 @@
 <link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png">
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.4.2/css/all.min.css" rel="stylesheet">
-<link href="../deps/font-awesome-6.4.2/css/v4-shims.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
+<link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="MatchIt: Getting Started">
 </head>
 <body>
@@ -26,7 +26,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">MatchIt</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.6.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.7.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -69,7 +69,7 @@
                         <h4 data-toc-skip class="author">Noah
 Greifer</h4>
             
-            <h4 data-toc-skip class="date">2024-11-13</h4>
+            <h4 data-toc-skip class="date">2025-01-10</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/kosukeimai/MatchIt/blob/master/vignettes/MatchIt.Rmd" class="external-link"><code>vignettes/MatchIt.Rmd</code></a></small>
       <div class="d-none name"><code>MatchIt.Rmd</code></div>
@@ -237,8 +237,10 @@ eliminate. We can do this using the code below:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># No matching; constructing a pre-match matchit object</span></span>
 <span><span class="va">m.out0</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/matchit.html">matchit</a></span><span class="op">(</span><span class="va">treat</span> <span class="op">~</span> <span class="va">age</span> <span class="op">+</span> <span class="va">educ</span> <span class="op">+</span> <span class="va">race</span> <span class="op">+</span> <span class="va">married</span> <span class="op">+</span> </span>
-<span>                   <span class="va">nodegree</span> <span class="op">+</span> <span class="va">re74</span> <span class="op">+</span> <span class="va">re75</span>, data <span class="op">=</span> <span class="va">lalonde</span>,</span>
-<span>                 method <span class="op">=</span> <span class="cn">NULL</span>, distance <span class="op">=</span> <span class="st">"glm"</span><span class="op">)</span></span></code></pre></div>
+<span>                    <span class="va">nodegree</span> <span class="op">+</span> <span class="va">re74</span> <span class="op">+</span> <span class="va">re75</span>,</span>
+<span>                  data <span class="op">=</span> <span class="va">lalonde</span>,</span>
+<span>                  method <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>                  distance <span class="op">=</span> <span class="st">"glm"</span><span class="op">)</span></span></code></pre></div>
 <p>The first argument is a <code>formula</code> relating the treatment
 to the covariates used in estimating the propensity score and for which
 balance is to be assessed. The <code>data</code> argument specifies the
@@ -315,8 +317,10 @@ perform nearest neighbor propensity score matching.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># 1:1 NN PS matching w/o replacement</span></span>
 <span><span class="va">m.out1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/matchit.html">matchit</a></span><span class="op">(</span><span class="va">treat</span> <span class="op">~</span> <span class="va">age</span> <span class="op">+</span> <span class="va">educ</span> <span class="op">+</span> <span class="va">race</span> <span class="op">+</span> <span class="va">married</span> <span class="op">+</span> </span>
-<span>                   <span class="va">nodegree</span> <span class="op">+</span> <span class="va">re74</span> <span class="op">+</span> <span class="va">re75</span>, data <span class="op">=</span> <span class="va">lalonde</span>,</span>
-<span>                 method <span class="op">=</span> <span class="st">"nearest"</span>, distance <span class="op">=</span> <span class="st">"glm"</span><span class="op">)</span></span></code></pre></div>
+<span>                   <span class="va">nodegree</span> <span class="op">+</span> <span class="va">re74</span> <span class="op">+</span> <span class="va">re75</span>,</span>
+<span>                  data <span class="op">=</span> <span class="va">lalonde</span>,</span>
+<span>                  method <span class="op">=</span> <span class="st">"nearest"</span>,</span>
+<span>                  distance <span class="op">=</span> <span class="st">"glm"</span><span class="op">)</span></span></code></pre></div>
 <p>We use the same syntax as before, but this time specify
 <code>method = "nearest"</code> to implement nearest neighbor matching,
 again using a logistic regression propensity score. Many other arguments
@@ -329,7 +333,8 @@ performed:</p>
 <code class="sourceCode R"><span><span class="va">m.out1</span></span></code></pre></div>
 <pre><code><span><span class="co">## A `matchit` object</span></span>
 <span><span class="co">##  - method: 1:1 nearest neighbor matching without replacement</span></span>
-<span><span class="co">##  - distance: Propensity score             - estimated with logistic regression</span></span>
+<span><span class="co">##  - distance: Propensity score</span></span>
+<span><span class="co">##              - estimated with logistic regression</span></span>
 <span><span class="co">##  - number of obs.: 614 (original), 370 (matched)</span></span>
 <span><span class="co">##  - target estimand: ATT</span></span>
 <span><span class="co">##  - covariates: age, educ, race, married, nodegree, re74, re75</span></span></code></pre>
@@ -414,13 +419,13 @@ the distribution of propensity scores of those who were matched using
 <code><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot()</a></code> with <code>type = "jitter"</code>:</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">m.out1</span>, type <span class="op">=</span> <span class="st">"jitter"</span>, interactive <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
-<p><img src="MatchIt_files/figure-html/unnamed-chunk-7-1.png" alt="Jitter plot of the propensity scores, which shows that no treated unit were dropped, and a large number of control units with low propensity scores were dropped." width="672"></p>
+<p><img src="MatchIt_files/figure-html/unnamed-chunk-7-1.png" alt="Jitter plot of the propensity scores, which shows that no treated unit were dropped, and a large number of control units with low propensity scores were dropped." width="672" style="display: block; margin: auto;"></p>
 <p>We can visually examine balance on the covariates using
 <code><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot()</a></code> with <code>type = "density"</code>:</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">m.out1</span>, type <span class="op">=</span> <span class="st">"density"</span>, interactive <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>     which.xs <span class="op">=</span> <span class="op">~</span><span class="va">age</span> <span class="op">+</span> <span class="va">married</span> <span class="op">+</span> <span class="va">re75</span><span class="op">)</span></span></code></pre></div>
-<p><img src="MatchIt_files/figure-html/unnamed-chunk-8-1.png" alt="Density plots of age, married and re75 in the unmatched and matched samples." width="672"></p>
+<p><img src="MatchIt_files/figure-html/unnamed-chunk-8-1.png" alt="Density plots of age, married and re75 in the unmatched and matched samples." width="672" style="display: block; margin: auto;"></p>
 <p>Imbalances are represented by the differences between the black
 (treated) and gray (control) distributions. Although
 <code>married</code> and <code>re75</code> appear to have improved
@@ -437,12 +442,16 @@ try a different link (probit) for the propensity score model.</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Full matching on a probit PS</span></span>
 <span><span class="va">m.out2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/matchit.html">matchit</a></span><span class="op">(</span><span class="va">treat</span> <span class="op">~</span> <span class="va">age</span> <span class="op">+</span> <span class="va">educ</span> <span class="op">+</span> <span class="va">race</span> <span class="op">+</span> <span class="va">married</span> <span class="op">+</span> </span>
-<span>                   <span class="va">nodegree</span> <span class="op">+</span> <span class="va">re74</span> <span class="op">+</span> <span class="va">re75</span>, data <span class="op">=</span> <span class="va">lalonde</span>,</span>
-<span>                 method <span class="op">=</span> <span class="st">"full"</span>, distance <span class="op">=</span> <span class="st">"glm"</span>, link <span class="op">=</span> <span class="st">"probit"</span><span class="op">)</span></span>
+<span>                   <span class="va">nodegree</span> <span class="op">+</span> <span class="va">re74</span> <span class="op">+</span> <span class="va">re75</span>,</span>
+<span>                  data <span class="op">=</span> <span class="va">lalonde</span>,</span>
+<span>                  method <span class="op">=</span> <span class="st">"full"</span>,</span>
+<span>                  distance <span class="op">=</span> <span class="st">"glm"</span>,</span>
+<span>                  link <span class="op">=</span> <span class="st">"probit"</span><span class="op">)</span></span>
 <span><span class="va">m.out2</span></span></code></pre></div>
 <pre><code><span><span class="co">## A `matchit` object</span></span>
 <span><span class="co">##  - method: Optimal full matching</span></span>
-<span><span class="co">##  - distance: Propensity score             - estimated with probit regression</span></span>
+<span><span class="co">##  - distance: Propensity score</span></span>
+<span><span class="co">##              - estimated with probit regression</span></span>
 <span><span class="co">##  - number of obs.: 614 (original), 614 (matched)</span></span>
 <span><span class="co">##  - target estimand: ATT</span></span>
 <span><span class="co">##  - covariates: age, educ, race, married, nodegree, re74, re75</span></span></code></pre>
@@ -484,7 +493,7 @@ in a plot, such as a Love plot, which we can make by calling
 <code><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot()</a></code> on the <code><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary()</a></code> output:</p>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">m.out2</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<p><img src="MatchIt_files/figure-html/unnamed-chunk-12-1.png" alt="A love plot with matched dots below the threshold lines, indicaitng good balance after matching, in contrast to the unmatched dots far from the treshold lines, indicating poor balance before matching." width="672"></p>
+<p><img src="MatchIt_files/figure-html/unnamed-chunk-12-1.png" alt="A love plot with matched dots below the threshold lines, indicaitng good balance after matching, in contrast to the unmatched dots far from the treshold lines, indicating poor balance before matching." width="672" style="display: block; margin: auto;"></p>
 <p>Love plots are a simple and straightforward way to summarize balance
 visually. See <code><a href="../articles/assessing-balance.html">vignette("assessing-balance")</a></code> for more
 information on how to customize <code>MatchIt</code>’s Love plot and how
@@ -504,7 +513,7 @@ full matching and most other matching methods, we can run a regression
 of the outcome on the treatment and covariates in the matched sample
 (i.e., including the matching weights) and estimate the treatment effect
 using g-computation as implemented in
-<code><a href="https://rdrr.io/pkg/marginaleffects/man/comparisons.html" class="external-link">marginaleffects::comparisons()</a></code><a class="footnote-ref" tabindex="0" data-bs-toggle="popover" data-bs-content='&lt;p&gt;In some cases, the coefficient on the treatment variable
+<code><a href="https://marginaleffects.com/man/r/comparisons.html" class="external-link">marginaleffects::avg_comparisons()</a></code><a class="footnote-ref" tabindex="0" data-bs-toggle="popover" data-bs-content='&lt;p&gt;In some cases, the coefficient on the treatment variable
 in the outcome model can be used as the effect estimate, but
 g-computation always yields a valid effect estimate regardless of the
 form of the outcome model and its use is the same regardless of the
@@ -518,12 +527,12 @@ can improve precision.</p>
 <p>Because full matching was successful at balancing the covariates,
 we’ll demonstrate here how to estimate a treatment effect after
 performing such an analysis. First, we’ll extract the matched dataset
-from the <code>matchit</code> object using <code><a href="../reference/match.data.html">match.data()</a></code>.
+from the <code>matchit</code> object using <code><a href="../reference/match_data.html">match_data()</a></code>.
 This dataset only contains the matched units and adds columns for
 <code>distance</code>, <code>weights</code>, and <code>subclass</code>
 (described previously).</p>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">m.data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/match.data.html">match.data</a></span><span class="op">(</span><span class="va">m.out2</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">m.data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/match_data.html">match_data</a></span><span class="op">(</span><span class="va">m.out2</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">m.data</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##      treat age educ   race married nodegree re74 re75       re78  distance weights subclass</span></span>
@@ -536,33 +545,34 @@ This dataset only contains the matched units and adds columns for
 <p>We can then model the outcome in this dataset using the standard
 regression functions in R, like <code><a href="https://rdrr.io/r/stats/lm.html" class="external-link">lm()</a></code> or <code><a href="https://rdrr.io/r/stats/glm.html" class="external-link">glm()</a></code>,
 being sure to include the matching weights (stored in the
-<code>weights</code> variable of the <code><a href="../reference/match.data.html">match.data()</a></code> output)
+<code>weights</code> variable of the <code><a href="../reference/match_data.html">match_data()</a></code> output)
 in the estimation<a class="footnote-ref" tabindex="0" data-bs-toggle="popover" data-bs-content="&lt;p&gt;With 1:1 nearest neighbor matching without replacement,
 excluding the matching weights does not change the estimates. For all
 other forms of matching, they are required, so we recommend always
 including them for consistency.&lt;/p&gt;"><sup>4</sup></a>. Finally, we use
-<code><a href="https://rdrr.io/pkg/marginaleffects/man/comparisons.html" class="external-link">marginaleffects::avg_comparisons()</a></code> to perform g-computation
+<code><a href="https://marginaleffects.com/man/r/comparisons.html" class="external-link">marginaleffects::avg_comparisons()</a></code> to perform g-computation
 to estimate the ATT. We recommend using cluster-robust standard errors
 for most analyses, with pair membership as the clustering variable;
-<code><a href="https://rdrr.io/pkg/marginaleffects/man/comparisons.html" class="external-link">avg_comparisons()</a></code> makes this straightforward.</p>
+<code><a href="https://marginaleffects.com/man/r/comparisons.html" class="external-link">avg_comparisons()</a></code> makes this straightforward.</p>
 <div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://marginaleffects.com/" class="external-link">"marginaleffects"</a></span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html" class="external-link">lm</a></span><span class="op">(</span><span class="va">re78</span> <span class="op">~</span> <span class="va">treat</span> <span class="op">*</span> <span class="op">(</span><span class="va">age</span> <span class="op">+</span> <span class="va">educ</span> <span class="op">+</span> <span class="va">race</span> <span class="op">+</span> <span class="va">married</span> <span class="op">+</span> <span class="va">nodegree</span> <span class="op">+</span> </span>
-<span>             <span class="va">re74</span> <span class="op">+</span> <span class="va">re75</span><span class="op">)</span>, data <span class="op">=</span> <span class="va">m.data</span>, weights <span class="op">=</span> <span class="va">weights</span><span class="op">)</span></span>
+<span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html" class="external-link">lm</a></span><span class="op">(</span><span class="va">re78</span> <span class="op">~</span> <span class="va">treat</span> <span class="op">*</span> <span class="op">(</span><span class="va">age</span> <span class="op">+</span> <span class="va">educ</span> <span class="op">+</span> <span class="va">race</span> <span class="op">+</span> <span class="va">married</span> <span class="op">+</span></span>
+<span>                            <span class="va">nodegree</span> <span class="op">+</span> <span class="va">re74</span> <span class="op">+</span> <span class="va">re75</span><span class="op">)</span>,</span>
+<span>          data <span class="op">=</span> <span class="va">m.data</span>,</span>
+<span>          weights <span class="op">=</span> <span class="va">weights</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/pkg/marginaleffects/man/comparisons.html" class="external-link">avg_comparisons</a></span><span class="op">(</span><span class="va">fit</span>,</span>
+<span><span class="fu"><a href="https://marginaleffects.com/man/r/comparisons.html" class="external-link">avg_comparisons</a></span><span class="op">(</span><span class="va">fit</span>,</span>
 <span>                variables <span class="op">=</span> <span class="st">"treat"</span>,</span>
 <span>                vcov <span class="op">=</span> <span class="op">~</span><span class="va">subclass</span>,</span>
-<span>                newdata <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="va">m.data</span>, <span class="va">treat</span> <span class="op">==</span> <span class="fl">1</span><span class="op">)</span>,</span>
-<span>                wts <span class="op">=</span> <span class="st">"weights"</span><span class="op">)</span></span></code></pre></div>
+<span>                newdata <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="va">treat</span> <span class="op">==</span> <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## </span></span>
 <span><span class="co">##  Estimate Std. Error    z Pr(&gt;|z|)   S 2.5 % 97.5 %</span></span>
 <span><span class="co">##      1977        704 2.81  0.00501 7.6   596   3357</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## Term: treat</span></span>
 <span><span class="co">## Type:  response </span></span>
-<span><span class="co">## Comparison: mean(1) - mean(0)</span></span>
+<span><span class="co">## Comparison: 1 - 0</span></span>
 <span><span class="co">## Columns: term, contrast, estimate, std.error, statistic, p.value, s.value, conf.low, conf.high, predicted_lo, predicted_hi, predicted</span></span></code></pre>
 <p>The outcome model coefficients and tests should not be interpreted or
 reported. See <code><a href="../articles/estimating-effects.html">vignette("estimating-effects")</a></code> for more
@@ -618,11 +628,12 @@ control units, so no units were discarded by the matching.</p>
 linear regression model with 1978 earnings as the outcome and the
 treatment, covariates, and their interaction as predictors and included
 the full matching weights in the estimation. The <code><a href="https://rdrr.io/r/stats/lm.html" class="external-link">lm()</a></code>
-function was used to fit the outcome, and the <code><a href="https://rdrr.io/pkg/marginaleffects/man/comparisons.html" class="external-link">comparisons()</a></code>
-function in the <code>marginaleffects</code> package was used to perform
-g-computation in the matched sample to estimate the ATT. A
-cluster-robust variance was used to estimate its standard error with
-matching stratum membership as the clustering variable.</p>
+function was used to fit the outcome, and the
+<code><a href="https://marginaleffects.com/man/r/comparisons.html" class="external-link">avg_comparisons()</a></code> function in the
+<code>marginaleffects</code> package was used to perform g-computation
+in the matched sample to estimate the ATT. A cluster-robust variance was
+used to estimate its standard error with matching stratum membership as
+the clustering variable.</p>
 <p>The estimated effect was $1977 (SE = 704.3, p = 0.005), indicating
 that the average effect of the treatment for those who received it is to
 increase earnings.</p>
