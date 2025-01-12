@@ -351,7 +351,8 @@ Results from <code>method = "optimal"</code> can be replicated with <code>method
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Optimal full PS matching</span></span></span>
 <span class="r-in"><span><span class="va">m.out1</span> <span class="op">&lt;-</span> <span class="fu"><a href="matchit.html">matchit</a></span><span class="op">(</span><span class="va">treat</span> <span class="op">~</span> <span class="va">age</span> <span class="op">+</span> <span class="va">educ</span> <span class="op">+</span> <span class="va">race</span> <span class="op">+</span> <span class="va">nodegree</span> <span class="op">+</span></span></span>
-<span class="r-in"><span>                    <span class="va">married</span> <span class="op">+</span> <span class="va">re74</span> <span class="op">+</span> <span class="va">re75</span>, data <span class="op">=</span> <span class="va">lalonde</span>,</span></span>
+<span class="r-in"><span>                    <span class="va">married</span> <span class="op">+</span> <span class="va">re74</span> <span class="op">+</span> <span class="va">re75</span>,</span></span>
+<span class="r-in"><span>                  data <span class="op">=</span> <span class="va">lalonde</span>,</span></span>
 <span class="r-in"><span>                  method <span class="op">=</span> <span class="st">"full"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">m.out1</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> A `matchit` object</span>
@@ -426,8 +427,10 @@ Results from <code>method = "optimal"</code> can be replicated with <code>method
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Optimal full Mahalanobis distance matching within a PS caliper</span></span></span>
 <span class="r-in"><span><span class="va">m.out2</span> <span class="op">&lt;-</span> <span class="fu"><a href="matchit.html">matchit</a></span><span class="op">(</span><span class="va">treat</span> <span class="op">~</span> <span class="va">age</span> <span class="op">+</span> <span class="va">educ</span> <span class="op">+</span> <span class="va">race</span> <span class="op">+</span> <span class="va">nodegree</span> <span class="op">+</span></span></span>
-<span class="r-in"><span>                    <span class="va">married</span> <span class="op">+</span> <span class="va">re74</span> <span class="op">+</span> <span class="va">re75</span>, data <span class="op">=</span> <span class="va">lalonde</span>,</span></span>
-<span class="r-in"><span>                  method <span class="op">=</span> <span class="st">"full"</span>, caliper <span class="op">=</span> <span class="fl">.01</span>,</span></span>
+<span class="r-in"><span>                    <span class="va">married</span> <span class="op">+</span> <span class="va">re74</span> <span class="op">+</span> <span class="va">re75</span>,</span></span>
+<span class="r-in"><span>                  data <span class="op">=</span> <span class="va">lalonde</span>,</span></span>
+<span class="r-in"><span>                  method <span class="op">=</span> <span class="st">"full"</span>,</span></span>
+<span class="r-in"><span>                  caliper <span class="op">=</span> <span class="fl">.01</span>,</span></span>
 <span class="r-in"><span>                  mahvars <span class="op">=</span> <span class="op">~</span> <span class="va">age</span> <span class="op">+</span> <span class="va">educ</span> <span class="op">+</span> <span class="va">re74</span> <span class="op">+</span> <span class="va">re75</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">m.out2</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> A `matchit` object</span>
@@ -483,9 +486,11 @@ Results from <code>method = "optimal"</code> can be replicated with <code>method
 <span class="r-in"><span><span class="co"># Optimal full Mahalanobis distance matching within calipers</span></span></span>
 <span class="r-in"><span><span class="co"># of 500 on re74 and re75</span></span></span>
 <span class="r-in"><span><span class="va">m.out3</span> <span class="op">&lt;-</span> <span class="fu"><a href="matchit.html">matchit</a></span><span class="op">(</span><span class="va">treat</span> <span class="op">~</span> <span class="va">age</span> <span class="op">+</span> <span class="va">educ</span> <span class="op">+</span> <span class="va">re74</span> <span class="op">+</span> <span class="va">re75</span>,</span></span>
-<span class="r-in"><span>                  data <span class="op">=</span> <span class="va">lalonde</span>, distance <span class="op">=</span> <span class="st">"mahalanobis"</span>,</span></span>
+<span class="r-in"><span>                  data <span class="op">=</span> <span class="va">lalonde</span>,</span></span>
+<span class="r-in"><span>                  distance <span class="op">=</span> <span class="st">"mahalanobis"</span>,</span></span>
 <span class="r-in"><span>                  method <span class="op">=</span> <span class="st">"full"</span>,</span></span>
-<span class="r-in"><span>                  caliper <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>re74 <span class="op">=</span> <span class="fl">500</span>, re75 <span class="op">=</span> <span class="fl">500</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>                  caliper <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>re74 <span class="op">=</span> <span class="fl">500</span>,</span></span>
+<span class="r-in"><span>                              re75 <span class="op">=</span> <span class="fl">500</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>                  std.caliper <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">m.out3</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> A `matchit` object</span>
@@ -494,8 +499,10 @@ Results from <code>method = "optimal"</code> can be replicated with <code>method
 <span class="r-out co"><span class="r-pr">#&gt;</span>  - number of obs.: 614 (original), 391 (matched)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  - target estimand: ATT</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  - covariates: age, educ, re74, re75</span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">m.out3</span>, addlvariables <span class="op">=</span> <span class="op">~</span><span class="va">race</span> <span class="op">+</span> <span class="va">nodegree</span> <span class="op">+</span> <span class="va">married</span>,</span></span>
-<span class="r-in"><span>        data <span class="op">=</span> <span class="va">lalonde</span>, un <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">m.out3</span>,</span></span>
+<span class="r-in"><span>        addlvariables <span class="op">=</span> <span class="op">~</span><span class="va">race</span> <span class="op">+</span> <span class="va">nodegree</span> <span class="op">+</span> <span class="va">married</span>,</span></span>
+<span class="r-in"><span>        data <span class="op">=</span> <span class="va">lalonde</span>,</span></span>
+<span class="r-in"><span>        un <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Call:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> matchit(formula = treat ~ age + educ + re74 + re75, data = lalonde, </span>

@@ -364,16 +364,20 @@ on the covariates without coarsening.</p></div>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"lalonde"</span><span class="op">)</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"lalonde"</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Coarsened exact matching on age, race, married, and educ with educ</span></span></span>
 <span class="r-in"><span><span class="co"># coarsened into 5 bins and race coarsened into 2 categories,</span></span></span>
 <span class="r-in"><span><span class="co"># grouping "white" and "hispan" together</span></span></span>
-<span class="r-in"><span><span class="va">m.out1</span> <span class="op">&lt;-</span> <span class="fu"><a href="matchit.html">matchit</a></span><span class="op">(</span><span class="va">treat</span> <span class="op">~</span> <span class="va">age</span> <span class="op">+</span> <span class="va">race</span> <span class="op">+</span> <span class="va">married</span> <span class="op">+</span> <span class="va">educ</span>, data <span class="op">=</span> <span class="va">lalonde</span>,</span></span>
-<span class="r-in"><span>                  method <span class="op">=</span> <span class="st">"cem"</span>, cutpoints <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>educ <span class="op">=</span> <span class="fl">5</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>                  grouping <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>race <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"white"</span>, <span class="st">"hispan"</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>                                              <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"black"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">cutpoints</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>educ <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">grouping</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>race <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"white"</span>, <span class="st">"hispan"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>                             <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"black"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">m.out1</span> <span class="op">&lt;-</span> <span class="fu"><a href="matchit.html">matchit</a></span><span class="op">(</span><span class="va">treat</span> <span class="op">~</span> <span class="va">age</span> <span class="op">+</span> <span class="va">race</span> <span class="op">+</span> <span class="va">married</span> <span class="op">+</span> <span class="va">educ</span>,</span></span>
+<span class="r-in"><span>                  data <span class="op">=</span> <span class="va">lalonde</span>,</span></span>
+<span class="r-in"><span>                  method <span class="op">=</span> <span class="st">"cem"</span>,</span></span>
+<span class="r-in"><span>                  cutpoints <span class="op">=</span> <span class="va">cutpoints</span>,</span></span>
+<span class="r-in"><span>                  grouping <span class="op">=</span> <span class="va">grouping</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">m.out1</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> A `matchit` object</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  - method: Coarsened exact matching</span>
@@ -384,8 +388,7 @@ on the covariates without coarsening.</p></div>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Call:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> matchit(formula = treat ~ age + race + married + educ, data = lalonde, </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     method = "cem", cutpoints = list(educ = 5), grouping = list(race = list(c("white", </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         "hispan"), c("black"))))</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     method = "cem", cutpoints = cutpoints, grouping = grouping)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Summary of Balance for All Data:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>            Means Treated Means Control Std. Mean Diff. Var. Ratio eCDF Mean</span>
@@ -431,11 +434,13 @@ on the covariates without coarsening.</p></div>
 <span class="r-in"><span><span class="co"># The same but requesting 1:1 Mahalanobis distance matching with</span></span></span>
 <span class="r-in"><span><span class="co"># the k2k and k2k.method argument. Note the remaining number of units</span></span></span>
 <span class="r-in"><span><span class="co"># is smaller than when retaining the full matched sample.</span></span></span>
-<span class="r-in"><span><span class="va">m.out2</span> <span class="op">&lt;-</span> <span class="fu"><a href="matchit.html">matchit</a></span><span class="op">(</span><span class="va">treat</span> <span class="op">~</span> <span class="va">age</span> <span class="op">+</span> <span class="va">race</span> <span class="op">+</span> <span class="va">married</span> <span class="op">+</span> <span class="va">educ</span>, data <span class="op">=</span> <span class="va">lalonde</span>,</span></span>
-<span class="r-in"><span>                  method <span class="op">=</span> <span class="st">"cem"</span>, cutpoints <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>educ <span class="op">=</span> <span class="fl">5</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>                  grouping <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>race <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"white"</span>, <span class="st">"hispan"</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>                                              <span class="st">"black"</span><span class="op">)</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>                  k2k <span class="op">=</span> <span class="cn">TRUE</span>, k2k.method <span class="op">=</span> <span class="st">"mahalanobis"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">m.out2</span> <span class="op">&lt;-</span> <span class="fu"><a href="matchit.html">matchit</a></span><span class="op">(</span><span class="va">treat</span> <span class="op">~</span> <span class="va">age</span> <span class="op">+</span> <span class="va">race</span> <span class="op">+</span> <span class="va">married</span> <span class="op">+</span> <span class="va">educ</span>,</span></span>
+<span class="r-in"><span>                  data <span class="op">=</span> <span class="va">lalonde</span>,</span></span>
+<span class="r-in"><span>                  method <span class="op">=</span> <span class="st">"cem"</span>,</span></span>
+<span class="r-in"><span>                  cutpoints <span class="op">=</span> <span class="va">cutpoints</span>,</span></span>
+<span class="r-in"><span>                  grouping <span class="op">=</span> <span class="va">grouping</span>,</span></span>
+<span class="r-in"><span>                  k2k <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
+<span class="r-in"><span>                  k2k.method <span class="op">=</span> <span class="st">"mahalanobis"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">m.out2</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> A `matchit` object</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  - method: Coarsened exact matching</span>
@@ -446,8 +451,8 @@ on the covariates without coarsening.</p></div>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Call:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> matchit(formula = treat ~ age + race + married + educ, data = lalonde, </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     method = "cem", cutpoints = list(educ = 5), grouping = list(race = list(c("white", </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         "hispan"), "black")), k2k = TRUE, k2k.method = "mahalanobis")</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     method = "cem", cutpoints = cutpoints, grouping = grouping, </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     k2k = TRUE, k2k.method = "mahalanobis")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Summary of Balance for Matched Data:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>            Means Treated Means Control Std. Mean Diff. Var. Ratio eCDF Mean</span>

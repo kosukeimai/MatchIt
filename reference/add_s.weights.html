@@ -125,7 +125,8 @@ containing the supplied sampling weights. If <code>s.weights = NULL</code>, the 
 <span class="r-in"><span><span class="co"># NN PS match using logistic regression PS that doesn't</span></span></span>
 <span class="r-in"><span><span class="co"># include sampling weights</span></span></span>
 <span class="r-in"><span><span class="va">m.out</span> <span class="op">&lt;-</span> <span class="fu"><a href="matchit.html">matchit</a></span><span class="op">(</span><span class="va">treat</span> <span class="op">~</span> <span class="va">age</span> <span class="op">+</span> <span class="va">educ</span> <span class="op">+</span> <span class="va">race</span> <span class="op">+</span> <span class="va">nodegree</span> <span class="op">+</span></span></span>
-<span class="r-in"><span>                   <span class="va">married</span>  <span class="op">+</span> <span class="va">re74</span> <span class="op">+</span> <span class="va">re75</span>, data <span class="op">=</span> <span class="va">lalonde</span><span class="op">)</span></span></span>
+<span class="r-in"><span>                   <span class="va">married</span>  <span class="op">+</span> <span class="va">re74</span> <span class="op">+</span> <span class="va">re75</span>,</span></span>
+<span class="r-in"><span>                 data <span class="op">=</span> <span class="va">lalonde</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">m.out</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> A `matchit` object</span>

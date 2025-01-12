@@ -502,8 +502,7 @@ combines the matching weights and sampling weights.</p>
 as Nonparametric Preprocessing for Reducing Model Dependence in Parametric
 Causal Inference. <em>Political Analysis</em>, 15(3), 199–236. <a href="https://doi.org/10.1093/pan/mpl013" class="external-link">doi:10.1093/pan/mpl013</a></p>
 <p>Ho, D. E., Imai, K., King, G., &amp; Stuart, E. A. (2011). MatchIt:
-Nonparametric Preprocessing for Parametric Causal Inference. <em>Journal of
-Statistical Software</em>, 42(8). <a href="https://doi.org/10.18637/jss.v042.i08" class="external-link">doi:10.18637/jss.v042.i08</a></p>
+Nonparametric Preprocessing for Parametric Causal Inference. <em>Journal of Statistical Software</em>, 42(8). <a href="https://doi.org/10.18637/jss.v042.i08" class="external-link">doi:10.18637/jss.v042.i08</a></p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
@@ -526,7 +525,8 @@ Statistical Software</em>, 42(8). <a href="https://doi.org/10.18637/jss.v042.i08
 <span class="r-in"><span><span class="co"># Default: 1:1 NN PS matching w/o replacement</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">m.out1</span> <span class="op">&lt;-</span> <span class="fu">matchit</span><span class="op">(</span><span class="va">treat</span> <span class="op">~</span> <span class="va">age</span> <span class="op">+</span> <span class="va">educ</span> <span class="op">+</span> <span class="va">race</span> <span class="op">+</span> <span class="va">nodegree</span> <span class="op">+</span></span></span>
-<span class="r-in"><span>                   <span class="va">married</span> <span class="op">+</span> <span class="va">re74</span> <span class="op">+</span> <span class="va">re75</span>, data <span class="op">=</span> <span class="va">lalonde</span><span class="op">)</span></span></span>
+<span class="r-in"><span>                    <span class="va">married</span> <span class="op">+</span> <span class="va">re74</span> <span class="op">+</span> <span class="va">re75</span>,</span></span>
+<span class="r-in"><span>                  data <span class="op">=</span> <span class="va">lalonde</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">m.out1</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> A `matchit` object</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  - method: 1:1 nearest neighbor matching without replacement</span>
@@ -601,9 +601,11 @@ Statistical Software</em>, 42(8). <a href="https://doi.org/10.18637/jss.v042.i08
 <span class="r-in"><span><span class="co"># exact matching on married and race</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">m.out2</span> <span class="op">&lt;-</span> <span class="fu">matchit</span><span class="op">(</span><span class="va">treat</span> <span class="op">~</span> <span class="va">age</span> <span class="op">+</span> <span class="va">educ</span> <span class="op">+</span> <span class="va">race</span> <span class="op">+</span> <span class="va">nodegree</span> <span class="op">+</span></span></span>
-<span class="r-in"><span>                   <span class="va">married</span> <span class="op">+</span> <span class="va">re74</span> <span class="op">+</span> <span class="va">re75</span>, data <span class="op">=</span> <span class="va">lalonde</span>,</span></span>
-<span class="r-in"><span>                   distance <span class="op">=</span> <span class="st">"mahalanobis"</span>, replace <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
-<span class="r-in"><span>                   exact <span class="op">=</span> <span class="op">~</span> <span class="va">married</span> <span class="op">+</span> <span class="va">race</span><span class="op">)</span></span></span>
+<span class="r-in"><span>                    <span class="va">married</span> <span class="op">+</span> <span class="va">re74</span> <span class="op">+</span> <span class="va">re75</span>,</span></span>
+<span class="r-in"><span>                  data <span class="op">=</span> <span class="va">lalonde</span>,</span></span>
+<span class="r-in"><span>                  distance <span class="op">=</span> <span class="st">"mahalanobis"</span>,</span></span>
+<span class="r-in"><span>                  replace <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
+<span class="r-in"><span>                  exact <span class="op">=</span> <span class="op">~</span> <span class="va">married</span> <span class="op">+</span> <span class="va">race</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">m.out2</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> A `matchit` object</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  - method: 1:1 nearest neighbor matching with replacement</span>
@@ -674,10 +676,13 @@ Statistical Software</em>, 42(8). <a href="https://doi.org/10.18637/jss.v042.i08
 <span class="r-in"><span><span class="co"># by a probit pregression PS</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">m.out3</span> <span class="op">&lt;-</span> <span class="fu">matchit</span><span class="op">(</span><span class="va">treat</span> <span class="op">~</span> <span class="va">age</span> <span class="op">+</span> <span class="va">educ</span> <span class="op">+</span> <span class="va">race</span> <span class="op">+</span> <span class="va">nodegree</span> <span class="op">+</span></span></span>
-<span class="r-in"><span>                   <span class="va">married</span> <span class="op">+</span> <span class="va">re74</span> <span class="op">+</span> <span class="va">re75</span>, data <span class="op">=</span> <span class="va">lalonde</span>,</span></span>
-<span class="r-in"><span>                   distance <span class="op">=</span> <span class="st">"glm"</span>, link <span class="op">=</span> <span class="st">"probit"</span>,</span></span>
-<span class="r-in"><span>                   mahvars <span class="op">=</span> <span class="op">~</span> <span class="va">age</span> <span class="op">+</span> <span class="va">educ</span> <span class="op">+</span> <span class="va">re74</span> <span class="op">+</span> <span class="va">re75</span>,</span></span>
-<span class="r-in"><span>                   caliper <span class="op">=</span> <span class="fl">.1</span>, ratio <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></span>
+<span class="r-in"><span>                    <span class="va">married</span> <span class="op">+</span> <span class="va">re74</span> <span class="op">+</span> <span class="va">re75</span>,</span></span>
+<span class="r-in"><span>                  data <span class="op">=</span> <span class="va">lalonde</span>,</span></span>
+<span class="r-in"><span>                  distance <span class="op">=</span> <span class="st">"glm"</span>,</span></span>
+<span class="r-in"><span>                  link <span class="op">=</span> <span class="st">"probit"</span>,</span></span>
+<span class="r-in"><span>                  mahvars <span class="op">=</span> <span class="op">~</span> <span class="va">age</span> <span class="op">+</span> <span class="va">educ</span> <span class="op">+</span> <span class="va">re74</span> <span class="op">+</span> <span class="va">re75</span>,</span></span>
+<span class="r-in"><span>                  caliper <span class="op">=</span> <span class="fl">.1</span>,</span></span>
+<span class="r-in"><span>                  ratio <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">m.out3</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> A `matchit` object</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  - method: 2:1 nearest neighbor matching without replacement</span>
@@ -756,10 +761,12 @@ Statistical Software</em>, 42(8). <a href="https://doi.org/10.18637/jss.v042.i08
 <span class="r-in"><span><span class="co"># Optimal full PS matching for the ATE within calipers on</span></span></span>
 <span class="r-in"><span><span class="co"># PS, age, and educ</span></span></span>
 <span class="r-in"><span><span class="va">m.out4</span> <span class="op">&lt;-</span> <span class="fu">matchit</span><span class="op">(</span><span class="va">treat</span> <span class="op">~</span> <span class="va">age</span> <span class="op">+</span> <span class="va">educ</span> <span class="op">+</span> <span class="va">race</span> <span class="op">+</span> <span class="va">nodegree</span> <span class="op">+</span></span></span>
-<span class="r-in"><span>                   <span class="va">married</span> <span class="op">+</span> <span class="va">re74</span> <span class="op">+</span> <span class="va">re75</span>, data <span class="op">=</span> <span class="va">lalonde</span>,</span></span>
-<span class="r-in"><span>                   method <span class="op">=</span> <span class="st">"full"</span>, estimand <span class="op">=</span> <span class="st">"ATE"</span>,</span></span>
-<span class="r-in"><span>                   caliper <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">.1</span>, age <span class="op">=</span> <span class="fl">2</span>, educ <span class="op">=</span> <span class="fl">1</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>                   std.caliper <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">TRUE</span>, <span class="cn">FALSE</span>, <span class="cn">FALSE</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span>                    <span class="va">married</span> <span class="op">+</span> <span class="va">re74</span> <span class="op">+</span> <span class="va">re75</span>,</span></span>
+<span class="r-in"><span>                  data <span class="op">=</span> <span class="va">lalonde</span>,</span></span>
+<span class="r-in"><span>                  method <span class="op">=</span> <span class="st">"full"</span>,</span></span>
+<span class="r-in"><span>                  estimand <span class="op">=</span> <span class="st">"ATE"</span>,</span></span>
+<span class="r-in"><span>                  caliper <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">.1</span>, age <span class="op">=</span> <span class="fl">2</span>, educ <span class="op">=</span> <span class="fl">1</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>                  std.caliper <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">TRUE</span>, <span class="cn">FALSE</span>, <span class="cn">FALSE</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">m.out4</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> A `matchit` object</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  - method: Optimal full matching</span>
@@ -838,9 +845,12 @@ Statistical Software</em>, 42(8). <a href="https://doi.org/10.18637/jss.v042.i08
 <span class="r-in"><span><span class="co"># discarding controls outside common support of PS</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">s.out1</span> <span class="op">&lt;-</span> <span class="fu">matchit</span><span class="op">(</span><span class="va">treat</span> <span class="op">~</span> <span class="va">age</span> <span class="op">+</span> <span class="va">educ</span> <span class="op">+</span> <span class="va">race</span> <span class="op">+</span> <span class="va">nodegree</span> <span class="op">+</span></span></span>
-<span class="r-in"><span>                   <span class="va">married</span> <span class="op">+</span> <span class="va">re74</span> <span class="op">+</span> <span class="va">re75</span>, data <span class="op">=</span> <span class="va">lalonde</span>,</span></span>
-<span class="r-in"><span>                   method <span class="op">=</span> <span class="st">"subclass"</span>, distance <span class="op">=</span> <span class="st">"glm"</span>,</span></span>
-<span class="r-in"><span>                   discard <span class="op">=</span> <span class="st">"control"</span>, subclass <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></span></span>
+<span class="r-in"><span>                    <span class="va">married</span> <span class="op">+</span> <span class="va">re74</span> <span class="op">+</span> <span class="va">re75</span>,</span></span>
+<span class="r-in"><span>                  data <span class="op">=</span> <span class="va">lalonde</span>,</span></span>
+<span class="r-in"><span>                  method <span class="op">=</span> <span class="st">"subclass"</span>,</span></span>
+<span class="r-in"><span>                  distance <span class="op">=</span> <span class="st">"glm"</span>,</span></span>
+<span class="r-in"><span>                  discard <span class="op">=</span> <span class="st">"control"</span>,</span></span>
+<span class="r-in"><span>                  subclass <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">s.out1</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> A `matchit` object</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  - method: Subclassification (10 subclasses)</span>

@@ -355,11 +355,13 @@ than matching.</p></div>
 <span class="r-in"><span><span class="co">#easy to install</span></span></span>
 <span class="r-in"><span><span class="va">solver</span> <span class="op">&lt;-</span> <span class="st">"highs"</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># 1:1 cardinality matching</span></span></span>
 <span class="r-in"><span><span class="va">m.out1</span> <span class="op">&lt;-</span> <span class="fu"><a href="matchit.html">matchit</a></span><span class="op">(</span><span class="va">treat</span> <span class="op">~</span> <span class="va">age</span> <span class="op">+</span> <span class="va">educ</span> <span class="op">+</span> <span class="va">re74</span>,</span></span>
-<span class="r-in"><span>                  data <span class="op">=</span> <span class="va">lalonde</span>, method <span class="op">=</span> <span class="st">"cardinality"</span>,</span></span>
-<span class="r-in"><span>                  estimand <span class="op">=</span> <span class="st">"ATT"</span>, ratio <span class="op">=</span> <span class="fl">1</span>,</span></span>
-<span class="r-in"><span>                  tols <span class="op">=</span> <span class="fl">.2</span>, solver <span class="op">=</span> <span class="va">solver</span><span class="op">)</span></span></span>
+<span class="r-in"><span>                  data <span class="op">=</span> <span class="va">lalonde</span>,</span></span>
+<span class="r-in"><span>                  method <span class="op">=</span> <span class="st">"cardinality"</span>,</span></span>
+<span class="r-in"><span>                  estimand <span class="op">=</span> <span class="st">"ATT"</span>,</span></span>
+<span class="r-in"><span>                  ratio <span class="op">=</span> <span class="fl">1</span>,</span></span>
+<span class="r-in"><span>                  tols <span class="op">=</span> <span class="fl">.2</span>,</span></span>
+<span class="r-in"><span>                  solver <span class="op">=</span> <span class="va">solver</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">m.out1</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> A `matchit` object</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  - method: Cardinality matching</span>
@@ -395,9 +397,12 @@ than matching.</p></div>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Profile matching for the ATT</span></span></span>
 <span class="r-in"><span><span class="va">m.out2</span> <span class="op">&lt;-</span> <span class="fu"><a href="matchit.html">matchit</a></span><span class="op">(</span><span class="va">treat</span> <span class="op">~</span> <span class="va">age</span> <span class="op">+</span> <span class="va">educ</span> <span class="op">+</span> <span class="va">re74</span>,</span></span>
-<span class="r-in"><span>                  data <span class="op">=</span> <span class="va">lalonde</span>, method <span class="op">=</span> <span class="st">"cardinality"</span>,</span></span>
-<span class="r-in"><span>                  estimand <span class="op">=</span> <span class="st">"ATT"</span>, ratio <span class="op">=</span> <span class="cn">NA</span>,</span></span>
-<span class="r-in"><span>                  tols <span class="op">=</span> <span class="fl">.2</span>, solver <span class="op">=</span> <span class="va">solver</span><span class="op">)</span></span></span>
+<span class="r-in"><span>                  data <span class="op">=</span> <span class="va">lalonde</span>,</span></span>
+<span class="r-in"><span>                  method <span class="op">=</span> <span class="st">"cardinality"</span>,</span></span>
+<span class="r-in"><span>                  estimand <span class="op">=</span> <span class="st">"ATT"</span>,</span></span>
+<span class="r-in"><span>                  ratio <span class="op">=</span> <span class="cn">NA</span>,</span></span>
+<span class="r-in"><span>                  tols <span class="op">=</span> <span class="fl">.2</span>,</span></span>
+<span class="r-in"><span>                  solver <span class="op">=</span> <span class="va">solver</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">m.out2</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> A `matchit` object</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  - method: Cardinality matching</span>
@@ -427,9 +432,12 @@ than matching.</p></div>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Profile matching for the ATE</span></span></span>
 <span class="r-in"><span><span class="va">m.out3</span> <span class="op">&lt;-</span> <span class="fu"><a href="matchit.html">matchit</a></span><span class="op">(</span><span class="va">treat</span> <span class="op">~</span> <span class="va">age</span> <span class="op">+</span> <span class="va">educ</span> <span class="op">+</span> <span class="va">re74</span>,</span></span>
-<span class="r-in"><span>                  data <span class="op">=</span> <span class="va">lalonde</span>, method <span class="op">=</span> <span class="st">"cardinality"</span>,</span></span>
-<span class="r-in"><span>                  estimand <span class="op">=</span> <span class="st">"ATE"</span>, ratio <span class="op">=</span> <span class="cn">NA</span>,</span></span>
-<span class="r-in"><span>                  tols <span class="op">=</span> <span class="fl">.2</span>, solver <span class="op">=</span> <span class="va">solver</span><span class="op">)</span></span></span>
+<span class="r-in"><span>                  data <span class="op">=</span> <span class="va">lalonde</span>,</span></span>
+<span class="r-in"><span>                  method <span class="op">=</span> <span class="st">"cardinality"</span>,</span></span>
+<span class="r-in"><span>                  estimand <span class="op">=</span> <span class="st">"ATE"</span>,</span></span>
+<span class="r-in"><span>                  ratio <span class="op">=</span> <span class="cn">NA</span>,</span></span>
+<span class="r-in"><span>                  tols <span class="op">=</span> <span class="fl">.2</span>,</span></span>
+<span class="r-in"><span>                  solver <span class="op">=</span> <span class="va">solver</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">m.out3</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> A `matchit` object</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  - method: Cardinality matching</span>
@@ -458,9 +466,12 @@ than matching.</p></div>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span><span class="co"># Pairing after 1:1 cardinality matching:</span></span></span>
 <span class="r-in"><span><span class="va">m.out1b</span> <span class="op">&lt;-</span> <span class="fu"><a href="matchit.html">matchit</a></span><span class="op">(</span><span class="va">treat</span> <span class="op">~</span> <span class="va">age</span> <span class="op">+</span> <span class="va">educ</span> <span class="op">+</span> <span class="va">re74</span>,</span></span>
-<span class="r-in"><span>                   data <span class="op">=</span> <span class="va">lalonde</span>, method <span class="op">=</span> <span class="st">"cardinality"</span>,</span></span>
-<span class="r-in"><span>                   estimand <span class="op">=</span> <span class="st">"ATT"</span>, ratio <span class="op">=</span> <span class="fl">1</span>,</span></span>
-<span class="r-in"><span>                   tols <span class="op">=</span> <span class="fl">.15</span>, solver <span class="op">=</span> <span class="va">solver</span>,</span></span>
+<span class="r-in"><span>                   data <span class="op">=</span> <span class="va">lalonde</span>,</span></span>
+<span class="r-in"><span>                   method <span class="op">=</span> <span class="st">"cardinality"</span>,</span></span>
+<span class="r-in"><span>                   estimand <span class="op">=</span> <span class="st">"ATT"</span>,</span></span>
+<span class="r-in"><span>                   ratio <span class="op">=</span> <span class="fl">1</span>,</span></span>
+<span class="r-in"><span>                   tols <span class="op">=</span> <span class="fl">.15</span>,</span></span>
+<span class="r-in"><span>                   solver <span class="op">=</span> <span class="va">solver</span>,</span></span>
 <span class="r-in"><span>                   mahvars <span class="op">=</span> <span class="op">~</span> <span class="va">age</span> <span class="op">+</span> <span class="va">educ</span> <span class="op">+</span> <span class="va">re74</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Note that balance doesn't change but pair distances</span></span></span>

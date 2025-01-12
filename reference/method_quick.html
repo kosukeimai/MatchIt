@@ -264,12 +264,11 @@ of such objects, one for each stratum of the <code>exact</code> variables.</p>
     <div class="section level2">
     <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a></h2>
     <p>In a manuscript, be sure to cite the <em>quickmatch</em> package if using
-<code><a href="matchit.html">matchit()</a></code> with <code>method = "quick"</code>:</p>
-<p>Sävje, F., Sekhon, J., &amp; Higgins, M. (2018). quickmatch: Quick generalized full matching. <a href="https://CRAN.R-project.org/package=quickmatch" class="external-link">https://CRAN.R-project.org/package=quickmatch</a></p>
+<code><a href="matchit.html">matchit()</a></code> with <code>method = "quick"</code>. A citation can be generated using <code>citation("quickmatch")</code>.</p>
 <p>For example, a sentence might read:</p>
 <p><em>Generalized full matching was performed using the MatchIt package (Ho,
 Imai, King, &amp; Stuart, 2011) in R, which calls functions from the quickmatch
-package (Sävje, Sekhon, &amp; Higgins, 2018).</em></p>
+package (Sävje, Sekhon, &amp; Higgins, 2024).</em></p>
 <p>You should also cite the following paper, which develops and describes the method:</p>
 <p>Sävje, F., Higgins, M. J., &amp; Sekhon, J. S. (2021). Generalized Full Matching. <em>Political Analysis</em>, 29(4), 423–447. <a href="https://doi.org/10.1017/pan.2020.32" class="external-link">doi:10.1017/pan.2020.32</a></p>
     </div>
@@ -287,7 +286,8 @@ a call to <code><a href="matchit.html">matchit()</a></code>.</p>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Generalize full PS matching</span></span></span>
 <span class="r-in"><span><span class="va">m.out1</span> <span class="op">&lt;-</span> <span class="fu"><a href="matchit.html">matchit</a></span><span class="op">(</span><span class="va">treat</span> <span class="op">~</span> <span class="va">age</span> <span class="op">+</span> <span class="va">educ</span> <span class="op">+</span> <span class="va">race</span> <span class="op">+</span> <span class="va">nodegree</span> <span class="op">+</span></span></span>
-<span class="r-in"><span>                    <span class="va">married</span> <span class="op">+</span> <span class="va">re74</span> <span class="op">+</span> <span class="va">re75</span>, data <span class="op">=</span> <span class="va">lalonde</span>,</span></span>
+<span class="r-in"><span>                    <span class="va">married</span> <span class="op">+</span> <span class="va">re74</span> <span class="op">+</span> <span class="va">re75</span>,</span></span>
+<span class="r-in"><span>                  data <span class="op">=</span> <span class="va">lalonde</span>,</span></span>
 <span class="r-in"><span>                  method <span class="op">=</span> <span class="st">"quick"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">m.out1</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> A `matchit` object</span>

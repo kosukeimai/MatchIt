@@ -339,7 +339,8 @@ switch to trigger which treatment group is considered "focal".</p>
 <h3 id="variable-ratio-matching">Variable Ratio Matching<a class="anchor" aria-label="anchor" href="#variable-ratio-matching"></a></h3>
 
 
-<p><code><a href="matchit.html">matchit()</a></code> can perform variable ratio "extremal" matching as described by Ming and Rosenbaum (2000). This
+<p><code><a href="matchit.html">matchit()</a></code> can perform variable ratio "extremal" matching as described by Ming and Rosenbaum (2000; <a href="https://doi.org/10.1111/j.0006-341X.2000.00118.x" class="external-link">doi:10.1111/j.0006-341X.2000.00118.x</a>
+). This
 method tends to result in better balance than fixed ratio matching at the
 expense of some precision. When <code>ratio &gt; 1</code>, rather than requiring all
 treated units to receive <code>ratio</code> matches, each treated unit is assigned
@@ -385,17 +386,6 @@ Examples below for an example of their use.</p>
 
     </div>
     <div class="section level2">
-    <h2 id="note">Note<a class="anchor" aria-label="anchor" href="#note"></a></h2>
-    <p>Sometimes an error will be produced by <em>Rcpp</em> along the lines of
-<code>"function 'Rcpp_precious_remove' not provided by package 'Rcpp'"</code>. It
-is not immediately clear why this happens, though
-<a href="https://lists.r-forge.r-project.org/pipermail/rcpp-devel/2021-July/010648.html" class="external-link">this</a>
-thread appears to provide some insight. In a fresh session, run
-<code>remove.packages(c("MatchIt", "Rcpp")); install.packages("MatchIt")</code>.
-This should sync <em>MatchIt</em> and <em>Rcpp</em> and ensure they work
-correctly.</p>
-    </div>
-    <div class="section level2">
     <h2 id="outputs">Outputs<a class="anchor" aria-label="anchor" href="#outputs"></a></h2>
 
 
@@ -425,7 +415,8 @@ minimized (i.e., as an alternative to specifying <code>m.order</code>).</p></div
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># 1:1 greedy NN matching on the PS</span></span></span>
 <span class="r-in"><span><span class="va">m.out1</span> <span class="op">&lt;-</span> <span class="fu"><a href="matchit.html">matchit</a></span><span class="op">(</span><span class="va">treat</span> <span class="op">~</span> <span class="va">age</span> <span class="op">+</span> <span class="va">educ</span> <span class="op">+</span> <span class="va">race</span> <span class="op">+</span> <span class="va">nodegree</span> <span class="op">+</span></span></span>
-<span class="r-in"><span>                    <span class="va">married</span> <span class="op">+</span> <span class="va">re74</span> <span class="op">+</span> <span class="va">re75</span>, data <span class="op">=</span> <span class="va">lalonde</span>,</span></span>
+<span class="r-in"><span>                    <span class="va">married</span> <span class="op">+</span> <span class="va">re74</span> <span class="op">+</span> <span class="va">re75</span>,</span></span>
+<span class="r-in"><span>                  data <span class="op">=</span> <span class="va">lalonde</span>,</span></span>
 <span class="r-in"><span>                  method <span class="op">=</span> <span class="st">"nearest"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">m.out1</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> A `matchit` object</span>
@@ -500,10 +491,13 @@ minimized (i.e., as an alternative to specifying <code>m.order</code>).</p></div
 <span class="r-in"><span><span class="co"># 3:1 NN Mahalanobis distance matching with</span></span></span>
 <span class="r-in"><span><span class="co"># replacement within a PS caliper</span></span></span>
 <span class="r-in"><span><span class="va">m.out2</span> <span class="op">&lt;-</span> <span class="fu"><a href="matchit.html">matchit</a></span><span class="op">(</span><span class="va">treat</span> <span class="op">~</span> <span class="va">age</span> <span class="op">+</span> <span class="va">educ</span> <span class="op">+</span> <span class="va">race</span> <span class="op">+</span> <span class="va">nodegree</span> <span class="op">+</span></span></span>
-<span class="r-in"><span>                    <span class="va">married</span> <span class="op">+</span> <span class="va">re74</span> <span class="op">+</span> <span class="va">re75</span>, data <span class="op">=</span> <span class="va">lalonde</span>,</span></span>
-<span class="r-in"><span>                  method <span class="op">=</span> <span class="st">"nearest"</span>, replace <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
+<span class="r-in"><span>                    <span class="va">married</span> <span class="op">+</span> <span class="va">re74</span> <span class="op">+</span> <span class="va">re75</span>,</span></span>
+<span class="r-in"><span>                  data <span class="op">=</span> <span class="va">lalonde</span>,</span></span>
+<span class="r-in"><span>                  method <span class="op">=</span> <span class="st">"nearest"</span>,</span></span>
+<span class="r-in"><span>                  replace <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
 <span class="r-in"><span>                  mahvars <span class="op">=</span> <span class="op">~</span> <span class="va">age</span> <span class="op">+</span> <span class="va">educ</span> <span class="op">+</span> <span class="va">re74</span> <span class="op">+</span> <span class="va">re75</span>,</span></span>
-<span class="r-in"><span>                  ratio <span class="op">=</span> <span class="fl">3</span>, caliper <span class="op">=</span> <span class="fl">.02</span><span class="op">)</span></span></span>
+<span class="r-in"><span>                  ratio <span class="op">=</span> <span class="fl">3</span>,</span></span>
+<span class="r-in"><span>                  caliper <span class="op">=</span> <span class="fl">.02</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">m.out2</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> A `matchit` object</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  - method: 3:1 nearest neighbor matching with replacement</span>
@@ -557,8 +551,10 @@ minimized (i.e., as an alternative to specifying <code>m.order</code>).</p></div
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># 1:1 NN Mahalanobis distance matching within calipers</span></span></span>
 <span class="r-in"><span><span class="co"># on re74 and re75 and exact matching on married and race</span></span></span>
-<span class="r-in"><span><span class="va">m.out3</span> <span class="op">&lt;-</span> <span class="fu"><a href="matchit.html">matchit</a></span><span class="op">(</span><span class="va">treat</span> <span class="op">~</span> <span class="va">age</span> <span class="op">+</span> <span class="va">educ</span> <span class="op">+</span> <span class="va">re74</span> <span class="op">+</span> <span class="va">re75</span>, data <span class="op">=</span> <span class="va">lalonde</span>,</span></span>
-<span class="r-in"><span>                  method <span class="op">=</span> <span class="st">"nearest"</span>, distance <span class="op">=</span> <span class="st">"mahalanobis"</span>,</span></span>
+<span class="r-in"><span><span class="va">m.out3</span> <span class="op">&lt;-</span> <span class="fu"><a href="matchit.html">matchit</a></span><span class="op">(</span><span class="va">treat</span> <span class="op">~</span> <span class="va">age</span> <span class="op">+</span> <span class="va">educ</span> <span class="op">+</span> <span class="va">re74</span> <span class="op">+</span> <span class="va">re75</span>,</span></span>
+<span class="r-in"><span>                  data <span class="op">=</span> <span class="va">lalonde</span>,</span></span>
+<span class="r-in"><span>                  method <span class="op">=</span> <span class="st">"nearest"</span>,</span></span>
+<span class="r-in"><span>                  distance <span class="op">=</span> <span class="st">"mahalanobis"</span>,</span></span>
 <span class="r-in"><span>                  exact <span class="op">=</span> <span class="op">~</span> <span class="va">married</span> <span class="op">+</span> <span class="va">race</span>,</span></span>
 <span class="r-in"><span>                  caliper <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>re74 <span class="op">=</span> <span class="fl">.2</span>, re75 <span class="op">=</span> <span class="fl">.15</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Fewer control units than treated units in some `exact` strata; not all</span>
@@ -607,9 +603,12 @@ minimized (i.e., as an alternative to specifying <code>m.order</code>).</p></div
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># 2:1 variable ratio NN matching on the PS</span></span></span>
 <span class="r-in"><span><span class="va">m.out4</span> <span class="op">&lt;-</span> <span class="fu"><a href="matchit.html">matchit</a></span><span class="op">(</span><span class="va">treat</span> <span class="op">~</span> <span class="va">age</span> <span class="op">+</span> <span class="va">educ</span> <span class="op">+</span> <span class="va">race</span> <span class="op">+</span> <span class="va">nodegree</span> <span class="op">+</span></span></span>
-<span class="r-in"><span>                    <span class="va">married</span> <span class="op">+</span> <span class="va">re74</span> <span class="op">+</span> <span class="va">re75</span>, data <span class="op">=</span> <span class="va">lalonde</span>,</span></span>
-<span class="r-in"><span>                  method <span class="op">=</span> <span class="st">"nearest"</span>, ratio <span class="op">=</span> <span class="fl">2</span>,</span></span>
-<span class="r-in"><span>                  min.controls <span class="op">=</span> <span class="fl">1</span>, max.controls <span class="op">=</span> <span class="fl">12</span><span class="op">)</span></span></span>
+<span class="r-in"><span>                    <span class="va">married</span> <span class="op">+</span> <span class="va">re74</span> <span class="op">+</span> <span class="va">re75</span>,</span></span>
+<span class="r-in"><span>                  data <span class="op">=</span> <span class="va">lalonde</span>,</span></span>
+<span class="r-in"><span>                  method <span class="op">=</span> <span class="st">"nearest"</span>,</span></span>
+<span class="r-in"><span>                  ratio <span class="op">=</span> <span class="fl">2</span>,</span></span>
+<span class="r-in"><span>                  min.controls <span class="op">=</span> <span class="fl">1</span>,</span></span>
+<span class="r-in"><span>                  max.controls <span class="op">=</span> <span class="fl">12</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">m.out4</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> A `matchit` object</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  - method: Variable ratio 2:1 nearest neighbor matching without replacement</span>

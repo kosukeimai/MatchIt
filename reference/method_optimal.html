@@ -341,7 +341,8 @@ regular use but may be of interest to those examining the source code.</p>
 <em>optmatch</em>. This enables matching problems of any size to be run, but
 may also let huge, infeasible problems get through and potentially take a
 long time or crash R. See optmatchsetMaxProblemSize for more details.</p>
-<p>A preprocessing algorithm describe by <a href="https://doi.org/10.1214/19-STS739" class="external-link">Sävje (2020)</a> is used to improve the speed of the matching when 1:1 matching on a propensity score. It does so by adding an additional constraint that guarantees a solution as optimal as the solution that would have been found without the constraint, and that constraint often dramatically reduces the size of the matching problem at no cost. However, this may introduce differences between the results obtained by <em>MatchIt</em> and by <em>optmatch</em>, though such differences will shrink when smaller values of <code>tol</code> are used.</p>
+<p>A preprocessing algorithm describe by Sävje (2020; <a href="https://doi.org/10.1214/19-STS739" class="external-link">doi:10.1214/19-STS739</a>
+) is used to improve the speed of the matching when 1:1 matching on a propensity score. It does so by adding an additional constraint that guarantees a solution as optimal as the solution that would have been found without the constraint, and that constraint often dramatically reduces the size of the matching problem at no cost. However, this may introduce differences between the results obtained by <em>MatchIt</em> and by <em>optmatch</em>, though such differences will shrink when smaller values of <code>tol</code> are used.</p>
     </div>
     <div class="section level2">
     <h2 id="outputs">Outputs<a class="anchor" aria-label="anchor" href="#outputs"></a></h2>
@@ -380,9 +381,11 @@ matching is a special case, and which relies on similar machinery.</p></div>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"lalonde"</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">#1:1 optimal PS matching with exact matching on race</span></span></span>
-<span class="r-in"><span><span class="va">m.out1</span> <span class="op">&lt;-</span> <span class="fu"><a href="matchit.html">matchit</a></span><span class="op">(</span><span class="va">treat</span> <span class="op">~</span> <span class="va">age</span> <span class="op">+</span> <span class="va">educ</span> <span class="op">+</span> <span class="va">race</span> <span class="op">+</span> <span class="va">nodegree</span> <span class="op">+</span></span></span>
-<span class="r-in"><span>                    <span class="va">married</span> <span class="op">+</span> <span class="va">re74</span> <span class="op">+</span> <span class="va">re75</span>, data <span class="op">=</span> <span class="va">lalonde</span>,</span></span>
-<span class="r-in"><span>                  method <span class="op">=</span> <span class="st">"optimal"</span>, exact <span class="op">=</span> <span class="op">~</span><span class="va">race</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">m.out1</span> <span class="op">&lt;-</span> <span class="fu"><a href="matchit.html">matchit</a></span><span class="op">(</span><span class="va">treat</span> <span class="op">~</span> <span class="va">age</span> <span class="op">+</span> <span class="va">educ</span> <span class="op">+</span> <span class="va">race</span> <span class="op">+</span></span></span>
+<span class="r-in"><span>                    <span class="va">nodegree</span> <span class="op">+</span> <span class="va">married</span> <span class="op">+</span> <span class="va">re74</span> <span class="op">+</span> <span class="va">re75</span>,</span></span>
+<span class="r-in"><span>                  data <span class="op">=</span> <span class="va">lalonde</span>,</span></span>
+<span class="r-in"><span>                  method <span class="op">=</span> <span class="st">"optimal"</span>,</span></span>
+<span class="r-in"><span>                  exact <span class="op">=</span> <span class="op">~</span><span class="va">race</span><span class="op">)</span></span></span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Fewer control units than treated units in some `exact` strata; not all</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> treated units will get a match.</span>
 <span class="r-in"><span><span class="va">m.out1</span></span></span>
@@ -456,9 +459,11 @@ matching is a special case, and which relies on similar machinery.</p></div>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">#2:1 optimal matching on the scaled Euclidean distance</span></span></span>
-<span class="r-in"><span><span class="va">m.out2</span> <span class="op">&lt;-</span> <span class="fu"><a href="matchit.html">matchit</a></span><span class="op">(</span><span class="va">treat</span> <span class="op">~</span> <span class="va">age</span> <span class="op">+</span> <span class="va">educ</span> <span class="op">+</span> <span class="va">race</span> <span class="op">+</span> <span class="va">nodegree</span> <span class="op">+</span></span></span>
-<span class="r-in"><span>                    <span class="va">married</span> <span class="op">+</span> <span class="va">re74</span> <span class="op">+</span> <span class="va">re75</span>, data <span class="op">=</span> <span class="va">lalonde</span>,</span></span>
-<span class="r-in"><span>                  method <span class="op">=</span> <span class="st">"optimal"</span>, ratio <span class="op">=</span> <span class="fl">2</span>,</span></span>
+<span class="r-in"><span><span class="va">m.out2</span> <span class="op">&lt;-</span> <span class="fu"><a href="matchit.html">matchit</a></span><span class="op">(</span><span class="va">treat</span> <span class="op">~</span> <span class="va">age</span> <span class="op">+</span> <span class="va">educ</span> <span class="op">+</span> <span class="va">race</span> <span class="op">+</span></span></span>
+<span class="r-in"><span>                    <span class="va">nodegree</span> <span class="op">+</span> <span class="va">married</span> <span class="op">+</span> <span class="va">re74</span> <span class="op">+</span> <span class="va">re75</span>,</span></span>
+<span class="r-in"><span>                  data <span class="op">=</span> <span class="va">lalonde</span>,</span></span>
+<span class="r-in"><span>                  method <span class="op">=</span> <span class="st">"optimal"</span>,</span></span>
+<span class="r-in"><span>                  ratio <span class="op">=</span> <span class="fl">2</span>,</span></span>
 <span class="r-in"><span>                  distance <span class="op">=</span> <span class="st">"scaled_euclidean"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">m.out2</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> A `matchit` object</span>
