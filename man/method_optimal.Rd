@@ -211,7 +211,7 @@ The option \code{"optmatch_max_problem_size"} is automatically set to
 may also let huge, infeasible problems get through and potentially take a
 long time or crash R. See \pkgfun{optmatch}{setMaxProblemSize} for more details.
 
-A preprocessing algorithm describe by \href{https://doi.org/10.1214/19-STS739}{Sävje (2020)} is used to improve the speed of the matching when 1:1 matching on a propensity score. It does so by adding an additional constraint that guarantees a solution as optimal as the solution that would have been found without the constraint, and that constraint often dramatically reduces the size of the matching problem at no cost. However, this may introduce differences between the results obtained by \emph{MatchIt} and by \emph{optmatch}, though such differences will shrink when smaller values of \code{tol} are used.
+A preprocessing algorithm describe by Sävje (2020; \doi{10.1214/19-STS739}) is used to improve the speed of the matching when 1:1 matching on a propensity score. It does so by adding an additional constraint that guarantees a solution as optimal as the solution that would have been found without the constraint, and that constraint often dramatically reduces the size of the matching problem at no cost. However, this may introduce differences between the results obtained by \emph{MatchIt} and by \emph{optmatch}, though such differences will shrink when smaller values of \code{tol} are used.
 }
 \section{Outputs}{
 
@@ -228,16 +228,20 @@ of such objects, one for each stratum of the \code{exact} variables.
 data("lalonde")
 
 #1:1 optimal PS matching with exact matching on race
-m.out1 <- matchit(treat ~ age + educ + race + nodegree +
-                    married + re74 + re75, data = lalonde,
-                  method = "optimal", exact = ~race)
+m.out1 <- matchit(treat ~ age + educ + race +
+                    nodegree + married + re74 + re75,
+                  data = lalonde,
+                  method = "optimal",
+                  exact = ~race)
 m.out1
 summary(m.out1)
 
 #2:1 optimal matching on the scaled Euclidean distance
-m.out2 <- matchit(treat ~ age + educ + race + nodegree +
-                    married + re74 + re75, data = lalonde,
-                  method = "optimal", ratio = 2,
+m.out2 <- matchit(treat ~ age + educ + race +
+                    nodegree + married + re74 + re75,
+                  data = lalonde,
+                  method = "optimal",
+                  ratio = 2,
                   distance = "scaled_euclidean")
 m.out2
 summary(m.out2, un = FALSE)

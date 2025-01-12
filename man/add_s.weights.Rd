@@ -47,7 +47,8 @@ sw <- rchisq(nrow(lalonde), 2)
 # NN PS match using logistic regression PS that doesn't
 # include sampling weights
 m.out <- matchit(treat ~ age + educ + race + nodegree +
-                   married  + re74 + re75, data = lalonde)
+                   married  + re74 + re75,
+                 data = lalonde)
 
 m.out
 

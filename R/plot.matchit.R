@@ -122,19 +122,24 @@
 #' data("lalonde")
 #'
 #' m.out <- matchit(treat ~ age + educ + married +
-#'                    race + re74, data = lalonde,
+#'                    race + re74,
+#'                  data = lalonde,
 #'                  method = "nearest")
-#' plot(m.out, type = "qq", interactive = FALSE,
+#' plot(m.out, type = "qq",
+#'      interactive = FALSE,
 #'      which.xs = ~age + educ + re74)
 #' plot(m.out, type = "histogram")
 #'
 #' s.out <- matchit(treat ~ age + educ + married +
 #'                    race + nodegree + re74 + re75,
-#'                  data = lalonde, method = "subclass")
-#' plot(s.out, type = "density", interactive = FALSE,
+#'                  data = lalonde,
+#'                  method = "subclass")
+#' plot(s.out, type = "density",
+#'      interactive = FALSE,
 #'      which.xs = ~age + educ + re74,
 #'      subclass = 3)
-#' plot(s.out, type = "jitter", interactive = FALSE)
+#' plot(s.out, type = "jitter",
+#'      interactive = FALSE)
 #'
 
 #' @exportS3Method plot matchit
@@ -150,13 +155,13 @@ plot.matchit <- function(x, type = "qq", interactive = TRUE, which.xs = NULL, da
   }
   else if (type == "jitter") {
     if (is_null(x$distance)) {
-      .err("`type = \"jitter\"` cannot be used if a distance measure is not estimated or supplied. No plots generated")
+      .err('`type = "jitter"` cannot be used if a distance measure is not estimated or supplied. No plots generated')
     }
     jitter_pscore(x, interactive = interactive,...)
   }
   else if (type == "histogram") {
     if (is_null(x$distance)) {
-      .err("`type = \"hist\"` cannot be used if a distance measure is not estimated or supplied. No plots generated")
+      .err('`type = "hist"` cannot be used if a distance measure is not estimated or supplied. No plots generated')
     }
     hist_pscore(x,...)
   }
@@ -167,15 +172,16 @@ plot.matchit <- function(x, type = "qq", interactive = TRUE, which.xs = NULL, da
 #' @rdname plot.matchit
 plot.matchit.subclass <- function(x, type = "qq", interactive = TRUE, which.xs = NULL, subclass, ...) {
   choice.menu <- function(choices, question) {
-    k <- length(choices)-1
+    k <- length(choices) - 1
     Choices <- data.frame(choices)
     row.names(Choices) <- 0:k
     names(Choices) <- "Choices"
-    print.data.frame(Choices, right=FALSE)
+    print.data.frame(Choices, right = FALSE)
     ans <- readline(question)
+
     while (!ans %in% 0:k) {
       message("Not valid -- please pick one of the choices")
-      print.data.frame(Choices, right=FALSE)
+      print.data.frame(Choices, right = FALSE)
       ans <- readline(question)
     }
 
@@ -232,15 +238,15 @@ plot.matchit.subclass <- function(x, type = "qq", interactive = TRUE, which.xs =
       matchit.covplot(x, type = type, interactive = interactive, which.xs = which.xs, ...)
     }
   }
-  else if (type=="jitter") {
+  else if (type == "jitter") {
     if (is_null(x$distance)) {
-      .err("`type = \"jitter\"` cannot be used when no distance variable was estimated or supplied")
+      .err('`type = "jitter"` cannot be used when no distance variable was estimated or supplied')
     }
     jitter_pscore(x, interactive = interactive, ...)
   }
   else if (type == "histogram") {
     if (is_null(x$distance)) {
-      .err("`type = \"histogram\"` cannot be used when no distance variable was estimated or supplied")
+      .err('`type = "histogram"` cannot be used when no distance variable was estimated or supplied')
     }
     hist_pscore(x,...)
   }

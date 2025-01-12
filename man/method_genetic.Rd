@@ -203,7 +203,7 @@ ATC for genetic matching.
 
 \subsection{Reproducibility}{
 
-Genetic matching involves a random component, so a seed must be set using \code{\link[=set.seed]{set.seed()}} to ensure reproducibility. When \code{cluster} is used for parallel processing, the seed must be compatible with parallel processing (e.g., by setting \code{type = "L'Ecuyer-CMRG"}).
+Genetic matching involves a random component, so a seed must be set using \code{\link[=set.seed]{set.seed()}} to ensure reproducibility. When \code{cluster} is used for parallel processing, the seed must be compatible with parallel processing (e.g., by setting \code{kind = "L'Ecuyer-CMRG"}).
 }
 }
 \section{Outputs}{
@@ -221,7 +221,8 @@ data("lalonde")
 
 # 1:1 genetic matching with PS as a covariate
 m.out1 <- matchit(treat ~ age + educ + race + nodegree +
-                    married + re74 + re75, data = lalonde,
+                    married + re74 + re75,
+                  data = lalonde,
                   method = "genetic",
                   pop.size = 10) #use much larger pop.size
 m.out1
@@ -229,9 +230,12 @@ summary(m.out1)
 
 # 2:1 genetic matching with replacement without PS
 m.out2 <- matchit(treat ~ age + educ + race + nodegree +
-                    married + re74 + re75, data = lalonde,
-                  method = "genetic", replace = TRUE,
-                  ratio = 2, distance = "mahalanobis",
+                    married + re74 + re75,
+                  data = lalonde,
+                  method = "genetic",
+                  replace = TRUE,
+                  ratio = 2,
+                  distance = "mahalanobis",
                   pop.size = 10) #use much larger pop.size
 m.out2
 summary(m.out2, un = FALSE)
@@ -240,7 +244,8 @@ summary(m.out2, un = FALSE)
 # within calipers on PS and educ; other variables are
 # used to estimate PS
 m.out3 <- matchit(treat ~ age + educ + race + nodegree +
-                    married + re74 + re75, data = lalonde,
+                    married + re74 + re75,
+                  data = lalonde,
                   method = "genetic",
                   mahvars = ~ age + educ + re74 + re75,
                   caliper = c(.05, educ = 2),

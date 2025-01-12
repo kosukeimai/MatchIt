@@ -391,7 +391,7 @@ wm <- function(x, w = NULL, na.rm = TRUE) {
     w <- w[-nas]
   }
 
-  sum(x*w)/sum(w)
+  sum(x * w)/sum(w)
 }
 
 #Faster diff()

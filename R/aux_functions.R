@@ -24,25 +24,24 @@ subclass_scoot <- function(sub, treat, x, min.n = 1) {
 create_info <- function(method, fn1, link, discard, replace, ratio,
                         mahalanobis, transform, subclass, antiexact,
                         distance_is_matrix) {
-  info <- list(method = method,
-               distance = if (is_null(fn1)) NULL else sub("distance2", "", fn1, fixed = TRUE),
-               link = if (is_null(link)) NULL else link,
-               discard = discard,
-               replace = if (is_not_null(method) && method %in% c("nearest", "genetic")) replace else NULL,
-               ratio = if (is_not_null(method) && method %in% c("nearest", "optimal", "genetic")) ratio else NULL,
-               max.controls = if (is_not_null(method) && method %in% c("nearest", "optimal")) attr(ratio, "max.controls") else NULL,
-               mahalanobis = mahalanobis,
-               transform = transform,
-               subclass = if (is_not_null(method) && method == "subclass") length(unique(subclass[!is.na(subclass)])) else NULL,
-               antiexact = antiexact,
-               distance_is_matrix = distance_is_matrix)
-  info
+  list(method = method,
+       distance = if (is_null(fn1)) NULL else sub("distance2", "", fn1, fixed = TRUE),
+       link = if (is_null(link)) NULL else link,
+       discard = discard,
+       replace = if (is_not_null(method) && method %in% c("nearest", "genetic")) replace else NULL,
+       ratio = if (is_not_null(method) && method %in% c("nearest", "optimal", "genetic")) ratio else NULL,
+       max.controls = if (is_not_null(method) && method %in% c("nearest", "optimal")) attr(ratio, "max.controls") else NULL,
+       mahalanobis = mahalanobis,
+       transform = transform,
+       subclass = if (is_not_null(method) && method == "subclass") length(unique(subclass[!is.na(subclass)])) else NULL,
+       antiexact = antiexact,
+       distance_is_matrix = distance_is_matrix)
 }
 
 #Function to turn a method name into a phrase describing the method
 info_to_method <- function(info) {
 
-  out.list <- setNames(vector("list", 3), c("kto1", "type", "replace"))
+  out.list <- setNames(vector("list", 3L), c("kto1", "type", "replace"))
 
   out.list[["kto1"]] <- {
     if (is_not_null(info$ratio)) paste0(if (is_not_null(info$max.controls)) "variable ratio ", round(info$ratio, 2), ":1")
@@ -256,7 +255,7 @@ pooled_cov <- function(X, t, w = NULL) {
       }
     }
 
-    return(cov(X)*(n-1)/(n-length(unique_t)))
+    return(cov(X) * (n - 1) / (n - length(unique_t)))
   }
 
   for (i in unique_t) {
@@ -276,7 +275,7 @@ pooled_sd <- function(X, t, w = NULL, bin.var = NULL, contribution = "proportion
   n <- nrow(X)
 
   if (is_null(bin.var)) {
-    bin.var <- apply(X, 2, function(x) all(x == 0 | x == 1))
+    bin.var <- apply(X, 2L, function(x) all(x == 0 | x == 1))
   }
 
   if (contribution == "equal") {

@@ -241,12 +241,16 @@ data("lalonde")
 
 # Linearized probit regression PS:
 m.out1 <- matchit(treat ~ age + educ + race + married +
-                    nodegree + re74 + re75, data = lalonde,
-                  distance = "glm", link = "linear.probit")
+                    nodegree + re74 + re75,
+                  data = lalonde,
+                  distance = "glm",
+                  link = "linear.probit")
 \dontshow{if (requireNamespace("mgcv", quietly = TRUE)) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
 # GAM logistic PS with smoothing splines (s()):
-m.out2 <- matchit(treat ~ s(age) + s(educ) + race + married +
-                    nodegree + re74 + re75, data = lalonde,
+m.out2 <- matchit(treat ~ s(age) + s(educ) +
+                    race + married +
+                    nodegree + re74 + re75,
+                  data = lalonde,
                   distance = "gam")
 summary(m.out2$model)
 \dontshow{\}) # examplesIf}
@@ -254,14 +258,17 @@ summary(m.out2$model)
 # CBPS for ATC matching w/replacement, using the just-
 # identified version of CBPS (setting method = "exact"):
 m.out3 <- matchit(treat ~ age + educ + race + married +
-                    nodegree + re74 + re75, data = lalonde,
-                  distance = "cbps", estimand = "ATC",
+                    nodegree + re74 + re75,
+                  data = lalonde,
+                  distance = "cbps",
+                  estimand = "ATC",
                   distance.options = list(method = "exact"),
                   replace = TRUE)
 \dontshow{\}) # examplesIf}
 # Mahalanobis distance matching - no PS estimated
 m.out4 <- matchit(treat ~ age + educ + race + married +
-                    nodegree + re74 + re75, data = lalonde,
+                    nodegree + re74 + re75,
+                  data = lalonde,
                   distance = "mahalanobis")
 
 m.out4$distance #NULL
@@ -269,8 +276,10 @@ m.out4$distance #NULL
 # Mahalanobis distance matching with PS estimated
 # for use in a caliper; matching done on mahvars
 m.out5 <- matchit(treat ~ age + educ + race + married +
-                    nodegree + re74 + re75, data = lalonde,
-                  distance = "glm", caliper = .1,
+                    nodegree + re74 + re75,
+                  data = lalonde,
+                  distance = "glm",
+                  caliper = .1,
                   mahvars = ~ age + educ + race + married +
                                 nodegree + re74 + re75)
 
@@ -278,22 +287,23 @@ summary(m.out5)
 
 # User-supplied propensity scores
 p.score <- fitted(glm(treat ~ age + educ + race + married +
-                        nodegree + re74 + re75, data = lalonde,
+                        nodegree + re74 + re75,
+                      data = lalonde,
                       family = binomial))
 
 m.out6 <- matchit(treat ~ age + educ + race + married +
-                    nodegree + re74 + re75, data = lalonde,
+                    nodegree + re74 + re75,
+                  data = lalonde,
                   distance = p.score)
 
-# User-supplied distance matrix using optmatch::match_on()
-\dontshow{if (requireNamespace("optmatch", quietly = TRUE)) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
-dist_mat <- optmatch::match_on(
+# User-supplied distance matrix using rank_mahalanobis()
+dist_mat <- robust_mahalanobis_dist(
               treat ~ age + educ + race + nodegree +
-                married + re74 + re75, data = lalonde,
-              method = "rank_mahalanobis")
+                married + re74 + re75,
+              data = lalonde)
 
 m.out7 <- matchit(treat ~ age + educ + race + nodegree +
-                    married + re74 + re75, data = lalonde,
+                    married + re74 + re75,
+                  data = lalonde,
                   distance = dist_mat)
-\dontshow{\}) # examplesIf}
 }

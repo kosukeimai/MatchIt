@@ -188,15 +188,18 @@ data("lalonde")
 
 # Optimal full PS matching
 m.out1 <- matchit(treat ~ age + educ + race + nodegree +
-                    married + re74 + re75, data = lalonde,
+                    married + re74 + re75,
+                  data = lalonde,
                   method = "full")
 m.out1
 summary(m.out1)
 
 # Optimal full Mahalanobis distance matching within a PS caliper
 m.out2 <- matchit(treat ~ age + educ + race + nodegree +
-                    married + re74 + re75, data = lalonde,
-                  method = "full", caliper = .01,
+                    married + re74 + re75,
+                  data = lalonde,
+                  method = "full",
+                  caliper = .01,
                   mahvars = ~ age + educ + re74 + re75)
 m.out2
 summary(m.out2, un = FALSE)
@@ -204,13 +207,17 @@ summary(m.out2, un = FALSE)
 # Optimal full Mahalanobis distance matching within calipers
 # of 500 on re74 and re75
 m.out3 <- matchit(treat ~ age + educ + re74 + re75,
-                  data = lalonde, distance = "mahalanobis",
+                  data = lalonde,
+                  distance = "mahalanobis",
                   method = "full",
-                  caliper = c(re74 = 500, re75 = 500),
+                  caliper = c(re74 = 500,
+                              re75 = 500),
                   std.caliper = FALSE)
 m.out3
-summary(m.out3, addlvariables = ~race + nodegree + married,
-        data = lalonde, un = FALSE)
+summary(m.out3,
+        addlvariables = ~race + nodegree + married,
+        data = lalonde,
+        un = FALSE)
 \dontshow{\}) # examplesIf}
 }
 \references{

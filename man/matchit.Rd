@@ -370,7 +370,8 @@ data("lalonde")
 # Default: 1:1 NN PS matching w/o replacement
 
 m.out1 <- matchit(treat ~ age + educ + race + nodegree +
-                   married + re74 + re75, data = lalonde)
+                    married + re74 + re75,
+                  data = lalonde)
 m.out1
 summary(m.out1)
 
@@ -378,9 +379,11 @@ summary(m.out1)
 # exact matching on married and race
 
 m.out2 <- matchit(treat ~ age + educ + race + nodegree +
-                   married + re74 + re75, data = lalonde,
-                   distance = "mahalanobis", replace = TRUE,
-                   exact = ~ married + race)
+                    married + re74 + re75,
+                  data = lalonde,
+                  distance = "mahalanobis",
+                  replace = TRUE,
+                  exact = ~ married + race)
 m.out2
 summary(m.out2, un = TRUE)
 
@@ -388,10 +391,13 @@ summary(m.out2, un = TRUE)
 # by a probit pregression PS
 
 m.out3 <- matchit(treat ~ age + educ + race + nodegree +
-                   married + re74 + re75, data = lalonde,
-                   distance = "glm", link = "probit",
-                   mahvars = ~ age + educ + re74 + re75,
-                   caliper = .1, ratio = 2)
+                    married + re74 + re75,
+                  data = lalonde,
+                  distance = "glm",
+                  link = "probit",
+                  mahvars = ~ age + educ + re74 + re75,
+                  caliper = .1,
+                  ratio = 2)
 m.out3
 summary(m.out3, un = TRUE)
 
@@ -399,10 +405,12 @@ summary(m.out3, un = TRUE)
 # PS, age, and educ
 \dontshow{if (requireNamespace("optmatch", quietly = TRUE)) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
 m.out4 <- matchit(treat ~ age + educ + race + nodegree +
-                   married + re74 + re75, data = lalonde,
-                   method = "full", estimand = "ATE",
-                   caliper = c(.1, age = 2, educ = 1),
-                   std.caliper = c(TRUE, FALSE, FALSE))
+                    married + re74 + re75,
+                  data = lalonde,
+                  method = "full",
+                  estimand = "ATE",
+                  caliper = c(.1, age = 2, educ = 1),
+                  std.caliper = c(TRUE, FALSE, FALSE))
 m.out4
 summary(m.out4, un = TRUE)
 \dontshow{\}) # examplesIf}
@@ -410,9 +418,12 @@ summary(m.out4, un = TRUE)
 # discarding controls outside common support of PS
 
 s.out1 <- matchit(treat ~ age + educ + race + nodegree +
-                   married + re74 + re75, data = lalonde,
-                   method = "subclass", distance = "glm",
-                   discard = "control", subclass = 10)
+                    married + re74 + re75,
+                  data = lalonde,
+                  method = "subclass",
+                  distance = "glm",
+                  discard = "control",
+                  subclass = 10)
 s.out1
 summary(s.out1, un = TRUE)
 }
@@ -422,8 +433,7 @@ as Nonparametric Preprocessing for Reducing Model Dependence in Parametric
 Causal Inference. \emph{Political Analysis}, 15(3), 199–236. \doi{10.1093/pan/mpl013}
 
 Ho, D. E., Imai, K., King, G., & Stuart, E. A. (2011). MatchIt:
-Nonparametric Preprocessing for Parametric Causal Inference. \emph{Journal of
-Statistical Software}, 42(8). \doi{10.18637/jss.v042.i08}
+Nonparametric Preprocessing for Parametric Causal Inference. \emph{Journal of Statistical Software}, 42(8). \doi{10.18637/jss.v042.i08}
 }
 \seealso{
 \code{\link[=summary.matchit]{summary.matchit()}} for balance assessment after matching, \code{\link[=plot.matchit]{plot.matchit()}} for plots of covariate balance and propensity score overlap after matching.

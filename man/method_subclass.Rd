@@ -127,17 +127,22 @@ data("lalonde")
 
 # PS subclassification for the ATT with 7 subclasses
 s.out1 <- matchit(treat ~ age + educ + race + nodegree +
-                    married + re74 + re75, data = lalonde,
-                  method = "subclass", subclass = 7)
+                    married + re74 + re75,
+                  data = lalonde,
+                  method = "subclass",
+                  subclass = 7)
 s.out1
 summary(s.out1, subclass = TRUE)
 
 # PS subclassification for the ATE with 10 subclasses
 # and at least 2 units in each group per subclass
 s.out2 <- matchit(treat ~ age + educ + race + nodegree +
-                    married + re74 + re75, data = lalonde,
-                  method = "subclass", subclass = 10,
-                  estimand = "ATE", min.n = 2)
+                    married + re74 + re75,
+                  data = lalonde,
+                  method = "subclass",
+                  subclass = 10,
+                  estimand = "ATE",
+                  min.n = 2)
 s.out2
 summary(s.out2)
 

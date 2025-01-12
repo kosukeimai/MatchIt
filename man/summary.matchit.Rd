@@ -219,15 +219,21 @@ components of the output are omitted.
 
 data("lalonde")
 m.out <- matchit(treat ~ age + educ + married +
-                   race + re74, data = lalonde,
-                 method = "nearest", exact = ~ married,
+                   race + re74,
+                 data = lalonde,
+                 method = "nearest",
+                 exact = ~ married,
                  replace = TRUE)
+
 summary(m.out, interactions = TRUE)
 
 s.out <- matchit(treat ~ age + educ + married +
                    race + nodegree + re74 + re75,
-                 data = lalonde, method = "subclass")
+                 data = lalonde,
+                 method = "subclass")
+
 summary(s.out, addlvariables = ~log(age) + I(re74==0))
+
 summary(s.out, subclass = TRUE)
 
 }
