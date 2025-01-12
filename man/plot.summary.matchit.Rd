@@ -76,16 +76,19 @@ differences are taken from \code{x$sum.subclass}.
 
 data("lalonde")
 m.out <- matchit(treat ~ age + educ + married +
-                   race + re74, data = lalonde,
+                   race + re74,
+                 data = lalonde,
                  method = "nearest")
 plot(summary(m.out, interactions = TRUE),
      var.order = "unmatched")
 
 s.out <- matchit(treat ~ age + educ + married +
                    race + nodegree + re74 + re75,
-                 data = lalonde, method = "subclass")
+                 data = lalonde,
+                 method = "subclass")
 plot(summary(s.out, subclass = TRUE),
-     var.order = "unmatched", abs = FALSE)
+     var.order = "unmatched",
+     abs = FALSE)
 
 }
 \seealso{

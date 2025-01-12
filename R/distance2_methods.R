@@ -173,8 +173,7 @@
 #' estimated. The `link` and `distance.options` arguments are ignored with these
 #' methods. See the individual matching methods pages for whether these
 #' distances are allowed and how they are used. Each of these distance measures
-#' can also be calculated outside `matchit()` using its [corresponding
-#' function][euclidean_dist].
+#' can also be calculated outside `matchit()` using its [corresponding function][euclidean_dist].
 #'
 #' \describe{
 #' \item{`"euclidean"`}{ The Euclidean distance is the raw
@@ -237,26 +236,33 @@
 #'
 #' # Linearized probit regression PS:
 #' m.out1 <- matchit(treat ~ age + educ + race + married +
-#'                     nodegree + re74 + re75, data = lalonde,
-#'                   distance = "glm", link = "linear.probit")
+#'                     nodegree + re74 + re75,
+#'                   data = lalonde,
+#'                   distance = "glm",
+#'                   link = "linear.probit")
 #' @examplesIf requireNamespace("mgcv", quietly = TRUE)
 #' # GAM logistic PS with smoothing splines (s()):
-#' m.out2 <- matchit(treat ~ s(age) + s(educ) + race + married +
-#'                     nodegree + re74 + re75, data = lalonde,
+#' m.out2 <- matchit(treat ~ s(age) + s(educ) +
+#'                     race + married +
+#'                     nodegree + re74 + re75,
+#'                   data = lalonde,
 #'                   distance = "gam")
 #' summary(m.out2$model)
 #' @examplesIf requireNamespace("CBPS", quietly = TRUE)
 #' # CBPS for ATC matching w/replacement, using the just-
 #' # identified version of CBPS (setting method = "exact"):
 #' m.out3 <- matchit(treat ~ age + educ + race + married +
-#'                     nodegree + re74 + re75, data = lalonde,
-#'                   distance = "cbps", estimand = "ATC",
+#'                     nodegree + re74 + re75,
+#'                   data = lalonde,
+#'                   distance = "cbps",
+#'                   estimand = "ATC",
 #'                   distance.options = list(method = "exact"),
 #'                   replace = TRUE)
 #' @examples
 #' # Mahalanobis distance matching - no PS estimated
 #' m.out4 <- matchit(treat ~ age + educ + race + married +
-#'                     nodegree + re74 + re75, data = lalonde,
+#'                     nodegree + re74 + re75,
+#'                   data = lalonde,
 #'                   distance = "mahalanobis")
 #'
 #' m.out4$distance #NULL
@@ -264,8 +270,10 @@
 #' # Mahalanobis distance matching with PS estimated
 #' # for use in a caliper; matching done on mahvars
 #' m.out5 <- matchit(treat ~ age + educ + race + married +
-#'                     nodegree + re74 + re75, data = lalonde,
-#'                   distance = "glm", caliper = .1,
+#'                     nodegree + re74 + re75,
+#'                   data = lalonde,
+#'                   distance = "glm",
+#'                   caliper = .1,
 #'                   mahvars = ~ age + educ + race + married +
 #'                                 nodegree + re74 + re75)
 #'
@@ -273,24 +281,25 @@
 #'
 #' # User-supplied propensity scores
 #' p.score <- fitted(glm(treat ~ age + educ + race + married +
-#'                         nodegree + re74 + re75, data = lalonde,
+#'                         nodegree + re74 + re75,
+#'                       data = lalonde,
 #'                       family = binomial))
 #'
 #' m.out6 <- matchit(treat ~ age + educ + race + married +
-#'                     nodegree + re74 + re75, data = lalonde,
+#'                     nodegree + re74 + re75,
+#'                   data = lalonde,
 #'                   distance = p.score)
 #'
-#' # User-supplied distance matrix using optmatch::match_on()
-#' @examplesIf requireNamespace("optmatch", quietly = TRUE)
-#' dist_mat <- optmatch::match_on(
+#' # User-supplied distance matrix using rank_mahalanobis()
+#' dist_mat <- robust_mahalanobis_dist(
 #'               treat ~ age + educ + race + nodegree +
-#'                 married + re74 + re75, data = lalonde,
-#'               method = "rank_mahalanobis")
+#'                 married + re74 + re75,
+#'               data = lalonde)
 #'
 #' m.out7 <- matchit(treat ~ age + educ + race + nodegree +
-#'                     married + re74 + re75, data = lalonde,
+#'                     married + re74 + re75,
+#'                   data = lalonde,
 #'                   distance = dist_mat)
-
 NULL
 
 #distance2glm-----------------

@@ -214,8 +214,8 @@ check_treat <- function(treat = NULL, X = NULL) {
 process.distance <- function(distance, method = NULL, treat) {
   if (is_null(distance)) {
     if (is_not_null(method) && !method %in% c("cem", "exact", "cardinality")) {
-      .err(sprintf("`distance` cannot be `NULL` with `method = \"%s\"`",
-                   method))
+      .err(sprintf("`distance` cannot be `NULL` with `method = %s`",
+                   add_quotes(method)))
     }
 
     return(distance)
@@ -234,7 +234,7 @@ process.distance <- function(distance, method = NULL, treat) {
                                  "linear.cauchit", "log", "probit")) {
       link <- tolower(distance)
 
-      .wrn(sprintf("`distance = \"%s\"` will be deprecated; please use `distance = \"glm\", link = \"%s\"` in the future",
+      .wrn(sprintf('`distance = "%s"` will be deprecated; please use `distance = "glm", link = "%s"` in the future',
                    distance, link))
 
       distance <- "glm"
@@ -243,7 +243,7 @@ process.distance <- function(distance, method = NULL, treat) {
     else if (tolower(distance) %in% tolower(c("GAMcloglog", "GAMlog", "GAMlogit", "GAMprobit"))) {
       link <- tolower(substr(distance, 4, nchar(distance)))
 
-      .wrn(sprintf("`distance = \"%s\"` will be deprecated; please use `distance = \"gam\", link = \"%s\"` in the future",
+      .wrn(sprintf('`distance = "%s"` will be deprecated; please use `distance = "gam", link = "%s"` in the future',
                    distance, link))
 
       distance <- "gam"
@@ -257,10 +257,10 @@ process.distance <- function(distance, method = NULL, treat) {
       distance <- "elasticnet"
     }
     else if (!tolower(distance) %in% allowable.distances) {
-      .err("the argument supplied to `distance` is not an allowable value. See `help(\"distance\")` for allowable options")
+      .err('the argument supplied to `distance` is not an allowable value. See `help("distance", package = "MatchIt")` for allowable options')
     }
     else if (is_not_null(method) && method == "subclass" && tolower(distance) %in% matchit_distances()) {
-      .err(sprintf("`distance` cannot be %s with `method = \"subclass\"`",
+      .err(sprintf('`distance` cannot be %s with `method = "subclass"`',
                    add_quotes(distance)))
     }
     else {
@@ -278,7 +278,6 @@ process.distance <- function(distance, method = NULL, treat) {
     .err(sprintf("`distance` cannot be supplied as a matrix with `method = %s`",
                  add_quotes(method, quotes = is_not_null(method))))
   }
-
 
   if (is.matrix(distance)) {
     dim.distance <- dim(distance)
@@ -524,7 +523,8 @@ process.caliper <- function(caliper = NULL, method = NULL, data = NULL, covs = N
   }
 
   if (any(caliper < 0) && !method %in% c("nearest", "genetic", "full")) {
-    .err(sprintf("calipers cannot be negative with `method = %s`", add_quotes(method)))
+    .err(sprintf("calipers cannot be negative with `method = %s`",
+                 add_quotes(method)))
   }
 
   #Add cal.formula

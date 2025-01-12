@@ -124,7 +124,8 @@ data("lalonde")
 
 # Generalize full PS matching
 m.out1 <- matchit(treat ~ age + educ + race + nodegree +
-                    married + re74 + re75, data = lalonde,
+                    married + re74 + re75,
+                  data = lalonde,
                   method = "quick")
 m.out1
 summary(m.out1)
@@ -132,15 +133,13 @@ summary(m.out1)
 }
 \references{
 In a manuscript, be sure to cite the \emph{quickmatch} package if using
-\code{matchit()} with \code{method = "quick"}:
-
-Sävje, F., Sekhon, J., & Higgins, M. (2018). quickmatch: Quick generalized full matching. \url{https://CRAN.R-project.org/package=quickmatch}
+\code{matchit()} with \code{method = "quick"}. A citation can be generated using \code{citation("quickmatch")}.
 
 For example, a sentence might read:
 
 \emph{Generalized full matching was performed using the MatchIt package (Ho,
 Imai, King, & Stuart, 2011) in R, which calls functions from the quickmatch
-package (Sävje, Sekhon, & Higgins, 2018).}
+package (Sävje, Sekhon, & Higgins, 2024).}
 
 You should also cite the following paper, which develops and describes the method:
 

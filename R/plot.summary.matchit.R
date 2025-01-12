@@ -62,16 +62,19 @@
 #'
 #' data("lalonde")
 #' m.out <- matchit(treat ~ age + educ + married +
-#'                    race + re74, data = lalonde,
+#'                    race + re74,
+#'                  data = lalonde,
 #'                  method = "nearest")
 #' plot(summary(m.out, interactions = TRUE),
 #'      var.order = "unmatched")
 #'
 #' s.out <- matchit(treat ~ age + educ + married +
 #'                    race + nodegree + re74 + re75,
-#'                  data = lalonde, method = "subclass")
+#'                  data = lalonde,
+#'                  method = "subclass")
 #' plot(summary(s.out, subclass = TRUE),
-#'      var.order = "unmatched", abs = FALSE)
+#'      var.order = "unmatched",
+#'      abs = FALSE)
 #'
 #' @exportS3Method plot summary.matchit
 plot.summary.matchit <- function(x,
@@ -88,7 +91,11 @@ plot.summary.matchit <- function(x,
   matched <- sub || is_not_null(x[["sum.matched"]])
   un <- is_not_null(x[["sum.all"]])
 
-  standard.sum <- if (un) x[["sum.all"]] else x[[if (sub) "sum.across" else "sum.matched"]]
+  standard.sum <- {
+    if (un) x[["sum.all"]]
+    else if (sub) x[["sum.across"]]
+    else x[["sum.matched"]]
+  }
 
   if (!"Std. Mean Diff." %in% colnames(standard.sum)) {
     .err("not appropriate for unstandardized summary. Run `summary()` with the `standardize = TRUE` option, and then plot")
@@ -97,6 +104,7 @@ plot.summary.matchit <- function(x,
   if (un) {
     sd.all <- x[["sum.all"]][,"Std. Mean Diff."]
   }
+
   if (matched) {
     sd.matched <- x[[if (sub) "sum.across" else "sum.matched"]][,"Std. Mean Diff."]
   }
@@ -108,8 +116,13 @@ plot.summary.matchit <- function(x,
   chk::chk_string(var.order)
   var.order <- match_arg(var.order, c("data", "matched", "unmatched", "alphabetical"))
 
-  if (!un && var.order == "unmatched") .err("`var.order` cannot be \"unmatched\" if `un = TRUE` in the call to `summary()`")
-  if (!matched && var.order == "matched") .err("`var.order` cannot be \"matched\" if `method = NULL` in the original call to `matchit()`")
+  if (!un && var.order == "unmatched") {
+    .err('`var.order` cannot be "unmatched" if `un = TRUE` in the call to `summary()`')
+  }
+
+  if (!matched && var.order == "matched") {
+    .err('`var.order` cannot be "matched" if `method = NULL` in the original call to `matchit()`')
+  }
 
   if (abs) {
     if (un) sd.all <- abs(sd.all)
@@ -144,6 +157,7 @@ plot.summary.matchit <- function(x,
     points(x = sd.all[ord], y = seq_along(sd.all),
            pch = 21, bg = "white", col = "black")
   }
+
   if (matched) {
     points(x = sd.matched[ord], y = seq_along(sd.matched),
            pch = 21, bg = "black", col = "black")
@@ -166,5 +180,6 @@ plot.summary.matchit <- function(x,
            pt.bg = c("white", "black"), pch = 21,
            inset = .015, xpd = TRUE)
   }
+
   invisible(x)
 }

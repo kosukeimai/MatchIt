@@ -11,33 +11,33 @@ double pairdistsubC(const NumericVector& x,
   double dist = 0;
 
   R_xlen_t i, j;
-  int s_i, ord_i, ord_j;
+  int s_i, o_i, o_j;
   int k = 0;
 
-  Function o("order");
-  IntegerVector ord = o(s);
-  ord = ord - 1;
+  Function ord("order");
+  IntegerVector o = ord(s);
+  o = o - 1;
 
   R_xlen_t n = sum(!is_na(s));
 
   for (i = 0; i < n; i++) {
-    ord_i = ord[i];
-    s_i = s[ord_i];
+    o_i = o[i];
+    s_i = s[o_i];
 
     for (j = i + 1; j < n; j++) {
-      ord_j = ord[j];
+      o_j = o[j];
 
-      if (s[ord_j] != s_i) {
+      if (s[o_j] != s_i) {
         break;
       }
 
-      if (t[ord_j] == t[ord_i]) {
+      if (t[o_j] == t[o_i]) {
         continue;
       }
 
       //Numerically stable formula for adding new observation to a mean
       k++;
-      dist += (std::abs(x[ord_j] - x[ord_i]) - dist) / k;
+      dist += (std::abs(x[o_j] - x[o_i]) - dist) / k;
     }
   }
 

@@ -197,7 +197,7 @@ switch to trigger which treatment group is considered "focal".
 
 \subsection{Variable Ratio Matching}{
 
-\code{matchit()} can perform variable ratio "extremal" matching as described by Ming and Rosenbaum (2000). This
+\code{matchit()} can perform variable ratio "extremal" matching as described by Ming and Rosenbaum (2000; \doi{10.1111/j.0006-341X.2000.00118.x}). This
 method tends to result in better balance than fixed ratio matching at the
 expense of some precision. When \code{ratio > 1}, rather than requiring all
 treated units to receive \code{ratio} matches, each treated unit is assigned
@@ -239,16 +239,6 @@ Using \code{m.order = "closest"} ensures that the best possible matches are give
 Nearest neighbor matching involves a random component only when \code{m.order = "random"} (or when the propensity is estimated using a method with randomness; see \code{\link{distance}} for details), so a seed must be set in that case using \code{\link[=set.seed]{set.seed()}} to ensure reproducibility. Otherwise, it is purely deterministic, and any ties are broken based on the order in which the data appear.
 }
 }
-\note{
-Sometimes an error will be produced by \emph{Rcpp} along the lines of
-\code{"function 'Rcpp_precious_remove' not provided by package 'Rcpp'"}. It
-is not immediately clear why this happens, though
-\href{https://lists.r-forge.r-project.org/pipermail/rcpp-devel/2021-July/010648.html}{this}
-thread appears to provide some insight. In a fresh session, run
-\verb{remove.packages(c("MatchIt", "Rcpp")); install.packages("MatchIt")}.
-This should sync \emph{MatchIt} and \emph{Rcpp} and ensure they work
-correctly.
-}
 \section{Outputs}{
 
 All outputs described in \code{\link[=matchit]{matchit()}} are returned with
@@ -261,7 +251,8 @@ data("lalonde")
 
 # 1:1 greedy NN matching on the PS
 m.out1 <- matchit(treat ~ age + educ + race + nodegree +
-                    married + re74 + re75, data = lalonde,
+                    married + re74 + re75,
+                  data = lalonde,
                   method = "nearest")
 m.out1
 summary(m.out1)
@@ -269,17 +260,22 @@ summary(m.out1)
 # 3:1 NN Mahalanobis distance matching with
 # replacement within a PS caliper
 m.out2 <- matchit(treat ~ age + educ + race + nodegree +
-                    married + re74 + re75, data = lalonde,
-                  method = "nearest", replace = TRUE,
+                    married + re74 + re75,
+                  data = lalonde,
+                  method = "nearest",
+                  replace = TRUE,
                   mahvars = ~ age + educ + re74 + re75,
-                  ratio = 3, caliper = .02)
+                  ratio = 3,
+                  caliper = .02)
 m.out2
 summary(m.out2, un = FALSE)
 
 # 1:1 NN Mahalanobis distance matching within calipers
 # on re74 and re75 and exact matching on married and race
-m.out3 <- matchit(treat ~ age + educ + re74 + re75, data = lalonde,
-                  method = "nearest", distance = "mahalanobis",
+m.out3 <- matchit(treat ~ age + educ + re74 + re75,
+                  data = lalonde,
+                  method = "nearest",
+                  distance = "mahalanobis",
                   exact = ~ married + race,
                   caliper = c(re74 = .2, re75 = .15))
 m.out3
@@ -287,9 +283,12 @@ summary(m.out3, un = FALSE)
 
 # 2:1 variable ratio NN matching on the PS
 m.out4 <- matchit(treat ~ age + educ + race + nodegree +
-                    married + re74 + re75, data = lalonde,
-                  method = "nearest", ratio = 2,
-                  min.controls = 1, max.controls = 12)
+                    married + re74 + re75,
+                  data = lalonde,
+                  method = "nearest",
+                  ratio = 2,
+                  min.controls = 1,
+                  max.controls = 12)
 m.out4
 summary(m.out4, un = FALSE)
 

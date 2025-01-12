@@ -159,23 +159,33 @@
 #' # 4:1 matching w/replacement
 #' m.out1 <- matchit(treat ~ age + educ + married +
 #'                     race + nodegree + re74 + re75,
-#'                   data = lalonde, replace = TRUE,
-#'                   caliper = .05, ratio = 4)
+#'                   data = lalonde,
+#'                   replace = TRUE,
+#'                   caliper = .05,
+#'                   ratio = 4)
 #'
-#' m.data1 <- match_data(m.out1, data = lalonde,
+#' m.data1 <- match_data(m.out1,
+#'                       data = lalonde,
 #'                       distance = "prop.score")
 #' dim(m.data1) #one row per matched unit
 #' head(m.data1, 10)
 #'
-#' g.matches1 <- get_matches(m.out1, data = lalonde,
+#' g.matches1 <- get_matches(m.out1,
+#'                           data = lalonde,
 #'                           distance = "prop.score")
 #' dim(g.matches1) #multiple rows per matched unit
 #' head(g.matches1, 10)
 #'
 
 #' @export
-match_data <- function(object, group = "all", distance = "distance", weights = "weights", subclass = "subclass",
-                       data = NULL, include.s.weights = TRUE, drop.unmatched = TRUE) {
+match_data <- function(object,
+                       group = "all",
+                       distance = "distance",
+                       weights = "weights",
+                       subclass = "subclass",
+                       data = NULL,
+                       include.s.weights = TRUE,
+                       drop.unmatched = TRUE) {
 
   chk::chk_is(object, "matchit")
 
@@ -249,7 +259,7 @@ match_data <- function(object, group = "all", distance = "distance", weights = "
   treat <- object$treat
 
   if (drop.unmatched && is_not_null(object$weights)) {
-    data <- data[object$weights > 0,,drop = FALSE]
+    data <- data[object$weights > 0,, drop = FALSE]
     treat <- treat[object$weights > 0]
   }
 
@@ -274,8 +284,13 @@ match.data <- function(...) {
 
 #' @export
 #' @rdname match_data
-get_matches <- function(object, distance = "distance", weights = "weights", subclass = "subclass",
-                        id = "id", data = NULL, include.s.weights = TRUE) {
+get_matches <- function(object,
+                        distance = "distance",
+                        weights = "weights",
+                        subclass = "subclass",
+                        id = "id",
+                        data = NULL,
+                        include.s.weights = TRUE) {
 
   chk::chk_is(object, "matchit")
 

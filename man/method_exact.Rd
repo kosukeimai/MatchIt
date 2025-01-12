@@ -73,7 +73,9 @@ forms of matching. \code{include.obj} is ignored.
 data("lalonde")
 
 # Exact matching on age, race, married, and educ
-m.out1 <- matchit(treat ~ age + race + married + educ, data = lalonde,
+m.out1 <- matchit(treat ~ age + race +
+                    married + educ,
+                  data = lalonde,
                   method = "exact")
 m.out1
 summary(m.out1)

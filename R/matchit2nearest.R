@@ -112,15 +112,6 @@
 #' Omitting this argument is the same as giving each observation a unique ID.}
 #' }
 #'
-#' @note Sometimes an error will be produced by *Rcpp* along the lines of
-#' `"function 'Rcpp_precious_remove' not provided by package 'Rcpp'"`. It
-#' is not immediately clear why this happens, though
-#' [this](https://lists.r-forge.r-project.org/pipermail/rcpp-devel/2021-July/010648.html)
-#' thread appears to provide some insight. In a fresh session, run
-#' `remove.packages(c("MatchIt", "Rcpp")); install.packages("MatchIt")`.
-#' This should sync *MatchIt* and *Rcpp* and ensure they work
-#' correctly.
-#'
 #' @section Outputs:
 #' All outputs described in [matchit()] are returned with
 #' `method = "nearest"`. When `replace = TRUE`, the `subclass`
@@ -181,14 +172,13 @@
 #' variable. When `estimand = "ATC"`, the default `m.order` is
 #' `"smallest"`, and the `match.matrix` component of the output will
 #' have the names of the control units as the rownames and be filled with the
-#' names of the matched treated units (opposite to when `estimand =
-#' "ATT"`). Note that the argument supplied to `estimand` doesn't
+#' names of the matched treated units (opposite to when `estimand = "ATT"`). Note that the argument supplied to `estimand` doesn't
 #' necessarily correspond to the estimand actually targeted; it is merely a
 #' switch to trigger which treatment group is considered "focal".
 #'
 #' ## Variable Ratio Matching
 #'
-#' `matchit()` can perform variable ratio "extremal" matching as described by Ming and Rosenbaum (2000). This
+#' `matchit()` can perform variable ratio "extremal" matching as described by Ming and Rosenbaum (2000; \doi{10.1111/j.0006-341X.2000.00118.x}). This
 #' method tends to result in better balance than fixed ratio matching at the
 #' expense of some precision. When `ratio > 1`, rather than requiring all
 #' treated units to receive `ratio` matches, each treated unit is assigned
@@ -245,7 +235,8 @@
 #'
 #' # 1:1 greedy NN matching on the PS
 #' m.out1 <- matchit(treat ~ age + educ + race + nodegree +
-#'                     married + re74 + re75, data = lalonde,
+#'                     married + re74 + re75,
+#'                   data = lalonde,
 #'                   method = "nearest")
 #' m.out1
 #' summary(m.out1)
@@ -253,17 +244,22 @@
 #' # 3:1 NN Mahalanobis distance matching with
 #' # replacement within a PS caliper
 #' m.out2 <- matchit(treat ~ age + educ + race + nodegree +
-#'                     married + re74 + re75, data = lalonde,
-#'                   method = "nearest", replace = TRUE,
+#'                     married + re74 + re75,
+#'                   data = lalonde,
+#'                   method = "nearest",
+#'                   replace = TRUE,
 #'                   mahvars = ~ age + educ + re74 + re75,
-#'                   ratio = 3, caliper = .02)
+#'                   ratio = 3,
+#'                   caliper = .02)
 #' m.out2
 #' summary(m.out2, un = FALSE)
 #'
 #' # 1:1 NN Mahalanobis distance matching within calipers
 #' # on re74 and re75 and exact matching on married and race
-#' m.out3 <- matchit(treat ~ age + educ + re74 + re75, data = lalonde,
-#'                   method = "nearest", distance = "mahalanobis",
+#' m.out3 <- matchit(treat ~ age + educ + re74 + re75,
+#'                   data = lalonde,
+#'                   method = "nearest",
+#'                   distance = "mahalanobis",
 #'                   exact = ~ married + race,
 #'                   caliper = c(re74 = .2, re75 = .15))
 #' m.out3
@@ -271,9 +267,12 @@
 #'
 #' # 2:1 variable ratio NN matching on the PS
 #' m.out4 <- matchit(treat ~ age + educ + race + nodegree +
-#'                     married + re74 + re75, data = lalonde,
-#'                   method = "nearest", ratio = 2,
-#'                   min.controls = 1, max.controls = 12)
+#'                     married + re74 + re75,
+#'                   data = lalonde,
+#'                   method = "nearest",
+#'                   ratio = 2,
+#'                   min.controls = 1,
+#'                   max.controls = 12)
 #' m.out4
 #' summary(m.out4, un = FALSE)
 #'
@@ -348,7 +347,8 @@ matchit2nearest <- function(treat, data, distance, discarded,
   if (is_not_null(caliper)) {
     if (any(names(caliper) != "")) {
       caliper.covs <- caliper[names(caliper) != ""]
-      caliper.covs.mat <- get_covs_matrix(reformulate(names(caliper.covs)), data = data)
+      caliper.covs.mat <- get_covs_matrix(reformulate(names(caliper.covs)),
+                                          data = data)
 
       ex.caliper.list <- setNames(lapply(names(caliper.covs), function(i) {
         if (caliper.covs[i] < 0) {
@@ -373,10 +373,14 @@ matchit2nearest <- function(treat, data, distance, discarded,
 
       if (is_not_null(ex.caliper.list)) {
         for (i in seq_along(ex.caliper.list)) {
-          levels(ex.caliper.list[[i]]) <- paste(names(ex.caliper.list)[i], "\u2208", levels(ex.caliper.list[[i]]))
+          levels(ex.caliper.list[[i]]) <- paste(names(ex.caliper.list)[i],
+                                                "\u2208",
+                                                levels(ex.caliper.list[[i]]))
         }
 
-        ex.caliper <- exactify(ex.caliper.list, nam = names(treat), sep = ", ",
+        ex.caliper <- exactify(ex.caliper.list,
+                               nam = names(treat),
+                               sep = ", ",
                                justify = NULL)
       }
     }
@@ -404,7 +408,9 @@ matchit2nearest <- function(treat, data, distance, discarded,
   if (is_not_null(unit.id) && reuse.max < n1) {
     unit.id <- process.variable.input(unit.id, data)
     unit.id <- exactify(model.frame(unit.id, data = data),
-                        nam = names(treat), sep = ", ", include_vars = TRUE)
+                        nam = names(treat),
+                        sep = ", ",
+                        include_vars = TRUE)
 
     num_ctrl_unit.ids <- length(unique(unit.id[treat == 0]))
     num_trt_unit.ids <- length(unique(unit.id[treat == 1]))
@@ -422,7 +428,9 @@ matchit2nearest <- function(treat, data, distance, discarded,
   ex <- NULL
   if (is_not_null(exact)) {
     ex <- exactify(model.frame(exact, data = data),
-                   nam = names(treat), sep = ", ", include_vars = TRUE)
+                   nam = names(treat),
+                   sep = ", ",
+                   include_vars = TRUE)
 
     cc <- Reduce("intersect", lapply(unique(treat), function(t) unclass(ex)[treat==t]))
 
@@ -542,7 +550,9 @@ matchit2nearest <- function(treat, data, distance, discarded,
                                               !(m.order %in% c("closest", "farthest")))) {
     if (is_not_null(ex.caliper)) {
       ex <- exactify(list(ex, ex.caliper),
-                     nam = names(treat), sep = ", ", include_vars = FALSE)
+                     nam = names(treat),
+                     sep = ", ",
+                     include_vars = FALSE)
     }
 
     mm <- nn_matchC_dispatch(treat, 1L, ratio, discarded, reuse.max, distance, distance_mat,

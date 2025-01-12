@@ -221,35 +221,47 @@
 #' #easy to install
 #' \donttest{solver <- "highs"
 #'
-#' # 1:1 cardinality matching
+# 1:1 cardinality matching
 #' m.out1 <- matchit(treat ~ age + educ + re74,
-#'                   data = lalonde, method = "cardinality",
-#'                   estimand = "ATT", ratio = 1,
-#'                   tols = .2, solver = solver)
+#'                   data = lalonde,
+#'                   method = "cardinality",
+#'                   estimand = "ATT",
+#'                   ratio = 1,
+#'                   tols = .2,
+#'                   solver = solver)
 #' m.out1
 #' summary(m.out1)
 #'
 #' # Profile matching for the ATT
 #' m.out2 <- matchit(treat ~ age + educ + re74,
-#'                   data = lalonde, method = "cardinality",
-#'                   estimand = "ATT", ratio = NA,
-#'                   tols = .2, solver = solver)
+#'                   data = lalonde,
+#'                   method = "cardinality",
+#'                   estimand = "ATT",
+#'                   ratio = NA,
+#'                   tols = .2,
+#'                   solver = solver)
 #' m.out2
 #' summary(m.out2, un = FALSE)
 #'
 #' # Profile matching for the ATE
 #' m.out3 <- matchit(treat ~ age + educ + re74,
-#'                   data = lalonde, method = "cardinality",
-#'                   estimand = "ATE", ratio = NA,
-#'                   tols = .2, solver = solver)
+#'                   data = lalonde,
+#'                   method = "cardinality",
+#'                   estimand = "ATE",
+#'                   ratio = NA,
+#'                   tols = .2,
+#'                   solver = solver)
 #' m.out3
 #' summary(m.out3, un = FALSE)}
 #' @examplesIf (requireNamespace("highs", quietly = TRUE) && requireNamespace("optmatch", quietly = TRUE))
 #' \donttest{# Pairing after 1:1 cardinality matching:
 #' m.out1b <- matchit(treat ~ age + educ + re74,
-#'                    data = lalonde, method = "cardinality",
-#'                    estimand = "ATT", ratio = 1,
-#'                    tols = .15, solver = solver,
+#'                    data = lalonde,
+#'                    method = "cardinality",
+#'                    estimand = "ATT",
+#'                    ratio = 1,
+#'                    tols = .15,
+#'                    solver = solver,
 #'                    mahvars = ~ age + educ + re74)
 #'
 #' # Note that balance doesn't change but pair distances

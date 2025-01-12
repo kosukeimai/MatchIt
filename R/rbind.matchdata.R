@@ -81,16 +81,17 @@ rbind.matchdata <- function(..., deparse.level = 1) {
     md_list <- allargs[names(allargs) == ""]
     allargs[names(allargs) == ""] <- NULL
   }
+
   allargs$deparse.level <- deparse.level
 
   type <- intersect(c("matchdata", "getmatches"), unlist(lapply(md_list, class)))
 
   if (is_null(type)) {
-    .err("A `matchdata` or `getmatches` object must be supplied")
+    .err("a `matchdata` or `getmatches` object must be supplied")
   }
 
   if (length(type) == 2L) {
-    .err("Supplied objects must be all `matchdata` objects or all `getmatches` objects")
+    .err("supplied objects must be all `matchdata` objects or all `getmatches` objects")
   }
 
   attrs <- c("distance", "weights", "subclass", "id")

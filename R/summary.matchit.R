@@ -180,15 +180,21 @@
 #'
 #' data("lalonde")
 #' m.out <- matchit(treat ~ age + educ + married +
-#'                    race + re74, data = lalonde,
-#'                  method = "nearest", exact = ~ married,
+#'                    race + re74,
+#'                  data = lalonde,
+#'                  method = "nearest",
+#'                  exact = ~ married,
 #'                  replace = TRUE)
+#'
 #' summary(m.out, interactions = TRUE)
 #'
 #' s.out <- matchit(treat ~ age + educ + married +
 #'                    race + nodegree + re74 + re75,
-#'                  data = lalonde, method = "subclass")
+#'                  data = lalonde,
+#'                  method = "subclass")
+#'
 #' summary(s.out, addlvariables = ~log(age) + I(re74==0))
+#'
 #' summary(s.out, subclass = TRUE)
 #'
 
@@ -216,7 +222,7 @@ summary.matchit <- function(object,
   no_x <- is_null(X)
 
   if (no_x) {
-    X <- matrix(1, nrow = length(treat), ncol = 1,
+    X <- matrix(1, nrow = length(treat), ncol = 1L,
                 dimnames = list(names(treat), ".1"))
     nam <- colnames(X)
   }
@@ -239,20 +245,20 @@ summary.matchit <- function(object,
   chk::chk_flag(un)
   chk::chk_flag(improvement)
 
-  if (standardize) {
-    s.d.denom <- switch(object$estimand,
-                        "ATT" = "treated",
-                        "ATC" = "control",
-                        "ATE" = "pooled")
+  s.d.denom <- {
+    if (standardize) switch(object$estimand,
+                            "ATT" = "treated",
+                            "ATC" = "control",
+                            "ATE" = "pooled")
+    else NULL
   }
-  else s.d.denom <- NULL
 
   ## Summary Stats
   if (un) {
     aa.all <- lapply(seq_len(kk), function(i) bal1var(X[,i], tt = treat, ww = NULL, s.weights = s.weights,
                                                       standardize = standardize, s.d.denom = s.d.denom))
     sum.all <- do.call("rbind", aa.all)
-    dimnames(sum.all) <- list(nam, names(aa.all[[1]]))
+    dimnames(sum.all) <- list(nam, names(aa.all[[1L]]))
 
     if (no_x) sum.all <- sum.all[-1, , drop = FALSE]
     sum.all.int <- NULL
@@ -267,23 +273,24 @@ summary.matchit <- function(object,
                                                           s.d.denom = s.d.denom,
                                                           compute.pair.dist = pair.dist))
     sum.matched <- do.call("rbind", aa.matched)
-    dimnames(sum.matched) <- list(nam, names(aa.matched[[1]]))
+    dimnames(sum.matched) <- list(nam, names(aa.matched[[1L]]))
 
     if (no_x) sum.matched <- sum.matched[-1, , drop = FALSE]
     sum.matched.int <- NULL
   }
 
   if (!no_x && interactions) {
-    n.int <- kk*(kk+1)/2
-    if (un) sum.all.int <- matrix(NA_real_, nrow = n.int, ncol = length(aa.all[[1]]),
+    n.int <- kk * (kk + 1) / 2
+    if (un) sum.all.int <- matrix(NA_real_, nrow = n.int, ncol = length(aa.all[[1L]]),
                                   dimnames = list(NULL, names(aa.all[[1]])))
-    if (matched) sum.matched.int <- matrix(NA_real_, nrow = n.int, ncol = length(aa.matched[[1]]),
-                                           dimnames = list(NULL, names(aa.matched[[1]])))
+
+    if (matched) sum.matched.int <- matrix(NA_real_, nrow = n.int, ncol = length(aa.matched[[1L]]),
+                                           dimnames = list(NULL, names(aa.matched[[1L]])))
 
     to.remove <- rep.int(FALSE, n.int)
     int.names <- character(n.int)
     k <- 1
-    for (i in 1:kk) {
+    for (i in seq_len(kk)) {
       for (j in i:kk) {
         x2 <- X[,i] * X[,j]
         if (all(abs(x2) < sqrt(.Machine$double.eps)) ||
@@ -329,11 +336,11 @@ summary.matchit <- function(object,
       ad.all <- bal1var(object$distance, tt = treat, ww = NULL, s.weights = s.weights,
                         standardize = standardize, s.d.denom = s.d.denom)
       if (!exists("sum.all", inherits = FALSE)) {
-        sum.all <- matrix(ad.all, nrow = 1, dimnames = list("distance", names(ad.all)))
+        sum.all <- matrix(ad.all, nrow = 1L, dimnames = list("distance", names(ad.all)))
       }
       else {
         sum.all <- rbind(ad.all, sum.all)
-        rownames(sum.all)[1] <- "distance"
+        rownames(sum.all)[1L] <- "distance"
       }
     }
     if (matched) {
@@ -341,11 +348,12 @@ summary.matchit <- function(object,
                             subclass = object$subclass, mm = object$match.matrix, standardize = standardize,
                             s.d.denom = s.d.denom, compute.pair.dist = pair.dist)
       if (!exists("sum.matched", inherits = FALSE)) {
-        sum.matched <- matrix(ad.matched, nrow = 1, dimnames = list("distance", names(ad.matched)))
+        sum.matched <- matrix(ad.matched, nrow = 1L,
+                              dimnames = list("distance", names(ad.matched)))
       }
       else {
         sum.matched <- rbind(ad.matched, sum.matched)
-        rownames(sum.matched)[1] <- "distance"
+        rownames(sum.matched)[1L] <- "distance"
       }
     }
   }
@@ -376,8 +384,11 @@ summary.matchit <- function(object,
   nn <- nn(treat, weights, object$discarded, s.weights)
 
   ## output
-  res <- list(call = object$call, nn = nn, sum.all = if (un) sum.all,
-              sum.matched = if (matched) sum.matched, reduction = reduction)
+  res <- list(call = object$call,
+              nn = nn,
+              sum.all = if (un) sum.all,
+              sum.matched = if (matched) sum.matched,
+              reduction = reduction)
 
   class(res) <- "summary.matchit"
 
@@ -428,12 +439,18 @@ summary.matchit.subclass <- function(object,
     else NULL
   }
 
-  if (isTRUE(which.subclass)) which.subclass <- subclasses
-  else if (isFALSE(which.subclass)) which.subclass <- NULL
-  else if (!is.atomic(which.subclass) || !all(which.subclass %in% seq_along(subclasses))) {
+  if (isTRUE(which.subclass)) {
+    which.subclass <- subclasses
+  }
+  else if (isFALSE(which.subclass)) {
+    which.subclass <- NULL
+  }
+  else if (is.atomic(which.subclass) && all(which.subclass %in% seq_along(subclasses))) {
+    which.subclass <- subclasses[which.subclass]
+  }
+  else {
     .err("`subclass` should be `TRUE`, `FALSE`, or a vector of subclass indices for which subclass balance is to be displayed")
   }
-  else which.subclass <- subclasses[which.subclass]
 
   matched <- TRUE #always compute aggregate balance so plot.summary can use it
   subs <- is_not_null(which.subclass)
@@ -449,7 +466,7 @@ summary.matchit.subclass <- function(object,
                                                                standardize = standardize, s.d.denom = s.d.denom)),
                        colnames(X))
     sum.all <- do.call("rbind", aa.all)
-    dimnames(sum.all) <- list(nam, names(aa.all[[1]]))
+    dimnames(sum.all) <- list(nam, names(aa.all[[1L]]))
 
     sum.all.int <- NULL
   }
@@ -460,21 +477,21 @@ summary.matchit.subclass <- function(object,
                                                                    s.d.denom = s.d.denom, compute.pair.dist = pair.dist)),
                            colnames(X))
     sum.matched <- do.call("rbind", aa.matched)
-    dimnames(sum.matched) <- list(nam, names(aa.matched[[1]]))
+    dimnames(sum.matched) <- list(nam, names(aa.matched[[1L]]))
 
     sum.matched.int <- NULL
   }
 
   if (interactions) {
-    n.int <- kk*(kk+1)/2
-    if (un) sum.all.int <- matrix(NA_real_, nrow = n.int, ncol = length(aa.all[[1]]),
-                                  dimnames = list(NULL, names(aa.all[[1]])))
-    if (matched) sum.matched.int <- matrix(NA_real_, nrow = n.int, ncol = length(aa.matched[[1]]),
-                                           dimnames = list(NULL, names(aa.matched[[1]])))
+    n.int <- kk * (kk + 1) / 2
+    if (un) sum.all.int <- matrix(NA_real_, nrow = n.int, ncol = length(aa.all[[1L]]),
+                                  dimnames = list(NULL, names(aa.all[[1L]])))
+    if (matched) sum.matched.int <- matrix(NA_real_, nrow = n.int, ncol = length(aa.matched[[1L]]),
+                                           dimnames = list(NULL, names(aa.matched[[1L]])))
 
     to.remove <- rep.int(FALSE, n.int)
     int.names <- character(n.int)
-    k <- 1
+    k <- 1L
     for (i in seq_len(kk)) {
       for (j in i:kk) {
         x2 <- X[,i] * X[,j]
@@ -496,10 +513,10 @@ summary.matchit.subclass <- function(object,
             int.names[k] <- paste0(nam[i], "\u00B2")
           }
           else {
-            int.names[k] <- paste(nam[i], nam[j], sep=" * ")
+            int.names[k] <- paste(nam[i], nam[j], sep = " * ")
           }
         }
-        k <- k + 1
+        k <- k + 1L
       }
     }
 
@@ -518,14 +535,14 @@ summary.matchit.subclass <- function(object,
       ad.all <- bal1var(object$distance, tt = treat, ww = NULL, s.weights = s.weights,
                         standardize = standardize, s.d.denom = s.d.denom)
       sum.all <- rbind(ad.all, sum.all)
-      rownames(sum.all)[1] <- "distance"
+      rownames(sum.all)[1L] <- "distance"
     }
     if (matched) {
       ad.matched <- bal1var(object$distance, tt = treat, ww = weights, s.weights = s.weights,
                             subclass = subclass, standardize = standardize,
                             s.d.denom = s.d.denom, compute.pair.dist = pair.dist)
       sum.matched <- rbind(ad.matched, sum.matched)
-      rownames(sum.matched)[1] <- "distance"
+      rownames(sum.matched)[1L] <- "distance"
     }
   }
 
@@ -533,7 +550,7 @@ summary.matchit.subclass <- function(object,
   if (un && matched && improvement) {
     stat.all <- abs(sum.all[,-(1:2)])
     stat.matched <- abs(sum.matched[,-(1:2)])
-    reduction <- 100*(stat.all-stat.matched)/stat.all
+    reduction <- 100 * (stat.all - stat.matched) / stat.all
 
     reduction[stat.all == 0 & stat.matched == 0] <- 0
     reduction[stat.all == 0 & stat.matched > 0] <- -Inf
@@ -551,19 +568,19 @@ summary.matchit.subclass <- function(object,
                          standardize = standardize, which.subclass = s)
       }), colnames(X))
 
-      sum.sub <- matrix(NA_real_, nrow = kk, ncol = ncol(aa[[1]]), dimnames = list(nam, colnames(aa[[1]])))
+      sum.sub <- matrix(NA_real_, nrow = kk, ncol = ncol(aa[[1L]]), dimnames = list(nam, colnames(aa[[1L]])))
 
       sum.sub.int <- NULL
-      for (i in 1:kk) {
+      for (i in seq_len(kk)) {
         sum.sub[i,] <- aa[[i]]
       }
       if (interactions) {
-        sum.sub.int <- matrix(NA_real_, nrow = kk*(kk+1)/2, ncol = length(aa[[1]]),
-                              dimnames = list(NULL, names(aa[[1]])))
+        sum.sub.int <- matrix(NA_real_, nrow = kk * (kk + 1) / 2, ncol = length(aa[[1L]]),
+                              dimnames = list(NULL, names(aa[[1L]])))
         to.remove <- rep.int(FALSE, nrow(sum.sub.int))
         int.names <- character(nrow(sum.sub.int))
-        k <- 1
-        for (i in 1:kk) {
+        k <- 1L
+        for (i in seq_len(kk)) {
           for (j in i:kk) {
             if (!to.remove[k]) { #to.remove defined above
               x2 <- X[,i] * X[,j]
@@ -590,7 +607,7 @@ summary.matchit.subclass <- function(object,
         ad <- bal1var.subclass(object$distance, tt = treat, s.weights = s.weights, subclass = subclass,
                                s.d.denom = s.d.denom, standardize = standardize, which.subclass = s)
         sum.sub <- rbind(ad, sum.sub)
-        rownames(sum.sub)[1] <- "distance"
+        rownames(sum.sub)[1L] <- "distance"
       }
 
       sum.sub
@@ -603,9 +620,13 @@ summary.matchit.subclass <- function(object,
   nn <- nn(treat, weights, object$discarded, s.weights)
 
   ## output
-  res <- list(call = object$call, sum.all = sum.all, sum.across = sum.matched,
-              sum.subclass = sum.subclass, reduction = reduction,
-              qn = qn, nn = nn)
+  res <- list(call = object$call,
+              sum.all = sum.all,
+              sum.across = sum.matched,
+              sum.subclass = sum.subclass,
+              reduction = reduction,
+              qn = qn,
+              nn = nn)
 
   class(res) <- c("summary.matchit.subclass", "summary.matchit")
 

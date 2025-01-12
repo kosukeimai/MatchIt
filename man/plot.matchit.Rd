@@ -128,19 +128,24 @@ plotting pane (note the latter will delete any plots in the plot history).
 data("lalonde")
 
 m.out <- matchit(treat ~ age + educ + married +
-                   race + re74, data = lalonde,
+                   race + re74,
+                 data = lalonde,
                  method = "nearest")
-plot(m.out, type = "qq", interactive = FALSE,
+plot(m.out, type = "qq",
+     interactive = FALSE,
      which.xs = ~age + educ + re74)
 plot(m.out, type = "histogram")
 
 s.out <- matchit(treat ~ age + educ + married +
                    race + nodegree + re74 + re75,
-                 data = lalonde, method = "subclass")
-plot(s.out, type = "density", interactive = FALSE,
+                 data = lalonde,
+                 method = "subclass")
+plot(s.out, type = "density",
+     interactive = FALSE,
      which.xs = ~age + educ + re74,
      subclass = 3)
-plot(s.out, type = "jitter", interactive = FALSE)
+plot(s.out, type = "jitter",
+     interactive = FALSE)
 
 }
 \seealso{

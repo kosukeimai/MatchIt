@@ -3,7 +3,7 @@ using namespace Rcpp;
 
 // [[Rcpp::plugins(cpp11)]]
 
-// Templated function to check if a vector has exactly n unique values
+// Templated function to check if all elements of a vector are equal to a supplied value
 template <int RTYPE>
 bool all_equal_to_(Vector<RTYPE> x,
                    typename traits::storage_type<RTYPE>::type y) {
