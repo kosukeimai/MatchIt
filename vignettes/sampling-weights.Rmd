@@ -6,10 +6,10 @@ output:
     html_vignette:
         toc: true
 vignette: >
-%\VignetteIndexEntry{Matching with Sampling Weights}
+  %\VignetteIndexEntry{Matching with Sampling Weights}
   %\VignetteEngine{knitr::rmarkdown_notangle}
   %\VignetteEncoding{UTF-8}
-  bibliography: references.bib
+bibliography: references.bib
 link-citations: true
 ---
 
