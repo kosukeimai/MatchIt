@@ -6,21 +6,21 @@ output:
     html_vignette:
         toc: true
 vignette: >
-  %\VignetteIndexEntry{Matching with Sampling Weights}
+%\VignetteIndexEntry{Matching with Sampling Weights}
   %\VignetteEngine{knitr::rmarkdown_notangle}
   %\VignetteEncoding{UTF-8}
-bibliography: references.bib
+  bibliography: references.bib
 link-citations: true
 ---
 
 ```{=html}
 <style>
 pre {
-  overflow-x: auto;
+overflow-x: auto;
 }
 pre code {
-  word-wrap: normal;
-  white-space: pre;
+word-wrap: normal;
+white-space: pre;
 }
 </style>
 ```
@@ -71,7 +71,9 @@ d <- data.frame(A, X, Y_C, SW)
 
 eval_est <- (requireNamespace("optmatch", quietly = TRUE) &&
                requireNamespace("marginaleffects", quietly = TRUE) &&
-               requireNamespace("sandwich", quietly = TRUE))
+               !isTRUE(as.logical(Sys.getenv("NOT_CRAN", "false"))) &&
+               requireNamespace("sandwich", quietly = TRUE) &&
+               utils::packageVersion("marginaleffects") > '0.25.0')
 ```
 
 ## Introduction
@@ -155,7 +157,7 @@ Below we estimate the effect of `A` on `Y_C` in the matched and sampling weighte
 md_F_s <- match_data(mF_s)
 
 fit <- lm(Y_C ~ A * (X1 + X2 + X3 + X4 + X5 + 
-             X6 + X7 + X8 + X9), data = md_F_s,
+                       X6 + X7 + X8 + X9), data = md_F_s,
           weights = weights)
 
 library("marginaleffects")

@@ -30,7 +30,8 @@ options(width = 200, digits= 4)
 
 me_ok <- requireNamespace("marginaleffects", quietly = TRUE) &&
   requireNamespace("sandwich", quietly = TRUE) &&
-  !isTRUE(as.logical(Sys.getenv("NOT_CRAN", "false")))
+  !isTRUE(as.logical(Sys.getenv("NOT_CRAN", "false"))) &&
+  utils::packageVersion("marginaleffects") > '0.25.0'
 su_ok <- requireNamespace("survival", quietly = TRUE)
 boot_ok <- requireNamespace("boot", quietly = TRUE)
 ```

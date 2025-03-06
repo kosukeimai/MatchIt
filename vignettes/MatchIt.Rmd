@@ -6,10 +6,10 @@ output:
   html_vignette:
     toc: yes
 vignette: >
-  %\VignetteIndexEntry{MatchIt: Getting Started} 
+%\VignetteIndexEntry{MatchIt: Getting Started} 
   %\VignetteEngine{knitr::rmarkdown_notangle} 
   %\VignetteEncoding{UTF-8}
-bibliography: references.bib
+  bibliography: references.bib
 link-citations: true
 ---
 
@@ -27,17 +27,19 @@ use <- {
 }
 
 me_ok <- requireNamespace("marginaleffects", quietly = TRUE) &&
-  requireNamespace("sandwich", quietly = TRUE)
+  requireNamespace("sandwich", quietly = TRUE) &&
+  !isTRUE(as.logical(Sys.getenv("NOT_CRAN", "false"))) &&
+  utils::packageVersion("marginaleffects") > '0.25.0'
 ```
 
 ```{=html}
 <style>
 pre {
-  overflow-x: auto;
+overflow-x: auto;
 }
 pre code {
-  word-wrap: normal;
-  white-space: pre;
+word-wrap: normal;
+white-space: pre;
 }
 </style>
 ```
@@ -109,7 +111,7 @@ Now, matching can be performed. There are several different classes and methods 
 ```{r}
 # 1:1 NN PS matching w/o replacement
 m.out1 <- matchit(treat ~ age + educ + race + married + 
-                   nodegree + re74 + re75,
+                    nodegree + re74 + re75,
                   data = lalonde,
                   method = "nearest",
                   distance = "glm")
@@ -162,7 +164,7 @@ Given the poor performance of nearest neighbor matching in this example, we can 
 ```{r, eval = (use == "full"), include= (use %in% c("full", "none"))}
 # Full matching on a probit PS
 m.out2 <- matchit(treat ~ age + educ + race + married + 
-                   nodegree + re74 + re75,
+                    nodegree + re74 + re75,
                   data = lalonde,
                   method = "full",
                   distance = "glm",
@@ -230,9 +232,9 @@ avg_comparisons(fit,
 est <- {
   if (use != "none" && me_ok) {
     avg_comparisons(fit,
-                variables = "treat",
-                vcov = ~subclass,
-                newdata = subset(treat == 1))
+                    variables = "treat",
+                    vcov = ~subclass,
+                    newdata = subset(treat == 1))
   }
   else data.frame(type = "response", term = "1 - 0", estimate = 2114, 
                   std.error = 646, statistic = 3.27, 
