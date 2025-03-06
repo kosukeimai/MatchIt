@@ -26,7 +26,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">MatchIt</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.7.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.7.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -69,7 +69,7 @@
                         <h4 data-toc-skip class="author">Noah
 Greifer</h4>
             
-            <h4 data-toc-skip class="date">2025-01-12</h4>
+            <h4 data-toc-skip class="date">2025-03-06</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/kosukeimai/MatchIt/blob/master/vignettes/matching-methods.Rmd" class="external-link"><code>vignettes/matching-methods.Rmd</code></a></small>
       <div class="d-none name"><code>matching-methods.Rmd</code></div>
@@ -82,7 +82,7 @@ Greifer</h4>
 </h2>
 <p><code>MatchIt</code> implements several matching methods with a
 variety of options. Though the help pages for the individual methods
-describes each method and how they can be used, this vignette provides a
+describe each method and how they can be used, this vignette provides a
 broad overview of the available matching methods and their associated
 options. The choice of matching method depends on the goals of the
 analysis (e.g., the estimand, whether low bias or high precision is
@@ -155,18 +155,20 @@ experiments, which are more familiar to non-technical audiences.</p>
 <p>In addition to subset selection, matching often (though not always)
 involves a form of <em>stratification</em>, the assignment of units to
 pairs or strata containing multiple units. The distinction between
-subset selection and stratification is described by <span class="citation">Zubizarreta, Paredes, and Rosenbaum (<a href="#ref-zubizarreta2014">2014a</a>)</span>, who separate them into
-two separate steps. In <code>MatchIt</code>, with almost all matching
-methods, subset selection is performed by stratification; for example,
-treated units are paired with control units, and unpaired units are then
-dropped from the matched sample. With some methods, subclasses are used
-to assign matching or stratification weights to individual units, which
-increase or decrease each unit’s leverage in a subsequent analysis.
-There has been some debate about the importance of stratification after
-subset selection; while some authors have argued that, with some forms
-of matching, pair membership is incidental <span class="citation">(<a href="#ref-stuart2008">Stuart 2008</a>; <a href="#ref-schafer2008">Schafer and Kang 2008</a>)</span>, others have
-argued that correctly incorporating pair membership into effect
-estimation can improve the quality of inferences <span class="citation">(<a href="#ref-austin2014a">Austin and Small 2014</a>;
+subset selection and stratification is described by <span class="citation">Zubizarreta, Paredes, and Rosenbaum (<a href="#ref-zubizarretaMatchingBalancePairing2014">2014</a>)</span>, who
+separate them into two separate steps. In <code>MatchIt</code>, with
+almost all matching methods, subset selection is performed by
+stratification; for example, treated units are paired with control
+units, and unpaired units are then dropped from the matched sample. With
+some methods, subclasses are used to assign matching or stratification
+weights to individual units, which increase or decrease each unit’s
+leverage in a subsequent analysis. There has been some debate about the
+importance of stratification after subset selection; while some authors
+have argued that, with some forms of matching, pair membership is
+incidental <span class="citation">(<a href="#ref-stuart2008">Stuart
+2008</a>; <a href="#ref-schafer2008">Schafer and Kang 2008</a>)</span>,
+others have argued that correctly incorporating pair membership into
+effect estimation can improve the quality of inferences <span class="citation">(<a href="#ref-austin2014a">Austin and Small 2014</a>;
 <a href="#ref-wan2019">Wan 2019</a>)</span>. For methods that allow it,
 <code>MatchIt</code> includes stratum membership as an additional output
 of each matching specification. How these strata can be used is detailed
@@ -581,14 +583,14 @@ the weights are restricted to be zero or one. Cardinality matching
 involves finding the largest sample that satisfies user-supplied balance
 constraints and constraints on the ratio of matched treated to matched
 control units <span class="citation">(<a href="#ref-zubizarretaMatchingBalancePairing2014">Zubizarreta, Paredes,
-and Rosenbaum 2014b</a>)</span>. It does not consider a specific
-estimand and can be a useful alternative to matching with a caliper for
-handling data with little overlap <span class="citation">(<a href="#ref-visconti2018">Visconti and Zubizarreta 2018</a>)</span>.
+and Rosenbaum 2014</a>)</span>. It does not consider a specific estimand
+and can be a useful alternative to matching with a caliper for handling
+data with little overlap <span class="citation">(<a href="#ref-visconti2018">Visconti and Zubizarreta 2018</a>)</span>.
 Profile matching involves identifying a target distribution (e.g., the
 full sample for the ATE or the treated units for the ATT) and finding
 the largest subset of the treated and control groups that satisfy
 user-supplied balance constraints with respect to that target <span class="citation">(<a href="#ref-cohnProfileMatchingGeneralization2021">Cohn and Zubizarreta
-2021</a>)</span>. See <code><a href="../reference/method_cardinality.html">?method_cardinality</a></code> for the
+2022</a>)</span>. See <code><a href="../reference/method_cardinality.html">?method_cardinality</a></code> for the
 documentation for using <code><a href="../reference/matchit.html">matchit()</a></code> with
 <code>method = "cardinality"</code>, including which inputs are required
 to request either cardinality matching or profile matching.</p>
@@ -612,7 +614,7 @@ create pairs in the matched sample by using the <code>mahvars</code>
 argument, which requests that optimal Mahalanobis matching be done after
 subset selection; doing so can add additional precision and robustness
 <span class="citation">(<a href="#ref-zubizarretaMatchingBalancePairing2014">Zubizarreta, Paredes,
-and Rosenbaum 2014b</a>)</span>.</p>
+and Rosenbaum 2014</a>)</span>.</p>
 <p>The optimization problem requires a special solver to solve.
 Currently, the available options in <code>MatchIt</code> are the HiGHS
 solver (through the <code>highs</code> package), the GLPK solver
@@ -655,7 +657,7 @@ used in creating the distance value, but other scores could be used,
 such as prognostic scores for prognostic score matching <span class="citation">(<a href="#ref-hansen2008a">Hansen 2008</a>)</span>.
 The propensity score is more like a “position” value, in that it
 reflects the position of each unit in the matching space, and the
-difference between positions is the distance between them. If the the
+difference between positions is the distance between them. If the
 argument to <code>distance</code> is one of the allowed methods for
 estimating propensity scores (see <code><a href="../reference/distance.html">?distance</a></code> for these
 values) or is a numeric vector with one value per unit, the distance
@@ -1050,13 +1052,13 @@ balance and high remaining sample size. As previously mentioned, no
 single method can be recommended above all others because the optimal
 specification depends on the unique qualities of each dataset.</p>
 <p>When the target population is less important, for example, when
-engaging in treatment effect discovery or when when the sampled
-population is not of particular interest (e.g., it corresponds to an
-arbitrarily chosen hospital or school; see <span class="citation">Mao,
-Li, and Greene (<a href="#ref-mao2018">2018</a>)</span> for these and
-other reasons why retaining the target population may not be important),
-other methods that do not retain the characteristics of the original
-sample become available. These include matching with a caliper (on the
+engaging in treatment effect discovery or when the sampled population is
+not of particular interest (e.g., it corresponds to an arbitrarily
+chosen hospital or school; see <span class="citation">Mao, Li, and
+Greene (<a href="#ref-mao2018">2018</a>)</span> for these and other
+reasons why retaining the target population may not be important), other
+methods that do not retain the characteristics of the original sample
+become available. These include matching with a caliper (on the
 propensity score or on the covariates themselves), cardinality matching,
 and more restrictive forms of matching like exact and coarsened exact
 matching, either on all covariates or just a subset, that are prone to
@@ -1180,10 +1182,10 @@ Using Full Matching on the Propensity Score.”</span> <em>Statistical
 Methods in Medical Research</em> 26 (6): 2505–25. <a href="https://doi.org/10.1177/0962280215601134" class="external-link">https://doi.org/10.1177/0962280215601134</a>.
 </div>
 <div id="ref-cohnProfileMatchingGeneralization2021" class="csl-entry">
-Cohn, Eric R., and Jose R. Zubizarreta. 2021. <span>“Profile
+Cohn, Eric R., and José R. Zubizarreta. 2022. <span>“Profile
 <span>Matching</span> for the <span>Generalization</span> and
-<span>Personalization</span> of <span>Causal Inferences</span>.”</span>
-<em>arXiv:2105.10060 [Stat]</em>, May. <a href="https://arxiv.org/abs/2105.10060" class="external-link">https://arxiv.org/abs/2105.10060</a>.
+<span>Personalization</span> of <span>Causal</span>
+<span>Inferences</span>.”</span> <em>Epidemiology</em> 33 (5): 678. <a href="https://doi.org/10.1097/EDE.0000000000001517" class="external-link">https://doi.org/10.1097/EDE.0000000000001517</a>.
 </div>
 <div id="ref-delosangelesresaDirectStableWeight2020" class="csl-entry">
 de los Angeles Resa, María, and José R. Zubizarreta. 2020. <span>“Direct
@@ -1370,15 +1372,9 @@ Literature: Avoiding the Pitfalls and Proposing a Set of Reporting
 Guidelines.”</span> <em>European Journal of Trauma and Emergency
 Surgery</em> 44 (3): 385–95. <a href="https://doi.org/10.1007/s00068-017-0786-6" class="external-link">https://doi.org/10.1007/s00068-017-0786-6</a>.
 </div>
-<div id="ref-zubizarreta2014" class="csl-entry">
-Zubizarreta, José R., Ricardo D. Paredes, and Paul R. Rosenbaum. 2014a.
-<span>“Matching for Balance, Pairing for Heterogeneity in an
-Observational Study of the Effectiveness of for-Profit and
-Not-for-Profit High Schools in Chile.”</span> <em>The Annals of Applied
-Statistics</em> 8 (1): 204–31. <a href="https://doi.org/10.1214/13-AOAS713" class="external-link">https://doi.org/10.1214/13-AOAS713</a>.
-</div>
 <div id="ref-zubizarretaMatchingBalancePairing2014" class="csl-entry">
-———. 2014b. <span>“Matching for Balance, Pairing for Heterogeneity in an
+Zubizarreta, José R., Ricardo D. Paredes, and Paul R. Rosenbaum. 2014.
+<span>“Matching for Balance, Pairing for Heterogeneity in an
 Observational Study of the Effectiveness of for-Profit and
 Not-for-Profit High Schools in <span>Chile</span>.”</span> <em>The
 Annals of Applied Statistics</em> 8 (1): 204–31. <a href="https://doi.org/10.1214/13-AOAS713" class="external-link">https://doi.org/10.1214/13-AOAS713</a>.
