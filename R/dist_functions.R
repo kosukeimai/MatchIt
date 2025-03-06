@@ -246,7 +246,16 @@ transform_covariates <- function(formula = NULL, data = NULL, method = "mahalano
   if (method == "mahalanobis") {
     # X <- sweep(X, 2, colMeans(X))
 
+    if (is_null(var) && is_null(treat) && is.null(s.weights)) {
+      # https://stats.stackexchange.com/a/81691/116195
+      dn <- dimnames(X)
+      X <- svd(sweep(X, 2L, colMeans(X)), nv = 0)$u * sqrt(nrow(X) - 1)
+      dimnames(X) <- dn
+      return(X)
+    }
+
     if (is_null(var)) {
+
       X <- scale(X)
 
       #NOTE: optmatch and Rubin (1980) use pooled within-group covariance matrix

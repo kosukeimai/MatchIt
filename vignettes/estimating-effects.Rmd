@@ -29,7 +29,8 @@ knitr::opts_chunk$set(echo = TRUE, eval=T)
 options(width = 200, digits= 4)
 
 me_ok <- requireNamespace("marginaleffects", quietly = TRUE) &&
-  requireNamespace("sandwich", quietly = TRUE)
+  requireNamespace("sandwich", quietly = TRUE) &&
+  !isTRUE(as.logical(Sys.getenv("NOT_CRAN", "false")))
 su_ok <- requireNamespace("survival", quietly = TRUE)
 boot_ok <- requireNamespace("boot", quietly = TRUE)
 ```
@@ -253,7 +254,7 @@ avg_predictions(fit1,
 
 We can see that the difference in potential outcome means is equal to the average treatment effect computed previously[^4]. All of the arguments to `avg_predictions()` are the same as those to `avg_comparisons()`.
 
-[^4]: To verify that they are equal, supply the output of `avg_predictions()` to `hypotheses()`, e.g., `avg_predictions(...) |> hypotheses("revpairwise")`; this explicitly compares the average potential outcomes and should yield identical estimates to the `avg_comparisons()` call.
+[^4]: To verify that they are equal, supply the output of `avg_predictions()` to `hypotheses()`, e.g., `avg_predictions(...) |> hypotheses(~pairwise)`; this explicitly compares the average potential outcomes and should yield identical estimates to the `avg_comparisons()` call.
 
 ### Adjustments to the Standard Case
 
@@ -585,10 +586,24 @@ avg_comparisons(fitP,
                 vcov = ~subclass,
                 newdata = subset(A == 1),
                 by = "X5",
-                hypothesis = "pairwise")
+                hypothesis = ~pairwise)
 ```
 
 As expected, the difference between the subgroup treatment effects is small and nonsignificant, so there is no evidence of moderation by `X5`.
+
+When the moderator has more than two levels, it is possible to run an omnibus test for moderation by changing `hypothesis` to `~reference` and supplying the output to `hypotheses()` with `joint = TRUE`, e.g.,
+
+```{r, eval=FALSE}
+avg_comparisons(fitP,
+                variables = "A",
+                vcov = ~subclass,
+                newdata = subset(A == 1),
+                by = "X5",
+                hypothesis = ~reference) |>
+  hypotheses(joint = TRUE)
+```
+
+This produces a single p-value for the test that all pairwise differences between subgroups are equal to zero.
 
 ### Reporting Results
 

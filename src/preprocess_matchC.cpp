@@ -10,7 +10,7 @@ using namespace Rcpp;
 IntegerVector preprocess_matchC(IntegerVector t,
                                 NumericVector p) {
   R_xlen_t n = t.size();
-  int n1 = sum(t == 1);
+  int n1 = std::count(t.begin(), t.end(), 1);
   int n0 = n - n1;
 
   int i, j;

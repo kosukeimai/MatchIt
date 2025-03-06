@@ -556,7 +556,7 @@ do_k2k <- function(treat, X, subclass, k2k.method = "mahalanobis", mpower = 2, s
   else {
     k2k.method <- "euclidean"
     X.match <- NULL
-    distance <- rep.int(0.0, length(treat))
+    distance <- rep.int(0, length(treat))
   }
 
   reuse.max <- 1L

@@ -41,7 +41,7 @@ IntegerMatrix nn_matchC_distmat_closest(const IntegerVector& treat,
   LogicalVector eligible = !discarded;
 
   for (gi = 0; gi < g; gi++) {
-    nt[gi] = sum(treat == gi);
+    nt[gi] = std::count(treat.begin(), treat.end(), gi);
   }
 
   int nf = nt[focal];
