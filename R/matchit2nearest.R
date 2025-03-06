@@ -350,38 +350,38 @@ matchit2nearest <- function(treat, data, distance, discarded,
       caliper.covs.mat <- get_covs_matrix(reformulate(names(caliper.covs)),
                                           data = data)
 
-      ex.caliper.list <- setNames(lapply(names(caliper.covs), function(i) {
-        if (caliper.covs[i] < 0) {
-          return(integer(0))
+      if (is_not_null(mahcovs) || is_not_null(distance_mat)) {
+        ex.caliper.list <- setNames(lapply(names(caliper.covs), function(i) {
+          if (caliper.covs[i] < 0) {
+            return(integer(0))
+          }
+
+          splits <- get_splitsC(as.numeric(caliper.covs.mat[,i]),
+                                as.numeric(caliper.covs[i]))
+
+          if (is_null(splits)) {
+            return(integer(0))
+          }
+
+          cut(caliper.covs.mat[,i],
+              breaks = splits,
+              include.lowest = TRUE)
+        }), names(caliper.covs))
+
+        ex.caliper.list[lengths(ex.caliper.list) == 0L] <- NULL
+
+        if (is_not_null(ex.caliper.list)) {
+          for (i in seq_along(ex.caliper.list)) {
+            levels(ex.caliper.list[[i]]) <- paste(names(ex.caliper.list)[i],
+                                                  "\u2208",
+                                                  levels(ex.caliper.list[[i]]))
+          }
+
+          ex.caliper <- exactify(ex.caliper.list,
+                                 nam = names(treat),
+                                 sep = ", ",
+                                 justify = NULL)
         }
-
-        splits <- get_splitsC(as.numeric(caliper.covs.mat[,i]),
-                              as.numeric(caliper.covs[i]))
-
-        if (is_null(splits)) {
-          return(integer(0))
-        }
-
-        cut(caliper.covs.mat[,i],
-            breaks = splits,
-            include.lowest = TRUE)
-      }), names(caliper.covs))
-
-      ex.caliper.list[lengths(ex.caliper.list) == 0L] <- NULL
-
-      # ex.caliper.list <- Filter(ex.caliper.list, f = function(x) nlevels(x) > 1)
-
-      if (is_not_null(ex.caliper.list)) {
-        for (i in seq_along(ex.caliper.list)) {
-          levels(ex.caliper.list[[i]]) <- paste(names(ex.caliper.list)[i],
-                                                "\u2208",
-                                                levels(ex.caliper.list[[i]]))
-        }
-
-        ex.caliper <- exactify(ex.caliper.list,
-                               nam = names(treat),
-                               sep = ", ",
-                               justify = NULL)
       }
     }
 
@@ -443,42 +443,53 @@ matchit2nearest <- function(treat, data, distance, discarded,
 
   if (reuse.max < n1) {
     if (is_not_null(ex)) {
-      e_ratios <- vapply(levels(ex), function(e) {
-        if (is_null(unit.id)) reuse.max * sum(treat[ex == e] == 0) / sum(treat[ex == e] == 1)
-        else reuse.max * length(unique(unit.id[treat == 0 & ex == e])) / sum(treat[ex == e] == 1)
-      }, numeric(1L))
+      w1 <- w2 <- FALSE
+      for (e in levels(ex)) {
+        ex_e <- which(ex == e)
 
-      if (any(e_ratios < 1)) {
-        .wrn(sprintf("fewer %s units than %s units in some `exact` strata; not all %s units will get a match",
-                     tc[2], tc[1], tc[1]))
-      }
+        e_ratio <- {
+          if (is_null(unit.id)) reuse.max * sum(treat[ex_e] == 0) / sum(treat[ex_e] == 1)
+          else reuse.max * length(unique(unit.id[ex_e][treat[ex_e] == 0])) / sum(treat[ex_e] == 1)
+        }
 
-      if (ratio > 1 && any(e_ratios < ratio)) {
-        if (is_null(max.controls) || ratio == max.controls)
-          .wrn(sprintf("not all %s units will get %s matches",
-                       tc[1], ratio))
-        else
-          .wrn(sprintf("not enough %s units for an average of %s matches per %s unit in all `exact` strata",
-                       tc[2], ratio, tc[1]))
+        if (!w1 && e_ratio < 1) {
+          .wrn(sprintf("fewer %s %s than %s units in some `exact` strata; not all %s units will get a match",
+                       tc[2L], if (is_null(unit.id)) "units" else "unit IDs", tc[1L], tc[1L]))
+          w1 <- TRUE
+        }
+
+        if (!w2 && ratio > 1 && e_ratio < ratio) {
+          if (is_null(max.controls) || ratio == max.controls)
+            .wrn(sprintf("not all %s units will get %s matches",
+                         tc[1L], ratio))
+          else
+            .wrn(sprintf("not enough %s %s for an average of %s matches per %s unit in all `exact` strata",
+                         tc[2L], if (is_null(unit.id)) "units" else "unit IDs", ratio, tc[1L]))
+          w2 <- TRUE
+        }
+
+        if (w1 && w2) {
+          break
+        }
       }
     }
     else {
-      e_ratios <- {
+      e_ratio <- {
         if (is_null(unit.id)) as.numeric(reuse.max) * n0 / n1
         else as.numeric(reuse.max) * num_ctrl_unit.ids / num_trt_unit.ids
       }
 
-      if (e_ratios < 1) {
+      if (e_ratio < 1) {
         .wrn(sprintf("fewer %s %s than %s units; not all %s units will get a match",
-                     tc[2], if (is_null(unit.id)) "units" else "unit IDs", tc[1], tc[1]))
+                     tc[2L], if (is_null(unit.id)) "units" else "unit IDs", tc[1L], tc[1L]))
       }
-      else if (e_ratios < ratio) {
+      else if (e_ratio < ratio) {
         if (is_null(max.controls) || ratio == max.controls)
           .wrn(sprintf("not all %s units will get %s matches",
                        tc[1], ratio))
         else
           .wrn(sprintf("not enough %s %s for an average of %s matches per %s unit",
-                       tc[2], if (is_null(unit.id)) "units" else "unit IDs", ratio, tc[1]))
+                       tc[2L], if (is_null(unit.id)) "units" else "unit IDs", ratio, tc[1L]))
       }
     }
   }
@@ -488,7 +499,7 @@ matchit2nearest <- function(treat, data, distance, discarded,
   if (is_not_null(max.controls)) {
     if (is_null(distance)) {
       if (is.full.mahalanobis) {
-        .err(sprintf("`distance` cannot be \"%s\" for variable ratio nearest neighbor matching",
+        .err(sprintf('`distance` cannot be "%s" for variable ratio nearest neighbor matching',
                      transform))
       }
       else {
@@ -546,8 +557,8 @@ matchit2nearest <- function(treat, data, distance, discarded,
     discarded[!ex %in% levels(ex)[cc]] <- TRUE
   }
 
-  if (is_null(ex) || is_not_null(unit.id) || (is_null(mahcovs) && is_null(distance_mat) &&
-                                              !(m.order %in% c("closest", "farthest")))) {
+  if (is_null(ex) || is_not_null(unit.id) || (is_null(mahcovs) && is_null(distance_mat))) {
+
     if (is_not_null(ex.caliper)) {
       ex <- exactify(list(ex, ex.caliper),
                      nam = names(treat),

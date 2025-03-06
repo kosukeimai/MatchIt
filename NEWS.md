@@ -6,6 +6,12 @@ output:
 `MatchIt` News and Updates
 ======
 
+# MatchIt 4.7.1
+
+* Updates for CRAN compatibility.
+
+* Typo fixes in documentation and vignettes, thanks to @iagogv3.
+
 # MatchIt 4.7.0
 
 * For nearest neighbor matching, optimal full matching, and genetic matching, calipers can now be negative, which forces paired units to be further away from each other on the given variables.

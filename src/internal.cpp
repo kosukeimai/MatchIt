@@ -217,27 +217,27 @@ std::vector<int> find_control_vec(const int& t_id,
   int num_matches_r = 0;
 
   int iz;
-  int z = 1;
+  bool left = false;
   int num_closer_than_dist_c;
 
   while (!l_stop || !r_stop) {
     if (l_stop) {
-      z = 1;
+      left = false;
     }
     else if (r_stop) {
-      z = -1;
+      left = true;
     }
     else {
-      z *= -1;
+      left = !left;
     }
 
-    if (z == -1) {
+    if (left) {
       if (iil <= min_ii || num_matches_l == ratio) {
         l_stop = true;
         continue;
       }
 
-      iil += z;
+      iil -= 1;
       iz = ind_d_ord[iil];
     }
     else {
@@ -246,7 +246,7 @@ std::vector<int> find_control_vec(const int& t_id,
         continue;
       }
 
-      iir += z;
+      iir += 1;
       iz = ind_d_ord[iir];
     }
 
@@ -266,7 +266,7 @@ std::vector<int> find_control_vec(const int& t_id,
 
     if (caliper_dist > 0) {
       if (dist_c > caliper_dist) {
-        if (z == -1) {
+        if (left) {
           l_stop = true;
         }
         else {
@@ -294,7 +294,7 @@ std::vector<int> find_control_vec(const int& t_id,
       }
 
       if (num_closer_than_dist_c >= ratio) {
-        if (z == -1) {
+        if (left) {
           l_stop = true;
         }
         else {
@@ -323,7 +323,7 @@ std::vector<int> find_control_vec(const int& t_id,
     potential_matches_id.push_back(iz);
     potential_matches_dist.push_back(dist_c);
 
-    if (z == -1) {
+    if (left) {
       num_matches_l++;
       if (num_matches_l == ratio) {
         l_stop = true;
@@ -433,7 +433,7 @@ std::vector<int> find_control_mahcovs(const int& t_id,
   double mv_dist;
 
   int iz;
-  int z = 1;
+  bool left = false;
 
   auto dist_comp = [](std::pair<int, double> a, std::pair<int, double> b) {
     return a.second < b.second;
@@ -441,22 +441,22 @@ std::vector<int> find_control_mahcovs(const int& t_id,
 
   while (!l_stop || !r_stop) {
     if (l_stop) {
-      z = 1;
+      left = false;
     }
     else if (r_stop) {
-      z = -1;
+      left = true;
     }
     else {
-      z *= -1;
+      left = !left;
     }
 
-    if (z == -1) {
+    if (left) {
       if (iil <= min_ii || num_matches_l == ratio) {
         l_stop = true;
         continue;
       }
 
-      iil += z;
+      iil -= 1;
       iz = ind_d_ord[iil];
     }
     else {
@@ -465,7 +465,7 @@ std::vector<int> find_control_mahcovs(const int& t_id,
         continue;
       }
 
-      iir += z;
+      iir += 1;
       iz = ind_d_ord[iir];
     }
 
@@ -484,7 +484,7 @@ std::vector<int> find_control_mahcovs(const int& t_id,
     mv_dist = pow(mv_i - match_var[iz], 2);
 
     if (mv_dist > match_var_caliper) {
-      if (z == -1) {
+      if (left) {
         l_stop = true;
       }
       else {
@@ -497,7 +497,7 @@ std::vector<int> find_control_mahcovs(const int& t_id,
     //If current dist is worse than ratio dists, continue
     if (potential_matches.size() == ratio) {
       if (potential_matches.back().second < mv_dist) {
-        if (z == -1) {
+        if (left) {
           l_stop = true;
         }
         else {
