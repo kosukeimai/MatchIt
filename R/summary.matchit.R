@@ -255,17 +255,17 @@ summary.matchit <- function(object,
 
   ## Summary Stats
   if (un) {
-    aa.all <- lapply(seq_len(kk), function(i) bal1var(X[,i], tt = treat, ww = NULL, s.weights = s.weights,
+    aa.all <- lapply(seq_len(kk), function(i) bal1var(X[, i], tt = treat, ww = NULL, s.weights = s.weights,
                                                       standardize = standardize, s.d.denom = s.d.denom))
     sum.all <- do.call("rbind", aa.all)
     dimnames(sum.all) <- list(nam, names(aa.all[[1L]]))
 
-    if (no_x) sum.all <- sum.all[-1, , drop = FALSE]
+    if (no_x) sum.all <- sum.all[-1L, , drop = FALSE]
     sum.all.int <- NULL
   }
 
   if (matched) {
-    aa.matched <- lapply(seq_len(kk), function(i) bal1var(X[,i], tt = treat, ww = weights,
+    aa.matched <- lapply(seq_len(kk), function(i) bal1var(X[, i], tt = treat, ww = weights,
                                                           s.weights = s.weights,
                                                           subclass = object$subclass,
                                                           mm = object$match.matrix,
@@ -292,18 +292,18 @@ summary.matchit <- function(object,
     k <- 1
     for (i in seq_len(kk)) {
       for (j in i:kk) {
-        x2 <- X[,i] * X[,j]
+        x2 <- X[, i] * X[, j]
         if (all(abs(x2) < sqrt(.Machine$double.eps)) ||
-            all(abs(x2 - X[,i]) < sqrt(.Machine$double.eps))) { #prevent interactions within same factors
+            all(abs(x2 - X[, i]) < sqrt(.Machine$double.eps))) { #prevent interactions within same factors
           to.remove[k] <- TRUE
         }
         else {
           if (un) {
-            sum.all.int[k,] <- bal1var(x2, tt = treat, ww = NULL, s.weights = s.weights,
+            sum.all.int[k, ] <- bal1var(x2, tt = treat, ww = NULL, s.weights = s.weights,
                                        standardize = standardize, s.d.denom = s.d.denom)
           }
           if (matched) {
-            sum.matched.int[k,] <- bal1var(x2, tt = treat, ww = weights, s.weights = s.weights,
+            sum.matched.int[k, ] <- bal1var(x2, tt = treat, ww = weights, s.weights = s.weights,
                                            subclass = object$subclass, mm = object$match.matrix,
                                            standardize = standardize, s.d.denom = s.d.denom,
                                            compute.pair.dist = pair.dist)
@@ -322,12 +322,12 @@ summary.matchit <- function(object,
 
     if (un) {
       rownames(sum.all.int) <- int.names
-      sum.all <- rbind(sum.all, sum.all.int[!to.remove,,drop = FALSE])
+      sum.all <- rbind(sum.all, sum.all.int[!to.remove, , drop = FALSE])
     }
 
     if (matched) {
       rownames(sum.matched.int) <- int.names
-      sum.matched <- rbind(sum.matched, sum.matched.int[!to.remove,,drop = FALSE])
+      sum.matched <- rbind(sum.matched, sum.matched.int[!to.remove, , drop = FALSE])
     }
   }
 
@@ -335,25 +335,25 @@ summary.matchit <- function(object,
     if (un) {
       ad.all <- bal1var(object$distance, tt = treat, ww = NULL, s.weights = s.weights,
                         standardize = standardize, s.d.denom = s.d.denom)
-      if (!exists("sum.all", inherits = FALSE)) {
-        sum.all <- matrix(ad.all, nrow = 1L, dimnames = list("distance", names(ad.all)))
-      }
-      else {
+      if (exists("sum.all", inherits = FALSE)) {
         sum.all <- rbind(ad.all, sum.all)
         rownames(sum.all)[1L] <- "distance"
+      }
+      else {
+        sum.all <- matrix(ad.all, nrow = 1L, dimnames = list("distance", names(ad.all)))
       }
     }
     if (matched) {
       ad.matched <- bal1var(object$distance, tt = treat, ww = weights, s.weights = s.weights,
                             subclass = object$subclass, mm = object$match.matrix, standardize = standardize,
                             s.d.denom = s.d.denom, compute.pair.dist = pair.dist)
-      if (!exists("sum.matched", inherits = FALSE)) {
-        sum.matched <- matrix(ad.matched, nrow = 1L,
-                              dimnames = list("distance", names(ad.matched)))
-      }
-      else {
+      if (exists("sum.matched", inherits = FALSE)) {
         sum.matched <- rbind(ad.matched, sum.matched)
         rownames(sum.matched)[1L] <- "distance"
+      }
+      else {
+        sum.matched <- matrix(ad.matched, nrow = 1L,
+                              dimnames = list("distance", names(ad.matched)))
       }
     }
   }
@@ -362,16 +362,16 @@ summary.matchit <- function(object,
   if (matched && un && improvement) {
     reduction <- matrix(NA_real_, nrow = nrow(sum.all), ncol = ncol(sum.all) - 2,
                         dimnames = list(rownames(sum.all), colnames(sum.all)[-(1:2)]))
-    stat.all <- abs(sum.all[,-(1:2), drop = FALSE])
-    stat.matched <- abs(sum.matched[,-(1:2), drop = FALSE])
+    stat.all <- abs(sum.all[, -(1:2), drop = FALSE])
+    stat.matched <- abs(sum.matched[, -(1:2), drop = FALSE])
 
     #Everything but variance ratios
-    reduction[,-2] <- 100*(stat.all[,-2]-stat.matched[,-2])/stat.all[,-2]
+    reduction[, -2] <- 100 * (stat.all[, -2] - stat.matched[, -2]) / stat.all[, -2]
 
     #Just variance ratios; turn to log first
-    vr.all <- abs(log(stat.all[,2]))
-    vr.matched <- abs(log(stat.matched[,2]))
-    reduction[,2] <- 100*(vr.all-vr.matched)/vr.all
+    vr.all <- abs(log(stat.all[, 2]))
+    vr.matched <- abs(log(stat.matched[, 2]))
+    reduction[, 2] <- 100 * (vr.all - vr.matched) / vr.all
 
     reduction[stat.all == 0 & stat.matched == 0] <- 0
     reduction[stat.all == 0 & stat.matched > 0] <- -Inf
@@ -462,7 +462,7 @@ summary.matchit.subclass <- function(object,
   sum.all <- sum.matched <- sum.subclass <- reduction <- NULL
 
   if (un) {
-    aa.all <- setNames(lapply(seq_len(kk), function(i) bal1var(X[,i], tt = treat, ww = NULL, s.weights = s.weights,
+    aa.all <- setNames(lapply(seq_len(kk), function(i) bal1var(X[, i], tt = treat, ww = NULL, s.weights = s.weights,
                                                                standardize = standardize, s.d.denom = s.d.denom)),
                        colnames(X))
     sum.all <- do.call("rbind", aa.all)
@@ -472,7 +472,7 @@ summary.matchit.subclass <- function(object,
   }
 
   if (matched) {
-    aa.matched <- setNames(lapply(seq_len(kk), function(i) bal1var(X[,i], tt = treat, ww = weights, s.weights = s.weights,
+    aa.matched <- setNames(lapply(seq_len(kk), function(i) bal1var(X[, i], tt = treat, ww = weights, s.weights = s.weights,
                                                                    subclass = subclass, standardize = standardize,
                                                                    s.d.denom = s.d.denom, compute.pair.dist = pair.dist)),
                            colnames(X))
@@ -494,18 +494,18 @@ summary.matchit.subclass <- function(object,
     k <- 1L
     for (i in seq_len(kk)) {
       for (j in i:kk) {
-        x2 <- X[,i] * X[,j]
+        x2 <- X[, i] * X[, j]
         if (all(abs(x2) < sqrt(.Machine$double.eps)) ||
-            all(abs(x2 - X[,i]) < sqrt(.Machine$double.eps))) { #prevent interactions within same factors
+            all(abs(x2 - X[, i]) < sqrt(.Machine$double.eps))) { #prevent interactions within same factors
           to.remove[k] <- TRUE
         }
         else {
           if (un) {
-            sum.all.int[k,] <- bal1var(x2, tt = treat, ww = NULL, s.weights = s.weights,
+            sum.all.int[k, ] <- bal1var(x2, tt = treat, ww = NULL, s.weights = s.weights,
                                        standardize = standardize, s.d.denom = s.d.denom)
           }
           if (matched) {
-            sum.matched.int[k,] <- bal1var(x2, tt = treat, ww = weights, s.weights = s.weights,
+            sum.matched.int[k, ] <- bal1var(x2, tt = treat, ww = weights, s.weights = s.weights,
                                            subclass = subclass, standardize = standardize,
                                            compute.pair.dist = pair.dist)
           }
@@ -522,11 +522,11 @@ summary.matchit.subclass <- function(object,
 
     if (un) {
       rownames(sum.all.int) <- int.names
-      sum.all <- rbind(sum.all, sum.all.int[!to.remove,,drop = FALSE])
+      sum.all <- rbind(sum.all, sum.all.int[!to.remove, , drop = FALSE])
     }
     if (matched) {
       rownames(sum.matched.int) <- int.names
-      sum.matched <- rbind(sum.matched, sum.matched.int[!to.remove,,drop = FALSE])
+      sum.matched <- rbind(sum.matched, sum.matched.int[!to.remove, , drop = FALSE])
     }
   }
 
@@ -548,8 +548,8 @@ summary.matchit.subclass <- function(object,
 
   ## Imbalance Reduction
   if (un && matched && improvement) {
-    stat.all <- abs(sum.all[,-(1:2)])
-    stat.matched <- abs(sum.matched[,-(1:2)])
+    stat.all <- abs(sum.all[, -(1:2)])
+    stat.matched <- abs(sum.matched[, -(1:2)])
     reduction <- 100 * (stat.all - stat.matched) / stat.all
 
     reduction[stat.all == 0 & stat.matched == 0] <- 0
@@ -563,7 +563,7 @@ summary.matchit.subclass <- function(object,
       #bal1var.subclass only returns unmatched stats, which is all we need within
       #subclasses. Otherwise, identical to matched stats.
       aa <- setNames(lapply(seq_len(kk), function(i) {
-        bal1var.subclass(X[,i], tt = treat, s.weights = s.weights,
+        bal1var.subclass(X[, i], tt = treat, s.weights = s.weights,
                          subclass = subclass, s.d.denom = s.d.denom,
                          standardize = standardize, which.subclass = s)
       }), colnames(X))
@@ -572,7 +572,7 @@ summary.matchit.subclass <- function(object,
 
       sum.sub.int <- NULL
       for (i in seq_len(kk)) {
-        sum.sub[i,] <- aa[[i]]
+        sum.sub[i, ] <- aa[[i]]
       }
       if (interactions) {
         sum.sub.int <- matrix(NA_real_, nrow = kk * (kk + 1) / 2, ncol = length(aa[[1L]]),
@@ -583,11 +583,11 @@ summary.matchit.subclass <- function(object,
         for (i in seq_len(kk)) {
           for (j in i:kk) {
             if (!to.remove[k]) { #to.remove defined above
-              x2 <- X[,i] * X[,j]
+              x2 <- X[, i] * X[, j]
               jqoi <- bal1var.subclass(x2, tt = treat, s.weights = s.weights,
                                        subclass = subclass, s.d.denom = s.d.denom,
                                        standardize = standardize, which.subclass = s)
-              sum.sub.int[k,] <- jqoi
+              sum.sub.int[k, ] <- jqoi
               if (i == j) {
                 int.names[k] <- paste0(nam[i], "\u00B2")
               }
@@ -600,7 +600,7 @@ summary.matchit.subclass <- function(object,
         }
         rownames(sum.sub.int) <- int.names
 
-        sum.sub <- rbind(sum.sub, sum.sub.int[!to.remove,,drop = FALSE])
+        sum.sub <- rbind(sum.sub, sum.sub.int[!to.remove, , drop = FALSE])
       }
 
       if (is_not_null(object$distance)) {
@@ -644,31 +644,31 @@ print.summary.matchit <- function(x, digits = max(3, getOption("digits") - 3),
 
   if (is_not_null(x$sum.all)) {
     cat("\nSummary of Balance for All Data:\n")
-    print(round_df_char(x$sum.all[,-7, drop = FALSE], digits, pad = "0", na_vals = "."),
+    print(round_df_char(x$sum.all[, -7, drop = FALSE], digits, pad = "0", na_vals = "."),
           right = TRUE, quote = FALSE)
   }
 
   if (is_not_null(x$sum.matched)) {
     cat("\nSummary of Balance for Matched Data:\n")
-    if (all(is.na(x$sum.matched[,7]))) x$sum.matched <- x$sum.matched[,-7,drop = FALSE] #Remove pair dist if empty
+    if (all(is.na(x$sum.matched[, 7]))) x$sum.matched <- x$sum.matched[, -7, drop = FALSE] #Remove pair dist if empty
     print(round_df_char(x$sum.matched, digits, pad = "0", na_vals = "."),
           right = TRUE, quote = FALSE)
   }
   if (is_not_null(x$reduction)) {
     cat("\nPercent Balance Improvement:\n")
-    print(round_df_char(x$reduction[,-5, drop = FALSE], 1, pad = "0", na_vals = "."), right = TRUE,
+    print(round_df_char(x$reduction[, -5, drop = FALSE], 1, pad = "0", na_vals = "."), right = TRUE,
           quote = FALSE)
   }
   if (is_not_null(x$nn)) {
     cat("\nSample Sizes:\n")
     nn <- x$nn
-    if (isTRUE(all.equal(nn["All (ESS)",], nn["All",]))) {
+    if (isTRUE(all.equal(nn["All (ESS)", ], nn["All", ]))) {
       #Don't print ESS if same as full SS
-      nn <- nn[rownames(nn) != "All (ESS)",,drop = FALSE]
+      nn <- nn[rownames(nn) != "All (ESS)", , drop = FALSE]
     }
-    if (isTRUE(all.equal(nn["Matched (ESS)",], nn["Matched",]))) {
+    if (isTRUE(all.equal(nn["Matched (ESS)", ], nn["Matched", ]))) {
       #Don't print ESS if same as matched SS
-      nn <- nn[rownames(nn) != "Matched (ESS)",,drop = FALSE]
+      nn <- nn[rownames(nn) != "Matched (ESS)", , drop = FALSE]
     }
     print(round_df_char(nn, 2, pad = " ", na_vals = "."), right = TRUE,
           quote = FALSE)
@@ -678,7 +678,7 @@ print.summary.matchit <- function(x, digits = max(3, getOption("digits") - 3),
 }
 
 #' @exportS3Method print summary.matchit.subclass
-print.summary.matchit.subclass <- function(x, digits = max(3, getOption("digits") -  3), ...){
+print.summary.matchit.subclass <- function(x, digits = max(3L, getOption("digits") -  3L), ...) {
 
   if (is_not_null(x$call)) {
     cat("\nCall:", deparse(x$call), sep = "\n")
@@ -686,7 +686,7 @@ print.summary.matchit.subclass <- function(x, digits = max(3, getOption("digits"
 
   if (is_not_null(x$sum.all)) {
     cat("\nSummary of Balance for All Data:\n")
-    print(round_df_char(x$sum.all[,-7, drop = FALSE], digits, pad = "0", na_vals = "."),
+    print(round_df_char(x$sum.all[, -7L, drop = FALSE], digits, pad = "0", na_vals = "."),
           right = TRUE, quote = FALSE)
   }
 
@@ -694,7 +694,7 @@ print.summary.matchit.subclass <- function(x, digits = max(3, getOption("digits"
     cat("\nSummary of Balance by Subclass:\n")
     for (s in seq_along(x$sum.subclass)) {
       cat(paste0("\n- ", names(x$sum.subclass)[s], "\n"))
-      print(round_df_char(x$sum.subclass[[s]][,-7, drop = FALSE], digits, pad = "0", na_vals = "."),
+      print(round_df_char(x$sum.subclass[[s]][, -7L, drop = FALSE], digits, pad = "0", na_vals = "."),
             right = TRUE, quote = FALSE)
     }
     if (is_not_null(x$qn)) {
@@ -706,26 +706,26 @@ print.summary.matchit.subclass <- function(x, digits = max(3, getOption("digits"
   else {
     if (is_not_null(x$sum.across)) {
       cat("\nSummary of Balance Across Subclasses\n")
-      if (all(is.na(x$sum.across[,7]))) x$sum.across <- x$sum.across[,-7,drop = FALSE]
+      if (all(is.na(x$sum.across[, 7L]))) x$sum.across <- x$sum.across[, -7L, drop = FALSE]
       print(round_df_char(x$sum.across, digits, pad = "0", na_vals = "."),
             right = TRUE, quote = FALSE)
     }
     if (is_not_null(x$reduction)) {
       cat("\nPercent Balance Improvement:\n")
-      print(round_df_char(x$reduction[,-5, drop = FALSE], 1, pad = "0", na_vals = "."),
+      print(round_df_char(x$reduction[, -5L, drop = FALSE], 1L, pad = "0", na_vals = "."),
             right = TRUE, quote = FALSE)
     }
 
     if (is_not_null(x$nn)) {
       cat("\nSample Sizes:\n")
       nn <- x$nn
-      if (isTRUE(all.equal(nn["All (ESS)",], nn["All",]))) {
+      if (isTRUE(all.equal(nn["All (ESS)", ], nn["All", ]))) {
         #Don't print ESS if same as full SS
-        nn <- nn[rownames(nn) != "All (ESS)",,drop = FALSE]
+        nn <- nn[rownames(nn) != "All (ESS)", , drop = FALSE]
       }
-      if (isTRUE(all.equal(nn["Matched (ESS)",], nn["Matched",]))) {
+      if (isTRUE(all.equal(nn["Matched (ESS)", ], nn["Matched", ]))) {
         #Don't print ESS if same as matched SS
-        nn <- nn[rownames(nn) != "Matched (ESS)",,drop = FALSE]
+        nn <- nn[rownames(nn) != "Matched (ESS)", , drop = FALSE]
       }
       print(round_df_char(nn, 2, pad = " ", na_vals = "."),
             right = TRUE, quote = FALSE)
@@ -789,8 +789,8 @@ print.summary.matchit.subclass <- function(x, digits = max(3, getOption("digits"
     .err("the argument to `addlvariables` must be in one of the accepted forms. See `?summary.matchit` for details")
   }
 
-
-  if (af <- rlang::is_formula(addlvariables)) {
+  af <- rlang::is_formula(addlvariables)
+  if (af) {
     addvariables_f <- addlvariables
     addlvariables <- model.frame(addvariables_f, data = data, na.action = "na.pass")
   }
@@ -806,13 +806,13 @@ print.summary.matchit.subclass <- function(x, digits = max(3, getOption("digits"
 
   k <- ncol(addlvariables)
   for (i in seq_len(k)) {
-    if (anyNA(addlvariables[[i]]) || (is.numeric(addlvariables[[i]]) && any(!is.finite(addlvariables[[i]])))) {
+    if (anyNA(addlvariables[[i]]) || (is.numeric(addlvariables[[i]]) && !all(is.finite(addlvariables[[i]])))) {
       covariates.with.missingness <- names(addlvariables)[i:k][vapply(i:k, function(j) anyNA(addlvariables[[j]]) ||
                                                                         (is.numeric(addlvariables[[j]]) &&
-                                                                           any(!is.finite(addlvariables[[j]]))),
+                                                                           !all(is.finite(addlvariables[[j]]))),
                                                                       logical(1L))]
       .err(paste0("Missing and non-finite values are not allowed in `addlvariables`. Variables with missingness or non-finite values:\n\t",
-                  paste(covariates.with.missingness, collapse = ", ")), tidy = FALSE)
+                  toString(covariates.with.missingness)), tidy = FALSE)
     }
 
     if (is.character(addlvariables[[i]])) {
@@ -820,11 +820,9 @@ print.summary.matchit.subclass <- function(x, digits = max(3, getOption("digits"
     }
   }
 
-  if (af) {
-    addlvariables <- get_covs_matrix(addvariables_f, data = data)
-  }
-  else {
-    addlvariables <- get_covs_matrix(data = addlvariables)
+  addlvariables <- {
+    if (af) get_covs_matrix(addvariables_f, data = data)
+    else get_covs_matrix(data = addlvariables)
   }
 
   # addl_assign <- get_assign(addlvariables)

@@ -540,12 +540,12 @@ matchit <- function(formula,
   covs <- model.frame(covs.formula, data = data, na.action = "na.pass")
   k <- ncol(covs)
   for (i in seq_len(k)) {
-    if (anyNA(covs[[i]]) || (is.numeric(covs[[i]]) && any(!is.finite(covs[[i]])))) {
+    if (anyNA(covs[[i]]) || (is.numeric(covs[[i]]) && !all(is.finite(covs[[i]])))) {
       covariates.with.missingness <- names(covs)[i:k][vapply(i:k, function(j) anyNA(covs[[j]]) ||
-                                                               (is.numeric(covs[[j]]) && any(!is.finite(covs[[j]]))),
+                                                               (is.numeric(covs[[j]]) && !all(is.finite(covs[[j]]))),
                                                              logical(1L))]
       .err(paste0("Missing and non-finite values are not allowed in the covariates. Covariates with missingness or non-finite values:\n\t",
-                  paste(covariates.with.missingness, collapse = ", ")), tidy = FALSE)
+                  toString(covariates.with.missingness)), tidy = FALSE)
     }
 
     if (is.character(covs[[i]])) {
@@ -633,7 +633,7 @@ matchit <- function(formula,
           distance.options[[i]] <- distance.options[[i]][!discarded]
         }
         else if (length(dim(distance.options[[i]])) == 2L && nrow(distance.options[[i]]) == n.obs) {
-          distance.options[[i]] <- distance.options[[i]][!discarded,,drop = FALSE]
+          distance.options[[i]] <- distance.options[[i]][!discarded, , drop = FALSE]
         }
       }
       dist.out <- do.call(fn1, distance.options, quote = TRUE)
@@ -764,7 +764,7 @@ print.matchit <- function(x, ...) {
       if (cal || disl) {
         cal.ps <- hasName(x[["caliper"]], "")
         cat(sprintf(" [%s]\n",
-                    paste(c("matching", "subclassification", "caliper", "common support")[c(!nm && !info$mahalanobis && info$method != "subclass", !nm && info$method == "subclass", cal.ps, disl)], collapse = ", ")))
+                    toString(c("matching", "subclassification", "caliper", "common support")[c(!nm && !info$mahalanobis && info$method != "subclass", !nm && info$method == "subclass", cal.ps, disl)])))
       }
 
       if (info$distance != "user") {
@@ -780,14 +780,13 @@ print.matchit <- function(x, ...) {
 
   if (cal) {
     cat(sprintf(" - caliper: %s\n",
-                paste(vapply(seq_along(x[["caliper"]]),
-                             function(z) {
-                               sprintf("%s (%s)",
-                                       if (names(x[["caliper"]])[z] == "") "<distance>"
-                                       else names(x[["caliper"]])[z],
-                                       format(round(x[["caliper"]][z], 3)))
-                             }, character(1L)),
-                      collapse = ", ")))
+                toString(vapply(seq_along(x[["caliper"]]),
+                                function(z) {
+                                  sprintf("%s (%s)",
+                                          if (nzchar(names(x[["caliper"]])[z])) names(x[["caliper"]])[z]
+                                          else "<distance>",
+                                          format(round(x[["caliper"]][z], 3L)))
+                                }, character(1L)))))
   }
 
   if (disl) {
@@ -800,9 +799,8 @@ print.matchit <- function(x, ...) {
 
   cat(sprintf(" - number of obs.: %s (original)%s\n",
               length(x[["treat"]]),
-              if (!all_equal_to(x[["weights"]], 1))
-                sprintf(", %s (matched)", sum(x[["weights"]] != 0))
-              else ""))
+              if (all_equal_to(x[["weights"]], 1)) ""
+              else sprintf(", %s (matched)", sum(x[["weights"]] != 0))))
 
   if (is_not_null(x[["s.weights"]])) {
     cat(" - sampling weights: present\n")
@@ -815,7 +813,7 @@ print.matchit <- function(x, ...) {
   if (is_not_null(x[["X"]])) {
     cat(sprintf(" - covariates: %s\n",
                 if (length(names(x[["X"]])) > 40L) "too many to name"
-                else paste(names(x[["X"]]), collapse = ", ")))
+                else toString(names(x[["X"]]))))
   }
 
   invisible(x)

@@ -25,7 +25,7 @@ Authors@R: c(
 	       comment = c(ORCID="0000-0003-3067-7154"))
   )
 Depends:
-    R (>= 3.5.0)
+    R (>= 3.6.0)
 Imports:
     backports (>= 1.1.9),
     chk (>= 0.8.1),
@@ -57,6 +57,7 @@ Suggests:
     highs,
     Rglpk,
     Rsymphony,
+    gurobi,
     knitr,
     rmarkdown,
     testthat (>= 3.0.0)

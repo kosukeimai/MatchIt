@@ -312,14 +312,12 @@ distance2glm <- function(formula, data = NULL, link = "logit", ...) {
   A <- ...mget(args)
   A[lengths(A) == 0L] <- NULL
 
-  family <- {
+  A[["data"]] <- data
+  A[["formula"]] <- formula
+  A[["family"]] <- {
     if (is_null(A[["weights"]])) binomial(link = link)
     else quasibinomial(link = link)
   }
-
-  A[["data"]] <- data
-  A[["formula"]] <- formula
-  A[["family"]] <- family
 
   res <- do.call("glm", A)
 
@@ -361,7 +359,7 @@ distance2rpart <- function(formula, data = NULL, link = NULL, ...) {
   A$method <- "class"
 
   res <- do.call(rpart::rpart, A)
-  list(model = res, distance = predict(res, type = "prob")[,"1"])
+  list(model = res, distance = predict(res, type = "prob")[, "1"])
 }
 
 #distance2nnet-----------------
@@ -491,7 +489,7 @@ distance2randomforest <- function(formula, data = NULL, link = NULL, ...) {
   newdata[[treatvar]] <- factor(newdata[[treatvar]], levels = c("0", "1"))
   res <- randomForest::randomForest(formula, data = newdata, ...)
 
-  list(model = res, distance = predict(res, type = "prob")[,"1"])
+  list(model = res, distance = predict(res, type = "prob")[, "1"])
 }
 
 #distance2glmnet--------------
@@ -524,7 +522,7 @@ distance2elasticnet <- function(formula, data = NULL, link = NULL, ...) {
   mf <- model.frame(formula, data = data)
 
   A$y <- model.response(mf)
-  A$x <- model.matrix(update(formula, . ~ . + 1), mf)[,-1,drop = FALSE]
+  A$x <- model.matrix(update(formula, . ~ . + 1), mf)[, -1L, drop = FALSE]
 
   res <- do.call(glmnet::cv.glmnet, A)
 

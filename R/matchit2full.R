@@ -239,14 +239,9 @@ matchit2full <- function(treat, formula, data, distance, discarded,
 
   .cat_verbose("Full matching... \n", verbose = verbose)
 
-  fm.args <- c("omit.fraction", "mean.controls", "tol", "solver")
-  A <- ...mget(fm.args)
+  .args <- c("omit.fraction", "mean.controls", "tol", "solver")
+  A <- ...mget(.args)
   A[lengths(A) == 0L] <- NULL
-
-  #Set max problem size to Inf and return to original value after match
-  omps <- getOption("optmatch_max_problem_size")
-  on.exit(options(optmatch_max_problem_size = omps))
-  options(optmatch_max_problem_size = Inf)
 
   estimand <- toupper(estimand)
   estimand <- match_arg(estimand, c("ATT", "ATC", "ATE"))
@@ -279,7 +274,7 @@ matchit2full <- function(treat, formula, data, distance, discarded,
     ex <- factor(exactify(model.frame(exact, data = data),
                           sep = ", ", include_vars = TRUE)[!discarded])
 
-    cc <- Reduce("intersect", lapply(unique(treat_), function(t) unclass(ex)[treat_==t]))
+    cc <- Reduce("intersect", lapply(unique(treat_), function(t) unclass(ex)[treat_ == t]))
 
     if (is_null(cc)) {
       .err("No matches were found")
@@ -315,7 +310,7 @@ matchit2full <- function(treat, formula, data, distance, discarded,
   mo <- mo[!discarded[treat == focal], !discarded[treat != focal], drop = FALSE]
   dimnames(mo) <- list(names(treat_)[treat_ == 1], names(treat_)[treat_ == 0])
 
-  mo <- optmatch::match_on(mo, data = as.data.frame(data)[!discarded,, drop = FALSE])
+  mo <- optmatch::match_on(mo, data = as.data.frame(data)[!discarded, , drop = FALSE])
   mo <- optmatch::as.InfinitySparseMatrix(mo)
 
   #Process antiexact
@@ -332,13 +327,13 @@ matchit2full <- function(treat, formula, data, distance, discarded,
       .err("calipers cannot be used with `method = \"full\"` when `min.controls` is specified")
     }
 
-    if (any(names(caliper) != "")) {
+    if (any(nzchar(names(caliper)))) {
       cov.cals <- setdiff(names(caliper), "")
       calcovs <- get_covs_matrix(reformulate(cov.cals, intercept = FALSE), data = data)
     }
 
     for (i in seq_along(caliper)) {
-      if (names(caliper)[i] != "") {
+      if (nzchar(names(caliper)[i])) {
         mo_cal <- optmatch::match_on(setNames(calcovs[!discarded, names(caliper)[i]], names(treat_)), z = treat_)
       }
       else if (is_null(mahvars) || is.matrix(distance)) {
@@ -369,7 +364,7 @@ matchit2full <- function(treat, formula, data, distance, discarded,
                            match(e, levels(ex)[cc]), length(cc), e),
                    verbose = verbose)
 
-      mo_ <- mo[ex[treat_==1] == e, ex[treat_==0] == e]
+      mo_ <- mo[ex[treat_ == 1] == e, ex[treat_ == 0] == e]
     }
     else {
       mo_ <- mo
@@ -386,9 +381,11 @@ matchit2full <- function(treat, formula, data, distance, discarded,
 
     A$x <- mo_
 
-    matchit_try({
-      p[[e]] <- do.call(optmatch::fullmatch, A)
-    }, from = "optmatch")
+    rlang::with_options({
+      matchit_try({
+        p[[e]] <- do.call(optmatch::fullmatch, A)
+      }, from = "optmatch")
+    }, optmatch_max_problem_size = Inf)
 
     pair[names(p[[e]])[!is.na(p[[e]])]] <- paste(as.character(p[[e]][!is.na(p[[e]])]), e, sep = "|")
   }
@@ -417,6 +414,6 @@ matchit2full <- function(treat, formula, data, distance, discarded,
 
   .cat_verbose("Done.\n", verbose = verbose)
 
-  class(res) <- c("matchit")
+  class(res) <- "matchit"
   res
 }

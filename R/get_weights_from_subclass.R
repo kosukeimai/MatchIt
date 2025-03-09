@@ -29,15 +29,15 @@ get_weights_from_subclass <- function(subclass, treat, estimand = "ATT") {
 
   if (estimand == "ATT") {
     weights[i1] <- 1
-    weights[i0] <- (treated_by_sub/control_by_sub)[subclass[i0]]
+    weights[i0] <- (treated_by_sub / control_by_sub)[subclass[i0]]
   }
   else if (estimand == "ATC") {
-    weights[i1] <- (control_by_sub/treated_by_sub)[subclass[i1]]
+    weights[i1] <- (control_by_sub / treated_by_sub)[subclass[i1]]
     weights[i0] <- 1
   }
   else if (estimand == "ATE") {
-    weights[i1] <- 1 + (control_by_sub/treated_by_sub)[subclass[i1]]
-    weights[i0] <- 1 + (treated_by_sub/control_by_sub)[subclass[i0]]
+    weights[i1] <- 1 + (control_by_sub / treated_by_sub)[subclass[i1]]
+    weights[i0] <- 1 + (treated_by_sub / control_by_sub)[subclass[i0]]
   }
 
   weights

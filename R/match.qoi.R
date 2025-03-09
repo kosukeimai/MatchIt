@@ -8,10 +8,10 @@ bal1var <- function(xx, tt, ww = NULL, s.weights, subclass = NULL, mm = NULL,
 
   xsum <- rep.int(NA_real_, 7L)
   if (standardize)
-    names(xsum) <- c("Means Treated","Means Control", "Std. Mean Diff.",
+    names(xsum) <- c("Means Treated", "Means Control", "Std. Mean Diff.",
                      "Var. Ratio", "eCDF Mean", "eCDF Max", "Std. Pair Dist.")
   else
-    names(xsum) <- c("Means Treated","Means Control", "Mean Diff.",
+    names(xsum) <- c("Means Treated", "Means Control", "Mean Diff.",
                      "Var. Ratio", "eQQ Mean", "eQQ Max", "Pair Dist.")
 
   if (un) ww <- s.weights
@@ -46,7 +46,7 @@ bal1var <- function(xx, tt, ww = NULL, s.weights, subclass = NULL, mm = NULL,
         }
       }
 
-      xsum[3L] <- mdiff/std
+      xsum[3L] <- mdiff / std
       if (!un && compute.pair.dist) {
         xsum[7L] <- pair.dist(xx, tt, subclass, mm, std)
       }
@@ -82,10 +82,10 @@ bal1var.subclass <- function(xx, tt, s.weights, subclass, s.d.denom = "treated",
   xsum <- matrix(NA_real_, nrow = 1L, ncol = 6L)
   rownames(xsum) <- "Subclass"
   if (standardize)
-    colnames(xsum) <- c("Means Treated","Means Control", "Std. Mean Diff.",
+    colnames(xsum) <- c("Means Treated", "Means Control", "Std. Mean Diff.",
                         "Var. Ratio", "eCDF Mean", "eCDF Max")
   else
-    colnames(xsum) <- c("Means Treated","Means Control", "Mean Diff",
+    colnames(xsum) <- c("Means Treated", "Means Control", "Mean Diff",
                         "Var. Ratio", "eQQ Mean", "eQQ Max")
 
   i1 <- which(in.sub & tt == 1)
@@ -93,10 +93,10 @@ bal1var.subclass <- function(xx, tt, s.weights, subclass, s.d.denom = "treated",
 
   too.small <- length(i1) < 2L && length(i0) < 2L
 
-  xsum["Subclass","Means Treated"] <- wm(xx[i1], s.weights[i1], na.rm = TRUE)
-  xsum["Subclass","Means Control"] <- wm(xx[i0], s.weights[i0], na.rm = TRUE)
+  xsum["Subclass", "Means Treated"] <- wm(xx[i1], s.weights[i1], na.rm = TRUE)
+  xsum["Subclass", "Means Control"] <- wm(xx[i0], s.weights[i0], na.rm = TRUE)
 
-  mdiff <- xsum["Subclass","Means Treated"] - xsum["Subclass","Means Control"]
+  mdiff <- xsum["Subclass", "Means Treated"] - xsum["Subclass", "Means Control"]
 
   if (standardize && abs(mdiff) > 1e-8) {
     if (!too.small) {
@@ -117,7 +117,7 @@ bal1var.subclass <- function(xx, tt, s.weights, subclass, s.d.denom = "treated",
         }
       }
 
-      xsum["Subclass", 3L] <- mdiff/std
+      xsum["Subclass", 3L] <- mdiff / std
     }
   }
   else {
@@ -157,7 +157,7 @@ pair.dist <- function(xx, tt, subclass = NULL, mm = NULL, std = NULL) {
   }
 
   if (is_not_null(std) && abs(mpdiff) > 1e-8) {
-    return(mpdiff/std)
+    return(mpdiff / std)
   }
 
   mpdiff

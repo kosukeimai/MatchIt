@@ -261,11 +261,11 @@ transform_covariates <- function(formula = NULL, data = NULL, method = "mahalano
       #NOTE: optmatch and Rubin (1980) use pooled within-group covariance matrix
       var <- {
         if (is_not_null(treat))
-          pooled_cov(X[!discarded,, drop = FALSE], treat[!discarded], s.weights[!discarded])
+          pooled_cov(X[!discarded, , drop = FALSE], treat[!discarded], s.weights[!discarded])
         else if (is_null(s.weights))
-          cov(X[!discarded,, drop = FALSE])
+          cov(X[!discarded, , drop = FALSE])
         else
-          cov.wt(X[!discarded,, drop = FALSE], s.weights[!discarded])$cov
+          cov.wt(X[!discarded, , drop = FALSE], s.weights[!discarded])$cov
       }
     }
     else if (!is.cov_like(var)) {
@@ -290,7 +290,7 @@ transform_covariates <- function(formula = NULL, data = NULL, method = "mahalano
                   dimnames = list(rownames(X)[!discarded], colnames(X)))
 
     for (i in seq_len(ncol(X_r))) {
-      X_r[,i] <- rank(X[!discarded, i])
+      X_r[, i] <- rank(X[!discarded, i])
     }
 
     var_r <- {
@@ -315,7 +315,7 @@ transform_covariates <- function(formula = NULL, data = NULL, method = "mahalano
     if (any(discarded)) {
       X_r <- array(0, dim = dim(X), dimnames = dimnames(X))
       for (i in seq_len(ncol(X_r))) {
-        X_r[!discarded,i] <- rank(X[!discarded,i])
+        X_r[!discarded, i] <- rank(X[!discarded, i])
       }
     }
 
@@ -324,10 +324,10 @@ transform_covariates <- function(formula = NULL, data = NULL, method = "mahalano
   else if (method == "scaled_euclidean") {
     if (is_null(var)) {
       if (is_not_null(treat)) {
-        sds <- pooled_sd(X[!discarded,, drop = FALSE], treat[!discarded], s.weights[!discarded])
+        sds <- pooled_sd(X[!discarded, , drop = FALSE], treat[!discarded], s.weights[!discarded])
       }
       else {
-        sds <- sqrt(apply(X[!discarded,, drop = FALSE], 2L, wvar, w = s.weights))
+        sds <- sqrt(apply(X[!discarded, , drop = FALSE], 2L, wvar, w = s.weights))
       }
     }
     else if (is.cov_like(var, X)) {
@@ -341,7 +341,7 @@ transform_covariates <- function(formula = NULL, data = NULL, method = "mahalano
     }
 
     for (i in seq_len(ncol(X))) {
-      X[,i] <- X[,i]/sds[i]
+      X[, i] <- X[, i] / sds[i]
     }
   }
   else if (method == "euclidean") {
@@ -415,7 +415,7 @@ get_covs_matrix_for_dist <- function(formula = NULL, data = NULL) {
 
   X <- model.matrix(formula, data = mf,
                     contrasts.arg = lapply(Filter(is.factor, mf),
-                                           function(x) contrasts(x, contrasts = FALSE)/sqrt(2)))
+                                           function(x) contrasts(x, contrasts = FALSE) / sqrt(2)))
 
   if (ncol(X) > 1L) {
     assign <- attr(X, "assign")[-1L]
@@ -446,7 +446,7 @@ get_covs_matrix_for_dist <- function(formula = NULL, data = NULL) {
 
   chk::chk_not_any_na(X, "the covariates")
 
-  if (any(!is.finite(X))) {
+  if (!all(is.finite(X))) {
     .err("non-finite values are not allowed in the covariates")
   }
 

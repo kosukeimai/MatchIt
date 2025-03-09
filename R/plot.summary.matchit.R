@@ -102,11 +102,11 @@ plot.summary.matchit <- function(x,
   }
 
   if (un) {
-    sd.all <- x[["sum.all"]][,"Std. Mean Diff."]
+    sd.all <- x[["sum.all"]][, "Std. Mean Diff."]
   }
 
   if (matched) {
-    sd.matched <- x[[if (sub) "sum.across" else "sum.matched"]][,"Std. Mean Diff."]
+    sd.matched <- x[[if (sub) "sum.across" else "sum.matched"]][, "Std. Mean Diff."]
   }
 
   chk::chk_flag(abs)
@@ -146,7 +146,7 @@ plot.summary.matchit <- function(x,
 
   if (sub && is_not_null(x$sum.subclass)) {
     for (i in seq_along(x$sum.subclass)) {
-      sd.sub <- x$sum.subclass[[i]][,"Std. Mean Diff."]
+      sd.sub <- x$sum.subclass[[i]][, "Std. Mean Diff."]
       if (abs) sd.sub <- abs(sd.sub)
       points(x = sd.sub[ord], y = seq_along(sd.sub),
              pch = as.character(i), col = "gray60", cex = .6)

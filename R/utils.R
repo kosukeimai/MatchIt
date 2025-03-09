@@ -27,7 +27,7 @@ word_list <- function(word.list = NULL, and.or = "and", is.are = FALSE, quotes =
   }
 
   if (is_null(and.or) || isFALSE(and.or)) {
-    out <- paste(word.list, collapse = ", ")
+    out <- toString(word.list)
   }
   else {
     and.or <- match_arg(and.or, c("and", "or"))
@@ -40,15 +40,13 @@ word_list <- function(word.list = NULL, and.or = "and", is.are = FALSE, quotes =
     }
     else {
       out <- sprintf("%s, %s %s",
-                     paste(word.list[-L], collapse = ", "),
+                     toString(word.list[-L]),
                      and.or,
                      word.list[L])
     }
   }
 
-  if (is.are) {
-    out <- sprintf("%s are", out)
-  }
+  if (is.are) out <- sprintf("%s are", out)
 
   attr(out, "plural") <- TRUE
 
@@ -69,20 +67,24 @@ add_quotes <- function(x, quotes = 2L) {
     return(paste0(quotes, x, str_rev(quotes)))
   }
 
-  if (!chk::vld_count(quotes) || quotes > 2) {
+  if (!chk::vld_count(quotes) || quotes > 2L) {
     stop("`quotes` must be boolean, 1, 2, or a string.")
   }
 
-  if (quotes == 0) {
+  if (quotes == 0L) {
     return(x)
   }
 
   x <- {
-    if (quotes == 1) sprintf("'%s'", x)
+    if (quotes == 1L) sprintf("'%s'", x)
     else sprintf('"%s"', x)
   }
 
   x
+}
+
+str_rev <- function(x) {
+  vapply(lapply(strsplit(x, NULL), rev), paste, character(1L), collapse = "")
 }
 
 #More informative and cleaner version of base::match.arg(). Uses chk.
@@ -96,7 +98,8 @@ match_arg <- function(arg, choices, several.ok = FALSE) {
   arg.name <- deparse1(substitute(arg), width.cutoff = 500L)
 
   if (missing(choices)) {
-    formal.args <- formals(sys.function(sysP <- sys.parent()))
+    sysP <- sys.parent()
+    formal.args <- formals(sys.function(sysP))
     choices <- eval(formal.args[[as.character(substitute(arg))]],
                     envir = sys.frame(sysP))
   }
@@ -110,21 +113,17 @@ match_arg <- function(arg, choices, several.ok = FALSE) {
   }
   else {
     chk::chk_string(arg, x_name = add_quotes(arg.name, "`"))
-
     if (identical(arg, choices)) {
       return(arg[1L])
     }
   }
 
   i <- pmatch(arg, choices, nomatch = 0L, duplicates.ok = TRUE)
-
-  if (all_equal_to(i, 0L)) {
+  if (all(i == 0L))
     .err(sprintf("the argument to `%s` should be %s%s",
                  arg.name,
                  ngettext(length(choices), "", if (several.ok) "at least one of " else "one of "),
-                 word_list(choices, and.or = "or", quotes = 2)))
-  }
-
+                 word_list(choices, and.or = "or", quotes = 2L)))
   i <- i[i > 0L]
 
   choices[i]
@@ -177,21 +176,20 @@ interaction2 <- function(..., sep = ".", lex.order = TRUE) {
 #which; otherwise, a guess is used. From WeightIt.
 binarize <- function(variable, zero = NULL, one = NULL) {
   var.name <- deparse1(substitute(variable))
-
-  if (has_n_unique(variable, 1L)) {
-    return(rep_with(1L, variable))
-  }
-
-  if (!has_n_unique(variable, 2L)) {
-    .err(sprintf("cannot binarize %s: more than two levels", var.name))
-  }
-
   if (is.character(variable) || is.factor(variable)) {
-    variable <- factor(variable, nmax = 2L)
+    variable <- factor(variable, nmax = if (is.factor(variable)) nlevels(variable) else NA)
     unique.vals <- levels(variable)
   }
   else {
-    unique.vals <- unique(variable, nmax = 2L)
+    unique.vals <- unique(variable)
+  }
+
+  if (length(unique.vals) == 1L) {
+    return(rep_with(1L, variable))
+  }
+
+  if (length(unique.vals) != 2L) {
+    .err(sprintf("cannot binarize %s: more than two levels", var.name))
   }
 
   if (is_not_null(zero)) {
@@ -225,7 +223,7 @@ binarize <- function(variable, zero = NULL, one = NULL) {
 
   variable.numeric <- {
     if (can_str2num(unique.vals)) setNames(str2num(unique.vals), unique.vals)[variable]
-    else unclass(factor(variable, levels = unique.vals))
+    else as.numeric(factor(variable, levels = unique.vals))
   }
 
   zero <- {
@@ -248,7 +246,7 @@ can_str2num <- function(x) {
   }
 
   nas <- is.na(x)
-  suppressWarnings(x_num <- as.numeric(as.character(x[!nas])))
+  x_num <- suppressWarnings(as.numeric(as.character(x[!nas])))
 
   !anyNA(x_num)
 }
@@ -257,24 +255,25 @@ can_str2num <- function(x) {
 str2num <- function(x) {
   nas <- is.na(x)
   if (!is.numeric(x) && !is.logical(x)) x <- as.character(x)
-  suppressWarnings(x_num <- as.numeric(x))
+  x_num <- suppressWarnings(as.numeric(x))
   is.na(x_num)[nas] <- TRUE
   x_num
 }
 
 #Capitalize first letter of string
 firstup <- function(x) {
-  substr(x, 1, 1) <- toupper(substr(x, 1, 1))
+  substr(x, 1L, 1L) <- toupper(substr(x, 1L, 1L))
   x
 }
 
 #Capitalize first letter of each word
 capwords <- function(s, strict = FALSE) {
-  cap <- function(s) paste0(toupper(substring(s, 1, 1)),
-                            {s <- substring(s, 2)
+  cap <- function(s) paste0(toupper(substring(s, 1L, 1L)),
+                            {s <- substring(s, 2L)
                             if (strict) tolower(s) else s},
                             collapse = " ")
-  sapply(strsplit(s, split = " "), cap, USE.NAMES = is_not_null(names(s)))
+  sapply(strsplit(s, split = " ", fixed = TRUE), cap,
+         USE.NAMES = is_not_null(names(s)))
 }
 
 #Reverse a string
@@ -300,7 +299,7 @@ round_df_char <- function(df, digits, pad = "0", na_vals = "") {
   nums <- vapply(df, is.numeric, logical(1))
 
   for (i in which(nums)) {
-    infs[,i] <- !nas[,i] & !is.finite(df[[i]])
+    infs[, i] <- !nas[, i] & !is.finite(df[[i]])
   }
 
   for (i in which(!nums)) {
@@ -310,7 +309,7 @@ round_df_char <- function(df, digits, pad = "0", na_vals = "") {
     }
   }
 
-  o.negs[,nums] <- !nas[,nums] & df[nums] < 0 & round(df[nums], digits) == 0
+  o.negs[, nums] <- !nas[, nums] & df[nums] < 0 & round(df[nums], digits) == 0
   df[nums] <- round(df[nums], digits = digits)
 
   pad0 <- identical(as.character(pad), "0")
@@ -370,7 +369,7 @@ wvar <- function(x, bin.var = NULL, w = NULL) {
   }
 
   #Reliability weights variance; same as cov.wt()
-  sum(w * (x - mx)^2)/(1 - sum(w^2))
+  sum(w * (x - mx)^2) / (1 - sum(w^2))
 }
 
 #Weighted mean faster than weighted.mean()
@@ -381,7 +380,7 @@ wm <- function(x, w = NULL, na.rm = TRUE) {
       nas <- which(is.na(x))
       x <- x[-nas]
     }
-    return(sum(x)/length(x))
+    return(sum(x) / length(x))
   }
 
   if (anyNA(x) || anyNA(w)) {
@@ -391,7 +390,7 @@ wm <- function(x, w = NULL, na.rm = TRUE) {
     w <- w[-nas]
   }
 
-  sum(x * w)/sum(w)
+  sum(x * w) / sum(w)
 }
 
 #Faster diff()
@@ -490,12 +489,14 @@ rep_with <- function(x, y) {
 pkg_caller_call <- function() {
   pn <- utils::packageName()
   package.funs <- c(getNamespaceExports(pn),
-                    .getNamespaceInfo(asNamespace(pn), "S3methods")[, 3])
+                    .getNamespaceInfo(asNamespace(pn), "S3methods")[, 3L])
 
   for (i in seq_len(sys.nframe())) {
     e <- sys.call(i)
 
-    if (is_null(n <- rlang::call_name(e))) {
+    n <- rlang::call_name(e)
+
+    if (is_null(n)) {
       next
     }
 
@@ -513,12 +514,16 @@ pkg_caller_call <- function() {
                call = pkg_caller_call())
 }
 .wrn <- function(..., n = NULL, tidy = TRUE, immediate = TRUE) {
-  if (immediate && isTRUE(all.equal(0, getOption("warn")))) {
-    op <- options(warn = 1)
-    on.exit(options(op))
-  }
   m <- chk::message_chk(..., n = n, tidy = tidy)
-  rlang::warn(paste(strwrap(m), collapse = "\n"))
+
+  if (immediate && isTRUE(all.equal(0, getOption("warn")))) {
+    rlang::with_options({
+      rlang::warn(paste(strwrap(m), collapse = "\n"))
+    }, warn = 1)
+  }
+  else {
+    rlang::warn(paste(strwrap(m), collapse = "\n"))
+  }
 }
 .msg <- function(..., n = NULL, tidy = TRUE) {
   m <- chk::message_chk(..., n = n, tidy = tidy)

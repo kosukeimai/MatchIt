@@ -253,14 +253,9 @@ matchit2optimal <- function(treat, formula, data, distance, discarded,
 
   rlang::check_installed("optmatch")
 
-  args <- c("tol", "solver")
-  A <- ...mget(args)
+  .args <- c("tol", "solver")
+  A <- ...mget(.args)
   A[lengths(A) == 0L] <- NULL
-
-  #Set max problem size to Inf and return to original value after match
-  omps <- getOption("optmatch_max_problem_size")
-  on.exit(options(optmatch_max_problem_size = omps))
-  options(optmatch_max_problem_size = Inf)
 
   estimand <- toupper(estimand)
   estimand <- match_arg(estimand, c("ATT", "ATC"))
@@ -302,46 +297,47 @@ matchit2optimal <- function(treat, formula, data, distance, discarded,
     ex <- factor(exactify(model.frame(exact, data = data),
                           sep = ", ", include_vars = TRUE)[!discarded])
 
-    cc <- Reduce("intersect", lapply(unique(treat_), function(t) unclass(ex)[treat_==t]))
+    cc <- Reduce("intersect", lapply(unique(treat_), function(t) unclass(ex)[treat_ == t]))
 
-    if (is_null(cc) ) {
+    if (is_null(cc)) {
       .err("no matches were found")
     }
 
     e_ratios <- vapply(levels(ex), function(e) {
-      sum(treat_[ex == e] == 0)/sum(treat_[ex == e] == 1)
+      sum(treat_[ex == e] == 0) / sum(treat_[ex == e] == 1)
     }, numeric(1L))
 
     if (any(e_ratios < 1)) {
       .wrn(sprintf("fewer %s units than %s units in some `exact` strata; not all %s units will get a match",
-                   tc[2], tc[1], tc[1]))
+                   tc[2L], tc[1L], tc[1L]))
     }
+
     if (ratio > 1 && any(e_ratios < ratio)) {
       if (ratio == max.controls)
         .wrn(sprintf("not all %s units will get %s matches",
-                     tc[1], ratio))
+                     tc[1L], ratio))
       else
         .wrn(sprintf("not enough %s units for an average of %s matches per %s unit in all `exact` strata",
-                     tc[2], ratio, tc[1]))
+                     tc[2L], ratio, tc[1L]))
     }
   }
   else {
     ex <- gl(1, length(treat_), labels = "_")
     cc <- 1
 
-    e_ratios <- setNames(sum(treat_ == 0)/sum(treat_ == 1), levels(ex))
+    e_ratios <- setNames(sum(treat_ == 0) / sum(treat_ == 1), levels(ex))
 
     if (e_ratios < 1) {
       .wrn(sprintf("fewer %s units than %s units; not all %s units will get a match",
-                   tc[2], tc[1], tc[1]))
+                   tc[2L], tc[1L], tc[1L]))
     }
     else if (e_ratios < ratio) {
       if (ratio == max.controls)
         .wrn(sprintf("not all %s units will get %s matches",
-                     tc[1], ratio))
+                     tc[1L], ratio))
       else
         .wrn(sprintf("not enough %s units for an average of %s matches per %s unit",
-                     tc[2], ratio, tc[1]))
+                     tc[2L], ratio, tc[1L]))
     }
   }
 
@@ -370,7 +366,7 @@ matchit2optimal <- function(treat, formula, data, distance, discarded,
   mo <- mo[!discarded[treat == focal], !discarded[treat != focal], drop = FALSE]
   dimnames(mo) <- list(names(treat_)[treat_ == 1], names(treat_)[treat_ == 0])
 
-  mo <- optmatch::match_on(mo, data = as.data.frame(data)[!discarded,, drop = FALSE])
+  mo <- optmatch::match_on(mo, data = as.data.frame(data)[!discarded, , drop = FALSE])
   mo <- optmatch::as.InfinitySparseMatrix(mo)
 
   if (is_null(mahvars) && !is.matrix(distance) && nlevels(ex) == 1L &&
@@ -407,7 +403,7 @@ matchit2optimal <- function(treat, formula, data, distance, discarded,
                            match(e, levels(ex)[cc]), length(cc), e),
                    verbose = verbose)
 
-      mo_ <- mo[ex[treat_==1] == e, ex[treat_==0] == e]
+      mo_ <- mo[ex[treat_ == 1] == e, ex[treat_ == 0] == e]
     }
     else {
       mo_ <- mo
@@ -445,17 +441,19 @@ matchit2optimal <- function(treat, formula, data, distance, discarded,
     A$mean.controls <- ratio_
     A$min.controls <- min.controls_
     A$max.controls <- max.controls_
-    A$data <- t_df[ex == e,, drop = FALSE] #just to get rownames; not actually used in matching
+    A$data <- t_df[ex == e, , drop = FALSE] #just to get rownames; not actually used in matching
 
-    matchit_try({
-      p[[e]] <- do.call(optmatch::fullmatch, A)
-    }, from = "optmatch")
+    rlang::with_options({
+      matchit_try({
+        p[[e]] <- do.call(optmatch::fullmatch, A)
+      }, from = "optmatch")
+    }, optmatch_max_problem_size = Inf)
 
     pair[names(p[[e]])[!is.na(p[[e]])]] <- paste(as.character(p[[e]][!is.na(p[[e]])]), e, sep = "|")
   }
 
   if (length(p) == 1L) {
-    p <- p[[1]]
+    p <- p[[1L]]
   }
 
   psclass <- factor(pair)

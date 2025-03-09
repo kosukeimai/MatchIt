@@ -306,8 +306,8 @@ matchit2nearest <- function(treat, data, distance, discarded,
 
   if (is.full.mahalanobis) {
     if (is_null(attr(terms(formula, data = data), "term.labels"))) {
-      .err(sprintf("covariates must be specified in the input formula when `distance = \"%s\"`",
-                   attr(is.full.mahalanobis, "transform")))
+      .err(sprintf("covariates must be specified in the input formula when `distance = %s`",
+                   add_quotes(attr(is.full.mahalanobis, "transform"))))
     }
     mahvars <- formula
   }
@@ -345,25 +345,25 @@ matchit2nearest <- function(treat, data, distance, discarded,
   ex.caliper <- NULL
 
   if (is_not_null(caliper)) {
-    if (any(names(caliper) != "")) {
-      caliper.covs <- caliper[names(caliper) != ""]
+    if (any(nzchar(names(caliper)))) {
+      caliper.covs <- caliper[nzchar(names(caliper))]
       caliper.covs.mat <- get_covs_matrix(reformulate(names(caliper.covs)),
                                           data = data)
 
       if (is_not_null(mahcovs) || is_not_null(distance_mat)) {
         ex.caliper.list <- setNames(lapply(names(caliper.covs), function(i) {
           if (caliper.covs[i] < 0) {
-            return(integer(0))
+            return(integer(0L))
           }
 
-          splits <- get_splitsC(as.numeric(caliper.covs.mat[,i]),
+          splits <- get_splitsC(as.numeric(caliper.covs.mat[, i]),
                                 as.numeric(caliper.covs[i]))
 
           if (is_null(splits)) {
-            return(integer(0))
+            return(integer(0L))
           }
 
-          cut(caliper.covs.mat[,i],
+          cut(caliper.covs.mat[, i],
               breaks = splits,
               include.lowest = TRUE)
         }), names(caliper.covs))
@@ -385,8 +385,8 @@ matchit2nearest <- function(treat, data, distance, discarded,
       }
     }
 
-    if (hasName(caliper, "")) {
-      caliper.dist <- caliper[names(caliper) == ""]
+    if (!all(nzchar(names(caliper)))) {
+      caliper.dist <- caliper[!nzchar(names(caliper))]
     }
   }
 
@@ -432,7 +432,7 @@ matchit2nearest <- function(treat, data, distance, discarded,
                    sep = ", ",
                    include_vars = TRUE)
 
-    cc <- Reduce("intersect", lapply(unique(treat), function(t) unclass(ex)[treat==t]))
+    cc <- Reduce("intersect", lapply(unique(treat), function(t) unclass(ex)[treat == t]))
 
     if (is_null(cc)) {
       .err("no matches were found")
@@ -536,20 +536,19 @@ matchit2nearest <- function(treat, data, distance, discarded,
     ratio <- as.integer(ratio)
   }
   else {
-    ratio <- as.integer(rep.int(ratio, n1))
+    ratio <- rep.int(as.integer(ratio), n1)
   }
 
   m.order <- {
     if (is_null(distance)) match_arg(m.order, c("data", "random", "closest", "farthest"))
-    else if (is_not_null(m.order)) match_arg(m.order, c("largest", "smallest", "data", "random", "closest", "farthest"))
-    else if (estimand == "ATC") "smallest"
-    else "largest"
+    else if (is_null(m.order)) switch(estimand, "ATC" = "smallest", "largest")
+    else match_arg(m.order, c("largest", "smallest", "data", "random", "closest", "farthest"))
   }
 
   #If mahcovs is only 1 variable, use vec matching for speed
   if (is.full.mahalanobis && is_null(distance) && is_null(caliper.dist) &&
       is_not_null(mahcovs) && ncol(mahcovs) == 1L) {
-    distance <- mahcovs[,1]
+    distance <- mahcovs[, 1L]
     mahcovs <- NULL
   }
 
@@ -577,7 +576,7 @@ matchit2nearest <- function(treat, data, distance, discarded,
                    verbose = verbose)
 
       .e <- which(ex == e)
-      .e1 <- which(ex[treat==1] == e)
+      .e1 <- which(ex[treat == 1] == e)
       treat_ <- treat[.e]
 
       discarded_ <- discarded[.e]
@@ -594,22 +593,22 @@ matchit2nearest <- function(treat, data, distance, discarded,
 
       caliper.covs.mat_ <- NULL
       if (is_not_null(caliper.covs.mat)) {
-        caliper.covs.mat_ <- caliper.covs.mat[.e,, drop = FALSE]
+        caliper.covs.mat_ <- caliper.covs.mat[.e, , drop = FALSE]
       }
 
       mahcovs_ <- NULL
       if (is_not_null(mahcovs)) {
-        mahcovs_ <- mahcovs[.e,,drop = FALSE]
+        mahcovs_ <- mahcovs[.e, , drop = FALSE]
       }
 
       antiexactcovs_ <- NULL
       if (is_not_null(antiexactcovs)) {
-        antiexactcovs_ <- antiexactcovs[.e,, drop = FALSE]
+        antiexactcovs_ <- antiexactcovs[.e, , drop = FALSE]
       }
 
       distance_mat_ <- NULL
       if (is_not_null(distance_mat)) {
-        .e0 <- which(ex[treat==0] == e)
+        .e0 <- which(ex[treat == 0] == e)
         distance_mat_ <- distance_mat[.e1, .e0, drop = FALSE]
       }
 

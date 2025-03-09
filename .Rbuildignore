@@ -16,3 +16,4 @@
 ^.*\.so$
 ^CRAN-SUBMISSION$
 ^Makefile$
+^\.lintr

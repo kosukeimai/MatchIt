@@ -25,8 +25,8 @@ create_info <- function(method, fn1, link, discard, replace, ratio,
                         mahalanobis, transform, subclass, antiexact,
                         distance_is_matrix) {
   list(method = method,
-       distance = if (is_null(fn1)) NULL else sub("distance2", "", fn1, fixed = TRUE),
-       link = if (is_null(link)) NULL else link,
+       distance = if (is_not_null(fn1)) sub("distance2", "", fn1, fixed = TRUE) else NULL,
+       link = if (is_not_null(link)) link else NULL,
        discard = discard,
        replace = if (is_not_null(method) && method %in% c("nearest", "genetic")) replace else NULL,
        ratio = if (is_not_null(method) && method %in% c("nearest", "optimal", "genetic")) ratio else NULL,
@@ -44,8 +44,8 @@ info_to_method <- function(info) {
   out.list <- setNames(vector("list", 3L), c("kto1", "type", "replace"))
 
   out.list[["kto1"]] <- {
-    if (is_not_null(info$ratio)) paste0(if (is_not_null(info$max.controls)) "variable ratio ", round(info$ratio, 2), ":1")
-    else NULL
+    if (is_null(info$ratio)) NULL
+    else paste0(if (is_not_null(info$max.controls)) "variable ratio ", round(info$ratio, 2L), ":1")
   }
 
   out.list[["type"]] <- {
@@ -84,44 +84,29 @@ info_to_distance <- function(info) {
     linear <- FALSE
   }
 
-  if (distance == "glm") {
-    if (link == "logit") dist <- "logistic regression"
-    else if (link == "probit") dist <- "probit regression"
-    else dist <- sprintf("GLM with a %s link", link)
-  }
-  else if (distance == "gam") {
-    dist <- sprintf("GAM with a %s link", link)
-  }
-  else if (distance == "gbm") {
-    dist <- "GBM"
-  }
-  else if (distance == "elasticnet") {
-    dist <- sprintf("an elastic net with a %s link", link)
-  }
-  else if (distance == "lasso") {
-    if (link == "logit") dist <- "lasso logistic regression"
-    else dist <- sprintf("lasso regression with a %s link", link)
-  }
-  else if (distance == "ridge") {
-    dist <- sprintf("ridge regression with a %s link", link)
-  }
-  else if (distance == "rpart") {
-    dist <- "CART"
-  }
-  else if (distance == "nnet") {
-    dist <- "a neural network"
-  }
-  else if (distance == "cbps") {
-    dist <- "CBPS"
-  }
-  else if (distance == "bart") {
-    dist <- "BART"
-  }
-  else if (distance == "randomforest") {
-    dist <- "a random forest"
-  }
+  dist <- switch(distance,
+                 "glm" = switch(link,
+                                "logit" = "logistic regression",
+                                "probit" = "probit regression",
+                                sprintf("GLM with a %s link", link)),
+                 "gam" = sprintf("GAM with a %s link", link),
+                 "gbm" = "GBM",
+                 "elasticnet" = sprintf("an elastic net with a %s link", link),
+                 "lasso" = switch(link,
+                                  "logit" = "lasso logistic regression",
+                                  sprintf("lasso regression with a %s link", link)),
+                 "ridge" = switch(link,
+                                  "logit" = "ridge logistic regression",
+                                  sprintf("ridge regression with a %s link", link)),
+                 "rpart" = "CART",
+                 "nnet" = "a neural network",
+                 "cbps" = "CBPS",
+                 "bart" = "BART",
+                 "randomforest" = "a random forest")
 
-  if (linear) dist <- paste(dist, "and linearized")
+  if (linear) {
+    dist <- paste(dist, "and linearized")
+  }
 
   dist
 }
@@ -197,10 +182,10 @@ get_covs_matrix <- function(formula = NULL, data = NULL) {
                     contrasts.arg = lapply(Filter(is.factor, mf),
                                            contrasts, contrasts = FALSE))
 
-  assign <- attr(X, "assign")[-1L]
-  X <- X[,-1L, drop = FALSE]
+  .assign <- attr(X, "assign")[-1L]
+  X <- X[, -1L, drop = FALSE]
 
-  attr(X, "assign") <- assign
+  attr(X, "assign") <- .assign
 
   X
 }
@@ -279,57 +264,56 @@ pooled_sd <- function(X, t, w = NULL, bin.var = NULL, contribution = "proportion
   }
 
   if (contribution == "equal") {
-    vars <- matrix(0, nrow = length(unique_t), ncol = ncol(X))
-
-    for (i in seq_along(unique_t)) {
-      in_t <- which(t == unique_t[i])
-      vars[i,] <- vapply(seq_len(ncol(X)), function(j) {
-        x <- X[,j]
-        b <- bin.var[j]
-        wvar(x[in_t], w = w[in_t], bin.var = b)
+    vars <- do.call("rbind", lapply(unique_t, function(i) {
+      in_t <- which(t == i)
+      vapply(seq_len(ncol(X)), function(j) {
+        wvar(X[in_t, j], w = w[in_t], bin.var = bin.var[j])
       }, numeric(1L))
-    }
+    }))
 
     pooled_var <- colMeans(vars)
   }
   else {
     pooled_var <- vapply(seq_len(ncol(X)), function(j) {
-      x <- X[,j]
+      x <- X[, j]
       b <- bin.var[j]
 
       if (b) {
-        if (is_null(w)) {
-          v <- vapply(unique_t, function(i) {
-            sxi <- sum(x[t == i])
-            ni <- sum(t == i)
-            sxi * (1 - sxi/ni) / n
+        v <- {
+          if (is_null(w)) vapply(unique_t, function(i) {
+            in_i <- which(t == i)
+            sxi <- sum(x[in_i])
+            ni <- length(in_i)
+            sxi * (1 - sxi / ni) / n
           }, numeric(1L))
-          return(sum(v))
-        }
-        else {
-          v <- vapply(unique_t, function(i) {
-            sxi <- sum(x[t == i] * w[t == i])
-            ni <- sum(w[t==i])
-            sxi * (1 - sxi/ni) / sum(w)
+          else vapply(unique_t, function(i) {
+            in_i <- which(t == i)
+            sxi <- sum(x[in_i] * w[in_i])
+            ni <- sum(w[in_i])
+            sxi * (1 - sxi / ni) / sum(w)
           }, numeric(1L))
-          return(sum(v))
         }
+
+        return(sum(v))
       }
-      else {
-        if (is_null(w)) {
-          for (i in unique_t) {
-            x[t==i] <- x[t==i] - wm(x[t==i])
-          }
-          return(sum(x^2)/(n - length(unique_t)))
+
+      if (is_null(w)) {
+        for (i in unique_t) {
+          in_i <- which(t == i)
+          x[in_i] <- x[in_i] - wm(x[in_i])
         }
-        else {
-          for (i in unique_t) {
-            x[t==i] <- x[t==i] - wm(x[t==i], w[t==i])
-          }
-          w_ <- .make_sum_to_1(w)
-          return(sum(w_ * x^2)/(1 - sum(w_^2)))
-        }
+
+        return(sum(x^2) / (n - length(unique_t)))
       }
+
+      for (i in unique_t) {
+        in_i <- which(t == i)
+        x[in_i] <- x[in_i] - wm(x[in_i], w[in_i])
+      }
+      w_ <- .make_sum_to_1(w)
+
+      sum(w_ * x^2) / (1 - sum(w_^2))
+
     }, numeric(1L))
   }
 
@@ -338,7 +322,7 @@ pooled_sd <- function(X, t, w = NULL, bin.var = NULL, contribution = "proportion
 
 #Effective sample size
 ESS <- function(w) {
-  sum(w)^2/sum(w^2)
+  sum(w)^2 / sum(w^2)
 }
 
 #Compute sample sizes
@@ -356,16 +340,16 @@ nn <- function(treat, weights, discarded = NULL, s.weights = NULL) {
 
   n <- matrix(0, ncol = 2L, nrow = 6L,
               dimnames = list(c("All (ESS)", "All", "Matched (ESS)",
-                                "Matched", "Unmatched","Discarded"),
+                                "Matched", "Unmatched", "Discarded"),
                               c("Control", "Treated")))
 
   #                      Control                                    Treated
-  n["All (ESS)",] <-     c(ESS(s.weights[treat==0]),                ESS(s.weights[treat==1]))
-  n["All",] <-           c(sum(treat==0),                           sum(treat==1))
-  n["Matched (ESS)",] <- c(ESS(weights[treat==0]),                  ESS(weights[treat==1]))
-  n["Matched",] <-       c(sum(treat==0 & weights > 0),             sum(treat==1 & weights > 0))
-  n["Unmatched",] <-     c(sum(treat==0 & weights==0 & !discarded), sum(treat==1 & weights==0 & !discarded))
-  n["Discarded",] <-     c(sum(treat==0 & discarded),               sum(treat==1 & discarded))
+  n["All (ESS)", ] <-     c(ESS(s.weights[treat == 0]),                ESS(s.weights[treat == 1]))
+  n["All", ] <-           c(sum(treat == 0),                           sum(treat == 1))
+  n["Matched (ESS)", ] <- c(ESS(weights[treat == 0]),                  ESS(weights[treat == 1]))
+  n["Matched", ] <-       c(sum(treat == 0 & weights > 0),             sum(treat == 1 & weights > 0))
+  n["Unmatched", ] <-     c(sum(treat == 0 & weights == 0 & !discarded), sum(treat == 1 & weights == 0 & !discarded))
+  n["Discarded", ] <-     c(sum(treat == 0 & discarded),               sum(treat == 1 & discarded))
 
   n
 }

@@ -89,7 +89,7 @@
 #'
 NULL
 
-matchit2exact <- function(treat, covs, data, estimand = "ATT", verbose = FALSE, ...){
+matchit2exact <- function(treat, covs, data, estimand = "ATT", verbose = FALSE, ...) {
 
   .cat_verbose("Exact matching...\n", verbose = verbose)
 
