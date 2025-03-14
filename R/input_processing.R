@@ -15,26 +15,40 @@ check.inputs <- function(mcall, method, distance, exact, mahvars, antiexact,
                                   "quick"))
   }
 
-  ignored.inputs <- character(0)
-  error.inputs <- character(0)
+  ignored.inputs <- character(0L)
+  error.inputs <- character(0L)
+
+  .entered_arg <- function(mcall, i) {
+    if (!hasName(mcall, i)) {
+      return(FALSE)
+    }
+
+    i_ <- get0(i, envir = pos.to.env(-2L), inherits = FALSE)
+
+    if (is_null(i_)) {
+      return(FALSE)
+    }
+
+    !identical(i_, eval(formals(matchit)[[i]]))
+  }
 
   if (null.method) {
     for (i in c("exact", "mahvars", "antiexact", "caliper", "std.caliper", "replace", "ratio", "min.controls", "max.controls", "m.order")) {
-      if (hasName(mcall, i) && is_not_null(i_ <- get0(i, inherits = FALSE)) && !identical(i_, formals(matchit)[[i]])) {
+      if (.entered_arg(mcall, i)) {
         ignored.inputs <- c(ignored.inputs, i)
       }
     }
   }
   else if (method == "exact") {
     for (i in c("distance", "exact", "mahvars", "antiexact", "caliper", "std.caliper", "discard", "reestimate", "replace", "ratio", "min.controls", "max.controls", "m.order")) {
-      if (hasName(mcall, i) && is_not_null(i_ <- get0(i, inherits = FALSE)) && !identical(i_, formals(matchit)[[i]])) {
+      if (.entered_arg(mcall, i)) {
         ignored.inputs <- c(ignored.inputs, i)
       }
     }
   }
   else if (method == "cem") {
     for (i in c("distance", "exact", "mahvars", "antiexact", "caliper", "std.caliper", "discard", "reestimate", "replace", "ratio", "min.controls", "max.controls")) {
-      if (hasName(mcall, i) && is_not_null(i_ <- get0(i, inherits = FALSE)) && !identical(i_, formals(matchit)[[i]])) {
+      if (.entered_arg(mcall, i)) {
         ignored.inputs <- c(ignored.inputs, i)
       }
     }
@@ -42,7 +56,7 @@ check.inputs <- function(mcall, method, distance, exact, mahvars, antiexact,
   else if (method == "nearest") {
     if (is.character(distance) && distance %in% matchit_distances()) {
       for (e in c("mahvars", "reestimate")) {
-        if (hasName(mcall, e) && is_not_null(e_ <- get0(e, inherits = FALSE)) && !identical(e_, formals(matchit)[[e]])) {
+        if (.entered_arg(mcall, e)) {
           error.inputs <- c(error.inputs, e)
         }
       }
@@ -51,14 +65,14 @@ check.inputs <- function(mcall, method, distance, exact, mahvars, antiexact,
   else if (method == "optimal") {
     if (is.character(distance) && distance %in% matchit_distances()) {
       for (e in c("mahvars", "reestimate")) {
-        if (hasName(mcall, e) && is_not_null(e_ <- get0(e, inherits = FALSE)) && !identical(e_, formals(matchit)[[e]])) {
+        if (.entered_arg(mcall, e)) {
           error.inputs <- c(error.inputs, e)
         }
       }
     }
 
     for (i in c("replace", "caliper", "std.caliper", "m.order")) {
-      if (hasName(mcall, i) && is_not_null(i_ <- get0(i, inherits = FALSE)) && !identical(i_, formals(matchit)[[i]])) {
+      if (.entered_arg(mcall, i)) {
         ignored.inputs <- c(ignored.inputs, i)
       }
     }
@@ -67,14 +81,14 @@ check.inputs <- function(mcall, method, distance, exact, mahvars, antiexact,
   else if (method == "full") {
     if (is.character(distance) && distance %in% matchit_distances()) {
       for (e in c("mahvars", "reestimate")) {
-        if (hasName(mcall, e) && is_not_null(e_ <- get0(e, inherits = FALSE)) && !identical(e_, formals(matchit)[[e]])) {
+        if (.entered_arg(mcall, e)) {
           error.inputs <- c(error.inputs, e)
         }
       }
     }
 
     for (i in c("replace", "ratio", "m.order")) {
-      if (hasName(mcall, i) && is_not_null(i_ <- get0(i, inherits = FALSE)) && !identical(i_, formals(matchit)[[i]])) {
+      if (.entered_arg(mcall, i)) {
         ignored.inputs <- c(ignored.inputs, i)
       }
     }
@@ -82,27 +96,27 @@ check.inputs <- function(mcall, method, distance, exact, mahvars, antiexact,
   else if (method == "genetic") {
     if (is.character(distance) && distance %in% matchit_distances()) {
       for (e in c("mahvars", "reestimate")) {
-        if (hasName(mcall, e) && is_not_null(e_ <- get0(e, inherits = FALSE)) && !identical(e_, formals(matchit)[[e]])) {
+        if (.entered_arg(mcall, e)) {
           error.inputs <- c(error.inputs, e)
         }
       }
     }
     for (i in c("min.controls", "max.controls")) {
-      if (hasName(mcall, i) && is_not_null(i_ <- get0(i, inherits = FALSE)) && !identical(i_, formals(matchit)[[i]])) {
+      if (.entered_arg(mcall, i)) {
         ignored.inputs <- c(ignored.inputs, i)
       }
     }
   }
   else if (method == "cardinality") {
     for (i in c("distance", "antiexact", "caliper", "std.caliper", "reestimate", "replace", "min.controls", "m.order")) {
-      if (hasName(mcall, i) && is_not_null(i_ <- get0(i, inherits = FALSE)) && !identical(i_, formals(matchit)[[i]])) {
+      if (.entered_arg(mcall, i)) {
         ignored.inputs <- c(ignored.inputs, i)
       }
     }
   }
   else if (method == "subclass") {
     for (i in c("exact", "mahvars", "antiexact", "caliper", "std.caliper", "replace", "ratio", "min.controls", "max.controls", "m.order")) {
-      if (hasName(mcall, i) && is_not_null(i_ <- get0(i, inherits = FALSE)) && !identical(i_, formals(matchit)[[i]])) {
+      if (.entered_arg(mcall, i)) {
         ignored.inputs <- c(ignored.inputs, i)
       }
     }
@@ -110,14 +124,14 @@ check.inputs <- function(mcall, method, distance, exact, mahvars, antiexact,
   else if (method == "quick") {
     if (is.character(distance) && distance %in% matchit_distances()) {
       for (e in c("mahvars", "reestimate")) {
-        if (hasName(mcall, e) && is_not_null(e_ <- get0(e, inherits = FALSE)) && !identical(e_, formals(matchit)[[e]])) {
+        if (.entered_arg(mcall, e)) {
           error.inputs <- c(error.inputs, e)
         }
       }
     }
 
     for (i in c("replace", "ratio", "min.controls", "max.controls", "m.order", "antiexact")) {
-      if (hasName(mcall, i) && is_not_null(i_ <- get0(i, inherits = FALSE)) && !identical(i_, formals(matchit)[[i]])) {
+      if (.entered_arg(mcall, i)) {
         ignored.inputs <- c(ignored.inputs, i)
       }
     }
@@ -284,11 +298,11 @@ process.distance <- function(distance, method = NULL, treat) {
 
     if (all_equal_to(dim.distance, length(treat))) {
       if (is_not_null(rownames(distance))) {
-        distance <- distance[names(treat),, drop = FALSE]
+        distance <- distance[names(treat), , drop = FALSE]
       }
 
       if (is_not_null(colnames(distance))) {
-        distance <- distance[,names(treat), drop = FALSE]
+        distance <- distance[, names(treat), drop = FALSE]
       }
 
       distance <- distance[treat == 1, treat == 0, drop = FALSE]
@@ -296,11 +310,11 @@ process.distance <- function(distance, method = NULL, treat) {
     else if (dim.distance[1L] == sum(treat == 1) &&
              dim.distance[2L] == sum(treat == 0)) {
       if (is_not_null(rownames(distance))) {
-        distance <- distance[names(treat)[treat == 1],, drop = FALSE]
+        distance <- distance[names(treat)[treat == 1], , drop = FALSE]
       }
 
       if (is_not_null(colnames(distance))) {
-        distance <- distance[,names(treat)[treat == 0], drop = FALSE]
+        distance <- distance[, names(treat)[treat == 0], drop = FALSE]
       }
     }
     else {
@@ -452,7 +466,7 @@ process.caliper <- function(caliper = NULL, method = NULL, data = NULL, covs = N
   else if (anyNA(names(caliper))) {
     .err("`caliper` names cannot include `NA`")
   }
-  else if (sum(names(caliper) == "") > 1) {
+  else if (sum(!nzchar(names(caliper))) > 1L) {
     .err("no more than one entry in `caliper` can have no name")
   }
 
@@ -464,9 +478,9 @@ process.caliper <- function(caliper = NULL, method = NULL, data = NULL, covs = N
   cal.in.data <- setNames(names(caliper) %in% names(data), names(caliper))
   cal.in.covs <- setNames(names(caliper) %in% names(covs), names(caliper))
   cal.in.mahcovs <- setNames(names(caliper) %in% names(mahcovs), names(caliper))
-  if (any(names(caliper) != "" & !cal.in.covs & !cal.in.data)) {
+  if (any(nzchar(names(caliper)) & !cal.in.covs & !cal.in.data)) {
     .err(paste0("All variables named in `caliper` must be in `data`. Variables not in `data`:\n\t",
-                paste0(names(caliper)[names(caliper) != "" & !cal.in.data & !cal.in.covs & !cal.in.mahcovs], collapse = ", ")),
+                toString(names(caliper)[nzchar(names(caliper)) & !cal.in.data & !cal.in.covs & !cal.in.mahcovs])),
          tidy = FALSE)
   }
 
@@ -491,17 +505,19 @@ process.caliper <- function(caliper = NULL, method = NULL, data = NULL, covs = N
 
   #Ensure no calipers on categorical variables
   cat.vars <- vapply(names(caliper), function(x) {
-    if (x == "") var <- distance
-    else if (cal.in.data[x]) var <- data[[x]]
-    else if (cal.in.covs[x]) var <- covs[[x]]
-    else var <- mahcovs[[x]]
+    v <- {
+      if (!nzchar(x)) distance
+      else if (cal.in.data[x]) data[[x]]
+      else if (cal.in.covs[x]) covs[[x]]
+      else mahcovs[[x]]
+    }
 
-    chk::vld_character_or_factor(var)
+    chk::vld_character_or_factor(v)
   }, logical(1L))
 
   if (any(cat.vars)) {
     .err(paste0("Calipers cannot be used with factor or character variables. Offending variables:\n\t",
-                paste0(ifelse(names(caliper) == "", "<distance>", names(caliper))[cat.vars], collapse = ", ")),
+                toString(ifelse(nzchar(names(caliper)), names(caliper), "<distance>")[cat.vars])),
          tidy = FALSE)
   }
 
@@ -510,12 +526,12 @@ process.caliper <- function(caliper = NULL, method = NULL, data = NULL, covs = N
   chk::chk_not_any_na(std.caliper)
 
   if (any(std.caliper)) {
-    if (hasName(std.caliper, "") && isTRUE(std.caliper[names(std.caliper) == ""]) && is.matrix(distance)) {
+    if (hasName(std.caliper, "") && isTRUE(std.caliper[!nzchar(names(std.caliper))]) && is.matrix(distance)) {
       .err("when `distance` is supplied as a matrix and a caliper for it is specified, `std.caliper` must be `FALSE` for the distance measure")
     }
 
     caliper[std.caliper] <- caliper[std.caliper] * vapply(names(caliper)[std.caliper], function(x) {
-      if (x == "") sd(distance[!discarded])
+      if (!nzchar(x)) sd(distance[!discarded])
       else if (cal.in.data[x]) sd(data[[x]][!discarded])
       else if (cal.in.covs[x]) sd(covs[[x]][!discarded])
       else sd(mahcovs[[x]][!discarded])
@@ -528,8 +544,8 @@ process.caliper <- function(caliper = NULL, method = NULL, data = NULL, covs = N
   }
 
   #Add cal.formula
-  if (any(names(caliper) != "" & !cal.in.covs[names(caliper)] & !cal.in.mahcovs[names(caliper)])) {
-    attr(caliper, "cal.formula") <- reformulate(names(caliper)[names(caliper) != "" & !cal.in.covs[names(caliper)] & !cal.in.mahcovs[names(caliper)]])
+  if (any(nzchar(names(caliper)) & !cal.in.covs[names(caliper)] & !cal.in.mahcovs[names(caliper)])) {
+    attr(caliper, "cal.formula") <- reformulate(names(caliper)[nzchar(names(caliper)) & !cal.in.covs[names(caliper)] & !cal.in.mahcovs[names(caliper)]])
   }
 
   caliper
@@ -585,7 +601,7 @@ process.variable.input <- function(x, data = NULL) {
 
     if (!all(hasName(data, x))) {
       .err(sprintf("All names supplied to `%s` must be variables in `data`. Variables not in `data`:\n\t%s", n,
-                   paste(add_quotes(setdiff(x, names(data))), collapse = ", ")), tidy = FALSE)
+                   toString(add_quotes(setdiff(x, names(data))))), tidy = FALSE)
     }
 
     x <- reformulate(x)

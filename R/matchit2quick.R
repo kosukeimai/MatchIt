@@ -124,7 +124,7 @@
 #' @examplesIf requireNamespace("quickmatch", quietly = TRUE)
 #' data("lalonde")
 #'
-#' # Generalize full PS matching
+#' # Generalized full PS matching
 #' m.out1 <- matchit(treat ~ age + educ + race + nodegree +
 #'                     married + re74 + re75,
 #'                   data = lalonde,
@@ -175,7 +175,7 @@ matchit2quick <- function(treat, formula, data, distance, discarded,
     ex <- factor(exactify(model.frame(exact, data = data),
                           sep = ", ", include_vars = TRUE)[!discarded])
 
-    cc <- Reduce("intersect", lapply(unique(treat_), function(t) unclass(ex)[treat_==t]))
+    cc <- Reduce("intersect", lapply(unique(treat_), function(t) unclass(ex)[treat_ == t]))
 
     if (is_null(cc)) {
       .err("no matches were found")
@@ -226,7 +226,7 @@ matchit2quick <- function(treat, formula, data, distance, discarded,
                    verbose = verbose)
     }
 
-    A$distances <- distcovs[ex == e,, drop = FALSE]
+    A$distances <- distcovs[ex == e, , drop = FALSE]
     A$treatments <- treat_[ex == e]
 
     matchit_try({
@@ -237,7 +237,7 @@ matchit2quick <- function(treat, formula, data, distance, discarded,
   }
 
   if (length(p) == 1L) {
-    p <- p[[1]]
+    p <- p[[1L]]
   }
 
   psclass <- factor(pair)
@@ -255,6 +255,6 @@ matchit2quick <- function(treat, formula, data, distance, discarded,
 
   .cat_verbose("Done.\n", verbose = verbose)
 
-  class(res) <- c("matchit")
+  class(res) <- "matchit"
   res
 }

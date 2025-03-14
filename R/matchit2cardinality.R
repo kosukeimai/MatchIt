@@ -280,7 +280,7 @@ matchit2cardinality <- function(treat, data, discarded, formula,
                                 replace = FALSE, mahvars = NULL, exact = NULL,
                                 estimand = "ATT", verbose = FALSE,
                                 tols = .05, std.tols = TRUE,
-                                solver = "highs", time = 2*60, ...) {
+                                solver = "highs", time = 2 * 60, ...) {
 
   .cat_verbose("Cardinality matching... \n", verbose = verbose)
 
@@ -289,28 +289,25 @@ matchit2cardinality <- function(treat, data, discarded, formula,
 
   estimand <- toupper(estimand)
   estimand <- match_arg(estimand, c("ATT", "ATC", "ATE"))
-  if (is_not_null(focal)) {
-    if (!focal %in% tvals) {
-      .err("`focal` must be a value of the treatment")
-    }
+  if (is_null(focal)) {
+    focal <- switch(estimand,
+                    "ATC" = min(tvals),
+                    max(tvals))
   }
-  else if (estimand == "ATC") {
-    focal <- min(tvals)
-  }
-  else {
-    focal <- max(tvals)
+  else if (!any(tvals == focal)) {
+    .err("`focal` must be a value of the treatment")
   }
 
   lab <- names(treat)
 
-  weights <- rep_with(0.0, treat)
+  weights <- rep_with(0, treat)
 
   X <- get_covs_matrix(formula, data = data)
 
   if (is_not_null(exact)) {
     ex <- exactify(model.frame(exact, data = data), nam = lab, sep = ", ", include_vars = TRUE)
 
-    cc <- Reduce("intersect", lapply(tvals, function(t) unclass(ex)[treat==t]))
+    cc <- Reduce("intersect", lapply(tvals, function(t) unclass(ex)[treat == t]))
 
     if (is_null(cc)) {
       .err("no matches were found")
@@ -333,11 +330,6 @@ matchit2cardinality <- function(treat, data, discarded, formula,
                                     s.weights = s.weights, treat = treat,
                                     discarded = discarded)
     pair <- rep_with(NA_character_, treat)
-
-    #Set max problem size to Inf and return to original value after match
-    omps <- getOption("optmatch_max_problem_size")
-    on.exit(options(optmatch_max_problem_size = omps))
-    options(optmatch_max_problem_size = Inf)
   }
   else {
     pair <- NULL
@@ -384,7 +376,7 @@ matchit2cardinality <- function(treat, data, discarded, formula,
     }
 
     for (i in which(sds >= 1e-10)) {
-      X[,std.tols[i]] <- X[,std.tols[i]] / sds[i]
+      X[, std.tols[i]] <- X[, std.tols[i]] / sds[i]
     }
   }
 
@@ -401,7 +393,7 @@ matchit2cardinality <- function(treat, data, discarded, formula,
 
     treat_in.exact <- treat[.e]
     out <- cardinality_matchit(treat = treat_in.exact,
-                               X = X[.e,, drop = FALSE],
+                               X = X[.e, , drop = FALSE],
                                estimand = estimand, tols = tols,
                                s.weights = s.weights[.e],
                                ratio = ratio,
@@ -413,13 +405,14 @@ matchit2cardinality <- function(treat, data, discarded, formula,
     opt.out[[e]] <- out[["opt.out"]]
 
     if (is_not_null(mahvars)) {
-      mo <- eucdist_internal(mahcovs[.e[out[["weights"]] > 0],, drop = FALSE],
+      mo <- eucdist_internal(mahcovs[.e[out[["weights"]] > 0], , drop = FALSE],
                              treat_in.exact[out[["weights"]] > 0])
 
-      pm <- optmatch::pairmatch(mo,
-                                controls = ratio,
-                                data = data.frame(treat_in.exact))
-
+      rlang::with_options({
+        pm <- optmatch::pairmatch(mo,
+                                  controls = ratio,
+                                  data = data.frame(treat_in.exact))
+      }, optmatch_max_problem_size = Inf)
       pair[names(pm)[!is.na(pm)]] <- paste(as.character(pm[!is.na(pm)]), e, sep = "|")
     }
   }
@@ -455,7 +448,7 @@ matchit2cardinality <- function(treat, data, discarded, formula,
 ## Function to actually do the matching
 cardinality_matchit <- function(treat, X, estimand = "ATT", tols = .05, s.weights = NULL,
                                 ratio = 1, focal = NULL, tvals = NULL, solver = "highs",
-                                time = 2*60, verbose = FALSE) {
+                                time = 2 * 60, verbose = FALSE) {
 
   n <- length(treat)
   if (is_null(tvals)) tvals <- if (is.factor(treat)) levels(treat) else sort(unique(treat))
@@ -485,8 +478,8 @@ cardinality_matchit <- function(treat, X, estimand = "ATT", tols = .05, s.weight
   #Select match type
   match_type <- {
     if (estimand == "ATE") "profile_ate"
-    else if (!is.finite(ratio)) "profile_att"
-    else "cardinality"
+    else if (is.finite(ratio)) "cardinality"
+    else "profile_att"
   }
 
   #Set objective and constraints
@@ -520,7 +513,7 @@ cardinality_matchit <- function(treat, X, estimand = "ATT", tols = .05, s.weight
       #Cov means must be greater than target.means-tols/2
       r2 <- r1 + ncol(X)
       C[r2, seq_len(n)] <- t((treat == tvals[i]) * s.weights * X)
-      C[r2, n + i] <- -target.means+tols/2
+      C[r2, n + i] <- -target.means + tols / 2
       Cdir[r2] <- ">"
     }
 
@@ -556,7 +549,7 @@ cardinality_matchit <- function(treat, X, estimand = "ATT", tols = .05, s.weight
     )
 
     #Constraint matrix
-    target.means <- apply(X[treat == focal,,drop=FALSE], 2, wm, w = s.weights[treat == focal])
+    target.means <- apply(X[treat == focal, , drop = FALSE], 2, wm, w = s.weights[treat == focal])
     #One row per constraint, one column per coef
 
     C <- matrix(0, nrow = (nt - 1) * (1 + 2 * ncol(X)), ncol = length(O))
@@ -570,13 +563,13 @@ cardinality_matchit <- function(treat, X, estimand = "ATT", tols = .05, s.weight
 
       #Cov means must be less than target.means+tols
       r1 <- nt - 1 + (i - 1) * 2 * ncol(X) + seq_len(ncol(X))
-      C[r1, seq_len(n0)] <- t((treat[nonf] == tvals_[i]) * s.weights[nonf] * X[nonf,,drop = FALSE])
+      C[r1, seq_len(n0)] <- t((treat[nonf] == tvals_[i]) * s.weights[nonf] * X[nonf, , drop = FALSE])
       C[r1, n0 + i] <- -target.means - tols
       Cdir[r1] <- "<"
 
       #Cov means must be greater than target.means-tols
       r2 <- r1 + ncol(X)
-      C[r2, seq_len(n0)] <- t((treat[nonf]==tvals_[i]) * s.weights[nonf] * X[nonf,,drop = FALSE])
+      C[r2, seq_len(n0)] <- t((treat[nonf] == tvals_[i]) * s.weights[nonf] * X[nonf, , drop = FALSE])
       C[r2, n0 + i] <- -target.means + tols
       Cdir[r2] <- ">"
     }
@@ -623,7 +616,7 @@ cardinality_matchit <- function(treat, X, estimand = "ATT", tols = .05, s.weight
       Cdir[r1] <- "<"
 
       r2 <- r1 + ncol(X)
-      C[r2, seq_len(n)] <- t(((treat == t_comb[1L]) - (treat == t_comb[2L])/ratio) * s.weights * X)
+      C[r2, seq_len(n)] <- t(((treat == t_comb[1L]) - (treat == t_comb[2L]) / ratio) * s.weights * X)
       C[r2, n + 1L] <- tols
       Cdir[r2] <- ">"
     }

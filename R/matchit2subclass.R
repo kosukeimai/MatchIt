@@ -187,8 +187,6 @@ matchit2subclass <- function(treat, distance, discarded,
 
   chk::chk_count(min.n)
 
-  n.obs <- length(treat)
-
   ## Setting Cut Points
   if (length(subclass) == 1L) {
     sprobs <- seq(0, 1, length.out = round(subclass) + 1)
@@ -200,14 +198,14 @@ matchit2subclass <- function(treat, distance, discarded,
     subclass <- length(sprobs) - 1L
   }
 
-  q <- switch(estimand,
-              "ATT" = quantile(distance[treat == 1], probs = sprobs, na.rm = TRUE),
-              "ATC" = quantile(distance[treat == 0], probs = sprobs, na.rm = TRUE),
-              quantile(distance, probs = sprobs, na.rm = TRUE))
+  qu <- switch(estimand,
+               "ATT" = quantile(distance[treat == 1], probs = sprobs, na.rm = TRUE),
+               "ATC" = quantile(distance[treat == 0], probs = sprobs, na.rm = TRUE),
+               quantile(distance, probs = sprobs, na.rm = TRUE))
 
   ## Calculating Subclasses
   psclass <- rep_with(NA_integer_, treat)
-  psclass[!discarded] <- as.integer(findInterval(distance[!discarded], q, all.inside = TRUE))
+  psclass[!discarded] <- as.integer(findInterval(distance[!discarded], qu, all.inside = TRUE))
 
   if (!has_n_unique(na.omit(psclass), subclass)) {
     .wrn("due to discreteness in the distance measure, fewer subclasses were generated than were requested")
@@ -228,13 +226,13 @@ matchit2subclass <- function(treat, distance, discarded,
                                           min.n)
   }
 
-  psclass <- setNames(factor(psclass, nmax = length(q)), names(treat))
+  psclass <- setNames(factor(psclass, nmax = length(qu)), names(treat))
   levels(psclass) <- as.character(seq_len(nlevels(psclass)))
 
   .cat_verbose("Calculating matching weights... ", verbose = verbose)
 
   res <- list(subclass = psclass,
-              q.cut = q,
+              q.cut = qu,
               weights = get_weights_from_subclass(psclass, treat, estimand))
 
   .cat_verbose("Done.\n", verbose = verbose)

@@ -259,13 +259,13 @@ match_data <- function(object,
   treat <- object$treat
 
   if (drop.unmatched && is_not_null(object$weights)) {
-    data <- data[object$weights > 0,, drop = FALSE]
+    data <- data[object$weights > 0, , drop = FALSE]
     treat <- treat[object$weights > 0]
   }
 
   group <- match_arg(group, c("all", "treated", "control"))
-  if (group == "treated") data <- data[treat == 1,,drop = FALSE]
-  else if (group == "control") data <- data[treat == 0,,drop = FALSE]
+  if (group == "treated") data <- data[treat == 1, , drop = FALSE]
+  else if (group == "control") data <- data[treat == 0, , drop = FALSE]
 
   if (is_not_null(object$distance)) attr(data, "distance") <- distance
   if (is_not_null(object$weights)) attr(data, "weights") <- weights
@@ -319,7 +319,7 @@ get_matches <- function(object,
   }
 
   mm <- object$match.matrix
-  mm <- mm[!is.na(mm[,1L]),,drop = FALSE]
+  mm <- mm[!is.na(mm[, 1L]), , drop = FALSE]
   tmm <- t(mm)
 
   num.matches <- rowSums(!is.na(mm))
@@ -340,7 +340,7 @@ get_matches <- function(object,
 
   out <- merge(matched, m.data, by = id, all.x = TRUE, sort = FALSE)
 
-  out <- out[order(out[[subclass]], object$treat[out[[id]]], method = "radix", decreasing = c(FALSE, TRUE)),]
+  out <- out[order(out[[subclass]], object$treat[out[[id]]], method = "radix", decreasing = c(FALSE, TRUE)), ]
   rownames(out) <- NULL
 
   out[[subclass]] <- factor(out[[subclass]], labels = seq_len(nrow(mm)))

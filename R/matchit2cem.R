@@ -377,7 +377,7 @@ cem_matchit <- function(treat, X, cutpoints = "sturges", grouping = list(), ...)
     if (nbg > 0L) {
       .err(paste0("Each entry in the list supplied to `groupings` must be a list with entries containing values of the corresponding variable.",
                   "\nIncorrectly specified variable%s:\n\t"),
-           paste(bag.groupings, collapse = ", "),
+           toString(bag.groupings),
            tidy = FALSE, n = nbg)
     }
 
@@ -387,7 +387,7 @@ cem_matchit <- function(treat, X, cutpoints = "sturges", grouping = list(), ...)
 
       for (i in seq_along(groups)) {
         groups[[i]] <- as.character(groups[[i]])
-        x[x %in% groups[[i]]] <- groups[[i]][1]
+        x[x %in% groups[[i]]] <- groups[[i]][1L]
       }
       X[[g]] <- x
 
@@ -472,7 +472,7 @@ cem_matchit <- function(treat, X, cutpoints = "sturges", grouping = list(), ...)
                 "\n\t- a single number corresponding to the number of bins",
                 "\n\t- a numeric vector containing the cut points separating bins",
                 "\nIncorrectly specified variable%s:\n\t"),
-         paste(names(cutpoints)[bad.cuts], collapse = ", "),
+         toString(names(cutpoints)[bad.cuts]),
          tidy = FALSE, n = sum(bad.cuts))
   }
 
@@ -490,8 +490,8 @@ cem_matchit <- function(treat, X, cutpoints = "sturges", grouping = list(), ...)
     if (is.character(bins)) {
       if (startsWith(bins, "q") || can_str2num(substring(bins, 2))) {
         #Quantile bins
-        q <- str2num(substring(bins, 2))
-        bins <- quantile(X[[i]], probs = seq(1/q, 1 - 1/q, by = 1/q), names = FALSE) #Outer boundaries will be added later
+        q <- str2num(substring(bins, 2L))
+        bins <- quantile(X[[i]], probs = seq(1 / q, 1 - 1 / q, by = 1 / q), names = FALSE) #Outer boundaries will be added later
       }
       else {
         bins <- match_arg(tolower(bins), c("sturges", "fd", "scott"))
@@ -518,7 +518,7 @@ cem_matchit <- function(treat, X, cutpoints = "sturges", grouping = list(), ...)
   #Exact match
   ex <- unclass(exactify(X, names(treat)))
 
-  cc <- Reduce("intersect", lapply(unique(treat), function(t) ex[treat==t]))
+  cc <- Reduce("intersect", lapply(unique(treat), function(t) ex[treat == t]))
 
   if (is_null(cc)) {
     .err("no units were matched. Try coarsening the variables further or decrease the number of variables to match on")
@@ -580,7 +580,7 @@ do_k2k <- function(treat, X, subclass, k2k.method = "mahalanobis", mpower = 2, s
       discarded_ <- rep.int(FALSE, length(.e))
       ex_ <- NULL
       ratio_ <- rep.int(1L, sum(treat_ == focal))
-      distance_mat <- as.matrix(dist(X.match[.e,,drop = FALSE],
+      distance_mat <- as.matrix(dist(X.match[.e, , drop = FALSE],
                                      method = k2k.method, p = mpower))[treat_ == focal, treat_ != focal, drop = FALSE]
 
       mm_ <- nn_matchC_dispatch(treat_, focal, ratio_, discarded_, reuse.max, distance, distance_mat,
@@ -589,7 +589,7 @@ do_k2k <- function(treat, X, subclass, k2k.method = "mahalanobis", mpower = 2, s
 
       #Ensure matched indices correspond to indices in full sample, not subgroup
       mm_[] <- .e[mm_]
-      mm[rownames(mm_),] <- mm_
+      mm[rownames(mm_), ] <- mm_
     }
   }
 

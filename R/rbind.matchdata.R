@@ -78,8 +78,8 @@ rbind.matchdata <- function(..., deparse.level = 1) {
     allargs <- list()
   }
   else {
-    md_list <- allargs[names(allargs) == ""]
-    allargs[names(allargs) == ""] <- NULL
+    md_list <- allargs[!nzchar(names(allargs))]
+    allargs[!nzchar(names(allargs))] <- NULL
   }
 
   allargs$deparse.level <- deparse.level

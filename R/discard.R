@@ -2,7 +2,7 @@ discard <- function(treat, pscore = NULL, option = NULL) {
 
   n.obs <- length(treat)
 
-  if (is_null(option)){
+  if (is_null(option)) {
     # keep all units
     return(rep_with(FALSE, treat))
   }
@@ -31,10 +31,10 @@ discard <- function(treat, pscore = NULL, option = NULL) {
     .err('`discard` must be a logical vector or "none" when `distance` is supplied as a matrix')
   }
 
-  pmax0 <- max(pscore[treat==0])
-  pmax1 <- max(pscore[treat==1])
-  pmin0 <- min(pscore[treat==0])
-  pmin1 <- min(pscore[treat==1])
+  pmax0 <- max(pscore[treat == 0])
+  pmax1 <- max(pscore[treat == 1])
+  pmin0 <- min(pscore[treat == 0])
+  pmin1 <- min(pscore[treat == 1])
 
   if (option == "both")    # discard units outside of common support
     discarded <- (pscore < max(pmin0, pmin1) | pscore > min(pmax0, pmax1))

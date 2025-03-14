@@ -157,13 +157,13 @@ plot.matchit <- function(x, type = "qq", interactive = TRUE, which.xs = NULL, da
     if (is_null(x$distance)) {
       .err('`type = "jitter"` cannot be used if a distance measure is not estimated or supplied. No plots generated')
     }
-    jitter_pscore(x, interactive = interactive,...)
+    jitter_pscore(x, interactive = interactive, ...)
   }
   else if (type == "histogram") {
     if (is_null(x$distance)) {
       .err('`type = "hist"` cannot be used if a distance measure is not estimated or supplied. No plots generated')
     }
-    hist_pscore(x,...)
+    hist_pscore(x, ...)
   }
   invisible(x)
 }
@@ -248,7 +248,7 @@ plot.matchit.subclass <- function(x, type = "qq", interactive = TRUE, which.xs =
     if (is_null(x$distance)) {
       .err('`type = "histogram"` cannot be used when no distance variable was estimated or supplied')
     }
-    hist_pscore(x,...)
+    hist_pscore(x, ...)
   }
   invisible(x)
 }
@@ -316,13 +316,13 @@ matchit.covplot <- function(object, type = "qq", interactive = TRUE, which.xs = 
 
     k <- ncol(X)
     for (i in seq_len(k)) {
-      if (anyNA(X[[i]]) || (is.numeric(X[[i]]) && any(!is.finite(X[[i]])))) {
+      if (anyNA(X[[i]]) || (is.numeric(X[[i]]) && !all(is.finite(X[[i]])))) {
         covariates.with.missingness <- names(X)[i:k][vapply(i:k, function(j) anyNA(X[[j]]) ||
                                                               (is.numeric(X[[j]]) &&
-                                                                 any(!is.finite(X[[j]]))),
+                                                                 !all(is.finite(X[[j]]))),
                                                             logical(1L))]
         .err(paste0("Missing and non-finite values are not allowed in the covariates named in `which.xs`. Variables with missingness or non-finite values:\n\t",
-                    paste(covariates.with.missingness, collapse = ", ")), tidy = FALSE)
+                    toString(covariates.with.missingness)), tidy = FALSE)
       }
 
       if (is.character(X[[i]])) {
@@ -359,45 +359,45 @@ matchit.covplot <- function(object, type = "qq", interactive = TRUE, which.xs = 
 
   oma <- c(2.25, 0, 3.75, 1.5)
   if (type == "qq") {
-    opar <- par(mfrow = c(3, 3), mar = rep.int(1/2, 4), oma = oma)
+    opar <- par(mfrow = c(3, 3), mar = rep.int(.5, 4L), oma = oma)
   }
   else if (type %in% c("ecdf", "density")) {
-    opar <- par(mfrow = c(3, 3), mar = c(1.5,.5,1.5,.5), oma = oma)
+    opar <- par(mfrow = c(3, 3), mar = c(1.5, .5, 1.5, .5), oma = oma)
   }
 
   for (i in seq_along(varnames)){
-    x <- if (type == "density") X[[i]] else X[,i]
+    x <- if (type == "density") X[[i]] else X[, i]
 
     plot.new()
 
-    if (((i-1) %% 3) == 0) {
+    if (((i - 1) %% 3) == 0) {
 
       if (type == "qq") {
         htext <- "eQQ Plots"
-        mtext(htext, 3, 2, TRUE, 0.5, cex=1.1, font = 2)
-        mtext("All", 3, .25, TRUE, 0.5, cex=1, font = 1)
-        mtext("Matched", 3, .25, TRUE, 0.83, cex=1, font = 1)
-        mtext("Control Units", 1, 0, TRUE, 2/3, cex=1, font = 1)
-        mtext("Treated Units", 4, 0, TRUE, 0.5, cex=1, font = 1)
+        mtext(htext, 3, 2, TRUE, 0.5, cex = 1.1, font = 2)
+        mtext("All", 3, .25, TRUE, 0.5, cex = 1, font = 1)
+        mtext("Matched", 3, .25, TRUE, 0.83, cex = 1, font = 1)
+        mtext("Control Units", 1, 0, TRUE, 2 / 3, cex = 1, font = 1)
+        mtext("Treated Units", 4, 0, TRUE, 0.5, cex = 1, font = 1)
       }
       else if (type == "ecdf") {
         htext <- "eCDF Plots"
-        mtext(htext, 3, 2, TRUE, 0.5, cex=1.1, font = 2)
-        mtext("All", 3, .25, TRUE, 0.5, cex=1, font = 1)
-        mtext("Matched", 3, .25, TRUE, 0.83, cex=1, font = 1)
+        mtext(htext, 3, 2, TRUE, 0.5, cex = 1.1, font = 2)
+        mtext("All", 3, .25, TRUE, 0.5, cex = 1, font = 1)
+        mtext("Matched", 3, .25, TRUE, 0.83, cex = 1, font = 1)
       }
       else if (type == "density") {
         htext <- "Density Plots"
-        mtext(htext, 3, 2, TRUE, 0.5, cex=1.1, font = 2)
-        mtext("All", 3, .25, TRUE, 0.5, cex=1, font = 1)
-        mtext("Matched", 3, .25, TRUE, 0.83, cex=1, font = 1)
+        mtext(htext, 3, 2, TRUE, 0.5, cex = 1.1, font = 2)
+        mtext("All", 3, .25, TRUE, 0.5, cex = 1, font = 1)
+        mtext("Matched", 3, .25, TRUE, 0.83, cex = 1, font = 1)
       }
 
     }
 
     par(usr = c(0, 1, 0, 1))
     l.wid <- strwidth(varnames, "user")
-    cex.labels <- max(0.75, min(1.45, 0.85/max(l.wid)))
+    cex.labels <- max(0.75, min(1.45, 0.85 / max(l.wid)))
     text(0.5, 0.5, varnames[i], cex = cex.labels)
 
     if (type == "qq") {
@@ -510,10 +510,10 @@ matchit.covplot.subclass <- function(object, type = "qq", which.subclass = NULL,
 
   for (s in which.subclass) {
     if (type == "qq") {
-      opar <- par(mfrow = c(3, 3), mar = rep.int(1/2, 4), oma = oma)
+      opar <- par(mfrow = c(3, 3), mar = rep.int(.5, 4), oma = oma)
     }
     else if (type %in% c("ecdf", "density")) {
-      opar <- par(mfrow = c(3, 3), mar = c(1.5,.5,1.5,.5), oma = oma)
+      opar <- par(mfrow = c(3, 3), mar = c(1.5, .5, 1.5, .5), oma = oma)
     }
 
     sw <- {
@@ -528,18 +528,18 @@ matchit.covplot.subclass <- function(object, type = "qq", which.subclass = NULL,
 
     for (i in seq_along(varnames)){
 
-      x <- switch(type, "density" = X[[i]], X[,i])
+      x <- switch(type, "density" = X[[i]], X[, i])
 
       plot.new()
 
-      if (((i-1) %% 3) == 0) {
+      if (((i - 1) %% 3) == 0) {
 
         if (type == "qq") {
           htext <- sprintf("eQQ Plots (Subclass %s)", s)
           mtext(htext, 3, 2, TRUE, 0.5, cex = 1.1, font = 2)
           mtext("All", 3, .25, TRUE, 0.5, cex = 1, font = 1)
           mtext("Matched", 3, .25, TRUE, 0.83, cex = 1, font = 1)
-          mtext("Control Units", 1, 0, TRUE, 2/3, cex = 1, font = 1)
+          mtext("Control Units", 1, 0, TRUE, 2 / 3, cex = 1, font = 1)
           mtext("Treated Units", 4, 0, TRUE, 0.5, cex = 1, font = 1)
         }
         else if (type == "ecdf") {
@@ -560,7 +560,7 @@ matchit.covplot.subclass <- function(object, type = "qq", which.subclass = NULL,
       #Empty plot with variable name
       par(usr = c(0, 1, 0, 1))
       l.wid <- strwidth(varnames, "user")
-      cex.labels <- max(0.75, min(1.45, 0.85/max(l.wid)))
+      cex.labels <- max(0.75, min(1.45, 0.85 / max(l.wid)))
       text(0.5, 0.5, varnames[i], cex = cex.labels)
 
       if (type == "qq") {
@@ -700,7 +700,7 @@ ecdfplot_match <- function(x, t, w, sw, ...) {
   x.range <- x.max - x.min
 
   #Unmatched samples
-  plot(x = x, y = w, type = "n" ,
+  plot(x = x, y = w, type = "n",
        xlim = c(x.min - .02 * x.range, x.max + .02 * x.range),
        ylim = c(0, 1), axes = TRUE, ...)
 
@@ -717,7 +717,7 @@ ecdfplot_match <- function(x, t, w, sw, ...) {
   box()
 
   #Matched sample
-  plot(x = x, y = w, type = "n" ,
+  plot(x = x, y = w, type = "n",
        xlim = c(x.min - .02 * x.range, x.max + .02 * x.range),
        ylim = c(0, 1), axes = FALSE, ...)
 
@@ -744,7 +744,40 @@ densityplot_match <- function(x, t, w, sw, bw = NULL, cut = 3, ...) {
 
   u <- unique(t)
 
-  if (!is.factor(x)) {
+  if (is.factor(x)) {
+    #Bar plot for binary variable
+    x_t_un <- lapply(sort(unique(t)), function(t_) {
+      vapply(levels(x), function(i) {
+        wm(x[t == t_] == i, sw[t == t_])
+      }, numeric(1L))})
+
+    x_t_m <- lapply(sort(unique(t)), function(t_) {
+      vapply(levels(x), function(i) {
+        wm(x[t == t_] == i, w[t == t_])
+      }, numeric(1L))})
+
+    ylim <- c(0, 1.1 * max(unlist(x_t_un), unlist(x_t_m)))
+
+    borders <- c("grey60", "black")
+    for (i in seq_along(x_t_un)) {
+      barplot(x_t_un[[i]], border = borders[i],
+              col = if (i == 1) "white" else NA_character_,
+              ylim = ylim, add = i != 1L)
+    }
+
+    abline(h = 0:1)
+    box()
+
+    for (i in seq_along(x_t_m)) {
+      barplot(x_t_m[[i]], border = borders[i],
+              col = if (i == 1) "white" else NA_character_,
+              ylim = ylim, add = i != 1L, axes = FALSE)
+    }
+
+    abline(h = 0:1)
+    box()
+  }
+  else {
     #Density plot for continuous variable
     small.tr <- u[which.min(vapply(u, function(tr) sum(t == tr), numeric(1L)))]
     x_small <- x[t == small.tr]
@@ -766,7 +799,7 @@ densityplot_match <- function(x, t, w, sw, bw = NULL, cut = 3, ...) {
 
     d_unmatched <- do.call("rbind", lapply(u, function(tr) {
       cbind(as.data.frame(density(x[t == tr],
-                                  weights = sw[t==tr],
+                                  weights = sw[t == tr],
                                   from = x.min - cut * bw,
                                   to = x.max + cut * bw,
                                   bw = bw, cut = cut, ...)[1:2]),
@@ -819,39 +852,6 @@ densityplot_match <- function(x, t, w, sw, bw = NULL, cut = 3, ...) {
     axis(1)
     box()
   }
-  else {
-    #Bar plot for binary variable
-    x_t_un <- lapply(sort(unique(t)), function(t_) {
-      vapply(levels(x), function(i) {
-        wm(x[t == t_] == i, sw[t == t_])
-      }, numeric(1L))})
-
-    x_t_m <- lapply(sort(unique(t)), function(t_) {
-      vapply(levels(x), function(i) {
-        wm(x[t == t_] == i, w[t == t_])
-      }, numeric(1L))})
-
-    ylim <- c(0, 1.1 * max(unlist(x_t_un), unlist(x_t_m)))
-
-    borders <- c("grey60", "black")
-    for (i in seq_along(x_t_un)) {
-      barplot(x_t_un[[i]], border = borders[i],
-              col = if (i == 1) "white" else NA_character_,
-              ylim = ylim, add = i != 1L)
-    }
-
-    abline(h = 0:1)
-    box()
-
-    for (i in seq_along(x_t_m)) {
-      barplot(x_t_m[[i]], border = borders[i],
-              col = if (i == 1) "white" else NA_character_,
-              ylim = ylim, add = i != 1L, axes = FALSE)
-    }
-
-    abline(h = 0:1)
-    box()
-  }
 }
 
 hist_pscore <- function(x, xlab = "Propensity Score", freq = FALSE, ...) {
@@ -867,7 +867,6 @@ hist_pscore <- function(x, xlab = "Propensity Score", freq = FALSE, ...) {
   }
 
   weights <- x$weights * s.weights
-  matched <- weights != 0
   q.cut <- x$q.cut
 
   minp <- min(pscore)
@@ -884,7 +883,7 @@ hist_pscore <- function(x, xlab = "Propensity Score", freq = FALSE, ...) {
 
   ylab <- if (freq) "Count" else "Proportion"
 
-  par(mfrow = c(2,2))
+  par(mfrow = c(2, 2))
   # breaks <- pretty(na.omit(pscore), 10)
   breaks <- seq(minp, maxp, length = 11)
   xlim <- range(breaks)
@@ -892,16 +891,16 @@ hist_pscore <- function(x, xlab = "Propensity Score", freq = FALSE, ...) {
   for (n in c("Raw Treated", "Matched Treated", "Raw Control", "Matched Control")) {
     w <- if (startsWith(n, "Raw")) s.weights else weights
 
-    t <- if (endsWith(n, "Treated")) 1 else 0
+    tr <- if (endsWith(n, "Treated")) 1 else 0
 
     #Create histogram using weights
     #Manually assign density, which is used as height of the bars. The scaling
     #of the weights above determine whether they are "counts" or "proportions".
     #Regardless, set freq = FALSE in plot() to ensure density is used for bar
     #height rather than count.
-    pm <- hist(pscore[treat==t], plot = FALSE, breaks = breaks)
-    pm[["density"]] <- vapply(seq_len(length(pm$breaks) - 1), function(i) {
-      sum(w[treat == t & pscore >= pm$breaks[i] & pscore < pm$breaks[i+1]])
+    pm <- hist(pscore[treat == tr], plot = FALSE, breaks = breaks)
+    pm[["density"]] <- vapply(seq_len(length(pm$breaks) - 1L), function(i) {
+      sum(w[treat == tr & pscore >= pm$breaks[i] & pscore < pm$breaks[i + 1L]])
     }, numeric(1L))
 
     plot(pm, xlim = xlim, xlab = xlab, main = n, ylab = ylab,
@@ -925,13 +924,13 @@ jitter_pscore <- function(x, interactive, pch = 1, ...) {
   weights <- x$weights * s.weights
   matched <- weights > 0
   q.cut <- x$q.cut
-  jitp <- jitter(rep.int(1, length(treat)), factor = 6) + (treat==1) * (weights == 0) - (treat==0) - (weights==0) * (treat==0)
+  jitp <- jitter(rep.int(1, length(treat)), factor = 6) + (treat == 1) * (weights == 0) - (treat == 0) - (weights==0) * (treat == 0)
   cswt <- sqrt(s.weights)
   cwt <- sqrt(weights)
   minp <- min(pscore, na.rm = TRUE)
   maxp <- max(pscore, na.rm = TRUE)
 
-  plot(pscore, xlim = c(minp - 0.05*(maxp-minp), maxp + 0.05 * (maxp - minp)), ylim = c(-1.5, 2.5),
+  plot(pscore, xlim = c(minp - 0.05 * (maxp-minp), maxp + 0.05 * (maxp - minp)), ylim = c(-1.5, 2.5),
        type = "n", ylab = "", xlab = "Propensity Score",
        axes = FALSE, main = "Distribution of Propensity Scores", ...)
 
@@ -940,17 +939,17 @@ jitter_pscore <- function(x, interactive, pch = 1, ...) {
   }
 
   #Matched treated
-  points(pscore[treat==1 & matched], jitp[treat==1 & matched],
-         pch = pch, cex = cwt[treat==1 & matched], ...)
+  points(pscore[treat == 1 & matched], jitp[treat == 1 & matched],
+         pch = pch, cex = cwt[treat == 1 & matched], ...)
   #Matched control
-  points(pscore[treat==0 & matched], jitp[treat==0 & matched],
-         pch = pch, cex = cwt[treat==0 & matched], ...)
+  points(pscore[treat == 0 & matched], jitp[treat == 0 & matched],
+         pch = pch, cex = cwt[treat == 0 & matched], ...)
   #Unmatched treated
-  points(pscore[treat==1 & !matched], jitp[treat==1 & !matched],
-         pch = pch, cex = cswt[treat==1 & !matched],...)
+  points(pscore[treat == 1 & !matched], jitp[treat == 1 & !matched],
+         pch = pch, cex = cswt[treat == 1 & !matched], ...)
   #Unmatched control
-  points(pscore[treat==0 & !matched], jitp[treat==0 & !matched],
-         pch = pch, cex = cswt[treat==0 & !matched], ...)
+  points(pscore[treat == 0 & !matched], jitp[treat == 0 & !matched],
+         pch = pch, cex = cswt[treat == 0 & !matched], ...)
 
   axis(1)
 

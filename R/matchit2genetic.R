@@ -266,8 +266,8 @@ matchit2genetic <- function(treat, data, distance, discarded,
 
   .cat_verbose("Genetic matching...\n", verbose = verbose)
 
-  args <- names(formals(Matching::GenMatch))
-  A <- ...mget(args)
+  .args <- names(formals(Matching::GenMatch))
+  A <- ...mget(.args)
   A[lengths(A) == 0L] <- NULL
 
   estimand <- toupper(estimand)
@@ -284,11 +284,11 @@ matchit2genetic <- function(treat, data, distance, discarded,
   if (!replace) {
     if (sum(!discarded & treat != focal) < sum(!discarded & treat == focal)) {
       .wrn(sprintf("fewer %s units than %s units; not all %s units will get a match",
-                   tc[2], tc[1], tc[1]))
+                   tc[2L], tc[1L], tc[1L]))
     }
-    else if (sum(!discarded & treat != focal) < sum(!discarded & treat == focal)*ratio) {
+    else if (sum(!discarded & treat != focal) < sum(!discarded & treat == focal) * ratio) {
       .err(sprintf("not enough %s units for %s matches for each %s unit",
-                   tc[2], ratio, tc[1]))
+                   tc[2L], ratio, tc[1L]))
     }
   }
 
@@ -301,9 +301,8 @@ matchit2genetic <- function(treat, data, distance, discarded,
 
   m.order <- {
     if (is_null(distance)) match_arg(m.order, c("data", "random"))
-    else if (is_not_null(m.order)) match_arg(m.order, c("largest", "smallest", "random", "data"))
-    else if (estimand == "ATC") "smallest"
-    else "largest"
+    else if (is_null(m.order)) switch(estimand, "ATC" = "smallest", "largest")
+    else match_arg(m.order, c("largest", "smallest", "data", "random"))
   }
 
   ord <- switch(m.order,
@@ -311,22 +310,22 @@ matchit2genetic <- function(treat, data, distance, discarded,
                 "smallest" = order(distance),
                 "random" = sample.int(n.obs),
                 "data" = seq_len(n.obs))
-  ord <- ord[!ord %in% which(discarded)]
+
+  if (any(discarded)) {
+    ord <- ord[!ord %in% which(discarded)]
+  }
 
   #Create X (matching variables) and covs_to_balance
   covs_to_balance <- get_covs_matrix(formula, data = data)
-  if (is_not_null(mahvars)) {
-    X <- get_covs_matrix_for_dist(mahvars, data = data)
-  }
-  else if (is.full.mahalanobis) {
-    X <- covs_to_balance
-  }
-  else {
-    X <- cbind(covs_to_balance, distance)
-  }
 
   if (ncol(covs_to_balance) == 0L) {
     .err("covariates must be specified in the input formula to use genetic matching")
+  }
+
+  X <- {
+    if (is_not_null(mahvars)) get_covs_matrix_for_dist(mahvars, data = data)
+    else if (is.full.mahalanobis) covs_to_balance
+    else cbind(covs_to_balance, distance)
   }
 
   #Process exact; exact.log will be supplied to GenMatch() and Match()
@@ -335,7 +334,7 @@ matchit2genetic <- function(treat, data, distance, discarded,
     ex <- unclass(exactify(model.frame(exact, data = data), names(treat),
                            sep = ", ", include_vars = TRUE))
 
-    cc <- intersect(ex[treat==1], ex[treat==0])
+    cc <- intersect(ex[treat == 1], ex[treat == 0])
 
     if (is_null(cc)) {
       .err("No matches were found")
@@ -353,8 +352,8 @@ matchit2genetic <- function(treat, data, distance, discarded,
   #ord already excludes discarded units
 
   treat_ <- treat[ord]
-  covs_to_balance <- covs_to_balance[ord,,drop = FALSE]
-  X <- X[ord,,drop = FALSE]
+  covs_to_balance <- covs_to_balance[ord, , drop = FALSE]
+  X <- X[ord, , drop = FALSE]
   if (is_not_null(s.weights)) s.weights <- s.weights[ord]
 
   #Process caliper; cal will be supplied to GenMatch() and Match()
@@ -362,11 +361,11 @@ matchit2genetic <- function(treat, data, distance, discarded,
   if (is_not_null(caliper) && any(caliper < 0)) {
     neg.cal <- names(caliper)[caliper < 0]
 
-    if (any(neg.cal != "")) {
-      negcalcovs <- get_covs_matrix(reformulate(neg.cal[neg.cal != ""]), data = data)[ord,,drop = FALSE]
+    if (any(nzchar(neg.cal))) {
+      negcalcovs <- get_covs_matrix(reformulate(neg.cal[nzchar(neg.cal)]), data = data)[ord, , drop = FALSE]
       negcalcovs_restrict <- do.call("rbind", lapply(seq_len(ncol(negcalcovs)), function(i) {
         do.call("rbind", lapply(which(treat_ == 1), function(j) {
-          restricted_controls <- which(treat_ == 0 & abs(negcalcovs[j, i] - negcalcovs[, i]) <= -caliper[neg.cal[neg.cal != ""][i]])
+          restricted_controls <- which(treat_ == 0 & abs(negcalcovs[j, i] - negcalcovs[, i]) <= -caliper[neg.cal[nzchar(neg.cal)][i]])
 
           if (is_null(restricted_controls)) {
             return(NULL)
@@ -384,9 +383,9 @@ matchit2genetic <- function(treat, data, distance, discarded,
       }
     }
 
-    if (any(neg.cal == "")) {
+    if (!all(nzchar(neg.cal))) {
       negcaldist_restrict <- do.call("rbind", lapply(which(treat_ == 1), function(j) {
-        restricted_controls <- which(treat_ == 0 & abs(distance[ord][j] - distance[ord]) <= -caliper[names(caliper) == ""])
+        restricted_controls <- which(treat_ == 0 & abs(distance[ord][j] - distance[ord]) <= -caliper[!nzchar(names(caliper))])
 
         if (is_null(restricted_controls)) {
           return(NULL)
@@ -410,7 +409,7 @@ matchit2genetic <- function(treat, data, distance, discarded,
   if (is_not_null(caliper)) {
     cov.cals <- setdiff(names(caliper), "")
     if (is_not_null(cov.cals) && !all(cov.cals %in% colnames(X))) {
-      calcovs <- get_covs_matrix(reformulate(cov.cals[!cov.cals %in% colnames(X)]), data = data)[ord,,drop = FALSE]
+      calcovs <- get_covs_matrix(reformulate(cov.cals[!cov.cals %in% colnames(X)]), data = data)[ord, , drop = FALSE]
       X <- cbind(X, calcovs)
 
       #Expand exact.log for newly added covariates
@@ -420,7 +419,7 @@ matchit2genetic <- function(treat, data, distance, discarded,
     }
 
     #Matching::Match multiplies calipers by pop SD, so we need to divide by pop SD to unstandardize
-    pop.sd <- function(x) sqrt(sum((x-mean(x))^2)/length(x))
+    pop.sd <- function(x) sqrt(sum((x - mean(x))^2) / length(x))
     caliper <- caliper / vapply(names(caliper), function(x) {
       if (x == "") pop.sd(distance[ord])
       else pop.sd(X[, x])
@@ -435,8 +434,8 @@ matchit2genetic <- function(treat, data, distance, discarded,
     }
 
     #Then put distance caliper into cal
-    if (hasName(caliper, "")) {
-      dist.cal <- caliper[names(caliper) == ""]
+    if (!all(nzchar(names(caliper)))) {
+      dist.cal <- caliper[!nzchar(names(caliper))]
       if (is_not_null(mahvars)) {
         #If mahvars specified, distance is not yet in X, so add it to X
         X <- cbind(X, distance[ord])
@@ -447,7 +446,7 @@ matchit2genetic <- function(treat, data, distance, discarded,
       }
       else {
         #Otherwise, distance is in X at the specified index
-        cal[ncol(covs_to_balance) + 1] <- dist.cal
+        cal[ncol(covs_to_balance) + 1L] <- dist.cal
       }
     }
     else {
@@ -456,7 +455,7 @@ matchit2genetic <- function(treat, data, distance, discarded,
   }
 
   if (is_not_null(antiexact)) {
-    antiexactcovs <- model.frame(antiexact, data)[ord,,drop = FALSE]
+    antiexactcovs <- model.frame(antiexact, data)[ord, , drop = FALSE]
     antiexact_restrict <- do.call("rbind", lapply(seq_len(ncol(antiexactcovs)), function(i) {
       do.call("rbind", lapply(which(treat_ == 1), function(j) {
         restricted_controls <- which(treat_ == 0 & antiexactcovs[[i]][j] == antiexactcovs[[i]])
@@ -491,8 +490,8 @@ matchit2genetic <- function(treat, data, distance, discarded,
                                 M = ratio, exact = exact.log, caliper = cal,
                                 replace = replace, estimand = "ATT", ties = FALSE,
                                 CommonSupport = FALSE, verbose = verbose,
-                                weights = s.weights, print.level = 2*verbose),
-                           A[names(A) %in% args]))
+                                weights = s.weights, print.level = 2 * verbose),
+                           A[names(A) %in% .args]))
       }, from = "Matching",
       dont_warn_if = c("replace==FALSE, but there are more (weighted) treated obs than control obs",
                        "no valid matches"))
