@@ -124,7 +124,7 @@
 #' @examplesIf requireNamespace("quickmatch", quietly = TRUE)
 #' data("lalonde")
 #'
-#' # Generalize full PS matching
+#' # Generalized full PS matching
 #' m.out1 <- matchit(treat ~ age + educ + race + nodegree +
 #'                     married + re74 + re75,
 #'                   data = lalonde,

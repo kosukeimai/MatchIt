@@ -47,8 +47,7 @@ models that require them such as generalized linear models, for which the
 logit and probit links are allowed, among others. In addition to specifying
 the link, the \code{link} argument can be used to specify whether the
 propensity score or the linearized version of the propensity score should be
-used; by specifying \code{link = "linear.{link}"}, the linearized version
-will be used.
+used (i.e., the linear predictor of the propensity score model); by specifying \code{link = "linear.{link}"}, the linearized version will be used. When \code{link = "linear.logit"}, for example, this requests the logit of a propensity score estimated with a logistic link.
 
 The \code{distance.options} argument can also be specified, which should be
 a list of values passed to the propensity score-estimating function, for
@@ -227,7 +226,7 @@ with propensity scores estimated previously without having to recompute them.
 \code{distance} can also be supplied as a matrix whose values represent the
 pairwise distances between units. The matrix should either be a square, with
 a row and column for each unit (e.g., as the output of a call to
-\verb{as.matrix(}\code{\link{dist}}\verb{(.))}), or have as many rows as there are treated units
+\verb{as.matrix([}dist\verb{](.))}), or have as many rows as there are treated units
 and as many columns as there are control units (e.g., as the output of a call
 to \code{\link[=mahalanobis_dist]{mahalanobis_dist()}} or \pkgfun{optmatch}{match_on}). Distance values of
 \code{Inf} will disallow the corresponding units to be matched. When \code{distance} is
@@ -239,12 +238,13 @@ ignored.
 \examples{
 data("lalonde")
 
-# Linearized probit regression PS:
+# Matching on logit of a PS estimated with logistic
+# regression:
 m.out1 <- matchit(treat ~ age + educ + race + married +
                     nodegree + re74 + re75,
                   data = lalonde,
                   distance = "glm",
-                  link = "linear.probit")
+                  link = "linear.logit")
 \dontshow{if (requireNamespace("mgcv", quietly = TRUE)) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
 # GAM logistic PS with smoothing splines (s()):
 m.out2 <- matchit(treat ~ s(age) + s(educ) +

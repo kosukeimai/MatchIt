@@ -38,8 +38,7 @@
 #' logit and probit links are allowed, among others. In addition to specifying
 #' the link, the `link` argument can be used to specify whether the
 #' propensity score or the linearized version of the propensity score should be
-#' used; by specifying `link = "linear.{link}"`, the linearized version
-#' will be used.
+#' used (i.e., the linear predictor of the propensity score model); by specifying `link = "linear.{link}"`, the linearized version will be used. When `link = "linear.logit"`, for example, this requests the logit of a propensity score estimated with a logistic link.
 #'
 #' The `distance.options` argument can also be specified, which should be
 #' a list of values passed to the propensity score-estimating function, for
@@ -216,7 +215,7 @@
 #' `distance` can also be supplied as a matrix whose values represent the
 #' pairwise distances between units. The matrix should either be a square, with
 #' a row and column for each unit (e.g., as the output of a call to
-#' `as.matrix(`[`dist`]`(.))`), or have as many rows as there are treated units
+#' `as.matrix([`dist`](.))`), or have as many rows as there are treated units
 #' and as many columns as there are control units (e.g., as the output of a call
 #' to [mahalanobis_dist()] or \pkgfun{optmatch}{match_on}). Distance values of
 #' `Inf` will disallow the corresponding units to be matched. When `distance` is
@@ -234,12 +233,13 @@
 #' @examples
 #' data("lalonde")
 #'
-#' # Linearized probit regression PS:
+#' # Matching on logit of a PS estimated with logistic
+#' # regression:
 #' m.out1 <- matchit(treat ~ age + educ + race + married +
 #'                     nodegree + re74 + re75,
 #'                   data = lalonde,
 #'                   distance = "glm",
-#'                   link = "linear.probit")
+#'                   link = "linear.logit")
 #' @examplesIf requireNamespace("mgcv", quietly = TRUE)
 #' # GAM logistic PS with smoothing splines (s()):
 #' m.out2 <- matchit(treat ~ s(age) + s(educ) +
@@ -334,8 +334,8 @@ distance2gam <- function(formula, data = NULL, link = "logit", ...) {
   if (linear) link <- sub("linear.", "", as.character(link), fixed = TRUE)
 
   A <- list(...)
-  weights <- A$weights
-  A$weights <- NULL
+  weights <- A[["weights"]]
+  A[["weights"]] <- NULL
 
   res <- do.call(mgcv::gam, c(list(formula, data, family = quasibinomial(link),
                                    weights = weights), A),
@@ -354,9 +354,9 @@ distance2rpart <- function(formula, data = NULL, link = NULL, ...) {
   A <- ...mget(args)
   A[lengths(A) == 0L] <- NULL
 
-  A$formula <- formula
-  A$data <- data
-  A$method <- "class"
+  A[["formula"]] <- formula
+  A[["data"]] <- data
+  A[["method"]] <- "class"
 
   res <- do.call(rpart::rpart, A)
   list(model = res, distance = predict(res, type = "prob")[, "1"])
@@ -367,10 +367,13 @@ distance2nnet <- function(formula, data = NULL, link = NULL, ...) {
   rlang::check_installed("nnet")
 
   A <- list(...)
-  weights <- A$weights
-  A$weights <- NULL
+  weights <- A[["weights"]]
+  A[["weights"]] <- NULL
 
-  res <- do.call(nnet::nnet, c(list(formula, data = data, weights = weights, entropy = TRUE), A), quote = TRUE)
+  res <- do.call(nnet::nnet, c(list(formula, data = data,
+                                    weights = weights, entropy = TRUE), A),
+                 quote = TRUE)
+
   list(model = res, distance = drop(fitted(res)))
 }
 
@@ -429,8 +432,8 @@ distance2bart <- function(formula, data = NULL, link = NULL, ...) {
   A <- ...mget(args)
   A[lengths(A) == 0L] <- NULL
 
-  A$formula <- formula
-  A$data <- data
+  A[["formula"]] <- formula
+  A[["data"]] <- data
 
   res <- do.call(dbarts::bart2, A)
 
@@ -510,10 +513,10 @@ distance2elasticnet <- function(formula, data = NULL, link = NULL, ...) {
 
   if (is_null(link)) link <- "logit"
 
-  A$family <- switch(link,
-                     "logit" = "binomial",
-                     "log" = "poisson",
-                     binomial(link = link))
+  A[["family"]] <- switch(link,
+                          "logit" = "binomial",
+                          "log" = "poisson",
+                          binomial(link = link))
 
   if (is_null(A[["alpha"]])) {
     A[["alpha"]] <- .5
@@ -537,7 +540,7 @@ distance2lasso <- function(formula, data = NULL, link = NULL, ...) {
     A <- ...mget(args)
     A[lengths(A) == 0L] <- NULL
 
-    A$alpha <- 1
+    A[["alpha"]] <- 1
     do.call("distance2elasticnet", c(list(formula, data = data, link = link), A),
             quote = TRUE)
   }
@@ -551,7 +554,7 @@ distance2ridge <- function(formula, data = NULL, link = NULL, ...) {
     A <- ...mget(args)
     A[lengths(A) == 0L] <- NULL
 
-    A$alpha <- 0
+    A[["alpha"]] <- 0
     do.call("distance2elasticnet", c(list(formula, data = data, link = link), A),
             quote = TRUE)
   }
@@ -572,9 +575,9 @@ distance2gbm <- function(formula, data = NULL, link = NULL, ...) {
   A <- ...mget(args)
   A[lengths(A) == 0L] <- NULL
 
-  A$formula <- formula
-  A$data <- data
-  A$distribution <- "bernoulli"
+  A[["formula"]] <- formula
+  A[["data"]] <- data
+  A[["distribution"]] <- "bernoulli"
 
   if (is_null(A[["n.trees"]])) A[["n.trees"]] <- 1e4
   if (is_null(A[["interaction.depth"]])) A[["interaction.depth"]] <- 3
