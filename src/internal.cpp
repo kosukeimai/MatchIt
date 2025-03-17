@@ -45,8 +45,11 @@ bool antiexact_okay(const int& aenc,
     return true;
   }
 
+  IntegerVector antiexact_covs_row_i = antiexact_covs.row(i);
+  IntegerVector antiexact_covs_row_j = antiexact_covs.row(j);
+
   for (int k = 0; k < aenc; k++) {
-    if (antiexact_covs(i, k) == antiexact_covs(j, k)) {
+    if (antiexact_covs_row_i[k] == antiexact_covs(j, k)) {
       return false;
     }
   }
@@ -72,6 +75,32 @@ bool caliper_covs_okay(const int& ncc,
     }
     else {
       if (std::abs(caliper_covs_mat(i, k) - caliper_covs_mat(j, k)) <= -caliper_covs[k]) {
+        return false;
+      }
+    }
+  }
+
+  return true;
+}
+
+// [[Rcpp::interfaces(cpp)]]
+bool caliper_covs_okay2(const int& ncc,
+                        const NumericVector& cc_ti,
+                        const int& j,
+                        const NumericMatrix& caliper_covs_mat,
+                        const NumericVector& caliper_covs) {
+  if (ncc == 0) {
+    return true;
+  }
+
+  for (int k = 0; k < ncc; k++) {
+    if (caliper_covs[k] >= 0) {
+      if (std::abs(cc_ti[k] - caliper_covs_mat(j, k)) > caliper_covs[k]) {
+        return false;
+      }
+    }
+    else {
+      if (std::abs(cc_ti[k] - caliper_covs_mat(j, k)) <= -caliper_covs[k]) {
         return false;
       }
     }
@@ -125,6 +154,21 @@ bool exact_okay(const bool& use_exact,
   }
 
   return exact[i] == exact[j];
+}
+
+// [[Rcpp::interfaces(cpp)]]
+double euc_dist_sq(const NumericVector& v1,
+                   const NumericVector& v2) {
+  double out = 0;
+  double tmp = 0;
+  int s = v1.size();
+
+  for (int i = 0; i < s; i++) {
+    tmp = v1[i] - v2[i];
+    out += tmp * tmp;
+  }
+
+  return out;
 }
 
 // [[Rcpp::interfaces(cpp)]]
@@ -198,10 +242,19 @@ std::vector<int> find_control_vec(const int& t_id,
     }
   }
 
+  if (caliper_dist <= 0 && min_dist < -caliper_dist) {
+    min_dist = -caliper_dist;
+  }
+
   int min_ii = first_control[gi];
   int max_ii = last_control[gi];
 
   double di = distance[t_id];
+
+  NumericVector cc_ti;
+  if (ncc > 0) {
+    cc_ti = caliper_covs_mat.row(t_id);
+  }
 
   bool l_stop = false;
   bool r_stop = false;
@@ -264,7 +317,7 @@ std::vector<int> find_control_vec(const int& t_id,
 
     dist_c = std::abs(di - distance[iz]);
 
-    if (caliper_dist > 0) {
+    if (caliper_dist >= 0) {
       if (dist_c > caliper_dist) {
         if (left) {
           l_stop = true;
@@ -275,10 +328,12 @@ std::vector<int> find_control_vec(const int& t_id,
         continue;
       }
     }
-    else {
-      if (dist_c <= -caliper_dist) {
-        continue;
-      }
+    else if (dist_c <= -caliper_dist) {
+      continue;
+    }
+
+    if (dist_c < min_dist) {
+      continue;
     }
 
     //If current dist is worse than ratio dists, continue
@@ -304,9 +359,7 @@ std::vector<int> find_control_vec(const int& t_id,
       }
     }
 
-    if (dist_c < min_dist) {
-      continue;
-    }
+
 
     if (!exact_okay(use_exact, t_id, iz, exact)) {
       continue;
@@ -316,7 +369,11 @@ std::vector<int> find_control_vec(const int& t_id,
       continue;
     }
 
-    if (!caliper_covs_okay(ncc, t_id, iz, caliper_covs_mat, caliper_covs)) {
+    // if (!caliper_covs_okay(ncc, t_id, iz, caliper_covs_mat, caliper_covs)) {
+    //   continue;
+    // }
+
+    if (!caliper_covs_okay2(ncc, cc_ti, iz, caliper_covs_mat, caliper_covs)) {
       continue;
     }
 
@@ -481,18 +538,24 @@ std::vector<int> find_control_mahcovs(const int& t_id,
       continue;
     }
 
-    mv_dist = pow(mv_i - match_var[iz], 2);
+    mv_dist = std::abs(mv_i - match_var[iz]);
 
-    if (mv_dist > match_var_caliper) {
-      if (left) {
-        l_stop = true;
+    if (match_var_caliper >= 0) {
+      if (mv_dist > match_var_caliper) {
+        if (left) {
+          l_stop = true;
+        }
+        else {
+          r_stop = true;
+        }
+        continue;
       }
-      else {
-        r_stop = true;
-      }
-
+    }
+    else if (mv_dist <= -match_var_caliper) {
       continue;
     }
+
+    mv_dist = mv_dist * mv_dist;
 
     //If current dist is worse than ratio dists, continue
     if (potential_matches.size() == ratio) {
@@ -524,7 +587,7 @@ std::vector<int> find_control_mahcovs(const int& t_id,
       continue;
     }
 
-    dist_c = sum(pow(mah_covs.row(t_id) - mah_covs.row(iz), 2.0));
+    dist_c = euc_dist_sq(mah_covs.row(t_id), mah_covs.row(iz));
 
     if (!std::isfinite(dist_c)) {
       continue;
@@ -818,4 +881,47 @@ void update_first_and_last_control(IntegerVector first_control,
       }
     }
   }
+}
+
+// [[Rcpp::interfaces(cpp)]]
+double get_affine_transformation(const NumericVector& x,
+                                 const NumericVector& y,
+                                 const double& tol = 1e-9) {
+  R_len_t n = x.size();
+  int i;
+
+  if (n != y.size() || n < 2) {
+    return false; // Need at least two points for a meaningful check
+  }
+
+  // Compute means
+  double mean_x = mean(x);
+  double mean_y = mean(y);
+
+  // Compute a (scaling factor)
+  double num = 0.0, denom = 0.0;
+  double x_diff, y_diff;
+  for (i = 0; i < n; i++) {
+    x_diff = x[i] - mean_x;
+    y_diff = y[i] - mean_y;
+
+    num += x_diff * y_diff;
+    denom += x_diff * x_diff;
+  }
+
+  if (std::abs(denom) < tol || std::abs(num) < tol) {
+    return 0.0;
+  }
+
+  double a = num / denom;
+  double b = mean_y - a * mean_x;
+
+  // Verify if y is reconstructed correctly within tolerance
+  for (i = 0; i < n; i++) {
+    if (std::abs(a * x[i] + b - y[i]) > tol) {
+      return 0.0;
+    }
+  }
+
+  return a;
 }

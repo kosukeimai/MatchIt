@@ -114,4 +114,8 @@ void update_first_and_last_control(IntegerVector first_control,
                                    const IntegerVector& treat,
                                    const int& gi);
 
+double get_affine_transformation(const NumericVector& x,
+                                 const NumericVector& y,
+                                 const double& tol = 1e-9);
+
 #endif
