@@ -6,6 +6,14 @@ output:
 `MatchIt` News and Updates
 ======
 
+# MatchIt (development version)
+
+* Fixed a bug where including an irrelevant argument to `matchit()` would yield the spurious error "invalid 'pos' argument". Thanks to @raffaem. (#219)
+
+* Improved performance of `method = "nearest"` when calipers are included on covariates.
+
+* Added some new tests.
+
 # MatchIt 4.7.1
 
 * Updates for CRAN compatibility.
