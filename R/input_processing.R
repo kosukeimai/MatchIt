@@ -1,5 +1,5 @@
 #Function to process inputs and throw warnings or errors if inputs are incompatible with methods
-check.inputs <- function(mcall, method, distance, exact, mahvars, antiexact,
+check.inputs <- function(mcall, method, distance, link, distance.options, exact, mahvars, antiexact,
                          caliper, discard, reestimate, s.weights, replace,
                          ratio, m.order, estimand, ...,
                          min.controls = NULL, max.controls = NULL) {
@@ -23,7 +23,7 @@ check.inputs <- function(mcall, method, distance, exact, mahvars, antiexact,
       return(FALSE)
     }
 
-    i_ <- get0(i, envir = pos.to.env(-2L), inherits = FALSE)
+    i_ <- get0(i, envir = parent.frame(), inherits = FALSE)
 
     if (is_null(i_)) {
       return(FALSE)
@@ -40,14 +40,14 @@ check.inputs <- function(mcall, method, distance, exact, mahvars, antiexact,
     }
   }
   else if (method == "exact") {
-    for (i in c("distance", "exact", "mahvars", "antiexact", "caliper", "std.caliper", "discard", "reestimate", "replace", "ratio", "min.controls", "max.controls", "m.order")) {
+    for (i in c("distance", "link", "distance.options", "exact", "mahvars", "antiexact", "caliper", "std.caliper", "discard", "reestimate", "replace", "ratio", "min.controls", "max.controls", "m.order")) {
       if (.entered_arg(mcall, i)) {
         ignored.inputs <- c(ignored.inputs, i)
       }
     }
   }
   else if (method == "cem") {
-    for (i in c("distance", "exact", "mahvars", "antiexact", "caliper", "std.caliper", "discard", "reestimate", "replace", "ratio", "min.controls", "max.controls")) {
+    for (i in c("distance", "link", "distance.options", "exact", "mahvars", "antiexact", "caliper", "std.caliper", "discard", "reestimate", "replace", "ratio", "min.controls", "max.controls")) {
       if (.entered_arg(mcall, i)) {
         ignored.inputs <- c(ignored.inputs, i)
       }
@@ -108,7 +108,7 @@ check.inputs <- function(mcall, method, distance, exact, mahvars, antiexact,
     }
   }
   else if (method == "cardinality") {
-    for (i in c("distance", "antiexact", "caliper", "std.caliper", "reestimate", "replace", "min.controls", "m.order")) {
+    for (i in c("distance", "link", "distance.options", "antiexact", "caliper", "std.caliper", "reestimate", "replace", "min.controls", "m.order")) {
       if (.entered_arg(mcall, i)) {
         ignored.inputs <- c(ignored.inputs, i)
       }
