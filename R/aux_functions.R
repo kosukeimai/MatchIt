@@ -1,6 +1,6 @@
 #Function to ensure no subclass is devoid of both treated and control units by "scooting" units
 #from other subclasses.
-subclass_scoot <- function(sub, treat, x, min.n = 1) {
+subclass_scoot <- function(sub, treat, x, min.n = 1L) {
   #Reassigns subclasses so there are no empty subclasses
   #for each treatment group.
   subtab <- table(treat, sub)
@@ -45,7 +45,9 @@ info_to_method <- function(info) {
 
   out.list[["kto1"]] <- {
     if (is_null(info$ratio)) NULL
-    else paste0(if (is_not_null(info$max.controls)) "variable ratio ", round(info$ratio, 2L), ":1")
+    else sprintf("%s%s:1",
+                 if (is_not_null(info$max.controls)) "variable ratio " else "",
+                 round(info$ratio, 2L))
   }
 
   out.list[["type"]] <- {
@@ -84,7 +86,7 @@ info_to_distance <- function(info) {
     linear <- FALSE
   }
 
-  dist <- switch(distance,
+  .dist <- switch(distance,
                  "glm" = switch(link,
                                 "logit" = "logistic regression",
                                 "probit" = "probit regression",
@@ -105,10 +107,10 @@ info_to_distance <- function(info) {
                  "randomforest" = "a random forest")
 
   if (linear) {
-    dist <- paste(dist, "and linearized")
+    .dist <- sprintf("%s and linearized", .dist)
   }
 
-  dist
+  .dist
 }
 
 #Make interaction vector out of matrix of covs; similar to interaction()
@@ -124,7 +126,7 @@ exactify <- function(X, nam = NULL, sep = "|", include_vars = FALSE, justify = "
     stop("X must be a matrix, data frame, or list.")
   }
 
-  X <- X[lengths(X) > 0]
+  X <- X[lengths(X) > 0L]
 
   if (is_null(X)) {
     return(NULL)
@@ -329,11 +331,11 @@ ESS <- function(w) {
 nn <- function(treat, weights, discarded = NULL, s.weights = NULL) {
 
   if (is_null(discarded)) {
-    discarded <- rep.int(FALSE, length(treat))
+    discarded <- rep_with(FALSE, treat)
   }
 
   if (is_null(s.weights)) {
-    s.weights <- rep.int(1, length(treat))
+    s.weights <- rep_with(1, treat)
   }
 
   weights <- weights * s.weights
@@ -343,13 +345,15 @@ nn <- function(treat, weights, discarded = NULL, s.weights = NULL) {
                                 "Matched", "Unmatched", "Discarded"),
                               c("Control", "Treated")))
 
-  #                      Control                                    Treated
-  n["All (ESS)", ] <-     c(ESS(s.weights[treat == 0]),                ESS(s.weights[treat == 1]))
-  n["All", ] <-           c(sum(treat == 0),                           sum(treat == 1))
-  n["Matched (ESS)", ] <- c(ESS(weights[treat == 0]),                  ESS(weights[treat == 1]))
-  n["Matched", ] <-       c(sum(treat == 0 & weights > 0),             sum(treat == 1 & weights > 0))
-  n["Unmatched", ] <-     c(sum(treat == 0 & weights == 0 & !discarded), sum(treat == 1 & weights == 0 & !discarded))
-  n["Discarded", ] <-     c(sum(treat == 0 & discarded),               sum(treat == 1 & discarded))
+  t1 <- treat == 1
+
+  #                       Control                                        Treated
+  n["All (ESS)", ] <-     c(ESS(s.weights[!t1]),                  ESS(s.weights[t1]))
+  n["All", ] <-           c(sum(!t1),                             sum(t1))
+  n["Matched (ESS)", ] <- c(ESS(weights[!t1]),                    ESS(weights[t1]))
+  n["Matched", ] <-       c(sum(!t1 & weights > 0),               sum(t1 & weights > 0))
+  n["Unmatched", ] <-     c(sum(!t1 & weights == 0 & !discarded), sum(t1 & weights == 0 & !discarded))
+  n["Discarded", ] <-     c(sum(!t1 & discarded),                 sum(t1 & discarded))
 
   n
 }

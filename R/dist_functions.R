@@ -418,11 +418,10 @@ get_covs_matrix_for_dist <- function(formula = NULL, data = NULL) {
                                            function(x) contrasts(x, contrasts = FALSE) / sqrt(2)))
 
   if (ncol(X) > 1L) {
-    assign <- attr(X, "assign")[-1L]
+    .assign <- attr(X, "assign")[-1L]
     X <- X[, -1L, drop = FALSE]
+    attr(X, "assign") <- .assign
   }
-
-  attr(X, "assign") <- assign
 
   attr(X, "treat") <-  model.response(mf)
 

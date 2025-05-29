@@ -16,7 +16,7 @@ get_weights_from_subclass <- function(subclass, treat, estimand = "ATT") {
     .err("No control units were matched")
   }
 
-  weights <- rep_with(0, treat)
+  w <- rep_with(0, treat)
 
   if (!is.factor(subclass)) {
     subclass <- factor(subclass, nmax = min(length(i1), length(i0)))
@@ -28,19 +28,19 @@ get_weights_from_subclass <- function(subclass, treat, estimand = "ATT") {
   subclass <- unclass(subclass)
 
   if (estimand == "ATT") {
-    weights[i1] <- 1
-    weights[i0] <- (treated_by_sub / control_by_sub)[subclass[i0]]
+    w[i1] <- 1
+    w[i0] <- (treated_by_sub / control_by_sub)[subclass[i0]]
   }
   else if (estimand == "ATC") {
-    weights[i1] <- (control_by_sub / treated_by_sub)[subclass[i1]]
-    weights[i0] <- 1
+    w[i1] <- (control_by_sub / treated_by_sub)[subclass[i1]]
+    w[i0] <- 1
   }
   else if (estimand == "ATE") {
-    weights[i1] <- 1 + (control_by_sub / treated_by_sub)[subclass[i1]]
-    weights[i0] <- 1 + (treated_by_sub / control_by_sub)[subclass[i0]]
+    w[i1] <- 1 + (control_by_sub / treated_by_sub)[subclass[i1]]
+    w[i0] <- 1 + (treated_by_sub / control_by_sub)[subclass[i0]]
   }
 
-  weights
+  w
 }
 
 # get_weights_from_subclass2 <- function(subclass, treat, estimand = "ATT") {

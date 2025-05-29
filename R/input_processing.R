@@ -255,7 +255,7 @@ process.distance <- function(distance, method = NULL, treat) {
       attr(distance, "link") <- link
     }
     else if (tolower(distance) %in% tolower(c("GAMcloglog", "GAMlog", "GAMlogit", "GAMprobit"))) {
-      link <- tolower(substr(distance, 4, nchar(distance)))
+      link <- tolower(substr(distance, 4L, nchar(distance)))
 
       .wrn(sprintf('`distance = "%s"` will be deprecated; please use `distance = "gam", link = "%s"` in the future',
                    distance, link))

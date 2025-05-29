@@ -188,8 +188,9 @@ IntegerMatrix nn_matchC_vec(const IntegerVector& treat_,
 
     for (r = 1; r <= max_ratio; r++) {
       ord_r = ord[as<IntegerVector>(ratio[ord - 1]) >= r];
+      ord_r = ord_r - 1;
 
-      for (int t_id_t_i : ord_r - 1) {
+      for (int t_id_t_i : ord_r) {
         // t_id_t_i; index of treated unit to match among treated units
         // t_id_i: index of treated unit to match among all units
         counter++;
@@ -285,7 +286,9 @@ IntegerMatrix nn_matchC_vec(const IntegerVector& treat_,
     }
   }
   else {
-    for (int t_id_t_i : ord - 1) {
+    int t_id_t_i;
+
+    for (int t_id_t_i_ : ord) {
       // t_id_t_i; index of treated unit to match among treated units
       // t_id_i: index of treated unit to match among all units
       counter++;
@@ -293,6 +296,8 @@ IntegerMatrix nn_matchC_vec(const IntegerVector& treat_,
         counter = 0;
         Rcpp::checkUserInterrupt();
       }
+
+      t_id_t_i = t_id_t_i_ - 1;
 
       t_id_i = ind_focal[t_id_t_i];
 

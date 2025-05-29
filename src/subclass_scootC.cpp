@@ -100,13 +100,12 @@ IntegerVector subclass_scootC(const IntegerVector& subclass_,
         }
 
         //Find unit with closest x in that subclass to take
-        for (i = 0; i < nt; i++) {
-          if (subclass[indt[i]] == s2) {
-            best_i = i;
-            best_x = x[indt[i]];
-            break;
-          }
-        }
+        best_i = std::distance(indt.begin(),
+                               std::find_if(indt.begin(), indt.end(),
+                                            [&subclass, &s2](int a){
+                                              return subclass[a] == s2;
+                                            }));
+        best_x = x[indt[best_i]];
 
         for (i = best_i + 1; i < nt; i++) {
           if (subclass[indt[i]] != s2) {

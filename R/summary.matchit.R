@@ -231,7 +231,7 @@ summary.matchit <- function(object,
 
     #Remove tics
     has_tics <- which(startsWith(nam, "`") & endsWith(nam, "`"))
-    nam[has_tics] <- substr(nam[has_tics], 2, nchar(nam[has_tics]) - 1)
+    nam[has_tics] <- substr(nam[has_tics], 2L, nchar(nam[has_tics]) - 1L)
   }
 
   kk <- ncol(X)
@@ -289,7 +289,7 @@ summary.matchit <- function(object,
 
     to.remove <- rep.int(FALSE, n.int)
     int.names <- character(n.int)
-    k <- 1
+    k <- 1L
     for (i in seq_len(kk)) {
       for (j in i:kk) {
         x2 <- X[, i] * X[, j]
@@ -316,7 +316,7 @@ summary.matchit <- function(object,
             int.names[k] <- paste(nam[i], nam[j], sep = " * ")
           }
         }
-        k <- k + 1
+        k <- k + 1L
       }
     }
 
@@ -360,17 +360,17 @@ summary.matchit <- function(object,
 
   ## Imbalance Reduction
   if (matched && un && improvement) {
-    reduction <- matrix(NA_real_, nrow = nrow(sum.all), ncol = ncol(sum.all) - 2,
+    reduction <- matrix(NA_real_, nrow = nrow(sum.all), ncol = ncol(sum.all) - 2L,
                         dimnames = list(rownames(sum.all), colnames(sum.all)[-(1:2)]))
     stat.all <- abs(sum.all[, -(1:2), drop = FALSE])
     stat.matched <- abs(sum.matched[, -(1:2), drop = FALSE])
 
     #Everything but variance ratios
-    reduction[, -2] <- 100 * (stat.all[, -2] - stat.matched[, -2]) / stat.all[, -2]
+    reduction[, -2L] <- 100 * (stat.all[, -2L] - stat.matched[, -2L]) / stat.all[, -2L]
 
     #Just variance ratios; turn to log first
-    vr.all <- abs(log(stat.all[, 2]))
-    vr.matched <- abs(log(stat.matched[, 2]))
+    vr.all <- abs(log(stat.all[, 2L]))
+    vr.matched <- abs(log(stat.matched[, 2L]))
     reduction[, 2] <- 100 * (vr.all - vr.matched) / vr.all
 
     reduction[stat.all == 0 & stat.matched == 0] <- 0
@@ -595,7 +595,7 @@ summary.matchit.subclass <- function(object,
                 int.names[k] <- paste(nam[i], nam[j], sep = " * ")
               }
             }
-            k <- k + 1
+            k <- k + 1L
           }
         }
         rownames(sum.sub.int) <- int.names
@@ -644,19 +644,19 @@ print.summary.matchit <- function(x, digits = max(3, getOption("digits") - 3),
 
   if (is_not_null(x$sum.all)) {
     cat("\nSummary of Balance for All Data:\n")
-    print(round_df_char(x$sum.all[, -7, drop = FALSE], digits, pad = "0", na_vals = "."),
+    print(round_df_char(x$sum.all[, -7L, drop = FALSE], digits, pad = "0", na_vals = "."),
           right = TRUE, quote = FALSE)
   }
 
   if (is_not_null(x$sum.matched)) {
     cat("\nSummary of Balance for Matched Data:\n")
-    if (all(is.na(x$sum.matched[, 7]))) x$sum.matched <- x$sum.matched[, -7, drop = FALSE] #Remove pair dist if empty
+    if (all(is.na(x$sum.matched[, 7L]))) x$sum.matched <- x$sum.matched[, -7L, drop = FALSE] #Remove pair dist if empty
     print(round_df_char(x$sum.matched, digits, pad = "0", na_vals = "."),
           right = TRUE, quote = FALSE)
   }
   if (is_not_null(x$reduction)) {
     cat("\nPercent Balance Improvement:\n")
-    print(round_df_char(x$reduction[, -5, drop = FALSE], 1, pad = "0", na_vals = "."), right = TRUE,
+    print(round_df_char(x$reduction[, -5L, drop = FALSE], 1, pad = "0", na_vals = "."), right = TRUE,
           quote = FALSE)
   }
   if (is_not_null(x$nn)) {
@@ -737,7 +737,7 @@ print.summary.matchit.subclass <- function(x, digits = max(3L, getOption("digits
 .process_X <- function(object, addlvariables = NULL, data = NULL) {
 
   X <- {
-    if (is_null(object$X)) matrix(nrow = length(object$treat), ncol = 0)
+    if (is_null(object$X)) matrix(nrow = length(object$treat), ncol = 0L)
     else get_covs_matrix(data = object$X)
   }
 
@@ -827,5 +827,4 @@ print.summary.matchit.subclass <- function(x, digits = max(3L, getOption("digits
 
   # addl_assign <- get_assign(addlvariables)
   cbind(X, addlvariables[, setdiff(colnames(addlvariables), colnames(X)), drop = FALSE])
-
 }
