@@ -6,7 +6,7 @@ test_that("Argument processing works", {
     m <- matchit(treat ~ age + educ + married, data = lalonde,
                  method = "cem",
                  distance = "probit")
-  }, "`distance`(.|\\s)*ignored")
+  }, .w("`distance` ignored"))
 
   #No warning for ignored args set to default
   expect_no_condition({
@@ -21,7 +21,7 @@ test_that("Argument processing works", {
                  method = "nearest",
                  distance = "scaled_euclidean",
                  reestimate = TRUE)
-  }, "`reestimate`(.|\\s)*not(.|\\s)*used")
+  }, .w("`reestimate` not used"))
 
   #No error for ignored args set to default
   expect_no_condition({

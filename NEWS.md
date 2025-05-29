@@ -6,7 +6,7 @@ output:
 `MatchIt` News and Updates
 ======
 
-# MatchIt (development version)
+# MatchIt 4.7.2
 
 * Fixed a bug where including an irrelevant argument to `matchit()` would yield the spurious error "invalid 'pos' argument". Thanks to @raffaem. (#219)
 

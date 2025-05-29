@@ -337,7 +337,7 @@ std::vector<int> find_control_vec(const int& t_id,
     }
 
     //If current dist is worse than ratio dists, continue
-    if (potential_matches_id.size() >= ratio) {
+    if (potential_matches_id.size() >= static_cast<size_t>(ratio)) {
       num_closer_than_dist_c = 0;
       for (double d : potential_matches_dist) {
         if (d < dist_c) {
@@ -558,7 +558,7 @@ std::vector<int> find_control_mahcovs(const int& t_id,
     mv_dist = mv_dist * mv_dist;
 
     //If current dist is worse than ratio dists, continue
-    if (potential_matches.size() == ratio) {
+    if (potential_matches.size() == static_cast<size_t>(ratio)) {
       if (potential_matches.back().second < mv_dist) {
         if (left) {
           l_stop = true;
@@ -599,7 +599,7 @@ std::vector<int> find_control_mahcovs(const int& t_id,
       potential_matches.push_back(new_match);
     }
     else if (dist_c > potential_matches.back().second) {
-      if (potential_matches.size() == ratio) {
+      if (potential_matches.size() == static_cast<size_t>(ratio)) {
         continue;
       }
 
@@ -609,7 +609,7 @@ std::vector<int> find_control_mahcovs(const int& t_id,
       potential_matches[0] = new_match;
     }
     else {
-      if (potential_matches.size() == ratio) {
+      if (potential_matches.size() == static_cast<size_t>(ratio)) {
         potential_matches.pop_back();
       }
 
@@ -663,7 +663,7 @@ std::vector<int> find_control_mat(const int& t_id,
   }
 
   std::vector<double> potential_matches_dist;
-  double max_dist;
+  double max_dist = R_PosInf;
 
   R_xlen_t nc = distance_mat_row_i.size();
 
@@ -674,7 +674,7 @@ std::vector<int> find_control_mat(const int& t_id,
 
     dist_c = distance_mat_row_i[c];
 
-    if (potential_matches_id.size() == ratio) {
+    if (potential_matches_id.size() == static_cast<size_t>(ratio)) {
       if (dist_c > max_dist) {
         continue;
       }
