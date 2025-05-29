@@ -57,7 +57,7 @@ matchit(formula,
 
     <a class="navbar-brand me-2" href="../index.html">MatchIt</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.7.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.7.2</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -383,9 +383,9 @@ than matching.</p></div>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Summary of Balance for Matched Data:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>      Means Treated Means Control Std. Mean Diff. Var. Ratio eCDF Mean eCDF Max</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> age        25.8162       27.2108         -0.1949     0.4858    0.0722   0.1459</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> educ       10.3459       10.3459          0.0000     0.5470    0.0284   0.0919</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> re74     2095.5737     3051.6162         -0.1956     1.2100    0.1026   0.3243</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> age        25.8162       25.3189          0.0695     0.5251    0.0686   0.2378</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> educ       10.3459       10.4108         -0.0323     0.5781    0.0250   0.0865</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> re74     2095.5737     2643.4427         -0.1121     1.1247    0.0577   0.2811</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Sample Sizes:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>           Control Treated</span>
@@ -406,7 +406,7 @@ than matching.</p></div>
 <span class="r-in"><span><span class="va">m.out2</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> A `matchit` object</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  - method: Cardinality matching</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  - number of obs.: 614 (original), 540 (matched)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  - number of obs.: 614 (original), 541 (matched)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  - target estimand: ATT</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  - covariates: age, educ, re74</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">m.out2</span>, un <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
@@ -418,15 +418,15 @@ than matching.</p></div>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Summary of Balance for Matched Data:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>      Means Treated Means Control Std. Mean Diff. Var. Ratio eCDF Mean eCDF Max</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> age        25.8162       26.3662         -0.0769     0.4781    0.0695   0.1593</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> educ       10.3459       10.0761          0.1342     0.4756    0.0375   0.1106</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> re74     2095.5737     3069.7682         -0.1994     1.7132    0.1305   0.3926</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> age        25.8162       26.3624         -0.0763     0.4794    0.0690   0.1580</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> educ       10.3459       10.0758          0.1343     0.4770    0.0373   0.1099</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> re74     2095.5737     3073.3246         -0.2001     1.7175    0.1311   0.3935</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Sample Sizes:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>           Control Treated</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> All           429     185</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Matched       355     185</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Unmatched      74       0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Matched       356     185</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Unmatched      73       0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Discarded       0       0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span></span></span>
@@ -441,7 +441,7 @@ than matching.</p></div>
 <span class="r-in"><span><span class="va">m.out3</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> A `matchit` object</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  - method: Cardinality matching</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  - number of obs.: 614 (original), 516 (matched)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  - number of obs.: 614 (original), 517 (matched)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  - target estimand: ATE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  - covariates: age, educ, re74</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">m.out3</span>, un <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
@@ -453,15 +453,15 @@ than matching.</p></div>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Summary of Balance for Matched Data:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>      Means Treated Means Control Std. Mean Diff. Var. Ratio eCDF Mean eCDF Max</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> age        27.2680       27.7852         -0.0565     0.5837    0.0597   0.1258</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> educ       10.1753       10.1718          0.0014     0.6952    0.0215   0.1051</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> re74     3972.5915     5146.7881         -0.1985     1.0184    0.0829   0.2069</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> age        27.6122       27.7852         -0.0189     0.6166    0.0500   0.1183</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> educ       10.3061       10.1718          0.0544     0.5816    0.0301   0.1101</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> re74     3955.9299     5146.7881         -0.2013     1.0076    0.0819   0.1817</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Sample Sizes:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>           Control Treated</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> All           429     185</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Matched       419      97</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Unmatched      10      88</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Matched       419      98</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Unmatched      10      87</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Discarded       0       0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span><span class="co"># Pairing after 1:1 cardinality matching:</span></span></span>
@@ -485,13 +485,13 @@ than matching.</p></div>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Summary of Balance for Matched Data:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>      Means Treated Means Control Std. Mean Diff. Var. Ratio eCDF Mean eCDF Max</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> age        25.8162       26.8432         -0.1435     0.5018    0.0673   0.1351</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> educ       10.3459       10.3514         -0.0027     0.5453    0.0287   0.0919</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> re74     2095.5737     2827.7621         -0.1498     1.3037    0.0890   0.3189</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> age        25.8162       25.5568          0.0363     0.4787    0.0732   0.2162</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> educ       10.3459       10.4270         -0.0403     0.5513    0.0282   0.0865</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> re74     2095.5737     1910.2745          0.0379     1.9064    0.0584   0.2703</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>      Std. Pair Dist.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> age           0.4487</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> educ          0.3576</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> re74          0.2796</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> age           0.4775</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> educ          0.2984</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> re74          0.2175</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Sample Sizes:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>           Control Treated</span>
@@ -509,9 +509,9 @@ than matching.</p></div>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Summary of Balance for Matched Data:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>      Means Treated Means Control Std. Mean Diff. Var. Ratio eCDF Mean eCDF Max</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> age        25.8162       27.2108         -0.1949     0.4858    0.0722   0.1459</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> educ       10.3459       10.3459          0.0000     0.5470    0.0284   0.0919</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> re74     2095.5737     3051.6162         -0.1956     1.2100    0.1026   0.3243</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> age        25.8162       25.3189          0.0695     0.5251    0.0686   0.2378</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> educ       10.3459       10.4108         -0.0323     0.5781    0.0250   0.0865</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> re74     2095.5737     2643.4427         -0.1121     1.1247    0.0577   0.2811</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Sample Sizes:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>           Control Treated</span>
@@ -536,7 +536,7 @@ than matching.</p></div>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.9000.</p>
 </div>
 
     </footer></div>
