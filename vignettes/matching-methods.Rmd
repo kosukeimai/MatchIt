@@ -161,7 +161,7 @@ To perform exact matching on all supplied covariates, the `method` argument can 
 
 ### Anti-exact matching (`antiexact`)
 
-Anti-exact matching adds a restriction such that a treated and control unit with same values of any of the specified anti-exact matching variables cannot be paired. This can be useful when finding comparison units outside of a unit's group, such as when matching units in one group to units in another when units within the same group might otherwise be close matches. See examples [here](https://stackoverflow.com/questions/66526115/propensity-score-matching-with-panel-data) and [here](https://stackoverflow.com/questions/61120201/avoiding-duplicates-from-propensity-score-matching?rq=1). A similar effect can be implemented by supplying negative caliper values.
+Anti-exact matching adds a restriction such that a treated and control unit with same values of any of the specified anti-exact matching variables cannot be paired. This can be useful when finding comparison units outside of a unit's group, such as when matching units in one group to units in another when units within the same group might otherwise be close matches. See examples [here](https://stackoverflow.com/q/66526115/6348551) and [here](https://stackoverflow.com/q/61120201/6348551). A similar effect can be implemented by supplying negative caliper values.
 
 ### Matching with replacement (`replace`)
 

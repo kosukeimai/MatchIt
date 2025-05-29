@@ -20,7 +20,7 @@ bal1var <- function(xx, tt, ww = NULL, s.weights, subclass = NULL, mm = NULL,
   i1 <- which(tt == 1)
   i0 <- which(tt == 0)
 
-  too.small <- sum(ww[i1] != 0) < 2 && sum(ww[i0] != 0) < 2
+  too.small <- sum(ww[i1] != 0) < 2L && sum(ww[i0] != 0) < 2L
 
   xsum["Means Treated"] <- wm(xx[i1], ww[i1], na.rm = TRUE)
   xsum["Means Control"] <- wm(xx[i0], ww[i0], na.rm = TRUE)
@@ -215,7 +215,7 @@ qqsum <- function(x, t, w = NULL, standardize = FALSE) {
     wn0 <- length(w0)
 
     if (wn1 < wn0) {
-      if (length(u) <= 5) {
+      if (length(u) <= 5L) {
         x0probs <- vapply(u, function(u_) wm(x0 == u_, w0), numeric(1L))
         x0cumprobs <- c(0, .cumsum_prob(x0probs))
         x0 <- u[findInterval(.cumsum_prob(w1), x0cumprobs, rightmost.closed = TRUE)]
@@ -226,7 +226,7 @@ qqsum <- function(x, t, w = NULL, standardize = FALSE) {
       }
     }
     else if (wn1 > wn0) {
-      if (length(u) <= 5) {
+      if (length(u) <= 5L) {
         x1probs <- vapply(u, function(u_) wm(x1 == u_, w1), numeric(1L))
         x1cumprobs <- c(0, .cumsum_prob(x1probs))
         x1 <- u[findInterval(.cumsum_prob(w0), x1cumprobs, rightmost.closed = TRUE)]
