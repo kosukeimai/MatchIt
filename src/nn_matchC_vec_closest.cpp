@@ -119,7 +119,24 @@ IntegerMatrix nn_matchC_vec_closest(const IntegerVector& treat,
   if (caliper_covs_.isNotNull()) {
     caliper_covs = as<NumericVector>(caliper_covs_);
     caliper_covs_mat = as<NumericMatrix>(caliper_covs_mat_);
+
     ncc = caliper_covs_mat.ncol();
+
+    double a;
+
+    // Find if caliper placed on distance
+    for (int cci = 0; cci < ncc; cci++) {
+      a = get_affine_transformation(caliper_covs_mat.column(cci),
+                                    distance);
+
+      if (std::abs(a) > 1e-10) {
+        if (caliper_dist_.isNull() ||
+            (caliper_covs[cci] >= 0 && caliper_dist > a * caliper_covs[cci]) ||
+            (caliper_covs[cci] < 0 && caliper_dist < a * caliper_covs[cci])) {
+          caliper_dist = a * caliper_covs[cci];
+        }
+      }
+    }
   }
 
   //antiexact

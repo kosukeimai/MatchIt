@@ -36,17 +36,17 @@ NumericVector weights_matrixC(const IntegerMatrix& mm,
 
   for (int r : which(!is_na(mm(_, 0)))) {
 
-    row_r = na_omit(mm.row(r));
+    row_r = na_omit(mm.row(r)) - 1;
 
     for (gi = 0; gi < g; gi++) {
       matches_g[gi] = 0.0;
     }
 
-    for (int i : row_r - 1) {
+    for (int i : row_r) {
       matches_g[treat[i]] += 1.0;
     }
 
-    for (int i : row_r - 1) {
+    for (int i : row_r) {
       if (matches_g[treat[i]] == 0.0) {
         continue;
       }

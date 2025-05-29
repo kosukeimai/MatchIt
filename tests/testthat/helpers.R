@@ -144,3 +144,8 @@ expect_good_matchit <- function(m, expect_subclass = NULL, expect_distance = NUL
 
   invisible(m)
 }
+
+#Use regex to make strings invariant to white spaces
+.w <- function(x) {
+  gsub(" ", "(\\s+)", x, fixed = TRUE)
+}

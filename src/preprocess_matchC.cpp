@@ -10,10 +10,10 @@ using namespace Rcpp;
 IntegerVector preprocess_matchC(IntegerVector t,
                                 NumericVector p) {
   R_xlen_t n = t.size();
-  int n1 = std::count(t.begin(), t.end(), 1);
-  int n0 = n - n1;
+  R_xlen_t n1 = std::count(t.begin(), t.end(), 1);
+  R_xlen_t n0 = n - n1;
 
-  int i, j;
+  R_xlen_t i, j;
 
   Function ord("order");
 
@@ -48,7 +48,7 @@ IntegerVector preprocess_matchC(IntegerVector t,
       continue;
     }
 
-    if (queue.size() > k0) {
+    if (queue.size() > static_cast<size_t>(k0)) {
       a[ci] = queue[k0];
       k0++;
     }
@@ -70,7 +70,7 @@ IntegerVector preprocess_matchC(IntegerVector t,
       continue;
     }
 
-    if (queue.size() > k0) {
+    if (queue.size() > static_cast<size_t>(k0)) {
       b[ci] = queue[k0];
       k0++;
     }
@@ -102,8 +102,10 @@ IntegerVector preprocess_matchC(IntegerVector t,
     ci++;
   }
 
-  IntegerVector out(keep.size());
-  for (i = 0; i < keep.size(); i++) {
+  int keep_size = keep.size();
+  IntegerVector out(keep_size);
+
+  for (i = 0; i < keep_size; i++) {
     out[i] = keep[i] + 1;
   }
 

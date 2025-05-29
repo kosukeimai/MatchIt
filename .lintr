@@ -1,0 +1,14 @@
+linters: all_linters(
+    brace_linter = NULL,
+    object_name_linter = NULL,
+    line_length_linter = NULL,
+    indentation_linter = NULL,
+    numeric_leading_zero_linter = NULL,
+    keyword_quote_linter = NULL,
+    function_argument_linter = NULL,
+    commented_code_linter = NULL,
+    unnecessary_nesting_linter = NULL,
+    implicit_integer_linter = NULL,
+    cyclocomp_linter = NULL
+  )
+encoding: "UTF-8"

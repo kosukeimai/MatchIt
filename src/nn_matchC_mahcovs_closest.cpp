@@ -84,15 +84,6 @@ IntegerMatrix nn_matchC_mahcovs_closest(const IntegerVector& treat,
 
   Function o("order");
 
-  NumericVector match_var = mah_covs.column(0);
-  double match_var_caliper = R_PosInf;
-
-  IntegerVector ind_d_ord = o(match_var);
-  ind_d_ord = ind_d_ord - 1; //location of each unit after sorting
-
-  IntegerVector match_d_ord = o(ind_d_ord);
-  match_d_ord = match_d_ord - 1;
-
   //exact
   bool use_exact = false;
   IntegerVector exact;
@@ -119,17 +110,6 @@ IntegerMatrix nn_matchC_mahcovs_closest(const IntegerVector& treat,
     caliper_covs = as<NumericVector>(caliper_covs_);
     caliper_covs_mat = as<NumericMatrix>(caliper_covs_mat_);
     ncc = caliper_covs_mat.ncol();
-
-    //Find if caliper placed on match_var
-    for (int cci = 0; cci < ncc; cci++) {
-      if (std::equal(caliper_covs_mat.column(cci).begin(),
-                     caliper_covs_mat.column(cci).end(),
-                     match_var.begin(),
-                     match_var.end())) {
-        match_var_caliper = caliper_covs[cci];
-        break;
-      }
-    }
   }
 
   //antiexact
@@ -147,6 +127,43 @@ IntegerMatrix nn_matchC_mahcovs_closest(const IntegerVector& treat,
     unit_id = as<IntegerVector>(unit_id_);
     use_unit_id = true;
   }
+
+  // Matching variable: if any mah_covs equal to caliper_covs, use
+  // that caliper_covs and caliper as matching variable
+  NumericVector match_var;
+  double match_var_caliper = R_PosInf;
+  int n_mah_covs = mah_covs.ncol();
+  if (ncc > 0) {
+    double a;
+    for (int mci = 0; match_var.size() == 0 && mci < n_mah_covs; mci++) {
+      for (int cci = 0; match_var.size() == 0 && cci < ncc; cci++) {
+        if (caliper_covs[cci] < 0) {
+          continue;
+        }
+
+        a = get_affine_transformation(caliper_covs_mat.column(cci),
+                                      mah_covs.column(mci));
+
+        if (std::abs(a) > 1e-10) {
+          caliper_covs_mat.column(cci) = mah_covs.column(mci);
+          caliper_covs[cci] *= a;
+
+          match_var = mah_covs.column(mci);
+          match_var_caliper = caliper_covs[cci];
+        }
+      }
+    }
+  }
+
+  if (match_var.size() == 0) {
+    match_var = mah_covs.column(0);
+  }
+
+  IntegerVector ind_d_ord = o(match_var);
+  ind_d_ord = ind_d_ord - 1; //location of each unit after sorting
+
+  IntegerVector match_d_ord = o(ind_d_ord);
+  match_d_ord = match_d_ord - 1;
 
   //storing closeness
   std::vector<int> t_id, c_id;

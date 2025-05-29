@@ -395,7 +395,7 @@ wm <- function(x, w = NULL, na.rm = TRUE) {
 
 #Faster diff()
 diff1 <- function(x) {
-  x[-1] - x[-length(x)]
+  x[-1L] - x[-length(x)]
 }
 
 #cumsum() for probabilities to ensure they are between 0 and 1
@@ -439,8 +439,19 @@ na.rem <- function(x) {
 
 #Extract variables from ..., similar to ...elt() or get0(), by name without evaluating list(...)
 ...get <- function(x, ifnotfound = NULL) {
-  eval(quote(if (!anyNA(.m1 <- match(.x, ...names())) && is_not_null(.m2 <- ...elt(.m1))) .m2
-             else .ifnotfound),
+  expr <- quote({
+    .m1 <- match(.x, ...names())
+    if (anyNA(.m1)) {
+      .ifnotfound
+    }
+    else {
+      .m2 <- ...elt(.m1[1L])
+      if (is_not_null(.m2)) .m2
+      else .ifnotfound
+    }
+  })
+
+  eval(expr,
        pairlist(.x = x[1L], .ifnotfound = ifnotfound),
        parent.frame(1L))
 }

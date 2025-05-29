@@ -446,7 +446,8 @@ matchit <- function(formula,
   n.obs <- length(treat)
 
   #Process inputs
-  ignored.inputs <- check.inputs(mcall = mcall, method = method, distance = distance, exact = exact,
+  ignored.inputs <- check.inputs(mcall = mcall, method = method, distance = distance,
+                                 link = link, distance.options = distance.options, exact = exact,
                                  mahvars = mahvars, antiexact = antiexact, caliper = caliper, discard = discard,
                                  reestimate = reestimate, s.weights = s.weights, replace = replace,
                                  ratio = ratio, m.order = m.order, estimand = estimand)

@@ -6,6 +6,14 @@ output:
 `MatchIt` News and Updates
 ======
 
+# MatchIt 4.7.2
+
+* Fixed a bug where including an irrelevant argument to `matchit()` would yield the spurious error "invalid 'pos' argument". Thanks to @raffaem. (#219)
+
+* Improved performance of `method = "nearest"` when calipers are included on covariates.
+
+* Added some new tests.
+
 # MatchIt 4.7.1
 
 * Updates for CRAN compatibility.
@@ -158,7 +166,7 @@ Most improvements are related to performance. Some of these dramatically improve
 
 * The Mahalanobis distance is now computed using the pooled within-group covariance matrix (computed by treatment group-mean centering each covariate before computing the covariance in the full sample), in line with how it is computed in `optmatch` and recommended by Rubin (1980) among others. This will cause results to differ between this version and prior versions of `MatchIt` that used the Mahalanobis distance computed ignoring group membership.
 
-* Added the `unit.id` argument to `matchit()` with `method = "nearest"`, which defines unit IDs so that if a control observation with a given unit ID has been matched to a treated unit, no other control units with the same ID can be used as future matches, ensuring each unit ID is used no more than once. This is useful when, e.g., multiple rows correspond to the same control firm but you only want each control firm to be matched once, in which case firm ID would be supplied to `unit.id`. See [here](https://stats.stackexchange.com/questions/349784/propensity-matching-and-analysis-of-resultant-data-on-a-data-set-with-repeated-m) for an example use case.
+* Added the `unit.id` argument to `matchit()` with `method = "nearest"`, which defines unit IDs so that if a control observation with a given unit ID has been matched to a treated unit, no other control units with the same ID can be used as future matches, ensuring each unit ID is used no more than once. This is useful when, e.g., multiple rows correspond to the same control firm but you only want each control firm to be matched once, in which case firm ID would be supplied to `unit.id`. See [here](https://stats.stackexchange.com/q/349784/116195) for an example use case.
 
 * In `summary.matchit()`, `improvement` is now set to `FALSE` by default to hide the percentage improvement in balance. Set to `TRUE` to recover prior behavior.
 
@@ -250,7 +258,7 @@ Most improvements are related to performance. Some of these dramatically improve
 
 * Added a section in `vignette("estimating-effects")` on moderation analysis with matching, making use of the new `rbind()` method.
 
-* Added `antiexact` argument to perform anti-exact matching, i.e., matching that ensures treated and control units have different values of certain variables. See [here](https://stackoverflow.com/questions/66526115/propensity-score-matching-with-panel-data) and [here](https://stackoverflow.com/questions/61120201/avoiding-duplicates-from-propensity-score-matching?rq=1) for examples where this feature was requested and might be useful. Anti-exact matching works with nearest neighbor, optimal, full, and genetic matching. The argument to `antiexact` should be similar to an argument to `exact`: either a string or a one-sided `formula` containing the names of the anti-exact matching variables.
+* Added `antiexact` argument to perform anti-exact matching, i.e., matching that ensures treated and control units have different values of certain variables. See [here](https://stackoverflow.com/q/66526115/6348551) and [here](https://stackoverflow.com/q/61120201/6348551) for examples where this feature was requested and might be useful. Anti-exact matching works with nearest neighbor, optimal, full, and genetic matching. The argument to `antiexact` should be similar to an argument to `exact`: either a string or a one-sided `formula` containing the names of the anti-exact matching variables.
 
 * Slight speed improvements for nearest neighbor matching, especially with `exact` specified.
 
