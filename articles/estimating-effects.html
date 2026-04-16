@@ -70,7 +70,7 @@
                         <h4 data-toc-skip class="author">Noah
 Greifer</h4>
             
-            <h4 data-toc-skip class="date">2025-05-29</h4>
+            <h4 data-toc-skip class="date">2026-04-16</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/kosukeimai/MatchIt/blob/master/vignettes/estimating-effects.Rmd" class="external-link"><code>vignettes/estimating-effects.Rmd</code></a></small>
       <div class="d-none name"><code>estimating-effects.Rmd</code></div>
@@ -454,7 +454,7 @@ not necessary, including them does not affect the estimates. Because it
 may not always be clear when weights are required, we recommend always
 including them.&lt;/p&gt;"><sup>3</sup></a>, then estimating the
 treatment effect using g-computation (i.e., using
-<code><a href="https://marginaleffects.com/man/r/comparisons.html" class="external-link">marginaleffects::avg_comparisons()</a></code>) with a cluster-robust
+<code><a href="https://rdrr.io/pkg/marginaleffects/man/comparisons.html" class="external-link">marginaleffects::avg_comparisons()</a></code>) with a cluster-robust
 SE to account for pair membership. This procedure is the same for
 continuous and binary outcomes with and without covariates.</p>
 <p>There are a few adjustments that need to be made for certain
@@ -527,7 +527,7 @@ example.</p>
 <span>                        <span class="va">X6</span> <span class="op">+</span> <span class="va">X7</span> <span class="op">+</span> <span class="va">X8</span> <span class="op">+</span> <span class="va">X9</span><span class="op">)</span>,</span>
 <span>           data <span class="op">=</span> <span class="va">md</span>,</span>
 <span>           weights <span class="op">=</span> <span class="va">weights</span><span class="op">)</span></span></code></pre></div>
-<p>Next, we use <code><a href="https://marginaleffects.com/man/r/comparisons.html" class="external-link">marginaleffects::avg_comparisons()</a></code> to
+<p>Next, we use <code><a href="https://rdrr.io/pkg/marginaleffects/man/comparisons.html" class="external-link">marginaleffects::avg_comparisons()</a></code> to
 estimate the ATT.</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">avg_comparisons</span><span class="op">(</span><span class="va">fit1</span>,</span>
@@ -546,7 +546,7 @@ specifics of the matching method and outcome type; see the sections
 below for information.</p>
 <p>If, in addition to the effect estimate, we want the average estimated
 potential outcomes, we can use
-<code><a href="https://marginaleffects.com/man/r/predictions.html" class="external-link">marginaleffects::avg_predictions()</a></code>, which we demonstrate
+<code><a href="https://rdrr.io/pkg/marginaleffects/man/predictions.html" class="external-link">marginaleffects::avg_predictions()</a></code>, which we demonstrate
 below. Note the interpretation of the resulting estimates as the
 expected potential outcomes is only valid if all covariates present in
 the outcome model (if any) are interacted with the treatment.</p>
@@ -1568,7 +1568,7 @@ Coefficients.”</span> <em>American Journal of Epidemiology</em> 177 (4):
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.9000.</p>
 </div>
 
     </footer>

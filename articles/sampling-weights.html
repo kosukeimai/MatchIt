@@ -70,7 +70,7 @@
                         <h4 data-toc-skip class="author">Noah
 Greifer</h4>
             
-            <h4 data-toc-skip class="date">2025-05-29</h4>
+            <h4 data-toc-skip class="date">2026-04-16</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/kosukeimai/MatchIt/blob/master/vignettes/sampling-weights.Rmd" class="external-link"><code>vignettes/sampling-weights.Rmd</code></a></small>
       <div class="d-none name"><code>sampling-weights.Rmd</code></div>
@@ -267,7 +267,7 @@ and <code><a href="../reference/match_data.html">get_matches()</a></code> do thi
 produced by these functions already are a product of the matching
 weights and the sampling weights. Note this will only be true if
 sampling weights are incorporated into the <code>matchit</code> object.
-With <code><a href="https://marginaleffects.com/man/r/comparisons.html" class="external-link">avg_comparisons()</a></code>, only the sampling weights should be
+With <code><a href="https://rdrr.io/pkg/marginaleffects/man/comparisons.html" class="external-link">avg_comparisons()</a></code>, only the sampling weights should be
 included when estimating the treatment effect.</p>
 <p>Below we estimate the effect of <code>A</code> on <code>Y_C</code> in
 the matched and sampling weighted sample, adjusting for the covariates
@@ -280,7 +280,7 @@ to improve precision and decrease bias.</p>
 <span>          weights <span class="op">=</span> <span class="va">weights</span><span class="op">)</span></span>
 <span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://marginaleffects.com/" class="external-link">"marginaleffects"</a></span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://marginaleffects.com/man/r/comparisons.html" class="external-link">avg_comparisons</a></span><span class="op">(</span><span class="va">fit</span>,</span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/marginaleffects/man/comparisons.html" class="external-link">avg_comparisons</a></span><span class="op">(</span><span class="va">fit</span>,</span>
 <span>                variables <span class="op">=</span> <span class="st">"A"</span>,</span>
 <span>                vcov <span class="op">=</span> <span class="op">~</span><span class="va">subclass</span>,</span>
 <span>                newdata <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="va">A</span> <span class="op">==</span> <span class="fl">1</span><span class="op">)</span>,</span>
@@ -374,7 +374,7 @@ Matching in the Context of Complex Survey Data.”</span>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.9000.</p>
 </div>
 
     </footer>

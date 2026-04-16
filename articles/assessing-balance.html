@@ -70,7 +70,7 @@
                         <h4 data-toc-skip class="author">Noah
 Greifer</h4>
             
-            <h4 data-toc-skip class="date">2025-05-29</h4>
+            <h4 data-toc-skip class="date">2026-04-16</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/kosukeimai/MatchIt/blob/master/vignettes/assessing-balance.Rmd" class="external-link"><code>vignettes/assessing-balance.Rmd</code></a></small>
       <div class="d-none name"><code>assessing-balance.Rmd</code></div>
@@ -514,7 +514,7 @@ supplied to <code>x</code> in <code><a href="https://rdrr.io/r/graphics/legend.h
 <code class="sourceCode R"><span><span class="va">m.sum</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">m.out</span>, addlvariables <span class="op">=</span> <span class="op">~</span> <span class="fu"><a href="https://rdrr.io/r/base/AsIs.html" class="external-link">I</a></span><span class="op">(</span><span class="va">age</span><span class="op">^</span><span class="fl">2</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/base/AsIs.html" class="external-link">I</a></span><span class="op">(</span><span class="va">re74</span><span class="op">==</span><span class="fl">0</span><span class="op">)</span> <span class="op">+</span> </span>
 <span>                   <span class="fu"><a href="https://rdrr.io/r/base/AsIs.html" class="external-link">I</a></span><span class="op">(</span><span class="va">re75</span><span class="op">==</span><span class="fl">0</span><span class="op">)</span> <span class="op">+</span> <span class="va">educ</span><span class="op">:</span><span class="va">race</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">m.sum</span>, var.order <span class="op">=</span> <span class="st">"unmatched"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="assessing-balance_files/figure-html/unnamed-chunk-3-1.png" alt="A love plot with most matched dots below the threshold lines, indicaitng good balance after matching, in contrast to the unmatched dots far from the treshold lines, indicating poor balance before matching." width="672" style="display: block; margin: auto;"></p>
+<p><img src="assessing-balance_files/figure-html/unnamed-chunk-3-1.png" class="r-plt" alt="A love plot with most matched dots below the threshold lines, indicaitng good balance after matching, in contrast to the unmatched dots far from the treshold lines, indicating poor balance before matching." width="672" style="display: block; margin: auto;"></p>
 <p>From this plot it is clear to see that balance was quite poor prior
 to matching, but full matching improved balance on all covariates, and
 most within a threshold of .1. To make the variable names cleaner, the
@@ -566,7 +566,7 @@ supplied with a data set containing the named variables.</li>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">#eQQ plot</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">m.out</span>, type <span class="op">=</span> <span class="st">"qq"</span>, which.xs <span class="op">=</span> <span class="op">~</span><span class="va">age</span> <span class="op">+</span> <span class="va">nodegree</span> <span class="op">+</span> <span class="va">re74</span><span class="op">)</span></span></code></pre></div>
-<p><img src="assessing-balance_files/figure-html/unnamed-chunk-4-1.png" alt="eQQ plots of age, nodegree, and re74 in the unmatched and matched samples." width="672" style="display: block; margin: auto;"></p>
+<p><img src="assessing-balance_files/figure-html/unnamed-chunk-4-1.png" class="r-plt" alt="eQQ plots of age, nodegree, and re74 in the unmatched and matched samples." width="672" style="display: block; margin: auto;"></p>
 <p>The y-axis displays the each value of the covariate for the treated
 units, and the x-axis displays the the value of the covariate at the
 corresponding quantile in the control group. When values fall on the 45
@@ -581,7 +581,7 @@ to compute the eQQ difference statistics that are displayed in
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">#eCDF plot</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">m.out</span>, type <span class="op">=</span> <span class="st">"ecdf"</span>, which.xs <span class="op">=</span> <span class="op">~</span><span class="va">educ</span> <span class="op">+</span> <span class="va">married</span> <span class="op">+</span> <span class="va">re75</span><span class="op">)</span></span></code></pre></div>
-<p><img src="assessing-balance_files/figure-html/unnamed-chunk-5-1.png" alt="eCDF plots of educ, married, and re75 in the unmatched and matched samples." width="672" style="display: block; margin: auto;"></p>
+<p><img src="assessing-balance_files/figure-html/unnamed-chunk-5-1.png" class="r-plt" alt="eCDF plots of educ, married, and re75 in the unmatched and matched samples." width="672" style="display: block; margin: auto;"></p>
 <p>The x-axis displays the covariate values and the y-axis displays the
 proportion of the sample at or less than that covariate value. Perfectly
 overlapping lines indicate good balance. The black line corresponds to
@@ -596,7 +596,7 @@ compute the eCDF difference statistics that are displayed in
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">#density plot</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">m.out</span>, type <span class="op">=</span> <span class="st">"density"</span>, which.xs <span class="op">=</span> <span class="op">~</span><span class="va">age</span> <span class="op">+</span> <span class="va">educ</span> <span class="op">+</span> <span class="va">race</span><span class="op">)</span></span></code></pre></div>
-<p><img src="assessing-balance_files/figure-html/unnamed-chunk-6-1.png" alt="Density plots of age, educ, and race in the unmatched and matched samples." width="672" style="display: block; margin: auto;"></p>
+<p><img src="assessing-balance_files/figure-html/unnamed-chunk-6-1.png" class="r-plt" alt="Density plots of age, educ, and race in the unmatched and matched samples." width="672" style="display: block; margin: auto;"></p>
 <p>The x-axis displays the covariate values and the y-axis displays the
 density of the sample at that covariate value. For categorical
 variables, the y-axis displays the proportion of the sample at that
@@ -756,7 +756,7 @@ object with <code>subclass = TRUE</code>.</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">s</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">s.out</span>, subclass <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">s</span>, var.order <span class="op">=</span> <span class="st">"unmatched"</span>, abs <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
-<p><img src="assessing-balance_files/figure-html/unnamed-chunk-10-1.png" alt="Love plot of balance before and after subclassification, with subclass IDs representing balance within each subclass in addition to dots representing balance overall." width="672" style="display: block; margin: auto;"></p>
+<p><img src="assessing-balance_files/figure-html/unnamed-chunk-10-1.png" class="r-plt" alt="Love plot of balance before and after subclassification, with subclass IDs representing balance within each subclass in addition to dots representing balance overall." width="672" style="display: block; margin: auto;"></p>
 <p>Note that for some variables, while the groups are balanced in
 aggregate (black dots), the individual subclasses (gray numbers) may not
 be balanced, in which case unadjusted effect estimates within these
@@ -770,7 +770,7 @@ within a subclass.</p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">s.out</span>, type <span class="op">=</span> <span class="st">"density"</span>, which.xs <span class="op">=</span> <span class="op">~</span><span class="va">educ</span> <span class="op">+</span> <span class="va">married</span> <span class="op">+</span> <span class="va">re75</span>,</span>
 <span>     subclass <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></code></pre></div>
-<p><img src="assessing-balance_files/figure-html/unnamed-chunk-11-1.png" alt="Density plots of educ, married, and re75 in the unmatched sample and in subclass 1." width="672" style="display: block; margin: auto;"></p>
+<p><img src="assessing-balance_files/figure-html/unnamed-chunk-11-1.png" class="r-plt" alt="Density plots of educ, married, and re75 in the unmatched sample and in subclass 1." width="672" style="display: block; margin: auto;"></p>
 <p>If we had set <code>subclass = FALSE</code>, plots would have been
 displayed in aggregate using the subclassification weights. If
 <code>subclass</code> is unspecified, a prompt will ask us for which
@@ -900,7 +900,7 @@ and for which statistics balance is to be displayed. Below is an example
 of its basic use:</p>
 <div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://ngreifer.github.io/cobalt/reference/love.plot.html" class="external-link">love.plot</a></span><span class="op">(</span><span class="va">m.out</span>, binary <span class="op">=</span> <span class="st">"std"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="assessing-balance_files/figure-html/unnamed-chunk-16-1.png" alt="Minimal love plot of balance before and after matching." width="672" style="display: block; margin: auto;"></p>
+<p><img src="assessing-balance_files/figure-html/unnamed-chunk-16-1.png" class="r-plt" alt="Minimal love plot of balance before and after matching." width="672" style="display: block; margin: auto;"></p>
 <p>The syntax is straightforward and similar to that of
 <code><a href="https://ngreifer.github.io/cobalt/reference/bal.tab.html" class="external-link">bal.tab()</a></code>. Below we demonstrate a more advanced use that
 customizes the appearance of the plot and displays balance not only on
@@ -915,7 +915,7 @@ full matching and nearest neighbor matching simultaneously.</p>
 <span>          colors <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"red"</span>, <span class="st">"blue"</span>, <span class="st">"darkgreen"</span><span class="op">)</span>,</span>
 <span>          sample.names <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Original"</span>, <span class="st">"Full Matching"</span>, <span class="st">"NN Matching"</span><span class="op">)</span>,</span>
 <span>          position <span class="op">=</span> <span class="st">"bottom"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="assessing-balance_files/figure-html/unnamed-chunk-17-1.png" alt="A more elaborate love plot displaying some of the cobalt's capabilities for making publication-ready plots." width="672" style="display: block; margin: auto;"></p>
+<p><img src="assessing-balance_files/figure-html/unnamed-chunk-17-1.png" class="r-plt" alt="A more elaborate love plot displaying some of the cobalt's capabilities for making publication-ready plots." width="672" style="display: block; margin: auto;"></p>
 <p>The <code><a href="https://ngreifer.github.io/cobalt/reference/love.plot.html" class="external-link">love.plot()</a></code> documentation explains what each of
 these arguments do and the several other ones available. See
 <code><a href="https://ngreifer.github.io/cobalt/articles/love.plot.html" class="external-link">vignette("love.plot", package = "cobalt")</a></code> for other
@@ -933,16 +933,16 @@ Below we demonstrate some of its uses:</p>
 <div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">#Density plot for continuous variables</span></span>
 <span><span class="fu"><a href="https://ngreifer.github.io/cobalt/reference/bal.plot.html" class="external-link">bal.plot</a></span><span class="op">(</span><span class="va">m.out</span>, var.name <span class="op">=</span> <span class="st">"educ"</span>, which <span class="op">=</span> <span class="st">"both"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="assessing-balance_files/figure-html/unnamed-chunk-18-1.png" alt="Density plot for educ before and after matching." width="672" style="display: block; margin: auto;"></p>
+<p><img src="assessing-balance_files/figure-html/unnamed-chunk-18-1.png" class="r-plt" alt="Density plot for educ before and after matching." width="672" style="display: block; margin: auto;"></p>
 <div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">#Bar graph for categorical variables</span></span>
 <span><span class="fu"><a href="https://ngreifer.github.io/cobalt/reference/bal.plot.html" class="external-link">bal.plot</a></span><span class="op">(</span><span class="va">m.out</span>, var.name <span class="op">=</span> <span class="st">"race"</span>, which <span class="op">=</span> <span class="st">"both"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="assessing-balance_files/figure-html/unnamed-chunk-18-2.png" alt="Bar graph for race before and after matching." width="672" style="display: block; margin: auto;"></p>
+<p><img src="assessing-balance_files/figure-html/unnamed-chunk-18-2.png" class="r-plt" alt="Bar graph for race before and after matching." width="672" style="display: block; margin: auto;"></p>
 <div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">#Mirrored histogram</span></span>
 <span><span class="fu"><a href="https://ngreifer.github.io/cobalt/reference/bal.plot.html" class="external-link">bal.plot</a></span><span class="op">(</span><span class="va">m.out</span>, var.name <span class="op">=</span> <span class="st">"distance"</span>, which <span class="op">=</span> <span class="st">"both"</span>,</span>
 <span>         type <span class="op">=</span> <span class="st">"histogram"</span>, mirror <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
-<p><img src="assessing-balance_files/figure-html/unnamed-chunk-18-3.png" alt="Mirrored histograms of propensity scores before and after matching." width="672" style="display: block; margin: auto;"></p>
+<p><img src="assessing-balance_files/figure-html/unnamed-chunk-18-3.png" class="r-plt" alt="Mirrored histograms of propensity scores before and after matching." width="672" style="display: block; margin: auto;"></p>
 <p>These plots help illuminate the specific ways in which the covariate
 distributions differ between treatment groups, which can aid in
 interpreting the balance statistics provided by <code><a href="https://ngreifer.github.io/cobalt/reference/bal.tab.html" class="external-link">bal.tab()</a></code>
@@ -1069,7 +1069,7 @@ Research.”</span> <em>Journal of Clinical Epidemiology</em> 66 (8): S84.
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.9000.</p>
 </div>
 
     </footer>

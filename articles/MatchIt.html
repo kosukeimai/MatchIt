@@ -70,7 +70,7 @@
                         <h4 data-toc-skip class="author">Noah
 Greifer</h4>
             
-            <h4 data-toc-skip class="date">2025-05-29</h4>
+            <h4 data-toc-skip class="date">2026-04-16</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/kosukeimai/MatchIt/blob/master/vignettes/MatchIt.Rmd" class="external-link"><code>vignettes/MatchIt.Rmd</code></a></small>
       <div class="d-none name"><code>MatchIt.Rmd</code></div>
@@ -420,13 +420,13 @@ the distribution of propensity scores of those who were matched using
 <code><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot()</a></code> with <code>type = "jitter"</code>:</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">m.out1</span>, type <span class="op">=</span> <span class="st">"jitter"</span>, interactive <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
-<p><img src="MatchIt_files/figure-html/unnamed-chunk-7-1.png" alt="Jitter plot of the propensity scores, which shows that no treated unit were dropped, and a large number of control units with low propensity scores were dropped." width="672" style="display: block; margin: auto;"></p>
+<p><img src="MatchIt_files/figure-html/unnamed-chunk-7-1.png" class="r-plt" alt="Jitter plot of the propensity scores, which shows that no treated unit were dropped, and a large number of control units with low propensity scores were dropped." width="672" style="display: block; margin: auto;"></p>
 <p>We can visually examine balance on the covariates using
 <code><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot()</a></code> with <code>type = "density"</code>:</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">m.out1</span>, type <span class="op">=</span> <span class="st">"density"</span>, interactive <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>     which.xs <span class="op">=</span> <span class="op">~</span><span class="va">age</span> <span class="op">+</span> <span class="va">married</span> <span class="op">+</span> <span class="va">re75</span><span class="op">)</span></span></code></pre></div>
-<p><img src="MatchIt_files/figure-html/unnamed-chunk-8-1.png" alt="Density plots of age, married and re75 in the unmatched and matched samples." width="672" style="display: block; margin: auto;"></p>
+<p><img src="MatchIt_files/figure-html/unnamed-chunk-8-1.png" class="r-plt" alt="Density plots of age, married and re75 in the unmatched and matched samples." width="672" style="display: block; margin: auto;"></p>
 <p>Imbalances are represented by the differences between the black
 (treated) and gray (control) distributions. Although
 <code>married</code> and <code>re75</code> appear to have improved
@@ -494,7 +494,7 @@ in a plot, such as a Love plot, which we can make by calling
 <code><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot()</a></code> on the <code><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary()</a></code> output:</p>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">m.out2</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<p><img src="MatchIt_files/figure-html/unnamed-chunk-12-1.png" alt="A love plot with matched dots below the threshold lines, indicaitng good balance after matching, in contrast to the unmatched dots far from the treshold lines, indicating poor balance before matching." width="672" style="display: block; margin: auto;"></p>
+<p><img src="MatchIt_files/figure-html/unnamed-chunk-12-1.png" class="r-plt" alt="A love plot with matched dots below the threshold lines, indicaitng good balance after matching, in contrast to the unmatched dots far from the treshold lines, indicating poor balance before matching." width="672" style="display: block; margin: auto;"></p>
 <p>Love plots are a simple and straightforward way to summarize balance
 visually. See <code><a href="../articles/assessing-balance.html">vignette("assessing-balance")</a></code> for more
 information on how to customize <code>MatchIt</code>’s Love plot and how
@@ -514,7 +514,7 @@ full matching and most other matching methods, we can run a regression
 of the outcome on the treatment and covariates in the matched sample
 (i.e., including the matching weights) and estimate the treatment effect
 using g-computation as implemented in
-<code><a href="https://marginaleffects.com/man/r/comparisons.html" class="external-link">marginaleffects::avg_comparisons()</a></code><a class="footnote-ref" tabindex="0" data-bs-toggle="popover" data-bs-content='&lt;p&gt;In some cases, the coefficient on the treatment variable
+<code><a href="https://rdrr.io/pkg/marginaleffects/man/comparisons.html" class="external-link">marginaleffects::avg_comparisons()</a></code><a class="footnote-ref" tabindex="0" data-bs-toggle="popover" data-bs-content='&lt;p&gt;In some cases, the coefficient on the treatment variable
 in the outcome model can be used as the effect estimate, but
 g-computation always yields a valid effect estimate regardless of the
 form of the outcome model and its use is the same regardless of the
@@ -551,10 +551,10 @@ in the estimation<a class="footnote-ref" tabindex="0" data-bs-toggle="popover" d
 excluding the matching weights does not change the estimates. For all
 other forms of matching, they are required, so we recommend always
 including them for consistency.&lt;/p&gt;"><sup>4</sup></a>. Finally, we use
-<code><a href="https://marginaleffects.com/man/r/comparisons.html" class="external-link">marginaleffects::avg_comparisons()</a></code> to perform g-computation
+<code><a href="https://rdrr.io/pkg/marginaleffects/man/comparisons.html" class="external-link">marginaleffects::avg_comparisons()</a></code> to perform g-computation
 to estimate the ATT. We recommend using cluster-robust standard errors
 for most analyses, with pair membership as the clustering variable;
-<code><a href="https://marginaleffects.com/man/r/comparisons.html" class="external-link">avg_comparisons()</a></code> makes this straightforward.</p>
+<code><a href="https://rdrr.io/pkg/marginaleffects/man/comparisons.html" class="external-link">avg_comparisons()</a></code> makes this straightforward.</p>
 <div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://marginaleffects.com/" class="external-link">"marginaleffects"</a></span><span class="op">)</span></span>
 <span></span>
@@ -563,7 +563,7 @@ for most analyses, with pair membership as the clustering variable;
 <span>          data <span class="op">=</span> <span class="va">m.data</span>,</span>
 <span>          weights <span class="op">=</span> <span class="va">weights</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="https://marginaleffects.com/man/r/comparisons.html" class="external-link">avg_comparisons</a></span><span class="op">(</span><span class="va">fit</span>,</span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/marginaleffects/man/comparisons.html" class="external-link">avg_comparisons</a></span><span class="op">(</span><span class="va">fit</span>,</span>
 <span>                variables <span class="op">=</span> <span class="st">"treat"</span>,</span>
 <span>                vcov <span class="op">=</span> <span class="op">~</span><span class="va">subclass</span>,</span>
 <span>                newdata <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="va">treat</span> <span class="op">==</span> <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
@@ -622,7 +622,7 @@ linear regression model with 1978 earnings as the outcome and the
 treatment, covariates, and their interaction as predictors and included
 the full matching weights in the estimation. The <code><a href="https://rdrr.io/r/stats/lm.html" class="external-link">lm()</a></code>
 function was used to fit the outcome, and the
-<code><a href="https://marginaleffects.com/man/r/comparisons.html" class="external-link">avg_comparisons()</a></code> function in the
+<code><a href="https://rdrr.io/pkg/marginaleffects/man/comparisons.html" class="external-link">avg_comparisons()</a></code> function in the
 <code>marginaleffects</code> package was used to perform g-computation
 in the matched sample to estimate the ATT. A cluster-robust variance was
 used to estimate its standard error with matching stratum membership as
@@ -724,7 +724,7 @@ Selection.”</span> <em>European Journal of Epidemiology</em> 34 (3):
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.9000.</p>
 </div>
 
     </footer>

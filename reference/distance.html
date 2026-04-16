@@ -164,8 +164,8 @@ set.</p></dd>
 <dd><p>The propensity
 scores are estimated using a lasso, ridge, or elastic net model,
 respectively. The <code>formula</code> supplied to <code><a href="matchit.html">matchit()</a></code> is processed
-with <code><a href="https://rdrr.io/r/stats/model.matrix.html" class="external-link">model.matrix()</a></code> and passed to <code><a href="https://glmnet.stanford.edu/reference/cv.glmnet.html" class="external-link">glmnet::cv.glmnet()</a></code>, and
-<code><a href="https://glmnet.stanford.edu/reference/predict.cv.glmnet.html" class="external-link">glmnet::predict.cv.glmnet()</a></code> is used to compute the propensity scores. The
+with <code><a href="https://rdrr.io/r/stats/model.matrix.html" class="external-link">model.matrix()</a></code> and passed to <code><a href="https://rdrr.io/pkg/glmnet/man/cv.glmnet.html" class="external-link">glmnet::cv.glmnet()</a></code>, and
+<code><a href="https://rdrr.io/pkg/glmnet/man/predict.cv.glmnet.html" class="external-link">glmnet::predict.cv.glmnet()</a></code> is used to compute the propensity scores. The
 <code>link</code> argument can be specified as a link function supplied to
 <code><a href="https://rdrr.io/r/stats/family.html" class="external-link">binomial()</a></code>, e.g., <code>"logit"</code>, which is the default. When <code>link</code>
 is prepended by <code>"linear."</code>, the linear predictor is used instead of
@@ -476,7 +476,7 @@ ignored.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.9000.</p>
 </div>
 
     </footer></div>
