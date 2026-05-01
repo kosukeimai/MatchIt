@@ -31,6 +31,7 @@ Below is how
 [`matchit()`](https://kosukeimai.github.io/MatchIt/reference/matchit.md)
 is used for generalized full matching:
 
+
     matchit(formula,
             data = NULL,
             method = "quick",

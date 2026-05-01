@@ -25,6 +25,7 @@ Below is how
 [`matchit()`](https://kosukeimai.github.io/MatchIt/reference/matchit.md)
 is used for exact matching:
 
+
     matchit(formula,
             data = NULL,
             method = "exact",
@@ -108,6 +109,7 @@ versions of the covariates.
 ## Examples
 
 ``` r
+
 data("lalonde")
 
 # Exact matching on age, race, married, and educ

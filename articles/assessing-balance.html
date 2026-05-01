@@ -70,7 +70,7 @@
                         <h4 data-toc-skip class="author">Noah
 Greifer</h4>
             
-            <h4 data-toc-skip class="date">2026-04-16</h4>
+            <h4 data-toc-skip class="date">2026-05-01</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/kosukeimai/MatchIt/blob/master/vignettes/assessing-balance.Rmd" class="external-link"><code>vignettes/assessing-balance.Rmd</code></a></small>
       <div class="d-none name"><code>assessing-balance.Rmd</code></div>
@@ -162,10 +162,11 @@ sample. In addition to computing SMDs on the covariates themselves, it
 is important to compute them on squares, cubes, and higher exponents as
 well as interactions between covariates. Several empirical studies have
 examined the appropriateness for using SMDs in balance assessment,
-including <span class="citation">Belitser et al. (<a href="#ref-belitser2011">2011</a>)</span>, <span class="citation">Ali et
-al. (<a href="#ref-ali2014">2014</a>)</span>, and <span class="citation">Stuart, Lee, and Leacy (<a href="#ref-stuart2013">2013</a>)</span>; in general, there is often a
-high correlation between the mean or maximum absolute SMD and the degree
-of bias in the treatment effect.</p></li>
+including <span class="citation"><span class="nocase">Belitser et
+al.</span> (<a href="#ref-belitser2011">2011</a>)</span>, <span class="citation"><span class="nocase">Ali et al.</span> (<a href="#ref-ali2014">2014</a>)</span>, and <span class="citation">Stuart
+et al. (<a href="#ref-stuart2013">2013</a>)</span>; in general, there is
+often a high correlation between the mean or maximum absolute SMD and
+the degree of bias in the treatment effect.</p></li>
 <li><p><strong>Variance Ratios</strong>. The variance ratio is the ratio
 of the variance of a covariate in one group to that in the other.
 Variance ratios close to 1 indicate good balance because they imply the
@@ -178,7 +179,7 @@ just its mean or variance. The maximum eCDF difference, also known as
 the Kolmogorov-Smirnov statistic, is sometimes recommended as a useful
 supplement to SMDs for assessing balance <span class="citation">(<a href="#ref-austin2015">Austin and Stuart 2015</a>)</span> and is often
 used as a criterion to use in propensity score methods that attempt to
-optimize balance <span class="citation">(e.g., <a href="#ref-mccaffrey2004">McCaffrey, Ridgeway, and Morral 2004</a>; <a href="#ref-diamond2013">Diamond and Sekhon 2013</a>)</span>. Although
+optimize balance <span class="citation">(e.g., <a href="#ref-mccaffrey2004">McCaffrey et al. 2004</a>; <a href="#ref-diamond2013">Diamond and Sekhon 2013</a>)</span>. Although
 the mean eCDF difference has not been as well studied, it provides a
 summary of imbalance that may be missed by relying solely on the maximum
 difference.</p></li>
@@ -193,13 +194,14 @@ region of the covariate distribution.</p></li>
 estimate of the potential outcome under control for each unit <span class="citation">(<a href="#ref-hansen2008">Hansen 2008</a>)</span>.
 Balance on the prognostic score has been shown to be highly correlated
 with bias in the effect estimate, making it a useful tool in balance
-assessment <span class="citation">(<a href="#ref-stuart2013">Stuart,
-Lee, and Leacy 2013</a>)</span>. Estimating the prognostic score
-requires having access to the outcome data, and using it may be seen as
-violating the principle of separating the design and analysis stages of
-a matching analysis <span class="citation">(<a href="#ref-rubin2001">Rubin 2001</a>)</span>. However, because only the
-outcome values from the control group are required to use the prognostic
-score, some separation is maintained.</p></li>
+assessment <span class="citation">(<a href="#ref-stuart2013">Stuart et
+al. 2013</a>)</span>. Estimating the prognostic score requires having
+access to the outcome data, and using it may be seen as violating the
+principle of separating the design and analysis stages of a matching
+analysis <span class="citation">(<a href="#ref-rubin2001">Rubin
+2001</a>)</span>. However, because only the outcome values from the
+control group are required to use the prognostic score, some separation
+is maintained.</p></li>
 </ul>
 <p>Several multivariate statistics exist that summarize balance across
 the entire joint covariate distribution. These can be functions of the
@@ -207,10 +209,10 @@ above measures, like the mean or maximum absolute SMD or the generalized
 weighted distance [GWD; <span class="citation">Franklin et al. (<a href="#ref-franklin2014">2014</a>)</span>], which is the sum of SMDs for
 the covariates and their squares and interactions, or separate
 statistics that measure quantities that abstract away from the
-distribution of individual covariates, like the L1 distance <span class="citation">(<a href="#ref-iacus2011">Iacus, King, and Porro
-2011</a>)</span>, cross-match test <span class="citation">(<a href="#ref-heller2010">Heller, Rosenbaum, and Small 2010</a>)</span>, or
-energy distance <span class="citation">(<a href="#ref-huling2020">Huling
-and Mak 2020</a>)</span>.</p>
+distribution of individual covariates, like the L1 distance <span class="citation">(<a href="#ref-iacus2011">Iacus et al.
+2011</a>)</span>, cross-match test <span class="citation">(<a href="#ref-heller2010">Heller et al. 2010</a>)</span>, or energy
+distance <span class="citation">(<a href="#ref-huling2020">Huling and
+Mak 2020</a>)</span>.</p>
 <p>Balance on the propensity score has often been considered a useful
 measure of balance, but we do not necessarily recommend it except as a
 supplement to balance on the covariates. Propensity score balance will
@@ -221,14 +223,14 @@ that covariates may be well balanced even if the propensity score is not
 balanced, such as when covariates are prioritized above the propensity
 score in the matching specification (e.g., with genetic matching). Given
 these observations, the propensity score should not be relied upon for
-assessing covariate balance. Simulation studies by <span class="citation">Stuart, Lee, and Leacy (<a href="#ref-stuart2013">2013</a>)</span> provide evidence for this
+assessing covariate balance. Simulation studies by <span class="citation">Stuart et al. (<a href="#ref-stuart2013">2013</a>)</span> provide evidence for this
 recommendation against relying on propensity score balance.</p>
 <p>There has been some debate about the use of hypothesis tests, such as
 t-tests or Kolmogorov-Smirnov tests, for assessing covariate balance.
 The idea is that balance tests test the null hypothesis that the matched
 sample has equivalent balance to a randomized experiment. There are
 several problems with balance tests, described by <span class="citation">Ho et al. (<a href="#ref-ho2007">2007</a>)</span> and
-<span class="citation">Imai, King, and Stuart (<a href="#ref-imai2008">2008</a>)</span>: 1) balance is a property of the
+<span class="citation">Imai et al. (<a href="#ref-imai2008">2008</a>)</span>: 1) balance is a property of the
 sample, not a of a population from which the sample was drawn; 2) the
 power of balance tests depends on the sample size, which changes during
 matching even if balance does not change; and 3) the use of hypothesis
@@ -964,11 +966,10 @@ reporting.</p>
 <div class="section level2 unnumbered">
 <h2 class="unnumbered" id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
 </h2>
-<div id="refs" class="references csl-bib-body hanging-indent" entry-spacing="0">
+<div id="refs" class="references csl-bib-body hanging-indent">
 <div id="ref-ali2014" class="csl-entry">
-Ali, M. Sanni, Rolf H. H. Groenwold, Wiebe R. Pestman, Svetlana V.
-Belitser, Kit C. B. Roes, Arno W. Hoes, Anthonius de Boer, and Olaf H.
-Klungel. 2014. <span>“Propensity Score Balance Measures in
+<span class="nocase">Ali, M. Sanni, Rolf H. H. Groenwold, Wiebe R.
+Pestman, et al.</span> 2014. <span>“Propensity Score Balance Measures in
 Pharmacoepidemiology: A Simulation Study.”</span>
 <em>Pharmacoepidemiology and Drug Safety</em> 23 (8): 802–11. <a href="https://doi.org/10.1002/pds.3574" class="external-link">https://doi.org/10.1002/pds.3574</a>.
 </div>
@@ -976,7 +977,7 @@ Pharmacoepidemiology: A Simulation Study.”</span>
 Austin, Peter C. 2009. <span>“Balance Diagnostics for Comparing the
 Distribution of Baseline Covariates Between Treatment Groups in
 Propensity-Score Matched Samples.”</span> <em>Statistics in
-Medicine</em> 28 (25): 3083–3107. <a href="https://doi.org/10.1002/sim.3697" class="external-link">https://doi.org/10.1002/sim.3697</a>.
+Medicine</em> 28 (25): 3083–107. <a href="https://doi.org/10.1002/sim.3697" class="external-link">https://doi.org/10.1002/sim.3697</a>.
 </div>
 <div id="ref-austin2015" class="csl-entry">
 Austin, Peter C., and Elizabeth A. Stuart. 2015. <span>“Moving Towards
@@ -986,11 +987,11 @@ in Observational Studies.”</span> <em>Statistics in Medicine</em> 34
 (28): 3661–79. <a href="https://doi.org/10.1002/sim.6607" class="external-link">https://doi.org/10.1002/sim.6607</a>.
 </div>
 <div id="ref-belitser2011" class="csl-entry">
-Belitser, Svetlana V., Edwin P. Martens, Wiebe R. Pestman, Rolf H.H.
-Groenwold, Anthonius de Boer, and Olaf H. Klungel. 2011.
-<span>“Measuring Balance and Model Selection in Propensity Score
-Methods.”</span> <em>Pharmacoepidemiology and Drug Safety</em> 20 (11):
-1115–29. <a href="https://doi.org/10.1002/pds.2188" class="external-link">https://doi.org/10.1002/pds.2188</a>.
+<span class="nocase">Belitser, Svetlana V., Edwin P. Martens, Wiebe R.
+Pestman, Rolf H.H. Groenwold, Anthonius de Boer, and Olaf H.
+Klungel</span>. 2011. <span>“Measuring Balance and Model Selection in
+Propensity Score Methods.”</span> <em>Pharmacoepidemiology and Drug
+Safety</em> 20 (11): 1115–29. <a href="https://doi.org/10.1002/pds.2188" class="external-link">https://doi.org/10.1002/pds.2188</a>.
 </div>
 <div id="ref-diamond2013" class="csl-entry">
 Diamond, Alexis, and Jasjeet S. Sekhon. 2013. <span>“Genetic Matching
@@ -1021,8 +1022,8 @@ Analysis</em> 15 (3): 199–236. <a href="https://doi.org/10.1093/pan/mpl013" cl
 </div>
 <div id="ref-huling2020" class="csl-entry">
 Huling, Jared D., and Simon Mak. 2020. <span>“Energy Balancing of
-Covariate Distributions.”</span> <em>arXiv:2004.13962 [Stat]</em>,
-April. <a href="https://arxiv.org/abs/2004.13962" class="external-link">https://arxiv.org/abs/2004.13962</a>.
+Covariate Distributions.”</span> <em>arXiv:2004.13962 [Stat]</em>, April
+29. <a href="https://arxiv.org/abs/2004.13962" class="external-link">https://arxiv.org/abs/2004.13962</a>.
 </div>
 <div id="ref-iacus2011" class="csl-entry">
 Iacus, Stefano M., Gary King, and Giuseppe Porro. 2011.
@@ -1038,7 +1039,7 @@ Society. Series A (Statistics in Society)</em> 171 (2): 481–502. <a href="http
 </div>
 <div id="ref-mccaffrey2004" class="csl-entry">
 McCaffrey, Daniel F., Greg Ridgeway, and Andrew R. Morral. 2004.
-<span>“Propensity Score Estimation With Boosted Regression for
+<span>“Propensity Score Estimation with Boosted Regression for
 Evaluating Causal Effects in Observational Studies.”</span>
 <em>Psychological Methods</em> 9 (4): 403–25. <a href="https://doi.org/10.1037/1082-989X.9.4.403" class="external-link">https://doi.org/10.1037/1082-989X.9.4.403</a>.
 </div>

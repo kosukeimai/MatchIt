@@ -25,6 +25,7 @@ Below is how
 [`matchit()`](https://kosukeimai.github.io/MatchIt/reference/matchit.md)
 is used for optimal pair matching:
 
+
     matchit(formula,
             data = NULL,
             method = "optimal",
@@ -163,6 +164,7 @@ Mahalanobis distance matching can be done one of two ways:
     `mahvars` will be ignored. For example, to perform simple
     Mahalanobis distance matching, the following could be run:
 
+
         matchit(treat ~ X1 + X2, method = "nearest",
                 distance = "mahalanobis") 
 
@@ -180,6 +182,7 @@ Mahalanobis distance matching can be done one of two ways:
     perform Mahalanobis after discarding units outside the common
     support of the propensity score in both groups, the following could
     be run:
+
 
         matchit(treat ~ X1 + X2 + X3, method = "nearest",
                 distance = "glm", discard = "both",

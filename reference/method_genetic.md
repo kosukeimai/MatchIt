@@ -27,6 +27,7 @@ Below is how
 [`matchit()`](https://kosukeimai.github.io/MatchIt/reference/matchit.md)
 is used for genetic matching:
 
+
     matchit(formula,
             data = NULL,
             method = "genetic",

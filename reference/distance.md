@@ -150,9 +150,9 @@ The following methods for estimating propensity scores are allowed:
   is processed with
   [`model.matrix()`](https://rdrr.io/r/stats/model.matrix.html) and
   passed to
-  [`glmnet::cv.glmnet()`](https://rdrr.io/pkg/glmnet/man/cv.glmnet.html),
+  [`glmnet::cv.glmnet()`](https://glmnet.stanford.edu/reference/cv.glmnet.html),
   and
-  [`glmnet::predict.cv.glmnet()`](https://rdrr.io/pkg/glmnet/man/predict.cv.glmnet.html)
+  [`glmnet::predict.cv.glmnet()`](https://glmnet.stanford.edu/reference/predict.cv.glmnet.html)
   is used to compute the propensity scores. The `link` argument can be
   specified as a link function supplied to
   [`binomial()`](https://rdrr.io/r/stats/family.html), e.g., `"logit"`,

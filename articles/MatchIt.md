@@ -46,6 +46,7 @@ Work program to demonstrate `MatchIt`’s capabilities. First, we load
 `MatchIt` and bring in the `lalonde` dataset.
 
 ``` r
+
 library("MatchIt")
 data("lalonde")
 
@@ -160,6 +161,7 @@ initial imbalance in one’s data that matching is attempting to
 eliminate. We can do this using the code below:
 
 ``` r
+
 # No matching; constructing a pre-match matchit object
 m.out0 <- matchit(treat ~ age + educ + race + married + 
                     nodegree + re74 + re75,
@@ -173,12 +175,12 @@ covariates used in estimating the propensity score and for which balance
 is to be assessed. The `data` argument specifies the dataset where these
 variables exist. Typically, the `method` argument specifies the method
 of matching to be performed; here, we set it to `NULL` so we can assess
-balance prior to matching[¹](#fn1). The `distance` argument specifies
-the method for estimating the propensity score, a one-dimensional
-summary of all the included covariates, computed as the predicted
-probability of being the treated group given the covariates; here, we
-set it to `"glm"` for generalized linear model, which implements
-logistic regression by default[²](#fn2) (see
+balance prior to matching[^1]. The `distance` argument specifies the
+method for estimating the propensity score, a one-dimensional summary of
+all the included covariates, computed as the predicted probability of
+being the treated group given the covariates; here, we set it to `"glm"`
+for generalized linear model, which implements logistic regression by
+default[^2] (see
 [`?distance`](https://kosukeimai.github.io/MatchIt/reference/distance.md)
 for other options).
 
@@ -186,6 +188,7 @@ Below we assess balance on the unmatched data using
 [`summary()`](https://rdrr.io/r/base/summary.html):
 
 ``` r
+
 # Checking balance prior to matching
 summary(m.out0)
 ```
@@ -240,6 +243,7 @@ balance in the treatment groups. Below we demonstrate the use of
 to perform nearest neighbor propensity score matching.
 
 ``` r
+
 # 1:1 NN PS matching w/o replacement
 m.out1 <- matchit(treat ~ age + educ + race + married + 
                     nodegree + re74 + re75,
@@ -258,6 +262,7 @@ The matching outputs are contained in the `m.out1` object. Printing this
 object gives a description of the type of matching performed:
 
 ``` r
+
 m.out1
 ```
 
@@ -310,6 +315,7 @@ balance before matching for brevity and because we already saw it.
 and after matching.)
 
 ``` r
+
 # Checking balance after NN matching
 summary(m.out1, un = FALSE)
 ```
@@ -358,6 +364,7 @@ the distribution of propensity scores of those who were matched using
 `type = "jitter"`:
 
 ``` r
+
 plot(m.out1, type = "jitter", interactive = FALSE)
 ```
 
@@ -370,6 +377,7 @@ We can visually examine balance on the covariates using
 `type = "density"`:
 
 ``` r
+
 plot(m.out1, type = "density", interactive = FALSE,
      which.xs = ~age + married + re75)
 ```
@@ -393,6 +401,7 @@ every control to at least one treated unit ([Hansen
 We’ll also try a different link (probit) for the propensity score model.
 
 ``` r
+
 # Full matching on a probit PS
 m.out2 <- matchit(treat ~ age + educ + race + married + 
                     nodegree + re74 + re75,
@@ -414,6 +423,7 @@ m.out2
 We can examine balance on this new matching specification.
 
 ``` r
+
 # Checking balance after full matching
 summary(m.out2, un = FALSE)
 ```
@@ -455,6 +465,7 @@ as a Love plot, which we can make by calling
 [`summary()`](https://rdrr.io/r/base/summary.html) output:
 
 ``` r
+
 plot(summary(m.out2))
 ```
 
@@ -481,7 +492,7 @@ full matching and most other matching methods, we can run a regression
 of the outcome on the treatment and covariates in the matched sample
 (i.e., including the matching weights) and estimate the treatment effect
 using g-computation as implemented in
-[`marginaleffects::avg_comparisons()`](https://rdrr.io/pkg/marginaleffects/man/comparisons.html)[³](#fn3).
+[`marginaleffects::avg_comparisons()`](https://rdrr.io/pkg/marginaleffects/man/comparisons.html)[^3].
 Including the covariates used in the matching in the effect estimation
 can provide additional robustness to slight imbalances remaining after
 matching and can improve precision.
@@ -495,6 +506,7 @@ This dataset only contains the matched units and adds columns for
 `distance`, `weights`, and `subclass` (described previously).
 
 ``` r
+
 m.data <- match_data(m.out2)
 
 head(m.data)
@@ -514,7 +526,7 @@ regression functions in R, like
 [`glm()`](https://rdrr.io/r/stats/glm.html), being sure to include the
 matching weights (stored in the `weights` variable of the
 [`match_data()`](https://kosukeimai.github.io/MatchIt/reference/match_data.md)
-output) in the estimation[⁴](#fn4). Finally, we use
+output) in the estimation[^4]. Finally, we use
 [`marginaleffects::avg_comparisons()`](https://rdrr.io/pkg/marginaleffects/man/comparisons.html)
 to perform g-computation to estimate the ATT. We recommend using
 cluster-robust standard errors for most analyses, with pair membership
@@ -523,6 +535,7 @@ as the clustering variable;
 makes this straightforward.
 
 ``` r
+
 library("marginaleffects")
 
 fit <- lm(re78 ~ treat * (age + educ + race + married +
@@ -639,7 +652,7 @@ in Parametric Causal Inference.” *Political Analysis* 15 (3): 199–236.
 <https://doi.org/10.1093/pan/mpl013>.
 
 King, Gary, and Richard Nielsen. 2019. “Why Propensity Scores Should Not
-Be Used for Matching.” *Political Analysis*, May, 1–20.
+Be Used for Matching.” *Political Analysis*, May 7, 1–20.
 <https://doi.org/10.1017/pan.2019.11>.
 
 Rosenbaum, Paul R., and Donald B. Rubin. 1983. “The Central Role of the
@@ -668,21 +681,19 @@ VanderWeele, Tyler J. 2019. “Principles of Confounder Selection.”
 *European Journal of Epidemiology* 34 (3): 211–19.
 <https://doi.org/10.1007/s10654-019-00494-6>.
 
-------------------------------------------------------------------------
-
-1.  Note that the default for `method` is `"nearest"` to perform nearest
-    neighbor matching. To prevent any matching from taking place in
-    order to assess pre-matching imbalance, `method` must be set to
+[^1]: Note that the default for `method` is `"nearest"` to perform
+    nearest neighbor matching. To prevent any matching from taking place
+    in order to assess pre-matching imbalance, `method` must be set to
     `NULL`.
 
-2.  Note that setting `distance = "logit"`, which was the default in
+[^2]: Note that setting `distance = "logit"`, which was the default in
     `MatchIt` version prior to 4.0.0, or `"ps"`, which was the default
     prior to version 4.5.0, will also estimate logistic regression
     propensity scores. Because it is the default, the `distance`
     argument can actually be omitted if logistic regression propensity
     scores are desired.
 
-3.  In some cases, the coefficient on the treatment variable in the
+[^3]: In some cases, the coefficient on the treatment variable in the
     outcome model can be used as the effect estimate, but g-computation
     always yields a valid effect estimate regardless of the form of the
     outcome model and its use is the same regardless of the outcome
@@ -691,7 +702,7 @@ VanderWeele, Tyler J. 2019. “Principles of Confounder Selection.”
     model. G-computation is explained in detail in
     [`vignette("estimating-effects")`](https://kosukeimai.github.io/MatchIt/articles/estimating-effects.md).
 
-4.  With 1:1 nearest neighbor matching without replacement, excluding
+[^4]: With 1:1 nearest neighbor matching without replacement, excluding
     the matching weights does not change the estimates. For all other
     forms of matching, they are required, so we recommend always
     including them for consistency.

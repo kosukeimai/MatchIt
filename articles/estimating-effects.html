@@ -70,7 +70,7 @@
                         <h4 data-toc-skip class="author">Noah
 Greifer</h4>
             
-            <h4 data-toc-skip class="date">2026-04-16</h4>
+            <h4 data-toc-skip class="date">2026-05-01</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/kosukeimai/MatchIt/blob/master/vignettes/estimating-effects.Rmd" class="external-link"><code>vignettes/estimating-effects.Rmd</code></a></small>
       <div class="d-none name"><code>estimating-effects.Rmd</code></div>
@@ -175,19 +175,19 @@ should not be used when marginal effects are desired.</p>
 <h3 id="g-computation">G-computation<a class="anchor" aria-label="anchor" href="#g-computation"></a>
 </h3>
 <p>To estimate marginal effects, we use a method known as g-computation
-<span class="citation">(<a href="#ref-snowdenImplementationGComputationSimulated2011">Snowden,
-Rose, and Mortimer 2011</a>)</span> or regression estimation <span class="citation">(<a href="#ref-schaferAverageCausalEffects2008">Schafer
-and Kang 2008</a>)</span>. This involves first specifying a model for
-the outcome as a function of the treatment and covariates. Then, for
-each unit, we compute their predicted values of the outcome setting
-their treatment status to treated, and then again for control, leaving
-us with two predicted outcome values for each unit, which are estimates
-of the potential outcomes under each treatment level. We compute the
-mean of each of the estimated potential outcomes across the entire
-sample, which leaves us with two average estimated potential outcomes.
-Finally, the contrast of these average estimated potential outcomes
-(e.g., their difference or ratio, depending on the effect measure
-desired) is the estimate of the treatment effect.</p>
+<span class="citation">(<a href="#ref-snowdenImplementationGComputationSimulated2011">Snowden et
+al. 2011</a>)</span> or regression estimation <span class="citation">(<a href="#ref-schaferAverageCausalEffects2008">Schafer and Kang
+2008</a>)</span>. This involves first specifying a model for the outcome
+as a function of the treatment and covariates. Then, for each unit, we
+compute their predicted values of the outcome setting their treatment
+status to treated, and then again for control, leaving us with two
+predicted outcome values for each unit, which are estimates of the
+potential outcomes under each treatment level. We compute the mean of
+each of the estimated potential outcomes across the entire sample, which
+leaves us with two average estimated potential outcomes. Finally, the
+contrast of these average estimated potential outcomes (e.g., their
+difference or ratio, depending on the effect measure desired) is the
+estimate of the treatment effect.</p>
 <p>When doing g-computation after matching, a few additional
 considerations are required. First, when we take the average of the
 estimated potential outcomes under each treatment level, this must be a
@@ -756,7 +756,7 @@ be treated just like continuous and binary outcomes as previously
 described.</p>
 <p>For the HR, we cannot compute average marginal effects and must use
 the coefficient on treatment in a Cox model fit without covariates<a class="footnote-ref" tabindex="0" data-bs-toggle="popover" data-bs-content='&lt;p&gt;It is not immediately clear how to estimate a marginal
-HR when covariates are included in the outcome model; though &lt;span class="citation"&gt;Austin, Thomas, and Rubin (&lt;a href="#ref-austin2020"&gt;2020&lt;/a&gt;)&lt;/span&gt; describe several ways of
+HR when covariates are included in the outcome model; though &lt;span class="citation"&gt;Austin et al. (&lt;a href="#ref-austin2020"&gt;2020&lt;/a&gt;)&lt;/span&gt; describe several ways of
 including covariates in a model to estimate the marginal HR, they do not
 develop SEs and little research has been done on this method, so we will
 not present it here. Instead, we fit a simple Cox model with the
@@ -1246,7 +1246,7 @@ pair membership and should be used when appropriate. Sometimes,
 researchers use functions in the <code>survey</code> package to estimate
 robust SEs, especially with inverse probability weighting; this is a
 valid way to compute robust SEs and will give similar results to
-<code><a href="https://sandwich.R-Forge.R-project.org/reference/vcovHC.html" class="external-link">sandwich::vcovHC()</a></code>.<a class="footnote-ref" tabindex="0" data-bs-toggle="popover" data-bs-content='&lt;p&gt;To use &lt;code&gt;survey&lt;/code&gt; to adjust for pair
+<code><a href="https://rdrr.io/pkg/sandwich/man/vcovHC.html" class="external-link">sandwich::vcovHC()</a></code>.<a class="footnote-ref" tabindex="0" data-bs-toggle="popover" data-bs-content='&lt;p&gt;To use &lt;code&gt;survey&lt;/code&gt; to adjust for pair
 membership, one can use the following code to specify the survey design
 to be used with &lt;code&gt;svyglm()&lt;/code&gt;:
 &lt;code&gt;svydesign(ids = ~subclass, weights = ~weights, data = md)&lt;/code&gt;
@@ -1305,15 +1305,15 @@ interactions.</p>
 <div class="section level2">
 <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
 </h2>
-<div id="refs" class="references csl-bib-body hanging-indent" entry-spacing="0">
+<div id="refs" class="references csl-bib-body hanging-indent">
 <div id="ref-abadie2008" class="csl-entry">
 Abadie, Alberto, and Guido W. Imbens. 2008. <span>“On the Failure of the
 Bootstrap for Matching Estimators.”</span> <em>Econometrica</em> 76 (6):
 1537–57. <a href="https://doi.org/10.3982/ECTA6474" class="external-link">https://doi.org/10.3982/ECTA6474</a>.
 </div>
 <div id="ref-abadie2019" class="csl-entry">
-Abadie, Alberto, and Jann Spiess. 2019. <span>“Robust Post-Matching
-Inference,”</span> January, 34. <a href="https://doi.org/10.1080/01621459.2020.1840383" class="external-link">https://doi.org/10.1080/01621459.2020.1840383</a>.
+Abadie, Alberto, and Jann Spiess. 2019. <em>Robust Post-Matching
+Inference</em>. January, 34. <a href="https://doi.org/10.1080/01621459.2020.1840383" class="external-link">https://doi.org/10.1080/01621459.2020.1840383</a>.
 </div>
 <div id="ref-austin2009a" class="csl-entry">
 Austin, Peter C. 2009. <span>“Type i Error Rates, Coverage of Confidence
@@ -1322,20 +1322,20 @@ Analyses.”</span> <em>The International Journal of Biostatistics</em> 5
 (1). <a href="https://doi.org/10.2202/1557-4679.1146" class="external-link">https://doi.org/10.2202/1557-4679.1146</a>.
 </div>
 <div id="ref-austin2013" class="csl-entry">
-———. 2013a. <span>“The Performance of Different Propensity Score Methods
-for Estimating Marginal Hazard Ratios.”</span> <em>Statistics in
-Medicine</em> 32 (16): 2837–49. <a href="https://doi.org/10.1002/sim.5705" class="external-link">https://doi.org/10.1002/sim.5705</a>.
+Austin, Peter C. 2013a. <span>“The Performance of Different Propensity
+Score Methods for Estimating Marginal Hazard Ratios.”</span>
+<em>Statistics in Medicine</em> 32 (16): 2837–49. <a href="https://doi.org/10.1002/sim.5705" class="external-link">https://doi.org/10.1002/sim.5705</a>.
 </div>
 <div id="ref-austin2013a" class="csl-entry">
-———. 2013b. <span>“The Use of Propensity Score Methods with Survival or
-Time-to-Event Outcomes: Reporting Measures of Effect Similar to Those
-Used in Randomized Experiments.”</span> <em>Statistics in Medicine</em>
-33 (7): 1242–58. <a href="https://doi.org/10.1002/sim.5984" class="external-link">https://doi.org/10.1002/sim.5984</a>.
+Austin, Peter C. 2013b. <span>“The Use of Propensity Score Methods with
+Survival or Time-to-Event Outcomes: Reporting Measures of Effect Similar
+to Those Used in Randomized Experiments.”</span> <em>Statistics in
+Medicine</em> 33 (7): 1242–58. <a href="https://doi.org/10.1002/sim.5984" class="external-link">https://doi.org/10.1002/sim.5984</a>.
 </div>
 <div id="ref-austinDoublePropensityscoreAdjustment2017" class="csl-entry">
-———. 2017. <span>“Double Propensity-Score Adjustment: A Solution to
-Design Bias or Bias Due to Incomplete Matching.”</span> <em>Statistical
-Methods in Medical Research</em> 26 (1): 201–22. <a href="https://doi.org/10.1177/0962280214543508" class="external-link">https://doi.org/10.1177/0962280214543508</a>.
+Austin, Peter C. 2017. <span>“Double Propensity-Score Adjustment: A
+Solution to Design Bias or Bias Due to Incomplete Matching.”</span>
+<em>Statistical Methods in Medical Research</em> 26 (1): 201–22. <a href="https://doi.org/10.1177/0962280214543508" class="external-link">https://doi.org/10.1177/0962280214543508</a>.
 </div>
 <div id="ref-austin2020a" class="csl-entry">
 Austin, Peter C., and Guy Cafri. 2020. <span>“Variance Estimation When
@@ -1376,7 +1376,7 @@ Practitioner<span>’</span>s Guide to Cluster-Robust Inference.”</span>
 Carpenter, James, and John Bithell. 2000. <span>“Bootstrap Confidence
 Intervals: When, Which, What? A Practical Guide for Medical
 Statisticians.”</span> <em>Statistics in Medicine</em> 19 (9): 1141–64.
-<a href="https://doi.org/10.1002/(SICI)1097-0258(20000515)19:9&lt;1141::AID-SIM479&gt;3.0.CO;2-F" class="external-link">https://doi.org/10.1002/(SICI)1097-0258(20000515)19:9&lt;1141::AID-SIM479&gt;3.0.CO;2-F</a>.
+<a href="https://doi.org/10.1002/(SICI)1097-0258(20000515)19:9%3C1141::AID-SIM479%3E3.0.CO;2-F" class="external-link">https://doi.org/10.1002/(SICI)1097-0258(20000515)19:9&lt;1141::AID-SIM479&gt;3.0.CO;2-F</a>.
 </div>
 <div id="ref-desai2017" class="csl-entry">
 Desai, Rishi J., Kenneth J. Rothman, Brian T. Bateman, Sonia
@@ -1400,7 +1400,7 @@ Green, Kerry M., and Elizabeth A. Stuart. 2014. <span>“Examining
 Moderation Analyses in Propensity Score Methods:
 <span>Application</span> to Depression and Substance Use.”</span>
 <em>Journal of Consulting and Clinical Psychology</em>, Advances in
-<span>Data Analytic Methods</span>, 82 (5): 773–83. <a href="https://doi.org/10.1037/a0036515" class="external-link">https://doi.org/10.1037/a0036515</a>.
+<span>Data Analytic Methods</span>, vol. 82 (5): 773–83. <a href="https://doi.org/10.1037/a0036515" class="external-link">https://doi.org/10.1037/a0036515</a>.
 </div>
 <div id="ref-greiferChoosingEstimandWhen2021" class="csl-entry">
 Greifer, Noah, and Elizabeth A. Stuart. 2021. <span>“Choosing the
@@ -1428,7 +1428,7 @@ Data.”</span> <em>Journal of Educational and Behavioral Statistics</em>
 <div id="ref-king2015" class="csl-entry">
 King, Gary, and Margaret E. Roberts. 2015. <span>“How Robust Standard
 Errors Expose Methodological Problems They Do Not Fix, and What to Do
-About It.”</span> <em>Political Analysis</em> 23 (2): 159–79. <a href="https://doi.org/10.1093/pan/mpu015" class="external-link">https://doi.org/10.1093/pan/mpu015</a>.
+about It.”</span> <em>Political Analysis</em> 23 (2): 159–79. <a href="https://doi.org/10.1093/pan/mpu015" class="external-link">https://doi.org/10.1093/pan/mpu015</a>.
 </div>
 <div id="ref-kreifMethodsEstimatingSubgroup2012" class="csl-entry">
 Kreif, Noemi, Richard Grieve, Rosalba Radice, Zia Sadique, Roland
@@ -1452,8 +1452,7 @@ Finite Sample Properties.”</span> <em>Journal of Econometrics</em> 29
 (3): 305–25. <a href="https://doi.org/10.1016/0304-4076(85)90158-7" class="external-link">https://doi.org/10.1016/0304-4076(85)90158-7</a>.
 </div>
 <div id="ref-nguyen2017" class="csl-entry">
-Nguyen, Tri-Long, Gary S. Collins, Jessica Spence, Jean-Pierre Daurès,
-P. J. Devereaux, Paul Landais, and Yannick Le Manach. 2017.
+Nguyen, Tri-Long, Gary S. Collins, Jessica Spence, et al. 2017.
 <span>“Double-Adjustment in Propensity Score Matching Analysis: Choosing
 a Threshold for Considering Residual Imbalance.”</span> <em>BMC Medical
 Research Methodology</em> 17: 78. <a href="https://doi.org/10.1186/s12874-017-0338-0" class="external-link">https://doi.org/10.1186/s12874-017-0338-0</a>.
@@ -1465,7 +1464,7 @@ Example.”</span> <em>Psychological Methods</em> 13 (4): 279–313. <a href="ht
 </div>
 <div id="ref-snowdenImplementationGComputationSimulated2011" class="csl-entry">
 Snowden, Jonathan M., Sherri Rose, and Kathleen M. Mortimer. 2011.
-<span>“Implementation of G-Computation on a Simulated Data Set:
+<span>“Implementation of g-Computation on a Simulated Data Set:
 Demonstration of a Causal Inference Technique.”</span> <em>American
 Journal of Epidemiology</em> 173 (7): 731–38. <a href="https://doi.org/10.1093/aje/kwq472" class="external-link">https://doi.org/10.1093/aje/kwq472</a>.
 </div>
@@ -1475,11 +1474,10 @@ Propensity<span>-</span>Score<span></span>matched Data?”</span>
 <em>Statistics in Medicine</em> 38 (2): 289–300. <a href="https://doi.org/10.1002/sim.7976" class="external-link">https://doi.org/10.1002/sim.7976</a>.
 </div>
 <div id="ref-wangRelativePerformancePropensity2018" class="csl-entry">
-Wang, Shirley V., Yinzhu Jin, Bruce Fireman, Susan Gruber, Mengdong He,
-Richard Wyss, HoJin Shin, et al. 2018. <span>“Relative
-<span>Performance</span> of <span>Propensity Score Matching
-Strategies</span> for <span>Subgroup Analyses</span>.”</span>
-<em>American Journal of Epidemiology</em> 187 (8): 1799–1807. <a href="https://doi.org/10.1093/aje/kwy049" class="external-link">https://doi.org/10.1093/aje/kwy049</a>.
+Wang, Shirley V., Yinzhu Jin, Bruce Fireman, et al. 2018.
+<span>“Relative <span>Performance</span> of <span>Propensity Score
+Matching Strategies</span> for <span>Subgroup Analyses</span>.”</span>
+<em>American Journal of Epidemiology</em> 187 (8): 1799–807. <a href="https://doi.org/10.1093/aje/kwy049" class="external-link">https://doi.org/10.1093/aje/kwy049</a>.
 </div>
 <div id="ref-westreich2013" class="csl-entry">
 Westreich, D., and S. Greenland. 2013. <span>“The Table 2 Fallacy:

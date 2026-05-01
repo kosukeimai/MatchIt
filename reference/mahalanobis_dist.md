@@ -187,6 +187,7 @@ Noah Greifer
 ## Examples
 
 ``` r
+
 data("lalonde")
 
 # Computing the scaled Euclidean distance between all units:

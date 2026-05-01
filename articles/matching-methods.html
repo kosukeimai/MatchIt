@@ -70,7 +70,7 @@
                         <h4 data-toc-skip class="author">Noah
 Greifer</h4>
             
-            <h4 data-toc-skip class="date">2026-04-16</h4>
+            <h4 data-toc-skip class="date">2026-05-01</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/kosukeimai/MatchIt/blob/master/vignettes/matching-methods.Rmd" class="external-link"><code>vignettes/matching-methods.Rmd</code></a></small>
       <div class="d-none name"><code>matching-methods.Rmd</code></div>
@@ -156,7 +156,7 @@ experiments, which are more familiar to non-technical audiences.</p>
 <p>In addition to subset selection, matching often (though not always)
 involves a form of <em>stratification</em>, the assignment of units to
 pairs or strata containing multiple units. The distinction between
-subset selection and stratification is described by <span class="citation">Zubizarreta, Paredes, and Rosenbaum (<a href="#ref-zubizarretaMatchingBalancePairing2014">2014</a>)</span>, who
+subset selection and stratification is described by <span class="citation">Zubizarreta et al. (<a href="#ref-zubizarretaMatchingBalancePairing2014">2014</a>)</span>, who
 separate them into two separate steps. In <code>MatchIt</code>, with
 almost all matching methods, subset selection is performed by
 stratification; for example, treated units are paired with control
@@ -236,8 +236,8 @@ closest eligible control unit to be paired with each treated unit. It is
 greedy in the sense that each pairing occurs without reference to how
 other units will be or have been paired, and therefore does not aim to
 optimize any criterion. Nearest neighbor matching is the most common
-form of matching used <span class="citation">(<a href="#ref-thoemmes2011">Thoemmes and Kim 2011</a>; <a href="#ref-zakrison2018">Zakrison, Austin, and McCredie 2018</a>)</span>
-and has been extensively studied through simulations. See
+form of matching used <span class="citation">(<a href="#ref-thoemmes2011">Thoemmes and Kim 2011</a>; <a href="#ref-zakrison2018">Zakrison et al. 2018</a>)</span> and has been
+extensively studied through simulations. See
 <code><a href="../reference/method_nearest.html">?method_nearest</a></code> for the documentation for
 <code><a href="../reference/matchit.html">matchit()</a></code> with <code>method = "nearest"</code>.</p>
 <p>Nearest neighbor matching requires the specification of a distance
@@ -336,7 +336,7 @@ distance matching methods, full matching can be used to estimate the
 ATE. Full matching can also be seen as a form of propensity score
 weighting that is less sensitive to the form of the propensity score
 model because the original propensity scores are used just to create the
-subclasses, not to form the weights directly <span class="citation">(<a href="#ref-austin2015a">Austin and Stuart 2015a</a>)</span>. In
+subclasses, not to form the weights directly <span class="citation">(<a href="#ref-austin2015a">Austin and Stuart 2015b</a>)</span>. In
 addition, full matching does not have to rely on estimated propensity
 scores to form the subclasses and weights; other distance measures are
 allowed as well.</p>
@@ -361,11 +361,11 @@ problems by setting, e.g., <code>tol = 1e-7</code>.</p>
 </h3>
 <p>Generalized full matching is a variant of full matching that uses a
 special fast clustering algorithm to dramatically speed up the matching,
-even for large datasets <span class="citation">(<a href="#ref-savjeGeneralizedFullMatching2021">Fredrik Sävje, Higgins, and
-Sekhon 2021</a>)</span>. Like with optimal full matching, generalized
-full matching assigns every unit to a subclass. What makes generalized
-full match “generalized” is that the user can customize the matching in
-a number of ways, such as by specifying an arbitrary minimum number of
+even for large datasets <span class="citation">(<a href="#ref-savjeGeneralizedFullMatching2021">Sävje et al.
+2021</a>)</span>. Like with optimal full matching, generalized full
+matching assigns every unit to a subclass. What makes generalized full
+match “generalized” is that the user can customize the matching in a
+number of ways, such as by specifying an arbitrary minimum number of
 units from each treatment group or total number of units per subclass,
 or by allowing not all units from a treatment group to have to be
 matched. Generalized full matching minimizes the largest within-subclass
@@ -379,8 +379,8 @@ free of confounding by the measured covariates. See
 <code><a href="../reference/matchit.html">matchit()</a></code> with <code>method = "quick"</code>. Generalized
 full matching in <code>MatchIt</code> depends on the
 <code>quickmatch()</code> function in the <code>quickmatch</code>
-package <span class="citation">(<a href="#ref-savjeQuickmatchQuickGeneralized2018">Fredrik Sävje, Sekhon,
-and Higgins 2018</a>)</span>.</p>
+package <span class="citation">(<a href="#ref-savjeQuickmatchQuickGeneralized2018">Sävje et al.
+2018</a>)</span>.</p>
 <p>Generalized full matching includes different options for
 customization than optimal full matching. The user cannot supply their
 own distance matrix, but propensity scores and distance metrics that are
@@ -418,7 +418,7 @@ between a treated unit
 and a control unit
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>j</mi><annotation encoding="application/x-tex">j</annotation></semantics></math>
 as
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>δ</mi><mrow><mi>G</mi><mi>M</mi><mi>D</mi></mrow></msub><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>𝐱</mi><mi>i</mi></msub><mo>,</mo><msub><mi>𝐱</mi><mi>j</mi></msub><mo>,</mo><mi>𝐖</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><msqrt><mrow><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>𝐱</mi><mi>i</mi></msub><mo>−</mo><msub><mi>𝐱</mi><mi>j</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mi>′</mi><mrow><mo stretchy="true" form="prefix">(</mo><msup><mi>𝐒</mi><mrow><mo>−</mo><mn>1</mn><mi>/</mi><mn>2</mn></mrow></msup><mo stretchy="true" form="postfix">)</mo></mrow><mi>′</mi><mi>𝐖</mi><mrow><mo stretchy="true" form="prefix">(</mo><msup><mi>𝐒</mi><mrow><mo>−</mo><mn>1</mn><mi>/</mi><mn>2</mn></mrow></msup><mo stretchy="true" form="postfix">)</mo></mrow><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>𝐱</mi><mi>i</mi></msub><mo>−</mo><msub><mi>𝐱</mi><mi>j</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow></msqrt></mrow><annotation encoding="application/x-tex">\delta_{GMD}(\mathbf{x}_i,\mathbf{x}_j, \mathbf{W})=\sqrt{(\mathbf{x}_i - \mathbf{x}_j)'(\mathbf{S}^{-1/2})'\mathbf{W}(\mathbf{S}^{-1/2})(\mathbf{x}_i - \mathbf{x}_j)}</annotation></semantics></math>
+<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>δ</mi><mrow><mi>G</mi><mi>M</mi><mi>D</mi></mrow></msub><mo stretchy="false" form="prefix">(</mo><msub><mi>𝐱</mi><mi>i</mi></msub><mo>,</mo><msub><mi>𝐱</mi><mi>j</mi></msub><mo>,</mo><mi>𝐖</mi><mo stretchy="false" form="postfix">)</mo><mo>=</mo><msqrt><mrow><mo stretchy="false" form="prefix">(</mo><msub><mi>𝐱</mi><mi>i</mi></msub><mo>−</mo><msub><mi>𝐱</mi><mi>j</mi></msub><msup><mo stretchy="false" form="postfix">)</mo><mo>′</mo></msup><mo stretchy="false" form="prefix">(</mo><msup><mi>𝐒</mi><mrow><mi>−</mi><mn>1</mn><mi>/</mi><mn>2</mn></mrow></msup><msup><mo stretchy="false" form="postfix">)</mo><mo>′</mo></msup><mi>𝐖</mi><mo stretchy="false" form="prefix">(</mo><msup><mi>𝐒</mi><mrow><mi>−</mi><mn>1</mn><mi>/</mi><mn>2</mn></mrow></msup><mo stretchy="false" form="postfix">)</mo><mo stretchy="false" form="prefix">(</mo><msub><mi>𝐱</mi><mi>i</mi></msub><mo>−</mo><msub><mi>𝐱</mi><mi>j</mi></msub><mo stretchy="false" form="postfix">)</mo></mrow></msqrt></mrow><annotation encoding="application/x-tex">\delta_{GMD}(\mathbf{x}_i,\mathbf{x}_j, \mathbf{W})=\sqrt{(\mathbf{x}_i - \mathbf{x}_j)'(\mathbf{S}^{-1/2})'\mathbf{W}(\mathbf{S}^{-1/2})(\mathbf{x}_i - \mathbf{x}_j)}</annotation></semantics></math>
 where
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>𝐱</mi><annotation encoding="application/x-tex">\mathbf{x}</annotation></semantics></math>
 is a
@@ -426,7 +426,7 @@ is a
 vector containing the value of each of the
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>p</mi><annotation encoding="application/x-tex">p</annotation></semantics></math>
 included covariates for that unit,
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi>𝐒</mi><mrow><mo>−</mo><mn>1</mn><mi>/</mi><mn>2</mn></mrow></msup><annotation encoding="application/x-tex">\mathbf{S}^{-1/2}</annotation></semantics></math>
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi>𝐒</mi><mrow><mi>−</mi><mn>1</mn><mi>/</mi><mn>2</mn></mrow></msup><annotation encoding="application/x-tex">\mathbf{S}^{-1/2}</annotation></semantics></math>
 is the Cholesky decomposition of the covariance matrix
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>𝐒</mi><annotation encoding="application/x-tex">\mathbf{S}</annotation></semantics></math>
 of the covariates, and
@@ -510,17 +510,17 @@ done.</p>
 <p>Coarsened exact matching (CEM) is a form of stratum matching that
 involves first coarsening the covariates by creating bins and then
 performing exact matching on the new coarsened versions of the
-covariates <span class="citation">(<a href="#ref-iacus2012">Iacus, King,
-and Porro 2012</a>)</span>. The degree and method of coarsening can be
-controlled by the user to manage the trade-off between exact and
-approximate balancing. For example, coarsening a covariate to two bins
-will mean that units that differ greatly on the covariate might be
-placed into the same subclass, while coarsening a variable to five bins
-may require units to be dropped due to not finding matches. Like exact
-matching, CEM is susceptible to the curse of dimensionality, making it a
-less viable solution with many covariates, especially with few units.
-Dropping units can also change the target population of the estimated
-effect. See <code><a href="../reference/method_cem.html">?method_cem</a></code> for the documentation for
+covariates <span class="citation">(<a href="#ref-iacus2012">Iacus et al.
+2012</a>)</span>. The degree and method of coarsening can be controlled
+by the user to manage the trade-off between exact and approximate
+balancing. For example, coarsening a covariate to two bins will mean
+that units that differ greatly on the covariate might be placed into the
+same subclass, while coarsening a variable to five bins may require
+units to be dropped due to not finding matches. Like exact matching, CEM
+is susceptible to the curse of dimensionality, making it a less viable
+solution with many covariates, especially with few units. Dropping units
+can also change the target population of the estimated effect. See
+<code><a href="../reference/method_cem.html">?method_cem</a></code> for the documentation for
 <code><a href="../reference/matchit.html">matchit()</a></code> with <code>method = "cem"</code>. CEM in
 <code>MatchIt</code> does not depend on any other package to perform the
 coarsening and matching, though it used to rely on the <code>cem</code>
@@ -536,7 +536,7 @@ quantiles of the propensity score distribution either in the treated
 group, control group, or overall, depending on the desired estimand.
 Propensity score subclassification is an old and well-studied method,
 though it can perform poorly compared to other, more modern propensity
-score methods such as full matching and weighting <span class="citation">(<a href="#ref-austin2010">Austin 2010a</a>)</span>.
+score methods such as full matching and weighting <span class="citation">(<a href="#ref-austin2010">Austin 2010b</a>)</span>.
 See <code><a href="../reference/method_subclass.html">?method_subclass</a></code> for the documentation for
 <code><a href="../reference/matchit.html">matchit()</a></code> with <code>method = "subclass"</code>.</p>
 <p>The binning of the propensity scores is typically based on dividing
@@ -583,10 +583,10 @@ pairs or subclasses. They can be thought of as a weighting method where
 the weights are restricted to be zero or one. Cardinality matching
 involves finding the largest sample that satisfies user-supplied balance
 constraints and constraints on the ratio of matched treated to matched
-control units <span class="citation">(<a href="#ref-zubizarretaMatchingBalancePairing2014">Zubizarreta, Paredes,
-and Rosenbaum 2014</a>)</span>. It does not consider a specific estimand
-and can be a useful alternative to matching with a caliper for handling
-data with little overlap <span class="citation">(<a href="#ref-visconti2018">Visconti and Zubizarreta 2018</a>)</span>.
+control units <span class="citation">(<a href="#ref-zubizarretaMatchingBalancePairing2014">Zubizarreta et al.
+2014</a>)</span>. It does not consider a specific estimand and can be a
+useful alternative to matching with a caliper for handling data with
+little overlap <span class="citation">(<a href="#ref-visconti2018">Visconti and Zubizarreta 2018</a>)</span>.
 Profile matching involves identifying a target distribution (e.g., the
 full sample for the ATE or the treated units for the ATT) and finding
 the largest subset of the treated and control groups that satisfy
@@ -614,8 +614,8 @@ the <code>tols</code> and <code>std.tols</code> arguments. One can also
 create pairs in the matched sample by using the <code>mahvars</code>
 argument, which requests that optimal Mahalanobis matching be done after
 subset selection; doing so can add additional precision and robustness
-<span class="citation">(<a href="#ref-zubizarretaMatchingBalancePairing2014">Zubizarreta, Paredes,
-and Rosenbaum 2014</a>)</span>.</p>
+<span class="citation">(<a href="#ref-zubizarretaMatchingBalancePairing2014">Zubizarreta et al.
+2014</a>)</span>.</p>
 <p>The optimization problem requires a special solver to solve.
 Currently, the available options in <code>MatchIt</code> are the HiGHS
 solver (through the <code>highs</code> package), the GLPK solver
@@ -692,7 +692,7 @@ methods compute a distance metric for a treated unit
 and a control unit
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>j</mi><annotation encoding="application/x-tex">j</annotation></semantics></math>
 as
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>δ</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>𝐱</mi><mi>i</mi></msub><mo>,</mo><msub><mi>𝐱</mi><mi>j</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><msqrt><mrow><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>𝐱</mi><mi>i</mi></msub><mo>−</mo><msub><mi>𝐱</mi><mi>j</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mi>′</mi><msup><mi>S</mi><mrow><mo>−</mo><mn>1</mn></mrow></msup><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>𝐱</mi><mi>i</mi></msub><mo>−</mo><msub><mi>𝐱</mi><mi>j</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow></msqrt></mrow><annotation encoding="application/x-tex">\delta(\mathbf{x}_i,\mathbf{x}_j)=\sqrt{(\mathbf{x}_i - \mathbf{x}_j)'S^{-1}(\mathbf{x}_i - \mathbf{x}_j)}</annotation></semantics></math></p>
+<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>δ</mi><mo stretchy="false" form="prefix">(</mo><msub><mi>𝐱</mi><mi>i</mi></msub><mo>,</mo><msub><mi>𝐱</mi><mi>j</mi></msub><mo stretchy="false" form="postfix">)</mo><mo>=</mo><msqrt><mrow><mo stretchy="false" form="prefix">(</mo><msub><mi>𝐱</mi><mi>i</mi></msub><mo>−</mo><msub><mi>𝐱</mi><mi>j</mi></msub><msup><mo stretchy="false" form="postfix">)</mo><mo>′</mo></msup><msup><mi>S</mi><mrow><mi>−</mi><mn>1</mn></mrow></msup><mo stretchy="false" form="prefix">(</mo><msub><mi>𝐱</mi><mi>i</mi></msub><mo>−</mo><msub><mi>𝐱</mi><mi>j</mi></msub><mo stretchy="false" form="postfix">)</mo></mrow></msqrt></mrow><annotation encoding="application/x-tex">\delta(\mathbf{x}_i,\mathbf{x}_j)=\sqrt{(\mathbf{x}_i - \mathbf{x}_j)'S^{-1}(\mathbf{x}_i - \mathbf{x}_j)}</annotation></semantics></math></p>
 <p>where
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>𝐱</mi><annotation encoding="application/x-tex">\mathbf{x}</annotation></semantics></math>
 is a
@@ -702,7 +702,7 @@ vector containing the value of each of the
 included covariates for that unit,
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>S</mi><annotation encoding="application/x-tex">S</annotation></semantics></math>
 is a scaling matrix, and
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi>S</mi><mrow><mo>−</mo><mn>1</mn></mrow></msup><annotation encoding="application/x-tex">S^{-1}</annotation></semantics></math>
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi>S</mi><mrow><mi>−</mi><mn>1</mn></mrow></msup><annotation encoding="application/x-tex">S^{-1}</annotation></semantics></math>
 is the (generalized) inverse of
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>S</mi><annotation encoding="application/x-tex">S</annotation></semantics></math>.
 For Mahalanobis distance matching,
@@ -854,7 +854,7 @@ statistical benefits in that weights for each unit can be omitted or are
 more straightforward to include and dependence between units depends
 only on pair membership. However, it is not asymptotically consistent
 unless the propensity scores for all treated units are below .5 and
-there are many more control units than treated units <span class="citation">(<a href="#ref-savjeInconsistencyMatchingReplacement2022">F. Sävje
+there are many more control units than treated units <span class="citation">(<a href="#ref-savjeInconsistencyMatchingReplacement2022">Sävje
 2022</a>)</span>. Special standard error estimators are sometimes
 required for estimating effects after matching with replacement <span class="citation">(<a href="#ref-austin2020a">Austin and Cafri
 2020</a>)</span>, and methods for accounting for uncertainty are not
@@ -901,7 +901,7 @@ the matches after the first match will generally be worse than the first
 match in terms of closeness to the treated unit, so increasing
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>k</mi><annotation encoding="application/x-tex">k</annotation></semantics></math>
 can also worsen balance <span class="citation">(<a href="#ref-rassenOnetomanyPropensityScore2012">Rassen et al.
-2012</a>)</span>. <span class="citation">Austin (<a href="#ref-austin2010a">2010b</a>)</span> found that 1:1 or 1:2 matching
+2012</a>)</span>. <span class="citation">Austin (<a href="#ref-austin2010a">2010a</a>)</span> found that 1:1 or 1:2 matching
 generally performed best in terms of mean squared error. In general, it
 makes sense to use higher values of
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>k</mi><annotation encoding="application/x-tex">k</annotation></semantics></math>
@@ -1053,33 +1053,32 @@ specification depends on the unique qualities of each dataset.</p>
 <p>When the target population is less important, for example, when
 engaging in treatment effect discovery or when the sampled population is
 not of particular interest (e.g., it corresponds to an arbitrarily
-chosen hospital or school; see <span class="citation">Mao, Li, and
-Greene (<a href="#ref-mao2018">2018</a>)</span> for these and other
-reasons why retaining the target population may not be important), other
-methods that do not retain the characteristics of the original sample
-become available. These include matching with a caliper (on the
-propensity score or on the covariates themselves), cardinality matching,
-and more restrictive forms of matching like exact and coarsened exact
-matching, either on all covariates or just a subset, that are prone to
-discard units from the sample in such a way that the target population
-is changed. <span class="citation">Austin (<a href="#ref-austin2013b">2013</a>)</span> and Austin and Stuart <span class="citation">(<a href="#ref-austin2015c">2015b</a>, <a href="#ref-austin2015a">2015a</a>)</span> have found that caliper
+chosen hospital or school; see <span class="citation">Mao et al. (<a href="#ref-mao2018">2018</a>)</span> for these and other reasons why
+retaining the target population may not be important), other methods
+that do not retain the characteristics of the original sample become
+available. These include matching with a caliper (on the propensity
+score or on the covariates themselves), cardinality matching, and more
+restrictive forms of matching like exact and coarsened exact matching,
+either on all covariates or just a subset, that are prone to discard
+units from the sample in such a way that the target population is
+changed. <span class="citation">Austin (<a href="#ref-austin2013b">2013</a>)</span> and Austin and Stuart <span class="citation">(<a href="#ref-austin2015c">2015a</a>, <a href="#ref-austin2015a">2015b</a>)</span> have found that caliper
 matching can be a particularly effective modification to nearest
 neighbor matching for eliminating imbalance and reducing bias when the
 target population is less relevant, but when inference to a specific
 target population is desired, using calipers can induce bias due to
-incomplete matching <span class="citation">(<a href="#ref-rosenbaum1985">Rosenbaum and Rubin 1985a</a>; <a href="#ref-wang2020">Wang 2020</a>)</span>. Cardinality matching can be
+incomplete matching <span class="citation">(<a href="#ref-rosenbaum1985">Rosenbaum and Rubin 1985b</a>; <a href="#ref-wang2020">Wang 2020</a>)</span>. Cardinality matching can be
 particularly effective in data with little overlap between the treatment
 groups <span class="citation">(<a href="#ref-visconti2018">Visconti and
 Zubizarreta 2018</a>)</span> and can perform better than caliper
-matching <span class="citation">(<a href="#ref-delosangelesresaDirectStableWeight2020">de los Angeles Resa
-and Zubizarreta 2020</a>)</span>.</p>
+matching <span class="citation">(<a href="#ref-delosangelesresaDirectStableWeight2020"><span class="nocase">de los Angeles Resa and Zubizarreta</span>
+2020</a>)</span>.</p>
 <p>It is important not to rely excessively on theoretical or
 simulation-based findings or specific recommendations when making
 choices about the best matching method to use. For example, although
 nearest neighbor matching without replacement balance covariates better
 than did subclassification with five or ten subclasses in Austin’s <span class="citation">(<a href="#ref-austin2009c">2009</a>)</span>
 simulation, this does not imply it will be superior in all datasets.
-Likewise, though <span class="citation">Rosenbaum and Rubin (<a href="#ref-rosenbaum1985a">1985b</a>)</span> and <span class="citation">Austin (<a href="#ref-austin2011a">2011</a>)</span>
+Likewise, though <span class="citation">Rosenbaum and Rubin (<a href="#ref-rosenbaum1985a">1985a</a>)</span> and <span class="citation">Austin (<a href="#ref-austin2011a">2011</a>)</span>
 both recommend using a caliper of .2 standard deviations of the logit of
 the propensity score, this does not imply that caliper will be optimal
 in all scenarios, and other widths should be tried, though it should be
@@ -1117,15 +1116,16 @@ dataset.</p>
 <div class="section level2 unnumbered">
 <h2 class="unnumbered" id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
 </h2>
-<div id="refs" class="references csl-bib-body hanging-indent" entry-spacing="0">
+<div id="refs" class="references csl-bib-body hanging-indent">
 <div id="ref-abadie2006" class="csl-entry">
 Abadie, Alberto, and Guido W. Imbens. 2006. <span>“Large Sample
 Properties of Matching Estimators for Average Treatment Effects.”</span>
 <em>Econometrica</em> 74 (1): 235–67. <a href="https://doi.org/10.1111/j.1468-0262.2006.00655.x" class="external-link">https://doi.org/10.1111/j.1468-0262.2006.00655.x</a>.
 </div>
 <div id="ref-abadie2016" class="csl-entry">
-———. 2016. <span>“Matching on the Estimated Propensity Score.”</span>
-<em>Econometrica</em> 84 (2): 781–807. <a href="https://doi.org/10.3982/ECTA11293" class="external-link">https://doi.org/10.3982/ECTA11293</a>.
+Abadie, Alberto, and Guido W. Imbens. 2016. <span>“Matching on the
+Estimated Propensity Score.”</span> <em>Econometrica</em> 84 (2):
+781–807. <a href="https://doi.org/10.3982/ECTA11293" class="external-link">https://doi.org/10.3982/ECTA11293</a>.
 </div>
 <div id="ref-austin2009c" class="csl-entry">
 Austin, Peter C. 2009. <span>“The Relative Ability of Different
@@ -1133,27 +1133,27 @@ Propensity Score Methods to Balance Measured Covariates Between Treated
 and Untreated Subjects in Observational Studies.”</span> <em>Medical
 Decision Making</em> 29 (6): 661–77. <a href="https://doi.org/10.1177/0272989x09341755" class="external-link">https://doi.org/10.1177/0272989x09341755</a>.
 </div>
-<div id="ref-austin2010" class="csl-entry">
-———. 2010a. <span>“The Performance of Different Propensity-Score Methods
-for Estimating Differences in Proportions (Risk Differences or Absolute
-Risk Reductions) in Observational Studies.”</span> <em>Statistics in
-Medicine</em> 29 (20): 2137–48. <a href="https://doi.org/10.1002/sim.3854" class="external-link">https://doi.org/10.1002/sim.3854</a>.
-</div>
 <div id="ref-austin2010a" class="csl-entry">
-———. 2010b. <span>“Statistical Criteria for Selecting the Optimal Number
-of Untreated Subjects Matched to Each Treated Subject When Using
-Many-to-One Matching on the Propensity Score.”</span> <em>American
-Journal of Epidemiology</em> 172 (9): 1092–97. <a href="https://doi.org/10.1093/aje/kwq224" class="external-link">https://doi.org/10.1093/aje/kwq224</a>.
+Austin, Peter C. 2010a. <span>“Statistical Criteria for Selecting the
+Optimal Number of Untreated Subjects Matched to Each Treated Subject
+When Using Many-to-One Matching on the Propensity Score.”</span>
+<em>American Journal of Epidemiology</em> 172 (9): 1092–97. <a href="https://doi.org/10.1093/aje/kwq224" class="external-link">https://doi.org/10.1093/aje/kwq224</a>.
+</div>
+<div id="ref-austin2010" class="csl-entry">
+Austin, Peter C. 2010b. <span>“The Performance of Different
+Propensity-Score Methods for Estimating Differences in Proportions (Risk
+Differences or Absolute Risk Reductions) in Observational
+Studies.”</span> <em>Statistics in Medicine</em> 29 (20): 2137–48. <a href="https://doi.org/10.1002/sim.3854" class="external-link">https://doi.org/10.1002/sim.3854</a>.
 </div>
 <div id="ref-austin2011a" class="csl-entry">
-———. 2011. <span>“Optimal Caliper Widths for
+Austin, Peter C. 2011. <span>“Optimal Caliper Widths for
 Propensity<span>-</span>Score Matching When Estimating Differences in
 Means and Differences in Proportions in Observational Studies.”</span>
 <em>Pharmaceutical Statistics</em> 10 (2): 150–61. <a href="https://doi.org/10.1002/pst.433" class="external-link">https://doi.org/10.1002/pst.433</a>.
 </div>
 <div id="ref-austin2013b" class="csl-entry">
-———. 2013. <span>“A Comparison of 12 Algorithms for Matching on the
-Propensity Score.”</span> <em>Statistics in Medicine</em> 33 (6):
+Austin, Peter C. 2013. <span>“A Comparison of 12 Algorithms for Matching
+on the Propensity Score.”</span> <em>Statistics in Medicine</em> 33 (6):
 1057–69. <a href="https://doi.org/10.1002/sim.6004" class="external-link">https://doi.org/10.1002/sim.6004</a>.
 </div>
 <div id="ref-austin2020a" class="csl-entry">
@@ -1168,17 +1168,18 @@ Bootstrapping When Using Propensity<span>-</span>Score Matching Without
 Replacement: A Simulation Study.”</span> <em>Statistics in Medicine</em>
 33 (24): 4306–19. <a href="https://doi.org/10.1002/sim.6276" class="external-link">https://doi.org/10.1002/sim.6276</a>.
 </div>
+<div id="ref-austin2015c" class="csl-entry">
+Austin, Peter C., and Elizabeth A. Stuart. 2015a. <span>“Estimating the
+Effect of Treatment on Binary Outcomes Using Full Matching on the
+Propensity Score.”</span> <em>Statistical Methods in Medical
+Research</em> 26 (6): 2505–25. <a href="https://doi.org/10.1177/0962280215601134" class="external-link">https://doi.org/10.1177/0962280215601134</a>.
+</div>
 <div id="ref-austin2015a" class="csl-entry">
-Austin, Peter C., and Elizabeth A. Stuart. 2015a. <span>“The Performance
+Austin, Peter C., and Elizabeth A. Stuart. 2015b. <span>“The Performance
 of Inverse Probability of Treatment Weighting and Full Matching on the
 Propensity Score in the Presence of Model Misspecification When
 Estimating the Effect of Treatment on Survival Outcomes.”</span>
 <em>Statistical Methods in Medical Research</em> 26 (4): 1654–70. <a href="https://doi.org/10.1177/0962280215584401" class="external-link">https://doi.org/10.1177/0962280215584401</a>.
-</div>
-<div id="ref-austin2015c" class="csl-entry">
-———. 2015b. <span>“Estimating the Effect of Treatment on Binary Outcomes
-Using Full Matching on the Propensity Score.”</span> <em>Statistical
-Methods in Medical Research</em> 26 (6): 2505–25. <a href="https://doi.org/10.1177/0962280215601134" class="external-link">https://doi.org/10.1177/0962280215601134</a>.
 </div>
 <div id="ref-cohnProfileMatchingGeneralization2021" class="csl-entry">
 Cohn, Eric R., and José R. Zubizarreta. 2022. <span>“Profile
@@ -1187,11 +1188,12 @@ Cohn, Eric R., and José R. Zubizarreta. 2022. <span>“Profile
 <span>Inferences</span>.”</span> <em>Epidemiology</em> 33 (5): 678. <a href="https://doi.org/10.1097/EDE.0000000000001517" class="external-link">https://doi.org/10.1097/EDE.0000000000001517</a>.
 </div>
 <div id="ref-delosangelesresaDirectStableWeight2020" class="csl-entry">
-de los Angeles Resa, María, and José R. Zubizarreta. 2020. <span>“Direct
-and Stable Weight Adjustment in Non-Experimental Studies with
-Multivalued Treatments: Analysis of the Effect of an Earthquake on
-Post-Traumatic Stress.”</span> <em>Journal of the Royal Statistical
-Society: Series A (Statistics in Society)</em> n/a (n/a). <a href="https://doi.org/10.1111/rssa.12561" class="external-link">https://doi.org/10.1111/rssa.12561</a>.
+<span class="nocase">de los Angeles Resa, María, and José R.
+Zubizarreta</span>. 2020. <span>“Direct and Stable Weight Adjustment in
+Non-Experimental Studies with Multivalued Treatments: Analysis of the
+Effect of an Earthquake on Post-Traumatic Stress.”</span> <em>Journal of
+the Royal Statistical Society: Series A (Statistics in Society)</em> n/a
+(n/a). <a href="https://doi.org/10.1111/rssa.12561" class="external-link">https://doi.org/10.1111/rssa.12561</a>.
 </div>
 <div id="ref-desai2017" class="csl-entry">
 Desai, Rishi J., Kenneth J. Rothman, Brian T. Bateman, Sonia
@@ -1218,7 +1220,7 @@ Coaching for the SAT.”</span> <em>Journal of the American Statistical
 Association</em> 99 (467): 609–18. <a href="https://doi.org/10.1198/016214504000000647" class="external-link">https://doi.org/10.1198/016214504000000647</a>.
 </div>
 <div id="ref-hansen2008a" class="csl-entry">
-———. 2008. <span>“The Prognostic Analogue of the Propensity
+Hansen, Ben B. 2008. <span>“The Prognostic Analogue of the Propensity
 Score.”</span> <em>Biometrika</em> 95 (2): 481–88. <a href="https://doi.org/10.1093/biomet/asn004" class="external-link">https://doi.org/10.1093/biomet/asn004</a>.
 </div>
 <div id="ref-hansen2006" class="csl-entry">
@@ -1246,13 +1248,13 @@ Inference Without Balance Checking: Coarsened Exact Matching.”</span>
 <div id="ref-king2019" class="csl-entry">
 King, Gary, and Richard Nielsen. 2019. <span>“Why Propensity Scores
 Should Not Be Used for Matching.”</span> <em>Political Analysis</em>,
-May, 1–20. <a href="https://doi.org/10.1017/pan.2019.11" class="external-link">https://doi.org/10.1017/pan.2019.11</a>.
+May 7, 1–20. <a href="https://doi.org/10.1017/pan.2019.11" class="external-link">https://doi.org/10.1017/pan.2019.11</a>.
 </div>
 <div id="ref-mao2018" class="csl-entry">
 Mao, Huzhang, Liang Li, and Tom Greene. 2018. <span>“Propensity Score
 Weighting Analysis and Treatment Effect Discovery.”</span>
-<em>Statistical Methods in Medical Research</em>, June, 096228021878117.
-<a href="https://doi.org/10.1177/0962280218781171" class="external-link">https://doi.org/10.1177/0962280218781171</a>.
+<em>Statistical Methods in Medical Research</em>, June 19,
+096228021878117. <a href="https://doi.org/10.1177/0962280218781171" class="external-link">https://doi.org/10.1177/0962280218781171</a>.
 </div>
 <div id="ref-ming2000" class="csl-entry">
 Ming, Kewei, and Paul R. Rosenbaum. 2000. <span>“Substantial Gains in
@@ -1279,30 +1281,31 @@ Epidemiology</em> 187 (9): 1951–61. <a href="https://doi.org/10.1093/aje/kwy07
 </div>
 <div id="ref-rosenbaumDesignObservationalStudies2010" class="csl-entry">
 Rosenbaum, Paul R. 2010. <em>Design of Observational Studies</em>.
-Springer Series in Statistics. <span>New York</span>:
-<span>Springer</span>.
+Springer Series in Statistics. <span>Springer</span>.
 </div>
 <div id="ref-rosenbaum2020" class="csl-entry">
-———. 2020. <span>“Modern Algorithms for Matching in Observational
-Studies.”</span> <em>Annual Review of Statistics and Its
+Rosenbaum, Paul R. 2020. <span>“Modern Algorithms for Matching in
+Observational Studies.”</span> <em>Annual Review of Statistics and Its
 Application</em> 7 (1): 143–76. <a href="https://doi.org/10.1146/annurev-statistics-031219-041058" class="external-link">https://doi.org/10.1146/annurev-statistics-031219-041058</a>.
 </div>
-<div id="ref-rosenbaum1985" class="csl-entry">
-Rosenbaum, Paul R., and Donald B. Rubin. 1985a. <span>“The Bias Due to
-Incomplete Matching.”</span> <em>Biometrics</em> 41 (1): 103–16. <a href="https://doi.org/10.2307/2530647" class="external-link">https://doi.org/10.2307/2530647</a>.
-</div>
 <div id="ref-rosenbaum1985a" class="csl-entry">
-———. 1985b. <span>“Constructing a Control Group Using Multivariate
-Matched Sampling Methods That Incorporate the Propensity Score.”</span>
-<em>The American Statistician</em> 39 (1): 33. <a href="https://doi.org/10.2307/2683903" class="external-link">https://doi.org/10.2307/2683903</a>.
+Rosenbaum, Paul R., and Donald B. Rubin. 1985a. <span>“Constructing a
+Control Group Using Multivariate Matched Sampling Methods That
+Incorporate the Propensity Score.”</span> <em>The American
+Statistician</em> 39 (1): 33. <a href="https://doi.org/10.2307/2683903" class="external-link">https://doi.org/10.2307/2683903</a>.
+</div>
+<div id="ref-rosenbaum1985" class="csl-entry">
+Rosenbaum, Paul R., and Donald B. Rubin. 1985b. <span>“The Bias Due to
+Incomplete Matching.”</span> <em>Biometrics</em> 41 (1): 103–16. <a href="https://doi.org/10.2307/2530647" class="external-link">https://doi.org/10.2307/2530647</a>.
 </div>
 <div id="ref-rubin1973" class="csl-entry">
 Rubin, Donald B. 1973. <span>“Matching to Remove Bias in Observational
 Studies.”</span> <em>Biometrics</em> 29 (1): 159. <a href="https://doi.org/10.2307/2529684" class="external-link">https://doi.org/10.2307/2529684</a>.
 </div>
 <div id="ref-rubinBiasReductionUsing1980" class="csl-entry">
-———. 1980. <span>“Bias <span>Reduction Using Mahalanobis-Metric
-Matching</span>.”</span> <em>Biometrics</em> 36 (2): 293–98. <a href="https://doi.org/10.2307/2529981" class="external-link">https://doi.org/10.2307/2529981</a>.
+Rubin, Donald B. 1980. <span>“Bias <span>Reduction Using
+Mahalanobis-Metric Matching</span>.”</span> <em>Biometrics</em> 36 (2):
+293–98. <a href="https://doi.org/10.2307/2529981" class="external-link">https://doi.org/10.2307/2529981</a>.
 </div>
 <div id="ref-savjeInconsistencyMatchingReplacement2022" class="csl-entry">
 Sävje, F. 2022. <span>“On the Inconsistency of Matching Without
@@ -1325,19 +1328,20 @@ Example.”</span> <em>Psychological Methods</em> 13 (4): 279–313. <a href="ht
 <div id="ref-sekhon2011" class="csl-entry">
 Sekhon, Jasjeet S. 2011. <span>“Multivariate and Propensity Score
 Matching Software with Automated Balance Optimization: The Matching
-Package for R.”</span> <em>Journal of Statistical Software</em> 42 (1):
+Package for r.”</span> <em>Journal of Statistical Software</em> 42 (1):
 1–52. <a href="https://doi.org/10.18637/jss.v042.i07" class="external-link">https://doi.org/10.18637/jss.v042.i07</a>.
 </div>
 <div id="ref-stuart2008" class="csl-entry">
 Stuart, Elizabeth A. 2008. <span>“Developing Practical Recommendations
-for the Use of Propensity Scores: Discussion of <span>‘</span>A Critical
+for the Use of Propensity Scores: Discussion of <span>‘</span>a Critical
 Appraisal of Propensity Score Matching in the Medical Literature Between
-1996 and 2003<span>’</span> by Peter Austin,Statistics in
+1996 and 2003<span>’</span> by Peter Austin,statistics in
 Medicine.”</span> <em>Statistics in Medicine</em> 27 (12): 2062–65. <a href="https://doi.org/10.1002/sim.3207" class="external-link">https://doi.org/10.1002/sim.3207</a>.
 </div>
 <div id="ref-stuart2010" class="csl-entry">
-———. 2010. <span>“Matching Methods for Causal Inference: A Review and a
-Look Forward.”</span> <em>Statistical Science</em> 25 (1): 1–21. <a href="https://doi.org/10.1214/09-STS313" class="external-link">https://doi.org/10.1214/09-STS313</a>.
+Stuart, Elizabeth A. 2010. <span>“Matching Methods for Causal Inference:
+A Review and a Look Forward.”</span> <em>Statistical Science</em> 25
+(1): 1–21. <a href="https://doi.org/10.1214/09-STS313" class="external-link">https://doi.org/10.1214/09-STS313</a>.
 </div>
 <div id="ref-stuart2008a" class="csl-entry">
 Stuart, Elizabeth A., and Kerry M. Green. 2008. <span>“Using Full
@@ -1362,7 +1366,8 @@ Propensity<span>-</span>Score<span></span>matched Data?”</span>
 </div>
 <div id="ref-wang2020" class="csl-entry">
 Wang, Jixian. 2020. <span>“To Use or Not to Use Propensity Score
-Matching?”</span> <em>Pharmaceutical Statistics</em>, August. <a href="https://doi.org/10.1002/pst.2051" class="external-link">https://doi.org/10.1002/pst.2051</a>.
+Matching?”</span> <em>Pharmaceutical Statistics</em>, ahead of print,
+August 10. <a href="https://doi.org/10.1002/pst.2051" class="external-link">https://doi.org/10.1002/pst.2051</a>.
 </div>
 <div id="ref-zakrison2018" class="csl-entry">
 Zakrison, T. L., Peter C. Austin, and V. A. McCredie. 2018. <span>“A

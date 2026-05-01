@@ -79,6 +79,7 @@ Noah Greifer
 ## Examples
 
 ``` r
+
 data("lalonde")
 
 # Matching based on race subsets

@@ -8,13 +8,13 @@ estimated quantities generalize to a target population defined by the
 weights. Evidence suggests that sampling weights need to be incorporated
 into a propensity score matching analysis to obtain valid and unbiased
 estimates of the treatment effect in the sampling weighted population
-([DuGoff, Schuler, and Stuart 2014](#ref-dugoff2014); [Austin, Jembere,
-and Chiu 2016](#ref-austin2016); [Lenis et al. 2019](#ref-lenis2019)).
-In this guide, we demonstrate how to use sampling weights with `MatchIt`
-for propensity score estimation, balance assessment, and effect
-estimation. Fortunately, doing so is not complicated, but some care must
-be taken to ensure sampling weights are incorporated correctly. It is
-assumed one has read the other vignettes explaining matching
+([DuGoff et al. 2014](#ref-dugoff2014); [Austin et al.
+2016](#ref-austin2016); [Lenis et al. 2019](#ref-lenis2019)). In this
+guide, we demonstrate how to use sampling weights with `MatchIt` for
+propensity score estimation, balance assessment, and effect estimation.
+Fortunately, doing so is not complicated, but some care must be taken to
+ensure sampling weights are incorporated correctly. It is assumed one
+has read the other vignettes explaining matching
 ([`vignette("matching-methods")`](https://kosukeimai.github.io/MatchIt/articles/matching-methods.md)),
 balance assessment
 ([`vignette("assessing-balance")`](https://kosukeimai.github.io/MatchIt/articles/assessing-balance.md)),
@@ -33,6 +33,7 @@ document. We will consider the effect of binary treatment `A` on
 continuous outcome `Y_C`, adjusting for confounders `X1`-`X9`.
 
 ``` r
+
 head(d)
 ```
 
@@ -45,6 +46,7 @@ head(d)
     ## 6 0 -2.4313 -1.7984 -1.2940  0.04609  1 -1.2419 -1.1252 -1.8659 -0.56513 -9.8504 14.773
 
 ``` r
+
 library("MatchIt")
 ```
 
@@ -53,11 +55,11 @@ library("MatchIt")
 When using sampling weights with propensity score matching, one has the
 option of including the sampling weights in the model used to estimate
 the propensity scores. Although evidence is mixed on whether this is
-required ([Austin, Jembere, and Chiu 2016](#ref-austin2016); [Lenis et
-al. 2019](#ref-lenis2019)), it can be a good idea. The choice should
-depend on whether including the sampling weights improves the quality of
-the matches. Specifications including and excluding sampling weights
-should be tried to determine which is preferred.
+required ([Austin et al. 2016](#ref-austin2016); [Lenis et al.
+2019](#ref-lenis2019)), it can be a good idea. The choice should depend
+on whether including the sampling weights improves the quality of the
+matches. Specifications including and excluding sampling weights should
+be tried to determine which is preferred.
 
 To supply sampling weights to the propensity score-estimating function
 in
@@ -72,6 +74,7 @@ effect in the population (ATE) (note that all methods and steps apply
 the same way to all forms of matching and all estimands).
 
 ``` r
+
 mF_s <- matchit(A ~ X1 + X2 + X3 + X4 + X5 + 
                   X6 + X7 + X8 + X9, data = d,
                 method = "full", distance = "glm",
@@ -94,6 +97,7 @@ specification as was used in
 [`vignette("estimating-effects")`](https://kosukeimai.github.io/MatchIt/articles/estimating-effects.md).
 
 ``` r
+
 mF <- matchit(A ~ X1 + X2 + X3 + X4 + X5 + 
                 X6 + X7 + X8 + X9, data = d,
               method = "full", distance = "glm",
@@ -110,6 +114,7 @@ do so, we use the function
 which adds sampling weights to the supplied `matchit` objects.
 
 ``` r
+
 mF <- add_s.weights(mF, ~SW)
 
 mF
@@ -162,6 +167,7 @@ or to being added afterward by
 they will be correctly incorporated into the balance statistics.
 
 ``` r
+
 #Balance before matching and for the SW propensity score full matching
 summary(mF_s)
 
@@ -216,6 +222,7 @@ weighted sample, adjusting for the covariates to improve precision and
 decrease bias.
 
 ``` r
+
 md_F_s <- match_data(mF_s)
 
 fit <- lm(Y_C ~ A * (X1 + X2 + X3 + X4 + X5 + 
@@ -243,6 +250,7 @@ included in the returned weights).
 ## Code to Generate Data used in Examples
 
 ``` r
+
 #Generatng data similar to Austin (2009) for demonstrating 
 #treatment effect estimation with sampling weights
 gen_X <- function(n) {

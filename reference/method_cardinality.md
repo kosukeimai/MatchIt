@@ -22,6 +22,7 @@ Below is how
 [`matchit()`](https://kosukeimai.github.io/MatchIt/reference/matchit.md)
 is used for cardinality matching:
 
+
     matchit(formula,
             data = NULL,
             method = "cardinality",

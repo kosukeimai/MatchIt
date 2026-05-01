@@ -64,6 +64,7 @@ Noah Greifer
 ## Examples
 
 ``` r
+
 data("lalonde")
 
 # Generate random sampling weights, just

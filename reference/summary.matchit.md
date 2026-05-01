@@ -299,6 +299,7 @@ which also displays balance for `matchit` objects.
 ## Examples
 
 ``` r
+
 data("lalonde")
 m.out <- matchit(treat ~ age + educ + married +
                    race + re74,

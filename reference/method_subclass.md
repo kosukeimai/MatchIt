@@ -20,6 +20,7 @@ Below is how
 [`matchit()`](https://kosukeimai.github.io/MatchIt/reference/matchit.md)
 is used for subclassification:
 
+
     matchit(formula,
             data = NULL,
             method = "subclass",
@@ -197,6 +198,7 @@ to optimize the within-subclass distance.
 ## Examples
 
 ``` r
+
 data("lalonde")
 
 # PS subclassification for the ATT with 7 subclasses

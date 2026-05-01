@@ -33,6 +33,7 @@ Below is how
 [`matchit()`](https://kosukeimai.github.io/MatchIt/reference/matchit.md)
 is used for optimal full matching:
 
+
     matchit(formula,
             data = NULL,
             method = "full",
@@ -173,6 +174,7 @@ Mahalanobis distance matching can be done one of two ways:
     variables. For example, to perform simple Mahalanobis distance
     matching, the following could be run:
 
+
         matchit(treat ~ X1 + X2, method = "nearest",
                 distance = "mahalanobis") 
 
@@ -190,6 +192,7 @@ Mahalanobis distance matching can be done one of two ways:
     to create the Mahalanobis distance. For example, to perform
     Mahalanobis within a propensity score caliper, the following could
     be run:
+
 
         matchit(treat ~ X1 + X2 + X3, method = "nearest",
                 distance =  "glm", caliper = .25,

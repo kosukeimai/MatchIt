@@ -70,7 +70,7 @@
                         <h4 data-toc-skip class="author">Noah
 Greifer</h4>
             
-            <h4 data-toc-skip class="date">2026-04-16</h4>
+            <h4 data-toc-skip class="date">2026-05-01</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/kosukeimai/MatchIt/blob/master/vignettes/sampling-weights.Rmd" class="external-link"><code>vignettes/sampling-weights.Rmd</code></a></small>
       <div class="d-none name"><code>sampling-weights.Rmd</code></div>
@@ -96,17 +96,16 @@ any estimated quantities generalize to a target population defined by
 the weights. Evidence suggests that sampling weights need to be
 incorporated into a propensity score matching analysis to obtain valid
 and unbiased estimates of the treatment effect in the sampling weighted
-population <span class="citation">(<a href="#ref-dugoff2014">DuGoff,
-Schuler, and Stuart 2014</a>; <a href="#ref-austin2016">Austin, Jembere,
-and Chiu 2016</a>; <a href="#ref-lenis2019">Lenis et al.
-2019</a>)</span>. In this guide, we demonstrate how to use sampling
-weights with <code>MatchIt</code> for propensity score estimation,
-balance assessment, and effect estimation. Fortunately, doing so is not
-complicated, but some care must be taken to ensure sampling weights are
-incorporated correctly. It is assumed one has read the other vignettes
-explaining matching (<code><a href="../articles/matching-methods.html">vignette("matching-methods")</a></code>), balance
-assessment (<code><a href="../articles/assessing-balance.html">vignette("assessing-balance")</a></code>), and effect
-estimation (<code><a href="../articles/estimating-effects.html">vignette("estimating-effects")</a></code>.</p>
+population <span class="citation">(<a href="#ref-dugoff2014">DuGoff et
+al. 2014</a>; <a href="#ref-austin2016">Austin et al. 2016</a>; <a href="#ref-lenis2019">Lenis et al. 2019</a>)</span>. In this guide, we
+demonstrate how to use sampling weights with <code>MatchIt</code> for
+propensity score estimation, balance assessment, and effect estimation.
+Fortunately, doing so is not complicated, but some care must be taken to
+ensure sampling weights are incorporated correctly. It is assumed one
+has read the other vignettes explaining matching
+(<code><a href="../articles/matching-methods.html">vignette("matching-methods")</a></code>), balance assessment
+(<code><a href="../articles/assessing-balance.html">vignette("assessing-balance")</a></code>), and effect estimation
+(<code><a href="../articles/estimating-effects.html">vignette("estimating-effects")</a></code>.</p>
 <p>We will use the same simulated toy dataset used in
 <code><a href="../articles/estimating-effects.html">vignette("estimating-effects")</a></code> except with the addition of
 a sampling weights variable, <code>SW</code>, which is used to
@@ -136,7 +135,7 @@ effect of binary treatment <code>A</code> on continuous outcome
 <p>When using sampling weights with propensity score matching, one has
 the option of including the sampling weights in the model used to
 estimate the propensity scores. Although evidence is mixed on whether
-this is required <span class="citation">(<a href="#ref-austin2016">Austin, Jembere, and Chiu 2016</a>; <a href="#ref-lenis2019">Lenis et al. 2019</a>)</span>, it can be a good
+this is required <span class="citation">(<a href="#ref-austin2016">Austin et al. 2016</a>; <a href="#ref-lenis2019">Lenis et al. 2019</a>)</span>, it can be a good
 idea. The choice should depend on whether including the sampling weights
 improves the quality of the matches. Specifications including and
 excluding sampling weights should be tried to determine which is
@@ -343,7 +342,7 @@ they are already included in the returned weights).</p>
 <div class="section level2 unnumbered">
 <h2 class="unnumbered" id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
 </h2>
-<div id="refs" class="references csl-bib-body hanging-indent" entry-spacing="0">
+<div id="refs" class="references csl-bib-body hanging-indent">
 <div id="ref-austin2016" class="csl-entry">
 Austin, Peter C., Nathaniel Jembere, and Maria Chiu. 2016.
 <span>“Propensity Score Matching and Complex Surveys.”</span>

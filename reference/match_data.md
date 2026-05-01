@@ -240,6 +240,7 @@ effects.
 ## Examples
 
 ``` r
+
 data("lalonde")
 
 # 4:1 matching w/replacement

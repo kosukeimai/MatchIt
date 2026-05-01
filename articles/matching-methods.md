@@ -80,24 +80,24 @@ experiments, which are more familiar to non-technical audiences.
 In addition to subset selection, matching often (though not always)
 involves a form of *stratification*, the assignment of units to pairs or
 strata containing multiple units. The distinction between subset
-selection and stratification is described by Zubizarreta, Paredes, and
-Rosenbaum ([2014](#ref-zubizarretaMatchingBalancePairing2014)), who
-separate them into two separate steps. In `MatchIt`, with almost all
-matching methods, subset selection is performed by stratification; for
-example, treated units are paired with control units, and unpaired units
-are then dropped from the matched sample. With some methods, subclasses
-are used to assign matching or stratification weights to individual
-units, which increase or decrease each unit’s leverage in a subsequent
-analysis. There has been some debate about the importance of
-stratification after subset selection; while some authors have argued
-that, with some forms of matching, pair membership is incidental
-([Stuart 2008](#ref-stuart2008); [Schafer and Kang
-2008](#ref-schafer2008)), others have argued that correctly
-incorporating pair membership into effect estimation can improve the
-quality of inferences ([Austin and Small 2014](#ref-austin2014a); [Wan
-2019](#ref-wan2019)). For methods that allow it, `MatchIt` includes
-stratum membership as an additional output of each matching
-specification. How these strata can be used is detailed in
+selection and stratification is described by Zubizarreta et al.
+([2014](#ref-zubizarretaMatchingBalancePairing2014)), who separate them
+into two separate steps. In `MatchIt`, with almost all matching methods,
+subset selection is performed by stratification; for example, treated
+units are paired with control units, and unpaired units are then dropped
+from the matched sample. With some methods, subclasses are used to
+assign matching or stratification weights to individual units, which
+increase or decrease each unit’s leverage in a subsequent analysis.
+There has been some debate about the importance of stratification after
+subset selection; while some authors have argued that, with some forms
+of matching, pair membership is incidental ([Stuart
+2008](#ref-stuart2008); [Schafer and Kang 2008](#ref-schafer2008)),
+others have argued that correctly incorporating pair membership into
+effect estimation can improve the quality of inferences ([Austin and
+Small 2014](#ref-austin2014a); [Wan 2019](#ref-wan2019)). For methods
+that allow it, `MatchIt` includes stratum membership as an additional
+output of each matching specification. How these strata can be used is
+detailed in
 [`vignette("estimating-effects")`](https://kosukeimai.github.io/MatchIt/articles/estimating-effects.md).
 
 At the heart of `MatchIt` are three classes of methods: distance
@@ -159,8 +159,8 @@ in the sense that each pairing occurs without reference to how other
 units will be or have been paired, and therefore does not aim to
 optimize any criterion. Nearest neighbor matching is the most common
 form of matching used ([Thoemmes and Kim 2011](#ref-thoemmes2011);
-[Zakrison, Austin, and McCredie 2018](#ref-zakrison2018)) and has been
-extensively studied through simulations. See
+[Zakrison et al. 2018](#ref-zakrison2018)) and has been extensively
+studied through simulations. See
 [`?method_nearest`](https://kosukeimai.github.io/MatchIt/reference/method_nearest.md)
 for the documentation for
 [`matchit()`](https://kosukeimai.github.io/MatchIt/reference/matchit.md)
@@ -269,7 +269,7 @@ matching can also be seen as a form of propensity score weighting that
 is less sensitive to the form of the propensity score model because the
 original propensity scores are used just to create the subclasses, not
 to form the weights directly ([Austin and Stuart
-2015a](#ref-austin2015a)). In addition, full matching does not have to
+2015b](#ref-austin2015a)). In addition, full matching does not have to
 rely on estimated propensity scores to form the subclasses and weights;
 other distance measures are allowed as well.
 
@@ -294,7 +294,7 @@ setting, e.g., `tol = 1e-7`.
 
 Generalized full matching is a variant of full matching that uses a
 special fast clustering algorithm to dramatically speed up the matching,
-even for large datasets ([Fredrik Sävje, Higgins, and Sekhon
+even for large datasets ([Sävje et al.
 2021](#ref-savjeGeneralizedFullMatching2021)). Like with optimal full
 matching, generalized full matching assigns every unit to a subclass.
 What makes generalized full match “generalized” is that the user can
@@ -313,9 +313,8 @@ covariates. See
 for the documentation for
 [`matchit()`](https://kosukeimai.github.io/MatchIt/reference/matchit.md)
 with `method = "quick"`. Generalized full matching in `MatchIt` depends
-on the `quickmatch()` function in the `quickmatch` package ([Fredrik
-Sävje, Sekhon, and Higgins
-2018](#ref-savjeQuickmatchQuickGeneralized2018)).
+on the `quickmatch()` function in the `quickmatch` package ([Sävje et
+al. 2018](#ref-savjeQuickmatchQuickGeneralized2018)).
 
 Generalized full matching includes different options for customization
 than optimal full matching. The user cannot supply their own distance
@@ -351,32 +350,36 @@ with `method = "genetic"`. Genetic matching in `MatchIt` depends on the
 scaled generalized Mahalanobis distance.
 
 Genetic matching considers the generalized Mahalanobis distance between
-a treated unit $i$ and a control unit $j$ as
-$$\delta_{GMD}\left( \mathbf{x}_{i},\mathbf{x}_{j},\mathbf{W} \right) = \sqrt{\left( \mathbf{x}_{i} - \mathbf{x}_{j} \right)\prime\left( \mathbf{S}^{- 1/2} \right)\prime\mathbf{W}\left( \mathbf{S}^{- 1/2} \right)\left( \mathbf{x}_{i} - \mathbf{x}_{j} \right)}$$
-where $\mathbf{x}$ is a $p \times 1$ vector containing the value of each
-of the $p$ included covariates for that unit, $\mathbf{S}^{- 1/2}$ is
-the Cholesky decomposition of the covariance matrix $\mathbf{S}$ of the
-covariates, and $\mathbf{W}$ is a diagonal matrix with scaling factors
-$w$ on the diagonal: $$\mathbf{W} = \begin{bmatrix}
-w_{1} & & & \\
- & w_{2} & & \\
- & & \ddots & \\
- & & & w_{p} \\
- & & & 
-\end{bmatrix}$$
+a treated unit $`i`$ and a control unit $`j`$ as
+``` math
+\delta_{GMD}(\mathbf{x}_i,\mathbf{x}_j, \mathbf{W})=\sqrt{(\mathbf{x}_i - \mathbf{x}_j)'(\mathbf{S}^{-1/2})'\mathbf{W}(\mathbf{S}^{-1/2})(\mathbf{x}_i - \mathbf{x}_j)}
+```
+where $`\mathbf{x}`$ is a $`p \times 1`$ vector containing the value of
+each of the $`p`$ included covariates for that unit,
+$`\mathbf{S}^{-1/2}`$ is the Cholesky decomposition of the covariance
+matrix $`\mathbf{S}`$ of the covariates, and $`\mathbf{W}`$ is a
+diagonal matrix with scaling factors $`w`$ on the diagonal:
+``` math
+\mathbf{W}=\begin{bmatrix}
+    w_1 &  & & \\
+     & w_2 & & \\
+     &  & \ddots &\\
+     & & & w_p \\
+    \end{bmatrix}
+```
 
-When $w_{k} = 1$ for all covariates $k$, the computed distance is the
+When $`w_k=1`$ for all covariates $`k`$, the computed distance is the
 standard Mahalanobis distance between units. Genetic matching estimates
-the optimal values of the $w_{k}$s, where a user-specified criterion is
+the optimal values of the $`w_k`$s, where a user-specified criterion is
 used to define what is optimal. The default is to maximize the smallest
 p-value among balance tests for the covariates in the matched sample
 (both Kolmogorov-Smirnov tests and t-tests for each covariate).
 
 In `MatchIt`, if a propensity score is specified, the default is to
-include the propensity score and the covariates in $\mathbf{x}$ and to
+include the propensity score and the covariates in $`\mathbf{x}`$ and to
 optimize balance on the covariates. When `distance = "mahalanobis"` or
 the `mahvars` argument is specified, the propensity score is left out of
-$\mathbf{x}$.
+$`\mathbf{x}`$.
 
 In all other respects, genetic matching functions just like nearest
 neighbor matching except that the matching itself is carried out by
@@ -430,16 +433,16 @@ which exact matching is to be done.
 Coarsened exact matching (CEM) is a form of stratum matching that
 involves first coarsening the covariates by creating bins and then
 performing exact matching on the new coarsened versions of the
-covariates ([Iacus, King, and Porro 2012](#ref-iacus2012)). The degree
-and method of coarsening can be controlled by the user to manage the
-trade-off between exact and approximate balancing. For example,
-coarsening a covariate to two bins will mean that units that differ
-greatly on the covariate might be placed into the same subclass, while
-coarsening a variable to five bins may require units to be dropped due
-to not finding matches. Like exact matching, CEM is susceptible to the
-curse of dimensionality, making it a less viable solution with many
-covariates, especially with few units. Dropping units can also change
-the target population of the estimated effect. See
+covariates ([Iacus et al. 2012](#ref-iacus2012)). The degree and method
+of coarsening can be controlled by the user to manage the trade-off
+between exact and approximate balancing. For example, coarsening a
+covariate to two bins will mean that units that differ greatly on the
+covariate might be placed into the same subclass, while coarsening a
+variable to five bins may require units to be dropped due to not finding
+matches. Like exact matching, CEM is susceptible to the curse of
+dimensionality, making it a less viable solution with many covariates,
+especially with few units. Dropping units can also change the target
+population of the estimated effect. See
 [`?method_cem`](https://kosukeimai.github.io/MatchIt/reference/method_cem.md)
 for the documentation for
 [`matchit()`](https://kosukeimai.github.io/MatchIt/reference/matchit.md)
@@ -457,7 +460,7 @@ group, control group, or overall, depending on the desired estimand.
 Propensity score subclassification is an old and well-studied method,
 though it can perform poorly compared to other, more modern propensity
 score methods such as full matching and weighting ([Austin
-2010a](#ref-austin2010)). See
+2010b](#ref-austin2010)). See
 [`?method_subclass`](https://kosukeimai.github.io/MatchIt/reference/method_subclass.md)
 for the documentation for
 [`matchit()`](https://kosukeimai.github.io/MatchIt/reference/matchit.md)
@@ -508,7 +511,7 @@ subclasses. They can be thought of as a weighting method where the
 weights are restricted to be zero or one. Cardinality matching involves
 finding the largest sample that satisfies user-supplied balance
 constraints and constraints on the ratio of matched treated to matched
-control units ([Zubizarreta, Paredes, and Rosenbaum
+control units ([Zubizarreta et al.
 2014](#ref-zubizarretaMatchingBalancePairing2014)). It does not consider
 a specific estimand and can be a useful alternative to matching with a
 caliper for handling data with little overlap ([Visconti and Zubizarreta
@@ -542,8 +545,8 @@ group, which is left intact. The balance tolerances are controlled by
 the `tols` and `std.tols` arguments. One can also create pairs in the
 matched sample by using the `mahvars` argument, which requests that
 optimal Mahalanobis matching be done after subset selection; doing so
-can add additional precision and robustness ([Zubizarreta, Paredes, and
-Rosenbaum 2014](#ref-zubizarretaMatchingBalancePairing2014)).
+can add additional precision and robustness ([Zubizarreta et al.
+2014](#ref-zubizarretaMatchingBalancePairing2014)).
 
 The optimization problem requires a special solver to solve. Currently,
 the available options in `MatchIt` are the HiGHS solver (through the
@@ -614,20 +617,23 @@ The `distance` argument can also be specified as a method of computing
 pairwise distances from the covariates directly (i.e., without
 estimating propensity scores). The options include `"mahalanobis"`,
 `"robust_mahalanobis"`, `"euclidean"`, and `"scaled_euclidean"`. These
-methods compute a distance metric for a treated unit $i$ and a control
-unit $j$ as
-$$\delta\left( \mathbf{x}_{i},\mathbf{x}_{j} \right) = \sqrt{\left( \mathbf{x}_{i} - \mathbf{x}_{j} \right)\prime S^{- 1}\left( \mathbf{x}_{i} - \mathbf{x}_{j} \right)}$$
+methods compute a distance metric for a treated unit $`i`$ and a control
+unit $`j`$ as
+``` math
+\delta(\mathbf{x}_i,\mathbf{x}_j)=\sqrt{(\mathbf{x}_i - \mathbf{x}_j)'S^{-1}(\mathbf{x}_i - \mathbf{x}_j)}
+```
 
-where $\mathbf{x}$ is a $p \times 1$ vector containing the value of each
-of the $p$ included covariates for that unit, $S$ is a scaling matrix,
-and $S^{- 1}$ is the (generalized) inverse of $S$. For Mahalanobis
-distance matching, $S$ is the pooled covariance matrix of the covariates
-([Rubin 1980](#ref-rubinBiasReductionUsing1980)); for Euclidean distance
-matching, $S$ is the identity matrix (i.e., no scaling); and for scaled
-Euclidean distance matching, $S$ is the diagonal of the pooled
-covariance matrix (containing just the variances). The robust
-Mahalanobis distance is computed not on the covariates directly but
-rather on their ranks and uses a correction for ties (see Rosenbaum
+where $`\mathbf{x}`$ is a $`p \times 1`$ vector containing the value of
+each of the $`p`$ included covariates for that unit, $`S`$ is a scaling
+matrix, and $`S^{-1}`$ is the (generalized) inverse of $`S`$. For
+Mahalanobis distance matching, $`S`$ is the pooled covariance matrix of
+the covariates ([Rubin 1980](#ref-rubinBiasReductionUsing1980)); for
+Euclidean distance matching, $`S`$ is the identity matrix (i.e., no
+scaling); and for scaled Euclidean distance matching, $`S`$ is the
+diagonal of the pooled covariance matrix (containing just the
+variances). The robust Mahalanobis distance is computed not on the
+covariates directly but rather on their ranks and uses a correction for
+ties (see Rosenbaum
 ([2010](#ref-rosenbaumDesignObservationalStudies2010)), ch 8). For
 creating close pairs, matching with these distance measures tends work
 better than propensity score matching because paired units will have
@@ -757,7 +763,7 @@ statistical benefits in that weights for each unit can be omitted or are
 more straightforward to include and dependence between units depends
 only on pair membership. However, it is not asymptotically consistent
 unless the propensity scores for all treated units are below .5 and
-there are many more control units than treated units ([F. Sävje
+there are many more control units than treated units ([Sävje
 2022](#ref-savjeInconsistencyMatchingReplacement2022)). Special standard
 error estimators are sometimes required for estimating effects after
 matching with replacement ([Austin and Cafri 2020](#ref-austin2020a)),
@@ -788,33 +794,33 @@ values allow control units to be matched more than once, though only up
 to the specified number of times. Higher values will tend to improve
 balance at the cost of precision.
 
-### $k$:1 matching (`ratio`)
+### $`k`$:1 matching (`ratio`)
 
 The most common form of matching, 1:1 matching, involves pairing one
-control unit with each treated unit. To perform $k$:1 matching (e.g.,
-2:1 or 3:1), which pairs (up to) $k$ control units with each treated
-unit, the `ratio` argument can be specified. Performing $k$:1 matching
+control unit with each treated unit. To perform $`k`$:1 matching (e.g.,
+2:1 or 3:1), which pairs (up to) $`k`$ control units with each treated
+unit, the `ratio` argument can be specified. Performing $`k`$:1 matching
 can preserve precision by preventing too many control units from being
 unmatched and dropped from the matched sample, though the gain in
-precision by increasing $k$ diminishes rapidly after 4 ([Rosenbaum
-2020](#ref-rosenbaum2020)). Importantly, for $k > 1$, the matches after
+precision by increasing $`k`$ diminishes rapidly after 4 ([Rosenbaum
+2020](#ref-rosenbaum2020)). Importantly, for $`k>1`$, the matches after
 the first match will generally be worse than the first match in terms of
-closeness to the treated unit, so increasing $k$ can also worsen balance
-([Rassen et al. 2012](#ref-rassenOnetomanyPropensityScore2012)). Austin
-([2010b](#ref-austin2010a)) found that 1:1 or 1:2 matching generally
-performed best in terms of mean squared error. In general, it makes
-sense to use higher values of $k$ while ensuring that balance is
+closeness to the treated unit, so increasing $`k`$ can also worsen
+balance ([Rassen et al. 2012](#ref-rassenOnetomanyPropensityScore2012)).
+Austin ([2010a](#ref-austin2010a)) found that 1:1 or 1:2 matching
+generally performed best in terms of mean squared error. In general, it
+makes sense to use higher values of $`k`$ while ensuring that balance is
 satisfactory.
 
-With nearest neighbor and optimal pair matching, variable $k$:1
+With nearest neighbor and optimal pair matching, variable $`k`$:1
 matching, in which the number of controls matched to each treated unit
 varies, can also be used; this can have improved performance over
-“fixed” $k$:1 matching ([Ming and Rosenbaum 2000](#ref-ming2000);
+“fixed” $`k`$:1 matching ([Ming and Rosenbaum 2000](#ref-ming2000);
 [Rassen et al. 2012](#ref-rassenOnetomanyPropensityScore2012)). See
 [`?method_nearest`](https://kosukeimai.github.io/MatchIt/reference/method_nearest.md)
 and
 [`?method_optimal`](https://kosukeimai.github.io/MatchIt/reference/method_optimal.md)
-for information on implementing variable $k$:1 matching.
+for information on implementing variable $`k`$:1 matching.
 
 ### Matching order (`m.order`)
 
@@ -933,7 +939,7 @@ preferable for large datasets that cannot be handled by optimal
 matching. Nearest neighbor, optimal, and genetic matching allow some
 customizations like including covariates on which to exactly match,
 using the Mahalanobis distance instead of a propensity score difference,
-and performing $k$:1 matching with $k > 1$. Nearest neighbor matching
+and performing $`k`$:1 matching with $`k>1`$. Nearest neighbor matching
 with replacement, full matching, and subclassification all involve
 weighting the control units with nonuniform weights, which often allows
 for improved balancing capabilities but can be accompanied by a loss in
@@ -947,26 +953,25 @@ of each dataset.
 When the target population is less important, for example, when engaging
 in treatment effect discovery or when the sampled population is not of
 particular interest (e.g., it corresponds to an arbitrarily chosen
-hospital or school; see Mao, Li, and Greene ([2018](#ref-mao2018)) for
-these and other reasons why retaining the target population may not be
-important), other methods that do not retain the characteristics of the
-original sample become available. These include matching with a caliper
-(on the propensity score or on the covariates themselves), cardinality
-matching, and more restrictive forms of matching like exact and
-coarsened exact matching, either on all covariates or just a subset,
-that are prone to discard units from the sample in such a way that the
-target population is changed. Austin ([2013](#ref-austin2013b)) and
-Austin and Stuart ([2015b](#ref-austin2015c), [2015a](#ref-austin2015a))
-have found that caliper matching can be a particularly effective
-modification to nearest neighbor matching for eliminating imbalance and
-reducing bias when the target population is less relevant, but when
-inference to a specific target population is desired, using calipers can
-induce bias due to incomplete matching ([Rosenbaum and Rubin
-1985a](#ref-rosenbaum1985); [Wang 2020](#ref-wang2020)). Cardinality
-matching can be particularly effective in data with little overlap
-between the treatment groups ([Visconti and Zubizarreta
-2018](#ref-visconti2018)) and can perform better than caliper matching
-([de los Angeles Resa and Zubizarreta
+hospital or school; see Mao et al. ([2018](#ref-mao2018)) for these and
+other reasons why retaining the target population may not be important),
+other methods that do not retain the characteristics of the original
+sample become available. These include matching with a caliper (on the
+propensity score or on the covariates themselves), cardinality matching,
+and more restrictive forms of matching like exact and coarsened exact
+matching, either on all covariates or just a subset, that are prone to
+discard units from the sample in such a way that the target population
+is changed. Austin ([2013](#ref-austin2013b)) and Austin and Stuart
+([2015a](#ref-austin2015c), [2015b](#ref-austin2015a)) have found that
+caliper matching can be a particularly effective modification to nearest
+neighbor matching for eliminating imbalance and reducing bias when the
+target population is less relevant, but when inference to a specific
+target population is desired, using calipers can induce bias due to
+incomplete matching ([Rosenbaum and Rubin 1985b](#ref-rosenbaum1985);
+[Wang 2020](#ref-wang2020)). Cardinality matching can be particularly
+effective in data with little overlap between the treatment groups
+([Visconti and Zubizarreta 2018](#ref-visconti2018)) and can perform
+better than caliper matching ([de los Angeles Resa and Zubizarreta
 2020](#ref-delosangelesresaDirectStableWeight2020)).
 
 It is important not to rely excessively on theoretical or
@@ -976,7 +981,7 @@ nearest neighbor matching without replacement balance covariates better
 than did subclassification with five or ten subclasses in Austin’s
 ([2009](#ref-austin2009c)) simulation, this does not imply it will be
 superior in all datasets. Likewise, though Rosenbaum and Rubin
-([1985b](#ref-rosenbaum1985a)) and Austin ([2011](#ref-austin2011a))
+([1985a](#ref-rosenbaum1985a)) and Austin ([2011](#ref-austin2011a))
 both recommend using a caliper of .2 standard deviations of the logit of
 the propensity score, this does not imply that caliper will be optimal
 in all scenarios, and other widths should be tried, though it should be
@@ -1017,31 +1022,32 @@ Abadie, Alberto, and Guido W. Imbens. 2006. “Large Sample Properties of
 Matching Estimators for Average Treatment Effects.” *Econometrica* 74
 (1): 235–67. <https://doi.org/10.1111/j.1468-0262.2006.00655.x>.
 
-———. 2016. “Matching on the Estimated Propensity Score.” *Econometrica*
-84 (2): 781–807. <https://doi.org/10.3982/ECTA11293>.
+Abadie, Alberto, and Guido W. Imbens. 2016. “Matching on the Estimated
+Propensity Score.” *Econometrica* 84 (2): 781–807.
+<https://doi.org/10.3982/ECTA11293>.
 
 Austin, Peter C. 2009. “The Relative Ability of Different Propensity
 Score Methods to Balance Measured Covariates Between Treated and
 Untreated Subjects in Observational Studies.” *Medical Decision Making*
 29 (6): 661–77. <https://doi.org/10.1177/0272989x09341755>.
 
-———. 2010a. “The Performance of Different Propensity-Score Methods for
-Estimating Differences in Proportions (Risk Differences or Absolute Risk
-Reductions) in Observational Studies.” *Statistics in Medicine* 29 (20):
-2137–48. <https://doi.org/10.1002/sim.3854>.
-
-———. 2010b. “Statistical Criteria for Selecting the Optimal Number of
-Untreated Subjects Matched to Each Treated Subject When Using
+Austin, Peter C. 2010a. “Statistical Criteria for Selecting the Optimal
+Number of Untreated Subjects Matched to Each Treated Subject When Using
 Many-to-One Matching on the Propensity Score.” *American Journal of
 Epidemiology* 172 (9): 1092–97. <https://doi.org/10.1093/aje/kwq224>.
 
-———. 2011. “Optimal Caliper Widths for Propensity-Score Matching When
-Estimating Differences in Means and Differences in Proportions in
-Observational Studies.” *Pharmaceutical Statistics* 10 (2): 150–61.
-<https://doi.org/10.1002/pst.433>.
+Austin, Peter C. 2010b. “The Performance of Different Propensity-Score
+Methods for Estimating Differences in Proportions (Risk Differences or
+Absolute Risk Reductions) in Observational Studies.” *Statistics in
+Medicine* 29 (20): 2137–48. <https://doi.org/10.1002/sim.3854>.
 
-———. 2013. “A Comparison of 12 Algorithms for Matching on the Propensity
-Score.” *Statistics in Medicine* 33 (6): 1057–69.
+Austin, Peter C. 2011. “Optimal Caliper Widths for Propensity-Score
+Matching When Estimating Differences in Means and Differences in
+Proportions in Observational Studies.” *Pharmaceutical Statistics* 10
+(2): 150–61. <https://doi.org/10.1002/pst.433>.
+
+Austin, Peter C. 2013. “A Comparison of 12 Algorithms for Matching on
+the Propensity Score.” *Statistics in Medicine* 33 (6): 1057–69.
 <https://doi.org/10.1002/sim.6004>.
 
 Austin, Peter C., and Guy Cafri. 2020. “Variance Estimation When Using
@@ -1054,16 +1060,17 @@ When Using Propensity-Score Matching Without Replacement: A Simulation
 Study.” *Statistics in Medicine* 33 (24): 4306–19.
 <https://doi.org/10.1002/sim.6276>.
 
-Austin, Peter C., and Elizabeth A. Stuart. 2015a. “The Performance of
+Austin, Peter C., and Elizabeth A. Stuart. 2015a. “Estimating the Effect
+of Treatment on Binary Outcomes Using Full Matching on the Propensity
+Score.” *Statistical Methods in Medical Research* 26 (6): 2505–25.
+<https://doi.org/10.1177/0962280215601134>.
+
+Austin, Peter C., and Elizabeth A. Stuart. 2015b. “The Performance of
 Inverse Probability of Treatment Weighting and Full Matching on the
 Propensity Score in the Presence of Model Misspecification When
 Estimating the Effect of Treatment on Survival Outcomes.” *Statistical
 Methods in Medical Research* 26 (4): 1654–70.
 <https://doi.org/10.1177/0962280215584401>.
-
-———. 2015b. “Estimating the Effect of Treatment on Binary Outcomes Using
-Full Matching on the Propensity Score.” *Statistical Methods in Medical
-Research* 26 (6): 2505–25. <https://doi.org/10.1177/0962280215601134>.
 
 Cohn, Eric R., and José R. Zubizarreta. 2022. “Profile Matching for the
 Generalization and Personalization of Causal Inferences.” *Epidemiology*
@@ -1095,7 +1102,7 @@ Hansen, Ben B. 2004. “Full Matching in an Observational Study of
 Coaching for the SAT.” *Journal of the American Statistical Association*
 99 (467): 609–18. <https://doi.org/10.1198/016214504000000647>.
 
-———. 2008. “The Prognostic Analogue of the Propensity Score.”
+Hansen, Ben B. 2008. “The Prognostic Analogue of the Propensity Score.”
 *Biometrika* 95 (2): 481–88. <https://doi.org/10.1093/biomet/asn004>.
 
 Hansen, Ben B., and Stephanie O. Klopfer. 2006. “Optimal Full Matching
@@ -1118,12 +1125,12 @@ Inference Without Balance Checking: Coarsened Exact Matching.”
 *Political Analysis* 20 (1): 1–24. <https://doi.org/10.1093/pan/mpr013>.
 
 King, Gary, and Richard Nielsen. 2019. “Why Propensity Scores Should Not
-Be Used for Matching.” *Political Analysis*, May, 1–20.
+Be Used for Matching.” *Political Analysis*, May 7, 1–20.
 <https://doi.org/10.1017/pan.2019.11>.
 
 Mao, Huzhang, Liang Li, and Tom Greene. 2018. “Propensity Score
 Weighting Analysis and Treatment Effect Discovery.” *Statistical Methods
-in Medical Research*, June, 096228021878117.
+in Medical Research*, June 19, 096228021878117.
 <https://doi.org/10.1177/0962280218781171>.
 
 Ming, Kewei, and Paul R. Rosenbaum. 2000. “Substantial Gains in Bias
@@ -1147,25 +1154,28 @@ Score Matching Paradox in Pharmacoepidemiology.” *American Journal of
 Epidemiology* 187 (9): 1951–61. <https://doi.org/10.1093/aje/kwy078>.
 
 Rosenbaum, Paul R. 2010. *Design of Observational Studies*. Springer
-Series in Statistics. New York: Springer.
+Series in Statistics. Springer.
 
-———. 2020. “Modern Algorithms for Matching in Observational Studies.”
-*Annual Review of Statistics and Its Application* 7 (1): 143–76.
+Rosenbaum, Paul R. 2020. “Modern Algorithms for Matching in
+Observational Studies.” *Annual Review of Statistics and Its
+Application* 7 (1): 143–76.
 <https://doi.org/10.1146/annurev-statistics-031219-041058>.
 
-Rosenbaum, Paul R., and Donald B. Rubin. 1985a. “The Bias Due to
+Rosenbaum, Paul R., and Donald B. Rubin. 1985a. “Constructing a Control
+Group Using Multivariate Matched Sampling Methods That Incorporate the
+Propensity Score.” *The American Statistician* 39 (1): 33.
+<https://doi.org/10.2307/2683903>.
+
+Rosenbaum, Paul R., and Donald B. Rubin. 1985b. “The Bias Due to
 Incomplete Matching.” *Biometrics* 41 (1): 103–16.
 <https://doi.org/10.2307/2530647>.
-
-———. 1985b. “Constructing a Control Group Using Multivariate Matched
-Sampling Methods That Incorporate the Propensity Score.” *The American
-Statistician* 39 (1): 33. <https://doi.org/10.2307/2683903>.
 
 Rubin, Donald B. 1973. “Matching to Remove Bias in Observational
 Studies.” *Biometrics* 29 (1): 159. <https://doi.org/10.2307/2529684>.
 
-———. 1980. “Bias Reduction Using Mahalanobis-Metric Matching.”
-*Biometrics* 36 (2): 293–98. <https://doi.org/10.2307/2529981>.
+Rubin, Donald B. 1980. “Bias Reduction Using Mahalanobis-Metric
+Matching.” *Biometrics* 36 (2): 293–98.
+<https://doi.org/10.2307/2529981>.
 
 Sävje, F. 2022. “On the Inconsistency of Matching Without Replacement.”
 *Biometrika* 109 (2): 551–58. <https://doi.org/10.1093/biomet/asab035>.
@@ -1185,17 +1195,17 @@ Nonrandomized Studies: A Practical Guide and Simulated Example.”
 
 Sekhon, Jasjeet S. 2011. “Multivariate and Propensity Score Matching
 Software with Automated Balance Optimization: The Matching Package for
-R.” *Journal of Statistical Software* 42 (1): 1–52.
+r.” *Journal of Statistical Software* 42 (1): 1–52.
 <https://doi.org/10.18637/jss.v042.i07>.
 
 Stuart, Elizabeth A. 2008. “Developing Practical Recommendations for the
-Use of Propensity Scores: Discussion of ‘A Critical Appraisal of
+Use of Propensity Scores: Discussion of ‘a Critical Appraisal of
 Propensity Score Matching in the Medical Literature Between 1996 and
-2003’ by Peter Austin,Statistics in Medicine.” *Statistics in Medicine*
+2003’ by Peter Austin,statistics in Medicine.” *Statistics in Medicine*
 27 (12): 2062–65. <https://doi.org/10.1002/sim.3207>.
 
-———. 2010. “Matching Methods for Causal Inference: A Review and a Look
-Forward.” *Statistical Science* 25 (1): 1–21.
+Stuart, Elizabeth A. 2010. “Matching Methods for Causal Inference: A
+Review and a Look Forward.” *Statistical Science* 25 (1): 1–21.
 <https://doi.org/10.1214/09-STS313>.
 
 Stuart, Elizabeth A., and Kerry M. Green. 2008. “Using Full Matching to
@@ -1219,7 +1229,8 @@ Propensity-Scorematched Data?” *Statistics in Medicine* 38 (2): 289–300.
 <https://doi.org/10.1002/sim.7976>.
 
 Wang, Jixian. 2020. “To Use or Not to Use Propensity Score Matching?”
-*Pharmaceutical Statistics*, August. <https://doi.org/10.1002/pst.2051>.
+*Pharmaceutical Statistics*, ahead of print, August 10.
+<https://doi.org/10.1002/pst.2051>.
 
 Zakrison, T. L., Peter C. Austin, and V. A. McCredie. 2018. “A
 Systematic Review of Propensity Score Methods in the Acute Care Surgery

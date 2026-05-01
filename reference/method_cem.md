@@ -24,6 +24,7 @@ Below is how
 [`matchit()`](https://kosukeimai.github.io/MatchIt/reference/matchit.md)
 is used for coarsened exact matching:
 
+
     matchit(formula,
             data = NULL,
             method = "cem",
@@ -228,6 +229,7 @@ splits the variable into `#` equally-sized bins (i.e., quantiles).
 
 An example of a way to supply an argument to `cutpoints` would be the
 following:
+
 
     cutpoints = list(X1 = 4,
                      X2 = c(1.7, 5.5, 10.2),

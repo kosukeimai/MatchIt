@@ -77,9 +77,9 @@ Common recommendations for assessing balance include the following:
   empirical studies have examined the appropriateness for using SMDs in
   balance assessment, including Belitser et al.
   ([2011](#ref-belitser2011)), Ali et al. ([2014](#ref-ali2014)), and
-  Stuart, Lee, and Leacy ([2013](#ref-stuart2013)); in general, there is
-  often a high correlation between the mean or maximum absolute SMD and
-  the degree of bias in the treatment effect.
+  Stuart et al. ([2013](#ref-stuart2013)); in general, there is often a
+  high correlation between the mean or maximum absolute SMD and the
+  degree of bias in the treatment effect.
 
 - **Variance Ratios**. The variance ratio is the ratio of the variance
   of a covariate in one group to that in the other. Variance ratios
@@ -95,10 +95,10 @@ Common recommendations for assessing balance include the following:
   supplement to SMDs for assessing balance ([Austin and Stuart
   2015](#ref-austin2015)) and is often used as a criterion to use in
   propensity score methods that attempt to optimize balance (e.g.,
-  [McCaffrey, Ridgeway, and Morral 2004](#ref-mccaffrey2004); [Diamond
-  and Sekhon 2013](#ref-diamond2013)). Although the mean eCDF difference
-  has not been as well studied, it provides a summary of imbalance that
-  may be missed by relying solely on the maximum difference.
+  [McCaffrey et al. 2004](#ref-mccaffrey2004); [Diamond and Sekhon
+  2013](#ref-diamond2013)). Although the mean eCDF difference has not
+  been as well studied, it provides a summary of imbalance that may be
+  missed by relying solely on the maximum difference.
 
 - **Visual Diagnostics**. Visual diagnostics such as eCDF plots,
   empirical quantile-quantile (eQQ) plots, and kernel density plots can
@@ -112,7 +112,7 @@ Common recommendations for assessing balance include the following:
   potential outcome under control for each unit ([Hansen
   2008](#ref-hansen2008)). Balance on the prognostic score has been
   shown to be highly correlated with bias in the effect estimate, making
-  it a useful tool in balance assessment ([Stuart, Lee, and Leacy
+  it a useful tool in balance assessment ([Stuart et al.
   2013](#ref-stuart2013)). Estimating the prognostic score requires
   having access to the outcome data, and using it may be seen as
   violating the principle of separating the design and analysis stages
@@ -127,9 +127,9 @@ weighted distance \[GWD; Franklin et al. ([2014](#ref-franklin2014))\],
 which is the sum of SMDs for the covariates and their squares and
 interactions, or separate statistics that measure quantities that
 abstract away from the distribution of individual covariates, like the
-L1 distance ([Iacus, King, and Porro 2011](#ref-iacus2011)), cross-match
-test ([Heller, Rosenbaum, and Small 2010](#ref-heller2010)), or energy
-distance ([Huling and Mak 2020](#ref-huling2020)).
+L1 distance ([Iacus et al. 2011](#ref-iacus2011)), cross-match test
+([Heller et al. 2010](#ref-heller2010)), or energy distance ([Huling and
+Mak 2020](#ref-huling2020)).
 
 Balance on the propensity score has often been considered a useful
 measure of balance, but we do not necessarily recommend it except as a
@@ -142,25 +142,25 @@ well balanced even if the propensity score is not balanced, such as when
 covariates are prioritized above the propensity score in the matching
 specification (e.g., with genetic matching). Given these observations,
 the propensity score should not be relied upon for assessing covariate
-balance. Simulation studies by Stuart, Lee, and Leacy
-([2013](#ref-stuart2013)) provide evidence for this recommendation
-against relying on propensity score balance.
+balance. Simulation studies by Stuart et al. ([2013](#ref-stuart2013))
+provide evidence for this recommendation against relying on propensity
+score balance.
 
 There has been some debate about the use of hypothesis tests, such as
 t-tests or Kolmogorov-Smirnov tests, for assessing covariate balance.
 The idea is that balance tests test the null hypothesis that the matched
 sample has equivalent balance to a randomized experiment. There are
 several problems with balance tests, described by Ho et al.
-([2007](#ref-ho2007)) and Imai, King, and Stuart
-([2008](#ref-imai2008)): 1) balance is a property of the sample, not a
-of a population from which the sample was drawn; 2) the power of balance
-tests depends on the sample size, which changes during matching even if
-balance does not change; and 3) the use of hypothesis tests implies a
-uniform decision criterion for rejecting the null hypothesis (e.g.,
-p-value less than .05, potentially with corrections for multiple
-comparisons), when balance should be improved without limit. `MatchIt`
-does not report any balance tests or p-values, instead relying on the
-descriptive statistics described above.
+([2007](#ref-ho2007)) and Imai et al. ([2008](#ref-imai2008)): 1)
+balance is a property of the sample, not a of a population from which
+the sample was drawn; 2) the power of balance tests depends on the
+sample size, which changes during matching even if balance does not
+change; and 3) the use of hypothesis tests implies a uniform decision
+criterion for rejecting the null hypothesis (e.g., p-value less than
+.05, potentially with corrections for multiple comparisons), when
+balance should be improved without limit. `MatchIt` does not report any
+balance tests or p-values, instead relying on the descriptive statistics
+described above.
 
 ## Recommendations for Balance Reporting
 
@@ -214,6 +214,7 @@ matching methods except propensity score subclassification, which we
 illustrate at the end.
 
 ``` r
+
 library("MatchIt")
 data("lalonde", package = "MatchIt")
 
@@ -269,7 +270,7 @@ has four additional arguments that control how balance is computed:
   statistics. (Regardless, the variance ratio will always be
   displayed.). The default is `TRUE` for standardized statistics, which
   are more common to report because they are all on the same scale
-  regardless of the scale of the covariates[¹](#fn1).
+  regardless of the scale of the covariates[^1].
 - `pair.dist` controls whether within-pair distances should be computed
   and displayed. These reflect the average distance between units within
   the same pair, standardized or unstandardized according to the
@@ -292,6 +293,7 @@ balance on the square of `age`, the variables representing whether
 and `race`.
 
 ``` r
+
 summary(m.out, addlvariables = ~ I(age^2) + I(re74==0) + 
           I(re75==0) + educ:race)
 ```
@@ -429,6 +431,7 @@ has several additional arguments that can be used to customize the plot.
 Below we create a Love plot of the covariates.
 
 ``` r
+
 m.sum <- summary(m.out, addlvariables = ~ I(age^2) + I(re74==0) + 
                    I(re75==0) + educ:race)
 plot(m.sum, var.order = "unmatched")
@@ -487,6 +490,7 @@ has a few arguments to customize the output:
 Below, we demonstrate the eQQ plot:
 
 ``` r
+
 #eQQ plot
 plot(m.out, type = "qq", which.xs = ~age + nodegree + re74)
 ```
@@ -508,6 +512,7 @@ with `standardize = FALSE`.
 Below, we demonstrate the eCDF plot:
 
 ``` r
+
 #eCDF plot
 plot(m.out, type = "ecdf", which.xs = ~educ + married + re75)
 ```
@@ -530,6 +535,7 @@ with `standardize = TRUE`.
 Below, we demonstrate the density plot:
 
 ``` r
+
 #density plot
 plot(m.out, type = "density", which.xs = ~age + educ + race)
 ```
@@ -562,6 +568,7 @@ demonstrate this below. First we will perform propensity score
 subclassification using 4 subclasses (typically more is beneficial).
 
 ``` r
+
 #Subclassification on a logistic regression PS
 s.out <- matchit(treat ~ age + educ + race + married + 
                    nodegree + re74 + re75, data = lalonde,
@@ -583,6 +590,7 @@ subclassification weights. This balance output looks similar to that for
 other matching methods.
 
 ``` r
+
 summary(s.out)
 ```
 
@@ -635,6 +643,7 @@ balance to be displayed on all subclasses (setting `un = FALSE` to
 suppress balance in the original sample):
 
 ``` r
+
 summary(s.out, subclass = TRUE, un = FALSE)
 ```
 
@@ -711,6 +720,7 @@ on a
 object with `subclass = TRUE`.
 
 ``` r
+
 s <- summary(s.out, subclass = TRUE)
 plot(s, var.order = "unmatched", abs = FALSE)
 ```
@@ -734,6 +744,7 @@ same as it does with
 Below we demonstrate checking balance within a subclass.
 
 ``` r
+
 plot(s.out, type = "density", which.xs = ~educ + married + re75,
      subclass = 1)
 ```
@@ -774,6 +785,7 @@ contains many examples of its use with `MatchIt` objects, so we only
 provide a short demonstration of its capabilities here.
 
 ``` r
+
 library("cobalt")
 ```
 
@@ -788,6 +800,7 @@ displayed and isolate desired information. We call
 with a few of its options specified below:
 
 ``` r
+
 bal.tab(m.out, un = TRUE, stats = c("m", "v", "ks"))
 ```
 
@@ -844,6 +857,7 @@ nearest neighbor matching without replacement, we could supply both to
 which we demonstrate below:
 
 ``` r
+
 #Nearest neighbor (NN) matching on the PS
 m.out2 <- matchit(treat ~ age + educ + race + married + 
                    nodegree + re74 + re75, data = lalonde)
@@ -890,6 +904,7 @@ variable names are displayed, and for which statistics balance is to be
 displayed. Below is an example of its basic use:
 
 ``` r
+
 love.plot(m.out, binary = "std")
 ```
 
@@ -904,6 +919,7 @@ on Kolmogorov-Smirnov statistics and for both full matching and nearest
 neighbor matching simultaneously.
 
 ``` r
+
 love.plot(m.out, stats = c("m", "ks"), poly = 2, abs = TRUE,
           weights = list(nn = m.out2),
           drop.distance = TRUE, thresholds = c(m = .1),
@@ -936,6 +952,7 @@ and bar graphs for categorical variables. It can also display eCDF plots
 and histograms. Below we demonstrate some of its uses:
 
 ``` r
+
 #Density plot for continuous variables
 bal.plot(m.out, var.name = "educ", which = "both")
 ```
@@ -944,6 +961,7 @@ bal.plot(m.out, var.name = "educ", which = "both")
 matching.](assessing-balance_files/figure-html/unnamed-chunk-18-1.png)
 
 ``` r
+
 #Bar graph for categorical variables
 bal.plot(m.out, var.name = "race", which = "both")
 ```
@@ -952,6 +970,7 @@ bal.plot(m.out, var.name = "race", which = "both")
 matching.](assessing-balance_files/figure-html/unnamed-chunk-18-2.png)
 
 ``` r
+
 #Mirrored histogram
 bal.plot(m.out, var.name = "distance", which = "both",
          type = "histogram", mirror = TRUE)
@@ -979,16 +998,15 @@ implement best practices in balance assessment and reporting.
 
 ## References
 
-Ali, M. Sanni, Rolf H. H. Groenwold, Wiebe R. Pestman, Svetlana V.
-Belitser, Kit C. B. Roes, Arno W. Hoes, Anthonius de Boer, and Olaf H.
-Klungel. 2014. “Propensity Score Balance Measures in
-Pharmacoepidemiology: A Simulation Study.” *Pharmacoepidemiology and
-Drug Safety* 23 (8): 802–11. <https://doi.org/10.1002/pds.3574>.
+Ali, M. Sanni, Rolf H. H. Groenwold, Wiebe R. Pestman, et al. 2014.
+“Propensity Score Balance Measures in Pharmacoepidemiology: A Simulation
+Study.” *Pharmacoepidemiology and Drug Safety* 23 (8): 802–11.
+<https://doi.org/10.1002/pds.3574>.
 
 Austin, Peter C. 2009. “Balance Diagnostics for Comparing the
 Distribution of Baseline Covariates Between Treatment Groups in
 Propensity-Score Matched Samples.” *Statistics in Medicine* 28 (25):
-3083–3107. <https://doi.org/10.1002/sim.3697>.
+3083–107. <https://doi.org/10.1002/sim.3697>.
 
 Austin, Peter C., and Elizabeth A. Stuart. 2015. “Moving Towards Best
 Practice When Using Inverse Probability of Treatment Weighting (IPTW)
@@ -1026,7 +1044,7 @@ in Parametric Causal Inference.” *Political Analysis* 15 (3): 199–236.
 <https://doi.org/10.1093/pan/mpl013>.
 
 Huling, Jared D., and Simon Mak. 2020. “Energy Balancing of Covariate
-Distributions.” *arXiv:2004.13962 \[Stat\]*, April.
+Distributions.” *arXiv:2004.13962 \[Stat\]*, April 29.
 <https://arxiv.org/abs/2004.13962>.
 
 Iacus, Stefano M., Gary King, and Giuseppe Porro. 2011. “Multivariate
@@ -1041,7 +1059,7 @@ Causal Inference.” *Journal of the Royal Statistical Society. Series A
 <https://doi.org/10.1111/j.1467-985X.2007.00527.x>.
 
 McCaffrey, Daniel F., Greg Ridgeway, and Andrew R. Morral. 2004.
-“Propensity Score Estimation With Boosted Regression for Evaluating
+“Propensity Score Estimation with Boosted Regression for Evaluating
 Causal Effects in Observational Studies.” *Psychological Methods* 9 (4):
 403–25. <https://doi.org/10.1037/1082-989X.9.4.403>.
 
@@ -1056,7 +1074,5 @@ Propensity Score Methods in Comparative Effectiveness Research.”
 *Journal of Clinical Epidemiology* 66 (8): S84.
 <https://doi.org/10.1016/j.jclinepi.2013.01.013>.
 
-------------------------------------------------------------------------
-
-1.  Note that versions of `MatchIt` before 4.0.0 had `standardize` set
+[^1]: Note that versions of `MatchIt` before 4.0.0 had `standardize` set
     to `FALSE` by default.

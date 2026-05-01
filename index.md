@@ -17,6 +17,7 @@ included. Below is an example of the use of `MatchIt` to perform
 Mahalanobis distance matching with replacement and assess balance:
 
 ``` r
+
 library("MatchIt")
 data("lalonde", package = "MatchIt")
 
@@ -32,6 +33,7 @@ Printing the `MatchIt` object provides details of the kind of matching
 performed.
 
 ``` r
+
 m.out
 ```
 
@@ -47,6 +49,7 @@ We can check covariate balance for the original and matched samples
 using [`summary()`](https://rdrr.io/r/base/summary.html):
 
 ``` r
+
 #Checking balance before and after matching:
 summary(m.out)
 ```
@@ -98,6 +101,7 @@ mean differences in a Love plot for a clean, visual display of balance
 across the sample:
 
 ``` r
+
 #Plot balance
 plot(summary(m.out))
 ```
@@ -107,7 +111,7 @@ matching.](reference/figures/README-unnamed-chunk-5-1.png)
 
 Although much has been written about matching theory, most of the theory
 relied upon in `MatchIt` is described well in [Ho, Imai, King, and
-Stuart (2007)](https//:doi.org/10.1093/pan/mpl013), [Stuart
+Stuart (2007)](https://doi.org/10.1093/pan/mpl013), [Stuart
 (2010)](https://doi.org/10.1214/09-STS313), and [Greifer and Stuart
 (2021)](https://doi.org/10.1093/epirev/mxab003). The *Journal of
 Statistical Software* article for `MatchIt` can be accessed
@@ -140,6 +144,7 @@ To download and install the latest stable version of `MatchIt` from
 CRAN, run the following:
 
 ``` r
+
 install.packages("MatchIt")
 ```
 
@@ -147,6 +152,7 @@ To install a development version, which may have a bug fixed or a new
 feature, run the following:
 
 ``` r
+
 install.packages("pak") #If not yet installed
 
 pak::pkg_install("ngreifer/MatchIt")

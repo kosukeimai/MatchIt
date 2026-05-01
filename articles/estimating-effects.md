@@ -91,7 +91,7 @@ should not be used when marginal effects are desired.
 ### G-computation
 
 To estimate marginal effects, we use a method known as g-computation
-([Snowden, Rose, and Mortimer
+([Snowden et al.
 2011](#ref-snowdenImplementationGComputationSimulated2011)) or
 regression estimation ([Schafer and Kang
 2008](#ref-schaferAverageCausalEffects2008)). This involves first
@@ -235,7 +235,7 @@ cluster-robust SEs after matching (e.g., [Austin
 2014](#ref-austin2014); [Gayat et al. 2012](#ref-gayat2012); [Wan
 2019](#ref-wan2019)). Given this evidence favoring the use of
 cluster-robust SEs, we recommend them in most cases and use them
-judiciously in this guide[¹](#fn1).
+judiciously in this guide[^1].
 
 #### Bootstrapping
 
@@ -289,8 +289,7 @@ bootstrap confidence interval often performs best ([Austin and Small
 2000](#ref-carpenter2000)) and is easy to implement, simply by setting
 `type = "bca"` in the call to
 [`boot::boot.ci()`](https://rdrr.io/pkg/boot/man/boot.ci.html) after
-running
-[`boot::boot()`](https://rdrr.io/pkg/boot/man/boot.html)[²](#fn2).
+running [`boot::boot()`](https://rdrr.io/pkg/boot/man/boot.html)[^2].
 
 Most of this guide will consider analytic (i.e., non-bootstrapping)
 approaches to estimating uncertainty; the section “Using Bootstrapping
@@ -308,6 +307,7 @@ the correct propensity score model is used. Below we display the first
 six rows of `d`:
 
 ``` r
+
 head(d)
 ```
 
@@ -339,6 +339,7 @@ We will need to the following packages to perform the desired analyses:
 Of course, we also need `MatchIt` to perform the matching.
 
 ``` r
+
 library("MatchIt")
 ## library("marginaleffects")
 ```
@@ -365,11 +366,11 @@ Cox-proportional hazards models.
 ### The Standard Case
 
 For almost all matching methods, whether a caliper, common support
-restriction, exact matching specification, or $k$:1 matching
+restriction, exact matching specification, or $`k`$:1 matching
 specification is used, estimating the effect in the matched dataset is
 straightforward and involves fitting a model for the outcome that
-incorporates the matching weights[³](#fn3), then estimating the
-treatment effect using g-computation (i.e., using
+incorporates the matching weights[^3], then estimating the treatment
+effect using g-computation (i.e., using
 [`marginaleffects::avg_comparisons()`](https://rdrr.io/pkg/marginaleffects/man/comparisons.html))
 with a cluster-robust SE to account for pair membership. This procedure
 is the same for continuous and binary outcomes with and without
@@ -395,6 +396,7 @@ methods use this exact procedure or a slight variation, so this section
 is critical even if you are using a different matching method.
 
 ``` r
+
 #Variable-ratio NN matching on the PS for the ATT
 mV <- matchit(A ~ X1 + X2 + X3 + X4 + X5 + 
                 X6 + X7 + X8 + X9,
@@ -413,6 +415,7 @@ mV
     ##  - covariates: X1, X2, X3, X4, X5, X6, X7, X8, X9
 
 ``` r
+
 #Extract matched data
 md <- match_data(mV)
 
@@ -453,6 +456,7 @@ output), which can add some robustness, especially when modeled flexibly
 [here](https://stats.stackexchange.com/a/580174/116195) for an example.
 
 ``` r
+
 #Linear model with covariates
 fit1 <- lm(Y_C ~ A * (X1 + X2 + X3 + X4 + X5 + 
                         X6 + X7 + X8 + X9),
@@ -465,6 +469,7 @@ Next, we use
 to estimate the ATT.
 
 ``` r
+
 avg_comparisons(fit1,
                 variables = "A",
                 vcov = ~subclass,
@@ -489,6 +494,7 @@ covariates present in the outcome model (if any) are interacted with the
 treatment.
 
 ``` r
+
 avg_predictions(fit1,
                 variables = "A",
                 vcov = ~subclass,
@@ -496,7 +502,7 @@ avg_predictions(fit1,
 ```
 
 We can see that the difference in potential outcome means is equal to
-the average treatment effect computed previously[⁴](#fn4). All of the
+the average treatment effect computed previously[^4]. All of the
 arguments to `avg_predictions()` are the same as those to
 `avg_comparisons()`.
 
@@ -571,7 +577,7 @@ effects and pool them using an average marginal effects procedure, and
 the second is to use the stratum weights to estimate a single average
 marginal effect. This latter approach is also known as marginal mean
 weighting through stratification (MMWS), and is described in detail by
-Hong ([2010](#ref-hong2010))[⁵](#fn5). When done properly, both methods
+Hong ([2010](#ref-hong2010))[^5]. When done properly, both methods
 should yield similar or identical estimates of the treatment effect.
 
 All of the methods described above for the Standard Case also work with
@@ -594,6 +600,7 @@ argument should be omitted. As with MMWS, one should change
 and `avg_predictions()`. See an example below:
 
 ``` r
+
 #Subclassification on the PS for the ATT
 mS <- matchit(A ~ X1 + X2 + X3 + X4 + X5 + 
                 X6 + X7 + X8 + X9,
@@ -635,9 +642,9 @@ because we can compute any of the above effect measures using
 To fit a logistic regression model, change
 [`lm()`](https://rdrr.io/r/stats/lm.html) to
 [`glm()`](https://rdrr.io/r/stats/glm.html) and set
-`family = quasibinomial()`[⁶](#fn6). To compute the marginal RD, we can
-use exactly the same syntax as in the Standard Case; nothing needs to
-change[⁷](#fn7).
+`family = quasibinomial()`[^6]. To compute the marginal RD, we can use
+exactly the same syntax as in the Standard Case; nothing needs to
+change[^7].
 
 To compute the marginal RR, we need to add `comparison = "lnratioavg"`
 to `avg_comparisons()`; this computes the marginal log RR. To get the
@@ -646,6 +653,7 @@ which exponentiates the marginal log RR and its confidence interval. The
 code below computes the effects and displays the statistics of interest:
 
 ``` r
+
 #Logistic regression model with covariates
 fit2 <- glm(Y_B ~ A * (X1 + X2 + X3 + X4 + X5 + 
                          X6 + X7 + X8 + X9),
@@ -686,9 +694,9 @@ be treated just like continuous and binary outcomes as previously
 described.
 
 For the HR, we cannot compute average marginal effects and must use the
-coefficient on treatment in a Cox model fit without covariates[⁸](#fn8).
-This means that we cannot use the procedures from the Standard Case.
-Here we describe estimating the marginal HR using
+coefficient on treatment in a Cox model fit without covariates[^8]. This
+means that we cannot use the procedures from the Standard Case. Here we
+describe estimating the marginal HR using
 [`coxph()`](https://rdrr.io/pkg/survival/man/coxph.html) from the
 `survival` package. (See
 [`help("coxph", package = "survival")`](https://rdrr.io/pkg/survival/man/coxph.html)
@@ -698,9 +706,10 @@ pair membership (stored in the `subclass` column of `md`) to the
 `cluster` argument and set `robust = TRUE`. For matching methods that
 don’t involve pairing (e.g., cardinality and profile matching and
 \[coarsened\] exact matching), we can omit the `cluster` argument (but
-keep `robust = TRUE`)[⁹](#fn9).
+keep `robust = TRUE`)[^9].
 
 ``` r
+
 library("survival")
 
 #Cox Regression for marginal HR
@@ -744,6 +753,7 @@ in the appendix of Austin and Cafri ([2020](#ref-austin2020a)). We
 demonstrate this below:
 
 ``` r
+
 #get_matches() after matching with replacement
 gm <- get_matches(mR)
 
@@ -807,6 +817,7 @@ This function returns the marginal RR. In it, we perform the matching,
 estimate the effect, and return the estimate of interest.
 
 ``` r
+
 boot_fun <- function(data, i) {
   boot_data <- data[i,]
   
@@ -857,6 +868,7 @@ known to be the most accurate. See
 Here, we’ll just use a percentile confidence interval.
 
 ``` r
+
 library("boot")
 set.seed(54321)
 boot_out <- boot(d, boot_fun, R = 199)
@@ -877,6 +889,7 @@ boot_out
     ## t1*    1.347  0.1417      0.1937
 
 ``` r
+
 boot.ci(boot_out, type = "perc")
 ```
 
@@ -916,6 +929,7 @@ bootstrap because matching does not need to occur within each bootstrap
 sample. First, we’ll do a round of matching.
 
 ``` r
+
 mNN <- matchit(A ~ X1 + X2 + X3 + X4 + X5 + 
                  X6 + X7 + X8 + X9, data = d)
 mNN
@@ -930,6 +944,7 @@ mNN
     ##  - covariates: X1, X2, X3, X4, X5, X6, X7, X8, X9
 
 ``` r
+
 md <- match_data(mNN)
 ```
 
@@ -937,6 +952,7 @@ Next, we’ll write the function that takes in cluster membership and the
 sampled indices and returns an estimate.
 
 ``` r
+
 #Unique pair IDs
 pair_ids <- levels(md$subclass)
 
@@ -987,6 +1003,7 @@ the most accurate. See
 Here, we’ll just use a percentile confidence interval.
 
 ``` r
+
 library("boot")
 set.seed(54321)
 cluster_boot_out <- boot(pair_ids, cluster_boot_fun,
@@ -1008,6 +1025,7 @@ cluster_boot_out
     ## t1*    1.588 0.001319      0.1265
 
 ``` r
+
 boot.ci(cluster_boot_out, type = "perc")
 ```
 
@@ -1072,6 +1090,7 @@ interactions. We’ll perform nearest neighbor matching on the propensity
 score and exact matching on the moderator, `X5`.
 
 ``` r
+
 mP <- matchit(A ~ X1 + X2 + X5*X3 + X4 + 
                 X5*X6 + X7 + X5*X8 + X9,
               data = d,
@@ -1102,6 +1121,7 @@ If we are satisfied with balance, we can then model the outcome with an
 interaction between the treatment and the moderator.
 
 ``` r
+
 mdP <- match_data(mP)
 
 fitP <- lm(Y_C ~ A * X5, data = mdP, weights = weights)
@@ -1112,6 +1132,7 @@ specifying the `by` argument to signify that we want treatment effects
 stratified by the moderator.
 
 ``` r
+
 avg_comparisons(fitP,
                 variables = "A",
                 vcov = ~subclass,
@@ -1125,6 +1146,7 @@ other. Finally, we can test for moderation using another call to
 signify that we want to compare effects between subgroups:
 
 ``` r
+
 avg_comparisons(fitP,
                 variables = "A",
                 vcov = ~subclass,
@@ -1141,6 +1163,7 @@ omnibus test for moderation by changing `hypothesis` to `~reference` and
 supplying the output to `hypotheses()` with `joint = TRUE`, e.g.,
 
 ``` r
+
 avg_comparisons(fitP,
                 variables = "A",
                 vcov = ~subclass,
@@ -1221,7 +1244,7 @@ pair membership and should be used when appropriate. Sometimes,
 researchers use functions in the `survey` package to estimate robust
 SEs, especially with inverse probability weighting; this is a valid way
 to compute robust SEs and will give similar results to
-[`sandwich::vcovHC()`](https://sandwich.R-Forge.R-project.org/reference/vcovHC.html).[¹⁰](#fn10)
+[`sandwich::vcovHC()`](https://rdrr.io/pkg/sandwich/man/vcovHC.html).[^10]
 
 ### 3. Interpreting conditional effects as marginal effects
 
@@ -1276,8 +1299,8 @@ Abadie, Alberto, and Guido W. Imbens. 2008. “On the Failure of the
 Bootstrap for Matching Estimators.” *Econometrica* 76 (6): 1537–57.
 <https://doi.org/10.3982/ECTA6474>.
 
-Abadie, Alberto, and Jann Spiess. 2019. “Robust Post-Matching
-Inference,” January, 34.
+Abadie, Alberto, and Jann Spiess. 2019. *Robust Post-Matching
+Inference*. January, 34.
 <https://doi.org/10.1080/01621459.2020.1840383>.
 
 Austin, Peter C. 2009. “Type i Error Rates, Coverage of Confidence
@@ -1285,18 +1308,18 @@ Intervals, and Variance Estimation in Propensity-Score Matched
 Analyses.” *The International Journal of Biostatistics* 5 (1).
 <https://doi.org/10.2202/1557-4679.1146>.
 
-———. 2013a. “The Performance of Different Propensity Score Methods for
-Estimating Marginal Hazard Ratios.” *Statistics in Medicine* 32 (16):
-2837–49. <https://doi.org/10.1002/sim.5705>.
+Austin, Peter C. 2013a. “The Performance of Different Propensity Score
+Methods for Estimating Marginal Hazard Ratios.” *Statistics in Medicine*
+32 (16): 2837–49. <https://doi.org/10.1002/sim.5705>.
 
-———. 2013b. “The Use of Propensity Score Methods with Survival or
-Time-to-Event Outcomes: Reporting Measures of Effect Similar to Those
-Used in Randomized Experiments.” *Statistics in Medicine* 33 (7):
-1242–58. <https://doi.org/10.1002/sim.5984>.
+Austin, Peter C. 2013b. “The Use of Propensity Score Methods with
+Survival or Time-to-Event Outcomes: Reporting Measures of Effect Similar
+to Those Used in Randomized Experiments.” *Statistics in Medicine* 33
+(7): 1242–58. <https://doi.org/10.1002/sim.5984>.
 
-———. 2017. “Double Propensity-Score Adjustment: A Solution to Design
-Bias or Bias Due to Incomplete Matching.” *Statistical Methods in
-Medical Research* 26 (1): 201–22.
+Austin, Peter C. 2017. “Double Propensity-Score Adjustment: A Solution
+to Design Bias or Bias Due to Incomplete Matching.” *Statistical Methods
+in Medical Research* 26 (1): 201–22.
 <https://doi.org/10.1177/0962280214543508>.
 
 Austin, Peter C., and Guy Cafri. 2020. “Variance Estimation When Using
@@ -1353,7 +1376,7 @@ Through Proportional Hazards Models: A Monte Carlo Study.”
 Green, Kerry M., and Elizabeth A. Stuart. 2014. “Examining Moderation
 Analyses in Propensity Score Methods: Application to Depression and
 Substance Use.” *Journal of Consulting and Clinical Psychology*,
-Advances in Data Analytic Methods, 82 (5): 773–83.
+Advances in Data Analytic Methods, vol. 82 (5): 773–83.
 <https://doi.org/10.1037/a0036515>.
 
 Greifer, Noah, and Elizabeth A. Stuart. 2021. “Choosing the Estimand
@@ -1375,7 +1398,7 @@ Educational and Behavioral Statistics* 35 (5): 499–531.
 <https://doi.org/10.3102/1076998609359785>.
 
 King, Gary, and Margaret E. Roberts. 2015. “How Robust Standard Errors
-Expose Methodological Problems They Do Not Fix, and What to Do About
+Expose Methodological Problems They Do Not Fix, and What to Do about
 It.” *Political Analysis* 23 (2): 159–79.
 <https://doi.org/10.1093/pan/mpu015>.
 
@@ -1398,8 +1421,7 @@ Heteroskedasticity-Consistent Covariance Matrix Estimators with Improved
 Finite Sample Properties.” *Journal of Econometrics* 29 (3): 305–25.
 <https://doi.org/10.1016/0304-4076(85)90158-7>.
 
-Nguyen, Tri-Long, Gary S. Collins, Jessica Spence, Jean-Pierre Daurès,
-P. J. Devereaux, Paul Landais, and Yannick Le Manach. 2017.
+Nguyen, Tri-Long, Gary S. Collins, Jessica Spence, et al. 2017.
 “Double-Adjustment in Propensity Score Matching Analysis: Choosing a
 Threshold for Considering Residual Imbalance.” *BMC Medical Research
 Methodology* 17: 78. <https://doi.org/10.1186/s12874-017-0338-0>.
@@ -1410,7 +1432,7 @@ Nonrandomized Studies: A Practical Guide and Simulated Example.”
 <https://doi.org/10.1037/a0014268>.
 
 Snowden, Jonathan M., Sherri Rose, and Kathleen M. Mortimer. 2011.
-“Implementation of G-Computation on a Simulated Data Set: Demonstration
+“Implementation of g-Computation on a Simulated Data Set: Demonstration
 of a Causal Inference Technique.” *American Journal of Epidemiology* 173
 (7): 731–38. <https://doi.org/10.1093/aje/kwq472>.
 
@@ -1418,10 +1440,9 @@ Wan, Fei. 2019. “Matched or Unmatched Analyses with
 Propensity-Scorematched Data?” *Statistics in Medicine* 38 (2): 289–300.
 <https://doi.org/10.1002/sim.7976>.
 
-Wang, Shirley V., Yinzhu Jin, Bruce Fireman, Susan Gruber, Mengdong He,
-Richard Wyss, HoJin Shin, et al. 2018. “Relative Performance of
-Propensity Score Matching Strategies for Subgroup Analyses.” *American
-Journal of Epidemiology* 187 (8): 1799–1807.
+Wang, Shirley V., Yinzhu Jin, Bruce Fireman, et al. 2018. “Relative
+Performance of Propensity Score Matching Strategies for Subgroup
+Analyses.” *American Journal of Epidemiology* 187 (8): 1799–807.
 <https://doi.org/10.1093/aje/kwy049>.
 
 Westreich, D., and S. Greenland. 2013. “The Table 2 Fallacy: Presenting
@@ -1432,6 +1453,7 @@ Journal of Epidemiology* 177 (4): 292–98.
 ## Code to Generate Data used in Examples
 
 ``` r
+
 #Generating data similar to Austin (2009) for demonstrating treatment effect estimation
 gen_X <- function(n) {
   X <- matrix(rnorm(9 * n), nrow = n, ncol = 9)
@@ -1496,58 +1518,56 @@ Y_S <- gen_Y_S(A, X)
 d <- data.frame(A, X, Y_C, Y_B, Y_S)
 ```
 
-------------------------------------------------------------------------
-
-1.  Because they are only appropriate with a large number of clusters,
+[^1]: Because they are only appropriate with a large number of clusters,
     cluster-robust SEs are generally not used with subclassification
     methods. Regular robust SEs are valid with these methods when using
     the subclassification weights to estimate marginal effects.
 
-2.  Sometimes, an error will occur with this method, which usually means
-    more bootstrap replications are required. The number of replicates
-    must be greater than the original sample size when using the full
-    bootstrap and greater than the number of pairs/strata when using the
-    block bootstrap.
+[^2]: Sometimes, an error will occur with this method, which usually
+    means more bootstrap replications are required. The number of
+    replicates must be greater than the original sample size when using
+    the full bootstrap and greater than the number of pairs/strata when
+    using the block bootstrap.
 
-3.  The matching weights are not necessary when performing 1:1 matching,
-    but we include them here for generality. When weights are not
-    necessary, including them does not affect the estimates. Because it
-    may not always be clear when weights are required, we recommend
+[^3]: The matching weights are not necessary when performing 1:1
+    matching, but we include them here for generality. When weights are
+    not necessary, including them does not affect the estimates. Because
+    it may not always be clear when weights are required, we recommend
     always including them.
 
-4.  To verify that they are equal, supply the output of
+[^4]: To verify that they are equal, supply the output of
     `avg_predictions()` to `hypotheses()`, e.g.,
     `avg_predictions(...) |> hypotheses(~pairwise)`; this explicitly
     compares the average potential outcomes and should yield identical
     estimates to the `avg_comparisons()` call.
 
-5.  It is also known as fine stratification weighting, described by
+[^5]: It is also known as fine stratification weighting, described by
     Desai et al. ([2017](#ref-desai2017)).
 
-6.  We use [`quasibinomial()`](https://rdrr.io/r/stats/family.html)
+[^6]: We use [`quasibinomial()`](https://rdrr.io/r/stats/family.html)
     instead of [`binomial()`](https://rdrr.io/r/stats/family.html)
     simply to avoid a spurious warning that can occur with certain kinds
     of matching; the results will be identical regardless.
 
-7.  Note that for low or high average expected risks computed with
+[^7]: Note that for low or high average expected risks computed with
     `avg_predictions()`, the confidence intervals may go below 0 or
     above 1; this is because an approximation is used. To avoid this
     problem, bootstrapping or simulation-based inference can be used
     instead.
 
-8.  It is not immediately clear how to estimate a marginal HR when
-    covariates are included in the outcome model; though Austin, Thomas,
-    and Rubin ([2020](#ref-austin2020)) describe several ways of
-    including covariates in a model to estimate the marginal HR, they do
-    not develop SEs and little research has been done on this method, so
-    we will not present it here. Instead, we fit a simple Cox model with
+[^8]: It is not immediately clear how to estimate a marginal HR when
+    covariates are included in the outcome model; though Austin et al.
+    ([2020](#ref-austin2020)) describe several ways of including
+    covariates in a model to estimate the marginal HR, they do not
+    develop SEs and little research has been done on this method, so we
+    will not present it here. Instead, we fit a simple Cox model with
     the treatment as the sole predictor.
 
-9.  For subclassification, only MMWS can be used; this is done simply by
-    including the stratification weights in the Cox model and omitting
-    the `cluster` argument.
+[^9]: For subclassification, only MMWS can be used; this is done simply
+    by including the stratification weights in the Cox model and
+    omitting the `cluster` argument.
 
-10. To use `survey` to adjust for pair membership, one can use the
+[^10]: To use `survey` to adjust for pair membership, one can use the
     following code to specify the survey design to be used with
     `svyglm()`:
     `svydesign(ids = ~subclass, weights = ~weights, data = md)` where
