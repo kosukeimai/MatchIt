@@ -105,7 +105,7 @@ plot(summary(m.out))
 
 Although much has been written about matching theory, most of the theory
 relied upon in `MatchIt` is described well in [Ho, Imai, King, and
-Stuart (2007)](https//:doi.org/10.1093/pan/mpl013), [Stuart
+Stuart (2007)](https://doi.org/10.1093/pan/mpl013), [Stuart
 (2010)](https://doi.org/10.1214/09-STS313), and [Greifer and Stuart
 (2021)](https://doi.org/10.1093/epirev/mxab003). The *Journal of
 Statistical Software* article for `MatchIt` can be accessed
