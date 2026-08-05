@@ -18,3 +18,4 @@
 ^Makefile$
 ^\.lintr
 ^\.claude$
+^CLAUDE\.md$
