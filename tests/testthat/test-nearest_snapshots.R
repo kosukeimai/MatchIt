@@ -795,6 +795,8 @@ test_that("link='linear.logit' + caliper (caliper on the linear predictor)", {
 #file, but nothing else pins its values, so a change in how `glm()` is called would
 #surface only as an unexplained change in `match.matrix`.
 test_that("estimated propensity scores are stable across links", {
+  skip_on_cran()
+
   for (link in c("logit", "probit", "cloglog", "linear.logit")) {
     m <- matchit(treat ~ age + educ + race + married + nodegree + re74 + re75,
                  data = lalonde, method = "nearest",

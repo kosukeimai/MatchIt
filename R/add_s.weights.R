@@ -146,9 +146,22 @@ add_s.weights <- function(m,
 
   m$s.weights <- s.weights
 
-  if (!is_null(m$method) && m$method %in% c("exact", "cem", "subclass", "full", "quick")) {
-    m$weights[] <- get_weights_from_subclass(m$subclass, m$treat, m$estimand,
-                                             s.weights)
+  #The method is recorded in `info`; `matchit` objects have no `method` component
+  method <- m$info$method
+
+  if (is_not_null(method) &&
+      method %in% c("exact", "cem", "subclass", "full", "quick")) {
+    weights <- get_weights_from_subclass(m$subclass, m$treat, m$estimand,
+                                         s.weights)
+
+    #Match the normalization of the original call. `info$normalize` is absent from
+    #objects created before it was recorded, where the default of `TRUE` applied.
+    if (isTRUE(m$info$normalize %or% TRUE)) {
+      wi <- which(weights > 0)
+      weights[wi] <- .make_sum_to_n(weights[wi], m$treat[wi])
+    }
+
+    m$weights[] <- weights
   }
 
   m$nn <- nn(m$treat, m$weights, m$discarded, s.weights)

@@ -117,27 +117,15 @@ test_that("weighted stratum masses balance, with and without s.weights", {
   )
 })
 
-test_that("add_s.weights() does not yet recompute the matching weights", {
-  #KNOWN BUG. `add_s.weights()` guards its recompute on `m$method`, but `matchit`
-  #objects carry the method at `m$info$method` and have no `method` element, so the
-  #condition is never true and the weights are left as they were -- for every one of
-  #the five stratification methods, not just this one. NEWS announces that
-  #`add_s.weights()` re-computes them. Two things are needed: the guard must read
-  #`m$info$method`, and the recomputed weights must then go through the same
-  #normalization `matchit()` applies, or they come out on a different scale (verified:
-  #raw recompute is off by a constant factor; raw plus `.make_sum_to_n()` matches
-  #exactly). See _dev/method-tests-findings.md.
+test_that("add_s.weights() reproduces matching with s.weights", {
+  #Exact matching's strata depend only on the covariates, so adding sampling weights
+  #after the fact must give exactly what supplying them up front would have.
+  #`test-add_s.weights.R` covers the other methods and the `normalize` interaction.
   m0 <- matchit(f3, data = lalonde, method = "exact")
   m1 <- add_s.weights(m0, lalonde_sw)
   m2 <- matchit(f3, data = lalonde, method = "exact", s.weights = lalonde_sw)
 
-  expect_equal(m1$s.weights, lalonde_sw, ignore_attr = TRUE)
-
-  #What it currently does: leaves the weights untouched
-  expect_identical(m1$weights, m0$weights)
-
-  #What it is supposed to do
-  expect_false(isTRUE(all.equal(m1$weights, m2$weights)))
+  expect_equal(m1$weights, m2$weights)
 })
 
 test_that("every retained stratum contains both treatment groups", {

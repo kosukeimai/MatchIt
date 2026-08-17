@@ -22,8 +22,9 @@ subclass_scoot <- function(sub, treat, x, min.n = 1L) {
 #Create info component of matchit object
 create_info <- function(method, fn1, link, discard, replace, ratio,
                         mahalanobis, transform, subclass, antiexact,
-                        distance_is_matrix) {
+                        distance_is_matrix, normalize = TRUE) {
   list(method = method,
+       normalize = normalize,
        distance = if (is_not_null(fn1)) sub("distance2", "", fn1, fixed = TRUE),
        link = if (is_not_null(link)) link,
        discard = discard,

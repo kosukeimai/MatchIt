@@ -682,7 +682,8 @@ matchit <- function(formula,
                       transform = attr(is.full.mahalanobis, "transform"),
                       subclass = match.out$subclass,
                       antiexact = colnames(antiexactcovs),
-                      distance_is_matrix = is_not_null(distance) && is.matrix(distance))
+                      distance_is_matrix = is_not_null(distance) && is.matrix(distance),
+                      normalize = normalize)
 
   #Create X output, removing duplicate variables
   X.list.nm <- c("covs", "exactcovs", "mahcovs", "calcovs", "antiexactcovs")

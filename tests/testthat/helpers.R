@@ -157,7 +157,16 @@ expect_good_matchit <- function(m, expect_subclass = NULL, expect_distance = NUL
 #and the weights are computed from `match.matrix` by a code path that no other
 #expectation exercises; `subclass` needs one because several distinct subclass
 #assignments can produce the same weights.
+#
+#These pins exist to hold results fixed across refactoring on one machine. They are
+#not portable: the solver-backed methods record values that depend on the installed
+#optmatch, quickmatch, or highs, and the propensity-score-based ones can shift on a
+#different BLAS. Skipping on CRAN is deliberate. The skip lives here rather than at
+#the top of each test so that the structural checks preceding it still run -- a
+#failure recorded before a skip is still reported as a failure.
 expect_matchit_snapshot <- function(m) {
+  skip_on_cran()
+
   expect_snapshot_value(m$match.matrix, style = "json2")
 
   expect_snapshot_value(unname(round(m$weights, 8L)), style = "json2")
