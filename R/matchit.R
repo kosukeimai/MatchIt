@@ -91,7 +91,7 @@
 #' remaining sample. Default is `FALSE` to use the propensity scores
 #' estimated in the original sample.
 #' @param s.weights an optional numeric vector of sampling weights to be
-#' incorporated into propensity score models and balance statistics. Can also
+#' incorporated into propensity score models, matching weights, and balance statistics. Can also
 #' be specified as a string containing the name of variable in `data` to
 #' be used or a one-sided formula with the variable on the right-hand side
 #' (e.g., `~ SW`). Not all propensity score models accept sampling
@@ -235,6 +235,8 @@
 #' For cardinality matching, all matched units receive a weight
 #' of 1.
 #'
+#' For stratification methods (\[coarsened\] exact matching, \[generalized\] full matching, and propensity score subclassification), when sampling weights are supplied through `s.weights` (or added to the `matchit` object using [add_s.weights()]), the stratum propensity scores are computed as the *weighted* proportion of treated units in each stratum, weighted by the sampling weights.
+#'
 #' ### Matching with replacement
 #'
 #' For matching *with* replacement, units are not assigned to unique strata. For
@@ -261,7 +263,7 @@
 #' [match_data()], which extracts the matched set from a `matchit` object,
 #' combines the matching weights and sampling weights.
 #'
-#' @return
+#' @returns
 #' When `method` is something other than `"subclass"`, a
 #' `matchit` object with the following components:
 #'
@@ -310,11 +312,11 @@
 #' @seealso
 #' [summary.matchit()] for balance assessment after matching, [plot.matchit()] for plots of covariate balance and propensity score overlap after matching.
 #'
-#' * `vignette("MatchIt")` for an introduction to matching with *MatchIt*
-#' * `vignette("matching-methods")` for descriptions of the variety of matching methods and options available
-#' * `vignette("assessing-balance")` for information on assessing the quality of a matching specification
-#' * `vignette("estimating-effects")` for instructions on how to estimate treatment effects after matching
-#' * `vignette("sampling-weights")` for a guide to using *MatchIt* with sampling weights.
+#' - `vignette("MatchIt")` for an introduction to matching with *MatchIt*
+#' - `vignette("matching-methods")` for descriptions of the variety of matching methods and options available
+#' - `vignette("assessing-balance")` for information on assessing the quality of a matching specification
+#' - `vignette("estimating-effects")` for instructions on how to estimate treatment effects after matching
+#' - `vignette("sampling-weights")` for a guide to using *MatchIt* with sampling weights.
 #'
 #' @references
 #' Ho, D. E., Imai, K., King, G., & Stuart, E. A. (2007). Matching as Nonparametric Preprocessing for Reducing Model Dependence in Parametric Causal Inference. *Political Analysis*, 15(3), 199–236. \doi{10.1093/pan/mpl013}

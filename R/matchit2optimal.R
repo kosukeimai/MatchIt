@@ -303,7 +303,7 @@ matchit2optimal <- function(treat, formula, data, distance, discarded,
     }, numeric(1L))
 
     if (any(e_ratios < 1)) {
-      arg::wrn("fewer {tc[2L]} units than {tc[1L]} units in some {.arg exact} strata; not all tc[1L] units will get a match")
+      arg::wrn("fewer {tc[2L]} units than {tc[1L]} units in some {.arg exact} strata; not all {tc[1L]} units will get a match")
     }
 
     if (ratio > 1 && any(e_ratios < ratio)) {
@@ -444,6 +444,10 @@ matchit2optimal <- function(treat, formula, data, distance, discarded,
     }, optmatch_max_problem_size = Inf)
 
     pair[names(p[[e]])[!is.na(p[[e]])]] <- paste(as.character(p[[e]][!is.na(p[[e]])]), e, sep = "|")
+  }
+
+  if (allNA(pair)) {
+    arg::err("No matches were found")
   }
 
   if (length(p) == 1L) {

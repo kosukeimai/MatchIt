@@ -88,7 +88,7 @@
 #'
 NULL
 
-matchit2exact <- function(treat, covs, data, estimand = "ATT", verbose = FALSE, ...) {
+matchit2exact <- function(treat, covs, data, s.weights = NULL, estimand = "ATT", focal = NULL, verbose = FALSE, ...) {
 
   .cat_verbose("Exact matching...\n", verbose = verbose)
 
@@ -111,7 +111,7 @@ matchit2exact <- function(treat, covs, data, estimand = "ATT", verbose = FALSE, 
   .cat_verbose("Calculating matching weights... ", verbose = verbose)
 
   res <- list(subclass = psclass,
-              weights = get_weights_from_subclass(psclass, treat, estimand))
+              weights = get_weights_from_subclass(psclass, treat, estimand, s.weights))
 
   .cat_verbose("Done.\n", verbose = verbose)
 

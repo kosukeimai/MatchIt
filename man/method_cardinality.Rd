@@ -45,16 +45,13 @@ when \code{estimand = "ATT"}, and the standard deviation of the control
 group when \code{estimand = "ATC"} (the same as used in
 \code{\link[=summary.matchit]{summary.matchit()}}).}
 \item{\code{solver}}{ the name of solver to use to
-solve the optimization problem. Available options include \code{"highs"}, \code{"glpk"},
-\code{"symphony"}, and \code{"gurobi"} for HiGHS (implemented in the \emph{highs} package), GLPK (implemented in the
-\emph{Rglpk} package), SYMPHONY (implemented in the \emph{Rsymphony}
-package), and Gurobi (implemented in the \emph{gurobi} package),
+solve the optimization problem. Available options include \code{"highs"}, \code{"glpk"}, and \code{"gurobi"} for HiGHS (implemented in the \emph{highs} package), GLPK (implemented in the
+\emph{Rglpk} package), and Gurobi (implemented in the \emph{gurobi} package),
 respectively. The differences between them are in speed and solving ability.
 HiGHS (the default) and GLPK are the easiest to install, but Gurobi is recommended as
 it consistently outperforms other solvers and can find solutions even when
 others can't, and in less time. Gurobi is proprietary but can be used with a
-free trial or academic license. SYMPHONY may not produce reproducible
-results, even with a seed set.  }
+free trial or academic license. }
 \item{\code{time}}{ the maximum amount of
 time before the optimization routine aborts, in seconds. Default is 120 (2
 minutes). For large problems, this should be set much higher.  }

@@ -245,7 +245,7 @@ matchit2quick <- function(treat, formula, data, distance, discarded,
   .cat_verbose("Calculating matching weights... ", verbose = verbose)
 
   res <- list(subclass = psclass,
-              weights = get_weights_from_subclass(psclass, treat, estimand),
+              weights = get_weights_from_subclass(psclass, treat, estimand, s.weights),
               obj = p)
 
   .cat_verbose("Done.\n", verbose = verbose)

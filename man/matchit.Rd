@@ -121,7 +121,7 @@ remaining sample. Default is \code{FALSE} to use the propensity scores
 estimated in the original sample.}
 
 \item{s.weights}{an optional numeric vector of sampling weights to be
-incorporated into propensity score models and balance statistics. Can also
+incorporated into propensity score models, matching weights, and balance statistics. Can also
 be specified as a string containing the name of variable in \code{data} to
 be used or a one-sided formula with the variable on the right-hand side
 (e.g., \code{~ SW}). Not all propensity score models accept sampling
@@ -331,6 +331,8 @@ control units.
 
 For cardinality matching, all matched units receive a weight
 of 1.
+
+For stratification methods ([coarsened] exact matching, [generalized] full matching, and propensity score subclassification), when sampling weights are supplied through \code{s.weights} (or added to the \code{matchit} object using \code{\link[=add_s.weights]{add_s.weights()}}), the stratum propensity scores are computed as the \emph{weighted} proportion of treated units in each stratum, weighted by the sampling weights.
 }
 
 \subsection{Matching with replacement}{

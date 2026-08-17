@@ -448,7 +448,7 @@ get_covs_matrix_for_dist <- function(formula = NULL, data = NULL) {
                 dimnames = list(names(X), NULL))
   }
 
-  arg::arg_no_NA(X, .msg = "{.val NA} values are not allowed in the covariates")
+  arg::arg_no_NA(X, .msg = "{.val {NA}} values are not allowed in the covariates")
 
   if (!all(is.finite(X))) {
     arg::err("non-finite values are not allowed in the covariates")

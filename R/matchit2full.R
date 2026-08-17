@@ -389,7 +389,7 @@ matchit2full <- function(treat, formula, data, distance, discarded,
     pair[names(p[[e]])[!is.na(p[[e]])]] <- paste(as.character(p[[e]][!is.na(p[[e]])]), e, sep = "|")
   }
 
-  if (all(is.na(pair))) {
+  if (allNA(pair)) {
     arg::err("No matches were found")
   }
 
@@ -408,7 +408,7 @@ matchit2full <- function(treat, formula, data, distance, discarded,
                verbose = verbose)
 
   res <- list(subclass = psclass,
-              weights = get_weights_from_subclass(psclass, treat, estimand),
+              weights = get_weights_from_subclass(psclass, treat, estimand, s.weights),
               obj = p)
 
   .cat_verbose("Done.\n", verbose = verbose)

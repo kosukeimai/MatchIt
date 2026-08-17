@@ -64,16 +64,13 @@
 #' group when `estimand = "ATC"` (the same as used in
 #' [summary.matchit()]).}
 #' \item{`solver`}{ the name of solver to use to
-#' solve the optimization problem. Available options include `"highs"`, `"glpk"`,
-#' `"symphony"`, and `"gurobi"` for HiGHS (implemented in the *highs* package), GLPK (implemented in the
-#' *Rglpk* package), SYMPHONY (implemented in the *Rsymphony*
-#' package), and Gurobi (implemented in the *gurobi* package),
+#' solve the optimization problem. Available options include `"highs"`, `"glpk"`, and `"gurobi"` for HiGHS (implemented in the *highs* package), GLPK (implemented in the
+#' *Rglpk* package), and Gurobi (implemented in the *gurobi* package),
 #' respectively. The differences between them are in speed and solving ability.
 #' HiGHS (the default) and GLPK are the easiest to install, but Gurobi is recommended as
 #' it consistently outperforms other solvers and can find solutions even when
 #' others can't, and in less time. Gurobi is proprietary but can be used with a
-#' free trial or academic license. SYMPHONY may not produce reproducible
-#' results, even with a seed set.  }
+#' free trial or academic license. }
 #' \item{`time`}{ the maximum amount of
 #' time before the optimization routine aborts, in seconds. Default is 120 (2
 #' minutes). For large problems, this should be set much higher.  }
@@ -453,9 +450,9 @@ cardinality_matchit <- function(treat, X, estimand = "ATT", tols = .05, s.weight
   arg::arg_number(time)
   arg::arg_gt(time, 0)
 
-  solver <- arg::match_arg(solver, c("highs", "glpk", "symphony", "gurobi"))
+  solver <- arg::match_arg(solver, c("highs", "glpk", "gurobi"))
 
-  rlang::check_installed(switch(solver, glpk = "Rglpk", symphony = "Rsymphony", gurobi = "gurobi",
+  rlang::check_installed(switch(solver, glpk = "Rglpk", gurobi = "gurobi",
                                 highs = "highs"))
 
   #Select match type
@@ -547,13 +544,13 @@ cardinality_matchit <- function(treat, X, estimand = "ATT", tols = .05, s.weight
       #Cov means must be less than target.means+tols
       r1 <- nt - 1 + (i - 1) * 2 * ncol(X) + seq_len(ncol(X))
       C[r1, seq_len(n0)] <- t((treat[nonf] == tvals_[i]) * s.weights[nonf] * X[nonf, , drop = FALSE])
-      C[r1, n0 + i] <- -target.means - tols
+      C[r1, n0 + i] <- -(target.means + tols)
       Cdir[r1] <- "<"
 
       #Cov means must be greater than target.means-tols
       r2 <- r1 + ncol(X)
       C[r2, seq_len(n0)] <- t((treat[nonf] == tvals_[i]) * s.weights[nonf] * X[nonf, , drop = FALSE])
-      C[r2, n0 + i] <- -target.means + tols
+      C[r2, n0 + i] <- -(target.means - tols)
       Cdir[r2] <- ">"
     }
 
@@ -624,7 +621,6 @@ cardinality_matchit <- function(treat, X, estimand = "ATT", tols = .05, s.weight
 
   sol <- switch(solver,
                 "glpk" = opt.out$solution,
-                "symphony" = opt.out$solution,
                 "gurobi" = opt.out$x,
                 "highs" = opt.out$primal_solution)
 
@@ -658,20 +654,12 @@ cardinality_error_report <- function(out, solver) {
       if (all_equal_to(out$solution, 0)) {
         arg::err("the optimization problem may be infeasible. Try increasing the value of {.arg tols}. See {.topic MatchIt::method_cardinality} for additional details")
       }
-      arg::wrn("the optimizer failed to find an optimal solution in the time alotted. The returned solution may not be optimal. See {.topic MatchIt::method_cardinality} for additional details")
-    }
-  }
-  else if (solver == "symphony") {
-    if (names(out$status) %in% c("TM_TIME_LIMIT_EXCEEDED") && !all(out$solution == 0) && all(out$solution <= 1)) {
-      arg::wrn("the optimizer failed to find an optimal solution in the time alotted. The returned solution may not be optimal")
-    }
-    else if (names(out$status) != "TM_OPTIMAL_SOLUTION_FOUND") {
-      arg::err("the optimizer failed to find an optimal solution in the time alotted. The optimization problem may be infeasible. Try increasing the value of {.arg tols}. See {.topic MatchIt::method_cardinality} for additional details")
+      arg::wrn("the optimizer failed to find an optimal solution in the time allotted. The returned solution may not be optimal. See {.topic MatchIt::method_cardinality} for additional details")
     }
   }
   else if (solver == "gurobi") {
     if (out$status %in% c("TIME_LIMIT", "SUBOPTIMAL") && !all(out$x == 0)) {
-      arg::wrn("the optimizer failed to find an optimal solution in the time alotted. The returned solution may not be optimal. See {.topic MatchIt::method_cardinality} for additional details")
+      arg::wrn("the optimizer failed to find an optimal solution in the time allotted. The returned solution may not be optimal. See {.topic MatchIt::method_cardinality} for additional details")
     }
     else if (out$status %in% c("INFEASIBLE", "INF_OR_UNBD", "NUMERIC") || all(out$x == 0)) {
       arg::err("the optimization problem may be infeasible. Try increasing the value of {.arg tols}. See {.topic MatchIt::method_cardinality} for additional details")
@@ -684,7 +672,7 @@ cardinality_error_report <- function(out, solver) {
       arg::err("the optimization problem may be infeasible. Try increasing the value of {.arg tols}. See {.topic MatchIt::method_cardinality} for additional details")
     }
     if (out$status_message %in% c("Time limit reached", "Iteration limit reached")) {
-      arg::err("the optimizer failed to find an optimal solution in the time alotted. Try increasing the value of {.arg time}. See {.topic MatchIt::method_cardinality} for additional details")
+      arg::err("the optimizer failed to find an optimal solution in the time allotted. Try increasing the value of {.arg time}. See {.topic MatchIt::method_cardinality} for additional details")
     }
   }
 }
@@ -697,15 +685,6 @@ dispatch_optimizer <- function(solver = "highs", obj, mat, dir, rhs, types, max 
                                      types = types,
                                      # bounds = list(lower = lb, upper = ub), #Spurious warning when using bounds
                                      control = list(tm_limit = time * 1000, verbose = verbose))
-  }
-  else if (solver == "symphony") {
-    dir[dir == "<"] <- "<="
-    dir[dir == ">"] <- ">="
-    dir[dir == "="] <- "=="
-    opt.out <- Rsymphony::Rsymphony_solve_LP(obj = obj, mat = mat, dir = dir, rhs = rhs, max = TRUE,
-                                             types = types, verbosity = verbose - 2,
-                                             # bounds = list(lower = lb, upper = ub), #Spurious warning when using bounds
-                                             time_limit = time)
   }
   else if (solver == "gurobi") {
     dir[dir == "<="] <- "<"

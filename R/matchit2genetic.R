@@ -522,7 +522,7 @@ matchit2genetic <- function(treat, data, distance, discarded,
   dont_warn_if = c("replace==FALSE, but there are more (weighted) treated obs than control obs",
                    "no valid matches"))
 
-  if (typeof(m.out) == "logical" && all(is.na(m.out))) {
+  if (typeof(m.out) == "logical" && allNA(m.out)) {
     arg::err("no units were matched")
   }
 

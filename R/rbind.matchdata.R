@@ -105,7 +105,7 @@ rbind.matchdata <- function(..., deparse.level = 1) {
       attr(m, i) %or% NA_character_
     }))
 
-    if (all(is.na(attr_list[[i]]))) {
+    if (allNA(attr_list[[i]])) {
       attr_list[[i]] <- NULL
     }
     else {
@@ -140,7 +140,7 @@ rbind.matchdata <- function(..., deparse.level = 1) {
 
       #Give subclasses unique values across datasets
       if (i == "subclass") {
-        if (all(is.na(md_list[[d]][[key_attrs[i]]]))) {
+        if (allNA(md_list[[d]][[key_attrs[i]]])) {
           md_list[[d]][[key_attrs[i]]] <- factor(md_list[[d]][[key_attrs[i]]], levels = NA)
         }
         else {

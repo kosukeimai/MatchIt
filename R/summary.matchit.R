@@ -657,7 +657,7 @@ print.summary.matchit <- function(x, digits = max(3, getOption("digits") - 3),
   if (is_not_null(x$sum.matched)) {
     cat("\nSummary of Balance for Matched Data:\n")
 
-    if (all(is.na(x$sum.matched[, 7L]))) {
+    if (allNA(x$sum.matched[, 7L])) {
       #Remove pair dist if empty
       x$sum.matched <- x$sum.matched[, -7L, drop = FALSE]
     }
@@ -733,7 +733,7 @@ print.summary.matchit.subclass <- function(x, digits = max(3L, getOption("digits
     if (is_not_null(x$sum.across)) {
       cat("\nSummary of Balance Across Subclasses\n")
 
-      if (all(is.na(x$sum.across[, 7L]))) {
+      if (allNA(x$sum.across[, 7L])) {
         x$sum.across <- x$sum.across[, -7L, drop = FALSE]
       }
 

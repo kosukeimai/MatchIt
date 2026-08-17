@@ -151,7 +151,161 @@ expect_good_matchit <- function(m, expect_subclass = NULL, expect_distance = NUL
   invisible(m)
 }
 
+#Pin the matched output of a `matchit()` call. `match.matrix` is recorded first so
+#that snapshots taken before `weights` and `subclass` were added still match.
+#`weights` needs its own pin because when `reuse.max > 1` there is no `subclass`
+#and the weights are computed from `match.matrix` by a code path that no other
+#expectation exercises; `subclass` needs one because several distinct subclass
+#assignments can produce the same weights.
+expect_matchit_snapshot <- function(m) {
+  expect_snapshot_value(m$match.matrix, style = "json2")
+
+  expect_snapshot_value(unname(round(m$weights, 8L)), style = "json2")
+
+  subclass <- {
+    if (is_null(m$subclass)) NULL
+    else unname(as.integer(m$subclass))
+  }
+
+  expect_snapshot_value(subclass, style = "json2")
+
+  invisible(m)
+}
+
 #Use regex to make strings invariant to white spaces
 .w <- function(x) {
   gsub(" ", "(\\s+)", x, fixed = TRUE)
+}
+
+# ===== Condition helpers =====
+
+#Assert that `expr` emits no warning other than ones matching `known`. Some
+#specifications warn only for some samples or some solver versions, so they cannot
+#simply be wrapped in `expect_warning()`; this accepts the known warnings and
+#nothing else, so an unrelated condition still fails the test, and it keeps working
+#unchanged if the known warning stops firing.
+expect_no_unexpected_warning <- function(expr, known = character()) {
+  ws <- character()
+
+  val <- withCallingHandlers(expr,
+                             warning = function(w) {
+                               ws <<- c(ws, conditionMessage(w))
+                               invokeRestart("muffleWarning")
+                             })
+
+  unexpected <- {
+    if (is_null(known)) ws
+    else ws[!vapply(ws, function(w) any(vapply(known, grepl, logical(1L),
+                                               x = w, fixed = TRUE)),
+                    logical(1L))]
+  }
+
+  expect(is_null(unexpected),
+         sprintf("Unexpected %s signaled: %s%s",
+                 ngettext(length(unexpected), "warning was", "warnings were"),
+                 toString(dQuote(gsub("\\s+", " ", unexpected), FALSE)),
+                 if (is_null(known)) ""
+                 else sprintf(" (allowed: %s)", toString(dQuote(known, FALSE)))),
+         trace_env = rlang::caller_env())
+
+  invisible(val)
+}
+
+#`matchit()` messages are built by cli, which hard-wraps them, so a regex spanning
+#a wrap point silently fails to match. Use this on any expected message long enough
+#to wrap. `expect_error(m, .w("..."))` is equivalent for short messages.
+expect_matchit_condition <- function(expr, class = c("warning", "error"), pattern) {
+  class <- match.arg(class)
+
+  cnd <- tryCatch({
+    withCallingHandlers(expr,
+                        warning = function(w) {
+                          if (class == "warning") {
+                            stop(w)
+                          }
+                          invokeRestart("muffleWarning")
+                        })
+    NULL
+  }, condition = function(c) c)
+
+  expect(is_not_null(cnd),
+         sprintf("No %s was signaled.", class),
+         trace_env = rlang::caller_env())
+
+  if (is_null(cnd)) {
+    return(invisible(NULL))
+  }
+
+  #cli inserts newlines at its wrap width; collapse them before matching
+  msg <- gsub("\\s+", " ", conditionMessage(cnd))
+
+  expect_match(msg, pattern, fixed = TRUE)
+
+  invisible(cnd)
+}
+
+# ===== Comparison helpers =====
+
+#`expect_equal()`'s complement, for asserting that something actually changed.
+expect_not_equal <- function(object, expected, ...,
+                             tolerance = if (edition_get() >= 3) testthat_tolerance(),
+                             info = NULL, label = NULL, expected.label = NULL) {
+
+  act <- quasi_label(rlang::enquo(object), label, arg = "object")
+  exp <- quasi_label(rlang::enquo(expected), expected.label, arg = "expected")
+
+  comp <- {
+    if (is_null(tolerance)) waldo::compare(act$val, exp$val, ..., x_arg = "actual",
+                                           y_arg = "expected")
+    else waldo::compare(act$val, exp$val, ..., tolerance = tolerance,
+                        x_arg = "actual", y_arg = "expected")
+  }
+
+  expect(length(comp) > 0L,
+         sprintf("%s (`actual`) is equal to %s (`expected`).", act$lab, exp$lab),
+         info = info, trace_env = rlang::caller_env())
+
+  invisible(act$val)
+}
+
+#Matching is supposed to improve balance; this is the weakest check that it did
+#anything useful, and it catches sign errors and mixed-up weights that structural
+#checks and snapshots both pass over.
+expect_balance_improved <- function(m, ...) {
+  skip_if_not_installed("cobalt")
+
+  s.weights <- m$s.weights %or% rep.int(1, length(m$treat))
+
+  matched <- abs(cobalt::col_w_smd(m$X, m$treat, m$weights, s.weights = s.weights))
+  unmatched <- abs(cobalt::col_w_smd(m$X, m$treat, s.weights = s.weights))
+
+  expect_lt(mean(matched, na.rm = TRUE), mean(unmatched, na.rm = TRUE), ...)
+
+  invisible(m)
+}
+
+# ===== Fixtures =====
+
+#Set a fixed proportion of each named column to NA without disturbing the RNG
+#stream of the calling test.
+inject_missingness <- function(data, cols, prop = 0.1, seed = 4321) {
+  old_seed <- {
+    if (exists(".Random.seed", envir = globalenv())) get(".Random.seed", envir = globalenv())
+    else NULL
+  }
+
+  set.seed(seed)
+
+  for (col in cols) {
+    is.na(data[[col]]) <- sample(nrow(data), round(prop * nrow(data)))
+  }
+
+  if (is_null(old_seed)) {
+    rm(".Random.seed", envir = globalenv())
+  }
+  else {
+    assign(".Random.seed", old_seed, envir = globalenv())
+  }
+
+  data
 }

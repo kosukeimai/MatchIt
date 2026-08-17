@@ -303,7 +303,7 @@ matchit2cem <- function(treat, covs, estimand = "ATT", s.weights = NULL,
   else {
     levels(strat) <- seq_len(nlevels(strat))
 
-    weights <- get_weights_from_subclass(strat, treat, estimand)
+    weights <- get_weights_from_subclass(strat, treat, estimand, s.weights)
   }
 
   .cat_verbose("Calculating matching weights... ", verbose = verbose)

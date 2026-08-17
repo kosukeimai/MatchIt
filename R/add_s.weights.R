@@ -76,16 +76,26 @@ add_s.weights <- function(m,
 
   if (!is.numeric(s.weights)) {
     if (is_null(data)) {
+      env <- NULL
+
       if (is_not_null(m$model)) {
-        env <- attributes(terms(m$model))$.Environment
+        env <- try(attributes(terms(m$model))$.Environment,
+                   silent = TRUE)
       }
-      else {
+
+      if (null_or_error(env)) {
+        env <- try(environment(m$formula),
+                   silent = TRUE)
+      }
+
+      if (null_or_error(env)) {
         env <- parent.frame()
       }
 
-      data <- eval(m$call$data, envir = env)
+      data <- try(eval(m$call$data, envir = env),
+                  silent = TRUE)
 
-      if (is_null(data)) {
+      if (null_or_error(data)) {
         arg::err("a dataset could not be found. Please supply an argument to {.arg data} containing the original dataset used in the matching")
       }
     }
@@ -135,6 +145,11 @@ add_s.weights <- function(m,
   attr(s.weights, "in_ps") <- isTRUE(all.equal(s.weights, m$s.weights))
 
   m$s.weights <- s.weights
+
+  if (!is_null(m$method) && m$method %in% c("exact", "cem", "subclass", "full", "quick")) {
+    m$weights[] <- get_weights_from_subclass(m$subclass, m$treat, m$estimand,
+                                             s.weights)
+  }
 
   m$nn <- nn(m$treat, m$weights, m$discarded, s.weights)
 

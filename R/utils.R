@@ -139,6 +139,9 @@ is_not_null <- function(x) !is_null(x)
   # like `%||%` but works for non-NULL length 0 objects
   if (is_null(x)) y else x
 }
+allNA <- function(x) {
+  anyNA(x) && all(is.na(x))
+}
 
 null_or_error <- function(x) {is_null(x) || inherits(x, "try-error")}
 
@@ -159,7 +162,7 @@ str2num <- function(x) {
   nas <- is.na(x)
   if (!is.numeric(x) && !is.logical(x)) x <- as.character(x)
   x_num <- suppressWarnings(as.numeric(x))
-  is.na(x_num)[nas] <- TRUE
+  is.na(x_num[nas]) <- TRUE
   x_num
 }
 
