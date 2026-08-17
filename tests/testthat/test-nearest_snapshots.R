@@ -257,12 +257,14 @@ test_that("m.order='smallest' + caliper + replace=FALSE", {
 
 test_that("exact + ratio=2 (within-stratum depletion)", {
   set.seed(12345)
-  expect_wrn(
-    m <- matchit(treat ~ age + educ + race + married + nodegree + re74 + re75,
-                 data = lalonde, method = "nearest",
-                 exact = ~ race, ratio = 2),
-    c("Fewer control units than treated units",
-      "Not all treated units will get 2 matches")
+  expect_warning(
+    expect_warning(
+      m <- matchit(treat ~ age + educ + race + married + nodegree + re74 + re75,
+                   data = lalonde, method = "nearest",
+                   exact = ~ race, ratio = 2),
+      "Fewer control units than treated units"
+    ),
+    "Not all treated units will get 2 matches"
   )
   expect_good_matchit(m, expect_distance = TRUE, expect_match.matrix = TRUE,
                       expect_subclass = TRUE, ratio = 2L)
@@ -445,13 +447,15 @@ test_that("variable ratio + caliper (min/max with restriction)", {
 
 test_that("variable ratio + exact (within strata)", {
   set.seed(12345)
-  expect_wrn(
-    m <- matchit(treat ~ age + educ + race + married + nodegree + re74 + re75,
-                 data = lalonde, method = "nearest",
-                 ratio = 2, min.controls = 1, max.controls = 4,
-                 exact = ~ race),
-    c("Fewer control units than treated units",
-      "Not enough control units")
+  expect_warning(
+    expect_warning(
+      m <- matchit(treat ~ age + educ + race + married + nodegree + re74 + re75,
+                   data = lalonde, method = "nearest",
+                   ratio = 2, min.controls = 1, max.controls = 4,
+                   exact = ~ race),
+      "Fewer control units than treated units"
+    ),
+    "Not enough control units"
   )
   ratio_attr <- structure(2L, min.controls = 1, max.controls = 4)
   expect_good_matchit(m, expect_distance = TRUE, expect_match.matrix = TRUE,
@@ -501,12 +505,14 @@ test_that("estimand='ATC' + mahvars (mahcovs path, ATC focal)", {
 
 test_that("estimand='ATC' + ratio=2 + exact (flipped focal)", {
   set.seed(12345)
-  expect_wrn(
-    m <- matchit(treat ~ age + educ + race + married + nodegree + re74 + re75,
-                 data = lalonde, method = "nearest",
-                 estimand = "ATC", ratio = 2, exact = ~ race),
-    c("Fewer treated units than control units",
-      "Not all control units will get 2 matches")
+  expect_warning(
+    expect_warning(
+      m <- matchit(treat ~ age + educ + race + married + nodegree + re74 + re75,
+                   data = lalonde, method = "nearest",
+                   estimand = "ATC", ratio = 2, exact = ~ race),
+      "Fewer treated units than control units"
+    ),
+    "Not all control units will get 2 matches"
   )
   expect_good_matchit(m, expect_distance = TRUE, expect_match.matrix = TRUE,
                       expect_subclass = TRUE, ratio = 2L)
@@ -650,11 +656,13 @@ test_that("unit.id + m.order='closest' (vec_closest path with unit.id)", {
 test_that("distmat + exact + ratio=2 (stratum loop + multi-match)", {
   set.seed(12345)
   d <- scaled_euclidean_dist(treat ~ age + educ + re74 + re75, data = lalonde_sub)
-  expect_wrn(
-    m <- matchit(treat ~ age + educ + re74 + re75, data = lalonde_sub,
-                 distance = d, exact = ~ race, ratio = 2),
-    c("Fewer control units than treated units",
-      "Not all treated units will get 2 matches")
+  expect_warning(
+    expect_warning(
+      m <- matchit(treat ~ age + educ + re74 + re75, data = lalonde_sub,
+                   distance = d, exact = ~ race, ratio = 2),
+      "Fewer control units than treated units"
+    ),
+    "Not all treated units will get 2 matches"
   )
   expect_good_matchit(m, expect_distance = FALSE, expect_match.matrix = TRUE,
                       expect_subclass = TRUE, ratio = 2L)
@@ -1014,14 +1022,16 @@ test_that("distmat + reuse.max=2 + m.order='closest' (distmat_closest bounded)",
 
 test_that("exact + antiexact + caliper + ratio=2 + m.order='closest'", {
   set.seed(12345)
-  expect_wrn(
-    m <- matchit(treat ~ age + educ + race + married + nodegree + re74 + re75,
-                 data = lalonde, method = "nearest",
-                 exact = ~ race, antiexact = ~ married,
-                 caliper = 0.2, std.caliper = FALSE,
-                 ratio = 2, m.order = "closest"),
-    c("Fewer control units than treated units",
-      "Not all treated units will get 2 matches")
+  expect_warning(
+    expect_warning(
+      m <- matchit(treat ~ age + educ + race + married + nodegree + re74 + re75,
+                   data = lalonde, method = "nearest",
+                   exact = ~ race, antiexact = ~ married,
+                   caliper = 0.2, std.caliper = FALSE,
+                   ratio = 2, m.order = "closest"),
+      "Fewer control units than treated units"
+    ),
+    "Not all treated units will get 2 matches"
   )
   expect_good_matchit(m, expect_distance = TRUE, expect_match.matrix = TRUE,
                       expect_subclass = TRUE, ratio = 2L)

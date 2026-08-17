@@ -182,107 +182,111 @@ expect_matchit_snapshot <- function(m) {
 }
 
 # ===== Condition helpers =====
+#
+#Taken from cobalt's test helpers, which solve this problem already.
+#
+#Messages raised by `arg::err()`/`arg::wrn()`/`arg::msg()` are formatted by cli,
+#which capitalizes the first letter, appends a period, converts inline markup
+#(e.g., `{.arg x}` to `` `x` ``), and hard-wraps the result to the console width.
+#The wrapping means a literal `fixed = TRUE` match against a long message fails,
+#and building a regex from the message requires escaping every metacharacter that
+#cli may have introduced (`[`, `]`, `{`, `}`, `+`, `?`, `*`, `|`).
+#
+#`expect_err()`, `expect_wrn()`, and `expect_msg()` sidestep both problems: they
+#collapse all whitespace in the *observed* message and then do a literal substring
+#match. Never copy a source string from `R/` into these -- use the rendered text.
 
-#Messages from *arg* are built by cli, which hard-wraps them at the console width, so
-#`conditionMessage()` contains newlines at positions that depend on that width and on
-#the length of any interpolated values. A pattern spanning one of those breaks fails to
-#match, silently and for a reason that has nothing to do with the behavior under test.
-#This undoes the wrapping so an expected message can be written as one string and
-#compared literally.
-.collapse_cnd_message <- function(cnd) {
-  gsub("\\s+", " ", trimws(conditionMessage(cnd)))
+#Collapse runs of whitespace so matching is invariant to how cli wrapped the message.
+squish <- function(x) {
+  gsub("\\s+", " ", trimws(paste(x, collapse = " ")))
 }
 
-#Assert that `expr` signals a condition of `class`, and that each element of `pattern`
-#appears in the message of one such condition. `pattern` may name several messages, so a
-#call that warns more than once is asserted in a single expectation rather than by
-#nesting `expect_warning()`s; omitting it asserts only that the condition fired.
-#
-#Matching is literal by default: *arg* messages are full of backticks, quotes, brackets,
-#periods, and question marks, so treating them as regular expressions is almost always
-#a mistake.
-#
-#Warnings and messages are caught with `withCallingHandlers()` so that `expr` runs to
-#completion -- `tryCatch()` would unwind it, leaving anything assigned inside `expr`
-#unset. Matching conditions are muffled; use `expect_no_unexpected_warning()` when the
-#point is that nothing *else* warned.
-expect_condition_message <- function(expr, class, pattern = NULL, fixed = TRUE) {
-  matched <- list()
-  err <- NULL
-
-  handle <- function(cnd) {
-    if (inherits(cnd, class)) {
-      matched[[length(matched) + 1L]] <<- cnd
-    }
-  }
-
-  tryCatch(
-    withCallingHandlers(expr,
-                        warning = function(w) {
-                          handle(w)
-                          invokeRestart("muffleWarning")
-                        },
-                        message = function(m) {
-                          handle(m)
-                          invokeRestart("muffleMessage")
-                        }),
-    error = function(e) {
-      handle(e)
-
-      if (!inherits(e, class)) {
-        err <<- e
-      }
-    }
-  )
-
-  if (is_null(matched)) {
-    #Report an unexpected error rather than only the absence of the expected condition;
-    #otherwise a call that fails early looks identical to one that simply did not warn.
-    expect(FALSE,
-           sprintf("No condition of class %s was signaled.%s",
-                   dQuote(class, FALSE),
-                   if (is_null(err)) ""
-                   else sprintf("\n  An error was signaled instead: %s",
-                                encodeString(.collapse_cnd_message(err), quote = '"'))),
-           trace_env = rlang::caller_env())
-
+#Shared back end for the three expectations below.
+.expect_cnd_text <- function(cnd, text, what) {
+  if (is.null(cnd)) {
+    testthat::fail(sprintf("Expected %s, but none was signaled.", what))
     return(invisible(NULL))
   }
 
-  msgs <- vapply(matched, .collapse_cnd_message, character(1L))
-
-  for (p in pattern) {
-    expect(any(grepl(p, msgs, fixed = fixed)),
-           sprintf("No %s message contained the expected text.\n  expected: %s\n  actual:   %s",
-                   class, encodeString(p, quote = '"'),
-                   toString(encodeString(msgs, quote = '"'))),
-           trace_env = rlang::caller_env())
+  if (is.null(text)) {
+    testthat::succeed()
+    return(invisible(cnd))
   }
 
-  invisible(if (length(matched) == 1L) matched[[1L]] else matched)
+  msg <- squish(conditionMessage(cnd))
+
+  #Matching is case-insensitive because cli capitalizes the first letter of every
+  #message, which would otherwise make any substring starting at the beginning of
+  #the message fail. The point is to identify which message was raised, not to
+  #pin its capitalization.
+  testthat::expect_true(
+    grepl(tolower(text), tolower(msg), fixed = TRUE),
+    info = sprintf("%s message did not contain the expected text.\n  expected: %s\n  actual:   %s",
+                   what, encodeString(text, quote = "\""), encodeString(msg, quote = "\""))
+  )
+
+  invisible(cnd)
 }
 
-#Counterparts to `arg::err()`, `arg::wrn()`, and `arg::msg()`, which signal rlang
-#conditions. Matching on the rlang subclass rather than the base class also asserts
-#that the condition came from *arg* (or another rlang-based signaller) rather than from
-#base R, so a low-level failure that happens to mention the same words cannot pass for
-#a proper input check.
-expect_err <- function(expr, pattern = NULL, fixed = TRUE) {
-  expect_condition_message(expr, "rlang_error", pattern, fixed)
+#Each of the three expectations below asserts that one condition was signaled.
+#Anything else the expression prints or signals is incidental to that assertion, and
+#letting it through only buries the reporter's own output, so the other two condition
+#classes are muffled and printed output is discarded.
+#
+#`capture.output()` evaluates its argument in the calling frame, so the promise is
+#still forced there and assignments inside the expression still take effect there.
+
+#Expect an error whose message contains `text` (literal, whitespace-insensitive).
+expect_err <- function(object, text = NULL) {
+  cnd <- NULL
+
+  utils::capture.output(
+    withCallingHandlers(cnd <- tryCatch({
+      force(object)
+      NULL
+    }, error = function(e) e),
+    message = function(m) invokeRestart("muffleMessage"),
+    warning = function(w) invokeRestart("muffleWarning")))
+
+  .expect_cnd_text(cnd, text, "error")
 }
 
-expect_wrn <- function(expr, pattern = NULL, fixed = TRUE) {
-  expect_condition_message(expr, "rlang_warning", pattern, fixed)
+#Expect a warning whose message contains `text`. The expression still runs to
+#completion, so assignments inside it take effect in the calling environment.
+expect_wrn <- function(object, text = NULL) {
+  cnd <- NULL
+
+  utils::capture.output(
+    withCallingHandlers(force(object),
+                        message = function(m) invokeRestart("muffleMessage"),
+                        warning = function(w) {
+                          if (is.null(cnd)) cnd <<- w
+                          invokeRestart("muffleWarning")
+                        }))
+
+  .expect_cnd_text(cnd, text, "warning")
 }
 
-expect_msg <- function(expr, pattern = NULL, fixed = TRUE) {
-  expect_condition_message(expr, "rlang_message", pattern, fixed)
+#Expect a message whose message contains `text`. As with `expect_wrn()`, the
+#expression runs to completion.
+expect_msg <- function(object, text = NULL) {
+  cnd <- NULL
+
+  utils::capture.output(
+    withCallingHandlers(force(object),
+                        warning = function(w) invokeRestart("muffleWarning"),
+                        message = function(m) {
+                          if (is.null(cnd)) cnd <<- m
+                          invokeRestart("muffleMessage")
+                        }))
+
+  .expect_cnd_text(cnd, text, "message")
 }
 
 #Assert that `expr` emits no warning other than ones matching `known`. Some
 #specifications warn only for some samples or some solver versions, so they cannot
-#simply be wrapped in `expect_warning()`; this accepts the known warnings and
-#nothing else, so an unrelated condition still fails the test, and it keeps working
+#simply be wrapped in `expect_wrn()`; this accepts the known warnings and nothing
+#else, so an unrelated condition still fails the test, and it keeps working
 #unchanged if the known warning stops firing.
 expect_no_unexpected_warning <- function(expr, known = character()) {
   ws <- character()
@@ -303,12 +307,17 @@ expect_no_unexpected_warning <- function(expr, known = character()) {
   expect(is_null(unexpected),
          sprintf("Unexpected %s signaled: %s%s",
                  ngettext(length(unexpected), "warning was", "warnings were"),
-                 toString(dQuote(gsub("\\s+", " ", unexpected), FALSE)),
+                 toString(dQuote(squish_each(unexpected), FALSE)),
                  if (is_null(known)) ""
                  else sprintf(" (allowed: %s)", toString(dQuote(known, FALSE)))),
          trace_env = rlang::caller_env())
 
   invisible(val)
+}
+
+#`squish()` collapses a vector into one string; this collapses each element.
+squish_each <- function(x) {
+  vapply(x, squish, character(1L), USE.NAMES = FALSE)
 }
 
 # ===== Comparison helpers =====

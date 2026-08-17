@@ -162,14 +162,14 @@ matchit2subclass <- function(treat, distance, discarded,
   .cat_verbose("Subclassifying...\n", verbose = verbose)
 
   ## Setting Cut Points
-  if (rlang::is_scalar_integerish(subclass) && subclass > 1 && is.finite(subclass)) {
+  if (rlang::is_scalar_integerish(subclass) && is.finite(subclass) && subclass > 1) {
     sprobs <- seq(0, 1, length.out = subclass + 1)
   }
-  else if (is.numeric(subclass) && all(subclass >= 0 & subclass <= 1) &&
+  else if (is.numeric(subclass) &&
+           all(is.finite(subclass)) &&
+           all(subclass >= 0 & subclass <= 1) &&
            !all(subclass == 0 | subclass == 1)) {
-    sprobs <- sort(unique(subclass))
-    if (sprobs[1L] != 0) sprobs <- c(0, sprobs)
-    if (sprobs[length(sprobs)] != 1) sprobs <- c(sprobs, 1)
+    sprobs <- sort(unique(c(0, 1, subclass)))
     subclass <- length(sprobs) - 1L
   }
   else {
