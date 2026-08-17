@@ -37,14 +37,13 @@ test_that("variable ratio", {
 })
 
 test_that("exact", {
-  expect_matchit_condition(
-    matchit(f, data = lalonde, method = "optimal", exact = ~ race),
-    "warning",
+  #`expect_wrn()` lets the call finish, so `m` is available afterward and the match
+  #does not have to be run a second time under `suppressWarnings()`
+  expect_wrn(
+    m <- matchit(f, data = lalonde, method = "optimal", exact = ~ race),
     "Fewer control units than treated units in some `exact` strata; not all treated units will get a match."
   )
 
-  m <- suppressWarnings(matchit(f, data = lalonde, method = "optimal",
-                               exact = ~ race))
   expect_good_matchit(m, expect_distance = TRUE, expect_match.matrix = TRUE,
                       expect_subclass = TRUE, ratio = 1L, replace = FALSE)
   expect_matchit_snapshot(m)
@@ -74,14 +73,11 @@ test_that("full Mahalanobis", {
 })
 
 test_that("estimand='ATC'", {
-  expect_matchit_condition(
-    matchit(f, data = lalonde, method = "optimal", estimand = "ATC"),
-    "warning",
+  expect_wrn(
+    m <- matchit(f, data = lalonde, method = "optimal", estimand = "ATC"),
     "Fewer treated units than control units; not all control units will get a match."
   )
 
-  m <- suppressWarnings(matchit(f, data = lalonde, method = "optimal",
-                               estimand = "ATC"))
   expect_good_matchit(m, expect_distance = TRUE, expect_match.matrix = TRUE,
                       expect_subclass = TRUE, ratio = 1L, replace = FALSE)
   expect_matchit_snapshot(m)
@@ -137,31 +133,28 @@ test_that("matching improves balance", {
 })
 
 test_that("calipers are not supported and warn", {
-  expect_matchit_condition(
-    matchit(f, data = lalonde, method = "optimal", caliper = 0.2),
-    "warning",
+  expect_wrn(
+    m1 <- matchit(f, data = lalonde, method = "optimal", caliper = 0.2),
     'The argument `caliper` is not used with `method = "optimal"` and will be ignored.'
   )
 
   #Ignoring the caliper must give the same answer as not supplying one
   m0 <- matchit(f, data = lalonde, method = "optimal")
-  m1 <- suppressWarnings(matchit(f, data = lalonde, method = "optimal",
-                                 caliper = 0.2))
   expect_identical(m0$match.matrix, m1$match.matrix)
 })
 
 test_that("mahvars with a full-distance `distance` is an error", {
-  expect_error(matchit(fm, data = lalonde, method = "optimal",
-                       distance = "mahalanobis",
-                       mahvars = ~ age + educ),
-               "cannot be used with")
+  expect_err(matchit(fm, data = lalonde, method = "optimal",
+                     distance = "mahalanobis",
+                     mahvars = ~ age + educ),
+             "cannot be used with")
 })
 
 test_that("missing values in covariates are an error", {
   lalonde_na <- inject_missingness(lalonde, "educ")
 
-  expect_error(matchit(f, data = lalonde_na, method = "optimal"),
-               "Missing and non-finite values are not allowed in the covariates")
+  expect_err(matchit(f, data = lalonde_na, method = "optimal"),
+             "Missing and non-finite values are not allowed in the covariates")
 })
 
 test_that("antiexact fails informatively when optmatch finds no match", {
@@ -169,10 +162,11 @@ test_that("antiexact fails informatively when optmatch finds no match", {
   #specification and returns all NA. MatchIt now catches that and errors clearly
   #rather than carrying the empty result into `subclass2mmC()`, which used to fail
   #with "negative length vectors are not allowed".
-  expect_error(
-    suppressWarnings(matchit(f, data = lalonde, method = "optimal",
-                             antiexact = ~ married)),
-    .w("No matches were found.")
+  #`expect_err()` muffles the warnings optmatch emits on the way, so they need no
+  #separate `suppressWarnings()`
+  expect_err(
+    matchit(f, data = lalonde, method = "optimal", antiexact = ~ married),
+    "No matches were found."
   )
 
   #The same antiexact specification succeeds with method = "full", so the

@@ -181,12 +181,103 @@ expect_matchit_snapshot <- function(m) {
   invisible(m)
 }
 
-#Use regex to make strings invariant to white spaces
-.w <- function(x) {
-  gsub(" ", "(\\s+)", x, fixed = TRUE)
+# ===== Condition helpers =====
+
+#Messages from *arg* are built by cli, which hard-wraps them at the console width, so
+#`conditionMessage()` contains newlines at positions that depend on that width and on
+#the length of any interpolated values. A pattern spanning one of those breaks fails to
+#match, silently and for a reason that has nothing to do with the behavior under test.
+#This undoes the wrapping so an expected message can be written as one string and
+#compared literally.
+.collapse_cnd_message <- function(cnd) {
+  gsub("\\s+", " ", trimws(conditionMessage(cnd)))
 }
 
-# ===== Condition helpers =====
+#Assert that `expr` signals a condition of `class`, and that each element of `pattern`
+#appears in the message of one such condition. `pattern` may name several messages, so a
+#call that warns more than once is asserted in a single expectation rather than by
+#nesting `expect_warning()`s; omitting it asserts only that the condition fired.
+#
+#Matching is literal by default: *arg* messages are full of backticks, quotes, brackets,
+#periods, and question marks, so treating them as regular expressions is almost always
+#a mistake.
+#
+#Warnings and messages are caught with `withCallingHandlers()` so that `expr` runs to
+#completion -- `tryCatch()` would unwind it, leaving anything assigned inside `expr`
+#unset. Matching conditions are muffled; use `expect_no_unexpected_warning()` when the
+#point is that nothing *else* warned.
+expect_condition_message <- function(expr, class, pattern = NULL, fixed = TRUE) {
+  matched <- list()
+  err <- NULL
+
+  handle <- function(cnd) {
+    if (inherits(cnd, class)) {
+      matched[[length(matched) + 1L]] <<- cnd
+    }
+  }
+
+  tryCatch(
+    withCallingHandlers(expr,
+                        warning = function(w) {
+                          handle(w)
+                          invokeRestart("muffleWarning")
+                        },
+                        message = function(m) {
+                          handle(m)
+                          invokeRestart("muffleMessage")
+                        }),
+    error = function(e) {
+      handle(e)
+
+      if (!inherits(e, class)) {
+        err <<- e
+      }
+    }
+  )
+
+  if (is_null(matched)) {
+    #Report an unexpected error rather than only the absence of the expected condition;
+    #otherwise a call that fails early looks identical to one that simply did not warn.
+    expect(FALSE,
+           sprintf("No condition of class %s was signaled.%s",
+                   dQuote(class, FALSE),
+                   if (is_null(err)) ""
+                   else sprintf("\n  An error was signaled instead: %s",
+                                encodeString(.collapse_cnd_message(err), quote = '"'))),
+           trace_env = rlang::caller_env())
+
+    return(invisible(NULL))
+  }
+
+  msgs <- vapply(matched, .collapse_cnd_message, character(1L))
+
+  for (p in pattern) {
+    expect(any(grepl(p, msgs, fixed = fixed)),
+           sprintf("No %s message contained the expected text.\n  expected: %s\n  actual:   %s",
+                   class, encodeString(p, quote = '"'),
+                   toString(encodeString(msgs, quote = '"'))),
+           trace_env = rlang::caller_env())
+  }
+
+  invisible(if (length(matched) == 1L) matched[[1L]] else matched)
+}
+
+#Counterparts to `arg::err()`, `arg::wrn()`, and `arg::msg()`, which signal rlang
+#conditions. Matching on the rlang subclass rather than the base class also asserts
+#that the condition came from *arg* (or another rlang-based signaller) rather than from
+#base R, so a low-level failure that happens to mention the same words cannot pass for
+#a proper input check.
+expect_err <- function(expr, pattern = NULL, fixed = TRUE) {
+  expect_condition_message(expr, "rlang_error", pattern, fixed)
+}
+
+expect_wrn <- function(expr, pattern = NULL, fixed = TRUE) {
+  expect_condition_message(expr, "rlang_warning", pattern, fixed)
+}
+
+expect_msg <- function(expr, pattern = NULL, fixed = TRUE) {
+  expect_condition_message(expr, "rlang_message", pattern, fixed)
+}
 
 #Assert that `expr` emits no warning other than ones matching `known`. Some
 #specifications warn only for some samples or some solver versions, so they cannot
@@ -218,39 +309,6 @@ expect_no_unexpected_warning <- function(expr, known = character()) {
          trace_env = rlang::caller_env())
 
   invisible(val)
-}
-
-#`matchit()` messages are built by cli, which hard-wraps them, so a regex spanning
-#a wrap point silently fails to match. Use this on any expected message long enough
-#to wrap. `expect_error(m, .w("..."))` is equivalent for short messages.
-expect_matchit_condition <- function(expr, class = c("warning", "error"), pattern) {
-  class <- match.arg(class)
-
-  cnd <- tryCatch({
-    withCallingHandlers(expr,
-                        warning = function(w) {
-                          if (class == "warning") {
-                            stop(w)
-                          }
-                          invokeRestart("muffleWarning")
-                        })
-    NULL
-  }, condition = function(c) c)
-
-  expect(is_not_null(cnd),
-         sprintf("No %s was signaled.", class),
-         trace_env = rlang::caller_env())
-
-  if (is_null(cnd)) {
-    return(invisible(NULL))
-  }
-
-  #cli inserts newlines at its wrap width; collapse them before matching
-  msg <- gsub("\\s+", " ", conditionMessage(cnd))
-
-  expect_match(msg, pattern, fixed = TRUE)
-
-  invisible(cnd)
 }
 
 # ===== Comparison helpers =====

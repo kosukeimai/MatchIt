@@ -57,9 +57,8 @@ test_that("distance = 'mahalanobis' is accepted but produces no distance", {
 })
 
 test_that("unused arguments warn and are ignored", {
-  expect_matchit_condition(
+  expect_wrn(
     matchit(f, data = lalonde, method = NULL, ratio = 2),
-    "warning",
     "The argument `ratio` is not used with `method = NULL` and will be ignored."
   )
 })

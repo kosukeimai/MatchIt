@@ -116,27 +116,25 @@ test_that("matching improves balance", {
 })
 
 test_that("covariate calipers are an error", {
-  expect_error(matchit(f, data = lalonde, method = "quick",
-                       caliper = c(age = 2), std.caliper = FALSE),
-               .w('With `method = "quick"`, calipers cannot be placed on covariates.'))
+  expect_err(matchit(f, data = lalonde, method = "quick",
+                     caliper = c(age = 2), std.caliper = FALSE),
+             'With `method = "quick"`, calipers cannot be placed on covariates.')
 })
 
 test_that("mahvars plus a caliper is an error", {
-  expect_error(matchit(f, data = lalonde, method = "quick",
-                       mahvars = ~ age, caliper = 0.2),
-               "a caliper can only be used when")
+  expect_err(matchit(f, data = lalonde, method = "quick",
+                     mahvars = ~ age, caliper = 0.2),
+             "a caliper can only be used when")
 })
 
 test_that("unused arguments warn and are ignored", {
-  expect_matchit_condition(
+  expect_wrn(
     matchit(f, data = lalonde, method = "quick", ratio = 2),
-    "warning",
     'The argument `ratio` is not used with `method = "quick"` and will be ignored.'
   )
 
-  expect_matchit_condition(
+  expect_wrn(
     matchit(f, data = lalonde, method = "quick", antiexact = ~ married),
-    "warning",
     'The argument `antiexact` is not used with `method = "quick"` and will be ignored.'
   )
 })
@@ -144,8 +142,8 @@ test_that("unused arguments warn and are ignored", {
 test_that("missing values in covariates are an error", {
   lalonde_na <- inject_missingness(lalonde, "educ")
 
-  expect_error(matchit(f, data = lalonde_na, method = "quick"),
-               "Missing and non-finite values are not allowed in the covariates")
+  expect_err(matchit(f, data = lalonde_na, method = "quick"),
+             "Missing and non-finite values are not allowed in the covariates")
 })
 
 test_that("no unexpected conditions in the baseline call", {

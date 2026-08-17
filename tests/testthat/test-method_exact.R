@@ -144,8 +144,8 @@ test_that("matching improves balance", {
 })
 
 test_that("no covariates is an error", {
-  expect_error(matchit(treat ~ 1, data = lalonde, method = "exact"),
-               .w("Covariates must be specified in the input formula to use exact matching."))
+  expect_err(matchit(treat ~ 1, data = lalonde, method = "exact"),
+             "Covariates must be specified in the input formula to use exact matching.")
 })
 
 test_that("no shared strata is an error", {
@@ -154,27 +154,29 @@ test_that("no shared strata is an error", {
   lalonde_uniq <- lalonde
   lalonde_uniq$uniq <- seq_len(nrow(lalonde))
 
-  expect_error(matchit(treat ~ uniq, data = lalonde_uniq, method = "exact"),
-               .w("No exact matches were found."))
+  expect_err(matchit(treat ~ uniq, data = lalonde_uniq, method = "exact"),
+             "No exact matches were found.")
 })
 
 test_that("unused arguments warn and are ignored", {
-  expect_matchit_condition(
+  expect_wrn(
     matchit(f3, data = lalonde, method = "exact", caliper = 0.1),
-    "warning",
     'The argument `caliper` is not used with `method = "exact"` and will be ignored.'
   )
 
-  expect_matchit_condition(
+  expect_wrn(
     matchit(f3, data = lalonde, method = "exact", replace = TRUE),
-    "warning",
     'The argument `replace` is not used with `method = "exact"` and will be ignored.'
   )
 
-  #Ignoring them must not change the result
+  #Supplying both produces one pluralized warning rather than two
+  expect_wrn(
+    m1 <- matchit(f3, data = lalonde, method = "exact",
+                  caliper = 0.1, replace = TRUE),
+    'The arguments `caliper` and `replace` are not used with `method = "exact"` and will be ignored.'
+  )
+
   m0 <- matchit(f3, data = lalonde, method = "exact")
-  m1 <- suppressWarnings(matchit(f3, data = lalonde, method = "exact",
-                                 caliper = 0.1, replace = TRUE))
   expect_identical(m0$subclass, m1$subclass)
   expect_identical(m0$weights, m1$weights)
 })
@@ -182,8 +184,8 @@ test_that("unused arguments warn and are ignored", {
 test_that("missing values in covariates are an error", {
   lalonde_na <- inject_missingness(lalonde, "educ")
 
-  expect_error(matchit(f3, data = lalonde_na, method = "exact"),
-               "Missing and non-finite values are not allowed in the covariates")
+  expect_err(matchit(f3, data = lalonde_na, method = "exact"),
+             "Missing and non-finite values are not allowed in the covariates")
 })
 
 test_that("no unexpected conditions in the baseline call", {

@@ -130,9 +130,9 @@ test_that("mahvars pairs units after selection", {
 })
 
 test_that("mahvars with a non-integer ratio is an error", {
-  expect_error(matchit(f, data = lalonde, method = "cardinality",
-                       mahvars = ~ age, ratio = NA),
-               "can only be used with")
+  expect_err(matchit(f, data = lalonde, method = "cardinality",
+                     mahvars = ~ age, ratio = NA),
+             "can only be used with")
 })
 
 test_that("solver = 'glpk' agrees with highs", {
@@ -151,9 +151,9 @@ test_that("solver = 'glpk' agrees with highs", {
 test_that("solver = 'symphony' is no longer available", {
   #SYMPHONY was removed because it returned a different solution on every call and
   #did not respond to set.seed().
-  expect_error(matchit(f, data = lalonde, method = "cardinality",
-                       solver = "symphony"),
-               .w('`solver` should be one of "highs", "glpk", or "gurobi".'))
+  expect_err(matchit(f, data = lalonde, method = "cardinality",
+                     solver = "symphony"),
+             '`solver` should be one of "highs", "glpk", or "gurobi".')
 })
 
 test_that("matching improves balance", {
@@ -162,15 +162,14 @@ test_that("matching improves balance", {
 })
 
 test_that("tols of the wrong length is an error", {
-  expect_error(matchit(f, data = lalonde, method = "cardinality",
-                       tols = c(0.1, 0.2)),
-               .w("`tols` must have length equal to 1 or the number of covariates."))
+  expect_err(matchit(f, data = lalonde, method = "cardinality",
+                     tols = c(0.1, 0.2)),
+             "`tols` must have length equal to 1 or the number of covariates.")
 })
 
 test_that("unused arguments warn and are ignored", {
-  expect_matchit_condition(
+  expect_wrn(
     matchit(f, data = lalonde, method = "cardinality", caliper = 0.1),
-    "warning",
     'The argument `caliper` is not used with `method = "cardinality"` and will be ignored.'
   )
 })
@@ -184,9 +183,9 @@ test_that("non-constant s.weights currently make the problem unsolvable", {
   expect_no_error(matchit(f, data = lalonde, method = "cardinality",
                           s.weights = rep(2, nrow(lalonde))))
 
-  expect_error(matchit(f, data = lalonde, method = "cardinality",
-                       s.weights = lalonde_sw, time = 2),
-               "failed to find an optimal solution")
+  expect_err(matchit(f, data = lalonde, method = "cardinality",
+                     s.weights = lalonde_sw, time = 2),
+             "failed to find an optimal solution")
 })
 
 test_that("no unexpected conditions in the baseline call", {

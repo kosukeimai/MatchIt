@@ -120,14 +120,11 @@ test_that("all units are retained without discard", {
 })
 
 test_that("requesting more subclasses than the PS supports warns", {
-  expect_matchit_condition(
-    matchit(f, data = lalonde, method = "subclass", subclass = 100),
-    "warning",
+  expect_wrn(
+    m <- matchit(f, data = lalonde, method = "subclass", subclass = 100),
     "Due to discreteness in the distance measure, fewer subclasses were generated than were requested."
   )
 
-  m <- suppressWarnings(matchit(f, data = lalonde, method = "subclass",
-                                subclass = 100))
   expect_lt(nlevels(m$subclass), 100L)
   expect_matchit_snapshot(m)
 })
@@ -143,8 +140,8 @@ test_that("subclass must ask for more than one subclass", {
   bad <- list(1, 0, c(0, 1), 2.5, -1, NA, "a")
 
   for (s in bad) {
-    expect_error(matchit(f, data = lalonde, method = "subclass", subclass = s),
-                 .w("`subclass` must either be the number of desired subclasses"))
+    expect_err(matchit(f, data = lalonde, method = "subclass", subclass = s),
+               "`subclass` must either be the number of desired subclasses")
   }
 })
 
@@ -172,26 +169,24 @@ test_that("duplicated quantiles are collapsed", {
 })
 
 test_that("distance = 'mahalanobis' is an error", {
-  expect_error(matchit(f, data = lalonde, method = "subclass",
-                       distance = "mahalanobis"),
-               .w('`distance` cannot be "mahalanobis" with `method = "subclass"`.'))
+  expect_err(matchit(f, data = lalonde, method = "subclass",
+                     distance = "mahalanobis"),
+             '`distance` cannot be "mahalanobis" with `method = "subclass"`.')
 })
 
 test_that("sub.by is defunct", {
-  expect_error(matchit(f, data = lalonde, method = "subclass", sub.by = "treat"),
-               .w("`sub.by` is defunct and has been replaced with `estimand`."))
+  expect_err(matchit(f, data = lalonde, method = "subclass", sub.by = "treat"),
+             "`sub.by` is defunct and has been replaced with `estimand`.")
 })
 
 test_that("unused arguments warn and are ignored", {
-  expect_matchit_condition(
+  expect_wrn(
     matchit(f, data = lalonde, method = "subclass", caliper = 0.1),
-    "warning",
     'The argument `caliper` is not used with `method = "subclass"` and will be ignored.'
   )
 
-  expect_matchit_condition(
+  expect_wrn(
     matchit(f, data = lalonde, method = "subclass", exact = ~ race),
-    "warning",
     'The argument `exact` is not used with `method = "subclass"` and will be ignored.'
   )
 })

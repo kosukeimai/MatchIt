@@ -187,6 +187,6 @@ test_that("s.weights can be given as a formula or a name", {
 })
 
 test_that("mismatched length is an error", {
-  expect_error(add_s.weights(fit("exact"), lalonde_sw[-1L]),
-               .w("`s.weights` must be the same length as the treatment vector."))
+  expect_err(add_s.weights(fit("exact"), lalonde_sw[-1L]),
+             "`s.weights` must be the same length as the treatment vector.")
 })
