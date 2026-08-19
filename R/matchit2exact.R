@@ -105,8 +105,9 @@ matchit2exact <- function(treat, covs, data, s.weights = NULL, estimand = "ATT",
     arg::err("no exact matches were found")
   }
 
-  psclass <- setNames(factor(match(xx, cc), nmax = length(cc)),
-                      names(treat))
+  psclass <- match(xx, cc) |>
+    factor(nmax = length(cc)) |>
+    setNames(names(treat))
 
   .cat_verbose("Calculating matching weights... ", verbose = verbose)
 

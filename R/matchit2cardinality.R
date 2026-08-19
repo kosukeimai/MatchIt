@@ -296,7 +296,8 @@ matchit2cardinality <- function(treat, data, discarded, formula,
   X <- get_covs_matrix(formula, data = data)
 
   if (is_not_null(exact)) {
-    ex <- exactify(model.frame(exact, data = data), nam = lab, sep = ", ", include_vars = TRUE)
+    ex <- model.frame(exact, data = data) |>
+      exactify(nam = lab, sep = ", ", include_vars = TRUE)
 
     cc <- Reduce("intersect", lapply(tvals, function(t) unclass(ex)[treat == t]))
 
@@ -413,8 +414,8 @@ matchit2cardinality <- function(treat, data, discarded, formula,
     levels(psclass) <- seq_len(nlevels(psclass))
     names(psclass) <- names(treat)
 
-    mm <- nummm2charmm(subclass2mmC(psclass, treat, focal = switch(estimand, "ATC" = 0, 1)),
-                       treat)
+    mm <- subclass2mmC(psclass, treat, focal = switch(estimand, "ATC" = 0, 1)) |>
+      nummm2charmm(treat)
   }
   else {
     mm <- psclass <- NULL

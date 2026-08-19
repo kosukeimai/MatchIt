@@ -376,7 +376,8 @@ cem_matchit <- function(treat, X, cutpoints = "sturges", grouping = list(), ...)
 
   #Process cutpoints
   if (!is.list(cutpoints)) {
-    cutpoints <- setNames(rep.int(list(cutpoints), sum(is.numeric.cov)), names(X)[is.numeric.cov])
+    cutpoints <- setNames(rep.int(list(cutpoints), sum(is.numeric.cov)),
+                          names(X)[is.numeric.cov])
   }
 
   if (is_null(names(cutpoints))) {
@@ -460,11 +461,11 @@ cem_matchit <- function(treat, X, cutpoints = "sturges", grouping = list(), ...)
         bins <- quantile(X[[i]], probs = seq(1 / q, 1 - 1 / q, by = 1 / q), names = FALSE) #Outer boundaries will be added later
       }
       else {
-        bins <- arg::match_arg(bins, c("sturges", "fd", "scott"))
-        bins <- switch(bins,
-                       sturges = nclass.Sturges(X[[i]]),
-                       fd = nclass.FD(X[[i]]),
-                       scott = nclass.scott(X[[i]]))
+        bins <- bins |>
+          arg::match_arg(c("sturges", "fd", "scott")) |>
+          switch(sturges = nclass.Sturges(X[[i]]),
+                 fd = nclass.FD(X[[i]]),
+                 scott = nclass.scott(X[[i]]))
         #Breaks is now a single number
       }
     }
@@ -490,8 +491,9 @@ cem_matchit <- function(treat, X, cutpoints = "sturges", grouping = list(), ...)
     arg::err("no units were matched. Try coarsening the variables further or decrease the number of variables to match on")
   }
 
-  setNames(factor(match(ex, cc), nmax = length(cc)),
-           names(treat))
+  match(ex, cc) |>
+    factor(nmax = length(cc)) |>
+    setNames(names(treat))
 }
 
 do_k2k <- function(treat, X, subclass, k2k.method = "mahalanobis", mpower = 2, s.weights = NULL,
