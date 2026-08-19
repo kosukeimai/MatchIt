@@ -133,7 +133,7 @@ binarize <- function(variable, zero = NULL, one = NULL) {
   setNames(as.integer(variable.numeric != zero), names(variable))
 }
 
-is_null <- function(x) {identical(length(x), 0L)}
+is_null <- function(x) {isTRUE(length(x) == 0L)}
 is_not_null <- function(x) !is_null(x)
 `%or%` <- function(x, y) {
   # like `%||%` but works for non-NULL length 0 objects

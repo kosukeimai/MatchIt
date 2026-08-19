@@ -18,8 +18,11 @@
 
 \item{s.weights}{the variable containing sampling weights to be incorporated
 into the optimization. The balance constraints refer to the product of the
-sampling weights and the matching weights, and the sum of the product of the
-sampling and matching weights will be maximized.}
+sampling weights and the matching weights. Sampling weights
+can only be used with profile matching (i.e., \code{estimand = "ATE"} or \code{ratio = NA}),
+which matches each treatment group to a fixed target; they cannot be used with
+cardinality matching, which matches the treatment groups to each other. See
+Details.}
 
 \item{ratio}{the desired ratio of control to treated units. Can be set to
 \code{NA} to maximize sample size without concern for this ratio. See
@@ -45,9 +48,7 @@ when \code{estimand = "ATT"}, and the standard deviation of the control
 group when \code{estimand = "ATC"} (the same as used in
 \code{\link[=summary.matchit]{summary.matchit()}}).}
 \item{\code{solver}}{ the name of solver to use to
-solve the optimization problem. Available options include \code{"highs"}, \code{"glpk"}, and \code{"gurobi"} for HiGHS (implemented in the \emph{highs} package), GLPK (implemented in the
-\emph{Rglpk} package), and Gurobi (implemented in the \emph{gurobi} package),
-respectively. The differences between them are in speed and solving ability.
+solve the optimization problem. Available options include \code{"highs"}for HiGHS (implemented in the \emph{highs} package), \code{"glpk"} for GLPK (implemented in the \emph{Rglpk} package), and \code{"gurobi"} for Gurobi (implemented in the \emph{gurobi} package). The differences between them are in speed and solving ability.
 HiGHS (the default) and GLPK are the easiest to install, but Gurobi is recommended as
 it consistently outperforms other solvers and can find solutions even when
 others can't, and in less time. Gurobi is proprietary but can be used with a
@@ -66,7 +67,7 @@ Rather than forming pairs, cardinality matching selects the largest subset
 of units that satisfies user-supplied balance constraints on mean
 differences. One of several available optimization programs can be used to
 solve the mixed integer program. The default is the HiGHS library as
-implemented in the \emph{highs} package, both of which are free, but performance can be
+implemented in the \emph{highs} package, which is free, but performance can be
 improved using Gurobi and the \emph{gurobi} package, for which there is a
 free academic license.
 
@@ -120,6 +121,13 @@ size of each sample independently or to a positive integer to ensure that
 the ratio of matched control units to matched treated treats is fixed,
 mimicking k:1 matching. Unlike cardinality matching, profile matching
 retains the requested estimand if a solution is found.
+
+This difference determines which of the two can be used with sampling weights.
+Sampling weights identify a population to generalize to, which presupposes a fixed
+target; profile matching has one, so \code{s.weights} is supported and the balance
+constraints then refer to the sampling-weighted covariate means of each group. In
+cardinality matching the target is whichever units happen to be selected, so it
+has no fixed population to generalize to, and supplying \code{s.weights} is an error.
 
 Neither method involves creating pairs in the matched set, but it is possible to perform an additional round of pairing within the matched sample after cardinality matching or profile matching for the ATE with a fixed whole number sample size ratio by supplying the desired pairing variables to \code{mahvars}. Doing so will trigger \link[=method_optimal]{optimal matching} using \code{optmatch::pairmatch()} on the Mahalanobis distance computed using the variables supplied to \code{mahvars}. The balance or composition of the matched sample will not change, but additional precision and robustness can be gained by forming the pairs.
 

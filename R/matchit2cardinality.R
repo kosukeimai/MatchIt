@@ -9,7 +9,7 @@
 #' of units that satisfies user-supplied balance constraints on mean
 #' differences. One of several available optimization programs can be used to
 #' solve the mixed integer program. The default is the HiGHS library as
-#' implemented in the *highs* package, both of which are free, but performance can be
+#' implemented in the *highs* package, which is free, but performance can be
 #' improved using Gurobi and the *gurobi* package, for which there is a
 #' free academic license.
 #'
@@ -40,8 +40,11 @@
 #' @param mahvars which variables should be used for pairing after subset selection. Can only be set when `ratio` is a whole number. See Details.
 #' @param s.weights the variable containing sampling weights to be incorporated
 #' into the optimization. The balance constraints refer to the product of the
-#' sampling weights and the matching weights, and the sum of the product of the
-#' sampling and matching weights will be maximized.
+#' sampling weights and the matching weights. Sampling weights
+#' can only be used with profile matching (i.e., `estimand = "ATE"` or `ratio = NA`),
+#' which matches each treatment group to a fixed target; they cannot be used with
+#' cardinality matching, which matches the treatment groups to each other. See
+#' Details.
 #' @param ratio the desired ratio of control to treated units. Can be set to
 #' `NA` to maximize sample size without concern for this ratio. See
 #' Details.
@@ -64,9 +67,7 @@
 #' group when `estimand = "ATC"` (the same as used in
 #' [summary.matchit()]).}
 #' \item{`solver`}{ the name of solver to use to
-#' solve the optimization problem. Available options include `"highs"`, `"glpk"`, and `"gurobi"` for HiGHS (implemented in the *highs* package), GLPK (implemented in the
-#' *Rglpk* package), and Gurobi (implemented in the *gurobi* package),
-#' respectively. The differences between them are in speed and solving ability.
+#' solve the optimization problem. Available options include `"highs"`for HiGHS (implemented in the *highs* package), `"glpk"` for GLPK (implemented in the *Rglpk* package), and `"gurobi"` for Gurobi (implemented in the *gurobi* package). The differences between them are in speed and solving ability.
 #' HiGHS (the default) and GLPK are the easiest to install, but Gurobi is recommended as
 #' it consistently outperforms other solvers and can find solutions even when
 #' others can't, and in less time. Gurobi is proprietary but can be used with a
@@ -119,6 +120,13 @@
 #' the ratio of matched control units to matched treated treats is fixed,
 #' mimicking k:1 matching. Unlike cardinality matching, profile matching
 #' retains the requested estimand if a solution is found.
+#'
+#' This difference determines which of the two can be used with sampling weights.
+#' Sampling weights identify a population to generalize to, which presupposes a fixed
+#' target; profile matching has one, so `s.weights` is supported and the balance
+#' constraints then refer to the sampling-weighted covariate means of each group. In
+#' cardinality matching the target is whichever units happen to be selected, so it
+#' has no fixed population to generalize to, and supplying `s.weights` is an error.
 #'
 #' Neither method involves creating pairs in the matched set, but it is possible to perform an additional round of pairing within the matched sample after cardinality matching or profile matching for the ATE with a fixed whole number sample size ratio by supplying the desired pairing variables to `mahvars`. Doing so will trigger [optimal matching][method_optimal] using `optmatch::pairmatch()` on the Mahalanobis distance computed using the variables supplied to `mahvars`. The balance or composition of the matched sample will not change, but additional precision and robustness can be gained by forming the pairs.
 #'
@@ -437,7 +445,19 @@ cardinality_matchit <- function(treat, X, estimand = "ATT", tols = .05, s.weight
   if (is_null(tvals)) tvals <- if (is.factor(treat)) levels(treat) else sort(unique(treat))
   nt <- length(tvals)
 
+  #Select match type
+  match_type <- {
+    if (estimand == "ATE") "profile_ate"
+    else if (is.finite(ratio)) "cardinality"
+    else "profile_att"
+  }
+
   #Check inputs
+  if (match_type == "cardinality" && is_not_null(s.weights) &&
+      !all_equal_to(s.weights, s.weights[1L])) {
+    arg::err("{.arg s.weights} cannot be used with cardinality matching because it matches the treatment groups to each other rather than to a fixed target population. Use {.code estimand = {.str ATE}} or {.code ratio = NA} for profile matching, which does match to a fixed target. See {.topic MatchIt::method_cardinality} for details")
+  }
+
   s.weights <- {
     if (is_null(s.weights)) rep.int(1, n)
     else .make_sum_to_n(s.weights, treat)
@@ -455,32 +475,36 @@ cardinality_matchit <- function(treat, X, estimand = "ATT", tols = .05, s.weight
   rlang::check_installed(switch(solver, glpk = "Rglpk", gurobi = "gurobi",
                                 highs = "highs"))
 
-  #Select match type
-  match_type <- {
-    if (estimand == "ATE") "profile_ate"
-    else if (is.finite(ratio)) "cardinality"
-    else "profile_att"
-  }
-
   #Set objective and constraints
   if (match_type == "profile_ate") {
     #Find largest sample that matches full sample
 
-    #Objective function: total sample size
+    #A finite `ratio` constrains the matched group sizes. That constraint is on the
+    #*unweighted* counts, which needs one extra integer slack; see below.
+    use.count <- nt == 2L && is.finite(ratio)
+
+    #Objective function: total unweighted sample size. The sampling weights belong in
+    #the balance constraints, where they weight the covariate means, and nowhere else:
+    #putting them in the objective or in the size constraints turns those into
+    #real-valued conditions on subset sums that the solver cannot resolve except by
+    #exhaustive search. See _dev/method-tests-findings.md.
     O <- c(
-      s.weights, #weight for each unit
-      rep.int(0, nt)       #slack coefs for each sample size (n1, n0)
+      rep.int(1, n),        #one per unit
+      rep.int(0, nt),       #slack coefs for each group's weighted size
+      if (use.count) 0      #slack coef for the focal group's matched count
     )
 
     #Constraint matrix
     target.means <- apply(X, 2L, wm, w = s.weights)
 
-    C <- matrix(0, nrow = nt * (1 + 2 * ncol(X)), ncol = length(O))
+    C <- matrix(0, nrow = nt * (1 + 2 * ncol(X)) + 2L * use.count,
+                ncol = length(O))
     Crhs <- rep.int(0, nrow(C))
     Cdir <- rep.int("==", nrow(C))
 
     for (i in seq_len(nt)) {
-      #Num in group i = ni
+      #Weighted size of group i = ni. This is a definition, not a constraint linking
+      #the groups, so it stays in weighted units.
       C[i, seq_len(n)] <- s.weights * (treat == tvals[i])
       C[i, n + i] <- -1
 
@@ -497,23 +521,40 @@ cardinality_matchit <- function(treat, X, estimand = "ATT", tols = .05, s.weight
       Cdir[r2] <- ">"
     }
 
-    #If ratio != 0, constrain n0 to be ratio*n1
-    if (nt == 2L && is.finite(ratio)) {
-      C_ratio <- c(rep.int(0, n), rep.int(-1, nt))
-      C_ratio[n + which(tvals == focal)] <- ratio
-      C <- rbind(C, C_ratio)
-      Crhs <- c(Crhs, 0)
-      Cdir <- c(Cdir, "==")
+    #If ratio is finite, constrain the unweighted size of the non-focal group to be
+    #ratio times that of the focal group. Counts rather than weighted sizes: equating
+    #weighted sizes across groups is an exact equality between two real-valued subset
+    #sums, which is what made this branch unsolvable with sampling weights.
+    if (use.count) {
+      k <- n + nt + 1L
+
+      for (i in seq_len(nt)) {
+        r <- nt * (1 + 2 * ncol(X)) + i
+        C[r, seq_len(n)] <- treat == tvals[i]
+        C[r, k] <- if (tvals[i] == focal) -1 else -ratio
+      }
     }
 
     #Coef types
-    types <- c(rep.int("B", n), #Matching weights
-               rep.int("C", nt)) #Slack coefs for matched group size
+    types <- c(rep.int("B", n),      #Matching weights
+               rep.int("C", nt),     #Slack coefs for matched group weighted size
+               if (use.count) "I")   #Slack coef for matched group count
+
+    #Each group's weighted size cannot exceed its total weight, which after rescaling
+    #is its size. Bounding it rather than leaving it free tightens the relaxation the
+    #solver starts from; without this the branch-and-bound tree is far larger.
+    group.n <- vapply(tvals, function(t) sum(treat == t), numeric(1L))
 
     lower.bound <- c(rep.int(0, n),
-                     rep.int(1, nt))
+                     rep.int(1, nt),
+                     if (use.count) 0)
     upper.bound <- c(rep.int(1, n),
-                     rep.int(Inf, nt))
+                     group.n,
+                     if (use.count) {
+                       #The focal count cannot exceed the focal group, nor can
+                       #`ratio` times it exceed the non-focal group
+                       min(group.n / ifelse(tvals == focal, 1, ratio))
+                     })
   }
   else if (match_type == "profile_att") {
     #Find largest control group that matches treated group
@@ -529,7 +570,8 @@ cardinality_matchit <- function(treat, X, estimand = "ATT", tols = .05, s.weight
     )
 
     #Constraint matrix
-    target.means <- apply(X[treat == focal, , drop = FALSE], 2, wm, w = s.weights[treat == focal])
+    target.means <- apply(X[treat == focal, , drop = FALSE], 2L, wm,
+                          w = s.weights[treat == focal])
     #One row per constraint, one column per coef
 
     C <- matrix(0, nrow = (nt - 1) * (1 + 2 * ncol(X)), ncol = length(O))
@@ -569,8 +611,8 @@ cardinality_matchit <- function(treat, X, estimand = "ATT", tols = .05, s.weight
 
     #Objective function: total sample size
     O <- c(
-      s.weights, #weight for each unit
-      0          #coef for treated sample size (n1)
+      rep.int(1, n), #weight for each unit
+      0              #coef for treated sample size (n1)
     )
 
     #Constraint matrix
@@ -582,7 +624,7 @@ cardinality_matchit <- function(treat, X, estimand = "ATT", tols = .05, s.weight
 
     for (i in seq_len(nt)) {
       #Num in group i = ni
-      C[i, seq_len(n)] <- s.weights * (treat == tvals[i])
+      C[i, seq_len(n)] <- 1 * (treat == tvals[i])
       C[i, n + 1L] <- if (tvals[i] == focal) -1 else -ratio
     }
 
@@ -591,12 +633,12 @@ cardinality_matchit <- function(treat, X, estimand = "ATT", tols = .05, s.weight
       if (t_comb[2L] == focal) t_comb <- rev(t_comb)
 
       r1 <- nt + (j - 1) * 2 * ncol(X) + seq_len(ncol(X))
-      C[r1, seq_len(n)] <- t(((treat == t_comb[1L]) - (treat == t_comb[2L]) / ratio) * s.weights * X)
+      C[r1, seq_len(n)] <- t(((treat == t_comb[1L]) - (treat == t_comb[2L]) / ratio) * X)
       C[r1, n + 1L] <- -tols
       Cdir[r1] <- "<"
 
       r2 <- r1 + ncol(X)
-      C[r2, seq_len(n)] <- t(((treat == t_comb[1L]) - (treat == t_comb[2L]) / ratio) * s.weights * X)
+      C[r2, seq_len(n)] <- t(((treat == t_comb[1L]) - (treat == t_comb[2L]) / ratio) * X)
       C[r2, n + 1L] <- tols
       Cdir[r2] <- ">"
     }

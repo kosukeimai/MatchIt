@@ -174,18 +174,66 @@ test_that("unused arguments warn and are ignored", {
   )
 })
 
-test_that("non-constant s.weights currently make the problem unsolvable", {
-  #KNOWN BUG/PERFORMANCE DEFECT. With constant `s.weights` the problem solves in
-  #well under a second; with any non-constant `s.weights` -- even values as mild as
-  #runif(0.9, 1.1) -- the solver hits its time limit and errors, at any `tols`
-  #tried up to 0.5. `time` is set low here so the test does not spend the default
-  #two minutes proving it. See _dev/method-tests-findings.md.
+test_that("cardinality matching rejects non-constant s.weights", {
+  #Cardinality matching balances the groups against each other, so it has no fixed
+  #target population for sampling weights to refer to. Profile matching does, and
+  #accepts them (below).
+  expect_err(matchit(f, data = lalonde, method = "cardinality",
+                     s.weights = lalonde_sw),
+             "cannot be used with cardinality matching")
+
+  #Constant sampling weights are equivalent to none, so they are allowed
   expect_no_error(matchit(f, data = lalonde, method = "cardinality",
                           s.weights = rep(2, nrow(lalonde))))
+})
 
-  expect_err(matchit(f, data = lalonde, method = "cardinality",
-                     s.weights = lalonde_sw, time = 2),
-             "failed to find an optimal solution")
+test_that("profile matching accepts s.weights and balances the weighted means", {
+  #`estimand = "ATE"` and `ratio = NA` are the two profile-matching routes; both hold a
+  #fixed target, so both take sampling weights.
+  for (args in list(list(estimand = "ATE", ratio = NA),
+                    list(estimand = "ATE", ratio = 1),
+                    list(estimand = "ATT", ratio = NA))) {
+    m <- do.call(matchit, c(list(f, data = lalonde, method = "cardinality",
+                                 s.weights = lalonde_sw),
+                            args))
+    expect_good_matchit(m, expect_distance = FALSE, expect_match.matrix = FALSE,
+                        expect_subclass = FALSE)
+    expect_gt(sum(m$weights > 0), 0L)
+  }
+})
+
+test_that("profile ATE with a finite ratio equates the unweighted group sizes", {
+  #The ratio constraint is on counts, not on weighted sizes, so it means the same
+  #thing with and without sampling weights.
+  for (r in c(1, 2)) {
+    for (sw in list(NULL, lalonde_sw)) {
+      m <- do.call(matchit, c(list(f, data = lalonde, method = "cardinality",
+                                   estimand = "ATE", ratio = r),
+                              if (is_not_null(sw)) list(s.weights = sw)))
+      keep <- m$weights > 0
+      expect_equal(sum(keep & m$treat == 0L), r * sum(keep & m$treat == 1L))
+    }
+  }
+})
+
+test_that("s.weights change the profile matching solution", {
+  m0 <- matchit(f, data = lalonde, method = "cardinality", estimand = "ATE",
+                ratio = NA)
+  m1 <- matchit(f, data = lalonde, method = "cardinality", estimand = "ATE",
+                ratio = NA, s.weights = lalonde_sw)
+
+  expect_not_equal(m0$weights, m1$weights)
+})
+
+test_that("constant s.weights reproduce the unweighted profile solution", {
+  m0 <- matchit(f, data = lalonde, method = "cardinality", estimand = "ATE",
+                ratio = NA)
+
+  for (v in c(1, 3)) {
+    m <- matchit(f, data = lalonde, method = "cardinality", estimand = "ATE",
+                 ratio = NA, s.weights = rep(v, nrow(lalonde)))
+    expect_equal(m$weights, m0$weights)
+  }
 })
 
 test_that("no unexpected conditions in the baseline call", {

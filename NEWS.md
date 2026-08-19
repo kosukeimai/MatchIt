@@ -5,6 +5,10 @@
 
 * For stratification methods (`"exact"`, `"cem"` with `k2k = FALSE`, `"full"`, `"quick"`, and `"subclass"`), when sampling weights are supplied through `s.weights`, they are now used to compute the matching weights. Previously, sampling weights were only used in the calculation of propensity scores (if any). When `add_s.weights()` is used on the output of `matchit()` from one of these methods initially run without `s.weights`, the matching weights will be re-computed incorporating the sampling weights. `vignette("sampling-weights")` has been updated accordingly.
 
+* With `method = "cardinality"`, `s.weights` is now only allowed with profile matching (`estimand = "ATE"` or `ratio = NA`), which matches each treatment group to a fixed target; supplying it with cardinality matching, which matches the treatment groups to each other and so has no fixed target population, is now an error. Previously it was silently accepted and made the optimization problem effectively unsolvable.
+
+* With `method = "cardinality"` and `estimand = "ATE"`, the size of the matched sample being maximized and the `ratio` constraint on the relative sizes of the matched groups now refer to the unweighted numbers of units rather than to the sums of the sampling weights. `s.weights` now enters only the balance constraints, where it weights the covariate means. This makes profile matching for the ATE usable with sampling weights; results are unchanged when `s.weights` is not supplied or is constant.
+
 * Bumped minimum R version to 4.1.0 and removed *backports* as a dependency.
 
 * Replaced *chk* dependency with *arg*.
