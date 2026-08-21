@@ -16,8 +16,10 @@ of variable in \code{data} to be used or a one-sided formula with the
 variable on the right-hand side (e.g., \code{~ SW}).}
 
 \item{data}{a data frame containing the sampling weights if given as a
-string or formula. If unspecified, \code{add_s.weights()} will attempt to find
-the dataset using the environment of the \code{matchit} object.}
+string or formula. It must contain one row for each unit in the original
+\code{matchit()} call, in the same order; supplying one with a different number of
+rows is an error. If unspecified, \code{add_s.weights()} will attempt to find the
+dataset using the environment of the \code{matchit} object.}
 }
 \value{
 a \code{matchit} object with an \code{s.weights} component

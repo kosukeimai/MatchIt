@@ -25,7 +25,10 @@ for which covariate(s) plots should be displayed. Factor variables should be
 named by the original variable name rather than the names of individual
 dummy variables created after expansion with \code{model.matrix}. Can be supplied as a character vector or a one-sided formula.}
 
-\item{data}{an optional data frame containing variables named in \code{which.xs} but not present in the \code{matchit} object.}
+\item{data}{an optional data frame containing variables named in \code{which.xs}
+but not present in the \code{matchit} object. It must contain one row for each unit
+in the original \code{matchit()} call, in the same order; supplying one with a
+different number of rows is an error.}
 
 \item{\dots}{arguments passed to \code{\link[=plot]{plot()}} to control the appearance of the
 plot. Not all options are accepted.}
