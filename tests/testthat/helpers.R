@@ -362,6 +362,21 @@ expect_balance_improved <- function(m, ...) {
 
 # ===== Fixtures =====
 
+#Send plots to a null device for the duration of the calling test, so the plotting
+#functions can be exercised without opening a window or writing a file. Taken from
+#cobalt's test helpers.
+local_null_device <- function(.env = parent.frame()) {
+  grDevices::pdf(NULL)
+
+  #`rlang::defer()` is not exported, so register the cleanup as an `on.exit()`
+  #expression in the calling frame instead. This needs no extra dependency.
+  do.call(base::on.exit,
+          list(quote(grDevices::dev.off()), add = TRUE, after = FALSE),
+          envir = .env)
+
+  invisible(NULL)
+}
+
 #Set a fixed proportion of each named column to NA without disturbing the RNG
 #stream of the calling test.
 inject_missingness <- function(data, cols, prop = 0.1, seed = 4321) {
