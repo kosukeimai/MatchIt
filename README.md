@@ -40,7 +40,8 @@ m.out
 
     #> A `matchit` object
     #>  - method: 1:1 nearest neighbor matching with replacement
-    #>  - distance: Mahalanobis - number of obs.: 614 (original), 263 (matched)
+    #>  - distance: Mahalanobis
+    #>  - number of obs.: 614 (original), 263 (matched)
     #>  - target estimand: ATT
     #>  - covariates: age, educ, race, married, nodegree, re74, re75
 
