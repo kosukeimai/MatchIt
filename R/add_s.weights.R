@@ -143,7 +143,8 @@ add_s.weights <- function(m,
   method <- m$info$method
 
   if (is_not_null(method) &&
-      method %in% c("exact", "cem", "subclass", "full", "quick")) {
+      method %in% c("exact", "cem", "subclass", "full", "quick") &&
+      is_null(m$match.matrix)) {
     weights <- get_weights_from_subclass(m$subclass, m$treat, m$estimand,
                                          s.weights)
 
