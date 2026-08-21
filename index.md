@@ -1,10 +1,10 @@
 # MatchIt: Nonparametric Preprocessing for Parametric Causal Inference
 
-## [![CRAN_Status_Badge](https://img.shields.io/cran/v/MatchIt?color=952100)](https://cran.r-project.org/package=MatchIt) [![CRAN_Downloads_Badge](https://cranlogs.r-pkg.org/badges/MatchIt?color=952100)](https://cran.r-project.org/package=MatchIt)
+## [![CRAN_Status_Badge](https://r-pkg.org/badges/version/MatchIt?color=952100)](https://cran.r-project.org/package=MatchIt) [![CRAN_Downloads_Badge](https://cranlogs.r-pkg.org/badges/MatchIt?color=952100)](https://cran.r-project.org/package=MatchIt)
 
 ### Overview
 
-`MatchIt` provides a simple and straightforward interface to various
+*MatchIt* provides a simple and straightforward interface to various
 methods of matching for covariate balance in observational studies.
 Matching is one way to reduce confounding and model dependence when
 estimating treatment effects. Several matching methods are available,
@@ -13,7 +13,7 @@ matching, generalized full matching, genetic matching, exact matching,
 coarsened exact matching, cardinality matching, and subclassification,
 some of which rely on functions from other R packages. A variety of
 methods to estimate propensity scores for propensity score matching are
-included. Below is an example of the use of `MatchIt` to perform
+included. Below is an example of the use of *MatchIt* to perform
 Mahalanobis distance matching with replacement and assess balance:
 
 ``` r
@@ -29,7 +29,7 @@ m.out <- matchit(treat ~ age + educ + race + married +
                  replace = TRUE)
 ```
 
-Printing the `MatchIt` object provides details of the kind of matching
+Printing the `matchit` object provides details of the kind of matching
 performed.
 
 ``` r
@@ -40,7 +40,8 @@ m.out
 ``` R
 #> A `matchit` object
 #>  - method: 1:1 nearest neighbor matching with replacement
-#>  - distance: Mahalanobis - number of obs.: 614 (original), 264 (matched)
+#>  - distance: Mahalanobis
+#>  - number of obs.: 614 (original), 263 (matched)
 #>  - target estimand: ATT
 #>  - covariates: age, educ, race, married, nodegree, re74, re75
 ```
@@ -74,22 +75,22 @@ summary(m.out)
 #> 
 #> Summary of Balance for Matched Data:
 #>            Means Treated Means Control Std. Mean Diff. Var. Ratio eCDF Mean eCDF Max Std. Pair Dist.
-#> age              25.8162       25.5405          0.0385     0.6531    0.0466   0.1892          0.4827
-#> educ             10.3459       10.4270         -0.0403     1.1649    0.0077   0.0378          0.1963
-#> raceblack         0.8432        0.8432          0.0000          .    0.0000   0.0000          0.0000
-#> racehispan        0.0595        0.0595          0.0000          .    0.0000   0.0000          0.0000
-#> racewhite         0.0973        0.0973          0.0000          .    0.0000   0.0000          0.0000
+#> age              25.8162       25.5622          0.0355     0.6547    0.0461   0.1838          0.4827
+#> educ             10.3459       10.4270         -0.0403     1.1648    0.0077   0.0378          0.1963
+#> raceblack         0.8432        0.8432         -0.0000          .    0.0000   0.0000          0.0000
+#> racehispan        0.0595        0.0595         -0.0000          .    0.0000   0.0000          0.0000
+#> racewhite         0.0973        0.0973         -0.0000          .    0.0000   0.0000          0.0000
 #> married           0.1892        0.1784          0.0276          .    0.0108   0.0108          0.0276
-#> nodegree          0.7081        0.7081          0.0000          .    0.0000   0.0000          0.0000
-#> re74           2095.5737     1788.6941          0.0628     1.5707    0.0311   0.1730          0.2494
-#> re75           1532.0553     1087.7420          0.1380     2.1244    0.0330   0.0865          0.2360
+#> nodegree          0.7081        0.7081         -0.0000          .    0.0000   0.0000          0.0000
+#> re74           2095.5737     1788.6941          0.0628     1.5706    0.0311   0.1730          0.2494
+#> re75           1532.0553     1087.7420          0.1380     2.1243    0.0330   0.0865          0.2360
 #> 
 #> Sample Sizes:
 #>               Control Treated
 #> All            429.       185
-#> Matched (ESS)   34.19     185
-#> Matched         79.       185
-#> Unmatched      350.         0
+#> Matched (ESS)   34.12     185
+#> Matched         78.       185
+#> Unmatched      351.         0
 #> Discarded        0.         0
 ```
 
@@ -110,22 +111,22 @@ plot(summary(m.out))
 matching.](reference/figures/README-unnamed-chunk-5-1.png)
 
 Although much has been written about matching theory, most of the theory
-relied upon in `MatchIt` is described well in [Ho, Imai, King, and
-Stuart (2007)](https://doi.org/10.1093/pan/mpl013), [Stuart
+relied upon in *MatchIt* is described well in [Ho, Imai, King, and
+Stuart (2007)](https//:doi.org/10.1093/pan/mpl013), [Stuart
 (2010)](https://doi.org/10.1214/09-STS313), and [Greifer and Stuart
 (2021)](https://doi.org/10.1093/epirev/mxab003). The *Journal of
-Statistical Software* article for `MatchIt` can be accessed
+Statistical Software* article for *MatchIt* can be accessed
 [here](https://doi.org/10.18637/jss.v042.i08), though note that some
-options have changed, so the `MatchIt` reference pages and included
+options have changed, so the *MatchIt* reference pages and included
 vignettes should be used for understanding the functions and methods
 available. Further references for individual methods are present in
-their respective help pages. The `MatchIt`
+their respective help pages. The *MatchIt*
 [website](https://kosukeimai.github.io/MatchIt/) provides access to
 vignettes and documentation files.
 
-### Citing `MatchIt`
+### Citing *MatchIt*
 
-Please cite `MatchIt` when using it for analysis presented in
+Please cite *MatchIt* when using it for analysis presented in
 publications, which you can do by citing the *Journal of Statistical
 Software* article below:
 
@@ -140,7 +141,7 @@ number for the version used.
 
 ### Installation
 
-To download and install the latest stable version of `MatchIt` from
+To download and install the latest stable version of *MatchIt* from
 CRAN, run the following:
 
 ``` r
@@ -155,7 +156,7 @@ feature, run the following:
 
 install.packages("pak") #If not yet installed
 
-pak::pkg_install("ngreifer/MatchIt")
+pak::pak("ngreifer/MatchIt")
 ```
 
 This will require R to compile C++ code, which might require additional
@@ -165,7 +166,7 @@ version of the package.
 
 ### Questions and Bug Reports
 
-If you have questions about `MatchIt` or want to submit a bug report,
+If you have questions about *MatchIt* or want to submit a bug report,
 please do so using the GitHub [issues
 page](https://github.com/kosukeimai/MatchIt/issues) for the package.
 Suggestions for new features and kind words of support are encouraged as

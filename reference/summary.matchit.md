@@ -56,8 +56,8 @@ print(x, digits = max(3, getOption("digits") - 3), ...)
 
   additional variable for which balance statistics are to be computed
   along with the covariates in the `matchit` object. Can be entered in
-  one of three ways: as a data frame of covariates with as many rows as
-  there were units in the original
+  one of three ways: as a data frame or matrix of covariates with as
+  many rows as there were units in the original
   [`matchit()`](https://kosukeimai.github.io/MatchIt/reference/matchit.md)
   call, as a string containing the names of variables in `data`, or as a
   right-sided `formula` with the additional variables (and possibly
@@ -77,8 +77,12 @@ print(x, digits = max(3, getOption("digits") - 3), ...)
 
 - data:
 
-  a optional data frame containing variables named in `addlvariables` if
-  specified as a string or formula.
+  an optional data frame containing variables named in `addlvariables`
+  if specified as a string or formula. It must contain one row for each
+  unit in the original
+  [`matchit()`](https://kosukeimai.github.io/MatchIt/reference/matchit.md)
+  call, in the same order; supplying one with a different number of rows
+  is an error.
 
 - pair.dist:
 
@@ -293,8 +297,8 @@ method;
 for making a Love plot from
 [`summary()`](https://rdrr.io/r/base/summary.html) output.
 
-[`cobalt::bal.tab.matchit()`](https://ngreifer.github.io/cobalt/reference/bal.tab.matchit.html),
-which also displays balance for `matchit` objects.
+[`cobalt::bal.tab.matchit()`](https://ngreifer.github.io/cobalt/reference/bal.tab.matchit.html)
+, which also displays balance for `matchit` objects.
 
 ## Examples
 
@@ -346,7 +350,7 @@ summary(m.out, interactions = TRUE)
 #> racewhite * re74          126.9766     4308.6240         -4.5164     0.0198
 #> re74²                28141411.5686 77555527.0664         -0.4331     0.6548
 #>                      eCDF Mean eCDF Max
-#> distance                0.3765   0.6419
+#> distance                0.3762   0.6419
 #> age                     0.0813   0.1577
 #> educ                    0.0347   0.1114
 #> married                 0.3236   0.3236

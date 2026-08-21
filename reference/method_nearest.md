@@ -358,7 +358,7 @@ Imai, King, & Stuart, 2011) in R.*
 for a detailed explanation of the inputs and outputs of a call to
 [`matchit()`](https://kosukeimai.github.io/MatchIt/reference/matchit.md).
 
-[`method_optimal()`](https://kosukeimai.github.io/MatchIt/reference/method_optimal.md)
+[`method_optimal`](https://kosukeimai.github.io/MatchIt/reference/method_optimal.md)
 for optimal pair matching, which is similar to nearest neighbor matching
 without replacement except that an overall distance criterion is
 minimized (i.e., as an alternative to specifying `m.order`).
@@ -458,7 +458,6 @@ m.out2
 #>  - method: 3:1 nearest neighbor matching with replacement
 #>  - distance: Mahalanobis [matching]
 #>              Propensity score [caliper]
-#> 
 #>              - estimated with logistic regression
 #>  - caliper: <distance> (0.006)
 #>  - number of obs.: 614 (original), 300 (matched)
@@ -512,12 +511,13 @@ m.out3 <- matchit(treat ~ age + educ + re74 + re75,
                   distance = "mahalanobis",
                   exact = ~ married + race,
                   caliper = c(re74 = .2, re75 = .15))
-#> Warning: Fewer control units than treated units in some `exact` strata; not all
-#> treated units will get a match.
+#> Warning: Fewer control units than treated units in some `exact` strata; not all treated
+#> units will get a match.
 m.out3
 #> A `matchit` object
 #>  - method: 1:1 nearest neighbor matching without replacement
-#>  - distance: Mahalanobis - caliper: re74 (1295.593), re75 (494.352)
+#>  - distance: Mahalanobis
+#>  - caliper: re74 (1295.593), re75 (494.352)
 #>  - number of obs.: 614 (original), 166 (matched)
 #>  - target estimand: ATT
 #>  - covariates: age, educ, re74, re75, married, race

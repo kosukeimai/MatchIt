@@ -6,7 +6,8 @@ setting `method = "optimal"` performs optimal pair matching. The
 matching is optimal in the sense that that sum of the absolute pairwise
 distances in the matched sample is as small as possible. The method
 functionally relies on
-[`optmatch::fullmatch()`](https://rdrr.io/pkg/optmatch/man/fullmatch.html).
+[`optmatch::fullmatch()`](https://rdrr.io/pkg/optmatch/man/fullmatch.html)
+.
 
 Advantages of optimal pair matching include that the matching order is
 not required to be specified and it is less likely that extreme
@@ -103,7 +104,8 @@ is used for optimal pair matching:
 
   for which variables anti-exact matching should take place. Anti-exact
   matching is processed using
-  [`optmatch::antiExactMatch()`](https://rdrr.io/pkg/optmatch/man/antiExactMatch.html).
+  [`optmatch::antiExactMatch()`](https://rdrr.io/pkg/optmatch/man/antiExactMatch.html)
+  .
 
 - discard:
 
@@ -142,8 +144,8 @@ is used for optimal pair matching:
 - ...:
 
   additional arguments passed to
-  [`optmatch::fullmatch()`](https://rdrr.io/pkg/optmatch/man/fullmatch.html).
-  Allowed arguments include `tol` and `solver`. See the
+  [`optmatch::fullmatch()`](https://rdrr.io/pkg/optmatch/man/fullmatch.html)
+  . Allowed arguments include `tol` and `solver`. See the
   [`optmatch::fullmatch()`](https://rdrr.io/pkg/optmatch/man/fullmatch.html)
   documentation for details. In general, `tol` should be set to a low
   number (e.g., `1e-7`) to get a more precise solution (default is
@@ -247,8 +249,8 @@ whereas in unrestricted full matching, multiple treated units can be
 assigned to the same subclass.
 [`optmatch::pairmatch()`](https://rdrr.io/pkg/optmatch/man/pairmatch.html)
 is simply a wrapper for
-[`optmatch::fullmatch()`](https://rdrr.io/pkg/optmatch/man/fullmatch.html),
-which performs optimal full matching and is the workhorse for
+[`optmatch::fullmatch()`](https://rdrr.io/pkg/optmatch/man/fullmatch.html)
+, which performs optimal full matching and is the workhorse for
 [`method_full`](https://kosukeimai.github.io/MatchIt/reference/method_full.md).
 In the same way,
 [`matchit()`](https://kosukeimai.github.io/MatchIt/reference/matchit.md)
@@ -298,8 +300,8 @@ In a manuscript, be sure to cite the following paper if using
 with `method = "optimal"`:
 
 Hansen, B. B., & Klopfer, S. O. (2006). Optimal Full Matching and
-Related Designs via Network Flows. Journal of Computational and
-Graphical Statistics, 15(3), 609–627.
+Related Designs via Network Flows. *Journal of Computational and
+Graphical Statistics*, 15(3), 609–627.
 [doi:10.1198/106186006X137047](https://doi.org/10.1198/106186006X137047)
 
 For example, a sentence might read:
@@ -314,8 +316,8 @@ optmatch package (Hansen & Klopfer, 2006).*
 for a detailed explanation of the inputs and outputs of a call to
 [`matchit()`](https://kosukeimai.github.io/MatchIt/reference/matchit.md).
 
-[`optmatch::fullmatch()`](https://rdrr.io/pkg/optmatch/man/fullmatch.html),
-which is the workhorse.
+[`optmatch::fullmatch()`](https://rdrr.io/pkg/optmatch/man/fullmatch.html)
+, which is the workhorse.
 
 [`method_full`](https://kosukeimai.github.io/MatchIt/reference/method_full.md)
 for optimal full matching, of which optimal pair matching is a special
@@ -332,8 +334,8 @@ m.out1 <- matchit(treat ~ age + educ + race +
                   data = lalonde,
                   method = "optimal",
                   exact = ~race)
-#> Warning: Fewer control units than treated units in some `exact` strata; not all
-#> treated units will get a match.
+#> Warning: Fewer control units than treated units in some `exact` strata; not all treated
+#> units will get a match.
 m.out1
 #> A `matchit` object
 #>  - method: 1:1 optimal pair matching
@@ -414,7 +416,8 @@ m.out2 <- matchit(treat ~ age + educ + race +
 m.out2
 #> A `matchit` object
 #>  - method: 2:1 optimal pair matching
-#>  - distance: Scaled Euclidean - number of obs.: 614 (original), 555 (matched)
+#>  - distance: Scaled Euclidean
+#>  - number of obs.: 614 (original), 555 (matched)
 #>  - target estimand: ATT
 #>  - covariates: age, educ, race, nodegree, married, re74, re75
 summary(m.out2, un = FALSE)

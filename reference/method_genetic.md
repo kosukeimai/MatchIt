@@ -13,7 +13,7 @@ which can be chosen, but which by default is the smallest p-value in
 covariate balance tests among the covariates. This method relies on and
 is a wrapper for
 [`Matching::GenMatch()`](https://rdrr.io/pkg/Matching/man/GenMatch.html)
-and [`Matching::Match()`](https://rdrr.io/pkg/Matching/man/Match.html),
+and [`Matching::Match()`](https://rdrr.io/pkg/Matching/man/Match.html) ,
 which use
 [`rgenoud::genoud()`](https://rdrr.io/pkg/rgenoud/man/genoud.html) to
 perform the optimization using the genetic algorithm.
@@ -183,13 +183,13 @@ is used for genetic matching:
 - ...:
 
   additional arguments passed to
-  [`Matching::GenMatch()`](https://rdrr.io/pkg/Matching/man/GenMatch.html).
-  Potentially useful options include `pop.size`, `max.generations`, and
-  `fit.func`. If `pop.size` is not specified, a warning from *Matching*
-  will be thrown reminding you to change it. Note that the `ties` and
-  `CommonSupport` arguments are set to `FALSE` and cannot be changed. If
-  `distance.tolerance` is not specified, it is set to 0, whereas the
-  default in *Matching* is 1e-5.
+  [`Matching::GenMatch()`](https://rdrr.io/pkg/Matching/man/GenMatch.html)
+  . Potentially useful options include `pop.size`, `max.generations`,
+  and `fit.func`. If `pop.size` is not specified, a warning from
+  *Matching* will be thrown reminding you to change it. Note that the
+  `ties` and `CommonSupport` arguments are set to `FALSE` and cannot be
+  changed. If `distance.tolerance` is not specified, it is set to 0,
+  whereas the default in *Matching* is 1e-5.
 
 ## Details
 
@@ -281,13 +281,13 @@ with `method = "genetic"`:
 
 Diamond, A., & Sekhon, J. S. (2013). Genetic matching for estimating
 causal effects: A general multivariate matching method for achieving
-balance in observational studies. Review of Economics and Statistics,
+balance in observational studies. *Review of Economics and Statistics*,
 95(3), 932–945.
 [doi:10.1162/REST_a_00318](https://doi.org/10.1162/REST_a_00318)
 
 Sekhon, J. S. (2011). Multivariate and Propensity Score Matching
 Software with Automated Balance Optimization: The Matching package for
-R. Journal of Statistical Software, 42(1), 1–52.
+R. *Journal of Statistical Software*, 42(1), 1–52.
 [doi:10.18637/jss.v042.i07](https://doi.org/10.18637/jss.v042.i07)
 
 For example, a sentence might read:
@@ -303,7 +303,7 @@ for a detailed explanation of the inputs and outputs of a call to
 [`matchit()`](https://kosukeimai.github.io/MatchIt/reference/matchit.md).
 
 [`Matching::GenMatch()`](https://rdrr.io/pkg/Matching/man/GenMatch.html)
-and [`Matching::Match()`](https://rdrr.io/pkg/Matching/man/Match.html),
+and [`Matching::Match()`](https://rdrr.io/pkg/Matching/man/Match.html) ,
 which do the work.
 
 ## Examples
@@ -399,7 +399,8 @@ m.out2 <- matchit(treat ~ age + educ + race + nodegree +
 m.out2
 #> A `matchit` object
 #>  - method: 2:1 genetic matching with replacement
-#>  - distance: Mahalanobis - number of obs.: 614 (original), 302 (matched)
+#>  - distance: Mahalanobis
+#>  - number of obs.: 614 (original), 302 (matched)
 #>  - target estimand: ATT
 #>  - covariates: age, educ, race, nodegree, married, re74, re75
 summary(m.out2, un = FALSE)
@@ -456,7 +457,6 @@ m.out3
 #>  - method: 1:1 genetic matching without replacement
 #>  - distance: Mahalanobis [matching]
 #>              Propensity score [caliper]
-#> 
 #>              - estimated with logistic regression
 #>  - caliper: <distance> (0.015), educ (2)
 #>  - number of obs.: 614 (original), 206 (matched)

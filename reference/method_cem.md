@@ -275,10 +275,7 @@ executing coarsened exact matching, described below.
 - When `k2k = TRUE`, in *MatchIt* matched units are identified by pair
   membership, and the original stratum membership prior to 1:1 matching
   is discarded. In *cem*, pairs are not identified beyond the stratum
-  the members are part of.
-
-- When `k2k = TRUE`, `k2k.method = "mahalanobis"` can be requested in
-  *MatchIt* but not in *cem*.
+  the members are part of. requested in *MatchIt* but not in *cem*.
 
 ## Outputs
 

@@ -10,11 +10,11 @@ into a propensity score matching analysis to obtain valid and unbiased
 estimates of the treatment effect in the sampling weighted population
 ([DuGoff et al. 2014](#ref-dugoff2014); [Austin et al.
 2016](#ref-austin2016); [Lenis et al. 2019](#ref-lenis2019)). In this
-guide, we demonstrate how to use sampling weights with `MatchIt` for
-propensity score estimation, balance assessment, and effect estimation.
-Fortunately, doing so is not complicated, but some care must be taken to
-ensure sampling weights are incorporated correctly. It is assumed one
-has read the other vignettes explaining matching
+guide, we demonstrate how to use sampling weights with *MatchIt* for
+propensity score estimation, matching, balance assessment, and effect
+estimation. Fortunately, doing so is not complicated, but some care must
+be taken to ensure sampling weights are incorporated correctly. It is
+assumed one has read the other vignettes explaining matching
 ([`vignette("matching-methods")`](https://kosukeimai.github.io/MatchIt/articles/matching-methods.md)),
 balance assessment
 ([`vignette("assessing-balance")`](https://kosukeimai.github.io/MatchIt/articles/assessing-balance.md)),
@@ -52,6 +52,10 @@ library("MatchIt")
 
 ## Matching
 
+Sampling weights can enter the matching specification in two ways: 1) in
+computing the distance measure (e.g., the propensity score) and 2) in
+computing matching weights from stratum membership.
+
 When using sampling weights with propensity score matching, one has the
 option of including the sampling weights in the model used to estimate
 the propensity scores. Although evidence is mixed on whether this is
@@ -61,24 +65,34 @@ on whether including the sampling weights improves the quality of the
 matches. Specifications including and excluding sampling weights should
 be tried to determine which is preferred.
 
+For stratification methods, including (coarsened) exact matching, full
+matching, and propensity score subclassification, sampling weights can
+also enter the calculation of the matching weights from stratum
+membership. Without sampling weights, matching weights are computed
+using the proportion of treated units in each stratum. With sampling
+weights, matching weights are computed using the *weighted* proportion
+of treated units in each stratum, weighted by the sampling weights. This
+does not affect pair matching methods, which compute matching weights
+from the match matrix rather than stratum membership.
+
 To supply sampling weights to the propensity score-estimating function
-in
+and calculation of the matching weights in
 [`matchit()`](https://kosukeimai.github.io/MatchIt/reference/matchit.md),
 the sampling weights variable should be supplied to the `s.weights`
 argument. It can be supplied either as a numerical vector containing the
 sampling weights, or a string or one-sided formula with the name of the
 sampling weights variable in the supplied dataset. Below we demonstrate
 including sampling weights into propensity scores estimated using
-logistic regression for optimal full matching for the average treatment
-effect in the population (ATE) (note that all methods and steps apply
-the same way to all forms of matching and all estimands).
+logistic regression for generalized full matching for the average
+treatment effect in the treated (ATT) (note that all methods and steps
+apply the same way to all forms of matching and all estimands).
 
 ``` r
 
-mF_s <- matchit(A ~ X1 + X2 + X3 + X4 + X5 + 
+mF_s <- matchit(A ~ X1 + X2 + X3 + X4 + X5 + SW +
                   X6 + X7 + X8 + X9, data = d,
-                method = "full", distance = "glm",
-                estimand = "ATE", s.weights = ~SW)
+                method = "quick", distance = "glm",
+                estimand = "ATT", s.weights = ~SW)
 mF_s
 ```
 
@@ -86,32 +100,35 @@ Notice that the description of the matching specification when the
 `matchit` object is printed includes lines indicating that the sampling
 weights were included in the estimation of the propensity score and that
 they are present in the `matchit` object. It is stored in the
-`s.weights` component of the `matchit` object. Note that at this stage,
-the matching weights (stored in the `weights` component of the `matchit`
-object) do not incorporate the sampling weights; they are calculated
-simply as a result of the matching.
+`s.weights` component of the `matchit` object. The matching weights
+(stored in the `weights` component of the `matchit` object) were
+computed incorporating the sampling weights with stratum membership, but
+the matching weights alone are not ready for use in estimating the
+treatment effect.
 
-Now let’s perform full matching on a propensity score that does not
+We’ll also perform full matching on a propensity score that does not
 include the sampling weights in its estimation. Here we use the same
 specification as was used in
 [`vignette("estimating-effects")`](https://kosukeimai.github.io/MatchIt/articles/estimating-effects.md).
 
 ``` r
 
-mF <- matchit(A ~ X1 + X2 + X3 + X4 + X5 + 
+mF <- matchit(A ~ X1 + X2 + X3 + X4 + X5 + SW +
                 X6 + X7 + X8 + X9, data = d,
-              method = "full", distance = "glm",
-              estimand = "ATE")
+              method = "quick", distance = "glm",
+              estimand = "ATT")
 mF
 ```
 
 Notice that there is no mention of sampling weights in the description
-of the matching specification. However, to properly assess balance and
-estimate effects, we need the sampling weights to be included in the
-`matchit` object, even if they were not used at all in the matching. To
-do so, we use the function
+of the matching specification. However, to properly incorporate sampling
+weights into the calculation of the matching weights and to assess
+balance and estimate effects, we need the sampling weights to be
+included in the `matchit` object, even if they were not used at all in
+the matching. To do so, we use the function
 [`add_s.weights()`](https://kosukeimai.github.io/MatchIt/reference/add_s.weights.md),
-which adds sampling weights to the supplied `matchit` objects.
+which adds sampling weights to the supplied `matchit` objects and
+recomputes the matching weights.
 
 ``` r
 
@@ -125,16 +142,14 @@ identifying that sampling weights are present but they were not used in
 the estimation of the propensity score used in the matching.
 
 Note that not all methods can involve sampling weights in the
-estimation. Only methods that use the propensity score will be affected
-by sampling weights; coarsened exact matching or Mahalanobis distance
-optimal pair matching, for example, ignore the sampling weights, and
-some propensity score estimation methods, like `randomForest` and `bart`
-(as presently implemented), cannot incorporate sampling weights.
-Sampling weights should still be supplied to
+estimation. Some propensity score estimation methods, like
+`randomForest` and `bart` (as presently implemented), cannot incorporate
+sampling weights; one alternative is to include the sampling weights as
+a predictor in the propensity score model. Sampling weights should still
+be supplied to
 [`matchit()`](https://kosukeimai.github.io/MatchIt/reference/matchit.md)
 even when using these methods to avoid having to use
-[`add_s.weights()`](https://kosukeimai.github.io/MatchIt/reference/add_s.weights.md)
-and remembering which methods do or do not involve sampling weights.
+[`add_s.weights()`](https://kosukeimai.github.io/MatchIt/reference/add_s.weights.md).
 
 ## Assessing Balance
 
@@ -189,11 +204,11 @@ weight-estimated propensity scores (`mF_s`) because of its superior
 balance. Some of the remaining imbalance may be eliminated by adjusting
 for the covariates in the outcome model.
 
-Note that had we not added sampling weights to `mF`, the matching
-specification that did not include the sampling weights, our balance
+Note that had we not added sampling weights to `mF` (the matching
+specification that did not include the sampling weights), our balance
 assessment would be inaccurate because the balance statistics would not
 include the sampling weights. In this case, in fact, assessing balance
-on `mF` without incorporated the sampling weights would have yielded
+on `mF` without incorporating the sampling weights would have yielded
 radically different results and a different conclusion. It is critical
 to incorporate sampling weights into the `matchit` object using
 [`add_s.weights()`](https://kosukeimai.github.io/MatchIt/reference/add_s.weights.md)
@@ -226,8 +241,8 @@ decrease bias.
 md_F_s <- match_data(mF_s)
 
 fit <- lm(Y_C ~ A * (X1 + X2 + X3 + X4 + X5 + 
-                       X6 + X7 + X8 + X9), data = md_F_s,
-          weights = weights)
+                       X6 + X7 + X8 + X9),
+          data = md_F_s, weights = weights)
 
 library("marginaleffects")
 avg_comparisons(fit,
@@ -244,8 +259,8 @@ to `FALSE`, makes it so the returned weights do not incorporate the
 sampling weights and are simply the matching weights. Because one might
 to forget to multiply the two sets of weights together, it is easier to
 just use the default of `include.s.weights = TRUE` and ignore the
-sampling weights in the rest of the analysis (because they are already
-included in the returned weights).
+sampling weights in the outcome model (because they are already included
+in the returned weights).
 
 ## Code to Generate Data used in Examples
 

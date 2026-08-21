@@ -350,36 +350,30 @@ with `method = "genetic"`. Genetic matching in `MatchIt` depends on the
 scaled generalized Mahalanobis distance.
 
 Genetic matching considers the generalized Mahalanobis distance between
-a treated unit $`i`$ and a control unit $`j`$ as
-``` math
-\delta_{GMD}(\mathbf{x}_i,\mathbf{x}_j, \mathbf{W})=\sqrt{(\mathbf{x}_i - \mathbf{x}_j)'(\mathbf{S}^{-1/2})'\mathbf{W}(\mathbf{S}^{-1/2})(\mathbf{x}_i - \mathbf{x}_j)}
-```
-where $`\mathbf{x}`$ is a $`p \times 1`$ vector containing the value of
-each of the $`p`$ included covariates for that unit,
-$`\mathbf{S}^{-1/2}`$ is the Cholesky decomposition of the covariance
-matrix $`\mathbf{S}`$ of the covariates, and $`\mathbf{W}`$ is a
-diagonal matrix with scaling factors $`w`$ on the diagonal:
-``` math
-\mathbf{W}=\begin{bmatrix}
-    w_1 &  & & \\
-     & w_2 & & \\
-     &  & \ddots &\\
-     & & & w_p \\
-    \end{bmatrix}
-```
+a treated unit \\i\\ and a control unit \\j\\ as
+\\\delta\_{GMD}(\mathbf{x}\_i,\mathbf{x}\_j,
+\mathbf{W})=\sqrt{(\mathbf{x}\_i -
+\mathbf{x}\_j)'(\mathbf{S}^{-1/2})'\mathbf{W}(\mathbf{S}^{-1/2})(\mathbf{x}\_i -
+\mathbf{x}\_j)}\\ where \\\mathbf{x}\\ is a \\p \times 1\\ vector
+containing the value of each of the \\p\\ included covariates for that
+unit, \\\mathbf{S}^{-1/2}\\ is the Cholesky decomposition of the
+covariance matrix \\\mathbf{S}\\ of the covariates, and \\\mathbf{W}\\
+is a diagonal matrix with scaling factors \\w\\ on the diagonal:
+\\\mathbf{W}=\begin{bmatrix} w_1 & & & \\ & w_2 & & \\ & & \ddots &\\ &
+& & w_p \\ \end{bmatrix}\\
 
-When $`w_k=1`$ for all covariates $`k`$, the computed distance is the
+When \\w_k=1\\ for all covariates \\k\\, the computed distance is the
 standard Mahalanobis distance between units. Genetic matching estimates
-the optimal values of the $`w_k`$s, where a user-specified criterion is
+the optimal values of the \\w_k\\s, where a user-specified criterion is
 used to define what is optimal. The default is to maximize the smallest
 p-value among balance tests for the covariates in the matched sample
 (both Kolmogorov-Smirnov tests and t-tests for each covariate).
 
 In `MatchIt`, if a propensity score is specified, the default is to
-include the propensity score and the covariates in $`\mathbf{x}`$ and to
+include the propensity score and the covariates in \\\mathbf{x}\\ and to
 optimize balance on the covariates. When `distance = "mahalanobis"` or
 the `mahvars` argument is specified, the propensity score is left out of
-$`\mathbf{x}`$.
+\\\mathbf{x}\\.
 
 In all other respects, genetic matching functions just like nearest
 neighbor matching except that the matching itself is carried out by
@@ -550,16 +544,15 @@ can add additional precision and robustness ([Zubizarreta et al.
 
 The optimization problem requires a special solver to solve. Currently,
 the available options in `MatchIt` are the HiGHS solver (through the
-`highs` package), the GLPK solver (through the `Rglpk` package), the
-SYMPHONY solver (through the `Rsymphony` package), and the Gurobi solver
-(through the `gurobi` package). The differences among the solvers are in
-performance; Gurobi is by far the best (fastest, least likely to fail to
-find a solution), but it is proprietary (though has a free trial and
-academic license) and is a bit more complicated to install. HiGHS is the
-default due to being open source, easily installed, and with performance
-comparable to Gurobi. The `designmatch` package also provides an
-implementation of cardinality matching with more options than `MatchIt`
-offers.
+`highs` package), the GLPK solver (through the `Rglpk` package), and the
+Gurobi solver (through the `gurobi` package). The differences among the
+solvers are in performance; Gurobi is by far the best (fastest, least
+likely to fail to find a solution), but it is proprietary (though has a
+free trial and academic license) and is a bit more complicated to
+install. HiGHS is the default due to being open source, easily
+installed, and with performance comparable to Gurobi. The `designmatch`
+package also provides an implementation of cardinality matching with
+more options than `MatchIt` offers.
 
 ## Customizing the Matching Specification
 
@@ -617,19 +610,18 @@ The `distance` argument can also be specified as a method of computing
 pairwise distances from the covariates directly (i.e., without
 estimating propensity scores). The options include `"mahalanobis"`,
 `"robust_mahalanobis"`, `"euclidean"`, and `"scaled_euclidean"`. These
-methods compute a distance metric for a treated unit $`i`$ and a control
-unit $`j`$ as
-``` math
-\delta(\mathbf{x}_i,\mathbf{x}_j)=\sqrt{(\mathbf{x}_i - \mathbf{x}_j)'S^{-1}(\mathbf{x}_i - \mathbf{x}_j)}
-```
+methods compute a distance metric for a treated unit \\i\\ and a control
+unit \\j\\ as
+\\\delta(\mathbf{x}\_i,\mathbf{x}\_j)=\sqrt{(\mathbf{x}\_i -
+\mathbf{x}\_j)'S^{-1}(\mathbf{x}\_i - \mathbf{x}\_j)}\\
 
-where $`\mathbf{x}`$ is a $`p \times 1`$ vector containing the value of
-each of the $`p`$ included covariates for that unit, $`S`$ is a scaling
-matrix, and $`S^{-1}`$ is the (generalized) inverse of $`S`$. For
-Mahalanobis distance matching, $`S`$ is the pooled covariance matrix of
+where \\\mathbf{x}\\ is a \\p \times 1\\ vector containing the value of
+each of the \\p\\ included covariates for that unit, \\S\\ is a scaling
+matrix, and \\S^{-1}\\ is the (generalized) inverse of \\S\\. For
+Mahalanobis distance matching, \\S\\ is the pooled covariance matrix of
 the covariates ([Rubin 1980](#ref-rubinBiasReductionUsing1980)); for
-Euclidean distance matching, $`S`$ is the identity matrix (i.e., no
-scaling); and for scaled Euclidean distance matching, $`S`$ is the
+Euclidean distance matching, \\S\\ is the identity matrix (i.e., no
+scaling); and for scaled Euclidean distance matching, \\S\\ is the
 diagonal of the pooled covariance matrix (containing just the
 variances). The robust Mahalanobis distance is computed not on the
 covariates directly but rather on their ranks and uses a correction for
@@ -794,33 +786,33 @@ values allow control units to be matched more than once, though only up
 to the specified number of times. Higher values will tend to improve
 balance at the cost of precision.
 
-### $`k`$:1 matching (`ratio`)
+### \\k\\:1 matching (`ratio`)
 
 The most common form of matching, 1:1 matching, involves pairing one
-control unit with each treated unit. To perform $`k`$:1 matching (e.g.,
-2:1 or 3:1), which pairs (up to) $`k`$ control units with each treated
-unit, the `ratio` argument can be specified. Performing $`k`$:1 matching
+control unit with each treated unit. To perform \\k\\:1 matching (e.g.,
+2:1 or 3:1), which pairs (up to) \\k\\ control units with each treated
+unit, the `ratio` argument can be specified. Performing \\k\\:1 matching
 can preserve precision by preventing too many control units from being
 unmatched and dropped from the matched sample, though the gain in
-precision by increasing $`k`$ diminishes rapidly after 4 ([Rosenbaum
-2020](#ref-rosenbaum2020)). Importantly, for $`k>1`$, the matches after
+precision by increasing \\k\\ diminishes rapidly after 4 ([Rosenbaum
+2020](#ref-rosenbaum2020)). Importantly, for \\k\>1\\, the matches after
 the first match will generally be worse than the first match in terms of
-closeness to the treated unit, so increasing $`k`$ can also worsen
+closeness to the treated unit, so increasing \\k\\ can also worsen
 balance ([Rassen et al. 2012](#ref-rassenOnetomanyPropensityScore2012)).
 Austin ([2010a](#ref-austin2010a)) found that 1:1 or 1:2 matching
 generally performed best in terms of mean squared error. In general, it
-makes sense to use higher values of $`k`$ while ensuring that balance is
+makes sense to use higher values of \\k\\ while ensuring that balance is
 satisfactory.
 
-With nearest neighbor and optimal pair matching, variable $`k`$:1
+With nearest neighbor and optimal pair matching, variable \\k\\:1
 matching, in which the number of controls matched to each treated unit
 varies, can also be used; this can have improved performance over
-“fixed” $`k`$:1 matching ([Ming and Rosenbaum 2000](#ref-ming2000);
+“fixed” \\k\\:1 matching ([Ming and Rosenbaum 2000](#ref-ming2000);
 [Rassen et al. 2012](#ref-rassenOnetomanyPropensityScore2012)). See
 [`?method_nearest`](https://kosukeimai.github.io/MatchIt/reference/method_nearest.md)
 and
 [`?method_optimal`](https://kosukeimai.github.io/MatchIt/reference/method_optimal.md)
-for information on implementing variable $`k`$:1 matching.
+for information on implementing variable \\k\\:1 matching.
 
 ### Matching order (`m.order`)
 
@@ -939,7 +931,7 @@ preferable for large datasets that cannot be handled by optimal
 matching. Nearest neighbor, optimal, and genetic matching allow some
 customizations like including covariates on which to exactly match,
 using the Mahalanobis distance instead of a propensity score difference,
-and performing $`k`$:1 matching with $`k>1`$. Nearest neighbor matching
+and performing \\k\\:1 matching with \\k\>1\\. Nearest neighbor matching
 with replacement, full matching, and subclassification all involve
 weighting the control units with nonuniform weights, which often allows
 for improved balancing capabilities but can be accompanied by a loss in

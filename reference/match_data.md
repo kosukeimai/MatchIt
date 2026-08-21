@@ -70,11 +70,16 @@ get_matches(
 
 - data:
 
-  a data frame containing the original dataset to which the computed
-  output variables (`distance`, `weights`, and/or `subclass`) should be
-  appended. If empty, `match_data()` and `get_matches()` will attempt to
-  find the dataset using the environment of the `matchit` object, which
-  can be unreliable; see Notes.
+  the original dataset supplied to
+  [`matchit()`](https://kosukeimai.github.io/MatchIt/reference/matchit.md),
+  to which the computed output variables (`distance`, `weights`, and/or
+  `subclass`) should be appended. This must be the dataset used in the
+  matching itself, with the same units in the same order and before any
+  subsetting; a dataset with a different number of rows will trigger an
+  error. Usually it should be left unspecified: when it is,
+  `match_data()` and `get_matches()` recover the original dataset from
+  the environment of the `matchit` object, which works in all but the
+  circumstances described in Notes.
 
 - include.s.weights:
 
@@ -139,7 +144,7 @@ set or dataset supplied to `data` and the following columns:
 - id:
 
   The ID of each unit, corresponding to the row names in the original
-  data or dataset supplied to `data`. Only included in `get_matches`
+  data or dataset supplied to `data`. Only included in `get_matches()`
   output. This column can be used to identify which rows belong to the
   same unit since the same unit may appear multiple times if reused in
   matching with replacement.
@@ -223,10 +228,14 @@ dataset will not be found. This can occur when
 [`matchit()`](https://kosukeimai.github.io/MatchIt/reference/matchit.md)
 was run within an [`lapply()`](https://rdrr.io/r/base/lapply.html) or
 [`purrr::map()`](https://purrr.tidyverse.org/reference/map.html) call.
-The solution, which is recommended in all cases, is simply to supply the
-original dataset to the `data` argument of `match_data()`, e.g., as
+The solution in that case is to supply the original dataset to the
+`data` argument of `match_data()`, e.g., as
 `match_data(m.out, data = original_data)`, as demonstrated in the
-Examples.
+Examples. This is the only purpose of the `data` argument; supplying
+anything other than the dataset used in the matching, including a subset
+of it or a version with its rows reordered, will produce output in which
+the appended matching variables do not correspond to the units they are
+attached to.
 
 ## See also
 

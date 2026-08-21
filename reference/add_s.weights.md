@@ -43,8 +43,11 @@ add_s.weights(m, s.weights = NULL, data = NULL)
 - data:
 
   a data frame containing the sampling weights if given as a string or
-  formula. If unspecified, `add_s.weights()` will attempt to find the
-  dataset using the environment of the `matchit` object.
+  formula. It must contain one row for each unit in the original
+  [`matchit()`](https://kosukeimai.github.io/MatchIt/reference/matchit.md)
+  call, in the same order; supplying one with a different number of rows
+  is an error. If unspecified, `add_s.weights()` will attempt to find
+  the dataset using the environment of the `matchit` object.
 
 ## Value
 

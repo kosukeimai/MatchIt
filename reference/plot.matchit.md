@@ -49,7 +49,11 @@ plot(x, type = "qq", interactive = TRUE, which.xs = NULL, subclass, ...)
 - data:
 
   an optional data frame containing variables named in `which.xs` but
-  not present in the `matchit` object.
+  not present in the `matchit` object. It must contain one row for each
+  unit in the original
+  [`matchit()`](https://kosukeimai.github.io/MatchIt/reference/matchit.md)
+  call, in the same order; supplying one with a different number of rows
+  is an error.
 
 - ...:
 

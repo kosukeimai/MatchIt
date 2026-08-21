@@ -27,6 +27,9 @@ Useful links:
 
 Authors:
 
+- Noah Greifer <noah.greifer@gmail.com>
+  ([ORCID](https://orcid.org/0000-0003-3067-7154))
+
 - Daniel Ho <daniel.e.ho@gmail.com>
   ([ORCID](https://orcid.org/0000-0002-2195-5469))
 

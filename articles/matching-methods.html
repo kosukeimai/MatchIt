@@ -11,23 +11,27 @@
 <link rel="apple-touch-icon" sizes="180x180" href="../apple-touch-icon.png">
 <link rel="icon" sizes="any" href="../favicon.ico">
 <link rel="manifest" href="../site.webmanifest">
-<script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
+<!-- mathjax math --><script src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js" integrity="sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI=" crossorigin="anonymous"></script><script>
+  window.MathJax = {
+    chtml: {
+      fontURL: "https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/output/chtml/fonts/woff-v2"
+    }
+  };
+</script><script src="../lightswitch.js"></script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Matching Methods">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css" integrity="sha384-zh0CIslj+VczCZtlzBcjt5ppRcsAmDnRem7ESsYwWwg3m/OaJ2l4x7YBZl9Kxxib" crossorigin="anonymous">
-<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.js" integrity="sha384-Rma6DA2IPUwhNxmrB/7S3Tno0YY7sFu9WSYMCuulLhIqYSGZ2gKCJWIqhBWqMQfh" crossorigin="anonymous"></script><script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/auto-render.min.js" integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous" onload="renderMathInElement(document.body);"></script>
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
 
-    <nav class="navbar navbar-expand-lg fixed-top bg-light" data-bs-theme="light" aria-label="Site navigation"><div class="container">
+    <nav class="navbar navbar-expand-lg fixed-top " aria-label="Site navigation"><div class="container">
 
     <a class="navbar-brand me-2" href="../index.html">MatchIt</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.7.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.8.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -54,6 +58,14 @@
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json">
 </form></li>
 <li class="nav-item"><a class="external-link nav-link" href="https://github.com/kosukeimai/MatchIt/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
+<li class="nav-item dropdown">
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-lightswitch" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true" aria-label="Light switch"><span class="fa fa-sun"></span></button>
+  <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdown-lightswitch">
+<li><button class="dropdown-item" data-bs-theme-value="light"><span class="fa fa-sun"></span> Light</button></li>
+    <li><button class="dropdown-item" data-bs-theme-value="dark"><span class="fa fa-moon"></span> Dark</button></li>
+    <li><button class="dropdown-item" data-bs-theme-value="auto"><span class="fa fa-adjust"></span> Auto</button></li>
+  </ul>
+</li>
       </ul>
 </div>
 
@@ -70,7 +82,7 @@
                         <h4 data-toc-skip class="author">Noah
 Greifer</h4>
             
-            <h4 data-toc-skip class="date">2026-05-01</h4>
+            <h4 data-toc-skip class="date">2026-08-21</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/kosukeimai/MatchIt/blob/master/vignettes/matching-methods.Rmd" class="external-link"><code>vignettes/matching-methods.Rmd</code></a></small>
       <div class="d-none name"><code>matching-methods.Rmd</code></div>
@@ -413,53 +425,34 @@ function in the <code>Matching</code> package <span class="citation">(<a href="#
 search and uses the <code>Match()</code> function to perform the nearest
 neighbor match using the scaled generalized Mahalanobis distance.</p>
 <p>Genetic matching considers the generalized Mahalanobis distance
-between a treated unit
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>i</mi><annotation encoding="application/x-tex">i</annotation></semantics></math>
-and a control unit
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>j</mi><annotation encoding="application/x-tex">j</annotation></semantics></math>
-as
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>δ</mi><mrow><mi>G</mi><mi>M</mi><mi>D</mi></mrow></msub><mo stretchy="false" form="prefix">(</mo><msub><mi>𝐱</mi><mi>i</mi></msub><mo>,</mo><msub><mi>𝐱</mi><mi>j</mi></msub><mo>,</mo><mi>𝐖</mi><mo stretchy="false" form="postfix">)</mo><mo>=</mo><msqrt><mrow><mo stretchy="false" form="prefix">(</mo><msub><mi>𝐱</mi><mi>i</mi></msub><mo>−</mo><msub><mi>𝐱</mi><mi>j</mi></msub><msup><mo stretchy="false" form="postfix">)</mo><mo>′</mo></msup><mo stretchy="false" form="prefix">(</mo><msup><mi>𝐒</mi><mrow><mi>−</mi><mn>1</mn><mi>/</mi><mn>2</mn></mrow></msup><msup><mo stretchy="false" form="postfix">)</mo><mo>′</mo></msup><mi>𝐖</mi><mo stretchy="false" form="prefix">(</mo><msup><mi>𝐒</mi><mrow><mi>−</mi><mn>1</mn><mi>/</mi><mn>2</mn></mrow></msup><mo stretchy="false" form="postfix">)</mo><mo stretchy="false" form="prefix">(</mo><msub><mi>𝐱</mi><mi>i</mi></msub><mo>−</mo><msub><mi>𝐱</mi><mi>j</mi></msub><mo stretchy="false" form="postfix">)</mo></mrow></msqrt></mrow><annotation encoding="application/x-tex">\delta_{GMD}(\mathbf{x}_i,\mathbf{x}_j, \mathbf{W})=\sqrt{(\mathbf{x}_i - \mathbf{x}_j)'(\mathbf{S}^{-1/2})'\mathbf{W}(\mathbf{S}^{-1/2})(\mathbf{x}_i - \mathbf{x}_j)}</annotation></semantics></math>
-where
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>𝐱</mi><annotation encoding="application/x-tex">\mathbf{x}</annotation></semantics></math>
-is a
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>p</mi><mo>×</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">p \times 1</annotation></semantics></math>
-vector containing the value of each of the
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>p</mi><annotation encoding="application/x-tex">p</annotation></semantics></math>
-included covariates for that unit,
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi>𝐒</mi><mrow><mi>−</mi><mn>1</mn><mi>/</mi><mn>2</mn></mrow></msup><annotation encoding="application/x-tex">\mathbf{S}^{-1/2}</annotation></semantics></math>
-is the Cholesky decomposition of the covariance matrix
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>𝐒</mi><annotation encoding="application/x-tex">\mathbf{S}</annotation></semantics></math>
-of the covariates, and
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>𝐖</mi><annotation encoding="application/x-tex">\mathbf{W}</annotation></semantics></math>
-is a diagonal matrix with scaling factors
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>w</mi><annotation encoding="application/x-tex">w</annotation></semantics></math>
-on the diagonal:
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>𝐖</mi><mo>=</mo><mrow><mo stretchy="true" form="prefix">[</mo><mtable><mtr><mtd columnalign="center" style="text-align: center"><msub><mi>w</mi><mn>1</mn></msub></mtd><mtd columnalign="center" style="text-align: center"></mtd><mtd columnalign="center" style="text-align: center"></mtd><mtd columnalign="center" style="text-align: center"></mtd></mtr><mtr><mtd columnalign="center" style="text-align: center"></mtd><mtd columnalign="center" style="text-align: center"><msub><mi>w</mi><mn>2</mn></msub></mtd><mtd columnalign="center" style="text-align: center"></mtd><mtd columnalign="center" style="text-align: center"></mtd></mtr><mtr><mtd columnalign="center" style="text-align: center"></mtd><mtd columnalign="center" style="text-align: center"></mtd><mtd columnalign="center" style="text-align: center"><mo>⋱</mo></mtd><mtd columnalign="center" style="text-align: center"></mtd></mtr><mtr><mtd columnalign="center" style="text-align: center"></mtd><mtd columnalign="center" style="text-align: center"></mtd><mtd columnalign="center" style="text-align: center"></mtd><mtd columnalign="center" style="text-align: center"><msub><mi>w</mi><mi>p</mi></msub></mtd></mtr><mtr><mtd columnalign="center" style="text-align: center"></mtd></mtr></mtable><mo stretchy="true" form="postfix">]</mo></mrow></mrow><annotation encoding="application/x-tex">
-\mathbf{W}=\begin{bmatrix}
+between a treated unit <span class="math inline">\(i\)</span> and a
+control unit <span class="math inline">\(j\)</span> as <span class="math display">\[\delta_{GMD}(\mathbf{x}_i,\mathbf{x}_j,
+\mathbf{W})=\sqrt{(\mathbf{x}_i -
+\mathbf{x}_j)'(\mathbf{S}^{-1/2})'\mathbf{W}(\mathbf{S}^{-1/2})(\mathbf{x}_i
+- \mathbf{x}_j)}\]</span> where <span class="math inline">\(\mathbf{x}\)</span> is a <span class="math inline">\(p \times 1\)</span> vector containing the value of
+each of the <span class="math inline">\(p\)</span> included covariates
+for that unit, <span class="math inline">\(\mathbf{S}^{-1/2}\)</span> is
+the Cholesky decomposition of the covariance matrix <span class="math inline">\(\mathbf{S}\)</span> of the covariates, and <span class="math inline">\(\mathbf{W}\)</span> is a diagonal matrix with
+scaling factors <span class="math inline">\(w\)</span> on the diagonal:
+<span class="math display">\[\mathbf{W}=\begin{bmatrix}
     w_1 &amp;  &amp; &amp; \\
      &amp; w_2 &amp; &amp; \\
      &amp;  &amp; \ddots &amp;\\
      &amp; &amp; &amp; w_p \\
-    \end{bmatrix}
-</annotation></semantics></math></p>
-<p>When
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>w</mi><mi>k</mi></msub><mo>=</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">w_k=1</annotation></semantics></math>
-for all covariates
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>k</mi><annotation encoding="application/x-tex">k</annotation></semantics></math>,
-the computed distance is the standard Mahalanobis distance between
-units. Genetic matching estimates the optimal values of the
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>w</mi><mi>k</mi></msub><annotation encoding="application/x-tex">w_k</annotation></semantics></math>s,
+    \end{bmatrix}\]</span></p>
+<p>When <span class="math inline">\(w_k=1\)</span> for all covariates
+<span class="math inline">\(k\)</span>, the computed distance is the
+standard Mahalanobis distance between units. Genetic matching estimates
+the optimal values of the <span class="math inline">\(w_k\)</span>s,
 where a user-specified criterion is used to define what is optimal. The
 default is to maximize the smallest p-value among balance tests for the
 covariates in the matched sample (both Kolmogorov-Smirnov tests and
 t-tests for each covariate).</p>
 <p>In <code>MatchIt</code>, if a propensity score is specified, the
-default is to include the propensity score and the covariates in
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>𝐱</mi><annotation encoding="application/x-tex">\mathbf{x}</annotation></semantics></math>
-and to optimize balance on the covariates. When
-<code>distance = "mahalanobis"</code> or the <code>mahvars</code>
-argument is specified, the propensity score is left out of
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>𝐱</mi><annotation encoding="application/x-tex">\mathbf{x}</annotation></semantics></math>.</p>
+default is to include the propensity score and the covariates in <span class="math inline">\(\mathbf{x}\)</span> and to optimize balance on the
+covariates. When <code>distance = "mahalanobis"</code> or the
+<code>mahvars</code> argument is specified, the propensity score is left
+out of <span class="math inline">\(\mathbf{x}\)</span>.</p>
 <p>In all other respects, genetic matching functions just like nearest
 neighbor matching except that the matching itself is carried out by
 <code><a href="https://rdrr.io/pkg/Matching/man/Match.html" class="external-link">Matching::Match()</a></code> instead of by <code>MatchIt</code>. When
@@ -619,11 +612,10 @@ subset selection; doing so can add additional precision and robustness
 <p>The optimization problem requires a special solver to solve.
 Currently, the available options in <code>MatchIt</code> are the HiGHS
 solver (through the <code>highs</code> package), the GLPK solver
-(through the <code>Rglpk</code> package), the SYMPHONY solver (through
-the <code>Rsymphony</code> package), and the Gurobi solver (through the
-<code>gurobi</code> package). The differences among the solvers are in
-performance; Gurobi is by far the best (fastest, least likely to fail to
-find a solution), but it is proprietary (though has a free trial and
+(through the <code>Rglpk</code> package), and the Gurobi solver (through
+the <code>gurobi</code> package). The differences among the solvers are
+in performance; Gurobi is by far the best (fastest, least likely to fail
+to find a solution), but it is proprietary (though has a free trial and
 academic license) and is a bit more complicated to install. HiGHS is the
 default due to being open source, easily installed, and with performance
 comparable to Gurobi. The <code>designmatch</code> package also provides
@@ -687,36 +679,20 @@ of computing pairwise distances from the covariates directly (i.e.,
 without estimating propensity scores). The options include
 <code>"mahalanobis"</code>, <code>"robust_mahalanobis"</code>,
 <code>"euclidean"</code>, and <code>"scaled_euclidean"</code>. These
-methods compute a distance metric for a treated unit
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>i</mi><annotation encoding="application/x-tex">i</annotation></semantics></math>
-and a control unit
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>j</mi><annotation encoding="application/x-tex">j</annotation></semantics></math>
-as
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>δ</mi><mo stretchy="false" form="prefix">(</mo><msub><mi>𝐱</mi><mi>i</mi></msub><mo>,</mo><msub><mi>𝐱</mi><mi>j</mi></msub><mo stretchy="false" form="postfix">)</mo><mo>=</mo><msqrt><mrow><mo stretchy="false" form="prefix">(</mo><msub><mi>𝐱</mi><mi>i</mi></msub><mo>−</mo><msub><mi>𝐱</mi><mi>j</mi></msub><msup><mo stretchy="false" form="postfix">)</mo><mo>′</mo></msup><msup><mi>S</mi><mrow><mi>−</mi><mn>1</mn></mrow></msup><mo stretchy="false" form="prefix">(</mo><msub><mi>𝐱</mi><mi>i</mi></msub><mo>−</mo><msub><mi>𝐱</mi><mi>j</mi></msub><mo stretchy="false" form="postfix">)</mo></mrow></msqrt></mrow><annotation encoding="application/x-tex">\delta(\mathbf{x}_i,\mathbf{x}_j)=\sqrt{(\mathbf{x}_i - \mathbf{x}_j)'S^{-1}(\mathbf{x}_i - \mathbf{x}_j)}</annotation></semantics></math></p>
-<p>where
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>𝐱</mi><annotation encoding="application/x-tex">\mathbf{x}</annotation></semantics></math>
-is a
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>p</mi><mo>×</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">p \times 1</annotation></semantics></math>
-vector containing the value of each of the
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>p</mi><annotation encoding="application/x-tex">p</annotation></semantics></math>
-included covariates for that unit,
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>S</mi><annotation encoding="application/x-tex">S</annotation></semantics></math>
-is a scaling matrix, and
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi>S</mi><mrow><mi>−</mi><mn>1</mn></mrow></msup><annotation encoding="application/x-tex">S^{-1}</annotation></semantics></math>
-is the (generalized) inverse of
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>S</mi><annotation encoding="application/x-tex">S</annotation></semantics></math>.
-For Mahalanobis distance matching,
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>S</mi><annotation encoding="application/x-tex">S</annotation></semantics></math>
-is the pooled covariance matrix of the covariates <span class="citation">(<a href="#ref-rubinBiasReductionUsing1980">Rubin
-1980</a>)</span>; for Euclidean distance matching,
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>S</mi><annotation encoding="application/x-tex">S</annotation></semantics></math>
-is the identity matrix (i.e., no scaling); and for scaled Euclidean
-distance matching,
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>S</mi><annotation encoding="application/x-tex">S</annotation></semantics></math>
-is the diagonal of the pooled covariance matrix (containing just the
-variances). The robust Mahalanobis distance is computed not on the
-covariates directly but rather on their ranks and uses a correction for
-ties (see <span class="citation">Rosenbaum (<a href="#ref-rosenbaumDesignObservationalStudies2010">2010</a>)</span>, ch
+methods compute a distance metric for a treated unit <span class="math inline">\(i\)</span> and a control unit <span class="math inline">\(j\)</span> as <span class="math display">\[\delta(\mathbf{x}_i,\mathbf{x}_j)=\sqrt{(\mathbf{x}_i
+- \mathbf{x}_j)'S^{-1}(\mathbf{x}_i - \mathbf{x}_j)}\]</span></p>
+<p>where <span class="math inline">\(\mathbf{x}\)</span> is a <span class="math inline">\(p \times 1\)</span> vector containing the value of
+each of the <span class="math inline">\(p\)</span> included covariates
+for that unit, <span class="math inline">\(S\)</span> is a scaling
+matrix, and <span class="math inline">\(S^{-1}\)</span> is the
+(generalized) inverse of <span class="math inline">\(S\)</span>. For
+Mahalanobis distance matching, <span class="math inline">\(S\)</span> is
+the pooled covariance matrix of the covariates <span class="citation">(<a href="#ref-rubinBiasReductionUsing1980">Rubin
+1980</a>)</span>; for Euclidean distance matching, <span class="math inline">\(S\)</span> is the identity matrix (i.e., no
+scaling); and for scaled Euclidean distance matching, <span class="math inline">\(S\)</span> is the diagonal of the pooled
+covariance matrix (containing just the variances). The robust
+Mahalanobis distance is computed not on the covariates directly but
+rather on their ranks and uses a correction for ties (see <span class="citation">Rosenbaum (<a href="#ref-rosenbaumDesignObservationalStudies2010">2010</a>)</span>, ch
 8). For creating close pairs, matching with these distance measures
 tends work better than propensity score matching because paired units
 will have close values on all of the covariates, whereas propensity
@@ -880,44 +856,31 @@ Higher values will tend to improve balance at the cost of precision.</p>
 </div>
 <div class="section level3">
 <h3 id="k1-matching-ratio">
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>k</mi><annotation encoding="application/x-tex">k</annotation></semantics></math>:1
-matching (<code>ratio</code>)<a class="anchor" aria-label="anchor" href="#k1-matching-ratio"></a>
+<span class="math inline">\(k\)</span>:1 matching
+(<code>ratio</code>)<a class="anchor" aria-label="anchor" href="#k1-matching-ratio"></a>
 </h3>
 <p>The most common form of matching, 1:1 matching, involves pairing one
-control unit with each treated unit. To perform
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>k</mi><annotation encoding="application/x-tex">k</annotation></semantics></math>:1
-matching (e.g., 2:1 or 3:1), which pairs (up to)
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>k</mi><annotation encoding="application/x-tex">k</annotation></semantics></math>
-control units with each treated unit, the <code>ratio</code> argument
-can be specified. Performing
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>k</mi><annotation encoding="application/x-tex">k</annotation></semantics></math>:1
-matching can preserve precision by preventing too many control units
-from being unmatched and dropped from the matched sample, though the
-gain in precision by increasing
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>k</mi><annotation encoding="application/x-tex">k</annotation></semantics></math>
+control unit with each treated unit. To perform <span class="math inline">\(k\)</span>:1 matching (e.g., 2:1 or 3:1), which
+pairs (up to) <span class="math inline">\(k\)</span> control units with
+each treated unit, the <code>ratio</code> argument can be specified.
+Performing <span class="math inline">\(k\)</span>:1 matching can
+preserve precision by preventing too many control units from being
+unmatched and dropped from the matched sample, though the gain in
+precision by increasing <span class="math inline">\(k\)</span>
 diminishes rapidly after 4 <span class="citation">(<a href="#ref-rosenbaum2020">Rosenbaum 2020</a>)</span>. Importantly, for
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>k</mi><mo>&gt;</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">k&gt;1</annotation></semantics></math>,
-the matches after the first match will generally be worse than the first
-match in terms of closeness to the treated unit, so increasing
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>k</mi><annotation encoding="application/x-tex">k</annotation></semantics></math>
-can also worsen balance <span class="citation">(<a href="#ref-rassenOnetomanyPropensityScore2012">Rassen et al.
+<span class="math inline">\(k&gt;1\)</span>, the matches after the first
+match will generally be worse than the first match in terms of closeness
+to the treated unit, so increasing <span class="math inline">\(k\)</span> can also worsen balance <span class="citation">(<a href="#ref-rassenOnetomanyPropensityScore2012">Rassen et al.
 2012</a>)</span>. <span class="citation">Austin (<a href="#ref-austin2010a">2010a</a>)</span> found that 1:1 or 1:2 matching
 generally performed best in terms of mean squared error. In general, it
-makes sense to use higher values of
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>k</mi><annotation encoding="application/x-tex">k</annotation></semantics></math>
-while ensuring that balance is satisfactory.</p>
-<p>With nearest neighbor and optimal pair matching, variable
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>k</mi><annotation encoding="application/x-tex">k</annotation></semantics></math>:1
-matching, in which the number of controls matched to each treated unit
-varies, can also be used; this can have improved performance over
-“fixed”
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>k</mi><annotation encoding="application/x-tex">k</annotation></semantics></math>:1
-matching <span class="citation">(<a href="#ref-ming2000">Ming and
-Rosenbaum 2000</a>; <a href="#ref-rassenOnetomanyPropensityScore2012">Rassen et al.
+makes sense to use higher values of <span class="math inline">\(k\)</span> while ensuring that balance is
+satisfactory.</p>
+<p>With nearest neighbor and optimal pair matching, variable <span class="math inline">\(k\)</span>:1 matching, in which the number of
+controls matched to each treated unit varies, can also be used; this can
+have improved performance over “fixed” <span class="math inline">\(k\)</span>:1 matching <span class="citation">(<a href="#ref-ming2000">Ming and Rosenbaum 2000</a>; <a href="#ref-rassenOnetomanyPropensityScore2012">Rassen et al.
 2012</a>)</span>. See <code><a href="../reference/method_nearest.html">?method_nearest</a></code> and
 <code><a href="../reference/method_optimal.html">?method_optimal</a></code> for information on implementing variable
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>k</mi><annotation encoding="application/x-tex">k</annotation></semantics></math>:1
-matching.</p>
+<span class="math inline">\(k\)</span>:1 matching.</p>
 </div>
 <div class="section level3">
 <h3 id="matching-order-m-order">Matching order (<code>m.order</code>)<a class="anchor" aria-label="anchor" href="#matching-order-m-order"></a>
@@ -1037,19 +1000,17 @@ preferable for large datasets that cannot be handled by optimal
 matching. Nearest neighbor, optimal, and genetic matching allow some
 customizations like including covariates on which to exactly match,
 using the Mahalanobis distance instead of a propensity score difference,
-and performing
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>k</mi><annotation encoding="application/x-tex">k</annotation></semantics></math>:1
-matching with
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>k</mi><mo>&gt;</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">k&gt;1</annotation></semantics></math>.
-Nearest neighbor matching with replacement, full matching, and
-subclassification all involve weighting the control units with
-nonuniform weights, which often allows for improved balancing
-capabilities but can be accompanied by a loss in effective sample size,
-even when all units are retained. There is no reason not to try many of
-these methods, varying parameters here and there, in search of good
-balance and high remaining sample size. As previously mentioned, no
-single method can be recommended above all others because the optimal
-specification depends on the unique qualities of each dataset.</p>
+and performing <span class="math inline">\(k\)</span>:1 matching with
+<span class="math inline">\(k&gt;1\)</span>. Nearest neighbor matching
+with replacement, full matching, and subclassification all involve
+weighting the control units with nonuniform weights, which often allows
+for improved balancing capabilities but can be accompanied by a loss in
+effective sample size, even when all units are retained. There is no
+reason not to try many of these methods, varying parameters here and
+there, in search of good balance and high remaining sample size. As
+previously mentioned, no single method can be recommended above all
+others because the optimal specification depends on the unique qualities
+of each dataset.</p>
 <p>When the target population is less important, for example, when
 engaging in treatment effect discovery or when the sampled population is
 not of particular interest (e.g., it corresponds to an arbitrarily
@@ -1396,7 +1357,7 @@ Annals of Applied Statistics</em> 8 (1): 204–31. <a href="https://doi.org/10.1
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.9000.</p>
 </div>
 
     </footer>

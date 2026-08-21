@@ -9,7 +9,8 @@ least one match. The matching is optimal in the sense that that sum of
 the absolute distances between the treated and control units in each
 subclass is as small as possible. The method relies on and is a wrapper
 for
-[`optmatch::fullmatch()`](https://rdrr.io/pkg/optmatch/man/fullmatch.html).
+[`optmatch::fullmatch()`](https://rdrr.io/pkg/optmatch/man/fullmatch.html)
+.
 
 Advantages of optimal full matching include that the matching order is
 not required to be specified, units do not need to be discarded, and it
@@ -113,7 +114,8 @@ is used for optimal full matching:
 
   for which variables anti-exact matching should take place. Anti-exact
   matching is processed using
-  [`optmatch::antiExactMatch()`](https://rdrr.io/pkg/optmatch/man/antiExactMatch.html).
+  [`optmatch::antiExactMatch()`](https://rdrr.io/pkg/optmatch/man/antiExactMatch.html)
+  .
 
 - discard:
 
@@ -135,8 +137,8 @@ is used for optimal full matching:
 
   the width(s) of the caliper(s) used for caliper matching. Calipers are
   processed by
-  [`optmatch::caliper()`](https://rdrr.io/pkg/optmatch/man/caliper-methods.html).
-  Positive and negative calipers are allowed. See Notes and Examples.
+  [`optmatch::caliper()`](https://rdrr.io/pkg/optmatch/man/caliper-methods.html)
+  . Positive and negative calipers are allowed. See Notes and Examples.
 
 - std.caliper:
 
@@ -151,8 +153,8 @@ is used for optimal full matching:
 - ...:
 
   additional arguments passed to
-  [`optmatch::fullmatch()`](https://rdrr.io/pkg/optmatch/man/fullmatch.html).
-  Allowed arguments include `min.controls`, `max.controls`,
+  [`optmatch::fullmatch()`](https://rdrr.io/pkg/optmatch/man/fullmatch.html)
+  . Allowed arguments include `min.controls`, `max.controls`,
   `omit.fraction`, `mean.controls`, `tol`, and `solver`. See the
   [`optmatch::fullmatch()`](https://rdrr.io/pkg/optmatch/man/fullmatch.html)
   documentation for details. In general, `tol` should be set to a low
@@ -265,8 +267,8 @@ Coaching for the SAT. Journal of the American Statistical Association,
 for a detailed explanation of the inputs and outputs of a call to
 [`matchit()`](https://kosukeimai.github.io/MatchIt/reference/matchit.md).
 
-[`optmatch::fullmatch()`](https://rdrr.io/pkg/optmatch/man/fullmatch.html),
-which is the workhorse.
+[`optmatch::fullmatch()`](https://rdrr.io/pkg/optmatch/man/fullmatch.html)
+, which is the workhorse.
 
 [`method_optimal`](https://kosukeimai.github.io/MatchIt/reference/method_optimal.md)
 for optimal pair matching, which is a special case of optimal full
@@ -373,7 +375,6 @@ m.out2
 #>  - method: Optimal full matching
 #>  - distance: Mahalanobis [matching]
 #>              Propensity score [caliper]
-#> 
 #>              - estimated with logistic regression
 #>  - caliper: <distance> (0.003)
 #>  - number of obs.: 614 (original), 349 (matched)
@@ -431,7 +432,8 @@ m.out3 <- matchit(treat ~ age + educ + re74 + re75,
 m.out3
 #> A `matchit` object
 #>  - method: Optimal full matching
-#>  - distance: Mahalanobis - caliper: re74 (500), re75 (500)
+#>  - distance: Mahalanobis
+#>  - caliper: re74 (500), re75 (500)
 #>  - number of obs.: 614 (original), 391 (matched)
 #>  - target estimand: ATT
 #>  - covariates: age, educ, re74, re75

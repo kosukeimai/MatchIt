@@ -11,26 +11,30 @@
 <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
 <link rel="icon" sizes="any" href="favicon.ico">
 <link rel="manifest" href="site.webmanifest">
-<script src="deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<link href="deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
+<!-- mathjax math --><script src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js" integrity="sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI=" crossorigin="anonymous"></script><script>
+  window.MathJax = {
+    chtml: {
+      fontURL: "https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/output/chtml/fonts/woff-v2"
+    }
+  };
+</script><script src="lightswitch.js"></script><script src="deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link href="deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet">
+<script src="deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="Nonparametric Preprocessing for Parametric Causal Inference">
 <meta name="description" content="Selects matched samples of the original treated and control groups with similar covariate distributions -- can be used to match exactly on covariates, to match on propensity scores, or perform a variety of other matching procedures. The package also implements a series of recommendations offered in Ho, Imai, King, and Stuart (2007) &lt;DOI:10.1093/pan/mpl013&gt;. (The gurobi package, which is not on CRAN, is optional and comes with an installation of the Gurobi Optimizer, available at &lt;https://www.gurobi.com&gt;.)">
 <meta property="og:description" content="Selects matched samples of the original treated and control groups with similar covariate distributions -- can be used to match exactly on covariates, to match on propensity scores, or perform a variety of other matching procedures. The package also implements a series of recommendations offered in Ho, Imai, King, and Stuart (2007) &lt;DOI:10.1093/pan/mpl013&gt;. (The gurobi package, which is not on CRAN, is optional and comes with an installation of the Gurobi Optimizer, available at &lt;https://www.gurobi.com&gt;.)">
 <meta property="og:image" content="https://kosukeimai.github.io/MatchIt/logo.png">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css" integrity="sha384-zh0CIslj+VczCZtlzBcjt5ppRcsAmDnRem7ESsYwWwg3m/OaJ2l4x7YBZl9Kxxib" crossorigin="anonymous">
-<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.js" integrity="sha384-Rma6DA2IPUwhNxmrB/7S3Tno0YY7sFu9WSYMCuulLhIqYSGZ2gKCJWIqhBWqMQfh" crossorigin="anonymous"></script><script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/auto-render.min.js" integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous" onload="renderMathInElement(document.body);"></script>
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
 
-    <nav class="navbar navbar-expand-lg fixed-top bg-light" data-bs-theme="light" aria-label="Site navigation"><div class="container">
+    <nav class="navbar navbar-expand-lg fixed-top " aria-label="Site navigation"><div class="container">
 
     <a class="navbar-brand me-2" href="index.html">MatchIt</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.7.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.8.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -57,6 +61,14 @@
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="search.json">
 </form></li>
 <li class="nav-item"><a class="external-link nav-link" href="https://github.com/kosukeimai/MatchIt/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
+<li class="nav-item dropdown">
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-lightswitch" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true" aria-label="Light switch"><span class="fa fa-sun"></span></button>
+  <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdown-lightswitch">
+<li><button class="dropdown-item" data-bs-theme-value="light"><span class="fa fa-sun"></span> Light</button></li>
+    <li><button class="dropdown-item" data-bs-theme-value="dark"><span class="fa fa-moon"></span> Dark</button></li>
+    <li><button class="dropdown-item" data-bs-theme-value="auto"><span class="fa fa-adjust"></span> Auto</button></li>
+  </ul>
+</li>
       </ul>
 </div>
 
@@ -71,13 +83,13 @@
 </div>
 <div class="section level2">
 <h2 id="cran_status_badge-cran_downloads_badge">
-<a href="https://cran.r-project.org/package=MatchIt" class="external-link"><img src="https://img.shields.io/cran/v/MatchIt?color=952100" alt="CRAN_Status_Badge"></a> <a href="https://cran.r-project.org/package=MatchIt" class="external-link"><img src="https://cranlogs.r-pkg.org/badges/MatchIt?color=952100" alt="CRAN_Downloads_Badge"></a>
+<a href="https://cran.r-project.org/package=MatchIt" class="external-link"><img src="https://r-pkg.org/badges/version/MatchIt?color=952100" alt="CRAN_Status_Badge"></a> <a href="https://cran.r-project.org/package=MatchIt" class="external-link"><img src="https://cranlogs.r-pkg.org/badges/MatchIt?color=952100" alt="CRAN_Downloads_Badge"></a>
 <a class="anchor" aria-label="anchor" href="#cran_status_badge-cran_downloads_badge"></a>
 </h2>
 <div class="section level3">
 <h3 id="overview">Overview<a class="anchor" aria-label="anchor" href="#overview"></a>
 </h3>
-<p><code>MatchIt</code> provides a simple and straightforward interface to various methods of matching for covariate balance in observational studies. Matching is one way to reduce confounding and model dependence when estimating treatment effects. Several matching methods are available, including nearest neighbor matching, optimal pair matching, optimal full matching, generalized full matching, genetic matching, exact matching, coarsened exact matching, cardinality matching, and subclassification, some of which rely on functions from other R packages. A variety of methods to estimate propensity scores for propensity score matching are included. Below is an example of the use of <code>MatchIt</code> to perform Mahalanobis distance matching with replacement and assess balance:</p>
+<p><em>MatchIt</em> provides a simple and straightforward interface to various methods of matching for covariate balance in observational studies. Matching is one way to reduce confounding and model dependence when estimating treatment effects. Several matching methods are available, including nearest neighbor matching, optimal pair matching, optimal full matching, generalized full matching, genetic matching, exact matching, coarsened exact matching, cardinality matching, and subclassification, some of which rely on functions from other R packages. A variety of methods to estimate propensity scores for propensity score matching are included. Below is an example of the use of <em>MatchIt</em> to perform Mahalanobis distance matching with replacement and assess balance:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://kosukeimai.github.io/MatchIt/">"MatchIt"</a></span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"lalonde"</span>, package <span class="op">=</span> <span class="st">"MatchIt"</span><span class="op">)</span></span>
@@ -88,14 +100,15 @@
 <span>                   <span class="va">nodegree</span> <span class="op">+</span> <span class="va">re74</span> <span class="op">+</span> <span class="va">re75</span>, </span>
 <span>                 data <span class="op">=</span> <span class="va">lalonde</span>, distance <span class="op">=</span> <span class="st">"mahalanobis"</span>,</span>
 <span>                 replace <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
-<p>Printing the <code>MatchIt</code> object provides details of the kind of matching performed.</p>
+<p>Printing the <code>matchit</code> object provides details of the kind of matching performed.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">m.out</span></span></code></pre></div>
 <div class="sourceCode" id="cb3"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a><span class="co">#&gt; A `matchit` object</span></span>
 <span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a><span class="co">#&gt;  - method: 1:1 nearest neighbor matching with replacement</span></span>
-<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a><span class="co">#&gt;  - distance: Mahalanobis - number of obs.: 614 (original), 264 (matched)</span></span>
-<span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a><span class="co">#&gt;  - target estimand: ATT</span></span>
-<span id="cb3-5"><a href="#cb3-5" tabindex="-1"></a><span class="co">#&gt;  - covariates: age, educ, race, married, nodegree, re74, re75</span></span></code></pre></div>
+<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a><span class="co">#&gt;  - distance: Mahalanobis</span></span>
+<span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a><span class="co">#&gt;  - number of obs.: 614 (original), 263 (matched)</span></span>
+<span id="cb3-5"><a href="#cb3-5" tabindex="-1"></a><span class="co">#&gt;  - target estimand: ATT</span></span>
+<span id="cb3-6"><a href="#cb3-6" tabindex="-1"></a><span class="co">#&gt;  - covariates: age, educ, race, married, nodegree, re74, re75</span></span></code></pre></div>
 <p>We can check covariate balance for the original and matched samples using <code><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary()</a></code>:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">#Checking balance before and after matching:</span></span>
@@ -119,55 +132,55 @@
 <span id="cb5-17"><a href="#cb5-17" tabindex="-1"></a><span class="co">#&gt; </span></span>
 <span id="cb5-18"><a href="#cb5-18" tabindex="-1"></a><span class="co">#&gt; Summary of Balance for Matched Data:</span></span>
 <span id="cb5-19"><a href="#cb5-19" tabindex="-1"></a><span class="co">#&gt;            Means Treated Means Control Std. Mean Diff. Var. Ratio eCDF Mean eCDF Max Std. Pair Dist.</span></span>
-<span id="cb5-20"><a href="#cb5-20" tabindex="-1"></a><span class="co">#&gt; age              25.8162       25.5405          0.0385     0.6531    0.0466   0.1892          0.4827</span></span>
-<span id="cb5-21"><a href="#cb5-21" tabindex="-1"></a><span class="co">#&gt; educ             10.3459       10.4270         -0.0403     1.1649    0.0077   0.0378          0.1963</span></span>
-<span id="cb5-22"><a href="#cb5-22" tabindex="-1"></a><span class="co">#&gt; raceblack         0.8432        0.8432          0.0000          .    0.0000   0.0000          0.0000</span></span>
-<span id="cb5-23"><a href="#cb5-23" tabindex="-1"></a><span class="co">#&gt; racehispan        0.0595        0.0595          0.0000          .    0.0000   0.0000          0.0000</span></span>
-<span id="cb5-24"><a href="#cb5-24" tabindex="-1"></a><span class="co">#&gt; racewhite         0.0973        0.0973          0.0000          .    0.0000   0.0000          0.0000</span></span>
+<span id="cb5-20"><a href="#cb5-20" tabindex="-1"></a><span class="co">#&gt; age              25.8162       25.5622          0.0355     0.6547    0.0461   0.1838          0.4827</span></span>
+<span id="cb5-21"><a href="#cb5-21" tabindex="-1"></a><span class="co">#&gt; educ             10.3459       10.4270         -0.0403     1.1648    0.0077   0.0378          0.1963</span></span>
+<span id="cb5-22"><a href="#cb5-22" tabindex="-1"></a><span class="co">#&gt; raceblack         0.8432        0.8432         -0.0000          .    0.0000   0.0000          0.0000</span></span>
+<span id="cb5-23"><a href="#cb5-23" tabindex="-1"></a><span class="co">#&gt; racehispan        0.0595        0.0595         -0.0000          .    0.0000   0.0000          0.0000</span></span>
+<span id="cb5-24"><a href="#cb5-24" tabindex="-1"></a><span class="co">#&gt; racewhite         0.0973        0.0973         -0.0000          .    0.0000   0.0000          0.0000</span></span>
 <span id="cb5-25"><a href="#cb5-25" tabindex="-1"></a><span class="co">#&gt; married           0.1892        0.1784          0.0276          .    0.0108   0.0108          0.0276</span></span>
-<span id="cb5-26"><a href="#cb5-26" tabindex="-1"></a><span class="co">#&gt; nodegree          0.7081        0.7081          0.0000          .    0.0000   0.0000          0.0000</span></span>
-<span id="cb5-27"><a href="#cb5-27" tabindex="-1"></a><span class="co">#&gt; re74           2095.5737     1788.6941          0.0628     1.5707    0.0311   0.1730          0.2494</span></span>
-<span id="cb5-28"><a href="#cb5-28" tabindex="-1"></a><span class="co">#&gt; re75           1532.0553     1087.7420          0.1380     2.1244    0.0330   0.0865          0.2360</span></span>
+<span id="cb5-26"><a href="#cb5-26" tabindex="-1"></a><span class="co">#&gt; nodegree          0.7081        0.7081         -0.0000          .    0.0000   0.0000          0.0000</span></span>
+<span id="cb5-27"><a href="#cb5-27" tabindex="-1"></a><span class="co">#&gt; re74           2095.5737     1788.6941          0.0628     1.5706    0.0311   0.1730          0.2494</span></span>
+<span id="cb5-28"><a href="#cb5-28" tabindex="-1"></a><span class="co">#&gt; re75           1532.0553     1087.7420          0.1380     2.1243    0.0330   0.0865          0.2360</span></span>
 <span id="cb5-29"><a href="#cb5-29" tabindex="-1"></a><span class="co">#&gt; </span></span>
 <span id="cb5-30"><a href="#cb5-30" tabindex="-1"></a><span class="co">#&gt; Sample Sizes:</span></span>
 <span id="cb5-31"><a href="#cb5-31" tabindex="-1"></a><span class="co">#&gt;               Control Treated</span></span>
 <span id="cb5-32"><a href="#cb5-32" tabindex="-1"></a><span class="co">#&gt; All            429.       185</span></span>
-<span id="cb5-33"><a href="#cb5-33" tabindex="-1"></a><span class="co">#&gt; Matched (ESS)   34.19     185</span></span>
-<span id="cb5-34"><a href="#cb5-34" tabindex="-1"></a><span class="co">#&gt; Matched         79.       185</span></span>
-<span id="cb5-35"><a href="#cb5-35" tabindex="-1"></a><span class="co">#&gt; Unmatched      350.         0</span></span>
+<span id="cb5-33"><a href="#cb5-33" tabindex="-1"></a><span class="co">#&gt; Matched (ESS)   34.12     185</span></span>
+<span id="cb5-34"><a href="#cb5-34" tabindex="-1"></a><span class="co">#&gt; Matched         78.       185</span></span>
+<span id="cb5-35"><a href="#cb5-35" tabindex="-1"></a><span class="co">#&gt; Unmatched      351.         0</span></span>
 <span id="cb5-36"><a href="#cb5-36" tabindex="-1"></a><span class="co">#&gt; Discarded        0.         0</span></span></code></pre></div>
 <p>At the top is balance for the original sample. Below that is balance in the matched sample. Smaller values for the balance statistics indicate better balance. (In this case, fairly good balance was achieved, but other matching methods should be tried). We can plot the standardized mean differences in a Love plot for a clean, visual display of balance across the sample:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">#Plot balance</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">m.out</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p><img src="reference/figures/README-unnamed-chunk-5-1.png" alt="Love plot of balance before and after matching." style="display: block; margin: auto;"></p>
-<p>Although much has been written about matching theory, most of the theory relied upon in <code>MatchIt</code> is described well in <a href="https://doi.org/10.1093/pan/mpl013" class="external-link">Ho, Imai, King, and Stuart (2007)</a>, <a href="https://doi.org/10.1214/09-STS313" class="external-link">Stuart (2010)</a>, and <a href="https://doi.org/10.1093/epirev/mxab003" class="external-link">Greifer and Stuart (2021)</a>. The <em>Journal of Statistical Software</em> article for <code>MatchIt</code> can be accessed <a href="https://doi.org/10.18637/jss.v042.i08" class="external-link">here</a>, though note that some options have changed, so the <code>MatchIt</code> reference pages and included vignettes should be used for understanding the functions and methods available. Further references for individual methods are present in their respective help pages. The <code>MatchIt</code> <a href="https://kosukeimai.github.io/MatchIt/">website</a> provides access to vignettes and documentation files.</p>
+<p>Although much has been written about matching theory, most of the theory relied upon in <em>MatchIt</em> is described well in <a href="https//:doi.org/10.1093/pan/mpl013">Ho, Imai, King, and Stuart (2007)</a>, <a href="https://doi.org/10.1214/09-STS313" class="external-link">Stuart (2010)</a>, and <a href="https://doi.org/10.1093/epirev/mxab003" class="external-link">Greifer and Stuart (2021)</a>. The <em>Journal of Statistical Software</em> article for <em>MatchIt</em> can be accessed <a href="https://doi.org/10.18637/jss.v042.i08" class="external-link">here</a>, though note that some options have changed, so the <em>MatchIt</em> reference pages and included vignettes should be used for understanding the functions and methods available. Further references for individual methods are present in their respective help pages. The <em>MatchIt</em> <a href="https://kosukeimai.github.io/MatchIt/">website</a> provides access to vignettes and documentation files.</p>
 </div>
 <div class="section level3">
-<h3 id="citing-matchit">Citing <code>MatchIt</code>
+<h3 id="citing-matchit">Citing <em>MatchIt</em>
 <a class="anchor" aria-label="anchor" href="#citing-matchit"></a>
 </h3>
-<p>Please cite <code>MatchIt</code> when using it for analysis presented in publications, which you can do by citing the <em>Journal of Statistical Software</em> article below:</p>
+<p>Please cite <em>MatchIt</em> when using it for analysis presented in publications, which you can do by citing the <em>Journal of Statistical Software</em> article below:</p>
 <p>Ho, D. E., Imai, K., King, G., &amp; Stuart, E. A. (2011). MatchIt: Nonparametric Preprocessing for Parametric Causal Inference. <em>Journal of Statistical Software</em>, 42(8). <a href="https://doi.org/10.18637/jss.v042.i08" class="external-link">doi:10.18637/jss.v042.i08</a></p>
 <p>This citation can also be accessed using <code>citation("MatchIt")</code> in R. For reproducibility purposes, it is also important to include the version number for the version used.</p>
 </div>
 <div class="section level3">
 <h3 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h3>
-<p>To download and install the latest stable version of <code>MatchIt</code> from CRAN, run the following:</p>
+<p>To download and install the latest stable version of <em>MatchIt</em> from CRAN, run the following:</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"MatchIt"</span><span class="op">)</span></span></code></pre></div>
 <p>To install a development version, which may have a bug fixed or a new feature, run the following:</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"pak"</span><span class="op">)</span> <span class="co">#If not yet installed</span></span>
 <span></span>
-<span><span class="fu">pak</span><span class="fu">::</span><span class="fu"><a href="https://pak.r-lib.org/reference/pkg_install.html" class="external-link">pkg_install</a></span><span class="op">(</span><span class="st">"ngreifer/MatchIt"</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">pak</span><span class="fu">::</span><span class="fu"><a href="https://pak.r-lib.org/reference/pak.html" class="external-link">pak</a></span><span class="op">(</span><span class="st">"ngreifer/MatchIt"</span><span class="op">)</span></span></code></pre></div>
 <p>This will require R to compile C++ code, which might require additional software to be installed on your computer. If you need the development version but can’t compile the package, ask the maintainer for a binary version of the package.</p>
 </div>
 <div class="section level3">
 <h3 id="questions-and-bug-reports">Questions and Bug Reports<a class="anchor" aria-label="anchor" href="#questions-and-bug-reports"></a>
 </h3>
-<p>If you have questions about <code>MatchIt</code> or want to submit a bug report, please do so using the GitHub <a href="https://github.com/kosukeimai/MatchIt/issues" class="external-link">issues page</a> for the package. Suggestions for new features and kind words of support are encouraged as well. Remember this software is free and developed by volunteers.</p>
+<p>If you have questions about <em>MatchIt</em> or want to submit a bug report, please do so using the GitHub <a href="https://github.com/kosukeimai/MatchIt/issues" class="external-link">issues page</a> for the package. Suggestions for new features and kind words of support are encouraged as well. Remember this software is free and developed by volunteers.</p>
 </div>
 </div>
 </div>
@@ -219,7 +232,7 @@
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.9000.</p>
 </div>
 
     </footer>

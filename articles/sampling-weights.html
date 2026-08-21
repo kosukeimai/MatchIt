@@ -11,23 +11,27 @@
 <link rel="apple-touch-icon" sizes="180x180" href="../apple-touch-icon.png">
 <link rel="icon" sizes="any" href="../favicon.ico">
 <link rel="manifest" href="../site.webmanifest">
-<script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
+<!-- mathjax math --><script src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js" integrity="sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI=" crossorigin="anonymous"></script><script>
+  window.MathJax = {
+    chtml: {
+      fontURL: "https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/output/chtml/fonts/woff-v2"
+    }
+  };
+</script><script src="../lightswitch.js"></script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Matching with Sampling Weights">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css" integrity="sha384-zh0CIslj+VczCZtlzBcjt5ppRcsAmDnRem7ESsYwWwg3m/OaJ2l4x7YBZl9Kxxib" crossorigin="anonymous">
-<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.js" integrity="sha384-Rma6DA2IPUwhNxmrB/7S3Tno0YY7sFu9WSYMCuulLhIqYSGZ2gKCJWIqhBWqMQfh" crossorigin="anonymous"></script><script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/auto-render.min.js" integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous" onload="renderMathInElement(document.body);"></script>
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
 
-    <nav class="navbar navbar-expand-lg fixed-top bg-light" data-bs-theme="light" aria-label="Site navigation"><div class="container">
+    <nav class="navbar navbar-expand-lg fixed-top " aria-label="Site navigation"><div class="container">
 
     <a class="navbar-brand me-2" href="../index.html">MatchIt</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.7.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.8.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -54,6 +58,14 @@
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json">
 </form></li>
 <li class="nav-item"><a class="external-link nav-link" href="https://github.com/kosukeimai/MatchIt/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
+<li class="nav-item dropdown">
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-lightswitch" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true" aria-label="Light switch"><span class="fa fa-sun"></span></button>
+  <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdown-lightswitch">
+<li><button class="dropdown-item" data-bs-theme-value="light"><span class="fa fa-sun"></span> Light</button></li>
+    <li><button class="dropdown-item" data-bs-theme-value="dark"><span class="fa fa-moon"></span> Dark</button></li>
+    <li><button class="dropdown-item" data-bs-theme-value="auto"><span class="fa fa-adjust"></span> Auto</button></li>
+  </ul>
+</li>
       </ul>
 </div>
 
@@ -70,7 +82,7 @@
                         <h4 data-toc-skip class="author">Noah
 Greifer</h4>
             
-            <h4 data-toc-skip class="date">2026-05-01</h4>
+            <h4 data-toc-skip class="date">2026-08-21</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/kosukeimai/MatchIt/blob/master/vignettes/sampling-weights.Rmd" class="external-link"><code>vignettes/sampling-weights.Rmd</code></a></small>
       <div class="d-none name"><code>sampling-weights.Rmd</code></div>
@@ -98,11 +110,11 @@ incorporated into a propensity score matching analysis to obtain valid
 and unbiased estimates of the treatment effect in the sampling weighted
 population <span class="citation">(<a href="#ref-dugoff2014">DuGoff et
 al. 2014</a>; <a href="#ref-austin2016">Austin et al. 2016</a>; <a href="#ref-lenis2019">Lenis et al. 2019</a>)</span>. In this guide, we
-demonstrate how to use sampling weights with <code>MatchIt</code> for
-propensity score estimation, balance assessment, and effect estimation.
-Fortunately, doing so is not complicated, but some care must be taken to
-ensure sampling weights are incorporated correctly. It is assumed one
-has read the other vignettes explaining matching
+demonstrate how to use sampling weights with <em>MatchIt</em> for
+propensity score estimation, matching, balance assessment, and effect
+estimation. Fortunately, doing so is not complicated, but some care must
+be taken to ensure sampling weights are incorporated correctly. It is
+assumed one has read the other vignettes explaining matching
 (<code><a href="../articles/matching-methods.html">vignette("matching-methods")</a></code>), balance assessment
 (<code><a href="../articles/assessing-balance.html">vignette("assessing-balance")</a></code>), and effect estimation
 (<code><a href="../articles/estimating-effects.html">vignette("estimating-effects")</a></code>.</p>
@@ -132,6 +144,9 @@ effect of binary treatment <code>A</code> on continuous outcome
 <div class="section level2">
 <h2 id="matching">Matching<a class="anchor" aria-label="anchor" href="#matching"></a>
 </h2>
+<p>Sampling weights can enter the matching specification in two ways: 1)
+in computing the distance measure (e.g., the propensity score) and 2) in
+computing matching weights from stratum membership.</p>
 <p>When using sampling weights with propensity score matching, one has
 the option of including the sampling weights in the model used to
 estimate the propensity scores. Although evidence is mixed on whether
@@ -140,48 +155,62 @@ idea. The choice should depend on whether including the sampling weights
 improves the quality of the matches. Specifications including and
 excluding sampling weights should be tried to determine which is
 preferred.</p>
+<p>For stratification methods, including (coarsened) exact matching,
+full matching, and propensity score subclassification, sampling weights
+can also enter the calculation of the matching weights from stratum
+membership. Without sampling weights, matching weights are computed
+using the proportion of treated units in each stratum. With sampling
+weights, matching weights are computed using the <em>weighted</em>
+proportion of treated units in each stratum, weighted by the sampling
+weights. This does not affect pair matching methods, which compute
+matching weights from the match matrix rather than stratum
+membership.</p>
 <p>To supply sampling weights to the propensity score-estimating
-function in <code><a href="../reference/matchit.html">matchit()</a></code>, the sampling weights variable should
-be supplied to the <code>s.weights</code> argument. It can be supplied
-either as a numerical vector containing the sampling weights, or a
-string or one-sided formula with the name of the sampling weights
-variable in the supplied dataset. Below we demonstrate including
-sampling weights into propensity scores estimated using logistic
-regression for optimal full matching for the average treatment effect in
-the population (ATE) (note that all methods and steps apply the same way
-to all forms of matching and all estimands).</p>
+function and calculation of the matching weights in
+<code><a href="../reference/matchit.html">matchit()</a></code>, the sampling weights variable should be supplied
+to the <code>s.weights</code> argument. It can be supplied either as a
+numerical vector containing the sampling weights, or a string or
+one-sided formula with the name of the sampling weights variable in the
+supplied dataset. Below we demonstrate including sampling weights into
+propensity scores estimated using logistic regression for generalized
+full matching for the average treatment effect in the treated (ATT)
+(note that all methods and steps apply the same way to all forms of
+matching and all estimands).</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">mF_s</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/matchit.html">matchit</a></span><span class="op">(</span><span class="va">A</span> <span class="op">~</span> <span class="va">X1</span> <span class="op">+</span> <span class="va">X2</span> <span class="op">+</span> <span class="va">X3</span> <span class="op">+</span> <span class="va">X4</span> <span class="op">+</span> <span class="va">X5</span> <span class="op">+</span> </span>
+<code class="sourceCode R"><span><span class="va">mF_s</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/matchit.html">matchit</a></span><span class="op">(</span><span class="va">A</span> <span class="op">~</span> <span class="va">X1</span> <span class="op">+</span> <span class="va">X2</span> <span class="op">+</span> <span class="va">X3</span> <span class="op">+</span> <span class="va">X4</span> <span class="op">+</span> <span class="va">X5</span> <span class="op">+</span> <span class="va">SW</span> <span class="op">+</span></span>
 <span>                  <span class="va">X6</span> <span class="op">+</span> <span class="va">X7</span> <span class="op">+</span> <span class="va">X8</span> <span class="op">+</span> <span class="va">X9</span>, data <span class="op">=</span> <span class="va">d</span>,</span>
-<span>                method <span class="op">=</span> <span class="st">"full"</span>, distance <span class="op">=</span> <span class="st">"glm"</span>,</span>
-<span>                estimand <span class="op">=</span> <span class="st">"ATE"</span>, s.weights <span class="op">=</span> <span class="op">~</span><span class="va">SW</span><span class="op">)</span></span>
+<span>                method <span class="op">=</span> <span class="st">"quick"</span>, distance <span class="op">=</span> <span class="st">"glm"</span>,</span>
+<span>                estimand <span class="op">=</span> <span class="st">"ATT"</span>, s.weights <span class="op">=</span> <span class="op">~</span><span class="va">SW</span><span class="op">)</span></span>
 <span><span class="va">mF_s</span></span></code></pre></div>
 <p>Notice that the description of the matching specification when the
 <code>matchit</code> object is printed includes lines indicating that
 the sampling weights were included in the estimation of the propensity
 score and that they are present in the <code>matchit</code> object. It
 is stored in the <code>s.weights</code> component of the
-<code>matchit</code> object. Note that at this stage, the matching
-weights (stored in the <code>weights</code> component of the
-<code>matchit</code> object) do not incorporate the sampling weights;
-they are calculated simply as a result of the matching.</p>
-<p>Now let’s perform full matching on a propensity score that does not
+<code>matchit</code> object. The matching weights (stored in the
+<code>weights</code> component of the <code>matchit</code> object) were
+computed incorporating the sampling weights with stratum membership, but
+the matching weights alone are not ready for use in estimating the
+treatment effect.</p>
+<p>We’ll also perform full matching on a propensity score that does not
 include the sampling weights in its estimation. Here we use the same
 specification as was used in
 <code><a href="../articles/estimating-effects.html">vignette("estimating-effects")</a></code>.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">mF</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/matchit.html">matchit</a></span><span class="op">(</span><span class="va">A</span> <span class="op">~</span> <span class="va">X1</span> <span class="op">+</span> <span class="va">X2</span> <span class="op">+</span> <span class="va">X3</span> <span class="op">+</span> <span class="va">X4</span> <span class="op">+</span> <span class="va">X5</span> <span class="op">+</span> </span>
+<code class="sourceCode R"><span><span class="va">mF</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/matchit.html">matchit</a></span><span class="op">(</span><span class="va">A</span> <span class="op">~</span> <span class="va">X1</span> <span class="op">+</span> <span class="va">X2</span> <span class="op">+</span> <span class="va">X3</span> <span class="op">+</span> <span class="va">X4</span> <span class="op">+</span> <span class="va">X5</span> <span class="op">+</span> <span class="va">SW</span> <span class="op">+</span></span>
 <span>                <span class="va">X6</span> <span class="op">+</span> <span class="va">X7</span> <span class="op">+</span> <span class="va">X8</span> <span class="op">+</span> <span class="va">X9</span>, data <span class="op">=</span> <span class="va">d</span>,</span>
-<span>              method <span class="op">=</span> <span class="st">"full"</span>, distance <span class="op">=</span> <span class="st">"glm"</span>,</span>
-<span>              estimand <span class="op">=</span> <span class="st">"ATE"</span><span class="op">)</span></span>
+<span>              method <span class="op">=</span> <span class="st">"quick"</span>, distance <span class="op">=</span> <span class="st">"glm"</span>,</span>
+<span>              estimand <span class="op">=</span> <span class="st">"ATT"</span><span class="op">)</span></span>
 <span><span class="va">mF</span></span></code></pre></div>
 <p>Notice that there is no mention of sampling weights in the
-description of the matching specification. However, to properly assess
-balance and estimate effects, we need the sampling weights to be
-included in the <code>matchit</code> object, even if they were not used
-at all in the matching. To do so, we use the function
+description of the matching specification. However, to properly
+incorporate sampling weights into the calculation of the matching
+weights and to assess balance and estimate effects, we need the sampling
+weights to be included in the <code>matchit</code> object, even if they
+were not used at all in the matching. To do so, we use the function
 <code><a href="../reference/add_s.weights.html">add_s.weights()</a></code>, which adds sampling weights to the
-supplied <code>matchit</code> objects.</p>
+supplied <code>matchit</code> objects and recomputes the matching
+weights.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">mF</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/add_s.weights.html">add_s.weights</a></span><span class="op">(</span><span class="va">mF</span>, <span class="op">~</span><span class="va">SW</span><span class="op">)</span></span>
 <span></span>
@@ -191,15 +220,13 @@ have been added identifying that sampling weights are present but they
 were not used in the estimation of the propensity score used in the
 matching.</p>
 <p>Note that not all methods can involve sampling weights in the
-estimation. Only methods that use the propensity score will be affected
-by sampling weights; coarsened exact matching or Mahalanobis distance
-optimal pair matching, for example, ignore the sampling weights, and
-some propensity score estimation methods, like <code>randomForest</code>
-and <code>bart</code> (as presently implemented), cannot incorporate
-sampling weights. Sampling weights should still be supplied to
+estimation. Some propensity score estimation methods, like
+<code>randomForest</code> and <code>bart</code> (as presently
+implemented), cannot incorporate sampling weights; one alternative is to
+include the sampling weights as a predictor in the propensity score
+model. Sampling weights should still be supplied to
 <code><a href="../reference/matchit.html">matchit()</a></code> even when using these methods to avoid having to
-use <code><a href="../reference/add_s.weights.html">add_s.weights()</a></code> and remembering which methods do or do
-not involve sampling weights.</p>
+use <code><a href="../reference/add_s.weights.html">add_s.weights()</a></code>.</p>
 </div>
 <div class="section level2">
 <h2 id="assessing-balance">Assessing Balance<a class="anchor" aria-label="anchor" href="#assessing-balance"></a>
@@ -244,11 +271,11 @@ analysis, we will move forward with the matching that used the sampling
 weight-estimated propensity scores (<code>mF_s</code>) because of its
 superior balance. Some of the remaining imbalance may be eliminated by
 adjusting for the covariates in the outcome model.</p>
-<p>Note that had we not added sampling weights to <code>mF</code>, the
-matching specification that did not include the sampling weights, our
+<p>Note that had we not added sampling weights to <code>mF</code> (the
+matching specification that did not include the sampling weights), our
 balance assessment would be inaccurate because the balance statistics
 would not include the sampling weights. In this case, in fact, assessing
-balance on <code>mF</code> without incorporated the sampling weights
+balance on <code>mF</code> without incorporating the sampling weights
 would have yielded radically different results and a different
 conclusion. It is critical to incorporate sampling weights into the
 <code>matchit</code> object using <code><a href="../reference/add_s.weights.html">add_s.weights()</a></code> even if
@@ -275,8 +302,8 @@ to improve precision and decrease bias.</p>
 <code class="sourceCode R"><span><span class="va">md_F_s</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/match_data.html">match_data</a></span><span class="op">(</span><span class="va">mF_s</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html" class="external-link">lm</a></span><span class="op">(</span><span class="va">Y_C</span> <span class="op">~</span> <span class="va">A</span> <span class="op">*</span> <span class="op">(</span><span class="va">X1</span> <span class="op">+</span> <span class="va">X2</span> <span class="op">+</span> <span class="va">X3</span> <span class="op">+</span> <span class="va">X4</span> <span class="op">+</span> <span class="va">X5</span> <span class="op">+</span> </span>
-<span>                       <span class="va">X6</span> <span class="op">+</span> <span class="va">X7</span> <span class="op">+</span> <span class="va">X8</span> <span class="op">+</span> <span class="va">X9</span><span class="op">)</span>, data <span class="op">=</span> <span class="va">md_F_s</span>,</span>
-<span>          weights <span class="op">=</span> <span class="va">weights</span><span class="op">)</span></span>
+<span>                       <span class="va">X6</span> <span class="op">+</span> <span class="va">X7</span> <span class="op">+</span> <span class="va">X8</span> <span class="op">+</span> <span class="va">X9</span><span class="op">)</span>,</span>
+<span>          data <span class="op">=</span> <span class="va">md_F_s</span>, weights <span class="op">=</span> <span class="va">weights</span><span class="op">)</span></span>
 <span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://marginaleffects.com/" class="external-link">"marginaleffects"</a></span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/marginaleffects/man/comparisons.html" class="external-link">avg_comparisons</a></span><span class="op">(</span><span class="va">fit</span>,</span>
@@ -290,8 +317,8 @@ have the option <code>include.s.weights</code>, which, when set to
 the sampling weights and are simply the matching weights. Because one
 might to forget to multiply the two sets of weights together, it is
 easier to just use the default of <code>include.s.weights = TRUE</code>
-and ignore the sampling weights in the rest of the analysis (because
-they are already included in the returned weights).</p>
+and ignore the sampling weights in the outcome model (because they are
+already included in the returned weights).</p>
 </div>
 <div class="section level2">
 <h2 id="code-to-generate-data-used-in-examples">Code to Generate Data used in Examples<a class="anchor" aria-label="anchor" href="#code-to-generate-data-used-in-examples"></a>
@@ -373,7 +400,7 @@ Matching in the Context of Complex Survey Data.”</span>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.9000.</p>
 </div>
 
     </footer>

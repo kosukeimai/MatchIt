@@ -90,7 +90,7 @@ The following methods for estimating propensity scores are allowed:
   model. The `formula` supplied to
   [`matchit()`](https://kosukeimai.github.io/MatchIt/reference/matchit.md)
   is passed directly to
-  [`mgcv::gam()`](https://rdrr.io/pkg/mgcv/man/gam.html), and
+  [`mgcv::gam()`](https://rdrr.io/pkg/mgcv/man/gam.html) , and
   [`mgcv::predict.gam()`](https://rdrr.io/pkg/mgcv/man/predict.gam.html)
   is used to compute the propensity scores. The `link` argument can be
   specified as a link function supplied to
@@ -98,16 +98,16 @@ The following methods for estimating propensity scores are allowed:
   which is the default. When `link` is prepended by `"linear."`, the
   linear predictor is used instead of the predicted probabilities. Note
   that unless the smoothing functions
-  [`mgcv::s()`](https://rdrr.io/pkg/mgcv/man/s.html),
-  [`mgcv::te()`](https://rdrr.io/pkg/mgcv/man/te.html),
-  [`mgcv::ti()`](https://rdrr.io/pkg/mgcv/man/te.html), or
+  [`mgcv::s()`](https://rdrr.io/pkg/mgcv/man/s.html) ,
+  [`mgcv::te()`](https://rdrr.io/pkg/mgcv/man/te.html) ,
+  [`mgcv::ti()`](https://rdrr.io/pkg/mgcv/man/te.html) , or
   [`mgcv::t2()`](https://rdrr.io/pkg/mgcv/man/t2.html) are used in
   `formula`, a generalized additive model is identical to a generalized
   linear model and will estimate the same propensity scores as
   [`glm()`](https://rdrr.io/r/stats/glm.html). See the documentation for
-  [`mgcv::gam()`](https://rdrr.io/pkg/mgcv/man/gam.html),
-  [`mgcv::formula.gam()`](https://rdrr.io/pkg/mgcv/man/formula.gam.html),
-  and
+  [`mgcv::gam()`](https://rdrr.io/pkg/mgcv/man/gam.html) ,
+  [`mgcv::formula.gam()`](https://rdrr.io/pkg/mgcv/man/formula.gam.html)
+  , and
   [`mgcv::gam.models()`](https://rdrr.io/pkg/mgcv/man/gam.models.html)
   for more information on how to specify these models. Also note that
   the formula returned in the
@@ -121,25 +121,27 @@ The following methods for estimating propensity scores are allowed:
   The `formula` supplied to
   [`matchit()`](https://kosukeimai.github.io/MatchIt/reference/matchit.md)
   is passed directly to
-  [`gbm::gbm()`](https://rdrr.io/pkg/gbm/man/gbm.html), and
-  [`gbm::predict.gbm()`](https://rdrr.io/pkg/gbm/man/predict.gbm.html)
+  [`gbm::gbm()`](https://gbm-developers.github.io/gbm/reference/gbm.html)
+  , and
+  [`gbm::predict.gbm()`](https://gbm-developers.github.io/gbm/reference/predict.gbm.html)
   is used to compute the propensity scores. The optimal tree is chosen
   using 5-fold cross-validation by default, and this can be changed by
   supplying an argument to `method` to `distance.options`; see
-  [`gbm::gbm.perf()`](https://rdrr.io/pkg/gbm/man/gbm.perf.html) for
-  details. The `link` argument can be specified as `"linear"` to use the
-  linear predictor instead of the predicted probabilities. No other
+  [`gbm::gbm.perf()`](https://gbm-developers.github.io/gbm/reference/gbm.perf.html)
+  for details. The `link` argument can be specified as `"linear"` to use
+  the linear predictor instead of the predicted probabilities. No other
   links are allowed. The tuning parameter defaults differ from
-  [`gbm::gbm()`](https://rdrr.io/pkg/gbm/man/gbm.html); they are as
-  follows: `n.trees = 1e4`, `interaction.depth = 3`, `shrinkage = .01`,
-  `bag.fraction = 1`, `cv.folds = 5`, `keep.data = FALSE`. These are the
-  same defaults as used in *WeightIt* and *twang*, except for `cv.folds`
-  and `keep.data`. Note this is not the same use of generalized boosted
-  modeling as in *twang*; here, the number of trees is chosen based on
-  cross-validation or out-of-bag error, rather than based on optimizing
-  balance. twang should not be cited when using this method to estimate
-  propensity scores. Note that because there is a random component to
-  choosing the tuning parameter, results will vary across runs unless a
+  [`gbm::gbm()`](https://gbm-developers.github.io/gbm/reference/gbm.html);
+  they are as follows: `n.trees = 1e4`, `interaction.depth = 3`,
+  `shrinkage = .01`, `bag.fraction = 1`, `cv.folds = 5`,
+  `keep.data = FALSE`. These are the same defaults as used in *WeightIt*
+  and *twang*, except for `cv.folds` and `keep.data`. Note this is not
+  the same use of generalized boosted modeling as in *twang*; here, the
+  number of trees is chosen based on cross-validation or out-of-bag
+  error, rather than based on optimizing balance. twang should not be
+  cited when using this method to estimate propensity scores. Note that
+  because there is a random component to choosing the tuning parameter,
+  results will vary across runs unless a
   [seed](https://rdrr.io/r/base/Random.html) is set.
 
 - `"lasso"`, `"ridge"`, `"elasticnet"`:
@@ -150,8 +152,8 @@ The following methods for estimating propensity scores are allowed:
   is processed with
   [`model.matrix()`](https://rdrr.io/r/stats/model.matrix.html) and
   passed to
-  [`glmnet::cv.glmnet()`](https://glmnet.stanford.edu/reference/cv.glmnet.html),
-  and
+  [`glmnet::cv.glmnet()`](https://glmnet.stanford.edu/reference/cv.glmnet.html)
+  , and
   [`glmnet::predict.cv.glmnet()`](https://glmnet.stanford.edu/reference/predict.cv.glmnet.html)
   is used to compute the propensity scores. The `link` argument can be
   specified as a link function supplied to
@@ -177,7 +179,7 @@ The following methods for estimating propensity scores are allowed:
   `formula` supplied to
   [`matchit()`](https://kosukeimai.github.io/MatchIt/reference/matchit.md)
   is passed directly to
-  [`rpart::rpart()`](https://rdrr.io/pkg/rpart/man/rpart.html), and
+  [`rpart::rpart()`](https://rdrr.io/pkg/rpart/man/rpart.html) , and
   [`rpart::predict.rpart()`](https://rdrr.io/pkg/rpart/man/predict.rpart.html)
   is used to compute the propensity scores. The `link` argument is
   ignored, and predicted probabilities are always returned as the
@@ -189,8 +191,8 @@ The following methods for estimating propensity scores are allowed:
   `formula` supplied to
   [`matchit()`](https://kosukeimai.github.io/MatchIt/reference/matchit.md)
   is passed directly to
-  [`randomForest::randomForest()`](https://rdrr.io/pkg/randomForest/man/randomForest.html),
-  and
+  [`randomForest::randomForest()`](https://rdrr.io/pkg/randomForest/man/randomForest.html)
+  , and
   [`randomForest::predict.randomForest()`](https://rdrr.io/pkg/randomForest/man/predict.randomForest.html)
   is used to compute the propensity scores. The `link` argument is
   ignored, and predicted probabilities are always returned as the
@@ -204,7 +206,7 @@ The following methods for estimating propensity scores are allowed:
   network. The `formula` supplied to
   [`matchit()`](https://kosukeimai.github.io/MatchIt/reference/matchit.md)
   is passed directly to
-  [`nnet::nnet()`](https://rdrr.io/pkg/nnet/man/nnet.html), and
+  [`nnet::nnet()`](https://rdrr.io/pkg/nnet/man/nnet.html) , and
   [`fitted()`](https://rdrr.io/r/stats/fitted.values.html) is used to
   compute the propensity scores. The `link` argument is ignored, and
   predicted probabilities are always returned as the distance measure.
@@ -220,7 +222,7 @@ The following methods for estimating propensity scores are allowed:
   `formula` supplied to
   [`matchit()`](https://kosukeimai.github.io/MatchIt/reference/matchit.md)
   is passed directly to
-  [`CBPS::CBPS()`](https://rdrr.io/pkg/CBPS/man/CBPS.html), and
+  [`CBPS::CBPS()`](https://rdrr.io/pkg/CBPS/man/CBPS.html) , and
   [`fitted()`](https://rdrr.io/r/stats/fitted.values.html) is used to
   compute the propensity scores. The `link` argument can be specified as
   `"linear"` to use the linear predictor instead of the predicted
@@ -237,7 +239,7 @@ The following methods for estimating propensity scores are allowed:
   trees (BART). The `formula` supplied to
   [`matchit()`](https://kosukeimai.github.io/MatchIt/reference/matchit.md)
   is passed directly to
-  [`dbarts::bart2()`](https://rdrr.io/pkg/dbarts/man/bart.html), and
+  [`dbarts::bart2()`](https://rdrr.io/pkg/dbarts/man/bart.html) , and
   [`dbarts::fitted.bart()`](https://rdrr.io/pkg/dbarts/man/bart.html) is
   used to compute the propensity scores. The `link` argument can be
   specified as `"linear"` to use the linear predictor instead of the
@@ -326,8 +328,8 @@ units and as many columns as there are control units (e.g., as the
 output of a call to
 [`mahalanobis_dist()`](https://kosukeimai.github.io/MatchIt/reference/mahalanobis_dist.md)
 or
-[`optmatch::match_on()`](https://rdrr.io/pkg/optmatch/man/match_on-methods.html)).
-Distance values of `Inf` will disallow the corresponding units to be
+[`optmatch::match_on()`](https://rdrr.io/pkg/optmatch/man/match_on-methods.html)
+). Distance values of `Inf` will disallow the corresponding units to be
 matched. When `distance` is a supplied as a numeric vector or matrix,
 `link` and `distance.options` are ignored.
 
@@ -360,19 +362,19 @@ summary(m.out2$model)
 #> 
 #> Parametric coefficients:
 #>               Estimate Std. Error t value Pr(>|t|)    
-#> (Intercept)  5.436e-01  3.950e-01   1.376  0.16928    
+#> (Intercept)  5.436e-01  3.950e-01   1.376  0.16927    
 #> racehispan  -2.447e+00  4.323e-01  -5.661 2.34e-08 ***
 #> racewhite   -2.995e+00  3.136e-01  -9.552  < 2e-16 ***
 #> married     -1.644e+00  3.438e-01  -4.781 2.20e-06 ***
-#> nodegree     7.894e-01  4.800e-01   1.645  0.10058    
+#> nodegree     7.894e-01  4.800e-01   1.645  0.10059    
 #> re74        -9.838e-05  3.245e-05  -3.031  0.00254 ** 
-#> re75         5.113e-05  5.001e-05   1.022  0.30702    
+#> re75         5.113e-05  5.001e-05   1.022  0.30703    
 #> ---
 #> Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 #> 
 #> Approximate significance of smooth terms:
 #>           edf Ref.df     F p-value    
-#> s(age)  7.489  8.144 6.781  <2e-16 ***
+#> s(age)  7.489  8.143 6.781  <2e-16 ***
 #> s(educ) 2.647  3.359 2.311  0.0628 .  
 #> ---
 #> Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1

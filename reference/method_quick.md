@@ -10,7 +10,8 @@ compared to optimal full matching, which is why it is labeled as
 "quick", at the expense of true optimality. The method is described in
 Sävje, Higgins, & Sekhon (2021). The method relies on and is a wrapper
 for
-[`quickmatch::quickmatch()`](https://rdrr.io/pkg/quickmatch/man/quickmatch.html).
+[`quickmatch::quickmatch()`](https://rdrr.io/pkg/quickmatch/man/quickmatch.html)
+.
 
 Advantages of generalized full matching include that the matching order
 is not required to be specified, units do not need to be discarded, and
@@ -140,9 +141,9 @@ is used for generalized full matching:
 - ...:
 
   additional arguments passed to
-  [`quickmatch::quickmatch()`](https://rdrr.io/pkg/quickmatch/man/quickmatch.html).
-  Allowed arguments include `treatment_constraints`, `size_constraint`,
-  `target`, and other arguments passed to
+  [`quickmatch::quickmatch()`](https://rdrr.io/pkg/quickmatch/man/quickmatch.html)
+  . Allowed arguments include `treatment_constraints`,
+  `size_constraint`, `target`, and other arguments passed to
   [`scclust::sc_clustering()`](https://rdrr.io/pkg/scclust/man/sc_clustering.html)
   (see
   [`quickmatch::quickmatch()`](https://rdrr.io/pkg/quickmatch/man/quickmatch.html)
@@ -186,9 +187,7 @@ a list of such objects, one for each stratum of the `exact` variables.
 In a manuscript, be sure to cite the *quickmatch* package if using
 [`matchit()`](https://kosukeimai.github.io/MatchIt/reference/matchit.md)
 with `method = "quick"`. A citation can be generated using
-`citation("quickmatch")`.
-
-For example, a sentence might read:
+`citation("quickmatch")`. For example, a sentence might read:
 
 *Generalized full matching was performed using the MatchIt package (Ho,
 Imai, King, & Stuart, 2011) in R, which calls functions from the
@@ -207,8 +206,8 @@ Matching. *Political Analysis*, 29(4), 423–447.
 for a detailed explanation of the inputs and outputs of a call to
 [`matchit()`](https://kosukeimai.github.io/MatchIt/reference/matchit.md).
 
-[`quickmatch::quickmatch()`](https://rdrr.io/pkg/quickmatch/man/quickmatch.html),
-which is the workhorse.
+[`quickmatch::quickmatch()`](https://rdrr.io/pkg/quickmatch/man/quickmatch.html)
+, which is the workhorse.
 
 [`method_full`](https://kosukeimai.github.io/MatchIt/reference/method_full.md)
 for optimal full matching, which is nearly the same but offers more

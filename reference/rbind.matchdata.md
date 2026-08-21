@@ -86,8 +86,7 @@ data("lalonde")
 m.out_b <- matchit(treat ~ age + educ + married +
                     nodegree + re74 + re75,
                   data = subset(lalonde, race == "black"))
-#> Warning: Fewer control units than treated units; not all treated units will get
-#> a match.
+#> Warning: Fewer control units than treated units; not all treated units will get a match.
 md_b <- match_data(m.out_b)
 
 m.out_h <- matchit(treat ~ age + educ + married +

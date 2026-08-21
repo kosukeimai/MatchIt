@@ -366,7 +366,7 @@ Cox-proportional hazards models.
 ### The Standard Case
 
 For almost all matching methods, whether a caliper, common support
-restriction, exact matching specification, or $`k`$:1 matching
+restriction, exact matching specification, or \\k\\:1 matching
 specification is used, estimating the effect in the matched dataset is
 straightforward and involves fitting a model for the outcome that
 incorporates the matching weights[^3], then estimating the treatment
@@ -1244,7 +1244,7 @@ pair membership and should be used when appropriate. Sometimes,
 researchers use functions in the `survey` package to estimate robust
 SEs, especially with inverse probability weighting; this is a valid way
 to compute robust SEs and will give similar results to
-[`sandwich::vcovHC()`](https://rdrr.io/pkg/sandwich/man/vcovHC.html).[^10]
+[`sandwich::vcovHC()`](https://zeileis.codeberg.page/sandwich/reference/vcovHC.html).[^10]
 
 ### 3. Interpreting conditional effects as marginal effects
 

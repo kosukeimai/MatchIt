@@ -176,9 +176,9 @@ Rubin, D. B. (1980). Bias Reduction Using Mahalanobis-Metric Matching.
 [`dist()`](https://rdrr.io/r/stats/dist.html) (which is used internally
 to compute some Euclidean distances)
 
-[`optmatch::match_on()`](https://rdrr.io/pkg/optmatch/man/match_on-methods.html),
-which provides similar functionality but with fewer options and a focus
-on efficient storage of the output.
+[`optmatch::match_on()`](https://rdrr.io/pkg/optmatch/man/match_on-methods.html)
+, which provides similar functionality but with fewer options and a
+focus on efficient storage of the output.
 
 ## Author
 

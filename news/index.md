@@ -1,5 +1,123 @@
 # Changelog
 
+## MatchIt 4.8.0
+
+- For stratification methods (`"exact"`, `"cem"` with `k2k = FALSE`,
+  `"full"`, `"quick"`, and `"subclass"`), when sampling weights are
+  supplied through `s.weights`, they are now used to compute the
+  matching weights. Previously, sampling weights were only used in the
+  calculation of propensity scores (if any). When
+  [`add_s.weights()`](https://kosukeimai.github.io/MatchIt/reference/add_s.weights.md)
+  is used on the output of
+  [`matchit()`](https://kosukeimai.github.io/MatchIt/reference/matchit.md)
+  from one of these methods initially run without `s.weights`, the
+  matching weights will be re-computed incorporating the sampling
+  weights.
+  [`vignette("sampling-weights")`](https://kosukeimai.github.io/MatchIt/articles/sampling-weights.md)
+  has been updated accordingly.
+
+- With `method = "cardinality"`, `s.weights` is now only allowed with
+  profile matching (`estimand = "ATE"` or `ratio = NA`), which matches
+  each treatment group to a fixed target; supplying it with cardinality
+  matching, which matches the treatment groups to each other and so has
+  no fixed target population, is now an error. Previously it was
+  silently accepted and made the optimization problem effectively
+  unsolvable.
+
+- With `method = "cardinality"` and `estimand = "ATE"`, the size of the
+  matched sample being maximized and the `ratio` constraint on the
+  relative sizes of the matched groups now refer to the unweighted
+  numbers of units rather than to the sums of the sampling weights.
+  `s.weights` now enters only the balance constraints, where it weights
+  the covariate means. This makes profile matching for the ATE usable
+  with sampling weights; results are unchanged when `s.weights` is not
+  supplied or is constant.
+
+- In
+  [`match_data()`](https://kosukeimai.github.io/MatchIt/reference/match_data.md)
+  and
+  [`get_matches()`](https://kosukeimai.github.io/MatchIt/reference/match_data.md),
+  a dataset supplied to `data` is now always used and is required to be
+  the original dataset supplied to
+  [`matchit()`](https://kosukeimai.github.io/MatchIt/reference/matchit.md);
+  supplying one with the wrong number of rows now throws an informative
+  error naming both sizes. Previously, such a dataset was silently
+  ignored in favor of one recovered from the environment of the
+  `matchit` object, if one could be found. The documentation now
+  clarifies that `data` is only needed when the original dataset cannot
+  be found automatically.
+
+- A dataset supplied to `data` in
+  [`summary()`](https://rdrr.io/r/base/summary.html),
+  [`plot()`](https://rdrr.io/r/graphics/plot.default.html), or
+  [`add_s.weights()`](https://kosukeimai.github.io/MatchIt/reference/add_s.weights.md)
+  is likewise now always validated against the units in the original
+  [`matchit()`](https://kosukeimai.github.io/MatchIt/reference/matchit.md)
+  call, with the same error. Previously,
+  [`summary()`](https://rdrr.io/r/base/summary.html) quietly replaced a
+  wrongly sized dataset with one recovered from the environment, and
+  [`plot()`](https://rdrr.io/r/graphics/plot.default.html) ignored
+  `data` entirely unless `which.xs` was also supplied.
+
+- In [`summary()`](https://rdrr.io/r/base/summary.html), `addlvariables`
+  can now be supplied as a matrix, as its documentation implied;
+  previously this failed with an uninformative error. A character matrix
+  is now treated as a matrix of covariates rather than as a vector of
+  variable names. Errors arising from an invalid `addlvariables` now
+  refer to `addlvariables` rather than to `data`.
+
+- Fixed a bug in [`print()`](https://rdrr.io/r/base/print.html) for
+  `matchit` objects where the distance line was not terminated when
+  matching was done on the Mahalanobis distance or on a user-supplied
+  distance measure, running the next line onto the end of it, and where
+  a blank line appeared when the distance had both a bracketed
+  annotation and an estimating method. The bracketed annotation now also
+  correctly reports when the distance measure was used for matching or
+  subclassification; previously it never did.
+
+- Fixed a bug where calling
+  [`plot()`](https://rdrr.io/r/graphics/plot.default.html) on the output
+  of
+  [`matchit()`](https://kosukeimai.github.io/MatchIt/reference/matchit.md)
+  with `method = "subclass"` without specifying `subclass` would enter
+  an interactive menu even in a non-interactive session, where it would
+  loop indefinitely. Balance in aggregate is now displayed instead, as
+  documented.
+
+- Fixed the error message produced by
+  [`plot()`](https://rdrr.io/r/graphics/plot.default.html) on a
+  `summary.matchit` object with `var.order = "unmatched"`, which
+  referred to `un = TRUE` when it meant `un = FALSE`.
+
+- Nearest neighbor matching on the Mahalanobis distance (i.e., with
+  `distance = "mahalanobis"` or `mahvars` supplied) is now 40-60%
+  faster, as the squared distance between two units is computed without
+  allocating a copy of each unit’s covariates.
+
+- Fixed a bug in the internal C++ code, which called
+  [`order()`](https://rdrr.io/r/base/order.html) as found from the
+  global environment; a function of that name defined by the user (or
+  exported by an attached package) would be used in place of
+  [`base::order()`](https://rdrr.io/r/base/order.html), giving wrong
+  results or an error. This affected nearest neighbor matching, optimal
+  matching, and [`summary()`](https://rdrr.io/r/base/summary.html) with
+  `pair.dist = TRUE`.
+
+- Removed the unused C++ interface in `inst/include`, which exported no
+  functions.
+
+- Bumped minimum R version to 4.1.0 and removed *backports* as a
+  dependency.
+
+- Replaced *chk* dependency with *arg* for error messages.
+
+- Added new tests.
+
+- `solver = "symphony"` is no longer allowed with
+  `method = "cardinality"`.
+
+- Documentation updates.
+
 ## MatchIt 4.7.2
 
 CRAN release: 2025-05-30
@@ -67,7 +185,7 @@ CRAN release: 2025-01-12
 CRAN release: 2024-11-13
 
 Most improvements are related to performance. Some of these dramatically
-improve speeds for large datasets. Most come from improvements to `Rcpp`
+improve speeds for large datasets. Most come from improvements to *Rcpp*
 code.
 
 - When using `method = "nearest"`, `m.order` can now be set to
@@ -131,7 +249,7 @@ code.
 CRAN release: 2023-10-13
 
 - When using `method = "cardinality"`, a new solver, HiGHS, can be
-  requested by setting `solver = "highs"`, which relies on the `highs`
+  requested by setting `solver = "highs"`, which relies on the *highs*
   package. This is much faster and more reliable than GLPK and is free
   and easy to install as a regular R package with no additional
   requirements.
@@ -171,7 +289,7 @@ CRAN release: 2023-06-14
 
 CRAN release: 2023-04-13
 
-- Error messages have been improved using `chk` and `rlang`, which are
+- Error messages have been improved using *chk* and *rlang*, which are
   now dependencies.
 
 - Fixed a bug when using `method = "nearest"` with `replace = TRUE` and
@@ -195,7 +313,7 @@ CRAN release: 2023-04-13
   [@fBedecarrats](https://github.com/fBedecarrats).
   ([\#156](https://github.com/kosukeimai/MatchIt/issues/156))
 
-- Updated vignettes to use `marginaleffects` v0.11.0 syntax.
+- Updated vignettes to use *marginaleffects* v0.11.0 syntax.
 
 ## MatchIt 4.5.2
 
@@ -252,7 +370,7 @@ CRAN release: 2022-11-16
   [`?method_quick`](https://kosukeimai.github.io/MatchIt/reference/method_quick.md)
   and
   [`vignette("matching-methods")`](https://kosukeimai.github.io/MatchIt/articles/matching-methods.md)
-  for more information. This functionality relies on the `quickmatch`
+  for more information. This functionality relies on the *quickmatch*
   package.
 
 - The package structure has been updated, include with the use of
@@ -281,7 +399,7 @@ CRAN release: 2022-11-16
 - The “Estimating Effects” vignette
   ([`vignette("estimating-effects")`](https://kosukeimai.github.io/MatchIt/articles/estimating-effects.md))
   has been rewritten to be much shorter (and hopefully clearer) and to
-  use the `marginaleffects` package, which is now a Suggested package.
+  use the *marginaleffects* package, which is now a Suggested package.
   The new vignette focuses on using g-computation to estimate treatment
   effects using a single workflow with slight modifications for
   different situations.
@@ -325,14 +443,14 @@ CRAN release: 2022-11-16
 
 CRAN release: 2022-05-18
 
-- `optmatch` has returned to CRAN, now with an open-source license! A
+- *optmatch* has returned to CRAN, now with an open-source license! A
   new `solver` argument can be passed to
   [`matchit()`](https://kosukeimai.github.io/MatchIt/reference/matchit.md)
   with `method = "full"` and `method = "optimal"` to control the solver
   used to perform the optimization used in the matching. Note that using
   the default (open source) solver LEMON may yield results different
-  from those obtained prior to `optmatch` 0.10.0. For reproducibility
-  questions, please contact the `optmatch` maintainers.
+  from those obtained prior to *optmatch* 0.10.0. For reproducibility
+  questions, please contact the *optmatch* maintainers.
 
 - New functions have been added to compute the Euclidean distance
   ([`euclidean_dist()`](https://kosukeimai.github.io/MatchIt/reference/mahalanobis_dist.md)),
@@ -360,9 +478,9 @@ CRAN release: 2022-05-18
 - The Mahalanobis distance is now computed using the pooled within-group
   covariance matrix (computed by treatment group-mean centering each
   covariate before computing the covariance in the full sample), in line
-  with how it is computed in `optmatch` and recommended by Rubin (1980)
+  with how it is computed in *optmatch* and recommended by Rubin (1980)
   among others. This will cause results to differ between this version
-  and prior versions of `MatchIt` that used the Mahalanobis distance
+  and prior versions of *MatchIt* that used the Mahalanobis distance
   computed ignoring group membership.
 
 - Added the `unit.id` argument to
@@ -402,7 +520,7 @@ CRAN release: 2022-05-18
   [@bking124](https://github.com/bking124).
   ([\#111](https://github.com/kosukeimai/MatchIt/issues/111))
 
-- Fixed a bug introduced by `optmatch` version 0.10.3.
+- Fixed a bug introduced by *optmatch* version 0.10.3.
 
 - Documentation updates.
 
@@ -412,7 +530,7 @@ CRAN release: 2022-05-18
 
 CRAN release: 2022-03-08
 
-- `optmatch` has been removed from CRAN. Instructions on installing it
+- *optmatch* has been removed from CRAN. Instructions on installing it
   are in
   [`?method_optimal`](https://kosukeimai.github.io/MatchIt/reference/method_optimal.md)
   and
@@ -422,7 +540,7 @@ CRAN release: 2022-03-08
   weights are supplied to
   [`randomForest::randomForest()`](https://rdrr.io/pkg/randomForest/man/randomForest.html).
 
-- Improved conditional use of packages, especially `optmatch`. This may
+- Improved conditional use of packages, especially *optmatch*. This may
   mean that certain examples fail to run in the vignettes.
 
 ## MatchIt 4.3.3
@@ -500,12 +618,12 @@ CRAN release: 2021-09-13
 
 - Added `"lasso"`, `"ridge"`, and `"elasticnet"` as options for
   `distance`. These estimate propensity scores using lasso, ridge, or
-  elastic net regression, respectively, as implemented in the `glmnet`
+  elastic net regression, respectively, as implemented in the *glmnet*
   package.
 
 - Added `"gbm"` as an option for `distance`. This estimates propensity
-  scores using generalized boosted models as implemented in the `gbm`
-  package. This implementation differs from that in `twang` by using
+  scores using generalized boosted models as implemented in the *gbm*
+  package. This implementation differs from that in *twang* by using
   cross-validation or out-of-bag error to choose the tuning parameter as
   opposed to balance.
 
@@ -575,7 +693,7 @@ CRAN release: 2021-09-13
   warning will only be produced when that argument has been set to a
   value other than its default (e.g., so setting `reestimate = FALSE`
   will no longer throw an error). This fixes an issue brought up by Vu
-  Ng when using `MatchThem`.
+  Ng when using *MatchThem*.
 
 - A clearer error is produced when non-finite values are present in the
   covariates.
@@ -586,7 +704,7 @@ CRAN release: 2021-05-26
 
 - `distance` can now be supplied as a distance matrix containing
   pairwise distances with nearest neighbor, optimal, and full matching.
-  This means users can create a distance matrix outside `MatchIt` (e.g.,
+  This means users can create a distance matrix outside *MatchIt* (e.g.,
   using
   [`optmatch::match_on()`](https://rdrr.io/pkg/optmatch/man/match_on-methods.html)
   or [`dist()`](https://rdrr.io/r/stats/dist.html)) and
@@ -631,7 +749,7 @@ CRAN release: 2021-05-26
   `replace = TRUE` and `method = "nearest"` no longer appears.
 
 - Fixed a bug when trying to supply `distance` as a labeled numeric
-  vector (e.g., resulting from `haven`).
+  vector (e.g., resulting from *haven*).
 
 - Fixed some typos in the documentation and vignettes.
 
@@ -642,16 +760,16 @@ CRAN release: 2020-12-15
 - Coarsened exact matching (i.e.,
   [`matchit()`](https://kosukeimai.github.io/MatchIt/reference/matchit.md)
   with `method = "cem"`) has been completely rewritten and no longer
-  involves the `cem` package, eliminating some spurious warning messages
+  involves the *cem* package, eliminating some spurious warning messages
   and fixing some bugs. All the same arguments can still be used, so old
   code will run, though some results will differ slightly. Additional
   options are available for matching and performance has improved. See
   [`?method_cem`](https://kosukeimai.github.io/MatchIt/reference/method_cem.md)
   for details on the differences between the implementation in the
-  current version of `MatchIt` and that in `cem` and older versions of
-  `MatchIt`. In general, these changes make coarsened exact matching
+  current version of *MatchIt* and that in *cem* and older versions of
+  *MatchIt*. In general, these changes make coarsened exact matching
   function as one would expect it to, circumventing some peculiarities
-  and bugs in the `cem` package.
+  and bugs in the *cem* package.
 
 - Variable ratio matching is now compatible with `method = "optimal"` in
   the same way it is with `method = "nearest"`, i.e., by using the
@@ -663,7 +781,7 @@ CRAN release: 2020-12-15
   though.
 
 - Processing improvements with `method = "optimal"` due to rewriting
-  some functions in `Rcpp`.
+  some functions in *Rcpp*.
 
 - Using `method = "optimal"` runs more smoothly when combining it with
   exact matching through the `exact` argument.
@@ -682,16 +800,16 @@ CRAN release: 2020-12-15
 
 CRAN release: 2020-11-27
 
-- Restored `cem` functionality after it had been taken down and
+- Restored *cem* functionality after it had been taken down and
   re-uploaded.
 
-- Added `pkgdown` website.
+- Added *pkgdown* website.
 
 - Computing matching weights after matching with replacement is faster
-  due to programming in `Rcpp`.
+  due to programming in *Rcpp*.
 
-- Fixed issues with `Rcpp` code that required C++11. C++11 has been
-  added to SystemRequirements in DESCRIPTION, and `MatchIt` now requires
+- Fixed issues with *Rcpp* code that required C++11. C++11 has been
+  added to SystemRequirements in DESCRIPTION, and *MatchIt* now requires
   R version 3.1.0 or later.
 
 ## MatchIt 4.0.0
@@ -729,7 +847,8 @@ CRAN release: 2020-11-14
 - `print.matchit()` has completely changed and now prints information
   about the matching type and specifications.
   [`summary.matchit()`](https://kosukeimai.github.io/MatchIt/reference/summary.matchit.md)
-  contains all the information that was in the old `print` method.
+  contains all the information that was in the old
+  [`print()`](https://rdrr.io/r/base/print.html) method.
 
 - A new function,
   [`add_s.weights()`](https://kosukeimai.github.io/MatchIt/reference/add_s.weights.md),
@@ -738,12 +857,12 @@ CRAN release: 2020-11-14
   to
   [`matchit()`](https://kosukeimai.github.io/MatchIt/reference/matchit.md)
   through the new `s.weights` argument. A new vignette describing how to
-  using `MatchIt` with sampling weights is available at
+  using *MatchIt* with sampling weights is available at
   [`vignette("sampling-weights")`](https://kosukeimai.github.io/MatchIt/articles/sampling-weights.md).
 
 - The included dataset, `lalonde`, now uses a `race` variable instead of
   separate `black` and `hispan` variables. This makes it easier to see
-  how character variables are treated by `MatchIt` functions.
+  how character variables are treated by *MatchIt* functions.
 
 - Added extensive documentation for every function, matching method, and
   distance specification. Documentation no longer links to
@@ -829,7 +948,7 @@ CRAN release: 2020-11-14
 
 #### `method = "nearest"`
 
-- Matching is much faster due to re-programming with `Rcpp`.
+- Matching is much faster due to re-programming with *Rcpp*.
 
 - With `method = "nearest"`, a `subclass` component containing pair
   membership is now included in the output when `replace = FALSE` (the
@@ -861,7 +980,7 @@ CRAN release: 2020-11-14
 #### `method = "optimal"` and `method = "full"`
 
 - Fixed bug in `method = "optimal"`, which produced results that did not
-  match `optmatch`. Now they do.
+  match *optmatch*. Now they do.
 
 - Added support for optimal and full Mahalanobis distance matching by
   setting `method = "mahalanobis"` with `method = "optimal"` and
@@ -950,7 +1069,7 @@ CRAN release: 2020-11-14
   subclass doesn’t have enough members from a treatment group, units
   from other subclasses are pulled to fill it so that every subclass
   will have at least `min.n` units from each treatment group. This uses
-  the same mechanism as is used in `WeightIt`. The default `min.n` is 1
+  the same mechanism as is used in *WeightIt*. The default `min.n` is 1
   to ensure there are at least one treated and control unit in each
   subclass.
 
@@ -1008,16 +1127,16 @@ CRAN release: 2020-11-14
 
 - Added `"cbps"` as option for `distance`. This estimates propensity
   scores using the covariate balancing propensity score (CBPS) algorithm
-  as implemented in the `CBPS` package. Set `link = "linear"` to use a
+  as implemented in the *CBPS* package. Set `link = "linear"` to use a
   linear version of the CBPS.
 
 - Added `"bart"` as an option for `distance`. This estimates propensity
   scores using Bayesian Additive Regression Trees (BART) as implemented
-  in the `dbarts` package.
+  in the *dbarts* package.
 
 - Added `"randomforest"` as an option for `distance`. This estimates
   propensity scores using random forests as implemented in the
-  `randomForest` package.
+  *randomForest* package.
 
 - Bugs in `distance = "rpart"` have been fixed.
 
@@ -1114,5 +1233,5 @@ CRAN release: 2020-11-14
   absolute or raw standardized mean differences, and placing threshold
   lines on the plots. For a more sophisticated interface, see
   [`cobalt::love.plot()`](https://ngreifer.github.io/cobalt/reference/love.plot.html),
-  which natively supports `matchit` objects and uses `ggplot2` as its
+  which natively supports `matchit` objects and uses *ggplot2* as its
   engine.
