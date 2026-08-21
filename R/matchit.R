@@ -738,7 +738,8 @@ print.matchit <- function(x, ...) {
   cal <- is_not_null(x[["caliper"]])
   dis <- c("both", "control", "treat")[pmatch(info$discard, c("both", "control", "treat"), 0L)]
   disl <- is_not_null(dis)
-  nm <- is_null(x[["method"]])
+  #The method is recorded in `info`; `matchit` objects have no `method` component
+  nm <- is_null(info$method)
 
   cat("A `matchit` object\n")
 
@@ -764,18 +765,23 @@ print.matchit <- function(x, ...) {
 
       if (cal || disl) {
         cal.ps <- !all(nzchar(names(x[["caliper"]])))
-        cat(sprintf(" [%s]\n",
+        cat(sprintf(" [%s]",
                     toString(c("matching", "subclassification", "caliper", "common support")[c(!nm && !info$mahalanobis && info$method != "subclass", !nm && info$method == "subclass", cal.ps, disl)])))
       }
 
+      cat("\n")
+
       if (info$distance != "user") {
-        cat(sprintf("\n             - estimated with %s\n",
+        cat(sprintf("             - estimated with %s\n",
                     info_to_distance(info)))
         if (is_not_null(x[["s.weights"]])) {
           cat(sprintf("             - sampling weights %s in estimation\n",
                       if (isTRUE(attr(x[["s.weights"]], "in_ps"))) "included" else "not included"))
         }
       }
+    }
+    else {
+      cat("\n")
     }
   }
 

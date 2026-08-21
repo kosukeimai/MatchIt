@@ -118,7 +118,7 @@ plot.summary.matchit <- function(x,
   var.order <- arg::match_arg(var.order, c("data", "matched", "unmatched", "alphabetical"))
 
   if (!un && var.order == "unmatched") {
-    arg::err("{.arg var.order} cannot be {.val {var.order}} if {.code un = TRUE} in the call to {.fun summary}")
+    arg::err("{.arg var.order} cannot be {.val {var.order}} if {.code un = FALSE} in the call to {.fun summary}")
   }
 
   if (!matched && var.order == "matched") {

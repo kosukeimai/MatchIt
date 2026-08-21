@@ -354,7 +354,7 @@ cem_matchit <- function(treat, X, cutpoints = "sturges", grouping = list(), ...)
     }, logical(1L))]
 
     if (is_not_null(bag.groupings)) {
-      arg::err(c("Each entry in the list supplied to {.arg groupings} must be a list with entries containing values of the corresponding variable.",
+      arg::err(c("Each entry in the list supplied to {.arg grouping} must be a list with entries containing values of the corresponding variable.",
                  "x" = "Incorrectly specified variable{?s}: {.var {bag.groupings}}"))
     }
 
