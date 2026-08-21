@@ -1,6 +1,5 @@
 #' Subclassification
 #' @name method_subclass
-#' @usage NULL
 #'
 #' @description
 #' In [matchit()], setting `method = "subclass"` performs
@@ -16,7 +15,7 @@
 #' context and how it can be specified.
 #'
 #' Below is how `matchit()` is used for subclassification:
-#' \preformatted{
+#' @usage
 #' matchit(formula,
 #'         data = NULL,
 #'         method = "subclass",
@@ -28,7 +27,7 @@
 #'         reestimate = FALSE,
 #'         s.weights = NULL,
 #'         verbose = FALSE,
-#'         ...) }
+#'         ...)
 #'
 #' @param formula a two-sided [formula] object containing the treatment and
 #' covariates to be used in creating the distance measure used in the

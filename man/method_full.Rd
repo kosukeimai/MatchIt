@@ -3,6 +3,25 @@
 \name{method_full}
 \alias{method_full}
 \title{Optimal Full Matching}
+\usage{
+matchit(formula,
+        data = NULL,
+        method = "full",
+        distance = "glm",
+        link = "logit",
+        distance.options = list(),
+        estimand = "ATT",
+        exact = NULL,
+        mahvars = NULL,
+        anitexact = NULL,
+        discard = "none",
+        reestimate = FALSE,
+        s.weights = NULL,
+        caliper = NULL,
+        std.caliper = TRUE,
+        verbose = FALSE,
+        ...)
+}
 \arguments{
 \item{formula}{a two-sided \link{formula} object containing the treatment and
 covariates to be used in creating the distance measure used in the matching.
@@ -93,25 +112,6 @@ See \code{\link[=matchit]{matchit()}} for an explanation of what each argument m
 context and how it can be specified.
 
 Below is how \code{matchit()} is used for optimal full matching:
-\preformatted{
-matchit(formula,
-        data = NULL,
-        method = "full",
-        distance = "glm",
-        link = "logit",
-        distance.options = list(),
-        estimand = "ATT",
-        exact = NULL,
-        mahvars = NULL,
-        anitexact = NULL,
-        discard = "none",
-        reestimate = FALSE,
-        s.weights = NULL,
-        caliper = NULL,
-        std.caliper = TRUE,
-        verbose = FALSE,
-        ...)
-}
 }
 \details{
 \subsection{Mahalanobis Distance Matching}{

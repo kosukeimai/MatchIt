@@ -3,6 +3,29 @@
 \name{method_nearest}
 \alias{method_nearest}
 \title{Nearest Neighbor Matching}
+\usage{
+matchit(formula,
+        data = NULL,
+        method = "nearest",
+        distance = "glm",
+        link = "logit",
+        distance.options = list(),
+        estimand = "ATT",
+        exact = NULL,
+        mahvars = NULL,
+        antiexact = NULL,
+        discard = "none",
+        reestimate = FALSE,
+        s.weights = NULL,
+        replace = TRUE,
+        m.order = NULL,
+        caliper = NULL,
+        ratio = 1,
+        min.controls = NULL,
+        max.controls = NULL,
+        verbose = FALSE,
+        ...)
+}
 \arguments{
 \item{formula}{a two-sided \link{formula} object containing the treatment and
 covariates to be used in creating the distance measure used in the matching.}
@@ -110,28 +133,6 @@ See \code{\link[=matchit]{matchit()}} for an explanation of what each argument m
 context and how it can be specified.
 
 Below is how \code{matchit()} is used for nearest neighbor matching:
-\preformatted{
-matchit(formula,
-        data = NULL,
-        method = "nearest",
-        distance = "glm",
-        link = "logit",
-        distance.options = list(),
-        estimand = "ATT",
-        exact = NULL,
-        mahvars = NULL,
-        antiexact = NULL,
-        discard = "none",
-        reestimate = FALSE,
-        s.weights = NULL,
-        replace = TRUE,
-        m.order = NULL,
-        caliper = NULL,
-        ratio = 1,
-        min.controls = NULL,
-        max.controls = NULL,
-        verbose = FALSE,
-        ...) }
 }
 \details{
 \subsection{Mahalanobis Distance Matching}{

@@ -1,6 +1,5 @@
 #' Fast Generalized Full Matching
 #' @name method_quick
-#' @usage NULL
 #'
 #' @description
 #' In [matchit()], setting `method = "quick"` performs generalized full
@@ -25,7 +24,7 @@
 #' context and how it can be specified.
 #'
 #' Below is how `matchit()` is used for generalized full matching:
-#' \preformatted{
+#' @usage
 #' matchit(formula,
 #'         data = NULL,
 #'         method = "quick",
@@ -42,7 +41,6 @@
 #'         std.caliper = TRUE,
 #'         verbose = FALSE,
 #'         ...)
-#' }
 #'
 #' @param formula a two-sided [formula] object containing the treatment and
 #' covariates to be used in creating the distance measure used in the matching.

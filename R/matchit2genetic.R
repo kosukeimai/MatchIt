@@ -1,6 +1,5 @@
 #' Genetic Matching
 #' @name method_genetic
-#' @usage NULL
 #'
 #' @description
 #' In [matchit()], setting `method = "genetic"` performs genetic matching.
@@ -21,7 +20,7 @@
 #' context and how it can be specified.
 #'
 #' Below is how `matchit()` is used for genetic matching:
-#' \preformatted{
+#' @usage
 #' matchit(formula,
 #'         data = NULL,
 #'         method = "genetic",
@@ -40,7 +39,7 @@
 #'         caliper = NULL,
 #'         ratio = 1,
 #'         verbose = FALSE,
-#'         ...) }
+#'         ...)
 #'
 #' @param formula a two-sided [formula] object containing the treatment and
 #' covariates to be used in creating the distance measure used in the matching.

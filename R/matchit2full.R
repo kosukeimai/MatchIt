@@ -1,6 +1,5 @@
 #' Optimal Full Matching
 #' @name method_full
-#' @usage NULL
 #'
 #' @description
 #' In [matchit()], setting `method = "full"` performs optimal full
@@ -25,7 +24,7 @@
 #' context and how it can be specified.
 #'
 #' Below is how `matchit()` is used for optimal full matching:
-#' \preformatted{
+#' @usage
 #' matchit(formula,
 #'         data = NULL,
 #'         method = "full",
@@ -43,7 +42,6 @@
 #'         std.caliper = TRUE,
 #'         verbose = FALSE,
 #'         ...)
-#' }
 #'
 #' @param formula a two-sided [formula] object containing the treatment and
 #' covariates to be used in creating the distance measure used in the matching.

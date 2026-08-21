@@ -1,6 +1,5 @@
 #' Cardinality Matching
 #' @name method_cardinality
-#' @usage NULL
 #'
 #' @description
 #' In [matchit()], setting `method = "cardinality"` performs cardinality
@@ -17,7 +16,7 @@
 #' means in a general context and how it can be specified.
 #'
 #' Below is how `matchit()` is used for cardinality matching:
-#' \preformatted{
+#' @usage
 #' matchit(formula,
 #'         data = NULL,
 #'         method = "cardinality",
@@ -30,7 +29,7 @@
 #'         tols = .05,
 #'         std.tols = TRUE,
 #'         solver = "highs",
-#'         ...) }
+#'         ...)
 #'
 #' @param formula a two-sided [formula] object containing the treatment and covariates to be balanced.
 #' @param data a data frame containing the variables named in `formula`. If not found in `data`, the variables will be sought in the environment.

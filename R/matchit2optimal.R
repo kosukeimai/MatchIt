@@ -1,6 +1,5 @@
 #' Optimal Pair Matching
 #' @name method_optimal
-#' @usage NULL
 #'
 #' @description
 #' In [matchit()], setting `method = "optimal"` performs optimal pair
@@ -20,7 +19,7 @@
 #' context and how it can be specified.
 #'
 #' Below is how `matchit()` is used for optimal pair matching:
-#' \preformatted{
+#' @usage
 #' matchit(formula,
 #'         data = NULL,
 #'         method = "optimal",
@@ -38,7 +37,7 @@
 #'         min.controls = NULL,
 #'         max.controls = NULL,
 #'         verbose = FALSE,
-#'         ...) }
+#'         ...)
 #'
 #' @param formula a two-sided [formula] object containing the treatment and
 #' covariates to be used in creating the distance measure used in the matching.

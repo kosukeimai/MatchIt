@@ -3,6 +3,20 @@
 \name{method_subclass}
 \alias{method_subclass}
 \title{Subclassification}
+\usage{
+matchit(formula,
+        data = NULL,
+        method = "subclass",
+        distance = "glm",
+        link = "logit",
+        distance.options = list(),
+        estimand = "ATT",
+        discard = "none",
+        reestimate = FALSE,
+        s.weights = NULL,
+        verbose = FALSE,
+        ...)
+}
 \arguments{
 \item{formula}{a two-sided \link{formula} object containing the treatment and
 covariates to be used in creating the distance measure used in the
@@ -75,19 +89,6 @@ See \code{\link[=matchit]{matchit()}} for an explanation of what each argument m
 context and how it can be specified.
 
 Below is how \code{matchit()} is used for subclassification:
-\preformatted{
-matchit(formula,
-        data = NULL,
-        method = "subclass",
-        distance = "glm",
-        link = "logit",
-        distance.options = list(),
-        estimand = "ATT",
-        discard = "none",
-        reestimate = FALSE,
-        s.weights = NULL,
-        verbose = FALSE,
-        ...) }
 }
 \details{
 After subclassification, effect estimates can be computed separately in the

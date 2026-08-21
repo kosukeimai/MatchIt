@@ -12,7 +12,7 @@ defining calipers. This page documents the options that can be supplied to
 the \code{distance} argument to \code{\link[=matchit]{matchit()}}.
 }
 \note{
-In versions of \emph{MatchIt} prior to 4.0.0, \code{distance} was specified in a
+In versions of \pkg{MatchIt} prior to 4.0.0, \code{distance} was specified in a
 slightly different way. When specifying arguments using the old syntax, they
 will automatically be converted to the corresponding method in the new syntax
 but a warning will be thrown. \code{distance = "logit"}, the old default, will
@@ -99,9 +99,9 @@ use the linear predictor instead of the predicted probabilities. No other
 links are allowed. The tuning parameter defaults differ from
 \code{gbm::gbm()}; they are as follows: \code{n.trees = 1e4},
 \code{interaction.depth = 3}, \code{shrinkage = .01}, \code{bag.fraction = 1}, \code{cv.folds = 5}, \code{keep.data = FALSE}. These are the same
-defaults as used in \emph{WeightIt} and \emph{twang}, except for
+defaults as used in \pkg{WeightIt} and \pkg{twang}, except for
 \code{cv.folds} and \code{keep.data}. Note this is not the same use of
-generalized boosted modeling as in \emph{twang}; here, the number of trees is
+generalized boosted modeling as in \pkg{twang}; here, the number of trees is
 chosen based on cross-validation or out-of-bag error, rather than based on
 optimizing balance. \pkg{twang} should not be cited when using this method
 to estimate propensity scores. Note that because there is a random component to choosing the tuning
@@ -188,8 +188,7 @@ can also be calculated outside \code{matchit()} using its \link[=euclidean_dist]
 \item{\code{"euclidean"}}{ The Euclidean distance is the raw
 distance between units, computed as \deqn{d_{ij} = \sqrt{(x_i - x_j)(x_i - x_j)'}} It is sensitive to the scale of the covariates, so covariates with
 larger scales will take higher priority. }
-\item{\code{"scaled_euclidean"}}{
-The scaled Euclidean distance is the
+\item{\code{"scaled_euclidean"}}{ The scaled Euclidean distance is the
 Euclidean distance computed on the scaled (i.e., standardized) covariates.
 This ensures the covariates are on the same scale. The covariates are
 standardized using the pooled within-group standard deviations, computed by
@@ -201,8 +200,7 @@ covariance matrix of the covariates, computed by treatment group-mean
 centering each covariate before computing the covariance in the full sample.
 This ensures the variables are on the same scale and accounts for the
 correlation between covariates. }
-\item{\code{"robust_mahalanobis"}}{ The
-robust rank-based Mahalanobis distance is the Mahalanobis distance computed
+\item{\code{"robust_mahalanobis"}}{ The robust rank-based Mahalanobis distance is the Mahalanobis distance computed
 on the ranks of the covariates with an adjustment for ties. It is described
 in Rosenbaum (2010, ch. 8) as an alternative to the Mahalanobis distance
 that handles outliers and rare categories better than the standard
