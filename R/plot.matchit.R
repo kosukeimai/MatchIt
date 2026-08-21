@@ -18,7 +18,10 @@
 #' for which covariate(s) plots should be displayed. Factor variables should be
 #' named by the original variable name rather than the names of individual
 #' dummy variables created after expansion with `model.matrix`. Can be supplied as a character vector or a one-sided formula.
-#' @param data an optional data frame containing variables named in `which.xs` but not present in the `matchit` object.
+#' @param data an optional data frame containing variables named in `which.xs`
+#' but not present in the `matchit` object. It must contain one row for each unit
+#' in the original `matchit()` call, in the same order; supplying one with a
+#' different number of rows is an error.
 #' @param subclass with subclassification and `type = "qq"`,
 #' `"ecdf"`, or `"density"`, whether to display balance for
 #' individual subclasses, and, if so, for which ones. Can be `TRUE`
@@ -211,7 +214,7 @@ plot.matchit.subclass <- function(x, type = "qq", interactive = TRUE, which.xs =
       matchit.covplot.subclass(x, type = type, which.subclass = which.subclass,
                                interactive = interactive, which.xs = which.xs, ...)
     }
-    else if (interactive && miss.sub) {
+    else if (interactive && miss.sub && interactive()) {
       subclasses <- levels(x$subclass)
       choices <- c("No (Exit)", paste0("Yes: Subclass ", subclasses), "Yes: In aggregate")
       plot.name <- switch(type, "qq" = "quantile-quantile", "ecdf" = "empirical CDF", "density" = "density")
@@ -244,6 +247,10 @@ plot.matchit.subclass <- function(x, type = "qq", interactive = TRUE, which.xs =
 ## plot helper functions
 matchit.covplot <- function(object, type = "qq", interactive = TRUE, which.xs = NULL, data = NULL, ...) {
 
+  if (is_not_null(data)) {
+    data <- .check_supplied_data(data, length(object$treat), original = FALSE)
+  }
+
   if (is_null(which.xs)) {
     if (is_null(object$X)) {
       arg::wrn("No covariates to plot")
@@ -264,9 +271,6 @@ matchit.covplot <- function(object, type = "qq", interactive = TRUE, which.xs = 
   }
   else {
     if (is_not_null(data)) {
-      if (!is.data.frame(data) || nrow(data) != length(object$treat)) {
-        arg::err("{.arg data} must be a data frame with as many rows as there are units in the supplied {.cls matchit} object")
-      }
       data <- cbind(data, object$X[setdiff(names(object$X), names(data))])
     }
     else {
@@ -406,6 +410,10 @@ matchit.covplot <- function(object, type = "qq", interactive = TRUE, which.xs = 
 matchit.covplot.subclass <- function(object, type = "qq", which.subclass = NULL,
                                      interactive = TRUE, which.xs = NULL, data = NULL, ...) {
 
+  if (is_not_null(data)) {
+    data <- .check_supplied_data(data, length(object$treat), original = FALSE)
+  }
+
   if (is_null(which.xs)) {
     if (is_null(object$X)) {
       arg::wrn("no covariates to plot")
@@ -429,11 +437,8 @@ matchit.covplot.subclass <- function(object, type = "qq", which.subclass = NULL,
     if (is_null(data)) {
       data <- object$X
     }
-    else if (is.data.frame(data) && nrow(data) == length(object$treat)) {
-      data <- cbind(data, object$X[setdiff(names(object$X), names(data))])
-    }
     else {
-      arg::err("{.arg data} must be a data frame with as many rows as there are units in the supplied {.cls matchit} object")
+      data <- cbind(data, object$X[setdiff(names(object$X), names(data))])
     }
 
     if (is_not_null(object$exact)) {

@@ -159,6 +159,34 @@ exactify <- function(X, nam = NULL, sep = "|", include_vars = FALSE, justify = "
   setNames(out, nam)
 }
 
+#Validate a dataset supplied by the user that must line up with the units in the
+#original call to matchit(). Coerces a matrix to a data frame. `original = TRUE` when
+#the argument is meant to be the original dataset itself (as in match_data()) rather
+#than a source of additional variables aligned with it (as in summary() and plot()).
+.check_supplied_data <- function(data, n, arg = "data", original = TRUE) {
+  if (!is.data.frame(data)) {
+    if (length(dim(data)) != 2L) {
+      if (original) {
+        arg::err("{.arg {arg}} must be a data frame containing the original dataset used in the call to {.fun matchit}")
+      }
+
+      arg::err("{.arg {arg}} must be a data frame")
+    }
+
+    data <- as.data.frame.matrix(data)
+  }
+
+  if (nrow(data) != n) {
+    if (original) {
+      arg::err("{.arg {arg}} must be the original dataset used in the call to {.fun matchit}, which had {n} unit{?s}; the supplied dataset has {nrow(data)} row{?s}")
+    }
+
+    arg::err("{.arg {arg}} must have one row for each of the {n} unit{?s} in the original call to {.fun matchit}; the supplied dataset has {nrow(data)} row{?s}")
+  }
+
+  data
+}
+
 #Get covariates (RHS) vars from formula
 get_covs_matrix <- function(formula = NULL, data = NULL) {
 

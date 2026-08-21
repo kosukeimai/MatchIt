@@ -19,8 +19,10 @@
 #' of variable in `data` to be used or a one-sided formula with the
 #' variable on the right-hand side (e.g., `~ SW`).
 #' @param data a data frame containing the sampling weights if given as a
-#' string or formula. If unspecified, `add_s.weights()` will attempt to find
-#' the dataset using the environment of the `matchit` object.
+#' string or formula. It must contain one row for each unit in the original
+#' `matchit()` call, in the same order; supplying one with a different number of
+#' rows is an error. If unspecified, `add_s.weights()` will attempt to find the
+#' dataset using the environment of the `matchit` object.
 #'
 #' @return a `matchit` object with an `s.weights` component
 #' containing the supplied sampling weights. If `s.weights = NULL`, the original
@@ -100,16 +102,7 @@ add_s.weights <- function(m,
       }
     }
     else {
-      if (!is.data.frame(data)) {
-        if (!is.matrix(data)) {
-          arg::err("{.arg data} must be a data frame")
-        }
-        data <- as.data.frame.matrix(data)
-      }
-
-      if (nrow(data) != length(m$treat)) {
-        arg::err("{.arg data} must have as many rows as there were units in the original call to {.fun matchit}")
-      }
+      data <- .check_supplied_data(data, length(m$treat), original = FALSE)
     }
 
     if (is.character(s.weights)) {

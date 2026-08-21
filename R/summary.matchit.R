@@ -11,9 +11,9 @@
 #' for two-way interactions and squares of covariates. Default is `FALSE`.
 #' @param addlvariables additional variable for which balance statistics are to
 #' be computed along with the covariates in the `matchit` object. Can be
-#' entered in one of three ways: as a data frame of covariates with as many
-#' rows as there were units in the original `matchit()` call, as a string
-#' containing the names of variables in `data`, or as a right-sided
+#' entered in one of three ways: as a data frame or matrix of covariates with
+#' as many rows as there were units in the original `matchit()` call, as a
+#' string containing the names of variables in `data`, or as a right-sided
 #' `formula` with the additional variables (and possibly their
 #' transformations) found in `data`, the environment, or the
 #' `matchit` object. Balance on squares and interactions of the additional
@@ -25,8 +25,10 @@
 #' (ECDFs). The unstandardized statistics are the raw mean difference and the
 #' mean and maximum of the quantile-quantile (QQ) difference. Variance ratios
 #' are produced either way. See Details below. Default is `TRUE`.
-#' @param data a optional data frame containing variables named in
-#' `addlvariables` if specified as a string or formula.
+#' @param data an optional data frame containing variables named in
+#' `addlvariables` if specified as a string or formula. It must contain one row
+#' for each unit in the original `matchit()` call, in the same order; supplying
+#' one with a different number of rows is an error.
 #' @param pair.dist `logical`; whether to compute average absolute pair
 #' distances. For matching methods that don't include a `match.matrix`
 #' component in the output (i.e., exact matching, coarsened exact matching,
@@ -784,26 +786,40 @@ print.summary.matchit.subclass <- function(x, digits = max(3L, getOption("digits
     return(X)
   }
 
-  #Attempt to extract data from matchit object; same as match_data()
-  data.found <- FALSE
-  for (i in 1:4) {
-    if (i == 2L) {
-      data <- try(eval(object$call$data, envir = environment(object$formula)), silent = TRUE)
-    }
-    else if (i == 3L) {
-      data <- try(eval(object$call$data, envir = parent.frame()), silent = TRUE)
-    }
-    else if (i == 4L) {
-      data <- object[["model"]][["data"]]
+  n <- length(object[["treat"]])
+
+  if (is_not_null(data)) {
+    #A supplied dataset is authoritative; it supplies the additional variables and
+    #must align with the units in the original call
+    data <- .check_supplied_data(data, n, original = FALSE)
+  }
+  else {
+    #Attempt to extract data from matchit object; same as match_data()
+    for (i in 2:4) {
+      if (i == 2L) {
+        data <- try(eval(object$call$data, envir = environment(object$formula)), silent = TRUE)
+      }
+      else if (i == 3L) {
+        data <- try(eval(object$call$data, envir = parent.frame()), silent = TRUE)
+      }
+      else if (i == 4L) {
+        data <- object[["model"]][["data"]]
+      }
+
+      if (!null_or_error(data) && length(dim(data)) == 2L && nrow(data) == n) {
+        break
+      }
     }
 
-    if (!null_or_error(data) && length(dim(data)) == 2L && nrow(data) == length(object[["treat"]])) {
-      data.found <- TRUE
-      break
+    if (null_or_error(data) || length(dim(data)) != 2L || nrow(data) != n) {
+      data <- NULL
+    }
+    else if (!is.data.frame(data)) {
+      data <- as.data.frame.matrix(data)
     }
   }
 
-  if (is.character(addlvariables)) {
+  if (is.character(addlvariables) && is_null(dim(addlvariables))) {
     if (is_null(data) || !is.data.frame(data)) {
       arg::err("if {.arg addlvariables} is specified as a string, a data frame argument must be supplied to {.arg data}")
     }
@@ -828,6 +844,10 @@ print.summary.matchit.subclass <- function(x, digits = max(3L, getOption("digits
     arg::err("the argument to {.arg addlvariables} must be in one of the accepted forms. See {.fun MatchIt::summary.matchit} for details")
   }
 
+  if (is.matrix(addlvariables)) {
+    addlvariables <- as.data.frame.matrix(addlvariables)
+  }
+
   af <- rlang::is_formula(addlvariables)
 
   if (af) {
@@ -835,13 +855,8 @@ print.summary.matchit.subclass <- function(x, digits = max(3L, getOption("digits
     addlvariables <- model.frame(addvariables_f, data = data, na.action = "na.pass")
   }
 
-  if (nrow(addlvariables) != length(object$treat)) {
-    if (is_null(data) || data.found) {
-      arg::err("variables specified in {.arg addlvariables} must have the same number of units as are present in the original call to {.fun matchit}")
-    }
-    else {
-      arg::err("{.arg data} must have the same number of units as are present in the original call to {.fun matchit}")
-    }
+  if (nrow(addlvariables) != n) {
+    arg::err("variables specified in {.arg addlvariables} must have the same number of units as are present in the original call to {.fun matchit}")
   }
 
   k <- ncol(addlvariables)

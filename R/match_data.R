@@ -29,11 +29,14 @@
 #' containing the unit IDs in the data frame output. Default is `"id"`.
 #' Only used with `get_matches()`; for `match_data()`, the units IDs
 #' are stored in the row names of the returned data frame.
-#' @param data a data frame containing the original dataset to which the
-#' computed output variables (`distance`, `weights`, and/or
-#' `subclass`) should be appended. If empty, `match_data()` and
-#' `get_matches()` will attempt to find the dataset using the environment
-#' of the `matchit` object, which can be unreliable; see Notes.
+#' @param data the original dataset supplied to `matchit()`, to which the
+#' computed output variables (`distance`, `weights`, and/or `subclass`) should
+#' be appended. This must be the dataset used in the matching itself, with the
+#' same units in the same order and before any subsetting; a dataset with a
+#' different number of rows will trigger an error. Usually it should be left
+#' unspecified: when it is, `match_data()` and `get_matches()` recover the
+#' original dataset from the environment of the `matchit` object, which works
+#' in all but the circumstances described in Notes.
 #' @param include.s.weights `logical`; whether to multiply the estimated
 #' weights by the sampling weights supplied to `matchit()`, if any.
 #' Default is `TRUE`. If `FALSE`, the weights in the
@@ -134,9 +137,13 @@
 #' `reestimate = TRUE`), this syntax may not work because the original
 #' dataset used to construct the matched dataset will not be found. This can
 #' occur when `matchit()` was run within an [lapply()] or
-#' `purrr::map()` call. The solution, which is recommended in all cases,
-#' is simply to supply the original dataset to the `data` argument of
-#' `match_data()`, e.g., as `match_data(m.out, data = original_data)`, as demonstrated in the Examples.
+#' `purrr::map()` call. The solution in that case is to supply the original
+#' dataset to the `data` argument of `match_data()`, e.g., as
+#' `match_data(m.out, data = original_data)`, as demonstrated in the Examples.
+#' This is the only purpose of the `data` argument; supplying anything other
+#' than the dataset used in the matching, including a subset of it or a version
+#' with its rows reordered, will produce output in which the appended matching
+#' variables do not correspond to the units they are attached to.
 #'
 #' @seealso
 #'
@@ -183,37 +190,40 @@ match_data <- function(object,
   arg::arg_supplied(object)
   arg::arg_is(object, "matchit")
 
-  data.found <- FALSE
-  for (i in 1:4) {
-    if (i == 2L) {
-      data <- try(eval(object$call$data, envir = environment(object$formula)), silent = TRUE)
-    }
-    else if (i == 3L) {
-      data <- try(eval(object$call$data, envir = parent.frame()), silent = TRUE)
-    }
-    else if (i == 4L) {
-      data <- object[["model"]][["data"]]
-    }
+  n <- length(object[["treat"]])
 
-    if (!null_or_error(data) && length(dim(data)) == 2L && nrow(data) == length(object[["treat"]])) {
-      data.found <- TRUE
-      break
-    }
+  if (is_not_null(data)) {
+    #A supplied dataset is authoritative; it must be the original one
+    data <- .check_supplied_data(data, n)
   }
+  else {
+    #Attempt to recover the original dataset; see the Note in ?match_data
+    data.found <- FALSE
 
-  if (!data.found) {
-    arg::err("a valid dataset could not be found. Please supply an argument to {.arg data} containing the original dataset used in the matching")
-  }
+    for (i in 2:4) {
+      if (i == 2L) {
+        data <- try(eval(object$call$data, envir = environment(object$formula)), silent = TRUE)
+      }
+      else if (i == 3L) {
+        data <- try(eval(object$call$data, envir = parent.frame()), silent = TRUE)
+      }
+      else if (i == 4L) {
+        data <- object[["model"]][["data"]]
+      }
 
-  if (!is.data.frame(data)) {
-    if (!is.matrix(data)) {
-      arg::err("{.arg data} must be a data frame")
+      if (!null_or_error(data) && length(dim(data)) == 2L && nrow(data) == n) {
+        data.found <- TRUE
+        break
+      }
     }
-    data <- as.data.frame.matrix(data)
-  }
 
-  if (nrow(data) != length(object$treat)) {
-    arg::err("{.arg data} must have as many rows as there were units in the original call to {.fun matchit}")
+    if (!data.found) {
+      arg::err("a valid dataset could not be found. Please supply an argument to {.arg data} containing the original dataset used in the matching")
+    }
+
+    if (!is.data.frame(data)) {
+      data <- as.data.frame.matrix(data)
+    }
   }
 
   if (is_not_null(object$distance)) {
