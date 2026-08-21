@@ -9,6 +9,18 @@
 
 * With `method = "cardinality"` and `estimand = "ATE"`, the size of the matched sample being maximized and the `ratio` constraint on the relative sizes of the matched groups now refer to the unweighted numbers of units rather than to the sums of the sampling weights. `s.weights` now enters only the balance constraints, where it weights the covariate means. This makes profile matching for the ATE usable with sampling weights; results are unchanged when `s.weights` is not supplied or is constant.
 
+* In `match_data()` and `get_matches()`, a dataset supplied to `data` is now always used and is required to be the original dataset supplied to `matchit()`; supplying one with the wrong number of rows now throws an informative error naming both sizes. Previously, such a dataset was silently ignored in favor of one recovered from the environment of the `matchit` object, if one could be found. The documentation now clarifies that `data` is only needed when the original dataset cannot be found automatically.
+
+* A dataset supplied to `data` in `summary()`, `plot()`, or `add_s.weights()` is likewise now always validated against the units in the original `matchit()` call, with the same error. Previously, `summary()` quietly replaced a wrongly sized dataset with one recovered from the environment, and `plot()` ignored `data` entirely unless `which.xs` was also supplied.
+
+* In `summary()`, `addlvariables` can now be supplied as a matrix, as its documentation implied; previously this failed with an uninformative error. A character matrix is now treated as a matrix of covariates rather than as a vector of variable names. Errors arising from an invalid `addlvariables` now refer to `addlvariables` rather than to `data`.
+
+* Fixed a bug in `print()` for `matchit` objects where the distance line was not terminated when matching was done on the Mahalanobis distance or on a user-supplied distance measure, running the next line onto the end of it, and where a blank line appeared when the distance had both a bracketed annotation and an estimating method. The bracketed annotation now also correctly reports when the distance measure was used for matching or subclassification; previously it never did.
+
+* Fixed a bug where calling `plot()` on the output of `matchit()` with `method = "subclass"` without specifying `subclass` would enter an interactive menu even in a non-interactive session, where it would loop indefinitely. Balance in aggregate is now displayed instead, as documented.
+
+* Fixed the error message produced by `plot()` on a `summary.matchit` object with `var.order = "unmatched"`, which referred to `un = TRUE` when it meant `un = FALSE`.
+
 * Bumped minimum R version to 4.1.0 and removed *backports* as a dependency.
 
 * Replaced *chk* dependency with *arg*.
