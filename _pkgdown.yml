@@ -1,9 +1,12 @@
 url: https://kosukeimai.github.io/MatchIt/
+
 template:
   bootstrap: 5
+  light-switch: true
   math-rendering: mathjax
   bslib:
     primary: "#952100"
+    secondary: "#da9499"
 
 reference:
 - title: Matching
