@@ -3,6 +3,27 @@
 \name{method_genetic}
 \alias{method_genetic}
 \title{Genetic Matching}
+\usage{
+matchit(formula,
+        data = NULL,
+        method = "genetic",
+        distance = "glm",
+        link = "logit",
+        distance.options = list(),
+        estimand = "ATT",
+        exact = NULL,
+        mahvars = NULL,
+        antiexact = NULL,
+        discard = "none",
+        reestimate = FALSE,
+        s.weights = NULL,
+        replace = FALSE,
+        m.order = NULL,
+        caliper = NULL,
+        ratio = 1,
+        verbose = FALSE,
+        ...)
+}
 \arguments{
 \item{formula}{a two-sided \link{formula} object containing the treatment and
 covariates to be used in creating the distance measure used in the matching.
@@ -120,26 +141,6 @@ See \code{\link[=matchit]{matchit()}} for an explanation of what each argument m
 context and how it can be specified.
 
 Below is how \code{matchit()} is used for genetic matching:
-\preformatted{
-matchit(formula,
-        data = NULL,
-        method = "genetic",
-        distance = "glm",
-        link = "logit",
-        distance.options = list(),
-        estimand = "ATT",
-        exact = NULL,
-        mahvars = NULL,
-        antiexact = NULL,
-        discard = "none",
-        reestimate = FALSE,
-        s.weights = NULL,
-        replace = FALSE,
-        m.order = NULL,
-        caliper = NULL,
-        ratio = 1,
-        verbose = FALSE,
-        ...) }
 }
 \details{
 In genetic matching, covariates play three roles: 1) as the variables on

@@ -1,6 +1,5 @@
 #' Exact Matching
 #' @name method_exact
-#' @usage NULL
 #'
 #' @description
 #' In [matchit()], setting `method = "exact"` performs exact matching.
@@ -22,7 +21,7 @@
 #' context and how it can be specified.
 #'
 #' Below is how `matchit()` is used for exact matching:
-#' \preformatted{
+#' @usage
 #' matchit(formula,
 #'         data = NULL,
 #'         method = "exact",
@@ -30,7 +29,6 @@
 #'         s.weights = NULL,
 #'         verbose = FALSE,
 #'         ...)
-#'}
 #'
 #' @param formula a two-sided [formula] object containing the treatment and
 #' covariates to be used in creating the subclasses defined by a full cross of

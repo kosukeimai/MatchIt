@@ -1,8 +1,6 @@
 #' Coarsened Exact Matching
 #' @name method_cem
 #'
-#' @usage NULL
-#'
 #' @description
 #' In [matchit()], setting `method = "cem"` performs coarsened exact
 #' matching. With coarsened exact matching, covariates are coarsened into bins,
@@ -21,14 +19,14 @@
 #' context and how it can be specified.
 #'
 #' Below is how `matchit()` is used for coarsened exact matching:
-#' \preformatted{
+#' @usage
 #' matchit(formula,
 #'         data = NULL,
 #'         method = "cem",
 #'         estimand = "ATT",
 #'         s.weights = NULL,
 #'         verbose = FALSE,
-#'         ...) }
+#'         ...)
 #'
 #' @param formula a two-sided [formula] object containing the treatment and
 #' covariates to be used in creating the subclasses defined by a full cross of

@@ -1,6 +1,5 @@
 #' Nearest Neighbor Matching
 #' @name method_nearest
-#' @usage NULL
 #'
 #' @description
 #' In [matchit()], setting `method = "nearest"` performs greedy nearest
@@ -15,7 +14,7 @@
 #' context and how it can be specified.
 #'
 #' Below is how `matchit()` is used for nearest neighbor matching:
-#' \preformatted{
+#' @usage
 #' matchit(formula,
 #'         data = NULL,
 #'         method = "nearest",
@@ -36,7 +35,7 @@
 #'         min.controls = NULL,
 #'         max.controls = NULL,
 #'         verbose = FALSE,
-#'         ...) }
+#'         ...)
 #'
 #' @param formula a two-sided [formula] object containing the treatment and
 #' covariates to be used in creating the distance measure used in the matching.

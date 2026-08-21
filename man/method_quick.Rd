@@ -3,6 +3,24 @@
 \name{method_quick}
 \alias{method_quick}
 \title{Fast Generalized Full Matching}
+\usage{
+matchit(formula,
+        data = NULL,
+        method = "quick",
+        distance = "glm",
+        link = "logit",
+        distance.options = list(),
+        estimand = "ATT",
+        exact = NULL,
+        mahvars = NULL,
+        discard = "none",
+        reestimate = FALSE,
+        s.weights = NULL,
+        caliper = NULL,
+        std.caliper = TRUE,
+        verbose = FALSE,
+        ...)
+}
 \arguments{
 \item{formula}{a two-sided \link{formula} object containing the treatment and
 covariates to be used in creating the distance measure used in the matching.
@@ -84,24 +102,6 @@ See \code{\link[=matchit]{matchit()}} for an explanation of what each argument m
 context and how it can be specified.
 
 Below is how \code{matchit()} is used for generalized full matching:
-\preformatted{
-matchit(formula,
-        data = NULL,
-        method = "quick",
-        distance = "glm",
-        link = "logit",
-        distance.options = list(),
-        estimand = "ATT",
-        exact = NULL,
-        mahvars = NULL,
-        discard = "none",
-        reestimate = FALSE,
-        s.weights = NULL,
-        caliper = NULL,
-        std.caliper = TRUE,
-        verbose = FALSE,
-        ...)
-}
 }
 \details{
 Generalized full matching is similar to optimal full matching, but has some additional flexibility that can be controlled by some of the extra arguments available. By default, \code{method = "quick"} performs a standard full match in which all units are matched (unless restricted by the caliper) and assigned to a subclass. Each subclass could contain multiple units from each treatment group. The subclasses are chosen to minimize the largest within-subclass distance between units (including between units of the same treatment group). Notably, generalized full matching requires less memory and can run much faster than optimal full matching and optimal pair matching and, in some cases, even than nearest neighbor matching, and it can be used with huge datasets (e.g., in the millions) while running in under a minute.

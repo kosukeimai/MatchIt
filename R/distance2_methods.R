@@ -89,9 +89,9 @@
 #' links are allowed. The tuning parameter defaults differ from
 #' `gbm::gbm()`; they are as follows: `n.trees = 1e4`,
 #' `interaction.depth = 3`, `shrinkage = .01`, `bag.fraction = 1`, `cv.folds = 5`, `keep.data = FALSE`. These are the same
-#' defaults as used in *WeightIt* and *twang*, except for
+#' defaults as used in \pkg{WeightIt} and \pkg{twang}, except for
 #' `cv.folds` and `keep.data`. Note this is not the same use of
-#' generalized boosted modeling as in *twang*; here, the number of trees is
+#' generalized boosted modeling as in \pkg{twang}; here, the number of trees is
 #' chosen based on cross-validation or out-of-bag error, rather than based on
 #' optimizing balance. \pkg{twang} should not be cited when using this method
 #' to estimate propensity scores. Note that because there is a random component to choosing the tuning
@@ -177,8 +177,7 @@
 #' \item{`"euclidean"`}{ The Euclidean distance is the raw
 #' distance between units, computed as \deqn{d_{ij} = \sqrt{(x_i - x_j)(x_i - x_j)'}} It is sensitive to the scale of the covariates, so covariates with
 #' larger scales will take higher priority. }
-#' \item{`"scaled_euclidean"`}{
-#'  The scaled Euclidean distance is the
+#' \item{`"scaled_euclidean"`}{ The scaled Euclidean distance is the
 #' Euclidean distance computed on the scaled (i.e., standardized) covariates.
 #' This ensures the covariates are on the same scale. The covariates are
 #' standardized using the pooled within-group standard deviations, computed by
@@ -190,8 +189,7 @@
 #' centering each covariate before computing the covariance in the full sample.
 #' This ensures the variables are on the same scale and accounts for the
 #' correlation between covariates. }
-#' \item{`"robust_mahalanobis"`}{ The
-#' robust rank-based Mahalanobis distance is the Mahalanobis distance computed
+#' \item{`"robust_mahalanobis"`}{ The robust rank-based Mahalanobis distance is the Mahalanobis distance computed
 #' on the ranks of the covariates with an adjustment for ties. It is described
 #' in Rosenbaum (2010, ch. 8) as an alternative to the Mahalanobis distance
 #' that handles outliers and rare categories better than the standard
@@ -221,7 +219,8 @@
 #' a supplied as a numeric vector or matrix, `link` and `distance.options` are
 #' ignored.
 #'
-#' @note In versions of *MatchIt* prior to 4.0.0, `distance` was specified in a
+#' @note
+#' In versions of \pkg{MatchIt} prior to 4.0.0, `distance` was specified in a
 #' slightly different way. When specifying arguments using the old syntax, they
 #' will automatically be converted to the corresponding method in the new syntax
 #' but a warning will be thrown. `distance = "logit"`, the old default, will

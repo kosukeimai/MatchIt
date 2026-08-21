@@ -3,6 +3,15 @@
 \name{method_cem}
 \alias{method_cem}
 \title{Coarsened Exact Matching}
+\usage{
+matchit(formula,
+        data = NULL,
+        method = "cem",
+        estimand = "ATT",
+        s.weights = NULL,
+        verbose = FALSE,
+        ...)
+}
 \arguments{
 \item{formula}{a two-sided \link{formula} object containing the treatment and
 covariates to be used in creating the subclasses defined by a full cross of
@@ -96,14 +105,6 @@ This page details the allowable arguments with \code{method = "cem"}. See
 context and how it can be specified.
 
 Below is how \code{matchit()} is used for coarsened exact matching:
-\preformatted{
-matchit(formula,
-        data = NULL,
-        method = "cem",
-        estimand = "ATT",
-        s.weights = NULL,
-        verbose = FALSE,
-        ...) }
 }
 \details{
 If the coarsening is such that there are no exact matches with the coarsened

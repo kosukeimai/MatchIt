@@ -3,6 +3,21 @@
 \name{method_cardinality}
 \alias{method_cardinality}
 \title{Cardinality Matching}
+\usage{
+matchit(formula,
+        data = NULL,
+        method = "cardinality",
+        estimand = "ATT",
+        exact = NULL,
+        mahvars = NULL,
+        s.weights = NULL,
+        ratio = 1,
+        verbose = FALSE,
+        tols = .05,
+        std.tols = TRUE,
+        solver = "highs",
+        ...)
+}
 \arguments{
 \item{formula}{a two-sided \link{formula} object containing the treatment and covariates to be balanced.}
 
@@ -75,20 +90,6 @@ This page details the allowable arguments with \code{method = "cardinality"}. Se
 means in a general context and how it can be specified.
 
 Below is how \code{matchit()} is used for cardinality matching:
-\preformatted{
-matchit(formula,
-        data = NULL,
-        method = "cardinality",
-        estimand = "ATT",
-        exact = NULL,
-        mahvars = NULL,
-        s.weights = NULL,
-        ratio = 1,
-        verbose = FALSE,
-        tols = .05,
-        std.tols = TRUE,
-        solver = "highs",
-        ...) }
 }
 \details{
 \subsection{Cardinality and Profile Matching}{
