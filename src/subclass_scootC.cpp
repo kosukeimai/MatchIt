@@ -1,13 +1,11 @@
 #include "internal.h"
 using namespace Rcpp;
 
-// [[Rcpp::plugins(cpp11)]]
-
 // [[Rcpp::export]]
 IntegerVector subclass_scootC(const IntegerVector& subclass_,
                               const IntegerVector& treat_,
                               const NumericVector& x_,
-                              const int& min_n) {
+                              int min_n) {
 
   if (min_n == 0) {
     return subclass_;
@@ -56,6 +54,16 @@ IntegerVector subclass_scootC(const IntegerVector& subclass_,
           if (subtab[s] == 0) {
             break;
           }
+        }
+
+        //`min(subtab) <= 0` should imply that some subclass is at exactly 0: the
+        //counts only ever drop below their starting values by the decrement at the
+        //end of each `m` iteration, which runs after this loop has emptied nothing,
+        //and only subclasses with a count above 0 are drawn from. If that ever
+        //stopped holding, `s` would be `nsub` here and the code below would assign
+        //an out-of-range subclass and then index `unique_sub` past its end.
+        if (s == nsub) {
+          break;
         }
 
         //Find which way to look for new member

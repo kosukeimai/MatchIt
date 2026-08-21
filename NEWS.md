@@ -21,6 +21,12 @@
 
 * Fixed the error message produced by `plot()` on a `summary.matchit` object with `var.order = "unmatched"`, which referred to `un = TRUE` when it meant `un = FALSE`.
 
+* Nearest neighbor matching on the Mahalanobis distance (i.e., with `distance = "mahalanobis"` or `mahvars` supplied) is now 40-60% faster, as the squared distance between two units is computed without allocating a copy of each unit's covariates.
+
+* Fixed a bug in the internal C++ code, which called `order()` as found from the global environment; a function of that name defined by the user (or exported by an attached package) would be used in place of `base::order()`, giving wrong results or an error. This affected nearest neighbor matching, optimal matching, and `summary()` with `pair.dist = TRUE`.
+
+* Removed the unused C++ interface in `inst/include`, which exported no functions.
+
 * Bumped minimum R version to 4.1.0 and removed *backports* as a dependency.
 
 * Replaced *chk* dependency with *arg*.

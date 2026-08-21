@@ -1,8 +1,6 @@
 #include "internal.h"
 using namespace Rcpp;
 
-// [[Rcpp::plugins(cpp11)]]
-
 // Computes matching weights from match.matrix
 // [[Rcpp::export]]
 NumericVector weights_matrixC(const IntegerMatrix& mm,
@@ -24,19 +22,39 @@ NumericVector weights_matrixC(const IntegerMatrix& mm,
 
   IntegerVector row_ind;
   if (focal.isNotNull()) {
-    row_ind = which(treat == as<int>(focal));
+    //`treat` has been recoded to 0..g-1, so `focal` must be recoded the same way
+    int focal_ = as<int>(focal);
+    for (int gj = 0; gj < g; gj++) {
+      if (unique_treat[gj] == focal_) {
+        focal_ = gj;
+        break;
+      }
+    }
+
+    row_ind = which(treat == focal_);
   }
   else {
     row_ind = match(as<CharacterVector>(rownames(mm)), lab) - 1;
   }
 
-  NumericVector matches_g = rep(0.0, g);
+  std::vector<double> matches_g(g, 0.0);
 
-  IntegerVector row_r(mm.ncol());
+  R_xlen_t mm_ncol = mm.ncol();
+
+  std::vector<int> row_r;
+  row_r.reserve(mm_ncol);
 
   for (int r : which(!is_na(mm(_, 0)))) {
 
-    row_r = na_omit(mm.row(r)) - 1;
+    //Filled by hand rather than with `na_omit(mm.row(r))`, which allocates two
+    //vectors for every row of the match matrix
+    row_r.clear();
+
+    for (R_xlen_t j = 0; j < mm_ncol; j++) {
+      if (mm(r, j) != NA_INTEGER) {
+        row_r.push_back(mm(r, j) - 1);
+      }
+    }
 
     for (gi = 0; gi < g; gi++) {
       matches_g[gi] = 0.0;

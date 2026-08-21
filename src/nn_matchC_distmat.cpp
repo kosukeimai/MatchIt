@@ -3,8 +3,6 @@
 #include "internal.h"
 using namespace Rcpp;
 
-// [[Rcpp::plugins(cpp11)]]
-
 // [[Rcpp::export]]
 IntegerMatrix nn_matchC_distmat(const IntegerVector& treat_,
                                 const IntegerVector& ord,
@@ -96,6 +94,11 @@ IntegerMatrix nn_matchC_distmat(const IntegerVector& treat_,
   // Output matrix with sample indices of control units
   IntegerMatrix mm(nf, max_ratio);
   mm.fill(NA_INTEGER);
+
+  //Next column to fill in each row of `mm`. Tracked rather than recomputed with
+  //`sum(!is_na(mm(row, _)))`, which allocates twice for every match written.
+  std::vector<int> mm_filled(mm.nrow(), 0);
+
   CharacterVector lab = treat_.names();
 
   //exact
@@ -178,7 +181,17 @@ IntegerMatrix nn_matchC_distmat(const IntegerVector& treat_,
           Rcpp::checkUserInterrupt();
         }
 
-        if (max(as<IntegerVector>(n_eligible[g_c])) == 0) {
+        //Any control group left with eligible units? Checked with a loop because
+        //`max(as<IntegerVector>(n_eligible[g_c]))` allocates twice per unit.
+        bool any_eligible = false;
+        for (int gj : g_c) {
+          if (n_eligible[gj] > 0) {
+            any_eligible = true;
+            break;
+          }
+        }
+
+        if (!any_eligible) {
           break;
         }
 
@@ -229,7 +242,7 @@ IntegerMatrix nn_matchC_distmat(const IntegerVector& treat_,
         }
 
         for (c = 0; c < k_total; c++) {
-          mm(t_id_t_i, sum(!is_na(mm(t_id_t_i, _)))) = matches_i[c];
+          mm(t_id_t_i, mm_filled[t_id_t_i]++) = matches_i[c];
         }
 
         matches_i[k_total] = t_id_i;
@@ -312,7 +325,7 @@ IntegerMatrix nn_matchC_distmat(const IntegerVector& treat_,
       }
 
       for (c = 0; c < k_total; c++) {
-        mm(t_id_t_i, sum(!is_na(mm(t_id_t_i, _)))) = matches_i[c];
+        mm(t_id_t_i, mm_filled[t_id_t_i]++) = matches_i[c];
       }
     }
   }

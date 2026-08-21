@@ -1,8 +1,6 @@
 #include "internal.h"
 using namespace Rcpp;
 
-// [[Rcpp::plugins(cpp11)]]
-
 // [[Rcpp::export]]
 double pairdistsubC(const NumericVector& x,
                     const IntegerVector& t,
@@ -14,7 +12,11 @@ double pairdistsubC(const NumericVector& x,
   int s_i, o_i, o_j;
   int k = 0;
 
-  Function ord("order");
+  //`base::order()`'s radix sort beats every C++ alternative measured here by 3-8x at
+  //these sizes; see _dev/cpp-cleanup-notes.md. Looked up in the base environment
+  //because `Function("order")` searches from the global environment, where a user
+  //object of that name would mask it.
+  Function ord = Environment::base_env()["order"];
   IntegerVector o = ord(s);
   o = o - 1;
 

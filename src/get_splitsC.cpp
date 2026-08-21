@@ -1,13 +1,9 @@
 #include "internal.h"
 using namespace Rcpp;
 
-// [[Rcpp::plugins(cpp11)]]
-
 // [[Rcpp::export]]
 NumericVector get_splitsC(const NumericVector& x,
-                          const double& caliper) {
-
-  NumericVector splits;
+                          double caliper) {
 
   NumericVector x_ = unique(x);
   NumericVector x_sorted = x_.sort();
@@ -15,12 +11,16 @@ NumericVector get_splitsC(const NumericVector& x,
   R_xlen_t n = x_sorted.size();
 
   if (n <= 1) {
-    return splits;
+    return NumericVector(0);
   }
 
-  splits = x_sorted[0];
+  //Accumulated in a std::vector because NumericVector::push_back() reallocates and
+  //copies the whole vector on every call, which is quadratic in the number of splits
+  std::vector<double> splits;
 
-  for (int i = 1; i < x_sorted.length(); i++) {
+  splits.push_back(x_sorted[0]);
+
+  for (R_xlen_t i = 1; i < n; i++) {
     if (x_sorted[i] - x_sorted[i - 1] <= caliper) continue;
 
     splits.push_back((x_sorted[i] + x_sorted[i - 1]) / 2);
@@ -28,5 +28,5 @@ NumericVector get_splitsC(const NumericVector& x,
 
   splits.push_back(x_sorted[n - 1]);
 
-  return splits;
+  return wrap(splits);
 }
