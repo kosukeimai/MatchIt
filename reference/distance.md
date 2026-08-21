@@ -10,7 +10,7 @@ can be supplied to the `distance` argument to
 
 ## Note
 
-In versions of *MatchIt* prior to 4.0.0, `distance` was specified in a
+In versions of MatchIt prior to 4.0.0, `distance` was specified in a
 slightly different way. When specifying arguments using the old syntax,
 they will automatically be converted to the corresponding method in the
 new syntax but a warning will be thrown. `distance = "logit"`, the old
@@ -134,12 +134,12 @@ The following methods for estimating propensity scores are allowed:
   [`gbm::gbm()`](https://gbm-developers.github.io/gbm/reference/gbm.html);
   they are as follows: `n.trees = 1e4`, `interaction.depth = 3`,
   `shrinkage = .01`, `bag.fraction = 1`, `cv.folds = 5`,
-  `keep.data = FALSE`. These are the same defaults as used in *WeightIt*
-  and *twang*, except for `cv.folds` and `keep.data`. Note this is not
-  the same use of generalized boosted modeling as in *twang*; here, the
-  number of trees is chosen based on cross-validation or out-of-bag
-  error, rather than based on optimizing balance. twang should not be
-  cited when using this method to estimate propensity scores. Note that
+  `keep.data = FALSE`. These are the same defaults as used in WeightIt
+  and twang, except for `cv.folds` and `keep.data`. Note this is not the
+  same use of generalized boosted modeling as in twang; here, the number
+  of trees is chosen based on cross-validation or out-of-bag error,
+  rather than based on optimizing balance. twang should not be cited
+  when using this method to estimate propensity scores. Note that
   because there is a random component to choosing the tuning parameter,
   results will vary across runs unless a
   [seed](https://rdrr.io/r/base/Random.html) is set.

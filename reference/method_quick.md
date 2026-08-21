@@ -32,23 +32,26 @@ Below is how
 [`matchit()`](https://kosukeimai.github.io/MatchIt/reference/matchit.md)
 is used for generalized full matching:
 
+## Usage
 
-    matchit(formula,
-            data = NULL,
-            method = "quick",
-            distance = "glm",
-            link = "logit",
-            distance.options = list(),
-            estimand = "ATT",
-            exact = NULL,
-            mahvars = NULL,
-            discard = "none",
-            reestimate = FALSE,
-            s.weights = NULL,
-            caliper = NULL,
-            std.caliper = TRUE,
-            verbose = FALSE,
-            ...)
+``` r
+matchit(formula,
+        data = NULL,
+        method = "quick",
+        distance = "glm",
+        link = "logit",
+        distance.options = list(),
+        estimand = "ATT",
+        exact = NULL,
+        mahvars = NULL,
+        discard = "none",
+        reestimate = FALSE,
+        s.weights = NULL,
+        caliper = NULL,
+        std.caliper = TRUE,
+        verbose = FALSE,
+        ...)
+```
 
 ## Arguments
 

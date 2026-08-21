@@ -15,20 +15,7 @@ here does not rely on any other package.
 This page details the allowable arguments with method = "subclass".
 See matchit() for an explanation of what each argument means in a general
 context and how it can be specified.
-Below is how matchit() is used for subclassification:
-matchit(formula,
-        data = NULL,
-        method = "subclass",
-        distance = "glm",
-        link = "logit",
-        distance.options = list(),
-        estimand = "ATT",
-        discard = "none",
-        reestimate = FALSE,
-        s.weights = NULL,
-        verbose = FALSE,
-        ...)
-'><meta property="og:description" content='In matchit(), setting method = "subclass" performs
+Below is how matchit() is used for subclassification:'><meta property="og:description" content='In matchit(), setting method = "subclass" performs
 subclassification on the distance measure (i.e., propensity score).
 Treatment and control units are placed into subclasses based on quantiles of
 the propensity score in the treated group, in the control group, or overall,
@@ -38,20 +25,7 @@ here does not rely on any other package.
 This page details the allowable arguments with method = "subclass".
 See matchit() for an explanation of what each argument means in a general
 context and how it can be specified.
-Below is how matchit() is used for subclassification:
-matchit(formula,
-        data = NULL,
-        method = "subclass",
-        distance = "glm",
-        link = "logit",
-        distance.options = list(),
-        estimand = "ATT",
-        discard = "none",
-        reestimate = FALSE,
-        s.weights = NULL,
-        verbose = FALSE,
-        ...)
-'><meta property="og:image" content="https://kosukeimai.github.io/MatchIt/logo.png"></head><body>
+Below is how matchit() is used for subclassification:'><meta property="og:image" content="https://kosukeimai.github.io/MatchIt/logo.png"></head><body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
 
@@ -109,8 +83,12 @@ here does not rely on any other package.</p>
 <p>This page details the allowable arguments with <code>method = "subclass"</code>.
 See <code><a href="matchit.html">matchit()</a></code> for an explanation of what each argument means in a general
 context and how it can be specified.</p>
-<p>Below is how <code><a href="matchit.html">matchit()</a></code> is used for subclassification:</p><div class="sourceCode"><pre><code><span></span>
-<span><span class="fu"><a href="../reference/matchit.html">matchit</a></span><span class="op">(</span><span class="va">formula</span>,</span>
+<p>Below is how <code><a href="matchit.html">matchit()</a></code> is used for subclassification:</p>
+    </div>
+
+    <div class="section level2">
+    <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu"><a href="matchit.html">matchit</a></span><span class="op">(</span><span class="va">formula</span>,</span>
 <span>        data <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>        method <span class="op">=</span> <span class="st">"subclass"</span>,</span>
 <span>        distance <span class="op">=</span> <span class="st">"glm"</span>,</span>
@@ -121,10 +99,8 @@ context and how it can be specified.</p>
 <span>        reestimate <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>        s.weights <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>        verbose <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>        <span class="va">...</span><span class="op">)</span> </span></code></pre></div>
-
+<span>        <span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
-
 
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>

@@ -18,28 +18,31 @@ Below is how
 [`matchit()`](https://kosukeimai.github.io/MatchIt/reference/matchit.md)
 is used for nearest neighbor matching:
 
+## Usage
 
-    matchit(formula,
-            data = NULL,
-            method = "nearest",
-            distance = "glm",
-            link = "logit",
-            distance.options = list(),
-            estimand = "ATT",
-            exact = NULL,
-            mahvars = NULL,
-            antiexact = NULL,
-            discard = "none",
-            reestimate = FALSE,
-            s.weights = NULL,
-            replace = TRUE,
-            m.order = NULL,
-            caliper = NULL,
-            ratio = 1,
-            min.controls = NULL,
-            max.controls = NULL,
-            verbose = FALSE,
-            ...) 
+``` r
+matchit(formula,
+        data = NULL,
+        method = "nearest",
+        distance = "glm",
+        link = "logit",
+        distance.options = list(),
+        estimand = "ATT",
+        exact = NULL,
+        mahvars = NULL,
+        antiexact = NULL,
+        discard = "none",
+        reestimate = FALSE,
+        s.weights = NULL,
+        replace = TRUE,
+        m.order = NULL,
+        caliper = NULL,
+        ratio = 1,
+        min.controls = NULL,
+        max.controls = NULL,
+        verbose = FALSE,
+        ...)
+```
 
 ## Arguments
 

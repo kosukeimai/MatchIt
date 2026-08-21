@@ -24,14 +24,17 @@ Below is how
 [`matchit()`](https://kosukeimai.github.io/MatchIt/reference/matchit.md)
 is used for coarsened exact matching:
 
+## Usage
 
-    matchit(formula,
-            data = NULL,
-            method = "cem",
-            estimand = "ATT",
-            s.weights = NULL,
-            verbose = FALSE,
-            ...) 
+``` r
+matchit(formula,
+        data = NULL,
+        method = "cem",
+        estimand = "ATT",
+        s.weights = NULL,
+        verbose = FALSE,
+        ...)
+```
 
 ## Arguments
 

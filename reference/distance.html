@@ -74,7 +74,7 @@ the <code>distance</code> argument to <code><a href="matchit.html">matchit()</a>
 
     <div class="section level2">
     <h2 id="note">Note<a class="anchor" aria-label="anchor" href="#note"></a></h2>
-    <p>In versions of <em>MatchIt</em> prior to 4.0.0, <code>distance</code> was specified in a
+    <p>In versions of <span class="pkg">MatchIt</span> prior to 4.0.0, <code>distance</code> was specified in a
 slightly different way. When specifying arguments using the old syntax, they
 will automatically be converted to the corresponding method in the new syntax
 but a warning will be thrown. <code>distance = "logit"</code>, the old default, will
@@ -175,9 +175,9 @@ use the linear predictor instead of the predicted probabilities. No other
 links are allowed. The tuning parameter defaults differ from
 <code><a href="https://gbm-developers.github.io/gbm/reference/gbm.html" class="external-link">gbm::gbm()</a></code>; they are as follows: <code>n.trees = 1e4</code>,
 <code>interaction.depth = 3</code>, <code>shrinkage = .01</code>, <code>bag.fraction = 1</code>, <code>cv.folds = 5</code>, <code>keep.data = FALSE</code>. These are the same
-defaults as used in <em>WeightIt</em> and <em>twang</em>, except for
+defaults as used in <span class="pkg">WeightIt</span> and <span class="pkg">twang</span>, except for
 <code>cv.folds</code> and <code>keep.data</code>. Note this is not the same use of
-generalized boosted modeling as in <em>twang</em>; here, the number of trees is
+generalized boosted modeling as in <span class="pkg">twang</span>; here, the number of trees is
 chosen based on cross-validation or out-of-bag error, rather than based on
 optimizing balance. <span class="pkg">twang</span> should not be cited when using this method
 to estimate propensity scores. Note that because there is a random component to choosing the tuning
@@ -305,8 +305,7 @@ This ensures the variables are on the same scale and accounts for the
 correlation between covariates.</p></dd>
 
 <dt><code>"robust_mahalanobis"</code></dt>
-<dd><p>The
-robust rank-based Mahalanobis distance is the Mahalanobis distance computed
+<dd><p>The robust rank-based Mahalanobis distance is the Mahalanobis distance computed
 on the ranks of the covariates with an adjustment for ties. It is described
 in Rosenbaum (2010, ch. 8) as an alternative to the Mahalanobis distance
 that handles outliers and rare categories better than the standard

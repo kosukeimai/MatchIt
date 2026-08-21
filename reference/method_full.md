@@ -34,24 +34,27 @@ Below is how
 [`matchit()`](https://kosukeimai.github.io/MatchIt/reference/matchit.md)
 is used for optimal full matching:
 
+## Usage
 
-    matchit(formula,
-            data = NULL,
-            method = "full",
-            distance = "glm",
-            link = "logit",
-            distance.options = list(),
-            estimand = "ATT",
-            exact = NULL,
-            mahvars = NULL,
-            anitexact = NULL,
-            discard = "none",
-            reestimate = FALSE,
-            s.weights = NULL,
-            caliper = NULL,
-            std.caliper = TRUE,
-            verbose = FALSE,
-            ...)
+``` r
+matchit(formula,
+        data = NULL,
+        method = "full",
+        distance = "glm",
+        link = "logit",
+        distance.options = list(),
+        estimand = "ATT",
+        exact = NULL,
+        mahvars = NULL,
+        anitexact = NULL,
+        discard = "none",
+        reestimate = FALSE,
+        s.weights = NULL,
+        caliper = NULL,
+        std.caliper = TRUE,
+        verbose = FALSE,
+        ...)
+```
 
 ## Arguments
 

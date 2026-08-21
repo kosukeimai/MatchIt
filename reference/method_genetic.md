@@ -27,26 +27,29 @@ Below is how
 [`matchit()`](https://kosukeimai.github.io/MatchIt/reference/matchit.md)
 is used for genetic matching:
 
+## Usage
 
-    matchit(formula,
-            data = NULL,
-            method = "genetic",
-            distance = "glm",
-            link = "logit",
-            distance.options = list(),
-            estimand = "ATT",
-            exact = NULL,
-            mahvars = NULL,
-            antiexact = NULL,
-            discard = "none",
-            reestimate = FALSE,
-            s.weights = NULL,
-            replace = FALSE,
-            m.order = NULL,
-            caliper = NULL,
-            ratio = 1,
-            verbose = FALSE,
-            ...) 
+``` r
+matchit(formula,
+        data = NULL,
+        method = "genetic",
+        distance = "glm",
+        link = "logit",
+        distance.options = list(),
+        estimand = "ATT",
+        exact = NULL,
+        mahvars = NULL,
+        antiexact = NULL,
+        discard = "none",
+        reestimate = FALSE,
+        s.weights = NULL,
+        replace = FALSE,
+        m.order = NULL,
+        caliper = NULL,
+        ratio = 1,
+        verbose = FALSE,
+        ...)
+```
 
 ## Arguments
 

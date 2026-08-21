@@ -20,19 +20,22 @@ Below is how
 [`matchit()`](https://kosukeimai.github.io/MatchIt/reference/matchit.md)
 is used for subclassification:
 
+## Usage
 
-    matchit(formula,
-            data = NULL,
-            method = "subclass",
-            distance = "glm",
-            link = "logit",
-            distance.options = list(),
-            estimand = "ATT",
-            discard = "none",
-            reestimate = FALSE,
-            s.weights = NULL,
-            verbose = FALSE,
-            ...) 
+``` r
+matchit(formula,
+        data = NULL,
+        method = "subclass",
+        distance = "glm",
+        link = "logit",
+        distance.options = list(),
+        estimand = "ATT",
+        discard = "none",
+        reestimate = FALSE,
+        s.weights = NULL,
+        verbose = FALSE,
+        ...)
+```
 
 ## Arguments
 

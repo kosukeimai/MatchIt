@@ -23,27 +23,7 @@ algorithm.
 This page details the allowable arguments with method = "genetic".
 See matchit() for an explanation of what each argument means in a general
 context and how it can be specified.
-Below is how matchit() is used for genetic matching:
-matchit(formula,
-        data = NULL,
-        method = "genetic",
-        distance = "glm",
-        link = "logit",
-        distance.options = list(),
-        estimand = "ATT",
-        exact = NULL,
-        mahvars = NULL,
-        antiexact = NULL,
-        discard = "none",
-        reestimate = FALSE,
-        s.weights = NULL,
-        replace = FALSE,
-        m.order = NULL,
-        caliper = NULL,
-        ratio = 1,
-        verbose = FALSE,
-        ...)
-'><meta property="og:description" content='In matchit(), setting method = "genetic" performs genetic matching.
+Below is how matchit() is used for genetic matching:'><meta property="og:description" content='In matchit(), setting method = "genetic" performs genetic matching.
 Genetic matching is a form of nearest neighbor matching where distances are
 computed as the generalized Mahalanobis distance, which is a generalization
 of the Mahalanobis distance with a scaling factor for each covariate that
@@ -61,27 +41,7 @@ algorithm.
 This page details the allowable arguments with method = "genetic".
 See matchit() for an explanation of what each argument means in a general
 context and how it can be specified.
-Below is how matchit() is used for genetic matching:
-matchit(formula,
-        data = NULL,
-        method = "genetic",
-        distance = "glm",
-        link = "logit",
-        distance.options = list(),
-        estimand = "ATT",
-        exact = NULL,
-        mahvars = NULL,
-        antiexact = NULL,
-        discard = "none",
-        reestimate = FALSE,
-        s.weights = NULL,
-        replace = FALSE,
-        m.order = NULL,
-        caliper = NULL,
-        ratio = 1,
-        verbose = FALSE,
-        ...)
-'><meta property="og:image" content="https://kosukeimai.github.io/MatchIt/logo.png"></head><body>
+Below is how matchit() is used for genetic matching:'><meta property="og:image" content="https://kosukeimai.github.io/MatchIt/logo.png"></head><body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
 
@@ -147,8 +107,12 @@ algorithm.</p>
 <p>This page details the allowable arguments with <code>method = "genetic"</code>.
 See <code><a href="matchit.html">matchit()</a></code> for an explanation of what each argument means in a general
 context and how it can be specified.</p>
-<p>Below is how <code><a href="matchit.html">matchit()</a></code> is used for genetic matching:</p><div class="sourceCode"><pre><code><span></span>
-<span><span class="fu"><a href="../reference/matchit.html">matchit</a></span><span class="op">(</span><span class="va">formula</span>,</span>
+<p>Below is how <code><a href="matchit.html">matchit()</a></code> is used for genetic matching:</p>
+    </div>
+
+    <div class="section level2">
+    <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu"><a href="matchit.html">matchit</a></span><span class="op">(</span><span class="va">formula</span>,</span>
 <span>        data <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>        method <span class="op">=</span> <span class="st">"genetic"</span>,</span>
 <span>        distance <span class="op">=</span> <span class="st">"glm"</span>,</span>
@@ -166,10 +130,8 @@ context and how it can be specified.</p>
 <span>        caliper <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>        ratio <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>        verbose <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>        <span class="va">...</span><span class="op">)</span> </span></code></pre></div>
-
+<span>        <span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
-
 
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>

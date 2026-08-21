@@ -22,20 +22,23 @@ Below is how
 [`matchit()`](https://kosukeimai.github.io/MatchIt/reference/matchit.md)
 is used for cardinality matching:
 
+## Usage
 
-    matchit(formula,
-            data = NULL,
-            method = "cardinality",
-            estimand = "ATT",
-            exact = NULL,
-            mahvars = NULL,
-            s.weights = NULL,
-            ratio = 1,
-            verbose = FALSE,
-            tols = .05,
-            std.tols = TRUE,
-            solver = "highs",
-            ...) 
+``` r
+matchit(formula,
+        data = NULL,
+        method = "cardinality",
+        estimand = "ATT",
+        exact = NULL,
+        mahvars = NULL,
+        s.weights = NULL,
+        ratio = 1,
+        verbose = FALSE,
+        tols = .05,
+        std.tols = TRUE,
+        solver = "highs",
+        ...)
+```
 
 ## Arguments
 
