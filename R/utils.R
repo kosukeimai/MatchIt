@@ -1,58 +1,3 @@
-#Function to turn a vector into a string with "," and "and" or "or" for clean messages. 'and.or'
-#controls whether words are separated by "and" or "or"; 'is.are' controls whether the list is
-#followed by "is" or "are" (to avoid manually figuring out if plural); quotes controls whether
-#quotes should be placed around words in string. From WeightIt.
-word_list <- function(word.list = NULL, and.or = "and", is.are = FALSE, quotes = FALSE) {
-  #When given a vector of strings, creates a string of the form "a and b"
-  #or "a, b, and c"
-  #If is.are, adds "is" or "are" appropriately
-
-  word.list <- setdiff(word.list, c(NA_character_, ""))
-
-  if (is_null(word.list)) {
-    out <- ""
-    attr(out, "plural") <- FALSE
-    return(out)
-  }
-
-  word.list <- add_quotes(word.list, quotes)
-
-  L <- length(word.list)
-
-  if (L == 1L) {
-    out <- word.list
-    if (is.are) out <- paste(out, "is")
-    attr(out, "plural") <- FALSE
-    return(out)
-  }
-
-  if (is_null(and.or) || isFALSE(and.or)) {
-    out <- toString(word.list)
-  }
-  else {
-    and.or <- match_arg(and.or, c("and", "or"))
-
-    if (L == 2L) {
-      out <- sprintf("%s %s %s",
-                     word.list[1L],
-                     and.or,
-                     word.list[2L])
-    }
-    else {
-      out <- sprintf("%s, %s %s",
-                     toString(word.list[-L]),
-                     and.or,
-                     word.list[L])
-    }
-  }
-
-  if (is.are) out <- sprintf("%s are", out)
-
-  attr(out, "plural") <- TRUE
-
-  out
-}
-
 #Add quotes to a string
 add_quotes <- function(x, quotes = 2L) {
   if (isFALSE(quotes)) {
@@ -63,11 +8,11 @@ add_quotes <- function(x, quotes = 2L) {
     quotes <- '"'
   }
 
-  if (chk::vld_string(quotes)) {
+  if (rlang::is_string(quotes)) {
     return(paste0(quotes, x, str_rev(quotes)))
   }
 
-  if (!chk::vld_count(quotes) || quotes > 2L) {
+  if (!rlang::is_integerish(quotes) || quotes > 2L) {
     stop("`quotes` must be boolean, 1, 2, or a string.")
   }
 
@@ -81,52 +26,6 @@ add_quotes <- function(x, quotes = 2L) {
   }
 
   x
-}
-
-str_rev <- function(x) {
-  vapply(lapply(strsplit(x, NULL), rev), paste, character(1L), collapse = "")
-}
-
-#More informative and cleaner version of base::match.arg(). Uses chk.
-match_arg <- function(arg, choices, several.ok = FALSE) {
-  #Replaces match.arg() but gives cleaner error message and processing
-  #of arg.
-  if (missing(arg)) {
-    stop("No argument was supplied to match_arg.")
-  }
-
-  arg.name <- deparse1(substitute(arg), width.cutoff = 500L)
-
-  if (missing(choices)) {
-    sysP <- sys.parent()
-    formal.args <- formals(sys.function(sysP))
-    choices <- eval(formal.args[[as.character(substitute(arg))]],
-                    envir = sys.frame(sysP))
-  }
-
-  if (is_null(arg)) {
-    return(choices[1L])
-  }
-
-  if (several.ok) {
-    chk::chk_character(arg, x_name = add_quotes(arg.name, "`"))
-  }
-  else {
-    chk::chk_string(arg, x_name = add_quotes(arg.name, "`"))
-    if (identical(arg, choices)) {
-      return(arg[1L])
-    }
-  }
-
-  i <- pmatch(arg, choices, nomatch = 0L, duplicates.ok = TRUE)
-  if (all(i == 0L))
-    .err(sprintf("the argument to `%s` should be %s%s",
-                 arg.name,
-                 ngettext(length(choices), "", if (several.ok) "at least one of " else "one of "),
-                 word_list(choices, and.or = "or", quotes = 2L)))
-  i <- i[i > 0L]
-
-  choices[i]
 }
 
 # Version of interaction(., drop = TRUE) that doesn't succumb to vector limit reached by
@@ -160,7 +59,7 @@ interaction2 <- function(..., sep = ".", lex.order = TRUE) {
 
   args_char <- lapply(args, function(x) {
     x <- unclass(x)
-    formatC(x, format = "d", flag = "0", width = ceiling(log10(max(x))))
+    formatC(x, format = "d", flag = "0", width = max(1, ceiling(log10(max(x)))))
   })
 
   lev <- {
@@ -189,12 +88,12 @@ binarize <- function(variable, zero = NULL, one = NULL) {
   }
 
   if (length(unique.vals) != 2L) {
-    .err(sprintf("cannot binarize %s: more than two levels", var.name))
+    arg::err("cannot binarize {.var {var.name}}: more than two levels")
   }
 
   if (is_not_null(zero)) {
     if (!zero %in% unique.vals) {
-      .err(sprintf("the argument to `zero` is not the name of a level of %s", var.name))
+      arg::err("the argument to {.arg zero} is not the name of a level of {.var {var.name}}")
     }
 
     return(setNames(as.integer(variable != zero), names(variable)))
@@ -202,7 +101,7 @@ binarize <- function(variable, zero = NULL, one = NULL) {
 
   if (is_not_null(one)) {
     if (!one %in% unique.vals) {
-      .err(sprintf("the argument to `one` is not the name of a level of %s", var.name))
+      arg::err("the argument to {.arg one} is not the name of a level of {.var {var.name}}")
     }
 
     return(setNames(as.integer(variable == one), names(variable)))
@@ -234,8 +133,15 @@ binarize <- function(variable, zero = NULL, one = NULL) {
   setNames(as.integer(variable.numeric != zero), names(variable))
 }
 
-is_null <- function(x) length(x) == 0L
+is_null <- function(x) {isTRUE(length(x) == 0L)}
 is_not_null <- function(x) !is_null(x)
+`%or%` <- function(x, y) {
+  # like `%||%` but works for non-NULL length 0 objects
+  if (is_null(x)) y else x
+}
+allNA <- function(x) {
+  anyNA(x) && all(is.na(x))
+}
 
 null_or_error <- function(x) {is_null(x) || inherits(x, "try-error")}
 
@@ -256,7 +162,7 @@ str2num <- function(x) {
   nas <- is.na(x)
   if (!is.numeric(x) && !is.logical(x)) x <- as.character(x)
   x_num <- suppressWarnings(as.numeric(x))
-  is.na(x_num)[nas] <- TRUE
+  is.na(x_num[nas]) <- TRUE
   x_num
 }
 
@@ -432,9 +338,129 @@ diff1 <- function(x) {
   x
 }
 
-#A faster na.omit for vectors
-na.rem <- function(x) {
-  x[!is.na(x)]
+#Generate a new list, data.frame, or matrix
+make_list <- function(n) {
+  if (is_null(n)) {
+    vector("list", 0L)
+  }
+  else if (rlang::is_scalar_integerish(n) && n >= 0) {
+    vector("list", as.integer(n))
+  }
+  else if (is.atomic(n)) {
+    setNames(vector("list", length(n)),
+             as.character(n))
+  }
+  else {
+    stop("'n' must be an integer(ish) scalar or an atomic variable.")
+  }
+}
+make_df <- function(ncol, nrow = 0L, types = "numeric") {
+  if (missing(ncol) || is_null(ncol)) {
+    ncol <- 0L
+  }
+
+  if (rlang::is_scalar_integerish(ncol)) {
+    col_names <- NULL
+    ncol <- as.integer(ncol)
+  }
+  else if (is.atomic(ncol)) {
+    col_names <- as.character(ncol)
+    ncol <- length(ncol)
+  }
+
+  if (is_null(nrow)) {
+    nrow <- 0L
+  }
+
+  if (rlang::is_scalar_integerish(nrow)) {
+    row_names <- NULL
+    nrow <- as.integer(nrow)
+  }
+  else if (is.atomic(nrow)) {
+    row_names <- as.character(nrow)
+    nrow <- length(nrow)
+  }
+
+  df <- as.data.frame.matrix(matrix(NA_real_, nrow = nrow, ncol = ncol))
+
+  names(df) <- col_names
+  rownames(df) <- row_names
+
+  if (is_null(types)) {
+    return(df)
+  }
+
+  if (!length(types) %in% c(1L, ncol)) {
+    stop("'types' must be equal to the number of columns.")
+  }
+
+  if (!is.character(types) ||
+      !all(types %in% c("numeric", "integer", "logical", "character", NA))) {
+    stop("'types' must be an acceptable type. For factors, use NA.")
+  }
+
+  if (length(types) == 1L) {
+    types <- rep.int(types, ncol)
+  }
+
+  for (i in which(!is.na(types))) {
+    df[[i]][] <- switch(types[i],
+                        integer = NA_integer_,
+                        logical = NA,
+                        character = NA_character_,
+                        NA_real_)
+  }
+
+  df
+}
+make_matrix <- function(ncol, nrow = 0L, type = "numeric") {
+  if (missing(ncol) || is_null(ncol)) {
+    ncol <- 0L
+  }
+
+  if (rlang::is_scalar_integerish(ncol)) {
+    col_names <- NULL
+    ncol <- as.integer(ncol)
+  }
+  else if (is.atomic(ncol)) {
+    col_names <- as.character(ncol)
+    ncol <- length(ncol)
+  }
+
+  if (is_null(nrow)) {
+    nrow <- 0L
+  }
+
+  if (rlang::is_scalar_integerish(nrow)) {
+    row_names <- NULL
+    nrow <- as.integer(nrow)
+  }
+  else if (is.atomic(nrow)) {
+    row_names <- as.character(nrow)
+    nrow <- length(nrow)
+  }
+
+  if (is_null(type)) {
+    type <- NA
+  }
+
+  if (length(type) != 1L) {
+    stop("'type' must have length 1.")
+  }
+
+  if (!is.character(type) ||
+      (!is.na(type) && !(type %in% c("numeric", "integer", "logical", "character")))) {
+    stop("'types' must be an acceptable type. For factors, use NA.")
+  }
+
+  fill_val <- switch(type,
+                     integer = NA_integer_,
+                     logical = NA,
+                     character = NA_character_,
+                     NA_real_)
+
+  matrix(fill_val, nrow = nrow, ncol = ncol,
+         dimnames = list(row_names, col_names))
 }
 
 #Extract variables from ..., similar to ...elt() or get0(), by name without evaluating list(...)
@@ -494,49 +520,4 @@ rep_with <- function(x, y) {
   }
 
   cat(paste(m, collapse = "\n"))
-}
-
-#Functions for error handling; based on chk and rlang
-pkg_caller_call <- function() {
-  pn <- utils::packageName()
-  package.funs <- c(getNamespaceExports(pn),
-                    .getNamespaceInfo(asNamespace(pn), "S3methods")[, 3L])
-
-  for (i in seq_len(sys.nframe())) {
-    e <- sys.call(i)
-
-    n <- rlang::call_name(e)
-
-    if (is_null(n)) {
-      next
-    }
-
-    if (n %in% package.funs) {
-      return(e)
-    }
-  }
-
-  NULL
-}
-
-.err <- function(..., n = NULL, tidy = TRUE) {
-  m <- chk::message_chk(..., n = n, tidy = tidy)
-  rlang::abort(paste(strwrap(m), collapse = "\n"),
-               call = pkg_caller_call())
-}
-.wrn <- function(..., n = NULL, tidy = TRUE, immediate = TRUE) {
-  m <- chk::message_chk(..., n = n, tidy = tidy)
-
-  if (immediate && isTRUE(all.equal(0, getOption("warn")))) {
-    rlang::with_options({
-      rlang::warn(paste(strwrap(m), collapse = "\n"))
-    }, warn = 1)
-  }
-  else {
-    rlang::warn(paste(strwrap(m), collapse = "\n"))
-  }
-}
-.msg <- function(..., n = NULL, tidy = TRUE) {
-  m <- chk::message_chk(..., n = n, tidy = tidy)
-  rlang::inform(paste(strwrap(m), collapse = "\n"), tidy = FALSE)
 }

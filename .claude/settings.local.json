@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(grep -E \"\\\\.cpp$|\\\\.h$\")",
+      "Bash(Rscript *)",
+      "Bash(NOT_CRAN=true Rscript *)",
+      "Bash(littler *)",
+      "Bash(grep -E \"\\\\.\\(R|cpp\\)$\")",
+      "Bash(r -e 'devtools::test\\(filter = \"nearest_snap\"\\)')",
+      "Bash(r *)"
+    ]
+  }
+}

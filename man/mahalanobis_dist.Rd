@@ -2,9 +2,9 @@
 % Please edit documentation in R/dist_functions.R
 \name{mahalanobis_dist}
 \alias{mahalanobis_dist}
-\alias{euclidean_dist}
 \alias{scaled_euclidean_dist}
 \alias{robust_mahalanobis_dist}
+\alias{euclidean_dist}
 \title{Compute a Distance Matrix}
 \usage{
 mahalanobis_dist(

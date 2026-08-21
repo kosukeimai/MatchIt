@@ -245,7 +245,7 @@ m.out1 <- matchit(treat ~ age + educ + race + married +
                   data = lalonde,
                   distance = "glm",
                   link = "linear.logit")
-\dontshow{if (requireNamespace("mgcv", quietly = TRUE)) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
+\dontshow{if (rlang::is_installed("mgcv")) withAutoprint(\{ # examplesIf}
 # GAM logistic PS with smoothing splines (s()):
 m.out2 <- matchit(treat ~ s(age) + s(educ) +
                     race + married +
@@ -254,7 +254,7 @@ m.out2 <- matchit(treat ~ s(age) + s(educ) +
                   distance = "gam")
 summary(m.out2$model)
 \dontshow{\}) # examplesIf}
-\dontshow{if (requireNamespace("CBPS", quietly = TRUE)) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
+\dontshow{if (rlang::is_installed("CBPS")) withAutoprint(\{ # examplesIf}
 # CBPS for ATC matching w/replacement, using the just-
 # identified version of CBPS (setting method = "exact"):
 m.out3 <- matchit(treat ~ age + educ + race + married +

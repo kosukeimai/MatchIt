@@ -1,21 +1,23 @@
 #include "internal.h"
 using namespace Rcpp;
 
-// [[Rcpp::plugins(cpp11)]]
-
 //Preprocess by pruning unnecessary edges as in Sävje (2020) https://doi.org/10.1214/19-STS699.
 //Returns a vector of matrix indices for n1xn0 distance matrix.
 
 // [[Rcpp::export]]
-IntegerVector preprocess_matchC(IntegerVector t,
-                                NumericVector p) {
+IntegerVector preprocess_matchC(const IntegerVector& t,
+                                const NumericVector& p) {
   R_xlen_t n = t.size();
   R_xlen_t n1 = std::count(t.begin(), t.end(), 1);
   R_xlen_t n0 = n - n1;
 
   R_xlen_t i, j;
 
-  Function ord("order");
+  //`base::order()`'s radix sort beats every C++ alternative measured here by 3-8x at
+  //these sizes; see _dev/cpp-cleanup-notes.md. Looked up in the base environment
+  //because `Function("order")` searches from the global environment, where a user
+  //object of that name would mask it.
+  Function ord = Environment::base_env()["order"];
 
   IntegerVector o = ord(p);
   o = o - 1; //location of each unit after sorting
@@ -82,7 +84,10 @@ IntegerVector preprocess_matchC(IntegerVector t,
   }
 
   std::vector<int> keep;
-  keep.reserve(n1 * n0);
+
+  //Reserving n1 * n0 would commit the full dense product, which is what this
+  //function exists to avoid; a few edges per control unit is the right order.
+  keep.reserve(4 * n0);
 
   ci = 0;
 
@@ -102,7 +107,7 @@ IntegerVector preprocess_matchC(IntegerVector t,
     ci++;
   }
 
-  int keep_size = keep.size();
+  R_xlen_t keep_size = keep.size();
   IntegerVector out(keep_size);
 
   for (i = 0; i < keep_size; i++) {

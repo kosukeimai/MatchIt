@@ -8,3 +8,5 @@ docs
 *\.so
 /doc/
 /Meta/
+CLAUDE.md
+.claude/worktrees/

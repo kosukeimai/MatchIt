@@ -1,6 +1,5 @@
 #' Exact Matching
 #' @name method_exact
-#' @aliases method_exact
 #' @usage NULL
 #'
 #' @description
@@ -59,7 +58,8 @@
 #' matching strata are not indexed by treated units as they are in some other
 #' forms of matching. `include.obj` is ignored.
 #'
-#' @seealso [matchit()] for a detailed explanation of the inputs and outputs of
+#' @seealso
+#' [matchit()] for a detailed explanation of the inputs and outputs of
 #' a call to `matchit()`. The `exact` argument can be used with other
 #' methods to perform exact matching in combination with other matching
 #' methods.
@@ -72,8 +72,7 @@
 #' using `method = "exact"` because the matching is performed completely
 #' within *MatchIt*. For example, a sentence might read:
 #'
-#' *Exact matching was performed using the MatchIt package (Ho, Imai,
-#' King, & Stuart, 2011) in R.*
+#' *Exact matching was performed using the MatchIt package (Ho, Imai, King, & Stuart, 2011) in R.*
 #'
 #' @examples
 #'
@@ -89,30 +88,31 @@
 #'
 NULL
 
-matchit2exact <- function(treat, covs, data, estimand = "ATT", verbose = FALSE, ...) {
+matchit2exact <- function(treat, covs, data, s.weights = NULL, estimand = "ATT", focal = NULL, verbose = FALSE, ...) {
 
   .cat_verbose("Exact matching...\n", verbose = verbose)
 
   if (is_null(covs)) {
-    .err("covariates must be specified in the input formula to use exact matching")
+    arg::err("covariates must be specified in the input formula to use exact matching")
   }
 
-  estimand <- toupper(estimand)
-  estimand <- match_arg(estimand, c("ATT", "ATC", "ATE"))
+  estimand <- arg::match_arg(estimand, c("ATT", "ATC", "ATE"))
 
   xx <- exactify(covs, names(treat))
   cc <- Reduce("intersect", lapply(unique(treat), function(t) xx[treat == t]))
 
   if (is_null(cc)) {
-    .err("no exact matches were found")
+    arg::err("no exact matches were found")
   }
 
-  psclass <- setNames(factor(match(xx, cc), nmax = length(cc)), names(treat))
+  psclass <- match(xx, cc) |>
+    factor(nmax = length(cc)) |>
+    setNames(names(treat))
 
   .cat_verbose("Calculating matching weights... ", verbose = verbose)
 
   res <- list(subclass = psclass,
-              weights = get_weights_from_subclass(psclass, treat, estimand))
+              weights = get_weights_from_subclass(psclass, treat, estimand, s.weights))
 
   .cat_verbose("Done.\n", verbose = verbose)
 

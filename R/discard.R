@@ -12,11 +12,11 @@ discard <- function(treat, pscore = NULL, option = NULL) {
     return(setNames(option, names(treat)))
   }
 
-  if (!chk::vld_string(option)) {
-    .err('`discard` must be "none", "both", "control", "treated" or a logical vector of observations to discard')
+  if (!rlang::is_string(option)) {
+    arg::err("{.arg discard} must be {.val none}, {.val both}, {.val control}, {.val treated} or a logical vector of observations to discard")
   }
 
-  option <- match_arg(option, c("none", "both", "control", "treated"))
+  option <- arg::match_arg(option, c("none", "both", "control", "treated"))
 
   if (option == "none") {
     # keep all units
@@ -24,11 +24,11 @@ discard <- function(treat, pscore = NULL, option = NULL) {
   }
 
   if (is_null(pscore)) {
-    .err('`discard` must be a logical vector or "none" in the absence of a propensity score')
+    arg::err("{.arg discard} must be a logical vector or {.val none} in the absence of a propensity score")
   }
 
   if (is.matrix(pscore)) {
-    .err('`discard` must be a logical vector or "none" when `distance` is supplied as a matrix')
+    arg::err("{.arg discard} must be a logical vector or {.val none} when {.arg distance} is supplied as a matrix")
   }
 
   pmax0 <- max(pscore[treat == 0])
@@ -36,12 +36,10 @@ discard <- function(treat, pscore = NULL, option = NULL) {
   pmin0 <- min(pscore[treat == 0])
   pmin1 <- min(pscore[treat == 1])
 
-  if (option == "both")    # discard units outside of common support
-    discarded <- (pscore < max(pmin0, pmin1) | pscore > min(pmax0, pmax1))
-  else if (option == "control") # discard control units only
-    discarded <- (pscore < pmin1 | pscore > pmax1)
-  else if (option == "treated")   # discard treated units only
-    discarded <- (pscore < pmin0 | pscore > pmax0)
+  discarded <- switch(option,
+                      both = pscore < max(pmin0, pmin1) | pscore > min(pmax0, pmax1),
+                      control = pscore < pmin1 | pscore > pmax1,
+                      treated = pscore < pmin0 | pscore > pmax0)
 
   # NOTE: WhatIf package has been removed from CRAN, so hull options won't work
   # else if (option %in% c("hull.control", "hull.treat", "hull.both")) {

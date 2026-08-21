@@ -3,119 +3,132 @@
 
 #include <Rcpp.h>
 #include <algorithm>
-#include <functional>
 #include <cmath>
+#include <numeric>
 #include <utility>
-#include <tuple>
-using namespace Rcpp;
+#include <vector>
 
-IntegerVector tabulateC_(const IntegerVector& bins,
-                         const int& nbins = 0);
+//No `using namespace Rcpp;` here: this header is included by every translation unit
+//in the package, and each of them has its own `using` directive.
 
-IntegerVector which(const LogicalVector& x);
+Rcpp::IntegerVector tabulateC_(const Rcpp::IntegerVector& bins,
+                               int nbins = 0);
 
-std::vector<int> find_control_vec(const int& t_id,
-                                  const IntegerVector& ind_d_ord,
-                                  const IntegerVector& match_d_ord,
-                                  const IntegerVector& treat,
-                                  const NumericVector& distance,
-                                  const LogicalVector& eligible,
-                                  const int& gi,
-                                  const int& r,
-                                  const IntegerVector& mm_rowi_,
-                                  const int& ncc,
-                                  const NumericMatrix& caliper_covs_mat,
-                                  const NumericVector& caliper_covs,
-                                  const double& caliper_dist,
-                                  const bool& use_exact,
-                                  const IntegerVector& exact,
-                                  const int& aenc,
-                                  const IntegerMatrix& antiexact_covs,
-                                  const IntegerVector& first_control,
-                                  const IntegerVector& last_control,
-                                  const int& ratio = 1,
-                                  const int& prev_start = -1);
+Rcpp::IntegerVector which(const Rcpp::LogicalVector& x);
 
-std::vector<int> find_control_mahcovs(const int& t_id,
-                                      const IntegerVector& ind_d_ord,
-                                      const IntegerVector& match_d_ord,
-                                      const NumericVector& match_var,
-                                      const double& match_var_caliper,
-                                      const IntegerVector& treat,
-                                      const NumericVector& distance,
-                                      const LogicalVector& eligible,
-                                      const int& gi,
-                                      const int& r,
-                                      const IntegerVector& mm_rowi,
-                                      const NumericMatrix& mah_covs,
-                                      const int& ncc,
-                                      const NumericMatrix& caliper_covs_mat,
-                                      const NumericVector& caliper_covs,
-                                      const bool& use_caliper_dist,
-                                      const double& caliper_dist,
-                                      const bool& use_exact,
-                                      const IntegerVector& exact,
-                                      const int& aenc,
-                                      const IntegerMatrix& antiexact_covs,
-                                      const int& ratio = 1);
+std::vector<int> find_control_vec(int t_id,
+                                  const Rcpp::IntegerVector& ind_d_ord,
+                                  const Rcpp::IntegerVector& match_d_ord,
+                                  const Rcpp::IntegerVector& treat,
+                                  const Rcpp::NumericVector& distance,
+                                  const Rcpp::LogicalVector& eligible,
+                                  int gi,
+                                  int r,
+                                  const Rcpp::IntegerVector& mm_rowi_,
+                                  int ncc,
+                                  const Rcpp::NumericMatrix& caliper_covs_mat,
+                                  const Rcpp::NumericVector& caliper_covs,
+                                  double caliper_dist,
+                                  bool use_exact,
+                                  const Rcpp::IntegerVector& exact,
+                                  int aenc,
+                                  const Rcpp::IntegerMatrix& antiexact_covs,
+                                  const Rcpp::IntegerVector& first_control,
+                                  const Rcpp::IntegerVector& last_control,
+                                  int ratio = 1,
+                                  int prev_start = -1);
 
-std::vector<int> find_control_mat(const int& t_id,
-                                  const IntegerVector& treat,
-                                  const IntegerVector& ind_non_focal,
-                                  const NumericVector& distance_mat_row_i,
-                                  const LogicalVector& eligible,
-                                  const int& gi,
-                                  const int& r,
-                                  const IntegerVector& mm_rowi,
-                                  const int& ncc,
-                                  const NumericMatrix& caliper_covs_mat,
-                                  const NumericVector& caliper_covs,
-                                  const double& caliper_dist,
-                                  const bool& use_exact,
-                                  const IntegerVector& exact,
-                                  const int& aenc,
-                                  const IntegerMatrix& antiexact_covs,
-                                  const int& ratio = 1);
+std::vector<int> find_control_mahcovs(int t_id,
+                                      const Rcpp::IntegerVector& ind_d_ord,
+                                      const Rcpp::IntegerVector& match_d_ord,
+                                      const Rcpp::NumericVector& match_var,
+                                      double match_var_caliper,
+                                      const Rcpp::IntegerVector& treat,
+                                      const Rcpp::NumericVector& distance,
+                                      const Rcpp::LogicalVector& eligible,
+                                      int gi,
+                                      int r,
+                                      const Rcpp::IntegerVector& mm_rowi,
+                                      const Rcpp::NumericMatrix& mah_covs,
+                                      int ncc,
+                                      const Rcpp::NumericMatrix& caliper_covs_mat,
+                                      const Rcpp::NumericVector& caliper_covs,
+                                      bool use_caliper_dist,
+                                      double caliper_dist,
+                                      bool use_exact,
+                                      const Rcpp::IntegerVector& exact,
+                                      int aenc,
+                                      const Rcpp::IntegerMatrix& antiexact_covs,
+                                      int ratio = 1);
 
-bool antiexact_okay(const int& aenc,
-                    const int& i,
-                    const int& j,
-                    const IntegerMatrix& antiexact_covs);
+std::vector<int> find_control_mat(int t_id,
+                                  const Rcpp::IntegerVector& treat,
+                                  const Rcpp::IntegerVector& ind_non_focal,
+                                  const Rcpp::NumericVector& distance_mat_row_i,
+                                  const Rcpp::LogicalVector& eligible,
+                                  int gi,
+                                  int r,
+                                  const Rcpp::IntegerVector& mm_rowi,
+                                  int ncc,
+                                  const Rcpp::NumericMatrix& caliper_covs_mat,
+                                  const Rcpp::NumericVector& caliper_covs,
+                                  double caliper_dist,
+                                  bool use_exact,
+                                  const Rcpp::IntegerVector& exact,
+                                  int aenc,
+                                  const Rcpp::IntegerMatrix& antiexact_covs,
+                                  int ratio = 1);
 
-bool caliper_covs_okay(const int& ncc,
-                       const int& i,
-                       const int& j,
-                       const NumericMatrix& caliper_covs_mat,
-                       const NumericVector& caliper_covs);
+double euc_dist_sq(const Rcpp::NumericMatrix& x,
+                   int i,
+                   int j);
 
-bool caliper_dist_okay(const bool& use_caliper_dist,
-                       const int& i,
-                       const int& j,
-                       const NumericVector& distance,
-                       const double& caliper_dist);
+//`ids` is taken by value so the early returns can move it rather than copy
+std::vector<int> take_closest(std::vector<int> ids,
+                              const std::vector<double>& dists,
+                              int ratio);
 
-bool mm_okay(const int& r,
-             const int& i,
-             const IntegerVector& mm_rowi);
+bool antiexact_okay(int aenc,
+                    int i,
+                    int j,
+                    const Rcpp::IntegerMatrix& antiexact_covs);
 
-bool exact_okay(const bool& use_exact,
-                const int& i,
-                const int& j,
-                const IntegerVector& exact);
+bool caliper_covs_okay(int ncc,
+                       int i,
+                       int j,
+                       const Rcpp::NumericMatrix& caliper_covs_mat,
+                       const Rcpp::NumericVector& caliper_covs);
 
-double max_finite(const NumericVector& x);
+bool caliper_dist_okay(bool use_caliper_dist,
+                       int i,
+                       int j,
+                       const Rcpp::NumericVector& distance,
+                       double caliper_dist);
 
-double min_finite(const NumericVector& x);
+bool mm_okay(int r,
+             int i,
+             const Rcpp::IntegerVector& mm_rowi);
 
-void update_first_and_last_control(IntegerVector first_control,
-                                   IntegerVector last_control,
-                                   const IntegerVector& ind_d_ord,
-                                   const LogicalVector& eligible,
-                                   const IntegerVector& treat,
-                                   const int& gi);
+bool exact_okay(bool use_exact,
+                int i,
+                int j,
+                const Rcpp::IntegerVector& exact);
 
-double get_affine_transformation(const NumericVector& x,
-                                 const NumericVector& y,
-                                 const double& tol = 1e-9);
+double max_finite(const Rcpp::NumericVector& x);
+
+double min_finite(const Rcpp::NumericVector& x);
+
+//`first_control` and `last_control` are taken by value on purpose: the copies share
+//the caller's SEXP, which is how the updates below reach the caller.
+void update_first_and_last_control(Rcpp::IntegerVector first_control,
+                                   Rcpp::IntegerVector last_control,
+                                   const Rcpp::IntegerVector& ind_d_ord,
+                                   const Rcpp::LogicalVector& eligible,
+                                   const Rcpp::IntegerVector& treat,
+                                   int gi);
+
+double get_affine_transformation(const Rcpp::NumericVector& x,
+                                 const Rcpp::NumericVector& y,
+                                 double tol = 1e-9);
 
 #endif

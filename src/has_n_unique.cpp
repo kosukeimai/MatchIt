@@ -1,12 +1,21 @@
 #include "internal.h"
 using namespace Rcpp;
 
-// [[Rcpp::plugins(cpp11)]]
-
-// Templated function to check if a vector has exactly n unique values
+// Templated function to check if a vector has exactly n unique values.
+// `x` is taken by value deliberately: the copy shares the underlying SEXP, and a
+// reference-to-const would make `*it` a const proxy, which for STRSXP has no
+// unambiguous comparison against the non-const proxy `seen[j]`.
 template <int RTYPE>
 bool has_n_unique_(Vector<RTYPE> x,
-                   const int& n) {
+                   int n) {
+
+  if (x.size() == 0) {
+    return n == 0;
+  }
+
+  if (n < 1) {
+    return false;
+  }
 
   Vector<RTYPE> seen(n);
   seen[0] = x[0];
@@ -47,8 +56,8 @@ bool has_n_unique_(Vector<RTYPE> x,
 
 // Wrapper function to handle different types of R vectors
 // [[Rcpp::export]]
-bool has_n_unique(const SEXP& x,
-                  const int& n) {
+bool has_n_unique(SEXP x,
+                  int n) {
   switch (TYPEOF(x)) {
   case INTSXP:
     return has_n_unique_<INTSXP>(x, n);

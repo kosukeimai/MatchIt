@@ -4,7 +4,6 @@
 \alias{summary.matchit}
 \alias{summary.matchit.subclass}
 \alias{print.summary.matchit}
-\alias{print.summary.matchit.subclass}
 \title{View a balance summary of a \code{matchit} object}
 \usage{
 \method{summary}{matchit}(
@@ -42,9 +41,9 @@ for two-way interactions and squares of covariates. Default is \code{FALSE}.}
 
 \item{addlvariables}{additional variable for which balance statistics are to
 be computed along with the covariates in the \code{matchit} object. Can be
-entered in one of three ways: as a data frame of covariates with as many
-rows as there were units in the original \code{matchit()} call, as a string
-containing the names of variables in \code{data}, or as a right-sided
+entered in one of three ways: as a data frame or matrix of covariates with
+as many rows as there were units in the original \code{matchit()} call, as a
+string containing the names of variables in \code{data}, or as a right-sided
 \code{formula} with the additional variables (and possibly their
 transformations) found in \code{data}, the environment, or the
 \code{matchit} object. Balance on squares and interactions of the additional
@@ -58,8 +57,10 @@ the difference in the (weighted) empirical cumulative distribution functions
 mean and maximum of the quantile-quantile (QQ) difference. Variance ratios
 are produced either way. See Details below. Default is \code{TRUE}.}
 
-\item{data}{a optional data frame containing variables named in
-\code{addlvariables} if specified as a string or formula.}
+\item{data}{an optional data frame containing variables named in
+\code{addlvariables} if specified as a string or formula. It must contain one row
+for each unit in the original \code{matchit()} call, in the same order; supplying
+one with a different number of rows is an error.}
 
 \item{pair.dist}{\code{logical}; whether to compute average absolute pair
 distances. For matching methods that don't include a \code{match.matrix}

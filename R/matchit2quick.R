@@ -1,6 +1,5 @@
 #' Fast Generalized Full Matching
 #' @name method_quick
-#' @aliases method_quick
 #' @usage NULL
 #'
 #' @description
@@ -98,30 +97,26 @@
 #' of such objects, one for each stratum of the `exact` variables.
 #'
 #' @details
-#'
 #' Generalized full matching is similar to optimal full matching, but has some additional flexibility that can be controlled by some of the extra arguments available. By default, `method = "quick"` performs a standard full match in which all units are matched (unless restricted by the caliper) and assigned to a subclass. Each subclass could contain multiple units from each treatment group. The subclasses are chosen to minimize the largest within-subclass distance between units (including between units of the same treatment group). Notably, generalized full matching requires less memory and can run much faster than optimal full matching and optimal pair matching and, in some cases, even than nearest neighbor matching, and it can be used with huge datasets (e.g., in the millions) while running in under a minute.
 #'
-#' @references In a manuscript, be sure to cite the *quickmatch* package if using
-#' `matchit()` with `method = "quick"`. A citation can be generated using `citation("quickmatch")`.
+#' @references
+#' In a manuscript, be sure to cite the *quickmatch* package if using `matchit()` with `method = "quick"`. A citation can be generated using `citation("quickmatch")`. For example, a sentence might read:
 #'
-#' For example, a sentence might read:
-#'
-#' *Generalized full matching was performed using the MatchIt package (Ho,
-#' Imai, King, & Stuart, 2011) in R, which calls functions from the quickmatch
-#' package (Sävje, Sekhon, & Higgins, 2024).*
+#' *Generalized full matching was performed using the MatchIt package (Ho, Imai, King, & Stuart, 2011) in R, which calls functions from the quickmatch package (Sävje, Sekhon, & Higgins, 2024).*
 #'
 #' You should also cite the following paper, which develops and describes the method:
 #'
 #' Sävje, F., Higgins, M. J., & Sekhon, J. S. (2021). Generalized Full Matching. *Political Analysis*, 29(4), 423–447. \doi{10.1017/pan.2020.32}
 #'
-#' @seealso [matchit()] for a detailed explanation of the inputs and outputs of
+#' @seealso
+#' [matchit()] for a detailed explanation of the inputs and outputs of
 #' a call to `matchit()`.
 #'
 #' \pkgfun{quickmatch}{quickmatch}, which is the workhorse.
 #'
 #' [`method_full`] for optimal full matching, which is nearly the same but offers more customizability and more optimal solutions at the cost of speed.
 #'
-#' @examplesIf requireNamespace("quickmatch", quietly = TRUE)
+#' @examplesIf rlang::is_installed("quickmatch")
 #' data("lalonde")
 #'
 #' # Generalized full PS matching
@@ -148,8 +143,8 @@ matchit2quick <- function(treat, formula, data, distance, discarded,
   distances.args <- c("data", "id_variable", "dist_variables", "normalize", "weights")
   A[names(A) %in% distances.args] <- NULL
 
-  estimand <- toupper(estimand)
-  estimand <- match_arg(estimand, c("ATT", "ATC", "ATE"))
+  estimand <- arg::match_arg(estimand, c("ATT", "ATC", "ATE"))
+
   if (estimand == "ATC") {
     tc <- c("control", "treated")
     focal <- 0
@@ -164,8 +159,7 @@ matchit2quick <- function(treat, formula, data, distance, discarded,
 
   if (is.full.mahalanobis) {
     if (is_null(attr(terms(formula, data = data), "term.labels"))) {
-      .err(sprintf("covariates must be specified in the input formula when `distance = \"%s\"`",
-                   attr(is.full.mahalanobis, "transform")))
+      arg::err('covariates must be specified in the input formula when {.code distance = {.str {attr(is.full.mahalanobis, "transform")}}}')
     }
     mahvars <- formula
   }
@@ -178,7 +172,7 @@ matchit2quick <- function(treat, formula, data, distance, discarded,
     cc <- Reduce("intersect", lapply(unique(treat_), function(t) unclass(ex)[treat_ == t]))
 
     if (is_null(cc)) {
-      .err("no matches were found")
+      arg::err("no matches were found")
     }
   }
   else {
@@ -189,7 +183,8 @@ matchit2quick <- function(treat, formula, data, distance, discarded,
   #Create distance matrix; note that Mahalanobis distance computed using entire
   #sample (minus discarded), like method2nearest, as opposed to within exact strata, like optmatch.
   if (is_not_null(mahvars)) {
-    transform <- if (is.full.mahalanobis) attr(is.full.mahalanobis, "transform") else "mahalanobis"
+    transform <- attr(is.full.mahalanobis, "transform") %or% "mahalanobis"
+
     distcovs <- transform_covariates(mahvars, data = data, method = transform,
                                      s.weights = s.weights, treat = treat,
                                      discarded = discarded)
@@ -205,11 +200,11 @@ matchit2quick <- function(treat, formula, data, distance, discarded,
   #Process caliper
   if (is_not_null(caliper)) {
     if (is_not_null(mahvars)) {
-      .err('with `method = "quick"`, a caliper can only be used when `distance` is a propensity score or vector and `mahvars` is not specified')
+      arg::err('with {.code method = "quick"}, a caliper can only be used when {.arg distance} is a propensity score or vector and {.arg mahvars} is not specified')
     }
 
     if (length(caliper) > 1L || !identical(names(caliper), "")) {
-      .err('with `method = "quick"`, calipers cannot be placed on covariates')
+      arg::err('with {.code method = "quick"}, calipers cannot be placed on covariates')
     }
   }
 
@@ -217,7 +212,7 @@ matchit2quick <- function(treat, formula, data, distance, discarded,
 
   #Initialize pair membership; must include names
   pair <- rep_with(NA_character_, treat)
-  p <- setNames(vector("list", nlevels(ex)), levels(ex))
+  p <- make_list(levels(ex))
 
   for (e in levels(ex)[cc]) {
     if (nlevels(ex) > 1L) {
@@ -250,7 +245,7 @@ matchit2quick <- function(treat, formula, data, distance, discarded,
   .cat_verbose("Calculating matching weights... ", verbose = verbose)
 
   res <- list(subclass = psclass,
-              weights = get_weights_from_subclass(psclass, treat, estimand),
+              weights = get_weights_from_subclass(psclass, treat, estimand, s.weights),
               obj = p)
 
   .cat_verbose("Done.\n", verbose = verbose)

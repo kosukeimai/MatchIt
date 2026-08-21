@@ -1,10 +1,41 @@
----
-output:
-  html_document: default
-  pdf_document: default
----
 `MatchIt` News and Updates
 ======
+
+# MatchIt 4.8.0
+
+* For stratification methods (`"exact"`, `"cem"` with `k2k = FALSE`, `"full"`, `"quick"`, and `"subclass"`), when sampling weights are supplied through `s.weights`, they are now used to compute the matching weights. Previously, sampling weights were only used in the calculation of propensity scores (if any). When `add_s.weights()` is used on the output of `matchit()` from one of these methods initially run without `s.weights`, the matching weights will be re-computed incorporating the sampling weights. `vignette("sampling-weights")` has been updated accordingly.
+
+* With `method = "cardinality"`, `s.weights` is now only allowed with profile matching (`estimand = "ATE"` or `ratio = NA`), which matches each treatment group to a fixed target; supplying it with cardinality matching, which matches the treatment groups to each other and so has no fixed target population, is now an error. Previously it was silently accepted and made the optimization problem effectively unsolvable.
+
+* With `method = "cardinality"` and `estimand = "ATE"`, the size of the matched sample being maximized and the `ratio` constraint on the relative sizes of the matched groups now refer to the unweighted numbers of units rather than to the sums of the sampling weights. `s.weights` now enters only the balance constraints, where it weights the covariate means. This makes profile matching for the ATE usable with sampling weights; results are unchanged when `s.weights` is not supplied or is constant.
+
+* In `match_data()` and `get_matches()`, a dataset supplied to `data` is now always used and is required to be the original dataset supplied to `matchit()`; supplying one with the wrong number of rows now throws an informative error naming both sizes. Previously, such a dataset was silently ignored in favor of one recovered from the environment of the `matchit` object, if one could be found. The documentation now clarifies that `data` is only needed when the original dataset cannot be found automatically.
+
+* A dataset supplied to `data` in `summary()`, `plot()`, or `add_s.weights()` is likewise now always validated against the units in the original `matchit()` call, with the same error. Previously, `summary()` quietly replaced a wrongly sized dataset with one recovered from the environment, and `plot()` ignored `data` entirely unless `which.xs` was also supplied.
+
+* In `summary()`, `addlvariables` can now be supplied as a matrix, as its documentation implied; previously this failed with an uninformative error. A character matrix is now treated as a matrix of covariates rather than as a vector of variable names. Errors arising from an invalid `addlvariables` now refer to `addlvariables` rather than to `data`.
+
+* Fixed a bug in `print()` for `matchit` objects where the distance line was not terminated when matching was done on the Mahalanobis distance or on a user-supplied distance measure, running the next line onto the end of it, and where a blank line appeared when the distance had both a bracketed annotation and an estimating method. The bracketed annotation now also correctly reports when the distance measure was used for matching or subclassification; previously it never did.
+
+* Fixed a bug where calling `plot()` on the output of `matchit()` with `method = "subclass"` without specifying `subclass` would enter an interactive menu even in a non-interactive session, where it would loop indefinitely. Balance in aggregate is now displayed instead, as documented.
+
+* Fixed the error message produced by `plot()` on a `summary.matchit` object with `var.order = "unmatched"`, which referred to `un = TRUE` when it meant `un = FALSE`.
+
+* Nearest neighbor matching on the Mahalanobis distance (i.e., with `distance = "mahalanobis"` or `mahvars` supplied) is now 40-60% faster, as the squared distance between two units is computed without allocating a copy of each unit's covariates.
+
+* Fixed a bug in the internal C++ code, which called `order()` as found from the global environment; a function of that name defined by the user (or exported by an attached package) would be used in place of `base::order()`, giving wrong results or an error. This affected nearest neighbor matching, optimal matching, and `summary()` with `pair.dist = TRUE`.
+
+* Removed the unused C++ interface in `inst/include`, which exported no functions.
+
+* Bumped minimum R version to 4.1.0 and removed *backports* as a dependency.
+
+* Replaced *chk* dependency with *arg* for error messages.
+
+* Added new tests.
+
+* `solver = "symphony"` is no longer allowed with `method = "cardinality"`.
+
+* Documentation updates.
 
 # MatchIt 4.7.2
 
@@ -36,7 +67,7 @@ output:
 
 # MatchIt 4.6.0
 
-Most improvements are related to performance. Some of these dramatically improve speeds for large datasets. Most come from improvements to `Rcpp` code.
+Most improvements are related to performance. Some of these dramatically improve speeds for large datasets. Most come from improvements to *Rcpp* code.
 
 * When using `method = "nearest"`, `m.order` can now be set to `"farthest"` to prioritize hard-to-match treated units. Note this **does not** implement "far matching" but simply changes the order in which the closest matches are selected.
 
@@ -66,7 +97,7 @@ Most improvements are related to performance. Some of these dramatically improve
 
 # MatchIt 4.5.5
 
-* When using `method = "cardinality"`, a new solver, HiGHS, can be requested by setting `solver = "highs"`, which relies on the `highs` package. This is much faster and more reliable than GLPK and is free and easy to install as a regular R package with no additional requirements.
+* When using `method = "cardinality"`, a new solver, HiGHS, can be requested by setting `solver = "highs"`, which relies on the *highs* package. This is much faster and more reliable than GLPK and is free and easy to install as a regular R package with no additional requirements.
 
 * Fixed a bug when using `method = "optimal"` with `discard` and `exact` specified. Thanks to @NikNakk for the issue and fix. (#171)
 
@@ -86,7 +117,7 @@ Most improvements are related to performance. Some of these dramatically improve
 
 # MatchIt 4.5.3
 
-* Error messages have been improved using `chk` and `rlang`, which are now dependencies.
+* Error messages have been improved using *chk* and *rlang*, which are now dependencies.
 
 * Fixed a bug when using `method = "nearest"` with `replace = TRUE` and `ratio` greater than 1. Thanks to Julia Kretschmann. (#159)
 
@@ -98,7 +129,7 @@ Most improvements are related to performance. Some of these dramatically improve
 
 * Fixed some typos in the vignettes. Thanks to @fBedecarrats. (#156)
 
-* Updated vignettes to use `marginaleffects` v0.11.0 syntax.
+* Updated vignettes to use *marginaleffects* v0.11.0 syntax.
 
 # MatchIt 4.5.2
 
@@ -122,7 +153,7 @@ Most improvements are related to performance. Some of these dramatically improve
 
 # MatchIt 4.5.0
 
-* Generalized full matching, as described by [Sävje, Higgins, and Sekhon (2021)](https://doi.org/10.1017/pan.2020.32), can now be implemented by setting `method = "quick"` in `matchit()`. It is a dramatically faster alternative to optimal full matching that can support much larger datasets and otherwise has similar balancing performance. See `?method_quick` and `vignette("matching-methods")` for more information. This functionality relies on the `quickmatch` package.
+* Generalized full matching, as described by [Sävje, Higgins, and Sekhon (2021)](https://doi.org/10.1017/pan.2020.32), can now be implemented by setting `method = "quick"` in `matchit()`. It is a dramatically faster alternative to optimal full matching that can support much larger datasets and otherwise has similar balancing performance. See `?method_quick` and `vignette("matching-methods")` for more information. This functionality relies on the *quickmatch* package.
 
 * The package structure has been updated, include with the use of Roxygen for documentation. This should not affect use, but the source code will look different from that of previous versions.
 
@@ -134,7 +165,7 @@ Most improvements are related to performance. Some of these dramatically improve
 
 * When a factor variable is supplied to `plot.matchit()` with `type = "density"`, the plot now displays all factor levels in the same plot instead of in separate plots for each level, similar to `cobalt::bal.plot()`.
 
-* The "Estimating Effects" vignette (`vignette("estimating-effects")`) has been rewritten to be much shorter (and hopefully clearer) and to use the `marginaleffects` package, which is now a Suggested package. The new vignette focuses on using g-computation to estimate treatment effects using a single workflow with slight modifications for different situations.
+* The "Estimating Effects" vignette (`vignette("estimating-effects")`) has been rewritten to be much shorter (and hopefully clearer) and to use the *marginaleffects* package, which is now a Suggested package. The new vignette focuses on using g-computation to estimate treatment effects using a single workflow with slight modifications for different situations.
 
 * The error message when covariates have missing or non-finite values is now clearer, identifying which variables are afflicted. This fixes a bug mentioned in #115.
 
@@ -158,13 +189,13 @@ Most improvements are related to performance. Some of these dramatically improve
 
 # MatchIt 4.4.0
 
-* `optmatch` has returned to CRAN, now with an open-source license! A new `solver` argument can be passed to `matchit()` with `method = "full"` and `method = "optimal"` to control the solver used to perform the optimization used in the matching. Note that using the default (open source) solver LEMON may yield results different from those obtained prior to `optmatch` 0.10.0. For reproducibility questions, please contact the `optmatch` maintainers.
+* *optmatch* has returned to CRAN, now with an open-source license! A new `solver` argument can be passed to `matchit()` with `method = "full"` and `method = "optimal"` to control the solver used to perform the optimization used in the matching. Note that using the default (open source) solver LEMON may yield results different from those obtained prior to *optmatch* 0.10.0. For reproducibility questions, please contact the *optmatch* maintainers.
 
 * New functions have been added to compute the Euclidean distance (`euclidean_dist()`), scaled Euclidean distance (`scaled_euclidean_dist()`), Mahalanobis distance (`mahalanobis_dist()`), and robust Mahalanobis distance (`robust_mahalanobis_dist()`). They produce distance matrices that can be supplied to the `distance` argument of `matchit()`, but see below.
 
 * New distance options are available for `matchit()` based on the distance functions above: `"robust_mahalanobis"`, `"euclidean"`, and `"scaled_euclidean"`, which complement `"mahalanobis"`. Similar to `"mahalanobis"`, these do not involve estimating a propensity score but rather operate on the covariates directly. These can be used for nearest neighbor matching, optimal matching, full matching, and coarsened exact matching with `k2k = TRUE`.
 
-* The Mahalanobis distance is now computed using the pooled within-group covariance matrix (computed by treatment group-mean centering each covariate before computing the covariance in the full sample), in line with how it is computed in `optmatch` and recommended by Rubin (1980) among others. This will cause results to differ between this version and prior versions of `MatchIt` that used the Mahalanobis distance computed ignoring group membership.
+* The Mahalanobis distance is now computed using the pooled within-group covariance matrix (computed by treatment group-mean centering each covariate before computing the covariance in the full sample), in line with how it is computed in *optmatch* and recommended by Rubin (1980) among others. This will cause results to differ between this version and prior versions of *MatchIt* that used the Mahalanobis distance computed ignoring group membership.
 
 * Added the `unit.id` argument to `matchit()` with `method = "nearest"`, which defines unit IDs so that if a control observation with a given unit ID has been matched to a treated unit, no other control units with the same ID can be used as future matches, ensuring each unit ID is used no more than once. This is useful when, e.g., multiple rows correspond to the same control firm but you only want each control firm to be matched once, in which case firm ID would be supplied to `unit.id`. See [here](https://stats.stackexchange.com/q/349784/116195) for an example use case.
 
@@ -178,7 +209,7 @@ Most improvements are related to performance. Some of these dramatically improve
 
 * Fixed a bug when using exact matching that caused an infinite loop when variable levels contained commas. Thanks to @bking124. (#111)
 
-* Fixed a bug introduced by `optmatch` version 0.10.3.
+* Fixed a bug introduced by *optmatch* version 0.10.3.
 
 * Documentation updates.
 
@@ -186,11 +217,11 @@ Most improvements are related to performance. Some of these dramatically improve
 
 # MatchIt 4.3.4
 
-* `optmatch` has been removed from CRAN. Instructions on installing it are in `?method_optimal` and `?method_full`.
+* *optmatch* has been removed from CRAN. Instructions on installing it are in `?method_optimal` and `?method_full`.
 
 * When `s.weights` are supplied with `distance = "randomforest"`, the weights are supplied to `randomForest::randomForest()`.
 
-* Improved conditional use of packages, especially `optmatch`. This may mean that certain examples fail to run in the vignettes.
+* Improved conditional use of packages, especially *optmatch*. This may mean that certain examples fail to run in the vignettes.
 
 # MatchIt 4.3.3
 
@@ -220,9 +251,9 @@ Most improvements are related to performance. Some of these dramatically improve
 
 * Cardinality and template matching can now be used by setting `method = "cardinality"` in `matchit()`. These methods use mixed integer programming to directly select a matched subsample without pairing or stratifying units that satisfied user-supplied balance constraints. Their results can be dramatically improved when using the Gurobi optimizer. See `?method_cardinality` and `vignette("matching-methods")` for more information.
 
-* Added `"lasso"`, `"ridge"`, and `"elasticnet"` as options for `distance`. These estimate propensity scores using lasso, ridge, or elastic net regression, respectively, as implemented in the `glmnet` package.
+* Added `"lasso"`, `"ridge"`, and `"elasticnet"` as options for `distance`. These estimate propensity scores using lasso, ridge, or elastic net regression, respectively, as implemented in the *glmnet* package.
 
-* Added `"gbm"` as an option for `distance`. This estimates propensity scores using generalized boosted models as implemented in the `gbm` package. This implementation differs from that in `twang` by using cross-validation or out-of-bag error to choose the tuning parameter as opposed to balance.
+* Added `"gbm"` as an option for `distance`. This estimates propensity scores using generalized boosted models as implemented in the *gbm* package. This implementation differs from that in *twang* by using cross-validation or out-of-bag error to choose the tuning parameter as opposed to balance.
 
 * A new argument, `include.obj`, has been added to `matchit()`. When `TRUE`, the intermediate matching object created internally will be included in the output in the `obj` component. See the individual methods pages for information on what is included in each output.  This is ignored for some methods.
 
@@ -246,13 +277,13 @@ Most improvements are related to performance. Some of these dramatically improve
 
 * Fixed a bug where supplying a "GAM" string to the `distance` argument (i.e., using the syntax prior to version 4.0.0) would ignore the link supplied.
 
-* When an incompatible argument is supplied to `matchit()` (e.g., `reestimate` with `distance = "mahalanobis"`), an error or warning will only be produced when that argument has been set to a value other than its default (e.g., so setting `reestimate = FALSE` will no longer throw an error). This fixes an issue brought up by Vu Ng when using `MatchThem`.
+* When an incompatible argument is supplied to `matchit()` (e.g., `reestimate` with `distance = "mahalanobis"`), an error or warning will only be produced when that argument has been set to a value other than its default (e.g., so setting `reestimate = FALSE` will no longer throw an error). This fixes an issue brought up by Vu Ng when using *MatchThem*.
 
 * A clearer error is produced when non-finite values are present in the covariates.
 
 # MatchIt 4.2.0
 
-* `distance` can now be supplied as a distance matrix containing pairwise distances with nearest neighbor, optimal, and full matching. This means users can create a distance matrix outside `MatchIt` (e.g., using `optmatch::match_on()` or `dist()`) and `matchit()` will use those distances in the matching. See `?distance` for details.
+* `distance` can now be supplied as a distance matrix containing pairwise distances with nearest neighbor, optimal, and full matching. This means users can create a distance matrix outside *MatchIt* (e.g., using `optmatch::match_on()` or `dist()`) and `matchit()` will use those distances in the matching. See `?distance` for details.
 
 * Added `rbind.matchdata()` method for `matchdata` and `getmatches` objects (the output of `match.data()` and `get_matches()`, respectively) to avoid subclass conflicts when combining matched samples after matching within subgroups.
 
@@ -266,19 +297,19 @@ Most improvements are related to performance. Some of these dramatically improve
 
 * A spurious warning that would appear when using a large `ratio` with `replace = TRUE` and `method = "nearest"` no longer appears.
 
-* Fixed a bug when trying to supply `distance` as a labeled numeric vector (e.g., resulting from `haven`).
+* Fixed a bug when trying to supply `distance` as a labeled numeric vector (e.g., resulting from *haven*).
 
 * Fixed some typos in the documentation and vignettes.
 
 # MatchIt 4.1.0
 
-* Coarsened exact matching (i.e., `matchit()` with `method = "cem"`) has been completely rewritten and no longer involves the `cem` package, eliminating some spurious warning messages and fixing some bugs. All the same arguments can still be used, so old code will run, though some results will differ slightly. Additional options are available for matching and performance has improved. See `?method_cem` for details on the differences between the implementation in the current version of `MatchIt` and that in `cem` and older versions of `MatchIt`. In general, these changes make coarsened exact matching function as one would expect it to, circumventing some peculiarities and bugs in the `cem` package.
+* Coarsened exact matching (i.e., `matchit()` with `method = "cem"`) has been completely rewritten and no longer involves the *cem* package, eliminating some spurious warning messages and fixing some bugs. All the same arguments can still be used, so old code will run, though some results will differ slightly. Additional options are available for matching and performance has improved. See `?method_cem` for details on the differences between the implementation in the current version of *MatchIt* and that in *cem* and older versions of *MatchIt*. In general, these changes make coarsened exact matching function as one would expect it to, circumventing some peculiarities and bugs in the *cem* package.
 
 * Variable ratio matching is now compatible with `method = "optimal"` in the same way it is with `method = "nearest"`, i.e., by using the `min.controls` and `max.controls` arguments.
 
 * With `method = "full"` and `method = "optimal"`, the maximum problem size has been set to unlimited, so that larger datasets can be used with these methods without error. They may take a long time to run, though.
 
-* Processing improvements with `method = "optimal"` due to rewriting some functions in `Rcpp`.
+* Processing improvements with `method = "optimal"` due to rewriting some functions in *Rcpp*.
 
 * Using `method = "optimal"` runs more smoothly when combining it with exact matching through the `exact` argument.
 
@@ -290,13 +321,13 @@ Most improvements are related to performance. Some of these dramatically improve
 
 # MatchIt 4.0.1
 
-* Restored `cem` functionality after it had been taken down and re-uploaded.
+* Restored *cem* functionality after it had been taken down and re-uploaded.
 
-* Added `pkgdown` website.
+* Added *pkgdown* website.
 
-* Computing matching weights after matching with replacement is faster due to programming in `Rcpp`.
+* Computing matching weights after matching with replacement is faster due to programming in *Rcpp*.
 
-* Fixed issues with `Rcpp` code that required C++11. C++11 has been added to SystemRequirements in DESCRIPTION, and `MatchIt` now requires R version 3.1.0 or later.
+* Fixed issues with *Rcpp* code that required C++11. C++11 has been added to SystemRequirements in DESCRIPTION, and *MatchIt* now requires R version 3.1.0 or later.
 
 # MatchIt 4.0.0
 
@@ -306,11 +337,11 @@ Most improvements are related to performance. Some of these dramatically improve
 
 * `get_matches()`, which seems to have been rarely used since it performed a similar function to `match.data()`, has been revamped. It creates a dataset with one row per unit per matched pair. If a unit is part of two separate pairs (e.g., as a result of matching with replacement), it will get two rows in the output dataset. The goal here was to be able to implement standard error estimators that rely both on repeated use of the same unit and subclass/pair membership, e.g., Austin & Cafri (2020). Otherwise, it functions similarly to `match.data()`. *NOTE: the changes to `get_matches()` are breaking changes! Legacy code will not work with the new syntax!*
 
-* `print.matchit()` has completely changed and now prints information about the matching type and specifications. `summary.matchit()` contains all the information that was in the old `print` method.
+* `print.matchit()` has completely changed and now prints information about the matching type and specifications. `summary.matchit()` contains all the information that was in the old `print()` method.
 
-* A new function, `add_s.weights()`, adds sampling weights to `matchit` objects for use in balance checking and effect estimation. Sampling weights can also be directly supplied to `matchit()` through the new `s.weights` argument. A new vignette describing how to using `MatchIt` with sampling weights is available at `vignette("sampling-weights")`.
+* A new function, `add_s.weights()`, adds sampling weights to `matchit` objects for use in balance checking and effect estimation. Sampling weights can also be directly supplied to `matchit()` through the new `s.weights` argument. A new vignette describing how to using *MatchIt* with sampling weights is available at `vignette("sampling-weights")`.
 
-* The included dataset, `lalonde`, now uses a `race` variable instead of separate `black` and `hispan` variables. This makes it easier to see how character variables are treated by `MatchIt` functions.
+* The included dataset, `lalonde`, now uses a `race` variable instead of separate `black` and `hispan` variables. This makes it easier to see how character variables are treated by *MatchIt* functions.
 
 * Added extensive documentation for every function, matching method, and distance specification. Documentation no longer links to `gking.harvard.edu/matchit` as it now stands alone.
 
@@ -337,7 +368,7 @@ Most improvements are related to performance. Some of these dramatically improve
 
 ### `method = "nearest"`
 
-* Matching is much faster due to re-programming with `Rcpp`.
+* Matching is much faster due to re-programming with *Rcpp*.
 
 * With `method = "nearest"`, a `subclass` component containing pair membership is now included in the output when `replace = FALSE` (the default), as it has been with optimal and full matching.
 
@@ -353,7 +384,7 @@ Most improvements are related to performance. Some of these dramatically improve
 
 ### `method = "optimal"` and `method = "full"`
 
-* Fixed bug in `method = "optimal"`, which produced results that did not match `optmatch`. Now they do.
+* Fixed bug in `method = "optimal"`, which produced results that did not match *optmatch*. Now they do.
 
 * Added support for optimal and full Mahalanobis distance matching by setting `method = "mahalanobis"` with `method = "optimal"` and `method = "full"`. Previously, both methods would perform a random match if `method` was set to `"mahalanobis"`. Now they use the native support in `optmatch::pairmatch()` and `optmatch::fullmatch()` for Mahalanobis distance matching.
 
@@ -389,7 +420,7 @@ Most improvements are related to performance. Some of these dramatically improve
 
 * Performance improvements.
 
-* A new argument, `min.n`, can be supplied, which controls the minimum size a treatment group can be in each subclass. When any estimated subclass doesn't have enough members from a treatment group, units from other subclasses are pulled to fill it so that every subclass will have at least `min.n` units from each treatment group. This uses the same mechanism as is used in `WeightIt`. The default `min.n` is 1 to ensure there are at least one treated and control unit in each subclass.
+* A new argument, `min.n`, can be supplied, which controls the minimum size a treatment group can be in each subclass. When any estimated subclass doesn't have enough members from a treatment group, units from other subclasses are pulled to fill it so that every subclass will have at least `min.n` units from each treatment group. This uses the same mechanism as is used in *WeightIt*. The default `min.n` is 1 to ensure there are at least one treated and control unit in each subclass.
 
 * Rather than producing warnings and just using the default number of subclasses (6), when an inappropriate argument is supplied to `subclass`, an error will occur.
 
@@ -403,11 +434,11 @@ Most improvements are related to performance. Some of these dramatically improve
 
 * The allowable options to `distance` have changed slightly. The input should be either `"mahalanobis"` for Mahalanobis distance matching (without a propensity score caliper), a numeric vector of distance values (i.e., values whose absolute pairwise differences form the distances), or one of the allowable options. The new allowable values include `"glm"` for propensity scores estimated with `glm()`, `"gam"` for propensity scores estimated with `mgcv::gam()`, `"rpart"` for propensity scores estimated with `rpart::rpart()`, `"nnet"` for propensity scores estimated with `nnet::nnet()`, `"cbps"` for propensity scores estimated with `CBPS::CBPS()`, or `bart` for propensity scores estimated with `dbarts::bart2()`. To specify a link (e.g., for probit regression), specify an argument to the new `link` parameter. For linear versions of the propensity score, specify `link` as `"linear.{link}"`. For example, for linear probit regression propensity scores, one should specify `distance = "glm", link = "linear.probit"`. The default `distance` is `"glm"` and the default link is `"logit"`, so these can be omitted if either is desired. Not all methods accept a `link`, and for those that don't, it will be ignored. If an old-style `distance` is supplied, it will be converted to an appropriate specification with a warning (except for `distance = "logit"`, which will be converted without a warning).
 
-* Added `"cbps"` as option for `distance`. This estimates propensity scores using the covariate balancing propensity score (CBPS) algorithm as implemented in the `CBPS` package. Set `link = "linear"` to use a linear version of the CBPS.
+* Added `"cbps"` as option for `distance`. This estimates propensity scores using the covariate balancing propensity score (CBPS) algorithm as implemented in the *CBPS* package. Set `link = "linear"` to use a linear version of the CBPS.
 
-* Added `"bart"` as an option for `distance`. This estimates propensity scores using Bayesian Additive Regression Trees (BART) as implemented in the `dbarts` package.
+* Added `"bart"` as an option for `distance`. This estimates propensity scores using Bayesian Additive Regression Trees (BART) as implemented in the *dbarts* package.
 
-* Added `"randomforest"` as an option for `distance`. This estimates propensity scores using random forests as implemented in the `randomForest` package.
+* Added `"randomforest"` as an option for `distance`. This estimates propensity scores using random forests as implemented in the *randomForest* package.
 
 * Bugs in `distance = "rpart"` have been fixed.
 
@@ -449,4 +480,4 @@ Most improvements are related to performance. Some of these dramatically improve
 
 ## `plot.summary.matchit()`
 
-* The summary plot has been completely redesigned. It is now a Love plot made using `graphics::dotchart()`. A few options are available for ordering the variables, presenting absolute or raw standardized mean differences, and placing threshold lines on the plots. For a more sophisticated interface, see `cobalt::love.plot()`, which natively supports `matchit` objects and uses `ggplot2` as its engine.
+* The summary plot has been completely redesigned. It is now a Love plot made using `graphics::dotchart()`. A few options are available for ordering the variables, presenting absolute or raw standardized mean differences, and placing threshold lines on the plots. For a more sophisticated interface, see `cobalt::love.plot()`, which natively supports `matchit` objects and uses *ggplot2* as its engine.

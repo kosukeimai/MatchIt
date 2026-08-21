@@ -6,13 +6,10 @@ check.inputs <- function(mcall, method, distance, link, distance.options, exact,
 
   null.method <- is_null(method)
 
-  if (null.method) {
-    method <- "NULL"
-  }
-  else {
-    method <- match_arg(method, c("exact", "cem", "nearest", "optimal", "full",
-                                  "genetic", "subclass", "cardinality",
-                                  "quick"))
+  if (!null.method) {
+    method <- arg::match_arg(method, c("exact", "cem", "nearest", "optimal", "full",
+                                       "genetic", "subclass", "cardinality",
+                                       "quick"))
   }
 
   ignored.inputs <- character(0L)
@@ -54,7 +51,7 @@ check.inputs <- function(mcall, method, distance, link, distance.options, exact,
     }
   }
   else if (method == "nearest") {
-    if (is.character(distance) && distance %in% matchit_distances()) {
+    if (rlang::is_string(distance) && distance %in% matchit_distances()) {
       for (e in c("mahvars", "reestimate")) {
         if (.entered_arg(mcall, e)) {
           error.inputs <- c(error.inputs, e)
@@ -63,7 +60,7 @@ check.inputs <- function(mcall, method, distance, link, distance.options, exact,
     }
   }
   else if (method == "optimal") {
-    if (is.character(distance) && distance %in% matchit_distances()) {
+    if (rlang::is_string(distance) && distance %in% matchit_distances()) {
       for (e in c("mahvars", "reestimate")) {
         if (.entered_arg(mcall, e)) {
           error.inputs <- c(error.inputs, e)
@@ -79,7 +76,7 @@ check.inputs <- function(mcall, method, distance, link, distance.options, exact,
 
   }
   else if (method == "full") {
-    if (is.character(distance) && distance %in% matchit_distances()) {
+    if (rlang::is_string(distance) && distance %in% matchit_distances()) {
       for (e in c("mahvars", "reestimate")) {
         if (.entered_arg(mcall, e)) {
           error.inputs <- c(error.inputs, e)
@@ -94,7 +91,7 @@ check.inputs <- function(mcall, method, distance, link, distance.options, exact,
     }
   }
   else if (method == "genetic") {
-    if (is.character(distance) && distance %in% matchit_distances()) {
+    if (rlang::is_string(distance) && distance %in% matchit_distances()) {
       for (e in c("mahvars", "reestimate")) {
         if (.entered_arg(mcall, e)) {
           error.inputs <- c(error.inputs, e)
@@ -122,7 +119,7 @@ check.inputs <- function(mcall, method, distance, link, distance.options, exact,
     }
   }
   else if (method == "quick") {
-    if (is.character(distance) && distance %in% matchit_distances()) {
+    if (rlang::is_string(distance) && distance %in% matchit_distances()) {
       for (e in c("mahvars", "reestimate")) {
         if (.entered_arg(mcall, e)) {
           error.inputs <- c(error.inputs, e)
@@ -137,19 +134,15 @@ check.inputs <- function(mcall, method, distance, link, distance.options, exact,
     }
   }
 
+  method_str <- if (null.method) "NULL" else dQuote(method, FALSE)
+
   if (is_not_null(ignored.inputs)) {
-    .wrn(sprintf("the argument%%s %s %%r not used with `method = %s` and will be ignored",
-                 word_list(ignored.inputs, quotes = "`"),
-                 add_quotes(method, quotes = !null.method)),
-         n = length(ignored.inputs))
+    arg::wrn("the {cli::qty(ignored.inputs)} argument{?s} {.arg {ignored.inputs}} {?is/are} not used with {.code method = {method_str}} and will be ignored")
   }
 
   if (is_not_null(error.inputs)) {
-    .err(sprintf("the argument%%s %s %%r not used with `method = %s` and `distance = %s`",
-                 word_list(error.inputs, quotes = "`"),
-                 add_quotes(method, quotes = !null.method),
-                 add_quotes(distance)),
-         n = length(error.inputs))
+    distance_str <- dQuote(distance, FALSE)
+    arg::err("the {cli::qty(error.inputs)} argument{?s} {.arg {error.inputs}} cannot be used with {.code method = {method_str}} and {.code distance = {distance_str}}")
   }
 
   ignored.inputs
@@ -171,16 +164,16 @@ check_treat <- function(treat = NULL, X = NULL) {
   }
 
   if (!is.atomic(treat) || is_not_null(dim(treat))) {
-    .err("the treatment must be a vector")
+    arg::err("the treatment must be a vector")
   }
 
   if (anyNA(treat)) {
-    .err("missing values are not allowed in the treatment")
+    arg::err("missing values are not allowed in the treatment")
   }
 
   if (TRUE) {
     if (!has_n_unique(treat, 2L)) {
-      .err("the treatment must be a binary variable")
+      arg::err("the treatment must be a binary variable")
     }
 
     treat <- binarize(treat) #make 0/1
@@ -201,10 +194,10 @@ check_treat <- function(treat = NULL, X = NULL) {
       attr(treat, "ordered") <- FALSE
     }
     else {
-      .err("the treatment must be a binary variable") #Remove to support multi
+      arg::err("the treatment must be a binary variable") #Remove to support multi
 
-      if (!chk::vld_character_or_factor(treat)) {
-        .err("the treatment must be a factor variable if it takes on more than 2 unique values")
+      if (!is.character(treat) && !is.factor(treat)) {
+        arg::err("the treatment must be a factor variable if it takes on more than 2 unique values")
       }
 
       treat <- droplevels(as.factor(treat))
@@ -216,7 +209,7 @@ check_treat <- function(treat = NULL, X = NULL) {
   }
 
   if (is_not_null(X) && length(treat) != nrow(X)) {
-    .err("the treatment and covariates must have the same number of units")
+    arg::err("the treatment and covariates must have the same number of units")
   }
 
   attr(treat, "checked") <- TRUE
@@ -228,14 +221,13 @@ check_treat <- function(treat = NULL, X = NULL) {
 process.distance <- function(distance, method = NULL, treat) {
   if (is_null(distance)) {
     if (is_not_null(method) && !method %in% c("cem", "exact", "cardinality")) {
-      .err(sprintf("`distance` cannot be `NULL` with `method = %s`",
-                   add_quotes(method)))
+      arg::err("{.arg distance} cannot be {.val {list(NULL)}} with {.code method = {.str {method}}}")
     }
 
     return(distance)
   }
 
-  if (chk::vld_string(distance)) {
+  if (rlang::is_string(distance)) {
     allowable.distances <- c(
       #Propensity score methods
       "glm", "cbps", "gam", "nnet", "rpart", "bart",
@@ -248,8 +240,7 @@ process.distance <- function(distance, method = NULL, treat) {
                                  "linear.cauchit", "log", "probit")) {
       link <- tolower(distance)
 
-      .wrn(sprintf('`distance = "%s"` will be deprecated; please use `distance = "glm", link = "%s"` in the future',
-                   distance, link))
+      arg::wrn('{.code distance = {.str {distance}}} will be deprecated; please use {.code distance = "glm", link = {.str {link}}} in the future')
 
       distance <- "glm"
       attr(distance, "link") <- link
@@ -257,8 +248,7 @@ process.distance <- function(distance, method = NULL, treat) {
     else if (tolower(distance) %in% tolower(c("GAMcloglog", "GAMlog", "GAMlogit", "GAMprobit"))) {
       link <- tolower(substr(distance, 4L, nchar(distance)))
 
-      .wrn(sprintf('`distance = "%s"` will be deprecated; please use `distance = "gam", link = "%s"` in the future',
-                   distance, link))
+      arg::wrn('{.code distance = {.str {distance}}} will be deprecated; please use {.code distance = "gam", link = {.str {link}}} in the future')
 
       distance <- "gam"
       attr(distance, "link") <- link
@@ -271,11 +261,10 @@ process.distance <- function(distance, method = NULL, treat) {
       distance <- "elasticnet"
     }
     else if (!tolower(distance) %in% allowable.distances) {
-      .err('the argument supplied to `distance` is not an allowable value. See `help("distance", package = "MatchIt")` for allowable options')
+      arg::err('the argument supplied to {.arg distance} is not an allowable value. See {.topic MatchIt::distance} for allowable options')
     }
     else if (is_not_null(method) && method == "subclass" && tolower(distance) %in% matchit_distances()) {
-      .err(sprintf('`distance` cannot be %s with `method = "subclass"`',
-                   add_quotes(distance)))
+      arg::err('{.arg distance} cannot be {.val {distance}} with {.code method = "subclass"}')
     }
     else {
       distance <- tolower(distance)
@@ -285,12 +274,12 @@ process.distance <- function(distance, method = NULL, treat) {
   }
 
   if (!is.numeric(distance) || (is_not_null(dim(distance)) && length(dim(distance)) != 2)) {
-    .err("`distance` must be a string with the name of the distance measure to be used or a numeric vector or matrix containing distance measures")
+    arg::err("{.arg distance} must be a string with the name of the distance measure to be used or a numeric vector or matrix containing distance measures")
   }
 
   if (is.matrix(distance) && (is_null(method) || !method %in% c("nearest", "optimal", "full"))) {
-    .err(sprintf("`distance` cannot be supplied as a matrix with `method = %s`",
-                 add_quotes(method, quotes = is_not_null(method))))
+    method_str <- if (is_null(method)) "NULL" else dQuote(method, FALSE)
+    arg::err("{.arg distance} cannot be supplied as a matrix with {.code method = {method_str}}")
   }
 
   if (is.matrix(distance)) {
@@ -318,14 +307,14 @@ process.distance <- function(distance, method = NULL, treat) {
       }
     }
     else {
-      .err("when supplied as a matrix, `distance` must have dimensions NxN or N1xN0. See `help(\"distance\")` for details")
+      arg::err("when supplied as a matrix, {.arg distance} must have dimensions NxN or N1xN0. See {.topic MatchIt::distance} for details")
     }
   }
   else if (length(distance) != length(treat)) {
-    .err("`distance` must be the same length as the dataset if specified as a numeric vector")
+    arg::err("{.arg distance} must be the same length as the dataset if specified as a numeric vector")
   }
 
-  chk::chk_not_any_na(distance)
+  arg::arg_no_NA(distance)
 
   distance
 }
@@ -333,53 +322,50 @@ process.distance <- function(distance, method = NULL, treat) {
 #Function to check ratio is acceptable
 process.ratio <- function(ratio, method = NULL, ..., min.controls = NULL, max.controls = NULL) {
   #Should be run after process.inputs() and ignored inputs set to NULL
-  ratio.null <- is_null(ratio)
-  ratio.na <- !ratio.null && anyNA(ratio)
-
   if (is_null(method)) {
     return(1)
   }
+
+  ratio.null <- is_null(ratio)
+  ratio.na <- !ratio.null && anyNA(ratio)
 
   if (method %in% c("nearest", "optimal")) {
     if (ratio.null) {
       ratio <- 1
     }
-    else {
-      chk::chk_number(ratio)
-      chk::chk_gte(ratio, 1)
-    }
+
+    arg::arg_number(ratio)
+    arg::arg_gte(ratio, 1)
 
     if (is_null(max.controls)) {
-      if (!chk::vld_whole_number(ratio)) {
-        .err("`ratio` must be a whole number when `max.controls` is not specified")
-      }
+      arg::arg_whole_number(ratio,
+                            .msg = "{.arg ratio} must be a whole number when {.arg max.controls} is not specified")
 
       ratio <- round(ratio)
     }
     else {
-      chk::chk_count(max.controls)
+      arg::arg_count(max.controls)
 
       if (ratio == 1) {
-        .err("`ratio` must be greater than 1 for variable ratio matching")
+        arg::err("{.arg ratio} must be greater than 1 for variable ratio matching")
       }
 
       if (max.controls <= ratio) {
-        .err("`max.controls` must be greater than `ratio` for variable ratio matching")
+        arg::err("{.arg max.controls} must be greater than {.arg ratio} for variable ratio matching")
       }
 
       if (is_null(min.controls)) {
         min.controls <- 1
       }
-      else {
-        chk::chk_count(min.controls)
-      }
+
+      arg::arg_count(min.controls)
 
       if (min.controls < 1) {
-        .err("`min.controls` cannot be less than 1 for variable ratio matching")
+        arg::err("{.arg min.controls} cannot be less than 1 for variable ratio matching")
       }
 
       if (min.controls >= ratio) {
-        .err("`min.controls` must be less than `ratio` for variable ratio matching")
+        arg::err("{.arg min.controls} must be less than {.arg ratio} for variable ratio matching")
       }
     }
   }
@@ -387,18 +373,16 @@ process.ratio <- function(ratio, method = NULL, ..., min.controls = NULL, max.co
     if (is_null(max.controls)) {
       max.controls <- Inf
     }
-    else {
-      chk::chk_number(max.controls)
-      chk::chk_gt(max.controls, 0)
-    }
+
+    arg::arg_number(max.controls)
+    arg::arg_gt(max.controls, 0)
 
     if (is_null(min.controls)) {
       min.controls <- 0
     }
-    else {
-      chk::chk_number(min.controls)
-      chk::chk_gt(min.controls, 0)
-    }
+
+    arg::arg_number(min.controls)
+    arg::arg_gte(min.controls, 0)
 
     ratio <- 1 #Just to get min.controls and max.controls out
   }
@@ -406,9 +390,8 @@ process.ratio <- function(ratio, method = NULL, ..., min.controls = NULL, max.co
     if (ratio.null) {
       ratio <- 1
     }
-    else {
-      chk::chk_count(ratio)
-    }
+
+    arg::arg_count(ratio)
 
     min.controls <- max.controls <- NULL
   }
@@ -416,8 +399,8 @@ process.ratio <- function(ratio, method = NULL, ..., min.controls = NULL, max.co
     if (ratio.null) {
       ratio <- 1
     }
-    else if (!ratio.na && (!chk::vld_number(ratio) || !chk::vld_gte(ratio, 0))) {
-      .err("`ratio` must be a single positive number or `NA`")
+    else if (!ratio.na && (!is.numeric(ratio) || !identical(length(ratio), 1L) || ratio <= 0)) {
+      arg::err("{.arg ratio} must be a single positive number or {.val {NA}}")
     }
 
     min.controls <- max.controls <- NULL
@@ -452,40 +435,40 @@ process.caliper <- function(caliper = NULL, method = NULL, data = NULL, covs = N
   }
 
   #Check if form of caliper is okay
-  if (!is.atomic(caliper) || !is.numeric(caliper)) {
-    .err("`caliper` must be a numeric vector")
-  }
+  arg::arg_numeric(caliper)
 
   #Check caliper names
-  if (length(caliper) == 1L && (is_null(names(caliper)) || identical(names(caliper), ""))) {
+  if (identical(length(caliper), 1L) && (is_null(names(caliper)) || identical(names(caliper), ""))) {
     names(caliper) <- ""
   }
   else if (is_null(names(caliper))) {
-    .err("`caliper` must be a named vector with names corresponding to the variables for which a caliper is to be applied")
+    arg::err("{.arg caliper} must be a named vector with names corresponding to the variables for which a caliper is to be applied")
   }
   else if (anyNA(names(caliper))) {
-    .err("`caliper` names cannot include `NA`")
+    arg::err("{.arg caliper} names cannot include {.val {NA}}")
   }
   else if (sum(!nzchar(names(caliper))) > 1L) {
-    .err("no more than one entry in `caliper` can have no name")
+    arg::err("no more than one entry in {.arg caliper} can have no name")
   }
 
   if (hasName(caliper, "") && is_null(distance)) {
-    .err("all entries in `caliper` must be named when `distance` does not correspond to a propensity score")
+    arg::err("all entries in {.arg caliper} must be named when {.arg distance} does not correspond to a propensity score")
   }
 
   #Check if caliper name is in available data
   cal.in.data <- setNames(names(caliper) %in% names(data), names(caliper))
   cal.in.covs <- setNames(names(caliper) %in% names(covs), names(caliper))
   cal.in.mahcovs <- setNames(names(caliper) %in% names(mahcovs), names(caliper))
+
   if (any(nzchar(names(caliper)) & !cal.in.covs & !cal.in.data)) {
-    .err(paste0("All variables named in `caliper` must be in `data`. Variables not in `data`:\n\t",
-                toString(names(caliper)[nzchar(names(caliper)) & !cal.in.data & !cal.in.covs & !cal.in.mahcovs])),
-         tidy = FALSE)
+    bad_vars <- names(caliper)[nzchar(names(caliper)) & !cal.in.data & !cal.in.covs & !cal.in.mahcovs]
+    arg::err(c("All variables named in {.arg caliper} must be in {.arg data}.",
+               "x" = "Variables not in {.arg data}: {.var {bad_vars}}"))
   }
 
   #Check std.caliper
-  chk::chk_logical(std.caliper)
+  arg::arg_logical(std.caliper)
+
   if (length(std.caliper) == 1L) {
     std.caliper <- rep_with(std.caliper, caliper)
   }
@@ -493,7 +476,7 @@ process.caliper <- function(caliper = NULL, method = NULL, data = NULL, covs = N
     names(std.caliper) <- names(caliper)
   }
   else {
-    .err("`std.caliper` must be the same length as `caliper`")
+    arg::err("{.arg std.caliper} must have the same length as {.arg caliper}")
   }
 
   #Remove trivial calipers
@@ -512,22 +495,23 @@ process.caliper <- function(caliper = NULL, method = NULL, data = NULL, covs = N
       else mahcovs[[x]]
     }
 
-    chk::vld_character_or_factor(v)
+    is.character(v) || is.factor(v)
   }, logical(1L))
 
   if (any(cat.vars)) {
-    .err(paste0("Calipers cannot be used with factor or character variables. Offending variables:\n\t",
-                toString(ifelse(nzchar(names(caliper)), names(caliper), "<distance>")[cat.vars])),
-         tidy = FALSE)
+    bad_vars <- ifelse(nzchar(names(caliper)), names(caliper), "<distance>")[cat.vars]
+    arg::err(c("Calipers cannot be used with factor or character variables.",
+               "x" = "Offending variables: {.var {bad_vars}}"))
   }
 
   #Process calipers according to std.caliper
   std.caliper <- std.caliper[names(std.caliper) %in% names(caliper)]
-  chk::chk_not_any_na(std.caliper)
+
+  arg::arg_no_NA(std.caliper)
 
   if (any(std.caliper)) {
     if (hasName(std.caliper, "") && isTRUE(std.caliper[!nzchar(names(std.caliper))]) && is.matrix(distance)) {
-      .err("when `distance` is supplied as a matrix and a caliper for it is specified, `std.caliper` must be `FALSE` for the distance measure")
+      arg::err("when {.arg distance} is supplied as a matrix and a caliper for it is specified, {.arg std.caliper} must be {.val {FALSE}} for the distance measure")
     }
 
     caliper[std.caliper] <- caliper[std.caliper] * vapply(names(caliper)[std.caliper], function(x) {
@@ -539,8 +523,7 @@ process.caliper <- function(caliper = NULL, method = NULL, data = NULL, covs = N
   }
 
   if (any(caliper < 0) && !method %in% c("nearest", "genetic", "full")) {
-    .err(sprintf("calipers cannot be negative with `method = %s`",
-                 add_quotes(method)))
+    arg::err("calipers cannot be negative with {.code method = {.str {method}}}")
   }
 
   #Add cal.formula
@@ -562,15 +545,15 @@ process.replace <- function(replace, method = NULL, ..., reuse.max = NULL) {
     replace <- FALSE
   }
 
-  chk::chk_flag(replace)
+  arg::arg_flag(replace)
 
   if (method %in% c("nearest")) {
     if (is_null(reuse.max)) {
       reuse.max <- if (replace) .Machine$integer.max else 1L
     }
     else {
-      chk::chk_count(reuse.max)
-      chk::chk_gte(reuse.max, 1)
+      arg::arg_count(reuse.max)
+      arg::arg_gte(reuse.max, 1)
 
       if (reuse.max > .Machine$integer.max) {
         reuse.max <- .Machine$integer.max
@@ -586,8 +569,7 @@ process.replace <- function(replace, method = NULL, ..., reuse.max = NULL) {
 
 #Process variable input, e.g., to exact or mahvars, that accept a string or rhs formula
 #Returns a model.frame object
-process.variable.input <- function(x, data = NULL) {
-  n <- deparse1(substitute(x))
+process.variable.input <- function(x, data = NULL, n = rlang::caller_arg(x)) {
 
   if (is_null(x)) {
     return(NULL)
@@ -595,13 +577,12 @@ process.variable.input <- function(x, data = NULL) {
 
   if (is.character(x)) {
     if (is_null(data) || !is.data.frame(data)) {
-      .err(sprintf("if `%s` is specified as strings, a data frame containing the named variables must be supplied to `data`",
-                   n))
+      arg::err("if {.arg {n}} is specified as strings, a data frame containing the named variables must be supplied to {.arg data}")
     }
 
     if (!all(hasName(data, x))) {
-      .err(sprintf("All names supplied to `%s` must be variables in `data`. Variables not in `data`:\n\t%s", n,
-                   toString(add_quotes(setdiff(x, names(data))))), tidy = FALSE)
+      arg::err(c("All names supplied to {.arg {n}} must be variables in {.arg data}.",
+                 "x" = "Variables not in {.arg data}: {.var {setdiff(x, names(data))}}"))
     }
 
     x <- reformulate(x)
@@ -610,13 +591,13 @@ process.variable.input <- function(x, data = NULL) {
     x <- update(terms(x, data = data), NULL ~ .)
   }
   else {
-    .err(sprintf("`%s` must be supplied as a character vector of names or a one-sided formula.", n))
+    arg::err("{.arg {n}} must be supplied as a character vector of names or a one-sided formula")
   }
 
   x_covs <- model.frame(x, data, na.action = "na.pass")
 
   if (anyNA(x_covs)) {
-    .err(sprintf("missing values are not allowed in the covariates named in `%s`", n))
+    arg::err("missing values are not allowed in the covariates named in {.arg {n}}")
   }
 
   x_covs

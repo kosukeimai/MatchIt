@@ -11,9 +11,6 @@
 #' the `distance` argument to [matchit()] and are used to compute the
 #' corresponding distance matrices within `matchit()` when named.
 #'
-#' @aliases euclidean_dist scaled_euclidean_dist mahalanobis_dist
-#' robust_mahalanobis_dist
-#'
 #' @param formula a formula with the treatment (i.e., splitting variable) on
 #' the left side and the covariates used to compute the distance matrix on the
 #' right side. If there is no left-hand-side variable, the distances will be
@@ -38,7 +35,8 @@
 #' @param \dots ignored. Included to make cycling through these functions
 #' easier without having to change the arguments supplied.
 #'
-#' @return A numeric distance matrix. When `formula` has a left-hand-side
+#' @return
+#' A numeric distance matrix. When `formula` has a left-hand-side
 #' (treatment) variable, the matrix will have one row for each treated unit and
 #' one column for each control unit. Otherwise, the matrix will have one row
 #' and one column for each unit.
@@ -168,6 +166,7 @@ mahalanobis_dist <- function(formula = NULL,
   X <- transform_covariates(formula, data, method = "mahalanobis",
                             s.weights = s.weights, var = var,
                             discarded = discarded)
+
   eucdist_internal(X, attr(X, "treat"))
 }
 
@@ -185,6 +184,7 @@ scaled_euclidean_dist <- function(formula = NULL,
                             s.weights = s.weights,
                             var = var,
                             discarded = discarded)
+
   eucdist_internal(X, attr(X, "treat"))
 }
 
@@ -200,6 +200,7 @@ robust_mahalanobis_dist <- function(formula = NULL,
                             method = "robust_mahalanobis",
                             s.weights = s.weights,
                             discarded = discarded)
+
   eucdist_internal(X, attr(X, "treat"))
 }
 
@@ -211,6 +212,7 @@ euclidean_dist <- function(formula = NULL,
   X <- transform_covariates(formula,
                             data = data,
                             method = "euclidean")
+
   eucdist_internal(X, attr(X, "treat"))
 }
 
@@ -237,7 +239,7 @@ transform_covariates <- function(formula = NULL, data = NULL, method = "mahalano
     X <- X[, -no_variance, drop = FALSE]
   }
 
-  method <- match_arg(method, matchit_distances())
+  method <- arg::match_arg(method, matchit_distances())
 
   if (is_null(discarded)) {
     discarded <- rep.int(FALSE, nrow(X))
@@ -260,16 +262,19 @@ transform_covariates <- function(formula = NULL, data = NULL, method = "mahalano
 
       #NOTE: optmatch and Rubin (1980) use pooled within-group covariance matrix
       var <- {
-        if (is_not_null(treat))
+        if (is_not_null(treat)) {
           pooled_cov(X[!discarded, , drop = FALSE], treat[!discarded], s.weights[!discarded])
-        else if (is_null(s.weights))
+        }
+        else if (is_null(s.weights)) {
           cov(X[!discarded, , drop = FALSE])
-        else
+        }
+        else {
           cov.wt(X[!discarded, , drop = FALSE], s.weights[!discarded])$cov
+        }
       }
     }
     else if (!is.cov_like(var)) {
-      .err("if `var` is not `NULL`, it must be a covariance matrix with as many entries as supplied variables")
+      arg::err("if {.arg var} is not {.val {list(NULL)}}, it must be a covariance matrix with as many entries as supplied variables")
     }
 
     inv_var <- NULL
@@ -337,7 +342,7 @@ transform_covariates <- function(formula = NULL, data = NULL, method = "mahalano
       sds <- sqrt(var)
     }
     else {
-      .err("if `var` is not `NULL`, it must be a covariance matrix or a vector of variances with as many entries as supplied variables")
+      arg::err("if {.arg var} is not {.val {list(NULL)}}, it must be a covariance matrix or a vector of variances with as many entries as supplied variables")
     }
 
     for (i in seq_len(ncol(X))) {
@@ -443,10 +448,10 @@ get_covs_matrix_for_dist <- function(formula = NULL, data = NULL) {
                 dimnames = list(names(X), NULL))
   }
 
-  chk::chk_not_any_na(X, "the covariates")
+  arg::arg_no_NA(X, .msg = "{.val {NA}} values are not allowed in the covariates")
 
   if (!all(is.finite(X))) {
-    .err("non-finite values are not allowed in the covariates")
+    arg::err("non-finite values are not allowed in the covariates")
   }
 
   if (!is.numeric(X) || length(dim(X)) != 2) {

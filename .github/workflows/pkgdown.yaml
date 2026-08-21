@@ -30,7 +30,7 @@ jobs:
 
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
-          extra-packages: r-lib/pkgdown, local::., gurobi=?ignore, Rsymphony=?ignore
+          extra-packages: r-lib/pkgdown, local::., gurobi=?ignore
           needs: website
           pak-version: devel
 

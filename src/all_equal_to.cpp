@@ -1,11 +1,9 @@
 #include "internal.h"
 using namespace Rcpp;
 
-// [[Rcpp::plugins(cpp11)]]
-
 // Templated function to check if all elements of a vector are equal to a supplied value
 template <int RTYPE>
-bool all_equal_to_(Vector<RTYPE> x,
+bool all_equal_to_(const Vector<RTYPE>& x,
                    typename traits::storage_type<RTYPE>::type y) {
 
   for (auto xi : x) {
@@ -19,8 +17,8 @@ bool all_equal_to_(Vector<RTYPE> x,
 
 // Wrapper function to handle different types of R vectors
 // [[Rcpp::export]]
-bool all_equal_to(RObject x,
-                  RObject y) {
+bool all_equal_to(const RObject& x,
+                  const RObject& y) {
 
   switch (TYPEOF(x)) {
   case INTSXP:

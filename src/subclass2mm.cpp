@@ -1,15 +1,13 @@
 #include "internal.h"
 using namespace Rcpp;
 
-// [[Rcpp::plugins(cpp11)]]
-
 //Turns subclass vector given as a factor into a numeric match.matrix.
 //focal is the treatment level (0/1) that corresponds to the rownames.
 
 // [[Rcpp::export]]
 IntegerMatrix subclass2mmC(const IntegerVector& subclass_,
                            const IntegerVector& treat,
-                           const int& focal) {
+                           int focal) {
 
   LogicalVector na_sub = is_na(subclass_);
   IntegerVector unique_sub = unique(as<IntegerVector>(subclass_[!na_sub]));
@@ -40,17 +38,26 @@ IntegerMatrix subclass2mmC(const IntegerVector& subclass_,
   mm.fill(NA_INTEGER);
   CharacterVector lab = treat.names();
 
-  IntegerVector ss(n1);
-  ss.fill(NA_INTEGER);
+  //First row of `mm` belonging to each subclass. The rows are scanned in order and
+  //the first match wins, which is what the loop this replaces did with its `break`;
+  //doing it once makes the assignment below O(n) instead of O(n * n1).
+  std::vector<int> first_row(nsub, -1);
 
-  int s, si;
   for (i = 0; i < n1; i++) {
     if (na_sub[ind_focal[i]]) {
       continue;
     }
 
-    ss[i] = subclass[ind_focal[i]];
+    int si = subclass[ind_focal[i]];
+
+    if (first_row[si] < 0) {
+      first_row[si] = i;
+    }
   }
+
+  //Next column to fill in each row, rather than recomputing it with
+  //`sum(!is_na(mm(s, _)))`, which allocates
+  std::vector<int> mm_filled(n1, 0);
 
   for (i = 0; i < n; i++) {
     if (treat[i] == focal) {
@@ -61,20 +68,13 @@ IntegerMatrix subclass2mmC(const IntegerVector& subclass_,
       continue;
     }
 
-    si = subclass[i];
+    int s = first_row[subclass[i]];
 
-    for (s = 0; s < n1; s++) {
-      if (!std::isfinite(ss[s])) {
-        continue;
-      }
-
-      if (si != ss[s]) {
-        continue;
-      }
-
-      mm(s, sum(!is_na(mm(s, _)))) = i;
-      break;
+    if (s < 0) {
+      continue;
     }
+
+    mm(s, mm_filled[s]++) = i;
   }
 
   mm = mm + 1;

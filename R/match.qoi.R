@@ -7,12 +7,12 @@ bal1var <- function(xx, tt, ww = NULL, s.weights, subclass = NULL, mm = NULL,
   bin.var <- all(xx == 0 | xx == 1)
 
   xsum <- rep.int(NA_real_, 7L)
-  if (standardize)
-    names(xsum) <- c("Means Treated", "Means Control", "Std. Mean Diff.",
-                     "Var. Ratio", "eCDF Mean", "eCDF Max", "Std. Pair Dist.")
-  else
-    names(xsum) <- c("Means Treated", "Means Control", "Mean Diff.",
-                     "Var. Ratio", "eQQ Mean", "eQQ Max", "Pair Dist.")
+  names(xsum) <- {
+    if (standardize) c("Means Treated", "Means Control", "Std. Mean Diff.",
+                       "Var. Ratio", "eCDF Mean", "eCDF Max", "Std. Pair Dist.")
+    else c("Means Treated", "Means Control", "Mean Diff.",
+           "Var. Ratio", "eQQ Mean", "eQQ Max", "Pair Dist.")
+  }
 
   if (un) ww <- s.weights
   else ww <- ww * s.weights
@@ -33,7 +33,7 @@ bal1var <- function(xx, tt, ww = NULL, s.weights, subclass = NULL, mm = NULL,
         std <- s.d.denom
       }
       else {
-        s.d.denom <- match_arg(s.d.denom, c("treated", "control", "pooled"))
+        s.d.denom <- arg::match_arg(s.d.denom, c("treated", "control", "pooled"))
         std <- switch(s.d.denom,
                       "treated" = sqrt(wvar(xx[i1], bin.var, s.weights[i1])),
                       "control" = sqrt(wvar(xx[i0], bin.var, s.weights[i0])),
@@ -79,14 +79,13 @@ bal1var.subclass <- function(xx, tt, s.weights, subclass, s.d.denom = "treated",
   bin.var <- all(xx == 0 | xx == 1)
   in.sub <- !is.na(subclass) & subclass == which.subclass
 
-  xsum <- matrix(NA_real_, nrow = 1L, ncol = 6L)
-  rownames(xsum) <- "Subclass"
-  if (standardize)
-    colnames(xsum) <- c("Means Treated", "Means Control", "Std. Mean Diff.",
-                        "Var. Ratio", "eCDF Mean", "eCDF Max")
-  else
-    colnames(xsum) <- c("Means Treated", "Means Control", "Mean Diff",
-                        "Var. Ratio", "eQQ Mean", "eQQ Max")
+  xsum <- make_matrix(ncol = 6L, nrow = "Subclass")
+  colnames(xsum) <- {
+    if (standardize) c("Means Treated", "Means Control", "Std. Mean Diff.",
+                       "Var. Ratio", "eCDF Mean", "eCDF Max")
+    else c("Means Treated", "Means Control", "Mean Diff",
+           "Var. Ratio", "eQQ Mean", "eQQ Max")
+  }
 
   i1 <- which(in.sub & tt == 1)
   i0 <- which(in.sub & tt == 0)
@@ -105,7 +104,7 @@ bal1var.subclass <- function(xx, tt, s.weights, subclass, s.d.denom = "treated",
       }
       else {
         #SD from full sample, not within subclass
-        s.d.denom <- match_arg(s.d.denom, c("treated", "control", "pooled"))
+        s.d.denom <- arg::match_arg(s.d.denom, c("treated", "control", "pooled"))
         std <- switch(s.d.denom,
                       "treated" = sqrt(wvar(xx[i1], bin.var, s.weights[i1])),
                       "control" = sqrt(wvar(xx[i0], bin.var, s.weights[i0])),

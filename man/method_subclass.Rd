@@ -122,7 +122,6 @@ quantiles listed in \code{q.cut}. \code{include.obj} is ignored.
 }
 
 \examples{
-
 data("lalonde")
 
 # PS subclassification for the ATT with 7 subclasses
@@ -152,20 +151,13 @@ In a manuscript, you don't need to cite another package when
 using \code{method = "subclass"} because the subclassification is performed
 completely within \emph{MatchIt}. For example, a sentence might read:
 
-\emph{Propensity score subclassification was performed using the MatchIt
-package (Ho, Imai, King, & Stuart, 2011) in R.}
+\emph{Propensity score subclassification was performed using the MatchIt package (Ho, Imai, King, & Stuart, 2011) in R.}
 
-It may be a good idea to cite Hong (2010) or Desai et al. (2017) if the
-treatment effect is estimated using the subclassification weights.
+It may be a good idea to cite Hong (2010) or Desai et al. (2017) if the treatment effect is estimated using the subclassification weights.
 
-Desai, R. J., Rothman, K. J., Bateman, B. . T., Hernandez-Diaz, S., &
-Huybrechts, K. F. (2017). A Propensity-score-based Fine Stratification
-Approach for Confounding Adjustment When Exposure Is Infrequent:
-Epidemiology, 28(2), 249–257. \doi{10.1097/EDE.0000000000000595}
+Desai, R. J., Rothman, K. J., Bateman, B. . T., Hernandez-Diaz, S., & Huybrechts, K. F. (2017). A Propensity-score-based Fine Stratification Approach for Confounding Adjustment When Exposure Is Infrequent. \emph{Epidemiology}, 28(2), 249–257. \doi{10.1097/EDE.0000000000000595}
 
-Hong, G. (2010). Marginal mean weighting through stratification: Adjustment
-for selection bias in multilevel data. Journal of Educational and Behavioral
-Statistics, 35(5), 499–531. \doi{10.3102/1076998609359785}
+Hong, G. (2010). Marginal mean weighting through stratification: Adjustment for selection bias in multilevel data. \emph{Journal of Educational and Behavioral Statistics}, 35(5), 499–531. \doi{10.3102/1076998609359785}
 }
 \seealso{
 \code{\link[=matchit]{matchit()}} for a detailed explanation of the inputs and outputs of

@@ -42,8 +42,8 @@ can be a vector of cutpoints that demarcate bins, a single number giving the
 number of bins, or a string corresponding to a method of computing the
 number of bins. Allowable strings include \code{"sturges"}, \code{"scott"},
 and \code{"fd"}, which use the functions
-\code{\link[grDevices:nclass]{grDevices::nclass.Sturges()}}, \code{\link[grDevices:nclass]{grDevices::nclass.scott()}},
-and \code{\link[grDevices:nclass]{grDevices::nclass.FD()}}, respectively. The default is
+\code{\link[grDevices:nclass.Sturges]{grDevices::nclass.Sturges()}}, \code{\link[grDevices:nclass.scott]{grDevices::nclass.scott()}},
+and \code{\link[grDevices:nclass.FD]{grDevices::nclass.FD()}}, respectively. The default is
 \code{"sturges"} for variables that are not listed or if no argument is
 supplied. Can also be a single value to be applied to all numeric variables.
 See Details.  }
@@ -187,9 +187,9 @@ cutpoints = list(X1 = 4,
 
 This would split \code{X1} into 4 bins, \code{X2}
 into bins based on the provided boundaries, \code{X3} into a number of bins
-determined by \code{\link[grDevices:nclass]{grDevices::nclass.scott()}}, and \code{X4} into
+determined by \code{\link[grDevices:nclass.scott]{grDevices::nclass.scott()}}, and \code{X4} into
 quintiles. All other numeric variables would be split into a number of bins
-determined by \code{\link[grDevices:nclass]{grDevices::nclass.Sturges()}}, the default.
+determined by \code{\link[grDevices:nclass.Sturges]{grDevices::nclass.Sturges()}}, the default.
 }
 
 }
@@ -203,26 +203,11 @@ differences between the ways \emph{MatchIt} and \emph{cem} (and older
 versions of \emph{MatchIt}) differ in executing coarsened exact matching,
 described below.
 \itemize{
-\item In \emph{MatchIt}, when a single number is
-supplied to \code{cutpoints}, it describes the number of bins; in
-\emph{cem}, it describes the number of cutpoints separating bins. The
-\emph{MatchIt} method is closer to how \code{\link[=hist]{hist()}} processes breaks points to
-create bins.
-\item In \emph{MatchIt}, values on the cutpoint boundaries will
-be placed into the higher bin; in \emph{cem}, they are placed into the lower
-bin. To avoid consequences of this choice, ensure the bin boundaries do not
-coincide with observed values of the variables.
-\item When \code{cutpoints} are used, \code{"ss"} (for Shimazaki-Shinomoto's rule) can be used in
-\emph{cem} but not in \emph{MatchIt}.
-\item When \code{k2k = TRUE}, \emph{MatchIt} matches on the original variables (scaled), whereas
-\emph{cem} matches on the coarsened variables. Because the variables are
-already exactly matched on the coarsened variables, matching in \emph{cem}
-is equivalent to random matching within strata.
-\item When \code{k2k = TRUE}, in \emph{MatchIt} matched units are identified by pair membership, and the
-original stratum membership prior to 1:1 matching is discarded. In
-\emph{cem}, pairs are not identified beyond the stratum the members are part of.
-\item When \code{k2k = TRUE}, \code{k2k.method = "mahalanobis"} can be
-requested in \emph{MatchIt} but not in \emph{cem}.
+\item In \emph{MatchIt}, when a single number is supplied to \code{cutpoints}, it describes the number of bins; in \emph{cem}, it describes the number of cutpoints separating bins. The \emph{MatchIt} method is closer to how \code{\link[=hist]{hist()}} processes breaks points to create bins.
+\item In \emph{MatchIt}, values on the cutpoint boundaries will be placed into the higher bin; in \emph{cem}, they are placed into the lower bin. To avoid consequences of this choice, ensure the bin boundaries do not coincide with observed values of the variables.
+\item When \code{cutpoints} are used, \code{"ss"} (for Shimazaki-Shinomoto's rule) can be used in \emph{cem} but not in \emph{MatchIt}.
+\item When \code{k2k = TRUE}, \emph{MatchIt} matches on the original variables (scaled), whereas \emph{cem} matches on the coarsened variables. Because the variables are already exactly matched on the coarsened variables, matching in \emph{cem} is equivalent to random matching within strata.
+\item When \code{k2k = TRUE}, in \emph{MatchIt} matched units are identified by pair membership, and the original stratum membership prior to 1:1 matching is discarded. In \emph{cem}, pairs are not identified beyond the stratum the members are part of. requested in \emph{MatchIt} but not in \emph{cem}.
 }
 }
 \section{Outputs}{
@@ -269,14 +254,12 @@ In a manuscript, you don't need to cite another package when
 using \code{method = "cem"} because the matching is performed completely
 within \emph{MatchIt}. For example, a sentence might read:
 
-\emph{Coarsened exact matching was performed using the MatchIt package (Ho,
-Imai, King, & Stuart, 2011) in R.}
+\emph{Coarsened exact matching was performed using the MatchIt package (Ho, Imai, King, & Stuart, 2011) in R.}
 
 It would be a good idea to cite the following article, which develops the
 theory behind coarsened exact matching:
 
-Iacus, S. M., King, G., & Porro, G. (2012). Causal Inference without Balance
-Checking: Coarsened Exact Matching. \emph{Political Analysis}, 20(1), 1–24. \doi{10.1093/pan/mpr013}
+Iacus, S. M., King, G., & Porro, G. (2012). Causal Inference without Balance Checking: Coarsened Exact Matching. \emph{Political Analysis}, 20(1), 1–24. \doi{10.1093/pan/mpr013}
 }
 \seealso{
 \code{\link[=matchit]{matchit()}} for a detailed explanation of the inputs and outputs of

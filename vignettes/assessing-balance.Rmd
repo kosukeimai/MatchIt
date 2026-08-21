@@ -227,7 +227,7 @@ If we had set `subclass = FALSE`, plots would have been displayed in aggregate u
 ## Assessing Balance with `cobalt`
 
 ```{r, include=FALSE}
-ok <- requireNamespace("cobalt", quietly = TRUE)
+ok <- rlang::is_installed("cobalt")
 ```
 
 The `cobalt` package was designed specifically for checking balance before and after matching (and weighting). It offers three main functions, `bal.tab()`, `love.plot()`, and `bal.plot()`, which perform similar actions to `summary.matchit()`, `plot.summary.matchit()`, and `plot.matchit()`, respectively. These functions directly interface with `matchit` objects, making `cobalt` straightforward to use in conjunction with `MatchIt`. `cobalt` can be used as a complement to `MatchIt`, especially for more advanced uses that are not accommodated by `MatchIt`, such as comparing balance across different matching schemes and even different packages, assessing balance in clustered or multiply imputed data, and assessing balance with multi-category, continuous, and time-varying treatments. The main `cobalt` vignette (`vignette("cobalt", package = "cobalt")`) contains many examples of its use with `MatchIt` objects, so we only provide a short demonstration of its capabilities here.

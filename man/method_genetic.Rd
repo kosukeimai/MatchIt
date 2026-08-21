@@ -216,7 +216,7 @@ included in the output.
 }
 
 \examples{
-\dontshow{if (all(sapply(c("Matching", "rgenoud"), requireNamespace, quietly = TRUE))) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
+\dontshow{if (rlang::is_installed(c("Matching", "rgenoud"))) withAutoprint(\{ # examplesIf}
 data("lalonde")
 
 # 1:1 genetic matching with PS as a covariate
@@ -256,22 +256,15 @@ summary(m.out3, un = FALSE)
 \dontshow{\}) # examplesIf}
 }
 \references{
-In a manuscript, be sure to cite the following papers if using
-\code{matchit()} with \code{method = "genetic"}:
+In a manuscript, be sure to cite the following papers if using \code{matchit()} with \code{method = "genetic"}:
 
-Diamond, A., & Sekhon, J. S. (2013). Genetic matching for estimating causal
-effects: A general multivariate matching method for achieving balance in
-observational studies. Review of Economics and Statistics, 95(3), 932–945. \doi{10.1162/REST_a_00318}
+Diamond, A., & Sekhon, J. S. (2013). Genetic matching for estimating causal effects: A general multivariate matching method for achieving balance in observational studies. \emph{Review of Economics and Statistics}, 95(3), 932–945. \doi{10.1162/REST_a_00318}
 
-Sekhon, J. S. (2011). Multivariate and Propensity Score Matching Software
-with Automated Balance Optimization: The Matching package for R. Journal of
-Statistical Software, 42(1), 1–52. \doi{10.18637/jss.v042.i07}
+Sekhon, J. S. (2011). Multivariate and Propensity Score Matching Software with Automated Balance Optimization: The Matching package for R. \emph{Journal of Statistical Software}, 42(1), 1–52. \doi{10.18637/jss.v042.i07}
 
 For example, a sentence might read:
 
-\emph{Genetic matching was performed using the MatchIt package (Ho, Imai,
-King, & Stuart, 2011) in R, which calls functions from the Matching package
-(Diamond & Sekhon, 2013; Sekhon, 2011).}
+\emph{Genetic matching was performed using the MatchIt package (Ho, Imai, King, & Stuart, 2011) in R, which calls functions from the Matching package (Diamond & Sekhon, 2013; Sekhon, 2011).}
 }
 \seealso{
 \code{\link[=matchit]{matchit()}} for a detailed explanation of the inputs and outputs of

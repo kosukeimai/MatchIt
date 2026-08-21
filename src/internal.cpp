@@ -1,25 +1,21 @@
-#include <Rcpp.h>
-#include <algorithm>
+#include "internal.h"
 using namespace Rcpp;
-
-// [[Rcpp::plugins(cpp11)]]
 
 // Rcpp internal functions
 
 //C implementation of tabulate(). Faster than base::tabulate(), but real
 //use is in subclass2mmC().
 
-// [[Rcpp::interfaces(cpp)]]
 IntegerVector tabulateC_(const IntegerVector& bins,
-                         const int& nbins = 0) {
+                         int nbins) {
   int max_bin;
 
   if (nbins > 0) max_bin = nbins;
   else max_bin = max(na_omit(bins));
 
   IntegerVector counts(max_bin);
-  int n = bins.size();
-  for (int i = 0; i < n; i++) {
+  R_xlen_t n = bins.size();
+  for (R_xlen_t i = 0; i < n; i++) {
     if (bins[i] > 0 && bins[i] <= max_bin) {
       counts[bins[i] - 1]++;
     }
@@ -30,26 +26,23 @@ IntegerVector tabulateC_(const IntegerVector& bins,
 
 //Rcpp port of base::which
 
-// [[Rcpp::interfaces(cpp)]]
 IntegerVector which(const LogicalVector& x) {
   IntegerVector ind = Range(0, x.size() - 1);
   return ind[x];
 }
 
-// [[Rcpp::interfaces(cpp)]]
-bool antiexact_okay(const int& aenc,
-                    const int& i,
-                    const int& j,
+bool antiexact_okay(int aenc,
+                    int i,
+                    int j,
                     const IntegerMatrix& antiexact_covs) {
   if (aenc == 0) {
     return true;
   }
 
-  IntegerVector antiexact_covs_row_i = antiexact_covs.row(i);
-  IntegerVector antiexact_covs_row_j = antiexact_covs.row(j);
-
+  //Indexed directly rather than through `.row()`, which would allocate a vector
+  //for each of the two rows on every call
   for (int k = 0; k < aenc; k++) {
-    if (antiexact_covs_row_i[k] == antiexact_covs(j, k)) {
+    if (antiexact_covs(i, k) == antiexact_covs(j, k)) {
       return false;
     }
   }
@@ -57,10 +50,9 @@ bool antiexact_okay(const int& aenc,
   return true;
 }
 
-// [[Rcpp::interfaces(cpp)]]
-bool caliper_covs_okay(const int& ncc,
-                       const int& i,
-                       const int& j,
+bool caliper_covs_okay(int ncc,
+                       int i,
+                       int j,
                        const NumericMatrix& caliper_covs_mat,
                        const NumericVector& caliper_covs) {
   if (ncc == 0) {
@@ -83,12 +75,12 @@ bool caliper_covs_okay(const int& ncc,
   return true;
 }
 
-// [[Rcpp::interfaces(cpp)]]
-bool caliper_covs_okay2(const int& ncc,
-                        const NumericVector& cc_ti,
-                        const int& j,
-                        const NumericMatrix& caliper_covs_mat,
-                        const NumericVector& caliper_covs) {
+//Only used in this file
+static bool caliper_covs_okay2(int ncc,
+                               const NumericVector& cc_ti,
+                               int j,
+                               const NumericMatrix& caliper_covs_mat,
+                               const NumericVector& caliper_covs) {
   if (ncc == 0) {
     return true;
   }
@@ -109,12 +101,11 @@ bool caliper_covs_okay2(const int& ncc,
   return true;
 }
 
-// [[Rcpp::interfaces(cpp)]]
-bool caliper_dist_okay(const bool& use_caliper_dist,
-                       const int& i,
-                       const int& j,
+bool caliper_dist_okay(bool use_caliper_dist,
+                       int i,
+                       int j,
                        const NumericVector& distance,
-                       const double& caliper_dist) {
+                       double caliper_dist) {
   if (!use_caliper_dist) {
     return true;
   }
@@ -127,14 +118,17 @@ bool caliper_dist_okay(const bool& use_caliper_dist,
   }
 }
 
-// [[Rcpp::interfaces(cpp)]]
-bool mm_okay(const int& r,
-             const int& i,
+bool mm_okay(int r,
+             int i,
              const IntegerVector& mm_rowi) {
 
   if (r > 1) {
-    for (int j : na_omit(mm_rowi)) {
-      if (i == j) {
+    //NA_INTEGER is INT_MIN, which never equals a unit index, so the NAs need no
+    //separate handling and `na_omit()`, which allocates, is not needed
+    R_xlen_t nmm = mm_rowi.size();
+
+    for (R_xlen_t k = 0; k < nmm; k++) {
+      if (mm_rowi[k] == i) {
         return false;
       }
     }
@@ -143,10 +137,9 @@ bool mm_okay(const int& r,
   return true;
 }
 
-// [[Rcpp::interfaces(cpp)]]
-bool exact_okay(const bool& use_exact,
-                const int& i,
-                const int& j,
+bool exact_okay(bool use_exact,
+                int i,
+                int j,
                 const IntegerVector& exact) {
 
   if (!use_exact) {
@@ -156,43 +149,87 @@ bool exact_okay(const bool& use_exact,
   return exact[i] == exact[j];
 }
 
-// [[Rcpp::interfaces(cpp)]]
-double euc_dist_sq(const NumericVector& v1,
-                   const NumericVector& v2) {
+//Squared Euclidean distance between two rows of a matrix. Takes row indices rather
+//than vectors because `.row()` allocates, and this runs once per candidate control.
+double euc_dist_sq(const NumericMatrix& x,
+                   int i,
+                   int j) {
   double out = 0;
-  double tmp = 0;
-  int s = v1.size();
+  int p = x.ncol();
 
-  for (int i = 0; i < s; i++) {
-    tmp = v1[i] - v2[i];
+  for (int k = 0; k < p; k++) {
+    double tmp = x(i, k) - x(j, k);
     out += tmp * tmp;
   }
 
   return out;
 }
 
-// [[Rcpp::interfaces(cpp)]]
-std::vector<int> find_control_vec(const int& t_id,
+//Return the `ratio` ids with the smallest distances, in increasing order of
+//distance. Shared by find_control_vec() and find_control_mat(), which differ in how
+//they collect candidates but not in how they choose among them.
+std::vector<int> take_closest(std::vector<int> ids,
+                              const std::vector<double>& dists,
+                              int ratio) {
+
+  int n = ids.size();
+
+  if (n <= 1) {
+    return ids;
+  }
+
+  if (n <= ratio && std::is_sorted(dists.begin(), dists.end())) {
+    return ids;
+  }
+
+  std::vector<int> ind(n);
+  std::iota(ind.begin(), ind.end(), 0);
+
+  auto dist_less = [&dists](int a, int b) {
+    return dists[a] < dists[b];
+  };
+
+  //`partial_sort()` and `sort()` order ties differently, so which one runs has to
+  //stay as it was for the output to be unchanged
+  if (n > ratio) {
+    std::partial_sort(ind.begin(), ind.begin() + ratio, ind.end(), dist_less);
+    ind.resize(ratio);
+  }
+  else {
+    std::sort(ind.begin(), ind.end(), dist_less);
+  }
+
+  std::vector<int> matches_out;
+  matches_out.reserve(ind.size());
+
+  for (int i : ind) {
+    matches_out.push_back(ids[i]);
+  }
+
+  return matches_out;
+}
+
+std::vector<int> find_control_vec(int t_id,
                                   const IntegerVector& ind_d_ord,
                                   const IntegerVector& match_d_ord,
                                   const IntegerVector& treat,
                                   const NumericVector& distance,
                                   const LogicalVector& eligible,
-                                  const int& gi,
-                                  const int& r,
+                                  int gi,
+                                  int r,
                                   const IntegerVector& mm_rowi_,
-                                  const int& ncc,
+                                  int ncc,
                                   const NumericMatrix& caliper_covs_mat,
                                   const NumericVector& caliper_covs,
-                                  const double& caliper_dist,
-                                  const bool& use_exact,
+                                  double caliper_dist,
+                                  bool use_exact,
                                   const IntegerVector& exact,
-                                  const int& aenc,
+                                  int aenc,
                                   const IntegerMatrix& antiexact_covs,
                                   const IntegerVector& first_control,
                                   const IntegerVector& last_control,
-                                  const int& ratio = 1,
-                                  const int& prev_start = -1) {
+                                  int ratio,
+                                  int prev_start) {
 
   int ii = match_d_ord[t_id];
 
@@ -359,8 +396,6 @@ std::vector<int> find_control_vec(const int& t_id,
       }
     }
 
-
-
     if (!exact_okay(use_exact, t_id, iz, exact)) {
       continue;
     }
@@ -368,10 +403,6 @@ std::vector<int> find_control_vec(const int& t_id,
     if (!antiexact_okay(aenc, t_id, iz, antiexact_covs)) {
       continue;
     }
-
-    // if (!caliper_covs_okay(ncc, t_id, iz, caliper_covs_mat, caliper_covs)) {
-    //   continue;
-    // }
 
     if (!caliper_covs_okay2(ncc, cc_ti, iz, caliper_covs_mat, caliper_covs)) {
       continue;
@@ -394,74 +425,31 @@ std::vector<int> find_control_vec(const int& t_id,
     }
   }
 
-  int n_potential_matches = potential_matches_id.size();
-
-  if (n_potential_matches <= 1) {
-    return potential_matches_id;
-  }
-
-  if (n_potential_matches <= ratio &&
-      std::is_sorted(potential_matches_dist.begin(),
-                     potential_matches_dist.end())) {
-    return potential_matches_id;
-  }
-
-  std::vector<int> ind(n_potential_matches);
-  std::iota(ind.begin(), ind.end(), 0);
-
-  std::vector<int> matches_out;
-
-  if (n_potential_matches > ratio) {
-    std::partial_sort(ind.begin(), ind.begin() + ratio, ind.end(),
-                      [&potential_matches_dist](int a, int b){
-                        return potential_matches_dist[a] < potential_matches_dist[b];
-                      });
-
-    matches_out.reserve(ratio);
-
-    for (auto it = ind.begin(); it != ind.begin() + ratio; ++it) {
-      matches_out.push_back(potential_matches_id[*it]);
-    }
-  }
-  else {
-    std::sort(ind.begin(), ind.end(),
-              [&potential_matches_dist](int a, int b){
-                return potential_matches_dist[a] < potential_matches_dist[b];
-              });
-
-    matches_out.reserve(n_potential_matches);
-
-    for (auto it = ind.begin(); it != ind.end(); ++it) {
-      matches_out.push_back(potential_matches_id[*it]);
-    }
-  }
-
-  return matches_out;
+  return take_closest(std::move(potential_matches_id), potential_matches_dist, ratio);
 }
 
-// [[Rcpp::interfaces(cpp)]]
-std::vector<int> find_control_mahcovs(const int& t_id,
+std::vector<int> find_control_mahcovs(int t_id,
                                       const IntegerVector& ind_d_ord,
                                       const IntegerVector& match_d_ord,
                                       const NumericVector& match_var,
-                                      const double& match_var_caliper,
+                                      double match_var_caliper,
                                       const IntegerVector& treat,
                                       const NumericVector& distance,
                                       const LogicalVector& eligible,
-                                      const int& gi,
-                                      const int& r,
+                                      int gi,
+                                      int r,
                                       const IntegerVector& mm_rowi,
                                       const NumericMatrix& mah_covs,
-                                      const int& ncc,
+                                      int ncc,
                                       const NumericMatrix& caliper_covs_mat,
                                       const NumericVector& caliper_covs,
-                                      const bool& use_caliper_dist,
-                                      const double& caliper_dist,
-                                      const bool& use_exact,
+                                      bool use_caliper_dist,
+                                      double caliper_dist,
+                                      bool use_exact,
                                       const IntegerVector& exact,
-                                      const int& aenc,
+                                      int aenc,
                                       const IntegerMatrix& antiexact_covs,
-                                      const int& ratio = 1) {
+                                      int ratio) {
 
   int ii = match_d_ord[t_id];
 
@@ -492,7 +480,8 @@ std::vector<int> find_control_mahcovs(const int& t_id,
   int iz;
   bool left = false;
 
-  auto dist_comp = [](std::pair<int, double> a, std::pair<int, double> b) {
+  auto dist_comp = [](const std::pair<int, double>& a,
+                      const std::pair<int, double>& b) {
     return a.second < b.second;
   };
 
@@ -587,7 +576,7 @@ std::vector<int> find_control_mahcovs(const int& t_id,
       continue;
     }
 
-    dist_c = euc_dist_sq(mah_covs.row(t_id), mah_covs.row(iz));
+    dist_c = euc_dist_sq(mah_covs, t_id, iz);
 
     if (!std::isfinite(dist_c)) {
       continue;
@@ -627,31 +616,30 @@ std::vector<int> find_control_mahcovs(const int& t_id,
   std::vector<int> matches_out;
   matches_out.reserve(potential_matches.size());
 
-  for (auto p : potential_matches) {
+  for (const auto& p : potential_matches) {
     matches_out.push_back(p.first);
   }
 
   return matches_out;
 }
 
-// [[Rcpp::interfaces(cpp)]]
-std::vector<int> find_control_mat(const int& t_id,
+std::vector<int> find_control_mat(int t_id,
                                   const IntegerVector& treat,
                                   const IntegerVector& ind_non_focal,
                                   const NumericVector& distance_mat_row_i,
                                   const LogicalVector& eligible,
-                                  const int& gi,
-                                  const int& r,
+                                  int gi,
+                                  int r,
                                   const IntegerVector& mm_rowi,
-                                  const int& ncc,
+                                  int ncc,
                                   const NumericMatrix& caliper_covs_mat,
                                   const NumericVector& caliper_covs,
-                                  const double& caliper_dist,
-                                  const bool& use_exact,
+                                  double caliper_dist,
+                                  bool use_exact,
                                   const IntegerVector& exact,
-                                  const int& aenc,
+                                  int aenc,
                                   const IntegerMatrix& antiexact_covs,
-                                  const int& ratio = 1) {
+                                  int ratio) {
 
   int c_id_i;
   double dist_c;
@@ -674,7 +662,7 @@ std::vector<int> find_control_mat(const int& t_id,
 
     dist_c = distance_mat_row_i[c];
 
-    if (potential_matches_id.size() == static_cast<size_t>(ratio)) {
+    if (potential_matches_id.size() >= static_cast<size_t>(ratio)) {
       if (dist_c > max_dist) {
         continue;
       }
@@ -732,52 +720,9 @@ std::vector<int> find_control_mat(const int& t_id,
     }
   }
 
-  int n_potential_matches = potential_matches_id.size();
-
-  if (n_potential_matches <= 1) {
-    return potential_matches_id;
-  }
-
-  if (n_potential_matches <= ratio &&
-      std::is_sorted(potential_matches_dist.begin(),
-                     potential_matches_dist.end())) {
-    return potential_matches_id;
-  }
-
-  std::vector<int> ind(n_potential_matches);
-  std::iota(ind.begin(), ind.end(), 0);
-
-  std::vector<int> matches_out;
-
-  if (n_potential_matches > ratio) {
-    std::partial_sort(ind.begin(), ind.begin() + ratio, ind.end(),
-                      [&potential_matches_dist](int a, int b){
-                        return potential_matches_dist[a] < potential_matches_dist[b];
-                      });
-
-    matches_out.reserve(ratio);
-
-    for (auto it = ind.begin(); it != ind.begin() + ratio; ++it) {
-      matches_out.push_back(potential_matches_id[*it]);
-    }
-  }
-  else {
-    std::sort(ind.begin(), ind.end(),
-              [&potential_matches_dist](int a, int b){
-                return potential_matches_dist[a] < potential_matches_dist[b];
-              });
-
-    matches_out.reserve(n_potential_matches);
-
-    for (auto it = ind.begin(); it != ind.end(); ++it) {
-      matches_out.push_back(potential_matches_id[*it]);
-    }
-  }
-
-  return matches_out;
+  return take_closest(std::move(potential_matches_id), potential_matches_dist, ratio);
 }
 
-// [[Rcpp::interfaces(cpp)]]
 double max_finite(const NumericVector& x) {
   double m = NA_REAL;
 
@@ -813,7 +758,6 @@ double max_finite(const NumericVector& x) {
   return m;
 }
 
-// [[Rcpp::interfaces(cpp)]]
 double min_finite(const NumericVector& x) {
   double m = NA_REAL;
 
@@ -849,13 +793,12 @@ double min_finite(const NumericVector& x) {
   return m;
 }
 
-// [[Rcpp::interfaces(cpp)]]
 void update_first_and_last_control(IntegerVector first_control,
                                    IntegerVector last_control,
                                    const IntegerVector& ind_d_ord,
                                    const LogicalVector& eligible,
                                    const IntegerVector& treat,
-                                   const int& gi) {
+                                   int gi) {
   R_xlen_t c;
 
   // Update first_control
@@ -883,15 +826,14 @@ void update_first_and_last_control(IntegerVector first_control,
   }
 }
 
-// [[Rcpp::interfaces(cpp)]]
 double get_affine_transformation(const NumericVector& x,
                                  const NumericVector& y,
-                                 const double& tol = 1e-9) {
-  R_len_t n = x.size();
-  int i;
+                                 double tol) {
+  R_xlen_t n = x.size();
+  R_xlen_t i;
 
   if (n != y.size() || n < 2) {
-    return false; // Need at least two points for a meaningful check
+    return 0.0; // Need at least two points for a meaningful check
   }
 
   // Compute means

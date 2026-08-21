@@ -4,15 +4,14 @@
 #' [match_data()] and [get_matches()]. They function nearly identically to
 #' `rbind.data.frame()`; see Details for how they differ.
 #'
-#' @aliases rbind.matchdata rbind.getmatches
-#'
 #' @param \dots Two or more `matchdata` or `getmatches` objects the
 #' output of calls to [match_data()] and [get_matches()], respectively.
 #' Supplied objects must either be all `matchdata` objects or all
 #' `getmatches` objects.
 #' @param deparse.level Passed to [rbind()].
 #'
-#' @return An object of the same class as those supplied to it (i.e., a
+#' @return
+#' An object of the same class as those supplied to it (i.e., a
 #' `matchdata` object if `matchdata` objects are supplied and a
 #' `getmatches` object if `getmatches` objects are supplied).
 #' [rbind()] is called on the objects after adjusting the variables so that the
@@ -37,7 +36,9 @@
 #' `rbind.getmatches()` and `rbind.matchdata()` are identical.
 #'
 #' @author Noah Greifer
-#' @seealso [match_data()], [rbind()]
+#'
+#' @seealso
+#' [match_data()], [rbind()]
 #'
 #' See `vignettes("estimating-effects")` for details on using
 #' `rbind()` for effect estimation after subsetting the data.
@@ -73,6 +74,7 @@ rbind.matchdata <- function(..., deparse.level = 1) {
 
   allargs <- list(...)
   allargs <- allargs[lengths(allargs) > 0L]
+
   if (is_null(names(allargs))) {
     md_list <- allargs
     allargs <- list()
@@ -87,24 +89,23 @@ rbind.matchdata <- function(..., deparse.level = 1) {
   type <- intersect(c("matchdata", "getmatches"), unlist(lapply(md_list, class)))
 
   if (is_null(type)) {
-    .err("a `matchdata` or `getmatches` object must be supplied")
+    arg::err("a {.cls matchdata} or {.cls getmatches} object must be supplied")
   }
 
   if (length(type) == 2L) {
-    .err("supplied objects must be all `matchdata` objects or all `getmatches` objects")
+    arg::err("supplied objects must be all {.cls matchdata} objects or all {.cls getmatches} objects")
   }
 
   attrs <- c("distance", "weights", "subclass", "id")
-  attr_list <- setNames(vector("list", length(attrs)), attrs)
+  attr_list <- make_list(attrs)
   key_attrs <- setNames(rep.int(NA_character_, length(attrs)), attrs)
 
   for (i in attrs) {
     attr_list[[i]] <- unlist(lapply(md_list, function(m) {
-      a <- attr(m, i)
-      if (is_null(a)) NA_character_ else a
+      attr(m, i) %or% NA_character_
     }))
 
-    if (all(is.na(attr_list[[i]]))) {
+    if (allNA(attr_list[[i]])) {
       attr_list[[i]] <- NULL
     }
     else {
@@ -122,8 +123,8 @@ rbind.matchdata <- function(..., deparse.level = 1) {
   for (d in seq_along(md_list)[-1L]) {
     if (length(other_col_list[[d]]) != length(other_col_list[[1L]]) ||
         !all(other_col_list[[d]] %in% other_col_list[[1L]])) {
-      .err(sprintf("the %s inputs must come from the same dataset",
-                 switch(type, "matchdata" = "`match_data()`", "`get_matches()`")))
+      fn <- switch(type, "matchdata" = "match_data", "get_matches")
+      arg::err("the {.fun {fn}} inputs must come from the same dataset")
     }
   }
 
@@ -139,7 +140,7 @@ rbind.matchdata <- function(..., deparse.level = 1) {
 
       #Give subclasses unique values across datasets
       if (i == "subclass") {
-        if (all(is.na(md_list[[d]][[key_attrs[i]]]))) {
+        if (allNA(md_list[[d]][[key_attrs[i]]])) {
           md_list[[d]][[key_attrs[i]]] <- factor(md_list[[d]][[key_attrs[i]]], levels = NA)
         }
         else {

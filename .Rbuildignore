@@ -3,7 +3,6 @@
 ^README.Rmd$
 ^\.travis\.yml$
 ^\.Rproj\.user$
-^tests$
 ^\_archive$
 ^\_dev$
 ^_pkgdown\.yml$
@@ -17,3 +16,5 @@
 ^CRAN-SUBMISSION$
 ^Makefile$
 ^\.lintr
+^\.claude$
+^CLAUDE\.md$

@@ -1,6 +1,5 @@
 #' Nearest Neighbor Matching
 #' @name method_nearest
-#' @aliases method_nearest
 #' @usage NULL
 #'
 #' @description
@@ -178,8 +177,7 @@
 #'
 #' ## Variable Ratio Matching
 #'
-#' `matchit()` can perform variable ratio "extremal" matching as described by Ming and Rosenbaum (2000; \doi{10.1111/j.0006-341X.2000.00118.x}). This
-#' method tends to result in better balance than fixed ratio matching at the
+#' `matchit()` can perform variable ratio "extremal" matching as described by Ming and Rosenbaum (2000; \doi{10.1111/j.0006-341X.2000.00118.x}). This method tends to result in better balance than fixed ratio matching at the
 #' expense of some precision. When `ratio > 1`, rather than requiring all
 #' treated units to receive `ratio` matches, each treated unit is assigned
 #' a value that corresponds to the number of control units they will be matched
@@ -217,16 +215,16 @@
 #'
 #' Nearest neighbor matching involves a random component only when `m.order = "random"` (or when the propensity is estimated using a method with randomness; see [`distance`] for details), so a seed must be set in that case using [set.seed()] to ensure reproducibility. Otherwise, it is purely deterministic, and any ties are broken based on the order in which the data appear.
 #'
-#' @seealso [matchit()] for a detailed explanation of the inputs and outputs of
+#' @seealso
+#' [matchit()] for a detailed explanation of the inputs and outputs of
 #' a call to `matchit()`.
 #'
-#' [method_optimal()] for optimal pair matching, which is similar to
+#' [`method_optimal`] for optimal pair matching, which is similar to
 #' nearest neighbor matching without replacement except that an overall distance criterion is
 #' minimized (i.e., as an alternative to specifying `m.order`).
 #'
-#' @references In a manuscript, you don't need to cite another package when
-#' using `method = "nearest"` because the matching is performed completely
-#' within *MatchIt*. For example, a sentence might read:
+#' @references
+#' In a manuscript, you don't need to cite another package when using `method = "nearest"` because the matching is performed completely within *MatchIt*. For example, a sentence might read:
 #'
 #' *Nearest neighbor matching was performed using the MatchIt package (Ho, Imai, King, & Stuart, 2011) in R.*
 #'
@@ -290,8 +288,7 @@ matchit2nearest <- function(treat, data, distance, discarded,
 
   .cat_verbose("Nearest neighbor matching... \n", verbose = verbose)
 
-  estimand <- toupper(estimand)
-  estimand <- match_arg(estimand, c("ATT", "ATC"))
+  estimand <- arg::match_arg(estimand, c("ATT", "ATC"))
 
   if (estimand == "ATC") {
     tc <- c("control", "treated")
@@ -306,8 +303,7 @@ matchit2nearest <- function(treat, data, distance, discarded,
 
   if (is.full.mahalanobis) {
     if (is_null(attr(terms(formula, data = data), "term.labels"))) {
-      .err(sprintf("covariates must be specified in the input formula when `distance = %s`",
-                   add_quotes(attr(is.full.mahalanobis, "transform"))))
+      arg::err('covariates must be specified in the input formula when {.code distance = {.str {attr(is.full.mahalanobis, "transform")}}}')
     }
     mahvars <- formula
   }
@@ -321,10 +317,7 @@ matchit2nearest <- function(treat, data, distance, discarded,
 
   mahcovs <- distance_mat <- NULL
   if (is_not_null(mahvars)) {
-    transform <- {
-      if (is.full.mahalanobis) attr(is.full.mahalanobis, "transform")
-      else "mahalanobis"
-    }
+    transform <- attr(is.full.mahalanobis, "transform") %or% "mahalanobis"
 
     mahcovs <- transform_covariates(mahvars, data = data, method = transform,
                                     s.weights = s.weights, treat = treat,
@@ -424,6 +417,8 @@ matchit2nearest <- function(treat, data, distance, discarded,
     unit.id <- NULL
   }
 
+  unit_text <- if (is_null(unit.id)) "units" else "unit IDs"
+
   #Process exact
   ex <- NULL
   if (is_not_null(exact)) {
@@ -435,7 +430,7 @@ matchit2nearest <- function(treat, data, distance, discarded,
     cc <- Reduce("intersect", lapply(unique(treat), function(t) unclass(ex)[treat == t]))
 
     if (is_null(cc)) {
-      .err("no matches were found")
+      arg::err("no matches were found")
     }
 
     cc <- sort(cc)
@@ -453,18 +448,18 @@ matchit2nearest <- function(treat, data, distance, discarded,
         }
 
         if (!w1 && e_ratio < 1) {
-          .wrn(sprintf("fewer %s %s than %s units in some `exact` strata; not all %s units will get a match",
-                       tc[2L], if (is_null(unit.id)) "units" else "unit IDs", tc[1L], tc[1L]))
+          arg::wrn("fewer {tc[2L]} {unit_text} than {tc[1L]} units in some {.arg exact} strata; not all {tc[1L]} units will get a match")
           w1 <- TRUE
         }
 
         if (!w2 && ratio > 1 && e_ratio < ratio) {
-          if (is_null(max.controls) || ratio == max.controls)
-            .wrn(sprintf("not all %s units will get %s matches",
-                         tc[1L], ratio))
-          else
-            .wrn(sprintf("not enough %s %s for an average of %s matches per %s unit in all `exact` strata",
-                         tc[2L], if (is_null(unit.id)) "units" else "unit IDs", ratio, tc[1L]))
+          if (is_null(max.controls) || ratio == max.controls) {
+            arg::wrn("not all {tc[1L]} units will get {ratio} matches")
+          }
+          else {
+            arg::wrn("not enough {tc[2L]} {unit_text} for an average of {ratio} matches per {tc[1L]} unit in all {.arg exact} strata")
+          }
+
           w2 <- TRUE
         }
 
@@ -480,16 +475,15 @@ matchit2nearest <- function(treat, data, distance, discarded,
       }
 
       if (e_ratio < 1) {
-        .wrn(sprintf("fewer %s %s than %s units; not all %s units will get a match",
-                     tc[2L], if (is_null(unit.id)) "units" else "unit IDs", tc[1L], tc[1L]))
+        arg::wrn("fewer {tc[2L]} {unit_text} than {tc[1L]} units; not all {tc[1L]} units will get a match")
       }
       else if (e_ratio < ratio) {
-        if (is_null(max.controls) || ratio == max.controls)
-          .wrn(sprintf("not all %s units will get %s matches",
-                       tc[1], ratio))
-        else
-          .wrn(sprintf("not enough %s %s for an average of %s matches per %s unit",
-                       tc[2L], if (is_null(unit.id)) "units" else "unit IDs", ratio, tc[1L]))
+        if (is_null(max.controls) || ratio == max.controls) {
+          arg::wrn("not all {tc[1]} units will get {ratio} matches")
+        }
+        else {
+          arg::wrn("not enough {tc[2L]} {unit_text} for an average of {ratio} matches per {tc[1L]} unit")
+        }
       }
     }
   }
@@ -499,11 +493,10 @@ matchit2nearest <- function(treat, data, distance, discarded,
   if (is_not_null(max.controls)) {
     if (is_null(distance)) {
       if (is.full.mahalanobis) {
-        .err(sprintf('`distance` cannot be "%s" for variable ratio nearest neighbor matching',
-                     transform))
+        arg::err("{.arg distance} cannot be {.val {transform}} for variable ratio nearest neighbor matching")
       }
       else {
-        .err("`distance` cannot be supplied as a matrix for variable ratio nearest neighbor matching")
+        arg::err("{.arg distance} cannot be supplied as a matrix for variable ratio nearest neighbor matching")
       }
     }
 
@@ -540,9 +533,9 @@ matchit2nearest <- function(treat, data, distance, discarded,
   }
 
   m.order <- {
-    if (is_null(distance)) match_arg(m.order, c("data", "random", "closest", "farthest"))
+    if (is_null(distance)) arg::match_arg(m.order, c("data", "random", "closest", "farthest"))
     else if (is_null(m.order)) switch(estimand, "ATC" = "smallest", "largest")
-    else match_arg(m.order, c("largest", "smallest", "data", "random", "closest", "farthest"))
+    else arg::match_arg(m.order, c("largest", "smallest", "data", "random", "closest", "farthest"))
   }
 
   #If mahcovs is only 1 variable, use vec matching for speed
@@ -624,9 +617,9 @@ matchit2nearest <- function(treat, data, distance, discarded,
     })
 
     #Construct match.matrix
-    mm <- matrix(NA_integer_, nrow = n1,
-                 ncol = max(vapply(mm_list, ncol, numeric(1L))),
-                 dimnames = list(names(treat)[treat == 1], NULL))
+    mm <- make_matrix(max(vapply(mm_list, ncol, numeric(1L))),
+                      nrow = names(treat)[treat == 1],
+                      type = "integer")
 
     for (m in mm_list) {
       mm[rownames(m), seq_len(ncol(m))] <- m

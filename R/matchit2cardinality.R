@@ -1,6 +1,5 @@
 #' Cardinality Matching
 #' @name method_cardinality
-#' @aliases method_cardinality
 #' @usage NULL
 #'
 #' @description
@@ -10,7 +9,7 @@
 #' of units that satisfies user-supplied balance constraints on mean
 #' differences. One of several available optimization programs can be used to
 #' solve the mixed integer program. The default is the HiGHS library as
-#' implemented in the *highs* package, both of which are free, but performance can be
+#' implemented in the *highs* package, which is free, but performance can be
 #' improved using Gurobi and the *gurobi* package, for which there is a
 #' free academic license.
 #'
@@ -33,22 +32,19 @@
 #'         solver = "highs",
 #'         ...) }
 #'
-#' @param formula a two-sided [formula] object containing the treatment and
-#' covariates to be balanced.
-#' @param data a data frame containing the variables named in `formula`.
-#' If not found in `data`, the variables will be sought in the
-#' environment.
+#' @param formula a two-sided [formula] object containing the treatment and covariates to be balanced.
+#' @param data a data frame containing the variables named in `formula`. If not found in `data`, the variables will be sought in the environment.
 #' @param method set here to `"cardinality"`.
-#' @param estimand a string containing the desired estimand. Allowable options
-#' include `"ATT"`, `"ATC"`, and `"ATE"`. See Details.
-#' @param exact for which variables exact matching should take place. Separate
-#' optimization will occur within each subgroup of the exact matching
-#' variables.
+#' @param estimand a string containing the desired estimand. Allowable options include `"ATT"`, `"ATC"`, and `"ATE"`. See Details.
+#' @param exact for which variables exact matching should take place. Separate optimization will occur within each subgroup of the exact matching variables.
 #' @param mahvars which variables should be used for pairing after subset selection. Can only be set when `ratio` is a whole number. See Details.
 #' @param s.weights the variable containing sampling weights to be incorporated
 #' into the optimization. The balance constraints refer to the product of the
-#' sampling weights and the matching weights, and the sum of the product of the
-#' sampling and matching weights will be maximized.
+#' sampling weights and the matching weights. Sampling weights
+#' can only be used with profile matching (i.e., `estimand = "ATE"` or `ratio = NA`),
+#' which matches each treatment group to a fixed target; they cannot be used with
+#' cardinality matching, which matches the treatment groups to each other. See
+#' Details.
 #' @param ratio the desired ratio of control to treated units. Can be set to
 #' `NA` to maximize sample size without concern for this ratio. See
 #' Details.
@@ -71,16 +67,11 @@
 #' group when `estimand = "ATC"` (the same as used in
 #' [summary.matchit()]).}
 #' \item{`solver`}{ the name of solver to use to
-#' solve the optimization problem. Available options include `"highs"`, `"glpk"`,
-#' `"symphony"`, and `"gurobi"` for HiGHS (implemented in the *highs* package), GLPK (implemented in the
-#' *Rglpk* package), SYMPHONY (implemented in the *Rsymphony*
-#' package), and Gurobi (implemented in the *gurobi* package),
-#' respectively. The differences between them are in speed and solving ability.
+#' solve the optimization problem. Available options include `"highs"`for HiGHS (implemented in the *highs* package), `"glpk"` for GLPK (implemented in the *Rglpk* package), and `"gurobi"` for Gurobi (implemented in the *gurobi* package). The differences between them are in speed and solving ability.
 #' HiGHS (the default) and GLPK are the easiest to install, but Gurobi is recommended as
 #' it consistently outperforms other solvers and can find solutions even when
 #' others can't, and in less time. Gurobi is proprietary but can be used with a
-#' free trial or academic license. SYMPHONY may not produce reproducible
-#' results, even with a seed set.  }
+#' free trial or academic license. }
 #' \item{`time`}{ the maximum amount of
 #' time before the optimization routine aborts, in seconds. Default is 120 (2
 #' minutes). For large problems, this should be set much higher.  }
@@ -101,8 +92,7 @@
 #' @details
 #' ## Cardinality and Profile Matching
 #'
-#' Two types of matching are
-#' available with `method = "cardinality"`: cardinality matching and
+#' Two types of matching are available with `method = "cardinality"`: cardinality matching and
 #' profile matching.
 #'
 #' **Cardinality matching** finds the largest matched set that satisfies the
@@ -131,11 +121,14 @@
 #' mimicking k:1 matching. Unlike cardinality matching, profile matching
 #' retains the requested estimand if a solution is found.
 #'
-#' Neither method involves creating pairs in the matched set, but it is
-#' possible to perform an additional round of pairing within the matched sample
-#' after cardinality matching or profile matching for the ATE with a fixed whole number
-#' sample size ratio by supplying the desired pairing variables to `mahvars`. Doing so will trigger [optimal matching][method_optimal] using `optmatch::pairmatch()` on the Mahalanobis distance computed using the variables supplied to `mahvars`. The balance or composition of the matched sample will not change, but additional
-#' precision and robustness can be gained by forming the pairs.
+#' This difference determines which of the two can be used with sampling weights.
+#' Sampling weights identify a population to generalize to, which presupposes a fixed
+#' target; profile matching has one, so `s.weights` is supported and the balance
+#' constraints then refer to the sampling-weighted covariate means of each group. In
+#' cardinality matching the target is whichever units happen to be selected, so it
+#' has no fixed population to generalize to, and supplying `s.weights` is an error.
+#'
+#' Neither method involves creating pairs in the matched set, but it is possible to perform an additional round of pairing within the matched sample after cardinality matching or profile matching for the ATE with a fixed whole number sample size ratio by supplying the desired pairing variables to `mahvars`. Doing so will trigger [optimal matching][method_optimal] using `optmatch::pairmatch()` on the Mahalanobis distance computed using the variables supplied to `mahvars`. The balance or composition of the matched sample will not change, but additional precision and robustness can be gained by forming the pairs.
 #'
 #' The weights are scaled so that the sum of the weights in each group is equal
 #' to the number of matched units in the smaller group when cardinality
@@ -150,8 +143,7 @@
 #'
 #' ## Specifying Balance Constraints
 #'
-#' The balance constraints are on
-#' the (standardized) mean differences between the matched treatment groups for
+#' The balance constraints are on the (standardized) mean differences between the matched treatment groups for
 #' each covariate. Balance constraints should be set by supplying arguments to
 #' `tols` and `std.tols`. For example, setting `tols = .1` and
 #' `std.tols = TRUE` requests that all the mean differences in the matched
@@ -159,8 +151,7 @@
 #' tolerances can be set for different variables; it might be beneficial to
 #' constrain the mean differences for highly prognostic covariates more tightly
 #' than for other variables. For example, one could specify `tols = c(.001, .05), std.tols = c(TRUE, FALSE)`
-#' to request that the standardized
-#' mean difference for the first covariate is less than .001 and the raw mean
+#' to request that the standardized mean difference for the first covariate is less than .001 and the raw mean
 #' difference for the second covariate is less than .05. The values should be
 #' specified in the order they appear in `formula`, except when
 #' interactions are present. One can run the following code:
@@ -179,8 +170,7 @@
 #' to know exactly the cause of the failure and what measures should be taken
 #' to rectify it.
 #'
-#' A warning that says `"The optimizer failed to find an optimal solution in the time alotted. The returned solution may not be optimal."` usually
-#' means that an optimal solution may be possible to find with more time, in
+#' A warning that says `"The optimizer failed to find an optimal solution in the time allotted. The returned solution may not be optimal."` usually means that an optimal solution may be possible to find with more time, in
 #' which case `time` should be increased or a faster solver should be
 #' used. Even with this warning, a potentially usable solution will be
 #' returned, so don't automatically take it to mean the optimization failed.
@@ -196,8 +186,8 @@
 #' or use another solver. Sometimes Gurobi can solve problems that the other
 #' solvers cannot.
 #'
-#' @seealso [matchit()] for a detailed explanation of the inputs and outputs of
-#' a call to `matchit()`.
+#' @seealso
+#' [matchit()] for a detailed explanation of the inputs and outputs of a call to `matchit()`.
 #'
 #' *\CRANpkg{designmatch}*, which performs cardinality and profile matching with many more options and
 #' more flexibility. The implementations of cardinality matching differ between
@@ -206,7 +196,8 @@
 #' *\CRANpkg{optweight}*, which offers similar functionality but in the context of weighting rather
 #' than matching.
 #'
-#' @references In a manuscript, you should reference the solver used in the
+#' @references
+#' In a manuscript, you should reference the solver used in the
 #' optimization. For example, a sentence might read:
 #'
 #' *Cardinality matching was performed using the MatchIt package (Ho, Imai, King, & Stuart, 2011) in R with the optimization performed by HiGHS (Huangfu & Hall, 2018).*
@@ -214,7 +205,7 @@
 #' See `vignette("matching-methods")` for more literature on cardinality
 #' matching.
 #'
-#' @examplesIf requireNamespace("highs", quietly = TRUE)
+#' @examplesIf rlang::is_installed("highs")
 #' data("lalonde")
 #'
 #' #Choose your solver; "gurobi" is best, "highs" is free and
@@ -253,7 +244,7 @@
 #'                   solver = solver)
 #' m.out3
 #' summary(m.out3, un = FALSE)}
-#' @examplesIf (requireNamespace("highs", quietly = TRUE) && requireNamespace("optmatch", quietly = TRUE))
+#' @examplesIf rlang::is_installed(c("highs", "optmatch"))
 #' \donttest{# Pairing after 1:1 cardinality matching:
 #' m.out1b <- matchit(treat ~ age + educ + re74,
 #'                    data = lalonde,
@@ -287,15 +278,15 @@ matchit2cardinality <- function(treat, data, discarded, formula,
   tvals <- unique(treat)
   nt <- length(tvals)
 
-  estimand <- toupper(estimand)
-  estimand <- match_arg(estimand, c("ATT", "ATC", "ATE"))
+  estimand <- arg::match_arg(estimand, c("ATT", "ATC", "ATE"))
+
   if (is_null(focal)) {
     focal <- switch(estimand,
                     "ATC" = min(tvals),
                     max(tvals))
   }
   else if (!any(tvals == focal)) {
-    .err("`focal` must be a value of the treatment")
+    arg::err("{.arg focal} must be a value of the treatment")
   }
 
   lab <- names(treat)
@@ -305,12 +296,13 @@ matchit2cardinality <- function(treat, data, discarded, formula,
   X <- get_covs_matrix(formula, data = data)
 
   if (is_not_null(exact)) {
-    ex <- exactify(model.frame(exact, data = data), nam = lab, sep = ", ", include_vars = TRUE)
+    ex <- model.frame(exact, data = data) |>
+      exactify(nam = lab, sep = ", ", include_vars = TRUE)
 
     cc <- Reduce("intersect", lapply(tvals, function(t) unclass(ex)[treat == t]))
 
     if (is_null(cc)) {
-      .err("no matches were found")
+      arg::err("no matches were found")
     }
   }
   else {
@@ -320,8 +312,8 @@ matchit2cardinality <- function(treat, data, discarded, formula,
 
   #Process mahvars
   if (is_not_null(mahvars)) {
-    if (!is.finite(ratio) || !chk::vld_whole_number(ratio)) {
-      .err("`mahvars` can only be used with `method = \"cardinality\"` when `ratio` is a whole number")
+    if (!is.finite(ratio) || !rlang::is_integerish(ratio)) {
+      arg::err("{.arg mahvars} can only be used with {.code method = {.str cardinality}} when {.arg ratio} is a whole number")
     }
 
     rlang::check_installed("optmatch")
@@ -338,7 +330,7 @@ matchit2cardinality <- function(treat, data, discarded, formula,
   #Process tols
   assign <- get_assign(X)
 
-  chk::chk_numeric(tols)
+  arg::arg_numeric(tols)
   if (length(tols) == 1L) {
     tols <- rep.int(tols, ncol(X))
   }
@@ -346,10 +338,10 @@ matchit2cardinality <- function(treat, data, discarded, formula,
     tols <- tols[assign]
   }
   else if (length(tols) != ncol(X)) {
-    .err("`tols` must have length 1 or the number of covariates. See `?method_cardinality` for details")
+    arg::err("{.arg tols} must have length equal to 1 or the number of covariates. See {.topic MatchIt::method_cardinality} for details")
   }
 
-  chk::chk_logical(std.tols)
+  arg::arg_logical(std.tols)
   if (length(std.tols) == 1L) {
     std.tols <- rep.int(std.tols, ncol(X))
   }
@@ -357,7 +349,7 @@ matchit2cardinality <- function(treat, data, discarded, formula,
     std.tols <- std.tols[assign]
   }
   else if (length(std.tols) != ncol(X)) {
-    .err("`std.tols` must have length 1 or the number of covariates. See `?method_cardinality` for details")
+    arg::err("{.arg std.tols} must have length equal to 1 or the number of covariates. See {.topic MatchIt::method_cardinality} for details")
   }
 
   #Apply std.tols
@@ -380,7 +372,7 @@ matchit2cardinality <- function(treat, data, discarded, formula,
     }
   }
 
-  opt.out <- setNames(vector("list", nlevels(ex)), levels(ex))
+  opt.out <- make_list(levels(ex))
 
   for (e in levels(ex)[cc]) {
     if (nlevels(ex) > 1L) {
@@ -422,15 +414,15 @@ matchit2cardinality <- function(treat, data, discarded, formula,
     levels(psclass) <- seq_len(nlevels(psclass))
     names(psclass) <- names(treat)
 
-    mm <- nummm2charmm(subclass2mmC(psclass, treat, focal = switch(estimand, "ATC" = 0, 1)),
-                       treat)
+    mm <- subclass2mmC(psclass, treat, focal = switch(estimand, "ATC" = 0, 1)) |>
+      nummm2charmm(treat)
   }
   else {
     mm <- psclass <- NULL
   }
 
   if (length(opt.out) == 1L) {
-    out <- out[[1L]]
+    opt.out <- opt.out[[1L]]
   }
 
   res <- list(match.matrix = mm,
@@ -454,27 +446,6 @@ cardinality_matchit <- function(treat, X, estimand = "ATT", tols = .05, s.weight
   if (is_null(tvals)) tvals <- if (is.factor(treat)) levels(treat) else sort(unique(treat))
   nt <- length(tvals)
 
-  #Check inputs
-  if (is_null(s.weights)) {
-    s.weights <- rep.int(1, n)
-  }
-  else {
-    s.weights <- .make_sum_to_n(s.weights, treat)
-  }
-
-  if (is_null(focal)) {
-    focal <- tvals[length(tvals)]
-  }
-
-  chk::chk_number(time)
-  chk::chk_gt(time, 0)
-
-  chk::chk_string(solver)
-  solver <- match_arg(solver, c("highs", "glpk", "symphony", "gurobi"))
-
-  rlang::check_installed(switch(solver, glpk = "Rglpk", symphony = "Rsymphony", gurobi = "gurobi",
-                                highs = "highs"))
-
   #Select match type
   match_type <- {
     if (estimand == "ATE") "profile_ate"
@@ -482,25 +453,59 @@ cardinality_matchit <- function(treat, X, estimand = "ATT", tols = .05, s.weight
     else "profile_att"
   }
 
+  #Check inputs
+  if (match_type == "cardinality" && is_not_null(s.weights) &&
+      !all_equal_to(s.weights, s.weights[1L])) {
+    arg::err("{.arg s.weights} cannot be used with cardinality matching because it matches the treatment groups to each other rather than to a fixed target population. Use {.code estimand = {.str ATE}} or {.code ratio = NA} for profile matching, which does match to a fixed target. See {.topic MatchIt::method_cardinality} for details")
+  }
+
+  s.weights <- {
+    if (is_null(s.weights)) rep.int(1, n)
+    else .make_sum_to_n(s.weights, treat)
+  }
+
+  if (is_null(focal)) {
+    focal <- tvals[length(tvals)]
+  }
+
+  arg::arg_number(time)
+  arg::arg_gt(time, 0)
+
+  solver <- arg::match_arg(solver, c("highs", "glpk", "gurobi"))
+
+  rlang::check_installed(switch(solver, glpk = "Rglpk", gurobi = "gurobi",
+                                highs = "highs"))
+
   #Set objective and constraints
   if (match_type == "profile_ate") {
     #Find largest sample that matches full sample
 
-    #Objective function: total sample size
+    #A finite `ratio` constrains the matched group sizes. That constraint is on the
+    #*unweighted* counts, which needs one extra integer slack; see below.
+    use.count <- nt == 2L && is.finite(ratio)
+
+    #Objective function: total unweighted sample size. The sampling weights belong in
+    #the balance constraints, where they weight the covariate means, and nowhere else:
+    #putting them in the objective or in the size constraints turns those into
+    #real-valued conditions on subset sums that the solver cannot resolve except by
+    #exhaustive search. See _dev/method-tests-findings.md.
     O <- c(
-      s.weights, #weight for each unit
-      rep.int(0, nt)       #slack coefs for each sample size (n1, n0)
+      rep.int(1, n),        #one per unit
+      rep.int(0, nt),       #slack coefs for each group's weighted size
+      if (use.count) 0      #slack coef for the focal group's matched count
     )
 
     #Constraint matrix
-    target.means <- apply(X, 2, wm, w = s.weights)
+    target.means <- apply(X, 2L, wm, w = s.weights)
 
-    C <- matrix(0, nrow = nt * (1 + 2 * ncol(X)), ncol = length(O))
+    C <- matrix(0, nrow = nt * (1 + 2 * ncol(X)) + 2L * use.count,
+                ncol = length(O))
     Crhs <- rep.int(0, nrow(C))
     Cdir <- rep.int("==", nrow(C))
 
     for (i in seq_len(nt)) {
-      #Num in group i = ni
+      #Weighted size of group i = ni. This is a definition, not a constraint linking
+      #the groups, so it stays in weighted units.
       C[i, seq_len(n)] <- s.weights * (treat == tvals[i])
       C[i, n + i] <- -1
 
@@ -517,23 +522,40 @@ cardinality_matchit <- function(treat, X, estimand = "ATT", tols = .05, s.weight
       Cdir[r2] <- ">"
     }
 
-    #If ratio != 0, constrain n0 to be ratio*n1
-    if (nt == 2L && is.finite(ratio)) {
-      C_ratio <- c(rep.int(0, n), rep.int(-1, nt))
-      C_ratio[n + which(tvals == focal)] <- ratio
-      C <- rbind(C, C_ratio)
-      Crhs <- c(Crhs, 0)
-      Cdir <- c(Cdir, "==")
+    #If ratio is finite, constrain the unweighted size of the non-focal group to be
+    #ratio times that of the focal group. Counts rather than weighted sizes: equating
+    #weighted sizes across groups is an exact equality between two real-valued subset
+    #sums, which is what made this branch unsolvable with sampling weights.
+    if (use.count) {
+      k <- n + nt + 1L
+
+      for (i in seq_len(nt)) {
+        r <- nt * (1 + 2 * ncol(X)) + i
+        C[r, seq_len(n)] <- treat == tvals[i]
+        C[r, k] <- if (tvals[i] == focal) -1 else -ratio
+      }
     }
 
     #Coef types
-    types <- c(rep.int("B", n), #Matching weights
-               rep.int("C", nt)) #Slack coefs for matched group size
+    types <- c(rep.int("B", n),      #Matching weights
+               rep.int("C", nt),     #Slack coefs for matched group weighted size
+               if (use.count) "I")   #Slack coef for matched group count
+
+    #Each group's weighted size cannot exceed its total weight, which after rescaling
+    #is its size. Bounding it rather than leaving it free tightens the relaxation the
+    #solver starts from; without this the branch-and-bound tree is far larger.
+    group.n <- vapply(tvals, function(t) sum(treat == t), numeric(1L))
 
     lower.bound <- c(rep.int(0, n),
-                     rep.int(1, nt))
+                     rep.int(1, nt),
+                     if (use.count) 0)
     upper.bound <- c(rep.int(1, n),
-                     rep.int(Inf, nt))
+                     group.n,
+                     if (use.count) {
+                       #The focal count cannot exceed the focal group, nor can
+                       #`ratio` times it exceed the non-focal group
+                       min(group.n / ifelse(tvals == focal, 1, ratio))
+                     })
   }
   else if (match_type == "profile_att") {
     #Find largest control group that matches treated group
@@ -549,7 +571,8 @@ cardinality_matchit <- function(treat, X, estimand = "ATT", tols = .05, s.weight
     )
 
     #Constraint matrix
-    target.means <- apply(X[treat == focal, , drop = FALSE], 2, wm, w = s.weights[treat == focal])
+    target.means <- apply(X[treat == focal, , drop = FALSE], 2L, wm,
+                          w = s.weights[treat == focal])
     #One row per constraint, one column per coef
 
     C <- matrix(0, nrow = (nt - 1) * (1 + 2 * ncol(X)), ncol = length(O))
@@ -564,13 +587,13 @@ cardinality_matchit <- function(treat, X, estimand = "ATT", tols = .05, s.weight
       #Cov means must be less than target.means+tols
       r1 <- nt - 1 + (i - 1) * 2 * ncol(X) + seq_len(ncol(X))
       C[r1, seq_len(n0)] <- t((treat[nonf] == tvals_[i]) * s.weights[nonf] * X[nonf, , drop = FALSE])
-      C[r1, n0 + i] <- -target.means - tols
+      C[r1, n0 + i] <- -(target.means + tols)
       Cdir[r1] <- "<"
 
       #Cov means must be greater than target.means-tols
       r2 <- r1 + ncol(X)
       C[r2, seq_len(n0)] <- t((treat[nonf] == tvals_[i]) * s.weights[nonf] * X[nonf, , drop = FALSE])
-      C[r2, n0 + i] <- -target.means + tols
+      C[r2, n0 + i] <- -(target.means - tols)
       Cdir[r2] <- ">"
     }
 
@@ -589,8 +612,8 @@ cardinality_matchit <- function(treat, X, estimand = "ATT", tols = .05, s.weight
 
     #Objective function: total sample size
     O <- c(
-      s.weights, #weight for each unit
-      0          #coef for treated sample size (n1)
+      rep.int(1, n), #weight for each unit
+      0              #coef for treated sample size (n1)
     )
 
     #Constraint matrix
@@ -602,7 +625,7 @@ cardinality_matchit <- function(treat, X, estimand = "ATT", tols = .05, s.weight
 
     for (i in seq_len(nt)) {
       #Num in group i = ni
-      C[i, seq_len(n)] <- s.weights * (treat == tvals[i])
+      C[i, seq_len(n)] <- 1 * (treat == tvals[i])
       C[i, n + 1L] <- if (tvals[i] == focal) -1 else -ratio
     }
 
@@ -611,12 +634,12 @@ cardinality_matchit <- function(treat, X, estimand = "ATT", tols = .05, s.weight
       if (t_comb[2L] == focal) t_comb <- rev(t_comb)
 
       r1 <- nt + (j - 1) * 2 * ncol(X) + seq_len(ncol(X))
-      C[r1, seq_len(n)] <- t(((treat == t_comb[1L]) - (treat == t_comb[2L]) / ratio) * s.weights * X)
+      C[r1, seq_len(n)] <- t(((treat == t_comb[1L]) - (treat == t_comb[2L]) / ratio) * X)
       C[r1, n + 1L] <- -tols
       Cdir[r1] <- "<"
 
       r2 <- r1 + ncol(X)
-      C[r2, seq_len(n)] <- t(((treat == t_comb[1L]) - (treat == t_comb[2L]) / ratio) * s.weights * X)
+      C[r2, seq_len(n)] <- t(((treat == t_comb[1L]) - (treat == t_comb[2L]) / ratio) * X)
       C[r2, n + 1L] <- tols
       Cdir[r2] <- ">"
     }
@@ -641,7 +664,6 @@ cardinality_matchit <- function(treat, X, estimand = "ATT", tols = .05, s.weight
 
   sol <- switch(solver,
                 "glpk" = opt.out$solution,
-                "symphony" = opt.out$solution,
                 "gurobi" = opt.out$x,
                 "highs" = opt.out$primal_solution)
 
@@ -673,35 +695,27 @@ cardinality_error_report <- function(out, solver) {
   if (solver == "glpk") {
     if (out$status == 1) {
       if (all_equal_to(out$solution, 0)) {
-        .err("the optimization problem may be infeasible. Try increasing the value of `tols`.\nSee `?method_cardinality` for additional details")
+        arg::err("the optimization problem may be infeasible. Try increasing the value of {.arg tols}. See {.topic MatchIt::method_cardinality} for additional details")
       }
-      .wrn("the optimizer failed to find an optimal solution in the time alotted. The returned solution may not be optimal.\nSee `?method_cardinality` for additional details")
-    }
-  }
-  else if (solver == "symphony") {
-    if (names(out$status) %in% c("TM_TIME_LIMIT_EXCEEDED") && !all(out$solution == 0) && all(out$solution <= 1)) {
-      .wrn("the optimizer failed to find an optimal solution in the time alotted. The returned solution may not be optimal")
-    }
-    else if (names(out$status) != "TM_OPTIMAL_SOLUTION_FOUND") {
-      .err("the optimizer failed to find an optimal solution in the time alotted. The optimization problem may be infeasible. Try increasing the value of 'tols'.\nSee `?method_cardinality` for additional details")
+      arg::wrn("the optimizer failed to find an optimal solution in the time allotted. The returned solution may not be optimal. See {.topic MatchIt::method_cardinality} for additional details")
     }
   }
   else if (solver == "gurobi") {
     if (out$status %in% c("TIME_LIMIT", "SUBOPTIMAL") && !all(out$x == 0)) {
-      .wrn("the optimizer failed to find an optimal solution in the time alotted. The returned solution may not be optimal.\nSee `?method_cardinality` for additional details")
+      arg::wrn("the optimizer failed to find an optimal solution in the time allotted. The returned solution may not be optimal. See {.topic MatchIt::method_cardinality} for additional details")
     }
     else if (out$status %in% c("INFEASIBLE", "INF_OR_UNBD", "NUMERIC") || all(out$x == 0)) {
-      .err("The optimization problem may be infeasible. Try increasing the value of `tols`.\nSee `?method_cardinality` for additional details")
+      arg::err("the optimization problem may be infeasible. Try increasing the value of {.arg tols}. See {.topic MatchIt::method_cardinality} for additional details")
     }
   }
   else if (solver == "highs") {
     if (out$status_message %in% c("Infeasible", "Primal infeasible or unbounded")) {
       # if (out$status_message %in% c("Infeasible", "Primal infeasible or unbounded") ||
       #     all(abs(out$primal_solution) < 1e-8)) {
-      .err("the optimization problem may be infeasible. Try increasing the value of `tols`.\nSee `?method_cardinality` for additional details")
+      arg::err("the optimization problem may be infeasible. Try increasing the value of {.arg tols}. See {.topic MatchIt::method_cardinality} for additional details")
     }
     if (out$status_message %in% c("Time limit reached", "Iteration limit reached")) {
-      .err("the optimizer failed to find an optimal solution in the time alotted. Try increasing the value of `time`.\nSee `?method_cardinality` for additional details")
+      arg::err("the optimizer failed to find an optimal solution in the time allotted. Try increasing the value of {.arg time}. See {.topic MatchIt::method_cardinality} for additional details")
     }
   }
 }
@@ -714,15 +728,6 @@ dispatch_optimizer <- function(solver = "highs", obj, mat, dir, rhs, types, max 
                                      types = types,
                                      # bounds = list(lower = lb, upper = ub), #Spurious warning when using bounds
                                      control = list(tm_limit = time * 1000, verbose = verbose))
-  }
-  else if (solver == "symphony") {
-    dir[dir == "<"] <- "<="
-    dir[dir == ">"] <- ">="
-    dir[dir == "="] <- "=="
-    opt.out <- Rsymphony::Rsymphony_solve_LP(obj = obj, mat = mat, dir = dir, rhs = rhs, max = TRUE,
-                                             types = types, verbosity = verbose - 2,
-                                             # bounds = list(lower = lb, upper = ub), #Spurious warning when using bounds
-                                             time_limit = time)
   }
   else if (solver == "gurobi") {
     dir[dir == "<="] <- "<"

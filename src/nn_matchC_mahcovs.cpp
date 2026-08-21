@@ -3,8 +3,6 @@
 #include "internal.h"
 using namespace Rcpp;
 
-// [[Rcpp::plugins(cpp11)]]
-
 // [[Rcpp::export]]
 IntegerMatrix nn_matchC_mahcovs(const IntegerVector& treat_,
                                 const IntegerVector& ord,
@@ -87,9 +85,18 @@ IntegerMatrix nn_matchC_mahcovs(const IntegerVector& treat_,
   // Output matrix with sample indices of control units
   IntegerMatrix mm(nf, max_ratio);
   mm.fill(NA_INTEGER);
+
+  //Next column to fill in each row of `mm`. Tracked rather than recomputed with
+  //`sum(!is_na(mm(row, _)))`, which allocates twice for every match written.
+  std::vector<int> mm_filled(mm.nrow(), 0);
+
   CharacterVector lab = treat_.names();
 
-  Function o("order");
+  //`base::order()`'s radix sort beats every C++ alternative measured here by 3-8x at
+  //these sizes; see _dev/cpp-cleanup-notes.md. Looked up in the base environment
+  //because `Function("order")` searches from the global environment, where a user
+  //object of that name would mask it.
+  Function o = Environment::base_env()["order"];
 
 
 
@@ -175,8 +182,12 @@ IntegerMatrix nn_matchC_mahcovs(const IntegerVector& treat_,
   IntegerVector ind_d_ord = o(match_var);
   ind_d_ord = ind_d_ord - 1; //location of each unit after sorting
 
-  IntegerVector match_d_ord = o(ind_d_ord);
-  match_d_ord = match_d_ord - 1;
+  //`ind_d_ord` is a permutation, so its order is just its inverse; computing that
+  //directly avoids a second call into R
+  IntegerVector match_d_ord(n);
+  for (i = 0; i < n; i++) {
+    match_d_ord[ind_d_ord[i]] = static_cast<int>(i);
+  }
 
   IntegerVector matches_i(1 + max_ratio * (g - 1));
   int k_total;
@@ -211,7 +222,17 @@ IntegerMatrix nn_matchC_mahcovs(const IntegerVector& treat_,
           Rcpp::checkUserInterrupt();
         }
 
-        if (max(as<IntegerVector>(n_eligible[g_c])) == 0) {
+        //Any control group left with eligible units? Checked with a loop because
+        //`max(as<IntegerVector>(n_eligible[g_c]))` allocates twice per unit.
+        bool any_eligible = false;
+        for (int gj : g_c) {
+          if (n_eligible[gj] > 0) {
+            any_eligible = true;
+            break;
+          }
+        }
+
+        if (!any_eligible) {
           break;
         }
 
@@ -267,7 +288,7 @@ IntegerMatrix nn_matchC_mahcovs(const IntegerVector& treat_,
         }
 
         for (c = 0; c < k_total; c++) {
-          mm(t_id_t_i, sum(!is_na(mm(t_id_t_i, _)))) = matches_i[c];
+          mm(t_id_t_i, mm_filled[t_id_t_i]++) = matches_i[c];
         }
 
         matches_i[k_total] = t_id_i;
@@ -356,7 +377,7 @@ IntegerMatrix nn_matchC_mahcovs(const IntegerVector& treat_,
       }
 
       for (c = 0; c < k_total; c++) {
-        mm(t_id_t_i, sum(!is_na(mm(t_id_t_i, _)))) = matches_i[c];
+        mm(t_id_t_i, mm_filled[t_id_t_i]++) = matches_i[c];
       }
     }
   }

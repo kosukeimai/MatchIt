@@ -38,7 +38,8 @@
 #' help in avoiding this.
 #' @param \dots ignored.
 #'
-#' @return A plot is displayed, and `x` is invisibly returned.
+#' @return
+#' A plot is displayed, and `x` is invisibly returned.
 #'
 #' @details
 #' For matching methods other than subclassification,
@@ -53,7 +54,8 @@
 #'
 #' @author Noah Greifer
 #'
-#' @seealso [summary.matchit()], [dotchart()]
+#' @seealso
+#' [summary.matchit()], [dotchart()]
 #'
 #' \pkgfun{cobalt}{love.plot} is a more flexible and sophisticated function to make
 #' Love plots and is also natively compatible with `matchit` objects.
@@ -98,7 +100,7 @@ plot.summary.matchit <- function(x,
   }
 
   if (!"Std. Mean Diff." %in% colnames(standard.sum)) {
-    .err("not appropriate for unstandardized summary. Run `summary()` with the `standardize = TRUE` option, and then plot")
+    arg::err("not appropriate for unstandardized summary. Run {.fun summary} with the {.code standardize = TRUE} option, and then plot")
   }
 
   if (un) {
@@ -109,19 +111,18 @@ plot.summary.matchit <- function(x,
     sd.matched <- x[[if (sub) "sum.across" else "sum.matched"]][, "Std. Mean Diff."]
   }
 
-  chk::chk_flag(abs)
+  arg::arg_flag(abs)
 
   var.names <- rownames(standard.sum)
 
-  chk::chk_string(var.order)
-  var.order <- match_arg(var.order, c("data", "matched", "unmatched", "alphabetical"))
+  var.order <- arg::match_arg(var.order, c("data", "matched", "unmatched", "alphabetical"))
 
   if (!un && var.order == "unmatched") {
-    .err('`var.order` cannot be "unmatched" if `un = TRUE` in the call to `summary()`')
+    arg::err("{.arg var.order} cannot be {.val {var.order}} if {.code un = FALSE} in the call to {.fun summary}")
   }
 
   if (!matched && var.order == "matched") {
-    .err('`var.order` cannot be "matched" if `method = NULL` in the original call to `matchit()`')
+    arg::err("{.arg var.order} cannot be {.val {var.order}} if {.code method = NULL} in the original call to {.fun matchit}")
   }
 
   if (abs) {
@@ -174,8 +175,9 @@ plot.summary.matchit <- function(x,
   }
 
   if (sum(matched, un) > 1 && is_not_null(position)) {
-    position <- match_arg(position, c("bottomright", "bottom", "bottomleft", "left",
-                                      "topleft", "top", "topright", "right", "center"))
+    position <- arg::match_arg(position, c("bottomright", "bottom", "bottomleft", "left",
+                                           "topleft", "top", "topright", "right", "center"))
+
     legend(position, legend = c("All", "Matched"),
            pt.bg = c("white", "black"), pch = 21,
            inset = .015, xpd = TRUE)

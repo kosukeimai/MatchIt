@@ -19,8 +19,10 @@
 #' of variable in `data` to be used or a one-sided formula with the
 #' variable on the right-hand side (e.g., `~ SW`).
 #' @param data a data frame containing the sampling weights if given as a
-#' string or formula. If unspecified, `add_s.weights()` will attempt to find
-#' the dataset using the environment of the `matchit` object.
+#' string or formula. It must contain one row for each unit in the original
+#' `matchit()` call, in the same order; supplying one with a different number of
+#' rows is an error. If unspecified, `add_s.weights()` will attempt to find the
+#' dataset using the environment of the `matchit` object.
 #'
 #' @return a `matchit` object with an `s.weights` component
 #' containing the supplied sampling weights. If `s.weights = NULL`, the original
@@ -60,77 +62,75 @@ add_s.weights <- function(m,
                           s.weights = NULL,
                           data = NULL) {
 
-  chk::chk_is(m, "matchit")
+  arg::arg_supplied(m)
+  arg::arg_is(m, "matchit")
 
   if (is_null(s.weights)) {
     return(m)
   }
 
+  arg::arg_or(
+    s.weights,
+    arg::arg_numeric,
+    arg::arg_string,
+    arg::arg_formula(one_sided = TRUE)
+  )
+
   if (!is.numeric(s.weights)) {
     if (is_null(data)) {
+      env <- NULL
+
       if (is_not_null(m$model)) {
-        env <- attributes(terms(m$model))$.Environment
+        env <- try(attributes(terms(m$model))$.Environment,
+                   silent = TRUE)
       }
-      else {
+
+      if (null_or_error(env)) {
+        env <- try(environment(m$formula),
+                   silent = TRUE)
+      }
+
+      if (null_or_error(env)) {
         env <- parent.frame()
       }
 
-      data <- eval(m$call$data, envir = env)
+      data <- try(eval(m$call$data, envir = env),
+                  silent = TRUE)
 
-      if (is_null(data)) {
-        .err("a dataset could not be found. Please supply an argument to `data` containing the original dataset used in the matching")
+      if (null_or_error(data)) {
+        arg::err("a dataset could not be found. Please supply an argument to {.arg data} containing the original dataset used in the matching")
       }
     }
     else {
-      if (!is.data.frame(data)) {
-        if (!is.matrix(data)) {
-          .err("`data` must be a data frame")
-        }
-        data <- as.data.frame.matrix(data)
-      }
-
-      if (nrow(data) != length(m$treat)) {
-        .err("`data` must have as many rows as there were units in the original call to `matchit()`")
-      }
+      data <- .check_supplied_data(data, length(m$treat), original = FALSE)
     }
 
     if (is.character(s.weights)) {
       if (is_null(data) || !is.data.frame(data)) {
-        .err("if `s.weights` is specified a string, a data frame containing the named variable must be supplied to `data`")
+        arg::err("if {.arg s.weights} is specified a string, a data frame containing the named variable must be supplied to {.arg data}")
       }
 
       if (!all(hasName(data, s.weights))) {
-        .err("the name supplied to `s.weights` must be a variable in `data`")
+        arg::err("the name supplied to {.arg s.weights} must be a variable in {.arg data}")
       }
 
-      s.weights.form <- reformulate(s.weights)
-      s.weights <- model.frame(s.weights.form, data, na.action = "na.pass")
-
-      if (ncol(s.weights) != 1L) {
-        .err("`s.weights` can only contain one named variable")
-      }
-
-      s.weights <- s.weights[[1L]]
+      s.weights <- reformulate(s.weights)
     }
-    else if (rlang::is_formula(s.weights)) {
-      s.weights.form <- update(terms(s.weights, data = data), NULL ~ .)
-      s.weights <- model.frame(s.weights.form, data, na.action = "na.pass")
 
-      if (ncol(s.weights) != 1L) {
-        .err("`s.weights` can only contain one named variable")
-      }
+    s.weights.form <- update(terms(s.weights, data = data), NULL ~ .)
+    s.weights <- model.frame(s.weights.form, data, na.action = "na.pass")
 
-      s.weights <- s.weights[[1L]]
+    if (ncol(s.weights) != 1L) {
+      arg::err("{.arg s.weights} can only contain one named variable")
     }
-    else {
-      .err("`s.weights` must be supplied as a numeric vector, string, or one-sided formula")
-    }
+
+    s.weights <- s.weights[[1L]]
   }
 
-  chk::chk_not_any_na(s.weights)
+  arg::arg_no_NA(s.weights)
 
   if (length(s.weights) != length(m$treat)) {
-    .err("`s.weights` must be the same length as the treatment vector")
+    arg::err("{.arg s.weights} must be the same length as the treatment vector")
   }
 
   names(s.weights) <- names(m$treat)
@@ -138,6 +138,25 @@ add_s.weights <- function(m,
   attr(s.weights, "in_ps") <- isTRUE(all.equal(s.weights, m$s.weights))
 
   m$s.weights <- s.weights
+
+  #The method is recorded in `info`; `matchit` objects have no `method` component
+  method <- m$info$method
+
+  if (is_not_null(method) &&
+      method %in% c("exact", "cem", "subclass", "full", "quick") &&
+      is_null(m$match.matrix)) {
+    weights <- get_weights_from_subclass(m$subclass, m$treat, m$estimand,
+                                         s.weights)
+
+    #Match the normalization of the original call. `info$normalize` is absent from
+    #objects created before it was recorded, where the default of `TRUE` applied.
+    if (isTRUE(m$info$normalize %or% TRUE)) {
+      wi <- which(weights > 0)
+      weights[wi] <- .make_sum_to_n(weights[wi], m$treat[wi])
+    }
+
+    m$weights[] <- weights
+  }
 
   m$nn <- nn(m$treat, m$weights, m$discarded, s.weights)
 

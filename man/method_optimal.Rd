@@ -224,7 +224,7 @@ of such objects, one for each stratum of the \code{exact} variables.
 }
 
 \examples{
-\dontshow{if (requireNamespace("optmatch", quietly = TRUE)) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
+\dontshow{if (rlang::is_installed("optmatch")) withAutoprint(\{ # examplesIf}
 data("lalonde")
 
 #1:1 optimal PS matching with exact matching on race
@@ -248,18 +248,13 @@ summary(m.out2, un = FALSE)
 \dontshow{\}) # examplesIf}
 }
 \references{
-In a manuscript, be sure to cite the following paper if using
-\code{matchit()} with \code{method = "optimal"}:
+In a manuscript, be sure to cite the following paper if using \code{matchit()} with \code{method = "optimal"}:
 
-Hansen, B. B., & Klopfer, S. O. (2006). Optimal Full Matching and Related
-Designs via Network Flows. Journal of Computational and Graphical
-Statistics, 15(3), 609–627. \doi{10.1198/106186006X137047}
+Hansen, B. B., & Klopfer, S. O. (2006). Optimal Full Matching and Related Designs via Network Flows. \emph{Journal of Computational and Graphical Statistics}, 15(3), 609–627. \doi{10.1198/106186006X137047}
 
 For example, a sentence might read:
 
-\emph{Optimal pair matching was performed using the MatchIt package (Ho,
-Imai, King, & Stuart, 2011) in R, which calls functions from the optmatch
-package (Hansen & Klopfer, 2006).}
+\emph{Optimal pair matching was performed using the MatchIt package (Ho, Imai, King, & Stuart, 2011) in R, which calls functions from the optmatch package (Hansen & Klopfer, 2006).}
 }
 \seealso{
 \code{\link[=matchit]{matchit()}} for a detailed explanation of the inputs and outputs of

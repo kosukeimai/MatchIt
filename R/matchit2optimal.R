@@ -1,6 +1,5 @@
 #' Optimal Pair Matching
 #' @name method_optimal
-#' @aliases method_optimal
 #' @usage NULL
 #'
 #' @description
@@ -201,7 +200,8 @@
 #'
 #' A preprocessing algorithm describe by Sävje (2020; \doi{10.1214/19-STS739}) is used to improve the speed of the matching when 1:1 matching on a propensity score. It does so by adding an additional constraint that guarantees a solution as optimal as the solution that would have been found without the constraint, and that constraint often dramatically reduces the size of the matching problem at no cost. However, this may introduce differences between the results obtained by *MatchIt* and by *optmatch*, though such differences will shrink when smaller values of `tol` are used.
 #'
-#' @seealso [matchit()] for a detailed explanation of the inputs and outputs of
+#' @seealso
+#' [matchit()] for a detailed explanation of the inputs and outputs of
 #' a call to `matchit()`.
 #'
 #' \pkgfun{optmatch}{fullmatch}, which is the workhorse.
@@ -209,20 +209,16 @@
 #' [`method_full`] for optimal full matching, of which optimal pair
 #' matching is a special case, and which relies on similar machinery.
 #'
-#' @references In a manuscript, be sure to cite the following paper if using
-#' `matchit()` with `method = "optimal"`:
+#' @references
+#' In a manuscript, be sure to cite the following paper if using `matchit()` with `method = "optimal"`:
 #'
-#' Hansen, B. B., & Klopfer, S. O. (2006). Optimal Full Matching and Related
-#' Designs via Network Flows. Journal of Computational and Graphical
-#' Statistics, 15(3), 609–627. \doi{10.1198/106186006X137047}
+#' Hansen, B. B., & Klopfer, S. O. (2006). Optimal Full Matching and Related Designs via Network Flows. *Journal of Computational and Graphical Statistics*, 15(3), 609–627. \doi{10.1198/106186006X137047}
 #'
 #' For example, a sentence might read:
 #'
-#' *Optimal pair matching was performed using the MatchIt package (Ho,
-#' Imai, King, & Stuart, 2011) in R, which calls functions from the optmatch
-#' package (Hansen & Klopfer, 2006).*
+#' *Optimal pair matching was performed using the MatchIt package (Ho, Imai, King, & Stuart, 2011) in R, which calls functions from the optmatch package (Hansen & Klopfer, 2006).*
 #'
-#' @examplesIf requireNamespace("optmatch", quietly = TRUE)
+#' @examplesIf rlang::is_installed("optmatch")
 #' data("lalonde")
 #'
 #' #1:1 optimal PS matching with exact matching on race
@@ -257,8 +253,8 @@ matchit2optimal <- function(treat, formula, data, distance, discarded,
   A <- ...mget(.args)
   A[lengths(A) == 0L] <- NULL
 
-  estimand <- toupper(estimand)
-  estimand <- match_arg(estimand, c("ATT", "ATC"))
+  estimand <- arg::match_arg(estimand, c("ATT", "ATC"))
+
   if (estimand == "ATC") {
     tc <- c("control", "treated")
     focal <- 0
@@ -274,14 +270,13 @@ matchit2optimal <- function(treat, formula, data, distance, discarded,
 
   if (is.full.mahalanobis) {
     if (is_null(attr(terms(formula, data = data), "term.labels"))) {
-      .err(sprintf("covariates must be specified in the input formula when `distance = \"%s\"`",
-                   attr(is.full.mahalanobis, "transform")))
+      arg::err('covariates must be specified in the input formula when {.code distance = {.str {attr(is.full.mahalanobis, "transform")}}}')
     }
     mahvars <- formula
   }
 
   if (is_not_null(caliper)) {
-    .wrn("calipers are currently not compatible with `method = \"optimal\"` and will be ignored")
+    arg::wrn("calipers are currently not compatible with {.code method = {.str optimal}} and will be ignored")
     caliper <- NULL
   }
 
@@ -300,7 +295,7 @@ matchit2optimal <- function(treat, formula, data, distance, discarded,
     cc <- Reduce("intersect", lapply(unique(treat_), function(t) unclass(ex)[treat_ == t]))
 
     if (is_null(cc)) {
-      .err("no matches were found")
+      arg::err("no matches were found")
     }
 
     e_ratios <- vapply(levels(ex), function(e) {
@@ -308,17 +303,16 @@ matchit2optimal <- function(treat, formula, data, distance, discarded,
     }, numeric(1L))
 
     if (any(e_ratios < 1)) {
-      .wrn(sprintf("fewer %s units than %s units in some `exact` strata; not all %s units will get a match",
-                   tc[2L], tc[1L], tc[1L]))
+      arg::wrn("fewer {tc[2L]} units than {tc[1L]} units in some {.arg exact} strata; not all {tc[1L]} units will get a match")
     }
 
     if (ratio > 1 && any(e_ratios < ratio)) {
-      if (ratio == max.controls)
-        .wrn(sprintf("not all %s units will get %s matches",
-                     tc[1L], ratio))
-      else
-        .wrn(sprintf("not enough %s units for an average of %s matches per %s unit in all `exact` strata",
-                     tc[2L], ratio, tc[1L]))
+      if (ratio == max.controls) {
+        arg::wrn("not all {tc[1L]} units will get {ratio} matches")
+      }
+      else {
+        arg::wrn("not enough {tc[2L]} units for an average of {ratio} matches per {tc[1L]} unit in all {.arg exact} strata")
+      }
     }
   }
   else {
@@ -327,24 +321,24 @@ matchit2optimal <- function(treat, formula, data, distance, discarded,
 
     e_ratios <- setNames(sum(treat_ == 0) / sum(treat_ == 1), levels(ex))
 
-    if (e_ratios < 1) {
-      .wrn(sprintf("fewer %s units than %s units; not all %s units will get a match",
-                   tc[2L], tc[1L], tc[1L]))
+    if (any(e_ratios < 1)) {
+      arg::wrn("fewer {tc[2L]} units than {tc[1L]} units; not all {tc[1L]} units will get a match")
     }
-    else if (e_ratios < ratio) {
-      if (ratio == max.controls)
-        .wrn(sprintf("not all %s units will get %s matches",
-                     tc[1L], ratio))
-      else
-        .wrn(sprintf("not enough %s units for an average of %s matches per %s unit",
-                     tc[2L], ratio, tc[1L]))
+    else if (any(e_ratios < ratio)) {
+      if (ratio == max.controls) {
+        arg::wrn("not all {tc[1]} units will get {ratio} matches")
+      }
+      else {
+        arg::wrn("not enough {tc[2L]} units for an average of {ratio} matches per {tc[1L]} unit")
+      }
     }
   }
 
   #Create distance matrix; note that Mahalanobis distance computed using entire
   #sample (minus discarded), like method2nearest, as opposed to within exact strata, like optmatch.
   if (is_not_null(mahvars)) {
-    transform <- if (is.full.mahalanobis) attr(is.full.mahalanobis, "transform") else "mahalanobis"
+    transform <- attr(is.full.mahalanobis, "transform") %or% "mahalanobis"
+
     mahcovs <- transform_covariates(mahvars, data = data, method = transform,
                                     s.weights = s.weights, treat = treat,
                                     discarded = discarded)
@@ -393,7 +387,7 @@ matchit2optimal <- function(treat, formula, data, distance, discarded,
 
   #Initialize pair membership; must include names
   pair <- rep_with(NA_character_, treat)
-  p <- setNames(vector("list", nlevels(ex)), levels(ex))
+  p <- make_list(levels(ex))
 
   t_df <- data.frame(treat_)
 
@@ -450,6 +444,10 @@ matchit2optimal <- function(treat, formula, data, distance, discarded,
     }, optmatch_max_problem_size = Inf)
 
     pair[names(p[[e]])[!is.na(p[[e]])]] <- paste(as.character(p[[e]][!is.na(p[[e]])]), e, sep = "|")
+  }
+
+  if (allNA(pair)) {
+    arg::err("No matches were found")
   }
 
   if (length(p) == 1L) {

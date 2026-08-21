@@ -51,11 +51,14 @@ is \code{"weights"}.}
 variable containing the subclasses or matched pair membership in the data
 frame output. Default is \code{"subclass"}.}
 
-\item{data}{a data frame containing the original dataset to which the
-computed output variables (\code{distance}, \code{weights}, and/or
-\code{subclass}) should be appended. If empty, \code{match_data()} and
-\code{get_matches()} will attempt to find the dataset using the environment
-of the \code{matchit} object, which can be unreliable; see Notes.}
+\item{data}{the original dataset supplied to \code{matchit()}, to which the
+computed output variables (\code{distance}, \code{weights}, and/or \code{subclass}) should
+be appended. This must be the dataset used in the matching itself, with the
+same units in the same order and before any subsetting; a dataset with a
+different number of rows will trigger an error. Usually it should be left
+unspecified: when it is, \code{match_data()} and \code{get_matches()} recover the
+original dataset from the environment of the \code{matchit} object, which works
+in all but the circumstances described in Notes.}
 
 \item{include.s.weights}{\code{logical}; whether to multiply the estimated
 weights by the sampling weights supplied to \code{matchit()}, if any.
@@ -90,17 +93,10 @@ order of the data.
 The returned data frame will contain the variables in the original data set
 or dataset supplied to \code{data} and the following columns:
 
-\item{distance}{The propensity score, if estimated or supplied to the
-\code{distance} argument in \code{matchit()} as a vector.}
-\item{weights}{The computed matching weights. These must be used in effect
-estimation to correctly incorporate the matching.}
-\item{subclass}{Matching
-strata membership. Units with the same value are in the same stratum.}
-\item{id}{The ID of each unit, corresponding to the row names in the
-original data or dataset supplied to \code{data}. Only included in
-\code{get_matches} output. This column can be used to identify which rows
-belong to the same unit since the same unit may appear multiple times if
-reused in matching with replacement.}
+\item{distance}{The propensity score, if estimated or supplied to the \code{distance} argument in \code{matchit()} as a vector.}
+\item{weights}{The computed matching weights. These must be used in effect estimation to correctly incorporate the matching.}
+\item{subclass}{Matching strata membership. Units with the same value are in the same stratum.}
+\item{id}{The ID of each unit, corresponding to the row names in the original data or dataset supplied to \code{data}. Only included in \code{get_matches()} output. This column can be used to identify which rows belong to the same unit since the same unit may appear multiple times if reused in matching with replacement.}
 
 These columns will take on the name supplied to the corresponding arguments
 in the call to \code{match_data()} or \code{get_matches()}. See Examples for
@@ -179,9 +175,13 @@ estimated (or was but with \code{discard} not \code{"none"} and
 \code{reestimate = TRUE}), this syntax may not work because the original
 dataset used to construct the matched dataset will not be found. This can
 occur when \code{matchit()} was run within an \code{\link[=lapply]{lapply()}} or
-\code{purrr::map()} call. The solution, which is recommended in all cases,
-is simply to supply the original dataset to the \code{data} argument of
-\code{match_data()}, e.g., as \code{match_data(m.out, data = original_data)}, as demonstrated in the Examples.
+\code{purrr::map()} call. The solution in that case is to supply the original
+dataset to the \code{data} argument of \code{match_data()}, e.g., as
+\code{match_data(m.out, data = original_data)}, as demonstrated in the Examples.
+This is the only purpose of the \code{data} argument; supplying anything other
+than the dataset used in the matching, including a subset of it or a version
+with its rows reordered, will produce output in which the appended matching
+variables do not correspond to the units they are attached to.
 }
 \examples{
 

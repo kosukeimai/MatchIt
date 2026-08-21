@@ -1,6 +1,5 @@
 #' Propensity scores and other distance measures
 #' @name distance
-#' @aliases distance
 #' @usage NULL
 #'
 #' @description
@@ -240,7 +239,7 @@
 #'                   data = lalonde,
 #'                   distance = "glm",
 #'                   link = "linear.logit")
-#' @examplesIf requireNamespace("mgcv", quietly = TRUE)
+#' @examplesIf rlang::is_installed("mgcv")
 #' # GAM logistic PS with smoothing splines (s()):
 #' m.out2 <- matchit(treat ~ s(age) + s(educ) +
 #'                     race + married +
@@ -248,7 +247,7 @@
 #'                   data = lalonde,
 #'                   distance = "gam")
 #' summary(m.out2$model)
-#' @examplesIf requireNamespace("CBPS", quietly = TRUE)
+#' @examplesIf rlang::is_installed("CBPS")
 #' # CBPS for ATC matching w/replacement, using the just-
 #' # identified version of CBPS (setting method = "exact"):
 #' m.out3 <- matchit(treat ~ age + educ + race + married +
@@ -308,7 +307,8 @@ distance2glm <- function(formula, data = NULL, link = "logit", ...) {
   linear <- is_not_null(link) && startsWith(as.character(link), "linear")
   if (linear) link <- sub("linear.", "", as.character(link), fixed = TRUE)
 
-  args <- unique(c(names(formals(glm)), names(formals(glm.control))))
+  args <- unique(c(rlang::fn_fmls_names(glm),
+                   rlang::fn_fmls_names(glm.control)))
   A <- ...mget(args)
   A[lengths(A) == 0L] <- NULL
 
@@ -319,7 +319,9 @@ distance2glm <- function(formula, data = NULL, link = "logit", ...) {
     else quasibinomial(link = link)
   }
 
-  res <- do.call("glm", A)
+  res <- matchit_try({
+    do.call("glm", A)
+  }, from = "{.fun stats::glm}")
 
   pred <- predict(res, type = if (linear) "link" else "response")
 
@@ -337,9 +339,11 @@ distance2gam <- function(formula, data = NULL, link = "logit", ...) {
   weights <- A[["weights"]]
   A[["weights"]] <- NULL
 
-  res <- do.call(mgcv::gam, c(list(formula, data, family = quasibinomial(link),
-                                   weights = weights), A),
-                 quote = TRUE)
+  res <- matchit_try({
+    do.call(mgcv::gam, c(list(formula, data, family = quasibinomial(link),
+                              weights = weights), A),
+            quote = TRUE)
+  }, from = "{.fun mgcv::gam}")
 
   pred <- predict(res, type = if (linear) "link" else "response")
 
@@ -350,7 +354,8 @@ distance2gam <- function(formula, data = NULL, link = "logit", ...) {
 distance2rpart <- function(formula, data = NULL, link = NULL, ...) {
   rlang::check_installed("rpart")
 
-  args <- unique(c(names(formals(rpart::rpart)), names(formals(rpart::rpart.control))))
+  args <- unique(c(rlang::fn_fmls_names(rpart::rpart),
+                   rlang::fn_fmls_names(rpart::rpart.control)))
   A <- ...mget(args)
   A[lengths(A) == 0L] <- NULL
 
@@ -358,7 +363,10 @@ distance2rpart <- function(formula, data = NULL, link = NULL, ...) {
   A[["data"]] <- data
   A[["method"]] <- "class"
 
-  res <- do.call(rpart::rpart, A)
+  res <- matchit_try({
+    do.call(rpart::rpart, A)
+  }, from = "{.fun rpart::rpart}")
+
   list(model = res, distance = predict(res, type = "prob")[, "1"])
 }
 
@@ -370,9 +378,11 @@ distance2nnet <- function(formula, data = NULL, link = NULL, ...) {
   weights <- A[["weights"]]
   A[["weights"]] <- NULL
 
-  res <- do.call(nnet::nnet, c(list(formula, data = data,
-                                    weights = weights, entropy = TRUE), A),
-                 quote = TRUE)
+  res <- matchit_try({
+    do.call(nnet::nnet, c(list(formula, data = data,
+                               weights = weights, entropy = TRUE), A),
+            quote = TRUE)
+  }, from = "{.fun nnet::nnet}")
 
   list(model = res, distance = drop(fitted(res)))
 }
@@ -388,14 +398,10 @@ distance2cbps <- function(formula, data = NULL, link = NULL, ...) {
   A[["standardized"]] <- FALSE
 
   if (is_null(A[["ATT"]])) {
-    if (is_null(A[["estimand"]])) {
-      A[["ATT"]] <- 1
-    }
-    else {
-      estimand <- toupper(A[["estimand"]])
-      estimand <- match_arg(estimand, c("ATT", "ATC", "ATE"))
-      A[["ATT"]] <- switch(estimand, "ATT" = 1, "ATC" = 2, 0)
-    }
+    estimand <- A[["estimand"]] %or% "ATT"
+
+    estimand <- arg::match_arg(estimand, c("ATT", "ATC", "ATE"))
+    A[["ATT"]] <- switch(estimand, "ATT" = 1, "ATC" = 2, 0)
   }
 
   if (is_null(A[["method"]])) {
@@ -412,9 +418,11 @@ distance2cbps <- function(formula, data = NULL, link = NULL, ...) {
   A[["formula"]] <- formula
   A[["data"]] <- data
 
-  capture.output({ #Keeps from printing message about treatment
-    res <- do.call(CBPS::CBPS, A, quote = TRUE)
-  })
+  matchit_try({
+    capture.output({ #Keeps from printing message about treatment
+      res <- do.call(CBPS::CBPS, A, quote = TRUE)
+    })
+  }, from = "{.fun CBPS::CBPS}")
 
   pred <- fitted(res)
   if (linear) pred <- qlogis(pred)
@@ -428,14 +436,17 @@ distance2bart <- function(formula, data = NULL, link = NULL, ...) {
 
   linear <- is_not_null(link) && startsWith(as.character(link), "linear")
 
-  args <- unique(c(names(formals(dbarts::bart2)), names(formals(dbarts::dbartsControl))))
+  args <- unique(c(rlang::fn_fmls_names(dbarts::bart2),
+                   rlang::fn_fmls_names(dbarts::dbartsControl)))
   A <- ...mget(args)
   A[lengths(A) == 0L] <- NULL
 
   A[["formula"]] <- formula
   A[["data"]] <- data
 
-  res <- do.call(dbarts::bart2, A)
+  res <- matchit_try({
+    do.call(dbarts::bart2, A)
+  }, from = "{.fun dbarts::bart2}")
 
   pred <- fitted(res, type = if (linear) "link" else "response")
 
@@ -461,7 +472,7 @@ distance2bart <- function(formula, data = NULL, link = NULL, ...) {
 #
 #   data <- model.frame(formula, data)
 #
-#   treat <- binarize(data[[1]])
+#   treat <- binarize(data[[1L]])
 #   X <- data[-1]
 #
 #   chars <- vapply(X, is.character, logical(1L))
@@ -475,7 +486,7 @@ distance2bart <- function(formula, data = NULL, link = NULL, ...) {
 #   res <- do.call(fun, c(list(X,
 #                              y.train = treat,
 #                              type = switch(link, "logit" = "lbart", "pbart")),
-#                         A[intersect(names(A), setdiff(names(formals(fun)),
+#                         A[intersect(names(A), setdiff(rlang::fn_fmls_names(fun),
 #                                                       c("x.train", "y.train", "x.test", "type", "ntype")))]))
 #
 #   pred <- res$prob.train.mean
@@ -487,10 +498,14 @@ distance2bart <- function(formula, data = NULL, link = NULL, ...) {
 #distance2randomforest-----------------
 distance2randomforest <- function(formula, data = NULL, link = NULL, ...) {
   rlang::check_installed("randomForest")
+
   newdata <- get_all_vars(formula, data)
   treatvar <- as.character(formula[[2L]])
   newdata[[treatvar]] <- factor(newdata[[treatvar]], levels = c("0", "1"))
-  res <- randomForest::randomForest(formula, data = newdata, ...)
+
+  res <- matchit_try({
+    randomForest::randomForest(formula, data = newdata, ...)
+  }, from = "{.fun randomForest::randomForest}")
 
   list(model = res, distance = predict(res, type = "prob")[, "1"])
 }
@@ -502,41 +517,42 @@ distance2elasticnet <- function(formula, data = NULL, link = NULL, ...) {
   linear <- is_not_null(link) && startsWith(as.character(link), "linear")
   if (linear) link <- sub("linear.", "", as.character(link), fixed = TRUE)
 
-  s <- ...get("s")
-  if (is_null(s)) {
-    s <- "lambda.1se"
-  }
+  s <- ...get("s") %or% "lambda.1se"
 
-  args <- unique(c(names(formals(glmnet::glmnet)), names(formals(glmnet::cv.glmnet))))
+  args <- unique(c(rlang::fn_fmls_names(glmnet::glmnet),
+                   rlang::fn_fmls_names(glmnet::cv.glmnet)))
   A <- ...mget(args)
   A[lengths(A) == 0L] <- NULL
 
-  if (is_null(link)) link <- "logit"
+  link <- link %or% "logit"
 
   A[["family"]] <- switch(link,
                           "logit" = "binomial",
                           "log" = "poisson",
                           binomial(link = link))
 
-  if (is_null(A[["alpha"]])) {
-    A[["alpha"]] <- .5
-  }
+  A[["alpha"]] <- A[["alpha"]] %or% .5
 
   mf <- model.frame(formula, data = data)
 
   A$y <- model.response(mf)
   A$x <- model.matrix(update(formula, . ~ . + 1), mf)[, -1L, drop = FALSE]
 
-  res <- do.call(glmnet::cv.glmnet, A)
+  res <- matchit_try({
+    do.call(glmnet::cv.glmnet, A)
+  }, from = "{.fun glmnet::cv.glmnet}")
 
-  pred <- drop(predict(res, newx = A$x, s = s,
-                       type = if (linear) "link" else "response"))
+  pred <- matchit_try({
+    drop(predict(res, newx = A$x, s = s,
+                 type = if (linear) "link" else "response"))
+  }, from = "{.fun glmnet::predict.glmnet}")
 
   list(model = res, distance = pred)
 }
 distance2lasso <- function(formula, data = NULL, link = NULL, ...) {
   if ("alpha" %in% ...names()) {
-    args <- unique(c("s", names(formals(glmnet::glmnet)), names(formals(glmnet::cv.glmnet))))
+    args <- unique(c("s", rlang::fn_fmls_names(glmnet::glmnet),
+                     rlang::fn_fmls_names(glmnet::cv.glmnet)))
     A <- ...mget(args)
     A[lengths(A) == 0L] <- NULL
 
@@ -550,7 +566,8 @@ distance2lasso <- function(formula, data = NULL, link = NULL, ...) {
 }
 distance2ridge <- function(formula, data = NULL, link = NULL, ...) {
   if ("alpha" %in% ...names()) {
-    args <- unique(c("s", names(formals(glmnet::glmnet)), names(formals(glmnet::cv.glmnet))))
+    args <- unique(c("s", rlang::fn_fmls_names(glmnet::glmnet),
+                     rlang::fn_fmls_names(glmnet::cv.glmnet)))
     A <- ...mget(args)
     A[lengths(A) == 0L] <- NULL
 
@@ -571,7 +588,7 @@ distance2gbm <- function(formula, data = NULL, link = NULL, ...) {
 
   method <- ...get("method")
 
-  args <- names(formals(gbm::gbm))
+  args <- rlang::fn_fmls_names(gbm::gbm)
   A <- ...mget(args)
   A[lengths(A) == 0L] <- NULL
 
@@ -587,20 +604,24 @@ distance2gbm <- function(formula, data = NULL, link = NULL, ...) {
   if (is_null(A[["keep.data"]])) A[["keep.data"]] <- FALSE
 
   if (A[["cv.folds"]] <= 1 && A[["bag.fraction"]] == 1) {
-    .err('either `bag.fraction` must be less than 1 or `cv.folds` must be greater than 1 when using `distance = "gbm"`')
+    arg::err("either {.arg bag.fraction} must be less than 1 or {.arg cv.folds} must be greater than 1 when using {.code distance = {.str gbm}}")
   }
 
   if (is_null(method)) {
     if (A[["bag.fraction"]] < 1) method <- "OOB"
     else method <- "cv"
   }
-  else if (!tolower(method) %in% c("oob", "cv")) {
-    .err('`distance.options$method` should be one of "OOB" or "cv"')
+  else if (!rlang::is_string(method) || !tolower(method) %in% c("oob", "cv")) {
+    arg::err("{.arg distance.options$method} should be one of {.val OOB} or {.val cv}")
   }
 
-  res <- do.call(gbm::gbm, A)
+  res <- matchit_try({
+    do.call(gbm::gbm, A)
+  }, from = "{.fun gbm::gbm}")
 
-  best.tree <- gbm::gbm.perf(res, plot.it = FALSE, method = method)
+  best.tree <- matchit_try({
+    gbm::gbm.perf(res, plot.it = FALSE, method = method)
+  }, from = "{.fun gbm::gbm.perf}")
 
   pred <- drop(predict(res, newdata = data, n.trees = best.tree,
                        type = if (linear) "link" else "response"))

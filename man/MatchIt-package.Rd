@@ -24,6 +24,7 @@ Useful links:
 
 Authors:
 \itemize{
+  \item Noah Greifer \email{noah.greifer@gmail.com} (\href{https://orcid.org/0000-0003-3067-7154}{ORCID})
   \item Daniel Ho \email{daniel.e.ho@gmail.com} (\href{https://orcid.org/0000-0002-2195-5469}{ORCID})
   \item Kosuke Imai \email{imai@harvard.edu} (\href{https://orcid.org/0000-0002-2748-1022}{ORCID})
   \item Gary King \email{king@harvard.edu} (\href{https://orcid.org/0000-0002-5327-7631}{ORCID})

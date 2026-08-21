@@ -1,6 +1,5 @@
 #' Genetic Matching
 #' @name method_genetic
-#' @aliases method_genetic
 #' @usage NULL
 #'
 #' @description
@@ -194,29 +193,24 @@
 #'
 #' Genetic matching involves a random component, so a seed must be set using [set.seed()] to ensure reproducibility. When `cluster` is used for parallel processing, the seed must be compatible with parallel processing (e.g., by setting `kind = "L'Ecuyer-CMRG"`).
 #'
-#' @seealso [matchit()] for a detailed explanation of the inputs and outputs of
+#' @seealso
+#' [matchit()] for a detailed explanation of the inputs and outputs of
 #' a call to `matchit()`.
 #'
 #' \pkgfun{Matching}{GenMatch} and \pkgfun{Matching}{Match}, which do the work.
 #'
-#' @references In a manuscript, be sure to cite the following papers if using
-#' `matchit()` with `method = "genetic"`:
+#' @references
+#' In a manuscript, be sure to cite the following papers if using `matchit()` with `method = "genetic"`:
 #'
-#' Diamond, A., & Sekhon, J. S. (2013). Genetic matching for estimating causal
-#' effects: A general multivariate matching method for achieving balance in
-#' observational studies. Review of Economics and Statistics, 95(3), 932–945. \doi{10.1162/REST_a_00318}
+#' Diamond, A., & Sekhon, J. S. (2013). Genetic matching for estimating causal effects: A general multivariate matching method for achieving balance in observational studies. *Review of Economics and Statistics*, 95(3), 932–945. \doi{10.1162/REST_a_00318}
 #'
-#' Sekhon, J. S. (2011). Multivariate and Propensity Score Matching Software
-#' with Automated Balance Optimization: The Matching package for R. Journal of
-#' Statistical Software, 42(1), 1–52. \doi{10.18637/jss.v042.i07}
+#' Sekhon, J. S. (2011). Multivariate and Propensity Score Matching Software with Automated Balance Optimization: The Matching package for R. *Journal of Statistical Software*, 42(1), 1–52. \doi{10.18637/jss.v042.i07}
 #'
 #' For example, a sentence might read:
 #'
-#' *Genetic matching was performed using the MatchIt package (Ho, Imai,
-#' King, & Stuart, 2011) in R, which calls functions from the Matching package
-#' (Diamond & Sekhon, 2013; Sekhon, 2011).*
+#' *Genetic matching was performed using the MatchIt package (Ho, Imai, King, & Stuart, 2011) in R, which calls functions from the Matching package (Diamond & Sekhon, 2013; Sekhon, 2011).*
 #'
-#' @examplesIf all(sapply(c("Matching", "rgenoud"), requireNamespace, quietly = TRUE))
+#' @examplesIf rlang::is_installed(c("Matching", "rgenoud"))
 #' data("lalonde")
 #'
 #' # 1:1 genetic matching with PS as a covariate
@@ -266,12 +260,13 @@ matchit2genetic <- function(treat, data, distance, discarded,
 
   .cat_verbose("Genetic matching...\n", verbose = verbose)
 
-  .args <- names(formals(Matching::GenMatch))
+  .args <- setdiff(rlang::fn_fmls_names(Matching::GenMatch),
+                   "...")
   A <- ...mget(.args)
   A[lengths(A) == 0L] <- NULL
 
-  estimand <- toupper(estimand)
-  estimand <- match_arg(estimand, c("ATT", "ATC"))
+  estimand <- arg::match_arg(estimand, c("ATT", "ATC"))
+
   if (estimand == "ATC") {
     tc <- c("control", "treated")
     focal <- 0
@@ -283,12 +278,10 @@ matchit2genetic <- function(treat, data, distance, discarded,
 
   if (!replace) {
     if (sum(!discarded & treat != focal) < sum(!discarded & treat == focal)) {
-      .wrn(sprintf("fewer %s units than %s units; not all %s units will get a match",
-                   tc[2L], tc[1L], tc[1L]))
+      arg::wrn("fewer {tc[2L]} units than {tc[1L]} units; not all {tc[1L]} units will get a match")
     }
     else if (sum(!discarded & treat != focal) < sum(!discarded & treat == focal) * ratio) {
-      .err(sprintf("not enough %s units for %s matches for each %s unit",
-                   tc[2L], ratio, tc[1L]))
+      arg::err("not enough {tc[2L]} units for {ratio} matches for each {tc[1L]} unit")
     }
   }
 
@@ -297,12 +290,14 @@ matchit2genetic <- function(treat, data, distance, discarded,
   n.obs <- length(treat)
   n1 <- sum(treat == 1)
 
-  if (is_null(names(treat))) names(treat) <- seq_len(n.obs)
+  if (is_null(names(treat))) {
+    names(treat) <- seq_len(n.obs)
+  }
 
   m.order <- {
-    if (is_null(distance)) match_arg(m.order, c("data", "random"))
+    if (is_null(distance)) arg::match_arg(m.order, c("data", "random"))
     else if (is_null(m.order)) switch(estimand, "ATC" = "smallest", "largest")
-    else match_arg(m.order, c("largest", "smallest", "data", "random"))
+    else arg::match_arg(m.order, c("largest", "smallest", "data", "random"))
   }
 
   ord <- switch(m.order,
@@ -319,7 +314,7 @@ matchit2genetic <- function(treat, data, distance, discarded,
   covs_to_balance <- get_covs_matrix(formula, data = data)
 
   if (ncol(covs_to_balance) == 0L) {
-    .err("covariates must be specified in the input formula to use genetic matching")
+    arg::err("covariates must be specified in the input formula to use genetic matching")
   }
 
   X <- {
@@ -337,7 +332,7 @@ matchit2genetic <- function(treat, data, distance, discarded,
     cc <- intersect(ex[treat == 1], ex[treat == 0])
 
     if (is_null(cc)) {
-      .err("No matches were found")
+      arg::err("No matches were found")
     }
 
     X <- cbind(X, ex)
@@ -426,7 +421,8 @@ matchit2genetic <- function(treat, data, distance, discarded,
     }, numeric(1L))
 
     #cal needs one value per variable in X
-    cal <- setNames(rep.int(Inf, ncol(X)), colnames(X))
+    cal <- setNames(rep.int(Inf, ncol(X)),
+                    colnames(X))
 
     #First put covariate calipers into cal
     if (is_not_null(cov.cals)) {
@@ -434,7 +430,10 @@ matchit2genetic <- function(treat, data, distance, discarded,
     }
 
     #Then put distance caliper into cal
-    if (!all(nzchar(names(caliper)))) {
+    if (all(nzchar(names(caliper)))) {
+      dist.cal <- NULL
+    }
+    else {
       dist.cal <- caliper[!nzchar(names(caliper))]
       if (is_not_null(mahvars)) {
         #If mahvars specified, distance is not yet in X, so add it to X
@@ -442,15 +441,14 @@ matchit2genetic <- function(treat, data, distance, discarded,
         cal <- c(cal, dist.cal)
 
         #Expand exact.log for newly added distance
-        if (is_not_null(exact.log)) exact.log <- c(exact.log, FALSE)
+        if (is_not_null(exact.log)) {
+          exact.log <- c(exact.log, FALSE)
+        }
       }
       else {
         #Otherwise, distance is in X at the specified index
         cal[ncol(covs_to_balance) + 1L] <- dist.cal
       }
-    }
-    else {
-      dist.cal <- NULL
     }
   }
 
@@ -464,7 +462,7 @@ matchit2genetic <- function(treat, data, distance, discarded,
           return(NULL)
         }
 
-        cbind(j, restricted_controls, -1)
+        cbind(j, restricted_controls, -1L)
       }))
     }))
 
@@ -524,13 +522,12 @@ matchit2genetic <- function(treat, data, distance, discarded,
   dont_warn_if = c("replace==FALSE, but there are more (weighted) treated obs than control obs",
                    "no valid matches"))
 
-  if (typeof(m.out) == "logical" && all(is.na(m.out))) {
-    .err("no units were matched")
+  if (typeof(m.out) == "logical" && allNA(m.out)) {
+    arg::err("no units were matched")
   }
 
   #Note: must use character match.matrix because of re-ordering treat into treat_
-  mm <- matrix(NA_integer_, nrow = n1, ncol = max(table(m.out$index.treated)),
-               dimnames = list(lab1, NULL))
+  mm <- make_matrix(max(table(m.out$index.treated)), nrow = lab1, type = "integer")
 
   unique.matched.focal <- unique(m.out$index.treated, nmax = n1)
 

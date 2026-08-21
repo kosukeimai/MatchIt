@@ -119,7 +119,7 @@ of such objects, one for each stratum of the \code{exact} variables.
 }
 
 \examples{
-\dontshow{if (requireNamespace("quickmatch", quietly = TRUE)) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
+\dontshow{if (rlang::is_installed("quickmatch")) withAutoprint(\{ # examplesIf}
 data("lalonde")
 
 # Generalized full PS matching
@@ -132,14 +132,9 @@ summary(m.out1)
 \dontshow{\}) # examplesIf}
 }
 \references{
-In a manuscript, be sure to cite the \emph{quickmatch} package if using
-\code{matchit()} with \code{method = "quick"}. A citation can be generated using \code{citation("quickmatch")}.
+In a manuscript, be sure to cite the \emph{quickmatch} package if using \code{matchit()} with \code{method = "quick"}. A citation can be generated using \code{citation("quickmatch")}. For example, a sentence might read:
 
-For example, a sentence might read:
-
-\emph{Generalized full matching was performed using the MatchIt package (Ho,
-Imai, King, & Stuart, 2011) in R, which calls functions from the quickmatch
-package (Sävje, Sekhon, & Higgins, 2024).}
+\emph{Generalized full matching was performed using the MatchIt package (Ho, Imai, King, & Stuart, 2011) in R, which calls functions from the quickmatch package (Sävje, Sekhon, & Higgins, 2024).}
 
 You should also cite the following paper, which develops and describes the method:
 

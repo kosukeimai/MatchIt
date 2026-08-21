@@ -3,8 +3,6 @@
 #include "internal.h"
 using namespace Rcpp;
 
-// [[Rcpp::plugins(cpp11)]]
-
 // [[Rcpp::export]]
 IntegerMatrix nn_matchC_vec_closest(const IntegerVector& treat,
                                     const IntegerVector& ratio,
@@ -37,9 +35,6 @@ IntegerMatrix nn_matchC_vec_closest(const IntegerVector& treat,
   ind_match.fill(NA_INTEGER);
 
   LogicalVector eligible = !discarded;
-
-  // IntegerVector g_c = Range(0, g - 1);
-  // g_c = g_c[g_c != focal];
 
   IntegerVector n_eligible(g);
   for (i = 0; i < n; i++) {
@@ -79,16 +74,28 @@ IntegerMatrix nn_matchC_vec_closest(const IntegerVector& treat,
   // Output matrix with sample indices of control units
   IntegerMatrix mm(nf, max_ratio);
   mm.fill(NA_INTEGER);
+
+  //Next column to fill in each row of `mm`. Tracked rather than recomputed with
+  //`sum(!is_na(mm(row, _)))`, which allocates twice for every match written.
+  std::vector<int> mm_filled(mm.nrow(), 0);
+
   CharacterVector lab = treat.names();
 
-  //Use base::order() because faster than C++ std::sort()
-  Function o("order");
+  //`base::order()`'s radix sort beats every C++ alternative measured here by 3-8x at
+  //these sizes; see _dev/cpp-cleanup-notes.md. Looked up in the base environment
+  //because `Function("order")` searches from the global environment, where a user
+  //object of that name would mask it.
+  Function o = Environment::base_env()["order"];
 
   IntegerVector ind_d_ord = o(distance);
-  ind_d_ord = ind_d_ord - 1;
+  ind_d_ord = ind_d_ord - 1; //location of each unit after sorting
 
-  IntegerVector match_d_ord = o(ind_d_ord);
-  match_d_ord = match_d_ord - 1;
+  //`ind_d_ord` is a permutation, so its order is just its inverse; computing that
+  //directly avoids a second call into R
+  IntegerVector match_d_ord(n);
+  for (i = 0; i < n; i++) {
+    match_d_ord[ind_d_ord[i]] = static_cast<int>(i);
+  }
 
   IntegerVector last_control(g);
   last_control.fill(n - 1);
@@ -189,13 +196,15 @@ IntegerMatrix nn_matchC_vec_closest(const IntegerVector& treat,
 
   IntegerVector::iterator ci;
 
-  std::function<bool(int, int)> cmp;
-  if (close) {
-    cmp = [&dist](const int& a, const int& b) {return dist[a] < dist[b];};
-  }
-  else {
-    cmp = [&dist](const int& a, const int& b) {return dist[a] >= dist[b];};
-  }
+  //One lambda rather than two wrapped in a `std::function`, so the comparison can
+  //be inlined into `std::lower_bound()` below
+  auto cmp = [&dist, close](const int& a, const int& b) {
+    if (close) {
+      return dist[a] < dist[b];
+    }
+
+    return dist[a] >= dist[b];
+  };
 
   for (r = 1; r <= max_ratio; r++) {
     //Find closest control unit to each treated unit
@@ -325,7 +334,7 @@ IntegerMatrix nn_matchC_vec_closest(const IntegerVector& treat,
         continue;
       }
 
-      mm(t_id_t_i, sum(!is_na(mm(t_id_t_i, _)))) = c_id_i;
+      mm(t_id_t_i, mm_filled[t_id_t_i]++) = c_id_i;
 
       ck_ = {c_id_i, t_id_i};
 

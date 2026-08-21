@@ -91,7 +91,7 @@
 #' remaining sample. Default is `FALSE` to use the propensity scores
 #' estimated in the original sample.
 #' @param s.weights an optional numeric vector of sampling weights to be
-#' incorporated into propensity score models and balance statistics. Can also
+#' incorporated into propensity score models, matching weights, and balance statistics. Can also
 #' be specified as a string containing the name of variable in `data` to
 #' be used or a one-sided formula with the variable on the right-hand side
 #' (e.g., `~ SW`). Not all propensity score models accept sampling
@@ -235,6 +235,8 @@
 #' For cardinality matching, all matched units receive a weight
 #' of 1.
 #'
+#' For stratification methods (\[coarsened\] exact matching, \[generalized\] full matching, and propensity score subclassification), when sampling weights are supplied through `s.weights` (or added to the `matchit` object using [add_s.weights()]), the stratum propensity scores are computed as the *weighted* proportion of treated units in each stratum, weighted by the sampling weights.
+#'
 #' ### Matching with replacement
 #'
 #' For matching *with* replacement, units are not assigned to unique strata. For
@@ -261,7 +263,8 @@
 #' [match_data()], which extracts the matched set from a `matchit` object,
 #' combines the matching weights and sampling weights.
 #'
-#' @return When `method` is something other than `"subclass"`, a
+#' @returns
+#' When `method` is something other than `"subclass"`, a
 #' `matchit` object with the following components:
 #'
 #' \item{match.matrix}{a matrix containing the matches. The row names correspond
@@ -306,21 +309,19 @@
 #'
 #' @author Daniel Ho, Kosuke Imai, Gary King, and Elizabeth Stuart wrote the original package. Starting with version 4.0.0, Noah Greifer is the primary maintainer and developer.
 #'
-#' @seealso [summary.matchit()] for balance assessment after matching, [plot.matchit()] for plots of covariate balance and propensity score overlap after matching.
+#' @seealso
+#' [summary.matchit()] for balance assessment after matching, [plot.matchit()] for plots of covariate balance and propensity score overlap after matching.
 #'
-#' * `vignette("MatchIt")` for an introduction to matching with *MatchIt*
-#' * `vignette("matching-methods")` for descriptions of the variety of matching methods and options available
-#' * `vignette("assessing-balance")` for information on assessing the quality of a matching specification
-#' * `vignette("estimating-effects")` for instructions on how to estimate treatment effects after matching
-#' * `vignette("sampling-weights")` for a guide to using *MatchIt* with sampling weights.
+#' - `vignette("MatchIt")` for an introduction to matching with *MatchIt*
+#' - `vignette("matching-methods")` for descriptions of the variety of matching methods and options available
+#' - `vignette("assessing-balance")` for information on assessing the quality of a matching specification
+#' - `vignette("estimating-effects")` for instructions on how to estimate treatment effects after matching
+#' - `vignette("sampling-weights")` for a guide to using *MatchIt* with sampling weights.
 #'
 #' @references
-#' Ho, D. E., Imai, K., King, G., & Stuart, E. A. (2007). Matching
-#' as Nonparametric Preprocessing for Reducing Model Dependence in Parametric
-#' Causal Inference. *Political Analysis*, 15(3), 199–236. \doi{10.1093/pan/mpl013}
+#' Ho, D. E., Imai, K., King, G., & Stuart, E. A. (2007). Matching as Nonparametric Preprocessing for Reducing Model Dependence in Parametric Causal Inference. *Political Analysis*, 15(3), 199–236. \doi{10.1093/pan/mpl013}
 #'
-#' Ho, D. E., Imai, K., King, G., & Stuart, E. A. (2011). MatchIt:
-#' Nonparametric Preprocessing for Parametric Causal Inference. *Journal of Statistical Software*, 42(8). \doi{10.18637/jss.v042.i08}
+#' Ho, D. E., Imai, K., King, G., & Stuart, E. A. (2011). MatchIt: Nonparametric Preprocessing for Parametric Causal Inference. *Journal of Statistical Software*, 42(8). \doi{10.18637/jss.v042.i08}
 #'
 #' @examples
 #' data("lalonde")
@@ -361,7 +362,7 @@
 #'
 #' # Optimal full PS matching for the ATE within calipers on
 #' # PS, age, and educ
-#' @examplesIf requireNamespace("optmatch", quietly = TRUE)
+#' @examplesIf rlang::is_installed("optmatch")
 #' m.out4 <- matchit(treat ~ age + educ + race + nodegree +
 #'                     married + re74 + re75,
 #'                   data = lalonde,
@@ -414,22 +415,21 @@ matchit <- function(formula,
   mcall <- match.call()
 
   ## Process method
-  chk::chk_null_or(method, vld = chk::vld_string)
+  arg::when_not_null(method, arg::arg_string)
+
   if (is_null(method)) {
     fn2 <- "matchit2null"
   }
   else {
-    method <- tolower(method)
-    method <- match_arg(method, c("exact", "cem", "nearest", "optimal",
-                                  "full", "genetic", "subclass", "cardinality",
-                                  "quick"))
+    method <- arg::match_arg(method, c("exact", "cem", "nearest", "optimal",
+                                       "full", "genetic", "subclass", "cardinality",
+                                       "quick"))
     fn2 <- paste0("matchit2", method)
   }
 
   #Process formula and data inputs
-  if (!rlang::is_formula(formula, lhs = TRUE)) {
-    .err("`formula` must be a formula relating treatment to covariates")
-  }
+  arg::arg_formula(formula, one_sided = FALSE,
+                   .msg = "{.arg formula} must be a formula relating treatment to covariates")
 
   treat.form <- update(terms(formula, data = data), . ~ 0)
   treat.mf <- model.frame(treat.form, data = data, na.action = "na.pass")
@@ -438,7 +438,7 @@ matchit <- function(formula,
   #Check and binarize treat
   treat <- check_treat(treat)
   if (is_null(treat)) {
-    .err("the treatment cannot be `NULL`")
+    arg::err("the treatment cannot be {.val {list(NULL)}}")
   }
 
   names(treat) <- rownames(treat.mf)
@@ -463,42 +463,43 @@ matchit <- function(formula,
   ratio <- process.ratio(ratio, method, ...)
 
   #Process s.weights
+  arg::when_not_null(
+    s.weights,
+    arg::arg_or(
+      arg::arg_numeric,
+      arg::arg_string,
+      arg::arg_formula(one_sided = TRUE)
+    )
+  )
+
   if (is_not_null(s.weights)) {
     if (is.character(s.weights)) {
       if (is_null(data) || !is.data.frame(data)) {
-        .err("if `s.weights` is specified a string, a data frame containing the named variable must be supplied to `data`")
+        arg::err("if {.arg s.weights} is specified a string, a data frame containing the named variable must be supplied to {.arg data}")
       }
 
       if (!all(hasName(data, s.weights))) {
-        .err("the name supplied to `s.weights` must be a variable in `data`")
+        arg::err("the name supplied to {.arg s.weights} must be a variable in {.arg data}")
       }
 
-      s.weights.form <- reformulate(s.weights)
-      s.weights <- model.frame(s.weights.form, data, na.action = "na.pass")
-
-      if (ncol(s.weights) != 1L) {
-        .err("`s.weights` can only contain one named variable")
-      }
-
-      s.weights <- s.weights[[1L]]
+      s.weights <- reformulate(s.weights)
     }
-    else if (rlang::is_formula(s.weights)) {
+
+    if (rlang::is_formula(s.weights)) {
       s.weights.form <- update(terms(s.weights, data = data), NULL ~ .)
       s.weights <- model.frame(s.weights.form, data, na.action = "na.pass")
 
       if (ncol(s.weights) != 1L) {
-        .err("`s.weights` can only contain one named variable")
+        arg::err("{.arg s.weights} can only contain one named variable")
       }
 
       s.weights <- s.weights[[1L]]
     }
-    else if (!is.numeric(s.weights)) {
-      .err("`s.weights` must be supplied as a numeric vector, string, or one-sided formula")
-    }
 
-    chk::chk_not_any_na(s.weights)
+    arg::arg_no_NA(s.weights)
+
     if (length(s.weights) != n.obs) {
-      .err("`s.weights` must be the same length as the treatment vector")
+      arg::err("{.arg s.weights} must be the same length as the treatment vector")
     }
 
     names(s.weights) <- names(treat)
@@ -526,7 +527,7 @@ matchit <- function(formula,
   }
 
   #Process covs
-  if (is_not_null(fn1) && fn1 == "distance2gam") {
+  if (is_not_null(fn1) && identical(fn1, "distance2gam")) {
     rlang::check_installed("mgcv")
     env <- environment(formula)
     covs.formula <- mgcv::interpret.gam(formula)$fake.formula
@@ -545,8 +546,8 @@ matchit <- function(formula,
       covariates.with.missingness <- names(covs)[i:k][vapply(i:k, function(j) anyNA(covs[[j]]) ||
                                                                (is.numeric(covs[[j]]) && !all(is.finite(covs[[j]]))),
                                                              logical(1L))]
-      .err(paste0("Missing and non-finite values are not allowed in the covariates. Covariates with missingness or non-finite values:\n\t",
-                  toString(covariates.with.missingness)), tidy = FALSE)
+      arg::err(c("Missing and non-finite values are not allowed in the covariates.",
+                 "x" = "Covariates with missingness or non-finite values: {.var {covariates.with.missingness}}"))
     }
 
     if (is.character(covs[[i]])) {
@@ -564,15 +565,15 @@ matchit <- function(formula,
   antiexactcovs <- process.variable.input(antiexact, data)
   antiexact <- attr(antiexactcovs, "terms")
 
-  chk::chk_flag(verbose)
-  chk::chk_flag(normalize)
+  arg::arg_flag(verbose)
+  arg::arg_flag(normalize)
 
   #Estimate distance, discard from common support, optionally re-estimate distance
   if (is_null(fn1) || is.full.mahalanobis) {
     #No distance measure
     dist.model <- distance <- link <- NULL
   }
-  else if (fn1 == "distance2user") {
+  else if (identical(fn1, "distance2user")) {
     dist.model <- link <- NULL
   }
   else {
@@ -583,6 +584,8 @@ matchit <- function(formula,
     }
 
     #Estimate distance
+    arg::when_not_null(distance.options, arg::arg_list)
+
     if (is_null(distance.options)) {
       distance.options <- list(formula = formula,
                                data = data,
@@ -590,8 +593,6 @@ matchit <- function(formula,
                                estimand = estimand)
     }
     else {
-      chk::chk_list(distance.options)
-
       if (is_null(distance.options$formula)) distance.options$formula <- formula
       if (is_null(distance.options$data)) distance.options$data <- data
       if (is_null(distance.options$verbose)) distance.options$verbose <- verbose
@@ -602,10 +603,7 @@ matchit <- function(formula,
       distance.options$weights <- s.weights
     }
 
-    distance.options$link <- {
-      if (is_not_null(attr(distance, "link"))) attr(distance, "link")
-      else link
-    }
+    distance.options$link <- attr(distance, "link") %or% link
 
     dist.out <- do.call(fn1, distance.options)
 
@@ -647,14 +645,15 @@ matchit <- function(formula,
   calcovs <- NULL
 
   if (is_not_null(caliper)) {
-    caliper <- process.caliper(caliper, method, data, covs, mahcovs, distance, discarded, std.caliper)
+    caliper <- process.caliper(caliper, method, data, covs, mahcovs,
+                               distance, discarded, std.caliper)
 
     if (is_not_null(attr(caliper, "cal.formula"))) {
       calcovs <- model.frame(attr(caliper, "cal.formula"), data = data,
                              na.action = "na.pass")
 
       if (anyNA(calcovs)) {
-        .err("missing values are not allowed in the covariates named in `caliper`")
+        arg::err("missing values are not allowed in the covariates named in {.arg caliper}")
       }
 
       attr(caliper, "cal.formula") <- NULL
@@ -683,7 +682,8 @@ matchit <- function(formula,
                       transform = attr(is.full.mahalanobis, "transform"),
                       subclass = match.out$subclass,
                       antiexact = colnames(antiexactcovs),
-                      distance_is_matrix = is_not_null(distance) && is.matrix(distance))
+                      distance_is_matrix = is_not_null(distance) && is.matrix(distance),
+                      normalize = normalize)
 
   #Create X output, removing duplicate variables
   X.list.nm <- c("covs", "exactcovs", "mahcovs", "calcovs", "antiexactcovs")
@@ -738,7 +738,8 @@ print.matchit <- function(x, ...) {
   cal <- is_not_null(x[["caliper"]])
   dis <- c("both", "control", "treat")[pmatch(info$discard, c("both", "control", "treat"), 0L)]
   disl <- is_not_null(dis)
-  nm <- is_null(x[["method"]])
+  #The method is recorded in `info`; `matchit` objects have no `method` component
+  nm <- is_null(info$method)
 
   cat("A `matchit` object\n")
 
@@ -763,19 +764,24 @@ print.matchit <- function(x, ...) {
       else cat("User-defined")
 
       if (cal || disl) {
-        cal.ps <- hasName(x[["caliper"]], "")
-        cat(sprintf(" [%s]\n",
+        cal.ps <- !all(nzchar(names(x[["caliper"]])))
+        cat(sprintf(" [%s]",
                     toString(c("matching", "subclassification", "caliper", "common support")[c(!nm && !info$mahalanobis && info$method != "subclass", !nm && info$method == "subclass", cal.ps, disl)])))
       }
 
+      cat("\n")
+
       if (info$distance != "user") {
-        cat(sprintf("\n             - estimated with %s\n",
+        cat(sprintf("             - estimated with %s\n",
                     info_to_distance(info)))
         if (is_not_null(x[["s.weights"]])) {
           cat(sprintf("             - sampling weights %s in estimation\n",
                       if (isTRUE(attr(x[["s.weights"]], "in_ps"))) "included" else "not included"))
         }
       }
+    }
+    else {
+      cat("\n")
     }
   }
 

@@ -197,8 +197,7 @@ switch to trigger which treatment group is considered "focal".
 
 \subsection{Variable Ratio Matching}{
 
-\code{matchit()} can perform variable ratio "extremal" matching as described by Ming and Rosenbaum (2000; \doi{10.1111/j.0006-341X.2000.00118.x}). This
-method tends to result in better balance than fixed ratio matching at the
+\code{matchit()} can perform variable ratio "extremal" matching as described by Ming and Rosenbaum (2000; \doi{10.1111/j.0006-341X.2000.00118.x}). This method tends to result in better balance than fixed ratio matching at the
 expense of some precision. When \code{ratio > 1}, rather than requiring all
 treated units to receive \code{ratio} matches, each treated unit is assigned
 a value that corresponds to the number of control units they will be matched
@@ -297,9 +296,7 @@ table(table(m.out4$subclass[m.out4$treat == 0]))
 
 }
 \references{
-In a manuscript, you don't need to cite another package when
-using \code{method = "nearest"} because the matching is performed completely
-within \emph{MatchIt}. For example, a sentence might read:
+In a manuscript, you don't need to cite another package when using \code{method = "nearest"} because the matching is performed completely within \emph{MatchIt}. For example, a sentence might read:
 
 \emph{Nearest neighbor matching was performed using the MatchIt package (Ho, Imai, King, & Stuart, 2011) in R.}
 }
@@ -307,7 +304,7 @@ within \emph{MatchIt}. For example, a sentence might read:
 \code{\link[=matchit]{matchit()}} for a detailed explanation of the inputs and outputs of
 a call to \code{matchit()}.
 
-\code{\link[=method_optimal]{method_optimal()}} for optimal pair matching, which is similar to
+\code{\link{method_optimal}} for optimal pair matching, which is similar to
 nearest neighbor matching without replacement except that an overall distance criterion is
 minimized (i.e., as an alternative to specifying \code{m.order}).
 }

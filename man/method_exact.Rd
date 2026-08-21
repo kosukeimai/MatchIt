@@ -86,8 +86,7 @@ In a manuscript, you don't need to cite another package when
 using \code{method = "exact"} because the matching is performed completely
 within \emph{MatchIt}. For example, a sentence might read:
 
-\emph{Exact matching was performed using the MatchIt package (Ho, Imai,
-King, & Stuart, 2011) in R.}
+\emph{Exact matching was performed using the MatchIt package (Ho, Imai, King, & Stuart, 2011) in R.}
 }
 \seealso{
 \code{\link[=matchit]{matchit()}} for a detailed explanation of the inputs and outputs of
