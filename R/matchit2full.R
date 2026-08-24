@@ -1,6 +1,8 @@
 #' Optimal Full Matching
 #' @name method_full
 #'
+#' @usage NULL
+#'
 #' @description
 #' In [matchit()], setting `method = "full"` performs optimal full
 #' matching, which is a form of subclassification wherein all units, both
@@ -24,7 +26,7 @@
 #' context and how it can be specified.
 #'
 #' Below is how `matchit()` is used for optimal full matching:
-#' @usage
+#' \preformatted{
 #' matchit(formula,
 #'         data = NULL,
 #'         method = "full",
@@ -34,64 +36,36 @@
 #'         estimand = "ATT",
 #'         exact = NULL,
 #'         mahvars = NULL,
-#'         anitexact = NULL,
+#'         antiexact = NULL,
 #'         discard = "none",
 #'         reestimate = FALSE,
 #'         s.weights = NULL,
 #'         caliper = NULL,
 #'         std.caliper = TRUE,
 #'         verbose = FALSE,
-#'         ...)
+#'         ...) }
 #'
-#' @param formula a two-sided [formula] object containing the treatment and
-#' covariates to be used in creating the distance measure used in the matching.
-#' This formula will be supplied to the functions that estimate the distance
-#' measure.
-#' @param data a data frame containing the variables named in `formula`.
-#' If not found in `data`, the variables will be sought in the
-#' environment.
-#' @param method set here to `"full"`.
-#' @param distance the distance measure to be used. See [`distance`]
-#' for allowable options. Can be supplied as a distance matrix.
-#' @param link when `distance` is specified as a method of estimating
-#' propensity scores, an additional argument controlling the link function used
-#' in estimating the distance measure. See [`distance`] for allowable
-#' options with each option.
-#' @param distance.options a named list containing additional arguments
-#' supplied to the function that estimates the distance measure as determined
-#' by the argument to `distance`.
-#' @param estimand a string containing the desired estimand. Allowable options
-#' include `"ATT"`, `"ATC"`, and `"ATE"`. The estimand controls
-#' how the weights are computed; see the Computing Weights section at
-#' [matchit()] for details.
-#' @param exact for which variables exact matching should take place.
-#' @param mahvars for which variables Mahalanobis distance matching should take
-#' place when `distance` corresponds to a propensity score (e.g., for
-#' caliper matching or to discard units for common support). If specified, the
-#' distance measure will not be used in matching.
-#' @param antiexact for which variables anti-exact matching should take place.
-#' Anti-exact matching is processed using \pkgfun{optmatch}{antiExactMatch}.
-#' @param discard a string containing a method for discarding units outside a
-#' region of common support. Only allowed when `distance` corresponds to a
-#' propensity score.
-#' @param reestimate if `discard` is not `"none"`, whether to
-#' re-estimate the propensity score in the remaining sample prior to matching.
-#' @param s.weights the variable containing sampling weights to be incorporated
-#' into propensity score models and balance statistics.
-#' @param caliper the width(s) of the caliper(s) used for caliper matching.
-#' Calipers are processed by \pkgfun{optmatch}{caliper}. Positive and negative calipers are allowed. See Notes and Examples.
-#' @param std.caliper `logical`; when calipers are specified, whether they
-#' are in standard deviation units (`TRUE`) or raw units (`FALSE`).
-#' @param verbose `logical`; whether information about the matching
-#' process should be printed to the console.
-#' @param \dots additional arguments passed to \pkgfun{optmatch}{fullmatch}.
-#' Allowed arguments include `min.controls`, `max.controls`,
-#' `omit.fraction`, `mean.controls`, `tol`, and `solver`.
-#' See the \pkgfun{optmatch}{fullmatch} documentation for details. In general,
-#' `tol` should be set to a low number (e.g., `1e-7`) to get a more
-#' precise solution.
-#'
-#' The arguments `replace`, `m.order`, and `ratio` are ignored with a warning.
+#' @section Arguments:
+#' @section Arguments:
+#' \tabular{ll}{
+#'   `formula` \tab a two-sided [formula] object containing the treatment and covariates to be used in creating the distance measure used in the matching. This formula will be supplied to the functions that estimate the distance measure. \cr
+#'   `data` \tab a data frame containing the variables named in `formula`. If not found in `data`, the variables will be sought in the environment. \cr
+#'   `method` \tab set here to `"full"`. \cr
+#'   `distance` \tab the distance measure to be used. See [`distance`] for allowable options. Can be supplied as a distance matrix. \cr
+#'   `link` \tab when `distance` is specified as a method of estimating propensity scores, an additional argument controlling the link function used in estimating the distance measure. See [`distance`] for allowable options with each option. \cr
+#'   `distance.options` \tab a named list containing additional arguments supplied to the function that estimates the distance measure as determined by the argument to `distance`. \cr
+#'   `estimand` \tab a string containing the desired estimand. Allowable options include `"ATT"`, `"ATC"`, and `"ATE"`. The estimand controls how the weights are computed; see the Computing Weights section at [matchit()] for details. \cr
+#'   `exact` \tab for which variables exact matching should take place. \cr
+#'   `mahvars` \tab for which variables Mahalanobis distance matching should take place when `distance` corresponds to a propensity score (e.g., for caliper matching or to discard units for common support). If specified, the distance measure will not be used in matching. \cr
+#'   `antiexact` \tab for which variables anti-exact matching should take place. Anti-exact matching is processed using \pkgfun{optmatch}{antiExactMatch}. \cr
+#'   `discard` \tab a string containing a method for discarding units outside a region of common support. Only allowed when `distance` corresponds to a propensity score. \cr
+#'   `reestimate` \tab if `discard` is not `"none"`, whether to re-estimate the propensity score in the remaining sample prior to matching. \cr
+#'   `s.weights` \tab the variable containing sampling weights to be incorporated into propensity score models and balance statistics. \cr
+#'   `caliper` \tab the width(s) of the caliper(s) used for caliper matching. Calipers are processed by \pkgfun{optmatch}{caliper}. Positive and negative calipers are allowed. See Notes and Examples. \cr
+#'   `std.caliper` \tab `logical`; when calipers are specified, whether they are in standard deviation units (`TRUE`) or raw units (`FALSE`). \cr
+#'   `verbose` \tab `logical`; whether information about the matching process should be printed to the console. \cr
+#'   `...` \tab additional arguments passed to \pkgfun{optmatch}{fullmatch}. Allowed arguments include `min.controls`, `max.controls`, `omit.fraction`, `mean.controls`, `tol`, and `solver`. See the \pkgfun{optmatch}{fullmatch} documentation for details. In general, `tol` should be set to a low number (e.g., `1e-7`) to get a more precise solution. The arguments `replace`, `m.order`, and `ratio` are ignored with a warning. \cr
+#' }
 #'
 #' @section Outputs: All outputs described in [matchit()] are returned with
 #' `method = "full"` except for `match.matrix`. This is because
@@ -101,7 +75,7 @@
 #' included in the output. When `exact` is specified, this will be a list
 #' of such objects, one for each stratum of the `exact` variables.
 #'
-#' @details
+#' @section Details:
 #' ## Mahalanobis Distance Matching
 #'
 #' Mahalanobis distance matching can be done one of two ways:

@@ -1,6 +1,8 @@
 #' Coarsened Exact Matching
 #' @name method_cem
 #'
+#' @usage NULL
+#'
 #' @description
 #' In [matchit()], setting `method = "cem"` performs coarsened exact
 #' matching. With coarsened exact matching, covariates are coarsened into bins,
@@ -19,82 +21,77 @@
 #' context and how it can be specified.
 #'
 #' Below is how `matchit()` is used for coarsened exact matching:
-#' @usage
+#' \preformatted{
 #' matchit(formula,
 #'         data = NULL,
 #'         method = "cem",
 #'         estimand = "ATT",
 #'         s.weights = NULL,
 #'         verbose = FALSE,
-#'         ...)
+#'         ...) }
 #'
-#' @param formula a two-sided [formula] object containing the treatment and
-#' covariates to be used in creating the subclasses defined by a full cross of
-#' the coarsened covariate levels.
-#' @param data a data frame containing the variables named in `formula`.
-#' If not found in `data`, the variables will be sought in the
-#' environment.
-#' @param method set here to `"cem"`.
-#' @param estimand a string containing the desired estimand. Allowable options
-#' include `"ATT"`, `"ATC"`, and `"ATE"`. The estimand controls
-#' how the weights are computed; see the Computing Weights section at
-#' [matchit()] for details. When `k2k = TRUE` (see below), `estimand`
-#' also controls how the matching is done.
-#' @param s.weights the variable containing sampling weights to be incorporated
-#' into balance statistics or the scaling factors when `k2k = TRUE` and
-#' certain methods are used.
-#' @param verbose `logical`; whether information about the matching
-#' process should be printed to the console.
-#' @param \dots additional arguments to control the matching process.
-#' \describe{
-#' \item{`grouping`}{ a named list with an (optional) entry
-#' for each categorical variable to be matched on. Each element should itself
-#' be a list, and each entry of the sublist should be a vector containing
-#' levels of the variable that should be combined to form a single level. Any
-#' categorical variables not included in `grouping` will remain as they
-#' are in the data, which means exact matching, with no coarsening, will take
-#' place on these variables. See Details.  }
-#' \item{`cutpoints`}{ a named list with an (optional) entry for each numeric variable to be matched on.
-#' Each element describes a way of coarsening the corresponding variable. They
-#' can be a vector of cutpoints that demarcate bins, a single number giving the
-#' number of bins, or a string corresponding to a method of computing the
-#' number of bins. Allowable strings include `"sturges"`, `"scott"`,
-#' and `"fd"`, which use the functions
-#' [grDevices::nclass.Sturges()], [grDevices::nclass.scott()],
-#' and [grDevices::nclass.FD()], respectively. The default is
-#' `"sturges"` for variables that are not listed or if no argument is
-#' supplied. Can also be a single value to be applied to all numeric variables.
-#' See Details.  }
-#' \item{`k2k`}{ `logical`; whether 1:1 matching should
-#' occur within the matched strata. If `TRUE` nearest neighbor matching
-#' without replacement will take place within each stratum, and any unmatched
-#' units will be dropped (e.g., if there are more treated than control units in
-#' the stratum, the treated units without a match will be dropped). The
-#' `k2k.method` argument controls how the distance between units is
-#' calculated.  }
-#' \item{`k2k.method`}{`character`; how the distance
-#' between units should be calculated if `k2k = TRUE`. Allowable arguments
-#' include `NULL` (for random matching), any argument to
-#' [distance()] for computing a distance matrix from covariates
-#' (e.g., `"mahalanobis"`), or any allowable argument to `method` in
-#' [dist()]. Matching will take place on the original
-#' (non-coarsened) variables. The default is `"mahalanobis"`.
+#' @section Arguments:
+#' \tabular{ll}{
+#'   `formula` \tab a two-sided [formula] object containing the treatment and covariates to be used in creating the subclasses defined by a full cross of the coarsened covariate levels. \cr
+#'   `data` \tab a data frame containing the variables named in `formula`. If not found in `data`, the variables will be sought in the environment. \cr
+#'   `method` \tab set here to `"cem"`. \cr
+#'   `estimand` \tab a string containing the desired estimand. Allowable options include `"ATT"`, `"ATC"`, and `"ATE"`. The estimand controls how the weights are computed; see the Computing Weights section at [matchit()] for details. When `k2k = TRUE` (see below), `estimand` also controls how the matching is done. \cr
+#'   `s.weights` \tab the variable containing sampling weights to be incorporated into balance statistics or the scaling factors when `k2k = TRUE` and certain methods are used. \cr
+#'   `verbose` \tab `logical`; whether information about the matching process should be printed to the console. \cr
+#'   `...` \tab additional arguments to control the matching process, described below. \cr
 #' }
-#' \item{`mpower`}{if `k2k.method = "minkowski"`, the power used in
-#' creating the distance. This is passed to the `p` argument of [dist()].
-#' }
-#' \item{`m.order`}{`character`; the order that the matching takes place when `k2k = TRUE`. Allowable options
-#'   include `"closest"`, where matching takes place in
-#'   ascending order of the smallest distance between units; `"farthest"`, where matching takes place in
-#'   descending order of the smallest distance between units; `"random"`, where matching takes place
-#'   in a random order; and `"data"` where matching takes place based on the
-#'   order of units in the data. When `m.order = "random"`, results may differ
-#'   across different runs of the same code unless a seed is set and specified
-#'   with [set.seed()]. The default of `NULL` corresponds to `"data"`. See [`method_nearest`] for more information.
+#'
+#' Arguments that can be supplied through `...`:
+#'
+#'   \itemize{
+#'   \item `grouping`: a named list with an (optional) entry
+#'   for each categorical variable to be matched on. Each element should itself
+#'   be a list, and each entry of the sublist should be a vector containing
+#'   levels of the variable that should be combined to form a single level. Any
+#'   categorical variables not included in `grouping` will remain as they
+#'   are in the data, which means exact matching, with no coarsening, will take
+#'   place on these variables. See Details.  
+#'   \item `cutpoints`: a named list with an (optional) entry for each numeric variable to be matched on.
+#'   Each element describes a way of coarsening the corresponding variable. They
+#'   can be a vector of cutpoints that demarcate bins, a single number giving the
+#'   number of bins, or a string corresponding to a method of computing the
+#'   number of bins. Allowable strings include `"sturges"`, `"scott"`,
+#'   and `"fd"`, which use the functions
+#'   [grDevices::nclass.Sturges()], [grDevices::nclass.scott()],
+#'   and [grDevices::nclass.FD()], respectively. The default is
+#'   `"sturges"` for variables that are not listed or if no argument is
+#'   supplied. Can also be a single value to be applied to all numeric variables.
+#'   See Details.  
+#'   \item `k2k`: `logical`; whether 1:1 matching should
+#'   occur within the matched strata. If `TRUE` nearest neighbor matching
+#'   without replacement will take place within each stratum, and any unmatched
+#'   units will be dropped (e.g., if there are more treated than control units in
+#'   the stratum, the treated units without a match will be dropped). The
+#'   `k2k.method` argument controls how the distance between units is
+#'   calculated.  
+#'   \item `k2k.method`: `character`; how the distance
+#'   between units should be calculated if `k2k = TRUE`. Allowable arguments
+#'   include `NULL` (for random matching), any argument to
+#'   [distance()] for computing a distance matrix from covariates
+#'   (e.g., `"mahalanobis"`), or any allowable argument to `method` in
+#'   [dist()]. Matching will take place on the original
+#'   (non-coarsened) variables. The default is `"mahalanobis"`.
+#'   
+#'   \item `mpower`: if `k2k.method = "minkowski"`, the power used in
+#'   creating the distance. This is passed to the `p` argument of [dist()].
+#'   
+#'   \item `m.order`: `character`; the order that the matching takes place when `k2k = TRUE`. Allowable options
+#'     include `"closest"`, where matching takes place in
+#'     ascending order of the smallest distance between units; `"farthest"`, where matching takes place in
+#'     descending order of the smallest distance between units; `"random"`, where matching takes place
+#'     in a random order; and `"data"` where matching takes place based on the
+#'     order of units in the data. When `m.order = "random"`, results may differ
+#'     across different runs of the same code unless a seed is set and specified
+#'     with [set.seed()]. The default of `NULL` corresponds to `"data"`. See [`method_nearest`] for more information.
+#'     
 #'   }
-#' }
 #'
-#' The arguments `distance` (and related arguments), `exact`, `mahvars`, `discard` (and related arguments), `replace`, `caliper` (and related arguments), and `ratio` are ignored with a warning.
+#'   The arguments `distance` (and related arguments), `exact`, `mahvars`, `discard` (and related arguments), `replace`, `caliper` (and related arguments), and `ratio` are ignored with a warning.
 #'
 #' @section Outputs:
 #'
@@ -102,7 +99,7 @@
 #' `method = "cem"` except for `match.matrix`. When `k2k = TRUE`, a `match.matrix` component with the matched pairs is also
 #' included. `include.obj` is ignored.
 #'
-#' @details
+#' @section Details:
 #' If the coarsening is such that there are no exact matches with the coarsened
 #' variables, the `grouping` and `cutpoints` arguments can be used to
 #' modify the matching specification. Reducing the number of cutpoints or

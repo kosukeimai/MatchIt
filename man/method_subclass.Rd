@@ -3,78 +3,6 @@
 \name{method_subclass}
 \alias{method_subclass}
 \title{Subclassification}
-\usage{
-matchit(formula,
-        data = NULL,
-        method = "subclass",
-        distance = "glm",
-        link = "logit",
-        distance.options = list(),
-        estimand = "ATT",
-        discard = "none",
-        reestimate = FALSE,
-        s.weights = NULL,
-        verbose = FALSE,
-        ...)
-}
-\arguments{
-\item{formula}{a two-sided \link{formula} object containing the treatment and
-covariates to be used in creating the distance measure used in the
-subclassification.}
-
-\item{data}{a data frame containing the variables named in \code{formula}.
-If not found in \code{data}, the variables will be sought in the
-environment.}
-
-\item{method}{set here to \code{"subclass"}.}
-
-\item{distance}{the distance measure to be used. See \code{\link{distance}}
-for allowable options. Must be a vector of distance scores or the name of a method of estimating propensity scores.}
-
-\item{link}{when \code{distance} is specified as a string, an additional
-argument controlling the link function used in estimating the distance
-measure. See \code{\link{distance}} for allowable options with each option.}
-
-\item{distance.options}{a named list containing additional arguments
-supplied to the function that estimates the distance measure as determined
-by the argument to \code{distance}.}
-
-\item{estimand}{the target \code{estimand}. If \code{"ATT"}, the default,
-subclasses are formed based on quantiles of the distance measure in the
-treated group; if \code{"ATC"}, subclasses are formed based on quantiles of
-the distance measure in the control group; if \code{"ATE"}, subclasses are
-formed based on quantiles of the distance measure in the full sample. The
-estimand also controls how the subclassification weights are computed; see
-the Computing Weights section at \code{\link[=matchit]{matchit()}} for details.}
-
-\item{discard}{a string containing a method for discarding units outside a
-region of common support.}
-
-\item{reestimate}{if \code{discard} is not \code{"none"}, whether to
-re-estimate the propensity score in the remaining sample prior to
-subclassification.}
-
-\item{s.weights}{the variable containing sampling weights to be incorporated
-into propensity score models and balance statistics.}
-
-\item{verbose}{\code{logical}; whether information about the matching
-process should be printed to the console.}
-
-\item{\dots}{additional arguments that control the subclassification:
-\describe{
-\item{\code{subclass}}{either the number of subclasses desired
-or a vector of quantiles used to divide the distance measure into
-subclasses. Default is 6.}
-\item{\code{min.n}}{ the minimum number of
-units of each treatment group that are to be assigned each subclass. If the
-distance measure is divided in such a way that fewer than \code{min.n} units
-of a treatment group are assigned a given subclass, units from other
-subclasses will be reassigned to fill the deficient subclass. Default is 1.
-}
-}
-
-The arguments \code{exact}, \code{mahvars}, \code{replace}, \code{m.order}, \code{caliper} (and related arguments), and \code{ratio} are ignored with a warning.}
-}
 \description{
 In \code{\link[=matchit]{matchit()}}, setting \code{method = "subclass"} performs
 subclassification on the distance measure (i.e., propensity score).
@@ -89,8 +17,69 @@ See \code{\link[=matchit]{matchit()}} for an explanation of what each argument m
 context and how it can be specified.
 
 Below is how \code{matchit()} is used for subclassification:
+\preformatted{
+matchit(formula,
+        data = NULL,
+        method = "subclass",
+        distance = "glm",
+        link = "logit",
+        distance.options = list(),
+        estimand = "ATT",
+        discard = "none",
+        reestimate = FALSE,
+        s.weights = NULL,
+        verbose = FALSE,
+        ...) }
 }
-\details{
+\section{Arguments}{
+
+
+
+\tabular{ll}{
+\code{formula} \tab a two-sided \link{formula} object containing the treatment and covariates to be used in creating the distance measure used in the subclassification. \cr
+\code{data} \tab a data frame containing the variables named in \code{formula}. If not found in \code{data}, the variables will be sought in the environment. \cr
+\code{method} \tab set here to \code{"subclass"}. \cr
+\code{distance} \tab the distance measure to be used. See \code{\link{distance}} for allowable options. Must be a vector of distance scores or the name of a method of estimating propensity scores. \cr
+\code{link} \tab when \code{distance} is specified as a string, an additional argument controlling the link function used in estimating the distance measure. See \code{\link{distance}} for allowable options with each option. \cr
+\code{distance.options} \tab a named list containing additional arguments supplied to the function that estimates the distance measure as determined by the argument to \code{distance}. \cr
+\code{estimand} \tab the target \code{estimand}. If \code{"ATT"}, the default, subclasses are formed based on quantiles of the distance measure in the treated group; if \code{"ATC"}, subclasses are formed based on quantiles of the distance measure in the control group; if \code{"ATE"}, subclasses are formed based on quantiles of the distance measure in the full sample. The estimand also controls how the subclassification weights are computed; see the Computing Weights section at \code{\link[=matchit]{matchit()}} for details. \cr
+\code{discard} \tab a string containing a method for discarding units outside a region of common support. \cr
+\code{reestimate} \tab if \code{discard} is not \code{"none"}, whether to re-estimate the propensity score in the remaining sample prior to subclassification. \cr
+\code{s.weights} \tab the variable containing sampling weights to be incorporated into propensity score models and balance statistics. \cr
+\code{verbose} \tab \code{logical}; whether information about the matching process should be printed to the console. \cr
+\code{...} \tab additional arguments that control the subclassification, described below. \cr
+}
+
+Arguments that can be supplied through \code{...}:
+
+\itemize{
+\item \code{subclass}: either the number of subclasses desired
+or a vector of quantiles used to divide the distance measure into
+subclasses. Default is 6.
+\item \code{min.n}: the minimum number of
+units of each treatment group that are to be assigned each subclass. If the
+distance measure is divided in such a way that fewer than \code{min.n} units
+of a treatment group are assigned a given subclass, units from other
+subclasses will be reassigned to fill the deficient subclass. Default is 1.
+
+}
+
+The arguments \code{exact}, \code{mahvars}, \code{replace}, \code{m.order}, \code{caliper} (and related arguments), and \code{ratio} are ignored with a warning.
+}
+
+\section{Outputs}{
+
+
+All outputs described in \code{\link[=matchit]{matchit()}} are returned with
+\code{method = "subclass"} except that \code{match.matrix} is excluded and
+one additional component, \code{q.cut}, is included, containing a vector of
+the distance measure cutpoints used to define the subclasses. Note that when
+\code{min.n > 0}, the subclass assignments may not strictly obey the
+quantiles listed in \code{q.cut}. \code{include.obj} is ignored.
+}
+
+\section{Details}{
+
 After subclassification, effect estimates can be computed separately in the
 subclasses and combined, or a single marginal effect can be estimated by
 using the weights in the full sample. When using the weights, the method is
@@ -110,16 +99,6 @@ Note that subclassification weights can also be estimated using
 \emph{WeightIt}, which provides some additional methods for estimating
 propensity scores. Where propensity score-estimation methods overlap, both
 packages will yield the same weights.
-}
-\section{Outputs}{
-
-
-All outputs described in \code{\link[=matchit]{matchit()}} are returned with
-\code{method = "subclass"} except that \code{match.matrix} is excluded and
-one additional component, \code{q.cut}, is included, containing a vector of
-the distance measure cutpoints used to define the subclasses. Note that when
-\code{min.n > 0}, the subclass assignments may not strictly obey the
-quantiles listed in \code{q.cut}. \code{include.obj} is ignored.
 }
 
 \examples{

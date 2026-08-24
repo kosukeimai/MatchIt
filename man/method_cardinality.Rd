@@ -3,78 +3,6 @@
 \name{method_cardinality}
 \alias{method_cardinality}
 \title{Cardinality Matching}
-\usage{
-matchit(formula,
-        data = NULL,
-        method = "cardinality",
-        estimand = "ATT",
-        exact = NULL,
-        mahvars = NULL,
-        s.weights = NULL,
-        ratio = 1,
-        verbose = FALSE,
-        tols = .05,
-        std.tols = TRUE,
-        solver = "highs",
-        ...)
-}
-\arguments{
-\item{formula}{a two-sided \link{formula} object containing the treatment and covariates to be balanced.}
-
-\item{data}{a data frame containing the variables named in \code{formula}. If not found in \code{data}, the variables will be sought in the environment.}
-
-\item{method}{set here to \code{"cardinality"}.}
-
-\item{estimand}{a string containing the desired estimand. Allowable options include \code{"ATT"}, \code{"ATC"}, and \code{"ATE"}. See Details.}
-
-\item{exact}{for which variables exact matching should take place. Separate optimization will occur within each subgroup of the exact matching variables.}
-
-\item{mahvars}{which variables should be used for pairing after subset selection. Can only be set when \code{ratio} is a whole number. See Details.}
-
-\item{s.weights}{the variable containing sampling weights to be incorporated
-into the optimization. The balance constraints refer to the product of the
-sampling weights and the matching weights. Sampling weights
-can only be used with profile matching (i.e., \code{estimand = "ATE"} or \code{ratio = NA}),
-which matches each treatment group to a fixed target; they cannot be used with
-cardinality matching, which matches the treatment groups to each other. See
-Details.}
-
-\item{ratio}{the desired ratio of control to treated units. Can be set to
-\code{NA} to maximize sample size without concern for this ratio. See
-Details.}
-
-\item{verbose}{\code{logical}; whether information about the matching
-process should be printed to the console.}
-
-\item{\dots}{additional arguments that control the matching specification:
-\describe{
-\item{\code{tols}}{\code{numeric}; a vector of imbalance
-tolerances for mean differences, one for each covariate in \code{formula}.
-If only one value is supplied, it is applied to all. See \code{std.tols}
-below. Default is \code{.05} for standardized mean differences of at most
-.05 for all covariates between the treatment groups in the matched sample.
-}
-\item{\code{std.tols}}{\code{logical}; whether each entry in \code{tols}
-corresponds to a raw or standardized mean difference. If only one value is
-supplied, it is applied to all. Default is \code{TRUE} for standardized mean
-differences. The standardization factor is the pooled standard deviation
-when \code{estimand = "ATE"}, the standard deviation of the treated group
-when \code{estimand = "ATT"}, and the standard deviation of the control
-group when \code{estimand = "ATC"} (the same as used in
-\code{\link[=summary.matchit]{summary.matchit()}}).}
-\item{\code{solver}}{ the name of solver to use to
-solve the optimization problem. Available options include \code{"highs"}for HiGHS (implemented in the \emph{highs} package), \code{"glpk"} for GLPK (implemented in the \emph{Rglpk} package), and \code{"gurobi"} for Gurobi (implemented in the \emph{gurobi} package). The differences between them are in speed and solving ability.
-HiGHS (the default) and GLPK are the easiest to install, but Gurobi is recommended as
-it consistently outperforms other solvers and can find solutions even when
-others can't, and in less time. Gurobi is proprietary but can be used with a
-free trial or academic license. }
-\item{\code{time}}{ the maximum amount of
-time before the optimization routine aborts, in seconds. Default is 120 (2
-minutes). For large problems, this should be set much higher.  }
-}
-
-The arguments \code{distance} (and related arguments), \code{replace}, \code{m.order}, and \code{caliper} (and related arguments) are ignored with a warning.}
-}
 \description{
 In \code{\link[=matchit]{matchit()}}, setting \code{method = "cardinality"} performs cardinality
 matching and other forms of matching that use mixed integer programming.
@@ -90,8 +18,83 @@ This page details the allowable arguments with \code{method = "cardinality"}. Se
 means in a general context and how it can be specified.
 
 Below is how \code{matchit()} is used for cardinality matching:
+\preformatted{
+matchit(formula,
+        data = NULL,
+        method = "cardinality",
+        estimand = "ATT",
+        exact = NULL,
+        mahvars = NULL,
+        s.weights = NULL,
+        ratio = 1,
+        verbose = FALSE,
+        tols = .05,
+        std.tols = TRUE,
+        solver = "highs",
+        ...) }
 }
-\details{
+\section{Arguments}{
+
+
+
+\tabular{ll}{
+\code{formula} \tab a two-sided \link{formula} object containing the treatment and covariates to be balanced. \cr
+\code{data} \tab a data frame containing the variables named in \code{formula}. If not found in \code{data}, the variables will be sought in the environment. \cr
+\code{method} \tab set here to \code{"cardinality"}. \cr
+\code{estimand} \tab a string containing the desired estimand. Allowable options include \code{"ATT"}, \code{"ATC"}, and \code{"ATE"}. See Details. \cr
+\code{exact} \tab for which variables exact matching should take place. Separate optimization will occur within each subgroup of the exact matching variables. \cr
+\code{mahvars} \tab which variables should be used for pairing after subset selection. Can only be set when \code{ratio} is a whole number. See Details. \cr
+\code{s.weights} \tab the variable containing sampling weights to be incorporated into the optimization. The balance constraints refer to the product of the sampling weights and the matching weights. Sampling weights can only be used with profile matching (i.e., \code{estimand = "ATE"} or \code{ratio = NA}), which matches each treatment group to a fixed target; they cannot be used with cardinality matching, which matches the treatment groups to each other. See Details. \cr
+\code{ratio} \tab the desired ratio of control to treated units. Can be set to \code{NA} to maximize sample size without concern for this ratio. See Details. \cr
+\code{verbose} \tab \code{logical}; whether information about the matching process should be printed to the console. \cr
+\code{...} \tab additional arguments that control the matching specification, described below. \cr
+}
+
+Arguments that can be supplied through \code{...}:
+
+\itemize{
+\item \code{tols}: \code{numeric}; a vector of imbalance
+tolerances for mean differences, one for each covariate in \code{formula}.
+If only one value is supplied, it is applied to all. See \code{std.tols}
+below. Default is \code{.05} for standardized mean differences of at most
+.05 for all covariates between the treatment groups in the matched sample.
+
+\item \code{std.tols}: \code{logical}; whether each entry in \code{tols}
+corresponds to a raw or standardized mean difference. If only one value is
+supplied, it is applied to all. Default is \code{TRUE} for standardized mean
+differences. The standardization factor is the pooled standard deviation
+when \code{estimand = "ATE"}, the standard deviation of the treated group
+when \code{estimand = "ATT"}, and the standard deviation of the control
+group when \code{estimand = "ATC"} (the same as used in
+\code{\link[=summary.matchit]{summary.matchit()}}).
+\item \code{solver}: the name of solver to use to
+solve the optimization problem. Available options include \code{"highs"}for HiGHS (implemented in the \emph{highs} package), \code{"glpk"} for GLPK (implemented in the \emph{Rglpk} package), and \code{"gurobi"} for Gurobi (implemented in the \emph{gurobi} package). The differences between them are in speed and solving ability.
+HiGHS (the default) and GLPK are the easiest to install, but Gurobi is recommended as
+it consistently outperforms other solvers and can find solutions even when
+others can't, and in less time. Gurobi is proprietary but can be used with a
+free trial or academic license.
+\item \code{time}: the maximum amount of
+time before the optimization routine aborts, in seconds. Default is 120 (2
+minutes). For large problems, this should be set much higher.
+}
+
+The arguments \code{distance} (and related arguments), \code{replace}, \code{m.order}, and \code{caliper} (and related arguments) are ignored with a warning.
+}
+
+\section{Outputs}{
+
+
+Most outputs described in \code{\link[=matchit]{matchit()}} are returned with
+\code{method = "cardinality"}. Unless \code{mahvars} is specified, the \code{match.matrix} and \code{subclass}
+components are omitted because no pairing or subclassification is done. When
+\code{include.obj = TRUE} in the call to \code{matchit()}, the output of the
+optimization function will be included in the output. When \code{exact} is
+specified, this will be a list of such objects, one for each stratum of the
+exact variables.
+}
+
+\section{Details}{
+
 \subsection{Cardinality and Profile Matching}{
 
 Two types of matching are available with \code{method = "cardinality"}: cardinality matching and
@@ -190,17 +193,6 @@ one can try relaxing the constraints by increasing the value of \code{tols}
 or use another solver. Sometimes Gurobi can solve problems that the other
 solvers cannot.
 }
-}
-\section{Outputs}{
-
-
-Most outputs described in \code{\link[=matchit]{matchit()}} are returned with
-\code{method = "cardinality"}. Unless \code{mahvars} is specified, the \code{match.matrix} and \code{subclass}
-components are omitted because no pairing or subclassification is done. When
-\code{include.obj = TRUE} in the call to \code{matchit()}, the output of the
-optimization function will be included in the output. When \code{exact} is
-specified, this will be a list of such objects, one for each stratum of the
-exact variables.
 }
 
 \examples{

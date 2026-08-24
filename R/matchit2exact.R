@@ -1,6 +1,8 @@
 #' Exact Matching
 #' @name method_exact
 #'
+#' @usage NULL
+#'
 #' @description
 #' In [matchit()], setting `method = "exact"` performs exact matching.
 #' With exact matching, a complete cross of the covariates is used to form
@@ -21,33 +23,26 @@
 #' context and how it can be specified.
 #'
 #' Below is how `matchit()` is used for exact matching:
-#' @usage
+#' \preformatted{
 #' matchit(formula,
 #'         data = NULL,
 #'         method = "exact",
 #'         estimand = "ATT",
 #'         s.weights = NULL,
 #'         verbose = FALSE,
-#'         ...)
+#'         ...) }
 #'
-#' @param formula a two-sided [formula] object containing the treatment and
-#' covariates to be used in creating the subclasses defined by a full cross of
-#' the covariate levels.
-#' @param data a data frame containing the variables named in `formula`.
-#' If not found in `data`, the variables will be sought in the
-#' environment.
-#' @param method set here to `"exact"`.
-#' @param estimand a string containing the desired estimand. Allowable options
-#' include `"ATT"`, `"ATC"`, and `"ATE"`. The estimand controls
-#' how the weights are computed; see the Computing Weights section at
-#' [matchit()] for details.
-#' @param s.weights the variable containing sampling weights to be incorporated
-#' into balance statistics. These weights do not affect the matching process.
-#' @param verbose `logical`; whether information about the matching
-#' process should be printed to the console.
-#' @param \dots ignored.
-#'
-#' The arguments `distance` (and related arguments), `exact`, `mahvars`, `discard` (and related arguments), `replace`, `m.order`, `caliper` (and related arguments), and `ratio` are ignored with a warning.
+#' @section Arguments:
+#' @section Arguments:
+#' \tabular{ll}{
+#'   `formula` \tab a two-sided [formula] object containing the treatment and covariates to be used in creating the subclasses defined by a full cross of the covariate levels. \cr
+#'   `data` \tab a data frame containing the variables named in `formula`. If not found in `data`, the variables will be sought in the environment. \cr
+#'   `method` \tab set here to `"exact"`. \cr
+#'   `estimand` \tab a string containing the desired estimand. Allowable options include `"ATT"`, `"ATC"`, and `"ATE"`. The estimand controls how the weights are computed; see the Computing Weights section at [matchit()] for details. \cr
+#'   `s.weights` \tab the variable containing sampling weights to be incorporated into balance statistics. These weights do not affect the matching process. \cr
+#'   `verbose` \tab `logical`; whether information about the matching process should be printed to the console. \cr
+#'   `...` \tab ignored. The arguments `distance` (and related arguments), `exact`, `mahvars`, `discard` (and related arguments), `replace`, `m.order`, `caliper` (and related arguments), and `ratio` are ignored with a warning. \cr
+#' }
 #'
 #' @section Outputs:
 #'

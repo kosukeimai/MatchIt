@@ -1,6 +1,8 @@
 #' Fast Generalized Full Matching
 #' @name method_quick
 #'
+#' @usage NULL
+#'
 #' @description
 #' In [matchit()], setting `method = "quick"` performs generalized full
 #' matching, which is a form of subclassification wherein all units, both
@@ -24,7 +26,7 @@
 #' context and how it can be specified.
 #'
 #' Below is how `matchit()` is used for generalized full matching:
-#' @usage
+#' \preformatted{
 #' matchit(formula,
 #'         data = NULL,
 #'         method = "quick",
@@ -40,49 +42,28 @@
 #'         caliper = NULL,
 #'         std.caliper = TRUE,
 #'         verbose = FALSE,
-#'         ...)
+#'         ...) }
 #'
-#' @param formula a two-sided [formula] object containing the treatment and
-#' covariates to be used in creating the distance measure used in the matching.
-#' This formula will be supplied to the functions that estimate the distance
-#' measure.
-#' @param data a data frame containing the variables named in `formula`.
-#' If not found in `data`, the variables will be sought in the
-#' environment.
-#' @param method set here to `"quick"`.
-#' @param distance the distance measure to be used. See [`distance`]
-#' for allowable options. Cannot be supplied as a matrix.
-#' @param link when `distance` is specified as a method of estimating
-#' propensity scores, an additional argument controlling the link function used
-#' in estimating the distance measure. See [`distance`] for allowable
-#' options with each option.
-#' @param distance.options a named list containing additional arguments
-#' supplied to the function that estimates the distance measure as determined
-#' by the argument to `distance`.
-#' @param estimand a string containing the desired estimand. Allowable options
-#' include `"ATT"`, `"ATC"`, and `"ATE"`. The estimand controls
-#' how the weights are computed; see the Computing Weights section at
-#' [matchit()] for details.
-#' @param exact for which variables exact matching should take place.
-#' @param mahvars for which variables Mahalanobis distance matching should take
-#' place when `distance` corresponds to a propensity score (e.g., to discard units for common support). If specified, the
-#' distance measure will not be used in matching.
-#' @param discard a string containing a method for discarding units outside a
-#' region of common support. Only allowed when `distance` corresponds to a
-#' propensity score.
-#' @param reestimate if `discard` is not `"none"`, whether to
-#' re-estimate the propensity score in the remaining sample prior to matching.
-#' @param s.weights the variable containing sampling weights to be incorporated
-#' into propensity score models and balance statistics.
-#' @param caliper the width of the caliper used for caliper matching. A caliper can only be placed on the propensity score and cannot be negative.
-#' @param std.caliper `logical`; when a caliper is specified, whether it
-#' is in standard deviation units (`TRUE`) or raw units (`FALSE`).
-#' @param verbose `logical`; whether information about the matching
-#' process should be printed to the console.
-#' @param \dots additional arguments passed to \pkgfun{quickmatch}{quickmatch}. Allowed arguments include `treatment_constraints`, `size_constraint`, `target`, and other arguments passed to `scclust::sc_clustering()` (see \pkgfun{quickmatch}{quickmatch} for details). In particular, changing `seed_method` from its default can improve performance.
-#' No arguments will be passed to `distances::distances()`.
-#'
-#' The arguments `replace`, `ratio`, `min.controls`, `max.controls`, `m.order`, and `antiexact` are ignored with a warning.
+#' @section Arguments:
+#' @section Arguments:
+#' \tabular{ll}{
+#'   `formula` \tab a two-sided [formula] object containing the treatment and covariates to be used in creating the distance measure used in the matching. This formula will be supplied to the functions that estimate the distance measure. \cr
+#'   `data` \tab a data frame containing the variables named in `formula`. If not found in `data`, the variables will be sought in the environment. \cr
+#'   `method` \tab set here to `"quick"`. \cr
+#'   `distance` \tab the distance measure to be used. See [`distance`] for allowable options. Cannot be supplied as a matrix. \cr
+#'   `link` \tab when `distance` is specified as a method of estimating propensity scores, an additional argument controlling the link function used in estimating the distance measure. See [`distance`] for allowable options with each option. \cr
+#'   `distance.options` \tab a named list containing additional arguments supplied to the function that estimates the distance measure as determined by the argument to `distance`. \cr
+#'   `estimand` \tab a string containing the desired estimand. Allowable options include `"ATT"`, `"ATC"`, and `"ATE"`. The estimand controls how the weights are computed; see the Computing Weights section at [matchit()] for details. \cr
+#'   `exact` \tab for which variables exact matching should take place. \cr
+#'   `mahvars` \tab for which variables Mahalanobis distance matching should take place when `distance` corresponds to a propensity score (e.g., to discard units for common support). If specified, the distance measure will not be used in matching. \cr
+#'   `discard` \tab a string containing a method for discarding units outside a region of common support. Only allowed when `distance` corresponds to a propensity score. \cr
+#'   `reestimate` \tab if `discard` is not `"none"`, whether to re-estimate the propensity score in the remaining sample prior to matching. \cr
+#'   `s.weights` \tab the variable containing sampling weights to be incorporated into propensity score models and balance statistics. \cr
+#'   `caliper` \tab the width of the caliper used for caliper matching. A caliper can only be placed on the propensity score and cannot be negative. \cr
+#'   `std.caliper` \tab `logical`; when a caliper is specified, whether it is in standard deviation units (`TRUE`) or raw units (`FALSE`). \cr
+#'   `verbose` \tab `logical`; whether information about the matching process should be printed to the console. \cr
+#'   `...` \tab additional arguments passed to \pkgfun{quickmatch}{quickmatch}. Allowed arguments include `treatment_constraints`, `size_constraint`, `target`, and other arguments passed to `scclust::sc_clustering()` (see \pkgfun{quickmatch}{quickmatch} for details). In particular, changing `seed_method` from its default can improve performance. No arguments will be passed to `distances::distances()`. The arguments `replace`, `ratio`, `min.controls`, `max.controls`, `m.order`, and `antiexact` are ignored with a warning. \cr
+#' }
 #'
 #' @section Outputs:
 #'
@@ -94,7 +75,7 @@
 #' included in the output. When `exact` is specified, this will be a list
 #' of such objects, one for each stratum of the `exact` variables.
 #'
-#' @details
+#' @section Details:
 #' Generalized full matching is similar to optimal full matching, but has some additional flexibility that can be controlled by some of the extra arguments available. By default, `method = "quick"` performs a standard full match in which all units are matched (unless restricted by the caliper) and assigned to a subclass. Each subclass could contain multiple units from each treatment group. The subclasses are chosen to minimize the largest within-subclass distance between units (including between units of the same treatment group). Notably, generalized full matching requires less memory and can run much faster than optimal full matching and optimal pair matching and, in some cases, even than nearest neighbor matching, and it can be used with huge datasets (e.g., in the millions) while running in under a minute.
 #'
 #' @references

@@ -1,6 +1,8 @@
 #' Subclassification
 #' @name method_subclass
 #'
+#' @usage NULL
+#'
 #' @description
 #' In [matchit()], setting `method = "subclass"` performs
 #' subclassification on the distance measure (i.e., propensity score).
@@ -15,7 +17,7 @@
 #' context and how it can be specified.
 #'
 #' Below is how `matchit()` is used for subclassification:
-#' @usage
+#' \preformatted{
 #' matchit(formula,
 #'         data = NULL,
 #'         method = "subclass",
@@ -27,53 +29,41 @@
 #'         reestimate = FALSE,
 #'         s.weights = NULL,
 #'         verbose = FALSE,
-#'         ...)
+#'         ...) }
 #'
-#' @param formula a two-sided [formula] object containing the treatment and
-#' covariates to be used in creating the distance measure used in the
-#' subclassification.
-#' @param data a data frame containing the variables named in `formula`.
-#' If not found in `data`, the variables will be sought in the
-#' environment.
-#' @param method set here to `"subclass"`.
-#' @param distance the distance measure to be used. See [`distance`]
-#' for allowable options. Must be a vector of distance scores or the name of a method of estimating propensity scores.
-#' @param link when `distance` is specified as a string, an additional
-#' argument controlling the link function used in estimating the distance
-#' measure. See [`distance`] for allowable options with each option.
-#' @param distance.options a named list containing additional arguments
-#' supplied to the function that estimates the distance measure as determined
-#' by the argument to `distance`.
-#' @param estimand the target `estimand`. If `"ATT"`, the default,
-#' subclasses are formed based on quantiles of the distance measure in the
-#' treated group; if `"ATC"`, subclasses are formed based on quantiles of
-#' the distance measure in the control group; if `"ATE"`, subclasses are
-#' formed based on quantiles of the distance measure in the full sample. The
-#' estimand also controls how the subclassification weights are computed; see
-#' the Computing Weights section at [matchit()] for details.
-#' @param discard a string containing a method for discarding units outside a
-#' region of common support.
-#' @param reestimate if `discard` is not `"none"`, whether to
-#' re-estimate the propensity score in the remaining sample prior to
-#' subclassification.
-#' @param s.weights the variable containing sampling weights to be incorporated
-#' into propensity score models and balance statistics.
-#' @param verbose `logical`; whether information about the matching
-#' process should be printed to the console.
-#' @param \dots additional arguments that control the subclassification:
-#' \describe{
-#' \item{`subclass`}{either the number of subclasses desired
-#' or a vector of quantiles used to divide the distance measure into
-#' subclasses. Default is 6.}
-#' \item{`min.n`}{ the minimum number of
-#' units of each treatment group that are to be assigned each subclass. If the
-#' distance measure is divided in such a way that fewer than `min.n` units
-#' of a treatment group are assigned a given subclass, units from other
-#' subclasses will be reassigned to fill the deficient subclass. Default is 1.
-#' }
+#' @section Arguments:
+#' @section Arguments:
+#' \tabular{ll}{
+#'   `formula` \tab a two-sided [formula] object containing the treatment and covariates to be used in creating the distance measure used in the subclassification. \cr
+#'   `data` \tab a data frame containing the variables named in `formula`. If not found in `data`, the variables will be sought in the environment. \cr
+#'   `method` \tab set here to `"subclass"`. \cr
+#'   `distance` \tab the distance measure to be used. See [`distance`] for allowable options. Must be a vector of distance scores or the name of a method of estimating propensity scores. \cr
+#'   `link` \tab when `distance` is specified as a string, an additional argument controlling the link function used in estimating the distance measure. See [`distance`] for allowable options with each option. \cr
+#'   `distance.options` \tab a named list containing additional arguments supplied to the function that estimates the distance measure as determined by the argument to `distance`. \cr
+#'   `estimand` \tab the target `estimand`. If `"ATT"`, the default, subclasses are formed based on quantiles of the distance measure in the treated group; if `"ATC"`, subclasses are formed based on quantiles of the distance measure in the control group; if `"ATE"`, subclasses are formed based on quantiles of the distance measure in the full sample. The estimand also controls how the subclassification weights are computed; see the Computing Weights section at [matchit()] for details. \cr
+#'   `discard` \tab a string containing a method for discarding units outside a region of common support. \cr
+#'   `reestimate` \tab if `discard` is not `"none"`, whether to re-estimate the propensity score in the remaining sample prior to subclassification. \cr
+#'   `s.weights` \tab the variable containing sampling weights to be incorporated into propensity score models and balance statistics. \cr
+#'   `verbose` \tab `logical`; whether information about the matching process should be printed to the console. \cr
+#'   `...` \tab additional arguments that control the subclassification, described below. \cr
 #' }
 #'
-#' The arguments `exact`, `mahvars`, `replace`, `m.order`, `caliper` (and related arguments), and `ratio` are ignored with a warning.
+#' Arguments that can be supplied through `...`:
+#'
+#'   \itemize{
+#'   \item `subclass`: either the number of subclasses desired
+#'   or a vector of quantiles used to divide the distance measure into
+#'   subclasses. Default is 6.
+#'   \item `min.n`: the minimum number of
+#'   units of each treatment group that are to be assigned each subclass. If the
+#'   distance measure is divided in such a way that fewer than `min.n` units
+#'   of a treatment group are assigned a given subclass, units from other
+#'   subclasses will be reassigned to fill the deficient subclass. Default is 1.
+#'
+#'   }
+#'
+#'   The arguments `exact`, `mahvars`, `replace`, `m.order`, `caliper` (and related arguments), and `ratio` are ignored with a warning.
+#'
 #'
 #' @section Outputs:
 #'
@@ -84,7 +74,7 @@
 #' `min.n > 0`, the subclass assignments may not strictly obey the
 #' quantiles listed in `q.cut`. `include.obj` is ignored.
 #'
-#' @details
+#' @section Details:
 #' After subclassification, effect estimates can be computed separately in the
 #' subclasses and combined, or a single marginal effect can be estimated by
 #' using the weights in the full sample. When using the weights, the method is

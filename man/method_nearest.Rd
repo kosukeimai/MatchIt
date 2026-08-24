@@ -3,7 +3,20 @@
 \name{method_nearest}
 \alias{method_nearest}
 \title{Nearest Neighbor Matching}
-\usage{
+\description{
+In \code{\link[=matchit]{matchit()}}, setting \code{method = "nearest"} performs greedy nearest
+neighbor matching. A distance is computed between each treated unit and each
+control unit, and, one by one, each treated unit is assigned a control unit
+as a match. The matching is "greedy" in the sense that there is no action
+taken to optimize an overall criterion; each match is selected without
+considering the other matches that may occur subsequently.
+
+This page details the allowable arguments with \code{method = "nearest"}.
+See \code{\link[=matchit]{matchit()}} for an explanation of what each argument means in a general
+context and how it can be specified.
+
+Below is how \code{matchit()} is used for nearest neighbor matching:
+\preformatted{
 matchit(formula,
         data = NULL,
         method = "nearest",
@@ -24,117 +37,65 @@ matchit(formula,
         min.controls = NULL,
         max.controls = NULL,
         verbose = FALSE,
-        ...)
+        ...) }
 }
-\arguments{
-\item{formula}{a two-sided \link{formula} object containing the treatment and
-covariates to be used in creating the distance measure used in the matching.}
+\section{Arguments}{
 
-\item{data}{a data frame containing the variables named in \code{formula}.
-If not found in \code{data}, the variables will be sought in the
-environment.}
 
-\item{method}{set here to \code{"nearest"}.}
 
-\item{distance}{the distance measure to be used. See \code{\link{distance}}
-for allowable options. Can be supplied as a distance matrix.}
+\tabular{ll}{
+\code{formula} \tab a two-sided \link{formula} object containing the treatment and covariates to be used in creating the distance measure used in the matching. \cr
+\code{data} \tab a data frame containing the variables named in \code{formula}. If not found in \code{data}, the variables will be sought in the environment. \cr
+\code{method} \tab set here to \code{"nearest"}. \cr
+\code{distance} \tab the distance measure to be used. See \code{\link{distance}} for allowable options. Can be supplied as a distance matrix. \cr
+\code{link} \tab when \code{distance} is specified as a method of estimating propensity scores, an additional argument controlling the link function used in estimating the distance measure. See \code{\link{distance}} for allowable options with each option. \cr
+\code{distance.options} \tab a named list containing additional arguments supplied to the function that estimates the distance measure as determined by the argument to \code{distance}. \cr
+\code{estimand} \tab a string containing the desired estimand. Allowable options include \code{"ATT"} and \code{"ATC"}. See Details. \cr
+\code{exact} \tab for which variables exact matching should take place; two units with different values of an exact matching variable will not be paired. \cr
+\code{mahvars} \tab for which variables Mahalanobis distance matching should take place when \code{distance} corresponds to a propensity score (e.g., for caliper matching or to discard units for common support). If specified, the distance measure will not be used in matching. \cr
+\code{antiexact} \tab for which variables anti-exact matching should take place; two units with the same value of an anti-exact matching variable will not be paired. \cr
+\code{discard} \tab a string containing a method for discarding units outside a region of common support. Only allowed when \code{distance} corresponds to a propensity score. \cr
+\code{reestimate} \tab if \code{discard} is not \code{"none"}, whether to re-estimate the propensity score in the remaining sample prior to matching. \cr
+\code{s.weights} \tab the variable containing sampling weights to be incorporated into propensity score models and balance statistics. \cr
+\code{replace} \tab whether matching should be done with replacement (i.e., whether control units can be used as matches multiple times). See also the \code{reuse.max} argument below. Default is \code{FALSE} for matching without replacement. \cr
+\code{m.order} \tab the order that the matching takes place. Allowable options include \code{"largest"}, where matching takes place in descending order of distance measures; \code{"smallest"}, where matching takes place in ascending order of distance measures; \code{"closest"}, where matching takes place in ascending order of the smallest distance between units; \code{"farthest"}, where matching takes place in descending order of the smallest distance between units; \code{"random"}, where matching takes place in a random order; and \code{"data"} where matching takes place based on the order of units in the data. When \code{m.order = "random"}, results may differ across different runs of the same code unless a seed is set and specified with \code{\link[=set.seed]{set.seed()}}. The default of \code{NULL} corresponds to \code{"largest"} when a propensity score is estimated or supplied as a vector and \code{"data"} otherwise. See Details for more information. \cr
+\code{caliper} \tab the width(s) of the caliper(s) used for caliper matching. Two units with a difference on a caliper variable larger than the caliper will not be paired. See Details and Examples. \cr
+\code{std.caliper} \tab \code{logical}; when calipers are specified, whether they are in standard deviation units (\code{TRUE}) or raw units (\code{FALSE}). \cr
+\code{ratio} \tab how many control units should be matched to each treated unit for k:1 matching. For variable ratio matching, see section "Variable Ratio Matching" in Details below. When \code{ratio} is greater than 1, all treated units will be attempted to be matched with a control unit before any treated unit is matched with a second control unit, etc. This reduces the possibility that control units will be used up before some treated units receive any matches. \cr
+\code{min.controls}, \code{max.controls} \tab for variable ratio matching, the minimum and maximum number of controls units to be matched to each treated unit. See section "Variable Ratio Matching" in Details below. \cr
+\code{verbose} \tab \code{logical}; whether information about the matching process should be printed to the console. When \code{TRUE}, a progress bar implemented using \emph{RcppProgress} will be displayed along with an estimate of the time remaining. \cr
+\code{...} \tab additional arguments that control the matching specification, described below. \cr
+}
 
-\item{link}{when \code{distance} is specified as a method of estimating
-propensity scores, an additional argument controlling the link function used
-in estimating the distance measure. See \code{\link{distance}} for allowable
-options with each option.}
+Arguments that can be supplied through \code{...}:
 
-\item{distance.options}{a named list containing additional arguments
-supplied to the function that estimates the distance measure as determined
-by the argument to \code{distance}.}
-
-\item{estimand}{a string containing the desired estimand. Allowable options
-include \code{"ATT"} and \code{"ATC"}. See Details.}
-
-\item{exact}{for which variables exact matching should take place; two units with different values of an exact matching variable will not be paired.}
-
-\item{mahvars}{for which variables Mahalanobis distance matching should take
-place when \code{distance} corresponds to a propensity score (e.g., for
-caliper matching or to discard units for common support). If specified, the
-distance measure will not be used in matching.}
-
-\item{antiexact}{for which variables anti-exact matching should take place; two units with the same value of an anti-exact matching variable will not be paired.}
-
-\item{discard}{a string containing a method for discarding units outside a
-region of common support. Only allowed when \code{distance} corresponds to a
-propensity score.}
-
-\item{reestimate}{if \code{discard} is not \code{"none"}, whether to
-re-estimate the propensity score in the remaining sample prior to matching.}
-
-\item{s.weights}{the variable containing sampling weights to be incorporated
-into propensity score models and balance statistics.}
-
-\item{replace}{whether matching should be done with replacement (i.e., whether control units can be used as matches multiple times). See also the \code{reuse.max} argument below. Default is \code{FALSE} for matching without replacement.}
-
-\item{m.order}{the order that the matching takes place. Allowable options
-include \code{"largest"}, where matching takes place in descending order of
-distance measures; \code{"smallest"}, where matching takes place in ascending
-order of distance measures; \code{"closest"}, where matching takes place in
-ascending order of the smallest distance between units; \code{"farthest"}, where matching takes place in
-descending order of the smallest distance between units; \code{"random"}, where matching takes place
-in a random order; and \code{"data"} where matching takes place based on the
-order of units in the data. When \code{m.order = "random"}, results may differ
-across different runs of the same code unless a seed is set and specified
-with \code{\link[=set.seed]{set.seed()}}. The default of \code{NULL} corresponds to \code{"largest"} when a
-propensity score is estimated or supplied as a vector and \code{"data"}
-otherwise. See Details for more information.}
-
-\item{caliper}{the width(s) of the caliper(s) used for caliper matching. Two units with a difference on a caliper variable larger than the caliper will not be paired. See Details and Examples.}
-
-\item{std.caliper}{\code{logical}; when calipers are specified, whether they
-are in standard deviation units (\code{TRUE}) or raw units (\code{FALSE}).}
-
-\item{ratio}{how many control units should be matched to each treated unit
-for k:1 matching. For variable ratio matching, see section "Variable Ratio
-Matching" in Details below. When \code{ratio} is greater than 1, all treated units will be attempted to be matched with a control unit before any treated unit is matched with a second control unit, etc. This reduces the possibility that control units will be used up before some treated units receive any matches.}
-
-\item{min.controls, max.controls}{for variable ratio matching, the minimum
-and maximum number of controls units to be matched to each treated unit. See
-section "Variable Ratio Matching" in Details below.}
-
-\item{verbose}{\code{logical}; whether information about the matching
-process should be printed to the console. When \code{TRUE}, a progress bar
-implemented using \emph{RcppProgress} will be displayed along with an estimate of the time remaining.}
-
-\item{\dots}{additional arguments that control the matching specification:
-\describe{
-\item{\code{reuse.max}}{ \code{numeric}; the maximum number of
+\itemize{
+\item \code{reuse.max}: \code{numeric}; the maximum number of
 times each control can be used as a match. Setting \code{reuse.max = 1}
 corresponds to matching without replacement (i.e., \code{replace = FALSE}),
 and setting \code{reuse.max = Inf} corresponds to traditional matching with
 replacement (i.e., \code{replace = TRUE}) with no limit on the number of
 times each control unit can be matched. Other values restrict the number of
 times each control can be matched when matching with replacement.
-\code{replace} is ignored when \code{reuse.max} is specified.  }
-\item{\code{unit.id}}{ one or more variables containing a unit ID for each
+\code{replace} is ignored when \code{reuse.max} is specified.
+\item \code{unit.id}: one or more variables containing a unit ID for each
 observation, i.e., in case multiple observations correspond to the same
 unit. Once a control observation has been matched, no other observation with
 the same unit ID can be used as matches. This ensures each control unit is
 used only once even if it has multiple observations associated with it.
-Omitting this argument is the same as giving each observation a unique ID.}
-}}
+Omitting this argument is the same as giving each observation a unique ID.
 }
-\description{
-In \code{\link[=matchit]{matchit()}}, setting \code{method = "nearest"} performs greedy nearest
-neighbor matching. A distance is computed between each treated unit and each
-control unit, and, one by one, each treated unit is assigned a control unit
-as a match. The matching is "greedy" in the sense that there is no action
-taken to optimize an overall criterion; each match is selected without
-considering the other matches that may occur subsequently.
-
-This page details the allowable arguments with \code{method = "nearest"}.
-See \code{\link[=matchit]{matchit()}} for an explanation of what each argument means in a general
-context and how it can be specified.
-
-Below is how \code{matchit()} is used for nearest neighbor matching:
 }
-\details{
+
+\section{Outputs}{
+
+All outputs described in \code{\link[=matchit]{matchit()}} are returned with
+\code{method = "nearest"}. When \code{replace = TRUE}, the \code{subclass}
+component is omitted. \code{include.obj} is ignored.
+}
+
+\section{Details}{
+
 \subsection{Mahalanobis Distance Matching}{
 
 Mahalanobis distance matching can be done one of two ways:
@@ -238,12 +199,6 @@ Using \code{m.order = "closest"} ensures that the best possible matches are give
 
 Nearest neighbor matching involves a random component only when \code{m.order = "random"} (or when the propensity is estimated using a method with randomness; see \code{\link{distance}} for details), so a seed must be set in that case using \code{\link[=set.seed]{set.seed()}} to ensure reproducibility. Otherwise, it is purely deterministic, and any ties are broken based on the order in which the data appear.
 }
-}
-\section{Outputs}{
-
-All outputs described in \code{\link[=matchit]{matchit()}} are returned with
-\code{method = "nearest"}. When \code{replace = TRUE}, the \code{subclass}
-component is omitted. \code{include.obj} is ignored.
 }
 
 \examples{

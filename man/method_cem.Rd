@@ -3,90 +3,6 @@
 \name{method_cem}
 \alias{method_cem}
 \title{Coarsened Exact Matching}
-\usage{
-matchit(formula,
-        data = NULL,
-        method = "cem",
-        estimand = "ATT",
-        s.weights = NULL,
-        verbose = FALSE,
-        ...)
-}
-\arguments{
-\item{formula}{a two-sided \link{formula} object containing the treatment and
-covariates to be used in creating the subclasses defined by a full cross of
-the coarsened covariate levels.}
-
-\item{data}{a data frame containing the variables named in \code{formula}.
-If not found in \code{data}, the variables will be sought in the
-environment.}
-
-\item{method}{set here to \code{"cem"}.}
-
-\item{estimand}{a string containing the desired estimand. Allowable options
-include \code{"ATT"}, \code{"ATC"}, and \code{"ATE"}. The estimand controls
-how the weights are computed; see the Computing Weights section at
-\code{\link[=matchit]{matchit()}} for details. When \code{k2k = TRUE} (see below), \code{estimand}
-also controls how the matching is done.}
-
-\item{s.weights}{the variable containing sampling weights to be incorporated
-into balance statistics or the scaling factors when \code{k2k = TRUE} and
-certain methods are used.}
-
-\item{verbose}{\code{logical}; whether information about the matching
-process should be printed to the console.}
-
-\item{\dots}{additional arguments to control the matching process.
-\describe{
-\item{\code{grouping}}{ a named list with an (optional) entry
-for each categorical variable to be matched on. Each element should itself
-be a list, and each entry of the sublist should be a vector containing
-levels of the variable that should be combined to form a single level. Any
-categorical variables not included in \code{grouping} will remain as they
-are in the data, which means exact matching, with no coarsening, will take
-place on these variables. See Details.  }
-\item{\code{cutpoints}}{ a named list with an (optional) entry for each numeric variable to be matched on.
-Each element describes a way of coarsening the corresponding variable. They
-can be a vector of cutpoints that demarcate bins, a single number giving the
-number of bins, or a string corresponding to a method of computing the
-number of bins. Allowable strings include \code{"sturges"}, \code{"scott"},
-and \code{"fd"}, which use the functions
-\code{\link[grDevices:nclass.Sturges]{grDevices::nclass.Sturges()}}, \code{\link[grDevices:nclass.scott]{grDevices::nclass.scott()}},
-and \code{\link[grDevices:nclass.FD]{grDevices::nclass.FD()}}, respectively. The default is
-\code{"sturges"} for variables that are not listed or if no argument is
-supplied. Can also be a single value to be applied to all numeric variables.
-See Details.  }
-\item{\code{k2k}}{ \code{logical}; whether 1:1 matching should
-occur within the matched strata. If \code{TRUE} nearest neighbor matching
-without replacement will take place within each stratum, and any unmatched
-units will be dropped (e.g., if there are more treated than control units in
-the stratum, the treated units without a match will be dropped). The
-\code{k2k.method} argument controls how the distance between units is
-calculated.  }
-\item{\code{k2k.method}}{\code{character}; how the distance
-between units should be calculated if \code{k2k = TRUE}. Allowable arguments
-include \code{NULL} (for random matching), any argument to
-\code{\link[=distance]{distance()}} for computing a distance matrix from covariates
-(e.g., \code{"mahalanobis"}), or any allowable argument to \code{method} in
-\code{\link[=dist]{dist()}}. Matching will take place on the original
-(non-coarsened) variables. The default is \code{"mahalanobis"}.
-}
-\item{\code{mpower}}{if \code{k2k.method = "minkowski"}, the power used in
-creating the distance. This is passed to the \code{p} argument of \code{\link[=dist]{dist()}}.
-}
-\item{\code{m.order}}{\code{character}; the order that the matching takes place when \code{k2k = TRUE}. Allowable options
-include \code{"closest"}, where matching takes place in
-ascending order of the smallest distance between units; \code{"farthest"}, where matching takes place in
-descending order of the smallest distance between units; \code{"random"}, where matching takes place
-in a random order; and \code{"data"} where matching takes place based on the
-order of units in the data. When \code{m.order = "random"}, results may differ
-across different runs of the same code unless a seed is set and specified
-with \code{\link[=set.seed]{set.seed()}}. The default of \code{NULL} corresponds to \code{"data"}. See \code{\link{method_nearest}} for more information.
-}
-}
-
-The arguments \code{distance} (and related arguments), \code{exact}, \code{mahvars}, \code{discard} (and related arguments), \code{replace}, \code{caliper} (and related arguments), and \code{ratio} are ignored with a warning.}
-}
 \description{
 In \code{\link[=matchit]{matchit()}}, setting \code{method = "cem"} performs coarsened exact
 matching. With coarsened exact matching, covariates are coarsened into bins,
@@ -105,8 +21,106 @@ This page details the allowable arguments with \code{method = "cem"}. See
 context and how it can be specified.
 
 Below is how \code{matchit()} is used for coarsened exact matching:
+\preformatted{
+matchit(formula,
+        data = NULL,
+        method = "cem",
+        estimand = "ATT",
+        s.weights = NULL,
+        verbose = FALSE,
+        ...) }
 }
-\details{
+\note{
+This method does not rely on the \emph{cem} package, instead using
+code written for \emph{MatchIt}, but its design is based on the original
+\emph{cem} functions. Versions of \emph{MatchIt} prior to 4.1.0 did rely on
+\emph{cem}, so results may differ between versions. There are a few
+differences between the ways \emph{MatchIt} and \emph{cem} (and older
+versions of \emph{MatchIt}) differ in executing coarsened exact matching,
+described below.
+\itemize{
+\item In \emph{MatchIt}, when a single number is supplied to \code{cutpoints}, it describes the number of bins; in \emph{cem}, it describes the number of cutpoints separating bins. The \emph{MatchIt} method is closer to how \code{\link[=hist]{hist()}} processes breaks points to create bins.
+\item In \emph{MatchIt}, values on the cutpoint boundaries will be placed into the higher bin; in \emph{cem}, they are placed into the lower bin. To avoid consequences of this choice, ensure the bin boundaries do not coincide with observed values of the variables.
+\item When \code{cutpoints} are used, \code{"ss"} (for Shimazaki-Shinomoto's rule) can be used in \emph{cem} but not in \emph{MatchIt}.
+\item When \code{k2k = TRUE}, \emph{MatchIt} matches on the original variables (scaled), whereas \emph{cem} matches on the coarsened variables. Because the variables are already exactly matched on the coarsened variables, matching in \emph{cem} is equivalent to random matching within strata.
+\item When \code{k2k = TRUE}, in \emph{MatchIt} matched units are identified by pair membership, and the original stratum membership prior to 1:1 matching is discarded. In \emph{cem}, pairs are not identified beyond the stratum the members are part of. requested in \emph{MatchIt} but not in \emph{cem}.
+}
+}
+\section{Arguments}{
+
+\tabular{ll}{
+\code{formula} \tab a two-sided \link{formula} object containing the treatment and covariates to be used in creating the subclasses defined by a full cross of the coarsened covariate levels. \cr
+\code{data} \tab a data frame containing the variables named in \code{formula}. If not found in \code{data}, the variables will be sought in the environment. \cr
+\code{method} \tab set here to \code{"cem"}. \cr
+\code{estimand} \tab a string containing the desired estimand. Allowable options include \code{"ATT"}, \code{"ATC"}, and \code{"ATE"}. The estimand controls how the weights are computed; see the Computing Weights section at \code{\link[=matchit]{matchit()}} for details. When \code{k2k = TRUE} (see below), \code{estimand} also controls how the matching is done. \cr
+\code{s.weights} \tab the variable containing sampling weights to be incorporated into balance statistics or the scaling factors when \code{k2k = TRUE} and certain methods are used. \cr
+\code{verbose} \tab \code{logical}; whether information about the matching process should be printed to the console. \cr
+\code{...} \tab additional arguments to control the matching process, described below. \cr
+}
+
+Arguments that can be supplied through \code{...}:
+
+\itemize{
+\item \code{grouping}: a named list with an (optional) entry
+for each categorical variable to be matched on. Each element should itself
+be a list, and each entry of the sublist should be a vector containing
+levels of the variable that should be combined to form a single level. Any
+categorical variables not included in \code{grouping} will remain as they
+are in the data, which means exact matching, with no coarsening, will take
+place on these variables. See Details.
+\item \code{cutpoints}: a named list with an (optional) entry for each numeric variable to be matched on.
+Each element describes a way of coarsening the corresponding variable. They
+can be a vector of cutpoints that demarcate bins, a single number giving the
+number of bins, or a string corresponding to a method of computing the
+number of bins. Allowable strings include \code{"sturges"}, \code{"scott"},
+and \code{"fd"}, which use the functions
+\code{\link[grDevices:nclass.Sturges]{grDevices::nclass.Sturges()}}, \code{\link[grDevices:nclass.scott]{grDevices::nclass.scott()}},
+and \code{\link[grDevices:nclass.FD]{grDevices::nclass.FD()}}, respectively. The default is
+\code{"sturges"} for variables that are not listed or if no argument is
+supplied. Can also be a single value to be applied to all numeric variables.
+See Details.
+\item \code{k2k}: \code{logical}; whether 1:1 matching should
+occur within the matched strata. If \code{TRUE} nearest neighbor matching
+without replacement will take place within each stratum, and any unmatched
+units will be dropped (e.g., if there are more treated than control units in
+the stratum, the treated units without a match will be dropped). The
+\code{k2k.method} argument controls how the distance between units is
+calculated.
+\item \code{k2k.method}: \code{character}; how the distance
+between units should be calculated if \code{k2k = TRUE}. Allowable arguments
+include \code{NULL} (for random matching), any argument to
+\code{\link[=distance]{distance()}} for computing a distance matrix from covariates
+(e.g., \code{"mahalanobis"}), or any allowable argument to \code{method} in
+\code{\link[=dist]{dist()}}. Matching will take place on the original
+(non-coarsened) variables. The default is \code{"mahalanobis"}.
+
+\item \code{mpower}: if \code{k2k.method = "minkowski"}, the power used in
+creating the distance. This is passed to the \code{p} argument of \code{\link[=dist]{dist()}}.
+
+\item \code{m.order}: \code{character}; the order that the matching takes place when \code{k2k = TRUE}. Allowable options
+include \code{"closest"}, where matching takes place in
+ascending order of the smallest distance between units; \code{"farthest"}, where matching takes place in
+descending order of the smallest distance between units; \code{"random"}, where matching takes place
+in a random order; and \code{"data"} where matching takes place based on the
+order of units in the data. When \code{m.order = "random"}, results may differ
+across different runs of the same code unless a seed is set and specified
+with \code{\link[=set.seed]{set.seed()}}. The default of \code{NULL} corresponds to \code{"data"}. See \code{\link{method_nearest}} for more information.
+
+}
+
+The arguments \code{distance} (and related arguments), \code{exact}, \code{mahvars}, \code{discard} (and related arguments), \code{replace}, \code{caliper} (and related arguments), and \code{ratio} are ignored with a warning.
+}
+
+\section{Outputs}{
+
+
+All outputs described in \code{\link[=matchit]{matchit()}} are returned with
+\code{method = "cem"} except for \code{match.matrix}. When \code{k2k = TRUE}, a \code{match.matrix} component with the matched pairs is also
+included. \code{include.obj} is ignored.
+}
+
+\section{Details}{
+
 If the coarsening is such that there are no exact matches with the coarsened
 variables, the \code{grouping} and \code{cutpoints} arguments can be used to
 modify the matching specification. Reducing the number of cutpoints or
@@ -194,29 +208,6 @@ determined by \code{\link[grDevices:nclass.Sturges]{grDevices::nclass.Sturges()}
 }
 
 }
-}
-\note{
-This method does not rely on the \emph{cem} package, instead using
-code written for \emph{MatchIt}, but its design is based on the original
-\emph{cem} functions. Versions of \emph{MatchIt} prior to 4.1.0 did rely on
-\emph{cem}, so results may differ between versions. There are a few
-differences between the ways \emph{MatchIt} and \emph{cem} (and older
-versions of \emph{MatchIt}) differ in executing coarsened exact matching,
-described below.
-\itemize{
-\item In \emph{MatchIt}, when a single number is supplied to \code{cutpoints}, it describes the number of bins; in \emph{cem}, it describes the number of cutpoints separating bins. The \emph{MatchIt} method is closer to how \code{\link[=hist]{hist()}} processes breaks points to create bins.
-\item In \emph{MatchIt}, values on the cutpoint boundaries will be placed into the higher bin; in \emph{cem}, they are placed into the lower bin. To avoid consequences of this choice, ensure the bin boundaries do not coincide with observed values of the variables.
-\item When \code{cutpoints} are used, \code{"ss"} (for Shimazaki-Shinomoto's rule) can be used in \emph{cem} but not in \emph{MatchIt}.
-\item When \code{k2k = TRUE}, \emph{MatchIt} matches on the original variables (scaled), whereas \emph{cem} matches on the coarsened variables. Because the variables are already exactly matched on the coarsened variables, matching in \emph{cem} is equivalent to random matching within strata.
-\item When \code{k2k = TRUE}, in \emph{MatchIt} matched units are identified by pair membership, and the original stratum membership prior to 1:1 matching is discarded. In \emph{cem}, pairs are not identified beyond the stratum the members are part of. requested in \emph{MatchIt} but not in \emph{cem}.
-}
-}
-\section{Outputs}{
-
-
-All outputs described in \code{\link[=matchit]{matchit()}} are returned with
-\code{method = "cem"} except for \code{match.matrix}. When \code{k2k = TRUE}, a \code{match.matrix} component with the matched pairs is also
-included. \code{include.obj} is ignored.
 }
 
 \examples{

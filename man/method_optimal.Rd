@@ -3,94 +3,6 @@
 \name{method_optimal}
 \alias{method_optimal}
 \title{Optimal Pair Matching}
-\usage{
-matchit(formula,
-        data = NULL,
-        method = "optimal",
-        distance = "glm",
-        link = "logit",
-        distance.options = list(),
-        estimand = "ATT",
-        exact = NULL,
-        mahvars = NULL,
-        antiexact = NULL,
-        discard = "none",
-        reestimate = FALSE,
-        s.weights = NULL,
-        ratio = 1,
-        min.controls = NULL,
-        max.controls = NULL,
-        verbose = FALSE,
-        ...)
-}
-\arguments{
-\item{formula}{a two-sided \link{formula} object containing the treatment and
-covariates to be used in creating the distance measure used in the matching.
-This formula will be supplied to the functions that estimate the distance
-measure.}
-
-\item{data}{a data frame containing the variables named in \code{formula}.
-If not found in \code{data}, the variables will be sought in the
-environment.}
-
-\item{method}{set here to \code{"optimal"}.}
-
-\item{distance}{the distance measure to be used. See \code{\link{distance}}
-for allowable options. Can be supplied as a distance matrix.}
-
-\item{link}{when \code{distance} is specified as a method of estimating
-propensity scores, an additional argument controlling the link function used
-in estimating the distance measure. See \code{\link{distance}} for allowable
-options with each option.}
-
-\item{distance.options}{a named list containing additional arguments
-supplied to the function that estimates the distance measure as determined
-by the argument to \code{distance}.}
-
-\item{estimand}{a string containing the desired estimand. Allowable options
-include \code{"ATT"} and \code{"ATC"}. See Details.}
-
-\item{exact}{for which variables exact matching should take place.}
-
-\item{mahvars}{for which variables Mahalanobis distance matching should take
-place when \code{distance} corresponds to a propensity score (e.g., for
-caliper matching or to discard units for common support). If specified, the
-distance measure will not be used in matching.}
-
-\item{antiexact}{for which variables anti-exact matching should take place.
-Anti-exact matching is processed using \pkgfun{optmatch}{antiExactMatch}.}
-
-\item{discard}{a string containing a method for discarding units outside a
-region of common support. Only allowed when \code{distance} is not
-\code{"mahalanobis"} and not a matrix.}
-
-\item{reestimate}{if \code{discard} is not \code{"none"}, whether to
-re-estimate the propensity score in the remaining sample prior to matching.}
-
-\item{s.weights}{the variable containing sampling weights to be incorporated
-into propensity score models and balance statistics.}
-
-\item{ratio}{how many control units should be matched to each treated unit
-for k:1 matching. For variable ratio matching, see section "Variable Ratio
-Matching" in Details below.}
-
-\item{min.controls, max.controls}{for variable ratio matching, the minimum
-and maximum number of controls units to be matched to each treated unit. See
-section "Variable Ratio Matching" in Details below.}
-
-\item{verbose}{\code{logical}; whether information about the matching
-process should be printed to the console. What is printed depends on the
-matching method. Default is \code{FALSE} for no printing other than
-warnings.}
-
-\item{\dots}{additional arguments passed to \pkgfun{optmatch}{fullmatch}.
-Allowed arguments include \code{tol} and \code{solver}. See the
-\pkgfun{optmatch}{fullmatch} documentation for details. In general, \code{tol}
-should be set to a low number (e.g., \code{1e-7}) to get a more precise
-solution (default is \code{1e-3}).
-
-The arguments \code{replace}, \code{caliper}, and \code{m.order} are ignored with a warning.}
-}
 \description{
 In \code{\link[=matchit]{matchit()}}, setting \code{method = "optimal"} performs optimal pair
 matching. The matching is optimal in the sense that that sum of the absolute
@@ -109,8 +21,84 @@ See \code{\link[=matchit]{matchit()}} for an explanation of what each argument m
 context and how it can be specified.
 
 Below is how \code{matchit()} is used for optimal pair matching:
+\preformatted{
+matchit(formula,
+        data = NULL,
+        method = "optimal",
+        distance = "glm",
+        link = "logit",
+        distance.options = list(),
+        estimand = "ATT",
+        exact = NULL,
+        mahvars = NULL,
+        antiexact = NULL,
+        discard = "none",
+        reestimate = FALSE,
+        s.weights = NULL,
+        ratio = 1,
+        min.controls = NULL,
+        max.controls = NULL,
+        verbose = FALSE,
+        ...) }
 }
-\details{
+\note{
+Optimal pair matching is a restricted form of optimal full matching
+where the number of treated units in each subclass is equal to 1, whereas in
+unrestricted full matching, multiple treated units can be assigned to the
+same subclass. \pkgfun{optmatch}{pairmatch} is simply a wrapper for
+\pkgfun{optmatch}{fullmatch}, which performs optimal full matching and is the
+workhorse for \code{\link{method_full}}. In the same way, \code{matchit()}
+uses \code{optmatch::fullmatch()} under the hood, imposing the restrictions that
+make optimal full matching function like optimal pair matching (which is
+simply to set \code{min.controls >= 1} and to pass \code{ratio} to the
+\code{mean.controls} argument). This distinction is not important for
+regular use but may be of interest to those examining the source code.
+
+The option \code{"optmatch_max_problem_size"} is automatically set to
+\code{Inf} during the matching process, different from its default in
+\emph{optmatch}. This enables matching problems of any size to be run, but
+may also let huge, infeasible problems get through and potentially take a
+long time or crash R. See \pkgfun{optmatch}{setMaxProblemSize} for more details.
+
+A preprocessing algorithm describe by Sävje (2020; \doi{10.1214/19-STS739}) is used to improve the speed of the matching when 1:1 matching on a propensity score. It does so by adding an additional constraint that guarantees a solution as optimal as the solution that would have been found without the constraint, and that constraint often dramatically reduces the size of the matching problem at no cost. However, this may introduce differences between the results obtained by \emph{MatchIt} and by \emph{optmatch}, though such differences will shrink when smaller values of \code{tol} are used.
+}
+\section{Arguments}{
+
+
+
+\tabular{ll}{
+\code{formula} \tab a two-sided \link{formula} object containing the treatment and covariates to be used in creating the distance measure used in the matching. This formula will be supplied to the functions that estimate the distance measure. \cr
+\code{data} \tab a data frame containing the variables named in \code{formula}. If not found in \code{data}, the variables will be sought in the environment. \cr
+\code{method} \tab set here to \code{"optimal"}. \cr
+\code{distance} \tab the distance measure to be used. See \code{\link{distance}} for allowable options. Can be supplied as a distance matrix. \cr
+\code{link} \tab when \code{distance} is specified as a method of estimating propensity scores, an additional argument controlling the link function used in estimating the distance measure. See \code{\link{distance}} for allowable options with each option. \cr
+\code{distance.options} \tab a named list containing additional arguments supplied to the function that estimates the distance measure as determined by the argument to \code{distance}. \cr
+\code{estimand} \tab a string containing the desired estimand. Allowable options include \code{"ATT"} and \code{"ATC"}. See Details. \cr
+\code{exact} \tab for which variables exact matching should take place. \cr
+\code{mahvars} \tab for which variables Mahalanobis distance matching should take place when \code{distance} corresponds to a propensity score (e.g., for caliper matching or to discard units for common support). If specified, the distance measure will not be used in matching. \cr
+\code{antiexact} \tab for which variables anti-exact matching should take place. Anti-exact matching is processed using \pkgfun{optmatch}{antiExactMatch}. \cr
+\code{discard} \tab a string containing a method for discarding units outside a region of common support. Only allowed when \code{distance} is not \code{"mahalanobis"} and not a matrix. \cr
+\code{reestimate} \tab if \code{discard} is not \code{"none"}, whether to re-estimate the propensity score in the remaining sample prior to matching. \cr
+\code{s.weights} \tab the variable containing sampling weights to be incorporated into propensity score models and balance statistics. \cr
+\code{ratio} \tab how many control units should be matched to each treated unit for k:1 matching. For variable ratio matching, see section "Variable Ratio Matching" in Details below. \cr
+\code{min.controls}, \code{max.controls} \tab for variable ratio matching, the minimum and maximum number of controls units to be matched to each treated unit. See section "Variable Ratio Matching" in Details below. \cr
+\code{verbose} \tab \code{logical}; whether information about the matching process should be printed to the console. What is printed depends on the matching method. Default is \code{FALSE} for no printing other than warnings. \cr
+\code{...} \tab additional arguments passed to \pkgfun{optmatch}{fullmatch}. Allowed arguments include \code{tol} and \code{solver}. See the \pkgfun{optmatch}{fullmatch} documentation for details. In general, \code{tol} should be set to a low number (e.g., \code{1e-7}) to get a more precise solution (default is \code{1e-3}). The arguments \code{replace}, \code{caliper}, and \code{m.order} are ignored with a warning. \cr
+}
+}
+
+\section{Outputs}{
+
+
+All outputs described in \code{\link[=matchit]{matchit()}} are returned with
+\code{method = "optimal"}. When \code{include.obj = TRUE} in the call to
+\code{matchit()}, the output of the call to \code{optmatch::fullmatch()} will be
+included in the output. When \code{exact} is specified, this will be a list
+of such objects, one for each stratum of the \code{exact} variables.
+}
+
+\section{Details}{
+
 \subsection{Mahalanobis Distance Matching}{
 
 Mahalanobis distance matching can be done one of two ways:
@@ -192,36 +180,6 @@ must be greater than \code{ratio}. See the Examples section of
 \code{\link[=method_nearest]{method_nearest()}} for an example of their use, which is the same
 as it is with optimal matching.
 }
-}
-\note{
-Optimal pair matching is a restricted form of optimal full matching
-where the number of treated units in each subclass is equal to 1, whereas in
-unrestricted full matching, multiple treated units can be assigned to the
-same subclass. \pkgfun{optmatch}{pairmatch} is simply a wrapper for
-\pkgfun{optmatch}{fullmatch}, which performs optimal full matching and is the
-workhorse for \code{\link{method_full}}. In the same way, \code{matchit()}
-uses \code{optmatch::fullmatch()} under the hood, imposing the restrictions that
-make optimal full matching function like optimal pair matching (which is
-simply to set \code{min.controls >= 1} and to pass \code{ratio} to the
-\code{mean.controls} argument). This distinction is not important for
-regular use but may be of interest to those examining the source code.
-
-The option \code{"optmatch_max_problem_size"} is automatically set to
-\code{Inf} during the matching process, different from its default in
-\emph{optmatch}. This enables matching problems of any size to be run, but
-may also let huge, infeasible problems get through and potentially take a
-long time or crash R. See \pkgfun{optmatch}{setMaxProblemSize} for more details.
-
-A preprocessing algorithm describe by Sävje (2020; \doi{10.1214/19-STS739}) is used to improve the speed of the matching when 1:1 matching on a propensity score. It does so by adding an additional constraint that guarantees a solution as optimal as the solution that would have been found without the constraint, and that constraint often dramatically reduces the size of the matching problem at no cost. However, this may introduce differences between the results obtained by \emph{MatchIt} and by \emph{optmatch}, though such differences will shrink when smaller values of \code{tol} are used.
-}
-\section{Outputs}{
-
-
-All outputs described in \code{\link[=matchit]{matchit()}} are returned with
-\code{method = "optimal"}. When \code{include.obj = TRUE} in the call to
-\code{matchit()}, the output of the call to \code{optmatch::fullmatch()} will be
-included in the output. When \code{exact} is specified, this will be a list
-of such objects, one for each stratum of the \code{exact} variables.
 }
 
 \examples{
