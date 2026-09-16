@@ -6,8 +6,7 @@ using namespace Rcpp;
 IntegerVector tabulateC(const IntegerVector& bins,
                         const Nullable<int>& nbins = R_NilValue) {
 
-  int nbins_ = 0;
-  if (nbins.isNotNull()) nbins_ = as<int>(nbins);
+  const int nbins_ = nbins.isNotNull() ? as<int>(nbins) : 0;
 
   return tabulateC_(bins, nbins_);
 }

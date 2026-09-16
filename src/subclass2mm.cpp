@@ -96,13 +96,9 @@ IntegerVector mm2subclassC(const IntegerMatrix& mm,
   subclass.fill(NA_INTEGER);
   subclass.names() = lab;
 
-  IntegerVector ind1;
-  if (focal.isNotNull()) {
-    ind1 = which(treat == as<int>(focal));
-  }
-  else {
-    ind1 = match(as<CharacterVector>(rownames(mm)), lab) - 1;
-  }
+  const IntegerVector ind1 = focal.isNotNull() ?
+  which(treat == as<int>(focal)) :
+  IntegerVector(match(as<CharacterVector>(rownames(mm)), lab) - 1);
 
   R_xlen_t r = mm.nrow();
   R_xlen_t ki = 0;

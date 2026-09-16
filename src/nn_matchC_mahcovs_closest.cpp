@@ -91,80 +91,64 @@ IntegerMatrix nn_matchC_mahcovs_closest(const IntegerVector& treat,
   //object of that name would mask it.
   Function o = Environment::base_env()["order"];
 
+  //`as<>()` on a `Nullable` wraps the caller's SEXP rather than copying it, so every
+  //object taken from an argument below is `const`. Writing through one of them would
+  //modify the R object the caller passed in, and the change would outlive the call.
+
   //exact
-  bool use_exact = false;
-  IntegerVector exact;
-  if (exact_.isNotNull()) {
-    exact = as<IntegerVector>(exact_);
-    use_exact = true;
-  }
+  const bool use_exact = exact_.isNotNull();
+  const IntegerVector exact = use_exact ? as<IntegerVector>(exact_) : IntegerVector(0);
 
   //distance & caliper_dist
-  bool use_caliper_dist = false;
-  double caliper_dist;
-  NumericVector distance;
-  if (caliper_dist_.isNotNull() && distance_.isNotNull()) {
-    distance = as<NumericVector>(distance_);
-    caliper_dist = as<double>(caliper_dist_);
-    use_caliper_dist = true;
-  }
+  const bool use_caliper_dist = caliper_dist_.isNotNull() && distance_.isNotNull();
+  const NumericVector distance = use_caliper_dist ? as<NumericVector>(distance_) : NumericVector(0);
+  const double caliper_dist = use_caliper_dist ? as<double>(caliper_dist_) : R_PosInf;
 
   //caliper_covs
-  NumericVector caliper_covs;
-  NumericMatrix caliper_covs_mat;
-  int ncc = 0;
-  if (caliper_covs_.isNotNull()) {
-    caliper_covs = as<NumericVector>(caliper_covs_);
-    caliper_covs_mat = as<NumericMatrix>(caliper_covs_mat_);
-    ncc = caliper_covs_mat.ncol();
-  }
+  const NumericVector caliper_covs = caliper_covs_.isNotNull() ? as<NumericVector>(caliper_covs_) : NumericVector(0);
+  const NumericMatrix caliper_covs_mat = caliper_covs_.isNotNull() ? as<NumericMatrix>(caliper_covs_mat_) : NumericMatrix(0, 0);
+  const int ncc = caliper_covs_mat.ncol();
 
   //antiexact
-  IntegerMatrix antiexact_covs;
-  int aenc = 0;
-  if (antiexact_covs_.isNotNull()) {
-    antiexact_covs = as<IntegerMatrix>(antiexact_covs_);
-    aenc = antiexact_covs.ncol();
-  }
+  const IntegerMatrix antiexact_covs = antiexact_covs_.isNotNull() ? as<IntegerMatrix>(antiexact_covs_) : IntegerMatrix(0, 0);
+  const int aenc = antiexact_covs.ncol();
 
   //unit_id
-  IntegerVector unit_id;
-  bool use_unit_id = false;
-  if (unit_id_.isNotNull()) {
-    unit_id = as<IntegerVector>(unit_id_);
-    use_unit_id = true;
-  }
+  const bool use_unit_id = unit_id_.isNotNull();
+  const IntegerVector unit_id = use_unit_id ? as<IntegerVector>(unit_id_) : IntegerVector(0);
 
-  // Matching variable: if any mah_covs equal to caliper_covs, use
-  // that caliper_covs and caliper as matching variable
-  NumericVector match_var;
+  //Matching variable: when a caliper covariate is an affine transformation of one of
+  //the `mah_covs` columns, sorting on that column lets the scan in
+  //`find_control_mahcovs()` stop as soon as the caliper is exceeded. Only the caliper
+  //is converted to that column's scale, and only for this function's own use; the
+  //caliper is still enforced on its own scale by `caliper_covs_okay()`, and
+  //`caliper_covs` and `caliper_covs_mat` belong to the caller and are left alone.
+  const int n_mah_covs = mah_covs.ncol();
+  int match_var_col = 0;
   double match_var_caliper = R_PosInf;
-  int n_mah_covs = mah_covs.ncol();
-  if (ncc > 0) {
-    double a;
-    for (int mci = 0; match_var.size() == 0 && mci < n_mah_covs; mci++) {
-      for (int cci = 0; match_var.size() == 0 && cci < ncc; cci++) {
-        if (caliper_covs[cci] < 0) {
-          continue;
-        }
+  bool match_var_found = false;
 
-        a = get_affine_transformation(caliper_covs_mat.column(cci),
-                                      mah_covs.column(mci));
-
-        if (std::abs(a) > 1e-10) {
-          caliper_covs_mat.column(cci) = mah_covs.column(mci);
-          caliper_covs[cci] *= a;
-
-          match_var = mah_covs.column(mci);
-          match_var_caliper = caliper_covs[cci];
-        }
+  for (int mci = 0; !match_var_found && mci < n_mah_covs; mci++) {
+    for (int cci = 0; cci < ncc; cci++) {
+      if (caliper_covs[cci] < 0) {
+        continue;
       }
+
+      double a = get_affine_transformation(caliper_covs_mat.column(cci),
+                                           mah_covs.column(mci));
+
+      if (std::abs(a) <= 1e-10) {
+        continue;
+      }
+
+      match_var_col = mci;
+      match_var_caliper = std::abs(a) * caliper_covs[cci];
+      match_var_found = true;
+      break;
     }
   }
 
-  if (match_var.size() == 0) {
-    match_var = mah_covs.column(0);
-  }
+  const NumericVector match_var = mah_covs.column(match_var_col);
 
   IntegerVector ind_d_ord = o(match_var);
   ind_d_ord = ind_d_ord - 1; //location of each unit after sorting

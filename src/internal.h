@@ -16,6 +16,9 @@ Rcpp::IntegerVector tabulateC_(const Rcpp::IntegerVector& bins,
 
 Rcpp::IntegerVector which(const Rcpp::LogicalVector& x);
 
+int recode_focal(int focal,
+                 const Rcpp::IntegerVector& unique_treat);
+
 std::vector<int> find_control_vec(int t_id,
                                   const Rcpp::IntegerVector& ind_d_ord,
                                   const Rcpp::IntegerVector& match_d_ord,

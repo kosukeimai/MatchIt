@@ -101,52 +101,32 @@ IntegerMatrix nn_matchC_distmat(const IntegerVector& treat_,
 
   CharacterVector lab = treat_.names();
 
-  //exact
-  bool use_exact = false;
-  IntegerVector exact;
-  if (exact_.isNotNull()) {
-    exact = as<IntegerVector>(exact_);
-    use_exact = true;
-  }
+  //`as<>()` on a `Nullable` wraps the caller's SEXP rather than copying it, so every
+  //object taken from an argument below is `const`. Writing through one of them would
+  //modify the R object the caller passed in, and the change would outlive the call.
 
-  //caliper_dist
-  double caliper_dist;
-  if (caliper_dist_.isNotNull()) {
-    caliper_dist = as<double>(caliper_dist_);
-  }
-  else {
-    caliper_dist = max_finite(distance_mat) + .1;
-  }
+  //exact
+  const bool use_exact = exact_.isNotNull();
+  const IntegerVector exact = use_exact ? as<IntegerVector>(exact_) : IntegerVector(0);
 
   //caliper_covs
-  NumericVector caliper_covs;
-  NumericMatrix caliper_covs_mat;
-  int ncc = 0;
-  if (caliper_covs_.isNotNull()) {
-    caliper_covs = as<NumericVector>(caliper_covs_);
-    caliper_covs_mat = as<NumericMatrix>(caliper_covs_mat_);
-    ncc = caliper_covs_mat.ncol();
-  }
+  const NumericVector caliper_covs = caliper_covs_.isNotNull() ? as<NumericVector>(caliper_covs_) : NumericVector(0);
+  const NumericMatrix caliper_covs_mat = caliper_covs_.isNotNull() ? as<NumericMatrix>(caliper_covs_mat_) : NumericMatrix(0, 0);
+  const int ncc = caliper_covs_mat.ncol();
 
   //antiexact
-  IntegerMatrix antiexact_covs;
-  int aenc = 0;
-  if (antiexact_covs_.isNotNull()) {
-    antiexact_covs = as<IntegerMatrix>(antiexact_covs_);
-    aenc = antiexact_covs.ncol();
-  }
-
-  //reuse_max
-  bool use_reuse_max = (reuse_max < nf);
+  const IntegerMatrix antiexact_covs = antiexact_covs_.isNotNull() ? as<IntegerMatrix>(antiexact_covs_) : IntegerMatrix(0, 0);
+  const int aenc = antiexact_covs.ncol();
 
   //unit_id
-  IntegerVector unit_id;
-  bool use_unit_id = false;
-  if (unit_id_.isNotNull()) {
-    unit_id = as<IntegerVector>(unit_id_);
-    use_unit_id = true;
-    use_reuse_max = true;
-  }
+  const bool use_unit_id = unit_id_.isNotNull();
+  const IntegerVector unit_id = use_unit_id ? as<IntegerVector>(unit_id_) : IntegerVector(0);
+
+  //caliper_dist
+  const double caliper_dist = caliper_dist_.isNotNull() ? as<double>(caliper_dist_) : max_finite(distance_mat) + .1;
+
+  //reuse_max
+  const bool use_reuse_max = use_unit_id || (reuse_max < nf);
 
   IntegerVector matches_i(1 + max_ratio * (g - 1));
   int k_total;

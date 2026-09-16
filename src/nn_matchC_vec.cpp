@@ -113,68 +113,54 @@ IntegerMatrix nn_matchC_vec(const IntegerVector& treat_,
   IntegerVector first_control(g);
   first_control.fill(0);
 
-  //exact
-  bool use_exact = false;
-  IntegerVector exact;
-  if (exact_.isNotNull()) {
-    exact = as<IntegerVector>(exact_);
-    use_exact = true;
-  }
+  //`as<>()` on a `Nullable` wraps the caller's SEXP rather than copying it, so every
+  //object taken from an argument below is `const`. Writing through one of them would
+  //modify the R object the caller passed in, and the change would outlive the call.
 
-  //caliper_dist
-  double caliper_dist;
-  if (caliper_dist_.isNotNull()) {
-    caliper_dist = as<double>(caliper_dist_);
-  }
-  else {
-    caliper_dist = max_finite(distance) - min_finite(distance) + 1;
-  }
+  //exact
+  const bool use_exact = exact_.isNotNull();
+  const IntegerVector exact = use_exact ? as<IntegerVector>(exact_) : IntegerVector(0);
 
   //caliper_covs
-  NumericVector caliper_covs;
-  NumericMatrix caliper_covs_mat;
-  int ncc = 0;
-  if (caliper_covs_.isNotNull()) {
-    caliper_covs = as<NumericVector>(caliper_covs_);
-    caliper_covs_mat = as<NumericMatrix>(caliper_covs_mat_);
+  const NumericVector caliper_covs = caliper_covs_.isNotNull() ? as<NumericVector>(caliper_covs_) : NumericVector(0);
+  const NumericMatrix caliper_covs_mat = caliper_covs_.isNotNull() ? as<NumericMatrix>(caliper_covs_mat_) : NumericMatrix(0, 0);
+  const int ncc = caliper_covs_mat.ncol();
 
-    ncc = caliper_covs_mat.ncol();
-    double a;
+  //antiexact
+  const IntegerMatrix antiexact_covs = antiexact_covs_.isNotNull() ? as<IntegerMatrix>(antiexact_covs_) : IntegerMatrix(0, 0);
+  const int aenc = antiexact_covs.ncol();
 
-    // Find if caliper placed on distance
-    for (int cci = 0; cci < ncc; cci++) {
-      a = get_affine_transformation(caliper_covs_mat.column(cci),
-                                    distance);
+  //unit_id
+  const bool use_unit_id = unit_id_.isNotNull();
+  const IntegerVector unit_id = use_unit_id ? as<IntegerVector>(unit_id_) : IntegerVector(0);
 
-      if (std::abs(a) > 1e-10) {
-        if (caliper_dist_.isNull() ||
-            (caliper_covs[cci] >= 0 && caliper_dist > a * caliper_covs[cci]) ||
-            (caliper_covs[cci] < 0 && caliper_dist < a * caliper_covs[cci])) {
-          caliper_dist = a * caliper_covs[cci];
-        }
-      }
+  //caliper_dist. Not `const`: the loop below may tighten it.
+  double caliper_dist = caliper_dist_.isNotNull() ? as<double>(caliper_dist_) : max_finite(distance) - min_finite(distance) + 1;
+
+  //A caliper on a covariate that is an affine transformation of `distance` is
+  //equivalent to a caliper on `distance` itself, which the sorted scan can stop early
+  //on; the covariate caliper stays in force either way.
+  for (int cci = 0; cci < ncc; cci++) {
+    double a = get_affine_transformation(caliper_covs_mat.column(cci),
+                                         distance);
+
+    if (std::abs(a) <= 1e-10) {
+      continue;
+    }
+
+    //`std::abs()` because a negative `a` would otherwise flip the sign of the
+    //caliper, and a negative caliper means the opposite of a positive one
+    double caliper_dist_cci = std::abs(a) * caliper_covs[cci];
+
+    if (caliper_dist_.isNull() ||
+        (caliper_covs[cci] >= 0 && caliper_dist > caliper_dist_cci) ||
+        (caliper_covs[cci] < 0 && caliper_dist < caliper_dist_cci)) {
+      caliper_dist = caliper_dist_cci;
     }
   }
 
-  //antiexact
-  IntegerMatrix antiexact_covs;
-  int aenc = 0;
-  if (antiexact_covs_.isNotNull()) {
-    antiexact_covs = as<IntegerMatrix>(antiexact_covs_);
-    aenc = antiexact_covs.ncol();
-  }
-
   //reuse_max
-  bool use_reuse_max = (reuse_max < nf);
-
-  //unit_id
-  IntegerVector unit_id;
-  bool use_unit_id = false;
-  if (unit_id_.isNotNull()) {
-    unit_id = as<IntegerVector>(unit_id_);
-    use_unit_id = true;
-    use_reuse_max = true;
-  }
+  const bool use_reuse_max = use_unit_id || (reuse_max < nf);
 
   IntegerVector matches_i(1 + max_ratio * (g - 1));
   int k_total;

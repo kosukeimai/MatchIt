@@ -198,3 +198,38 @@ test_that("calipers work, positive and negative", {
                       expect_subclass = !m$info$replace,
                       ratio = m$info$ratio)
 })
+
+test_that("covariate calipers are respected in every `exact` stratum", {
+  set.seed(1234)
+  n <- 600
+  g <- sample(LETTERS[1:10], n, TRUE)
+  x <- rnorm(n)
+  y <- rnorm(n)
+  a <- rbinom(n, 1, .25)
+  d <- data.frame(a, x, y, g)
+
+  #`x` is both a matching variable and the caliper variable, so the caliper is
+  #converted to the scale of the matching variables internally. That conversion
+  #must not change the caliper itself, which is reused for each `exact` stratum.
+  for (m.order in c("data", "random", "closest", "farthest")) {
+    m <- matchit(a ~ x + y, data = d, distance = "mahalanobis", exact = ~g,
+                 caliper = c(x = .5), std.caliper = FALSE, m.order = m.order)
+
+    expect_good_matchit(m, expect_distance = FALSE, expect_match.matrix = TRUE,
+                        expect_subclass = TRUE, ratio = 1)
+
+    mm <- m$match.matrix
+
+    caliper.diff <- vapply(seq_len(nrow(mm)), function(i) {
+      ctrl <- na.omit(mm[i, ])
+
+      if (length(ctrl) == 0L) {
+        return(0)
+      }
+
+      max(abs(d[rownames(mm)[i], "x"] - d[ctrl, "x"]))
+    }, numeric(1L))
+
+    expect_true(all(caliper.diff <= .5))
+  }
+})

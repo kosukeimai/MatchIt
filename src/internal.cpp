@@ -31,6 +31,23 @@ IntegerVector which(const LogicalVector& x) {
   return ind[x];
 }
 
+//Position of `focal` among the sorted unique treatment values, which is how the
+//treatment is recoded to 0..g-1 everywhere it is used as an index. `focal` is always
+//one of those values, so the `g` returned when it is absent is unreachable.
+
+int recode_focal(int focal,
+                 const IntegerVector& unique_treat) {
+  int g = unique_treat.size();
+
+  for (int gi = 0; gi < g; gi++) {
+    if (unique_treat[gi] == focal) {
+      return gi;
+    }
+  }
+
+  return g;
+}
+
 bool antiexact_okay(int aenc,
                     int i,
                     int j,

@@ -20,22 +20,10 @@ NumericVector weights_matrixC(const IntegerMatrix& mm,
   weights.fill(0.0);
   weights.names() = lab;
 
-  IntegerVector row_ind;
-  if (focal.isNotNull()) {
-    //`treat` has been recoded to 0..g-1, so `focal` must be recoded the same way
-    int focal_ = as<int>(focal);
-    for (int gj = 0; gj < g; gj++) {
-      if (unique_treat[gj] == focal_) {
-        focal_ = gj;
-        break;
-      }
-    }
-
-    row_ind = which(treat == focal_);
-  }
-  else {
-    row_ind = match(as<CharacterVector>(rownames(mm)), lab) - 1;
-  }
+  //`treat` has been recoded to 0..g-1, so `focal` must be recoded the same way
+  const IntegerVector row_ind = focal.isNotNull() ?
+  which(treat == recode_focal(as<int>(focal), unique_treat)) :
+  IntegerVector(match(as<CharacterVector>(rownames(mm)), lab) - 1);
 
   std::vector<double> matches_g(g, 0.0);
 

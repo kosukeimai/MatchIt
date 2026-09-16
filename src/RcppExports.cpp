@@ -106,26 +106,26 @@ BEGIN_RCPP
 END_RCPP
 }
 // nn_matchC_mahcovs
-IntegerMatrix nn_matchC_mahcovs(const IntegerVector& treat_, const IntegerVector& ord, const IntegerVector& ratio, const LogicalVector& discarded, const int& reuse_max, const int& focal_, const NumericMatrix& mah_covs, const Nullable<NumericVector>& distance_, const Nullable<IntegerMatrix>& exact_, const Nullable<double>& caliper_dist_, const Nullable<NumericVector>& caliper_covs_, const Nullable<NumericMatrix>& caliper_covs_mat_, const Nullable<IntegerMatrix>& antiexact_covs_, const Nullable<IntegerVector>& unit_id_, const bool& disl_prog);
+IntegerMatrix nn_matchC_mahcovs(const IntegerVector treat_, const IntegerVector ord, const IntegerVector ratio, const LogicalVector discarded, const int reuse_max, const int focal_, const NumericMatrix mah_covs, const Nullable<NumericVector> distance_, const Nullable<IntegerMatrix> exact_, const Nullable<double> caliper_dist_, const Nullable<NumericVector> caliper_covs_, const Nullable<NumericMatrix> caliper_covs_mat_, const Nullable<IntegerMatrix> antiexact_covs_, const Nullable<IntegerVector> unit_id_, const bool disl_prog);
 RcppExport SEXP _MatchIt_nn_matchC_mahcovs(SEXP treat_SEXP, SEXP ordSEXP, SEXP ratioSEXP, SEXP discardedSEXP, SEXP reuse_maxSEXP, SEXP focal_SEXP, SEXP mah_covsSEXP, SEXP distance_SEXP, SEXP exact_SEXP, SEXP caliper_dist_SEXP, SEXP caliper_covs_SEXP, SEXP caliper_covs_mat_SEXP, SEXP antiexact_covs_SEXP, SEXP unit_id_SEXP, SEXP disl_progSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const IntegerVector& >::type treat_(treat_SEXP);
-    Rcpp::traits::input_parameter< const IntegerVector& >::type ord(ordSEXP);
-    Rcpp::traits::input_parameter< const IntegerVector& >::type ratio(ratioSEXP);
-    Rcpp::traits::input_parameter< const LogicalVector& >::type discarded(discardedSEXP);
-    Rcpp::traits::input_parameter< const int& >::type reuse_max(reuse_maxSEXP);
-    Rcpp::traits::input_parameter< const int& >::type focal_(focal_SEXP);
-    Rcpp::traits::input_parameter< const NumericMatrix& >::type mah_covs(mah_covsSEXP);
-    Rcpp::traits::input_parameter< const Nullable<NumericVector>& >::type distance_(distance_SEXP);
-    Rcpp::traits::input_parameter< const Nullable<IntegerMatrix>& >::type exact_(exact_SEXP);
-    Rcpp::traits::input_parameter< const Nullable<double>& >::type caliper_dist_(caliper_dist_SEXP);
-    Rcpp::traits::input_parameter< const Nullable<NumericVector>& >::type caliper_covs_(caliper_covs_SEXP);
-    Rcpp::traits::input_parameter< const Nullable<NumericMatrix>& >::type caliper_covs_mat_(caliper_covs_mat_SEXP);
-    Rcpp::traits::input_parameter< const Nullable<IntegerMatrix>& >::type antiexact_covs_(antiexact_covs_SEXP);
-    Rcpp::traits::input_parameter< const Nullable<IntegerVector>& >::type unit_id_(unit_id_SEXP);
-    Rcpp::traits::input_parameter< const bool& >::type disl_prog(disl_progSEXP);
+    Rcpp::traits::input_parameter< const IntegerVector >::type treat_(treat_SEXP);
+    Rcpp::traits::input_parameter< const IntegerVector >::type ord(ordSEXP);
+    Rcpp::traits::input_parameter< const IntegerVector >::type ratio(ratioSEXP);
+    Rcpp::traits::input_parameter< const LogicalVector >::type discarded(discardedSEXP);
+    Rcpp::traits::input_parameter< const int >::type reuse_max(reuse_maxSEXP);
+    Rcpp::traits::input_parameter< const int >::type focal_(focal_SEXP);
+    Rcpp::traits::input_parameter< const NumericMatrix >::type mah_covs(mah_covsSEXP);
+    Rcpp::traits::input_parameter< const Nullable<NumericVector> >::type distance_(distance_SEXP);
+    Rcpp::traits::input_parameter< const Nullable<IntegerMatrix> >::type exact_(exact_SEXP);
+    Rcpp::traits::input_parameter< const Nullable<double> >::type caliper_dist_(caliper_dist_SEXP);
+    Rcpp::traits::input_parameter< const Nullable<NumericVector> >::type caliper_covs_(caliper_covs_SEXP);
+    Rcpp::traits::input_parameter< const Nullable<NumericMatrix> >::type caliper_covs_mat_(caliper_covs_mat_SEXP);
+    Rcpp::traits::input_parameter< const Nullable<IntegerMatrix> >::type antiexact_covs_(antiexact_covs_SEXP);
+    Rcpp::traits::input_parameter< const Nullable<IntegerVector> >::type unit_id_(unit_id_SEXP);
+    Rcpp::traits::input_parameter< const bool >::type disl_prog(disl_progSEXP);
     rcpp_result_gen = Rcpp::wrap(nn_matchC_mahcovs(treat_, ord, ratio, discarded, reuse_max, focal_, mah_covs, distance_, exact_, caliper_dist_, caliper_covs_, caliper_covs_mat_, antiexact_covs_, unit_id_, disl_prog));
     return rcpp_result_gen;
 END_RCPP
