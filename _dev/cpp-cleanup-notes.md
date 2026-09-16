@@ -152,7 +152,7 @@ generated registration table.
 
 ## Not done
 
-- Restructuring the nearest-neighbour search: passing `mm` plus a row index instead of
+- Restructuring the nearest-neighbor search: passing `mm` plus a row index instead of
   `mm.row()` (an allocation per treated unit per group), the two-sided scan itself,
   and `find_control_mat()`'s prune against the running maximum rather than the
   ratio-th best. Out of scope by instruction, and each is a design change.

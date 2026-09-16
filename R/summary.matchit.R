@@ -250,8 +250,11 @@ summary.matchit <- function(object,
 
   ## Summary Stats
   if (un) {
-    aa.all <- lapply(seq_len(kk), function(i) bal1var(X[, i], tt = treat, ww = NULL, s.weights = s.weights,
-                                                      standardize = standardize, s.d.denom = s.d.denom))
+    aa.all <- lapply(seq_len(kk), function(i) {
+      bal1var(X[, i], tt = treat, ww = NULL, s.weights = s.weights,
+              standardize = standardize, s.d.denom = s.d.denom)
+    })
+
     sum.all <- do.call("rbind", aa.all)
     dimnames(sum.all) <- list(nam, names(aa.all[[1L]]))
 
@@ -260,13 +263,13 @@ summary.matchit <- function(object,
   }
 
   if (matched) {
-    aa.matched <- lapply(seq_len(kk), function(i) bal1var(X[, i], tt = treat, ww = weights,
-                                                          s.weights = s.weights,
-                                                          subclass = object$subclass,
-                                                          mm = object$match.matrix,
-                                                          standardize = standardize,
-                                                          s.d.denom = s.d.denom,
-                                                          compute.pair.dist = pair.dist))
+    aa.matched <- lapply(seq_len(kk), function(i) {
+      bal1var(X[, i], tt = treat, ww = weights, s.weights = s.weights,
+              subclass = object$subclass, mm = object$match.matrix,
+              standardize = standardize, s.d.denom = s.d.denom,
+              compute.pair.dist = pair.dist)
+    })
+
     sum.matched <- do.call("rbind", aa.matched)
     dimnames(sum.matched) <- list(nam, names(aa.matched[[1L]]))
 
@@ -457,9 +460,12 @@ summary.matchit.subclass <- function(object,
   sum.all <- sum.matched <- sum.subclass <- reduction <- NULL
 
   if (un) {
-    aa.all <- setNames(lapply(seq_len(kk), function(i) bal1var(X[, i], tt = treat, ww = NULL, s.weights = s.weights,
-                                                               standardize = standardize, s.d.denom = s.d.denom)),
-                       colnames(X))
+    aa.all <- lapply(seq_len(kk), function(i) {
+      bal1var(X[, i], tt = treat, ww = NULL, s.weights = s.weights,
+              standardize = standardize, s.d.denom = s.d.denom)
+    }) |>
+      setNames(colnames(X))
+
     sum.all <- do.call("rbind", aa.all)
     dimnames(sum.all) <- list(nam, names(aa.all[[1L]]))
 
@@ -467,10 +473,13 @@ summary.matchit.subclass <- function(object,
   }
 
   if (matched) {
-    aa.matched <- setNames(lapply(seq_len(kk), function(i) bal1var(X[, i], tt = treat, ww = weights, s.weights = s.weights,
-                                                                   subclass = subclass, standardize = standardize,
-                                                                   s.d.denom = s.d.denom, compute.pair.dist = pair.dist)),
-                           colnames(X))
+    aa.matched <- lapply(seq_len(kk), function(i) {
+      bal1var(X[, i], tt = treat, ww = weights, s.weights = s.weights,
+              subclass = subclass, standardize = standardize,
+              s.d.denom = s.d.denom, compute.pair.dist = pair.dist)
+    }) |>
+      setNames(colnames(X))
+
     sum.matched <- do.call("rbind", aa.matched)
     dimnames(sum.matched) <- list(nam, names(aa.matched[[1L]]))
 
@@ -534,17 +543,19 @@ summary.matchit.subclass <- function(object,
 
   if (is_not_null(object$distance)) {
     if (un) {
-      ad.all <- bal1var(object$distance, tt = treat, ww = NULL, s.weights = s.weights,
-                        standardize = standardize, s.d.denom = s.d.denom)
-      sum.all <- rbind(ad.all, sum.all)
+      sum.all <- bal1var(object$distance, tt = treat, ww = NULL, s.weights = s.weights,
+                         standardize = standardize, s.d.denom = s.d.denom) |>
+        rbind(sum.all)
+
       rownames(sum.all)[1L] <- "distance"
     }
 
     if (matched) {
-      ad.matched <- bal1var(object$distance, tt = treat, ww = weights, s.weights = s.weights,
-                            subclass = subclass, standardize = standardize,
-                            s.d.denom = s.d.denom, compute.pair.dist = pair.dist)
-      sum.matched <- rbind(ad.matched, sum.matched)
+      sum.matched <- bal1var(object$distance, tt = treat, ww = weights, s.weights = s.weights,
+                             subclass = subclass, standardize = standardize,
+                             s.d.denom = s.d.denom, compute.pair.dist = pair.dist) |>
+        rbind(sum.matched)
+
       rownames(sum.matched)[1L] <- "distance"
     }
   }
@@ -565,11 +576,12 @@ summary.matchit.subclass <- function(object,
 
       #bal1var.subclass only returns unmatched stats, which is all we need within
       #subclasses. Otherwise, identical to matched stats.
-      aa <- setNames(lapply(seq_len(kk), function(i) {
+      aa <- lapply(seq_len(kk), function(i) {
         bal1var.subclass(X[, i], tt = treat, s.weights = s.weights,
                          subclass = subclass, s.d.denom = s.d.denom,
                          standardize = standardize, which.subclass = s)
-      }), colnames(X))
+      }) |>
+        setNames(colnames(X))
 
       sum.sub <- make_matrix(colnames(aa[[1L]]), nrow = nam)
 
@@ -609,9 +621,10 @@ summary.matchit.subclass <- function(object,
       }
 
       if (is_not_null(object$distance)) {
-        ad <- bal1var.subclass(object$distance, tt = treat, s.weights = s.weights, subclass = subclass,
-                               s.d.denom = s.d.denom, standardize = standardize, which.subclass = s)
-        sum.sub <- rbind(ad, sum.sub)
+        sum.sub <- bal1var.subclass(object$distance, tt = treat, s.weights = s.weights, subclass = subclass,
+                                    s.d.denom = s.d.denom, standardize = standardize, which.subclass = s) |>
+          rbind(sum.sub)
+
         rownames(sum.sub)[1L] <- "distance"
       }
 
