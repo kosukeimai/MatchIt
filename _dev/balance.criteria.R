@@ -16,7 +16,7 @@ init_smd <- function(covs, treat, s.weights = NULL, estimand = "ATT", ...) {
     bin.var[i] <- all(xx == 0 | xx == 1)
 
     std[i] <- switch(estimand,
-                  "ATT" = sqrt(wvar(xx[treat], bin.var[i], s.weights[treat==1])),
+                  "ATT" = sqrt(wvar(xx[treat==1], bin.var[i], s.weights[treat==1])),
                   "ATC" = sqrt(wvar(xx[treat==0], bin.var[i], s.weights[treat==0])),
                   "ATE" = sqrt(.5*(wvar(xx[treat==1], bin.var[i], s.weights[treat==1]) +
                                      wvar(xx[treat==0], bin.var[i], s.weights[treat==0]))))
@@ -57,6 +57,56 @@ init_ks <- function(covs, treat, s.weights = NULL, ...) {
   class(out) <- "init_ks"
   out
 }
+init_smd.ks <- function(covs, treat, s.weights = NULL, estimand = "ATT", ...) {
+  bin.var <- vapply(seq_len(ncol(covs)), function(i) {
+    xx <- covs[,i]
+    all(xx == 0 | xx == 1)
+  }, logical(1L))
+
+  if (is.null(s.weights)) s.weights <- rep(1, NROW(covs))
+
+  bin.covs <- covs[,bin.var, drop = FALSE]
+  cont.covs <- covs[,!bin.var, drop = FALSE]
+  cont.covs_ord <- matrix(0L, nrow = NROW(cont.covs), ncol = NCOL(cont.covs),
+                          dimnames = dimnames(cont.covs))
+  for (i in seq_len(NCOL(cont.covs))) {
+    cont.covs_ord[,i] <- order(cont.covs[,i])
+  }
+
+  bin.std <- setNames(numeric(ncol(bin.covs)), colnames(bin.covs))
+  for (i in seq_len(ncol(bin.covs))) {
+    xx <- bin.covs[,i]
+    bin.std[i] <- switch(estimand,
+                     "ATT" = sqrt(wvar(xx[treat==1], TRUE, s.weights[treat==1])),
+                     "ATC" = sqrt(wvar(xx[treat==0], TRUE, s.weights[treat==0])),
+                     "ATE" = sqrt(.5*(wvar(xx[treat==1], TRUE, s.weights[treat==1]) +
+                                        wvar(xx[treat==0], TRUE, s.weights[treat==0]))))
+
+    if (bin.std[i] < sqrt(.Machine$double.eps)) bin.std[i] <- sqrt(wvar(xx, TRUE, s.weights)) #Avoid divide by zero
+  }
+
+  cont.std <- setNames(numeric(ncol(cont.covs)), colnames(cont.covs))
+  for (i in seq_len(ncol(cont.covs))) {
+    xx <- cont.covs[,i]
+    cont.std[i] <- switch(estimand,
+                         "ATT" = sqrt(wvar(xx[treat==1], FALSE, s.weights[treat==1])),
+                         "ATC" = sqrt(wvar(xx[treat==0], FALSE, s.weights[treat==0])),
+                         "ATE" = sqrt(.5*(wvar(xx[treat==1], FALSE, s.weights[treat==1]) +
+                                            wvar(xx[treat==0], FALSE, s.weights[treat==0]))))
+
+    if (cont.std[i] < sqrt(.Machine$double.eps)) cont.std[i] <- sqrt(wvar(xx, FALSE, s.weights)) #Avoid divide by zero
+  }
+
+  out <- list(treat = treat,
+              bin.covs = bin.covs,
+              cont.covs = cont.covs,
+              cont.covs_ord = cont.covs_ord,
+              s.weights = s.weights,
+              bin.std = bin.std,
+              cont.std = cont.std)
+  class(out) <- "init_smd.ks"
+  out
+}
 init_energy.dist <- function(covs, treat, s.weights = NULL, estimand = "ATT", ...) {
   if (is.null(s.weights)) s.weights <- rep(1, NROW(covs))
 
@@ -67,28 +117,15 @@ init_energy.dist <- function(covs, treat, s.weights = NULL, estimand = "ATT", ..
   d <- eucdist_internal(covs)
 
   n <- length(treat)
-  diagn <- diag(n)
 
-  if (estimand == "ATC") {
-    treat <- 1 - treat
-    estimand <- "ATT"
-  }
+  J0 <- (treat == 0)
+  J1 <- (treat == 1)
 
-  for (t in 0:1) s.weights[treat == t] <- s.weights[treat == t]/mean(s.weights[treat == t])
-
-  n0 <- sum(treat == 0)
-  n1 <- sum(treat == 1)
-
-  J0 <- s.weights*(treat == 0)
-  J1 <- s.weights*(treat == 1)
-
-  M10 <- (2/(n1*n0)) * tcrossprod(J1, J0) * d
-  M11 <- (-1/(n1*n1)) * tcrossprod(J1, J1) * d
-  M00 <- (-1/(n0*n0)) * tcrossprod(J0, J0) * d
+  M <- (2 * tcrossprod(J1, J0) - tcrossprod(J1, J1) - tcrossprod(J0, J0)) * d
 
   #Edist =  w %*% (M10 + M00 + M11) %*% t(w)
 
-  out <- list(M = M10 + M11 + M00,
+  out <- list(M = M,
               s.weights = s.weights,
               treat = treat)
   class(out) <- "init_energy.dist"
@@ -103,7 +140,7 @@ smd.binary <- function(init, weights = NULL) {
     xx <- init$covs[,i]
     m0 <- wm(xx[init$treat==0], weights[init$treat==0], na.rm=TRUE)
     m1 <- wm(xx[init$treat==1], weights[init$treat==1], na.rm=TRUE)
-    (m1 - m0)/init$std[i]
+    abs(m1 - m0)/init$std[i]
   }, numeric(1L))
 }
 ks.binary <- function(init, weights = NULL) {
@@ -133,13 +170,35 @@ ks.binary <- function(init, weights = NULL) {
 
   c(bin.ks, cont.ks)
 }
+smd.ks.binary <- function(init, weights = NULL) {
+
+  ks <- ks.binary(init, weights)
+
+  weights <- weights * init$s.weights
+
+  bin.smds <- vapply(seq_len(ncol(init$bin.covs)), function(i) {
+    xx <- init$bin.covs[,i]
+    m0 <- wm(xx[init$treat==0], weights[init$treat==0], na.rm=TRUE)
+    m1 <- wm(xx[init$treat==1], weights[init$treat==1], na.rm=TRUE)
+    abs(m1 - m0)/init$bin.std[i]
+  }, numeric(1L))
+
+  cont.smds <- vapply(seq_len(ncol(init$cont.covs)), function(i) {
+    xx <- init$bin.covs[,i]
+    m0 <- wm(xx[init$treat==0], weights[init$treat==0], na.rm=TRUE)
+    m1 <- wm(xx[init$treat==1], weights[init$treat==1], na.rm=TRUE)
+    abs(m1 - m0)/init$cont.std[i]
+  }, numeric(1L))
+
+  c(cont.smds, bin.smds, ks)
+}
 energy.dist.binary <- function(init, weights = NULL) {
 
   if (is.null(weights)) weights <- rep(1, nrow(init[["M2"]]))
 
   weights <- weights * init[["s.weights"]]
 
-  for (t in 0:1) weights[init[["treat"]] == t] <- weights[init[["treat"]] == t]/mean(weights[init[["treat"]] == t])
+  for (t in 0:1) weights[init[["treat"]] == t] <- weights[init[["treat"]] == t]/sum(weights[init[["treat"]] == t])
 
   return(drop(t(weights) %*% init[["M"]] %*% weights))
 }
@@ -149,6 +208,7 @@ initialize_balance <- function(criterion, covs, treat, s.weights = NULL, ...) {
   init_fun <- switch(criterion,
                      "smd.mean" =, "smd.max" =, "smd.rms" = "init_smd",
                      "ks.mean" =, "ks.max" =, "ks.rms" = "init_ks",
+                     "smd.ks.mean" =, "smd.ks.max" =, "smd.ks.rms" = "init_smd.ks",
                      "pvals" = "init_pvals",
                      "energy.dist" = "init_energy.dist")
 
@@ -156,17 +216,23 @@ initialize_balance <- function(criterion, covs, treat, s.weights = NULL, ...) {
 
   init <- eval.parent(mc)
   attr(init, "criterion") <- criterion
-  attr(init, "lexical") <- endsWith(criterion, ".max")
+  attr(init, "lexical") <- FALSE#endsWith(criterion, ".max")
   init
 }
 compute_balance <- function(init, weights) {
   balance <- switch(attr(init, "criterion"),
-      smd.mean =  mean(abs(smd.binary(init, weights))),
-      smd.max = sort(abs(smd.binary(init, weights)), decreasing = TRUE),
+      smd.mean =  mean(smd.binary(init, weights)),
+      # smd.max = sort(abs(smd.binary(init, weights)), decreasing = TRUE),
+      smd.max = max(smd.binary(init, weights)),
       smd.rms = sqrt(mean(smd.binary(init, weights)^2)),
       ks.mean = mean(ks.binary(init, weights)),
-      ks.max = sort(ks.binary(init, weights), decreasing = TRUE),
+      # ks.max = sort(ks.binary(init, weights), decreasing = TRUE),
+      ks.max = max(ks.binary(init, weights)),
       ks.rms = sqrt(mean(ks.binary(init, weights)^2)),
+      smd.ks.mean = mean(smd.ks.binary(init, weights)),
+      # ks.max = sort(ks.binary(init, weights), decreasing = TRUE),
+      smd.ks.max = max(smd.ks.binary(init, weights)),
+      smd.ks.rms = sqrt(mean(smd.ks.binary(init, weights)^2)),
       energy.dist = energy.dist.binary(init, weights)
     )
 

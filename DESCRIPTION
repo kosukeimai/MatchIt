@@ -71,4 +71,4 @@ BugReports: https://github.com/kosukeimai/MatchIt/issues
 VignetteBuilder: knitr
 Roxygen: list(markdown = TRUE)
 Config/testthat/edition: 3
-Config/roxygen2/version: 8.0.0
+Config/roxygen2/version: 8.1.0

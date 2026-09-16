@@ -10,3 +10,4 @@ docs
 /Meta/
 CLAUDE.md
 .claude/worktrees/
+.progress-runs/

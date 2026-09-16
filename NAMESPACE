@@ -22,11 +22,15 @@ export(scaled_euclidean_dist)
 import(graphics)
 import(stats)
 importFrom(Rcpp,evalCpp)
-importFrom(grDevices,devAskNewPage)
-importFrom(grDevices,nclass.FD)
-importFrom(grDevices,nclass.Sturges)
-importFrom(grDevices,nclass.scott)
-importFrom(utils,capture.output)
-importFrom(utils,combn)
-importFrom(utils,hasName)
+importFrom(grDevices,
+  devAskNewPage,
+  nclass.FD,
+  nclass.Sturges,
+  nclass.scott
+)
+importFrom(utils,
+  capture.output,
+  combn,
+  hasName
+)
 useDynLib(MatchIt, .registration = TRUE)

@@ -1,5 +1,4 @@
 #include <Rcpp.h>
-#include "internal.h"
 using namespace Rcpp;
 
 //Performs nearest neighbor matching given an n1 by n0 distance matrix,
@@ -14,6 +13,11 @@ using namespace Rcpp;
 //             matching with replacement (unrestricted)
 // ratio - integer vector of length n1 with number of controls for each treated
 //         unit (is a vector to enable variable ratio matching)
+
+IntegerVector which(const LogicalVector& x) {
+  IntegerVector ind = Range(0, x.size() - 1);
+  return ind[x];
+}
 
 // [[Rcpp::export]]
 IntegerMatrix do_matchingC(const NumericMatrix& distmat,
@@ -77,3 +81,4 @@ IntegerMatrix do_matchingC(const NumericMatrix& distmat,
 
   return mm;
 }
+

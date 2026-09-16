@@ -9,7 +9,7 @@ genmatch <- function(formula, data, treat, balance.covs.formula = NULL, reuse.ma
 
   do_matching <- get(paste0("do_matching", test))
 
-  #Initilize covariates for matching
+  #Initialize covariates for matching
   matching.covs <- transform_covariates(formula, data, treat = treat, method = "mahalanobis",
                                         s.weights = s.weights)
 
@@ -17,16 +17,18 @@ genmatch <- function(formula, data, treat, balance.covs.formula = NULL, reuse.ma
   matches_denied <- deny_match(treat, cal.dist, dist, cal, cal.covs, exact, anitexact)
   to_deny_matches <- length(matches_denied) > 0
 
-  #Initilize covariates for balancing
+  #Initialize covariates for balancing
   if (is.null(balance.covs.formula)) balance.covs.formula <- formula
-  balance.covs <- get.covs.matrix(balance.covs.formula, data = data)
+  balance.covs <- get_covs_matrix(balance.covs.formula, data = data)
 
-  #Initilize balance criterion
+  #Initialize balance criterion
   bal.init <- initialize_balance(criterion = criterion, covs = balance.covs,
                                  treat = treat, s.weights = s.weights)
 
   #Function to do matching matching and produce balance statistic given covariate weights
-  gen_fun <- function(w) {
+  gen_fun <- function(w_) {
+    w <- sqrt(exp(c(0, w_)))
+
     #Create distance matrix from weighted covariates
     distmat <- eucdist_internal(matching.covs %*% diag(w), treat)
     if (to_deny_matches) distmat[matches_denied] <- Inf
@@ -35,23 +37,153 @@ genmatch <- function(formula, data, treat, balance.covs.formula = NULL, reuse.ma
     matches <- do_matching(distmat, treat, ord, rat, reuse.max)
 
     #Extract matching weights
-    match_weights <- weights.matrix(matches, treat)
+    match_weights <- get_weights_from_mm(matches, treat)
 
     #Return balance statistic
     return(compute_balance(bal.init, match_weights))
   }
 
   #Set bounds on covariate weights; keep positive to limit search
-  bounds <- matrix(c(0, 1000), nrow = ncol(matching.covs), ncol = 2,
+  bounds <- matrix(c(-8, 8), nrow = ncol(matching.covs) - 1, ncol = 2,
                    byrow = TRUE)
 
   #Perform optimization
-  opt <- rgenoud::genoud(gen_fun, nvars = ncol(matching.covs),
+  opt <- rgenoud::genoud(gen_fun, nvars = ncol(matching.covs) - 1,
                          max = FALSE, Domains = bounds,
                          lexical = attr(bal.init, "lexical"),
                          gradient.check = FALSE, BFGS = FALSE,
-                         hessian = FALSE, starting.values = rep(1, ncol(matching.covs)),
+                         hessian = FALSE, starting.values = rep(0, ncol(matching.covs) - 1),
                          ...)
+
+  #Once optimal weights found, create distance matrix
+  distmat <- eucdist_internal(matching.covs %*% diag(sqrt(exp(c(0, opt$par)))), treat)
+  distmat[matches_denied] <- Inf
+
+  #Perform matching; output is a char match.matrix
+  matches <- do_matching(distmat, treat, ord, rat, reuse.max)
+
+  # browser()
+  # microbenchmark::microbenchmark(
+  #   `1` = do_matching1(distmat, treat, ord, rat, reuse.max),
+  #   `1.5` = do_matching1.5(distmat, treat, ord, rat, reuse.max),
+  #   `4` = do_matching4(distmat, treat, ord, rat, reuse.max),
+  #   check = "equivalent", times = 100
+  # )
+
+  return(list(matches = matches, opt = opt, weights = get_weights_from_mm(matches, treat)))
+}
+
+genmatch2 <- function(formula, data, treat, balance.covs.formula = NULL, reuse.max = 1, rat = 1, ord,
+                     criterion = "smd.max", s.weights = NULL, cal.dist = NULL, dist = NULL, cal = NULL,
+                     cal.covs = NULL, exact = NULL, anitexact = NULL, test = 4, ...) {
+  #Argument checking
+  if (missing(ord)) ord <- seq_len(sum(treat == 1))
+  if (is.null(names(treat))) names(treat) <- rownames(data)
+  if (length(rat) == 1) rat <- rep(rat, sum(treat == 1))
+  if (reuse.max > sum(treat == 1)) reuse.max <- as.integer(sum(treat == 1))
+
+  do_matching <- get(paste0("do_matching", test))
+
+  #Initialize covariates for matching
+  matching.covs <- transform_covariates(formula, data, treat = treat, method = "mahalanobis",
+                                        s.weights = s.weights)
+
+  #Initialize distance matrix restrictions
+  matches_denied <- deny_match(treat, cal.dist, dist, cal, cal.covs, exact, anitexact)
+  to_deny_matches <- length(matches_denied) > 0
+
+  #Initialize covariates for balancing
+  if (is.null(balance.covs.formula)) balance.covs.formula <- formula
+  balance.covs <- get_covs_matrix(balance.covs.formula, data = data)
+
+  #Initialize balance criterion
+  bal.init <- initialize_balance(criterion = criterion, covs = balance.covs,
+                                 treat = treat, s.weights = s.weights)
+
+  #Function to do matching matching and produce balance statistic given covariate weights
+  gen_fun <- function(w_) {
+    w <- sqrt(exp(c(0, w_)))
+
+    #Create distance matrix from weighted covariates
+    distmat <- eucdist_internal(matching.covs %*% diag(w), treat)
+    if (to_deny_matches) distmat[matches_denied] <- Inf
+
+    #Perform matching
+    matches <- do_matching(distmat, treat, ord, rat, reuse.max)
+
+    #Extract matching weights
+    match_weights <- get_weights_from_mm(matches, treat)
+
+    #Return balance statistic
+    return(-compute_balance(bal.init, match_weights))
+  }
+
+  #Perform optimization
+  opt <- GA::ga(gen_fun,
+                type = "real-valued",
+                lower = rep(-8, ncol(matching.covs) - 1),
+                upper = rep(8, ncol(matching.covs) - 1),
+                suggestions = rep(0, ncol(matching.covs) - 1),
+                ...)
+
+  #Once optimal weights found, create distance matrix
+  distmat <- eucdist_internal(matching.covs %*% diag(sqrt(exp(c(0, opt@solution[1,])))), treat)
+  distmat[matches_denied] <- Inf
+
+  #Perform matching; output is a char match.matrix
+  matches <- do_matching(distmat, treat, ord, rat, reuse.max)
+
+  return(list(matches = matches, opt = opt, weights = get_weights_from_mm(matches, treat)))
+}
+
+psomatch <- function(formula, data, treat, balance.covs.formula = NULL, reuse.max = 1, rat = 1, ord,
+                     criterion = "smd.max", s.weights = NULL, cal.dist = NULL, dist = NULL, cal = NULL,
+                     cal.covs = NULL, exact = NULL, anitexact = NULL, test = 4, ...) {
+  #Argument checking
+  if (missing(ord)) ord <- seq_len(sum(treat == 1))
+  if (is.null(names(treat))) names(treat) <- rownames(data)
+  if (length(rat) == 1) rat <- rep(rat, sum(treat == 1))
+  if (reuse.max > sum(treat == 1)) reuse.max <- as.integer(sum(treat == 1))
+
+  do_matching <- get(paste0("do_matching", test))
+
+  #Initialize covariates for matching
+  matching.covs <- transform_covariates(formula, data, treat = treat, method = "mahalanobis",
+                                        s.weights = s.weights)
+
+  #Initialize distance matrix restrictions
+  matches_denied <- deny_match(treat, cal.dist, dist, cal, cal.covs, exact, anitexact)
+  to_deny_matches <- length(matches_denied) > 0
+
+  #Initialize covariates for balancing
+  if (is.null(balance.covs.formula)) balance.covs.formula <- formula
+  balance.covs <- get_covs_matrix(balance.covs.formula, data = data)
+
+  #Initialize balance criterion
+  bal.init <- initialize_balance(criterion = criterion, covs = balance.covs,
+                                 treat = treat, s.weights = s.weights)
+
+  #Function to do matching matching and produce balance statistic given covariate weights
+  pso_fun <- function(w) {
+    #Create distance matrix from weighted covariates
+    distmat <- eucdist_internal(matching.covs %*% diag(w), treat)
+    if (to_deny_matches) distmat[matches_denied] <- Inf
+
+    #Perform matching
+    matches <- do_matching(distmat, treat, ord, rat, reuse.max)
+
+    #Extract matching weights
+    match_weights <- get_weights_from_mm(matches, treat)
+
+    #Return balance statistic
+    return(compute_balance(bal.init, match_weights))
+  }
+
+  #Perform optimization
+  opt <- pso::psoptim(rep(1, ncol(matching.covs)), pso_fun,
+                      lower = rep(0, ncol(matching.covs)),
+                      upper = rep(1e3, ncol(matching.covs)),
+                      control = list(abstol = 1e-4))
 
   #Once optimal weights found, create distance matrix
   distmat <- eucdist_internal(matching.covs %*% diag(opt$par), treat)
@@ -68,7 +200,7 @@ genmatch <- function(formula, data, treat, balance.covs.formula = NULL, reuse.ma
   #   check = "equivalent", times = 100
   # )
 
-  return(list(matches = matches, opt = opt, weights = weights.matrix(matches, treat)))
+  return(list(matches = matches, opt = opt, weights = get_weights_from_mm(matches, treat)))
 }
 
 do_matching1 <- function(distmat, treat, ord = NULL, ratio, reuse.max) {

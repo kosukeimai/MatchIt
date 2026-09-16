@@ -75,7 +75,7 @@
 #'   replacement (i.e., `replace = TRUE`) with no limit on the number of
 #'   times each control unit can be matched. Other values restrict the number of
 #'   times each control can be matched when matching with replacement.
-#'   `replace` is ignored when `reuse.max` is specified.  
+#'   `replace` is ignored when `reuse.max` is specified.
 #'   \item `unit.id`: one or more variables containing a unit ID for each
 #'   observation, i.e., in case multiple observations correspond to the same
 #'   unit. Once a control observation has been matched, no other observation with
@@ -580,7 +580,6 @@ matchit2nearest <- function(treat, data, distance, discarded,
       }
 
       ratio_ <- ratio[.e1]
-
       mm_ <- nn_matchC_dispatch(treat_, 1L, ratio_, discarded_, reuse.max, distance_, distance_mat_,
                                 ex.caliper_, caliper.dist, caliper.covs, caliper.covs.mat_, mahcovs_,
                                 antiexactcovs_, NULL, m.order, verbose)
