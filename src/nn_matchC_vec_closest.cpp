@@ -79,7 +79,7 @@ IntegerMatrix nn_matchC_vec_closest(const IntegerVector& treat,
   //`sum(!is_na(mm(row, _)))`, which allocates twice for every match written.
   std::vector<int> mm_filled(mm.nrow(), 0);
 
-  CharacterVector lab = treat.names();
+  const CharacterVector lab = treat.names();
 
   //`base::order()`'s radix sort beats every C++ alternative measured here by 3-8x at
   //these sizes; see _dev/cpp-cleanup-notes.md. Looked up in the base environment

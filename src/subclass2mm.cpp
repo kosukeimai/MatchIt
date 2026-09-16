@@ -36,7 +36,7 @@ IntegerMatrix subclass2mmC(const IntegerVector& subclass_,
 
   IntegerMatrix mm(n1, mm_col);
   mm.fill(NA_INTEGER);
-  CharacterVector lab = treat.names();
+  const CharacterVector lab = treat.names();
 
   //First row of `mm` belonging to each subclass. The rows are scanned in order and
   //the first match wins, which is what the loop this replaces did with its `break`;
@@ -88,7 +88,7 @@ IntegerVector mm2subclassC(const IntegerMatrix& mm,
                            const IntegerVector& treat,
                            const Nullable<int>& focal = R_NilValue) {
 
-  CharacterVector lab = treat.names();
+  const CharacterVector lab = treat.names();
 
   R_xlen_t n1 = treat.size();
 
@@ -98,7 +98,7 @@ IntegerVector mm2subclassC(const IntegerMatrix& mm,
 
   const IntegerVector ind1 = focal.isNotNull() ?
   which(treat == as<int>(focal)) :
-  IntegerVector(match(as<CharacterVector>(rownames(mm)), lab) - 1);
+    IntegerVector(match(as<CharacterVector>(rownames(mm)), lab) - 1);
 
   R_xlen_t r = mm.nrow();
   R_xlen_t ki = 0;

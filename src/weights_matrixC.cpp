@@ -7,7 +7,7 @@ NumericVector weights_matrixC(const IntegerMatrix& mm,
                               const IntegerVector& treat_,
                               const Nullable<int>& focal = R_NilValue) {
 
-  CharacterVector lab = treat_.names();
+  const CharacterVector lab = treat_.names();
   IntegerVector unique_treat = unique(treat_);
   std::sort(unique_treat.begin(), unique_treat.end());
   int g = unique_treat.size();
@@ -23,7 +23,7 @@ NumericVector weights_matrixC(const IntegerMatrix& mm,
   //`treat` has been recoded to 0..g-1, so `focal` must be recoded the same way
   const IntegerVector row_ind = focal.isNotNull() ?
   which(treat == recode_focal(as<int>(focal), unique_treat)) :
-  IntegerVector(match(as<CharacterVector>(rownames(mm)), lab) - 1);
+    IntegerVector(match(as<CharacterVector>(rownames(mm)), lab) - 1);
 
   std::vector<double> matches_g(g, 0.0);
 

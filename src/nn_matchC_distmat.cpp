@@ -99,7 +99,7 @@ IntegerMatrix nn_matchC_distmat(const IntegerVector& treat_,
   //`sum(!is_na(mm(row, _)))`, which allocates twice for every match written.
   std::vector<int> mm_filled(mm.nrow(), 0);
 
-  CharacterVector lab = treat_.names();
+  const CharacterVector lab = treat_.names();
 
   //`as<>()` on a `Nullable` wraps the caller's SEXP rather than copying it, so every
   //object taken from an argument below is `const`. Writing through one of them would
