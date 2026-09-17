@@ -18,190 +18,80 @@ Below is how
 [`matchit()`](https://kosukeimai.github.io/MatchIt/reference/matchit.md)
 is used for nearest neighbor matching:
 
-## Usage
 
-``` r
-matchit(formula,
-        data = NULL,
-        method = "nearest",
-        distance = "glm",
-        link = "logit",
-        distance.options = list(),
-        estimand = "ATT",
-        exact = NULL,
-        mahvars = NULL,
-        antiexact = NULL,
-        discard = "none",
-        reestimate = FALSE,
-        s.weights = NULL,
-        replace = TRUE,
-        m.order = NULL,
-        caliper = NULL,
-        ratio = 1,
-        min.controls = NULL,
-        max.controls = NULL,
-        verbose = FALSE,
-        ...)
-```
+    matchit(formula,
+            data = NULL,
+            method = "nearest",
+            distance = "glm",
+            link = "logit",
+            distance.options = list(),
+            estimand = "ATT",
+            exact = NULL,
+            mahvars = NULL,
+            antiexact = NULL,
+            discard = "none",
+            reestimate = FALSE,
+            s.weights = NULL,
+            replace = TRUE,
+            m.order = NULL,
+            caliper = NULL,
+            ratio = 1,
+            min.controls = NULL,
+            max.controls = NULL,
+            verbose = FALSE,
+            ...) 
 
 ## Arguments
 
-- formula:
+|  |  |
+|----|----|
+| `formula` | a two-sided [formula](https://rdrr.io/r/stats/formula.html) object containing the treatment and covariates to be used in creating the distance measure used in the matching. |
+| `data` | a data frame containing the variables named in `formula`. If not found in `data`, the variables will be sought in the environment. |
+| `method` | set here to `"nearest"`. |
+| `distance` | the distance measure to be used. See [`distance`](https://kosukeimai.github.io/MatchIt/reference/distance.md) for allowable options. Can be supplied as a distance matrix. |
+| `link` | when `distance` is specified as a method of estimating propensity scores, an additional argument controlling the link function used in estimating the distance measure. See [`distance`](https://kosukeimai.github.io/MatchIt/reference/distance.md) for allowable options with each option. |
+| `distance.options` | a named list containing additional arguments supplied to the function that estimates the distance measure as determined by the argument to `distance`. |
+| `estimand` | a string containing the desired estimand. Allowable options include `"ATT"` and `"ATC"`. See Details. |
+| `exact` | for which variables exact matching should take place; two units with different values of an exact matching variable will not be paired. |
+| `mahvars` | for which variables Mahalanobis distance matching should take place when `distance` corresponds to a propensity score (e.g., for caliper matching or to discard units for common support). If specified, the distance measure will not be used in matching. |
+| `antiexact` | for which variables anti-exact matching should take place; two units with the same value of an anti-exact matching variable will not be paired. |
+| `discard` | a string containing a method for discarding units outside a region of common support. Only allowed when `distance` corresponds to a propensity score. |
+| `reestimate` | if `discard` is not `"none"`, whether to re-estimate the propensity score in the remaining sample prior to matching. |
+| `s.weights` | the variable containing sampling weights to be incorporated into propensity score models and balance statistics. |
+| `replace` | whether matching should be done with replacement (i.e., whether control units can be used as matches multiple times). See also the `reuse.max` argument below. Default is `FALSE` for matching without replacement. |
+| `m.order` | the order that the matching takes place. Allowable options include `"largest"`, where matching takes place in descending order of distance measures; `"smallest"`, where matching takes place in ascending order of distance measures; `"closest"`, where matching takes place in ascending order of the smallest distance between units; `"farthest"`, where matching takes place in descending order of the smallest distance between units; `"random"`, where matching takes place in a random order; and `"data"` where matching takes place based on the order of units in the data. When `m.order = "random"`, results may differ across different runs of the same code unless a seed is set and specified with [`set.seed()`](https://rdrr.io/r/base/Random.html). The default of `NULL` corresponds to `"largest"` when a propensity score is estimated or supplied as a vector and `"data"` otherwise. See Details for more information. |
+| `caliper` | the width(s) of the caliper(s) used for caliper matching. Two units with a difference on a caliper variable larger than the caliper will not be paired. See Details and Examples. |
+| `std.caliper` | `logical`; when calipers are specified, whether they are in standard deviation units (`TRUE`) or raw units (`FALSE`). |
+| `ratio` | how many control units should be matched to each treated unit for k:1 matching. For variable ratio matching, see section "Variable Ratio Matching" in Details below. When `ratio` is greater than 1, all treated units will be attempted to be matched with a control unit before any treated unit is matched with a second control unit, etc. This reduces the possibility that control units will be used up before some treated units receive any matches. |
+| `min.controls`, `max.controls` | for variable ratio matching, the minimum and maximum number of controls units to be matched to each treated unit. See section "Variable Ratio Matching" in Details below. |
+| `verbose` | `logical`; whether information about the matching process should be printed to the console. When `TRUE`, a progress bar implemented using *RcppProgress* will be displayed along with an estimate of the time remaining. |
+| `...` | additional arguments that control the matching specification, described below. |
 
-  a two-sided [formula](https://rdrr.io/r/stats/formula.html) object
-  containing the treatment and covariates to be used in creating the
-  distance measure used in the matching.
+Arguments that can be supplied through `...`:
 
-- data:
+- `reuse.max`: `numeric`; the maximum number of times each control can
+  be used as a match. Setting `reuse.max = 1` corresponds to matching
+  without replacement (i.e., `replace = FALSE`), and setting
+  `reuse.max = Inf` corresponds to traditional matching with replacement
+  (i.e., `replace = TRUE`) with no limit on the number of times each
+  control unit can be matched. Other values restrict the number of times
+  each control can be matched when matching with replacement. `replace`
+  is ignored when `reuse.max` is specified.
 
-  a data frame containing the variables named in `formula`. If not found
-  in `data`, the variables will be sought in the environment.
+- `unit.id`: one or more variables containing a unit ID for each
+  observation, i.e., in case multiple observations correspond to the
+  same unit. Once a control observation has been matched, no other
+  observation with the same unit ID can be used as matches. This ensures
+  each control unit is used only once even if it has multiple
+  observations associated with it. Omitting this argument is the same as
+  giving each observation a unique ID.
 
-- method:
+## Outputs
 
-  set here to `"nearest"`.
-
-- distance:
-
-  the distance measure to be used. See
-  [`distance`](https://kosukeimai.github.io/MatchIt/reference/distance.md)
-  for allowable options. Can be supplied as a distance matrix.
-
-- link:
-
-  when `distance` is specified as a method of estimating propensity
-  scores, an additional argument controlling the link function used in
-  estimating the distance measure. See
-  [`distance`](https://kosukeimai.github.io/MatchIt/reference/distance.md)
-  for allowable options with each option.
-
-- distance.options:
-
-  a named list containing additional arguments supplied to the function
-  that estimates the distance measure as determined by the argument to
-  `distance`.
-
-- estimand:
-
-  a string containing the desired estimand. Allowable options include
-  `"ATT"` and `"ATC"`. See Details.
-
-- exact:
-
-  for which variables exact matching should take place; two units with
-  different values of an exact matching variable will not be paired.
-
-- mahvars:
-
-  for which variables Mahalanobis distance matching should take place
-  when `distance` corresponds to a propensity score (e.g., for caliper
-  matching or to discard units for common support). If specified, the
-  distance measure will not be used in matching.
-
-- antiexact:
-
-  for which variables anti-exact matching should take place; two units
-  with the same value of an anti-exact matching variable will not be
-  paired.
-
-- discard:
-
-  a string containing a method for discarding units outside a region of
-  common support. Only allowed when `distance` corresponds to a
-  propensity score.
-
-- reestimate:
-
-  if `discard` is not `"none"`, whether to re-estimate the propensity
-  score in the remaining sample prior to matching.
-
-- s.weights:
-
-  the variable containing sampling weights to be incorporated into
-  propensity score models and balance statistics.
-
-- replace:
-
-  whether matching should be done with replacement (i.e., whether
-  control units can be used as matches multiple times). See also the
-  `reuse.max` argument below. Default is `FALSE` for matching without
-  replacement.
-
-- m.order:
-
-  the order that the matching takes place. Allowable options include
-  `"largest"`, where matching takes place in descending order of
-  distance measures; `"smallest"`, where matching takes place in
-  ascending order of distance measures; `"closest"`, where matching
-  takes place in ascending order of the smallest distance between units;
-  `"farthest"`, where matching takes place in descending order of the
-  smallest distance between units; `"random"`, where matching takes
-  place in a random order; and `"data"` where matching takes place based
-  on the order of units in the data. When `m.order = "random"`, results
-  may differ across different runs of the same code unless a seed is set
-  and specified with [`set.seed()`](https://rdrr.io/r/base/Random.html).
-  The default of `NULL` corresponds to `"largest"` when a propensity
-  score is estimated or supplied as a vector and `"data"` otherwise. See
-  Details for more information.
-
-- caliper:
-
-  the width(s) of the caliper(s) used for caliper matching. Two units
-  with a difference on a caliper variable larger than the caliper will
-  not be paired. See Details and Examples.
-
-- std.caliper:
-
-  `logical`; when calipers are specified, whether they are in standard
-  deviation units (`TRUE`) or raw units (`FALSE`).
-
-- ratio:
-
-  how many control units should be matched to each treated unit for k:1
-  matching. For variable ratio matching, see section "Variable Ratio
-  Matching" in Details below. When `ratio` is greater than 1, all
-  treated units will be attempted to be matched with a control unit
-  before any treated unit is matched with a second control unit, etc.
-  This reduces the possibility that control units will be used up before
-  some treated units receive any matches.
-
-- min.controls, max.controls:
-
-  for variable ratio matching, the minimum and maximum number of
-  controls units to be matched to each treated unit. See section
-  "Variable Ratio Matching" in Details below.
-
-- verbose:
-
-  `logical`; whether information about the matching process should be
-  printed to the console. When `TRUE`, a progress bar implemented using
-  *RcppProgress* will be displayed along with an estimate of the time
-  remaining.
-
-- ...:
-
-  additional arguments that control the matching specification:
-
-  `reuse.max`
-
-  :   `numeric`; the maximum number of times each control can be used as
-      a match. Setting `reuse.max = 1` corresponds to matching without
-      replacement (i.e., `replace = FALSE`), and setting
-      `reuse.max = Inf` corresponds to traditional matching with
-      replacement (i.e., `replace = TRUE`) with no limit on the number
-      of times each control unit can be matched. Other values restrict
-      the number of times each control can be matched when matching with
-      replacement. `replace` is ignored when `reuse.max` is specified.
-
-  `unit.id`
-
-  :   one or more variables containing a unit ID for each observation,
-      i.e., in case multiple observations correspond to the same unit.
-      Once a control observation has been matched, no other observation
-      with the same unit ID can be used as matches. This ensures each
-      control unit is used only once even if it has multiple
-      observations associated with it. Omitting this argument is the
-      same as giving each observation a unique ID.
+All outputs described in
+[`matchit()`](https://kosukeimai.github.io/MatchIt/reference/matchit.md)
+are returned with `method = "nearest"`. When `replace = TRUE`, the
+`subclass` component is omitted. `include.obj` is ignored.
 
 ## Details
 
@@ -338,13 +228,6 @@ for details), so a seed must be set in that case using
 [`set.seed()`](https://rdrr.io/r/base/Random.html) to ensure
 reproducibility. Otherwise, it is purely deterministic, and any ties are
 broken based on the order in which the data appear.
-
-## Outputs
-
-All outputs described in
-[`matchit()`](https://kosukeimai.github.io/MatchIt/reference/matchit.md)
-are returned with `method = "nearest"`. When `replace = TRUE`, the
-`subclass` component is omitted. `include.obj` is ignored.
 
 ## References
 

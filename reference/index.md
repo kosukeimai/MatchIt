@@ -5,31 +5,31 @@
 - [`matchit()`](https://kosukeimai.github.io/MatchIt/reference/matchit.md)
   : Matching for Causal Inference
 
-- [`matchit()`](https://kosukeimai.github.io/MatchIt/reference/method_cardinality.md)
+- [`method_cardinality`](https://kosukeimai.github.io/MatchIt/reference/method_cardinality.md)
   : Cardinality Matching
 
-- [`matchit()`](https://kosukeimai.github.io/MatchIt/reference/method_cem.md)
+- [`method_cem`](https://kosukeimai.github.io/MatchIt/reference/method_cem.md)
   : Coarsened Exact Matching
 
-- [`matchit()`](https://kosukeimai.github.io/MatchIt/reference/method_exact.md)
+- [`method_exact`](https://kosukeimai.github.io/MatchIt/reference/method_exact.md)
   : Exact Matching
 
-- [`matchit()`](https://kosukeimai.github.io/MatchIt/reference/method_full.md)
+- [`method_full`](https://kosukeimai.github.io/MatchIt/reference/method_full.md)
   : Optimal Full Matching
 
-- [`matchit()`](https://kosukeimai.github.io/MatchIt/reference/method_genetic.md)
+- [`method_genetic`](https://kosukeimai.github.io/MatchIt/reference/method_genetic.md)
   : Genetic Matching
 
-- [`matchit()`](https://kosukeimai.github.io/MatchIt/reference/method_nearest.md)
+- [`method_nearest`](https://kosukeimai.github.io/MatchIt/reference/method_nearest.md)
   : Nearest Neighbor Matching
 
-- [`matchit()`](https://kosukeimai.github.io/MatchIt/reference/method_optimal.md)
+- [`method_optimal`](https://kosukeimai.github.io/MatchIt/reference/method_optimal.md)
   : Optimal Pair Matching
 
-- [`matchit()`](https://kosukeimai.github.io/MatchIt/reference/method_quick.md)
+- [`method_quick`](https://kosukeimai.github.io/MatchIt/reference/method_quick.md)
   : Fast Generalized Full Matching
 
-- [`matchit()`](https://kosukeimai.github.io/MatchIt/reference/method_subclass.md)
+- [`method_subclass`](https://kosukeimai.github.io/MatchIt/reference/method_subclass.md)
   : Subclassification
 
 - [`distance`](https://kosukeimai.github.io/MatchIt/reference/distance.md)

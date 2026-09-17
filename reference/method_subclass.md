@@ -20,112 +20,61 @@ Below is how
 [`matchit()`](https://kosukeimai.github.io/MatchIt/reference/matchit.md)
 is used for subclassification:
 
-## Usage
 
-``` r
-matchit(formula,
-        data = NULL,
-        method = "subclass",
-        distance = "glm",
-        link = "logit",
-        distance.options = list(),
-        estimand = "ATT",
-        discard = "none",
-        reestimate = FALSE,
-        s.weights = NULL,
-        verbose = FALSE,
-        ...)
-```
+    matchit(formula,
+            data = NULL,
+            method = "subclass",
+            distance = "glm",
+            link = "logit",
+            distance.options = list(),
+            estimand = "ATT",
+            discard = "none",
+            reestimate = FALSE,
+            s.weights = NULL,
+            verbose = FALSE,
+            ...) 
 
 ## Arguments
 
-- formula:
+|  |  |
+|----|----|
+| `formula` | a two-sided [formula](https://rdrr.io/r/stats/formula.html) object containing the treatment and covariates to be used in creating the distance measure used in the subclassification. |
+| `data` | a data frame containing the variables named in `formula`. If not found in `data`, the variables will be sought in the environment. |
+| `method` | set here to `"subclass"`. |
+| `distance` | the distance measure to be used. See [`distance`](https://kosukeimai.github.io/MatchIt/reference/distance.md) for allowable options. Must be a vector of distance scores or the name of a method of estimating propensity scores. |
+| `link` | when `distance` is specified as a string, an additional argument controlling the link function used in estimating the distance measure. See [`distance`](https://kosukeimai.github.io/MatchIt/reference/distance.md) for allowable options with each option. |
+| `distance.options` | a named list containing additional arguments supplied to the function that estimates the distance measure as determined by the argument to `distance`. |
+| `estimand` | the target `estimand`. If `"ATT"`, the default, subclasses are formed based on quantiles of the distance measure in the treated group; if `"ATC"`, subclasses are formed based on quantiles of the distance measure in the control group; if `"ATE"`, subclasses are formed based on quantiles of the distance measure in the full sample. The estimand also controls how the subclassification weights are computed; see the Computing Weights section at [`matchit()`](https://kosukeimai.github.io/MatchIt/reference/matchit.md) for details. |
+| `discard` | a string containing a method for discarding units outside a region of common support. |
+| `reestimate` | if `discard` is not `"none"`, whether to re-estimate the propensity score in the remaining sample prior to subclassification. |
+| `s.weights` | the variable containing sampling weights to be incorporated into propensity score models and balance statistics. |
+| `verbose` | `logical`; whether information about the matching process should be printed to the console. |
+| `...` | additional arguments that control the subclassification, described below. |
 
-  a two-sided [formula](https://rdrr.io/r/stats/formula.html) object
-  containing the treatment and covariates to be used in creating the
-  distance measure used in the subclassification.
+Arguments that can be supplied through `...`:
 
-- data:
+- `subclass`: either the number of subclasses desired or a vector of
+  quantiles used to divide the distance measure into subclasses. Default
+  is 6.
 
-  a data frame containing the variables named in `formula`. If not found
-  in `data`, the variables will be sought in the environment.
+- `min.n`: the minimum number of units of each treatment group that are
+  to be assigned each subclass. If the distance measure is divided in
+  such a way that fewer than `min.n` units of a treatment group are
+  assigned a given subclass, units from other subclasses will be
+  reassigned to fill the deficient subclass. Default is 1.
 
-- method:
+The arguments `exact`, `mahvars`, `replace`, `m.order`, `caliper` (and
+related arguments), and `ratio` are ignored with a warning.
 
-  set here to `"subclass"`.
+## Outputs
 
-- distance:
-
-  the distance measure to be used. See
-  [`distance`](https://kosukeimai.github.io/MatchIt/reference/distance.md)
-  for allowable options. Must be a vector of distance scores or the name
-  of a method of estimating propensity scores.
-
-- link:
-
-  when `distance` is specified as a string, an additional argument
-  controlling the link function used in estimating the distance measure.
-  See
-  [`distance`](https://kosukeimai.github.io/MatchIt/reference/distance.md)
-  for allowable options with each option.
-
-- distance.options:
-
-  a named list containing additional arguments supplied to the function
-  that estimates the distance measure as determined by the argument to
-  `distance`.
-
-- estimand:
-
-  the target `estimand`. If `"ATT"`, the default, subclasses are formed
-  based on quantiles of the distance measure in the treated group; if
-  `"ATC"`, subclasses are formed based on quantiles of the distance
-  measure in the control group; if `"ATE"`, subclasses are formed based
-  on quantiles of the distance measure in the full sample. The estimand
-  also controls how the subclassification weights are computed; see the
-  Computing Weights section at
-  [`matchit()`](https://kosukeimai.github.io/MatchIt/reference/matchit.md)
-  for details.
-
-- discard:
-
-  a string containing a method for discarding units outside a region of
-  common support.
-
-- reestimate:
-
-  if `discard` is not `"none"`, whether to re-estimate the propensity
-  score in the remaining sample prior to subclassification.
-
-- s.weights:
-
-  the variable containing sampling weights to be incorporated into
-  propensity score models and balance statistics.
-
-- verbose:
-
-  `logical`; whether information about the matching process should be
-  printed to the console.
-
-- ...:
-
-  additional arguments that control the subclassification:
-
-  `subclass`
-
-  :   either the number of subclasses desired or a vector of quantiles
-      used to divide the distance measure into subclasses. Default is 6.
-
-  `min.n`
-
-  :   the minimum number of units of each treatment group that are to be
-      assigned each subclass. If the distance measure is divided in such
-      a way that fewer than `min.n` units of a treatment group are
-      assigned a given subclass, units from other subclasses will be
-      reassigned to fill the deficient subclass. Default is 1.
-
-  The arguments `exact`, `mahvars`, `replace`, `m.order`, `caliper` (and
-  related arguments), and `ratio` are ignored with a warning.
+All outputs described in
+[`matchit()`](https://kosukeimai.github.io/MatchIt/reference/matchit.md)
+are returned with `method = "subclass"` except that `match.matrix` is
+excluded and one additional component, `q.cut`, is included, containing
+a vector of the distance measure cutpoints used to define the
+subclasses. Note that when `min.n > 0`, the subclass assignments may not
+strictly obey the quantiles listed in `q.cut`. `include.obj` is ignored.
 
 ## Details
 
@@ -151,16 +100,6 @@ Note that subclassification weights can also be estimated using
 *WeightIt*, which provides some additional methods for estimating
 propensity scores. Where propensity score-estimation methods overlap,
 both packages will yield the same weights.
-
-## Outputs
-
-All outputs described in
-[`matchit()`](https://kosukeimai.github.io/MatchIt/reference/matchit.md)
-are returned with `method = "subclass"` except that `match.matrix` is
-excluded and one additional component, `q.cut`, is included, containing
-a vector of the distance measure cutpoints used to define the
-subclasses. Note that when `min.n > 0`, the subclass assignments may not
-strictly obey the quantiles listed in `q.cut`. `include.obj` is ignored.
 
 ## References
 

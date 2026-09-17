@@ -26,136 +26,99 @@ Below is how
 [`matchit()`](https://kosukeimai.github.io/MatchIt/reference/matchit.md)
 is used for optimal pair matching:
 
-## Usage
 
-``` r
-matchit(formula,
-        data = NULL,
-        method = "optimal",
-        distance = "glm",
-        link = "logit",
-        distance.options = list(),
-        estimand = "ATT",
-        exact = NULL,
-        mahvars = NULL,
-        antiexact = NULL,
-        discard = "none",
-        reestimate = FALSE,
-        s.weights = NULL,
-        ratio = 1,
-        min.controls = NULL,
-        max.controls = NULL,
-        verbose = FALSE,
-        ...)
-```
+    matchit(formula,
+            data = NULL,
+            method = "optimal",
+            distance = "glm",
+            link = "logit",
+            distance.options = list(),
+            estimand = "ATT",
+            exact = NULL,
+            mahvars = NULL,
+            antiexact = NULL,
+            discard = "none",
+            reestimate = FALSE,
+            s.weights = NULL,
+            ratio = 1,
+            min.controls = NULL,
+            max.controls = NULL,
+            verbose = FALSE,
+            ...) 
+
+## Note
+
+Optimal pair matching is a restricted form of optimal full matching
+where the number of treated units in each subclass is equal to 1,
+whereas in unrestricted full matching, multiple treated units can be
+assigned to the same subclass.
+[`optmatch::pairmatch()`](https://rdrr.io/pkg/optmatch/man/pairmatch.html)
+is simply a wrapper for
+[`optmatch::fullmatch()`](https://rdrr.io/pkg/optmatch/man/fullmatch.html)
+, which performs optimal full matching and is the workhorse for
+[`method_full`](https://kosukeimai.github.io/MatchIt/reference/method_full.md).
+In the same way,
+[`matchit()`](https://kosukeimai.github.io/MatchIt/reference/matchit.md)
+uses
+[`optmatch::fullmatch()`](https://rdrr.io/pkg/optmatch/man/fullmatch.html)
+under the hood, imposing the restrictions that make optimal full
+matching function like optimal pair matching (which is simply to set
+`min.controls >= 1` and to pass `ratio` to the `mean.controls`
+argument). This distinction is not important for regular use but may be
+of interest to those examining the source code.
+
+The option `"optmatch_max_problem_size"` is automatically set to `Inf`
+during the matching process, different from its default in *optmatch*.
+This enables matching problems of any size to be run, but may also let
+huge, infeasible problems get through and potentially take a long time
+or crash R. See
+[`optmatch::setMaxProblemSize()`](https://rdrr.io/pkg/optmatch/man/setMaxProblemSize.html)
+for more details.
+
+A preprocessing algorithm describe by Sävje (2020;
+[doi:10.1214/19-STS739](https://doi.org/10.1214/19-STS739) ) is used to
+improve the speed of the matching when 1:1 matching on a propensity
+score. It does so by adding an additional constraint that guarantees a
+solution as optimal as the solution that would have been found without
+the constraint, and that constraint often dramatically reduces the size
+of the matching problem at no cost. However, this may introduce
+differences between the results obtained by *MatchIt* and by *optmatch*,
+though such differences will shrink when smaller values of `tol` are
+used.
 
 ## Arguments
 
-- formula:
+|  |  |
+|----|----|
+| `formula` | a two-sided [formula](https://rdrr.io/r/stats/formula.html) object containing the treatment and covariates to be used in creating the distance measure used in the matching. This formula will be supplied to the functions that estimate the distance measure. |
+| `data` | a data frame containing the variables named in `formula`. If not found in `data`, the variables will be sought in the environment. |
+| `method` | set here to `"optimal"`. |
+| `distance` | the distance measure to be used. See [`distance`](https://kosukeimai.github.io/MatchIt/reference/distance.md) for allowable options. Can be supplied as a distance matrix. |
+| `link` | when `distance` is specified as a method of estimating propensity scores, an additional argument controlling the link function used in estimating the distance measure. See [`distance`](https://kosukeimai.github.io/MatchIt/reference/distance.md) for allowable options with each option. |
+| `distance.options` | a named list containing additional arguments supplied to the function that estimates the distance measure as determined by the argument to `distance`. |
+| `estimand` | a string containing the desired estimand. Allowable options include `"ATT"` and `"ATC"`. See Details. |
+| `exact` | for which variables exact matching should take place. |
+| `mahvars` | for which variables Mahalanobis distance matching should take place when `distance` corresponds to a propensity score (e.g., for caliper matching or to discard units for common support). If specified, the distance measure will not be used in matching. |
+| `antiexact` | for which variables anti-exact matching should take place. Anti-exact matching is processed using [`optmatch::antiExactMatch()`](https://rdrr.io/pkg/optmatch/man/antiExactMatch.html) . |
+| `discard` | a string containing a method for discarding units outside a region of common support. Only allowed when `distance` is not `"mahalanobis"` and not a matrix. |
+| `reestimate` | if `discard` is not `"none"`, whether to re-estimate the propensity score in the remaining sample prior to matching. |
+| `s.weights` | the variable containing sampling weights to be incorporated into propensity score models and balance statistics. |
+| `ratio` | how many control units should be matched to each treated unit for k:1 matching. For variable ratio matching, see section "Variable Ratio Matching" in Details below. |
+| `min.controls`, `max.controls` | for variable ratio matching, the minimum and maximum number of controls units to be matched to each treated unit. See section "Variable Ratio Matching" in Details below. |
+| `verbose` | `logical`; whether information about the matching process should be printed to the console. What is printed depends on the matching method. Default is `FALSE` for no printing other than warnings. |
+| `...` | additional arguments passed to [`optmatch::fullmatch()`](https://rdrr.io/pkg/optmatch/man/fullmatch.html) . Allowed arguments include `tol` and `solver`. See the [`optmatch::fullmatch()`](https://rdrr.io/pkg/optmatch/man/fullmatch.html) documentation for details. In general, `tol` should be set to a low number (e.g., `1e-7`) to get a more precise solution (default is `1e-3`). The arguments `replace`, `caliper`, and `m.order` are ignored with a warning. |
 
-  a two-sided [formula](https://rdrr.io/r/stats/formula.html) object
-  containing the treatment and covariates to be used in creating the
-  distance measure used in the matching. This formula will be supplied
-  to the functions that estimate the distance measure.
+## Outputs
 
-- data:
-
-  a data frame containing the variables named in `formula`. If not found
-  in `data`, the variables will be sought in the environment.
-
-- method:
-
-  set here to `"optimal"`.
-
-- distance:
-
-  the distance measure to be used. See
-  [`distance`](https://kosukeimai.github.io/MatchIt/reference/distance.md)
-  for allowable options. Can be supplied as a distance matrix.
-
-- link:
-
-  when `distance` is specified as a method of estimating propensity
-  scores, an additional argument controlling the link function used in
-  estimating the distance measure. See
-  [`distance`](https://kosukeimai.github.io/MatchIt/reference/distance.md)
-  for allowable options with each option.
-
-- distance.options:
-
-  a named list containing additional arguments supplied to the function
-  that estimates the distance measure as determined by the argument to
-  `distance`.
-
-- estimand:
-
-  a string containing the desired estimand. Allowable options include
-  `"ATT"` and `"ATC"`. See Details.
-
-- exact:
-
-  for which variables exact matching should take place.
-
-- mahvars:
-
-  for which variables Mahalanobis distance matching should take place
-  when `distance` corresponds to a propensity score (e.g., for caliper
-  matching or to discard units for common support). If specified, the
-  distance measure will not be used in matching.
-
-- antiexact:
-
-  for which variables anti-exact matching should take place. Anti-exact
-  matching is processed using
-  [`optmatch::antiExactMatch()`](https://rdrr.io/pkg/optmatch/man/antiExactMatch.html)
-  .
-
-- discard:
-
-  a string containing a method for discarding units outside a region of
-  common support. Only allowed when `distance` is not `"mahalanobis"`
-  and not a matrix.
-
-- reestimate:
-
-  if `discard` is not `"none"`, whether to re-estimate the propensity
-  score in the remaining sample prior to matching.
-
-- s.weights:
-
-  the variable containing sampling weights to be incorporated into
-  propensity score models and balance statistics.
-
-- ratio:
-
-  how many control units should be matched to each treated unit for k:1
-  matching. For variable ratio matching, see section "Variable Ratio
-  Matching" in Details below.
-
-- min.controls, max.controls:
-
-  for variable ratio matching, the minimum and maximum number of
-  controls units to be matched to each treated unit. See section
-  "Variable Ratio Matching" in Details below.
-
-- verbose:
-
-  `logical`; whether information about the matching process should be
-  printed to the console. What is printed depends on the matching
-  method. Default is `FALSE` for no printing other than warnings.
-
-- ...:
-
-  additional arguments passed to
-  [`optmatch::fullmatch()`](https://rdrr.io/pkg/optmatch/man/fullmatch.html)
-  . Allowed arguments include `tol` and `solver`. See the
-  [`optmatch::fullmatch()`](https://rdrr.io/pkg/optmatch/man/fullmatch.html)
-  documentation for details. In general, `tol` should be set to a low
-  number (e.g., `1e-7`) to get a more precise solution (default is
-  `1e-3`).
-
-  The arguments `replace`, `caliper`, and `m.order` are ignored with a
-  warning.
+All outputs described in
+[`matchit()`](https://kosukeimai.github.io/MatchIt/reference/matchit.md)
+are returned with `method = "optimal"`. When `include.obj = TRUE` in the
+call to
+[`matchit()`](https://kosukeimai.github.io/MatchIt/reference/matchit.md),
+the output of the call to
+[`optmatch::fullmatch()`](https://rdrr.io/pkg/optmatch/man/fullmatch.html)
+will be included in the output. When `exact` is specified, this will be
+a list of such objects, one for each stratum of the `exact` variables.
 
 ## Details
 
@@ -243,58 +206,6 @@ greater than `ratio`. See the Examples section of
 [`method_nearest()`](https://kosukeimai.github.io/MatchIt/reference/method_nearest.md)
 for an example of their use, which is the same as it is with optimal
 matching.
-
-## Note
-
-Optimal pair matching is a restricted form of optimal full matching
-where the number of treated units in each subclass is equal to 1,
-whereas in unrestricted full matching, multiple treated units can be
-assigned to the same subclass.
-[`optmatch::pairmatch()`](https://rdrr.io/pkg/optmatch/man/pairmatch.html)
-is simply a wrapper for
-[`optmatch::fullmatch()`](https://rdrr.io/pkg/optmatch/man/fullmatch.html)
-, which performs optimal full matching and is the workhorse for
-[`method_full`](https://kosukeimai.github.io/MatchIt/reference/method_full.md).
-In the same way,
-[`matchit()`](https://kosukeimai.github.io/MatchIt/reference/matchit.md)
-uses
-[`optmatch::fullmatch()`](https://rdrr.io/pkg/optmatch/man/fullmatch.html)
-under the hood, imposing the restrictions that make optimal full
-matching function like optimal pair matching (which is simply to set
-`min.controls >= 1` and to pass `ratio` to the `mean.controls`
-argument). This distinction is not important for regular use but may be
-of interest to those examining the source code.
-
-The option `"optmatch_max_problem_size"` is automatically set to `Inf`
-during the matching process, different from its default in *optmatch*.
-This enables matching problems of any size to be run, but may also let
-huge, infeasible problems get through and potentially take a long time
-or crash R. See
-[`optmatch::setMaxProblemSize()`](https://rdrr.io/pkg/optmatch/man/setMaxProblemSize.html)
-for more details.
-
-A preprocessing algorithm describe by Sävje (2020;
-[doi:10.1214/19-STS739](https://doi.org/10.1214/19-STS739) ) is used to
-improve the speed of the matching when 1:1 matching on a propensity
-score. It does so by adding an additional constraint that guarantees a
-solution as optimal as the solution that would have been found without
-the constraint, and that constraint often dramatically reduces the size
-of the matching problem at no cost. However, this may introduce
-differences between the results obtained by *MatchIt* and by *optmatch*,
-though such differences will shrink when smaller values of `tol` are
-used.
-
-## Outputs
-
-All outputs described in
-[`matchit()`](https://kosukeimai.github.io/MatchIt/reference/matchit.md)
-are returned with `method = "optimal"`. When `include.obj = TRUE` in the
-call to
-[`matchit()`](https://kosukeimai.github.io/MatchIt/reference/matchit.md),
-the output of the call to
-[`optmatch::fullmatch()`](https://rdrr.io/pkg/optmatch/man/fullmatch.html)
-will be included in the output. When `exact` is specified, this will be
-a list of such objects, one for each stratum of the `exact` variables.
 
 ## References
 

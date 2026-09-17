@@ -23,7 +23,27 @@ algorithm.
 This page details the allowable arguments with method = "genetic".
 See matchit() for an explanation of what each argument means in a general
 context and how it can be specified.
-Below is how matchit() is used for genetic matching:'><meta property="og:description" content='In matchit(), setting method = "genetic" performs genetic matching.
+Below is how matchit() is used for genetic matching:
+matchit(formula,
+        data = NULL,
+        method = "genetic",
+        distance = "glm",
+        link = "logit",
+        distance.options = list(),
+        estimand = "ATT",
+        exact = NULL,
+        mahvars = NULL,
+        antiexact = NULL,
+        discard = "none",
+        reestimate = FALSE,
+        s.weights = NULL,
+        replace = FALSE,
+        m.order = NULL,
+        caliper = NULL,
+        ratio = 1,
+        verbose = FALSE,
+        ...)
+'><meta property="og:description" content='In matchit(), setting method = "genetic" performs genetic matching.
 Genetic matching is a form of nearest neighbor matching where distances are
 computed as the generalized Mahalanobis distance, which is a generalization
 of the Mahalanobis distance with a scaling factor for each covariate that
@@ -41,7 +61,27 @@ algorithm.
 This page details the allowable arguments with method = "genetic".
 See matchit() for an explanation of what each argument means in a general
 context and how it can be specified.
-Below is how matchit() is used for genetic matching:'><meta property="og:image" content="https://kosukeimai.github.io/MatchIt/logo.png"></head><body>
+Below is how matchit() is used for genetic matching:
+matchit(formula,
+        data = NULL,
+        method = "genetic",
+        distance = "glm",
+        link = "logit",
+        distance.options = list(),
+        estimand = "ATT",
+        exact = NULL,
+        mahvars = NULL,
+        antiexact = NULL,
+        discard = "none",
+        reestimate = FALSE,
+        s.weights = NULL,
+        replace = FALSE,
+        m.order = NULL,
+        caliper = NULL,
+        ratio = 1,
+        verbose = FALSE,
+        ...)
+'><meta property="og:image" content="https://kosukeimai.github.io/MatchIt/logo.png"></head><body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
 
@@ -107,12 +147,8 @@ algorithm.</p>
 <p>This page details the allowable arguments with <code>method = "genetic"</code>.
 See <code><a href="matchit.html">matchit()</a></code> for an explanation of what each argument means in a general
 context and how it can be specified.</p>
-<p>Below is how <code><a href="matchit.html">matchit()</a></code> is used for genetic matching:</p>
-    </div>
-
-    <div class="section level2">
-    <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu"><a href="matchit.html">matchit</a></span><span class="op">(</span><span class="va">formula</span>,</span>
+<p>Below is how <code><a href="matchit.html">matchit()</a></code> is used for genetic matching:</p><div class="sourceCode"><pre><code><span></span>
+<span><span class="fu"><a href="../reference/matchit.html">matchit</a></span><span class="op">(</span><span class="va">formula</span>,</span>
 <span>        data <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>        method <span class="op">=</span> <span class="st">"genetic"</span>,</span>
 <span>        distance <span class="op">=</span> <span class="st">"glm"</span>,</span>
@@ -130,154 +166,35 @@ context and how it can be specified.</p>
 <span>        caliper <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>        ratio <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>        verbose <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>        <span class="va">...</span><span class="op">)</span></span></code></pre></div>
+<span>        <span class="va">...</span><span class="op">)</span> </span></code></pre></div>
+
     </div>
+
 
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
 
 
-<dl><dt id="arg-formula">formula<a class="anchor" aria-label="anchor" href="#arg-formula"></a></dt>
-<dd><p>a two-sided <a href="https://rdrr.io/r/stats/formula.html" class="external-link">formula</a> object containing the treatment and
-covariates to be used in creating the distance measure used in the matching.
-This formula will be supplied to the functions that estimate the distance
-measure and is used to determine the covariates whose balance is to be
-optimized.</p></dd>
 
 
-<dt id="arg-data">data<a class="anchor" aria-label="anchor" href="#arg-data"></a></dt>
-<dd><p>a data frame containing the variables named in <code>formula</code>.
-If not found in <code>data</code>, the variables will be sought in the
-environment.</p></dd>
+<table class="table table"><tr><td><code>formula</code></td><td>a two-sided <a href="https://rdrr.io/r/stats/formula.html" class="external-link">formula</a> object containing the treatment and covariates to be used in creating the distance measure used in the matching. This formula will be supplied to the functions that estimate the distance measure and is used to determine the covariates whose balance is to be optimized.</td></tr><tr><td><code>data</code></td><td>a data frame containing the variables named in <code>formula</code>. If not found in <code>data</code>, the variables will be sought in the environment.</td></tr><tr><td><code>method</code></td><td>set here to <code>"genetic"</code>.</td></tr><tr><td><code>distance</code></td><td>the distance measure to be used. See <code><a href="distance.html">distance</a></code> for allowable options. When set to a method of estimating propensity scores or a numeric vector of distance values, the distance measure is included with the covariates in <code>formula</code> to be supplied to the generalized Mahalanobis distance matrix unless <code>mahvars</code> is specified. Otherwise, only the covariates in <code>formula</code> are supplied to the generalized Mahalanobis distance matrix to have their scaling factors chosen. <code>distance</code> <em>cannot</em> be supplied as a distance matrix. Supplying any method of computing a distance matrix (e.g., <code>"mahalanobis"</code>) has the same effect of omitting propensity score but does not affect how the distance between units is computed otherwise.</td></tr><tr><td><code>link</code></td><td>when <code>distance</code> is specified as a method of estimating propensity scores, an additional argument controlling the link function used in estimating the distance measure. See <code><a href="distance.html">distance</a></code> for allowable options with each option.</td></tr><tr><td><code>distance.options</code></td><td>a named list containing additional arguments supplied to the function that estimates the distance measure as determined by the argument to <code>distance</code>.</td></tr><tr><td><code>estimand</code></td><td>a string containing the desired estimand. Allowable options include <code>"ATT"</code> and <code>"ATC"</code>. See Details.</td></tr><tr><td><code>exact</code></td><td>for which variables exact matching should take place.</td></tr><tr><td><code>mahvars</code></td><td>when a distance corresponds to a propensity score (e.g., for caliper matching or to discard units for common support), which covariates should be supplied to the generalized Mahalanobis distance matrix for matching. If unspecified, all variables in <code>formula</code> will be supplied to the distance matrix. Use <code>mahvars</code> to only supply a subset. Even if <code>mahvars</code> is specified, balance will be optimized on all covariates in <code>formula</code>. See Details.</td></tr><tr><td><code>antiexact</code></td><td>for which variables anti-exact matching should take place. Anti-exact matching is processed using the <code>restrict</code> argument to <code><a href="https://rdrr.io/pkg/Matching/man/GenMatch.html" class="external-link">Matching::GenMatch()</a></code> and <code><a href="https://rdrr.io/pkg/Matching/man/Match.html" class="external-link">Matching::Match()</a></code>.</td></tr><tr><td><code>discard</code></td><td>a string containing a method for discarding units outside a region of common support. Only allowed when <code>distance</code> corresponds to a propensity score.</td></tr><tr><td><code>reestimate</code></td><td>if <code>discard</code> is not <code>"none"</code>, whether to re-estimate the propensity score in the remaining sample prior to matching.</td></tr><tr><td><code>s.weights</code></td><td>the variable containing sampling weights to be incorporated into propensity score models and balance statistics. These are also supplied to <code>GenMatch()</code> for use in computing the balance t-test p-values in the process of matching.</td></tr><tr><td><code>replace</code></td><td>whether matching should be done with replacement.</td></tr><tr><td><code>m.order</code></td><td>the order that the matching takes place. Allowable options include <code>"largest"</code>, where matching takes place in descending order of distance measures; <code>"smallest"</code>, where matching takes place in ascending order of distance measures; <code>"random"</code>, where matching takes place in a random order; and <code>"data"</code> where matching takes place based on the order of units in the data. When <code>m.order = "random"</code>, results may differ across different runs of the same code unless a seed is set and specified with <code><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed()</a></code>. The default of <code>NULL</code> corresponds to <code>"largest"</code> when a propensity score is estimated or supplied as a vector and <code>"data"</code> otherwise.</td></tr><tr><td><code>caliper</code></td><td>the width(s) of the caliper(s) used for caliper matching. See Details and Examples.</td></tr><tr><td><code>std.caliper</code></td><td><code>logical</code>; when calipers are specified, whether they are in standard deviation units (<code>TRUE</code>) or raw units (<code>FALSE</code>).</td></tr><tr><td><code>ratio</code></td><td>how many control units should be matched to each treated unit for k:1 matching. Should be a single integer value.</td></tr><tr><td><code>verbose</code></td><td><code>logical</code>; whether information about the matching process should be printed to the console. When <code>TRUE</code>, output from <code>GenMatch()</code> with <code>print.level = 2</code> will be displayed. Default is <code>FALSE</code> for no printing other than warnings.</td></tr><tr><td><code>...</code></td><td>additional arguments passed to <code><a href="https://rdrr.io/pkg/Matching/man/GenMatch.html" class="external-link">Matching::GenMatch()</a></code>
+. Potentially useful options include <code>pop.size</code>, <code>max.generations</code>, and <code>fit.func</code>. If <code>pop.size</code> is not specified, a warning from <em>Matching</em> will be thrown reminding you to change it. Note that the <code>ties</code> and <code>CommonSupport</code> arguments are set to <code>FALSE</code> and cannot be changed. If <code>distance.tolerance</code> is not specified, it is set to 0, whereas the default in <em>Matching</em> is 1e-5.</td></tr></table></div>
+    <div class="section level2">
+    <h2 id="outputs">Outputs<a class="anchor" aria-label="anchor" href="#outputs"></a></h2>
 
 
-<dt id="arg-method">method<a class="anchor" aria-label="anchor" href="#arg-method"></a></dt>
-<dd><p>set here to <code>"genetic"</code>.</p></dd>
-
-
-<dt id="arg-distance">distance<a class="anchor" aria-label="anchor" href="#arg-distance"></a></dt>
-<dd><p>the distance measure to be used. See <code><a href="distance.html">distance</a></code>
-for allowable options. When set to a method of estimating propensity scores
-or a numeric vector of distance values, the distance measure is included
-with the covariates in <code>formula</code> to be supplied to the generalized
-Mahalanobis distance matrix unless <code>mahvars</code> is specified. Otherwise,
-only the covariates in <code>formula</code> are supplied to the generalized
-Mahalanobis distance matrix to have their scaling factors chosen.
-<code>distance</code> <em>cannot</em> be supplied as a distance matrix. Supplying
-any method of computing a distance matrix (e.g., <code>"mahalanobis"</code>) has
-the same effect of omitting propensity score but does not affect how the
-distance between units is computed otherwise.</p></dd>
-
-
-<dt id="arg-link">link<a class="anchor" aria-label="anchor" href="#arg-link"></a></dt>
-<dd><p>when <code>distance</code> is specified as a method of estimating
-propensity scores, an additional argument controlling the link function used
-in estimating the distance measure. See <code><a href="distance.html">distance</a></code> for allowable
-options with each option.</p></dd>
-
-
-<dt id="arg-distance-options">distance.options<a class="anchor" aria-label="anchor" href="#arg-distance-options"></a></dt>
-<dd><p>a named list containing additional arguments
-supplied to the function that estimates the distance measure as determined
-by the argument to <code>distance</code>.</p></dd>
-
-
-<dt id="arg-estimand">estimand<a class="anchor" aria-label="anchor" href="#arg-estimand"></a></dt>
-<dd><p>a string containing the desired estimand. Allowable options
-include <code>"ATT"</code> and <code>"ATC"</code>. See Details.</p></dd>
-
-
-<dt id="arg-exact">exact<a class="anchor" aria-label="anchor" href="#arg-exact"></a></dt>
-<dd><p>for which variables exact matching should take place.</p></dd>
-
-
-<dt id="arg-mahvars">mahvars<a class="anchor" aria-label="anchor" href="#arg-mahvars"></a></dt>
-<dd><p>when a distance corresponds to a propensity score (e.g., for
-caliper matching or to discard units for common support), which covariates
-should be supplied to the generalized Mahalanobis distance matrix for
-matching. If unspecified, all variables in <code>formula</code> will be supplied
-to the distance matrix. Use <code>mahvars</code> to only supply a subset. Even if
-<code>mahvars</code> is specified, balance will be optimized on all covariates in
-<code>formula</code>. See Details.</p></dd>
-
-
-<dt id="arg-antiexact">antiexact<a class="anchor" aria-label="anchor" href="#arg-antiexact"></a></dt>
-<dd><p>for which variables anti-exact matching should take place.
-Anti-exact matching is processed using the <code>restrict</code> argument to
-<code><a href="https://rdrr.io/pkg/Matching/man/GenMatch.html" class="external-link">Matching::GenMatch()</a></code> and <code><a href="https://rdrr.io/pkg/Matching/man/Match.html" class="external-link">Matching::Match()</a></code>.</p></dd>
-
-
-<dt id="arg-discard">discard<a class="anchor" aria-label="anchor" href="#arg-discard"></a></dt>
-<dd><p>a string containing a method for discarding units outside a
-region of common support. Only allowed when <code>distance</code> corresponds to a
-propensity score.</p></dd>
-
-
-<dt id="arg-reestimate">reestimate<a class="anchor" aria-label="anchor" href="#arg-reestimate"></a></dt>
-<dd><p>if <code>discard</code> is not <code>"none"</code>, whether to
-re-estimate the propensity score in the remaining sample prior to matching.</p></dd>
-
-
-<dt id="arg-s-weights">s.weights<a class="anchor" aria-label="anchor" href="#arg-s-weights"></a></dt>
-<dd><p>the variable containing sampling weights to be incorporated
-into propensity score models and balance statistics. These are also supplied
-to <code>GenMatch()</code> for use in computing the balance t-test p-values in the
-process of matching.</p></dd>
-
-
-<dt id="arg-replace">replace<a class="anchor" aria-label="anchor" href="#arg-replace"></a></dt>
-<dd><p>whether matching should be done with replacement.</p></dd>
-
-
-<dt id="arg-m-order">m.order<a class="anchor" aria-label="anchor" href="#arg-m-order"></a></dt>
-<dd><p>the order that the matching takes place. Allowable options
-include <code>"largest"</code>, where matching takes place in descending order of
-distance measures; <code>"smallest"</code>, where matching takes place in ascending
-order of distance measures; <code>"random"</code>, where matching takes place
-in a random order; and <code>"data"</code> where matching takes place based on the
-order of units in the data. When <code>m.order = "random"</code>, results may differ
-across different runs of the same code unless a seed is set and specified
-with <code><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed()</a></code>. The default of <code>NULL</code> corresponds to <code>"largest"</code> when a
-propensity score is estimated or supplied as a vector and <code>"data"</code>
-otherwise.</p></dd>
-
-
-<dt id="arg-caliper">caliper<a class="anchor" aria-label="anchor" href="#arg-caliper"></a></dt>
-<dd><p>the width(s) of the caliper(s) used for caliper matching. See
-Details and Examples.</p></dd>
-
-
-<dt id="arg-std-caliper">std.caliper<a class="anchor" aria-label="anchor" href="#arg-std-caliper"></a></dt>
-<dd><p><code>logical</code>; when calipers are specified, whether they
-are in standard deviation units (<code>TRUE</code>) or raw units (<code>FALSE</code>).</p></dd>
-
-
-<dt id="arg-ratio">ratio<a class="anchor" aria-label="anchor" href="#arg-ratio"></a></dt>
-<dd><p>how many control units should be matched to each treated unit
-for k:1 matching. Should be a single integer value.</p></dd>
-
-
-<dt id="arg-verbose">verbose<a class="anchor" aria-label="anchor" href="#arg-verbose"></a></dt>
-<dd><p><code>logical</code>; whether information about the matching
-process should be printed to the console. When <code>TRUE</code>, output from
-<code>GenMatch()</code> with <code>print.level = 2</code> will be displayed. Default is
-<code>FALSE</code> for no printing other than warnings.</p></dd>
-
-
-<dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
-<dd><p>additional arguments passed to <code><a href="https://rdrr.io/pkg/Matching/man/GenMatch.html" class="external-link">Matching::GenMatch()</a></code>
-.
-Potentially useful options include <code>pop.size</code>, <code>max.generations</code>,
-and <code>fit.func</code>. If <code>pop.size</code> is not specified, a warning from
-<em>Matching</em> will be thrown reminding you to change it. Note that the
-<code>ties</code> and <code>CommonSupport</code> arguments are set to <code>FALSE</code> and
-cannot be changed. If <code>distance.tolerance</code> is not specified, it is set
-to 0, whereas the default in <em>Matching</em> is 1e-5.</p></dd>
-
-</dl></div>
+<p>All outputs described in <code><a href="matchit.html">matchit()</a></code> are returned with
+<code>method = "genetic"</code>. When <code>replace = TRUE</code>, the <code>subclass</code>
+component is omitted. When <code>include.obj = TRUE</code> in the call to
+<code><a href="matchit.html">matchit()</a></code>, the output of the call to <code><a href="https://rdrr.io/pkg/Matching/man/GenMatch.html" class="external-link">Matching::GenMatch()</a></code>
+ will be
+included in the output.</p>
+    </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>In genetic matching, covariates play three roles: 1) as the variables on
+
+
+<p>In genetic matching, covariates play three roles: 1) as the variables on
 which balance is optimized, 2) as the variables in the generalized
 Mahalanobis distance between units, and 3) in estimating the propensity
 score. Variables supplied to <code>formula</code> are always used for role (1), as
@@ -337,17 +254,6 @@ ATC for genetic matching.</p>
 <p>Genetic matching involves a random component, so a seed must be set using <code><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed()</a></code> to ensure reproducibility. When <code>cluster</code> is used for parallel processing, the seed must be compatible with parallel processing (e.g., by setting <code>kind = "L'Ecuyer-CMRG"</code>).</p>
 </div>
 
-    </div>
-    <div class="section level2">
-    <h2 id="outputs">Outputs<a class="anchor" aria-label="anchor" href="#outputs"></a></h2>
-
-
-<p>All outputs described in <code><a href="matchit.html">matchit()</a></code> are returned with
-<code>method = "genetic"</code>. When <code>replace = TRUE</code>, the <code>subclass</code>
-component is omitted. When <code>include.obj = TRUE</code> in the call to
-<code><a href="matchit.html">matchit()</a></code>, the output of the call to <code><a href="https://rdrr.io/pkg/Matching/man/GenMatch.html" class="external-link">Matching::GenMatch()</a></code>
- will be
-included in the output.</p>
     </div>
     <div class="section level2">
     <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a></h2>

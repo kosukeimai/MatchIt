@@ -25,60 +25,26 @@ Below is how
 [`matchit()`](https://kosukeimai.github.io/MatchIt/reference/matchit.md)
 is used for exact matching:
 
-## Usage
 
-``` r
-matchit(formula,
-        data = NULL,
-        method = "exact",
-        estimand = "ATT",
-        s.weights = NULL,
-        verbose = FALSE,
-        ...)
-```
+    matchit(formula,
+            data = NULL,
+            method = "exact",
+            estimand = "ATT",
+            s.weights = NULL,
+            verbose = FALSE,
+            ...) 
 
 ## Arguments
 
-- formula:
-
-  a two-sided [formula](https://rdrr.io/r/stats/formula.html) object
-  containing the treatment and covariates to be used in creating the
-  subclasses defined by a full cross of the covariate levels.
-
-- data:
-
-  a data frame containing the variables named in `formula`. If not found
-  in `data`, the variables will be sought in the environment.
-
-- method:
-
-  set here to `"exact"`.
-
-- estimand:
-
-  a string containing the desired estimand. Allowable options include
-  `"ATT"`, `"ATC"`, and `"ATE"`. The estimand controls how the weights
-  are computed; see the Computing Weights section at
-  [`matchit()`](https://kosukeimai.github.io/MatchIt/reference/matchit.md)
-  for details.
-
-- s.weights:
-
-  the variable containing sampling weights to be incorporated into
-  balance statistics. These weights do not affect the matching process.
-
-- verbose:
-
-  `logical`; whether information about the matching process should be
-  printed to the console.
-
-- ...:
-
-  ignored.
-
-  The arguments `distance` (and related arguments), `exact`, `mahvars`,
-  `discard` (and related arguments), `replace`, `m.order`, `caliper`
-  (and related arguments), and `ratio` are ignored with a warning.
+|  |  |
+|----|----|
+| `formula` | a two-sided [formula](https://rdrr.io/r/stats/formula.html) object containing the treatment and covariates to be used in creating the subclasses defined by a full cross of the covariate levels. |
+| `data` | a data frame containing the variables named in `formula`. If not found in `data`, the variables will be sought in the environment. |
+| `method` | set here to `"exact"`. |
+| `estimand` | a string containing the desired estimand. Allowable options include `"ATT"`, `"ATC"`, and `"ATE"`. The estimand controls how the weights are computed; see the Computing Weights section at [`matchit()`](https://kosukeimai.github.io/MatchIt/reference/matchit.md) for details. |
+| `s.weights` | the variable containing sampling weights to be incorporated into balance statistics. These weights do not affect the matching process. |
+| `verbose` | `logical`; whether information about the matching process should be printed to the console. |
+| `...` | ignored. The arguments `distance` (and related arguments), `exact`, `mahvars`, `discard` (and related arguments), `replace`, `m.order`, `caliper` (and related arguments), and `ratio` are ignored with a warning. |
 
 ## Outputs
 

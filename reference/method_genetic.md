@@ -27,172 +27,63 @@ Below is how
 [`matchit()`](https://kosukeimai.github.io/MatchIt/reference/matchit.md)
 is used for genetic matching:
 
-## Usage
 
-``` r
-matchit(formula,
-        data = NULL,
-        method = "genetic",
-        distance = "glm",
-        link = "logit",
-        distance.options = list(),
-        estimand = "ATT",
-        exact = NULL,
-        mahvars = NULL,
-        antiexact = NULL,
-        discard = "none",
-        reestimate = FALSE,
-        s.weights = NULL,
-        replace = FALSE,
-        m.order = NULL,
-        caliper = NULL,
-        ratio = 1,
-        verbose = FALSE,
-        ...)
-```
+    matchit(formula,
+            data = NULL,
+            method = "genetic",
+            distance = "glm",
+            link = "logit",
+            distance.options = list(),
+            estimand = "ATT",
+            exact = NULL,
+            mahvars = NULL,
+            antiexact = NULL,
+            discard = "none",
+            reestimate = FALSE,
+            s.weights = NULL,
+            replace = FALSE,
+            m.order = NULL,
+            caliper = NULL,
+            ratio = 1,
+            verbose = FALSE,
+            ...) 
 
 ## Arguments
 
-- formula:
+|  |  |
+|----|----|
+| `formula` | a two-sided [formula](https://rdrr.io/r/stats/formula.html) object containing the treatment and covariates to be used in creating the distance measure used in the matching. This formula will be supplied to the functions that estimate the distance measure and is used to determine the covariates whose balance is to be optimized. |
+| `data` | a data frame containing the variables named in `formula`. If not found in `data`, the variables will be sought in the environment. |
+| `method` | set here to `"genetic"`. |
+| `distance` | the distance measure to be used. See [`distance`](https://kosukeimai.github.io/MatchIt/reference/distance.md) for allowable options. When set to a method of estimating propensity scores or a numeric vector of distance values, the distance measure is included with the covariates in `formula` to be supplied to the generalized Mahalanobis distance matrix unless `mahvars` is specified. Otherwise, only the covariates in `formula` are supplied to the generalized Mahalanobis distance matrix to have their scaling factors chosen. `distance` *cannot* be supplied as a distance matrix. Supplying any method of computing a distance matrix (e.g., `"mahalanobis"`) has the same effect of omitting propensity score but does not affect how the distance between units is computed otherwise. |
+| `link` | when `distance` is specified as a method of estimating propensity scores, an additional argument controlling the link function used in estimating the distance measure. See [`distance`](https://kosukeimai.github.io/MatchIt/reference/distance.md) for allowable options with each option. |
+| `distance.options` | a named list containing additional arguments supplied to the function that estimates the distance measure as determined by the argument to `distance`. |
+| `estimand` | a string containing the desired estimand. Allowable options include `"ATT"` and `"ATC"`. See Details. |
+| `exact` | for which variables exact matching should take place. |
+| `mahvars` | when a distance corresponds to a propensity score (e.g., for caliper matching or to discard units for common support), which covariates should be supplied to the generalized Mahalanobis distance matrix for matching. If unspecified, all variables in `formula` will be supplied to the distance matrix. Use `mahvars` to only supply a subset. Even if `mahvars` is specified, balance will be optimized on all covariates in `formula`. See Details. |
+| `antiexact` | for which variables anti-exact matching should take place. Anti-exact matching is processed using the `restrict` argument to [`Matching::GenMatch()`](https://rdrr.io/pkg/Matching/man/GenMatch.html) and [`Matching::Match()`](https://rdrr.io/pkg/Matching/man/Match.html). |
+| `discard` | a string containing a method for discarding units outside a region of common support. Only allowed when `distance` corresponds to a propensity score. |
+| `reestimate` | if `discard` is not `"none"`, whether to re-estimate the propensity score in the remaining sample prior to matching. |
+| `s.weights` | the variable containing sampling weights to be incorporated into propensity score models and balance statistics. These are also supplied to `GenMatch()` for use in computing the balance t-test p-values in the process of matching. |
+| `replace` | whether matching should be done with replacement. |
+| `m.order` | the order that the matching takes place. Allowable options include `"largest"`, where matching takes place in descending order of distance measures; `"smallest"`, where matching takes place in ascending order of distance measures; `"random"`, where matching takes place in a random order; and `"data"` where matching takes place based on the order of units in the data. When `m.order = "random"`, results may differ across different runs of the same code unless a seed is set and specified with [`set.seed()`](https://rdrr.io/r/base/Random.html). The default of `NULL` corresponds to `"largest"` when a propensity score is estimated or supplied as a vector and `"data"` otherwise. |
+| `caliper` | the width(s) of the caliper(s) used for caliper matching. See Details and Examples. |
+| `std.caliper` | `logical`; when calipers are specified, whether they are in standard deviation units (`TRUE`) or raw units (`FALSE`). |
+| `ratio` | how many control units should be matched to each treated unit for k:1 matching. Should be a single integer value. |
+| `verbose` | `logical`; whether information about the matching process should be printed to the console. When `TRUE`, output from `GenMatch()` with `print.level = 2` will be displayed. Default is `FALSE` for no printing other than warnings. |
+| `...` | additional arguments passed to [`Matching::GenMatch()`](https://rdrr.io/pkg/Matching/man/GenMatch.html) . Potentially useful options include `pop.size`, `max.generations`, and `fit.func`. If `pop.size` is not specified, a warning from *Matching* will be thrown reminding you to change it. Note that the `ties` and `CommonSupport` arguments are set to `FALSE` and cannot be changed. If `distance.tolerance` is not specified, it is set to 0, whereas the default in *Matching* is 1e-5. |
 
-  a two-sided [formula](https://rdrr.io/r/stats/formula.html) object
-  containing the treatment and covariates to be used in creating the
-  distance measure used in the matching. This formula will be supplied
-  to the functions that estimate the distance measure and is used to
-  determine the covariates whose balance is to be optimized.
+## Outputs
 
-- data:
-
-  a data frame containing the variables named in `formula`. If not found
-  in `data`, the variables will be sought in the environment.
-
-- method:
-
-  set here to `"genetic"`.
-
-- distance:
-
-  the distance measure to be used. See
-  [`distance`](https://kosukeimai.github.io/MatchIt/reference/distance.md)
-  for allowable options. When set to a method of estimating propensity
-  scores or a numeric vector of distance values, the distance measure is
-  included with the covariates in `formula` to be supplied to the
-  generalized Mahalanobis distance matrix unless `mahvars` is specified.
-  Otherwise, only the covariates in `formula` are supplied to the
-  generalized Mahalanobis distance matrix to have their scaling factors
-  chosen. `distance` *cannot* be supplied as a distance matrix.
-  Supplying any method of computing a distance matrix (e.g.,
-  `"mahalanobis"`) has the same effect of omitting propensity score but
-  does not affect how the distance between units is computed otherwise.
-
-- link:
-
-  when `distance` is specified as a method of estimating propensity
-  scores, an additional argument controlling the link function used in
-  estimating the distance measure. See
-  [`distance`](https://kosukeimai.github.io/MatchIt/reference/distance.md)
-  for allowable options with each option.
-
-- distance.options:
-
-  a named list containing additional arguments supplied to the function
-  that estimates the distance measure as determined by the argument to
-  `distance`.
-
-- estimand:
-
-  a string containing the desired estimand. Allowable options include
-  `"ATT"` and `"ATC"`. See Details.
-
-- exact:
-
-  for which variables exact matching should take place.
-
-- mahvars:
-
-  when a distance corresponds to a propensity score (e.g., for caliper
-  matching or to discard units for common support), which covariates
-  should be supplied to the generalized Mahalanobis distance matrix for
-  matching. If unspecified, all variables in `formula` will be supplied
-  to the distance matrix. Use `mahvars` to only supply a subset. Even if
-  `mahvars` is specified, balance will be optimized on all covariates in
-  `formula`. See Details.
-
-- antiexact:
-
-  for which variables anti-exact matching should take place. Anti-exact
-  matching is processed using the `restrict` argument to
-  [`Matching::GenMatch()`](https://rdrr.io/pkg/Matching/man/GenMatch.html)
-  and
-  [`Matching::Match()`](https://rdrr.io/pkg/Matching/man/Match.html).
-
-- discard:
-
-  a string containing a method for discarding units outside a region of
-  common support. Only allowed when `distance` corresponds to a
-  propensity score.
-
-- reestimate:
-
-  if `discard` is not `"none"`, whether to re-estimate the propensity
-  score in the remaining sample prior to matching.
-
-- s.weights:
-
-  the variable containing sampling weights to be incorporated into
-  propensity score models and balance statistics. These are also
-  supplied to `GenMatch()` for use in computing the balance t-test
-  p-values in the process of matching.
-
-- replace:
-
-  whether matching should be done with replacement.
-
-- m.order:
-
-  the order that the matching takes place. Allowable options include
-  `"largest"`, where matching takes place in descending order of
-  distance measures; `"smallest"`, where matching takes place in
-  ascending order of distance measures; `"random"`, where matching takes
-  place in a random order; and `"data"` where matching takes place based
-  on the order of units in the data. When `m.order = "random"`, results
-  may differ across different runs of the same code unless a seed is set
-  and specified with [`set.seed()`](https://rdrr.io/r/base/Random.html).
-  The default of `NULL` corresponds to `"largest"` when a propensity
-  score is estimated or supplied as a vector and `"data"` otherwise.
-
-- caliper:
-
-  the width(s) of the caliper(s) used for caliper matching. See Details
-  and Examples.
-
-- std.caliper:
-
-  `logical`; when calipers are specified, whether they are in standard
-  deviation units (`TRUE`) or raw units (`FALSE`).
-
-- ratio:
-
-  how many control units should be matched to each treated unit for k:1
-  matching. Should be a single integer value.
-
-- verbose:
-
-  `logical`; whether information about the matching process should be
-  printed to the console. When `TRUE`, output from `GenMatch()` with
-  `print.level = 2` will be displayed. Default is `FALSE` for no
-  printing other than warnings.
-
-- ...:
-
-  additional arguments passed to
-  [`Matching::GenMatch()`](https://rdrr.io/pkg/Matching/man/GenMatch.html)
-  . Potentially useful options include `pop.size`, `max.generations`,
-  and `fit.func`. If `pop.size` is not specified, a warning from
-  *Matching* will be thrown reminding you to change it. Note that the
-  `ties` and `CommonSupport` arguments are set to `FALSE` and cannot be
-  changed. If `distance.tolerance` is not specified, it is set to 0,
-  whereas the default in *Matching* is 1e-5.
+All outputs described in
+[`matchit()`](https://kosukeimai.github.io/MatchIt/reference/matchit.md)
+are returned with `method = "genetic"`. When `replace = TRUE`, the
+`subclass` component is omitted. When `include.obj = TRUE` in the call
+to
+[`matchit()`](https://kosukeimai.github.io/MatchIt/reference/matchit.md),
+the output of the call to
+[`Matching::GenMatch()`](https://rdrr.io/pkg/Matching/man/GenMatch.html)
+will be included in the output.
 
 ## Details
 
@@ -263,18 +154,6 @@ using [`set.seed()`](https://rdrr.io/r/base/Random.html) to ensure
 reproducibility. When `cluster` is used for parallel processing, the
 seed must be compatible with parallel processing (e.g., by setting
 `kind = "L'Ecuyer-CMRG"`).
-
-## Outputs
-
-All outputs described in
-[`matchit()`](https://kosukeimai.github.io/MatchIt/reference/matchit.md)
-are returned with `method = "genetic"`. When `replace = TRUE`, the
-`subclass` component is omitted. When `include.obj = TRUE` in the call
-to
-[`matchit()`](https://kosukeimai.github.io/MatchIt/reference/matchit.md),
-the output of the call to
-[`Matching::GenMatch()`](https://rdrr.io/pkg/Matching/man/GenMatch.html)
-will be included in the output.
 
 ## References
 

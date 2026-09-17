@@ -2,6 +2,8 @@
 
 ## MatchIt 4.8.0
 
+CRAN release: 2026-09-16
+
 - For stratification methods (`"exact"`, `"cem"` with `k2k = FALSE`,
   `"full"`, `"quick"`, and `"subclass"`), when sampling weights are
   supplied through `s.weights`, they are now used to compute the
@@ -93,6 +95,15 @@
   `distance = "mahalanobis"` or `mahvars` supplied) is now 40-60%
   faster, as the squared distance between two units is computed without
   allocating a copy of each unit’s covariates.
+
+- Fixed a bug in nearest neighbor matching (`method = "nearest"`) with
+  `exact` supplied, a caliper on a covariate, and matching on the
+  Mahalanobis distance (i.e., with `distance = "mahalanobis"` or
+  `mahvars` supplied), in which the caliper was rescaled each time an
+  `exact` stratum was processed. It was applied correctly in the first
+  stratum only, and pairs violating it could be matched in the others.
+  Thanks to [@Luke-Shaw](https://github.com/Luke-Shaw)
+  ([\#236](https://github.com/kosukeimai/MatchIt/issues/236)).
 
 - Fixed a bug in the internal C++ code, which called
   [`order()`](https://rdrr.io/r/base/order.html) as found from the

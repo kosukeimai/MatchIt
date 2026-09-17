@@ -22,121 +22,82 @@ Below is how
 [`matchit()`](https://kosukeimai.github.io/MatchIt/reference/matchit.md)
 is used for cardinality matching:
 
-## Usage
 
-``` r
-matchit(formula,
-        data = NULL,
-        method = "cardinality",
-        estimand = "ATT",
-        exact = NULL,
-        mahvars = NULL,
-        s.weights = NULL,
-        ratio = 1,
-        verbose = FALSE,
-        tols = .05,
-        std.tols = TRUE,
-        solver = "highs",
-        ...)
-```
+    matchit(formula,
+            data = NULL,
+            method = "cardinality",
+            estimand = "ATT",
+            exact = NULL,
+            mahvars = NULL,
+            s.weights = NULL,
+            ratio = 1,
+            verbose = FALSE,
+            tols = .05,
+            std.tols = TRUE,
+            solver = "highs",
+            ...) 
 
 ## Arguments
 
-- formula:
+|  |  |
+|----|----|
+| `formula` | a two-sided [formula](https://rdrr.io/r/stats/formula.html) object containing the treatment and covariates to be balanced. |
+| `data` | a data frame containing the variables named in `formula`. If not found in `data`, the variables will be sought in the environment. |
+| `method` | set here to `"cardinality"`. |
+| `estimand` | a string containing the desired estimand. Allowable options include `"ATT"`, `"ATC"`, and `"ATE"`. See Details. |
+| `exact` | for which variables exact matching should take place. Separate optimization will occur within each subgroup of the exact matching variables. |
+| `mahvars` | which variables should be used for pairing after subset selection. Can only be set when `ratio` is a whole number. See Details. |
+| `s.weights` | the variable containing sampling weights to be incorporated into the optimization. The balance constraints refer to the product of the sampling weights and the matching weights. Sampling weights can only be used with profile matching (i.e., `estimand = "ATE"` or `ratio = NA`), which matches each treatment group to a fixed target; they cannot be used with cardinality matching, which matches the treatment groups to each other. See Details. |
+| `ratio` | the desired ratio of control to treated units. Can be set to `NA` to maximize sample size without concern for this ratio. See Details. |
+| `verbose` | `logical`; whether information about the matching process should be printed to the console. |
+| `...` | additional arguments that control the matching specification, described below. |
 
-  a two-sided [formula](https://rdrr.io/r/stats/formula.html) object
-  containing the treatment and covariates to be balanced.
+Arguments that can be supplied through `...`:
 
-- data:
+- `tols`: `numeric`; a vector of imbalance tolerances for mean
+  differences, one for each covariate in `formula`. If only one value is
+  supplied, it is applied to all. See `std.tols` below. Default is `.05`
+  for standardized mean differences of at most .05 for all covariates
+  between the treatment groups in the matched sample.
 
-  a data frame containing the variables named in `formula`. If not found
-  in `data`, the variables will be sought in the environment.
+- `std.tols`: `logical`; whether each entry in `tols` corresponds to a
+  raw or standardized mean difference. If only one value is supplied, it
+  is applied to all. Default is `TRUE` for standardized mean
+  differences. The standardization factor is the pooled standard
+  deviation when `estimand = "ATE"`, the standard deviation of the
+  treated group when `estimand = "ATT"`, and the standard deviation of
+  the control group when `estimand = "ATC"` (the same as used in
+  [`summary.matchit()`](https://kosukeimai.github.io/MatchIt/reference/summary.matchit.md)).
 
-- method:
+- `solver`: the name of solver to use to solve the optimization problem.
+  Available options include `"highs"`for HiGHS (implemented in the
+  *highs* package), `"glpk"` for GLPK (implemented in the *Rglpk*
+  package), and `"gurobi"` for Gurobi (implemented in the *gurobi*
+  package). The differences between them are in speed and solving
+  ability. HiGHS (the default) and GLPK are the easiest to install, but
+  Gurobi is recommended as it consistently outperforms other solvers and
+  can find solutions even when others can't, and in less time. Gurobi is
+  proprietary but can be used with a free trial or academic license.
 
-  set here to `"cardinality"`.
+- `time`: the maximum amount of time before the optimization routine
+  aborts, in seconds. Default is 120 (2 minutes). For large problems,
+  this should be set much higher.
 
-- estimand:
+The arguments `distance` (and related arguments), `replace`, `m.order`,
+and `caliper` (and related arguments) are ignored with a warning.
 
-  a string containing the desired estimand. Allowable options include
-  `"ATT"`, `"ATC"`, and `"ATE"`. See Details.
+## Outputs
 
-- exact:
-
-  for which variables exact matching should take place. Separate
-  optimization will occur within each subgroup of the exact matching
-  variables.
-
-- mahvars:
-
-  which variables should be used for pairing after subset selection. Can
-  only be set when `ratio` is a whole number. See Details.
-
-- s.weights:
-
-  the variable containing sampling weights to be incorporated into the
-  optimization. The balance constraints refer to the product of the
-  sampling weights and the matching weights. Sampling weights can only
-  be used with profile matching (i.e., `estimand = "ATE"` or
-  `ratio = NA`), which matches each treatment group to a fixed target;
-  they cannot be used with cardinality matching, which matches the
-  treatment groups to each other. See Details.
-
-- ratio:
-
-  the desired ratio of control to treated units. Can be set to `NA` to
-  maximize sample size without concern for this ratio. See Details.
-
-- verbose:
-
-  `logical`; whether information about the matching process should be
-  printed to the console.
-
-- ...:
-
-  additional arguments that control the matching specification:
-
-  `tols`
-
-  :   `numeric`; a vector of imbalance tolerances for mean differences,
-      one for each covariate in `formula`. If only one value is
-      supplied, it is applied to all. See `std.tols` below. Default is
-      `.05` for standardized mean differences of at most .05 for all
-      covariates between the treatment groups in the matched sample.
-
-  `std.tols`
-
-  :   `logical`; whether each entry in `tols` corresponds to a raw or
-      standardized mean difference. If only one value is supplied, it is
-      applied to all. Default is `TRUE` for standardized mean
-      differences. The standardization factor is the pooled standard
-      deviation when `estimand = "ATE"`, the standard deviation of the
-      treated group when `estimand = "ATT"`, and the standard deviation
-      of the control group when `estimand = "ATC"` (the same as used in
-      [`summary.matchit()`](https://kosukeimai.github.io/MatchIt/reference/summary.matchit.md)).
-
-  `solver`
-
-  :   the name of solver to use to solve the optimization problem.
-      Available options include `"highs"`for HiGHS (implemented in the
-      *highs* package), `"glpk"` for GLPK (implemented in the *Rglpk*
-      package), and `"gurobi"` for Gurobi (implemented in the *gurobi*
-      package). The differences between them are in speed and solving
-      ability. HiGHS (the default) and GLPK are the easiest to install,
-      but Gurobi is recommended as it consistently outperforms other
-      solvers and can find solutions even when others can't, and in less
-      time. Gurobi is proprietary but can be used with a free trial or
-      academic license.
-
-  `time`
-
-  :   the maximum amount of time before the optimization routine aborts,
-      in seconds. Default is 120 (2 minutes). For large problems, this
-      should be set much higher.
-
-  The arguments `distance` (and related arguments), `replace`,
-  `m.order`, and `caliper` (and related arguments) are ignored with a
-  warning.
+Most outputs described in
+[`matchit()`](https://kosukeimai.github.io/MatchIt/reference/matchit.md)
+are returned with `method = "cardinality"`. Unless `mahvars` is
+specified, the `match.matrix` and `subclass` components are omitted
+because no pairing or subclassification is done. When
+`include.obj = TRUE` in the call to
+[`matchit()`](https://kosukeimai.github.io/MatchIt/reference/matchit.md),
+the output of the optimization function will be included in the output.
+When `exact` is specified, this will be a list of such objects, one for
+each stratum of the exact variables.
 
 ## Details
 
@@ -251,19 +212,6 @@ that there is no possible way to satisfy the constraints. To rectify
 this, one can try relaxing the constraints by increasing the value of
 `tols` or use another solver. Sometimes Gurobi can solve problems that
 the other solvers cannot.
-
-## Outputs
-
-Most outputs described in
-[`matchit()`](https://kosukeimai.github.io/MatchIt/reference/matchit.md)
-are returned with `method = "cardinality"`. Unless `mahvars` is
-specified, the `match.matrix` and `subclass` components are omitted
-because no pairing or subclassification is done. When
-`include.obj = TRUE` in the call to
-[`matchit()`](https://kosukeimai.github.io/MatchIt/reference/matchit.md),
-the output of the optimization function will be included in the output.
-When `exact` is specified, this will be a list of such objects, one for
-each stratum of the exact variables.
 
 ## References
 

@@ -14,7 +14,29 @@ considering the other matches that may occur subsequently.
 This page details the allowable arguments with method = "nearest".
 See matchit() for an explanation of what each argument means in a general
 context and how it can be specified.
-Below is how matchit() is used for nearest neighbor matching:'><meta property="og:description" content='In matchit(), setting method = "nearest" performs greedy nearest
+Below is how matchit() is used for nearest neighbor matching:
+matchit(formula,
+        data = NULL,
+        method = "nearest",
+        distance = "glm",
+        link = "logit",
+        distance.options = list(),
+        estimand = "ATT",
+        exact = NULL,
+        mahvars = NULL,
+        antiexact = NULL,
+        discard = "none",
+        reestimate = FALSE,
+        s.weights = NULL,
+        replace = TRUE,
+        m.order = NULL,
+        caliper = NULL,
+        ratio = 1,
+        min.controls = NULL,
+        max.controls = NULL,
+        verbose = FALSE,
+        ...)
+'><meta property="og:description" content='In matchit(), setting method = "nearest" performs greedy nearest
 neighbor matching. A distance is computed between each treated unit and each
 control unit, and, one by one, each treated unit is assigned a control unit
 as a match. The matching is "greedy" in the sense that there is no action
@@ -23,7 +45,29 @@ considering the other matches that may occur subsequently.
 This page details the allowable arguments with method = "nearest".
 See matchit() for an explanation of what each argument means in a general
 context and how it can be specified.
-Below is how matchit() is used for nearest neighbor matching:'><meta property="og:image" content="https://kosukeimai.github.io/MatchIt/logo.png"></head><body>
+Below is how matchit() is used for nearest neighbor matching:
+matchit(formula,
+        data = NULL,
+        method = "nearest",
+        distance = "glm",
+        link = "logit",
+        distance.options = list(),
+        estimand = "ATT",
+        exact = NULL,
+        mahvars = NULL,
+        antiexact = NULL,
+        discard = "none",
+        reestimate = FALSE,
+        s.weights = NULL,
+        replace = TRUE,
+        m.order = NULL,
+        caliper = NULL,
+        ratio = 1,
+        min.controls = NULL,
+        max.controls = NULL,
+        verbose = FALSE,
+        ...)
+'><meta property="og:image" content="https://kosukeimai.github.io/MatchIt/logo.png"></head><body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
 
@@ -80,12 +124,8 @@ considering the other matches that may occur subsequently.</p>
 <p>This page details the allowable arguments with <code>method = "nearest"</code>.
 See <code><a href="matchit.html">matchit()</a></code> for an explanation of what each argument means in a general
 context and how it can be specified.</p>
-<p>Below is how <code><a href="matchit.html">matchit()</a></code> is used for nearest neighbor matching:</p>
-    </div>
-
-    <div class="section level2">
-    <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu"><a href="matchit.html">matchit</a></span><span class="op">(</span><span class="va">formula</span>,</span>
+<p>Below is how <code><a href="matchit.html">matchit()</a></code> is used for nearest neighbor matching:</p><div class="sourceCode"><pre><code><span></span>
+<span><span class="fu"><a href="../reference/matchit.html">matchit</a></span><span class="op">(</span><span class="va">formula</span>,</span>
 <span>        data <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>        method <span class="op">=</span> <span class="st">"nearest"</span>,</span>
 <span>        distance <span class="op">=</span> <span class="st">"glm"</span>,</span>
@@ -105,153 +145,44 @@ context and how it can be specified.</p>
 <span>        min.controls <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>        max.controls <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>        verbose <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>        <span class="va">...</span><span class="op">)</span></span></code></pre></div>
+<span>        <span class="va">...</span><span class="op">)</span> </span></code></pre></div>
+
     </div>
+
 
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
 
 
-<dl><dt id="arg-formula">formula<a class="anchor" aria-label="anchor" href="#arg-formula"></a></dt>
-<dd><p>a two-sided <a href="https://rdrr.io/r/stats/formula.html" class="external-link">formula</a> object containing the treatment and
-covariates to be used in creating the distance measure used in the matching.</p></dd>
 
 
-<dt id="arg-data">data<a class="anchor" aria-label="anchor" href="#arg-data"></a></dt>
-<dd><p>a data frame containing the variables named in <code>formula</code>.
-If not found in <code>data</code>, the variables will be sought in the
-environment.</p></dd>
-
-
-<dt id="arg-method">method<a class="anchor" aria-label="anchor" href="#arg-method"></a></dt>
-<dd><p>set here to <code>"nearest"</code>.</p></dd>
-
-
-<dt id="arg-distance">distance<a class="anchor" aria-label="anchor" href="#arg-distance"></a></dt>
-<dd><p>the distance measure to be used. See <code><a href="distance.html">distance</a></code>
-for allowable options. Can be supplied as a distance matrix.</p></dd>
-
-
-<dt id="arg-link">link<a class="anchor" aria-label="anchor" href="#arg-link"></a></dt>
-<dd><p>when <code>distance</code> is specified as a method of estimating
-propensity scores, an additional argument controlling the link function used
-in estimating the distance measure. See <code><a href="distance.html">distance</a></code> for allowable
-options with each option.</p></dd>
-
-
-<dt id="arg-distance-options">distance.options<a class="anchor" aria-label="anchor" href="#arg-distance-options"></a></dt>
-<dd><p>a named list containing additional arguments
-supplied to the function that estimates the distance measure as determined
-by the argument to <code>distance</code>.</p></dd>
-
-
-<dt id="arg-estimand">estimand<a class="anchor" aria-label="anchor" href="#arg-estimand"></a></dt>
-<dd><p>a string containing the desired estimand. Allowable options
-include <code>"ATT"</code> and <code>"ATC"</code>. See Details.</p></dd>
-
-
-<dt id="arg-exact">exact<a class="anchor" aria-label="anchor" href="#arg-exact"></a></dt>
-<dd><p>for which variables exact matching should take place; two units with different values of an exact matching variable will not be paired.</p></dd>
-
-
-<dt id="arg-mahvars">mahvars<a class="anchor" aria-label="anchor" href="#arg-mahvars"></a></dt>
-<dd><p>for which variables Mahalanobis distance matching should take
-place when <code>distance</code> corresponds to a propensity score (e.g., for
-caliper matching or to discard units for common support). If specified, the
-distance measure will not be used in matching.</p></dd>
-
-
-<dt id="arg-antiexact">antiexact<a class="anchor" aria-label="anchor" href="#arg-antiexact"></a></dt>
-<dd><p>for which variables anti-exact matching should take place; two units with the same value of an anti-exact matching variable will not be paired.</p></dd>
-
-
-<dt id="arg-discard">discard<a class="anchor" aria-label="anchor" href="#arg-discard"></a></dt>
-<dd><p>a string containing a method for discarding units outside a
-region of common support. Only allowed when <code>distance</code> corresponds to a
-propensity score.</p></dd>
-
-
-<dt id="arg-reestimate">reestimate<a class="anchor" aria-label="anchor" href="#arg-reestimate"></a></dt>
-<dd><p>if <code>discard</code> is not <code>"none"</code>, whether to
-re-estimate the propensity score in the remaining sample prior to matching.</p></dd>
-
-
-<dt id="arg-s-weights">s.weights<a class="anchor" aria-label="anchor" href="#arg-s-weights"></a></dt>
-<dd><p>the variable containing sampling weights to be incorporated
-into propensity score models and balance statistics.</p></dd>
-
-
-<dt id="arg-replace">replace<a class="anchor" aria-label="anchor" href="#arg-replace"></a></dt>
-<dd><p>whether matching should be done with replacement (i.e., whether control units can be used as matches multiple times). See also the <code>reuse.max</code> argument below. Default is <code>FALSE</code> for matching without replacement.</p></dd>
-
-
-<dt id="arg-m-order">m.order<a class="anchor" aria-label="anchor" href="#arg-m-order"></a></dt>
-<dd><p>the order that the matching takes place. Allowable options
-include <code>"largest"</code>, where matching takes place in descending order of
-distance measures; <code>"smallest"</code>, where matching takes place in ascending
-order of distance measures; <code>"closest"</code>, where matching takes place in
-ascending order of the smallest distance between units; <code>"farthest"</code>, where matching takes place in
-descending order of the smallest distance between units; <code>"random"</code>, where matching takes place
-in a random order; and <code>"data"</code> where matching takes place based on the
-order of units in the data. When <code>m.order = "random"</code>, results may differ
-across different runs of the same code unless a seed is set and specified
-with <code><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed()</a></code>. The default of <code>NULL</code> corresponds to <code>"largest"</code> when a
-propensity score is estimated or supplied as a vector and <code>"data"</code>
-otherwise. See Details for more information.</p></dd>
-
-
-<dt id="arg-caliper">caliper<a class="anchor" aria-label="anchor" href="#arg-caliper"></a></dt>
-<dd><p>the width(s) of the caliper(s) used for caliper matching. Two units with a difference on a caliper variable larger than the caliper will not be paired. See Details and Examples.</p></dd>
-
-
-<dt id="arg-std-caliper">std.caliper<a class="anchor" aria-label="anchor" href="#arg-std-caliper"></a></dt>
-<dd><p><code>logical</code>; when calipers are specified, whether they
-are in standard deviation units (<code>TRUE</code>) or raw units (<code>FALSE</code>).</p></dd>
-
-
-<dt id="arg-ratio">ratio<a class="anchor" aria-label="anchor" href="#arg-ratio"></a></dt>
-<dd><p>how many control units should be matched to each treated unit
-for k:1 matching. For variable ratio matching, see section "Variable Ratio
-Matching" in Details below. When <code>ratio</code> is greater than 1, all treated units will be attempted to be matched with a control unit before any treated unit is matched with a second control unit, etc. This reduces the possibility that control units will be used up before some treated units receive any matches.</p></dd>
-
-
-<dt id="arg-min-controls-max-controls">min.controls, max.controls<a class="anchor" aria-label="anchor" href="#arg-min-controls-max-controls"></a></dt>
-<dd><p>for variable ratio matching, the minimum
-and maximum number of controls units to be matched to each treated unit. See
-section "Variable Ratio Matching" in Details below.</p></dd>
-
-
-<dt id="arg-verbose">verbose<a class="anchor" aria-label="anchor" href="#arg-verbose"></a></dt>
-<dd><p><code>logical</code>; whether information about the matching
-process should be printed to the console. When <code>TRUE</code>, a progress bar
-implemented using <em>RcppProgress</em> will be displayed along with an estimate of the time remaining.</p></dd>
-
-
-<dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
-<dd><p>additional arguments that control the matching specification:</p><dl><dt><code>reuse.max</code></dt>
-<dd><p><code>numeric</code>; the maximum number of
+<table class="table table"><tr><td><code>formula</code></td><td>a two-sided <a href="https://rdrr.io/r/stats/formula.html" class="external-link">formula</a> object containing the treatment and covariates to be used in creating the distance measure used in the matching.</td></tr><tr><td><code>data</code></td><td>a data frame containing the variables named in <code>formula</code>. If not found in <code>data</code>, the variables will be sought in the environment.</td></tr><tr><td><code>method</code></td><td>set here to <code>"nearest"</code>.</td></tr><tr><td><code>distance</code></td><td>the distance measure to be used. See <code><a href="distance.html">distance</a></code> for allowable options. Can be supplied as a distance matrix.</td></tr><tr><td><code>link</code></td><td>when <code>distance</code> is specified as a method of estimating propensity scores, an additional argument controlling the link function used in estimating the distance measure. See <code><a href="distance.html">distance</a></code> for allowable options with each option.</td></tr><tr><td><code>distance.options</code></td><td>a named list containing additional arguments supplied to the function that estimates the distance measure as determined by the argument to <code>distance</code>.</td></tr><tr><td><code>estimand</code></td><td>a string containing the desired estimand. Allowable options include <code>"ATT"</code> and <code>"ATC"</code>. See Details.</td></tr><tr><td><code>exact</code></td><td>for which variables exact matching should take place; two units with different values of an exact matching variable will not be paired.</td></tr><tr><td><code>mahvars</code></td><td>for which variables Mahalanobis distance matching should take place when <code>distance</code> corresponds to a propensity score (e.g., for caliper matching or to discard units for common support). If specified, the distance measure will not be used in matching.</td></tr><tr><td><code>antiexact</code></td><td>for which variables anti-exact matching should take place; two units with the same value of an anti-exact matching variable will not be paired.</td></tr><tr><td><code>discard</code></td><td>a string containing a method for discarding units outside a region of common support. Only allowed when <code>distance</code> corresponds to a propensity score.</td></tr><tr><td><code>reestimate</code></td><td>if <code>discard</code> is not <code>"none"</code>, whether to re-estimate the propensity score in the remaining sample prior to matching.</td></tr><tr><td><code>s.weights</code></td><td>the variable containing sampling weights to be incorporated into propensity score models and balance statistics.</td></tr><tr><td><code>replace</code></td><td>whether matching should be done with replacement (i.e., whether control units can be used as matches multiple times). See also the <code>reuse.max</code> argument below. Default is <code>FALSE</code> for matching without replacement.</td></tr><tr><td><code>m.order</code></td><td>the order that the matching takes place. Allowable options include <code>"largest"</code>, where matching takes place in descending order of distance measures; <code>"smallest"</code>, where matching takes place in ascending order of distance measures; <code>"closest"</code>, where matching takes place in ascending order of the smallest distance between units; <code>"farthest"</code>, where matching takes place in descending order of the smallest distance between units; <code>"random"</code>, where matching takes place in a random order; and <code>"data"</code> where matching takes place based on the order of units in the data. When <code>m.order = "random"</code>, results may differ across different runs of the same code unless a seed is set and specified with <code><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed()</a></code>. The default of <code>NULL</code> corresponds to <code>"largest"</code> when a propensity score is estimated or supplied as a vector and <code>"data"</code> otherwise. See Details for more information.</td></tr><tr><td><code>caliper</code></td><td>the width(s) of the caliper(s) used for caliper matching. Two units with a difference on a caliper variable larger than the caliper will not be paired. See Details and Examples.</td></tr><tr><td><code>std.caliper</code></td><td><code>logical</code>; when calipers are specified, whether they are in standard deviation units (<code>TRUE</code>) or raw units (<code>FALSE</code>).</td></tr><tr><td><code>ratio</code></td><td>how many control units should be matched to each treated unit for k:1 matching. For variable ratio matching, see section "Variable Ratio Matching" in Details below. When <code>ratio</code> is greater than 1, all treated units will be attempted to be matched with a control unit before any treated unit is matched with a second control unit, etc. This reduces the possibility that control units will be used up before some treated units receive any matches.</td></tr><tr><td><code>min.controls</code>, <code>max.controls</code></td><td>for variable ratio matching, the minimum and maximum number of controls units to be matched to each treated unit. See section "Variable Ratio Matching" in Details below.</td></tr><tr><td><code>verbose</code></td><td><code>logical</code>; whether information about the matching process should be printed to the console. When <code>TRUE</code>, a progress bar implemented using <em>RcppProgress</em> will be displayed along with an estimate of the time remaining.</td></tr><tr><td><code>...</code></td><td>additional arguments that control the matching specification, described below.</td></tr></table><p>Arguments that can be supplied through <code>...</code>:</p>
+<ul><li><p><code>reuse.max</code>: <code>numeric</code>; the maximum number of
 times each control can be used as a match. Setting <code>reuse.max = 1</code>
 corresponds to matching without replacement (i.e., <code>replace = FALSE</code>),
 and setting <code>reuse.max = Inf</code> corresponds to traditional matching with
 replacement (i.e., <code>replace = TRUE</code>) with no limit on the number of
 times each control unit can be matched. Other values restrict the number of
 times each control can be matched when matching with replacement.
-<code>replace</code> is ignored when <code>reuse.max</code> is specified.</p></dd>
-
-<dt><code>unit.id</code></dt>
-<dd><p>one or more variables containing a unit ID for each
+<code>replace</code> is ignored when <code>reuse.max</code> is specified.</p></li>
+<li><p><code>unit.id</code>: one or more variables containing a unit ID for each
 observation, i.e., in case multiple observations correspond to the same
 unit. Once a control observation has been matched, no other observation with
 the same unit ID can be used as matches. This ensures each control unit is
 used only once even if it has multiple observations associated with it.
-Omitting this argument is the same as giving each observation a unique ID.</p></dd>
+Omitting this argument is the same as giving each observation a unique ID.</p></li>
+</ul></div>
+    <div class="section level2">
+    <h2 id="outputs">Outputs<a class="anchor" aria-label="anchor" href="#outputs"></a></h2>
 
 
-</dl></dd>
-
-</dl></div>
+<p>All outputs described in <code><a href="matchit.html">matchit()</a></code> are returned with
+<code>method = "nearest"</code>. When <code>replace = TRUE</code>, the <code>subclass</code>
+component is omitted. <code>include.obj</code> is ignored.</p>
+    </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
+
 
 <div class="section">
 <h3 id="mahalanobis-distance-matching">Mahalanobis Distance Matching<a class="anchor" aria-label="anchor" href="#mahalanobis-distance-matching"></a></h3>
@@ -353,14 +284,6 @@ Examples below for an example of their use.</p>
 <p>Nearest neighbor matching involves a random component only when <code>m.order = "random"</code> (or when the propensity is estimated using a method with randomness; see <code><a href="distance.html">distance</a></code> for details), so a seed must be set in that case using <code><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed()</a></code> to ensure reproducibility. Otherwise, it is purely deterministic, and any ties are broken based on the order in which the data appear.</p>
 </div>
 
-    </div>
-    <div class="section level2">
-    <h2 id="outputs">Outputs<a class="anchor" aria-label="anchor" href="#outputs"></a></h2>
-
-
-<p>All outputs described in <code><a href="matchit.html">matchit()</a></code> are returned with
-<code>method = "nearest"</code>. When <code>replace = TRUE</code>, the <code>subclass</code>
-component is omitted. <code>include.obj</code> is ignored.</p>
     </div>
     <div class="section level2">
     <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a></h2>

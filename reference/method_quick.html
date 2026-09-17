@@ -24,7 +24,24 @@ to be correct to estimate the treatment effect without bias.
 This page details the allowable arguments with method = "quick".
 See matchit() for an explanation of what each argument means in a general
 context and how it can be specified.
-Below is how matchit() is used for generalized full matching:'><meta property="og:description" content='In matchit(), setting method = "quick" performs generalized full
+Below is how matchit() is used for generalized full matching:
+matchit(formula,
+        data = NULL,
+        method = "quick",
+        distance = "glm",
+        link = "logit",
+        distance.options = list(),
+        estimand = "ATT",
+        exact = NULL,
+        mahvars = NULL,
+        discard = "none",
+        reestimate = FALSE,
+        s.weights = NULL,
+        caliper = NULL,
+        std.caliper = TRUE,
+        verbose = FALSE,
+        ...)
+'><meta property="og:description" content='In matchit(), setting method = "quick" performs generalized full
 matching, which is a form of subclassification wherein all units, both
 treatment and control (i.e., the "full" sample), are assigned to a subclass
 and receive at least one match. It uses an algorithm that is extremely fast
@@ -43,7 +60,24 @@ to be correct to estimate the treatment effect without bias.
 This page details the allowable arguments with method = "quick".
 See matchit() for an explanation of what each argument means in a general
 context and how it can be specified.
-Below is how matchit() is used for generalized full matching:'><meta property="og:image" content="https://kosukeimai.github.io/MatchIt/logo.png"></head><body>
+Below is how matchit() is used for generalized full matching:
+matchit(formula,
+        data = NULL,
+        method = "quick",
+        distance = "glm",
+        link = "logit",
+        distance.options = list(),
+        estimand = "ATT",
+        exact = NULL,
+        mahvars = NULL,
+        discard = "none",
+        reestimate = FALSE,
+        s.weights = NULL,
+        caliper = NULL,
+        std.caliper = TRUE,
+        verbose = FALSE,
+        ...)
+'><meta property="og:image" content="https://kosukeimai.github.io/MatchIt/logo.png"></head><body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
 
@@ -110,12 +144,8 @@ to be correct to estimate the treatment effect without bias.</p>
 <p>This page details the allowable arguments with <code>method = "quick"</code>.
 See <code><a href="matchit.html">matchit()</a></code> for an explanation of what each argument means in a general
 context and how it can be specified.</p>
-<p>Below is how <code><a href="matchit.html">matchit()</a></code> is used for generalized full matching:</p>
-    </div>
-
-    <div class="section level2">
-    <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu"><a href="matchit.html">matchit</a></span><span class="op">(</span><span class="va">formula</span>,</span>
+<p>Below is how <code><a href="matchit.html">matchit()</a></code> is used for generalized full matching:</p><div class="sourceCode"><pre><code><span></span>
+<span><span class="fu"><a href="../reference/matchit.html">matchit</a></span><span class="op">(</span><span class="va">formula</span>,</span>
 <span>        data <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>        method <span class="op">=</span> <span class="st">"quick"</span>,</span>
 <span>        distance <span class="op">=</span> <span class="st">"glm"</span>,</span>
@@ -130,107 +160,20 @@ context and how it can be specified.</p>
 <span>        caliper <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>        std.caliper <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>        verbose <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>        <span class="va">...</span><span class="op">)</span></span></code></pre></div>
+<span>        <span class="va">...</span><span class="op">)</span> </span></code></pre></div>
+
     </div>
+
 
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
 
 
-<dl><dt id="arg-formula">formula<a class="anchor" aria-label="anchor" href="#arg-formula"></a></dt>
-<dd><p>a two-sided <a href="https://rdrr.io/r/stats/formula.html" class="external-link">formula</a> object containing the treatment and
-covariates to be used in creating the distance measure used in the matching.
-This formula will be supplied to the functions that estimate the distance
-measure.</p></dd>
 
 
-<dt id="arg-data">data<a class="anchor" aria-label="anchor" href="#arg-data"></a></dt>
-<dd><p>a data frame containing the variables named in <code>formula</code>.
-If not found in <code>data</code>, the variables will be sought in the
-environment.</p></dd>
-
-
-<dt id="arg-method">method<a class="anchor" aria-label="anchor" href="#arg-method"></a></dt>
-<dd><p>set here to <code>"quick"</code>.</p></dd>
-
-
-<dt id="arg-distance">distance<a class="anchor" aria-label="anchor" href="#arg-distance"></a></dt>
-<dd><p>the distance measure to be used. See <code><a href="distance.html">distance</a></code>
-for allowable options. Cannot be supplied as a matrix.</p></dd>
-
-
-<dt id="arg-link">link<a class="anchor" aria-label="anchor" href="#arg-link"></a></dt>
-<dd><p>when <code>distance</code> is specified as a method of estimating
-propensity scores, an additional argument controlling the link function used
-in estimating the distance measure. See <code><a href="distance.html">distance</a></code> for allowable
-options with each option.</p></dd>
-
-
-<dt id="arg-distance-options">distance.options<a class="anchor" aria-label="anchor" href="#arg-distance-options"></a></dt>
-<dd><p>a named list containing additional arguments
-supplied to the function that estimates the distance measure as determined
-by the argument to <code>distance</code>.</p></dd>
-
-
-<dt id="arg-estimand">estimand<a class="anchor" aria-label="anchor" href="#arg-estimand"></a></dt>
-<dd><p>a string containing the desired estimand. Allowable options
-include <code>"ATT"</code>, <code>"ATC"</code>, and <code>"ATE"</code>. The estimand controls
-how the weights are computed; see the Computing Weights section at
-<code><a href="matchit.html">matchit()</a></code> for details.</p></dd>
-
-
-<dt id="arg-exact">exact<a class="anchor" aria-label="anchor" href="#arg-exact"></a></dt>
-<dd><p>for which variables exact matching should take place.</p></dd>
-
-
-<dt id="arg-mahvars">mahvars<a class="anchor" aria-label="anchor" href="#arg-mahvars"></a></dt>
-<dd><p>for which variables Mahalanobis distance matching should take
-place when <code>distance</code> corresponds to a propensity score (e.g., to discard units for common support). If specified, the
-distance measure will not be used in matching.</p></dd>
-
-
-<dt id="arg-discard">discard<a class="anchor" aria-label="anchor" href="#arg-discard"></a></dt>
-<dd><p>a string containing a method for discarding units outside a
-region of common support. Only allowed when <code>distance</code> corresponds to a
-propensity score.</p></dd>
-
-
-<dt id="arg-reestimate">reestimate<a class="anchor" aria-label="anchor" href="#arg-reestimate"></a></dt>
-<dd><p>if <code>discard</code> is not <code>"none"</code>, whether to
-re-estimate the propensity score in the remaining sample prior to matching.</p></dd>
-
-
-<dt id="arg-s-weights">s.weights<a class="anchor" aria-label="anchor" href="#arg-s-weights"></a></dt>
-<dd><p>the variable containing sampling weights to be incorporated
-into propensity score models and balance statistics.</p></dd>
-
-
-<dt id="arg-caliper">caliper<a class="anchor" aria-label="anchor" href="#arg-caliper"></a></dt>
-<dd><p>the width of the caliper used for caliper matching. A caliper can only be placed on the propensity score and cannot be negative.</p></dd>
-
-
-<dt id="arg-std-caliper">std.caliper<a class="anchor" aria-label="anchor" href="#arg-std-caliper"></a></dt>
-<dd><p><code>logical</code>; when a caliper is specified, whether it
-is in standard deviation units (<code>TRUE</code>) or raw units (<code>FALSE</code>).</p></dd>
-
-
-<dt id="arg-verbose">verbose<a class="anchor" aria-label="anchor" href="#arg-verbose"></a></dt>
-<dd><p><code>logical</code>; whether information about the matching
-process should be printed to the console.</p></dd>
-
-
-<dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
-<dd><p>additional arguments passed to <code><a href="https://rdrr.io/pkg/quickmatch/man/quickmatch.html" class="external-link">quickmatch::quickmatch()</a></code>
+<table class="table table"><tr><td><code>formula</code></td><td>a two-sided <a href="https://rdrr.io/r/stats/formula.html" class="external-link">formula</a> object containing the treatment and covariates to be used in creating the distance measure used in the matching. This formula will be supplied to the functions that estimate the distance measure.</td></tr><tr><td><code>data</code></td><td>a data frame containing the variables named in <code>formula</code>. If not found in <code>data</code>, the variables will be sought in the environment.</td></tr><tr><td><code>method</code></td><td>set here to <code>"quick"</code>.</td></tr><tr><td><code>distance</code></td><td>the distance measure to be used. See <code><a href="distance.html">distance</a></code> for allowable options. Cannot be supplied as a matrix.</td></tr><tr><td><code>link</code></td><td>when <code>distance</code> is specified as a method of estimating propensity scores, an additional argument controlling the link function used in estimating the distance measure. See <code><a href="distance.html">distance</a></code> for allowable options with each option.</td></tr><tr><td><code>distance.options</code></td><td>a named list containing additional arguments supplied to the function that estimates the distance measure as determined by the argument to <code>distance</code>.</td></tr><tr><td><code>estimand</code></td><td>a string containing the desired estimand. Allowable options include <code>"ATT"</code>, <code>"ATC"</code>, and <code>"ATE"</code>. The estimand controls how the weights are computed; see the Computing Weights section at <code><a href="matchit.html">matchit()</a></code> for details.</td></tr><tr><td><code>exact</code></td><td>for which variables exact matching should take place.</td></tr><tr><td><code>mahvars</code></td><td>for which variables Mahalanobis distance matching should take place when <code>distance</code> corresponds to a propensity score (e.g., to discard units for common support). If specified, the distance measure will not be used in matching.</td></tr><tr><td><code>discard</code></td><td>a string containing a method for discarding units outside a region of common support. Only allowed when <code>distance</code> corresponds to a propensity score.</td></tr><tr><td><code>reestimate</code></td><td>if <code>discard</code> is not <code>"none"</code>, whether to re-estimate the propensity score in the remaining sample prior to matching.</td></tr><tr><td><code>s.weights</code></td><td>the variable containing sampling weights to be incorporated into propensity score models and balance statistics.</td></tr><tr><td><code>caliper</code></td><td>the width of the caliper used for caliper matching. A caliper can only be placed on the propensity score and cannot be negative.</td></tr><tr><td><code>std.caliper</code></td><td><code>logical</code>; when a caliper is specified, whether it is in standard deviation units (<code>TRUE</code>) or raw units (<code>FALSE</code>).</td></tr><tr><td><code>verbose</code></td><td><code>logical</code>; whether information about the matching process should be printed to the console.</td></tr><tr><td><code>...</code></td><td>additional arguments passed to <code><a href="https://rdrr.io/pkg/quickmatch/man/quickmatch.html" class="external-link">quickmatch::quickmatch()</a></code>
 . Allowed arguments include <code>treatment_constraints</code>, <code>size_constraint</code>, <code>target</code>, and other arguments passed to <code><a href="https://rdrr.io/pkg/scclust/man/sc_clustering.html" class="external-link">scclust::sc_clustering()</a></code> (see <code><a href="https://rdrr.io/pkg/quickmatch/man/quickmatch.html" class="external-link">quickmatch::quickmatch()</a></code>
- for details). In particular, changing <code>seed_method</code> from its default can improve performance.
-No arguments will be passed to <code><a href="https://rdrr.io/pkg/distances/man/distances.html" class="external-link">distances::distances()</a></code>.</p>
-<p>The arguments <code>replace</code>, <code>ratio</code>, <code>min.controls</code>, <code>max.controls</code>, <code>m.order</code>, and <code>antiexact</code> are ignored with a warning.</p></dd>
-
-</dl></div>
-    <div class="section level2">
-    <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>Generalized full matching is similar to optimal full matching, but has some additional flexibility that can be controlled by some of the extra arguments available. By default, <code>method = "quick"</code> performs a standard full match in which all units are matched (unless restricted by the caliper) and assigned to a subclass. Each subclass could contain multiple units from each treatment group. The subclasses are chosen to minimize the largest within-subclass distance between units (including between units of the same treatment group). Notably, generalized full matching requires less memory and can run much faster than optimal full matching and optimal pair matching and, in some cases, even than nearest neighbor matching, and it can be used with huge datasets (e.g., in the millions) while running in under a minute.</p>
-    </div>
+ for details). In particular, changing <code>seed_method</code> from its default can improve performance. No arguments will be passed to <code><a href="https://rdrr.io/pkg/distances/man/distances.html" class="external-link">distances::distances()</a></code>. The arguments <code>replace</code>, <code>ratio</code>, <code>min.controls</code>, <code>max.controls</code>, <code>m.order</code>, and <code>antiexact</code> are ignored with a warning.</td></tr></table></div>
     <div class="section level2">
     <h2 id="outputs">Outputs<a class="anchor" aria-label="anchor" href="#outputs"></a></h2>
 
@@ -244,6 +187,12 @@ forms of matching. When <code>include.obj = TRUE</code> in the call to
  will be
 included in the output. When <code>exact</code> is specified, this will be a list
 of such objects, one for each stratum of the <code>exact</code> variables.</p>
+    </div>
+    <div class="section level2">
+    <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
+
+
+<p>Generalized full matching is similar to optimal full matching, but has some additional flexibility that can be controlled by some of the extra arguments available. By default, <code>method = "quick"</code> performs a standard full match in which all units are matched (unless restricted by the caliper) and assigned to a subclass. Each subclass could contain multiple units from each treatment group. The subclasses are chosen to minimize the largest within-subclass distance between units (including between units of the same treatment group). Notably, generalized full matching requires less memory and can run much faster than optimal full matching and optimal pair matching and, in some cases, even than nearest neighbor matching, and it can be used with huge datasets (e.g., in the millions) while running in under a minute.</p>
     </div>
     <div class="section level2">
     <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a></h2>

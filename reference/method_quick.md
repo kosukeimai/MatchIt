@@ -32,130 +32,57 @@ Below is how
 [`matchit()`](https://kosukeimai.github.io/MatchIt/reference/matchit.md)
 is used for generalized full matching:
 
-## Usage
 
-``` r
-matchit(formula,
-        data = NULL,
-        method = "quick",
-        distance = "glm",
-        link = "logit",
-        distance.options = list(),
-        estimand = "ATT",
-        exact = NULL,
-        mahvars = NULL,
-        discard = "none",
-        reestimate = FALSE,
-        s.weights = NULL,
-        caliper = NULL,
-        std.caliper = TRUE,
-        verbose = FALSE,
-        ...)
-```
+    matchit(formula,
+            data = NULL,
+            method = "quick",
+            distance = "glm",
+            link = "logit",
+            distance.options = list(),
+            estimand = "ATT",
+            exact = NULL,
+            mahvars = NULL,
+            discard = "none",
+            reestimate = FALSE,
+            s.weights = NULL,
+            caliper = NULL,
+            std.caliper = TRUE,
+            verbose = FALSE,
+            ...) 
 
 ## Arguments
 
-- formula:
+|  |  |
+|----|----|
+| `formula` | a two-sided [formula](https://rdrr.io/r/stats/formula.html) object containing the treatment and covariates to be used in creating the distance measure used in the matching. This formula will be supplied to the functions that estimate the distance measure. |
+| `data` | a data frame containing the variables named in `formula`. If not found in `data`, the variables will be sought in the environment. |
+| `method` | set here to `"quick"`. |
+| `distance` | the distance measure to be used. See [`distance`](https://kosukeimai.github.io/MatchIt/reference/distance.md) for allowable options. Cannot be supplied as a matrix. |
+| `link` | when `distance` is specified as a method of estimating propensity scores, an additional argument controlling the link function used in estimating the distance measure. See [`distance`](https://kosukeimai.github.io/MatchIt/reference/distance.md) for allowable options with each option. |
+| `distance.options` | a named list containing additional arguments supplied to the function that estimates the distance measure as determined by the argument to `distance`. |
+| `estimand` | a string containing the desired estimand. Allowable options include `"ATT"`, `"ATC"`, and `"ATE"`. The estimand controls how the weights are computed; see the Computing Weights section at [`matchit()`](https://kosukeimai.github.io/MatchIt/reference/matchit.md) for details. |
+| `exact` | for which variables exact matching should take place. |
+| `mahvars` | for which variables Mahalanobis distance matching should take place when `distance` corresponds to a propensity score (e.g., to discard units for common support). If specified, the distance measure will not be used in matching. |
+| `discard` | a string containing a method for discarding units outside a region of common support. Only allowed when `distance` corresponds to a propensity score. |
+| `reestimate` | if `discard` is not `"none"`, whether to re-estimate the propensity score in the remaining sample prior to matching. |
+| `s.weights` | the variable containing sampling weights to be incorporated into propensity score models and balance statistics. |
+| `caliper` | the width of the caliper used for caliper matching. A caliper can only be placed on the propensity score and cannot be negative. |
+| `std.caliper` | `logical`; when a caliper is specified, whether it is in standard deviation units (`TRUE`) or raw units (`FALSE`). |
+| `verbose` | `logical`; whether information about the matching process should be printed to the console. |
+| `...` | additional arguments passed to [`quickmatch::quickmatch()`](https://rdrr.io/pkg/quickmatch/man/quickmatch.html) . Allowed arguments include `treatment_constraints`, `size_constraint`, `target`, and other arguments passed to [`scclust::sc_clustering()`](https://rdrr.io/pkg/scclust/man/sc_clustering.html) (see [`quickmatch::quickmatch()`](https://rdrr.io/pkg/quickmatch/man/quickmatch.html) for details). In particular, changing `seed_method` from its default can improve performance. No arguments will be passed to [`distances::distances()`](https://rdrr.io/pkg/distances/man/distances.html). The arguments `replace`, `ratio`, `min.controls`, `max.controls`, `m.order`, and `antiexact` are ignored with a warning. |
 
-  a two-sided [formula](https://rdrr.io/r/stats/formula.html) object
-  containing the treatment and covariates to be used in creating the
-  distance measure used in the matching. This formula will be supplied
-  to the functions that estimate the distance measure.
+## Outputs
 
-- data:
-
-  a data frame containing the variables named in `formula`. If not found
-  in `data`, the variables will be sought in the environment.
-
-- method:
-
-  set here to `"quick"`.
-
-- distance:
-
-  the distance measure to be used. See
-  [`distance`](https://kosukeimai.github.io/MatchIt/reference/distance.md)
-  for allowable options. Cannot be supplied as a matrix.
-
-- link:
-
-  when `distance` is specified as a method of estimating propensity
-  scores, an additional argument controlling the link function used in
-  estimating the distance measure. See
-  [`distance`](https://kosukeimai.github.io/MatchIt/reference/distance.md)
-  for allowable options with each option.
-
-- distance.options:
-
-  a named list containing additional arguments supplied to the function
-  that estimates the distance measure as determined by the argument to
-  `distance`.
-
-- estimand:
-
-  a string containing the desired estimand. Allowable options include
-  `"ATT"`, `"ATC"`, and `"ATE"`. The estimand controls how the weights
-  are computed; see the Computing Weights section at
-  [`matchit()`](https://kosukeimai.github.io/MatchIt/reference/matchit.md)
-  for details.
-
-- exact:
-
-  for which variables exact matching should take place.
-
-- mahvars:
-
-  for which variables Mahalanobis distance matching should take place
-  when `distance` corresponds to a propensity score (e.g., to discard
-  units for common support). If specified, the distance measure will not
-  be used in matching.
-
-- discard:
-
-  a string containing a method for discarding units outside a region of
-  common support. Only allowed when `distance` corresponds to a
-  propensity score.
-
-- reestimate:
-
-  if `discard` is not `"none"`, whether to re-estimate the propensity
-  score in the remaining sample prior to matching.
-
-- s.weights:
-
-  the variable containing sampling weights to be incorporated into
-  propensity score models and balance statistics.
-
-- caliper:
-
-  the width of the caliper used for caliper matching. A caliper can only
-  be placed on the propensity score and cannot be negative.
-
-- std.caliper:
-
-  `logical`; when a caliper is specified, whether it is in standard
-  deviation units (`TRUE`) or raw units (`FALSE`).
-
-- verbose:
-
-  `logical`; whether information about the matching process should be
-  printed to the console.
-
-- ...:
-
-  additional arguments passed to
-  [`quickmatch::quickmatch()`](https://rdrr.io/pkg/quickmatch/man/quickmatch.html)
-  . Allowed arguments include `treatment_constraints`,
-  `size_constraint`, `target`, and other arguments passed to
-  [`scclust::sc_clustering()`](https://rdrr.io/pkg/scclust/man/sc_clustering.html)
-  (see
-  [`quickmatch::quickmatch()`](https://rdrr.io/pkg/quickmatch/man/quickmatch.html)
-  for details). In particular, changing `seed_method` from its default
-  can improve performance. No arguments will be passed to
-  [`distances::distances()`](https://rdrr.io/pkg/distances/man/distances.html).
-
-  The arguments `replace`, `ratio`, `min.controls`, `max.controls`,
-  `m.order`, and `antiexact` are ignored with a warning.
+All outputs described in
+[`matchit()`](https://kosukeimai.github.io/MatchIt/reference/matchit.md)
+are returned with `method = "quick"` except for `match.matrix`. This is
+because matching strata are not indexed by treated units as they are in
+some other forms of matching. When `include.obj = TRUE` in the call to
+[`matchit()`](https://kosukeimai.github.io/MatchIt/reference/matchit.md),
+the output of the call to
+[`quickmatch::quickmatch()`](https://rdrr.io/pkg/quickmatch/man/quickmatch.html)
+will be included in the output. When `exact` is specified, this will be
+a list of such objects, one for each stratum of the `exact` variables.
 
 ## Details
 
@@ -171,19 +98,6 @@ matching requires less memory and can run much faster than optimal full
 matching and optimal pair matching and, in some cases, even than nearest
 neighbor matching, and it can be used with huge datasets (e.g., in the
 millions) while running in under a minute.
-
-## Outputs
-
-All outputs described in
-[`matchit()`](https://kosukeimai.github.io/MatchIt/reference/matchit.md)
-are returned with `method = "quick"` except for `match.matrix`. This is
-because matching strata are not indexed by treated units as they are in
-some other forms of matching. When `include.obj = TRUE` in the call to
-[`matchit()`](https://kosukeimai.github.io/MatchIt/reference/matchit.md),
-the output of the call to
-[`quickmatch::quickmatch()`](https://rdrr.io/pkg/quickmatch/man/quickmatch.html)
-will be included in the output. When `exact` is specified, this will be
-a list of such objects, one for each stratum of the `exact` variables.
 
 ## References
 

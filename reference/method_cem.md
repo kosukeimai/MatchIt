@@ -24,133 +24,131 @@ Below is how
 [`matchit()`](https://kosukeimai.github.io/MatchIt/reference/matchit.md)
 is used for coarsened exact matching:
 
-## Usage
 
-``` r
-matchit(formula,
-        data = NULL,
-        method = "cem",
-        estimand = "ATT",
-        s.weights = NULL,
-        verbose = FALSE,
-        ...)
-```
+    matchit(formula,
+            data = NULL,
+            method = "cem",
+            estimand = "ATT",
+            s.weights = NULL,
+            verbose = FALSE,
+            ...) 
+
+## Note
+
+This method does not rely on the *cem* package, instead using code
+written for *MatchIt*, but its design is based on the original *cem*
+functions. Versions of *MatchIt* prior to 4.1.0 did rely on *cem*, so
+results may differ between versions. There are a few differences between
+the ways *MatchIt* and *cem* (and older versions of *MatchIt*) differ in
+executing coarsened exact matching, described below.
+
+- In *MatchIt*, when a single number is supplied to `cutpoints`, it
+  describes the number of bins; in *cem*, it describes the number of
+  cutpoints separating bins. The *MatchIt* method is closer to how
+  [`hist()`](https://rdrr.io/r/graphics/hist.html) processes breaks
+  points to create bins.
+
+- In *MatchIt*, values on the cutpoint boundaries will be placed into
+  the higher bin; in *cem*, they are placed into the lower bin. To avoid
+  consequences of this choice, ensure the bin boundaries do not coincide
+  with observed values of the variables.
+
+- When `cutpoints` are used, `"ss"` (for Shimazaki-Shinomoto's rule) can
+  be used in *cem* but not in *MatchIt*.
+
+- When `k2k = TRUE`, *MatchIt* matches on the original variables
+  (scaled), whereas *cem* matches on the coarsened variables. Because
+  the variables are already exactly matched on the coarsened variables,
+  matching in *cem* is equivalent to random matching within strata.
+
+- When `k2k = TRUE`, in *MatchIt* matched units are identified by pair
+  membership, and the original stratum membership prior to 1:1 matching
+  is discarded. In *cem*, pairs are not identified beyond the stratum
+  the members are part of. requested in *MatchIt* but not in *cem*.
 
 ## Arguments
 
-- formula:
+|  |  |
+|----|----|
+| `formula` | a two-sided [formula](https://rdrr.io/r/stats/formula.html) object containing the treatment and covariates to be used in creating the subclasses defined by a full cross of the coarsened covariate levels. |
+| `data` | a data frame containing the variables named in `formula`. If not found in `data`, the variables will be sought in the environment. |
+| `method` | set here to `"cem"`. |
+| `estimand` | a string containing the desired estimand. Allowable options include `"ATT"`, `"ATC"`, and `"ATE"`. The estimand controls how the weights are computed; see the Computing Weights section at [`matchit()`](https://kosukeimai.github.io/MatchIt/reference/matchit.md) for details. When `k2k = TRUE` (see below), `estimand` also controls how the matching is done. |
+| `s.weights` | the variable containing sampling weights to be incorporated into balance statistics or the scaling factors when `k2k = TRUE` and certain methods are used. |
+| `verbose` | `logical`; whether information about the matching process should be printed to the console. |
+| `...` | additional arguments to control the matching process, described below. |
 
-  a two-sided [formula](https://rdrr.io/r/stats/formula.html) object
-  containing the treatment and covariates to be used in creating the
-  subclasses defined by a full cross of the coarsened covariate levels.
+Arguments that can be supplied through `...`:
 
-- data:
+- `grouping`: a named list with an (optional) entry for each categorical
+  variable to be matched on. Each element should itself be a list, and
+  each entry of the sublist should be a vector containing levels of the
+  variable that should be combined to form a single level. Any
+  categorical variables not included in `grouping` will remain as they
+  are in the data, which means exact matching, with no coarsening, will
+  take place on these variables. See Details.
 
-  a data frame containing the variables named in `formula`. If not found
-  in `data`, the variables will be sought in the environment.
+- `cutpoints`: a named list with an (optional) entry for each numeric
+  variable to be matched on. Each element describes a way of coarsening
+  the corresponding variable. They can be a vector of cutpoints that
+  demarcate bins, a single number giving the number of bins, or a string
+  corresponding to a method of computing the number of bins. Allowable
+  strings include `"sturges"`, `"scott"`, and `"fd"`, which use the
+  functions
+  [`grDevices::nclass.Sturges()`](https://rdrr.io/r/grDevices/nclass.html),
+  [`grDevices::nclass.scott()`](https://rdrr.io/r/grDevices/nclass.html),
+  and
+  [`grDevices::nclass.FD()`](https://rdrr.io/r/grDevices/nclass.html),
+  respectively. The default is `"sturges"` for variables that are not
+  listed or if no argument is supplied. Can also be a single value to be
+  applied to all numeric variables. See Details.
 
-- method:
+- `k2k`: `logical`; whether 1:1 matching should occur within the matched
+  strata. If `TRUE` nearest neighbor matching without replacement will
+  take place within each stratum, and any unmatched units will be
+  dropped (e.g., if there are more treated than control units in the
+  stratum, the treated units without a match will be dropped). The
+  `k2k.method` argument controls how the distance between units is
+  calculated.
 
-  set here to `"cem"`.
+- `k2k.method`: `character`; how the distance between units should be
+  calculated if `k2k = TRUE`. Allowable arguments include `NULL` (for
+  random matching), any argument to
+  [`distance()`](https://kosukeimai.github.io/MatchIt/reference/distance.md)
+  for computing a distance matrix from covariates (e.g.,
+  `"mahalanobis"`), or any allowable argument to `method` in
+  [`dist()`](https://rdrr.io/r/stats/dist.html). Matching will take
+  place on the original (non-coarsened) variables. The default is
+  `"mahalanobis"`.
 
-- estimand:
+- `mpower`: if `k2k.method = "minkowski"`, the power used in creating
+  the distance. This is passed to the `p` argument of
+  [`dist()`](https://rdrr.io/r/stats/dist.html).
 
-  a string containing the desired estimand. Allowable options include
-  `"ATT"`, `"ATC"`, and `"ATE"`. The estimand controls how the weights
-  are computed; see the Computing Weights section at
-  [`matchit()`](https://kosukeimai.github.io/MatchIt/reference/matchit.md)
-  for details. When `k2k = TRUE` (see below), `estimand` also controls
-  how the matching is done.
+- `m.order`: `character`; the order that the matching takes place when
+  `k2k = TRUE`. Allowable options include `"closest"`, where matching
+  takes place in ascending order of the smallest distance between units;
+  `"farthest"`, where matching takes place in descending order of the
+  smallest distance between units; `"random"`, where matching takes
+  place in a random order; and `"data"` where matching takes place based
+  on the order of units in the data. When `m.order = "random"`, results
+  may differ across different runs of the same code unless a seed is set
+  and specified with [`set.seed()`](https://rdrr.io/r/base/Random.html).
+  The default of `NULL` corresponds to `"data"`. See
+  [`method_nearest`](https://kosukeimai.github.io/MatchIt/reference/method_nearest.md)
+  for more information.
 
-- s.weights:
+The arguments `distance` (and related arguments), `exact`, `mahvars`,
+`discard` (and related arguments), `replace`, `caliper` (and related
+arguments), and `ratio` are ignored with a warning.
 
-  the variable containing sampling weights to be incorporated into
-  balance statistics or the scaling factors when `k2k = TRUE` and
-  certain methods are used.
+## Outputs
 
-- verbose:
-
-  `logical`; whether information about the matching process should be
-  printed to the console.
-
-- ...:
-
-  additional arguments to control the matching process.
-
-  `grouping`
-
-  :   a named list with an (optional) entry for each categorical
-      variable to be matched on. Each element should itself be a list,
-      and each entry of the sublist should be a vector containing levels
-      of the variable that should be combined to form a single level.
-      Any categorical variables not included in `grouping` will remain
-      as they are in the data, which means exact matching, with no
-      coarsening, will take place on these variables. See Details.
-
-  `cutpoints`
-
-  :   a named list with an (optional) entry for each numeric variable to
-      be matched on. Each element describes a way of coarsening the
-      corresponding variable. They can be a vector of cutpoints that
-      demarcate bins, a single number giving the number of bins, or a
-      string corresponding to a method of computing the number of bins.
-      Allowable strings include `"sturges"`, `"scott"`, and `"fd"`,
-      which use the functions
-      [`grDevices::nclass.Sturges()`](https://rdrr.io/r/grDevices/nclass.html),
-      [`grDevices::nclass.scott()`](https://rdrr.io/r/grDevices/nclass.html),
-      and
-      [`grDevices::nclass.FD()`](https://rdrr.io/r/grDevices/nclass.html),
-      respectively. The default is `"sturges"` for variables that are
-      not listed or if no argument is supplied. Can also be a single
-      value to be applied to all numeric variables. See Details.
-
-  `k2k`
-
-  :   `logical`; whether 1:1 matching should occur within the matched
-      strata. If `TRUE` nearest neighbor matching without replacement
-      will take place within each stratum, and any unmatched units will
-      be dropped (e.g., if there are more treated than control units in
-      the stratum, the treated units without a match will be dropped).
-      The `k2k.method` argument controls how the distance between units
-      is calculated.
-
-  `k2k.method`
-
-  :   `character`; how the distance between units should be calculated
-      if `k2k = TRUE`. Allowable arguments include `NULL` (for random
-      matching), any argument to
-      [`distance()`](https://kosukeimai.github.io/MatchIt/reference/distance.md)
-      for computing a distance matrix from covariates (e.g.,
-      `"mahalanobis"`), or any allowable argument to `method` in
-      [`dist()`](https://rdrr.io/r/stats/dist.html). Matching will take
-      place on the original (non-coarsened) variables. The default is
-      `"mahalanobis"`.
-
-  `mpower`
-
-  :   if `k2k.method = "minkowski"`, the power used in creating the
-      distance. This is passed to the `p` argument of
-      [`dist()`](https://rdrr.io/r/stats/dist.html).
-
-  `m.order`
-
-  :   `character`; the order that the matching takes place when
-      `k2k = TRUE`. Allowable options include `"closest"`, where
-      matching takes place in ascending order of the smallest distance
-      between units; `"farthest"`, where matching takes place in
-      descending order of the smallest distance between units;
-      `"random"`, where matching takes place in a random order; and
-      `"data"` where matching takes place based on the order of units in
-      the data. When `m.order = "random"`, results may differ across
-      different runs of the same code unless a seed is set and specified
-      with [`set.seed()`](https://rdrr.io/r/base/Random.html). The
-      default of `NULL` corresponds to `"data"`. See
-      [`method_nearest`](https://kosukeimai.github.io/MatchIt/reference/method_nearest.md)
-      for more information.
-
-  The arguments `distance` (and related arguments), `exact`, `mahvars`,
-  `discard` (and related arguments), `replace`, `caliper` (and related
-  arguments), and `ratio` are ignored with a warning.
+All outputs described in
+[`matchit()`](https://kosukeimai.github.io/MatchIt/reference/matchit.md)
+are returned with `method = "cem"` except for `match.matrix`. When
+`k2k = TRUE`, a `match.matrix` component with the matched pairs is also
+included. `include.obj` is ignored.
 
 ## Details
 
@@ -246,47 +244,6 @@ and `X4` into quintiles. All other numeric variables would be split into
 a number of bins determined by
 [`grDevices::nclass.Sturges()`](https://rdrr.io/r/grDevices/nclass.html),
 the default.
-
-## Note
-
-This method does not rely on the *cem* package, instead using code
-written for *MatchIt*, but its design is based on the original *cem*
-functions. Versions of *MatchIt* prior to 4.1.0 did rely on *cem*, so
-results may differ between versions. There are a few differences between
-the ways *MatchIt* and *cem* (and older versions of *MatchIt*) differ in
-executing coarsened exact matching, described below.
-
-- In *MatchIt*, when a single number is supplied to `cutpoints`, it
-  describes the number of bins; in *cem*, it describes the number of
-  cutpoints separating bins. The *MatchIt* method is closer to how
-  [`hist()`](https://rdrr.io/r/graphics/hist.html) processes breaks
-  points to create bins.
-
-- In *MatchIt*, values on the cutpoint boundaries will be placed into
-  the higher bin; in *cem*, they are placed into the lower bin. To avoid
-  consequences of this choice, ensure the bin boundaries do not coincide
-  with observed values of the variables.
-
-- When `cutpoints` are used, `"ss"` (for Shimazaki-Shinomoto's rule) can
-  be used in *cem* but not in *MatchIt*.
-
-- When `k2k = TRUE`, *MatchIt* matches on the original variables
-  (scaled), whereas *cem* matches on the coarsened variables. Because
-  the variables are already exactly matched on the coarsened variables,
-  matching in *cem* is equivalent to random matching within strata.
-
-- When `k2k = TRUE`, in *MatchIt* matched units are identified by pair
-  membership, and the original stratum membership prior to 1:1 matching
-  is discarded. In *cem*, pairs are not identified beyond the stratum
-  the members are part of. requested in *MatchIt* but not in *cem*.
-
-## Outputs
-
-All outputs described in
-[`matchit()`](https://kosukeimai.github.io/MatchIt/reference/matchit.md)
-are returned with `method = "cem"` except for `match.matrix`. When
-`k2k = TRUE`, a `match.matrix` component with the matched pairs is also
-included. `include.obj` is ignored.
 
 ## References
 
