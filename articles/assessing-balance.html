@@ -31,7 +31,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">MatchIt</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.8.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.8.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -82,7 +82,7 @@
                         <h4 data-toc-skip class="author">Noah
 Greifer</h4>
             
-            <h4 data-toc-skip class="date">2026-09-17</h4>
+            <h4 data-toc-skip class="date">2026-09-26</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/kosukeimai/MatchIt/blob/master/vignettes/assessing-balance.Rmd" class="external-link"><code>vignettes/assessing-balance.Rmd</code></a></small>
       <div class="d-none name"><code>assessing-balance.Rmd</code></div>
@@ -118,22 +118,22 @@ form observational data, balance is not guaranteed and must be
 assessed.</p>
 <p>This document provides instructions for assessing and reporting
 covariate balance as part of a matching analysis. The tools available in
-<code>MatchIt</code> for balance assessment should be used during the
+<em>MatchIt</em> for balance assessment should be used during the
 process of selecting a good matching scheme and ensuring that the chosen
 scheme is adequate. These tools implement the recommendations of <span class="citation">Ho et al. (<a href="#ref-ho2007">2007</a>)</span> and
 others for assessing balance.</p>
-<p>In addition to the tools available in <code>MatchIt</code>, the
-<code>cobalt</code> package has a suite of functions designed to assess
-and display balance and is directly compatible with <code>MatchIt</code>
-objects. <code>cobalt</code> has extensive documentation, but we
-describe some of its functionality here as a complement to the tools in
-<code>MatchIt</code>.</p>
+<p>In addition to the tools available in <em>MatchIt</em>, the
+<em>cobalt</em> package has a suite of functions designed to assess and
+display balance and is directly compatible with <em>MatchIt</em>
+objects. <em>cobalt</em> has extensive documentation, but we describe
+some of its functionality here as a complement to the tools in
+<em>MatchIt</em>.</p>
 <p>The structure of this document is as follows: first, we describe some
 of the recommendations for balance checking and their rationale; next,
-we describe the tools for assessing balance present in
-<code>MatchIt</code> and display their use in evaluating several
-matching schemes; finally; we briefly describe some of the functionality
-in <code>cobalt</code> to extend that in <code>MatchIt</code>.</p>
+we describe the tools for assessing balance present in <em>MatchIt</em>
+and display their use in evaluating several matching schemes; finally;
+we briefly describe some of the functionality in <em>cobalt</em> to
+extend that in <em>MatchIt</em>.</p>
 </div>
 <div class="section level2">
 <h2 id="recommendations-for-balance-assessment">Recommendations for Balance Assessment<a class="anchor" aria-label="anchor" href="#recommendations-for-balance-assessment"></a>
@@ -249,9 +249,8 @@ matching even if balance does not change; and 3) the use of hypothesis
 tests implies a uniform decision criterion for rejecting the null
 hypothesis (e.g., p-value less than .05, potentially with corrections
 for multiple comparisons), when balance should be improved without
-limit. <code>MatchIt</code> does not report any balance tests or
-p-values, instead relying on the descriptive statistics described
-above.</p>
+limit. <em>MatchIt</em> does not report any balance tests or p-values,
+instead relying on the descriptive statistics described above.</p>
 </div>
 <div class="section level2">
 <h2 id="recommendations-for-balance-reporting">Recommendations for Balance Reporting<a class="anchor" aria-label="anchor" href="#recommendations-for-balance-reporting"></a>
@@ -275,18 +274,18 @@ largest mean and maximum eCDF difference among the covariates and the
 largest SMD among squares, cubes, and interactions of the
 covariates.</p></li>
 </ul>
-<p><code>MatchIt</code> provides tools for calculating each of these
+<p><em>MatchIt</em> provides tools for calculating each of these
 statistics so they can be reported with ease in a manuscript or
 report.</p>
 </div>
 <div class="section level2">
-<h2 id="assessing-balance-with-matchit">Assessing Balance with <code>MatchIt</code><a class="anchor" aria-label="anchor" href="#assessing-balance-with-matchit"></a>
+<h2 id="assessing-balance-with-matchit">Assessing Balance with <em>MatchIt</em><a class="anchor" aria-label="anchor" href="#assessing-balance-with-matchit"></a>
 </h2>
-<p><code>MatchIt</code> contains several tools to assess balance
-numerically and graphically. The primary balance assessment function is
+<p><em>MatchIt</em> contains several tools to assess balance numerically
+and graphically. The primary balance assessment function is
 <code><a href="../reference/summary.matchit.html">summary.matchit()</a></code>, which is called when using
-<code><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary()</a></code> on a <code>MatchIt</code> object and produces
-several tables of balance statistics before and after matching.
+<code><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary()</a></code> on a <em>MatchIt</em> object and produces several
+tables of balance statistics before and after matching.
 <code><a href="../reference/plot.summary.matchit.html">plot.summary.matchit()</a></code> generates a Love plot using R’s base
 graphics system containing the standardized mean differences resulting
 from a call to <code><a href="../reference/summary.matchit.html">summary.matchit()</a></code> and provides a nice way to
@@ -296,13 +295,12 @@ different elements of covariate balance, including propensity score
 overlap and distribution plots of the covariates. These functions
 together form a suite that can be used to assess and report balance in a
 variety of ways.</p>
-<p>To demonstrate <code>MatchIt</code>’s balance assessment
-capabilities, we will use the Lalonde data included in
-<code>MatchIt</code> and used in <code><a href="../articles/MatchIt.html">vignette("MatchIt")</a></code>. We
-will perform 1:1 nearest neighbor matching with replacement on the
-propensity score, though the functionality is identical across all
-matching methods except propensity score subclassification, which we
-illustrate at the end.</p>
+<p>To demonstrate <em>MatchIt</em>’s balance assessment capabilities, we
+will use the Lalonde data included in <em>MatchIt</em> and used in
+<code><a href="../articles/MatchIt.html">vignette("MatchIt")</a></code>. We will perform 1:1 nearest neighbor
+matching with replacement on the propensity score, though the
+functionality is identical across all matching methods except propensity
+score subclassification, which we illustrate at the end.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://kosukeimai.github.io/MatchIt/">"MatchIt"</a></span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"lalonde"</span>, package <span class="op">=</span> <span class="st">"MatchIt"</span><span class="op">)</span></span>
@@ -364,8 +362,8 @@ unstandardized statistics include the raw difference in means and eQQ
 plot statistics. (Regardless, the variance ratio will always be
 displayed.). The default is <code>TRUE</code> for standardized
 statistics, which are more common to report because they are all on the
-same scale regardless of the scale of the covariates<a class="footnote-ref" tabindex="0" data-bs-toggle="popover" data-bs-content="&lt;p&gt;Note that versions of &lt;code&gt;MatchIt&lt;/code&gt; before 4.0.0
-had &lt;code&gt;standardize&lt;/code&gt; set to &lt;code&gt;FALSE&lt;/code&gt; by default.&lt;/p&gt;"><sup>1</sup></a>.</li>
+same scale regardless of the scale of the covariates<a class="footnote-ref" tabindex="0" data-bs-toggle="popover" data-bs-content="&lt;p&gt;Note that versions of &lt;em&gt;MatchIt&lt;/em&gt; before 4.0.0 had
+&lt;code&gt;standardize&lt;/code&gt; set to &lt;code&gt;FALSE&lt;/code&gt; by default.&lt;/p&gt;"><sup>1</sup></a>.</li>
 <li>
 <code>pair.dist</code> controls whether within-pair distances should
 be computed and displayed. These reflect the average distance between
@@ -389,8 +387,8 @@ balance on the square of <code>age</code>, the variables representing
 whether <code>re74</code> and <code>re75</code> were equal to 0, and the
 interaction between <code>educ</code> and <code>race</code>.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">m.out</span>, addlvariables <span class="op">=</span> <span class="op">~</span> <span class="fu"><a href="https://rdrr.io/r/base/AsIs.html" class="external-link">I</a></span><span class="op">(</span><span class="va">age</span><span class="op">^</span><span class="fl">2</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/base/AsIs.html" class="external-link">I</a></span><span class="op">(</span><span class="va">re74</span><span class="op">==</span><span class="fl">0</span><span class="op">)</span> <span class="op">+</span> </span>
-<span>          <span class="fu"><a href="https://rdrr.io/r/base/AsIs.html" class="external-link">I</a></span><span class="op">(</span><span class="va">re75</span><span class="op">==</span><span class="fl">0</span><span class="op">)</span> <span class="op">+</span> <span class="va">educ</span><span class="op">:</span><span class="va">race</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">m.out</span>, addlvariables <span class="op">=</span> <span class="op">~</span> <span class="fu"><a href="https://rdrr.io/r/base/AsIs.html" class="external-link">I</a></span><span class="op">(</span><span class="va">age</span><span class="op">^</span><span class="fl">2</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/base/AsIs.html" class="external-link">I</a></span><span class="op">(</span><span class="va">re74</span> <span class="op">==</span> <span class="fl">0</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>          <span class="fu"><a href="https://rdrr.io/r/base/AsIs.html" class="external-link">I</a></span><span class="op">(</span><span class="va">re75</span> <span class="op">==</span> <span class="fl">0</span><span class="op">)</span> <span class="op">+</span> <span class="va">educ</span><span class="op">:</span><span class="va">race</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## </span></span>
 <span><span class="co">## Call:</span></span>
 <span><span class="co">## matchit(formula = treat ~ age + educ + race + married + nodegree + </span></span>
@@ -491,8 +489,8 @@ scheme to achieve distributional balance.</p>
 <code>plot.summary.matchit()</code><a class="anchor" aria-label="anchor" href="#plot-summary-matchit"></a>
 </h3>
 <p>A Love plot is a clean way to visually summarize balance. Using
-<code>plot</code> on the output of a call to <code><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary()</a></code> on a
-<code>matchit</code> object produces a Love plot of the standardized
+<code><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot()</a></code> on the output of a call to <code><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary()</a></code> on
+a <code>matchit</code> object produces a Love plot of the standardized
 mean differences. <code><a href="../reference/plot.summary.matchit.html">plot.summary.matchit()</a></code> has several
 additional arguments that can be used to customize the plot.</p>
 <ul>
@@ -525,27 +523,27 @@ supplied to <code>x</code> in <code><a href="https://rdrr.io/r/graphics/legend.h
 </ul>
 <p>Below we create a Love plot of the covariates.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">m.sum</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">m.out</span>, addlvariables <span class="op">=</span> <span class="op">~</span> <span class="fu"><a href="https://rdrr.io/r/base/AsIs.html" class="external-link">I</a></span><span class="op">(</span><span class="va">age</span><span class="op">^</span><span class="fl">2</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/base/AsIs.html" class="external-link">I</a></span><span class="op">(</span><span class="va">re74</span><span class="op">==</span><span class="fl">0</span><span class="op">)</span> <span class="op">+</span> </span>
-<span>                   <span class="fu"><a href="https://rdrr.io/r/base/AsIs.html" class="external-link">I</a></span><span class="op">(</span><span class="va">re75</span><span class="op">==</span><span class="fl">0</span><span class="op">)</span> <span class="op">+</span> <span class="va">educ</span><span class="op">:</span><span class="va">race</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">m.sum</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">m.out</span>, addlvariables <span class="op">=</span> <span class="op">~</span> <span class="fu"><a href="https://rdrr.io/r/base/AsIs.html" class="external-link">I</a></span><span class="op">(</span><span class="va">age</span><span class="op">^</span><span class="fl">2</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/base/AsIs.html" class="external-link">I</a></span><span class="op">(</span><span class="va">re74</span> <span class="op">==</span> <span class="fl">0</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>                   <span class="fu"><a href="https://rdrr.io/r/base/AsIs.html" class="external-link">I</a></span><span class="op">(</span><span class="va">re75</span> <span class="op">==</span> <span class="fl">0</span><span class="op">)</span> <span class="op">+</span> <span class="va">educ</span><span class="op">:</span><span class="va">race</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">m.sum</span>, var.order <span class="op">=</span> <span class="st">"unmatched"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="assessing-balance_files/figure-html/unnamed-chunk-3-1.png" class="r-plt" alt="A love plot with most matched dots below the threshold lines, indicaitng good balance after matching, in contrast to the unmatched dots far from the treshold lines, indicating poor balance before matching." width="672" style="display: block; margin: auto;"></p>
 <p>From this plot it is clear to see that balance was quite poor prior
 to matching, but full matching improved balance on all covariates, and
 most within a threshold of .1. To make the variable names cleaner, the
-original variables should be renamed prior to matching.
-<code>cobalt</code> provides many additional options to generate and
-customize Love plots using the <code><a href="https://ngreifer.github.io/cobalt/reference/love.plot.html" class="external-link">love.plot()</a></code> function and
-should be used if a plot beyond what is available with
-<code><a href="../reference/plot.summary.matchit.html">plot.summary.matchit()</a></code> is desired.</p>
+original variables should be renamed prior to matching. <em>cobalt</em>
+provides many additional options to generate and customize Love plots
+using the <code><a href="https://ngreifer.github.io/cobalt/reference/love.plot.html" class="external-link">love.plot()</a></code> function and should be used if a plot
+beyond what is available with <code><a href="../reference/plot.summary.matchit.html">plot.summary.matchit()</a></code> is
+desired.</p>
 </div>
 <div class="section level3">
 <h3 id="plot-matchit">
 <code>plot.matchit()</code><a class="anchor" aria-label="anchor" href="#plot-matchit"></a>
 </h3>
-<p>In addition to numeric summaries of balance, <code>MatchIt</code>
-offers graphical summaries as well using <code><a href="../reference/plot.matchit.html">plot.matchit()</a></code>
-(i.e., using <code><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot()</a></code> on a <code>matchit</code> object). We
-can create eQQ plots, eCDF plots, or density plots of the covariates and
+<p>In addition to numeric summaries of balance, <em>MatchIt</em> offers
+graphical summaries as well using <code><a href="../reference/plot.matchit.html">plot.matchit()</a></code> (i.e.,
+using <code><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot()</a></code> on a <code>matchit</code> object). We can
+create eQQ plots, eCDF plots, or density plots of the covariates and
 histograms or jitter plots of the propensity score. The covariate plots
 can provide a summary of the balance of the full marginal distribution
 of a covariate beyond just the mean and variance.</p>
@@ -708,55 +706,55 @@ original sample):</p>
 <span><span class="co">## </span></span>
 <span><span class="co">## - Subclass 1</span></span>
 <span><span class="co">##            Means Treated Means Control Std. Mean Diff. Var. Ratio eCDF Mean eCDF Max</span></span>
-<span><span class="co">## distance           0.239         0.095           0.879      2.494     0.313    0.508</span></span>
-<span><span class="co">## age               26.478        28.800          -0.345      0.394     0.090    0.160</span></span>
-<span><span class="co">## educ              10.304        10.214           0.040      0.620     0.025    0.084</span></span>
-<span><span class="co">## raceblack          0.370         0.063           0.635          .     0.307    0.307</span></span>
-<span><span class="co">## racehispan         0.239         0.167           0.169          .     0.072    0.072</span></span>
-<span><span class="co">## racewhite          0.391         0.770          -0.776          .     0.379    0.379</span></span>
-<span><span class="co">## married            0.370         0.589          -0.455          .     0.219    0.219</span></span>
+<span><span class="co">## distance           0.239         0.095           0.653      2.494     0.313    0.508</span></span>
+<span><span class="co">## age               26.478        28.800          -0.324      0.394     0.090    0.160</span></span>
+<span><span class="co">## educ              10.304        10.214           0.045      0.620     0.025    0.084</span></span>
+<span><span class="co">## raceblack          0.370         0.063           0.843          .     0.307    0.307</span></span>
+<span><span class="co">## racehispan         0.239         0.167           0.304          .     0.072    0.072</span></span>
+<span><span class="co">## racewhite          0.391         0.770          -1.277          .     0.379    0.379</span></span>
+<span><span class="co">## married            0.370         0.589          -0.560          .     0.219    0.219</span></span>
 <span><span class="co">## nodegree           0.587         0.584           0.007          .     0.003    0.003</span></span>
-<span><span class="co">## re74            5430.539      6363.913          -0.118      1.298     0.087    0.284</span></span>
-<span><span class="co">## re75            2929.039      2699.399           0.054      1.587     0.047    0.144</span></span>
+<span><span class="co">## re74            5430.539      6363.913          -0.191      1.298     0.087    0.284</span></span>
+<span><span class="co">## re75            2929.039      2699.399           0.071      1.587     0.047    0.144</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## - Subclass 2</span></span>
 <span><span class="co">##            Means Treated Means Control Std. Mean Diff. Var. Ratio eCDF Mean eCDF Max</span></span>
-<span><span class="co">## distance           0.604         0.612          -0.214      0.905     0.083    0.195</span></span>
-<span><span class="co">## age               25.556        24.409           0.152      0.461     0.114    0.370</span></span>
-<span><span class="co">## educ               9.933         9.773           0.066      0.448     0.084    0.188</span></span>
+<span><span class="co">## distance           0.604         0.612          -0.035      0.905     0.083    0.195</span></span>
+<span><span class="co">## age               25.556        24.409           0.160      0.461     0.114    0.370</span></span>
+<span><span class="co">## educ               9.933         9.773           0.080      0.448     0.084    0.188</span></span>
 <span><span class="co">## raceblack          1.000         1.000           0.000          .     0.000    0.000</span></span>
 <span><span class="co">## racehispan         0.000         0.000           0.000          .     0.000    0.000</span></span>
 <span><span class="co">## racewhite          0.000         0.000           0.000          .     0.000    0.000</span></span>
-<span><span class="co">## married            0.378         0.091           0.592          .     0.287    0.287</span></span>
-<span><span class="co">## nodegree           0.667         0.500           0.354          .     0.167    0.167</span></span>
-<span><span class="co">## re74            1777.422      2516.589          -0.219      0.433     0.076    0.280</span></span>
-<span><span class="co">## re75             972.344      1131.077          -0.100      0.666     0.034    0.086</span></span>
+<span><span class="co">## married            0.378         0.091           0.732          .     0.287    0.287</span></span>
+<span><span class="co">## nodegree           0.667         0.500           0.367          .     0.167    0.167</span></span>
+<span><span class="co">## re74            1777.422      2516.589          -0.151      0.433     0.076    0.280</span></span>
+<span><span class="co">## re75             972.344      1131.077          -0.049      0.666     0.034    0.086</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## - Subclass 3</span></span>
 <span><span class="co">##            Means Treated Means Control Std. Mean Diff. Var. Ratio eCDF Mean eCDF Max</span></span>
-<span><span class="co">## distance           0.693         0.691           0.130      1.281     0.055    0.189</span></span>
-<span><span class="co">## age               24.021        22.964           0.158      0.509     0.128    0.281</span></span>
-<span><span class="co">## educ              10.170        10.286          -0.069      1.040     0.038    0.099</span></span>
+<span><span class="co">## distance           0.693         0.691           0.012      1.281     0.055    0.189</span></span>
+<span><span class="co">## age               24.021        22.964           0.148      0.509     0.128    0.281</span></span>
+<span><span class="co">## educ              10.170        10.286          -0.057      1.040     0.038    0.099</span></span>
 <span><span class="co">## raceblack          1.000         1.000           0.000          .     0.000    0.000</span></span>
 <span><span class="co">## racehispan         0.000         0.000           0.000          .     0.000    0.000</span></span>
 <span><span class="co">## racewhite          0.000         0.000           0.000          .     0.000    0.000</span></span>
-<span><span class="co">## married            0.021         0.107          -0.595          .     0.086    0.086</span></span>
-<span><span class="co">## nodegree           0.681         0.750          -0.148          .     0.069    0.069</span></span>
-<span><span class="co">## re74             939.969       888.947           0.020      2.038     0.059    0.216</span></span>
-<span><span class="co">## re75            1217.455      1285.387          -0.018      1.535     0.038    0.188</span></span>
+<span><span class="co">## married            0.021         0.107          -0.219          .     0.086    0.086</span></span>
+<span><span class="co">## nodegree           0.681         0.750          -0.152          .     0.069    0.069</span></span>
+<span><span class="co">## re74             939.969       888.947           0.010      2.038     0.059    0.216</span></span>
+<span><span class="co">## re75            1217.455      1285.387          -0.021      1.535     0.038    0.188</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## - Subclass 4</span></span>
 <span><span class="co">##            Means Treated Means Control Std. Mean Diff. Var. Ratio eCDF Mean eCDF Max</span></span>
-<span><span class="co">## distance           0.767         0.753           0.540      2.961     0.165    0.445</span></span>
-<span><span class="co">## age               27.213        23.786           0.461      0.521     0.150    0.459</span></span>
-<span><span class="co">## educ              10.957        11.429          -0.341      0.701     0.059    0.126</span></span>
+<span><span class="co">## distance           0.767         0.753           0.063      2.961     0.165    0.445</span></span>
+<span><span class="co">## age               27.213        23.786           0.479      0.521     0.150    0.459</span></span>
+<span><span class="co">## educ              10.957        11.429          -0.234      0.701     0.059    0.126</span></span>
 <span><span class="co">## raceblack          1.000         1.000           0.000          .     0.000    0.000</span></span>
 <span><span class="co">## racehispan         0.000         0.000           0.000          .     0.000    0.000</span></span>
 <span><span class="co">## racewhite          0.000         0.000           0.000          .     0.000    0.000</span></span>
 <span><span class="co">## married            0.000         0.000           0.000          .     0.000    0.000</span></span>
-<span><span class="co">## nodegree           0.894         0.786           0.350          .     0.108    0.108</span></span>
-<span><span class="co">## re74             291.783       540.618          -0.307      0.917     0.083    0.280</span></span>
-<span><span class="co">## re75            1015.289       854.751           0.079      3.523     0.112    0.266</span></span>
+<span><span class="co">## nodegree           0.894         0.786           0.237          .     0.108    0.108</span></span>
+<span><span class="co">## re74             291.783       540.618          -0.051      0.917     0.083    0.280</span></span>
+<span><span class="co">## re75            1015.289       854.751           0.050      3.523     0.112    0.266</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## Sample Sizes by Subclass:</span></span>
 <span><span class="co">##           1  2  3  4 All</span></span>
@@ -791,25 +789,24 @@ displayed in aggregate using the subclassification weights. If
 subclass we want to see balance.</p>
 </div>
 <div class="section level2">
-<h2 id="assessing-balance-with-cobalt">Assessing Balance with <code>cobalt</code><a class="anchor" aria-label="anchor" href="#assessing-balance-with-cobalt"></a>
+<h2 id="assessing-balance-with-cobalt">Assessing Balance with <em>cobalt</em><a class="anchor" aria-label="anchor" href="#assessing-balance-with-cobalt"></a>
 </h2>
-<p>The <code>cobalt</code> package was designed specifically for
-checking balance before and after matching (and weighting). It offers
-three main functions, <code><a href="https://ngreifer.github.io/cobalt/reference/bal.tab.html" class="external-link">bal.tab()</a></code>, <code><a href="https://ngreifer.github.io/cobalt/reference/love.plot.html" class="external-link">love.plot()</a></code>,
-and <code><a href="https://ngreifer.github.io/cobalt/reference/bal.plot.html" class="external-link">bal.plot()</a></code>, which perform similar actions to
+<p>The <em>cobalt</em> package was designed specifically for checking
+balance before and after matching (and weighting). It offers three main
+functions, <code><a href="https://ngreifer.github.io/cobalt/reference/bal.tab.html" class="external-link">bal.tab()</a></code>, <code><a href="https://ngreifer.github.io/cobalt/reference/love.plot.html" class="external-link">love.plot()</a></code>, and
+<code><a href="https://ngreifer.github.io/cobalt/reference/bal.plot.html" class="external-link">bal.plot()</a></code>, which perform similar actions to
 <code><a href="../reference/summary.matchit.html">summary.matchit()</a></code>, <code><a href="../reference/plot.summary.matchit.html">plot.summary.matchit()</a></code>, and
 <code><a href="../reference/plot.matchit.html">plot.matchit()</a></code>, respectively. These functions directly
-interface with <code>matchit</code> objects, making <code>cobalt</code>
-straightforward to use in conjunction with <code>MatchIt</code>.
-<code>cobalt</code> can be used as a complement to <code>MatchIt</code>,
+interface with <code>matchit</code> objects, making <em>cobalt</em>
+straightforward to use in conjunction with <em>MatchIt</em>.
+<em>cobalt</em> can be used as a complement to <em>MatchIt</em>,
 especially for more advanced uses that are not accommodated by
-<code>MatchIt</code>, such as comparing balance across different
-matching schemes and even different packages, assessing balance in
-clustered or multiply imputed data, and assessing balance with
-multi-category, continuous, and time-varying treatments. The main
-<code>cobalt</code> vignette
-(<code><a href="https://ngreifer.github.io/cobalt/articles/cobalt.html" class="external-link">vignette("cobalt", package = "cobalt")</a></code>) contains many
-examples of its use with <code>MatchIt</code> objects, so we only
+<em>MatchIt</em>, such as comparing balance across different matching
+schemes and even different packages, assessing balance in clustered or
+multiply imputed data, and assessing balance with multi-category,
+continuous, and time-varying treatments. The main <em>cobalt</em>
+vignette (<code><a href="https://ngreifer.github.io/cobalt/articles/cobalt.html" class="external-link">vignette("cobalt", package = "cobalt")</a></code>) contains
+many examples of its use with <em>MatchIt</em> objects, so we only
 provide a short demonstration of its capabilities here.</p>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://ngreifer.github.io/cobalt/" class="external-link">"cobalt"</a></span><span class="op">)</span></span></code></pre></div>
@@ -862,7 +859,7 @@ output, though this behavior can be changed by setting
 Functionality for producing balance statistics for additional variables
 and for powers and interactions of the covariates is available using the
 <code>addl</code>, <code>poly</code>, and <code>int</code> options.</p>
-<p><code><a href="https://ngreifer.github.io/cobalt/reference/bal.tab.html" class="external-link">bal.tab()</a></code> and other <code>cobalt</code> functions can
+<p><code><a href="https://ngreifer.github.io/cobalt/reference/bal.tab.html" class="external-link">bal.tab()</a></code> and other <em>cobalt</em> functions can
 produce balance not just on a single <code>matchit</code> object but on
 several at the same time, which facilitates comparing balance across
 several matching specifications. For example, if we wanted to compare
@@ -971,8 +968,8 @@ between the covariate distributions of the treated and control groups.
 Balance should be assessed during the matching phase to find a matching
 specification that works. Balance must also be reported in the write-up
 of a matching analysis to demonstrate to readers that matching was
-successful. <code>MatchIt</code> and <code>cobalt</code> each offer a
-suite of functions to implement best practices in balance assessment and
+successful. <em>MatchIt</em> and <em>cobalt</em> each offer a suite of
+functions to implement best practices in balance assessment and
 reporting.</p>
 </div>
 <div class="section level2 unnumbered">

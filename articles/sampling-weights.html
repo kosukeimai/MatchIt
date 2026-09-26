@@ -31,7 +31,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">MatchIt</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.8.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.8.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -82,7 +82,7 @@
                         <h4 data-toc-skip class="author">Noah
 Greifer</h4>
             
-            <h4 data-toc-skip class="date">2026-09-17</h4>
+            <h4 data-toc-skip class="date">2026-09-26</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/kosukeimai/MatchIt/blob/master/vignettes/sampling-weights.Rmd" class="external-link"><code>vignettes/sampling-weights.Rmd</code></a></small>
       <div class="d-none name"><code>sampling-weights.Rmd</code></div>
@@ -221,12 +221,11 @@ were not used in the estimation of the propensity score used in the
 matching.</p>
 <p>Note that not all methods can involve sampling weights in the
 estimation. Some propensity score estimation methods, like
-<code>randomForest</code> and <code>bart</code> (as presently
-implemented), cannot incorporate sampling weights; one alternative is to
-include the sampling weights as a predictor in the propensity score
-model. Sampling weights should still be supplied to
-<code><a href="../reference/matchit.html">matchit()</a></code> even when using these methods to avoid having to
-use <code><a href="../reference/add_s.weights.html">add_s.weights()</a></code>.</p>
+<code>"bart"</code> (as presently implemented), cannot incorporate
+sampling weights; one alternative is to include the sampling weights as
+a predictor in the propensity score model. Sampling weights should still
+be supplied to <code><a href="../reference/matchit.html">matchit()</a></code> even when using these methods to
+avoid having to use <code><a href="../reference/add_s.weights.html">add_s.weights()</a></code>.</p>
 </div>
 <div class="section level2">
 <h2 id="assessing-balance">Assessing Balance<a class="anchor" aria-label="anchor" href="#assessing-balance"></a>

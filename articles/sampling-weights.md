@@ -142,11 +142,10 @@ identifying that sampling weights are present but they were not used in
 the estimation of the propensity score used in the matching.
 
 Note that not all methods can involve sampling weights in the
-estimation. Some propensity score estimation methods, like
-`randomForest` and `bart` (as presently implemented), cannot incorporate
-sampling weights; one alternative is to include the sampling weights as
-a predictor in the propensity score model. Sampling weights should still
-be supplied to
+estimation. Some propensity score estimation methods, like `"bart"` (as
+presently implemented), cannot incorporate sampling weights; one
+alternative is to include the sampling weights as a predictor in the
+propensity score model. Sampling weights should still be supplied to
 [`matchit()`](https://kosukeimai.github.io/MatchIt/reference/matchit.md)
 even when using these methods to avoid having to use
 [`add_s.weights()`](https://kosukeimai.github.io/MatchIt/reference/add_s.weights.md).

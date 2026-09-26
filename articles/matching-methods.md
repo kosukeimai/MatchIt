@@ -2,7 +2,7 @@
 
 ## Introduction
 
-`MatchIt` implements several matching methods with a variety of options.
+*MatchIt* implements several matching methods with a variety of options.
 Though the help pages for the individual methods describe each method
 and how they can be used, this vignette provides a broad overview of the
 available matching methods and their associated options. The choice of
@@ -16,10 +16,10 @@ reducing the possibility of capitalizing on chance while allowing for
 the benefits of an exploratory analysis in the design phase ([Ho et al.
 2007](#ref-ho2007)).
 
-This vignette describes each matching method available in `MatchIt` and
+This vignette describes each matching method available in *MatchIt* and
 the various options that are allowed with matching methods and the
 consequences of their use. For a brief introduction to the use of
-`MatchIt` functions, see
+*MatchIt* functions, see
 [`vignette("MatchIt")`](https://kosukeimai.github.io/MatchIt/articles/MatchIt.md).
 For details on how to assess and report covariate balance, see
 [`vignette("assessing-balance")`](https://kosukeimai.github.io/MatchIt/articles/assessing-balance.md).
@@ -29,7 +29,7 @@ after matching, see
 
 ## Matching
 
-Matching as implemented in `MatchIt` is a form of *subset selection*,
+Matching as implemented in *MatchIt* is a form of *subset selection*,
 that is, the pruning and weighting of units to arrive at a (weighted)
 subset of the units from the original dataset. Ideally, and if done
 successfully, subset selection produces a new sample where the treatment
@@ -56,7 +56,7 @@ treatment effects.
 It is important to note that this implementation of matching differs
 from the methods described by Abadie and Imbens
 ([2006](#ref-abadie2006), [2016](#ref-abadie2016)) and implemented in
-the `Matching` R package and `teffects` routine in Stata. That form of
+the *Matching* R package and `teffects` routine in Stata. That form of
 matching is *matching imputation*, where the missing potential outcomes
 for each unit are imputed using the observed outcomes of paired units.
 This is a critical distinction because matching imputation is a specific
@@ -82,7 +82,7 @@ involves a form of *stratification*, the assignment of units to pairs or
 strata containing multiple units. The distinction between subset
 selection and stratification is described by Zubizarreta et al.
 ([2014](#ref-zubizarretaMatchingBalancePairing2014)), who separate them
-into two separate steps. In `MatchIt`, with almost all matching methods,
+into two separate steps. In *MatchIt*, with almost all matching methods,
 subset selection is performed by stratification; for example, treated
 units are paired with control units, and unpaired units are then dropped
 from the matched sample. With some methods, subclasses are used to
@@ -95,12 +95,12 @@ of matching, pair membership is incidental ([Stuart
 others have argued that correctly incorporating pair membership into
 effect estimation can improve the quality of inferences ([Austin and
 Small 2014](#ref-austin2014a); [Wan 2019](#ref-wan2019)). For methods
-that allow it, `MatchIt` includes stratum membership as an additional
+that allow it, *MatchIt* includes stratum membership as an additional
 output of each matching specification. How these strata can be used is
 detailed in
 [`vignette("estimating-effects")`](https://kosukeimai.github.io/MatchIt/articles/estimating-effects.md).
 
-At the heart of `MatchIt` are three classes of methods: distance
+At the heart of *MatchIt* are three classes of methods: distance
 matching, stratum matching, and pure subset selection. *Distance
 matching* involves considering a focal group (usually the treated group)
 and selecting members of the non-focal group (i.e., the control group)
@@ -111,9 +111,9 @@ neighbor matching (`method = "nearest"`), optimal pair matching
 (`method = "optimal"`), optimal full matching (`method = "full"`),
 generalized full matching (`method = "quick"`), and genetic matching
 (`method = "genetic"`) are the methods of distance matching implemented
-in `MatchIt`. Typically, only the average treatment in the treated (ATT)
+in *MatchIt*. Typically, only the average treatment in the treated (ATT)
 or average treatment in the control (ATC), if the control group is the
-focal group, can be estimated after distance matching in `MatchIt` (full
+focal group, can be estimated after distance matching in *MatchIt* (full
 matching is an exception, described later).
 
 *Stratum matching* involves creating strata based on unique values of
@@ -138,7 +138,7 @@ original sample without considering the distance between individual
 units or strata that units might fall into. Subsets are selected to
 optimize a criterion subject to constraint on balance and remaining
 sample size. Cardinality and profile matching (`method = "cardinality"`)
-are the methods of pure subset selection implemented in `MatchIt`. Both
+are the methods of pure subset selection implemented in *MatchIt*. Both
 methods allow the user to specify the largest imbalance allowed in the
 resulting matched sample, and an optimization routine attempts to find
 the largest matched sample that satisfies those balance constraints.
@@ -146,7 +146,7 @@ While cardinality matching does not target a specific estimand, profile
 matching can be used to target the ATT, ATC, or ATE.
 
 Below, we describe each of the matching methods implemented in
-`MatchIt`.
+*MatchIt*.
 
 ## Matching Methods
 
@@ -194,8 +194,8 @@ of the units in the dataset to ensure that multiple runs of the same
 specification yield the same result (unless the matching order is
 requested to be random).
 
-Nearest neighbor matching is implemented in `MatchIt` using internal C++
-code through `Rcpp`. When matching on a propensity score, this makes
+Nearest neighbor matching is implemented in *MatchIt* using internal C++
+code through *Rcpp*. When matching on a propensity score, this makes
 matching extremely fast, even for large datasets. Using a caliper on the
 propensity score (described below) makes it even faster. Run times may
 be a bit longer when matching on other distance measures (e.g., the
@@ -217,8 +217,8 @@ absolute pair distances in the matched sample. See
 [`?method_optimal`](https://kosukeimai.github.io/MatchIt/reference/method_optimal.md)
 for the documentation for
 [`matchit()`](https://kosukeimai.github.io/MatchIt/reference/matchit.md)
-with `method = "optimal"`. Optimal pair matching in `MatchIt` depends on
-the `fullmatch()` function in the `optmatch` package ([Hansen and
+with `method = "optimal"`. Optimal pair matching in *MatchIt* depends on
+the `fullmatch()` function in the *optmatch* package ([Hansen and
 Klopfer 2006](#ref-hansen2006)).
 
 Like nearest neighbor matching, optimal pair matching requires the
@@ -253,8 +253,8 @@ confounding by the measured covariates. See
 [`?method_full`](https://kosukeimai.github.io/MatchIt/reference/method_full.md)
 for the documentation for
 [`matchit()`](https://kosukeimai.github.io/MatchIt/reference/matchit.md)
-with `method = "full"`. Optimal full matching in `MatchIt` depends on
-the `fullmatch()` function in the `optmatch` package ([Hansen and
+with `method = "full"`. Optimal full matching in *MatchIt* depends on
+the `fullmatch()` function in the *optmatch* package ([Hansen and
 Klopfer 2006](#ref-hansen2006)).
 
 Like the other distance matching methods, optimal full matching requires
@@ -312,8 +312,8 @@ covariates. See
 [`?method_quick`](https://kosukeimai.github.io/MatchIt/reference/method_quick.md)
 for the documentation for
 [`matchit()`](https://kosukeimai.github.io/MatchIt/reference/matchit.md)
-with `method = "quick"`. Generalized full matching in `MatchIt` depends
-on the `quickmatch()` function in the `quickmatch` package ([Sävje et
+with `method = "quick"`. Generalized full matching in *MatchIt* depends
+on the `quickmatch()` function in the *quickmatch* package ([Sävje et
 al. 2018](#ref-savjeQuickmatchQuickGeneralized2018)).
 
 Generalized full matching includes different options for customization
@@ -343,8 +343,8 @@ scaled generalized Mahalanobis distance. See
 [`?method_genetic`](https://kosukeimai.github.io/MatchIt/reference/method_genetic.md)
 for the documentation for
 [`matchit()`](https://kosukeimai.github.io/MatchIt/reference/matchit.md)
-with `method = "genetic"`. Genetic matching in `MatchIt` depends on the
-`GenMatch()` function in the `Matching` package ([Sekhon
+with `method = "genetic"`. Genetic matching in *MatchIt* depends on the
+`GenMatch()` function in the *Matching* package ([Sekhon
 2011](#ref-sekhon2011)) to perform the genetic search and uses the
 `Match()` function to perform the nearest neighbor match using the
 scaled generalized Mahalanobis distance.
@@ -369,7 +369,7 @@ used to define what is optimal. The default is to maximize the smallest
 p-value among balance tests for the covariates in the matched sample
 (both Kolmogorov-Smirnov tests and t-tests for each covariate).
 
-In `MatchIt`, if a propensity score is specified, the default is to
+In *MatchIt*, if a propensity score is specified, the default is to
 include the propensity score and the covariates in \\\mathbf{x}\\ and to
 optimize balance on the covariates. When `distance = "mahalanobis"` or
 the `mahvars` argument is specified, the propensity score is left out of
@@ -378,7 +378,7 @@ the `mahvars` argument is specified, the propensity score is left out of
 In all other respects, genetic matching functions just like nearest
 neighbor matching except that the matching itself is carried out by
 [`Matching::Match()`](https://rdrr.io/pkg/Matching/man/Match.html)
-instead of by `MatchIt`. When using `method = "genetic"` in `MatchIt`,
+instead of by *MatchIt*. When using `method = "genetic"` in *MatchIt*,
 additional arguments passed to
 [`Matching::GenMatch()`](https://rdrr.io/pkg/Matching/man/GenMatch.html)
 to control the genetic search process should be specified; in
@@ -440,9 +440,9 @@ population of the estimated effect. See
 [`?method_cem`](https://kosukeimai.github.io/MatchIt/reference/method_cem.md)
 for the documentation for
 [`matchit()`](https://kosukeimai.github.io/MatchIt/reference/matchit.md)
-with `method = "cem"`. CEM in `MatchIt` does not depend on any other
+with `method = "cem"`. CEM in *MatchIt* does not depend on any other
 package to perform the coarsening and matching, though it used to rely
-on the `cem` package.
+on the *cem* package.
 
 ### Subclassification (`method = "subclass"`)
 
@@ -494,7 +494,7 @@ marginal effect can be estimated using the subclassification weights.
 This latter method has been called marginal mean weighting through
 subclassification \[MMWS; Hong ([2010](#ref-hong2010))\] and fine
 stratification weighting ([Desai et al. 2017](#ref-desai2017)). It is
-also implemented in the `WeightIt` package.
+also implemented in the *WeightIt* package.
 
 ### Cardinality and Profile Matching (`method = "cardinality"`)
 
@@ -543,16 +543,16 @@ can add additional precision and robustness ([Zubizarreta et al.
 2014](#ref-zubizarretaMatchingBalancePairing2014)).
 
 The optimization problem requires a special solver to solve. Currently,
-the available options in `MatchIt` are the HiGHS solver (through the
-`highs` package), the GLPK solver (through the `Rglpk` package), and the
-Gurobi solver (through the `gurobi` package). The differences among the
+the available options in *MatchIt* are the HiGHS solver (through the
+*highs* package), the GLPK solver (through the *Rglpk* package), and the
+Gurobi solver (through the *gurobi* package). The differences among the
 solvers are in performance; Gurobi is by far the best (fastest, least
 likely to fail to find a solution), but it is proprietary (though has a
 free trial and academic license) and is a bit more complicated to
 install. HiGHS is the default due to being open source, easily
-installed, and with performance comparable to Gurobi. The `designmatch`
+installed, and with performance comparable to Gurobi. The *designmatch*
 package also provides an implementation of cardinality matching with
-more options than `MatchIt` offers.
+more options than *MatchIt* offers but with a more advanced interface.
 
 ## Customizing the Matching Specification
 
@@ -572,7 +572,7 @@ unit to each treated unit. In optimal matching, this is used in the
 criterion that is optimized. By default, the distance measure is the
 propensity score difference, and the argument supplied to `distance`
 corresponds to the method of estimating the propensity score. In
-`MatchIt`, propensity scores are often labeled as “distance” values,
+*MatchIt*, propensity scores are often labeled as “distance” values,
 even though the propensity score itself is not a distance measure. This
 is to reflect that the propensity score is used in creating the distance
 value, but other scores could be used, such as prognostic scores for
@@ -639,7 +639,7 @@ matching ([Ripollone et al.
 
 `distance` can also be supplied as a matrix of distance values between
 units. This makes it possible to use handcrafted distance matrices or
-distances created outside `MatchIt`. Only nearest neighbor, optimal
+distances created outside *MatchIt*. Only nearest neighbor, optimal
 pair, and optimal full matching allow this specification.
 
 The propensity score can have uses other than as the basis for matching.
@@ -660,7 +660,7 @@ treatment groups. A common support restriction discards units that fall
 outside of the region of common support, preventing them from being
 matched to other units and included in the matched sample. This can
 reduce the potential for extrapolation and help the matching algorithms
-to avoid overly distant matches from occurring. In `MatchIt`, the
+to avoid overly distant matches from occurring. In *MatchIt*, the
 `discard` option implements a common support restriction based on the
 propensity score. The argument can be supplied as `"treated"`,
 `"control"`, or `"both"`, which discards units in the corresponding

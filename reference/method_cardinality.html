@@ -63,7 +63,7 @@ matchit(formula,
 
     <a class="navbar-brand me-2" href="../index.html">MatchIt</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.8.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.8.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -160,7 +160,9 @@ others can't, and in less time. Gurobi is proprietary but can be used with a
 free trial or academic license.</p></li>
 <li><p><code>time</code>: the maximum amount of
 time before the optimization routine aborts, in seconds. Default is 120 (2
-minutes). For large problems, this should be set much higher.</p></li>
+minutes). For large problems, this should be set much higher. When the limit is
+reached, the best solution found so far is returned with a warning; see
+<em>Dealing with Errors and Warnings</em> in Details.</p></li>
 </ul><p>The arguments <code>distance</code> (and related arguments), <code>replace</code>, <code>m.order</code>, and <code>caliper</code> (and related arguments) are ignored with a warning.</p>
     </div>
     <div class="section level2">
@@ -269,6 +271,11 @@ Sometimes, when there are multiple solutions with the same resulting sample
 size, the optimizers will stall at one of them, not thinking it has found
 the optimum. The result should be checked to see if it can be used as the
 solution.</p>
+<p>An error that says <code>"The optimizer failed to find any solution in the time allotted."</code>
+means that the time limit was reached before any solution satisfying the constraints
+was found, so there is nothing to return. Increasing <code>time</code> may allow one to be found,
+though the problem may also be infeasible (see below). Only HiGHS distinguishes this
+case; with GLPK and Gurobi, it produces the error about infeasibility.</p>
 <p>An error that says <code>"The optimization problem may be infeasible."</code>
 usually means that there is a issue with the optimization problem, i.e.,
 that there is no possible way to satisfy the constraints. To rectify this,

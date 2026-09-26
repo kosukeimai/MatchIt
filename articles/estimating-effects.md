@@ -46,7 +46,7 @@ treatment effect in the population (ATE) is the average effect of
 treatment for the population from which the sample is a random sample.
 This estimand is estimable only for methods that allow the ATE and
 either do not discard units from the sample or explicit target full
-sample balance, which in `MatchIt` is limited to full matching,
+sample balance, which in *MatchIt* is limited to full matching,
 subclassification, and profile matching when setting `estimand = "ATE"`.
 When treated units are discarded (e.g., through the use of common
 support restrictions, calipers, cardinality matching, or \[coarsened\]
@@ -325,18 +325,18 @@ survival outcome.
 
 We will need to the following packages to perform the desired analyses:
 
-- `marginaleffects` provides the `avg_comparisons()` function for
+- *marginaleffects* provides the `avg_comparisons()` function for
   performing g-computation and estimating the SEs and confidence
   intervals of the average estimate potential outcomes and treatment
   effects
-- `sandwich` is used internally by `marginaleffects` to compute robust
+- *sandwich* is used internally by *marginaleffects* to compute robust
   and cluster-robust SEs
-- `survival` provides
+- *survival* provides
   [`coxph()`](https://rdrr.io/pkg/survival/man/coxph.html) to estimate
   the coefficients in a Cox-proportional hazards model for the marginal
   hazard ratio, which we will use for survival outcomes.
 
-Of course, we also need `MatchIt` to perform the matching.
+Of course, we also need *MatchIt* to perform the matching.
 
 ``` r
 
@@ -357,10 +357,10 @@ SEs if requested; and it always produces average marginal effects for
 the correct population if requested.
 
 Other packages may be of use but are not used here. There are
-alternatives to the `marginaleffects` package for computing average
-marginal effects, including `margins` and `stdReg`. The `survey` package
-can be used to estimate robust SEs incorporating weights and provides
-functions for survey-weighted generalized linear models and
+alternatives to the *marginaleffects* package for computing average
+marginal effects, including *margins* and *stdReg2*. The *survey*
+package can be used to estimate robust SEs incorporating weights and
+provides functions for survey-weighted generalized linear models and
 Cox-proportional hazards models.
 
 ### The Standard Case
@@ -698,7 +698,7 @@ coefficient on treatment in a Cox model fit without covariates[^8]. This
 means that we cannot use the procedures from the Standard Case. Here we
 describe estimating the marginal HR using
 [`coxph()`](https://rdrr.io/pkg/survival/man/coxph.html) from the
-`survival` package. (See
+*survival* package. (See
 [`help("coxph", package = "survival")`](https://rdrr.io/pkg/survival/man/coxph.html)
 for more information on this model.) To request cluster-robust SEs as
 recommended by Austin ([2013b](#ref-austin2013a)), we need to supply
@@ -791,7 +791,7 @@ the bootstrap: 1) the standard bootstrap, which involve resampling units
 and performing matching and effect estimation within each bootstrap
 sample, and 2) the cluster bootstrap, which involves resampling pairs
 after matching and estimating the effect in each bootstrap sample. For
-both, we will use functionality in the `boot` package. It is critical to
+both, we will use functionality in the *boot* package. It is critical to
 set a seed using [`set.seed()`](https://rdrr.io/r/base/Random.html)
 prior to performing the bootstrap in order for results to be replicable.
 
@@ -1114,7 +1114,7 @@ subgroup balance would be to use
 which has a `cluster` argument that can be used to assess balance within
 subgroups, e.g., by `cobalt::bal.tab(mP, cluster = "X5")`. See the
 vignette “Appendix 2: Using cobalt with Clustered, Multiply Imputed, and
-Other Segmented Data” on the `cobalt`
+Other Segmented Data” on the *cobalt*
 [website](https://ngreifer.github.io/cobalt/index.html) for details.
 
 If we are satisfied with balance, we can then model the outcome with an
@@ -1195,9 +1195,9 @@ the analysis. Results should at least include the following:
   replication)
 - R packages and functions used in estimating the effect and its SE
   (e.g., [`glm()`](https://rdrr.io/r/stats/glm.html) in base R,
-  `avg_comparisons()` in `marginaleffects`,
+  `avg_comparisons()` in *marginaleffects*,
   [`boot()`](https://rdrr.io/pkg/boot/man/boot.html) and
-  [`boot.ci()`](https://rdrr.io/pkg/boot/man/boot.ci.html) in `boot`)
+  [`boot.ci()`](https://rdrr.io/pkg/boot/man/boot.ci.html) in *boot*)
 - The effect and its SE and confidence interval
 
 All this is in addition to information about the matching method,
@@ -1241,7 +1241,7 @@ maximum likelihood are inaccurate when using matching weights because
 they assume weights are frequency weights rather than probability
 weights. Cluster-robust SEs account for both the matching weights and
 pair membership and should be used when appropriate. Sometimes,
-researchers use functions in the `survey` package to estimate robust
+researchers use functions in the *survey* package to estimate robust
 SEs, especially with inverse probability weighting; this is a valid way
 to compute robust SEs and will give similar results to
 [`sandwich::vcovHC()`](https://zeileis.codeberg.page/sandwich/reference/vcovHC.html).[^10]
@@ -1567,7 +1567,7 @@ d <- data.frame(A, X, Y_C, Y_B, Y_S)
     by including the stratification weights in the Cox model and
     omitting the `cluster` argument.
 
-[^10]: To use `survey` to adjust for pair membership, one can use the
+[^10]: To use *survey* to adjust for pair membership, one can use the
     following code to specify the survey design to be used with
     `svyglm()`:
     `svydesign(ids = ~subclass, weights = ~weights, data = md)` where

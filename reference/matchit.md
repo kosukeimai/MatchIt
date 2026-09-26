@@ -658,7 +658,7 @@ m.out2
 #> A `matchit` object
 #>  - method: 1:1 nearest neighbor matching with replacement
 #>  - distance: Mahalanobis
-#>  - number of obs.: 614 (original), 266 (matched)
+#>  - number of obs.: 614 (original), 265 (matched)
 #>  - target estimand: ATT
 #>  - covariates: age, educ, race, nodegree, married, re74, re75
 summary(m.out2, un = TRUE)
@@ -692,17 +692,17 @@ summary(m.out2, un = TRUE)
 #> 
 #> Summary of Balance for Matched Data:
 #>            Means Treated Means Control Std. Mean Diff. Var. Ratio eCDF Mean
-#> age              25.8162       25.5946          0.0310     0.6496    0.0472
-#> educ             10.3459       10.3946         -0.0242     1.1565    0.0065
+#> age              25.8162       25.6162          0.0280     0.6513    0.0466
+#> educ             10.3459       10.3946         -0.0242     1.1564    0.0065
 #> raceblack         0.8432        0.8432          0.0000          .    0.0000
 #> racehispan        0.0595        0.0595          0.0000          .    0.0000
 #> racewhite         0.0973        0.0973          0.0000          .    0.0000
 #> nodegree          0.7081        0.7135         -0.0119          .    0.0054
 #> married           0.1892        0.1892          0.0000          .    0.0000
-#> re74           2095.5737     1861.6424          0.0479     1.4979    0.0286
-#> re75           1532.0553     1091.6516          0.1368     2.0336    0.0347
+#> re74           2095.5737     1861.6424          0.0479     1.4978    0.0286
+#> re75           1532.0553     1091.6516          0.1368     2.0335    0.0347
 #>            eCDF Max Std. Pair Dist.
-#> age          0.1838          0.4918
+#> age          0.1784          0.4918
 #> educ         0.0324          0.2070
 #> raceblack    0.0000          0.0000
 #> racehispan   0.0000          0.0000
@@ -715,9 +715,9 @@ summary(m.out2, un = TRUE)
 #> Sample Sizes:
 #>               Control Treated
 #> All            429.       185
-#> Matched (ESS)   34.96     185
-#> Matched         81.       185
-#> Unmatched      348.         0
+#> Matched (ESS)   34.89     185
+#> Matched         80.       185
+#> Unmatched      349.         0
 #> Discarded        0.         0
 #> 
 

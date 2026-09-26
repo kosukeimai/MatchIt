@@ -1,5 +1,81 @@
 # Changelog
 
+## MatchIt 4.8.1
+
+- Nearest neighbor matching on large samples is much faster, especially
+  with `exact` when there are many exact matching strata.
+
+- Optimal, full, and quick matching with `exact` are faster when there
+  are many exact matching strata, as is `method = "cem"` with
+  `k2k = TRUE` and a `k2k.method` computed by
+  [`dist()`](https://rdrr.io/r/stats/dist.html).
+
+- [`summary()`](https://rdrr.io/r/base/summary.html) is faster on large
+  samples, especially in computing pair distances when strata are large
+  (as with exact, coarsened exact, and full matching) and balance
+  statistics within subclasses with `subclass = TRUE`.
+
+- With `method = "cardinality"` and `solver = "highs"`, reaching the
+  time limit set by `time` now returns the best solution found so far
+  with a warning, as with the other solvers. Previously, this was an
+  error even when a usable solution had been found.
+
+- Fixed a bug in [`summary()`](https://rdrr.io/r/base/summary.html) with
+  `subclass = TRUE` in which the eCDF and eQQ statistics for a subclass
+  were wrong when a covariate that is not binary took only the values 0
+  and 1 within that subclass.
+
+- Fixed a bug in [`summary()`](https://rdrr.io/r/base/summary.html) with
+  `subclass = TRUE` in which the eCDF and eQQ statistics within each
+  subclass ignored the sampling weights, unlike the other balance
+  statistics.
+
+- Fixed a bug in [`summary()`](https://rdrr.io/r/base/summary.html) in
+  which setting both `subclass = TRUE` and `interactions = TRUE` after
+  subclassification would yield an error (introduced in 4.8.0). The
+  balance tables for individual subclasses now contain the same
+  interactions as the aggregate table; previously, they also included
+  squares of dummy variables and products of dummy variables for the
+  same factor.
+
+- Fixed a bug in [`summary()`](https://rdrr.io/r/base/summary.html) with
+  `subclass = TRUE` in which the standardized mean differences within
+  each subclass were standardized by the standard deviation of the
+  treated or control units in that subclass rather than in the full
+  sample. They now use the same standardization factor as the aggregate
+  balance statistics.
+
+- Fixed a bug in [`summary()`](https://rdrr.io/r/base/summary.html) with
+  `interactions = TRUE` after subclassification in which the
+  standardized mean differences of the interactions in the aggregate
+  balance table were standardized by the standard deviation of the
+  treated units regardless of the estimand.
+
+- Fixed a bug where using `method = "cem"` with `k2k = TRUE` and
+  `estimand = "ATC"` would yield an error when `k2k.method` was one
+  computed by [`dist()`](https://rdrr.io/r/stats/dist.html), such as
+  `"maximum"` or `"manhattan"`.
+
+- Fixed a bug with `method = "quick"` in which, when some units were
+  discarded (e.g., using `discard`), the subclasses were assigned to the
+  wrong units, so that discarded units were placed in subclasses and
+  some retained units were not.
+
+- Fixed a bug with `method = "optimal"` and `method = "full"` in which,
+  when some units were discarded and an `exact` matching stratum was
+  left with one treated and one control unit, those two units were not
+  matched to each other and other units, including discarded ones, were
+  placed in their subclass instead.
+
+- Fixed a bug with `method = "nearest"` in which a covariate caliper
+  could exclude control units it should have allowed because of rounding
+  error when the caliper variable was also used in the distance (e.g.,
+  with `distance = "scaled_euclidean"` or `"mahalanobis"`). This
+  happened when a control unit’s difference from a treated unit on the
+  caliper variable was at or within rounding error of the caliper width,
+  which is common with discrete covariates; matches in such cases may
+  differ from previous versions.
+
 ## MatchIt 4.8.0
 
 CRAN release: 2026-09-16

@@ -18,23 +18,23 @@ observational data, balance is not guaranteed and must be assessed.
 
 This document provides instructions for assessing and reporting
 covariate balance as part of a matching analysis. The tools available in
-`MatchIt` for balance assessment should be used during the process of
+*MatchIt* for balance assessment should be used during the process of
 selecting a good matching scheme and ensuring that the chosen scheme is
 adequate. These tools implement the recommendations of Ho et al.
 ([2007](#ref-ho2007)) and others for assessing balance.
 
-In addition to the tools available in `MatchIt`, the `cobalt` package
+In addition to the tools available in *MatchIt*, the *cobalt* package
 has a suite of functions designed to assess and display balance and is
-directly compatible with `MatchIt` objects. `cobalt` has extensive
+directly compatible with *MatchIt* objects. *cobalt* has extensive
 documentation, but we describe some of its functionality here as a
-complement to the tools in `MatchIt`.
+complement to the tools in *MatchIt*.
 
 The structure of this document is as follows: first, we describe some of
 the recommendations for balance checking and their rationale; next, we
-describe the tools for assessing balance present in `MatchIt` and
+describe the tools for assessing balance present in *MatchIt* and
 display their use in evaluating several matching schemes; finally; we
-briefly describe some of the functionality in `cobalt` to extend that in
-`MatchIt`.
+briefly describe some of the functionality in *cobalt* to extend that in
+*MatchIt*.
 
 ## Recommendations for Balance Assessment
 
@@ -158,7 +158,7 @@ sample size, which changes during matching even if balance does not
 change; and 3) the use of hypothesis tests implies a uniform decision
 criterion for rejecting the null hypothesis (e.g., p-value less than
 .05, potentially with corrections for multiple comparisons), when
-balance should be improved without limit. `MatchIt` does not report any
+balance should be improved without limit. *MatchIt* does not report any
 balance tests or p-values, instead relying on the descriptive statistics
 described above.
 
@@ -181,16 +181,16 @@ We recommend the following in reporting balance in a matching analysis:
   mean and maximum eCDF difference among the covariates and the largest
   SMD among squares, cubes, and interactions of the covariates.
 
-`MatchIt` provides tools for calculating each of these statistics so
+*MatchIt* provides tools for calculating each of these statistics so
 they can be reported with ease in a manuscript or report.
 
-## Assessing Balance with `MatchIt`
+## Assessing Balance with *MatchIt*
 
-`MatchIt` contains several tools to assess balance numerically and
+*MatchIt* contains several tools to assess balance numerically and
 graphically. The primary balance assessment function is
 [`summary.matchit()`](https://kosukeimai.github.io/MatchIt/reference/summary.matchit.md),
 which is called when using
-[`summary()`](https://rdrr.io/r/base/summary.html) on a `MatchIt` object
+[`summary()`](https://rdrr.io/r/base/summary.html) on a *MatchIt* object
 and produces several tables of balance statistics before and after
 matching.
 [`plot.summary.matchit()`](https://kosukeimai.github.io/MatchIt/reference/plot.summary.matchit.md)
@@ -205,8 +205,8 @@ balance, including propensity score overlap and distribution plots of
 the covariates. These functions together form a suite that can be used
 to assess and report balance in a variety of ways.
 
-To demonstrate `MatchIt`’s balance assessment capabilities, we will use
-the Lalonde data included in `MatchIt` and used in
+To demonstrate *MatchIt*’s balance assessment capabilities, we will use
+the Lalonde data included in *MatchIt* and used in
 [`vignette("MatchIt")`](https://kosukeimai.github.io/MatchIt/articles/MatchIt.md).
 We will perform 1:1 nearest neighbor matching with replacement on the
 propensity score, though the functionality is identical across all
@@ -294,8 +294,8 @@ and `race`.
 
 ``` r
 
-summary(m.out, addlvariables = ~ I(age^2) + I(re74==0) + 
-          I(re75==0) + educ:race)
+summary(m.out, addlvariables = ~ I(age^2) + I(re74 == 0) + 
+          I(re75 == 0) + educ:race)
 ```
 
     ## 
@@ -399,10 +399,11 @@ scheme to achieve distributional balance.
 
 ### `plot.summary.matchit()`
 
-A Love plot is a clean way to visually summarize balance. Using `plot`
-on the output of a call to
-[`summary()`](https://rdrr.io/r/base/summary.html) on a `matchit` object
-produces a Love plot of the standardized mean differences.
+A Love plot is a clean way to visually summarize balance. Using
+[`plot()`](https://rdrr.io/r/graphics/plot.default.html) on the output
+of a call to [`summary()`](https://rdrr.io/r/base/summary.html) on a
+`matchit` object produces a Love plot of the standardized mean
+differences.
 [`plot.summary.matchit()`](https://kosukeimai.github.io/MatchIt/reference/plot.summary.matchit.md)
 has several additional arguments that can be used to customize the plot.
 
@@ -432,8 +433,8 @@ Below we create a Love plot of the covariates.
 
 ``` r
 
-m.sum <- summary(m.out, addlvariables = ~ I(age^2) + I(re74==0) + 
-                   I(re75==0) + educ:race)
+m.sum <- summary(m.out, addlvariables = ~ I(age^2) + I(re74 == 0) + 
+                   I(re75 == 0) + educ:race)
 plot(m.sum, var.order = "unmatched")
 ```
 
@@ -445,7 +446,7 @@ matching.](assessing-balance_files/figure-html/unnamed-chunk-3-1.png)
 From this plot it is clear to see that balance was quite poor prior to
 matching, but full matching improved balance on all covariates, and most
 within a threshold of .1. To make the variable names cleaner, the
-original variables should be renamed prior to matching. `cobalt`
+original variables should be renamed prior to matching. *cobalt*
 provides many additional options to generate and customize Love plots
 using the
 [`love.plot()`](https://ngreifer.github.io/cobalt/reference/love.plot.html)
@@ -455,7 +456,7 @@ is desired.
 
 ### `plot.matchit()`
 
-In addition to numeric summaries of balance, `MatchIt` offers graphical
+In addition to numeric summaries of balance, *MatchIt* offers graphical
 summaries as well using
 [`plot.matchit()`](https://kosukeimai.github.io/MatchIt/reference/plot.matchit.md)
 (i.e., using [`plot()`](https://rdrr.io/r/graphics/plot.default.html) on
@@ -656,55 +657,55 @@ summary(s.out, subclass = TRUE, un = FALSE)
     ## 
     ## - Subclass 1
     ##            Means Treated Means Control Std. Mean Diff. Var. Ratio eCDF Mean eCDF Max
-    ## distance           0.239         0.095           0.879      2.494     0.313    0.508
-    ## age               26.478        28.800          -0.345      0.394     0.090    0.160
-    ## educ              10.304        10.214           0.040      0.620     0.025    0.084
-    ## raceblack          0.370         0.063           0.635          .     0.307    0.307
-    ## racehispan         0.239         0.167           0.169          .     0.072    0.072
-    ## racewhite          0.391         0.770          -0.776          .     0.379    0.379
-    ## married            0.370         0.589          -0.455          .     0.219    0.219
+    ## distance           0.239         0.095           0.653      2.494     0.313    0.508
+    ## age               26.478        28.800          -0.324      0.394     0.090    0.160
+    ## educ              10.304        10.214           0.045      0.620     0.025    0.084
+    ## raceblack          0.370         0.063           0.843          .     0.307    0.307
+    ## racehispan         0.239         0.167           0.304          .     0.072    0.072
+    ## racewhite          0.391         0.770          -1.277          .     0.379    0.379
+    ## married            0.370         0.589          -0.560          .     0.219    0.219
     ## nodegree           0.587         0.584           0.007          .     0.003    0.003
-    ## re74            5430.539      6363.913          -0.118      1.298     0.087    0.284
-    ## re75            2929.039      2699.399           0.054      1.587     0.047    0.144
+    ## re74            5430.539      6363.913          -0.191      1.298     0.087    0.284
+    ## re75            2929.039      2699.399           0.071      1.587     0.047    0.144
     ## 
     ## - Subclass 2
     ##            Means Treated Means Control Std. Mean Diff. Var. Ratio eCDF Mean eCDF Max
-    ## distance           0.604         0.612          -0.214      0.905     0.083    0.195
-    ## age               25.556        24.409           0.152      0.461     0.114    0.370
-    ## educ               9.933         9.773           0.066      0.448     0.084    0.188
+    ## distance           0.604         0.612          -0.035      0.905     0.083    0.195
+    ## age               25.556        24.409           0.160      0.461     0.114    0.370
+    ## educ               9.933         9.773           0.080      0.448     0.084    0.188
     ## raceblack          1.000         1.000           0.000          .     0.000    0.000
     ## racehispan         0.000         0.000           0.000          .     0.000    0.000
     ## racewhite          0.000         0.000           0.000          .     0.000    0.000
-    ## married            0.378         0.091           0.592          .     0.287    0.287
-    ## nodegree           0.667         0.500           0.354          .     0.167    0.167
-    ## re74            1777.422      2516.589          -0.219      0.433     0.076    0.280
-    ## re75             972.344      1131.077          -0.100      0.666     0.034    0.086
+    ## married            0.378         0.091           0.732          .     0.287    0.287
+    ## nodegree           0.667         0.500           0.367          .     0.167    0.167
+    ## re74            1777.422      2516.589          -0.151      0.433     0.076    0.280
+    ## re75             972.344      1131.077          -0.049      0.666     0.034    0.086
     ## 
     ## - Subclass 3
     ##            Means Treated Means Control Std. Mean Diff. Var. Ratio eCDF Mean eCDF Max
-    ## distance           0.693         0.691           0.130      1.281     0.055    0.189
-    ## age               24.021        22.964           0.158      0.509     0.128    0.281
-    ## educ              10.170        10.286          -0.069      1.040     0.038    0.099
+    ## distance           0.693         0.691           0.012      1.281     0.055    0.189
+    ## age               24.021        22.964           0.148      0.509     0.128    0.281
+    ## educ              10.170        10.286          -0.057      1.040     0.038    0.099
     ## raceblack          1.000         1.000           0.000          .     0.000    0.000
     ## racehispan         0.000         0.000           0.000          .     0.000    0.000
     ## racewhite          0.000         0.000           0.000          .     0.000    0.000
-    ## married            0.021         0.107          -0.595          .     0.086    0.086
-    ## nodegree           0.681         0.750          -0.148          .     0.069    0.069
-    ## re74             939.969       888.947           0.020      2.038     0.059    0.216
-    ## re75            1217.455      1285.387          -0.018      1.535     0.038    0.188
+    ## married            0.021         0.107          -0.219          .     0.086    0.086
+    ## nodegree           0.681         0.750          -0.152          .     0.069    0.069
+    ## re74             939.969       888.947           0.010      2.038     0.059    0.216
+    ## re75            1217.455      1285.387          -0.021      1.535     0.038    0.188
     ## 
     ## - Subclass 4
     ##            Means Treated Means Control Std. Mean Diff. Var. Ratio eCDF Mean eCDF Max
-    ## distance           0.767         0.753           0.540      2.961     0.165    0.445
-    ## age               27.213        23.786           0.461      0.521     0.150    0.459
-    ## educ              10.957        11.429          -0.341      0.701     0.059    0.126
+    ## distance           0.767         0.753           0.063      2.961     0.165    0.445
+    ## age               27.213        23.786           0.479      0.521     0.150    0.459
+    ## educ              10.957        11.429          -0.234      0.701     0.059    0.126
     ## raceblack          1.000         1.000           0.000          .     0.000    0.000
     ## racehispan         0.000         0.000           0.000          .     0.000    0.000
     ## racewhite          0.000         0.000           0.000          .     0.000    0.000
     ## married            0.000         0.000           0.000          .     0.000    0.000
-    ## nodegree           0.894         0.786           0.350          .     0.108    0.108
-    ## re74             291.783       540.618          -0.307      0.917     0.083    0.280
-    ## re75            1015.289       854.751           0.079      3.523     0.112    0.266
+    ## nodegree           0.894         0.786           0.237          .     0.108    0.108
+    ## re74             291.783       540.618          -0.051      0.917     0.083    0.280
+    ## re75            1015.289       854.751           0.050      3.523     0.112    0.266
     ## 
     ## Sample Sizes by Subclass:
     ##           1  2  3  4 All
@@ -758,9 +759,9 @@ aggregate using the subclassification weights. If `subclass` is
 unspecified, a prompt will ask us for which subclass we want to see
 balance.
 
-## Assessing Balance with `cobalt`
+## Assessing Balance with *cobalt*
 
-The `cobalt` package was designed specifically for checking balance
+The *cobalt* package was designed specifically for checking balance
 before and after matching (and weighting). It offers three main
 functions,
 [`bal.tab()`](https://ngreifer.github.io/cobalt/reference/bal.tab.html),
@@ -773,15 +774,15 @@ which perform similar actions to
 and
 [`plot.matchit()`](https://kosukeimai.github.io/MatchIt/reference/plot.matchit.md),
 respectively. These functions directly interface with `matchit` objects,
-making `cobalt` straightforward to use in conjunction with `MatchIt`.
-`cobalt` can be used as a complement to `MatchIt`, especially for more
-advanced uses that are not accommodated by `MatchIt`, such as comparing
+making *cobalt* straightforward to use in conjunction with *MatchIt*.
+*cobalt* can be used as a complement to *MatchIt*, especially for more
+advanced uses that are not accommodated by *MatchIt*, such as comparing
 balance across different matching schemes and even different packages,
 assessing balance in clustered or multiply imputed data, and assessing
 balance with multi-category, continuous, and time-varying treatments.
-The main `cobalt` vignette
+The main *cobalt* vignette
 ([`vignette("cobalt", package = "cobalt")`](https://ngreifer.github.io/cobalt/articles/cobalt.html))
-contains many examples of its use with `MatchIt` objects, so we only
+contains many examples of its use with *MatchIt* objects, so we only
 provide a short demonstration of its capabilities here.
 
 ``` r
@@ -848,7 +849,7 @@ and for powers and interactions of the covariates is available using the
 `addl`, `poly`, and `int` options.
 
 [`bal.tab()`](https://ngreifer.github.io/cobalt/reference/bal.tab.html)
-and other `cobalt` functions can produce balance not just on a single
+and other *cobalt* functions can produce balance not just on a single
 `matchit` object but on several at the same time, which facilitates
 comparing balance across several matching specifications. For example,
 if we wanted to compare the full matching results to the results of
@@ -993,7 +994,7 @@ the covariate distributions of the treated and control groups. Balance
 should be assessed during the matching phase to find a matching
 specification that works. Balance must also be reported in the write-up
 of a matching analysis to demonstrate to readers that matching was
-successful. `MatchIt` and `cobalt` each offer a suite of functions to
+successful. *MatchIt* and *cobalt* each offer a suite of functions to
 implement best practices in balance assessment and reporting.
 
 ## References
@@ -1074,5 +1075,5 @@ Propensity Score Methods in Comparative Effectiveness Research.”
 *Journal of Clinical Epidemiology* 66 (8): S84.
 <https://doi.org/10.1016/j.jclinepi.2013.01.013>.
 
-[^1]: Note that versions of `MatchIt` before 4.0.0 had `standardize` set
+[^1]: Note that versions of *MatchIt* before 4.0.0 had `standardize` set
     to `FALSE` by default.

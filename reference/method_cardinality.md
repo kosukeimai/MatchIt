@@ -81,7 +81,9 @@ Arguments that can be supplied through `...`:
 
 - `time`: the maximum amount of time before the optimization routine
   aborts, in seconds. Default is 120 (2 minutes). For large problems,
-  this should be set much higher.
+  this should be set much higher. When the limit is reached, the best
+  solution found so far is returned with a warning; see *Dealing with
+  Errors and Warnings* in Details.
 
 The arguments `distance` (and related arguments), `replace`, `m.order`,
 and `caliper` (and related arguments) are ignored with a warning.
@@ -205,6 +207,14 @@ failed. Sometimes, when there are multiple solutions with the same
 resulting sample size, the optimizers will stall at one of them, not
 thinking it has found the optimum. The result should be checked to see
 if it can be used as the solution.
+
+An error that says
+`"The optimizer failed to find any solution in the time allotted."`
+means that the time limit was reached before any solution satisfying the
+constraints was found, so there is nothing to return. Increasing `time`
+may allow one to be found, though the problem may also be infeasible
+(see below). Only HiGHS distinguishes this case; with GLPK and Gurobi,
+it produces the error about infeasibility.
 
 An error that says `"The optimization problem may be infeasible."`
 usually means that there is a issue with the optimization problem, i.e.,

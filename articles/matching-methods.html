@@ -31,7 +31,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">MatchIt</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.8.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.8.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -82,7 +82,7 @@
                         <h4 data-toc-skip class="author">Noah
 Greifer</h4>
             
-            <h4 data-toc-skip class="date">2026-09-17</h4>
+            <h4 data-toc-skip class="date">2026-09-26</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/kosukeimai/MatchIt/blob/master/vignettes/matching-methods.Rmd" class="external-link"><code>vignettes/matching-methods.Rmd</code></a></small>
       <div class="d-none name"><code>matching-methods.Rmd</code></div>
@@ -93,24 +93,22 @@ Greifer</h4>
 <div class="section level2">
 <h2 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
 </h2>
-<p><code>MatchIt</code> implements several matching methods with a
-variety of options. Though the help pages for the individual methods
-describe each method and how they can be used, this vignette provides a
-broad overview of the available matching methods and their associated
-options. The choice of matching method depends on the goals of the
-analysis (e.g., the estimand, whether low bias or high precision is
-important) and the unique qualities of each dataset to be analyzed, so
-there is no single optimal choice for any given analysis. A benefit of
-nonparametric preprocessing through matching is that a number of
-matching methods can be tried and their quality assessed without
-consulting the outcome, reducing the possibility of capitalizing on
-chance while allowing for the benefits of an exploratory analysis in the
-design phase <span class="citation">(<a href="#ref-ho2007">Ho et al.
-2007</a>)</span>.</p>
+<p><em>MatchIt</em> implements several matching methods with a variety
+of options. Though the help pages for the individual methods describe
+each method and how they can be used, this vignette provides a broad
+overview of the available matching methods and their associated options.
+The choice of matching method depends on the goals of the analysis
+(e.g., the estimand, whether low bias or high precision is important)
+and the unique qualities of each dataset to be analyzed, so there is no
+single optimal choice for any given analysis. A benefit of nonparametric
+preprocessing through matching is that a number of matching methods can
+be tried and their quality assessed without consulting the outcome,
+reducing the possibility of capitalizing on chance while allowing for
+the benefits of an exploratory analysis in the design phase <span class="citation">(<a href="#ref-ho2007">Ho et al. 2007</a>)</span>.</p>
 <p>This vignette describes each matching method available in
-<code>MatchIt</code> and the various options that are allowed with
-matching methods and the consequences of their use. For a brief
-introduction to the use of <code>MatchIt</code> functions, see
+<em>MatchIt</em> and the various options that are allowed with matching
+methods and the consequences of their use. For a brief introduction to
+the use of <em>MatchIt</em> functions, see
 <code><a href="../articles/MatchIt.html">vignette("MatchIt")</a></code>. For details on how to assess and
 report covariate balance, see
 <code><a href="../articles/assessing-balance.html">vignette("assessing-balance")</a></code>. For details on how to
@@ -120,17 +118,16 @@ estimate treatment effects and standard errors after matching, see
 <div class="section level2">
 <h2 id="matching">Matching<a class="anchor" aria-label="anchor" href="#matching"></a>
 </h2>
-<p>Matching as implemented in <code>MatchIt</code> is a form of
-<em>subset selection</em>, that is, the pruning and weighting of units
-to arrive at a (weighted) subset of the units from the original dataset.
-Ideally, and if done successfully, subset selection produces a new
-sample where the treatment is unassociated with the covariates so that a
-comparison of the outcomes treatment and control groups is not
-confounded by the measured and balanced covariates. Although statistical
-estimation methods like regression can also be used to remove
-confounding due to measured covariates, <span class="citation">Ho et al.
-(<a href="#ref-ho2007">2007</a>)</span> argue that fitting regression
-models in matched samples reduces the dependence of the validity of the
+<p>Matching as implemented in <em>MatchIt</em> is a form of <em>subset
+selection</em>, that is, the pruning and weighting of units to arrive at
+a (weighted) subset of the units from the original dataset. Ideally, and
+if done successfully, subset selection produces a new sample where the
+treatment is unassociated with the covariates so that a comparison of
+the outcomes treatment and control groups is not confounded by the
+measured and balanced covariates. Although statistical estimation
+methods like regression can also be used to remove confounding due to
+measured covariates, <span class="citation">Ho et al. (<a href="#ref-ho2007">2007</a>)</span> argue that fitting regression models
+in matched samples reduces the dependence of the validity of the
 estimated treatment effect on the correct specification of the
 model.</p>
 <p>Matching is nonparametric in the sense that the estimated weights and
@@ -145,13 +142,13 @@ regression or weighting, make it a robust and effective way to estimate
 treatment effects.</p>
 <p>It is important to note that this implementation of matching differs
 from the methods described by Abadie and Imbens <span class="citation">(<a href="#ref-abadie2006">2006</a>, <a href="#ref-abadie2016">2016</a>)</span> and implemented in the
-<code>Matching</code> R package and <code>teffects</code> routine in
-Stata. That form of matching is <em>matching imputation</em>, where the
-missing potential outcomes for each unit are imputed using the observed
-outcomes of paired units. This is a critical distinction because
-matching imputation is a specific estimation method with its own effect
-and standard error estimators, in contrast to subset selection, which is
-a preprocessing method that does not require specific estimators and is
+<em>Matching</em> R package and <code>teffects</code> routine in Stata.
+That form of matching is <em>matching imputation</em>, where the missing
+potential outcomes for each unit are imputed using the observed outcomes
+of paired units. This is a critical distinction because matching
+imputation is a specific estimation method with its own effect and
+standard error estimators, in contrast to subset selection, which is a
+preprocessing method that does not require specific estimators and is
 broadly compatible with other parametric and nonparametric analyses. The
 benefits of matching imputation are that its theoretical properties
 (i.e., the rate of convergence and asymptotic variance of the estimator)
@@ -169,24 +166,22 @@ experiments, which are more familiar to non-technical audiences.</p>
 involves a form of <em>stratification</em>, the assignment of units to
 pairs or strata containing multiple units. The distinction between
 subset selection and stratification is described by <span class="citation">Zubizarreta et al. (<a href="#ref-zubizarretaMatchingBalancePairing2014">2014</a>)</span>, who
-separate them into two separate steps. In <code>MatchIt</code>, with
-almost all matching methods, subset selection is performed by
-stratification; for example, treated units are paired with control
-units, and unpaired units are then dropped from the matched sample. With
-some methods, subclasses are used to assign matching or stratification
-weights to individual units, which increase or decrease each unit’s
-leverage in a subsequent analysis. There has been some debate about the
-importance of stratification after subset selection; while some authors
-have argued that, with some forms of matching, pair membership is
-incidental <span class="citation">(<a href="#ref-stuart2008">Stuart
-2008</a>; <a href="#ref-schafer2008">Schafer and Kang 2008</a>)</span>,
-others have argued that correctly incorporating pair membership into
-effect estimation can improve the quality of inferences <span class="citation">(<a href="#ref-austin2014a">Austin and Small 2014</a>;
+separate them into two separate steps. In <em>MatchIt</em>, with almost
+all matching methods, subset selection is performed by stratification;
+for example, treated units are paired with control units, and unpaired
+units are then dropped from the matched sample. With some methods,
+subclasses are used to assign matching or stratification weights to
+individual units, which increase or decrease each unit’s leverage in a
+subsequent analysis. There has been some debate about the importance of
+stratification after subset selection; while some authors have argued
+that, with some forms of matching, pair membership is incidental <span class="citation">(<a href="#ref-stuart2008">Stuart 2008</a>; <a href="#ref-schafer2008">Schafer and Kang 2008</a>)</span>, others have
+argued that correctly incorporating pair membership into effect
+estimation can improve the quality of inferences <span class="citation">(<a href="#ref-austin2014a">Austin and Small 2014</a>;
 <a href="#ref-wan2019">Wan 2019</a>)</span>. For methods that allow it,
-<code>MatchIt</code> includes stratum membership as an additional output
-of each matching specification. How these strata can be used is detailed
-in <code><a href="../articles/estimating-effects.html">vignette("estimating-effects")</a></code>.</p>
-<p>At the heart of <code>MatchIt</code> are three classes of methods:
+<em>MatchIt</em> includes stratum membership as an additional output of
+each matching specification. How these strata can be used is detailed in
+<code><a href="../articles/estimating-effects.html">vignette("estimating-effects")</a></code>.</p>
+<p>At the heart of <em>MatchIt</em> are three classes of methods:
 distance matching, stratum matching, and pure subset selection.
 <em>Distance matching</em> involves considering a focal group (usually
 the treated group) and selecting members of the non-focal group (i.e.,
@@ -199,11 +194,11 @@ from the sample. Nearest neighbor matching
 (<code>method = "full"</code>), generalized full matching
 (<code>method = "quick"</code>), and genetic matching
 (<code>method = "genetic"</code>) are the methods of distance matching
-implemented in <code>MatchIt</code>. Typically, only the average
-treatment in the treated (ATT) or average treatment in the control
-(ATC), if the control group is the focal group, can be estimated after
-distance matching in <code>MatchIt</code> (full matching is an
-exception, described later).</p>
+implemented in <em>MatchIt</em>. Typically, only the average treatment
+in the treated (ATT) or average treatment in the control (ATC), if the
+control group is the focal group, can be estimated after distance
+matching in <em>MatchIt</em> (full matching is an exception, described
+later).</p>
 <p><em>Stratum matching</em> involves creating strata based on unique
 values of the covariates and assigning units with those covariate values
 into those strata. Any units that are in strata that lack either treated
@@ -227,14 +222,14 @@ units or strata that units might fall into. Subsets are selected to
 optimize a criterion subject to constraint on balance and remaining
 sample size. Cardinality and profile matching
 (<code>method = "cardinality"</code>) are the methods of pure subset
-selection implemented in <code>MatchIt</code>. Both methods allow the
-user to specify the largest imbalance allowed in the resulting matched
+selection implemented in <em>MatchIt</em>. Both methods allow the user
+to specify the largest imbalance allowed in the resulting matched
 sample, and an optimization routine attempts to find the largest matched
 sample that satisfies those balance constraints. While cardinality
 matching does not target a specific estimand, profile matching can be
 used to target the ATT, ATC, or ATE.</p>
 <p>Below, we describe each of the matching methods implemented in
-<code>MatchIt</code>.</p>
+<em>MatchIt</em>.</p>
 </div>
 <div class="section level2">
 <h2 id="matching-methods">Matching Methods<a class="anchor" aria-label="anchor" href="#matching-methods"></a>
@@ -279,15 +274,15 @@ control unit, etc. Ties are broken deterministically based on the order
 of the units in the dataset to ensure that multiple runs of the same
 specification yield the same result (unless the matching order is
 requested to be random).</p>
-<p>Nearest neighbor matching is implemented in <code>MatchIt</code>
-using internal C++ code through <code>Rcpp</code>. When matching on a
-propensity score, this makes matching extremely fast, even for large
-datasets. Using a caliper on the propensity score (described below)
-makes it even faster. Run times may be a bit longer when matching on
-other distance measures (e.g., the Mahalanobis distance). In contrast to
-optimal pair matching (described below), nearest neighbor matching does
-not require computing the full distance matrix between units, which
-makes it more applicable to large datasets.</p>
+<p>Nearest neighbor matching is implemented in <em>MatchIt</em> using
+internal C++ code through <em>Rcpp</em>. When matching on a propensity
+score, this makes matching extremely fast, even for large datasets.
+Using a caliper on the propensity score (described below) makes it even
+faster. Run times may be a bit longer when matching on other distance
+measures (e.g., the Mahalanobis distance). In contrast to optimal pair
+matching (described below), nearest neighbor matching does not require
+computing the full distance matrix between units, which makes it more
+applicable to large datasets.</p>
 </div>
 <div class="section level3">
 <h3 id="optimal-pair-matching-method-optimal">Optimal Pair Matching (<code>method = "optimal"</code>)<a class="anchor" aria-label="anchor" href="#optimal-pair-matching-method-optimal"></a>
@@ -301,9 +296,8 @@ an overall criterion <span class="citation">(<a href="#ref-hansen2006">Hansen an
 is the sum of the absolute pair distances in the matched sample. See
 <code><a href="../reference/method_optimal.html">?method_optimal</a></code> for the documentation for
 <code><a href="../reference/matchit.html">matchit()</a></code> with <code>method = "optimal"</code>. Optimal
-pair matching in <code>MatchIt</code> depends on the
-<code>fullmatch()</code> function in the <code>optmatch</code> package
-<span class="citation">(<a href="#ref-hansen2006">Hansen and Klopfer
+pair matching in <em>MatchIt</em> depends on the
+<code>fullmatch()</code> function in the <em>optmatch</em> package <span class="citation">(<a href="#ref-hansen2006">Hansen and Klopfer
 2006</a>)</span>.</p>
 <p>Like nearest neighbor matching, optimal pair matching requires the
 specification of a distance measure between units. Optimal pair matching
@@ -334,9 +328,9 @@ these weights then function like propensity score weights and can be
 used to estimate a weighted treatment effect, ideally free of
 confounding by the measured covariates. See <code><a href="../reference/method_full.html">?method_full</a></code>
 for the documentation for <code><a href="../reference/matchit.html">matchit()</a></code> with
-<code>method = "full"</code>. Optimal full matching in
-<code>MatchIt</code> depends on the <code>fullmatch()</code> function in
-the <code>optmatch</code> package <span class="citation">(<a href="#ref-hansen2006">Hansen and Klopfer 2006</a>)</span>.</p>
+<code>method = "full"</code>. Optimal full matching in <em>MatchIt</em>
+depends on the <code>fullmatch()</code> function in the
+<em>optmatch</em> package <span class="citation">(<a href="#ref-hansen2006">Hansen and Klopfer 2006</a>)</span>.</p>
 <p>Like the other distance matching methods, optimal full matching
 requires the specification of a distance measure between units. It can
 be seen a combination of distance matching and stratum matching:
@@ -389,9 +383,9 @@ weights and can be used to estimate a weighted treatment effect, ideally
 free of confounding by the measured covariates. See
 <code><a href="../reference/method_quick.html">?method_quick</a></code> for the documentation for
 <code><a href="../reference/matchit.html">matchit()</a></code> with <code>method = "quick"</code>. Generalized
-full matching in <code>MatchIt</code> depends on the
-<code>quickmatch()</code> function in the <code>quickmatch</code>
-package <span class="citation">(<a href="#ref-savjeQuickmatchQuickGeneralized2018">Sävje et al.
+full matching in <em>MatchIt</em> depends on the
+<code>quickmatch()</code> function in the <em>quickmatch</em> package
+<span class="citation">(<a href="#ref-savjeQuickmatchQuickGeneralized2018">Sävje et al.
 2018</a>)</span>.</p>
 <p>Generalized full matching includes different options for
 customization than optimal full matching. The user cannot supply their
@@ -420,8 +414,8 @@ Once the scaling factors have been found, nearest neighbor matching is
 performed on the scaled generalized Mahalanobis distance. See
 <code><a href="../reference/method_genetic.html">?method_genetic</a></code> for the documentation for
 <code><a href="../reference/matchit.html">matchit()</a></code> with <code>method = "genetic"</code>. Genetic
-matching in <code>MatchIt</code> depends on the <code>GenMatch()</code>
-function in the <code>Matching</code> package <span class="citation">(<a href="#ref-sekhon2011">Sekhon 2011</a>)</span> to perform the genetic
+matching in <em>MatchIt</em> depends on the <code>GenMatch()</code>
+function in the <em>Matching</em> package <span class="citation">(<a href="#ref-sekhon2011">Sekhon 2011</a>)</span> to perform the genetic
 search and uses the <code>Match()</code> function to perform the nearest
 neighbor match using the scaled generalized Mahalanobis distance.</p>
 <p>Genetic matching considers the generalized Mahalanobis distance
@@ -448,23 +442,22 @@ where a user-specified criterion is used to define what is optimal. The
 default is to maximize the smallest p-value among balance tests for the
 covariates in the matched sample (both Kolmogorov-Smirnov tests and
 t-tests for each covariate).</p>
-<p>In <code>MatchIt</code>, if a propensity score is specified, the
-default is to include the propensity score and the covariates in <span class="math inline">\(\mathbf{x}\)</span> and to optimize balance on the
+<p>In <em>MatchIt</em>, if a propensity score is specified, the default
+is to include the propensity score and the covariates in <span class="math inline">\(\mathbf{x}\)</span> and to optimize balance on the
 covariates. When <code>distance = "mahalanobis"</code> or the
 <code>mahvars</code> argument is specified, the propensity score is left
 out of <span class="math inline">\(\mathbf{x}\)</span>.</p>
 <p>In all other respects, genetic matching functions just like nearest
 neighbor matching except that the matching itself is carried out by
-<code><a href="https://rdrr.io/pkg/Matching/man/Match.html" class="external-link">Matching::Match()</a></code> instead of by <code>MatchIt</code>. When
-using <code>method = "genetic"</code> in <code>MatchIt</code>,
-additional arguments passed to <code><a href="https://rdrr.io/pkg/Matching/man/GenMatch.html" class="external-link">Matching::GenMatch()</a></code> to
-control the genetic search process should be specified; in particular,
-the <code>pop.size</code> argument should be increased from its default
-of 100 to a much higher value. Doing so will make the algorithm take
-more time to finish but will generally improve the quality of the
-resulting matches. Different functions can be supplied to be used as the
-objective in the optimization using the <code>fit.func</code>
-argument.</p>
+<code><a href="https://rdrr.io/pkg/Matching/man/Match.html" class="external-link">Matching::Match()</a></code> instead of by <em>MatchIt</em>. When
+using <code>method = "genetic"</code> in <em>MatchIt</em>, additional
+arguments passed to <code><a href="https://rdrr.io/pkg/Matching/man/GenMatch.html" class="external-link">Matching::GenMatch()</a></code> to control the
+genetic search process should be specified; in particular, the
+<code>pop.size</code> argument should be increased from its default of
+100 to a much higher value. Doing so will make the algorithm take more
+time to finish but will generally improve the quality of the resulting
+matches. Different functions can be supplied to be used as the objective
+in the optimization using the <code>fit.func</code> argument.</p>
 </div>
 <div class="section level3">
 <h3 id="exact-matching-method-exact">Exact Matching (<code>method = "exact"</code>)<a class="anchor" aria-label="anchor" href="#exact-matching-method-exact"></a>
@@ -515,8 +508,8 @@ solution with many covariates, especially with few units. Dropping units
 can also change the target population of the estimated effect. See
 <code><a href="../reference/method_cem.html">?method_cem</a></code> for the documentation for
 <code><a href="../reference/matchit.html">matchit()</a></code> with <code>method = "cem"</code>. CEM in
-<code>MatchIt</code> does not depend on any other package to perform the
-coarsening and matching, though it used to rely on the <code>cem</code>
+<em>MatchIt</em> does not depend on any other package to perform the
+coarsening and matching, though it used to rely on the <em>cem</em>
 package.</p>
 </div>
 <div class="section level3">
@@ -562,7 +555,7 @@ a single marginal effect can be estimated using the subclassification
 weights. This latter method has been called marginal mean weighting
 through subclassification [MMWS; <span class="citation">Hong (<a href="#ref-hong2010">2010</a>)</span>] and fine stratification weighting
 <span class="citation">(<a href="#ref-desai2017">Desai et al.
-2017</a>)</span>. It is also implemented in the <code>WeightIt</code>
+2017</a>)</span>. It is also implemented in the <em>WeightIt</em>
 package.</p>
 </div>
 <div class="section level3">
@@ -610,17 +603,17 @@ subset selection; doing so can add additional precision and robustness
 <span class="citation">(<a href="#ref-zubizarretaMatchingBalancePairing2014">Zubizarreta et al.
 2014</a>)</span>.</p>
 <p>The optimization problem requires a special solver to solve.
-Currently, the available options in <code>MatchIt</code> are the HiGHS
-solver (through the <code>highs</code> package), the GLPK solver
-(through the <code>Rglpk</code> package), and the Gurobi solver (through
-the <code>gurobi</code> package). The differences among the solvers are
-in performance; Gurobi is by far the best (fastest, least likely to fail
-to find a solution), but it is proprietary (though has a free trial and
+Currently, the available options in <em>MatchIt</em> are the HiGHS
+solver (through the <em>highs</em> package), the GLPK solver (through
+the <em>Rglpk</em> package), and the Gurobi solver (through the
+<em>gurobi</em> package). The differences among the solvers are in
+performance; Gurobi is by far the best (fastest, least likely to fail to
+find a solution), but it is proprietary (though has a free trial and
 academic license) and is a bit more complicated to install. HiGHS is the
 default due to being open source, easily installed, and with performance
-comparable to Gurobi. The <code>designmatch</code> package also provides
-an implementation of cardinality matching with more options than
-<code>MatchIt</code> offers.</p>
+comparable to Gurobi. The <em>designmatch</em> package also provides an
+implementation of cardinality matching with more options than
+<em>MatchIt</em> offers but with a more advanced interface.</p>
 </div>
 </div>
 <div class="section level2">
@@ -643,7 +636,7 @@ unit to each treated unit. In optimal matching, this is used in the
 criterion that is optimized. By default, the distance measure is the
 propensity score difference, and the argument supplied to
 <code>distance</code> corresponds to the method of estimating the
-propensity score. In <code>MatchIt</code>, propensity scores are often
+propensity score. In <em>MatchIt</em>, propensity scores are often
 labeled as “distance” values, even though the propensity score itself is
 not a distance measure. This is to reflect that the propensity score is
 used in creating the distance value, but other scores could be used,
@@ -704,7 +697,7 @@ score matching <span class="citation">(<a href="#ref-ripolloneImplicationsPropen
 2018</a>)</span>.</p>
 <p><code>distance</code> can also be supplied as a matrix of distance
 values between units. This makes it possible to use handcrafted distance
-matrices or distances created outside <code>MatchIt</code>. Only nearest
+matrices or distances created outside <em>MatchIt</em>. Only nearest
 neighbor, optimal pair, and optimal full matching allow this
 specification.</p>
 <p>The propensity score can have uses other than as the basis for
@@ -728,9 +721,9 @@ that fall outside of the region of common support, preventing them from
 being matched to other units and included in the matched sample. This
 can reduce the potential for extrapolation and help the matching
 algorithms to avoid overly distant matches from occurring. In
-<code>MatchIt</code>, the <code>discard</code> option implements a
-common support restriction based on the propensity score. The argument
-can be supplied as <code>"treated"</code>, <code>"control"</code>, or
+<em>MatchIt</em>, the <code>discard</code> option implements a common
+support restriction based on the propensity score. The argument can be
+supplied as <code>"treated"</code>, <code>"control"</code>, or
 <code>"both"</code>, which discards units in the corresponding group
 that fall outside the region of common support for the propensity score.
 The <code>reestimate</code> argument can be supplied to choose whether

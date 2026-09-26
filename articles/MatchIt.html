@@ -31,7 +31,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">MatchIt</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.8.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.8.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -82,7 +82,7 @@
                         <h4 data-toc-skip class="author">Noah
 Greifer</h4>
             
-            <h4 data-toc-skip class="date">2026-09-17</h4>
+            <h4 data-toc-skip class="date">2026-09-26</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/kosukeimai/MatchIt/blob/master/vignettes/MatchIt.Rmd" class="external-link"><code>vignettes/MatchIt.Rmd</code></a></small>
       <div class="d-none name"><code>MatchIt.Rmd</code></div>
@@ -102,25 +102,25 @@ white-space: pre;
 <div class="section level2">
 <h2 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
 </h2>
-<p><code>MatchIt</code> implements the suggestions of <span class="citation">Ho et al. (<a href="#ref-ho2007">2007</a>)</span> for
+<p><em>MatchIt</em> implements the suggestions of <span class="citation">Ho et al. (<a href="#ref-ho2007">2007</a>)</span> for
 improving parametric statistical models for estimating treatment effects
 in observational studies and reducing model dependence by preprocessing
 data with semi-parametric and non-parametric matching methods. After
-appropriately preprocessing with <code>MatchIt</code>, researchers can
-use whatever parametric model they would have used without
-<code>MatchIt</code> and produce inferences that are more robust and
-less sensitive to modeling assumptions. <code>MatchIt</code> reduces the
-dependence of causal inferences on commonly made, but hard-to-justify,
-statistical modeling assumptions using a large range of sophisticated
-matching methods. The package includes several popular approaches to
-matching and provides access to methods implemented in other packages
-through its single, unified, and easy-to-use interface.</p>
+appropriately preprocessing with <em>MatchIt</em>, researchers can use
+whatever parametric model they would have used without <em>MatchIt</em>
+and produce inferences that are more robust and less sensitive to
+modeling assumptions. <em>MatchIt</em> reduces the dependence of causal
+inferences on commonly made, but hard-to-justify, statistical modeling
+assumptions using a large range of sophisticated matching methods. The
+package includes several popular approaches to matching and provides
+access to methods implemented in other packages through its single,
+unified, and easy-to-use interface.</p>
 <p>Matching is used in the context of estimating the causal effect of a
 binary treatment or exposure on an outcome while controlling for
 measured pre-treatment variables, typically confounding variables or
 variables prognostic of the outcome. Here and throughout the
-<code>MatchIt</code> documentation we use the word “treatment” to refer
-to the focal causal variable of interest, with “treated” and “control”
+<em>MatchIt</em> documentation we use the word “treatment” to refer to
+the focal causal variable of interest, with “treated” and “control”
 reflecting the names of the treatment groups. The goal of matching is to
 produce <em>covariate balance</em>, that is, for the distributions of
 covariates in the two groups to be approximately equal to each other, as
@@ -130,18 +130,18 @@ choice of model used to estimate the treatment effect; in perfectly
 balanced samples, a simple difference in means can be a valid treatment
 effect estimate. Here we do not aim to provide a full introduction to
 matching or causal inference theory, but simply to explain how to use
-<code>MatchIt</code> to perform nonparametric preprocessing. For
-excellent and accessible introductions to matching, see <span class="citation">Stuart (<a href="#ref-stuart2010">2010</a>)</span> and
+<em>MatchIt</em> to perform nonparametric preprocessing. For excellent
+and accessible introductions to matching, see <span class="citation">Stuart (<a href="#ref-stuart2010">2010</a>)</span> and
 <span class="citation">Austin (<a href="#ref-austin2011b">2011</a>)</span>.</p>
 <p>A matching analysis involves four primary steps: 1) planning, 2)
 matching, 3) assessing the quality of matches, and 4) estimating the
 treatment effect and its uncertainty. Here we briefly discuss these
-steps and how they can be implemented with <code>MatchIt</code>; in the
+steps and how they can be implemented with <em>MatchIt</em>; in the
 other included vignettes, these steps are discussed in more detail.</p>
 <p>We will use Lalonde’s data on the evaluation of the National
-Supported Work program to demonstrate <code>MatchIt</code>’s
-capabilities. First, we load <code>MatchIt</code> and bring in the
-<code>lalonde</code> dataset.</p>
+Supported Work program to demonstrate <em>MatchIt</em>’s capabilities.
+First, we load <em>MatchIt</em> and bring in the <code>lalonde</code>
+dataset.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://kosukeimai.github.io/MatchIt/">"MatchIt"</a></span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"lalonde"</span><span class="op">)</span></span>
@@ -161,15 +161,15 @@ for more information on this dataset. In particular, the analysis is
 concerned with the marginal, total effect of the treatment for those who
 actually received the treatment.</p>
 <p>In what follows, we briefly describe the four steps of a matching
-analysis and how to implement them in <code>MatchIt</code>. For more
+analysis and how to implement them in <em>MatchIt</em>. For more
 details, we recommend reading the other vignettes,
 <code><a href="../articles/matching-methods.html">vignette("matching-methods")</a></code>,
 <code><a href="../articles/assessing-balance.html">vignette("assessing-balance")</a></code>, and
 <code><a href="../articles/estimating-effects.html">vignette("estimating-effects")</a></code>, especially for users less
-familiar with matching methods. For the use of <code>MatchIt</code> with
+familiar with matching methods. For the use of <em>MatchIt</em> with
 sampling weights, also see <code><a href="../articles/sampling-weights.html">vignette("sampling-weights")</a></code>. It
-is important to recognize that the ease of using <code>MatchIt</code>
-does not imply the simplicity of matching methods; advanced statistical
+is important to recognize that the ease of using <em>MatchIt</em> does
+not imply the simplicity of matching methods; advanced statistical
 methods like matching that require many decisions to be made and caution
 in their use should only be performed by those with statistical
 training.</p>
@@ -269,7 +269,7 @@ covariates, computed as the predicted probability of being the treated
 group given the covariates; here, we set it to <code>"glm"</code> for
 generalized linear model, which implements logistic regression by
 default<a class="footnote-ref" tabindex="0" data-bs-toggle="popover" data-bs-content='&lt;p&gt;Note that setting &lt;code&gt;distance = "logit"&lt;/code&gt;, which
-was the default in &lt;code&gt;MatchIt&lt;/code&gt; version prior to 4.0.0, or
+was the default in &lt;em&gt;MatchIt&lt;/em&gt; version prior to 4.0.0, or
 &lt;code&gt;"ps"&lt;/code&gt;, which was the default prior to version 4.5.0, will
 also estimate logistic regression propensity scores. Because it is the
 default, the &lt;code&gt;distance&lt;/code&gt; argument can actually be omitted if
@@ -367,7 +367,7 @@ eliminating differences between the treatment groups to achieve
 covariate balance, its performance in this regard must be assessed. If
 covariates remain imbalanced after matching, the matching is considered
 unsuccessful, and a different matching specification should be tried.
-<code>MatchIt</code> offers a few tools for the assessment of covariate
+<em>MatchIt</em> offers a few tools for the assessment of covariate
 balance after matching. These include graphical and statistical methods.
 More detail on the interpretation of the included plots and statistics
 can be found in <code><a href="../articles/assessing-balance.html">vignette("assessing-balance")</a></code>.</p>
@@ -505,14 +505,14 @@ in a table, using the values resulting from <code><a href="https://rdrr.io/r/bas
 in a plot, such as a Love plot, which we can make by calling
 <code><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot()</a></code> on the <code><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary()</a></code> output:</p>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">m.out2</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">m.out2</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <p><img src="MatchIt_files/figure-html/unnamed-chunk-12-1.png" class="r-plt" alt="A love plot with matched dots below the threshold lines, indicaitng good balance after matching, in contrast to the unmatched dots far from the treshold lines, indicating poor balance before matching." width="672" style="display: block; margin: auto;"></p>
 <p>Love plots are a simple and straightforward way to summarize balance
 visually. See <code><a href="../articles/assessing-balance.html">vignette("assessing-balance")</a></code> for more
-information on how to customize <code>MatchIt</code>’s Love plot and how
-to use <code>cobalt</code>, a package designed specifically for balance
-assessment and reporting that is compatible with
-<code>MatchIt</code>.</p>
+information on how to customize <em>MatchIt</em>’s Love plot and how to
+use <em>cobalt</em>, a package designed specifically for balance
+assessment and reporting that is compatible with <em>MatchIt</em>.</p>
 </div>
 </div>
 <div class="section level2">
@@ -634,11 +634,11 @@ linear regression model with 1978 earnings as the outcome and the
 treatment, covariates, and their interaction as predictors and included
 the full matching weights in the estimation. The <code><a href="https://rdrr.io/r/stats/lm.html" class="external-link">lm()</a></code>
 function was used to fit the outcome, and the
-<code><a href="https://rdrr.io/pkg/marginaleffects/man/comparisons.html" class="external-link">avg_comparisons()</a></code> function in the
-<code>marginaleffects</code> package was used to perform g-computation
-in the matched sample to estimate the ATT. A cluster-robust variance was
-used to estimate its standard error with matching stratum membership as
-the clustering variable.</p>
+<code><a href="https://rdrr.io/pkg/marginaleffects/man/comparisons.html" class="external-link">avg_comparisons()</a></code> function in the <em>marginaleffects</em>
+package was used to perform g-computation in the matched sample to
+estimate the ATT. A cluster-robust variance was used to estimate its
+standard error with matching stratum membership as the clustering
+variable.</p>
 <p>The estimated effect was $2114 (SE = 646, p = 0.001), indicating that
 the average effect of the treatment for those who received it is to
 increase earnings.</p>
@@ -649,16 +649,15 @@ increase earnings.</p>
 </h2>
 <p>Although we have covered the basics of performing a matching analysis
 here, to use matching to its full potential, the more advanced methods
-available in <code>MatchIt</code> should be considered. We recommend
-reading the other vignettes included here to gain a better understand of
-all the <code>MatchIt</code> has to offer and how to use it responsibly
-and effectively. As previously stated, the ease of using
-<code>MatchIt</code> does not imply that matching or causal inference in
-general are simple matters; matching is an advanced statistical
-technique that should be used with care and caution. We hope the
-capabilities of <code>MatchIt</code> ease and encourage the use of
-nonparametric preprocessing for estimating causal effects in a robust
-and well-justified way.</p>
+available in <em>MatchIt</em> should be considered. We recommend reading
+the other vignettes included here to gain a better understand of all the
+<em>MatchIt</em> has to offer and how to use it responsibly and
+effectively. As previously stated, the ease of using <em>MatchIt</em>
+does not imply that matching or causal inference in general are simple
+matters; matching is an advanced statistical technique that should be
+used with care and caution. We hope the capabilities of <em>MatchIt</em>
+ease and encourage the use of nonparametric preprocessing for estimating
+causal effects in a robust and well-justified way.</p>
 </div>
 <div class="section level2 unnumbered">
 <h2 class="unnumbered" id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>

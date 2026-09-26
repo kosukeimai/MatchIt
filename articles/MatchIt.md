@@ -2,14 +2,14 @@
 
 ## Introduction
 
-`MatchIt` implements the suggestions of Ho et al. ([2007](#ref-ho2007))
+*MatchIt* implements the suggestions of Ho et al. ([2007](#ref-ho2007))
 for improving parametric statistical models for estimating treatment
 effects in observational studies and reducing model dependence by
 preprocessing data with semi-parametric and non-parametric matching
-methods. After appropriately preprocessing with `MatchIt`, researchers
-can use whatever parametric model they would have used without `MatchIt`
+methods. After appropriately preprocessing with *MatchIt*, researchers
+can use whatever parametric model they would have used without *MatchIt*
 and produce inferences that are more robust and less sensitive to
-modeling assumptions. `MatchIt` reduces the dependence of causal
+modeling assumptions. *MatchIt* reduces the dependence of causal
 inferences on commonly made, but hard-to-justify, statistical modeling
 assumptions using a large range of sophisticated matching methods. The
 package includes several popular approaches to matching and provides
@@ -19,7 +19,7 @@ unified, and easy-to-use interface.
 Matching is used in the context of estimating the causal effect of a
 binary treatment or exposure on an outcome while controlling for
 measured pre-treatment variables, typically confounding variables or
-variables prognostic of the outcome. Here and throughout the `MatchIt`
+variables prognostic of the outcome. Here and throughout the *MatchIt*
 documentation we use the word “treatment” to refer to the focal causal
 variable of interest, with “treated” and “control” reflecting the names
 of the treatment groups. The goal of matching is to produce *covariate
@@ -30,7 +30,7 @@ that it allows for increased robustness to the choice of model used to
 estimate the treatment effect; in perfectly balanced samples, a simple
 difference in means can be a valid treatment effect estimate. Here we do
 not aim to provide a full introduction to matching or causal inference
-theory, but simply to explain how to use `MatchIt` to perform
+theory, but simply to explain how to use *MatchIt* to perform
 nonparametric preprocessing. For excellent and accessible introductions
 to matching, see Stuart ([2010](#ref-stuart2010)) and Austin
 ([2011](#ref-austin2011b)).
@@ -38,12 +38,12 @@ to matching, see Stuart ([2010](#ref-stuart2010)) and Austin
 A matching analysis involves four primary steps: 1) planning, 2)
 matching, 3) assessing the quality of matches, and 4) estimating the
 treatment effect and its uncertainty. Here we briefly discuss these
-steps and how they can be implemented with `MatchIt`; in the other
+steps and how they can be implemented with *MatchIt*; in the other
 included vignettes, these steps are discussed in more detail.
 
 We will use Lalonde’s data on the evaluation of the National Supported
-Work program to demonstrate `MatchIt`’s capabilities. First, we load
-`MatchIt` and bring in the `lalonde` dataset.
+Work program to demonstrate *MatchIt*’s capabilities. First, we load
+*MatchIt* and bring in the `lalonde` dataset.
 
 ``` r
 
@@ -70,16 +70,16 @@ concerned with the marginal, total effect of the treatment for those who
 actually received the treatment.
 
 In what follows, we briefly describe the four steps of a matching
-analysis and how to implement them in `MatchIt`. For more details, we
+analysis and how to implement them in *MatchIt*. For more details, we
 recommend reading the other vignettes,
 [`vignette("matching-methods")`](https://kosukeimai.github.io/MatchIt/articles/matching-methods.md),
 [`vignette("assessing-balance")`](https://kosukeimai.github.io/MatchIt/articles/assessing-balance.md),
 and
 [`vignette("estimating-effects")`](https://kosukeimai.github.io/MatchIt/articles/estimating-effects.md),
 especially for users less familiar with matching methods. For the use of
-`MatchIt` with sampling weights, also see
+*MatchIt* with sampling weights, also see
 [`vignette("sampling-weights")`](https://kosukeimai.github.io/MatchIt/articles/sampling-weights.md).
-It is important to recognize that the ease of using `MatchIt` does not
+It is important to recognize that the ease of using *MatchIt* does not
 imply the simplicity of matching methods; advanced statistical methods
 like matching that require many decisions to be made and caution in
 their use should only be performed by those with statistical training.
@@ -288,7 +288,7 @@ eliminating differences between the treatment groups to achieve
 covariate balance, its performance in this regard must be assessed. If
 covariates remain imbalanced after matching, the matching is considered
 unsuccessful, and a different matching specification should be tried.
-`MatchIt` offers a few tools for the assessment of covariate balance
+*MatchIt* offers a few tools for the assessment of covariate balance
 after matching. These include graphical and statistical methods. More
 detail on the interpretation of the included plots and statistics can be
 found in
@@ -466,7 +466,8 @@ as a Love plot, which we can make by calling
 
 ``` r
 
-plot(summary(m.out2))
+summary(m.out2) |>
+  plot()
 ```
 
 ![A love plot with matched dots below the threshold lines, indicaitng
@@ -477,9 +478,9 @@ matching.](MatchIt_files/figure-html/unnamed-chunk-12-1.png)
 Love plots are a simple and straightforward way to summarize balance
 visually. See
 [`vignette("assessing-balance")`](https://kosukeimai.github.io/MatchIt/articles/assessing-balance.md)
-for more information on how to customize `MatchIt`’s Love plot and how
-to use `cobalt`, a package designed specifically for balance assessment
-and reporting that is compatible with `MatchIt`.
+for more information on how to customize *MatchIt*’s Love plot and how
+to use *cobalt*, a package designed specifically for balance assessment
+and reporting that is compatible with *MatchIt*.
 
 ## Estimating the Treatment Effect
 
@@ -608,7 +609,7 @@ report. Below is an example of how we might write up the prior analysis:
 > [`lm()`](https://rdrr.io/r/stats/lm.html) function was used to fit the
 > outcome, and the
 > [`avg_comparisons()`](https://rdrr.io/pkg/marginaleffects/man/comparisons.html)
-> function in the `marginaleffects` package was used to perform
+> function in the *marginaleffects* package was used to perform
 > g-computation in the matched sample to estimate the ATT. A
 > cluster-robust variance was used to estimate its standard error with
 > matching stratum membership as the clustering variable.
@@ -621,13 +622,13 @@ report. Below is an example of how we might write up the prior analysis:
 
 Although we have covered the basics of performing a matching analysis
 here, to use matching to its full potential, the more advanced methods
-available in `MatchIt` should be considered. We recommend reading the
+available in *MatchIt* should be considered. We recommend reading the
 other vignettes included here to gain a better understand of all the
-`MatchIt` has to offer and how to use it responsibly and effectively. As
-previously stated, the ease of using `MatchIt` does not imply that
+*MatchIt* has to offer and how to use it responsibly and effectively. As
+previously stated, the ease of using *MatchIt* does not imply that
 matching or causal inference in general are simple matters; matching is
 an advanced statistical technique that should be used with care and
-caution. We hope the capabilities of `MatchIt` ease and encourage the
+caution. We hope the capabilities of *MatchIt* ease and encourage the
 use of nonparametric preprocessing for estimating causal effects in a
 robust and well-justified way.
 
@@ -687,7 +688,7 @@ VanderWeele, Tyler J. 2019. “Principles of Confounder Selection.”
     `NULL`.
 
 [^2]: Note that setting `distance = "logit"`, which was the default in
-    `MatchIt` version prior to 4.0.0, or `"ps"`, which was the default
+    *MatchIt* version prior to 4.0.0, or `"ps"`, which was the default
     prior to version 4.5.0, will also estimate logistic regression
     propensity scores. Because it is the default, the `distance`
     argument can actually be omitted if logistic regression propensity
