@@ -1,6 +1,19 @@
 # Changelog
 
+## MatchIt 4.8.2
+
+- Fixed a bug in
+  [`plot.matchit()`](https://kosukeimai.github.io/MatchIt/reference/plot.matchit.md)
+  with `type = "jitter"` in which supplying `xlab` or `main` would yield
+  an error.
+
+- Fixed tests that failed on CRAN when R uses an alternative BLAS
+  library (e.g., MKL), which can produce results that differ in the last
+  digits across calls.
+
 ## MatchIt 4.8.1
+
+CRAN release: 2026-09-26
 
 - Nearest neighbor matching on large samples is much faster, especially
   with `exact` when there are many exact matching strata.

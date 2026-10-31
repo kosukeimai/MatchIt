@@ -13,7 +13,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">MatchIt</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.8.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.8.2</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -52,7 +52,12 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="4.8.1" id="matchit-481">MatchIt 4.8.1<a class="anchor" aria-label="anchor" href="#matchit-481"></a></h2>
+<h2 class="pkg-version" data-toc-text="4.8.2" id="matchit-482">MatchIt 4.8.2<a class="anchor" aria-label="anchor" href="#matchit-482"></a></h2>
+<ul><li><p>Fixed a bug in <code><a href="../reference/plot.matchit.html">plot.matchit()</a></code> with <code>type = "jitter"</code> in which supplying <code>xlab</code> or <code>main</code> would yield an error.</p></li>
+<li><p>Fixed tests that failed on CRAN when R uses an alternative BLAS library (e.g., MKL), which can produce results that differ in the last digits across calls.</p></li>
+</ul></div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="4.8.1" id="matchit-481">MatchIt 4.8.1<a class="anchor" aria-label="anchor" href="#matchit-481"></a></h2><p class="text-muted">CRAN release: 2026-09-26</p>
 <ul><li><p>Nearest neighbor matching on large samples is much faster, especially with <code>exact</code> when there are many exact matching strata.</p></li>
 <li><p>Optimal, full, and quick matching with <code>exact</code> are faster when there are many exact matching strata, as is <code>method = "cem"</code> with <code>k2k = TRUE</code> and a <code>k2k.method</code> computed by <code><a href="https://rdrr.io/r/stats/dist.html" class="external-link">dist()</a></code>.</p></li>
 <li><p><code><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary()</a></code> is faster on large samples, especially in computing pair distances when strata are large (as with exact, coarsened exact, and full matching) and balance statistics within subclasses with <code>subclass = TRUE</code>.</p></li>

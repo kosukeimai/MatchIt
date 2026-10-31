@@ -350,7 +350,7 @@ summary(m.out, interactions = TRUE)
 #> racewhite * re74          126.9766     4308.6240         -4.5164     0.0198
 #> re74²                28141411.5686 77555527.0664         -0.4331     0.6548
 #>                      eCDF Mean eCDF Max
-#> distance                0.3765   0.6419
+#> distance                0.3762   0.6419
 #> age                     0.0813   0.1577
 #> educ                    0.0347   0.1114
 #> married                 0.3236   0.3236

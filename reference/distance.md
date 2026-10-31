@@ -362,19 +362,19 @@ summary(m.out2$model)
 #> 
 #> Parametric coefficients:
 #>               Estimate Std. Error t value Pr(>|t|)    
-#> (Intercept)  5.436e-01  3.950e-01   1.376  0.16928    
+#> (Intercept)  5.436e-01  3.950e-01   1.376  0.16927    
 #> racehispan  -2.447e+00  4.323e-01  -5.661 2.34e-08 ***
 #> racewhite   -2.995e+00  3.136e-01  -9.552  < 2e-16 ***
 #> married     -1.644e+00  3.438e-01  -4.781 2.20e-06 ***
-#> nodegree     7.894e-01  4.800e-01   1.645  0.10058    
+#> nodegree     7.894e-01  4.800e-01   1.645  0.10059    
 #> re74        -9.838e-05  3.245e-05  -3.031  0.00254 ** 
-#> re75         5.113e-05  5.001e-05   1.022  0.30702    
+#> re75         5.113e-05  5.001e-05   1.022  0.30703    
 #> ---
 #> Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 #> 
 #> Approximate significance of smooth terms:
 #>           edf Ref.df     F p-value    
-#> s(age)  7.489  8.144 6.781  <2e-16 ***
+#> s(age)  7.489  8.143 6.781  <2e-16 ***
 #> s(educ) 2.647  3.359 2.311  0.0628 .  
 #> ---
 #> Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
