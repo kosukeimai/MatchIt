@@ -153,6 +153,10 @@ test_that("optimal matching is no worse than greedy on total distance", {
   #measurably *worse* than greedy on this data -- 39.69374 against 39.69280 -- and
   #at `tol = 1e-6` the two agree to every printed digit. See
   #_dev/method-tests-findings.md.
+  #
+  #The comparison allows `1e-8` of slack because the two totals can then differ in
+  #the last bits: each call fits its own propensity score model, and some BLAS
+  #libraries (e.g., MKL) are not bitwise reproducible across calls.
   total_dist <- function(m) {
     sum(vapply(rownames(m$match.matrix), function(t1) {
       t0 <- m$match.matrix[t1, ]
@@ -163,7 +167,7 @@ test_that("optimal matching is no worse than greedy on total distance", {
   mn <- matchit(f, data = lalonde, method = "nearest")
 
   mo_tight <- matchit(f, data = lalonde, method = "optimal", tol = 1e-6)
-  expect_lte(total_dist(mo_tight), total_dist(mn))
+  expect_lte(total_dist(mo_tight), total_dist(mn) + 1e-8)
 
   mo_default <- matchit(f, data = lalonde, method = "optimal")
   expect_gt(total_dist(mo_default), total_dist(mo_tight))

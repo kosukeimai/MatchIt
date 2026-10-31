@@ -28,11 +28,13 @@ test_that("discard drops units and zeroes their weights", {
 
 test_that("the propensity score matches the one from a matching method", {
   #`method = NULL` shares the distance-estimation path with every other method, so
-  #the scores must agree exactly.
+  #the scores must agree. Not `expect_identical()`: the two calls fit the model
+  #separately, and some BLAS libraries (e.g., MKL) are not bitwise reproducible
+  #across calls.
   m0 <- matchit(f, data = lalonde, method = NULL)
   m1 <- matchit(f, data = lalonde, method = "nearest")
 
-  expect_identical(m0$distance, m1$distance)
+  expect_equal(m0$distance, m1$distance, tolerance = 1e-10)
 })
 
 test_that("s.weights are carried through", {
