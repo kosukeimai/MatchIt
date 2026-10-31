@@ -1,6 +1,10 @@
 `MatchIt` News and Updates
 ======
 
+# MatchIt 4.8.2
+
+* Fixed tests that failed on CRAN when R uses an alternative BLAS library (e.g., MKL), which can produce results that differ in the last digits across calls.
+
 # MatchIt 4.8.1
 
 * Nearest neighbor matching on large samples is much faster, especially with `exact` when there are many exact matching strata.
