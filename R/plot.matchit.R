@@ -895,7 +895,8 @@ hist_pscore <- function(x, xlab = "Propensity Score", freq = FALSE, ...) {
 
 }
 
-jitter_pscore <- function(x, interactive, pch = 1, ...) {
+jitter_pscore <- function(x, interactive, pch = 1, xlab = "Propensity Score",
+                          main = "Distribution of Propensity Scores", ...) {
 
   .pardefault <- par(no.readonly = TRUE)
   on.exit(par(.pardefault))
@@ -913,8 +914,8 @@ jitter_pscore <- function(x, interactive, pch = 1, ...) {
   maxp <- max(pscore, na.rm = TRUE)
 
   plot(pscore, xlim = c(minp - 0.05 * (maxp - minp), maxp + 0.05 * (maxp - minp)), ylim = c(-1.5, 2.5),
-       type = "n", ylab = "", xlab = "Propensity Score",
-       axes = FALSE, main = "Distribution of Propensity Scores", ...)
+       type = "n", ylab = "", xlab = xlab,
+       axes = FALSE, main = main, ...)
 
   if (is_not_null(q.cut)) {
     abline(v = q.cut, col = "grey", lty = 1)

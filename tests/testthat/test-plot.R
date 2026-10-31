@@ -61,6 +61,18 @@ test_that("plot.matchit: jitter and histogram need a distance measure", {
   expect_err(plot(mc, type = "jitter", interactive = FALSE), "cannot be used")
 })
 
+test_that("plot.matchit: jitter and histogram accept xlab", {
+  local_null_device()
+
+  m <- matchit(f_pl, data = lalonde)
+
+  expect_silent(plot(m, type = "jitter", interactive = FALSE,
+                     xlab = "PS", main = "Scores"))
+
+  #The histogram titles each of its four panels, so only `xlab` applies
+  expect_silent(plot(m, type = "histogram", interactive = FALSE, xlab = "PS"))
+})
+
 test_that("plot.matchit: which.xs selects the variables plotted", {
   local_null_device()
 
